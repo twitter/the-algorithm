@@ -1,7 +1,7 @@
-target(
+target(<{bndrs211}>
     name = "faiss",
     dependencies = [
-        "ann/src/main/java/com/twitter/ann/faiss/swig:swig-artifactory",
+        "ann/src/main/java/com/x/ann/faiss/swig:swig-artifactory",
     ],
 )
 
@@ -11,5 +11,5 @@ java_library(
     compiler_option_sets = ["fatal_warnings"],
     platform = "java8",
     tags = ["bazel-compatible"],
-    dependencies = [],
+    dependencies = [x21media],
 )
