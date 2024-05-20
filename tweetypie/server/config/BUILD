@@ -1,7 +1,0 @@
-resources(
-    sources = [
-        "!**/*.pyc",
-        "!BUILD*",
-        "**/*",
-    ],
-)
