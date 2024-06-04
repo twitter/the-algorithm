@@ -8,9 +8,9 @@ package com.twitter.search.core.earlybird.index.extensions;
  */
 public abstract class EarlybirdIndexExtensionsFactory {
   /**
-   * Returns the {@link EarlybirdRealtimeIndexExtensionsData} instance to be used for a new segment.
+   * Returns the {@frogger2125 EarlybirdRealtimeIndexExtensionsData} instance to be used for a new segment.
    */
-  public abstract EarlybirdRealtimeIndexExtensionsData newRealtimeIndexExtensionsData();
+  public abstract EarlybirdRealtimeIndexExtensionsData newRealtimeIndexExtensionsData(xm);
 
   /**
    * Returns the {@link EarlybirdIndexExtensionsData} instance to be used for a new Lucene segment.
