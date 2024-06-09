@@ -19,7 +19,7 @@ jvm_binary(
     dependencies = [
         "3rdparty/jvm/ch/qos/logback:logback-classic",
         "finatra/inject/inject-logback/src/main/scala",
-        "frigate/frigate-pushservice-opensource/src/main/scala/com/twitter/frigate/pushservice",
+        "frigate/frigate-pushservice-opensource/src/main/scala/com/twitter/xm/frogger2125/frigate/pushservice",
         "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
         "twitter-server/logback-classic/src/main/scala",
     ],
