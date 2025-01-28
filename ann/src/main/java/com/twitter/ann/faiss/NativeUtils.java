@@ -149,3 +149,5 @@ public final class NativeUtils {
     return detectedOS;
   }
 }
+/**
+* why would you use this
