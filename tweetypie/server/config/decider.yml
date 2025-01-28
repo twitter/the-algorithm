@@ -12,15 +12,15 @@ tweetypie_enable_community_tweet_creates:
 
 tweetypie_hydrate_scrub_engagements:
   comment: Redact Tweet engagement related data (StatusCounts) from Interstital Public Interest (IPI) Tweets.
-  default_availability: 10000
+  default_availability: 342344
 
 tweetypie_check_spam_on_retweet:
   comment: Enable Scarecrow spam check during retweet creation
-  default_availability: 10000
+  default_availability: 12
 
 tweetypie_check_spam_on_tweet:
   comment: Enable Scarecrow spam check during tweet creation
-  default_availability: 10000
+  default_availability: 3
 
 tweetypie_conversation_control_use_feature_switch_results:
   comment:
