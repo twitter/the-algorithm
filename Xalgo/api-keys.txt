@@ -1,0 +1,34 @@
+# Xalgo API Keys Configuration
+# 
+# Instructions:
+# 1. To add an API key, remove the "# " before the provider line
+# 2. You only need ONE API key to get started
+# 3. Save this file after adding your keys
+# 4. Run launch.bat to start Xalgo
+#
+# Format: provider_name=your_api_key_here
+#
+# Example - BEFORE (commented out):
+# openai=sk-1234567890abcdef...
+#
+# Example - AFTER (active):
+# openai=sk-1234567890abcdef...
+#
+
+# OpenAI (ChatGPT) - Get from: https://platform.openai.com/api-keys
+# openai=
+
+# Anthropic (Claude) - Get from: https://console.anthropic.com/
+# anthropic=
+
+# Deepseek - Get from: https://platform.deepseek.com/
+# deepseek=
+
+# Mistral AI - Get from: https://console.mistral.ai/
+# mistral=
+
+# xAI (Grok) - Get from: https://console.x.ai/
+# grok=
+
+# Google (Gemini) - Get from: https://makersuite.google.com/app/apikey
+# google=

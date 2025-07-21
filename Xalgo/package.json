@@ -1,0 +1,34 @@
+{
+  "name": "xalgo-cli",
+  "version": "1.0.0",
+  "description": "AI-powered CLI for exploring the X/Twitter algorithm",
+  "main": "src/index.js",
+  "type": "module",
+  "bin": {
+    "xalgo": "./src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "install-global": "npm install -g ."
+  },
+  "keywords": ["twitter", "algorithm", "ai", "cli", "exploration"],
+  "author": "Xalgo Team",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "inquirer": "^9.2.15",
+    "axios": "^1.6.7",
+    "fs-extra": "^11.2.0",
+    "path": "^0.12.7",
+    "os": "^0.1.2",
+    "dotenv": "^16.4.1",
+    "figlet": "^1.7.0",
+    "cli-spinner": "^0.2.10",
+    "node-fetch": "^3.3.2",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}
