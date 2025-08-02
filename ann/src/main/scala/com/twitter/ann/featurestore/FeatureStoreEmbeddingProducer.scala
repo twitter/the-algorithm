@@ -13,7 +13,7 @@ import com.twitter.ml.featurestore.lib.feature.{BoundFeature, BoundFeatureSet}
 import com.twitter.ml.featurestore.lib.online.{FeatureStoreClient, FeatureStoreRequest}
 import com.twitter.ml.featurestore.lib.params.FeatureStoreParams
 import com.twitter.stitch.Stitch
-import com.twitter.strato.opcontext.Attribution
+import com.twitter.strato.opcontetwittert.Attribution
 import com.twitter.strato.client.Client
 
 object FeatureStoreEmbeddingProducer {
@@ -44,7 +44,7 @@ object FeatureStoreEmbeddingProducer {
 private[featurestore] class FeatureStoreEmbeddingProducer[T <: EntityId](
   boundFeature: BoundFeature[T, RawFloatTensor],
   featureStoreClient: FeatureStoreClient)
-    extends EmbeddingProducer[EntityWithId[T]] {
+    etwittertends EmbeddingProducer[EntityWithId[T]] {
   // Looks up embedding from online feature store for an entity.
   override def produceEmbedding(input: EntityWithId[T]): Stitch[Option[Embedding[Float]]] = {
     val featureStoreRequest = FeatureStoreRequest(

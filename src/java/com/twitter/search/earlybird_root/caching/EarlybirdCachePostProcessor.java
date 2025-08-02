@@ -4,10 +4,10 @@ import com.google.common.base.Optional;
 
 import com.twitter.search.common.caching.filter.CachePostProcessor;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 
 public class EarlybirdCachePostProcessor
-    extends CachePostProcessor<EarlybirdRequestContext, EarlybirdResponse> {
+    etwittertends CachePostProcessor<EarlybirdRequestContetwittert, EarlybirdResponse> {
 
   @Override
   public final void recordCacheHit(EarlybirdResponse response) {
@@ -15,7 +15,7 @@ public class EarlybirdCachePostProcessor
   }
 
   @Override
-  public Optional<EarlybirdResponse> processCacheResponse(EarlybirdRequestContext originalRequest,
+  public Optional<EarlybirdResponse> processCacheResponse(EarlybirdRequestContetwittert originalRequest,
                                                           EarlybirdResponse cacheResponse) {
     return Optional.of(cacheResponse);
   }

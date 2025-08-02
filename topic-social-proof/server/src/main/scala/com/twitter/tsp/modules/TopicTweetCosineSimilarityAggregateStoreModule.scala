@@ -12,7 +12,7 @@ import com.twitter.storehaus.ReadableStore
 import com.twitter.tsp.stores.TopicTweetsCosineSimilarityAggregateStore
 import com.twitter.tsp.stores.TopicTweetsCosineSimilarityAggregateStore.ScoreKey
 
-object TopicTweetCosineSimilarityAggregateStoreModule extends TwitterModule {
+object TopicTweetCosineSimilarityAggregateStoreModule etwittertends TwitterModule {
 
   @Provides
   @Singleton

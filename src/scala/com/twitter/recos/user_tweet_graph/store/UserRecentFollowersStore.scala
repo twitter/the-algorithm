@@ -14,17 +14,17 @@ import com.twitter.util.Time
 
 class UserRecentFollowersStore(
   sgsClient: SocialGraphService.MethodPerEndpoint)
-    extends ReadableStore[UserRecentFollowersStore.Query, Seq[UserId]] {
+    etwittertends ReadableStore[UserRecentFollowersStore.Query, Seq[UserId]] {
 
   override def get(key: UserRecentFollowersStore.Query): Future[Option[Seq[UserId]]] = {
     val edgeRequest = EdgesRequest(
       relationship = SrcRelationship(key.userId, RelationshipType.FollowedBy),
-      // Could have a better guess at count when k.maxAge != None
-      pageRequest = Some(PageRequest(count = key.maxResults))
+      // Could have a better guess at count when k.matwitterAge != None
+      pageRequest = Some(PageRequest(count = key.matwitterResults))
     )
 
-    val lookbackThresholdMillis = key.maxAge
-      .map(maxAge => (Time.now - maxAge).inMilliseconds)
+    val lookbackThresholdMillis = key.matwitterAge
+      .map(matwitterAge => (Time.now - matwitterAge).inMilliseconds)
       .getOrElse(0L)
 
     sgsClient
@@ -43,8 +43,8 @@ class UserRecentFollowersStore(
 object UserRecentFollowersStore {
   case class Query(
     userId: UserId,
-    // maxResults - if Some(count), we return only the `count` most recent follows
-    maxResults: Option[Int] = None,
-    // maxAge - if Some(duration), return only follows since `Time.now - duration`
-    maxAge: Option[Duration] = None)
+    // matwitterResults - if Some(count), we return only the `count` most recent follows
+    matwitterResults: Option[Int] = None,
+    // matwitterAge - if Some(duration), return only follows since `Time.now - duration`
+    matwitterAge: Option[Duration] = None)
 }

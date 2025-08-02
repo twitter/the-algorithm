@@ -19,10 +19,10 @@ trait ScoreId {
   def algorithm: ScoringAlgorithm
 
   /**
-   * Convert to a Thrift object. Throw a exception if the operation is not override.
+   * Convert to a Thrift object. Throw a etwitterception if the operation is not override.
    */
   implicit def toThrift: ThriftScoreId =
-    throw new UnsupportedOperationException(s"ScoreId $this doesn't support Thrift format")
+    throw new UnsupportedOperationEtwitterception(s"ScoreId $this doesn't support Thrift format")
 }
 
 object ScoreId {
@@ -40,7 +40,7 @@ object ScoreId {
  * Generic Internal pairwise id. Support all the subtypes in InternalId, which includes TweetId,
  * UserId, EntityId and more combination ids.
  **/
-trait PairScoreId extends ScoreId {
+trait PairScoreId etwittertends ScoreId {
 
   def id1: InternalId
   def id2: InternalId
@@ -68,7 +68,7 @@ object PairScoreId {
     algorithm: ScoringAlgorithm,
     id1: InternalId,
     id2: InternalId)
-      extends PairScoreId
+      etwittertends PairScoreId
 
   implicit val fromThriftScoreId: ThriftScoreId => PairScoreId = {
     case ThriftScoreId(algorithm, ScoreInternalId.GenericPairScoreId(pairScoreId)) =>
@@ -83,7 +83,7 @@ object PairScoreId {
  * ScoreId for a pair of SimClustersEmbedding.
  * Used for dot product, cosine similarity and other basic embedding operations.
  */
-trait SimClustersEmbeddingPairScoreId extends PairScoreId {
+trait SimClustersEmbeddingPairScoreId etwittertends PairScoreId {
   def embeddingId1: SimClustersEmbeddingId
 
   def embeddingId2: SimClustersEmbeddingId
@@ -120,7 +120,7 @@ object SimClustersEmbeddingPairScoreId {
     algorithm: ScoringAlgorithm,
     embeddingId1: SimClustersEmbeddingId,
     embeddingId2: SimClustersEmbeddingId)
-      extends SimClustersEmbeddingPairScoreId
+      etwittertends SimClustersEmbeddingPairScoreId
 
   implicit val fromThriftScoreId: ThriftScoreId => SimClustersEmbeddingPairScoreId = {
     case ThriftScoreId(algorithm, ScoreInternalId.SimClustersEmbeddingPairScoreId(pairScoreId)) =>

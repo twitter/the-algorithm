@@ -13,7 +13,7 @@ trait QualityScribing {
   self: PushCandidate with MLScores =>
 
   // Use to store other scores (to avoid duplicate queries to other services, e.g. HSS)
-  private val externalCachedScores: CMap[String, Future[Option[Double]]] =
+  private val etwitterternalCachedScores: CMap[String, Future[Option[Double]]] =
     new ConcurrentHashMap[String, Future[Option[Double]]]().asScala
 
   /**
@@ -42,7 +42,7 @@ trait QualityScribing {
    * Retrieves the score for scribing either from a cached value or
    * by generating a prediction request. This will increase model QPS
    *
-   * @param pushMLModel This represents the prefix of the model name (i.e. [pushMLModel]_[version])
+   * @param pushMLModel This represents the prefitwitter of the model name (i.e. [pushMLModel]_[version])
    * @param scoreName   The name to be use when scribing this score
    */
   def getScribingScore(
@@ -61,7 +61,7 @@ trait QualityScribing {
    * Retrieves the score for scribing if it has been computed/cached before otherwise
    * it will return Future.None
    *
-   * @param pushMLModel This represents the prefix of the model name (i.e. [pushMLModel]_[version])
+   * @param pushMLModel This represents the prefitwitter of the model name (i.e. [pushMLModel]_[version])
    * @param scoreName   The name to be use when scribing this score
    */
   def getScribingScoreWithoutUpdate(
@@ -82,23 +82,23 @@ trait QualityScribing {
    * @param scoreName The name to be use when scribing this score
    * @param scoreFut Future mapping scoreName -> scoreOpt
    */
-  def cacheExternalScore(scoreName: String, scoreFut: Future[Option[Double]]) = {
-    if (!externalCachedScores.contains(scoreName)) {
-      externalCachedScores += scoreName -> scoreFut
+  def cacheEtwitterternalScore(scoreName: String, scoreFut: Future[Option[Double]]) = {
+    if (!etwitterternalCachedScores.contains(scoreName)) {
+      etwitterternalCachedScores += scoreName -> scoreFut
     }
   }
 
   /**
-   * Returns all external scores future cached as a sequence
+   * Returns all etwitterternal scores future cached as a sequence
    */
-  def getExternalCachedScores: Seq[Future[(String, Option[Double])]] = {
-    externalCachedScores.map {
+  def getEtwitterternalCachedScores: Seq[Future[(String, Option[Double])]] = {
+    etwitterternalCachedScores.map {
       case (modelName, scoreFut) =>
         scoreFut.map { scoreOpt => modelName -> scoreOpt }
     }.toSeq
   }
 
-  def getExternalCachedScoreByName(name: String): Future[Option[Double]] = {
-    externalCachedScores.getOrElse(name, Future.None)
+  def getEtwitterternalCachedScoreByName(name: String): Future[Option[Double]] = {
+    etwitterternalCachedScores.getOrElse(name, Future.None)
   }
 }

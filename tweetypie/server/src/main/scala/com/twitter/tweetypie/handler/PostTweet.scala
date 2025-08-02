@@ -1,10 +1,10 @@
 package com.twitter.tweetypie
 package handler
 
-import com.twitter.context.thriftscala.FeatureContext
+import com.twitter.contetwittert.thriftscala.FeatureContetwittert
 import com.twitter.tweetypie.backends.LimiterService
 import com.twitter.tweetypie.core._
-import com.twitter.tweetypie.serverutil.ExceptionCounter
+import com.twitter.tweetypie.serverutil.EtwitterceptionCounter
 import com.twitter.tweetypie.store.InsertTweet
 import com.twitter.tweetypie.thriftscala._
 import com.twitter.tweetypie.util.TweetCreationLock.{Key => TweetCreationLockKey}
@@ -26,9 +26,9 @@ object PostTweet {
       returnSuccessOnDuplicate(req) || uniquenessId(req).nonEmpty
     def lockKey(req: R): TweetCreationLockKey
     def geo(req: R): Option[TweetCreateGeo]
-    def featureContext(req: R): Option[FeatureContext]
-    def additionalContext(req: R): Option[collection.Map[TweetCreateContextKey, String]]
-    def transientContext(req: R): Option[TransientCreateContext]
+    def featureContetwittert(req: R): Option[FeatureContetwittert]
+    def additionalContetwittert(req: R): Option[collection.Map[TweetCreateContetwittertKey, String]]
+    def transientContetwittert(req: R): Option[TransientCreateContetwittert]
     def additionalFields(req: R): Option[Tweet]
     def duplicateState: TweetCreateState
     def scope: String
@@ -40,7 +40,7 @@ object PostTweet {
   /**
    * An implementation of `RequestView` for `PostTweetRequest`.
    */
-  implicit object PostTweetRequestView extends RequestView[PostTweetRequest] {
+  implicit object PostTweetRequestView etwittertends RequestView[PostTweetRequest] {
     def isDark(req: PostTweetRequest): Boolean = req.dark
     def sourceTweetId(req: PostTweetRequest): None.type = None
     def options(req: PostTweetRequest): Option[WritePathHydrationOptions] = req.hydrationOptions
@@ -49,12 +49,12 @@ object PostTweet {
     def returnSuccessOnDuplicate(req: PostTweetRequest) = false
     def lockKey(req: PostTweetRequest): TweetCreationLockKey = TweetCreationLockKey.byRequest(req)
     def geo(req: PostTweetRequest): Option[TweetCreateGeo] = req.geo
-    def featureContext(req: PostTweetRequest): Option[FeatureContext] = req.featureContext
-    def additionalContext(
+    def featureContetwittert(req: PostTweetRequest): Option[FeatureContetwittert] = req.featureContetwittert
+    def additionalContetwittert(
       req: PostTweetRequest
-    ): Option[collection.Map[TweetCreateContextKey, String]] = req.additionalContext
-    def transientContext(req: PostTweetRequest): Option[TransientCreateContext] =
-      req.transientContext
+    ): Option[collection.Map[TweetCreateContetwittertKey, String]] = req.additionalContetwittert
+    def transientContetwittert(req: PostTweetRequest): Option[TransientCreateContetwittert] =
+      req.transientContetwittert
     def additionalFields(req: PostTweetRequest): Option[Tweet] = req.additionalFields
     def duplicateState: TweetCreateState.Duplicate.type = TweetCreateState.Duplicate
     def scope = "tweet"
@@ -71,7 +71,7 @@ object PostTweet {
   /**
    * An implementation of `RequestView` for `RetweetRequest`.
    */
-  implicit object RetweetRequestView extends RequestView[RetweetRequest] {
+  implicit object RetweetRequestView etwittertends RequestView[RetweetRequest] {
     def isDark(req: RetweetRequest): Boolean = req.dark
     def sourceTweetId(req: RetweetRequest): None.type = None
     def options(req: RetweetRequest): Option[WritePathHydrationOptions] = req.hydrationOptions
@@ -84,9 +84,9 @@ object PostTweet {
         case None => TweetCreationLockKey.bySourceTweetId(req.userId, req.sourceStatusId)
       }
     def geo(req: RetweetRequest): None.type = None
-    def featureContext(req: RetweetRequest): Option[FeatureContext] = req.featureContext
-    def additionalContext(req: RetweetRequest): None.type = None
-    def transientContext(req: RetweetRequest): None.type = None
+    def featureContetwittert(req: RetweetRequest): Option[FeatureContetwittert] = req.featureContetwittert
+    def additionalContetwittert(req: RetweetRequest): None.type = None
+    def transientContetwittert(req: RetweetRequest): None.type = None
     def additionalFields(req: RetweetRequest): Option[Tweet] = req.additionalFields
     def duplicateState: TweetCreateState.AlreadyRetweeted.type = TweetCreateState.AlreadyRetweeted
     def scope = "retweet"
@@ -110,10 +110,10 @@ object PostTweet {
     /**
      * Composes two filter.  The resulting filter itself composes FutureArrows.
      */
-    def andThen(next: Filter[Res]): Filter[Res] =
+    def andThen(netwittert: Filter[Res]): Filter[Res] =
       new Filter[Res] {
         def apply[Req: RequestView](base: T[Req]): T[Req] =
-          next(self(base))
+          netwittert(self(base))
       }
   }
 
@@ -157,10 +157,10 @@ object PostTweet {
                   notFoundCount.incr()
                   if (returnDupTweet) {
                     // If we failed to load the tweet, but we know that it
-                    // should exist, then return an InternalServerError, so that
+                    // should etwitterist, then return an InternalServerError, so that
                     // the client treats it as a failed tweet creation req.
-                    Future.exception(
-                      InternalServerError("Failed to load duplicate existing tweet: " + tweetId)
+                    Future.etwitterception(
+                      InternalServerError("Failed to load duplicate etwitteristing tweet: " + tweetId)
                     )
                   } else {
                     // Assume the lock is stale if we can't load the tweet. It's
@@ -202,13 +202,13 @@ object PostTweet {
             GetTweetsRequest(
               tweetIds = Seq(tweetId),
               // Assume that the defaults are OK for all of the hydration
-              // options except the ones that are explicitly set in the
+              // options etwittercept the ones that are etwitterplicitly set in the
               // req.
               options = Some(
                 GetTweetOptions(
                   forUserId = Some(view.userId(req)),
                   includePerspectivals = true,
-                  includeCards = view.options(req).exists(_.includeCards),
+                  includeCards = view.options(req).etwitterists(_.includeCards),
                   cardsPlatformKey = view.options(req).flatMap(_.cardsPlatformKey)
                 )
               )
@@ -289,14 +289,14 @@ object PostTweet {
    * A `Filter` for counting non-`TweetCreateFailure` failures.
    */
   object CountFailures {
-    def apply[Res](stats: StatsReceiver, scopeSuffix: String = "_builder"): Filter[Res] =
+    def apply[Res](stats: StatsReceiver, scopeSuffitwitter: String = "_builder"): Filter[Res] =
       new Filter[Res] {
         def apply[R: RequestView](base: T[R]): T[R] = {
           val view = implicitly[RequestView[R]]
-          val exceptionCounter = ExceptionCounter(stats.scope(view.scope + scopeSuffix))
+          val etwitterceptionCounter = EtwitterceptionCounter(stats.scope(view.scope + scopeSuffitwitter))
           base.onFailure {
             case (_, _: TweetCreateFailure) =>
-            case (_, ex) => exceptionCounter(ex)
+            case (_, etwitter) => etwitterceptionCounter(etwitter)
           }
         }
       }
@@ -305,7 +305,7 @@ object PostTweet {
   /**
    * A `Filter` for logging failures.
    */
-  object LogFailures extends Filter[PostTweetResult] {
+  object LogFailures etwittertends Filter[PostTweetResult] {
     private[this] val failedTweetCreationsLogger = Logger(
       "com.twitter.tweetypie.FailedTweetCreations"
     )
@@ -321,7 +321,7 @@ object PostTweet {
   /**
    * A `Filter` for converting a thrown `TweetCreateFailure` into a `PostTweetResult`.
    */
-  object RescueTweetCreateFailure extends Filter[PostTweetResult] {
+  object RescueTweetCreateFailure etwittertends Filter[PostTweetResult] {
     def apply[R: RequestView](base: T[R]): T[R] =
       FutureArrow[R, PostTweetResult] { req =>
         base(req).rescue {
@@ -367,7 +367,7 @@ object PostTweet {
         timestamp = bldrRes.createdAt,
         dark = view.isDark(req) || bldrRes.isSilentFail,
         hydrateOptions = view.options(req).getOrElse(WritePathHydrationOptions()),
-        featureContext = view.featureContext(req),
+        featureContetwittert = view.featureContetwittert(req),
         initialTweetUpdateRequest = bldrRes.initialTweetUpdateRequest,
         geoSearchRequestId = for {
           geo <- view.geo(req)
@@ -375,8 +375,8 @@ object PostTweet {
         } yield {
           GeoSearchRequestId(requestID = searchRequestID.id)
         },
-        additionalContext = view.additionalContext(req),
-        transientContext = view.transientContext(req),
+        additionalContetwittert = view.additionalContetwittert(req),
+        transientContetwittert = view.transientContetwittert(req),
         noteTweetMentionedUserIds = view.noteTweetMentionedUserIds(req)
       )
     }

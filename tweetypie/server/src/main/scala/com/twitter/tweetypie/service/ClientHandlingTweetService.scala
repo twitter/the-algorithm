@@ -2,15 +2,15 @@
 package com.twitter.tweetypie.service
 
 import com.twitter.coreservices.StratoPublicApiRequestAttributionCounter
-import com.twitter.finagle.CancelledRequestException
-import com.twitter.finagle.context.Contexts
-import com.twitter.finagle.context.Deadline
-import com.twitter.finagle.mux.ClientDiscardedRequestException
+import com.twitter.finagle.CancelledRequestEtwitterception
+import com.twitter.finagle.contetwittert.Contetwitterts
+import com.twitter.finagle.contetwittert.Deadline
+import com.twitter.finagle.mutwitter.ClientDiscardedRequestEtwitterception
 import com.twitter.finagle.stats.DefaultStatsReceiver
 import com.twitter.finagle.stats.Stat
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.servo.util.ExceptionCategorizer
-import com.twitter.servo.util.MemoizedExceptionCounterFactory
+import com.twitter.servo.etwitterception.thriftscala.ClientError
+import com.twitter.servo.util.EtwitterceptionCategorizer
+import com.twitter.servo.util.MemoizedEtwitterceptionCounterFactory
 import com.twitter.tweetypie.Future
 import com.twitter.tweetypie.Gate
 import com.twitter.tweetypie.Logger
@@ -18,37 +18,37 @@ import com.twitter.tweetypie.StatsReceiver
 import com.twitter.tweetypie.ThriftTweetService
 import com.twitter.tweetypie.TweetId
 import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.context.TweetypieContext
+import com.twitter.tweetypie.contetwittert.TweetypieContetwittert
 import com.twitter.tweetypie.core.OverCapacity
-import com.twitter.tweetypie.serverutil.ExceptionCounter
+import com.twitter.tweetypie.serverutil.EtwitterceptionCounter
 import com.twitter.tweetypie.thriftscala._
 import com.twitter.util.Promise
 
 /**
  * A TweetService that takes care of the handling of requests from
- * external services. In particular, this wrapper doesn't have any
+ * etwitterternal services. In particular, this wrapper doesn't have any
  * logic for handling requests itself. It just serves as a gateway for
  * requests and responses, making sure that the underlying tweet
- * service only sees requests it should handle and that the external
+ * service only sees requests it should handle and that the etwitterternal
  * clients get clean responses.
  *
- * - Ensures that exceptions are propagated cleanly
+ * - Ensures that etwitterceptions are propagated cleanly
  * - Sheds traffic if necessary
  * - Authenticates clients
  * - Records stats about clients
  *
  * For each endpoint, we record both client-specific and total metrics for number of requests,
- * successes, exceptions, and latency.  The stats names follow the patterns:
+ * successes, etwitterceptions, and latency.  The stats names follow the patterns:
  * - ./<methodName>/requests
  * - ./<methodName>/success
  * - ./<methodName>/client_errors
  * - ./<methodName>/server_errors
- * - ./<methodName>/exceptions
- * - ./<methodName>/exceptions/<exceptionName>
+ * - ./<methodName>/etwitterceptions
+ * - ./<methodName>/etwitterceptions/<etwitterceptionName>
  * - ./<methodName>/<clientId>/requests
  * - ./<methodName>/<clientId>/success
- * - ./<methodName>/<clientId>/exceptions
- * - ./<methodName>/<clientId>/exceptions/<exceptionName>
+ * - ./<methodName>/<clientId>/etwitterceptions
+ * - ./<methodName>/<clientId>/etwitterceptions/<etwitterceptionName>
  */
 class ClientHandlingTweetService(
   underlying: ThriftTweetService,
@@ -60,8 +60,8 @@ class ClientHandlingTweetService(
   getTweetFieldsAuthorizer: MethodAuthorizer[GetTweetFieldsRequest],
   requestSizeAuthorizer: MethodAuthorizer[Int],
   clientIdHelper: ClientIdHelper)
-    extends ThriftTweetService {
-  import RescueExceptions._
+    etwittertends ThriftTweetService {
+  import RescueEtwitterceptions._
 
   private val log = Logger("com.twitter.tweetypie.service.TweetService")
 
@@ -73,27 +73,27 @@ class ClientHandlingTweetService(
     DefaultStatsReceiver
   )
   private[this] val clientServerCategorizer =
-    ExceptionCategorizer.simple {
+    EtwitterceptionCategorizer.simple {
       _ match {
         case _: ClientError | _: AccessDenied => "client_errors"
         case _ => "server_errors"
       }
     }
 
-  private[this] val preServoExceptionCountersWithClientId =
-    new MemoizedExceptionCounterFactory(stats)
-  private[this] val preServoExceptionCounters =
-    new MemoizedExceptionCounterFactory(stats, categorizer = ExceptionCounter.defaultCategorizer)
-  private[this] val postServoExceptionCounters =
-    new MemoizedExceptionCounterFactory(stats, categorizer = clientServerCategorizer)
+  private[this] val preServoEtwitterceptionCountersWithClientId =
+    new MemoizedEtwitterceptionCounterFactory(stats)
+  private[this] val preServoEtwitterceptionCounters =
+    new MemoizedEtwitterceptionCounterFactory(stats, categorizer = EtwitterceptionCounter.defaultCategorizer)
+  private[this] val postServoEtwitterceptionCounters =
+    new MemoizedEtwitterceptionCounterFactory(stats, categorizer = clientServerCategorizer)
 
   private def clientId: String =
     clientIdHelper.effectiveClientId.getOrElse(ClientIdHelper.UnknownClientId)
   private def clientIdRoot: String =
     clientIdHelper.effectiveClientIdRoot.getOrElse(ClientIdHelper.UnknownClientId)
 
-  private[this] val futureOverCapacityException =
-    Future.exception(OverCapacity("Request rejected due to load shedding."))
+  private[this] val futureOverCapacityEtwitterception =
+    Future.etwitterception(OverCapacity("Request rejected due to load shedding."))
 
   private[this] def ifNotOverCapacityRead[T](
     methodStats: StatsReceiver,
@@ -113,7 +113,7 @@ class ClientHandlingTweetService(
 
     if (doShed) {
       methodStats.stat("loadshed_rejected_requests").add(requestSize)
-      futureOverCapacityException
+      futureOverCapacityEtwitterception
     } else {
       f
     }
@@ -126,14 +126,14 @@ class ClientHandlingTweetService(
     }
 
   /**
-   * Perform the action, increment the appropriate counters, and clean up the exceptions to servo exceptions
+   * Perform the action, increment the appropriate counters, and clean up the etwitterceptions to servo etwitterceptions
    *
    * This method also masks all interrupts to prevent request cancellation on hangup.
    */
   private[this] def trackS[T](
     name: String,
     requestInfo: Any,
-    extraStatPrefix: Option[String] = None,
+    etwittertraStatPrefitwitter: Option[String] = None,
     requestSize: Option[Long] = None
   )(
     action: StatsReceiver => Future[T]
@@ -143,16 +143,16 @@ class ClientHandlingTweetService(
     val cancelledCounter = methodStats.counter("cancelled")
 
     /**
-     * Returns an identical future except that it ignores interrupts and increments a counter
+     * Returns an identical future etwittercept that it ignores interrupts and increments a counter
      * when a request is cancelled. This is [[Future]].masked but with a counter.
      */
     def maskedWithStats[A](f: Future[A]): Future[A] = {
       val p = Promise[A]()
       p.setInterruptHandler {
-        case _: ClientDiscardedRequestException | _: CancelledRequestException =>
+        case _: ClientDiscardedRequestEtwitterception | _: CancelledRequestEtwitterception =>
           cancelledCounter.incr()
       }
-      f.proxyTo(p)
+      f.protwitteryTo(p)
       p
     }
 
@@ -160,35 +160,35 @@ class ClientHandlingTweetService(
       requestAuthorizer(name, clientIdHelper.effectiveClientId)
         .flatMap { _ =>
           methodStats.counter(Requests).incr()
-          extraStatPrefix.foreach(p => methodStats.counter(p, Requests).incr())
+          etwittertraStatPrefitwitter.foreach(p => methodStats.counter(p, Requests).incr())
           clientStats.counter(Requests).incr()
           StratoStatsCounter.recordStats(name, "tweets", requestSize.getOrElse(1L))
 
           Stat.timeFuture(methodStats.stat(Latency)) {
             Stat.timeFuture(clientStats.stat(Latency)) {
-              maybeTimeFuture(extraStatPrefix.map(p => methodStats.stat(p, Latency))) {
-                TweetypieContext.Local.trackStats(stats, methodStats, clientStats)
+              maybeTimeFuture(etwittertraStatPrefitwitter.map(p => methodStats.stat(p, Latency))) {
+                TweetypieContetwittert.Local.trackStats(stats, methodStats, clientStats)
 
                 // Remove the deadline for backend requests when we mask client cancellations so
                 // that side-effects are applied to all backend services even after client timeouts.
-                // Wrap and then flatten an extra layer of Future to capture any thrown exceptions.
-                Future(Contexts.broadcast.letClear(Deadline)(action(methodStats))).flatten
+                // Wrap and then flatten an etwittertra layer of Future to capture any thrown etwitterceptions.
+                Future(Contetwitterts.broadcast.letClear(Deadline)(action(methodStats))).flatten
               }
             }
           }
         }
     ).onSuccess { _ =>
         methodStats.counter(Success).incr()
-        extraStatPrefix.foreach(p => methodStats.counter(p, Success).incr())
+        etwittertraStatPrefitwitter.foreach(p => methodStats.counter(p, Success).incr())
         clientStats.counter(Success).incr()
       }
       .onFailure { e =>
-        preServoExceptionCounters(name)(e)
-        preServoExceptionCountersWithClientId(name, clientIdRoot)(e)
+        preServoEtwitterceptionCounters(name)(e)
+        preServoEtwitterceptionCountersWithClientId(name, clientIdRoot)(e)
       }
       .rescue(rescueToServoFailure(name, clientId))
       .onFailure { e =>
-        postServoExceptionCounters(name)(e)
+        postServoEtwitterceptionCounters(name)(e)
         logFailure(e, requestInfo)
       }
   }
@@ -196,19 +196,19 @@ class ClientHandlingTweetService(
   def track[T](
     name: String,
     requestInfo: Any,
-    extraStatPrefix: Option[String] = None,
+    etwittertraStatPrefitwitter: Option[String] = None,
     requestSize: Option[Long] = None
   )(
     action: => Future[T]
   ): Future[T] = {
-    trackS(name, requestInfo, extraStatPrefix, requestSize) { _: StatsReceiver => action }
+    trackS(name, requestInfo, etwittertraStatPrefitwitter, requestSize) { _: StatsReceiver => action }
   }
 
-  private def logFailure(ex: Throwable, requestInfo: Any): Unit =
-    log.warn(s"Returning failure response: $ex\n failed request info: $requestInfo")
+  private def logFailure(etwitter: Throwable, requestInfo: Any): Unit =
+    log.warn(s"Returning failure response: $etwitter\n failed request info: $requestInfo")
 
-  object RequestWidthPrefix {
-    private def prefix(width: Int) = {
+  object RequestWidthPrefitwitter {
+    private def prefitwitter(width: Int) = {
       val bucketMin =
         width match {
           case c if c < 10 => "0_9"
@@ -218,13 +218,13 @@ class ClientHandlingTweetService(
       s"width_$bucketMin"
     }
 
-    def forGetTweetsRequest(r: GetTweetsRequest): String = prefix(r.tweetIds.size)
-    def forGetTweetFieldsRequest(r: GetTweetFieldsRequest): String = prefix(r.tweetIds.size)
+    def forGetTweetsRequest(r: GetTweetsRequest): String = prefitwitter(r.tweetIds.size)
+    def forGetTweetFieldsRequest(r: GetTweetFieldsRequest): String = prefitwitter(r.tweetIds.size)
   }
 
-  object WithMediaPrefix {
+  object WithMediaPrefitwitter {
     def forPostTweetRequest(r: PostTweetRequest): String =
-      if (r.mediaUploadIds.exists(_.nonEmpty))
+      if (r.mediaUploadIds.etwitterists(_.nonEmpty))
         "with_media"
       else
         "without_media"
@@ -234,7 +234,7 @@ class ClientHandlingTweetService(
     trackS(
       "get_tweets",
       request,
-      Some(RequestWidthPrefix.forGetTweetsRequest(request)),
+      Some(RequestWidthPrefitwitter.forGetTweetsRequest(request)),
       Some(request.tweetIds.size)
     ) { stats =>
       getTweetsAuthorizer(request, clientId).flatMap { _ =>
@@ -248,7 +248,7 @@ class ClientHandlingTweetService(
     trackS(
       "get_tweet_fields",
       request,
-      Some(RequestWidthPrefix.forGetTweetFieldsRequest(request)),
+      Some(RequestWidthPrefitwitter.forGetTweetFieldsRequest(request)),
       Some(request.tweetIds.size)
     ) { stats =>
       getTweetFieldsAuthorizer(request, clientId).flatMap { _ =>
@@ -261,14 +261,14 @@ class ClientHandlingTweetService(
   override def replicatedGetTweets(request: GetTweetsRequest): Future[Unit] =
     track("replicated_get_tweets", request, requestSize = Some(request.tweetIds.size)) {
       underlying.replicatedGetTweets(request).rescue {
-        case e: Throwable => Future.Unit // do not need deferredrpc to retry on exceptions
+        case e: Throwable => Future.Unit // do not need deferredrpc to retry on etwitterceptions
       }
     }
 
   override def replicatedGetTweetFields(request: GetTweetFieldsRequest): Future[Unit] =
     track("replicated_get_tweet_fields", request, requestSize = Some(request.tweetIds.size)) {
       underlying.replicatedGetTweetFields(request).rescue {
-        case e: Throwable => Future.Unit // do not need deferredrpc to retry on exceptions
+        case e: Throwable => Future.Unit // do not need deferredrpc to retry on etwitterceptions
       }
     }
 
@@ -284,12 +284,12 @@ class ClientHandlingTweetService(
   override def replicatedGetTweetCounts(request: GetTweetCountsRequest): Future[Unit] =
     track("replicated_get_tweet_counts", request, requestSize = Some(request.tweetIds.size)) {
       underlying.replicatedGetTweetCounts(request).rescue {
-        case e: Throwable => Future.Unit // do not need deferredrpc to retry on exceptions
+        case e: Throwable => Future.Unit // do not need deferredrpc to retry on etwitterceptions
       }
     }
 
   override def postTweet(request: PostTweetRequest): Future[PostTweetResult] =
-    track("post_tweet", request, Some(WithMediaPrefix.forPostTweetRequest(request))) {
+    track("post_tweet", request, Some(WithMediaPrefitwitter.forPostTweetRequest(request))) {
       underlying.postTweet(request)
     }
 

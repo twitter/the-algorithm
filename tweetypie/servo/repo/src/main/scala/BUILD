@@ -14,7 +14,7 @@ scala_library(
         "3rdparty/jvm/org/apache/thrift:libthrift",
         "finagle/finagle-core/src/main",
         "finagle/finagle-memcached/src/main/scala",
-        "finagle/finagle-mux/src/main/scala",
+        "finagle/finagle-mutwitter/src/main/scala",
         "finagle/finagle-thrift",
         "scrooge/scrooge-core",
         "scrooge/scrooge-serializer/src/main/scala",

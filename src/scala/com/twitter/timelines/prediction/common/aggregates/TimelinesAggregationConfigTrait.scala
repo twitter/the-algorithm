@@ -5,7 +5,7 @@ import com.twitter.timelines.data_processing.ml_util.aggregation_framework.Aggre
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
 
 trait TimelinesAggregationConfigTrait
-    extends TimelinesAggregationConfigDetails
+    etwittertends TimelinesAggregationConfigDetails
     with AggregationConfig {
   private val aggregateGroups = Set(
     authorTopicAggregates,

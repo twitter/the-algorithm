@@ -20,7 +20,7 @@ trait AggregateFeaturesMergerBase {
   def storeMerger: StoreMerger
 
   def getAggregatePipe(storeName: String): DataSetPipe
-  def applyMaxSizeByTypeOpt(aggregateType: AggregateType.Value): Option[Int] = Option.empty[Int]
+  def applyMatwitterSizeByTypeOpt(aggregateType: AggregateType.Value): Option[Int] = Option.empty[Int]
 
   def usersActiveSourcePipe: TypedPipe[Long]
   def numRecords: Stat
@@ -30,7 +30,7 @@ trait AggregateFeaturesMergerBase {
    * This method should only be called with a storeName that corresponds
    * to a user aggregate store.
    */
-  def extractUserFeaturesMap(storeName: String): TypedPipe[(Long, KeyedRecord)] = {
+  def etwittertractUserFeaturesMap(storeName: String): TypedPipe[(Long, KeyedRecord)] = {
     val aggregateKey = storeRegister.storeNameToTypeMap(storeName)
     samplingRateOpt
       .map(rate => SamplingUtils.userBasedSample(getAggregatePipe(storeName), rate))
@@ -53,16 +53,16 @@ trait AggregateFeaturesMergerBase {
    * desired secondaryKey. We provide secondaryKeyFilterPipeOpt against which secondary
    * keys can be filtered to help prune the final merged MH dataset.
    */
-  def extractSecondaryTuples[T](
+  def etwittertractSecondaryTuples[T](
     storeName: String,
     secondaryKey: Feature[T],
     shouldHash: Boolean = false,
-    maxSizeOpt: Option[Int] = None,
+    matwitterSizeOpt: Option[Int] = None,
     secondaryKeyFilterPipeOpt: Option[TypedPipe[Long]] = None
   ): TypedPipe[(Long, KeyedRecordMap)] = {
     val aggregateKey = storeRegister.storeNameToTypeMap(storeName)
 
-    val extractedRecordsBySecondaryKey =
+    val etwittertractedRecordsBySecondaryKey =
       samplingRateOpt
         .map(rate => SamplingUtils.userBasedSample(getAggregatePipe(storeName), rate))
         .getOrElse(getAggregatePipe(storeName))
@@ -70,7 +70,7 @@ trait AggregateFeaturesMergerBase {
         .map { r: DataRecord =>
           val record = SRichDataRecord(r)
           val userId = keyFromLong(r, USER_ID)
-          val secondaryId = extractSecondary(r, secondaryKey, shouldHash)
+          val secondaryId = etwittertractSecondary(r, secondaryKey, shouldHash)
           record.clearFeature(USER_ID)
           record.clearFeature(secondaryKey)
 
@@ -81,7 +81,7 @@ trait AggregateFeaturesMergerBase {
     val grouped =
       (secondaryKeyFilterPipeOpt match {
         case Some(secondaryKeyFilterPipe: TypedPipe[Long]) =>
-          extractedRecordsBySecondaryKey
+          etwittertractedRecordsBySecondaryKey
             .map {
               // In this step, we swap `userId` with `secondaryId` to join on the `secondaryId`
               // It is important to swap them back after the join, otherwise the job will fail.
@@ -94,14 +94,14 @@ trait AggregateFeaturesMergerBase {
                 numFilteredRecords.inc()
                 (userId, secondaryId -> r)
             }
-        case _ => extractedRecordsBySecondaryKey
+        case _ => etwittertractedRecordsBySecondaryKey
       }).group
         .withReducers(numReducers)
 
-    maxSizeOpt match {
-      case Some(maxSize) =>
+    matwitterSizeOpt match {
+      case Some(matwitterSize) =>
         grouped
-          .take(maxSize)
+          .take(matwitterSize)
           .mapValueStream(recordsIter => Iterator(KeyedRecordMap(aggregateKey, recordsIter.toMap)))
           .toTypedPipe
       case None =>
@@ -117,7 +117,7 @@ trait AggregateFeaturesMergerBase {
       require(storeMerger.isValidToMerge(storeNames))
 
       if (aggregateType == AggregateType.User) {
-        storeNames.map(extractUserFeaturesMap)
+        storeNames.map(etwittertractUserFeaturesMap)
       } else None
     }.toSeq
 
@@ -138,11 +138,11 @@ trait AggregateFeaturesMergerBase {
         storeNames.flatMap { storeName =>
           storeConfig.secondaryKeyFeatureOpt
             .map { secondaryFeature =>
-              extractSecondaryTuples(
+              etwittertractSecondaryTuples(
                 storeName,
                 secondaryFeature,
                 shouldHash,
-                applyMaxSizeByTypeOpt(aggregateType),
+                applyMatwitterSizeByTypeOpt(aggregateType),
                 getSecondaryKeyFilterPipeOpt(aggregateType)
               )
             }
@@ -190,12 +190,12 @@ trait AggregateFeaturesMergerBase {
                 case (aggregateType, keyedRecordMaps) =>
                   val keyedRecordMapOpt =
                     keyedRecordMaps.foldLeft(Option.empty[KeyedRecordMap]) {
-                      (mergedRecOpt, nextRec) =>
-                        applyMaxSizeByTypeOpt(aggregateType)
-                          .map { maxSize =>
-                            mergeKeyedRecordMapOpts(mergedRecOpt, Some(nextRec), maxSize)
+                      (mergedRecOpt, netwittertRec) =>
+                        applyMatwitterSizeByTypeOpt(aggregateType)
+                          .map { matwitterSize =>
+                            mergeKeyedRecordMapOpts(mergedRecOpt, Some(netwittertRec), matwitterSize)
                           }.getOrElse {
-                            mergeKeyedRecordMapOpts(mergedRecOpt, Some(nextRec))
+                            mergeKeyedRecordMapOpts(mergedRecOpt, Some(netwittertRec))
                           }
                     }
                   (aggregateType, keyedRecordMapOpt)

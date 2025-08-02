@@ -14,7 +14,7 @@ import com.twitter.tweetypie.thriftscala.DetachedRetweet
  * Loads the source tweet for a retweet
  */
 object SourceTweetHydrator {
-  type Type = ValueHydrator[Option[TweetResult], TweetCtx]
+  type Type = ValueHydrator[Option[TweetResult], TweetCttwitter]
 
   def configureOptions(opts: TweetQuery.Options): TweetQuery.Options = {
     // set scrubUnrequestedFields to false so that we will have access to
@@ -24,7 +24,7 @@ object SourceTweetHydrator {
     opts.copy(scrubUnrequestedFields = false, fetchStoredTweets = false, isSourceTweet = true)
   }
 
-  private object NotFoundException {
+  private object NotFoundEtwitterception {
     def unapply(t: Throwable): Option[Boolean] =
       t match {
         case NotFound => Some(false)
@@ -40,28 +40,28 @@ object SourceTweetHydrator {
   ): Type = {
     val notFoundCounter = stats.counter("not_found")
 
-    ValueHydrator[Option[TweetResult], TweetCtx] { (_, ctx) =>
-      ctx.sourceTweetId match {
+    ValueHydrator[Option[TweetResult], TweetCttwitter] { (_, cttwitter) =>
+      cttwitter.sourceTweetId match {
         case None =>
           ValueState.StitchUnmodifiedNone
         case Some(srcTweetId) =>
-          repo(srcTweetId, configureOptions(ctx.opts)).liftToTry.flatMap {
-            case Throw(NotFoundException(isDeleted)) =>
+          repo(srcTweetId, configureOptions(cttwitter.opts)).liftToTry.flatMap {
+            case Throw(NotFoundEtwitterception(isDeleted)) =>
               notFoundCounter.incr()
-              scribeDetachedRetweets(detachedRetweet(srcTweetId, ctx))
-              if (ctx.opts.requireSourceTweet) {
-                Stitch.exception(SourceTweetNotFound(isDeleted))
+              scribeDetachedRetweets(detachedRetweet(srcTweetId, cttwitter))
+              if (cttwitter.opts.requireSourceTweet) {
+                Stitch.etwitterception(SourceTweetNotFound(isDeleted))
               } else {
                 ValueState.StitchUnmodifiedNone
               }
 
             case Return(r) => Stitch.value(ValueState.modified(Some(r)))
-            case Throw(t) => Stitch.exception(t)
+            case Throw(t) => Stitch.etwitterception(t)
           }
       }
     }.onlyIf((curr, _) => curr.isEmpty)
   }
 
-  def detachedRetweet(srcTweetId: TweetId, ctx: TweetCtx): DetachedRetweet =
-    DetachedRetweet(ctx.tweetId, ctx.userId, srcTweetId)
+  def detachedRetweet(srcTweetId: TweetId, cttwitter: TweetCttwitter): DetachedRetweet =
+    DetachedRetweet(cttwitter.tweetId, cttwitter.userId, srcTweetId)
 }

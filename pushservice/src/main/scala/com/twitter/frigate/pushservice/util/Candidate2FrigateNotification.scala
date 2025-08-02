@@ -72,11 +72,11 @@ object Candidate2FrigateNotification {
           trendId = None
         )
 
-      case userCandidate: PushCandidate with UserCandidate with SocialContextActions =>
+      case userCandidate: PushCandidate with UserCandidate with SocialContetwittertActions =>
         PushAdaptorUtil.getFrigateNotificationForUser(
           userCandidate.commonRecType,
           userCandidate.userId,
-          userCandidate.socialContextActions,
+          userCandidate.socialContetwittertActions,
           userCandidate.pushCopyId,
           userCandidate.ntabCopyId
         )
@@ -90,11 +90,11 @@ object Candidate2FrigateNotification {
           userCandidate.ntabCopyId
         )
 
-      case tweetCandidate: PushCandidate with TweetCandidate with TweetDetails with SocialContextActions =>
-        PushAdaptorUtil.getFrigateNotificationForTweetWithSocialContextActions(
+      case tweetCandidate: PushCandidate with TweetCandidate with TweetDetails with SocialContetwittertActions =>
+        PushAdaptorUtil.getFrigateNotificationForTweetWithSocialContetwittertActions(
           tweetCandidate.commonRecType,
           tweetCandidate.tweetId,
-          tweetCandidate.socialContextActions,
+          tweetCandidate.socialContetwittertActions,
           tweetCandidate.authorId,
           tweetCandidate.pushCopyId,
           tweetCandidate.ntabCopyId,
@@ -113,7 +113,7 @@ object Candidate2FrigateNotification {
       case _ =>
         statsReceiver
           .scope(s"${candidate.commonRecType}").counter("frigate_notification_error").incr()
-        throw new IllegalStateException("Incorrect candidate type when create FrigateNotification")
+        throw new IllegalStateEtwitterception("Incorrect candidate type when create FrigateNotification")
     }
   }
 }

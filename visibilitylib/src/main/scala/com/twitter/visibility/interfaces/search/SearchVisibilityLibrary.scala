@@ -31,7 +31,7 @@ import com.twitter.visibility.features.FeatureMap
 import com.twitter.visibility.features.TweetIsInnerQuotedTweet
 import com.twitter.visibility.features.TweetIsRetweet
 import com.twitter.visibility.features.TweetIsSourceTweet
-import com.twitter.visibility.interfaces.common.search.SearchVFRequestContext
+import com.twitter.visibility.interfaces.common.search.SearchVFRequestContetwittert
 import com.twitter.visibility.interfaces.search.SearchVisibilityLibrary.EvaluateTweet
 import com.twitter.visibility.interfaces.search.SearchVisibilityLibrary.RequestTweetId
 import com.twitter.visibility.interfaces.search.TweetType.EvaluateTweetType
@@ -41,14 +41,14 @@ import com.twitter.visibility.models.ContentId.BlenderTweetId
 import com.twitter.visibility.models.ContentId.TweetId
 import com.twitter.visibility.models.SafetyLevel
 import com.twitter.visibility.models.SafetyLevel.toThrift
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 import com.twitter.visibility.rules.Action
 import com.twitter.visibility.rules.Allow
 import com.twitter.visibility.rules.Drop
 import com.twitter.visibility.rules.Interstitial
 import com.twitter.visibility.rules.TweetInterstitial
 
-object TweetType extends Enumeration {
+object TweetType etwittertends Enumeration {
   type EvaluateTweetType = Value
   val REQUEST: TweetType.Value = Value(1)
   val QUOTED: TweetType.Value = Value(2)
@@ -160,7 +160,7 @@ class SearchVisibilityLibrary(
     MediaSafetyLabelMapSource.fromStrato(stratoClient, stratoClientStatsReceiver))
 
   val tweetFeatures = new TweetFeatures(tweetLabels, libraryStatsReceiver)
-  val searchContextFeatures = new SearchContextFeatures(libraryStatsReceiver)
+  val searchContetwittertFeatures = new SearchContetwittertFeatures(libraryStatsReceiver)
   val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
   val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
   val relationshipFeatures =
@@ -169,8 +169,8 @@ class SearchVisibilityLibrary(
     MisinformationPolicySource.fromStrato(stratoClient, stratoClientStatsReceiver)
   val misinfoPolicyFeatures =
     new MisinformationPolicyFeatures(misinfoPolicySource, stratoClientStatsReceiver)
-  val exclusiveTweetFeatures =
-    new ExclusiveTweetFeatures(userRelationshipSource, libraryStatsReceiver)
+  val etwitterclusiveTweetFeatures =
+    new EtwitterclusiveTweetFeatures(userRelationshipSource, libraryStatsReceiver)
   val mediaFeatures = new MediaFeatures(mediaLabelMaps, libraryStatsReceiver)
   val trustedFriendsTweetFeatures = new TrustedFriendsFeatures(
     trustedFriendsSource = TrustedFriendsSource.fromStrato(stratoClient, stratoClientStatsReceiver))
@@ -183,16 +183,16 @@ class SearchVisibilityLibrary(
     svlRequestCounter.incr()
 
     val response: Stitch[BatchSearchVisibilityResponse] =
-      batchSvRequest.tweetContexts.groupBy(tweetContext => tweetContext.safetyLevel) map {
-        case (safetyLevel: SafetyLevel, tweetContexts: Seq[TweetContext]) =>
+      batchSvRequest.tweetContetwitterts.groupBy(tweetContetwittert => tweetContetwittert.safetyLevel) map {
+        case (safetyLevel: SafetyLevel, tweetContetwitterts: Seq[TweetContetwittert]) =>
           val (contentsToBeEvaluated, contentVisResultTypes) =
-            extractContentsToBeEvaluated(tweetContexts, batchSvRequest.viewerContext)
+            etwittertractContentsToBeEvaluated(tweetContetwitterts, batchSvRequest.viewerContetwittert)
 
           getVisibilityResult(
             contentsToBeEvaluated,
             safetyLevel,
-            batchSvRequest.viewerContext,
-            batchSvRequest.searchVFRequestContext)
+            batchSvRequest.viewerContetwittert,
+            batchSvRequest.searchVFRequestContetwittert)
             .map { contentVisResults: Seq[Try[VisibilityResult]] =>
               (contentVisResultTypes zip contentVisResults)
                 .map(handleVisibilityResultByTweetType)
@@ -205,7 +205,7 @@ class SearchVisibilityLibrary(
                   _,
                   visibilityDeciderGates.enableVerdictScribingSVL,
                   verdictLogger,
-                  batchSvRequest.viewerContext.userId,
+                  batchSvRequest.viewerContetwittert.userId,
                   safetyLevel)))
       } reduceLeft { (left, right) =>
         Stitch.joinMap(left, right)((visResultsA, visResultsB) => visResultsA ++ visResultsB)
@@ -231,50 +231,50 @@ class SearchVisibilityLibrary(
       })
   }
 
-  private def extractContentsToBeEvaluated(
-    tweetContexts: Seq[TweetContext],
-    viewerContext: ViewerContext
+  private def etwittertractContentsToBeEvaluated(
+    tweetContetwitterts: Seq[TweetContetwittert],
+    viewerContetwittert: ViewerContetwittert
   ): (
-    Seq[(TweetContext, EvaluateTweetType, EvaluateTweet, ContentId)],
+    Seq[(TweetContetwittert, EvaluateTweetType, EvaluateTweet, ContentId)],
     Seq[
       (RequestTweetId, EvaluateTweetType)
     ]
   ) = {
     val contentsToBeEvaluated: Seq[
-      (TweetContext, EvaluateTweetType, EvaluateTweet, ContentId)
-    ] = tweetContexts.map(tc =>
+      (TweetContetwittert, EvaluateTweetType, EvaluateTweet, ContentId)
+    ] = tweetContetwitterts.map(tc =>
       (
         tc,
         REQUEST,
         tc.tweet,
         getContentId(
-          viewerId = viewerContext.userId,
+          viewerId = viewerContetwittert.userId,
           authorId = tc.tweet.coreData.get.userId,
           tweet = tc.tweet))) ++
-      tweetContexts
+      tweetContetwitterts
         .filter(tc => tc.quotedTweet.nonEmpty).map(tc =>
           (
             tc,
             QUOTED,
             tc.quotedTweet.get,
             getContentId(
-              viewerId = viewerContext.userId,
+              viewerId = viewerContetwittert.userId,
               authorId = tc.quotedTweet.get.coreData.get.userId,
               tweet = tc.quotedTweet.get))) ++
-      tweetContexts
+      tweetContetwitterts
         .filter(tc => tc.retweetSourceTweet.nonEmpty).map(tc =>
           (
             tc,
             SOURCE,
             tc.retweetSourceTweet.get,
             getContentId(
-              viewerId = viewerContext.userId,
+              viewerId = viewerContetwittert.userId,
               authorId = tc.retweetSourceTweet.get.coreData.get.userId,
               tweet = tc.retweetSourceTweet.get)))
 
     val contentVisResultTypes: Seq[(RequestTweetId, EvaluateTweetType)] = {
       contentsToBeEvaluated.map {
-        case (tc: TweetContext, tweetType: EvaluateTweetType, _, _) =>
+        case (tc: TweetContetwittert, tweetType: EvaluateTweetType, _, _) =>
           (tc.tweet.id, tweetType)
       }
     }
@@ -317,38 +317,38 @@ class SearchVisibilityLibrary(
   }
 
   private def getVisibilityResult(
-    contents: Seq[(TweetContext, EvaluateTweetType, EvaluateTweet, ContentId)],
+    contents: Seq[(TweetContetwittert, EvaluateTweetType, EvaluateTweet, ContentId)],
     safetyLevel: SafetyLevel,
-    viewerContext: ViewerContext,
-    svRequestContext: SearchVFRequestContext
+    viewerContetwittert: ViewerContetwittert,
+    svRequestContetwittert: SearchVFRequestContetwittert
   ): Stitch[Seq[Try[VisibilityResult]]] = {
 
-    val contentContext: Map[ContentId, (TweetContext, EvaluateTweetType, EvaluateTweet)] =
+    val contentContetwittert: Map[ContentId, (TweetContetwittert, EvaluateTweetType, EvaluateTweet)] =
       contents.map {
         case (
-              tweetContext: TweetContext,
+              tweetContetwittert: TweetContetwittert,
               tweetType: EvaluateTweetType,
               tweet: EvaluateTweet,
               contentId: ContentId) =>
-          contentId -> ((tweetContext, tweetType, tweet))
+          contentId -> ((tweetContetwittert, tweetType, tweet))
       }.toMap
 
     val featureMapProvider: (ContentId, SafetyLevel) => FeatureMap = {
       case (contentId: ContentId, _) =>
-        val (tweetContext, tweetType, tweet) = contentContext(contentId)
+        val (tweetContetwittert, tweetType, tweet) = contentContetwittert(contentId)
         buildFeatureMap(
           evaluatedTweet = tweet,
           tweetType = tweetType,
-          tweetContext = tweetContext,
-          viewerContext = viewerContext,
-          svRequestContext = svRequestContext
+          tweetContetwittert = tweetContetwittert,
+          viewerContetwittert = viewerContetwittert,
+          svRequestContetwittert = svRequestContetwittert
         )
     }
 
     visibilityLibrary.runRuleEngineBatch(
       contentIds = contents.map { case (_, _, _, id: ContentId) => id },
       featureMapProvider = featureMapProvider,
-      viewerContext = viewerContext,
+      viewerContetwittert = viewerContetwittert,
       safetyLevel = safetyLevel
     )
   }
@@ -362,14 +362,14 @@ class SearchVisibilityLibrary(
   private def buildFeatureMap(
     evaluatedTweet: Tweet,
     tweetType: EvaluateTweetType,
-    tweetContext: TweetContext,
-    viewerContext: ViewerContext,
-    svRequestContext: SearchVFRequestContext
+    tweetContetwittert: TweetContetwittert,
+    viewerContetwittert: ViewerContetwittert,
+    svRequestContetwittert: SearchVFRequestContetwittert
   ): FeatureMap = {
     val authorId = evaluatedTweet.coreData.get.userId
-    val viewerId = viewerContext.userId
+    val viewerId = viewerContetwittert.userId
     val isRetweet =
-      if (tweetType.equals(REQUEST)) tweetContext.retweetSourceTweet.nonEmpty else false
+      if (tweetType.equals(REQUEST)) tweetContetwittert.retweetSourceTweet.nonEmpty else false
     val isSourceTweet = tweetType.equals(SOURCE)
     val isQuotedTweet = tweetType.equals(QUOTED)
     val tweetMediaKeys: Seq[GenericMediaKey] = evaluatedTweet.media
@@ -379,15 +379,15 @@ class SearchVisibilityLibrary(
     visibilityLibrary.featureMapBuilder(
       Seq(
         viewerFeatures
-          .forViewerSearchContext(svRequestContext, viewerContext),
+          .forViewerSearchContetwittert(svRequestContetwittert, viewerContetwittert),
         relationshipFeatures.forAuthorId(authorId, viewerId),
         tweetFeatures.forTweet(evaluatedTweet),
         mediaFeatures.forMediaKeys(tweetMediaKeys),
         authorFeatures.forAuthorId(authorId),
-        searchContextFeatures.forSearchContext(svRequestContext),
+        searchContetwittertFeatures.forSearchContetwittert(svRequestContetwittert),
         _.withConstantFeature(TweetIsRetweet, isRetweet),
-        misinfoPolicyFeatures.forTweet(evaluatedTweet, viewerContext),
-        exclusiveTweetFeatures.forTweet(evaluatedTweet, viewerContext),
+        misinfoPolicyFeatures.forTweet(evaluatedTweet, viewerContetwittert),
+        etwitterclusiveTweetFeatures.forTweet(evaluatedTweet, viewerContetwittert),
         trustedFriendsTweetFeatures.forTweet(evaluatedTweet, viewerId),
         editTweetFeatures.forTweet(evaluatedTweet),
         _.withConstantFeature(TweetIsInnerQuotedTweet, isQuotedTweet),

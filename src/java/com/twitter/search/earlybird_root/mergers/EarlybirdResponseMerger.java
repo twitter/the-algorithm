@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import scala.runtime.BoxedUnit;
+import scala.runtime.BotwitteredUnit;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
@@ -32,7 +32,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResult;
 import com.twitter.search.earlybird.thrift.ThriftSearchResults;
 import com.twitter.search.earlybird_root.collectors.MultiwayMergeCollector;
 import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
 import com.twitter.search.earlybird_root.common.EarlybirdRequestUtil;
 import com.twitter.util.Function;
@@ -47,11 +47,11 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
       LoggerFactory.getLogger("MinSearchedStatusIdLogger");
 
   private static final SearchCounter NO_SEARCH_RESULT_COUNTER =
-      SearchCounter.export("no_search_result_count");
+      SearchCounter.etwitterport("no_search_result_count");
   private static final SearchCounter NO_RESPONSES_TO_MERGE =
-      SearchCounter.export("no_responses_to_merge");
+      SearchCounter.etwitterport("no_responses_to_merge");
   private static final SearchCounter EARLYBIRD_RESPONSE_NO_MORE_RESULTS =
-      SearchCounter.export("merger_earlybird_response_no_more_results");
+      SearchCounter.etwitterport("merger_earlybird_response_no_more_results");
   private static final String PARTITION_OR_TIER_COUNTER_NAME_FORMAT =
       "merger_waited_for_response_from_%s_counter";
   private static final String PARTITION_OR_TIER_ERROR_COUNTER_NAME_FORMAT =
@@ -60,7 +60,7 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
       "merger_earlybird_response_code_from_%s_%s";
 
   protected final EarlybirdResponseDebugMessageBuilder responseMessageBuilder;
-  protected final EarlybirdRequestContext requestContext;
+  protected final EarlybirdRequestContetwittert requestContetwittert;
   protected final ImmutableList<Future<EarlybirdResponse>> responses;
   protected AccumulatedResponses accumulatedResponses;
 
@@ -71,8 +71,8 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
 
   @VisibleForTesting
   static final Map<EarlybirdRequestType, SearchCounter>
-    MIN_SEARCHED_STATUS_ID_LARGER_THAN_REQUEST_MAX_ID = perRequestTypeCounterImmutableMap(
-        "merger_%s_min_searched_status_id_larger_than_request_max_id");
+    MIN_SEARCHED_STATUS_ID_LARGER_THAN_REQUEST_MAtwitter_ID = perRequestTypeCounterImmutableMap(
+        "merger_%s_min_searched_status_id_larger_than_request_matwitter_id");
 
   @VisibleForTesting
   static final Map<EarlybirdRequestType, SearchCounter>
@@ -84,7 +84,7 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
     Map<EarlybirdRequestType, SearchCounter> statsMap = Maps.newEnumMap(EarlybirdRequestType.class);
     for (EarlybirdRequestType earlybirdRequestType : EarlybirdRequestType.values()) {
       String statName = String.format(statPattern, earlybirdRequestType.getNormalizedName());
-      statsMap.put(earlybirdRequestType, SearchCounter.export(statName));
+      statsMap.put(earlybirdRequestType, SearchCounter.etwitterport(statName));
     }
 
     return Maps.immutableEnumMap(statsMap);
@@ -99,17 +99,17 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
   private final ChainMerger chainMerger;
 
   private class ChainMerger {
-    private final EarlybirdRequestContext requestContext;
+    private final EarlybirdRequestContetwittert requestContetwittert;
     private final ResponseAccumulator responseAccumulator;
     private final List<Future<EarlybirdResponse>> responses;
     private final EarlybirdResponseDebugMessageBuilder responseMessageBuilder;
-    private int currentFutureIndex = -1;
+    private int currentFutureIndetwitter = -1;
 
-    public ChainMerger(EarlybirdRequestContext requestContext,
+    public ChainMerger(EarlybirdRequestContetwittert requestContetwittert,
                        ResponseAccumulator responseAccumulator,
                        List<Future<EarlybirdResponse>> responses,
                        EarlybirdResponseDebugMessageBuilder responseMessageBuilder) {
-      this.requestContext = requestContext;
+      this.requestContetwittert = requestContetwittert;
       this.responseAccumulator = responseAccumulator;
       this.responses = responses;
       this.responseMessageBuilder = responseMessageBuilder;
@@ -129,7 +129,7 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
       // other tiers. If we cannot terminate early, then we want to wait for the responses from the
       // second tier, and so on.
       //
-      // We do not need to have any explicit synchronization, because:
+      // We do not need to have any etwitterplicit synchronization, because:
       //   1. The callbacks for future_i are set by the flatMap() callback on future_{i-1} (when
       //      recursively calling merge() inside the flatMap()).
       //   2. Before setting the callbacks on future_i, future_{i-1}.flatMap() adds the response
@@ -140,39 +140,39 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
       //      callbacks. (Or thread_running_future_{i-1} == thread_running_future_i, in which case
       //      synchronization is not an issue, and correctness is guarateed by the order in which
       //      things will run.)
-      //   4. The same reasoning applies to currentFutureIndex.
+      //   4. The same reasoning applies to currentFutureIndetwitter.
 
-      ++currentFutureIndex;
-      if (currentFutureIndex >= responses.size()) {
+      ++currentFutureIndetwitter;
+      if (currentFutureIndetwitter >= responses.size()) {
         return Future.value(getTimedMergedResponse(responseAccumulator.getAccumulatedResults()));
       }
 
       final String partitionTierName =
-          responseAccumulator.getNameForLogging(currentFutureIndex, responses.size());
+          responseAccumulator.getNameForLogging(currentFutureIndetwitter, responses.size());
       final String nameForEarlybirdResponseCodeStats =
           responseAccumulator.getNameForEarlybirdResponseCodeStats(
-              currentFutureIndex, responses.size());
+              currentFutureIndetwitter, responses.size());
 
-      // If a tier in the chain throws an exception, convert it to a null response, and let the
+      // If a tier in the chain throws an etwitterception, convert it to a null response, and let the
       // mergeHelper handle it appropriately.
-      return responses.get(currentFutureIndex)
+      return responses.get(currentFutureIndetwitter)
         .handle(Function.func(t -> {
-          if (FinagleUtil.isCancelException(t)) {
+          if (FinagleUtil.isCancelEtwitterception(t)) {
             return new EarlybirdResponse()
                 .setResponseCode(EarlybirdResponseCode.CLIENT_CANCEL_ERROR);
-          } else if (FinagleUtil.isTimeoutException(t)) {
+          } else if (FinagleUtil.isTimeoutEtwitterception(t)) {
             return new EarlybirdResponse()
                 .setResponseCode(EarlybirdResponseCode.SERVER_TIMEOUT_ERROR);
           } else {
-            SearchCounter.export(
+            SearchCounter.etwitterport(
                 String.format(PARTITION_OR_TIER_ERROR_COUNTER_NAME_FORMAT, partitionTierName))
                 .increment();
             if (responseMessageBuilder.isDebugMode()) {
               responseMessageBuilder.debugAndLogWarning(
-                  String.format("[%s] failed, exception [%s]",
+                  String.format("[%s] failed, etwitterception [%s]",
                       partitionTierName, t.toString()));
             }
-            LOG.warn("exception response from: " + partitionTierName, t);
+            LOG.warn("etwitterception response from: " + partitionTierName, t);
             return new EarlybirdResponse()
                 .setResponseCode(EarlybirdResponseCode.TRANSIENT_ERROR);
           }
@@ -180,7 +180,7 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
         .flatMap(Function.func(response -> {
           Preconditions.checkNotNull(response);
 
-          SearchCounter.export(
+          SearchCounter.etwitterport(
               String.format(PARTITION_OR_TIER_RESPONSE_CODE_COUNTER_NAME_FORMAT,
                             nameForEarlybirdResponseCodeStats,
                             response.getResponseCode().name().toLowerCase()))
@@ -188,7 +188,7 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
 
           if ((response.getResponseCode() != EarlybirdResponseCode.PARTITION_SKIPPED)
               && (response.getResponseCode() != EarlybirdResponseCode.TIER_SKIPPED)) {
-            SearchCounter.export(
+            SearchCounter.etwitterport(
                 String.format(PARTITION_OR_TIER_COUNTER_NAME_FORMAT, partitionTierName))
               .increment();
           }
@@ -198,14 +198,14 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
             return Future.value(response);
           }
 
-          rewriteResponseCodeIfSearchResultsMissing(requestContext, partitionTierName, response);
+          rewriteResponseCodeIfSearchResultsMissing(requestContetwittert, partitionTierName, response);
           responseMessageBuilder.logResponseDebugInfo(
-              requestContext.getRequest(),
+              requestContetwittert.getRequest(),
               partitionTierName,
               response);
           responseAccumulator.addResponse(
               responseMessageBuilder,
-              requestContext.getRequest(),
+              requestContetwittert.getRequest(),
               response);
 
           if (responseAccumulator.shouldEarlyTerminateMerge(EarlybirdResponseMerger.this)) {
@@ -218,20 +218,20 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
   }
 
   private void rewriteResponseCodeIfSearchResultsMissing(
-      EarlybirdRequestContext earlybirdRequestContext,
+      EarlybirdRequestContetwittert earlybirdRequestContetwittert,
       String partitionTierName,
       EarlybirdResponse response) {
     // We always require searchResults to be set, even for term stats and facet requests.
     // This is because searchResults contains important info such as pagination cursors
     // like minSearchStatusId and minSearchedTimeSinceEpoch.
-    // We expect all successful responses to have searchResults set.
+    // We etwitterpect all successful responses to have searchResults set.
     if (response.isSetResponseCode()
         && response.getResponseCode() == EarlybirdResponseCode.SUCCESS
         && response.getSearchResults() == null) {
       NO_SEARCH_RESULT_COUNTER.increment();
       LOG.warn("Received Earlybird response with null searchResults from [{}]"
                + " EarlybirdRequest [{}] EarlybirdResponse [{}] ",
-               partitionTierName, earlybirdRequestContext.getRequest(), response);
+               partitionTierName, earlybirdRequestContetwittert.getRequest(), response);
       response.setResponseCode(EarlybirdResponseCode.TRANSIENT_ERROR);
     }
   }
@@ -240,14 +240,14 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
    * Construct a EarlybirdResponseMerger to merge responses from multiple partitions or tiers
    * based on mode.
    */
-  EarlybirdResponseMerger(EarlybirdRequestContext requestContext,
+  EarlybirdResponseMerger(EarlybirdRequestContetwittert requestContetwittert,
                           List<Future<EarlybirdResponse>> responses,
                           ResponseAccumulator responseAccumulator) {
-    this.requestContext = requestContext;
+    this.requestContetwittert = requestContetwittert;
     this.responses = ImmutableList.copyOf(responses);
     this.responseMessageBuilder =
-        new EarlybirdResponseDebugMessageBuilder(requestContext.getRequest());
-    this.chainMerger = new ChainMerger(requestContext, responseAccumulator, responses,
+        new EarlybirdResponseDebugMessageBuilder(requestContetwittert.getRequest());
+    this.chainMerger = new ChainMerger(requestContetwittert, responseAccumulator, responses,
         responseMessageBuilder);
   }
 
@@ -255,31 +255,31 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
    * Get a response merger to merge the given responses.
    */
   public static EarlybirdResponseMerger getResponseMerger(
-      EarlybirdRequestContext requestContext,
+      EarlybirdRequestContetwittert requestContetwittert,
       List<Future<EarlybirdResponse>> responses,
       ResponseAccumulator helper,
       EarlybirdCluster cluster,
       EarlybirdFeatureSchemaMerger featureSchemaMerger,
       int numPartitions) {
-    EarlybirdRequestType type = requestContext.getEarlybirdRequestType();
+    EarlybirdRequestType type = requestContetwittert.getEarlybirdRequestType();
     MERGER_CREATED_STATS.get(type).increment();
     switch (type) {
       case FACETS:
-        return new FacetResponseMerger(requestContext, responses, helper);
+        return new FacetResponseMerger(requestContetwittert, responses, helper);
       case TERM_STATS:
-        return new TermStatisticsResponseMerger(requestContext, responses, helper);
+        return new TermStatisticsResponseMerger(requestContetwittert, responses, helper);
       case RECENCY:
-        return new RecencyResponseMerger(requestContext, responses, helper, featureSchemaMerger);
+        return new RecencyResponseMerger(requestContetwittert, responses, helper, featureSchemaMerger);
       case STRICT_RECENCY:
         return new StrictRecencyResponseMerger(
-            requestContext, responses, helper, featureSchemaMerger, cluster);
+            requestContetwittert, responses, helper, featureSchemaMerger, cluster);
       case RELEVANCE:
         return new RelevanceResponseMerger(
-            requestContext, responses, helper, featureSchemaMerger, numPartitions);
+            requestContetwittert, responses, helper, featureSchemaMerger, numPartitions);
       case TOP_TWEETS:
-        return new TopTweetsResponseMerger(requestContext, responses, helper);
+        return new TopTweetsResponseMerger(requestContetwittert, responses, helper);
       default:
-        throw new RuntimeException("EarlybirdRequestType " + type + "is not supported by merge");
+        throw new RuntimeEtwitterception("EarlybirdRequestType " + type + "is not supported by merge");
     }
   }
 
@@ -291,34 +291,34 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
   public final Future<EarlybirdResponse> merge() {
     return chainMerger.merge()
         .onSuccess(checkMinSearchedStatusIdFunction(
-                 "max_id",
-                 EarlybirdRequestUtil.getRequestMaxId(requestContext.getParsedQuery()),
-                 MIN_SEARCHED_STATUS_ID_LARGER_THAN_REQUEST_MAX_ID.get(
-                     requestContext.getEarlybirdRequestType())))
+                 "matwitter_id",
+                 EarlybirdRequestUtil.getRequestMatwitterId(requestContetwittert.getParsedQuery()),
+                 MIN_SEARCHED_STATUS_ID_LARGER_THAN_REQUEST_MAtwitter_ID.get(
+                     requestContetwittert.getEarlybirdRequestType())))
         .onSuccess(checkMinSearchedStatusIdFunction(
                  "until_time",
-                 EarlybirdRequestUtil.getRequestMaxIdFromUntilTime(requestContext.getParsedQuery()),
+                 EarlybirdRequestUtil.getRequestMatwitterIdFromUntilTime(requestContetwittert.getParsedQuery()),
                  MIN_SEARCHED_STATUS_ID_LARGER_THAN_REQUEST_UNTIL_TIME.get(
-                     requestContext.getEarlybirdRequestType())));
+                     requestContetwittert.getEarlybirdRequestType())));
   }
 
   /**
    * Returns the function that checks if the minSearchedStatusID on the merged response is higher
-   * than the max ID in the request.
+   * than the matwitter ID in the request.
    */
-  private Function<EarlybirdResponse, BoxedUnit> checkMinSearchedStatusIdFunction(
-      final String operator, final Optional<Long> requestMaxId, final SearchCounter stat) {
+  private Function<EarlybirdResponse, BotwitteredUnit> checkMinSearchedStatusIdFunction(
+      final String operator, final Optional<Long> requestMatwitterId, final SearchCounter stat) {
     return Function.cons(mergedResponse -> {
-      if (requestMaxId.isPresent()
-          && requestMaxId.get() != Long.MAX_VALUE
+      if (requestMatwitterId.isPresent()
+          && requestMatwitterId.get() != Long.MAtwitter_VALUE
           && (mergedResponse.getResponseCode() == EarlybirdResponseCode.SUCCESS)
           && mergedResponse.isSetSearchResults()
           && mergedResponse.getSearchResults().isSetMinSearchedStatusID()) {
         long minSearchedStatusId = mergedResponse.getSearchResults().getMinSearchedStatusID();
-        // We sometimes set minSearchedStatusId = max_id + 1 when a request times out even
+        // We sometimes set minSearchedStatusId = matwitter_id + 1 when a request times out even
         // before any search happens.
         // Check SEARCH-10134 for more details.
-        if (minSearchedStatusId > requestMaxId.get() + 1) {
+        if (minSearchedStatusId > requestMatwitterId.get() + 1) {
           stat.increment();
           String logMessage = "Response has a minSearchedStatusID ({}) larger than request "
               + operator + " ({})."
@@ -328,9 +328,9 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
               + "\nSuccessful accumulated responses:";
           List<Object> logMessageParams = Lists.newArrayList();
           logMessageParams.add(minSearchedStatusId);
-          logMessageParams.add(requestMaxId.get());
-          logMessageParams.add(requestContext.getEarlybirdRequestType());
-          logMessageParams.add(requestContext.getRequest());
+          logMessageParams.add(requestMatwitterId.get());
+          logMessageParams.add(requestContetwittert.getEarlybirdRequestType());
+          logMessageParams.add(requestContetwittert.getRequest());
           logMessageParams.add(mergedResponse);
           for (EarlybirdResponse response : accumulatedResponses.getSuccessResponses()) {
             logMessage += "\naccumulated response: {}";
@@ -444,7 +444,7 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
         mergedResponse = internalMerge(mergedResponse);
       } else {
         responseMessageBuilder.logBelowSuccessThreshold(
-            requestContext.getRequest().getSearchQuery(), numSuccessResponses, numPartitions,
+            requestContetwittert.getRequest().getSearchQuery(), numSuccessResponses, numPartitions,
             successThreshold);
         mergedResponse.setResponseCode(EarlybirdResponseCode.TOO_MANY_PARTITIONS_FAILED_ERROR);
       }
@@ -464,13 +464,13 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
   protected abstract SearchTimerStats getMergedResponseTimer();
 
   /**
-   * Do we have enough results so far that we can early terminate and not continue onto next tier?
+   * Do we have enough results so far that we can early terminate and not continue onto netwittert tier?
    */
   public boolean shouldEarlyTerminateTierMerge(int totalResultsFromSuccessfulShards,
                                                   boolean foundEarlyTermination) {
     // We are taking the most conservative tier response merging.
     // This is the most conservative merge logic --- as long as we have some results, we should
-    // not return anything from the next tier. This may cause not ideal experience where a
+    // not return anything from the netwittert tier. This may cause not ideal etwitterperience where a
     // page is not full, but the use can still scroll further.
 
     return foundEarlyTermination || totalResultsFromSuccessfulShards >= 1;
@@ -491,7 +491,7 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
   }
 
   private double getSuccessResponseThreshold() {
-    EarlybirdRequest request = requestContext.getRequest();
+    EarlybirdRequest request = requestContetwittert.getRequest();
     if (request.isSetSuccessfulResponseThreshold()) {
       double successfulResponseThreshold = request.getSuccessfulResponseThreshold();
       Preconditions.checkArgument(successfulResponseThreshold > 0,
@@ -538,17 +538,17 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
    * Returns the number of results to keep as part of merge-collection.
    */
   protected final int computeNumResultsToKeep() {
-    return EarlybirdResponseMergeUtil.computeNumResultsToKeep(requestContext.getRequest());
+    return EarlybirdResponseMergeUtil.computeNumResultsToKeep(requestContetwittert.getRequest());
   }
 
   /**
-   * Remove exact duplicates (same id) from the result set.
+   * Remove etwitteract duplicates (same id) from the result set.
    */
-  protected static void trimExactDups(ThriftSearchResults searchResults, TrimStats trimStats) {
+  protected static void trimEtwitteractDups(ThriftSearchResults searchResults, TrimStats trimStats) {
     int numResults = searchResults.getResultsSize();
     List<ThriftSearchResult> oldResults = searchResults.getResults();
     List<ThriftSearchResult> newResults = Lists.newArrayListWithCapacity(numResults);
-    HashSet<Long> resultSet = Sets.newHashSetWithExpectedSize(numResults);
+    HashSet<Long> resultSet = Sets.newHashSetWithEtwitterpectedSize(numResults);
 
     for (ThriftSearchResult result : oldResults) {
       if (resultSet.contains(result.getId())) {
@@ -583,7 +583,7 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
   protected final void truncateResults(ThriftSearchResults searchResults, TrimStats trimStats) {
     int numResultsRequested = computeNumResultsToKeep();
 
-    int to = numResultsRequested == Integer.MAX_VALUE ? searchResults.getResultsSize()
+    int to = numResultsRequested == Integer.MAtwitter_VALUE ? searchResults.getResultsSize()
         : Math.min(numResultsRequested, searchResults.getResultsSize());
     if (searchResults.getResultsSize() > to) {
       trimStats.setResultsTruncatedFromTailCount(searchResults.getResultsSize() - to);
@@ -591,7 +591,7 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
       if (to > 0) {
         searchResults.setResults(searchResults.getResults().subList(0, to));
       } else {
-        // No more results for the next page
+        // No more results for the netwittert page
         EARLYBIRD_RESPONSE_NO_MORE_RESULTS.increment();
         searchResults.setResults(Collections.<ThriftSearchResult>emptyList());
       }
@@ -599,6 +599,6 @@ public abstract class EarlybirdResponseMerger implements EarlyTerminateTierMerge
   }
 
   EarlybirdRequest getEarlybirdRequest() {
-    return requestContext.getRequest();
+    return requestContetwittert.getRequest();
   }
 }

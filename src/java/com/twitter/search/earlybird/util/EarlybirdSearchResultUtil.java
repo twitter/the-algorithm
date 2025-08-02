@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -40,12 +40,12 @@ public final class EarlybirdSearchResultUtil {
     results.setNumHitsProcessed(info.getNumHitsProcessed());
     results.setNumPartitionsEarlyTerminated(info.isEarlyTerminated() ? 1 : 0);
     if (info.isSetSearchedStatusIDs()) {
-      results.setMaxSearchedStatusID(info.getMaxSearchedStatusID());
+      results.setMatwitterSearchedStatusID(info.getMatwitterSearchedStatusID());
       results.setMinSearchedStatusID(info.getMinSearchedStatusID());
     }
 
     if (info.isSetSearchedTimes()) {
-      results.setMaxSearchedTimeSinceEpoch(info.getMaxSearchedTime());
+      results.setMatwitterSearchedTimeSinceEpoch(info.getMatwitterSearchedTime());
       results.setMinSearchedTimeSinceEpoch(info.getMinSearchedTime());
     }
   }
@@ -96,7 +96,7 @@ public final class EarlybirdSearchResultUtil {
     debugInfo.setHostname(DatabaseConfig.getLocalHostname());
     // These info can also come from EarlybirdServer.get().getPartitionConfig() if we add such a
     // getter for partitionConfig().
-    debugInfo.setPartitionId(partitionConfig.getIndexingHashPartitionID());
+    debugInfo.setPartitionId(partitionConfig.getIndetwitteringHashPartitionID());
     debugInfo.setTiername(partitionConfig.getTierName());
     debugInfo.setClusterName(partitionConfig.getClusterName());
 

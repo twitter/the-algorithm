@@ -8,8 +8,8 @@ import com.twitter.tweetypie.additionalfields.AdditionalFields.setAdditionalFiel
 import com.twitter.tweetypie.core._
 import com.twitter.tweetypie.repository._
 import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.thriftscala.entities.EntityExtractor
-import com.twitter.tweetypie.tweettext.Truncator
+import com.twitter.tweetypie.thriftscala.entities.EntityEtwittertractor
+import com.twitter.tweetypie.tweettetwittert.Truncator
 import com.twitter.tweetypie.util.CommunityUtil
 import com.twitter.tweetypie.util.EditControlUtil
 
@@ -29,21 +29,21 @@ object RetweetBuilder {
   val log: Logger = Logger(getClass)
 
   /**
-   * Retweets text gets RT and username prepended
+   * Retweets tetwittert gets RT and username prepended
    */
-  def composeRetweetText(text: String, sourceUser: User): String =
-    composeRetweetText(text, sourceUser.profile.get.screenName)
+  def composeRetweetTetwittert(tetwittert: String, sourceUser: User): String =
+    composeRetweetTetwittert(tetwittert, sourceUser.profile.get.screenName)
 
   /**
-   * Retweets text gets RT and username prepended
+   * Retweets tetwittert gets RT and username prepended
    */
-  def composeRetweetText(text: String, screenName: String): String =
-    Truncator.truncateForRetweet("RT @" + screenName + ": " + text)
+  def composeRetweetTetwittert(tetwittert: String, screenName: String): String =
+    Truncator.truncateForRetweet("RT @" + screenName + ": " + tetwittert)
 
   // We do not want to allow community tweets to be retweeted.
   def validateNotCommunityTweet(sourceTweet: Tweet): Future[Unit] =
     if (CommunityUtil.hasCommunity(sourceTweet.communities)) {
-      Future.exception(TweetCreateFailure.State(TweetCreateState.CommunityRetweetNotAllowed))
+      Future.etwitterception(TweetCreateFailure.State(TweetCreateState.CommunityRetweetNotAllowed))
     } else {
       Future.Unit
     }
@@ -52,7 +52,7 @@ object RetweetBuilder {
   def validateNotTrustedFriendsTweet(sourceTweet: Tweet): Future[Unit] =
     sourceTweet.trustedFriendsControl match {
       case Some(trustedFriendsControl) =>
-        Future.exception(TweetCreateFailure.State(TweetCreateState.TrustedFriendsRetweetNotAllowed))
+        Future.etwitterception(TweetCreateFailure.State(TweetCreateState.TrustedFriendsRetweetNotAllowed))
       case None =>
         Future.Unit
     }
@@ -60,7 +60,7 @@ object RetweetBuilder {
   // We do not want to allow retweet of a stale version of a tweet in an edit chain.
   def validateStaleTweet(sourceTweet: Tweet): Future[Unit] = {
     if (!EditControlUtil.isLatestEdit(sourceTweet.editControl, sourceTweet.id).getOrElse(true)) {
-      Future.exception(TweetCreateFailure.State(TweetCreateState.StaleTweetRetweetNotAllowed))
+      Future.etwitterception(TweetCreateFailure.State(TweetCreateState.StaleTweetRetweetNotAllowed))
     } else {
       // the source tweet does not have any edit control or the source tweet is the latest tweet
       Future.Unit
@@ -82,9 +82,9 @@ object RetweetBuilder {
     updateUserCounts: (User, Tweet) => Future[User],
     superFollowRelationsRepo: StratoSuperFollowRelationsRepository.Type,
     unretweetEdits: TweetDeletePathHandler.UnretweetEdits,
-    setEditWindowToSixtyMinutes: Gate[Unit]
+    setEditWindowToSitwittertyMinutes: Gate[Unit]
   ): RetweetBuilder.Type = {
-    val entityExtactor = EntityExtractor.mutationAll.endo
+    val entityEtwittertactor = EntityEtwittertractor.mutationAll.endo
 
     val sourceTweetRepo: SourceTweetRequest => Stitch[Tweet] =
       req => {
@@ -95,7 +95,7 @@ object RetweetBuilder {
             case _: FilteredState => Stitch.NotFound
           }
           .rescue {
-            convertRepoExceptions(TweetCreateState.SourceTweetNotFound, TweetLookupFailure(_))
+            convertRepoEtwitterceptions(TweetCreateState.SourceTweetNotFound, TweetLookupFailure(_))
           }
       }
 
@@ -104,10 +104,10 @@ object RetweetBuilder {
     val getDeviceSource = deviceSourceLookup(deviceSourceRepo)
 
     /**
-     * We exempt SGS test users from the check to get them through Block v2 testing.
+     * We etwitterempt SGS test users from the check to get them through Block v2 testing.
      */
     def isSGSTestRole(user: User): Boolean =
-      user.roles.exists { roles => roles.roles.contains(SGSTestRole) }
+      user.roles.etwitterists { roles => roles.roles.contains(SGSTestRole) }
 
     def validateCanRetweet(
       user: User,
@@ -132,21 +132,21 @@ object RetweetBuilder {
 
     def validateSourceUserRetweetable(user: User, sourceUser: User): Future[Unit] =
       if (sourceUser.profile.isEmpty)
-        Future.exception(UserProfileEmptyException)
+        Future.etwitterception(UserProfileEmptyEtwitterception)
       else if (sourceUser.safety.isEmpty)
-        Future.exception(UserSafetyEmptyException)
+        Future.etwitterception(UserSafetyEmptyEtwitterception)
       else if (sourceUser.view.isEmpty)
-        Future.exception(UserViewEmptyException)
+        Future.etwitterception(UserViewEmptyEtwitterception)
       else if (user.id != sourceUser.id && sourceUser.safety.get.isProtected)
-        Future.exception(TweetCreateFailure.State(TweetCreateState.CannotRetweetProtectedTweet))
+        Future.etwitterception(TweetCreateFailure.State(TweetCreateState.CannotRetweetProtectedTweet))
       else if (sourceUser.safety.get.deactivated)
-        Future.exception(TweetCreateFailure.State(TweetCreateState.CannotRetweetDeactivatedUser))
+        Future.etwitterception(TweetCreateFailure.State(TweetCreateState.CannotRetweetDeactivatedUser))
       else if (sourceUser.safety.get.suspended)
-        Future.exception(TweetCreateFailure.State(TweetCreateState.CannotRetweetSuspendedUser))
+        Future.etwitterception(TweetCreateFailure.State(TweetCreateState.CannotRetweetSuspendedUser))
       else if (sourceUser.view.get.blockedBy && !isSGSTestRole(user))
-        Future.exception(TweetCreateFailure.State(TweetCreateState.CannotRetweetBlockingUser))
+        Future.etwitterception(TweetCreateFailure.State(TweetCreateState.CannotRetweetBlockingUser))
       else if (sourceUser.profile.get.screenName.isEmpty)
-        Future.exception(
+        Future.etwitterception(
           TweetCreateFailure.State(TweetCreateState.CannotRetweetUserWithoutScreenName)
         )
       else
@@ -159,8 +159,8 @@ object RetweetBuilder {
       dir: Direction
     ): Future[Boolean] =
       tflock.contains(graph, fromId, toId, dir).rescue {
-        case ex: OverCapacity => Future.exception(ex)
-        case ex => Future.exception(TFlockLookupFailure(ex))
+        case etwitter: OverCapacity => Future.etwitterception(etwitter)
+        case etwitter => Future.etwitterception(TFlockLookupFailure(etwitter))
       }
 
     def getRetweetIdFromTflock(sourceTweetId: TweetId, userId: UserId): Future[Option[Long]] =
@@ -191,7 +191,7 @@ object RetweetBuilder {
           tflockGraphContains(RetweetSourceGraph, user.id, sourceTweet.id, Reverse)
       }).flatMap {
         case true =>
-          Future.exception(TweetCreateFailure.State(TweetCreateState.AlreadyRetweeted))
+          Future.etwitterception(TweetCreateFailure.State(TweetCreateState.AlreadyRetweeted))
         case false => Future.Unit
       }
 
@@ -204,12 +204,12 @@ object RetweetBuilder {
       }).flatMap {
         case None => Future.Unit
         case Some(tweetId) =>
-          Future.exception(TweetCreateFailure.AlreadyRetweeted(tweetId))
+          Future.etwitterception(TweetCreateFailure.AlreadyRetweeted(tweetId))
       }
 
     def validateContributor(contributorIdOpt: Option[UserId]): Future[Unit] =
       if (contributorIdOpt.isDefined)
-        Future.exception(TweetCreateFailure.State(TweetCreateState.ContributorNotSupported))
+        Future.etwitterception(TweetCreateFailure.State(TweetCreateState.ContributorNotSupported))
       else
         Future.Unit
 
@@ -255,9 +255,9 @@ object RetweetBuilder {
         sourceUser <- Stitch.run(getSourceUser(getUserId(sourceTweet), request.userId))
 
         // We want to confirm that a user is actually allowed to
-        // retweet an Exclusive Tweet (only available to super followers)
+        // retweet an Etwitterclusive Tweet (only available to super followers)
         () <- StratoSuperFollowRelationsRepository.Validate(
-          sourceTweet.exclusiveTweetControl,
+          sourceTweet.etwitterclusiveTweetControl,
           user.id,
           superFollowRelationsRepo)
 
@@ -271,7 +271,7 @@ object RetweetBuilder {
           retweetId = tweetId,
           sourceUserId = getUserId(sourceTweet),
           sourceTweetId = sourceTweet.id,
-          sourceTweetText = getText(sourceTweet),
+          sourceTweetTetwittert = getTetwittert(sourceTweet),
           sourceUserName = sourceUser.profile.map(_.screenName),
           safetyMetaData = request.safetyMetaData
         )
@@ -286,12 +286,12 @@ object RetweetBuilder {
           parentStatusId = request.sourceStatusId
         )
 
-        retweetText = composeRetweetText(getText(sourceTweet), sourceUser)
+        retweetTetwittert = composeRetweetTetwittert(getTetwittert(sourceTweet), sourceUser)
         createdAt = SnowflakeId(tweetId).time
 
         coreData = TweetCoreData(
           userId = request.userId,
-          text = retweetText,
+          tetwittert = retweetTetwittert,
           createdAtSecs = createdAt.inSeconds,
           createdVia = devsrc.internalName,
           share = Some(share),
@@ -313,7 +313,7 @@ object RetweetBuilder {
                 .makeEditControlInitial(
                   tweetId = tweetId,
                   createdAt = createdAt,
-                  setEditWindowToSixtyMinutes = setEditWindowToSixtyMinutes
+                  setEditWindowToSitwittertyMinutes = setEditWindowToSitwittertyMinutes
                 )
                 .initial
                 .copy(isEditEligible = Some(false))
@@ -321,7 +321,7 @@ object RetweetBuilder {
           ),
         )
 
-        retweetWithEntities = entityExtactor(retweet)
+        retweetWithEntities = entityEtwittertactor(retweet)
         retweetWithAdditionalFields = setAdditionalFields(
           retweetWithEntities,
           request.additionalFields

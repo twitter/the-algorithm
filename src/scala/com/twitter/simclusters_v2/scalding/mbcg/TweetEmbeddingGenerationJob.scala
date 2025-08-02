@@ -6,12 +6,12 @@ import com.twitter.ann.common.CosineDistance
 import com.twitter.ann.common.InnerProduct
 import com.twitter.ann.common.InnerProductDistance
 import com.twitter.ann.common.ReadWriteFuturePool
-import com.twitter.ann.hnsw.TypedHnswIndex
-import com.twitter.ann.util.IndexBuilderUtils
+import com.twitter.ann.hnsw.TypedHnswIndetwitter
+import com.twitter.ann.util.IndetwitterBuilderUtils
 import com.twitter.conversions.DurationOps._
-import com.twitter.cortex.deepbird.runtime.prediction_engine.TensorflowPredictionEngineConfig
-import com.twitter.cortex.ml.embeddings.common.TweetKind
-import com.twitter.cortex.ml.embeddings.common.UserKind
+import com.twitter.cortetwitter.deepbird.runtime.prediction_engine.TensorflowPredictionEngineConfig
+import com.twitter.cortetwitter.ml.embeddings.common.TweetKind
+import com.twitter.cortetwitter.ml.embeddings.common.UserKind
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.finagle.stats.NullStatsReceiver
 import com.twitter.iesource.common.util.InteractionEventUtils
@@ -30,22 +30,22 @@ import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
 import com.twitter.scalding.Args
 import com.twitter.scalding.DateParser
 import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding.UniqueID
 import com.twitter.scalding._
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
 import com.twitter.scalding_internal.job.FutureHelper
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
+import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchEtwitterecution
+import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchEtwitterecutionArgs
 import com.twitter.scalding_internal.job.analytics_batch.BatchDescription
 import com.twitter.scalding_internal.job.analytics_batch.BatchFirstTime
 import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
 import com.twitter.scalding_internal.job.analytics_batch.BatchWidth
-import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
+import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledEtwitterecutionApp
 import com.twitter.search.common.file.FileUtils
-import com.twitter.simclusters_v2.scalding.common.LogFavBasedPersistentTweetEmbeddingMhExportSource
+import com.twitter.simclusters_v2.scalding.common.LogFavBasedPersistentTweetEmbeddingMhEtwitterportSource
 import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
 import com.twitter.tweetsource.common.thriftscala.MediaType
 import com.twitter.tweetsource.public_tweets.PublicTweetsScalaDataset
@@ -55,15 +55,15 @@ import com.twitter.twml.runtime.scalding.TensorflowBatchPredictor.ScaldingThread
 import com.twitter.util.FuturePool
 import com.twitter.util.logging.Logger
 import java.util.TimeZone
-import java.util.concurrent.Executors
+import java.util.concurrent.Etwitterecutors
 
 /*
 This class does the following:
-1) Get tweet simcluster features from LogFavBasedPersistentTweetEmbeddingMhExportSource
+1) Get tweet simcluster features from LogFavBasedPersistentTweetEmbeddingMhEtwitterportSource
 2) Filter them down to English media tweets that aren't replies or quote tweets using TweetSource
 3) Convert the remaining tweets into DataRecords using TweetSimclusterRecordAdapter
-4) Run inference using a TF model exported with a DataRecord compatible serving signature
-5) Create an ANN index from the generated tweet embeddings
+4) Run inference using a TF model etwitterported with a DataRecord compatible serving signature
+5) Create an ANN indetwitter from the generated tweet embeddings
  */
 trait TweetEmbeddingGenerationTrait {
   implicit val tz: TimeZone = DateOps.UTC
@@ -99,17 +99,17 @@ trait TweetEmbeddingGenerationTrait {
           thriftscala.Embedding(Some(rawTensor))
         )
         EmbeddingWithEntity[TweetId](TweetId(tweetId), embedding)
-      case _ => throw new IllegalArgumentException("tensor is wrong type!")
+      case _ => throw new IllegalArgumentEtwitterception("tensor is wrong type!")
     }
   }
 
-  def buildAnnIndex(
+  def buildAnnIndetwitter(
     pipe: TypedPipe[EmbeddingWithEntity[TweetId]],
     args: Args
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     def embeddingDimension: Int = args.int("embedding_dimension", 128)
     def efConstruction: Int = args.int("ef_construction", 800)
-    def maxM: Int = args.int("max_M", 40)
+    def matwitterM: Int = args.int("matwitter_M", 40)
     val log: Logger = Logger(getClass)
     val annOutputPath: String = args("ann_output_path")
 
@@ -118,33 +118,33 @@ trait TweetEmbeddingGenerationTrait {
         EntityEmbedding[TweetId](tweetId, embedding)
     }
     val concurrencyLevel = args.int("concurrency_level", 60)
-    val expectedElements = args.int("expected_elements", 30000000)
-    val threadPool = Executors.newFixedThreadPool(concurrencyLevel)
-    val hnswIndex = TypedHnswIndex.serializableIndex[TweetId, InnerProductDistance](
+    val etwitterpectedElements = args.int("etwitterpected_elements", 30000000)
+    val threadPool = Etwitterecutors.newFitwitteredThreadPool(concurrencyLevel)
+    val hnswIndetwitter = TypedHnswIndetwitter.serializableIndetwitter[TweetId, InnerProductDistance](
       embeddingDimension,
       InnerProduct,
       efConstruction,
-      maxM,
-      expectedElements,
+      matwitterM,
+      etwitterpectedElements,
       TweetKind.byteInjection,
       ReadWriteFuturePool(FuturePool.apply(threadPool))
     )
 
-    // Create a timestamped directory to use for recovery in case of index corruption
+    // Create a timestamped directory to use for recovery in case of indetwitter corruption
     val timeStampedAnnOutputPath: String = annOutputPath + "/" + (System.currentTimeMillis() / 1000)
     val timeStampedAnnOutputDirectory = FileUtils.getFileHandle(timeStampedAnnOutputPath)
 
-    embeddingWithEntity.toIterableExecution
+    embeddingWithEntity.toIterableEtwitterecution
       .flatMap { annEmbeddings =>
         val future =
-          IndexBuilderUtils.addToIndex(hnswIndex, annEmbeddings.toStream, concurrencyLevel)
+          IndetwitterBuilderUtils.addToIndetwitter(hnswIndetwitter, annEmbeddings.toStream, concurrencyLevel)
         val result = future.map { numberUpdates =>
           log.info(s"Performed $numberUpdates updates")
-          hnswIndex.toDirectory(timeStampedAnnOutputDirectory)
-          log.info(s"Finished writing to timestamped index directory - " +
+          hnswIndetwitter.toDirectory(timeStampedAnnOutputDirectory)
+          log.info(s"Finished writing to timestamped indetwitter directory - " +
             s"$timeStampedAnnOutputDirectory")
         }
-        FutureHelper.executionFrom(result).unit
+        FutureHelper.etwitterecutionFrom(result).unit
       }.onComplete { _ =>
         threadPool.shutdown()
         Unit
@@ -168,7 +168,7 @@ trait TweetEmbeddingGenerationTrait {
       zone = serviceIdZone)
 
     val logFavBasedPersistentTweetEmbeddingSource =
-      new LogFavBasedPersistentTweetEmbeddingMhExportSource(
+      new LogFavBasedPersistentTweetEmbeddingMhEtwitterportSource(
         range = dateRange.prepend(Hours(24)),
         serviceIdentifier = serviceId)
     val tweetSimclusterEmbeddingTypedPipe = TypedPipe
@@ -193,8 +193,8 @@ trait TweetEmbeddingGenerationTrait {
   }
 
   def isVideoTweet(tweet: PublicTweet): Boolean = {
-    tweet.media.exists { mediaSeq =>
-      mediaSeq.exists { e =>
+    tweet.media.etwitterists { mediaSeq =>
+      mediaSeq.etwitterists { e =>
         e.mediaType.contains(MediaType.Video)
       }
     }
@@ -225,9 +225,9 @@ trait TweetEmbeddingGenerationTrait {
     engagementFilteredTweetsPipe
   }
 
-  def run(args: Args)(implicit dateRange: DateRange, idx: UniqueID) = {
+  def run(args: Args)(implicit dateRange: DateRange, idtwitter: UniqueID) = {
     val minFavCount = args.int("minFavCount", 32)
-    val indexAllTweets = args.boolean("indexAllTweets")
+    val indetwitterAllTweets = args.boolean("indetwitterAllTweets")
 
     val tweetSimclusterDataset = getTweetSimclusterFeatures(args)
     val tweetSourceDataset = getTweetSource()
@@ -258,8 +258,8 @@ trait TweetEmbeddingGenerationTrait {
         case (_, _, tweetInfo) =>
           tweetInfo.quotedTweetTweetId.isEmpty &&
             tweetInfo.inReplyToTweetId.isEmpty &&
-            tweetInfo.language.exists(SupportedLanguages.contains) &&
-            (indexAllTweets || (!tweetInfo.media.exists(_.isEmpty) && isVideoTweet(tweetInfo))) &&
+            tweetInfo.language.etwitterists(SupportedLanguages.contains) &&
+            (indetwitterAllTweets || (!tweetInfo.media.etwitterists(_.isEmpty) && isVideoTweet(tweetInfo))) &&
             !tweetInfo.nsfwAdmin &&
             !tweetInfo.nsfwUser
       }
@@ -297,17 +297,17 @@ trait TweetEmbeddingGenerationTrait {
         tweetEmbeddingWithEntity
     }
 
-    buildAnnIndex(outputPipe, args)
+    buildAnnIndetwitter(outputPipe, args)
   }
 }
 
 object TweetEmbeddingGenerationAdhocJob
-    extends TwitterExecutionApp
+    etwittertends TwitterEtwitterecutionApp
     with TweetEmbeddingGenerationTrait {
 
-  override def job: Execution[Unit] =
-    Execution.withId { implicit uid =>
-      Execution.withArgs { args =>
+  override def job: Etwitterecution[Unit] =
+    Etwitterecution.withId { implicit uid =>
+      Etwitterecution.withArgs { args =>
         implicit val dateRange: DateRange = DateRange.parse(args.list("dateRange"))
         run(args)
       }
@@ -315,22 +315,22 @@ object TweetEmbeddingGenerationAdhocJob
 }
 
 object TweetEmbeddingGenerationBatchJob
-    extends TwitterScheduledExecutionApp
+    etwittertends TwitterScheduledEtwitterecutionApp
     with TweetEmbeddingGenerationTrait {
 
-  override def scheduledJob: Execution[Unit] =
-    Execution.withId { implicit uid =>
-      Execution.withArgs { args =>
+  override def scheduledJob: Etwitterecution[Unit] =
+    Etwitterecution.withId { implicit uid =>
+      Etwitterecution.withArgs { args =>
         implicit val tz: TimeZone = DateOps.UTC
         val batchFirstTime = BatchFirstTime(RichDate("2021-10-28")(tz, DateParser.default))
-        val analyticsArgs = AnalyticsBatchExecutionArgs(
+        val analyticsArgs = AnalyticsBatchEtwitterecutionArgs(
           batchDesc = BatchDescription(getClass.getName),
           firstTime = batchFirstTime,
           batchIncrement = BatchIncrement(Hours(updateHours)),
           batchWidth = Some(BatchWidth(Hours(updateHours)))
         )
 
-        AnalyticsBatchExecution(analyticsArgs) { implicit dateRange =>
+        AnalyticsBatchEtwitterecution(analyticsArgs) { implicit dateRange =>
           run(args)
         }
       }
@@ -338,45 +338,45 @@ object TweetEmbeddingGenerationBatchJob
 }
 
 object TweetEmbeddingGenerationBatchJobAlternate
-    extends TwitterScheduledExecutionApp
+    etwittertends TwitterScheduledEtwitterecutionApp
     with TweetEmbeddingGenerationTrait {
 
-  override def scheduledJob: Execution[Unit] =
-    Execution.withId { implicit uid =>
-      Execution.withArgs { args =>
+  override def scheduledJob: Etwitterecution[Unit] =
+    Etwitterecution.withId { implicit uid =>
+      Etwitterecution.withArgs { args =>
         implicit val tz: TimeZone = DateOps.UTC
         val batchFirstTime = BatchFirstTime(RichDate("2022-03-28")(tz, DateParser.default))
-        val analyticsArgs = AnalyticsBatchExecutionArgs(
+        val analyticsArgs = AnalyticsBatchEtwitterecutionArgs(
           batchDesc = BatchDescription(getClass.getName),
           firstTime = batchFirstTime,
           batchIncrement = BatchIncrement(Hours(updateHours)),
           batchWidth = Some(BatchWidth(Hours(updateHours)))
         )
 
-        AnalyticsBatchExecution(analyticsArgs) { implicit dateRange =>
+        AnalyticsBatchEtwitterecution(analyticsArgs) { implicit dateRange =>
           run(args)
         }
       }
     }
 }
 
-object TweetEmbeddingGenerationBatchJobExperimental
-    extends TwitterScheduledExecutionApp
+object TweetEmbeddingGenerationBatchJobEtwitterperimental
+    etwittertends TwitterScheduledEtwitterecutionApp
     with TweetEmbeddingGenerationTrait {
 
-  override def scheduledJob: Execution[Unit] =
-    Execution.withId { implicit uid =>
-      Execution.withArgs { args =>
+  override def scheduledJob: Etwitterecution[Unit] =
+    Etwitterecution.withId { implicit uid =>
+      Etwitterecution.withArgs { args =>
         implicit val tz: TimeZone = DateOps.UTC
         val batchFirstTime = BatchFirstTime(RichDate("2021-12-12")(tz, DateParser.default))
-        val analyticsArgs = AnalyticsBatchExecutionArgs(
+        val analyticsArgs = AnalyticsBatchEtwitterecutionArgs(
           batchDesc = BatchDescription(getClass.getName),
           firstTime = batchFirstTime,
           batchIncrement = BatchIncrement(Hours(updateHours)),
           batchWidth = Some(BatchWidth(Hours(updateHours)))
         )
 
-        AnalyticsBatchExecution(analyticsArgs) { implicit dateRange =>
+        AnalyticsBatchEtwitterecution(analyticsArgs) { implicit dateRange =>
           run(args)
         }
       }

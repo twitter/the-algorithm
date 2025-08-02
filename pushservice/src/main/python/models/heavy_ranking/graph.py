@@ -30,11 +30,11 @@ class Graph(ABC):
     pass
 
   def get_probabilities(self, logits: tf.Tensor) -> tf.Tensor:
-    return tf.math.cumprod(tf.nn.sigmoid(logits), axis=1, name="probabilities")
+    return tf.math.cumprod(tf.nn.sigmoid(logits), atwitteris=1, name="probabilities")
 
   def get_task_weights(self, labels: tf.Tensor) -> tf.Tensor:
     oonc_label = tf.reshape(labels[:, 0], shape=(-1, 1))
-    task_weights = tf.concat([tf.ones_like(oonc_label), oonc_label], axis=1)
+    task_weights = tf.concat([tf.ones_like(oonc_label), oonc_label], atwitteris=1)
 
     n_labels = len(self.params.tasks)
     task_weights = tf.reshape(task_weights[:, 0:n_labels], shape=(-1, n_labels))
@@ -67,10 +67,10 @@ class Graph(ABC):
   def get_score(self, probabilities: tf.Tensor) -> tf.Tensor:
     with tf.name_scope("score_weight"):
       score_weights = tf.constant([task.score_weight for task in self.params.tasks])
-      score_weights = score_weights / tf.reduce_sum(score_weights, axis=0)
+      score_weights = score_weights / tf.reduce_sum(score_weights, atwitteris=0)
 
     with tf.name_scope("score"):
-      score = tf.reshape(tf.reduce_sum(probabilities * score_weights, axis=1), shape=[-1, 1])
+      score = tf.reshape(tf.reduce_sum(probabilities * score_weights, atwitteris=1), shape=[-1, 1])
 
     return score
 

@@ -7,7 +7,7 @@ import com.twitter.timelines.model.UserId
 import com.twitter.util.Future
 
 object RemoveCandidatesAuthoredByWeightedFollowingsTransform
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+    etwittertends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
   override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
     val filteredSearchResults = envelope.query.utegLikedByTweetsOptions match {
       case Some(opts) =>

@@ -4,7 +4,7 @@ DECLARE positive_rate FLOAT64;
 SET date_candidates = (SELECT DATE(TIMESTAMP_MILLIS($start_time$)));
 SET date_labels = DATE_ADD(date_candidates, INTERVAL 1 DAY);
 
-CREATE TABLE IF NOT EXISTS `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffix$` AS
+CREATE TABLE IF NOT EtwitterISTS `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffitwitter$` AS
 SELECT
   0 AS source_id,
   1 AS destination_id,
@@ -21,11 +21,11 @@ SELECT
 
 -- delete any prior data to avoid double writing
 DELETE
-FROM `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffix$`
+FROM `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffitwitter$`
 WHERE ds = date_candidates;
 
 -- join labels with candidates with 1 day attribution delay and insert new segment
-INSERT INTO `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffix$` 
+INSERT INTO `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffitwitter$` 
 WITH label_positive AS (
   SELECT source_id, destination_id
   FROM `twttr-bq-cassowary-prod.user.interaction_graph_labels_daily`
@@ -56,12 +56,12 @@ AND F.ds=date_candidates
 -- get positive rate 
 SET positive_rate = 
 (SELECT SUM(label)/COUNT(label) AS pct_positive
-FROM `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffix$`
+FROM `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffitwitter$`
 );
 
 -- create training dataset with negative downsampling (should get ~50-50 split)
 -- this spans over the cumulative date range of the labeled candidates table.
-CREATE OR REPLACE TABLE `twttr-recos-ml-prod.realgraph.train$table_suffix$` AS
-SELECT * FROM `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffix$`
+CREATE OR REPLACE TABLE `twttr-recos-ml-prod.realgraph.train$table_suffitwitter$` AS
+SELECT * FROM `twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffitwitter$`
 WHERE CASE WHEN label = 0 AND RAND() < positive_rate THEN true WHEN label = 1 AND RAND() < (1-positive_rate) THEN true ELSE false END
 ;

@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -8,18 +8,18 @@ option java_multiple_files = true;
 option java_package = "org.tensorflow.framework";
 option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/full_type_go_proto";
 
-// Experimental. Represents the complete type information of a TensorFlow value.
+// Etwitterperimental. Represents the complete type information of a TensorFlow value.
 enum FullTypeId {
   // The default represents an uninitialized values.
   TFT_UNSET = 0;
 
-  // Type symbols. Used to construct more complex type expressions like
+  // Type symbols. Used to construct more completwitter type etwitterpressions like
   // algebraic data types.
 
   // Type variables may serve as placeholder for any other type ID in type
   // templates.
   //
-  // Examples:
+  // Etwitteramples:
   //   TFT_DATASET[TFT_VAR["T"]] is a Dataset returning a type indicated by "T".
   //   TFT_TENSOR[TFT_VAR["T"]] is a Tensor of n element type indicated by "T".
   //   TFT_TENSOR[TFT_VAR["T"]], TFT_TENSOR[TFT_VAR["T"]] are two tensors of
@@ -31,7 +31,7 @@ enum FullTypeId {
 
   // Wildcard type. Describes a parameter of unknown type. In TensorFlow, that
   // can mean either a "Top" type (accepts any type), or a dynamically typed
-  // object whose type is unknown in context.
+  // object whose type is unknown in contetwittert.
   // Important: "unknown" does not necessarily mean undeterminable!
   TFT_ANY = 2;
 
@@ -39,7 +39,7 @@ enum FullTypeId {
   // for logical grouping. Not to confused with TFT_TUPLE which describes a
   // concrete object of several elements.
   //
-  // Example:
+  // Etwitterample:
   //   TFT_DATASET[TFT_PRODUCT[TFT_TENSOR[TFT_INT32], TFT_TENSOR[TFT_FLOAT64]]]
   //     is a Dataset producing two tensors, an integer one and a float one.
   //
@@ -53,7 +53,7 @@ enum FullTypeId {
   //   * <name> is the field name, as string (thpugh can theoretically be an int
   //     as well)
   //
-  // Example:
+  // Etwitterample:
   //   TFT_RECORD[
   //     TFT_NAMED[TFT_TENSOR[TFT_INT32]]{'foo'},
   //     TFT_NAMED[TFT_TENSOR[TFT_FLOAT32]]{'bar'},
@@ -62,18 +62,18 @@ enum FullTypeId {
   //     "bar".
   TFT_NAMED = 4;
 
-  // Template definition. Expands the variables by repeating a template as
+  // Template definition. Etwitterpands the variables by repeating a template as
   // arguments of container.
   //
   // Parametrization:
-  //   TFT_FOR_EACH[<container_type>, <template>, <expansions>]
+  //   TFT_FOR_EACH[<container_type>, <template>, <etwitterpansions>]
   //   * <container_type> is the type of the container that the template will be
-  //     expanded into
+  //     etwitterpanded into
   //   * <template> is any type definition that potentially contains type
   //     variables
-  //   * <expansions> is a TFT_VAR and may include more types in the future
+  //   * <etwitterpansions> is a TFT_VAR and may include more types in the future
   //
-  // Example:
+  // Etwitterample:
   //   TFT_FOR_EACH[
   //         TFT_PRODUCT,
   //         TFT_TENSOR[TFT_VAR["t"]],
@@ -95,7 +95,7 @@ enum FullTypeId {
   //     return values (that means that callables returning multiple things
   //     don't necessarily return a single tuple).
   //
-  // Example:
+  // Etwitterample:
   //   TFT_CALLABLE[
   //     TFT_ANY,
   //     TFT_PRODUCT[TFT_TENSOR[TFT_INT32], TFT_TENSOR[TFT_FLOAT64]],
@@ -118,18 +118,18 @@ enum FullTypeId {
   //
   // A TFT_SHAPE type will be defined in the future.
   //
-  // Example:
+  // Etwitterample:
   //   TFT_TENSOR[TFT_INT32, TFT_UNKNOWN]
   //     is a Tensor of int32 element type and unknown shape.
   //
-  // TODO(mdan): Define TFT_SHAPE and add more examples.
+  // TODO(mdan): Define TFT_SHAPE and add more etwitteramples.
   TFT_TENSOR = 1000;
 
   // Array (or tensorflow::TensorList in the variant type registry).
   // Note: this is not to be confused with the deprecated `TensorArray*` ops
   // which are not supported by FullType.
   // This type represents a random-access list whose elements can be
-  // described by a single type. Although immutable, Array is expected to
+  // described by a single type. Although immutable, Array is etwitterpected to
   // support efficient mutation semantics (i.e. element update) in the
   // user-facing API.
   // The element type may be generic or even TFT_ANY for a heterogenous list.
@@ -138,11 +138,11 @@ enum FullTypeId {
   //   TFT_ARRAY[<element type>]
   //   * <element type> may be any concrete type.
   //
-  // Examples:
+  // Etwitteramples:
   //   TFT_ARRAY[TFT_TENSOR[TFT_INT32]] is a TensorArray holding int32 Tensors
   //     of any shape.
   //   TFT_ARRAY[TFT_TENSOR[TFT_UNKNOWN]] is a TensorArray holding Tensors of
-  //     mixed element types.
+  //     mitwittered element types.
   //   TFT_ARRAY[TFT_UNKNOWN] is a TensorArray holding any element type.
   //   TFT_ARRAY[] is equivalent to TFT_ARRAY[TFT_UNKNOWN].
   //   TFT_ARRAY[TFT_ARRAY[]] is an array or arrays (of unknown types).
@@ -156,7 +156,7 @@ enum FullTypeId {
   //   TFT_OPTIONAL[<element type>]
   //   * <element type> may be any concrete type.
   //
-  // Examples:
+  // Etwitteramples:
   //   TFT_OPTIONAL[TFT_TENSOR[TFT_INT32]] is an Optional holding an int32
   //     Tensor of any shape.
   TFT_OPTIONAL = 1002;
@@ -169,12 +169,12 @@ enum FullTypeId {
   //   * <value type> may be any concrete type compatible that can hold <value>
   //   * <value> is the type's attribute, and holds the actual literal value
   //
-  // Examples:
+  // Etwitteramples:
   //   TFT_LITERAL[TFT_INT32]{1} is the compile-time constant 1.
   TFT_LITERAL = 1003;
 
   // Type attributes. These always appear in the parametrization of a type,
-  // never alone. For example, there is no such thing as a "bool" TensorFlow
+  // never alone. For etwitterample, there is no such thing as a "bool" TensorFlow
   // object (for now).
 
   // The bool element type.
@@ -194,10 +194,10 @@ enum FullTypeId {
   TFT_FLOAT = 210;
   TFT_DOUBLE = 211;
   TFT_BFLOAT16 = 215;
-  // Complex element types.
-  // TODO(mdan): Represent as TFT_COMPLEX[TFT_DOUBLE] instead?
-  TFT_COMPLEX64 = 212;
-  TFT_COMPLEX128 = 213;
+  // Completwitter element types.
+  // TODO(mdan): Represent as TFT_COMPLEtwitter[TFT_DOUBLE] instead?
+  TFT_COMPLEtwitter64 = 212;
+  TFT_COMPLEtwitter128 = 213;
   // The string element type.
   TFT_STRING = 214;
 
@@ -205,7 +205,7 @@ enum FullTypeId {
   // core type system or be consisdered third-party (and consequently moved to
   // user-defined type mechanisms). Presently, they are effectively in the core
   // type system, because key compilation passes like Placer account for their
-  // existence.
+  // etwitteristence.
 
   // Datasets created by tf.data ops and APIs. Datasets have generator/iterable
   // semantics, that is, one can construct an iterator from them. Like
@@ -213,14 +213,14 @@ enum FullTypeId {
   // by a single type. Unlike Array, they do not support random access or
   // mutation, and can potentially produce an infinite number of elements.
   // A datasets can produce logical structures (e.g. multiple elements). This
-  // is expressed using TFT_PRODUCT.
+  // is etwitterpressed using TFT_PRODUCT.
   //
   //
   // Parametrization: TFT_ARRAY[<element type>].
   //   * <element type> may be a concrete type or a type symbol. It represents
   //     the data type of the elements produced by the dataset.
   //
-  // Examples:
+  // Etwitteramples:
   //   TFT_DATSET[TFT_TENSOR[TFT_INT32]] is a Dataset producing single int32
   //     Tensors of unknown shape.
   //   TFT_DATSET[TFT_PRODUCT[TFT_TENSOR[TFT_INT32], TFT_TENSOR[TFT_FLOAT32]] is
@@ -234,16 +234,16 @@ enum FullTypeId {
   // Parametrization: TFT_RAGGED[<element_type>].
   TFT_RAGGED = 10103;
 
-  // A mutex lock tensor, produced by tf.raw_ops.MutexLock.
-  // Unlike strict execution models, where ownership of a lock is denoted by
+  // A mutetwitter lock tensor, produced by tf.raw_ops.MutetwitterLock.
+  // Unlike strict etwitterecution models, where ownership of a lock is denoted by
   // "running after the lock has been acquired", in non-strict mode, lock
   // ownership is in the true sense: "the op argument representing the lock is
   // available".
-  // Mutex locks are the dynamic counterpart of control dependencies.
+  // Mutetwitter locks are the dynamic counterpart of control dependencies.
   // TODO(mdan): Properly document this thing.
   //
-  // Parametrization: TFT_MUTEX_LOCK[].
-  TFT_MUTEX_LOCK = 10202;
+  // Parametrization: TFT_MUTEtwitter_LOCK[].
+  TFT_MUTEtwitter_LOCK = 10202;
 
   // The equivalent of a Tensor with DT_VARIANT dtype, kept here to simplify
   // translation. This type should not normally appear after type inference.
@@ -252,7 +252,7 @@ enum FullTypeId {
   TFT_LEGACY_VARIANT = 10203;
 }
 
-// Highly experimental and very likely to change.
+// Highly etwitterperimental and very likely to change.
 // This encoding uses tags instead of dedicated messages for regularity. In
 // particular the encoding imposes no restrictions on what the parameters of any
 // type should be, which in particular needs to be true for type symbols.
@@ -265,7 +265,7 @@ message FullTypeDef {
   repeated FullTypeDef args = 2;
 
   // Literal values of this type object, if the the type admits one.
-  // For example, a type variable admits a string attribute - its name.
+  // For etwitterample, a type variable admits a string attribute - its name.
   // Shape-related types may admit int attributes - their static shape values.
   // Fields for more data types to be added as needed.
   oneof attr {

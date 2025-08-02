@@ -1,18 +1,18 @@
 package com.twitter.search.ingester.pipeline.twitter.kafka;
 
-import javax.naming.NamingException;
+import javatwitter.naming.NamingEtwitterception;
 
 import com.google.common.base.Preconditions;
 
-import org.apache.commons.pipeline.StageException;
+import org.apache.commons.pipeline.StageEtwitterception;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 
 import com.twitter.search.ingester.model.IngesterTwitterMessage;
 import com.twitter.search.ingester.pipeline.twitter.ThriftVersionedEventsConverter;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
+import com.twitter.search.ingester.pipeline.util.PipelineStageEtwitterception;
 
 @ConsumedTypes(IngesterTwitterMessage.class)
-public class DeleteUpdateEventsKafkaProducerStage extends KafkaProducerStage
+public class DeleteUpdateEventsKafkaProducerStage etwittertends KafkaProducerStage
     <IngesterTwitterMessage> {
   private ThriftVersionedEventsConverter converter;
 
@@ -26,25 +26,25 @@ public class DeleteUpdateEventsKafkaProducerStage extends KafkaProducerStage
   }
 
   @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
+  protected void innerSetup() throws PipelineStageEtwitterception, NamingEtwitterception {
     super.innerSetup();
     commonInnerSetup();
   }
 
   @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
+  protected void doInnerPreprocess() throws StageEtwitterception, NamingEtwitterception {
     super.doInnerPreprocess();
     commonInnerSetup();
   }
 
-  private void commonInnerSetup() throws NamingException {
+  private void commonInnerSetup() throws NamingEtwitterception {
     converter = new ThriftVersionedEventsConverter(wireModule.getPenguinVersions());
 
   }
   @Override
-  public void innerProcess(Object obj) throws StageException {
+  public void innerProcess(Object obj) throws StageEtwitterception {
     if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not an IngesterTwitterMessage: " + obj);
+      throw new StageEtwitterception(this, "Object is not an IngesterTwitterMessage: " + obj);
     }
 
     IngesterTwitterMessage message = (IngesterTwitterMessage) obj;

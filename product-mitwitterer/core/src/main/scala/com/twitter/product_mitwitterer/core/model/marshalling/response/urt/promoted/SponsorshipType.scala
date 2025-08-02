@@ -1,0 +1,7 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.promoted
+
+sealed trait SponsorshipType
+
+case object DirectSponsorshipType etwittertends SponsorshipType
+case object IndirectSponsorshipType etwittertends SponsorshipType
+case object NoSponsorshipSponsorshipType etwittertends SponsorshipType

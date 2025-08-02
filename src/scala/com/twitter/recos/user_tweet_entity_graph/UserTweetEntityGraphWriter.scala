@@ -3,8 +3,8 @@ package com.twitter.recos.user_tweet_entity_graph
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
 import com.twitter.graphjet.algorithms.{RecommendationType, TweetIDMask}
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph
-import com.twitter.graphjet.bipartite.segment.NodeMetadataLeftIndexedBipartiteGraphSegment
+import com.twitter.graphjet.bipartite.NodeMetadataLeftIndetwitteredMultiSegmentBipartiteGraph
+import com.twitter.graphjet.bipartite.segment.NodeMetadataLeftIndetwitteredBipartiteGraphSegment
 import com.twitter.recos.hose.common.UnifiedGraphWriter
 import com.twitter.recos.internal.thriftscala.RecosHoseMessage
 import com.twitter.recos.serviceapi.Tweetypie._
@@ -29,16 +29,16 @@ case class UserTweetEntityGraphWriter(
   kafkaConsumerBuilder: FinagleKafkaConsumerBuilder[String, RecosHoseMessage],
   clientId: String,
   statsReceiver: StatsReceiver)
-    extends UnifiedGraphWriter[
-      NodeMetadataLeftIndexedBipartiteGraphSegment,
-      NodeMetadataLeftIndexedMultiSegmentBipartiteGraph
+    etwittertends UnifiedGraphWriter[
+      NodeMetadataLeftIndetwitteredBipartiteGraphSegment,
+      NodeMetadataLeftIndetwitteredMultiSegmentBipartiteGraph
     ] {
   writer =>
-  // The max throughput for each kafka consumer is around 25MB/s
+  // The matwitter throughput for each kafka consumer is around 25MB/s
   // Use 4 processors for 100MB/s catch-up speed.
   val consumerNum: Int = 4
   // Leave 1 Segments to LiveWriter
-  val catchupWriterNum: Int = RecosConfig.maxNumSegments - 1
+  val catchupWriterNum: Int = RecosConfig.matwitterNumSegments - 1
 
   private final val EMTPY_LEFT_NODE_METADATA = new Array[Array[Int]](1)
 
@@ -47,7 +47,7 @@ case class UserTweetEntityGraphWriter(
    * current segment
    */
   override def addEdgeToGraph(
-    graph: NodeMetadataLeftIndexedMultiSegmentBipartiteGraph,
+    graph: NodeMetadataLeftIndetwitteredMultiSegmentBipartiteGraph,
     recosHoseMessage: RecosHoseMessage
   ): Unit = {
     graph.addEdge(
@@ -56,7 +56,7 @@ case class UserTweetEntityGraphWriter(
       UserTweetEdgeTypeMask.actionTypeToEdgeType(recosHoseMessage.action),
       recosHoseMessage.edgeMetadata.getOrElse(0L),
       EMTPY_LEFT_NODE_METADATA,
-      extractEntities(recosHoseMessage)
+      etwittertractEntities(recosHoseMessage)
     )
   }
 
@@ -65,7 +65,7 @@ case class UserTweetEntityGraphWriter(
    * insert edges to non-current (old) segments
    */
   override def addEdgeToSegment(
-    segment: NodeMetadataLeftIndexedBipartiteGraphSegment,
+    segment: NodeMetadataLeftIndetwitteredBipartiteGraphSegment,
     recosHoseMessage: RecosHoseMessage
   ): Unit = {
     segment.addEdge(
@@ -74,7 +74,7 @@ case class UserTweetEntityGraphWriter(
       UserTweetEdgeTypeMask.actionTypeToEdgeType(recosHoseMessage.action),
       recosHoseMessage.edgeMetadata.getOrElse(0L),
       EMTPY_LEFT_NODE_METADATA,
-      extractEntities(recosHoseMessage)
+      etwittertractEntities(recosHoseMessage)
     )
   }
 
@@ -90,7 +90,7 @@ case class UserTweetEntityGraphWriter(
       .getOrElse(rightId)
   }
 
-  private def extractEntities(message: RecosHoseMessage): Array[Array[Int]] = {
+  private def etwittertractEntities(message: RecosHoseMessage): Array[Array[Int]] = {
     val entities: Array[Array[Int]] =
       new Array[Array[Int]](RecommendationType.METADATASIZE.getValue)
     message.entities.foreach {

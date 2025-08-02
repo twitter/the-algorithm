@@ -22,7 +22,7 @@ trait SoftTtl[-V] {
   /**
    * Wraps the value in Fresh or Stale depending on the value of `isFresh`.
    *
-   * (The type variable U exists because it is not allowed to return
+   * (The type variable U etwitterists because it is not allowed to return
    * values of a contravariant type, so we must define a variable that
    * is a specific subclass of V. This is worth it because it allows
    * us to create polymorphic policies without having to specify the
@@ -40,7 +40,7 @@ object SoftTtl {
    * Regardless of the inputs, the value will always be considered
    * fresh.
    */
-  object NeverRefresh extends SoftTtl[Any] {
+  object NeverRefresh etwittertends SoftTtl[Any] {
     override def isFresh(_unusedValue: Any, _unusedCachedAt: Time): Boolean = true
   }
 
@@ -66,25 +66,25 @@ object SoftTtl {
     jitter: Duration,
     specificLogger: Logger = null,
     rng: Random = Random)
-      extends SoftTtl[Any] {
+      etwittertends SoftTtl[Any] {
 
     private[this] val logger: Logger =
       if (specificLogger == null) Logger(getClass) else specificLogger
 
-    private[this] val maxJitterMs: Long = jitter.inMilliseconds
+    private[this] val matwitterJitterMs: Long = jitter.inMilliseconds
 
-    // this requirement is due to using Random.nextInt to choose the
+    // this requirement is due to using Random.netwittertInt to choose the
     // jitter, but it allows jitter of greater than 24 days
-    require(maxJitterMs <= (Int.MaxValue / 2))
+    require(matwitterJitterMs <= (Int.MatwitterValue / 2))
 
     // Negative jitter probably indicates misuse of the API
-    require(maxJitterMs >= 0)
+    require(matwitterJitterMs >= 0)
 
     // we want period +/- jitter, but the random generator
     // generates non-negative numbers, so we generate [0, 2 *
-    // maxJitter) and subtract maxJitter to obtain [-maxJitter,
-    // maxJitter)
-    private[this] val maxJitterRangeMs: Int = (maxJitterMs * 2).toInt
+    // matwitterJitter) and subtract matwitterJitter to obtain [-matwitterJitter,
+    // matwitterJitter)
+    private[this] val matwitterJitterRangeMs: Int = (matwitterJitterMs * 2).toInt
 
     // We perform all calculations in milliseconds, so convert the
     // period to milliseconds out here.
@@ -92,11 +92,11 @@ object SoftTtl {
 
     // If the value is below this age, it will always be fresh,
     // regardless of jitter.
-    private[this] val alwaysFreshAgeMs: Long = softTtlMs - maxJitterMs
+    private[this] val alwaysFreshAgeMs: Long = softTtlMs - matwitterJitterMs
 
     // If the value is above this age, it will always be stale,
     // regardless of jitter.
-    private[this] val alwaysStaleAgeMs: Long = softTtlMs + maxJitterMs
+    private[this] val alwaysStaleAgeMs: Long = softTtlMs + matwitterJitterMs
 
     override def isFresh(value: Any, cachedAt: Time): Boolean = {
       val ageMs: Long = (Time.now - cachedAt).inMilliseconds
@@ -106,7 +106,7 @@ object SoftTtl {
         } else if (ageMs > alwaysStaleAgeMs) {
           false
         } else {
-          val jitterMs: Long = rng.nextInt(maxJitterRangeMs) - maxJitterMs
+          val jitterMs: Long = rng.netwittertInt(matwitterJitterRangeMs) - matwitterJitterMs
           ageMs <= softTtlMs + jitterMs
         }
 

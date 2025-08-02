@@ -1,6 +1,6 @@
 package com.twitter.visibility.rules
 
-import com.twitter.visibility.configapi.params.FSRuleParams.HighToxicityModelScoreSpaceThresholdParam
+import com.twitter.visibility.configapi.params.FSRuleParams.HighTotwittericityModelScoreSpaceThresholdParam
 import com.twitter.visibility.configapi.params.RuleParam
 import com.twitter.visibility.configapi.params.RuleParams.EnableMutedKeywordFilteringSpaceTitleNotificationsRuleParam
 import com.twitter.visibility.models.SpaceSafetyLabelType.CoordinatedHarmfulActivityHighRecall
@@ -17,7 +17,7 @@ import com.twitter.visibility.models.UserLabelValue.NsfwBannerImage
 import com.twitter.visibility.models.UserLabelValue.NsfwNearPerfect
 import com.twitter.visibility.models.SpaceSafetyLabelType
 import com.twitter.visibility.models.SpaceSafetyLabelType.HatefulHighRecall
-import com.twitter.visibility.models.SpaceSafetyLabelType.HighToxicityModelScore
+import com.twitter.visibility.models.SpaceSafetyLabelType.HighTotwittericityModelScore
 import com.twitter.visibility.models.SpaceSafetyLabelType.ViolenceHighRecall
 import com.twitter.visibility.models.UserLabelValue
 import com.twitter.visibility.rules.Condition._
@@ -29,88 +29,88 @@ object SpaceRules {
   abstract class SpaceHasLabelRule(
     action: Action,
     safetyLabelType: SpaceSafetyLabelType)
-      extends RuleWithConstantAction(action, And(SpaceHasLabel(safetyLabelType), NonAuthorViewer))
+      etwittertends RuleWithConstantAction(action, And(SpaceHasLabel(safetyLabelType), NonAuthorViewer))
 
   abstract class SpaceHasLabelAndNonFollowerRule(
     action: Action,
     safetyLabelType: SpaceSafetyLabelType)
-      extends RuleWithConstantAction(
+      etwittertends RuleWithConstantAction(
         action,
         And(SpaceHasLabel(safetyLabelType), LoggedOutOrViewerNotFollowingAuthor))
 
   abstract class AnySpaceHostOrAdminHasLabelRule(
     action: Action,
     userLabel: UserLabelValue)
-      extends WhenAuthorUserLabelPresentRule(action, userLabel)
+      etwittertends WhenAuthorUserLabelPresentRule(action, userLabel)
 
   abstract class AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
     action: Action,
     userLabel: UserLabelValue)
-      extends ConditionWithUserLabelRule(action, LoggedOutOrViewerNotFollowingAuthor, userLabel)
+      etwittertends ConditionWithUserLabelRule(action, LoggedOutOrViewerNotFollowingAuthor, userLabel)
 
 
   object SpaceDoNotAmplifyAllUsersDropRule
-      extends SpaceHasLabelRule(
+      etwittertends SpaceHasLabelRule(
         Drop(Unspecified),
         DoNotAmplify,
       )
 
   object SpaceDoNotAmplifyNonFollowerDropRule
-      extends SpaceHasLabelAndNonFollowerRule(
+      etwittertends SpaceHasLabelAndNonFollowerRule(
         Drop(Unspecified),
         DoNotAmplify,
       )
 
   object SpaceCoordHarmfulActivityHighRecallAllUsersDropRule
-      extends SpaceHasLabelRule(
+      etwittertends SpaceHasLabelRule(
         Drop(Unspecified),
         CoordinatedHarmfulActivityHighRecall,
       )
 
   object SpaceCoordHarmfulActivityHighRecallNonFollowerDropRule
-      extends SpaceHasLabelAndNonFollowerRule(
+      etwittertends SpaceHasLabelAndNonFollowerRule(
         Drop(Unspecified),
         CoordinatedHarmfulActivityHighRecall,
       )
 
   object SpaceUntrustedUrlAllUsersDropRule
-      extends SpaceHasLabelRule(
+      etwittertends SpaceHasLabelRule(
         Drop(Unspecified),
         UntrustedUrl,
       )
 
   object SpaceUntrustedUrlNonFollowerDropRule
-      extends SpaceHasLabelAndNonFollowerRule(
+      etwittertends SpaceHasLabelAndNonFollowerRule(
         Drop(Unspecified),
         UntrustedUrl,
       )
 
   object SpaceMisleadingHighRecallNonFollowerDropRule
-      extends SpaceHasLabelAndNonFollowerRule(
+      etwittertends SpaceHasLabelAndNonFollowerRule(
         Drop(Unspecified),
         MisleadingHighRecall,
       )
 
   object SpaceNsfwHighPrecisionAllUsersInterstitialRule
-      extends SpaceHasLabelRule(
+      etwittertends SpaceHasLabelRule(
         Interstitial(Nsfw),
         NsfwHighPrecision,
       )
 
   object SpaceNsfwHighPrecisionAllUsersDropRule
-      extends SpaceHasLabelRule(
+      etwittertends SpaceHasLabelRule(
         Drop(Nsfw),
         NsfwHighPrecision,
       )
 
   object SpaceNsfwHighPrecisionNonFollowerDropRule
-      extends SpaceHasLabelAndNonFollowerRule(
+      etwittertends SpaceHasLabelAndNonFollowerRule(
         Drop(Nsfw),
         NsfwHighPrecision,
       )
 
   object SpaceNsfwHighPrecisionSafeSearchNonFollowerDropRule
-      extends RuleWithConstantAction(
+      etwittertends RuleWithConstantAction(
         Drop(Nsfw),
         And(
           SpaceHasLabel(NsfwHighPrecision),
@@ -121,19 +121,19 @@ object SpaceRules {
       )
 
   object SpaceNsfwHighRecallAllUsersDropRule
-      extends SpaceHasLabelRule(
+      etwittertends SpaceHasLabelRule(
         Drop(Nsfw),
         NsfwHighRecall,
       )
 
   object SpaceNsfwHighRecallNonFollowerDropRule
-      extends SpaceHasLabelAndNonFollowerRule(
+      etwittertends SpaceHasLabelAndNonFollowerRule(
         Drop(Nsfw),
         NsfwHighRecall,
       )
 
   object SpaceNsfwHighRecallSafeSearchNonFollowerDropRule
-      extends RuleWithConstantAction(
+      etwittertends RuleWithConstantAction(
         Drop(Nsfw),
         And(
           SpaceHasLabel(NsfwHighRecall),
@@ -144,34 +144,34 @@ object SpaceRules {
       )
 
   object SpaceHatefulHighRecallAllUsersDropRule
-      extends SpaceHasLabelRule(
+      etwittertends SpaceHasLabelRule(
         Drop(Unspecified),
         HatefulHighRecall,
       )
 
   object SpaceViolenceHighRecallAllUsersDropRule
-      extends SpaceHasLabelRule(
+      etwittertends SpaceHasLabelRule(
         Drop(Unspecified),
         ViolenceHighRecall,
       )
 
-  object SpaceHighToxicityScoreNonFollowerDropRule
-      extends RuleWithConstantAction(
+  object SpaceHighTotwittericityScoreNonFollowerDropRule
+      etwittertends RuleWithConstantAction(
         Drop(Unspecified),
         And(
           SpaceHasLabelWithScoreAboveThresholdWithParam(
-            HighToxicityModelScore,
-            HighToxicityModelScoreSpaceThresholdParam
+            HighTotwittericityModelScore,
+            HighTotwittericityModelScoreSpaceThresholdParam
           ),
           NonAuthorViewer,
           LoggedOutOrViewerNotFollowingAuthor,
         )
       )
-      with ExperimentalRule
+      with EtwitterperimentalRule
 
 
   object ViewerHasMatchingMutedKeywordInSpaceTitleForNotificationsRule
-      extends OnlyWhenNotAuthorViewerRule(
+      etwittertends OnlyWhenNotAuthorViewerRule(
         Drop(Reason.MutedKeyword),
         Condition.ViewerHasMatchingKeywordInSpaceTitleForNotifications
       ) {
@@ -182,37 +182,37 @@ object SpaceRules {
 
 
   object UserAbusiveNonFollowerDropRule
-      extends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
+      etwittertends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
         Drop(Unspecified),
         Abusive
       )
 
   object UserBlinkWorstAllUsersDropRule
-      extends AnySpaceHostOrAdminHasLabelRule(
+      etwittertends AnySpaceHostOrAdminHasLabelRule(
         Drop(Unspecified),
         BlinkWorst
       )
 
   object UserNsfwNearPerfectNonFollowerDropRule
-      extends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
+      etwittertends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
         Drop(Nsfw),
         NsfwNearPerfect
       )
 
   object UserNsfwHighPrecisionNonFollowerDropRule
-      extends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
+      etwittertends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
         Drop(Nsfw),
         UserLabelValue.NsfwHighPrecision
       )
 
   object UserNsfwAvatarImageNonFollowerDropRule
-      extends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
+      etwittertends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
         Drop(Nsfw),
         NsfwAvatarImage
       )
 
   object UserNsfwBannerImageNonFollowerDropRule
-      extends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
+      etwittertends AnySpaceHostOrAdminHasLabelAndNonFollowerRule(
         Drop(Nsfw),
         NsfwBannerImage
       )

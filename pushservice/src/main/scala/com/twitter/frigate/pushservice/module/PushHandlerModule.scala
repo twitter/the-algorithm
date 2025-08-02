@@ -15,7 +15,7 @@ import com.twitter.frigate.pushservice.take.SendHandlerNotifier
 import com.twitter.frigate.pushservice.target.PushTargetUserBuilder
 import com.twitter.inject.TwitterModule
 
-object PushHandlerModule extends TwitterModule {
+object PushHandlerModule etwittertends TwitterModule {
 
   @Provides
   @Singleton

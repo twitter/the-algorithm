@@ -9,7 +9,7 @@ The function `apply_mask` applies a binary mask to the channels of a given tenso
 following loss:
 
   logits = tf.matmul(features, weights)
-  loss = tf.losses.sparse_softmax_cross_entropy(labels, logits)
+  loss = tf.losses.sparse_softmatwitter_cross_entropy(labels, logits)
 
 Each mask has a corresponding pruning signal. The function `update_pruning_signals` will update and
 return these signals:
@@ -37,7 +37,7 @@ import numpy as np
 import tensorflow.compat.v1 as tf
 
 MASK_COLLECTION = 'pruning/masks'
-MASK_EXTENDED_COLLECTION = 'pruning/masks_extended'
+MASK_EtwitterTENDED_COLLECTION = 'pruning/masks_etwittertended'
 OP_COLLECTION = 'pruning/ops'
 
 
@@ -62,42 +62,42 @@ def apply_mask(tensor, name='pruning'):
     mask = tf.Variable(tf.ones(tensor.shape.as_list()[-1]), trainable=False, name='mask')
     pruning_signal = tf.Variable(tf.zeros_like(mask), trainable=False, name='signal')
 
-    # extending masks is a trick to get a separate gradient for each data point
-    mask_extended = extend_mask(mask, tensor)
+    # etwittertending masks is a trick to get a separate gradient for each data point
+    mask_etwittertended = etwittertend_mask(mask, tensor)
 
-  # store extended mask, pruning signal, and other vars for easy access later
-  mask.extended = mask_extended
+  # store etwittertended mask, pruning signal, and other vars for easy access later
+  mask.etwittertended = mask_etwittertended
   mask.pruning_signal = pruning_signal
   mask.tensor = tensor
 
   # mask tensor
-  tensor = tf.multiply(tensor, mask_extended)
+  tensor = tf.multiply(tensor, mask_etwittertended)
   tensor.set_shape(tensor_shape)
   tensor._mask = mask
 
   tf.add_to_collection(MASK_COLLECTION, mask)
-  tf.add_to_collection(MASK_EXTENDED_COLLECTION, mask.extended)
+  tf.add_to_collection(MASK_EtwitterTENDED_COLLECTION, mask.etwittertended)
   tf.add_to_collection(OP_COLLECTION, tensor.op)
 
   return tensor
 
 
-def extend_mask(mask, tensor):
+def etwittertend_mask(mask, tensor):
   """
   Repeats the mask for each data point stored in a tensor.
 
-  If `tensor` is AxBxC dimensional and `mask` is C dimensional, returns an Ax1xC dimensional
+  If `tensor` is AtwitterBtwitterC dimensional and `mask` is C dimensional, returns an Atwitter1twitterC dimensional
   tensor with A copies or `mask`.
 
   Arguments:
     mask: tf.Tensor
-      The mask which will be extended
+      The mask which will be etwittertended
 
     tensor: tf.Tensor
-      The tensor to which the extended mask will be applied
+      The tensor to which the etwittertended mask will be applied
 
   Returns:
-    The extended mask
+    The etwittertended mask
   """
 
   batch_size = tf.shape(tensor)[:1]
@@ -211,7 +211,7 @@ def pruned_shape(tensor):
 
 def computational_cost(op_or_tensor, _observed=None):
   """
-  Estimates the computational complexity of a pruned graph (number of floating point operations).
+  Estimates the computational completwitterity of a pruned graph (number of floating point operations).
 
   This function currently only supports sequential graphs such as those of MLPs and
   simple CNNs with 2D convolutions in NHWC format.
@@ -228,9 +228,9 @@ def computational_cost(op_or_tensor, _observed=None):
 
   cost = tf.constant(0.)
 
-  # exclude cost of computing extended pruning masks
-  masks_extended = [mask.extended for mask in tf.get_collection(MASK_COLLECTION)]
-  if op_or_tensor in masks_extended:
+  # etwitterclude cost of computing etwittertended pruning masks
+  masks_etwittertended = [mask.etwittertended for mask in tf.get_collection(MASK_COLLECTION)]
+  if op_or_tensor in masks_etwittertended:
     return cost
 
   # convert tensor to op
@@ -249,7 +249,7 @@ def computational_cost(op_or_tensor, _observed=None):
 
   # add cost of operation
   if op.op_def is None or op in tf.get_collection(OP_COLLECTION):
-    # exclude cost of undefined ops and pruning ops
+    # etwitterclude cost of undefined ops and pruning ops
     return cost
 
   elif op.op_def.name == 'MatMul':
@@ -282,7 +282,7 @@ def update_pruning_signals(loss, decay=.96, masks=None, method='Fisher'):
       Any cross-entropy loss
 
     decay: float
-      Controls exponential moving average of pruning signals
+      Controls etwitterponential moving average of pruning signals
 
     method: str
       Method used to compute pruning signal (currently only supports 'Fisher')
@@ -304,8 +304,8 @@ def update_pruning_signals(loss, decay=.96, masks=None, method='Fisher'):
     return []
 
   with tf.variable_scope('pruning_opt', reuse=True):
-    # compute gradients of extended masks (yields separate gradient for each data point)
-    grads = tf.gradients(loss, [m.extended for m in masks])
+    # compute gradients of etwittertended masks (yields separate gradient for each data point)
+    grads = tf.gradients(loss, [m.etwittertended for m in masks])
 
     # estimate Fisher pruning signals from batch
     signals_batch = [tf.squeeze(tf.reduce_mean(tf.square(g), 0)) for g in grads]
@@ -341,21 +341,21 @@ def prune(signals, masks=None):
     signals = [tf.where(m > .5, s, tf.zeros_like(s) + np.inf) for m, s in zip(masks, signals)]
 
     # find units with smallest pruning signal in each layer
-    min_idx = [tf.argmin(s) for s in signals]
-    min_signals = [s[i] for s, i in zip(signals, min_idx)]
+    min_idtwitter = [tf.argmin(s) for s in signals]
+    min_signals = [s[i] for s, i in zip(signals, min_idtwitter)]
 
     # find layer with smallest pruning signal
     l = tf.argmin(min_signals)
 
     # construct pruning operations, one for each mask
     updates = []
-    for k, i in enumerate(min_idx):
+    for k, i in enumerate(min_idtwitter):
       # set mask of layer l to 0 where pruning signal is smallest
       updates.append(
         tf.cond(
           tf.equal(l, k),
           lambda: tf.scatter_update(
-            masks[k], tf.Print(i, [i], message="Pruning layer [{0}] at index ".format(k)), 0.),
+            masks[k], tf.Print(i, [i], message="Pruning layer [{0}] at indetwitter ".format(k)), 0.),
           lambda: masks[k]))
 
     updates = tf.group(updates, name='prune')

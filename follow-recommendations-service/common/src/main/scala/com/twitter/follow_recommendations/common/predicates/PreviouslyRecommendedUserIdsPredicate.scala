@@ -4,15 +4,15 @@ import com.twitter.follow_recommendations.common.base.Predicate
 import com.twitter.follow_recommendations.common.base.PredicateResult
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.models.HasPreviousRecommendationsContext
+import com.twitter.follow_recommendations.common.models.HasPreviousRecommendationsContetwittert
 import com.twitter.stitch.Stitch
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
 @Singleton
 class PreviouslyRecommendedUserIdsPredicate
-    extends Predicate[(HasPreviousRecommendationsContext, CandidateUser)] {
+    etwittertends Predicate[(HasPreviousRecommendationsContetwittert, CandidateUser)] {
   override def apply(
-    pair: (HasPreviousRecommendationsContext, CandidateUser)
+    pair: (HasPreviousRecommendationsContetwittert, CandidateUser)
   ): Stitch[PredicateResult] = {
 
     val (targetUser, candidate) = pair

@@ -60,12 +60,12 @@ class Partition(Layer):
         [[vals_0, vals_1], [keys_0, keys_1], [indices_0, indices_1]]
 
       where:
-        vals_x:
-          values of the hashmap for partition x
-        keys_x:
-          keys of the hashmap for partition x
-        indices_x:
-          indices of the hashmap for partition x
+        vals_twitter:
+          values of the hashmap for partition twitter
+        keys_twitter:
+          keys of the hashmap for partition twitter
+        indices_twitter:
+          indices of the hashmap for partition twitter
     """
     partioned_val = tf.dynamic_partition(input_vals, partition_ids, self.partitions)
     partioned_keys = tf.dynamic_partition(input_keys, partition_ids, self.partitions)

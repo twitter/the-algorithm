@@ -1,8 +1,8 @@
 package com.twitter.search.earlybird_root;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javatwitter.inject.Inject;
+import javatwitter.inject.Named;
+import javatwitter.inject.Singleton;
 
 
 import com.twitter.finagle.Service;
@@ -21,14 +21,14 @@ import com.twitter.search.earlybird_root.caching.RelevanceZeroResultsCacheFilter
 import com.twitter.search.earlybird_root.caching.StrictRecencyCacheFilter;
 import com.twitter.search.earlybird_root.caching.TermStatsCacheFilter;
 import com.twitter.search.earlybird_root.caching.TopTweetsCacheFilter;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.earlybird_root.filters.ClientIdQuotaFilter;
 import com.twitter.search.earlybird_root.filters.ClientIdTrackingFilter;
 import com.twitter.search.earlybird_root.filters.ClientRequestTimeFilter;
 import com.twitter.search.earlybird_root.filters.DeadlineTimeoutStatsFilter;
 import com.twitter.search.earlybird_root.filters.DropAllProtectedOperatorFilter;
 import com.twitter.search.earlybird_root.filters.EarlybirdFeatureSchemaAnnotateFilter;
-import com.twitter.search.earlybird_root.filters.InitializeRequestContextFilter;
+import com.twitter.search.earlybird_root.filters.InitializeRequestContetwittertFilter;
 import com.twitter.search.earlybird_root.filters.MetadataTrackingFilter;
 import com.twitter.search.earlybird_root.filters.NullcastTrackingFilter;
 import com.twitter.search.earlybird_root.filters.PostCacheRequestTypeCountFilter;
@@ -37,9 +37,9 @@ import com.twitter.search.earlybird_root.filters.QueryLangStatFilter;
 import com.twitter.search.earlybird_root.filters.QueryOperatorStatFilter;
 import com.twitter.search.earlybird_root.filters.RequestResultStatsFilter;
 import com.twitter.search.earlybird_root.filters.ResponseCodeStatFilter;
-import com.twitter.search.earlybird_root.filters.SearchPayloadSizeLocalContextFilter;
+import com.twitter.search.earlybird_root.filters.SearchPayloadSizeLocalContetwittertFilter;
 import com.twitter.search.earlybird_root.filters.StratoAttributionClientIdFilter;
-import com.twitter.search.earlybird_root.filters.TopLevelExceptionHandlingFilter;
+import com.twitter.search.earlybird_root.filters.TopLevelEtwitterceptionHandlingFilter;
 import com.twitter.util.Future;
 
 @Singleton
@@ -49,14 +49,14 @@ public class RealtimeCgRootService implements EarlybirdService.ServiceIface {
 
   @Inject
   public RealtimeCgRootService(
-      TopLevelExceptionHandlingFilter topLevelExceptionHandlingFilter,
+      TopLevelEtwitterceptionHandlingFilter topLevelEtwitterceptionHandlingFilter,
       ResponseCodeStatFilter responseCodeStatFilter,
       LoggingFilter<EarlybirdRequest, EarlybirdResponse> loggingFilter,
       RequestValidationFilter<EarlybirdRequest, EarlybirdResponse> validationFilter,
       MtlsServerSessionTrackerFilter<EarlybirdRequest, EarlybirdResponse> mtlsFilter,
       FinagleClientStatsFilter<EarlybirdRequest, EarlybirdResponse> finagleStatsFilter,
       InitializeFilter initializeFilter,
-      InitializeRequestContextFilter initializeRequestContextFilter,
+      InitializeRequestContetwittertFilter initializeRequestContetwittertFilter,
       QueryLangStatFilter queryLangStatFilter,
       DropAllProtectedOperatorFilter dropAllProtectedOperatorFilter,
       QueryOperatorStatFilter queryOperatorStatFilter,
@@ -77,16 +77,16 @@ public class RealtimeCgRootService implements EarlybirdService.ServiceIface {
       ClientRequestTimeFilter clientRequestTimeFilter,
       DeadlineTimeoutStatsFilter deadlineTimeoutStatsFilter,
       EarlybirdFeatureSchemaAnnotateFilter featureSchemaAnnotateFilter,
-      SearchPayloadSizeLocalContextFilter searchPayloadSizeLocalContextFilter,
+      SearchPayloadSizeLocalContetwittertFilter searchPayloadSizeLocalContetwittertFilter,
       @Named(ProtectedScatterGatherModule.NAMED_SCATTER_GATHER_SERVICE)
-          Service<EarlybirdRequestContext, EarlybirdResponse> scatterGatherService,
+          Service<EarlybirdRequestContetwittert, EarlybirdResponse> scatterGatherService,
       StratoAttributionClientIdFilter stratoAttributionClientIdFilter) {
     this.allFiltersAndService =
         loggingFilter
-            .andThen(topLevelExceptionHandlingFilter)
+            .andThen(topLevelEtwitterceptionHandlingFilter)
             .andThen(stratoAttributionClientIdFilter)
             .andThen(clientRequestTimeFilter)
-            .andThen(searchPayloadSizeLocalContextFilter)
+            .andThen(searchPayloadSizeLocalContetwittertFilter)
             .andThen(responseCodeStatFilter)
             .andThen(requestResultStatsFilter)
             .andThen(validationFilter)
@@ -96,7 +96,7 @@ public class RealtimeCgRootService implements EarlybirdService.ServiceIface {
             .andThen(quotaFilter)
             .andThen(metadataTrackingFilter)
             .andThen(initializeFilter)
-            .andThen(initializeRequestContextFilter)
+            .andThen(initializeRequestContetwittertFilter)
             .andThen(deadlineTimeoutStatsFilter)
             .andThen(queryLangStatFilter)
             .andThen(nullcastTrackingFilter)
@@ -122,7 +122,7 @@ public class RealtimeCgRootService implements EarlybirdService.ServiceIface {
 
   @Override
   public Future<EarlybirdStatusResponse> getStatus() {
-    throw new UnsupportedOperationException("not supported");
+    throw new UnsupportedOperationEtwitterception("not supported");
   }
 
   @Override

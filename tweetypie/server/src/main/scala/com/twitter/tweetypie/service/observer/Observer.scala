@@ -6,7 +6,7 @@ import com.twitter.snowflake.id.SnowflakeId
 import com.twitter.tweetypie.additionalfields.AdditionalFields
 import com.twitter.tweetypie.media.MediaKeyClassifier
 import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.tweettext.TweetText.codePointLength
+import com.twitter.tweetypie.tweettetwittert.TweetTetwittert.codePointLength
 import com.twitter.conversions.DurationOps._
 
 /**
@@ -283,7 +283,7 @@ private[service] object Observer {
     val quotedTweetCounter = stats.counter("quoted_tweet")
     val selfRetweetCounter = stats.counter("self_retweet")
     val languageScope = stats.scope("language")
-    val textLengthStat = stats.stat("text_length")
+    val tetwittertLengthStat = stats.stat("tetwittert_length")
     val selfThreadCounter = stats.counter("self_thread")
     val communitiesTweetCounter = stats.counter("communities")
 
@@ -342,21 +342,21 @@ private[service] object Observer {
           hashtagsStat.add(hashtags.size)
           mediaStat.add(media.size)
 
-          if (mediaKeys.exists(MediaKeyClassifier.isImage(_))) photosCounter.incr()
-          if (mediaKeys.exists(MediaKeyClassifier.isGif(_))) gifsCounter.incr()
-          if (mediaKeys.exists(MediaKeyClassifier.isVideo(_))) videosCounter.incr()
+          if (mediaKeys.etwitterists(MediaKeyClassifier.isImage(_))) photosCounter.incr()
+          if (mediaKeys.etwitterists(MediaKeyClassifier.isGif(_))) gifsCounter.incr()
+          if (mediaKeys.etwitterists(MediaKeyClassifier.isVideo(_))) videosCounter.incr()
 
-          if (tweet.cards.exists(_.nonEmpty)) cardsCounter.incr()
+          if (tweet.cards.etwitterists(_.nonEmpty)) cardsCounter.incr()
           if (tweet.card2.nonEmpty) card2Counter.incr()
           if (coreDataOptionField(_.coordinates).nonEmpty) geoCoordsCounter.incr()
           if (TweetLenses.place.get(tweet).nonEmpty) placeCounter.incr()
           if (TweetLenses.quotedTweet.get(tweet).nonEmpty) quotedTweetCounter.incr()
-          if (share.exists(_.sourceUserId == getUserId(tweet))) selfRetweetCounter.incr()
+          if (share.etwitterists(_.sourceUserId == getUserId(tweet))) selfRetweetCounter.incr()
 
           tweet.language
             .map(_.language)
             .foreach(lang => languageScope.counter(lang).incr())
-          coreDataField(_.text).foreach(text => textLengthStat.add(codePointLength(text)))
+          coreDataField(_.tetwittert).foreach(tetwittert => tetwittertLengthStat.add(codePointLength(tetwittert)))
         }
       }
     }

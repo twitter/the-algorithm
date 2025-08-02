@@ -32,13 +32,13 @@ object FaissCommon {
                 faissParam.quantizerKfactorRf,
                 faissParam.quantizerNprobe,
                 faissParam.ht))
-          case p => Failure(new IllegalArgumentException(s"Expected FaissParams got $p"))
+          case p => Failure(new IllegalArgumentEtwitterception(s"Etwitterpected FaissParams got $p"))
         }
     }
 
-  def isValidFaissIndex(path: AbstractFile): Boolean = {
+  def isValidFaissIndetwitter(path: AbstractFile): Boolean = {
     path.isDirectory &&
     path.hasSuccessFile &&
-    path.getChild("faiss.index").exists()
+    path.getChild("faiss.indetwitter").etwitterists()
   }
 }

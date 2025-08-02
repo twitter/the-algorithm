@@ -15,15 +15,15 @@ import com.twitter.strato.client.Client
 import com.twitter.strato.data.Conv
 import com.twitter.strato.thrift.ScroogeConv
 import com.twitter.usersignalservice.base.StratoSignalFetcher
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 case class VideoTweetsPlayback50Fetcher @Inject() (
   stratoClient: Client,
   timer: Timer,
   stats: StatsReceiver)
-    extends StratoSignalFetcher[
+    etwittertends StratoSignalFetcher[
       (UserId, VideoViewEngagementType),
       Unit,
       UserRecentVideoViewTweets
@@ -60,7 +60,7 @@ case class VideoTweetsPlayback50Fetcher @Inject() (
             SignalType.VideoView90dPlayback50V1,
             rawSignal.engagedAt,
             Some(InternalId.TweetId(rawSignal.tweetId)))
-        }.take(query.maxResults.getOrElse(Int.MaxValue))
+        }.take(query.matwitterResults.getOrElse(Int.MatwitterValue))
     }
   }
 

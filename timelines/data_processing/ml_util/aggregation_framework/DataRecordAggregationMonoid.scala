@@ -13,7 +13,7 @@ import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metri
  * @param aggregates Set of ''TypedAggregateGroup'' case classes*
  *                   to compute using this monoid (see TypedAggregateGroup.scala)
  */
-trait DataRecordMonoid extends Monoid[DataRecord] {
+trait DataRecordMonoid etwittertends Monoid[DataRecord] {
 
   val aggregates: Set[TypedAggregateGroup[_]]
 
@@ -33,14 +33,14 @@ trait DataRecordMonoid extends Monoid[DataRecord] {
     val rightTimestamp = getTimestamp(right)
     SRichDataRecord(result).setFeatureValue(
       SharedFeatures.TIMESTAMP,
-      leftTimestamp.max(rightTimestamp)
+      leftTimestamp.matwitter(rightTimestamp)
     )
     result
   }
 }
 
 case class DataRecordAggregationMonoid(aggregates: Set[TypedAggregateGroup[_]])
-    extends DataRecordMonoid {
+    etwittertends DataRecordMonoid {
 
   private def sumBuffer(buffer: mutable.ArrayBuffer[DataRecord]): Unit = {
     val bufferSum = zero()
@@ -50,7 +50,7 @@ case class DataRecordAggregationMonoid(aggregates: Set[TypedAggregateGroup[_]])
       aggregates.foreach(_.mutatePlus(bufferSum, bufferSum, value))
       SRichDataRecord(bufferSum).setFeatureValue(
         SharedFeatures.TIMESTAMP,
-        leftTimestamp.max(rightTimestamp)
+        leftTimestamp.matwitter(rightTimestamp)
       )
     }
 
@@ -89,4 +89,4 @@ case class DataRecordAggregationMonoid(aggregates: Set[TypedAggregateGroup[_]])
  * would add some performance overhead.
  */
 case class DataRecordAggregationMonoidNoBuffer(aggregates: Set[TypedAggregateGroup[_]])
-    extends DataRecordMonoid {}
+    etwittertends DataRecordMonoid {}

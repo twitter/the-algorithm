@@ -4,7 +4,7 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/com/google/inject/extensions:guice-assistedinject",
+        "3rdparty/jvm/com/google/inject/etwittertensions:guice-assistedinject",
         "3rdparty/jvm/net/codingwell:scala-guice",
         "3rdparty/jvm/org/slf4j:slf4j-api",
         "configapi/configapi-core",

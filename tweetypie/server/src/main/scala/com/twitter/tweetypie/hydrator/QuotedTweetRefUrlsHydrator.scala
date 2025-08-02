@@ -8,12 +8,12 @@ import com.twitter.tweetypie.repository._
 import com.twitter.tweetypie.thriftscala._
 
 /**
- * This populates expanded URL and display text in ShortenedUrl struct,
+ * This populates etwitterpanded URL and display tetwittert in ShortenedUrl struct,
  * which is part of QuotedTweet metadata. We are using User Identity repo
- * to retrieve user's current screen-name to construct expanded url, instead
+ * to retrieve user's current screen-name to construct etwitterpanded url, instead
  * of relying on URL hydration.
  *
- * Expanded urls contain a mutable screen name and an immutable tweetId.
+ * Etwitterpanded urls contain a mutable screen name and an immutable tweetId.
  * when visiting the link, you're always redirected to the link with
  * correct screen name - therefore, it's okay to have permalinks containing
  * old screen names that have since been changed by their user in the cache.
@@ -22,23 +22,23 @@ import com.twitter.tweetypie.thriftscala._
  *
  */
 object QuotedTweetRefUrlsHydrator {
-  type Type = ValueHydrator[Option[QuotedTweet], TweetCtx]
+  type Type = ValueHydrator[Option[QuotedTweet], TweetCttwitter]
 
   /**
    * Return true if longUrl is not set or if a prior hydration set it to shortUrl due to
    * a partial (to re-attempt hydration).
    */
   def needsHydration(s: ShortenedUrl): Boolean =
-    s.longUrl.isEmpty || s.displayText.isEmpty || s.longUrl == s.shortUrl
+    s.longUrl.isEmpty || s.displayTetwittert.isEmpty || s.longUrl == s.shortUrl
 
   def apply(repo: UserIdentityRepository.Type): Type = {
-    ValueHydrator[QuotedTweet, TweetCtx] { (curr, _) =>
+    ValueHydrator[QuotedTweet, TweetCttwitter] { (curr, _) =>
       repo(UserKey(curr.userId)).liftToTry.map { r =>
-        // we verify curr.permalink.exists pre-hydration
+        // we verify curr.permalink.etwitterists pre-hydration
         val shortUrl = curr.permalink.get.shortUrl
-        val expandedUrl = r match {
+        val etwitterpandedUrl = r match {
           case Return(user) => TweetPermalink(user.screenName, curr.tweetId).httpsUrl
-          case Throw(_) => shortUrl // fall-back to shortUrl as expandedUrl
+          case Throw(_) => shortUrl // fall-back to shortUrl as etwitterpandedUrl
         }
         ValueState.delta(
           curr,
@@ -46,16 +46,16 @@ object QuotedTweetRefUrlsHydrator {
             permalink = Some(
               ShortenedUrl(
                 shortUrl,
-                expandedUrl,
-                DisplayUrl.truncateUrl(expandedUrl, true)
+                etwitterpandedUrl,
+                DisplayUrl.truncateUrl(etwitterpandedUrl, true)
               )
             )
           )
         )
       }
     }
-  }.onlyIf { (curr, ctx) =>
-    curr.permalink.exists(needsHydration) &&
-    ctx.tweetFieldRequested(Tweet.QuotedTweetField) && !ctx.isRetweet
+  }.onlyIf { (curr, cttwitter) =>
+    curr.permalink.etwitterists(needsHydration) &&
+    cttwitter.tweetFieldRequested(Tweet.QuotedTweetField) && !cttwitter.isRetweet
   }.liftOption
 }

@@ -34,12 +34,12 @@ class StoreBuilder(
     globalStats.scope("representation_manager_client").scope(this.getClass.getSimpleName)
 
   // Column consts
-  private val ColPathPrefix = "recommendations/representation_manager/"
-  private val SimclustersTweetColPath = ColPathPrefix + "simClustersEmbedding.Tweet"
-  private val SimclustersUserColPath = ColPathPrefix + "simClustersEmbedding.User"
-  private val SimclustersTopicIdColPath = ColPathPrefix + "simClustersEmbedding.TopicId"
+  private val ColPathPrefitwitter = "recommendations/representation_manager/"
+  private val SimclustersTweetColPath = ColPathPrefitwitter + "simClustersEmbedding.Tweet"
+  private val SimclustersUserColPath = ColPathPrefitwitter + "simClustersEmbedding.User"
+  private val SimclustersTopicIdColPath = ColPathPrefitwitter + "simClustersEmbedding.TopicId"
   private val SimclustersLocaleEntityIdColPath =
-    ColPathPrefix + "simClustersEmbedding.LocaleEntityId"
+    ColPathPrefitwitter + "simClustersEmbedding.LocaleEntityId"
 
   def buildSimclustersTweetEmbeddingStore(
     embeddingColumnView: SimClustersEmbeddingView
@@ -194,11 +194,11 @@ class StoreBuilder(
         ObservedReadableStore(
           store = rawStore
         )(statsPerStore)
-      case EnabledInMemoryCacheParams(ttl, maxKeys, cacheName) =>
+      case EnabledInMemoryCacheParams(ttl, matwitterKeys, cacheName) =>
         ObservedCachedReadableStore.from[K, SimClustersEmbedding](
           rawStore,
           ttl = ttl,
-          maxKeys = maxKeys,
+          matwitterKeys = matwitterKeys,
           cacheName = cacheName,
           windowSize = 10000L
         )(statsPerStore)

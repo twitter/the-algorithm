@@ -1,5 +1,5 @@
 """
-This module contains the ExperimentTracker class.
+This module contains the EtwitterperimentTracker class.
 """
 
-from .experiment_tracker import ExperimentTracker  # noqa: F401
+from .etwitterperiment_tracker import EtwitterperimentTracker  # noqa: F401

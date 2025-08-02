@@ -12,7 +12,7 @@ class UtegLikedByTweetsSearchResultsTransform(
   override protected val searchClient: SearchClient,
   override protected val statsReceiver: StatsReceiver,
   relevanceSearchProvider: DependencyProvider[Boolean])
-    extends RecapHydrationSearchResultsTransformBase {
+    etwittertends RecapHydrationSearchResultsTransformBase {
 
   private[this] val numResultsFromSearchStat = statsReceiver.stat("numResultsFromSearch")
 

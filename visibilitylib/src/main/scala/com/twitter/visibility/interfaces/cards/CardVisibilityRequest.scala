@@ -2,7 +2,7 @@ package com.twitter.visibility.interfaces.cards
 
 import com.twitter.tweetypie.{thriftscala => tweetypiethrift}
 import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 
 case class CardVisibilityRequest(
   cardUri: String,
@@ -10,4 +10,4 @@ case class CardVisibilityRequest(
   tweetOpt: Option[tweetypiethrift.Tweet],
   isPollCardType: Boolean,
   safetyLevel: SafetyLevel,
-  viewerContext: ViewerContext)
+  viewerContetwittert: ViewerContetwittert)

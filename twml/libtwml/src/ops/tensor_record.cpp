@@ -14,7 +14,7 @@ REGISTER_OP("GetStringTensorsFromDataRecord")
 .Input("data_record_handle: resource")
 .Output("ids: int64")
 .Output("strings: string")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that decodes and returns string tensors from the data record.
@@ -26,7 +26,7 @@ Input
   data_record_handle: Resource handle to DataRecord.
 
 Outputs
-  ids: A 1D int64 tensor representing the input index in a given batch.
+  ids: A 1D int64 tensor representing the input indetwitter in a given batch.
   strings: A 1D string tensor representing the decoded strings from the batch.
 )doc");
 
@@ -35,7 +35,7 @@ REGISTER_OP("GetStringTensorsFromHashedDataRecord")
 .Input("hashed_data_record_handle: resource")
 .Output("ids: int64")
 .Output("strings: string")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that decodes and returns string tensors from the hashed data record.
@@ -47,7 +47,7 @@ Input
   data_record_handle: Resource handle to DataRecord.
 
 Outputs
-  ids: A 1D int64 tensor representing the input index in a given batch.
+  ids: A 1D int64 tensor representing the input indetwitter in a given batch.
   strings: A 1D string tensor representing the decoded strings from the batch.
 )doc");
 
@@ -57,13 +57,13 @@ class GetStringTensorsOp : public OpKernel {
   int64 feature_id;
 
  public:
-  explicit GetStringTensorsOp(OpKernelConstruction *context)
-      : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
+  etwitterplicit GetStringTensorsOp(OpKernelConstruction *contetwittert)
+      : OpKernel(contetwittert) {
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("feature_id", &feature_id));
   }
 
-  void Compute(OpKernelContext *context) override {
-    auto handle = getHandle<Resource>(context, 0);
+  void Compute(OpKernelContetwittert *contetwittert) override {
+    auto handle = getHandle<Resource>(contetwittert, 0);
     const int64 batch_size = static_cast<int64>(handle->records.size());
     const auto &records = handle->records;
 
@@ -83,8 +83,8 @@ class GetStringTensorsOp : public OpKernel {
       TensorShape shape = {total_size};
       Tensor *strings_tensor = nullptr;
       Tensor *ids_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids_tensor));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &strings_tensor));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, shape, &ids_tensor));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(1, shape, &strings_tensor));
 
       auto strings_data = strings_tensor->flat<string>().data();
       auto ids_data = ids_tensor->flat<int64>().data();
@@ -109,8 +109,8 @@ class GetStringTensorsOp : public OpKernel {
           continue;
         }
       }
-    } catch(const std::exception &err) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(err.what()));
+    } catch(const std::etwitterception &err) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(err.what()));
     }
   }
 };
@@ -133,7 +133,7 @@ REGISTER_OP("GetTensorsFromDataRecord")
 .Output("out_shape: int64")
 .Output("out_type: string")
 .Output("out_endian: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that decodes and returns tensors from the data record.
@@ -159,7 +159,7 @@ REGISTER_OP("GetTensorsFromHashedDataRecord")
 .Output("out_shape: int64")
 .Output("out_type: string")
 .Output("out_endian: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns decodes and tensors from the hashed data record.
@@ -184,21 +184,21 @@ class GetTensorsOp : public OpKernel {
   int64 feature_id;
 
  public:
-  explicit GetTensorsOp(OpKernelConstruction *context)
-      : OpKernel(context), assert_shape(true) {
-    OP_REQUIRES_OK(context, context->GetAttr("assert_shape", &assert_shape));
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
+  etwitterplicit GetTensorsOp(OpKernelConstruction *contetwittert)
+      : OpKernel(contetwittert), assert_shape(true) {
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("assert_shape", &assert_shape));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("feature_id", &feature_id));
   }
 
-  void Compute(OpKernelContext *context) override {
-    auto handle = getHandle<Resource>(context, 0);
+  void Compute(OpKernelContetwittert *contetwittert) override {
+    auto handle = getHandle<Resource>(contetwittert, 0);
     uint64 batch_size = handle->records.size();
     const auto &records = handle->records;
 
     try {
       TensorShape raw_shape = {static_cast<int64>(batch_size)};
       Tensor* output_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, raw_shape, &output_tensor));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, raw_shape, &output_tensor));
       auto output_flat = output_tensor->flat<string>();
       auto output_data = output_flat.data();
 
@@ -246,27 +246,27 @@ class GetTensorsOp : public OpKernel {
         const uint8 *tensor_data = reinterpret_cast<const uint8 *>(tensor.getData<void>());
         *output_data = std::string(tensor_data, tensor_data + curr_length);
 
-        // Increment it for the next tensor in the batch.
+        // Increment it for the netwittert tensor in the batch.
         output_data++;
       }
 
       Tensor *shape_tensor = nullptr;
       TensorShape shape_shape = {static_cast<int64>(shape.size())};
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape_shape, &shape_tensor));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(1, shape_shape, &shape_tensor));
       auto shape_flat = shape_tensor->flat<int64>();
       for (int i = 0; i < static_cast<int>(shape.size()); i++) {
         shape_flat(i) = shape[i];
       }
 
       Tensor* type_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(2, {}, &type_tensor));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(2, {}, &type_tensor));
       type_tensor->scalar<string>()() = twml::getTypeName(type);
 
       Tensor* endian_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(3, {}, &endian_tensor));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(3, {}, &endian_tensor));
       endian_tensor->scalar<uint8>()() = is_big_endian;
-    } catch(const std::exception &err) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(err.what()));
+    } catch(const std::etwitterception &err) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(err.what()));
     }
   }
 };
@@ -291,7 +291,7 @@ REGISTER_OP("GetTensorsWithMissingMaskFromDataRecord")
 .Output("out_type: string")
 .Output("out_endian: uint8")
 .Output("is_found: bool")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that decodes and returns tensors from the data record.
@@ -299,8 +299,8 @@ A tensorflow OP that decodes and returns tensors from the data record.
 Attr
   assert_shape: Specifies if the shape needs to be same across the batch.
   feature_id: The hashed id of the feature name.
-  default_shape: Expected shape of output tensor.
-  dtype_size: expected size of each element.
+  default_shape: Etwitterpected shape of output tensor.
+  dtype_size: etwitterpected size of each element.
 
 Input
   data_record_handle: Resource handle to DataRecord.
@@ -322,7 +322,7 @@ REGISTER_OP("GetTensorsWithMissingMaskFromHashedDataRecord")
 .Output("out_type: string")
 .Output("out_endian: uint8")
 .Output("is_found: bool")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that decodes and returns tensors from the data record.
@@ -330,8 +330,8 @@ A tensorflow OP that decodes and returns tensors from the data record.
 Attr
   assert_shape: Specifies if the shape needs to be same across the batch.
   feature_id: The hashed id of the feature name.
-  default_shape: Expected shape of output tensor.
-  dtype_size: expected size of each element.
+  default_shape: Etwitterpected shape of output tensor.
+  dtype_size: etwitterpected size of each element.
 
 Input
   hashed_data_record_handle: Resource handle to HashedDataRecord.
@@ -352,16 +352,16 @@ class GetTensorsWithMissingMaskOp : public OpKernel {
   std::vector<int64> shape;
 
  public:
-  explicit GetTensorsWithMissingMaskOp(OpKernelConstruction *context)
-      : OpKernel(context), assert_shape(true) {
-    OP_REQUIRES_OK(context, context->GetAttr("assert_shape", &assert_shape));
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
-    OP_REQUIRES_OK(context, context->GetAttr("default_shape", &shape));
-    OP_REQUIRES_OK(context, context->GetAttr("dtype_size", &dtype_size));
+  etwitterplicit GetTensorsWithMissingMaskOp(OpKernelConstruction *contetwittert)
+      : OpKernel(contetwittert), assert_shape(true) {
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("assert_shape", &assert_shape));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("feature_id", &feature_id));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("default_shape", &shape));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("dtype_size", &dtype_size));
   }
 
-  void Compute(OpKernelContext *context) override {
-    auto handle = getHandle<Resource>(context, 0);
+  void Compute(OpKernelContetwittert *contetwittert) override {
+    auto handle = getHandle<Resource>(contetwittert, 0);
     uint64 batch_size = handle->records.size();
     const auto &records = handle->records;
 
@@ -370,8 +370,8 @@ class GetTensorsWithMissingMaskOp : public OpKernel {
       Tensor* output_tensor = nullptr;
       Tensor* is_found_tensor = nullptr;
 
-      OP_REQUIRES_OK(context, context->allocate_output(0, raw_shape, &output_tensor));
-      OP_REQUIRES_OK(context, context->allocate_output(3, raw_shape, &is_found_tensor));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, raw_shape, &output_tensor));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(3, raw_shape, &is_found_tensor));
 
       auto output_flat = output_tensor->flat<string>();
       auto output_data = output_flat.data();
@@ -394,7 +394,7 @@ class GetTensorsWithMissingMaskOp : public OpKernel {
             is_big_endian = curr_is_big_endian;
             // FloatTensors are stored as a list of doubles.
             // If the requested dtype_size is 4, update the length.
-            // NOTE: All the missing tensors before this have wrong length, this is fixed at the end.
+            // NOTE: All the missing tensors before this have wrong length, this is fitwittered at the end.
             if (type == TWML_TYPE_DOUBLE && is_big_endian && dtype_size == 4) {
               length = length * 2;
             }
@@ -427,7 +427,7 @@ class GetTensorsWithMissingMaskOp : public OpKernel {
           *is_found_data = false;
         }
 
-        // Increment it for the next tensor in the batch.
+        // Increment it for the netwittert tensor in the batch.
         output_data++;
         is_found_data++;
       }
@@ -446,14 +446,14 @@ class GetTensorsWithMissingMaskOp : public OpKernel {
       }
 
       Tensor* type_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(1, {}, &type_tensor));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(1, {}, &type_tensor));
       type_tensor->scalar<string>()() = twml::getTypeName(type);
 
       Tensor* endian_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(2, {}, &endian_tensor));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(2, {}, &endian_tensor));
       endian_tensor->scalar<uint8>()() = is_big_endian;
-    } catch(const std::exception &err) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(err.what()));
+    } catch(const std::etwitterception &err) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(err.what()));
     }
   }
 };
@@ -477,7 +477,7 @@ REGISTER_OP("GetSparseTensorsFromDataRecord")
 .Output("dense_shape: int64")
 .Output("values_type: string")
 .Output("valueendian: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that decodes and returns tensors from the data record.
@@ -506,7 +506,7 @@ REGISTER_OP("GetSparseTensorsFromHashedDataRecord")
 .Output("dense_shape: int64")
 .Output("values_type: string")
 .Output("values_endian: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that decodes and returns tensors from the data record.
@@ -532,13 +532,13 @@ class GetSparseTensorsOp : public OpKernel {
   int64 feature_id;
 
  public:
-  explicit GetSparseTensorsOp(OpKernelConstruction *context)
-      : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
+  etwitterplicit GetSparseTensorsOp(OpKernelConstruction *contetwittert)
+      : OpKernel(contetwittert) {
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("feature_id", &feature_id));
   }
 
-  void Compute(OpKernelContext *context) override {
-    auto handle = getHandle<Resource>(context, 0);
+  void Compute(OpKernelContetwittert *contetwittert) override {
+    auto handle = getHandle<Resource>(contetwittert, 0);
     const int64 batch_size = static_cast<int64>(handle->records.size());
     const auto &records = handle->records;
 
@@ -611,7 +611,7 @@ class GetSparseTensorsOp : public OpKernel {
         }
         // Assert indices tensor is big endian and of type INT64.
         if (indices_type != TWML_TYPE_INT64 || !indices_is_big_endian) {
-          throw std::runtime_error("Unexpected type for index tensor for feature_id: "
+          throw std::runtime_error("Unetwitterpected type for indetwitter tensor for feature_id: "
                                    + std::to_string(feature_id));
         }
 
@@ -626,21 +626,21 @@ class GetSparseTensorsOp : public OpKernel {
 
       Tensor* ids_tensor = nullptr;
       TensorShape ids_shape = {static_cast<int64>(total_length)};
-      OP_REQUIRES_OK(context, context->allocate_output(0, ids_shape, &ids_tensor));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, ids_shape, &ids_tensor));
       auto ids_tensor_flat = ids_tensor->flat<int64>();
       auto ids_tensor_data = ids_tensor_flat.data();
 
       TensorShape raw_shape = {static_cast<int64>(1)};
 
       Tensor* indices_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(1, raw_shape, &indices_tensor));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(1, raw_shape, &indices_tensor));
       auto indices_tensor_flat = indices_tensor->flat<string>();
       auto indices_tensor_string = indices_tensor_flat.data();
       indices_tensor_string->resize(total_indices_length);
       auto indices_tensor_iter = indices_tensor_string->begin();
 
       Tensor* values_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(2, raw_shape, &values_tensor));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(2, raw_shape, &values_tensor));
       auto values_tensor_flat = values_tensor->flat<string>();
       auto values_tensor_string = values_tensor_flat.data();
       values_tensor_string->resize(total_values_length);
@@ -662,21 +662,21 @@ class GetSparseTensorsOp : public OpKernel {
 
       Tensor *shape_tensor = nullptr;
       TensorShape shape_shape = {static_cast<int64>(shape.size())};
-      OP_REQUIRES_OK(context, context->allocate_output(3, shape_shape, &shape_tensor));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(3, shape_shape, &shape_tensor));
       auto shape_flat = shape_tensor->flat<int64>();
       for (int i = 0; i < static_cast<int>(shape.size()); i++) {
         shape_flat(i) = shape[i];
       }
 
       Tensor* type_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(4, {}, &type_tensor));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(4, {}, &type_tensor));
       type_tensor->scalar<string>()() = twml::getTypeName(type);
 
       Tensor* endian_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(5, {}, &endian_tensor));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(5, {}, &endian_tensor));
       endian_tensor->scalar<uint8>()() = is_big_endian;
-    } catch(const std::exception &err) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(err.what()));
+    } catch(const std::etwitterception &err) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(err.what()));
     }
   }
 };

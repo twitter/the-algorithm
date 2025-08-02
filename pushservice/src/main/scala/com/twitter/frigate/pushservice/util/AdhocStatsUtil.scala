@@ -20,7 +20,7 @@ class AdhocStatsUtil(stats: StatsReceiver) {
   private def isAdhocTweetCandidate(candidate: PushCandidate): Boolean = {
     candidate match {
       case tweetCandidate: RawCandidate with TweetCandidate with TweetAuthor =>
-        tweetCandidate.authorId.exists(id => getAdhocIds(candidate).contains(id))
+        tweetCandidate.authorId.etwitterists(id => getAdhocIds(candidate).contains(id))
       case _ => false
     }
   }
@@ -56,12 +56,12 @@ class AdhocStatsUtil(stats: StatsReceiver) {
   }
 
   def getRankingStats(rankedCandidates: Seq[CandidateDetails[PushCandidate]]): Unit = {
-    rankedCandidates.zipWithIndex.foreach {
-      case (rankedCandidate, index) =>
+    rankedCandidates.zipWithIndetwitter.foreach {
+      case (rankedCandidate, indetwitter) =>
         val rankerStats = stats.scope("heavy_ranker")
         if (isAdhocTweetCandidate(rankedCandidate.candidate)) {
           rankerStats.counter("ranked_candidates").incr()
-          rankerStats.stat("rank").add(index.toFloat)
+          rankerStats.stat("rank").add(indetwitter.toFloat)
           rankedCandidate.candidate.modelScores.map { modelScores =>
             modelScores.foreach {
               case (modelName, score) =>
@@ -74,12 +74,12 @@ class AdhocStatsUtil(stats: StatsReceiver) {
     }
   }
   def getReRankingStats(rankedCandidates: Seq[CandidateDetails[PushCandidate]]): Unit = {
-    rankedCandidates.zipWithIndex.foreach {
-      case (rankedCandidate, index) =>
+    rankedCandidates.zipWithIndetwitter.foreach {
+      case (rankedCandidate, indetwitter) =>
         val rankerStats = stats.scope("re_ranking")
         if (isAdhocTweetCandidate(rankedCandidate.candidate)) {
           rankerStats.counter("re_ranked_candidates").incr()
-          rankerStats.stat("re_rank").add(index.toFloat)
+          rankerStats.stat("re_rank").add(indetwitter.toFloat)
         }
     }
   }

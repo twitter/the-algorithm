@@ -13,9 +13,9 @@ import com.twitter.tweetypie.thriftscala.TweetCreateState
 
 object Spam {
   sealed trait Result
-  case object Allow extends Result
-  case object SilentFail extends Result
-  case object DisabledByIpiPolicy extends Result
+  case object Allow etwittertends Result
+  case object SilentFail etwittertends Result
+  case object DisabledByIpiPolicy etwittertends Result
 
   val AllowFuture: Future[Allow.type] = Future.value(Allow)
   val SilentFailFuture: Future[SilentFail.type] = Future.value(SilentFail)
@@ -56,10 +56,10 @@ object Spam {
    * Wrapper that implicitly allows retweet or tweet creation when spam
    * checking fails.
    */
-  def allowOnException[T](checker: Checker[T]): Checker[T] =
+  def allowOnEtwitterception[T](checker: Checker[T]): Checker[T] =
     req =>
       checker(req).rescue {
-        case e: TweetCreateFailure => Future.exception(e)
+        case e: TweetCreateFailure => Future.etwitterception(e)
         case _ => AllowFuture
       }
 
@@ -93,7 +93,7 @@ object Spam {
       } yield denyMessage
       handler.applyOrElse(
         (result.resultCode, result.bounce, customDenyMessage),
-        withEffect(DoNotCheckSpam, (_: AnyRef) => stats.counter("unexpected_result").incr())
+        withEffect(DoNotCheckSpam, (_: AnyRef) => stats.counter("unetwitterpected_result").incr())
       )
     }
 }

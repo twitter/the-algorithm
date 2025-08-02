@@ -9,12 +9,12 @@ sealed trait DeciderUtils {
   def shouldPublish(decider: Decider, uua: UnifiedUserAction, sinkTopic: String): Boolean
 }
 
-object DefaultDeciderUtils extends DeciderUtils {
+object DefaultDeciderUtils etwittertends DeciderUtils {
   override def shouldPublish(decider: Decider, uua: UnifiedUserAction, sinkTopic: String): Boolean =
     decider.isAvailable(feature = s"Publish${uua.actionType}", Some(RandomRecipient))
 }
 
-object ClientEventDeciderUtils extends DeciderUtils {
+object ClientEventDeciderUtils etwittertends DeciderUtils {
   override def shouldPublish(decider: Decider, uua: UnifiedUserAction, sinkTopic: String): Boolean =
     decider.isAvailable(
       feature = s"Publish${uua.actionType}",

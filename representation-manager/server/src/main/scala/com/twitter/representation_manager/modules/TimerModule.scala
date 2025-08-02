@@ -4,9 +4,9 @@ import com.google.inject.Provides
 import com.twitter.finagle.util.DefaultTimer
 import com.twitter.inject.TwitterModule
 import com.twitter.util.Timer
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
-object TimerModule extends TwitterModule {
+object TimerModule etwittertends TwitterModule {
   @Singleton
   @Provides
   def providesTimer: Timer = DefaultTimer

@@ -19,17 +19,17 @@ enum ScoringAlgorithm {
 	PairEmbeddingEuclideanDistance = 4,
 	PairEmbeddingManhattanDistance = 5,
   PairEmbeddingLogCosineSimilarity = 6,
-  PairEmbeddingExpScaledCosineSimilarity = 7,
+  PairEmbeddingEtwitterpScaledCosineSimilarity = 7,
 
 	// Reserve 1000 - 1999 for Tweet Similarity Model
   TagSpaceCosineSimilarity = 1000,
-	WeightedSumTagSpaceRankingExperiment1 = 1001, //deprecated
-	WeightedSumTagSpaceRankingExperiment2 = 1002, //deprecated
-  WeightedSumTagSpaceANNExperiment = 1003,      //deprecated 
+	WeightedSumTagSpaceRankingEtwitterperiment1 = 1001, //deprecated
+	WeightedSumTagSpaceRankingEtwitterperiment2 = 1002, //deprecated
+  WeightedSumTagSpaceANNEtwitterperiment = 1003,      //deprecated 
 
 	// Reserved for 10001 - 20000 for Aggregate scoring
 	WeightedSumTopicTweetRanking = 10001,
-	CortexTopicTweetLabel = 10002,
+	CortetwitterTopicTweetLabel = 10002,
 	// Reserved 20001 - 30000 for Topic Tweet scores 
 	CertoNormalizedDotProductScore = 20001,
 	CertoNormalizedCosineScore = 20002

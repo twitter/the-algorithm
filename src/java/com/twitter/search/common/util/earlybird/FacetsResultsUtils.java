@@ -78,7 +78,7 @@ public final class FacetsResultsUtils {
   }
 
   /**
-   * Extract information from one ThriftFacetResults into facetFieldInfoMap and userIDWhitelist.
+   * Etwittertract information from one ThriftFacetResults into facetFieldInfoMap and userIDWhitelist.
    * @param facetResults Related facets results.
    * @param facetFieldInfoMap The facets field info map to fill, a map from facet type to the facet
    * fiels results info.
@@ -119,7 +119,7 @@ public final class FacetsResultsUtils {
   }
 
   /**
-   * Merge a metadata into an existing one.
+   * Merge a metadata into an etwitteristing one.
    * @param baseMetadata the metadata to merge into.
    * @param metadataUpdate the new metadata to merge.
    * @param userIDWhitelist user id whitelist to filter user id with.
@@ -131,19 +131,19 @@ public final class FacetsResultsUtils {
           final Set<Long> userIDWhitelist) {
     ThriftFacetCountMetadata mergedMetadata = baseMetadata;
     if (metadataUpdate != null) {
-      String mergedExplanation = null;
+      String mergedEtwitterplanation = null;
       if (mergedMetadata != null) {
-        if (mergedMetadata.maxTweepCred < metadataUpdate.maxTweepCred) {
-          mergedMetadata.setMaxTweepCred(metadataUpdate.maxTweepCred);
+        if (mergedMetadata.matwitterTweepCred < metadataUpdate.matwitterTweepCred) {
+          mergedMetadata.setMatwitterTweepCred(metadataUpdate.matwitterTweepCred);
         }
 
-        if (mergedMetadata.isSetExplanation()) {
-          mergedExplanation = mergedMetadata.getExplanation();
-          if (metadataUpdate.isSetExplanation()) {
-            mergedExplanation += "\n" + metadataUpdate.getExplanation();
+        if (mergedMetadata.isSetEtwitterplanation()) {
+          mergedEtwitterplanation = mergedMetadata.getEtwitterplanation();
+          if (metadataUpdate.isSetEtwitterplanation()) {
+            mergedEtwitterplanation += "\n" + metadataUpdate.getEtwitterplanation();
           }
-        } else if (metadataUpdate.isSetExplanation()) {
-          mergedExplanation = metadataUpdate.getExplanation();
+        } else if (metadataUpdate.isSetEtwitterplanation()) {
+          mergedEtwitterplanation = metadataUpdate.getEtwitterplanation();
         }
 
         if (mergedMetadata.getStatusId() == -1) {
@@ -173,10 +173,10 @@ public final class FacetsResultsUtils {
         mergedMetadata = metadataUpdate;
       }
 
-      // this will not set an explanation if neither oldMetadata nor metadataUpdate
-      // had an explanation
-      if (mergedExplanation != null) {
-        mergedMetadata.setExplanation(mergedExplanation);
+      // this will not set an etwitterplanation if neither oldMetadata nor metadataUpdate
+      // had an etwitterplanation
+      if (mergedEtwitterplanation != null) {
+        mergedMetadata.setEtwitterplanation(mergedEtwitterplanation);
       }
 
       if (userIDWhitelist != null) {
@@ -249,8 +249,8 @@ public final class FacetsResultsUtils {
 
     Iterator<ThriftFacetCount> iterator = facetFieldResults.getTopFacetsIterator();
 
-    while (iterator.hasNext()) {
-      ThriftFacetCount count = iterator.next();
+    while (iterator.hasNetwittert()) {
+      ThriftFacetCount count = iterator.netwittert();
       if (count.isSetMetadata() && count.getMetadata().isSetNativePhotoUrl()) {
         String nativeUrl = count.getMetadata().getNativePhotoUrl();
 
@@ -327,14 +327,14 @@ public final class FacetsResultsUtils {
    * Replace "p.twimg.com/" part of the native photo (twimg) URL with "pbs.twimg.com/media/".
    * We need to do this because of blobstore and it's suppose to be a temporary measure. This
    * code should be removed once we verified that all native photo URL being sent to Search
-   * are prefixed with "pbs.twimg.com/media/" and no native photo URL in our index contains
+   * are prefitwittered with "pbs.twimg.com/media/" and no native photo URL in our indetwitter contains
    * "p.twimg.com/"
    *
    * Please see SEARCH-783 and EVENTS-539 for more details.
    *
    * @param response response containing the facet results
    */
-  public static void fixNativePhotoUrl(EarlybirdResponse response) {
+  public static void fitwitterNativePhotoUrl(EarlybirdResponse response) {
     if (response == null
         || !response.isSetFacetResults()
         || !response.getFacetResults().isSetFacetFields()) {
@@ -359,14 +359,14 @@ public final class FacetsResultsUtils {
    * Replace "p.twimg.com/" part of the native photo (twimg) URL with "pbs.twimg.com/media/".
    * We need to do this because of blobstore and it's suppose to be a temporary measure. This
    * code should be removed once we verified that all native photo URL being sent to Search
-   * are prefixed with "pbs.twimg.com/media/" and no native photo URL in our index contains
+   * are prefitwittered with "pbs.twimg.com/media/" and no native photo URL in our indetwitter contains
    * "p.twimg.com/"
    *
    * Please see SEARCH-783 and EVENTS-539 for more details.
    *
    * @param termResultsCollection collection of ThriftTermResults containing the native photo URL
    */
-  public static void fixNativePhotoUrl(Collection<ThriftTermResults> termResultsCollection) {
+  public static void fitwitterNativePhotoUrl(Collection<ThriftTermResults> termResultsCollection) {
     if (termResultsCollection == null) {
       return;
     }
@@ -380,7 +380,7 @@ public final class FacetsResultsUtils {
   }
 
   /**
-   * Helper function for fixNativePhotoUrl()
+   * Helper function for fitwitterNativePhotoUrl()
    */
   private static void replacePhotoUrl(ThriftFacetCountMetadata metadata) {
     if (metadata != null
@@ -392,9 +392,9 @@ public final class FacetsResultsUtils {
   }
 
   /**
-   * Deepcopy of an EarlybirdResponse without explanation
+   * Deepcopy of an EarlybirdResponse without etwitterplanation
    */
-  public static EarlybirdResponse deepCopyWithoutExplanation(EarlybirdResponse facetsResponse) {
+  public static EarlybirdResponse deepCopyWithoutEtwitterplanation(EarlybirdResponse facetsResponse) {
     if (facetsResponse == null) {
       return null;
     } else if (!facetsResponse.isSetFacetResults()
@@ -406,7 +406,7 @@ public final class FacetsResultsUtils {
         : copy.getFacetResults().getFacetFields().entrySet()) {
       if (entry.getValue().getTopFacetsSize() > 0) {
         for (ThriftFacetCount fc : entry.getValue().getTopFacets()) {
-          fc.getMetadata().unsetExplanation();
+          fc.getMetadata().unsetEtwitterplanation();
         }
       }
     }

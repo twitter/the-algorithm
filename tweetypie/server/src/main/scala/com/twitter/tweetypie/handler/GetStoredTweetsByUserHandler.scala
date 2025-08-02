@@ -24,7 +24,7 @@ object GetStoredTweetsByUserHandler {
     getStoredTweetsHandler: GetStoredTweetsHandler.Type,
     getStoredTweet: TweetStorageClient.GetStoredTweet,
     selectPage: FutureArrow[Select[StatusGraph], PageResult[Long]],
-    maxPages: Int
+    matwitterPages: Int
   ): Type = {
     FutureArrow { request =>
       val options = request.options.getOrElse(GetStoredTweetsByUserOptions())
@@ -35,14 +35,14 @@ object GetStoredTweetsByUserHandler {
         if (options.startFromOldest) Cursor.lowest else Cursor.highest
       }
 
-      getNextTweetIdsInTimeRange(
+      getNetwittertTweetIdsInTimeRange(
         request.userId,
         startTimeMsec,
         endTimeMsec,
         cursor,
         selectPage,
         getStoredTweet,
-        maxPages,
+        matwitterPages,
         numTries = 0
       ).flatMap {
         case (tweetIds, cursor) =>
@@ -77,14 +77,14 @@ object GetStoredTweetsByUserHandler {
     )
   }
 
-  private def getNextTweetIdsInTimeRange(
+  private def getNetwittertTweetIdsInTimeRange(
     userId: UserId,
     startTimeMsec: Long,
     endTimeMsec: Long,
     cursor: Cursor,
     selectPage: FutureArrow[Select[StatusGraph], PageResult[Long]],
     getStoredTweet: TweetStorageClient.GetStoredTweet,
-    maxPages: Int,
+    matwitterPages: Int,
     numTries: Int
   ): Future[(Seq[TweetId], Cursor)] = {
     val select = Select(
@@ -98,7 +98,7 @@ object GetStoredTweetsByUserHandler {
       timestamp >= startTimeMsec && timestamp <= endTimeMsec
     def pastTimeRange(timestamps: Seq[Long]) = {
       if (cursor.isAscending) {
-        timestamps.max > endTimeMsec
+        timestamps.matwitter > endTimeMsec
       } else {
         timestamps.min < startTimeMsec
       }
@@ -108,12 +108,12 @@ object GetStoredTweetsByUserHandler {
 
     pageResultFuture.flatMap { pageResult =>
       val groupedIds = pageResult.entries.groupBy(SnowflakeId.isSnowflakeId)
-      val nextCursor = if (cursor.isAscending) pageResult.previousCursor else pageResult.nextCursor
+      val netwittertCursor = if (cursor.isAscending) pageResult.previousCursor else pageResult.netwittertCursor
 
       // Timestamps for the creation of Tweets with snowflake IDs can be calculated from the IDs
       // themselves.
       val snowflakeIdsTimestamps: Seq[(Long, Long)] = groupedIds.getOrElse(true, Seq()).map { id =>
-        val snowflakeTimeMillis = SnowflakeId.unixTimeMillisFromId(id)
+        val snowflakeTimeMillis = SnowflakeId.unitwitterTimeMillisFromId(id)
         (id, snowflakeTimeMillis)
       }
 
@@ -125,7 +125,7 @@ object GetStoredTweetsByUserHandler {
           .map {
             _.flatMap {
               case GetStoredTweet.Response.FoundAny(tweet, _, _, _, _) => {
-                if (tweet.coreData.exists(_.createdAtSecs > 0)) {
+                if (tweet.coreData.etwitterists(_.createdAtSecs > 0)) {
                   Some((tweet.id, tweet.coreData.get.createdAtSecs))
                 } else None
               }
@@ -141,7 +141,7 @@ object GetStoredTweetsByUserHandler {
           }
           .map(_._1)
 
-        if (nextCursor.isEnd) {
+        if (netwittertCursor.isEnd) {
           // We've considered the last Tweet for this User. There are no more Tweets to return.
           Future.value((filteredTweetIds, Cursor.end))
         } else if (allTweetIdsAndTimestamps.nonEmpty &&
@@ -155,32 +155,32 @@ object GetStoredTweetsByUserHandler {
           // We're here because one of two things happened:
           // 1. allTweetIdsAndTimestamps is empty: Either Tflock has returned an empty page of Tweets
           //    or we weren't able to fetch timestamps for any of the Tweets Tflock returned. In this
-          //    case, we fetch the next page of Tweets.
+          //    case, we fetch the netwittert page of Tweets.
           // 2. allTweetIdsAndTimestamps is non-empty but filteredTweetIds is empty: The current page
-          //    has no Tweets inside the requested time range. We fetch the next page of Tweets and
+          //    has no Tweets inside the requested time range. We fetch the netwittert page of Tweets and
           //    try again.
-          // If we hit the limit for the maximum number of pages from tflock to be requested, we
+          // If we hit the limit for the matwitterimum number of pages from tflock to be requested, we
           // return an empty list of Tweets with the cursor for the caller to try again.
 
-          if (numTries == maxPages) {
-            Future.value((filteredTweetIds, nextCursor))
+          if (numTries == matwitterPages) {
+            Future.value((filteredTweetIds, netwittertCursor))
           } else {
-            getNextTweetIdsInTimeRange(
+            getNetwittertTweetIdsInTimeRange(
               userId = userId,
               startTimeMsec = startTimeMsec,
               endTimeMsec = endTimeMsec,
-              cursor = nextCursor,
+              cursor = netwittertCursor,
               selectPage = selectPage,
               getStoredTweet = getStoredTweet,
-              maxPages = maxPages,
+              matwitterPages = matwitterPages,
               numTries = numTries + 1
             )
           }
         } else {
           // filteredTweetIds is non-empty: There are some Tweets in this page that are within the
           // requested time range, and we aren't out of the time range yet. We return the Tweets we
-          // have and set the cursor forward for the next request.
-          Future.value((filteredTweetIds, nextCursor))
+          // have and set the cursor forward for the netwittert request.
+          Future.value((filteredTweetIds, netwittertCursor))
         }
       }
     }

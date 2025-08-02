@@ -19,7 +19,7 @@ import com.twitter.util.Future
  *
  */
 case class WeightedSumAggregatedScoreStore(parameters: Seq[WeightedSumAggregatedScoreParameter])
-    extends AggregatedScoreStore {
+    etwittertends AggregatedScoreStore {
 
   override def get(k: ThriftScoreId): Future[Option[ThriftScore]] = {
     val underlyingScores = parameters.map { parameter =>
@@ -28,7 +28,7 @@ case class WeightedSumAggregatedScoreStore(parameters: Seq[WeightedSumAggregated
         .map(_.map(s => parameter.scoreTransform(s.score) * parameter.weight))
     }
     Future.collect(underlyingScores).map { scores =>
-      if (scores.exists(_.nonEmpty)) {
+      if (scores.etwitterists(_.nonEmpty)) {
         val newScore = scores.foldLeft(0.0) {
           case (sum, maybeScore) =>
             sum + maybeScore.getOrElse(0.0)

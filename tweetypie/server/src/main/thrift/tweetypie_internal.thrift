@@ -1,17 +1,17 @@
 namespace java com.twitter.tweetypie.thriftjava
 #@namespace scala com.twitter.tweetypie.thriftscala
 
-include "com/twitter/context/feature_context.thrift"
-include "com/twitter/expandodo/cards.thrift"
+include "com/twitter/contetwittert/feature_contetwittert.thrift"
+include "com/twitter/etwitterpandodo/cards.thrift"
 include "com/twitter/gizmoduck/user.thrift"
 include "com/twitter/mediaservices/commons/MediaCommon.thrift"
 include "com/twitter/mediaservices/commons/MediaInformation.thrift"
 include "com/twitter/mediaservices/commons/TweetMedia.thrift"
-include "com/twitter/servo/exceptions.thrift"
+include "com/twitter/servo/etwitterceptions.thrift"
 include "com/twitter/servo/cache/servo_repo.thrift"
 include "com/twitter/tseng/withholding/withholding.thrift"
 include "com/twitter/tweetypie/delete_location_data.thrift"
-include "com/twitter/tweetypie/transient_context.thrift"
+include "com/twitter/tweetypie/transient_contetwittert.thrift"
 include "com/twitter/tweetypie/media_entity.thrift"
 include "com/twitter/tweetypie/tweet.thrift"
 include "com/twitter/tweetypie/tweet_audit.thrift"
@@ -77,11 +77,11 @@ enum AsyncWriteAction {
   // obsolete MAIL_ENQUEUE            = 3
   FANOUT_DELIVERY         = 4
   // obsolete FACEBOOK_ENQUEUE        = 5
-  TWEET_INDEX             = 6
+  TWEET_INDEtwitter             = 6
   TIMELINE_UPDATE         = 7
   CACHE_UPDATE            = 8
   REPLICATION             = 9
-  // obsolete MONORAIL_EXPIRY_ENQUEUE = 10
+  // obsolete MONORAIL_EtwitterPIRY_ENQUEUE = 10
   USER_GEOTAG_UPDATE      = 11
   // obsolete IBIS_ENQUEUE            = 12
   EVENT_BUS_ENQUEUE       = 13
@@ -114,7 +114,7 @@ struct DetachedRetweet {
 struct TweetCacheWrite {
   1: required i64 tweet_id (personalDataType = 'TweetId')
   // If the tweet id is a snowflake id, this is an offset since tweet creation. 
-  // If it is not a snowflake id, then this is a Unix epoch time in
+  // If it is not a snowflake id, then this is a Unitwitter epoch time in
   // milliseconds. (The idea is that for most tweets, this encoding will make
   // it easier to see the interval between events and whether it occured soon
   // acter tweet creation.)
@@ -146,12 +146,12 @@ struct AsyncInsertRequest {
   10: optional AsyncWriteAction retry_action
   # 11: obsolete: bool from_monorail = 0
   # 14: obsolete
-  15: optional feature_context.FeatureContext feature_context
+  15: optional feature_contetwittert.FeatureContetwittert feature_contetwittert
   # 16: obsolete
   # 17: obsolete
   # 26: obsolete: optional tweet.Tweet debug_tweet_copy
-  27: optional map<tweet.TweetCreateContextKey, string> additional_context
-  30: optional transient_context.TransientCreateContext transient_context
+  27: optional map<tweet.TweetCreateContetwittertKey, string> additional_contetwittert
+  30: optional transient_contetwittert.TransientCreateContetwittert transient_contetwittert
   // Used to check whether the same tweet has been quoted multiple
   // times by a given user.
   31: optional bool quoter_has_already_quoted_tweet
@@ -329,7 +329,7 @@ enum DataErrorCause {
  * but encountered an inconsistency, and the operation cannot
  * be meaninfully performed.
  */
-exception DataError {
+etwitterception DataError {
   1: required string message
   2: optional DataErrorCause errorCause
 }
@@ -430,79 +430,79 @@ struct InitialTweetUpdateRequest {
   3: optional tweet.ShortenedUrl selfPermalink
 }
 
-service TweetServiceInternal extends tweet_service.TweetService {
+service TweetServiceInternal etwittertends tweet_service.TweetService {
 
   /**
    * Performs the async portion of TweetService.erase_user_tweets.
    * Only tweetypie itself can call this.
    */
   void async_erase_user_tweets(1: AsyncEraseUserTweetsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Performs the async portion of TweetService.post_tweet.
    * Only tweetypie itself can call this.
    */
   void async_insert(1: AsyncInsertRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Performs the async portion of TweetService.delete_tweets.
    * Only tweetypie itself can call this.
    */
   void async_delete(1: AsyncDeleteRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Performs the async portion of TweetService.undelete_tweet.
    * Only tweetypie itself can call this.
    */
   void async_undelete_tweet(1: AsyncUndeleteTweetRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Performs the async portion of TweetService.update_possibly_sensitive_tweet.
    * Only tweetypie itself can call this.
    */
   void async_update_possibly_sensitive_tweet(1: AsyncUpdatePossiblySensitiveTweetRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Performs the async portion of TweetService.incr_tweet_fav_count.
    * Only tweetypie itself can call this.
    */
   void async_incr_fav_count(1: AsyncIncrFavCountRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Performs the async portion of TweetService.incr_tweet_bookmark_count.
    * Only tweetypie itself can call this.
    */
   void async_incr_bookmark_count(1: AsyncIncrBookmarkCountRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Performs the async portion of TweetService.set_additional_fields.
    * Only tweetypie itself can call this.
    */
   void async_set_additional_fields(1: AsyncSetAdditionalFieldsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Performs the async portion of TweetServiceInternal.set_retweet_visibility.
    * Only tweetypie itself can call this.
    */
   void async_set_retweet_visibility(1: AsyncSetRetweetVisibilityRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Set whether the specified retweet ID should be included in its source tweet's retweet count.
@@ -510,32 +510,32 @@ service TweetServiceInternal extends tweet_service.TweetService {
    * suspended or fraudulent (e.g. ROPO-'d) user has retweeted to disincentivize their false engagement.
    */
   void set_retweet_visibility(1: SetRetweetVisibilityRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Performs the async portion of TweetService.delete_additional_fields.
    * Only tweetypie itself can call this.
    */
   void async_delete_additional_fields(1: AsyncDeleteAdditionalFieldsRequest field_delete) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Performs the async portion of TweetService.takedown.
    * Only tweetypie itself can call this.
    */
   void async_takedown(1: AsyncTakedownRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Update the tweet's takedown fields when a user is taken down.
    * Only tweetypie's UserTakedownChange daemon can call this.
    */
   void set_tweet_user_takedown(1: SetTweetUserTakedownRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error,
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error,
     3: DataError data_error)
 
   /**
@@ -554,8 +554,8 @@ service TweetServiceInternal extends tweet_service.TweetService {
    *     the initial tweet is only deleted, which makes all edits hidden.
    */
   void cascaded_delete_tweet(1: CascadedDeleteTweetRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Update the timestamp of the user's most recent request to delete
@@ -565,88 +565,88 @@ service TweetServiceInternal extends tweet_service.TweetService {
    * Tweetypie.
    */
   void scrub_geo_update_user_timestamp(1: delete_location_data.DeleteLocationData request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Look up tweets quoting a tweet that has been deleted and enqueue a compliance event.
    * Only tweetypie's QuotedTweetDelete daemon can call this.
   **/
   void quoted_tweet_delete(1: QuotedTweetDeleteRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Look up tweets quoting a tweet that has been taken down and enqueue a compliance event.
    * Only tweetypie's QuotedTweetTakedown daemon can call this.
   **/
   void quoted_tweet_takedown(1: QuotedTweetTakedownRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Replicates TweetService.get_tweet_counts from another cluster.
    */
   void replicated_get_tweet_counts(1: tweet_service.GetTweetCountsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Replicates TweetService.get_tweet_fields from another cluster.
    */
   void replicated_get_tweet_fields(1: tweet_service.GetTweetFieldsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Replicates TweetService.get_tweets from another cluster.
    */
   void replicated_get_tweets(1: tweet_service.GetTweetsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Replicates a TweetService.post_tweet InsertTweet event from another cluster.
    * Note: v1 version of this endpoint previously just took a Tweet which is why it was replaced
    */
   void replicated_insert_tweet2(1: ReplicatedInsertTweet2Request request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Replicates a TweetService.delete_tweets DeleteTweet event from another cluster.
    */
   void replicated_delete_tweet2(1: ReplicatedDeleteTweet2Request request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Replicates a TweetService.incr_tweet_fav_count event from another cluster.
    */
   void replicated_incr_fav_count(1: i64 tweet_id, 2: i32 delta) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Replicates a TweetService.incr_tweet_bookmark_count event from another cluster.
    */
   void replicated_incr_bookmark_count(1: i64 tweet_id, 2: i32 delta) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Replicates a TweetServiceInternal.set_retweet_visibility event from another cluster.
    */
   void replicated_set_retweet_visibility(1: ReplicatedSetRetweetVisibilityRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Replicates a TweetService.scrub_geo from another cluster.
    */
   void replicated_scrub_geo(1: list<i64> tweet_ids) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Replicates a TweetService.set_additional_fields event from another cluster.
@@ -654,8 +654,8 @@ service TweetServiceInternal extends tweet_service.TweetService {
   void replicated_set_additional_fields(
     1: tweet_service.SetAdditionalFieldsRequest request
   ) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Replicates a TweetService.delete_additional_fields event from another cluster.
@@ -663,43 +663,43 @@ service TweetServiceInternal extends tweet_service.TweetService {
   void replicated_delete_additional_fields(
     1: ReplicatedDeleteAdditionalFieldsRequest request
   ) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Replicates a TweetService.undelete_tweet event from another cluster.
    * Note: v1 version of this endpoint previously just took a Tweet which is why it was replaced
    */
   void replicated_undelete_tweet2(1: ReplicatedUndeleteTweet2Request request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Replicates a TweetService.takedown event from another cluster.
    */
   void replicated_takedown(1: tweet.Tweet tweet) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Replicates a TweetService.update_possibly_sensitive_tweet event from another cluster.
    */
   void replicated_update_possibly_sensitive_tweet(1: tweet.Tweet tweet) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Fetches hydrated Tweets and some metadata irrespective of the Tweets' state.
    */
   list<GetStoredTweetsResult> get_stored_tweets(1: GetStoredTweetsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
   * Fetches hydrated Tweets and some metadata for a particular user, irrespective of the Tweets'
   * state.
   */
   GetStoredTweetsByUserResult get_stored_tweets_by_user(1: GetStoredTweetsByUserRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 }

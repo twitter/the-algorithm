@@ -1,10 +1,10 @@
 class LollyModelScorer(object):
-  def __init__(self, data_example_parser):
-    self._data_example_parser = data_example_parser
+  def __init__(self, data_etwitterample_parser):
+    self._data_etwitterample_parser = data_etwitterample_parser
 
-  def score(self, data_example):
-    value_by_feature_name = self._data_example_parser.parse(data_example)
-    features = self._data_example_parser.features
+  def score(self, data_etwitterample):
+    value_by_feature_name = self._data_etwitterample_parser.parse(data_etwitterample)
+    features = self._data_etwitterample_parser.features
     return self._score(value_by_feature_name, features)
 
   def _score(self, value_by_feature_name, features):

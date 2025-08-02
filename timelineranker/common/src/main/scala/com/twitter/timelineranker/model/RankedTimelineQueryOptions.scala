@@ -11,7 +11,7 @@ object RankedTimelineQueryOptions {
 }
 
 case class RankedTimelineQueryOptions(seenEntries: Option[PriorSeenEntries])
-    extends TimelineQueryOptions {
+    etwittertends TimelineQueryOptions {
 
   throwIfInvalid()
 

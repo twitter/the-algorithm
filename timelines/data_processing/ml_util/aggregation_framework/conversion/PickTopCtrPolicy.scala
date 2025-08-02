@@ -1,7 +1,7 @@
 package com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion
 
 import com.twitter.ml.api._
-import com.twitter.ml.api.FeatureContext
+import com.twitter.ml.api.FeatureContetwittert
 import com.twitter.ml.api.util.SRichDataRecord
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon
@@ -16,13 +16,13 @@ case class CtrDescriptor(
 object PickTopCtrBuilderHelper {
 
   def createCtrDescriptors(
-    aggregatePrefix: String,
+    aggregatePrefitwitter: String,
     engagementLabels: Set[Feature[JBoolean]],
     aggregatesToCompute: Set[TypedAggregateGroup[_]],
-    outputSuffix: String
+    outputSuffitwitter: String
   ): Set[CtrDescriptor] = {
     val aggregateFeatures = aggregatesToCompute
-      .filter(_.aggregatePrefix == aggregatePrefix)
+      .filter(_.aggregatePrefitwitter == aggregatePrefitwitter)
 
     val impressionFeature = aggregateFeatures
       .flatMap { group =>
@@ -41,7 +41,7 @@ object PickTopCtrBuilderHelper {
             .filter(_.query.feature == None)
             .filter { descriptor =>
               //TODO: we should remove the need to pass around engagementLabels and just use all the labels available.
-              descriptor.query.label.exists(engagementLabels.contains(_))
+              descriptor.query.label.etwitterists(engagementLabels.contains(_))
             }
             .flatMap(_.outputFeatures)
         }
@@ -53,7 +53,7 @@ object PickTopCtrBuilderHelper {
           engagementFeature = aggregateEngagementFeature,
           impressionFeature = impressionFeature,
           outputFeature = new Feature.Continuous(
-            aggregateEngagementFeature.getDenseFeatureName + "." + outputSuffix,
+            aggregateEngagementFeature.getDenseFeatureName + "." + outputSuffitwitter,
             AggregationMetricCommon.derivePersonalDataTypes(
               Some(aggregateEngagementFeature),
               Some(impressionFeature)
@@ -66,17 +66,17 @@ object PickTopCtrBuilderHelper {
 
 object PickTopCtrPolicy {
   def build(
-    aggregatePrefix: String,
+    aggregatePrefitwitter: String,
     engagementLabels: Set[Feature[JBoolean]],
     aggregatesToCompute: Set[TypedAggregateGroup[_]],
     smoothing: Double = 1.0,
-    outputSuffix: String = "ratio"
+    outputSuffitwitter: String = "ratio"
   ): PickTopCtrPolicy = {
     val ctrDescriptors = PickTopCtrBuilderHelper.createCtrDescriptors(
-      aggregatePrefix = aggregatePrefix,
+      aggregatePrefitwitter = aggregatePrefitwitter,
       engagementLabels = engagementLabels,
       aggregatesToCompute = aggregatesToCompute,
-      outputSuffix = outputSuffix
+      outputSuffitwitter = outputSuffitwitter
     )
     PickTopCtrPolicy(
       ctrDescriptors = ctrDescriptors,
@@ -87,18 +87,18 @@ object PickTopCtrPolicy {
 
 object CombinedTopNCtrsByWilsonConfidenceIntervalPolicy {
   def build(
-    aggregatePrefix: String,
+    aggregatePrefitwitter: String,
     engagementLabels: Set[Feature[JBoolean]],
     aggregatesToCompute: Set[TypedAggregateGroup[_]],
-    outputSuffix: String = "ratioWithWCI",
+    outputSuffitwitter: String = "ratioWithWCI",
     z: Double = 1.96,
     topN: Int = 1
   ): CombinedTopNCtrsByWilsonConfidenceIntervalPolicy = {
     val ctrDescriptors = PickTopCtrBuilderHelper.createCtrDescriptors(
-      aggregatePrefix = aggregatePrefix,
+      aggregatePrefitwitter = aggregatePrefitwitter,
       engagementLabels = engagementLabels,
       aggregatesToCompute = aggregatesToCompute,
-      outputSuffix = outputSuffix
+      outputSuffitwitter = outputSuffitwitter
     )
     CombinedTopNCtrsByWilsonConfidenceIntervalPolicy(
       ctrDescriptors = ctrDescriptors,
@@ -120,7 +120,7 @@ object CombinedTopNCtrsByWilsonConfidenceIntervalPolicy {
  */
 
 abstract class PickTopCtrPolicyBase(ctrDescriptors: Set[CtrDescriptor])
-    extends SparseBinaryMergePolicy {
+    etwittertends SparseBinaryMergePolicy {
 
   private def getContinuousFeature(
     aggregateRecord: DataRecord,
@@ -138,7 +138,7 @@ abstract class PickTopCtrPolicyBase(ctrDescriptors: Set[CtrDescriptor])
   override def mergeRecord(
     mutableInputRecord: DataRecord,
     aggregateRecords: List[DataRecord],
-    aggregateContext: FeatureContext
+    aggregateContetwittert: FeatureContetwittert
   ): Unit = {
     ctrDescriptors
       .foreach {
@@ -162,14 +162,14 @@ abstract class PickTopCtrPolicyBase(ctrDescriptors: Set[CtrDescriptor])
 
   protected def combineTopNCtrsToSingleScore(sortedCtrs: Seq[Double]): Option[Double]
 
-  override def aggregateFeaturesPostMerge(aggregateContext: FeatureContext): Set[Feature[_]] =
+  override def aggregateFeaturesPostMerge(aggregateContetwittert: FeatureContetwittert): Set[Feature[_]] =
     ctrDescriptors
       .map(_.outputFeature)
       .toSet
 }
 
 case class PickTopCtrPolicy(ctrDescriptors: Set[CtrDescriptor], smoothing: Double = 1.0)
-    extends PickTopCtrPolicyBase(ctrDescriptors) {
+    etwittertends PickTopCtrPolicyBase(ctrDescriptors) {
   require(smoothing > 0.0)
 
   override def calculateCtr(impressions: Double, engagements: Double): Double =
@@ -183,7 +183,7 @@ case class CombinedTopNCtrsByWilsonConfidenceIntervalPolicy(
   ctrDescriptors: Set[CtrDescriptor],
   z: Double = 1.96,
   topN: Int = 1)
-    extends PickTopCtrPolicyBase(ctrDescriptors) {
+    etwittertends PickTopCtrPolicyBase(ctrDescriptors) {
 
   private val zSquared = z * z
   private val zSquaredDiv2 = zSquared / 2.0
@@ -196,7 +196,7 @@ case class CombinedTopNCtrsByWilsonConfidenceIntervalPolicy(
    */
   override def calculateCtr(rawImpressions: Double, engagements: Double): Double = {
     // just in case engagements happens to be more than impressions...
-    val impressions = Math.max(rawImpressions, engagements)
+    val impressions = Math.matwitter(rawImpressions, engagements)
 
     if (impressions > 0.0) {
       val p = engagements / impressions
@@ -220,7 +220,7 @@ case class CombinedTopNCtrsByWilsonConfidenceIntervalPolicy(
     if (sortedCtrs.nonEmpty) {
       val inverseLogP = sortedCtrs
         .take(topN).map { p => Math.log(1.0 - p) }.sum
-      Some(1.0 - Math.exp(inverseLogP))
+      Some(1.0 - Math.etwitterp(inverseLogP))
     } else None
 
 }

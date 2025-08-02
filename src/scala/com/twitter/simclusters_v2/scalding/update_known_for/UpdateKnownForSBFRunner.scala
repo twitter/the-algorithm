@@ -1,14 +1,14 @@
 package com.twitter.simclusters_v2.scalding.update_known_for
 
-import com.twitter.algebird.Max
+import com.twitter.algebird.Matwitter
 import com.twitter.hermit.candidate.thriftscala.Candidates
 import com.twitter.sbf.core.AlgorithmConfig
 import com.twitter.sbf.core.MHAlgorithm
-import com.twitter.sbf.core.SparseBinaryMatrix
-import com.twitter.sbf.core.SparseRealMatrix
+import com.twitter.sbf.core.SparseBinaryMatritwitter
+import com.twitter.sbf.core.SparseRealMatritwitter
 import com.twitter.sbf.graph.Graph
 import com.twitter.scalding.Days
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding.Hdfs
 import com.twitter.scalding.Mode
 import com.twitter.scalding.Stat
@@ -17,7 +17,7 @@ import com.twitter.scalding.UniqueID
 import com.twitter.scalding.commons.source.VersionedKeyValSource
 import com.twitter.scalding.typed.TypedPipe
 import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv2.remote_access.EtwitterplicitLocation
 import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
 import com.twitter.simclusters_v2.common.ClusterId
 import com.twitter.simclusters_v2.common.UserId
@@ -46,7 +46,7 @@ object UpdateKnownForSBFRunner {
    *  2. read the user similarity graph from Sims, and convert their UserIds to the same mapped integer Id
    *  3. read the previous known_for data set for initialization of the clustering algorithm;
    *     for users without previous assignments, we randomly assign them to some unused clusters (if there are any).
-   *  4. run the clustering algorithm for x iterations (x = 4 in the prod setting)
+   *  4. run the clustering algorithm for twitter iterations (twitter = 4 in the prod setting)
    *  5. output of the clustering result as the new known_for.
    *
    */
@@ -54,10 +54,10 @@ object UpdateKnownForSBFRunner {
     simsGraph: TypedPipe[Candidates],
     minActiveFollowers: Int,
     topK: Int,
-    maxNeighbors: Int,
+    matwitterNeighbors: Int,
     tempLocationPath: String,
     previousKnownFor: TypedPipe[(UserId, Array[(ClusterId, Float)])],
-    maxEpochsForClustering: Int,
+    matwitterEpochsForClustering: Int,
     squareWeightsEnable: Boolean,
     wtCoeff: Double,
     mode: Mode
@@ -65,7 +65,7 @@ object UpdateKnownForSBFRunner {
     implicit
     uniqueId: UniqueID,
     tz: TimeZone
-  ): Execution[TypedPipe[(UserId, Array[(ClusterId, Float)])]] = {
+  ): Etwitterecution[TypedPipe[(UserId, Array[(ClusterId, Float)])]] = {
 
     val tempLocationPathSimsGraph = tempLocationPath + "/sims_graph"
     val tempLocationPathMappedIds = tempLocationPath + "/mapped_user_ids"
@@ -83,7 +83,7 @@ object UpdateKnownForSBFRunner {
       getMappedSimsGraph(
         mappedIdsToUserIds,
         simsGraph,
-        maxNeighbors
+        matwitterNeighbors
       ) // The simsGraph here consists of the mapped Ids and mapped ngbr Ids and not the original userIds
 
     val mappedSimsGraphVersionedKeyVal: VersionedKeyValSource[Int, List[(Int, Float)]] =
@@ -91,25 +91,25 @@ object UpdateKnownForSBFRunner {
     val mappedIdsToUserIdsVersionedKeyVal: VersionedKeyValSource[Int, UserId] =
       AdhocKeyValSources.mappedIndicesDevelSource(tempLocationPathMappedIds)
 
-    // exec to write intermediate results for mapped Sims Graph and mappedIds
-    val mappedSimsGraphAndMappedIdsWriteExec: Execution[Unit] = Execution
+    // etwitterec to write intermediate results for mapped Sims Graph and mappedIds
+    val mappedSimsGraphAndMappedIdsWriteEtwitterec: Etwitterecution[Unit] = Etwitterecution
       .zip(
-        mappedSimsGraphInput.writeExecution(mappedSimsGraphVersionedKeyVal),
-        mappedIdsToUserIds.writeExecution(mappedIdsToUserIdsVersionedKeyVal)
+        mappedSimsGraphInput.writeEtwitterecution(mappedSimsGraphVersionedKeyVal),
+        mappedIdsToUserIds.writeEtwitterecution(mappedIdsToUserIdsVersionedKeyVal)
       ).unit
 
-    mappedSimsGraphAndMappedIdsWriteExec.flatMap { _ =>
+    mappedSimsGraphAndMappedIdsWriteEtwitterec.flatMap { _ =>
       // The simsGraph and the mappedIds from userId(long) -> mappedIds are
       // having to be written to a temporary location and read again before running
       // the clustering algorithm.
 
-      Execution
+      Etwitterecution
         .zip(
-          readIntermediateExec(
+          readIntermediateEtwitterec(
             TypedPipe.from(mappedSimsGraphVersionedKeyVal),
             mode,
             tempLocationPathSimsGraph),
-          readIntermediateExec(
+          readIntermediateEtwitterec(
             TypedPipe.from(mappedIdsToUserIdsVersionedKeyVal),
             mode,
             tempLocationPathMappedIds)
@@ -125,7 +125,7 @@ object UpdateKnownForSBFRunner {
             val clusteringResults = getClusteringAssignments(
               mappedSimsGraphInputReadAgain,
               previousKnownForMappedIdsAssignments,
-              maxEpochsForClustering,
+              matwitterEpochsForClustering,
               squareWeightsEnable,
               wtCoeff
             )
@@ -147,7 +147,7 @@ object UpdateKnownForSBFRunner {
                     .swap
                     .mapValues(_.toArray)
 
-                Execution.from(updatedKnownFor)
+                Etwitterecution.from(updatedKnownFor)
               }
         }
     }
@@ -161,24 +161,24 @@ object UpdateKnownForSBFRunner {
     inputKnownFor: TypedPipe[(UserId, Array[(ClusterId, Float)])]
   )(
     implicit uniqueId: UniqueID
-  ): Execution[String] = {
+  ): Etwitterecution[String] = {
 
     val minSizeOfBiggerClusterForComparison = 10
 
-    val compareClusterExec = CompareClusters.summarize(
+    val compareClusterEtwitterec = CompareClusters.summarize(
       CompareClusters.compare(
         KnownForSources.transpose(inputKnownFor),
         KnownForSources.transpose(newKnownFor),
         minSizeOfBiggerCluster = minSizeOfBiggerClusterForComparison
       ))
 
-    val compareProducerExec = CompareClusters.compareClusterAssignments(
+    val compareProducerEtwitterec = CompareClusters.compareClusterAssignments(
       newKnownFor.mapValues(_.toList),
       inputKnownFor.mapValues(_.toList)
     )
 
-    Execution
-      .zip(compareClusterExec, compareProducerExec)
+    Etwitterecution
+      .zip(compareClusterEtwitterec, compareProducerEtwitterec)
       .map {
         case (compareClusterResults, compareProducerResult) =>
           s"Cosine similarity distribution between cluster membership vectors for " +
@@ -196,7 +196,7 @@ object UpdateKnownForSBFRunner {
    * Convert the list of updated KnownFor to a TypedPipe
    *
    * This step should have been done using TypedPipe.from(updatedKnownForList), however, due to the
-   * large size of the list, TypedPipe would throw out-of-memory exceptions. So we have to first
+   * large size of the list, TypedPipe would throw out-of-memory etwitterceptions. So we have to first
    * dump it to a temp file on HDFS and using a customized read function to load to TypedPipe
    *
    */
@@ -204,7 +204,7 @@ object UpdateKnownForSBFRunner {
     updatedKnownForList: List[(Int, List[(ClusterId, Float)])],
     mode: Mode,
     temporaryOutputStringPath: String
-  ): Execution[TypedPipe[(Int, List[(ClusterId, Float)])]] = {
+  ): Etwitterecution[TypedPipe[(Int, List[(ClusterId, Float)])]] = {
 
     val stringOutput = updatedKnownForList.map {
       case (mappedUserId, clusterArray) =>
@@ -219,11 +219,11 @@ object UpdateKnownForSBFRunner {
         s"$mappedUserId $str"
     }
 
-    // using Execution to enforce the order of the following 3 steps:
+    // using Etwitterecution to enforce the order of the following 3 steps:
     // 1. write the list of strings to a temp file on HDFS
     // 2. read the strings to TypedPipe
     // 3. delete the temp file
-    Execution
+    Etwitterecution
       .from(
         // write the output to HDFS; the data will be loaded to Typedpipe later;
         // the reason of doing this is that we can not just do TypePipe.from(stringOutput) which
@@ -254,35 +254,35 @@ object UpdateKnownForSBFRunner {
               println(s"rowId:$rowId  ClusterAssigned: $clusterAssignment")
             (rowId, clusterAssignment)
         }
-        // return the dataset as an execution and delete the temp location
-        readIntermediateExec(clustersWithScores, mode, temporaryOutputStringPath)
+        // return the dataset as an etwitterecution and delete the temp location
+        readIntermediateEtwitterec(clustersWithScores, mode, temporaryOutputStringPath)
       }
   }
 
   /**
-   * Helper function to read the dataset as execution and delete the temporary
+   * Helper function to read the dataset as etwitterecution and delete the temporary
    * location on HDFS for PDP compliance
    */
-  def readIntermediateExec[K, V](
+  def readIntermediateEtwitterec[K, V](
     dataset: TypedPipe[(K, V)],
     mode: Mode,
     tempLocationPath: String
-  ): Execution[TypedPipe[(K, V)]] = {
-    Execution
+  ): Etwitterecution[TypedPipe[(K, V)]] = {
+    Etwitterecution
       .from(dataset)
       .flatMap { output =>
         // delete the temporary outputs for PDP compliance
         mode match {
           case Hdfs(_, conf) =>
             val fs = FileSystem.newInstance(conf)
-            if (fs.deleteOnExit(new Path(tempLocationPath))) {
+            if (fs.deleteOnEtwitterit(new Path(tempLocationPath))) {
               println(s"Successfully deleted the temporary folder $tempLocationPath!")
             } else {
               println(s"Failed to delete the temporary folder $tempLocationPath!")
             }
           case _ => ()
         }
-        Execution.from(output)
+        Etwitterecution.from(output)
       }
   }
 
@@ -292,14 +292,14 @@ object UpdateKnownForSBFRunner {
    *
    * @param mappedUsers mapping of long userIDs to their integer indices
    * @param allEdges sims graph
-   * @param maxNeighborsPerNode number of neighbors for each user
+   * @param matwitterNeighborsPerNode number of neighbors for each user
    *
    * @return simsGraph of users and neighbors with their mapped interger ids
    */
   def getMappedSimsGraph(
     mappedUsers: TypedPipe[(Int, UserId)],
     allEdges: TypedPipe[Candidates],
-    maxNeighborsPerNode: Int
+    matwitterNeighborsPerNode: Int
   )(
     implicit uniqueId: UniqueID
   ): TypedPipe[(Int, List[(Int, Float)])] = {
@@ -318,7 +318,7 @@ object UpdateKnownForSBFRunner {
       .flatMap {
         case (id, (neighbors, mappedId)) =>
           val before = neighbors.size
-          val topKNeighbors = neighbors.sortBy(-_.score).take(maxNeighborsPerNode)
+          val topKNeighbors = neighbors.sortBy(-_.score).take(matwitterNeighborsPerNode)
           val after = topKNeighbors.size
           numEdgesLostTopKTruncated.incBy(before - after)
           topKNeighbors.map { candidate =>
@@ -332,17 +332,17 @@ object UpdateKnownForSBFRunner {
         case (id, ((mappedNeighborId, score), mappedId)) =>
           numEdgesAfterSecondJoin.inc()
           // to make the graph symmetric, add those edges back that might have been filtered
-          // due to maxNeighborsPerNodefor a user but not for its neighbors
+          // due to matwitterNeighborsPerNodefor a user but not for its neighbors
           List(
-            (mappedId, Map(mappedNeighborId -> Max(score))),
-            (mappedNeighborId, Map(mappedId -> Max(score)))
+            (mappedId, Map(mappedNeighborId -> Matwitter(score))),
+            (mappedNeighborId, Map(mappedId -> Matwitter(score)))
           )
       }
       .sumByKey
       .withReducers(9100)
       .map {
         case (id, nbrMap) =>
-          // Graph initialization expects neighbors to be sorted in ascending order of ids
+          // Graph initialization etwitterpects neighbors to be sorted in ascending order of ids
           val sorted = nbrMap.mapValues(_.get).toList.sortBy(_._1)
           finalNumEdges.incBy(sorted.size)
           (id, sorted)
@@ -363,7 +363,7 @@ object UpdateKnownForSBFRunner {
         DAL
           .readMostRecentSnapshotNoOlderThan(
             UsersourceFlatScalaDataset,
-            Days(30)).withRemoteReadPolicy(ExplicitLocation(ProcAtla)).toTypedPipe,
+            Days(30)).withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla)).toTypedPipe,
         minActiveFollowers,
         topK
       )
@@ -477,7 +477,7 @@ object UpdateKnownForSBFRunner {
    * Helper function that initializes users to clusters based on previous knownFor assignments
    * and for users with no previous assignments, assign them randomly to any of the empty clusters
    */
-  def initializeSparseBinaryMatrix(
+  def initializeSparseBinaryMatritwitter(
     graph: Graph,
     mappedSimsGraphIter: Iterable[
       (Int, Array[Int], Array[Float], List[(ClusterId, Float)])
@@ -485,7 +485,7 @@ object UpdateKnownForSBFRunner {
     numUsers: Int,
     numClusters: Int,
     algoConfig: AlgorithmConfig,
-  ): SparseBinaryMatrix = {
+  ): SparseBinaryMatritwitter = {
     var clustersSeenFromPreviousWeek: Set[Int] = Set.empty
     var emptyClustersFromPreviousWeek: Set[Int] = Set.empty
     var usersWithNoAssignmentsFromPreviousWeek: Set[Int] = Set.empty
@@ -502,27 +502,27 @@ object UpdateKnownForSBFRunner {
     (1 to numClusters).foreach { i =>
       if (!clustersSeenFromPreviousWeek.contains(i)) emptyClustersFromPreviousWeek += i
     }
-    var z = new SparseBinaryMatrix(numUsers, numClusters)
+    var z = new SparseBinaryMatritwitter(numUsers, numClusters)
     println("Going to initialize from previous KnownFor")
-    var zeroIndexedClusterIdsFromPreviousWeek: Set[Int] = Set.empty
-    for (clusterIdOneIndexed <- emptyClustersFromPreviousWeek) {
-      zeroIndexedClusterIdsFromPreviousWeek += (clusterIdOneIndexed - 1)
+    var zeroIndetwitteredClusterIdsFromPreviousWeek: Set[Int] = Set.empty
+    for (clusterIdOneIndetwittered <- emptyClustersFromPreviousWeek) {
+      zeroIndetwitteredClusterIdsFromPreviousWeek += (clusterIdOneIndetwittered - 1)
     }
     // Initialize z - users with no previous assignments are assigned to empty clusters
     z.initFromSubsetOfRowsForSpecifiedColumns(
       graph,
-      (gr: Graph, i: Integer) => algoConfig.rng.nextDouble,
-      zeroIndexedClusterIdsFromPreviousWeek.toArray,
+      (gr: Graph, i: Integer) => algoConfig.rng.netwittertDouble,
+      zeroIndetwitteredClusterIdsFromPreviousWeek.toArray,
       usersWithNoAssignmentsFromPreviousWeek.toArray,
       new PrintWriter(System.err)
     )
     println("Initialized the empty clusters")
     mappedSimsGraphIter.foreach {
       case (id, _, _, knownFor) =>
-        val currClustersForUserZeroIndexed = knownFor.map(_._1).map(x => x - 1)
+        val currClustersForUserZeroIndetwittered = knownFor.map(_._1).map(twitter => twitter - 1)
         // Users who have a previous cluster assignment are initialized with the same cluster
-        if (currClustersForUserZeroIndexed.nonEmpty) {
-          z.updateRow(id, currClustersForUserZeroIndexed.sorted.toArray)
+        if (currClustersForUserZeroIndetwittered.nonEmpty) {
+          z.updateRow(id, currClustersForUserZeroIndetwittered.sorted.toArray)
         }
     }
     println("Done initializing from previous knownFor assignment")
@@ -530,14 +530,14 @@ object UpdateKnownForSBFRunner {
   }
 
   /**
-   * Optimize the sparseBinaryMatrix. This function runs the clustering epochs and computes the
-   * cluster assignments for the next week, based on the underlying user-user graph
+   * Optimize the sparseBinaryMatritwitter. This function runs the clustering epochs and computes the
+   * cluster assignments for the netwittert week, based on the underlying user-user graph
    */
-  def optimizeSparseBinaryMatrix(
+  def optimizeSparseBinaryMatritwitter(
     algoConfig: AlgorithmConfig,
     graph: Graph,
-    z: SparseBinaryMatrix
-  ): SparseBinaryMatrix = {
+    z: SparseBinaryMatritwitter
+  ): SparseBinaryMatritwitter = {
     val prec0 = MHAlgorithm.clusterPrecision(graph, z, 0, 1000, algoConfig.rng)
     println("Precision of cluster 0:" + prec0.precision)
     val prec1 = MHAlgorithm.clusterPrecision(graph, z, 1, 1000, algoConfig.rng)
@@ -550,10 +550,10 @@ object UpdateKnownForSBFRunner {
   /**
    * Helper function that takes the heuristically scored association of user to a cluster
    * and returns the knownFor result
-   * @param srm SparseRealMatrix with (row, col) score denoting the membership score of user in the cluster
+   * @param srm SparseRealMatritwitter with (row, col) score denoting the membership score of user in the cluster
    * @return assignments of users (mapped integer indices) to clusters with knownFor scores.
    */
-  def getKnownForHeuristicScores(srm: SparseRealMatrix): List[(Int, List[(ClusterId, Float)])] = {
+  def getKnownForHeuristicScores(srm: SparseRealMatritwitter): List[(Int, List[(ClusterId, Float)])] = {
     val knownForAssignmentsFromClusterScores = (0 until srm.getNumRows).map { rowId =>
       val rowWithIndices = srm.getColIdsForRow(rowId)
       val rowWithScores = srm.getValuesForRow(rowId)
@@ -565,15 +565,15 @@ object UpdateKnownForSBFRunner {
         println("Inside outputIter:" + rowId + " " + srm.getNumRows)
       }
 
-      val clusterAssignmentWithMaxScore: List[(ClusterId, Float)] =
+      val clusterAssignmentWithMatwitterScore: List[(ClusterId, Float)] =
         if (allClustersWithScores.length > 1) {
-          // if sparseBinaryMatrix z has rows with more than one non-zero column (i.e a user
+          // if sparseBinaryMatritwitter z has rows with more than one non-zero column (i.e a user
           // initialized with more than one cluster), and the clustering algorithm doesnot find
           // a better proposal for cluster assignment, the user's multi-cluster membership
           // from the initialization step can continue.
           // We found that this happens in ~0.1% of the knownFor users. Hence choose the
           // cluster with the highest score to deal with such edge cases.
-          val result: (ClusterId, Float) = allClustersWithScores.maxBy(_._2)
+          val result: (ClusterId, Float) = allClustersWithScores.matwitterBy(_._2)
           println(
             "Found a user with mappedId: %s with more than 1 cluster assignment:%s; Assigned to the best cluster: %s"
               .format(
@@ -585,7 +585,7 @@ object UpdateKnownForSBFRunner {
         } else {
           allClustersWithScores.toList
         }
-      (rowId, clusterAssignmentWithMaxScore)
+      (rowId, clusterAssignmentWithMatwitterScore)
     }
     knownForAssignmentsFromClusterScores.toList
   }
@@ -595,7 +595,7 @@ object UpdateKnownForSBFRunner {
    *
    * @param mappedSimsGraph user-user graph as input to clustering
    * @param previousKnownForAssignments previous week clustering assignments
-   * @param maxEpochsForClustering number of neighbors for each user
+   * @param matwitterEpochsForClustering number of neighbors for each user
    * @param squareWeights boolean flag for the edge weights in the sims graph
    * @param wtCoeff wtCoeff
    *
@@ -604,36 +604,36 @@ object UpdateKnownForSBFRunner {
   def getClusteringAssignments(
     mappedSimsGraph: TypedPipe[(Int, List[(Int, Float)])],
     previousKnownForAssignments: TypedPipe[(Int, List[(ClusterId, Float)])],
-    maxEpochsForClustering: Int,
+    matwitterEpochsForClustering: Int,
     squareWeights: Boolean,
     wtCoeff: Double
   )(
     implicit uniqueId: UniqueID
-  ): Execution[List[(Int, List[(ClusterId, Float)])]] = {
+  ): Etwitterecution[List[(Int, List[(ClusterId, Float)])]] = {
 
     attachClusterAssignments(
       mappedSimsGraph,
       previousKnownForAssignments,
-      squareWeights).toIterableExecution.flatMap { mappedSimsGraphWithClustersIter =>
+      squareWeights).toIterableEtwitterecution.flatMap { mappedSimsGraphWithClustersIter =>
       val tic = System.currentTimeMillis
-      var maxVertexId = 0
-      var maxClusterIdInPreviousAssignment = 0
+      var matwitterVertetwitterId = 0
+      var matwitterClusterIdInPreviousAssignment = 0
       mappedSimsGraphWithClustersIter.foreach {
         case (id, _, _, knownFor) =>
-          maxVertexId = Math.max(id, maxVertexId)
+          matwitterVertetwitterId = Math.matwitter(id, matwitterVertetwitterId)
           knownFor.foreach {
             case (clusterId, _) =>
-              maxClusterIdInPreviousAssignment =
-                Math.max(clusterId, maxClusterIdInPreviousAssignment)
+              matwitterClusterIdInPreviousAssignment =
+                Math.matwitter(clusterId, matwitterClusterIdInPreviousAssignment)
           }
       }
 
       val numUsersToCluster =
-        maxVertexId + 1 //since users were mapped with index starting from 0, using zipWithIndex
+        matwitterVertetwitterId + 1 //since users were mapped with indetwitter starting from 0, using zipWithIndetwitter
       println("Total number of topK users to be clustered this time:" + numUsersToCluster)
       println(
-        "Total number of clusters in the previous knownFor assignment:" + maxClusterIdInPreviousAssignment)
-      println("Will set number of communities to " + maxClusterIdInPreviousAssignment)
+        "Total number of clusters in the previous knownFor assignment:" + matwitterClusterIdInPreviousAssignment)
+      println("Will set number of communities to " + matwitterClusterIdInPreviousAssignment)
 
       // Initialize the graph with users, neighbors and the corresponding edge weights
       val graph = getGraphFromSimsInput(mappedSimsGraphWithClustersIter, numUsersToCluster)
@@ -642,30 +642,30 @@ object UpdateKnownForSBFRunner {
 
       // define the algoConfig parameters
       val algoConfig = new AlgorithmConfig()
-        .withCpu(16).withK(maxClusterIdInPreviousAssignment)
+        .withCpu(16).withK(matwitterClusterIdInPreviousAssignment)
         .withWtCoeff(wtCoeff.toDouble)
-        .withMaxEpoch(maxEpochsForClustering)
+        .withMatwitterEpoch(matwitterEpochsForClustering)
       algoConfig.divideResultIntoConnectedComponents = false
       algoConfig.minClusterSize = 1
       algoConfig.updateImmediately = true
       algoConfig.rng = new RandomAdaptor(new JDKRandomGenerator(1))
 
-      // Initialize a sparseBinaryMatrix with users assigned to their previous week knownFor
+      // Initialize a sparseBinaryMatritwitter with users assigned to their previous week knownFor
       // assignments. For those users who do not a prior assignment, we assign
       // the (user + the neighbors from the graph) to the empty clusters.
       // Please note that this neighborhood-based initialization to empty clusters can
       // have a few cases where the same user was assigned to more than one cluster
-      val z = initializeSparseBinaryMatrix(
+      val z = initializeSparseBinaryMatritwitter(
         graph,
         mappedSimsGraphWithClustersIter,
         numUsersToCluster,
-        maxClusterIdInPreviousAssignment,
+        matwitterClusterIdInPreviousAssignment,
         algoConfig
       )
 
       // Run the epochs of the clustering algorithm to find the new cluster assignments
       val tic2 = System.currentTimeMillis
-      val optimizedZ = optimizeSparseBinaryMatrix(algoConfig, graph, z)
+      val optimizedZ = optimizeSparseBinaryMatritwitter(algoConfig, graph, z)
       val toc2 = System.currentTimeMillis
       println("Time to optimize: %.2f seconds\n".format((toc2 - tic2) / 1000.0))
       println("Time to initialize & optimize: %.2f seconds\n".format((toc2 - toc) / 1000.0))
@@ -679,7 +679,7 @@ object UpdateKnownForSBFRunner {
       val knownForAssignmentsFromClusterScores: List[(Int, List[(ClusterId, Float)])] =
         getKnownForHeuristicScores(srm)
 
-      Execution.from(knownForAssignmentsFromClusterScores)
+      Etwitterecution.from(knownForAssignmentsFromClusterScores)
     }
   }
 }

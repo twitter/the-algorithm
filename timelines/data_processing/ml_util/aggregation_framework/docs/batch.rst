@@ -10,7 +10,7 @@ Given these groups, this section will discuss how you can setup offline batch jo
 Input Data
 ----------
 
-In order to generate aggregate features, the relevant input features need to be available offline as a daily scalding source in `DataRecord` format (typically `DailySuffixFeatureSource <https://cgit.twitter.biz/source/tree/src/scala/com/twitter/ml/api/FeatureSource.scala>`_, though `HourlySuffixFeatureSource` could also be usable but we have not tested this).
+In order to generate aggregate features, the relevant input features need to be available offline as a daily scalding source in `DataRecord` format (typically `DailySuffitwitterFeatureSource <https://cgit.twitter.biz/source/tree/src/scala/com/twitter/ml/api/FeatureSource.scala>`_, though `HourlySuffitwitterFeatureSource` could also be usable but we have not tested this).
 
 .. admonition:: Note
 
@@ -21,7 +21,7 @@ Aggregation Config
 
 Now that we have a daily data source with input features and labels, we need to setup the `AggregateGroup` config itself. This contains all aggregation groups that you would like to compute and we will go through the implementation step-by-step.
 
-.. admonition:: Example: Timelines Quality config
+.. admonition:: Etwitterample: Timelines Quality config
 
   `TimelinesAggregationConfig <https://cgit.twitter.biz/source/tree/src/scala/com/twitter/timelines/prediction/common/aggregates/TimelinesAggregationConfig.scala>`_ imports the configured `AggregationGroups` from `TimelinesAggregationConfigDetails <https://cgit.twitter.biz/source/tree/src/scala/com/twitter/timelines/prediction/common/aggregates/TimelinesAggregationConfigDetails.scala>`_. The config is then referenced by the implementing summingbird-scalding job which we will setup below.
 
@@ -36,7 +36,7 @@ Each `AggregateGroup` will need to define a (daily) source of input features. We
     name = "timelines_daily_recap",
     timestampFeature = TIMESTAMP,
     scaldingHdfsPath = Some("/user/timelines/processed/suggests/recap/data_records"),
-    scaldingSuffixType = Some("daily"),
+    scaldingSuffitwitterType = Some("daily"),
     withValidation = true
   )
 
@@ -46,11 +46,11 @@ Each `AggregateGroup` will need to define a (daily) source of input features. We
 
   #. The name is not important as long as it is unique.
 
-  #. `timestampFeature` must be a discrete feature of type `com.twitter.ml.api.Feature[Long]` and represents the “time” of a given training record in milliseconds - for example, the time at which an engagement, push open event, or abuse event took place that you are trying to train on. If you do not already have such a feature in your daily training data, you need to add one.
+  #. `timestampFeature` must be a discrete feature of type `com.twitter.ml.api.Feature[Long]` and represents the “time” of a given training record in milliseconds - for etwitterample, the time at which an engagement, push open event, or abuse event took place that you are trying to train on. If you do not already have such a feature in your daily training data, you need to add one.
 
-  #. `scaldingSuffixType` can be “hourly” or “daily” depending on the type of source (`HourlySuffixFeatureSource` vs `DailySuffixFeatureSource`).
+  #. `scaldingSuffitwitterType` can be “hourly” or “daily” depending on the type of source (`HourlySuffitwitterFeatureSource` vs `DailySuffitwitterFeatureSource`).
   
-  #. Set `withValidation` to true to validate the presence of _SUCCESS file. Context: https://jira.twitter.biz/browse/TQ-10618
+  #. Set `withValidation` to true to validate the presence of _SUCCESS file. Contetwittert: https://jira.twitter.biz/browse/TQ-10618
 
 Output HDFS store
 -----------------
@@ -62,25 +62,25 @@ The output HDFS store is where the computed aggregate features are stored. This 
  val outputHdfsPath = "/user/timelines/processed/aggregates_v2"
   val timelinesOfflineAggregateSink = new OfflineStoreCommonConfig {
     override def apply(startDate: String) = new OfflineAggregateStoreCommonConfig(
-      outputHdfsPathPrefix = outputHdfsPath,
+      outputHdfsPathPrefitwitter = outputHdfsPath,
       dummyAppId = "timelines_aggregates_v2_ro", // unused - can be arbitrary
-      dummyDatasetPrefix = "timelines_aggregates_v2_ro", // unused - can be arbitrary
+      dummyDatasetPrefitwitter = "timelines_aggregates_v2_ro", // unused - can be arbitrary
       startDate = startDate
     )
   }
 
-Note: `dummyAppId` and `dummyDatasetPrefix` are unused so can be set to any arbitrary value. They should be removed on the framework side.
+Note: `dummyAppId` and `dummyDatasetPrefitwitter` are unused so can be set to any arbitrary value. They should be removed on the framework side.
 
-The `outputHdfsPathPrefix` is the only field that matters, and should be set to the HDFS path where you want to store the aggregate features. Make sure you have a lot of quota available at that path.
+The `outputHdfsPathPrefitwitter` is the only field that matters, and should be set to the HDFS path where you want to store the aggregate features. Make sure you have a lot of quota available at that path.
 
 Setting Up Aggregates Job
 -------------------------
 
-Once you have defined a config file with the aggregates you would like to compute, the next step is to create the aggregates scalding job using the config (`example <https://cgit.twitter.biz/source/tree/timelines/data_processing/ad_hoc/aggregate_interactions/v2/offline_aggregation/TimelinesAggregationScaldingJob.scala>`_). This is very concise and requires only a few lines of code:
+Once you have defined a config file with the aggregates you would like to compute, the netwittert step is to create the aggregates scalding job using the config (`etwitterample <https://cgit.twitter.biz/source/tree/timelines/data_processing/ad_hoc/aggregate_interactions/v2/offline_aggregation/TimelinesAggregationScaldingJob.scala>`_). This is very concise and requires only a few lines of code:
 
 .. code-block:: scala
 
-  object TimelinesAggregationScaldingJob extends AggregatesV2ScaldingJob {
+  object TimelinesAggregationScaldingJob etwittertends AggregatesV2ScaldingJob {
     override val aggregatesToCompute = TimelinesAggregationConfig.aggregatesToCompute
   }
 
@@ -154,9 +154,9 @@ All future runs (2nd onwards) will use the permanent entry in the capesos yml co
 Output Aggregate Features
 -------------------------
 
-This scalding job using the example config from the earlier section would output a VersionedKeyValSource to `/user/timelines/processed/aggregates_v2/user_aggregates` on HDFS.
+This scalding job using the etwitterample config from the earlier section would output a VersionedKeyValSource to `/user/timelines/processed/aggregates_v2/user_aggregates` on HDFS.
 
-Note that `/user/timelines/processed/aggregates_v2` is the explicitly defined root path while `user_aggregates` is the output directory of the example `AggregateGroup` defined earlier. The latter can be different for different `AggregateGroups` defined in your config.
+Note that `/user/timelines/processed/aggregates_v2` is the etwitterplicitly defined root path while `user_aggregates` is the output directory of the etwitterample `AggregateGroup` defined earlier. The latter can be different for different `AggregateGroups` defined in your config.
 
 
 The VersionedKeyValSource is difficult to use directly in your jobs/offline trainings, but we provide an adapted source `AggregatesV2FeatureSource` that makes it easy to join and use in your jobs:
@@ -176,12 +176,12 @@ Simply replace the `rootPath`, `storeName` and `aggregates` object to whatever y
 
 .. admonition:: Usage
 
-  This can now be used like any other `DataSetPipe` in offline ML jobs. You can write out the features to a `DailySuffixFeatureSource`, you can join them with your data offline for trainings, or you can write them to a Manhattan store for serving online. 
+  This can now be used like any other `DataSetPipe` in offline ML jobs. You can write out the features to a `DailySuffitwitterFeatureSource`, you can join them with your data offline for trainings, or you can write them to a Manhattan store for serving online. 
 
-Aggregate Features Example
+Aggregate Features Etwitterample
 --------------------------
 
-Here is an example of sample of the aggregate features we just computed:
+Here is an etwitterample of sample of the aggregate features we just computed:
 
 .. code-block:: scala
 
@@ -191,11 +191,11 @@ Here is an example of sample of the aggregate features we just computed:
   user_aggregate_v2.pair.is_favorited.tweetsource.is_quote.50.days.count: 6.0
   meta.user_id: 123456789
 
-Aggregate feature names match a `prefix.pair.label.feature.half_life.metric` schema and correspond to what was defined in the aggregation config for each of these fields.
+Aggregate feature names match a `prefitwitter.pair.label.feature.half_life.metric` schema and correspond to what was defined in the aggregation config for each of these fields.
 
-.. admonition:: Example
+.. admonition:: Etwitterample
 
-  In this example, the above features are capturing that userId 123456789L has:
+  In this etwitterample, the above features are capturing that userId 123456789L has:
 
   .. 
   A 50-day decayed count of 100 training records with any label or feature (“tweet impressions”)
@@ -208,8 +208,8 @@ Aggregate feature names match a `prefix.pair.label.feature.half_life.metric` sch
 
 By combining the above, a model might infer that for this specific user, quote tweets comprise 30% of all impressions, have a favorite rate of 6/30 = 20%, compared to a favorite rate of 10/100 = 10% on the total population of tweets.
 
-Therefore, being a quote tweet makes this specific user `123456789L` approximately twice as likely to favorite the tweet, which is useful for prediction and could result in the ML model giving higher scores to & ranking quote tweets higher in a personalized fashion for this user.
+Therefore, being a quote tweet makes this specific user `123456789L` approtwitterimately twice as likely to favorite the tweet, which is useful for prediction and could result in the ML model giving higher scores to & ranking quote tweets higher in a personalized fashion for this user.
 
 Tests for Feature Names
 --------------------------
-When you change or add AggregateGroup, feature names might change. And the Feature Store provides a testing mechanism to assert that the feature names change as you expect. See `tests for feature names <https://docbird.twitter.biz/ml_feature_store/catalog.html#tests-for-feature-names>`_.
+When you change or add AggregateGroup, feature names might change. And the Feature Store provides a testing mechanism to assert that the feature names change as you etwitterpect. See `tests for feature names <https://docbird.twitter.biz/ml_feature_store/catalog.html#tests-for-feature-names>`_.

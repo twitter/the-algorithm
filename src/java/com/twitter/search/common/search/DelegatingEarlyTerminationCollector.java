@@ -1,11 +1,11 @@
 package com.twitter.search.common.search;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.List;
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
-import org.apache.lucene.index.LeafReaderContext;
+import org.apache.lucene.indetwitter.LeafReaderContetwittert;
 import org.apache.lucene.search.Collector;
 import org.apache.lucene.search.LeafCollector;
 import org.apache.lucene.search.Scorable;
@@ -19,7 +19,7 @@ import com.twitter.search.common.query.thriftjava.CollectorParams;
  * that delegates actual hit collection to a sub collector.
  */
 public final class DelegatingEarlyTerminationCollector
-    extends TwitterEarlyTerminationCollector {
+    etwittertends TwitterEarlyTerminationCollector {
   private final Collector subCollector;
   private LeafCollector subLeafCollector;
 
@@ -40,27 +40,27 @@ public final class DelegatingEarlyTerminationCollector
   }
 
   @Override
-  public void setScorer(Scorable scorer) throws IOException {
+  public void setScorer(Scorable scorer) throws IOEtwitterception {
     super.setScorer(scorer);
     subLeafCollector.setScorer(scorer);
   }
 
   @Override
-  protected void doCollect() throws IOException {
+  protected void doCollect() throws IOEtwitterception {
     subLeafCollector.collect(curDocId);
   }
 
   @Override
-  protected void doFinishSegment(int lastSearchedDocID) throws IOException {
+  protected void doFinishSegment(int lastSearchedDocID) throws IOEtwitterception {
     if (subCollector instanceof TwitterCollector) {
       ((TwitterCollector) subCollector).finishSegment(lastSearchedDocID);
     }
   }
 
   @Override
-  public void setNextReader(LeafReaderContext context) throws IOException {
-    super.setNextReader(context);
-    subLeafCollector = subCollector.getLeafCollector(context);
+  public void setNetwittertReader(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
+    super.setNetwittertReader(contetwittert);
+    subLeafCollector = subCollector.getLeafCollector(contetwittert);
   }
 
   @Override

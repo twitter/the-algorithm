@@ -21,7 +21,7 @@ import com.twitter.tweetypie.client_id.ClientIdHelper
 import com.twitter.tweetypie.client_id.ConditionalServiceIdentifierStrategy
 import com.twitter.tweetypie.client_id.PreferForwardedServiceIdentifierForStrato
 import com.twitter.tweetypie.client_id.UseTransportServiceIdentifier
-import com.twitter.tweetypie.context.TweetypieContext
+import com.twitter.tweetypie.contetwittert.TweetypieContetwittert
 import com.twitter.tweetypie.matching.Tokenizer
 import com.twitter.tweetypie.service._
 import com.twitter.tweetypie.thriftscala.TweetServiceInternal$FinagleService
@@ -91,26 +91,26 @@ class TweetServerBuilder(settings: TweetServiceSettings) {
     deciderGates
   }
 
-  val featureSwitchesWithExperiments = FeatureSwitchesBuilder
-    .createWithExperiments("/features/tweetypie/main")
+  val featureSwitchesWithEtwitterperiments = FeatureSwitchesBuilder
+    .createWithEtwitterperiments("/features/tweetypie/main")
     .build()
 
-  val featureSwitchesWithoutExperiments = FeatureSwitchesBuilder
-    .createWithNoExperiments("/features/tweetypie/main", Some(statsReceiver))
+  val featureSwitchesWithoutEtwitterperiments = FeatureSwitchesBuilder
+    .createWithNoEtwitterperiments("/features/tweetypie/main", Some(statsReceiver))
     .build()
 
   // ********* initializer **********
 
-  private[this] def warmupTextTokenization(logger: Logger): Unit = {
-    logger.info("Warming up text tokenization")
+  private[this] def warmupTetwittertTokenization(logger: Logger): Unit = {
+    logger.info("Warming up tetwittert tokenization")
     val watch = Stopwatch.start()
     Tokenizer.warmUp()
-    logger.info(s"Warmed up text tokenization in ${watch()}")
+    logger.info(s"Warmed up tetwittert tokenization in ${watch()}")
   }
 
   private[this] def runWarmup(tweetService: Activity[ThriftTweetService]): Unit = {
     val tokenizationLogger = Logger("com.twitter.tweetypie.TweetServerBuilder.TokenizationWarmup")
-    warmupTextTokenization(tokenizationLogger)
+    warmupTetwittertTokenization(tokenizationLogger)
 
     val warmupLogger = Logger("com.twitter.tweetypie.TweetServerBuilder.BackendWarmup")
     // #1 warmup backends
@@ -134,7 +134,7 @@ class TweetServerBuilder(settings: TweetServiceSettings) {
       val duration = Time.now.since(startTime)
       log.info("resolved all serversets in " + duration)
     } catch {
-      case NonFatal(ex) => log.warn("failed to resolve all serversets", ex)
+      case NonFatal(etwitter) => log.warn("failed to resolve all serversets", etwitter)
     }
   }
 
@@ -172,8 +172,8 @@ class TweetServerBuilder(settings: TweetServiceSettings) {
       statsReceiver = statsReceiver,
       timer = timer,
       deciderGates = deciderGates,
-      featureSwitchesWithExperiments = featureSwitchesWithExperiments,
-      featureSwitchesWithoutExperiments = featureSwitchesWithoutExperiments,
+      featureSwitchesWithEtwitterperiments = featureSwitchesWithEtwitterperiments,
+      featureSwitchesWithoutEtwitterperiments = featureSwitchesWithoutEtwitterperiments,
       backendClients = backendClients,
       clientIdHelper = clientIdHelper,
     )
@@ -204,7 +204,7 @@ class TweetServerBuilder(settings: TweetServiceSettings) {
     val serviceFilter =
       quillCapture
         .getServerFilter(ThriftProto.server)
-        .andThen(TweetypieContext.Local.filter[Array[Byte], Array[Byte]])
+        .andThen(TweetypieContetwittert.Local.filter[Array[Byte], Array[Byte]])
         .andThen(darkTrafficFilter)
 
     initialize(tweetService)
@@ -217,7 +217,7 @@ class TweetServerBuilder(settings: TweetServiceSettings) {
           service,
           protocolFactory = Protocols.binaryFactory(),
           stats = NullStatsReceiver,
-          maxThriftBufferSize = settings.maxThriftBufferSize
+          matwitterThriftBufferSize = settings.matwitterThriftBufferSize
         )
 
       serviceFilter andThen finagleService

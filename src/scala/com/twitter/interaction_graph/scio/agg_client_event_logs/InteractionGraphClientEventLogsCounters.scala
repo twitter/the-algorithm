@@ -12,7 +12,7 @@ trait InteractionGraphClientEventLogsCountersTrait {
 }
 
 case object InteractionGraphClientEventLogsCounters
-    extends InteractionGraphClientEventLogsCountersTrait {
+    etwittertends InteractionGraphClientEventLogsCountersTrait {
 
   val profileViewCounter = ScioMetrics.counter(Namespace, "Profile View Features")
   val linkOpenCounter = ScioMetrics.counter(Namespace, "Link Open Features")

@@ -6,21 +6,21 @@ import com.twitter.strato.catalog.OpMetadata
 import com.twitter.strato.config.ContactInfo
 import com.twitter.strato.config.Policy
 import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
+import com.twitter.strato.data.Description.PlainTetwittert
 import com.twitter.strato.data.Lifecycle.Production
 import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.opcontext.OpContext
+import com.twitter.strato.opcontetwittert.OpContetwittert
 import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.tweetypie.federated.context.GetRequestContext
-import com.twitter.tweetypie.federated.context.RequestContext
+import com.twitter.tweetypie.federated.contetwittert.GetRequestContetwittert
+import com.twitter.tweetypie.federated.contetwittert.RequestContetwittert
 import com.twitter.tweetypie.thriftscala.{graphql => gql}
 import com.twitter.tweetypie.{thriftscala => thrift}
 
 class UnretweetColumn(
   unretweet: thrift.UnretweetRequest => Future[thrift.UnretweetResult],
-  getRequestContext: GetRequestContext,
-) extends StratoFed.Column("tweetypie/unretweet.Tweet")
-    with StratoFed.Execute.StitchWithContext
+  getRequestContetwittert: GetRequestContetwittert,
+) etwittertends StratoFed.Column("tweetypie/unretweet.Tweet")
+    with StratoFed.Etwitterecute.StitchWithContetwittert
     with StratoFed.HandleDarkRequests {
 
   override val policy: Policy = AccessPolicy.TweetMutationCommonAccessPolicies
@@ -39,16 +39,16 @@ class UnretweetColumn(
   override val metadata: OpMetadata =
     OpMetadata(
       Some(Production),
-      Some(PlainText("Removes any retweets by the calling user of the given source tweet.")))
+      Some(PlainTetwittert("Removes any retweets by the calling user of the given source tweet.")))
 
-  override def execute(gqlRequest: Arg, opContext: OpContext): Stitch[Result] = {
-    val ctx: RequestContext = getRequestContext(opContext)
+  override def etwitterecute(gqlRequest: Arg, opContetwittert: OpContetwittert): Stitch[Result] = {
+    val cttwitter: RequestContetwittert = getRequestContetwittert(opContetwittert)
     val req = thrift.UnretweetRequest(
-      ctx.twitterUserId,
+      cttwitter.twitterUserId,
       gqlRequest.sourceTweetId,
     )
 
-    val stitchUnretweet = handleDarkRequest(opContext)(
+    val stitchUnretweet = handleDarkRequest(opContetwittert)(
       light = Stitch.callFuture(unretweet(req)),
       // For dark requests, we don't want to send traffic to tweetypie.
       // Since the response is the same regardless of the request, we take a no-op

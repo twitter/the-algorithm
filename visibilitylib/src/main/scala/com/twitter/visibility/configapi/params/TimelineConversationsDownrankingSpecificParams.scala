@@ -2,12 +2,12 @@ package com.twitter.visibility.configapi.params
 
 private[visibility] object TimelineConversationsDownrankingSpecificParams {
 
-  object EnablePSpammyTweetDownrankConvosLowQualityParam extends RuleParam(false)
+  object EnablePSpammyTweetDownrankConvosLowQualityParam etwittertends RuleParam(false)
 
-  object EnableRitoActionedTweetDownrankConvosLowQualityParam extends RuleParam(false)
+  object EnableRitoActionedTweetDownrankConvosLowQualityParam etwittertends RuleParam(false)
 
   object EnableHighSpammyTweetContentScoreConvoDownrankAbusiveQualityRuleParam
-      extends RuleParam(false)
+      etwittertends RuleParam(false)
 
-  object EnableHighCryptospamScoreConvoDownrankAbusiveQualityRuleParam extends RuleParam(false)
+  object EnableHighCryptospamScoreConvoDownrankAbusiveQualityRuleParam etwittertends RuleParam(false)
 }

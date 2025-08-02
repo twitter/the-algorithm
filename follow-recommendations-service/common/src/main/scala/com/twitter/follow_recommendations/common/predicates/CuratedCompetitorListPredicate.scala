@@ -9,8 +9,8 @@ import com.twitter.follow_recommendations.common.models.FilterReason.CuratedAcco
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.stitch.Stitch
 import com.twitter.strato.client.Fetcher
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 import com.twitter.conversions.DurationOps._
 import com.twitter.escherbird.util.stitchcache.StitchCache
 
@@ -21,25 +21,25 @@ case class CuratedCompetitorListPredicate @Inject() (
     String,
     Unit,
     Seq[Long]
-  ]) extends Predicate[CandidateUser] {
+  ]) etwittertends Predicate[CandidateUser] {
 
   private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getName)
   private val cacheStats = stats.scope("cache")
 
   private val cache = StitchCache[String, Set[Long]](
-    maxCacheSize = CuratedCompetitorListPredicate.CacheNumberOfEntries,
+    matwitterCacheSize = CuratedCompetitorListPredicate.CacheNumberOfEntries,
     ttl = CuratedCompetitorListPredicate.CacheTTL,
     statsReceiver = cacheStats,
-    underlyingCall = (competitorListPrefix: String) => query(competitorListPrefix)
+    underlyingCall = (competitorListPrefitwitter: String) => query(competitorListPrefitwitter)
   )
 
-  private def query(prefix: String): Stitch[Set[Long]] =
-    competitorAccountFetcher.fetch(prefix).map(_.v.getOrElse(Nil).toSet)
+  private def query(prefitwitter: String): Stitch[Set[Long]] =
+    competitorAccountFetcher.fetch(prefitwitter).map(_.v.getOrElse(Nil).toSet)
 
   /**
    * Caveat here is that though the similarToUserIds allows for a Seq[Long], in practice we would
    * only return 1 userId. Multiple userId's would result in filtering candidates associated with
-   * a different similarToUserId. For example:
+   * a different similarToUserId. For etwitterample:
    *   - similarToUser1 -> candidate1, candidate2
    *   - similarToUser2 -> candidate3
    *   and in the competitorList store we have:

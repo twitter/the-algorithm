@@ -26,8 +26,8 @@ import com.twitter.visibility.engine.VisibilityRulePreprocessor
 import com.twitter.visibility.features.FeatureMap
 import com.twitter.visibility.models.ContentId
 import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.EvaluationContext
+import com.twitter.visibility.models.ViewerContetwittert
+import com.twitter.visibility.rules.EvaluationContetwittert
 import com.twitter.visibility.rules.Rule
 import com.twitter.visibility.rules.generators.TweetRuleGenerator
 import com.twitter.visibility.rules.providers.InjectedPolicyProvider
@@ -153,17 +153,17 @@ object VisibilityLibrary {
 
       (decider, abDecider, featureSwitches) match {
         case (None, _, _) =>
-          throw new IllegalStateException(
+          throw new IllegalStateEtwitterception(
             "Decider is unset! If intentional, please call .withNullDecider()."
           )
 
         case (_, None, _) =>
-          throw new IllegalStateException(
+          throw new IllegalStateEtwitterception(
             "ABDecider is unset! If intentional, please call .withNullABDecider()."
           )
 
         case (_, _, None) =>
-          throw new IllegalStateException(
+          throw new IllegalStateEtwitterception(
             "FeatureSwitches is unset! This is a bug."
           )
 
@@ -261,7 +261,7 @@ class VisibilityLibrary private[VisibilityLibrary] (
     enableFailClosed)
 
   val ruleEngineVersionStatsReceiver = statsReceiver.scope("rule_engine_version")
-  def isReleaseCandidateEnabled: Boolean = visibilityDeciderGates.enableExperimentalRuleEngine()
+  def isReleaseCandidateEnabled: Boolean = visibilityDeciderGates.enableEtwitterperimentalRuleEngine()
 
   private def visibilityRuleEngine: DeciderableVisibilityRuleEngine = {
     if (isReleaseCandidateEnabled) {
@@ -283,28 +283,28 @@ class VisibilityLibrary private[VisibilityLibrary] (
       result
     }
 
-  def getParams(viewerContext: ViewerContext, safetyLevel: SafetyLevel): Params = {
+  def getParams(viewerContetwittert: ViewerContetwittert, safetyLevel: SafetyLevel): Params = {
     if (memoizeSafetyLevelParams()) {
-      visibilityParams.memoized(viewerContext, safetyLevel)
+      visibilityParams.memoized(viewerContetwittert, safetyLevel)
     } else {
-      visibilityParams(viewerContext, safetyLevel)
+      visibilityParams(viewerContetwittert, safetyLevel)
     }
   }
 
-  def evaluationContextBuilder(viewerContext: ViewerContext): EvaluationContext.Builder =
-    EvaluationContext
-      .Builder(statsReceiver, visibilityParams, viewerContext)
+  def evaluationContetwittertBuilder(viewerContetwittert: ViewerContetwittert): EvaluationContetwittert.Builder =
+    EvaluationContetwittert
+      .Builder(statsReceiver, visibilityParams, viewerContetwittert)
       .withMemoizedParams(memoizeSafetyLevelParams)
 
   def runRuleEngine(
     contentId: ContentId,
     featureMap: FeatureMap,
-    evaluationContextBuilder: EvaluationContext.Builder,
+    evaluationContetwittertBuilder: EvaluationContetwittert.Builder,
     safetyLevel: SafetyLevel
   ): Stitch[VisibilityResult] =
     profileStitch(
       visibilityRuleEngine(
-        evaluationContextBuilder.build(safetyLevel),
+        evaluationContetwittertBuilder.build(safetyLevel),
         safetyLevel,
         new VisibilityResultBuilder(contentId, featureMap),
         enableShortCircuiting
@@ -315,12 +315,12 @@ class VisibilityLibrary private[VisibilityLibrary] (
   def runRuleEngine(
     contentId: ContentId,
     featureMap: FeatureMap,
-    viewerContext: ViewerContext,
+    viewerContetwittert: ViewerContetwittert,
     safetyLevel: SafetyLevel
   ): Stitch[VisibilityResult] =
     profileStitch(
       visibilityRuleEngine(
-        EvaluationContext(safetyLevel, getParams(viewerContext, safetyLevel), statsReceiver),
+        EvaluationContetwittert(safetyLevel, getParams(viewerContetwittert, safetyLevel), statsReceiver),
         safetyLevel,
         new VisibilityResultBuilder(contentId, featureMap),
         enableShortCircuiting
@@ -329,14 +329,14 @@ class VisibilityLibrary private[VisibilityLibrary] (
     )
 
   def runRuleEngine(
-    viewerContext: ViewerContext,
+    viewerContetwittert: ViewerContetwittert,
     safetyLevel: SafetyLevel,
     preprocessedResultBuilder: VisibilityResultBuilder,
     preprocessedRules: Seq[Rule]
   ): Stitch[VisibilityResult] =
     profileStitch(
       visibilityRuleEngine(
-        EvaluationContext(safetyLevel, getParams(viewerContext, safetyLevel), statsReceiver),
+        EvaluationContetwittert(safetyLevel, getParams(viewerContetwittert, safetyLevel), statsReceiver),
         safetyLevel,
         preprocessedResultBuilder,
         enableShortCircuiting,
@@ -348,14 +348,14 @@ class VisibilityLibrary private[VisibilityLibrary] (
   def runRuleEngineBatch(
     contentIds: Seq[ContentId],
     featureMapProvider: (ContentId, SafetyLevel) => FeatureMap,
-    viewerContext: ViewerContext,
+    viewerContetwittert: ViewerContetwittert,
     safetyLevel: SafetyLevel,
   ): Stitch[Seq[Try[VisibilityResult]]] = {
-    val params = getParams(viewerContext, safetyLevel)
+    val params = getParams(viewerContetwittert, safetyLevel)
     profileStitch(
       Stitch.traverse(contentIds) { contentId =>
         visibilityRuleEngine(
-          EvaluationContext(safetyLevel, params, NullStatsReceiver),
+          EvaluationContetwittert(safetyLevel, params, NullStatsReceiver),
           safetyLevel,
           new VisibilityResultBuilder(contentId, featureMapProvider(contentId, safetyLevel)),
           enableShortCircuiting
@@ -368,14 +368,14 @@ class VisibilityLibrary private[VisibilityLibrary] (
   def runRuleEngineBatch(
     contentIds: Seq[ContentId],
     featureMapProvider: (ContentId, SafetyLevel) => FeatureMap,
-    evaluationContextBuilder: EvaluationContext.Builder,
+    evaluationContetwittertBuilder: EvaluationContetwittert.Builder,
     safetyLevel: SafetyLevel
   ): Stitch[Seq[Try[VisibilityResult]]] = {
-    val evaluationContext = evaluationContextBuilder.build(safetyLevel)
+    val evaluationContetwittert = evaluationContetwittertBuilder.build(safetyLevel)
     profileStitch(
       Stitch.traverse(contentIds) { contentId =>
         visibilityRuleEngine(
-          evaluationContext,
+          evaluationContetwittert,
           safetyLevel,
           new VisibilityResultBuilder(contentId, featureMapProvider(contentId, safetyLevel)),
           enableShortCircuiting

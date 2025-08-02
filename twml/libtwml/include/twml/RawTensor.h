@@ -27,20 +27,20 @@ public:
     return m_raw_length;
   }
 
-  // Extracts a slice from a tensor at idx0 along dimension 0
+  // Etwittertracts a slice from a tensor at idtwitter0 along dimension 0
   // Used in BatchPredictionResponse to write each slice in separate records
-  RawTensor getSlice(uint64_t idx0) const {
+  RawTensor getSlice(uint64_t idtwitter0) const {
     void *slice = nullptr;
     uint64_t raw_length = 0;
 
     if (getType() == TWML_TYPE_STRING) {
       raw_length = getStride(0);
       std::string *data = const_cast<std::string *>(static_cast<const std::string*>(getData<void>()));
-      slice = static_cast<void *>(data + raw_length * idx0);
+      slice = static_cast<void *>(data + raw_length * idtwitter0);
     } else {
       raw_length = getStride(0) * getSizeOf(getType());
       char *data = const_cast<char *>(static_cast<const char*>(getData<void>()));
-      slice = static_cast<void *>(data + raw_length * idx0);
+      slice = static_cast<void *>(data + raw_length * idtwitter0);
     }
 
     std::vector<uint64_t> dims, strides;

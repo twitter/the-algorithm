@@ -12,12 +12,12 @@ import com.twitter.visibility.features.FeatureMap
 import com.twitter.visibility.interfaces.common.tweets.SafetyLabelMapFetcherType
 import com.twitter.visibility.models.ContentId.TweetId
 import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 
 case class DESVisibilityRequest(
   tweet: Tweet,
   visibilitySurface: SafetyLevel,
-  viewerContext: ViewerContext)
+  viewerContetwittert: ViewerContetwittert)
 
 object DESVisibilityLibrary {
   type Type = DESVisibilityRequest => Stitch[VisibilityResult]
@@ -55,7 +55,7 @@ object DESVisibilityLibrary {
           visibilityLibrary.runRuleEngine(
             contentId,
             resolvedFeatureMap,
-            request.viewerContext,
+            request.viewerContetwittert,
             request.visibilitySurface
           )
         }
@@ -63,7 +63,7 @@ object DESVisibilityLibrary {
         visibilityLibrary.runRuleEngine(
           contentId,
           featureMap,
-          request.viewerContext,
+          request.viewerContetwittert,
           request.visibilitySurface
         )
       }

@@ -27,7 +27,7 @@ object ScarecrowPredicate {
       case tweetCandidate: TweetCandidate with TweetDetails =>
         tweetCandidate.tweetyPieResult
           .flatMap { tweetPieResult =>
-            tweetPieResult.tweet.hashtags.map(_.map(_.text))
+            tweetPieResult.tweet.hashtags.map(_.map(_.tetwittert))
           }.getOrElse(Nil)
       case _ =>
         Nil
@@ -36,7 +36,7 @@ object ScarecrowPredicate {
       case tweetCandidate: TweetCandidate with TweetDetails =>
         tweetCandidate.tweetyPieResult
           .flatMap { tweetPieResult =>
-            tweetPieResult.tweet.urls.map(_.flatMap(_.expanded))
+            tweetPieResult.tweet.urls.map(_.flatMap(_.etwitterpanded))
           }
       case _ => None
     }
@@ -53,7 +53,7 @@ object ScarecrowPredicate {
         None
     }
     val scUserIds = candidate match {
-      case hasSocialContext: SocialContextActions => Some(hasSocialContext.socialContextUserIds)
+      case hasSocialContetwittert: SocialContetwittertActions => Some(hasSocialContetwittert.socialContetwittertUserIds)
       case _ => None
     }
 
@@ -98,7 +98,7 @@ object ScarecrowPredicate {
         }),
         "hashtagsInTweet" -> FeatureData(Some(FeatureValue.StrListValue(hashtagsInTweet))),
         "urlsInTweet" -> FeatureData(urlsInTweet.map(FeatureValue.StrListValue)),
-        "socialContexts" -> FeatureData(scUserIds.map { sc =>
+        "socialContetwitterts" -> FeatureData(scUserIds.map { sc =>
           FeatureValue.LongListValue(sc)
         }),
         "eventTitle" -> FeatureData(eventTitleOpt.map { eventTitle =>

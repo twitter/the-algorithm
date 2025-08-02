@@ -38,14 +38,14 @@ import org.scalatest.prop.TableFor1
 import org.scalatest.prop.TableFor2
 import org.scalatest.prop.TableFor3
 
-class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
-  trait Fixture {
+class TweetypieEventAdapterSpec etwittertends Test with TableDrivenPropertyChecks {
+  trait Fitwitterture {
     val frozenTime: Time = Time.fromMilliseconds(1658949273000L)
 
     val tweetDeleteEventTime: Time = Time.fromMilliseconds(1658949253000L)
 
     val tweetId = 1554576940856246272L
-    val timestamp: Long = SnowflakeId.unixTimeMillisFromId(tweetId)
+    val timestamp: Long = SnowflakeId.unitwitterTimeMillisFromId(tweetId)
     val userId = 1L
     val user: User = User(
       id = userId,
@@ -55,12 +55,12 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
     )
 
     val actionedTweetId = 1554576940756246333L
-    val actionedTweetTimestamp: Long = SnowflakeId.unixTimeMillisFromId(actionedTweetId)
+    val actionedTweetTimestamp: Long = SnowflakeId.unitwitterTimeMillisFromId(actionedTweetId)
     val actionedTweetAuthorId = 2L
 
     val actionedByActionedTweetId = 1554566940756246272L
     val actionedByActionedTweetTimestamp: Long =
-      SnowflakeId.unixTimeMillisFromId(actionedByActionedTweetId)
+      SnowflakeId.unitwitterTimeMillisFromId(actionedByActionedTweetId)
     val actionedByActionedTweetAuthorId = 3L
 
     val tweetEventFlags: TweetEventFlags = TweetEventFlags(timestampMs = timestamp)
@@ -90,7 +90,7 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
       ))
 
     val tweetCoreData: TweetCoreData =
-      TweetCoreData(userId, text = "text", createdVia = "created_via", createdAtSecs = timestamp)
+      TweetCoreData(userId, tetwittert = "tetwittert", createdVia = "created_via", createdAtSecs = timestamp)
     val baseTweet: Tweet = Tweet(
       tweetId,
       coreData = Some(tweetCoreData),
@@ -200,7 +200,7 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
       tweetEventFlags
     )
     val userScrubGeoEvent: TweetEvent = TweetEvent(
-      TweetEventData.UserScrubGeoEvent(UserScrubGeoEvent(userId = userId, maxTweetId = tweetId)),
+      TweetEventData.UserScrubGeoEvent(UserScrubGeoEvent(userId = userId, matwitterTweetId = tweetId)),
       tweetEventFlags
     )
     val tweetPossiblySensitiveUpdateEvent: TweetEvent = TweetEvent(
@@ -254,7 +254,7 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
       tweetEventFlags
     )
 
-    def getExpectedUUA(
+    def getEtwitterpectedUUA(
       userId: Long,
       actionTweetId: Long,
       actionTweetAuthorId: Long,
@@ -327,7 +327,7 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
         )
       ),
       tweetEventFlags)
-    val expectedUUACreate = getExpectedUUA(
+    val etwitterpectedUUACreate = getEtwitterpectedUUA(
       userId = userId,
       actionTweetId = tweetId,
       /* @see comment above for ActionTweetType
@@ -349,7 +349,7 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
       ),
       tweetEventFlags
     )
-    val expectedUUAReplyDefault = getExpectedUUA(
+    val etwitterpectedUUAReplyDefault = getEtwitterpectedUUA(
       userId = userId,
       actionTweetId = actionedTweetId,
       /* @see comment above for ActionTweetType
@@ -393,7 +393,7 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
       ),
       tweetEventFlags
     )
-    val expectedUUAQuoteDefault: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUUAQuoteDefault: UnifiedUserAction = getEtwitterpectedUUA(
       userId = userId,
       actionTweetId = actionedTweetId,
       /* @see comment above for ActionTweetType
@@ -423,7 +423,7 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
       ),
       tweetEventFlags
     )
-    val expectedUUAQuoteReply: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUUAQuoteReply: UnifiedUserAction = getEtwitterpectedUUA(
       userId = userId,
       actionTweetId = actionedTweetId,
       /* @see comment above for ActionTweetType
@@ -453,7 +453,7 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
       ),
       tweetEventFlags
     )
-    val expectedUUAQuoteQuote: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUUAQuoteQuote: UnifiedUserAction = getEtwitterpectedUUA(
       userId = userId,
       actionTweetId = actionedTweetId,
       /* @see comment above for ActionTweetType
@@ -477,7 +477,7 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
       ),
       tweetEventFlags
     )
-    val expectedUUARetweetDefault: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUUARetweetDefault: UnifiedUserAction = getEtwitterpectedUUA(
       userId = userId,
       actionTweetId = actionedTweetId,
       /* @see comment above for ActionTweetType
@@ -506,7 +506,7 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
       ),
       tweetEventFlags
     )
-    val expectedUUARetweetReply: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUUARetweetReply: UnifiedUserAction = getEtwitterpectedUUA(
       userId = userId,
       actionTweetId = actionedTweetId,
       /* @see comment above for ActionTweetType
@@ -536,7 +536,7 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
       ),
       tweetEventFlags
     )
-    val expectedUUARetweetQuote: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUUARetweetQuote: UnifiedUserAction = getEtwitterpectedUUA(
       userId = userId,
       actionTweetId = actionedTweetId,
       /* @see comment above for ActionTweetType
@@ -570,7 +570,7 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
       ),
       tweetEventFlags
     )
-    val expectedUUARetweetRetweet: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUUARetweetRetweet: UnifiedUserAction = getEtwitterpectedUUA(
       userId = userId,
       actionTweetId = actionedByActionedTweetId,
       /* @see comment above for ActionTweetType
@@ -593,7 +593,7 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
       ),
       tweetEventFlags.copy(timestampMs = tweetDeleteEventTime.inMilliseconds)
     )
-    val expectedUUADeleteDefault: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUUADeleteDefault: UnifiedUserAction = getEtwitterpectedUUA(
       userId = user.id,
       actionTweetId = tweetId,
       actionTweetAuthorId = userId,
@@ -612,7 +612,7 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
       ),
       tweetEventFlags.copy(timestampMs = tweetDeleteEventTime.inMilliseconds)
     )
-    val expectedUUAUnreply: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUUAUnreply: UnifiedUserAction = getEtwitterpectedUUA(
       userId = user.id,
       actionTweetId = actionedTweetId,
       actionTweetAuthorId = actionedTweetAuthorId,
@@ -632,7 +632,7 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
       ),
       tweetEventFlags.copy(timestampMs = tweetDeleteEventTime.inMilliseconds)
     )
-    val expectedUUAUnquote: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUUAUnquote: UnifiedUserAction = getEtwitterpectedUUA(
       userId = user.id,
       actionTweetId = actionedTweetId,
       actionTweetAuthorId = actionedTweetAuthorId,
@@ -658,7 +658,7 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
       ),
       tweetEventFlags.copy(timestampMs = tweetDeleteEventTime.inMilliseconds)
     )
-    val expectedUUAUnretweet: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUUAUnretweet: UnifiedUserAction = getEtwitterpectedUUA(
       userId = user.id,
       actionTweetId = actionedTweetId,
       actionTweetAuthorId = actionedTweetAuthorId,
@@ -682,7 +682,7 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
       ),
       tweetEventFlags
     )
-    val expectedUUARegularTweetFromEdit: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUUARegularTweetFromEdit: UnifiedUserAction = getEtwitterpectedUUA(
       userId = user.id,
       actionTweetId = tweetId,
       actionTweetAuthorId = userId,
@@ -708,7 +708,7 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
       ),
       tweetEventFlags
     )
-    val expectedUUAQuoteFromEdit: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUUAQuoteFromEdit: UnifiedUserAction = getEtwitterpectedUUA(
       userId = user.id,
       actionTweetId = tweetId,
       actionTweetAuthorId = userId,
@@ -721,7 +721,7 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
   }
 
   test("ignore non-TweetCreate / non-TweetDelete events") {
-    new Fixture {
+    new Fitwitterture {
       val ignoredTweetEvents: TableFor1[TweetEvent] = Table(
         "ignoredTweetEvents",
         additionalFieldUpdateEvent,
@@ -742,7 +742,7 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
   }
 
   test("ignore invalid TweetCreate events") {
-    new Fixture {
+    new Fitwitterture {
       val ignoredTweetEvents: TableFor2[String, TweetEvent] = Table(
         ("invalidType", "event"),
         ("replyAndRetweetBothPresent", replyRetweetPresentEvent)
@@ -755,95 +755,95 @@ class TweetypieEventAdapterSpec extends Test with TableDrivenPropertyChecks {
   }
 
   test("TweetypieCreateEvent") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val actual = TweetypieEventAdapter.adaptEvent(tweetCreateEvent)
-        assert(Seq(expectedUUACreate) == actual)
+        assert(Seq(etwitterpectedUUACreate) == actual)
       }
     }
   }
 
   test("TweetypieReplyEvent") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val tweetReplies: TableFor3[String, TweetEvent, UnifiedUserAction] = Table(
-          ("actionTweetType", "event", "expected"),
-          ("Default", tweetReplyDefaultEvent, expectedUUAReplyDefault),
-          ("Reply", tweetReplyToReplyEvent, expectedUUAReplyDefault),
-          ("Quote", tweetReplyToQuoteEvent, expectedUUAReplyDefault),
+          ("actionTweetType", "event", "etwitterpected"),
+          ("Default", tweetReplyDefaultEvent, etwitterpectedUUAReplyDefault),
+          ("Reply", tweetReplyToReplyEvent, etwitterpectedUUAReplyDefault),
+          ("Quote", tweetReplyToQuoteEvent, etwitterpectedUUAReplyDefault),
         )
-        forEvery(tweetReplies) { (_: String, event: TweetEvent, expected: UnifiedUserAction) =>
+        forEvery(tweetReplies) { (_: String, event: TweetEvent, etwitterpected: UnifiedUserAction) =>
           val actual = TweetypieEventAdapter.adaptEvent(event)
-          assert(Seq(expected) === actual)
+          assert(Seq(etwitterpected) === actual)
         }
       }
     }
   }
 
   test("TweetypieQuoteEvent") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val tweetQuotes: TableFor3[String, TweetEvent, UnifiedUserAction] = Table(
-          ("actionTweetType", "event", "expected"),
-          ("Default", tweetQuoteDefaultEvent, expectedUUAQuoteDefault),
-          ("Reply", tweetQuoteReplyEvent, expectedUUAQuoteReply),
-          ("Quote", tweetQuoteQuoteEvent, expectedUUAQuoteQuote),
+          ("actionTweetType", "event", "etwitterpected"),
+          ("Default", tweetQuoteDefaultEvent, etwitterpectedUUAQuoteDefault),
+          ("Reply", tweetQuoteReplyEvent, etwitterpectedUUAQuoteReply),
+          ("Quote", tweetQuoteQuoteEvent, etwitterpectedUUAQuoteQuote),
         )
-        forEvery(tweetQuotes) { (_: String, event: TweetEvent, expected: UnifiedUserAction) =>
+        forEvery(tweetQuotes) { (_: String, event: TweetEvent, etwitterpected: UnifiedUserAction) =>
           val actual = TweetypieEventAdapter.adaptEvent(event)
-          assert(Seq(expected) === actual)
+          assert(Seq(etwitterpected) === actual)
         }
       }
     }
   }
 
   test("TweetypieRetweetEvent") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val tweetRetweets: TableFor3[String, TweetEvent, UnifiedUserAction] = Table(
-          ("actionTweetType", "event", "expected"),
-          ("Default", tweetRetweetDefaultEvent, expectedUUARetweetDefault),
-          ("Reply", tweetRetweetReplyEvent, expectedUUARetweetReply),
-          ("Quote", tweetRetweetQuoteEvent, expectedUUARetweetQuote),
-          ("Retweet", tweetRetweetRetweetEvent, expectedUUARetweetRetweet),
+          ("actionTweetType", "event", "etwitterpected"),
+          ("Default", tweetRetweetDefaultEvent, etwitterpectedUUARetweetDefault),
+          ("Reply", tweetRetweetReplyEvent, etwitterpectedUUARetweetReply),
+          ("Quote", tweetRetweetQuoteEvent, etwitterpectedUUARetweetQuote),
+          ("Retweet", tweetRetweetRetweetEvent, etwitterpectedUUARetweetRetweet),
         )
-        forEvery(tweetRetweets) { (_: String, event: TweetEvent, expected: UnifiedUserAction) =>
+        forEvery(tweetRetweets) { (_: String, event: TweetEvent, etwitterpected: UnifiedUserAction) =>
           val actual = TweetypieEventAdapter.adaptEvent(event)
-          assert(Seq(expected) === actual)
+          assert(Seq(etwitterpected) === actual)
         }
       }
     }
   }
 
   test("TweetypieDeleteEvent") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val tweetDeletes: TableFor3[String, TweetEvent, UnifiedUserAction] = Table(
-          ("actionTweetType", "event", "expected"),
-          ("Default", tweetDeleteEvent, expectedUUADeleteDefault),
-          ("Reply", tweetUnreplyEvent, expectedUUAUnreply),
-          ("Quote", tweetUnquoteEvent, expectedUUAUnquote),
-          ("Retweet", tweetUnretweetEvent, expectedUUAUnretweet),
+          ("actionTweetType", "event", "etwitterpected"),
+          ("Default", tweetDeleteEvent, etwitterpectedUUADeleteDefault),
+          ("Reply", tweetUnreplyEvent, etwitterpectedUUAUnreply),
+          ("Quote", tweetUnquoteEvent, etwitterpectedUUAUnquote),
+          ("Retweet", tweetUnretweetEvent, etwitterpectedUUAUnretweet),
         )
-        forEvery(tweetDeletes) { (_: String, event: TweetEvent, expected: UnifiedUserAction) =>
+        forEvery(tweetDeletes) { (_: String, event: TweetEvent, etwitterpected: UnifiedUserAction) =>
           val actual = TweetypieEventAdapter.adaptEvent(event)
-          assert(Seq(expected) === actual)
+          assert(Seq(etwitterpected) === actual)
         }
       }
     }
   }
 
   test("TweetypieEditEvent") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val tweetEdits: TableFor3[String, TweetEvent, UnifiedUserAction] = Table(
-          ("actionTweetType", "event", "expected"),
-          ("RegularTweetFromEdit", regularTweetFromEditEvent, expectedUUARegularTweetFromEdit),
-          ("QuoteFromEdit", quoteFromEditEvent, expectedUUAQuoteFromEdit)
+          ("actionTweetType", "event", "etwitterpected"),
+          ("RegularTweetFromEdit", regularTweetFromEditEvent, etwitterpectedUUARegularTweetFromEdit),
+          ("QuoteFromEdit", quoteFromEditEvent, etwitterpectedUUAQuoteFromEdit)
         )
-        forEvery(tweetEdits) { (_: String, event: TweetEvent, expected: UnifiedUserAction) =>
+        forEvery(tweetEdits) { (_: String, event: TweetEvent, etwitterpected: UnifiedUserAction) =>
           val actual = TweetypieEventAdapter.adaptEvent(event)
-          assert(Seq(expected) === actual)
+          assert(Seq(etwitterpected) === actual)
         }
       }
     }

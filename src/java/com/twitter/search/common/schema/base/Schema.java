@@ -3,7 +3,7 @@ package com.twitter.search.common.schema.base;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableCollection;
@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableMap;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.facet.FacetsConfig;
-import org.apache.lucene.index.FieldInfos;
+import org.apache.lucene.indetwitter.FieldInfos;
 
 import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
 import com.twitter.search.common.schema.thriftjava.ThriftAnalyzer;
@@ -93,7 +93,7 @@ public interface Schema {
   FieldInfo getFieldInfo(String fieldName);
 
   /**
-   * Builds a lucene FieldInfos instance, usually used for indexing.
+   * Builds a lucene FieldInfos instance, usually used for indetwittering.
    */
   FieldInfos getLuceneFieldInfos(Predicate<String> acceptedFields);
 
@@ -128,7 +128,7 @@ public interface Schema {
   Collection<FieldInfo> getCsfFacetFields();
 
   /**
-   * Get the field weight map for text searchable fields.
+   * Get the field weight map for tetwittert searchable fields.
    */
   Map<String, FieldWeightDefault> getFieldWeightMap();
 
@@ -139,7 +139,7 @@ public interface Schema {
 
   /**
    * Get scoring feature configuration by feature field id.  The feature configuration is
-   * guaranteed to be not null, or a NullPointerException will be thrown out.
+   * guaranteed to be not null, or a NullPointerEtwitterception will be thrown out.
    */
   FeatureConfiguration getFeatureConfigurationById(int featureFieldId);
 
@@ -217,14 +217,14 @@ public interface Schema {
   }
 
   /**
-   * Exception thrown when errors or inconsistences are detected in a search schema.
+   * Etwitterception thrown when errors or inconsistences are detected in a search schema.
    */
-  final class SchemaValidationException extends Exception {
-    public SchemaValidationException(String msg) {
+  final class SchemaValidationEtwitterception etwittertends Etwitterception {
+    public SchemaValidationEtwitterception(String msg) {
       super(msg);
     }
 
-    public SchemaValidationException(String msg, Exception e) {
+    public SchemaValidationEtwitterception(String msg, Etwitterception e) {
       super(msg, e);
     }
   }

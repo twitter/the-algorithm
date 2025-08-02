@@ -20,7 +20,7 @@ case class DefaultRecTopicSocialProofTarget(
   params: Params
 )(
   implicit statsReceiver: StatsReceiver)
-    extends TargetUser
+    etwittertends TargetUser
     with TopicSocialProofRecRequest
     with TargetABDecider {
   override def globalStats: StatsReceiver = statsReceiver
@@ -48,10 +48,10 @@ case class RecTargetFactory(
     userStore.get(userId).map { userOpt =>
       val userRoles = userOpt.flatMap(_.roles.map(_.roles.toSet))
 
-      val context = request.context.copy(userId = Some(request.userId)) // override to make sure
+      val contetwittert = request.contetwittert.copy(userId = Some(request.userId)) // override to make sure
 
       val params = paramBuilder
-        .buildFromTopicListingViewerContext(Some(context), request.displayLocation, userRoles)
+        .buildFromTopicListingViewerContetwittert(Some(contetwittert), request.displayLocation, userRoles)
 
       DefaultRecTopicSocialProofTarget(
         request,

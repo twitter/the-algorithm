@@ -2,7 +2,7 @@ package com.twitter.simclusters_v2.tweet_similarity
 
 import com.twitter.ml.api.Feature.{Binary, Continuous, Discrete, SparseContinuous}
 import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.{DataRecord, FeatureContext, IRecordOneToOneAdapter}
+import com.twitter.ml.api.{DataRecord, FeatureContetwittert, IRecordOneToOneAdapter}
 import com.twitter.ml.featurestore.catalog.features.recommendations.ProducerSimClustersEmbedding
 import com.twitter.ml.featurestore.lib.UserId
 import com.twitter.ml.featurestore.lib.data.{PredictionRecord, PredictionRecordAdapter}
@@ -23,7 +23,7 @@ object TweetSimilarityFeatures {
   val CosineSimilarity = new Continuous("meta.cosine_similarity")
   val Label = new Binary("co-engagement.label")
 
-  val FeatureContext: FeatureContext = new FeatureContext(
+  val FeatureContetwittert: FeatureContetwittert = new FeatureContetwittert(
     QueryTweetId,
     CandidateTweetId,
     QueryTweetEmbedding,

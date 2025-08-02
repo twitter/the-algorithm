@@ -7,7 +7,7 @@ import com.twitter.unified_user_actions.adapter.ads_callback_engagements.AdsCall
 object EngagementTypeMappings {
 
   /**
-   * Ads could be Tweets or non-Tweets. Since UUA explicitly sets the item type, it is
+   * Ads could be Tweets or non-Tweets. Since UUA etwitterplicitly sets the item type, it is
    * possible that one Ads Callback engagement type maps to multiple UUA action types.
    */
   def getEngagementMappings(
@@ -35,7 +35,7 @@ object EngagementTypeMappings {
           case EngagementType.UserName => Seq(PromotedTweetClickProfile)
           case EngagementType.Hashtag => Seq(PromotedTweetClickHashtag)
           case EngagementType.Url => Seq(PromotedTweetOpenLink)
-          case EngagementType.CarouselSwipeNext => Seq(PromotedTweetCarouselSwipeNext)
+          case EngagementType.CarouselSwipeNetwittert => Seq(PromotedTweetCarouselSwipeNetwittert)
           case EngagementType.CarouselSwipePrevious => Seq(PromotedTweetCarouselSwipePrevious)
           case EngagementType.DwellShort => Seq(PromotedTweetLingerImpressionShort)
           case EngagementType.DwellMedium => Seq(PromotedTweetLingerImpressionMedium)

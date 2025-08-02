@@ -1,20 +1,20 @@
 package com.twitter.search.common.search.termination;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Arrays;
 
 import com.google.common.base.Preconditions;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.indetwitter.IndetwitterReader;
+import org.apache.lucene.search.IndetwitterSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Weight;
 
 /**
- * Query implementation that can timeout and return non-exhaustive results.
+ * Query implementation that can timeout and return non-etwitterhaustive results.
  */
-public class TerminationQuery extends Query {
+public class TerminationQuery etwittertends Query {
   private final Query inner;
   private final QueryTimeout timeout;
 
@@ -25,13 +25,13 @@ public class TerminationQuery extends Query {
 
   @Override
   public Weight createWeight(
-      IndexSearcher searcher, ScoreMode scoreMode, float boost) throws IOException {
+      IndetwitterSearcher searcher, ScoreMode scoreMode, float boost) throws IOEtwitterception {
     Weight innerWeight = inner.createWeight(searcher, scoreMode, boost);
     return new TerminationQueryWeight(this, innerWeight, timeout);
   }
 
   @Override
-  public Query rewrite(IndexReader reader) throws IOException {
+  public Query rewrite(IndetwitterReader reader) throws IOEtwitterception {
     Query rewritten = inner.rewrite(reader);
     if (rewritten != inner) {
       return new TerminationQuery(rewritten, timeout);

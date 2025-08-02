@@ -3,19 +3,19 @@ package com.twitter.servo.cache
 /**
  * Converts all keys to a string via .toString
  */
-class ToStringKeyTransformer[K] extends KeyTransformer[K] {
+class ToStringKeyTransformer[K] etwittertends KeyTransformer[K] {
   override def apply(key: K) = key.toString
 }
 
 /**
- * Prefixes all keys with a string
+ * Prefitwitteres all keys with a string
  */
-class PrefixKeyTransformer[K](
-  prefix: String,
+class PrefitwitterKeyTransformer[K](
+  prefitwitter: String,
   delimiter: String = constants.Colon,
   underlying: KeyTransformer[K] = new ToStringKeyTransformer[K]: ToStringKeyTransformer[K])
-    extends KeyTransformer[K] {
-  private[this] val fullPrefix = prefix + delimiter
+    etwittertends KeyTransformer[K] {
+  private[this] val fullPrefitwitter = prefitwitter + delimiter
 
-  override def apply(key: K) = fullPrefix + underlying(key)
+  override def apply(key: K) = fullPrefitwitter + underlying(key)
 }

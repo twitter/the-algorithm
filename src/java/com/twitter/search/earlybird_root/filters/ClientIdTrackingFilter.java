@@ -3,7 +3,7 @@ package com.twitter.search.earlybird_root.filters;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import javax.inject.Inject;
+import javatwitter.inject.Inject;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -24,10 +24,10 @@ import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
 import com.twitter.util.Future;
 
 /** Tracks the number of queries we get from each client. */
-public class ClientIdTrackingFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+public class ClientIdTrackingFilter etwittertends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
   // Be careful when changing the names of these stats or adding new ones: make sure that they have
-  // prefixes/suffixes that will allow us to group them in Viz, without pulling in other stats.
-  // For example, we'll probably have a Viz graph for client_id_tracker_qps_for_client_id_*_all.
+  // prefitwitteres/suffitwitteres that will allow us to group them in Viz, without pulling in other stats.
+  // For etwitterample, we'll probably have a Viz graph for client_id_tracker_qps_for_client_id_*_all.
   // So if you add a new stat named client_id_tracker_qps_for_client_id_%s_and_new_field_%s_all,
   // then the graph will be grouping up the values from both stats, instead of grouping up the
   // values only for client_id_tracker_qps_for_client_id_%s_all.
@@ -74,7 +74,7 @@ public class ClientIdTrackingFilter extends SimpleFilter<EarlybirdRequest, Early
     if (decider.isAvailable(SUPERROOT_REJECT_REQUESTS_WITH_UNKNOWN_FINAGLE_ID)
         && finagleId.equals(FinagleUtil.UNKNOWN_CLIENT_NAME)) {
       EarlybirdResponse response = new EarlybirdResponse(
-          EarlybirdResponseCode.QUOTA_EXCEEDED_ERROR, 0)
+          EarlybirdResponseCode.QUOTA_EtwitterCEEDED_ERROR, 0)
           .setDebugString(UNKNOWN_FINAGLE_ID_DEBUG_STRING);
       return Future.value(response);
     }
@@ -98,10 +98,10 @@ public class ClientIdTrackingFilter extends SimpleFilter<EarlybirdRequest, Early
     RequestCounters clientCounters = requestCountersByClientId.get(clientId);
     if (clientCounters == null) {
       clientCounters = new RequestCounters(ClientIdUtil.formatClientId(clientId));
-      RequestCounters existingCounters =
+      RequestCounters etwitteristingCounters =
         requestCountersByClientId.putIfAbsent(clientId, clientCounters);
-      if (existingCounters != null) {
-        clientCounters = existingCounters;
+      if (etwitteristingCounters != null) {
+        clientCounters = etwitteristingCounters;
       }
     }
     return clientCounters;
@@ -114,10 +114,10 @@ public class ClientIdTrackingFilter extends SimpleFilter<EarlybirdRequest, Early
     if (counters == null) {
       counters = new RequestCounters(ClientIdUtil.formatFinagleClientIdAndClientId(
           finagleId, clientId));
-      RequestCounters existingCounters = requestCountersByFinagleIdAndClientId.putIfAbsent(
+      RequestCounters etwitteristingCounters = requestCountersByFinagleIdAndClientId.putIfAbsent(
           clientKey, counters);
-      if (existingCounters != null) {
-        counters = existingCounters;
+      if (etwitteristingCounters != null) {
+        counters = etwitteristingCounters;
       }
     }
     return counters;
@@ -129,18 +129,18 @@ public class ClientIdTrackingFilter extends SimpleFilter<EarlybirdRequest, Early
     String clientIdForStats = ClientIdUtil.formatClientId(clientId);
     String finagleClientIdAndClientIdForStats =
       ClientIdUtil.formatFinagleClientIdAndClientId(finagleId, clientId);
-    SearchCounter.export(String.format(QPS_ALL_STAT_PATTERN, clientIdForStats)).increment();
-    SearchCounter.export(String.format(QPS_ALL_STAT_PATTERN, finagleClientIdAndClientIdForStats))
+    SearchCounter.etwitterport(String.format(QPS_ALL_STAT_PATTERN, clientIdForStats)).increment();
+    SearchCounter.etwitterport(String.format(QPS_ALL_STAT_PATTERN, finagleClientIdAndClientIdForStats))
       .increment();
     if (isLoggedIn) {
-      SearchCounter.export(String.format(QPS_LOGGED_IN_STAT_PATTERN, clientIdForStats)).increment();
-      SearchCounter.export(
+      SearchCounter.etwitterport(String.format(QPS_LOGGED_IN_STAT_PATTERN, clientIdForStats)).increment();
+      SearchCounter.etwitterport(
           String.format(QPS_LOGGED_IN_STAT_PATTERN, finagleClientIdAndClientIdForStats))
         .increment();
     } else {
-      SearchCounter.export(String.format(QPS_LOGGED_OUT_STAT_PATTERN, clientIdForStats))
+      SearchCounter.etwitterport(String.format(QPS_LOGGED_OUT_STAT_PATTERN, clientIdForStats))
         .increment();
-      SearchCounter.export(
+      SearchCounter.etwitterport(
           String.format(QPS_LOGGED_OUT_STAT_PATTERN, finagleClientIdAndClientIdForStats))
         .increment();
     }

@@ -26,11 +26,11 @@ sealed trait TimelineRankerClientBuilderBase {
   def DefaultProdRequestTimeout: Duration = 2.seconds
   def DefaultProdTimeout: Duration = 3.seconds
   def DefaultProdRetryPolicy: RetryPolicy[Try[Nothing]] =
-    tries(2, TimeoutAndWriteExceptionsOnly orElse ChannelClosedExceptionsOnly)
+    tries(2, TimeoutAndWriteEtwitterceptionsOnly orElse ChannelClosedEtwitterceptionsOnly)
 
   def DefaultLocalTcpConnectTimeout: Duration = 1.second
   def DefaultLocalConnectTimeout: Duration = 1.second
-  def DefaultLocalRetryPolicy: RetryPolicy[Try[Nothing]] = tries(2, TimeoutAndWriteExceptionsOnly)
+  def DefaultLocalRetryPolicy: RetryPolicy[Try[Nothing]] = tries(2, TimeoutAndWriteEtwitterceptionsOnly)
 
   def apply(
     finagleClientBuilder: FinagleClientBuilder,
@@ -39,7 +39,7 @@ sealed trait TimelineRankerClientBuilderBase {
     serviceIdentifier: ServiceIdentifier = EmptyServiceIdentifier,
     opportunisticTlsOpt: Option[OpportunisticTls.Level] = None,
   ): ClientBuilder.Complete[ThriftClientRequest, Array[Byte]] = {
-    val defaultBuilder = finagleClientBuilder.thriftMuxClientBuilder(name)
+    val defaultBuilder = finagleClientBuilder.thriftMutwitterClientBuilder(name)
     val destination = getDestOverride(environment)
 
     val partialClient = environment match {
@@ -84,6 +84,6 @@ sealed trait TimelineRankerClientBuilderBase {
   }
 }
 
-object TimelineRankerClientBuilder extends TimelineRankerClientBuilderBase {
+object TimelineRankerClientBuilder etwittertends TimelineRankerClientBuilderBase {
   override def DefaultProdDest: String = "/s/timelineranker/timelineranker"
 }

@@ -1,0 +1,7 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.timeline_module
+
+sealed trait ModuleHeaderDisplayType
+
+case object Classic etwittertends ModuleHeaderDisplayType
+case object ContetwittertEmphasis etwittertends ModuleHeaderDisplayType
+case object ClassicNoDivider etwittertends ModuleHeaderDisplayType

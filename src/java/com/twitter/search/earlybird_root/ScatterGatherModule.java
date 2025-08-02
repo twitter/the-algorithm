@@ -3,8 +3,8 @@ package com.twitter.search.earlybird_root;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nullable;
-import javax.inject.Named;
+import javatwitter.annotation.Nullable;
+import javatwitter.inject.Named;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,31 +24,31 @@ import com.twitter.search.earlybird.config.TierConfig;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.filters.RequestContextToEarlybirdRequestFilter;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
+import com.twitter.search.earlybird_root.filters.RequestContetwittertToEarlybirdRequestFilter;
 
-public abstract class ScatterGatherModule extends TwitterModule {
+public abstract class ScatterGatherModule etwittertends TwitterModule {
   private static final Logger LOG = LoggerFactory.getLogger(ScatterGatherModule.class);
 
   private static final String SEARCH_METHOD_NAME = "search";
-  protected static final String ALT_TRAFFIC_PERCENTAGE_DECIDER_KEY_PREFIX =
+  protected static final String ALT_TRAFFIC_PERCENTAGE_DECIDER_KEY_PREFItwitter =
       "alt_client_traffic_percentage_";
   static final String NAMED_SCATTER_GATHER_SERVICE = "scatter_gather_service";
 
   /**
    * Provides the scatterGatherService for single tier Earlybird clusters (Protected and Realtime).
    */
-  public abstract Service<EarlybirdRequestContext, EarlybirdResponse> provideScatterGatherService(
+  public abstract Service<EarlybirdRequestContetwittert, EarlybirdResponse> provideScatterGatherService(
       EarlybirdServiceScatterGatherSupport scatterGatherSupport,
       RequestSuccessStats requestSuccessStats,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
+      PartitionLoggingSupport<EarlybirdRequestContetwittert> partitionLoggingSupport,
+      RequestContetwittertToEarlybirdRequestFilter requestContetwittertToEarlybirdRequestFilter,
       PartitionAccessController partitionAccessController,
       PartitionConfig partitionConfig,
       RootClientServiceBuilder<EarlybirdService.ServiceIface> rootClientServiceBuilder,
-      @Named(EarlybirdCommonModule.NAMED_EXP_CLUSTER_CLIENT)
+      @Named(EarlybirdCommonModule.NAMED_EtwitterP_CLUSTER_CLIENT)
           RootClientServiceBuilder<EarlybirdService.ServiceIface>
-          expClusterRootClientServiceBuilder,
+          etwitterpClusterRootClientServiceBuilder,
       @Named(EarlybirdCommonModule.NAMED_ALT_CLIENT) @Nullable PartitionConfig altPartitionConfig,
       @Named(EarlybirdCommonModule.NAMED_ALT_CLIENT) @Nullable
           RootClientServiceBuilder<EarlybirdService.ServiceIface> altRootClientServiceBuilder,
@@ -56,11 +56,11 @@ public abstract class ScatterGatherModule extends TwitterModule {
       EarlybirdCluster cluster,
       SearchDecider decider);
 
-  protected final Service<EarlybirdRequestContext, EarlybirdResponse> buildScatterOrSplitterService(
+  protected final Service<EarlybirdRequestContetwittert, EarlybirdResponse> buildScatterOrSplitterService(
       EarlybirdServiceScatterGatherSupport scatterGatherSupport,
       RequestSuccessStats requestSuccessStats,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
+      PartitionLoggingSupport<EarlybirdRequestContetwittert> partitionLoggingSupport,
+      RequestContetwittertToEarlybirdRequestFilter requestContetwittertToEarlybirdRequestFilter,
       PartitionAccessController partitionAccessController,
       PartitionConfig partitionConfig,
       RootClientServiceBuilder<EarlybirdService.ServiceIface> rootClientServiceBuilder,
@@ -71,13 +71,13 @@ public abstract class ScatterGatherModule extends TwitterModule {
       EarlybirdCluster cluster,
       SearchDecider decider
   ) {
-    ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse> scatterGatherService =
+    ScatterGatherService<EarlybirdRequestContetwittert, EarlybirdResponse> scatterGatherService =
         createScatterGatherService(
             "",
             scatterGatherSupport,
             requestSuccessStats,
             partitionLoggingSupport,
-            requestContextToEarlybirdRequestFilter,
+            requestContetwittertToEarlybirdRequestFilter,
             partitionAccessController,
             partitionConfig.getNumPartitions(),
             partitionConfig.getPartitionPath(),
@@ -95,13 +95,13 @@ public abstract class ScatterGatherModule extends TwitterModule {
 
     LOG.info("alt client config available, using SplitterService");
 
-    ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse> altScatterGatherService =
+    ScatterGatherService<EarlybirdRequestContetwittert, EarlybirdResponse> altScatterGatherService =
         createScatterGatherService(
             "_alt",
             scatterGatherSupport,
             requestSuccessStats,
             partitionLoggingSupport,
-            requestContextToEarlybirdRequestFilter,
+            requestContetwittertToEarlybirdRequestFilter,
             partitionAccessController,
             altPartitionConfig.getNumPartitions(),
             altPartitionConfig.getPartitionPath(),
@@ -115,16 +115,16 @@ public abstract class ScatterGatherModule extends TwitterModule {
         scatterGatherService,
         altScatterGatherService,
         decider,
-        ALT_TRAFFIC_PERCENTAGE_DECIDER_KEY_PREFIX + cluster.getNameForStats());
+        ALT_TRAFFIC_PERCENTAGE_DECIDER_KEY_PREFItwitter + cluster.getNameForStats());
   }
 
-  protected ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse>
+  protected ScatterGatherService<EarlybirdRequestContetwittert, EarlybirdResponse>
       createScatterGatherService(
-          String nameSuffix,
+          String nameSuffitwitter,
           EarlybirdServiceScatterGatherSupport scatterGatherSupport,
           RequestSuccessStats requestSuccessStats,
-          PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport,
-          RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
+          PartitionLoggingSupport<EarlybirdRequestContetwittert> partitionLoggingSupport,
+          RequestContetwittertToEarlybirdRequestFilter requestContetwittertToEarlybirdRequestFilter,
           PartitionAccessController partitionAccessController,
           int numPartitions,
           String partitionPath,
@@ -133,24 +133,24 @@ public abstract class ScatterGatherModule extends TwitterModule {
           EarlybirdCluster cluster,
           SearchDecider decider,
           String clientName) {
-    rootClientServiceBuilder.initializeWithPathSuffix(clientName + nameSuffix,
+    rootClientServiceBuilder.initializeWithPathSuffitwitter(clientName + nameSuffitwitter,
         numPartitions,
         partitionPath);
 
     ClientBackupFilter backupFilter =
         new ClientBackupFilter(
             "root_" + cluster.getNameForStats(),
-            "earlybird" + nameSuffix,
+            "earlybird" + nameSuffitwitter,
             statsReceiver,
             decider);
 
-    ClientLatencyFilter clientLatencyFilter = new ClientLatencyFilter("all" + nameSuffix);
+    ClientLatencyFilter clientLatencyFilter = new ClientLatencyFilter("all" + nameSuffitwitter);
 
-    List<Service<EarlybirdRequestContext, EarlybirdResponse>> services = new ArrayList<>();
+    List<Service<EarlybirdRequestContetwittert, EarlybirdResponse>> services = new ArrayList<>();
     for (Service<EarlybirdRequest, EarlybirdResponse> service
         : rootClientServiceBuilder
         .<EarlybirdRequest, EarlybirdResponse>safeBuildServiceList(SEARCH_METHOD_NAME)) {
-      services.add(requestContextToEarlybirdRequestFilter
+      services.add(requestContetwittertToEarlybirdRequestFilter
           .andThen(backupFilter)
           .andThen(clientLatencyFilter)
           .andThen(service));

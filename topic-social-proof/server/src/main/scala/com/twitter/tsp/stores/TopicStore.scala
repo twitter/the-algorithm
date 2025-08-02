@@ -8,9 +8,9 @@ import com.twitter.interests.thriftscala.InterestId
 import com.twitter.interests.thriftscala.InterestLabel
 import com.twitter.interests.thriftscala.InterestRelationship
 import com.twitter.interests.thriftscala.InterestRelationshipV1
-import com.twitter.interests.thriftscala.InterestedInInterestLookupContext
+import com.twitter.interests.thriftscala.InterestedInInterestLookupContetwittert
 import com.twitter.interests.thriftscala.InterestedInInterestModel
-import com.twitter.interests.thriftscala.OptOutInterestLookupContext
+import com.twitter.interests.thriftscala.OptOutInterestLookupContetwittert
 import com.twitter.interests.thriftscala.UserInterest
 import com.twitter.interests.thriftscala.UserInterestData
 import com.twitter.interests.thriftscala.UserInterestsResponse
@@ -31,10 +31,10 @@ case class TopicResponses(responses: Seq[TopicResponse])
 object TopicStore {
 
   private val InterestedInInterestsColumn = "interests/interestedInInterests"
-  private lazy val ExplicitInterestsContext: InterestedInInterestLookupContext =
-    InterestedInInterestLookupContext(
-      explicitContext = None,
-      inferredContext = None,
+  private lazy val EtwitterplicitInterestsContetwittert: InterestedInInterestLookupContetwittert =
+    InterestedInInterestLookupContetwittert(
+      etwitterplicitContetwittert = None,
+      inferredContetwittert = None,
       disableImplicit = Some(true)
     )
 
@@ -47,7 +47,7 @@ object TopicStore {
               InterestId.SemanticCore(semanticCoreEntity),
               Some(UserInterestData.InterestedIn(data))) =>
           val topicFollowingTimestampOpt = data.collect {
-            case InterestedInInterestModel.ExplicitModel(
+            case InterestedInInterestModel.EtwitterplicitModel(
                   InterestRelationship.V1(interestRelationshipV1)) =>
               interestRelationshipV1.timestampMs
           }.lastOption
@@ -58,7 +58,7 @@ object TopicStore {
     TopicResponses(responses)
   }
 
-  def explicitFollowingTopicStore(
+  def etwitterplicitFollowingTopicStore(
     stratoClient: Client
   )(
     implicit statsReceiver: StatsReceiver
@@ -72,7 +72,7 @@ object TopicStore {
           InterestedInInterestsFetchKey(
             userId = uid,
             labels = None,
-            lookupContext = Some(ExplicitInterestsContext)
+            lookupContetwittert = Some(EtwitterplicitInterestsContetwittert)
           ))
         .mapValues(userInterestsResponseToTopicResponse)
 
@@ -88,7 +88,7 @@ object TopicStore {
     val stratoStore =
       StratoFetchableStore
         .withUnitView[
-          (Long, Option[Seq[InterestLabel]], Option[OptOutInterestLookupContext]),
+          (Long, Option[Seq[InterestLabel]], Option[OptOutInterestLookupContetwittert]),
           UserInterestsResponse](stratoClient, optOutStratoStorePath)
         .composeKeyMapping[UserId](uid => (uid, None, None))
         .mapValues { userInterestsResponse =>

@@ -13,13 +13,13 @@ import com.twitter.follow_recommendations.common.base.Transform
 import com.twitter.follow_recommendations.common.base.TruePredicate
 import com.twitter.follow_recommendations.common.candidate_sources.promoted_accounts.PromotedAccountsCandidateSource
 import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.predicates.ExcludedUserIdPredicate
+import com.twitter.follow_recommendations.common.predicates.EtwittercludedUserIdPredicate
 import com.twitter.follow_recommendations.common.transforms.tracking_token.TrackingTokenTransform
 import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
 import com.twitter.util.Duration
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class PromotedAccountsFlow @Inject() (
@@ -27,7 +27,7 @@ class PromotedAccountsFlow @Inject() (
   trackingTokenTransform: TrackingTokenTransform,
   baseStatsReceiver: StatsReceiver,
   @Flag("fetch_prod_promoted_accounts") fetchProductionPromotedAccounts: Boolean)
-    extends RecommendationFlow[PromotedAccountsFlowRequest, CandidateUser] {
+    etwittertends RecommendationFlow[PromotedAccountsFlowRequest, CandidateUser] {
 
   protected override def targetEligibility: Predicate[PromotedAccountsFlowRequest] =
     new ParamPredicate[PromotedAccountsFlowRequest](
@@ -56,7 +56,7 @@ class PromotedAccountsFlow @Inject() (
     (PromotedAccountsFlowRequest, CandidateUser)
   ] = {
     val preRankerFilterStats = statsReceiver.scope("pre_ranker")
-    ExcludedUserIdPredicate.observe(preRankerFilterStats.scope("exclude_user_id_predicate"))
+    EtwittercludedUserIdPredicate.observe(preRankerFilterStats.scope("etwitterclude_user_id_predicate"))
   }
 
   /**

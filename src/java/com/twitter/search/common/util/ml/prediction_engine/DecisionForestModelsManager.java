@@ -1,13 +1,13 @@
 package com.twitter.search.common.util.ml.prediction_engine;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Collections;
 import java.util.Map;
 import java.util.function.Supplier;
 
 import com.google.common.base.Preconditions;
 
-import com.twitter.ml.api.FeatureContext;
+import com.twitter.ml.api.FeatureContetwittert;
 import com.twitter.mlv2.trees.predictor.CartTree;
 import com.twitter.mlv2.trees.scorer.DecisionForestScorer;
 import com.twitter.search.common.file.AbstractFile;
@@ -17,29 +17,29 @@ import com.twitter.search.common.util.ml.models_manager.BaseModelsManager;
  * Loads Decision Forest based models and keep them in memory. Can also be scheduled to reload
  * models periodically.
  *
- * Note: Each instance is tied to a single {@link FeatureContext} instance. So, to load models
+ * Note: Each instance is tied to a single {@link FeatureContetwittert} instance. So, to load models
  * for different tasks, you should use different instances of the this class.
  */
-public class DecisionForestModelsManager extends BaseModelsManager<DecisionForestScorer<CartTree>> {
+public class DecisionForestModelsManager etwittertends BaseModelsManager<DecisionForestScorer<CartTree>> {
   private static final String MODEL_FILE_NAME = "model.json";
 
-  private final FeatureContext featureContext;
+  private final FeatureContetwittert featureContetwittert;
 
   DecisionForestModelsManager(
       Supplier<Map<String, AbstractFile>> activeModelsSupplier,
-      FeatureContext featureContext,
+      FeatureContetwittert featureContetwittert,
       boolean shouldUnloadInactiveModels,
-      String statsPrefix
+      String statsPrefitwitter
   ) {
-    super(activeModelsSupplier, shouldUnloadInactiveModels, statsPrefix);
-    this.featureContext = featureContext;
+    super(activeModelsSupplier, shouldUnloadInactiveModels, statsPrefitwitter);
+    this.featureContetwittert = featureContetwittert;
   }
 
   @Override
   public DecisionForestScorer<CartTree> readModelFromDirectory(AbstractFile modelBaseDir)
-      throws IOException {
+      throws IOEtwitterception {
     String modelFilePath = modelBaseDir.getChild(MODEL_FILE_NAME).getPath();
-    return DecisionForestScorer.createCartTreeScorer(modelFilePath, featureContext);
+    return DecisionForestScorer.createCartTreeScorer(modelFilePath, featureContetwittert);
   }
 
   /**
@@ -49,19 +49,19 @@ public class DecisionForestModelsManager extends BaseModelsManager<DecisionFores
    * before, the model will be removed (i.e. it unloads models that are not active anymore).
    */
   public static DecisionForestModelsManager createUsingConfigFile(
-      AbstractFile configFile, FeatureContext featureContext, String statsPrefix) {
+      AbstractFile configFile, FeatureContetwittert featureContetwittert, String statsPrefitwitter) {
     Preconditions.checkArgument(
         configFile.canRead(), "Config file is not readable: %s", configFile.getPath());
     return new DecisionForestModelsManager(
-        new ConfigSupplier(configFile), featureContext, true, statsPrefix);
+        new ConfigSupplier(configFile), featureContetwittert, true, statsPrefitwitter);
   }
 
   /**
    * Creates a no-op instance. It can be used for tests or when the models are disabled.
    */
-  public static DecisionForestModelsManager createNoOp(String statsPrefix) {
+  public static DecisionForestModelsManager createNoOp(String statsPrefitwitter) {
     return new DecisionForestModelsManager(
-        Collections::emptyMap, new FeatureContext(), false, statsPrefix) {
+        Collections::emptyMap, new FeatureContetwittert(), false, statsPrefitwitter) {
       @Override
       public void run() { }
     };

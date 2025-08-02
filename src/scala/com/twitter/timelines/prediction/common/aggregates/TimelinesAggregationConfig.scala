@@ -2,7 +2,7 @@ package com.twitter.timelines.prediction.common.aggregates
 
 import com.twitter.dal.client.dataset.KeyValDALDataset
 import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
+import com.twitter.ml.api.FeatureContetwittert
 import com.twitter.scalding_internal.multiformat.format.keyval
 import com.twitter.summingbird.batch.BatchID
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion.CombineCountsPolicy
@@ -11,7 +11,7 @@ import com.twitter.timelines.data_processing.ml_util.aggregation_framework.Aggre
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.OfflineAggregateDataRecordStore
 import scala.collection.JavaConverters._
 
-object TimelinesAggregationConfig extends TimelinesAggregationConfigTrait {
+object TimelinesAggregationConfig etwittertends TimelinesAggregationConfigTrait {
   override def outputHdfsPath: String = "/user/timelines/processed/aggregates_v2"
 
   def storeToDatasetMap: Map[String, KeyValDALDataset[
@@ -37,7 +37,7 @@ object TimelinesAggregationConfig extends TimelinesAggregationConfigTrait {
   override def mkPhysicalStore(store: AggregateStore): AggregateStore = store match {
     case s: OfflineAggregateDataRecordStore =>
       s.toOfflineAggregateDataRecordStoreWithDAL(storeToDatasetMap(s.name))
-    case _ => throw new IllegalArgumentException("Unsupported logical dataset type.")
+    case _ => throw new IllegalArgumentEtwitterception("Unsupported logical dataset type.")
   }
 
   object CombineCountPolicies {
@@ -56,25 +56,25 @@ object TimelinesAggregationConfig extends TimelinesAggregationConfigTrait {
     val UserMediaUnderstandingAnnotationCountsPolicy: CombineCountsPolicy =
       mkCountsPolicy("user_media_annotation_aggregate")
 
-    private[this] def mkCountsPolicy(prefix: String): CombineCountsPolicy = {
+    private[this] def mkCountsPolicy(prefitwitter: String): CombineCountsPolicy = {
       val features = TimelinesAggregationConfig.aggregatesToCompute
-        .filter(_.aggregatePrefix == prefix)
+        .filter(_.aggregatePrefitwitter == prefitwitter)
         .flatMap(_.allOutputFeatures)
       CombineCountsPolicy(
         topK = 2,
-        aggregateContextToPrecompute = new FeatureContext(features.asJava),
+        aggregateContetwittertToPrecompute = new FeatureContetwittert(features.asJava),
         hardLimit = Some(20)
       )
     }
   }
 }
 
-object TimelinesAggregationCanaryConfig extends TimelinesAggregationConfigTrait {
+object TimelinesAggregationCanaryConfig etwittertends TimelinesAggregationConfigTrait {
   override def outputHdfsPath: String = "/user/timelines/canaries/processed/aggregates_v2"
 
   override def mkPhysicalStore(store: AggregateStore): AggregateStore = store match {
     case s: OfflineAggregateDataRecordStore =>
       s.toOfflineAggregateDataRecordStoreWithDAL(dalDataset = AggregatesCanaryScalaDataset)
-    case _ => throw new IllegalArgumentException("Unsupported logical dataset type.")
+    case _ => throw new IllegalArgumentEtwitterception("Unsupported logical dataset type.")
   }
 }

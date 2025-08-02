@@ -5,23 +5,23 @@ import com.twitter.frigate.pushservice.model.PushTypes.Target
 import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
 import com.twitter.util.Future
 
-object ExplicitOONCFilterPredicate extends QualityPredicateBase {
-  override lazy val name = "open_or_ntab_click_explicit_threshold"
+object EtwitterplicitOONCFilterPredicate etwittertends QualityPredicateBase {
+  override lazy val name = "open_or_ntab_click_etwitterplicit_threshold"
 
-  override lazy val thresholdExtractor = (t: Target) =>
-    Future.value(t.params(PushFeatureSwitchParams.QualityPredicateExplicitThresholdParam))
+  override lazy val thresholdEtwittertractor = (t: Target) =>
+    Future.value(t.params(PushFeatureSwitchParams.QualityPredicateEtwitterplicitThresholdParam))
 
-  override def scoreExtractor = (candidate: PushCandidate) =>
+  override def scoreEtwittertractor = (candidate: PushCandidate) =>
     candidate.mrWeightedOpenOrNtabClickRankingProbability
 }
 
-object WeightedOpenOrNtabClickQualityPredicate extends QualityPredicateBase {
+object WeightedOpenOrNtabClickQualityPredicate etwittertends QualityPredicateBase {
   override lazy val name = "weighted_open_or_ntab_click_model"
 
-  override lazy val thresholdExtractor = (t: Target) => {
+  override lazy val thresholdEtwittertractor = (t: Target) => {
     Future.value(0.0)
   }
 
-  override def scoreExtractor =
+  override def scoreEtwittertractor =
     (candidate: PushCandidate) => candidate.mrWeightedOpenOrNtabClickFilteringProbability
 }

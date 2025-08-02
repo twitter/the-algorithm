@@ -1,7 +1,7 @@
 package com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations
 
 import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.{DataRecord, FeatureContext, IRecordOneToOneAdapter}
+import com.twitter.ml.api.{DataRecord, FeatureContetwittert, IRecordOneToOneAdapter}
 
 case class UserTopicTrainingSample(
   userId: Long,
@@ -14,15 +14,15 @@ case class UserTopicTrainingSample(
   followedTopicsSimClusters: Map[Int, Double],
   notInterestedTopicsSimClusters: Map[Int, Double])
 
-class UserTopicDataRecordAdapter extends IRecordOneToOneAdapter[UserTopicTrainingSample] {
+class UserTopicDataRecordAdapter etwittertends IRecordOneToOneAdapter[UserTopicTrainingSample] {
   import UserFeatures._
 
   /**
-   * Get its feature context used to annotate the data.
+   * Get its feature contetwittert used to annotate the data.
    *
-   * @return feature context
+   * @return feature contetwittert
    */
-  override def getFeatureContext: FeatureContext = UserFeatures.FeatureContext
+  override def getFeatureContetwittert: FeatureContetwittert = UserFeatures.FeatureContetwittert
 
   /**
    * Adapt record of type T to DataRecord.
@@ -31,7 +31,7 @@ class UserTopicDataRecordAdapter extends IRecordOneToOneAdapter[UserTopicTrainin
    *
    * @return a DataRecord
    *
-   * @throws com.twitter.ml.api.InvalidFeatureException
+   * @throws com.twitter.ml.api.InvalidFeatureEtwitterception
    */
   override def adaptToDataRecord(record: UserTopicTrainingSample): DataRecord = {
     val dr = new DataRecord()

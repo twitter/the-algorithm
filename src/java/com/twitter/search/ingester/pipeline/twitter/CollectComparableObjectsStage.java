@@ -9,7 +9,7 @@ import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.commons.pipeline.StageException;
+import org.apache.commons.pipeline.StageEtwitterception;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducedTypes;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ import com.twitter.search.common.metrics.SearchTimerStats;
  */
 @ConsumedTypes(Comparable.class)
 @ProducedTypes(NavigableSet.class)
-public class CollectComparableObjectsStage extends TwitterBaseStage<Void, Void> {
+public class CollectComparableObjectsStage etwittertends TwitterBaseStage<Void, Void> {
   private static final Logger LOG = LoggerFactory.getLogger(CollectComparableObjectsStage.class);
 
   // Batch size of the collections we are emitting.
@@ -43,7 +43,7 @@ public class CollectComparableObjectsStage extends TwitterBaseStage<Void, Void> 
   // Timestamp (ms) of last batch emission.
   private final AtomicLong lastEmitTimeMillis = new AtomicLong(-1);
   // If set, will emit a batch (only upon arrival of a new element), if time since last emit has
-  // exceeded this threshold.
+  // etwitterceeded this threshold.
   private long emitAfterMillis = -1;
 
   private SearchCounter sizeBasedEmitCount;
@@ -55,31 +55,31 @@ public class CollectComparableObjectsStage extends TwitterBaseStage<Void, Void> 
   protected void initStats() {
     super.initStats();
 
-    SearchCustomGauge.export(getStageNamePrefix() + "_last_emit_time",
+    SearchCustomGauge.etwitterport(getStageNamePrefitwitter() + "_last_emit_time",
         () -> lastEmitTimeMillis.get());
 
-    sizeBasedEmitCount = SearchCounter.export(getStageNamePrefix() + "_size_based_emit_count");
-    timeBasedEmitCount = SearchCounter.export(getStageNamePrefix() + "_time_based_emit_count");
-    sizeAndTimeBasedEmitCount = SearchCounter.export(
-        getStageNamePrefix() + "_size_and_time_based_emit_count");
+    sizeBasedEmitCount = SearchCounter.etwitterport(getStageNamePrefitwitter() + "_size_based_emit_count");
+    timeBasedEmitCount = SearchCounter.etwitterport(getStageNamePrefitwitter() + "_time_based_emit_count");
+    sizeAndTimeBasedEmitCount = SearchCounter.etwitterport(
+        getStageNamePrefitwitter() + "_size_and_time_based_emit_count");
 
-    batchEmitTimeStats = SearchTimerStats.export(
-        getStageNamePrefix() + "_batch_emit_time",
+    batchEmitTimeStats = SearchTimerStats.etwitterport(
+        getStageNamePrefitwitter() + "_batch_emit_time",
         TimeUnit.MILLISECONDS,
         false, // no cpu timers
         true); // with percentiles
   }
 
   @Override
-  protected void doInnerPreprocess() throws StageException {
+  protected void doInnerPreprocess() throws StageEtwitterception {
     // We have to initialize this stat here, because initStats() is called before
     // doInnerPreprocess(), so at that point the 'clock' is not set yet.
-    SearchCustomGauge.export(getStageNamePrefix() + "_millis_since_last_emit",
+    SearchCustomGauge.etwitterport(getStageNamePrefitwitter() + "_millis_since_last_emit",
         () -> clock.nowMillis() - lastEmitTimeMillis.get());
 
     currentCollection = newBatchCollection();
     if (batchSize <= 0) {
-      throw new StageException(this, "Must set the batchSize parameter to a value >0");
+      throw new StageEtwitterception(this, "Must set the batchSize parameter to a value >0");
     }
   }
 
@@ -88,9 +88,9 @@ public class CollectComparableObjectsStage extends TwitterBaseStage<Void, Void> 
   }
 
   @Override
-  public void innerProcess(Object obj) throws StageException {
+  public void innerProcess(Object obj) throws StageEtwitterception {
     if (!Comparable.class.isAssignableFrom(obj.getClass())) {
-      throw new StageException(
+      throw new StageEtwitterception(
           this, "Attempt to add a non-comparable object to a sorted collection");
     }
 
@@ -132,7 +132,7 @@ public class CollectComparableObjectsStage extends TwitterBaseStage<Void, Void> 
   }
 
   @Override
-  public void innerPostprocess() throws StageException {
+  public void innerPostprocess() throws StageEtwitterception {
     if (!currentCollection.isEmpty()) {
       emitAndCount(currentCollection);
       updateLastEmitTime();

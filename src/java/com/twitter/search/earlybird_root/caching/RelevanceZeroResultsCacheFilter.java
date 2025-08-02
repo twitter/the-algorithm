@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird_root.caching;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import javatwitter.inject.Inject;
+import javatwitter.inject.Named;
 
 import com.twitter.search.common.caching.Cache;
 import com.twitter.search.common.caching.filter.CacheFilter;
@@ -9,7 +9,7 @@ import com.twitter.search.common.decider.SearchDecider;
 import com.twitter.search.common.root.SearchRootModule;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 
 /**
  * A filter that:
@@ -22,7 +22,7 @@ import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
  * always return 0 results, for all users. So we can cache that result.
  */
 public class RelevanceZeroResultsCacheFilter
-  extends CacheFilter<EarlybirdRequestContext, EarlybirdRequest, EarlybirdResponse> {
+  etwittertends CacheFilter<EarlybirdRequestContetwittert, EarlybirdRequest, EarlybirdResponse> {
 
   /** Creates a filter that caches relevance requests with 0 results. */
   @Inject

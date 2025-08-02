@@ -1,14 +1,14 @@
 package com.twitter.frigate.pushservice.model.ntab
 
 import com.twitter.frigate.pushservice.model.ListRecommendationPushCandidate
-import com.twitter.notificationservice.thriftscala.DisplayText
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
+import com.twitter.notificationservice.thriftscala.DisplayTetwittert
+import com.twitter.notificationservice.thriftscala.DisplayTetwittertEntity
 import com.twitter.notificationservice.thriftscala.InlineCard
-import com.twitter.notificationservice.thriftscala.StoryContext
-import com.twitter.notificationservice.thriftscala.TextValue
+import com.twitter.notificationservice.thriftscala.StoryContetwittert
+import com.twitter.notificationservice.thriftscala.TetwittertValue
 import com.twitter.util.Future
 
-trait ListCandidateNTabRequestHydrator extends NTabRequestHydrator {
+trait ListCandidateNTabRequestHydrator etwittertends NTabRequestHydrator {
 
   self: ListRecommendationPushCandidate =>
 
@@ -17,18 +17,18 @@ trait ListCandidateNTabRequestHydrator extends NTabRequestHydrator {
 
   override lazy val facepileUsersFut: Future[Seq[Long]] = Future.Nil
 
-  override lazy val storyContext: Option[StoryContext] = None
+  override lazy val storyContetwittert: Option[StoryContetwittert] = None
 
   override lazy val inlineCard: Option[InlineCard] = None
 
   override lazy val tapThroughFut: Future[String] = Future.value(s"i/lists/${listId}")
 
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] = listName.map {
+  override lazy val displayTetwittertEntitiesFut: Future[Seq[DisplayTetwittertEntity]] = listName.map {
     listNameOpt =>
       listNameOpt.toSeq.map { name =>
-        DisplayTextEntity(name = "title", value = TextValue.Text(name))
+        DisplayTetwittertEntity(name = "title", value = TetwittertValue.Tetwittert(name))
       }
   }
 
-  override val socialProofDisplayText: Option[DisplayText] = Some(DisplayText())
+  override val socialProofDisplayTetwittert: Option[DisplayTetwittert] = Some(DisplayTetwittert())
 }

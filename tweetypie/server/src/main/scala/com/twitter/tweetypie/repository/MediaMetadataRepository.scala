@@ -11,7 +11,7 @@ object MediaMetadataRepository {
 
   def apply(getMediaMetadata: FutureArrow[MediaMetadataRequest, MediaMetadata]): Type = {
     // use an `SeqGroup` to group the future-calls together, even though they can be
-    // executed independently, in order to help keep hydration between different tweets
+    // etwitterecuted independently, in order to help keep hydration between different tweets
     // in sync, to improve batching in hydrators which occur later in the pipeline.
     val requestGroup = SeqGroup[MediaMetadataRequest, MediaMetadata] {
       requests: Seq[MediaMetadataRequest] =>

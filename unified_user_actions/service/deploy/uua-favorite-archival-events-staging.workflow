@@ -9,7 +9,7 @@
     "dependencies": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
+        "name": "packer-client-no-petwitter",
         "version": "latest"
       }
     ],
@@ -32,8 +32,8 @@
       "name": "staging",
       "targets": [
         {
-          "name": "uua-favorite-archival-events-staging-pdxa",
-          "key": "pdxa/discode/staging/uua-favorite-archival-events"
+          "name": "uua-favorite-archival-events-staging-pdtwittera",
+          "key": "pdtwittera/discode/staging/uua-favorite-archival-events"
         }
       ]
     }

@@ -1,11 +1,11 @@
 package com.twitter.search.earlybird.search;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Map;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.indetwitter.IndetwitterReader;
+import org.apache.lucene.indetwitter.Term;
+import org.apache.lucene.search.IndetwitterSearcher;
 
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
 import com.twitter.search.earlybird.EarlybirdSearcher;
@@ -18,8 +18,8 @@ import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
 import com.twitter.search.earlybird.thrift.ThriftSearchResults;
 import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
 
-public abstract class EarlybirdLuceneSearcher extends IndexSearcher {
-  public EarlybirdLuceneSearcher(IndexReader r) {
+public abstract class EarlybirdLuceneSearcher etwittertends IndetwitterSearcher {
+  public EarlybirdLuceneSearcher(IndetwitterReader r) {
     super(r);
   }
 
@@ -31,7 +31,7 @@ public abstract class EarlybirdLuceneSearcher extends IndexSearcher {
    */
   public abstract void fillFacetResults(
       AbstractFacetTermCollector collector, ThriftSearchResults searchResults)
-      throws IOException;
+      throws IOEtwitterception;
 
   /**
    * Fills metadata for all given facet results.
@@ -43,7 +43,7 @@ public abstract class EarlybirdLuceneSearcher extends IndexSearcher {
   public abstract void fillFacetResultMetadata(
       Map<Term, ThriftFacetCount> facetResults,
       ImmutableSchemaInterface schema,
-      byte debugMode) throws IOException;
+      byte debugMode) throws IOEtwitterception;
 
   /**
    * Fills metadata for all given term stats results.
@@ -55,36 +55,36 @@ public abstract class EarlybirdLuceneSearcher extends IndexSearcher {
   public abstract void fillTermStatsMetadata(
       ThriftTermStatisticsResults termStatsResults,
       ImmutableSchemaInterface schema,
-      byte debugMode) throws IOException;
+      byte debugMode) throws IOEtwitterception;
 
   /**
    * Returns the results for the given term stats request.
    *
    * @param searchRequestInfo Stores the original term stats request and some other useful request
    *                          information.
-   * @param searcher The searcher that should be used to execute the request.
+   * @param searcher The searcher that should be used to etwitterecute the request.
    * @param requestDebugMode The debug mode for this request.
    * @return The term stats results for the given request.
    */
   public abstract TermStatisticsSearchResults collectTermStatistics(
       TermStatisticsRequestInfo searchRequestInfo,
       EarlybirdSearcher searcher,
-      int requestDebugMode) throws IOException;
+      int requestDebugMode) throws IOEtwitterception;
 
   /**
-   * Writes an explanation for the given hits into the given ThriftSearchResults instance.
+   * Writes an etwitterplanation for the given hits into the given ThriftSearchResults instance.
    *
-   * @param searchRequestInfo Stores the original request and some other useful request context.
+   * @param searchRequestInfo Stores the original request and some other useful request contetwittert.
    * @param hits The hits.
-   * @param searchResults The ThriftSearchResults where the explanation for the given hits will be
+   * @param searchResults The ThriftSearchResults where the etwitterplanation for the given hits will be
    *                      stored.
    */
-  // Writes explanations into the searchResults thrift.
-  public abstract void explainSearchResults(SearchRequestInfo searchRequestInfo,
+  // Writes etwitterplanations into the searchResults thrift.
+  public abstract void etwitterplainSearchResults(SearchRequestInfo searchRequestInfo,
                                             SimpleSearchResults hits,
-                                            ThriftSearchResults searchResults) throws IOException;
+                                            ThriftSearchResults searchResults) throws IOEtwitterception;
 
-  public static class FacetSearchResults extends SearchResultsInfo {
+  public static class FacetSearchResults etwittertends SearchResultsInfo {
     private FacetResultsCollector collector;
 
     public FacetSearchResults(FacetResultsCollector collector) {

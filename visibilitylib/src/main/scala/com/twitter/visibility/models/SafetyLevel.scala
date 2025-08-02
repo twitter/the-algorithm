@@ -61,7 +61,7 @@ object SafetyLevel {
     ThriftSafetyLevel.DirectMessages -> DirectMessages,
     ThriftSafetyLevel.DirectMessagesConversationList -> DirectMessagesConversationList,
     ThriftSafetyLevel.DirectMessagesConversationTimeline -> DirectMessagesConversationTimeline,
-    ThriftSafetyLevel.DirectMessagesInbox -> DirectMessagesInbox,
+    ThriftSafetyLevel.DirectMessagesInbotwitter -> DirectMessagesInbotwitter,
     ThriftSafetyLevel.DirectMessagesMutedUsers -> DirectMessagesMutedUsers,
     ThriftSafetyLevel.DirectMessagesPinned -> DirectMessagesPinned,
     ThriftSafetyLevel.DirectMessagesSearch -> DirectMessagesSearch,
@@ -70,7 +70,7 @@ object SafetyLevel {
     ThriftSafetyLevel.EmbeddedTweet -> EmbeddedTweet,
     ThriftSafetyLevel.EmbedsPublicInterestNotice -> EmbedsPublicInterestNotice,
     ThriftSafetyLevel.EmbedTweetMarkup -> EmbedTweetMarkup,
-    ThriftSafetyLevel.ExploreRecommendations -> ExploreRecommendations,
+    ThriftSafetyLevel.EtwitterploreRecommendations -> EtwitterploreRecommendations,
     ThriftSafetyLevel.WritePathLimitedActionsEnforcement -> WritePathLimitedActionsEnforcement,
     ThriftSafetyLevel.FilterAll -> FilterAll,
     ThriftSafetyLevel.FilterAllPlaceholder -> FilterAllPlaceholder,
@@ -100,7 +100,7 @@ object SafetyLevel {
     ThriftSafetyLevel.ModeratedTweetsTimeline -> ModeratedTweetsTimeline,
     ThriftSafetyLevel.Moments -> Moments,
     ThriftSafetyLevel.NearbyTimeline -> NearbyTimeline,
-    ThriftSafetyLevel.NewUserExperience -> NewUserExperience,
+    ThriftSafetyLevel.NewUserEtwitterperience -> NewUserEtwitterperience,
     ThriftSafetyLevel.NotificationsIbis -> NotificationsIbis,
     ThriftSafetyLevel.NotificationsPlatform -> NotificationsPlatform,
     ThriftSafetyLevel.NotificationsPlatformPush -> NotificationsPlatformPush,
@@ -110,8 +110,8 @@ object SafetyLevel {
     ThriftSafetyLevel.NotificationsWrite -> NotificationsWrite,
     ThriftSafetyLevel.NotificationsWriterTweetHydrator -> NotificationsWriterTweetHydrator,
     ThriftSafetyLevel.NotificationsWriterV2 -> NotificationsWriterV2,
-    ThriftSafetyLevel.ProfileMixerMedia -> ProfileMixerMedia,
-    ThriftSafetyLevel.ProfileMixerFavorites -> ProfileMixerFavorites,
+    ThriftSafetyLevel.ProfileMitwittererMedia -> ProfileMitwittererMedia,
+    ThriftSafetyLevel.ProfileMitwittererFavorites -> ProfileMitwittererFavorites,
     ThriftSafetyLevel.QuickPromoteTweetEligibility -> QuickPromoteTweetEligibility,
     ThriftSafetyLevel.QuoteTweetTimeline -> QuoteTweetTimeline,
     ThriftSafetyLevel.QuotedTweetRules -> QuotedTweetRules,
@@ -120,8 +120,8 @@ object SafetyLevel {
     ThriftSafetyLevel.RecosWritePath -> RecosWritePath,
     ThriftSafetyLevel.RepliesGrouping -> RepliesGrouping,
     ThriftSafetyLevel.ReportCenter -> ReportCenter,
-    ThriftSafetyLevel.ReturningUserExperience -> ReturningUserExperience,
-    ThriftSafetyLevel.ReturningUserExperienceFocalTweet -> ReturningUserExperienceFocalTweet,
+    ThriftSafetyLevel.ReturningUserEtwitterperience -> ReturningUserEtwitterperience,
+    ThriftSafetyLevel.ReturningUserEtwitterperienceFocalTweet -> ReturningUserEtwitterperienceFocalTweet,
     ThriftSafetyLevel.Revenue -> Revenue,
     ThriftSafetyLevel.RitoActionedTweetTimeline -> RitoActionedTweetTimeline,
     ThriftSafetyLevel.SafeSearchMinimal -> SafeSearchMinimal,
@@ -130,8 +130,8 @@ object SafetyLevel {
     ThriftSafetyLevel.SearchLatest -> SearchLatest,
     ThriftSafetyLevel.SearchTop -> SearchTop,
     ThriftSafetyLevel.SearchTopQig -> SearchTopQig,
-    ThriftSafetyLevel.SearchMixerSrpMinimal -> SearchMixerSrpMinimal,
-    ThriftSafetyLevel.SearchMixerSrpStrict -> SearchMixerSrpStrict,
+    ThriftSafetyLevel.SearchMitwittererSrpMinimal -> SearchMitwittererSrpMinimal,
+    ThriftSafetyLevel.SearchMitwittererSrpStrict -> SearchMitwittererSrpStrict,
     ThriftSafetyLevel.SearchPeopleSrp -> SearchPeopleSrp,
     ThriftSafetyLevel.SearchPeopleTypeahead -> SearchPeopleTypeahead,
     ThriftSafetyLevel.SearchPhoto -> SearchPhoto,
@@ -154,7 +154,7 @@ object SafetyLevel {
     ThriftSafetyLevel.SpacesSharing -> SpacesSharing,
     ThriftSafetyLevel.SpaceTweetAvatarHomeTimeline -> SpaceTweetAvatarHomeTimeline,
     ThriftSafetyLevel.StickersTimeline -> StickersTimeline,
-    ThriftSafetyLevel.StratoExtLimitedEngagements -> StratoExtLimitedEngagements,
+    ThriftSafetyLevel.StratoEtwittertLimitedEngagements -> StratoEtwittertLimitedEngagements,
     ThriftSafetyLevel.StreamServices -> StreamServices,
     ThriftSafetyLevel.SuperFollowerConnections -> SuperFollowerConnections,
     ThriftSafetyLevel.SuperLike -> SuperLike,
@@ -221,624 +221,624 @@ object SafetyLevel {
   private lazy val modelToThriftMap: Map[SafetyLevel, ThriftSafetyLevel] =
     for ((k, v) <- thriftToModelMap) yield (v, k)
 
-  case object AdsBusinessSettings extends SafetyLevel {
+  case object AdsBusinessSettings etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableAdsBusinessSettingsSafetyLevelParam
   }
-  case object AdsCampaign extends SafetyLevel {
+  case object AdsCampaign etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableAdsCampaignSafetyLevelParam
   }
-  case object AdsManager extends SafetyLevel {
+  case object AdsManager etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableAdsManagerSafetyLevelParam
   }
-  case object AdsReportingDashboard extends SafetyLevel {
+  case object AdsReportingDashboard etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableAdsReportingDashboardSafetyLevelParam
   }
-  case object AllSubscribedLists extends SafetyLevel {
+  case object AllSubscribedLists etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableAllSubscribedListsSafetyLevelParam
   }
-  case object Appeals extends SafetyLevel {
+  case object Appeals etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableAppealsSafetyLevelParam
   }
-  case object ArticleTweetTimeline extends SafetyLevel {
+  case object ArticleTweetTimeline etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableArticleTweetTimelineSafetyLevelParam
   }
-  case object BaseQig extends SafetyLevel {
+  case object BaseQig etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableBaseQigSafetyLevelParam
   }
-  case object BirdwatchNoteAuthor extends SafetyLevel {
+  case object BirdwatchNoteAuthor etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableBirdwatchNoteAuthorSafetyLevel
   }
-  case object BirdwatchNoteTweetsTimeline extends SafetyLevel {
+  case object BirdwatchNoteTweetsTimeline etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableBirdwatchNoteTweetsTimelineSafetyLevel
   }
-  case object BirdwatchNeedsYourHelpNotifications extends SafetyLevel {
+  case object BirdwatchNeedsYourHelpNotifications etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
       EnableBirdwatchNeedsYourHelpNotificationsSafetyLevel
   }
-  case object BlockMuteUsersTimeline extends SafetyLevel {
+  case object BlockMuteUsersTimeline etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableBlockMuteUsersTimelineSafetyLevelParam
   }
-  case object BrandSafety extends SafetyLevel {
+  case object BrandSafety etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableBrandSafetySafetyLevelParam
   }
-  case object CardPollVoting extends SafetyLevel {
+  case object CardPollVoting etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableCardPollVotingSafetyLevelParam
   }
-  case object CardsService extends SafetyLevel {
+  case object CardsService etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableCardsServiceSafetyLevelParam
   }
-  case object Communities extends SafetyLevel {
+  case object Communities etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableCommunitiesSafetyLevelParam
   }
-  case object ContentControlToolInstall extends SafetyLevel {
+  case object ContentControlToolInstall etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableContentControlToolInstallSafetyLevelParam
   }
-  case object ConversationFocalPrehydration extends SafetyLevel {
+  case object ConversationFocalPrehydration etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
       EnableConversationFocalPrehydrationSafetyLevelParam
   }
-  case object ConversationFocalTweet extends SafetyLevel {
+  case object ConversationFocalTweet etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableConversationFocalTweetSafetyLevelParam
   }
-  case object ConversationInjectedTweet extends SafetyLevel {
+  case object ConversationInjectedTweet etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableConversationInjectedTweetSafetyLevelParam
   }
-  case object ConversationReply extends SafetyLevel {
+  case object ConversationReply etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableConversationReplySafetyLevelParam
   }
-  case object AccessInternalPromotedContent extends SafetyLevel {
+  case object AccessInternalPromotedContent etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
       EnableAccessInternalPromotedContentSafetyLevelParam
   }
-  case object CuratedTrendsRepresentativeTweet extends SafetyLevel {
+  case object CuratedTrendsRepresentativeTweet etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableCuratedTrendsRepresentativeTweet
   }
-  case object CurationPolicyViolations extends SafetyLevel {
+  case object CurationPolicyViolations etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableCurationPolicyViolations
   }
-  case object DevPlatformGetListTweets extends SafetyLevel {
+  case object DevPlatformGetListTweets etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableDevPlatformGetListTweetsSafetyLevelParam
   }
-  case object DesFollowingAndFollowersUserList extends SafetyLevel {
+  case object DesFollowingAndFollowersUserList etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
       EnableDESFollowingAndFollowersUserListSafetyLevelParam
   }
-  case object DesHomeTimeline extends SafetyLevel {
+  case object DesHomeTimeline etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableDESHomeTimelineSafetyLevelParam
   }
-  case object DesQuoteTweetTimeline extends SafetyLevel {
+  case object DesQuoteTweetTimeline etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableDESQuoteTweetTimelineSafetyLevelParam
   }
-  case object DesRealtime extends SafetyLevel {
+  case object DesRealtime etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableDESRealtimeSafetyLevelParam
   }
-  case object DesRealtimeSpamEnrichment extends SafetyLevel {
+  case object DesRealtimeSpamEnrichment etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableDESRealtimeSpamEnrichmentSafetyLevelParam
   }
-  case object DesRealtimeTweetFilter extends SafetyLevel {
+  case object DesRealtimeTweetFilter etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableDESRealtimeTweetFilterSafetyLevelParam
   }
-  case object DesRetweetingUsers extends SafetyLevel {
+  case object DesRetweetingUsers etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableDESRetweetingUsersSafetyLevelParam
   }
-  case object DesTweetDetail extends SafetyLevel {
+  case object DesTweetDetail etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableDesTweetDetailSafetyLevelParam
   }
-  case object DesTweetLikingUsers extends SafetyLevel {
+  case object DesTweetLikingUsers etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableDESTweetLikingUsersSafetyLevelParam
   }
-  case object DesUserBookmarks extends SafetyLevel {
+  case object DesUserBookmarks etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableDESUserBookmarksSafetyLevelParam
   }
-  case object DesUserLikedTweets extends SafetyLevel {
+  case object DesUserLikedTweets etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableDESUserLikedTweetSafetyLevelParam
   }
-  case object DesUserMentions extends SafetyLevel {
+  case object DesUserMentions etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableDESUserMentionsSafetyLevelParam
   }
-  case object DesUserTweets extends SafetyLevel {
+  case object DesUserTweets etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableDESUserTweetsSafetyLevelParam
   }
-  case object DevPlatformComplianceStream extends SafetyLevel {
+  case object DevPlatformComplianceStream etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableDevPlatformComplianceStreamSafetyLevelParam
   }
-  case object DirectMessages extends SafetyLevel {
+  case object DirectMessages etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableDirectMessagesSafetyLevelParam
   }
-  case object DirectMessagesConversationList extends SafetyLevel {
+  case object DirectMessagesConversationList etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
       EnableDirectMessagesConversationListSafetyLevelParam
   }
-  case object DirectMessagesConversationTimeline extends SafetyLevel {
+  case object DirectMessagesConversationTimeline etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
       EnableDirectMessagesConversationTimelineSafetyLevelParam
   }
-  case object DirectMessagesInbox extends SafetyLevel {
+  case object DirectMessagesInbotwitter etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
-      EnableDirectMessagesInboxSafetyLevelParam
+      EnableDirectMessagesInbotwitterSafetyLevelParam
   }
-  case object DirectMessagesMutedUsers extends SafetyLevel {
+  case object DirectMessagesMutedUsers etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableDirectMessagesMutedUsersSafetyLevelParam
   }
-  case object DirectMessagesPinned extends SafetyLevel {
+  case object DirectMessagesPinned etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableDirectMessagesPinnedSafetyLevelParam
   }
-  case object DirectMessagesSearch extends SafetyLevel {
+  case object DirectMessagesSearch etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableDirectMessagesSearchSafetyLevelParam
   }
-  case object EditHistoryTimeline extends SafetyLevel {
+  case object EditHistoryTimeline etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableEditHistoryTimelineSafetyLevelParam
   }
-  case object ElevatedQuoteTweetTimeline extends SafetyLevel {
+  case object ElevatedQuoteTweetTimeline etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableElevatedQuoteTweetTimelineSafetyLevelParam
   }
-  case object EmbeddedTweet extends SafetyLevel {
+  case object EmbeddedTweet etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableEmbeddedTweetSafetyLevelParam
   }
-  case object EmbedsPublicInterestNotice extends SafetyLevel {
+  case object EmbedsPublicInterestNotice etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableEmbedsPublicInterestNoticeSafetyLevelParam
   }
-  case object EmbedTweetMarkup extends SafetyLevel {
+  case object EmbedTweetMarkup etwittertends SafetyLevel {
     override def enabledParam: SafetyLevelParam = EnableEmbedTweetMarkupSafetyLevelParam
   }
-  case object WritePathLimitedActionsEnforcement extends SafetyLevel {
+  case object WritePathLimitedActionsEnforcement etwittertends SafetyLevel {
     override def enabledParam: SafetyLevelParam =
       EnableWritePathLimitedActionsEnforcementSafetyLevelParam
   }
-  case object FilterNone extends SafetyLevel {
+  case object FilterNone etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableFilterNoneSafetyLevelParam
   }
-  case object FilterAll extends SafetyLevel {
+  case object FilterAll etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableFilterAllSafetyLevelParam
   }
-  case object FilterAllPlaceholder extends SafetyLevel {
+  case object FilterAllPlaceholder etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableFilterDefaultSafetyLevelParam
   }
-  case object FilterDefault extends SafetyLevel {
+  case object FilterDefault etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableFilterDefaultSafetyLevelParam
   }
-  case object FollowedTopicsTimeline extends SafetyLevel {
+  case object FollowedTopicsTimeline etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableFollowedTopicsTimelineSafetyLevelParam
   }
-  case object FollowerConnections extends SafetyLevel {
+  case object FollowerConnections etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableFollowerConnectionsSafetyLevelParam
   }
-  case object FollowingAndFollowersUserList extends SafetyLevel {
+  case object FollowingAndFollowersUserList etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
       EnableFollowingAndFollowersUserListSafetyLevelParam
   }
-  case object ForDevelopmentOnly extends SafetyLevel {
+  case object ForDevelopmentOnly etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableForDevelopmentOnlySafetyLevelParam
   }
-  case object FriendsFollowingList extends SafetyLevel {
+  case object FriendsFollowingList etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableFriendsFollowingListSafetyLevelParam
   }
-  case object GraphqlDefault extends SafetyLevel {
+  case object GraphqlDefault etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableGraphqlDefaultSafetyLevelParam
   }
-  case object GryphonDecksAndColumns extends SafetyLevel {
+  case object GryphonDecksAndColumns etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableGryphonDecksAndColumnsSafetyLevelParam
   }
-  case object HumanizationNudge extends SafetyLevel {
+  case object HumanizationNudge etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableHumanizationNudgeSafetyLevelParam
   }
-  case object KitchenSinkDevelopment extends SafetyLevel {
+  case object KitchenSinkDevelopment etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableKitchenSinkDevelopmentSafetyLevelParam
   }
-  case object ListHeader extends SafetyLevel {
+  case object ListHeader etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableListHeaderSafetyLevelParam
   }
-  case object ListMemberships extends SafetyLevel {
+  case object ListMemberships etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableListMembershipsSafetyLevelParam
   }
-  case object ListOwnerships extends SafetyLevel {
+  case object ListOwnerships etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableListOwnershipsSafetyLevelParam
   }
-  case object ListRecommendations extends SafetyLevel {
+  case object ListRecommendations etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableListRecommendationsSafetyLevelParam
   }
-  case object ListSearch extends SafetyLevel {
+  case object ListSearch etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableListSearchSafetyLevelParam
   }
-  case object ListSubscriptions extends SafetyLevel {
+  case object ListSubscriptions etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableListSubscriptionsSafetyLevelParam
   }
-  case object LivePipelineEngagementCounts extends SafetyLevel {
+  case object LivePipelineEngagementCounts etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableLivePipelineEngagementCountsSafetyLevelParam
   }
-  case object LiveVideoTimeline extends SafetyLevel {
+  case object LiveVideoTimeline etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableLiveVideoTimelineSafetyLevelParam
   }
-  case object MagicRecs extends SafetyLevel {
+  case object MagicRecs etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableMagicRecsSafetyLevelParam
   }
-  case object MagicRecsAggressive extends SafetyLevel {
+  case object MagicRecsAggressive etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableMagicRecsAggressiveSafetyLevelParam
   }
-  case object MagicRecsAggressiveV2 extends SafetyLevel {
+  case object MagicRecsAggressiveV2 etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableMagicRecsAggressiveV2SafetyLevelParam
   }
-  case object MagicRecsV2 extends SafetyLevel {
+  case object MagicRecsV2 etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableMagicRecsV2SafetyLevelParam
   }
-  case object Minimal extends SafetyLevel {
+  case object Minimal etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableMinimalSafetyLevelParam
   }
-  case object ModeratedTweetsTimeline extends SafetyLevel {
+  case object ModeratedTweetsTimeline etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableModeratedTweetsTimelineSafetyLevelParam
   }
-  case object Moments extends SafetyLevel {
+  case object Moments etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableMomentsSafetyLevelParam
   }
-  case object NearbyTimeline extends SafetyLevel {
+  case object NearbyTimeline etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableNearbySafetyLevelParam
   }
-  case object NewUserExperience extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableNewUserExperienceSafetyLevelParam
+  case object NewUserEtwitterperience etwittertends SafetyLevel {
+    override val enabledParam: SafetyLevelParam = EnableNewUserEtwitterperienceSafetyLevelParam
   }
-  case object NotificationsIbis extends SafetyLevel {
+  case object NotificationsIbis etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableNotificationsIbisSafetyLevelParam
   }
-  case object NotificationsPlatform extends SafetyLevel {
+  case object NotificationsPlatform etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableNotificationsPlatformSafetyLevelParam
   }
-  case object NotificationsPlatformPush extends SafetyLevel {
+  case object NotificationsPlatformPush etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableNotificationsPlatformPushSafetyLevelParam
   }
-  case object NotificationsQig extends SafetyLevel {
+  case object NotificationsQig etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableNotificationsQigSafetyLevelParam
   }
-  case object NotificationsRead extends SafetyLevel {
+  case object NotificationsRead etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableNotificationsReadSafetyLevelParam
   }
-  case object NotificationsTimelineDeviceFollow extends SafetyLevel {
+  case object NotificationsTimelineDeviceFollow etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
       EnableNotificationsTimelineDeviceFollowSafetyLevelParam
   }
-  case object NotificationsWrite extends SafetyLevel {
+  case object NotificationsWrite etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableNotificationsWriteSafetyLevelParam
   }
-  case object NotificationsWriterV2 extends SafetyLevel {
+  case object NotificationsWriterV2 etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableNotificationsWriterV2SafetyLevelParam
   }
-  case object NotificationsWriterTweetHydrator extends SafetyLevel {
+  case object NotificationsWriterTweetHydrator etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
       EnableNotificationsWriterTweetHydratorSafetyLevelParam
   }
-  case object ProfileMixerMedia extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableProfileMixerMediaSafetyLevelParam
+  case object ProfileMitwittererMedia etwittertends SafetyLevel {
+    override val enabledParam: SafetyLevelParam = EnableProfileMitwittererMediaSafetyLevelParam
   }
-  case object ProfileMixerFavorites extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableProfileMixerFavoritesSafetyLevelParam
+  case object ProfileMitwittererFavorites etwittertends SafetyLevel {
+    override val enabledParam: SafetyLevelParam = EnableProfileMitwittererFavoritesSafetyLevelParam
   }
-  case object QuickPromoteTweetEligibility extends SafetyLevel {
+  case object QuickPromoteTweetEligibility etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableQuickPromoteTweetEligibilitySafetyLevelParam
   }
-  case object QuoteTweetTimeline extends SafetyLevel {
+  case object QuoteTweetTimeline etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableQuoteTweetTimelineSafetyLevelParam
   }
-  case object QuotedTweetRules extends SafetyLevel {
+  case object QuotedTweetRules etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableQuotedTweetRulesParam
   }
-  case object Recommendations extends SafetyLevel {
+  case object Recommendations etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableRecommendationsSafetyLevelParam
   }
-  case object RecosVideo extends SafetyLevel {
+  case object RecosVideo etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableRecosVideoSafetyLevelParam
   }
-  case object RecosWritePath extends SafetyLevel {
+  case object RecosWritePath etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableRecosWritePathSafetyLevelParam
   }
-  case object RepliesGrouping extends SafetyLevel {
+  case object RepliesGrouping etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableRepliesGroupingSafetyLevelParam
   }
-  case object ReportCenter extends SafetyLevel {
+  case object ReportCenter etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableReportCenterSafetyLevelParam
   }
-  case object ReturningUserExperience extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableReturningUserExperienceSafetyLevelParam
+  case object ReturningUserEtwitterperience etwittertends SafetyLevel {
+    override val enabledParam: SafetyLevelParam = EnableReturningUserEtwitterperienceSafetyLevelParam
   }
-  case object ReturningUserExperienceFocalTweet extends SafetyLevel {
+  case object ReturningUserEtwitterperienceFocalTweet etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
-      EnableReturningUserExperienceFocalTweetSafetyLevelParam
+      EnableReturningUserEtwitterperienceFocalTweetSafetyLevelParam
   }
-  case object Revenue extends SafetyLevel {
+  case object Revenue etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableRevenueSafetyLevelParam
   }
-  case object RitoActionedTweetTimeline extends SafetyLevel {
+  case object RitoActionedTweetTimeline etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableRitoActionedTweetTimelineParam
   }
-  case object SafeSearchMinimal extends SafetyLevel {
+  case object SafeSearchMinimal etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSafeSearchMinimalSafetyLevelParam
   }
-  case object SafeSearchStrict extends SafetyLevel {
+  case object SafeSearchStrict etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSafeSearchStrictSafetyLevelParam
   }
-  case object SearchHydration extends SafetyLevel {
+  case object SearchHydration etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSearchHydrationSafetyLevelParam
   }
-  case object SearchLatest extends SafetyLevel {
+  case object SearchLatest etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSearchLatestSafetyLevelParam
   }
-  case object SearchMixerSrpMinimal extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSearchMixerSrpMinimalSafetyLevelParam
+  case object SearchMitwittererSrpMinimal etwittertends SafetyLevel {
+    override val enabledParam: SafetyLevelParam = EnableSearchMitwittererSrpMinimalSafetyLevelParam
   }
-  case object SearchMixerSrpStrict extends SafetyLevel {
-    override val enabledParam: SafetyLevelParam = EnableSearchMixerSrpStrictSafetyLevelParam
+  case object SearchMitwittererSrpStrict etwittertends SafetyLevel {
+    override val enabledParam: SafetyLevelParam = EnableSearchMitwittererSrpStrictSafetyLevelParam
   }
-  case object SearchPeopleSrp extends SafetyLevel {
+  case object SearchPeopleSrp etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSearchPeopleSearchResultPageSafetyLevelParam
   }
-  case object SearchPeopleTypeahead extends SafetyLevel {
+  case object SearchPeopleTypeahead etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSearchPeopleTypeaheadSafetyLevelParam
   }
-  case object SearchPhoto extends SafetyLevel {
+  case object SearchPhoto etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSearchPhotoSafetyLevelParam
   }
-  case object ShoppingManagerSpyMode extends SafetyLevel {
+  case object ShoppingManagerSpyMode etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableShoppingManagerSpyModeSafetyLevelParam
   }
-  case object StratoExtLimitedEngagements extends SafetyLevel {
+  case object StratoEtwittertLimitedEngagements etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
-      EnableStratoExtLimitedEngagementsSafetyLevelParam
+      EnableStratoEtwittertLimitedEngagementsSafetyLevelParam
   }
-  case object SearchTop extends SafetyLevel {
+  case object SearchTop etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSearchTopSafetyLevelParam
   }
-  case object SearchTopQig extends SafetyLevel {
+  case object SearchTopQig etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSearchTopQigSafetyLevelParam
   }
-  case object SearchTrendTakeoverPromotedTweet extends SafetyLevel {
+  case object SearchTrendTakeoverPromotedTweet etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = SearchTrendTakeoverPromotedTweetSafetyLevelParam
   }
-  case object SearchVideo extends SafetyLevel {
+  case object SearchVideo etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSearchVideoSafetyLevelParam
   }
-  case object SearchBlenderUserRules extends SafetyLevel {
+  case object SearchBlenderUserRules etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSearchBlenderUserRulesSafetyLevelParam
   }
-  case object SearchLatestUserRules extends SafetyLevel {
+  case object SearchLatestUserRules etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSearchLatestUserRulesSafetyLevelParam
   }
-  case object SignalsReactions extends SafetyLevel {
+  case object SignalsReactions etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSignalsReactionsSafetyLevelParam
   }
-  case object SignalsTweetReactingUsers extends SafetyLevel {
+  case object SignalsTweetReactingUsers etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSignalsTweetReactingUsersSafetyLevelParam
   }
-  case object SocialProof extends SafetyLevel {
+  case object SocialProof etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSocialProofSafetyLevelParam
   }
-  case object SoftInterventionPivot extends SafetyLevel {
+  case object SoftInterventionPivot etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSoftInterventionPivotSafetyLevelParam
   }
-  case object SpaceFleetline extends SafetyLevel {
+  case object SpaceFleetline etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSpaceFleetlineSafetyLevelParam
   }
-  case object SpaceHomeTimelineUpranking extends SafetyLevel {
+  case object SpaceHomeTimelineUpranking etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSpaceHomeTimelineUprankingSafetyLevelParam
   }
-  case object SpaceJoinScreen extends SafetyLevel {
+  case object SpaceJoinScreen etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSpaceJoinScreenSafetyLevelParam
   }
-  case object SpaceNotifications extends SafetyLevel {
+  case object SpaceNotifications etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSpaceNotificationSafetyLevelParam
   }
-  case object Spaces extends SafetyLevel {
+  case object Spaces etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSpacesSafetyLevelParam
   }
-  case object SpacesParticipants extends SafetyLevel {
+  case object SpacesParticipants etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSpacesParticipantsSafetyLevelParam
   }
-  case object SpacesSellerApplicationStatus extends SafetyLevel {
+  case object SpacesSellerApplicationStatus etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
       EnableSpacesSellerApplicationStatusSafetyLevelParam
   }
-  case object SpacesSharing extends SafetyLevel {
+  case object SpacesSharing etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSpacesSharingSafetyLevelParam
   }
-  case object SpaceTweetAvatarHomeTimeline extends SafetyLevel {
+  case object SpaceTweetAvatarHomeTimeline etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSpaceTweetAvatarHomeTimelineSafetyLevelParam
   }
-  case object StickersTimeline extends SafetyLevel {
+  case object StickersTimeline etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableStickersTimelineSafetyLevelParam
   }
-  case object StreamServices extends SafetyLevel {
+  case object StreamServices etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableStreamServicesSafetyLevelParam
   }
-  case object SuperFollowerConnections extends SafetyLevel {
+  case object SuperFollowerConnections etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSuperFollowerConnectionsSafetyLevelParam
   }
-  case object SuperLike extends SafetyLevel {
+  case object SuperLike etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableSuperLikeSafetyLevelParam
   }
-  case object Test extends SafetyLevel {
+  case object Test etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTestSafetyLevelParam
   }
-  case object TimelineConversations extends SafetyLevel {
+  case object TimelineConversations etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineConversationsSafetyLevelParam
   }
-  case object TimelineConversationsDownranking extends SafetyLevel {
+  case object TimelineConversationsDownranking etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
       EnableTimelineConversationsDownrankingSafetyLevelParam
   }
-  case object TimelineConversationsDownrankingMinimal extends SafetyLevel {
+  case object TimelineConversationsDownrankingMinimal etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
       EnableTimelineConversationsDownrankingMinimalSafetyLevelParam
   }
-  case object TimelineFollowingActivity extends SafetyLevel {
+  case object TimelineFollowingActivity etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineFollowingActivitySafetyLevelParam
   }
-  case object TimelineHome extends SafetyLevel {
+  case object TimelineHome etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineHomeSafetyLevelParam
   }
-  case object TimelineHomeCommunities extends SafetyLevel {
+  case object TimelineHomeCommunities etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineHomeCommunitiesSafetyLevelParam
   }
-  case object TimelineHomeHydration extends SafetyLevel {
+  case object TimelineHomeHydration etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineHomeHydrationSafetyLevelParam
   }
-  case object TimelineHomePromotedHydration extends SafetyLevel {
+  case object TimelineHomePromotedHydration etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
       EnableTimelineHomePromotedHydrationSafetyLevelParam
   }
-  case object TimelineHomeRecommendations extends SafetyLevel {
+  case object TimelineHomeRecommendations etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineHomeRecommendationsSafetyLevelParam
   }
-  case object TimelineHomeTopicFollowRecommendations extends SafetyLevel {
+  case object TimelineHomeTopicFollowRecommendations etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
       EnableTimelineHomeTopicFollowRecommendationsSafetyLevelParam
   }
-  case object TimelineScorer extends SafetyLevel {
+  case object TimelineScorer etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
       EnableTimelineScorerSafetyLevelParam
   }
-  case object TopicsLandingPageTopicRecommendations extends SafetyLevel {
+  case object TopicsLandingPageTopicRecommendations etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
       EnableTopicsLandingPageTopicRecommendationsSafetyLevelParam
   }
-  case object ExploreRecommendations extends SafetyLevel {
+  case object EtwitterploreRecommendations etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
-      EnableExploreRecommendationsSafetyLevelParam
+      EnableEtwitterploreRecommendationsSafetyLevelParam
   }
-  case object TimelineModeratedTweetsHydration extends SafetyLevel {
+  case object TimelineModeratedTweetsHydration etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
       EnableTimelineModeratedTweetsHydrationSafetyLevelParam
   }
-  case object TimelineInjection extends SafetyLevel {
+  case object TimelineInjection etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineInjectionSafetyLevelParam
   }
-  case object TimelineMentions extends SafetyLevel {
+  case object TimelineMentions etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineMentionsSafetyLevelParam
   }
-  case object TimelineHomeLatest extends SafetyLevel {
+  case object TimelineHomeLatest etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineHomeLatestSafetyLevelParam
   }
-  case object TimelineLikedBy extends SafetyLevel {
+  case object TimelineLikedBy etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineLikedBySafetyLevelParam
   }
-  case object TimelineRetweetedBy extends SafetyLevel {
+  case object TimelineRetweetedBy etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineRetweetedBySafetyLevelParam
   }
-  case object TimelineSuperLikedBy extends SafetyLevel {
+  case object TimelineSuperLikedBy etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineLikedBySafetyLevelParam
   }
-  case object TimelineBookmark extends SafetyLevel {
+  case object TimelineBookmark etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineBookmarkSafetyLevelParam
   }
-  case object TimelineContentControls extends SafetyLevel {
+  case object TimelineContentControls etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineContentControlsSafetyLevelParam
   }
-  case object TimelineMedia extends SafetyLevel {
+  case object TimelineMedia etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineMediaSafetyLevelParam
   }
-  case object TimelineReactiveBlending extends SafetyLevel {
+  case object TimelineReactiveBlending etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineReactiveBlendingSafetyLevelParam
   }
-  case object TimelineFavorites extends SafetyLevel {
+  case object TimelineFavorites etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineFavoritesSafetyLevelParam
   }
-  case object TimelineFavoritesSelfView extends SafetyLevel {
+  case object TimelineFavoritesSelfView etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineFavoritesSelfViewSafetyLevelParam
   }
-  case object TimelineLists extends SafetyLevel {
+  case object TimelineLists etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineListsSafetyLevelParam
   }
-  case object TimelineProfile extends SafetyLevel {
+  case object TimelineProfile etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineProfileSafetyLevelParam
   }
-  case object TimelineProfileAll extends SafetyLevel {
+  case object TimelineProfileAll etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineProfileAllSafetyLevelParam
   }
 
-  case object TimelineProfileSpaces extends SafetyLevel {
+  case object TimelineProfileSpaces etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineProfileSpacesSafetyLevelParam
   }
 
-  case object TimelineProfileSuperFollows extends SafetyLevel {
+  case object TimelineProfileSuperFollows etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineProfileSuperFollowsSafetyLevelParam
   }
-  case object TimelineFocalTweet extends SafetyLevel {
+  case object TimelineFocalTweet etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTimelineFocalTweetSafetyLevelParam
   }
-  case object Tombstoning extends SafetyLevel {
+  case object Tombstoning etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTombstoningSafetyLevelParam
   }
-  case object TopicRecommendations extends SafetyLevel {
+  case object TopicRecommendations etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTopicRecommendationsSafetyLevelParam
   }
-  case object TrendsRepresentativeTweet extends SafetyLevel {
+  case object TrendsRepresentativeTweet etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTrendsRepresentativeTweetSafetyLevelParam
   }
-  case object TrustedFriendsUserList extends SafetyLevel {
+  case object TrustedFriendsUserList etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTrustedFriendsUserListSafetyLevelParam
   }
-  case object TwitterDelegateUserList extends SafetyLevel {
+  case object TwitterDelegateUserList etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTwitterDelegateUserListSafetyLevelParam
   }
-  case object TweetDetail extends SafetyLevel {
+  case object TweetDetail etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTweetDetailSafetyLevelParam
   }
-  case object TweetDetailNonToo extends SafetyLevel {
+  case object TweetDetailNonToo etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTweetDetailNonTooSafetyLevelParam
   }
-  case object TweetDetailWithInjectionsHydration extends SafetyLevel {
+  case object TweetDetailWithInjectionsHydration etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam =
       EnableTweetDetailWithInjectionsHydrationSafetyLevelParam
   }
-  case object TweetEngagers extends SafetyLevel {
+  case object TweetEngagers etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTweetEngagersSafetyLevelParam
   }
-  case object TweetReplyNudge extends SafetyLevel {
+  case object TweetReplyNudge etwittertends SafetyLevel {
     override def enabledParam: SafetyLevelParam = EnableTweetReplyNudgeParam
   }
-  case object TweetScopedTimeline extends SafetyLevel {
+  case object TweetScopedTimeline etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTweetScopedTimelineSafetyLevelParam
   }
-  case object TweetWritesApi extends SafetyLevel {
+  case object TweetWritesApi etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTweetWritesApiSafetyLevelParam
   }
-  case object TwitterArticleCompose extends SafetyLevel {
+  case object TwitterArticleCompose etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTwitterArticleComposeSafetyLevelParam
   }
-  case object TwitterArticleProfileTab extends SafetyLevel {
+  case object TwitterArticleProfileTab etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTwitterArticleProfileTabSafetyLevelParam
   }
-  case object TwitterArticleRead extends SafetyLevel {
+  case object TwitterArticleRead etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTwitterArticleReadSafetyLevelParam
   }
-  case object UserProfileHeader extends SafetyLevel {
+  case object UserProfileHeader etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableUserProfileHeaderSafetyLevelParam
   }
-  case object UserMilestoneRecommendation extends SafetyLevel {
+  case object UserMilestoneRecommendation etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableUserMilestoneRecommendationSafetyLevelParam
   }
-  case object UserScopedTimeline extends SafetyLevel {
+  case object UserScopedTimeline etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableUserScopedTimelineSafetyLevelParam
   }
-  case object UserSearchSrp extends SafetyLevel {
+  case object UserSearchSrp etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableUserSearchSrpSafetyLevelParam
   }
-  case object UserSearchTypeahead extends SafetyLevel {
+  case object UserSearchTypeahead etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableUserSearchTypeaheadSafetyLevelParam
   }
-  case object UserSelfViewOnly extends SafetyLevel {
+  case object UserSelfViewOnly etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableUserSelfViewOnlySafetyLevelParam
   }
-  case object UserSettings extends SafetyLevel {
+  case object UserSettings etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableUserSettingsSafetyLevelParam
   }
-  case object VideoAds extends SafetyLevel {
+  case object VideoAds etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableVideoAdsSafetyLevelParam
   }
-  case object ZipbirdConsumerArchives extends SafetyLevel {
+  case object ZipbirdConsumerArchives etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableZipbirdConsumerArchivesSafetyLevelParam
   }
-  case object TweetAward extends SafetyLevel {
+  case object TweetAward etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableTweetAwardSafetyLevelParam
   }
 
-  case object DeprecatedSafetyLevel extends SafetyLevel {
+  case object DeprecatedSafetyLevel etwittertends SafetyLevel {
     override val enabledParam: SafetyLevelParam = EnableDeprecatedSafetyLevel
   }
 

@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird_root.filters;
 
-import javax.inject.Inject;
+import javatwitter.inject.Inject;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -11,24 +11,24 @@ import com.twitter.finagle.Service;
 import com.twitter.finagle.SimpleFilter;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twitter.search.queryparser.query.QueryParserEtwitterception;
 import com.twitter.search.queryparser.visitors.DropAllProtectedOperatorVisitor;
 import com.twitter.util.Future;
 
 public class DropAllProtectedOperatorFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+    etwittertends SimpleFilter<EarlybirdRequestContetwittert, EarlybirdResponse> {
   private static final Logger LOG =
       LoggerFactory.getLogger(DropAllProtectedOperatorFilter.class);
   private static final SearchCounter QUERY_PARSER_FAILURE_COUNTER =
-      SearchCounter.export("protected_operator_filter_query_parser_failure_count");
+      SearchCounter.etwitterport("protected_operator_filter_query_parser_failure_count");
   @VisibleForTesting
   static final SearchCounter TOTAL_REQUESTS_COUNTER =
-      SearchCounter.export("drop_all_protected_operator_filter_total");
+      SearchCounter.etwitterport("drop_all_protected_operator_filter_total");
   @VisibleForTesting
   static final SearchCounter OPERATOR_DROPPED_REQUESTS_COUNTER =
-      SearchCounter.export("drop_all_protected_operator_filter_operator_dropped");
+      SearchCounter.etwitterport("drop_all_protected_operator_filter_operator_dropped");
 
   private final DropAllProtectedOperatorVisitor dropProtectedOperatorVisitor;
 
@@ -41,18 +41,18 @@ public class DropAllProtectedOperatorFilter
 
   @Override
   public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+      EarlybirdRequestContetwittert requestContetwittert,
+      Service<EarlybirdRequestContetwittert, EarlybirdResponse> service) {
     TOTAL_REQUESTS_COUNTER.increment();
-    Query query = requestContext.getParsedQuery();
+    Query query = requestContetwittert.getParsedQuery();
     if (query == null) {
-      return service.apply(requestContext);
+      return service.apply(requestContetwittert);
     }
 
     Query processedQuery = query;
     try {
       processedQuery = query.accept(dropProtectedOperatorVisitor);
-    } catch (QueryParserException e) {
+    } catch (QueryParserEtwitterception e) {
       // this should not happen since we already have a parsed query
       QUERY_PARSER_FAILURE_COUNTER.increment();
       LOG.warn(
@@ -60,12 +60,12 @@ public class DropAllProtectedOperatorFilter
     }
 
     if (processedQuery == query) {
-      return service.apply(requestContext);
+      return service.apply(requestContetwittert);
     } else {
       OPERATOR_DROPPED_REQUESTS_COUNTER.increment();
-      EarlybirdRequestContext clonedRequestContext =
-          EarlybirdRequestContext.copyRequestContext(requestContext, processedQuery);
-      return service.apply(clonedRequestContext);
+      EarlybirdRequestContetwittert clonedRequestContetwittert =
+          EarlybirdRequestContetwittert.copyRequestContetwittert(requestContetwittert, processedQuery);
+      return service.apply(clonedRequestContetwittert);
     }
   }
 }

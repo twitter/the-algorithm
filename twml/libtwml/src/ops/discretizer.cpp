@@ -8,18 +8,18 @@
 using namespace tensorflow;
 
 
-void ComputeDiscretizers(OpKernelContext* context, const bool return_bin_indices = false) {
-  const Tensor& keys = context->input(0);
-  const Tensor& vals = context->input(1);
-  const Tensor& bin_ids = context->input(2);
-  const Tensor& bin_vals = context->input(3);
-  const Tensor& feature_offsets = context->input(4);
+void ComputeDiscretizers(OpKernelContetwittert* contetwittert, const bool return_bin_indices = false) {
+  const Tensor& keys = contetwittert->input(0);
+  const Tensor& vals = contetwittert->input(1);
+  const Tensor& bin_ids = contetwittert->input(2);
+  const Tensor& bin_vals = contetwittert->input(3);
+  const Tensor& feature_offsets = contetwittert->input(4);
 
   Tensor* new_keys = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(0, keys.shape(),
+  OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, keys.shape(),
                                                    &new_keys));
   Tensor* new_vals = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(1, keys.shape(),
+  OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(1, keys.shape(),
                                                    &new_vals));
 
   try {
@@ -36,8 +36,8 @@ void ComputeDiscretizers(OpKernelContext* context, const bool return_bin_indices
                    bin_ids_, bin_vals_,
                    feature_offsets_,
                    return_bin_indices);
-  }  catch (const std::exception &e) {
-    context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+  }  catch (const std::etwitterception &e) {
+    contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
   }
 }
 
@@ -50,7 +50,7 @@ REGISTER_OP("MDL")
 .Input("feature_offsets: int64")
 .Output("new_keys: int64")
 .Output("new_vals: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     // TODO: check sizes
     c->set_output(0, c->input(0));
     c->set_output(1, c->input(0));
@@ -66,7 +66,7 @@ Input
   bin_vals: A tensor containing the bin boundaries for value at a given feature id.
   feature_offsets: Specifies the starting location of bins for a given feature id.
 
-Expected Sizes:
+Etwitterpected Sizes:
   keys, vals: [N].
   bin_ids, bin_vals: [sum_{n=1}^{n=num_classes} num_bins(n)]
 
@@ -74,9 +74,9 @@ Expected Sizes:
   - N is the number of sparse features in the current batch.
   - [0, num_classes) represents the range each feature id can take.
   - num_bins(n) is the number of bins for a given feature id.
-  - If num_bins is fixed, then xs, ys are of size [num_classes * num_bins].
+  - If num_bins is fitwittered, then twitters, ys are of size [num_classes * num_bins].
 
-Expected Types:
+Etwitterpected Types:
   keys, bin_ids: int64.
   vals: float or double.
   bin_vals: same as vals.
@@ -93,9 +93,9 @@ Inside MDL, the following is happening:
 ::
   start = offsets[key[i]]
   end = offsets[key[i] + 1]
-  idx = binary_search for val[i] in [bin_vals[start], bin_vals[end]]
+  idtwitter = binary_search for val[i] in [bin_vals[start], bin_vals[end]]
 
-  result_keys[i] = bin_ids[idx]
+  result_keys[i] = bin_ids[idtwitter]
   val[i] = 1 # binary feature value
 
 Outputs
@@ -108,11 +108,11 @@ Outputs
 template<typename T>
 class MDL : public OpKernel {
  public:
-  explicit MDL(OpKernelConstruction* context) : OpKernel(context) {
+  etwitterplicit MDL(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {
   }
 
-  void Compute(OpKernelContext* context) override {
-    ComputeDiscretizers(context);
+  void Compute(OpKernelContetwittert* contetwittert) override {
+    ComputeDiscretizers(contetwittert);
   }
 };
 
@@ -125,7 +125,7 @@ REGISTER_OP("PercentileDiscretizer")
 .Input("feature_offsets: int64")
 .Output("new_keys: int64")
 .Output("new_vals: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     // TODO: check sizes
     c->set_output(0, c->input(0));
     c->set_output(1, c->input(0));
@@ -141,7 +141,7 @@ Input
   bin_vals: A tensor containing the bin boundaries for value at a given feature id.
   feature_offsets: Specifies the starting location of bins for a given feature id.
 
-Expected Sizes:
+Etwitterpected Sizes:
   keys, vals: [N].
   bin_ids, bin_vals: [sum_{n=1}^{n=num_classes} num_bins(n)]
 
@@ -149,9 +149,9 @@ Expected Sizes:
   - N is the number of sparse features in the current batch.
   - [0, num_classes) represents the range each feature id can take.
   - num_bins(n) is the number of bins for a given feature id.
-  - If num_bins is fixed, then xs, ys are of size [num_classes * num_bins].
+  - If num_bins is fitwittered, then twitters, ys are of size [num_classes * num_bins].
 
-Expected Types:
+Etwitterpected Types:
   keys, bin_ids: int64.
   vals: float or double.
   bin_vals: same as vals.
@@ -168,9 +168,9 @@ Inside PercentileDiscretizer, the following is happening:
 ::
   start = offsets[key[i]]
   end = offsets[key[i] + 1]
-  idx = binary_search for val[i] in [bin_vals[start], bin_vals[end]]
+  idtwitter = binary_search for val[i] in [bin_vals[start], bin_vals[end]]
 
-  result_keys[i] = bin_ids[idx]
+  result_keys[i] = bin_ids[idtwitter]
   val[i] = 1 # binary feature value
 
 Outputs
@@ -182,11 +182,11 @@ Outputs
 template<typename T>
 class PercentileDiscretizer : public OpKernel {
  public:
-  explicit PercentileDiscretizer(OpKernelConstruction* context) : OpKernel(context) {
+  etwitterplicit PercentileDiscretizer(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {
   }
 
-  void Compute(OpKernelContext* context) override {
-    ComputeDiscretizers(context);
+  void Compute(OpKernelContetwittert* contetwittert) override {
+    ComputeDiscretizers(contetwittert);
   }
 };
 
@@ -200,7 +200,7 @@ REGISTER_OP("PercentileDiscretizerBinIndices")
 .Input("feature_offsets: int64")
 .Output("new_keys: int64")
 .Output("new_vals: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     // TODO: check sizes
     c->set_output(0, c->input(0));
     c->set_output(1, c->input(0));
@@ -219,7 +219,7 @@ Input
   bin_vals: A tensor containing the bin boundaries for value at a given feature id.
   feature_offsets: Specifies the starting location of bins for a given feature id.
 
-Expected Sizes:
+Etwitterpected Sizes:
   keys, vals: [N].
   bin_ids, bin_vals: [sum_{n=1}^{n=num_classes} num_bins(n)]
 
@@ -227,9 +227,9 @@ Expected Sizes:
   - N is the number of sparse features in the current batch.
   - [0, num_classes) represents the range each feature id can take.
   - num_bins(n) is the number of bins for a given feature id.
-  - If num_bins is fixed, then xs, ys are of size [num_classes * num_bins].
+  - If num_bins is fitwittered, then twitters, ys are of size [num_classes * num_bins].
 
-Expected Types:
+Etwitterpected Types:
   keys, bin_ids: int64.
   vals: float or double.
   bin_vals: same as vals.
@@ -246,9 +246,9 @@ Inside PercentileDiscretizerBinIndices, the following is happening:
 ::
   start = offsets[key[i]]
   end = offsets[key[i] + 1]
-  idx = binary_search for val[i] in [bin_vals[start], bin_vals[end]]
+  idtwitter = binary_search for val[i] in [bin_vals[start], bin_vals[end]]
 
-  result_keys[i] = bin_ids[idx]
+  result_keys[i] = bin_ids[idtwitter]
   val[i] = 1 # binary feature value
 
 Outputs
@@ -260,11 +260,11 @@ Outputs
 template<typename T>
 class PercentileDiscretizerBinIndices : public OpKernel {
  public:
-  explicit PercentileDiscretizerBinIndices(OpKernelConstruction* context) : OpKernel(context) {
+  etwitterplicit PercentileDiscretizerBinIndices(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {
   }
 
-  void Compute(OpKernelContext* context) override {
-    ComputeDiscretizers(context, true);
+  void Compute(OpKernelContetwittert* contetwittert) override {
+    ComputeDiscretizers(contetwittert, true);
   }
 };
 

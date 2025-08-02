@@ -91,7 +91,7 @@ class UrlResolver(
     val isCreatedBeforeDelayThreshold = SnowflakeUtils
       .tweetCreationTime(tweetId)
       .map(_.untilNow)
-      .exists(_ > urlResolverDelaySinceCreation)
+      .etwitterists(_ > urlResolverDelaySinceCreation)
 
     if (isCreatedBeforeDelayThreshold) {
       numNoDelayCounter.incr()

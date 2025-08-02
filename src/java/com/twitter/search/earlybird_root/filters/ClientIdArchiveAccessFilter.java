@@ -2,7 +2,7 @@ package com.twitter.search.earlybird_root.filters;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
+import javatwitter.inject.Inject;
 
 import com.google.common.base.Preconditions;
 
@@ -17,7 +17,7 @@ import com.twitter.search.earlybird_root.quota.ClientIdQuotaManager;
 import com.twitter.search.earlybird_root.quota.QuotaInfo;
 import com.twitter.util.Future;
 
-public class ClientIdArchiveAccessFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+public class ClientIdArchiveAccessFilter etwittertends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
   private static final String UNAUTHORIZED_ARCHIVE_ACCESS_COUNTER_PATTERN =
       "unauthorized_access_to_full_archive_by_client_%s";
 
@@ -39,7 +39,7 @@ public class ClientIdArchiveAccessFilter extends SimpleFilter<EarlybirdRequest, 
     Optional<QuotaInfo> quotaInfoOptional = quotaManager.getQuotaForClient(clientId);
     QuotaInfo quotaInfo = quotaInfoOptional.orElseGet(quotaManager::getCommonPoolQuota);
     if (!quotaInfo.hasArchiveAccess() && request.isGetOlderResults()) {
-      SearchCounter unauthorizedArchiveAccessCounter = SearchCounter.export(
+      SearchCounter unauthorizedArchiveAccessCounter = SearchCounter.etwitterport(
           String.format(UNAUTHORIZED_ARCHIVE_ACCESS_COUNTER_PATTERN, clientId));
       unauthorizedArchiveAccessCounter.increment();
 
@@ -47,7 +47,7 @@ public class ClientIdArchiveAccessFilter extends SimpleFilter<EarlybirdRequest, 
           "Client %s is not whitelisted for archive access. Request access at go/searchquota.",
           clientId);
       EarlybirdResponse response = new EarlybirdResponse(
-          EarlybirdResponseCode.QUOTA_EXCEEDED_ERROR, 0)
+          EarlybirdResponseCode.QUOTA_EtwitterCEEDED_ERROR, 0)
           .setDebugString(message);
       return Future.value(response);
     }

@@ -10,7 +10,7 @@ import com.twitter.frigate.thriftscala.CommonRecommendationType
 import com.twitter.frigate.thriftscala.FrigateNotification
 import com.twitter.util.Future
 
-object MagicFanoutCreatorEventCandidateGenerator extends CandidateGenerator {
+object MagicFanoutCreatorEventCandidateGenerator etwittertends CandidateGenerator {
   override def getCandidate(
     targetUser: PushTypes.Target,
     notification: FrigateNotification
@@ -18,24 +18,24 @@ object MagicFanoutCreatorEventCandidateGenerator extends CandidateGenerator {
 
     require(
       notification.commonRecommendationType == CommonRecommendationType.CreatorSubscriber || notification.commonRecommendationType == CommonRecommendationType.NewCreator,
-      "MagicFanoutCreatorEvent: unexpected CRT " + notification.commonRecommendationType
+      "MagicFanoutCreatorEvent: unetwitterpected CRT " + notification.commonRecommendationType
     )
     require(
       notification.creatorSubscriptionNotification.isDefined,
       "MagicFanoutCreatorEvent: creatorSubscriptionNotification is not defined")
     require(
-      notification.creatorSubscriptionNotification.exists(_.magicFanoutPushId.isDefined),
+      notification.creatorSubscriptionNotification.etwitterists(_.magicFanoutPushId.isDefined),
       "MagicFanoutCreatorEvent: magicFanoutPushId is not defined")
     require(
-      notification.creatorSubscriptionNotification.exists(_.fanoutReasons.isDefined),
+      notification.creatorSubscriptionNotification.etwitterists(_.fanoutReasons.isDefined),
       "MagicFanoutCreatorEvent: fanoutReasons is not defined")
     require(
-      notification.creatorSubscriptionNotification.exists(_.creatorId.isDefined),
+      notification.creatorSubscriptionNotification.etwitterists(_.creatorId.isDefined),
       "MagicFanoutCreatorEvent: creatorId is not defined")
     if (notification.commonRecommendationType == CommonRecommendationType.CreatorSubscriber) {
       require(
         notification.creatorSubscriptionNotification
-          .exists(_.subscriberId.isDefined),
+          .etwitterists(_.subscriberId.isDefined),
         "MagicFanoutCreatorEvent: subscriber id is not defined"
       )
     }

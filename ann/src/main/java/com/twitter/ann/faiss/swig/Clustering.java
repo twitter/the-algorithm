@@ -8,7 +8,7 @@
 
 package com.twitter.ann.faiss;
 
-public class Clustering extends ClusteringParameters {
+public class Clustering etwittertends ClusteringParameters {
   private transient long swigCPtr;
 
   protected Clustering(long cPtr, boolean cMemoryOwn) {
@@ -78,20 +78,20 @@ public class Clustering extends ClusteringParameters {
     this(swigfaissJNI.new_Clustering__SWIG_1(d, k, ClusteringParameters.getCPtr(cp), cp), true);
   }
 
-  public void train(long n, SWIGTYPE_p_float x, Index index, SWIGTYPE_p_float x_weights) {
-    swigfaissJNI.Clustering_train__SWIG_0(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x), Index.getCPtr(index), index, SWIGTYPE_p_float.getCPtr(x_weights));
+  public void train(long n, SWIGTYPE_p_float twitter, Indetwitter indetwitter, SWIGTYPE_p_float twitter_weights) {
+    swigfaissJNI.Clustering_train__SWIG_0(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(twitter), Indetwitter.getCPtr(indetwitter), indetwitter, SWIGTYPE_p_float.getCPtr(twitter_weights));
   }
 
-  public void train(long n, SWIGTYPE_p_float x, Index index) {
-    swigfaissJNI.Clustering_train__SWIG_1(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x), Index.getCPtr(index), index);
+  public void train(long n, SWIGTYPE_p_float twitter, Indetwitter indetwitter) {
+    swigfaissJNI.Clustering_train__SWIG_1(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(twitter), Indetwitter.getCPtr(indetwitter), indetwitter);
   }
 
-  public void train_encoded(long nx, SWIGTYPE_p_unsigned_char x_in, Index codec, Index index, SWIGTYPE_p_float weights) {
-    swigfaissJNI.Clustering_train_encoded__SWIG_0(swigCPtr, this, nx, SWIGTYPE_p_unsigned_char.getCPtr(x_in), Index.getCPtr(codec), codec, Index.getCPtr(index), index, SWIGTYPE_p_float.getCPtr(weights));
+  public void train_encoded(long ntwitter, SWIGTYPE_p_unsigned_char twitter_in, Indetwitter codec, Indetwitter indetwitter, SWIGTYPE_p_float weights) {
+    swigfaissJNI.Clustering_train_encoded__SWIG_0(swigCPtr, this, ntwitter, SWIGTYPE_p_unsigned_char.getCPtr(twitter_in), Indetwitter.getCPtr(codec), codec, Indetwitter.getCPtr(indetwitter), indetwitter, SWIGTYPE_p_float.getCPtr(weights));
   }
 
-  public void train_encoded(long nx, SWIGTYPE_p_unsigned_char x_in, Index codec, Index index) {
-    swigfaissJNI.Clustering_train_encoded__SWIG_1(swigCPtr, this, nx, SWIGTYPE_p_unsigned_char.getCPtr(x_in), Index.getCPtr(codec), codec, Index.getCPtr(index), index);
+  public void train_encoded(long ntwitter, SWIGTYPE_p_unsigned_char twitter_in, Indetwitter codec, Indetwitter indetwitter) {
+    swigfaissJNI.Clustering_train_encoded__SWIG_1(swigCPtr, this, ntwitter, SWIGTYPE_p_unsigned_char.getCPtr(twitter_in), Indetwitter.getCPtr(codec), codec, Indetwitter.getCPtr(indetwitter), indetwitter);
   }
 
   public void post_process_centroids() {

@@ -10,9 +10,9 @@ import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_f
 import com.twitter.follow_recommendations.common.candidate_sources.real_graph.RealGraphOonFSConfig
 import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RepeatedProfileVisitsFSConfig
 import com.twitter.follow_recommendations.common.candidate_sources.sims.SimsSourceFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentEngagementSimilarUsersFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.SimsExpansionFSConfig
-import com.twitter.follow_recommendations.common.candidate_sources.socialgraph.RecentFollowingRecentFollowingExpansionSourceFSConfig
+import com.twitter.follow_recommendations.common.candidate_sources.sims_etwitterpansion.RecentEngagementSimilarUsersFSConfig
+import com.twitter.follow_recommendations.common.candidate_sources.sims_etwitterpansion.SimsEtwitterpansionFSConfig
+import com.twitter.follow_recommendations.common.candidate_sources.socialgraph.RecentFollowingRecentFollowingEtwitterpansionSourceFSConfig
 import com.twitter.follow_recommendations.common.candidate_sources.stp.OfflineStpSourceFsConfig
 import com.twitter.follow_recommendations.common.candidate_sources.stp.OnlineSTPSourceFSConfig
 import com.twitter.follow_recommendations.common.candidate_sources.triangular_loops.TriangularLoopsFSConfig
@@ -24,13 +24,13 @@ import com.twitter.follow_recommendations.flows.content_recommender_flow.Content
 import com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicateFSConfig
 import com.twitter.follow_recommendations.common.predicates.hss.HssPredicateFSConfig
 import com.twitter.follow_recommendations.common.predicates.sgs.SgsPredicateFSConfig
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlFlowFSConfig
+import com.twitter.follow_recommendations.flows.post_nutwitter_ml.PostNutwitterMlFlowFSConfig
 import com.twitter.logging.Logger
 import com.twitter.timelines.configapi.BaseConfigBuilder
 import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class FeatureSwitchConfigs @Inject() (
@@ -39,7 +39,7 @@ class FeatureSwitchConfigs @Inject() (
   weightedCandidateSourceRankerFSConfig: WeightedCandidateSourceRankerFSConfig,
   // Flow related config
   contentRecommenderFlowFSConfig: ContentRecommenderFlowFSConfig,
-  postNuxMlFlowFSConfig: PostNuxMlFlowFSConfig,
+  postNutwitterMlFlowFSConfig: PostNutwitterMlFlowFSConfig,
   // Candidate source related config
   crowdSearchAccountsFSConfig: CrowdSearchAccountsFSConfig,
   offlineStpSourceFsConfig: OfflineStpSourceFsConfig,
@@ -49,8 +49,8 @@ class FeatureSwitchConfigs @Inject() (
   realGraphOonFSConfig: RealGraphOonFSConfig,
   repeatedProfileVisitsFSConfig: RepeatedProfileVisitsFSConfig,
   recentEngagementSimilarUsersFSConfig: RecentEngagementSimilarUsersFSConfig,
-  recentFollowingRecentFollowingExpansionSourceFSConfig: RecentFollowingRecentFollowingExpansionSourceFSConfig,
-  simsExpansionFSConfig: SimsExpansionFSConfig,
+  recentFollowingRecentFollowingEtwitterpansionSourceFSConfig: RecentFollowingRecentFollowingEtwitterpansionSourceFSConfig,
+  simsEtwitterpansionFSConfig: SimsEtwitterpansionFSConfig,
   simsSourceFSConfig: SimsSourceFSConfig,
   socialProofEnforcedCandidateSourceFSConfig: SocialProofEnforcedCandidateSourceFSConfig,
   triangularLoopsFSConfig: TriangularLoopsFSConfig,
@@ -73,7 +73,7 @@ class FeatureSwitchConfigs @Inject() (
         weightedCandidateSourceRankerFSConfig,
         // Flow related config
         contentRecommenderFlowFSConfig,
-        postNuxMlFlowFSConfig,
+        postNutwitterMlFlowFSConfig,
         // Candidate source related config
         crowdSearchAccountsFSConfig,
         offlineStpSourceFsConfig,
@@ -83,8 +83,8 @@ class FeatureSwitchConfigs @Inject() (
         realGraphOonFSConfig,
         repeatedProfileVisitsFSConfig,
         recentEngagementSimilarUsersFSConfig,
-        recentFollowingRecentFollowingExpansionSourceFSConfig,
-        simsExpansionFSConfig,
+        recentFollowingRecentFollowingEtwitterpansionSourceFSConfig,
+        simsEtwitterpansionFSConfig,
         simsSourceFSConfig,
         socialProofEnforcedCandidateSourceFSConfig,
         triangularLoopsFSConfig,

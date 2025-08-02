@@ -10,7 +10,7 @@ import com.twitter.timelines.configapi.Param
 class CandidateParamPredicate[A <: HasParams](
   param: Param[Boolean],
   reason: FilterReason)
-    extends Predicate[A] {
+    etwittertends Predicate[A] {
   override def apply(candidate: A): Stitch[PredicateResult] = {
     if (candidate.params(param)) {
       Stitch.value(PredicateResult.Valid)

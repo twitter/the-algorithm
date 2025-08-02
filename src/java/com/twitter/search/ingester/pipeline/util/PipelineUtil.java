@@ -12,12 +12,12 @@ public final class PipelineUtil {
    * looping indefinitely in the first call to process() and don't care what the object passed
    * in is, but still needs at least one item fed to the stage to start processing.
    *
-   * Examples of stages like this are: EventBusReaderStage and KafkaBytesReaderStage
+   * Etwitteramples of stages like this are: EventBusReaderStage and KafkaBytesReaderStage
    *
    * @param stage stage to enqueue an arbitrary object to.
    */
   public static void feedStartObjectToStage(InstrumentedBaseStage stage) {
-    Feeder stageFeeder = stage.getStageContext().getStageFeeder(stage);
+    Feeder stageFeeder = stage.getStageContetwittert().getStageFeeder(stage);
     Preconditions.checkNotNull(stageFeeder);
     stageFeeder.feed("off to the races");
   }

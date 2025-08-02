@@ -12,7 +12,7 @@ import com.twitter.frigate.pushservice.util.PushIbisUtil.mergeModelValues
 import com.twitter.frigate.thriftscala.CommonRecommendationType
 import com.twitter.util.Future
 
-trait OutOfNetworkTweetIbis2HydratorForCandidate extends TweetCandidateIbis2Hydrator {
+trait OutOfNetworkTweetIbis2HydratorForCandidate etwittertends TweetCandidateIbis2Hydrator {
   self: PushCandidate with OutOfNetworkTweetCandidate with TopicCandidate with TweetAuthorDetails =>
 
   private lazy val useNewOonCopyValue =
@@ -35,13 +35,13 @@ trait OutOfNetworkTweetIbis2HydratorForCandidate extends TweetCandidateIbis2Hydr
       "is_video" -> s"$hasVideo"
     )
 
-  private lazy val launchVideosInImmersiveExploreValue =
+  private lazy val launchVideosInImmersiveEtwitterploreValue =
     Map(
-      "launch_videos_in_immersive_explore" -> s"${hasVideo && target.params(PushFeatureSwitchParams.EnableLaunchVideosInImmersiveExplore)}"
+      "launch_videos_in_immersive_etwitterplore" -> s"${hasVideo && target.params(PushFeatureSwitchParams.EnableLaunchVideosInImmersiveEtwitterplore)}"
     )
 
   private lazy val oonTweetModelValues =
-    useNewOonCopyValue ++ ibtModelValues ++ tweetDynamicInlineActionsModelValues ++ launchVideosInImmersiveExploreValue
+    useNewOonCopyValue ++ ibtModelValues ++ tweetDynamicInlineActionsModelValues ++ launchVideosInImmersiveEtwitterploreValue
 
   lazy val useTopicCopyForMBCGIbis = mrModelingBasedTypes.contains(commonRecType) && target.params(
     PushFeatureSwitchParams.EnableMrModelingBasedCandidatesTopicCopy)
@@ -57,16 +57,16 @@ trait OutOfNetworkTweetIbis2HydratorForCandidate extends TweetCandidateIbis2Hydr
     } else super.modelName
   }
 
-  lazy val exploreVideoParams: Map[String, String] = {
-    if (self.commonRecType == CommonRecommendationType.ExploreVideoTweet) {
+  lazy val etwitterploreVideoParams: Map[String, String] = {
+    if (self.commonRecType == CommonRecommendationType.EtwitterploreVideoTweet) {
       Map(
-        "is_explore_video" -> "true"
+        "is_etwitterplore_video" -> "true"
       )
     } else Map.empty[String, String]
   }
 
   override lazy val customFieldsMapFut: Future[Map[String, String]] =
-    mergeModelValues(super.customFieldsMapFut, exploreVideoParams)
+    mergeModelValues(super.customFieldsMapFut, etwitterploreVideoParams)
 
   override lazy val tweetModelValues: Future[Map[String, String]] =
     if (localizedUttEntity.isDefined &&

@@ -3,8 +3,8 @@ package com.twitter.search.earlybird.document;
 import org.apache.lucene.document.Document;
 
 /**
- * TweetDocument is a record produced by DocumentReader and TweetIndexUpdateReader
- * for consumption by the partition indexer.
+ * TweetDocument is a record produced by DocumentReader and TweetIndetwitterUpdateReader
+ * for consumption by the partition indetwitterer.
  */
 public final class TweetDocument {
   private final long tweetID;

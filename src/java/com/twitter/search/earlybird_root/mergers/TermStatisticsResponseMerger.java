@@ -14,24 +14,24 @@ import com.twitter.search.common.util.earlybird.FacetsResultsUtils;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.ThriftTermStatisticsRequest;
 import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.util.Future;
 
 /**
  * Merger class to merge termstats EarlybirdResponse objects
  */
-public class TermStatisticsResponseMerger extends EarlybirdResponseMerger {
+public class TermStatisticsResponseMerger etwittertends EarlybirdResponseMerger {
   private static final Logger LOG = LoggerFactory.getLogger(TermStatisticsResponseMerger.class);
 
   private static final SearchTimerStats TIMER =
-      SearchTimerStats.export("merge_term_stats", TimeUnit.NANOSECONDS, false, true);
+      SearchTimerStats.etwitterport("merge_term_stats", TimeUnit.NANOSECONDS, false, true);
 
   private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
 
-  public TermStatisticsResponseMerger(EarlybirdRequestContext requestContext,
+  public TermStatisticsResponseMerger(EarlybirdRequestContetwittert requestContetwittert,
                                       List<Future<EarlybirdResponse>> responses,
                                       ResponseAccumulator mode) {
-    super(requestContext, responses, mode);
+    super(requestContetwittert, responses, mode);
   }
 
   @Override
@@ -47,7 +47,7 @@ public class TermStatisticsResponseMerger extends EarlybirdResponseMerger {
   @Override
   protected EarlybirdResponse internalMerge(EarlybirdResponse termStatsResponse) {
     ThriftTermStatisticsRequest termStatisticsRequest =
-        requestContext.getRequest().getTermStatisticsRequest();
+        requestContetwittert.getRequest().getTermStatisticsRequest();
 
     Collection<EarlybirdResponse> termStatsResults =
         Collections2.filter(accumulatedResponses.getSuccessResponses(),
@@ -74,7 +74,7 @@ public class TermStatisticsResponseMerger extends EarlybirdResponseMerger {
     termStatsResponse.setTermStatisticsResults(results);
     termStatsResponse.setSearchResults(ThriftTermResultsMerger.mergeSearchStats(termStatsResults));
 
-    FacetsResultsUtils.fixNativePhotoUrl(results.getTermResults().values());
+    FacetsResultsUtils.fitwitterNativePhotoUrl(results.getTermResults().values());
 
     LOG.debug("TermStats call completed successfully: {}", termStatsResponse);
 

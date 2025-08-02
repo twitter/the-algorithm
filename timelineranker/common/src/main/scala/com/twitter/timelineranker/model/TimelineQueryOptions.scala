@@ -9,7 +9,7 @@ object TimelineQueryOptions {
         RankedTimelineQueryOptions.fromThrift(r)
       case thrift.TimelineQueryOptions.ReverseChronTimelineQueryOptions(r) =>
         ReverseChronTimelineQueryOptions.fromThrift(r)
-      case _ => throw new IllegalArgumentException(s"Unsupported type: $options")
+      case _ => throw new IllegalArgumentEtwitterception(s"Unsupported type: $options")
     }
   }
 }

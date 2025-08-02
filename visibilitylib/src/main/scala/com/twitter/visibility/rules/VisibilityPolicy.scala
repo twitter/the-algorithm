@@ -12,8 +12,8 @@ import com.twitter.visibility.rules.SafeSearchTweetRules._
 import com.twitter.visibility.rules.SafeSearchUserRules.SafeSearchNsfwAvatarImageUserLabelRule
 import com.twitter.visibility.rules.SafeSearchUserRules._
 import com.twitter.visibility.rules.SpaceRules._
-import com.twitter.visibility.rules.ToxicityReplyFilterRules.ToxicityReplyFilterDropNotificationRule
-import com.twitter.visibility.rules.ToxicityReplyFilterRules.ToxicityReplyFilterRule
+import com.twitter.visibility.rules.TotwittericityReplyFilterRules.TotwittericityReplyFilterDropNotificationRule
+import com.twitter.visibility.rules.TotwittericityReplyFilterRules.TotwittericityReplyFilterRule
 import com.twitter.visibility.rules.UnsafeSearchTweetRules._
 import com.twitter.visibility.rules.UserUnavailableStateTombstoneRules._
 
@@ -67,7 +67,7 @@ object VisibilityPolicy {
     SpamTweetLabelRule,
     PdnaTweetLabelRule,
     BounceTweetLabelRule,
-    DropExclusiveTweetContentRule,
+    DropEtwitterclusiveTweetContentRule,
     DropTrustedFriendsTweetContentRule
   )
 
@@ -80,7 +80,7 @@ object VisibilityPolicy {
     SpamTweetLabelTombstoneRule,
     PdnaTweetLabelTombstoneRule,
     BounceTweetLabelTombstoneRule,
-    TombstoneExclusiveTweetContentRule,
+    TombstoneEtwitterclusiveTweetContentRule,
     TombstoneTrustedFriendsTweetContentRule,
   )
 
@@ -115,7 +115,7 @@ object PolicyLevelRuleParams {
 }
 
 case object FilterAllPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(DropAllRule),
       userRules = Seq(DropAllRule),
       cardRules = Seq(DropAllRule),
@@ -131,14 +131,14 @@ case object FilterAllPolicy
       communityRules = Seq(DropAllRule),
     )
 
-case object FilterNonePolicy extends VisibilityPolicy()
+case object FilterNonePolicy etwittertends VisibilityPolicy()
 
 object ConversationsAdAvoidanceRules {
   val tweetRules = Seq(
     NsfwHighRecallTweetLabelAvoidRule,
     NsfwHighPrecisionTweetLabelAvoidRule,
-    NsfwTextTweetLabelAvoidRule,
-    AvoidHighToxicityModelScoreRule,
+    NsfwTetwittertTweetLabelAvoidRule,
+    AvoidHighTotwittericityModelScoreRule,
     AvoidReportedTweetModelScoreRule,
     NsfwHighPrecisionUserLabelAvoidTweetRule,
     TweetNsfwUserAdminAvoidRule,
@@ -153,8 +153,8 @@ object ConversationsAdAvoidanceRules {
     NsfwHighPrecisionTweetLabelAvoidRule -> ruleParams(
       RuleParams.EnableNewAdAvoidanceRulesParam
     ),
-    NsfwTextTweetLabelAvoidRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
-    AvoidHighToxicityModelScoreRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
+    NsfwTetwittertTweetLabelAvoidRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
+    AvoidHighTotwittericityModelScoreRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
     AvoidReportedTweetModelScoreRule -> ruleParams(RuleParams.EnableNewAdAvoidanceRulesParam),
     NsfwHighPrecisionUserLabelAvoidTweetRule -> ruleParams(
       RuleParams.EnableNewAdAvoidanceRulesParam),
@@ -165,7 +165,7 @@ object ConversationsAdAvoidanceRules {
 }
 
 case object FilterDefaultPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
@@ -177,7 +177,7 @@ case object FilterDefaultPolicy
     )
 
 case object LimitedEngagementBaseRules
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         StaleTweetLimitedActionsRule,
         LimitRepliesByInvitationConversationRule,
@@ -196,7 +196,7 @@ case object LimitedEngagementBaseRules
     )
 
 case object WritePathLimitedActionsEnforcementPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         AbusePolicyEpisodicTweetLabelInterstitialRule,
         EmergencyDynamicInterstitialRule
@@ -205,20 +205,20 @@ case object WritePathLimitedActionsEnforcementPolicy
     )
 
 case object TestPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         TestRule
       )
     )
 
 case object CardsServicePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       cardRules = Seq(
         DropProtectedAuthorPollCardRule,
         DropCardUriRootDomainDenylistRule
       ),
       spaceRules = Seq(
-        SpaceHighToxicityScoreNonFollowerDropRule,
+        SpaceHighTotwittericityScoreNonFollowerDropRule,
         SpaceHatefulHighRecallAllUsersDropRule,
         SpaceViolenceHighRecallAllUsersDropRule,
         ViewerIsSoftUserDropRule
@@ -226,7 +226,7 @@ case object CardsServicePolicy
     )
 
 case object CardPollVotingPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       cardRules = Seq(
         DropProtectedAuthorPollCardRule,
         DropCommunityNonMemberPollCardRule
@@ -252,27 +252,27 @@ case object TimelineLikedByRules {
 }
 
 case object FollowingAndFollowersUserListPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = UserTimelineRules.UserRules
     )
 
 case object FriendsFollowingListPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = UserTimelineRules.UserRules
     )
 
 case object ListOwnershipsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = UserTimelineRules.UserRules
     )
 
 case object ListRecommendationsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = RecommendationsPolicy.userRules ++ Seq(
         DropNsfwUserAuthorRule,
         NsfwHighRecallRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
+        SearchNsfwTetwittertRule,
         ViewerBlocksAuthorRule,
         ViewerMutesAuthorRule
       )
@@ -280,10 +280,10 @@ case object ListRecommendationsPolicy
 
 case object ListSearchBaseRules {
 
-  val NonExperimentalSafeSearchMinimalPolicyUserRules: Seq[Rule] =
-    SafeSearchMinimalPolicy.userRules.filterNot(_.isExperimental)
+  val NonEtwitterperimentalSafeSearchMinimalPolicyUserRules: Seq[Rule] =
+    SafeSearchMinimalPolicy.userRules.filterNot(_.isEtwitterperimental)
 
-  val MinimalPolicyUserRules: Seq[Rule] = NonExperimentalSafeSearchMinimalPolicyUserRules
+  val MinimalPolicyUserRules: Seq[Rule] = NonEtwitterperimentalSafeSearchMinimalPolicyUserRules
 
   val BlockMutePolicyUserRules = Seq(
     ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
@@ -303,10 +303,10 @@ case object ListSearchBaseRules {
     SafeSearchNsfwBannerImageUserLabelRule,
     SafeSearchReadOnlyUserLabelRule,
     SafeSearchSearchBlacklistUserLabelRule,
-    SafeSearchNsfwTextUserLabelRule,
+    SafeSearchNsfwTetwittertUserLabelRule,
     SafeSearchSpamHighRecallUserLabelRule,
     SafeSearchDownrankSpamReplyAuthorLabelRule,
-    SafeSearchNsfwTextAuthorLabelRule,
+    SafeSearchNsfwTetwittertAuthorLabelRule,
     DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
     DropNsfwUserAuthorViewerOptInFilteringOnSearchRule,
   )
@@ -429,29 +429,29 @@ object SensitiveMediaSettingsTweetDetailBaseRules {
 }
 
 case object ListSearchPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = ListSearchBaseRules.MinimalPolicyUserRules ++
         ListSearchBaseRules.BlockMutePolicyUserRules ++
         ListSearchBaseRules.StrictPolicyUserRules
     )
 
 case object ListSubscriptionsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = UserTimelineRules.UserRules
     )
 
 case object ListMembershipsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = UserTimelineRules.UserRules
     )
 
 case object AllSubscribedListsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = UserTimelineRules.UserRules
     )
 
 case object ListHeaderPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = Seq(
         AuthorBlocksViewerDropRule,
         ProtectedAuthorDropRule,
@@ -459,8 +459,8 @@ case object ListHeaderPolicy
       )
     )
 
-case object NewUserExperiencePolicy
-    extends VisibilityPolicy(
+case object NewUserEtwitterperiencePolicy
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
         AbusiveTweetLabelRule,
         LowQualityTweetLabelDropRule,
@@ -472,7 +472,7 @@ case object NewUserExperiencePolicy
         NsfwCardImageTweetLabelRule,
         NsfwHighRecallTweetLabelRule,
         NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
+        NsfwTetwittertTweetLabelDropRule,
         SpamHighRecallTweetLabelDropRule,
         DuplicateContentTweetLabelDropRule,
         GoreAndViolenceTweetLabelRule,
@@ -492,7 +492,7 @@ case object NewUserExperiencePolicy
         LowQualityRule,
         ReadOnlyRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
+        SearchNsfwTetwittertRule,
         CompromisedRule,
         SpamHighRecallRule,
         DuplicateContentRule,
@@ -504,15 +504,15 @@ case object NewUserExperiencePolicy
         NotGraduatedNonFollowerRule,
         LikelyIvsLabelNonFollowerDropUserRule,
         DownrankSpamReplyNonAuthorRule,
-        NsfwTextNonAuthorDropRule
+        NsfwTetwittertNonAuthorDropRule
       )
     )
 
 case object DESHomeTimelinePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         DropStaleTweetsRule,
-        DropAllExclusiveTweetsRule,
+        DropAllEtwitterclusiveTweetsRule,
         DropAllTrustedFriendsTweetsRule,
         DropAllCommunityTweetsRule
       ) ++
@@ -521,10 +521,10 @@ case object DESHomeTimelinePolicy
     )
 
 case object DesQuoteTweetTimelinePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         DropStaleTweetsRule,
-        DropAllExclusiveTweetsRule,
+        DropAllEtwitterclusiveTweetsRule,
         DropAllTrustedFriendsTweetsRule
       ) ++ ElevatedQuoteTweetTimelinePolicy.tweetRules.diff(Seq(DropStaleTweetsRule)),
       userRules = Seq(
@@ -534,7 +534,7 @@ case object DesQuoteTweetTimelinePolicy
     )
 
 case object DESRealtimeSpamEnrichmentPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
         LowQualityTweetLabelDropRule,
         SpamHighRecallTweetLabelDropRule,
@@ -542,7 +542,7 @@ case object DESRealtimeSpamEnrichmentPolicy
         SearchBlacklistTweetLabelRule,
         SmyteSpamTweetLabelDropRule,
         DropAllCommunityTweetsRule,
-        DropAllExclusiveTweetsRule,
+        DropAllEtwitterclusiveTweetsRule,
         DropAllTrustedFriendsTweetsRule,
         NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
         GoreAndViolenceHighPrecisionAllUsersTweetLabelRule,
@@ -553,10 +553,10 @@ case object DESRealtimeSpamEnrichmentPolicy
     )
 
 case object DESRealtimePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         DropAllCommunityTweetsRule,
-        DropAllExclusiveTweetsRule,
+        DropAllEtwitterclusiveTweetsRule,
         DropAllTrustedFriendsTweetsRule,
         DropAllCollabInvitationTweetsRule
       ),
@@ -567,9 +567,9 @@ case object DESRealtimePolicy
     )
 
 case object DESRetweetingUsersPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        DropAllExclusiveTweetsRule,
+        DropAllEtwitterclusiveTweetsRule,
         DropAllTrustedFriendsTweetsRule,
       ),
       userRules = Seq(
@@ -581,18 +581,18 @@ case object DESRetweetingUsersPolicy
     )
 
 case object DESTweetLikingUsersPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
-        DropAllExclusiveTweetsRule,
+        DropAllEtwitterclusiveTweetsRule,
         DropAllTrustedFriendsTweetsRule,
       ),
       userRules = TimelineLikedByRules.UserRules
     )
 
 case object DESUserBookmarksPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
-        DropAllExclusiveTweetsRule,
+        DropAllEtwitterclusiveTweetsRule,
         DropAllTrustedFriendsTweetsRule,
       ) ++
         (VisibilityPolicy.baseTweetRules
@@ -602,10 +602,10 @@ case object DESUserBookmarksPolicy
     )
 
 case object DESUserLikedTweetsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         DropStaleTweetsRule,
-        DropAllExclusiveTweetsRule,
+        DropAllEtwitterclusiveTweetsRule,
         DropAllTrustedFriendsTweetsRule,
       ) ++
         (
@@ -634,12 +634,12 @@ case object DESUserLikedTweetsPolicy
     )
 
 case object DESUserMentionsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
         DropAllCommunityTweetsRule,
         AuthorBlocksViewerDropRule,
         ProtectedAuthorDropRule,
-        DropAllExclusiveTweetsRule,
+        DropAllEtwitterclusiveTweetsRule,
         DropAllTrustedFriendsTweetsRule,
         AbusePolicyEpisodicTweetLabelInterstitialRule,
         EmergencyDynamicInterstitialRule,
@@ -655,10 +655,10 @@ case object DESUserMentionsPolicy
     )
 
 case object DESUserTweetsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         DropStaleTweetsRule,
-        DropAllExclusiveTweetsRule,
+        DropAllEtwitterclusiveTweetsRule,
         DropAllTrustedFriendsTweetsRule,
       ) ++
         (VisibilityPolicy.baseTweetRules
@@ -668,7 +668,7 @@ case object DESUserTweetsPolicy
     )
 
 case object DevPlatformComplianceStreamPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         SpamAllUsersTweetLabelRule,
         PdnaAllUsersTweetLabelRule,
@@ -678,20 +678,20 @@ case object DevPlatformComplianceStreamPolicy
     )
 
 case object DesTweetDetailPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
-        DropAllExclusiveTweetsRule,
+        DropAllEtwitterclusiveTweetsRule,
         DropAllTrustedFriendsTweetsRule,
       ) ++ BaseTweetDetailPolicy.tweetRules
     )
 
 case object DevPlatformGetListTweetsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(DropStaleTweetsRule) ++ DesTweetDetailPolicy.tweetRules
     )
 
 case object FollowerConnectionsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules,
       userRules = Seq(
         SpammyFollowerRule
@@ -699,7 +699,7 @@ case object FollowerConnectionsPolicy
     )
 
 case object SuperFollowerConnectionsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules,
       userRules = Seq(
         SpammyFollowerRule
@@ -707,7 +707,7 @@ case object SuperFollowerConnectionsPolicy
     )
 
 case object LivePipelineEngagementCountsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         AbusePolicyEpisodicTweetLabelInterstitialRule,
         EmergencyDynamicInterstitialRule,
@@ -715,7 +715,7 @@ case object LivePipelineEngagementCountsPolicy
     )
 
 case object LiveVideoTimelinePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
         AbusiveTweetLabelRule,
         AbusiveHighRecallTweetLabelRule,
@@ -727,7 +727,7 @@ case object LiveVideoTimelinePolicy
         NsfwCardImageTweetLabelRule,
         NsfwHighRecallTweetLabelRule,
         NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
+        NsfwTetwittertTweetLabelDropRule,
         LiveLowQualityTweetLabelRule,
         SpamHighRecallTweetLabelDropRule,
         DuplicateContentTweetLabelDropRule,
@@ -745,7 +745,7 @@ case object LiveVideoTimelinePolicy
         LowQualityRule,
         ReadOnlyRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
+        SearchNsfwTetwittertRule,
         CompromisedRule,
         NsfwHighPrecisionRule,
         NsfwHighRecallRule,
@@ -760,26 +760,26 @@ case object LiveVideoTimelinePolicy
         DoNotAmplifyNonFollowerRule,
         NotGraduatedNonFollowerRule,
         LikelyIvsLabelNonFollowerDropUserRule,
-        NsfwTextNonAuthorDropRule
+        NsfwTetwittertNonAuthorDropRule
       )
     )
 
 case object MagicRecsPolicyOverrides {
   val replacements: Map[Rule, Rule] = Map()
   def union(rules: Seq[Rule]*): Seq[Rule] = rules
-    .map(ar => ar.map(x => replacements.getOrElse(x, x)))
+    .map(ar => ar.map(twitter => replacements.getOrElse(twitter, twitter)))
     .reduce((a, b) => a ++ b.filterNot(a.contains))
 }
 
 case object MagicRecsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = MagicRecsPolicyOverrides.union(
         RecommendationsPolicy.tweetRules.filterNot(_ == SafetyCrisisLevel3DropRule),
         NotificationsIbisPolicy.tweetRules,
         Seq(
           NsfaHighRecallTweetLabelRule,
           NsfwHighRecallTweetLabelRule,
-          NsfwTextHighPrecisionTweetLabelDropRule),
+          NsfwTetwittertHighPrecisionTweetLabelDropRule),
         Seq(
           AuthorBlocksViewerDropRule,
           ViewerBlocksAuthorRule,
@@ -799,7 +799,7 @@ case object MagicRecsPolicy
     )
 
 case object MagicRecsV2Policy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = MagicRecsPolicyOverrides.union(
         MagicRecsPolicy.tweetRules,
         NotificationsWriterTweetHydratorPolicy.tweetRules
@@ -811,19 +811,19 @@ case object MagicRecsV2Policy
     )
 
 case object MagicRecsAggressivePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = MagicRecsPolicy.tweetRules,
       userRules = MagicRecsPolicy.userRules
     )
 
 case object MagicRecsAggressiveV2Policy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = MagicRecsV2Policy.tweetRules,
       userRules = MagicRecsV2Policy.userRules
     )
 
 case object MinimalPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules,
       userRules = Seq(
         TsViolationRule
@@ -831,7 +831,7 @@ case object MinimalPolicy
     )
 
 case object ModeratedTweetsTimelinePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = TweetDetailPolicy.tweetRules.diff(
         Seq(
           AuthorBlocksViewerDropRule,
@@ -841,7 +841,7 @@ case object ModeratedTweetsTimelinePolicy
     )
 
 case object MomentsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           AuthorBlocksViewerUnspecifiedRule,
@@ -856,7 +856,7 @@ case object MomentsPolicy
     )
 
 case object NearbyTimelinePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = SearchBlenderRules.tweetRelevanceRules,
       userRules = SearchBlenderRules.userBaseRules
     )
@@ -880,19 +880,19 @@ private object NotificationsRules {
 }
 
 case object NotificationsIbisPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules =
           VisibilityPolicy.baseTweetRules ++ Seq(
           AbusiveUqfNonFollowerTweetLabelRule,
           LowQualityTweetLabelDropRule,
-          ToxicityReplyFilterDropNotificationRule,
+          TotwittericityReplyFilterDropNotificationRule,
           NsfwHighPrecisionTweetLabelRule,
           GoreAndViolenceHighPrecisionTweetLabelRule,
           NsfwReportedHeuristicsTweetLabelRule,
           GoreAndViolenceReportedHeuristicsTweetLabelRule,
           NsfwCardImageTweetLabelRule,
           NsfwVideoTweetLabelDropRule,
-          NsfwTextTweetLabelDropRule,
+          NsfwTetwittertTweetLabelDropRule,
           SpamHighRecallTweetLabelDropRule,
           DuplicateContentTweetLabelDropRule,
           DuplicateMentionTweetLabelRule,
@@ -908,18 +908,18 @@ case object NotificationsIbisPolicy
       userRules = NotificationsRules.userRules ++ Seq(
         DoNotAmplifyNonFollowerRule,
         LikelyIvsLabelNonFollowerDropUserRule,
-        NsfwTextNonAuthorDropRule
+        NsfwTetwittertNonAuthorDropRule
       )
     )
 
 case object NotificationsReadPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = NotificationsRules.tweetRules,
       userRules = NotificationsRules.userRules
     )
 
 case object NotificationsTimelineDeviceFollowPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules,
       userRules = Seq(
         AuthorBlocksViewerDropRule,
@@ -929,13 +929,13 @@ case object NotificationsTimelineDeviceFollowPolicy
     )
 
 case object NotificationsWritePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = NotificationsRules.tweetRules,
       userRules = NotificationsRules.userRules
     )
 
 case object NotificationsWriterV2Policy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules =
         Seq(
           AuthorBlocksViewerDropRule,
@@ -959,7 +959,7 @@ case object NotificationsWriterV2Policy
     )
 
 case object NotificationsWriterTweetHydratorPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = NotificationsRules.tweetRules ++
         Seq(
           LowQualityTweetLabelDropRule,
@@ -968,7 +968,7 @@ case object NotificationsWriterTweetHydratorPolicy
           DuplicateMentionUqfTweetLabelRule,
           LowQualityMentionTweetLabelRule,
           SmyteSpamTweetLabelDropRule,
-          ToxicityReplyFilterDropNotificationRule,
+          TotwittericityReplyFilterDropNotificationRule,
           AbusiveUqfNonFollowerTweetLabelRule,
           UntrustedUrlUqfNonFollowerTweetLabelRule,
           DownrankSpamReplyUqfNonFollowerTweetLabelRule,
@@ -982,20 +982,20 @@ case object NotificationsWriterTweetHydratorPolicy
     )
 
 case object NotificationsPlatformPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = NotificationsWriterTweetHydratorPolicy.tweetRules,
       userRules = NotificationsWriterV2Policy.userRules
     )
 
 case object NotificationsPlatformPushPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = NotificationsIbisPolicy.tweetRules,
       userRules = Seq(ViewerMutesAuthorRule)
         ++ NotificationsIbisPolicy.userRules
     )
 
 case object QuoteTweetTimelinePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
         DropStaleTweetsRule,
         AbusiveTweetLabelRule,
@@ -1007,7 +1007,7 @@ case object QuoteTweetTimelinePolicy
         NsfwCardImageTweetLabelRule,
         NsfwHighRecallTweetLabelRule,
         NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
+        NsfwTetwittertTweetLabelDropRule,
         SpamHighRecallTweetLabelDropRule,
         DuplicateContentTweetLabelDropRule,
         GoreAndViolenceTweetLabelRule,
@@ -1026,7 +1026,7 @@ case object QuoteTweetTimelinePolicy
         LowQualityRule,
         ReadOnlyRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
+        SearchNsfwTetwittertRule,
         CompromisedRule,
         SpamHighRecallRule,
         DuplicateContentRule,
@@ -1035,12 +1035,12 @@ case object QuoteTweetTimelinePolicy
         NsfwBannerImageRule,
         AbusiveHighRecallRule,
         DownrankSpamReplyNonAuthorRule,
-        NsfwTextNonAuthorDropRule
+        NsfwTetwittertNonAuthorDropRule
       )
     )
 
 case object ElevatedQuoteTweetTimelinePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules =
           TweetDetailPolicy.tweetRules.diff(
             Seq(
@@ -1050,7 +1050,7 @@ case object ElevatedQuoteTweetTimelinePolicy
     )
 
 case object EmbedsPublicInterestNoticePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
         AbusePolicyEpisodicTweetLabelInterstitialRule,
         EmergencyDynamicInterstitialRule,
@@ -1058,7 +1058,7 @@ case object EmbedsPublicInterestNoticePolicy
     )
 
 case object RecommendationsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           AbusiveTweetLabelRule,
@@ -1069,7 +1069,7 @@ case object RecommendationsPolicy
           GoreAndViolenceReportedHeuristicsTweetLabelRule,
           NsfwCardImageTweetLabelRule,
           NsfwVideoTweetLabelDropRule,
-          NsfwTextTweetLabelDropRule,
+          NsfwTetwittertTweetLabelDropRule,
           SpamHighRecallTweetLabelDropRule,
           DuplicateContentTweetLabelDropRule,
           GoreAndViolenceTweetLabelRule,
@@ -1099,12 +1099,12 @@ case object RecommendationsPolicy
         DoNotAmplifyNonFollowerRule,
         NotGraduatedNonFollowerRule,
         LikelyIvsLabelNonFollowerDropUserRule,
-        NsfwTextNonAuthorDropRule
+        NsfwTetwittertNonAuthorDropRule
       )
     )
 
 case object RecosVideoPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
         AbusiveTweetLabelRule,
         LowQualityTweetLabelDropRule,
@@ -1115,17 +1115,17 @@ case object RecosVideoPolicy
         NsfwCardImageTweetLabelRule,
         NsfwHighRecallTweetLabelRule,
         NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
+        NsfwTetwittertTweetLabelDropRule,
         SpamHighRecallTweetLabelDropRule,
         DuplicateContentTweetLabelDropRule,
         BystanderAbusiveTweetLabelRule,
         SmyteSpamTweetLabelDropRule,
       ),
-      userRules = Seq(NsfwTextNonAuthorDropRule)
+      userRules = Seq(NsfwTetwittertNonAuthorDropRule)
     )
 
 case object RepliesGroupingPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           LowQualityTweetLabelDropRule,
@@ -1160,8 +1160,8 @@ case object RepliesGroupingPolicy
       )
     )
 
-case object ReturningUserExperiencePolicy
-    extends VisibilityPolicy(
+case object ReturningUserEtwitterperiencePolicy
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
         AbusiveTweetLabelRule,
         LowQualityTweetLabelDropRule,
@@ -1173,8 +1173,8 @@ case object ReturningUserExperiencePolicy
         NsfwCardImageTweetLabelRule,
         NsfwHighRecallTweetLabelRule,
         NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
-        NsfwTextHighPrecisionTweetLabelDropRule,
+        NsfwTetwittertTweetLabelDropRule,
+        NsfwTetwittertHighPrecisionTweetLabelDropRule,
         SpamHighRecallTweetLabelDropRule,
         DuplicateContentTweetLabelDropRule,
         GoreAndViolenceTweetLabelRule,
@@ -1196,7 +1196,7 @@ case object ReturningUserExperiencePolicy
         LowQualityRule,
         ReadOnlyRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
+        SearchNsfwTetwittertRule,
         CompromisedRule,
         SpamHighRecallRule,
         DuplicateContentRule,
@@ -1208,14 +1208,14 @@ case object ReturningUserExperiencePolicy
         NotGraduatedNonFollowerRule,
         LikelyIvsLabelNonFollowerDropUserRule,
         DownrankSpamReplyNonAuthorRule,
-        NsfwTextNonAuthorDropRule,
+        NsfwTetwittertNonAuthorDropRule,
         DropNsfwUserAuthorRule,
         NsfwHighRecallRule
       )
     )
 
-case object ReturningUserExperienceFocalTweetPolicy
-    extends VisibilityPolicy(
+case object ReturningUserEtwitterperienceFocalTweetPolicy
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           AuthorBlocksViewerDropRule,
@@ -1233,7 +1233,7 @@ case object ReturningUserExperienceFocalTweetPolicy
     )
 
 case object RevenuePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           AbusiveTweetLabelRule,
@@ -1247,7 +1247,7 @@ case object RevenuePolicy
     )
 
 case object SafeSearchMinimalPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         DropOuterCommunityTweetsRule,
       ) ++ VisibilityPolicy.baseTweetRules ++ Seq(
@@ -1278,7 +1278,7 @@ case object SafeSearchMinimalPolicy
         CompromisedRule,
         SpamHighRecallRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
+        SearchNsfwTetwittertRule,
         DuplicateContentRule,
         DoNotAmplifyNonFollowerRule,
         SearchLikelyIvsLabelNonFollowerDropUserRule
@@ -1286,7 +1286,7 @@ case object SafeSearchMinimalPolicy
     )
 
 case object SearchHydrationPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         AbusePolicyEpisodicTweetLabelInterstitialRule,
         EmergencyDynamicInterstitialRule,
@@ -1340,7 +1340,7 @@ case object SearchBlenderRules {
       SafeSearchNsfwCardImageTweetLabelRule,
       SafeSearchNsfwHighRecallTweetLabelRule,
       SafeSearchNsfwVideoTweetLabelRule,
-      SafeSearchNsfwTextTweetLabelRule,
+      SafeSearchNsfwTetwittertTweetLabelRule,
       SpamHighRecallTweetLabelDropRule,
       DuplicateContentTweetLabelDropRule,
       SafeSearchGoreAndViolenceTweetLabelRule,
@@ -1384,7 +1384,7 @@ case object SearchBlenderRules {
     SafeSearchNsfwCardImageTweetLabelRule,
     SafeSearchNsfwHighRecallTweetLabelRule,
     SafeSearchNsfwVideoTweetLabelRule,
-    SafeSearchNsfwTextTweetLabelRule,
+    SafeSearchNsfwTetwittertTweetLabelRule,
     SpamHighRecallTweetLabelDropRule,
     DuplicateContentTweetLabelDropRule,
     SafeSearchGoreAndViolenceTweetLabelRule,
@@ -1429,7 +1429,7 @@ case object SearchBlenderRules {
     SafeSearchAbusiveHighRecallUserLabelRule,
     SafeSearchDownrankSpamReplyAuthorLabelRule,
     SafeSearchNotGraduatedNonFollowersUserLabelRule,
-    SafeSearchNsfwTextAuthorLabelRule
+    SafeSearchNsfwTetwittertAuthorLabelRule
   )
 
   val userRules: Seq[ConditionWithUserLabelRule] = userBaseRules
@@ -1451,17 +1451,17 @@ case object SearchBlenderRules {
 }
 
 case object SearchBlenderUserRulesPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = SearchBlenderRules.userRules
     )
 
 case object SearchLatestUserRulesPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = SearchLatestPolicy.userRules
     )
 
 case object UserSearchSrpPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = Seq(
         AuthorBlocksViewerDropRule,
         ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
@@ -1474,12 +1474,12 @@ case object UserSearchSrpPolicy
         SafeSearchNsfwAvatarImageUserLabelRule,
         SafeSearchNsfwBannerImageUserLabelRule,
         SafeSearchAbusiveHighRecallUserLabelRule,
-        SafeSearchNsfwTextAuthorLabelRule
+        SafeSearchNsfwTetwittertAuthorLabelRule
       )
     )
 
 case object UserSearchTypeaheadPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = Seq(
         SafeSearchAbusiveUserLabelRule,
         SafeSearchHighRecallUserLabelRule,
@@ -1488,13 +1488,13 @@ case object UserSearchTypeaheadPolicy
         SafeSearchNsfwAvatarImageUserLabelRule,
         SafeSearchNsfwBannerImageUserLabelRule,
         SafeSearchAbusiveHighRecallUserLabelRule,
-        SafeSearchNsfwTextAuthorLabelRule
+        SafeSearchNsfwTetwittertAuthorLabelRule
       ),
       tweetRules = Seq(DropAllRule)
     )
 
-case object SearchMixerSrpMinimalPolicy
-    extends VisibilityPolicy(
+case object SearchMitwittererSrpMinimalPolicy
+    etwittertends VisibilityPolicy(
       userRules = Seq(
         AuthorBlocksViewerDropRule,
         ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
@@ -1502,8 +1502,8 @@ case object SearchMixerSrpMinimalPolicy
       )
     )
 
-case object SearchMixerSrpStrictPolicy
-    extends VisibilityPolicy(
+case object SearchMitwittererSrpStrictPolicy
+    etwittertends VisibilityPolicy(
       userRules = Seq(
         AuthorBlocksViewerDropRule,
         ViewerBlocksAuthorViewerOptInBlockingOnSearchRule,
@@ -1520,12 +1520,12 @@ case object SearchMixerSrpStrictPolicy
     )
 
 case object SearchPeopleSrpPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = SearchBlenderRules.searchQueryMatchesTweetAuthorRules
     )
 
 case object SearchPeopleTypeaheadPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = SearchBlenderRules.searchQueryMatchesTweetAuthorRules
         .diff(
           Seq(
@@ -1535,33 +1535,33 @@ case object SearchPeopleTypeaheadPolicy
     )
 
 case object SearchPhotoPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = SearchBlenderRules.tweetRelevanceRules,
       userRules = SearchBlenderRules.userRelevanceRules,
       policyRuleParams = SearchBlenderRules.basicBlockMutePolicyRuleParam
     )
 
 case object SearchTrendTakeoverPromotedTweetPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules
     )
 
 case object SearchVideoPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = SearchBlenderRules.tweetRelevanceRules,
       userRules = SearchBlenderRules.userRelevanceRules,
       policyRuleParams = SearchBlenderRules.basicBlockMutePolicyRuleParam
     )
 
 case object SearchLatestPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = SearchBlenderRules.tweetRecencyRules,
       userRules = SearchBlenderRules.userRecencyBaseRules,
       policyRuleParams = SearchBlenderRules.basicBlockMutePolicyRuleParam
     )
 
 case object SearchTopPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = SearchBlenderRules.tweetRelevanceRules,
       userRules = Seq(SpammyUserModelHighPrecisionDropTweetRule) ++
         SearchBlenderRules.basicBlockMuteRules ++
@@ -1570,7 +1570,7 @@ case object SearchTopPolicy
     )
 
 case object SearchTopQigPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = BaseQigPolicy.tweetRules ++
         Seq(
           UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelDropRule,
@@ -1600,7 +1600,7 @@ case object SearchTopQigPolicy
     )
 
 case object SafeSearchStrictPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         DropOuterCommunityTweetsRule,
       ) ++ VisibilityPolicy.baseTweetRules ++ Seq(
@@ -1614,7 +1614,7 @@ case object SafeSearchStrictPolicy
         NsfwCardImageTweetLabelRule,
         NsfwHighRecallTweetLabelRule,
         NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
+        NsfwTetwittertTweetLabelDropRule,
         SpamHighRecallTweetLabelDropRule,
         DuplicateContentTweetLabelDropRule,
         GoreAndViolenceTweetLabelRule,
@@ -1638,7 +1638,7 @@ case object SafeSearchStrictPolicy
         LowQualityRule,
         ReadOnlyRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
+        SearchNsfwTetwittertRule,
         CompromisedRule,
         SpamHighRecallRule,
         DuplicateContentRule,
@@ -1650,12 +1650,12 @@ case object SafeSearchStrictPolicy
         NotGraduatedNonFollowerRule,
         SearchLikelyIvsLabelNonFollowerDropUserRule,
         DownrankSpamReplyNonAuthorRule,
-        NsfwTextNonAuthorDropRule,
+        NsfwTetwittertNonAuthorDropRule,
       )
     )
 
 case object StickersTimelinePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules,
       userRules = Seq(
         AbusiveRule,
@@ -1663,7 +1663,7 @@ case object StickersTimelinePolicy
         ReadOnlyRule,
         CompromisedRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
+        SearchNsfwTetwittertRule,
         DuplicateContentRule,
         EngagementSpammerRule,
         EngagementSpammerHighRecallRule,
@@ -1673,19 +1673,19 @@ case object StickersTimelinePolicy
       )
     )
 
-case object StratoExtLimitedEngagementsPolicy
-    extends VisibilityPolicy(
+case object StratoEtwittertLimitedEngagementsPolicy
+    etwittertends VisibilityPolicy(
       tweetRules =
         VisibilityPolicy.baseTweetRules ++ LimitedEngagementBaseRules.tweetRules
     )
 
 case object InternalPromotedContentPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules
     )
 
 case object StreamServicesPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
         AbusiveTweetLabelRule,
         LowQualityTweetLabelDropRule,
@@ -1695,17 +1695,17 @@ case object StreamServicesPolicy
         GoreAndViolenceReportedHeuristicsTweetLabelRule,
         NsfwCardImageTweetLabelRule,
         NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
+        NsfwTetwittertTweetLabelDropRule,
         SpamHighRecallTweetLabelDropRule,
         DuplicateContentTweetLabelDropRule,
         BystanderAbusiveTweetLabelRule,
         SmyteSpamTweetLabelDropRule
       ),
-      userRules = Seq(NsfwTextNonAuthorDropRule)
+      userRules = Seq(NsfwTetwittertNonAuthorDropRule)
     )
 
 case object SuperLikePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
         AbusePolicyEpisodicTweetLabelDropRule,
         EmergencyDropRule,
@@ -1715,13 +1715,13 @@ case object SuperLikePolicy
         GoreAndViolenceReportedHeuristicsTweetLabelRule,
         NsfwCardImageTweetLabelRule,
         NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule
+        NsfwTetwittertTweetLabelDropRule
       ),
-      userRules = Seq(NsfwTextNonAuthorDropRule)
+      userRules = Seq(NsfwTetwittertNonAuthorDropRule)
     )
 
 case object TimelineFocalTweetPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         AbusePolicyEpisodicTweetLabelInterstitialRule,
         EmergencyDynamicInterstitialRule,
@@ -1729,7 +1729,7 @@ case object TimelineFocalTweetPolicy
     )
 
 case object TimelineBookmarkPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules =
         Seq(
           DropCommunityTweetsRule,
@@ -1741,7 +1741,7 @@ case object TimelineBookmarkPolicy
           PdnaTweetLabelRule,
           BounceOuterTweetTombstoneRule,
           BounceQuotedTweetTombstoneRule,
-          DropExclusiveTweetContentRule,
+          DropEtwitterclusiveTweetContentRule,
           DropTrustedFriendsTweetContentRule,
         ) ++
           Seq(
@@ -1773,7 +1773,7 @@ case object TimelineBookmarkPolicy
     )
 
 case object TimelineListsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules =
         Seq(
           DropOuterCommunityTweetsRule,
@@ -1800,7 +1800,7 @@ case object TimelineListsPolicy
     )
 
 case object TimelineFavoritesPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules =
         Seq(
           DropOuterCommunityTweetsRule,
@@ -1860,11 +1860,11 @@ case object TimelineFavoritesPolicy
       policyRuleParams = SensitiveMediaSettingsProfileTimelineBaseRules.policyRuleParams
     )
 
-case object ProfileMixerFavoritesPolicy
-    extends VisibilityPolicy(
+case object ProfileMitwittererFavoritesPolicy
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         DropStaleTweetsRule,
-        DropExclusiveTweetContentRule,
+        DropEtwitterclusiveTweetContentRule,
         DropOuterCommunityTweetsRule,
       ),
       deletedTweetRules = Seq(
@@ -1874,7 +1874,7 @@ case object ProfileMixerFavoritesPolicy
     )
 
 case object TimelineMediaPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
         TimelineProfileRules.baseTweetRules
         ++ Seq(
           NsfwHighPrecisionTombstoneInnerQuotedTweetLabelRule,
@@ -1929,11 +1929,11 @@ case object TimelineMediaPolicy
       policyRuleParams = SensitiveMediaSettingsProfileTimelineBaseRules.policyRuleParams
     )
 
-case object ProfileMixerMediaPolicy
-    extends VisibilityPolicy(
+case object ProfileMitwittererMediaPolicy
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         DropStaleTweetsRule,
-        DropExclusiveTweetContentRule
+        DropEtwitterclusiveTweetContentRule
       ),
       deletedTweetRules = Seq(
         TombstoneBounceDeletedOuterTweetRule,
@@ -1955,8 +1955,8 @@ object TimelineProfileRules {
     PdnaQuotedTweetLabelTombstoneRule,
     PdnaTweetLabelRule,
     BounceTweetLabelTombstoneRule,
-    TombstoneExclusiveQuotedTweetContentRule,
-    DropExclusiveTweetContentRule,
+    TombstoneEtwitterclusiveQuotedTweetContentRule,
+    DropEtwitterclusiveTweetContentRule,
     DropTrustedFriendsTweetContentRule
   )
 
@@ -1977,7 +1977,7 @@ object TimelineProfileRules {
       NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule,
       GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule,
       NsfwCardImageAvoidAllUsersTweetLabelRule,
-      NsfwTextTweetLabelAvoidRule,
+      NsfwTetwittertTweetLabelAvoidRule,
       DoNotAmplifyTweetLabelAvoidRule,
       NsfaHighPrecisionTweetLabelAvoidRule,
     ) ++ LimitedEngagementBaseRules.tweetRules
@@ -2022,7 +2022,7 @@ object TimelineProfileRules {
 }
 
 case object TimelineProfilePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules =
         Seq(
           DropOuterCommunityTweetsRule,
@@ -2049,7 +2049,7 @@ case object TimelineProfilePolicy
     )
 
 case object TimelineProfileAllPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
         TimelineProfileRules.baseTweetRules
         ++ TimelineProfileRules.tweetTombstoneRules,
       deletedTweetRules = Seq(
@@ -2071,7 +2071,7 @@ case object TimelineProfileAllPolicy
     )
 
 case object TimelineProfileSuperFollowsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules =
         Seq(
           DropOuterCommunityTweetsRule
@@ -2081,7 +2081,7 @@ case object TimelineProfileSuperFollowsPolicy
     )
 
 case object TimelineReactiveBlendingPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           ViewerHasMatchingMutedKeywordForHomeTimelineRule,
@@ -2096,7 +2096,7 @@ case object TimelineReactiveBlendingPolicy
     )
 
 case object TimelineHomePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseQuotedTweetTombstoneRules ++
         VisibilityPolicy.baseTweetRules ++
         Seq(
@@ -2155,7 +2155,7 @@ case object TimelineHomePolicy
     )
 
 case object BaseTimelineHomePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseQuotedTweetTombstoneRules ++
         VisibilityPolicy.baseTweetRules ++
         Seq(
@@ -2199,7 +2199,7 @@ case object BaseTimelineHomePolicy
     )
 
 case object TimelineHomeHydrationPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules =
           VisibilityPolicy.baseQuotedTweetTombstoneRules ++
           VisibilityPolicy.baseTweetRules ++
@@ -2233,7 +2233,7 @@ case object TimelineHomeHydrationPolicy
     )
 
 case object TimelineHomeLatestPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules =
           VisibilityPolicy.baseQuotedTweetTombstoneRules ++
           VisibilityPolicy.baseTweetRules ++
@@ -2290,7 +2290,7 @@ case object TimelineHomeLatestPolicy
     )
 
 case object TimelineModeratedTweetsHydrationPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           NsfwHighPrecisionInterstitialAllUsersTweetLabelRule,
@@ -2302,17 +2302,17 @@ case object TimelineModeratedTweetsHydrationPolicy
     )
 
 case object SignalsReactionsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         AuthorBlocksViewerDropRule
       ) ++ LimitedEngagementBaseRules.tweetRules
     )
 
 case object SignalsTweetReactingUsersPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules :+
         NsfwVideoTweetLabelDropRule :+
-        NsfwTextAllUsersTweetLabelDropRule,
+        NsfwTetwittertAllUsersTweetLabelDropRule,
       userRules = Seq(
         CompromisedNonFollowerWithUqfRule,
         EngagementSpammerNonFollowerWithUqfRule,
@@ -2322,12 +2322,12 @@ case object SignalsTweetReactingUsersPolicy
         AuthorBlocksViewerDropRule,
         ProtectedAuthorDropRule,
         SuspendedAuthorRule,
-        NsfwTextNonAuthorDropRule
+        NsfwTetwittertNonAuthorDropRule
       )
     )
 
 case object SocialProofPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = FilterDefaultPolicy.tweetRules,
       userRules = Seq(
         ProtectedAuthorDropRule,
@@ -2338,51 +2338,51 @@ case object SocialProofPolicy
     )
 
 case object TimelineLikedByPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules :+
         NsfwVideoTweetLabelDropRule :+
-        NsfwTextAllUsersTweetLabelDropRule,
-      userRules = TimelineLikedByRules.UserRules :+ NsfwTextNonAuthorDropRule
+        NsfwTetwittertAllUsersTweetLabelDropRule,
+      userRules = TimelineLikedByRules.UserRules :+ NsfwTetwittertNonAuthorDropRule
     )
 
 case object TimelineRetweetedByPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules :+
         NsfwVideoTweetLabelDropRule :+
-        NsfwTextAllUsersTweetLabelDropRule,
+        NsfwTetwittertAllUsersTweetLabelDropRule,
       userRules = Seq(
         CompromisedNonFollowerWithUqfRule,
         EngagementSpammerNonFollowerWithUqfRule,
         LowQualityNonFollowerWithUqfRule,
         ReadOnlyNonFollowerWithUqfRule,
         SpamHighRecallNonFollowerWithUqfRule,
-        NsfwTextNonAuthorDropRule
+        NsfwTetwittertNonAuthorDropRule
       )
     )
 
 case object TimelineSuperLikedByPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules :+
         NsfwVideoTweetLabelDropRule :+
-        NsfwTextAllUsersTweetLabelDropRule,
+        NsfwTetwittertAllUsersTweetLabelDropRule,
       userRules = Seq(
         CompromisedNonFollowerWithUqfRule,
         EngagementSpammerNonFollowerWithUqfRule,
         LowQualityNonFollowerWithUqfRule,
         ReadOnlyNonFollowerWithUqfRule,
         SpamHighRecallNonFollowerWithUqfRule,
-        NsfwTextNonAuthorDropRule
+        NsfwTetwittertNonAuthorDropRule
       )
     )
 
 case object TimelineContentControlsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = TopicsLandingPageTopicRecommendationsPolicy.tweetRules,
       userRules = TopicsLandingPageTopicRecommendationsPolicy.userRules
     )
 
 case object TimelineConversationsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           AbusiveNonFollowerTweetLabelRule,
@@ -2430,7 +2430,7 @@ case object TimelineConversationsPolicy
     )
 
 case object TimelineFollowingActivityPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           AbusiveTweetLabelRule,
@@ -2444,7 +2444,7 @@ case object TimelineFollowingActivityPolicy
     )
 
 case object TimelineInjectionPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
         NsfwHighPrecisionTweetLabelRule,
         GoreAndViolenceHighPrecisionTweetLabelRule,
@@ -2453,7 +2453,7 @@ case object TimelineInjectionPolicy
         NsfwCardImageTweetLabelRule,
         NsfwHighRecallTweetLabelRule,
         NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
+        NsfwTetwittertTweetLabelDropRule,
         SafetyCrisisLevel2DropRule,
         SafetyCrisisLevel3DropRule,
         SafetyCrisisLevel4DropRule,
@@ -2464,12 +2464,12 @@ case object TimelineInjectionPolicy
         DoNotAmplifyNonFollowerRule,
         NotGraduatedNonFollowerRule,
         LikelyIvsLabelNonFollowerDropUserRule,
-        NsfwTextNonAuthorDropRule
+        NsfwTetwittertNonAuthorDropRule
       )
     )
 
 case object TimelineMentionsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           LowQualityTweetLabelDropRule,
@@ -2478,7 +2478,7 @@ case object TimelineMentionsPolicy
           DuplicateMentionUqfTweetLabelRule,
           LowQualityMentionTweetLabelRule,
           SmyteSpamTweetLabelDropRule,
-          ToxicityReplyFilterDropNotificationRule,
+          TotwittericityReplyFilterDropNotificationRule,
           AbusiveUqfNonFollowerTweetLabelRule,
           UntrustedUrlUqfNonFollowerTweetLabelRule,
           DownrankSpamReplyUqfNonFollowerTweetLabelRule,
@@ -2503,7 +2503,7 @@ case object TimelineMentionsPolicy
     )
 
 case object TweetEngagersPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules,
       userRules = Seq(
         CompromisedNonFollowerWithUqfRule,
@@ -2515,7 +2515,7 @@ case object TweetEngagersPolicy
     )
 
 case object TweetWritesApiPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
         AbusePolicyEpisodicTweetLabelInterstitialRule,
         EmergencyDynamicInterstitialRule,
@@ -2523,7 +2523,7 @@ case object TweetWritesApiPolicy
     )
 
 case object QuotedTweetRulesPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       quotedTweetRules = Seq(
         DeactivatedAuthorRule,
         ErasedAuthorRule,
@@ -2538,7 +2538,7 @@ case object QuotedTweetRulesPolicy
     )
 
 case object TweetDetailPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           AuthorBlocksViewerDropRule,
@@ -2578,7 +2578,7 @@ case object TweetDetailPolicy
     )
 
 case object BaseTweetDetailPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           AuthorBlocksViewerDropRule,
@@ -2603,7 +2603,7 @@ case object BaseTweetDetailPolicy
     )
 
 case object TweetDetailWithInjectionsHydrationPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           AbusePolicyEpisodicTweetLabelInterstitialRule,
@@ -2620,15 +2620,15 @@ case object TweetDetailWithInjectionsHydrationPolicy
     )
 
 case object TweetDetailNonTooPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
-        DropAllExclusiveTweetsRule,
+        DropAllEtwitterclusiveTweetsRule,
         DropAllTrustedFriendsTweetsRule,
       ) ++ BaseTweetDetailPolicy.tweetRules
     )
 
 case object RecosWritePathPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
         AbusiveTweetLabelRule,
         LowQualityTweetLabelDropRule,
@@ -2638,32 +2638,32 @@ case object RecosWritePathPolicy
         GoreAndViolenceReportedHeuristicsTweetLabelRule,
         NsfwCardImageTweetLabelRule,
         NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
+        NsfwTetwittertTweetLabelDropRule,
         SpamHighRecallTweetLabelDropRule,
         DuplicateContentTweetLabelDropRule,
         BystanderAbusiveTweetLabelRule,
         SmyteSpamTweetLabelDropRule
       ),
-      userRules = Seq(NsfwTextNonAuthorDropRule)
+      userRules = Seq(NsfwTetwittertNonAuthorDropRule)
     )
 
 case object BrandSafetyPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
         NsfwVideoTweetLabelDropRule,
-        NsfwTextTweetLabelDropRule,
+        NsfwTetwittertTweetLabelDropRule,
         NsfaHighRecallTweetLabelInterstitialRule
       ),
-      userRules = Seq(NsfwTextNonAuthorDropRule)
+      userRules = Seq(NsfwTetwittertNonAuthorDropRule)
     )
 
 case object VideoAdsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules
     )
 
 case object AppealsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           NsfwCardImageAllUsersTweetLabelRule,
@@ -2675,9 +2675,9 @@ case object AppealsPolicy
     )
 
 case object TimelineConversationsDownrankingPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
-        HighToxicityScoreDownrankAbusiveQualitySectionRule,
+        HighTotwittericityScoreDownrankAbusiveQualitySectionRule,
         UntrustedUrlConversationsTweetLabelRule,
         DownrankSpamReplyConversationsTweetLabelRule,
         DownrankSpamReplyConversationsAuthorLabelRule,
@@ -2690,22 +2690,22 @@ case object TimelineConversationsDownrankingPolicy
         HighSpammyTweetContentScoreConvoDownrankAbusiveQualityRule,
         HighCryptospamScoreConvoDownrankAbusiveQualityRule,
         CopypastaSpamAbusiveQualityTweetLabelRule,
-        HighToxicityScoreDownrankLowQualitySectionRule,
+        HighTotwittericityScoreDownrankLowQualitySectionRule,
         HighPSpammyTweetScoreDownrankLowQualitySectionRule,
         RitoActionedTweetDownrankLowQualitySectionRule,
-        HighToxicityScoreDownrankHighQualitySectionRule,
+        HighTotwittericityScoreDownrankHighQualitySectionRule,
       )
     )
 
 case object TimelineConversationsDownrankingMinimalPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         HighProactiveTosScoreTweetLabelDownrankingRule
       )
     )
 
 case object TimelineHomeRecommendationsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.union(
         RecommendationsPolicy.tweetRules.filter(
           _ != NsfwHighPrecisionTweetLabelRule
@@ -2726,7 +2726,7 @@ case object TimelineHomeRecommendationsPolicy
     )
 
 case object TimelineHomeTopicFollowRecommendationsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.union(
         Seq(
           SearchBlacklistTweetLabelRule,
@@ -2747,14 +2747,14 @@ case object TimelineHomeTopicFollowRecommendationsPolicy
     )
 
 case object TimelineScorerPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         AllowAllRule
       )
     )
 
 case object FollowedTopicsTimelinePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = Seq(
         AuthorBlocksViewerDropRule,
         ProtectedAuthorDropRule,
@@ -2763,7 +2763,7 @@ case object FollowedTopicsTimelinePolicy
     )
 
 case object TopicsLandingPageTopicRecommendationsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.union(
         Seq(
           SearchBlacklistTweetLabelRule,
@@ -2781,8 +2781,8 @@ case object TopicsLandingPageTopicRecommendationsPolicy
       )
     )
 
-case object ExploreRecommendationsPolicy
-    extends VisibilityPolicy(
+case object EtwitterploreRecommendationsPolicy
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         DropOuterCommunityTweetsRule,
         SearchBlacklistTweetLabelRule,
@@ -2806,7 +2806,7 @@ case object ExploreRecommendationsPolicy
     )
 
 case object TombstoningPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         TombstoneIf.ViewerIsBlockedByAuthor,
         TombstoneIf.AuthorIsProtected,
@@ -2818,7 +2818,7 @@ case object TombstoningPolicy
     )
 
 case object TweetReplyNudgePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         SpamAllUsersTweetLabelRule,
         PdnaAllUsersTweetLabelRule,
@@ -2832,22 +2832,22 @@ case object TweetReplyNudgePolicy
         GoreAndViolenceReportedHeuristicsAllUsersTweetLabelDropRule,
         NsfwCardImageAllUsersTweetLabelDropRule,
         NsfwVideoAllUsersTweetLabelDropRule,
-        NsfwTextAllUsersTweetLabelDropRule,
+        NsfwTetwittertAllUsersTweetLabelDropRule,
       ),
       userRules = Seq(
         DropNsfwUserAuthorRule,
         DropNsfwAdminAuthorRule,
-        NsfwTextAllUsersDropRule
+        NsfwTetwittertAllUsersDropRule
       )
     )
 
 case object HumanizationNudgePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = UserTimelineRules.UserRules
     )
 
 case object TrendsRepresentativeTweetPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.union(
         RecommendationsPolicy.tweetRules,
         Seq(
@@ -2861,7 +2861,7 @@ case object TrendsRepresentativeTweetPolicy
           NsfwHighPrecisionTweetLabelRule,
           NsfwHighRecallAllUsersTweetLabelDropRule,
           NsfwVideoTweetLabelDropRule,
-          NsfwTextTweetLabelDropRule,
+          NsfwTetwittertTweetLabelDropRule,
           PdnaAllUsersTweetLabelRule,
           SearchBlacklistTweetLabelRule,
           SpamHighRecallTweetLabelDropRule,
@@ -2894,36 +2894,36 @@ case object TrendsRepresentativeTweetPolicy
           EngagementSpammerHighRecallRule,
           AbusiveHighRecallRule,
           SearchBlacklistRule,
-          SearchNsfwTextRule,
+          SearchNsfwTetwittertRule,
           NsfwHighRecallRule,
           TsViolationRule,
           DownrankSpamReplyAllViewersRule,
-          NsfwTextNonAuthorDropRule
+          NsfwTetwittertNonAuthorDropRule
         )
       )
     )
 
 case object AdsCampaignPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = Seq(SuspendedAuthorRule),
       tweetRules = VisibilityPolicy.baseTweetRules
     )
 
 case object AdsManagerPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
         AdsManagerDenyListAllUsersTweetLabelRule,
       )
     )
 
 case object AdsReportingDashboardPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = AdsManagerPolicy.tweetRules,
       userRules = AdsCampaignPolicy.userRules
     )
 
 case object BirdwatchNoteAuthorPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = Seq(
         SuspendedAuthorRule,
         AuthorBlocksViewerDropRule,
@@ -2933,7 +2933,7 @@ case object BirdwatchNoteAuthorPolicy
     )
 
 case object BirdwatchNoteTweetsTimelinePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           MutedRetweetsRule,
@@ -2950,7 +2950,7 @@ case object BirdwatchNoteTweetsTimelinePolicy
     )
 
 case object BirdwatchNeedsYourHelpNotificationsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           AuthorBlocksViewerDropRule,
@@ -2962,36 +2962,36 @@ case object BirdwatchNeedsYourHelpNotificationsPolicy
     )
 
 case object ForDevelopmentOnlyPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = Seq.empty,
       tweetRules = VisibilityPolicy.baseTweetRules
     )
 
 case object UserProfileHeaderPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = Seq.empty,
       tweetRules = Seq(DropAllRule)
     )
 
 case object UserScopedTimelinePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = UserTimelineRules.UserRules,
       tweetRules = Seq(DropAllRule)
     )
 
 case object TweetScopedTimelinePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = UserTimelineRules.UserRules,
       tweetRules = Seq.empty
     )
 
 case object SoftInterventionPivotPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules
     )
 
 case object CuratedTrendsRepresentativeTweetPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = Seq(
         SuspendedAuthorRule,
         AuthorBlocksViewerDropRule,
@@ -3001,7 +3001,7 @@ case object CuratedTrendsRepresentativeTweetPolicy
     )
 
 case object CommunitiesPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           RetweetDropRule,
@@ -3018,7 +3018,7 @@ case object CommunitiesPolicy
     )
 
 case object TimelineHomeCommunitiesPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.union(
         Seq(
           DropAllAuthorRemovedCommunityTweetsRule,
@@ -3035,7 +3035,7 @@ case object TimelineHomeCommunitiesPolicy
     )
 
 case object TimelineHomePromotedHydrationPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         ViewerHasMatchingMutedKeywordForHomeTimelinePromotedTweetRule,
         ViewerMutesAuthorHomeTimelinePromotedTweetRule,
@@ -3045,7 +3045,7 @@ case object TimelineHomePromotedHydrationPolicy
     )
 
 case object SpacesPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
         SpaceDoNotAmplifyAllUsersDropRule,
         SpaceNsfwHighPrecisionNonFollowerDropRule),
       userRules = Seq(
@@ -3054,14 +3054,14 @@ case object SpacesPolicy
     )
 
 case object SpacesSellerApplicationStatusPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = Seq(
         ViewerIsNotAuthorDropRule
       )
     )
 
 case object SpacesParticipantsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(DropAllRule),
       userRules = Seq(
         AuthorBlocksViewerDropRule,
@@ -3070,7 +3070,7 @@ case object SpacesParticipantsPolicy
     )
 
 case object SpacesSharingPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = TweetDetailPolicy.tweetRules,
       userRules = Seq(
         AuthorBlocksViewerDropRule,
@@ -3081,7 +3081,7 @@ case object SpacesSharingPolicy
     )
 
 case object SpaceFleetlinePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       spaceRules = Seq(
         SpaceDoNotAmplifyNonFollowerDropRule,
         SpaceCoordHarmfulActivityHighRecallNonFollowerDropRule,
@@ -3099,7 +3099,7 @@ case object SpaceFleetlinePolicy
     )
 
 case object SpaceNotificationsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       spaceRules = Seq(
         SpaceHatefulHighRecallAllUsersDropRule,
         SpaceViolenceHighRecallAllUsersDropRule,
@@ -3119,7 +3119,7 @@ case object SpaceNotificationsPolicy
         DoNotAmplifyUserRule,
         AbusiveRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
+        SearchNsfwTetwittertRule,
         RecommendationsBlacklistRule,
         NotGraduatedRule,
         SpamHighRecallRule,
@@ -3133,7 +3133,7 @@ case object SpaceNotificationsPolicy
     )
 
 case object SpaceTweetAvatarHomeTimelinePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       spaceRules = Seq(
         SpaceDoNotAmplifyNonFollowerDropRule,
         SpaceCoordHarmfulActivityHighRecallNonFollowerDropRule,
@@ -3148,7 +3148,7 @@ case object SpaceTweetAvatarHomeTimelinePolicy
         NotGraduatedNonFollowerRule,
         AbusiveRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
+        SearchNsfwTetwittertRule,
         RecommendationsBlacklistRule,
         SpamHighRecallRule,
         AbusiveHighRecallRule,
@@ -3161,7 +3161,7 @@ case object SpaceTweetAvatarHomeTimelinePolicy
     )
 
 case object SpaceHomeTimelineUprankingPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       spaceRules = Seq(
         SpaceDoNotAmplifyNonFollowerDropRule,
         SpaceCoordHarmfulActivityHighRecallNonFollowerDropRule,
@@ -3177,7 +3177,7 @@ case object SpaceHomeTimelineUprankingPolicy
         NotGraduatedRule,
         AbusiveRule,
         SearchBlacklistRule,
-        SearchNsfwTextRule,
+        SearchNsfwTetwittertRule,
         RecommendationsBlacklistRule,
         SpamHighRecallRule,
         AbusiveHighRecallRule,
@@ -3189,23 +3189,23 @@ case object SpaceHomeTimelineUprankingPolicy
     )
 
 case object SpaceJoinScreenPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       spaceRules = Seq(
         SpaceNsfwHighPrecisionAllUsersInterstitialRule
       )
     )
 
 case object KitchenSinkDevelopmentPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules.diff(
         Seq(
           BounceTweetLabelRule,
-          DropExclusiveTweetContentRule,
+          DropEtwitterclusiveTweetContentRule,
           DropTrustedFriendsTweetContentRule
         )
       ) ++ Seq(
         BounceTweetLabelTombstoneRule,
-        TombstoneExclusiveTweetContentRule,
+        TombstoneEtwitterclusiveTweetContentRule,
         TombstoneTrustedFriendsTweetContentRule)
         ++ Seq(
           AbusePolicyEpisodicTweetLabelInterstitialRule,
@@ -3220,7 +3220,7 @@ case object KitchenSinkDevelopmentPolicy
           NsfwReportedHeuristicsAllUsersTweetLabelRule,
           GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule,
           NsfwCardImageAllUsersTweetLabelRule,
-          ExperimentalNudgeLabelRule,
+          EtwitterperimentalNudgeLabelRule,
         ) ++ LimitedEngagementBaseRules.tweetRules,
       userRules = Seq(
         AuthorBlocksViewerDropRule,
@@ -3261,7 +3261,7 @@ case object KitchenSinkDevelopmentPolicy
     )
 
 case object CurationPolicyViolationsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++ Seq(
         DoNotAmplifyAllViewersDropRule,
       ),
@@ -3272,7 +3272,7 @@ case object CurationPolicyViolationsPolicy
     )
 
 case object GraphqlDefaultPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           AbusePolicyEpisodicTweetLabelInterstitialRule,
@@ -3286,7 +3286,7 @@ case object GraphqlDefaultPolicy
     )
 
 case object GryphonDecksAndColumnsSharingPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = Seq(
         AuthorBlocksViewerDropRule,
         ProtectedAuthorDropRule,
@@ -3296,30 +3296,30 @@ case object GryphonDecksAndColumnsSharingPolicy
     )
 
 case object UserSettingsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = Seq(ViewerIsNotAuthorDropRule),
       tweetRules = Seq(DropAllRule)
     )
 
 case object BlockMuteUsersTimelinePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = Seq(SuspendedAuthorRule),
       tweetRules = Seq(DropAllRule)
     )
 
 case object TopicRecommendationsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules =
         Seq(
           NsfwHighRecallTweetLabelRule,
-          NsfwTextHighPrecisionTweetLabelDropRule
+          NsfwTetwittertHighPrecisionTweetLabelDropRule
         )
           ++ RecommendationsPolicy.tweetRules,
       userRules = RecommendationsPolicy.userRules
     )
 
 case object RitoActionedTweetTimelinePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules =
         VisibilityPolicy.baseTweetTombstoneRules
           ++ Seq(
@@ -3335,7 +3335,7 @@ case object RitoActionedTweetTimelinePolicy
     )
 
 case object EmbeddedTweetsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetTombstoneRules
         ++ Seq(
           AbusePolicyEpisodicTweetLabelInterstitialRule,
@@ -3364,7 +3364,7 @@ case object EmbeddedTweetsPolicy
     )
 
 case object EmbedTweetMarkupPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(DropStaleTweetsRule) ++
         VisibilityPolicy.baseTweetTombstoneRules
         ++ Seq(
@@ -3386,7 +3386,7 @@ case object EmbedTweetMarkupPolicy
     )
 
 case object ArticleTweetTimelinePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules =
           VisibilityPolicy.baseTweetRules ++
           Seq(
@@ -3409,7 +3409,7 @@ case object ArticleTweetTimelinePolicy
     )
 
 case object ConversationFocalPrehydrationPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       deletedTweetRules = Seq(
         TombstoneBounceDeletedOuterTweetRule,
         TombstoneBounceDeletedQuotedTweetRule,
@@ -3417,7 +3417,7 @@ case object ConversationFocalPrehydrationPolicy
     )
 
 case object ConversationFocalTweetPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetTombstoneRules
         ++ Seq(
           DynamicProductAdDropTweetLabelRule,
@@ -3475,7 +3475,7 @@ case object ConversationFocalTweetPolicy
     )
 
 case object ConversationReplyPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetTombstoneRules
         ++ Seq(
           LowQualityTweetLabelTombstoneRule,
@@ -3484,7 +3484,7 @@ case object ConversationReplyPolicy
           DeciderableSpamHighRecallAuthorLabelTombstoneRule,
           SmyteSpamTweetLabelTombstoneRule,
           AuthorBlocksViewerTombstoneRule,
-          ToxicityReplyFilterRule,
+          TotwittericityReplyFilterRule,
           DynamicProductAdDropTweetLabelRule,
           SensitiveMediaTweetDropSettingLevelTombstoneRules.AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule,
           SensitiveMediaTweetDropSettingLevelTombstoneRules.ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule,
@@ -3547,18 +3547,18 @@ case object ConversationReplyPolicy
     )
 
 case object AdsBusinessSettingsPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(DropAllRule)
     )
 
 case object UserMilestoneRecommendationPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = RecommendationsPolicy.userRules ++ Seq(
       )
     )
 
 case object TrustedFriendsUserListPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(DropAllRule),
       userRules = Seq(
         ViewerBlocksAuthorRule
@@ -3566,7 +3566,7 @@ case object TrustedFriendsUserListPolicy
     )
 
 case object TwitterDelegateUserListPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = Seq(
         ViewerBlocksAuthorRule,
         ViewerIsAuthorDropRule,
@@ -3577,14 +3577,14 @@ case object TwitterDelegateUserListPolicy
     )
 
 case object QuickPromoteTweetEligibilityPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = TweetDetailPolicy.tweetRules,
       userRules = UserTimelineRules.UserRules,
       policyRuleParams = TweetDetailPolicy.policyRuleParams
     )
 
 case object ReportCenterPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = ConversationFocalTweetPolicy.tweetRules.diff(
         ConversationsAdAvoidanceRules.tweetRules
       ),
@@ -3609,7 +3609,7 @@ case object ReportCenterPolicy
     )
 
 case object ConversationInjectedTweetPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetRules ++
         Seq(
           AbusePolicyEpisodicTweetLabelInterstitialRule,
@@ -3626,53 +3626,53 @@ case object ConversationInjectedTweetPolicy
     )
 
 case object EditHistoryTimelinePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = ConversationReplyPolicy.tweetRules,
       policyRuleParams = ConversationReplyPolicy.policyRuleParams,
       deletedTweetRules = ConversationReplyPolicy.deletedTweetRules,
       userUnavailableStateRules = ConversationReplyPolicy.userUnavailableStateRules)
 
 case object UserSelfViewOnlyPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = Seq(ViewerIsNotAuthorDropRule),
       tweetRules = Seq(DropAllRule)
     )
 
 case object TwitterArticleComposePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       twitterArticleRules = Seq(
         ViewerIsNotAuthorDropRule
       )
     )
 
 case object TwitterArticleProfileTabPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       twitterArticleRules = Seq(
         AuthorBlocksViewerDropRule
       )
     )
 
 case object TwitterArticleReadPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       twitterArticleRules = Seq(
         AuthorBlocksViewerDropRule,
       )
     )
 
 case object ContentControlToolInstallPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = UserProfileHeaderPolicy.userRules,
       tweetRules = UserProfileHeaderPolicy.tweetRules
     )
 
 case object TimelineProfileSpacesPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = UserProfileHeaderPolicy.userRules,
       tweetRules = UserProfileHeaderPolicy.tweetRules
     )
 
 case object TimelineFavoritesSelfViewPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = TimelineFavoritesPolicy.tweetRules.diff(Seq(DropStaleTweetsRule)),
       policyRuleParams = TimelineFavoritesPolicy.policyRuleParams,
       deletedTweetRules = TimelineFavoritesPolicy.deletedTweetRules,
@@ -3680,7 +3680,7 @@ case object TimelineFavoritesSelfViewPolicy
     )
 
 case object BaseQigPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         AbusePolicyEpisodicTweetLabelDropRule,
         AutomationTweetLabelRule,
@@ -3695,7 +3695,7 @@ case object BaseQigPolicy
         NsfwCardImageTweetLabelRule,
         NsfwHighRecallTweetLabelRule,
         NsfwReportedHeuristicsTweetLabelRule,
-        NsfwTextTweetLabelDropRule,
+        NsfwTetwittertTweetLabelDropRule,
         NsfwVideoTweetLabelDropRule,
         PdnaTweetLabelRule,
         SafetyCrisisLevel3DropRule,
@@ -3721,7 +3721,7 @@ case object BaseQigPolicy
       ))
 
 case object NotificationsQigPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = BaseQigPolicy.tweetRules ++ Seq(
         DropAllCommunityTweetsRule,
         DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule,
@@ -3744,7 +3744,7 @@ case object NotificationsQigPolicy
     )
 
 case object ShoppingManagerSpyModePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = Seq(
         DropAllRule
       ),
@@ -3757,7 +3757,7 @@ case object ShoppingManagerSpyModePolicy
     )
 
 case object ZipbirdConsumerArchivesPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = VisibilityPolicy.baseTweetTombstoneRules,
       userRules = Seq(
         AuthorBlocksViewerDropRule,
@@ -3775,10 +3775,10 @@ case object ZipbirdConsumerArchivesPolicy
       )
     )
 
-case class MixedVisibilityPolicy(
+case class MitwitteredVisibilityPolicy(
   originalPolicy: VisibilityPolicy,
   additionalTweetRules: Seq[Rule])
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = (additionalTweetRules ++ originalPolicy.tweetRules)
         .sortWith(_.actionBuilder.actionSeverity > _.actionBuilder.actionSeverity),
       userRules = originalPolicy.userRules,
@@ -3797,7 +3797,7 @@ case class MixedVisibilityPolicy(
     )
 
 case object TweetAwardPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = Seq.empty,
       tweetRules =
         VisibilityPolicy.baseTweetRules ++ Seq(
@@ -3807,7 +3807,7 @@ case object TweetAwardPolicy
           NsfwReportedHeuristicsTweetLabelRule,
           NsfwCardImageTweetLabelRule,
           NsfwVideoTweetLabelDropRule,
-          NsfwTextTweetLabelDropRule,
+          NsfwTetwittertTweetLabelDropRule,
           GoreAndViolenceHighPrecisionTweetLabelRule,
           GoreAndViolenceReportedHeuristicsTweetLabelRule,
           GoreAndViolenceTweetLabelRule,

@@ -1,6 +1,6 @@
 stratofed_forward_dark_traffic:
   comment:
-    Forward Federated Strato traffic to DarkTrafficProxy (DTP).
+    Forward Federated Strato traffic to DarkTrafficProtwittery (DTP).
     Note, this decider is not overrideable via Tweetypie tooling,
     as it is only used by the StratoFedServer frameworkDecider instance.
     Note, you cannot use this decider as a TweetypieDeciderGates.
@@ -32,20 +32,20 @@ tweetypie_conversation_control_tweet_create_enabled:
     Controls whether we will enforce conversation control policy on tweet create. http://go/dont-at-me-backend-tdd
   default_availability: 0
 
-tweetypie_enable_exclusive_tweet_control_validation:
+tweetypie_enable_etwitterclusive_tweet_control_validation:
   comment:
-    Controls whether we will restrict the exclusiveTweetControlOptions parameter to only be usable by creators. http://go/superfollows
+    Controls whether we will restrict the etwitterclusiveTweetControlOptions parameter to only be usable by creators. http://go/superfollows
   default_availability: 0
 
 tweetypie_delay_erase_user_tweets:
-  comment: sleep for a fixed number of seconds before deleting a page of tweets during user erasure. Used as a rate limiting mechanism.
+  comment: sleep for a fitwittered number of seconds before deleting a page of tweets during user erasure. Used as a rate limiting mechanism.
   default_availability: 5000
 
 tweetypie_deny_non_tweet_permalinks:
   comment:
     Right now we would create a quote-tweet which would contain a non-working permalink
     whereas with latest QT + media changes we're blocking the tweet creation. If tweet
-    from permalink is not found, we would throw an exception if this decider is on else
+    from permalink is not found, we would throw an etwitterception if this decider is on else
     return a default pass-through response.
   default_availability: 0
 
@@ -92,7 +92,7 @@ tweetypie_hydrate_gnip_profile_geo_enrichment:
   default_availability: 10000
 
 tweetypie_hydrate_has_media:
-  comment: Hydrate the hasMedia field based on whether the tweet has a media entity, a media card, or a URL that matches partner media regexes
+  comment: Hydrate the hasMedia field based on whether the tweet has a media entity, a media card, or a URL that matches partner media regetwitteres
   default_availability: 10000
 
 tweetypie_hydrate_media:
@@ -144,8 +144,8 @@ tweetypie_jiminy_dark_requests:
   comment: Enables dark requests to the Jiminy backend for the specified % of traffic
   default_availability: 0
 
-tweetypie_log_cache_exceptions:
-  comment: Enables logging of cache exceptions to loglens.
+tweetypie_log_cache_etwitterceptions:
+  comment: Enables logging of cache etwitterceptions to loglens.
   default_availability: 0
 
 tweetypie_log_reads:
@@ -170,16 +170,16 @@ tweetypie_log_vf_dark_read_mismatches:
   comment: Log mismatches from the tweetypie_dark_read_safety_labels_from_strato code path.
   default_availability: 0
 
-tweetypie_max_request_width_enabled:
+tweetypie_matwitter_request_width_enabled:
   comment:
-    Controls whether the max request width limit is enabled or not.
+    Controls whether the matwitter request width limit is enabled or not.
     0 means the limit is disabled, 10000 means it is turned on and
-    request widths > maxSize will be rejected.
+    request widths > matwitterSize will be rejected.
   default_availability: 0
 
 tweetypie_media_refs_hydrator_include_pasted_media:
   comment:
-    For debugging MediaRefsHydrator - determine if extra calls to pasted media are causing the GC issues.
+    For debugging MediaRefsHydrator - determine if etwittertra calls to pasted media are causing the GC issues.
   default_availability: 0
 
 tweetypie_prefer_forwarded_service_identifier_for_client_id:
@@ -207,8 +207,8 @@ tweetypie_replicate_reads_to_atla:
   comment: Send reads to deferredrpc for replication to atla. We can use this to warm caches in atla.
   default_availability: 0
 
-tweetypie_replicate_reads_to_pdxa:
-  comment: Send reads to deferredrpc for replication to pdxa. We can use this to warm caches in pdxa.
+tweetypie_replicate_reads_to_pdtwittera:
+  comment: Send reads to deferredrpc for replication to pdtwittera. We can use this to warm caches in pdtwittera.
   default_availability: 0
 
 tweetypie_disable_invite_via_mention:
@@ -241,19 +241,19 @@ tweetypie_short_circuit_likely_partial_tweet_reads_ms:
   comment:
     Specifies a number of milliseconds before which, we short circuit likely
     partial reads from MH and return NotFound tweet response state.
-    After experimenting decided to go with 1500 ms.
+    After etwitterperimenting decided to go with 1500 ms.
   default_availability: 0
 
-tweetypie_populate_quoted_tweet_results_as_contextual_tweet_ref:
+tweetypie_populate_quoted_tweet_results_as_contetwittertual_tweet_ref:
   comment:
     CreateTweet and CreateReTweet column to return the 'quoted_tweet_results' PrefetchedItem as
-    ContextualTweetRef type instead of just tweetId.
+    ContetwittertualTweetRef type instead of just tweetId.
     This will be used during the quotedTweet.Tweet column migration (see http://go/qt-col-migration)
     Post-migration, this will be removed.
   default_availability: 0
 tweetypie_enable_unmentions_timeline_warmup:
   comment:
-    When enabled, read-path calls execute an async call to the getUnmentionedUsersFromConverstion
+    When enabled, read-path calls etwitterecute an async call to the getUnmentionedUsersFromConverstion
     strato column to warm the unmentioned NH/haplolite cache.
     http://go/unmention-me-onepager
   default_availability: 0
@@ -302,7 +302,7 @@ tweetypie_hydrate_bookmarks_perspective:
     Controls whether we request the Bookmarked perspective from TLS
   default_availability: 0
 
-tweetypie_set_edit_time_window_to_sixty_minutes:
+tweetypie_set_edit_time_window_to_sitwitterty_minutes:
   comment:
     Set time window in which Tweets are editable to 60 minutes
   default_availability: 0

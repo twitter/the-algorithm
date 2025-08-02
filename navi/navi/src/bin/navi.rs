@@ -36,9 +36,9 @@ fn load_custom_op(lib_path: &str) -> () {
 fn get_custom_op_version(customops_lib: &str) -> i64 {
     let customop_bytes = std::fs::read(customops_lib).unwrap(); // Vec<u8>
     let customop_hash = digest(customop_bytes.as_slice());
-    //conver the last 4 hex digits to version number as prometheus metrics doesn't support string, the total space is 16^4 == 65536
+    //conver the last 4 hetwitter digits to version number as prometheus metrics doesn't support string, the total space is 16^4 == 65536
     let customop_version_num =
-        i64::from_str_radix(&customop_hash[customop_hash.len() - 4..], 16).unwrap();
+        i64::from_str_raditwitter(&customop_hash[customop_hash.len() - 4..], 16).unwrap();
     info!(
         "customop hash: {}, version_number: {}",
         customop_hash, customop_version_num

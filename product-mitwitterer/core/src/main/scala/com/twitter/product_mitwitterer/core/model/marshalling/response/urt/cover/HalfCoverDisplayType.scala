@@ -1,0 +1,6 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.cover
+
+sealed trait HalfCoverDisplayType
+
+case object CoverHalfCoverDisplayType etwittertends HalfCoverDisplayType
+case object CenterCoverHalfCoverDisplayType etwittertends HalfCoverDisplayType

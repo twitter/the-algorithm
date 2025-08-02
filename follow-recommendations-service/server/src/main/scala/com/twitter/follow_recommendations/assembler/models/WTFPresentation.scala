@@ -9,12 +9,12 @@ trait WTFPresentation {
 case class UserList(
   userBioEnabled: Boolean,
   userBioTruncated: Boolean,
-  userBioMaxLines: Option[Long],
+  userBioMatwitterLines: Option[Long],
   feedbackAction: Option[FeedbackAction])
-    extends WTFPresentation {
+    etwittertends WTFPresentation {
   def toThrift: t.WTFPresentation = {
     t.WTFPresentation.UserBioList(
-      t.UserList(userBioEnabled, userBioTruncated, userBioMaxLines, feedbackAction.map(_.toThrift)))
+      t.UserList(userBioEnabled, userBioTruncated, userBioMatwitterLines, feedbackAction.map(_.toThrift)))
   }
 }
 
@@ -25,14 +25,14 @@ object UserList {
     UserList(
       userListOptions.userBioEnabled,
       userListOptions.userBioTruncated,
-      userListOptions.userBioMaxLines,
+      userListOptions.userBioMatwitterLines,
       None)
   }
 }
 
 case class Carousel(
   feedbackAction: Option[FeedbackAction])
-    extends WTFPresentation {
+    etwittertends WTFPresentation {
   def toThrift: t.WTFPresentation = {
     t.WTFPresentation.Carousel(t.Carousel(feedbackAction.map(_.toThrift)))
   }

@@ -1,8 +1,8 @@
 package com.twitter.simclusters_v2.scalding.embedding.common
 
-import com.twitter.scalding.{Args, DateRange, Execution, TypedPipe, UniqueID}
+import com.twitter.scalding.{Args, DateRange, Etwitterecution, TypedPipe, UniqueID}
 import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
+import com.twitter.simclusters_v2.scalding.common.matritwitter.{SparseMatritwitter, SparseRowMatritwitter}
 import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil._
 import com.twitter.simclusters_v2.thriftscala._
 import java.util.TimeZone
@@ -13,7 +13,7 @@ import java.util.TimeZone
  *
  * The most straightforward way to understand the SimClusters Embeddings for a Noun is that it is
  * a weighted sum of SimClusters InterestedIn vectors from users who are interested in the Noun.
- * So for a noun type, you only need to define `prepareNounToUserMatrix` to pass in a matrix which
+ * So for a noun type, you only need to define `prepareNounToUserMatritwitter` to pass in a matritwitter which
  * represents how much each user is interested in this noun.
  */
 trait SimClustersEmbeddingBaseJob[NounType] {
@@ -26,33 +26,33 @@ trait SimClustersEmbeddingBaseJob[NounType] {
 
   def numReducersOpt: Option[Int] = None
 
-  def prepareNounToUserMatrix(
+  def prepareNounToUserMatritwitter(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): SparseMatrix[NounType, UserId, Double]
+  ): SparseMatritwitter[NounType, UserId, Double]
 
-  def prepareUserToClusterMatrix(
+  def prepareUserToClusterMatritwitter(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): SparseRowMatrix[UserId, ClusterId, Double]
+  ): SparseRowMatritwitter[UserId, ClusterId, Double]
 
-  def writeNounToClustersIndex(
+  def writeNounToClustersIndetwitter(
     output: TypedPipe[(NounType, Seq[(ClusterId, Double)])]
   )(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit]
+  ): Etwitterecution[Unit]
 
-  def writeClusterToNounsIndex(
+  def writeClusterToNounsIndetwitter(
     output: TypedPipe[(ClusterId, Seq[(NounType, Double)])]
   )(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit]
+  ): Etwitterecution[Unit]
 
   def runOnDateRange(
     args: Args
@@ -60,23 +60,23 @@ trait SimClustersEmbeddingBaseJob[NounType] {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
-    val embeddingMatrix: SparseRowMatrix[NounType, ClusterId, Double] =
-      prepareNounToUserMatrix.rowL2Normalize
-        .multiplySkinnySparseRowMatrix(
-          prepareUserToClusterMatrix.colL2Normalize,
+    val embeddingMatritwitter: SparseRowMatritwitter[NounType, ClusterId, Double] =
+      prepareNounToUserMatritwitter.rowL2Normalize
+        .multiplySkinnySparseRowMatritwitter(
+          prepareUserToClusterMatritwitter.colL2Normalize,
           numReducersOpt
         )
         .filter((_, _, v) => v > thresholdForEmbeddingScores)
 
-    Execution
+    Etwitterecution
       .zip(
-        writeNounToClustersIndex(
-          embeddingMatrix.sortWithTakePerRow(numClustersPerNoun)(Ordering.by(-_._2))
+        writeNounToClustersIndetwitter(
+          embeddingMatritwitter.sortWithTakePerRow(numClustersPerNoun)(Ordering.by(-_._2))
         ),
-        writeClusterToNounsIndex(
-          embeddingMatrix.sortWithTakePerCol(numNounsPerClusters)(
+        writeClusterToNounsIndetwitter(
+          embeddingMatritwitter.sortWithTakePerCol(numNounsPerClusters)(
             Ordering.by(-_._2)
           )
         )
@@ -93,28 +93,28 @@ object SimClustersEmbeddingJob {
    */
   def computeEmbeddings[T](
     simClustersSource: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    normalizedInputMatrix: TypedPipe[(UserId, (T, Double))],
-    scoreExtractors: Seq[UserToInterestedInClusterScores => (Double, ScoreType.ScoreType)],
+    normalizedInputMatritwitter: TypedPipe[(UserId, (T, Double))],
+    scoreEtwittertractors: Seq[UserToInterestedInClusterScores => (Double, ScoreType.ScoreType)],
     modelVersion: ModelVersion,
     toSimClustersEmbeddingId: (T, ScoreType.ScoreType) => SimClustersEmbeddingId,
     numReducers: Option[Int] = None
   ): TypedPipe[(SimClustersEmbeddingId, (ClusterId, Double))] = {
-    val userSimClustersMatrix =
-      getUserSimClustersMatrix(simClustersSource, scoreExtractors, modelVersion)
+    val userSimClustersMatritwitter =
+      getUserSimClustersMatritwitter(simClustersSource, scoreEtwittertractors, modelVersion)
     multiplyMatrices(
-      normalizedInputMatrix,
-      userSimClustersMatrix,
+      normalizedInputMatritwitter,
+      userSimClustersMatritwitter,
       toSimClustersEmbeddingId,
       numReducers)
   }
 
   def getL2Norm[T](
-    inputMatrix: TypedPipe[(T, (UserId, Double))],
+    inputMatritwitter: TypedPipe[(T, (UserId, Double))],
     numReducers: Option[Int] = None
   )(
     implicit ordering: Ordering[T]
   ): TypedPipe[(T, Double)] = {
-    val l2Norm = inputMatrix
+    val l2Norm = inputMatritwitter
       .mapValues {
         case (_, score) => score * score
       }
@@ -127,13 +127,13 @@ object SimClustersEmbeddingJob {
     }
   }
 
-  def getNormalizedTransposeInputMatrix[T](
-    inputMatrix: TypedPipe[(T, (UserId, Double))],
+  def getNormalizedTransposeInputMatritwitter[T](
+    inputMatritwitter: TypedPipe[(T, (UserId, Double))],
     numReducers: Option[Int] = None
   )(
     implicit ordering: Ordering[T]
   ): TypedPipe[(UserId, (T, Double))] = {
-    val inputWithNorm = inputMatrix.join(getL2Norm(inputMatrix, numReducers))
+    val inputWithNorm = inputMatritwitter.join(getL2Norm(inputMatritwitter, numReducers))
 
     (numReducers match {
       case Some(reducers) => inputWithNorm.withReducers(reducers)
@@ -145,18 +145,18 @@ object SimClustersEmbeddingJob {
   }
 
   /**
-   * Matrix multiplication with the ability to tune the reducer size for better performance
+   * Matritwitter multiplication with the ability to tune the reducer size for better performance
    */
   @Deprecated
   def legacyMultiplyMatrices[T](
-    normalizedTransposeInputMatrix: TypedPipe[(UserId, (T, Double))],
-    userSimClustersMatrix: TypedPipe[(UserId, Seq[(ClusterId, Double)])],
-    numReducers: Int // Matrix multiplication is expensive. Use this to tune performance
+    normalizedTransposeInputMatritwitter: TypedPipe[(UserId, (T, Double))],
+    userSimClustersMatritwitter: TypedPipe[(UserId, Seq[(ClusterId, Double)])],
+    numReducers: Int // Matritwitter multiplication is etwitterpensive. Use this to tune performance
   )(
     implicit ordering: Ordering[T]
   ): TypedPipe[((ClusterId, T), Double)] = {
-    normalizedTransposeInputMatrix
-      .join(userSimClustersMatrix)
+    normalizedTransposeInputMatritwitter
+      .join(userSimClustersMatritwitter)
       .withReducers(numReducers)
       .flatMap {
         case (_, ((inputId, score), clustersWithScores)) =>
@@ -170,21 +170,21 @@ object SimClustersEmbeddingJob {
   }
 
   def multiplyMatrices[T](
-    normalizedTransposeInputMatrix: TypedPipe[(UserId, (T, Double))],
-    userSimClustersMatrix: TypedPipe[(UserId, Seq[((ClusterId, ScoreType.ScoreType), Double)])],
+    normalizedTransposeInputMatritwitter: TypedPipe[(UserId, (T, Double))],
+    userSimClustersMatritwitter: TypedPipe[(UserId, Seq[((ClusterId, ScoreType.ScoreType), Double)])],
     toSimClustersEmbeddingId: (T, ScoreType.ScoreType) => SimClustersEmbeddingId,
     numReducers: Option[Int] = None
   ): TypedPipe[(SimClustersEmbeddingId, (ClusterId, Double))] = {
     val inputJoinedWithSimClusters = numReducers match {
       case Some(reducers) =>
-        normalizedTransposeInputMatrix
-          .join(userSimClustersMatrix)
+        normalizedTransposeInputMatritwitter
+          .join(userSimClustersMatritwitter)
           .withReducers(reducers)
       case _ =>
-        normalizedTransposeInputMatrix.join(userSimClustersMatrix)
+        normalizedTransposeInputMatritwitter.join(userSimClustersMatritwitter)
     }
 
-    val matrixMultiplicationResult = inputJoinedWithSimClusters.flatMap {
+    val matritwitterMultiplicationResult = inputJoinedWithSimClusters.flatMap {
       case (_, ((inputId, inputScore), clustersWithScores)) =>
         clustersWithScores.map {
           case ((clusterId, scoreType), clusterScore) =>
@@ -194,17 +194,17 @@ object SimClustersEmbeddingJob {
 
     (numReducers match {
       case Some(reducers) =>
-        matrixMultiplicationResult.withReducers(reducers + 1)
-      case _ => matrixMultiplicationResult
+        matritwitterMultiplicationResult.withReducers(reducers + 1)
+      case _ => matritwitterMultiplicationResult
     }).map {
       case ((clusterId, embeddingId), score) =>
         (embeddingId, (clusterId, score))
     }
   }
 
-  def getUserSimClustersMatrix(
+  def getUserSimClustersMatritwitter(
     simClustersSource: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    scoreExtractors: Seq[UserToInterestedInClusterScores => (Double, ScoreType.ScoreType)],
+    scoreEtwittertractors: Seq[UserToInterestedInClusterScores => (Double, ScoreType.ScoreType)],
     modelVersion: ModelVersion
   ): TypedPipe[(UserId, Seq[((ClusterId, ScoreType.ScoreType), Double)])] = {
     simClustersSource.map {
@@ -212,8 +212,8 @@ object SimClustersEmbeddingJob {
           if ModelVersions.toModelVersion(clusters.knownForModelVersion) == modelVersion =>
         userId -> clusters.clusterIdToScores.flatMap {
           case (clusterId, clusterScores) =>
-            scoreExtractors.map { scoreExtractor =>
-              scoreExtractor(clusterScores) match {
+            scoreEtwittertractors.map { scoreEtwittertractor =>
+              scoreEtwittertractor(clusterScores) match {
                 case (score, scoreType) => ((clusterId, scoreType), score)
               }
             }
@@ -222,7 +222,7 @@ object SimClustersEmbeddingJob {
     }
   }
 
-  def toReverseIndexSimClusterEmbedding(
+  def toReverseIndetwitterSimClusterEmbedding(
     embeddings: TypedPipe[(SimClustersEmbeddingId, (ClusterId, EmbeddingScore))],
     topK: Int
   ): TypedPipe[(SimClustersEmbeddingId, InternalIdEmbedding)] = {

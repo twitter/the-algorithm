@@ -42,7 +42,7 @@ class EntityTweetsSource(
 
   private[this] val followGraphDataTransform = new FollowGraphDataTransform(
     followGraphDataProvider = followGraphDataProvider,
-    maxFollowedUsersProvider = DependencyProvider.from(MaxFollowedUsersParam)
+    matwitterFollowedUsersProvider = DependencyProvider.from(MatwitterFollowedUsersParam)
   )
   private[this] val fetchSearchResultsTransform = new EntityTweetsSearchResultsTransform(
     searchClient = searchClient,
@@ -78,8 +78,8 @@ class EntityTweetsSource(
       enableContentFeaturesGate = RecapQuery.paramGate(EnableContentFeaturesHydrationParam),
       enableTokensInContentFeaturesGate =
         RecapQuery.paramGate(EnableTokensInContentFeaturesHydrationParam),
-      enableTweetTextInContentFeaturesGate =
-        RecapQuery.paramGate(EnableTweetTextInContentFeaturesHydrationParam),
+      enableTweetTetwittertInContentFeaturesGate =
+        RecapQuery.paramGate(EnableTweetTetwittertInContentFeaturesHydrationParam),
       enableConversationControlContentFeaturesGate =
         RecapQuery.paramGate(EnableConversationControlInContentFeaturesHydrationParam),
       enableTweetMediaHydrationGate = RecapQuery.paramGate(EnableTweetMediaHydrationParam),

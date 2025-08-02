@@ -2,7 +2,7 @@ package com.twitter.timelineranker.repository
 
 import com.twitter.timelineranker.model.ReverseChronTimelineQuery
 import com.twitter.timelineranker.model.Timeline
-import com.twitter.timelineranker.parameters.revchron.ReverseChronTimelineQueryContextBuilder
+import com.twitter.timelineranker.parameters.revchron.ReverseChronTimelineQueryContetwittertBuilder
 import com.twitter.timelineranker.source.ReverseChronHomeTimelineSource
 import com.twitter.util.Future
 
@@ -13,8 +13,8 @@ import com.twitter.util.Future
  */
 class ReverseChronHomeTimelineRepository(
   source: ReverseChronHomeTimelineSource,
-  contextBuilder: ReverseChronTimelineQueryContextBuilder) {
+  contetwittertBuilder: ReverseChronTimelineQueryContetwittertBuilder) {
   def get(query: ReverseChronTimelineQuery): Future[Timeline] = {
-    contextBuilder(query).flatMap(source.get)
+    contetwittertBuilder(query).flatMap(source.get)
   }
 }

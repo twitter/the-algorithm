@@ -2,7 +2,7 @@ package com.twitter.visibility.configapi.configs
 
 import com.twitter.servo.decider.DeciderKeyEnum
 
-private[visibility] object DeciderKey extends DeciderKeyEnum {
+private[visibility] object DeciderKey etwittertends DeciderKeyEnum {
 
   val EnableAllSubscribedListsSafetyLevel: Value = Value(
     "visibility_library_enable_all_subscribed_lists_safety_level"
@@ -130,8 +130,8 @@ private[visibility] object DeciderKey extends DeciderKeyEnum {
   val EnableDirectMessagesConversationTimelineSafetyLevel: Value = Value(
     "visibility_library_enable_direct_messages_conversation_timeline_safety_level"
   )
-  val EnableDirectMessagesInboxSafetyLevel: Value = Value(
-    "visibility_library_enable_direct_messages_inbox_safety_level"
+  val EnableDirectMessagesInbotwitterSafetyLevel: Value = Value(
+    "visibility_library_enable_direct_messages_inbotwitter_safety_level"
   )
   val EnableDirectMessagesMutedUsersSafetyLevel: Value = Value(
     "visibility_library_enable_direct_messages_muted_users_safety_level"
@@ -260,8 +260,8 @@ private[visibility] object DeciderKey extends DeciderKeyEnum {
   val EnableNearbyTimelineSafetyLevel: Value = Value(
     "visibility_library_enable_nearby_timeline_safety_level"
   )
-  val EnableNewUserExperienceSafetyLevel: Value = Value(
-    "visibility_library_enable_new_user_experience_safety_level"
+  val EnableNewUserEtwitterperienceSafetyLevel: Value = Value(
+    "visibility_library_enable_new_user_etwitterperience_safety_level"
   )
   val EnableNotificationsIbisSafetyLevel: Value = Value(
     "visibility_library_enable_notifications_ibis_safety_level"
@@ -311,11 +311,11 @@ private[visibility] object DeciderKey extends DeciderKeyEnum {
   val EnableReportCenterSafetyLevel: Value = Value(
     "visibility_library_enable_report_center_safety_level"
   )
-  val EnableReturningUserExperienceSafetyLevel: Value = Value(
-    "visibility_library_enable_returning_user_experience_safety_level"
+  val EnableReturningUserEtwitterperienceSafetyLevel: Value = Value(
+    "visibility_library_enable_returning_user_etwitterperience_safety_level"
   )
-  val EnableReturningUserExperienceFocalTweetSafetyLevel: Value = Value(
-    "visibility_library_enable_returning_user_experience_focal_tweet_safety_level"
+  val EnableReturningUserEtwitterperienceFocalTweetSafetyLevel: Value = Value(
+    "visibility_library_enable_returning_user_etwitterperience_focal_tweet_safety_level"
   )
   val EnableRevenueSafetyLevel: Value = Value(
     "visibility_library_enable_revenue_safety_level"
@@ -338,11 +338,11 @@ private[visibility] object DeciderKey extends DeciderKeyEnum {
   val EnableSearchLatest: Value = Value(
     "visibility_library_enable_search_latest_safety_level"
   )
-  val EnableSearchMixerSrpMinimalSafetyLevel: Value = Value(
-    "visibility_library_enable_search_mixer_srp_minimal_safety_level"
+  val EnableSearchMitwittererSrpMinimalSafetyLevel: Value = Value(
+    "visibility_library_enable_search_mitwitterer_srp_minimal_safety_level"
   )
-  val EnableSearchMixerSrpStrictSafetyLevel: Value = Value(
-    "visibility_library_enable_search_mixer_srp_strict_safety_level"
+  val EnableSearchMitwittererSrpStrictSafetyLevel: Value = Value(
+    "visibility_library_enable_search_mitwitterer_srp_strict_safety_level"
   )
   val EnableUserSearchSrpSafetyLevel: Value = Value(
     "visibility_library_enable_user_search_srp_safety_level"
@@ -419,8 +419,8 @@ private[visibility] object DeciderKey extends DeciderKeyEnum {
   val EnableStickersTimelineSafetyLevel: Value = Value(
     "visibility_library_enable_stickers_timeline_safety_level"
   )
-  val EnableStratoExtLimitedEngagementsSafetyLevel: Value = Value(
-    "visibility_library_enable_strato_ext_limited_engagements_safety_level"
+  val EnableStratoEtwittertLimitedEngagementsSafetyLevel: Value = Value(
+    "visibility_library_enable_strato_etwittert_limited_engagements_safety_level"
   )
   val EnableStreamServicesSafetyLevel: Value = Value(
     "visibility_library_enable_stream_services_safety_level"
@@ -482,8 +482,8 @@ private[visibility] object DeciderKey extends DeciderKeyEnum {
   val EnableTopicsLandingPageTopicRecommendationsSafetyLevel: Value = Value(
     "visibility_library_enable_topics_landing_page_topic_recommendations_safety_level"
   )
-  val EnableExploreRecommendationsSafetyLevel: Value = Value(
-    "visibility_library_enable_explore_recommendations_safety_level"
+  val EnableEtwitterploreRecommendationsSafetyLevel: Value = Value(
+    "visibility_library_enable_etwitterplore_recommendations_safety_level"
   )
   val EnableTimelineInjectionSafetyLevel: Value = Value(
     "visibility_library_enable_timeline_injection_safety_level"
@@ -655,12 +655,12 @@ private[visibility] object DeciderKey extends DeciderKeyEnum {
     "visibility_library_enable_legacy_sensitive_media_rules_direct_messages"
   )
 
-  val VisibilityLibraryEnableToxicReplyFilterConversation: Value = Value(
-    "visibility_library_enable_toxic_reply_filter_conversation"
+  val VisibilityLibraryEnableTotwittericReplyFilterConversation: Value = Value(
+    "visibility_library_enable_totwitteric_reply_filter_conversation"
   )
 
-  val VisibilityLibraryEnableToxicReplyFilterNotifications: Value = Value(
-    "visibility_library_enable_toxic_reply_filter_notifications"
+  val VisibilityLibraryEnableTotwittericReplyFilterNotifications: Value = Value(
+    "visibility_library_enable_totwitteric_reply_filter_notifications"
   )
 
   val EnableSmyteSpamTweetRule: Value = Value(
@@ -728,32 +728,32 @@ private[visibility] object DeciderKey extends DeciderKeyEnum {
     "visibility_library_enable_reported_tweet_interstitial_search_rule"
   )
 
-  val EnableDropExclusiveTweetContentRule: Value = Value(
-    "visibility_library_enable_drop_exclusive_tweet_content_rule"
+  val EnableDropEtwitterclusiveTweetContentRule: Value = Value(
+    "visibility_library_enable_drop_etwitterclusive_tweet_content_rule"
   )
 
-  val EnableDropExclusiveTweetContentRuleFailClosed: Value = Value(
-    "visibility_library_enable_drop_exclusive_tweet_content_rule_fail_closed"
+  val EnableDropEtwitterclusiveTweetContentRuleFailClosed: Value = Value(
+    "visibility_library_enable_drop_etwitterclusive_tweet_content_rule_fail_closed"
   )
 
-  val EnableTombstoneExclusiveQtProfileTimelineParam: Value = Value(
-    "visibility_library_enable_tombstone_exclusive_quoted_tweet_content_rule"
+  val EnableTombstoneEtwitterclusiveQtProfileTimelineParam: Value = Value(
+    "visibility_library_enable_tombstone_etwitterclusive_quoted_tweet_content_rule"
   )
 
-  val EnableDropAllExclusiveTweetsRule: Value = Value(
-    "visibility_library_enable_drop_all_exclusive_tweets_rule"
+  val EnableDropAllEtwitterclusiveTweetsRule: Value = Value(
+    "visibility_library_enable_drop_all_etwitterclusive_tweets_rule"
   )
 
-  val EnableDropAllExclusiveTweetsRuleFailClosed: Value = Value(
-    "visibility_library_enable_drop_all_exclusive_tweets_rule_fail_closed"
+  val EnableDropAllEtwitterclusiveTweetsRuleFailClosed: Value = Value(
+    "visibility_library_enable_drop_all_etwitterclusive_tweets_rule_fail_closed"
   )
 
   val EnableDownrankSpamReplySectioningRule: Value = Value(
     "visibility_library_enable_downrank_spam_reply_sectioning_rule"
   )
 
-  val EnableNsfwTextSectioningRule: Value = Value(
-    "visibility_library_enable_nsfw_text_sectioning_rule"
+  val EnableNsfwTetwittertSectioningRule: Value = Value(
+    "visibility_library_enable_nsfw_tetwittert_sectioning_rule"
   )
 
   val EnableNsfwAgeBasedMediaDropRules: Value = Value(
@@ -872,8 +872,8 @@ private[visibility] object DeciderKey extends DeciderKeyEnum {
     "visibility_library_enable_short_circuiting_from_search_visibility_library"
   )
 
-  val EnableNsfwTextHighPrecisionDropRule: Value = Value(
-    "visibility_library_enable_nsfw_text_high_precision_drop_rule"
+  val EnableNsfwTetwittertHighPrecisionDropRule: Value = Value(
+    "visibility_library_enable_nsfw_tetwittert_high_precision_drop_rule"
   )
 
   val EnableSpammyTweetRuleVerdictLogging: Value = Value(
@@ -904,8 +904,8 @@ private[visibility] object DeciderKey extends DeciderKeyEnum {
     "visibility_library_enable_community_non_member_poll_card_rule_fail_closed"
   )
 
-  val EnableExperimentalNudgeLabelRule: Value = Value(
-    "visibility_library_enable_experimental_nudge_label_rule"
+  val EnableEtwitterperimentalNudgeLabelRule: Value = Value(
+    "visibility_library_enable_etwitterperimental_nudge_label_rule"
   )
 
   val NsfwHighPrecisionUserLabelAvoidTweetRuleEnabledParam: Value = Value(
@@ -981,14 +981,14 @@ private[visibility] object DeciderKey extends DeciderKeyEnum {
   )
 
   val EnableNsfwHpQuotedTweetDropRule: Value = Value(
-    "visibility_library_enable_nsfw_hp_quoted_tweet_drop_experiment_rule"
+    "visibility_library_enable_nsfw_hp_quoted_tweet_drop_etwitterperiment_rule"
   )
   val EnableNsfwHpQuotedTweetTombstoneRule: Value = Value(
-    "visibility_library_enable_nsfw_hp_quoted_tweet_tombstone_experiment_rule"
+    "visibility_library_enable_nsfw_hp_quoted_tweet_tombstone_etwitterperiment_rule"
   )
 
-  val EnableExperimentalRuleEngine: Value = Value(
-    "visibility_library_enable_experimental_rule_engine"
+  val EnableEtwitterperimentalRuleEngine: Value = Value(
+    "visibility_library_enable_etwitterperimental_rule_engine"
   )
 
   val EnableFosnrRules: Value = Value(
@@ -1007,8 +1007,8 @@ private[visibility] object DeciderKey extends DeciderKeyEnum {
     "visibility_library_enable_localized_interstitial_generator"
   )
 
-  val EnableProfileMixeMediaSafetyLevel: Value = Value(
-    "visibility_library_enable_profile_mixer_media_safety_level")
+  val EnableProfileMitwittereMediaSafetyLevel: Value = Value(
+    "visibility_library_enable_profile_mitwitterer_media_safety_level")
 
   val EnableConvosLocalizedInterstitial: Value = Value(
     "visibility_library_convos_enable_localized_interstitial"
@@ -1030,8 +1030,8 @@ private[visibility] object DeciderKey extends DeciderKeyEnum {
     "visibility_library_enable_localized_interstitial_user_state_lib"
   )
 
-  val EnableProfileMixerFavoritesSafetyLevel: Value = Value(
-    "visibility_library_enable_profile_mixer_favorites_safety_level")
+  val EnableProfileMitwittererFavoritesSafetyLevel: Value = Value(
+    "visibility_library_enable_profile_mitwitterer_favorites_safety_level")
 
   val EnableAbusiveBehaviorDropRule: Value = Value(
     "visibility_library_enable_abusive_behavior_drop_rule"

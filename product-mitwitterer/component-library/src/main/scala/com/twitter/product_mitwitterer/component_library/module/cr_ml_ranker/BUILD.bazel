@@ -1,0 +1,13 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "cr-ml-ranker/thrift/src/main/thrift:thrift-scala",
+        "finatra/inject/inject-core/src/main/scala",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/scorer/cr_ml_ranker",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/module",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/pipeline",
+    ],
+)

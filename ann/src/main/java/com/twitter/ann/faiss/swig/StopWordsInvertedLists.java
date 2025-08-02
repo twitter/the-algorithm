@@ -8,7 +8,7 @@
 
 package com.twitter.ann.faiss;
 
-public class StopWordsInvertedLists extends ReadOnlyInvertedLists {
+public class StopWordsInvertedLists etwittertends ReadOnlyInvertedLists {
   private transient long swigCPtr;
 
   protected StopWordsInvertedLists(long cPtr, boolean cMemoryOwn) {
@@ -45,16 +45,16 @@ public class StopWordsInvertedLists extends ReadOnlyInvertedLists {
     return (cPtr == 0) ? null : new InvertedLists(cPtr, false);
   }
 
-  public void setMaxsize(long value) {
-    swigfaissJNI.StopWordsInvertedLists_maxsize_set(swigCPtr, this, value);
+  public void setMatwittersize(long value) {
+    swigfaissJNI.StopWordsInvertedLists_matwittersize_set(swigCPtr, this, value);
   }
 
-  public long getMaxsize() {
-    return swigfaissJNI.StopWordsInvertedLists_maxsize_get(swigCPtr, this);
+  public long getMatwittersize() {
+    return swigfaissJNI.StopWordsInvertedLists_matwittersize_get(swigCPtr, this);
   }
 
-  public StopWordsInvertedLists(InvertedLists il, long maxsize) {
-    this(swigfaissJNI.new_StopWordsInvertedLists(InvertedLists.getCPtr(il), il, maxsize), true);
+  public StopWordsInvertedLists(InvertedLists il, long matwittersize) {
+    this(swigfaissJNI.new_StopWordsInvertedLists(InvertedLists.getCPtr(il), il, matwittersize), true);
   }
 
   public long list_size(long list_no) {

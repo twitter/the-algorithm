@@ -108,10 +108,10 @@ class LoggedOutRefreshForPushNotifier(
     val bstats = BroadcastStatsReceiver(receivers)
     Stat
       .timeFuture(bstats.stat("logged_out_latency"))(
-        loggedOutResponse.raiseWithin(CommonConstants.maxPushRequestDuration)
+        loggedOutResponse.raiseWithin(CommonConstants.matwitterPushRequestDuration)
       )
-      .onFailure { exception =>
-        rfphStatsRecorder.loggedOutRequestExceptionStats(exception, bstats)
+      .onFailure { etwitterception =>
+        rfphStatsRecorder.loggedOutRequestEtwitterceptionStats(etwitterception, bstats)
       }
     loggedOutResponse
   }

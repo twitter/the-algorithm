@@ -26,10 +26,10 @@ case class PastedMedia(mediaEntities: Seq[MediaEntity], mediaTags: Map[MediaId, 
     )
 
   /**
-   * Return a new PastedMedia that contains only the first maxMediaEntities media entities
+   * Return a new PastedMedia that contains only the first matwitterMediaEntities media entities
    */
-  def take(maxMediaEntities: Int): PastedMedia = {
-    val entities = this.mediaEntities.take(maxMediaEntities)
+  def take(matwitterMediaEntities: Int): PastedMedia = {
+    val entities = this.mediaEntities.take(matwitterMediaEntities)
     val mediaIds = entities.map(_.mediaId)
     val pastedTags = mediaTags.filterKeys { id => mediaIds.contains(id) }
 
@@ -77,18 +77,18 @@ object PastedMedia {
 }
 
 object PastedMediaRepository {
-  type Type = (TweetId, Ctx) => Stitch[PastedMedia]
+  type Type = (TweetId, Cttwitter) => Stitch[PastedMedia]
 
-  case class Ctx(
+  case class Cttwitter(
     includeMediaEntities: Boolean,
     includeAdditionalMetadata: Boolean,
     includeMediaTags: Boolean,
-    extensionsArgs: Option[ByteBuffer],
+    etwittertensionsArgs: Option[ByteBuffer],
     safetyLevel: SafetyLevel) {
     def asTweetQueryOptions: TweetQuery.Options =
       TweetQuery.Options(
         enforceVisibilityFiltering = true,
-        extensionsArgs = extensionsArgs,
+        etwittertensionsArgs = etwittertensionsArgs,
         safetyLevel = safetyLevel,
         include = TweetQuery.Include(
           tweetFields =
@@ -112,8 +112,8 @@ object PastedMediaRepository {
    * are protected, deactivated, suspended, etc.
    */
   def apply(tweetRepo: TweetRepository.Type): Type =
-    (tweetId, ctx) =>
-      tweetRepo(tweetId, ctx.asTweetQueryOptions)
+    (tweetId, cttwitter) =>
+      tweetRepo(tweetId, cttwitter.asTweetQueryOptions)
         .flatMap { t =>
           val entities = PastedMedia.getMediaEntities(t)
           if (entities.nonEmpty) {

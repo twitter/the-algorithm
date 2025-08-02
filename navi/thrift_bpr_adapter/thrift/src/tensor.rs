@@ -2,8 +2,8 @@
 // DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
 
 #![allow(unused_imports)]
-#![allow(unused_extern_crates)]
-#![allow(clippy::too_many_arguments, clippy::type_complexity, clippy::vec_box)]
+#![allow(unused_etwittertern_crates)]
+#![allow(clippy::too_many_arguments, clippy::type_completwitterity, clippy::vec_botwitter)]
 #![cfg_attr(rustfmt, rustfmt_skip)]
 
 use std::cell::RefCell;
@@ -19,10 +19,10 @@ use thrift::OrderedFloat;
 use thrift::{ApplicationError, ApplicationErrorKind, ProtocolError, ProtocolErrorKind, TThriftClient};
 use thrift::protocol::{TFieldIdentifier, TListIdentifier, TMapIdentifier, TMessageIdentifier, TMessageType, TInputProtocol, TOutputProtocol, TSerializable, TSetIdentifier, TStructIdentifier, TType};
 use thrift::protocol::field_id;
-use thrift::protocol::verify_expected_message_type;
-use thrift::protocol::verify_expected_sequence_number;
-use thrift::protocol::verify_expected_service_call;
-use thrift::protocol::verify_required_field_exists;
+use thrift::protocol::verify_etwitterpected_message_type;
+use thrift::protocol::verify_etwitterpected_sequence_number;
+use thrift::protocol::verify_etwitterpected_service_call;
+use thrift::protocol::verify_required_field_etwitterists;
 use thrift::server::TProcessor;
 
 #[derive(Copy, Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
@@ -161,9 +161,9 @@ impl TSerializable for StringTensor {
       i_prot.read_field_end()?;
     }
     i_prot.read_struct_end()?;
-    verify_required_field_exists("StringTensor.strings", &f_1)?;
+    verify_required_field_etwitterists("StringTensor.strings", &f_1)?;
     let ret = StringTensor {
-      strings: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      strings: f_1.etwitterpect("auto-generated code should have checked for presence of required fields"),
       shape: f_2,
     };
     Ok(ret)
@@ -250,9 +250,9 @@ impl TSerializable for Int32Tensor {
       i_prot.read_field_end()?;
     }
     i_prot.read_struct_end()?;
-    verify_required_field_exists("Int32Tensor.ints", &f_1)?;
+    verify_required_field_etwitterists("Int32Tensor.ints", &f_1)?;
     let ret = Int32Tensor {
-      ints: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      ints: f_1.etwitterpect("auto-generated code should have checked for presence of required fields"),
       shape: f_2,
     };
     Ok(ret)
@@ -339,9 +339,9 @@ impl TSerializable for Int64Tensor {
       i_prot.read_field_end()?;
     }
     i_prot.read_struct_end()?;
-    verify_required_field_exists("Int64Tensor.longs", &f_1)?;
+    verify_required_field_etwitterists("Int64Tensor.longs", &f_1)?;
     let ret = Int64Tensor {
-      longs: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      longs: f_1.etwitterpect("auto-generated code should have checked for presence of required fields"),
       shape: f_2,
     };
     Ok(ret)
@@ -428,9 +428,9 @@ impl TSerializable for FloatTensor {
       i_prot.read_field_end()?;
     }
     i_prot.read_struct_end()?;
-    verify_required_field_exists("FloatTensor.floats", &f_1)?;
+    verify_required_field_etwitterists("FloatTensor.floats", &f_1)?;
     let ret = FloatTensor {
-      floats: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      floats: f_1.etwitterpect("auto-generated code should have checked for presence of required fields"),
       shape: f_2,
     };
     Ok(ret)
@@ -517,9 +517,9 @@ impl TSerializable for DoubleTensor {
       i_prot.read_field_end()?;
     }
     i_prot.read_struct_end()?;
-    verify_required_field_exists("DoubleTensor.doubles", &f_1)?;
+    verify_required_field_etwitterists("DoubleTensor.doubles", &f_1)?;
     let ret = DoubleTensor {
-      doubles: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      doubles: f_1.etwitterpect("auto-generated code should have checked for presence of required fields"),
       shape: f_2,
     };
     Ok(ret)
@@ -606,9 +606,9 @@ impl TSerializable for BoolTensor {
       i_prot.read_field_end()?;
     }
     i_prot.read_struct_end()?;
-    verify_required_field_exists("BoolTensor.booleans", &f_1)?;
+    verify_required_field_etwitterists("BoolTensor.booleans", &f_1)?;
     let ret = BoolTensor {
-      booleans: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      booleans: f_1.etwitterpect("auto-generated code should have checked for presence of required fields"),
       shape: f_2,
     };
     Ok(ret)
@@ -696,11 +696,11 @@ impl TSerializable for RawTypedTensor {
       i_prot.read_field_end()?;
     }
     i_prot.read_struct_end()?;
-    verify_required_field_exists("RawTypedTensor.data_type", &f_1)?;
-    verify_required_field_exists("RawTypedTensor.content", &f_2)?;
+    verify_required_field_etwitterists("RawTypedTensor.data_type", &f_1)?;
+    verify_required_field_etwitterists("RawTypedTensor.content", &f_2)?;
     let ret = RawTypedTensor {
-      data_type: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      content: f_2.expect("auto-generated code should have checked for presence of required fields"),
+      data_type: f_1.etwitterpect("auto-generated code should have checked for presence of required fields"),
+      content: f_2.etwitterpect("auto-generated code should have checked for presence of required fields"),
       shape: f_3,
     };
     Ok(ret)
@@ -786,9 +786,9 @@ impl TSerializable for BinaryTensor {
       i_prot.read_field_end()?;
     }
     i_prot.read_struct_end()?;
-    verify_required_field_exists("BinaryTensor.binaries", &f_1)?;
+    verify_required_field_etwitterists("BinaryTensor.binaries", &f_1)?;
     let ret = BinaryTensor {
-      binaries: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      binaries: f_1.etwitterpect("auto-generated code should have checked for presence of required fields"),
       shape: f_2,
     };
     Ok(ret)
@@ -928,7 +928,7 @@ impl TSerializable for GeneralTensor {
         )
       )
     } else {
-      Ok(ret.expect("return value should have been constructed"))
+      Ok(ret.etwitterpect("return value should have been constructed"))
     }
   }
   fn write_to_out_protocol(&self, o_prot: &mut dyn TOutputProtocol) -> thrift::Result<()> {
@@ -1040,13 +1040,13 @@ impl TSerializable for COOSparseTensor {
       i_prot.read_field_end()?;
     }
     i_prot.read_struct_end()?;
-    verify_required_field_exists("COOSparseTensor.dense_shape", &f_1)?;
-    verify_required_field_exists("COOSparseTensor.indices", &f_2)?;
-    verify_required_field_exists("COOSparseTensor.values", &f_3)?;
+    verify_required_field_etwitterists("COOSparseTensor.dense_shape", &f_1)?;
+    verify_required_field_etwitterists("COOSparseTensor.indices", &f_2)?;
+    verify_required_field_etwitterists("COOSparseTensor.values", &f_3)?;
     let ret = COOSparseTensor {
-      dense_shape: f_1.expect("auto-generated code should have checked for presence of required fields"),
-      indices: f_2.expect("auto-generated code should have checked for presence of required fields"),
-      values: f_3.expect("auto-generated code should have checked for presence of required fields"),
+      dense_shape: f_1.etwitterpect("auto-generated code should have checked for presence of required fields"),
+      indices: f_2.etwitterpect("auto-generated code should have checked for presence of required fields"),
+      values: f_3.etwitterpect("auto-generated code should have checked for presence of required fields"),
     };
     Ok(ret)
   }
@@ -1126,7 +1126,7 @@ impl TSerializable for SparseTensor {
         )
       )
     } else {
-      Ok(ret.expect("return value should have been constructed"))
+      Ok(ret.etwitterpect("return value should have been constructed"))
     }
   }
   fn write_to_out_protocol(&self, o_prot: &mut dyn TOutputProtocol) -> thrift::Result<()> {

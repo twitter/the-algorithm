@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.search.relevance.scoring;
 
-import org.apache.lucene.search.Explanation;
+import org.apache.lucene.search.Etwitterplanation;
 
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
@@ -14,7 +14,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
  * Since score_filter: operator requires all score to be between [0, 1], if you want to use this
  * with it, don't use any tweet id larger than 10000 in your test.
  */
-public class TestScoringFunction extends ScoringFunction {
+public class TestScoringFunction etwittertends ScoringFunction {
   private ThriftSearchResultMetadata metadata = null;
   private float score;
 
@@ -31,7 +31,7 @@ public class TestScoringFunction extends ScoringFunction {
   }
 
   @Override
-  protected Explanation doExplain(float luceneScore) {
+  protected Etwitterplanation doEtwitterplain(float luceneScore) {
     return null;
   }
 

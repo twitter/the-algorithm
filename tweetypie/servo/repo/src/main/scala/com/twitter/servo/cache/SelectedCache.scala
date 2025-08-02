@@ -5,7 +5,7 @@ import com.twitter.util.Future
 /**
  * Represents multiple underlying ReadCaches selected by key at invocation time.
  */
-trait SelectedReadCacheWrapper[K, V, This <: ReadCache[K, V]] extends ReadCache[K, V] {
+trait SelectedReadCacheWrapper[K, V, This <: ReadCache[K, V]] etwittertends ReadCache[K, V] {
 
   /** Retrieves the underlying cache for the given key. */
   def underlyingCache(key: K): This
@@ -43,7 +43,7 @@ trait SelectedReadCacheWrapper[K, V, This <: ReadCache[K, V]] extends ReadCache[
  * Represents multiple underlying Caches selected by key at invocation time.
  */
 trait SelectedCacheWrapper[K, V]
-    extends Cache[K, V]
+    etwittertends Cache[K, V]
     with SelectedReadCacheWrapper[K, V, Cache[K, V]] {
   override def add(key: K, value: V) = underlyingCache(key).add(key, value)
 
@@ -62,7 +62,7 @@ trait SelectedCacheWrapper[K, V]
  * caches based on a function.
  */
 class SelectedCache[K, V](primary: Cache[K, V], secondary: Cache[K, V], usePrimary: K => Boolean)
-    extends SelectedCacheWrapper[K, V] {
+    etwittertends SelectedCacheWrapper[K, V] {
   override def underlyingCache(key: K) = if (usePrimary(key)) primary else secondary
 
   override def underlyingCacheForKeys(keys: Seq[K]) = {
@@ -78,9 +78,9 @@ class SelectedCache[K, V](primary: Cache[K, V], secondary: Cache[K, V], usePrima
  * Factory for SelectedCache instances that use a simple function to migrate
  * users from a secondary cache (function returns false) to a primary cache
  * (function returns true). Serves a purpose similar to CacheFactory, but
- * cannot extend it due to type constraints.
+ * cannot etwittertend it due to type constraints.
  *
- * The function is expected to produce stable results by key over time to
+ * The function is etwitterpected to produce stable results by key over time to
  * prevent accessing stale cache entries due to keys flapping between the
  * two caches.
  */

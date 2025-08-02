@@ -6,7 +6,7 @@ create_thrift_libraries(
     dependency_roots = [
         "mediaservices/commons/src/main/thrift",
     ],
-    export_roots = [
+    etwitterport_roots = [
         "mediaservices/commons/src/main/thrift:thrift",
     ],
     generate_languages = [
@@ -93,10 +93,10 @@ create_thrift_libraries(
         ":media-entity",
         ":note-tweet",
         "mediaservices/commons/src/main/thrift",
-        "src/thrift/com/twitter/content-health/toxicreplyfilter",
+        "src/thrift/com/twitter/content-health/totwittericreplyfilter",
         "src/thrift/com/twitter/dataproducts:enrichments_profilegeo",
         "src/thrift/com/twitter/escherbird:tweet-annotation",
-        "src/thrift/com/twitter/expandodo:cards",
+        "src/thrift/com/twitter/etwitterpandodo:cards",
         "src/thrift/com/twitter/geoduck",
         "src/thrift/com/twitter/service/scarecrow/gen:tiered-actions",
         "src/thrift/com/twitter/spam/rtf:safety-label",
@@ -106,16 +106,16 @@ create_thrift_libraries(
         "strato/config/src/thrift/com/twitter/strato/columns/creative_entity_enrichments",
         "unified-cards/thrift/src/main/thrift:thrift-contract",
     ],
-    export_roots = [
+    etwitterport_roots = [
         ":api-fields",
         ":edit-control",
         ":media-entity",
         ":note-tweet",
         "mediaservices/commons/src/main/thrift:thrift",
-        "src/thrift/com/twitter/content-health/toxicreplyfilter",
+        "src/thrift/com/twitter/content-health/totwittericreplyfilter",
         "src/thrift/com/twitter/dataproducts:enrichments_profilegeo",
         "src/thrift/com/twitter/escherbird:tweet-annotation",
-        "src/thrift/com/twitter/expandodo:cards",
+        "src/thrift/com/twitter/etwitterpandodo:cards",
         "src/thrift/com/twitter/geoduck:geoduck",
         "src/thrift/com/twitter/service/scarecrow/gen:tiered-actions",
         "src/thrift/com/twitter/spam/rtf:safety-label",
@@ -147,27 +147,27 @@ create_thrift_libraries(
     tags = ["bazel-compatible"],
     dependency_roots = [
         ":audit",
-        ":transient_context",
+        ":transient_contetwittert",
         ":tweet",
         "carousel/service/thrift:service",
         "incentives/jiminy/src/main/thrift/com/twitter/incentives/jiminy:thrift",
         "mediaservices/commons/src/main/thrift",
         "src/thrift/com/twitter/bouncer:bounce-action-thrift",
-        "src/thrift/com/twitter/context:feature-context",
-        "src/thrift/com/twitter/servo:servo-exception",
+        "src/thrift/com/twitter/contetwittert:feature-contetwittert",
+        "src/thrift/com/twitter/servo:servo-etwitterception",
         "src/thrift/com/twitter/spam/features:safety-meta-data",
         "src/thrift/com/twitter/spam/rtf:safety-label",
         "src/thrift/com/twitter/spam/rtf:safety-level",
         "src/thrift/com/twitter/spam/rtf:safety-result",
         "src/thrift/com/twitter/tseng/withholding:thrift",
     ],
-    export_roots = [
-        ":transient_context",
+    etwitterport_roots = [
+        ":transient_contetwittert",
         ":tweet",
         "carousel/service/thrift:service",
         "incentives/jiminy/src/main/thrift/com/twitter/incentives/jiminy:thrift",
         "src/thrift/com/twitter/bouncer:bounce-action-thrift",
-        "src/thrift/com/twitter/context:feature-context",
+        "src/thrift/com/twitter/contetwittert:feature-contetwittert",
         "src/thrift/com/twitter/spam/features:safety-meta-data",
         "src/thrift/com/twitter/spam/rtf:safety-level",
         "src/thrift/com/twitter/spam/rtf:safety-result",
@@ -194,13 +194,13 @@ create_thrift_libraries(
     tags = ["bazel-compatible"],
     dependency_roots = [
         ":audit",
-        ":transient_context",
+        ":transient_contetwittert",
         ":tweet",
         "src/thrift/com/twitter/gizmoduck:user-thrift",
     ],
-    export_roots = [
+    etwitterport_roots = [
         ":audit",
-        ":transient_context",
+        ":transient_contetwittert",
         ":tweet",
         "src/thrift/com/twitter/gizmoduck:user-thrift",
     ],
@@ -240,7 +240,7 @@ create_thrift_libraries(
         ":service",
         ":tweet",
         "mediaservices/commons/src/main/thrift",
-        "src/thrift/com/twitter/expandodo:cards",
+        "src/thrift/com/twitter/etwitterpandodo:cards",
         "src/thrift/com/twitter/gizmoduck:user-thrift",
         "tweetypie/common/src/thrift/com/twitter/tweetypie:media-entity",
     ],
@@ -263,8 +263,8 @@ create_thrift_libraries(
 )
 
 create_thrift_libraries(
-    base_name = "transient_context",
-    sources = ["transient_context.thrift"],
+    base_name = "transient_contetwittert",
+    sources = ["transient_contetwittert.thrift"],
     platform = "java8",
     tags = ["bazel-compatible"],
     dependency_roots = [
@@ -278,8 +278,8 @@ create_thrift_libraries(
         "scala",
         "strato",
     ],
-    provides_java_name = "transient-context-java",
-    provides_scala_name = "transient-context-scala",
+    provides_java_name = "transient-contetwittert-java",
+    provides_scala_name = "transient-contetwittert-scala",
 )
 
 create_thrift_libraries(
@@ -288,7 +288,7 @@ create_thrift_libraries(
     tags = ["bazel-compatible"],
     dependency_roots = [
         ":service",
-        "src/thrift/com/twitter/context:twitter-context",
+        "src/thrift/com/twitter/contetwittert:twitter-contetwittert",
     ],
     generate_languages = [
         "java",

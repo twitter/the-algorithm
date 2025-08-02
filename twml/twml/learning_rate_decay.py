@@ -10,7 +10,7 @@ def get_learning_rate_decay_fn(params):
   as arguments and returns the current learning rate.
 
   Currently supports params.learning_rate_decay values of:
-  exponential | polynomial | piecewise_constant | cosine | cosine restarts.
+  etwitterponential | polynomial | piecewise_constant | cosine | cosine restarts.
   See `Decaying the Leanring Rate
   <https://www.tensorflow.org/api_guides/python/train#Decaying_the_learning_rate>`_ for details.
 
@@ -21,46 +21,46 @@ def get_learning_rate_decay_fn(params):
   paramsv = params.values()
   if 'learning_rate_decay' not in paramsv or params.learning_rate_decay == 'no_learning_rate_decay':
     return None
-  elif params.learning_rate_decay == 'exponential_learning_rate_decay':
+  elif params.learning_rate_decay == 'etwitterponential_learning_rate_decay':
     if 'decay_steps' not in paramsv:
-      raise ValueError("Expecting params.decay_steps for "
-                       "params.learning_rate_decay == 'exponential'")
-    if 'exponential_decay_rate' not in paramsv:
-      raise ValueError("Expecting params.exponential_decay_rate for "
-                       "params.learning_rate_decay == 'exponential'")
+      raise ValueError("Etwitterpecting params.decay_steps for "
+                       "params.learning_rate_decay == 'etwitterponential'")
+    if 'etwitterponential_decay_rate' not in paramsv:
+      raise ValueError("Etwitterpecting params.etwitterponential_decay_rate for "
+                       "params.learning_rate_decay == 'etwitterponential'")
 
-    def exponential_decay_fn(learning_rate, global_step):
-      """ exponential decay function to be passed to optimize_loss """
-      return tf.train.exponential_decay(
+    def etwitterponential_decay_fn(learning_rate, global_step):
+      """ etwitterponential decay function to be passed to optimize_loss """
+      return tf.train.etwitterponential_decay(
         learning_rate=learning_rate,
         global_step=global_step,
         decay_steps=params.decay_steps,
-        decay_rate=params.exponential_decay_rate
+        decay_rate=params.etwitterponential_decay_rate
       )
-    return exponential_decay_fn
+    return etwitterponential_decay_fn
   elif params.learning_rate_decay == 'piecewise_constant_learning_rate_decay':
     if 'piecewise_constant_boundaries' not in paramsv:
-      raise ValueError("Expecting params.piecewise_constant_boundaries for "
+      raise ValueError("Etwitterpecting params.piecewise_constant_boundaries for "
                        "params.learning_rate_decay == 'piecewise_constant'")
     if 'piecewise_constant_values' not in paramsv:
-      raise ValueError("Expecting params.piecewise_constant_values for "
+      raise ValueError("Etwitterpecting params.piecewise_constant_values for "
                        "params.learning_rate_decay == 'piecewise_constant'")
     # pylint: disable=unused-argument
 
     def piecewise_constant_fn(learning_rate, global_step):
       """ piecewise_constant decay function to be passed to optimize_loss """
       return tf.train.piecewise_constant(
-        x=global_step,
+        twitter=global_step,
         boundaries=params.piecewise_constant_boundaries,
         values=params.piecewise_constant_values
       )
     return piecewise_constant_fn
   elif params.learning_rate_decay == 'polynomial_learning_rate_decay':
     if 'decay_steps' not in paramsv:
-      raise ValueError("Expecting params.decay_steps for "
+      raise ValueError("Etwitterpecting params.decay_steps for "
                        "params.learning_rate_decay == 'polynomial'")
     if 'end_learning_rate' not in paramsv:
-      raise ValueError("Expecting params.end_learning_rate for "
+      raise ValueError("Etwitterpecting params.end_learning_rate for "
                        "params.learning_rate_decay == 'polynomial'")
 
     def polynomial_decay_fn(learning_rate, global_step):
@@ -76,19 +76,19 @@ def get_learning_rate_decay_fn(params):
 
   elif params.learning_rate_decay == 'inverse_learning_rate_decay':
     if 'min_learning_rate' not in paramsv:
-      raise ValueError("Expecting params.min_learning_rate for "
+      raise ValueError("Etwitterpecting params.min_learning_rate for "
                        "params.learning_rate_decay == 'inverse'")
     if 'decay_rate' not in paramsv:
-      raise ValueError("Expecting params.decay_rate for "
+      raise ValueError("Etwitterpecting params.decay_rate for "
                        "params.learning_rate_decay == 'inverse'")
     if 'decay_steps' not in paramsv:
-      raise ValueError("Expecting params.decay_steps for "
+      raise ValueError("Etwitterpecting params.decay_steps for "
                        "params.learning_rate_decay == 'inverse'")
 
     def bounded_inverse_time_decay_fn(learning_rate, global_step):
       '''
       Returns the decayed learning_rate by applying the function:
-      decayed_lr = max(lr /(1 + decay_rate * floor(global_step /decay_step)),
+      decayed_lr = matwitter(lr /(1 + decay_rate * floor(global_step /decay_step)),
                        min_learning_rate)
       Arguments:
         learning_rate:
@@ -119,17 +119,17 @@ def get_learning_rate_decay_fn(params):
       dtype = decayed_rate.dtype
       # Casting the min_learning rate the same dtype as decayes rate
       min_learning_rate = tf.cast(params.min_learning_rate, dtype)
-      # Returning the maximum between the two
-      return tf.maximum(decayed_rate, min_learning_rate)
+      # Returning the matwitterimum between the two
+      return tf.matwitterimum(decayed_rate, min_learning_rate)
 
     return bounded_inverse_time_decay_fn
 
   elif params.learning_rate_decay == 'cosine_learning_rate_decay':
     if 'decay_steps' not in paramsv:
-      raise ValueError("Expecting params.decay_steps for "
+      raise ValueError("Etwitterpecting params.decay_steps for "
                        "params.learning_rate_decay == 'cosine_decay'")
     if "alpha" not in paramsv:
-      raise ValueError("Expecting params.alpha for "
+      raise ValueError("Etwitterpecting params.alpha for "
                        "params.learning_rate_decay == 'cosine_decay'")
     def cosine_decay_fn(learning_rate, global_step):
       """ cosine decay function to be passed to optimize_loss """
@@ -142,16 +142,16 @@ def get_learning_rate_decay_fn(params):
     return cosine_decay_fn
   elif params.learning_rate_decay == 'cosine_restarts_learning_rate_decay':
     if 'first_decay_steps' not in paramsv:
-      raise ValueError("Expecting params.first_decay_steps for "
+      raise ValueError("Etwitterpecting params.first_decay_steps for "
                        "params.learning_rate_decay == 'cosine_restarts_decay'")
     if 't_mul' not in paramsv:
-      raise ValueError("Expecting params.t_mul for "
+      raise ValueError("Etwitterpecting params.t_mul for "
                        "params.learning_rate_decay == 'cosine_restarts_decay'")
     if 'm_mul' not in paramsv:
-      raise ValueError("Expecting params.m_mul for "
+      raise ValueError("Etwitterpecting params.m_mul for "
                        "params.learning_rate_decay == 'cosine_restarts_decay'")
     if "alpha" not in paramsv:
-      raise ValueError("Expecting params.alpha for "
+      raise ValueError("Etwitterpecting params.alpha for "
                        "params.learning_rate_decay == 'cosine_restarts_decay'")
     def cosine_restart_decay_fn(learning_rate, global_step):
       """ cosine decay function to be passed to optimize_loss """

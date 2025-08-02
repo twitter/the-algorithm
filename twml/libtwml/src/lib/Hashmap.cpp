@@ -11,7 +11,7 @@ namespace twml {
   }
 
   HashMap::~HashMap() {
-    // Do not throw exceptions from the destructor
+    // Do not throw etwitterceptions from the destructor
     twml_hashmap_delete(m_hashmap);
   }
 

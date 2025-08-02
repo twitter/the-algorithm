@@ -1,9 +1,9 @@
 package com.twitter.frigate.pushservice.adaptor
 
-import com.twitter.cr_mixer.thriftscala.FrsTweetRequest
-import com.twitter.cr_mixer.thriftscala.NotificationsContext
-import com.twitter.cr_mixer.thriftscala.Product
-import com.twitter.cr_mixer.thriftscala.ProductContext
+import com.twitter.cr_mitwitterer.thriftscala.FrsTweetRequest
+import com.twitter.cr_mitwitterer.thriftscala.NotificationsContetwittert
+import com.twitter.cr_mitwitterer.thriftscala.Product
+import com.twitter.cr_mitwitterer.thriftscala.ProductContetwittert
 import com.twitter.finagle.stats.Counter
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base.CandidateSource
@@ -13,7 +13,7 @@ import com.twitter.frigate.common.predicate.CommonOutNetworkTweetCandidatesSourc
 import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
 import com.twitter.frigate.pushservice.model.PushTypes.Target
 import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.store.CrMixerTweetStore
+import com.twitter.frigate.pushservice.store.CrMitwittererTweetStore
 import com.twitter.frigate.pushservice.store.UttEntityHydrationStore
 import com.twitter.frigate.pushservice.util.MediaCRT
 import com.twitter.frigate.pushservice.util.PushAdaptorUtil
@@ -28,7 +28,7 @@ import com.twitter.hermit.model.Algorithm.ForwardPhoneBook
 import com.twitter.hermit.model.Algorithm.ReverseEmailBookIbis
 import com.twitter.hermit.model.Algorithm.ReversePhoneBook
 import com.twitter.hermit.store.tweetypie.UserTweet
-import com.twitter.product_mixer.core.thriftscala.ClientContext
+import com.twitter.product_mitwitterer.core.thriftscala.ClientContetwittert
 import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
 import com.twitter.storehaus.ReadableStore
 import com.twitter.tsp.thriftscala.TopicSocialProofRequest
@@ -54,14 +54,14 @@ object FRSAlgorithmFeedbackTokenUtil {
 }
 
 case class FRSTweetCandidateAdaptor(
-  crMixerTweetStore: CrMixerTweetStore,
+  crMitwittererTweetStore: CrMitwittererTweetStore,
   tweetyPieStore: ReadableStore[Long, TweetyPieResult],
   tweetyPieStoreNoVF: ReadableStore[Long, TweetyPieResult],
   userTweetTweetyPieStore: ReadableStore[UserTweet, TweetyPieResult],
   uttEntityHydrationStore: UttEntityHydrationStore,
   topicSocialProofServiceStore: ReadableStore[TopicSocialProofRequest, TopicSocialProofResponse],
   globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
+    etwittertends CandidateSource[Target, RawCandidate]
     with CandidateSourceEligible[Target, RawCandidate] {
 
   private val stats = globalStats.scope(this.getClass.getSimpleName)
@@ -194,7 +194,7 @@ case class FRSTweetCandidateAdaptor(
     }
   }
 
-  def getTweetCandidatesFromCrMixer(
+  def getTweetCandidatesFromCrMitwitterer(
     inputTarget: Target,
     showAllResultsFromFrs: Boolean,
   ): Future[Option[Seq[RawCandidate with TweetCandidate]]] = {
@@ -207,17 +207,17 @@ case class FRSTweetCandidateAdaptor(
         case (seenTweetIds, pastRecItems, countryCode, language) =>
           val pastUserRecs = pastRecItems.userIds.toSeq
           val request = FrsTweetRequest(
-            clientContext = ClientContext(
+            clientContetwittert = ClientContetwittert(
               userId = Some(inputTarget.targetId),
               countryCode = countryCode,
               languageCode = language
             ),
             product = Product.Notifications,
-            productContext = Some(ProductContext.NotificationsContext(NotificationsContext())),
-            excludedUserIds = Some(pastUserRecs),
-            excludedTweetIds = Some(seenTweetIds)
+            productContetwittert = Some(ProductContetwittert.NotificationsContetwittert(NotificationsContetwittert())),
+            etwittercludedUserIds = Some(pastUserRecs),
+            etwittercludedTweetIds = Some(seenTweetIds)
           )
-          crMixerTweetStore.getFRSTweetCandidates(request).flatMap {
+          crMitwittererTweetStore.getFRSTweetCandidates(request).flatMap {
             case Some(response) =>
               val tweetIds = response.tweets.map(_.tweetId)
               val validTweets = filterInvalidTweets(tweetIds, inputTarget)
@@ -255,7 +255,7 @@ case class FRSTweetCandidateAdaptor(
     totalRequests.incr()
     val enableResultsFromFrs =
       inputTarget.params(PushFeatureSwitchParams.EnableResultFromFrsCandidates)
-    getTweetCandidatesFromCrMixer(inputTarget, enableResultsFromFrs)
+    getTweetCandidatesFromCrMitwitterer(inputTarget, enableResultsFromFrs)
   }
 
   override def isCandidateSourceAvailable(target: Target): Future[Boolean] = {

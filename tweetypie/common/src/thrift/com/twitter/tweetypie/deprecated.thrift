@@ -4,7 +4,7 @@ namespace java com.twitter.tweetypie.thriftjava
 namespace py gen.twitter.tweetypie.deprecated
 namespace rb TweetyPie
 
-include "com/twitter/expandodo/cards.thrift"
+include "com/twitter/etwitterpandodo/cards.thrift"
 include "com/twitter/gizmoduck/user.thrift"
 include "com/twitter/tweetypie/media_entity.thrift"
 include "com/twitter/tweetypie/tweet.thrift"
@@ -43,7 +43,7 @@ struct Geo {
   5: optional string name (personalDataType = 'PublishedCoarseLocationTweet')
 
   6: optional tweet.Place place // provided if StatusRequestOptions.load_places is set
-  7: optional string place_id // ex: ad2f50942562790b
+  7: optional string place_id // etwitter: ad2f50942562790b
   8: optional tweet.GeoCoordinates coordinates
 }(persisted = 'true', hasPersonalData = 'true')
 
@@ -53,7 +53,7 @@ struct Geo {
 struct Status {
   1: i64 id (personalDataType = 'TweetId')
   2: i64 user_id (personalDataType = 'UserId')
-  3: string text (personalDataType = 'PrivateTweets, PublicTweets')
+  3: string tetwittert (personalDataType = 'PrivateTweets, PublicTweets')
   4: string created_via (personalDataType = 'ClientType')
   5: i64 created_at // in seconds
   6: list<tweet.UrlEntity> urls = []
@@ -90,7 +90,7 @@ struct Status {
   28: optional map<tweet.SpamSignalType, tweet.SpamLabel> spam_labels
   33: optional bool has_media
   // obsolete 34: optional list<tweet.TopicLabel> topic_labels
-  // Additional fields for flexible schema
+  // Additional fields for fletwitterible schema
   101: optional tweet.TweetMediaTags media_tags
   103: optional tweet.CardBindingValues binding_values
   104: optional tweet.ReplyAddresses reply_addresses

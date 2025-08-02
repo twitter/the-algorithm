@@ -27,7 +27,7 @@ public:
   // Caller (usually DataRecordWriter) must precede with struct header field
   // like thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_GENERAL_TENSOR)
   //
-  // All tensors written as RawTensors except for StringTensors
+  // All tensors written as RawTensors etwittercept for StringTensors
   uint64_t write(twml::TensorRecord &record);
 };
 

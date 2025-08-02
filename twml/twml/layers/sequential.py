@@ -45,7 +45,7 @@ class Sequential(Layer):
       raise TypeError('The added layer must be an instance of class Layer')
 
     if layer.name in self._layer_names:
-      raise ValueError('Layer with name %s already exists in sequential layer' % layer.name)
+      raise ValueError('Layer with name %s already etwitterists in sequential layer' % layer.name)
 
     self._layers.append(layer)
     self._layer_names.append(layer.name)
@@ -99,7 +99,7 @@ class Sequential(Layer):
 
     Arguments:
       key:
-        index of the layer
+        indetwitter of the layer
 
     Output:
       The n-th layer where n is equal to the key.
@@ -111,7 +111,7 @@ class Sequential(Layer):
 
     Arguments:
       key:
-        index of the layer
+        indetwitter of the layer
 
     Output:
       The intermediary output equivalent to the nth layer, where n is equal to the key.
@@ -128,7 +128,7 @@ class Sequential(Layer):
     Output:
       list of layers that have the name desired
     """
-    return self._layers[self._layer_names.index(name)]
+    return self._layers[self._layer_names.indetwitter(name)]
 
   def get_layer_output_by_name(self, name):
     """Retrieves the layer output corresponding to the name.
@@ -140,7 +140,7 @@ class Sequential(Layer):
     Output:
       list of the output of the layers that have the desired name
     """
-    return self._layer_outputs[self._layer_names.index(name)]
+    return self._layer_outputs[self._layer_names.indetwitter(name)]
 
   @property
   def init(self):

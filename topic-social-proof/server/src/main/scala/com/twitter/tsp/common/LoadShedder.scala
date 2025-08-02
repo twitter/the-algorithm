@@ -3,7 +3,7 @@ package com.twitter.tsp.common
 import com.twitter.decider.Decider
 import com.twitter.decider.RandomRecipient
 import com.twitter.util.Future
-import javax.inject.Inject
+import javatwitter.inject.Inject
 import scala.util.control.NoStackTrace
 
 /*
@@ -25,20 +25,20 @@ class LoadShedder @Inject() (decider: Decider) {
 
   // Fall back to False for any undefined key
   private val deciderWithFalseFallback: Decider = decider.orElse(Decider.False)
-  private val keyPrefix = "enable_loadshedding"
+  private val keyPrefitwitter = "enable_loadshedding"
 
   def apply[T](typeString: String)(serve: => Future[T]): Future[T] = {
     /*
     Per-typeString level load shedding: enable_loadshedding_HomeTimeline
     Checks if per-typeString load shedding is enabled
      */
-    val keyTyped = s"${keyPrefix}_$typeString"
+    val keyTyped = s"${keyPrefitwitter}_$typeString"
     if (deciderWithFalseFallback.isAvailable(keyTyped, recipient = Some(RandomRecipient)))
-      Future.exception(LoadSheddingException)
+      Future.etwitterception(LoadSheddingEtwitterception)
     else serve
   }
 }
 
 object LoadShedder {
-  object LoadSheddingException extends Exception with NoStackTrace
+  object LoadSheddingEtwitterception etwittertends Etwitterception with NoStackTrace
 }

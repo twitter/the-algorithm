@@ -48,7 +48,7 @@ object RealTimeAggregatesJobBase {
   lazy val summerMetrics: SummerStormMetrics = SummerStormMetrics(Iterable(commonMetric))
 }
 
-trait RealTimeAggregatesJobBase extends Serializable {
+trait RealTimeAggregatesJobBase etwittertends Serializable {
   import RealTimeAggregatesJobBase._
   import com.twitter.summingbird_internal.bijection.BatchPairImplicits._
 
@@ -64,7 +64,7 @@ trait RealTimeAggregatesJobBase extends Serializable {
   implicit lazy val aggregationKeyInjection: Injection[AggregationKey, Array[Byte]] =
     AggregationKeyInjection
 
-  val clusters: Set[String] = Set("atla", "pdxa")
+  val clusters: Set[String] = Set("atla", "pdtwittera")
 
   def buildAggregateStoreToStorm(
     isProd: Boolean,
@@ -79,52 +79,52 @@ trait RealTimeAggregatesJobBase extends Serializable {
               rtaStore.online(serviceIdentifier))
 
           lazy val mergeableStore: MergeableStore[(AggregationKey, BatchID), DataRecord] =
-            if (jobConfig.enableUserReindexingNighthawkBtreeStore
-              || jobConfig.enableUserReindexingNighthawkHashStore) {
-              val reindexingNighthawkBtreeWritableDataRecordStoreList =
-                if (jobConfig.enableUserReindexingNighthawkBtreeStore) {
+            if (jobConfig.enableUserReindetwitteringNighthawkBtreeStore
+              || jobConfig.enableUserReindetwitteringNighthawkHashStore) {
+              val reindetwitteringNighthawkBtreeWritableDataRecordStoreList =
+                if (jobConfig.enableUserReindetwitteringNighthawkBtreeStore) {
                   lazy val cacheClientNighthawkConfig =
-                    jobConfig.userReindexingNighthawkBtreeStoreConfig.online(serviceIdentifier)
+                    jobConfig.userReindetwitteringNighthawkBtreeStoreConfig.online(serviceIdentifier)
                   List(
-                    UserReindexingNighthawkWritableDataRecordStore.getBtreeStore(
+                    UserReindetwitteringNighthawkWritableDataRecordStore.getBtreeStore(
                       nighthawkCacheConfig = cacheClientNighthawkConfig,
                       // Choose a reasonably large target size as this will be equivalent to the number of unique (user, timestamp)
                       // keys that are returned on read on the pKey, and we may have duplicate authors and associated records.
                       targetSize = 512,
                       statsReceiver = statsReceiver,
-                      // Assuming trims are relatively expensive, choose a trimRate that's not as aggressive. In this case we trim on
+                      // Assuming trims are relatively etwitterpensive, choose a trimRate that's not as aggressive. In this case we trim on
                       // 10% of all writes.
                       trimRate = 0.1
                     ))
                 } else { Nil }
-              val reindexingNighthawkHashWritableDataRecordStoreList =
-                if (jobConfig.enableUserReindexingNighthawkHashStore) {
+              val reindetwitteringNighthawkHashWritableDataRecordStoreList =
+                if (jobConfig.enableUserReindetwitteringNighthawkHashStore) {
                   lazy val cacheClientNighthawkConfig =
-                    jobConfig.userReindexingNighthawkHashStoreConfig.online(serviceIdentifier)
+                    jobConfig.userReindetwitteringNighthawkHashStoreConfig.online(serviceIdentifier)
                   List(
-                    UserReindexingNighthawkWritableDataRecordStore.getHashStore(
+                    UserReindetwitteringNighthawkWritableDataRecordStore.getHashStore(
                       nighthawkCacheConfig = cacheClientNighthawkConfig,
                       // Choose a reasonably large target size as this will be equivalent to the number of unique (user, timestamp)
                       // keys that are returned on read on the pKey, and we may have duplicate authors and associated records.
                       targetSize = 512,
                       statsReceiver = statsReceiver,
-                      // Assuming trims are relatively expensive, choose a trimRate that's not as aggressive. In this case we trim on
+                      // Assuming trims are relatively etwitterpensive, choose a trimRate that's not as aggressive. In this case we trim on
                       // 10% of all writes.
                       trimRate = 0.1
                     ))
                 } else { Nil }
 
               lazy val replicatingWritableStore = new ReplicatingWritableStore(
-                stores = List(primaryStore) ++ reindexingNighthawkBtreeWritableDataRecordStoreList
-                  ++ reindexingNighthawkHashWritableDataRecordStoreList
+                stores = List(primaryStore) ++ reindetwitteringNighthawkBtreeWritableDataRecordStoreList
+                  ++ reindetwitteringNighthawkHashWritableDataRecordStoreList
               )
 
-              lazy val combinedStoreWithReindexing = new CombinedStore(
+              lazy val combinedStoreWithReindetwittering = new CombinedStore(
                 read = primaryStore,
                 write = replicatingWritableStore
               )
 
-              combinedStoreWithReindexing.toMergeable
+              combinedStoreWithReindetwittering.toMergeable
             } else {
               primaryStore
             }
@@ -238,18 +238,18 @@ trait RealTimeAggregatesJobBase extends Serializable {
 
         heronJvmOptions.asScala.toMap ++ AggregatesV2Job
           .aggregateNames(aggregatesToCompute).map {
-            case (prefix, aggNames) => (s"extras.aggregateNames.${prefix}", aggNames)
+            case (prefitwitter, aggNames) => (s"etwittertras.aggregateNames.${prefitwitter}", aggNames)
           }
       }
 
       override def transformConfig(m: Map[String, AnyRef]): Map[String, AnyRef] = {
         super.transformConfig(m) ++ List(
           /**
-           * Disable acking by setting acker executors to 0. Tuples that come off the
+           * Disable acking by setting acker etwitterecutors to 0. Tuples that come off the
            * spout will be immediately acked which effectively disables retries on tuple
-           * failures. This should help topology throughput/availability by relaxing consistency.
+           * failures. This should help topology throughput/availability by relatwittering consistency.
            */
-          Config.TOPOLOGY_ACKER_EXECUTORS -> int2Integer(0),
+          Config.TOPOLOGY_ACKER_EtwitterECUTORS -> int2Integer(0),
           Config.TOPOLOGY_WORKERS -> int2Integer(jobConfig.topologyWorkers),
           HeronConfig.TOPOLOGY_CONTAINER_CPU_REQUESTED -> int2Integer(8),
           HeronConfig.TOPOLOGY_DROPTUPLES_UPON_BACKPRESSURE -> java.lang.Boolean.valueOf(true),
@@ -268,7 +268,7 @@ trait RealTimeAggregatesJobBase extends Serializable {
           "DEFAULT" -> Options()
             .set(flatMapMetrics)
             .set(summerMetrics)
-            .set(MaxWaitingFutures(1000))
+            .set(MatwitterWaitingFutures(1000))
             .set(FlushFrequency(30.seconds))
             .set(UseAsyncCache(true))
             .set(AsyncPoolSize(4))
@@ -281,7 +281,7 @@ trait RealTimeAggregatesJobBase extends Serializable {
             .set(SummerParallelism(jobConfig.summerCount))
             /**
              * Sets number of tuples a Summer awaits before aggregation. Set higher
-             * if you need to lower qps to memcache at the expense of introducing
+             * if you need to lower qps to memcache at the etwitterpense of introducing
              * some (stable) latency.
              */
             .set(CacheSize(jobConfig.cacheSize))

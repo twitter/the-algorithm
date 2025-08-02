@@ -12,15 +12,15 @@ import com.twitter.pluck.source.cassowary.SimsCandidatesSource
 import com.twitter.scalding._
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv2.remote_access.EtwitterplicitLocation
 import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.job.TwitterExecutionApp
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
 import com.twitter.scalding_internal.job.analytics_batch._
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common.ModelVersions
 import com.twitter.simclusters_v2.hdfs_sources._
 import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
+import com.twitter.simclusters_v2.scalding.embedding.common.EtwitterternalDataSources
 import com.twitter.simclusters_v2.thriftscala._
 import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
 import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
@@ -38,7 +38,7 @@ object ClusterDetailsJob {
     sumOfSquares: Scores,
     sum: Scores,
     min: Scores,
-    max: Scores)
+    matwitter: Scores)
 
   case class InfoFromUserSource(
     fractionMarkedNSFWUser: Double,
@@ -47,11 +47,11 @@ object ClusterDetailsJob {
     languageToFractionInferredLanguage: Map[String, Double])
 
   def positiveMin(a: Double, b: Double) = {
-    if (math.min(a, b) == 0.0) math.max(a, b) else math.min(a, b)
+    if (math.min(a, b) == 0.0) math.matwitter(a, b) else math.min(a, b)
   }
 
   case class ClusterDetailsSemigroup(implicit qtreeSemigroup: Semigroup[QTree[Double]])
-      extends Semigroup[IntermediateDetails] {
+      etwittertends Semigroup[IntermediateDetails] {
     val optionMonoid: OptionMonoid[QTree[Double]] = new OptionMonoid[QTree[Double]]()
     override def plus(
       left: IntermediateDetails,
@@ -80,9 +80,9 @@ object ClusterDetailsJob {
           positiveMin(left.min.logFavScore, right.min.logFavScore)
         ),
         Scores(
-          math.max(left.max.followScore, right.max.followScore),
-          math.max(left.max.favScore, right.max.favScore),
-          math.max(left.max.logFavScore, right.max.logFavScore)
+          math.matwitter(left.matwitter.followScore, right.matwitter.followScore),
+          math.matwitter(left.matwitter.favScore, right.matwitter.favScore),
+          math.matwitter(left.matwitter.logFavScore, right.matwitter.logFavScore)
         )
       )
     }
@@ -119,7 +119,7 @@ object ClusterDetailsJob {
                     logFavScore * logFavScore),
                   sum = Scores(followScore, favScore, logFavScore),
                   min = Scores(followScore, favScore, logFavScore),
-                  max = Scores(followScore, favScore, logFavScore)
+                  matwitter = Scores(followScore, favScore, logFavScore)
                 )
               )
           }
@@ -130,8 +130,8 @@ object ClusterDetailsJob {
       .toTypedPipe
   }
 
-  private def safeGetDoubleOpt(x: Option[Double]): Double = {
-    x.map { y => if (y.isNaN) 0 else y }.getOrElse(0)
+  private def safeGetDoubleOpt(twitter: Option[Double]): Double = {
+    twitter.map { y => if (y.isNaN) 0 else y }.getOrElse(0)
   }
 
   private def getSimilaritiesForAllPairs(
@@ -237,7 +237,7 @@ object ClusterDetailsJob {
     sum: Double,
     sumOfSquares: Double,
     min: Double,
-    max: Double,
+    matwitter: Double,
     fullSize: Int
   ): DistributionDetails = {
     val mean = sum / fullSize
@@ -259,7 +259,7 @@ object ClusterDetailsJob {
       p50 = Some(getQB(0.5)),
       p75 = Some(getQB(0.75)),
       p95 = Some(getQB(0.95)),
-      max = Some(max)
+      matwitter = Some(matwitter)
     )
   }
 
@@ -332,9 +332,9 @@ object ClusterDetailsJob {
               inferredLangsNumeratorsMap) =>
           InfoFromUserSource(
             nsfwNumerator * 1.0 / denominator,
-            languageNumeratorsMap.mapValues { x => x * 1.0 / denominator },
-            countryNumeratorsMap.mapValues { x => x * 1.0 / denominator },
-            inferredLangsNumeratorsMap.mapValues { x => x * 1.0 / denominator }
+            languageNumeratorsMap.mapValues { twitter => twitter * 1.0 / denominator },
+            countryNumeratorsMap.mapValues { twitter => twitter * 1.0 / denominator },
+            inferredLangsNumeratorsMap.mapValues { twitter => twitter * 1.0 / denominator }
           )
       }
   }
@@ -364,22 +364,22 @@ object ClusterDetailsJob {
     cosineThreshold: Double
   )(
     implicit uniqId: UniqueID
-  ): Execution[TypedPipe[((String, Int), ClusterDetails)]] = {
+  ): Etwitterecution[TypedPipe[((String, Int), ClusterDetails)]] = {
     val topSimilarClusters = getTopSimilarClustersWithCosine(input, cosineThreshold)
     val infoFromUserSource: TypedPipe[(Int, InfoFromUserSource)] = (for {
       us <- usersource
       inferredLanguages <- inferredLanguageSource
     } yield getInfoFromUserSource(knownFor, us, inferredLanguages)).getOrElse(TypedPipe.empty)
 
-    val clusterEvaluationExec = simsGraph match {
+    val clusterEvaluationEtwitterec = simsGraph match {
       case Some(sg) =>
         ClusterEvaluation.clusterLevelEvaluation(sg, knownForTranspose, "eval")
       case None =>
         val dummyPipe: TypedPipe[(Int, (Int, ClusterQuality))] = TypedPipe.empty
-        Execution.from(dummyPipe)
+        Etwitterecution.from(dummyPipe)
     }
 
-    clusterEvaluationExec
+    clusterEvaluationEtwitterec
       .map { clusterIdToSizesAndQualities =>
         val clusterQualities: TypedPipe[(Int, ClusterQuality)] =
           clusterIdToSizesAndQualities.mapValues(_._2)
@@ -415,7 +415,7 @@ object ClusterDetailsJob {
                       sum = intermediateDetails.sum.favScore,
                       sumOfSquares = intermediateDetails.sumOfSquares.favScore,
                       min = intermediateDetails.min.favScore,
-                      max = intermediateDetails.max.favScore,
+                      matwitter = intermediateDetails.matwitter.favScore,
                       fullSize = intermediateDetails.numUsersWithNonZeroFavScore
                     )
                   },
@@ -425,7 +425,7 @@ object ClusterDetailsJob {
                       sum = intermediateDetails.sum.followScore,
                       sumOfSquares = intermediateDetails.sumOfSquares.followScore,
                       min = intermediateDetails.min.followScore,
-                      max = intermediateDetails.max.followScore,
+                      matwitter = intermediateDetails.matwitter.followScore,
                       fullSize = intermediateDetails.numUsersWithNonZeroFollowScore
                     )
                   },
@@ -435,7 +435,7 @@ object ClusterDetailsJob {
                       sum = intermediateDetails.sum.logFavScore,
                       sumOfSquares = intermediateDetails.sumOfSquares.logFavScore,
                       min = intermediateDetails.min.logFavScore,
-                      max = intermediateDetails.max.logFavScore,
+                      matwitter = intermediateDetails.matwitter.logFavScore,
                       // note: user has non-zero fav score iff a user has non-zero log-fav score
                       fullSize = intermediateDetails.numUsersWithNonZeroFavScore
                     )
@@ -457,14 +457,14 @@ object ClusterDetailsJob {
 
   def getTruncatedSims(
     sims: TypedPipe[Candidates],
-    maxNeighbors: Int
+    matwitterNeighbors: Int
   ): TypedPipe[(Long, Map[Long, Float])] = {
     sims.map { cands =>
       (
         cands.userId,
         // These candidates are already sorted, but leaving it in just in case the behavior changes upstream
         cands.candidates
-          .map { c => (c.userId, c.score.toFloat) }.sortBy(-_._2).take(maxNeighbors).toMap
+          .map { c => (c.userId, c.score.toFloat) }.sortBy(-_._2).take(matwitterNeighbors).toMap
       )
     }
   }
@@ -473,21 +473,21 @@ object ClusterDetailsJob {
 /**
  scalding remote run  --main-class com.twitter.simclusters_v2.scalding.ClusterDetailsAdhoc \
   --target src/scala/com/twitter/simclusters_v2/scalding:cluster_details-adhoc \
-  --hadoop-properties "scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=4000" \
+  --hadoop-properties "scalding.with.reducers.set.etwitterplicitly=true mapreduce.job.reduces=4000" \
   --user recos-platform -- \
   --date 2020-06-25 \
   --dateForUserSource 2020-06-25 \
   --includeUserSource \
   --outputDir /user/recos-platform/adhoc/your_ldap/cluster_details_inferred_lang
  */
-object ClusterDetailsAdhoc extends TwitterExecutionApp {
+object ClusterDetailsAdhoc etwittertends TwitterEtwitterecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
   implicit val dp = DateParser.default
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
+  def job: Etwitterecution[Unit] =
+    Etwitterecution.getConfigMode.flatMap {
       case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
+        Etwitterecution.withId { implicit uniqueId =>
           val args = config.getArgs
           val date = DateRange.parse(args("dateForUserSource"))
           val (knownFor, knownForTranspose) =
@@ -512,7 +512,7 @@ object ClusterDetailsAdhoc extends TwitterExecutionApp {
                 .readMostRecentSnapshotNoOlderThan(
                   SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
                   Days(14))
-                .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+                .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
                 .toTypedPipe
                 .map {
                   case KeyVal(userId, clustersUserIsInterestedIn) =>
@@ -525,13 +525,13 @@ object ClusterDetailsAdhoc extends TwitterExecutionApp {
           } else None
 
           val inferredLanguagesOpt = if (args.boolean("includeUserSource")) {
-            Some(ExternalDataSources.inferredUserProducedLanguageSource)
+            Some(EtwitterternalDataSources.inferredUserProducedLanguageSource)
           } else None
 
           val simsGraphOpt = args.optional("simsForEvalInputDir").map { sgDir =>
             ClusterDetailsJob.getTruncatedSims(
               TypedPipe.from(WTFCandidatesSource(sgDir)),
-              args.int("maxSimsNeighborsForEval", 20)
+              args.int("matwitterSimsNeighborsForEval", 20)
             )
           }
 
@@ -548,13 +548,13 @@ object ClusterDetailsAdhoc extends TwitterExecutionApp {
                 simsGraphOpt,
                 cosineThreshold = args.double("cosineThreshold", 0.01)
               ).flatMap(
-                _.writeExecution(AdhocKeyValSources.clusterDetailsSource(args("outputDir"))))
+                _.writeEtwitterecution(AdhocKeyValSources.clusterDetailsSource(args("outputDir"))))
           )
         }
     }
 }
 
-trait ClusterDetailsBatchTrait extends TwitterScheduledExecutionApp {
+trait ClusterDetailsBatchTrait etwittertends TwitterScheduledEtwitterecutionApp {
   implicit val tz = DateOps.UTC
   implicit val parser = DateParser.default
 
@@ -568,35 +568,35 @@ trait ClusterDetailsBatchTrait extends TwitterScheduledExecutionApp {
   def outputDataset: KeyValDALDataset[KeyVal[(String, Int), ClusterDetails]]
   def clusterDetailsLiteOutputDataset: SnapshotDALDataset[ClusterDetailsLite]
 
-  private lazy val execArgs = AnalyticsBatchExecutionArgs(
+  private lazy val etwitterecArgs = AnalyticsBatchEtwitterecutionArgs(
     batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
     firstTime = BatchFirstTime(RichDate(firstTime)),
     lastTime = None,
     batchIncrement = BatchIncrement(batchIncrement)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) {
+  override def scheduledJob: Etwitterecution[Unit] = AnalyticsBatchEtwitterecution(etwitterecArgs) {
     implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
+      Etwitterecution.withId { implicit uniqueId =>
+        Etwitterecution.withArgs { args =>
           val qtreeSemigroupKParameter = args.int("qtreeSemigroupKParameter", 5)
-          val maxSimsNeighborsForEval = args.int("maxSimsNeighborsForEval", 20)
+          val matwitterSimsNeighborsForEval = args.int("matwitterSimsNeighborsForEval", 20)
           val knownForTranspose =
             KnownForSources.fromKeyVal(
-              DAL.readMostRecentSnapshot(knownForDataset, dateRange.extend(Days(7))).toTypedPipe,
+              DAL.readMostRecentSnapshot(knownForDataset, dateRange.etwittertend(Days(7))).toTypedPipe,
               modelVersion)
           val knownFor = KnownForSources.transpose(knownForTranspose)
           val cosineThreshold = args.double("cosineThreshold", 0.01)
           val interestedIn =
             DAL
-              .readMostRecentSnapshot(interestedInDataset, dateRange.extend(Days(7)))
+              .readMostRecentSnapshot(interestedInDataset, dateRange.etwittertend(Days(7)))
               .toTypedPipe
               .map {
                 case KeyVal(userId, clustersUserIsInterestedIn) =>
                   (userId, clustersUserIsInterestedIn)
               }
           val sims = if (modelVersion == ModelVersions.Model20M145K2020) {
-            // The model version 20m_145k_2020 uses approximate_cosine_follow as the input sims graph
+            // The model version 20m_145k_2020 uses approtwitterimate_cosine_follow as the input sims graph
             // to cluster users. The same graph is used to evaluate the clusters
             TypedPipe
               .from(FollowingsCosineSimilaritiesManhattanSource())
@@ -605,10 +605,10 @@ trait ClusterDetailsBatchTrait extends TwitterScheduledExecutionApp {
             TypedPipe.from(
               SimsCandidatesSource()(
                 dateRange = dateRange,
-                suffixPath = "/classified_candidates_rollup"
+                suffitwitterPath = "/classified_candidates_rollup"
               ))
           }
-          val resultExec = ClusterDetailsJob
+          val resultEtwitterec = ClusterDetailsJob
             .run(
               interestedIn,
               qtreeSemigroupKParameter,
@@ -616,21 +616,21 @@ trait ClusterDetailsBatchTrait extends TwitterScheduledExecutionApp {
               knownFor,
               knownForTranspose,
               Some(DAL.readMostRecentSnapshot(UsersourceFlatScalaDataset, dateRange).toTypedPipe),
-              Some(ExternalDataSources.inferredUserProducedLanguageSource),
+              Some(EtwitterternalDataSources.inferredUserProducedLanguageSource),
               Some(
-                ClusterDetailsJob.getTruncatedSims(sims, maxNeighbors = maxSimsNeighborsForEval)),
+                ClusterDetailsJob.getTruncatedSims(sims, matwitterNeighbors = matwitterSimsNeighborsForEval)),
               cosineThreshold
             ).flatMap { resultUnmapped =>
-              val clusterDetailsExec = resultUnmapped
+              val clusterDetailsEtwitterec = resultUnmapped
                 .map {
                   case (clusterKey, details) =>
                     KeyVal(clusterKey, details)
-                }.writeDALVersionedKeyValExecution(
+                }.writeDALVersionedKeyValEtwitterecution(
                   outputDataset,
-                  D.Suffix(manhattanOutputPath)
+                  D.Suffitwitter(manhattanOutputPath)
                 )
 
-              val clusterDetailsLiteExec =
+              val clusterDetailsLiteEtwitterec =
                 resultUnmapped
                   .map {
                     case ((_, clusterId), details)
@@ -660,24 +660,24 @@ trait ClusterDetailsBatchTrait extends TwitterScheduledExecutionApp {
                         details.numUsersWithNonZeroFavScore,
                         details.knownForUsersAndScores.getOrElse(Nil)
                       )
-                  }.writeDALSnapshotExecution(
+                  }.writeDALSnapshotEtwitterecution(
                     clusterDetailsLiteOutputDataset,
                     D.Daily,
-                    D.Suffix(clusterDetailsLiteOutputPath),
+                    D.Suffitwitter(clusterDetailsLiteOutputPath),
                     D.EBLzo(),
                     dateRange.end)
 
-              Execution.zip(clusterDetailsExec, clusterDetailsLiteExec)
+              Etwitterecution.zip(clusterDetailsEtwitterec, clusterDetailsLiteEtwitterec)
             }
 
-          Util.printCounters(resultExec)
+          Util.printCounters(resultEtwitterec)
         }
       }
   }
 
 }
 
-object ClusterDetailsBatch extends ClusterDetailsBatchTrait {
+object ClusterDetailsBatch etwittertends ClusterDetailsBatchTrait {
   override val firstTime: String = "2018-07-28"
   override val batchIncrement: Duration = Days(7)
 
@@ -695,7 +695,7 @@ object ClusterDetailsBatch extends ClusterDetailsBatchTrait {
     SimclustersV2ClusterDetailsLiteScalaDataset
 }
 
-object ClusterDetails20M145KUpdated extends ClusterDetailsBatchTrait {
+object ClusterDetails20M145KUpdated etwittertends ClusterDetailsBatchTrait {
   override val firstTime: String = "2019-06-16"
   override val batchIncrement: Duration = Days(7)
 
@@ -717,7 +717,7 @@ object ClusterDetails20M145KUpdated extends ClusterDetailsBatchTrait {
  * capesospy-v2 update --build_locally --start_cron cluster_details_20m_145k_2020 \
  * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
  */
-object ClusterDetails20M145K2020 extends ClusterDetailsBatchTrait {
+object ClusterDetails20M145K2020 etwittertends ClusterDetailsBatchTrait {
   override val firstTime: String = "2020-10-15"
   override val batchIncrement: Duration = Days(7)
 
@@ -743,19 +743,19 @@ scalding remote run  --main-class com.twitter.simclusters_v2.scalding.DumpCluste
   --clusterIds 5542 129677 48645 \
   --inputDir /user/recos-platform/adhoc/your_ldap/cluster_details_inferred_lang
  */
-object DumpClusterDetailsAdhoc extends TwitterExecutionApp {
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
+object DumpClusterDetailsAdhoc etwittertends TwitterEtwitterecutionApp {
+  def job: Etwitterecution[Unit] =
+    Etwitterecution.getConfigMode.flatMap {
       case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
+        Etwitterecution.withId { implicit uniqueId =>
           val args = config.getArgs
           val clusters = args.list("clusterIds").map(_.toInt).toSet //(1 to 2500).toSet //
           TypedPipe
             .from(AdhocKeyValSources.clusterDetailsSource(args("inputDir")))
             .filter { case ((modelVersion, clusterId), details) => clusters.contains(clusterId) }
-            .toIterableExecution
+            .toIterableEtwitterecution
             .map { iter =>
-              iter.foreach { x => println(Util.prettyJsonMapper.writeValueAsString(x)) }
+              iter.foreach { twitter => println(Util.prettyJsonMapper.writeValueAsString(twitter)) }
             }
         }
     }
@@ -769,11 +769,11 @@ object DumpClusterDetailsAdhoc extends TwitterExecutionApp {
  * --inputDir /user/cassowary/manhattan_sequence_files/simclusters_v2_cluster_details_20m_145k_updated/ \
  * --outputDir adhoc/your_ldap
  */
-object DumpClusterSimilaritiesAdhoc extends TwitterExecutionApp {
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
+object DumpClusterSimilaritiesAdhoc etwittertends TwitterEtwitterecutionApp {
+  def job: Etwitterecution[Unit] =
+    Etwitterecution.getConfigMode.flatMap {
       case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
+        Etwitterecution.withId { implicit uniqueId =>
           val args = config.getArgs
           TypedPipe
             .from(AdhocKeyValSources.clusterDetailsSource(args("inputDir")))
@@ -788,7 +788,7 @@ object DumpClusterSimilaritiesAdhoc extends TwitterExecutionApp {
                     "%.4f".format(compositeScore)
                   )
                 }
-            }.writeExecution(TypedTsv(args("outputDir")))
+            }.writeEtwitterecution(TypedTsv(args("outputDir")))
         }
     }
 }

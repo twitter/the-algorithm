@@ -13,10 +13,10 @@ import com.twitter.visibility.common.stitch.StitchHelpers
 import com.twitter.visibility.features.FeatureMap
 import com.twitter.visibility.models.ContentId.DmConversationId
 import com.twitter.visibility.rules.Drop
-import com.twitter.visibility.rules.EvaluationContext
+import com.twitter.visibility.rules.EvaluationContetwittert
 import com.twitter.visibility.rules.Reason
 import com.twitter.visibility.rules.RuleBase
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
+import com.twitter.visibility.rules.providers.ProvidedEvaluationContetwittert
 import com.twitter.visibility.rules.utils.ShimUtils
 
 object DmConversationVisibilityLibrary {
@@ -48,8 +48,8 @@ object DmConversationVisibilityLibrary {
       } else {
         vfEngineCounter.incr()
 
-        val viewerContext = req.viewerContext
-        val viewerId = viewerContext.userId
+        val viewerContetwittert = req.viewerContetwittert
+        val viewerId = viewerContetwittert.userId
         val isVfFeatureHydrationEnabled: Boolean =
           enableVfFeatureHydrationInShim()
 
@@ -57,15 +57,15 @@ object DmConversationVisibilityLibrary {
           Seq(dmConversationFeatures.forDmConversationId(dmConversationId, viewerId)))
 
         val resp = if (isVfFeatureHydrationEnabled) {
-          val evaluationContext = ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-            evaluationContext = EvaluationContext(
+          val evaluationContetwittert = ProvidedEvaluationContetwittert.injectRuntimeRulesIntoEvaluationContetwittert(
+            evaluationContetwittert = EvaluationContetwittert(
               safetyLevel,
-              visibilityLibrary.getParams(viewerContext, safetyLevel),
+              visibilityLibrary.getParams(viewerContetwittert, safetyLevel),
               visibilityLibrary.statsReceiver)
           )
 
           val preFilteredFeatureMap =
-            ShimUtils.preFilterFeatureMap(featureMap, safetyLevel, contentId, evaluationContext)
+            ShimUtils.preFilterFeatureMap(featureMap, safetyLevel, contentId, evaluationContetwittert)
 
           FeatureMap.resolve(preFilteredFeatureMap, libraryStatsReceiver).flatMap {
             resolvedFeatureMap =>
@@ -73,7 +73,7 @@ object DmConversationVisibilityLibrary {
                 .runRuleEngine(
                   contentId,
                   resolvedFeatureMap,
-                  viewerContext,
+                  viewerContetwittert,
                   safetyLevel
                 )
           }
@@ -82,7 +82,7 @@ object DmConversationVisibilityLibrary {
             .runRuleEngine(
               contentId,
               featureMap,
-              viewerContext,
+              viewerContetwittert,
               safetyLevel
             )
         }

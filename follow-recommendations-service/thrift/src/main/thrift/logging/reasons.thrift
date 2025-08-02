@@ -8,7 +8,7 @@ struct FollowProof {
   2: required i32 numIds(personalDataType='CountOfFollowersAndFollowees')
 }(persisted='true', hasPersonalData='true')
 
-// Similar to userIds in the context (e.g. profileId)
+// Similar to userIds in the contetwittert (e.g. profileId)
 struct SimilarToProof {
   1: required list<i64> userIds(personalDataType='UserId')
 }(persisted='true', hasPersonalData='true')

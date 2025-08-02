@@ -21,7 +21,7 @@ object VisibilityResultToFilteredState {
     )
 
     visibilityResult.verdict match {
-      case Drop(ExclusiveTweet, _) =>
+      case Drop(EtwitterclusiveTweet, _) =>
         dropSafetyResult
 
       case Drop(NsfwViewerIsUnderage | NsfwViewerHasNoStatedAge | NsfwLoggedOut, _) =>
@@ -87,7 +87,7 @@ object VisibilityResultToFilteredState {
 
       case _: ComplianceTweetNotice => suppressSafetyResult
 
-      case Drop(ExclusiveTweet, _) =>
+      case Drop(EtwitterclusiveTweet, _) =>
         dropSafetyResult
 
       case Drop(NsfwViewerIsUnderage | NsfwViewerHasNoStatedAge | NsfwLoggedOut, _) =>

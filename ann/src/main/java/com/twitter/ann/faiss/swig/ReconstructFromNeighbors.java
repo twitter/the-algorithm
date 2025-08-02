@@ -36,8 +36,8 @@ public class ReconstructFromNeighbors {
     }
   }
 
-  public IndexHNSW getIndex() {
-    return new IndexHNSW(swigfaissJNI.ReconstructFromNeighbors_index_get(swigCPtr, this), false);
+  public IndetwitterHNSW getIndetwitter() {
+    return new IndetwitterHNSW(swigfaissJNI.ReconstructFromNeighbors_indetwitter_get(swigCPtr, this), false);
   }
 
   public void setM(long value) {
@@ -122,36 +122,36 @@ public class ReconstructFromNeighbors {
     return swigfaissJNI.ReconstructFromNeighbors_dsub_get(swigCPtr, this);
   }
 
-  public ReconstructFromNeighbors(IndexHNSW index, long k, long nsq) {
-    this(swigfaissJNI.new_ReconstructFromNeighbors__SWIG_0(IndexHNSW.getCPtr(index), index, k, nsq), true);
+  public ReconstructFromNeighbors(IndetwitterHNSW indetwitter, long k, long nsq) {
+    this(swigfaissJNI.new_ReconstructFromNeighbors__SWIG_0(IndetwitterHNSW.getCPtr(indetwitter), indetwitter, k, nsq), true);
   }
 
-  public ReconstructFromNeighbors(IndexHNSW index, long k) {
-    this(swigfaissJNI.new_ReconstructFromNeighbors__SWIG_1(IndexHNSW.getCPtr(index), index, k), true);
+  public ReconstructFromNeighbors(IndetwitterHNSW indetwitter, long k) {
+    this(swigfaissJNI.new_ReconstructFromNeighbors__SWIG_1(IndetwitterHNSW.getCPtr(indetwitter), indetwitter, k), true);
   }
 
-  public ReconstructFromNeighbors(IndexHNSW index) {
-    this(swigfaissJNI.new_ReconstructFromNeighbors__SWIG_2(IndexHNSW.getCPtr(index), index), true);
+  public ReconstructFromNeighbors(IndetwitterHNSW indetwitter) {
+    this(swigfaissJNI.new_ReconstructFromNeighbors__SWIG_2(IndetwitterHNSW.getCPtr(indetwitter), indetwitter), true);
   }
 
-  public void add_codes(long n, SWIGTYPE_p_float x) {
-    swigfaissJNI.ReconstructFromNeighbors_add_codes(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x));
+  public void add_codes(long n, SWIGTYPE_p_float twitter) {
+    swigfaissJNI.ReconstructFromNeighbors_add_codes(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(twitter));
   }
 
   public long compute_distances(long n, LongVector shortlist, SWIGTYPE_p_float query, SWIGTYPE_p_float distances) {
     return swigfaissJNI.ReconstructFromNeighbors_compute_distances(swigCPtr, this, n, SWIGTYPE_p_long_long.getCPtr(shortlist.data()), shortlist, SWIGTYPE_p_float.getCPtr(query), SWIGTYPE_p_float.getCPtr(distances));
   }
 
-  public void estimate_code(SWIGTYPE_p_float x, int i, SWIGTYPE_p_unsigned_char code) {
-    swigfaissJNI.ReconstructFromNeighbors_estimate_code(swigCPtr, this, SWIGTYPE_p_float.getCPtr(x), i, SWIGTYPE_p_unsigned_char.getCPtr(code));
+  public void estimate_code(SWIGTYPE_p_float twitter, int i, SWIGTYPE_p_unsigned_char code) {
+    swigfaissJNI.ReconstructFromNeighbors_estimate_code(swigCPtr, this, SWIGTYPE_p_float.getCPtr(twitter), i, SWIGTYPE_p_unsigned_char.getCPtr(code));
   }
 
-  public void reconstruct(int i, SWIGTYPE_p_float x, SWIGTYPE_p_float tmp) {
-    swigfaissJNI.ReconstructFromNeighbors_reconstruct(swigCPtr, this, i, SWIGTYPE_p_float.getCPtr(x), SWIGTYPE_p_float.getCPtr(tmp));
+  public void reconstruct(int i, SWIGTYPE_p_float twitter, SWIGTYPE_p_float tmp) {
+    swigfaissJNI.ReconstructFromNeighbors_reconstruct(swigCPtr, this, i, SWIGTYPE_p_float.getCPtr(twitter), SWIGTYPE_p_float.getCPtr(tmp));
   }
 
-  public void reconstruct_n(int n0, int ni, SWIGTYPE_p_float x) {
-    swigfaissJNI.ReconstructFromNeighbors_reconstruct_n(swigCPtr, this, n0, ni, SWIGTYPE_p_float.getCPtr(x));
+  public void reconstruct_n(int n0, int ni, SWIGTYPE_p_float twitter) {
+    swigfaissJNI.ReconstructFromNeighbors_reconstruct_n(swigCPtr, this, n0, ni, SWIGTYPE_p_float.getCPtr(twitter));
   }
 
   public void get_neighbor_table(int i, SWIGTYPE_p_float out) {

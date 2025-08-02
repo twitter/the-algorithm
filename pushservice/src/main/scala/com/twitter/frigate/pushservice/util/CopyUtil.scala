@@ -19,7 +19,7 @@ object CopyUtil {
    *         metadata within the look back period. In the tuple, the 4 elements represents:
    *         1. Timestamp of the past feature copy
    *         2. Option[Seq()] of copy feature names of the past copy
-   *         3. Index of the particular feature copy in look back history if normal copy presents
+   *         3. Indetwitter of the particular feature copy in look back history if normal copy presents
    */
   private def getPastCopyFeaturesList(
     candidate: PushCandidate
@@ -32,7 +32,7 @@ object CopyUtil {
         .takeWhile {
           case (notifTimestamp, _) => historyLookbackDuration.ago < notifTimestamp
         }
-      notificationHistoryInLookbackDuration.zipWithIndex
+      notificationHistoryInLookbackDuration.zipWithIndetwitter
         .filter {
           case ((_, notification), _) =>
             notification.copyFeatures match {
@@ -41,8 +41,8 @@ object CopyUtil {
             }
         }
         .collect {
-          case ((timestamp, notification), notificationIndex) =>
-            (timestamp, notification.copyFeatures, notificationIndex)
+          case ((timestamp, notification), notificationIndetwitter) =>
+            (timestamp, notification.copyFeatures, notificationIndetwitter)
         }
     }
   }
@@ -57,7 +57,7 @@ object CopyUtil {
         .takeWhile {
           case (notifTimestamp, _) => historyLookbackDuration.ago < notifTimestamp
         }
-      notificationHistoryInLookbackDuration.zipWithIndex
+      notificationHistoryInLookbackDuration.zipWithIndetwitter
         .filter {
           case ((_, notification), _) =>
             notification.copyFeatures match {
@@ -67,8 +67,8 @@ object CopyUtil {
             }
         }
         .collect {
-          case ((timestamp, notification), notificationIndex) =>
-            (timestamp, notification.copyFeatures, notificationIndex)
+          case ((timestamp, notification), notificationIndetwitter) =>
+            (timestamp, notification.copyFeatures, notificationIndetwitter)
         }
     }
   }
@@ -83,7 +83,7 @@ object CopyUtil {
         .takeWhile {
           case (notifTimestamp, _) => historyLookbackDuration.ago < notifTimestamp
         }
-      notificationHistoryInLookbackDuration.zipWithIndex
+      notificationHistoryInLookbackDuration.zipWithIndetwitter
         .filter {
           case ((_, notification), _) =>
             notification.copyFeatures match {
@@ -94,8 +94,8 @@ object CopyUtil {
             }
         }
         .collect {
-          case ((timestamp, notification), notificationIndex) =>
-            (timestamp, notification.copyFeatures, notificationIndex)
+          case ((timestamp, notification), notificationIndetwitter) =>
+            (timestamp, notification.copyFeatures, notificationIndetwitter)
         }
     }
   }
@@ -210,10 +210,10 @@ object CopyUtil {
   ): Boolean = {
     val defaultFatigue = true
     val finalFatigueRes =
-      fatigueRulesWithFlags.zipWithIndex.foldLeft(defaultFatigue)(
-        (fatigueSoFar, fatigueRuleFuncWithFlagAndIndex) => {
-          val ((fatigueRuleFunc, flag), index) = fatigueRuleFuncWithFlagAndIndex
-          val funcScopedStats = statsReceiver.scope(s"fatigueFunction${index}")
+      fatigueRulesWithFlags.zipWithIndetwitter.foldLeft(defaultFatigue)(
+        (fatigueSoFar, fatigueRuleFuncWithFlagAndIndetwitter) => {
+          val ((fatigueRuleFunc, flag), indetwitter) = fatigueRuleFuncWithFlagAndIndetwitter
+          val funcScopedStats = statsReceiver.scope(s"fatigueFunction${indetwitter}")
           if (flag) {
             val shouldFatigueForTheRule = fatigueRuleFunc()
             funcScopedStats.scope(s"eval_${shouldFatigueForTheRule}").counter().incr()
@@ -232,7 +232,7 @@ object CopyUtil {
     copyFeatureType: String,
     fatigueDuration: com.twitter.util.Duration,
   ): Boolean = {
-    copyFeatureHistory.exists {
+    copyFeatureHistory.etwitterists {
       case (notifTimestamp, Some(copyFeatures), _) if copyFeatures.contains(copyFeatureType) =>
         notifTimestamp > fatigueDuration.ago
       case _ => false
@@ -433,12 +433,12 @@ object CopyUtil {
 
     val copyBodyFeatures = {
       if (RecTypes.isF1Type(candidate.commonRecType) && target.params(FS.EnableF1CopyBody)) {
-        scopedStats.counter("f1BodyExpEnabled").incr()
-        Map(PushConstants.CopyBodyExpIbisModelValues -> "true")
+        scopedStats.counter("f1BodyEtwitterpEnabled").incr()
+        Map(PushConstants.CopyBodyEtwitterpIbisModelValues -> "true")
       } else if (RecTypes.isOutOfNetworkTweetRecType(candidate.commonRecType) && target.params(
           FS.EnableOONCopyBody)) {
-        scopedStats.counter("oonBodyExpEnabled").incr()
-        Map(PushConstants.CopyBodyExpIbisModelValues -> "true")
+        scopedStats.counter("oonBodyEtwitterpEnabled").incr()
+        Map(PushConstants.CopyBodyEtwitterpIbisModelValues -> "true")
       } else
         Map.empty[String, String]
     }

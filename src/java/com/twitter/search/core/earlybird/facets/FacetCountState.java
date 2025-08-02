@@ -30,7 +30,7 @@ public final class FacetCountState<R> {
    */
   public void addFacet(String facetName, int numResultsRequested) {
     facetfieldResults.put(facetName, new FacetFieldResults(facetName,
-            Math.max(numResultsRequested, minNumFacetResults)));
+            Math.matwitter(numResultsRequested, minNumFacetResults)));
     Schema.FieldInfo field = schema.getFacetFieldByFacetName(facetName);
     fieldsToCount.add(field);
   }

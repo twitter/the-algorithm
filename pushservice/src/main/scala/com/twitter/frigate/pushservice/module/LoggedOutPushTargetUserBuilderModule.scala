@@ -8,7 +8,7 @@ import com.twitter.frigate.pushservice.target.LoggedOutPushTargetUserBuilder
 import com.twitter.frigate.pushservice.config.DeployConfig
 import com.twitter.inject.TwitterModule
 
-object LoggedOutPushTargetUserBuilderModule extends TwitterModule {
+object LoggedOutPushTargetUserBuilderModule etwittertends TwitterModule {
 
   @Provides
   @Singleton

@@ -2,7 +2,7 @@ package com.twitter.follow_recommendations.common.feature_hydration.sources
 
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.google.inject.Inject
-import com.twitter.finagle.TimeoutException
+import com.twitter.finagle.TimeoutEtwitterception
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSource
@@ -11,9 +11,9 @@ import com.twitter.follow_recommendations.common.feature_hydration.common.HasPre
 import com.twitter.follow_recommendations.common.feature_hydration.sources.Utils.adaptAdditionalFeaturesToDataRecord
 import com.twitter.follow_recommendations.common.feature_hydration.sources.Utils.randomizedTTL
 import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
+import com.twitter.follow_recommendations.common.models.HasSimilarToContetwittert
 import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
+import com.twitter.ml.api.FeatureContetwittert
 import com.twitter.ml.api.IRecordOneToOneAdapter
 import com.twitter.ml.featurestore.catalog.datasets.core.UsersourceEntityDataset
 import com.twitter.ml.featurestore.catalog.entities.core.{Author => AuthorEntity}
@@ -44,18 +44,18 @@ import com.twitter.timelines.configapi.HasParams
 import java.util.concurrent.TimeUnit
 import com.twitter.conversions.DurationOps._
 import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 
 class FeatureStoreGizmoduckSource @Inject() (
   serviceIdentifier: ServiceIdentifier,
   stats: StatsReceiver)
-    extends FeatureSource {
+    etwittertends FeatureSource {
   import FeatureStoreGizmoduckSource._
 
   val backupSourceStats = stats.scope("feature_store_hydration_gizmoduck")
   val adapterStats = backupSourceStats.scope("adapters")
   override def id: FeatureSourceId = FeatureSourceId.FeatureStoreGizmoduckSourceId
-  override def featureContext: FeatureContext = getFeatureContext
+  override def featureContetwittert: FeatureContetwittert = getFeatureContetwittert
 
   val clientConfig: ClientConfig[HasParams] = ClientConfig(
     dynamicHydrationConfig = dynamicHydrationConfig,
@@ -77,8 +77,8 @@ class FeatureStoreGizmoduckSource @Inject() (
     DatasetValuesCache(
       Caffeine
         .newBuilder()
-        .expireAfterWrite(randomizedTTL(12.hours.inSeconds), TimeUnit.SECONDS)
-        .maximumSize(DefaultCacheMaxKeys)
+        .etwitterpireAfterWrite(randomizedTTL(12.hours.inSeconds), TimeUnit.SECONDS)
+        .matwitterimumSize(DefaultCacheMatwitterKeys)
         .build[(_ <: EntityId, DatasetId), Stitch[HydrationResponse[_]]]
         .asMap,
       datasetsToCache,
@@ -98,10 +98,10 @@ class FeatureStoreGizmoduckSource @Inject() (
     )
 
   override def hydrateFeatures(
-    target: HasClientContext
+    target: HasClientContetwittert
       with HasPreFetchedFeature
       with HasParams
-      with HasSimilarToContext
+      with HasSimilarToContetwittert
       with HasDisplayLocation,
     candidates: Seq[CandidateUser]
   ): Stitch[Map[CandidateUser, DataRecord]] = {
@@ -141,7 +141,7 @@ class FeatureStoreGizmoduckSource @Inject() (
           .within(target.params(FeatureStoreSourceParams.GlobalFetchTimeout))(
             com.twitter.finagle.util.DefaultTimer)
           .rescue {
-            case _: TimeoutException =>
+            case _: TimeoutEtwitterception =>
               Stitch.value(Map.empty[CandidateUser, DataRecord])
           }
       }.getOrElse(Stitch.value(Map.empty[CandidateUser, DataRecord]))
@@ -150,15 +150,15 @@ class FeatureStoreGizmoduckSource @Inject() (
 
 object FeatureStoreGizmoduckSource {
   private val DatasetCacheScope = "feature_store_local_cache_gizmoduck"
-  private val DefaultCacheMaxKeys = 20000
+  private val DefaultCacheMatwitterKeys = 20000
 
   val allFeatures: Set[BoundFeature[_ <: EntityId, _]] =
     FeatureStoreFeatures.candidateUserStatusFeatures ++
       FeatureStoreFeatures.similarToUserStatusFeatures ++
       FeatureStoreFeatures.targetUserStatusFeatures
 
-  val getFeatureContext: FeatureContext =
-    BoundFeatureSet(allFeatures).toFeatureContext
+  val getFeatureContetwittert: FeatureContetwittert =
+    BoundFeatureSet(allFeatures).toFeatureContetwittert
 
   val dynamicHydrationConfig: DynamicHydrationConfig[HasParams] =
     DynamicHydrationConfig(

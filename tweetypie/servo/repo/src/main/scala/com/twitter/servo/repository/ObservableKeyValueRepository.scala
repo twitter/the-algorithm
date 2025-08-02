@@ -1,13 +1,13 @@
 package com.twitter.servo.repository
 
 import com.twitter.finagle.stats.{StatsReceiver, Stat}
-import com.twitter.servo.util.{ExceptionCounter, LogarithmicallyBucketedTimer}
+import com.twitter.servo.util.{EtwitterceptionCounter, LogarithmicallyBucketedTimer}
 import com.twitter.util.{Future, Return, Throw, Try}
 
 class RepositoryObserver(
   statsReceiver: StatsReceiver,
   bucketBySize: Boolean,
-  exceptionCounter: ExceptionCounter) {
+  etwitterceptionCounter: EtwitterceptionCounter) {
   protected[this] lazy val timer = new LogarithmicallyBucketedTimer(statsReceiver)
   protected[this] val sizeStat = statsReceiver.stat("size")
   protected[this] val foundStat = statsReceiver.counter("found")
@@ -16,7 +16,7 @@ class RepositoryObserver(
   private[this] val timeStat = statsReceiver.stat(LogarithmicallyBucketedTimer.LatencyStatName)
 
   def this(statsReceiver: StatsReceiver, bucketBySize: Boolean = true) =
-    this(statsReceiver, bucketBySize, new ExceptionCounter(statsReceiver))
+    this(statsReceiver, bucketBySize, new EtwitterceptionCounter(statsReceiver))
 
   def time[T](size: Int = 1)(f: => Future[T]) = {
     sizeStat.add(size)
@@ -38,19 +38,19 @@ class RepositoryObserver(
     total(size)
   }
 
-  def exception(ts: Throwable*): Unit = {
-    exceptionCounter(ts)
+  def etwitterception(ts: Throwable*): Unit = {
+    etwitterceptionCounter(ts)
     total(ts.size)
   }
 
-  def exceptions(ts: Seq[Throwable]): Unit = {
-    exception(ts: _*)
+  def etwitterceptions(ts: Seq[Throwable]): Unit = {
+    etwitterception(ts: _*)
   }
 
   def observeTry[V](tryObj: Try[V]): Unit = {
     tryObj.respond {
       case Return(_) => found()
-      case Throw(t) => exception(t)
+      case Throw(t) => etwitterception(t)
     }
   }
 
@@ -58,7 +58,7 @@ class RepositoryObserver(
     optionTry.respond {
       case Return(Some(_)) => found()
       case Return(None) => notFound()
-      case Throw(t) => exception(t)
+      case Throw(t) => etwitterception(t)
     }
   }
 
@@ -67,9 +67,9 @@ class RepositoryObserver(
       case Return(result) =>
         found(result.found.size)
         notFound(result.notFound.size)
-        exceptions(result.failed.values.toSeq)
+        etwitterceptions(result.failed.values.toSeq)
       case Throw(t) =>
-        exception(t)
+        etwitterception(t)
     }
   }
 
@@ -83,7 +83,7 @@ class RepositoryObserver(
     seqTry.respond {
       case Return(seq) if seq.isEmpty => notFound()
       case Return(seq) => found(seq.length)
-      case Throw(t) => exception(t)
+      case Throw(t) => etwitterception(t)
     }
   }
 }

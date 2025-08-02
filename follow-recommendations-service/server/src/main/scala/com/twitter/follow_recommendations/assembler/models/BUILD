@@ -7,6 +7,6 @@ scala_library(
         "follow-recommendations-service/thrift/src/main/thrift:thrift-scala",
         "stringcenter/client",
     ],
-    exports = [
+    etwitterports = [
     ],
 )

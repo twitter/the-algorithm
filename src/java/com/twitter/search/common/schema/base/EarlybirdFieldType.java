@@ -1,22 +1,22 @@
 package com.twitter.search.common.schema.base;
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.document.FieldType;
-import org.apache.lucene.index.DocValuesType;
-import org.apache.lucene.index.IndexOptions;
+import org.apache.lucene.indetwitter.DocValuesType;
+import org.apache.lucene.indetwitter.IndetwitterOptions;
 
-import com.twitter.common.text.util.TokenStreamSerializer;
+import com.twitter.common.tetwittert.util.TokenStreamSerializer;
 import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
 import com.twitter.search.common.schema.thriftjava.ThriftCSFViewSettings;
 import com.twitter.search.common.schema.thriftjava.ThriftFeatureUpdateConstraint;
 
 /**
- * An extension of Lucene's {@link FieldType} that contains additional Earlybird-specific settings.
- * Lucene IndexingChains can downcast the FieldType object to access these additional settings.
+ * An etwittertension of Lucene's {@link FieldType} that contains additional Earlybird-specific settings.
+ * Lucene IndetwitteringChains can downcast the FieldType object to access these additional settings.
  */
-public class EarlybirdFieldType extends FieldType {
+public class EarlybirdFieldType etwittertends FieldType {
 
   public static final EarlybirdFieldType LONG_CSF_FIELD_TYPE = new EarlybirdFieldType();
   public static final EarlybirdFieldType INT_CSF_FIELD_TYPE = new EarlybirdFieldType();
@@ -45,14 +45,14 @@ public class EarlybirdFieldType extends FieldType {
   // This is true for fields that become immutable after optimization
   private boolean becomesImmutable = true;
   private boolean supportOrderedTerms;
-  private boolean supportTermTextLookup;
-  private boolean indexHFTermPairs;
+  private boolean supportTermTetwittertLookup;
+  private boolean indetwitterHFTermPairs;
 
   /**
    * This flag turns on tweet specific normalizations.
    * This turns on the following two token processors:
-   * {@link com.twitter.search.common.util.text.splitter.HashtagMentionPunctuationSplitter}
-   * {@link com.twitter.search.common.util.text.filter.NormalizedTokenFilter}
+   * {@link com.twitter.search.common.util.tetwittert.splitter.HashtagMentionPunctuationSplitter}
+   * {@link com.twitter.search.common.util.tetwittert.filter.NormalizedTokenFilter}
    *
    * HashtagMentionPunctuationSplitter would break a mention or hashtag like @ab_cd or #ab_cd into
    * tokens {ab, cd}.
@@ -71,8 +71,8 @@ public class EarlybirdFieldType extends FieldType {
   // csf type settings
   private ThriftCSFType csfType;
   private boolean csfVariableLength;
-  private int csfFixedLengthNumValuesPerDoc;
-  private boolean csfFixedLengthUpdateable;
+  private int csfFitwitteredLengthNumValuesPerDoc;
+  private boolean csfFitwitteredLengthUpdateable;
   private boolean csfLoadIntoRam;
   private boolean csfDefaultValueSet;
   private long csfDefaultValue;
@@ -88,16 +88,16 @@ public class EarlybirdFieldType extends FieldType {
   private boolean storeFacetOffensiveCounters;
   private boolean useCSFForFacetCounting;
 
-  // Determines if this field is indexed
-  private boolean indexedField = false;
+  // Determines if this field is indetwittered
+  private boolean indetwitteredField = false;
 
   // search field settings
   // whether a field should be searched by default
-  private boolean textSearchableByDefault = false;
-  private float textSearchableFieldWeight = 1.0f;
+  private boolean tetwittertSearchableByDefault = false;
+  private float tetwittertSearchableFieldWeight = 1.0f;
 
-  // For indexed numerical fields
-  private IndexedNumericFieldSettings numericFieldSettings = null;
+  // For indetwittered numerical fields
+  private IndetwitteredNumericFieldSettings numericFieldSettings = null;
 
   public boolean isStorePerPositionPayloads() {
     return storePerPositionPayloads;
@@ -135,12 +135,12 @@ public class EarlybirdFieldType extends FieldType {
     this.supportOrderedTerms = supportOrderedTerms;
   }
 
-  public boolean isSupportTermTextLookup() {
-    return supportTermTextLookup;
+  public boolean isSupportTermTetwittertLookup() {
+    return supportTermTetwittertLookup;
   }
 
-  public void setSupportTermTextLookup(boolean supportTermTextLookup) {
-    this.supportTermTextLookup = supportTermTextLookup;
+  public void setSupportTermTetwittertLookup(boolean supportTermTetwittertLookup) {
+    this.supportTermTetwittertLookup = supportTermTetwittertLookup;
   }
 
   @Nullable
@@ -166,8 +166,8 @@ public class EarlybirdFieldType extends FieldType {
     return csfVariableLength;
   }
 
-  public int getCsfFixedLengthNumValuesPerDoc() {
-    return csfFixedLengthNumValuesPerDoc;
+  public int getCsfFitwitteredLengthNumValuesPerDoc() {
+    return csfFitwitteredLengthNumValuesPerDoc;
   }
 
   public void setCsfVariableLength() {
@@ -176,18 +176,18 @@ public class EarlybirdFieldType extends FieldType {
   }
 
   /**
-   * Make the field a fixed length CSF, with the given length.
+   * Make the field a fitwittered length CSF, with the given length.
    */
-  public void setCsfFixedLengthSettings(int csfFixedLengthNumValuesPerDocument,
-                                        boolean isCsfFixedLengthUpdateable) {
+  public void setCsfFitwitteredLengthSettings(int csfFitwitteredLengthNumValuesPerDocument,
+                                        boolean isCsfFitwitteredLengthUpdateable) {
     checkIfFrozen();
     this.csfVariableLength = false;
-    this.csfFixedLengthNumValuesPerDoc = csfFixedLengthNumValuesPerDocument;
-    this.csfFixedLengthUpdateable = isCsfFixedLengthUpdateable;
+    this.csfFitwitteredLengthNumValuesPerDoc = csfFitwitteredLengthNumValuesPerDocument;
+    this.csfFitwitteredLengthUpdateable = isCsfFitwitteredLengthUpdateable;
   }
 
-  public boolean isCsfFixedLengthUpdateable() {
-    return csfFixedLengthUpdateable;
+  public boolean isCsfFitwitteredLengthUpdateable() {
+    return csfFitwitteredLengthUpdateable;
   }
 
   public boolean isCsfLoadIntoRam() {
@@ -253,13 +253,13 @@ public class EarlybirdFieldType extends FieldType {
     return facetName != null && !StringUtils.isEmpty(facetName);
   }
 
-  public boolean isIndexHFTermPairs() {
-    return indexHFTermPairs;
+  public boolean isIndetwitterHFTermPairs() {
+    return indetwitterHFTermPairs;
   }
 
-  public void setIndexHFTermPairs(boolean indexHFTermPairs) {
+  public void setIndetwitterHFTermPairs(boolean indetwitterHFTermPairs) {
     checkIfFrozen();
-    this.indexHFTermPairs = indexHFTermPairs;
+    this.indetwitterHFTermPairs = indetwitterHFTermPairs;
   }
 
   public boolean acceptPretokenizedField() {
@@ -285,39 +285,39 @@ public class EarlybirdFieldType extends FieldType {
     this.useTweetSpecificNormalization = useTweetSpecificNormalization;
   }
 
-  public boolean isIndexedField() {
-    return indexedField;
+  public boolean isIndetwitteredField() {
+    return indetwitteredField;
   }
 
-  public void setIndexedField(boolean indexedField) {
-    this.indexedField = indexedField;
+  public void setIndetwitteredField(boolean indetwitteredField) {
+    this.indetwitteredField = indetwitteredField;
   }
 
-  public boolean isTextSearchableByDefault() {
-    return textSearchableByDefault;
+  public boolean isTetwittertSearchableByDefault() {
+    return tetwittertSearchableByDefault;
   }
 
-  public void setTextSearchableByDefault(boolean textSearchableByDefault) {
+  public void setTetwittertSearchableByDefault(boolean tetwittertSearchableByDefault) {
     checkIfFrozen();
-    this.textSearchableByDefault = textSearchableByDefault;
+    this.tetwittertSearchableByDefault = tetwittertSearchableByDefault;
   }
 
-  public float getTextSearchableFieldWeight() {
-    return textSearchableFieldWeight;
+  public float getTetwittertSearchableFieldWeight() {
+    return tetwittertSearchableFieldWeight;
   }
 
-  public void setTextSearchableFieldWeight(float textSearchableFieldWeight) {
+  public void setTetwittertSearchableFieldWeight(float tetwittertSearchableFieldWeight) {
     checkIfFrozen();
-    this.textSearchableFieldWeight = textSearchableFieldWeight;
+    this.tetwittertSearchableFieldWeight = tetwittertSearchableFieldWeight;
   }
 
   /**
-   * Convenience method to find out if this field stores positions. {@link #indexOptions()} can also
-   * be used to determine the index options for this field.
+   * Convenience method to find out if this field stores positions. {@link #indetwitterOptions()} can also
+   * be used to determine the indetwitter options for this field.
    */
   public final boolean hasPositions() {
-    return indexOptions() == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS
-            || indexOptions() == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+    return indetwitterOptions() == IndetwitterOptions.DOCS_AND_FREQS_AND_POSITIONS
+            || indetwitterOptions() == IndetwitterOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
   }
 
   public boolean isCsfViewField() {
@@ -344,7 +344,7 @@ public class EarlybirdFieldType extends FieldType {
     FeatureConfiguration.Builder builder = FeatureConfiguration.builder()
             .withName(fieldName)
             .withType(csfViewSettings.csfType)
-            .withBitRange(csfViewSettings.getValueIndex(),
+            .withBitRange(csfViewSettings.getValueIndetwitter(),
                 csfViewSettings.getBitStartPosition(),
                 csfViewSettings.getBitLength())
             .withBaseField(baseField.getName());
@@ -363,11 +363,11 @@ public class EarlybirdFieldType extends FieldType {
     this.csfViewFeatureConfiguration = builder.build();
   }
 
-  public IndexedNumericFieldSettings getNumericFieldSettings() {
+  public IndetwitteredNumericFieldSettings getNumericFieldSettings() {
     return numericFieldSettings;
   }
 
-  public void setNumericFieldSettings(IndexedNumericFieldSettings numericFieldSettings) {
+  public void setNumericFieldSettings(IndetwitteredNumericFieldSettings numericFieldSettings) {
     checkIfFrozen();
     this.numericFieldSettings = numericFieldSettings;
   }

@@ -3,7 +3,7 @@ package com.twitter.timelines.data_processing.ml_util
 import com.twitter.ml.api.DataRecord
 
 package object aggregation_framework {
-  object AggregateType extends Enumeration {
+  object AggregateType etwittertends Enumeration {
     type AggregateType = Value
     val User, UserAuthor, UserEngager, UserMention, UserRequestHour, UserRequestDow,
       UserOriginalAuthor, UserList, UserTopic, UserInferredTopic, UserMediaUnderstandingAnnotation =

@@ -1,17 +1,17 @@
 import tensorflow.compat.v1 as tf
 
 
-def cosine_similarity(x1, x2, axis):
+def cosine_similarity(twitter1, twitter2, atwitteris):
   """
   cosine similarity of two tensors.
 
   Arguments:
-    x1:
+    twitter1:
       A tf.Tensor
-    x2:
+    twitter2:
       A tf.Tensor
-    axis: Dimension along which to normalize.
+    atwitteris: Dimension along which to normalize.
   """
-  normalize_x1 = tf.nn.l2_normalize(x1, axis=axis)
-  normalize_x2 = tf.nn.l2_normalize(x2, axis=axis)
-  return tf.reduce_sum(tf.multiply(normalize_x1, normalize_x2), axis=axis)
+  normalize_twitter1 = tf.nn.l2_normalize(twitter1, atwitteris=atwitteris)
+  normalize_twitter2 = tf.nn.l2_normalize(twitter2, atwitteris=atwitteris)
+  return tf.reduce_sum(tf.multiply(normalize_twitter1, normalize_twitter2), atwitteris=atwitteris)

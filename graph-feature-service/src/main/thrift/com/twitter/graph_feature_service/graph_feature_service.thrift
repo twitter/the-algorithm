@@ -32,7 +32,7 @@ enum PresetFeatureTypes {
   HTL_TWO_HOP,
   WTF_TWO_HOP,
   SQ_TWO_HOP,
-  RUX_TWO_HOP,
+  RUtwitter_TWO_HOP,
   MR_TWO_HOP,
   USER_TYPEAHEAD_TWO_HOP
 }
@@ -48,7 +48,7 @@ struct UserWithScore {
 }(hasPersonalData = 'true')
 
 // Feature Type
-// For example, to compute how many of source user's following's have favorited candidate user,
+// For etwitterample, to compute how many of source user's following's have favorited candidate user,
 // we need to compute the intersection between source user's FOLLOWING edges, and candidate user's
 // FAVORITED_BY edge. In this case, we should user FeatureType(FOLLOWING, FAVORITED_BY)
 struct FeatureType {

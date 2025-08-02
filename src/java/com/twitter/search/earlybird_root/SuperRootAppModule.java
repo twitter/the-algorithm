@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird_root;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javatwitter.inject.Named;
+import javatwitter.inject.Singleton;
 
 import com.google.inject.Key;
 import com.google.inject.Provides;
@@ -10,13 +10,13 @@ import com.google.inject.util.Providers;
 import com.twitter.app.Flag;
 import com.twitter.app.Flaggable;
 import com.twitter.common.util.Clock;
-import com.twitter.common_internal.text.version.PenguinVersionConfig;
+import com.twitter.common_internal.tetwittert.version.PenguinVersionConfig;
 import com.twitter.finagle.Name;
 import com.twitter.finagle.Service;
 import com.twitter.finagle.stats.StatsReceiver;
 import com.twitter.inject.TwitterModule;
 import com.twitter.search.common.config.SearchPenguinVersionsConfig;
-import com.twitter.search.common.dark.ResolverProxy;
+import com.twitter.search.common.dark.ResolverProtwittery;
 import com.twitter.search.common.decider.SearchDecider;
 import com.twitter.search.common.root.LoggingSupport;
 import com.twitter.search.common.root.RemoteClientBuilder;
@@ -28,18 +28,18 @@ import com.twitter.search.earlybird.thrift.EarlybirdRequest;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.EarlybirdService;
 import com.twitter.search.earlybird.thrift.ThriftTweetSource;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.earlybird_root.common.InjectionNames;
 import com.twitter.search.earlybird_root.filters.EarlybirdClusterAvailableFilter;
 import com.twitter.search.earlybird_root.filters.MarkTweetSourceFilter;
-import com.twitter.search.earlybird_root.filters.RequestContextToEarlybirdRequestFilter;
+import com.twitter.search.earlybird_root.filters.RequestContetwittertToEarlybirdRequestFilter;
 import com.twitter.search.earlybird_root.filters.RequestTypeCountFilter;
-import com.twitter.search.earlybird_root.filters.ServiceExceptionHandlingFilter;
+import com.twitter.search.earlybird_root.filters.ServiceEtwitterceptionHandlingFilter;
 import com.twitter.search.earlybird_root.filters.ServiceResponseValidationFilter;
 import com.twitter.search.earlybird_root.filters.UnsetSuperRootFieldsFilter;
 import com.twitter.util.Future;
 
-public class SuperRootAppModule extends TwitterModule {
+public class SuperRootAppModule etwittertends TwitterModule {
   private final Flag<String> rootRealtimeFlag = createFlag(
       "root-realtime",
       "",
@@ -82,28 +82,28 @@ public class SuperRootAppModule extends TwitterModule {
   @Named(InjectionNames.REALTIME)
   private EarlybirdService.ServiceIface providesRealtimeIface(
       RemoteClientBuilder<EarlybirdService.ServiceIface> builder,
-      ResolverProxy proxy) throws Exception {
-    Name name = proxy.resolve(rootRealtimeFlag.apply());
+      ResolverProtwittery protwittery) throws Etwitterception {
+    Name name = protwittery.resolve(rootRealtimeFlag.apply());
     return builder.createRemoteClient(name, "realtime", "realtime_");
   }
 
   @Provides
   @Singleton
   @Named(InjectionNames.REALTIME)
-  private Service<EarlybirdRequestContext, EarlybirdResponse> providesRealtimeService(
+  private Service<EarlybirdRequestContetwittert, EarlybirdResponse> providesRealtimeService(
       @Named(InjectionNames.REALTIME)
       EarlybirdService.ServiceIface realtimeServiceIface,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
+      RequestContetwittertToEarlybirdRequestFilter requestContetwittertToEarlybirdRequestFilter,
       StatsReceiver statsReceiver,
       SearchDecider decider) {
     return buildClientService(
         realtimeServiceIface,
         new EarlybirdClusterAvailableFilter(decider, EarlybirdCluster.REALTIME),
         new MarkTweetSourceFilter(ThriftTweetSource.REALTIME_CLUSTER),
-        new ServiceExceptionHandlingFilter(EarlybirdCluster.REALTIME),
+        new ServiceEtwitterceptionHandlingFilter(EarlybirdCluster.REALTIME),
         new ServiceResponseValidationFilter(EarlybirdCluster.REALTIME),
         new RequestTypeCountFilter(EarlybirdCluster.REALTIME.getNameForStats()),
-        requestContextToEarlybirdRequestFilter,
+        requestContetwittertToEarlybirdRequestFilter,
         new UnsetSuperRootFieldsFilter(),
         new ClientLatencyFilter(EarlybirdCluster.REALTIME.getNameForStats()));
   }
@@ -113,28 +113,28 @@ public class SuperRootAppModule extends TwitterModule {
   @Named(InjectionNames.FULL_ARCHIVE)
   private EarlybirdService.ServiceIface providesFullArchiveIface(
       RemoteClientBuilder<EarlybirdService.ServiceIface> builder,
-      ResolverProxy proxy) throws Exception {
-    Name name = proxy.resolve(rootArchiveFullFlag.apply());
+      ResolverProtwittery protwittery) throws Etwitterception {
+    Name name = protwittery.resolve(rootArchiveFullFlag.apply());
     return builder.createRemoteClient(name, "fullarchive", "full_archive_");
   }
 
   @Provides
   @Singleton
   @Named(InjectionNames.FULL_ARCHIVE)
-  private Service<EarlybirdRequestContext, EarlybirdResponse> providesFullArchiveService(
+  private Service<EarlybirdRequestContetwittert, EarlybirdResponse> providesFullArchiveService(
       @Named(InjectionNames.FULL_ARCHIVE)
       EarlybirdService.ServiceIface fullArchiveServiceIface,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
+      RequestContetwittertToEarlybirdRequestFilter requestContetwittertToEarlybirdRequestFilter,
       StatsReceiver statsReceiver,
       SearchDecider decider) {
     return buildClientService(
         fullArchiveServiceIface,
         new EarlybirdClusterAvailableFilter(decider, EarlybirdCluster.FULL_ARCHIVE),
         new MarkTweetSourceFilter(ThriftTweetSource.FULL_ARCHIVE_CLUSTER),
-        new ServiceExceptionHandlingFilter(EarlybirdCluster.FULL_ARCHIVE),
+        new ServiceEtwitterceptionHandlingFilter(EarlybirdCluster.FULL_ARCHIVE),
         new ServiceResponseValidationFilter(EarlybirdCluster.FULL_ARCHIVE),
         new RequestTypeCountFilter(EarlybirdCluster.FULL_ARCHIVE.getNameForStats()),
-        requestContextToEarlybirdRequestFilter,
+        requestContetwittertToEarlybirdRequestFilter,
         // Disable unset followedUserIds for archive since archive earlybirds rely on this field
         // to rewrite query to include protected Tweets
         new UnsetSuperRootFieldsFilter(false),
@@ -146,28 +146,28 @@ public class SuperRootAppModule extends TwitterModule {
   @Named(InjectionNames.PROTECTED)
   private EarlybirdService.ServiceIface providesProtectedIface(
       RemoteClientBuilder<EarlybirdService.ServiceIface> builder,
-      ResolverProxy proxy) throws Exception {
-    Name name = proxy.resolve(rootProtectedFlag.apply());
+      ResolverProtwittery protwittery) throws Etwitterception {
+    Name name = protwittery.resolve(rootProtectedFlag.apply());
     return builder.createRemoteClient(name, "protected", "protected_");
   }
 
   @Provides
   @Singleton
   @Named(InjectionNames.PROTECTED)
-  private Service<EarlybirdRequestContext, EarlybirdResponse> providesProtectedService(
+  private Service<EarlybirdRequestContetwittert, EarlybirdResponse> providesProtectedService(
       @Named(InjectionNames.PROTECTED)
       EarlybirdService.ServiceIface protectedServiceIface,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
+      RequestContetwittertToEarlybirdRequestFilter requestContetwittertToEarlybirdRequestFilter,
       StatsReceiver statsReceiver,
       SearchDecider decider) {
     return buildClientService(
         protectedServiceIface,
         new EarlybirdClusterAvailableFilter(decider, EarlybirdCluster.PROTECTED),
         new MarkTweetSourceFilter(ThriftTweetSource.REALTIME_PROTECTED_CLUSTER),
-        new ServiceExceptionHandlingFilter(EarlybirdCluster.PROTECTED),
+        new ServiceEtwitterceptionHandlingFilter(EarlybirdCluster.PROTECTED),
         new ServiceResponseValidationFilter(EarlybirdCluster.PROTECTED),
         new RequestTypeCountFilter(EarlybirdCluster.PROTECTED.getNameForStats()),
-        requestContextToEarlybirdRequestFilter,
+        requestContetwittertToEarlybirdRequestFilter,
         new UnsetSuperRootFieldsFilter(),
         new ClientLatencyFilter(EarlybirdCluster.PROTECTED.getNameForStats()));
   }
@@ -175,38 +175,38 @@ public class SuperRootAppModule extends TwitterModule {
   /**
    * Builds a Finagle Service based on a EarlybirdService.ServiceIface.
    */
-  private Service<EarlybirdRequestContext, EarlybirdResponse> buildClientService(
+  private Service<EarlybirdRequestContetwittert, EarlybirdResponse> buildClientService(
       final EarlybirdService.ServiceIface serviceIface,
       EarlybirdClusterAvailableFilter earlybirdClusterAvailableFilter,
       MarkTweetSourceFilter markTweetSourceFilter,
-      ServiceExceptionHandlingFilter serviceExceptionHandlingFilter,
+      ServiceEtwitterceptionHandlingFilter serviceEtwitterceptionHandlingFilter,
       ServiceResponseValidationFilter serviceResponseValidationFilter,
       RequestTypeCountFilter requestTypeCountFilter,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
+      RequestContetwittertToEarlybirdRequestFilter requestContetwittertToEarlybirdRequestFilter,
       UnsetSuperRootFieldsFilter unsetSuperRootFieldsFilter,
       ClientLatencyFilter latencyFilter) {
     Service<EarlybirdRequest, EarlybirdResponse> service =
         new Service<EarlybirdRequest, EarlybirdResponse>() {
 
           @Override
-          public Future<EarlybirdResponse> apply(EarlybirdRequest requestContext) {
-            return serviceIface.search(requestContext);
+          public Future<EarlybirdResponse> apply(EarlybirdRequest requestContetwittert) {
+            return serviceIface.search(requestContetwittert);
           }
         };
 
     // We should apply ServiceResponseValidationFilter first, to validate the response.
     // Then, if the response is valid, we should tag all results with the appropriate tweet source.
-    // ServiceExceptionHandlingFilter should come last, to catch all possible exceptions (that were
+    // ServiceEtwitterceptionHandlingFilter should come last, to catch all possible etwitterceptions (that were
     // thrown by the service, or by ServiceResponseValidationFilter and MarkTweetSourceFilter).
     //
     // But before we do all of this, we should apply the EarlybirdClusterAvailableFilter to see if
     // we even need to send the request to this cluster.
     return earlybirdClusterAvailableFilter
-        .andThen(serviceExceptionHandlingFilter)
+        .andThen(serviceEtwitterceptionHandlingFilter)
         .andThen(markTweetSourceFilter)
         .andThen(serviceResponseValidationFilter)
         .andThen(requestTypeCountFilter)
-        .andThen(requestContextToEarlybirdRequestFilter)
+        .andThen(requestContetwittertToEarlybirdRequestFilter)
         .andThen(latencyFilter)
         .andThen(unsetSuperRootFieldsFilter)
         .andThen(service);

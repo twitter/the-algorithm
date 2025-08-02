@@ -2,7 +2,7 @@ package com.twitter.simclusters_v2.scalding.mbcg
 
 import com.twitter.ml.api.DataRecord
 import com.twitter.ml.api.embedding.Embedding
-import com.twitter.ml.api.FeatureContext
+import com.twitter.ml.api.FeatureContetwittert
 import com.twitter.ml.api.FloatTensor
 import com.twitter.ml.api.GeneralTensor
 import com.twitter.ml.api.IRecordOneToOneAdapter
@@ -15,8 +15,8 @@ import scala.collection.JavaConverters._
 Adapters to convert data from MBCG input sources into DataRecords
  */
 object TweetSimclusterRecordAdapter
-    extends IRecordOneToOneAdapter[(Long, PersistentSimClustersEmbedding, Embedding[Float])] {
-  override def getFeatureContext: FeatureContext = TweetAllFeatures.featureContext
+    etwittertends IRecordOneToOneAdapter[(Long, PersistentSimClustersEmbedding, Embedding[Float])] {
+  override def getFeatureContetwittert: FeatureContetwittert = TweetAllFeatures.featureContetwittert
 
   override def adaptToDataRecord(
     tweetFeatures: (Long, PersistentSimClustersEmbedding, Embedding[Float])
@@ -36,7 +36,7 @@ object TweetSimclusterRecordAdapter
     dataRecord.setFeatureValue(
       TweetAllFeatures.authorF2vProducerEmbedding,
       GeneralTensor.floatTensor(
-        new FloatTensor(f2vEmbedding.map(Double.box(_)).asJava)
+        new FloatTensor(f2vEmbedding.map(Double.botwitter(_)).asJava)
       )
     )
 
@@ -45,8 +45,8 @@ object TweetSimclusterRecordAdapter
 }
 
 object UserSimclusterRecordAdapter
-    extends IRecordOneToOneAdapter[(Long, ClustersUserIsInterestedIn, Embedding[Float])] {
-  override def getFeatureContext: FeatureContext = TweetAllFeatures.featureContext
+    etwittertends IRecordOneToOneAdapter[(Long, ClustersUserIsInterestedIn, Embedding[Float])] {
+  override def getFeatureContetwittert: FeatureContetwittert = TweetAllFeatures.featureContetwittert
 
   override def adaptToDataRecord(
     userSimclusterEmbedding: (Long, ClustersUserIsInterestedIn, Embedding[Float])
@@ -70,7 +70,7 @@ object UserSimclusterRecordAdapter
     dataRecord.setFeatureValue(
       UserAllFeatures.userF2vConsumerEmbedding,
       GeneralTensor.floatTensor(
-        new FloatTensor(f2vEmbedding.map(Double.box(_)).asJava)
+        new FloatTensor(f2vEmbedding.map(Double.botwitter(_)).asJava)
       )
     )
 

@@ -14,15 +14,15 @@ import com.twitter.usersignalservice.thriftscala.Signal
 import com.twitter.usersignalservice.thriftscala.SignalType
 import com.twitter.util.Future
 import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 case class TweetClickFetcher @Inject() (
   stratoClient: Client,
   timer: Timer,
   stats: StatsReceiver)
-    extends StratoSignalFetcher[(UserId, Long), Unit, RecentTweetClickImpressEvents] {
+    etwittertends StratoSignalFetcher[(UserId, Long), Unit, RecentTweetClickImpressEvents] {
 
   import TweetClickFetcher._
 
@@ -56,7 +56,7 @@ case class TweetClickFetcher @Inject() (
           .filter(dwelltimeFilter(_, query.signalType))
           .map(signalFromTweetClick(_, query.signalType))
           .sortBy(-_.timestamp)
-          .take(query.maxResults.getOrElse(Int.MaxValue))
+          .take(query.matwitterResults.getOrElse(Int.MatwitterValue))
       }
     }
 }

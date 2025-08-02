@@ -7,13 +7,13 @@ import com.twitter.timelines.configapi.Config
 import com.twitter.util.Future
 
 class RecapQueryParamInitializer(config: Config, runtimeConfig: RuntimeConfiguration)
-    extends FunctionArrow[RecapQuery, Future[RecapQuery]] {
-  private[this] val requestContextBuilder =
-    new RequestContextBuilderImpl(runtimeConfig.configApiConfiguration.requestContextFactory)
+    etwittertends FunctionArrow[RecapQuery, Future[RecapQuery]] {
+  private[this] val requestContetwittertBuilder =
+    new RequestContetwittertBuilderImpl(runtimeConfig.configApiConfiguration.requestContetwittertFactory)
 
   def apply(query: RecapQuery): Future[RecapQuery] = {
-    requestContextBuilder(Some(query.userId), query.deviceContext).map { baseContext =>
-      val params = config(baseContext, runtimeConfig.statsReceiver)
+    requestContetwittertBuilder(Some(query.userId), query.deviceContetwittert).map { baseContetwittert =>
+      val params = config(baseContetwittert, runtimeConfig.statsReceiver)
       query.copy(params = params)
     }
   }

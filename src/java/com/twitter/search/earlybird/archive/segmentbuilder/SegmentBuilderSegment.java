@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.archive.segmentbuilder;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import com.google.common.base.Preconditions;
 
@@ -11,7 +11,7 @@ import com.twitter.search.common.util.zktrylock.TryLock;
 import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
 import com.twitter.search.earlybird.archive.ArchiveSegment;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
+import com.twitter.search.earlybird.indetwitter.EarlybirdSegmentFactory;
 import com.twitter.search.earlybird.partition.SegmentInfo;
 import com.twitter.search.earlybird.partition.SegmentSyncConfig;
 
@@ -52,7 +52,7 @@ public abstract class SegmentBuilderSegment {
    * @return The state after handling.
    */
   public abstract SegmentBuilderSegment handle()
-      throws SegmentInfoConstructionException, SegmentUpdaterException;
+      throws SegmentInfoConstructionEtwitterception, SegmentUpdaterEtwitterception;
 
   public boolean isBuilt() {
     return false;
@@ -71,17 +71,17 @@ public abstract class SegmentBuilderSegment {
    * internal state.
    */
   protected SegmentInfo createNewSegmentInfo(SegmentInfo oldSegmentInfo)
-      throws SegmentInfoConstructionException {
+      throws SegmentInfoConstructionEtwitterception {
     Preconditions.checkArgument(oldSegmentInfo.getSegment() instanceof ArchiveSegment);
     ArchiveSegment archiveSegment = (ArchiveSegment) oldSegmentInfo.getSegment();
 
     try {
       ArchiveSegment segment = new ArchiveSegment(archiveSegment.getArchiveTimeSlice(),
-          archiveSegment.getHashPartitionID(), EarlybirdConfig.getMaxSegmentSize());
+          archiveSegment.getHashPartitionID(), EarlybirdConfig.getMatwitterSegmentSize());
 
       return new SegmentInfo(segment, earlybirdSegmentFactory, sync);
-    } catch (IOException e) {
-      throw new SegmentInfoConstructionException("Error creating new segments", e);
+    } catch (IOEtwitterception e) {
+      throw new SegmentInfoConstructionEtwitterception("Error creating new segments", e);
     }
   }
 
@@ -89,12 +89,12 @@ public abstract class SegmentBuilderSegment {
     ZooKeeperTryLockFactory tryLockFactory = segmentConfig.getTryLockFactory();
     String zkRootPath = sync.getZooKeeperSyncFullPath();
     String nodeName = segmentInfo.getZkNodeName();
-    Amount<Long, Time> expirationTime = segmentConfig.getSegmentZKLockExpirationTime();
+    Amount<Long, Time> etwitterpirationTime = segmentConfig.getSegmentZKLockEtwitterpirationTime();
 
     return tryLockFactory.createTryLock(
         DatabaseConfig.getLocalHostname(),
         zkRootPath,
         nodeName,
-        expirationTime);
+        etwitterpirationTime);
   }
 }

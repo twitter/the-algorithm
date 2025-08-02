@@ -5,11 +5,11 @@ import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.ml.featurestore.catalog.datasets.magicrecs.UserFeaturesDataset
 import com.twitter.ml.featurestore.catalog.datasets.geo.GeoUserLocationDataset
 import com.twitter.ml.featurestore.lib.dataset.DatasetParams
-import com.twitter.ml.featurestore.lib.export.strato.FeatureStoreAppNames
+import com.twitter.ml.featurestore.lib.etwitterport.strato.FeatureStoreAppNames
 import com.twitter.ml.featurestore.lib.online.FeatureStoreClient
 import com.twitter.ml.featurestore.lib.params.FeatureStoreParams
 import com.twitter.strato.client.{Client, Strato}
-import com.twitter.strato.opcontext.Attribution.ManhattanAppId
+import com.twitter.strato.opcontetwittert.Attribution.ManhattanAppId
 import com.twitter.util.Duration
 
 private[real_time] object FeatureStoreUtils {
@@ -24,7 +24,7 @@ private[real_time] object FeatureStoreUtils {
       perDataset = Map(
         UserFeaturesDataset.id ->
           DatasetParams(
-            stratoSuffix = Some(FeatureStoreAppNames.Timelines),
+            stratoSuffitwitter = Some(FeatureStoreAppNames.Timelines),
             attributions = Seq(ManhattanAppId("athena", "timelines_aggregates_v2_features_by_user"))
           ),
         GeoUserLocationDataset.id ->

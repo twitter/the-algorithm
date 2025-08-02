@@ -2,8 +2,8 @@ package com.twitter.tweetypie
 package federated
 package warmups
 
-import com.twitter.context.TwitterContext
-import com.twitter.context.thriftscala.Viewer
+import com.twitter.contetwittert.TwitterContetwittert
+import com.twitter.contetwittert.thriftscala.Viewer
 import com.twitter.spam.rtf.thriftscala.SafetyLevel
 import com.twitter.stitch.Stitch
 import com.twitter.strato.access.Access
@@ -14,9 +14,9 @@ import com.twitter.strato.access.Access.TwitterUserId
 import com.twitter.strato.access.Access.TwitterUserNotSuspended
 import com.twitter.strato.catalog.Ops
 import com.twitter.strato.client.StaticClient
-import com.twitter.strato.context.StratoContext
-import com.twitter.strato.opcontext.DarkRequest
-import com.twitter.strato.opcontext.OpContext
+import com.twitter.strato.contetwittert.StratoContetwittert
+import com.twitter.strato.opcontetwittert.DarkRequest
+import com.twitter.strato.opcontetwittert.OpContetwittert
 import com.twitter.strato.test.config.bouncer.TestPrincipals
 import com.twitter.strato.thrift.ScroogeConvImplicits._
 import com.twitter.tweetypie.federated.columns.CreateRetweetColumn
@@ -42,10 +42,10 @@ object StratoCatalogWarmups {
     //       columns are gated by a bouncer policy
     Access
       .withPrincipals(WarmupPrincipals) {
-        StratoContext.withOpContext(WarmupOpContext) {
-          TwitterContext.let(viewer = WarmupViewer) {
+        StratoContetwittert.withOpContetwittert(WarmupOpContetwittert) {
+          TwitterContetwittert.let(viewer = WarmupViewer) {
             warmupSettings.clientId.asCurrent {
-              Stitch.run(executeDarkly(catalog))
+              Stitch.run(etwitterecuteDarkly(catalog))
             }
           }
         }
@@ -73,59 +73,59 @@ object StratoCatalogWarmups {
     clientApplicationId = Some(RwebClientId),
   )
 
-  private[this] val WarmupOpContext =
-    OpContext
+  private[this] val WarmupOpContetwittert =
+    OpContetwittert
       .safetyLevel(SafetyLevel.TweetWritesApi.name)
       .copy(darkRequest = Some(DarkRequest()))
       .toThrift()
 
   private[this] val EllenOscarSelfie = 440322224407314432L
 
-  private[this] val TwitterContext: TwitterContext =
-    com.twitter.context.TwitterContext(com.twitter.tweetypie.TwitterContextPermit)
+  private[this] val TwitterContetwittert: TwitterContetwittert =
+    com.twitter.contetwittert.TwitterContetwittert(com.twitter.tweetypie.TwitterContetwittertPermit)
 
-  private[this] def executeDarkly(catalog: PartialFunction[String, Ops]): Stitch[Unit] = {
+  private[this] def etwitterecuteDarkly(catalog: PartialFunction[String, Ops]): Stitch[Unit] = {
     val stratoClient = new StaticClient(catalog)
     val tweetCreator =
-      stratoClient.executer[CreateTweetRequest, CreateTweetResponseWithSubqueryPrefetchItems](
+      stratoClient.etwitterecuter[CreateTweetRequest, CreateTweetResponseWithSubqueryPrefetchItems](
         CreateTweetColumn.Path)
 
     val tweetDeletor =
       stratoClient
-        .executer[DeleteTweetRequest, DeleteTweetResponseWithSubqueryPrefetchItems](
+        .etwitterecuter[DeleteTweetRequest, DeleteTweetResponseWithSubqueryPrefetchItems](
           DeleteTweetColumn.Path)
 
     val retweetCreator =
       stratoClient
-        .executer[CreateRetweetRequest, CreateRetweetResponseWithSubqueryPrefetchItems](
+        .etwitterecuter[CreateRetweetRequest, CreateRetweetResponseWithSubqueryPrefetchItems](
           CreateRetweetColumn.Path)
 
     val unretweetor =
       stratoClient
-        .executer[UnretweetRequest, UnretweetResponseWithSubqueryPrefetchItems](
+        .etwitterecuter[UnretweetRequest, UnretweetResponseWithSubqueryPrefetchItems](
           UnretweetColumn.Path)
 
     val stitchCreateTweet =
       tweetCreator
-        .execute(CreateTweetRequest("getting warmer"))
+        .etwitterecute(CreateTweetRequest("getting warmer"))
         .onSuccess(_ => log.info(s"${CreateTweetColumn.Path} warmup success"))
         .onFailure(e => log.info(s"${CreateTweetColumn.Path} warmup fail: $e"))
 
     val stitchDeleteTweet =
       tweetDeletor
-        .execute(DeleteTweetRequest(-1L))
+        .etwitterecute(DeleteTweetRequest(-1L))
         .onSuccess(_ => log.info(s"${DeleteTweetColumn.Path} warmup success"))
         .onFailure(e => log.info(s"${DeleteTweetColumn.Path} warmup fail: $e"))
 
     val stitchCreateRetweet =
       retweetCreator
-        .execute(CreateRetweetRequest(EllenOscarSelfie))
+        .etwitterecute(CreateRetweetRequest(EllenOscarSelfie))
         .onSuccess(_ => log.info(s"${CreateRetweetColumn.Path} warmup success"))
         .onFailure(e => log.info(s"${CreateRetweetColumn.Path} warmup fail: $e"))
 
     val stitchUnretweet =
       unretweetor
-        .execute(UnretweetRequest(EllenOscarSelfie))
+        .etwitterecute(UnretweetRequest(EllenOscarSelfie))
         .onSuccess(_ => log.info(s"${UnretweetColumn.Path} warmup success"))
         .onFailure(e => log.info(s"${UnretweetColumn.Path} warmup fail: $e"))
 

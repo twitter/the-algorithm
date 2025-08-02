@@ -1,7 +1,7 @@
 package com.twitter.tweetypie
 package hydrator
 
-object StripHiddenGeoCoordinates extends Mutation[Tweet] {
+object StripHiddenGeoCoordinates etwittertends Mutation[Tweet] {
   def apply(tweet: Tweet): Option[Tweet] =
     for {
       coreData <- tweet.coreData

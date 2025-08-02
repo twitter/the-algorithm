@@ -13,11 +13,11 @@ import com.google.common.collect.ImmutableList;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.ApiException;
+import org.apache.kafka.common.errors.ApiEtwitterception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchRateCounter;
 import com.twitter.search.common.metrics.SearchTimer;
@@ -25,8 +25,8 @@ import com.twitter.search.common.metrics.SearchTimerStats;
 import com.twitter.search.common.util.LogFormatUtil;
 import com.twitter.search.earlybird.EarlybirdStatus;
 import com.twitter.search.earlybird.common.CaughtUpMonitor;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.WrappedKafkaApiException;
+import com.twitter.search.earlybird.etwitterception.CriticalEtwitterceptionHandler;
+import com.twitter.search.earlybird.etwitterception.WrappedKafkaApiEtwitterception;
 import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
 
 /**
@@ -36,20 +36,20 @@ public class EarlybirdKafkaConsumer implements Closeable {
   private static final Logger LOG = LoggerFactory.getLogger(EarlybirdKafkaConsumer.class);
 
   private static final Duration POLL_TIMEOUT = Duration.ofSeconds(1);
-  private static final String STATS_PREFIX = "earlybird_kafka_consumer_";
+  private static final String STATS_PREFItwitter = "earlybird_kafka_consumer_";
 
   // See SEARCH-31827
   private static final SearchCounter INGESTING_DONE =
-      SearchCounter.export(STATS_PREFIX + "ingesting_done");
-  private static final SearchRateCounter POLL_LOOP_EXCEPTIONS =
-      SearchRateCounter.export(STATS_PREFIX + "poll_loop_exceptions");
-  private static final SearchRateCounter FLUSHING_EXCEPTIONS =
-      SearchRateCounter.export(STATS_PREFIX + "flushing_exceptions");
+      SearchCounter.etwitterport(STATS_PREFItwitter + "ingesting_done");
+  private static final SearchRateCounter POLL_LOOP_EtwitterCEPTIONS =
+      SearchRateCounter.etwitterport(STATS_PREFItwitter + "poll_loop_etwitterceptions");
+  private static final SearchRateCounter FLUSHING_EtwitterCEPTIONS =
+      SearchRateCounter.etwitterport(STATS_PREFItwitter + "flushing_etwitterceptions");
 
   private static final SearchTimerStats TIMED_POLLS =
-      SearchTimerStats.export(STATS_PREFIX + "timed_polls");
-  private static final SearchTimerStats TIMED_INDEX_EVENTS =
-      SearchTimerStats.export(STATS_PREFIX + "timed_index_events");
+      SearchTimerStats.etwitterport(STATS_PREFItwitter + "timed_polls");
+  private static final SearchTimerStats TIMED_INDEtwitter_EVENTS =
+      SearchTimerStats.etwitterport(STATS_PREFItwitter + "timed_indetwitter_events");
 
   private final AtomicBoolean running = new AtomicBoolean(true);
   private final BalancingKafkaConsumer balancingKafkaConsumer;
@@ -57,11 +57,11 @@ public class EarlybirdKafkaConsumer implements Closeable {
   protected final TopicPartition tweetTopic;
   protected final TopicPartition updateTopic;
   private final KafkaConsumer<Long, ThriftVersionedEvents> underlyingKafkaConsumer;
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final EarlybirdIndexFlusher earlybirdIndexFlusher;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
+  private final CriticalEtwitterceptionHandler criticalEtwitterceptionHandler;
+  private final EarlybirdIndetwitterFlusher earlybirdIndetwitterFlusher;
+  private final SearchIndetwitteringMetricSet searchIndetwitteringMetricSet;
   private boolean finishedIngestUntilCurrent;
-  private final CaughtUpMonitor indexCaughtUpMonitor;
+  private final CaughtUpMonitor indetwitterCaughtUpMonitor;
 
   protected class ConsumeBatchResult {
     private boolean isCaughtUp;
@@ -83,21 +83,21 @@ public class EarlybirdKafkaConsumer implements Closeable {
 
   public EarlybirdKafkaConsumer(
       KafkaConsumer<Long, ThriftVersionedEvents> underlyingKafkaConsumer,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler,
+      SearchIndetwitteringMetricSet searchIndetwitteringMetricSet,
+      CriticalEtwitterceptionHandler criticalEtwitterceptionHandler,
       PartitionWriter partitionWriter,
       TopicPartition tweetTopic,
       TopicPartition updateTopic,
-      EarlybirdIndexFlusher earlybirdIndexFlusher,
-      CaughtUpMonitor kafkaIndexCaughtUpMonitor
+      EarlybirdIndetwitterFlusher earlybirdIndetwitterFlusher,
+      CaughtUpMonitor kafkaIndetwitterCaughtUpMonitor
   ) {
     this.partitionWriter = partitionWriter;
     this.underlyingKafkaConsumer = underlyingKafkaConsumer;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
+    this.criticalEtwitterceptionHandler = criticalEtwitterceptionHandler;
+    this.searchIndetwitteringMetricSet = searchIndetwitteringMetricSet;
     this.tweetTopic = tweetTopic;
     this.updateTopic = updateTopic;
-    this.earlybirdIndexFlusher = earlybirdIndexFlusher;
+    this.earlybirdIndetwitterFlusher = earlybirdIndetwitterFlusher;
 
     LOG.info("Reading from Kafka topics: tweetTopic={}, updateTopic={}", tweetTopic, updateTopic);
     underlyingKafkaConsumer.assign(ImmutableList.of(updateTopic, tweetTopic));
@@ -105,17 +105,17 @@ public class EarlybirdKafkaConsumer implements Closeable {
     this.balancingKafkaConsumer =
         new BalancingKafkaConsumer(underlyingKafkaConsumer, tweetTopic, updateTopic);
     this.finishedIngestUntilCurrent = false;
-    this.indexCaughtUpMonitor = kafkaIndexCaughtUpMonitor;
+    this.indetwitterCaughtUpMonitor = kafkaIndetwitterCaughtUpMonitor;
   }
 
   /**
-   * Run the consumer, indexing from Kafka.
+   * Run the consumer, indetwittering from Kafka.
    */
   @VisibleForTesting
   public void run() {
     while (isRunning()) {
       ConsumeBatchResult result = consumeBatch(true);
-      indexCaughtUpMonitor.setAndNotify(result.isCaughtUp());
+      indetwitterCaughtUpMonitor.setAndNotify(result.isCaughtUp());
     }
   }
 
@@ -132,17 +132,17 @@ public class EarlybirdKafkaConsumer implements Closeable {
     try {
       underlyingKafkaConsumer.seek(tweetTopic, tweetOffset);
       underlyingKafkaConsumer.seek(updateTopic, updateOffset);
-    } catch (ApiException kafkaApiException) {
-      throw new WrappedKafkaApiException("Can't seek to tweet and update offsets",
-          kafkaApiException);
+    } catch (ApiEtwitterception kafkaApiEtwitterception) {
+      throw new WrappedKafkaApiEtwitterception("Can't seek to tweet and update offsets",
+          kafkaApiEtwitterception);
     }
 
     Map<TopicPartition, Long> endOffsets;
     try {
       endOffsets = underlyingKafkaConsumer.endOffsets(ImmutableList.of(tweetTopic, updateTopic));
-    } catch (ApiException kafkaApiException) {
-      throw new WrappedKafkaApiException("Can't find end offsets",
-          kafkaApiException);
+    } catch (ApiEtwitterception kafkaApiEtwitterception) {
+      throw new WrappedKafkaApiEtwitterception("Can't find end offsets",
+          kafkaApiEtwitterception);
     }
 
     if (endOffsets.size() > 0) {
@@ -189,9 +189,9 @@ public class EarlybirdKafkaConsumer implements Closeable {
   }
 
   /**
-   * We don't index during flushing, so after the flush is done, the index is stale.
+   * We don't indetwitter during flushing, so after the flush is done, the indetwitter is stale.
    * We need to get to current, before we rejoin the serverset so that upon rejoining we're
-   * not serving a stale index.
+   * not serving a stale indetwitter.
    */
   @VisibleForTesting
   void getToCurrentPostFlush() {
@@ -205,7 +205,7 @@ public class EarlybirdKafkaConsumer implements Closeable {
   }
 
   /*
-   * @return true if we are current after indexing this batch.
+   * @return true if we are current after indetwittering this batch.
    */
   @VisibleForTesting
   protected ConsumeBatchResult consumeBatch(boolean flushingEnabled) {
@@ -220,17 +220,17 @@ public class EarlybirdKafkaConsumer implements Closeable {
       readRecordsCount += records.count();
       TIMED_POLLS.stopTimerAndIncrement(pollTimer);
 
-      // Index.
-      SearchTimer indexTimer = TIMED_INDEX_EVENTS.startNewTimer();
-      isCaughtUp = partitionWriter.indexBatch(records);
-      TIMED_INDEX_EVENTS.stopTimerAndIncrement(indexTimer);
-    } catch (Exception ex) {
-      POLL_LOOP_EXCEPTIONS.increment();
-      LOG.error("Exception in poll loop", ex);
+      // Indetwitter.
+      SearchTimer indetwitterTimer = TIMED_INDEtwitter_EVENTS.startNewTimer();
+      isCaughtUp = partitionWriter.indetwitterBatch(records);
+      TIMED_INDEtwitter_EVENTS.stopTimerAndIncrement(indetwitterTimer);
+    } catch (Etwitterception etwitter) {
+      POLL_LOOP_EtwitterCEPTIONS.increment();
+      LOG.error("Etwitterception in poll loop", etwitter);
     }
 
     try {
-      // Possibly flush the index.
+      // Possibly flush the indetwitter.
       if (isCaughtUp && flushingEnabled) {
         long tweetOffset = 0;
         long updateOffset = 0;
@@ -238,19 +238,19 @@ public class EarlybirdKafkaConsumer implements Closeable {
         try {
           tweetOffset = underlyingKafkaConsumer.position(tweetTopic);
           updateOffset = underlyingKafkaConsumer.position(updateTopic);
-        } catch (ApiException kafkaApiException) {
-          throw new WrappedKafkaApiException("can't get topic positions", kafkaApiException);
+        } catch (ApiEtwitterception kafkaApiEtwitterception) {
+          throw new WrappedKafkaApiEtwitterception("can't get topic positions", kafkaApiEtwitterception);
         }
 
-        EarlybirdIndexFlusher.FlushAttemptResult flushAttemptResult =
-            earlybirdIndexFlusher.flushIfNecessary(
+        EarlybirdIndetwitterFlusher.FlushAttemptResult flushAttemptResult =
+            earlybirdIndetwitterFlusher.flushIfNecessary(
                 tweetOffset, updateOffset, this::getToCurrentPostFlush);
 
-        if (flushAttemptResult == EarlybirdIndexFlusher.FlushAttemptResult.FLUSH_ATTEMPT_MADE) {
+        if (flushAttemptResult == EarlybirdIndetwitterFlusher.FlushAttemptResult.FLUSH_ATTEMPT_MADE) {
           // Viz might show this as a fairly high number, so we're printing it here to confirm
           // the value on the server.
-          LOG.info("Finished flushing. Index freshness in ms: {}",
-              LogFormatUtil.formatInt(searchIndexingMetricSet.getIndexFreshnessInMillis()));
+          LOG.info("Finished flushing. Indetwitter freshness in ms: {}",
+              LogFormatUtil.formatInt(searchIndetwitteringMetricSet.getIndetwitterFreshnessInMillis()));
         }
 
         if (!finishedIngestUntilCurrent) {
@@ -258,9 +258,9 @@ public class EarlybirdKafkaConsumer implements Closeable {
               flushAttemptResult);
         }
       }
-    } catch (Exception ex) {
-      FLUSHING_EXCEPTIONS.increment();
-      LOG.error("Exception while flushing", ex);
+    } catch (Etwitterception etwitter) {
+      FLUSHING_EtwitterCEPTIONS.increment();
+      LOG.error("Etwitterception while flushing", etwitter);
     }
 
     return new ConsumeBatchResult(isCaughtUp, readRecordsCount);
@@ -270,8 +270,8 @@ public class EarlybirdKafkaConsumer implements Closeable {
     return running.get() && EarlybirdStatus.getStatusCode() != EarlybirdStatusCode.STOPPING;
   }
 
-  public void prepareAfterStartingWithIndex(long maxIndexedTweetId) {
-    partitionWriter.prepareAfterStartingWithIndex(maxIndexedTweetId);
+  public void prepareAfterStartingWithIndetwitter(long matwitterIndetwitteredTweetId) {
+    partitionWriter.prepareAfterStartingWithIndetwitter(matwitterIndetwitteredTweetId);
   }
 
   public void close() {

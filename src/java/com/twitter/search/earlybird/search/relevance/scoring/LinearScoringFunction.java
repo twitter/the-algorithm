@@ -1,11 +1,11 @@
 package com.twitter.search.earlybird.search.relevance.scoring;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import org.apache.lucene.search.Explanation;
+import org.apache.lucene.search.Etwitterplanation;
 
 import com.twitter.search.common.relevance.features.MutableFeatureNormalizers;
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
@@ -21,7 +21,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
  * Scoring function that uses the weights and boosts provided in the scoring parameters from the
  * request.
  */
-public class LinearScoringFunction extends FeatureBasedScoringFunction {
+public class LinearScoringFunction etwittertends FeatureBasedScoringFunction {
   private static final double BASE_SCORE = 0.0001;
 
   public LinearScoringFunction(
@@ -29,20 +29,20 @@ public class LinearScoringFunction extends FeatureBasedScoringFunction {
       ThriftSearchQuery searchQuery,
       AntiGamingFilter antiGamingFilter,
       ThriftSearchResultType searchResultType,
-      UserTable userTable) throws IOException {
+      UserTable userTable) throws IOEtwitterception {
     super("LinearScoringFunction", schema, searchQuery, antiGamingFilter, searchResultType,
         userTable);
   }
 
   @Override
-  protected double computeScore(LinearScoringData data, boolean forExplanation) throws IOException {
+  protected double computeScore(LinearScoringData data, boolean forEtwitterplanation) throws IOEtwitterception {
     double score = BASE_SCORE;
 
     data.luceneContrib = params.useLuceneScoreAsBoost
         ? 0.0 : params.luceneWeight * data.luceneScore;
 
     data.reputationContrib = params.reputationWeight * data.userRep;
-    data.textScoreContrib = params.textScoreWeight * data.textScore;
+    data.tetwittertScoreContrib = params.tetwittertScoreWeight * data.tetwittertScore;
     data.parusContrib = params.parusWeight * data.parusScore;
 
     // contributions from engagement counters. Note that we have "true" argument for all getters,
@@ -59,9 +59,9 @@ public class LinearScoringFunction extends FeatureBasedScoringFunction {
     data.quotedContrib =
         params.quotedCountWeight * data.quotedCount;
 
-    for (int i = 0; i < LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS; i++) {
-      data.offlineExpFeatureContributions[i] =
-          params.rankingOfflineExpWeights[i] * data.offlineExpFeatureValues[i];
+    for (int i = 0; i < LinearScoringData.MAtwitter_OFFLINE_EtwitterPERIMENTAL_FIELDS; i++) {
+      data.offlineEtwitterpFeatureContributions[i] =
+          params.rankingOfflineEtwitterpWeights[i] * data.offlineEtwitterpFeatureValues[i];
     }
 
     data.hasUrlContrib = params.urlWeight * (data.hasUrl ? 1.0 : 0.0);
@@ -78,7 +78,7 @@ public class LinearScoringFunction extends FeatureBasedScoringFunction {
     // for contribution computation.
     score += data.luceneContrib
         + data.reputationContrib
-        + data.textScoreContrib
+        + data.tetwittertScoreContrib
         + data.replyContrib
         + data.multipleReplyContrib
         + data.retweetContrib
@@ -95,129 +95,129 @@ public class LinearScoringFunction extends FeatureBasedScoringFunction {
         + data.querySpecificScore
         + data.authorSpecificScore;
 
-    for (int i = 0; i < LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS; i++) {
-      score += data.offlineExpFeatureContributions[i];
+    for (int i = 0; i < LinearScoringData.MAtwitter_OFFLINE_EtwitterPERIMENTAL_FIELDS; i++) {
+      score += data.offlineEtwitterpFeatureContributions[i];
     }
 
     return score;
   }
 
   /**
-   * Generates the explanation for the linear score.
+   * Generates the etwitterplanation for the linear score.
    */
   @Override
-  protected void generateExplanationForScoring(
-      LinearScoringData scoringData, boolean isHit, List<Explanation> details) throws IOException {
+  protected void generateEtwitterplanationForScoring(
+      LinearScoringData scoringData, boolean isHit, List<Etwitterplanation> details) throws IOEtwitterception {
     // 1. Linear components
-    final List<Explanation> linearDetails = Lists.newArrayList();
-    addLinearElementExplanation(
+    final List<Etwitterplanation> linearDetails = Lists.newArrayList();
+    addLinearElementEtwitterplanation(
         linearDetails, "[LuceneQueryScore]",
         params.luceneWeight, scoringData.luceneScore, scoringData.luceneContrib);
     if (scoringData.hasCard) {
       if (scoringData.cardAuthorMatchBoostApplied) {
-        linearDetails.add(Explanation.match(
+        linearDetails.add(Etwitterplanation.match(
             (float) params.cardAuthorMatchBoosts[scoringData.cardType],
-            "[x] card author match boost"));
+            "[twitter] card author match boost"));
       }
       if (scoringData.cardDescriptionMatchBoostApplied) {
-        linearDetails.add(Explanation.match(
+        linearDetails.add(Etwitterplanation.match(
             (float) params.cardDescriptionMatchBoosts[scoringData.cardType],
-            "[x] card description match boost"));
+            "[twitter] card description match boost"));
       }
       if (scoringData.cardDomainMatchBoostApplied) {
-        linearDetails.add(Explanation.match(
+        linearDetails.add(Etwitterplanation.match(
             (float) params.cardDomainMatchBoosts[scoringData.cardType],
-            "[x] card domain match boost"));
+            "[twitter] card domain match boost"));
       }
       if (scoringData.cardTitleMatchBoostApplied) {
-        linearDetails.add(Explanation.match(
+        linearDetails.add(Etwitterplanation.match(
             (float) params.cardTitleMatchBoosts[scoringData.cardType],
-            "[x] card title match boost"));
+            "[twitter] card title match boost"));
       }
     }
-    addLinearElementExplanation(
+    addLinearElementEtwitterplanation(
         linearDetails, "reputation",
         params.reputationWeight, scoringData.userRep, scoringData.reputationContrib);
-    addLinearElementExplanation(
-        linearDetails, "text score",
-        params.textScoreWeight, scoringData.textScore, scoringData.textScoreContrib);
-    addLinearElementExplanation(
+    addLinearElementEtwitterplanation(
+        linearDetails, "tetwittert score",
+        params.tetwittertScoreWeight, scoringData.tetwittertScore, scoringData.tetwittertScoreContrib);
+    addLinearElementEtwitterplanation(
         linearDetails, "reply count (log2)",
         params.replyWeight, scoringData.replyCountPostLog2, scoringData.replyContrib);
-    addLinearElementExplanation(
+    addLinearElementEtwitterplanation(
         linearDetails, "multi reply",
         params.multipleReplyWeight,
         getUnscaledReplyCountFeatureValue() > params.multipleReplyMinVal ? 1 : 0,
         scoringData.multipleReplyContrib);
-    addLinearElementExplanation(
+    addLinearElementEtwitterplanation(
         linearDetails, "retweet count (log2)",
         params.retweetWeight, scoringData.retweetCountPostLog2, scoringData.retweetContrib);
-    addLinearElementExplanation(
+    addLinearElementEtwitterplanation(
         linearDetails, "fav count (log2)",
         params.favWeight, scoringData.favCountPostLog2, scoringData.favContrib);
-    addLinearElementExplanation(
+    addLinearElementEtwitterplanation(
         linearDetails, "parus score",
         params.parusWeight, scoringData.parusScore, scoringData.parusContrib);
-    for (int i = 0; i < LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS; i++) {
-      if (params.rankingOfflineExpWeights[i] != LinearScoringParams.DEFAULT_FEATURE_WEIGHT) {
-        addLinearElementExplanation(linearDetails,
-            "ranking exp score offline experimental #" + i,
-            params.rankingOfflineExpWeights[i], scoringData.offlineExpFeatureValues[i],
-            scoringData.offlineExpFeatureContributions[i]);
+    for (int i = 0; i < LinearScoringData.MAtwitter_OFFLINE_EtwitterPERIMENTAL_FIELDS; i++) {
+      if (params.rankingOfflineEtwitterpWeights[i] != LinearScoringParams.DEFAULT_FEATURE_WEIGHT) {
+        addLinearElementEtwitterplanation(linearDetails,
+            "ranking etwitterp score offline etwitterperimental #" + i,
+            params.rankingOfflineEtwitterpWeights[i], scoringData.offlineEtwitterpFeatureValues[i],
+            scoringData.offlineEtwitterpFeatureContributions[i]);
       }
     }
-    addLinearElementExplanation(linearDetails,
+    addLinearElementEtwitterplanation(linearDetails,
         "embedded tweet impression count",
         params.embedsImpressionWeight, scoringData.getEmbedsImpressionCount(false),
         scoringData.embedsImpressionContrib);
-    addLinearElementExplanation(linearDetails,
+    addLinearElementEtwitterplanation(linearDetails,
         "embedded tweet url count",
         params.embedsUrlWeight, scoringData.getEmbedsUrlCount(false),
         scoringData.embedsUrlContrib);
-    addLinearElementExplanation(linearDetails,
+    addLinearElementEtwitterplanation(linearDetails,
         "video view count",
         params.videoViewWeight, scoringData.getVideoViewCount(false),
         scoringData.videoViewContrib);
-    addLinearElementExplanation(linearDetails,
+    addLinearElementEtwitterplanation(linearDetails,
         "quoted count",
         params.quotedCountWeight, scoringData.quotedCount, scoringData.quotedContrib);
 
-    addLinearElementExplanation(
+    addLinearElementEtwitterplanation(
         linearDetails, "has url", params.urlWeight, scoringData.hasUrl ? 1.0 : 0.0,
         scoringData.hasUrlContrib);
 
-    addLinearElementExplanation(
+    addLinearElementEtwitterplanation(
         linearDetails, "is reply", params.isReplyWeight,
         scoringData.isReply ? 1.0 : 0.0, scoringData.isReplyContrib);
-    addLinearElementExplanation(
+    addLinearElementEtwitterplanation(
         linearDetails, "is follow retweet", params.followRetweetWeight,
         scoringData.isRetweet && scoringData.isFollow ? 1.0 : 0.0,
         scoringData.isFollowRetweetContrib);
-    addLinearElementExplanation(
+    addLinearElementEtwitterplanation(
         linearDetails, "is trusted retweet", params.trustedRetweetWeight,
         scoringData.isRetweet && scoringData.isTrusted ? 1.0 : 0.0,
         scoringData.isTrustedRetweetContrib);
 
     if (scoringData.querySpecificScore != 0.0) {
-      linearDetails.add(Explanation.match((float) scoringData.querySpecificScore,
+      linearDetails.add(Etwitterplanation.match((float) scoringData.querySpecificScore,
           "[+] query specific score adjustment"));
     }
     if (scoringData.authorSpecificScore != 0.0) {
-      linearDetails.add(Explanation.match((float) scoringData.authorSpecificScore,
+      linearDetails.add(Etwitterplanation.match((float) scoringData.authorSpecificScore,
           "[+] author specific score adjustment"));
     }
 
 
-    Explanation linearCombo = isHit
-        ? Explanation.match((float) scoringData.scoreBeforeBoost,
+    Etwitterplanation linearCombo = isHit
+        ? Etwitterplanation.match((float) scoringData.scoreBeforeBoost,
           "(MATCH) Linear components, sum of:", linearDetails)
-        : Explanation.noMatch("Linear components, sum of:", linearDetails);
+        : Etwitterplanation.noMatch("Linear components, sum of:", linearDetails);
 
 
     details.add(linearCombo);
   }
 
-  private void addLinearElementExplanation(List<Explanation> explanation,
+  private void addLinearElementEtwitterplanation(List<Etwitterplanation> etwitterplanation,
                                            String name,
                                            double weight,
                                            double componentValue,
@@ -225,12 +225,12 @@ public class LinearScoringFunction extends FeatureBasedScoringFunction {
     if (contrib == 0.0) {
       return;
     }
-    explanation.add(
-        Explanation.match((float) contrib,
+    etwitterplanation.add(
+        Etwitterplanation.match((float) contrib,
             String.format("[+] %s=%.3f weight=%.3f", name, componentValue, weight)));
   }
 
-  private double getUnscaledReplyCountFeatureValue() throws IOException {
+  private double getUnscaledReplyCountFeatureValue() throws IOEtwitterception {
     byte featureValue = (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.REPLY_COUNT);
     return MutableFeatureNormalizers.BYTE_NORMALIZER.unnormLowerBound(featureValue);
   }

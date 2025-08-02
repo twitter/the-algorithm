@@ -127,7 +127,7 @@ trait OverrideForIbis2Request {
             impressionIds
           else Seq(impressionIds.head)
         }
-        // Explicitly enable targetId-based override for MagicFanoutSportsEvent candidates (live sport update notifications)
+        // Etwitterplicitly enable targetId-based override for MagicFanoutSportsEvent candidates (live sport update notifications)
         else if (self.commonRecType == MagicFanoutSportsEvent && target.params(
             FSParams.EnableTargetIdInSmartPushPayloadForMagicFanoutSportsEvent)) {
           enableTargetIdOverrideForMagicFanoutSportsEventCounter.incr()
@@ -147,29 +147,29 @@ trait OverrideForIbis2Request {
 
       val nSlotsMap = {
         if (target.params(FSParams.EnableOverrideNotificationsNSlots)) {
-          if (target.params(FSParams.EnableOverrideMaxSlotFn)) {
+          if (target.params(FSParams.EnableOverrideMatwitterSlotFn)) {
             val nslotFnParam = ContinuousFunctionParam(
               target
-                .params(PushFeatureSwitchParams.OverrideMaxSlotFnPushCapKnobs),
+                .params(PushFeatureSwitchParams.OverrideMatwitterSlotFnPushCapKnobs),
               target
-                .params(PushFeatureSwitchParams.OverrideMaxSlotFnNSlotKnobs),
+                .params(PushFeatureSwitchParams.OverrideMatwitterSlotFnNSlotKnobs),
               target
-                .params(PushFeatureSwitchParams.OverrideMaxSlotFnPowerKnobs),
+                .params(PushFeatureSwitchParams.OverrideMatwitterSlotFnPowerKnobs),
               target
-                .params(PushFeatureSwitchParams.OverrideMaxSlotFnWeight),
-              target.params(FSParams.OverrideNotificationsMaxNumOfSlots)
+                .params(PushFeatureSwitchParams.OverrideMatwitterSlotFnWeight),
+              target.params(FSParams.OverrideNotificationsMatwitterNumOfSlots)
             )
             val numOfSlots = ContinuousFunction.safeEvaluateFn(
               pushCap,
               nslotFnParam,
-              overrideStats.scope("max_nslot_fn"))
-            overrideStats.counter("max_notification_slots_num_" + numOfSlots.toString).incr()
+              overrideStats.scope("matwitter_nslot_fn"))
+            overrideStats.counter("matwitter_notification_slots_num_" + numOfSlots.toString).incr()
             addedNSlotsToPayload.incr()
-            Map("max_notification_slots" -> numOfSlots)
+            Map("matwitter_notification_slots" -> numOfSlots)
           } else {
             addedNSlotsToPayload.incr()
-            val numOfSlots = target.params(FSParams.OverrideNotificationsMaxNumOfSlots)
-            Map("max_notification_slots" -> numOfSlots)
+            val numOfSlots = target.params(FSParams.OverrideNotificationsMatwitterNumOfSlots)
+            Map("matwitter_notification_slots" -> numOfSlots)
           }
         } else {
           noNSlotsAddedToPayload.incr()

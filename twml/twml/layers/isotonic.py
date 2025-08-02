@@ -21,7 +21,7 @@ class Isotonic(Layer):
       number of bins used for isotonic calibration.
       More bins means a more precise isotonic function.
       Less bins means a more regularized isotonic function.
-    xs_input:
+    twitters_input:
       A tensor containing the boundaries of the bins.
     ys_input:
       A tensor containing calibrated values for the corresponding bins.
@@ -29,21 +29,21 @@ class Isotonic(Layer):
   Output:
       output:
         A layer containing calibrated probabilities with same shape and size as input.
-  Expected Sizes:
-      xs_input, ys_input:
+  Etwitterpected Sizes:
+      twitters_input, ys_input:
         [n_unit, n_bin].
-  Expected Types:
-      xs_input, ys_input:
+  Etwitterpected Types:
+      twitters_input, ys_input:
         same as input.
   """
 
-  def __init__(self, n_unit, n_bin, xs_input=None, ys_input=None, **kwargs):
+  def __init__(self, n_unit, n_bin, twitters_input=None, ys_input=None, **kwargs):
     super(Isotonic, self).__init__(**kwargs)
 
     self._n_unit = n_unit
     self._n_bin = n_bin
 
-    self.xs_input = np.empty([n_unit, n_bin], dtype=np.float32) if xs_input is None else xs_input
+    self.twitters_input = np.empty([n_unit, n_bin], dtype=np.float32) if twitters_input is None else twitters_input
     self.ys_input = np.empty([n_unit, n_bin], dtype=np.float32) if ys_input is None else ys_input
 
   def compute_output_shape(self, input_shape):
@@ -72,5 +72,5 @@ class Isotonic(Layer):
     Returns:
       The output from the layer
     """
-    calibrate_op = libtwml.ops.isotonic_calibration(inputs, self.xs_input, self.ys_input)
+    calibrate_op = libtwml.ops.isotonic_calibration(inputs, self.twitters_input, self.ys_input)
     return calibrate_op

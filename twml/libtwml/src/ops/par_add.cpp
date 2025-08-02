@@ -4,7 +4,7 @@
 #include "tensorflow/core/util/work_sharder.h"
 #include "tensorflow/core/lib/core/threadpool.h"
 #include "tensorflow/core/platform/env.h"
-#include "tensorflow/core/platform/mutex.h"
+#include "tensorflow/core/platform/mutetwitter.h"
 #include "tensorflow/core/platform/logging.h"
 #include <iostream>
 
@@ -16,7 +16,7 @@ REGISTER_OP("ParAdd")
   .Input("input_a: float")
   .Input("input_b: float")
   .Output("a_plus_b: float")
-  .SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+  .SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
       c->set_output(0, c->input(0));
       return Status::OK();
   });
@@ -24,23 +24,23 @@ REGISTER_OP("ParAdd")
 
 class ParAddOp : public OpKernel {
  public:
-  explicit ParAddOp(OpKernelConstruction* context) : OpKernel(context) {
+  etwitterplicit ParAddOp(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {
   }
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     // Grab the input tensor
-    const Tensor& input_tensor0 = context->input(0);
+    const Tensor& input_tensor0 = contetwittert->input(0);
     auto input_flat0 = input_tensor0.flat<float>();
-    const Tensor& input_tensor1 = context->input(1);
+    const Tensor& input_tensor1 = contetwittert->input(1);
     auto input_flat1 = input_tensor1.flat<float>();
 
-    OP_REQUIRES(context, input_tensor0.shape() == input_tensor1.shape(),
+    OP_REQUIRES(contetwittert, input_tensor0.shape() == input_tensor1.shape(),
                 errors::InvalidArgument("Input tensors must be identical shape."));
 
     // Create an output tensor
     Tensor* output_tensor = NULL;
-    OP_REQUIRES_OK(context,
-                   context->allocate_output(0,
+    OP_REQUIRES_OK(contetwittert,
+                   contetwittert->allocate_output(0,
                                             input_tensor0.shape(),
                                             &output_tensor));
     auto output_flat = output_tensor->flat<float>();
@@ -48,8 +48,8 @@ class ParAddOp : public OpKernel {
     // PARALLEL ADD
     const int N = input_flat0.size();
 
-    // retrieve the thread pool from the op context
-    auto worker_threads = *(context->device()->tensorflow_cpu_worker_threads());
+    // retrieve the thread pool from the op contetwittert
+    auto worker_threads = *(contetwittert->device()->tensorflow_cpu_worker_threads());
 
     // Definition of the computation thread
     auto task = [=, &input_flat0, &input_flat1, &output_flat](int64 start, int64 limit) {

@@ -7,14 +7,14 @@ import com.twitter.visibility.rules.Reason.Unspecified
 
 object FollowerRelations {
 
-  case object AuthorMutesViewerFeature extends BooleanFeatureCondition(AuthorMutesViewer)
+  case object AuthorMutesViewerFeature etwittertends BooleanFeatureCondition(AuthorMutesViewer)
 
   object AuthorMutesViewerRule
-      extends OnlyWhenNotAuthorViewerRule(
+      etwittertends OnlyWhenNotAuthorViewerRule(
         action = Drop(Unspecified),
         condition = AuthorMutesViewerFeature)
 
   object ProtectedViewerRule
-      extends OnlyWhenNotAuthorViewerRule(action = Drop(Unspecified), condition = ProtectedViewer)
+      etwittertends OnlyWhenNotAuthorViewerRule(action = Drop(Unspecified), condition = ProtectedViewer)
 
 }

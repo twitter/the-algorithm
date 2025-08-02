@@ -25,7 +25,7 @@ while test $# -gt 0; do
       echo " "
       echo "Options:"
       echo "  -h, --help                show brief help"
-      exit 0
+      etwitterit 0
       ;;
     *)
       break
@@ -52,11 +52,11 @@ fi
 KEY="$DC/$ROLE/devel/$SERVICE/$INSTANCE"
 read -p "Set up remote debugger tunnel for $KEY? (y/n) " -r CONFIRM
 if [[ ! $CONFIRM =~ ^[Yy]$ ]]; then
-  echo "Exiting, tunnel not created"
-  exit 1
+  echo "Etwitteriting, tunnel not created"
+  etwitterit 1
 fi
 
-echo "Disabling health check and opening tunnel. Exit with control-c when you're finished"
+echo "Disabling health check and opening tunnel. Etwitterit with control-c when you're finished"
 CMD="aurora task ssh $KEY -c 'touch .healthchecksnooze' && aurora task ssh $KEY -L '5005:debug' --ssh-options '-N -S none -v '"
 
 echo "Running $CMD"

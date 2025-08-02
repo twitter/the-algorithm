@@ -29,21 +29,21 @@ import com.twitter.visibility.rules.Condition.ConversationCreateDmEvent
 object DmEventRules {
 
   object MessageCreateEventWithUnavailableSenderDropRule
-      extends RuleWithConstantAction(
+      etwittertends RuleWithConstantAction(
         Drop(Unspecified),
         Or(SuspendedAuthor, DeactivatedAuthor, ErasedAuthor)) {
     override def enableFailClosed = Seq(RuleParams.True)
   }
 
   object WelcomeMessageCreateEventOnlyVisibleToRecipientDropRule
-      extends RuleWithConstantAction(
+      etwittertends RuleWithConstantAction(
         Drop(Unspecified),
         And(ViewerIsDmEventInitiatingUser, WelcomeMessageCreateDmEvent)) {
     override def enableFailClosed = Seq(RuleParams.True)
   }
 
   object InaccessibleDmEventDropRule
-      extends RuleWithConstantAction(
+      etwittertends RuleWithConstantAction(
         Drop(Unspecified),
         Or(
           Not(ViewerIsDmConversationParticipant),
@@ -53,12 +53,12 @@ object DmEventRules {
   }
 
   object HiddenAndDeletedDmEventDropRule
-      extends RuleWithConstantAction(Drop(Unspecified), Or(DmEventIsDeleted, DmEventIsHidden)) {
+      etwittertends RuleWithConstantAction(Drop(Unspecified), Or(DmEventIsDeleted, DmEventIsHidden)) {
     override def enableFailClosed = Seq(RuleParams.True)
   }
 
   object NonPerspectivalDmEventDropRule
-      extends RuleWithConstantAction(
+      etwittertends RuleWithConstantAction(
         Drop(Unspecified),
         Or(
           And(Not(PerspectivalJoinConversationDmEvent), JoinConversationDmEvent),
@@ -71,7 +71,7 @@ object DmEventRules {
   }
 
   object DmEventInOneToOneConversationWithUnavailableUserDropRule
-      extends RuleWithConstantAction(
+      etwittertends RuleWithConstantAction(
         Drop(Unspecified),
         And(
           Or(MessageCreateDmEvent, LastMessageReadUpdateDmEvent),
@@ -80,7 +80,7 @@ object DmEventRules {
   }
 
   object GroupEventInOneToOneConversationDropRule
-      extends RuleWithConstantAction(
+      etwittertends RuleWithConstantAction(
         Drop(Unspecified),
         And(
           Or(JoinConversationDmEvent, ConversationCreateDmEvent),

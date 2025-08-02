@@ -1,11 +1,11 @@
 package com.twitter.search.earlybird;
 
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.EtwitterecutorService;
+import java.util.concurrent.Etwitterecutors;
+import java.util.concurrent.RejectedEtwitterecutionEtwitterception;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolEtwitterecutor;
 import java.util.concurrent.TimeUnit;
 
 import scala.Function0;
@@ -14,10 +14,10 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import com.twitter.search.common.concurrent.ThreadPoolExecutorStats;
+import com.twitter.search.common.concurrent.ThreadPoolEtwitterecutorStats;
 import com.twitter.search.common.metrics.SearchRateCounter;
 import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.util.ExecutorServiceFuturePool;
+import com.twitter.util.EtwitterecutorServiceFuturePool;
 import com.twitter.util.Future;
 import com.twitter.util.FuturePool;
 
@@ -25,33 +25,33 @@ import com.twitter.util.FuturePool;
  * A future pool that delegates all calls to an underlying futurePool, which can be recreated.
  */
 public class EarlybirdFuturePoolManager implements FuturePool {
-  private volatile ExecutorServiceFuturePool pool = null;
+  private volatile EtwitterecutorServiceFuturePool pool = null;
 
   private final String threadName;
-  private final ThreadPoolExecutorStats threadPoolExecutorStats;
+  private final ThreadPoolEtwitterecutorStats threadPoolEtwitterecutorStats;
 
   public EarlybirdFuturePoolManager(String threadName) {
     this.threadName = threadName;
-    this.threadPoolExecutorStats = new ThreadPoolExecutorStats(threadName);
+    this.threadPoolEtwitterecutorStats = new ThreadPoolEtwitterecutorStats(threadName);
   }
 
   final synchronized void createUnderlyingFuturePool(int threadCount) {
     Preconditions.checkState(pool == null, "Cannot create a new pool before stopping the old one");
 
-    ExecutorService executorService =
-        createExecutorService(threadCount, getMaxQueueSize());
-    if (executorService instanceof ThreadPoolExecutor) {
-      threadPoolExecutorStats.setUnderlyingExecutorForStats((ThreadPoolExecutor) executorService);
+    EtwitterecutorService etwitterecutorService =
+        createEtwitterecutorService(threadCount, getMatwitterQueueSize());
+    if (etwitterecutorService instanceof ThreadPoolEtwitterecutor) {
+      threadPoolEtwitterecutorStats.setUnderlyingEtwitterecutorForStats((ThreadPoolEtwitterecutor) etwitterecutorService);
     }
 
-    pool = new ExecutorServiceFuturePool(executorService);
+    pool = new EtwitterecutorServiceFuturePool(etwitterecutorService);
   }
 
   final synchronized void stopUnderlyingFuturePool(long timeout, TimeUnit timeunit)
-      throws InterruptedException {
+      throws InterruptedEtwitterception {
     Preconditions.checkNotNull(pool);
-    pool.executor().shutdown();
-    pool.executor().awaitTermination(timeout, timeunit);
+    pool.etwitterecutor().shutdown();
+    pool.etwitterecutor().awaitTermination(timeout, timeunit);
     pool = null;
   }
 
@@ -65,26 +65,26 @@ public class EarlybirdFuturePoolManager implements FuturePool {
   }
 
   @VisibleForTesting
-  protected ExecutorService createExecutorService(int threadCount, int maxQueueSize) {
-    if (maxQueueSize <= 0) {
-      return Executors.newFixedThreadPool(threadCount, createThreadFactory(threadName));
+  protected EtwitterecutorService createEtwitterecutorService(int threadCount, int matwitterQueueSize) {
+    if (matwitterQueueSize <= 0) {
+      return Etwitterecutors.newFitwitteredThreadPool(threadCount, createThreadFactory(threadName));
     }
 
     SearchRateCounter rejectedTaskCounter =
-        SearchRateCounter.export(threadName + "_rejected_task_count");
-    return new ThreadPoolExecutor(
+        SearchRateCounter.etwitterport(threadName + "_rejected_task_count");
+    return new ThreadPoolEtwitterecutor(
         threadCount, threadCount, 0, TimeUnit.MILLISECONDS,
-        new ArrayBlockingQueue<>(maxQueueSize),
+        new ArrayBlockingQueue<>(matwitterQueueSize),
         createThreadFactory(threadName),
-        (runnable, executor) -> {
+        (runnable, etwitterecutor) -> {
           rejectedTaskCounter.increment();
-          throw new RejectedExecutionException(threadName + " queue is full");
+          throw new RejectedEtwitterecutionEtwitterception(threadName + " queue is full");
         });
   }
 
   @VisibleForTesting
-  protected int getMaxQueueSize() {
-    return EarlybirdProperty.MAX_QUEUE_SIZE.get(0);
+  protected int getMatwitterQueueSize() {
+    return EarlybirdProperty.MAtwitter_QUEUE_SIZE.get(0);
   }
 
   @VisibleForTesting

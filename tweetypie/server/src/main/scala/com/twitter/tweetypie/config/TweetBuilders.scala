@@ -9,7 +9,7 @@ import com.twitter.tweetypie.jiminy.tweetypie.NudgeBuilder
 import com.twitter.tweetypie.repository.RelationshipKey
 import com.twitter.tweetypie.store.TotalTweetStore
 import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.tweettext.TweetText
+import com.twitter.tweetypie.tweettetwittert.TweetTetwittert
 import com.twitter.visibility.common.TrustedFriendsSource
 import com.twitter.visibility.common.UserRelationshipSource
 import com.twitter.visibility.writer.interfaces.tweets.TweetWriteEnforcementLibrary
@@ -26,7 +26,7 @@ object TweetBuilders {
     nonAndroid: Gate[Unit]
   ): Gate[Option[String]] =
     Gate[Option[String]] { (userAgent: Option[String]) =>
-      if (userAgent.exists(_.startsWith("TwitterAndroid"))) {
+      if (userAgent.etwitterists(_.startsWith("TwitterAndroid"))) {
         android()
       } else {
         nonAndroid()
@@ -37,7 +37,7 @@ object TweetBuilders {
     settings: TweetServiceSettings,
     statsReceiver: StatsReceiver,
     deciderGates: TweetypieDeciderGates,
-    featureSwitchesWithExperiments: FeatureSwitches,
+    featureSwitchesWithEtwitterperiments: FeatureSwitches,
     clients: BackendClients,
     caches: Caches,
     repos: LogicalRepositories,
@@ -73,7 +73,7 @@ object TweetBuilders {
         repos.unmentionedEntitiesRepo,
         deciderGates.enableRemoveUnmentionedImplicitMentions,
         statsReceiver.scope("reply_builder"),
-        TweetText.MaxMentions
+        TweetTetwittert.MatwitterMentions
       )
 
     val mediaBuilder =
@@ -112,7 +112,7 @@ object TweetBuilders {
 
     val retweetSpamChecker =
       Spam.gated(deciderGates.checkSpamOnRetweet) {
-        Spam.allowOnException(
+        Spam.allowOnEtwitterception(
           ScarecrowRetweetSpamChecker(
             statsReceiver.scope("retweet_builder").scope("spam"),
             repos.retweetSpamCheckRepo
@@ -122,7 +122,7 @@ object TweetBuilders {
 
     val tweetSpamChecker =
       Spam.gated(deciderGates.checkSpamOnTweet) {
-        Spam.allowOnException(
+        Spam.allowOnEtwitterception(
           ScarecrowTweetSpamChecker.fromSpamCheckRepository(
             statsReceiver.scope("tweet_builder").scope("spam"),
             repos.tweetSpamCheckRepo
@@ -155,14 +155,14 @@ object TweetBuilders {
       TweetBuilder.filterInvalidData(
         validateTweetMediaTags = TweetBuilder.validateTweetMediaTags(
           tweetBuilderStats.scope("media_tags_filter"),
-          RateLimitChecker.getMaxMediaTags(
+          RateLimitChecker.getMatwitterMediaTags(
             clients.limiterService.minRemaining(Feature.MediaTagCreate),
-            TweetBuilder.MaxMediaTagCount
+            TweetBuilder.MatwitterMediaTagCount
           ),
           repos.optionalUserRepo
         ),
         cardReferenceBuilder = TweetBuilder.cardReferenceBuilder(
-          CardReferenceValidationHandler(clients.expandodo.checkAttachmentEligibility),
+          CardReferenceValidationHandler(clients.etwitterpandodo.checkAttachmentEligibility),
           urlShortener
         )
       )
@@ -219,7 +219,7 @@ object TweetBuilders {
         repos.tweetRepo,
         statsReceiver.scope("tweet_write_enforcement_library")
       ),
-      enableExclusiveTweetControlValidation = deciderGates.enableExclusiveTweetControlValidation,
+      enableEtwitterclusiveTweetControlValidation = deciderGates.enableEtwitterclusiveTweetControlValidation,
       enableTrustedFriendsControlValidation = deciderGates.enableTrustedFriendsControlValidation,
       enableStaleTweetValidation = deciderGates.enableStaleTweetValidation
     )
@@ -237,7 +237,7 @@ object TweetBuilders {
       subscriptionVerificationRepo = repos.stratoSubscriptionVerificationRepo,
       disablePromotedTweetEdit = deciderGates.disablePromotedTweetEdit,
       checkTwitterBlueSubscription = deciderGates.checkTwitterBlueSubscriptionForEdit,
-      setEditWindowToSixtyMinutes = deciderGates.setEditTimeWindowToSixtyMinutes,
+      setEditWindowToSitwittertyMinutes = deciderGates.setEditTimeWindowToSitwittertyMinutes,
       stats = statsReceiver,
     )
 
@@ -274,7 +274,7 @@ object TweetBuilders {
             communitiesValidator = communitiesValidator,
             collabControlBuilder = collabControlBuilder,
             editControlBuilder = editControlBuilder,
-            featureSwitches = featureSwitchesWithExperiments,
+            featureSwitches = featureSwitchesWithEtwitterperiments,
           )
         )
 
@@ -292,7 +292,7 @@ object TweetBuilders {
             updateUserCounts = updateUserCounts,
             superFollowRelationsRepo = repos.stratoSuperFollowRelationsRepo,
             unretweetEdits = unretweetEdits,
-            setEditWindowToSixtyMinutes = deciderGates.setEditTimeWindowToSixtyMinutes
+            setEditWindowToSitwittertyMinutes = deciderGates.setEditTimeWindowToSitwittertyMinutes
           )
         )
     }

@@ -3,9 +3,9 @@ package com.twitter.search.earlybird_root.filters;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.inject.Inject;
+import javatwitter.inject.Inject;
 
-import scala.runtime.BoxedUnit;
+import scala.runtime.BotwitteredUnit;
 
 import com.twitter.common.util.Clock;
 import com.twitter.finagle.Service;
@@ -26,16 +26,16 @@ import com.twitter.util.Function;
 import com.twitter.util.Future;
 
 public class RequestResultStatsFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+    etwittertends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
   private final Clock clock;
   private final RequestResultStats stats;
 
   static class RequestResultStats {
-    private static final String PREFIX = "request_result_properties_";
+    private static final String PREFItwitter = "request_result_properties_";
 
     private final SearchCounter resultsRequestedCount;
     private final SearchCounter resultsReturnedCount;
-    private final SearchCounter maxHitsToProcessCount;
+    private final SearchCounter matwitterHitsToProcessCount;
     private final SearchCounter hitsProcessedCount;
     private final SearchCounter docsProcessedCount;
     private final SearchCounter timeoutMsCount;
@@ -45,15 +45,15 @@ public class RequestResultStatsFilter
 
     RequestResultStats() {
       // Request properties
-      resultsRequestedCount = SearchCounter.export(PREFIX + "results_requested_cnt");
-      maxHitsToProcessCount = SearchCounter.export(PREFIX + "max_hits_to_process_cnt");
-      timeoutMsCount = SearchCounter.export(PREFIX + "timeout_ms_cnt");
+      resultsRequestedCount = SearchCounter.etwitterport(PREFItwitter + "results_requested_cnt");
+      matwitterHitsToProcessCount = SearchCounter.etwitterport(PREFItwitter + "matwitter_hits_to_process_cnt");
+      timeoutMsCount = SearchCounter.etwitterport(PREFItwitter + "timeout_ms_cnt");
       requestedNumResultsPercentileByClientId = new ConcurrentHashMap<>();
 
       // Result properties
-      resultsReturnedCount = SearchCounter.export(PREFIX + "results_returned_cnt");
-      hitsProcessedCount = SearchCounter.export(PREFIX + "hits_processed_cnt");
-      docsProcessedCount = SearchCounter.export(PREFIX + "docs_processed_cnt");
+      resultsReturnedCount = SearchCounter.etwitterport(PREFItwitter + "results_returned_cnt");
+      hitsProcessedCount = SearchCounter.etwitterport(PREFItwitter + "hits_processed_cnt");
+      docsProcessedCount = SearchCounter.etwitterport(PREFItwitter + "docs_processed_cnt");
       returnedNumResultsPercentileByClientId = new ConcurrentHashMap<>();
       oldestResultPercentileByClientId = new ConcurrentHashMap<>();
     }
@@ -66,8 +66,8 @@ public class RequestResultStatsFilter
       return resultsReturnedCount;
     }
 
-    SearchCounter getMaxHitsToProcessCount() {
-      return maxHitsToProcessCount;
+    SearchCounter getMatwitterHitsToProcessCount() {
+      return matwitterHitsToProcessCount;
     }
 
     SearchCounter getHitsProcessedCount() {
@@ -97,8 +97,8 @@ public class RequestResultStatsFilter
           key -> PercentileUtil.createPercentile(statName(clientId, "returned_num_results")));
     }
 
-    private String statName(String clientId, String suffix) {
-      return String.format("%s%s_%s", PREFIX, ClientIdUtil.formatClientId(clientId), suffix);
+    private String statName(String clientId, String suffitwitter) {
+      return String.format("%s%s_%s", PREFItwitter, ClientIdUtil.formatClientId(clientId), suffitwitter);
     }
   }
 
@@ -120,8 +120,8 @@ public class RequestResultStatsFilter
       }
       CollectorTerminationParams terminationParams = collectorParams.getTerminationParams();
       if (terminationParams != null) {
-        if (terminationParams.isSetMaxHitsToProcess()) {
-          stats.getMaxHitsToProcessCount().add(terminationParams.maxHitsToProcess);
+        if (terminationParams.isSetMatwitterHitsToProcess()) {
+          stats.getMatwitterHitsToProcessCount().add(terminationParams.matwitterHitsToProcess);
         }
         if (terminationParams.isSetTimeoutMs()) {
           stats.getTimeoutMsCount().add(terminationParams.timeoutMs);
@@ -135,8 +135,8 @@ public class RequestResultStatsFilter
               .record(searchQuery.numResults);
         }
       }
-      if (searchQuery.isSetMaxHitsToProcess()) {
-        stats.getMaxHitsToProcessCount().add(searchQuery.maxHitsToProcess);
+      if (searchQuery.isSetMatwitterHitsToProcess()) {
+        stats.getMatwitterHitsToProcessCount().add(searchQuery.matwitterHitsToProcess);
       }
       if (request.isSetTimeoutMs()) {
         stats.getTimeoutMsCount().add(request.timeoutMs);
@@ -172,13 +172,13 @@ public class RequestResultStatsFilter
     updateRequestStats(request);
 
     return service.apply(request).onSuccess(
-        new Function<EarlybirdResponse, BoxedUnit>() {
+        new Function<EarlybirdResponse, BotwitteredUnit>() {
           @Override
-          public BoxedUnit apply(EarlybirdResponse response) {
+          public BotwitteredUnit apply(EarlybirdResponse response) {
             if (response.isSetSearchResults()) {
               updateResultsStats(request.getClientId(), response.searchResults);
             }
-            return BoxedUnit.UNIT;
+            return BotwitteredUnit.UNIT;
           }
         });
   }

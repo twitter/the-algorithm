@@ -17,16 +17,16 @@ import java.io.Serializable
 case class Query(
   userId: UserId,
   signalType: SignalType,
-  maxResults: Option[Int],
+  matwitterResults: Option[Int],
   clientId: ClientIdentifier = ClientIdentifier.Unknown)
 
 /**
  * A trait that defines a standard interface for the signal fetcher
  *
- * Extends this only when all other traits extending BaseSignalFetcher do not apply to
+ * Etwittertends this only when all other traits etwittertending BaseSignalFetcher do not apply to
  * your use case.
  */
-trait BaseSignalFetcher extends ReadableStore[Query, Seq[Signal]] {
+trait BaseSignalFetcher etwittertends ReadableStore[Query, Seq[Signal]] {
   import BaseSignalFetcher._
 
   /**
@@ -43,8 +43,8 @@ trait BaseSignalFetcher extends ReadableStore[Query, Seq[Signal]] {
   def timer: Timer
 
   /**
-   * This function is called by the top level class to fetch signals. It executes the pipeline to
-   * fetch raw signals, process and transform the signals. Exceptions and timeout control are
+   * This function is called by the top level class to fetch signals. It etwitterecutes the pipeline to
+   * fetch raw signals, process and transform the signals. Etwitterceptions and timeout control are
    * handled here.
    * @param query
    * @return Future[Option[Seq[Signal]]]
@@ -58,7 +58,7 @@ trait BaseSignalFetcher extends ReadableStore[Query, Seq[Signal]] {
         signals
       }.raiseWithin(Timeout)(timer).handle {
         case e =>
-          clientStatsReceiver.scope("FetcherExceptions").counter(e.getClass.getCanonicalName).incr()
+          clientStatsReceiver.scope("FetcherEtwitterceptions").counter(e.getClass.getCanonicalName).incr()
           EmptyResponse
       }
   }

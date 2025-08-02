@@ -2,8 +2,8 @@ package com.twitter.tweetypie
 package handler
 
 import com.twitter.conversions.DurationOps.RichDuration
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.servo.exception.thriftscala.ClientErrorCause
+import com.twitter.servo.etwitterception.thriftscala.ClientError
+import com.twitter.servo.etwitterception.thriftscala.ClientErrorCause
 import com.twitter.servo.util.FutureArrow
 import com.twitter.snowflake.id.SnowflakeId
 import com.twitter.stitch.Stitch
@@ -22,7 +22,7 @@ import com.twitter.tweetypie.backends.TimelineService.GetPerspectives
 import com.twitter.tweetypie.util.EditControlUtil
 import scala.util.control.NoStackTrace
 
-case class CascadedDeleteNotAvailable(retweetId: TweetId) extends Exception with NoStackTrace {
+case class CascadedDeleteNotAvailable(retweetId: TweetId) etwittertends Etwitterception with NoStackTrace {
   override def getMessage: String =
     s"""|Cascaded delete tweet failed because tweet $retweetId
         |is not present in cache or manhattan.""".stripMargin
@@ -36,36 +36,36 @@ object TweetDeletePathHandler {
   type UnretweetEdits = (Option[EditControl], TweetId, UserId) => Future[Unit]
 
   /** The information from a deleteTweet request that can be inspected by a deleteTweets validator */
-  case class DeleteTweetsContext(
+  case class DeleteTweetsContetwittert(
     byUserId: Option[UserId],
     authenticatedUserId: Option[UserId],
     tweetAuthorId: UserId,
     users: Map[UserId, User],
     isUserErasure: Boolean,
-    expectedErasureUserId: Option[UserId],
+    etwitterpectedErasureUserId: Option[UserId],
     tweetIsBounced: Boolean,
     isBounceDelete: Boolean)
 
   /** Provides reason a tweet deletion was allowed */
   sealed trait DeleteAuthorization { def byUserId: Option[UserId] }
 
-  case class AuthorizedByTweetOwner(userId: UserId) extends DeleteAuthorization {
+  case class AuthorizedByTweetOwner(userId: UserId) etwittertends DeleteAuthorization {
     def byUserId: Option[UserId] = Some(userId)
   }
-  case class AuthorizedByTweetContributor(contributorUserId: UserId) extends DeleteAuthorization {
+  case class AuthorizedByTweetContributor(contributorUserId: UserId) etwittertends DeleteAuthorization {
     def byUserId: Option[UserId] = Some(contributorUserId)
   }
-  case class AuthorizedByAdmin(adminUserId: UserId) extends DeleteAuthorization {
+  case class AuthorizedByAdmin(adminUserId: UserId) etwittertends DeleteAuthorization {
     def byUserId: Option[UserId] = Some(adminUserId)
   }
-  case object AuthorizedByErasure extends DeleteAuthorization {
+  case object AuthorizedByErasure etwittertends DeleteAuthorization {
     def byUserId: None.type = None
   }
 
   // Type for a method that receives all the relevant information about a proposed internal tweet
-  // deletion and can return Future.exception to cancel the delete due to a validation error or
+  // deletion and can return Future.etwitterception to cancel the delete due to a validation error or
   // return a [[DeleteAuthorization]] specifying the reason the deletion is allowed.
-  type ValidateDeleteTweets = FutureArrow[DeleteTweetsContext, DeleteAuthorization]
+  type ValidateDeleteTweets = FutureArrow[DeleteTweetsContetwittert, DeleteAuthorization]
 
   val userFieldsForDelete: Set[UserField] =
     Set(UserField.Account, UserField.Profile, UserField.Roles, UserField.Safety)
@@ -77,15 +77,15 @@ object TweetDeletePathHandler {
     )
 
   // user_agent property originates from the client so truncate to a reasonable length
-  val MaxUserAgentLength = 1000
+  val MatwitterUserAgentLength = 1000
 
   // Age under which we treat not found tweets in
   // cascaded_delete_tweet as a temporary condition (the most likely
-  // explanation being that the tweet has not yet been
+  // etwitterplanation being that the tweet has not yet been
   // replicated). Tweets older than this we assume are due to
   // *permanently* inconsistent data, either spurious edges in tflock or
   // tweets that are not loadable from Manhattan.
-  val MaxCascadedDeleteTweetTemporaryInconsistencyAge: Duration =
+  val MatwitterCascadedDeleteTweetTemporaryInconsistencyAge: Duration =
     10.minutes
 }
 
@@ -109,7 +109,7 @@ trait TweetDeletePathHandler {
 
   def unretweetEdits(
     optEditControl: Option[EditControl],
-    excludedTweetId: TweetId,
+    etwittercludedTweetId: TweetId,
     byUserId: UserId
   ): Future[Unit]
 }
@@ -125,14 +125,14 @@ class DefaultTweetDeletePathHandler(
   lastQuoteOfQuoterRepo: LastQuoteOfQuoterRepository.Type,
   tweetStore: TotalTweetStore,
   getPerspectives: GetPerspectives)
-    extends TweetDeletePathHandler {
+    etwittertends TweetDeletePathHandler {
   import TweetDeletePathHandler._
 
   val tweetRepo: TweetRepository.Type = TweetRepository.fromTweetResult(tweetResultRepo)
 
   // attempt to delete tweets was made by someone other than the tweet owner or an admin user
-  object DeleteTweetsPermissionException extends Exception with NoStackTrace
-  object ExpectedUserIdMismatchException extends Exception with NoStackTrace
+  object DeleteTweetsPermissionEtwitterception etwittertends Etwitterception with NoStackTrace
+  object EtwitterpectedUserIdMismatchEtwitterception etwittertends Etwitterception with NoStackTrace
 
   private[this] val log = Logger("com.twitter.tweetypie.store.TweetDeletions")
 
@@ -163,7 +163,7 @@ class DefaultTweetDeletePathHandler(
   private[this] val deleteTweetsTweetNotFound = deleteTweets.counter("tweet_not_found")
   private[this] val deleteTweetsUserNotFound = deleteTweets.counter("user_not_found")
   private[this] val userIdMismatchInTweetDelete =
-    deleteTweets.counter("expected_actual_user_id_mismatch")
+    deleteTweets.counter("etwitterpected_actual_user_id_mismatch")
   private[this] val bounceDeleteFlagNotSet =
     deleteTweets.counter("bounce_delete_flag_not_set")
 
@@ -200,7 +200,7 @@ class DefaultTweetDeletePathHandler(
       .map(_.value)
       .liftToOption {
         // We treat the request the same whether the tweet never
-        // existed or is in one of the already-deleted states by
+        // etwitteristed or is in one of the already-deleted states by
         // just filtering out those tweets. Any tweets that we
         // return should be deleted. If the tweet has been
         // bounce-deleted, we never want to soft-delete it, and
@@ -269,7 +269,7 @@ class DefaultTweetDeletePathHandler(
   /** A suspended/deactivated user can't delete tweets */
   private[this] def userNotSuspendedOrDeactivated(user: User): Try[User] =
     user.safety match {
-      case None => Throw(UpstreamFailure.UserSafetyEmptyException)
+      case None => Throw(UpstreamFailure.UserSafetyEmptyEtwitterception)
       case Some(safety) if safety.deactivated =>
         Throw(
           AccessDenied(
@@ -289,7 +289,7 @@ class DefaultTweetDeletePathHandler(
 
   /**
    * Ensure that byUser has permission to delete tweet either by virtue of owning the tweet or being
-   * an admin user.  Returns the reason as a DeleteAuthorization or else throws an Exception if not
+   * an admin user.  Returns the reason as a DeleteAuthorization or else throws an Etwitterception if not
    * authorized.
    */
   private[this] def userAuthorizedToDeleteTweet(
@@ -299,7 +299,7 @@ class DefaultTweetDeletePathHandler(
   ): Try[DeleteAuthorization] = {
 
     def hasAdminPrivilege =
-      byUser.roles.exists(_.rights.contains("delete_user_tweets"))
+      byUser.roles.etwitterists(_.rights.contains("delete_user_tweets"))
 
     deleteTweetsAuthAttempts.incr()
     if (byUser.id == tweetAuthorId) {
@@ -315,25 +315,25 @@ class DefaultTweetDeletePathHandler(
       Return(AuthorizedByAdmin(byUser.id))
     } else {
       deleteTweetsAuthFailures.incr()
-      Throw(DeleteTweetsPermissionException)
+      Throw(DeleteTweetsPermissionEtwitterception)
     }
   }
 
   /**
-   * expected user id is the id provided on the DeleteTweetsRequest that the indicates which user
+   * etwitterpected user id is the id provided on the DeleteTweetsRequest that the indicates which user
    * owns the tweets they want to delete. The actualUserId is the actual userId on the tweet we are about to delete.
    * we check to ensure they are the same as a safety check against accidental deletion of tweets either from user mistakes
    * or from corrupted data (e.g bad tflock edges)
    */
-  private[this] def expectedUserIdMatchesActualUserId(
-    expectedUserId: UserId,
+  private[this] def etwitterpectedUserIdMatchesActualUserId(
+    etwitterpectedUserId: UserId,
     actualUserId: UserId
   ): Try[Unit] =
-    if (expectedUserId == actualUserId) {
+    if (etwitterpectedUserId == actualUserId) {
       Return.Unit
     } else {
       userIdMismatchInTweetDelete.incr()
-      Throw(ExpectedUserIdMismatchException)
+      Throw(EtwitterpectedUserIdMismatchEtwitterception)
     }
 
   /**
@@ -341,17 +341,17 @@ class DefaultTweetDeletePathHandler(
    * not be suspended or deactivated.
    */
   val validateTweetsForPublicDelete: ValidateDeleteTweets = FutureArrow {
-    ctx: DeleteTweetsContext =>
+    cttwitter: DeleteTweetsContetwittert =>
       Future.const(
         for {
 
           // byUserId must be present
-          byUserId <- ctx.byUserId.orThrow(
+          byUserId <- cttwitter.byUserId.orThrow(
             ClientError(ClientErrorCause.BadRequest, "Missing byUserId")
           )
 
           // the byUser must be found
-          byUserOpt = ctx.users.get(byUserId)
+          byUserOpt = cttwitter.users.get(byUserId)
           byUser <- byUserOpt.orThrow(
             ClientError(ClientErrorCause.BadRequest, s"User $byUserId not found")
           )
@@ -359,15 +359,15 @@ class DefaultTweetDeletePathHandler(
           _ <- userNotSuspendedOrDeactivated(byUser)
 
           _ <- validateBounceConditions(
-            ctx.tweetIsBounced,
-            ctx.isBounceDelete
+            cttwitter.tweetIsBounced,
+            cttwitter.isBounceDelete
           )
 
           // if there's a contributor, make sure the user is found and not suspended or deactivated
           _ <-
-            ctx.authenticatedUserId
+            cttwitter.authenticatedUserId
               .map { uid =>
-                ctx.users.get(uid) match {
+                cttwitter.users.get(uid) match {
                   case None =>
                     Throw(ClientError(ClientErrorCause.BadRequest, s"Contributor $uid not found"))
                   case Some(authUser) =>
@@ -376,19 +376,19 @@ class DefaultTweetDeletePathHandler(
               }
               .getOrElse(Return.Unit)
 
-          // if the expected user id is present, make sure it matches the user id on the tweet
+          // if the etwitterpected user id is present, make sure it matches the user id on the tweet
           _ <-
-            ctx.expectedErasureUserId
-              .map { expectedUserId =>
-                expectedUserIdMatchesActualUserId(expectedUserId, ctx.tweetAuthorId)
+            cttwitter.etwitterpectedErasureUserId
+              .map { etwitterpectedUserId =>
+                etwitterpectedUserIdMatchesActualUserId(etwitterpectedUserId, cttwitter.tweetAuthorId)
               }
               .getOrElse(Return.Unit)
 
           // User must own the tweet or be an admin
           deleteAuth <- userAuthorizedToDeleteTweet(
             byUser,
-            ctx.authenticatedUserId,
-            ctx.tweetAuthorId
+            cttwitter.authenticatedUserId,
+            cttwitter.tweetAuthorId
           )
         } yield deleteAuth
       )
@@ -410,35 +410,35 @@ class DefaultTweetDeletePathHandler(
    * Validation for the user erasure case. User may be missing.
    */
   val validateTweetsForUserErasureDaemon: ValidateDeleteTweets = FutureArrow {
-    ctx: DeleteTweetsContext =>
+    cttwitter: DeleteTweetsContetwittert =>
       Future
         .const(
           for {
-            expectedUserId <- ctx.expectedErasureUserId.orThrow(
+            etwitterpectedUserId <- cttwitter.etwitterpectedErasureUserId.orThrow(
               ClientError(
                 ClientErrorCause.BadRequest,
-                "expectedUserId is required for DeleteTweetRequests"
+                "etwitterpectedUserId is required for DeleteTweetRequests"
               )
             )
 
             // It's critical to always check that the userId on the tweet we want to delete matches the
             // userId on the erasure request. This prevents us from accidentally deleting tweets not owned by the
             // erased user, even if tflock serves us bad data.
-            validationResult <- expectedUserIdMatchesActualUserId(expectedUserId, ctx.tweetAuthorId)
+            validationResult <- etwitterpectedUserIdMatchesActualUserId(etwitterpectedUserId, cttwitter.tweetAuthorId)
           } yield validationResult
         )
         .map(_ => AuthorizedByErasure)
   }
 
   /**
-   * Fill in missing values of AuditDeleteTweet with values from TwitterContext.
+   * Fill in missing values of AuditDeleteTweet with values from TwitterContetwittert.
    */
-  def enrichMissingFromTwitterContext(orig: AuditDeleteTweet): AuditDeleteTweet = {
-    val viewer = TwitterContext()
+  def enrichMissingFromTwitterContetwittert(orig: AuditDeleteTweet): AuditDeleteTweet = {
+    val viewer = TwitterContetwittert()
     orig.copy(
       host = orig.host.orElse(viewer.flatMap(_.auditIp)),
       clientApplicationId = orig.clientApplicationId.orElse(viewer.flatMap(_.clientApplicationId)),
-      userAgent = orig.userAgent.orElse(viewer.flatMap(_.userAgent)).map(_.take(MaxUserAgentLength))
+      userAgent = orig.userAgent.orElse(viewer.flatMap(_.userAgent)).map(_.take(MatwitterUserAgentLength))
     )
   }
 
@@ -457,7 +457,7 @@ class DefaultTweetDeletePathHandler(
   ): Future[Seq[DeleteTweetResult]] = {
 
     val auditDeleteTweet =
-      enrichMissingFromTwitterContext(request.auditPassthrough.getOrElse(AuditDeleteTweet()))
+      enrichMissingFromTwitterContetwittert(request.auditPassthrough.getOrElse(AuditDeleteTweet()))
     deleteTweetsTweets.incr(request.tweetIds.size)
     for {
       tweetDataMap <- getTweetsForDeleteTweets(
@@ -491,13 +491,13 @@ class DefaultTweetDeletePathHandler(
               val validation: Future[(Boolean, DeleteAuthorization)] = for {
                 isLastQuoteOfQuoter <- isFinalQuoteOfQuoter(tweet)
                 deleteAuth <- validate(
-                  DeleteTweetsContext(
+                  DeleteTweetsContetwittert(
                     byUserId = byUserId,
                     authenticatedUserId = authenticatedUserId,
                     tweetAuthorId = getUserId(tweet),
                     users = users,
                     isUserErasure = request.isUserErasure,
-                    expectedErasureUserId = request.expectedUserId,
+                    etwitterpectedErasureUserId = request.etwitterpectedUserId,
                     tweetIsBounced = tweetIsBounced,
                     isBounceDelete = request.isBounceDelete
                   )
@@ -508,7 +508,7 @@ class DefaultTweetDeletePathHandler(
                     // unretweetEdits, unretweet edits of the source Tweet
                     // before deleting the retweet.
                     //
-                    // deleteAuth will always contain a byUserId except for erasure deletion,
+                    // deleteAuth will always contain a byUserId etwittercept for erasure deletion,
                     // in which case the retweets will be deleted individually.
                     deleteAuth.byUserId match {
                       case Some(userId) =>
@@ -556,9 +556,9 @@ class DefaultTweetDeletePathHandler(
                   deleteTweetsFailures.incr()
                 }
                 .handle {
-                  case ExpectedUserIdMismatchException =>
-                    DeleteTweetResult(tweetId, TweetDeleteState.ExpectedUserIdMismatch)
-                  case DeleteTweetsPermissionException =>
+                  case EtwitterpectedUserIdMismatchEtwitterception =>
+                    DeleteTweetResult(tweetId, TweetDeleteState.EtwitterpectedUserIdMismatch)
+                  case DeleteTweetsPermissionEtwitterception =>
                     DeleteTweetResult(tweetId, TweetDeleteState.PermissionError)
                 }
           }
@@ -584,16 +584,16 @@ class DefaultTweetDeletePathHandler(
    *  Validations for the public deleteTweets endpoint.
    *   - ensures that the byUserId user can be found and is in the correct user state
    *   - ensures that the tweet is being deleted by the tweet's owner, or by an admin
-   *  If there is a validation error, a future.exception is returned
+   *  If there is a validation error, a future.etwitterception is returned
    *
-   *  If the delete request is part of a user erasure, validations are relaxed (the User is allowed to be missing).
+   *  If the delete request is part of a user erasure, validations are relatwittered (the User is allowed to be missing).
    */
   val deleteTweetsValidator: ValidateDeleteTweets =
-    FutureArrow { context =>
-      if (context.isUserErasure) {
-        validateTweetsForUserErasureDaemon(context)
+    FutureArrow { contetwittert =>
+      if (contetwittert.isUserErasure) {
+        validateTweetsForUserErasureDaemon(contetwittert)
       } else {
-        validateTweetsForPublicDelete(context)
+        validateTweetsForPublicDelete(contetwittert)
       }
     }
 
@@ -604,11 +604,11 @@ class DefaultTweetDeletePathHandler(
 
     // For comparison testing we only want to compare the DeleteTweetsRequests that are generated
     // in DeleteTweets path and not the call that comes from the Unretweet path
-    val context = TwitterContext()
+    val contetwittert = TwitterContetwittert()
     internalDeleteTweets(
       request,
-      byUserId = request.byUserId.orElse(context.flatMap(_.userId)),
-      context.flatMap(_.authenticatedUserId),
+      byUserId = request.byUserId.orElse(contetwittert.flatMap(_.userId)),
+      contetwittert.flatMap(_.authenticatedUserId),
       deleteTweetsValidator,
       isUnretweetEdits
     )
@@ -628,7 +628,7 @@ class DefaultTweetDeletePathHandler(
   //     Note that, when serving the original delete request for an edit,
   //     the initial tweet is only deleted, which makes all edits hidden.
   override def cascadedDeleteTweet(request: CascadedDeleteTweetRequest): Future[Unit] = {
-    val contextViewer = TwitterContext()
+    val contetwittertViewer = TwitterContetwittert()
     getTweet(request.tweetId)
       .transform {
         case Throw(
@@ -642,7 +642,7 @@ class DefaultTweetDeletePathHandler(
             if (SnowflakeId.isSnowflakeId(request.tweetId)) {
               val age = Time.now - SnowflakeId(request.tweetId).time
               cascadedDeleteTweetTweetNotFoundAge.add(age.inMilliseconds)
-              age < MaxCascadedDeleteTweetTemporaryInconsistencyAge
+              age < MatwitterCascadedDeleteTweetTemporaryInconsistencyAge
             } else {
               false
             }
@@ -650,7 +650,7 @@ class DefaultTweetDeletePathHandler(
           if (recentlyCreated) {
             // Treat the NotFound as a temporary condition, most
             // likely due to replication lag.
-            Future.exception(CascadedDeleteNotAvailable(request.tweetId))
+            Future.etwitterception(CascadedDeleteNotAvailable(request.tweetId))
           } else {
             // Treat the NotFound as a permanent inconsistenty, either
             // spurious edges in tflock or invalid data in Manhattan. This
@@ -672,7 +672,7 @@ class DefaultTweetDeletePathHandler(
         // the options that we used to load the tweet, so we will just
         // let them bubble up as an internal server error
         case Throw(other) =>
-          Future.exception(other)
+          Future.etwitterception(other)
 
         case Return(tweet) =>
           Future
@@ -700,7 +700,7 @@ class DefaultTweetDeletePathHandler(
                       tweet = tweet,
                       timestamp = Time.now,
                       user = user,
-                      byUserId = contextViewer.flatMap(_.userId),
+                      byUserId = contetwittertViewer.flatMap(_.userId),
                       cascadedFromTweetId = Some(request.cascadedFromTweetId),
                       auditPassthrough = request.auditPassthrough,
                       isUserErasure = false,
@@ -766,7 +766,7 @@ class DefaultTweetDeletePathHandler(
    * - create A
    * - retweet A'
    * - create B
-   * - unretweet B => Deletes A' (& also any B' if it existed)
+   * - unretweet B => Deletes A' (& also any B' if it etwitteristed)
    *
    * 3. When Tweetypie gets a delete request for a retweet, say A1. & if A happens to the source
    * tweet for A1 & if A is an edit tweet, then the entire edit chain should be unretweeted & not
@@ -774,7 +774,7 @@ class DefaultTweetDeletePathHandler(
    * - create A
    * - retweet A'
    * - create B
-   * - delete A' => Deletes A' (& also any B' if it existed)
+   * - delete A' => Deletes A' (& also any B' if it etwitteristed)
    *
    * The following function has two failure scenarios -
    * i. when it fails to get perspectives of any of the edit tweets.
@@ -782,20 +782,20 @@ class DefaultTweetDeletePathHandler(
    *
    * In either of this scenario, we fail the entire request & the error bubbles up to the top.
    * Note: The above unretweet of edits only happens for the current user.
-   * In normal circumstances, a maximum of one Tweet in the edit chain will have been retweeted,
+   * In normal circumstances, a matwitterimum of one Tweet in the edit chain will have been retweeted,
    * but we don't know which one it was. Additionally, there may be circumstances where
    * unretweet failed, and we end up with multiple versions retweeted. For these reasons,
-   * we always unretweet all the revisions (except for `excludedTweetId`).
+   * we always unretweet all the revisions (etwittercept for `etwittercludedTweetId`).
    * This is a no-op if none of these versions have been retweeted.
    * */
   override def unretweetEdits(
     optEditControl: Option[EditControl],
-    excludedTweetId: TweetId,
+    etwittercludedTweetId: TweetId,
     byUserId: UserId
   ): Future[Unit] = {
 
     val editTweetIds: Seq[TweetId] =
-      EditControlUtil.getEditTweetIds(optEditControl).get().filter(_ != excludedTweetId)
+      EditControlUtil.getEditTweetIds(optEditControl).get().filter(_ != etwittercludedTweetId)
 
     (editTweetIdRetweetsFromUser(editTweetIds, byUserId).flatMap { tweetIds =>
       if (tweetIds.nonEmpty) {

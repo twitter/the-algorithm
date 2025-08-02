@@ -7,7 +7,7 @@ import com.twitter.frigate.thriftscala.CommonRecommendationType
 import com.twitter.frigate.thriftscala.FrigateNotification
 import com.twitter.util.Future
 
-object ScheduledSpaceSubscriberCandidateGenerator extends CandidateGenerator {
+object ScheduledSpaceSubscriberCandidateGenerator etwittertends CandidateGenerator {
 
   override def getCandidate(
     targetUser: Target,
@@ -20,11 +20,11 @@ object ScheduledSpaceSubscriberCandidateGenerator extends CandidateGenerator {
      **/
     require(
       notification.commonRecommendationType == CommonRecommendationType.ScheduledSpaceSubscriber,
-      "ScheduledSpaceSubscriber: unexpected CRT " + notification.commonRecommendationType
+      "ScheduledSpaceSubscriber: unetwitterpected CRT " + notification.commonRecommendationType
     )
 
     val spaceNotification = notification.spaceNotification.getOrElse(
-      throw new IllegalStateException("ScheduledSpaceSubscriber notification object not defined"))
+      throw new IllegalStateEtwitterception("ScheduledSpaceSubscriber notification object not defined"))
 
     require(
       spaceNotification.hostUserId.isDefined,

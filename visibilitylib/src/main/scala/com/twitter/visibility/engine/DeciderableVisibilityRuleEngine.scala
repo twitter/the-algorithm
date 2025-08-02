@@ -6,12 +6,12 @@ import com.twitter.stitch.Stitch
 import com.twitter.visibility.builder.VisibilityResult
 import com.twitter.visibility.builder.VisibilityResultBuilder
 import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.EvaluationContext
+import com.twitter.visibility.rules.EvaluationContetwittert
 import com.twitter.visibility.rules.Rule
 
 trait DeciderableVisibilityRuleEngine {
   def apply(
-    evaluationContext: EvaluationContext,
+    evaluationContetwittert: EvaluationContetwittert,
     safetyLevel: SafetyLevel,
     visibilityResultBuilder: VisibilityResultBuilder,
     enableShortCircuiting: Gate[Unit] = Gate.True,
@@ -19,7 +19,7 @@ trait DeciderableVisibilityRuleEngine {
   ): Stitch[VisibilityResult]
 
   def apply(
-    evaluationContext: EvaluationContext,
+    evaluationContetwittert: EvaluationContetwittert,
     thriftSafetyLevel: ThriftSafetyLevel,
     visibilityResultBuilder: VisibilityResultBuilder
   ): Stitch[VisibilityResult]

@@ -13,19 +13,19 @@ namespace functor {
 // `ConservativeShard` is adopted rather than `Shard` in tensorflow because the
 // original `Shard` may generate number of shards more than the number of
 // threads, which is not ideal for this case, as it may cause too much overhead.
-static void ConservativeShard(int max_parallelism, thread::ThreadPool *workers,
+static void ConservativeShard(int matwitter_parallelism, thread::ThreadPool *workers,
                               int64 total, int64 cost_per_unit,
                               std::function<void(int64, int64)> work) {
   if (total == 0) {
     return;
   }
-  max_parallelism = std::min(max_parallelism, workers->NumThreads());
-  if (max_parallelism <= 1) {
+  matwitter_parallelism = std::min(matwitter_parallelism, workers->NumThreads());
+  if (matwitter_parallelism <= 1) {
     // Just inline the whole work since we only have 1 thread (core).
     work(0, total);
     return;
   }
-  cost_per_unit = std::max(1LL, cost_per_unit);
+  cost_per_unit = std::matwitter(1LL, cost_per_unit);
   // We shard [0, total) into "num_shards" shards.
   //   1 <= num_shards <= num worker threads
   //
@@ -34,7 +34,7 @@ static void ConservativeShard(int max_parallelism, thread::ThreadPool *workers,
   // is 10us.
   static const int64 kMinCostPerShard = 10000;
   const int num_shards =
-      std::max<int>(1, std::min(static_cast<int64>(max_parallelism),
+      std::matwitter<int>(1, std::min(static_cast<int64>(matwitter_parallelism),
                                 total * cost_per_unit / kMinCostPerShard));
 
   // Each shard contains up to "block_size" units. [0, total) is sharded
@@ -58,7 +58,7 @@ static void ConservativeShard(int max_parallelism, thread::ThreadPool *workers,
     });
   }
 
-  // Inline execute the 1st shard.
+  // Inline etwitterecute the 1st shard.
   work(0, std::min(block_size, total));
   counter.Wait();
 }
@@ -86,11 +86,11 @@ static void LookupAndSegmentSum(const Tindices *a_indices, const float *b,
 // duplicating output buffer to achieve lock free output. So there should not
 // be too many threads.
 template<typename Tindices>
-static void ParallelLookupAndSegmentSum(OpKernelContext *ctx,
+static void ParallelLookupAndSegmentSum(OpKernelContetwittert *cttwitter,
                                         const Tindices *a_indices,
                                         const float *b, int nnz, int outer_left,
                                         int outer_right, float *output) {
-  auto worker_threads = *(ctx->device()->tensorflow_cpu_worker_threads());
+  auto worker_threads = *(cttwitter->device()->tensorflow_cpu_worker_threads());
   int out_size = outer_left * outer_right;
   if (worker_threads.num_threads <= 1) {
     memset(output, 0, out_size * sizeof(float));
@@ -109,15 +109,15 @@ static void ParallelLookupAndSegmentSum(OpKernelContext *ctx,
       port::AlignedMalloc(num_bytes, Allocator::kAllocatorAlignment)));
   float *temp_out = buffer.get();
 
-  std::atomic<int> thread_index(0);
+  std::atomic<int> thread_indetwitter(0);
 
   auto task = [&](int64 start, int64 limit) {
-    int local_thread_index = thread_index++;
+    int local_thread_indetwitter = thread_indetwitter++;
     float *buf_ptr = nullptr;
-    if (local_thread_index == 0) {
+    if (local_thread_indetwitter == 0) {
       buf_ptr = output;
     } else {
-      buf_ptr = temp_out + (local_thread_index - 1) * padded_out_size;
+      buf_ptr = temp_out + (local_thread_indetwitter - 1) * padded_out_size;
     }
     memset(buf_ptr, 0, out_size * sizeof(float));
 
@@ -133,7 +133,7 @@ static void ParallelLookupAndSegmentSum(OpKernelContext *ctx,
   ConservativeShard(worker_threads.num_threads, worker_threads.workers, nnz,
                     static_cast<int64>(cost_per_unit), task);
 
-  for (int i = 1; i < thread_index; ++i) {
+  for (int i = 1; i < thread_indetwitter; ++i) {
     VectorSum(output, temp_out + (i - 1) * padded_out_size, out_size);
   }
 }

@@ -1,10 +1,10 @@
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.concurrent.TimeUnit;
-import javax.inject.Inject;
+import javatwitter.inject.Inject;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.common_internal.text.version.PenguinVersionConfig;
+import com.twitter.common_internal.tetwittert.version.PenguinVersion;
+import com.twitter.common_internal.tetwittert.version.PenguinVersionConfig;
 import com.twitter.finagle.Service;
 import com.twitter.finagle.SimpleFilter;
 import com.twitter.finagle.tracing.Trace;
@@ -13,25 +13,25 @@ import com.twitter.search.common.metrics.SearchRateCounter;
 import com.twitter.search.common.metrics.SearchTimer;
 import com.twitter.search.common.metrics.SearchTimerStats;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.earlybird_root.common.QueryParsingUtils;
 import com.twitter.search.queryparser.parser.SerializedQueryParser;
 import com.twitter.search.queryparser.parser.SerializedQueryParser.TokenizationOption;
 import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twitter.search.queryparser.query.QueryParserEtwitterception;
 import com.twitter.util.Duration;
 import com.twitter.util.Future;
 
-public class QueryTokenizerFilter extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private static final String PREFIX = "query_tokenizer_";
+public class QueryTokenizerFilter etwittertends SimpleFilter<EarlybirdRequestContetwittert, EarlybirdResponse> {
+  private static final String PREFItwitter = "query_tokenizer_";
   private static final SearchRateCounter SUCCESS_COUNTER =
-      SearchRateCounter.export(PREFIX + "success");
+      SearchRateCounter.etwitterport(PREFItwitter + "success");
   private static final SearchRateCounter FAILURE_COUNTER =
-      SearchRateCounter.export(PREFIX + "error");
+      SearchRateCounter.etwitterport(PREFItwitter + "error");
   private static final SearchRateCounter SKIPPED_COUNTER =
-      SearchRateCounter.export(PREFIX + "skipped");
+      SearchRateCounter.etwitterport(PREFItwitter + "skipped");
   private static final SearchTimerStats QUERY_TOKENIZER_TIME =
-      SearchTimerStats.export(PREFIX + "time", TimeUnit.MILLISECONDS, false);
+      SearchTimerStats.etwitterport(PREFItwitter + "time", TimeUnit.MILLISECONDS, false);
 
   private final TokenizationOption tokenizationOption;
 
@@ -44,36 +44,36 @@ public class QueryTokenizerFilter extends SimpleFilter<EarlybirdRequestContext, 
 
   @Override
   public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+      EarlybirdRequestContetwittert requestContetwittert,
+      Service<EarlybirdRequestContetwittert, EarlybirdResponse> service) {
 
-    if (!requestContext.getRequest().isRetokenizeSerializedQuery()
-        || !requestContext.getRequest().isSetSearchQuery()
-        || !requestContext.getRequest().getSearchQuery().isSetSerializedQuery()) {
+    if (!requestContetwittert.getRequest().isRetokenizeSerializedQuery()
+        || !requestContetwittert.getRequest().isSetSearchQuery()
+        || !requestContetwittert.getRequest().getSearchQuery().isSetSerializedQuery()) {
       SKIPPED_COUNTER.increment();
-      return service.apply(requestContext);
+      return service.apply(requestContetwittert);
     }
 
     SearchTimer timer = QUERY_TOKENIZER_TIME.startNewTimer();
     try {
-      String serializedQuery = requestContext.getRequest().getSearchQuery().getSerializedQuery();
+      String serializedQuery = requestContetwittert.getRequest().getSearchQuery().getSerializedQuery();
       Query parsedQuery = reparseQuery(serializedQuery);
       SUCCESS_COUNTER.increment();
-      return service.apply(EarlybirdRequestContext.copyRequestContext(requestContext, parsedQuery));
-    } catch (QueryParserException e) {
+      return service.apply(EarlybirdRequestContetwittert.copyRequestContetwittert(requestContetwittert, parsedQuery));
+    } catch (QueryParserEtwitterception e) {
       FAILURE_COUNTER.increment();
-      return QueryParsingUtils.newClientErrorResponse(requestContext.getRequest(), e);
+      return QueryParsingUtils.newClientErrorResponse(requestContetwittert.getRequest(), e);
     } finally {
       long elapsed = timer.stop();
       QUERY_TOKENIZER_TIME.timerIncrement(elapsed);
       Tracing trace = Trace.apply();
       if (trace.isActivelyTracing()) {
-        trace.record(PREFIX + "time", Duration.fromMilliseconds(elapsed));
+        trace.record(PREFItwitter + "time", Duration.fromMilliseconds(elapsed));
       }
     }
   }
 
-  public Query reparseQuery(String serializedQuery) throws QueryParserException {
+  public Query reparseQuery(String serializedQuery) throws QueryParserEtwitterception {
     SerializedQueryParser parser = new SerializedQueryParser(tokenizationOption);
     return parser.parse(serializedQuery);
   }
@@ -82,7 +82,7 @@ public class QueryTokenizerFilter extends SimpleFilter<EarlybirdRequestContext, 
    * Initializing the query parser can take many seconds. We initialize it at warmup so that
    * requests don't time out after we join the serverset. SEARCH-28801
    */
-  public void performExpensiveInitialization() throws QueryParserException {
+  public void performEtwitterpensiveInitialization() throws QueryParserEtwitterception {
     SerializedQueryParser queryParser = new SerializedQueryParser(tokenizationOption);
 
     // The Korean query parser takes a few seconds on it's own to initialize.

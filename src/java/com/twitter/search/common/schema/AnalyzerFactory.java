@@ -1,7 +1,7 @@
 package com.twitter.search.common.schema;
 
 import java.io.Reader;
-import java.text.ParseException;
+import java.tetwittert.ParseEtwitterception;
 import java.util.Map;
 
 import com.google.common.base.Splitter;
@@ -56,7 +56,7 @@ public class AnalyzerFactory {
     if (matchVersionName != null) {
       try {
         matchVersion = Version.parse(matchVersionName);
-      } catch (ParseException e) {
+      } catch (ParseEtwitterception e) {
         // ignore and use default version
         LOG.warn("Unable to parse match version: " + matchVersionName
                 + ". Will use default version of 8.5.2.");
@@ -112,7 +112,7 @@ public class AnalyzerFactory {
 
   private CharFilter resolveCharFilterClass(ThriftClassInstantiater classDef, Reader input) {
     if (classDef.getClassName().equals(HTML_STRIP_CHAR_FILTER)) {
-      String escapedTags = getArg(classDef.getParams(), "excapedTags");
+      String escapedTags = getArg(classDef.getParams(), "etwittercapedTags");
       if (escapedTags != null) {
         return new HTMLStripCharFilter(input, Sets.newHashSet(Splitter.on(",").split(escapedTags)));
       } else {
@@ -123,7 +123,7 @@ public class AnalyzerFactory {
     }
 
 
-    throw new ClassNotSupportedException("CharFilter", classDef);
+    throw new ClassNotSupportedEtwitterception("CharFilter", classDef);
   }
 
   private String getArg(Map<String, String> args, String arg) {
@@ -134,8 +134,8 @@ public class AnalyzerFactory {
     return args.get(arg);
   }
 
-  public final class ClassNotSupportedException extends RuntimeException {
-    private ClassNotSupportedException(String type, ThriftClassInstantiater classDef) {
+  public final class ClassNotSupportedEtwitterception etwittertends RuntimeEtwitterception {
+    private ClassNotSupportedEtwitterception(String type, ThriftClassInstantiater classDef) {
       super(type + " class with name " + classDef.getClassName() + " currently not supported.");
     }
   }

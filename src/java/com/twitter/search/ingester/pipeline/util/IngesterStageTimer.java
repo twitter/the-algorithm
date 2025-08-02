@@ -4,15 +4,15 @@ import com.twitter.common.base.MorePreconditions;
 import com.twitter.search.common.metrics.SearchTimerStats;
 import org.apache.commons.pipeline.stage.StageTimer;
 /**
- * Adds science stats export to StageTimer
+ * Adds science stats etwitterport to StageTimer
  */
-public class IngesterStageTimer extends StageTimer {
+public class IngesterStageTimer etwittertends StageTimer {
   private final String name;
   private final SearchTimerStats timer;
 
   public IngesterStageTimer(String statName) {
     name = MorePreconditions.checkNotBlank(statName);
-    timer = SearchTimerStats.export(name, TimeUnit.NANOSECONDS, true);
+    timer = SearchTimerStats.etwitterport(name, TimeUnit.NANOSECONDS, true);
   }
 
   public String getName() {

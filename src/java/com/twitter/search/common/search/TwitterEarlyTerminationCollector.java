@@ -1,15 +1,15 @@
 package com.twitter.search.common.search;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nonnull;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
+import org.apache.lucene.indetwitter.LeafReader;
+import org.apache.lucene.indetwitter.LeafReaderContetwittert;
 import org.apache.lucene.search.LeafCollector;
 import org.apache.lucene.search.Scorable;
 import org.slf4j.Logger;
@@ -23,28 +23,28 @@ import com.twitter.search.common.query.thriftjava.CollectorTerminationParams;
 
 /**
  * A TwitterCollector containing the most common early termination logic based on
- * timeout, cost, and max hits. This class does not do any actual hit collection---this class
+ * timeout, cost, and matwitter hits. This class does not do any actual hit collection---this class
  * is abstract and cannot be instantiated.
  *
- * If a Collector and all its subclasses need early termination, it should extend this class.
+ * If a Collector and all its subclasses need early termination, it should etwittertend this class.
  *
  * However, if one just wants to add EarlyTermination to any single collector, he can just
  * use {@link DelegatingEarlyTerminationCollector}
  * as a wrapper.
  */
 public abstract class TwitterEarlyTerminationCollector
-    extends TwitterCollector implements LeafCollector {
+    etwittertends TwitterCollector implements LeafCollector {
   private static final Logger LOG = LoggerFactory.getLogger(TwitterEarlyTerminationCollector.class);
   private static final SearchCounter NEGATIVE_TIME_PER_SEGMENT =
-      SearchCounter.export("TwitterEarlyTerminationCollector_negative_time_per_segment");
+      SearchCounter.etwitterport("TwitterEarlyTerminationCollector_negative_time_per_segment");
   private static final SearchRateCounter QUERY_TIMEOUT_ENFORCED =
-      SearchRateCounter.export("TwitterEarlyTerminationCollector_query_timeout_enforced");
+      SearchRateCounter.etwitterport("TwitterEarlyTerminationCollector_query_timeout_enforced");
 
   protected int curDocId = -1;
 
   protected Scorable scorer = null;
   private LeafReader curReader = null;
-  private final long maxHitsToProcess;
+  private final long matwitterHitsToProcess;
   private long numHitsProcessed = 0;
   private int lastEarlyTerminationCheckDocId = -1;
   private final Clock clock;
@@ -54,17 +54,17 @@ public abstract class TwitterEarlyTerminationCollector
 
   private final TerminationTracker terminationTracker;
 
-  // This determines how often the expensive early termination check is performed.
-  // If set to be negative, expensive early termination check only performed at segment boundaries.
-  // If set to a positive number X, this check is performed every X docs processed.
+  // This determines how often the etwitterpensive early termination check is performed.
+  // If set to be negative, etwitterpensive early termination check only performed at segment boundaries.
+  // If set to a positive number twitter, this check is performed every twitter docs processed.
   private int numDocsBetweenTimeoutChecks;
 
   // Number of segments searched so far.
   // This is used to predicatively early terminate.
-  // Expensive early termination checks may not happen often enough. Sometimes the request
+  // Etwitterpensive early termination checks may not happen often enough. Sometimes the request
   // times out in between the termination checks.
   // After finishing searching a segment, we estimate how much time is needed to search one
-  // segment on average.  If searching the next segment would cause a timeout, we early terminate.
+  // segment on average.  If searching the netwittert segment would cause a timeout, we early terminate.
   private int numSearchedSegments = 0;
 
   /**
@@ -88,15 +88,15 @@ public abstract class TwitterEarlyTerminationCollector
 
     if (terminationParams == null) {
       terminationParams = new CollectorTerminationParams()
-          .setMaxHitsToProcess(Integer.MAX_VALUE)
-          .setMaxQueryCost(Double.MAX_VALUE)
-          .setTimeoutMs(Integer.MAX_VALUE);
+          .setMatwitterHitsToProcess(Integer.MAtwitter_VALUE)
+          .setMatwitterQueryCost(Double.MAtwitter_VALUE)
+          .setTimeoutMs(Integer.MAtwitter_VALUE);
     }
 
-    if (!terminationParams.isSetMaxHitsToProcess() || terminationParams.getMaxHitsToProcess() < 0) {
-      maxHitsToProcess = Integer.MAX_VALUE;
+    if (!terminationParams.isSetMatwitterHitsToProcess() || terminationParams.getMatwitterHitsToProcess() < 0) {
+      matwitterHitsToProcess = Integer.MAtwitter_VALUE;
     } else {
-      maxHitsToProcess = terminationParams.getMaxHitsToProcess();
+      matwitterHitsToProcess = terminationParams.getMatwitterHitsToProcess();
     }
 
     if (terminationParams.isSetNumDocsBetweenTimeoutChecks()) {
@@ -110,27 +110,27 @@ public abstract class TwitterEarlyTerminationCollector
     this.clock = clock;
   }
 
-  public final LeafCollector getLeafCollector(LeafReaderContext context) throws IOException {
-    this.setNextReader(context);
+  public final LeafCollector getLeafCollector(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
+    this.setNetwittertReader(contetwittert);
     return this;
   }
 
   /**
    * Sub-classes may override this to add more collection logic.
    */
-  protected abstract void doCollect() throws IOException;
+  protected abstract void doCollect() throws IOEtwitterception;
 
   /**
    * Sub-classes may override this to add more segment completion logic.
    * @param lastSearchedDocID is the last docid searched before termination,
    * or NO_MORE_DOCS if there was no early termination.  This doc may not be a hit!
    */
-  protected abstract void doFinishSegment(int lastSearchedDocID) throws IOException;
+  protected abstract void doFinishSegment(int lastSearchedDocID) throws IOEtwitterception;
 
   /**
    *  sub classes can override this to perform more early termination checks.
    */
-  public EarlyTerminationState innerShouldCollectMore() throws IOException {
+  public EarlyTerminationState innerShouldCollectMore() throws IOEtwitterception {
     return EarlyTerminationState.COLLECTING;
   }
 
@@ -149,17 +149,17 @@ public abstract class TwitterEarlyTerminationCollector
   }
 
   @Override
-  public final boolean isTerminated() throws IOException {
+  public final boolean isTerminated() throws IOEtwitterception {
     EarlyTerminationState earlyTerminationState = getEarlyTerminationState();
 
     if (earlyTerminationState.isTerminated()) {
       return true;
     }
 
-    if (getNumHitsProcessed() >= getMaxHitsToProcess()) {
+    if (getNumHitsProcessed() >= getMatwitterHitsToProcess()) {
       collectedEnoughResults();
       if (shouldTerminate()) {
-        return setEarlyTerminationState(EarlyTerminationState.TERMINATED_MAX_HITS_EXCEEDED)
+        return setEarlyTerminationState(EarlyTerminationState.TERMINATED_MAtwitter_HITS_EtwitterCEEDED)
             .isTerminated();
       } else {
         return false;
@@ -170,32 +170,32 @@ public abstract class TwitterEarlyTerminationCollector
   }
 
   /**
-   * Note: subclasses overriding this method are expected to call "super.setNextReader"
-   * in their setNextReader().
-   * @deprecated Remove this methods in favor of {@link #getLeafCollector(LeafReaderContext)}
+   * Note: subclasses overriding this method are etwitterpected to call "super.setNetwittertReader"
+   * in their setNetwittertReader().
+   * @deprecated Remove this methods in favor of {@link #getLeafCollector(LeafReaderContetwittert)}
    */
   @Deprecated
-  public void setNextReader(LeafReaderContext context) throws IOException {
+  public void setNetwittertReader(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
     if (!terminationTracker.useLastSearchedDocIdOnTimeout()) {
-      expensiveEarlyTerminationCheck();
+      etwitterpensiveEarlyTerminationCheck();
     }
 
-    // Reset curDocId for next segment
+    // Reset curDocId for netwittert segment
     curDocId = -1;
     lastEarlyTerminationCheckDocId = -1;
-    curReader = context.reader();
+    curReader = contetwittert.reader();
   }
 
   /**
-   * Sub-classes overriding this method are expected to call super.setScorer()
+   * Sub-classes overriding this method are etwitterpected to call super.setScorer()
    */
   @Override
-  public void setScorer(Scorable scorer) throws IOException {
+  public void setScorer(Scorable scorer) throws IOEtwitterception {
     this.scorer = scorer;
   }
 
   @Override
-  public final void collect(int doc) throws IOException {
+  public final void collect(int doc) throws IOEtwitterception {
     curDocId = doc;
     doCollect();
     numHitsProcessed++;
@@ -204,7 +204,7 @@ public abstract class TwitterEarlyTerminationCollector
       lastEarlyTerminationCheckDocId = curDocId;
 
       if (!terminationTracker.useLastSearchedDocIdOnTimeout()) {
-        expensiveEarlyTerminationCheck();
+        etwitterpensiveEarlyTerminationCheck();
       }
     }
   }
@@ -214,25 +214,25 @@ public abstract class TwitterEarlyTerminationCollector
    * @param lastSearchedDocID is the last docid searched before termination,
    * or NO_MORE_DOCS if there was no early termination.  This doc may not be a hit!
    */
-  protected final void trackCompleteSegment(int lastSearchedDocID) throws IOException {
+  protected final void trackCompleteSegment(int lastSearchedDocID) throws IOEtwitterception {
     doFinishSegment(lastSearchedDocID);
   }
 
   @Override
-  public final void finishSegment(int lastSearchedDocID) throws IOException {
+  public final void finishSegment(int lastSearchedDocID) throws IOEtwitterception {
     // finished searching a segment. Computer average time needed to search a segment.
-    Preconditions.checkState(curReader != null, "Did subclass call super.setNextReader()?");
+    Preconditions.checkState(curReader != null, "Did subclass call super.setNetwittertReader()?");
     numSearchedSegments++;
 
     long totalTime = clock.nowMillis() - terminationTracker.getLocalStartTimeMillis();
 
-    if (totalTime >= Integer.MAX_VALUE) {
+    if (totalTime >= Integer.MAtwitter_VALUE) {
       String msg = String.format(
-          "%s: A query runs for %d that is longer than Integer.MAX_VALUE ms. lastSearchedDocID: %d",
+          "%s: A query runs for %d that is longer than Integer.MAtwitter_VALUE ms. lastSearchedDocID: %d",
           getClass().getSimpleName(), totalTime, lastSearchedDocID
       );
       LOG.error(msg);
-      throw new IllegalStateException(msg);
+      throw new IllegalStateEtwitterception(msg);
     }
 
     int timePerSegment = ((int) totalTime) / numSearchedSegments;
@@ -252,7 +252,7 @@ public abstract class TwitterEarlyTerminationCollector
     // the captured lastSearchedDocId from the tracker instead, which is the most up-to-date amongst
     // the query nodes.
     if (terminationTracker.useLastSearchedDocIdOnTimeout()
-        && EarlyTerminationState.TERMINATED_TIME_OUT_EXCEEDED.equals(
+        && EarlyTerminationState.TERMINATED_TIME_OUT_EtwitterCEEDED.equals(
             terminationTracker.getEarlyTerminationState())) {
       QUERY_TIMEOUT_ENFORCED.increment();
       trackCompleteSegment(terminationTracker.getLastSearchedDocId());
@@ -260,7 +260,7 @@ public abstract class TwitterEarlyTerminationCollector
       trackCompleteSegment(lastSearchedDocID);
     }
 
-    // We finished a segment, so clear out the DocIdTrackers. The next segment will register its
+    // We finished a segment, so clear out the DocIdTrackers. The netwittert segment will register its
     // own trackers, and we don't need to keep the trackers from the current segment.
     terminationTracker.resetDocIdTrackers();
 
@@ -270,27 +270,27 @@ public abstract class TwitterEarlyTerminationCollector
   }
 
   /**
-   * More expensive Early Termination checks, which are not called every hit.
+   * More etwitterpensive Early Termination checks, which are not called every hit.
    * This sets EarlyTerminationState if it decides that early termination should kick in.
    * See: SEARCH-29723.
    */
-  private void expensiveEarlyTerminationCheck() {
+  private void etwitterpensiveEarlyTerminationCheck() {
     if (queryCostProvider != null) {
       double totalQueryCost = queryCostProvider.getTotalCost();
-      double maxQueryCost = terminationTracker.getMaxQueryCost();
-      if (totalQueryCost >= maxQueryCost) {
-        setEarlyTerminationState(EarlyTerminationState.TERMINATED_MAX_QUERY_COST_EXCEEDED);
+      double matwitterQueryCost = terminationTracker.getMatwitterQueryCost();
+      if (totalQueryCost >= matwitterQueryCost) {
+        setEarlyTerminationState(EarlyTerminationState.TERMINATED_MAtwitter_QUERY_COST_EtwitterCEEDED);
       }
     }
 
     final long nowMillis = clock.nowMillis();
     if (nowMillis >= terminationTracker.getTimeoutEndTimeWithReservation()) {
-      setEarlyTerminationState(EarlyTerminationState.TERMINATED_TIME_OUT_EXCEEDED);
+      setEarlyTerminationState(EarlyTerminationState.TERMINATED_TIME_OUT_EtwitterCEEDED);
     }
   }
 
-  public long getMaxHitsToProcess() {
-    return maxHitsToProcess;
+  public long getMatwitterHitsToProcess() {
+    return matwitterHitsToProcess;
   }
 
   public final void setNumHitsProcessed(long numHitsProcessed) {
@@ -314,7 +314,7 @@ public abstract class TwitterEarlyTerminationCollector
     return this.terminationTracker;
   }
 
-  protected void collectedEnoughResults() throws IOException {
+  protected void collectedEnoughResults() throws IOEtwitterception {
   }
 
   protected boolean shouldTerminate() {
@@ -322,7 +322,7 @@ public abstract class TwitterEarlyTerminationCollector
   }
 
   /**
-   * Debug info collected during execution.
+   * Debug info collected during etwitterecution.
    */
   public abstract List<String> getDebugInfo();
 }

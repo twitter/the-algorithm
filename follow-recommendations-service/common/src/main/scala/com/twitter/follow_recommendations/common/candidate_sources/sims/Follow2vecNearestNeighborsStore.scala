@@ -5,19 +5,19 @@ import com.twitter.follow_recommendations.common.candidate_sources.sims.Follow2v
 import com.twitter.hermit.candidate.thriftscala.Candidate
 import com.twitter.hermit.candidate.thriftscala.Candidates
 import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
 import com.twitter.stitch.Stitch
 import com.twitter.strato.catalog.Fetch
 import com.twitter.strato.client.Fetcher
 import com.twitter.strato.generated.client.recommendations.follow2vec.LinearRegressionFollow2vecNearestNeighborsClientColumn
 import com.twitter.util.Return
 import com.twitter.util.Throw
-import javax.inject.Inject
+import javatwitter.inject.Inject
 
 @Singleton
 class LinearRegressionFollow2vecNearestNeighborsStore @Inject() (
   linearRegressionFollow2vecNearestNeighborsClientColumn: LinearRegressionFollow2vecNearestNeighborsClientColumn)
-    extends StratoBasedSimsCandidateSource[NearestNeighborParamsType](
+    etwittertends StratoBasedSimsCandidateSource[NearestNeighborParamsType](
       Follow2vecNearestNeighborsStore.convertFetcher(
         linearRegressionFollow2vecNearestNeighborsClientColumn.fetcher),
       view = Follow2vecNearestNeighborsStore.defaultSearchParams,
@@ -62,7 +62,7 @@ object Follow2vecNearestNeighborsStore {
           fetcher.fetch(key = (key, defaultFeatureStoreVersion), view = view)
         results.transform {
           case Return(r) => Stitch.value(Fetch.Result(toCandidates(r.v)))
-          case Throw(e) => Stitch.exception(e)
+          case Throw(e) => Stitch.etwitterception(e)
         }
       }
   }

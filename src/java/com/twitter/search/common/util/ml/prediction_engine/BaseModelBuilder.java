@@ -17,8 +17,8 @@ public abstract class BaseModelBuilder implements ModelBuilder {
   // Ignore features that have an absolute weight lower than this value
   protected static final double MIN_WEIGHT = 1e-9;
   private static final String BIAS_FIELD_NAME = ModelInterpreter.BIAS_FIELD_NAME;
-  static final String DISCRETIZER_NAME_SUFFIX =
-      "." + DiscretizerTransform.DEFAULT_FEATURE_NAME_SUFFIX;
+  static final String DISCRETIZER_NAME_SUFFItwitter =
+      "." + DiscretizerTransform.DEFAULT_FEATURE_NAME_SUFFItwitter;
 
   protected final String modelName;
   protected double bias;
@@ -46,8 +46,8 @@ public abstract class BaseModelBuilder implements ModelBuilder {
   }
 
   /**
-   * Parses a line from the interpreted model text file. See the javadoc of the constructor for
-   * more details about how to create the text file.
+   * Parses a line from the interpreted model tetwittert file. See the javadoc of the constructor for
+   * more details about how to create the tetwittert file.
    * <p>
    * The file uses TSV format with 3 columns:
    * <p>
@@ -57,11 +57,11 @@ public abstract class BaseModelBuilder implements ModelBuilder {
    * Weight:
    * Weight of the feature using LOGIT scale.
    * <p>
-   * When it parses each line, it stores the weights for all the features defined in the context,
+   * When it parses each line, it stores the weights for all the features defined in the contetwittert,
    * as well as the bias, but it ignores any other feature (e.g. label, prediction or
    * meta.record_weight) and features with a small absolute weight (see MIN_WEIGHT).
    * <p>
-   * Example lines:
+   * Etwitterample lines:
    * <p>
    * model_name      bias    0.019735312089324074
    * model_name      demo.binary_feature          0.06524706073105327
@@ -91,7 +91,7 @@ public abstract class BaseModelBuilder implements ModelBuilder {
     FeatureParser parser = FeatureParser.parse(featureName);
     String baseName = parser.getBaseName();
 
-    if (Math.abs(weight) < MIN_WEIGHT && !baseName.endsWith(DISCRETIZER_NAME_SUFFIX)) {
+    if (Math.abs(weight) < MIN_WEIGHT && !baseName.endsWith(DISCRETIZER_NAME_SUFFItwitter)) {
       // skip, unless it represents a range of a discretized feature.
       // discretized features with all zeros should also be removed, but will handle that later
       return this;

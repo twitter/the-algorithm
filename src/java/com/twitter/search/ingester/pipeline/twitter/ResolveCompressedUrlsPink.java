@@ -63,7 +63,7 @@ public class ResolveCompressedUrlsPink {
     }
 
     List<String> urlsList = ImmutableList.copyOf(urls);
-    int batchSize = decider.featureExists(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
+    int batchSize = decider.featureEtwitterists(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
         ? decider.getAvailability(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
         : 10000;
     int numRequests = (int) Math.ceil(1.0 * urlsList.size() / batchSize);
@@ -106,7 +106,7 @@ public class ResolveCompressedUrlsPink {
         LOG.warn("Failed to resolve URLs with Pink Storer.", throwable);
       }
       return tryResponse;
-    } catch (Exception e) {
+    } catch (Etwitterception e) {
       return Throwables.unchecked(e);
     }
   }

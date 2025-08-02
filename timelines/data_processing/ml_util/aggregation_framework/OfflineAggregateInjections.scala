@@ -19,11 +19,11 @@ object OfflineAggregateInjections {
 
   private[aggregation_framework] def getPdts[T](
     aggregateGroups: Iterable[T],
-    featureExtractor: T => Iterable[Feature[_]]
+    featureEtwittertractor: T => Iterable[Feature[_]]
   ): Option[Set[PersonalDataType]] = {
     val pdts: Set[PersonalDataType] = for {
       group <- aggregateGroups.toSet[T]
-      feature <- featureExtractor(group)
+      feature <- featureEtwittertractor(group)
       pdtSet <- feature.getPersonalDataTypes.asSet().asScala
       javaPdt <- pdtSet.asScala
       scalaPdt <- PersonalDataType.get(javaPdt.getValue)

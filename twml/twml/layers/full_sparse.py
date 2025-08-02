@@ -27,12 +27,12 @@ class FullSparse(Layer):
     input_size:
       The number of input units. (Deprecated)
     weight_initializer:
-      Initializer function for the weight matrix.
+      Initializer function for the weight matritwitter.
       This argument defaults to zeros_initializer().
       This is valid when the FullSparse is the first layer of
       parameters but should be changed otherwise.
     weight_regularizer:
-      Regularizer function for the weight matrix.
+      Regularizer function for the weight matritwitter.
       Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
     bias_regularizer:
       Regularizer function for the bias.
@@ -51,15 +51,15 @@ class FullSparse(Layer):
       share weights, but to avoid mistakes we require ``reuse=True`` in such cases.
     use_sparse_grads:
       Boolean, if `True` do sparse mat mul with `embedding_lookup_sparse`, which will
-      make gradients to weight matrix also sparse in backward pass. This can lead to non-trivial
+      make gradients to weight matritwitter also sparse in backward pass. This can lead to non-trivial
       speed up at training time when input_size is large and optimizer handles sparse gradients
-      correctly (eg. with SGD or LazyAdamOptimizer). If weight matrix is small, it's recommended
-      to set this flag to `False`; for most use cases of FullSparse, however, weight matrix will
+      correctly (eg. with SGD or LazyAdamOptimizer). If weight matritwitter is small, it's recommended
+      to set this flag to `False`; for most use cases of FullSparse, however, weight matritwitter will
       be large, so it's better to set it to `True`
     num_partitions:
       Number of partitions to use for the weight variable. Defaults to 1.
-    partition_axis:
-      If num_partitions is specified, the partition axis for the weight variable
+    partition_atwitteris:
+      If num_partitions is specified, the partition atwitteris for the weight variable
       Defaults to 0 (partition by row).
       Must be 0 (row) or 1 (column)
     use_binary_values:
@@ -85,7 +85,7 @@ class FullSparse(Layer):
                name=None,
                use_sparse_grads=True,
                num_partitions=None,
-               partition_axis=0,
+               partition_atwitteris=0,
                use_binary_values=False,
                bias_regularizer=None,
                weight_regularizer=None,
@@ -111,9 +111,9 @@ class FullSparse(Layer):
     self.activation = activation
     self.use_sparse_grads = use_sparse_grads
     self.num_partitions = num_partitions
-    if partition_axis != 0 and partition_axis != 1:
-      raise ValueError('partition_axis must be 0 or 1')
-    self.partition_axis = partition_axis
+    if partition_atwitteris != 0 and partition_atwitteris != 1:
+      raise ValueError('partition_atwitteris must be 0 or 1')
+    self.partition_atwitteris = partition_atwitteris
     self.use_binary_values = use_binary_values
     self.weight_regularizer = weight_regularizer
     self.bias_regularizer = bias_regularizer
@@ -175,7 +175,7 @@ class FullSparse(Layer):
       raise ValueError("Input tensor should have shape."
                        " You can set it using twml.util.limit_sparse_tensor_size")
 
-    (split_dim, other_dim) = (in_shape, out_shape) if self.partition_axis == 0 else (out_shape, in_shape)
+    (split_dim, other_dim) = (in_shape, out_shape) if self.partition_atwitteris == 0 else (out_shape, in_shape)
     requested_size = math.ceil(float(split_dim) / num_partitions) * other_dim * dtype.size
     if (requested_size >= 2**31):
       raise ValueError("Weight tensor partitions cannot be larger than 2GB.\n"
@@ -188,8 +188,8 @@ class FullSparse(Layer):
                        (in_shape, self.output_size, dtype.name, requested_size, num_partitions))
 
     if self.num_partitions:
-      partition_axis = int(self.partition_axis)
-      partitioner = tf.fixed_size_partitioner(self.num_partitions, axis=partition_axis)
+      partition_atwitteris = int(self.partition_atwitteris)
+      partitioner = tf.fitwittered_size_partitioner(self.num_partitions, atwitteris=partition_atwitteris)
     else:
       # Regular variables do not like it when you pass both constant tensors and shape
       if not callable(self.weight_initializer):
@@ -243,7 +243,7 @@ class FullSparse(Layer):
                                            self.use_sparse_grads,
                                            use_binary_values[n],
                                            name='sparse_mm_' + str(n),
-                                           partition_axis=self.partition_axis,
+                                           partition_atwitteris=self.partition_atwitteris,
                                            num_partitions=self.num_partitions,
                                            compress_ids=self._use_compression,
                                            cast_indices_dtype=self._cast_indices_dtype,
@@ -259,7 +259,7 @@ class FullSparse(Layer):
                                     self.use_sparse_grads,
                                     self.use_binary_values,
                                     name='sparse_mm',
-                                    partition_axis=self.partition_axis,
+                                    partition_atwitteris=self.partition_atwitteris,
                                     num_partitions=self.num_partitions,
                                     compress_ids=self._use_compression,
                                     cast_indices_dtype=self._cast_indices_dtype,
@@ -286,7 +286,7 @@ def full_sparse(
         reuse=None,
         use_sparse_grads=True,
         num_partitions=None,
-        partition_axis=0,
+        partition_atwitteris=0,
         use_binary_values=False,
         use_compression=False):
   """Functional interface for the sparsely-connected layer.
@@ -297,13 +297,13 @@ def full_sparse(
     output_size:
       Long or Integer, dimensionality of the output space.
     weight_initializer:
-      Initializer function for the weight matrix.
+      Initializer function for the weight matritwitter.
     activation:
       Activation function (callable). Set it to None to maintain a linear activation.
     bias_initializer:
       Initializer function for the bias.
     weight_regularizer:
-      Regularizer function for the weight matrix.
+      Regularizer function for the weight matritwitter.
       Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
     bias_regularizer:
       Regularizer function for the bias.
@@ -317,15 +317,15 @@ def full_sparse(
       share weights, but to avoid mistakes we require ``reuse=True`` in such cases.
     use_sparse_grads:
       Boolean, if `True` do sparse mat mul with `embedding_lookup_sparse`, which will
-      make gradients to weight matrix also sparse in backward pass. This can lead to non-trivial
+      make gradients to weight matritwitter also sparse in backward pass. This can lead to non-trivial
       speed up at training time when input_size is large and optimizer handles sparse gradients
-      correctly (eg. with SGD or LazyAdamOptimizer). If weight matrix is small, it's recommended
-      to set this flag to `False`; for most use cases of FullSparse, however, weight matrix will
+      correctly (eg. with SGD or LazyAdamOptimizer). If weight matritwitter is small, it's recommended
+      to set this flag to `False`; for most use cases of FullSparse, however, weight matritwitter will
       be large, so it's better to set it to `True`
     num_partitions:
       Number of partitions to use for the weight variable. Defaults to 1.
-    partition_axis:
-      If num_partitions is specified, the partition axis for the weight variable
+    partition_atwitteris:
+      If num_partitions is specified, the partition atwitteris for the weight variable
       Defaults to 0 (partition by row).
       Must be 0 (row) or 1 (column)
     use_binary_values:
@@ -335,7 +335,7 @@ def full_sparse(
       Default False. Set True to enable data compression techniques for
       optimization of network traffic for distributed training.
   Returns:
-    Outputs a ``tf.Tensor`` of size ``[batch_size x output_size]``.
+    Outputs a ``tf.Tensor`` of size ``[batch_size twitter output_size]``.
   """
   # TODO - remove input_size warning.
   if input_size:
@@ -364,7 +364,7 @@ def full_sparse(
                      _reuse=reuse,
                      use_sparse_grads=use_sparse_grads,
                      num_partitions=num_partitions,
-                     partition_axis=partition_axis,
+                     partition_atwitteris=partition_atwitteris,
                      use_compression=use_compression,
                      use_binary_values=use_binary_values)
   return layer(inputs)

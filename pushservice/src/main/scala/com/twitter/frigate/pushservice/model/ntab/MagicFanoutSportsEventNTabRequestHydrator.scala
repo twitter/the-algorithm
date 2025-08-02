@@ -6,15 +6,15 @@ import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
 import com.twitter.frigate.pushservice.model.MagicFanoutEventHydratedCandidate
 import com.twitter.frigate.pushservice.params.{PushFeatureSwitchParams => FS}
 import com.twitter.notificationservice.thriftscala.CreateGenericNotificationRequest
-import com.twitter.notificationservice.thriftscala.DisplayText
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
+import com.twitter.notificationservice.thriftscala.DisplayTetwittert
+import com.twitter.notificationservice.thriftscala.DisplayTetwittertEntity
 import com.twitter.notificationservice.thriftscala.GenericType
-import com.twitter.notificationservice.thriftscala.TextValue
+import com.twitter.notificationservice.thriftscala.TetwittertValue
 import com.twitter.notificationservice.thriftscala.TapThroughAction
 import com.twitter.util.Future
 import com.twitter.util.Time
 
-trait MagicFanoutSportsEventNTabRequestHydrator extends EventNTabRequestHydrator {
+trait MagicFanoutSportsEventNTabRequestHydrator etwittertends EventNTabRequestHydrator {
   self: PushCandidate
     with MagicFanoutEventHydratedCandidate
     with MagicFanoutSportsEventCandidate
@@ -29,9 +29,9 @@ trait MagicFanoutSportsEventNTabRequestHydrator extends EventNTabRequestHydrator
   override lazy val tapThroughFut: Future[String] = {
     Future.value(s"i/events/$eventId")
   }
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] =
+  override lazy val displayTetwittertEntitiesFut: Future[Seq[DisplayTetwittertEntity]] =
     eventTitleFut.map { eventTitle =>
-      Seq(DisplayTextEntity(name = "title", value = TextValue.Text(eventTitle)))
+      Seq(DisplayTetwittertEntity(name = "title", value = TetwittertValue.Tetwittert(eventTitle)))
     }
 
   override lazy val facepileUsersFut: Future[Seq[Long]] =
@@ -58,21 +58,21 @@ trait MagicFanoutSportsEventNTabRequestHydrator extends EventNTabRequestHydrator
 
   private lazy val sportsNtabRequest: Future[Option[CreateGenericNotificationRequest]] = {
     Future
-      .join(senderIdFut, displayTextEntitiesFut, facepileUsersFut, tapThroughFut)
+      .join(senderIdFut, displayTetwittertEntitiesFut, facepileUsersFut, tapThroughFut)
       .map {
-        case (senderId, displayTextEntities, facepileUsers, tapThrough) =>
+        case (senderId, displayTetwittertEntities, facepileUsers, tapThrough) =>
           Some(
             CreateGenericNotificationRequest(
               userId = target.targetId,
               senderId = senderId,
               genericType = GenericType.RefreshableNotification,
-              displayText = DisplayText(values = displayTextEntities),
+              displayTetwittert = DisplayTetwittert(values = displayTetwittertEntities),
               facepileUsers = facepileUsers,
               timestampMillis = Time.now.inMillis,
               tapThroughAction = Some(TapThroughAction(Some(tapThrough))),
               impressionId = Some(impressionId),
-              socialProofText = socialProofDisplayText,
-              context = storyContext,
+              socialProofTetwittert = socialProofDisplayTetwittert,
+              contetwittert = storyContetwittert,
               inlineCard = inlineCard,
               refreshableType = refreshableType
             ))
@@ -82,11 +82,11 @@ trait MagicFanoutSportsEventNTabRequestHydrator extends EventNTabRequestHydrator
   override lazy val ntabRequest: Future[Option[CreateGenericNotificationRequest]] = {
     if (target.params(FS.EnableNTabEntriesForSportsEventNotifications)) {
       self.target.history.flatMap { pushHistory =>
-        val prevEventHistoryExists = pushHistory.sortedHistory.exists {
+        val prevEventHistoryEtwitterists = pushHistory.sortedHistory.etwitterists {
           case (_, notification) =>
-            notification.magicFanoutEventNotification.exists(_.eventId == self.eventId)
+            notification.magicFanoutEventNotification.etwitterists(_.eventId == self.eventId)
         }
-        if (prevEventHistoryExists) {
+        if (prevEventHistoryEtwitterists) {
           Future.None
         } else sportsNtabRequest
       }

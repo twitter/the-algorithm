@@ -1,28 +1,28 @@
 package com.twitter.search.earlybird.search.queries;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
+import org.apache.lucene.indetwitter.LeafReader;
+import org.apache.lucene.indetwitter.LeafReaderContetwittert;
+import org.apache.lucene.indetwitter.NumericDocValues;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.IndetwitterSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Weight;
 
 import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
+import com.twitter.search.core.earlybird.indetwitter.util.RangeFilterDISI;
 
 /**
  * CSFDisjunctionFilter provides an efficient mechanism to query for documents that have a
  * long CSF equal to one of the provided values.
  */
-public final class CSFDisjunctionFilter extends Query {
+public final class CSFDisjunctionFilter etwittertends Query {
   private final String csfField;
   private final Set<Long> values;
 
@@ -38,11 +38,11 @@ public final class CSFDisjunctionFilter extends Query {
   }
 
   @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
+  public Weight createWeight(IndetwitterSearcher searcher, ScoreMode scoreMode, float boost) {
     return new DefaultFilterWeight(this) {
       @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        return new CSFDisjunctionFilterDISI(context.reader(), csfField, values);
+      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
+        return new CSFDisjunctionFilterDISI(contetwittert.reader(), csfField, values);
       }
     };
   }
@@ -68,20 +68,20 @@ public final class CSFDisjunctionFilter extends Query {
     return "CSFDisjunctionFilter:" + csfField + ",count:" + values.size();
   }
 
-  private static final class CSFDisjunctionFilterDISI extends RangeFilterDISI {
+  private static final class CSFDisjunctionFilterDISI etwittertends RangeFilterDISI {
     private final NumericDocValues docValues;
     private final Set<Long> values;
 
     private CSFDisjunctionFilterDISI(LeafReader reader, String csfField, Set<Long> values)
-        throws IOException {
+        throws IOEtwitterception {
       super(reader);
       this.values = values;
       this.docValues = reader.getNumericDocValues(csfField);
     }
 
     @Override
-    protected boolean shouldReturnDoc() throws IOException {
-      return docValues.advanceExact(docID()) && values.contains(docValues.longValue());
+    protected boolean shouldReturnDoc() throws IOEtwitterception {
+      return docValues.advanceEtwitteract(docID()) && values.contains(docValues.longValue());
     }
   }
 }

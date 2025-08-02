@@ -3,7 +3,7 @@ package com.twitter.servo.util
 import com.twitter.finagle.thrift.ClientId
 
 /**
- * A trait defining contextual information necessary to authorize
+ * A trait defining contetwittertual information necessary to authorize
  * and observe a request.
  */
 trait Observable {

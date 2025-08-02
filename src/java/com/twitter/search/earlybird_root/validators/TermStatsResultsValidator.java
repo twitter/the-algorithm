@@ -15,8 +15,8 @@ public class TermStatsResultsValidator implements ServiceResponseValidator<Early
   public Future<EarlybirdResponse> validate(EarlybirdResponse response) {
     if (!response.isSetTermStatisticsResults()
         || !response.getTermStatisticsResults().isSetTermResults()) {
-      return Future.exception(
-          new IllegalStateException(cluster + " returned null term statistics results."));
+      return Future.etwitterception(
+          new IllegalStateEtwitterception(cluster + " returned null term statistics results."));
     }
     return Future.value(response);
   }

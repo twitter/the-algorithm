@@ -24,7 +24,7 @@ scala_library(
         "visibility/lib/src/main/scala/com/twitter/visibility/features",
         "visibility/lib/src/main/scala/com/twitter/visibility/models",
         "visibility/lib/src/main/scala/com/twitter/visibility/rules",
-        "visibility/results/src/main/scala/com/twitter/visibility/results/richtext",
+        "visibility/results/src/main/scala/com/twitter/visibility/results/richtetwittert",
         "visibility/results/src/main/scala/com/twitter/visibility/results/translation",
     ],
 )

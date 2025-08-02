@@ -15,12 +15,12 @@ def read_config(whitelist_yaml_file):
   with tf.gfile.FastGFile(whitelist_yaml_file) as f:
     try:
       return yaml.safe_load(f)
-    except yaml.YAMLError as exc:
-      print(exc)
-      sys.exit(1)
+    etwittercept yaml.YAMLError as etwitterc:
+      print(etwitterc)
+      sys.etwitterit(1)
 
 
-def _sparse_feature_fixup(features, input_size_bits):
+def _sparse_feature_fitwitterup(features, input_size_bits):
   """Rebuild a sparse tensor feature so that its dense shape attribute is present.
 
   Arguments:
@@ -36,11 +36,11 @@ def _sparse_feature_fixup(features, input_size_bits):
 
 
 def self_atten_dense(input, out_dim, activation=None, use_bias=True, name=None):
-  def safe_concat(base, suffix):
+  def safe_concat(base, suffitwitter):
     """Concats variables name components if base is given."""
     if not base:
       return base
-    return f"{base}:{suffix}"
+    return f"{base}:{suffitwitter}"
 
   input_dim = input.shape.as_list()[1]
 
@@ -67,7 +67,7 @@ def get_dense_out(input, out_dim, activation, dense_type):
 
 
 def get_input_trans_func(bn_normalized_dense, is_training):
-  gw_normalized_dense = tf.expand_dims(bn_normalized_dense, -1)
+  gw_normalized_dense = tf.etwitterpand_dims(bn_normalized_dense, -1)
   group_num = bn_normalized_dense.shape.as_list()[1]
 
   gw_normalized_dense = GroupWiseTrans(group_num, 1, 8, name="groupwise_1", activation=tf.tanh)(
@@ -105,13 +105,13 @@ def tensor_dropout(
 
   Arguments:
     input_tensor:
-      B x D dense tensor, or a sparse tensor
+      B twitter D dense tensor, or a sparse tensor
     rate (float32):
       dropout rate
     is_training (bool):
       training stage or not.
     sparse_tensor (bool):
-      whether the input_tensor is sparse tensor or not. Default to be None, this value has to be passed explicitly.
+      whether the input_tensor is sparse tensor or not. Default to be None, this value has to be passed etwitterplicitly.
     rescale_sparse_dropout (bool):
       Do we need to do rescaling or not.
   Returns:
@@ -126,8 +126,8 @@ def tensor_dropout(
         keep_mask.set_shape([None])
         keep_mask = tf.cast(keep_mask, tf.bool)
 
-        keep_indices = tf.boolean_mask(input_tensor.indices, keep_mask, axis=0)
-        keep_values = tf.boolean_mask(values, keep_mask, axis=0)
+        keep_indices = tf.boolean_mask(input_tensor.indices, keep_mask, atwitteris=0)
+        keep_values = tf.boolean_mask(values, keep_mask, atwitteris=0)
 
         dropped_tensor = tf.SparseTensor(keep_indices, keep_values, input_tensor.dense_shape)
         return dropped_tensor
@@ -143,7 +143,7 @@ def adaptive_transformation(bn_normalized_dense, is_training, func_type="default
     "tiny",
   ], f"fun_type can only be one of default and tiny, but get {func_type}"
 
-  gw_normalized_dense = tf.expand_dims(bn_normalized_dense, -1)
+  gw_normalized_dense = tf.etwitterpand_dims(bn_normalized_dense, -1)
   group_num = bn_normalized_dense.shape.as_list()[1]
 
   if func_type == "default":
@@ -213,12 +213,12 @@ class FastGroupWiseTrans(object):
 
   def __call__(self, input_tensor):
     """
-    input_tensor: batch_size x group_num x input_dim
-    output_tensor:  batch_size x group_num x out_dim"""
-    input_tensor_expand = tf.expand_dims(input_tensor, axis=-1)
+    input_tensor: batch_size twitter group_num twitter input_dim
+    output_tensor:  batch_size twitter group_num twitter out_dim"""
+    input_tensor_etwitterpand = tf.etwitterpand_dims(input_tensor, atwitteris=-1)
 
     output_tensor = tf.add(
-      tf.reduce_sum(tf.multiply(input_tensor_expand, self.w), axis=-2, keepdims=False),
+      tf.reduce_sum(tf.multiply(input_tensor_etwitterpand, self.w), atwitteris=-2, keepdims=False),
       self.b,
     )
 
@@ -239,15 +239,15 @@ class GroupWiseTrans(object):
     self.activation = activation
 
     w_list, b_list = [], []
-    for idx in range(out_dim):
+    for idtwitter in range(out_dim):
       this_w = tf.get_variable(
-        name + f"_group_weight_{idx}",
+        name + f"_group_weight_{idtwitter}",
         [1, group_num, input_dim],
         initializer=tf.keras.initializers.glorot_uniform(),
         trainable=True,
       )
       this_b = tf.get_variable(
-        name + f"_group_bias_{idx}",
+        name + f"_group_bias_{idtwitter}",
         [1, group_num, 1],
         initializer=tf.constant_initializer(0.0),
         trainable=True,
@@ -259,16 +259,16 @@ class GroupWiseTrans(object):
 
   def __call__(self, input_tensor):
     """
-    input_tensor: batch_size x group_num x input_dim
-    output_tensor: batch_size x group_num x out_dim
+    input_tensor: batch_size twitter group_num twitter input_dim
+    output_tensor: batch_size twitter group_num twitter out_dim
     """
     out_tensor_list = []
-    for idx in range(self.out_dim):
+    for idtwitter in range(self.out_dim):
       this_res = (
-        tf.reduce_sum(input_tensor * self.w_list[idx], axis=-1, keepdims=True) + self.b_list[idx]
+        tf.reduce_sum(input_tensor * self.w_list[idtwitter], atwitteris=-1, keepdims=True) + self.b_list[idtwitter]
       )
       out_tensor_list.append(this_res)
-    output_tensor = tf.concat(out_tensor_list, axis=-1)
+    output_tensor = tf.concat(out_tensor_list, atwitteris=-1)
 
     if self.activation is not None:
       output_tensor = self.activation(output_tensor)
@@ -287,8 +287,8 @@ def add_histogram_summary(var, name, name_scope="hist_dense_feature/"):
       tf.summary.histogram(name, tf.reshape(var, [-1]))
 
 
-def sparse_clip_by_value(sparse_tf, min_val, max_val):
-  new_vals = tf.clip_by_value(sparse_tf.values, min_val, max_val)
+def sparse_clip_by_value(sparse_tf, min_val, matwitter_val):
+  new_vals = tf.clip_by_value(sparse_tf.values, min_val, matwitter_val)
   return tf.SparseTensor(sparse_tf.indices, new_vals, sparse_tf.dense_shape)
 
 
@@ -332,8 +332,8 @@ def filter_nans_and_infs(tensor, sparse_tensor=False):
 def generate_disliked_mask(labels):
   """Generate a disliked mask where only samples with dislike labels are set to 1 otherwise set to 0.
   Args:
-    labels: labels of training samples, which is a 2D tensor of shape batch_size x 3: [OONCs, engagements, dislikes]
+    labels: labels of training samples, which is a 2D tensor of shape batch_size twitter 3: [OONCs, engagements, dislikes]
   Returns:
-    1D tensor of shape batch_size x 1: [dislikes (booleans)]
+    1D tensor of shape batch_size twitter 1: [dislikes (booleans)]
   """
   return tf.equal(tf.reshape(labels[:, 2], shape=[-1, 1]), 1)

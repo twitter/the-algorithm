@@ -11,7 +11,7 @@ import com.twitter.storehaus_internal.memcache.MemcacheStore
 import com.twitter.storehaus_internal.util.ClientName
 import com.twitter.storehaus_internal.util.ZkEndPoint
 
-object UnifiedCacheClient extends TwitterModule {
+object UnifiedCacheClient etwittertends TwitterModule {
   val tspUnifiedCacheDest: Flag[String] = flag[String](
     name = "tsp.unifiedCacheDest",
     default = "/srv#/prod/local/cache/topic_social_proof_unified",

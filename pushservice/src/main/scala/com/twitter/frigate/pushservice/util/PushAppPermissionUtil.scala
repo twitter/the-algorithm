@@ -1,7 +1,7 @@
 package com.twitter.frigate.pushservice.util
 
 import com.twitter.frigate.common.store.deviceinfo.DeviceInfo
-import com.twitter.onboarding.task.service.models.external.PermissionState
+import com.twitter.onboarding.task.service.models.etwitterternal.PermissionState
 import com.twitter.permissions_storage.thriftscala.AppPermission
 import com.twitter.storehaus.ReadableStore
 import com.twitter.util.Future
@@ -40,10 +40,10 @@ object PushAppPermissionUtil {
   def hasTargetUploadedAddressBook(
     appPermissionOpt: Option[AppPermission]
   ): Boolean = {
-    appPermissionOpt.exists { appPermission =>
+    appPermissionOpt.etwitterists { appPermission =>
       val syncState = appPermission.metadata.get(SyncStateKey)
       appPermission.systemPermissionState == PermissionState.On && syncState
-        .exists(_.equalsIgnoreCase(SyncStateOnValue))
+        .etwitterists(_.equalsIgnoreCase(SyncStateOnValue))
     }
   }
 }

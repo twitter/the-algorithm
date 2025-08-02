@@ -8,8 +8,8 @@ import com.twitter.scalding.UniqueID
 import com.twitter.scalding._
 import com.twitter.scalding.typed.TypedPipe
 import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite.ExplicitEndTime
-import com.twitter.scalding_internal.dalv2.DALWrite.WriteExtension
+import com.twitter.scalding_internal.dalv2.DALWrite.EtwitterplicitEndTime
+import com.twitter.scalding_internal.dalv2.DALWrite.WriteEtwittertension
 import com.twitter.scalding_internal.job.RequiredBinaryComparators.ordSer
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common.Country
@@ -18,12 +18,12 @@ import com.twitter.simclusters_v2.common.Timestamp
 import com.twitter.simclusters_v2.common.TweetId
 import com.twitter.simclusters_v2.common.UserId
 import com.twitter.simclusters_v2.hdfs_sources.InterestedInSources
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
+import com.twitter.simclusters_v2.scalding.embedding.common.EtwitterternalDataSources
 import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
 import com.twitter.simclusters_v2.thriftscala.InternalId.ClusterId
 import com.twitter.simclusters_v2.thriftscala.ModelVersion
 import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
+import com.twitter.wtf.scalding.jobs.common.ScheduledEtwitterecutionApp
 import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2GlobalLanguageEmbeddingScalaDataset
 import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2GlobalLanguageEmbeddingThriftScalaDataset
 import com.twitter.simclusters_v2.thriftscala.LanguageToClusters
@@ -34,7 +34,7 @@ capesospy-v2 update --build_locally --start_cron \
   --start_cron global_simclusters_language_embedding_job \
   src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
  */
-object GlobalSimClustersLanguageEmbeddingBatchApp extends ScheduledExecutionApp {
+object GlobalSimClustersLanguageEmbeddingBatchApp etwittertends ScheduledEtwitterecutionApp {
 
   override val firstTime: RichDate = RichDate("2023-03-07")
 
@@ -148,17 +148,17 @@ object GlobalSimClustersLanguageEmbeddingBatchApp extends ScheduledExecutionApp 
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     // Read the most recent InterestedIn snapshot from the past 21 days
     val interestedIn =
       InterestedInSources
         .simClustersInterestedIn2020Source(dateRange.prepend(Days(21)), timeZone).forceToDisk
 
     // Get the user tweet fav engagement history from the past 2 days
-    val userTweetFavEdges = ExternalDataSources.userTweetFavoritesSource
+    val userTweetFavEdges = EtwitterternalDataSources.userTweetFavoritesSource
 
     // Read user language from UserSource
-    val userLanguages = ExternalDataSources.userSource
+    val userLanguages = EtwitterternalDataSources.userSource
 
     val globalEmbeddings = getGlobalSimClustersEmbeddingPerLanguage(
       flattenAndFilterUserInterestedIn(interestedIn),
@@ -171,9 +171,9 @@ object GlobalSimClustersLanguageEmbeddingBatchApp extends ScheduledExecutionApp 
         case (lang, embeddings) =>
           KeyVal(lang, embeddings)
       }
-      .writeDALVersionedKeyValExecution(
+      .writeDALVersionedKeyValEtwitterecution(
         globalLanguageEmbeddingsKeyValDataset,
-        D.Suffix(outputHdfsDirectory)
+        D.Suffitwitter(outputHdfsDirectory)
       )
 
     // Write results as a thrift dataset
@@ -186,10 +186,10 @@ object GlobalSimClustersLanguageEmbeddingBatchApp extends ScheduledExecutionApp 
             clusterUserIsInterestedIn.clusterIdToScores
           )
       }
-      .writeDALSnapshotExecution(
+      .writeDALSnapshotEtwitterecution(
         globalLanguageEmbeddingsThriftDataset,
         D.Daily,
-        D.Suffix(outputThriftHdfsDirectory),
+        D.Suffitwitter(outputThriftHdfsDirectory),
         D.Parquet,
         dateRange.`end`
       )

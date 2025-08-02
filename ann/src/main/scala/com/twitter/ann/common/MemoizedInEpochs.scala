@@ -7,7 +7,7 @@ import com.twitter.util.logging.Logging
 
 // Memoization with a twist
 // New epoch reuse K:V pairs from previous and recycle everything else
-class MemoizedInEpochs[K, V](f: K => Try[V]) extends Logging {
+class MemoizedInEpochs[K, V](f: K => Try[V]) etwittertends Logging {
   private var memoizedCalls: Map[K, V] = Map.empty
 
   def epoch(keys: Seq[K]): Seq[V] = {

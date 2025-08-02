@@ -7,16 +7,16 @@ package com.twitter.search.common.relevance.features;
 public final class RelevanceSignalConstants {
   // user reputation
   public static final byte UNSET_REPUTATION_SENTINEL = Byte.MIN_VALUE;
-  public static final byte MAX_REPUTATION = 100;
+  public static final byte MAtwitter_REPUTATION = 100;
   public static final byte MIN_REPUTATION = 0;
   // below overall CDF of ~10%, default value for new users,
   // given as a goodwill value in case it is unset
   public static final byte GOODWILL_REPUTATION = 17;
 
-  // text score
-  public static final byte UNSET_TEXT_SCORE_SENTINEL = Byte.MIN_VALUE;
+  // tetwittert score
+  public static final byte UNSET_TEtwitterT_SCORE_SENTINEL = Byte.MIN_VALUE;
   // roughly at overall CDF of ~10%, given as a goodwill value in case it is unset
-  public static final byte GOODWILL_TEXT_SCORE = 19;
+  public static final byte GOODWILL_TEtwitterT_SCORE = 19;
 
   private RelevanceSignalConstants() {
   }
@@ -25,6 +25,6 @@ public final class RelevanceSignalConstants {
   public static boolean isValidUserReputation(int userRep) {
     return userRep != UNSET_REPUTATION_SENTINEL
            && userRep >= MIN_REPUTATION
-           && userRep < MAX_REPUTATION;
+           && userRep < MAtwitter_REPUTATION;
   }
 }

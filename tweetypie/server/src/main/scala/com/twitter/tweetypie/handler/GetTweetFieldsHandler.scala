@@ -2,7 +2,7 @@ package com.twitter.tweetypie
 package handler
 
 import com.twitter.container.thriftscala.MaterializeAsTweetFieldsRequest
-import com.twitter.context.TestingSignalsContext
+import com.twitter.contetwittert.TestingSignalsContetwittert
 import com.twitter.servo.util.FutureArrow
 import com.twitter.spam.rtf.thriftscala.FilteredReason
 import com.twitter.spam.rtf.thriftscala.SafetyLevel
@@ -54,7 +54,7 @@ object GetTweetFieldsHandler {
    */
   def toTweetQueryOptions(options: GetTweetFieldsOptions): TweetQuery.Options = {
     val includes = options.tweetIncludes
-    val shouldSkipCache = TestingSignalsContext().flatMap(_.simulateBackPressure).nonEmpty
+    val shouldSkipCache = TestingSignalsContetwittert().flatMap(_.simulateBackPressure).nonEmpty
     val cacheControl =
       if (shouldSkipCache) CacheControl.NoCache
       else if (options.doNotCache) CacheControl.ReadOnlyCache
@@ -85,8 +85,8 @@ object GetTweetFieldsHandler {
       forUserId = options.forUserId,
       languageTag = options.languageTag.getOrElse("en"),
       cardsPlatformKey = options.cardsPlatformKey,
-      extensionsArgs = options.extensionsArgs,
-      forExternalConsumption = true,
+      etwittertensionsArgs = options.etwittertensionsArgs,
+      forEtwitterternalConsumption = true,
       simpleQuotedTweet = options.simpleQuotedTweet
     )
   }
@@ -110,12 +110,12 @@ object GetTweetFieldsHandler {
         measureRacyReads(tweetId)
         Stitch.value(GetTweetFieldsResult(tweetId, NotFoundResultState))
 
-      case Throw(ex) =>
-        val resultStateStitch = failureResultState(ex) match {
+      case Throw(etwitter) =>
+        val resultStateStitch = failureResultState(etwitter) match {
           case notFoundResultState @ TweetFieldsResultState.NotFound(_) =>
             deletedTweetVisibilityRepo(
               DeletedTweetVisibilityRepository.VisibilityRequest(
-                ex,
+                etwitter,
                 tweetId,
                 options.safetyLevel,
                 options.forUserId,
@@ -147,15 +147,15 @@ object GetTweetFieldsHandler {
     }
   }
 
-  private def failureResultState(ex: Throwable): TweetFieldsResultState =
-    ex match {
+  private def failureResultState(etwitter: Throwable): TweetFieldsResultState =
+    etwitter match {
       case FilteredState.Unavailable.TweetDeleted => DeletedResultState
       case FilteredState.Unavailable.BounceDeleted => BounceDeletedResultState
       case FilteredState.Unavailable.SourceTweetNotFound(d) => notFoundResultState(deleted = d)
       case FilteredState.Unavailable.Author.NotFound => NotFoundResultState
       case fs: FilteredState.HasFilteredReason => toFilteredState(fs.filteredReason)
       case OverCapacity(_) => toFailedState(overcapacity = true, None)
-      case _ => toFailedState(overcapacity = false, Some(ex.toString))
+      case _ => toFailedState(overcapacity = false, Some(etwitter.toString))
     }
 
   private val NotFoundResultState = TweetFieldsResultState.NotFound(TweetFieldsResultNotFound())
@@ -207,7 +207,7 @@ object GetTweetFieldsHandler {
               val resultState = failureResultState(state)
 
               (tweetData.tweet.quotedTweet, resultState) match {
-                //When QT exists => contribute VF filtered reason to result state
+                //When QT etwitterists => contribute VF filtered reason to result state
                 case (Some(qt), notFoundResultState @ TweetFieldsResultState.NotFound(_)) =>
                   deletedTweetVisibilityRepo(
                     DeletedTweetVisibilityRepository.VisibilityRequest(
@@ -373,10 +373,10 @@ object GetTweetFieldsHandler {
         ).onSuccess(_ => ccTweetMaterializeSuccess.incr())
           .onFailure(_ => ccTweetMaterializeFailed.incr())
           .handle {
-            case ex =>
+            case etwitter =>
               GetTweetFieldsResult(
                 tweetId = tweetId,
-                tweetResult = failureResultState(ex)
+                tweetResult = failureResultState(etwitter)
               )
           }
       case (Some(_), _, true, _) =>

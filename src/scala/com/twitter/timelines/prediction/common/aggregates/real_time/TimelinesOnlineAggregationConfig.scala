@@ -7,7 +7,7 @@ import com.twitter.timelines.data_processing.ml_util.aggregation_framework.heron
 }
 
 object TimelinesOnlineAggregationConfig
-    extends TimelinesOnlineAggregationDefinitionsTrait
+    etwittertends TimelinesOnlineAggregationDefinitionsTrait
     with OnlineAggregationStoresTrait {
 
   import TimelinesOnlineAggregationSources._

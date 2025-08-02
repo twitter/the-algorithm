@@ -6,29 +6,29 @@ import com.twitter.ml.api.Feature.Continuous
 import com.twitter.ml.api.Feature.Discrete
 import com.twitter.ml.api.Feature.SparseBinary
 import com.twitter.ml.api.Feature.SparseContinuous
-import com.twitter.ml.api.Feature.Text
+import com.twitter.ml.api.Feature.Tetwittert
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
 import scala.collection.JavaConverters._
 
-object TimelinesSharedFeatures extends TimelinesSharedFeatures("")
-object InReplyToTweetTimelinesSharedFeatures extends TimelinesSharedFeatures("in_reply_to_tweet")
+object TimelinesSharedFeatures etwittertends TimelinesSharedFeatures("")
+object InReplyToTweetTimelinesSharedFeatures etwittertends TimelinesSharedFeatures("in_reply_to_tweet")
 
 /**
  * Defines shared features
  */
-class TimelinesSharedFeatures(prefix: String) {
+class TimelinesSharedFeatures(prefitwitter: String) {
   private def name(featureName: String): String = {
-    if (prefix.nonEmpty) {
-      s"$prefix.$featureName"
+    if (prefitwitter.nonEmpty) {
+      s"$prefitwitter.$featureName"
     } else {
       featureName
     }
   }
 
   // meta
-  val EXPERIMENT_META = new SparseBinary(
-    name("timelines.meta.experiment_meta"),
-    Set(ExperimentId, ExperimentName).asJava)
+  val EtwitterPERIMENT_META = new SparseBinary(
+    name("timelines.meta.etwitterperiment_meta"),
+    Set(EtwitterperimentId, EtwitterperimentName).asJava)
 
   // historically used in the "combined models" to distinguish in-network and out of network tweets.
   // now the feature denotes which adapter (recap or rectweet) was used to generate the datarecords.
@@ -36,7 +36,7 @@ class TimelinesSharedFeatures(prefix: String) {
   val INJECTION_TYPE = new Discrete(name("timelines.meta.injection_type"))
 
   // Used to indicate which injection module is this
-  val INJECTION_MODULE_NAME = new Text(name("timelines.meta.injection_module_name"))
+  val INJECTION_MODULE_NAME = new Tetwittert(name("timelines.meta.injection_module_name"))
 
   val LIST_ID = new Discrete(name("timelines.meta.list_id"))
   val LIST_IS_PINNED = new Binary(name("timelines.meta.list_is_pinned"))
@@ -58,7 +58,7 @@ class TimelinesSharedFeatures(prefix: String) {
   val PHOTO_DISCOUNT = new Continuous(name("timelines.score_discounts.photo"))
   val VIDEO_DISCOUNT = new Continuous(name("timelines.score_discounts.video"))
   val TWEET_HEIGHT_DISCOUNT = new Continuous(name("timelines.score_discounts.tweet_height"))
-  val TOXICITY_DISCOUNT = new Continuous(name("timelines.score_discounts.toxicity"))
+  val TOtwitterICITY_DISCOUNT = new Continuous(name("timelines.score_discounts.totwittericity"))
 
   // engagements
   val ENGAGEMENT_TYPE = new Discrete(name("timelines.engagement.type"))
@@ -86,8 +86,8 @@ class TimelinesSharedFeatures(prefix: String) {
   )
   val PREDICTED_IS_CLICKED =
     new Continuous(name("timelines.engagement_predicted.is_clicked"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_PHOTO_EXPANDED = new Continuous(
-    name("timelines.engagement_predicted.is_photo_expanded"),
+  val PREDICTED_IS_PHOTO_EtwitterPANDED = new Continuous(
+    name("timelines.engagement_predicted.is_photo_etwitterpanded"),
     Set(EngagementScore).asJava
   )
   val PREDICTED_IS_FOLLOWED =
@@ -206,8 +206,8 @@ class TimelinesSharedFeatures(prefix: String) {
     Set(PrivateTimestamp).asJava)
   val TIMESTAMP_CLICKED =
     new Discrete("timelines.meta.timestamp.engagement.clicked", Set(PrivateTimestamp).asJava)
-  val TIMESTAMP_PHOTO_EXPANDED =
-    new Discrete("timelines.meta.timestamp.engagement.photo_expanded", Set(PrivateTimestamp).asJava)
+  val TIMESTAMP_PHOTO_EtwitterPANDED =
+    new Discrete("timelines.meta.timestamp.engagement.photo_etwitterpanded", Set(PrivateTimestamp).asJava)
   val TIMESTAMP_DWELLED =
     new Discrete("timelines.meta.timestamp.engagement.dwelled", Set(PrivateTimestamp).asJava)
   val TIMESTAMP_VIDEO_PLAYBACK_50 = new Discrete(
@@ -279,8 +279,8 @@ class TimelinesSharedFeatures(prefix: String) {
     new Binary("timelines.meta.training_data.for_profile_clicked", Set(EngagementId).asJava)
   val TRAINING_FOR_CLICKED =
     new Binary("timelines.meta.training_data.for_clicked", Set(EngagementId).asJava)
-  val TRAINING_FOR_PHOTO_EXPANDED =
-    new Binary("timelines.meta.training_data.for_photo_expanded", Set(EngagementId).asJava)
+  val TRAINING_FOR_PHOTO_EtwitterPANDED =
+    new Binary("timelines.meta.training_data.for_photo_etwitterpanded", Set(EngagementId).asJava)
   val TRAINING_FOR_VIDEO_PLAYBACK_50 =
     new Binary("timelines.meta.training_data.for_video_playback_50", Set(EngagementId).asJava)
   val TRAINING_FOR_NEGATIVE_FEEDBACK =
@@ -307,10 +307,10 @@ class TimelinesSharedFeatures(prefix: String) {
     new Continuous(name("timelines.score.good_open_link"), Set(EngagementScore).asJava)
   val PREDICTED_SCORE_PROFILE_CLICK =
     new Continuous(name("timelines.score.profile_click"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_DETAIL_EXPAND =
-    new Continuous(name("timelines.score.detail_expand"), Set(EngagementScore).asJava)
-  val PREDICTED_SCORE_PHOTO_EXPAND =
-    new Continuous(name("timelines.score.photo_expand"), Set(EngagementScore).asJava)
+  val PREDICTED_SCORE_DETAIL_EtwitterPAND =
+    new Continuous(name("timelines.score.detail_etwitterpand"), Set(EngagementScore).asJava)
+  val PREDICTED_SCORE_PHOTO_EtwitterPAND =
+    new Continuous(name("timelines.score.photo_etwitterpand"), Set(EngagementScore).asJava)
   val PREDICTED_SCORE_PLAYBACK_50 =
     new Continuous(name("timelines.score.playback_50"), Set(EngagementScore).asJava)
   val PREDICTED_SCORE_VIDEO_QUALITY_VIEW =
@@ -436,8 +436,8 @@ class TimelinesSharedFeatures(prefix: String) {
     new Binary(name("timelines.earlybird.label_spam_hi_rcl_flag"), Set(TweetSafetyLabels).asJava)
 
   // Periscope features
-  val PERISCOPE_EXISTS = new Binary(
-    name("timelines.earlybird.periscope_exists"),
+  val PERISCOPE_EtwitterISTS = new Binary(
+    name("timelines.earlybird.periscope_etwitterists"),
     Set(PublicTweetEntitiesAndMetadata, PrivateTweetEntitiesAndMetadata).asJava)
   val PERISCOPE_IS_LIVE = new Binary(
     name("timelines.earlybird.periscope_is_live"),
@@ -610,62 +610,62 @@ class TimelinesSharedFeatures(prefix: String) {
     Set(MediaFile, MediaProcessingInformation).asJava)
 
   val NUM_CAPS =
-    new Continuous(name("tweetsource.tweet.text.num_caps"), Set(PublicTweets, PrivateTweets).asJava)
+    new Continuous(name("tweetsource.tweet.tetwittert.num_caps"), Set(PublicTweets, PrivateTweets).asJava)
   val TWEET_LENGTH =
-    new Continuous(name("tweetsource.tweet.text.length"), Set(PublicTweets, PrivateTweets).asJava)
+    new Continuous(name("tweetsource.tweet.tetwittert.length"), Set(PublicTweets, PrivateTweets).asJava)
   val TWEET_LENGTH_TYPE = new Discrete(
-    name("tweetsource.tweet.text.length_type"),
+    name("tweetsource.tweet.tetwittert.length_type"),
     Set(PublicTweets, PrivateTweets).asJava)
   val NUM_WHITESPACES = new Continuous(
-    name("tweetsource.tweet.text.num_whitespaces"),
+    name("tweetsource.tweet.tetwittert.num_whitespaces"),
     Set(PublicTweets, PrivateTweets).asJava)
   val HAS_QUESTION =
-    new Binary(name("tweetsource.tweet.text.has_question"), Set(PublicTweets, PrivateTweets).asJava)
+    new Binary(name("tweetsource.tweet.tetwittert.has_question"), Set(PublicTweets, PrivateTweets).asJava)
   val NUM_NEWLINES = new Continuous(
-    name("tweetsource.tweet.text.num_newlines"),
+    name("tweetsource.tweet.tetwittert.num_newlines"),
     Set(PublicTweets, PrivateTweets).asJava)
   val EMOJI_TOKENS = new SparseBinary(
-    name("tweetsource.v3.tweet.text.emoji_tokens"),
+    name("tweetsource.v3.tweet.tetwittert.emoji_tokens"),
     Set(PublicTweets, PrivateTweets).asJava)
   val EMOTICON_TOKENS = new SparseBinary(
-    name("tweetsource.v3.tweet.text.emoticon_tokens"),
+    name("tweetsource.v3.tweet.tetwittert.emoticon_tokens"),
     Set(PublicTweets, PrivateTweets).asJava)
   val NUM_EMOJIS = new Continuous(
-    name("tweetsource.v3.tweet.text.num_emojis"),
+    name("tweetsource.v3.tweet.tetwittert.num_emojis"),
     Set(PublicTweets, PrivateTweets).asJava)
   val NUM_EMOTICONS = new Continuous(
-    name("tweetsource.v3.tweet.text.num_emoticons"),
+    name("tweetsource.v3.tweet.tetwittert.num_emoticons"),
     Set(PublicTweets, PrivateTweets).asJava)
   val POS_UNIGRAMS = new SparseBinary(
-    name("tweetsource.v3.tweet.text.pos_unigrams"),
+    name("tweetsource.v3.tweet.tetwittert.pos_unigrams"),
     Set(PublicTweets, PrivateTweets).asJava)
   val POS_BIGRAMS = new SparseBinary(
-    name("tweetsource.v3.tweet.text.pos_bigrams"),
+    name("tweetsource.v3.tweet.tetwittert.pos_bigrams"),
     Set(PublicTweets, PrivateTweets).asJava)
-  val TEXT_TOKENS = new SparseBinary(
-    name("tweetsource.v4.tweet.text.tokens"),
+  val TEtwitterT_TOKENS = new SparseBinary(
+    name("tweetsource.v4.tweet.tetwittert.tokens"),
     Set(PublicTweets, PrivateTweets).asJava)
 
-  // Health features model scores (see go/toxicity, go/pblock, go/pspammytweet)
+  // Health features model scores (see go/totwittericity, go/pblock, go/pspammytweet)
   val PBLOCK_SCORE =
     new Continuous(name("timelines.earlybird.pblock_score"), Set(TweetSafetyScores).asJava)
-  val TOXICITY_SCORE =
-    new Continuous(name("timelines.earlybird.toxicity_score"), Set(TweetSafetyScores).asJava)
-  val EXPERIMENTAL_HEALTH_MODEL_SCORE_1 =
+  val TOtwitterICITY_SCORE =
+    new Continuous(name("timelines.earlybird.totwittericity_score"), Set(TweetSafetyScores).asJava)
+  val EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_1 =
     new Continuous(
-      name("timelines.earlybird.experimental_health_model_score_1"),
+      name("timelines.earlybird.etwitterperimental_health_model_score_1"),
       Set(TweetSafetyScores).asJava)
-  val EXPERIMENTAL_HEALTH_MODEL_SCORE_2 =
+  val EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_2 =
     new Continuous(
-      name("timelines.earlybird.experimental_health_model_score_2"),
+      name("timelines.earlybird.etwitterperimental_health_model_score_2"),
       Set(TweetSafetyScores).asJava)
-  val EXPERIMENTAL_HEALTH_MODEL_SCORE_3 =
+  val EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_3 =
     new Continuous(
-      name("timelines.earlybird.experimental_health_model_score_3"),
+      name("timelines.earlybird.etwitterperimental_health_model_score_3"),
       Set(TweetSafetyScores).asJava)
-  val EXPERIMENTAL_HEALTH_MODEL_SCORE_4 =
+  val EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_4 =
     new Continuous(
-      name("timelines.earlybird.experimental_health_model_score_4"),
+      name("timelines.earlybird.etwitterperimental_health_model_score_4"),
       Set(TweetSafetyScores).asJava)
   val PSPAMMY_TWEET_SCORE =
     new Continuous(name("timelines.earlybird.pspammy_tweet_score"), Set(TweetSafetyScores).asJava)
@@ -698,22 +698,22 @@ class TimelinesSharedFeatures(prefix: String) {
     new Binary(name("timelines.engagement.is_linger_impression"), Set(EngagementsPrivate).asJava)
 
   // Features to create rollups
-  val LANGUAGE_GROUP = new Discrete(name("timelines.tweet.text.language_group"))
+  val LANGUAGE_GROUP = new Discrete(name("timelines.tweet.tetwittert.language_group"))
 
-  // The final position index of the tweet being trained on in the timeline
+  // The final position indetwitter of the tweet being trained on in the timeline
   // served from TLM (could still change later in TLS-API), as recorded by
-  // PositionIndexLoggingEnvelopeTransform.
-  val FINAL_POSITION_INDEX = new Discrete(name("timelines.display.final_position_index"))
+  // PositionIndetwitterLoggingEnvelopeTransform.
+  val FINAL_POSITION_INDEtwitter = new Discrete(name("timelines.display.final_position_indetwitter"))
 
   // The traceId of the timeline request, can be used to group tweets in the same response.
   val TRACE_ID = new Discrete(name("timelines.display.trace_id"), Set(TfeTransactionId).asJava)
 
-  // Whether this tweet was randomly injected into the timeline or not, for exploration purposes
+  // Whether this tweet was randomly injected into the timeline or not, for etwitterploration purposes
   val IS_RANDOM_TWEET = new Binary(name("timelines.display.is_random_tweet"))
 
-  //  Whether this tweet was reordered with softmax ranking for explore/exploit, and needs to
-  //  be excluded from exploit only holdback
-  val IS_SOFTMAX_RANKING_TWEET = new Binary(name("timelines.display.is_softmax_ranking_tweet"))
+  //  Whether this tweet was reordered with softmatwitter ranking for etwitterplore/etwitterploit, and needs to
+  //  be etwittercluded from etwitterploit only holdback
+  val IS_SOFTMAtwitter_RANKING_TWEET = new Binary(name("timelines.display.is_softmatwitter_ranking_tweet"))
 
   // Whether the user viewing the tweet has disabled ranked timeline.
   val IS_RANKED_TIMELINE_DISABLER = new Binary(
@@ -724,7 +724,7 @@ class TimelinesSharedFeatures(prefix: String) {
   // as part of http://go/shrink-4205 process to shrink the quality features holdback.
   val IS_USER_RELEASED_FROM_QUALITY_HOLDBACK = new Binary(
     name("timelines.user_features.is_released_from_quality_holdback"),
-    Set(ExperimentId, ExperimentName).asJava)
+    Set(EtwitterperimentId, EtwitterperimentName).asJava)
 
   val INITIAL_PREDICTION_FAV =
     new Continuous(name("timelines.initial_prediction.fav"), Set(EngagementScore).asJava)
@@ -739,10 +739,10 @@ class TimelinesSharedFeatures(prefix: String) {
   val INITIAL_PREDICTION_VIDEO_PLAYBACK_50 = new Continuous(
     name("timelines.initial_prediction.video_playback_50"),
     Set(EngagementScore).asJava)
-  val INITIAL_PREDICTION_DETAIL_EXPAND =
-    new Continuous(name("timelines.initial_prediction.detail_expand"), Set(EngagementScore).asJava)
-  val INITIAL_PREDICTION_PHOTO_EXPAND =
-    new Continuous(name("timelines.initial_prediction.photo_expand"), Set(EngagementScore).asJava)
+  val INITIAL_PREDICTION_DETAIL_EtwitterPAND =
+    new Continuous(name("timelines.initial_prediction.detail_etwitterpand"), Set(EngagementScore).asJava)
+  val INITIAL_PREDICTION_PHOTO_EtwitterPAND =
+    new Continuous(name("timelines.initial_prediction.photo_etwitterpand"), Set(EngagementScore).asJava)
 
   val VIEWER_FOLLOWS_ORIGINAL_AUTHOR =
     new Binary(name("timelines.viewer_follows_original_author"), Set(Follow).asJava)

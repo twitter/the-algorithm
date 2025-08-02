@@ -178,11 +178,11 @@ object KeyValueRepository {
     repo andThen { _ map { _ mapValues f } }
 
   /**
-   * Turns a KeyValueRepository which may throw an exception to another
+   * Turns a KeyValueRepository which may throw an etwitterception to another
    * KeyValueRepository which always returns Future.value(KeyValueResult)
-   * even when there is an exception
+   * even when there is an etwitterception
    */
-  def scatterExceptions[Q <: Traversable[K], K, V](
+  def scatterEtwitterceptions[Q <: Traversable[K], K, V](
     repo: KeyValueRepository[Q, K, V]
   ): KeyValueRepository[Q, K, V] =
     q =>

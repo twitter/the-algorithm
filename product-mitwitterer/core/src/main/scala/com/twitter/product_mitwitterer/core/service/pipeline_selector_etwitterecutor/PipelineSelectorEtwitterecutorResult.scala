@@ -1,0 +1,5 @@
+package com.twitter.product_mitwitterer.core.service.pipeline_selector_etwitterecutor
+
+import com.twitter.product_mitwitterer.core.model.common.identifier.ComponentIdentifier
+
+case class PipelineSelectorEtwitterecutorResult(pipelineIdentifier: ComponentIdentifier)

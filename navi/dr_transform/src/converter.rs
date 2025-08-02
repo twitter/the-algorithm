@@ -4,7 +4,7 @@ use std::fs;
 
 use crate::all_config;
 use crate::all_config::AllConfig;
-use anyhow::{bail, Context};
+use anyhow::{bail, Contetwittert};
 use bpr_thrift::data::DataRecord;
 use bpr_thrift::prediction_service::BatchPredictionRequest;
 use bpr_thrift::tensor::GeneralTensor;
@@ -104,7 +104,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
         let seg_dense_config = util::load_config(&seg_dense_config_path)?;
         let all_config = all_config::parse(
             &fs::read_to_string(&all_config_path)
-                .with_context(|| "error loading all_config.json - ")?,
+                .with_contetwittert(|| "error loading all_config.json - ")?,
         )?;
 
         let feature_mapper = util::load_from_parsed_config(seg_dense_config.clone())?;
@@ -144,7 +144,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
                     ] as &'static [f64])),
                 &["feature_id"],
             )
-            .expect("metric cannot be created");
+            .etwitterpect("metric cannot be created");
             let continuous = HistogramVec::new(
                 HistogramOpts::new(
                     ":navi:feature_id:continuous",
@@ -157,7 +157,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
                 ] as &'static [f64])),
                 &["feature_id"],
             )
-            .expect("metric cannot be created");
+            .etwitterpect("metric cannot be created");
             register_metric_fn.map(|r| {
                 r(&discrete);
                 r(&continuous);
@@ -196,8 +196,8 @@ impl BatchPredictionRequestToTorchTensorConverter {
     }
 
     fn get_feature_id(feature_name: &str, seg_dense_config: &Root) -> i64 {
-        // given a feature name, we get the complex feature type id
-        for feature in &seg_dense_config.complex_feature_type_transform_spec {
+        // given a feature name, we get the completwitter feature type id
+        for feature in &seg_dense_config.completwitter_feature_type_transform_spec {
             if feature.full_feature_name == feature_name {
                 return feature.feature_id;
             }
@@ -219,7 +219,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
         feature_id: i64,
         batch_size: &[usize],
     ) -> Array2<f32> {
-        // given an embedding feature id, extract the float tensor array into tensors.
+        // given an embedding feature id, etwittertract the float tensor array into tensors.
         let cols: usize = 200;
         let rows: usize = batch_size[batch_size.len() - 1];
         let total_size = rows * cols;
@@ -254,7 +254,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
                                 float_tensor
                                     .floats
                                     .iter()
-                                    .map(|x| x.into_inner() as f32)
+                                    .map(|twitter| twitter.into_inner() as f32)
                                     .collect::<Vec<_>>()
                             }
                             _ => vec![0 as f32; cols],
@@ -270,7 +270,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
                 }
             }
             // find the feature in individual feature list and add to corresponding batch.
-            for (index, datarecord) in bpr.individual_features_list.iter().enumerate() {
+            for (indetwitter, datarecord) in bpr.individual_features_list.iter().enumerate() {
                 if datarecord.tensors.is_some()
                     && datarecord
                         .tensors
@@ -288,12 +288,12 @@ impl BatchPredictionRequestToTorchTensorConverter {
                         GeneralTensor::FloatTensor(float_tensor) => float_tensor
                             .floats
                             .iter()
-                            .map(|x| x.into_inner() as f32)
+                            .map(|twitter| twitter.into_inner() as f32)
                             .collect::<Vec<_>>(),
                         _ => vec![0 as f32; cols],
                     };
                     for col in 0..cols {
-                        working_set[(bpr_start + index) * cols + col] = tensor[col];
+                        working_set[(bpr_start + indetwitter) * cols + col] = tensor[col];
                     }
                 }
             }
@@ -303,7 +303,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
     }
 
     // Todo : Refactor, create a generic version with different type and field accessors
-    //   Example paramterize and then instiantiate the following
+    //   Etwitterample paramterize and then instiantiate the following
     //           (FLOAT --> FLOAT, DataRecord.continuous_feature)
     //           (BOOL --> INT64, DataRecord.binary_feature)
     //           (INT64 --> INT64, DataRecord.discrete_feature)
@@ -338,12 +338,12 @@ impl BatchPredictionRequestToTorchTensorConverter {
                 for feature in common_features {
                     match self.feature_mapper.get(feature.0) {
                         Some(f_info) => {
-                            let idx = f_info.index_within_tensor as usize;
-                            if idx < cols {
+                            let idtwitter = f_info.indetwitter_within_tensor as usize;
+                            if idtwitter < cols {
                                 // Set value in each row
                                 for r in bpr_start..bpr_end {
-                                    let flat_index: usize = r * cols + idx;
-                                    tensor[flat_index] = feature.1.into_inner() as f32;
+                                    let flat_indetwitter: usize = r * cols + idtwitter;
+                                    tensor[flat_indetwitter] = feature.1.into_inner() as f32;
                                 }
                             }
                         }
@@ -369,10 +369,10 @@ impl BatchPredictionRequestToTorchTensorConverter {
                     for feature in dr.continuous_features.as_ref().unwrap() {
                         match self.feature_mapper.get(&feature.0) {
                             Some(f_info) => {
-                                let idx = f_info.index_within_tensor as usize;
-                                let flat_index: usize = r * cols + idx;
-                                if flat_index < tensor.len() && idx < cols {
-                                    tensor[flat_index] = feature.1.into_inner() as f32;
+                                let idtwitter = f_info.indetwitter_within_tensor as usize;
+                                let flat_indetwitter: usize = r * cols + idtwitter;
+                                if flat_indetwitter < tensor.len() && idtwitter < cols {
+                                    tensor[flat_indetwitter] = feature.1.into_inner() as f32;
                                 }
                             }
                             None => (),
@@ -430,12 +430,12 @@ impl BatchPredictionRequestToTorchTensorConverter {
                 for feature in common_features {
                     match self.feature_mapper.get(feature) {
                         Some(f_info) => {
-                            let idx = f_info.index_within_tensor as usize;
-                            if idx < cols {
+                            let idtwitter = f_info.indetwitter_within_tensor as usize;
+                            if idtwitter < cols {
                                 // Set value in each row
                                 for r in bpr_start..bpr_end {
-                                    let flat_index: usize = r * cols + idx;
-                                    v[flat_index] = 1;
+                                    let flat_indetwitter: usize = r * cols + idtwitter;
+                                    v[flat_indetwitter] = 1;
                                 }
                             }
                         }
@@ -451,9 +451,9 @@ impl BatchPredictionRequestToTorchTensorConverter {
                     for feature in dr.binary_features.as_ref().unwrap() {
                         match self.feature_mapper.get(&feature) {
                             Some(f_info) => {
-                                let idx = f_info.index_within_tensor as usize;
-                                let flat_index: usize = r * cols + idx;
-                                v[flat_index] = 1;
+                                let idtwitter = f_info.indetwitter_within_tensor as usize;
+                                let flat_indetwitter: usize = r * cols + idtwitter;
+                                v[flat_indetwitter] = 1;
                             }
                             None => (),
                         }
@@ -501,12 +501,12 @@ impl BatchPredictionRequestToTorchTensorConverter {
                 for feature in common_features {
                     match self.feature_mapper.get(feature.0) {
                         Some(f_info) => {
-                            let idx = f_info.index_within_tensor as usize;
-                            if idx < cols {
+                            let idtwitter = f_info.indetwitter_within_tensor as usize;
+                            if idtwitter < cols {
                                 // Set value in each row
                                 for r in bpr_start..bpr_end {
-                                    let flat_index: usize = r * cols + idx;
-                                    v[flat_index] = *feature.1;
+                                    let flat_indetwitter: usize = r * cols + idtwitter;
+                                    v[flat_indetwitter] = *feature.1;
                                 }
                             }
                         }
@@ -527,10 +527,10 @@ impl BatchPredictionRequestToTorchTensorConverter {
                     for feature in dr.discrete_features.as_ref().unwrap() {
                         match self.feature_mapper.get(&feature.0) {
                             Some(f_info) => {
-                                let idx = f_info.index_within_tensor as usize;
-                                let flat_index: usize = r * cols + idx;
-                                if flat_index < v.len() && idx < cols {
-                                    v[flat_index] = *feature.1;
+                                let idtwitter = f_info.indetwitter_within_tensor as usize;
+                                let flat_indetwitter: usize = r * cols + idtwitter;
+                                if flat_indetwitter < v.len() && idtwitter < cols {
+                                    v[flat_indetwitter] = *feature.1;
                                 }
                             }
                             None => (),

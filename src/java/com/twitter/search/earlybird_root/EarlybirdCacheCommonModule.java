@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird_root;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javatwitter.inject.Named;
+import javatwitter.inject.Singleton;
 
 import com.google.inject.Provides;
 
@@ -25,7 +25,7 @@ import com.twitter.util.Duration;
 /**
  * Provides common bindings for cache related modules.
  */
-public class EarlybirdCacheCommonModule extends TwitterModule {
+public class EarlybirdCacheCommonModule etwittertends TwitterModule {
   private static final String CACHE_VERSION = "1";
 
   @Override
@@ -36,8 +36,8 @@ public class EarlybirdCacheCommonModule extends TwitterModule {
 
   @Provides
   @Singleton
-  @Named(CacheCommonUtil.NAMED_MAX_CACHE_RESULTS)
-  Integer provideMaxCacheResults() {
+  @Named(CacheCommonUtil.NAMED_MAtwitter_CACHE_RESULTS)
+  Integer provideMatwitterCacheResults() {
     return 100;
   }
 
@@ -66,26 +66,26 @@ public class EarlybirdCacheCommonModule extends TwitterModule {
    *
    * @param client the memcache client to use.
    * @param decider the decider to use for the cache.
-   * @param cachePrefix the common cache prefix for the cache type.
-   * @param serializedKeyPrefix the common cache prefix for the cluster.
-   * @param cacheExpiryMillis cache entry ttl in milliseconds.
+   * @param cachePrefitwitter the common cache prefitwitter for the cache type.
+   * @param serializedKeyPrefitwitter the common cache prefitwitter for the cluster.
+   * @param cacheEtwitterpiryMillis cache entry ttl in milliseconds.
    */
   static Cache<EarlybirdRequest, EarlybirdResponse> createCache(
       JavaClient client,
       DefaultForcedCacheMissDecider decider,
-      String cachePrefix,
-      String serializedKeyPrefix,
-      long cacheExpiryMillis,
-      int cacheKeyMaxBytes,
-      int cacheValueMaxBytes) {
+      String cachePrefitwitter,
+      String serializedKeyPrefitwitter,
+      long cacheEtwitterpiryMillis,
+      int cacheKeyMatwitterBytes,
+      int cacheValueMatwitterBytes) {
     return new SearchCacheBuilder<EarlybirdRequest, EarlybirdResponse>(
         CACHE_VERSION,
         client,
-        cachePrefix,
-        serializedKeyPrefix,
-        cacheExpiryMillis)
-        .withMaxKeyBytes(cacheKeyMaxBytes)
-        .withMaxValueBytes(cacheValueMaxBytes)
+        cachePrefitwitter,
+        serializedKeyPrefitwitter,
+        cacheEtwitterpiryMillis)
+        .withMatwitterKeyBytes(cacheKeyMatwitterBytes)
+        .withMatwitterValueBytes(cacheValueMatwitterBytes)
         .withRequestTimeoutCounter(CacheStats.REQUEST_TIMEOUT_COUNTER)
         .withRequestFailedCounter(CacheStats.REQUEST_FAILED_COUNTER)
         .withCacheSerializer(new EarlybirdCacheSerializer())

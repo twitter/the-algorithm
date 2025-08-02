@@ -61,7 +61,7 @@ object TimelinesOnlineAggregationUtils {
     CombinedFeatures.TweetDetailDwellEngagements ++ CombinedFeatures.ProfileDwellEngagements ++ CombinedFeatures.FullscreenVideoDwellEngagements
   val AllTweetUnionLabels: Set[Feature[JBoolean]] = Set(
     CombinedFeatures.IS_IMPLICIT_POSITIVE_FEEDBACK_UNION,
-    CombinedFeatures.IS_EXPLICIT_POSITIVE_FEEDBACK_UNION,
+    CombinedFeatures.IS_EtwitterPLICIT_POSITIVE_FEEDBACK_UNION,
     CombinedFeatures.IS_ALL_NEGATIVE_FEEDBACK_UNION
   )
   val AllTweetLabels: Set[Feature[JBoolean]] =
@@ -74,13 +74,13 @@ object TimelinesOnlineAggregationUtils {
     val resource = Some(Source.fromResource(aggRemovalPath))
     val lines = resource.map(_.getLines.toSeq)
     lines match {
-      case Some(value) => prodGroup.copy(aggExclusionRegex = value)
+      case Some(value) => prodGroup.copy(aggEtwitterclusionRegetwitter = value)
       case _ => prodGroup
     }
   }
 }
 
-trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfigTrait {
+trait TimelinesOnlineAggregationDefinitionsTrait etwittertends OnlineAggregationConfigTrait {
   import TimelinesOnlineAggregationUtils._
 
   def inputSource: AggregateSource
@@ -111,7 +111,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val tweetEngagement30MinuteCountsProd =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v1",
+      aggregatePrefitwitter = "real_time_tweet_aggregates_v1",
       keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
       features = Set.empty,
       labels = TweetLabels ++ TweetNegativeEngagementDontLikeLabels,
@@ -126,7 +126,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val tweetVerifiedDontLikeEngagementRealTimeAggregatesProd =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v6",
+      aggregatePrefitwitter = "real_time_tweet_aggregates_v6",
       preTransforms = Seq(RichRemoveUnverifiedUserTransform),
       keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
       features = Set.empty,
@@ -141,7 +141,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val tweetNegativeEngagement6HourCounts =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v2",
+      aggregatePrefitwitter = "real_time_tweet_aggregates_v2",
       keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
       features = Set.empty,
       labels = TweetNegativeEngagementLabels,
@@ -155,7 +155,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val tweetVerifiedNegativeEngagementCounts =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v7",
+      aggregatePrefitwitter = "real_time_tweet_aggregates_v7",
       preTransforms = Seq(RichRemoveUnverifiedUserTransform),
       keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
       features = Set.empty,
@@ -170,7 +170,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val promotedTweetEngagementRealTimeCounts =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v3.is_promoted",
+      aggregatePrefitwitter = "real_time_tweet_aggregates_v3.is_promoted",
       preTransforms = Seq(
         DownsampleTransform(
           negativeSamplingRate = 0.0,
@@ -193,7 +193,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val tweetEngagementTotalCountsProd =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v1",
+      aggregatePrefitwitter = "real_time_tweet_aggregates_v1",
       keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
       features = Set.empty,
       labels = TweetLabels ++ TweetNegativeEngagementDontLikeLabels,
@@ -207,7 +207,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val tweetNegativeEngagementTotalCounts =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v2",
+      aggregatePrefitwitter = "real_time_tweet_aggregates_v2",
       keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
       features = Set.empty,
       labels = TweetNegativeEngagementLabels,
@@ -224,7 +224,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val userEngagementRealTimeAggregatesProd =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_user_aggregates_v1",
+      aggregatePrefitwitter = "real_time_user_aggregates_v1",
       keys = Set(SharedFeatures.USER_ID),
       features = TweetFeatures,
       labels = TweetLabels ++ TweetNegativeEngagementDontLikeLabels,
@@ -241,7 +241,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val userEngagementRealTimeAggregatesV2 =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_user_aggregates_v2",
+      aggregatePrefitwitter = "real_time_user_aggregates_v2",
       keys = Set(SharedFeatures.USER_ID),
       features = ClientLogEventDataRecordFeatures.TweetFeaturesV2,
       labels = TweetCoreAndDwellLabels,
@@ -259,7 +259,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val userEngagementAuthorUserStateRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_user_aggregates_v3",
+      aggregatePrefitwitter = "real_time_user_aggregates_v3",
       preTransforms = Seq.empty,
       keys = Set(SharedFeatures.USER_ID),
       features = AuthorFeaturesAdapter.UserStateBooleanFeatures,
@@ -278,7 +278,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val userNegativeEngagementAuthorUserStateRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_user_aggregates_v4",
+      aggregatePrefitwitter = "real_time_user_aggregates_v4",
       preTransforms = Seq.empty,
       keys = Set(SharedFeatures.USER_ID),
       features = AuthorFeaturesAdapter.UserStateBooleanFeatures,
@@ -297,7 +297,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val userEngagement48HourRealTimeAggregatesProd =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_user_aggregates_v5",
+      aggregatePrefitwitter = "real_time_user_aggregates_v5",
       keys = Set(SharedFeatures.USER_ID),
       features = TweetFeatures,
       labels = TweetLabels ++ TweetNegativeEngagementDontLikeLabels,
@@ -314,7 +314,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val userNegativeEngagementAuthorUserState72HourRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_user_aggregates_v6",
+      aggregatePrefitwitter = "real_time_user_aggregates_v6",
       preTransforms = Seq.empty,
       keys = Set(SharedFeatures.USER_ID),
       features = AuthorFeaturesAdapter.UserStateBooleanFeatures,
@@ -334,7 +334,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val authorEngagementRealTimeAggregatesProd =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_author_aggregates_v1",
+      aggregatePrefitwitter = "real_time_author_aggregates_v1",
       keys = Set(TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
       features = Set.empty,
       labels = TweetLabels ++ TweetNegativeEngagementDontLikeLabels,
@@ -355,7 +355,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val authorNegativeEngagementRealTimeAggregatesProd =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_author_aggregates_v2",
+      aggregatePrefitwitter = "real_time_author_aggregates_v2",
       keys = Set(TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
       features = Set.empty,
       labels = TweetNegativeEngagementLabels,
@@ -374,7 +374,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val authorVerifiedNegativeEngagementRealTimeAggregatesProd =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_author_aggregates_v3",
+      aggregatePrefitwitter = "real_time_author_aggregates_v3",
       preTransforms = Seq(RichRemoveUnverifiedUserTransform),
       keys = Set(TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
       features = Set.empty,
@@ -392,7 +392,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val topicEngagementRealTimeAggregatesProd =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_topic_aggregates_v1",
+      aggregatePrefitwitter = "real_time_topic_aggregates_v1",
       keys = Set(TimelinesSharedFeatures.TOPIC_ID),
       features = Set.empty,
       labels = TweetLabels ++ AllTweetNegativeEngagementLabels,
@@ -409,7 +409,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val topicEngagementUserStateRealTimeAggregatesProd =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_topic_aggregates_v2",
+      aggregatePrefitwitter = "real_time_topic_aggregates_v2",
       keys = Set(TimelinesSharedFeatures.TOPIC_ID),
       features = UserFeaturesAdapter.UserStateBooleanFeatures,
       labels = TweetCoreAndDwellLabels,
@@ -427,7 +427,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val topicNegativeEngagementUserStateRealTimeAggregatesProd =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_topic_aggregates_v3",
+      aggregatePrefitwitter = "real_time_topic_aggregates_v3",
       keys = Set(TimelinesSharedFeatures.TOPIC_ID),
       features = UserFeaturesAdapter.UserStateBooleanFeatures,
       labels = TweetNegativeEngagementLabels ++ TweetNegativeEngagementDontLikeLabels,
@@ -445,7 +445,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val topicEngagement24HourRealTimeAggregatesProd =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_topic_aggregates_v4",
+      aggregatePrefitwitter = "real_time_topic_aggregates_v4",
       keys = Set(TimelinesSharedFeatures.TOPIC_ID),
       features = Set.empty,
       labels = TweetLabels ++ AllTweetNegativeEngagementLabels,
@@ -460,7 +460,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val tweetEngagementUserStateRealTimeAggregatesProd =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v3",
+      aggregatePrefitwitter = "real_time_tweet_aggregates_v3",
       keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
       features = UserFeaturesAdapter.UserStateBooleanFeatures,
       labels = TweetCoreAndDwellLabels,
@@ -476,7 +476,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val tweetEngagementGenderRealTimeAggregatesProd =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v4",
+      aggregatePrefitwitter = "real_time_tweet_aggregates_v4",
       keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
       features = UserFeaturesAdapter.GenderBooleanFeatures,
       labels =
@@ -493,7 +493,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val tweetNegativeEngagementUserStateRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v5",
+      aggregatePrefitwitter = "real_time_tweet_aggregates_v5",
       keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
       features = UserFeaturesAdapter.UserStateBooleanFeatures,
       labels = TweetNegativeEngagementLabels ++ TweetNegativeEngagementDontLikeLabels,
@@ -509,7 +509,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val tweetVerifiedNegativeEngagementUserStateRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_aggregates_v8",
+      aggregatePrefitwitter = "real_time_tweet_aggregates_v8",
       preTransforms = Seq(RichRemoveUnverifiedUserTransform),
       keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
       features = UserFeaturesAdapter.UserStateBooleanFeatures,
@@ -528,7 +528,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val userCandidateTweetSourceEngagementRealTimeAggregatesProd =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_user_candidate_tweet_source_aggregates_v1",
+      aggregatePrefitwitter = "real_time_user_candidate_tweet_source_aggregates_v1",
       keys = Set(SharedFeatures.USER_ID),
       features = CandidateTweetSourceFeatures,
       labels = TweetCoreAndDwellLabels ++ NegativeEngagementsRealTimeDontLike,
@@ -546,7 +546,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val userCandidateTweetSourceEngagement48HourRealTimeAggregatesProd =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_user_candidate_tweet_source_aggregates_v2",
+      aggregatePrefitwitter = "real_time_user_candidate_tweet_source_aggregates_v2",
       keys = Set(SharedFeatures.USER_ID),
       features = CandidateTweetSourceFeatures,
       labels = TweetCoreAndDwellLabels ++ NegativeEngagementsRealTimeDontLike,
@@ -564,7 +564,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val userProfileEngagementRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "profile_real_time_user_aggregates_v1",
+      aggregatePrefitwitter = "profile_real_time_user_aggregates_v1",
       preTransforms = Seq(IsNewUserTransform),
       keys = Set(SharedFeatures.USER_ID),
       features = TweetFeatures,
@@ -589,7 +589,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val userProfileNegativeEngagementRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "profile_negative_engagement_real_time_user_aggregates_v1",
+      aggregatePrefitwitter = "profile_negative_engagement_real_time_user_aggregates_v1",
       preTransforms = Seq(NegativeEngagementsUnionTransform),
       keys = Set(SharedFeatures.USER_ID),
       features = Set.empty,
@@ -608,7 +608,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val userAuthorProfileEngagementRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "user_author_profile_real_time_aggregates_v1",
+      aggregatePrefitwitter = "user_author_profile_real_time_aggregates_v1",
       keys = Set(SharedFeatures.USER_ID, TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
       features = Set.empty,
       labels = ProfileCoreLabels,
@@ -626,7 +626,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val userAuthorProfileNegativeEngagementRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "user_author_profile_negative_engagement_real_time_aggregates_v1",
+      aggregatePrefitwitter = "user_author_profile_negative_engagement_real_time_aggregates_v1",
       preTransforms = Seq(NegativeEngagementsUnionTransform),
       keys = Set(SharedFeatures.USER_ID, TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
       features = Set.empty,
@@ -642,14 +642,14 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val newUserAuthorEngagementRealTimeAggregatesProd =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_new_user_author_aggregates_v1",
+      aggregatePrefitwitter = "real_time_new_user_author_aggregates_v1",
       preTransforms = Seq(IsNewUserTransform),
       keys = Set(SharedFeatures.USER_ID, TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
       features = Set.empty,
       labels = TweetCoreAndDwellLabels ++ Set(
         IS_CLICKED,
         IS_PROFILE_CLICKED,
-        IS_PHOTO_EXPANDED
+        IS_PHOTO_EtwitterPANDED
       ),
       metrics = Set(CountMetric),
       halfLives = Set(30.minutes, Duration.Top),
@@ -660,7 +660,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
     )
 
   val userAuthorEngagementRealTimeAggregatesProd = {
-    // Computing user-author real-time aggregates is very expensive so we
+    // Computing user-author real-time aggregates is very etwitterpensive so we
     // take the union of all major negative feedback engagements to create
     // a single negtive label for aggregation. We also include a number of
     // core positive engagements.
@@ -673,7 +673,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
 
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_user_author_aggregates_v1",
+      aggregatePrefitwitter = "real_time_user_author_aggregates_v1",
       preTransforms = Seq(BinaryUnionNegativeEngagementsTransform),
       keys = Set(SharedFeatures.USER_ID, TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
       features = Set.empty,
@@ -693,7 +693,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val listEngagementRealTimeAggregatesProd =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_list_aggregates_v1",
+      aggregatePrefitwitter = "real_time_list_aggregates_v1",
       keys = Set(ListFeatures.LIST_ID),
       features = Set.empty,
       labels =
@@ -709,7 +709,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val topicCountryRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_topic_country_aggregates_v1",
+      aggregatePrefitwitter = "real_time_topic_country_aggregates_v1",
       keys = Set(TimelinesSharedFeatures.TOPIC_ID, UserFeaturesAdapter.USER_COUNTRY_ID),
       features = Set.empty,
       labels =
@@ -725,7 +725,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val tweetCountryRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_country_aggregates_v1",
+      aggregatePrefitwitter = "real_time_tweet_country_aggregates_v1",
       keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID, UserFeaturesAdapter.USER_COUNTRY_ID),
       features = Set.empty,
       labels = TweetCoreAndDwellLabels ++ AllTweetNegativeEngagementLabels,
@@ -740,7 +740,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val tweetCountryPrivateEngagementsRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_country_aggregates_v2",
+      aggregatePrefitwitter = "real_time_tweet_country_aggregates_v2",
       keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID, UserFeaturesAdapter.USER_COUNTRY_ID),
       features = Set.empty,
       labels = PrivateEngagementLabelsV2 ++ ShareEngagementLabels,
@@ -755,7 +755,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val tweetCountryVerifiedNegativeEngagementsRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_country_aggregates_v3",
+      aggregatePrefitwitter = "real_time_tweet_country_aggregates_v3",
       preTransforms = Seq(RichRemoveUnverifiedUserTransform),
       keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID, UserFeaturesAdapter.USER_COUNTRY_ID),
       features = Set.empty,
@@ -767,7 +767,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
       includeTimestampFeature = false,
     )
 
-  object positionTranforms extends IsPositionTransform {
+  object positionTranforms etwittertends IsPositionTransform {
     override val isInPositionRangeFeature: Seq[PositionCase] =
       Seq(PositionCase(1, IS_TOP_ONE), PositionCase(5, IS_TOP_FIVE), PositionCase(10, IS_TOP_TEN))
     override val decodedPositionFeature: Feature.Discrete =
@@ -777,7 +777,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val userPositionEngagementsCountsProd =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_position_based_user_aggregates_v1",
+      aggregatePrefitwitter = "real_time_position_based_user_aggregates_v1",
       keys = Set(SharedFeatures.USER_ID),
       features = Set(IS_TOP_ONE, IS_TOP_FIVE, IS_TOP_TEN),
       labels = TweetCoreAndDwellLabels,
@@ -793,7 +793,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val userPositionEngagementsSumProd =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_position_based_user_sum_aggregates_v2",
+      aggregatePrefitwitter = "real_time_position_based_user_sum_aggregates_v2",
       keys = Set(SharedFeatures.USER_ID),
       features = Set(LOG_POSITION),
       labels = TweetCoreAndDwellLabels,
@@ -811,7 +811,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val tweetShareEngagementsRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_share_aggregates_v1",
+      aggregatePrefitwitter = "real_time_tweet_share_aggregates_v1",
       keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
       features = Set.empty,
       labels = ShareEngagementLabels,
@@ -825,7 +825,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val userShareEngagementsRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_user_share_aggregates_v1",
+      aggregatePrefitwitter = "real_time_user_share_aggregates_v1",
       keys = Set(SharedFeatures.USER_ID),
       features = Set.empty,
       labels = ShareEngagementLabels,
@@ -839,7 +839,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val userAuthorShareEngagementsRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_user_author_share_aggregates_v1",
+      aggregatePrefitwitter = "real_time_user_author_share_aggregates_v1",
       keys = Set(SharedFeatures.USER_ID, TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
       features = Set.empty,
       labels = ShareEngagementLabels,
@@ -854,7 +854,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val topicShareEngagementsRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_topic_share_aggregates_v1",
+      aggregatePrefitwitter = "real_time_topic_share_aggregates_v1",
       keys = Set(TimelinesSharedFeatures.TOPIC_ID),
       features = Set.empty,
       labels = ShareEngagementLabels,
@@ -868,7 +868,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val authorShareEngagementsRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_author_share_aggregates_v1",
+      aggregatePrefitwitter = "real_time_author_share_aggregates_v1",
       keys = Set(TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
       features = Set.empty,
       labels = ShareEngagementLabels,
@@ -883,7 +883,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val tweetBookmarkEngagementsRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_bookmark_aggregates_v1",
+      aggregatePrefitwitter = "real_time_tweet_bookmark_aggregates_v1",
       keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
       features = Set.empty,
       labels = BookmarkEngagementLabels,
@@ -897,7 +897,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val userBookmarkEngagementsRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_user_bookmark_aggregates_v1",
+      aggregatePrefitwitter = "real_time_user_bookmark_aggregates_v1",
       keys = Set(SharedFeatures.USER_ID),
       features = Set.empty,
       labels = BookmarkEngagementLabels,
@@ -911,7 +911,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val userAuthorBookmarkEngagementsRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_user_author_bookmark_aggregates_v1",
+      aggregatePrefitwitter = "real_time_user_author_bookmark_aggregates_v1",
       keys = Set(SharedFeatures.USER_ID, TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
       features = Set.empty,
       labels = BookmarkEngagementLabels,
@@ -926,7 +926,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val authorBookmarkEngagementsRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_author_bookmark_aggregates_v1",
+      aggregatePrefitwitter = "real_time_author_bookmark_aggregates_v1",
       keys = Set(TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
       features = Set.empty,
       labels = BookmarkEngagementLabels,
@@ -943,7 +943,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val userBCEDwellEngagementsRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_user_bce_dwell_aggregates",
+      aggregatePrefitwitter = "real_time_user_bce_dwell_aggregates",
       keys = Set(SharedFeatures.USER_ID),
       features = Set.empty,
       labels = AllBCEDwellLabels,
@@ -960,7 +960,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val tweetBCEDwellEngagementsRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_tweet_bce_dwell_aggregates",
+      aggregatePrefitwitter = "real_time_tweet_bce_dwell_aggregates",
       keys = Set(TimelinesSharedFeatures.SOURCE_TWEET_ID),
       features = Set.empty,
       labels = AllBCEDwellLabels,
@@ -978,10 +978,10 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
     )
   )
 
-  val ExplicitPositiveEngagementsUnionTransform = RichITransform(
+  val EtwitterplicitPositiveEngagementsUnionTransform = RichITransform(
     BinaryUnion(
-      featuresToUnify = CombinedFeatures.ExplicitPositiveEngagements,
-      outputFeature = CombinedFeatures.IS_EXPLICIT_POSITIVE_FEEDBACK_UNION
+      featuresToUnify = CombinedFeatures.EtwitterplicitPositiveEngagements,
+      outputFeature = CombinedFeatures.IS_EtwitterPLICIT_POSITIVE_FEEDBACK_UNION
     )
   )
 
@@ -998,10 +998,10 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   val authorContentPreferenceRealTimeAggregates =
     AggregateGroup(
       inputSource = inputSource,
-      aggregatePrefix = "real_time_author_content_preference_aggregates",
+      aggregatePrefitwitter = "real_time_author_content_preference_aggregates",
       preTransforms = Seq(
         ImplicitPositiveEngagementsUnionTransform,
-        ExplicitPositiveEngagementsUnionTransform,
+        EtwitterplicitPositiveEngagementsUnionTransform,
         AllNegativeEngagementsUnionTransform),
       keys = Set(TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
       features =
@@ -1057,7 +1057,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
   ).map(
     addFeatureFilterFromResource(
       _,
-      "com/twitter/timelines/prediction/common/aggregates/real_time/aggregates_to_drop.txt"))
+      "com/twitter/timelines/prediction/common/aggregates/real_time/aggregates_to_drop.ttwittert"))
 
   val StagingAggregateGroups = ProdAggregateGroups.map(createStagingGroup)
 
@@ -1077,7 +1077,7 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
    * This defines the set of selected features from a candidate
    * that we'd like to send to the served features cache by TLM.
    * These should include  interesting and necessary features that
-   * cannot be extracted from LogEvents only by the real-time aggregates
+   * cannot be etwittertracted from LogEvents only by the real-time aggregates
    * job. If you are adding new AggregateGroups requiring TLM-side
    * candidate features, make sure to add them here.
    */
@@ -1094,12 +1094,12 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
  * aggregation config, and not for implementing an online real-time aggregates job.
  */
 object TimelinesOnlineAggregationFeaturesOnlyConfig
-    extends TimelinesOnlineAggregationDefinitionsTrait {
+    etwittertends TimelinesOnlineAggregationDefinitionsTrait {
 
   private[real_time] case class DummyAggregateSource(name: String, timestampFeature: Feature[JLong])
-      extends AggregateSource
+      etwittertends AggregateSource
 
-  private[real_time] case class DummyAggregateStore(name: String) extends AggregateStore
+  private[real_time] case class DummyAggregateStore(name: String) etwittertends AggregateStore
 
   override lazy val inputSource = DummyAggregateSource(
     name = "timelines_rta",

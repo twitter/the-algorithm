@@ -12,9 +12,9 @@ import com.twitter.util.logging.Logging
 import scala.annotation.tailrec
 import scala.util.Random
 
-trait Warmup extends Logging {
+trait Warmup etwittertends Logging {
   protected def minSuccessfulTries: Int
-  protected def maxTries: Int
+  protected def matwitterTries: Int
   protected def randomQueryDimension: Int
   protected def timeout: Duration
 
@@ -25,7 +25,7 @@ trait Warmup extends Logging {
     name: String,
     f: => Future[_]
   ): Unit = {
-    if (successes == minSuccessfulTries || iteration == maxTries) {
+    if (successes == minSuccessfulTries || iteration == matwitterTries) {
       info(s"Warmup finished after ${iteration} iterations with ${successes} successes")
     } else {
       Try(Await.result(f.liftToTry, timeout)) match {
@@ -44,7 +44,7 @@ trait Warmup extends Logging {
 
   private val rng = new Random()
   protected def randomQuery(): EmbeddingVector =
-    Embedding(Array.fill(randomQueryDimension)(-1 + 2 * rng.nextFloat()))
+    Embedding(Array.fill(randomQueryDimension)(-1 + 2 * rng.netwittertFloat()))
 
   def warmup(): Unit
 }

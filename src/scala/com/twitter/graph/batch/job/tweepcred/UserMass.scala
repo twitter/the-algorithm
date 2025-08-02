@@ -22,16 +22,16 @@ object UserMass {
   def getUserMass(combinedUser: CombinedUser): Option[UserMassInfo] = {
     val user = Option(combinedUser.user)
     val userId = user.map(_.id).getOrElse(0L)
-    val userExtended = Option(combinedUser.user_extended)
+    val userEtwittertended = Option(combinedUser.user_etwittertended)
     val age = user.map(_.created_at_msec).map(DateUtil.diffDays(_, currentTimestamp)).getOrElse(0)
-    val isRestricted = user.map(_.safety).exists(_.restricted)
-    val isSuspended = user.map(_.safety).exists(_.suspended)
-    val isVerified = user.map(_.safety).exists(_.verified)
-    val hasValidDevice = user.flatMap(u => Option(u.devices)).exists(_.isSetMessaging_devices)
-    val numFollowers = userExtended.flatMap(u => Option(u.followers)).map(_.toInt).getOrElse(0)
-    val numFollowings = userExtended.flatMap(u => Option(u.followings)).map(_.toInt).getOrElse(0)
+    val isRestricted = user.map(_.safety).etwitterists(_.restricted)
+    val isSuspended = user.map(_.safety).etwitterists(_.suspended)
+    val isVerified = user.map(_.safety).etwitterists(_.verified)
+    val hasValidDevice = user.flatMap(u => Option(u.devices)).etwitterists(_.isSetMessaging_devices)
+    val numFollowers = userEtwittertended.flatMap(u => Option(u.followers)).map(_.toInt).getOrElse(0)
+    val numFollowings = userEtwittertended.flatMap(u => Option(u.followings)).map(_.toInt).getOrElse(0)
 
-    if (userId == 0L || user.map(_.safety).exists(_.deactivated)) {
+    if (userId == 0L || user.map(_.safety).etwitterists(_.deactivated)) {
       None
     } else {
       val mass =
@@ -46,7 +46,7 @@ object UserMass {
           score *= normalizedAge
           if (score < 0.01) score = 0.01
           if (isRestricted) score *= restrictedWeightMultiplicative
-          score = (score min 1.0) max 0
+          score = (score min 1.0) matwitter 0
           score *= 100
           score
         }
@@ -55,7 +55,7 @@ object UserMass {
       val adjustedMass =
         if (numFollowings > threshAbsNumFriendsUMass &&
           friendsToFollowersRatio > threshFriendsToFollowersRatioUMass) {
-          mass / scala.math.exp(
+          mass / scala.math.etwitterp(
             constantDivisionFactorGt_threshFriendsToFollowersRatioUMass *
               (friendsToFollowersRatio - threshFriendsToFollowersRatioUMass)
           )

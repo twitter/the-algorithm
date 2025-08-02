@@ -6,7 +6,7 @@ import com.twitter.frigate.pushservice.take.predicates.candidate_map.CandidatePr
 import com.twitter.hermit.predicate.Predicate
 import com.twitter.util.Future
 
-class RFPHCandidateValidator(override val config: Config) extends CandidateValidator {
+class RFPHCandidateValidator(override val config: Config) etwittertends CandidateValidator {
   private val rFPHCandidateValidatorStats = statsReceiver.scope(this.getClass.getSimpleName)
   private val concurrentPredicateCount = rFPHCandidateValidatorStats.counter("concurrent")
   private val sequentialPredicateCount = rFPHCandidateValidatorStats.counter("sequential")
@@ -18,10 +18,10 @@ class RFPHCandidateValidator(override val config: Config) extends CandidateValid
     val predicates = rfphPrePredicates ++ candidatePredicates ++ postPredicates
     if (candidate.target.isEmailUser) {
       concurrentPredicateCount.incr()
-      executeConcurrentPredicates(candidate, predicates).map(_.headOption)
+      etwitterecuteConcurrentPredicates(candidate, predicates).map(_.headOption)
     } else {
       sequentialPredicateCount.incr()
-      executeSequentialPredicates(candidate, predicates)
+      etwitterecuteSequentialPredicates(candidate, predicates)
     }
   }
 }

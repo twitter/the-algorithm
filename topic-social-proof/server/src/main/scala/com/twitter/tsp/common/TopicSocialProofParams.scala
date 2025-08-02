@@ -11,14 +11,14 @@ import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
 object TopicSocialProofParams {
 
   object TopicTweetsSemanticCoreVersionId
-      extends FSBoundedParam[Long](
+      etwittertends FSBoundedParam[Long](
         name = "topic_tweets_semantic_core_annotation_version_id",
         default = 1433487161551032320L,
         min = 0L,
-        max = Long.MaxValue
+        matwitter = Long.MatwitterValue
       )
   object TopicTweetsSemanticCoreVersionIdsSet
-      extends FSParam[Set[Long]](
+      etwittertends FSParam[Set[Long]](
         name = "topic_tweets_semantic_core_annotation_version_id_allowed_set",
         default = Set(TopicTweetsSemanticCoreVersionId.default))
 
@@ -26,39 +26,39 @@ object TopicSocialProofParams {
    * Controls the Topic Social Proof cosine similarity threshold for the Topic Tweets.
    */
   object TweetToTopicCosineSimilarityThreshold
-      extends FSBoundedParam[Double](
+      etwittertends FSBoundedParam[Double](
         name = "topic_tweets_cosine_similarity_threshold_tsp",
         default = 0.0,
         min = 0.0,
-        max = 1.0
+        matwitter = 1.0
       )
 
-  object EnablePersonalizedContextTopics // master feature switch to enable backfill
-      extends FSParam[Boolean](
-        name = "topic_tweets_personalized_contexts_enable_personalized_contexts",
+  object EnablePersonalizedContetwittertTopics // master feature switch to enable backfill
+      etwittertends FSParam[Boolean](
+        name = "topic_tweets_personalized_contetwitterts_enable_personalized_contetwitterts",
         default = false
       )
 
   object EnableYouMightLikeTopic
-      extends FSParam[Boolean](
-        name = "topic_tweets_personalized_contexts_enable_you_might_like",
+      etwittertends FSParam[Boolean](
+        name = "topic_tweets_personalized_contetwitterts_enable_you_might_like",
         default = false
       )
 
   object EnableRecentEngagementsTopic
-      extends FSParam[Boolean](
-        name = "topic_tweets_personalized_contexts_enable_recent_engagements",
+      etwittertends FSParam[Boolean](
+        name = "topic_tweets_personalized_contetwitterts_enable_recent_engagements",
         default = false
       )
 
-  object EnableTopicTweetHealthFilterPersonalizedContexts
-      extends FSParam[Boolean](
-        name = "topic_tweets_personalized_contexts_health_switch",
+  object EnableTopicTweetHealthFilterPersonalizedContetwitterts
+      etwittertends FSParam[Boolean](
+        name = "topic_tweets_personalized_contetwitterts_health_switch",
         default = true
       )
 
   object EnableTweetToTopicScoreRanking
-      extends FSParam[Boolean](
+      etwittertends FSParam[Boolean](
         name = "topic_tweets_enable_tweet_to_topic_score_ranking",
         default = true
       )
@@ -87,10 +87,10 @@ object FeatureSwitchConfig {
   )
 
   private val booleanFeatureSwitchOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-    TopicSocialProofParams.EnablePersonalizedContextTopics,
+    TopicSocialProofParams.EnablePersonalizedContetwittertTopics,
     TopicSocialProofParams.EnableYouMightLikeTopic,
     TopicSocialProofParams.EnableRecentEngagementsTopic,
-    TopicSocialProofParams.EnableTopicTweetHealthFilterPersonalizedContexts,
+    TopicSocialProofParams.EnableTopicTweetHealthFilterPersonalizedContetwitterts,
     TopicSocialProofParams.EnableTweetToTopicScoreRanking,
   )
   val config: BaseConfig = BaseConfigBuilder()

@@ -8,7 +8,7 @@
 
 package com.twitter.ann.faiss;
 
-public class RangeSearchPartialResult extends BufferList {
+public class RangeSearchPartialResult etwittertends BufferList {
   private transient long swigCPtr;
 
   protected RangeSearchPartialResult(long cPtr, boolean cMemoryOwn) {

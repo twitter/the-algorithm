@@ -19,7 +19,7 @@ sealed trait SimClustersProfile {
   lazy val modelVersion: ModelVersion = modelVersionStr
 }
 
-sealed trait SimClustersJobProfile extends SimClustersProfile {
+sealed trait SimClustersJobProfile etwittertends SimClustersProfile {
 
   val jobType: JobType
 
@@ -49,7 +49,7 @@ sealed trait SimClustersJobProfile extends SimClustersProfile {
       case JobType.Tweet => ""
     }
 
-    val prefix = alt match {
+    val prefitwitter = alt match {
       case AltSetting.Alt =>
         "alt_"
       case AltSetting.Esc =>
@@ -58,21 +58,21 @@ sealed trait SimClustersJobProfile extends SimClustersProfile {
         ""
     }
 
-    s"simclusters_v2_${jobTypeStr}summingbird_$prefix$env"
+    s"simclusters_v2_${jobTypeStr}summingbird_$prefitwitter$env"
   }
 
 }
 
 object SimClustersProfile {
 
-  object JobType extends Enumeration {
+  object JobType etwittertends Enumeration {
     type JobType = Value
     val Tweet: JobType = Value("tweet")
     val PersistentTweet: JobType = Value("persistent_tweet")
     val MultiModelTweet: JobType = Value("multimodel_tweet")
   }
 
-  object Environment extends Enumeration {
+  object Environment etwittertends Enumeration {
     type Environment = Value
     val Prod: Environment = Value("prod")
     val Devel: Environment = Value("devel")
@@ -86,7 +86,7 @@ object SimClustersProfile {
     }
   }
 
-  object AltSetting extends Enumeration {
+  object AltSetting etwittertends Enumeration {
     type AltSetting = Value
     val Normal: AltSetting = Value("normal")
     val Alt: AltSetting = Value("alt")
@@ -111,7 +111,7 @@ object SimClustersProfile {
     clusterTopKTweetsPath: String,
     coreEmbeddingType: EmbeddingType,
     clusterTopKTweetsLightPath: Option[String] = None)
-      extends SimClustersJobProfile {
+      etwittertends SimClustersJobProfile {
 
     final val jobType: JobType = JobType.Tweet
   }
@@ -122,7 +122,7 @@ object SimClustersProfile {
     modelVersionStr: String,
     persistentTweetStratoPath: String,
     coreEmbeddingType: EmbeddingType)
-      extends SimClustersJobProfile {
+      etwittertends SimClustersJobProfile {
     final val jobType: JobType = JobType.PersistentTweet
   }
 
@@ -174,7 +174,7 @@ object SimClustersProfile {
     (env, alt) match {
       case (Environment.Prod, AltSetting.Alt) => AltProdTweetJobProfile
       case (Environment.Devel, AltSetting.Alt) => AltDevelTweetJobProfile
-      case _ => throw new IllegalArgumentException("Invalid env or alt setting")
+      case _ => throw new IllegalArgumentEtwitterception("Invalid env or alt setting")
     }
   }
 
@@ -185,15 +185,15 @@ object SimClustersProfile {
     (env, alt) match {
       case (Environment.Prod, AltSetting.Normal) => ProdPersistentTweetProfile
       case (Environment.Devel, AltSetting.Normal) => DevelPersistentTweetProfile
-      case _ => throw new IllegalArgumentException("Invalid env or alt setting")
+      case _ => throw new IllegalArgumentEtwitterception("Invalid env or alt setting")
     }
   }
 
   /**
-   * For short term, fav based tweet embedding and log fav based tweets embedding exists at the
+   * For short term, fav based tweet embedding and log fav based tweets embedding etwitterists at the
    * same time. We want to move to log fav based tweet embedding eventually.
-   * Follow based tweet embeddings exists in both environment.
-   * A uniform tweet embedding API is the future to replace the existing use case.
+   * Follow based tweet embeddings etwitterists in both environment.
+   * A uniform tweet embedding API is the future to replace the etwitteristing use case.
    */
   final lazy val tweetJobProfileMap: Environment => Map[
     (EmbeddingType, String),

@@ -24,7 +24,7 @@ public class BatchingClient<RQ, RP> {
   }
 
   /**
-   * unsentRequests is not threadsafe, and so it must be externally synchronized.
+   * unsentRequests is not threadsafe, and so it must be etwitterternally synchronized.
    */
   private final HashSet<RQ> unsentRequests = new HashSet<>();
 
@@ -61,16 +61,16 @@ public class BatchingClient<RQ, RP> {
         return;
       }
 
-      // Make a copy of requests so we can modify it inside executeBatchCall without additional
+      // Make a copy of requests so we can modify it inside etwitterecuteBatchCall without additional
       // synchronization.
       frozenRequests = new HashSet<>(unsentRequests);
       unsentRequests.clear();
     }
 
-    executeBatchCall(frozenRequests);
+    etwitterecuteBatchCall(frozenRequests);
   }
 
-  private void executeBatchCall(Set<RQ> requests) {
+  private void etwitterecuteBatchCall(Set<RQ> requests) {
     batchClient.batchGet(requests)
         .onSuccess(responseMap -> {
           for (Map.Entry<RQ, RP> entry : responseMap.entrySet()) {
@@ -84,17 +84,17 @@ public class BatchingClient<RQ, RP> {
           for (RQ request : outstandingRequests) {
             Promise<RP> promise = promises.remove(request);
             if (promise != null) {
-              promise.become(Future.exception(new ResponseNotReturnedException(request)));
+              promise.become(Future.etwitterception(new ResponseNotReturnedEtwitterception(request)));
             }
           }
 
           return null;
         })
-        .onFailure(exception -> {
+        .onFailure(etwitterception -> {
           for (RQ request : requests) {
             Promise<RP> promise = promises.remove(request);
             if (promise != null) {
-              promise.become(Future.exception(exception));
+              promise.become(Future.etwitterception(etwitterception));
             }
           }
 

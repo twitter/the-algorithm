@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird_root.filters;
 
-import javax.inject.Inject;
+import javatwitter.inject.Inject;
 
 import com.twitter.common.util.Clock;
 import com.twitter.finagle.Service;
@@ -11,9 +11,9 @@ import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.util.Future;
 
 /** A filter that sets the EarlybirdRequest.clientRequestTimeMs field if it's not already set. */
-public class ClientRequestTimeFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+public class ClientRequestTimeFilter etwittertends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
   private static final SearchCounter CLIENT_REQUEST_TIME_MS_UNSET_COUNTER =
-      SearchCounter.export("client_request_time_ms_unset");
+      SearchCounter.etwitterport("client_request_time_ms_unset");
 
   private final Clock clock;
 

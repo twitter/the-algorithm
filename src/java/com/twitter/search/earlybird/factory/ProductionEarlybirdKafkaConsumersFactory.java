@@ -2,7 +2,7 @@ package com.twitter.search.earlybird.factory;
 
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.util.io.kafka.CompactThriftDeserializer;
 import com.twitter.search.common.util.io.kafka.FinagleKafkaClientUtils;
 
@@ -11,24 +11,24 @@ import com.twitter.search.common.util.io.kafka.FinagleKafkaClientUtils;
  */
 public class ProductionEarlybirdKafkaConsumersFactory implements EarlybirdKafkaConsumersFactory {
   private final String kafkaPath;
-  private final int defaultMaxPollRecords;
+  private final int defaultMatwitterPollRecords;
 
-  ProductionEarlybirdKafkaConsumersFactory(String kafkaPath, int defaultMaxPollRecords) {
+  ProductionEarlybirdKafkaConsumersFactory(String kafkaPath, int defaultMatwitterPollRecords) {
     this.kafkaPath = kafkaPath;
-    this.defaultMaxPollRecords = defaultMaxPollRecords;
+    this.defaultMatwitterPollRecords = defaultMatwitterPollRecords;
   }
 
   /**
-   * Create a kafka consumer with set maximum of records to be polled.
+   * Create a kafka consumer with set matwitterimum of records to be polled.
    */
   @Override
   public KafkaConsumer<Long, ThriftVersionedEvents> createKafkaConsumer(
-      String clientID, int maxPollRecords) {
+      String clientID, int matwitterPollRecords) {
     return FinagleKafkaClientUtils.newKafkaConsumerForAssigning(
         kafkaPath,
         new CompactThriftDeserializer<>(ThriftVersionedEvents.class),
         clientID,
-        maxPollRecords);
+        matwitterPollRecords);
   }
 
   /**
@@ -36,6 +36,6 @@ public class ProductionEarlybirdKafkaConsumersFactory implements EarlybirdKafkaC
    */
   @Override
   public KafkaConsumer<Long, ThriftVersionedEvents> createKafkaConsumer(String clientID) {
-    return createKafkaConsumer(clientID, defaultMaxPollRecords);
+    return createKafkaConsumer(clientID, defaultMatwitterPollRecords);
   }
 }

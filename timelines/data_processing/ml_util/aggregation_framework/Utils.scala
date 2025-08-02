@@ -18,9 +18,9 @@ object Utils {
   private val random = scala.util.Random
   private val keyedDataRecordMapMonoid = {
     val dataRecordMergerSg = new Semigroup[DataRecord] {
-      override def plus(x: DataRecord, y: DataRecord): DataRecord = {
-        dataRecordMerger.merge(x, y)
-        x
+      override def plus(twitter: DataRecord, y: DataRecord): DataRecord = {
+        dataRecordMerger.merge(twitter, y)
+        twitter
       }
     }
     new ScMapMonoid[Long, DataRecord]()(dataRecordMergerSg)
@@ -33,13 +33,13 @@ object Utils {
     try {
       SRichDataRecord(record).getFeatureValue(feature).toLong
     } catch {
-      case _: NumberFormatException => 0L
+      case _: NumberFormatEtwitterception => 0L
     }
 
   def keyFromHash(record: DataRecord, feature: Feature[String]): Long =
     SRichDataRecord(record).getFeatureValue(feature).hashCode.toLong
 
-  def extractSecondary[T](
+  def etwittertractSecondary[T](
     record: DataRecord,
     secondaryKey: Feature[T],
     shouldHash: Boolean = false
@@ -48,7 +48,7 @@ object Utils {
       if (shouldHash) keyFromHash(record, secondaryKey.asInstanceOf[Feature[String]])
       else keyFromString(record, secondaryKey.asInstanceOf[Feature[String]])
     case FeatureType.DISCRETE => keyFromLong(record, secondaryKey.asInstanceOf[Feature[JLong]])
-    case f => throw new IllegalArgumentException(s"Feature type $f is not supported.")
+    case f => throw new IllegalArgumentEtwitterception(s"Feature type $f is not supported.")
   }
 
   def mergeKeyedRecordOpts(args: Option[KeyedRecord]*): Option[KeyedRecord] = {
@@ -76,14 +76,14 @@ object Utils {
   def mergeKeyedRecordMapOpts(
     opt1: Option[KeyedRecordMap],
     opt2: Option[KeyedRecordMap],
-    maxSize: Int = Int.MaxValue
+    matwitterSize: Int = Int.MatwitterValue
   ): Option[KeyedRecordMap] = {
     if (opt1.isEmpty && opt2.isEmpty) {
       None
     } else {
       val keys = Seq(opt1, opt2).flatten.map(_.aggregateType)
       require(keys.toSet.size == 1, "All merged records must have the same aggregate key.")
-      val mergedRecordMap = mergeMapOpts(opt1.map(_.recordMap), opt2.map(_.recordMap), maxSize)
+      val mergedRecordMap = mergeMapOpts(opt1.map(_.recordMap), opt2.map(_.recordMap), matwitterSize)
       Some(KeyedRecordMap(keys.head, mergedRecordMap))
     }
   }
@@ -91,12 +91,12 @@ object Utils {
   private def mergeMapOpts(
     opt1: Option[ScMap[Long, DataRecord]],
     opt2: Option[ScMap[Long, DataRecord]],
-    maxSize: Int = Int.MaxValue
+    matwitterSize: Int = Int.MatwitterValue
   ): ScMap[Long, DataRecord] = {
-    require(maxSize >= 0)
+    require(matwitterSize >= 0)
     val keySet = opt1.map(_.keySet).getOrElse(Set.empty) ++ opt2.map(_.keySet).getOrElse(Set.empty)
     val totalSize = keySet.size
-    val rate = if (totalSize <= maxSize) 1.0 else maxSize.toDouble / totalSize
+    val rate = if (totalSize <= matwitterSize) 1.0 else matwitterSize.toDouble / totalSize
     val prunedOpt1 = opt1.map(downsample(_, rate))
     val prunedOpt2 = opt2.map(downsample(_, rate))
     Seq(prunedOpt1, prunedOpt2).flatten
@@ -115,7 +115,7 @@ object Utils {
           // selected or rejected. Otherwise, mergeMapOpts will choose different keys for the
           // two input maps and their union will be larger than the limit we want.
           random.setSeed((key.hashCode, samplingRate.hashCode).hashCode)
-          random.nextDouble < samplingRate
+          random.netwittertDouble < samplingRate
       }
     }
   }

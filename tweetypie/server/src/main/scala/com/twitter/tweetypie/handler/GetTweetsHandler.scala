@@ -2,9 +2,9 @@ package com.twitter.tweetypie
 package handler
 
 import com.twitter.container.thriftscala.MaterializeAsTweetRequest
-import com.twitter.context.TestingSignalsContext
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.servo.exception.thriftscala.ClientErrorCause
+import com.twitter.contetwittert.TestingSignalsContetwittert
+import com.twitter.servo.etwitterception.thriftscala.ClientError
+import com.twitter.servo.etwitterception.thriftscala.ClientErrorCause
 import com.twitter.servo.util.FutureArrow
 import com.twitter.spam.rtf.thriftscala.FilteredReason
 import com.twitter.spam.rtf.thriftscala.SafetyLevel
@@ -59,7 +59,7 @@ object GetTweetsHandler {
         requestOptions.additionalFieldIds.filter(!AdditionalFields.isAdditionalFieldId(_))
 
       if (invalidAdditionalFields.nonEmpty) {
-        Future.exception(
+        Future.etwitterception(
           ClientError(
             ClientErrorCause.BadRequest,
             "Requested additional fields contain invalid field id " +
@@ -81,8 +81,8 @@ object GetTweetsHandler {
                   measureRacyReads(id)
 
                   Stitch.value(GetTweetResult(id, StatusState.NotFound))
-                case Throw(ex) =>
-                  failureResult(deletedTweetVisibilityRepo, id, requestOptions, ex)
+                case Throw(etwitter) =>
+                  failureResult(deletedTweetVisibilityRepo, id, requestOptions, etwitter)
                 case Return(r) =>
                   toGetTweetResult(
                     deletedTweetVisibilityRepo,
@@ -112,7 +112,7 @@ object GetTweetsHandler {
   }
 
   def toTweetQueryOptions(options: GetTweetOptions): TweetQuery.Options = {
-    val shouldSkipCache = TestingSignalsContext().flatMap(_.simulateBackPressure).nonEmpty
+    val shouldSkipCache = TestingSignalsContetwittert().flatMap(_.simulateBackPressure).nonEmpty
     val cacheControl =
       if (shouldSkipCache) CacheControl.NoCache
       else if (options.doNotCache) CacheControl.ReadOnlyCache
@@ -130,13 +130,13 @@ object GetTweetsHandler {
       ),
       cacheControl = cacheControl,
       cardsPlatformKey = options.cardsPlatformKey,
-      excludeReported = options.excludeReported,
+      etwittercludeReported = options.etwittercludeReported,
       enforceVisibilityFiltering = !options.bypassVisibilityFiltering,
       safetyLevel = options.safetyLevel.getOrElse(SafetyLevel.FilterDefault),
       forUserId = options.forUserId,
       languageTag = options.languageTag,
-      extensionsArgs = options.extensionsArgs,
-      forExternalConsumption = true,
+      etwittertensionsArgs = options.etwittertensionsArgs,
+      forEtwitterternalConsumption = true,
       simpleQuotedTweet = options.simpleQuotedTweet
     )
   }
@@ -285,7 +285,7 @@ object GetTweetsHandler {
     deletedTweetVisibilityRepo: DeletedTweetVisibilityRepository.Type,
     tweetId: TweetId,
     options: GetTweetOptions,
-    ex: Throwable
+    etwitter: Throwable
   ): Stitch[GetTweetResult] = {
     def deletedState(deleted: Boolean, statusState: StatusState) =
       if (deleted && options.enableDeletedState) {
@@ -294,7 +294,7 @@ object GetTweetsHandler {
         StatusState.NotFound
       }
 
-    ex match {
+    etwitter match {
       case FilteredState.Unavailable.Author.Deactivated =>
         Stitch.value(GetTweetResult(tweetId, StatusState.DeactivatedUser))
       case FilteredState.Unavailable.Author.NotFound =>
@@ -312,7 +312,7 @@ object GetTweetsHandler {
       case FilteredState.Unavailable.TweetDeleted =>
         deletedTweetVisibilityRepo(
           DeletedTweetVisibilityRepository.VisibilityRequest(
-            ex,
+            etwitter,
             tweetId,
             options.safetyLevel,
             options.forUserId,
@@ -326,7 +326,7 @@ object GetTweetsHandler {
       case FilteredState.Unavailable.BounceDeleted =>
         deletedTweetVisibilityRepo(
           DeletedTweetVisibilityRepository.VisibilityRequest(
-            ex,
+            etwitter,
             tweetId,
             options.safetyLevel,
             options.forUserId,
@@ -340,7 +340,7 @@ object GetTweetsHandler {
       case FilteredState.Unavailable.SourceTweetNotFound(d) =>
         deletedTweetVisibilityRepo(
           DeletedTweetVisibilityRepository.VisibilityRequest(
-            ex,
+            etwitter,
             tweetId,
             options.safetyLevel,
             options.forUserId,

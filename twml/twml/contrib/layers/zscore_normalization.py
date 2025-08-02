@@ -8,7 +8,7 @@ from tensorflow.python.training import moving_averages
 
 
 # This is copied from tensorflow.contrib.framework.python.ops.add_model_variable in 1.15
-# Not available in 2.x
+# Not available in 2.twitter
 # TODO: Figure out if this is really necessary.
 def _add_model_variable(var):
   """Adds a variable to the `GraphKeys.MODEL_VARIABLES` collection.
@@ -88,8 +88,8 @@ class ZscoreNormalization(Layer):
   def _training_pass(self, input, dense_mask, input_dtype, handle_single, zero_debias):
     epsilon = self.epsilon
     moving_mean, moving_var = self.moving_mean, self.moving_var
-    # calculate the number of exisiting value for each feature
-    tensor_batch_num = tf.reduce_sum(tf.cast(dense_mask, self.data_type), axis=0)
+    # calculate the number of etwitterisiting value for each feature
+    tensor_batch_num = tf.reduce_sum(tf.cast(dense_mask, self.data_type), atwitteris=0)
     mask_ones = tf.cast(tensor_batch_num, tf.bool)
     eps_vector = tf.fill(tf.shape(tensor_batch_num), epsilon)
     # the following filled 0 with epision
@@ -97,23 +97,23 @@ class ZscoreNormalization(Layer):
                                     tensor_batch_num,
                                     eps_vector
                                   )
-    tensor_batch_num_eps_broacast = tf.expand_dims(tensor_batch_num_eps, 0)
+    tensor_batch_num_eps_broacast = tf.etwitterpand_dims(tensor_batch_num_eps, 0)
     tensor_batch_divided = input / tensor_batch_num_eps_broacast
-    tensor_batch_mean = tf.reduce_sum(tensor_batch_divided, axis=0)
+    tensor_batch_mean = tf.reduce_sum(tensor_batch_divided, atwitteris=0)
 
     # update moving mean here, and use it to calculate the std.
     tensor_moving_mean = update_moving_variable(tensor_batch_mean, moving_mean, self.decay,
                                                 zero_debias, name="mean_ema_op")
 
-    tensor_batch_sub_mean = input - tf.expand_dims(tensor_moving_mean, 0)
+    tensor_batch_sub_mean = input - tf.etwitterpand_dims(tensor_moving_mean, 0)
     tensor_batch_sub_mean = tf.where(dense_mask,
                                     tensor_batch_sub_mean,
                                     tf.zeros_like(tensor_batch_sub_mean))
     # divided by sqrt(n) before square, and then do summation for numeric stability.
-    broad_sqrt_num_eps = tf.expand_dims(tf.sqrt(tensor_batch_num_eps), 0)
+    broad_sqrt_num_eps = tf.etwitterpand_dims(tf.sqrt(tensor_batch_num_eps), 0)
     tensor_batch_sub_mean_div = tensor_batch_sub_mean / broad_sqrt_num_eps
     tensor_batch_sub_mean_div_square = tf.square(tensor_batch_sub_mean_div)
-    tensor_batch_var = tf.reduce_sum(tensor_batch_sub_mean_div_square, axis=0)
+    tensor_batch_var = tf.reduce_sum(tensor_batch_sub_mean_div_square, atwitteris=0)
 
     # update moving var here, dont replace 0 with eps before updating.
     tensor_moving_var = update_moving_variable(tensor_batch_var, moving_var, self.decay,
@@ -125,12 +125,12 @@ class ZscoreNormalization(Layer):
                                     eps_vector,
                                     tensor_moving_std)
 
-    missing_input_norm = tensor_batch_sub_mean / tf.expand_dims(tensor_moving_std_eps, 0)
+    missing_input_norm = tensor_batch_sub_mean / tf.etwitterpand_dims(tensor_moving_std_eps, 0)
 
     if handle_single:
       # if std==0 and value not missing, reset it to 1.
       moving_var_mask_zero = tf.math.equal(tensor_moving_var, 0)
-      moving_var_mask_zero = tf.expand_dims(moving_var_mask_zero, 0)
+      moving_var_mask_zero = tf.etwitterpand_dims(moving_var_mask_zero, 0)
       missing_input_norm = tf.where(
         tf.math.logical_and(dense_mask, moving_var_mask_zero),
         tf.ones_like(missing_input_norm),
@@ -145,7 +145,7 @@ class ZscoreNormalization(Layer):
     testing_moving_mean = tf.cast(self.moving_mean, input_dtype)
     tensor_moving_std = tf.cast(tf.sqrt(self.moving_var), input_dtype)
 
-    broad_mean = tf.expand_dims(testing_moving_mean, 0)
+    broad_mean = tf.etwitterpand_dims(testing_moving_mean, 0)
     tensor_batch_sub_mean = input - broad_mean
 
     tensor_batch_sub_mean = tf.where(dense_mask,
@@ -155,10 +155,10 @@ class ZscoreNormalization(Layer):
     tensor_moving_std_eps = tf.where(tf.equal(tensor_moving_std, 0),
                                       tf.fill(tf.shape(tensor_moving_std), epsilon),
                                       tensor_moving_std)
-    missing_input_norm = tensor_batch_sub_mean / tf.expand_dims(tensor_moving_std_eps, 0)
+    missing_input_norm = tensor_batch_sub_mean / tf.etwitterpand_dims(tensor_moving_std_eps, 0)
     if handle_single:
       # if std==0 and value not missing, reset it to 1.
-      moving_var_broad = tf.expand_dims(tensor_moving_std, 0)
+      moving_var_broad = tf.etwitterpand_dims(tensor_moving_std, 0)
       moving_var_mask_zero = tf.math.logical_not(tf.cast(moving_var_broad, tf.bool))
 
       missing_input_norm = tf.where(tf.math.logical_and(dense_mask, moving_var_mask_zero),
@@ -177,15 +177,15 @@ class ZscoreNormalization(Layer):
     """
     Args:
     -----------
-    input:  B x D : float32/float64
+    input:  B twitter D : float32/float64
       missing value must be set to 0.
     is_training: bool
       training phase or testing phase
-    dense_mask: B x D : bool
+    dense_mask: B twitter D : bool
       missing value should be marked as 0, non-missing as 1. same shape as input
     zero_debias: bool
       bias correction of the moving average. (biased towards 0 in the beginning.
-      see adam paper. https://arxiv.org/abs/1412.6980)
+      see adam paper. https://artwitteriv.org/abs/1412.6980)
     handle_single: bool
       if std==0, and feature is not missing value, set the value to 1, instead of 0.
       This is super rare if input only consists of continous feature.
@@ -217,7 +217,7 @@ def zscore_normalization(
   """
   Args:
   ------------
-  input:  B x D : float32/float64
+  input:  B twitter D : float32/float64
     missing value must be set to 0.
   is_training: bool
     training phase or testing phase
@@ -227,11 +227,11 @@ def zscore_normalization(
     use float64 to zprevent overflow during variance calculation.
   name:
     Layer name
-  dense_mask: B x D : bool
+  dense_mask: B twitter D : bool
     missing value should be marked as 0, non-missing as 1. same shape as input
   zero_debias: bool
     bias correction of the moving average. (biased towards 0 in the beginning.
-    see adam paper. https://arxiv.org/abs/1412.6980)
+    see adam paper. https://artwitteriv.org/abs/1412.6980)
   handle_single: bool
     if std==0, and feature is not missing value, set the value to 1, instead of 0.
     This is super rare if input only consists of continous feature.

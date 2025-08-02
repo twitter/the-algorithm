@@ -20,9 +20,9 @@ namespace twml {
     uint64_t ikeysStride   = input_keys.getStride(0);
     uint64_t ivaluesStride = input_vals.getStride(0);
 
-    auto xsData = bin_vals.getData<T>();
+    auto twittersData = bin_vals.getData<T>();
     auto ysData = bin_ids.getData<int64_t>();
-    uint64_t xsStride = bin_vals.getStride(0);
+    uint64_t twittersStride = bin_vals.getStride(0);
     uint64_t ysStride = bin_ids.getStride(0);
 
     auto offsetData = feature_offsets.getData<int64_t>();
@@ -32,7 +32,7 @@ namespace twml {
     uint64_t fsize = feature_offsets.getNumElements();
 
     for (uint64_t i = 0; i < size; i++) {
-      int64_t ikey = ikeysData[i * ikeysStride] - TWML_INDEX_BASE;
+      int64_t ikey = ikeysData[i * ikeysStride] - TWML_INDEtwitter_BASE;
       T val = ivalsData[i * ivaluesStride];
       if (ikey == -1) {
         ovalsData[i * ovaluesStride] = val;
@@ -41,16 +41,16 @@ namespace twml {
 
       // Perform interpolation
       uint64_t offset = offsetData[ikey];
-      uint64_t next_offset = (ikey == (int64_t)(fsize - 1)) ? total_bins : offsetData[ikey + 1];
-      uint64_t mainSize = next_offset - offset;
+      uint64_t netwittert_offset = (ikey == (int64_t)(fsize - 1)) ? total_bins : offsetData[ikey + 1];
+      uint64_t mainSize = netwittert_offset - offset;
 
-      const T *lxsData = xsData + offset;
+      const T *ltwittersData = twittersData + offset;
       const int64_t *lysData = ysData + offset;
-      int64_t okey = interpolation<T, int64_t>(lxsData, xsStride,
+      int64_t okey = interpolation<T, int64_t>(ltwittersData, twittersStride,
                                  lysData, ysStride,
                                  val, mainSize, NEAREST, 0,
                                  return_bin_indices);
-      okeysData[i * okeysStride] = okey + TWML_INDEX_BASE;
+      okeysData[i * okeysStride] = okey + TWML_INDEtwitter_BASE;
       ovalsData[i * ovaluesStride] = 1;
     }
   }
@@ -128,7 +128,7 @@ namespace twml {
    *    The output tensor must have space allcoated.
    * @param input input tensor; size must match output.
    *    input is assumed to have size [batch_size, number_of_labels].
-   * @param xs the bins.
+   * @param twitters the bins.
    * @param ys the values for the bins.
    * @param mode: linear or nearest InterpolationMode.
    *    linear is used for isotonic calibration.
@@ -142,7 +142,7 @@ namespace twml {
   void interpolation(
     Tensor output,
     const Tensor input,
-    const Tensor xs,
+    const Tensor twitters,
     const Tensor ys,
     const InterpolationMode mode) {
     // Sanity check: input and output should have two dims.
@@ -160,37 +160,37 @@ namespace twml {
     }
 
     // Sanity check: number of labels in input should match
-    // number of labels in xs / ys.
-    if (input.getDim(1) != xs.getDim(0)
+    // number of labels in twitters / ys.
+    if (input.getDim(1) != twitters.getDim(0)
       || input.getDim(1) != ys.getDim(0)) {
       throw twml::Error(TWML_ERR_TYPE,
-                "input, xs, ys should have the same number of labels.");
+                "input, twitters, ys should have the same number of labels.");
     }
 
     const uint64_t inputStride0 = input.getStride(0);
     const uint64_t inputStride1 = input.getStride(1);
     const uint64_t outputStride0 = output.getStride(0);
     const uint64_t outputStride1 = output.getStride(1);
-    const uint64_t xsStride0 = xs.getStride(0);
-    const uint64_t xsStride1 = xs.getStride(1);
+    const uint64_t twittersStride0 = twitters.getStride(0);
+    const uint64_t twittersStride1 = twitters.getStride(1);
     const uint64_t ysStride0 = ys.getStride(0);
     const uint64_t ysStride1 = ys.getStride(1);
-    const uint64_t mainSize = xs.getDim(1);
+    const uint64_t mainSize = twitters.getDim(1);
 
-    // for each value in the input matrix, compute output value by
+    // for each value in the input matritwitter, compute output value by
     // calling interpolation.
     auto inputData = input.getData<T>();
     auto outputData = output.getData<T>();
-    auto xsData = xs.getData<T>();
+    auto twittersData = twitters.getData<T>();
     auto ysData = ys.getData<T>();
 
     for (uint64_t i = 0; i < input.getDim(0); i++) {
       for (uint64_t j = 0; j < input.getDim(1); j++) {
         const T val = inputData[i * inputStride0 + j * inputStride1];
-        const T *lxsData = xsData + j * xsStride0;
+        const T *ltwittersData = twittersData + j * twittersStride0;
         const T *lysData = ysData + j * ysStride0;
         const T res = interpolation(
-          lxsData, xsStride1,
+          ltwittersData, twittersStride1,
           lysData, ysStride1,
           val,
           mainSize,
@@ -204,14 +204,14 @@ namespace twml {
   void linearInterpolation(
     Tensor output,
     const Tensor input,
-    const Tensor xs,
+    const Tensor twitters,
     const Tensor ys) {
     switch (input.getType()) {
     case TWML_TYPE_FLOAT:
-      twml::interpolation<float>(output, input, xs, ys, LINEAR);
+      twml::interpolation<float>(output, input, twitters, ys, LINEAR);
       break;
     case TWML_TYPE_DOUBLE:
-      twml::interpolation<double>(output, input, xs, ys, LINEAR);
+      twml::interpolation<double>(output, input, twitters, ys, LINEAR);
       break;
     default:
       throw twml::Error(TWML_ERR_TYPE,
@@ -222,14 +222,14 @@ namespace twml {
   void nearestInterpolation(
     Tensor output,
     const Tensor input,
-    const Tensor xs,
+    const Tensor twitters,
     const Tensor ys) {
     switch (input.getType()) {
     case TWML_TYPE_FLOAT:
-      twml::interpolation<float>(output, input, xs, ys, NEAREST);
+      twml::interpolation<float>(output, input, twitters, ys, NEAREST);
       break;
     case TWML_TYPE_DOUBLE:
-      twml::interpolation<double>(output, input, xs, ys, NEAREST);
+      twml::interpolation<double>(output, input, twitters, ys, NEAREST);
       break;
     default:
       throw twml::Error(TWML_ERR_TYPE,
@@ -246,7 +246,7 @@ twml_err twml_optim_mdl_infer(twml_tensor output_keys,
                 const twml_tensor bin_vals,
                 const twml_tensor feature_offsets,
                 bool return_bin_indices) {
-  HANDLE_EXCEPTIONS(
+  HANDLE_EtwitterCEPTIONS(
     using namespace twml;
     mdlInfer(*getTensor(output_keys),
          *getTensor(output_vals),
@@ -262,13 +262,13 @@ twml_err twml_optim_mdl_infer(twml_tensor output_keys,
 twml_err twml_optim_nearest_interpolation(
                 twml_tensor output,
                 const twml_tensor input,
-                const twml_tensor xs,
+                const twml_tensor twitters,
                 const twml_tensor ys) {
-  HANDLE_EXCEPTIONS(
+  HANDLE_EtwitterCEPTIONS(
     using namespace twml;
     nearestInterpolation(*getTensor(output),
       *getConstTensor(input),
-      *getConstTensor(xs),
+      *getConstTensor(twitters),
       *getConstTensor(ys)););
   return TWML_ERR_NONE;
 }

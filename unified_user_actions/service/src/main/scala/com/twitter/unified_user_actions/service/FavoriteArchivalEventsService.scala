@@ -7,9 +7,9 @@ import com.twitter.kafka.client.processor.AtLeastOnceProcessor
 import com.twitter.timelineservice.fanout.thriftscala.FavoriteArchivalEvent
 import com.twitter.unified_user_actions.service.module.KafkaProcessorFavoriteArchivalEventsModule
 
-object FavoriteArchivalEventsServiceMain extends FavoriteArchivalEventsService
+object FavoriteArchivalEventsServiceMain etwittertends FavoriteArchivalEventsService
 
-class FavoriteArchivalEventsService extends TwitterServer {
+class FavoriteArchivalEventsService etwittertends TwitterServer {
 
   override val modules = Seq(
     KafkaProcessorFavoriteArchivalEventsModule,
@@ -20,7 +20,7 @@ class FavoriteArchivalEventsService extends TwitterServer {
 
   override protected def start(): Unit = {
     val processor = injector.instance[AtLeastOnceProcessor[UnKeyed, FavoriteArchivalEvent]]
-    closeOnExit(processor)
+    closeOnEtwitterit(processor)
     processor.start()
   }
 }

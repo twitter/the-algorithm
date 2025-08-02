@@ -85,7 +85,7 @@ def _main():
   else:
     feature_list_path = opt.feature_list
 
-  if opt.warm_start_base_dir != "none" and tf.io.gfile.exists(opt.warm_start_base_dir):
+  if opt.warm_start_base_dir != "none" and tf.io.gfile.etwitterists(opt.warm_start_base_dir):
     if opt.output_checkpoint_dir == "none" or opt.output_checkpoint_dir == opt.warm_start_base_dir:
       _warm_start_base_dir = os.path.normpath(opt.warm_start_base_dir) + "_backup_warm_start"
       _output_folder_dir = opt.warm_start_base_dir
@@ -112,7 +112,7 @@ def _main():
       tf.logging.info(f"Finish writting files to {continuous_binary_feat_list_save_path}")
 
     warm_start_folder = os.path.join(_warm_start_base_dir, "best_checkpoint")
-    if not tf.io.gfile.exists(warm_start_folder):
+    if not tf.io.gfile.etwitterists(warm_start_folder):
       warm_start_folder = _warm_start_base_dir
 
     rmdir(_output_folder_dir)

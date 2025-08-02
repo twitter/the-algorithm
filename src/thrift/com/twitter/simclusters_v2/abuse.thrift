@@ -10,7 +10,7 @@ include "simclusters_presto.thrift"
  * Struct that associates a user with simcluster scores for different
  * interaction types. This is meant to be used as a feature to predict abuse.
  *
- * This thrift struct is meant for exploration purposes. It does not have any
+ * This thrift struct is meant for etwitterploration purposes. It does not have any
  * assumptions about what type of interactions we use or what types of scores
  * we are keeping track of.
  **/ 

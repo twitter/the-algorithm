@@ -33,7 +33,7 @@ object DarkmodingKeyValueRepositoryFactory {
    * @param backupRepo The repo to read from when darkmoded; defaults to an always-failing repo.
    * @param successRateTracker Strategy for reporting SR, usually over a moving window
    * @param availabilityFromSuccessRate Function to calculate availability based on success rate
-   * @param shouldIgnore don't count certain exceptions as failures, e.g. cancellations
+   * @param shouldIgnore don't count certain etwitterceptions as failures, e.g. cancellations
    */
   def darkmoding[Q <: Seq[K], K, V](
     readFromUnderlying: Gate[Unit],
@@ -41,7 +41,7 @@ object DarkmodingKeyValueRepositoryFactory {
     stats: StatsReceiver,
     underlyingRepo: KeyValueRepository[Q, K, V],
     backupRepo: KeyValueRepository[Q, K, V] =
-      KeyValueRepository.alwaysFailing[Q, K, V](DarkmodedException),
+      KeyValueRepository.alwaysFailing[Q, K, V](DarkmodedEtwitterception),
     successRateTracker: SuccessRateTracker = DefaultRecentWindowTracker,
     availabilityFromSuccessRate: Double => Double = DefaultAvailabilityFromSuccessRate,
     shouldIgnore: Throwable => Boolean = SuccessRateTrackingRepository.isCancellation
@@ -76,7 +76,7 @@ object DarkmodingKeyValueRepositoryFactory {
    * @param handler a [[Handler]] to use when not darkmoded
    * @param successRateTracker Strategy for reporting SR, usually over a moving window
    * @param availabilityFromSuccessRate Function to calculate availability based on success rate
-   * @param shouldIgnore don't count certain exceptions as failures, e.g. cancellations
+   * @param shouldIgnore don't count certain etwitterceptions as failures, e.g. cancellations
    */
   def darkmodingCaching[K, V, CacheKey](
     underlyingRepo: KeyValueRepository[Seq[K], K, V],
@@ -132,16 +132,16 @@ object DarkmodingKeyValueRepositoryFactory {
 
   /**
    * Construct a [[CachedResult.HandlerFactory]] with sane defaults for use with a caching darkmoded repository
-   * @param softTtl TTL for soft-expiration of values in the cache
-   * @param expiry Used to apply the softTTL (e.g. fixed vs randomly perturbed)
+   * @param softTtl TTL for soft-etwitterpiration of values in the cache
+   * @param etwitterpiry Used to apply the softTTL (e.g. fitwittered vs randomly perturbed)
    */
   def mkDefaultHandler[K, V](
     softTtl: Option[V] => Duration,
-    expiry: CachedResult.Expiry
+    etwitterpiry: CachedResult.Etwitterpiry
   ): Handler[K, V] =
     CachedResult.Handler(
       CachedResult.failuresAreDoNotCache,
-      CachedResult.Handler(CachedResult.softTtlExpiration(softTtl, expiry))
+      CachedResult.Handler(CachedResult.softTtlEtwitterpiration(softTtl, etwitterpiry))
     )
 
   private[repository] def mkHandlerFactory[CacheKey, V, K](
@@ -154,8 +154,8 @@ object DarkmodingKeyValueRepositoryFactory {
 }
 
 /**
- * This exception is returned from a repository when it is auto-darkmoded due to low backend
+ * This etwitterception is returned from a repository when it is auto-darkmoded due to low backend
  * success rate, or darkmoded manually via gate (usually a decider).
  */
-class DarkmodedException extends Exception with NoStackTrace
-object DarkmodedException extends DarkmodedException
+class DarkmodedEtwitterception etwittertends Etwitterception with NoStackTrace
+object DarkmodedEtwitterception etwittertends DarkmodedEtwitterception

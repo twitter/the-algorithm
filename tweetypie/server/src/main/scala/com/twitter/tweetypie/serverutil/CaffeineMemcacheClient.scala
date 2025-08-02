@@ -8,7 +8,7 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import com.twitter.finagle.memcached.protocol.Value
 import com.twitter.finagle.memcached.Client
 import com.twitter.finagle.memcached.GetResult
-import com.twitter.finagle.memcached.ProxyClient
+import com.twitter.finagle.memcached.ProtwitteryClient
 import com.twitter.finagle.stats.NullStatsReceiver
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.util.Duration
@@ -19,7 +19,7 @@ import com.twitter.util.{Promise => TwitterPromise}
 import com.twitter.util.logging.Logger
 import java.util.concurrent.TimeUnit.NANOSECONDS
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.Executor
+import java.util.concurrent.Etwitterecutor
 import java.util.concurrent.TimeUnit
 import java.util.function.BiConsumer
 import java.util.function.Supplier
@@ -34,16 +34,16 @@ object CaffeineMemcacheClient {
    * Helper method to convert between Java 8's CompletableFuture and Twitter's Future.
    */
   private def toTwitterFuture[T](cf: CompletableFuture[T]): Future[T] = {
-    if (cf.isDone && !cf.isCompletedExceptionally && !cf.isCancelled) {
+    if (cf.isDone && !cf.isCompletedEtwitterceptionally && !cf.isCancelled) {
       Future.const(Return(cf.get()))
     } else {
       val p = new TwitterPromise[T] with TwitterPromise.InterruptHandler {
         override protected def onInterrupt(t: Throwable): Unit = cf.cancel(true)
       }
       cf.whenComplete(new BiConsumer[T, Throwable] {
-        override def accept(result: T, exception: Throwable): Unit = {
-          if (exception != null) {
-            p.updateIfEmpty(Throw(exception))
+        override def accept(result: T, etwitterception: Throwable): Unit = {
+          if (etwitterception != null) {
+            p.updateIfEmpty(Throw(etwitterception))
           } else {
             p.updateIfEmpty(Return(result))
           }
@@ -55,14 +55,14 @@ object CaffeineMemcacheClient {
 }
 
 class CaffeineMemcacheClient(
-  override val proxyClient: Client,
-  val maximumSize: Int = 1000,
+  override val protwitteryClient: Client,
+  val matwitterimumSize: Int = 1000,
   val ttl: Duration = Duration.fromSeconds(10),
   stats: StatsReceiver = NullStatsReceiver)
-    extends ProxyClient {
+    etwittertends ProtwitteryClient {
   import CaffeineMemcacheClient._
 
-  private[this] object Stats extends StatsCounter {
+  private[this] object Stats etwittertends StatsCounter {
     private val hits = stats.counter("hits")
     private val miss = stats.counter("misses")
     private val totalLoadTime = stats.stat("loads")
@@ -97,29 +97,29 @@ class CaffeineMemcacheClient(
     }
   }
 
-  private[this] object MemcachedAsyncCacheLoader extends AsyncCacheLoader[String, GetResult] {
+  private[this] object MemcachedAsyncCacheLoader etwittertends AsyncCacheLoader[String, GetResult] {
     private[this] val EmptyMisses: Set[String] = Set.empty
     private[this] val EmptyFailures: Map[String, Throwable] = Map.empty
     private[this] val EmptyHits: Map[String, Value] = Map.empty
 
-    override def asyncLoad(key: String, executor: Executor): CompletableFuture[GetResult] = {
+    override def asyncLoad(key: String, etwitterecutor: Etwitterecutor): CompletableFuture[GetResult] = {
       val f = new util.function.Function[util.Map[String, GetResult], GetResult] {
         override def apply(r: util.Map[String, GetResult]): GetResult = r.get(key)
       }
-      asyncLoadAll(Seq(key).asJava, executor).thenApply(f)
+      asyncLoadAll(Seq(key).asJava, etwitterecutor).thenApply(f)
     }
 
     /**
      * Converts response from multi-key to single key. Memcache returns the result
-     * in one struct that contains all the hits, misses and exceptions. Caffeine
+     * in one struct that contains all the hits, misses and etwitterceptions. Caffeine
      * requires a map from a key to the result, so we do that conversion here.
      */
     override def asyncLoadAll(
       keys: lang.Iterable[_ <: String],
-      executor: Executor
+      etwitterecutor: Etwitterecutor
     ): CompletableFuture[util.Map[String, GetResult]] = {
       val result = new CompletableFuture[util.Map[String, GetResult]]()
-      proxyClient.getResult(keys.asScala).respond {
+      protwitteryClient.getResult(keys.asScala).respond {
         case Return(r) =>
           val map = new util.HashMap[String, GetResult]()
           r.hits.foreach {
@@ -132,7 +132,7 @@ class CaffeineMemcacheClient(
           r.misses.foreach { key =>
             map.put(key, r.copy(hits = EmptyHits, misses = Set(key), failures = EmptyFailures))
           }
-          // We are passing through failures so that we maintain the contract expected by clients.
+          // We are passing through failures so that we maintain the contract etwitterpected by clients.
           // Without passing through the failures, several metrics get lost. Some of these failures
           // might get cached. The cache is short-lived, so we are not worried when it does
           // get cached.
@@ -144,9 +144,9 @@ class CaffeineMemcacheClient(
               )
           }
           result.complete(map)
-        case Throw(ex) =>
-          logger.warn("Error loading keys from memcached", ex)
-          result.completeExceptionally(ex)
+        case Throw(etwitter) =>
+          logger.warn("Error loading keys from memcached", etwitter)
+          result.completeEtwitterceptionally(etwitter)
       }
       result
     }
@@ -155,9 +155,9 @@ class CaffeineMemcacheClient(
   private[this] val cache: AsyncLoadingCache[String, GetResult] =
     Caffeine
       .newBuilder()
-      .maximumSize(maximumSize)
+      .matwitterimumSize(matwitterimumSize)
       .refreshAfterWrite(ttl.inMilliseconds * 3 / 4, TimeUnit.MILLISECONDS)
-      .expireAfterWrite(ttl.inMilliseconds, TimeUnit.MILLISECONDS)
+      .etwitterpireAfterWrite(ttl.inMilliseconds, TimeUnit.MILLISECONDS)
       .recordStats(new Supplier[StatsCounter] {
         override def get(): StatsCounter = Stats
       })

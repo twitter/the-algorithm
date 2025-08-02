@@ -1,6 +1,6 @@
 package com.twitter.search.ingester.pipeline.twitter;
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
@@ -37,13 +37,13 @@ public final class ResolveCompressedUrlsUtils {
    *  - urlDirectInfo: both the media type and link category must be set.
    *  - htmlBasics: Pink has successfully parsed the resolved link's metadata.
    *  - resolution: Pink was able to successfully get to the last hop in the redirect chain.
-   *                This is especially important, because some sites have a robots.txt file, which
+   *                This is especially important, because some sites have a robots.ttwittert file, which
    *                prevents Pink from following the redirect chain once it gets to that site.
    *                In that case, we end up with a "last hop" URL, but the FetchStatusCode is not
    *                set to OK. We need to ignore these URLs because we don't know if they're really
    *                the last hop URLs.
-   *                Also, Pink has some restrictions on the page size. For example, it does not
-   *                parse text pages that are larger than 2MB. So if the redirect chain leads Pink
+   *                Also, Pink has some restrictions on the page size. For etwitterample, it does not
+   *                parse tetwittert pages that are larger than 2MB. So if the redirect chain leads Pink
    *                to one of these pages, it will stop there. And again, we don't know if this is
    *                the last hop URL or not, so we have to ignore that URL.
    *

@@ -13,44 +13,44 @@ import com.twitter.strato.config.BouncerAccess
 import com.twitter.strato.config.ContactInfo
 import com.twitter.strato.config.Policy
 import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
+import com.twitter.strato.data.Description.PlainTetwittert
 import com.twitter.strato.data.Lifecycle.Production
 import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.opcontext.OpContext
+import com.twitter.strato.opcontetwittert.OpContetwittert
 import com.twitter.strato.response.Err
 import com.twitter.strato.thrift.ScroogeConv
 import com.twitter.tweetypie.decider.overrides.TweetyPieDeciderOverrides
 import com.twitter.tweetypie.federated.columns.ApiErrors._
 import com.twitter.tweetypie.federated.columns.CreateTweetColumn.toCreateTweetErr
-import com.twitter.tweetypie.federated.context.GetRequestContext
+import com.twitter.tweetypie.federated.contetwittert.GetRequestContetwittert
 import com.twitter.tweetypie.federated.prefetcheddata.PrefetchedDataRequest
 import com.twitter.tweetypie.federated.prefetcheddata.PrefetchedDataResponse
 import com.twitter.tweetypie.federated.promotedcontent.TweetPromotedContentLogger
 import com.twitter.tweetypie.federated.promotedcontent.TweetPromotedContentLogger._
 import com.twitter.tweetypie.repository.UnmentionInfoRepository
 import com.twitter.tweetypie.repository.VibeRepository
-import com.twitter.tweetypie.thriftscala.TransientCreateContext
-import com.twitter.tweetypie.thriftscala.TweetCreateContextKey
+import com.twitter.tweetypie.thriftscala.TransientCreateContetwittert
+import com.twitter.tweetypie.thriftscala.TweetCreateContetwittertKey
 import com.twitter.tweetypie.thriftscala.TweetCreateState._
 import com.twitter.tweetypie.thriftscala.{graphql => gql}
 import com.twitter.tweetypie.util.CommunityAnnotation
 import com.twitter.tweetypie.util.ConversationControls
-import com.twitter.tweetypie.util.TransientContextUtil
+import com.twitter.tweetypie.util.TransientContetwittertUtil
 import com.twitter.tweetypie.{thriftscala => thrift}
 import com.twitter.util.Throwables
-import com.twitter.weaverbird.common.{GetRequestContext => WGetRequestContext}
+import com.twitter.weaverbird.common.{GetRequestContetwittert => WGetRequestContetwittert}
 
 class CreateTweetColumn(
   postTweet: thrift.PostTweetRequest => Future[thrift.PostTweetResult],
-  getRequestContext: GetRequestContext,
+  getRequestContetwittert: GetRequestContetwittert,
   prefetchedDataRepository: PrefetchedDataRequest => Stitch[PrefetchedDataResponse],
   unmentionInfoRepository: UnmentionInfoRepository.Type,
   vibeRepository: VibeRepository.Type,
   logTweetPromotedContent: TweetPromotedContentLogger.Type,
   statsReceiver: StatsReceiver,
   enableCommunityTweetCreatesDecider: Gate[Unit],
-) extends StratoFed.Column(CreateTweetColumn.Path)
-    with StratoFed.Execute.StitchWithContext
+) etwittertends StratoFed.Column(CreateTweetColumn.Path)
+    with StratoFed.Etwitterecute.StitchWithContetwittert
     with StratoFed.HandleDarkRequests {
 
   override val policy: Policy = AllOf(
@@ -70,7 +70,7 @@ class CreateTweetColumn(
     OpMetadata(
       Some(Production),
       Some(
-        PlainText(
+        PlainTetwittert(
           """
     Creates a tweet using the calling authenticated Twitter user as author. 
     NOTE, not all Tweet space fields are GraphQL queryable in the CreateTweet mutation response. 
@@ -78,18 +78,18 @@ class CreateTweetColumn(
     """))
     )
 
-  private val getWeaverbirdCtx = new WGetRequestContext()
+  private val getWeaverbirdCttwitter = new WGetRequestContetwittert()
 
-  override def execute(request: Arg, opContext: OpContext): Stitch[Result] = {
+  override def etwitterecute(request: Arg, opContetwittert: OpContetwittert): Stitch[Result] = {
 
-    val ctx = getRequestContext(opContext)
+    val cttwitter = getRequestContetwittert(opContetwittert)
 
     // First, do any request parameter validation that can result in an error
     // prior to calling into thriftTweetService.postTweet.
-    val safetyLevel = ctx.safetyLevel.getOrElse(throw SafetyLevelMissingErr)
+    val safetyLevel = cttwitter.safetyLevel.getOrElse(throw SafetyLevelMissingErr)
 
     val trackingId = request.engagementRequest match {
-      case Some(engagementRequest: EngagementRequest) if ctx.hasPrivilegePromotedTweetsInTimeline =>
+      case Some(engagementRequest: EngagementRequest) if cttwitter.hasPrivilegePromotedTweetsInTimeline =>
         TrackingId.parse(engagementRequest.impressionId, statsReceiver)
       case Some(e: EngagementRequest) =>
         throw ClientNotPrivilegedErr
@@ -97,16 +97,16 @@ class CreateTweetColumn(
         None
     }
 
-    val deviceSource = ctx.deviceSource.getOrElse(throw GenericAccessDeniedErr)
+    val deviceSource = cttwitter.deviceSource.getOrElse(throw GenericAccessDeniedErr)
 
-    if (request.nullcast && !ctx.hasPrivilegeNullcastingAccess) {
+    if (request.nullcast && !cttwitter.hasPrivilegeNullcastingAccess) {
       throw GenericAccessDeniedErr
     }
 
     val safetyMetadata = SafetyMetadataUtils.makeSafetyMetaData(
-      sessionHash = ctx.sessionHash,
-      knownDeviceToken = ctx.knownDeviceToken,
-      contributorId = ctx.contributorId
+      sessionHash = cttwitter.sessionHash,
+      knownDeviceToken = cttwitter.knownDeviceToken,
+      contributorId = cttwitter.contributorId
     )
 
     val cardReference: Option[thrift.CardReference] =
@@ -122,7 +122,7 @@ class CreateTweetColumn(
     val mediaUploadIds = mediaEntities.map(_.map(_.mediaId)).filter(_.nonEmpty)
 
     val mediaTags: Option[thrift.TweetMediaTags] = {
-      val mediaTagsAuthorized = !ctx.isContributorRequest
+      val mediaTagsAuthorized = !cttwitter.isContributorRequest
 
       val tagMap: Map[MediaId, Seq[thrift.MediaTag]] =
         mediaEntities
@@ -171,42 +171,42 @@ class CreateTweetColumn(
             mediaTags = mediaTags
           ))
 
-    val transientContext: Option[TransientCreateContext] =
-      parseTransientContext(
+    val transientContetwittert: Option[TransientCreateContetwittert] =
+      parseTransientContetwittert(
         request.batchCompose,
         request.periscope,
-        ctx.twitterUserId,
+        cttwitter.twitterUserId,
       )
 
-    // PostTweetRequest.additionalContext is marked as deprecated in favor of .transientContext,
+    // PostTweetRequest.additionalContetwittert is marked as deprecated in favor of .transientContetwittert,
     // but the REST API still supports it and it is still passed along through Tweetypie, and
     // FanoutService and Notifications still depend on it.
-    val additionalContext: Option[Map[TweetCreateContextKey, String]] =
-      transientContext.map(TransientContextUtil.toAdditionalContext)
+    val additionalContetwittert: Option[Map[TweetCreateContetwittertKey, String]] =
+      transientContetwittert.map(TransientContetwittertUtil.toAdditionalContetwittert)
 
     val thriftPostTweetRequest = thrift.PostTweetRequest(
-      userId = ctx.twitterUserId,
-      text = request.tweetText,
+      userId = cttwitter.twitterUserId,
+      tetwittert = request.tweetTetwittert,
       createdVia = deviceSource,
       inReplyToTweetId = request.reply.map(_.inReplyToTweetId),
       geo = request.geo.flatMap(parseTweetCreateGeo),
       autoPopulateReplyMetadata = request.reply.isDefined,
-      excludeReplyUserIds = request.reply.map(_.excludeReplyUserIds).filter(_.nonEmpty),
+      etwittercludeReplyUserIds = request.reply.map(_.etwittercludeReplyUserIds).filter(_.nonEmpty),
       nullcast = request.nullcast,
       // Send a dark request to Tweetypie if the dark_request directive is set or
       // if the Tweet is undo-able.
-      dark = ctx.isDarkRequest || request.undoOptions.exists(_.isUndo),
-      hydrationOptions = Some(HydrationOptions.writePathHydrationOptions(ctx.cardsPlatformKey)),
-      remoteHost = ctx.remoteHost,
+      dark = cttwitter.isDarkRequest || request.undoOptions.etwitterists(_.isUndo),
+      hydrationOptions = Some(HydrationOptions.writePathHydrationOptions(cttwitter.cardsPlatformKey)),
+      remoteHost = cttwitter.remoteHost,
       safetyMetaData = Some(safetyMetadata),
       attachmentUrl = request.attachmentUrl,
       mediaUploadIds = mediaUploadIds,
       mediaMetadata = None,
-      transientContext = transientContext,
-      additionalContext = additionalContext,
+      transientContetwittert = transientContetwittert,
+      additionalContetwittert = additionalContetwittert,
       conversationControl = request.conversationControl.map(parseTweetCreateConversationControl),
-      exclusiveTweetControlOptions = request.exclusiveTweetControlOptions.map { _ =>
-        thrift.ExclusiveTweetControlOptions()
+      etwitterclusiveTweetControlOptions = request.etwitterclusiveTweetControlOptions.map { _ =>
+        thrift.EtwitterclusiveTweetControlOptions()
       },
       trustedFriendsControlOptions =
         request.trustedFriendsControlOptions.map(parseTrustedFriendsControlOptions),
@@ -219,7 +219,7 @@ class CreateTweetColumn(
           options.noteTweetId,
           options.mentionedScreenNames,
           options.mentionedUserIds,
-          options.isExpandable))
+          options.isEtwitterpandable))
     )
 
     val stitchPostTweet =
@@ -231,9 +231,9 @@ class CreateTweetColumn(
 
     for {
       engagement <- request.engagementRequest
-      if !request.reply.exists(_.inReplyToTweetId == 0) // no op per go/rb/845242
+      if !request.reply.etwitterists(_.inReplyToTweetId == 0) // no op per go/rb/845242
       engagementType = if (request.reply.isDefined) ReplyEngagement else TweetEngagement
-    } logTweetPromotedContent(engagement, engagementType, ctx.isDarkRequest)
+    } logTweetPromotedContent(engagement, engagementType, cttwitter.isDarkRequest)
 
     stitchPostTweet.flatMap { result: thrift.PostTweetResult =>
       result.state match {
@@ -294,7 +294,7 @@ class CreateTweetColumn(
                 safetyLevel = safetyLevel,
                 unmentionInfo = prefetchFields.flatMap(params => params._1),
                 vibe = prefetchFields.flatMap(params => params._2),
-                requestContext = getWeaverbirdCtx()
+                requestContetwittert = getWeaverbirdCttwitter()
               )
 
               prefetchedDataRepository(r)
@@ -393,11 +393,11 @@ class CreateTweetColumn(
     }
   }
 
-  private[this] def parseTransientContext(
+  private[this] def parseTransientContetwittert(
     gqlBatchComposeMode: Option[gql.BatchComposeMode],
-    gqlPeriscope: Option[gql.TweetPeriscopeContext],
+    gqlPeriscope: Option[gql.TweetPeriscopeContetwittert],
     twitterUserId: UserId,
-  ): Option[TransientCreateContext] = {
+  ): Option[TransientCreateContetwittert] = {
     val batchComposeMode = gqlBatchComposeMode.map(parseBatchMode)
 
     // Per c.t.fanoutservice.model.Tweet#deviceFollowType, isLive=None and Some(false) are
@@ -407,7 +407,7 @@ class CreateTweetColumn(
 
     if (batchComposeMode.isDefined || periscopeIsLive.isDefined) {
       Some(
-        thrift.TransientCreateContext(
+        thrift.TransientCreateContetwittert(
           batchCompose = batchComposeMode,
           periscopeIsLive = periscopeIsLive,
           periscopeCreatorId = periscopeCreatorId
@@ -450,10 +450,10 @@ object CreateTweetColumn {
     bounce: Option[BouncerBounce],
     failureReason: Option[String]
   ): Err = errState match {
-    case TextCannotBeBlank =>
+    case TetwittertCannotBeBlank =>
       TweetCannotBeBlankErr
-    case TextTooLong =>
-      TweetTextTooLongErr
+    case TetwittertTooLong =>
+      TweetTetwittertTooLongErr
     case Duplicate =>
       DuplicateStatusErr
     case MalwareUrl =>
@@ -461,28 +461,28 @@ object CreateTweetColumn {
     case UserDeactivated | UserSuspended =>
       // should not occur since this condition is caught by access policy filters
       CurrentUserSuspendedErr
-    case RateLimitExceeded =>
-      RateLimitExceededErr
+    case RateLimitEtwitterceeded =>
+      RateLimitEtwitterceededErr
     case UrlSpam =>
       TweetUrlSpamErr
     case Spam | UserReadonly =>
       TweetSpammerErr
     case SpamCaptcha =>
       CaptchaChallengeErr
-    case SafetyRateLimitExceeded =>
-      SafetyRateLimitExceededErr
+    case SafetyRateLimitEtwitterceeded =>
+      SafetyRateLimitEtwitterceededErr
     case Bounce if bounce.isDefined =>
       accessDeniedByBouncerErr(bounce.get)
-    case MentionLimitExceeded =>
-      MentionLimitExceededErr
-    case UrlLimitExceeded =>
-      UrlLimitExceededErr
-    case HashtagLimitExceeded =>
-      HashtagLimitExceededErr
-    case CashtagLimitExceeded =>
-      CashtagLimitExceededErr
-    case HashtagLengthLimitExceeded =>
-      HashtagLengthLimitExceededErr
+    case MentionLimitEtwitterceeded =>
+      MentionLimitEtwitterceededErr
+    case UrlLimitEtwitterceeded =>
+      UrlLimitEtwitterceededErr
+    case HashtagLimitEtwitterceeded =>
+      HashtagLimitEtwitterceededErr
+    case CashtagLimitEtwitterceeded =>
+      CashtagLimitEtwitterceededErr
+    case HashtagLengthLimitEtwitterceeded =>
+      HashtagLengthLimitEtwitterceededErr
     case TooManyAttachmentTypes =>
       TooManyAttachmentTypesErr
     case InvalidUrl =>
@@ -508,8 +508,8 @@ object CreateTweetColumn {
       ConversationControlInvalidErr
     case ReplyTweetNotAllowed =>
       ConversationControlReplyRestricted
-    case ExclusiveTweetEngagementNotAllowed =>
-      ExclusiveTweetEngagementNotAllowedErr
+    case EtwitterclusiveTweetEngagementNotAllowed =>
+      EtwitterclusiveTweetEngagementNotAllowedErr
     case CommunityReplyTweetNotAllowed =>
       CommunityReplyTweetNotAllowedErr
     case CommunityUserNotAuthorized =>

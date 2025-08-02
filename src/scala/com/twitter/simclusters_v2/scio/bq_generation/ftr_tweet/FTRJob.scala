@@ -2,7 +2,7 @@ package com.twitter.simclusters_v2.scio.bq_generation
 package ftr_tweet
 
 import com.google.api.services.bigquery.model.TimePartitioning
-import com.spotify.scio.ScioContext
+import com.spotify.scio.ScioContetwittert
 import com.spotify.scio.coders.Coder
 import com.twitter.beam.io.dal.DAL
 import com.twitter.beam.io.fs.multiformat.PathLayout
@@ -17,7 +17,7 @@ import com.twitter.simclusters_v2.scio.bq_generation.common.BQTableDetails
 import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getInterestedIn2020SQL
 import com.twitter.simclusters_v2.thriftscala.CandidateTweets
 import com.twitter.simclusters_v2.thriftscala.CandidateTweetsList
-import com.twitter.tcdc.bqblaster.beam.syntax._
+import com.twitter.tcdc.bqblaster.beam.syntatwitter._
 import com.twitter.tcdc.bqblaster.core.avro.TypedProjection
 import com.twitter.tcdc.bqblaster.core.transform.RootTransform
 import java.time.Instant
@@ -28,9 +28,9 @@ import scala.collection.mutable.ListBuffer
 import org.apache.beam.sdk.io.gcp.bigquery.SchemaAndRecord
 import org.apache.beam.sdk.transforms.SerializableFunction
 import org.apache.avro.generic.GenericRecord
-import com.twitter.wtf.beam.bq_embedding_export.BQQueryUtils
+import com.twitter.wtf.beam.bq_embedding_etwitterport.BQQueryUtils
 
-trait FTRJob extends ScioBeamJob[DateRangeOptions] {
+trait FTRJob etwittertends ScioBeamJob[DateRangeOptions] {
   // Configs to set for different type of embeddings and jobs
   val isAdhoc: Boolean
   val outputTable: BQTableDetails
@@ -46,7 +46,7 @@ trait FTRJob extends ScioBeamJob[DateRangeOptions] {
   override implicit def scroogeCoder[T <: ThriftStruct: Manifest]: Coder[T] =
     ThriftStructLazyBinaryScroogeCoder.scroogeCoder
 
-  override def configurePipeline(sc: ScioContext, opts: DateRangeOptions): Unit = {
+  override def configurePipeline(sc: ScioContetwittert, opts: DateRangeOptions): Unit = {
     // The time when the job is scheduled
     val queryTimestamp = opts.interval.getEnd
 
@@ -87,10 +87,10 @@ trait FTRJob extends ScioBeamJob[DateRangeOptions] {
         "ENG_SAMPLE_RATE" -> Config.EngSampleRate.toString,
         "MIN_TWEET_FAVS" -> Config.MinTweetFavs.toString,
         "MIN_TWEET_IMPS" -> Config.MinTweetImps.toString,
-        "MAX_TWEET_FTR" -> Config.MaxTweetFTR.toString,
-        "MAX_USER_LOG_N_IMPS" -> Config.MaxUserLogNImps.toString,
-        "MAX_USER_LOG_N_FAVS" -> Config.MaxUserLogNFavs.toString,
-        "MAX_USER_FTR" -> Config.MaxUserFTR.toString,
+        "MAtwitter_TWEET_FTR" -> Config.MatwitterTweetFTR.toString,
+        "MAtwitter_USER_LOG_N_IMPS" -> Config.MatwitterUserLogNImps.toString,
+        "MAtwitter_USER_LOG_N_FAVS" -> Config.MatwitterUserLogNFavs.toString,
+        "MAtwitter_USER_FTR" -> Config.MatwitterUserFTR.toString,
         "TWEET_EMBEDDING_LENGTH" -> Config.SimClustersTweetEmbeddingsGenerationEmbeddingLength.toString,
         "HALFLIFE" -> Config.SimClustersTweetEmbeddingsGenerationHalfLife.toString,
         "SCORE_COLUMN" -> scoreColumn,
@@ -128,11 +128,11 @@ trait FTRJob extends ScioBeamJob[DateRangeOptions] {
       .Builder()
       .withPrependedFields("ingestionTime" -> TypedProjection.fromConstant(ingestionTime))
     val timePartitioning = new TimePartitioning()
-      .setType("HOUR").setField("ingestionTime").setExpirationMs(3.days.inMilliseconds)
+      .setType("HOUR").setField("ingestionTime").setEtwitterpirationMs(3.days.inMilliseconds)
     val bqWriter = BigQueryIO
       .write[CandidateTweets]
       .to(outputTable.toString)
-      .withExtendedErrorInfo()
+      .withEtwittertendedErrorInfo()
       .withTimePartitioning(timePartitioning)
       .withLoadJobProjectId(projectId)
       .withThriftSupport(bqFieldsTransform.build(), AvroConverter.Legacy)
@@ -163,7 +163,7 @@ trait FTRJob extends ScioBeamJob[DateRangeOptions] {
         name = "WriteFtrTweetRecommendationsToKeyValDataset",
         DAL.writeVersionedKeyVal(
           tweetRecommentationsSnapshotDataset,
-          PathLayout.VersionedPath(prefix =
+          PathLayout.VersionedPath(prefitwitter =
             ((if (!isAdhoc)
                 RootMHPath
               else
@@ -177,7 +177,7 @@ trait FTRJob extends ScioBeamJob[DateRangeOptions] {
 
 }
 
-object FTRAdhocJob extends FTRJob {
+object FTRAdhocJob etwittertends FTRJob {
   override val isAdhoc = true
   override val outputTable: BQTableDetails =
     BQTableDetails("twttr-recos-ml-prod", "simclusters", "offline_tweet_recommendations_ftr_adhoc")
@@ -191,7 +191,7 @@ object FTRAdhocJob extends FTRJob {
   override val scoreKey = "ftrat5_decayed_pop_bias_1000_rank_decay_1_1"
 }
 
-object IIKF2020DecayedSumBatchJobProd extends FTRJob {
+object IIKF2020DecayedSumBatchJobProd etwittertends FTRJob {
   override val isAdhoc = false
   override val outputTable: BQTableDetails = BQTableDetails(
     "twttr-bq-cassowary-prod",
@@ -207,7 +207,7 @@ object IIKF2020DecayedSumBatchJobProd extends FTRJob {
   override val scoreKey = "dec_sum_logfavScoreClusterNormalizedOnly"
 }
 
-object IIKF2020FTRAt5Pop1000batchJobProd extends FTRJob {
+object IIKF2020FTRAt5Pop1000batchJobProd etwittertends FTRJob {
   override val isAdhoc = false
   override val outputTable: BQTableDetails = BQTableDetails(
     "twttr-bq-cassowary-prod",
@@ -222,7 +222,7 @@ object IIKF2020FTRAt5Pop1000batchJobProd extends FTRJob {
   override val scoreKey = "ftrat5_decayed_pop_bias_1000_rank_decay_1_1"
 }
 
-object IIKF2020FTRAt5Pop10000batchJobProd extends FTRJob {
+object IIKF2020FTRAt5Pop10000batchJobProd etwittertends FTRJob {
   override val isAdhoc = false
   override val outputTable: BQTableDetails = BQTableDetails(
     "twttr-bq-cassowary-prod",

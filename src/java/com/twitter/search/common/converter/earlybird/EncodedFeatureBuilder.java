@@ -1,14 +1,14 @@
 package com.twitter.search.common.converter.earlybird;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regetwitter.Matcher;
+import java.util.regetwitter.Pattern;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Joiner;
@@ -20,35 +20,35 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.twitter.common.text.token.TokenizedCharSequence;
-import com.twitter.common.text.token.TokenizedCharSequenceStream;
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.indexing.thriftjava.Place;
-import com.twitter.search.common.indexing.thriftjava.PotentialLocation;
-import com.twitter.search.common.indexing.thriftjava.ProfileGeoEnrichment;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.indexing.thriftjava.VersionedTweetFeatures;
+import com.twitter.common.tetwittert.token.TokenizedCharSequence;
+import com.twitter.common.tetwittert.token.TokenizedCharSequenceStream;
+import com.twitter.common.tetwittert.util.TokenStreamSerializer;
+import com.twitter.common_internal.tetwittert.version.PenguinVersion;
+import com.twitter.search.common.indetwittering.thriftjava.Place;
+import com.twitter.search.common.indetwittering.thriftjava.PotentialLocation;
+import com.twitter.search.common.indetwittering.thriftjava.ProfileGeoEnrichment;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftEtwitterpandedUrl;
+import com.twitter.search.common.indetwittering.thriftjava.VersionedTweetFeatures;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.relevance.entities.PotentialLocationObject;
 import com.twitter.search.common.relevance.entities.TwitterMessage;
 import com.twitter.search.common.relevance.features.FeatureSink;
 import com.twitter.search.common.relevance.features.MutableFeatureNormalizers;
 import com.twitter.search.common.relevance.features.RelevanceSignalConstants;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.relevance.features.TweetTextQuality;
+import com.twitter.search.common.relevance.features.TweetTetwittertFeatures;
+import com.twitter.search.common.relevance.features.TweetTetwittertQuality;
 import com.twitter.search.common.relevance.features.TweetUserFeatures;
 import com.twitter.search.common.schema.base.FeatureConfiguration;
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
 import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeatures;
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
 import com.twitter.search.common.util.lang.ThriftLanguageUtil;
-import com.twitter.search.common.util.text.LanguageIdentifierHelper;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.search.common.util.text.SourceNormalizer;
-import com.twitter.search.common.util.text.TokenizerHelper;
-import com.twitter.search.common.util.text.TokenizerResult;
-import com.twitter.search.common.util.text.TweetTokenStreamSerializer;
+import com.twitter.search.common.util.tetwittert.LanguageIdentifierHelper;
+import com.twitter.search.common.util.tetwittert.NormalizerHelper;
+import com.twitter.search.common.util.tetwittert.SourceNormalizer;
+import com.twitter.search.common.util.tetwittert.TokenizerHelper;
+import com.twitter.search.common.util.tetwittert.TokenizerResult;
+import com.twitter.search.common.util.tetwittert.TweetTokenStreamSerializer;
 import com.twitter.search.common.util.url.LinkVisibilityUtils;
 import com.twitter.search.common.util.url.NativeVideoClassificationUtils;
 import com.twitter.search.ingester.model.VisibleTokenRatioUtil;
@@ -62,7 +62,7 @@ public class EncodedFeatureBuilder {
   private static final Logger LOG = LoggerFactory.getLogger(EncodedFeatureBuilder.class);
 
   private static final SearchCounter NUM_TWEETS_WITH_INVALID_TWEET_ID_IN_PHOTO_URL =
-      SearchCounter.export("tweets_with_invalid_tweet_id_in_photo_url");
+      SearchCounter.etwitterport("tweets_with_invalid_tweet_id_in_photo_url");
 
   // TwitterTokenStream for converting TokenizedCharSequence into a stream for serialization
   // This is stateful so should only be used one tweet at a time
@@ -84,7 +84,7 @@ public class EncodedFeatureBuilder {
     for (PenguinVersion penguinVersion : PenguinVersion.values()) {
       SERIALIZE_FAILURE_COUNTERS_MAP.put(
           penguinVersion,
-          SearchCounter.export(
+          SearchCounter.etwitterport(
               "tokenstream_serialization_failure_" + penguinVersion.name().toLowerCase()));
     }
   }
@@ -92,25 +92,25 @@ public class EncodedFeatureBuilder {
   public static class TweetFeatureWithEncodeFeatures {
     public final VersionedTweetFeatures versionedFeatures;
     public final EarlybirdEncodedFeatures encodedFeatures;
-    public final EarlybirdEncodedFeatures extendedEncodedFeatures;
+    public final EarlybirdEncodedFeatures etwittertendedEncodedFeatures;
 
     public TweetFeatureWithEncodeFeatures(
         VersionedTweetFeatures versionedFeatures,
         EarlybirdEncodedFeatures encodedFeatures,
-        EarlybirdEncodedFeatures extendedEncodedFeatures) {
+        EarlybirdEncodedFeatures etwittertendedEncodedFeatures) {
       this.versionedFeatures = versionedFeatures;
       this.encodedFeatures = encodedFeatures;
-      this.extendedEncodedFeatures = extendedEncodedFeatures;
+      this.etwittertendedEncodedFeatures = etwittertendedEncodedFeatures;
     }
   }
 
   /**
-   * Create tweet text features and the encoded features.
+   * Create tweet tetwittert features and the encoded features.
    *
    * @param message the tweet message
    * @param penguinVersion the based penguin version to create the features
    * @param schemaSnapshot the schema associated with the features
-   * @return the text features and the encoded features
+   * @return the tetwittert features and the encoded features
    */
   public TweetFeatureWithEncodeFeatures createTweetFeaturesFromTwitterMessage(
       TwitterMessage message,
@@ -118,42 +118,42 @@ public class EncodedFeatureBuilder {
       ImmutableSchemaInterface schemaSnapshot) {
     VersionedTweetFeatures versionedTweetFeatures = new VersionedTweetFeatures();
 
-    // Write extendedPackedFeatures.
-    EarlybirdEncodedFeatures extendedEncodedFeatures =
-        createExtendedEncodedFeaturesFromTwitterMessage(message, penguinVersion, schemaSnapshot);
-    if (extendedEncodedFeatures != null) {
-      extendedEncodedFeatures
-          .writeExtendedFeaturesToVersionedTweetFeatures(versionedTweetFeatures);
+    // Write etwittertendedPackedFeatures.
+    EarlybirdEncodedFeatures etwittertendedEncodedFeatures =
+        createEtwittertendedEncodedFeaturesFromTwitterMessage(message, penguinVersion, schemaSnapshot);
+    if (etwittertendedEncodedFeatures != null) {
+      etwittertendedEncodedFeatures
+          .writeEtwittertendedFeaturesToVersionedTweetFeatures(versionedTweetFeatures);
     }
 
     setSourceAndNormalizedSource(
         message.getStrippedSource(), versionedTweetFeatures, penguinVersion);
 
-    TweetTextFeatures textFeatures = message.getTweetTextFeatures(penguinVersion);
+    TweetTetwittertFeatures tetwittertFeatures = message.getTweetTetwittertFeatures(penguinVersion);
 
     ///////////////////////////////
     // Add hashtags and mentions
-    textFeatures.getHashtags().forEach(versionedTweetFeatures::addToHashtags);
-    textFeatures.getMentions().forEach(versionedTweetFeatures::addToMentions);
+    tetwittertFeatures.getHashtags().forEach(versionedTweetFeatures::addToHashtags);
+    tetwittertFeatures.getMentions().forEach(versionedTweetFeatures::addToMentions);
 
     ///////////////////////////////
-    // Extract some extra information from the message text.
-    // Index stock symbols with $ prepended
-    textFeatures.getStocks().stream()
+    // Etwittertract some etwittertra information from the message tetwittert.
+    // Indetwitter stock symbols with $ prepended
+    tetwittertFeatures.getStocks().stream()
         .filter(stock -> stock != null)
         .forEach(stock -> versionedTweetFeatures.addToStocks(stock.toLowerCase()));
 
     // Question marks
-    versionedTweetFeatures.setHasQuestionMark(textFeatures.hasQuestionMark());
+    versionedTweetFeatures.setHasQuestionMark(tetwittertFeatures.hasQuestionMark());
     // Smileys
-    versionedTweetFeatures.setHasPositiveSmiley(textFeatures.hasPositiveSmiley());
-    versionedTweetFeatures.setHasNegativeSmiley(textFeatures.hasNegativeSmiley());
+    versionedTweetFeatures.setHasPositiveSmiley(tetwittertFeatures.hasPositiveSmiley());
+    versionedTweetFeatures.setHasNegativeSmiley(tetwittertFeatures.hasNegativeSmiley());
 
     TokenStreamSerializer streamSerializer =
         TweetTokenStreamSerializer.getTweetTokenStreamSerializer();
-    TokenizedCharSequence tokenSeq = textFeatures.getTokenSequence();
+    TokenizedCharSequence tokenSeq = tetwittertFeatures.getTokenSequence();
     tokenSeqStream.reset(tokenSeq);
-    int tokenPercent = VISIBLE_TOKEN_RATIO.extractAndNormalizeTokenPercentage(tokenSeqStream);
+    int tokenPercent = VISIBLE_TOKEN_RATIO.etwittertractAndNormalizeTokenPercentage(tokenSeqStream);
     tokenSeqStream.reset(tokenSeq);
 
     // Write packedFeatures.
@@ -163,13 +163,13 @@ public class EncodedFeatureBuilder {
 
     try {
       versionedTweetFeatures.setTweetTokenStream(streamSerializer.serialize(tokenSeqStream));
-      versionedTweetFeatures.setTweetTokenStreamText(tokenSeq.toString());
-    } catch (IOException e) {
+      versionedTweetFeatures.setTweetTokenStreamTetwittert(tokenSeq.toString());
+    } catch (IOEtwitterception e) {
       LOG.error("TwitterTokenStream serialization error! Could not serialize: "
           + tokenSeq.toString());
       SERIALIZE_FAILURE_COUNTERS_MAP.get(penguinVersion).increment();
       versionedTweetFeatures.unsetTweetTokenStream();
-      versionedTweetFeatures.unsetTweetTokenStreamText();
+      versionedTweetFeatures.unsetTweetTokenStreamTetwittert();
     }
 
     // User name features
@@ -184,18 +184,18 @@ public class EncodedFeatureBuilder {
       try {
         versionedTweetFeatures.setUserDisplayNameTokenStream(
             streamSerializer.serialize(tokenSeqStream));
-        versionedTweetFeatures.setUserDisplayNameTokenStreamText(result.tokenSequence.toString());
-      } catch (IOException e) {
+        versionedTweetFeatures.setUserDisplayNameTokenStreamTetwittert(result.tokenSequence.toString());
+      } catch (IOEtwitterception e) {
         LOG.error("TwitterTokenStream serialization error! Could not serialize: "
             + message.getFromUserDisplayName().get());
         SERIALIZE_FAILURE_COUNTERS_MAP.get(penguinVersion).increment();
         versionedTweetFeatures.unsetUserDisplayNameTokenStream();
-        versionedTweetFeatures.unsetUserDisplayNameTokenStreamText();
+        versionedTweetFeatures.unsetUserDisplayNameTokenStreamTetwittert();
       }
     }
 
-    String resolvedUrlsText = Joiner.on(" ").skipNulls().join(textFeatures.getResolvedUrlTokens());
-    versionedTweetFeatures.setNormalizedResolvedUrlText(resolvedUrlsText);
+    String resolvedUrlsTetwittert = Joiner.on(" ").skipNulls().join(tetwittertFeatures.getResolvedUrlTokens());
+    versionedTweetFeatures.setNormalizedResolvedUrlTetwittert(resolvedUrlsTetwittert);
 
     addPlace(message, versionedTweetFeatures, penguinVersion);
     addProfileGeoEnrichment(message, versionedTweetFeatures, penguinVersion);
@@ -203,7 +203,7 @@ public class EncodedFeatureBuilder {
     versionedTweetFeatures.setTweetSignature(message.getTweetSignature(penguinVersion));
 
     return new TweetFeatureWithEncodeFeatures(
-        versionedTweetFeatures, encodedFeatures, extendedEncodedFeatures);
+        versionedTweetFeatures, encodedFeatures, etwittertendedEncodedFeatures);
   }
 
 
@@ -243,7 +243,7 @@ public class EncodedFeatureBuilder {
         try {
           long photoStatusId = Long.parseLong(idStr);
           message.addPhotoUrl(photoStatusId, null);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatEtwitterception e) {
           LOG.warn("Found a tweet with a photo URL with an invalid tweet ID: " + message);
           NUM_TWEETS_WITH_INVALID_TWEET_ID_IN_PHOTO_URL.increment();
         }
@@ -316,8 +316,8 @@ public class EncodedFeatureBuilder {
             EarlybirdFieldConstant.FROM_BLUE_VERIFIED_ACCOUNT_FLAG, message.isUserBlueVerified())
         .setBooleanValue(EarlybirdFieldConstant.IS_SENSITIVE_CONTENT, message.isSensitiveContent());
 
-    TweetTextFeatures textFeatures = message.getTweetTextFeatures(penguinVersion);
-    if (textFeatures != null) {
+    TweetTetwittertFeatures tetwittertFeatures = message.getTweetTetwittertFeatures(penguinVersion);
+    if (tetwittertFeatures != null) {
       final FeatureConfiguration featureConfigNumHashtags = schema.getFeatureConfigurationByName(
           EarlybirdFieldConstant.NUM_HASHTAGS.getFieldName());
       final FeatureConfiguration featureConfigNumMentions = schema.getFeatureConfigurationByName(
@@ -325,38 +325,38 @@ public class EncodedFeatureBuilder {
 
       sink.setNumericValue(
               EarlybirdFieldConstant.NUM_HASHTAGS,
-              Math.min(textFeatures.getHashtagsSize(), featureConfigNumHashtags.getMaxValue()))
+              Math.min(tetwittertFeatures.getHashtagsSize(), featureConfigNumHashtags.getMatwitterValue()))
           .setNumericValue(
               EarlybirdFieldConstant.NUM_MENTIONS,
-              Math.min(textFeatures.getMentionsSize(), featureConfigNumMentions.getMaxValue()))
+              Math.min(tetwittertFeatures.getMentionsSize(), featureConfigNumMentions.getMatwitterValue()))
           .setBooleanValue(
               EarlybirdFieldConstant.HAS_MULTIPLE_HASHTAGS_OR_TRENDS_FLAG,
-              TwitterMessage.hasMultipleHashtagsOrTrends(textFeatures))
+              TwitterMessage.hasMultipleHashtagsOrTrends(tetwittertFeatures))
           .setBooleanValue(
               EarlybirdFieldConstant.HAS_TREND_FLAG,
-              textFeatures.getTrendingTermsSize() > 0);
+              tetwittertFeatures.getTrendingTermsSize() > 0);
     }
 
-    TweetTextQuality textQuality = message.getTweetTextQuality(penguinVersion);
-    if (textQuality != null) {
-      sink.setNumericValue(EarlybirdFieldConstant.TEXT_SCORE, textQuality.getTextScore());
+    TweetTetwittertQuality tetwittertQuality = message.getTweetTetwittertQuality(penguinVersion);
+    if (tetwittertQuality != null) {
+      sink.setNumericValue(EarlybirdFieldConstant.TEtwitterT_SCORE, tetwittertQuality.getTetwittertScore());
       sink.setBooleanValue(
           EarlybirdFieldConstant.IS_OFFENSIVE_FLAG,
-          textQuality.hasBoolQuality(TweetTextQuality.BooleanQualityType.OFFENSIVE)
-              || textQuality.hasBoolQuality(TweetTextQuality.BooleanQualityType.OFFENSIVE_USER)
+          tetwittertQuality.hasBoolQuality(TweetTetwittertQuality.BooleanQualityType.OFFENSIVE)
+              || tetwittertQuality.hasBoolQuality(TweetTetwittertQuality.BooleanQualityType.OFFENSIVE_USER)
               // Note: if json message "possibly_sensitive" flag is set, we consider the tweet
               // sensitive and is currently filtered out in safe search mode via a hacky setup:
               // earlybird does not create _filter_sensitive_content field, only
               // _is_offensive field is created, and used in filter:safe operator
-              || textQuality.hasBoolQuality(TweetTextQuality.BooleanQualityType.SENSITIVE));
-      if (textQuality.hasBoolQuality(TweetTextQuality.BooleanQualityType.SENSITIVE)) {
+              || tetwittertQuality.hasBoolQuality(TweetTetwittertQuality.BooleanQualityType.SENSITIVE));
+      if (tetwittertQuality.hasBoolQuality(TweetTetwittertQuality.BooleanQualityType.SENSITIVE)) {
         sink.setBooleanValue(EarlybirdFieldConstant.IS_SENSITIVE_CONTENT, true);
       }
     } else {
-      // we don't have text score, for whatever reason, set to sentinel value so we won't be
+      // we don't have tetwittert score, for whatever reason, set to sentinel value so we won't be
       // skipped by scoring function
-      sink.setNumericValue(EarlybirdFieldConstant.TEXT_SCORE,
-          RelevanceSignalConstants.UNSET_TEXT_SCORE_SENTINEL);
+      sink.setNumericValue(EarlybirdFieldConstant.TEtwitterT_SCORE,
+          RelevanceSignalConstants.UNSET_TEtwitterT_SCORE_SENTINEL);
     }
 
     if (message.isSetLocale()) {
@@ -405,23 +405,23 @@ public class EncodedFeatureBuilder {
   }
 
   /**
-   * Returns the extended encoded features.
+   * Returns the etwittertended encoded features.
    */
-  public static EarlybirdEncodedFeatures createExtendedEncodedFeaturesFromTwitterMessage(
+  public static EarlybirdEncodedFeatures createEtwittertendedEncodedFeaturesFromTwitterMessage(
     TwitterMessage message,
     PenguinVersion penguinVersion,
     ImmutableSchemaInterface schema) {
     FeatureSink sink = new FeatureSink(schema);
 
-    TweetTextFeatures textFeatures = message.getTweetTextFeatures(penguinVersion);
+    TweetTetwittertFeatures tetwittertFeatures = message.getTweetTetwittertFeatures(penguinVersion);
 
-    if (textFeatures != null) {
-      setExtendedEncodedFeatureIntValue(sink, schema,
-          EarlybirdFieldConstant.NUM_HASHTAGS_V2, textFeatures.getHashtagsSize());
-      setExtendedEncodedFeatureIntValue(sink, schema,
-          EarlybirdFieldConstant.NUM_MENTIONS_V2, textFeatures.getMentionsSize());
-      setExtendedEncodedFeatureIntValue(sink, schema,
-          EarlybirdFieldConstant.NUM_STOCKS, textFeatures.getStocksSize());
+    if (tetwittertFeatures != null) {
+      setEtwittertendedEncodedFeatureIntValue(sink, schema,
+          EarlybirdFieldConstant.NUM_HASHTAGS_V2, tetwittertFeatures.getHashtagsSize());
+      setEtwittertendedEncodedFeatureIntValue(sink, schema,
+          EarlybirdFieldConstant.NUM_MENTIONS_V2, tetwittertFeatures.getMentionsSize());
+      setEtwittertendedEncodedFeatureIntValue(sink, schema,
+          EarlybirdFieldConstant.NUM_STOCKS, tetwittertFeatures.getStocksSize());
     }
 
     Optional<Long> referenceAuthorId = message.getReferenceAuthorId();
@@ -430,7 +430,7 @@ public class EncodedFeatureBuilder {
     }
 
     return (EarlybirdEncodedFeatures) sink.getFeaturesForBaseField(
-        EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD.getFieldName());
+        EarlybirdFieldConstant.EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD.getFieldName());
   }
 
   /**
@@ -451,11 +451,11 @@ public class EncodedFeatureBuilder {
       encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_CARD_FLAG);
     }
 
-    // Set HAS_IMAGE HAS_NEWS HAS_VIDEO etc. flags for expanded urls.
-    if (message.getExpandedUrlMapSize() > 0) {
+    // Set HAS_IMAGE HAS_NEWS HAS_VIDEO etc. flags for etwitterpanded urls.
+    if (message.getEtwitterpandedUrlMapSize() > 0) {
       encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_LINK_FLAG);
 
-      for (ThriftExpandedUrl url : message.getExpandedUrlMap().values()) {
+      for (ThriftEtwitterpandedUrl url : message.getEtwitterpandedUrlMap().values()) {
         if (url.isSetMediaType()) {
           switch (url.getMediaType()) {
             case NATIVE_IMAGE:
@@ -474,23 +474,23 @@ public class EncodedFeatureBuilder {
             case UNKNOWN:
               break;
             default:
-              throw new IllegalStateException("Unexpected enum value: " + url.getMediaType());
+              throw new IllegalStateEtwitterception("Unetwitterpected enum value: " + url.getMediaType());
           }
         }
       }
     }
 
     Set<String> canonicalLastHopUrlsStrings = message.getCanonicalLastHopUrls();
-    Set<String> expandedUrlsStrings = message.getExpandedUrls()
+    Set<String> etwitterpandedUrlsStrings = message.getEtwitterpandedUrls()
         .stream()
-        .map(ThriftExpandedUrl::getExpandedUrl)
+        .map(ThriftEtwitterpandedUrl::getEtwitterpandedUrl)
         .collect(Collectors.toSet());
-    Set<String> expandedAndLastHopUrlsStrings = new HashSet<>();
-    expandedAndLastHopUrlsStrings.addAll(expandedUrlsStrings);
-    expandedAndLastHopUrlsStrings.addAll(canonicalLastHopUrlsStrings);
-    // Check both expanded and last hop url for consumer videos as consumer video urls are
+    Set<String> etwitterpandedAndLastHopUrlsStrings = new HashSet<>();
+    etwitterpandedAndLastHopUrlsStrings.addAll(etwitterpandedUrlsStrings);
+    etwitterpandedAndLastHopUrlsStrings.addAll(canonicalLastHopUrlsStrings);
+    // Check both etwitterpanded and last hop url for consumer videos as consumer video urls are
     // sometimes redirected to the url of the tweets containing the videos (SEARCH-42612).
-    if (NativeVideoClassificationUtils.hasConsumerVideo(expandedAndLastHopUrlsStrings)) {
+    if (NativeVideoClassificationUtils.hasConsumerVideo(etwitterpandedAndLastHopUrlsStrings)) {
       encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_CONSUMER_VIDEO_FLAG);
     }
     if (NativeVideoClassificationUtils.hasProVideo(canonicalLastHopUrlsStrings)) {
@@ -502,12 +502,12 @@ public class EncodedFeatureBuilder {
     if (NativeVideoClassificationUtils.hasPeriscope(canonicalLastHopUrlsStrings)) {
       encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_PERISCOPE_FLAG);
     }
-    if (LinkVisibilityUtils.hasVisibleLink(message.getExpandedUrls())) {
+    if (LinkVisibilityUtils.hasVisibleLink(message.getEtwitterpandedUrls())) {
       encodedFeatures.setFlag(EarlybirdFieldConstant.HAS_VISIBLE_LINK_FLAG);
     }
   }
 
-  private static void setExtendedEncodedFeatureIntValue(
+  private static void setEtwittertendedEncodedFeatureIntValue(
       FeatureSink sink,
       ImmutableSchemaInterface schema,
       EarlybirdFieldConstant field,
@@ -516,7 +516,7 @@ public class EncodedFeatureBuilder {
     if (fieldInSchema) {
       FeatureConfiguration featureConfig =
           schema.getFeatureConfigurationByName(field.getFieldName());
-      sink.setNumericValue(field, Math.min(value, featureConfig.getMaxValue()));
+      sink.setNumericValue(field, Math.min(value, featureConfig.getMatwitterValue()));
     }
   }
 

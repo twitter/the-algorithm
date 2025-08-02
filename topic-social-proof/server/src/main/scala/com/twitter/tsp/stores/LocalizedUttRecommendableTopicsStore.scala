@@ -4,17 +4,17 @@ import com.twitter.storehaus.ReadableStore
 import com.twitter.topiclisting.FollowableTopicProductId
 import com.twitter.topiclisting.ProductId
 import com.twitter.topiclisting.SemanticCoreEntityId
-import com.twitter.topiclisting.TopicListingViewerContext
+import com.twitter.topiclisting.TopicListingViewerContetwittert
 import com.twitter.topiclisting.utt.UttLocalization
 import com.twitter.util.Future
 
 case class LocalizedUttTopicNameRequest(
   productId: ProductId.Value,
-  viewerContext: TopicListingViewerContext,
+  viewerContetwittert: TopicListingViewerContetwittert,
   enableInternationalTopics: Boolean)
 
 class LocalizedUttRecommendableTopicsStore(uttLocalization: UttLocalization)
-    extends ReadableStore[LocalizedUttTopicNameRequest, Set[SemanticCoreEntityId]] {
+    etwittertends ReadableStore[LocalizedUttTopicNameRequest, Set[SemanticCoreEntityId]] {
 
   override def get(
     request: LocalizedUttTopicNameRequest
@@ -22,7 +22,7 @@ class LocalizedUttRecommendableTopicsStore(uttLocalization: UttLocalization)
     uttLocalization
       .getRecommendableTopics(
         productId = request.productId,
-        viewerContext = request.viewerContext,
+        viewerContetwittert = request.viewerContetwittert,
         enableInternationalTopics = request.enableInternationalTopics,
         followableTopicProductId = FollowableTopicProductId.AllFollowable
       ).map { response => Some(response) }

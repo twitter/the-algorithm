@@ -7,7 +7,7 @@ import com.twitter.tweetypie.media._
 import com.twitter.tweetypie.thriftscala._
 
 trait MediaServiceStore
-    extends TweetStoreBase[MediaServiceStore]
+    etwittertends TweetStoreBase[MediaServiceStore]
     with AsyncDeleteTweet.Store
     with AsyncUndeleteTweet.Store {
   def wrap(w: TweetStore.Wrap): MediaServiceStore =

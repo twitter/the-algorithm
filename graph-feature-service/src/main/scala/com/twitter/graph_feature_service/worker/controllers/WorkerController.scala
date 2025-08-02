@@ -8,17 +8,17 @@ import com.twitter.graph_feature_service.thriftscala
 import com.twitter.graph_feature_service.thriftscala.Worker.GetIntersection
 import com.twitter.graph_feature_service.thriftscala._
 import com.twitter.graph_feature_service.worker.handlers._
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class WorkerController @Inject() (
   workerGetIntersectionHandler: WorkerGetIntersectionHandler
 )(
   implicit statsReceiver: StatsReceiver)
-    extends Controller(thriftscala.Worker) {
+    etwittertends Controller(thriftscala.Worker) {
 
-  // use DiscoveryStatsFilter to filter out exceptions out of our control
+  // use DiscoveryStatsFilter to filter out etwitterceptions out of our control
   private val getIntersectionService: Service[
     WorkerIntersectionRequest,
     WorkerIntersectionResponse

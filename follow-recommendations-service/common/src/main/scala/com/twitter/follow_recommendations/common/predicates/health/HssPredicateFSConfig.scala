@@ -6,11 +6,11 @@ import com.twitter.timelines.configapi.FSBoundedParam
 import com.twitter.timelines.configapi.HasDurationConversion
 import com.twitter.util.Duration
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
-class HssPredicateFSConfig @Inject() () extends FeatureSwitchConfig {
+class HssPredicateFSConfig @Inject() () etwittertends FeatureSwitchConfig {
   override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
     HssCseScoreThreshold,
     HssNsfwScoreThreshold,

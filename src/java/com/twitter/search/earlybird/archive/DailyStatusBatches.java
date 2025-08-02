@@ -1,17 +1,17 @@
 package com.twitter.search.earlybird.archive;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileNotFoundEtwitterception;
 import java.io.FileWriter;
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.NavigableMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regetwitter.Matcher;
+import java.util.regetwitter.Pattern;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -39,16 +39,16 @@ import com.twitter.search.earlybird.partition.HdfsUtil;
 import com.twitter.search.earlybird.partition.StatusBatchFlushVersion;
 
 /**
- * Provides access to preprocessed statuses (tweets) to be indexed by archive search earlybirds.
+ * Provides access to preprocessed statuses (tweets) to be indetwittered by archive search earlybirds.
  *
  * These tweets can be coming from a scrub gen or from the output of the daily jobs.
  */
 public class DailyStatusBatches {
   private static final Logger LOG = LoggerFactory.getLogger(DailyStatusBatches.class);
 
-  // Maximum time to spend on obtaining daily status batches by computing or loading from HDFS
-  private static final Amount<Long, Time> MAX_TIME_ALLOWED_DAILY_STATUS_BATCHES_MINUTES =
-      Amount.of(EarlybirdConfig.getLong("daily_status_batches_max_initial_load_time_minutes"),
+  // Matwitterimum time to spend on obtaining daily status batches by computing or loading from HDFS
+  private static final Amount<Long, Time> MAtwitter_TIME_ALLOWED_DAILY_STATUS_BATCHES_MINUTES =
+      Amount.of(EarlybirdConfig.getLong("daily_status_batches_matwitter_initial_load_time_minutes"),
           Time.MINUTES);
   // Time to wait before trying again when obtaining daily status batches fails
   private static final Amount<Long, Time> DAILY_STATUS_BATCHES_WAITING_TIME_MINUTES =
@@ -57,8 +57,8 @@ public class DailyStatusBatches {
   private static final String DAILY_STATUS_BATCHES_SYNC_PATH =
       EarlybirdProperty.ZK_APP_ROOT.get() + "/daily_batches_sync";
   private static final String DAILY_BATCHES_ZK_LOCK = "daily_batches_zk_lock";
-  private static final Amount<Long, Time> DAILY_STATUS_BATCHES_ZK_LOCK_EXPIRATION_MINUTES =
-      Amount.of(EarlybirdConfig.getLong("daily_status_batches_zk_lock_expiration_minutes"),
+  private static final Amount<Long, Time> DAILY_STATUS_BATCHES_ZK_LOCK_EtwitterPIRATION_MINUTES =
+      Amount.of(EarlybirdConfig.getLong("daily_status_batches_zk_lock_etwitterpiration_minutes"),
           Time.MINUTES);
 
   static final FastDateFormat DATE_FORMAT = FastDateFormat.getInstance("yyyyMMdd");
@@ -66,7 +66,7 @@ public class DailyStatusBatches {
   // before this date, there was no twitter
   private static final Date FIRST_TWITTER_DAY = DateUtil.toDate(2006, 2, 1);
 
-  private static final String STATUS_BATCHES_PREFIX = "status_batches";
+  private static final String STATUS_BATCHES_PREFItwitter = "status_batches";
 
   private final String rootDir =
       EarlybirdConfig.getString("hdfs_offline_segment_sync_dir", "top_archive_statuses");
@@ -76,7 +76,7 @@ public class DailyStatusBatches {
 
   public static final String STATUS_SUBDIR_NAME = "statuses";
   public static final String LAYOUT_SUBDIR_NAME = "layouts";
-  public static final String SCRUB_GEN_SUFFIX_PATTERN = "scrubbed/%s";
+  public static final String SCRUB_GEN_SUFFItwitter_PATTERN = "scrubbed/%s";
 
   private static final String INTERMEDIATE_COUNTS_SUBDIR_NAME = "counts";
   private static final String SUCCESS_FILE_NAME = "_SUCCESS";
@@ -97,7 +97,7 @@ public class DailyStatusBatches {
   private long numberOfDaysWithValidScrubGenData;
 
   public DailyStatusBatches(
-      ZooKeeperTryLockFactory zooKeeperTryLockFactory, Date scrubGenDay) throws IOException {
+      ZooKeeperTryLockFactory zooKeeperTryLockFactory, Date scrubGenDay) throws IOEtwitterception {
     this.zkTryLockFactory = zooKeeperTryLockFactory;
     this.scrubGenDay = scrubGenDay;
 
@@ -138,7 +138,7 @@ public class DailyStatusBatches {
   /**
    * Load the daily status batches from HDFS; return true if one or more batches could be loaded.
    **/
-  private boolean refreshByLoadingHDFSStatusBatches(final FileSystem fs) throws IOException {
+  private boolean refreshByLoadingHDFSStatusBatches(final FileSystem fs) throws IOEtwitterception {
     // first find the latest valid end date of statuses
     final Date lastValidStatusDay = getLastValidInputDateFromNow(fs);
     if (lastValidStatusDay != null) {
@@ -156,7 +156,7 @@ public class DailyStatusBatches {
   /**
    * Checks the directory for new data and returns true, if one or more new batches could be loaded.
    */
-  public void refresh() throws IOException {
+  public void refresh() throws IOEtwitterception {
     final FileSystem hdfs = HdfsUtil.getHdfsFileSystem();
 
     final Stopwatch stopwatch = Stopwatch.createStarted();
@@ -168,7 +168,7 @@ public class DailyStatusBatches {
           String errMsg = "Failed to load or compute daily status batches after "
               + stopwatch.toString();
           LOG.error(errMsg);
-          throw new IOException(errMsg);
+          throw new IOEtwitterception(errMsg);
         }
       } else {
         loadNewDailyBatches(hdfs);
@@ -179,19 +179,19 @@ public class DailyStatusBatches {
   }
 
   private boolean initializeDailyStatusBatches(final FileSystem hdfs,
-                                               final Stopwatch stopwatch) throws IOException {
+                                               final Stopwatch stopwatch) throws IOEtwitterception {
     long timeSpentOnDailyBatches = 0L;
-    long maxAllowedTimeMs = MAX_TIME_ALLOWED_DAILY_STATUS_BATCHES_MINUTES.as(Time.MILLISECONDS);
+    long matwitterAllowedTimeMs = MAtwitter_TIME_ALLOWED_DAILY_STATUS_BATCHES_MINUTES.as(Time.MILLISECONDS);
     long waitingTimeMs = DAILY_STATUS_BATCHES_WAITING_TIME_MINUTES.as(Time.MILLISECONDS);
     boolean firstLoop = true;
     LOG.info("Starting to load or compute daily status batches for the first time.");
-    while (timeSpentOnDailyBatches <= maxAllowedTimeMs && !Thread.currentThread().isInterrupted()) {
+    while (timeSpentOnDailyBatches <= matwitterAllowedTimeMs && !Thread.currentThread().isInterrupted()) {
       if (!firstLoop) {
         try {
           LOG.info("Sleeping " + waitingTimeMs
               + " millis before trying to obtain daily batches again");
           Thread.sleep(waitingTimeMs);
-        } catch (InterruptedException e) {
+        } catch (InterruptedEtwitterception e) {
           LOG.warn("Interrupted while waiting to load daily batches", e);
           Thread.currentThread().interrupt();
           break;
@@ -217,14 +217,14 @@ public class DailyStatusBatches {
 
   private boolean computeDailyBatchesWithZKLock(final FileSystem hdfs,
                                                 final AtomicBoolean successRef,
-                                                final Stopwatch stopwatch) throws IOException {
+                                                final Stopwatch stopwatch) throws IOEtwitterception {
     // Using a global lock to coordinate among earlybirds and segment builders so that only
     // one instance would hit the HDFS name node to query the daily status directories
     TryLock lock = zkTryLockFactory.createTryLock(
         DatabaseConfig.getLocalHostname(),
         DAILY_STATUS_BATCHES_SYNC_PATH,
         DAILY_BATCHES_ZK_LOCK,
-        DAILY_STATUS_BATCHES_ZK_LOCK_EXPIRATION_MINUTES);
+        DAILY_STATUS_BATCHES_ZK_LOCK_EtwitterPIRATION_MINUTES);
 
     return lock.tryWithLock(() -> {
       LOG.info("Obtained ZK lock to compute daily status batches after {}", stopwatch);
@@ -245,21 +245,21 @@ public class DailyStatusBatches {
     });
   }
 
-  private void verifyDirectory(FileSystem hdfs) throws IOException {
-    if (!hdfs.exists(rootPath)) {
-      throw new IOException("Root dir '" + rootPath + "' does not exist.");
+  private void verifyDirectory(FileSystem hdfs) throws IOEtwitterception {
+    if (!hdfs.etwitterists(rootPath)) {
+      throw new IOEtwitterception("Root dir '" + rootPath + "' does not etwitterist.");
     }
 
-    if (!hdfs.exists(buildGenPath)) {
-      throw new IOException("Build gen dir '" + buildGenPath + "' does not exist.");
+    if (!hdfs.etwitterists(buildGenPath)) {
+      throw new IOEtwitterception("Build gen dir '" + buildGenPath + "' does not etwitterist.");
     }
 
-    if (!hdfs.exists(statusPath)) {
-      throw new IOException("Status dir '" + statusPath + "' does not exist.");
+    if (!hdfs.etwitterists(statusPath)) {
+      throw new IOEtwitterception("Status dir '" + statusPath + "' does not etwitterist.");
     }
   }
 
-  private void loadNewDailyBatches(FileSystem hdfs) throws IOException {
+  private void loadNewDailyBatches(FileSystem hdfs) throws IOEtwitterception {
     Preconditions.checkNotNull(lastValidDay);
 
     Calendar day = Calendar.getInstance();
@@ -272,7 +272,7 @@ public class DailyStatusBatches {
     }
   }
 
-  private boolean initialLoadDailyBatchInfos(FileSystem hdfs) throws IOException {
+  private boolean initialLoadDailyBatchInfos(FileSystem hdfs) throws IOEtwitterception {
     LOG.info("Starting to build timeslice map from scratch.");
 
     final Date lastValidStatusDay = getLastValidInputDateFromNow(hdfs);
@@ -346,7 +346,7 @@ public class DailyStatusBatches {
   }
 
   @VisibleForTesting
-  protected DailyStatusBatch loadDay(FileSystem hdfs, Date day) throws IOException {
+  protected DailyStatusBatch loadDay(FileSystem hdfs, Date day) throws IOEtwitterception {
     Path dayPath = new Path(getStatusPathToUseForDay(day), ArchiveHDFSUtils.dateToPath(day, "/"));
     LOG.debug("Looking for batch in " + dayPath.toString());
     DailyStatusBatch result = this.statusBatches.get(day);
@@ -358,8 +358,8 @@ public class DailyStatusBatches {
     try {
       files = hdfs.listStatus(dayPath);
       LOG.debug("Files found:  " + filesToString(files));
-    } catch (FileNotFoundException e) {
-      LOG.debug("loadDay() called, but directory does not exist for day: " + day
+    } catch (FileNotFoundEtwitterception e) {
+      LOG.debug("loadDay() called, but directory does not etwitterist for day: " + day
           + " in: " + dayPath);
       return null;
     }
@@ -401,7 +401,7 @@ public class DailyStatusBatches {
   /**
    * Determines if this directory has a valid batch for the given day.
    */
-  public boolean hasValidBatchForDay(Date day) throws IOException {
+  public boolean hasValidBatchForDay(Date day) throws IOEtwitterception {
     FileSystem hdfs = null;
     try {
       hdfs = HdfsUtil.getHdfsFileSystem();
@@ -411,7 +411,7 @@ public class DailyStatusBatches {
     }
   }
 
-  private boolean hasValidBatchForDay(FileSystem fs, Date day) throws IOException {
+  private boolean hasValidBatchForDay(FileSystem fs, Date day) throws IOEtwitterception {
     DailyStatusBatch batch = loadDay(fs, day);
 
     return batch != null && batch.isValid();
@@ -427,7 +427,7 @@ public class DailyStatusBatches {
     return lastValidDay;
   }
 
-  private Date getLastValidInputDateFromNow(FileSystem hdfs) throws IOException {
+  private Date getLastValidInputDateFromNow(FileSystem hdfs) throws IOEtwitterception {
     Calendar cal = Calendar.getInstance();
     cal.setTime(new Date()); // current date
     return getLastValidInputDate(hdfs, cal);
@@ -437,7 +437,7 @@ public class DailyStatusBatches {
    * Starting from current date, probe backward till we find a valid input Date
    */
   @VisibleForTesting
-  Date getLastValidInputDate(FileSystem hdfs, Calendar cal) throws IOException {
+  Date getLastValidInputDate(FileSystem hdfs, Calendar cal) throws IOEtwitterception {
     cal.set(Calendar.MILLISECOND, 0);
     cal.set(Calendar.HOUR_OF_DAY, 0);
     cal.set(Calendar.MINUTE, 0);
@@ -465,9 +465,9 @@ public class DailyStatusBatches {
   boolean hasStatusBatchesOnHdfs(FileSystem fs, Date lastDataDay) {
     String hdfsFileName = getHdfsStatusBatchSyncFileName(lastDataDay);
     try {
-      return fs.exists(new Path(hdfsFileName));
-    } catch (IOException ex) {
-      LOG.error("Failed checking status batch file on HDFS: " + hdfsFileName, ex);
+      return fs.etwitterists(new Path(hdfsFileName));
+    } catch (IOEtwitterception etwitter) {
+      LOG.error("Failed checking status batch file on HDFS: " + hdfsFileName, etwitter);
       return false;
     }
   }
@@ -496,7 +496,7 @@ public class DailyStatusBatches {
 
       lineReader = new LineRecordFileReader(fileLocalPath);
       String batchLine;
-      while ((batchLine = lineReader.readNext()) != null) {
+      while ((batchLine = lineReader.readNetwittert()) != null) {
         DailyStatusBatch batch = DailyStatusBatch.deserializeFromJson(batchLine);
         if (batch == null) {
           LOG.error("Invalid daily status batch constructed from line: " + batchLine);
@@ -518,8 +518,8 @@ public class DailyStatusBatches {
       LOG.info("Last entry: {}", statusBatches.lastEntry().getValue().toString());
 
       return true;
-    } catch (IOException ex) {
-      LOG.error("Failed loading time slices from HDFS: " + fileHdfsPath, ex);
+    } catch (IOEtwitterception etwitter) {
+      LOG.error("Failed loading time slices from HDFS: " + fileHdfsPath, etwitter);
       resetDirectory();
       return false;
     } finally {
@@ -549,7 +549,7 @@ public class DailyStatusBatches {
       LOG.info("Flushing daily status batches into: " + fileLocalPath);
       outputFile = new File(fileLocalPath);
       outputFile.getParentFile().mkdirs();
-      if (!outputFile.getParentFile().exists()) {
+      if (!outputFile.getParentFile().etwitterists()) {
         LOG.error("Cannot create directory: " + outputFile.getParentFile().toString());
         return false;
       }
@@ -562,7 +562,7 @@ public class DailyStatusBatches {
 
       // Upload the file to HDFS
       return uploadStatusBatchesToHdfs(fs, day);
-    } catch (IOException e) {
+    } catch (IOEtwitterception e) {
       String fileHdfsPath = getHdfsStatusBatchSyncFileName(day);
       LOG.error("Failed storing status batches to HDFS: " + fileHdfsPath, e);
       return false;
@@ -571,7 +571,7 @@ public class DailyStatusBatches {
         if (fileWriter != null) {
           fileWriter.close();
         }
-      } catch (IOException e) {
+      } catch (IOEtwitterception e) {
         LOG.error("Error to close fileWrite.", e);
       }
       if (outputFile != null) {
@@ -594,15 +594,15 @@ public class DailyStatusBatches {
 
     try {
       Path hdfsFilePath = new Path(hdfsFileName);
-      if (fs.exists(hdfsFilePath)) {
+      if (fs.etwitterists(hdfsFilePath)) {
         LOG.warn("Found status batch file on HDFS: " + hdfsFileName);
         return true;
       }
 
       String hdfsTempName = getHdfsStatusBatchTempSyncFileName(day);
       Path hdfsTempPath = new Path(hdfsTempName);
-      if (fs.exists(hdfsTempPath)) {
-        LOG.info("Found existing temporary status batch file on HDFS, removing: " + hdfsTempName);
+      if (fs.etwitterists(hdfsTempPath)) {
+        LOG.info("Found etwitteristing temporary status batch file on HDFS, removing: " + hdfsTempName);
         if (!fs.delete(hdfsTempPath, false)) {
           LOG.error("Failed to delete temporary file: " + hdfsTempName);
           return false;
@@ -617,8 +617,8 @@ public class DailyStatusBatches {
         LOG.error("Failed to rename " + hdfsTempName + " on HDFS to: " + hdfsFileName);
         return false;
       }
-    } catch (IOException ex) {
-      LOG.error("Failed uploading status batch file to HDFS: " + hdfsFileName, ex);
+    } catch (IOEtwitterception etwitter) {
+      LOG.error("Failed uploading status batch file to HDFS: " + hdfsFileName, etwitter);
       return false;
     }
   }
@@ -631,39 +631,39 @@ public class DailyStatusBatches {
     return EarlybirdConfig.getBool("archive_daily_status_batch_loading_enabled", false);
   }
 
-  private static String getVersionFileExtension() {
-    return StatusBatchFlushVersion.CURRENT_FLUSH_VERSION.getVersionFileExtension();
+  private static String getVersionFileEtwittertension() {
+    return StatusBatchFlushVersion.CURRENT_FLUSH_VERSION.getVersionFileEtwittertension();
   }
 
   String getStatusBatchSyncRootDir() {
     return EarlybirdConfig.getString("archive_daily_status_batch_sync_dir",
-        "daily_status_batches") + "/" + scrubGenSuffix();
+        "daily_status_batches") + "/" + scrubGenSuffitwitter();
   }
 
   @VisibleForTesting
   String getLocalStatusBatchSyncFileName(Date day) {
-    return  getStatusBatchSyncRootDir() + "/" + STATUS_BATCHES_PREFIX + "_"
-        + DATE_FORMAT.format(day) + getVersionFileExtension();
+    return  getStatusBatchSyncRootDir() + "/" + STATUS_BATCHES_PREFItwitter + "_"
+        + DATE_FORMAT.format(day) + getVersionFileEtwittertension();
   }
 
   String getHdfsStatusBatchSyncRootDir() {
     return EarlybirdConfig.getString("hdfs_archive_daily_status_batch_sync_dir",
-        "daily_status_batches") + "/" + scrubGenSuffix();
+        "daily_status_batches") + "/" + scrubGenSuffitwitter();
   }
 
   @VisibleForTesting
   String getHdfsStatusBatchSyncFileName(Date day) {
-    return getHdfsStatusBatchSyncRootDir() + "/" + STATUS_BATCHES_PREFIX + "_"
-        + DATE_FORMAT.format(day) + getVersionFileExtension();
+    return getHdfsStatusBatchSyncRootDir() + "/" + STATUS_BATCHES_PREFItwitter + "_"
+        + DATE_FORMAT.format(day) + getVersionFileEtwittertension();
   }
 
   private String getHdfsStatusBatchTempSyncFileName(Date day) {
     return getHdfsStatusBatchSyncRootDir() + "/" + DatabaseConfig.getLocalHostname() + "_"
-        + STATUS_BATCHES_PREFIX + "_" + DATE_FORMAT.format(day) + getVersionFileExtension();
+        + STATUS_BATCHES_PREFItwitter + "_" + DATE_FORMAT.format(day) + getVersionFileEtwittertension();
   }
 
-  private String scrubGenSuffix() {
-    return String.format(SCRUB_GEN_SUFFIX_PATTERN, DATE_FORMAT.format(scrubGenDay));
+  private String scrubGenSuffitwitter() {
+    return String.format(SCRUB_GEN_SUFFItwitter_PATTERN, DATE_FORMAT.format(scrubGenDay));
   }
 
   /**
@@ -674,24 +674,24 @@ public class DailyStatusBatches {
       return statusPath;
     }
 
-    String suffix = scrubGenSuffix();
-    Preconditions.checkArgument(!suffix.isEmpty());
-    Path scrubPath = new Path(buildGenPath, suffix);
+    String suffitwitter = scrubGenSuffitwitter();
+    Preconditions.checkArgument(!suffitwitter.isEmpty());
+    Path scrubPath = new Path(buildGenPath, suffitwitter);
     return new Path(scrubPath, STATUS_SUBDIR_NAME);
   }
 
   /**
    * Determines if the data for the specified scrub gen was fully built, by checking the number of
-   * days for which data was built against the expected number of days extracted from the specified
+   * days for which data was built against the etwitterpected number of days etwittertracted from the specified
    * scrub gen date.
    */
-  public boolean isScrubGenDataFullyBuilt(FileSystem hdfs) throws IOException {
+  public boolean isScrubGenDataFullyBuilt(FileSystem hdfs) throws IOEtwitterception {
     initialLoadDailyBatchInfos(hdfs);
     if (numberOfDaysWithValidScrubGenData == 0) {
       LOG.warn("numberOfDaysWithValidScrubGenData is 0");
     }
-    long expectedDays = getDiffBetweenDays(scrubGenDay);
-    return expectedDays == numberOfDaysWithValidScrubGenData;
+    long etwitterpectedDays = getDiffBetweenDays(scrubGenDay);
+    return etwitterpectedDays == numberOfDaysWithValidScrubGenData;
   }
 
   @VisibleForTesting

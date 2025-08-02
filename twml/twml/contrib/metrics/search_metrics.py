@@ -1,5 +1,5 @@
 """
-Module containing extra tensorflow metrics used at Twitter.
+Module containing etwittertra tensorflow metrics used at Twitter.
 This module conforms to conventions used by tf.metrics.*.
 In particular, each metric constructs two subgraphs: value_op and update_op:
   - The value op is used to fetch the current metric value.
@@ -16,7 +16,7 @@ from collections import OrderedDict
 from functools import partial
 
 import tensorflow.compat.v1 as tf
-from tensorflow.python.eager import context
+from tensorflow.python.eager import contetwittert
 from tensorflow.python.framework import dtypes, ops
 from tensorflow.python.ops import array_ops, state_ops
 import twml
@@ -39,7 +39,7 @@ def ndcg(labels, predictions,
     \\sum_{i=1}^k \frac{2^{relevance\\_score} -1}{\\log_{2}(i + 1)}
 
   k is the length of items to be ranked in a batch/query
-  Notice that whether k will be replaced with a fixed value requires discussions
+  Notice that whether k will be replaced with a fitwittered value requires discussions
   The scores in predictions are transformed to order and relevance scores to calculate ndcg
   A relevance score means how relevant a DataRecord is to a particular query
 
@@ -58,16 +58,16 @@ def ndcg(labels, predictions,
     label_scores = tf.to_float(labels, name='label_to_float')
     predicted_scores = tf.to_float(predictions, name='predictions_to_float')
 
-    if context.executing_eagerly():
-      raise RuntimeError('ndcg is not supported when eager execution '
+    if contetwittert.etwitterecuting_eagerly():
+      raise RuntimeError('ndcg is not supported when eager etwitterecution '
                          'is enabled.')
 
     total_ndcg = _metric_variable([], dtypes.float32, name='total_ndcg')
     count_query = _metric_variable([], dtypes.float32, name='query_count')
 
     # actual ndcg cutoff position top_k_int
-    max_prediction_size = array_ops.size(predicted_scores)
-    top_k_int = tf.minimum(max_prediction_size, top_k_int)
+    matwitter_prediction_size = array_ops.size(predicted_scores)
+    top_k_int = tf.minimum(matwitter_prediction_size, top_k_int)
     # the ndcg score of the batch
     ndcg = math_fns.cal_ndcg(label_scores,
       predicted_scores, top_k_int=top_k_int)

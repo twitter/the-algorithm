@@ -21,7 +21,7 @@ class TFModelDiscretizerBuilder(object):
             "feature_nameN": 0.0
           },
           "discretized": {
-            # (feature name : index aligned lists of bin_boundaries and weights
+            # (feature name : indetwitter aligned lists of bin_boundaries and weights
             "feature_name_1": {
               "bin_boundaries": [1, ..., inf],
               "weights": [0.0, ..., 0.0]
@@ -38,7 +38,7 @@ class TFModelDiscretizerBuilder(object):
     '''
     discretized_features = tf_model_initializer["features"]["discretized"]
 
-    max_bins = 0
+    matwitter_bins = 0
 
     feature_ids = []
     bin_vals = []
@@ -49,7 +49,7 @@ class TFModelDiscretizerBuilder(object):
       np_bin_boundaries = [np.float(bin_boundary) for bin_boundary in bin_boundaries]
       bin_vals.append(np_bin_boundaries)
 
-      max_bins = max(max_bins, len(np_bin_boundaries))
+      matwitter_bins = matwitter(matwitter_bins, len(np_bin_boundaries))
 
     feature_ids_np = np.array(feature_ids)
     bin_vals_np = np.array(bin_vals).flatten()
@@ -57,6 +57,6 @@ class TFModelDiscretizerBuilder(object):
     return HashingDiscretizer(
       feature_ids=feature_ids_np,
       bin_vals=bin_vals_np,
-      n_bin=max_bins,
+      n_bin=matwitter_bins,
       out_bits=self.num_bits
     )

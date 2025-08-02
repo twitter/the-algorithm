@@ -34,7 +34,7 @@ object CandidateAlgorithmTypeConstants {
       AlgorithmType.Activity),
     AlgorithmToFeedbackTokenMap(LinearRegressionFollow2VecNearestNeighbors).toString -> Set(
       AlgorithmType.Activity),
-    AlgorithmToFeedbackTokenMap(NUXLOHistory).toString -> Set(AlgorithmType.Activity),
+    AlgorithmToFeedbackTokenMap(NUtwitterLOHistory).toString -> Set(AlgorithmType.Activity),
     AlgorithmToFeedbackTokenMap(TrafficAttributionAccounts).toString -> Set(AlgorithmType.Activity),
     AlgorithmToFeedbackTokenMap(RealGraphOonV2).toString -> Set(AlgorithmType.Activity),
     AlgorithmToFeedbackTokenMap(MagicRecsRecentEngagements).toString -> Set(AlgorithmType.Activity),
@@ -44,7 +44,7 @@ object CandidateAlgorithmTypeConstants {
     AlgorithmToFeedbackTokenMap(RealTimeMutualFollow).toString -> Set(AlgorithmType.Social),
     AlgorithmToFeedbackTokenMap(ForwardPhoneBook).toString -> Set(AlgorithmType.Social),
     AlgorithmToFeedbackTokenMap(ForwardEmailBook).toString -> Set(AlgorithmType.Social),
-    AlgorithmToFeedbackTokenMap(NewFollowingNewFollowingExpansion).toString -> Set(
+    AlgorithmToFeedbackTokenMap(NewFollowingNewFollowingEtwitterpansion).toString -> Set(
       AlgorithmType.Social),
     AlgorithmToFeedbackTokenMap(NewFollowingSarusCoOccurSocialProof).toString -> Set(
       AlgorithmType.Social),
@@ -73,7 +73,7 @@ object CandidateAlgorithmTypeConstants {
     AlgorithmToFeedbackTokenMap(TttInterest).toString -> Set(AlgorithmType.Interest),
     AlgorithmToFeedbackTokenMap(UttInterestRelatedUsers).toString -> Set(AlgorithmType.Interest),
     AlgorithmToFeedbackTokenMap(UttSeedAccounts).toString -> Set(AlgorithmType.Interest),
-    AlgorithmToFeedbackTokenMap(UttProducerExpansion).toString -> Set(AlgorithmType.Interest),
+    AlgorithmToFeedbackTokenMap(UttProducerEtwitterpansion).toString -> Set(AlgorithmType.Interest),
     // Hybrid (more than one type) Algorithms:
     AlgorithmToFeedbackTokenMap(UttProducerOfflineMbcgV1).toString -> Set(
       AlgorithmType.Interest,

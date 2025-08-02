@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.search.facets;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,10 +10,10 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
+import org.apache.lucene.indetwitter.PostingsEnum;
+import org.apache.lucene.indetwitter.Term;
+import org.apache.lucene.indetwitter.Terms;
+import org.apache.lucene.indetwitter.TermsEnum;
 import org.apache.lucene.search.DocIdSetIterator;
 
 import com.twitter.common.util.Clock;
@@ -24,8 +24,8 @@ import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
 import com.twitter.search.common.schema.base.Schema;
 import com.twitter.search.common.search.EarlyTerminationState;
 import com.twitter.search.common.util.earlybird.TermStatisticsUtil;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
+import com.twitter.search.core.earlybird.indetwitter.TimeMapper;
+import com.twitter.search.earlybird.indetwitter.EarlybirdSingleSegmentSearcher;
 import com.twitter.search.earlybird.search.AbstractResultsCollector;
 import com.twitter.search.earlybird.search.SearchResultsInfo;
 import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
@@ -33,16 +33,16 @@ import com.twitter.search.earlybird.thrift.ThriftHistogramSettings;
 import com.twitter.search.earlybird.thrift.ThriftTermRequest;
 import com.twitter.search.earlybird.thrift.ThriftTermResults;
 
-public class TermStatisticsCollector extends AbstractResultsCollector
+public class TermStatisticsCollector etwittertends AbstractResultsCollector
         <TermStatisticsRequestInfo, TermStatisticsCollector.TermStatisticsSearchResults> {
   private static final EarlyTerminationState TERMINATED_TERM_STATS_COUNTING_DONE =
       new EarlyTerminationState("terminated_term_stats_counting_done", true);
 
   // Stats for tracking histogram results.
   private static final SearchResultsStats TERM_STATS_HISTOGRAM_REQUESTS_WITH_MOVED_BACK_BINS =
-      SearchResultsStats.export("term_statistics_collector_queries_with_moved_back_bins");
+      SearchResultsStats.etwitterport("term_statistics_collector_queries_with_moved_back_bins");
   private static final SearchCounter TERM_STATS_SKIPPED_LARGER_OUT_OF_BOUNDS_HITS =
-      SearchCounter.export("term_statistics_collector_skipped_larger_out_of_bounds_hits");
+      SearchCounter.etwitterport("term_statistics_collector_skipped_larger_out_of_bounds_hits");
 
   @VisibleForTesting
   static final class TermStatistics {
@@ -67,7 +67,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
      * Take the currently accumulated counts and "move them back" to make room for counts from more
      * recent binIds.
      *
-     * For example, if the oldFirstBinID was set to 10, and the histogramBins were {3, 4, 5, 6, 7},
+     * For etwitterample, if the oldFirstBinID was set to 10, and the histogramBins were {3, 4, 5, 6, 7},
      * after this call with newFirstBinID set to 12, the histogramBins will be set
      * to {5, 6, 7, 0, 0}.
      *
@@ -85,9 +85,9 @@ public class TermStatisticsCollector extends AbstractResultsCollector
       for (int i = 0; i < histogramBins.length; i++) {
         int oldCount = histogramBins[i];
         histogramBins[i] = 0;
-        int newIndex = i - moveBackBy;
-        if (newIndex >= 0) {
-          histogramBins[newIndex] = oldCount;
+        int newIndetwitter = i - moveBackBy;
+        if (newIndetwitter >= 0) {
+          histogramBins[newIndetwitter] = oldCount;
           this.termCount += oldCount;
         }
       }
@@ -166,9 +166,9 @@ public class TermStatisticsCollector extends AbstractResultsCollector
         if (facetField != null) {
           term = new Term(facetField.getName(), termRequest.getTerm());
         } else {
-          // EarlybirdSearcher.validateRequest() should've already checked that the field exists in
+          // EarlybirdSearcher.validateRequest() should've already checked that the field etwitterists in
           // the schema, and that the term can be converted to the type of this field. However, if
-          // that did not happen for some reason, an exception will be thrown here, which will be
+          // that did not happen for some reason, an etwitterception will be thrown here, which will be
           // converted to a TRANSIENT_ERROR response code.
           Schema.FieldInfo fieldInfo = schema.getFieldInfo(fieldName);
           Preconditions.checkNotNull(
@@ -187,7 +187,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
   }
 
   @Override
-  public void startSegment() throws IOException {
+  public void startSegment() throws IOEtwitterception {
     termStatisticsDebugInfo.add(
         "Starting segment in timestamp range: [" + timeMapper.getFirstTime()
         + ", " + timeMapper.getLastTime() + "]");
@@ -198,14 +198,14 @@ public class TermStatisticsCollector extends AbstractResultsCollector
         Terms terms = currTwitterReader.terms(termStats.term.field());
         if (terms != null) {
           termsEnum = terms.iterator();
-          if (termsEnum != null && termsEnum.seekExact(termStats.term.bytes())) {
+          if (termsEnum != null && termsEnum.seekEtwitteract(termStats.term.bytes())) {
             termStats.termDF += termsEnum.docFreq();  // Only meaningful for matchAll queries.
             termStats.segmentDocsEnum =
                 termsEnum.postings(termStats.segmentDocsEnum, PostingsEnum.FREQS);
             termStats.segmentDone = termStats.segmentDocsEnum == null
-                 || termStats.segmentDocsEnum.nextDoc() == DocIdSetIterator.NO_MORE_DOCS;
+                 || termStats.segmentDocsEnum.netwittertDoc() == DocIdSetIterator.NO_MORE_DOCS;
           } else {
-            // this term doesn't exist in this segment.
+            // this term doesn't etwitterist in this segment.
           }
         }
       } else {
@@ -223,28 +223,28 @@ public class TermStatisticsCollector extends AbstractResultsCollector
     }
 
     final int binID = Math.abs(tweetTime) / binSize;
-    final int expectedFirstBinId = binID - numBins + 1;
+    final int etwitterpectedFirstBinId = binID - numBins + 1;
 
     if (firstBinID == -1) {
-      firstBinID = expectedFirstBinId;
-    } else if (expectedFirstBinId > firstBinID) {
+      firstBinID = etwitterpectedFirstBinId;
+    } else if (etwitterpectedFirstBinId > firstBinID) {
       numTimesBinsWereMovedBack++;
       final int oldOutOfOrderFirstBinID = firstBinID;
-      firstBinID = expectedFirstBinId;
+      firstBinID = etwitterpectedFirstBinId;
       // We got a more recent out of order bin, move previous counts back.
       for (TermStatistics ts : termStatistics) {
         ts.moveBackTermCounts(oldOutOfOrderFirstBinID, firstBinID);
       }
     }
 
-    final int binIndex = binID - firstBinID;
-    if (binIndex >= numBins) {
+    final int binIndetwitter = binID - firstBinID;
+    if (binIndetwitter >= numBins) {
       // In-order times should be decreasing,
       // and out of order times seen after an in-order tweet should also be smaller than the
-      // first in-order tweet's time. Will track these and export as a stat.
+      // first in-order tweet's time. Will track these and etwitterport as a stat.
       numLargerOutOfBoundsBinsSkipped++;
       return -1;
-    } else if (binIndex < 0) {
+    } else if (binIndetwitter < 0) {
       // Early termination criteria.
       seenOutOfRange++;
     } else {
@@ -253,18 +253,18 @@ public class TermStatisticsCollector extends AbstractResultsCollector
       seenOutOfRange = 0;
     }
 
-    return binIndex;
+    return binIndetwitter;
   }
 
   @Override
-  public void doCollect(long tweetID) throws IOException {
+  public void doCollect(long tweetID) throws IOEtwitterception {
     if (searchRequestInfo.isReturnHistogram()) {
       final int tweetTime = timeMapper.getTime(curDocId);
-      final int binIndex = calculateBin(tweetTime);
-      if (binIndex >= 0) {
+      final int binIndetwitter = calculateBin(tweetTime);
+      if (binIndetwitter >= 0) {
         for (TermStatistics ts : termStatistics) {
           if (!ts.segmentDone) {
-            countHist(ts, binIndex);
+            countHist(ts, binIndetwitter);
           }
         }
       }
@@ -284,7 +284,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
     // requests because otherwise the bin ID calculation will be confused.
   }
 
-  private boolean advance(TermStatistics ts) throws IOException {
+  private boolean advance(TermStatistics ts) throws IOEtwitterception {
     PostingsEnum docsEnum = ts.segmentDocsEnum;
     if (docsEnum.docID() < curDocId) {
       if (docsEnum.advance(curDocId) == DocIdSetIterator.NO_MORE_DOCS) {
@@ -295,7 +295,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
     return docsEnum.docID() == curDocId;
   }
 
-  private boolean countHist(TermStatistics ts, int bin) throws IOException {
+  private boolean countHist(TermStatistics ts, int bin) throws IOEtwitterception {
     if (ts.term != null && !advance(ts)) {
       return false;
     }
@@ -303,7 +303,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
     return true;
   }
 
-  private boolean countNoHist(TermStatistics ts) throws IOException {
+  private boolean countNoHist(TermStatistics ts) throws IOEtwitterception {
     if (ts.term != null && !advance(ts)) {
       return false;
     }
@@ -340,7 +340,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
     return new TermStatisticsSearchResults();
   }
 
-  public final class TermStatisticsSearchResults extends SearchResultsInfo {
+  public final class TermStatisticsSearchResults etwittertends SearchResultsInfo {
     public final List<Integer> binIds;
     public final Map<ThriftTermRequest, ThriftTermResults> results;
     public final int lastCompleteBinId;
@@ -359,8 +359,8 @@ public class TermStatisticsCollector extends AbstractResultsCollector
 
           if (shouldCollectDetailedDebugInfo()) {
             termStatisticsDebugInfo.add("minSearchedTime: " + minSearchedTime);
-            int maxSearchedTime = TermStatisticsCollector.this.getMaxSearchedTime();
-            termStatisticsDebugInfo.add("maxSearchedTime: " + maxSearchedTime);
+            int matwitterSearchedTime = TermStatisticsCollector.this.getMatwitterSearchedTime();
+            termStatisticsDebugInfo.add("matwitterSearchedTime: " + matwitterSearchedTime);
           }
 
           int lastCompleteBin = -1;
@@ -368,7 +368,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
           computeFirstBinId(TermStatisticsCollector.this.isSetMinSearchedTime(), minSearchedTime);
           trackHistogramResultStats();
 
-          // Example:
+          // Etwitterample:
           //  minSearchTime = 53s
           //  binSize = 10
           //  firstBinId = 5
@@ -457,7 +457,7 @@ public class TermStatisticsCollector extends AbstractResultsCollector
         // the range of the served segments.
         firstBinID = 0;
       } else {
-        // Example:
+        // Etwitterample:
         //    minSearchedTime = 54
         //    binSize = 10
         //    firstBinId = 5

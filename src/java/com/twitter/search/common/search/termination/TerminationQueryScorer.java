@@ -1,6 +1,6 @@
 package com.twitter.search.common.search.termination;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import com.google.common.base.Preconditions;
 
@@ -16,7 +16,7 @@ import com.twitter.search.common.search.DocIdTracker;
  * Scorer implementation that adds termination support for an underlying query.
  * Meant to be used in conjunction with {@link TerminationQuery}.
  */
-public class TerminationQueryScorer extends FilteredScorer implements DocIdTracker {
+public class TerminationQueryScorer etwittertends FilteredScorer implements DocIdTracker {
   private final QueryTimeout timeout;
   private int lastSearchedDocId = -1;
 
@@ -24,7 +24,7 @@ public class TerminationQueryScorer extends FilteredScorer implements DocIdTrack
     super(weight, inner);
     this.timeout = Preconditions.checkNotNull(timeout);
     this.timeout.registerDocIdTracker(this);
-    SearchRateCounter.export(
+    SearchRateCounter.etwitterport(
         timeout.getClientId() + "_num_termination_query_scorers_created").increment();
   }
 
@@ -45,22 +45,22 @@ public class TerminationQueryScorer extends FilteredScorer implements DocIdTrack
       }
 
       @Override
-      public int nextDoc() throws IOException {
+      public int netwittertDoc() throws IOEtwitterception {
         if (docId == NO_MORE_DOCS) {
           return NO_MORE_DOCS;
         }
 
-        if (timeout.shouldExit()) {
+        if (timeout.shouldEtwitterit()) {
           docId = NO_MORE_DOCS;
         } else {
-          docId = superDISI.nextDoc();
+          docId = superDISI.netwittertDoc();
           lastSearchedDocId = docId;
         }
         return docId;
       }
 
       @Override
-      public int advance(int target) throws IOException {
+      public int advance(int target) throws IOEtwitterception {
         if (docId == NO_MORE_DOCS) {
           return NO_MORE_DOCS;
         }
@@ -68,7 +68,7 @@ public class TerminationQueryScorer extends FilteredScorer implements DocIdTrack
         if (target == NO_MORE_DOCS) {
           docId = NO_MORE_DOCS;
           lastSearchedDocId = docId;
-        } else if (timeout.shouldExit()) {
+        } else if (timeout.shouldEtwitterit()) {
           docId = NO_MORE_DOCS;
         } else {
           docId = superDISI.advance(target);

@@ -9,21 +9,21 @@ import com.twitter.follow_recommendations.common.clients.addressbook.models.Reco
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueWithStats
 import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.strato.generated.client.onboarding.userrecs.ForwardEmailBookClientColumn
 import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class ForwardEmailBookSource @Inject() (
   forwardEmailBookClientColumn: ForwardEmailBookClientColumn,
   addressBookClient: AddressbookClient,
   statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser] {
+    etwittertends CandidateSource[HasParams with HasClientContetwittert, CandidateUser] {
 
   override val identifier: CandidateSourceIdentifier =
     ForwardEmailBookSource.Identifier
@@ -33,7 +33,7 @@ class ForwardEmailBookSource @Inject() (
    * Generate a list of candidates for the target
    */
   override def apply(
-    target: HasParams with HasClientContext
+    target: HasParams with HasClientContetwittert
   ): Stitch[Seq[CandidateUser]] = {
     val candidateUsers: Stitch[Seq[Long]] = target.getOptionalUserId
       .map { userId =>

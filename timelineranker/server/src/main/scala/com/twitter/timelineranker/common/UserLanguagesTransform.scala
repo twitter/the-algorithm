@@ -19,7 +19,7 @@ object UserLanguagesTransform {
  * It should be run in parallel with the main pipeline which fetches and hydrates CandidateTweets
  */
 class UserLanguagesTransform(handler: FailOpenHandler, userMetadataClient: UserMetadataClient)
-    extends FutureArrow[RecapQuery, Seq[ThriftLanguage]] {
+    etwittertends FutureArrow[RecapQuery, Seq[ThriftLanguage]] {
   override def apply(request: RecapQuery): Future[Seq[ThriftLanguage]] = {
     import UserLanguagesTransform._
 

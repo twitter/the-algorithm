@@ -19,7 +19,7 @@ class SocialGraph(
     userId: Long,
     ids: Seq[Long],
     relationshipTypes: Map[RelationshipType, Boolean],
-    lookupContext: Option[LookupContext] = IncludeInactiveUnionLookupContext,
+    lookupContetwittert: Option[LookupContetwittert] = IncludeInactiveUnionLookupContetwittert,
     stats: StatsReceiver
   ): Future[Seq[Long]] = {
     if (ids.isEmpty) {
@@ -38,7 +38,7 @@ class SocialGraph(
       val idsRequest = IdsRequest(
         relationships = relationships,
         pageRequest = SelectAllPageRequest,
-        context = lookupContext
+        contetwittert = lookupContetwittert
       )
       socialGraphIdStore
         .get(idsRequest)
@@ -58,7 +58,7 @@ class SocialGraph(
       userId,
       candidates,
       FollowedByNotMutedRelationships,
-      IncludeInactiveLookupContext,
+      IncludeInactiveLookupContetwittert,
       followedByNotMutedByStats
     )
   }
@@ -68,9 +68,9 @@ class SocialGraph(
 object SocialGraph {
   val SelectAllPageRequest = Some(PageRequest(selectAll = Some(true)))
 
-  val IncludeInactiveLookupContext = Some(LookupContext(includeInactive = true))
-  val IncludeInactiveUnionLookupContext = Some(
-    LookupContext(includeInactive = true, performUnion = Some(true))
+  val IncludeInactiveLookupContetwittert = Some(LookupContetwittert(includeInactive = true))
+  val IncludeInactiveUnionLookupContetwittert = Some(
+    LookupContetwittert(includeInactive = true, performUnion = Some(true))
   )
 
   val FollowedByNotMutedRelationships: Map[RelationshipType, Boolean] = Map(

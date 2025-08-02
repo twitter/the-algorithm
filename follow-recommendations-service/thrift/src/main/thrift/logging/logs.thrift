@@ -2,19 +2,19 @@ namespace java com.twitter.follow_recommendations.logging.thriftjava
 #@namespace scala com.twitter.follow_recommendations.logging.thriftscala
 #@namespace strato com.twitter.follow_recommendations.logging
 
-include "client_context.thrift"
+include "client_contetwittert.thrift"
 include "debug.thrift"
-include "display_context.thrift"
+include "display_contetwittert.thrift"
 include "display_location.thrift"
 include "recommendations.thrift"
 
 struct OfflineRecommendationRequest {
-    1: required client_context.OfflineClientContext clientContext
+    1: required client_contetwittert.OfflineClientContetwittert clientContetwittert
     2: required display_location.OfflineDisplayLocation displayLocation
-    3: optional display_context.OfflineDisplayContext displayContext
-    4: optional i32 maxResults
+    3: optional display_contetwittert.OfflineDisplayContetwittert displayContetwittert
+    4: optional i32 matwitterResults
     5: optional string cursor
-    6: optional list<i64> excludedIds(personalDataType='UserId')
+    6: optional list<i64> etwittercludedIds(personalDataType='UserId')
     7: optional bool fetchPromotedContent
     8: optional debug.OfflineDebugParams debugParams
 }(persisted='true', hasPersonalData='true')
@@ -30,7 +30,7 @@ struct RecommendationLog {
 }(persisted='true', hasPersonalData='true')
 
 struct OfflineScoringUserRequest {
-  1: required client_context.OfflineClientContext clientContext
+  1: required client_contetwittert.OfflineClientContetwittert clientContetwittert
   2: required display_location.OfflineDisplayLocation displayLocation
   3: required list<recommendations.OfflineUserRecommendation> candidates
 }(persisted='true', hasPersonalData='true')
@@ -61,7 +61,7 @@ struct OfflineRecommendationFlowCandidateSourceCandidates {
 }(persisted='true', hasPersonalData='true')
 
 struct RecommendationFlowLog {
-  1: required client_context.OfflineClientContext clientContext
+  1: required client_contetwittert.OfflineClientContetwittert clientContetwittert
   2: optional OfflineRecommendationFlowUserMetadata userMetadata
   3: optional OfflineRecommendationFlowSignals signals
   4: required i64 timestampMs

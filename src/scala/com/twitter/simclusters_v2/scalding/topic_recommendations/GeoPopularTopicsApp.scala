@@ -6,18 +6,18 @@ import com.twitter.recos.entities.thriftscala.SemanticCoreEntity
 import com.twitter.recos.entities.thriftscala.SemanticCoreEntityScoreList
 import com.twitter.recos.entities.thriftscala.SemanticEntityScore
 import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding._
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv2.remote_access.EtwitterplicitLocation
 import com.twitter.scalding_internal.dalv2.remote_access.Proc2Atla
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common.SemanticCoreEntityId
 import com.twitter.simclusters_v2.hdfs_sources.GeopopularTopTweetImpressedTopicsScalaDataset
 import com.twitter.timelines.per_topic_metrics.thriftscala.PerTopicAggregateEngagementMetric
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
+import com.twitter.wtf.scalding.jobs.common.AdhocEtwitterecutionApp
+import com.twitter.wtf.scalding.jobs.common.ScheduledEtwitterecutionApp
 import java.util.TimeZone
 import timelines.data_processing.jobs.metrics.per_topic_metrics.PerTopicAggregateEngagementScalaDataset
 
@@ -29,15 +29,15 @@ import timelines.data_processing.jobs.metrics.per_topic_metrics.PerTopicAggregat
  -- \
  --date 2020-03-28 --output_dir /user/recos-platform/adhoc/your_ldap/topics_country_counts
  */
-object GeoPopularTopicsAdhocApp extends AdhocExecutionApp {
+object GeoPopularTopicsAdhocApp etwittertends AdhocEtwitterecutionApp {
   override def runOnDateRange(
     args: Args
   )(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val maxTopicsPerCountry = args.int("maxTopics", 2000)
+  ): Etwitterecution[Unit] = {
+    val matwitterTopicsPerCountry = args.int("matwitterTopics", 2000)
     val typedTsv = args.boolean("tsv")
     implicit val inj: Injection[List[(SemanticCoreEntityId, Double)], Array[Byte]] =
       Bufferable.injectionOf[List[(SemanticCoreEntityId, Double)]]
@@ -47,15 +47,15 @@ object GeoPopularTopicsAdhocApp extends AdhocExecutionApp {
       .toTypedPipe
     val topicsWithEngagement =
       GeoPopularTopicsApp
-        .getPopularTopicsFromLogs(perTopicEngagementLogData, maxTopicsPerCountry)
+        .getPopularTopicsFromLogs(perTopicEngagementLogData, matwitterTopicsPerCountry)
         .mapValues(_.toList)
 
     if (typedTsv) {
-      topicsWithEngagement.writeExecution(
+      topicsWithEngagement.writeEtwitterecution(
         TypedTsv(args("/user/recos-platform/adhoc/your_ldap/topics_country_counts_tsv"))
       )
     } else {
-      topicsWithEngagement.writeExecution(
+      topicsWithEngagement.writeEtwitterecution(
         VersionedKeyValSource[String, List[(SemanticCoreEntityId, Double)]](args("output_dir"))
       )
     }
@@ -67,7 +67,7 @@ object GeoPopularTopicsAdhocApp extends AdhocExecutionApp {
  --start_cron popular_topics_per_country \
  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
-object GeoPopularTopicsBatchApp extends ScheduledExecutionApp {
+object GeoPopularTopicsBatchApp etwittertends ScheduledEtwitterecutionApp {
   override val firstTime: RichDate = RichDate("2020-04-06")
 
   override val batchIncrement: Duration = Days(1)
@@ -78,8 +78,8 @@ object GeoPopularTopicsBatchApp extends ScheduledExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val maxTopicsPerCountry = args.int("maxTopics", 2000)
+  ): Etwitterecution[Unit] = {
+    val matwitterTopicsPerCountry = args.int("matwitterTopics", 2000)
 
     val geoPopularTopicsPath: String =
       "/user/cassowary/manhattan_sequence_files/geo_popular_top_tweet_impressed_topics"
@@ -87,11 +87,11 @@ object GeoPopularTopicsBatchApp extends ScheduledExecutionApp {
     // Read engagement logs from the past 7 days
     val perTopicEngagementLogData = DAL
       .read(PerTopicAggregateEngagementScalaDataset, dateRange.prepend(Days(7)))
-      .withRemoteReadPolicy(ExplicitLocation(Proc2Atla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(Proc2Atla))
       .toTypedPipe
 
     val topicsWithScores =
-      GeoPopularTopicsApp.getPopularTopicsFromLogs(perTopicEngagementLogData, maxTopicsPerCountry)
+      GeoPopularTopicsApp.getPopularTopicsFromLogs(perTopicEngagementLogData, matwitterTopicsPerCountry)
 
     val topicsWithEntityScores = topicsWithScores
       .mapValues(_.map {
@@ -100,13 +100,13 @@ object GeoPopularTopicsBatchApp extends ScheduledExecutionApp {
       })
       .mapValues(SemanticCoreEntityScoreList(_))
 
-    val writeKeyValResultExec = topicsWithEntityScores
+    val writeKeyValResultEtwitterec = topicsWithEntityScores
       .map { case (country, topics) => KeyVal(country, topics) }
-      .writeDALVersionedKeyValExecution(
+      .writeDALVersionedKeyValEtwitterecution(
         GeopopularTopTweetImpressedTopicsScalaDataset,
-        D.Suffix(geoPopularTopicsPath)
+        D.Suffitwitter(geoPopularTopicsPath)
       )
-    writeKeyValResultExec
+    writeKeyValResultEtwitterec
   }
 }
 
@@ -114,7 +114,7 @@ object GeoPopularTopicsApp {
 
   def getPopularTopicsFromLogs(
     engagementLogs: TypedPipe[PerTopicAggregateEngagementMetric],
-    maxTopics: Int
+    matwitterTopics: Int
   )(
     implicit uniqueId: UniqueID
   ): TypedPipe[(String, Seq[(SemanticCoreEntityId, Double)])] = {
@@ -158,7 +158,7 @@ object GeoPopularTopicsApp {
           (country, (topicId, totalEngagementCountryCount.toDouble))
       }
       .group
-      .sortedReverseTake(maxTopics)(Ordering.by(_._2))
+      .sortedReverseTake(matwitterTopics)(Ordering.by(_._2))
       .toTypedPipe
   }
 

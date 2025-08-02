@@ -1,12 +1,12 @@
 package com.twitter.simclusters_v2.scalding.tweet_similarity
 
-import com.twitter.ml.api.DailySuffixFeatureSource
+import com.twitter.ml.api.DailySuffitwitterFeatureSource
 import com.twitter.ml.api.DataSetPipe
 import com.twitter.ml.api.RichDataRecord
 import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
 import com.twitter.simclusters_v2.common.TweetId
 import com.twitter.simclusters_v2.scalding.common.Util
 import com.twitter.simclusters_v2.tweet_similarity.TweetSimilarityFeatures
@@ -22,11 +22,11 @@ object DatasetTopKAnalysisJob {
     coengagementRate: Double)
 
   def getCoocurrenceTweetPairs(dataset: DataSetPipe): TypedPipe[TweetPairWithStats] = {
-    val featureContext = dataset.featureContext
+    val featureContetwittert = dataset.featureContetwittert
 
     dataset.records
       .map { record =>
-        val richDataRecord = new RichDataRecord(record, featureContext)
+        val richDataRecord = new RichDataRecord(record, featureContetwittert)
         val coengaged =
           if (richDataRecord
               .getFeatureValue(TweetSimilarityFeatures.Label)
@@ -52,9 +52,9 @@ object DatasetTopKAnalysisJob {
   }
 
   def getQueryTweetToCounts(dataset: DataSetPipe): TypedPipe[(Long, (Int, Int))] = {
-    val featureContext = dataset.featureContext
+    val featureContetwittert = dataset.featureContetwittert
     dataset.records.map { record =>
-      val richDataRecord = new RichDataRecord(record, featureContext)
+      val richDataRecord = new RichDataRecord(record, featureContetwittert)
       val coengaged =
         if (richDataRecord
             .getFeatureValue(TweetSimilarityFeatures.Label)
@@ -71,12 +71,12 @@ object DatasetTopKAnalysisJob {
     tweetPairs: TypedPipe[TweetPairWithStats],
     k: Int,
     orderByFnt: TweetPairWithStats => Double
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val topKTweetPairs =
       tweetPairs.groupAll
         .sortedReverseTake(k)(Ordering.by(orderByFnt))
         .values
-    topKTweetPairs.toIterableExecution.map { s =>
+    topKTweetPairs.toIterableEtwitterecution.map { s =>
       println(s.map(Util.prettyJsonMapper.writeValueAsString).mkString("\n"))
     }
   }
@@ -86,27 +86,27 @@ object DatasetTopKAnalysisJob {
     k: Int,
     orderByFnt: TweetPairWithStats => Double,
     descending: Boolean = true
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     if (descending) {
       println("TweetTopKTweets (descending order)")
       groupedBy
         .sortedReverseTake(k)(Ordering.by(orderByFnt))
-        .toIterableExecution
+        .toIterableEtwitterecution
         .map { record => println(record.toString()) }
     } else {
       println("TweetTopKTweets (ascending order)")
       groupedBy
         .sortedTake(k)(Ordering.by(orderByFnt))
-        .toIterableExecution
+        .toIterableEtwitterecution
         .map { record => println(record.toString()) }
     }
   }
 
-  def printTweetPairStatsExec(
+  def printTweetPairStatsEtwitterec(
     tweetPairs: TypedPipe[TweetPairWithStats],
     k: Int
-  ): Execution[Unit] = {
-    Execution
+  ): Etwitterecution[Unit] = {
+    Etwitterecution
       .sequence(
         Seq(
           Util.printSummaryOfNumericColumn(
@@ -131,7 +131,7 @@ object DatasetTopKAnalysisJob {
       ).unit
   }
 
-  def printPerQueryStatsExec(dataset: DataSetPipe, k: Int): Execution[Unit] = {
+  def printPerQueryStatsEtwitterec(dataset: DataSetPipe, k: Int): Etwitterecution[Unit] = {
     val queryToCounts = getQueryTweetToCounts(dataset)
 
     val topKQueryTweetsByOccurrence =
@@ -144,34 +144,34 @@ object DatasetTopKAnalysisJob {
         .sortedReverseTake(k)(Ordering.by { case (_, (_, coengagementCount)) => coengagementCount })
         .values
 
-    Execution
+    Etwitterecution
       .sequence(
         Seq(
           Util.printSummaryOfNumericColumn(
             queryToCounts.map(_._2._1),
             Some("Per-query Total Cooccurrence Count")),
-          topKQueryTweetsByOccurrence.toIterableExecution.map { s =>
+          topKQueryTweetsByOccurrence.toIterableEtwitterecution.map { s =>
             println(s.map(Util.prettyJsonMapper.writeValueAsString).mkString("\n"))
           },
           Util.printSummaryOfNumericColumn(
             queryToCounts.map(_._2._2),
             Some("Per-query Total Coengagement Count")),
-          topKQueryTweetsByEngagement.toIterableExecution.map { s =>
+          topKQueryTweetsByEngagement.toIterableEtwitterecution.map { s =>
             println(s.map(Util.prettyJsonMapper.writeValueAsString).mkString("\n"))
           }
         )
       ).unit
   }
 
-  def runTweetTopKTweetsOutputExecs(
+  def runTweetTopKTweetsOutputEtwitterecs(
     tweetPairs: TypedPipe[TweetPairWithStats],
     k: Int,
     outputPath: String
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     tweetPairs
       .groupBy(_.queryTweet)
       .sortedReverseTake(k)(Ordering.by(_.coengagementRate))
-      .writeExecution(TypedTsv(outputPath + "/topK_by_coengagement_rate"))
+      .writeEtwitterecution(TypedTsv(outputPath + "/topK_by_coengagement_rate"))
   }
 }
 
@@ -184,24 +184,24 @@ object DatasetTopKAnalysisJob {
   --dataset_path /user/cassowary/adhoc/training_data/2020-02-19_class_balanced/train \
   --output_path /user/cassowary/adhoc/training_data/2020-02-19_class_balanced/train/analysis
  * */
-object DatasetTopKAnalysisAdhocApp extends TwitterExecutionApp {
+object DatasetTopKAnalysisAdhocApp etwittertends TwitterEtwitterecutionApp {
   implicit val timeZone: TimeZone = DateOps.UTC
   implicit val dateParser: DateParser = DateParser.default
 
-  def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    Execution.withArgs { args: Args =>
+  def job: Etwitterecution[Unit] = Etwitterecution.withId { implicit uniqueId =>
+    Etwitterecution.withArgs { args: Args =>
       implicit val dateRange: DateRange = DateRange.parse(args.list("date"))
-      val dataset: DataSetPipe = DailySuffixFeatureSource(args("dataset_path")).read
+      val dataset: DataSetPipe = DailySuffitwitterFeatureSource(args("dataset_path")).read
       val outputPath: String = args("output_path")
       val topK: Int = args.int("top_K", default = 10)
 
       val tweetPairs = DatasetTopKAnalysisJob.getCoocurrenceTweetPairs(dataset)
 
-      Execution
+      Etwitterecution
         .zip(
-          DatasetTopKAnalysisJob.printTweetPairStatsExec(tweetPairs, topK),
-          DatasetTopKAnalysisJob.runTweetTopKTweetsOutputExecs(tweetPairs, topK, outputPath),
-          DatasetTopKAnalysisJob.printPerQueryStatsExec(dataset, topK)
+          DatasetTopKAnalysisJob.printTweetPairStatsEtwitterec(tweetPairs, topK),
+          DatasetTopKAnalysisJob.runTweetTopKTweetsOutputEtwitterecs(tweetPairs, topK, outputPath),
+          DatasetTopKAnalysisJob.printPerQueryStatsEtwitterec(dataset, topK)
         ).unit
     }
   }
@@ -217,27 +217,27 @@ object DatasetTopKAnalysisAdhocApp extends TwitterExecutionApp {
   --tweets 1223105606757695490 \
   --top_K 100
  * */
-object DatasetTopKAnalysisDumpApp extends TwitterExecutionApp {
+object DatasetTopKAnalysisDumpApp etwittertends TwitterEtwitterecutionApp {
   implicit val timeZone: TimeZone = DateOps.UTC
   implicit val dateParser: DateParser = DateParser.default
 
-  def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    Execution.withArgs { args: Args =>
+  def job: Etwitterecution[Unit] = Etwitterecution.withId { implicit uniqueId =>
+    Etwitterecution.withArgs { args: Args =>
       implicit val dateRange: DateRange = DateRange.parse(args.list("date"))
-      val dataset: DataSetPipe = DailySuffixFeatureSource(args("dataset_path")).read
+      val dataset: DataSetPipe = DailySuffitwitterFeatureSource(args("dataset_path")).read
       val tweets = args.list("tweets").map(_.toLong).toSet
       val topK: Int = args.int("top_K", default = 100)
 
       val tweetPairs = DatasetTopKAnalysisJob.getCoocurrenceTweetPairs(dataset)
 
       if (tweets.isEmpty) {
-        Execution.from(println("Empty query tweets"))
+        Etwitterecution.from(println("Empty query tweets"))
       } else {
         val filteredGroupby = tweetPairs
           .filter { record => tweets.contains(record.queryTweet) }
           .groupBy(_.queryTweet)
 
-        Execution
+        Etwitterecution
           .zip(
             //Top K
             DatasetTopKAnalysisJob

@@ -15,7 +15,7 @@ import com.twitter.util.Timer
 import scala.collection.mutable
 
 trait TweetCountsCacheUpdatingStore
-    extends TweetStoreBase[TweetCountsCacheUpdatingStore]
+    etwittertends TweetStoreBase[TweetCountsCacheUpdatingStore]
     with InsertTweet.Store
     with AsyncInsertTweet.Store
     with ReplicatedInsertTweet.Store
@@ -74,7 +74,7 @@ object TweetCountsCacheUpdatingStore {
       getShare(tweet).map(share => RetweetsKey(share.sourceStatusId))
     ).flatten
 
-  // pick all keys except quotes key
+  // pick all keys etwittercept quotes key
   def relatedKeysWithoutQuotesKey(tweet: Tweet): Seq[TweetCountKey] =
     relatedKeys(tweet).filterNot(_.isInstanceOf[QuotesKey])
 
@@ -85,9 +85,9 @@ object TweetCountsCacheUpdatingStore {
     val delete: Action = key => countsStore.delete(key)
 
     def initCounts(tweetId: TweetId) = Future.join(keys(tweetId).map(init))
-    def incrRelatedCounts(tweet: Tweet, excludeQuotesKey: Boolean = false) = {
+    def incrRelatedCounts(tweet: Tweet, etwittercludeQuotesKey: Boolean = false) = {
       Future.join {
-        if (excludeQuotesKey) {
+        if (etwittercludeQuotesKey) {
           relatedKeysWithoutQuotesKey(tweet).map(incr)
         } else {
           relatedKeys(tweet).map(incr)
@@ -231,7 +231,7 @@ object CachedCountsStore {
     Cached(Some(count), CachedValueStatus.Found, now, Some(now))
   }
 
-  case class IncrDecrHandler(delta: Long) extends Handler[Cached[Count]] {
+  case class IncrDecrHandler(delta: Long) etwittertends Handler[Cached[Count]] {
     override def apply(inCache: Option[Cached[Count]]): Option[Cached[Count]] =
       inCache.flatMap(incrCount)
 
@@ -239,12 +239,12 @@ object CachedCountsStore {
       oldCached.value.map { oldCount => oldCached.copy(value = Some(saferIncr(oldCount))) }
     }
 
-    private[this] def saferIncr(value: Long) = math.max(0, value + delta)
+    private[this] def saferIncr(value: Long) = math.matwitter(0, value + delta)
 
     override lazy val toString: String = "IncrDecrHandler(%s)".format(delta)
   }
 
-  object QueueIsFullException extends Exception
+  object QueueIsFullEtwitterception etwittertends Etwitterception
 }
 
 /**
@@ -255,15 +255,15 @@ object CachedCountsStore {
  * and subsequent updates are aggregated together.  Periodically, the aggregated updates will
  * be flushed. If the flush for a key succeeds and no more updates have come in during the flush,
  * then the key is demoted out of the tracked state.  Otherwise, updates continue to aggregate
- * until the next flush attempt.
+ * until the netwittert flush attempt.
  */
 class AggregatingCachedCountsStore(
   underlying: CachedCountsStore,
   timer: Timer,
   flushInterval: Duration,
-  maxSize: Int,
+  matwitterSize: Int,
   stats: StatsReceiver)
-    extends CachedCountsStore
+    etwittertends CachedCountsStore
     with Serialized {
   private[this] val pendingUpdates: mutable.Map[TweetCountKey, Count] =
     new mutable.HashMap[TweetCountKey, Count]
@@ -320,11 +320,11 @@ class AggregatingCachedCountsStore(
       val alreadyTracked = pendingUpdates.contains(key)
 
       if (!alreadyTracked) {
-        if (pendingUpdates.size < maxSize)
+        if (pendingUpdates.size < matwitterSize)
           promotionCounter.incr()
         else {
           overflowCounter.incr()
-          throw CachedCountsStore.QueueIsFullException
+          throw CachedCountsStore.QueueIsFullEtwitterception
         }
       }
 
@@ -354,5 +354,5 @@ class AggregatingCachedCountsStore(
     underlying
       .incr(key, delta)
       .flatMap(_ => aggregate(key, -delta))
-      .handle { case ex => flushFailureCounter.incr() }
+      .handle { case etwitter => flushFailureCounter.incr() }
 }

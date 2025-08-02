@@ -9,7 +9,7 @@ import scala.collection.JavaConverters._
 /**
  * A simple utility class to wait for serverset names to be resolved at startup.
  *
- * See [[com.twitter.finagle.client.ClientRegistry.expAllRegisteredClientsResolved()]] for an
+ * See [[com.twitter.finagle.client.ClientRegistry.etwitterpAllRegisteredClientsResolved()]] for an
  * alternative way to wait for ServerSet resolution.
  */
 object WaitForServerSets {
@@ -29,7 +29,7 @@ object WaitForServerSets {
 
   /**
    * Returns a Future that is satisfied when no more names resolve to Addr.Pending,
-   * or the specified timeout expires.
+   * or the specified timeout etwitterpires.
    *
    * This ignores address resolution failures, so just because the Future is satisfied
    * doesn't necessarily imply that all names are resolved to something useful.
@@ -51,7 +51,7 @@ object WaitForServerSets {
       .within(
         timer,
         timeout,
-        new TimeoutException(
+        new TimeoutEtwitterception(
           "Failed to resolve: " +
             vars.map(_.map { case (name, _) => name }).sample()
         )

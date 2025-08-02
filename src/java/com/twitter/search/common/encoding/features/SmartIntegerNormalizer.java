@@ -15,15 +15,15 @@ import com.google.common.base.Preconditions;
  * 4) no waste in code space, all possible values representable by normalized bits are used,
  * each corresponding to a different value.
  */
-public class SmartIntegerNormalizer extends ByteNormalizer {
-  // The max value we want to support in this normalizer. If the input is larger than this value,
-  // it's normalized as if it's the maxValue.
-  private final int maxValue;
+public class SmartIntegerNormalizer etwittertends ByteNormalizer {
+  // The matwitter value we want to support in this normalizer. If the input is larger than this value,
+  // it's normalized as if it's the matwitterValue.
+  private final int matwitterValue;
   // Number of bits used for normalized value, the largest normalized value
   // would be (1 << numBits) - 1.
   private final int numBits;
   // The inclusive lower bounds of all buckets. A normalized value k corresponds to original values
-  // in the inclusive-exclusive range
+  // in the inclusive-etwitterclusive range
   //   [ boundaryValues[k], boundaryValues[k+1] )
   private final int[] boundaryValues;
   // The length of the boundaryValues array, or the number of buckets.
@@ -32,35 +32,35 @@ public class SmartIntegerNormalizer extends ByteNormalizer {
   /**
    * Construct a normalizer.
    *
-   * @param maxValue max value it supports, must be larger than minValue. Anything larger than this
-   * would be treated as maxValue.
+   * @param matwitterValue matwitter value it supports, must be larger than minValue. Anything larger than this
+   * would be treated as matwitterValue.
    * @param numBits number of bits you want to use for this normalization, between 1 and 8.
    * higher resolution for the lower numbers.
    */
-  public SmartIntegerNormalizer(int maxValue, int numBits) {
-    Preconditions.checkArgument(maxValue > 0);
+  public SmartIntegerNormalizer(int matwitterValue, int numBits) {
+    Preconditions.checkArgument(matwitterValue > 0);
     Preconditions.checkArgument(numBits > 0 && numBits <= 8);
 
-    this.maxValue = maxValue;
+    this.matwitterValue = matwitterValue;
     this.numBits = numBits;
 
     this.length = 1 << numBits;
     this.boundaryValues = new int[length];
 
 
-    int index;
-    for (index = length - 1; index >= 0; --index) {
+    int indetwitter;
+    for (indetwitter = length - 1; indetwitter >= 0; --indetwitter) {
       // values are evenly distributed on the log scale
-      int boundary = (int) Math.pow(maxValue, (double) index / length);
+      int boundary = (int) Math.pow(matwitterValue, (double) indetwitter / length);
       // we have more byte slots left than we have possible boundary values (buckets),
       // just give consecutive boundary values to all remaining slots, starting from 0.
-      if (boundary <= index) {
+      if (boundary <= indetwitter) {
         break;
       }
-      boundaryValues[index] = boundary;
+      boundaryValues[indetwitter] = boundary;
     }
-    if (index >= 0) {
-      for (int i = 1; i <= index; ++i) {
+    if (indetwitter >= 0) {
+      for (int i = 1; i <= indetwitter; ++i) {
         boundaryValues[i] = i;
       }
     }
@@ -69,13 +69,13 @@ public class SmartIntegerNormalizer extends ByteNormalizer {
 
   @Override
   public byte normalize(double val) {
-    int intVal = (int) (val > maxValue ? maxValue : val);
+    int intVal = (int) (val > matwitterValue ? matwitterValue : val);
     return intToUnsignedByte(binarySearch(intVal, boundaryValues));
   }
 
   /**
    * Return the lower bound of the bucket represent by norm. This simply returns the boundary
-   * value indexed by current norm.
+   * value indetwittered by current norm.
    */
   @Override
   public double unnormLowerBound(byte norm) {
@@ -83,8 +83,8 @@ public class SmartIntegerNormalizer extends ByteNormalizer {
   }
 
   /**
-   * Return the upper bound of the bucket represent by norm. This returns the next boundary value
-   * minus 1. If norm represents the last bucket, it returns the maxValue.
+   * Return the upper bound of the bucket represent by norm. This returns the netwittert boundary value
+   * minus 1. If norm represents the last bucket, it returns the matwitterValue.
    */
   @Override
   public double unnormUpperBound(byte norm) {
@@ -92,13 +92,13 @@ public class SmartIntegerNormalizer extends ByteNormalizer {
     // boundary value.
     int intNorm = unsignedByteToInt(norm);
     if (intNorm == length - 1) {
-      return maxValue;
+      return matwitterValue;
     }
     return boundaryValues[intNorm + 1] - 1;
   }
 
   /**
-   * Do a binary search on array and find the index of the item that's no bigger than value.
+   * Do a binary search on array and find the indetwitter of the item that's no bigger than value.
    */
   private static int binarySearch(int value, int[] array) {
     // corner cases
@@ -127,8 +127,8 @@ public class SmartIntegerNormalizer extends ByteNormalizer {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder(String.format(
-        "Smart Integer Normalizer (numBits = %d, max = %d)\n",
-        this.numBits, this.maxValue));
+        "Smart Integer Normalizer (numBits = %d, matwitter = %d)\n",
+        this.numBits, this.matwitterValue));
     for (int i = 0; i < this.length; i++) {
       sb.append(String.format(
           "[%2d] boundary = %6d, range [ %6d, %6d ), norm: %4d | %4d | %4d %s\n",

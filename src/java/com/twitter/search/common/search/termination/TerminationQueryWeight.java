@@ -1,13 +1,13 @@
 package com.twitter.search.common.search.termination;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Explanation;
+import org.apache.lucene.indetwitter.LeafReaderContetwittert;
+import org.apache.lucene.indetwitter.Term;
+import org.apache.lucene.search.Etwitterplanation;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.Weight;
 
@@ -15,7 +15,7 @@ import org.apache.lucene.search.Weight;
  * Weight implementation that adds termination support for an underlying query.
  * Meant to be used in conjunction with {@link TerminationQuery}.
  */
-public class TerminationQueryWeight extends Weight {
+public class TerminationQueryWeight etwittertends Weight {
   private final Weight inner;
   private final QueryTimeout timeout;
 
@@ -26,14 +26,14 @@ public class TerminationQueryWeight extends Weight {
   }
 
   @Override
-  public Explanation explain(LeafReaderContext context, int doc)
-      throws IOException {
-    return inner.explain(context, doc);
+  public Etwitterplanation etwitterplain(LeafReaderContetwittert contetwittert, int doc)
+      throws IOEtwitterception {
+    return inner.etwitterplain(contetwittert, doc);
   }
 
   @Override
-  public Scorer scorer(LeafReaderContext context) throws IOException {
-    Scorer innerScorer = inner.scorer(context);
+  public Scorer scorer(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
+    Scorer innerScorer = inner.scorer(contetwittert);
     if (innerScorer != null) {
       return new TerminationQueryScorer(this, innerScorer, timeout);
     }
@@ -42,12 +42,12 @@ public class TerminationQueryWeight extends Weight {
   }
 
   @Override
-  public void extractTerms(Set<Term> terms) {
-    inner.extractTerms(terms);
+  public void etwittertractTerms(Set<Term> terms) {
+    inner.etwittertractTerms(terms);
   }
 
   @Override
-  public boolean isCacheable(LeafReaderContext ctx) {
-    return inner.isCacheable(ctx);
+  public boolean isCacheable(LeafReaderContetwittert cttwitter) {
+    return inner.isCacheable(cttwitter);
   }
 }

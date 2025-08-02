@@ -1,0 +1,7 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.promoted
+
+sealed trait DynamicPrerollType
+
+object Amplify etwittertends DynamicPrerollType
+object Marketplace etwittertends DynamicPrerollType
+object LiveTvEvent etwittertends DynamicPrerollType

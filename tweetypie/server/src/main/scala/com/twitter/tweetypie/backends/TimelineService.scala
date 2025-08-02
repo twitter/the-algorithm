@@ -25,7 +25,7 @@ object TimelineService {
     tls.TimelineQuery(
       timelineType = tls.TimelineType.User,
       timelineId = 620530287L, // same user id that timelineservice-api uses for warmup
-      maxCount = 1
+      matwitterCount = 1
     )
 
   def fromClient(client: tls.TimelineService.MethodPerEndpoint): TimelineService =
@@ -39,8 +39,8 @@ object TimelineService {
 
   case class Config(writeRequestPolicy: Policy, readRequestPolicy: Policy) {
 
-    def apply(svc: TimelineService, ctx: Backend.Context): TimelineService = {
-      val build = new PolicyAdvocate("TimelineService", ctx, svc)
+    def apply(svc: TimelineService, cttwitter: Backend.Contetwittert): TimelineService = {
+      val build = new PolicyAdvocate("TimelineService", cttwitter, svc)
       new TimelineService {
         val processEvent2: FutureArrow[Event, ProcessEventResult] =
           build("processEvent2", writeRequestPolicy, _.processEvent2)
@@ -55,20 +55,20 @@ object TimelineService {
 
   case class FailureBackoffsPolicy(
     timeoutBackoffs: Stream[Duration] = Stream.empty,
-    tlsExceptionBackoffs: Stream[Duration] = Stream.empty)
-      extends Policy {
+    tlsEtwitterceptionBackoffs: Stream[Duration] = Stream.empty)
+      etwittertends Policy {
     def toFailureRetryPolicy: FailureRetryPolicy =
       FailureRetryPolicy(
         RetryPolicy.combine(
           RetryPolicyBuilder.timeouts(timeoutBackoffs),
-          RetryPolicy.backoff(Backoff.fromStream(tlsExceptionBackoffs)) {
-            case Throw(ex: tls.InternalServerError) => true
+          RetryPolicy.backoff(Backoff.fromStream(tlsEtwitterceptionBackoffs)) {
+            case Throw(etwitter: tls.InternalServerError) => true
           }
         )
       )
 
-    def apply[A, B](name: String, ctx: Context): Builder[A, B] =
-      toFailureRetryPolicy(name, ctx)
+    def apply[A, B](name: String, cttwitter: Contetwittert): Builder[A, B] =
+      toFailureRetryPolicy(name, cttwitter)
   }
 
   implicit val warmup: Warmup[TimelineService] =

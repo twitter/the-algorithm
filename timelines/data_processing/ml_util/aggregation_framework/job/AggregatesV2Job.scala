@@ -31,7 +31,7 @@ object AggregatesV2Job {
     }
 
   /**
-   * Given a set of aggregates to compute and a datarecord, extract key-value
+   * Given a set of aggregates to compute and a datarecord, etwittertract key-value
    * pairs to output to the summingbird store.
    *
    * @param dataRecord input data record
@@ -156,7 +156,7 @@ object AggregatesV2Job {
     aggregateSet
       .map(typedGroup =>
         (
-          typedGroup.aggregatePrefix,
+          typedGroup.aggregatePrefitwitter,
           typedGroup.individualAggregateDescriptors
             .flatMap(_.outputFeatures.map(_.getFeatureName)).mkString(",")))
   }.toMap

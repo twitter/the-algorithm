@@ -1,12 +1,12 @@
 package com.twitter.search.earlybird_root;
 
-import javax.inject.Inject;
+import javatwitter.inject.Inject;
 
 import com.twitter.finagle.Service;
 import com.twitter.search.common.root.SearchRootServer;
 import com.twitter.search.earlybird.thrift.EarlybirdService;
 
-public class ProtectedRootServer extends SearchRootServer<EarlybirdService.ServiceIface> {
+public class ProtectedRootServer etwittertends SearchRootServer<EarlybirdService.ServiceIface> {
 
   @Inject
   public ProtectedRootServer(ProtectedRootService svc, Service<byte[], byte[]> byteSvc) {

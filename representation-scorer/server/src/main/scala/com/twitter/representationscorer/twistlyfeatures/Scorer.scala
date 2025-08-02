@@ -15,7 +15,7 @@ import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm
 import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
 import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingPairScoreId
 import com.twitter.stitch.Stitch
-import javax.inject.Inject
+import javatwitter.inject.Inject
 
 class Scorer @Inject() (
   fetchEngagementsFromUSS: Long => Stitch[Engagements],
@@ -114,7 +114,7 @@ class Scorer @Inject() (
     userId: UserId,
     tweetId: TweetId
   ): Stitch[SimClustersRecentEngagementSimilarities] = {
-    get(userId, Seq(tweetId)).map(x => x.head)
+    get(userId, Seq(tweetId)).map(twitter => twitter.head)
   }
 
   /**
@@ -137,7 +137,7 @@ class Scorer @Inject() (
           )
           .map {
             case (tweetScoresSeq, userScoreSeq) =>
-              // All seq have = size because when scores don't exist, they are returned as Option
+              // All seq have = size because when scores don't etwitterist, they are returned as Option
               (tweetScoresSeq, userScoreSeq).zipped.map { (tweetScores, userScores) =>
                 computeSimilarityScoresPerTweet(
                   engagements,
@@ -305,63 +305,63 @@ class Scorer @Inject() (
       .force
 
     val result = SimClustersRecentEngagementSimilarities(
-      fav1dLast10Max = max(favs1d),
+      fav1dLast10Matwitter = matwitter(favs1d),
       fav1dLast10Avg = avg(favs1d),
-      fav7dLast10Max = max(favs7d),
+      fav7dLast10Matwitter = matwitter(favs7d),
       fav7dLast10Avg = avg(favs7d),
-      retweet1dLast10Max = max(retweets1d),
+      retweet1dLast10Matwitter = matwitter(retweets1d),
       retweet1dLast10Avg = avg(retweets1d),
-      retweet7dLast10Max = max(retweets7d),
+      retweet7dLast10Matwitter = matwitter(retweets7d),
       retweet7dLast10Avg = avg(retweets7d),
-      follow7dLast10Max = max(follows7d),
+      follow7dLast10Matwitter = matwitter(follows7d),
       follow7dLast10Avg = avg(follows7d),
-      follow30dLast10Max = max(follows30d),
+      follow30dLast10Matwitter = matwitter(follows30d),
       follow30dLast10Avg = avg(follows30d),
-      share1dLast10Max = max(shares1d),
+      share1dLast10Matwitter = matwitter(shares1d),
       share1dLast10Avg = avg(shares1d),
-      share7dLast10Max = max(shares7d),
+      share7dLast10Matwitter = matwitter(shares7d),
       share7dLast10Avg = avg(shares7d),
-      reply1dLast10Max = max(replies1d),
+      reply1dLast10Matwitter = matwitter(replies1d),
       reply1dLast10Avg = avg(replies1d),
-      reply7dLast10Max = max(replies7d),
+      reply7dLast10Matwitter = matwitter(replies7d),
       reply7dLast10Avg = avg(replies7d),
-      originalTweet1dLast10Max = max(originalTweets1d),
+      originalTweet1dLast10Matwitter = matwitter(originalTweets1d),
       originalTweet1dLast10Avg = avg(originalTweets1d),
-      originalTweet7dLast10Max = max(originalTweets7d),
+      originalTweet7dLast10Matwitter = matwitter(originalTweets7d),
       originalTweet7dLast10Avg = avg(originalTweets7d),
-      videoPlayback1dLast10Max = max(videoViews1d),
+      videoPlayback1dLast10Matwitter = matwitter(videoViews1d),
       videoPlayback1dLast10Avg = avg(videoViews1d),
-      videoPlayback7dLast10Max = max(videoViews7d),
+      videoPlayback7dLast10Matwitter = matwitter(videoViews7d),
       videoPlayback7dLast10Avg = avg(videoViews7d),
-      block1dLast10Max = max(block1d),
+      block1dLast10Matwitter = matwitter(block1d),
       block1dLast10Avg = avg(block1d),
-      block7dLast10Max = max(block7d),
+      block7dLast10Matwitter = matwitter(block7d),
       block7dLast10Avg = avg(block7d),
-      block30dLast10Max = max(block30d),
+      block30dLast10Matwitter = matwitter(block30d),
       block30dLast10Avg = avg(block30d),
-      mute1dLast10Max = max(mute1d),
+      mute1dLast10Matwitter = matwitter(mute1d),
       mute1dLast10Avg = avg(mute1d),
-      mute7dLast10Max = max(mute7d),
+      mute7dLast10Matwitter = matwitter(mute7d),
       mute7dLast10Avg = avg(mute7d),
-      mute30dLast10Max = max(mute30d),
+      mute30dLast10Matwitter = matwitter(mute30d),
       mute30dLast10Avg = avg(mute30d),
-      report1dLast10Max = max(report1d),
+      report1dLast10Matwitter = matwitter(report1d),
       report1dLast10Avg = avg(report1d),
-      report7dLast10Max = max(report7d),
+      report7dLast10Matwitter = matwitter(report7d),
       report7dLast10Avg = avg(report7d),
-      report30dLast10Max = max(report30d),
+      report30dLast10Matwitter = matwitter(report30d),
       report30dLast10Avg = avg(report30d),
-      dontlike1dLast10Max = max(dontlike1d),
+      dontlike1dLast10Matwitter = matwitter(dontlike1d),
       dontlike1dLast10Avg = avg(dontlike1d),
-      dontlike7dLast10Max = max(dontlike7d),
+      dontlike7dLast10Matwitter = matwitter(dontlike7d),
       dontlike7dLast10Avg = avg(dontlike7d),
-      dontlike30dLast10Max = max(dontlike30d),
+      dontlike30dLast10Matwitter = matwitter(dontlike30d),
       dontlike30dLast10Avg = avg(dontlike30d),
-      seeFewer1dLast10Max = max(seeFewer1d),
+      seeFewer1dLast10Matwitter = matwitter(seeFewer1d),
       seeFewer1dLast10Avg = avg(seeFewer1d),
-      seeFewer7dLast10Max = max(seeFewer7d),
+      seeFewer7dLast10Matwitter = matwitter(seeFewer7d),
       seeFewer7dLast10Avg = avg(seeFewer7d),
-      seeFewer30dLast10Max = max(seeFewer30d),
+      seeFewer30dLast10Matwitter = matwitter(seeFewer30d),
       seeFewer30dLast10Avg = avg(seeFewer30d),
     )
     trackStats(result)
@@ -370,23 +370,23 @@ class Scorer @Inject() (
 
   private def trackStats(result: SimClustersRecentEngagementSimilarities): Unit = {
     val scores = Seq(
-      result.fav7dLast10Max,
-      result.retweet7dLast10Max,
-      result.follow30dLast10Max,
-      result.share1dLast10Max,
-      result.share7dLast10Max,
-      result.reply7dLast10Max,
-      result.originalTweet7dLast10Max,
-      result.videoPlayback7dLast10Max,
-      result.block30dLast10Max,
-      result.mute30dLast10Max,
-      result.report30dLast10Max,
-      result.dontlike30dLast10Max,
-      result.seeFewer30dLast10Max
+      result.fav7dLast10Matwitter,
+      result.retweet7dLast10Matwitter,
+      result.follow30dLast10Matwitter,
+      result.share1dLast10Matwitter,
+      result.share7dLast10Matwitter,
+      result.reply7dLast10Matwitter,
+      result.originalTweet7dLast10Matwitter,
+      result.videoPlayback7dLast10Matwitter,
+      result.block30dLast10Matwitter,
+      result.mute30dLast10Matwitter,
+      result.report30dLast10Matwitter,
+      result.dontlike30dLast10Matwitter,
+      result.seeFewer30dLast10Matwitter
     )
 
-    val nonEmpty = scores.exists(_.isDefined)
-    val nonZero = scores.exists { case Some(score) if score > 0 => true; case _ => false }
+    val nonEmpty = scores.etwitterists(_.isDefined)
+    val nonZero = scores.etwitterists { case Some(score) if score > 0 => true; case _ => false }
 
     if (nonEmpty) {
       scoresNonEmptyCounter.incr()
@@ -425,8 +425,8 @@ class Scorer @Inject() (
 object Scorer {
   def avg(s: Traversable[Double]): Option[Double] =
     if (s.isEmpty) None else Some(s.sum / s.size)
-  def max(s: Traversable[Double]): Option[Double] =
-    if (s.isEmpty) None else Some(s.foldLeft(0.0D) { (curr, _max) => math.max(curr, _max) })
+  def matwitter(s: Traversable[Double]): Option[Double] =
+    if (s.isEmpty) None else Some(s.foldLeft(0.0D) { (curr, _matwitter) => math.matwitter(curr, _matwitter) })
 
   private def getAuthorScoreId(
     userId: UserId,

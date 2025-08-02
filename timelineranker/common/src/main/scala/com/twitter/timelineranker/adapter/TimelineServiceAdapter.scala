@@ -19,10 +19,10 @@ object TimelineServiceAdapter {
   def toTlrQuery(
     id: Long,
     tlsRange: tls.TimelineRange,
-    getTweetsFromArchiveIndex: Boolean = true
+    getTweetsFromArchiveIndetwitter: Boolean = true
   ): ReverseChronTimelineQuery = {
     val timelineId = TimelineId(id, TimelineKind.home)
-    val maxCount = tlsRange.maxCount
+    val matwitterCount = tlsRange.matwitterCount
     val tweetIdRange = tlsRange.cursor.map { cursor =>
       TweetIdRange(
         fromId = cursor.tweetIdBounds.bottom,
@@ -30,13 +30,13 @@ object TimelineServiceAdapter {
       )
     }
     val options = ReverseChronTimelineQueryOptions(
-      getTweetsFromArchiveIndex = getTweetsFromArchiveIndex
+      getTweetsFromArchiveIndetwitter = getTweetsFromArchiveIndetwitter
     )
-    ReverseChronTimelineQuery(timelineId, Some(maxCount), tweetIdRange, Some(options))
+    ReverseChronTimelineQuery(timelineId, Some(matwitterCount), tweetIdRange, Some(options))
   }
 
   def toTlsQuery(query: ReverseChronTimelineQuery): tls.TimelineQuery = {
-    val tlsRange = toTlsRange(query.range, query.maxCount)
+    val tlsRange = toTlsRange(query.range, query.matwitterCount)
     tls.TimelineQuery(
       id = query.id.id,
       kind = query.id.kind,
@@ -44,7 +44,7 @@ object TimelineServiceAdapter {
     )
   }
 
-  def toTlsRange(range: Option[TimelineRange], maxCount: Option[Int]): tls.TimelineRange = {
+  def toTlsRange(range: Option[TimelineRange], matwitterCount: Option[Int]): tls.TimelineRange = {
     val cursor = range.map {
       case tweetIdRange: TweetIdRange =>
         RequestCursor(
@@ -52,9 +52,9 @@ object TimelineServiceAdapter {
           bottom = tweetIdRange.fromId.map(core.CursorState.fromTweetId)
         )
       case _ =>
-        throw new IllegalArgumentException(s"Only TweetIdRange is supported. Found: $range")
+        throw new IllegalArgumentEtwitterception(s"Only TweetIdRange is supported. Found: $range")
     }
-    maxCount
+    matwitterCount
       .map { count => tls.TimelineRange(cursor, count) }
       .getOrElse(tls.TimelineRange(cursor))
   }
@@ -79,11 +79,11 @@ object TimelineServiceAdapter {
           case tweet: tls.Tweet =>
             TimelineEntryEnvelope(Tweet(tweet.tweetId))
           case entry =>
-            throw new Exception(s"Only tweet timelines are supported. Found: $entry")
+            throw new Etwitterception(s"Only tweet timelines are supported. Found: $entry")
         }
         Return(Timeline(TimelineId(tlsTimeline.id, tlsTimeline.kind), tweetEnvelopes))
       case Some(TimelineNotFound) | Some(TimelineUnavailable) =>
-        Throw(new tls.core.TimelineUnavailableException(tlsTimeline.id, Some(tlsTimeline.kind)))
+        Throw(new tls.core.TimelineUnavailableEtwitterception(tlsTimeline.id, Some(tlsTimeline.kind)))
     }
   }
 
@@ -93,7 +93,7 @@ object TimelineServiceAdapter {
         case tweet: Tweet => tls.Tweet(tweet.id)
         case entry: HydratedTweetEntry => tls.Tweet.fromThrift(entry.tweet)
         case _ =>
-          throw new IllegalArgumentException(
+          throw new IllegalArgumentEtwitterception(
             s"Only tweet timelines are supported. Found: ${entry.entry}"
           )
       }
@@ -110,7 +110,7 @@ object TimelineServiceAdapter {
       case tlsthrift.TimelineEntry.Tweet(tweet) =>
         tweet.statusId
       case entry =>
-        throw new IllegalArgumentException(s"Only tweet timelines are supported. Found: ${entry}")
+        throw new IllegalArgumentEtwitterception(s"Only tweet timelines are supported. Found: ${entry}")
     }
   }
 
@@ -120,7 +120,7 @@ object TimelineServiceAdapter {
         case tweet: Tweet => tweet.id
         case entry: HydratedTweetEntry => entry.tweet.id
         case _ =>
-          throw new IllegalArgumentException(
+          throw new IllegalArgumentEtwitterception(
             s"Only tweet timelines are supported. Found: ${entry.entry}"
           )
       }
@@ -132,7 +132,7 @@ object TimelineServiceAdapter {
       entry.entry match {
         case hydratedTweet: HydratedTweet => hydratedTweet
         case _ =>
-          throw new IllegalArgumentException(s"Expected hydrated tweet. Found: ${entry.entry}")
+          throw new IllegalArgumentEtwitterception(s"Etwitterpected hydrated tweet. Found: ${entry.entry}")
       }
     }
   }

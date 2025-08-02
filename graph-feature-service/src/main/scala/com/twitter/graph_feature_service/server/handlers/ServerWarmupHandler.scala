@@ -10,12 +10,12 @@ import com.twitter.graph_feature_service.thriftscala.GfsIntersectionRequest
 import com.twitter.inject.utils.Handler
 import com.twitter.scrooge.Request
 import com.twitter.util.logging.Logger
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 import scala.util.Random
 
 @Singleton
-class ServerWarmupHandler @Inject() (warmup: ThriftWarmup) extends Handler {
+class ServerWarmupHandler @Inject() (warmup: ThriftWarmup) etwittertends Handler {
 
   val logger: Logger = Logger("WarmupHandler")
 
@@ -24,7 +24,7 @@ class ServerWarmupHandler @Inject() (warmup: ThriftWarmup) extends Handler {
 
   private def getRandomRequest: GfsIntersectionRequest = {
     GfsIntersectionRequest(
-      testingAccounts(Random.nextInt(testingAccounts.length)),
+      testingAccounts(Random.netwittertInt(testingAccounts.length)),
       testingAccounts,
       Seq(FeatureType(Following, FollowedBy), FeatureType(Following, FavoritedBy))
     )

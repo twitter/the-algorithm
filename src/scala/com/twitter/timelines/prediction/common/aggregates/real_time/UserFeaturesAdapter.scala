@@ -3,10 +3,10 @@ package com.twitter.timelines.prediction.common.aggregates.real_time
 import com.twitter.dal.personal_data.thriftjava.PersonalDataType.InferredGender
 import com.twitter.dal.personal_data.thriftjava.PersonalDataType.UserState
 import com.twitter.ml.api.Feature.Binary
-import com.twitter.ml.api.Feature.Text
+import com.twitter.ml.api.Feature.Tetwittert
 import com.twitter.ml.api.DataRecord
 import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
+import com.twitter.ml.api.FeatureContetwittert
 import com.twitter.ml.api.RichDataRecord
 import com.twitter.ml.featurestore.catalog.entities.core.User
 import com.twitter.ml.featurestore.catalog.features.core.UserAccount
@@ -25,7 +25,7 @@ import java.lang.{String => JString}
 import java.util
 import scala.collection.JavaConverters._
 
-object UserFeaturesAdapter extends TimelinesAdapterBase[PredictionRecord] {
+object UserFeaturesAdapter etwittertends TimelinesAdapterBase[PredictionRecord] {
   val UserStateBoundFeature: BoundFeature[UserId, FSDiscrete] = UserActivity.UserState.bind(User)
 
   /**
@@ -65,7 +65,7 @@ object UserFeaturesAdapter extends TimelinesAdapterBase[PredictionRecord] {
   val UserStateBooleanFeatures: Set[Feature[_]] = userStateToFeatureMap.values.toSet
 
 
-  val USER_COUNTRY_ID = new Text("geo.user_location.country_code")
+  val USER_COUNTRY_ID = new Tetwittert("geo.user_location.country_code")
   val UserCountryCodeFeature: BoundFeature[UserId, String] =
     UserLocation.CountryCodeAlpha2.bind(User)
   val UserLocationFeatures: Set[Feature[_]] = Set(USER_COUNTRY_ID)
@@ -85,7 +85,7 @@ object UserFeaturesAdapter extends TimelinesAdapterBase[PredictionRecord] {
     UserStateBooleanFeatures.toSeq ++ GenderBooleanFeatures.toSeq ++
       UserLocationFeatures.toSeq ++ Seq(UserHealthFeatures.IsUserVerifiedUnion)
 
-  override def getFeatureContext: FeatureContext = new FeatureContext(allFeatures: _*)
+  override def getFeatureContetwittert: FeatureContetwittert = new FeatureContetwittert(allFeatures: _*)
   override def commonFeatures: Set[Feature[_]] = Set.empty
 
   override def adaptToDataRecords(record: PredictionRecord): util.List[DataRecord] = {
@@ -100,7 +100,7 @@ object UserFeaturesAdapter extends TimelinesAdapterBase[PredictionRecord] {
     }
 
     val isUserVerifiedUnion =
-      UserVerifiedFeaturesSet.exists(feature => record.getFeatureValue(feature).getOrElse(false))
+      UserVerifiedFeaturesSet.etwitterists(feature => record.getFeatureValue(feature).getOrElse(false))
     newRecord.setFeatureValue[JBoolean](UserHealthFeatures.IsUserVerifiedUnion, isUserVerifiedUnion)
 
     List(newRecord.getRecord).asJava

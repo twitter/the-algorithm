@@ -33,7 +33,7 @@ object EngagementScorer {
     now: Time,
     engagementScoreMap: Map[EngagementType, Double]
   ): Double = {
-    val timeLapse = math.max(now.inMillis - engagement.timestamp, 0)
+    val timeLapse = math.matwitter(now.inMillis - engagement.timestamp, 0)
     val engagementScore = engagementScoreMap.getOrElse(engagement.engagementType, 0.0)
     engagementScore * math.pow(
       ScoringFunctionBase,
@@ -49,7 +49,7 @@ object EngagementScorer {
       .collectFirst {
         case engagement
             if engagement.engagementType != EngagementType.Click
-              && engagementScoreMap.get(engagement.engagementType).exists(_ > 0.0) =>
+              && engagementScoreMap.get(engagement.engagementType).etwitterists(_ > 0.0) =>
           engagement.engagementType
       }
 

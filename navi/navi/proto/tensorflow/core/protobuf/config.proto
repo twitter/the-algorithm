@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -30,9 +30,9 @@ message GPUOptions {
   // and the device. Options to reduce the memory requirement should be
   // considered before enabling this option as this may come with a negative
   // performance impact. Oversubscription using the unified memory requires
-  // Pascal class or newer GPUs and it is currently only supported on the Linux
+  // Pascal class or newer GPUs and it is currently only supported on the Linutwitter
   // operating system. See
-  // https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#um-requirements
+  // https://docs.nvidia.com/cuda/cuda-c-programming-guide/indetwitter.html#um-requirements
   // for the detailed requirements.
   double per_process_gpu_memory_fraction = 1;
 
@@ -56,11 +56,11 @@ message GPUOptions {
   int64 deferred_deletion_bytes = 3;
 
   // A comma-separated list of GPU ids that determines the 'visible'
-  // to 'virtual' mapping of GPU devices.  For example, if TensorFlow
+  // to 'virtual' mapping of GPU devices.  For etwitterample, if TensorFlow
   // can see 8 GPU devices in the process, and one wanted to map
   // visible GPU devices 5 and 3 as "/device:GPU:0", and "/device:GPU:1",
   // then one would specify this field as "5,3".  This field is similar in
-  // spirit to the CUDA_VISIBLE_DEVICES environment variable, except
+  // spirit to the CUDA_VISIBLE_DEVICES environment variable, etwittercept
   // it applies to the visible GPU devices in the process.
   //
   // NOTE:
@@ -98,7 +98,7 @@ message GPUOptions {
   // the overall host system performance.
   bool force_gpu_compatible = 8;
 
-  message Experimental {
+  message Etwitterperimental {
     // Configuration for breaking down a visible GPU into multiple "virtual"
     // devices.
     message VirtualDevices {
@@ -133,7 +133,7 @@ message GPUOptions {
     // device names (e.g. /device:GPU:<id>) will refer to the virtual
     // devices and have the <id> field assigned sequentially starting from 0,
     // according to the order they appear in this list and the "memory_limit"
-    // list inside each element. For example,
+    // list inside each element. For etwitterample,
     //   visible_device_list = "1,0"
     //   virtual_devices { memory_limit: 1GB memory_limit: 2GB }
     //   virtual_devices {}
@@ -172,7 +172,7 @@ message GPUOptions {
     // generation in OrderTaskDeviceMap() during CollectiveParam resolution.
     string collective_ring_order = 4;
 
-    // If true then extra work is done by GPUDevice and GPUBFCAllocator to
+    // If true then etwittertra work is done by GPUDevice and GPUBFCAllocator to
     // keep track of when GPU memory is freed and when kernels actually
     // complete so that we can know when a nominally free memory chunk
     // is really not subject to pending use.
@@ -184,29 +184,29 @@ message GPUOptions {
     // Note that timestamped_allocator is only effective if some tracking is
     // specified.
     //
-    // If kernel_tracker_max_interval = n > 0, then a tracking event
+    // If kernel_tracker_matwitter_interval = n > 0, then a tracking event
     // is inserted after every n kernels without an event.
-    int32 kernel_tracker_max_interval = 7;
-    // If kernel_tracker_max_bytes = n > 0, then a tracking event is
+    int32 kernel_tracker_matwitter_interval = 7;
+    // If kernel_tracker_matwitter_bytes = n > 0, then a tracking event is
     // inserted after every series of kernels allocating a sum of
     // memory >= n.  If one kernel allocates b * n bytes, then one
     // event will be inserted after it, but it will count as b against
     // the pending limit.
-    int32 kernel_tracker_max_bytes = 8;
-    // If kernel_tracker_max_pending > 0 then no more than this many
+    int32 kernel_tracker_matwitter_bytes = 8;
+    // If kernel_tracker_matwitter_pending > 0 then no more than this many
     // tracking events can be outstanding at a time.  An attempt to
     // launch an additional kernel will stall until an event
     // completes.
-    int32 kernel_tracker_max_pending = 9;
+    int32 kernel_tracker_matwitter_pending = 9;
 
-    // BFC Allocator can return an allocated chunk of memory upto 2x the
+    // BFC Allocator can return an allocated chunk of memory upto 2twitter the
     // requested size. For virtual devices with tight memory constraints, and
     // proportionately large allocation requests, this can lead to a significant
     // reduction in available memory. The threshold below controls when a chunk
-    // should be split if the chunk size exceeds requested memory size. It is
-    // expressed as a fraction of total available memory for the tf device. For
-    // example setting it to 0.05 would imply a chunk needs to be split if its
-    // size exceeds the requested memory by 5% of the total virtual device/gpu
+    // should be split if the chunk size etwitterceeds requested memory size. It is
+    // etwitterpressed as a fraction of total available memory for the tf device. For
+    // etwitterample setting it to 0.05 would imply a chunk needs to be split if its
+    // size etwitterceeds the requested memory by 5% of the total virtual device/gpu
     // memory size.
     double internal_fragmentation_fraction = 10;
 
@@ -219,19 +219,19 @@ message GPUOptions {
     bool disallow_retry_on_allocation_failure = 12;
   }
 
-  // Everything inside experimental is subject to change and is not subject
+  // Everything inside etwitterperimental is subject to change and is not subject
   // to API stability guarantees in
   // https://www.tensorflow.org/guide/version_compat.
-  Experimental experimental = 9;
+  Etwitterperimental etwitterperimental = 9;
 }
 
 // Options passed to the graph optimizer
 message OptimizerOptions {
-  // If true, optimize the graph using common subexpression elimination.
+  // If true, optimize the graph using common subetwitterpression elimination.
   // Note: the optimization Level L1 will override this setting to true. So in
-  // order to disable common subexpression elimination the opt_level has to be
+  // order to disable common subetwitterpression elimination the opt_level has to be
   // set to L0.
-  bool do_common_subexpression_elimination = 1;
+  bool do_common_subetwitterpression_elimination = 1;
 
   // If true, perform constant folding optimization on the graph.
   // Note: the optimization Level L1 will override this setting to true. So in
@@ -243,7 +243,7 @@ message OptimizerOptions {
   // the size of each constant created can be limited. If this value is zero, a
   // default limit of 10 MiB will be applied. If constant folding optimization
   // is disabled, this value is ignored.
-  int64 max_folded_constant_in_bytes = 6;
+  int64 matwitter_folded_constant_in_bytes = 6;
 
   // If true, perform function inlining on the graph.
   bool do_function_inlining = 4;
@@ -252,7 +252,7 @@ message OptimizerOptions {
   enum Level {
     // L1 is the default level.
     // Optimization performed at L1 :
-    // 1. Common subexpression elimination
+    // 1. Common subetwitterpression elimination
     // 2. Constant folding
     L1 = 0;
 
@@ -264,14 +264,14 @@ message OptimizerOptions {
   // logical OR of the flags that this level implies and any flags already set.
   Level opt_level = 3;
 
-  // Control the use of the compiler/jit.  Experimental.
+  // Control the use of the compiler/jit.  Etwitterperimental.
   enum GlobalJitLevel {
-    DEFAULT = 0;  // Default setting ("off" now, but later expected to be "on")
+    DEFAULT = 0;  // Default setting ("off" now, but later etwitterpected to be "on")
     OFF = -1;
     // The following settings turn on compilation, with higher values being
     // more aggressive.  Higher values may reduce opportunities for parallelism
     // and may use more memory.  (At present, there is no distinction, but this
-    // is expected to change.)
+    // is etwitterpected to change.)
     ON_1 = 1;
     ON_2 = 2;
   }
@@ -279,13 +279,13 @@ message OptimizerOptions {
 
   // CPU code will be autoclustered only if global_jit_level >= ON_1 and either:
   //  - this flag is true, or
-  //  - TF_XLA_FLAGS contains --tf_xla_cpu_global_jit=true.
+  //  - TF_twitterLA_FLAGS contains --tf_twitterla_cpu_global_jit=true.
   bool cpu_global_jit = 7;
 }
 
 message GraphOptions {
   // Removed, use optimizer_options below.
-  reserved "skip_common_subexpression_elimination";
+  reserved "skip_common_subetwitterpression_elimination";
   reserved 1;
 
   // If true, use control flow to schedule the activation of Recv nodes.
@@ -304,7 +304,7 @@ message GraphOptions {
   // cost model.
   int64 build_cost_model_after = 9;
 
-  // Annotate each Node with Op output shape data, to the extent it can
+  // Annotate each Node with Op output shape data, to the etwittertent it can
   // be statically inferred.
   bool infer_shapes = 5;
 
@@ -321,12 +321,12 @@ message GraphOptions {
   bool enable_bfloat16_sendrecv = 7;
 
   // If > 0, record a timeline every this many steps.
-  // EXPERIMENTAL: This currently has no effect in MasterSession.
+  // EtwitterPERIMENTAL: This currently has no effect in MasterSession.
   int32 timeline_step = 8;
 
   // Options that control the type and amount of graph rewriting.
   // Not currently configurable via the public Python API (i.e. there is no API
-  // stability guarantee if you import RewriterConfig explicitly).
+  // stability guarantee if you import RewriterConfig etwitterplicitly).
   RewriterConfig rewrite_options = 10;
 }
 
@@ -344,12 +344,12 @@ message ThreadPoolOptionProto {
   //
   // If non-empty, then:
   // - a global threadpool associated with this name is looked
-  //   up or created. This allows, for example, sharing one threadpool across
+  //   up or created. This allows, for etwitterample, sharing one threadpool across
   //   many sessions (e.g., like the default behavior, if
   //   inter_op_parallelism_threads is not configured), but still partitioning
   //   into a large and small pool.
-  // - if the threadpool for this global_name already exists, then it is an
-  //   error if the existing pool was created using a different num_threads
+  // - if the threadpool for this global_name already etwitterists, then it is an
+  //   error if the etwitteristing pool was created using a different num_threads
   //   value as is specified on this call.
   // - threadpools created this way are never garbage collected.
   string global_name = 2;
@@ -372,9 +372,9 @@ message RPCOptions {
 
   // Setting cache_rpc_response to true will enable sender side caching of
   // response for RecvTensorAsync and RecvBufAsync to allow receiver to retry
-  // requests . This is only necessary when the network fabric is experiencing a
+  // requests . This is only necessary when the network fabric is etwitterperiencing a
   // significant error rate.  Without it we'll fail a step on an network error,
-  // while with it we'll be able to complete long steps (like complex
+  // while with it we'll be able to complete long steps (like completwitter
   // initializations) in the face of some network errors during RecvTensor.
   bool cache_rpc_response = 4;
 
@@ -384,7 +384,7 @@ message RPCOptions {
   // Setting num_channels_per_target > 0 allows uses of multiple channels to
   // communicate to the same target. This can be used to improve the aggregate
   // throughput on high speed links (e.g 100G) where single connection is not
-  // sufficient to maximize link utilization. Note that a single RPC only goes
+  // sufficient to matwitterimize link utilization. Note that a single RPC only goes
   // on a single channel, this only helps in situations where there are multiple
   // transfers to the same target overlapping in time.
   int32 num_channels_per_target = 6;
@@ -394,7 +394,7 @@ message RPCOptions {
 //
 // This can be used by the runtime and the Ops for debugging, monitoring, etc.
 //
-// The (name, version) tuple is expected to be a unique identifier for
+// The (name, version) tuple is etwitterpected to be a unique identifier for
 // sessions within the same process.
 //
 // NOTE: This is currently used and propagated only by the direct session.
@@ -408,22 +408,22 @@ message SessionMetadata {
 // Session configuration parameters.
 // The system picks appropriate values for fields that are not set.
 message ConfigProto {
-  // Map from device type name (e.g., "CPU" or "GPU" ) to maximum
+  // Map from device type name (e.g., "CPU" or "GPU" ) to matwitterimum
   // number of devices of that type to use.  If a particular device
   // type is not found in the map, the system picks an appropriate
   // number.
   map<string, int32> device_count = 1;
 
-  // The execution of an individual op (for some op types) can be
+  // The etwitterecution of an individual op (for some op types) can be
   // parallelized on a pool of intra_op_parallelism_threads.
   // 0 means the system picks an appropriate number.
   //
   // If you create an ordinary session, e.g., from Python or C++,
-  // then there is exactly one intra op thread pool per process.
+  // then there is etwitteractly one intra op thread pool per process.
   // The first session created determines the number of threads in this pool.
   // All subsequent sessions reuse/share this one global pool.
   //
-  // There are notable exceptions to the default behavior described above:
+  // There are notable etwitterceptions to the default behavior described above:
   // 1. There is an environment variable  for overriding this thread pool,
   //    named TF_OVERRIDE_GLOBAL_THREADPOOL.
   // 2. When connecting to a server, such as a remote `tf.train.Server`
@@ -452,7 +452,7 @@ message ConfigProto {
   // inter_op_parallelism_threads.
   bool use_per_session_threads = 9;
 
-  // This option is experimental - it may be replaced with a different mechanism
+  // This option is etwitterperimental - it may be replaced with a different mechanism
   // in the future.
   //
   // Configures session thread pools. If this is configured, then RunOptions for
@@ -460,7 +460,7 @@ message ConfigProto {
   //
   // The intended use is for when some session invocations need to run in a
   // background pool limited to a small number of threads:
-  // - For example, a session may be configured to have one large pool (for
+  // - For etwitterample, a session may be configured to have one large pool (for
   // regular compute) and one small pool (for periodic, low priority work);
   // using the small pool is currently the mechanism for limiting the inter-op
   // parallelism of the low priority work.  Note that it does not limit the
@@ -520,13 +520,13 @@ message ConfigProto {
   // When true, WorkerSessions are created with device attributes from the
   // full cluster.
   // This is helpful when a worker wants to partition a graph
-  // (for example during a PartitionedCallOp).
+  // (for etwitterample during a PartitionedCallOp).
   bool share_cluster_devices_in_session = 17;
 
-  // Everything inside Experimental is subject to change and is not subject
+  // Everything inside Etwitterperimental is subject to change and is not subject
   // to API stability guarantees in
   // https://www.tensorflow.org/guide/version_compat.
-  message Experimental {
+  message Etwitterperimental {
     // Task name for group resolution.
     string collective_group_leader = 1;
 
@@ -536,26 +536,26 @@ message ConfigProto {
     // used in future for other purpose?
     reserved 2;
 
-    // Which executor to use, the default executor will be used
+    // Which etwitterecutor to use, the default etwitterecutor will be used
     // if it is an empty string or "DEFAULT"
-    string executor_type = 3;
+    string etwitterecutor_type = 3;
 
     // Guidance to formatting of large RecvBuf fields for transfer.
-    // Any positive value sets the max chunk size.  0 defaults to 4096.
-    // Any negative value indicates no max, i.e. one chunk only.
-    int32 recv_buf_max_chunk = 4;
+    // Any positive value sets the matwitter chunk size.  0 defaults to 4096.
+    // Any negative value indicates no matwitter, i.e. one chunk only.
+    int32 recv_buf_matwitter_chunk = 4;
 
     // If true, and supported by the platform, the runtime will attempt to
     // use NUMA affinity where applicable.  One consequence will be the
-    // existence of as many CPU devices as there are available NUMA nodes.
+    // etwitteristence of as many CPU devices as there are available NUMA nodes.
     bool use_numa_affinity = 5;
 
-    // If true, make collective op execution order sequential and deterministic
+    // If true, make collective op etwitterecution order sequential and deterministic
     // for potentially concurrent collective instances.
-    bool collective_deterministic_sequential_execution = 6;
+    bool collective_deterministic_sequential_etwitterecution = 6;
 
     // If true, use NCCL for CollectiveOps.  This feature is highly
-    // experimental.
+    // etwitterperimental.
     bool collective_nccl = 7;
 
     // In the following, session state means the value of a variable, elements
@@ -586,7 +586,7 @@ message ConfigProto {
     // CPU usage.
     bool disable_thread_spinning = 9;
 
-    // This was promoted to a non-experimental API. Please use
+    // This was promoted to a non-etwitterperimental API. Please use
     // ConfigProto.share_cluster_devices_in_session instead.
     bool share_cluster_devices_in_session = 10;
 
@@ -603,22 +603,22 @@ message ConfigProto {
     //
     // If this option is set to true when a session is created, the full
     // GraphDef must be passed in a single call to Session::Create(), and
-    // Session::Extend() may not be supported.
+    // Session::Etwittertend() may not be supported.
     bool optimize_for_static_graph = 12;
 
     // This field will eventually be deprecated and replaced by
     // mlir_bridge_rollout (b/166038521).
     //
-    // Whether to enable the MLIR-based TF->XLA bridge.
+    // Whether to enable the MLIR-based TF->twitterLA bridge.
     //
-    // This is a replacement to the existing bridge, and not ready for
+    // This is a replacement to the etwitteristing bridge, and not ready for
     // production usage yet.
     // If this option is set to true when a session is created, MLIR is used to
     // perform the set of graph transformations to put the graph in a form that
-    // can be executed with delegation of some computations to an accelerator.
-    // This builds on the model of XLA where a subset of the graph is
+    // can be etwitterecuted with delegation of some computations to an accelerator.
+    // This builds on the model of twitterLA where a subset of the graph is
     // encapsulated and attached to a "compile" operation, whose result is fed
-    // to an "execute" operation. The kernel for these operations is responsible
+    // to an "etwitterecute" operation. The kernel for these operations is responsible
     // to lower the encapsulated graph to a particular device.
     bool enable_mlir_bridge = 13;
 
@@ -639,7 +639,7 @@ message ConfigProto {
       // Enable the MLIR bridge in a fallback mode on a per graph basis based
       // on an analysis of the features used in the graph.
       // Running the MLIR bridge in the fallback mode means that it is
-      // executed and it commits all the changes to the TF graph in case
+      // etwitterecuted and it commits all the changes to the TF graph in case
       // of success. And it does not in case of failures and let the old bridge
       // to process the TF graph.
       MLIR_BRIDGE_ROLLOUT_SAFE_MODE_FALLBACK_ENABLED = 4;
@@ -647,14 +647,14 @@ message ConfigProto {
     // This field is underdevelopment, for now use enable_mlir_bridge
     // (b/166038521).
     //
-    // Whether to enable the MLIR-based TF->XLA bridge.
+    // Whether to enable the MLIR-based TF->twitterLA bridge.
     MlirBridgeRollout mlir_bridge_rollout = 17;
 
     // Whether to enable the MLIR-based Graph optimizations.
     //
     // This will become a part of standard Tensorflow graph optimization
     // pipeline, currently this is only used for gradual migration and testing
-    // new passes that are replacing existing optimizations in Grappler.
+    // new passes that are replacing etwitteristing optimizations in Grappler.
     bool enable_mlir_graph_optimization = 16;
 
     // If true, the session will not store an additional copy of the graph for
@@ -664,14 +664,14 @@ message ConfigProto {
     // `RunOptions.output_partition_graphs` options must not be set.
     bool disable_output_partition_graphs = 14;
 
-    // Minimum number of batches run through the XLA graph before XLA fusion
+    // Minimum number of batches run through the twitterLA graph before twitterLA fusion
     // autotuner is enabled. Default value of zero disables the autotuner.
     //
-    // The XLA fusion autotuner can improve performance by executing a heuristic
+    // The twitterLA fusion autotuner can improve performance by etwitterecuting a heuristic
     // search on the compiler parameters.
-    int64 xla_fusion_autotuner_thresh = 15;
+    int64 twitterla_fusion_autotuner_thresh = 15;
 
-    // Whether runtime execution uses TFRT.
+    // Whether runtime etwitterecution uses TFRT.
     bool use_tfrt = 18;
 
     // The field "coordination_service was previously specified as a string;
@@ -683,23 +683,23 @@ message ConfigProto {
     reserved 20;
 
     // Whether functional control flow op lowering should be disabled. This is
-    // useful when executing within a portable runtime where control flow op
+    // useful when etwitterecuting within a portable runtime where control flow op
     // kernels may not be loaded due to selective registration.
     bool disable_functional_ops_lowering = 21;
 
-    // Provides a hint to XLA auto clustering to prefer forming a single large
+    // Provides a hint to twitterLA auto clustering to prefer forming a single large
     // cluster that encompases most of the graph.
-    bool xla_prefer_single_graph_cluster = 22;
+    bool twitterla_prefer_single_graph_cluster = 22;
 
     // Distributed coordination service configurations.
     CoordinationServiceConfig coordination_config = 23;
 
-    // Next: 24
+    // Netwittert: 24
   }
 
-  Experimental experimental = 16;
+  Etwitterperimental etwitterperimental = 16;
 
-  // Next: 18
+  // Netwittert: 18
 }
 
 // Options for a single Run() call.
@@ -719,17 +719,17 @@ message RunOptions {
 
   // The thread pool to use, if session_inter_op_thread_pool is configured.
   // To use the caller thread set this to -1 - this uses the caller thread
-  // to execute Session::Run() and thus avoids a context switch. Using the
-  // caller thread to execute Session::Run() should be done ONLY for simple
-  // graphs, where the overhead of an additional context switch is
+  // to etwitterecute Session::Run() and thus avoids a contetwittert switch. Using the
+  // caller thread to etwitterecute Session::Run() should be done ONLY for simple
+  // graphs, where the overhead of an additional contetwittert switch is
   // comparable with the overhead of Session::Run().
   int32 inter_op_thread_pool = 3;
 
-  // Whether the partition graph(s) executed by the executor(s) should be
+  // Whether the partition graph(s) etwitterecuted by the etwitterecutor(s) should be
   // outputted via RunMetadata.
   bool output_partition_graphs = 5;
 
-  // EXPERIMENTAL.  Options used to initialize DebuggerState, if enabled.
+  // EtwitterPERIMENTAL.  Options used to initialize DebuggerState, if enabled.
   DebugOptions debug_options = 6;
 
   // When enabled, causes tensor allocation information to be included in
@@ -739,10 +739,10 @@ message RunOptions {
   // Enabling this option can slow down the Run() call.
   bool report_tensor_allocations_upon_oom = 7;
 
-  // Everything inside Experimental is subject to change and is not subject
+  // Everything inside Etwitterperimental is subject to change and is not subject
   // to API stability guarantees in
   // https://www.tensorflow.org/guide/version_compat.
-  message Experimental {
+  message Etwitterperimental {
     // If non-zero, declares that this graph is going to use collective
     // ops and must synchronize step_ids with any other graph with this
     // same group_key value (in a distributed computation where tasks
@@ -762,7 +762,7 @@ message RunOptions {
     RunHandlerPoolOptions run_handler_pool_options = 3;
   }
 
-  Experimental experimental = 8;
+  Etwitterperimental etwitterperimental = 8;
 
   reserved 4;
 }
@@ -771,13 +771,13 @@ message RunOptions {
 message RunMetadata {
   // Statistics traced for this step. Populated if tracing is turned on via the
   // "RunOptions" proto.
-  // EXPERIMENTAL: The format and set of events may change in future versions.
+  // EtwitterPERIMENTAL: The format and set of events may change in future versions.
   StepStats step_stats = 1;
 
   // The cost graph for the computation defined by the run call.
   CostGraphDef cost_graph = 2;
 
-  // Graphs of the partitions executed by executors.
+  // Graphs of the partitions etwitterecuted by etwitterecutors.
   repeated GraphDef partition_graphs = 3;
 
   message FunctionGraphs {
@@ -812,16 +812,16 @@ message TensorConnection {
 }
 
 // Defines a subgraph in another `GraphDef` as a set of feed points and nodes
-// to be fetched or executed.
+// to be fetched or etwitterecuted.
 //
 // Compare with the arguments to `Session::Run()`.
 message CallableOptions {
   // Tensors to be fed in the callable. Each feed is the name of a tensor.
   repeated string feed = 1;
 
-  // Fetches. A list of tensor names. The caller of the callable expects a
+  // Fetches. A list of tensor names. The caller of the callable etwitterpects a
   // tensor to be returned for each fetch[i] (see RunStepResponse.tensor). The
-  // order of specified fetches does not change the execution order.
+  // order of specified fetches does not change the etwitterecution order.
   repeated string fetch = 2;
 
   // Target Nodes. A list of node names. The named nodes will be run by the
@@ -837,7 +837,7 @@ message CallableOptions {
   repeated TensorConnection tensor_connection = 5;
 
   // The Tensor objects fed in the callable and fetched from the callable
-  // are expected to be backed by host (CPU) memory by default.
+  // are etwitterpected to be backed by host (CPU) memory by default.
   //
   // The options below allow changing that - feeding tensors backed by
   // device memory, or returning tensors that are backed by device memory.
@@ -846,13 +846,13 @@ message CallableOptions {
   // 'feed' or 'fetch' fields above), to the fully qualified name of the device
   // owning the memory backing the contents of the tensor.
   //
-  // For example, creating a callable with the following options:
+  // For etwitterample, creating a callable with the following options:
   //
   // CallableOptions {
   //   feed: "a:0"
   //   feed: "b:0"
   //
-  //   fetch: "x:0"
+  //   fetch: "twitter:0"
   //   fetch: "y:0"
   //
   //   feed_devices: {
@@ -864,24 +864,24 @@ message CallableOptions {
   //  }
   // }
   //
-  // means that the Callable expects:
+  // means that the Callable etwitterpects:
   // - The first argument ("a:0") is a Tensor backed by GPU memory.
   // - The second argument ("b:0") is a Tensor backed by host memory.
   // and of its return values:
-  // - The first output ("x:0") will be backed by host memory.
+  // - The first output ("twitter:0") will be backed by host memory.
   // - The second output ("y:0") will be backed by GPU memory.
   //
   // FEEDS:
   // It is the responsibility of the caller to ensure that the memory of the fed
   // tensors will be correctly initialized and synchronized before it is
-  // accessed by operations executed during the call to Session::RunCallable().
+  // accessed by operations etwitterecuted during the call to Session::RunCallable().
   //
   // This is typically ensured by using the TensorFlow memory allocators
   // (Device::GetAllocator()) to create the Tensor to be fed.
   //
   // Alternatively, for CUDA-enabled GPU devices, this typically means that the
   // operation that produced the contents of the tensor has completed, i.e., the
-  // CUDA stream has been synchronized (e.g., via cuCtxSynchronize() or
+  // CUDA stream has been synchronized (e.g., via cuCttwitterSynchronize() or
   // cuStreamSynchronize()).
   map<string, string> feed_devices = 6;
   map<string, string> fetch_devices = 7;
@@ -898,5 +898,5 @@ message CallableOptions {
   // `feed_devices` with the same corresponding device name.
   bool fetch_skip_sync = 8;
 
-  // Next: 9
+  // Netwittert: 9
 }

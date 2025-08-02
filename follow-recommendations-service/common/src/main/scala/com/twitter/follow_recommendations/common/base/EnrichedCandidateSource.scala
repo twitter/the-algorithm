@@ -1,10 +1,10 @@
 package com.twitter.follow_recommendations.common.base
 
 import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
 import com.twitter.stitch.Stitch
 import com.twitter.util.Duration
-import com.twitter.util.TimeoutException
+import com.twitter.util.TimeoutEtwitterception
 import scala.language.implicitConversions
 
 class EnrichedCandidateSource[Target, Candidate](original: CandidateSource[Target, Candidate]) {
@@ -17,7 +17,7 @@ class EnrichedCandidateSource[Target, Candidate](original: CandidateSource[Targe
    * @return
    */
   def gate(predicate: Predicate[Target]): CandidateSource[Target, Candidate] = {
-    throw new UnsupportedOperationException()
+    throw new UnsupportedOperationEtwitterception()
   }
 
   def observe(statsReceiver: StatsReceiver): CandidateSource[Target, Candidate] = {
@@ -121,7 +121,7 @@ class EnrichedCandidateSource[Target, Candidate](original: CandidateSource[Targe
           .apply(target)
           .within(candidateTimeout)(com.twitter.finagle.util.DefaultTimer)
           .rescue {
-            case _: TimeoutException =>
+            case _: TimeoutEtwitterception =>
               timeoutCounter.incr()
               Stitch.Nil
           }
@@ -144,10 +144,10 @@ class EnrichedCandidateSource[Target, Candidate](original: CandidateSource[Targe
           .apply(target)
           .within(candidateTimeout)(com.twitter.finagle.util.DefaultTimer)
           .handle {
-            case _: TimeoutException =>
+            case _: TimeoutEtwitterception =>
               timeoutCounter.incr()
               Seq.empty
-            case e: Exception =>
+            case e: Etwitterception =>
               statsReceiver
                 .scope("candidate_source_error").scope(originalIdentifier.name).counter(
                   e.getClass.getSimpleName).incr

@@ -159,19 +159,19 @@ object MisinformationPolicyTransform {
 
 sealed trait PublishedState
 object PublishedState {
-  case object Draft extends PublishedState
-  case object Dogfood extends PublishedState
-  case object Published extends PublishedState
+  case object Draft etwittertends PublishedState
+  case object Dogfood etwittertends PublishedState
+  case object Published etwittertends PublishedState
 
   val PublicPublishedStates = Seq(PublishedState.Published)
   val EmployeePublishedStates = Seq(PublishedState.Published, PublishedState.Dogfood)
 }
 sealed trait MisinfoPolicyDisplayType
 object MisinfoPolicyDisplayType {
-  case object GetTheLatest extends MisinfoPolicyDisplayType
-  case object StayInformed extends MisinfoPolicyDisplayType
-  case object Misleading extends MisinfoPolicyDisplayType
-  case object GovernmentRequested extends MisinfoPolicyDisplayType
+  case object GetTheLatest etwittertends MisinfoPolicyDisplayType
+  case object StayInformed etwittertends MisinfoPolicyDisplayType
+  case object Misleading etwittertends MisinfoPolicyDisplayType
+  case object GovernmentRequested etwittertends MisinfoPolicyDisplayType
 }
 
 object SemanticCoreMisinformation {

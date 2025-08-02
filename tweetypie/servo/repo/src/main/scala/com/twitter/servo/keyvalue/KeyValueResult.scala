@@ -153,7 +153,7 @@ object KeyValueResult {
    * Return[Some[V]] is counted as a found result, a value of Return[None] is counted as a notFound
    * result, and a value of Throw[V] is counted as a failed result.
    *
-   * notFound will be filled in from the missing keys. Exceptions will be handled by counting all
+   * notFound will be filled in from the missing keys. Etwitterceptions will be handled by counting all
    * keys as failed. Values that are in map but not keys will be ignored.
    */
   def fromMapTryOptions[K, V](
@@ -206,7 +206,7 @@ case class KeyValueResult[K, +V](
   found: Map[K, V] = Map.empty[K, V]: immutable.Map[K, V],
   notFound: Set[K] = Set.empty[K]: immutable.Set[K],
   failed: Map[K, Throwable] = Map.empty[K, Throwable]: immutable.Map[K, Throwable])
-    extends Iterable[(K, Try[Option[V]])] {
+    etwittertends Iterable[(K, Try[Option[V]])] {
 
   /**
    * A cheaper implementation of isEmpty than the default which relies
@@ -226,8 +226,8 @@ case class KeyValueResult[K, +V](
 
   /**
    * Maps over found values to produce a new KeyValueResult.  If the given function throws an
-   * exception for a particular value, that value will be moved to the `failed` bucket with
-   * the thrown exception.
+   * etwitterception for a particular value, that value will be moved to the `failed` bucket with
+   * the thrown etwitterception.
    */
   def mapFound[V2](f: V => V2): KeyValueResult[K, V2] = {
     val builder = new KeyValueResultBuilder[K, V2]()
@@ -264,7 +264,7 @@ case class KeyValueResult[K, +V](
   }
 
   /**
-   * Map over found values to create a new KVR with the existing notFound and failed keys intact.
+   * Map over found values to create a new KVR with the etwitteristing notFound and failed keys intact.
    */
   def mapFoundValues[V2](f: V => Try[Option[V2]]): KeyValueResult[K, V2] = {
     val builder = new KeyValueResultBuilder[K, V2]()
@@ -427,7 +427,7 @@ case class KeyValueResult[K, +V](
    */
   def toFutureSeqOfOptions(keys: Seq[K]): Future[Seq[Option[V]]] = {
     failed.values.headOption match {
-      case Some(t) => Future.exception(t)
+      case Some(t) => Future.etwitterception(t)
       case None => Future.value(keys.map(found.get))
     }
   }

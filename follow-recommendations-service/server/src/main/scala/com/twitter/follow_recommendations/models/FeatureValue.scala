@@ -14,11 +14,11 @@ object FeatureValue {
     case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.LongValue(long)) =>
       NumberFeatureValue(long)
     case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.UnknownUnionField(field)) =>
-      throw new UnknownFeatureValueException(s"Primitive: ${field.field.name}")
+      throw new UnknownFeatureValueEtwitterception(s"Primitive: ${field.field.name}")
     case t.FeatureValue.UnknownUnionField(field) =>
-      throw new UnknownFeatureValueException(field.field.name)
+      throw new UnknownFeatureValueEtwitterception(field.field.name)
   }
 }
 
-class UnknownFeatureValueException(fieldName: String)
-    extends Exception(s"Unknown FeatureValue name in thrift: ${fieldName}")
+class UnknownFeatureValueEtwitterception(fieldName: String)
+    etwittertends Etwitterception(s"Unknown FeatureValue name in thrift: ${fieldName}")

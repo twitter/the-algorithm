@@ -19,92 +19,92 @@ import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
 
 public final class EarlybirdRequestUtil {
   // This logger is setup to log to a separate set of log files (request_info) and use an
-  // async logger so as to not block the searcher thread. See search/earlybird/config/log4j.xml
+  // async logger so as to not block the searcher thread. See search/earlybird/config/log4j.twitterml
   private static final Logger LOG = LoggerFactory.getLogger(EarlybirdRequestUtil.class);
 
   @VisibleForTesting
   static final SearchMovingAverage REQUESTED_NUM_RESULTS_STAT =
-      SearchMovingAverage.export("requested_num_results");
+      SearchMovingAverage.etwitterport("requested_num_results");
 
   @VisibleForTesting
-  static final SearchMovingAverage REQUESTED_MAX_HITS_TO_PROCESS_STAT =
-      SearchMovingAverage.export("requested_max_hits_to_process");
+  static final SearchMovingAverage REQUESTED_MAtwitter_HITS_TO_PROCESS_STAT =
+      SearchMovingAverage.etwitterport("requested_matwitter_hits_to_process");
 
   @VisibleForTesting
-  static final SearchMovingAverage REQUESTED_COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS_STAT =
-      SearchMovingAverage.export("requested_collector_params_max_hits_to_process");
+  static final SearchMovingAverage REQUESTED_COLLECTOR_PARAMS_MAtwitter_HITS_TO_PROCESS_STAT =
+      SearchMovingAverage.etwitterport("requested_collector_params_matwitter_hits_to_process");
 
   @VisibleForTesting
-  static final SearchMovingAverage REQUESTED_RELEVANCE_OPTIONS_MAX_HITS_TO_PROCESS_STAT =
-      SearchMovingAverage.export("requested_relevance_options_max_hits_to_process");
+  static final SearchMovingAverage REQUESTED_RELEVANCE_OPTIONS_MAtwitter_HITS_TO_PROCESS_STAT =
+      SearchMovingAverage.etwitterport("requested_relevance_options_matwitter_hits_to_process");
 
   @VisibleForTesting
-  static final SearchCounter REQUESTED_MAX_HITS_TO_PROCESS_ARE_DIFFERENT_STAT =
-      SearchCounter.export("requested_max_hits_to_process_are_different");
+  static final SearchCounter REQUESTED_MAtwitter_HITS_TO_PROCESS_ARE_DIFFERENT_STAT =
+      SearchCounter.etwitterport("requested_matwitter_hits_to_process_are_different");
 
   private static final SearchRateCounter REQUEST_WITH_MORE_THAN_2K_NUM_RESULTS_STAT =
-      SearchRateCounter.export("request_with_more_than_2k_num_result");
+      SearchRateCounter.etwitterport("request_with_more_than_2k_num_result");
   private static final SearchRateCounter REQUEST_WITH_MORE_THAN_4K_NUM_RESULTS_STAT =
-      SearchRateCounter.export("request_with_more_than_4k_num_result");
+      SearchRateCounter.etwitterport("request_with_more_than_4k_num_result");
 
   // Stats for tracking clock skew between earlybird and the client-specified request timestamp.
   @VisibleForTesting
   public static final SearchTimerStats CLIENT_CLOCK_DIFF_ABS =
-      SearchTimerStats.export("client_clock_diff_abs", TimeUnit.MILLISECONDS, false, true);
+      SearchTimerStats.etwitterport("client_clock_diff_abs", TimeUnit.MILLISECONDS, false, true);
   @VisibleForTesting
   public static final SearchTimerStats CLIENT_CLOCK_DIFF_POS =
-      SearchTimerStats.export("client_clock_diff_pos", TimeUnit.MILLISECONDS, false, true);
+      SearchTimerStats.etwitterport("client_clock_diff_pos", TimeUnit.MILLISECONDS, false, true);
   @VisibleForTesting
   public static final SearchTimerStats CLIENT_CLOCK_DIFF_NEG =
-      SearchTimerStats.export("client_clock_diff_neg", TimeUnit.MILLISECONDS, false, true);
+      SearchTimerStats.etwitterport("client_clock_diff_neg", TimeUnit.MILLISECONDS, false, true);
   @VisibleForTesting
   public static final SearchRateCounter CLIENT_CLOCK_DIFF_MISSING =
-      SearchRateCounter.export("client_clock_diff_missing");
+      SearchRateCounter.etwitterport("client_clock_diff_missing");
 
-  private static final int MAX_NUM_RESULTS = 4000;
-  private static final int OLD_MAX_NUM_RESULTS = 2000;
+  private static final int MAtwitter_NUM_RESULTS = 4000;
+  private static final int OLD_MAtwitter_NUM_RESULTS = 2000;
 
   private EarlybirdRequestUtil() {
   }
 
   /**
-   * Logs and fixes some potentially excessive values in the given request.
+   * Logs and fitwitteres some potentially etwittercessive values in the given request.
    */
-  public static void logAndFixExcessiveValues(EarlybirdRequest request) {
+  public static void logAndFitwitterEtwittercessiveValues(EarlybirdRequest request) {
     ThriftSearchQuery searchQuery = request.getSearchQuery();
     if (searchQuery != null) {
-      int maxHitsToProcess = 0;
+      int matwitterHitsToProcess = 0;
       int numResultsToReturn = 0;
 
       if (searchQuery.isSetCollectorParams()) {
         numResultsToReturn = searchQuery.getCollectorParams().getNumResultsToReturn();
 
         if (searchQuery.getCollectorParams().isSetTerminationParams()) {
-          maxHitsToProcess =
-              searchQuery.getCollectorParams().getTerminationParams().getMaxHitsToProcess();
+          matwitterHitsToProcess =
+              searchQuery.getCollectorParams().getTerminationParams().getMatwitterHitsToProcess();
         }
       }
 
-      if (maxHitsToProcess > 50000) {
-        LOG.warn("Excessive max hits in " + request.toString());
+      if (matwitterHitsToProcess > 50000) {
+        LOG.warn("Etwittercessive matwitter hits in " + request.toString());
       }
 
       // We used to limit number of results to 2000. These two counters help us track if we receive
       // too many requests with large number of results set.
-      String warningMessageTemplate = "Exceed %d num result in %s";
-      if (numResultsToReturn > MAX_NUM_RESULTS) {
-        LOG.warn(String.format(warningMessageTemplate, MAX_NUM_RESULTS, request.toString()));
+      String warningMessageTemplate = "Etwitterceed %d num result in %s";
+      if (numResultsToReturn > MAtwitter_NUM_RESULTS) {
+        LOG.warn(String.format(warningMessageTemplate, MAtwitter_NUM_RESULTS, request.toString()));
         REQUEST_WITH_MORE_THAN_4K_NUM_RESULTS_STAT.increment();
-        searchQuery.getCollectorParams().setNumResultsToReturn(MAX_NUM_RESULTS);
-      } else if (numResultsToReturn > OLD_MAX_NUM_RESULTS) {
-        LOG.warn(String.format(warningMessageTemplate, OLD_MAX_NUM_RESULTS, request.toString()));
+        searchQuery.getCollectorParams().setNumResultsToReturn(MAtwitter_NUM_RESULTS);
+      } else if (numResultsToReturn > OLD_MAtwitter_NUM_RESULTS) {
+        LOG.warn(String.format(warningMessageTemplate, OLD_MAtwitter_NUM_RESULTS, request.toString()));
         REQUEST_WITH_MORE_THAN_2K_NUM_RESULTS_STAT.increment();
       }
 
       ThriftSearchRelevanceOptions options = searchQuery.getRelevanceOptions();
       if (options != null) {
-        if (options.getMaxHitsToProcess() > 50000) {
-          LOG.warn("Excessive max hits in " + request.toString());
+        if (options.getMatwitterHitsToProcess() > 50000) {
+          LOG.warn("Etwittercessive matwitter hits in " + request.toString());
         }
       }
     }
@@ -130,29 +130,29 @@ public final class EarlybirdRequestUtil {
       if (request.isSetTimeoutMs()) {
         terminationParams.setTimeoutMs(request.getTimeoutMs());
       }
-      if (request.isSetMaxQueryCost()) {
-        terminationParams.setMaxQueryCost(request.getMaxQueryCost());
+      if (request.isSetMatwitterQueryCost()) {
+        terminationParams.setMatwitterQueryCost(request.getMatwitterQueryCost());
       }
       searchQuery.getCollectorParams().setTerminationParams(terminationParams);
     }
-    setMaxHitsToProcess(searchQuery);
+    setMatwitterHitsToProcess(searchQuery);
   }
 
-  // Early birds will only look for maxHitsToProcess in CollectorParameters.TerminationParameters.
-  // Priority to set  CollectorParameters.TerminationParameters.maxHitsToProcess is
+  // Early birds will only look for matwitterHitsToProcess in CollectorParameters.TerminationParameters.
+  // Priority to set  CollectorParameters.TerminationParameters.matwitterHitsToProcess is
   // 1 Collector parameters
   // 2 RelevanceParameters
-  // 3 ThrfitQuery.maxHitsToProcess
-  private static void setMaxHitsToProcess(ThriftSearchQuery thriftSearchQuery) {
+  // 3 ThrfitQuery.matwitterHitsToProcess
+  private static void setMatwitterHitsToProcess(ThriftSearchQuery thriftSearchQuery) {
     CollectorTerminationParams terminationParams = thriftSearchQuery
         .getCollectorParams().getTerminationParams();
-    if (!terminationParams.isSetMaxHitsToProcess()) {
+    if (!terminationParams.isSetMatwitterHitsToProcess()) {
       if (thriftSearchQuery.isSetRelevanceOptions()
-          && thriftSearchQuery.getRelevanceOptions().isSetMaxHitsToProcess()) {
-        terminationParams.setMaxHitsToProcess(
-            thriftSearchQuery.getRelevanceOptions().getMaxHitsToProcess());
+          && thriftSearchQuery.getRelevanceOptions().isSetMatwitterHitsToProcess()) {
+        terminationParams.setMatwitterHitsToProcess(
+            thriftSearchQuery.getRelevanceOptions().getMatwitterHitsToProcess());
       } else {
-        terminationParams.setMaxHitsToProcess(thriftSearchQuery.getMaxHitsToProcess());
+        terminationParams.setMatwitterHitsToProcess(thriftSearchQuery.getMatwitterHitsToProcess());
       }
     }
   }
@@ -187,32 +187,32 @@ public final class EarlybirdRequestUtil {
       REQUESTED_NUM_RESULTS_STAT.addSample(searchQuery.getNumResults());
     }
 
-    if (searchQuery.isSetMaxHitsToProcess()) {
-      REQUESTED_MAX_HITS_TO_PROCESS_STAT.addSample(searchQuery.getMaxHitsToProcess());
+    if (searchQuery.isSetMatwitterHitsToProcess()) {
+      REQUESTED_MAtwitter_HITS_TO_PROCESS_STAT.addSample(searchQuery.getMatwitterHitsToProcess());
     }
 
-    Integer collectorParamsMaxHitsToProcess = null;
+    Integer collectorParamsMatwitterHitsToProcess = null;
     if (searchQuery.isSetCollectorParams()
         && searchQuery.getCollectorParams().isSetTerminationParams()
-        && searchQuery.getCollectorParams().getTerminationParams().isSetMaxHitsToProcess()) {
-      collectorParamsMaxHitsToProcess =
-          searchQuery.getCollectorParams().getTerminationParams().getMaxHitsToProcess();
-      REQUESTED_COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS_STAT
-          .addSample(collectorParamsMaxHitsToProcess);
+        && searchQuery.getCollectorParams().getTerminationParams().isSetMatwitterHitsToProcess()) {
+      collectorParamsMatwitterHitsToProcess =
+          searchQuery.getCollectorParams().getTerminationParams().getMatwitterHitsToProcess();
+      REQUESTED_COLLECTOR_PARAMS_MAtwitter_HITS_TO_PROCESS_STAT
+          .addSample(collectorParamsMatwitterHitsToProcess);
     }
 
-    Integer relevanceOptionsMaxHitsToProcess = null;
+    Integer relevanceOptionsMatwitterHitsToProcess = null;
     if (searchQuery.isSetRelevanceOptions()
-        && searchQuery.getRelevanceOptions().isSetMaxHitsToProcess()) {
-      relevanceOptionsMaxHitsToProcess = searchQuery.getRelevanceOptions().getMaxHitsToProcess();
-      REQUESTED_RELEVANCE_OPTIONS_MAX_HITS_TO_PROCESS_STAT
-          .addSample(relevanceOptionsMaxHitsToProcess);
+        && searchQuery.getRelevanceOptions().isSetMatwitterHitsToProcess()) {
+      relevanceOptionsMatwitterHitsToProcess = searchQuery.getRelevanceOptions().getMatwitterHitsToProcess();
+      REQUESTED_RELEVANCE_OPTIONS_MAtwitter_HITS_TO_PROCESS_STAT
+          .addSample(relevanceOptionsMatwitterHitsToProcess);
     }
 
-    if ((collectorParamsMaxHitsToProcess != null)
-        && (relevanceOptionsMaxHitsToProcess != null)
-        && (collectorParamsMaxHitsToProcess != relevanceOptionsMaxHitsToProcess)) {
-      REQUESTED_MAX_HITS_TO_PROCESS_ARE_DIFFERENT_STAT.increment();
+    if ((collectorParamsMatwitterHitsToProcess != null)
+        && (relevanceOptionsMatwitterHitsToProcess != null)
+        && (collectorParamsMatwitterHitsToProcess != relevanceOptionsMatwitterHitsToProcess)) {
+      REQUESTED_MAtwitter_HITS_TO_PROCESS_ARE_DIFFERENT_STAT.increment();
     }
   }
 

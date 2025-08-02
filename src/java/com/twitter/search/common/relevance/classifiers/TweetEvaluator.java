@@ -11,7 +11,7 @@ import com.twitter.search.common.relevance.entities.TwitterMessage;
  */
 public abstract class TweetEvaluator {
   /**
-   * Passed in TwitterMessage is examined and any extractable
+   * Passed in TwitterMessage is etwitteramined and any etwittertractable
    * features are stored in TweetFeatures field of TwitterMessage.
    *
    * @param tweet TwitterMessage to perform classification on.

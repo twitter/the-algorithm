@@ -56,7 +56,7 @@ object PNegMultimodalPredicates {
               val pNegMultimodalScore = 1.0 - tweetScoringResponse.score
 
               candidate
-                .cacheExternalScore("PNegMultimodalScore", Future.value(Some(pNegMultimodalScore)))
+                .cacheEtwitterternalScore("PNegMultimodalScore", Future.value(Some(pNegMultimodalScore)))
 
               if (isOonCandidate) {
                 oonCandidatesCounter.incr()

@@ -9,7 +9,7 @@ import com.twitter.socialgraph.event.thriftscala.FollowEvent
 
 object LabelUtil {
 
-  val LabelExplicit = Set(
+  val LabelEtwitterplicit = Set(
     FeatureName.NumFollows,
     FeatureName.NumFavorites,
     FeatureName.NumRetweets,
@@ -37,7 +37,7 @@ object LabelUtil {
     FeatureName.NumEmailClick,
   )
 
-  val LabelSet = (LabelExplicit ++ LabelImplicit).map(_.value)
+  val LabelSet = (LabelEtwitterplicit ++ LabelImplicit).map(_.value)
 
   def fromFollowEvent(f: FollowEvent): Option[EdgeLabel] = {
     for {

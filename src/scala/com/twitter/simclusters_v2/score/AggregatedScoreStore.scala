@@ -7,7 +7,7 @@ import com.twitter.storehaus.ReadableStore
  * A wrapper class, used to aggregate the scores calculated by other score stores. It relies on the
  * results of other ScoreStores registered in the ScoreFacadeStore.
  */
-trait AggregatedScoreStore extends ReadableStore[ThriftScoreId, ThriftScore] {
+trait AggregatedScoreStore etwittertends ReadableStore[ThriftScoreId, ThriftScore] {
 
   // The underlyingScoreStore relies on [[ScoreFacadeStore]] to finish the dependency injection.
   protected var scoreFacadeStore: ReadableStore[ThriftScoreId, ThriftScore] = ReadableStore.empty

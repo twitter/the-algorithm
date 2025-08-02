@@ -1,6 +1,6 @@
 package com.twitter.unified_user_actions.adapter.social_graph_event
 
-import com.twitter.socialgraph.thriftscala.LogEventContext
+import com.twitter.socialgraph.thriftscala.LogEventContetwittert
 import com.twitter.socialgraph.thriftscala.SrcTargetRequest
 import com.twitter.socialgraph.thriftscala.WriteEvent
 import com.twitter.socialgraph.thriftscala.WriteRequestResult
@@ -35,10 +35,10 @@ trait BaseSocialGraphWriteEvent[T] {
   ): Seq[UnifiedUserAction] =
     uuaAction.getSrcTargetRequest(writeEvent).map { srcTargetRequest =>
       UnifiedUserAction(
-        userIdentifier = UserIdentifier(userId = writeEvent.context.loggedInUserId),
+        userIdentifier = UserIdentifier(userId = writeEvent.contetwittert.loggedInUserId),
         item = getSocialGraphItem(srcTargetRequest),
         actionType = uuaAction.uuaActionType,
-        eventMetadata = getEventMetadata(writeEvent.context)
+        eventMetadata = getEventMetadata(writeEvent.contetwittert)
       )
     }
 
@@ -50,9 +50,9 @@ trait BaseSocialGraphWriteEvent[T] {
     )
   }
 
-  def getEventMetadata(context: LogEventContext): EventMetadata = {
+  def getEventMetadata(contetwittert: LogEventContetwittert): EventMetadata = {
     EventMetadata(
-      sourceTimestampMs = context.timestamp,
+      sourceTimestampMs = contetwittert.timestamp,
       receivedTimestampMs = AdapterUtils.currentTimestampMs,
       sourceLineage = SourceLineage.ServerSocialGraphEvents,
     )

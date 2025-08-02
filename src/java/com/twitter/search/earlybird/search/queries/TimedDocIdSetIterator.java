@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird.search.queries;
 
-import java.io.IOException;
-import javax.annotation.Nullable;
+import java.io.IOEtwitterception;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -14,14 +14,14 @@ import com.twitter.search.common.search.TerminationTracker;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
 
 /**
- * DocIdSetIterator whose nextDoc() and advance() will early terminate by returning NO_MORE_DOCS
+ * DocIdSetIterator whose netwittertDoc() and advance() will early terminate by returning NO_MORE_DOCS
  * after the given deadline.
  */
-public class TimedDocIdSetIterator extends DocIdSetIterator {
-  // check deadline every NEXT_CALL_TIMEOUT_CHECK_PERIOD calls to nextDoc()
+public class TimedDocIdSetIterator etwittertends DocIdSetIterator {
+  // check deadline every NEtwitterT_CALL_TIMEOUT_CHECK_PERIOD calls to netwittertDoc()
   @VisibleForTesting
-  protected static final int NEXT_CALL_TIMEOUT_CHECK_PERIOD =
-      EarlybirdConfig.getInt("timed_doc_id_set_next_doc_deadline_check_period", 1000);
+  protected static final int NEtwitterT_CALL_TIMEOUT_CHECK_PERIOD =
+      EarlybirdConfig.getInt("timed_doc_id_set_netwittert_doc_deadline_check_period", 1000);
 
 
   // check deadline every ADVANCE_CALL_TIMEOUT_CHECK_PERIOD calls to advance()
@@ -37,7 +37,7 @@ public class TimedDocIdSetIterator extends DocIdSetIterator {
   private final long deadlineMillisFromEpoch;
 
   private int docId = -1;
-  private int nextCounter = 0;
+  private int netwittertCounter = 0;
   private int advanceCounter = 0;
 
   public TimedDocIdSetIterator(DocIdSetIterator innerIterator,
@@ -88,24 +88,24 @@ public class TimedDocIdSetIterator extends DocIdSetIterator {
   }
 
   @Override
-  public int nextDoc() throws IOException {
-    if (++nextCounter % NEXT_CALL_TIMEOUT_CHECK_PERIOD == 0
+  public int netwittertDoc() throws IOEtwitterception {
+    if (++netwittertCounter % NEtwitterT_CALL_TIMEOUT_CHECK_PERIOD == 0
         && clock.nowMillis() > deadlineMillisFromEpoch) {
       if (timeoutCountStat != null) {
         timeoutCountStat.increment();
       }
       if (terminationTracker != null) {
         terminationTracker.setEarlyTerminationState(
-            EarlyTerminationState.TERMINATED_TIME_OUT_EXCEEDED);
+            EarlyTerminationState.TERMINATED_TIME_OUT_EtwitterCEEDED);
       }
 
       return docId = NO_MORE_DOCS;
     }
-    return docId = innerIterator.nextDoc();
+    return docId = innerIterator.netwittertDoc();
   }
 
   @Override
-  public int advance(int target) throws IOException {
+  public int advance(int target) throws IOEtwitterception {
     if (++advanceCounter % ADVANCE_CALL_TIMEOUT_CHECK_PERIOD == 0
         && clock.nowMillis() > deadlineMillisFromEpoch) {
       if (timeoutCountStat != null) {
@@ -113,7 +113,7 @@ public class TimedDocIdSetIterator extends DocIdSetIterator {
       }
       if (terminationTracker != null) {
         terminationTracker.setEarlyTerminationState(
-            EarlyTerminationState.TERMINATED_TIME_OUT_EXCEEDED);
+            EarlyTerminationState.TERMINATED_TIME_OUT_EtwitterCEEDED);
       }
       return docId = NO_MORE_DOCS;
     }

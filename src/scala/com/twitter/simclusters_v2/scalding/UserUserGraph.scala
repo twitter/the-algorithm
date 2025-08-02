@@ -1,22 +1,22 @@
 package com.twitter.simclusters_v2.scalding
 
 import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, WriteExtension}
+import com.twitter.scalding_internal.dalv2.DALWrite.{D, WriteEtwittertension}
 import com.twitter.scalding_internal.job.analytics_batch.{
-  AnalyticsBatchExecution,
-  AnalyticsBatchExecutionArgs,
+  AnalyticsBatchEtwitterecution,
+  AnalyticsBatchEtwitterecutionArgs,
   BatchDescription,
   BatchFirstTime,
   BatchIncrement,
-  TwitterScheduledExecutionApp
+  TwitterScheduledEtwitterecutionApp
 }
 import com.twitter.simclusters_v2.scalding.common.Util
 import com.twitter.simclusters_v2.hdfs_sources.{
-  UserAndNeighborsFixedPathSource,
+  UserAndNeighborsFitwitteredPathSource,
   UserUserGraphScalaDataset
 }
 import com.twitter.simclusters_v2.thriftscala.{NeighborWithWeights, UserAndNeighbors}
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
+import com.twitter.wtf.scalding.jobs.common.AdhocEtwitterecutionApp
 import java.util.TimeZone
 
 /**
@@ -43,7 +43,7 @@ object UserUserGraph {
 
   def addWeightsAndAdjListify(
     input: TypedPipe[Edge],
-    maxNeighborsPerUser: Int
+    matwitterNeighborsPerUser: Int
   )(
     implicit uniqueId: UniqueID
   ): TypedPipe[UserAndNeighbors] = {
@@ -65,15 +65,15 @@ object UserUserGraph {
       }
       .group
       //      .withReducers(10000)
-      .sortedReverseTake(maxNeighborsPerUser)(Ordering.by { x: NeighborWithWeights =>
-        x.favScoreHalfLife100Days.getOrElse(0.0)
+      .sortedReverseTake(matwitterNeighborsPerUser)(Ordering.by { twitter: NeighborWithWeights =>
+        twitter.favScoreHalfLife100Days.getOrElse(0.0)
       })
       .map {
         case (srcId, neighborList) =>
-          if (neighborList.size >= maxNeighborsPerUser) numUsersNeedingNeighborTruncation.inc()
+          if (neighborList.size >= matwitterNeighborsPerUser) numUsersNeedingNeighborTruncation.inc()
           neighborList.foreach { neighbor =>
             numEdgesAfterTruncation.inc()
-            if (neighbor.favScoreHalfLife100Days.exists(_ > 0)) numFavEdgesAfterTruncation.inc()
+            if (neighbor.favScoreHalfLife100Days.etwitterists(_ > 0)) numFavEdgesAfterTruncation.inc()
             if (neighbor.isFollowed.contains(true)) numFollowEdgesAfterTruncation.inc()
           }
           numRecordsInOutputGraph.inc()
@@ -84,14 +84,14 @@ object UserUserGraph {
   def run(
     followEdges: TypedPipe[(Long, Long)],
     favEdges: TypedPipe[(Long, Long, Double)],
-    maxNeighborsPerUser: Int
+    matwitterNeighborsPerUser: Int
   )(
     implicit uniqueID: UniqueID
   ): TypedPipe[UserAndNeighbors] = {
     val combined = UserUserNormalizedGraph.combineFollowAndFav(followEdges, favEdges)
     addWeightsAndAdjListify(
       combined,
-      maxNeighborsPerUser
+      matwitterNeighborsPerUser
     )
   }
 }
@@ -102,7 +102,7 @@ object UserUserGraph {
  * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
  */
 
-object UserUserGraphBatch extends TwitterScheduledExecutionApp {
+object UserUserGraphBatch etwittertends TwitterScheduledEtwitterecutionApp {
   private val firstTime: String = "2021-04-24"
   implicit val tz = DateOps.UTC
   implicit val parser = DateParser.default
@@ -111,30 +111,30 @@ object UserUserGraphBatch extends TwitterScheduledExecutionApp {
 
   private val outputPath: String = "/user/cassowary/processed/user_user_graph"
 
-  private val execArgs = AnalyticsBatchExecutionArgs(
+  private val etwitterecArgs = AnalyticsBatchEtwitterecutionArgs(
     batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
     firstTime = BatchFirstTime(RichDate(firstTime)),
     lastTime = None,
     batchIncrement = BatchIncrement(batchIncrement)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) {
+  override def scheduledJob: Etwitterecution[Unit] = AnalyticsBatchEtwitterecution(etwitterecArgs) {
     implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
-          val maxNeighborsPerUser = args.int("maxNeighborsPerUser", 2000)
+      Etwitterecution.withId { implicit uniqueId =>
+        Etwitterecution.withArgs { args =>
+          val matwitterNeighborsPerUser = args.int("matwitterNeighborsPerUser", 2000)
 
           Util.printCounters(
             UserUserGraph
               .run(
                 UserUserNormalizedGraph.getFollowEdges,
                 UserUserNormalizedGraph.getFavEdges(halfLifeInDaysForFavScore),
-                maxNeighborsPerUser
+                matwitterNeighborsPerUser
               )
-              .writeDALSnapshotExecution(
+              .writeDALSnapshotEtwitterecution(
                 UserUserGraphScalaDataset,
                 D.Daily,
-                D.Suffix(outputPath),
+                D.Suffitwitter(outputPath),
                 D.EBLzo(),
                 dateRange.end)
           )
@@ -154,15 +154,15 @@ scalding remote run \
 --target src/scala/com/twitter/simclusters_v2/scalding:user_user_graph-adhoc \
 -- --date 2021-04-24 --outputDir "/user/cassowary/adhoc/user_user_graph_adhoc"
  */
-object UserUserGraphAdhoc extends AdhocExecutionApp {
+object UserUserGraphAdhoc etwittertends AdhocEtwitterecutionApp {
   override def runOnDateRange(
     args: Args
   )(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val maxNeighborsPerUser = args.int("maxNeighborsPerUser", 2000)
+  ): Etwitterecution[Unit] = {
+    val matwitterNeighborsPerUser = args.int("matwitterNeighborsPerUser", 2000)
     val halfLifeInDaysForFavScore = 100
     val outputDir = args("outputDir")
     val userAndNeighbors =
@@ -170,11 +170,11 @@ object UserUserGraphAdhoc extends AdhocExecutionApp {
         .run(
           UserUserNormalizedGraph.getFollowEdges,
           UserUserNormalizedGraph.getFavEdges(halfLifeInDaysForFavScore),
-          maxNeighborsPerUser)
+          matwitterNeighborsPerUser)
 
-    Execution
+    Etwitterecution
       .zip(
-        userAndNeighbors.writeExecution(UserAndNeighborsFixedPathSource(outputDir)),
-        userAndNeighbors.writeExecution(TypedTsv(outputDir + "_tsv"))).unit
+        userAndNeighbors.writeEtwitterecution(UserAndNeighborsFitwitteredPathSource(outputDir)),
+        userAndNeighbors.writeEtwitterecution(TypedTsv(outputDir + "_tsv"))).unit
   }
 }

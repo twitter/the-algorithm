@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.search.relevance.collectors;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -21,7 +21,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
  * RelevanceAllCollector is a results collector that collects all results sorted by score,
  * including signature-duplicates and results skipped by the scoring function.
  */
-public class RelevanceAllCollector extends AbstractRelevanceCollector {
+public class RelevanceAllCollector etwittertends AbstractRelevanceCollector {
   // All results.
   protected final List<RelevanceHit> results;
 
@@ -40,7 +40,7 @@ public class RelevanceAllCollector extends AbstractRelevanceCollector {
   }
 
   @Override
-  protected void doCollectWithScore(long tweetID, float score) throws IOException {
+  protected void doCollectWithScore(long tweetID, float score) throws IOEtwitterception {
     ThriftSearchResultMetadata metadata = collectMetadata();
     scoringFunction.populateResultMetadataBasedOnScoringData(
         searchRequestInfo.getSearchQuery().getResultMetadataOptions(),

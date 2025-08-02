@@ -17,7 +17,7 @@ object TweetVisibilityNudgeEnrichment {
     countryCode: Option[String]
   ): VisibilityResult = {
 
-    val softIntervention = extractSoftIntervention(result.verdict, result.secondaryVerdicts)
+    val softIntervention = etwittertractSoftIntervention(result.verdict, result.secondaryVerdicts)
 
     val enrichedPrimaryVerdict = enrichAction(
       result.verdict,
@@ -38,7 +38,7 @@ object TweetVisibilityNudgeEnrichment {
     result.copy(verdict = enrichedPrimaryVerdict, secondaryVerdicts = enrichedSecondaryVerdicts)
   }
 
-  private def extractSoftIntervention(
+  private def etwittertractSoftIntervention(
     primary: Action,
     secondaries: Seq[Action]
   ): Option[SoftIntervention] = {

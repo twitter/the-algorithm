@@ -11,7 +11,7 @@ include "online_store.thrift"
  **/
 struct FullClusterIdBucket {
   1: required online_store.ModelVersion modelVersion
-  // (hash(clusterId) mod NUM_BUCKETS_XXXXXX)
+  // (hash(clusterId) mod NUM_BUCKETS_twittertwittertwittertwittertwittertwitter)
   2: required i32 bucket
 }(hasPersonalData = 'false')
 

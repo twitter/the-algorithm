@@ -3,7 +3,7 @@ package service
 
 import com.twitter.bijection.scrooge.BinaryScalaCodec
 import com.twitter.coreservices.failed_task.writer.FailedTaskWriter
-import com.twitter.scrooge.ThriftException
+import com.twitter.scrooge.ThriftEtwitterception
 import com.twitter.scrooge.ThriftStruct
 import com.twitter.scrooge.ThriftStructCodec
 import com.twitter.tweetypie.serverutil.BoringStackTrace
@@ -13,12 +13,12 @@ import scala.util.control.NoStackTrace
 object FailureLoggingTweetService {
 
   /**
-   * Defines the universe of exception types for which we should scribe
+   * Defines the universe of etwitterception types for which we should scribe
    * the failure.
    */
   private def shouldWrite(t: Throwable): Boolean =
     t match {
-      case _: ThriftException => true
+      case _: ThriftEtwitterception => true
       case _: PostTweetFailure => true
       case _ => !BoringStackTrace.isBoring(t)
     }
@@ -26,12 +26,12 @@ object FailureLoggingTweetService {
   /**
    * Holds failure information from a failing PostTweetResult.
    *
-   * FailedTaskWriter logs an exception with the failed request, so we
+   * FailedTaskWriter logs an etwitterception with the failed request, so we
    * need to package up any failure that we want to log into an
-   * exception.
+   * etwitterception.
    */
   private class PostTweetFailure(state: TweetCreateState, reason: Option[String])
-      extends Exception
+      etwittertends Etwitterception
       with NoStackTrace {
     override def toString: String = s"PostTweetFailure($state, $reason)"
   }
@@ -44,7 +44,7 @@ object FailureLoggingTweetService {
 class FailureLoggingTweetService(
   failedTaskWriter: FailedTaskWriter[Array[Byte]],
   protected val underlying: ThriftTweetService)
-    extends TweetServiceProxy {
+    etwittertends TweetServiceProtwittery {
   import FailureLoggingTweetService._
 
   private[this] object writers {
@@ -54,9 +54,9 @@ class FailureLoggingTweetService(
     ): (T, Throwable) => Future[Unit] = {
       val taskWriter = failedTaskWriter(name, BinaryScalaCodec(codec).apply)
 
-      (t, exc) =>
-        Future.when(shouldWrite(exc)) {
-          taskWriter.writeFailure(t, exc)
+      (t, etwitterc) =>
+        Future.when(shouldWrite(etwitterc)) {
+          taskWriter.writeFailure(t, etwitterc)
         }
     }
 
@@ -69,8 +69,8 @@ class FailureLoggingTweetService(
       // Log requests for states other than OK to enable debugging creation failures
       case Return(res) if res.state != TweetCreateState.Ok =>
         writers.postTweet(request, new PostTweetFailure(res.state, res.failureReason))
-      case Throw(exc) =>
-        writers.postTweet(request, exc)
+      case Throw(etwitterc) =>
+        writers.postTweet(request, etwitterc)
       case _ =>
     }
 }

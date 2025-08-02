@@ -6,14 +6,14 @@ namespace rb TweetyPie
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                                                                                      //
-//   This file contains type definitions to support the Geo field added to Tweet flexible schema ONLY.                  //
+//   This file contains type definitions to support the Geo field added to Tweet fletwitterible schema ONLY.                  //
 //   It is unlikely to be re-usable so treat it them as private outside the subpackage defined here.                    //
 //                                                                                                                      //
 //   In respect to back storage, consider it has limited capacity, provisioned to address particular use cases.         //
 //   There is no free resources outside its current usage plus a future projection (see Storage Capacity below).        //
-//   For example:                                                                                                       //
-//    1- Adding extra fields to TweetLocationInfo will likely require extra storage.                                    //
-//    2- Increase on front-load QPS (read or write) may require extra sharding to not impact delay percentiles.         //
+//   For etwitterample:                                                                                                       //
+//    1- Adding etwittertra fields to TweetLocationInfo will likely require etwittertra storage.                                    //
+//    2- Increase on front-load QPS (read or write) may require etwittertra sharding to not impact delay percentiles.         //
 //   Failure to observe these may impact Tweetypie write-path and read-path.                                            //
 //                                                                                                                      //
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ enum GeoTagPlaceSource {
    * N.B.: COORDINATES is not AUTO because the API request doesn't publish a Place
    */
   AUTO        = 2
-  EXPLICIT    = 3
+  EtwitterPLICIT    = 3
 
   // free to use, added for backwards compatibility on client code.
   RESERVED_4  = 4
@@ -47,16 +47,16 @@ enum GeoTagPlaceSource {
 
 /**
  * Information about Tweet's Location(s).
- * Designed to enable custom consumption experiences of the Tweet's location(s).
+ * Designed to enable custom consumption etwitterperiences of the Tweet's location(s).
  * E.g.: Tweet's perspectival view of a Location entity
  *
  * To guarantee user's rights of privacy:
  *
  * - Only include user's published location data or unpublished location data that
- *   is EXPLICITLY set as publicly available by the user.
+ *   is EtwitterPLICITLY set as publicly available by the user.
  *
  * - Never include user's unpublished (aka shared) location data that
- *   is NOT EXPLICITLY set as publicly available by the user.
+ *   is NOT EtwitterPLICITLY set as publicly available by the user.
  *
  *   E.g.: User is asked to share their GPS coordinates with Twitter from mobile client,
  *         under the guarantee it won't be made publicly available.

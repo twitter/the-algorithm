@@ -18,7 +18,7 @@ import com.twitter.util.logging.Logging
 /**
  * Process request parameters into a ConversationControl value.
  */
-object ConversationControlBuilder extends Logging {
+object ConversationControlBuilder etwittertends Logging {
   type Type = Request => Stitch[Option[ConversationControl]]
 
   type ScreenName = String
@@ -27,7 +27,7 @@ object ConversationControlBuilder extends Logging {
    * The fields necessary to create a [[ConversationControl]].
    *
    * This is a trait rather than a case class to avoid running the
-   * code to extract the mentions in the cases where handling the
+   * code to etwittertract the mentions in the cases where handling the
    * request doesn't need to use them (the common case where
    * tweetCreateConversationControl is None).
    */
@@ -42,10 +42,10 @@ object ConversationControlBuilder extends Logging {
   object Request {
 
     /**
-     * Extract the data necessary to create a [[ConversationControl]]
+     * Etwittertract the data necessary to create a [[ConversationControl]]
      * for a new [[Tweet]]. This is intended for use when creating
      * Tweets. It must be called after the Tweet has had its entities
-     * extracted.
+     * etwittertracted.
      */
     def fromTweet(
       tweet: Tweet,
@@ -58,11 +58,11 @@ object ConversationControlBuilder extends Logging {
         def mentionedUserScreenNames: Set[ScreenName] =
           tweet.mentions
           // Enforce that the Tweet's mentions have already been
-          // extracted from the text. (Mentions will be None if they
-          // have not yet been extracted.)
+          // etwittertracted from the tetwittert. (Mentions will be None if they
+          // have not yet been etwittertracted.)
             .getOrElse(
-              throw new RuntimeException(
-                "Mentions must be extracted before applying ConversationControls"))
+              throw new RuntimeEtwitterception(
+                "Mentions must be etwittertracted before applying ConversationControls"))
             .map(_.screenName)
             .toSet
 
@@ -87,8 +87,8 @@ object ConversationControlBuilder extends Logging {
     )
 
   /**
-   * Extract the inviteViaMention value which does not exist on the TweetCreateConversationControl
-   * itself but does exist on the structures it unions.
+   * Etwittertract the inviteViaMention value which does not etwitterist on the TweetCreateConversationControl
+   * itself but does etwitterist on the structures it unions.
    */
   def inviteViaMention(tccc: TweetCreateConversationControl): Boolean =
     tccc match {
@@ -100,9 +100,9 @@ object ConversationControlBuilder extends Logging {
 
   /**
    * Translates the TweetCreateConversationControl into
-   * ConversationControl using the context from the rest of the tweet
+   * ConversationControl using the contetwittert from the rest of the tweet
    * creation. For the most part, this is just a direct translation,
-   * plus filling in the contextual user ids (mentioned users and tweet
+   * plus filling in the contetwittertual user ids (mentioned users and tweet
    * author).
    */
   def apply(
@@ -116,8 +116,8 @@ object ConversationControlBuilder extends Logging {
     val failureCounter = statsReceiver.counter("failures")
 
     // Get the user ids for these screen names. Any users who do not
-    // exist will be silently dropped.
-    def getExistingUserIds(
+    // etwitterist will be silently dropped.
+    def getEtwitteristingUserIds(
       screenNames: Set[ScreenName],
       mentionedUserIds: Option[Set[Long]]
     ): Stitch[Set[UserId]] = {
@@ -142,7 +142,7 @@ object ConversationControlBuilder extends Logging {
           cctl match {
             case TweetCreateConversationControl.ByInvitation(byInvitationControl) =>
               for {
-                invitedUserIds <- getExistingUserIds(
+                invitedUserIds <- getEtwitteristingUserIds(
                   request.mentionedUserScreenNames,
                   request.noteTweetMentionedUserIds)
               } yield Some(
@@ -155,7 +155,7 @@ object ConversationControlBuilder extends Logging {
 
             case TweetCreateConversationControl.Community(communityControl) =>
               for {
-                invitedUserIds <- getExistingUserIds(
+                invitedUserIds <- getEtwitteristingUserIds(
                   request.mentionedUserScreenNames,
                   request.noteTweetMentionedUserIds)
               } yield Some(
@@ -167,7 +167,7 @@ object ConversationControlBuilder extends Logging {
               )
             case TweetCreateConversationControl.Followers(followersControl) =>
               for {
-                invitedUserIds <- getExistingUserIds(
+                invitedUserIds <- getEtwitteristingUserIds(
                   request.mentionedUserScreenNames,
                   request.noteTweetMentionedUserIds)
               } yield Some(
@@ -180,12 +180,12 @@ object ConversationControlBuilder extends Logging {
             // This should only ever happen if a new value is added to the
             // union and we don't update this code.
             case TweetCreateConversationControl.UnknownUnionField(fld) =>
-              throw new RuntimeException(s"Unexpected TweetCreateConversationControl: $fld")
+              throw new RuntimeEtwitterception(s"Unetwitterpected TweetCreateConversationControl: $fld")
           }
       }
 
     (request: Request) => {
-      // Wrap in Stitch to encapsulate any exceptions that happen
+      // Wrap in Stitch to encapsulate any etwitterceptions that happen
       // before making a Stitch call inside of process.
       Stitch(process(request)).flatten.respond { response =>
         // If we count this before doing the work, and the stats are
@@ -199,7 +199,7 @@ object ConversationControlBuilder extends Logging {
 
         response.onFailure { e =>
           error(message = "Failed to create conversation control", cause = e)
-          // Don't bother counting individual exceptions, because
+          // Don't bother counting individual etwitterceptions, because
           // the cost of keeping those stats is probably not worth
           // the convenience of not having to look in the logs.
           failureCounter.incr()
@@ -220,8 +220,8 @@ object ConversationControlBuilder extends Logging {
 
     type Type = FutureEffect[Request]
 
-    val ExInvalidConversationControl = TweetCreateFailure.State(InvalidConversationControl)
-    val ExConversationControlNotAllowed = TweetCreateFailure.State(ConversationControlNotAllowed)
+    val EtwitterInvalidConversationControl = TweetCreateFailure.State(InvalidConversationControl)
+    val EtwitterConversationControlNotAllowed = TweetCreateFailure.State(ConversationControlNotAllowed)
     val ConversationControlStatusUpdateEnabledKey = "conversation_control_status_update_enabled"
     val ConversationControlFollowersEnabledKey = "conversation_control_my_followers_enabled"
 
@@ -231,7 +231,7 @@ object ConversationControlBuilder extends Logging {
     ): Type = request => {
       def fsDenied(fsKey: String): Boolean = {
         val featureEnabledOpt: Option[Boolean] =
-          // Do not log impressions, which would interfere with shared client experiment data.
+          // Do not log impressions, which would interfere with shared client etwitterperiment data.
           request.matchedResults.flatMap(_.getBoolean(fsKey, shouldLogImpression = false))
         val fsEnabled = featureEnabledOpt.contains(true)
         if (!fsEnabled) {
@@ -251,7 +251,7 @@ object ConversationControlBuilder extends Logging {
       }
 
       val isCcDeniedByFs = isCcRequest && {
-        val isFollower = request.conversationControl.exists {
+        val isFollower = request.conversationControl.etwitterists {
           case _: TweetCreateConversationControl.Followers => true
           case _ => false
         }
@@ -261,9 +261,9 @@ object ConversationControlBuilder extends Logging {
       }
 
       if (isCcDeniedByFs && useFeatureSwitchResults()) {
-        Future.exception(ExConversationControlNotAllowed)
+        Future.etwitterception(EtwitterConversationControlNotAllowed)
       } else if (isCcInvalidParams) {
-        Future.exception(ExInvalidConversationControl)
+        Future.etwitterception(EtwitterInvalidConversationControl)
       } else {
         Future.Unit
       }

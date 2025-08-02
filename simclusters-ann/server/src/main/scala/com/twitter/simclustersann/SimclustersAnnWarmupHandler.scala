@@ -2,7 +2,7 @@ package com.twitter.simclustersann
 
 import com.twitter.inject.Logging
 import com.twitter.inject.utils.Handler
-import javax.inject.Inject
+import javatwitter.inject.Inject
 import scala.util.control.NonFatal
 import com.google.common.util.concurrent.RateLimiter
 import com.twitter.conversions.DurationOps.richDurationFromInt
@@ -11,15 +11,15 @@ import com.twitter.simclusters_v2.common.ClusterId
 import com.twitter.simclusters_v2.common.TweetId
 import com.twitter.storehaus.ReadableStore
 import com.twitter.util.Await
-import com.twitter.util.ExecutorServiceFuturePool
+import com.twitter.util.EtwitterecutorServiceFuturePool
 import com.twitter.util.Future
 
 class SimclustersAnnWarmupHandler @Inject() (
   clusterTweetCandidatesStore: ReadableStore[ClusterId, Seq[(TweetId, Double)]],
-  futurePool: ExecutorServiceFuturePool,
+  futurePool: EtwitterecutorServiceFuturePool,
   rateLimiter: RateLimiter,
   statsReceiver: StatsReceiver)
-    extends Handler
+    etwittertends Handler
     with Logging {
 
   private val stats = statsReceiver.scope(this.getClass.getName)
@@ -63,7 +63,7 @@ class SimclustersAnnWarmupHandler @Inject() (
       case NonFatal(e) => error(e.getMessage, e)
     } finally {
       try {
-        futurePool.executor.shutdown()
+        futurePool.etwitterecutor.shutdown()
       } catch {
         case NonFatal(_) =>
       }

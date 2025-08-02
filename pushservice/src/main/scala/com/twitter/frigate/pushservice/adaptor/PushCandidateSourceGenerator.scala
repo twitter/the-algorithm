@@ -1,14 +1,14 @@
 package com.twitter.frigate.pushservice.adaptor
 
-import com.twitter.content_mixer.thriftscala.ContentMixerRequest
-import com.twitter.content_mixer.thriftscala.ContentMixerResponse
-import com.twitter.explore_ranker.thriftscala.ExploreRankerRequest
-import com.twitter.explore_ranker.thriftscala.ExploreRankerResponse
+import com.twitter.content_mitwitterer.thriftscala.ContentMitwittererRequest
+import com.twitter.content_mitwitterer.thriftscala.ContentMitwittererResponse
+import com.twitter.etwitterplore_ranker.thriftscala.EtwitterploreRankerRequest
+import com.twitter.etwitterplore_ranker.thriftscala.EtwitterploreRankerResponse
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base._
 import com.twitter.frigate.common.candidate._
 import com.twitter.frigate.common.store.RecentTweetsQuery
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
+import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContetwittert
 import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
 import com.twitter.frigate.pushservice.model.PushTypes.Target
 import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
@@ -42,7 +42,7 @@ class PushCandidateSourceGenerator(
   safeUserTweetTweetyPieStore: ReadableStore[UserTweet, TweetyPieResult],
   cachedTweetyPieStoreV2NoVF: ReadableStore[Long, TweetyPieResult],
   edgeStore: ReadableStore[RelationEdge, Boolean],
-  interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests],
+  interestsLookupStore: ReadableStore[InterestsLookupRequestWithContetwittert, UserInterests],
   uttEntityHydrationStore: UttEntityHydrationStore,
   geoDuckV2Store: ReadableStore[Long, LocationResponse],
   topTweetsByGeoStore: ReadableStore[InterestDomain[String], Map[String, List[(Long, Double)]]],
@@ -51,9 +51,9 @@ class PushCandidateSourceGenerator(
   recommendedTrendsCandidateSource: RecommendedTrendsCandidateSource,
   recentTweetsByAuthorStore: ReadableStore[RecentTweetsQuery, Seq[Seq[Long]]],
   topicSocialProofServiceStore: ReadableStore[TopicSocialProofRequest, TopicSocialProofResponse],
-  crMixerStore: CrMixerTweetStore,
-  contentMixerStore: ReadableStore[ContentMixerRequest, ContentMixerResponse],
-  exploreRankerStore: ReadableStore[ExploreRankerRequest, ExploreRankerResponse],
+  crMitwittererStore: CrMitwittererTweetStore,
+  contentMitwittererStore: ReadableStore[ContentMitwittererRequest, ContentMitwittererResponse],
+  etwitterploreRankerStore: ReadableStore[EtwitterploreRankerRequest, EtwitterploreRankerResponse],
   softUserLocationStore: ReadableStore[Long, Location],
   tripTweetCandidateStore: ReadableStore[TripDomain, TripTweets],
   listRecsStore: ReadableStore[String, NonPersonalizedRecommendedLists],
@@ -66,12 +66,12 @@ class PushCandidateSourceGenerator(
     cachedTweetyPieStoreV2,
     cachedTweetyPieStoreV2NoVF,
     userTweetTweetyPieStore,
-    PushFeatureSwitchParams.NumberOfMaxEarlybirdInNetworkCandidatesParam,
+    PushFeatureSwitchParams.NumberOfMatwitterEarlybirdInNetworkCandidatesParam,
     globalStats
   )
 
   private val frsTweetCandidateAdaptor = FRSTweetCandidateAdaptor(
-    crMixerStore,
+    crMitwittererStore,
     cachedTweetyPieStoreV2,
     cachedTweetyPieStoreV2NoVF,
     userTweetTweetyPieStore,
@@ -80,8 +80,8 @@ class PushCandidateSourceGenerator(
     globalStats
   )
 
-  private val contentRecommenderMixerAdaptor = ContentRecommenderMixerAdaptor(
-    crMixerStore,
+  private val contentRecommenderMitwittererAdaptor = ContentRecommenderMitwittererAdaptor(
+    crMitwittererStore,
     safeCachedTweetyPieStoreV2,
     edgeStore,
     topicSocialProofServiceStore,
@@ -91,7 +91,7 @@ class PushCandidateSourceGenerator(
 
   private val tripGeoCandidatesAdaptor = TripGeoCandidatesAdaptor(
     tripTweetCandidateStore,
-    contentMixerStore,
+    contentMitwittererStore,
     safeCachedTweetyPieStoreV2,
     cachedTweetyPieStoreV2NoVF,
     globalStats
@@ -137,7 +137,7 @@ class PushCandidateSourceGenerator(
         safeUserTweetTweetyPieStore,
         globalStats
       ),
-      contentRecommenderMixerAdaptor,
+      contentRecommenderMitwittererAdaptor,
       tripGeoCandidatesAdaptor,
       HighQualityTweetsAdaptor(
         tripTweetCandidateStore,
@@ -146,8 +146,8 @@ class PushCandidateSourceGenerator(
         cachedTweetyPieStoreV2NoVF,
         globalStats
       ),
-      ExploreVideoTweetCandidateAdaptor(
-        exploreRankerStore,
+      EtwitterploreVideoTweetCandidateAdaptor(
+        etwitterploreRankerStore,
         cachedTweetyPieStoreV2,
         globalStats
       ),

@@ -54,7 +54,7 @@ case class StagingConfig(
   override val tunableMap: TunableMap,
 )(
   implicit val statsReceiver: StatsReceiver)
-    extends {
+    etwittertends {
   // Due to trait initialization logic in Scala, any abstract members declared in Config or
   // DeployConfig should be declared in this block. Otherwise the abstract member might initialize to
   // null if invoked before object creation finishing.
@@ -77,7 +77,7 @@ case class StagingConfig(
   val historyStoreMemcacheDest = "/srv#/test/local/cache/twemcache_eventstream_test:twemcaches"
   val userTweetEntityGraphDest = "/cluster/local/cassowary/staging/user_tweet_entity_graph"
   val userUserGraphDest = "/cluster/local/cassowary/staging/user_user_graph"
-  val lexServiceDest = "/srv#/staging/local/live-video/timeline-thrift"
+  val letwitterServiceDest = "/srv#/staging/local/live-video/timeline-thrift"
   val deepbirdv2PredictionServiceDest = "/cluster/local/frigate/staging/deepbirdv2-magicrecs"
 
   override val featureStoreUtil = FeatureStoreUtil.withParams(Some(serviceIdentifier))

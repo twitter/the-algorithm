@@ -14,14 +14,14 @@ import com.twitter.servo.data.Lens
 object Forked {
 
   /**
-   * A strategy for executing forked actions.
+   * A strategy for etwitterecuting forked actions.
    */
-  type Executor = (() => Unit) => Unit
+  type Etwitterecutor = (() => Unit) => Unit
 
   /**
-   * Directly execute the forked action.
+   * Directly etwitterecute the forked action.
    */
-  val inlineExecutor: Executor = f => f()
+  val inlineEtwitterecutor: Etwitterecutor = f => f()
 
   /**
    * Produce objects of type A to send to a secondary target.
@@ -41,11 +41,11 @@ object Forked {
   /**
    * Fork a subset of the elements of the Seq, based on the supplied
    * predicate. If the resulting Seq is empty, the secondary action
-   * will not be executed.
+   * will not be etwitterecuted.
    */
-  def forkSeq[T](f: T => Boolean): Fork[Seq[T]] = { xs =>
-    val newXs = xs filter f
-    if (newXs.nonEmpty) Some(newXs) else None
+  def forkSeq[T](f: T => Boolean): Fork[Seq[T]] = { twitters =>
+    val newtwitters = twitters filter f
+    if (newtwitters.nonEmpty) Some(newtwitters) else None
   }
 
   /**
@@ -56,10 +56,10 @@ object Forked {
 
   /**
    * A factory for building actions that will partially tee their input
-   * to a secondary target. The executor is parameterized to make the
-   * execution strategy independent from the forking logic.
+   * to a secondary target. The etwitterecutor is parameterized to make the
+   * etwitterecution strategy independent from the forking logic.
    */
-  def toSecondary[S](secondary: S, executor: Executor): S => Forked[S] =
+  def toSecondary[S](secondary: S, etwitterecutor: Etwitterecutor): S => Forked[S] =
     primary =>
       new Forked[S] {
 
@@ -69,7 +69,7 @@ object Forked {
          */
         def apply[Q, R](fork: Forked.Fork[Q], action: (S, Q) => R): Q => R = { req =>
           fork(req) foreach { req =>
-            executor(() => action(secondary, req))
+            etwitterecutor(() => action(secondary, req))
           }
           action(primary, req)
         }

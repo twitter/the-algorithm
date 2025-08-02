@@ -101,7 +101,7 @@ class AggregatesV2Adapter(
   aggregates: Set[TypedAggregateGroup[_]],
   sourceVersion: Long,
   trimThreshold: Double)
-    extends IRecordOneToManyAdapter[AggregatesV2Adapter.AggregatesV2Tuple] {
+    etwittertends IRecordOneToManyAdapter[AggregatesV2Adapter.AggregatesV2Tuple] {
 
   import AggregatesV2Adapter._
 
@@ -110,9 +110,9 @@ class AggregatesV2Adapter(
   val timestampFeatures: List[Feature[JLong]] = List(SharedFeatures.TIMESTAMP)
   val allFeatures: List[Feature[_]] = keyFeatures ++ aggregateFeatures ++ timestampFeatures
 
-  val featureContext: FeatureContext = new FeatureContext(allFeatures.asJava)
+  val featureContetwittert: FeatureContetwittert = new FeatureContetwittert(allFeatures.asJava)
 
-  override def getFeatureContext: FeatureContext = featureContext
+  override def getFeatureContetwittert: FeatureContetwittert = featureContetwittert
 
   val aggregateFeaturesAndHalfLives: List[(Feature[_$3], Duration) forSome { type _$3 }] =
     aggregateFeatures.map { aggregateFeature: Feature[_] =>
@@ -122,14 +122,14 @@ class AggregatesV2Adapter(
 
   override def adaptToDataRecords(tuple: AggregatesV2Tuple): ju.List[DataRecord] = tuple match {
     case (key: AggregationKey, (batchId: BatchID, record: DataRecord)) => {
-      val resultRecord = new SRichDataRecord(new DataRecord, featureContext)
+      val resultRecord = new SRichDataRecord(new DataRecord, featureContetwittert)
 
       val itr = resultRecord.continuousFeaturesIterator()
       val featuresToClear = mutable.Set[Feature[JDouble]]()
-      while (itr.moveNext()) {
-        val nextFeature = itr.getFeature
-        if (!aggregateFeatures.contains(nextFeature)) {
-          featuresToClear += nextFeature
+      while (itr.moveNetwittert()) {
+        val netwittertFeature = itr.getFeature
+        if (!aggregateFeatures.contains(netwittertFeature)) {
+          featuresToClear += netwittertFeature
         }
       }
 
@@ -144,7 +144,7 @@ class AggregatesV2Adapter(
         } else if (keyFeature.getFeatureType == FeatureType.STRING) {
           resultRecord.setFeatureValue(
             keyFeature.asInstanceOf[Feature[String]],
-            key.textFeaturesById(keyFeature.getDenseFeatureId)
+            key.tetwittertFeaturesById(keyFeature.getDenseFeatureId)
           )
         }
       }

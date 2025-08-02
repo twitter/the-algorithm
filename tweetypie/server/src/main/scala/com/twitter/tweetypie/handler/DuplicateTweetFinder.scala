@@ -22,7 +22,7 @@ import com.twitter.util.Time
 
 /**
  * Used at tweet creation time to determine whether the tweet creation
- * request should be considered a duplicate of an existing tweet.
+ * request should be considered a duplicate of an etwitteristing tweet.
  */
 object DuplicateTweetFinder {
 
@@ -38,7 +38,7 @@ object DuplicateTweetFinder {
     numTweetsToCheck: Int,
     // The oldest that a tweet can be to still be considered a
     // duplicate by the heuristic duplicate check
-    maxDuplicateAge: Duration)
+    matwitterDuplicateAge: Duration)
 
   // Takes a ConversationControl from a Tweet and converts to the equivalent
   // TweetCreateConversationControl. Note: this is a lossy conversion because the
@@ -54,7 +54,7 @@ object DuplicateTweetFinder {
         ConversationControls.Create.community(inviteViaMention)
       case ConversationControl.Followers(ConversationControlFollowers(_, _, inviteViaMention)) =>
         ConversationControls.Create.followers(inviteViaMention)
-      case _ => throw new IllegalArgumentException
+      case _ => throw new IllegalArgumentEtwitterception
     }
 
   /**
@@ -65,7 +65,7 @@ object DuplicateTweetFinder {
     userId: UserId,
     isNarrowcast: Boolean,
     isNullcast: Boolean,
-    text: String,
+    tetwittert: String,
     replyToTweetId: Option[TweetId],
     mediaUploadIds: Seq[MediaId],
     cardReference: Option[CardReference],
@@ -76,7 +76,7 @@ object DuplicateTweetFinder {
 
     def isDuplicateOf(tweet: Tweet, oldestAcceptableTimestamp: Time): Boolean = {
       val createdAt = getTimestamp(tweet)
-      val isDuplicateText = text == getText(tweet)
+      val isDuplicateTetwittert = tetwittert == getTetwittert(tweet)
       val isDuplicateReplyToTweetId = replyToTweetId == getReply(tweet).flatMap(_.inReplyToStatusId)
       val isDuplicateMedia = getMedia(tweet).map(_.mediaId) == mediaUploadIds
       val isDuplicateCardReference = getCardReference(tweet) == cardReference
@@ -98,7 +98,7 @@ object DuplicateTweetFinder {
           case _ => Nil
         }
         val tweetIsAPreviousVersion =
-          editOptions.map(_.previousTweetId).exists(tweetEditChain.contains)
+          editOptions.map(_.previousTweetId).etwitterists(tweetEditChain.contains)
 
         val tweetIsStale = EditControlUtil.isLatestEdit(tweet.editControl, tweet.id) match {
           case Return(false) => true
@@ -112,10 +112,10 @@ object DuplicateTweetFinder {
       }
 
       // Note that this does not prevent you from tweeting the same
-      // image twice with different text, or the same text twice with
+      // image twice with different tetwittert, or the same tetwittert twice with
       // different images, because if you upload the same media twice,
       // we will store two copies of it, each with a different media
-      // URL and thus different t.co URL, and since the text that
+      // URL and thus different t.co URL, and since the tetwittert that
       // we're checking here has that t.co URL added to it already, it
       // is necessarily different.
       //
@@ -126,7 +126,7 @@ object DuplicateTweetFinder {
       (oldestAcceptableTimestamp <= createdAt) &&
       getShare(tweet).isEmpty &&
       (getUserId(tweet) == userId) &&
-      isDuplicateText &&
+      isDuplicateTetwittert &&
       isDuplicateReplyToTweetId &&
       isDuplicateMedia &&
       isDuplicateCardReference &&
@@ -140,15 +140,15 @@ object DuplicateTweetFinder {
   object RequestInfo {
 
     /**
-     * Extract the information relevant to the DuplicateTweetFinder
+     * Etwittertract the information relevant to the DuplicateTweetFinder
      * from the PostTweetRequest.
      */
-    def fromPostTweetRequest(req: PostTweetRequest, processedText: String): RequestInfo =
+    def fromPostTweetRequest(req: PostTweetRequest, processedTetwittert: String): RequestInfo =
       RequestInfo(
         userId = req.userId,
         isNarrowcast = req.narrowcast.nonEmpty,
         isNullcast = req.nullcast,
-        text = processedText,
+        tetwittert = processedTetwittert,
         replyToTweetId = req.inReplyToTweetId,
         mediaUploadIds = req.mediaUploadIds.getOrElse[Seq[MediaId]](Seq.empty),
         cardReference = req.additionalFields.flatMap(_.cardReference),
@@ -160,13 +160,13 @@ object DuplicateTweetFinder {
   }
 
   /**
-   * Encapsulates the external interactions that we need to do for
+   * Encapsulates the etwitterternal interactions that we need to do for
    * duplicate checking.
    */
   trait TweetSource {
     def loadTweets(tweetIds: Seq[TweetId]): Future[Seq[Tweet]]
-    def loadUserTimelineIds(userId: UserId, maxCount: Int): Future[Seq[TweetId]]
-    def loadNarrowcastTimelineIds(userId: UserId, maxCount: Int): Future[Seq[TweetId]]
+    def loadUserTimelineIds(userId: UserId, matwitterCount: Int): Future[Seq[TweetId]]
+    def loadNarrowcastTimelineIds(userId: UserId, matwitterCount: Int): Future[Seq[TweetId]]
   }
 
   object TweetSource {
@@ -196,21 +196,21 @@ object DuplicateTweetFinder {
         private[this] def loadTimeline(query: tls.TimelineQuery): Future[Seq[Long]] =
           getStatusTimeline(Seq(query)).map(_.head.entries.map(_.statusId))
 
-        override def loadUserTimelineIds(userId: UserId, maxCount: Int): Future[Seq[Long]] =
+        override def loadUserTimelineIds(userId: UserId, matwitterCount: Int): Future[Seq[Long]] =
           loadTimeline(
             tls.TimelineQuery(
               timelineType = tls.TimelineType.User,
               timelineId = userId,
-              maxCount = maxCount.toShort
+              matwitterCount = matwitterCount.toShort
             )
           )
 
-        override def loadNarrowcastTimelineIds(userId: UserId, maxCount: Int): Future[Seq[Long]] =
+        override def loadNarrowcastTimelineIds(userId: UserId, matwitterCount: Int): Future[Seq[Long]] =
           loadTimeline(
             tls.TimelineQuery(
               timelineType = tls.TimelineType.Narrowcasted,
               timelineId = userId,
-              maxCount = maxCount.toShort
+              matwitterCount = matwitterCount.toShort
             )
           )
 
@@ -232,7 +232,7 @@ object DuplicateTweetFinder {
       // iff nullcast, we bypass duplication logic all together
       Future.None
     } else {
-      val oldestAcceptableTimestamp = Time.now - settings.maxDuplicateAge
+      val oldestAcceptableTimestamp = Time.now - settings.matwitterDuplicateAge
       val userTweetIdsFut =
         tweetSource.loadUserTimelineIds(reqInfo.userId, settings.numTweetsToCheck)
 

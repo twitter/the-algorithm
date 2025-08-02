@@ -22,14 +22,14 @@ import com.twitter.util.Future
  * Querying with corresponding scoring algorithms results in different Certo scores.
  */
 case class TopicTweetCertoScoreStore(certoStratoStore: ReadableStore[TweetId, TopicToScores])
-    extends ReadableStore[ThriftScoreId, ThriftScore] {
+    etwittertends ReadableStore[ThriftScoreId, ThriftScore] {
 
   override def multiGet[K1 <: ThriftScoreId](ks: Set[K1]): Map[K1, Future[Option[ThriftScore]]] = {
     val tweetIds =
       ks.map(_.internalId).collect {
         case GenericPairScoreId(scoreId) =>
           ((scoreId.id1, scoreId.id2): @annotation.nowarn(
-            "msg=may not be exhaustive|max recursion depth")) match {
+            "msg=may not be etwitterhaustive|matwitter recursion depth")) match {
             case (InternalId.TweetId(tweetId), _) => tweetId
             case (_, InternalId.TweetId(tweetId)) => tweetId
           }
@@ -45,7 +45,7 @@ case class TopicTweetCertoScoreStore(certoStratoStore: ReadableStore[TweetId, To
               case (InternalId.TweetId(tweetId), InternalId.TopicId(topicId)) =>
                 (
                   k,
-                  extractScore(
+                  etwittertractScore(
                     tweetId,
                     topicId,
                     certoScores,
@@ -53,7 +53,7 @@ case class TopicTweetCertoScoreStore(certoStratoStore: ReadableStore[TweetId, To
               case (InternalId.TopicId(topicId), InternalId.TweetId(tweetId)) =>
                 (
                   k,
-                  extractScore(
+                  etwittertractScore(
                     tweetId,
                     topicId,
                     certoScores,
@@ -65,7 +65,7 @@ case class TopicTweetCertoScoreStore(certoStratoStore: ReadableStore[TweetId, To
               case (InternalId.TweetId(tweetId), InternalId.TopicId(topicId)) =>
                 (
                   k,
-                  extractScore(
+                  etwittertractScore(
                     tweetId,
                     topicId,
                     certoScores,
@@ -73,7 +73,7 @@ case class TopicTweetCertoScoreStore(certoStratoStore: ReadableStore[TweetId, To
               case (InternalId.TopicId(topicId), InternalId.TweetId(tweetId)) =>
                 (
                   k,
-                  extractScore(
+                  etwittertractScore(
                     tweetId,
                     topicId,
                     certoScores,
@@ -88,18 +88,18 @@ case class TopicTweetCertoScoreStore(certoStratoStore: ReadableStore[TweetId, To
   }
 
   /**
-   * Given tweetToCertoScores, extract certain Certo score between the given tweetId and topicId.
-   * The Certo score of interest is specified using scoreExtractor.
+   * Given tweetToCertoScores, etwittertract certain Certo score between the given tweetId and topicId.
+   * The Certo score of interest is specified using scoreEtwittertractor.
    */
-  def extractScore(
+  def etwittertractScore(
     tweetId: TweetId,
     topicId: TopicId,
     tweetToCertoScores: Map[TweetId, Option[TopicToScores]],
-    scoreExtractor: Scores => Double
+    scoreEtwittertractor: Scores => Double
   ): Option[ThriftScore] = {
     tweetToCertoScores.get(tweetId).flatMap {
       case Some(topicToScores) =>
-        topicToScores.topicToScores.flatMap(_.get(topicId).map(scoreExtractor).map(ThriftScore(_)))
+        topicToScores.topicToScores.flatMap(_.get(topicId).map(scoreEtwittertractor).map(ThriftScore(_)))
       case _ => Some(ThriftScore(0.0))
     }
   }

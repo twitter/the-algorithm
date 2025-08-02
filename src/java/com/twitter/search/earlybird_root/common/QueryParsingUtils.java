@@ -2,7 +2,7 @@ package com.twitter.search.earlybird_root.common;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -17,11 +17,11 @@ import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
 import com.twitter.search.queryparser.parser.SerializedQueryParser;
 import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twitter.search.queryparser.query.QueryParserEtwitterception;
 import com.twitter.util.Future;
 
 /**
- * Common utils for parsing serialized queries, and handling query parser exceptions.
+ * Common utils for parsing serialized queries, and handling query parser etwitterceptions.
  */
 public final class QueryParsingUtils {
 
@@ -29,24 +29,24 @@ public final class QueryParsingUtils {
 
   @VisibleForTesting
   public static final SearchCounter QUERYPARSE_COUNT =
-      SearchCounter.export("root_queryparse_count");
+      SearchCounter.etwitterport("root_queryparse_count");
   private static final SearchTimerStats QUERYPARSE_TIMER =
-      SearchTimerStats.export("root_queryparse_time", TimeUnit.NANOSECONDS, false, true);
+      SearchTimerStats.etwitterport("root_queryparse_time", TimeUnit.NANOSECONDS, false, true);
   private static final SearchCounter NO_PARSED_QUERY_COUNT =
-      SearchCounter.export("root_no_parsed_query_count");
+      SearchCounter.etwitterport("root_no_parsed_query_count");
 
   private QueryParsingUtils() { }
 
   /**
    * Takes an earlybird request, and parses its serialized query (if it is set).
-   * Expects the required ThriftSearchQuery to be set on the passed in EarlybirdRequest.
+   * Etwitterpects the required ThriftSearchQuery to be set on the passed in EarlybirdRequest.
    *
    * @param request the earlybird request to parse.
    * @return null if the request does not specify a serialized query.
-   * @throws QueryParserException if querry parsing fails.
+   * @throws QueryParserEtwitterception if querry parsing fails.
    */
   @Nullable
-  static Query getParsedQuery(EarlybirdRequest request) throws QueryParserException {
+  static Query getParsedQuery(EarlybirdRequest request) throws QueryParserEtwitterception {
     // searchQuery is required on EarlybirdRequest.
     Preconditions.checkState(request.isSetSearchQuery());
     Query parsedQuery;
@@ -73,7 +73,7 @@ public final class QueryParsingUtils {
    */
   public static Future<EarlybirdResponse> newClientErrorResponse(
       EarlybirdRequest request,
-      QueryParserException e) {
+      QueryParserEtwitterception e) {
 
     String msg = "Failed to parse query";
     LOG.warn(msg, e);

@@ -20,80 +20,80 @@ import com.twitter.visibility.rules.Reason._
 import com.twitter.visibility.rules.RuleActionSourceBuilder.TweetSafetyLabelSourceBuilder
 
 object AbusiveTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
+    etwittertends NonAuthorWithTweetLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.Abusive
     )
     with DoesLogVerdict
 
 object AbusiveNonFollowerTweetLabelRule
-    extends NonFollowerWithTweetLabelRule(
-      Drop(Toxicity),
+    etwittertends NonFollowerWithTweetLabelRule(
+      Drop(Totwittericity),
       TweetSafetyLabelType.Abusive
     )
 
 object AbusiveUqfNonFollowerTweetLabelRule
-    extends NonFollowerWithUqfTweetLabelRule(
-      Drop(Toxicity),
+    etwittertends NonFollowerWithUqfTweetLabelRule(
+      Drop(Totwittericity),
       TweetSafetyLabelType.Abusive
     )
 
 object AbusiveHighRecallTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
+    etwittertends NonAuthorWithTweetLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.AbusiveHighRecall
     )
 
 object AbusiveHighRecallNonFollowerTweetLabelRule
-    extends NonFollowerWithTweetLabelRule(
+    etwittertends NonFollowerWithTweetLabelRule(
       Interstitial(PossiblyUndesirable),
       TweetSafetyLabelType.AbusiveHighRecall
     )
 
 object AutomationTweetLabelRule
-    extends NonFollowerWithTweetLabelRule(
+    etwittertends NonFollowerWithTweetLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.Automation
     )
 
 object BystanderAbusiveTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
+    etwittertends NonAuthorWithTweetLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.BystanderAbusive
     )
 
 object BystanderAbusiveNonFollowerTweetLabelRule
-    extends NonFollowerWithTweetLabelRule(
+    etwittertends NonFollowerWithTweetLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.BystanderAbusive
     )
 
 abstract class DuplicateContentTweetLabelRule(action: Action)
-    extends NonAuthorWithTweetLabelRule(
+    etwittertends NonAuthorWithTweetLabelRule(
       action,
       TweetSafetyLabelType.DuplicateContent
     )
 
 object DuplicateContentTweetLabelDropRule
-    extends DuplicateContentTweetLabelRule(Drop(TweetLabelDuplicateContent))
+    etwittertends DuplicateContentTweetLabelRule(Drop(TweetLabelDuplicateContent))
 
 object DuplicateContentTweetLabelTombstoneRule
-    extends DuplicateContentTweetLabelRule(Tombstone(Epitaph.Unavailable))
+    etwittertends DuplicateContentTweetLabelRule(Tombstone(Epitaph.Unavailable))
 
 object DuplicateMentionTweetLabelRule
-    extends NonFollowerWithTweetLabelRule(
+    etwittertends NonFollowerWithTweetLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.DuplicateMention
     )
 
 object DuplicateMentionUqfTweetLabelRule
-    extends NonFollowerWithUqfTweetLabelRule(
+    etwittertends NonFollowerWithUqfTweetLabelRule(
       Drop(TweetLabelDuplicateMention),
       TweetSafetyLabelType.DuplicateMention
     )
 
 object GoreAndViolenceTweetLabelRule
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       Drop(Unspecified),
       And(
         NonAuthorViewer,
@@ -103,13 +103,13 @@ object GoreAndViolenceTweetLabelRule
     )
 
 object LiveLowQualityTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
+    etwittertends NonAuthorWithTweetLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.LiveLowQuality
     )
 
 object LowQualityMentionTweetLabelRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(LowQualityMention),
       And(
         TweetHasLabelForPerspectivalUser(TweetSafetyLabelType.LowQualityMention),
@@ -120,7 +120,7 @@ object LowQualityMentionTweetLabelRule
 abstract class NsfwCardImageTweetLabelBaseRule(
   override val action: Action,
   val additionalCondition: Condition = TrueCondition,
-) extends RuleWithConstantAction(
+) etwittertends RuleWithConstantAction(
       action,
       And(
         additionalCondition,
@@ -129,18 +129,18 @@ abstract class NsfwCardImageTweetLabelBaseRule(
     )
 
 object NsfwCardImageTweetLabelRule
-    extends NsfwCardImageTweetLabelBaseRule(
+    etwittertends NsfwCardImageTweetLabelBaseRule(
       action = Drop(Nsfw),
       additionalCondition = NonAuthorViewer,
     )
 
 object NsfwCardImageAllUsersTweetLabelRule
-    extends NsfwCardImageTweetLabelBaseRule(
+    etwittertends NsfwCardImageTweetLabelBaseRule(
       action = Interstitial(Nsfw)
     )
 
 object NsfwCardImageAvoidAllUsersTweetLabelRule
-    extends NsfwCardImageTweetLabelBaseRule(
+    etwittertends NsfwCardImageTweetLabelBaseRule(
       action = Avoid(Some(AvoidReason.ContainsNsfwMedia)),
     ) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
@@ -150,14 +150,14 @@ object NsfwCardImageAvoidAllUsersTweetLabelRule
 }
 
 object NsfwCardImageAvoidAdPlacementAllUsersTweetLabelRule
-    extends NsfwCardImageTweetLabelBaseRule(
+    etwittertends NsfwCardImageTweetLabelBaseRule(
       action = Avoid(Some(AvoidReason.ContainsNsfwMedia)),
     ) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableAvoidNsfwRulesParam)
 }
 
 object SearchAvoidTweetNsfwAdminRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Avoid(Some(AvoidReason.ContainsNsfwMedia)),
       TweetHasNsfwAdminAuthor
     ) {
@@ -165,7 +165,7 @@ object SearchAvoidTweetNsfwAdminRule
 }
 
 object SearchAvoidTweetNsfwUserRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Avoid(Some(AvoidReason.ContainsNsfwMedia)),
       TweetHasNsfwUserAuthor
     ) {
@@ -173,36 +173,36 @@ object SearchAvoidTweetNsfwUserRule
 }
 
 object NsfwCardImageAllUsersTweetLabelDropRule
-    extends NsfwCardImageTweetLabelBaseRule(
+    etwittertends NsfwCardImageTweetLabelBaseRule(
       action = Drop(Nsfw),
     )
 
 object HighProactiveTosScoreTweetLabelDropRule
-    extends NonAuthorWithTweetLabelRule(
+    etwittertends NonAuthorWithTweetLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.HighProactiveTosScore
     )
 
 object HighProactiveTosScoreTweetLabelDropSearchRule
-    extends NonAuthorAndNonFollowerWithTweetLabelRule(
+    etwittertends NonAuthorAndNonFollowerWithTweetLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.HighProactiveTosScore
     )
 
 object NsfwHighPrecisionTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
+    etwittertends NonAuthorWithTweetLabelRule(
       Drop(Nsfw),
       TweetSafetyLabelType.NsfwHighPrecision
     )
 
 object NsfwHighPrecisionAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Drop(Nsfw),
       TweetSafetyLabelType.NsfwHighPrecision
     )
 
 object NsfwHighPrecisionInnerQuotedTweetLabelRule
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       Drop(Nsfw),
       And(IsQuotedInnerTweet, NonAuthorViewer),
       TweetSafetyLabelType.NsfwHighPrecision
@@ -211,7 +211,7 @@ object NsfwHighPrecisionInnerQuotedTweetLabelRule
 }
 
 object NsfwHighPrecisionTombstoneInnerQuotedTweetLabelRule
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       Tombstone(Epitaph.Unavailable),
       And(IsQuotedInnerTweet, NonAuthorViewer),
       TweetSafetyLabelType.NsfwHighPrecision
@@ -220,32 +220,32 @@ object NsfwHighPrecisionTombstoneInnerQuotedTweetLabelRule
 }
 
 object GoreAndViolenceHighPrecisionTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
+    etwittertends NonAuthorWithTweetLabelRule(
       Drop(Nsfw),
       TweetSafetyLabelType.GoreAndViolenceHighPrecision
     )
 
 object NsfwReportedHeuristicsTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
+    etwittertends NonAuthorWithTweetLabelRule(
       Drop(Nsfw),
       TweetSafetyLabelType.NsfwReportedHeuristics
     )
 
 object GoreAndViolenceReportedHeuristicsTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
+    etwittertends NonAuthorWithTweetLabelRule(
       Drop(Nsfw),
       TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
     )
 
 object NsfwHighPrecisionInterstitialAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Interstitial(Nsfw),
       TweetSafetyLabelType.NsfwHighPrecision
     )
     with DoesLogVerdict
 
 object GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Avoid(Some(AvoidReason.ContainsNsfwMedia)),
       TweetSafetyLabelType.GoreAndViolenceHighPrecision
     ) {
@@ -256,7 +256,7 @@ object GoreAndViolenceHighPrecisionAvoidAllUsersTweetLabelRule
 }
 
 object GoreAndViolenceHighPrecisionAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Interstitial(Nsfw),
       TweetSafetyLabelType.GoreAndViolenceHighPrecision
     )
@@ -267,7 +267,7 @@ object GoreAndViolenceHighPrecisionAllUsersTweetLabelRule
 }
 
 object NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Avoid(Some(AvoidReason.ContainsNsfwMedia)),
       TweetSafetyLabelType.NsfwReportedHeuristics
     ) {
@@ -278,7 +278,7 @@ object NsfwReportedHeuristicsAvoidAllUsersTweetLabelRule
 }
 
 object NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Avoid(Some(AvoidReason.ContainsNsfwMedia)),
       TweetSafetyLabelType.NsfwReportedHeuristics
     ) {
@@ -289,19 +289,19 @@ object NsfwReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule
 }
 
 object NsfwReportedHeuristicsAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Interstitial(Nsfw),
       TweetSafetyLabelType.NsfwReportedHeuristics
     )
 
 object GoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Interstitial(Nsfw),
       TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
     )
 
 object GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Avoid(Some(AvoidReason.ContainsNsfwMedia)),
       TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
     ) {
@@ -312,7 +312,7 @@ object GoreAndViolenceReportedHeuristicsAvoidAllUsersTweetLabelRule
 }
 
 object GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Avoid(Some(AvoidReason.ContainsNsfwMedia)),
       TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
     ) {
@@ -323,31 +323,31 @@ object GoreAndViolenceReportedHeuristicsAvoidAdPlacementAllUsersTweetLabelRule
 }
 
 object GoreAndViolenceHighPrecisionAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Drop(Nsfw),
       TweetSafetyLabelType.GoreAndViolenceHighPrecision
     )
 
 object NsfwReportedHeuristicsAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Drop(Nsfw),
       TweetSafetyLabelType.NsfwReportedHeuristics
     )
 
 object GoreAndViolenceReportedHeuristicsAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Drop(Nsfw),
       TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
     )
 
 object NsfwHighRecallTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
+    etwittertends NonAuthorWithTweetLabelRule(
       Drop(Nsfw),
       TweetSafetyLabelType.NsfwHighRecall
     )
 
 object NsfwHighRecallAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Drop(Nsfw),
       TweetSafetyLabelType.NsfwHighRecall
     )
@@ -355,36 +355,36 @@ object NsfwHighRecallAllUsersTweetLabelDropRule
 abstract class PdnaTweetLabelRule(
   override val action: Action,
   val additionalCondition: Condition)
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       action,
       And(NonAuthorViewer, additionalCondition),
       TweetSafetyLabelType.Pdna
     )
 
-object PdnaTweetLabelRule extends PdnaTweetLabelRule(Drop(PdnaTweet), Condition.True)
+object PdnaTweetLabelRule etwittertends PdnaTweetLabelRule(Drop(PdnaTweet), Condition.True)
 
 object PdnaTweetLabelTombstoneRule
-    extends PdnaTweetLabelRule(Tombstone(Epitaph.Unavailable), Condition.True)
+    etwittertends PdnaTweetLabelRule(Tombstone(Epitaph.Unavailable), Condition.True)
 
 object PdnaQuotedTweetLabelTombstoneRule
-    extends PdnaTweetLabelRule(Tombstone(Epitaph.Unavailable), Condition.IsQuotedInnerTweet) {
+    etwittertends PdnaTweetLabelRule(Tombstone(Epitaph.Unavailable), Condition.IsQuotedInnerTweet) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(EnablePdnaQuotedTweetTombstoneRuleParam)
 }
 
 object PdnaAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.Pdna
     )
 
 object SearchBlacklistTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
+    etwittertends NonAuthorWithTweetLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.SearchBlacklist
     )
 
 object SearchBlacklistHighRecallTweetLabelDropRule
-    extends NonAuthorAndNonFollowerWithTweetLabelRule(
+    etwittertends NonAuthorAndNonFollowerWithTweetLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.SearchBlacklistHighRecall
     )
@@ -392,82 +392,82 @@ object SearchBlacklistHighRecallTweetLabelDropRule
 abstract class SpamTweetLabelRule(
   override val action: Action,
   val additionalCondition: Condition)
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       action,
       And(NonAuthorViewer, additionalCondition),
       TweetSafetyLabelType.Spam
     )
     with DoesLogVerdict
 
-object SpamTweetLabelRule extends SpamTweetLabelRule(Drop(TweetLabeledSpam), Condition.True)
+object SpamTweetLabelRule etwittertends SpamTweetLabelRule(Drop(TweetLabeledSpam), Condition.True)
 
 object SpamTweetLabelTombstoneRule
-    extends SpamTweetLabelRule(Tombstone(Epitaph.Unavailable), Condition.True)
+    etwittertends SpamTweetLabelRule(Tombstone(Epitaph.Unavailable), Condition.True)
 
 object SpamQuotedTweetLabelTombstoneRule
-    extends SpamTweetLabelRule(Tombstone(Epitaph.Unavailable), Condition.IsQuotedInnerTweet) {
+    etwittertends SpamTweetLabelRule(Tombstone(Epitaph.Unavailable), Condition.IsQuotedInnerTweet) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableSpamQuotedTweetTombstoneRuleParam)
 }
 
 object SpamAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.Spam
     )
 
 abstract class BounceTweetLabelRule(override val action: Action)
-    extends NonAuthorWithTweetLabelRule(
+    etwittertends NonAuthorWithTweetLabelRule(
       action,
       TweetSafetyLabelType.Bounce
     )
 
-object BounceTweetLabelRule extends BounceTweetLabelRule(Drop(Bounce))
+object BounceTweetLabelRule etwittertends BounceTweetLabelRule(Drop(Bounce))
 
-object BounceTweetLabelTombstoneRule extends BounceTweetLabelRule(Tombstone(Epitaph.Bounced))
+object BounceTweetLabelTombstoneRule etwittertends BounceTweetLabelRule(Tombstone(Epitaph.Bounced))
 
 abstract class BounceOuterTweetLabelRule(override val action: Action)
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       action,
       And(Not(Condition.IsQuotedInnerTweet), NonAuthorViewer),
       TweetSafetyLabelType.Bounce
     )
 
-object BounceOuterTweetTombstoneRule extends BounceOuterTweetLabelRule(Tombstone(Epitaph.Bounced))
+object BounceOuterTweetTombstoneRule etwittertends BounceOuterTweetLabelRule(Tombstone(Epitaph.Bounced))
 
 object BounceQuotedTweetTombstoneRule
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       Tombstone(Epitaph.Bounced),
       Condition.IsQuotedInnerTweet,
       TweetSafetyLabelType.Bounce
     )
 
 object BounceAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Drop(Bounce),
       TweetSafetyLabelType.Bounce
     )
 
 
 abstract class SpamHighRecallTweetLabelRule(action: Action)
-    extends NonAuthorWithTweetLabelRule(
+    etwittertends NonAuthorWithTweetLabelRule(
       action,
       TweetSafetyLabelType.SpamHighRecall
     )
 
 object SpamHighRecallTweetLabelDropRule
-    extends SpamHighRecallTweetLabelRule(Drop(SpamHighRecallTweet))
+    etwittertends SpamHighRecallTweetLabelRule(Drop(SpamHighRecallTweet))
 
 object SpamHighRecallTweetLabelTombstoneRule
-    extends SpamHighRecallTweetLabelRule(Tombstone(Epitaph.Unavailable))
+    etwittertends SpamHighRecallTweetLabelRule(Tombstone(Epitaph.Unavailable))
 
 object UntrustedUrlAllViewersTweetLabelRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.UntrustedUrl
     )
 
 object DownrankSpamReplyAllViewersTweetLabelRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.DownrankSpamReply
     ) {
@@ -476,13 +476,13 @@ object DownrankSpamReplyAllViewersTweetLabelRule
 }
 
 object UntrustedUrlTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
+    etwittertends NonAuthorWithTweetLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.UntrustedUrl
     )
 
 object DownrankSpamReplyTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
+    etwittertends NonAuthorWithTweetLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.DownrankSpamReply
     ) {
@@ -491,13 +491,13 @@ object DownrankSpamReplyTweetLabelRule
 }
 
 object UntrustedUrlUqfNonFollowerTweetLabelRule
-    extends NonFollowerWithUqfTweetLabelRule(
+    etwittertends NonFollowerWithUqfTweetLabelRule(
       Drop(UntrustedUrl),
       TweetSafetyLabelType.UntrustedUrl
     )
 
 object DownrankSpamReplyUqfNonFollowerTweetLabelRule
-    extends NonFollowerWithUqfTweetLabelRule(
+    etwittertends NonFollowerWithUqfTweetLabelRule(
       Drop(SpamReplyDownRank),
       TweetSafetyLabelType.DownrankSpamReply
     ) {
@@ -506,7 +506,7 @@ object DownrankSpamReplyUqfNonFollowerTweetLabelRule
 }
 
 object NsfaHighRecallTweetLabelRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Unspecified),
       And(
         NonAuthorViewer,
@@ -515,7 +515,7 @@ object NsfaHighRecallTweetLabelRule
     )
 
 object NsfaHighRecallTweetLabelInterstitialRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Interstitial(Unspecified),
       And(
         NonAuthorViewer,
@@ -524,39 +524,39 @@ object NsfaHighRecallTweetLabelInterstitialRule
     )
 
 object NsfwVideoTweetLabelDropRule
-    extends NonAuthorWithTweetLabelRule(
+    etwittertends NonAuthorWithTweetLabelRule(
       Drop(Nsfw),
       TweetSafetyLabelType.NsfwVideo
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTextSectioningRuleParam)
+  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTetwittertSectioningRuleParam)
 }
 
-object NsfwTextTweetLabelDropRule
-    extends NonAuthorWithTweetLabelRule(
+object NsfwTetwittertTweetLabelDropRule
+    etwittertends NonAuthorWithTweetLabelRule(
       Drop(Nsfw),
-      TweetSafetyLabelType.NsfwText
+      TweetSafetyLabelType.NsfwTetwittert
     )
 
 object NsfwVideoAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Drop(Nsfw),
       TweetSafetyLabelType.NsfwVideo
     )
 
-object NsfwTextAllUsersTweetLabelDropRule
-    extends TweetHasLabelRule(
+object NsfwTetwittertAllUsersTweetLabelDropRule
+    etwittertends TweetHasLabelRule(
       Drop(Nsfw),
-      TweetSafetyLabelType.NsfwText
+      TweetSafetyLabelType.NsfwTetwittert
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTextSectioningRuleParam)
+  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTetwittertSectioningRuleParam)
 }
 
 abstract class BaseLowQualityTweetLabelRule(action: Action)
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       action,
       And(
         TweetHasLabel(TweetSafetyLabelType.LowQuality),
-        TweetComposedBefore(PublicInterest.PolicyConfig.LowQualityProxyLabelStart),
+        TweetComposedBefore(PublicInterest.PolicyConfig.LowQualityProtwitteryLabelStart),
         NonAuthorViewer
       )
     )
@@ -565,13 +565,13 @@ abstract class BaseLowQualityTweetLabelRule(action: Action)
     TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.LowQuality))
 }
 
-object LowQualityTweetLabelDropRule extends BaseLowQualityTweetLabelRule(Drop(LowQualityTweet))
+object LowQualityTweetLabelDropRule etwittertends BaseLowQualityTweetLabelRule(Drop(LowQualityTweet))
 
 object LowQualityTweetLabelTombstoneRule
-    extends BaseLowQualityTweetLabelRule(Tombstone(Epitaph.Unavailable))
+    etwittertends BaseLowQualityTweetLabelRule(Tombstone(Epitaph.Unavailable))
 
 abstract class SafetyCrisisLevelDropRule(level: Int, condition: Condition = TrueCondition)
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       Drop(Unspecified),
       And(
         NonAuthorViewer,
@@ -582,19 +582,19 @@ abstract class SafetyCrisisLevelDropRule(level: Int, condition: Condition = True
     )
 
 object SafetyCrisisAnyLevelDropRule
-    extends NonAuthorWithTweetLabelRule(
+    etwittertends NonAuthorWithTweetLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.SafetyCrisis
     )
 
-object SafetyCrisisLevel2DropRule extends SafetyCrisisLevelDropRule(2, Not(ViewerDoesFollowAuthor))
+object SafetyCrisisLevel2DropRule etwittertends SafetyCrisisLevelDropRule(2, Not(ViewerDoesFollowAuthor))
 
-object SafetyCrisisLevel3DropRule extends SafetyCrisisLevelDropRule(3, Not(ViewerDoesFollowAuthor))
+object SafetyCrisisLevel3DropRule etwittertends SafetyCrisisLevelDropRule(3, Not(ViewerDoesFollowAuthor))
 
-object SafetyCrisisLevel4DropRule extends SafetyCrisisLevelDropRule(4)
+object SafetyCrisisLevel4DropRule etwittertends SafetyCrisisLevelDropRule(4)
 
 abstract class SafetyCrisisLevelSectionRule(level: Int)
-    extends ConditionWithNotInnerCircleOfFriendsRule(
+    etwittertends ConditionWithNotInnerCircleOfFriendsRule(
       ConversationSectionAbusiveQuality,
       And(
         TweetHasLabel(TweetSafetyLabelType.SafetyCrisis),
@@ -605,33 +605,33 @@ abstract class SafetyCrisisLevelSectionRule(level: Int)
 }
 
 object SafetyCrisisLevel3SectionRule
-    extends SafetyCrisisLevelSectionRule(3)
+    etwittertends SafetyCrisisLevelSectionRule(3)
     with DoesLogVerdictDecidered {
   override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
 }
 
 object SafetyCrisisLevel4SectionRule
-    extends SafetyCrisisLevelSectionRule(4)
+    etwittertends SafetyCrisisLevelSectionRule(4)
     with DoesLogVerdictDecidered {
   override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
 }
 
 object DoNotAmplifyDropRule
-    extends NonFollowerWithTweetLabelRule(Drop(Unspecified), TweetSafetyLabelType.DoNotAmplify)
+    etwittertends NonFollowerWithTweetLabelRule(Drop(Unspecified), TweetSafetyLabelType.DoNotAmplify)
 
 object DoNotAmplifyAllViewersDropRule
-    extends TweetHasLabelRule(Drop(Unspecified), TweetSafetyLabelType.DoNotAmplify)
+    etwittertends TweetHasLabelRule(Drop(Unspecified), TweetSafetyLabelType.DoNotAmplify)
 
 object DoNotAmplifySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
+    etwittertends ConditionWithNotInnerCircleOfFriendsRule(
       ConversationSectionAbusiveQuality,
       TweetHasLabel(TweetSafetyLabelType.DoNotAmplify))
 
 object HighPSpammyScoreAllViewerDropRule
-    extends TweetHasLabelRule(Drop(Unspecified), TweetSafetyLabelType.HighPSpammyTweetScore)
+    etwittertends TweetHasLabelRule(Drop(Unspecified), TweetSafetyLabelType.HighPSpammyTweetScore)
 
 object HighPSpammyTweetScoreSearchTweetLabelDropRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       action = Drop(Unspecified),
       condition = And(
         LoggedOutOrViewerNotFollowingAuthor,
@@ -650,28 +650,28 @@ object HighPSpammyTweetScoreSearchTweetLabelDropRule
 }
 
 object AdsManagerDenyListAllUsersTweetLabelRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.AdsManagerDenyList
     )
 
 abstract class SmyteSpamTweetLabelRule(action: Action)
-    extends NonAuthorWithTweetLabelRule(
+    etwittertends NonAuthorWithTweetLabelRule(
       action,
       TweetSafetyLabelType.SmyteSpamTweet
     ) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableSmyteSpamTweetRuleParam)
 }
 
-object SmyteSpamTweetLabelDropRule extends SmyteSpamTweetLabelRule(Drop(TweetLabeledSpam))
+object SmyteSpamTweetLabelDropRule etwittertends SmyteSpamTweetLabelRule(Drop(TweetLabeledSpam))
 
 object SmyteSpamTweetLabelTombstoneRule
-    extends SmyteSpamTweetLabelRule(Tombstone(Epitaph.Unavailable))
+    etwittertends SmyteSpamTweetLabelRule(Tombstone(Epitaph.Unavailable))
 
-object SmyteSpamTweetLabelDropSearchRule extends SmyteSpamTweetLabelRule(Drop(Unspecified))
+object SmyteSpamTweetLabelDropSearchRule etwittertends SmyteSpamTweetLabelRule(Drop(Unspecified))
 
 object HighSpammyTweetContentScoreSearchLatestTweetLabelDropRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       action = Drop(Unspecified),
       condition = And(
         Not(IsTweetInTweetLevelStcmHoldback),
@@ -689,7 +689,7 @@ object HighSpammyTweetContentScoreSearchLatestTweetLabelDropRule
 }
 
 object HighSpammyTweetContentScoreSearchTopTweetLabelDropRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       action = Drop(Unspecified),
       condition = And(
         Not(IsTweetInTweetLevelStcmHoldback),
@@ -708,7 +708,7 @@ object HighSpammyTweetContentScoreSearchTopTweetLabelDropRule
 }
 
 object HighSpammyTweetContentScoreTrendsTopTweetLabelDropRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       action = Drop(Unspecified),
       condition = And(
         Not(IsTweetInTweetLevelStcmHoldback),
@@ -728,7 +728,7 @@ object HighSpammyTweetContentScoreTrendsTopTweetLabelDropRule
 }
 
 object HighSpammyTweetContentScoreTrendsLatestTweetLabelDropRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       action = Drop(Unspecified),
       condition = And(
         Not(IsTweetInTweetLevelStcmHoldback),
@@ -747,7 +747,7 @@ object HighSpammyTweetContentScoreTrendsLatestTweetLabelDropRule
 }
 
 object GoreAndViolenceTopicHighRecallTweetLabelRule
-    extends NonAuthorWithTweetLabelRule(
+    etwittertends NonAuthorWithTweetLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.GoreAndViolenceTopicHighRecall
     ) {
@@ -756,7 +756,7 @@ object GoreAndViolenceTopicHighRecallTweetLabelRule
 }
 
 object CopypastaSpamAllViewersTweetLabelRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.CopypastaSpam
     ) {
@@ -765,7 +765,7 @@ object CopypastaSpamAllViewersTweetLabelRule
 }
 
 object CopypastaSpamAllViewersSearchTweetLabelRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.CopypastaSpam
     ) {
@@ -774,7 +774,7 @@ object CopypastaSpamAllViewersSearchTweetLabelRule
 }
 
 object CopypastaSpamNonFollowerSearchTweetLabelRule
-    extends NonFollowerWithTweetLabelRule(
+    etwittertends NonFollowerWithTweetLabelRule(
       Drop(Unspecified),
       TweetSafetyLabelType.CopypastaSpam
     ) {
@@ -783,7 +783,7 @@ object CopypastaSpamNonFollowerSearchTweetLabelRule
 }
 
 object CopypastaSpamAbusiveQualityTweetLabelRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
+    etwittertends ConditionWithNotInnerCircleOfFriendsRule(
       ConversationSectionAbusiveQuality,
       TweetHasLabel(TweetSafetyLabelType.CopypastaSpam)
     )
@@ -796,58 +796,58 @@ object CopypastaSpamAbusiveQualityTweetLabelRule
 }
 
 object DynamicProductAdLimitedEngagementTweetLabelRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       LimitedEngagements(LimitedEngagementReason.DynamicProductAd),
       TweetSafetyLabelType.DynamicProductAd)
 
 object SkipTweetDetailLimitedEngagementTweetLabelRule
-    extends AlwaysActRule(LimitedEngagements(LimitedEngagementReason.SkipTweetDetail)) {
+    etwittertends AlwaysActRule(LimitedEngagements(LimitedEngagementReason.SkipTweetDetail)) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(
     SkipTweetDetailLimitedEngagementRuleEnabledParam)
 }
 
 object DynamicProductAdDropTweetLabelRule
-    extends TweetHasLabelRule(Drop(Unspecified), TweetSafetyLabelType.DynamicProductAd)
+    etwittertends TweetHasLabelRule(Drop(Unspecified), TweetSafetyLabelType.DynamicProductAd)
 
-object NsfwTextHighPrecisionTweetLabelDropRule
-    extends RuleWithConstantAction(
+object NsfwTetwittertHighPrecisionTweetLabelDropRule
+    etwittertends RuleWithConstantAction(
       Drop(Reason.Nsfw),
       And(
         NonAuthorViewer,
         Or(
-          TweetHasLabel(TweetSafetyLabelType.ExperimentalSensitiveIllegal2),
-          TweetHasLabel(TweetSafetyLabelType.NsfwTextHighPrecision)
+          TweetHasLabel(TweetSafetyLabelType.EtwitterperimentalSensitiveIllegal2),
+          TweetHasLabel(TweetSafetyLabelType.NsfwTetwittertHighPrecision)
         )
       )
     )
     with DoesLogVerdict {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTextHighPrecisionDropRuleParam)
+  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTetwittertHighPrecisionDropRuleParam)
   override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.NsfwTextHighPrecision))
+    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.NsfwTetwittertHighPrecision))
 }
 
 
-object ExperimentalNudgeLabelRule
-    extends TweetHasLabelRule(
-      TweetVisibilityNudge(TweetVisibilityNudgeReason.ExperimentalNudgeSafetyLabelReason),
-      TweetSafetyLabelType.ExperimentalNudge) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableExperimentalNudgeEnabledParam)
+object EtwitterperimentalNudgeLabelRule
+    etwittertends TweetHasLabelRule(
+      TweetVisibilityNudge(TweetVisibilityNudgeReason.EtwitterperimentalNudgeSafetyLabelReason),
+      TweetSafetyLabelType.EtwitterperimentalNudge) {
+  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableEtwitterperimentalNudgeEnabledParam)
 }
 
-object NsfwTextTweetLabelAvoidRule
-    extends RuleWithConstantAction(
+object NsfwTetwittertTweetLabelAvoidRule
+    etwittertends RuleWithConstantAction(
       Avoid(),
       Or(
-        TweetHasLabel(TweetSafetyLabelType.ExperimentalSensitiveIllegal2),
-        TweetHasLabel(TweetSafetyLabelType.NsfwTextHighPrecision)
+        TweetHasLabel(TweetSafetyLabelType.EtwitterperimentalSensitiveIllegal2),
+        TweetHasLabel(TweetSafetyLabelType.NsfwTetwittertHighPrecision)
       )
     ) {
   override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.NsfwTextHighPrecision))
+    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.NsfwTetwittertHighPrecision))
 }
 
 object DoNotAmplifyTweetLabelAvoidRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Avoid(),
       TweetSafetyLabelType.DoNotAmplify
     ) {
@@ -856,7 +856,7 @@ object DoNotAmplifyTweetLabelAvoidRule
 }
 
 object NsfaHighPrecisionTweetLabelAvoidRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Avoid(),
       TweetSafetyLabelType.NsfaHighPrecision
     ) {
@@ -865,7 +865,7 @@ object NsfaHighPrecisionTweetLabelAvoidRule
 }
 
 object NsfwHighPrecisionTweetLabelAvoidRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Avoid(Some(AvoidReason.ContainsNsfwMedia)),
       TweetSafetyLabelType.NsfwHighPrecision
     ) {
@@ -874,7 +874,7 @@ object NsfwHighPrecisionTweetLabelAvoidRule
 }
 
 object NsfwHighRecallTweetLabelAvoidRule
-    extends TweetHasLabelRule(
+    etwittertends TweetHasLabelRule(
       Avoid(Some(AvoidReason.ContainsNsfwMedia)),
       TweetSafetyLabelType.NsfwHighRecall
     ) {

@@ -9,15 +9,15 @@ import com.twitter.follow_recommendations.common.candidate_sources.geo.PopCountr
 import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeohashSource
 import com.twitter.follow_recommendations.common.candidate_sources.real_graph.RealGraphOonV2Source
 import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RepeatedProfileVisitsSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentEngagementSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentFollowingSimilarUsersSource
+import com.twitter.follow_recommendations.common.candidate_sources.sims_etwitterpansion.RecentEngagementSimilarUsersSource
+import com.twitter.follow_recommendations.common.candidate_sources.sims_etwitterpansion.RecentFollowingSimilarUsersSource
 import com.twitter.follow_recommendations.common.candidate_sources.stp.OfflineStrongTiePredictionSource
 import com.twitter.follow_recommendations.common.candidate_sources.triangular_loops.TriangularLoopsSource
 import com.twitter.follow_recommendations.common.candidate_sources.user_user_graph.UserUserGraphCandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
 import com.twitter.follow_recommendations.common.candidate_sources.crowd_search_accounts.CrowdSearchAccountsSource
 import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSource
-import com.twitter.follow_recommendations.common.candidate_sources.socialgraph.RecentFollowingRecentFollowingExpansionSource
+import com.twitter.follow_recommendations.common.candidate_sources.socialgraph.RecentFollowingRecentFollowingEtwitterpansionSource
 import com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts.TopOrganicFollowsAccountsSource
 import com.twitter.timelines.configapi.Params
 
@@ -42,8 +42,8 @@ object ContentRecommenderFlowCandidateSourceWeights {
         ContentRecommenderFlowCandidateSourceWeightsParams.TriangularLoopsSourceWeight),
       OfflineStrongTiePredictionSource.Identifier -> params(
         ContentRecommenderFlowCandidateSourceWeightsParams.OfflineStrongTiePredictionSourceWeight),
-      RecentFollowingRecentFollowingExpansionSource.Identifier -> params(
-        ContentRecommenderFlowCandidateSourceWeightsParams.NewFollowingNewFollowingExpansionSourceWeight),
+      RecentFollowingRecentFollowingEtwitterpansionSource.Identifier -> params(
+        ContentRecommenderFlowCandidateSourceWeightsParams.NewFollowingNewFollowingEtwitterpansionSourceWeight),
       RecentFollowingSimilarUsersSource.Identifier -> params(
         ContentRecommenderFlowCandidateSourceWeightsParams.NewFollowingSimilarUserSourceWeight),
       // Activity based

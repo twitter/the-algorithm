@@ -1,0 +1,6 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.item.label
+
+sealed trait LabelDisplayType
+
+case object InlineHeaderLabelDisplayType etwittertends LabelDisplayType
+case object OtherRepliesSectionHeaderLabelDisplayType etwittertends LabelDisplayType

@@ -6,28 +6,28 @@ import com.twitter.follow_recommendations.common.models.FollowProof
 import com.twitter.follow_recommendations.common.models.HasRecentFollowedByUserIds
 import com.twitter.follow_recommendations.common.models.Reason
 import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.strato.generated.client.onboarding.userrecs.TriangularLoopsV2OnUserClientColumn
 import com.twitter.timelines.configapi.HasParams
 import com.twitter.wtf.triangular_loop.thriftscala.Candidates
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class TriangularLoopsSource @Inject() (
   triangularLoopsV2Column: TriangularLoopsV2OnUserClientColumn)
-    extends CandidateSource[
-      HasParams with HasClientContext with HasRecentFollowedByUserIds,
+    etwittertends CandidateSource[
+      HasParams with HasClientContetwittert with HasRecentFollowedByUserIds,
       CandidateUser
     ] {
 
   override val identifier: CandidateSourceIdentifier = TriangularLoopsSource.Identifier
 
   override def apply(
-    target: HasParams with HasClientContext with HasRecentFollowedByUserIds
+    target: HasParams with HasClientContetwittert with HasRecentFollowedByUserIds
   ): Stitch[Seq[CandidateUser]] = {
     val candidates = target.getOptionalUserId
       .map { userId =>
@@ -69,7 +69,7 @@ object TriangularLoopsSource {
         CandidateUser(
           id = candidate.incomingUserId,
           score = Some(1.0 / math
-            .max(1, candidate.numFollowers.getOrElse(0) + candidate.numFollowings.getOrElse(0))),
+            .matwitter(1, candidate.numFollowers.getOrElse(0) + candidate.numFollowings.getOrElse(0))),
           reason = Some(
             Reason(
               Some(

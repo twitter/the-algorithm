@@ -14,7 +14,7 @@ class IOError : public twml::Error {
       ERROR_HEADER_CHECKSUM = 4,
       INVALID_METHOD = 5,
       USING_RESERVED = 6,
-      ERROR_HEADER_EXTRA_FIELD_CHECKSUM = 7,
+      ERROR_HEADER_EtwitterTRA_FIELD_CHECKSUM = 7,
       CANT_FIT_OUTPUT = 8,
       SPLIT_FILE = 9,
       BLOCK_SIZE_TOO_LARGE = 10,

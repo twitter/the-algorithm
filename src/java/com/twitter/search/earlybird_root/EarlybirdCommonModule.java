@@ -1,8 +1,8 @@
 package com.twitter.search.earlybird_root;
 
-import javax.annotation.Nullable;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javatwitter.annotation.Nullable;
+import javatwitter.inject.Named;
+import javatwitter.inject.Singleton;
 
 import scala.PartialFunction;
 
@@ -21,15 +21,15 @@ import com.twitter.finagle.stats.StatsReceiver;
 import com.twitter.finagle.thrift.RichServerParam;
 import com.twitter.finagle.thrift.ThriftClientRequest;
 import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.dark.DarkProxy;
-import com.twitter.search.common.dark.ResolverProxy;
+import com.twitter.search.common.dark.DarkProtwittery;
+import com.twitter.search.common.dark.ResolverProtwittery;
 import com.twitter.search.common.partitioning.zookeeper.SearchZkClient;
 import com.twitter.search.common.root.PartitionConfig;
 import com.twitter.search.common.root.RemoteClientBuilder;
 import com.twitter.search.common.root.RootClientServiceBuilder;
 import com.twitter.search.common.root.SearchRootModule;
 import com.twitter.search.common.root.ServerSetsConfig;
-import com.twitter.search.common.util.zookeeper.ZooKeeperProxy;
+import com.twitter.search.common.util.zookeeper.ZooKeeperProtwittery;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.EarlybirdService;
@@ -40,9 +40,9 @@ import com.twitter.search.earlybird_root.filters.QueryLangStatFilter;
 /**
  * Provides common bindings.
  */
-public class EarlybirdCommonModule extends TwitterModule {
+public class EarlybirdCommonModule etwittertends TwitterModule {
   static final String NAMED_ALT_CLIENT = "alt_client";
-  static final String NAMED_EXP_CLUSTER_CLIENT = "exp_cluster_client";
+  static final String NAMED_EtwitterP_CLUSTER_CLIENT = "etwitterp_cluster_client";
 
   private final Flag<String> altZkRoleFlag = createFlag(
       "alt_zk_role",
@@ -80,9 +80,9 @@ public class EarlybirdCommonModule extends TwitterModule {
   @Singleton
   Service<byte[], byte[]> providesByteService(
       EarlybirdService.ServiceIface svc,
-      DarkProxy<ThriftClientRequest, byte[]> darkProxy,
+      DarkProtwittery<ThriftClientRequest, byte[]> darkProtwittery,
       TProtocolFactory protocolFactory) {
-    return darkProxy.toFilter().andThen(
+    return darkProtwittery.toFilter().andThen(
         new EarlybirdService.Service(
             svc, new RichServerParam(protocolFactory, SearchRootModule.SCROOGE_BUFFER_SIZE)));
   }
@@ -96,7 +96,7 @@ public class EarlybirdCommonModule extends TwitterModule {
 
   @Provides
   @Singleton
-  ZooKeeperProxy provideZookeeperClient() {
+  ZooKeeperProtwittery provideZookeeperClient() {
     return SearchZkClient.getSZooKeeperClient();
   }
 
@@ -138,27 +138,27 @@ public class EarlybirdCommonModule extends TwitterModule {
   RootClientServiceBuilder<EarlybirdService.ServiceIface> provideAltRootClientServiceBuilder(
       @Named(NAMED_ALT_CLIENT) @Nullable ServerSetsConfig serverSetsConfig,
       @Named(SearchRootModule.NAMED_SERVICE_INTERFACE) Class serviceIface,
-      ResolverProxy resolverProxy,
+      ResolverProtwittery resolverProtwittery,
       RemoteClientBuilder<EarlybirdService.ServiceIface> remoteClientBuilder) {
     if (serverSetsConfig == null) {
       return null;
     }
 
     return new RootClientServiceBuilder<>(
-        serverSetsConfig, serviceIface, resolverProxy, remoteClientBuilder);
+        serverSetsConfig, serviceIface, resolverProtwittery, remoteClientBuilder);
   }
 
   @Provides
   @Singleton
-  @Named(NAMED_EXP_CLUSTER_CLIENT)
-  RootClientServiceBuilder<EarlybirdService.ServiceIface> provideExpClusterRootClientServiceBuilder(
-      @Named(SearchRootModule.NAMED_EXP_CLUSTER_SERVER_SETS_CONFIG)
+  @Named(NAMED_EtwitterP_CLUSTER_CLIENT)
+  RootClientServiceBuilder<EarlybirdService.ServiceIface> provideEtwitterpClusterRootClientServiceBuilder(
+      @Named(SearchRootModule.NAMED_EtwitterP_CLUSTER_SERVER_SETS_CONFIG)
           ServerSetsConfig serverSetsConfig,
       @Named(SearchRootModule.NAMED_SERVICE_INTERFACE) Class serviceIface,
-      ResolverProxy resolverProxy,
+      ResolverProtwittery resolverProtwittery,
       RemoteClientBuilder<EarlybirdService.ServiceIface> remoteClientBuilder) {
     return new RootClientServiceBuilder<>(
-        serverSetsConfig, serviceIface, resolverProxy, remoteClientBuilder);
+        serverSetsConfig, serviceIface, resolverProtwittery, remoteClientBuilder);
   }
 
   @Provides

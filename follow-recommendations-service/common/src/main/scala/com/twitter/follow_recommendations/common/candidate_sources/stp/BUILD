@@ -4,7 +4,7 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/com/google/inject/extensions:guice-assistedinject",
+        "3rdparty/jvm/com/google/inject/etwittertensions:guice-assistedinject",
         "3rdparty/jvm/net/codingwell:scala-guice",
         "3rdparty/jvm/org/slf4j:slf4j-api",
         "finatra/inject/inject-core/src/main/scala",
@@ -18,7 +18,7 @@ scala_library(
         "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/stores",
         "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/configapi/common",
         "src/scala/com/twitter/onboarding/relevance/features/strongtie",
-        "src/thrift/com/twitter/search/account_search/extended_network:extended_network_users-scala",
+        "src/thrift/com/twitter/search/account_search/etwittertended_network:etwittertended_network_users-scala",
         "strato/config/columns/hub:hub-strato-client",
         "strato/config/columns/onboarding/userrecs:userrecs-strato-client",
         "strato/config/columns/search/account_search:account_search-strato-client",

@@ -4,9 +4,9 @@ import com.google.inject.Provides
 import com.google.inject.Singleton
 import com.twitter.inject.annotations.Flag
 import com.twitter.decider.RandomRecipient
-import com.twitter.finagle.ThriftMux
+import com.twitter.finagle.ThriftMutwitter
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMuxClientSyntax
+import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMutwitterClientSyntatwitter
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.finagle.thrift.ClientId
 import com.twitter.finatra.annotations.DarkTrafficService
@@ -16,11 +16,11 @@ import com.twitter.inject.TwitterModule
 import com.twitter.inject.thrift.filters.DarkTrafficFilter
 import com.twitter.servo.decider.DeciderGateBuilder
 
-object DiffyModule extends TwitterModule {
+object DiffyModule etwittertends TwitterModule {
   // diffy.dest is defined in the Follow Recommendations Service aurora file
-  // and points to the Dark Traffic Proxy server
+  // and points to the Dark Traffic Protwittery server
   private val destFlag =
-    flag[String]("diffy.dest", "/$/nil", "Resolvable name of diffy-service or proxy")
+    flag[String]("diffy.dest", "/$/nil", "Resolvable name of diffy-service or protwittery")
 
   @Provides
   @Singleton
@@ -28,12 +28,12 @@ object DiffyModule extends TwitterModule {
   def provideDarkTrafficService(
     serviceIdentifier: ServiceIdentifier
   ): FollowRecommendationsThriftService.ReqRepServicePerEndpoint = {
-    ThriftMux.client
-      .withClientId(ClientId("follow_recos_service_darktraffic_proxy_client"))
+    ThriftMutwitter.client
+      .withClientId(ClientId("follow_recos_service_darktraffic_protwittery_client"))
       .withMutualTls(serviceIdentifier)
       .servicePerEndpoint[FollowRecommendationsThriftService.ReqRepServicePerEndpoint](
         dest = destFlag(),
-        label = "darktrafficproxy"
+        label = "darktrafficprotwittery"
       )
   }
 
@@ -46,7 +46,7 @@ object DiffyModule extends TwitterModule {
     @Flag("environment") env: String
   ): DarkTrafficFilter[FollowRecommendationsThriftService.ReqRepServicePerEndpoint] = {
     // sampleFunction is used to determine which requests should get replicated
-    // to the dark traffic proxy server
+    // to the dark traffic protwittery server
     val sampleFunction: Any => Boolean = { _ =>
       // check whether the current FRS instance is deployed in production
       env match {

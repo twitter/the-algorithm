@@ -14,7 +14,7 @@ REGISTER_OP("Sleep")
 .SetShapeFn(tensorflow::shape_inference::ScalarShape)
 .Doc(R"doc(
 A tensorflow OP that sleeps for specified number of milliseconds. 
-This is a proxy to determine the number of inter_op_parallelism pool. 
+This is a protwittery to determine the number of inter_op_parallelism pool. 
 This is not part of the Tensorflow API as of the date of writing this 
 doc. Hence, a tensorflow operation is the best resort.
 Input
@@ -27,11 +27,11 @@ Output
 
 class SleepOp : public OpKernel {
  public:
-    explicit SleepOp(OpKernelConstruction* context) : OpKernel(context) {}
+    etwitterplicit SleepOp(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {}
 
-    void Compute(OpKernelContext* context) override {
+    void Compute(OpKernelContetwittert* contetwittert) override {
       // Grab the input tensor
-      const Tensor& input_tensor = context->input(0);
+      const Tensor& input_tensor = contetwittert->input(0);
       auto input = input_tensor.flat<int32>();
 
       // Sleep for specified milliseconds
@@ -42,7 +42,7 @@ class SleepOp : public OpKernel {
 
       // Set the output tensor
       Tensor* output_tensor = NULL;
-      OP_REQUIRES_OK(context, context->allocate_output(0, TensorShape({}), &output_tensor));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, TensorShape({}), &output_tensor));
       auto output_flat = output_tensor->flat<int32>();
       output_flat(0) = elapsed.count();
     }

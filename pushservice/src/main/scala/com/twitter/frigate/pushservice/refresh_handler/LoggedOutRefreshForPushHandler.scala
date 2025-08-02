@@ -25,7 +25,7 @@ import com.twitter.frigate.pushservice.scriber.MrRequestScribeHandler
 import com.twitter.frigate.pushservice.target.LoggedOutPushTargetUserBuilder
 import com.twitter.frigate.pushservice.thriftscala.LoggedOutRequest
 import com.twitter.frigate.pushservice.thriftscala.LoggedOutResponse
-import com.twitter.frigate.pushservice.thriftscala.PushContext
+import com.twitter.frigate.pushservice.thriftscala.PushContetwittert
 import com.twitter.hermit.predicate.NamedPredicate
 import com.twitter.hermit.predicate.Predicate
 import com.twitter.hermit.predicate.SequentialPredicate
@@ -40,7 +40,7 @@ class LoggedOutRefreshForPushHandler(
   loMrRequestScriberNode: String
 )(
   globalStats: StatsReceiver)
-    extends FetchRankFlowWithHydratedCandidates[Target, RawCandidate, PushCandidate] {
+    etwittertends FetchRankFlowWithHydratedCandidates[Target, RawCandidate, PushCandidate] {
 
   val log = MRLogger("LORefreshForPushHandler")
   implicit val statsReceiver: StatsReceiver =
@@ -180,15 +180,15 @@ class LoggedOutRefreshForPushHandler(
 
   override def process(
     target: Target,
-    externalCandidates: Seq[RawCandidate] = Nil
+    etwitterternalCandidates: Seq[RawCandidate] = Nil
   ): Future[Response[PushCandidate, Result]] = {
     isTargetValid(target).flatMap {
       case OK =>
         for {
           candidatesFromSources <- trackSeq(fetchStats)(fetchCandidates(target))
-          externalCandidateDetails = externalCandidates.map(
-            CandidateDetails(_, "logged_out_refresh_for_push_handler_external_candidates"))
-          allCandidates = candidatesFromSources ++ externalCandidateDetails
+          etwitterternalCandidateDetails = etwitterternalCandidates.map(
+            CandidateDetails(_, "logged_out_refresh_for_push_handler_etwitterternal_candidates"))
+          allCandidates = candidatesFromSources ++ etwitterternalCandidateDetails
           hydratedCandidatesWithCopy <-
             trackSeq(loCandidateHydrationStats)(hydrateCandidates(allCandidates))
           (candidates, preRankingFilteredCandidates) <-
@@ -227,9 +227,9 @@ class LoggedOutRefreshForPushHandler(
 
   def buildTarget(
     guestId: Long,
-    inputPushContext: Option[PushContext]
+    inputPushContetwittert: Option[PushContetwittert]
   ): Future[Target] =
-    loPushTargetUserBuilder.buildTarget(guestId, inputPushContext)
+    loPushTargetUserBuilder.buildTarget(guestId, inputPushContetwittert)
 
   /**
    * Hydrate candidate by querying downstream services
@@ -247,8 +247,8 @@ class LoggedOutRefreshForPushHandler(
   def refreshAndSend(request: LoggedOutRequest): Future[LoggedOutResponse] = {
     for {
       target <- track(loggedOutBuildStats)(
-        loPushTargetUserBuilder.buildTarget(request.guestId, request.context))
-      response <- track(loggedOutProcessStats)(process(target, externalCandidates = Seq.empty))
+        loPushTargetUserBuilder.buildTarget(request.guestId, request.contetwittert))
+      response <- track(loggedOutProcessStats)(process(target, etwitterternalCandidates = Seq.empty))
       loggedOutRefreshResponse <-
         track(loggedOutNotifyStats)(loRfphNotifier.checkResponseAndNotify(response))
     } yield {

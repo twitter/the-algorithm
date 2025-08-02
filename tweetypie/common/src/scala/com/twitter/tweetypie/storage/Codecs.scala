@@ -39,12 +39,12 @@ object StringCodec {
  *                              considered internal and all the ids greater than or equal to this field id are considered 'Additional fields'.
  *                              This is set to 100.
  *
- * Internal Fields            : Fields with ids [1 to firstAdditionalFieldid) (excluding firstAdditionalFieldId)
+ * Internal Fields            : Fields with ids [1 to firstAdditionalFieldid) (etwittercluding firstAdditionalFieldId)
  *
  * Core fields                : (Subset of Internal fields)- Fields with ids [1 to 8, 19]. These fields are "packed" together and stored
  *                              under a single key. This key is referred to as "CoreFieldsKey" (see @TweetKeyType.CoreFieldsKey).
  *                              Note: Actually field 1 is skipped when packing as this field is the tweet id and it need not be
- *                              explicitly stored since the pkey already contains the tweet Id)
+ *                              etwitterplicitly stored since the pkey already contains the tweet Id)
  *
  * Root Core field id         : The field id under which the packed core fields are stored in Manhattan. (This is field Id "1")
  *
@@ -69,11 +69,11 @@ object TweetFields {
   // The field under which all the core field values are stored (in serialized form).
   val rootCoreFieldId: Short = 1
 
-  val coreFieldIds: immutable.IndexedSeq[FieldId] = {
+  val coreFieldIds: immutable.IndetwitteredSeq[FieldId] = {
     val quotedTweetFieldId: Short = 19
     (1 to 8).map(_.toShort) ++ Seq(quotedTweetFieldId)
   }
-  val requiredFieldIds: immutable.IndexedSeq[FieldId] = (1 to 5).map(_.toShort)
+  val requiredFieldIds: immutable.IndetwitteredSeq[FieldId] = (1 to 5).map(_.toShort)
 
   val coreFieldsIdInInternalTweet: Short = 1
 
@@ -116,7 +116,7 @@ object TFieldBlobCodec {
     if (version != FormatVersion) {
       throw new VersionMismatchError(
         "Version mismatch in decoding ByteBuffer to TFieldBlob. " +
-          "Actual version: " + version + ". Expected version: " + FormatVersion
+          "Actual version: " + version + ". Etwitterpected version: " + FormatVersion
       )
     }
 
@@ -140,7 +140,7 @@ object TFieldBlobCodec {
  * - To make the packing/unpacking the fields to/from TFieldBlob object, we created the following
  *   two helper thrift structures 'CoreFields' and 'InternalTweet'
  *
- *       // The field Ids and types here MUST exactly match field Ids on 'StoredTweet' thrift structure.
+ *       // The field Ids and types here MUST etwitteractly match field Ids on 'StoredTweet' thrift structure.
  *       struct CoreFields {
  *          2: optional i64 user_id
  *          ...
@@ -160,7 +160,7 @@ object TFieldBlobCodec {
  *     For packing:
  *       (i) Copy fields (2-8,19) from StoredTweet object to a new CoreFields object
  *      (ii) Create a new InternalTweet object with the 'CoreFields' object constructed in step (i) above
- *     (iii) Extract field "1" as a TFieldBlob from InternalField (by calling the scrooge generated "getFieldBlob(1)"
+ *     (iii) Etwittertract field "1" as a TFieldBlob from InternalField (by calling the scrooge generated "getFieldBlob(1)"
  *           function on the InternalField objecton
  *
  *     For unpacking:
@@ -190,7 +190,7 @@ object CoreFieldsCodec {
 
   // Create a 'CoreFields' thrift object from 'Tweet' thrift object.
   def fromTweet(tweet: StoredTweet): CoreFields = {
-    // As mentioned above, the field ids and types on the 'CoreFields' struct exactly match the
+    // As mentioned above, the field ids and types on the 'CoreFields' struct etwitteractly match the
     // corresponding fields on StoredTweet structure. So it is safe to call .getField() on Tweet object and
     // and pass the returned tFleldBlob a 'setField' on 'CoreFields' object.
     coreFieldIds.foldLeft(CoreFields()) {
@@ -204,35 +204,35 @@ object CoreFieldsCodec {
 }
 
 /**
- * Helper object to convert ManhattanException to FieldResponseCode thrift object
+ * Helper object to convert ManhattanEtwitterception to FieldResponseCode thrift object
  */
 object FieldResponseCodeCodec {
-  import FieldResponseCodec.ValueNotFoundException
+  import FieldResponseCodec.ValueNotFoundEtwitterception
 
-  def fromManhattanException(mhException: ManhattanException): FieldResponseCode = {
-    mhException match {
-      case _: ValueNotFoundException => FieldResponseCode.ValueNotFound
-      case _: InternalErrorManhattanException => FieldResponseCode.Error
-      case _: InvalidRequestManhattanException => FieldResponseCode.InvalidRequest
-      case _: DeniedManhattanException => FieldResponseCode.Error
-      case _: UnsatisfiableManhattanException => FieldResponseCode.Error
-      case _: TimeoutManhattanException => FieldResponseCode.Timeout
+  def fromManhattanEtwitterception(mhEtwitterception: ManhattanEtwitterception): FieldResponseCode = {
+    mhEtwitterception match {
+      case _: ValueNotFoundEtwitterception => FieldResponseCode.ValueNotFound
+      case _: InternalErrorManhattanEtwitterception => FieldResponseCode.Error
+      case _: InvalidRequestManhattanEtwitterception => FieldResponseCode.InvalidRequest
+      case _: DeniedManhattanEtwitterception => FieldResponseCode.Error
+      case _: UnsatisfiableManhattanEtwitterception => FieldResponseCode.Error
+      case _: TimeoutManhattanEtwitterception => FieldResponseCode.Timeout
     }
   }
 }
 
 /**
- * Helper object to construct FieldResponse thrift object from an Exception.
- * This is typically called to convert 'ManhattanException' object to 'FieldResponse' thrift object
+ * Helper object to construct FieldResponse thrift object from an Etwitterception.
+ * This is typically called to convert 'ManhattanEtwitterception' object to 'FieldResponse' thrift object
  */
 object FieldResponseCodec {
-  class ValueNotFoundException extends ManhattanException("Value not found!") with NoStackTrace
-  private[storage] val NotFound = new ValueNotFoundException
+  class ValueNotFoundEtwitterception etwittertends ManhattanEtwitterception("Value not found!") with NoStackTrace
+  private[storage] val NotFound = new ValueNotFoundEtwitterception
 
   def fromThrowable(e: Throwable, additionalMsg: Option[String] = None): FieldResponse = {
     val (respCode, errMsg) = e match {
-      case mhException: ManhattanException =>
-        (FieldResponseCodeCodec.fromManhattanException(mhException), mhException.getMessage)
+      case mhEtwitterception: ManhattanEtwitterception =>
+        (FieldResponseCodeCodec.fromManhattanEtwitterception(mhEtwitterception), mhEtwitterception.getMessage)
       case _ => (FieldResponseCode.Error, e.getMessage)
     }
 

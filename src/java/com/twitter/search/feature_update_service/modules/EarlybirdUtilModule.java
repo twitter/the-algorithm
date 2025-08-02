@@ -3,7 +3,7 @@ package com.twitter.search.feature_update_service.modules;
 import com.twitter.app.Flaggable;
 import com.twitter.inject.TwitterModule;
 
-public class EarlybirdUtilModule extends TwitterModule {
+public class EarlybirdUtilModule etwittertends TwitterModule {
   public static final String PENGUIN_VERSIONS_FLAG = "penguin.versions";
 
   public EarlybirdUtilModule() {

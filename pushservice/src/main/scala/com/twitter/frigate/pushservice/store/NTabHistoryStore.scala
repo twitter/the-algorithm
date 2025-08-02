@@ -14,7 +14,7 @@ import com.twitter.storage.client.manhattan.kv.impl.ValueDescriptor
 import com.twitter.util.Future
 
 case class NTabHistoryStore(mhEndpoint: ManhattanKVEndpoint, dataset: String)
-    extends ReadableWritableStore[(Long, String), GenericNotificationOverrideKey] {
+    etwittertends ReadableWritableStore[(Long, String), GenericNotificationOverrideKey] {
 
   private val keyDesc: DescriptorP1L1.EmptyKey[Long, String] =
     KeyDescriptor(Component(LongInjection), Component(StringInjection))

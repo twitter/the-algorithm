@@ -13,7 +13,7 @@ import com.twitter.frigate.common.base.MagicFanoutSportsEventCandidate
 import com.twitter.frigate.common.base.MagicFanoutSportsScoreInformation
 import com.twitter.frigate.common.base.TeamInfo
 import com.twitter.frigate.magic_events.thriftscala.MagicEventsReason
-import com.twitter.frigate.pushservice.exception.InvalidSportDomainException
+import com.twitter.frigate.pushservice.etwitterception.InvalidSportDomainEtwitterception
 import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
 import com.twitter.frigate.pushservice.model.PushTypes.Target
 import com.twitter.frigate.pushservice.params.PushConstants
@@ -45,11 +45,11 @@ object MagicFanoutSportsEventCandidateGenerator {
      * */
     require(
       notification.commonRecommendationType == CommonRecommendationType.MagicFanoutSportsEvent,
-      "MagicFanoutSports: unexpected CRT " + notification.commonRecommendationType
+      "MagicFanoutSports: unetwitterpected CRT " + notification.commonRecommendationType
     )
 
     require(
-      notification.magicFanoutEventNotification.exists(_.pushId.isDefined),
+      notification.magicFanoutEventNotification.etwitterists(_.pushId.isDefined),
       "MagicFanoutSportsEvent: pushId is not defined")
 
     val magicFanoutEventNotification = notification.magicFanoutEventNotification.get
@@ -96,7 +96,7 @@ object MagicFanoutSportsEventCandidateGenerator {
                   }
               } else {
                 // The domains are not in our list of supported sports
-                throw new InvalidSportDomainException(
+                throw new InvalidSportDomainEtwitterception(
                   s"Domain for entity ${eventId} is not supported")
               }
             case _ => Future.None

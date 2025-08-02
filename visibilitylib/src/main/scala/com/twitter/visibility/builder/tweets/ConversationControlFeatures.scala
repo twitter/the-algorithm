@@ -96,7 +96,7 @@ class ConversationControlFeatures(
       case _ => Seq()
     }
 
-    viewerId.exists(invitedUserIds.contains(_))
+    viewerId.etwitterists(invitedUserIds.contains(_))
   }
 
   def conversationAuthorFollows(

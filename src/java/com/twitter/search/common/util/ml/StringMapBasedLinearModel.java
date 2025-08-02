@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import com.twitter.common.base.Function;
 import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.util.io.TextFileLoadingUtils;
+import com.twitter.search.common.util.io.TetwittertFileLoadingUtils;
 
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
@@ -17,7 +17,7 @@ import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
 /**
  * Represents a linear model for scoring and classification.
  *
- * Features are represented as arbitrary strings, making this a fairly flexible implementation
+ * Features are represented as arbitrary strings, making this a fairly fletwitterible implementation
  * (at the cost of some performance, since all operations require hash lookups). Instances
  * and weights are both encoded sparsely (as maps) so this implementation is well suited to
  * models with large feature sets where most features are inactive at a given time. Weights
@@ -117,7 +117,7 @@ public class StringMapBasedLinearModel implements MapBasedLinearModel<String> {
    */
   public static StringMapBasedLinearModel loadFromFile(AbstractFile fileHandle) {
     Map<String, Float> weights =
-        TextFileLoadingUtils.loadMapFromFile(
+        TetwittertFileLoadingUtils.loadMapFromFile(
             fileHandle,
             (Function<String, Float>) item -> Float.parseFloat(item));
     return new StringMapBasedLinearModel(weights);

@@ -1,7 +1,7 @@
 package com.twitter.unified_user_actions.enricher.hcache
 
 import com.twitter.cache.FutureCache
-import com.twitter.cache.FutureCacheProxy
+import com.twitter.cache.FutureCacheProtwittery
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.util.Future
 import scala.annotation.nowarn
@@ -10,7 +10,7 @@ import scala.annotation.nowarn
  * Adds stats and reuse the main logic of the EvictingCache.
  */
 class ObservedEvictingCache[K, V](underlying: FutureCache[K, V], scopedStatsReceiver: StatsReceiver)
-    extends FutureCacheProxy[K, V](underlying) {
+    etwittertends FutureCacheProtwittery[K, V](underlying) {
   import ObservedEvictingCache._
 
   private[this] val getsCounter = scopedStatsReceiver.counter(StatsNames.Gets)

@@ -9,14 +9,14 @@ import com.twitter.tweetypie.storage.Response.TweetResponse
 import com.twitter.tweetypie.storage.Response.TweetResponseCode
 import com.twitter.tweetypie.storage.TweetStorageClient
 import com.twitter.tweetypie.storage.TweetStorageClient.GetTweet
-import com.twitter.tweetypie.storage.TweetStorageException
+import com.twitter.tweetypie.storage.TweetStorageEtwitterception
 import com.twitter.tweetypie.thriftscala._
 import com.twitter.util.Future
 
-case class UpdateTweetNotFoundException(tweetId: TweetId) extends Exception
+case class UpdateTweetNotFoundEtwitterception(tweetId: TweetId) etwittertends Etwitterception
 
 trait ManhattanTweetStore
-    extends TweetStoreBase[ManhattanTweetStore]
+    etwittertends TweetStoreBase[ManhattanTweetStore]
     with InsertTweet.Store
     with AsyncDeleteTweet.Store
     with ScrubGeo.Store
@@ -49,7 +49,7 @@ object ManhattanTweetStore {
   private val log = Logger(getClass)
   private val successResponses = Set(TweetResponseCode.Success, TweetResponseCode.Deleted)
 
-  case class AnnotationFailure(message: String) extends Exception(message)
+  case class AnnotationFailure(message: String) etwittertends Etwitterception(message)
 
   def apply(tweetStorageClient: TweetStorageClient): ManhattanTweetStore = {
 
@@ -60,12 +60,12 @@ object ManhattanTweetStore {
       Stitch
         .run(responsesStitch)
         .onFailure {
-          case ex: TweetStorageException => log.warn("failed on: " + action, ex)
+          case etwitter: TweetStorageEtwitterception => log.warn("failed on: " + action, etwitter)
           case _ =>
         }
         .flatMap { responses =>
-          Future.when(responses.exists(resp => !successResponses(resp.overallResponse))) {
-            Future.exception(AnnotationFailure(s"$action gets failure response $responses"))
+          Future.when(responses.etwitterists(resp => !successResponses(resp.overallResponse))) {
+            Future.etwitterception(AnnotationFailure(s"$action gets failure response $responses"))
           }
         }
 
@@ -88,7 +88,7 @@ object ManhattanTweetStore {
             } else {
               Stitch.Unit
             }
-          case _ => Stitch.exception(UpdateTweetNotFoundException(tweetId))
+          case _ => Stitch.etwitterception(UpdateTweetNotFoundEtwitterception(tweetId))
         }
       }
     }

@@ -1,6 +1,6 @@
 /**
  * Copyright 2021 Twitter, Inc.
- * SPDX-License-Identifier: Apache-2.0
+ * SPDtwitter-License-Identifier: Apache-2.0
  */
 package com.twitter.unified_user_actions.kafka.serde.internal
 
@@ -19,12 +19,12 @@ import com.twitter.util.logging.Logging
 import org.apache.thrift.protocol.TBinaryProtocol
 
 abstract class AbstractScroogeSerDe[T <: ThriftStruct: Manifest](nullCounter: Counter)
-    extends Serde[T]
+    etwittertends Serde[T]
     with Logging {
 
   private val rateLimiter = RateLimiter.create(1.0) // at most 1 log message per second
 
-  private def rateLimitedLogError(e: Exception): Unit =
+  private def rateLimitedLogError(e: Etwitterception): Unit =
     if (rateLimiter.tryAcquire()) {
       logger.error(e.getMessage, e)
     }
@@ -48,7 +48,7 @@ abstract class AbstractScroogeSerDe[T <: ThriftStruct: Manifest](nullCounter: Co
         try {
           thriftStructSerializer.fromBytes(data)
         } catch {
-          case e: Exception =>
+          case e: Etwitterception =>
             nullCounter.incr()
             rateLimitedLogError(e)
             null.asInstanceOf[T]
@@ -95,7 +95,7 @@ abstract class AbstractScroogeSerDe[T <: ThriftStruct: Manifest](nullCounter: Co
 }
 
 class ThriftSerDe[T <: ThriftStruct: Manifest](nullCounter: Counter = NullStatsReceiver.NullCounter)
-    extends AbstractScroogeSerDe[T](nullCounter = nullCounter) {
+    etwittertends AbstractScroogeSerDe[T](nullCounter = nullCounter) {
   protected[this] override def constructThriftStructSerializer(
     thriftStructClass: Class[T],
     thriftStructCodec: ThriftStructCodec[T]
@@ -109,7 +109,7 @@ class ThriftSerDe[T <: ThriftStruct: Manifest](nullCounter: Counter = NullStatsR
 
 class CompactThriftSerDe[T <: ThriftStruct: Manifest](
   nullCounter: Counter = NullStatsReceiver.NullCounter)
-    extends AbstractScroogeSerDe[T](nullCounter = nullCounter) {
+    etwittertends AbstractScroogeSerDe[T](nullCounter = nullCounter) {
   override protected[this] def constructThriftStructSerializer(
     thriftStructClass: Class[T],
     thriftStructCodec: ThriftStructCodec[T]

@@ -9,7 +9,7 @@ class UnifiedUserActionToUserVideoGraphBuilder(
   userTweetEntityEdgeBuilder: UserTweetEntityEdgeBuilder
 )(
   override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[UuaEngagementEventDetails, UserTweetEntityEdge] {
+    etwittertends EventToMessageBuilder[UuaEngagementEventDetails, UserTweetEntityEdge] {
 
   private val numVideoPlayback50EdgeCounter = statsReceiver.counter("num_video_playback50_edge")
   private val numUnVideoPlayback50Counter = statsReceiver.counter("num_non_video_playback50_edge")

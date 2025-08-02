@@ -2,7 +2,7 @@ package com.twitter.timelines.prediction.common.aggregates.real_time
 
 import com.twitter.ml.api.DataRecord
 import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
+import com.twitter.ml.api.FeatureContetwittert
 import com.twitter.ml.featurestore.catalog.entities.core.Tweet
 import com.twitter.ml.featurestore.catalog.features.trends.TweetTrendsScores
 import com.twitter.ml.featurestore.lib.TweetId
@@ -14,7 +14,7 @@ import com.twitter.timelines.prediction.common.adapters.TimelinesAdapterBase
 import java.util
 import scala.collection.JavaConverters._
 
-object TweetFeaturesAdapter extends TimelinesAdapterBase[PredictionRecord] {
+object TweetFeaturesAdapter etwittertends TimelinesAdapterBase[PredictionRecord] {
 
   private val ContinuousFeatureMap: Map[BoundFeature[TweetId, Double], Feature.Continuous] = Map()
 
@@ -25,7 +25,7 @@ object TweetFeaturesAdapter extends TimelinesAdapterBase[PredictionRecord] {
 
   private val adapter = PredictionRecordAdapter.oneToOne(TweetFeaturesSet)
 
-  override def getFeatureContext: FeatureContext = new FeatureContext(AllFeatures: _*)
+  override def getFeatureContetwittert: FeatureContetwittert = new FeatureContetwittert(AllFeatures: _*)
 
   override def commonFeatures: Set[Feature[_]] = Set.empty
 

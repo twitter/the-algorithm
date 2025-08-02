@@ -40,7 +40,7 @@ case class StitchCacheOperations[K, V](operations: CacheOperations[K, V]) {
     // in order to handle the case where a batch has a duplicate
     // key. Each copy of the duplicate key will trigger a write back
     // to cache, so we dedupe the writes in order to avoid the
-    // extraneous RPC call.
+    // etwittertraneous RPC call.
     Stitch.call(new StitchCacheOperations.SetCall(key, value), setGroup)
 }
 

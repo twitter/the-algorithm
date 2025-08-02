@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird_root.common;
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 
@@ -15,14 +15,14 @@ public final class EarlybirdServiceResponse {
     // The service was called (or will be called).
     SERVICE_CALLED(true),
 
-    // The service is not available (turned off by a decider, for example).
+    // The service is not available (turned off by a decider, for etwitterample).
     SERVICE_NOT_AVAILABLE(false),
 
     // The client did not request results from this service.
     SERVICE_NOT_REQUESTED(false),
 
     // The service is available and the client wants results from this service, but the service
-    // was not called (because we got enough results from other services, for example).
+    // was not called (because we got enough results from other services, for etwitterample).
     SERVICE_NOT_CALLED(false);
 
     private final boolean serviceWasCalled;

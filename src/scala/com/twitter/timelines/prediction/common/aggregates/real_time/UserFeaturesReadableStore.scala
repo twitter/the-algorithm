@@ -14,7 +14,7 @@ class UserFeaturesReadableStore(
   featureStoreClient: FeatureStoreClient,
   userEntity: Entity[UserId],
   userFeaturesAdapter: TimelinesAdapterBase[PredictionRecord])
-    extends ReadableStore[Set[Long], DataRecord] {
+    etwittertends ReadableStore[Set[Long], DataRecord] {
 
   override def multiGet[K <: Set[Long]](keys: Set[K]): Map[K, Future[Option[DataRecord]]] = {
     val orderedKeys = keys.toSeq
@@ -26,10 +26,10 @@ class UserFeaturesReadableStore(
     val predictionRecordsFut: Future[Seq[PredictionRecord]] = featureStoreClient(
       featureStoreRequests)
 
-    orderedKeys.zipWithIndex.map {
-      case (userId, index) =>
+    orderedKeys.zipWithIndetwitter.map {
+      case (userId, indetwitter) =>
         val dataRecordFutOpt = predictionRecordsFut.map { predictionRecords =>
-          userFeaturesAdapter.adaptToDataRecords(predictionRecords(index)).asScala.headOption
+          userFeaturesAdapter.adaptToDataRecords(predictionRecords(indetwitter)).asScala.headOption
         }
         (userId, dataRecordFutOpt)
     }.toMap

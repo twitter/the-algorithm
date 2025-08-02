@@ -32,7 +32,7 @@ enum EdgeType {
 }
 ```
 
-For an example of how this is used, consider the `GetNeighbors` query. If we set the `edgeType` field
+For an etwitterample of how this is used, consider the `GetNeighbors` query. If we set the `edgeType` field
 of the `GfsNeighborsRequest`, the response will contain all the users that the specified user follows.
 If, on the other hand, we set `edgeType` to be `FollowedBy` it will return all the users who are
 followed by the specified user.

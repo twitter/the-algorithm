@@ -1,8 +1,8 @@
 package com.twitter.tweetypie
 package store
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.fastertwitterml.jackson.databind.ObjectMapper
+import com.fastertwitterml.jackson.module.scala.DefaultScalaModule
 import com.twitter.scrooge.TFieldBlob
 import com.twitter.servo.cache.LockingCache._
 import com.twitter.servo.cache._
@@ -16,7 +16,7 @@ import com.twitter.util.Time
 import diffshow.DiffShow
 
 trait CachingTweetStore
-    extends TweetStoreBase[CachingTweetStore]
+    etwittertends TweetStoreBase[CachingTweetStore]
     with InsertTweet.Store
     with ReplicatedInsertTweet.Store
     with DeleteTweet.Store
@@ -165,7 +165,7 @@ object CachingTweetStore {
         FutureEffect[ReplicatedTakedown.Event](e => ops.takedown(e.tweet))
 
       override val flush: FutureEffect[Flush.Event] =
-        FutureEffect[Flush.Event](e => ops.flushTweets(e.tweetIds, logExisting = e.logExisting))
+        FutureEffect[Flush.Event](e => ops.flushTweets(e.tweetIds, logEtwitteristing = e.logEtwitteristing))
           .onlyIf(_.flushTweets)
 
       override val updatePossiblySensitiveTweet: FutureEffect[UpdatePossiblySensitiveTweet.Event] =
@@ -278,7 +278,7 @@ private class CachingTweetStoreOps(
             // cache. This is much more likely to succeed because it
             // does not require multiple successful requests to cache.
             // This will force the tweet to be loaded from storage the
-            // next time it is requested, and the stored tweet will have
+            // netwittert time it is requested, and the stored tweet will have
             // the geo information removed.
             //
             // This eviction path was added due to frequent failures of
@@ -295,10 +295,10 @@ private class CachingTweetStoreOps(
   def updatePossiblySensitive(tweet: Tweet): Future[Unit] =
     lockAndSet(tweet.id, updateTweetHandler(copyNsfwFieldsForUpdate(tweet)))
 
-  def flushTweets(tweetIds: Seq[TweetId], logExisting: Boolean = false): Future[Unit] = {
+  def flushTweets(tweetIds: Seq[TweetId], logEtwitteristing: Boolean = false): Future[Unit] = {
     val tweetKeys = tweetIds.map(tweetKeyFactory.fromId)
 
-    Future.when(logExisting) { logExistingValues(tweetKeys) }.ensure {
+    Future.when(logEtwitteristing) { logEtwitteristingValues(tweetKeys) }.ensure {
       evictAll(tweetKeys)
     }
   }
@@ -313,7 +313,7 @@ private class CachingTweetStoreOps(
     c.status == CachedValueStatus.Found && !isBounceDeleted(c)
 
   /**
-   * A LockingCache.Handler that updates an existing CachedTweet in cache.
+   * A LockingCache.Handler that updates an etwitteristing CachedTweet in cache.
    */
   private def updateTweetHandler(update: Tweet => Tweet): CachedTweetHandler =
     inCache =>
@@ -324,7 +324,7 @@ private class CachingTweetStoreOps(
       } yield found(cachedTweet.copy(tweet = updatedTweet))
 
   /**
-   * A LockingCache.Handler that updates an existing CachedTweet in cache.
+   * A LockingCache.Handler that updates an etwitteristing CachedTweet in cache.
    */
   private def updateCachedTweetHandler(update: CachedTweet => CachedTweet): CachedTweetHandler =
     inCache =>
@@ -385,12 +385,12 @@ private class CachingTweetStoreOps(
       .onSuccess { (failures: Seq[Int]) => evictionFailedCounter.incr(failures.sum) }
       .unit
 
-  private def logExistingValues(keys: Seq[TweetKey]): Future[Unit] =
+  private def logEtwitteristingValues(keys: Seq[TweetKey]): Future[Unit] =
     tweetCache
       .get(keys)
-      .map { existing =>
+      .map { etwitteristing =>
         for {
-          (key, cached) <- existing.found
+          (key, cached) <- etwitteristing.found
           cachedTweet <- cached.value
           tweet = cachedTweet.tweet
         } yield {

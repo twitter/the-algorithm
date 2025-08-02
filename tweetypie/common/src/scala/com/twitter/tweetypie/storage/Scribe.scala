@@ -25,10 +25,10 @@ import com.twitter.util.Time
  *
  * The thrift ops are scribed only after the write API call has succeeded.
  *
- * The class is thread safe except initial configuration and registration routines,
- * and no exception is expected unless java heap is out of memory.
+ * The class is thread safe etwittercept initial configuration and registration routines,
+ * and no etwitterception is etwitterpected unless java heap is out of memory.
  *
- * If exception does get thrown, add/remove/scrub operations will fail and
+ * If etwitterception does get thrown, add/remove/scrub operations will fail and
  * client will have to retry
  */
 class Scribe(factory: Scribe.ScribeHandlerFactory, statsReceiver: StatsReceiver) {

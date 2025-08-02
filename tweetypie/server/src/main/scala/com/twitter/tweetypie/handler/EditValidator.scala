@@ -2,7 +2,7 @@ package com.twitter.tweetypie
 package handler
 
 import com.twitter.scrooge.schema.scrooge.scala.CompiledScroogeDefBuilder
-import com.twitter.scrooge.schema.scrooge.scala.CompiledScroogeValueExtractor
+import com.twitter.scrooge.schema.scrooge.scala.CompiledScroogeValueEtwittertractor
 import com.twitter.scrooge.schema.tree.DefinitionTraversal
 import com.twitter.scrooge.schema.tree.FieldPath
 import com.twitter.scrooge.schema.{ThriftDefinitions => DEF}
@@ -72,8 +72,8 @@ object EditValidator {
     // Collect uneditable fields that were edited
     val invalidEditedFields = uneditableFieldPaths.flatMap { fieldPath =>
       val previousValue =
-        FieldPath.lensGet(CompiledScroogeValueExtractor, previousTweet, fieldPath)
-      val editValue = FieldPath.lensGet(CompiledScroogeValueExtractor, editTweet, fieldPath)
+        FieldPath.lensGet(CompiledScroogeValueEtwittertractor, previousTweet, fieldPath)
+      val editValue = FieldPath.lensGet(CompiledScroogeValueEtwittertractor, editTweet, fieldPath)
 
       if (previousValue != editValue) {
         Some(fieldPath.toString)
@@ -83,7 +83,7 @@ object EditValidator {
     }
 
     if (invalidEditedFields.nonEmpty) {
-      // If any inequalities are found, log them and return an exception.
+      // If any inequalities are found, log them and return an etwitterception.
       val msg = "uneditable fields were edited: " + invalidEditedFields.mkString(",")
       log.error(msg)
       throw TweetCreateFailure.State(FieldEditNotAllowed, Some(msg))

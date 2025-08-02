@@ -12,7 +12,7 @@
     "dependencies": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
+        "name": "packer-client-no-petwitter",
         "version": "latest"
       }
     ],
@@ -39,8 +39,8 @@
           "key": "atla/discode/prod/uua-social-graph"
         },
         {
-          "name": "uua-social-graph-prod-pdxa",
-          "key": "pdxa/discode/prod/uua-social-graph"
+          "name": "uua-social-graph-prod-pdtwittera",
+          "key": "pdtwittera/discode/prod/uua-social-graph"
         }
       ]
     }

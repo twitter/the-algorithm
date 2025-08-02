@@ -21,12 +21,12 @@ public class PartitionConfig {
   public static final String DEFAULT_TIER_NAME = "all";
 
   // the date range of the timeslices this tier will load. The start date is inclusive, while
-  // the end date is exclusive.
+  // the end date is etwitterclusive.
   private final Date tierStartDate;
   private final Date tierEndDate;
 
-  private final int indexingHashPartitionID; // Hash Partition ID assigned for this EB
-  private final int maxEnabledLocalSegments; // Number of segments to keep
+  private final int indetwitteringHashPartitionID; // Hash Partition ID assigned for this EB
+  private final int matwitterEnabledLocalSegments; // Number of segments to keep
   // The position of this host in the ordered list of hosts serving this hash partition
   private final int hostPositionWithinHashPartition;
   private volatile int numReplicasInHashPartition;
@@ -34,16 +34,16 @@ public class PartitionConfig {
   private final int numPartitions; // Total number of partitions in the current cluster
 
   public PartitionConfig(
-      int indexingHashPartitionID,
-      int maxEnabledLocalSegments,
+      int indetwitteringHashPartitionID,
+      int matwitterEnabledLocalSegments,
       int hostPositionWithinHashPartition,
       int numReplicasInHashPartition,
       int numPartitions) {
     this(DEFAULT_TIER_NAME,
         TierConfig.DEFAULT_TIER_START_DATE,
         TierConfig.DEFAULT_TIER_END_DATE,
-        indexingHashPartitionID,
-        maxEnabledLocalSegments,
+        indetwitteringHashPartitionID,
+        matwitterEnabledLocalSegments,
         hostPositionWithinHashPartition,
         numReplicasInHashPartition,
         numPartitions);
@@ -52,12 +52,12 @@ public class PartitionConfig {
   public PartitionConfig(String tierName,
                          Date tierStartDate,
                          Date tierEndDate,
-                         int indexingHashPartitionID,
-                         int maxEnabledLocalSegments,
+                         int indetwitteringHashPartitionID,
+                         int matwitterEnabledLocalSegments,
                          int hostPositionWithinHashPartition,
                          int numReplicasInHashPartition,
                          int numPartitions) {
-    this(tierName, tierStartDate, tierEndDate, indexingHashPartitionID, maxEnabledLocalSegments,
+    this(tierName, tierStartDate, tierEndDate, indetwitteringHashPartitionID, matwitterEnabledLocalSegments,
         hostPositionWithinHashPartition, numReplicasInHashPartition, Config.getEnvironment(),
         numPartitions);
   }
@@ -65,8 +65,8 @@ public class PartitionConfig {
   public PartitionConfig(String tierName,
                          Date tierStartDate,
                          Date tierEndDate,
-                         int indexingHashPartitionID,
-                         int maxEnabledLocalSegments,
+                         int indetwitteringHashPartitionID,
+                         int matwitterEnabledLocalSegments,
                          int hostPositionWithinHashPartition,
                          int numReplicasInHashPartition,
                          String clusterName,
@@ -75,8 +75,8 @@ public class PartitionConfig {
     this.clusterName = Preconditions.checkNotNull(clusterName);
     this.tierStartDate = Preconditions.checkNotNull(tierStartDate);
     this.tierEndDate = Preconditions.checkNotNull(tierEndDate);
-    this.indexingHashPartitionID = indexingHashPartitionID;
-    this.maxEnabledLocalSegments = maxEnabledLocalSegments;
+    this.indetwitteringHashPartitionID = indetwitteringHashPartitionID;
+    this.matwitterEnabledLocalSegments = matwitterEnabledLocalSegments;
     this.hostPositionWithinHashPartition = hostPositionWithinHashPartition;
     this.numReplicasInHashPartition = numReplicasInHashPartition;
     this.numPartitions = numPartitions;
@@ -98,12 +98,12 @@ public class PartitionConfig {
     return tierEndDate;
   }
 
-  public int getIndexingHashPartitionID() {
-    return indexingHashPartitionID;
+  public int getIndetwitteringHashPartitionID() {
+    return indetwitteringHashPartitionID;
   }
 
-  public int getMaxEnabledLocalSegments() {
-    return maxEnabledLocalSegments;
+  public int getMatwitterEnabledLocalSegments() {
+    return matwitterEnabledLocalSegments;
   }
 
   public int getHostPositionWithinHashPartition() {

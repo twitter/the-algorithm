@@ -17,7 +17,7 @@ case class ContinuousFunctionParam(
 object ContinuousFunction {
 
   /**
-   * Evalutate the value for function f(x) = w(x - b)^power
+   * Evalutate the value for function f(twitter) = w(twitter - b)^power
    * where w and b are decided by the start, startVal, end, endVal
    * such that
    *         w(start - b) ^ power = startVal
@@ -44,15 +44,15 @@ object ContinuousFunction {
   }
 
   /**
-   * Evaluate value for function f(x), and return weight * f(x)
+   * Evaluate value for function f(twitter), and return weight * f(twitter)
    *
-   * f(x) is a piecewise function
-   * f(x) = w_i * (x - b_i)^powers[i] for knobs[i] <= x < knobs[i+1]
+   * f(twitter) is a piecewise function
+   * f(twitter) = w_i * (twitter - b_i)^powers[i] for knobs[i] <= twitter < knobs[i+1]
    * such that
    *         w(knobs[i] - b) ^ power = knobVals[i]
    *         w(knobs[i+1] - b) ^ power = knobVals[i+1]
    *
-   * @return Evaluate value for weight * f(x), for the function described above. If the any of the input is invalid, returns defaultVal
+   * @return Evaluate value for weight * f(twitter), for the function described above. If the any of the input is invalid, returns defaultVal
    */
   def safeEvaluateFn(
     value: Double,
@@ -75,9 +75,9 @@ object ContinuousFunction {
       invalidStats.incr()
       defaultVal
     } else {
-      val endIndex = knobs.indexWhere(knob => knob > value)
+      val endIndetwitter = knobs.indetwitterWhere(knob => knob > value)
       validStats.incr()
-      endIndex match {
+      endIndetwitter match {
         case -1 => {
           validEndCaseStats.incr()
           knobVals(knobVals.size - 1) * weight
@@ -87,14 +87,14 @@ object ContinuousFunction {
           knobVals(0) * weight
         }
         case _ => {
-          val startIndex = endIndex - 1
+          val startIndetwitter = endIndetwitter - 1
           evaluateFn(
             value,
-            knobs(startIndex),
-            knobVals(startIndex),
-            knobs(endIndex),
-            knobVals(endIndex),
-            powers(startIndex),
+            knobs(startIndetwitter),
+            knobVals(startIndetwitter),
+            knobs(endIndetwitter),
+            knobVals(endIndetwitter),
+            powers(startIndetwitter),
             weight)
         }
       }
@@ -116,9 +116,9 @@ object ContinuousFunction {
     totalStats.incr()
 
     if (fnParams.validateParams()) {
-      val endIndex = fnParams.knobs.indexWhere(knob => knob > value)
+      val endIndetwitter = fnParams.knobs.indetwitterWhere(knob => knob > value)
       validStats.incr()
-      endIndex match {
+      endIndetwitter match {
         case -1 => {
           validEndCaseStats.incr()
           fnParams.knobValues(fnParams.knobValues.size - 1) * fnParams.weight
@@ -128,14 +128,14 @@ object ContinuousFunction {
           fnParams.knobValues(0) * fnParams.weight
         }
         case _ => {
-          val startIndex = endIndex - 1
+          val startIndetwitter = endIndetwitter - 1
           evaluateFn(
             value,
-            fnParams.knobs(startIndex),
-            fnParams.knobValues(startIndex),
-            fnParams.knobs(endIndex),
-            fnParams.knobValues(endIndex),
-            fnParams.powers(startIndex),
+            fnParams.knobs(startIndetwitter),
+            fnParams.knobValues(startIndetwitter),
+            fnParams.knobs(endIndetwitter),
+            fnParams.knobValues(endIndetwitter),
+            fnParams.powers(startIndetwitter),
             fnParams.weight
           )
         }

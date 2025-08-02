@@ -11,7 +11,7 @@ import org.apache.lucene.search.Query;
 
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
 import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.common.util.text.NormalizerHelper;
+import com.twitter.search.common.util.tetwittert.NormalizerHelper;
 import com.twitter.search.common.util.url.URLUtils;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
 import com.twitter.search.earlybird.search.SearchRequestInfo;
@@ -20,7 +20,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
 import com.twitter.search.earlybird.thrift.ThriftTermRequest;
 import com.twitter.search.earlybird.thrift.ThriftTermStatisticsRequest;
 
-public class TermStatisticsRequestInfo extends SearchRequestInfo {
+public class TermStatisticsRequestInfo etwittertends SearchRequestInfo {
   private static final Set<String> FACET_URL_FIELDS_TO_NORMALIZE = new ImmutableSet.Builder()
       .add(EarlybirdFieldConstant.IMAGES_FACET)
       .add(EarlybirdFieldConstant.VIDEOS_FACET)
@@ -46,8 +46,8 @@ public class TermStatisticsRequestInfo extends SearchRequestInfo {
       termRequests.add(new ThriftTermRequest().setFieldName("").setTerm(""));
     }
 
-    // We only normalize TEXT terms and urls. All other terms, e.g. topics (named entities) are
-    // not normalized. Here the assumption is that the caller passes the exact terms back that
+    // We only normalize TEtwitterT terms and urls. All other terms, e.g. topics (named entities) are
+    // not normalized. Here the assumption is that the caller passes the etwitteract terms back that
     // the facet API returned
     for (ThriftTermRequest termReq : termRequests) {
       if (termReq.getTerm().isEmpty()) {
@@ -55,8 +55,8 @@ public class TermStatisticsRequestInfo extends SearchRequestInfo {
       }
 
       if (!termReq.isSetFieldName()
-          || termReq.getFieldName().equals(EarlybirdFieldConstant.TEXT_FIELD.getFieldName())) {
-        // normalize the TEXT term as it's normalized during ingestion
+          || termReq.getFieldName().equals(EarlybirdFieldConstant.TEtwitterT_FIELD.getFieldName())) {
+        // normalize the TEtwitterT term as it's normalized during ingestion
         termReq.setTerm(NormalizerHelper.normalizeWithUnknownLocale(
                             termReq.getTerm(), EarlybirdConfig.getPenguinVersion()));
       } else if (FACET_URL_FIELDS_TO_NORMALIZE.contains(termReq.getFieldName())) {
@@ -69,14 +69,14 @@ public class TermStatisticsRequestInfo extends SearchRequestInfo {
   }
 
   @Override
-  protected int calculateMaxHitsToProcess(ThriftSearchQuery searchQuery) {
+  protected int calculateMatwitterHitsToProcess(ThriftSearchQuery searchQuery) {
     Preconditions.checkNotNull(searchQuery.getCollectorParams());
     if (!searchQuery.getCollectorParams().isSetTerminationParams()
-        || !searchQuery.getCollectorParams().getTerminationParams().isSetMaxHitsToProcess()) {
+        || !searchQuery.getCollectorParams().getTerminationParams().isSetMatwitterHitsToProcess()) {
       // Override the default value to all hits.
-      return Integer.MAX_VALUE;
+      return Integer.MAtwitter_VALUE;
     } else {
-      return super.calculateMaxHitsToProcess(searchQuery);
+      return super.calculateMatwitterHitsToProcess(searchQuery);
     }
   }
 

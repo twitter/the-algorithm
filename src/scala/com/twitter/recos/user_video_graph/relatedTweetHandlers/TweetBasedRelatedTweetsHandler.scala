@@ -20,7 +20,7 @@ import scala.concurrent.duration.HOURS
  *
  */
 class TweetBasedRelatedTweetsHandler(bipartiteGraph: BipartiteGraph, statsReceiver: StatsReceiver)
-    extends RequestHandler[TweetBasedRelatedTweetRequest, RelatedTweetResponse] {
+    etwittertends RequestHandler[TweetBasedRelatedTweetRequest, RelatedTweetResponse] {
   private val stats = statsReceiver.scope(this.getClass.getSimpleName)
 
   override def apply(request: TweetBasedRelatedTweetRequest): Future[RelatedTweetResponse] = {
@@ -41,14 +41,14 @@ class TweetBasedRelatedTweetsHandler(bipartiteGraph: BipartiteGraph, statsReceiv
     maskedTweetId: Long
   ): RelatedTweetResponse = {
 
-    val maxNumSamplesPerNeighbor = request.maxNumSamplesPerNeighbor.getOrElse(100)
-    val maxResults = request.maxResults.getOrElse(200)
+    val matwitterNumSamplesPerNeighbor = request.matwitterNumSamplesPerNeighbor.getOrElse(100)
+    val matwitterResults = request.matwitterResults.getOrElse(200)
     val minScore = request.minScore.getOrElse(0.5)
-    val maxTweetAge = request.maxTweetAgeInHours.getOrElse(48)
+    val matwitterTweetAge = request.matwitterTweetAgeInHours.getOrElse(48)
     val minResultDegree = request.minResultDegree.getOrElse(50)
     val minQueryDegree = request.minQueryDegree.getOrElse(10)
     val minCooccurrence = request.minCooccurrence.getOrElse(3)
-    val excludeTweetIds = request.excludeTweetIds.getOrElse(Seq.empty).toSet
+    val etwittercludeTweetIds = request.etwittercludeTweetIds.getOrElse(Seq.empty).toSet
 
     val queryTweetDegree = bipartiteGraph.getRightNodeDegree(maskedTweetId)
     stats.stat("queryTweetDegree").add(queryTweetDegree)
@@ -59,7 +59,7 @@ class TweetBasedRelatedTweetsHandler(bipartiteGraph: BipartiteGraph, statsReceiv
     } else {
 
       val sampledLHSuserIds =
-        SampleLHSUsersUtil.sampleLHSUsers(maskedTweetId, maxNumSamplesPerNeighbor, bipartiteGraph)
+        SampleLHSUsersUtil.sampleLHSUsers(maskedTweetId, matwitterNumSamplesPerNeighbor, bipartiteGraph)
 
       val rHStweetIds = FetchRHSTweetsUtil.fetchRHSTweets(
         sampledLHSuserIds,
@@ -79,8 +79,8 @@ class TweetBasedRelatedTweetsHandler(bipartiteGraph: BipartiteGraph, statsReceiv
         .filter(relatedTweet =>
           FilterUtil.tweetAgeFilter(
             relatedTweet.tweetId,
-            Duration(maxTweetAge, HOURS)) && (relatedTweet.score > minScore) && (!excludeTweetIds
-            .contains(relatedTweet.tweetId))).take(maxResults)
+            Duration(matwitterTweetAge, HOURS)) && (relatedTweet.score > minScore) && (!etwittercludeTweetIds
+            .contains(relatedTweet.tweetId))).take(matwitterResults)
 
       stats.stat("response_size").add(relatedTweets.size)
       RelatedTweetResponse(

@@ -2,7 +2,7 @@ package com.twitter.search.earlybird_root.mergers;
 
 import java.util.Collections;
 import java.util.List;
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -36,7 +36,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResult;
 import com.twitter.search.earlybird.thrift.ThriftSearchResults;
 import com.twitter.search.earlybird.thrift.ThriftTweetSource;
 import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.earlybird_root.common.EarlybirdServiceResponse;
 import com.twitter.util.Function;
 import com.twitter.util.Function0;
@@ -45,26 +45,26 @@ import com.twitter.util.Future;
 /** Utility functions for merging recency and relevance results. */
 public class SuperRootResponseMerger {
   private static final Logger LOG = LoggerFactory.getLogger(SuperRootResponseMerger.class);
-  private static final String ALL_STATS_PREFIX = "superroot_response_merger_";
+  private static final String ALL_STATS_PREFItwitter = "superroot_response_merger_";
 
   private static final SearchCounter FULL_ARCHIVE_MIN_ID_GREATER_THAN_REALTIME_MIN_ID =
-    SearchCounter.export("full_archive_min_id_greater_than_realtime_min_id");
+    SearchCounter.etwitterport("full_archive_min_id_greater_than_realtime_min_id");
 
   private static final String ERROR_FORMAT = "%s%s_errors_from_cluster_%s_%s";
 
   private final ThriftSearchRankingMode rankingMode;
   private final EarlybirdFeatureSchemaMerger featureSchemaMerger;
-  private final String featureStatPrefix;
+  private final String featureStatPrefitwitter;
   private final Clock clock;
-  private final String rankingModeStatPrefix;
+  private final String rankingModeStatPrefitwitter;
 
   private final SearchCounter mergedResponseSearchResultsNotSet;
   private final SearchCounter invalidMinStatusId;
-  private final SearchCounter invalidMaxStatusId;
+  private final SearchCounter invalidMatwitterStatusId;
   private final SearchCounter noMinIds;
-  private final SearchCounter noMaxIds;
+  private final SearchCounter noMatwitterIds;
   private final SearchCounter mergedResponses;
-  private final SearchCounter mergedResponsesWithExactDups;
+  private final SearchCounter mergedResponsesWithEtwitteractDups;
   private final LoadingCache<Pair<ThriftTweetSource, ThriftTweetSource>, SearchCounter> dupsStats;
 
   private static final EarlybirdResponse EMPTY_RESPONSE =
@@ -81,32 +81,32 @@ public class SuperRootResponseMerger {
   public SuperRootResponseMerger(ThriftSearchRankingMode rankingMode,
                                  EarlybirdFeatureSchemaMerger featureSchemaMerger,
                                  Clock clock) {
-    this.rankingModeStatPrefix = rankingMode.name().toLowerCase();
+    this.rankingModeStatPrefitwitter = rankingMode.name().toLowerCase();
 
     this.rankingMode = rankingMode;
     this.featureSchemaMerger = featureSchemaMerger;
     this.clock = clock;
-    this.featureStatPrefix = "superroot_" + rankingMode.name().toLowerCase();
+    this.featureStatPrefitwitter = "superroot_" + rankingMode.name().toLowerCase();
 
-    mergedResponseSearchResultsNotSet = SearchCounter.export(
-        ALL_STATS_PREFIX + rankingModeStatPrefix + "_merged_response_search_results_not_set");
+    mergedResponseSearchResultsNotSet = SearchCounter.etwitterport(
+        ALL_STATS_PREFItwitter + rankingModeStatPrefitwitter + "_merged_response_search_results_not_set");
     invalidMinStatusId =
-      SearchCounter.export(ALL_STATS_PREFIX + rankingModeStatPrefix + "_invalid_min_status_id");
-    invalidMaxStatusId =
-      SearchCounter.export(ALL_STATS_PREFIX + rankingModeStatPrefix + "_invalid_max_status_id");
-    noMinIds = SearchCounter.export(ALL_STATS_PREFIX + rankingModeStatPrefix + "_no_min_ids");
-    noMaxIds = SearchCounter.export(ALL_STATS_PREFIX + rankingModeStatPrefix + "_no_max_ids");
-    mergedResponses = SearchCounter.export(ALL_STATS_PREFIX + rankingModeStatPrefix
+      SearchCounter.etwitterport(ALL_STATS_PREFItwitter + rankingModeStatPrefitwitter + "_invalid_min_status_id");
+    invalidMatwitterStatusId =
+      SearchCounter.etwitterport(ALL_STATS_PREFItwitter + rankingModeStatPrefitwitter + "_invalid_matwitter_status_id");
+    noMinIds = SearchCounter.etwitterport(ALL_STATS_PREFItwitter + rankingModeStatPrefitwitter + "_no_min_ids");
+    noMatwitterIds = SearchCounter.etwitterport(ALL_STATS_PREFItwitter + rankingModeStatPrefitwitter + "_no_matwitter_ids");
+    mergedResponses = SearchCounter.etwitterport(ALL_STATS_PREFItwitter + rankingModeStatPrefitwitter
       + "_merged_responses");
-    mergedResponsesWithExactDups =
-      SearchCounter.export(ALL_STATS_PREFIX + rankingModeStatPrefix
-        + "_merged_responses_with_exact_dups");
+    mergedResponsesWithEtwitteractDups =
+      SearchCounter.etwitterport(ALL_STATS_PREFItwitter + rankingModeStatPrefitwitter
+        + "_merged_responses_with_etwitteract_dups");
     dupsStats = CacheBuilder.newBuilder()
       .build(new CacheLoader<Pair<ThriftTweetSource, ThriftTweetSource>, SearchCounter>() {
           @Override
           public SearchCounter load(Pair<ThriftTweetSource, ThriftTweetSource> key) {
-            return SearchCounter.export(
-                ALL_STATS_PREFIX + rankingModeStatPrefix + "_merged_responses_with_exact_dups_"
+            return SearchCounter.etwitterport(
+                ALL_STATS_PREFItwitter + rankingModeStatPrefitwitter + "_merged_responses_with_etwitteract_dups_"
                 + key.getFirst().name() + "_" + key.getSecond().name());
           }
         });
@@ -120,23 +120,23 @@ public class SuperRootResponseMerger {
       cause = "null_response";
     }
     String statName = String.format(
-      ERROR_FORMAT, ALL_STATS_PREFIX, rankingModeStatPrefix, cluster, cause
+      ERROR_FORMAT, ALL_STATS_PREFItwitter, rankingModeStatPrefitwitter, cluster, cause
     );
 
-    SearchCounter.export(statName).increment();
+    SearchCounter.etwitterport(statName).increment();
   }
 
   /**
    * Merges the given response futures.
    *
-   * @param earlybirdRequestContext The earlybird request.
+   * @param earlybirdRequestContetwittert The earlybird request.
    * @param realtimeResponseFuture The response from the realtime cluster.
    * @param protectedResponseFuture The response from the protected cluster.
    * @param fullArchiveResponseFuture The response from the full archive cluster.
    * @return A future with the merged results.
    */
   public Future<EarlybirdResponse> mergeResponseFutures(
-      final EarlybirdRequestContext earlybirdRequestContext,
+      final EarlybirdRequestContetwittert earlybirdRequestContetwittert,
       final Future<EarlybirdServiceResponse> realtimeResponseFuture,
       final Future<EarlybirdServiceResponse> protectedResponseFuture,
       final Future<EarlybirdServiceResponse> fullArchiveResponseFuture) {
@@ -178,7 +178,7 @@ public class SuperRootResponseMerger {
 
             // Merge the responses.
             EarlybirdResponse mergedResponse = mergeResponses(
-                earlybirdRequestContext,
+                earlybirdRequestContetwittert,
                 realtimeResponse.getResponse(),
                 protectedResponse.getResponse(),
                 fullArchiveResponse.getResponse());
@@ -193,25 +193,25 @@ public class SuperRootResponseMerger {
                   "realtime clusters had no results and archive cluster response had error");
             }
 
-            // Corner case: the realtime response could have exactly numRequested results, and could
-            // be exhausted (not early-terminated). In this case, the request should not have been
+            // Corner case: the realtime response could have etwitteractly numRequested results, and could
+            // be etwitterhausted (not early-terminated). In this case, the request should not have been
             // sent to the full archive cluster.
             //   - If the full archive cluster is not available, or was not requested, then we don't
             //     need to change anything.
             //   - If the full archive cluster is available and was requested (but wasn't hit
             //     because we found enough results in the realtime cluster), then we should set the
             //     early-termination flag on the merged response, to indicate that we potentially
-            //     have more results for this query in our index.
+            //     have more results for this query in our indetwitter.
             if ((fullArchiveResponse.getServiceState()
                  == EarlybirdServiceResponse.ServiceState.SERVICE_NOT_CALLED)
                 && !EarlybirdResponseUtil.isEarlyTerminated(realtimeResponse.getResponse())) {
               EarlyTerminationInfo earlyTerminationInfo = new EarlyTerminationInfo(true);
               earlyTerminationInfo.setEarlyTerminationReason(
-                  EarlyTerminationState.TERMINATED_NUM_RESULTS_EXCEEDED.getTerminationReason());
+                  EarlyTerminationState.TERMINATED_NUM_RESULTS_EtwitterCEEDED.getTerminationReason());
               mergedResponse.setEarlyTerminationInfo(earlyTerminationInfo);
             }
 
-            // If we've exhausted all clusters, set the minSearchedStatusID to 0.
+            // If we've etwitterhausted all clusters, set the minSearchedStatusID to 0.
             if (!EarlybirdResponseUtil.isEarlyTerminated(mergedResponse)) {
               mergedResponse.getSearchResults().setMinSearchedStatusID(0);
             }
@@ -220,27 +220,27 @@ public class SuperRootResponseMerger {
           }
         });
 
-    // Handle all merging exceptions.
-    return handleResponseException(mergedResponseFuture,
-                                   "Exception thrown while merging responses.");
+    // Handle all merging etwitterceptions.
+    return handleResponseEtwitterception(mergedResponseFuture,
+                                   "Etwitterception thrown while merging responses.");
   }
 
   /**
    * Merge the results in the given responses.
    *
-   * @param earlybirdRequestContext The earlybird request context.
+   * @param earlybirdRequestContetwittert The earlybird request contetwittert.
    * @param realtimeResponse The response from the realtime cluster.
    * @param protectedResponse The response from the protected cluster.
    * @param fullArchiveResponse The response from the full archive cluster.
    * @return The merged response.
    */
   private EarlybirdResponse mergeResponses(
-      EarlybirdRequestContext earlybirdRequestContext,
+      EarlybirdRequestContetwittert earlybirdRequestContetwittert,
       @Nullable EarlybirdResponse realtimeResponse,
       @Nullable EarlybirdResponse protectedResponse,
       @Nullable EarlybirdResponse fullArchiveResponse) {
 
-    EarlybirdRequest request = earlybirdRequestContext.getRequest();
+    EarlybirdRequest request = earlybirdRequestContetwittert.getRequest();
     ThriftSearchQuery searchQuery = request.getSearchQuery();
     int numResultsRequested;
 
@@ -300,7 +300,7 @@ public class SuperRootResponseMerger {
       if (!EarlybirdResponseUtil.isEarlyTerminated(mergedResponse)) {
         EarlyTerminationInfo earlyTerminationInfo = new EarlyTerminationInfo(true);
         earlyTerminationInfo.setEarlyTerminationReason(
-            EarlyTerminationState.TERMINATED_NUM_RESULTS_EXCEEDED.getTerminationReason());
+            EarlyTerminationState.TERMINATED_NUM_RESULTS_EtwitterCEEDED.getTerminationReason());
         mergedResponse.setEarlyTerminationInfo(earlyTerminationInfo);
       }
 
@@ -309,17 +309,17 @@ public class SuperRootResponseMerger {
 
     mergedResponse.getSearchResults().setResults(mergedResults);
     featureSchemaMerger.mergeFeatureSchemaAcrossClusters(
-        earlybirdRequestContext,
+        earlybirdRequestContetwittert,
         mergedResponse,
-        featureStatPrefix,
+        featureStatPrefitwitter,
         realtimeResponse,
         protectedResponse,
         fullArchiveResponse);
 
-    // Set the minSearchedStatusID and maxSearchedStatusID fields on the merged response.
+    // Set the minSearchedStatusID and matwitterSearchedStatusID fields on the merged response.
     setMinSearchedStatusId(mergedResponse, realtimeResponse, protectedResponse, fullArchiveResponse,
         resultsTrimmed);
-    setMaxSearchedStatusId(mergedResponse, realtimeResponse, protectedResponse,
+    setMatwitterSearchedStatusId(mergedResponse, realtimeResponse, protectedResponse,
         fullArchiveResponse);
 
     int numRealtimeSearchedSegments =
@@ -340,7 +340,7 @@ public class SuperRootResponseMerger {
     mergedResponse.setNumSearchedSegments(
         numRealtimeSearchedSegments + numProtectedSearchedSegments + numArchiveSearchedSegments);
 
-    if (earlybirdRequestContext.getRequest().getDebugMode() > 0) {
+    if (earlybirdRequestContetwittert.getRequest().getDebugMode() > 0) {
       mergedResponse.setDebugString(
           mergeClusterDebugStrings(realtimeResponse, protectedResponse, fullArchiveResponse));
     }
@@ -377,7 +377,7 @@ public class SuperRootResponseMerger {
     List<ThriftSearchResult> distinctMergedResults =
         EarlybirdResponseMergeUtil.distinctByStatusId(mergedResults, dupsStats);
     if (mergedResults != distinctMergedResults) {
-      mergedResponsesWithExactDups.increment();
+      mergedResponsesWithEtwitteractDups.increment();
     }
 
     if (rankingMode == ThriftSearchRankingMode.RELEVANCE
@@ -399,27 +399,27 @@ public class SuperRootResponseMerger {
    * It adds the ThriftSearchResults from protected tweets to the realtimeResponse
    *
    * Algorithm diagram: (with newer tweets at the top)
-   *               ------------------------------------  <--- protected maxSearchedStatusID
+   *               ------------------------------------  <--- protected matwitterSearchedStatusID
    *               |C:Newest protected realtime tweets|
-   *               | (does not exist if realtime      |
-   *               | maxID >= protected maxID)        |
+   *               | (does not etwitterist if realtime      |
+   *               | matwitterID >= protected matwitterID)        |
    *
    *               |     ------------------------     |  <--- 60 seconds ago
    *               |D:Newer protected realtime tweets |
-   *               | (does not exist if realtime      |
-   *               | maxID >= 60 seconds ago)         |
-   * ----------    |     ------------------------     |  <--- public realtime maxSearchedStatusID
+   *               | (does not etwitterist if realtime      |
+   *               | matwitterID >= 60 seconds ago)         |
+   * ----------    |     ------------------------     |  <--- public realtime matwitterSearchedStatusID
    * |A:Public|    |E:Automatically valid protected   |
    * |realtime|    |realtime tweets                   |
    * ----------    |     ------------------------     |  <--- public realtime minSearchedStatusID
    *               |                                  |
-   * ----------    |  E if archive is present         |  <--- public archive maxSearchedStatusID
-   * ----------    |  E if archive is present         |  <--- public archive maxSearchedStatusID
+   * ----------    |  E if archive is present         |  <--- public archive matwitterSearchedStatusID
+   * ----------    |  E if archive is present         |  <--- public archive matwitterSearchedStatusID
    * |B:Public|    |  F is archive is not present     |
    * |archive |    |                                  |
    * ----------    |     ------------------------     |  <--- public archive minSearchedStatusID
    *               |F:Older protected realtime tweets |
-   *               | (does not exist if protected     |
+   *               | (does not etwitterist if protected     |
    *               | minID >= public minID)           |
    *               ------------------------------------  <--- protected minSearchedStatusID
    * Step 1: Select tweets from groups A, and E. If this is enough, return them
@@ -427,10 +427,10 @@ public class SuperRootResponseMerger {
    * Step 3: Select tweets from groups A, D, E, and F and return them
    *
    * There are two primary tradeoffs, both of which favor public tweets:
-   *  (1) Benefit: While public indexing latency is < 60s, auto-updating never misses public tweets
+   *  (1) Benefit: While public indetwittering latency is < 60s, auto-updating never misses public tweets
    *      Cost:    Absence of public tweets may delay protected tweets from being searchable for 60s
    *  (2) Benefit: No failure or delay from the protected cluster will affect realtime results
-   *      Cost:    If the protected cluster indexes more slowly, auto-update may miss its tweets
+   *      Cost:    If the protected cluster indetwitteres more slowly, auto-update may miss its tweets
    *
    * @param fullArchiveTweets - used solely for generating anchor points, not merged in.
    */
@@ -447,14 +447,14 @@ public class SuperRootResponseMerger {
     boolean isProtectedUsable = EarlybirdResponseUtil.hasResults(realtimeProtectedTweets);
 
     long minId = Long.MIN_VALUE;
-    long maxId = Long.MAX_VALUE;
+    long matwitterId = Long.MAtwitter_VALUE;
     if (isRealtimeUsable) {
       // Determine the actual upper/lower bounds on the tweet id
       if (realtimeTweets.getSearchResults().isSetMinSearchedStatusID()) {
         minId = realtimeTweets.getSearchResults().getMinSearchedStatusID();
       }
-      if (realtimeTweets.getSearchResults().isSetMaxSearchedStatusID()) {
-        maxId = realtimeTweets.getSearchResults().getMaxSearchedStatusID();
+      if (realtimeTweets.getSearchResults().isSetMatwitterSearchedStatusID()) {
+        matwitterId = realtimeTweets.getSearchResults().getMatwitterSearchedStatusID();
       }
 
       int justRight = realtimeTweets.getSearchResults().getResultsSize();
@@ -471,15 +471,15 @@ public class SuperRootResponseMerger {
       }
       if (isProtectedUsable) {
         for (ThriftSearchResult result : realtimeProtectedTweets.getSearchResults().getResults()) {
-          if (result.getId() >= minId && result.getId() <= maxId) {
+          if (result.getId() >= minId && result.getId() <= matwitterId) {
             justRight++;
           }
         }
       }
       if (justRight < numRequested) {
         // Since this is only used as an upper bound, old (pre-2010) ids are still handled correctly
-        maxId = Math.max(
-            maxId,
+        matwitterId = Math.matwitter(
+            matwitterId,
             SnowflakeIdParser.generateValidStatusId(
                 clock.nowMillis() - Amount.of(60, Time.SECONDS).as(Time.MILLISECONDS), 0));
       }
@@ -494,7 +494,7 @@ public class SuperRootResponseMerger {
           realtimeProtectedTweets.getSearchResults().getResults(),
           ThriftTweetSource.REALTIME_PROTECTED_CLUSTER);
       for (ThriftSearchResult result : realtimeProtectedTweets.getSearchResults().getResults()) {
-        if (result.getId() <= maxId && result.getId() >= minId) {
+        if (result.getId() <= matwitterId && result.getId() >= minId) {
           mergedSearchResults.add(result);
         }
       }
@@ -505,8 +505,8 @@ public class SuperRootResponseMerger {
           mergedSearchResults, realtimeTweets, ThriftTweetSource.REALTIME_CLUSTER);
     }
 
-    // Set the minSearchedStatusID and maxSearchedStatusID on the protected response to the
-    // minId and maxId that were used to trim the protected results.
+    // Set the minSearchedStatusID and matwitterSearchedStatusID on the protected response to the
+    // minId and matwitterId that were used to trim the protected results.
     // This is needed in order to correctly set these IDs on the merged response.
     ThriftSearchResults protectedResults =
       EarlybirdResponseUtil.getResults(realtimeProtectedTweets);
@@ -516,9 +516,9 @@ public class SuperRootResponseMerger {
       protectedResults.setMinSearchedStatusID(minId);
     }
     if ((protectedResults != null)
-        && protectedResults.isSetMaxSearchedStatusID()
-        && (protectedResults.getMaxSearchedStatusID() > maxId)) {
-      realtimeProtectedTweets.getSearchResults().setMaxSearchedStatusID(maxId);
+        && protectedResults.isSetMatwitterSearchedStatusID()
+        && (protectedResults.getMatwitterSearchedStatusID() > matwitterId)) {
+      realtimeProtectedTweets.getSearchResults().setMatwitterSearchedStatusID(matwitterId);
     }
 
     return mergedSearchResults;
@@ -616,67 +616,67 @@ public class SuperRootResponseMerger {
   }
 
   /**
-   * Sets the maxSearchedStatusID field on the merged response.
+   * Sets the matwitterSearchedStatusID field on the merged response.
    *
    * @param mergedResponse The merged response.
    * @param fullArchiveResponse The full archive response.
    */
-  private void setMaxSearchedStatusId(EarlybirdResponse mergedResponse,
+  private void setMatwitterSearchedStatusId(EarlybirdResponse mergedResponse,
       EarlybirdResponse realtimeResponse,
       EarlybirdResponse protectedResponse,
       EarlybirdResponse fullArchiveResponse) {
 
     Preconditions.checkNotNull(mergedResponse.getSearchResults());
-    List<Long> maxIDs = Lists.newArrayList();
+    List<Long> matwitterIDs = Lists.newArrayList();
     if (fullArchiveResponse != null
         && fullArchiveResponse.isSetSearchResults()
-        && fullArchiveResponse.getSearchResults().isSetMaxSearchedStatusID()) {
-      maxIDs.add(fullArchiveResponse.getSearchResults().getMaxSearchedStatusID());
-      if (mergedResponse.getSearchResults().isSetMaxSearchedStatusID()
-          && fullArchiveResponse.getSearchResults().getMaxSearchedStatusID()
-          > mergedResponse.getSearchResults().getMaxSearchedStatusID()) {
-        invalidMaxStatusId.increment();
+        && fullArchiveResponse.getSearchResults().isSetMatwitterSearchedStatusID()) {
+      matwitterIDs.add(fullArchiveResponse.getSearchResults().getMatwitterSearchedStatusID());
+      if (mergedResponse.getSearchResults().isSetMatwitterSearchedStatusID()
+          && fullArchiveResponse.getSearchResults().getMatwitterSearchedStatusID()
+          > mergedResponse.getSearchResults().getMatwitterSearchedStatusID()) {
+        invalidMatwitterStatusId.increment();
       }
     }
 
     if (protectedResponse != null
         && !EarlybirdResponseUtil.hasResults(realtimeResponse)
         && EarlybirdResponseUtil.hasResults(protectedResponse)
-        && protectedResponse.getSearchResults().isSetMaxSearchedStatusID()) {
+        && protectedResponse.getSearchResults().isSetMatwitterSearchedStatusID()) {
 
-      maxIDs.add(protectedResponse.getSearchResults().getMaxSearchedStatusID());
+      matwitterIDs.add(protectedResponse.getSearchResults().getMatwitterSearchedStatusID());
     }
 
-    if (mergedResponse.getSearchResults().isSetMaxSearchedStatusID()) {
-      maxIDs.add(mergedResponse.getSearchResults().getMaxSearchedStatusID());
+    if (mergedResponse.getSearchResults().isSetMatwitterSearchedStatusID()) {
+      matwitterIDs.add(mergedResponse.getSearchResults().getMatwitterSearchedStatusID());
     }
 
     ThriftSearchResults searchResults = mergedResponse.getSearchResults();
     if (searchResults.getResultsSize() > 0) {
       List<ThriftSearchResult> results = searchResults.getResults();
-      maxIDs.add(results.get(0).getId());
+      matwitterIDs.add(results.get(0).getId());
     }
 
-    if (!maxIDs.isEmpty()) {
-      mergedResponse.getSearchResults().setMaxSearchedStatusID(Collections.max(maxIDs));
+    if (!matwitterIDs.isEmpty()) {
+      mergedResponse.getSearchResults().setMatwitterSearchedStatusID(Collections.matwitter(matwitterIDs));
     } else {
-      noMaxIds.increment();
+      noMatwitterIds.increment();
     }
   }
 
   /**
-   * Handles exceptions thrown while merging responses. Timeout exceptions are converted to
-   * SERVER_TIMEOUT_ERROR responses. All other exceptions are converted to PERSISTENT_ERROR
+   * Handles etwitterceptions thrown while merging responses. Timeout etwitterceptions are converted to
+   * SERVER_TIMEOUT_ERROR responses. All other etwitterceptions are converted to PERSISTENT_ERROR
    * responses.
    */
-  private Future<EarlybirdResponse> handleResponseException(
+  private Future<EarlybirdResponse> handleResponseEtwitterception(
       Future<EarlybirdResponse> responseFuture, final String debugMsg) {
     return responseFuture.handle(
         new Function<Throwable, EarlybirdResponse>() {
           @Override
           public EarlybirdResponse apply(Throwable t) {
             EarlybirdResponseCode responseCode = EarlybirdResponseCode.PERSISTENT_ERROR;
-            if (FinagleUtil.isTimeoutException(t)) {
+            if (FinagleUtil.isTimeoutEtwitterception(t)) {
               responseCode = EarlybirdResponseCode.SERVER_TIMEOUT_ERROR;
             }
             EarlybirdResponse response = new EarlybirdResponse(responseCode, 0);

@@ -16,7 +16,7 @@ case class WarmupQueriesSettings(
   requestTimeout: Duration = 3.seconds,
   clientId: ClientId = ClientId("tweetypie.warmup"),
   requestTimeRange: Duration = 10.minutes,
-  maxConcurrency: Int = 20)
+  matwitterConcurrency: Int = 20)
 
 object TweetServiceWarmer {
 
@@ -36,7 +36,7 @@ class TweetServiceWarmer(
     includeRetweetCount = true, includeReplyCount = true, includeFavoriteCount = true,
     includeCards = true, cardsPlatformKey = Some("iPhone-13"), includePerspectivals = true,
     includeQuotedTweet = true, forUserId = Some(TweetServiceWarmer.ForUserId)))
-    extends (ThriftTweetService => Unit) {
+    etwittertends (ThriftTweetService => Unit) {
   import warmupSettings._
 
   private val realTweetIds =
@@ -55,7 +55,7 @@ class TweetServiceWarmer(
   private val log = Logger(getClass)
 
   /**
-   * Executes the warmup queries, waiting for them to complete or until
+   * Etwitterecutes the warmup queries, waiting for them to complete or until
    * the warmupTimeout occurs.
    */
   def apply(service: ThriftTweetService): Unit = {
@@ -67,21 +67,21 @@ class TweetServiceWarmer(
   }
 
   /**
-   * Executes the warmup queries, returning when all responses have completed or timed-out.
+   * Etwitterecutes the warmup queries, returning when all responses have completed or timed-out.
    */
   private[this] def warmup(service: ThriftTweetService): Unit =
     clientId.asCurrent {
       val request = GetTweetsRequest(realTweetIds, options = Some(requestOptions))
       val requests = Seq.fill(realTweetRequestCycles)(request)
-      val requestGroups = requests.grouped(maxConcurrency)
+      val requestGroups = requests.grouped(matwitterConcurrency)
 
       for (requests <- requestGroups) {
         val responses = requests.map(service.getTweets(_))
         try {
           Await.ready(Future.join(responses), requestTimeout)
         } catch {
-          // Await.ready throws exceptions on timeouts and
-          // interruptions. This prevents those exceptions from
+          // Await.ready throws etwitterceptions on timeouts and
+          // interruptions. This prevents those etwitterceptions from
           // bubbling up.
           case NonFatal(_) =>
         }

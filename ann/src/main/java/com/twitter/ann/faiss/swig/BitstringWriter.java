@@ -65,8 +65,8 @@ public class BitstringWriter {
     this(swigfaissJNI.new_BitstringWriter(SWIGTYPE_p_unsigned_char.getCPtr(code), code_size), true);
   }
 
-  public void write(long x, int nbit) {
-    swigfaissJNI.BitstringWriter_write(swigCPtr, this, x, nbit);
+  public void write(long twitter, int nbit) {
+    swigfaissJNI.BitstringWriter_write(swigCPtr, this, twitter, nbit);
   }
 
 }

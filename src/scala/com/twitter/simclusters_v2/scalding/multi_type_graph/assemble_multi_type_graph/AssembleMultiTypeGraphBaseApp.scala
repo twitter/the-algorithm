@@ -2,7 +2,7 @@ package com.twitter.simclusters_v2.scalding
 package multi_type_graph.assemble_multi_type_graph
 
 import com.twitter.dal.client.dataset.{KeyValDALDataset, SnapshotDALDataset}
-import com.twitter.scalding.{Execution, _}
+import com.twitter.scalding.{Etwitterecution, _}
 import com.twitter.scalding_internal.dalv2.DALWrite.{D, _}
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.scalding.common.TypedRichPipe.typedPipeToRichPipe
@@ -18,7 +18,7 @@ import com.twitter.simclusters_v2.thriftscala.{
   RightNodeWithEdgeWeightList,
   MultiTypeGraphEdge
 }
-import com.twitter.wtf.scalding.jobs.common.DateRangeExecutionApp
+import com.twitter.wtf.scalding.jobs.common.DateRangeEtwitterecutionApp
 import java.util.TimeZone
 
 /**
@@ -37,7 +37,7 @@ import java.util.TimeZone
  * most frequently occurring, in FullGraph
  */
 
-trait AssembleMultiTypeGraphBaseApp extends DateRangeExecutionApp {
+trait AssembleMultiTypeGraphBaseApp etwittertends DateRangeEtwitterecutionApp {
   val truncatedMultiTypeGraphKeyValDataset: KeyValDALDataset[
     KeyVal[LeftNode, RightNodeWithEdgeWeightList]
   ]
@@ -56,7 +56,7 @@ trait AssembleMultiTypeGraphBaseApp extends DateRangeExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     import Config._
     import AssembleMultiTypeGraph._
 
@@ -101,36 +101,36 @@ trait AssembleMultiTypeGraphBaseApp extends DateRangeExecutionApp {
             (RightNodeTypeStruct(rightNodeType), NounWithFrequencyList(nounsListWithFrequency))
         }
 
-    //WriteExecs - truncated graph
-    val truncatedGraphTsvExec: Execution[Unit] =
-      truncatedGraphKeyedBySrc.writeExecution(
-        TypedTsv[(LeftNode, RightNodeWithEdgeWeightList)](AdhocRootPrefix + "truncated_graph_tsv"))
+    //WriteEtwitterecs - truncated graph
+    val truncatedGraphTsvEtwitterec: Etwitterecution[Unit] =
+      truncatedGraphKeyedBySrc.writeEtwitterecution(
+        TypedTsv[(LeftNode, RightNodeWithEdgeWeightList)](AdhocRootPrefitwitter + "truncated_graph_tsv"))
 
-    val truncatedGraphDALExec: Execution[Unit] = truncatedGraphKeyedBySrc
+    val truncatedGraphDALEtwitterec: Etwitterecution[Unit] = truncatedGraphKeyedBySrc
       .map {
         case (leftNode, rightNodeWithWeightList) =>
           numKeysInTruncatedGraph.inc()
           KeyVal(leftNode, rightNodeWithWeightList)
       }
-      .writeDALVersionedKeyValExecution(
+      .writeDALVersionedKeyValEtwitterecution(
         truncatedMultiTypeGraphKeyValDataset,
-        D.Suffix(
+        D.Suffitwitter(
           (if (!isAdhoc)
              RootPath
            else
-             AdhocRootPrefix)
+             AdhocRootPrefitwitter)
             + truncatedMultiTypeGraphMHOutputPath),
-        ExplicitEndTime(dateRange.`end`)
+        EtwitterplicitEndTime(dateRange.`end`)
       )
 
-    //WriteExec - topK rightnouns
-    val topKNounsTsvExec: Execution[Unit] =
-      topKNounsKeyedByType.writeExecution(
+    //WriteEtwitterec - topK rightnouns
+    val topKNounsTsvEtwitterec: Etwitterecution[Unit] =
+      topKNounsKeyedByType.writeEtwitterecution(
         TypedTsv[(RightNodeTypeStruct, NounWithFrequencyList)](
-          AdhocRootPrefix + "top_k_right_nouns_tsv"))
+          AdhocRootPrefitwitter + "top_k_right_nouns_tsv"))
 
     // writing topKNouns MH dataset for debugger
-    val topKNounsDALExec: Execution[Unit] = topKNounsKeyedByType
+    val topKNounsDALEtwitterec: Etwitterecution[Unit] = topKNounsKeyedByType
       .map {
         case (engagementType, rightList) =>
           val rightListMH =
@@ -138,30 +138,30 @@ trait AssembleMultiTypeGraphBaseApp extends DateRangeExecutionApp {
           numKeysInTopKNounsGraph.inc()
           KeyVal(engagementType, rightListMH)
       }
-      .writeDALVersionedKeyValExecution(
+      .writeDALVersionedKeyValEtwitterecution(
         topKRightNounsKeyValDataset,
-        D.Suffix(
+        D.Suffitwitter(
           (if (!isAdhoc)
              RootPath
            else
-             AdhocRootPrefix)
+             AdhocRootPrefitwitter)
             + topKRightNounsMHOutputPath),
-        ExplicitEndTime(dateRange.`end`)
+        EtwitterplicitEndTime(dateRange.`end`)
       )
 
-    //WriteExec - fullGraph
-    val fullGraphDALExec: Execution[Unit] = fullGraph
+    //WriteEtwitterec - fullGraph
+    val fullGraphDALEtwitterec: Etwitterecution[Unit] = fullGraph
       .map {
         case (leftNode, rightNodeWithWeight) =>
           MultiTypeGraphEdge(leftNode, rightNodeWithWeight)
-      }.writeDALSnapshotExecution(
+      }.writeDALSnapshotEtwitterecution(
         fullMultiTypeGraphSnapshotDataset,
         D.Daily,
-        D.Suffix(
+        D.Suffitwitter(
           (if (!isAdhoc)
              RootThriftPath
            else
-             AdhocRootPrefix)
+             AdhocRootPrefitwitter)
             + fullMultiTypeGraphThriftOutputPath),
         D.Parquet,
         dateRange.`end`
@@ -169,16 +169,16 @@ trait AssembleMultiTypeGraphBaseApp extends DateRangeExecutionApp {
 
     if (isAdhoc) {
       Util.printCounters(
-        Execution
+        Etwitterecution
           .zip(
-            truncatedGraphTsvExec,
-            topKNounsTsvExec,
-            truncatedGraphDALExec,
-            topKNounsDALExec,
-            fullGraphDALExec).unit)
+            truncatedGraphTsvEtwitterec,
+            topKNounsTsvEtwitterec,
+            truncatedGraphDALEtwitterec,
+            topKNounsDALEtwitterec,
+            fullGraphDALEtwitterec).unit)
     } else {
       Util.printCounters(
-        Execution.zip(truncatedGraphDALExec, topKNounsDALExec, fullGraphDALExec).unit)
+        Etwitterecution.zip(truncatedGraphDALEtwitterec, topKNounsDALEtwitterec, fullGraphDALEtwitterec).unit)
     }
 
   }

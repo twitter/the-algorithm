@@ -22,7 +22,7 @@ sealed trait EarlybirdEvaluationMetric {
  * If there are fewer than `k` candidates, then we can choose to filter out requests (will
  * lower value of recall) or keep them by trivially computing recall as 1.0.
  */
-case class TopKRecall(k: Int, filterFewerThanK: Boolean) extends EarlybirdEvaluationMetric {
+case class TopKRecall(k: Int, filterFewerThanK: Boolean) etwittertends EarlybirdEvaluationMetric {
   override val name: String = s"top_${k}_recall${if (filterFewerThanK) "_filtered" else ""}"
   override def apply(candidates: Seq[CandidateRecord]): Option[Double] = {
     if (candidates.size <= k) {
@@ -43,10 +43,10 @@ case class TopKRecall(k: Int, filterFewerThanK: Boolean) extends EarlybirdEvalua
  *
  * Note: A pair with same scores for one model and different for the other will contribute 1
  * to the sum. Pairs that are strictly ordered the same, will contribute 2.
- * It follows that the score for a constant model is 0.5, which is approximately equal to a
- * random model as expected.
+ * It follows that the score for a constant model is 0.5, which is approtwitterimately equal to a
+ * random model as etwitterpected.
  */
-case object ProbabilityOfCorrectOrdering extends EarlybirdEvaluationMetric {
+case object ProbabilityOfCorrectOrdering etwittertends EarlybirdEvaluationMetric {
 
   def fractionOf[A](trav: GenTraversableOnce[A])(p: A => Boolean): Double = {
     if (trav.isEmpty)
@@ -85,7 +85,7 @@ case object ProbabilityOfCorrectOrdering extends EarlybirdEvaluationMetric {
 /**
  * Like `TopKRecall`, but uses `n` % of top candidates instead.
  */
-case class TopNPercentRecall(percent: Double) extends EarlybirdEvaluationMetric {
+case class TopNPercentRecall(percent: Double) etwittertends EarlybirdEvaluationMetric {
   override val name: String = s"top_${percent}_pct_recall"
   override def apply(candidates: Seq[CandidateRecord]): Option[Double] = {
     val k = Math.floor(candidates.size * percent).toInt
@@ -106,7 +106,7 @@ case class TopNPercentRecall(percent: Double) extends EarlybirdEvaluationMetric 
  * recall of selected light-score based candidates among set of actual
  * shown candidates.
  */
-case class ShownTweetRecall(k: Int) extends EarlybirdEvaluationMetric {
+case class ShownTweetRecall(k: Int) etwittertends EarlybirdEvaluationMetric {
   override val name: String = s"shown_tweet_recall_$k"
   override def apply(candidates: Seq[CandidateRecord]): Option[Double] = {
     if (candidates.size <= k) {
@@ -124,7 +124,7 @@ case class ShownTweetRecall(k: Int) extends EarlybirdEvaluationMetric {
 /**
  * Like `ShownTweetRecall`, but uses `n` % of top candidates instead.
  */
-case class ShownTweetPercentRecall(percent: Double) extends EarlybirdEvaluationMetric {
+case class ShownTweetPercentRecall(percent: Double) etwittertends EarlybirdEvaluationMetric {
   override val name: String = s"shown_tweet_recall_${percent}_pct"
   override def apply(candidates: Seq[CandidateRecord]): Option[Double] = {
     val k = Math.floor(candidates.size * percent).toInt
@@ -141,7 +141,7 @@ case class ShownTweetPercentRecall(percent: Double) extends EarlybirdEvaluationM
  * because by definition the top full-scored candidates will be served. If the value is
  * < 1, this is due to the ranked section being smaller than k.
  */
-case class ShownTweetRecallWithFullScores(k: Int) extends EarlybirdEvaluationMetric {
+case class ShownTweetRecallWithFullScores(k: Int) etwittertends EarlybirdEvaluationMetric {
   override val name: String = s"shown_tweet_recall_with_full_scores_$k"
   override def apply(candidates: Seq[CandidateRecord]): Option[Double] = {
     if (candidates.size <= k) {
@@ -160,7 +160,7 @@ case class ShownTweetRecallWithFullScores(k: Int) extends EarlybirdEvaluationMet
  * Picks the set of `k` top candidates using the light scores, and calculates
  * average full score for the candidates.
  */
-case class AverageFullScoreForTopLight(k: Int) extends EarlybirdEvaluationMetric {
+case class AverageFullScoreForTopLight(k: Int) etwittertends EarlybirdEvaluationMetric {
   override val name: String = s"average_full_score_for_top_light_$k"
   override def apply(candidates: Seq[CandidateRecord]): Option[Double] = {
     if (candidates.size <= k) {
@@ -177,7 +177,7 @@ case class AverageFullScoreForTopLight(k: Int) extends EarlybirdEvaluationMetric
  * sum of full scores for those. Divides that by sum of `k` top full scores,
  * overall, to get a "score recall".
  */
-case class SumScoreRecallForTopLight(k: Int) extends EarlybirdEvaluationMetric {
+case class SumScoreRecallForTopLight(k: Int) etwittertends EarlybirdEvaluationMetric {
   override val name: String = s"sum_score_recall_for_top_light_$k"
   override def apply(candidates: Seq[CandidateRecord]): Option[Double] = {
     if (candidates.size <= k) {
@@ -190,13 +190,13 @@ case class SumScoreRecallForTopLight(k: Int) extends EarlybirdEvaluationMetric {
   }
 }
 
-case class HasFewerThanKCandidates(k: Int) extends EarlybirdEvaluationMetric {
+case class HasFewerThanKCandidates(k: Int) etwittertends EarlybirdEvaluationMetric {
   override val name: String = s"has_fewer_than_${k}_candidates"
   override def apply(candidates: Seq[CandidateRecord]): Option[Double] =
     Some(if (candidates.size <= k) 1.0 else 0.0)
 }
 
-case object NumberOfCandidates extends EarlybirdEvaluationMetric {
+case object NumberOfCandidates etwittertends EarlybirdEvaluationMetric {
   override val name: String = s"number_of_candidates"
   override def apply(candidates: Seq[CandidateRecord]): Option[Double] =
     Some(candidates.size.toDouble)

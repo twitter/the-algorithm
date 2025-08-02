@@ -8,13 +8,13 @@ sealed trait Credentials {
   def password: String
 }
 
-case class InlineCredentials(username: String, password: String) extends Credentials
+case class InlineCredentials(username: String, password: String) etwittertends Credentials
 
 case class FileCredentials(
   path: String,
   usernameField: String = "db_username",
   passwordField: String = "db_password")
-    extends Credentials {
+    etwittertends Credentials {
   lazy val (username, password) = {
     val credentials = security.Credentials(new File(path))
     (credentials(usernameField), credentials(passwordField))

@@ -16,7 +16,7 @@ class TweetEventToUserTweetEntityGraphBuilder(
   decider: RecosInjectorDecider
 )(
   override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[TweetCreateEventDetails, UserTweetEntityEdge] {
+    etwittertends EventToMessageBuilder[TweetCreateEventDetails, UserTweetEntityEdge] {
 
   // TweetCreationStore counters
   private val lastTweetTimeNotInMh = statsReceiver.counter("last_tweet_time_not_in_mh")
@@ -276,8 +276,8 @@ class TweetEventToUserTweetEntityGraphBuilder(
   /**
    * For a given user, read the user's last time tweeted from the MH store, and
    * write the new tweet time into the MH store before returning.
-   * Note this function is async, so the MH write operations will continue to execute on its own.
-   * This might create a read/write race condition, but it's expected.
+   * Note this function is async, so the MH write operations will continue to etwitterecute on its own.
+   * This might create a read/write race condition, but it's etwitterpected.
    */
   private def getAndUpdateLastTweetCreationTime(
     authorId: Long,
@@ -311,7 +311,7 @@ class TweetEventToUserTweetEntityGraphBuilder(
           .put(authorId, newTweetInfo)
           .onSuccess(_ => tweetCreationStoreInserts.incr())
           .onFailure { e =>
-            statsReceiver.counter("write_failed_with_ex:" + e.getClass.getName).incr()
+            statsReceiver.counter("write_failed_with_etwitter:" + e.getClass.getName).incr()
           }
       }
   }

@@ -2,7 +2,7 @@ package com.twitter.simclusters_v2.scalding.inferred_entities
 
 import com.twitter.scalding.{DateRange, Days, TypedPipe}
 import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
+import com.twitter.scalding_internal.dalv2.remote_access.{EtwitterplicitLocation, ProcAtla}
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common.{ModelVersions, SemanticCoreEntityId, UserId}
 import com.twitter.simclusters_v2.hdfs_sources.{
@@ -66,7 +66,7 @@ object ProdSources {
   ): TypedPipe[(UserId, Seq[(SemanticCoreEntityId, Double)])] = {
     DAL
       .readMostRecentSnapshot(SimclustersInferredEntitiesFromKnownForScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
       .toTypedPipe
       .map {
         case KeyVal(userId, entities) =>
@@ -79,7 +79,7 @@ object ProdSources {
                   (entity.entityId, entity.score)
               }
               .groupBy(_._1)
-              .map { case (entityId, scores) => (entityId, scores.map(_._2).max) }
+              .map { case (entityId, scores) => (entityId, scores.map(_._2).matwitter) }
               .toSeq
           (userId, validEntities)
       }
@@ -88,7 +88,7 @@ object ProdSources {
   def getUserUserEngagementGraph(dateRange: DateRange): TypedPipe[UserAndNeighbors] = {
     DAL
       .readMostRecentSnapshot(UserUserNormalizedGraphScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
       .toTypedPipe
   }
 }

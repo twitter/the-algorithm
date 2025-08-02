@@ -15,7 +15,7 @@ import com.twitter.timelines.configapi.Config
 
 /**
  * Builds global composite config containing prioritized "layers" of parameter overrides
- * based on whitelists, experiments, and deciders. Generated config can be used in tests with
+ * based on whitelists, etwitterperiments, and deciders. Generated config can be used in tests with
  * mocked decider and whitelist.
  */
 class ConfigBuilder(deciderGateBuilder: DeciderGateBuilder, statsReceiver: StatsReceiver) {
@@ -25,8 +25,8 @@ class ConfigBuilder(deciderGateBuilder: DeciderGateBuilder, statsReceiver: Stats
    * minimum, it should include all configs containing decider-based param overrides.
    *
    * It is important that the production config include all production param overrides as it is
-   * used to build holdback experiment configs; If the production config doesn't include all param
-   * overrides supporting production behavior then holdback experiment "production" buckets will
+   * used to build holdback etwitterperiment configs; If the production config doesn't include all param
+   * overrides supporting production behavior then holdback etwitterperiment "production" buckets will
    * not reflect production behavior.
    */
   val prodConfig: Config = new CompositeConfig(

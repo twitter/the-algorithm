@@ -29,7 +29,7 @@ impl Display for SegDenseError {
                 write!(f, "{}", "SegDense JSON: Array Node note found!")
             }
             SegDenseError::JsonArraySize => {
-                write!(f, "{}", "SegDense JSON: Array size not as expected!")
+                write!(f, "{}", "SegDense JSON: Array size not as etwitterpected!")
             }
             SegDenseError::JsonMissingInputFeature => {
                 write!(f, "{}", "SegDense JSON: Missing input feature!")

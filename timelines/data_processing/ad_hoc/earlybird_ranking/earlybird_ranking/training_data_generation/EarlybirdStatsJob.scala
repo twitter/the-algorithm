@@ -3,16 +3,16 @@ package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.training_
 import com.twitter.ml.api.analytics.DataSetAnalyticsPlugin
 import com.twitter.ml.api.matcher.FeatureMatcher
 import com.twitter.ml.api.util.FDsl
-import com.twitter.ml.api.DailySuffixFeatureSource
+import com.twitter.ml.api.DailySuffitwitterFeatureSource
 import com.twitter.ml.api.DataRecord
 import com.twitter.ml.api.DataSetPipe
 import com.twitter.ml.api.FeatureStats
 import com.twitter.ml.api.IMatcher
 import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding.TypedJson
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.timelines.data_processing.util.execution.UTCDateRangeFromArgs
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
+import com.twitter.timelines.data_processing.util.etwitterecution.UTCDateRangeFromArgs
 import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingConfiguration
 import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingRecapConfiguration
 import com.twitter.timelines.prediction.features.recap.RecapFeatures
@@ -25,7 +25,7 @@ import scala.collection.JavaConverters._
  * --input   recap data source (containing all labels)
  * --output  path to output JSON file containing stats
  */
-object EarlybirdStatsJob extends TwitterExecutionApp with UTCDateRangeFromArgs {
+object EarlybirdStatsJob etwittertends TwitterEtwitterecutionApp with UTCDateRangeFromArgs {
 
   import DataSetAnalyticsPlugin._
   import FDsl._
@@ -33,7 +33,7 @@ object EarlybirdStatsJob extends TwitterExecutionApp with UTCDateRangeFromArgs {
 
   lazy val constants: EarlybirdTrainingConfiguration = new EarlybirdTrainingRecapConfiguration
   private[this] def addGlobalEngagementLabel(record: DataRecord) = {
-    if (constants.LabelInfos.exists { labelInfo => record.hasFeature(labelInfo.feature) }) {
+    if (constants.LabelInfos.etwitterists { labelInfo => record.hasFeature(labelInfo.feature) }) {
       record.setFeatureValue(IS_EARLYBIRD_UNIFIED_ENGAGEMENT, true)
     }
     record
@@ -52,12 +52,12 @@ object EarlybirdStatsJob extends TwitterExecutionApp with UTCDateRangeFromArgs {
       .collectFeatureStats()
   }
 
-  override def job: Execution[Unit] = {
+  override def job: Etwitterecution[Unit] = {
     for {
-      args <- Execution.getArgs
-      dateRange <- dateRangeEx
-      data = DailySuffixFeatureSource(args("input"))(dateRange).read
-      _ <- computeStats(data).writeExecution(TypedJson(args("output")))
+      args <- Etwitterecution.getArgs
+      dateRange <- dateRangeEtwitter
+      data = DailySuffitwitterFeatureSource(args("input"))(dateRange).read
+      _ <- computeStats(data).writeEtwitterecution(TypedJson(args("output")))
     } yield ()
   }
 }

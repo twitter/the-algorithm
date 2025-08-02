@@ -8,7 +8,7 @@ import com.twitter.strato.catalog.Scan.Slice
 import com.twitter.strato.client.Client
 import com.twitter.strato.thrift.ScroogeConvImplicits._
 
-object ImpressionStoreModule extends TwitterModule {
+object ImpressionStoreModule etwittertends TwitterModule {
 
   val columnPath: String = "onboarding/userrecs/wtfImpressionCountsStore"
 

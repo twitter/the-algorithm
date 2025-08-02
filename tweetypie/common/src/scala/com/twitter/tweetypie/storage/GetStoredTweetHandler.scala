@@ -40,7 +40,7 @@ object GetStoredTweetHandler {
     val errs =
       mutable.Buffer[Error]()
 
-    val hasStoredTweetFields: Boolean = mhRecords.exists {
+    val hasStoredTweetFields: Boolean = mhRecords.etwitterists {
       case TweetManhattanRecord(TweetKey(_, _: TweetKey.LKey.FieldKey), _) => true
       case _ => false
     }
@@ -53,15 +53,15 @@ object GetStoredTweetHandler {
       None
     }
 
-    val scrubbedFields: Set[FieldId] = extractScrubbedFields(mhRecords)
+    val scrubbedFields: Set[FieldId] = etwittertractScrubbedFields(mhRecords)
     val tweet: Option[Tweet] = storedTweet.map(StorageConversions.fromStoredTweetAllowInvalid)
     val stateRecords: Seq[TweetStateRecord] = TweetStateRecord.fromTweetMhRecords(mhRecords)
     val tweetState: Option[TweetStateRecord] = TweetStateRecord.mostRecent(mhRecords)
 
     storedTweet.foreach { storedTweet =>
-      val storedExpectedFields = storedTweet.getFieldBlobs(expectedFields)
-      val missingExpectedFields = expectedFields.filterNot(storedExpectedFields.contains)
-      if (missingExpectedFields.nonEmpty || !isValid(storedTweet)) {
+      val storedEtwitterpectedFields = storedTweet.getFieldBlobs(etwitterpectedFields)
+      val missingEtwitterpectedFields = etwitterpectedFields.filterNot(storedEtwitterpectedFields.contains)
+      if (missingEtwitterpectedFields.nonEmpty || !isValid(storedTweet)) {
         errs.append(Error.TweetFieldsMissingOrInvalid)
       }
 
@@ -70,7 +70,7 @@ object GetStoredTweetHandler {
         errs.append(Error.ScrubbedFieldsPresent)
       }
 
-      if (deletedAtMs(tweetState).exists(_ < Time.now.inMilliseconds - 14.days.inMilliseconds)) {
+      if (deletedAtMs(tweetState).etwitterists(_ < Time.now.inMilliseconds - 14.days.inMilliseconds)) {
         errs.append(Error.TweetShouldBeHardDeleted)
       }
     }
@@ -106,7 +106,7 @@ object GetStoredTweetHandler {
 
   def apply(read: ManhattanOperations.Read, statsReceiver: StatsReceiver): GetStoredTweet = {
 
-    object mhGroup extends StitchSeqGroup[TweetId, Seq[TweetManhattanRecord]] {
+    object mhGroup etwittertends StitchSeqGroup[TweetId, Seq[TweetManhattanRecord]] {
       override def run(tweetIds: Seq[TweetId]): Stitch[Seq[Seq[TweetManhattanRecord]]] = {
         Stats.addWidthStat("getStoredTweet", "tweetIds", tweetIds.size, statsReceiver)
         Stitch.traverse(tweetIds)(read(_))

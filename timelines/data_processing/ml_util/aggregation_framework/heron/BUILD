@@ -50,7 +50,7 @@ scala_library(
         "src/thrift/com/twitter/clientapp/gen:clientapp-java",
         "src/thrift/com/twitter/ml/api:data-java",
         "src/thrift/com/twitter/ml/api:data-scala",
-        "src/thrift/com/twitter/ml/api:feature_context-java",
+        "src/thrift/com/twitter/ml/api:feature_contetwittert-java",
         "timelines/data_processing/ml_util/aggregation_framework:common_types",
         "timelines/data_processing/ml_util/transforms",
         "util/util-core:scala",

@@ -13,7 +13,7 @@ import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.ThriftSearchResult;
 import com.twitter.search.earlybird.thrift.ThriftSearchResults;
 import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.util.Future;
 
 /**
@@ -21,7 +21,7 @@ import com.twitter.util.Future;
  * As of now, this merger is used by Gnip to make sure that scrolling returns all results.
  *
  * The logic used for merging partitions is a bit tricky, because on one hand, we want to make sure
- * that we do miss results on the next pagination request; on the other hand, we want to return as
+ * that we do miss results on the netwittert pagination request; on the other hand, we want to return as
  * many results as we can, and we want to set the minSearchedStatusID of the merged response as low
  * as we can, in order to minimize the number of pagination requests.
  *
@@ -31,20 +31,20 @@ import com.twitter.util.Future;
  *  1. merge results from all partitions
  *  2. if at least one partition response is early-terminated, set earlyTerminated = true
  *     on the merged response
- *  3. set trimmingMinId = max(minSearchedStatusIDs of all partition responses)
+ *  3. set trimmingMinId = matwitter(minSearchedStatusIDs of all partition responses)
  *  4. trim all results to trimmingMinId
  *  5. set minSearchedStatusID on the merged response to trimmingMinId
  *  6. if we have more than numRequested results:
  *     - keep only the newest numRequested results
  *     - set minSearchedStatusID of the merged response to the lowest tweet ID in the response
  *  7. if at least one partition response is not early-terminated, set
- *     tierBottomId = max(minSearchedStatusIDs of all non-early-terminated responses)
- *     (otherwise, set tierBottomId to some undefined value: -1, Long.MAX_VALUE, etc.)
+ *     tierBottomId = matwitter(minSearchedStatusIDs of all non-early-terminated responses)
+ *     (otherwise, set tierBottomId to some undefined value: -1, Long.MAtwitter_VALUE, etc.)
  *  8. if minSearchedStatusID of the merged response is the same as tierBottomId,
  *     clear the early-termination flag on the merged response
  *
  * The logic in steps 7 and 8 can be a little tricky to understand. They basically say: when we've
- * exhausted the "least deep" partition in the realtime cluster, it's time to move to the full
+ * etwitterhausted the "least deep" partition in the realtime cluster, it's time to move to the full
  * archive cluster (if we keep going past the "least deep" partition, we might miss results).
  *
  * Full archive cluster:
@@ -52,7 +52,7 @@ import com.twitter.util.Future;
  *  2. if at least one partition response is early-terminated, set earlyTerminated = true
  *     on the merged response
  *  3. set trimmingMinId to:
- *     - max(minSearchedStatusIDs of early-terminated responses), if at least one partition response
+ *     - matwitter(minSearchedStatusIDs of early-terminated responses), if at least one partition response
  *       is early-terminated
  *     - min(minSearchedStatusIDs of all responses), if all partition responses are not
  *       early-terminated
@@ -78,18 +78,18 @@ import com.twitter.util.Future;
  * partition 2 has tweets 9, 8, 7, 6, 2 that match our query
  *
  * If we ask for 3 results, than partition 1 will return tweets 10, 5, 3, and partition 2 will
- * return tweets 9, 8, 7. If we set trimmingMinId = min(minSearchedStatusIDs), then the next
- * pagination request will have [max_id = 2], and we will miss tweet 6.
+ * return tweets 9, 8, 7. If we set trimmingMinId = min(minSearchedStatusIDs), then the netwittert
+ * pagination request will have [matwitter_id = 2], and we will miss tweet 6.
  *
  * So the intuition here is that if we have an early-terminated response, we cannot set
  * trimmingMinId to something lower than the minSearchedStatusID returned by that partition
- * (otherwise we might miss results from that partition). However, if we've exhausted all
+ * (otherwise we might miss results from that partition). However, if we've etwitterhausted all
  * partitions, then it's OK to not trim any result, because tiers do not intersect, so we will not
- * miss any result from the next tier once we get there.
+ * miss any result from the netwittert tier once we get there.
  */
-public class StrictRecencyResponseMerger extends RecencyResponseMerger {
+public class StrictRecencyResponseMerger etwittertends RecencyResponseMerger {
   private static final SearchTimerStats STRICT_RECENCY_TIMER_AVG =
-      SearchTimerStats.export("merge_recency_strict", TimeUnit.NANOSECONDS, false, true);
+      SearchTimerStats.etwitterport("merge_recency_strict", TimeUnit.NANOSECONDS, false, true);
 
   @VisibleForTesting
   static final EarlyTerminationTrimmingStats PARTITION_MERGING_EARLY_TERMINATION_TRIMMING_STATS =
@@ -101,12 +101,12 @@ public class StrictRecencyResponseMerger extends RecencyResponseMerger {
 
   private final EarlybirdCluster cluster;
 
-  public StrictRecencyResponseMerger(EarlybirdRequestContext requestContext,
+  public StrictRecencyResponseMerger(EarlybirdRequestContetwittert requestContetwittert,
                                      List<Future<EarlybirdResponse>> responses,
                                      ResponseAccumulator mode,
                                      EarlybirdFeatureSchemaMerger featureSchemaMerger,
                                      EarlybirdCluster cluster) {
-    super(requestContext, responses, mode, featureSchemaMerger);
+    super(requestContetwittert, responses, mode, featureSchemaMerger);
     this.cluster = cluster;
   }
 
@@ -117,27 +117,27 @@ public class StrictRecencyResponseMerger extends RecencyResponseMerger {
 
   /**
    * Unlike {@link com.twitter.search.earlybird_root.mergers.RecencyResponseMerger}, this method
-   * takes a much simpler approach by just taking the max of the maxSearchedStatusIds.
+   * takes a much simpler approach by just taking the matwitter of the matwitterSearchedStatusIds.
    *
-   * Also, when no maxSearchedStatusId is available at all, Long.MIN_VALUE is used instead of
-   * Long.MAX_VALUE. This ensures that we don't return any result in these cases.
+   * Also, when no matwitterSearchedStatusId is available at all, Long.MIN_VALUE is used instead of
+   * Long.MAtwitter_VALUE. This ensures that we don't return any result in these cases.
    */
   @Override
-  protected long findMaxFullySearchedStatusID() {
-    return accumulatedResponses.getMaxIds().isEmpty()
-        ? Long.MIN_VALUE : Collections.max(accumulatedResponses.getMaxIds());
+  protected long findMatwitterFullySearchedStatusID() {
+    return accumulatedResponses.getMatwitterIds().isEmpty()
+        ? Long.MIN_VALUE : Collections.matwitter(accumulatedResponses.getMatwitterIds());
   }
 
   /**
    * This method is subtly different from the base class version: when no minSearchedStatusId is
-   * available at all, Long.MAX_VALUE is used instead of Long.MIN_VALUE. This ensures that we
+   * available at all, Long.MAtwitter_VALUE is used instead of Long.MIN_VALUE. This ensures that we
    * don't return any result in these cases.
    */
   @Override
   protected long findMinFullySearchedStatusID() {
     List<Long> minIds = accumulatedResponses.getMinIds();
     if (minIds.isEmpty()) {
-      return Long.MAX_VALUE;
+      return Long.MAtwitter_VALUE;
     }
 
     if (accumulatedResponses.isMergingPartitionsWithinATier()) {
@@ -150,15 +150,15 @@ public class StrictRecencyResponseMerger extends RecencyResponseMerger {
 
   @Override
   protected TrimStats trimResults(
-      ThriftSearchResults searchResults, long mergedMin, long mergedMax) {
+      ThriftSearchResults searchResults, long mergedMin, long mergedMatwitter) {
     if (!searchResults.isSetResults() || searchResults.getResultsSize() == 0) {
       // no results, no trimming needed
       return TrimStats.EMPTY_STATS;
     }
 
     TrimStats trimStats = new TrimStats();
-    trimExactDups(searchResults, trimStats);
-    filterResultsByMergedMinMaxIds(searchResults, mergedMax, mergedMin, trimStats);
+    trimEtwitteractDups(searchResults, trimStats);
+    filterResultsByMergedMinMatwitterIds(searchResults, mergedMatwitter, mergedMin, trimStats);
     int numResults = computeNumResultsToKeep();
     if (searchResults.getResultsSize() > numResults) {
       trimStats.setResultsTruncatedFromTailCount(searchResults.getResultsSize() - numResults);
@@ -173,13 +173,13 @@ public class StrictRecencyResponseMerger extends RecencyResponseMerger {
    * than currentMergedMin, we always take minResultId.
    * If we don't do this, we would lose results.
    *
-   * Illustration with an example. Assuming we are outside of the lag threshold.
+   * Illustration with an etwitterample. Assuming we are outside of the lag threshold.
    * Num results requested: 3
-   * Response 1:  min: 100   max: 900   results:  400, 500, 600
-   * Response 2:  min: 300   max: 700   results:  350, 450, 550
+   * Response 1:  min: 100   matwitter: 900   results:  400, 500, 600
+   * Response 2:  min: 300   matwitter: 700   results:  350, 450, 550
    *
    * Merged results: 600, 550, 500
-   * Merged max: 900
+   * Merged matwitter: 900
    * Merged min: we could take 300 (minId), or take 500 (minResultId).
    *
    * If we take minId, and use 300 as the pagination cursor, we'd lose results
@@ -210,11 +210,11 @@ public class StrictRecencyResponseMerger extends RecencyResponseMerger {
   protected boolean clearEarlyTerminationIfReachingTierBottom(EarlybirdResponse mergedResponse) {
     if (EarlybirdCluster.isArchive(cluster)) {
       // We don't need to worry about the tier bottom when merging partition responses in the full
-      // archive cluster: if all partitions were exhausted and we didn't trim the results, then
+      // archive cluster: if all partitions were etwitterhausted and we didn't trim the results, then
       // the early-terminated flag on the merged response will be false. If at least one partition
       // is early-terminated, or we trimmed some results, then the ealry-terminated flag on the
       // merged response will be true, and we should continue getting results from this tier before
-      // we move to the next one.
+      // we move to the netwittert one.
       return false;
     }
 
@@ -267,23 +267,23 @@ public class StrictRecencyResponseMerger extends RecencyResponseMerger {
     Preconditions.checkArgument(!minIds.isEmpty());
 
     if (!EarlybirdCluster.isArchive(cluster)) {
-      return Collections.max(minIds);
+      return Collections.matwitter(minIds);
     }
 
-    long maxOfEarlyTerminatedMins = -1;
-    long minOfAllMins = Long.MAX_VALUE;
+    long matwitterOfEarlyTerminatedMins = -1;
+    long minOfAllMins = Long.MAtwitter_VALUE;
     for (EarlybirdResponse response : accumulatedResponses.getSuccessResponses()) {
       if (response.isSetSearchResults()
           && response.getSearchResults().isSetMinSearchedStatusID()) {
         long minId = response.getSearchResults().getMinSearchedStatusID();
         minOfAllMins = Math.min(minOfAllMins, minId);
         if (isEarlyTerminated(response)) {
-          maxOfEarlyTerminatedMins = Math.max(maxOfEarlyTerminatedMins, minId);
+          matwitterOfEarlyTerminatedMins = Math.matwitter(matwitterOfEarlyTerminatedMins, minId);
         }
       }
     }
-    if (maxOfEarlyTerminatedMins >= 0) {
-      return maxOfEarlyTerminatedMins;
+    if (matwitterOfEarlyTerminatedMins >= 0) {
+      return matwitterOfEarlyTerminatedMins;
     } else {
       return minOfAllMins;
     }

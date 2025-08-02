@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.search.relevance.scoring;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,7 @@ import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
 import com.twitter.search.common.util.ml.tensorflow_engine.TensorflowModelsManager;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
 import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.ClientException;
+import com.twitter.search.earlybird.etwitterception.ClientEtwitterception;
 import com.twitter.search.earlybird.ml.ScoringModelsManager;
 import com.twitter.search.earlybird.search.AntiGamingFilter;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
@@ -22,7 +22,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
 import com.twitter.search.queryparser.query.Query;
 
 /**
- * Returns a scoring function for a particular experiment ID.
+ * Returns a scoring function for a particular etwitterperiment ID.
  *
  * Can be used for a/b testing of different scoring formulas.
  */
@@ -32,7 +32,7 @@ public abstract class ScoringFunctionProvider {
   /**
    * Returns the scoring function.
    */
-  public abstract ScoringFunction getScoringFunction() throws IOException, ClientException;
+  public abstract ScoringFunction getScoringFunction() throws IOEtwitterception, ClientEtwitterception;
 
   public static final String RETWEETS_SCORER_NAME = "retweets";
   public static final String NO_SPAM_SCORER_NAME = "no_spam";
@@ -44,34 +44,34 @@ public abstract class ScoringFunctionProvider {
           EarlybirdConfig.getBool("top_tweet_scoring_with_decay", true);
 
   /**
-   * Abstract class that can be used for ScoringFunctions that don't throw a ClientException.
+   * Abstract class that can be used for ScoringFunctions that don't throw a ClientEtwitterception.
    *
-   * It does throw an IOException but it doesn't throw a ClientException so the name can be a bit
+   * It does throw an IOEtwitterception but it doesn't throw a ClientEtwitterception so the name can be a bit
    * misleading.
    */
-  public abstract static class NamedScoringFunctionProvider extends ScoringFunctionProvider {
+  public abstract static class NamedScoringFunctionProvider etwittertends ScoringFunctionProvider {
     /**
      * Returns the scoring function.
      */
-    public abstract ScoringFunction getScoringFunction() throws IOException;
+    public abstract ScoringFunction getScoringFunction() throws IOEtwitterception;
   }
 
   /**
-   * Returns the scoring function provider with the given name, or null if no such provider exists.
+   * Returns the scoring function provider with the given name, or null if no such provider etwitterists.
    */
   public static NamedScoringFunctionProvider getScoringFunctionProviderByName(
       String name, final ImmutableSchemaInterface schema) {
     if (name.equals(NO_SPAM_SCORER_NAME)) {
       return new NamedScoringFunctionProvider() {
         @Override
-        public ScoringFunction getScoringFunction() throws IOException {
+        public ScoringFunction getScoringFunction() throws IOEtwitterception {
           return new SpamVectorScoringFunction(schema);
         }
       };
     } else if (name.equals(RETWEETS_SCORER_NAME)) {
       return new NamedScoringFunctionProvider() {
         @Override
-        public ScoringFunction getScoringFunction() throws IOException {
+        public ScoringFunction getScoringFunction() throws IOEtwitterception {
           // Production top tweet actually uses this.
           if (TOP_TWEET_WITH_DECAY) {
             return new RetweetBasedTopTweetsScoringFunction(schema);
@@ -83,7 +83,7 @@ public abstract class ScoringFunctionProvider {
     } else if (name.equals(TEST_SCORER_NAME)) {
       return new NamedScoringFunctionProvider() {
         @Override
-        public ScoringFunction getScoringFunction() throws IOException {
+        public ScoringFunction getScoringFunction() throws IOEtwitterception {
           return new TestScoringFunction(schema);
         }
       };
@@ -95,7 +95,7 @@ public abstract class ScoringFunctionProvider {
    * Returns default scoring functions for different scoring function type
    * and provides fallback behavior if model-based scoring function fails
    */
-  public static class DefaultScoringFunctionProvider extends ScoringFunctionProvider {
+  public static class DefaultScoringFunctionProvider etwittertends ScoringFunctionProvider {
     private final EarlybirdRequest request;
     private final ImmutableSchemaInterface schema;
     private final ThriftSearchQuery searchQuery;
@@ -107,14 +107,14 @@ public abstract class ScoringFunctionProvider {
     private final TensorflowModelsManager tensorflowModelsManager;
 
     private static final SearchCounter MODEL_BASED_SCORING_FUNCTION_CREATED =
-        SearchCounter.export("model_based_scoring_function_created");
+        SearchCounter.etwitterport("model_based_scoring_function_created");
     private static final SearchCounter MODEL_BASED_FALLBACK_TO_LINEAR_SCORING_FUNCTION =
-        SearchCounter.export("model_based_fallback_to_linear_scoring_function");
+        SearchCounter.etwitterport("model_based_fallback_to_linear_scoring_function");
 
     private static final SearchCounter TENSORFLOW_BASED_SCORING_FUNCTION_CREATED =
-        SearchCounter.export("tensorflow_based_scoring_function_created");
+        SearchCounter.etwitterport("tensorflow_based_scoring_function_created");
     private static final SearchCounter TENSORFLOW_BASED_FALLBACK_TO_LINEAR_SCORING_FUNCTION =
-        SearchCounter.export("tensorflow_fallback_to_linear_function_scoring_function");
+        SearchCounter.etwitterport("tensorflow_fallback_to_linear_function_scoring_function");
 
     public DefaultScoringFunctionProvider(
         final EarlybirdRequest request,
@@ -138,7 +138,7 @@ public abstract class ScoringFunctionProvider {
     }
 
     @Override
-    public ScoringFunction getScoringFunction() throws IOException, ClientException {
+    public ScoringFunction getScoringFunction() throws IOEtwitterception, ClientEtwitterception {
       if (searchQuery.isSetRelevanceOptions()
           && searchQuery.getRelevanceOptions().isSetRankingParams()) {
         ThriftRankingParams params = searchQuery.getRelevanceOptions().getRankingParams();
@@ -168,7 +168,7 @@ public abstract class ScoringFunctionProvider {
           case TOPTWEETS:
             return createTopTweets();
           default:
-            throw new IllegalArgumentException("Unknown scoring type: in " + searchQuery);
+            throw new IllegalArgumentEtwitterception("Unknown scoring type: in " + searchQuery);
         }
       } else {
         LOG.error("No relevance options provided query = " + searchQuery);
@@ -176,7 +176,7 @@ public abstract class ScoringFunctionProvider {
       }
     }
 
-    private ScoringFunction createLinear() throws IOException {
+    private ScoringFunction createLinear() throws IOEtwitterception {
       LinearScoringFunction scoringFunction = new LinearScoringFunction(
           schema, searchQuery, antiGamingFilter, ThriftSearchResultType.RELEVANCE,
           userTable);
@@ -186,11 +186,11 @@ public abstract class ScoringFunctionProvider {
     }
 
     /**
-     * For model based scoring function, ClientException will be throw if client selects an
+     * For model based scoring function, ClientEtwitterception will be throw if client selects an
      * unknown model for scoring manager.
      * {@link com.twitter.search.earlybird.search.relevance.scoring.ModelBasedScoringFunction}
      */
-    private ScoringFunction createModelBased() throws IOException, ClientException {
+    private ScoringFunction createModelBased() throws IOEtwitterception, ClientEtwitterception {
       ModelBasedScoringFunction scoringFunction = new ModelBasedScoringFunction(
           schema, searchQuery, antiGamingFilter, ThriftSearchResultType.RELEVANCE, userTable,
           scoringModelsManager);
@@ -199,13 +199,13 @@ public abstract class ScoringFunctionProvider {
       return scoringFunction;
     }
 
-    private ScoringFunction createTopTweets() throws IOException {
+    private ScoringFunction createTopTweets() throws IOEtwitterception {
       return new LinearScoringFunction(
           schema, searchQuery, antiGamingFilter, ThriftSearchResultType.POPULAR, userTable);
     }
 
     private TensorflowBasedScoringFunction createTensorflowBased()
-      throws IOException, ClientException {
+      throws IOEtwitterception, ClientEtwitterception {
       TensorflowBasedScoringFunction tfScoringFunction = new TensorflowBasedScoringFunction(
           request, schema, searchQuery, antiGamingFilter,
           ThriftSearchResultType.RELEVANCE, userTable, tensorflowModelsManager);

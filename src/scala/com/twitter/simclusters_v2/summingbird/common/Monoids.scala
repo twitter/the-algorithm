@@ -26,21 +26,21 @@ import scala.collection.mutable
 object Monoids {
 
   class ScoresMonoid(implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid)
-      extends Monoid[Scores] {
+      etwittertends Monoid[Scores] {
 
     private val optionalThriftDecayedValueMonoid =
       new OptionMonoid[ThriftDecayedValue]()
 
     override val zero: Scores = Scores()
 
-    override def plus(x: Scores, y: Scores): Scores = {
+    override def plus(twitter: Scores, y: Scores): Scores = {
       Scores(
         optionalThriftDecayedValueMonoid.plus(
-          x.favClusterNormalized8HrHalfLifeScore,
+          twitter.favClusterNormalized8HrHalfLifeScore,
           y.favClusterNormalized8HrHalfLifeScore
         ),
         optionalThriftDecayedValueMonoid.plus(
-          x.followClusterNormalized8HrHalfLifeScore,
+          twitter.followClusterNormalized8HrHalfLifeScore,
           y.followClusterNormalized8HrHalfLifeScore
         )
       )
@@ -48,27 +48,27 @@ object Monoids {
   }
 
   class ClustersWithScoresMonoid(implicit scoresMonoid: ScoresMonoid)
-      extends Monoid[ClustersWithScores] {
+      etwittertends Monoid[ClustersWithScores] {
 
     private val optionMapMonoid =
       new OptionMonoid[collection.Map[Int, Scores]]()(new ScMapMonoid[Int, Scores]())
 
     override val zero: ClustersWithScores = ClustersWithScores()
 
-    override def plus(x: ClustersWithScores, y: ClustersWithScores): ClustersWithScores = {
+    override def plus(twitter: ClustersWithScores, y: ClustersWithScores): ClustersWithScores = {
       ClustersWithScores(
-        optionMapMonoid.plus(x.clustersToScore, y.clustersToScore)
+        optionMapMonoid.plus(twitter.clustersToScore, y.clustersToScore)
       )
     }
   }
 
   class MultiModelClustersWithScoresMonoid(implicit scoresMonoid: ScoresMonoid)
-      extends Monoid[MultiModelClustersWithScores] {
+      etwittertends Monoid[MultiModelClustersWithScores] {
 
     override val zero: MultiModelClustersWithScores = MultiModelClustersWithScores()
 
     override def plus(
-      x: MultiModelClustersWithScores,
+      twitter: MultiModelClustersWithScores,
       y: MultiModelClustersWithScores
     ): MultiModelClustersWithScores = {
       // We reuse the logic from the Monoid for the Value here
@@ -76,7 +76,7 @@ object Monoids {
 
       MultiModelClustersWithScores(
         MultiModelUtils.mergeTwoMultiModelMaps(
-          x.multiModelClustersWithScores,
+          twitter.multiModelClustersWithScores,
           y.multiModelClustersWithScores,
           clustersWithScoreMonoid))
     }
@@ -87,18 +87,18 @@ object Monoids {
     threshold: Double
   )(
     implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid)
-      extends Monoid[TopKClustersWithScores] {
+      etwittertends Monoid[TopKClustersWithScores] {
 
     override val zero: TopKClustersWithScores = TopKClustersWithScores()
 
     override def plus(
-      x: TopKClustersWithScores,
+      twitter: TopKClustersWithScores,
       y: TopKClustersWithScores
     ): TopKClustersWithScores = {
 
       val mergedFavMap = TopKScoresUtils
         .mergeTwoTopKMapWithDecayedValues(
-          x.topClustersByFavClusterNormalizedScore
+          twitter.topClustersByFavClusterNormalizedScore
             .map(_.mapValues(
               _.favClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
           y.topClustersByFavClusterNormalizedScore
@@ -111,7 +111,7 @@ object Monoids {
 
       val mergedFollowMap = TopKScoresUtils
         .mergeTwoTopKMapWithDecayedValues(
-          x.topClustersByFollowClusterNormalizedScore
+          twitter.topClustersByFollowClusterNormalizedScore
             .map(_.mapValues(
               _.followClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
           y.topClustersByFollowClusterNormalizedScore
@@ -134,16 +134,16 @@ object Monoids {
     tweetAgeThreshold: Long
   )(
     implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid)
-      extends Monoid[TopKTweetsWithScores] {
+      etwittertends Monoid[TopKTweetsWithScores] {
 
     override val zero: TopKTweetsWithScores = TopKTweetsWithScores()
 
-    override def plus(x: TopKTweetsWithScores, y: TopKTweetsWithScores): TopKTweetsWithScores = {
+    override def plus(twitter: TopKTweetsWithScores, y: TopKTweetsWithScores): TopKTweetsWithScores = {
       val oldestTweetId = SnowflakeId.firstIdFor(System.currentTimeMillis() - tweetAgeThreshold)
 
       val mergedFavMap = TopKScoresUtils
         .mergeTwoTopKMapWithDecayedValues(
-          x.topTweetsByFavClusterNormalizedScore
+          twitter.topTweetsByFavClusterNormalizedScore
             .map(_.mapValues(
               _.favClusterNormalized8HrHalfLifeScore.getOrElse(thriftDecayedValueMonoid.zero))),
           y.topTweetsByFavClusterNormalizedScore
@@ -161,11 +161,11 @@ object Monoids {
   class MultiModelTopKTweetsWithScoresMonoid(
   )(
     implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid)
-      extends Monoid[MultiModelTopKTweetsWithScores] {
+      etwittertends Monoid[MultiModelTopKTweetsWithScores] {
     override val zero: MultiModelTopKTweetsWithScores = MultiModelTopKTweetsWithScores()
 
     override def plus(
-      x: MultiModelTopKTweetsWithScores,
+      twitter: MultiModelTopKTweetsWithScores,
       y: MultiModelTopKTweetsWithScores
     ): MultiModelTopKTweetsWithScores = {
       // We reuse the logic from the Monoid for the Value here
@@ -173,7 +173,7 @@ object Monoids {
 
       MultiModelTopKTweetsWithScores(
         MultiModelUtils.mergeTwoMultiModelMaps(
-          x.multiModelTopKTweetsWithScores,
+          twitter.multiModelTopKTweetsWithScores,
           y.multiModelTopKTweetsWithScores,
           topKTweetsWithScoresMonoid))
     }
@@ -184,7 +184,7 @@ object Monoids {
    * Merge two PersistentSimClustersEmbedding. The latest embedding overwrite the old embedding.
    * The new count equals to the sum of the count.
    */
-  class PersistentSimClustersEmbeddingMonoid extends Monoid[PersistentSimClustersEmbedding] {
+  class PersistentSimClustersEmbeddingMonoid etwittertends Monoid[PersistentSimClustersEmbedding] {
 
     override val zero: PersistentSimClustersEmbedding = PersistentSimClustersEmbedding(
       ThriftSimClustersEmbedding(),
@@ -194,25 +194,25 @@ object Monoids {
     private val optionLongMonoid = new OptionMonoid[Long]()
 
     override def plus(
-      x: PersistentSimClustersEmbedding,
+      twitter: PersistentSimClustersEmbedding,
       y: PersistentSimClustersEmbedding
     ): PersistentSimClustersEmbedding = {
       val latest =
-        if (x.metadata.updatedAtMs.getOrElse(0L) > y.metadata.updatedAtMs.getOrElse(0L)) x else y
+        if (twitter.metadata.updatedAtMs.getOrElse(0L) > y.metadata.updatedAtMs.getOrElse(0L)) twitter else y
       latest.copy(
         metadata = latest.metadata.copy(
-          updatedCount = optionLongMonoid.plus(x.metadata.updatedCount, y.metadata.updatedCount)))
+          updatedCount = optionLongMonoid.plus(twitter.metadata.updatedCount, y.metadata.updatedCount)))
     }
   }
 
   class MultiModelPersistentSimClustersEmbeddingMonoid
-      extends Monoid[MultiModelPersistentSimClustersEmbedding] {
+      etwittertends Monoid[MultiModelPersistentSimClustersEmbedding] {
 
     override val zero: MultiModelPersistentSimClustersEmbedding =
       MultiModelPersistentSimClustersEmbedding(Map[ModelVersion, PersistentSimClustersEmbedding]())
 
     override def plus(
-      x: MultiModelPersistentSimClustersEmbedding,
+      twitter: MultiModelPersistentSimClustersEmbedding,
       y: MultiModelPersistentSimClustersEmbedding
     ): MultiModelPersistentSimClustersEmbedding = {
       val monoid = Implicits.persistentSimClustersEmbeddingMonoid
@@ -220,7 +220,7 @@ object Monoids {
       // PersistentSimClustersEmbeddings is the only required thrift object so we need to wrap it
       // in Some
       MultiModelUtils.mergeTwoMultiModelMaps(
-        Some(x.multiModelPersistentSimClustersEmbedding),
+        Some(twitter.multiModelPersistentSimClustersEmbedding),
         Some(y.multiModelPersistentSimClustersEmbedding),
         monoid) match {
         // clean up the empty embeddings
@@ -246,7 +246,7 @@ object Monoids {
    * the other embedding. The new count equals to the sum of the count.
    */
   class PersistentSimClustersEmbeddingLongestL2NormMonoid
-      extends Monoid[PersistentSimClustersEmbedding] {
+      etwittertends Monoid[PersistentSimClustersEmbedding] {
 
     override val zero: PersistentSimClustersEmbedding = PersistentSimClustersEmbedding(
       ThriftSimClustersEmbedding(),
@@ -254,28 +254,28 @@ object Monoids {
     )
 
     override def plus(
-      x: PersistentSimClustersEmbedding,
+      twitter: PersistentSimClustersEmbedding,
       y: PersistentSimClustersEmbedding
     ): PersistentSimClustersEmbedding = {
-      if (SimClustersEmbedding(x.embedding).l2norm >= SimClustersEmbedding(y.embedding).l2norm) x
+      if (SimClustersEmbedding(twitter.embedding).l2norm >= SimClustersEmbedding(y.embedding).l2norm) twitter
       else y
     }
   }
 
   class MultiModelPersistentSimClustersEmbeddingLongestL2NormMonoid
-      extends Monoid[MultiModelPersistentSimClustersEmbedding] {
+      etwittertends Monoid[MultiModelPersistentSimClustersEmbedding] {
 
     override val zero: MultiModelPersistentSimClustersEmbedding =
       MultiModelPersistentSimClustersEmbedding(Map[ModelVersion, PersistentSimClustersEmbedding]())
 
     override def plus(
-      x: MultiModelPersistentSimClustersEmbedding,
+      twitter: MultiModelPersistentSimClustersEmbedding,
       y: MultiModelPersistentSimClustersEmbedding
     ): MultiModelPersistentSimClustersEmbedding = {
       val monoid = Implicits.persistentSimClustersEmbeddingLongestL2NormMonoid
 
       MultiModelUtils.mergeTwoMultiModelMaps(
-        Some(x.multiModelPersistentSimClustersEmbedding),
+        Some(twitter.multiModelPersistentSimClustersEmbedding),
         Some(y.multiModelPersistentSimClustersEmbedding),
         monoid) match {
         // clean up empty embeddings
@@ -319,24 +319,24 @@ object Monoids {
      *
      */
     def mergeClusterScoresWithUpdateTimes[Key](
-      x: Seq[(Key, Double)],
-      xUpdatedAtMs: Long,
+      twitter: Seq[(Key, Double)],
+      twitterUpdatedAtMs: Long,
       y: Seq[(Key, Double)],
       yUpdatedAtMs: Long,
       halfLifeMs: Long,
       topK: Int,
       threshold: Double
     ): Seq[(Key, Double)] = {
-      val latestUpdate = math.max(xUpdatedAtMs, yUpdatedAtMs)
+      val latestUpdate = math.matwitter(twitterUpdatedAtMs, yUpdatedAtMs)
       val decayedValueForLatestTime = DecayedValue.build(0.0, latestUpdate, halfLifeMs)
 
       val merged = mutable.HashMap[Key, Double]()
 
-      x.foreach {
+      twitter.foreach {
         case (key, score) =>
           val decayedScore = Implicits.decayedValueMonoid
             .plus(
-              DecayedValue.build(score, xUpdatedAtMs, halfLifeMs),
+              DecayedValue.build(score, twitterUpdatedAtMs, halfLifeMs),
               decayedValueForLatestTime
             ).value
           if (decayedScore > threshold)
@@ -352,8 +352,8 @@ object Monoids {
             ).value
           if (decayedScore > threshold)
             merged.get(key) match {
-              case Some(existingValue) =>
-                if (decayedScore > existingValue)
+              case Some(etwitteristingValue) =>
+                if (decayedScore > etwitteristingValue)
                   merged += key -> decayedScore
               case None =>
                 merged += key -> decayedScore
@@ -384,18 +384,18 @@ object Monoids {
       implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid
     ): Option[collection.Map[T, ThriftDecayedValue]] = {
 
-      if (a.isEmpty || a.exists(_.isEmpty)) {
+      if (a.isEmpty || a.etwitterists(_.isEmpty)) {
         return b
       }
 
-      if (b.isEmpty || b.exists(_.isEmpty)) {
+      if (b.isEmpty || b.etwitterists(_.isEmpty)) {
         return a
       }
 
       val latestScaledTime = (a.get.view ++ b.get.view).map {
         case (_, scores) =>
           scores.scaledTime
-      }.max
+      }.matwitter
 
       val decayedValueWithLatestScaledTime = ThriftDecayedValue(0.0, latestScaledTime)
 
@@ -452,7 +452,7 @@ object Monoids {
   object MultiModelUtils {
 
     /**
-     * In order to reduce complexity we use the Monoid for the value to plus two MultiModel maps
+     * In order to reduce completwitterity we use the Monoid for the value to plus two MultiModel maps
      */
     def mergeTwoMultiModelMaps[T](
       a: Option[collection.Map[ModelVersion, T]],

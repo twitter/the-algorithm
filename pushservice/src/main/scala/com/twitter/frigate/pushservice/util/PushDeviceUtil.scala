@@ -10,23 +10,23 @@ import com.twitter.finagle.stats.StatsReceiver
 object PushDeviceUtil {
 
   def isPrimaryDeviceAndroid(deviceInfoOpt: Option[DeviceInfo]): Boolean = {
-    deviceInfoOpt.exists {
-      _.guessedPrimaryClient.exists { clientType =>
+    deviceInfoOpt.etwitterists {
+      _.guessedPrimaryClient.etwitterists { clientType =>
         (clientType == MobileClientType.Android) || (clientType == MobileClientType.AndroidLite)
       }
     }
   }
 
   def isPrimaryDeviceIOS(deviceInfoOpt: Option[DeviceInfo]): Boolean = {
-    deviceInfoOpt.exists {
-      _.guessedPrimaryClient.exists { clientType =>
+    deviceInfoOpt.etwitterists {
+      _.guessedPrimaryClient.etwitterists { clientType =>
         (clientType == MobileClientType.Iphone) || (clientType == MobileClientType.Ipad)
       }
     }
   }
 
   def isPushRecommendationsEligible(target: Target): Future[Boolean] =
-    target.deviceInfo.map(_.exists(_.isRecommendationsEligible))
+    target.deviceInfo.map(_.etwitterists(_.isRecommendationsEligible))
 
   def isTopicsEligible(
     target: Target,
@@ -34,14 +34,14 @@ object PushDeviceUtil {
   ): Future[Boolean] = {
     val isTopicsSkipFatigue = Future.True
 
-    Future.join(isTopicsSkipFatigue, target.deviceInfo.map(_.exists(_.isTopicsEligible))).map {
+    Future.join(isTopicsSkipFatigue, target.deviceInfo.map(_.etwitterists(_.isTopicsEligible))).map {
       case (isTopicsNotFatigue, isTopicsEligibleSetting) =>
         isTopicsNotFatigue && isTopicsEligibleSetting
     }
   }
 
   def isSpacesEligible(target: Target): Future[Boolean] =
-    target.deviceInfo.map(_.exists(_.isSpacesEligible))
+    target.deviceInfo.map(_.etwitterists(_.isSpacesEligible))
 
   def isNtabOnlyEligible: Future[Boolean] = {
     Future.False

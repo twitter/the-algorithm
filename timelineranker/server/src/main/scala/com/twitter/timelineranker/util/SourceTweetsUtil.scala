@@ -23,7 +23,7 @@ object SourceTweetsUtil {
       followedUserIds
     )
 
-    val extendedRepliesSourceTweetIds = getExtendedReplySourceTweetIds(
+    val etwittertendedRepliesSourceTweetIds = getEtwittertendedReplySourceTweetIds(
       searchResults,
       searchResultsTweetIds,
       followedUserIds
@@ -41,7 +41,7 @@ object SourceTweetsUtil {
       Seq.empty
     }
 
-    (retweetSourceTweetIds ++ extendedRepliesSourceTweetIds ++
+    (retweetSourceTweetIds ++ etwittertendedRepliesSourceTweetIds ++
       inNetworkReplyInReplyToTweetIds ++ replyRootTweetIds).distinct
   }
 
@@ -75,13 +75,13 @@ object SourceTweetsUtil {
       .filterNot(searchResultsTweetIds.contains)
   }
 
-  def getExtendedReplySourceTweetIds(
+  def getEtwittertendedReplySourceTweetIds(
     searchResults: Seq[ThriftSearchResult],
     searchResultsTweetIds: Set[TweetId],
     followedUserIds: Seq[UserId]
   ): Seq[TweetId] = {
     searchResults
-      .filter(SearchResultUtil.isExtendedReply(followedUserIds))
+      .filter(SearchResultUtil.isEtwittertendedReply(followedUserIds))
       .flatMap(SearchResultUtil.getSourceTweetId)
       .filterNot(searchResultsTweetIds.contains)
   }

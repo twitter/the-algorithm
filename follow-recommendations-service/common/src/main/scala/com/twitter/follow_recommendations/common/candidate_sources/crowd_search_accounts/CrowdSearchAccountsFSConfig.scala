@@ -4,11 +4,11 @@ import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
 import com.twitter.timelines.configapi.FSBoundedParam
 import com.twitter.timelines.configapi.FSName
 import com.twitter.timelines.configapi.Param
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
-class CrowdSearchAccountsFSConfig @Inject() () extends FeatureSwitchConfig {
+class CrowdSearchAccountsFSConfig @Inject() () etwittertends FeatureSwitchConfig {
   override val booleanFSParams: Seq[Param[Boolean] with FSName] = Seq(
     CrowdSearchAccountsParams.CandidateSourceEnabled,
   )

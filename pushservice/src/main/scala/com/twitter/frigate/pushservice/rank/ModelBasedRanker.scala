@@ -14,11 +14,11 @@ object ModelBasedRanker {
 
   def rankBySpecifiedScore(
     candidatesDetails: Seq[CandidateDetails[PushCandidate]],
-    scoreExtractor: PushCandidate => Future[Option[Double]]
+    scoreEtwittertractor: PushCandidate => Future[Option[Double]]
   ): Future[Seq[CandidateDetails[PushCandidate]]] = {
 
     val scoredCandidatesFutures = candidatesDetails.map { cand =>
-      scoreExtractor(cand.candidate).map { scoreOp => (cand, scoreOp.getOrElse(0.0)) }
+      scoreEtwittertractor(cand.candidate).map { scoreOp => (cand, scoreOp.getOrElse(0.0)) }
     }
 
     Future.collect(scoredCandidatesFutures).map { scores =>
@@ -29,7 +29,7 @@ object ModelBasedRanker {
 
   def populatePredictionScoreStats(
     candidatesDetails: Seq[CandidateDetails[PushCandidate]],
-    scoreExtractor: PushCandidate => Future[Option[Double]],
+    scoreEtwittertractor: PushCandidate => Future[Option[Double]],
     predictionScoreStats: StatsReceiver
   ): Unit = {
     val scoreScaleFactorForStat = 10000
@@ -37,7 +37,7 @@ object ModelBasedRanker {
     candidatesDetails.map {
       case CandidateDetails(candidate, source) =>
         val crt = candidate.commonRecType
-        scoreExtractor(candidate).map { scoreOp =>
+        scoreEtwittertractor(candidate).map { scoreOp =>
           val scaledScore = (scoreOp.getOrElse(0.0) * scoreScaleFactorForStat).toFloat
           predictionScoreStats.scope("all_candidates").stat(statName).add(scaledScore)
           predictionScoreStats.scope(crt.toString()).stat(statName).add(scaledScore)
@@ -83,8 +83,8 @@ object ModelBasedRanker {
     bias: Double = 0.0
   ): Double = {
     val base = -1.0 * (weight * score + bias)
-    val cappedBase = math.max(math.min(base, 100.0), -100.0)
-    1.0 / (1.0 + math.exp(cappedBase))
+    val cappedBase = math.matwitter(math.min(base, 100.0), -100.0)
+    1.0 / (1.0 + math.etwitterp(cappedBase))
   }
 
   def transformLinear(
@@ -92,7 +92,7 @@ object ModelBasedRanker {
     bar: Double = 1.0
   ): Double = {
     val positiveBar = math.abs(bar)
-    val cappedScore = math.max(math.min(score, positiveBar), -1.0 * positiveBar)
+    val cappedScore = math.matwitter(math.min(score, positiveBar), -1.0 * positiveBar)
     cappedScore / positiveBar
   }
 
@@ -122,7 +122,7 @@ object ModelBasedRanker {
               val transformedQualityScore = qualityScoreTransform(qualityScore)
               val combinedScore = ooncScore * (1.0 + qualityScoreBoost * transformedQualityScore)
               candidate
-                .cacheExternalScore(OoncQualityCombinedScore, Future.value(Some(combinedScore)))
+                .cacheEtwitterternalScore(OoncQualityCombinedScore, Future.value(Some(combinedScore)))
               Some(combinedScore)
             case _ => None
           }
@@ -146,7 +146,7 @@ object ModelBasedRanker {
       candidate => {
         val baseScoreFutureOpt: Future[Option[Double]] = {
           val qualityCombinedScoreFutureOpt =
-            candidate.getExternalCachedScoreByName(OoncQualityCombinedScore)
+            candidate.getEtwitterternalCachedScoreByName(OoncQualityCombinedScore)
           val ooncScoreFutureOpt = candidate.mrWeightedOpenOrNtabClickRankingProbability
           Future.join(qualityCombinedScoreFutureOpt, ooncScoreFutureOpt).map {
             case (Some(qualityCombinedScore), _) =>
@@ -178,8 +178,8 @@ object ModelBasedRanker {
           ooncRankedCandidate.candidate,
           MrQualityUprankingPartialTypeEnum.Oon)
 
-        if (sortedOonCandidateIterator.hasNext && isOon)
-          sortedOonCandidateIterator.next()
+        if (sortedOonCandidateIterator.hasNetwittert && isOon)
+          sortedOonCandidateIterator.netwittert()
         else ooncRankedCandidate
       }
     }

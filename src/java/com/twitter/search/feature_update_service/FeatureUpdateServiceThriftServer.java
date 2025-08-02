@@ -16,11 +16,11 @@ import com.twitter.app.Flag;
 import com.twitter.app.Flaggable;
 import com.twitter.finagle.Filter;
 import com.twitter.finagle.Service;
-import com.twitter.finagle.ThriftMux;
+import com.twitter.finagle.ThriftMutwitter;
 import com.twitter.finatra.annotations.DarkTrafficFilterType;
 import com.twitter.finatra.decider.modules.DeciderModule$;
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule;
-import com.twitter.finatra.mtls.thriftmux.AbstractMtlsThriftServer;
+import com.twitter.finatra.mtls.thriftmutwitter.modules.MtlsThriftWebFormsModule;
+import com.twitter.finatra.mtls.thriftmutwitter.AbstractMtlsThriftServer;
 import com.twitter.finatra.thrift.filters.AccessLoggingFilter;
 import com.twitter.finatra.thrift.filters.LoggingMDCFilter;
 import com.twitter.finatra.thrift.filters.StatsFilter;
@@ -30,7 +30,7 @@ import com.twitter.finatra.thrift.routing.JavaThriftRouter;
 import com.twitter.inject.thrift.modules.ThriftClientIdModule$;
 import com.twitter.search.common.constants.SearchThriftWebFormsAccess;
 import com.twitter.search.common.metrics.BuildInfoStats;
-import com.twitter.search.common.util.PlatformStatsExporter;
+import com.twitter.search.common.util.PlatformStatsEtwitterporter;
 import com.twitter.search.feature_update_service.filters.ClientIdWhitelistFilter;
 import com.twitter.search.feature_update_service.modules.ClientIdWhitelistModule;
 import com.twitter.search.feature_update_service.modules.EarlybirdUtilModule;
@@ -40,15 +40,15 @@ import com.twitter.search.feature_update_service.modules.FuturePoolModule;
 import com.twitter.search.feature_update_service.modules.TweetypieModule;
 import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateService;
 import com.twitter.thriftwebforms.MethodOptionsAccessConfig;
-import com.twitter.util.ExecutorServiceFuturePool;
+import com.twitter.util.EtwitterecutorServiceFuturePool;
 
-public class FeatureUpdateServiceThriftServer extends AbstractMtlsThriftServer {
+public class FeatureUpdateServiceThriftServer etwittertends AbstractMtlsThriftServer {
   private static final Logger LOG =
       LoggerFactory.getLogger(FeatureUpdateServiceThriftServer.class);
 
   // Ideally we would not have to access the "environment" flag here and we could instead pass
   // a flag to the ThriftWebFormsModule that would either enable or disable thrift web forms.
-  // However, it is not simple to create our own TwitterModule that both extends the
+  // However, it is not simple to create our own TwitterModule that both etwittertends the
   // ThriftWebFormsModule and consumes an injected flag.
   private Flag<String> envFlag = flag().create("environment",
       "",
@@ -56,8 +56,8 @@ public class FeatureUpdateServiceThriftServer extends AbstractMtlsThriftServer {
       Flaggable.ofString());
 
   FeatureUpdateServiceThriftServer(String[] args) {
-    BuildInfoStats.export();
-    PlatformStatsExporter.exportPlatformStats();
+    BuildInfoStats.etwitterport();
+    PlatformStatsEtwitterporter.etwitterportPlatformStats();
 
     flag().parseArgs(args, true);
   }
@@ -98,7 +98,7 @@ public class FeatureUpdateServiceThriftServer extends AbstractMtlsThriftServer {
   @Override
   public void configureThrift(JavaThriftRouter router) {
     router
-        // Initialize Mapped Diagnostic Context (MDC) for logging
+        // Initialize Mapped Diagnostic Contetwittert (MDC) for logging
         // (see https://logback.qos.ch/manual/mdc.html)
         .filter(LoggingMDCFilter.class)
         // Inject trace ID in MDC for logging
@@ -107,7 +107,7 @@ public class FeatureUpdateServiceThriftServer extends AbstractMtlsThriftServer {
         .filter(ThriftMDCFilter.class)
         // Log client access
         .filter(AccessLoggingFilter.class)
-        // Export basic service stats
+        // Etwitterport basic service stats
         .filter(StatsFilter.class)
         .filter(ClientIdWhitelistFilter.class)
         .add(FeatureUpdateController.class);
@@ -122,24 +122,24 @@ public class FeatureUpdateServiceThriftServer extends AbstractMtlsThriftServer {
   }
 
   @Override
-  public ThriftMux.Server configureThriftServer(ThriftMux.Server server) {
+  public ThriftMutwitter.Server configureThriftServer(ThriftMutwitter.Server server) {
     // This cast looks redundant, but it is required for pants to compile this file.
-    return (ThriftMux.Server) server.withResponseClassifier(new FeatureUpdateResponseClassifier());
+    return (ThriftMutwitter.Server) server.withResponseClassifier(new FeatureUpdateResponseClassifier());
   }
 
   @Override
   public void postWarmup() {
     super.postWarmup();
 
-    ExecutorServiceFuturePool futurePool = injector().instance(ExecutorServiceFuturePool.class);
+    EtwitterecutorServiceFuturePool futurePool = injector().instance(EtwitterecutorServiceFuturePool.class);
     Preconditions.checkNotNull(futurePool);
 
-    onExit(() -> {
+    onEtwitterit(() -> {
       try {
-        futurePool.executor().shutdownNow();
+        futurePool.etwitterecutor().shutdownNow();
 
-        futurePool.executor().awaitTermination(10L, TimeUnit.SECONDS);
-      } catch (InterruptedException e) {
+        futurePool.etwitterecutor().awaitTermination(10L, TimeUnit.SECONDS);
+      } catch (InterruptedEtwitterception e) {
         LOG.error("Interrupted while awaiting future pool termination", e);
       }
 

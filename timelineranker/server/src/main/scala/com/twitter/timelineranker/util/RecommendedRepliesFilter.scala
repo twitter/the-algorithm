@@ -20,7 +20,7 @@ object RecommendedRepliesFilter {
   ): Boolean = {
     val isValidRecommendedReply =
       !tweet.isRetweet &&
-        tweet.inReplyToUserId.exists(followedUserIds.contains(_)) &&
+        tweet.inReplyToUserId.etwitterists(followedUserIds.contains(_)) &&
         !mutedUserIds.contains(tweet.userId)
 
     isRecommendedReply(tweet, followedUserIds) && !isValidRecommendedReply

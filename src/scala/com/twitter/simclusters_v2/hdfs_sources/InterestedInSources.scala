@@ -3,7 +3,7 @@ package com.twitter.simclusters_v2.hdfs_sources
 import com.twitter.dal.client.dataset.KeyValDALDataset
 import com.twitter.scalding.{DateOps, DateRange, Days, TypedPipe}
 import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
+import com.twitter.scalding_internal.dalv2.remote_access.{EtwitterplicitLocation, ProcAtla}
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common.UserId
 import com.twitter.simclusters_v2.thriftscala.ModelVersion
@@ -22,7 +22,7 @@ object InterestedInSources {
 
   /**
    * Internal version, not PDP compliant, not to be used outside simclusters_v2
-   * Reads 20M145KDec11 production InterestedIn data from atla-proc, with a 14-day extended window
+   * Reads 20M145KDec11 production InterestedIn data from atla-proc, with a 14-day etwittertended window
    */
   private[simclusters_v2] def simClustersRawInterestedInDec11Source(
     dateRange: DateRange,
@@ -34,7 +34,7 @@ object InterestedInSources {
         SimclustersV2RawInterestedIn20M145KDec11ScalaDataset,
         dateRange.prepend(Days(14)(timeZone))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
       .toTypedPipe
       .map {
         case KeyVal(userId, clustersUserIsInterestedIn) =>
@@ -44,7 +44,7 @@ object InterestedInSources {
 
   /**
    * Internal version, not PDP compliant, not to be used outside simclusters_v2
-   * Reads 20M145KUpdated InterestedIn data from atla-proc, with a 14-day extended window
+   * Reads 20M145KUpdated InterestedIn data from atla-proc, with a 14-day etwittertended window
    */
   private[simclusters_v2] def simClustersRawInterestedInUpdatedSource(
     dateRange: DateRange,
@@ -55,7 +55,7 @@ object InterestedInSources {
         SimclustersV2RawInterestedIn20M145KUpdatedScalaDataset,
         dateRange.prepend(Days(14)(timeZone))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
       .toTypedPipe.map {
         case KeyVal(userId, clustersUserIsInterestedIn) =>
           (userId, clustersUserIsInterestedIn)
@@ -64,7 +64,7 @@ object InterestedInSources {
 
   /**
    * Internal version, not PDP compliant, not to be used outside simclusters_v2
-   * Reads 20M145K2020 InterestedIn data from atla-proc, with a 14-day extended window
+   * Reads 20M145K2020 InterestedIn data from atla-proc, with a 14-day etwittertended window
    */
   private[simclusters_v2] def simClustersRawInterestedIn2020Source(
     dateRange: DateRange,
@@ -75,7 +75,7 @@ object InterestedInSources {
         SimclustersV2RawInterestedIn20M145K2020ScalaDataset,
         dateRange.prepend(Days(14)(timeZone))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
       .toTypedPipe.map {
         case KeyVal(userId, clustersUserIsInterestedIn) =>
           (userId, clustersUserIsInterestedIn)
@@ -89,8 +89,8 @@ object InterestedInSources {
     DAL
       .readMostRecentSnapshot(
         SimclustersV2RawInterestedInLite20M145K2020ScalaDataset,
-        dateRange.extend(Days(14)(timeZone)))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+        dateRange.etwittertend(Days(14)(timeZone)))
+      .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
       .toTypedPipe.map {
         case KeyVal(userId, clustersUserIsInterestedIn) =>
           (userId, clustersUserIsInterestedIn)
@@ -98,7 +98,7 @@ object InterestedInSources {
   }
 
   /**
-   * Reads 20M145KDec11 production InterestedIn data from atla-proc, with a 14-day extended window
+   * Reads 20M145KDec11 production InterestedIn data from atla-proc, with a 14-day etwittertended window
    */
   def simClustersInterestedInDec11Source(
     dateRange: DateRange,
@@ -109,7 +109,7 @@ object InterestedInSources {
       .readMostRecentSnapshot(
         SimclustersV2InterestedInScalaDataset,
         dateRange.prepend(Days(14)(timeZone)))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
       .toTypedPipe.map {
         case KeyVal(userId, clustersUserIsInterestedIn) =>
           (userId, clustersUserIsInterestedIn)
@@ -117,7 +117,7 @@ object InterestedInSources {
   }
 
   /**
-   * Reads 20M145KUpdated InterestedIn data from atla-proc, with a 14-day extended window
+   * Reads 20M145KUpdated InterestedIn data from atla-proc, with a 14-day etwittertended window
    */
   def simClustersInterestedInUpdatedSource(
     dateRange: DateRange,
@@ -128,7 +128,7 @@ object InterestedInSources {
         SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
         dateRange.prepend(Days(14)(timeZone))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
       .toTypedPipe.map {
         case KeyVal(userId, clustersUserIsInterestedIn) =>
           (userId, clustersUserIsInterestedIn)
@@ -136,7 +136,7 @@ object InterestedInSources {
   }
 
   /**
-   * Reads 20M145K2020 InterestedIn data from atla-proc, with a 14-day extended window
+   * Reads 20M145K2020 InterestedIn data from atla-proc, with a 14-day etwittertended window
    */
   def simClustersInterestedIn2020Source(
     dateRange: DateRange,
@@ -147,7 +147,7 @@ object InterestedInSources {
         SimclustersV2InterestedIn20M145K2020ScalaDataset,
         dateRange.prepend(Days(14)(timeZone))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
       .toTypedPipe.map {
         case KeyVal(userId, clustersUserIsInterestedIn) =>
           (userId, clustersUserIsInterestedIn)
@@ -155,7 +155,7 @@ object InterestedInSources {
   }
 
   /**
-   * Reads InterestedIn data based on ModelVersion from atla-proc, with a 14-day extended window
+   * Reads InterestedIn data based on ModelVersion from atla-proc, with a 14-day etwittertended window
    */
   def simClustersInterestedInSource(
     modelVersion: ModelVersion,
@@ -168,7 +168,7 @@ object InterestedInSources {
         ModelVersionInterestedInDatasetMap(modelVersion),
         dateRange.prepend(Days(14)(timeZone))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
       .toTypedPipe.map {
         case KeyVal(userId, clustersUserIsInterestedIn) =>
           (userId, clustersUserIsInterestedIn)

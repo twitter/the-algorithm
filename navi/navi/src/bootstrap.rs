@@ -1,6 +1,6 @@
 use anyhow::Result;
 use log::{info, warn};
-use x509_parser::{prelude::{parse_x509_pem}, parse_x509_certificate};
+use twitter509_parser::{prelude::{parse_twitter509_pem}, parse_twitter509_certificate};
 use std::collections::HashMap;
 use tokio::time::Instant;
 use tonic::{
@@ -28,7 +28,7 @@ use crate::cli_args::{ARGS, INPUTS, OUTPUTS};
 use crate::metrics::{
     NAVI_VERSION, NUM_PREDICTIONS, NUM_REQUESTS_FAILED, NUM_REQUESTS_FAILED_BY_MODEL,
     NUM_REQUESTS_RECEIVED, NUM_REQUESTS_RECEIVED_BY_MODEL, RESPONSE_TIME_COLLECTOR,
-    CERT_EXPIRY_EPOCH
+    CERT_EtwitterPIRY_EPOCH
 };
 use crate::predict_service::{Model, PredictService};
 use crate::tf_proto::tensorflow_serving::model_spec::VersionChoice::Version;
@@ -63,15 +63,15 @@ impl TensorInput {
 
 impl TensorInputEnum {
     #[inline(always)]
-    pub(crate) fn extend(&mut self, another: TensorInputEnum) {
+    pub(crate) fn etwittertend(&mut self, another: TensorInputEnum) {
         match (self, another) {
-            (Self::String(input), Self::String(ex)) => input.extend(ex),
-            (Self::Int(input), Self::Int(ex)) => input.extend(ex),
-            (Self::Int64(input), Self::Int64(ex)) => input.extend(ex),
-            (Self::Float(input), Self::Float(ex)) => input.extend(ex),
-            (Self::Double(input), Self::Double(ex)) => input.extend(ex),
-            (Self::Boolean(input), Self::Boolean(ex)) => input.extend(ex),
-            x => panic!("input enum type not matched. input:{:?}, ex:{:?}", x.0, x.1),
+            (Self::String(input), Self::String(etwitter)) => input.etwittertend(etwitter),
+            (Self::Int(input), Self::Int(etwitter)) => input.etwittertend(etwitter),
+            (Self::Int64(input), Self::Int64(etwitter)) => input.etwittertend(etwitter),
+            (Self::Float(input), Self::Float(etwitter)) => input.etwittertend(etwitter),
+            (Self::Double(input), Self::Double(etwitter)) => input.etwittertend(etwitter),
+            (Self::Boolean(input), Self::Boolean(etwitter)) => input.etwittertend(etwitter),
+            twitter => panic!("input enum type not matched. input:{:?}, etwitter:{:?}", twitter.0, twitter.1),
         }
     }
     #[inline(always)]
@@ -79,12 +79,12 @@ impl TensorInputEnum {
         input_tensors
             .into_iter()
             .reduce(|mut acc, e| {
-                for (i, ext) in acc.iter_mut().zip(e) {
-                    i.tensor_data.extend(ext.tensor_data);
+                for (i, etwittert) in acc.iter_mut().zip(e) {
+                    i.tensor_data.etwittertend(etwittert.tensor_data);
                 }
                 acc
             })
-            .unwrap() //invariant: we expect there's always rows in input_tensors
+            .unwrap() //invariant: we etwitterpect there's always rows in input_tensors
     }
 }
 
@@ -159,15 +159,15 @@ impl<T: Model> PredictionService for PredictService<T> {
         NUM_REQUESTS_RECEIVED_BY_MODEL
             .with_label_values(&[&model_spec])
             .inc();
-        let idx = PredictService::<T>::get_model_index(&model_spec).ok_or_else(|| {
+        let idtwitter = PredictService::<T>::get_model_indetwitter(&model_spec).ok_or_else(|| {
             Status::failed_precondition(format!("model spec not found:{}", model_spec))
         })?;
-        let input_spec = match INPUTS[idx].get() {
+        let input_spec = match INPUTS[idtwitter].get() {
             Some(input) => input,
-            _ => return Err(Status::not_found(format!("model input spec {}", idx))),
+            _ => return Err(Status::not_found(format!("model input spec {}", idtwitter))),
         };
         let input_val = req.take_input_vals(input_spec);
-        self.predict(idx, version, input_val, start)
+        self.predict(idtwitter, version, input_val, start)
             .await
             .map_or_else(
                 |e| {
@@ -186,14 +186,14 @@ impl<T: Model> PredictionService for PredictService<T> {
                         PredictResult::Ok(tensors, version) => {
                             let mut outputs = HashMap::new();
                             NUM_PREDICTIONS.with_label_values(&[&model_spec]).inc();
-                            //FIXME: uncomment when prediction scores are normal
+                            //FItwitterME: uncomment when prediction scores are normal
                             // PREDICTION_SCORE_SUM
                             // .with_label_values(&[&model_spec])
                             // .inc_by(tensors[0]as f64);
                             for (tp, output_name) in tensors
                                 .into_iter()
                                 .map(|tensor| tensor.create_tensor_proto())
-                                .zip(OUTPUTS[idx].iter())
+                                .zip(OUTPUTS[idtwitter].iter())
                             {
                                 outputs.insert(output_name.to_owned(), tp);
                             }
@@ -206,15 +206,15 @@ impl<T: Model> PredictionService for PredictService<T> {
                             };
                             Ok(Response::new(reply))
                         }
-                        PredictResult::DropDueToOverload => Err(Status::resource_exhausted("")),
-                        PredictResult::ModelNotFound(idx) => {
-                            Err(Status::not_found(format!("model index {}", idx)))
+                        PredictResult::DropDueToOverload => Err(Status::resource_etwitterhausted("")),
+                        PredictResult::ModelNotFound(idtwitter) => {
+                            Err(Status::not_found(format!("model indetwitter {}", idtwitter)))
                         },
-                        PredictResult::ModelNotReady(idx) => {
-                            Err(Status::unavailable(format!("model index {}", idx)))
+                        PredictResult::ModelNotReady(idtwitter) => {
+                            Err(Status::unavailable(format!("model indetwitter {}", idtwitter)))
                         }
-                        PredictResult::ModelVersionNotFound(idx, version) => Err(
-                            Status::not_found(format!("model index:{}, version {}", idx, version)),
+                        PredictResult::ModelVersionNotFound(idtwitter, version) => Err(
+                            Status::not_found(format!("model indetwitter:{}, version {}", idtwitter, version)),
                         ),
                     }
                 },
@@ -236,9 +236,9 @@ impl<T: Model> PredictionService for PredictService<T> {
 }
 
 // A function that takes a timestamp as input and returns a ticker stream
-fn report_expiry(expiry_time: i64) {
-    info!("Certificate expires at epoch: {:?}", expiry_time);
-    CERT_EXPIRY_EPOCH.set(expiry_time as i64);
+fn report_etwitterpiry(etwitterpiry_time: i64) {
+    info!("Certificate etwitterpires at epoch: {:?}", etwitterpiry_time);
+    CERT_EtwitterPIRY_EPOCH.set(etwitterpiry_time as i64);
 }
 
 pub fn bootstrap<T: Model>(model_factory: ModelFactory<T>) -> Result<()> {
@@ -261,7 +261,7 @@ pub fn bootstrap<T: Model>(model_factory: ModelFactory<T>) -> Result<()> {
     tokio::runtime::Builder::new_multi_thread()
         .thread_name("async worker")
         .worker_threads(ARGS.num_worker_threads)
-        .max_blocking_threads(ARGS.max_blocking_threads)
+        .matwitter_blocking_threads(ARGS.matwitter_blocking_threads)
         .enable_all()
         .build()
         .unwrap()
@@ -277,31 +277,31 @@ pub fn bootstrap<T: Model>(model_factory: ModelFactory<T>) -> Result<()> {
             } else {
                 // Read the pem file as a string
                 let pem_str = std::fs::read_to_string(format!("{}/server.crt", ARGS.ssl_dir)).unwrap();
-                let res = parse_x509_pem(&pem_str.as_bytes());
+                let res = parse_twitter509_pem(&pem_str.as_bytes());
                 match res {
                     Ok((rem, pem_2)) => {
                         assert!(rem.is_empty());
                         assert_eq!(pem_2.label, String::from("CERTIFICATE"));
-                        let res_x509 = parse_x509_certificate(&pem_2.contents);
+                        let res_twitter509 = parse_twitter509_certificate(&pem_2.contents);
                         info!("Certificate label: {}", pem_2.label);
-                        assert!(res_x509.is_ok());
-                        report_expiry(res_x509.unwrap().1.validity().not_after.timestamp());
+                        assert!(res_twitter509.is_ok());
+                        report_etwitterpiry(res_twitter509.unwrap().1.validity().not_after.timestamp());
                     },
                     _ => panic!("PEM parsing failed: {:?}", res),
                 }
 
                 let key = tokio::fs::read(format!("{}/server.key", ARGS.ssl_dir))
                     .await
-                    .expect("can't find key file");
+                    .etwitterpect("can't find key file");
                 let crt = tokio::fs::read(format!("{}/server.crt", ARGS.ssl_dir))
                     .await
-                    .expect("can't find crt file");
+                    .etwitterpect("can't find crt file");
                 let chain = tokio::fs::read(format!("{}/server.chain", ARGS.ssl_dir))
                     .await
-                    .expect("can't find chain file");
+                    .etwitterpect("can't find chain file");
                 let mut pem = Vec::new();
-                pem.extend(crt);
-                pem.extend(chain);
+                pem.etwittertend(crt);
+                pem.etwittertend(chain);
                 let identity = Identity::from_pem(pem.clone(), key);
                 let client_ca_cert = Certificate::from_pem(pem.clone());
                 let tls = ServerTlsConfig::new()
@@ -309,7 +309,7 @@ pub fn bootstrap<T: Model>(model_factory: ModelFactory<T>) -> Result<()> {
                     .client_ca_root(client_ca_cert);
                 Server::builder()
                     .tls_config(tls)
-                    .expect("fail to config SSL")
+                    .etwitterpect("fail to config SSL")
             };
 
             info!(

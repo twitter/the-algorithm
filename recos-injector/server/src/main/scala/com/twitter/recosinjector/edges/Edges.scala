@@ -26,7 +26,7 @@ case class UserTweetEntityEdge(
   metadata: Option[Long],
   entitiesMap: Option[Map[Byte, Seq[Int]]],
   tweetDetails: Option[TweetDetails])
-    extends Edge {
+    etwittertends Edge {
 
   override def convertToRecosHoseMessage: RecosHoseMessage = {
     RecosHoseMessage(
@@ -69,7 +69,7 @@ case class UserUserEdge(
   targetUser: Long,
   action: Action,
   metadata: Option[Long])
-    extends Edge {
+    etwittertends Edge {
   override def convertToRecosHoseMessage: RecosHoseMessage = {
     RecosHoseMessage(
       leftId = sourceUser,
@@ -80,7 +80,7 @@ case class UserUserEdge(
   }
 
   override def convertToUserTweetAuthorGraphMessage: UserTweetAuthorGraphMessage = {
-    throw new RuntimeException(
+    throw new RuntimeEtwitterception(
       "convertToUserTweetAuthorGraphMessage not implemented in UserUserEdge.")
   }
 

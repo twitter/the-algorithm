@@ -20,8 +20,8 @@ WITH
       END AS doOrUndo
     FROM `twttr-bql-unified-prod.unified_user_actions_engagements.streaming_unified_user_actions_engagements`, vars
     WHERE (DATE(dateHour) >= DATE(vars.start_date) AND DATE(dateHour) <= DATE(vars.end_date))
-      AND eventMetadata.sourceTimestampMs >= UNIX_MILLIS(vars.start_date)
-      AND eventMetadata.sourceTimestampMs <= UNIX_MILLIS(vars.end_date)
+      AND eventMetadata.sourceTimestampMs >= UNItwitter_MILLIS(vars.start_date)
+      AND eventMetadata.sourceTimestampMs <= UNItwitter_MILLIS(vars.end_date)
       AND (actionType IN ({CONTRIBUTING_ACTION_TYPES_STR})
             OR actionType IN ({UNDO_ACTION_TYPES_STR}))
   ),
@@ -39,8 +39,8 @@ WITH
         SELECT item.tweetInfo.actionTweetId AS tweetId
         FROM `twttr-bql-unified-prod.unified_user_actions_engagements.streaming_unified_user_actions_engagements`, vars
         WHERE (DATE(dateHour) >= DATE(vars.start_date) AND DATE(dateHour) <= DATE(vars.end_date))
-          AND eventMetadata.sourceTimestampMs >= UNIX_MILLIS(start_date)
-          AND eventMetadata.sourceTimestampMs <= UNIX_MILLIS(end_date)
+          AND eventMetadata.sourceTimestampMs >= UNItwitter_MILLIS(start_date)
+          AND eventMetadata.sourceTimestampMs <= UNItwitter_MILLIS(end_date)
           AND (actionType IN ("ClientTweetVideoPlayback50")
                 OR actionType IN ("ClientTweetVideoPlayback95"))
       )

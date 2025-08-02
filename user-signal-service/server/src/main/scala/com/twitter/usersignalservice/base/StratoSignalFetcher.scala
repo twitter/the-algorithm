@@ -8,16 +8,16 @@ import com.twitter.twistly.common.UserId
 import com.twitter.util.Future
 
 /**
- * A Strato signal fetcher extending BaseSignalFetcher to provide an interface to fetch signals from
+ * A Strato signal fetcher etwittertending BaseSignalFetcher to provide an interface to fetch signals from
  * Strato Column.
  *
- * Extends this when the underlying store is a single Strato column.
+ * Etwittertends this when the underlying store is a single Strato column.
  * @tparam StratoKeyType
  * @tparam StratoViewType
  * @tparam StratoValueType
  */
 trait StratoSignalFetcher[StratoKeyType, StratoViewType, StratoValueType]
-    extends BaseSignalFetcher {
+    etwittertends BaseSignalFetcher {
   /*
     Define the meta info of the strato column
    */

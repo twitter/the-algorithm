@@ -10,5 +10,5 @@ sealed trait GfsQuery {
 /**
  * Search for edges for any users to users in local partition.
  */
-case class ToPartialQuery(edgeType: EdgeType, userId: Long) extends GfsQuery
+case class ToPartialQuery(edgeType: EdgeType, userId: Long) etwittertends GfsQuery
 

@@ -2,7 +2,7 @@ package com.twitter.unified_user_actions.client.config
 
 import com.twitter.inject.Test
 
-class KafkaConfigsSpec extends Test {
+class KafkaConfigsSpec etwittertends Test {
   test("configs should be correct") {
     val states = Seq(
       (
@@ -28,10 +28,10 @@ class KafkaConfigsSpec extends Test {
     )
 
     states.foreach {
-      case (actual, expectedEnv, expectedTopic, expectedClusterName) =>
-        assert(expectedEnv == actual.environment.name, s"in $actual")
-        assert(expectedTopic == actual.topic, s"in $actual")
-        assert(expectedClusterName == actual.cluster.name, s"in $actual")
+      case (actual, etwitterpectedEnv, etwitterpectedTopic, etwitterpectedClusterName) =>
+        assert(etwitterpectedEnv == actual.environment.name, s"in $actual")
+        assert(etwitterpectedTopic == actual.topic, s"in $actual")
+        assert(etwitterpectedClusterName == actual.cluster.name, s"in $actual")
       case _ =>
     }
   }

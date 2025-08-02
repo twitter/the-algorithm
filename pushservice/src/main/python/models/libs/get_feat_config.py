@@ -75,23 +75,23 @@ def _get_new_feature_config_base(
 
   builder = contrib_feature_config.FeatureConfigBuilder(data_spec_path=data_spec_path)
 
-  builder = builder.extract_feature_group(
-    feature_regexes=a_string_feat_list,
+  builder = builder.etwittertract_feature_group(
+    feature_regetwitteres=a_string_feat_list,
     group_name="continuous",
     default_value=FEAT_CONFIG_DEFAULT_VAL,
     type_filter=["CONTINUOUS"],
   )
 
-  builder = builder.extract_features_as_hashed_sparse(
-    feature_regexes=a_string_feat_list,
+  builder = builder.etwittertract_features_as_hashed_sparse(
+    feature_regetwitteres=a_string_feat_list,
     output_tensor_name="sparse_no_continuous",
     hash_space_size_bits=input_size_bits,
     type_filter=["BINARY", "DISCRETE", "STRING", "SPARSE_BINARY"],
   )
 
   if add_gbdt:
-    builder = builder.extract_features_as_hashed_sparse(
-      feature_regexes=["ads\..*"],
+    builder = builder.etwittertract_features_as_hashed_sparse(
+      feature_regetwitteres=["ads\..*"],
       output_tensor_name="gbdt_sparse",
       hash_space_size_bits=input_size_bits,
     )
@@ -99,23 +99,23 @@ def _get_new_feature_config_base(
   if add_sparse_continous:
     s_string_feat_list = [f[0] for f in feature_list if f[1] == "S"]
 
-    builder = builder.extract_features_as_hashed_sparse(
-      feature_regexes=s_string_feat_list,
+    builder = builder.etwittertract_features_as_hashed_sparse(
+      feature_regetwitteres=s_string_feat_list,
       output_tensor_name="sparse_continuous",
       hash_space_size_bits=input_size_bits,
       type_filter=["SPARSE_CONTINUOUS"],
     )
 
   if add_user_id:
-    builder = builder.extract_feature("meta.user_id")
+    builder = builder.etwittertract_feature("meta.user_id")
   if add_timestamp:
-    builder = builder.extract_feature("meta.timestamp")
+    builder = builder.etwittertract_feature("meta.timestamp")
   if add_user_age:
-    builder = builder.extract_feature(USER_AGE_FEATURE_NAME)
+    builder = builder.etwittertract_feature(USER_AGE_FEATURE_NAME)
 
   if run_light_ranking_group_metrics_in_bq:
-    builder = builder.extract_feature("meta.trace_id")
-    builder = builder.extract_feature("meta.ranking.weighted_oonc_model_score")
+    builder = builder.etwittertract_feature("meta.trace_id")
+    builder = builder.etwittertract_feature("meta.ranking.weighted_oonc_model_score")
 
   builder = builder.add_labels(labels).define_weight("meta.weight")
 

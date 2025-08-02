@@ -7,7 +7,7 @@ import com.twitter.graph_feature_service.thriftscala.GfsIntersectionResponse
 import com.twitter.graph_feature_service.thriftscala.GfsPresetIntersectionRequest
 import com.twitter.graph_feature_service.thriftscala.{Server => GraphFeatureService}
 import com.twitter.stitch.Stitch
-import javax.inject.{Inject, Singleton}
+import javatwitter.inject.{Inject, Singleton}
 
 @Singleton
 class GraphFeatureServiceClient @Inject() (

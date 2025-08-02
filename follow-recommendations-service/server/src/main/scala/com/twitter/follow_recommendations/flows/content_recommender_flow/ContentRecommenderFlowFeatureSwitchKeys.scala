@@ -23,8 +23,8 @@ object ContentRecommenderFlowFeatureSwitchKeys {
     "content_recommender_flow_include_home_timeline_tweet_recs_candidate_source"
   val IncludeSocialProofEnforcedCandidateSource =
     "content_recommender_flow_include_social_proof_enforced_candidate_source"
-  val IncludeNewFollowingNewFollowingExpansionCandidateSource =
-    "content_recommender_flow_include_new_following_new_following_expansion_candidate_source"
+  val IncludeNewFollowingNewFollowingEtwitterpansionCandidateSource =
+    "content_recommender_flow_include_new_following_new_following_etwitterpansion_candidate_source"
   val IncludeMoreGeoBasedCandidateSource =
     "content_recommender_flow_include_more_geo_based_candidate_source"
   val GetFollowersFromSgs = "content_recommender_flow_get_followers_from_sgs"
@@ -46,8 +46,8 @@ object ContentRecommenderFlowFeatureSwitchKeys {
   val TriangularLoopsSourceWeight =
     "content_recommender_flow_candidate_source_weight_triangular_loops"
   val UserUserGraphSourceWeight = "content_recommender_flow_candidate_source_weight_user_user_graph"
-  val NewFollowingNewFollowingExpansionSourceWeight =
-    "content_recommender_flow_candidate_source_weight_new_following_new_following_expansion"
+  val NewFollowingNewFollowingEtwitterpansionSourceWeight =
+    "content_recommender_flow_candidate_source_weight_new_following_new_following_etwitterpansion"
   // Activity based
   val NewFollowingSimilarUserSourceWeight =
     "content_recommender_flow_candidate_source_weight_new_following_similar_user"

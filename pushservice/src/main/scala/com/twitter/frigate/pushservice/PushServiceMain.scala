@@ -8,10 +8,10 @@ import com.twitter.finatra.http.HttpServer
 import com.twitter.finatra.http.filters.CommonFilters
 import com.twitter.finatra.http.routing.HttpRouter
 import com.twitter.finatra.mtls.http.{Mtls => HttpMtls}
-import com.twitter.finatra.mtls.thriftmux.{Mtls => ThriftMtls}
-import com.twitter.finatra.mtls.thriftmux.filters.MtlsServerSessionTrackerFilter
+import com.twitter.finatra.mtls.thriftmutwitter.{Mtls => ThriftMtls}
+import com.twitter.finatra.mtls.thriftmutwitter.filters.MtlsServerSessionTrackerFilter
 import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.finatra.thrift.filters.ExceptionMappingFilter
+import com.twitter.finatra.thrift.filters.EtwitterceptionMappingFilter
 import com.twitter.finatra.thrift.filters.LoggingMDCFilter
 import com.twitter.finatra.thrift.filters.StatsFilter
 import com.twitter.finatra.thrift.filters.ThriftMDCFilter
@@ -29,15 +29,15 @@ import com.twitter.logging.LoggerFactory
 import com.twitter.logging.{Logging => JLogging}
 import com.twitter.logging.QueueingHandler
 import com.twitter.logging.ScribeHandler
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule
-import com.twitter.product_mixer.core.module.ABDeciderModule
-import com.twitter.product_mixer.core.module.FeatureSwitchesModule
-import com.twitter.product_mixer.core.module.StratoClientModule
+import com.twitter.product_mitwitterer.core.module.product_mitwitterer_flags.ProductMitwittererFlagModule
+import com.twitter.product_mitwitterer.core.module.ABDeciderModule
+import com.twitter.product_mitwitterer.core.module.FeatureSwitchesModule
+import com.twitter.product_mitwitterer.core.module.StratoClientModule
 
-object PushServiceMain extends PushServiceFinatraServer
+object PushServiceMain etwittertends PushServiceFinatraServer
 
 class PushServiceFinatraServer
-    extends ThriftServer
+    etwittertends ThriftServer
     with ThriftMtls
     with HttpServer
     with HttpMtls
@@ -55,7 +55,7 @@ class PushServiceFinatraServer
       EnvironmentModule,
       ThriftClientIdModule,
       DeployConfigModule,
-      ProductMixerFlagModule,
+      ProductMitwittererFlagModule,
       StratoClientModule,
       PushHandlerModule,
       PushTargetUserBuilderModule,
@@ -67,7 +67,7 @@ class PushServiceFinatraServer
 
   override def configureThrift(router: ThriftRouter): Unit = {
     router
-      .filter[ExceptionMappingFilter]
+      .filter[EtwitterceptionMappingFilter]
       .filter[LoggingMDCFilter]
       .filter[TraceIdMDCFilter]
       .filter[ThriftMDCFilter]
@@ -90,7 +90,7 @@ class PushServiceFinatraServer
   }
 
   override protected def warmup(): Unit = {
-    handle[PushMixerThriftServerWarmupHandler]()
+    handle[PushMitwittererThriftServerWarmupHandler]()
   }
 
   override protected def configureLoggerFactories(): Unit = {
@@ -109,7 +109,7 @@ class PushServiceFinatraServer
         level = Some(Level.INFO),
         useParents = false,
         handlers = QueueingHandler(
-          maxQueueSize = 10000,
+          matwitterQueueSize = 10000,
           handler = ScribeHandler(
             category = "frigate_pushservice_log",
             formatter = BareFormatter,
@@ -122,7 +122,7 @@ class PushServiceFinatraServer
         level = Some(Level.INFO),
         useParents = false,
         handlers = QueueingHandler(
-          maxQueueSize = 10000,
+          matwitterQueueSize = 10000,
           handler = ScribeHandler(
             category = "frigate_notifier",
             formatter = BareFormatter,
@@ -135,7 +135,7 @@ class PushServiceFinatraServer
         level = Some(Level.INFO),
         useParents = false,
         handlers = QueueingHandler(
-          maxQueueSize = 10000,
+          matwitterQueueSize = 10000,
           handler = ScribeHandler(
             category = "test_frigate_push",
             formatter = BareFormatter,
@@ -148,11 +148,11 @@ class PushServiceFinatraServer
         level = Some(Level.INFO),
         useParents = false,
         handlers = QueueingHandler(
-          maxQueueSize = 2500,
+          matwitterQueueSize = 2500,
           handler = ScribeHandler(
             category = "magicrecs_candidates_subsample_scribe",
-            maxMessagesPerTransaction = 250,
-            maxMessagesToBuffer = 2500,
+            matwitterMessagesPerTransaction = 250,
+            matwitterMessagesToBuffer = 2500,
             formatter = BareFormatter,
             statsReceiver = scribeScope.scope("magicrecs_candidates_subsample_scribe")
           )
@@ -163,11 +163,11 @@ class PushServiceFinatraServer
         level = Some(Level.INFO),
         useParents = false,
         handlers = QueueingHandler(
-          maxQueueSize = 2500,
+          matwitterQueueSize = 2500,
           handler = ScribeHandler(
             category = "mr_request_scribe",
-            maxMessagesPerTransaction = 250,
-            maxMessagesToBuffer = 2500,
+            matwitterMessagesPerTransaction = 250,
+            matwitterMessagesToBuffer = 2500,
             formatter = BareFormatter,
             statsReceiver = scribeScope.scope("mr_request_scribe")
           )
@@ -178,11 +178,11 @@ class PushServiceFinatraServer
         level = Some(Level.INFO),
         useParents = false,
         handlers = QueueingHandler(
-          maxQueueSize = 2500,
+          matwitterQueueSize = 2500,
           handler = ScribeHandler(
             category = "frigate_high_quality_candidates_log",
-            maxMessagesPerTransaction = 250,
-            maxMessagesToBuffer = 2500,
+            matwitterMessagesPerTransaction = 250,
+            matwitterMessagesToBuffer = 2500,
             formatter = BareFormatter,
             statsReceiver = scribeScope.scope("high_quality_candidates_scribe")
           )

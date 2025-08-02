@@ -2,7 +2,7 @@ package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common
 
 import com.twitter.ml.api.DataRecord
 import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
+import com.twitter.ml.api.FeatureContetwittert
 import com.twitter.ml.api.ITransform
 import com.twitter.ml.api.transform.CascadeTransform
 import com.twitter.ml.api.util.SRichDataRecord
@@ -11,13 +11,13 @@ import com.twitter.search.common.features.TweetFeature
 import com.twitter.timelines.prediction.features.itl.ITLFeatures._
 import scala.collection.JavaConverters._
 
-class EarlybirdTrainingRectweetConfiguration extends EarlybirdTrainingConfiguration {
+class EarlybirdTrainingRectweetConfiguration etwittertends EarlybirdTrainingConfiguration {
 
   override val labels: Map[String, Feature.Binary] = Map(
-    "detail_expanded" -> IS_CLICKED,
+    "detail_etwitterpanded" -> IS_CLICKED,
     "favorited" -> IS_FAVORITED,
     "open_linked" -> IS_OPEN_LINKED,
-    "photo_expanded" -> IS_PHOTO_EXPANDED,
+    "photo_etwitterpanded" -> IS_PHOTO_EtwitterPANDED,
     "profile_clicked" -> IS_PROFILE_CLICKED,
     "replied" -> IS_REPLIED,
     "retweeted" -> IS_RETWEETED,
@@ -28,7 +28,7 @@ class EarlybirdTrainingRectweetConfiguration extends EarlybirdTrainingConfigurat
 
   override def featureToSearchResultFeatureMap: Map[Feature[_], SearchResultFeature] =
     super.featureToSearchResultFeatureMap ++ Map(
-      TEXT_SCORE -> TweetFeature.TEXT_SCORE,
+      TEtwitterT_SCORE -> TweetFeature.TEtwitterT_SCORE,
       REPLY_COUNT -> TweetFeature.REPLY_COUNT,
       RETWEET_COUNT -> TweetFeature.RETWEET_COUNT,
       FAV_COUNT -> TweetFeature.FAVORITE_COUNT,
@@ -41,7 +41,7 @@ class EarlybirdTrainingRectweetConfiguration extends EarlybirdTrainingConfigurat
       HAS_IMAGE -> TweetFeature.HAS_IMAGE_URL_FLAG,
       HAS_NEWS -> TweetFeature.HAS_NEWS_URL_FLAG,
       HAS_VIDEO -> TweetFeature.HAS_VIDEO_URL_FLAG,
-      // some features that exist for recap are not available in rectweet
+      // some features that etwitterist for recap are not available in rectweet
       //    HAS_TREND
       //    HAS_MULTIPLE_HASHTAGS_OR_TRENDS
       //    IS_OFFENSIVE
@@ -73,8 +73,8 @@ class EarlybirdTrainingRectweetConfiguration extends EarlybirdTrainingConfigurat
     val linkLanguageTransform = new ITransform {
       private val linkLanguageFeature = new Feature.Continuous(TweetFeature.LINK_LANGUAGE.getName)
 
-      override def transformContext(featureContext: FeatureContext): FeatureContext =
-        featureContext.addFeatures(
+      override def transformContetwittert(featureContetwittert: FeatureContetwittert): FeatureContetwittert =
+        featureContetwittert.addFeatures(
           linkLanguageFeature
         )
 

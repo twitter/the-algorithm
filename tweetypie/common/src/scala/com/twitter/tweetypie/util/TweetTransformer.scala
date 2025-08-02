@@ -33,7 +33,7 @@ object TweetTransformer {
     Status(
       id = tweet.id,
       userId = coreData.userId,
-      text = coreData.text,
+      tetwittert = coreData.tetwittert,
       createdVia = coreData.createdVia,
       createdAt = coreData.createdAtSecs,
       urls = tweet.urls.getOrElse(Seq.empty),
@@ -71,7 +71,7 @@ object TweetTransformer {
     val coreData =
       TweetCoreData(
         userId = status.userId,
-        text = status.text,
+        tetwittert = status.tetwittert,
         createdVia = status.createdVia,
         createdAtSecs = status.createdAt,
         reply = status.reply,

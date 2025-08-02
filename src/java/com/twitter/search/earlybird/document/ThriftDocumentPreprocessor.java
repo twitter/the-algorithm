@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.document;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.List;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -23,7 +23,7 @@ import com.twitter.search.common.schema.thriftjava.ThriftField;
 import geo.google.datamodel.GeoAddressAccuracy;
 
 /**
- * Used to preprocess a ThriftDocument before indexing.
+ * Used to preprocess a ThriftDocument before indetwittering.
  */
 public final class ThriftDocumentPreprocessor {
   private static final FieldNameToIdMapping ID_MAP = new EarlybirdFieldConstants();
@@ -40,7 +40,7 @@ public final class ThriftDocumentPreprocessor {
    */
   public static ThriftDocument preprocess(
       ThriftDocument doc, EarlybirdCluster cluster, ImmutableSchemaInterface schema)
-      throws IOException {
+      throws IOEtwitterception {
     patchArchiveThriftDocumentAccuracy(doc, cluster);
     patchArchiveHasLinks(doc, cluster);
     addAllMissingMinEngagementFields(doc, cluster, schema);
@@ -48,13 +48,13 @@ public final class ThriftDocumentPreprocessor {
   }
 
   private static final SearchCounter GEO_SCRUBBED_COUNT =
-      SearchCounter.export("geo_scrubbed_count");
+      SearchCounter.etwitterport("geo_scrubbed_count");
   private static final SearchCounter GEO_ARCHIVE_PATCHED_ACCURACY_COUNT =
-      SearchCounter.export("geo_archive_patched_accuracy_count");
+      SearchCounter.etwitterport("geo_archive_patched_accuracy_count");
   private static final SearchCounter GEO_MISSING_COORDINATE_COUNT =
-      SearchCounter.export("geo_missing_coordinate_count");
+      SearchCounter.etwitterport("geo_missing_coordinate_count");
   private static final SearchCounter ARCHIVED_LINKS_FIELD_PATCHED_COUNT =
-      SearchCounter.export("links_field_patched_count");
+      SearchCounter.etwitterport("links_field_patched_count");
 
   /**
    * Counter for all the combinations of nullcast bit set and nullcast filter set.
@@ -63,7 +63,7 @@ public final class ThriftDocumentPreprocessor {
    * with nullcast bit set to true.
    */
   private static final SearchTruthTableCounter NULLCAST_DOC_STATS =
-      SearchTruthTableCounter.export(
+      SearchTruthTableCounter.etwitterport(
           "ThriftDocumentPreprocessor_nullcast_doc_stats",
           "nullcastBitSet",
           "nullcastFilterSet");
@@ -88,7 +88,7 @@ public final class ThriftDocumentPreprocessor {
         doc.getFields().remove(geoField);
         GEO_SCRUBBED_COUNT.increment();
       } else if (EarlybirdCluster.isArchive(cluster)) {
-        // In archive indexing, we base precision on SearchArchiveStatus.getPrecision, which is not
+        // In archive indetwittering, we base precision on SearchArchiveStatus.getPrecision, which is not
         // in the scale we want.  We always use POINT_LEVEL scale for now.
         geoField.getFieldData().getGeoCoordinate().setAccuracy(
             GeoAddressAccuracy.POINT_LEVEL.getCode());
@@ -143,7 +143,7 @@ public final class ThriftDocumentPreprocessor {
   @VisibleForTesting
   static void addAllMissingMinEngagementFields(
       ThriftDocument doc, EarlybirdCluster cluster, ImmutableSchemaInterface schema
-  ) throws IOException {
+  ) throws IOEtwitterception {
     if (!EarlybirdCluster.isArchive(cluster)) {
       return;
     }

@@ -22,7 +22,7 @@ case class LanguageFilteredLocaleEntityEmbeddingStore(
   underlyingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding],
   clusterDetailsStore: ReadableStore[(ModelVersion, ClusterId), ClusterDetails],
   composeKeyMapping: SimClustersEmbeddingId => SimClustersEmbeddingId)
-    extends ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] {
+    etwittertends ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] {
 
   import LanguageFilteredLocaleEntityEmbeddingStore._
 
@@ -70,12 +70,12 @@ case class LanguageFilteredLocaleEntityEmbeddingStore(
       case Some(details) =>
         val dominantLanguage =
           details.languageToFractionDeviceLanguage.map { langMap =>
-            langMap.maxBy {
+            langMap.matwitterBy {
               case (_, score) => score
             }._1
           }
 
-        dominantLanguage.exists(_.equalsIgnoreCase(requestLang))
+        dominantLanguage.etwitterists(_.equalsIgnoreCase(requestLang))
       case _ => true
     }
 
@@ -88,7 +88,7 @@ object LanguageFilteredLocaleEntityEmbeddingStore {
       case SimClustersEmbeddingId(_, _, InternalId.LocaleEntityId(localeEntityId)) =>
         localeEntityId.language
       case _ =>
-        throw new IllegalArgumentException(
+        throw new IllegalArgumentEtwitterception(
           s"The Id $simClustersEmbeddingId doesn't contain Locale info")
     }
   }

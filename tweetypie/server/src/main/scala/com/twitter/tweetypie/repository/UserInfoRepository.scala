@@ -11,13 +11,13 @@ import com.twitter.visibility.interfaces.tweets.UserUnavailableStateVisibilityLi
 import com.twitter.visibility.interfaces.tweets.UserUnavailableStateVisibilityRequest
 import com.twitter.visibility.models.SafetyLevel
 import com.twitter.visibility.models.UserUnavailableStateEnum
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 import com.twitter.visibility.thriftscala.UserVisibilityResult
 
 /**
  * Some types of user (e.g. frictionless users) may not
  * have profiles, so a missing UserIdentity may mean that the user
- * does not exist, or that the user does not have a profile.
+ * does not etwitterist, or that the user does not have a profile.
  */
 object UserIdentityRepository {
   type Type = UserKey => Stitch[UserIdentity]
@@ -97,7 +97,7 @@ object UserVisibilityRepository {
                   query.safetyLevel
                     .map(SafetyLevel.fromThrift).getOrElse(SafetyLevel.FilterDefault),
                   query.tweetId,
-                  ViewerContext.fromContextWithViewerIdFallback(query.forUserId),
+                  ViewerContetwittert.fromContetwittertWithViewerIdFallback(query.forUserId),
                   toUserUnavailableState(state, reason),
                   query.isRetweet,
                   query.isInnerQuotedTweet

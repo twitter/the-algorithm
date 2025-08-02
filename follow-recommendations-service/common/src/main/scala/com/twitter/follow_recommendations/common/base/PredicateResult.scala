@@ -8,11 +8,11 @@ sealed trait PredicateResult {
 
 object PredicateResult {
 
-  case object Valid extends PredicateResult {
+  case object Valid etwittertends PredicateResult {
     override val value = true
   }
 
-  case class Invalid(reasons: Set[FilterReason] = Set.empty[FilterReason]) extends PredicateResult {
+  case class Invalid(reasons: Set[FilterReason] = Set.empty[FilterReason]) etwittertends PredicateResult {
     override val value = false
   }
 }

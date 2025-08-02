@@ -7,7 +7,7 @@ import com.twitter.tweetypie.repository._
 import com.twitter.tweetypie.thriftscala._
 
 object MentionEntitiesHydrator {
-  type Type = ValueHydrator[Seq[MentionEntity], TweetCtx]
+  type Type = ValueHydrator[Seq[MentionEntity], TweetCttwitter]
 
   def once(h: MentionEntityHydrator.Type): Type =
     TweetHydration.completeOnlyOnce(
@@ -21,12 +21,12 @@ object MentionEntitiesHydrator {
 }
 
 object MentionEntityHydrator {
-  type Type = ValueHydrator[MentionEntity, TweetCtx]
+  type Type = ValueHydrator[MentionEntity, TweetCttwitter]
 
   val hydratedField: FieldByPath = fieldByPath(Tweet.MentionsField)
 
   def apply(repo: UserIdentityRepository.Type): Type =
-    ValueHydrator[MentionEntity, TweetCtx] { (entity, _) =>
+    ValueHydrator[MentionEntity, TweetCttwitter] { (entity, _) =>
       repo(UserKey(entity.screenName)).liftToTry.map {
         case Return(user) => ValueState.delta(entity, update(entity, user))
         case Throw(NotFound) => ValueState.unmodified(entity)

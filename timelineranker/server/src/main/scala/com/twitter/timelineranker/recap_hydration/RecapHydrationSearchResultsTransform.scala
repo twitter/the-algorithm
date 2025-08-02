@@ -9,7 +9,7 @@ import com.twitter.timelines.model.TweetId
 class RecapHydrationSearchResultsTransform(
   override protected val searchClient: SearchClient,
   override protected val statsReceiver: StatsReceiver)
-    extends RecapHydrationSearchResultsTransformBase {
+    etwittertends RecapHydrationSearchResultsTransformBase {
   override def tweetIdsToHydrate(envelope: CandidateEnvelope): Seq[TweetId] =
     envelope.query.tweetIds.get
 }

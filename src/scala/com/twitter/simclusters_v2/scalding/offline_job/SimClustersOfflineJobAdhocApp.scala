@@ -1,12 +1,12 @@
 package com.twitter.simclusters_v2.scalding.offline_job
 
 import com.twitter.scalding._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
 import com.twitter.simclusters_v2.common.ModelVersions
 import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.ClusterTopKTweetsHourlySuffixSource
-import com.twitter.simclusters_v2.hdfs_sources.TweetClusterScoresHourlySuffixSource
-import com.twitter.simclusters_v2.hdfs_sources.TweetTopKClustersHourlySuffixSource
+import com.twitter.simclusters_v2.hdfs_sources.ClusterTopKTweetsHourlySuffitwitterSource
+import com.twitter.simclusters_v2.hdfs_sources.TweetClusterScoresHourlySuffitwitterSource
+import com.twitter.simclusters_v2.hdfs_sources.TweetTopKClustersHourlySuffitwitterSource
 import com.twitter.simclusters_v2.scalding.common.Util
 import com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJob._
 import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
@@ -21,14 +21,14 @@ scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/offli
 --output_dir /user/cassowary/your_ldap/offline_simcluster_20190810
 --model_version 20M_145K_updated
  */
-object SimClustersOfflineJobAdhocApp extends TwitterExecutionApp {
+object SimClustersOfflineJobAdhocApp etwittertends TwitterEtwitterecutionApp {
 
   import SimClustersOfflineJobUtil._
   import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
 
-  override def job: Execution[Unit] =
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args: Args =>
+  override def job: Etwitterecution[Unit] =
+    Etwitterecution.withId { implicit uniqueId =>
+      Etwitterecution.withArgs { args: Args =>
         // required
         val wholeDateRange: DateRange = DateRange.parse(args.list("date"))
         val batchSize: Duration = Hours(args.int("batch_hours"))
@@ -58,22 +58,22 @@ object SimClustersOfflineJobAdhocApp extends TwitterExecutionApp {
         val interestedInData: TypedPipe[(Long, ClustersUserIsInterestedIn)] =
           fullInterestedInData.filter(_._2.knownForModelVersion == modelVersion)
 
-        val debugExec = Execution.zip(
+        val debugEtwitterec = Etwitterecution.zip(
           fullInterestedInData.printSummary("fullInterestedIn", numRecords = 20),
           interestedInData.printSummary("interestedIn", numRecords = 20)
         )
 
         // recursive function to calculate batches one by one
-        def runBatch(batchDateRange: DateRange): Execution[Unit] = {
+        def runBatch(batchDateRange: DateRange): Etwitterecution[Unit] = {
           if (batchDateRange.start.timestamp > wholeDateRange.end.timestamp) {
-            Execution.unit // stops here
+            Etwitterecution.unit // stops here
           } else {
 
             val previousScores = if (batchDateRange.start == wholeDateRange.start) {
               TypedPipe.from(Nil)
             } else {
               TypedPipe.from(
-                TweetClusterScoresHourlySuffixSource(
+                TweetClusterScoresHourlySuffitwitterSource(
                   tweetClusterScoreOutputPath,
                   batchDateRange - batchSize
                 )
@@ -87,12 +87,12 @@ object SimClustersOfflineJobAdhocApp extends TwitterExecutionApp {
               previousScores
             )
 
-            val writeLatestScoresExecution = {
-              Execution.zip(
+            val writeLatestScoresEtwitterecution = {
+              Etwitterecution.zip(
                 latestScores.printSummary(name = "TweetEntityScores"),
                 latestScores
-                  .writeExecution(
-                    TweetClusterScoresHourlySuffixSource(
+                  .writeEtwitterecution(
+                    TweetClusterScoresHourlySuffitwitterSource(
                       tweetClusterScoreOutputPath,
                       batchDateRange
                     )
@@ -100,33 +100,33 @@ object SimClustersOfflineJobAdhocApp extends TwitterExecutionApp {
               )
             }
 
-            val computeTweetTopKExecution = {
+            val computeTweetTopKEtwitterecution = {
               val tweetTopK = computeTweetTopKClusters(latestScores)
-              Execution.zip(
+              Etwitterecution.zip(
                 tweetTopK.printSummary(name = "TweetTopK"),
-                tweetTopK.writeExecution(
-                  TweetTopKClustersHourlySuffixSource(tweetTopKClustersOutputPath, batchDateRange)
+                tweetTopK.writeEtwitterecution(
+                  TweetTopKClustersHourlySuffitwitterSource(tweetTopKClustersOutputPath, batchDateRange)
                 )
               )
             }
 
-            val computeClusterTopKExecution = {
+            val computeClusterTopKEtwitterecution = {
               val clusterTopK = computeClusterTopKTweets(latestScores)
-              Execution.zip(
+              Etwitterecution.zip(
                 clusterTopK.printSummary(name = "ClusterTopK"),
-                clusterTopK.writeExecution(
-                  ClusterTopKTweetsHourlySuffixSource(clusterTopKTweetsOutputPath, batchDateRange)
+                clusterTopK.writeEtwitterecution(
+                  ClusterTopKTweetsHourlySuffitwitterSource(clusterTopKTweetsOutputPath, batchDateRange)
                 )
               )
             }
 
-            Execution
+            Etwitterecution
               .zip(
-                writeLatestScoresExecution,
-                computeTweetTopKExecution,
-                computeClusterTopKExecution
+                writeLatestScoresEtwitterecution,
+                computeTweetTopKEtwitterecution,
+                computeClusterTopKEtwitterecution
               ).flatMap { _ =>
-                // run next batch
+                // run netwittert batch
                 runBatch(batchDateRange + batchSize)
               }
           }
@@ -134,8 +134,8 @@ object SimClustersOfflineJobAdhocApp extends TwitterExecutionApp {
 
         // start from the first batch
         Util.printCounters(
-          Execution.zip(
-            debugExec,
+          Etwitterecution.zip(
+            debugEtwitterec,
             runBatch(
               DateRange(wholeDateRange.start, wholeDateRange.start + batchSize - Millisecs(1)))
           )
@@ -145,7 +145,7 @@ object SimClustersOfflineJobAdhocApp extends TwitterExecutionApp {
 }
 
 /**
-For example:
+For etwitterample:
 scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/offline_job:dump_cluster_topk_job-adhoc \
 --user cassowary
 --main-class com.twitter.simclusters_v2.scalding.offline_job.DumpClusterTopKTweetsAdhoc \
@@ -155,7 +155,7 @@ scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/offli
 --clusters 4446
 
  */
-object DumpClusterTopKTweetsAdhoc extends TwitterExecutionApp {
+object DumpClusterTopKTweetsAdhoc etwittertends TwitterEtwitterecutionApp {
 
   implicit val timeZone: TimeZone = DateOps.UTC
   implicit val dateParser: DateParser = DateParser.default
@@ -163,12 +163,12 @@ object DumpClusterTopKTweetsAdhoc extends TwitterExecutionApp {
   import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
   import com.twitter.simclusters_v2.summingbird.common.ThriftDecayedValueMonoid._
 
-  override def job: Execution[Unit] =
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args: Args =>
+  override def job: Etwitterecution[Unit] =
+    Etwitterecution.withId { implicit uniqueId =>
+      Etwitterecution.withArgs { args: Args =>
         val date = DateRange.parse(args.list("date"))
         val path = args("clusterTopKTweetsPath")
-        val input = TypedPipe.from(ClusterTopKTweetsHourlySuffixSource(path, date))
+        val input = TypedPipe.from(ClusterTopKTweetsHourlySuffitwitterSource(path, date))
         val clusters = args.list("clusters").map(_.toInt).toSet
 
         val dvm = SimClustersOfflineJobUtil.thriftDecayedValueMonoid
@@ -179,8 +179,8 @@ object DumpClusterTopKTweetsAdhoc extends TwitterExecutionApp {
             .collect {
               case rec if clusters.contains(rec.clusterId) =>
                 val res = rec.topKTweets
-                  .mapValues { x =>
-                    x.score
+                  .mapValues { twitter =>
+                    twitter.score
                       .map { y =>
                         val enriched = new EnrichedThriftDecayedValue(y)(dvm)
                         enriched.decayToTimestamp(date.end.timestamp).value
@@ -189,7 +189,7 @@ object DumpClusterTopKTweetsAdhoc extends TwitterExecutionApp {
                 rec.clusterId + "\t" + Util.prettyJsonMapper
                   .writeValueAsString(res).replaceAll("\n", " ")
             }
-            .toIterableExecution
+            .toIterableEtwitterecution
             .map { strings => println(strings.mkString("\n")) }
         }
       }

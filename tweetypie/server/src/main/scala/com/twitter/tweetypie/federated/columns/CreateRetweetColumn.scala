@@ -11,15 +11,15 @@ import com.twitter.strato.config.BouncerAccess
 import com.twitter.strato.config.ContactInfo
 import com.twitter.strato.config.Policy
 import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
+import com.twitter.strato.data.Description.PlainTetwittert
 import com.twitter.strato.data.Lifecycle.Production
 import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.opcontext.OpContext
+import com.twitter.strato.opcontetwittert.OpContetwittert
 import com.twitter.strato.response.Err
 import com.twitter.strato.thrift.ScroogeConv
 import com.twitter.tweetypie.federated.columns.ApiErrors._
 import com.twitter.tweetypie.federated.columns.CreateRetweetColumn.toCreateRetweetErr
-import com.twitter.tweetypie.federated.context.GetRequestContext
+import com.twitter.tweetypie.federated.contetwittert.GetRequestContetwittert
 import com.twitter.tweetypie.federated.prefetcheddata.PrefetchedDataRequest
 import com.twitter.tweetypie.federated.prefetcheddata.PrefetchedDataResponse
 import com.twitter.tweetypie.federated.promotedcontent.TweetPromotedContentLogger
@@ -27,16 +27,16 @@ import com.twitter.tweetypie.federated.promotedcontent.TweetPromotedContentLogge
 import com.twitter.tweetypie.thriftscala.TweetCreateState._
 import com.twitter.tweetypie.thriftscala.{graphql => gql}
 import com.twitter.tweetypie.{thriftscala => thrift}
-import com.twitter.weaverbird.common.{GetRequestContext => WGetRequestContext}
+import com.twitter.weaverbird.common.{GetRequestContetwittert => WGetRequestContetwittert}
 
 class CreateRetweetColumn(
   retweet: thrift.RetweetRequest => Future[thrift.PostTweetResult],
-  getRequestContext: GetRequestContext,
+  getRequestContetwittert: GetRequestContetwittert,
   prefetchedDataRepository: PrefetchedDataRequest => Stitch[PrefetchedDataResponse],
   logTweetPromotedContent: TweetPromotedContentLogger.Type,
   statsReceiver: StatsReceiver,
-) extends StratoFed.Column(CreateRetweetColumn.Path)
-    with StratoFed.Execute.StitchWithContext
+) etwittertends StratoFed.Column(CreateRetweetColumn.Path)
+    with StratoFed.Etwitterecute.StitchWithContetwittert
     with StratoFed.HandleDarkRequests {
 
   override val policy: Policy = AllOf(
@@ -54,21 +54,21 @@ class CreateRetweetColumn(
   override val contactInfo: ContactInfo = TweetypieContactInfo
   override val metadata: OpMetadata = OpMetadata(
     Some(Production),
-    Some(PlainText("Creates a retweet by the calling Twitter user of the given source tweet.")))
+    Some(PlainTetwittert("Creates a retweet by the calling Twitter user of the given source tweet.")))
 
-  private val getWeaverbirdCtx = new WGetRequestContext()
+  private val getWeaverbirdCttwitter = new WGetRequestContetwittert()
 
-  override def execute(request: Arg, opContext: OpContext): Stitch[Result] = {
-    val ctx = getRequestContext(opContext)
+  override def etwitterecute(request: Arg, opContetwittert: OpContetwittert): Stitch[Result] = {
+    val cttwitter = getRequestContetwittert(opContetwittert)
 
     // First, do any request parameter validation that can result in an error
     // prior to calling into thriftTweetService.retweet.
-    val safetyLevel = ctx.safetyLevel.getOrElse(throw SafetyLevelMissingErr)
+    val safetyLevel = cttwitter.safetyLevel.getOrElse(throw SafetyLevelMissingErr)
 
     // Macaw-tweets returns ApiError.ClientNotPrivileged if the caller provides
     // an impression_id but lacks the PROMOTED_TWEETS_IN_TIMELINE privilege.
     val trackingId = request.engagementRequest match {
-      case Some(engagementRequest: EngagementRequest) if ctx.hasPrivilegePromotedTweetsInTimeline =>
+      case Some(engagementRequest: EngagementRequest) if cttwitter.hasPrivilegePromotedTweetsInTimeline =>
         TrackingId.parse(engagementRequest.impressionId, statsReceiver)
       case Some(e: EngagementRequest) =>
         throw ClientNotPrivilegedErr
@@ -81,32 +81,32 @@ class CreateRetweetColumn(
     // ClientApplicationId is similar to TweetCreateState.DeviceSourceNotFound,
     // which Macaw-tweets handles via a catch-all that returns
     // ApiError.GenericAccessDenied
-    val deviceSource = ctx.deviceSource.getOrElse(throw GenericAccessDeniedErr)
+    val deviceSource = cttwitter.deviceSource.getOrElse(throw GenericAccessDeniedErr)
 
     // Macaw-tweets doesn't perform any parameter validation for the components
     // used as input to makeSafetyMetaData.
     val safetyMetadata = SafetyMetadataUtils.makeSafetyMetaData(
-      sessionHash = ctx.sessionHash,
-      knownDeviceToken = ctx.knownDeviceToken,
-      contributorId = ctx.contributorId
+      sessionHash = cttwitter.sessionHash,
+      knownDeviceToken = cttwitter.knownDeviceToken,
+      contributorId = cttwitter.contributorId
     )
 
     val thriftRetweetRequest = thrift.RetweetRequest(
       sourceStatusId = request.tweetId,
-      userId = ctx.twitterUserId,
+      userId = cttwitter.twitterUserId,
       contributorUserId = None, // no longer supported, per tweet_service.thrift
       createdVia = deviceSource,
       nullcast = request.nullcast,
       trackingId = trackingId,
-      dark = ctx.isDarkRequest,
-      hydrationOptions = Some(HydrationOptions.writePathHydrationOptions(ctx.cardsPlatformKey)),
+      dark = cttwitter.isDarkRequest,
+      hydrationOptions = Some(HydrationOptions.writePathHydrationOptions(cttwitter.cardsPlatformKey)),
       safetyMetaData = Some(safetyMetadata),
     )
 
     val stitchRetweet = Stitch.callFuture(retweet(thriftRetweetRequest))
 
     request.engagementRequest.foreach { engagement =>
-      logTweetPromotedContent(engagement, RetweetEngagement, ctx.isDarkRequest)
+      logTweetPromotedContent(engagement, RetweetEngagement, cttwitter.isDarkRequest)
     }
 
     stitchRetweet.flatMap { result: thrift.PostTweetResult =>
@@ -117,7 +117,7 @@ class CreateRetweetColumn(
             sourceTweet = result.sourceTweet,
             quotedTweet = result.quotedTweet,
             safetyLevel = safetyLevel,
-            requestContext = getWeaverbirdCtx()
+            requestContetwittert = getWeaverbirdCttwitter()
           )
 
           prefetchedDataRepository(r)
@@ -141,7 +141,7 @@ object CreateRetweetColumn {
   /**
    * Ported from:
    *   StatusesRetweetController#retweetStatus rescue block
-   *   TweetyPieStatusRepository.toRetweetException
+   *   TweetyPieStatusRepository.toRetweetEtwitterception
    */
   def toCreateRetweetErr(
     errState: thrift.TweetCreateState,
@@ -160,14 +160,14 @@ object CreateRetweetColumn {
       StatusNotFoundErr
     case UserDeactivated | UserSuspended =>
       UserDeniedRetweetErr
-    case RateLimitExceeded =>
-      RateLimitExceededErr
+    case RateLimitEtwitterceeded =>
+      RateLimitEtwitterceededErr
     case UrlSpam =>
       TweetUrlSpamErr
     case Spam | UserReadonly =>
       TweetSpammerErr
-    case SafetyRateLimitExceeded =>
-      SafetyRateLimitExceededErr
+    case SafetyRateLimitEtwitterceeded =>
+      SafetyRateLimitEtwitterceededErr
     case Bounce if bounce.isDefined =>
       accessDeniedByBouncerErr(bounce.get)
     case DisabledByIpiPolicy =>

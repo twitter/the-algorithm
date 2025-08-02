@@ -1,12 +1,12 @@
 package com.twitter.search.common.query;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.indetwitter.IndetwitterReader;
+import org.apache.lucene.search.IndetwitterSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Weight;
@@ -14,7 +14,7 @@ import org.apache.lucene.search.Weight;
 /**
  * Query implementation adds attribute collection support for an underlying query.
  */
-public class IdentifiableQuery extends Query {
+public class IdentifiableQuery etwittertends Query {
   protected final Query inner;
   private final FieldRankHitInfo queryId;
   private final HitAttributeCollector attrCollector;
@@ -28,13 +28,13 @@ public class IdentifiableQuery extends Query {
 
   @Override
   public Weight createWeight(
-      IndexSearcher searcher, ScoreMode scoreMode, float boost) throws IOException {
+      IndetwitterSearcher searcher, ScoreMode scoreMode, float boost) throws IOEtwitterception {
     Weight innerWeight = inner.createWeight(searcher, scoreMode, boost);
     return new IdentifiableQueryWeight(this, innerWeight, queryId, attrCollector);
   }
 
   @Override
-  public Query rewrite(IndexReader reader) throws IOException {
+  public Query rewrite(IndetwitterReader reader) throws IOEtwitterception {
     Query rewritten = inner.rewrite(reader);
     if (rewritten != inner) {
       return new IdentifiableQuery(rewritten, queryId, attrCollector);

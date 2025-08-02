@@ -12,8 +12,8 @@ import com.twitter.simclusters_v2.hdfs_sources._
 import com.twitter.simclusters_v2.scalding.common.Util
 import com.twitter.simclusters_v2.thriftscala._
 import com.twitter.wtf.entity_real_graph.scalding.common.{DataSources => ERGDataSources}
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
+import com.twitter.wtf.scalding.jobs.common.AdhocEtwitterecutionApp
+import com.twitter.wtf.scalding.jobs.common.ScheduledEtwitterecutionApp
 import java.util.TimeZone
 
 /**
@@ -68,7 +68,7 @@ capesospy-v2 update --build_locally --start_cron \
   inferred_entities_from_known_for \
   src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
  */
-object InferredKnownForSemanticCoreEntitiesBatchApp extends ScheduledExecutionApp {
+object InferredKnownForSemanticCoreEntitiesBatchApp etwittertends ScheduledEtwitterecutionApp {
 
   import InferredSemanticCoreEntitiesFromKnownFor._
 
@@ -84,10 +84,10 @@ object InferredKnownForSemanticCoreEntitiesBatchApp extends ScheduledExecutionAp
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     val clusterToEntities = EntityEmbeddingsSources
-      .getReverseIndexedSemanticCoreEntityEmbeddingsSource(
+      .getReverseIndetwitteredSemanticCoreEntityEmbeddingsSource(
         EmbeddingType.FavBasedSematicCoreEntity,
         ModelVersions.Model20M145K2020,
         dateRange.embiggen(Days(7)) // read 7 days before & after to give buffer
@@ -106,9 +106,9 @@ object InferredKnownForSemanticCoreEntitiesBatchApp extends ScheduledExecutionAp
 
     userToEntities
       .map { case (userId, entities) => KeyVal(userId, entities) }
-      .writeDALVersionedKeyValExecution(
+      .writeDALVersionedKeyValEtwitterecution(
         SimclustersInferredEntitiesFromKnownForScalaDataset,
-        D.Suffix(outputPath)
+        D.Suffitwitter(outputPath)
       )
   }
 }
@@ -120,7 +120,7 @@ object InferredKnownForSemanticCoreEntitiesBatchApp extends ScheduledExecutionAp
   --tool com.twitter.simclusters_v2.scalding.inferred_entities.InferredSemanticCoreEntitiesFromKnownForAdhocApp \
   -- --date 2019-11-02 --email your_ldap@twitter.com
  */
-object InferredSemanticCoreEntitiesFromKnownForAdhocApp extends AdhocExecutionApp {
+object InferredSemanticCoreEntitiesFromKnownForAdhocApp etwittertends AdhocEtwitterecutionApp {
 
   private def readEntityEmbeddingsFromPath(
     path: String
@@ -135,13 +135,13 @@ object InferredSemanticCoreEntitiesFromKnownForAdhocApp extends AdhocExecutionAp
                 case InternalIdWithScore(InternalId.EntityId(entityId), score) =>
                   SemanticCoreEntityWithScore(entityId, score)
                 case _ =>
-                  throw new IllegalArgumentException(
+                  throw new IllegalArgumentEtwitterception(
                     "The value to the entity embeddings dataset isn't entityId"
                   )
               }
               (clusterId, semanticCoreEntities)
             case _ =>
-              throw new IllegalArgumentException(
+              throw new IllegalArgumentEtwitterception(
                 "The key to the entity embeddings dataset isn't clusterId"
               )
           }
@@ -154,20 +154,20 @@ object InferredSemanticCoreEntitiesFromKnownForAdhocApp extends AdhocExecutionAp
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     import InferredSemanticCoreEntitiesFromKnownFor._
 
     val entityIdToString: TypedPipe[(Long, String)] =
       ERGDataSources.semanticCoreMetadataSource
         .collect {
           case FullMetadata(domainId, entityId, Some(basicMetadata), _, _, _)
-              if domainId == 131L && !basicMetadata.indexableFields.exists(
-                _.tags.exists(_.contains("utt:sensitive_interest"))) =>
+              if domainId == 131L && !basicMetadata.indetwitterableFields.etwitterists(
+                _.tags.etwitterists(_.contains("utt:sensitive_interest"))) =>
             entityId -> basicMetadata.name
         }.distinctBy(_._1)
 
     val clusterToEntitiesUpdated = EntityEmbeddingsSources
-      .getReverseIndexedSemanticCoreEntityEmbeddingsSource(
+      .getReverseIndetwitteredSemanticCoreEntityEmbeddingsSource(
         EmbeddingType.FavBasedSematicCoreEntity,
         ModelVersions.Model20M145KUpdated,
         dateRange.embiggen(Days(4)) // read 4 days before & after to give buffer
@@ -234,9 +234,9 @@ object InferredSemanticCoreEntitiesFromKnownForAdhocApp extends AdhocExecutionAp
         )
       }
 
-    Execution
+    Etwitterecution
       .zip(
-        userToEntitiesWithString.writeExecution(TypedTsv(outputPath)),
+        userToEntitiesWithString.writeEtwitterecution(TypedTsv(outputPath)),
         scoreDistribution,
         coverageDistribution
       ).unit

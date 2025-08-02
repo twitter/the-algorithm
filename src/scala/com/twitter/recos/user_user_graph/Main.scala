@@ -4,11 +4,11 @@ import com.twitter.abdecider.ABDeciderFactory
 import com.twitter.abdecider.LoggingABDecider
 import com.twitter.app.Flag
 import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.http.HttpMuxer
+import com.twitter.finagle.ThriftMutwitter
+import com.twitter.finagle.http.HttpMutwitterer
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.finagle.mtls.server.MtlsStackServer._
-import com.twitter.finagle.mux.transport.OpportunisticTls
+import com.twitter.finagle.mutwitter.transport.OpportunisticTls
 import com.twitter.finagle.thrift.ClientId
 import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
 import com.twitter.finatra.kafka.domain.KafkaGroupId
@@ -19,7 +19,7 @@ import com.twitter.frigate.common.util.ElfOwlFilter.ByLdapGroup
 import com.twitter.logging._
 import com.twitter.recos.decider.UserUserGraphDecider
 import com.twitter.recos.graph_common.FinagleStatsReceiverWrapper
-import com.twitter.recos.graph_common.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphBuilder
+import com.twitter.recos.graph_common.NodeMetadataLeftIndetwitteredPowerLawMultiSegmentBipartiteGraphBuilder
 import com.twitter.recos.internal.thriftscala.RecosHoseMessage
 import com.twitter.recos.model.Constants
 import com.twitter.recos.user_user_graph.KafkaConfig._
@@ -28,7 +28,7 @@ import com.twitter.server.Deciderable
 import com.twitter.server.TwitterServer
 import com.twitter.server.logging.{Logging => JDK14Logging}
 import com.twitter.servo.request._
-import com.twitter.servo.util.ExceptionCounter
+import com.twitter.servo.util.EtwitterceptionCounter
 import com.twitter.thriftwebforms._
 import com.twitter.util.Await
 import com.twitter.util.Duration
@@ -40,7 +40,7 @@ import org.apache.kafka.common.config.SslConfigs
 import org.apache.kafka.common.security.auth.SecurityProtocol
 import org.apache.kafka.common.serialization.StringDeserializer
 
-object Main extends TwitterServer with JDK14Logging with Deciderable {
+object Main etwittertends TwitterServer with JDK14Logging with Deciderable {
   profile =>
 
   val shardId: Flag[Int] = flag("shardId", 0, "Shard ID")
@@ -49,8 +49,8 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
   val logDir: Flag[String] = flag("logdir", "recos", "Logging directory")
   val hoseName: Flag[String] =
     flag("hosename", "recos_injector_user_user", "the kafka stream used for incoming edges")
-  val maxNumSegments: Flag[Int] =
-    flag("maxNumSegments", graphBuilderConfig.maxNumSegments, "the number of segments in the graph")
+  val matwitterNumSegments: Flag[Int] =
+    flag("matwitterNumSegments", graphBuilderConfig.matwitterNumSegments, "the number of segments in the graph")
   val numShards: Flag[Int] = flag("numShards", 1, "Number of shards for this service")
   val truststoreLocation: Flag[String] =
     flag[String]("truststore_location", "", "Truststore file location")
@@ -78,20 +78,20 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
   val shutdownTimeout: Flag[Duration] = flag(
     "service.shutdownTimeout",
     5.seconds,
-    "Maximum amount of time to wait for pending requests to complete on shutdown"
+    "Matwitterimum amount of time to wait for pending requests to complete on shutdown"
   )
 
   /**
-   * ExceptionCounter for tracking failures from RequestHandler(s).
+   * EtwitterceptionCounter for tracking failures from RequestHandler(s).
    */
-  lazy val exceptionCounter = new ExceptionCounter(statsReceiver)
+  lazy val etwitterceptionCounter = new EtwitterceptionCounter(statsReceiver)
 
   /**
-   * Function for translating exceptions returned by a RequestHandler. Useful
-   * for cases where underlying exception types should be wrapped in those
+   * Function for translating etwitterceptions returned by a RequestHandler. Useful
+   * for cases where underlying etwitterception types should be wrapped in those
    * defined in the project's Thrift IDL.
    */
-  lazy val translateExceptions: PartialFunction[Throwable, Throwable] = {
+  lazy val translateEtwitterceptions: PartialFunction[Throwable, Throwable] = {
     case t => t
   }
 
@@ -149,7 +149,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
         level = Some(loggingLevel),
         useParents = false,
         handlers = QueueingHandler(
-          maxQueueSize = 10000,
+          matwitterQueueSize = 10000,
           handler = ScribeHandler(
             category = "client_event",
             formatter = BareFormatter
@@ -179,11 +179,11 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
   // ********* Recos service **********
 
   def main(): Unit = {
-    log.info("building graph with maxNumSegments = " + profile.maxNumSegments())
+    log.info("building graph with matwitterNumSegments = " + profile.matwitterNumSegments())
     log.info("Reading from: " + hoseName())
 
-    val graph = NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphBuilder(
-      graphBuilderConfig.copy(maxNumSegments = profile.maxNumSegments()),
+    val graph = NodeMetadataLeftIndetwitteredPowerLawMultiSegmentBipartiteGraphBuilder(
+      graphBuilderConfig.copy(matwitterNumSegments = profile.matwitterNumSegments()),
       statsReceiverWrapper
     )
 
@@ -228,7 +228,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
       zone = dataCenter()
     )
 
-    val thriftServer = ThriftMux.server
+    val thriftServer = ThriftMutwitter.server
       .withOpportunisticTls(OpportunisticTls.Required)
       .withMutualTls(serviceIdentifier)
       .serveIface(servicePort(), recos)
@@ -244,7 +244,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
     log.info("clientid: " + clientId.toString)
     log.info("servicePort: " + servicePort().toString)
     log.info("adding shutdown hook")
-    onExit {
+    onEtwitterit {
       graphWriter.shutdown()
       thriftServer.close(shutdownTimeout().fromNow)
     }

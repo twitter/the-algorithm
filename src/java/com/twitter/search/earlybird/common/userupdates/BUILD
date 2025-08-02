@@ -38,7 +38,7 @@ java_library(
         "src/scala/com/twitter/scalding_internal/multiformat",
         "src/scala/com/twitter/scalding_internal/source",
         "src/scala/com/twitter/search/user_table/sources",
-        "src/thrift/com/twitter/search/common:indexing-java",
+        "src/thrift/com/twitter/search/common:indetwittering-java",
         "src/thrift/com/twitter/tweetypie:events-java",
         "util/util-core:scala",
     ],

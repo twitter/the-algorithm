@@ -40,12 +40,12 @@ public class intArray {
     this(swigfaissJNI.new_intArray(nelements), true);
   }
 
-  public int getitem(int index) {
-    return swigfaissJNI.intArray_getitem(swigCPtr, this, index);
+  public int getitem(int indetwitter) {
+    return swigfaissJNI.intArray_getitem(swigCPtr, this, indetwitter);
   }
 
-  public void setitem(int index, int value) {
-    swigfaissJNI.intArray_setitem(swigCPtr, this, index, value);
+  public void setitem(int indetwitter, int value) {
+    swigfaissJNI.intArray_setitem(swigCPtr, this, indetwitter, value);
   }
 
   public SWIGTYPE_p_int cast() {

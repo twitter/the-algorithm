@@ -46,14 +46,14 @@ object SparseBinaryAggregateJoin {
     }
   }
 
-  private[this] def mkKeyIndexedAggregates(
+  private[this] def mkKeyIndetwitteredAggregates(
     joinFeaturesDataSet: DataSetPipe,
     joinKeyList: List[Feature[_]]
   ): TypedPipe[(String, DataRecord)] =
     joinFeaturesDataSet.records
       .map { record => (makeKey(record, joinKeyList), record) }
 
-  private[this] def mkKeyIndexedInput(
+  private[this] def mkKeyIndetwitteredInput(
     inputDataSet: DataSetPipe,
     joinKeyList: List[Feature[_]]
   ): TypedPipe[(String, DataRecord)] =
@@ -64,7 +64,7 @@ object SparseBinaryAggregateJoin {
         } yield { (key, record) }
       }
 
-  private[this] def mkKeyIndexedInputWithUniqueId(
+  private[this] def mkKeyIndetwitteredInputWithUniqueId(
     inputDataSet: DataSetPipe,
     joinKeyList: List[Feature[_]],
     uniqueIdFeatureList: List[Feature[_]]
@@ -76,22 +76,22 @@ object SparseBinaryAggregateJoin {
         } yield { (key, makeKey(record, uniqueIdFeatureList)) }
       }
 
-  private[this] def mkRecordIndexedAggregates(
-    keyIndexedInput: TypedPipe[(String, DataRecord)],
-    keyIndexedAggregates: TypedPipe[(String, DataRecord)]
+  private[this] def mkRecordIndetwitteredAggregates(
+    keyIndetwitteredInput: TypedPipe[(String, DataRecord)],
+    keyIndetwitteredAggregates: TypedPipe[(String, DataRecord)]
   ): UnsortedGrouped[DataRecord, List[DataRecord]] =
-    keyIndexedInput
-      .join(keyIndexedAggregates)
+    keyIndetwitteredInput
+      .join(keyIndetwitteredAggregates)
       .map { case (_, (inputRecord, aggregateRecord)) => (inputRecord, aggregateRecord) }
       .group
       .toList
 
-  private[this] def mkRecordIndexedAggregatesWithUniqueId(
-    keyIndexedInput: TypedPipe[(String, String)],
-    keyIndexedAggregates: TypedPipe[(String, DataRecord)]
+  private[this] def mkRecordIndetwitteredAggregatesWithUniqueId(
+    keyIndetwitteredInput: TypedPipe[(String, String)],
+    keyIndetwitteredAggregates: TypedPipe[(String, DataRecord)]
   ): UnsortedGrouped[String, List[DataRecord]] =
-    keyIndexedInput
-      .join(keyIndexedAggregates)
+    keyIndetwitteredInput
+      .join(keyIndetwitteredAggregates)
       .map { case (_, (inputId, aggregateRecord)) => (inputId, aggregateRecord) }
       .group
       .toList
@@ -99,12 +99,12 @@ object SparseBinaryAggregateJoin {
   def mkJoinedDataSet(
     inputDataSet: DataSetPipe,
     joinFeaturesDataSet: DataSetPipe,
-    recordIndexedAggregates: UnsortedGrouped[DataRecord, List[DataRecord]],
+    recordIndetwitteredAggregates: UnsortedGrouped[DataRecord, List[DataRecord]],
     mergePolicy: SparseBinaryMergePolicy
   ): TypedPipe[DataRecord] =
     inputDataSet.records
       .map(record => (record, ()))
-      .leftJoin(recordIndexedAggregates)
+      .leftJoin(recordIndetwitteredAggregates)
       .map {
         case (inputRecord, (_, aggregateRecordsOpt)) =>
           aggregateRecordsOpt
@@ -112,7 +112,7 @@ object SparseBinaryAggregateJoin {
               mergePolicy.mergeRecord(
                 inputRecord,
                 aggregateRecords,
-                joinFeaturesDataSet.featureContext
+                joinFeaturesDataSet.featureContetwittert
               )
               inputRecord
             }
@@ -122,13 +122,13 @@ object SparseBinaryAggregateJoin {
   def mkJoinedDataSetWithUniqueId(
     inputDataSet: DataSetPipe,
     joinFeaturesDataSet: DataSetPipe,
-    recordIndexedAggregates: UnsortedGrouped[String, List[DataRecord]],
+    recordIndetwitteredAggregates: UnsortedGrouped[String, List[DataRecord]],
     mergePolicy: SparseBinaryMergePolicy,
     uniqueIdFeatureList: List[Feature[_]]
   ): TypedPipe[DataRecord] =
     inputDataSet.records
       .map(record => (makeKey(record, uniqueIdFeatureList), record))
-      .leftJoin(recordIndexedAggregates)
+      .leftJoin(recordIndetwitteredAggregates)
       .map {
         case (_, (inputRecord, aggregateRecordsOpt)) =>
           aggregateRecordsOpt
@@ -136,7 +136,7 @@ object SparseBinaryAggregateJoin {
               mergePolicy.mergeRecord(
                 inputRecord,
                 aggregateRecords,
-                joinFeaturesDataSet.featureContext
+                joinFeaturesDataSet.featureContetwittert
               )
               inputRecord
             }
@@ -165,21 +165,21 @@ object SparseBinaryAggregateJoin {
         .map(uniqueIdFeatures =>
           uniqueIdFeatures.productIterator.toList.asInstanceOf[List[Feature[_]]])
         .getOrElse(List.empty[Feature[_]])
-      val keyIndexedAggregates = mkKeyIndexedAggregates(joinFeaturesDataSet, joinKeyList)
+      val keyIndetwitteredAggregates = mkKeyIndetwitteredAggregates(joinFeaturesDataSet, joinKeyList)
       val joinedDataSet = if (uniqueIdFeatureList.isEmpty) {
-        val keyIndexedInput = mkKeyIndexedInput(inputDataSet, joinKeyList)
-        val recordIndexedAggregates =
-          mkRecordIndexedAggregates(keyIndexedInput, keyIndexedAggregates)
-        mkJoinedDataSet(inputDataSet, joinFeaturesDataSet, recordIndexedAggregates, mergePolicy)
+        val keyIndetwitteredInput = mkKeyIndetwitteredInput(inputDataSet, joinKeyList)
+        val recordIndetwitteredAggregates =
+          mkRecordIndetwitteredAggregates(keyIndetwitteredInput, keyIndetwitteredAggregates)
+        mkJoinedDataSet(inputDataSet, joinFeaturesDataSet, recordIndetwitteredAggregates, mergePolicy)
       } else {
-        val keyIndexedInput =
-          mkKeyIndexedInputWithUniqueId(inputDataSet, joinKeyList, uniqueIdFeatureList)
-        val recordIndexedAggregates =
-          mkRecordIndexedAggregatesWithUniqueId(keyIndexedInput, keyIndexedAggregates)
+        val keyIndetwitteredInput =
+          mkKeyIndetwitteredInputWithUniqueId(inputDataSet, joinKeyList, uniqueIdFeatureList)
+        val recordIndetwitteredAggregates =
+          mkRecordIndetwitteredAggregatesWithUniqueId(keyIndetwitteredInput, keyIndetwitteredAggregates)
         mkJoinedDataSetWithUniqueId(
           inputDataSet,
           joinFeaturesDataSet,
-          recordIndexedAggregates,
+          recordIndetwitteredAggregates,
           mergePolicy,
           uniqueIdFeatureList
         )
@@ -187,9 +187,9 @@ object SparseBinaryAggregateJoin {
 
       DataSetPipe(
         joinedDataSet,
-        mergePolicy.mergeContext(
-          inputDataSet.featureContext,
-          joinFeaturesDataSet.featureContext
+        mergePolicy.mergeContetwittert(
+          inputDataSet.featureContetwittert,
+          joinFeaturesDataSet.featureContetwittert
         )
       )
     } else {

@@ -7,11 +7,11 @@ sealed trait SafetyLevel {
 }
 
 object SafetyLevel {
-  case object Recommendations extends SafetyLevel {
+  case object Recommendations etwittertends SafetyLevel {
     override val toThrift = ThriftSafetyLevel.Recommendations
   }
 
-  case object TopicsLandingPageTopicRecommendations extends SafetyLevel {
+  case object TopicsLandingPageTopicRecommendations etwittertends SafetyLevel {
     override val toThrift = ThriftSafetyLevel.TopicsLandingPageTopicRecommendations
   }
 }

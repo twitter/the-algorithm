@@ -1,0 +1,19 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/model",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/model/request",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/param",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/product/following/model",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/util",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/decorator/urt",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/premarshaller/urt/builder",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/marshaller/response/urt",
+        "src/thrift/com/twitter/timelines/service:thrift-scala",
+        "src/thrift/com/twitter/timelineservice/server/internal:thrift-scala",
+        "timelinemitwitterer/server/src/main/scala/com/twitter/timelinemitwitterer/injection/model/candidate",
+    ],
+)

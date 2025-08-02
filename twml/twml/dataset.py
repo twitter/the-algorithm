@@ -23,7 +23,7 @@ class BlockFormatDataset(tf.data.Dataset):
       compression_type:
         A string specifying the compression type.
         Can be one of 'gz' (or 'gzip'), 'none', 'auto' (default).
-        When compression_type == 'auto', it is inferred from file extension.
+        When compression_type == 'auto', it is inferred from file etwittertension.
       buffer_size:
         Buffer size to be used during decompression. default: 1<<20.
     """
@@ -40,7 +40,7 @@ class BlockFormatDataset(tf.data.Dataset):
     try:
       block_format_dataset = __import__("libtwml_internal").OPLIB.block_format_dataset
       return block_format_dataset(self._filenames)
-    except ImportError:
+    etwittercept ImportError:
       block_format_dataset = OPLIB.block_format_dataset_v2
       return block_format_dataset(self._filenames, self._compression_type, self._buffer_size)
 
@@ -76,16 +76,16 @@ def downsample_dataset(dataset, sample_rate, rate_name):
   return dataset.filter(lambda _: tf.squeeze(tf.random_uniform([1])) < sample_rate)
 
 
-def _filenames_dataset(files, shards=None, shard_index=None):
+def _filenames_dataset(files, shards=None, shard_indetwitter=None):
   """
   Get a tf.data.Dataset with file names from a list of files
   Optionally shard the file list (see stream_block_format_dataset)
   """
   files = tf.data.Dataset.from_tensor_slices(files)
 
-  if [shards, shard_index] != [None, None]:
-    logging.info("Sharding files dataset (index: %d, shards: %d)" % (shard_index, shards))
-    files = files.shard(num_shards=shards, index=shard_index)
+  if [shards, shard_indetwitter] != [None, None]:
+    logging.info("Sharding files dataset (indetwitter: %d, shards: %d)" % (shard_indetwitter, shards))
+    files = files.shard(num_shards=shards, indetwitter=shard_indetwitter)
 
   return files
 
@@ -96,7 +96,7 @@ def stream_block_format_dataset(
         block_length=None, part_file_parallelism=None, file_shuffle_size=None,
         record_shuffle_size=None, dataset_fn=None,
         keep_rate=None, parts_downsampling_rate=None, prefetch_size=2,
-        shards=None, shard_index=None, shuffle_files=True, interleave=True):
+        shards=None, shard_indetwitter=None, shuffle_files=True, interleave=True):
   """
   Helper function to stream a list of part files.
 
@@ -120,7 +120,7 @@ def stream_block_format_dataset(
       Defaults to batch_size.
     part_file_parallelism (optional):
       Number of part files to read from in parallel. Once a part file is completely read, it will
-      be replaced by the next part file in the part file list.
+      be replaced by the netwittert part file in the part file list.
 
       ``num_threads`` specifies a reader thread pool size, while ``part_file_parallelism`` specifies
       the number of files to read from in parallel. If ``part_file_parallelism`` is greater than or
@@ -131,8 +131,8 @@ def stream_block_format_dataset(
 
     file_shuffle_size (optional):
       the buffer_size used for shuffling of the list of files.
-      Defaults to 1000. For example, if you have 2000 files, the first
-      1000 files are shuffled together, iterated through, then the next 1000 files are shuffled
+      Defaults to 1000. For etwitterample, if you have 2000 files, the first
+      1000 files are shuffled together, iterated through, then the netwittert 1000 files are shuffled
       and iterated through.
     record_shuffle_size (optional):
       the ``buffer_size`` used for shuffling records in each thread.
@@ -153,7 +153,7 @@ def stream_block_format_dataset(
 
     parts_downsampling_rate (optional):
       A float value in ``(0.0, 1.0]`` that indicates the factor by which to downsample part files.
-      For example, a value of 0.2 means only 20 percent of part files become part of the dataset.
+      For etwitterample, a value of 0.2 means only 20 percent of part files become part of the dataset.
 
       Note that this argument is only useful in conjunction with a [train,eval]_steps of -1
       (that is, when the entire dataset is used). Furthermore, note that even in this case, each
@@ -167,7 +167,7 @@ def stream_block_format_dataset(
       techniques that require each worker to train on disjoint partitions of the dataset.
       The dataset is not sharded by default.
 
-    shard_index (optional):
+    shard_indetwitter (optional):
       Which partition of the dataset to use if ``shards`` is set.
 
     shuffle_files (optional):
@@ -182,7 +182,7 @@ def stream_block_format_dataset(
   """
   # Creating a dataset from an input directory
 
-  files = _filenames_dataset(files, shards=shards, shard_index=shard_index)
+  files = _filenames_dataset(files, shards=shards, shard_indetwitter=shard_indetwitter)
 
   file_shuffle_size = file_shuffle_size if file_shuffle_size is not None else 100000
   record_shuffle_size = record_shuffle_size if record_shuffle_size is not None else (batch_size * 8)
@@ -208,7 +208,7 @@ def stream_block_format_dataset(
     dataset = BlockFormatDataset(filenames)
 
     # early prefetching can sometimes improve performance (like on GCS)
-    dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
+    dataset = dataset.prefetch(tf.data.etwitterperimental.AUTOTUNE)
 
     # Shuffling before repeating ensures strong ordering.
     if shuffle:
@@ -228,12 +228,12 @@ def stream_block_format_dataset(
 
   if dataset_fn is None:
     # Create a batch of datarecords and decode them
-    return dataset.batch(batch_size).map(parse_fn, num_parallel_calls=tf.data.experimental.AUTOTUNE).prefetch(prefetch_size)
+    return dataset.batch(batch_size).map(parse_fn, num_parallel_calls=tf.data.etwitterperimental.AUTOTUNE).prefetch(prefetch_size)
 
   return dataset_fn(dataset, parse_fn, batch_size)
 
 
-def cx_zk_path(path):
+def ctwitter_zk_path(path):
   if path is None:
     raise ValueError("Path for zookeeper dataset pointer is None. You must specify a path.")
   return_path = "/".join([DEFAULT_ZOOKEEPER_BASE_ZNODE, path])
@@ -276,7 +276,7 @@ def zookeeper_ordered_dataset(
       Only used if interleave=True.
     part_file_parallelism:
       Default None. Number of part files to read from in parallel. Once a part file is completely
-      read, it will be replaced by the next part file indicated by the zookeeper counter.
+      read, it will be replaced by the netwittert part file indicated by the zookeeper counter.
       Only used if interleave=True.
 
       ``num_threads`` specifies a reader thread pool size, while ``part_file_parallelism`` specifies
@@ -306,7 +306,7 @@ def zookeeper_ordered_dataset(
 
         def dataset_fn(dataset, parse_fn, batch_size):
           dataset = dataset.batch(batch_size)
-          dataset = dataset.map(parse_fn, tf.data.experimental.AUTOTUNE)
+          dataset = dataset.map(parse_fn, tf.data.etwitterperimental.AUTOTUNE)
           if batch_shuffle_size:
             dataset = dataset.shuffle(batch_shuffle_size)
           return dataset.prefetch(prefetch_size)
@@ -317,10 +317,10 @@ def zookeeper_ordered_dataset(
   block_length = batch_size if block_length is None else block_length
   part_file_parallelism = num_threads if part_file_parallelism is None else part_file_parallelism
 
-  def zk_index_generator(my_files=files):
+  def zk_indetwitter_generator(my_files=files):
     zk = KazooClient(hosts=DEFAULT_ZOOKEEPER_HOST)
     zk.start()
-    my_counter = zk.Counter(cx_zk_path(zk_counter_path), default=0)
+    my_counter = zk.Counter(ctwitter_zk_path(zk_counter_path), default=0)
     while True:
       my_counter += 1
       counter_pre_value = my_counter.pre_value
@@ -335,7 +335,7 @@ def zookeeper_ordered_dataset(
         yield chosen_file
     zk.stop()
 
-  files = tf.data.Dataset.from_generator(zk_index_generator, tf.string)
+  files = tf.data.Dataset.from_generator(zk_indetwitter_generator, tf.string)
 
   # Downsample parts files
   files = downsample_dataset(files, file_keep_rate, "file_keep_rate")
@@ -359,7 +359,7 @@ def zookeeper_ordered_dataset(
   if dataset_fn is None:
     # Create a batch of datarecords and decode them
     dataset = dataset.batch(batch_size)
-    dataset = dataset.map(parse_fn, num_parallel_calls=tf.data.experimental.AUTOTUNE)
+    dataset = dataset.map(parse_fn, num_parallel_calls=tf.data.etwitterperimental.AUTOTUNE)
     # shuffle after batching and parsing for performance reasons
     # faster b/c 1 random selection is made per batch rather than per record
     if batch_shuffle_size:

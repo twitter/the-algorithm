@@ -3,12 +3,12 @@ package com.twitter.timelines.data_processing.ml_util.aggregation_framework
 import com.twitter.ml.api._
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetric
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.EasyMetric
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.MaxMetric
+import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.MatwitterMetric
 import com.twitter.timelines.data_processing.ml_util.transforms.OneToSomeTransform
 import com.twitter.util.Duration
 import java.lang.{Boolean => JBoolean}
 import java.lang.{Long => JLong}
-import scala.language.existentials
+import scala.language.etwitteristentials
 
 /**
  * A wrapper for [[com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup]]
@@ -21,11 +21,11 @@ import scala.language.existentials
  * @param preTransforms Sequence of [[ITransform]] that is applied to
  * data records pre-aggregation (e.g. discretization, renaming)
  * @param samplingTransformOpt Optional [[OneToSomeTransform]] that samples data record
- * @param aggregatePrefix Prefix to use for naming resultant aggregate features
+ * @param aggregatePrefitwitter Prefitwitter to use for naming resultant aggregate features
  * @param keys Features to group by when computing the aggregates
  * (e.g. USER_ID, AUTHOR_ID). These must be either discrete, string or sparse binary.
  * Grouping by a sparse binary feature is different than grouping by a discrete or string
- * feature. For example, if you have a sparse binary feature WORDS_IN_TWEET which is
+ * feature. For etwitterample, if you have a sparse binary feature WORDS_IN_TWEET which is
  * a set of all words in a tweet, then grouping by this feature generates a
  * separate aggregate mean/count/etc for each value of the feature (each word), and
  * not just a single aggregate count for different "sets of words"
@@ -37,12 +37,12 @@ import scala.language.existentials
  * @param outputStore Store to output this aggregate to
  * @param includeAnyFeature Aggregate label counts for any feature value
  * @param includeAnyLabel Aggregate feature counts for any label value (e.g. all impressions)
- * @param includeTimestampFeature compute max aggregate on timestamp feature
- * @param aggExclusionRegex Sequence of Regexes, which define features to
+ * @param includeTimestampFeature compute matwitter aggregate on timestamp feature
+ * @param aggEtwitterclusionRegetwitter Sequence of Regetwitteres, which define features to
  */
 case class AggregateGroup(
   inputSource: AggregateSource,
-  aggregatePrefix: String,
+  aggregatePrefitwitter: String,
   keys: Set[Feature[_]],
   features: Set[Feature[_]],
   labels: Set[_ <: Feature[JBoolean]],
@@ -53,7 +53,7 @@ case class AggregateGroup(
   includeAnyFeature: Boolean = true,
   includeAnyLabel: Boolean = true,
   includeTimestampFeature: Boolean = false,
-  aggExclusionRegex: Seq[String] = Seq.empty) {
+  aggEtwitterclusionRegetwitter: Seq[String] = Seq.empty) {
 
   private def toStrongType[T](
     metrics: Set[EasyMetric],
@@ -67,7 +67,7 @@ case class AggregateGroup(
 
     TypedAggregateGroup[T](
       inputSource = inputSource,
-      aggregatePrefix = aggregatePrefix,
+      aggregatePrefitwitter = aggregatePrefitwitter,
       keysToAggregate = keys,
       featuresToAggregate = underlyingFeatures,
       labels = labels,
@@ -77,17 +77,17 @@ case class AggregateGroup(
       preTransforms = preTransforms,
       includeAnyFeature,
       includeAnyLabel,
-      aggExclusionRegex
+      aggEtwitterclusionRegetwitter
     )
   }
 
   private def timestampTypedAggregateGroup: TypedAggregateGroup[_] = {
     val metrics: Set[AggregationMetric[JLong, _]] =
-      Set(MaxMetric.forFeatureType[JLong](TypedAggregateGroup.timestampFeature.getFeatureType).get)
+      Set(MatwitterMetric.forFeatureType[JLong](TypedAggregateGroup.timestampFeature.getFeatureType).get)
 
     TypedAggregateGroup[JLong](
       inputSource = inputSource,
-      aggregatePrefix = aggregatePrefix,
+      aggregatePrefitwitter = aggregatePrefitwitter,
       keysToAggregate = keys,
       featuresToAggregate = Set(TypedAggregateGroup.timestampFeature),
       labels = Set.empty,
@@ -97,7 +97,7 @@ case class AggregateGroup(
       preTransforms = preTransforms,
       includeAnyFeature = false,
       includeAnyLabel = true,
-      aggExclusionRegex = Seq.empty
+      aggEtwitterclusionRegetwitter = Seq.empty
     )
   }
 

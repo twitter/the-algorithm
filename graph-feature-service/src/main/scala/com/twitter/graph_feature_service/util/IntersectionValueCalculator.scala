@@ -17,27 +17,27 @@ object IntersectionValueCalculator {
    * Compute the size of the array in a ByteBuffer.
    * Note that this function assumes the ByteBuffer is encoded using Injections.seqLong2ByteBuffer
    */
-  def computeArraySize(x: ByteBuffer): Int = {
-    x.remaining() >> 3 // divide 8
+  def computeArraySize(twitter: ByteBuffer): Int = {
+    twitter.remaining() >> 3 // divide 8
   }
 
   /**
    *
    */
-  def apply(x: ByteBuffer, y: ByteBuffer, intersectionIdLimit: Int): WorkerIntersectionValue = {
+  def apply(twitter: ByteBuffer, y: ByteBuffer, intersectionIdLimit: Int): WorkerIntersectionValue = {
 
-    val xSize = computeArraySize(x)
+    val twitterSize = computeArraySize(twitter)
     val ySize = computeArraySize(y)
 
-    val largerArray = if (xSize > ySize) x else y
-    val smallerArray = if (xSize > ySize) y else x
+    val largerArray = if (twitterSize > ySize) twitter else y
+    val smallerArray = if (twitterSize > ySize) y else twitter
 
     if (intersectionIdLimit == 0) {
       val result = computeIntersectionUsingBinarySearchOnLargerByteBuffer(smallerArray, largerArray)
-      WorkerIntersectionValue(result, xSize, ySize)
+      WorkerIntersectionValue(result, twitterSize, ySize)
     } else {
       val (result, ids) = computeIntersectionWithIds(smallerArray, largerArray, intersectionIdLimit)
-      WorkerIntersectionValue(result, xSize, ySize, ids)
+      WorkerIntersectionValue(result, twitterSize, ySize, ids)
     }
   }
 
@@ -96,50 +96,50 @@ object IntersectionValueCalculator {
     while (start <= end && start < arr.remaining()) {
       val mid = ((start + end) >> 1) & ~7 // take mid - mid % 8
       if (arr.getLong(mid) == value) {
-        return mid // return the index of the value
+        return mid // return the indetwitter of the value
       } else if (arr.getLong(mid) < value) {
         start = mid + 8
       } else {
         end = mid - 1
       }
     }
-    // if not existed, return -1
+    // if not etwitteristed, return -1
     -1
   }
 
   /**
    * TODO: for now it only computes intersection size. Will add more feature types (e.g., dot
-   * product, maximum value).
+   * product, matwitterimum value).
    *
-   * NOTE that this function assumes both x and y are SORTED arrays.
+   * NOTE that this function assumes both twitter and y are SORTED arrays.
    * In graph feature service, the sorting is done in the offline Scalding job.
    *
-   * @param x                     source user's array
+   * @param twitter                     source user's array
    * @param y                     candidate user's array
    * @param featureType           feature type
    * @return
    */
-  def apply(x: Array[Long], y: Array[Long], featureType: FeatureType): IntersectionValue = {
+  def apply(twitter: Array[Long], y: Array[Long], featureType: FeatureType): IntersectionValue = {
 
-    val xSize = x.length
+    val twitterSize = twitter.length
     val ySize = y.length
 
     val intersection =
-      if (xSize.min(ySize) * math.log(xSize.max(ySize)) < (xSize + ySize).toDouble) {
-        if (xSize < ySize) {
-          computeIntersectionUsingBinarySearchOnLargerArray(x, y)
+      if (twitterSize.min(ySize) * math.log(twitterSize.matwitter(ySize)) < (twitterSize + ySize).toDouble) {
+        if (twitterSize < ySize) {
+          computeIntersectionUsingBinarySearchOnLargerArray(twitter, y)
         } else {
-          computeIntersectionUsingBinarySearchOnLargerArray(y, x)
+          computeIntersectionUsingBinarySearchOnLargerArray(y, twitter)
         }
       } else {
-        computeIntersectionUsingListMerging(x, y)
+        computeIntersectionUsingListMerging(twitter, y)
       }
 
     IntersectionValue(
       featureType,
       Some(intersection.toInt),
       None, // return None for now
-      Some(xSize),
+      Some(twitterSize),
       Some(ySize)
     )
   }
@@ -147,14 +147,14 @@ object IntersectionValueCalculator {
   /**
    * Function for computing the intersections of two SORTED arrays by list merging.
    *
-   * @param x one array
+   * @param twitter one array
    * @param y another array
    * @param ordering ordering function for comparing values of T
    * @tparam T type
    * @return The intersection size and the list of intersected elements
    */
   private[util] def computeIntersectionUsingListMerging[T](
-    x: Array[T],
+    twitter: Array[T],
     y: Array[T]
   )(
     implicit ordering: Ordering[T]
@@ -164,8 +164,8 @@ object IntersectionValueCalculator {
     var i: Int = 0
     var j: Int = 0
 
-    while (i < x.length && j < y.length) {
-      val comp = ordering.compare(x(i), y(j))
+    while (i < twitter.length && j < y.length) {
+      val comp = ordering.compare(twitter(i), y(j))
       if (comp > 0) j += 1
       else if (comp < 0) i += 1
       else {
@@ -213,7 +213,7 @@ object IntersectionValueCalculator {
    * @param value the target value for searching
    * @param ordering ordering function
    * @tparam T type
-   * @return the index of element in the larger array.
+   * @return the indetwitter of element in the larger array.
    *         If there is no such element in the array, return -1.
    */
   private[util] def binarySearch[T](
@@ -229,14 +229,14 @@ object IntersectionValueCalculator {
       val mid = (start + end) >> 1
       val comp = ordering.compare(arr(mid), value)
       if (comp == 0) {
-        return mid // return the index of the value
+        return mid // return the indetwitter of the value
       } else if (comp < 0) {
         start = mid + 1
       } else {
         end = mid - 1
       }
     }
-    // if not existed, return -1
+    // if not etwitteristed, return -1
     -1
   }
 }

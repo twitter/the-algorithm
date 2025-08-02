@@ -2,7 +2,7 @@ package com.twitter.search.common.util.earlybird;
 
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -13,8 +13,8 @@ import com.google.common.collect.Maps;
 
 import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
 import com.twitter.search.common.relevance.ranking.ActionChain;
-import com.twitter.search.common.relevance.ranking.filters.ExactDuplicateFilter;
-import com.twitter.search.common.relevance.text.VisibleTokenRatioNormalizer;
+import com.twitter.search.common.relevance.ranking.filters.EtwitteractDuplicateFilter;
+import com.twitter.search.common.relevance.tetwittert.VisibleTokenRatioNormalizer;
 import com.twitter.search.common.runtime.ActionChainDebugManager;
 import com.twitter.search.common.schema.base.Schema;
 import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
@@ -71,7 +71,7 @@ public final class ThriftSearchResultUtil {
               ThriftSearchResultMetadata metadata = result.getMetadata();
               return metadata.isIsUserNSFW()
                       || metadata.isIsOffensive()
-                      || metadata.getExtraMetadata().isIsSensitiveContent();
+                      || metadata.getEtwittertraMetadata().isIsSensitiveContent();
             } else {
               return false;
             }
@@ -161,10 +161,10 @@ public final class ThriftSearchResultUtil {
       // counts, just set it to 1 if we see one that was early terminated.
       base.setNumPartitionsEarlyTerminated(1);
     }
-    if (delta.isSetMaxSearchedStatusID()) {
-      long deltaMax = delta.getMaxSearchedStatusID();
-      if (!base.isSetMaxSearchedStatusID() || deltaMax > base.getMaxSearchedStatusID()) {
-        base.setMaxSearchedStatusID(deltaMax);
+    if (delta.isSetMatwitterSearchedStatusID()) {
+      long deltaMatwitter = delta.getMatwitterSearchedStatusID();
+      if (!base.isSetMatwitterSearchedStatusID() || deltaMatwitter > base.getMatwitterSearchedStatusID()) {
+        base.setMatwitterSearchedStatusID(deltaMatwitter);
       }
     }
     if (delta.isSetMinSearchedStatusID()) {
@@ -192,7 +192,7 @@ public final class ThriftSearchResultUtil {
     ActionChain<ThriftSearchResult> filterChain =
       ActionChainDebugManager
         .<ThriftSearchResult>createActionChainBuilder("RemoveDuplicatesFilters")
-        .appendActions(new ExactDuplicateFilter())
+        .appendActions(new EtwitteractDuplicateFilter())
         .build();
     return filterChain.apply(results);
   }

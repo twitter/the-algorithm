@@ -6,4 +6,4 @@ case class GroupedEmbeddingData(
   @SchemaFieldName("entityId") entityId: Option[Long],
   @SchemaFieldName("embedding") embedding: Seq[Double],
   @SchemaFieldName("groupId") groupId: Option[String],
-) extends BaseEmbeddingData
+) etwittertends BaseEmbeddingData

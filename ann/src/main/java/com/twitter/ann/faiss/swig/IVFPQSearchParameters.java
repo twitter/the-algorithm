@@ -8,7 +8,7 @@
 
 package com.twitter.ann.faiss;
 
-public class IVFPQSearchParameters extends IVFSearchParameters {
+public class IVFPQSearchParameters etwittertends IVFSearchParameters {
   private transient long swigCPtr;
 
   protected IVFPQSearchParameters(long cPtr, boolean cMemoryOwn) {

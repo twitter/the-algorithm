@@ -231,7 +231,7 @@ scala_library(
         "finatra-internal/decider/src/main/scala",
         "finatra-internal/kafka-streams/kafka-streams/src/main/scala",
         "finatra-internal/kafka/src/main/scala/com/twitter/finatra/kafka/producers",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
+        "finatra-internal/mtls-thriftmutwitter/src/main/scala",
         "finatra-internal/mtls/src/main/scala",
         "kafka/finagle-kafka/finatra-kafka-streams/kafka-streams-static-partitioning/src/main/scala",
         "kafka/finagle-kafka/finatra-kafka-streams/kafka-streams/src/main/scala",

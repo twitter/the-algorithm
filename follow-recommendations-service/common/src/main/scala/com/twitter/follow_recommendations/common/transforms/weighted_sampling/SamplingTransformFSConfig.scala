@@ -4,12 +4,12 @@ import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
 import com.twitter.timelines.configapi.FSBoundedParam
 import com.twitter.timelines.configapi.FSParam
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
-class SamplingTransformFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val intFSParams: Seq[FSBoundedParam[Int]] = Seq(SamplingTransformParams.TopKFixed)
+class SamplingTransformFSConfig @Inject() () etwittertends FeatureSwitchConfig {
+  override val intFSParams: Seq[FSBoundedParam[Int]] = Seq(SamplingTransformParams.TopKFitwittered)
 
   override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
     SamplingTransformParams.MultiplicativeFactor)

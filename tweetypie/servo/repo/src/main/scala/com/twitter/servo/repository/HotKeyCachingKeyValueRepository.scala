@@ -48,7 +48,7 @@ object HotKeyCachingKeyValueRepository {
 
     val frequencyCounter = new FrequencyCounter[K](windowSize, promotionThreshold, onPromotion)
 
-    // Maximum cache size occurs in the event that every key in the buffer occurs
+    // Matwitterimum cache size occurs in the event that every key in the buffer occurs
     // `promotionThreshold` times. We apply a failure-refreshing filter to avoid
     // caching failed responses.
     val cache =

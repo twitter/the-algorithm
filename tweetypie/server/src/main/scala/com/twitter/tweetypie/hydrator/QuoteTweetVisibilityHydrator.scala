@@ -10,7 +10,7 @@ import com.twitter.tweetypie.thriftscala.QuotedTweet
  * inner quoted tweet blocks the author of the outer quote tweet or the author
  * of the inner quoted tweet is otherwise not visible to the outer author.
  *
- * In the example below, QuoteTweetVisibilityHydrator checks if @jack
+ * In the etwitterample below, QuoteTweetVisibilityHydrator checks if @jack
  * blocks @trollmaster.
  *
  * {{{
@@ -25,13 +25,13 @@ import com.twitter.tweetypie.thriftscala.QuotedTweet
  *   +------------------------------+
  * }}}
  *
- * In the example below, QuoteTweetVisibilityHydrator checks if @h4x0r can view
+ * In the etwitterample below, QuoteTweetVisibilityHydrator checks if @h4twitter0r can view
  * user @protectedUser.
  *
  * {{{
  *   @viewer
  *   +------------------------------+
- *   | @h4x0r                       | <-- OUTER QUOTE TWEET
+ *   | @h4twitter0r                       | <-- OUTER QUOTE TWEET
  *   | lol nice password            |
  *   | +--------------------------+ |
  *   | | @protectedUser           | <---- INNER QUOTED TWEET
@@ -41,7 +41,7 @@ import com.twitter.tweetypie.thriftscala.QuotedTweet
  * }}}
  *
  *
- * In the example below, QuoteTweetVisibilityHydrator checks if @viewer blocks @jack:
+ * In the etwitterample below, QuoteTweetVisibilityHydrator checks if @viewer blocks @jack:
  *
  * {{{
  *   @viewer
@@ -57,18 +57,18 @@ import com.twitter.tweetypie.thriftscala.QuotedTweet
  *
  */
 object QuoteTweetVisibilityHydrator {
-  type Type = ValueHydrator[Option[FilteredState.Unavailable], TweetCtx]
+  type Type = ValueHydrator[Option[FilteredState.Unavailable], TweetCttwitter]
 
   def apply(repo: QuotedTweetVisibilityRepository.Type): QuoteTweetVisibilityHydrator.Type =
-    ValueHydrator[Option[FilteredState.Unavailable], TweetCtx] { (_, ctx) =>
-      val innerTweet: QuotedTweet = ctx.quotedTweet.get
+    ValueHydrator[Option[FilteredState.Unavailable], TweetCttwitter] { (_, cttwitter) =>
+      val innerTweet: QuotedTweet = cttwitter.quotedTweet.get
       val request = QuotedTweetVisibilityRepository.Request(
-        outerTweetId = ctx.tweetId,
-        outerAuthorId = ctx.userId,
+        outerTweetId = cttwitter.tweetId,
+        outerAuthorId = cttwitter.userId,
         innerTweetId = innerTweet.tweetId,
         innerAuthorId = innerTweet.userId,
-        viewerId = ctx.opts.forUserId,
-        safetyLevel = ctx.opts.safetyLevel
+        viewerId = cttwitter.opts.forUserId,
+        safetyLevel = cttwitter.opts.safetyLevel
       )
 
       repo(request).liftToTry.map {
@@ -84,10 +84,10 @@ object QuoteTweetVisibilityHydrator {
         case Throw(_) =>
           ValueState.UnmodifiedNone
       }
-    }.onlyIf { (_, ctx) =>
-      !ctx.isRetweet &&
-      ctx.tweetFieldRequested(Tweet.QuotedTweetField) &&
-      ctx.opts.enforceVisibilityFiltering &&
-      ctx.quotedTweet.isDefined
+    }.onlyIf { (_, cttwitter) =>
+      !cttwitter.isRetweet &&
+      cttwitter.tweetFieldRequested(Tweet.QuotedTweetField) &&
+      cttwitter.opts.enforceVisibilityFiltering &&
+      cttwitter.quotedTweet.isDefined
     }
 }

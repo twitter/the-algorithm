@@ -12,7 +12,7 @@
     "dependencies": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
+        "name": "packer-client-no-petwitter",
         "version": "latest"
       }
     ],
@@ -39,8 +39,8 @@
           "key": "atla/discode/prod/uua-tls-favs"
         },
         {
-          "name": "uua-tls-favs-prod-pdxa",
-          "key": "pdxa/discode/prod/uua-tls-favs"
+          "name": "uua-tls-favs-prod-pdtwittera",
+          "key": "pdtwittera/discode/prod/uua-tls-favs"
         }
       ]
     }

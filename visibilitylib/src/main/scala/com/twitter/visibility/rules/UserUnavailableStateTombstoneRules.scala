@@ -18,92 +18,92 @@ import com.twitter.visibility.rules.Condition.ViewerMutesAuthor
 
 object UserUnavailableStateTombstoneRules {
   abstract class UserUnavailableStateTweetTombstoneRule(epitaph: Epitaph, condition: Condition)
-      extends RuleWithConstantAction(Tombstone(epitaph), condition) {}
+      etwittertends RuleWithConstantAction(Tombstone(epitaph), condition) {}
 
   abstract class UserUnavailableStateRetweetTombstoneRule(epitaph: Epitaph, condition: Condition)
-      extends RuleWithConstantAction(Tombstone(epitaph), And(Retweet, condition)) {}
+      etwittertends RuleWithConstantAction(Tombstone(epitaph), And(Retweet, condition)) {}
 
   abstract class UserUnavailableStateInnerQuotedTweetTombstoneRule(
     epitaph: Epitaph,
     condition: Condition)
-      extends RuleWithConstantAction(Tombstone(epitaph), And(IsQuotedInnerTweet, condition))
+      etwittertends RuleWithConstantAction(Tombstone(epitaph), And(IsQuotedInnerTweet, condition))
 
   abstract class UserUnavailableStateInnerQuotedTweetInterstitialRule(
     reason: Reason,
     condition: Condition)
-      extends RuleWithConstantAction(Interstitial(reason), And(IsQuotedInnerTweet, condition))
+      etwittertends RuleWithConstantAction(Interstitial(reason), And(IsQuotedInnerTweet, condition))
 
   object SuspendedUserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.Suspended, SuspendedAuthor)
+      etwittertends UserUnavailableStateTweetTombstoneRule(Epitaph.Suspended, SuspendedAuthor)
 
   object DeactivatedUserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.Deactivated, DeactivatedAuthor)
+      etwittertends UserUnavailableStateTweetTombstoneRule(Epitaph.Deactivated, DeactivatedAuthor)
 
   object OffBoardedUserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.Offboarded, OffboardedAuthor)
+      etwittertends UserUnavailableStateTweetTombstoneRule(Epitaph.Offboarded, OffboardedAuthor)
 
   object ErasedUserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.Deactivated, ErasedAuthor)
+      etwittertends UserUnavailableStateTweetTombstoneRule(Epitaph.Deactivated, ErasedAuthor)
 
   object ProtectedUserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.Protected, ProtectedAuthor)
+      etwittertends UserUnavailableStateTweetTombstoneRule(Epitaph.Protected, ProtectedAuthor)
 
   object AuthorBlocksViewerUserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.BlockedBy, AuthorBlocksViewer)
+      etwittertends UserUnavailableStateTweetTombstoneRule(Epitaph.BlockedBy, AuthorBlocksViewer)
 
   object UserUnavailableTweetTombstoneRule
-      extends UserUnavailableStateTweetTombstoneRule(Epitaph.Unavailable, UnavailableAuthor)
+      etwittertends UserUnavailableStateTweetTombstoneRule(Epitaph.Unavailable, UnavailableAuthor)
 
   object SuspendedUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Suspended, SuspendedAuthor)
+      etwittertends UserUnavailableStateRetweetTombstoneRule(Epitaph.Suspended, SuspendedAuthor)
 
   object DeactivatedUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Deactivated, DeactivatedAuthor)
+      etwittertends UserUnavailableStateRetweetTombstoneRule(Epitaph.Deactivated, DeactivatedAuthor)
 
   object OffBoardedUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Offboarded, OffboardedAuthor)
+      etwittertends UserUnavailableStateRetweetTombstoneRule(Epitaph.Offboarded, OffboardedAuthor)
 
   object ErasedUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Deactivated, ErasedAuthor)
+      etwittertends UserUnavailableStateRetweetTombstoneRule(Epitaph.Deactivated, ErasedAuthor)
 
   object ProtectedUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Protected, ProtectedAuthor)
+      etwittertends UserUnavailableStateRetweetTombstoneRule(Epitaph.Protected, ProtectedAuthor)
 
   object AuthorBlocksViewerUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.BlockedBy, AuthorBlocksViewer)
+      etwittertends UserUnavailableStateRetweetTombstoneRule(Epitaph.BlockedBy, AuthorBlocksViewer)
 
   object ViewerBlocksAuthorUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Unavailable, ViewerBlocksAuthor)
+      etwittertends UserUnavailableStateRetweetTombstoneRule(Epitaph.Unavailable, ViewerBlocksAuthor)
 
   object ViewerMutesAuthorUserUnavailableRetweetTombstoneRule
-      extends UserUnavailableStateRetweetTombstoneRule(Epitaph.Unavailable, ViewerMutesAuthor)
+      etwittertends UserUnavailableStateRetweetTombstoneRule(Epitaph.Unavailable, ViewerMutesAuthor)
 
   object SuspendedUserUnavailableInnerQuotedTweetTombstoneRule
-      extends UserUnavailableStateInnerQuotedTweetTombstoneRule(Epitaph.Suspended, SuspendedAuthor)
+      etwittertends UserUnavailableStateInnerQuotedTweetTombstoneRule(Epitaph.Suspended, SuspendedAuthor)
 
   object DeactivatedUserUnavailableInnerQuotedTweetTombstoneRule
-      extends UserUnavailableStateInnerQuotedTweetTombstoneRule(
+      etwittertends UserUnavailableStateInnerQuotedTweetTombstoneRule(
         Epitaph.Deactivated,
         DeactivatedAuthor)
 
   object OffBoardedUserUnavailableInnerQuotedTweetTombstoneRule
-      extends UserUnavailableStateInnerQuotedTweetTombstoneRule(
+      etwittertends UserUnavailableStateInnerQuotedTweetTombstoneRule(
         Epitaph.Offboarded,
         OffboardedAuthor)
 
   object ErasedUserUnavailableInnerQuotedTweetTombstoneRule
-      extends UserUnavailableStateInnerQuotedTweetTombstoneRule(Epitaph.Deactivated, ErasedAuthor)
+      etwittertends UserUnavailableStateInnerQuotedTweetTombstoneRule(Epitaph.Deactivated, ErasedAuthor)
 
   object ProtectedUserUnavailableInnerQuotedTweetTombstoneRule
-      extends UserUnavailableStateInnerQuotedTweetTombstoneRule(Epitaph.Protected, ProtectedAuthor)
+      etwittertends UserUnavailableStateInnerQuotedTweetTombstoneRule(Epitaph.Protected, ProtectedAuthor)
 
   object AuthorBlocksViewerUserUnavailableInnerQuotedTweetTombstoneRule
-      extends UserUnavailableStateInnerQuotedTweetTombstoneRule(
+      etwittertends UserUnavailableStateInnerQuotedTweetTombstoneRule(
         Epitaph.BlockedBy,
         AuthorBlocksViewer)
 
   object ViewerBlocksAuthorUserUnavailableInnerQuotedTweetInterstitialRule
-      extends UserUnavailableStateInnerQuotedTweetInterstitialRule(
+      etwittertends UserUnavailableStateInnerQuotedTweetInterstitialRule(
         Reason.ViewerBlocksAuthor,
         ViewerBlocksAuthor) {
     override def enabled: Seq[RuleParam[Boolean]] =
@@ -111,7 +111,7 @@ object UserUnavailableStateTombstoneRules {
   }
 
   object ViewerMutesAuthorUserUnavailableInnerQuotedTweetInterstitialRule
-      extends UserUnavailableStateInnerQuotedTweetInterstitialRule(
+      etwittertends UserUnavailableStateInnerQuotedTweetInterstitialRule(
         Reason.ViewerMutesAuthor,
         ViewerMutesAuthor) {
     override def enabled: Seq[RuleParam[Boolean]] =

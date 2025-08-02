@@ -9,7 +9,7 @@ import com.twitter.frigate.thriftscala.CommonRecommendationType
  *  This Ranker re-ranks MR candidates, boosting input CRTs.
  *  Relative ranking between input CRTs and rest of the candidates doesn't change
  *
- *  Ex: T: Tweet candidate, F: input CRT candidatess
+ *  Etwitter: T: Tweet candidate, F: input CRT candidatess
  *
  *  T3, F2, T1, T2, F1 => F2, F1, T3, T1, T2
  */

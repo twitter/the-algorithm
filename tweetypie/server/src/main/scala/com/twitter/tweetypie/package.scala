@@ -6,7 +6,7 @@ import com.twitter.tweetypie.thriftscala._
 import com.twitter.gizmoduck.thriftscala.QueryFields
 
 package object tweetypie {
-  // common imports that many classes need, will probably expand this list in the future.
+  // common imports that many classes need, will probably etwitterpand this list in the future.
   type Logger = com.twitter.util.logging.Logger
   val Logger: com.twitter.util.logging.Logger.type = com.twitter.util.logging.Logger
   type StatsReceiver = com.twitter.finagle.stats.StatsReceiver
@@ -80,7 +80,7 @@ package object tweetypie {
       TweetLenses.geoCoordinates.get(tweet).nonEmpty
 
   def getUserId(tweet: Tweet): UserId = TweetLenses.userId.get(tweet)
-  def getText(tweet: Tweet): String = TweetLenses.text.get(tweet)
+  def getTetwittert(tweet: Tweet): String = TweetLenses.tetwittert.get(tweet)
   def getCreatedAt(tweet: Tweet): Long = TweetLenses.createdAt.get(tweet)
   def getCreatedVia(tweet: Tweet): String = TweetLenses.createdVia.get(tweet)
   def getReply(tweet: Tweet): Option[Reply] = TweetLenses.reply.get(tweet)
@@ -99,7 +99,7 @@ package object tweetypie {
   def isSelfReply(authorUserId: UserId, r: Reply): Boolean =
     r.inReplyToStatusId.isDefined && (r.inReplyToUserId == authorUserId)
   def isSelfReply(tweet: Tweet): Boolean = {
-    getReply(tweet).exists { r => isSelfReply(getUserId(tweet), r) }
+    getReply(tweet).etwitterists { r => isSelfReply(getUserId(tweet), r) }
   }
   def getConversationId(tweet: Tweet): Option[TweetId] = TweetLenses.conversationId.get(tweet)
   def getSelfThreadMetadata(tweet: Tweet): Option[SelfThreadMetadata] =

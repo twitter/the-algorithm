@@ -3,19 +3,19 @@ package com.twitter.follow_recommendations.common.feature_hydration.sources
 import com.twitter.conversions.DurationOps._
 import com.twitter.ml.featurestore.catalog.datasets.core.UserMobileSdkDataset
 import com.twitter.ml.featurestore.catalog.datasets.core.UsersourceEntityDataset
-import com.twitter.ml.featurestore.catalog.datasets.customer_journey.PostNuxAlgorithmIdAggregateDataset
-import com.twitter.ml.featurestore.catalog.datasets.customer_journey.PostNuxAlgorithmTypeAggregateDataset
+import com.twitter.ml.featurestore.catalog.datasets.customer_journey.PostNutwitterAlgorithmIdAggregateDataset
+import com.twitter.ml.featurestore.catalog.datasets.customer_journey.PostNutwitterAlgorithmTypeAggregateDataset
 import com.twitter.ml.featurestore.catalog.datasets.magicrecs.NotificationSummariesEntityDataset
 import com.twitter.ml.featurestore.catalog.datasets.onboarding.MetricCenterUserCountingFeaturesDataset
 import com.twitter.ml.featurestore.catalog.datasets.onboarding.UserWtfAlgorithmAggregateFeaturesDataset
-import com.twitter.ml.featurestore.catalog.datasets.onboarding.WhoToFollowPostNuxFeaturesDataset
-import com.twitter.ml.featurestore.catalog.datasets.rux.UserRecentReactivationTimeDataset
+import com.twitter.ml.featurestore.catalog.datasets.onboarding.WhoToFollowPostNutwitterFeaturesDataset
+import com.twitter.ml.featurestore.catalog.datasets.rutwitter.UserRecentReactivationTimeDataset
 import com.twitter.ml.featurestore.catalog.datasets.timelines.AuthorFeaturesEntityDataset
 import com.twitter.ml.featurestore.lib.dataset.DatasetParams
 import com.twitter.ml.featurestore.lib.dataset.online.BatchingPolicy
 import com.twitter.ml.featurestore.lib.params.FeatureStoreParams
-import com.twitter.strato.opcontext.Attribution.ManhattanAppId
-import com.twitter.strato.opcontext.ServeWithin
+import com.twitter.strato.opcontetwittert.Attribution.ManhattanAppId
+import com.twitter.strato.opcontetwittert.ServeWithin
 
 object FeatureStoreParameters {
 
@@ -35,43 +35,43 @@ object FeatureStoreParameters {
     perDataset = Map(
       MetricCenterUserCountingFeaturesDataset.id ->
         DatasetParams(
-          stratoSuffix = Some("onboarding"),
+          stratoSuffitwitter = Some("onboarding"),
           batchingPolicy = Some(BatchingPolicy.Isolated(200))
         ),
       UsersourceEntityDataset.id ->
         DatasetParams(
-          stratoSuffix = Some("onboarding")
+          stratoSuffitwitter = Some("onboarding")
         ),
-      WhoToFollowPostNuxFeaturesDataset.id ->
+      WhoToFollowPostNutwitterFeaturesDataset.id ->
         DatasetParams(
-          stratoSuffix = Some("onboarding"),
+          stratoSuffitwitter = Some("onboarding"),
           batchingPolicy = Some(BatchingPolicy.Isolated(200))
         ),
       AuthorFeaturesEntityDataset.id ->
         DatasetParams(
-          stratoSuffix = Some("onboarding"),
+          stratoSuffitwitter = Some("onboarding"),
           batchingPolicy = Some(BatchingPolicy.Isolated(10))
         ),
       UserRecentReactivationTimeDataset.id -> DatasetParams(
-        stratoSuffix =
+        stratoSuffitwitter =
           None // removed due to low hit rate. we should use a negative cache in the future
       ),
       UserWtfAlgorithmAggregateFeaturesDataset.id -> DatasetParams(
-        stratoSuffix = None
+        stratoSuffitwitter = None
       ),
       NotificationSummariesEntityDataset.id -> DatasetParams(
-        stratoSuffix = Some("onboarding"),
+        stratoSuffitwitter = Some("onboarding"),
         serveWithin = Some(ServeWithin(duration = 45.millis, roundTripAllowance = None)),
         batchingPolicy = Some(BatchingPolicy.Isolated(10))
       ),
       UserMobileSdkDataset.id -> DatasetParams(
-        stratoSuffix = Some("onboarding")
+        stratoSuffitwitter = Some("onboarding")
       ),
-      PostNuxAlgorithmIdAggregateDataset.id -> DatasetParams(
-        stratoSuffix = Some("onboarding")
+      PostNutwitterAlgorithmIdAggregateDataset.id -> DatasetParams(
+        stratoSuffitwitter = Some("onboarding")
       ),
-      PostNuxAlgorithmTypeAggregateDataset.id -> DatasetParams(
-        stratoSuffix = Some("onboarding")
+      PostNutwitterAlgorithmTypeAggregateDataset.id -> DatasetParams(
+        stratoSuffitwitter = Some("onboarding")
       ),
     ),
     enableFeatureGenerationStats = true

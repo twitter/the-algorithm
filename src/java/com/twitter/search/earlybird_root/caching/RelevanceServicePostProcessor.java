@@ -5,10 +5,10 @@ import com.twitter.search.common.caching.CacheUtil;
 import com.twitter.search.common.caching.filter.ServicePostProcessor;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 
 public class RelevanceServicePostProcessor
-    extends ServicePostProcessor<EarlybirdRequestContext, EarlybirdResponse> {
+    etwittertends ServicePostProcessor<EarlybirdRequestContetwittert, EarlybirdResponse> {
   private final Cache<EarlybirdRequest, EarlybirdResponse> cache;
 
   public RelevanceServicePostProcessor(
@@ -17,8 +17,8 @@ public class RelevanceServicePostProcessor
   }
 
   @Override
-  public void processServiceResponse(EarlybirdRequestContext requestContext,
+  public void processServiceResponse(EarlybirdRequestContetwittert requestContetwittert,
                                      EarlybirdResponse serviceResponse) {
-    CacheUtil.cacheResults(cache, requestContext.getRequest(), serviceResponse, Integer.MAX_VALUE);
+    CacheUtil.cacheResults(cache, requestContetwittert.getRequest(), serviceResponse, Integer.MAtwitter_VALUE);
   }
 }

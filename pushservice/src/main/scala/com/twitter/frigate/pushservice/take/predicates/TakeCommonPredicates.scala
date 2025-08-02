@@ -23,10 +23,10 @@ trait TakeCommonPredicates {
     CrtDeciderPredicate(config.decider),
     PredicatesForCandidate.enableSendHandlerCandidates,
     PredicatesForCandidate.mrWebHoldbackPredicate,
-    PredicatesForCandidate.targetUserExists,
-    PredicatesForCandidate.authorInSocialContext,
+    PredicatesForCandidate.targetUserEtwitterists,
+    PredicatesForCandidate.authorInSocialContetwittert,
     PredicatesForCandidate.recommendedTweetIsAuthoredBySelf,
-    PredicatesForCandidate.selfInSocialContext,
+    PredicatesForCandidate.selfInSocialContetwittert,
     NtabCaretClickFatiguePredicate()
   )
 

@@ -22,7 +22,7 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
    *
    * @param origin Origin (reference) point
    * @param initial Initial list of elements to add in the structure
-   * @param minQueue True for min queue, False for max queue
+   * @param minQueue True for min queue, False for matwitter queue
    * @param distFn Distance function
    */
   public DistancedItemQueue(
@@ -78,7 +78,7 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
   /**
    * Return root of the queue
    *
-   * @return root of the queue i.e min/max element depending upon min-max queue
+   * @return root of the queue i.e min/matwitter element depending upon min-matwitter queue
    */
   public DistancedItem<T> peek() {
     return queue.peek();
@@ -87,7 +87,7 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
   /**
    * Dequeue root of the queue.
    *
-   * @return remove and return root of the queue i.e min/max element depending upon min-max queue
+   * @return remove and return root of the queue i.e min/matwitter element depending upon min-matwitter queue
    */
   public DistancedItem<T> dequeue() {
     return queue.poll();
@@ -96,7 +96,7 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
   /**
    * Dequeue all the elements from queueu with ordering mantained
    *
-   * @return remove all the elements in the order of the queue i.e min/max queue.
+   * @return remove all the elements in the order of the queue i.e min/matwitter queue.
    */
   public List<DistancedItem<T>> dequeueAll() {
     final List<DistancedItem<T>> list = new ArrayList<>(queue.size());
@@ -124,8 +124,8 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
   List<T> toListWithItem() {
     List<T> list = new ArrayList<>(queue.size());
     Iterator<DistancedItem<T>> itr = iterator();
-    while (itr.hasNext()) {
-      list.add(itr.next().getItem());
+    while (itr.hasNetwittert()) {
+      list.add(itr.netwittert().getItem());
     }
     return list;
   }
@@ -182,8 +182,8 @@ public class DistancedItemQueue<U, T> implements Iterable<DistancedItem<T>> {
     }
 
     final Iterator<DistancedItem<T>> itr = iterator();
-    while (itr.hasNext()) {
-      rqueue.add(itr.next());
+    while (itr.hasNetwittert()) {
+      rqueue.add(itr.netwittert());
     }
 
     return new DistancedItemQueue<>(origin, distFn, rqueue, !isMinQueue());

@@ -11,7 +11,7 @@ import com.twitter.visibility.generators.TombstoneGenerator
 import com.twitter.visibility.models.ContentId.DeleteTweetId
 import com.twitter.visibility.models.SafetyLevel
 import com.twitter.visibility.models.TweetDeleteReason.TweetDeleteReason
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 
 object DeletedTweetVisibilityLibrary {
   type Type = DeletedTweetVisibilityLibrary.Request => Stitch[VisibilityResult]
@@ -19,7 +19,7 @@ object DeletedTweetVisibilityLibrary {
   case class Request(
     tweetId: Long,
     safetyLevel: SafetyLevel,
-    viewerContext: ViewerContext,
+    viewerContetwittert: ViewerContetwittert,
     tweetDeleteReason: TweetDeleteReason,
     isRetweet: Boolean,
     isInnerQuotedTweet: Boolean,
@@ -35,7 +35,7 @@ object DeletedTweetVisibilityLibrary {
     (request: Request) => {
       vfEngineCounter.incr()
       val contentId = DeleteTweetId(request.tweetId)
-      val language = request.viewerContext.requestLanguageCode.getOrElse("en")
+      val language = request.viewerContetwittert.requestLanguageCode.getOrElse("en")
 
       val featureMap =
         visibilityLibrary.featureMapBuilder(
@@ -50,7 +50,7 @@ object DeletedTweetVisibilityLibrary {
         .runRuleEngine(
           contentId,
           featureMap,
-          request.viewerContext,
+          request.viewerContetwittert,
           request.safetyLevel
         )
         .map(tombstoneGenerator(_, language))

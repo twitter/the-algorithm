@@ -1,16 +1,16 @@
 package com.twitter.search.earlybird.search.relevance.scoring;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.indetwitter.IndetwitterReader;
+import org.apache.lucene.indetwitter.LeafReaderContetwittert;
+import org.apache.lucene.indetwitter.Term;
+import org.apache.lucene.search.Etwitterplanation;
+import org.apache.lucene.search.IndetwitterSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.ScoreMode;
@@ -24,14 +24,14 @@ import com.twitter.search.common.results.thriftjava.FieldHitAttribution;
  * A wrapper for a Lucene query which first computes Lucene's query score
  * and then delegates to a {@link ScoringFunction} for final score computation.
  */
-public class RelevanceQuery extends Query {
+public class RelevanceQuery etwittertends Query {
   private static final Logger LOG = LoggerFactory.getLogger(RelevanceQuery.class.getName());
 
   protected final Query luceneQuery;
   protected final ScoringFunction scoringFunction;
 
-  // True when the lucene query's score should be ignored for debug explanations.
-  protected final boolean ignoreLuceneQueryScoreExplanation;
+  // True when the lucene query's score should be ignored for debug etwitterplanations.
+  protected final boolean ignoreLuceneQueryScoreEtwitterplanation;
 
   public RelevanceQuery(Query luceneQuery, ScoringFunction scoringFunction) {
     this(luceneQuery, scoringFunction, false);
@@ -39,10 +39,10 @@ public class RelevanceQuery extends Query {
 
   public RelevanceQuery(Query luceneQuery,
                         ScoringFunction scoringFunction,
-                        boolean ignoreLuceneQueryScoreExplanation) {
+                        boolean ignoreLuceneQueryScoreEtwitterplanation) {
     this.luceneQuery = luceneQuery;
     this.scoringFunction = scoringFunction;
-    this.ignoreLuceneQueryScoreExplanation = ignoreLuceneQueryScoreExplanation;
+    this.ignoreLuceneQueryScoreEtwitterplanation = ignoreLuceneQueryScoreEtwitterplanation;
   }
 
   public ScoringFunction getScoringFunction() {
@@ -54,17 +54,17 @@ public class RelevanceQuery extends Query {
   }
 
   @Override
-  public Query rewrite(IndexReader reader) throws IOException {
+  public Query rewrite(IndetwitterReader reader) throws IOEtwitterception {
     Query rewritten = luceneQuery.rewrite(reader);
     if (rewritten == luceneQuery) {
       return this;
     }
-    return new RelevanceQuery(rewritten, scoringFunction, ignoreLuceneQueryScoreExplanation);
+    return new RelevanceQuery(rewritten, scoringFunction, ignoreLuceneQueryScoreEtwitterplanation);
   }
 
   @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
+  public Weight createWeight(IndetwitterSearcher searcher, ScoreMode scoreMode, float boost)
+      throws IOEtwitterception {
     Weight luceneWeight = luceneQuery.createWeight(searcher, scoreMode, boost);
     if (luceneWeight == null) {
       return null;
@@ -72,71 +72,71 @@ public class RelevanceQuery extends Query {
     return new RelevanceWeight(searcher, luceneWeight);
   }
 
-  public class RelevanceWeight extends Weight {
+  public class RelevanceWeight etwittertends Weight {
     private final Weight luceneWeight;
 
-    public RelevanceWeight(IndexSearcher searcher, Weight luceneWeight) {
+    public RelevanceWeight(IndetwitterSearcher searcher, Weight luceneWeight) {
       super(RelevanceQuery.this);
       this.luceneWeight = luceneWeight;
     }
 
     @Override
-    public void extractTerms(Set<Term> terms) {
-      this.luceneWeight.extractTerms(terms);
+    public void etwittertractTerms(Set<Term> terms) {
+      this.luceneWeight.etwittertractTerms(terms);
     }
 
 
     @Override
-    public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-      return explain(context, doc, null);
+    public Etwitterplanation etwitterplain(LeafReaderContetwittert contetwittert, int doc) throws IOEtwitterception {
+      return etwitterplain(contetwittert, doc, null);
     }
 
     /**
-     * Returns an explanation of the scoring for the given document.
+     * Returns an etwitterplanation of the scoring for the given document.
      *
-     * @param context The context of the reader that returned this document.
+     * @param contetwittert The contetwittert of the reader that returned this document.
      * @param doc The document.
      * @param fieldHitAttribution Per-hit field attribution information.
-     * @return An explanation of the scoring for the given document.
+     * @return An etwitterplanation of the scoring for the given document.
      */
-    public Explanation explain(LeafReaderContext context, int doc,
-        @Nullable FieldHitAttribution fieldHitAttribution) throws IOException {
+    public Etwitterplanation etwitterplain(LeafReaderContetwittert contetwittert, int doc,
+        @Nullable FieldHitAttribution fieldHitAttribution) throws IOEtwitterception {
 
-      Explanation luceneExplanation = Explanation.noMatch("LuceneQuery explain skipped");
-      if (!ignoreLuceneQueryScoreExplanation) {
+      Etwitterplanation luceneEtwitterplanation = Etwitterplanation.noMatch("LuceneQuery etwitterplain skipped");
+      if (!ignoreLuceneQueryScoreEtwitterplanation) {
         // get Lucene score
         try {
-          luceneExplanation = luceneWeight.explain(context, doc);
-        } catch (Exception e) {
-          // We sometimes see exceptions resulting from term queries that do not store
-          // utf8-text, which TermQuery.toString() assumes.  Catch here and allow at least
-          // scoring function explanations to be returned.
-          LOG.error("Exception in explain", e);
-          luceneExplanation = Explanation.noMatch("LuceneQuery explain failed");
+          luceneEtwitterplanation = luceneWeight.etwitterplain(contetwittert, doc);
+        } catch (Etwitterception e) {
+          // We sometimes see etwitterceptions resulting from term queries that do not store
+          // utf8-tetwittert, which TermQuery.toString() assumes.  Catch here and allow at least
+          // scoring function etwitterplanations to be returned.
+          LOG.error("Etwitterception in etwitterplain", e);
+          luceneEtwitterplanation = Etwitterplanation.noMatch("LuceneQuery etwitterplain failed");
         }
       }
 
-      Explanation scoringFunctionExplanation;
+      Etwitterplanation scoringFunctionEtwitterplanation;
       scoringFunction.setFieldHitAttribution(fieldHitAttribution);
-      scoringFunctionExplanation = scoringFunction.explain(
-          context.reader(), doc, luceneExplanation.getValue().floatValue());
+      scoringFunctionEtwitterplanation = scoringFunction.etwitterplain(
+          contetwittert.reader(), doc, luceneEtwitterplanation.getValue().floatValue());
 
-      // just add a wrapper for a better structure of the final explanation
-      Explanation luceneExplanationWrapper = Explanation.match(
-          luceneExplanation.getValue(), "LuceneQuery", luceneExplanation);
+      // just add a wrapper for a better structure of the final etwitterplanation
+      Etwitterplanation luceneEtwitterplanationWrapper = Etwitterplanation.match(
+          luceneEtwitterplanation.getValue(), "LuceneQuery", luceneEtwitterplanation);
 
-      return Explanation.match(scoringFunctionExplanation.getValue(), "RelevanceQuery",
-              scoringFunctionExplanation, luceneExplanationWrapper);
+      return Etwitterplanation.match(scoringFunctionEtwitterplanation.getValue(), "RelevanceQuery",
+              scoringFunctionEtwitterplanation, luceneEtwitterplanationWrapper);
     }
 
     @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      return luceneWeight.scorer(context);
+    public Scorer scorer(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
+      return luceneWeight.scorer(contetwittert);
     }
 
     @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
-      return luceneWeight.isCacheable(ctx);
+    public boolean isCacheable(LeafReaderContetwittert cttwitter) {
+      return luceneWeight.isCacheable(cttwitter);
     }
   }
 

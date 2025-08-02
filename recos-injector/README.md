@@ -13,7 +13,7 @@ You can run tests by using the following command from your project's root direct
 
 The simplest way to stand up a service is to run it locally. To run
 recos-injector-server in development mode, compile the project and then
-execute it with `bazel run`:
+etwitterecute it with `bazel run`:
 
     $ bazel build recos-injector/server:bin
     $ bazel run recos-injector/server:bin

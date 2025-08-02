@@ -4,7 +4,7 @@ import com.google.inject.Inject
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.finagle.thrift.ClientId
 import com.twitter.finatra.thrift.Controller
-import com.twitter.frigate.pushservice.exception.DisplayLocationNotSupportedException
+import com.twitter.frigate.pushservice.etwitterception.DisplayLocationNotSupportedEtwitterception
 import com.twitter.frigate.pushservice.refresh_handler.RefreshForPushHandler
 import com.twitter.frigate.pushservice.send_handler.SendHandler
 import com.twitter.frigate.pushservice.refresh_handler.LoggedOutRefreshForPushHandler
@@ -21,7 +21,7 @@ class PushServiceController @Inject() (
   refreshForPushHandler: RefreshForPushHandler,
   loggedOutRefreshForPushHandler: LoggedOutRefreshForPushHandler,
   statsReceiver: StatsReceiver)
-    extends Controller(t.PushService)
+    etwittertends Controller(t.PushService)
     with Logging {
 
   private val stats: StatsReceiver = statsReceiver.scope(s"${this.getClass.getSimpleName}")
@@ -50,18 +50,18 @@ class PushServiceController @Inject() (
       case NotificationDisplayLocation.PushToMobileDevice =>
         loggedOutRefreshForPushHandler.refreshAndSend(request.request)
       case _ =>
-        Future.exception(
-          new DisplayLocationNotSupportedException(
+        Future.etwitterception(
+          new DisplayLocationNotSupportedEtwitterception(
             "Specified notification display location is not supported"))
     }
-    fut.onFailure { ex =>
+    fut.onFailure { etwitter =>
       logger.error(
-        s"Failure in push service for logged out refresh request: $request - ${ex.getMessage} - ${ex.getStackTrace
+        s"Failure in push service for logged out refresh request: $request - ${etwitter.getMessage} - ${etwitter.getStackTrace
           .mkString(", \n\t")}",
-        ex)
+        etwitter)
       failureCount.incr()
       uncaughtErrorCount.incr()
-      uncaughtErrorScope.counter(ex.getClass.getCanonicalName).incr()
+      uncaughtErrorScope.counter(etwitter.getClass.getCanonicalName).incr()
     }
   }
 
@@ -78,20 +78,20 @@ class PushServiceController @Inject() (
         clientIdScope.counter(clientId).incr()
         refreshForPushHandler.refreshAndSend(request.request)
       case _ =>
-        Future.exception(
-          new DisplayLocationNotSupportedException(
+        Future.etwitterception(
+          new DisplayLocationNotSupportedEtwitterception(
             "Specified notification display location is not supported"))
     }
-    fut.onFailure { ex =>
+    fut.onFailure { etwitter =>
       logger.error(
-        s"Failure in push service for refresh request: $request - ${ex.getMessage} - ${ex.getStackTrace
+        s"Failure in push service for refresh request: $request - ${etwitter.getMessage} - ${etwitter.getStackTrace
           .mkString(", \n\t")}",
-        ex
+        etwitter
       )
 
       failureCount.incr()
       uncaughtErrorCount.incr()
-      uncaughtErrorScope.counter(ex.getClass.getCanonicalName).incr()
+      uncaughtErrorScope.counter(etwitter.getClass.getCanonicalName).incr()
     }
 
   }
@@ -99,16 +99,16 @@ class PushServiceController @Inject() (
   private def send(
     request: t.PushService.Send.Args
   ): Future[t.PushService.Send.SuccessType] = {
-    sendHandler(request.request).onFailure { ex =>
+    sendHandler(request.request).onFailure { etwitter =>
       logger.error(
-        s"Failure in push service for send request: $request - ${ex.getMessage} - ${ex.getStackTrace
+        s"Failure in push service for send request: $request - ${etwitter.getMessage} - ${etwitter.getStackTrace
           .mkString(", \n\t")}",
-        ex
+        etwitter
       )
 
       failureCount.incr()
       uncaughtErrorCount.incr()
-      uncaughtErrorScope.counter(ex.getClass.getCanonicalName).incr()
+      uncaughtErrorScope.counter(etwitter.getClass.getCanonicalName).incr()
     }
   }
 }

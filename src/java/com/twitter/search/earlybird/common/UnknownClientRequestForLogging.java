@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird.common;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.thrift.TException;
+import org.apache.thrift.TEtwitterception;
 import org.apache.thrift.TSerializer;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.slf4j.Logger;
@@ -65,7 +65,7 @@ public final class UnknownClientRequestForLogging {
       EarlybirdRequest clearedRequest = request.deepCopy();
       clearedRequest.unsetClientRequestTimeMs();
       return base64.encodeToString(serializer.serialize(clearedRequest));
-    } catch (TException e) {
+    } catch (TEtwitterception e) {
       GENERAL_LOG.error("Failed to serialize request for logging.", e);
       return "failed_to_serialize";
     }

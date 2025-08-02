@@ -9,9 +9,9 @@ import com.twitter.unified_user_actions.adapter.AbstractAdapter
 import com.twitter.unified_user_actions.adapter.client_event.ClientEventImpression._
 import com.twitter.unified_user_actions.adapter.client_event.ClientEventEngagement._
 import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
-import scala.util.matching.Regex
+import scala.util.matching.Regetwitter
 
-class ClientEventAdapter extends AbstractAdapter[LogEvent, UnKeyed, UnifiedUserAction] {
+class ClientEventAdapter etwittertends AbstractAdapter[LogEvent, UnKeyed, UnifiedUserAction] {
   import ClientEventAdapter._
 
   override def adaptOneToKeyedMany(
@@ -107,7 +107,7 @@ object ClientEventAdapter {
                 Seq(TweetVideoCtaUrlClick)
               case (_, _, _, Some(element), Some("cta_watch_click")) if isVideoEvent(element) =>
                 Seq(TweetVideoCtaWatchClick)
-              case (_, _, _, Some("platform_photo_card"), Some("click")) => Seq(TweetPhotoExpand)
+              case (_, _, _, Some("platform_photo_card"), Some("click")) => Seq(TweetPhotoEtwitterpand)
               case (_, _, _, Some("platform_card"), Some("click")) => Seq(CardClick)
               case (_, _, _, _, Some("open_app")) => Seq(CardOpenApp)
               case (_, _, _, _, Some("install_app")) => Seq(CardAppInstallAttempt)
@@ -240,13 +240,13 @@ object ClientEventAdapter {
               case (Some("app"), Some("enter_background"), _, _, Some("become_inactive"))
                   if logEvent.logBase
                     .flatMap(_.clientAppId)
-                    .exists(validUASIosClientIds.contains(_)) =>
-                Seq(AppExit)
+                    .etwitterists(validUASIosClientIds.contains(_)) =>
+                Seq(AppEtwitterit)
               case (Some("app"), _, _, _, Some("become_inactive"))
                   if logEvent.logBase
                     .flatMap(_.clientAppId)
-                    .exists(validUASAndroidClientIds.contains(_)) =>
-                Seq(AppExit)
+                    .etwitterists(validUASAndroidClientIds.contains(_)) =>
+                Seq(AppEtwitterit)
               case (_, _, Some("gallery"), Some("photo"), Some("impression")) =>
                 Seq(TweetGalleryImpression)
               case (_, _, _, _, _)
@@ -259,11 +259,11 @@ object ClientEventAdapter {
       }.flatten
 
   def shouldIgnoreClientEvent(eventNamespace: Option[EventNamespace]): Boolean =
-    eventNamespace.exists { name =>
+    eventNamespace.etwitterists { name =>
       (name.page, name.section, name.component, name.element, name.action) match {
-        case (Some("ddg"), _, _, _, Some("experiment")) => true
+        case (Some("ddg"), _, _, _, Some("etwitterperiment")) => true
         case (Some("qig_ranker"), _, _, _, _) => true
-        case (Some("timelinemixer"), _, _, _, _) => true
+        case (Some("timelinemitwitterer"), _, _, _, _) => true
         case (Some("timelineservice"), _, _, _, _) => true
         case (Some("tweetconvosvc"), _, _, _, _) => true
         case _ => false

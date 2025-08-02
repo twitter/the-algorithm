@@ -16,7 +16,7 @@ class CachingStore[K, V](
   underlying: Store[K, V],
   valuePicker: LockingCache.Picker[Cached[V]],
   key: V => K)
-    extends TransformingCachingStore[K, V, K, V](
+    etwittertends TransformingCachingStore[K, V, K, V](
       cache,
       underlying,
       valuePicker,
@@ -30,7 +30,7 @@ class CachingStore[K, V](
  *
  * Updates are applied first (unmodified) to the underlying store and then
  * the cache is updated after running the key/value through a one-way function
- * to derive the key/value as expected by the cache.
+ * to derive the key/value as etwitterpected by the cache.
  *
  * @param cache
  *   the wrapping cache
@@ -39,7 +39,7 @@ class CachingStore[K, V](
  *   the underlying store
  *
  * @param valuePicker
- *   chooses between existing and new value
+ *   chooses between etwitteristing and new value
  *
  * @param key
  *   computes a key from the value being stored
@@ -57,7 +57,7 @@ class TransformingCachingStore[K, V, CacheK, CacheV](
   key: V => K,
   cacheKey: K => CacheK,
   cacheValue: V => CacheV)
-    extends Store[K, V] {
+    etwittertends Store[K, V] {
   protected[this] val log = Logger.get(getClass.getSimpleName)
 
   override def create(value: V): Future[V] = {
@@ -106,7 +106,7 @@ class TransformingCachingStore[K, V, CacheK, CacheV](
     val handler = LockingCache.PickingHandler(cached, valuePicker)
     cache.lockAndSet(cacheKey(key), handler).unit onFailure {
       case t =>
-        log.error(t, "exception caught while caching %s value", desc)
+        log.error(t, "etwitterception caught while caching %s value", desc)
     }
   }
 }

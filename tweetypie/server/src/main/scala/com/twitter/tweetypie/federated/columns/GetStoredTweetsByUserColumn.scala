@@ -11,7 +11,7 @@ import com.twitter.strato.config.Has
 import com.twitter.strato.config.Path
 import com.twitter.strato.config.Policy
 import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
+import com.twitter.strato.data.Description.PlainTetwittert
 import com.twitter.strato.data.Lifecycle.Production
 import com.twitter.strato.fed.StratoFed
 import com.twitter.strato.response.Err
@@ -24,14 +24,14 @@ import com.twitter.util.Future
 
 class GetStoredTweetsByUserColumn(
   handler: thrift.GetStoredTweetsByUserRequest => Future[thrift.GetStoredTweetsByUserResult])
-    extends StratoFed.Column(GetStoredTweetsByUserColumn.Path)
+    etwittertends StratoFed.Column(GetStoredTweetsByUserColumn.Path)
     with StratoFed.Fetch.Stitch {
 
   override val contactInfo: ContactInfo = TweetypieContactInfo
   override val metadata: OpMetadata = OpMetadata(
     lifecycle = Some(Production),
     description =
-      Some(PlainText("Fetches hydrated Tweets for a particular User regardless of Tweet state."))
+      Some(PlainTetwittert("Fetches hydrated Tweets for a particular User regardless of Tweet state."))
   )
   override val policy: Policy = AnyOf(
     Seq(
@@ -72,7 +72,7 @@ class GetStoredTweetsByUserColumn(
           ))
       }
       .rescue {
-        case _ => Stitch.exception(Err(Err.Internal))
+        case _ => Stitch.etwitterception(Err(Err.Internal))
       }
   }
 

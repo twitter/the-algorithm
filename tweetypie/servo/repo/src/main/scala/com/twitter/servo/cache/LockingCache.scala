@@ -2,11 +2,11 @@ package com.twitter.servo.cache
 
 import com.twitter.conversions.DurationOps._
 import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.partitioning.FailureAccrualException
+import com.twitter.finagle.partitioning.FailureAccrualEtwitterception
 import com.twitter.finagle.Backoff
 import com.twitter.finagle.stats.{NullStatsReceiver, Stat, StatsReceiver}
 import com.twitter.logging.{Level, Logger}
-import com.twitter.servo.util.{ExceptionCounter, RateLimitingLogger}
+import com.twitter.servo.util.{EtwitterceptionCounter, RateLimitingLogger}
 import com.twitter.util._
 import scala.util.control.NoStackTrace
 
@@ -26,11 +26,11 @@ object LockingCache {
    */
   type Handler[V] = Option[V] => Option[V]
 
-  case class AlwaysSetHandler[V](value: Option[V]) extends Handler[V] {
+  case class AlwaysSetHandler[V](value: Option[V]) etwittertends Handler[V] {
     override def apply(ignored: Option[V]) = value
   }
 
-  case class PickingHandler[V](newValue: V, pick: Picker[V]) extends Handler[V] {
+  case class PickingHandler[V](newValue: V, pick: Picker[V]) etwittertends Handler[V] {
     override def apply(inCache: Option[V]): Option[V] =
       inCache match {
         case None =>
@@ -42,11 +42,11 @@ object LockingCache {
           pick(newValue, oldValue)
       }
 
-    // apparently case classes that extend functions don't get pretty toString methods
+    // apparently case classes that etwittertend functions don't get pretty toString methods
     override lazy val toString = "PickingHandler(%s, %s)".format(newValue, pick)
   }
 
-  case class UpdateOnlyPickingHandler[V](newValue: V, pick: Picker[V]) extends Handler[V] {
+  case class UpdateOnlyPickingHandler[V](newValue: V, pick: Picker[V]) etwittertends Handler[V] {
     override def apply(inCache: Option[V]): Option[V] =
       inCache match {
         case None =>
@@ -58,7 +58,7 @@ object LockingCache {
           pick(newValue, oldValue)
       }
 
-    // apparently case classes that extend functions don't get pretty toString methods
+    // apparently case classes that etwittertend functions don't get pretty toString methods
     override lazy val toString = "UpdateOnlyPickingHandler(%s, %s)".format(newValue, pick)
   }
 }
@@ -72,7 +72,7 @@ trait LockingCacheFactory {
  * A cache that enforces a consistent view of values between the time when a set
  * is initiated and when the value is actually updated in cache.
  */
-trait LockingCache[K, V] extends Cache[K, V] {
+trait LockingCache[K, V] etwittertends Cache[K, V] {
 
   /**
    * Look up a value and dispatch based on the result. The particular locking
@@ -82,7 +82,7 @@ trait LockingCache[K, V] extends Cache[K, V] {
    * Overview of semantics:
    *   `handler(None)` is called if no value is present in cache.
    *   `handler(Some(value))` is called if a value is present.
-   *   `handler(x)` should return None if nothing should be done and `Some(value)`
+   *   `handler(twitter)` should return None if nothing should be done and `Some(value)`
    *   if a value should be set.
    *
    * @return the value that was actually set
@@ -97,7 +97,7 @@ class OptimisticLockingCacheObserver(statsReceiver: StatsReceiver) {
 
   private[this] val successCounter = scopedReceiver.counter("success")
   private[this] val failureCounter = scopedReceiver.counter("failure")
-  private[this] val exceptionCounter = new ExceptionCounter(scopedReceiver)
+  private[this] val etwitterceptionCounter = new EtwitterceptionCounter(scopedReceiver)
   private[this] val lockAndSetStat = scopedReceiver.stat("lockAndSet")
 
   def time[V](f: => Future[Option[V]]): Future[Option[V]] = {
@@ -128,7 +128,7 @@ class OptimisticLockingCacheObserver(statsReceiver: StatsReceiver) {
       val name = attempt.getClass.getSimpleName
       scopedReceiver.counter(name).incr()
       attempt.maybeThrowable foreach { t =>
-        exceptionCounter(t)
+        etwitterceptionCounter(t)
         scopedReceiver.scope(name).counter(t.getClass.getName).incr()
       }
     }
@@ -143,7 +143,7 @@ case class OptimisticLockingCacheFactory(
   // in service logs and any accompanying log sinks such as Splunk. By default, this is disabled,
   // however may be optionally enabled for the purpose of debugging. Caution is warranted.
   enableKeyLogging: Boolean = false)
-    extends LockingCacheFactory {
+    etwittertends LockingCacheFactory {
   def this(
     backoffs: Backoff,
     statsReceiver: StatsReceiver,
@@ -166,24 +166,24 @@ object OptimisticLockingCache {
   def emptyFutureNone[V] = FutureNone.asInstanceOf[Future[Option[V]]]
 
   sealed abstract class FailedAttempt(val maybeThrowable: Option[Throwable])
-      extends Exception
+      etwittertends Etwitterception
       with NoStackTrace
-  case class GetWithChecksumException(t: Throwable) extends FailedAttempt(Some(t))
-  case object GetWithChecksumEmpty extends FailedAttempt(None)
-  case object CheckAndSetFailed extends FailedAttempt(None)
-  case class CheckAndSetException(t: Throwable) extends FailedAttempt(Some(t))
-  case class AddException(t: Throwable) extends FailedAttempt(Some(t))
+  case class GetWithChecksumEtwitterception(t: Throwable) etwittertends FailedAttempt(Some(t))
+  case object GetWithChecksumEmpty etwittertends FailedAttempt(None)
+  case object CheckAndSetFailed etwittertends FailedAttempt(None)
+  case class CheckAndSetEtwitterception(t: Throwable) etwittertends FailedAttempt(Some(t))
+  case class AddEtwitterception(t: Throwable) etwittertends FailedAttempt(Some(t))
 
   case class LockAndSetFailure(str: String, attempts: Seq[FailedAttempt])
-      extends Exception(
+      etwittertends Etwitterception(
         str,
-        // if the last exception was an RPC exception, try to recover the stack trace
+        // if the last etwitterception was an RPC etwitterception, try to recover the stack trace
         attempts.lastOption.flatMap(_.maybeThrowable).orNull
       )
 
   private def retryPolicy(backoffs: Backoff): RetryPolicy[Try[Nothing]] =
     RetryPolicy.backoff(backoffs) {
-      case Throw(_: FailureAccrualException) => false
+      case Throw(_: FailureAccrualEtwitterception) => false
       case _ => true
     }
 }
@@ -197,7 +197,7 @@ class OptimisticLockingCache[K, V](
   observer: OptimisticLockingCacheObserver,
   timer: Timer,
   enableKeyLogging: Boolean)
-    extends LockingCache[K, V]
+    etwittertends LockingCache[K, V]
     with CacheWrapper[K, V] {
   import LockingCache._
   import OptimisticLockingCache._
@@ -249,10 +249,10 @@ class OptimisticLockingCache[K, V](
   private[this] val rateLimitedLogger = new RateLimitingLogger(logger = log)
 
   @deprecated("use RetryPolicy-based constructor", "0.1.2")
-  def this(underlyingCache: Cache[K, V], maxTries: Int = 10, enableKeyLogging: Boolean) = {
+  def this(underlyingCache: Cache[K, V], matwitterTries: Int = 10, enableKeyLogging: Boolean) = {
     this(
       underlyingCache,
-      Backoff.const(0.milliseconds).take(maxTries),
+      Backoff.const(0.milliseconds).take(matwitterTries),
       new OptimisticLockingCacheObserver(NullStatsReceiver),
       new NullTimer,
       enableKeyLogging
@@ -289,9 +289,9 @@ class OptimisticLockingCache[K, V](
           rateLimitedLogger.log(
             s"failed attempts for ${key}:\n ${attempts.mkString("\n ")}",
             level = Level.INFO)
-          Future.exception(LockAndSetFailure("lockAndSet failed for " + key, attempts))
+          Future.etwitterception(LockAndSetFailure("lockAndSet failed for " + key, attempts))
         } else {
-          Future.exception(LockAndSetFailure("lockAndSet failed", attempts))
+          Future.etwitterception(LockAndSetFailure("lockAndSet failed", attempts))
         }
 
       case Some((backoff, tailPolicy)) =>
@@ -339,10 +339,10 @@ class OptimisticLockingCache[K, V](
             }
 
           case Throw(t) =>
-            // count exception against retries
+            // count etwitterception against retries
             if (enableKeyLogging)
-              rateLimitedLogger.logThrowable(t, s"add($key) returned exception. will retry")
-            retry(key, Throw(t), handler, retryPolicy, attempts :+ AddException(t))
+              rateLimitedLogger.logThrowable(t, s"add($key) returned etwitterception. will retry")
+            retry(key, Throw(t), handler, retryPolicy, attempts :+ AddEtwitterception(t))
         }
     }
   }
@@ -403,8 +403,8 @@ class OptimisticLockingCache[K, V](
           if (enableKeyLogging)
             rateLimitedLogger.logThrowable(
               t,
-              s"getWithChecksum(${key}) returned exception. will retry.")
-          retry(key, Throw(t), handler, retryPolicy, attempts :+ GetWithChecksumException(t))
+              s"getWithChecksum(${key}) returned etwitterception. will retry.")
+          retry(key, Throw(t), handler, retryPolicy, attempts :+ GetWithChecksumEtwitterception(t))
       }
     }
   }
@@ -452,24 +452,24 @@ class OptimisticLockingCache[K, V](
             }
 
           case Throw(t) =>
-            // count exception against retries
+            // count etwitterception against retries
             if (enableKeyLogging)
               rateLimitedLogger.logThrowable(
                 t,
-                s"checkAndSet(${key}) returned exception. will retry.")
-            retry(key, Throw(t), handler, retryPolicy, attempts :+ CheckAndSetException(t))
+                s"checkAndSet(${key}) returned etwitterception. will retry.")
+            retry(key, Throw(t), handler, retryPolicy, attempts :+ CheckAndSetEtwitterception(t))
         }
     }
   }
 }
 
-object NonLockingCacheFactory extends LockingCacheFactory {
+object NonLockingCacheFactory etwittertends LockingCacheFactory {
   override def apply[K, V](cache: Cache[K, V]): LockingCache[K, V] = new NonLockingCache(cache)
   override def scope(scopes: String*) = this
 }
 
 class NonLockingCache[K, V](override val underlyingCache: Cache[K, V])
-    extends LockingCache[K, V]
+    etwittertends LockingCache[K, V]
     with CacheWrapper[K, V] {
   override def lockAndSet(key: K, handler: LockingCache.Handler[V]): Future[Option[V]] = {
     handler(None) match {

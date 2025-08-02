@@ -9,12 +9,12 @@ import com.twitter.unified_user_actions.adapter.common.AdapterUtils
 import com.twitter.unified_user_actions.thriftscala._
 
 class TlsFavsAdapter
-    extends AbstractAdapter[ContextualizedFavoriteEvent, UnKeyed, UnifiedUserAction] {
+    etwittertends AbstractAdapter[ContetwittertualizedFavoriteEvent, UnKeyed, UnifiedUserAction] {
 
   import TlsFavsAdapter._
 
   override def adaptOneToKeyedMany(
-    input: ContextualizedFavoriteEvent,
+    input: ContetwittertualizedFavoriteEvent,
     statsReceiver: StatsReceiver = NullStatsReceiver
   ): Seq[(UnKeyed, UnifiedUserAction)] =
     adaptEvent(input).map { e => (UnKeyed, e) }
@@ -22,7 +22,7 @@ class TlsFavsAdapter
 
 object TlsFavsAdapter {
 
-  def adaptEvent(e: ContextualizedFavoriteEvent): Seq[UnifiedUserAction] =
+  def adaptEvent(e: ContetwittertualizedFavoriteEvent): Seq[UnifiedUserAction] =
     Option(e).flatMap { e =>
       e.event match {
         case FavoriteEventUnion.Favorite(favoriteEvent) =>
@@ -31,7 +31,7 @@ object TlsFavsAdapter {
               userIdentifier = getUserIdentifier(Left(favoriteEvent)),
               item = getFavItem(favoriteEvent),
               actionType = ActionType.ServerTweetFav,
-              eventMetadata = getEventMetadata(Left(favoriteEvent), e.context),
+              eventMetadata = getEventMetadata(Left(favoriteEvent), e.contetwittert),
               productSurface = None,
               productSurfaceInfo = None
             ))
@@ -42,7 +42,7 @@ object TlsFavsAdapter {
               userIdentifier = getUserIdentifier(Right(unfavoriteEvent)),
               item = getUnfavItem(unfavoriteEvent),
               actionType = ActionType.ServerTweetUnfav,
-              eventMetadata = getEventMetadata(Right(unfavoriteEvent), e.context),
+              eventMetadata = getEventMetadata(Right(unfavoriteEvent), e.contetwittert),
               productSurface = None,
               productSurfaceInfo = None
             ))
@@ -71,7 +71,7 @@ object TlsFavsAdapter {
 
   def getEventMetadata(
     event: Either[FavoriteEvent, UnfavoriteEvent],
-    context: LogEventContext
+    contetwittert: LogEventContetwittert
   ): EventMetadata = {
     val sourceTimestampMs = event match {
       case Left(favoriteEvent) => favoriteEvent.eventTimeMs
@@ -79,15 +79,15 @@ object TlsFavsAdapter {
     }
     // Client UI language, see more at http://go/languagepriority. The format should be ISO 639-1.
     val language = event match {
-      case Left(favoriteEvent) => favoriteEvent.viewerContext.flatMap(_.requestLanguageCode)
-      case Right(unfavoriteEvent) => unfavoriteEvent.viewerContext.flatMap(_.requestLanguageCode)
+      case Left(favoriteEvent) => favoriteEvent.viewerContetwittert.flatMap(_.requestLanguageCode)
+      case Right(unfavoriteEvent) => unfavoriteEvent.viewerContetwittert.flatMap(_.requestLanguageCode)
     }
     // From the request (user’s current location),
-    // see https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/thrift/com/twitter/context/viewer.thrift?L54
+    // see https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/thrift/com/twitter/contetwittert/viewer.thrift?L54
     // The format should be ISO_3166-1_alpha-2.
     val countryCode = event match {
-      case Left(favoriteEvent) => favoriteEvent.viewerContext.flatMap(_.requestCountryCode)
-      case Right(unfavoriteEvent) => unfavoriteEvent.viewerContext.flatMap(_.requestCountryCode)
+      case Left(favoriteEvent) => favoriteEvent.viewerContetwittert.flatMap(_.requestCountryCode)
+      case Right(unfavoriteEvent) => unfavoriteEvent.viewerContetwittert.flatMap(_.requestCountryCode)
     }
     EventMetadata(
       sourceTimestampMs = sourceTimestampMs,
@@ -95,8 +95,8 @@ object TlsFavsAdapter {
       sourceLineage = SourceLineage.ServerTlsFavs,
       language = language.map(AdapterUtils.normalizeLanguageCode),
       countryCode = countryCode.map(AdapterUtils.normalizeCountryCode),
-      traceId = Some(context.traceId),
-      clientAppId = context.clientApplicationId,
+      traceId = Some(contetwittert.traceId),
+      clientAppId = contetwittert.clientApplicationId,
     )
   }
 

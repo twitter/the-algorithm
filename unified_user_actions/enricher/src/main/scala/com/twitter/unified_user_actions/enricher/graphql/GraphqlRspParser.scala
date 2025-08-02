@@ -13,11 +13,11 @@ import com.twitter.util.Try
 /**
  * @param dm The DynMap parsed from the returned Json string
  */
-case class GraphqlRspErrors(dm: DynMap) extends Exception {
+case class GraphqlRspErrors(dm: DynMap) etwittertends Etwitterception {
   override def toString: String = dm.toString()
 }
 
-object GraphqlRspParser extends Logging {
+object GraphqlRspParser etwittertends Logging {
   private val rateLimiter = RateLimiter.create(1.0) // at most 1 log message per second
   private def rateLimitedLogError(e: Throwable): Unit =
     if (rateLimiter.tryAcquire()) {
@@ -27,7 +27,7 @@ object GraphqlRspParser extends Logging {
   /**
    * GraphQL's response is a Json string.
    * This function first parses the raw response as a Json string, then it checks if the returned
-   * object has the "data" field which means the response is expected. The response could also
+   * object has the "data" field which means the response is etwitterpected. The response could also
    * return a valid Json string but with errors inside it as a list of "errors".
    */
   def toDynMap(

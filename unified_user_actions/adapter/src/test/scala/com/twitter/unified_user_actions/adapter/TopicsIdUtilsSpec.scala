@@ -50,13 +50,13 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 
 @RunWith(classOf[JUnitRunner])
 class TopicsIdUtilsSpec
-    extends AnyFunSuite
+    etwittertends AnyFunSuite
     with Matchers
     with Mockito
     with TableDrivenPropertyChecks {
   import com.twitter.unified_user_actions.adapter.client_event.TopicIdUtils._
 
-  trait Fixture {
+  trait Fitwitterture {
     def buildLogBase(userId: Long): LogBase = {
       val logBase = mock[LogBase]
       when(logBase.country).thenReturn(Some("US"))
@@ -338,7 +338,7 @@ class TopicsIdUtilsSpec
   }
 
   test("getTopicId should correctly find topic id from item for home timeline and search") {
-    new Fixture {
+    new Fitwitterture {
 
       val testData = Table(
         ("ItemType", "topicId", "controllerData"),
@@ -360,7 +360,7 @@ class TopicsIdUtilsSpec
   }
 
   test("getTopicId should correctly find topic id from item for guide events") {
-    new Fixture {
+    new Fitwitterture {
       getTopicId(
         buildItemForGuide(1, ItemType.Tweet, 100, topicMetadataInGuide),
         defaultNamespace
@@ -369,7 +369,7 @@ class TopicsIdUtilsSpec
   }
 
   test("getTopicId should correctly find topic id for onboarding events") {
-    new Fixture {
+    new Fitwitterture {
       getTopicId(
         buildItemForOnboarding(1, 100),
         buildNamespaceForOnboarding
@@ -462,7 +462,7 @@ class TopicsIdUtilsSpec
       (
         Item(description = Some("id=678,key=value")),
         EventNamespace(
-          page = Some("onXYZboarding"),
+          page = Some("ontwitterYZboarding"),
           section = Some("section has topic"),
           component = Some("component has topic"),
           element = Some("element has topic")

@@ -3,10 +3,10 @@ package com.twitter.search.earlybird_root.caching;
 import com.twitter.search.common.caching.filter.QueryCachePredicate;
 import com.twitter.search.common.decider.SearchDecider;
 import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
 
-public class TopTweetsQueryCachePredicate extends QueryCachePredicate<EarlybirdRequestContext> {
+public class TopTweetsQueryCachePredicate etwittertends QueryCachePredicate<EarlybirdRequestContetwittert> {
   private final SearchDecider decider;
   private final String toptweetsCacheEnabledDeciderKey;
 
@@ -16,9 +16,9 @@ public class TopTweetsQueryCachePredicate extends QueryCachePredicate<EarlybirdR
   }
 
   @Override
-  public Boolean shouldQueryCache(EarlybirdRequestContext requestContext) {
-    return EarlybirdRequestType.TOP_TWEETS == requestContext.getEarlybirdRequestType()
-        && EarlybirdRequestUtil.isCachingAllowed(requestContext.getRequest())
+  public Boolean shouldQueryCache(EarlybirdRequestContetwittert requestContetwittert) {
+    return EarlybirdRequestType.TOP_TWEETS == requestContetwittert.getEarlybirdRequestType()
+        && EarlybirdRequestUtil.isCachingAllowed(requestContetwittert.getRequest())
         && decider.isAvailable(toptweetsCacheEnabledDeciderKey);
   }
 }

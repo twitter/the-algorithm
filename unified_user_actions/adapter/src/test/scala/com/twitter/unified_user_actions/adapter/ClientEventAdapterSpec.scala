@@ -20,15 +20,15 @@ import org.scalatest.prop.TableFor1
 import org.scalatest.prop.TableFor2
 import scala.language.implicitConversions
 
-class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
+class ClientEventAdapterSpec etwittertends Test with TableDrivenPropertyChecks {
   // Tests for invalid client-events
   test("should ignore events") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       val eventsToBeIgnored: TableFor2[String, LogEvent] = Table(
         ("namespace", "event"),
         ("ddg", ddgEvent),
         ("qig_ranker", qigRankerEvent),
-        ("timelnemixer", timelineMixerEvent),
+        ("timelnemitwitterer", timelineMitwittererEvent),
         ("timelineservice", timelineServiceEvent),
         ("tweetconvosvc", tweetConcServiceEvent),
         ("item-type is non-tweet", renderNonTweetItemTypeEvent)
@@ -43,44 +43,44 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   test("Tests for ItemType filter") {
     /// Tweet events
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val events = Table(
-          ("itemType", "expectedUUA"),
-          (Some(ItemType.Tweet), Seq(expectedTweetRenderDefaultTweetUUA)),
-          (Some(ItemType.QuotedTweet), Seq(expectedTweetRenderDefaultTweetUUA)),
+          ("itemType", "etwitterpectedUUA"),
+          (Some(ItemType.Tweet), Seq(etwitterpectedTweetRenderDefaultTweetUUA)),
+          (Some(ItemType.QuotedTweet), Seq(etwitterpectedTweetRenderDefaultTweetUUA)),
           (Some(ItemType.Topic), Nil),
           (None, Nil)
         )
 
-        forEvery(events) { (itemTypeOpt: Option[ItemType], expected: Seq[UnifiedUserAction]) =>
+        forEvery(events) { (itemTypeOpt: Option[ItemType], etwitterpected: Seq[UnifiedUserAction]) =>
           val actual = ClientEventAdapter.adaptEvent(
             actionTowardDefaultTweetEvent(
               eventNamespace = Some(ceRenderEventNamespace),
               itemTypeOpt = itemTypeOpt
             ))
-          assert(expected === actual)
+          assert(etwitterpected === actual)
         }
       }
     }
 
     /// Topic events
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
-        val expected: UnifiedUserAction = mkExpectedUUAForActionTowardTopicEvent(
+        val etwitterpected: UnifiedUserAction = mkEtwitterpectedUUAForActionTowardTopicEvent(
           topicId = topicId,
           clientEventNamespace = Some(uuaTopicFollowClientEventNamespace1),
           actionType = ActionType.ClientTopicFollow
         )
         val events = Table(
-          ("itemType", "expectedUUA"),
-          (Some(ItemType.Tweet), Seq(expected)),
-          (Some(ItemType.QuotedTweet), Seq(expected)),
-          (Some(ItemType.Topic), Seq(expected)),
+          ("itemType", "etwitterpectedUUA"),
+          (Some(ItemType.Tweet), Seq(etwitterpected)),
+          (Some(ItemType.QuotedTweet), Seq(etwitterpected)),
+          (Some(ItemType.Topic), Seq(etwitterpected)),
           (None, Nil)
         )
 
-        forEvery(events) { (itemTypeOpt: Option[ItemType], expected: Seq[UnifiedUserAction]) =>
+        forEvery(events) { (itemTypeOpt: Option[ItemType], etwitterpected: Seq[UnifiedUserAction]) =>
           val actual = ClientEventAdapter.adaptEvent(
             actionTowardDefaultTweetEvent(
               eventNamespace = Some(ceTopicFollow1),
@@ -89,7 +89,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                 Some(SuggestionDetails(decodedControllerData = Some(homeTweetControllerData()))),
               itemTypeOpt = itemTypeOpt
             ))
-          assert(expected === actual)
+          assert(etwitterpected === actual)
         }
       }
     }
@@ -97,62 +97,62 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientTweetRenderImpression
   test("ClientTweetRenderImpression") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
+          ("actionTweetType", "clientEvent", "etwitterpectedUUAEvent"),
           (
             "Default",
             actionTowardDefaultTweetEvent(eventNamespace = Some(ceRenderEventNamespace)),
-            Seq(expectedTweetRenderDefaultTweetUUA)),
+            Seq(etwitterpectedTweetRenderDefaultTweetUUA)),
           (
             "Reply",
             actionTowardReplyEvent(eventNamespace = Some(ceRenderEventNamespace)),
-            Seq(expectedTweetRenderReplyUUA)),
+            Seq(etwitterpectedTweetRenderReplyUUA)),
           (
             "Retweet",
             actionTowardRetweetEvent(eventNamespace = Some(ceRenderEventNamespace)),
-            Seq(expectedTweetRenderRetweetUUA)),
+            Seq(etwitterpectedTweetRenderRetweetUUA)),
           (
             "Quote",
             actionTowardQuoteEvent(
               eventNamespace = Some(ceRenderEventNamespace),
               quotedAuthorId = Some(456L)),
-            Seq(expectedTweetRenderQuoteUUA1, expectedTweetRenderQuoteUUA2)),
+            Seq(etwitterpectedTweetRenderQuoteUUA1, etwitterpectedTweetRenderQuoteUUA2)),
           (
             "Retweet of a reply that quoted another Tweet",
             actionTowardRetweetEventWithReplyAndQuote(eventNamespace =
               Some(ceRenderEventNamespace)),
             Seq(
-              expectedTweetRenderRetweetWithReplyAndQuoteUUA1,
-              expectedTweetRenderRetweetWithReplyAndQuoteUUA2))
+              etwitterpectedTweetRenderRetweetWithReplyAndQuoteUUA1,
+              etwitterpectedTweetRenderRetweetWithReplyAndQuoteUUA2))
         )
         forEvery(clientEvents) {
-          (_: String, event: LogEvent, expectedUUA: Seq[UnifiedUserAction]) =>
+          (_: String, event: LogEvent, etwitterpectedUUA: Seq[UnifiedUserAction]) =>
             val actual = ClientEventAdapter.adaptEvent(event)
-            actual should contain theSameElementsAs expectedUUA
+            actual should contain theSameElementsAs etwitterpectedUUA
         }
       }
     }
   }
 
   test("ClientTweetGallery/DetailImpression") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
+          ("actionTweetType", "clientEvent", "etwitterpectedUUAEvent"),
           (
             "DetailImpression: tweet::tweet::impression",
             actionTowardDefaultTweetEvent(eventNamespace = Some(ceTweetDetailsEventNamespace1)),
-            expectedTweetDetailImpressionUUA1),
+            etwitterpectedTweetDetailImpressionUUA1),
           (
             "GalleryImpression: gallery:photo:impression",
             actionTowardDefaultTweetEvent(eventNamespace = Some(ceGalleryEventNamespace)),
-            expectedTweetGalleryImpressionUUA),
+            etwitterpectedTweetGalleryImpressionUUA),
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
+        forEvery(clientEvents) { (_: String, event: LogEvent, etwitterpectedUUA: UnifiedUserAction) =>
           val actual = ClientEventAdapter.adaptEvent(event)
-          assert(Seq(expectedUUA) === actual)
+          assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -160,22 +160,22 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientTweetLingerImpression
   test("ClientTweetLingerImpression") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
-          ("Default", lingerDefaultTweetEvent, expectedTweetLingerDefaultTweetUUA),
-          ("Reply", lingerReplyEvent, expectedTweetLingerReplyUUA),
-          ("Retweet", lingerRetweetEvent, expectedTweetLingerRetweetUUA),
-          ("Quote", lingerQuoteEvent, expectedTweetLingerQuoteUUA),
+          ("actionTweetType", "clientEvent", "etwitterpectedUUAEvent"),
+          ("Default", lingerDefaultTweetEvent, etwitterpectedTweetLingerDefaultTweetUUA),
+          ("Reply", lingerReplyEvent, etwitterpectedTweetLingerReplyUUA),
+          ("Retweet", lingerRetweetEvent, etwitterpectedTweetLingerRetweetUUA),
+          ("Quote", lingerQuoteEvent, etwitterpectedTweetLingerQuoteUUA),
           (
             "Retweet of a reply that quoted another Tweet",
             lingerRetweetWithReplyAndQuoteEvent,
-            expectedTweetLingerRetweetWithReplyAndQuoteUUA),
+            etwitterpectedTweetLingerRetweetWithReplyAndQuoteUUA),
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
+        forEvery(clientEvents) { (_: String, event: LogEvent, etwitterpectedUUA: UnifiedUserAction) =>
           val actual = ClientEventAdapter.adaptEvent(event)
-          assert(Seq(expectedUUA) === actual)
+          assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -184,7 +184,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
   // Tests for ClientTweetClickQuote
   test(
     "ClickQuote, which is the click on the quote button, results in setting retweeting, inReplyTo, quoted tweet ids") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val actual = ClientEventAdapter.adaptEvent(
           // there shouldn't be any quotingTweetId in CE when it is "quote"
@@ -192,7 +192,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
             EventNamespace(
               action = Some("quote")
             ))))
-        assert(Seq(expectedTweetClickQuoteUUA) === actual)
+        assert(Seq(etwitterpectedTweetClickQuoteUUA) === actual)
       }
     }
   }
@@ -200,7 +200,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
   // Tests for ClientTweetQuote
   test(
     "Quote, which is sending the quote, results in setting retweeting, inReplyTo, quoted tweet ids") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       val actions: TableFor1[String] = Table(
         "action",
         "send_quote_tweet",
@@ -215,7 +215,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
               EventNamespace(
                 action = Some(action)
               ))))
-          assert(Seq(expectedTweetQuoteUUA(action)) === actual)
+          assert(Seq(etwitterpectedTweetQuoteUUA(action)) === actual)
         }
       }
     }
@@ -223,44 +223,44 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientTweetFav and ClientTweetUnfav
   test("ClientTweetFav and ClientTweetUnfav") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
+          ("actionTweetType", "clientEvent", "etwitterpectedUUAEvent"),
           (
             "Default Tweet favorite",
             actionTowardDefaultTweetEvent(eventNamespace = Some(ceFavoriteEventNamespace)),
-            expectedTweetFavoriteDefaultTweetUUA),
+            etwitterpectedTweetFavoriteDefaultTweetUUA),
           (
             "Reply Tweet favorite",
             actionTowardReplyEvent(eventNamespace = Some(ceFavoriteEventNamespace)),
-            expectedTweetFavoriteReplyUUA),
+            etwitterpectedTweetFavoriteReplyUUA),
           (
             "Retweet Tweet favorite",
             actionTowardRetweetEvent(eventNamespace = Some(ceFavoriteEventNamespace)),
-            expectedTweetFavoriteRetweetUUA),
+            etwitterpectedTweetFavoriteRetweetUUA),
           (
             "Quote Tweet favorite",
             actionTowardQuoteEvent(eventNamespace = Some(ceFavoriteEventNamespace)),
-            expectedTweetFavoriteQuoteUUA),
+            etwitterpectedTweetFavoriteQuoteUUA),
           (
             "Retweet of a reply that quoted another Tweet favorite",
             actionTowardRetweetEventWithReplyAndQuote(eventNamespace =
               Some(ceFavoriteEventNamespace)),
-            expectedTweetFavoriteRetweetWithReplyAndQuoteUUA),
+            etwitterpectedTweetFavoriteRetweetWithReplyAndQuoteUUA),
           (
             "Default Tweet unfavorite",
             actionTowardDefaultTweetEvent(
               eventNamespace = Some(EventNamespace(action = Some("unfavorite"))),
             ),
-            mkExpectedUUAForActionTowardDefaultTweetEvent(
+            mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
               clientEventNamespace = Some(ClientEventNamespace(action = Some("unfavorite"))),
               actionType = ActionType.ClientTweetUnfav
             ))
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
+        forEvery(clientEvents) { (_: String, event: LogEvent, etwitterpectedUUA: UnifiedUserAction) =>
           val actual = ClientEventAdapter.adaptEvent(event)
-          assert(Seq(expectedUUA) === actual)
+          assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -268,35 +268,35 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientTweetClickReply
   test("ClientTweetClickReply") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
+          ("actionTweetType", "clientEvent", "etwitterpectedUUAEvent"),
           (
             "Default",
             actionTowardDefaultTweetEvent(eventNamespace = Some(ceClickReplyEventNamespace)),
-            expectedTweetClickReplyDefaultTweetUUA),
+            etwitterpectedTweetClickReplyDefaultTweetUUA),
           (
             "Reply",
             actionTowardReplyEvent(eventNamespace = Some(ceClickReplyEventNamespace)),
-            expectedTweetClickReplyReplyUUA),
+            etwitterpectedTweetClickReplyReplyUUA),
           (
             "Retweet",
             actionTowardRetweetEvent(eventNamespace = Some(ceClickReplyEventNamespace)),
-            expectedTweetClickReplyRetweetUUA),
+            etwitterpectedTweetClickReplyRetweetUUA),
           (
             "Quote",
             actionTowardQuoteEvent(eventNamespace = Some(ceClickReplyEventNamespace)),
-            expectedTweetClickReplyQuoteUUA),
+            etwitterpectedTweetClickReplyQuoteUUA),
           (
             "Retweet of a reply that quoted another Tweet",
             actionTowardRetweetEventWithReplyAndQuote(eventNamespace =
               Some(ceClickReplyEventNamespace)),
-            expectedTweetClickReplyRetweetWithReplyAndQuoteUUA)
+            etwitterpectedTweetClickReplyRetweetWithReplyAndQuoteUUA)
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
+        forEvery(clientEvents) { (_: String, event: LogEvent, etwitterpectedUUA: UnifiedUserAction) =>
           val actual = ClientEventAdapter.adaptEvent(event)
-          assert(Seq(expectedUUA) === actual)
+          assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -304,21 +304,21 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientTweetReply
   test("ClientTweetReply") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
-          ("DefaultOrReply", replyToDefaultTweetOrReplyEvent, expectedTweetReplyDefaultTweetUUA),
-          ("Retweet", replyToRetweetEvent, expectedTweetReplyRetweetUUA),
-          ("Quote", replyToQuoteEvent, expectedTweetReplyQuoteUUA),
+          ("actionTweetType", "clientEvent", "etwitterpectedUUAEvent"),
+          ("DefaultOrReply", replyToDefaultTweetOrReplyEvent, etwitterpectedTweetReplyDefaultTweetUUA),
+          ("Retweet", replyToRetweetEvent, etwitterpectedTweetReplyRetweetUUA),
+          ("Quote", replyToQuoteEvent, etwitterpectedTweetReplyQuoteUUA),
           (
             "Retweet of a reply that quoted another Tweet",
             replyToRetweetWithReplyAndQuoteEvent,
-            expectedTweetReplyRetweetWithReplyAndQuoteUUA)
+            etwitterpectedTweetReplyRetweetWithReplyAndQuoteUUA)
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
+        forEvery(clientEvents) { (_: String, event: LogEvent, etwitterpectedUUA: UnifiedUserAction) =>
           val actual = ClientEventAdapter.adaptEvent(event)
-          assert(Seq(expectedUUA) === actual)
+          assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -326,54 +326,54 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientTweetRetweet and ClientTweetUnretweet
   test("ClientTweetRetweet and ClientTweetUnretweet") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
+          ("actionTweetType", "clientEvent", "etwitterpectedUUAEvent"),
           (
             "Default Tweet retweet",
             actionTowardDefaultTweetEvent(eventNamespace = Some(ceRetweetEventNamespace)),
-            expectedTweetRetweetDefaultTweetUUA),
+            etwitterpectedTweetRetweetDefaultTweetUUA),
           (
             "Reply Tweet retweet",
             actionTowardReplyEvent(eventNamespace = Some(ceRetweetEventNamespace)),
-            expectedTweetRetweetReplyUUA),
+            etwitterpectedTweetRetweetReplyUUA),
           (
             "Retweet Tweet retweet",
             actionTowardRetweetEvent(eventNamespace = Some(ceRetweetEventNamespace)),
-            expectedTweetRetweetRetweetUUA),
+            etwitterpectedTweetRetweetRetweetUUA),
           (
             "Quote Tweet retweet",
             actionTowardQuoteEvent(eventNamespace = Some(ceRetweetEventNamespace)),
-            expectedTweetRetweetQuoteUUA),
+            etwitterpectedTweetRetweetQuoteUUA),
           (
             "Retweet of a reply that quoted another Tweet retweet",
             actionTowardRetweetEventWithReplyAndQuote(eventNamespace =
               Some(ceRetweetEventNamespace)),
-            expectedTweetRetweetRetweetWithReplyAndQuoteUUA),
+            etwitterpectedTweetRetweetRetweetWithReplyAndQuoteUUA),
           (
             "Default Tweet unretweet",
             actionTowardDefaultTweetEvent(
               eventNamespace = Some(EventNamespace(action = Some("unretweet"))),
             ),
-            mkExpectedUUAForActionTowardDefaultTweetEvent(
+            mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
               clientEventNamespace = Some(ClientEventNamespace(action = Some("unretweet"))),
               actionType = ActionType.ClientTweetUnretweet
             ))
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
+        forEvery(clientEvents) { (_: String, event: LogEvent, etwitterpectedUUA: UnifiedUserAction) =>
           val actual = ClientEventAdapter.adaptEvent(event)
-          assert(Seq(expectedUUA) === actual)
+          assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
   }
 
   test("include Topic Id") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val actual = ClientEventAdapter.adaptEvent(renderDefaultTweetWithTopicIdEvent)
-        assert(Seq(expectedTweetRenderDefaultTweetWithTopicIdUUA) === actual)
+        assert(Seq(etwitterpectedTweetRenderDefaultTweetWithTopicIdUUA) === actual)
       }
     }
   }
@@ -381,7 +381,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
   // Tests for ClientTweetVideoPlayback0, 25, 50, 75, 95, 100 PlayFromTap, QualityView,
   // VideoView, MrcView, ViewThreshold
   test("ClientTweetVideoPlayback*") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val clientEvents = Table(
           ("ceNamespace", "uuaNamespace", "uuaActionType"),
@@ -438,36 +438,36 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                 clientMediaEvent = Some(clientMediaEvent),
                 cardDetails = Some(cardDetails)
               )
-              val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
+              val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
                 clientEventNamespace = Some(uuaNamespace.copy(element = Some(element))),
                 actionType = uuaActionType,
                 tweetActionInfo = Some(videoMetadata)
               )
               val actual = ClientEventAdapter.adaptEvent(event)
-              assert(Seq(expectedUUA) === actual)
+              assert(Seq(etwitterpectedUUA) === actual)
           }
         }
       }
     }
   }
 
-  // Tests for ClientTweetPhotoExpand
-  test("Client Tweet Photo Expand") {
-    new TestFixtures.ClientEventFixture {
+  // Tests for ClientTweetPhotoEtwitterpand
+  test("Client Tweet Photo Etwitterpand") {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
-        val clientEvent = actionTowardDefaultTweetEvent(eventNamespace = Some(cePhotoExpand))
-        val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
-          clientEventNamespace = Some(uuaPhotoExpandClientEventNamespace),
-          actionType = ActionType.ClientTweetPhotoExpand
+        val clientEvent = actionTowardDefaultTweetEvent(eventNamespace = Some(cePhotoEtwitterpand))
+        val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
+          clientEventNamespace = Some(uuaPhotoEtwitterpandClientEventNamespace),
+          actionType = ActionType.ClientTweetPhotoEtwitterpand
         )
-        assert(Seq(expectedUUA) === ClientEventAdapter.adaptEvent(clientEvent))
+        assert(Seq(etwitterpectedUUA) === ClientEventAdapter.adaptEvent(clientEvent))
       }
     }
   }
 
   // Tests for ClientCardClick
   test("Client Card Related") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val clientEvents = Table(
           ("ceNamespace", "ceItemType", "uuaNamespace", "uuaActionType"),
@@ -514,7 +514,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
               itemTypeOpt = Some(ceItemType),
               authorId = Some(authorId)
             )
-            val expectedUUA = mkExpectedUUAForCardEvent(
+            val etwitterpectedUUA = mkEtwitterpectedUUAForCardEvent(
               id = Some(itemTweetId),
               clientEventNamespace = Some(uuaNamespace),
               actionType = uuaActionType,
@@ -522,7 +522,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
               authorId = Some(authorId)
             )
             val actual = ClientEventAdapter.adaptEvent(event)
-            assert(Seq(expectedUUA) === actual)
+            assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -530,7 +530,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientTweetClickMentionScreenName
   test("ClientTweetClickMentionScreenName") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val userHandle = "someHandle"
         val clientEvent = actionTowardDefaultTweetEvent(
@@ -541,14 +541,14 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                 itemType = Some(ItemType.User),
                 id = Some(userId),
                 name = Some(userHandle)))))
-        val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
+        val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
           clientEventNamespace = Some(uuaMentionClickClientEventNamespace),
           actionType = ActionType.ClientTweetClickMentionScreenName,
           tweetActionInfo = Some(
             TweetActionInfo.ClientTweetClickMentionScreenName(
               ClientTweetClickMentionScreenName(actionProfileId = userId, handle = userHandle)))
         )
-        assert(Seq(expectedUUA) === ClientEventAdapter.adaptEvent(clientEvent))
+        assert(Seq(etwitterpectedUUA) === ClientEventAdapter.adaptEvent(clientEvent))
       }
     }
   }
@@ -556,10 +556,10 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
   // Tests for Topic Follow/Unfollow actions
   test("Topic Follow/Unfollow Actions") {
     // The Topic Id is mostly from TimelineTopic controller data or HomeTweets controller data!
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val clientEvents = Table(
-          ("clientEventNamesapce", "expectedUUANamespace", "controllerData", "actionType"),
+          ("clientEventNamesapce", "etwitterpectedUUANamespace", "controllerData", "actionType"),
           (
             ceTopicFollow1,
             uuaTopicFollowClientEventNamespace1,
@@ -641,14 +641,14 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
               suggestionDetails =
                 Some(SuggestionDetails(decodedControllerData = Some(controllerData)))
             )
-            val expectedUUA = mkExpectedUUAForActionTowardTopicEvent(
+            val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardTopicEvent(
               topicId = topicId,
               traceId = None,
               clientEventNamespace = Some(uuaNs),
               actionType = actionType
             )
             val actual = ClientEventAdapter.adaptEvent(event)
-            assert(Seq(expectedUUA) === actual)
+            assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -656,10 +656,10 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for Topic NotInterestedIn & its Undo actions
   test("Topic NotInterestedIn & its Undo actions") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val clientEvents = Table(
-          ("clientEventNamesapce", "expectedUUANamespace", "controllerData", "actionType"),
+          ("clientEventNamesapce", "etwitterpectedUUANamespace", "controllerData", "actionType"),
           (
             ceTopicNotInterestedIn1,
             uuaTopicNotInterestedInClientEventNamespace1,
@@ -719,14 +719,14 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
               suggestionDetails =
                 Some(SuggestionDetails(decodedControllerData = Some(controllerData)))
             )
-            val expectedUUA = mkExpectedUUAForActionTowardTopicEvent(
+            val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardTopicEvent(
               topicId = topicId,
               traceId = None,
               clientEventNamespace = Some(uuaNs),
               actionType = actionType
             )
             val actual = ClientEventAdapter.adaptEvent(event)
-            assert(Seq(expectedUUA) === actual)
+            assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -734,7 +734,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for authorInfo
   test("authorInfo") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val clientEvents = Table(
           ("authorIdOpt", "isFollowedByActingUser", "isFollowingActingUser"),
@@ -756,15 +756,15 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                 isFollowedByActingUser = isFollowedByActingUser,
                 isFollowingActingUser = isFollowingActingUser
               ))
-            val expected =
-              expectedTweetRenderDefaultTweetWithAuthorInfoUUA(authorInfo = authorIdOpt.map { id =>
+            val etwitterpected =
+              etwitterpectedTweetRenderDefaultTweetWithAuthorInfoUUA(authorInfo = authorIdOpt.map { id =>
                 AuthorInfo(
                   authorId = Some(id),
                   isFollowedByActingUser = Some(isFollowedByActingUser),
                   isFollowingActingUser = Some(isFollowingActingUser)
                 )
               })
-            assert(Seq(expected) === actual)
+            assert(Seq(etwitterpected) === actual)
         }
       }
     }
@@ -772,7 +772,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientTweetReport
   test("ClientTweetReport") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val ceNTabTweetReport: EventNamespace =
           ceTweetReport.copy(page = Some("ntab"), section = Some("all"), component = Some("urt"))
@@ -859,7 +859,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                 notificationTabDetails = ceNotificationTabDetails,
                 reportDetails = ceReportDetails))
 
-            val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
+            val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
               clientEventNamespace = Some(uuaNamespace),
               actionType = ActionType.ClientTweetReport,
               tweetActionInfo = Some(uuaTweetActionInfo),
@@ -867,7 +867,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
               productSurfaceInfo = productSurfaceInfo
             )
 
-            assert(Seq(expectedUUA) === actual)
+            assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -875,7 +875,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientTweetNotHelpful and ClientTweetUndoNotHelpful
   test("ClientTweetNotHelpful & UndoNotHelpful") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val actions = Table(("action"), "click", "undo")
         val element = "feedback_givefeedback"
@@ -885,7 +885,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
               eventNamespace = Some(ceEventNamespace(element, action)),
             )
 
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
+          val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
             clientEventNamespace = Some(uuaClientEventNamespace(element, action)),
             actionType = action match {
               case "click" => ActionType.ClientTweetNotHelpful
@@ -894,7 +894,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
           )
 
           val actual = ClientEventAdapter.adaptEvent(clientEvent)
-          assert(Seq(expectedUUA) === actual)
+          assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -902,7 +902,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientTweetNotInterestedIn and ClientTweetUndoNotInterestedIn
   test("ClientTweetNotInterestedIn & UndoNotInterestedIn") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val actions = Table(("action"), "click", "undo")
         val element = "feedback_dontlike"
@@ -912,7 +912,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
               eventNamespace = Some(ceEventNamespace(element, action)),
             )
 
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
+          val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
             clientEventNamespace = Some(uuaClientEventNamespace(element, action)),
             actionType = action match {
               case "click" => ActionType.ClientTweetNotInterestedIn
@@ -921,7 +921,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
           )
 
           val actual = ClientEventAdapter.adaptEvent(clientEvent)
-          assert(Seq(expectedUUA) === actual)
+          assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -929,7 +929,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientTweetNotAboutTopic & ClientTweetUndoNotAboutTopic
   test("ClientTweetNotAboutTopic & ClientTweetUndoNotAboutTopic") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val actions = Table(("action"), "click", "undo")
         val element = "feedback_notabouttopic"
@@ -939,7 +939,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
               eventNamespace = Some(ceEventNamespace(element, action)),
             )
 
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
+          val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
             clientEventNamespace = Some(uuaClientEventNamespace(element, action)),
             actionType = action match {
               case "click" => ActionType.ClientTweetNotAboutTopic
@@ -948,7 +948,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
           )
 
           val actual = ClientEventAdapter.adaptEvent(clientEvent)
-          assert(Seq(expectedUUA) === actual)
+          assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -956,7 +956,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientTweetNotRecent and ClientTweetUndoNotRecent
   test("ClientTweetNotRecent & UndoNotRecent") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val actions = Table(("action"), "click", "undo")
         val element = "feedback_notrecent"
@@ -966,7 +966,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
               eventNamespace = Some(ceEventNamespace(element, action)),
             )
 
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
+          val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
             clientEventNamespace = Some(uuaClientEventNamespace(element, action)),
             actionType = action match {
               case "click" => ActionType.ClientTweetNotRecent
@@ -975,7 +975,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
           )
 
           val actual = ClientEventAdapter.adaptEvent(clientEvent)
-          assert(Seq(expectedUUA) === actual)
+          assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -983,7 +983,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientTweetSeeFewer and ClientTweetUndoSeeFewer
   test("ClientTweetSeeFewer & ClientTweetUndoSeeFewer") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val actions = Table(("action"), "click", "undo")
         val element = "feedback_seefewer"
@@ -993,7 +993,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
               eventNamespace = Some(ceEventNamespace(element, action)),
             )
 
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
+          val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
             clientEventNamespace = Some(uuaClientEventNamespace(element, action)),
             actionType = action match {
               case "click" => ActionType.ClientTweetSeeFewer
@@ -1002,7 +1002,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
           )
 
           val actual = ClientEventAdapter.adaptEvent(clientEvent)
-          assert(Seq(expectedUUA) === actual)
+          assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -1010,10 +1010,10 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for getEventMetadata
   test("getEventMetadata") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val clientEvents = Table(
-          ("clientEventNamesapce", "expectedUUANamespace", "controllerData"),
+          ("clientEventNamesapce", "etwitterpectedUUANamespace", "controllerData"),
           (
             ceRenderEventNamespace,
             uuaRenderClientEventNamespace,
@@ -1032,11 +1032,11 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
               suggestionDetails =
                 Some(SuggestionDetails(decodedControllerData = Some(controllerData)))
             )
-            val expectedEventMetaData = mkUUAEventMetadata(
+            val etwitterpectedEventMetaData = mkUUAEventMetadata(
               clientEventNamespace = Some(uuaNs)
             )
             val actual = ClientEventAdapter.adaptEvent(event).head.eventMetadata
-            assert(expectedEventMetaData === actual)
+            assert(etwitterpectedEventMetaData === actual)
         }
       }
     }
@@ -1044,10 +1044,10 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for getSourceTimestamp
   test("getSourceTimestamp") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val params = Table(
-          ("testCase", "clientEvent", "expectedUUAEventTimestamp"),
+          ("testCase", "clientEvent", "etwitterpectedUUAEventTimestamp"),
           (
             "CES event with DriftAdjustedEventCreatedAtMs",
             actionTowardDefaultTweetEvent(eventNamespace = Some(ceRenderEventNamespace)),
@@ -1069,10 +1069,10 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
             ),
             Some(logBase.timestamp))
         )
-        forEvery(params) { (_: String, event: LogEvent, expectedUUAEventTimestamp: Option[Long]) =>
+        forEvery(params) { (_: String, event: LogEvent, etwitterpectedUUAEventTimestamp: Option[Long]) =>
           val actual =
             ClientEventAdapter.adaptEvent(event).map(_.eventMetadata.sourceTimestampMs).headOption
-          assert(expectedUUAEventTimestamp === actual)
+          assert(etwitterpectedUUAEventTimestamp === actual)
         }
       }
     }
@@ -1080,7 +1080,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ServerTweetReport
   test("ServerTweetReport") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val params = Table(
           ("eventType", "ceNamespace", "ceReportDetails", "uuaNamespace", "uuaTweetActionInfo"),
@@ -1116,17 +1116,17 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                 eventNamespace = Some(ceNamespace),
                 reportDetails = ceReportDetails))
 
-            val expectedUUA =
+            val etwitterpectedUUA =
               if (ceNamespace.action.contains("submit"))
                 Seq(
-                  mkExpectedUUAForActionTowardDefaultTweetEvent(
+                  mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
                     clientEventNamespace = uuaNamespace,
                     actionType = ActionType.ServerTweetReport,
                     tweetActionInfo = uuaTweetActionInfo
                   ))
               else Nil
 
-            assert(expectedUUA === actual)
+            assert(etwitterpectedUUA === actual)
         }
       }
     }
@@ -1134,14 +1134,14 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientNotificationOpen
   test("ClientNotificationOpen") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val clientEvent =
           pushNotificationEvent(
             eventNamespace = Some(ceNotificationOpen),
             notificationDetails = Some(notificationDetails))
 
-        val expectedUUA = mkExpectedUUAForNotificationEvent(
+        val etwitterpectedUUA = mkEtwitterpectedUUAForNotificationEvent(
           clientEventNamespace = Some(uuaNotificationOpen),
           actionType = ActionType.ClientNotificationOpen,
           notificationContent = tweetNotificationContent,
@@ -1152,14 +1152,14 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
         )
 
         val actual = ClientEventAdapter.adaptEvent(clientEvent)
-        assert(Seq(expectedUUA) === actual)
+        assert(Seq(etwitterpectedUUA) === actual)
       }
     }
   }
 
   // Tests for ClientNotificationClick
   test("ClientNotificationClick") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val params = Table(
           ("notificationType", "ceNotificationTabDetails", "uuaNotificationContent"),
@@ -1186,7 +1186,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                 eventNamespace = Some(ceNotificationClick),
                 notificationTabDetails = Some(ceNotificationTabDetails)))
 
-            val expectedUUA = mkExpectedUUAForNotificationEvent(
+            val etwitterpectedUUA = mkEtwitterpectedUUAForNotificationEvent(
               clientEventNamespace = Some(uuaNotificationClick),
               actionType = ActionType.ClientNotificationClick,
               notificationContent = uuaNotificationContent,
@@ -1194,7 +1194,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
               productSurfaceInfo = Some(notificationTabProductSurfaceInfo)
             )
 
-            assert(Seq(expectedUUA) === actual)
+            assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -1202,7 +1202,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientNotificationSeeLessOften
   test("ClientNotificationSeeLessOften") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val params = Table(
           ("notificationType", "ceNotificationTabDetails", "uuaNotificationContent"),
@@ -1225,7 +1225,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                 eventNamespace = Some(ceNotificationSeeLessOften),
                 notificationTabDetails = Some(ceNotificationTabDetails)))
 
-            val expectedUUA = mkExpectedUUAForNotificationEvent(
+            val etwitterpectedUUA = mkEtwitterpectedUUAForNotificationEvent(
               clientEventNamespace = Some(uuaNotificationSeeLessOften),
               actionType = ActionType.ClientNotificationSeeLessOften,
               notificationContent = uuaNotificationContent,
@@ -1233,7 +1233,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
               productSurfaceInfo = Some(notificationTabProductSurfaceInfo)
             )
 
-            assert(Seq(expectedUUA) === actual)
+            assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -1241,7 +1241,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientTweetClick
   test("ClientTweetClick") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val params = Table(
           ("eventName", "page", "nTabDetails", "uuaProductSurface", "uuaProductSurfaceInfo"),
@@ -1267,14 +1267,14 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                 eventNamespace = Some(ceTweetClick.copy(page = Some(page))),
                 notificationTabDetails = notificationTabDetails))
 
-            val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
+            val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
               clientEventNamespace = Some(uuaTweetClick.copy(page = Some(page))),
               actionType = ActionType.ClientTweetClick,
               productSurface = uuaProductSurface,
               productSurfaceInfo = uuaProductSurfaceInfo
             )
 
-            assert(Seq(expectedUUA) === actual)
+            assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -1282,27 +1282,27 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientTweetClickProfile
   test("ClientTweetClickProfile") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val actual =
           ClientEventAdapter.adaptEvent(
             profileClickEvent(eventNamespace = Some(ceTweetClickProfile)))
 
-        val expectedUUA = mkExpectedUUAForProfileClick(
+        val etwitterpectedUUA = mkEtwitterpectedUUAForProfileClick(
           clientEventNamespace = Some(uuaTweetClickProfile),
           actionType = ActionType.ClientTweetClickProfile,
           authorInfo = Some(
             AuthorInfo(
               authorId = Some(authorId)
             )))
-        assert(Seq(expectedUUA) === actual)
+        assert(Seq(etwitterpectedUUA) === actual)
       }
     }
   }
 
   // Tests for ClientTweetClickShare
   test("ClientTweetClickShare") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val actual =
           ClientEventAdapter.adaptEvent(
@@ -1313,7 +1313,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
               promotedId = Some("promted_123")
             ))
 
-        val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
+        val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
           clientEventNamespace = Some(ClientEventNamespace(action = Some("share_menu_click"))),
           actionType = ActionType.ClientTweetClickShare,
           authorInfo = Some(
@@ -1323,14 +1323,14 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
           tweetPosition = Some(1),
           promotedId = Some("promted_123")
         )
-        assert(Seq(expectedUUA) === actual)
+        assert(Seq(etwitterpectedUUA) === actual)
       }
     }
   }
 
   // Tests for ClientTweetShareVia* and ClientTweetUnbookmark
   test("ClientTweetShareVia and Unbookmark") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val input = Table(
           ("eventNamespaceAction", "uuaActionTypes"),
@@ -1348,8 +1348,8 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                 authorId = Some(authorId)))
 
           implicit def any2iterable[A](a: A): Iterable[A] = Some(a)
-          val expectedUUA: Seq[UnifiedUserAction] = uuaActionTypes.flatMap { uuaActionType =>
-            mkExpectedUUAForActionTowardDefaultTweetEvent(
+          val etwitterpectedUUA: Seq[UnifiedUserAction] = uuaActionTypes.flatMap { uuaActionType =>
+            mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
               clientEventNamespace =
                 Some(ClientEventNamespace(action = Some(eventNamespaceAction))),
               actionType = uuaActionType,
@@ -1359,7 +1359,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                 ))
             )
           }
-          assert(expectedUUA === actual)
+          assert(etwitterpectedUUA === actual)
         }
       }
     }
@@ -1367,7 +1367,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Test for ClientTweetClickHashtag
   test("ClientTweetClickHashtag") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val events = Table(
           ("targets", "tweetActionInfo"),
@@ -1392,12 +1392,12 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
               actionTowardDefaultTweetEvent(
                 eventNamespace = Some(ceClickHashtag),
                 targets = targets)
-            val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
+            val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
               clientEventNamespace = Some(uuaClickHashtagClientEventNamespace),
               actionType = ActionType.ClientTweetClickHashtag,
               tweetActionInfo = tweetActionInfo
             )
-            assert(Seq(expectedUUA) === ClientEventAdapter.adaptEvent(clientEvent))
+            assert(Seq(etwitterpectedUUA) === ClientEventAdapter.adaptEvent(clientEvent))
         }
 
       }
@@ -1406,7 +1406,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientTweetVideoPlaybackStart and ClientTweetVideoPlaybackComplete
   test("Client Tweet Video Playback Start and Complete") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val input = Table(
           ("ceNamespace", "uuaNamespace", "uuaActionType"),
@@ -1432,12 +1432,12 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                 clientMediaEvent = Some(clientMediaEvent),
                 cardDetails = Some(cardDetails)
               )
-              val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
+              val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
                 clientEventNamespace = Some(uuaNamespace.copy(element = Some(element))),
                 actionType = uuaActionType,
                 tweetActionInfo = Some(videoMetadata)
               )
-              assert(ClientEventAdapter.adaptEvent(clientEvent).contains(expectedUUA))
+              assert(ClientEventAdapter.adaptEvent(clientEvent).contains(etwitterpectedUUA))
           }
         }
 
@@ -1453,12 +1453,12 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                 mediaDetailsV2 = Some(mediaDetailsV2),
                 clientMediaEvent = Some(clientMediaEvent)
               )
-              val unexpectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
+              val unetwitterpectedUUA = mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
                 clientEventNamespace = Some(uuaNamespace.copy(element = Some(element))),
                 actionType = uuaActionType,
                 tweetActionInfo = Some(videoMetadata)
               )
-              assert(!ClientEventAdapter.adaptEvent(clientEvent).contains(unexpectedUUA))
+              assert(!ClientEventAdapter.adaptEvent(clientEvent).contains(unetwitterpectedUUA))
           }
         }
       }
@@ -1467,7 +1467,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientTweetNotRelevant and ClientTweetUndoNotRelevant
   test("ClientTweetNotRelevant & UndoNotRelevant") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val actions = Table(("action"), "click", "undo")
         val element = "feedback_notrelevant"
@@ -1477,7 +1477,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
               eventNamespace = Some(ceEventNamespace(element, action)),
             )
 
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
+          val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
             clientEventNamespace = Some(uuaClientEventNamespace(element, action)),
             actionType = action match {
               case "click" => ActionType.ClientTweetNotRelevant
@@ -1486,7 +1486,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
           )
 
           val actual = ClientEventAdapter.adaptEvent(clientEvent)
-          assert(Seq(expectedUUA) === actual)
+          assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -1494,14 +1494,14 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientNotificationDismiss
   test("ClientNotificationDismiss") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val clientEvent =
           pushNotificationEvent(
             eventNamespace = Some(ceNotificationDismiss),
             notificationDetails = Some(notificationDetails))
 
-        val expectedUUA = mkExpectedUUAForNotificationEvent(
+        val etwitterpectedUUA = mkEtwitterpectedUUAForNotificationEvent(
           clientEventNamespace = Some(uuaNotificationDismiss),
           actionType = ActionType.ClientNotificationDismiss,
           notificationContent = tweetNotificationContent,
@@ -1512,14 +1512,14 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
         )
 
         val actual = ClientEventAdapter.adaptEvent(clientEvent)
-        assert(Seq(expectedUUA) === actual)
+        assert(Seq(etwitterpectedUUA) === actual)
       }
     }
   }
 
   // Tests for ClientTypeaheadClick
   test("ClientTypeaheadClick") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val searchQuery = "searchQuery"
 
@@ -1543,14 +1543,14 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                 eventNamespace = Some(ceTypeaheadClick),
                 targets = clientEventTargets,
                 searchQuery = searchQuery)
-            val expectedUUA = mkExpectedUUAForTypeaheadAction(
+            val etwitterpectedUUA = mkEtwitterpectedUUAForTypeaheadAction(
               clientEventNamespace = Some(uuaTypeaheadClick),
               actionType = ActionType.ClientTypeaheadClick,
               typeaheadActionInfo = typeaheadActionInfo,
               searchQuery = searchQuery
             )
             val actual = ClientEventAdapter.adaptEvent(clientEvent)
-            assert(Seq(expectedUUA) === actual)
+            assert(Seq(etwitterpectedUUA) === actual)
         }
         // Testing invalid target item type case
         assert(
@@ -1566,7 +1566,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientFeedbackPromptSubmit
   test("ClientFeedbackPromptSubmit") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val searchQuery: String = "searchQuery"
         val searchDetails = Some(SearchDetails(query = Some(searchQuery)))
@@ -1631,12 +1631,12 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
           ) =>
             val actual =
               ClientEventAdapter.adaptEvent(logEvent)
-            val expectedUUA = mkExpectedUUAForFeedbackSubmitAction(
+            val etwitterpectedUUA = mkEtwitterpectedUUAForFeedbackSubmitAction(
               clientEventNamespace = Some(uuaNamespace),
               actionType = uuaActionType,
               feedbackPromptInfo = feedbackPromptInfo,
               searchQuery = searchQuery)
-            assert(Seq(expectedUUA) === actual)
+            assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -1644,7 +1644,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientProfile*
   test("ClientProfile*") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val input = Table(
           ("eventName", "ceNamespace", "uuaNamespace", "uuaActionType"),
@@ -1674,18 +1674,18 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                   eventName = eventName,
                   eventNamespace = Some(ceNamespace)
                 ))
-            val expectedUUA = mkExpectedUUAForProfileAction(
+            val etwitterpectedUUA = mkEtwitterpectedUUAForProfileAction(
               clientEventNamespace = Some(uuaNamespace),
               actionType = uuaActionType,
               actionProfileId = itemProfileId)
-            assert(Seq(expectedUUA) === actual)
+            assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
   }
   // Tests for ClientTweetEngagementAttempt
   test("ClientTweetEngagementAttempt") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val clientEvents = Table(
           ("eventName", "ceNamespace", "uuaNamespace", "uuaActionType"),
@@ -1714,10 +1714,10 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
           ) =>
             val actual =
               ClientEventAdapter.adaptEvent(actionTowardDefaultTweetEvent(Some(ceNamespace)))
-            val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
+            val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
               clientEventNamespace = Some(uuaNamespace),
               actionType = uuaActionType)
-            assert(Seq(expectedUUA) === actual)
+            assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -1725,7 +1725,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for LoggedOut for ClientLogin*
   test("ClientLogin*") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val clientEvents = Table(
           ("eventName", "ceNamespace", "uuaNamespace", "uuaActionType"),
@@ -1763,13 +1763,13 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                   pushNotificationDetails = None,
                   reportDetails = None,
                   searchDetails = None))
-            val expectedUUA = mkExpectedUUAForActionTowardCTAEvent(
+            val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardCTAEvent(
               clientEventNamespace = Some(uuaNamespace),
               actionType = uuaActionType,
               guestIdMarketingOpt = logBase1.guestIdMarketing
             )
 
-            assert(Seq(expectedUUA) === actual)
+            assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -1777,7 +1777,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for LoggedOut for ClientSignup*
   test("ClientSignup*") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val clientEvents = Table(
           ("eventName", "ceNamespace", "uuaNamespace", "uuaActionType"),
@@ -1810,12 +1810,12 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                   pushNotificationDetails = None,
                   reportDetails = None,
                   searchDetails = None))
-            val expectedUUA = mkExpectedUUAForActionTowardCTAEvent(
+            val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardCTAEvent(
               clientEventNamespace = Some(uuaNamespace),
               actionType = uuaActionType,
               guestIdMarketingOpt = logBase1.guestIdMarketing
             )
-            assert(Seq(expectedUUA) === actual)
+            assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -1823,7 +1823,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientTweetFollowAuthor
   test("ClientTweetFollowAuthor") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val testEventsList = Seq(
           (ceTweetFollowAuthor1, uuaTweetFollowAuthor1, TweetAuthorFollowClickSource.CaretMenu),
@@ -1837,7 +1837,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                   eventName = "tweet_follow_author",
                   eventNamespace = Some(eventNamespace)
                 ))
-            val expectedUUA = mkExpectedUUAForTweetActionTowardAuthor(
+            val etwitterpectedUUA = mkEtwitterpectedUUAForTweetActionTowardAuthor(
               clientEventNamespace = Some(clientEventNamespace),
               actionType = ActionType.ClientTweetFollowAuthor,
               authorInfo = Some(
@@ -1849,7 +1849,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                   ClientTweetFollowAuthor(followClickSource)
                 ))
             )
-            assert(Seq(expectedUUA) === actual)
+            assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -1857,7 +1857,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientTweetUnfollowAuthor
   test("ClientTweetUnfollowAuthor") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val testEventsList = Seq(
           (
@@ -1877,7 +1877,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                   eventName = "tweet_unfollow_author",
                   eventNamespace = Some(eventNamespace)
                 ))
-            val expectedUUA = mkExpectedUUAForTweetActionTowardAuthor(
+            val etwitterpectedUUA = mkEtwitterpectedUUAForTweetActionTowardAuthor(
               clientEventNamespace = Some(clientEventNamespace),
               actionType = ActionType.ClientTweetUnfollowAuthor,
               authorInfo = Some(
@@ -1889,7 +1889,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                   ClientTweetUnfollowAuthor(unfollowClickSource)
                 ))
             )
-            assert(Seq(expectedUUA) === actual)
+            assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
@@ -1897,7 +1897,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Tests for ClientTweetMuteAuthor
   test("ClientTweetMuteAuthor") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val actual =
           ClientEventAdapter.adaptEvent(
@@ -1906,21 +1906,21 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
               eventNamespace = Some(ceTweetMuteAuthor)
             ))
 
-        val expectedUUA = mkExpectedUUAForTweetActionTowardAuthor(
+        val etwitterpectedUUA = mkEtwitterpectedUUAForTweetActionTowardAuthor(
           clientEventNamespace = Some(uuaTweetMuteAuthor),
           actionType = ActionType.ClientTweetMuteAuthor,
           authorInfo = Some(
             AuthorInfo(
               authorId = Some(authorId)
             )))
-        assert(Seq(expectedUUA) === actual)
+        assert(Seq(etwitterpectedUUA) === actual)
       }
     }
   }
 
   // Tests for ClientTweetBlockAuthor
   test("ClientTweetBlockAuthor") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val actual =
           ClientEventAdapter.adaptEvent(
@@ -1929,21 +1929,21 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
               eventNamespace = Some(ceTweetBlockAuthor)
             ))
 
-        val expectedUUA = mkExpectedUUAForTweetActionTowardAuthor(
+        val etwitterpectedUUA = mkEtwitterpectedUUAForTweetActionTowardAuthor(
           clientEventNamespace = Some(uuaTweetBlockAuthor),
           actionType = ActionType.ClientTweetBlockAuthor,
           authorInfo = Some(
             AuthorInfo(
               authorId = Some(authorId)
             )))
-        assert(Seq(expectedUUA) === actual)
+        assert(Seq(etwitterpectedUUA) === actual)
       }
     }
   }
 
   // Tests for ClientTweetUnblockAuthor
   test("ClientTweetUnblockAuthor") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val actual =
           ClientEventAdapter.adaptEvent(
@@ -1952,21 +1952,21 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
               eventNamespace = Some(ceTweetUnblockAuthor)
             ))
 
-        val expectedUUA = mkExpectedUUAForTweetActionTowardAuthor(
+        val etwitterpectedUUA = mkEtwitterpectedUUAForTweetActionTowardAuthor(
           clientEventNamespace = Some(uuaTweetUnblockAuthor),
           actionType = ActionType.ClientTweetUnblockAuthor,
           authorInfo = Some(
             AuthorInfo(
               authorId = Some(authorId)
             )))
-        assert(Seq(expectedUUA) === actual)
+        assert(Seq(etwitterpectedUUA) === actual)
       }
     }
   }
 
   // Test for ClientTweetOpenLink
   test("ClientTweetOpenLink") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val input = Table(
           ("url", "tweetActionInfo"),
@@ -1977,12 +1977,12 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
         forEvery(input) { (url: Option[String], tweetActionInfo: TweetActionInfo) =>
           val clientEvent =
             actionTowardDefaultTweetEvent(eventNamespace = Some(ceOpenLink), url = url)
-          val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
+          val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
             clientEventNamespace = Some(uuaOpenLinkClientEventNamespace),
             actionType = ActionType.ClientTweetOpenLink,
             tweetActionInfo = Some(tweetActionInfo)
           )
-          assert(Seq(expectedUUA) === ClientEventAdapter.adaptEvent(clientEvent))
+          assert(Seq(etwitterpectedUUA) === ClientEventAdapter.adaptEvent(clientEvent))
         }
       }
     }
@@ -1990,27 +1990,27 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
 
   // Test for ClientTweetTakeScreenshot
   test("Client take screenshot") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val clientEvent =
           actionTowardDefaultTweetEvent(
             eventNamespace = Some(ceTakeScreenshot),
             percentVisibleHeight100k = Some(100))
-        val expectedUUA = mkExpectedUUAForActionTowardDefaultTweetEvent(
+        val etwitterpectedUUA = mkEtwitterpectedUUAForActionTowardDefaultTweetEvent(
           clientEventNamespace = Some(uuaTakeScreenshotClientEventNamespace),
           actionType = ActionType.ClientTweetTakeScreenshot,
           tweetActionInfo = Some(clientTakeScreenshot)
         )
-        assert(Seq(expectedUUA) === ClientEventAdapter.adaptEvent(clientEvent))
+        assert(Seq(etwitterpectedUUA) === ClientEventAdapter.adaptEvent(clientEvent))
       }
     }
   }
 
   test("Home / Search product surface meta data") {
-    new TestFixtures.ClientEventFixture {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val clientEvents = Table(
-          ("actionTweetType", "clientEvent", "expectedUUAEvent"),
+          ("actionTweetType", "clientEvent", "etwitterpectedUUAEvent"),
           (
             "homeTweetEventWithControllerData",
             actionTowardDefaultTweetEvent(
@@ -2023,7 +2023,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                     requestJoinId = Some(requestJoinId)
                   ))))
             ),
-            expectedHomeTweetEventWithControllerData),
+            etwitterpectedHomeTweetEventWithControllerData),
           (
             "homeTweetEventWithSuggestionType",
             actionTowardDefaultTweetEvent(
@@ -2032,7 +2032,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                 SuggestionDetails(
                   suggestionType = Some("Test_type")
                 ))),
-            expectedHomeTweetEventWithSuggestType),
+            etwitterpectedHomeTweetEventWithSuggestType),
           (
             "homeTweetEventWithControllerDataSuggestionType",
             actionTowardDefaultTweetEvent(
@@ -2047,7 +2047,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                       requestJoinId = Some(requestJoinId)))
                 ))
             ),
-            expectedHomeTweetEventWithControllerDataSuggestType),
+            etwitterpectedHomeTweetEventWithControllerDataSuggestType),
           (
             "homeLatestTweetEventWithControllerData",
             actionTowardDefaultTweetEvent(
@@ -2060,7 +2060,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                     requestJoinId = Some(requestJoinId)
                   ))))
             ),
-            expectedHomeLatestTweetEventWithControllerData),
+            etwitterpectedHomeLatestTweetEventWithControllerData),
           (
             "homeLatestTweetEventWithSuggestionType",
             actionTowardDefaultTweetEvent(
@@ -2069,7 +2069,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                 SuggestionDetails(
                   suggestionType = Some("Test_type")
                 ))),
-            expectedHomeLatestTweetEventWithSuggestType),
+            etwitterpectedHomeLatestTweetEventWithSuggestType),
           (
             "homeLatestTweetEventWithControllerDataSuggestionType",
             actionTowardDefaultTweetEvent(
@@ -2084,7 +2084,7 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                       requestJoinId = Some(requestJoinId)))
                 ))
             ),
-            expectedHomeLatestTweetEventWithControllerDataSuggestType),
+            etwitterpectedHomeLatestTweetEventWithControllerDataSuggestType),
           (
             "searchTweetEventWithControllerData",
             actionTowardDefaultTweetEvent(
@@ -2097,18 +2097,18 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
                     requestJoinId = Some(requestJoinId)
                   ))))
             ),
-            expectedSearchTweetEventWithControllerData),
+            etwitterpectedSearchTweetEventWithControllerData),
         )
-        forEvery(clientEvents) { (_: String, event: LogEvent, expectedUUA: UnifiedUserAction) =>
+        forEvery(clientEvents) { (_: String, event: LogEvent, etwitterpectedUUA: UnifiedUserAction) =>
           val actual = ClientEventAdapter.adaptEvent(event)
-          assert(Seq(expectedUUA) === actual)
+          assert(Seq(etwitterpectedUUA) === actual)
         }
       }
     }
   }
 
-  test("ClientAppExit") {
-    new TestFixtures.ClientEventFixture {
+  test("ClientAppEtwitterit") {
+    new TestFitwittertures.ClientEventFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val duration: Option[Long] = Some(10000L)
         val inputTable = Table(
@@ -2132,20 +2132,20 @@ class ClientEventAdapterSpec extends Test with TableDrivenPropertyChecks {
           ) =>
             val actual = ClientEventAdapter.adaptEvent(
               actionTowardsUasEvent(
-                eventNamespace = Some(ceAppExit.copy(section = section)),
+                eventNamespace = Some(ceAppEtwitterit.copy(section = section)),
                 clientAppId = clientAppId,
                 duration = duration
               ))
 
             if (isValidEvent) {
               // create UUA UAS event
-              val expectedUUA = mkExpectedUUAForUasEvent(
-                clientEventNamespace = Some(uuaAppExit.copy(section = section)),
-                actionType = ActionType.ClientAppExit,
+              val etwitterpectedUUA = mkEtwitterpectedUUAForUasEvent(
+                clientEventNamespace = Some(uuaAppEtwitterit.copy(section = section)),
+                actionType = ActionType.ClientAppEtwitterit,
                 clientAppId = clientAppId,
                 duration = duration
               )
-              assert(Seq(expectedUUA) === actual)
+              assert(Seq(etwitterpectedUUA) === actual)
             } else {
               // ignore the event and do not create UUA UAS event
               assert(actual.isEmpty)

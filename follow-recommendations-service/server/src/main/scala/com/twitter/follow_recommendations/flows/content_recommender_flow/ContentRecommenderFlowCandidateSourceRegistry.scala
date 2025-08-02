@@ -14,17 +14,17 @@ import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_f
 import com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts.TopOrganicFollowsAccountsSource
 import com.twitter.follow_recommendations.common.candidate_sources.real_graph.RealGraphOonV2Source
 import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RepeatedProfileVisitsSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentEngagementSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentFollowingSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.socialgraph.RecentFollowingRecentFollowingExpansionSource
+import com.twitter.follow_recommendations.common.candidate_sources.sims_etwitterpansion.RecentEngagementSimilarUsersSource
+import com.twitter.follow_recommendations.common.candidate_sources.sims_etwitterpansion.RecentFollowingSimilarUsersSource
+import com.twitter.follow_recommendations.common.candidate_sources.socialgraph.RecentFollowingRecentFollowingEtwitterpansionSource
 import com.twitter.follow_recommendations.common.candidate_sources.stp.OfflineStrongTiePredictionSource
 import com.twitter.follow_recommendations.common.candidate_sources.triangular_loops.TriangularLoopsSource
 import com.twitter.follow_recommendations.common.candidate_sources.user_user_graph.UserUserGraphCandidateSource
 import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class ContentRecommenderFlowCandidateSourceRegistry @Inject() (
@@ -37,7 +37,7 @@ class ContentRecommenderFlowCandidateSourceRegistry @Inject() (
   triangularLoopsSource: TriangularLoopsSource,
   userUserGraphCandidateSource: UserUserGraphCandidateSource,
   realGraphOonSource: RealGraphOonV2Source,
-  recentFollowingRecentFollowingExpansionSource: RecentFollowingRecentFollowingExpansionSource,
+  recentFollowingRecentFollowingEtwitterpansionSource: RecentFollowingRecentFollowingEtwitterpansionSource,
   // activity based
   recentFollowingSimilarUsersSource: RecentFollowingSimilarUsersSource,
   recentEngagementSimilarUsersSource: RecentEngagementSimilarUsersSource,
@@ -50,7 +50,7 @@ class ContentRecommenderFlowCandidateSourceRegistry @Inject() (
   topOrganicFollowsAccountsSource: TopOrganicFollowsAccountsSource,
   ppmiLocaleFollowSource: PPMILocaleFollowSource,
   baseStatsReceiver: StatsReceiver)
-    extends CandidateSourceRegistry[ContentRecommenderRequest, CandidateUser] {
+    etwittertends CandidateSourceRegistry[ContentRecommenderRequest, CandidateUser] {
 
   override val statsReceiver = baseStatsReceiver
     .scope("content_recommender_flow", "candidate_sources")
@@ -64,7 +64,7 @@ class ContentRecommenderFlowCandidateSourceRegistry @Inject() (
     triangularLoopsSource,
     userUserGraphCandidateSource,
     realGraphOonSource,
-    recentFollowingRecentFollowingExpansionSource,
+    recentFollowingRecentFollowingEtwitterpansionSource,
     recentFollowingSimilarUsersSource,
     recentEngagementSimilarUsersSource,
     repeatedProfileVisitsSource,

@@ -10,10 +10,10 @@ import com.twitter.util.{Duration, Future, Time}
 import org.apache.thrift.protocol.TBinaryProtocol
 
 case class CacheEntityEntry(
-  cachePrefix: String,
+  cachePrefitwitter: String,
   hashedEntityId: Int,
   entity: String) {
-  val fullKey: String = cachePrefix + hashedEntityId
+  val fullKey: String = cachePrefitwitter + hashedEntityId
 }
 
 object RecosHoseEntitiesCache {
@@ -21,8 +21,8 @@ object RecosHoseEntitiesCache {
   val EntitiesSerializer =
     new ThriftSerializer[RecosHoseEntities](RecosHoseEntities, new TBinaryProtocol.Factory())
 
-  val HashtagPrefix: String = "h"
-  val UrlPrefix: String = "u"
+  val HashtagPrefitwitter: String = "h"
+  val UrlPrefitwitter: String = "u"
 }
 
 /**
@@ -37,26 +37,26 @@ class RecosHoseEntitiesCache(client: Client) {
   import RecosHoseEntitiesCache._
 
   private def isEntityWithinTTL(entity: RecosHoseEntity, ttlInMillis: Long): Boolean = {
-    entity.timestamp.exists(timestamp => Time.now.inMilliseconds - timestamp <= ttlInMillis)
+    entity.timestamp.etwitterists(timestamp => Time.now.inMilliseconds - timestamp <= ttlInMillis)
   }
 
   /**
    * Add a new RecosHoseEntity into RecosHoseEntities
    */
   private def updateRecosHoseEntities(
-    existingEntitiesOpt: Option[RecosHoseEntities],
+    etwitteristingEntitiesOpt: Option[RecosHoseEntities],
     newEntityString: String,
     stats: StatsReceiver
   ): RecosHoseEntities = {
-    val existingEntities = existingEntitiesOpt.map(_.entities).getOrElse(Nil)
+    val etwitteristingEntities = etwitteristingEntitiesOpt.map(_.entities).getOrElse(Nil)
 
-    // Discard expired and duplicate existing entities
-    val validExistingEntities = existingEntities
+    // Discard etwitterpired and duplicate etwitteristing entities
+    val validEtwitteristingEntities = etwitteristingEntities
       .filter(entity => isEntityWithinTTL(entity, EntityTTL.inMillis))
       .filter(_.entity != newEntityString)
 
     val newRecosHoseEntity = RecosHoseEntity(newEntityString, Some(Time.now.inMilliseconds))
-    RecosHoseEntities(validExistingEntities :+ newRecosHoseEntity)
+    RecosHoseEntities(validEtwitteristingEntities :+ newRecosHoseEntity)
   }
 
   private def getRecosHoseEntitiesCache(
@@ -67,15 +67,15 @@ class RecosHoseEntitiesCache(client: Client) {
       .get(cacheEntries.map(_.fullKey))
       .map(_.map {
         case (cacheKey, buf) =>
-          val recosHoseEntitiesTry = EntitiesSerializer.from(Buf.ByteArray.Owned.extract(buf))
+          val recosHoseEntitiesTry = EntitiesSerializer.from(Buf.ByteArray.Owned.etwittertract(buf))
           if (recosHoseEntitiesTry.isThrow) {
             stats.counter("cache_get_deserialization_failure").incr()
           }
           cacheKey -> recosHoseEntitiesTry.toOption
       })
       .onSuccess { _ => stats.counter("get_cache_success").incr() }
-      .onFailure { ex =>
-        stats.scope("get_cache_failure").counter(ex.getClass.getSimpleName).incr()
+      .onFailure { etwitter =>
+        stats.scope("get_cache_failure").counter(etwitter.getClass.getSimpleName).incr()
       }
   }
 
@@ -92,15 +92,15 @@ class RecosHoseEntitiesCache(client: Client) {
       client
         .set(cacheKey, 0, EntityTTL.fromNow, Buf.ByteArray.Owned(bytes))
         .onSuccess { _ => stats.counter("put_cache_success").incr() }
-        .onFailure { ex =>
-          stats.scope("put_cache_failure").counter(ex.getClass.getSimpleName).incr()
+        .onFailure { etwitter =>
+          stats.scope("put_cache_failure").counter(etwitter.getClass.getSimpleName).incr()
         }
     }
   }
 
   /**
-   * Store a list of new entities into the cache by their cacheKeys, and remove expired/invalid
-   * values in the existing cache entries at the same time
+   * Store a list of new entities into the cache by their cacheKeys, and remove etwitterpired/invalid
+   * values in the etwitteristing cache entries at the same time
    */
   def updateEntitiesCache(
     newCacheEntries: Seq[CacheEntityEntry],
@@ -108,17 +108,17 @@ class RecosHoseEntitiesCache(client: Client) {
   ): Future[Unit] = {
     stats.counter("update_cache_request").incr()
     getRecosHoseEntitiesCache(newCacheEntries, stats)
-      .map { existingCacheEntries =>
+      .map { etwitteristingCacheEntries =>
         newCacheEntries.foreach { newCacheEntry =>
           val fullKey = newCacheEntry.fullKey
-          val existingRecosHoseEntities = existingCacheEntries.get(fullKey).flatten
-          stats.stat("num_existing_entities").add(existingRecosHoseEntities.size)
-          if (existingRecosHoseEntities.isEmpty) {
-            stats.counter("existing_entities_empty").incr()
+          val etwitteristingRecosHoseEntities = etwitteristingCacheEntries.get(fullKey).flatten
+          stats.stat("num_etwitteristing_entities").add(etwitteristingRecosHoseEntities.size)
+          if (etwitteristingRecosHoseEntities.isEmpty) {
+            stats.counter("etwitteristing_entities_empty").incr()
           }
 
           val updatedRecosHoseEntities = updateRecosHoseEntities(
-            existingRecosHoseEntities,
+            etwitteristingRecosHoseEntities,
             newCacheEntry.entity,
             stats
           )
@@ -130,8 +130,8 @@ class RecosHoseEntitiesCache(client: Client) {
         }
       }
       .onSuccess { _ => stats.counter("update_cache_success").incr() }
-      .onFailure { ex =>
-        stats.scope("update_cache_failure").counter(ex.getClass.getSimpleName).incr()
+      .onFailure { etwitter =>
+        stats.scope("update_cache_failure").counter(etwitter.getClass.getSimpleName).incr()
       }
   }
 }

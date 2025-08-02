@@ -18,7 +18,7 @@ import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
 import com.twitter.frigate.pushservice.params.PushParams
 import com.twitter.frigate.pushservice.params.WeightedOpenOrNtabClickModel
 import com.twitter.frigate.pushservice.util.PushDeviceUtil
-import com.twitter.nrel.hydration.push.HydrationContext
+import com.twitter.nrel.hydration.push.HydrationContetwittert
 import com.twitter.timelines.configapi.FSParam
 
 trait TargetScoringDetails {
@@ -73,7 +73,7 @@ trait TargetScoringDetails {
   lazy val rankingModelParam: Future[FSParam[WeightedOpenOrNtabClickModel.ModelNameType]] =
     tuc.deviceInfo.map { deviceInfoOpt =>
       if (PushDeviceUtil.isPrimaryDeviceAndroid(deviceInfoOpt) &&
-        tuc.params(PushParams.AndroidOnlyRankingExperimentParam)) {
+        tuc.params(PushParams.AndroidOnlyRankingEtwitterperimentParam)) {
         PushFeatureSwitchParams.WeightedOpenOrNtabClickRankingModelForAndroidParam
       } else {
         PushFeatureSwitchParams.WeightedOpenOrNtabClickRankingModelParam
@@ -83,12 +83,12 @@ trait TargetScoringDetails {
   lazy val filteringModelParam: FSParam[WeightedOpenOrNtabClickModel.ModelNameType] =
     PushFeatureSwitchParams.WeightedOpenOrNtabClickFilteringModelParam
 
-  def skipMlRanker: Boolean = skipModelInfo.exists(_.skipPushRanker.contains(true))
+  def skipMlRanker: Boolean = skipModelInfo.etwitterists(_.skipPushRanker.contains(true))
 
-  def skipModelPredicate: Boolean = skipModelInfo.exists(_.skipPushOpenPredicate.contains(true))
+  def skipModelPredicate: Boolean = skipModelInfo.etwitterists(_.skipPushOpenPredicate.contains(true))
 
   def noSkipButScribeFeatures: Boolean =
-    skipModelInfo.exists(_.noSkipButScribeFeatures.contains(true))
+    skipModelInfo.etwitterists(_.noSkipButScribeFeatures.contains(true))
 
   def isModelTrainingData: Boolean = skipMlRanker || skipModelPredicate || noSkipButScribeFeatures
 
@@ -99,7 +99,7 @@ trait TargetScoringDetails {
       useRandomRecipient = true
     )
 
-  def targetHydrationContext: Future[HydrationContext]
+  def targetHydrationContetwittert: Future[HydrationContetwittert]
 
   def featureMap: Future[FeatureMap]
 

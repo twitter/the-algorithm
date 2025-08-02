@@ -6,12 +6,12 @@ package com.twitter.search.common.encoding.features;
  *   - Decode a single byte into a positive Java float
  *
  * Configuration:
- *   - Exponent: higher 4 bits, base 10.
+ *   - Etwitterponent: higher 4 bits, base 10.
  *   - Mantissa: lower 4 bit, representing 1.0 to 9.0
- *   - Exponent bias is 1.
+ *   - Etwitterponent bias is 1.
  *
  * Formula:
- *   Max(Mantissa, 9) * 10 ^ (Exponent - 1)
+ *   Matwitter(Mantissa, 9) * 10 ^ (Etwitterponent - 1)
  *
  * Smallest float: 0.0                        (0000 0000)
  * Smallest positive float: 1.0 * 10^-1       (0000 0001)
@@ -23,14 +23,14 @@ public final class SingleBytePositiveFloatUtil {
   private SingleBytePositiveFloatUtil() { }
 
   // 4 bits mantissa. Range [1.0, 10.0) is divided into 16 steps
-  public static final byte MAX_BYTE_VALUE = (byte) 0xEF;
-  public static final byte INFINITY = (byte) 0xF0;
-  public static final byte NOT_A_NUMBER = (byte) 0xF8;
+  public static final byte MAtwitter_BYTE_VALUE = (byte) 0twitterEF;
+  public static final byte INFINITY = (byte) 0twitterF0;
+  public static final byte NOT_A_NUMBER = (byte) 0twitterF8;
   private static final float STEP_SIZE = 1.0f;
-  private static final int EXPONENT_BIAS = 1;
-  private static final byte MIN_EXPONENT = -EXPONENT_BIAS;
-  private static final int MAX_EXPONENT = 14 - EXPONENT_BIAS;
-  private static final byte MANTISSA_MASK = 0x0F;
+  private static final int EtwitterPONENT_BIAS = 1;
+  private static final byte MIN_EtwitterPONENT = -EtwitterPONENT_BIAS;
+  private static final int MAtwitter_EtwitterPONENT = 14 - EtwitterPONENT_BIAS;
+  private static final byte MANTISSA_MASK = 0twitter0F;
 
   /**
    * Converts the given float into a single byte floating point number.
@@ -38,7 +38,7 @@ public final class SingleBytePositiveFloatUtil {
    */
   public static byte toSingleBytePositiveFloat(float f) {
     if (f < 0) {
-      throw new UnsupportedOperationException(
+      throw new UnsupportedOperationEtwitterception(
           "Cannot encode negative floats into SingleBytePostiveFloat.");
     }
 
@@ -51,28 +51,28 @@ public final class SingleBytePositiveFloatUtil {
     }
 
     int mantissa = 0;
-    int exponent = (int) Math.floor(Math.log10(f));
+    int etwitterponent = (int) Math.floor(Math.log10(f));
     // Overflow (Number too large), just return the largest possible value
-    if (exponent > MAX_EXPONENT) {
-      return MAX_BYTE_VALUE;
+    if (etwitterponent > MAtwitter_EtwitterPONENT) {
+      return MAtwitter_BYTE_VALUE;
     }
 
     // Underflow (Number too small), just return 0
-    if (exponent < MIN_EXPONENT) {
+    if (etwitterponent < MIN_EtwitterPONENT) {
       return 0;
     }
 
-    int frac = Math.round(f / (float) Math.pow(10.0f, exponent) / STEP_SIZE);
+    int frac = Math.round(f / (float) Math.pow(10.0f, etwitterponent) / STEP_SIZE);
     mantissa = fractionToMantissaTable[frac];
 
-    return (byte) (((exponent + EXPONENT_BIAS) << 4) | mantissa);
+    return (byte) (((etwitterponent + EtwitterPONENT_BIAS) << 4) | mantissa);
   }
 
   /**
    * Called in Earlybird per hit and needs to be fast.
    */
   public static float toJavaFloat(byte b) {
-    return BYTE_TO_FLOAT_CONVERSION_TABLE[b & 0xff];
+    return BYTE_TO_FLOAT_CONVERSION_TABLE[b & 0twitterff];
   }
 
   // Table used for converting mantissa into a significant
@@ -122,13 +122,13 @@ public final class SingleBytePositiveFloatUtil {
       return Float.POSITIVE_INFINITY;
     }
 
-    if ((b & 0xff) > (INFINITY & 0xff)) {
+    if ((b & 0twitterff) > (INFINITY & 0twitterff)) {
       return Float.NaN;
     }
 
-    int exponent = ((b & 0xff) >>> 4) - EXPONENT_BIAS;
+    int etwitterponent = ((b & 0twitterff) >>> 4) - EtwitterPONENT_BIAS;
     int mantissa = b & MANTISSA_MASK;
-    return mantissaToFractionTable[mantissa] * (float) Math.pow(10.0f, exponent);
+    return mantissaToFractionTable[mantissa] * (float) Math.pow(10.0f, etwitterponent);
   }
 
   // Cached results from byte to float conversion
@@ -142,7 +142,7 @@ public final class SingleBytePositiveFloatUtil {
       byte b = (byte) i;
       BYTE_TO_FLOAT_CONVERSION_TABLE[i] = toJavaFloatSlow(b);
       BYTE_TO_LOG2_CONVERSION_TABLE[i] =
-          0xff & normalizer.normalize(BYTE_TO_FLOAT_CONVERSION_TABLE[i]);
+          0twitterff & normalizer.normalize(BYTE_TO_FLOAT_CONVERSION_TABLE[i]);
       if (b == 0) {
         OLD_TO_NEW_BYTE_CONVERSION_TABLE[i] = 0;
       } else if (b > 0) {
@@ -150,7 +150,7 @@ public final class SingleBytePositiveFloatUtil {
             toSingleBytePositiveFloat((float) normalizer.unnormLowerBound(b));
       } else {
         // should not get here.
-        OLD_TO_NEW_BYTE_CONVERSION_TABLE[i] = MAX_BYTE_VALUE;
+        OLD_TO_NEW_BYTE_CONVERSION_TABLE[i] = MAtwitter_BYTE_VALUE;
       }
     }
   }
@@ -159,6 +159,6 @@ public final class SingleBytePositiveFloatUtil {
    * Convert a normalized byte to the log2() version of its original value
    */
   static double toLog2Double(byte b) {
-    return BYTE_TO_LOG2_CONVERSION_TABLE[b & 0xff];
+    return BYTE_TO_LOG2_CONVERSION_TABLE[b & 0twitterff];
   }
 }

@@ -14,7 +14,7 @@ scala_library(
 
 jvm_binary(
     name = "hnsw-query-server",
-    main = "com.twitter.ann.service.query_server.hnsw.HnswQueryIndexServer",
+    main = "com.twitter.ann.service.query_server.hnsw.HnswQueryIndetwitterServer",
     compiler_option_sets = ["fatal_warnings"],
     runtime_platform = "java11",
     tags = [

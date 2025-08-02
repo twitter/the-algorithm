@@ -7,15 +7,15 @@ import com.twitter.logging.Logger
 import com.twitter.scalding._
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv2.remote_access.EtwitterplicitLocation
 import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
+import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchEtwitterecution
+import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchEtwitterecutionArgs
 import com.twitter.scalding_internal.job.analytics_batch.BatchDescription
 import com.twitter.scalding_internal.job.analytics_batch.BatchFirstTime
 import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
-import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
+import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledEtwitterecutionApp
 import com.twitter.simclusters_v2.hdfs_sources._
 import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
 import com.twitter.simclusters_v2.scalding.common.Util
@@ -32,7 +32,7 @@ object UserUserNormalizedGraph {
 
   // The common function for applying logarithmic transformation
   def logTransformation(weight: Double): Double = {
-    math.max(math.log10(1.0 + weight), 0.0)
+    math.matwitter(math.log10(1.0 + weight), 0.0)
   }
 
   def getFollowEdges(implicit dateRange: DateRange, uniqueID: UniqueID): TypedPipe[(Long, Long)] = {
@@ -79,7 +79,7 @@ object UserUserNormalizedGraph {
     transformFavEdges(
       DAL
         .readMostRecentSnapshot(UserUserFavGraphScalaDataset)
-        .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+        .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
         .toTypedPipe,
       halfLifeInDaysForFavScore
     )
@@ -112,7 +112,7 @@ object UserUserNormalizedGraph {
 
   def addNormalizedWeightsAndAdjListify(
     input: TypedPipe[Edge],
-    maxNeighborsPerUser: Int,
+    matwitterNeighborsPerUser: Int,
     normsAndCountsFull: TypedPipe[NormsAndCounts]
   )(
     implicit uniqueId: UniqueID
@@ -149,18 +149,18 @@ object UserUserNormalizedGraph {
       }
       .group
       //.withReducers(1000)
-      .sortedReverseTake(maxNeighborsPerUser)(Ordering.by { x: NeighborWithWeights =>
+      .sortedReverseTake(matwitterNeighborsPerUser)(Ordering.by { twitter: NeighborWithWeights =>
         (
-          x.favScoreHalfLife100Days.getOrElse(0.0),
-          x.followScoreNormalizedByNeighborFollowersL2.getOrElse(0.0)
+          twitter.favScoreHalfLife100Days.getOrElse(0.0),
+          twitter.followScoreNormalizedByNeighborFollowersL2.getOrElse(0.0)
         )
       })
       .map {
         case (srcId, neighborList) =>
-          if (neighborList.size >= maxNeighborsPerUser) numUsersNeedingNeighborTruncation.inc()
+          if (neighborList.size >= matwitterNeighborsPerUser) numUsersNeedingNeighborTruncation.inc()
           neighborList.foreach { neighbor =>
             numEdgesAfterTruncation.inc()
-            if (neighbor.favScoreHalfLife100Days.exists(_ > 0)) numFavEdgesAfterTruncation.inc()
+            if (neighbor.favScoreHalfLife100Days.etwitterists(_ > 0)) numFavEdgesAfterTruncation.inc()
             if (neighbor.isFollowed.contains(true)) numFollowEdgesAfterTruncation.inc()
           }
           numRecordsInOutputGraph.inc()
@@ -187,20 +187,20 @@ object UserUserNormalizedGraph {
     followEdges: TypedPipe[(Long, Long)],
     favEdges: TypedPipe[(Long, Long, Double)],
     normsAndCounts: TypedPipe[NormsAndCounts],
-    maxNeighborsPerUser: Int
+    matwitterNeighborsPerUser: Int
   )(
     implicit uniqueID: UniqueID
   ): TypedPipe[UserAndNeighbors] = {
     val combined = combineFollowAndFav(followEdges, favEdges)
     addNormalizedWeightsAndAdjListify(
       combined,
-      maxNeighborsPerUser,
+      matwitterNeighborsPerUser,
       normsAndCounts
     )
   }
 }
 
-object UserUserNormalizedGraphBatch extends TwitterScheduledExecutionApp {
+object UserUserNormalizedGraphBatch etwittertends TwitterScheduledEtwitterecutionApp {
   private val firstTime: String = "2018-06-16"
   implicit val tz = DateOps.UTC
   implicit val parser = DateParser.default
@@ -209,18 +209,18 @@ object UserUserNormalizedGraphBatch extends TwitterScheduledExecutionApp {
 
   private val outputPath: String = "/user/cassowary/processed/user_user_normalized_graph"
 
-  private val execArgs = AnalyticsBatchExecutionArgs(
+  private val etwitterecArgs = AnalyticsBatchEtwitterecutionArgs(
     batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
     firstTime = BatchFirstTime(RichDate(firstTime)),
     lastTime = None,
     batchIncrement = BatchIncrement(batchIncrement)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) {
+  override def scheduledJob: Etwitterecution[Unit] = AnalyticsBatchEtwitterecution(etwitterecArgs) {
     implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
-          val maxNeighborsPerUser = args.int("maxNeighborsPerUser", 2000)
+      Etwitterecution.withId { implicit uniqueId =>
+        Etwitterecution.withArgs { args =>
+          val matwitterNeighborsPerUser = args.int("matwitterNeighborsPerUser", 2000)
 
           val producerNormsAndCounts =
             DAL.readMostRecentSnapshot(ProducerNormsAndCountsScalaDataset).toTypedPipe
@@ -231,12 +231,12 @@ object UserUserNormalizedGraphBatch extends TwitterScheduledExecutionApp {
                 UserUserNormalizedGraph.getFollowEdges,
                 UserUserNormalizedGraph.getFavEdges(halfLifeInDaysForFavScore),
                 producerNormsAndCounts,
-                maxNeighborsPerUser
+                matwitterNeighborsPerUser
               )
-              .writeDALSnapshotExecution(
+              .writeDALSnapshotEtwitterecution(
                 UserUserNormalizedGraphScalaDataset,
                 D.Daily,
-                D.Suffix(outputPath),
+                D.Suffitwitter(outputPath),
                 D.EBLzo(),
                 dateRange.end)
           )
@@ -245,7 +245,7 @@ object UserUserNormalizedGraphBatch extends TwitterScheduledExecutionApp {
   }
 }
 
-object UserUserNormalizedGraphAdhoc extends TwitterExecutionApp {
+object UserUserNormalizedGraphAdhoc etwittertends TwitterEtwitterecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
   implicit val dp = DateParser.default
   val log = Logger()
@@ -256,22 +256,22 @@ object UserUserNormalizedGraphAdhoc extends TwitterExecutionApp {
     Math.abs(KeyHasher.KETAMA.hashKey(bb.array()))
   }
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
+  def job: Etwitterecution[Unit] =
+    Etwitterecution.getConfigMode.flatMap {
       case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
+        Etwitterecution.withId { implicit uniqueId =>
           val args = config.getArgs
           implicit val dateRange: DateRange = DateRange.parse(args.list("date"))
           val halfLifeInDaysForFavScore = 100
-          val maxNeighborsPerUser = args.int("maxNeighborsPerUser", 2000)
+          val matwitterNeighborsPerUser = args.int("matwitterNeighborsPerUser", 2000)
           val producerNormsAndCounts = TypedPipe.from(
-            NormsAndCountsFixedPathSource(args("normsInputDir"))
+            NormsAndCountsFitwitteredPathSource(args("normsInputDir"))
           )
           val favEdges = args.optional("favGraphInputDir") match {
             case Some(favGraphInputDir) =>
               UserUserNormalizedGraph.transformFavEdges(
                 TypedPipe.from(
-                  EdgeWithDecayedWtsFixedPathSource(favGraphInputDir)
+                  EdgeWithDecayedWtsFitwitteredPathSource(favGraphInputDir)
                 ),
                 halfLifeInDaysForFavScore
               )
@@ -287,26 +287,26 @@ object UserUserNormalizedGraphAdhoc extends TwitterExecutionApp {
                 followEdges,
                 favEdges,
                 producerNormsAndCounts,
-                maxNeighborsPerUser
-              ).writeExecution(UserAndNeighborsFixedPathSource(args("outputDir")))
+                matwitterNeighborsPerUser
+              ).writeEtwitterecution(UserAndNeighborsFitwitteredPathSource(args("outputDir")))
           )
         }
     }
 }
 
-object DumpUserUserGraphAdhoc extends TwitterExecutionApp {
+object DumpUserUserGraphAdhoc etwittertends TwitterEtwitterecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
+  def job: Etwitterecution[Unit] =
+    Etwitterecution.getConfigMode.flatMap {
       case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
+        Etwitterecution.withId { implicit uniqueId =>
           val args = config.getArgs
           val input = args.optional("inputDir") match {
-            case Some(inputDir) => TypedPipe.from(UserAndNeighborsFixedPathSource(inputDir))
+            case Some(inputDir) => TypedPipe.from(UserAndNeighborsFitwitteredPathSource(inputDir))
             case None =>
               DAL
                 .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(30))
-                .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+                .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
                 .toTypedPipe
           }
           val users = args.list("users").map(_.toLong).toSet
@@ -320,7 +320,7 @@ object DumpUserUserGraphAdhoc extends TwitterExecutionApp {
                     Util.prettyJsonMapper.writeValueAsString(n).replaceAll("\n", " ")
                   }).mkString("\n")
               }
-              .toIterableExecution
+              .toIterableEtwitterecution
               .map { strings => println(strings.mkString("\n")) }
           }
         }
@@ -333,19 +333,19 @@ object DumpUserUserGraphAdhoc extends TwitterExecutionApp {
  * --tool com.twitter.simclusters_v2.scalding.EmployeeGraph --screen --screen-detached \
  * --tee your_ldap/employeeGraph20190809 -- --outputDir adhoc/employeeGraph20190809
  */
-object EmployeeGraph extends TwitterExecutionApp {
+object EmployeeGraph etwittertends TwitterEtwitterecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
+  def job: Etwitterecution[Unit] =
+    Etwitterecution.getConfigMode.flatMap {
       case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
+        Etwitterecution.withId { implicit uniqueId =>
           val args = config.getArgs
           val input = args.optional("inputDir") match {
-            case Some(inputDir) => TypedPipe.from(UserAndNeighborsFixedPathSource(inputDir))
+            case Some(inputDir) => TypedPipe.from(UserAndNeighborsFitwitteredPathSource(inputDir))
             case None =>
               DAL
                 .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(30))
-                .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+                .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
                 .toTypedPipe
           }
           val employeeIds = EmployeeIds.buildMerlinClientAndGetEmployees("frigate-scalding.dev")
@@ -362,7 +362,7 @@ object EmployeeGraph extends TwitterExecutionApp {
                 }
             }
             .flatten
-            .writeExecution(TypedTsv(args("outputDir")))
+            .writeEtwitterecution(TypedTsv(args("outputDir")))
 
         }
     }
@@ -373,20 +373,20 @@ object EmployeeGraph extends TwitterExecutionApp {
  * --submitter  hadoopnest2.atla.twitter.com --user recos-platform -- --graphOutputDir "/user/recos-platform/adhoc/employee_graph_from_user_user/"
  */
 
-object EmployeeGraphFromUserUser extends TwitterExecutionApp {
+object EmployeeGraphFromUserUser etwittertends TwitterEtwitterecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
+  def job: Etwitterecution[Unit] =
+    Etwitterecution.getConfigMode.flatMap {
       case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
+        Etwitterecution.withId { implicit uniqueId =>
           val args = config.getArgs
           val graphOutputDir = args("graphOutputDir")
           val input = args.optional("inputDir") match {
-            case Some(inputDir) => TypedPipe.from(UserAndNeighborsFixedPathSource(inputDir))
+            case Some(inputDir) => TypedPipe.from(UserAndNeighborsFitwitteredPathSource(inputDir))
             case None =>
               DAL
                 .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(30))
-                .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+                .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
                 .toTypedPipe
           }
           val employeeIds = EmployeeIds.buildMerlinClientAndGetEmployees("frigate-scalding.dev")
@@ -395,7 +395,7 @@ object EmployeeGraphFromUserUser extends TwitterExecutionApp {
               case rec if employeeIds.contains(rec.userId) =>
                 rec
             }
-            .writeExecution(UserAndNeighborsFixedPathSource(graphOutputDir))
+            .writeEtwitterecution(UserAndNeighborsFitwitteredPathSource(graphOutputDir))
 
         }
     }
@@ -407,28 +407,28 @@ object EmployeeGraphFromUserUser extends TwitterExecutionApp {
  * --tool com.twitter.simclusters_v2.scalding.VitGraph --screen --screen-detached \
  * --tee your_ldap/vitGraph20190809 -- --outputDir adhoc/vitGraph20190809
  */
-object VitGraph extends TwitterExecutionApp {
+object VitGraph etwittertends TwitterEtwitterecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
+  def job: Etwitterecution[Unit] =
+    Etwitterecution.getConfigMode.flatMap {
       case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
+        Etwitterecution.withId { implicit uniqueId =>
           val args = config.getArgs
           val minActiveFollowers = args.int("minActiveFollowers")
           val topK = args.int("topK")
           val input = args.optional("inputDir") match {
-            case Some(inputDir) => TypedPipe.from(UserAndNeighborsFixedPathSource(inputDir))
+            case Some(inputDir) => TypedPipe.from(UserAndNeighborsFitwitteredPathSource(inputDir))
             case None =>
               DAL
                 .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(30))
-                .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+                .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
                 .toTypedPipe
           }
           val userSource =
             DAL.readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(30)).toTypedPipe
 
           TopUsersSimilarityGraph
-            .vits(userSource, minActiveFollowers, topK).toIterableExecution.flatMap { vitsIter =>
+            .vits(userSource, minActiveFollowers, topK).toIterableEtwitterecution.flatMap { vitsIter =>
               val vits = vitsIter.toSet
               println(s"Found ${vits.size} many vits. First few: " + vits.take(5).mkString(","))
               input
@@ -444,7 +444,7 @@ object VitGraph extends TwitterExecutionApp {
                     }
                 }
                 .flatten
-                .writeExecution(TypedTsv(args("outputDir")))
+                .writeEtwitterecution(TypedTsv(args("outputDir")))
             }
 
         }

@@ -12,7 +12,7 @@ import com.twitter.frigate.common.base.Invalid
 import com.twitter.frigate.common.base.OK
 import com.twitter.frigate.common.base.Result
 import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.data_pipeline.features_common.PushQualityModelFeatureContext
+import com.twitter.frigate.data_pipeline.features_common.PushQualityModelFeatureContetwittert
 import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
 import com.twitter.frigate.pushservice.model.PushTypes.Target
 import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
@@ -23,7 +23,7 @@ import com.twitter.frigate.scribe.thriftscala.MrRequestScribe
 import com.twitter.frigate.scribe.thriftscala.TargetUserInfo
 import com.twitter.frigate.thriftscala.FrigateNotification
 import com.twitter.frigate.thriftscala.TweetNotification
-import com.twitter.frigate.thriftscala.{SocialContextAction => TSocialContextAction}
+import com.twitter.frigate.thriftscala.{SocialContetwittertAction => TSocialContetwittertAction}
 import com.twitter.logging.Logger
 import com.twitter.ml.api.DataRecord
 import com.twitter.ml.api.Feature
@@ -70,7 +70,7 @@ class MrRequestScribeHandler(mrRequestScriberNode: String, stats: StatsReceiver)
         case Invalid(reason) => reason
         case _ =>
           mrRequestScribeInvalidStats.incr()
-          throw new IllegalStateException("Invalid reason for Target Filtering " + result)
+          throw new IllegalStateEtwitterception("Invalid reason for Target Filtering " + result)
       }
       buildScribeThrift(target, predicate, None).map { targetFilteredScribe =>
         writeAtTargetFilteringStep(target, targetFilteredScribe)
@@ -187,19 +187,19 @@ class MrRequestScribeHandler(mrRequestScriberNode: String, stats: StatsReceiver)
           stats
         ).map { dataRecord =>
           val richRecord =
-            new SRichDataRecord(dataRecord, PushQualityModelFeatureContext.featureContext)
+            new SRichDataRecord(dataRecord, PushQualityModelFeatureContetwittert.featureContetwittert)
 
           val selectedRecord =
-            SRichDataRecord(new DataRecord(), PushQualityModelFeatureContext.featureContext)
+            SRichDataRecord(new DataRecord(), PushQualityModelFeatureContetwittert.featureContetwittert)
           featureList.map { featureName =>
             val feature: Feature[_] = {
               try {
-                PushQualityModelFeatureContext.featureContext.getFeature(featureName)
+                PushQualityModelFeatureContetwittert.featureContetwittert.getFeature(featureName)
               } catch {
-                case _: Exception =>
+                case _: Etwitterception =>
                   mrRequestScribeNotIncludedFeatureStats.incr()
-                  throw new IllegalStateException(
-                    "Scribing features not included in FeatureContext: " + featureName)
+                  throw new IllegalStateEtwitterception(
+                    "Scribing features not included in FeatureContetwittert: " + featureName)
               }
             }
 
@@ -247,7 +247,7 @@ class MrRequestScribeHandler(mrRequestScriberNode: String, stats: StatsReceiver)
       val simplifiedTweetNotificationOpt = frgNotif.tweetNotification.map { tweetNotification =>
         TweetNotification(
           tweetNotification.tweetId,
-          Seq.empty[TSocialContextAction],
+          Seq.empty[TSocialContetwittertAction],
           tweetNotification.tweetAuthorId)
       }
       val simplifiedFrigateNotification = FrigateNotification(
@@ -278,7 +278,7 @@ class MrRequestScribeHandler(mrRequestScriberNode: String, stats: StatsReceiver)
               case Invalid(reason) => reason
               case _ => {
                 mrRequestScribeInvalidStats.incr()
-                throw new IllegalStateException(
+                throw new IllegalStateEtwitterception(
                   "Invalid reason for Candidate Filtering " + preRankingFilteredCandidateResult.result)
               }
             },
@@ -288,8 +288,8 @@ class MrRequestScribeHandler(mrRequestScriberNode: String, stats: StatsReceiver)
 
     for {
       _ <- Future.collectToTry {
-        rankedCandidates.zipWithIndex.map {
-          case (rankedCandidateDetail, index) =>
+        rankedCandidates.zipWithIndetwitter.map {
+          case (rankedCandidateDetail, indetwitter) =>
             val modelScoresFut = {
               val crt = rankedCandidateDetail.candidate.commonRecType
               if (RecTypes.notEligibleForModelScoreTracking.contains(crt)) Future.None
@@ -299,18 +299,18 @@ class MrRequestScribeHandler(mrRequestScriberNode: String, stats: StatsReceiver)
             modelScoresFut.map { modelScores =>
               candidatesMap(rankedCandidateDetail.candidate.impressionId) =
                 candidatesMap(rankedCandidateDetail.candidate.impressionId).copy(
-                  rankPosition = Some(index),
+                  rankPosition = Some(indetwitter),
                   modelScore = modelScores
                 )
             }
         }
       }
 
-      _ = rerankedCandidates.zipWithIndex.foreach {
-        case (rerankedCandidateDetail, index) => {
+      _ = rerankedCandidates.zipWithIndetwitter.foreach {
+        case (rerankedCandidateDetail, indetwitter) => {
           candidatesMap(rerankedCandidateDetail.candidate.impressionId) =
             candidatesMap(rerankedCandidateDetail.candidate.impressionId).copy(
-              rerankPosition = Some(index)
+              rerankPosition = Some(indetwitter)
             )
         }
       }
@@ -320,9 +320,9 @@ class MrRequestScribeHandler(mrRequestScriberNode: String, stats: StatsReceiver)
           if (isFeatureHydratingEnabled) {
             PushPredictionHelper
               .getDataRecord(
-                rerankedCandidateDetail.candidate.target.targetHydrationContext,
+                rerankedCandidateDetail.candidate.target.targetHydrationContetwittert,
                 rerankedCandidateDetail.candidate.target.featureMap,
-                rerankedCandidateDetail.candidate.candidateHydrationContext,
+                rerankedCandidateDetail.candidate.candidateHydrationContetwittert,
                 rerankedCandidateDetail.candidate.candidateFeatureMap(),
                 stats
               ).map { features =>
@@ -354,7 +354,7 @@ class MrRequestScribeHandler(mrRequestScriberNode: String, stats: StatsReceiver)
                 candidateFilteredOutStep = Some(CandidateFilteredOutStep.PostRankFiltering))
           case _ =>
             mrRequestScribeInvalidStats.incr()
-            throw new IllegalStateException(
+            throw new IllegalStateEtwitterception(
               "Invalid reason for Candidate Filtering " + allTakeCandidateResult.result)
         }
       }

@@ -14,15 +14,15 @@ import com.twitter.tweetypie.thriftscala.TweetPerspective
 
 object EditPerspectiveHydrator {
 
-  type Type = ValueHydrator[Option[TweetPerspective], Ctx]
+  type Type = ValueHydrator[Option[TweetPerspective], Cttwitter]
   val HydratedField: FieldByPath = fieldByPath(Tweet.EditPerspectiveField)
 
-  case class Ctx(
+  case class Cttwitter(
     currentTweetPerspective: Option[StatusPerspective],
     editControl: Option[EditControl],
     featureSwitchResults: Option[FeatureSwitchResults],
-    underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+    underlyingTweetCttwitter: TweetCttwitter)
+      etwittertends TweetCttwitter.Protwittery
 
   // Timeline safety levels determine some part of high level traffic
   // that we might want to turn off with a decider if edits traffic
@@ -103,14 +103,14 @@ object EditPerspectiveHydrator {
       }.toMap
     val editsAggregated = stats.counter("edit_perspective", "edits_aggregated")
 
-    ValueHydrator[Option[TweetPerspective], Ctx] { (curr, ctx) =>
-      val safetyLevel = ctx.opts.safetyLevel
+    ValueHydrator[Option[TweetPerspective], Cttwitter] { (curr, cttwitter) =>
+      val safetyLevel = cttwitter.opts.safetyLevel
       val lookupsDecider =
         if (TimelinesSafetyLevels.contains(safetyLevel)) timelinesGate
         else if (TweetDetailSafetyLevels.contains(safetyLevel)) tweetDetailsGate
         else otherSafetyLevelsGate
 
-      val tweetIds: Seq[TweetId] = if (lookupsDecider()) tweetIdsToAggregate(ctx).toSeq else Seq()
+      val tweetIds: Seq[TweetId] = if (lookupsDecider()) tweetIdsToAggregate(cttwitter).toSeq else Seq()
       statsByLevel
         .getOrElse(
           safetyLevel,
@@ -122,15 +122,15 @@ object EditPerspectiveHydrator {
         .traverse(tweetIds) { id =>
           repo(
             Query(
-              ctx.opts.forUserId.get,
+              cttwitter.opts.forUserId.get,
               id,
               PerspectiveHydrator.evaluatePerspectiveTypes(
-                ctx.opts.forUserId.get,
+                cttwitter.opts.forUserId.get,
                 bookmarksGate,
-                ctx.featureSwitchResults))).liftToTry
+                cttwitter.featureSwitchResults))).liftToTry
         }.map { seq =>
           if (seq.isEmpty) {
-            val editPerspective = ctx.currentTweetPerspective.map { c =>
+            val editPerspective = cttwitter.currentTweetPerspective.map { c =>
               TweetPerspective(
                 c.favorited,
                 c.retweeted,
@@ -143,37 +143,37 @@ object EditPerspectiveHydrator {
             val aggregate = Some(
               TweetPerspective(
                 favorited =
-                  returns.exists(_.favorited) || ctx.currentTweetPerspective.exists(_.favorited),
+                  returns.etwitterists(_.favorited) || cttwitter.currentTweetPerspective.etwitterists(_.favorited),
                 retweeted =
-                  returns.exists(_.retweeted) || ctx.currentTweetPerspective.exists(_.retweeted),
+                  returns.etwitterists(_.retweeted) || cttwitter.currentTweetPerspective.etwitterists(_.retweeted),
                 bookmarked = Some(
-                  returns.exists(_.bookmarked.contains(true)) || ctx.currentTweetPerspective.exists(
+                  returns.etwitterists(_.bookmarked.contains(true)) || cttwitter.currentTweetPerspective.etwitterists(
                     _.bookmarked.contains(true)))
               )
             )
 
-            if (seq.exists(_.isThrow)) {
+            if (seq.etwitterists(_.isThrow)) {
               ValueState.partial(aggregate, HydratedField)
             } else {
               ValueState.modified(aggregate)
             }
           }
         }
-    }.onlyIf { (curr, ctx) =>
+    }.onlyIf { (curr, cttwitter) =>
       curr.isEmpty &&
-      ctx.opts.forUserId.isDefined &&
-      ctx.tweetFieldRequested(Tweet.EditPerspectiveField)
+      cttwitter.opts.forUserId.isDefined &&
+      cttwitter.tweetFieldRequested(Tweet.EditPerspectiveField)
     }
   }
 
-  private def tweetIdsToAggregate(ctx: Ctx): Set[TweetId] = {
-    ctx.editControl
+  private def tweetIdsToAggregate(cttwitter: Cttwitter): Set[TweetId] = {
+    cttwitter.editControl
       .flatMap {
         case EditControl.Initial(initial) => Some(initial)
         case EditControl.Edit(edit) => edit.editControlInitial
         case _ => None
       }
       .map(_.editTweetIds.toSet)
-      .getOrElse(Set()) - ctx.tweetId
+      .getOrElse(Set()) - cttwitter.tweetId
   }
 }

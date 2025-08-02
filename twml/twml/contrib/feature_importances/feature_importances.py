@@ -5,20 +5,20 @@ from collections import defaultdict
 
 from com.twitter.mlmetastore.modelrepo.client import ModelRepoClient
 from com.twitter.mlmetastore.modelrepo.core import FeatureImportance, FeatureNames
-from twitter.deepbird.io.util import match_feature_regex_list
+from twitter.deepbird.io.util import match_feature_regetwitter_list
 
 from twml.contrib.feature_importances.helpers import (
   _get_feature_name_from_config,
   _get_feature_types_from_records,
   _get_metrics_hook,
-  _expand_prefix,
-  longest_common_prefix,
+  _etwitterpand_prefitwitter,
+  longest_common_prefitwitter,
   write_list_to_hdfs_gfile)
 from twml.contrib.feature_importances.feature_permutation import PermutedInputFnFactory
-from twml.tracking import ExperimentTracker
+from twml.tracking import EtwitterperimentTracker
 
 from tensorflow.compat.v1 import logging
-from requests.exceptions import HTTPError, RetryError
+from requests.etwitterceptions import HTTPError, RetryError
 from queue import Queue
 
 
@@ -33,12 +33,12 @@ LOSS = "loss"
 
 def _repartition(feature_list_queue, fnames_ftypes, split_feature_group_on_period):
   """
-  Iterate through letters to partition each feature by prefix, and then put each tuple
-    (prefix, feature_partition) into the feature_list_queue
+  Iterate through letters to partition each feature by prefitwitter, and then put each tuple
+    (prefitwitter, feature_partition) into the feature_list_queue
   Args:
-    prefix (str): The prefix shared by each feature in list_of_feature_types
+    prefitwitter (str): The prefitwitter shared by each feature in list_of_feature_types
     feature_list_queue (Queue<(str, list<(str, str)>)>): The queue of feature groups
-    fnames_ftypes (list<(str, str)>): List of (fname, ftype) pairs. Each fname begins with prefix
+    fnames_ftypes (list<(str, str)>): List of (fname, ftype) pairs. Each fname begins with prefitwitter
     split_feature_group_on_period (str): If true, require that feature groups end in a period
   Returns:
     Updated queue with each group in fnames_ftypes
@@ -46,23 +46,23 @@ def _repartition(feature_list_queue, fnames_ftypes, split_feature_group_on_perio
   assert len(fnames_ftypes) > 1
 
   split_character = "." if split_feature_group_on_period else None
-  # Compute the longest prefix of the words
-  prefix = longest_common_prefix(
+  # Compute the longest prefitwitter of the words
+  prefitwitter = longest_common_prefitwitter(
     strings=[fname for fname, _ in fnames_ftypes], split_character=split_character)
 
-  # Separate the features by prefix
-  prefix_to_features = defaultdict(list)
+  # Separate the features by prefitwitter
+  prefitwitter_to_features = defaultdict(list)
   for fname, ftype in fnames_ftypes:
-    assert fname.startswith(prefix)
-    new_prefix = _expand_prefix(fname=fname, prefix=prefix, split_character=split_character)
-    prefix_to_features[new_prefix].append((fname, ftype))
+    assert fname.startswith(prefitwitter)
+    new_prefitwitter = _etwitterpand_prefitwitter(fname=fname, prefitwitter=prefitwitter, split_character=split_character)
+    prefitwitter_to_features[new_prefitwitter].append((fname, ftype))
 
   # Add all of the new partitions to the queue
-  for new_prefix, fname_ftype_list in prefix_to_features.items():
-    extended_new_prefix = longest_common_prefix(
+  for new_prefitwitter, fname_ftype_list in prefitwitter_to_features.items():
+    etwittertended_new_prefitwitter = longest_common_prefitwitter(
       strings=[fname for fname, _ in fname_ftype_list], split_character=split_character)
-    assert extended_new_prefix.startswith(new_prefix)
-    feature_list_queue.put((extended_new_prefix, fname_ftype_list))
+    assert etwittertended_new_prefitwitter.startswith(new_prefitwitter)
+    feature_list_queue.put((etwittertended_new_prefitwitter, fname_ftype_list))
   return feature_list_queue
 
 
@@ -80,7 +80,7 @@ def _infer_if_is_metric_larger_the_better(stopping_metric):
   return is_metric_larger_the_better
 
 
-def _check_whether_tree_should_expand(baseline_performance, computed_performance, sensitivity, stopping_metric, is_metric_larger_the_better):
+def _check_whether_tree_should_etwitterpand(baseline_performance, computed_performance, sensitivity, stopping_metric, is_metric_larger_the_better):
   """
   Returns True if
     - the metric is positive (e.g. ROC_AUC) and computed_performance is nontrivially smaller than the baseline_performance
@@ -111,59 +111,59 @@ def _compute_multiple_permuted_performances_from_trainer(
   return metrics_hook.metric_values
 
 
-def _get_extra_feature_group_performances(factory, trainer, parse_fn, extra_groups, feature_to_type, record_count):
-  """Compute performance differences for the extra feature groups
+def _get_etwittertra_feature_group_performances(factory, trainer, parse_fn, etwittertra_groups, feature_to_type, record_count):
+  """Compute performance differences for the etwittertra feature groups
   """
-  extra_group_feature_performance_results = {}
-  for group_name, raw_feature_regex_list in extra_groups.items():
+  etwittertra_group_feature_performance_results = {}
+  for group_name, raw_feature_regetwitter_list in etwittertra_groups.items():
     start = time.time()
-    fnames = match_feature_regex_list(
+    fnames = match_feature_regetwitter_list(
       features=feature_to_type.keys(),
-      feature_regex_list=[regex for regex in raw_feature_regex_list],
+      feature_regetwitter_list=[regetwitter for regetwitter in raw_feature_regetwitter_list],
       preprocess=False,
       as_dict=False)
 
     fnames_ftypes = [(fname, feature_to_type[fname]) for fname in fnames]
 
-    logging.info("Extracted extra group {} with features {}".format(group_name, fnames_ftypes))
-    extra_group_feature_performance_results[group_name] = _compute_multiple_permuted_performances_from_trainer(
+    logging.info("Etwittertracted etwittertra group {} with features {}".format(group_name, fnames_ftypes))
+    etwittertra_group_feature_performance_results[group_name] = _compute_multiple_permuted_performances_from_trainer(
       factory=factory, fname_ftypes=fnames_ftypes,
       trainer=trainer, parse_fn=parse_fn, record_count=record_count)
     logging.info("\n\nImportances computed for {} in {} seconds \n\n".format(
       group_name, int(time.time() - start)))
-  return extra_group_feature_performance_results
+  return etwittertra_group_feature_performance_results
 
 
 def _feature_importances_tree_algorithm(
     data_dir, trainer, parse_fn, fnames, stopping_metric, file_list=None, datarecord_filter_fn=None, split_feature_group_on_period=True,
-    record_count=99999, is_metric_larger_the_better=None, sensitivity=0.025, extra_groups=None, dont_build_tree=False):
-  """Tree algorithm for feature and feature group importances. This algorithm build a prefix tree of
+    record_count=99999, is_metric_larger_the_better=None, sensitivity=0.025, etwittertra_groups=None, dont_build_tree=False):
+  """Tree algorithm for feature and feature group importances. This algorithm build a prefitwitter tree of
   the feature names and then traverses the tree with a BFS. At each node (aka group of features with
-  a shared prefix) the algorithm computes the performance of the model when we permute all features
+  a shared prefitwitter) the algorithm computes the performance of the model when we permute all features
   in the group. The algorithm only zooms-in on groups that impact the performance by more than
   sensitivity. As a result, features that affect the model performance by less than sensitivity will
-  not have an exact importance.
+  not have an etwitteract importance.
   Args:
     data_dir: (str): The location of the training or testing data to compute importances over.
       If None, the trainer._eval_files are used
     trainer: (DataRecordTrainer): A DataRecordTrainer object
     parse_fn: (function): The parse_fn used by eval_input_fn
     fnames (list<string>): The list of feature names
-    stopping_metric (str): The metric to use to determine when to stop expanding trees
-    file_list (list<str>): The list of filenames. Exactly one of file_list and data_dir should be
+    stopping_metric (str): The metric to use to determine when to stop etwitterpanding trees
+    file_list (list<str>): The list of filenames. Etwitteractly one of file_list and data_dir should be
       provided
     datarecord_filter_fn (function): a function takes a single data sample in com.twitter.ml.api.ttypes.DataRecord format
         and return a boolean value, to indicate if this data record should be kept in feature importance module or not.
     split_feature_group_on_period (boolean): If true, split feature groups by period rather than on
-      optimal prefix
+      optimal prefitwitter
     record_count (int): The number of records to compute importances over
     is_metric_larger_the_better (boolean): If true, assume that stopping_metric is a metric where larger
       values are better (e.g. ROC-AUC)
-    sensitivity (float): The smallest change in performance to continue to expand the tree
-    extra_groups (dict<str, list<str>>): A dictionary mapping the name of extra feature groups to the list of
+    sensitivity (float): The smallest change in performance to continue to etwitterpand the tree
+    etwittertra_groups (dict<str, list<str>>): A dictionary mapping the name of etwittertra feature groups to the list of
       the names of the features in the group. You should only supply a value for this argument if you have a set
-      of features that you want to evaluate as a group but don't share a prefix
-    dont_build_tree (boolean): If True, don't build the tree and only compute the extra_groups importances
+      of features that you want to evaluate as a group but don't share a prefitwitter
+    dont_build_tree (boolean): If True, don't build the tree and only compute the etwittertra_groups importances
   Returns:
     A dictionary that contains the individual and group feature importances
   """
@@ -188,63 +188,63 @@ def _feature_importances_tree_algorithm(
   individual_feature_performances = {}
   feature_group_performances = {}
   if dont_build_tree:
-    logging.info("Not building feature importance trie. Will only compute importances for the extra_groups")
+    logging.info("Not building feature importance trie. Will only compute importances for the etwittertra_groups")
   else:
     logging.info("Building feature importance trie")
-    # Each element in the Queue will be a tuple of (prefix, list_of_feature_type_pairs) where
-    #   each feature in list_of_feature_type_pairs will have have the prefix "prefix"
+    # Each element in the Queue will be a tuple of (prefitwitter, list_of_feature_type_pairs) where
+    #   each feature in list_of_feature_type_pairs will have have the prefitwitter "prefitwitter"
     feature_list_queue = _repartition(
       feature_list_queue=Queue(), fnames_ftypes=all_feature_types, split_feature_group_on_period=split_feature_group_on_period)
 
     while not feature_list_queue.empty():
       # Pop the queue. We should never have an empty list in the queue
-      prefix, fnames_ftypes = feature_list_queue.get()
+      prefitwitter, fnames_ftypes = feature_list_queue.get()
       assert len(fnames_ftypes) > 0
 
       # Compute performance from permuting all features in fname_ftypes
       logging.info(
         "\n\nComputing importances for {} ({}...). {} elements left in the queue \n\n".format(
-          prefix, fnames_ftypes[:5], feature_list_queue.qsize()))
+          prefitwitter, fnames_ftypes[:5], feature_list_queue.qsize()))
       start = time.time()
       computed_performance = _compute_multiple_permuted_performances_from_trainer(
         factory=factory, fname_ftypes=fnames_ftypes,
         trainer=trainer, parse_fn=parse_fn, record_count=record_count)
       logging.info("\n\nImportances computed for {} in {} seconds \n\n".format(
-        prefix, int(time.time() - start)))
+        prefitwitter, int(time.time() - start)))
       if len(fnames_ftypes) == 1:
         individual_feature_performances[fnames_ftypes[0][0]] = computed_performance
       else:
-        feature_group_performances[prefix] = computed_performance
+        feature_group_performances[prefitwitter] = computed_performance
       # Dig deeper into the features in fname_ftypes only if there is more than one feature in the
       #    list and the performance drop is nontrivial
-      logging.info("Checking performance for {} ({}...)".format(prefix, fnames_ftypes[:5]))
-      check = _check_whether_tree_should_expand(
+      logging.info("Checking performance for {} ({}...)".format(prefitwitter, fnames_ftypes[:5]))
+      check = _check_whether_tree_should_etwitterpand(
         baseline_performance=baseline_performance, computed_performance=computed_performance,
         sensitivity=sensitivity, stopping_metric=stopping_metric, is_metric_larger_the_better=is_metric_larger_the_better)
       if len(fnames_ftypes) > 1 and check:
-        logging.info("Expanding {} ({}...)".format(prefix, fnames_ftypes[:5]))
+        logging.info("Etwitterpanding {} ({}...)".format(prefitwitter, fnames_ftypes[:5]))
         feature_list_queue = _repartition(
           feature_list_queue=feature_list_queue, fnames_ftypes=fnames_ftypes, split_feature_group_on_period=split_feature_group_on_period)
       else:
-        logging.info("Not expanding {} ({}...)".format(prefix, fnames_ftypes[:5]))
+        logging.info("Not etwitterpanding {} ({}...)".format(prefitwitter, fnames_ftypes[:5]))
 
   # Baseline performance is grouped in with individual_feature_importance_results
   individual_feature_performance_results = dict(
     out, **{k: v for k, v in individual_feature_performances.items()})
   group_feature_performance_results = {k: v for k, v in feature_group_performances.items()}
 
-  if extra_groups is not None:
-    logging.info("Computing performances for extra groups {}".format(extra_groups.keys()))
-    for group_name, performances in _get_extra_feature_group_performances(
+  if etwittertra_groups is not None:
+    logging.info("Computing performances for etwittertra groups {}".format(etwittertra_groups.keys()))
+    for group_name, performances in _get_etwittertra_feature_group_performances(
         factory=factory,
         trainer=trainer,
         parse_fn=parse_fn,
-        extra_groups=extra_groups,
+        etwittertra_groups=etwittertra_groups,
         feature_to_type=feature_to_type,
         record_count=record_count).items():
       group_feature_performance_results[group_name] = performances
   else:
-    logging.info("Not computing performances for extra groups")
+    logging.info("Not computing performances for etwittertra groups")
 
   return {INDIVIDUAL: individual_feature_performance_results,
           GROUP: group_feature_performance_results}
@@ -370,11 +370,11 @@ def write_feature_importances_to_ml_dash(trainer, feature_importances, feature_c
     feature_importances (dict, default=None): Dictionary of precomputed feature importances
     feature_importance_metric (str, default=None): The metric to write to ML Dashboard
   """
-  experiment_tracking_path = trainer.experiment_tracker.tracking_path\
-    if trainer.experiment_tracker.tracking_path\
-    else ExperimentTracker.guess_path(trainer._save_dir)
+  etwitterperiment_tracking_path = trainer.etwitterperiment_tracker.tracking_path\
+    if trainer.etwitterperiment_tracker.tracking_path\
+    else EtwitterperimentTracker.guess_path(trainer._save_dir)
 
-  logging.info('Computing feature importances for run: {}'.format(experiment_tracking_path))
+  logging.info('Computing feature importances for run: {}'.format(etwitterperiment_tracking_path))
 
   feature_importance_list = []
   for key in feature_importances:
@@ -385,12 +385,12 @@ def write_feature_importances_to_ml_dash(trainer, feature_importances, feature_c
         try:
           imps[metric_name] = float(value)
           logging.info('Wrote feature importance value {} for metric: {}'.format(str(value), metric_name))
-        except Exception as ex:
-          logging.error("Skipping writing metric:{} to ML Metastore due to invalid metric value: {} or value type: {}. Exception: {}".format(metric_name, str(value), type(value), str(ex)))
+        etwittercept Etwitterception as etwitter:
+          logging.error("Skipping writing metric:{} to ML Metastore due to invalid metric value: {} or value type: {}. Etwitterception: {}".format(metric_name, str(value), type(value), str(etwitter)))
           pass
 
       feature_importance_list.append(FeatureImportance(
-        run_id=experiment_tracking_path,
+        run_id=etwitterperiment_tracking_path,
         feature_name=_process_feature_name_for_mldash(feature_name),
         feature_importance_metrics=imps,
         is_group=key == GROUP
@@ -399,7 +399,7 @@ def write_feature_importances_to_ml_dash(trainer, feature_importances, feature_c
 # setting feature config to match the one used in compute_feature_importances
   feature_config = feature_config or trainer._feature_config
   feature_names = FeatureNames(
-    run_id=experiment_tracking_path,
+    run_id=etwitterperiment_tracking_path,
     names=list(feature_config.features.keys())
   )
 
@@ -409,6 +409,6 @@ def write_feature_importances_to_ml_dash(trainer, feature_importances, feature_c
     client.add_feature_importances(feature_importance_list)
     logging.info('Writing feature names to ML Metastore')
     client.add_feature_names(feature_names)
-  except (HTTPError, RetryError) as err:
+  etwittercept (HTTPError, RetryError) as err:
     logging.error('Feature importance is not being written due to: '
                   'HTTPError when attempting to write to ML Metastore: \n{}.'.format(err))

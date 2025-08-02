@@ -1,7 +1,7 @@
 package com.twitter.simclusters_v2.scio
 package multi_type_graph.common
 
-import com.spotify.scio.ScioContext
+import com.spotify.scio.ScioContetwittert
 import com.spotify.scio.values.SCollection
 import com.twitter.beam.io.dal.DAL
 import com.twitter.common.util.Clock
@@ -32,24 +32,24 @@ object MultiTypeGraphUtil {
       case _: Noun.TweetId => 5
     }
 
-    override def compare(x: Noun, y: Noun): Int = nounTypeOrder(x) compare nounTypeOrder(y)
+    override def compare(twitter: Noun, y: Noun): Int = nounTypeOrder(twitter) compare nounTypeOrder(y)
   }
 
   val rightNodeTypeOrdering: Ordering[RightNodeType] = ordSer[RightNodeType]
 
   val rightNodeOrdering: Ordering[RightNode] =
     new Ordering[RightNode] {
-      override def compare(x: RightNode, y: RightNode): Int = {
+      override def compare(twitter: RightNode, y: RightNode): Int = {
         Ordering
           .Tuple2(rightNodeTypeOrdering, nounOrdering)
-          .compare((x.rightNodeType, x.noun), (y.rightNodeType, y.noun))
+          .compare((twitter.rightNodeType, twitter.noun), (y.rightNodeType, y.noun))
       }
     }
 
   def getTruncatedMultiTypeGraph(
     noOlderThan: Duration = Duration.fromDays(14)
   )(
-    implicit sc: ScioContext
+    implicit sc: ScioContetwittert
   ): SCollection[(Long, RightNode, Double)] = {
     sc.customInput(
         "ReadTruncatedMultiTypeGraph",

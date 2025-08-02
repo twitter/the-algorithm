@@ -5,9 +5,9 @@ import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
 import com.twitter.follow_recommendations.common.models._
 import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.recos.recos_common.thriftscala.UserSocialProofType
 import com.twitter.recos.user_user_graph.thriftscala.RecommendUserDisplayLocation
 import com.twitter.recos.user_user_graph.thriftscala.RecommendUserRequest
@@ -16,16 +16,16 @@ import com.twitter.recos.user_user_graph.thriftscala.RecommendedUser
 import com.twitter.stitch.Stitch
 import com.twitter.strato.client.Fetcher
 import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Named
+import javatwitter.inject.Singleton
 
 @Singleton
 class UserUserGraphCandidateSource @Inject() (
   @Named(GuiceNamedConstants.USER_USER_GRAPH_FETCHER)
   fetcher: Fetcher[RecommendUserRequest, Unit, RecommendUserResponse],
   statsReceiver: StatsReceiver)
-    extends CandidateSource[
+    etwittertends CandidateSource[
       UserUserGraphCandidateSource.Target,
       CandidateUser
     ] {
@@ -64,7 +64,7 @@ class UserUserGraphCandidateSource @Inject() (
   ): Option[RecommendUserRequest] = {
     (target.getOptionalUserId, target.recentFollowedUserIds) match {
       case (Some(userId), Some(recentFollowedUserIds)) =>
-        // use recentFollowedUserIds as seeds for initial experiment
+        // use recentFollowedUserIds as seeds for initial etwitterperiment
         val seedsWithWeights: Map[Long, Double] = recentFollowedUserIds.map {
           recentFollowedUserId =>
             recentFollowedUserId -> UserUserGraphCandidateSource.DefaultSeedWeight
@@ -73,9 +73,9 @@ class UserUserGraphCandidateSource @Inject() (
           requesterId = userId,
           displayLocation = UserUserGraphCandidateSource.DisplayLocation,
           seedsWithWeights = seedsWithWeights,
-          excludedUserIds = Some(target.excludedUserIds),
-          maxNumResults = Some(target.params.getInt(UserUserGraphParams.MaxCandidatesToReturn)),
-          maxNumSocialProofs = Some(UserUserGraphCandidateSource.MaxNumSocialProofs),
+          etwittercludedUserIds = Some(target.etwittercludedUserIds),
+          matwitterNumResults = Some(target.params.getInt(UserUserGraphParams.MatwitterCandidatesToReturn)),
+          matwitterNumSocialProofs = Some(UserUserGraphCandidateSource.MatwitterNumSocialProofs),
           minUserPerSocialProof = Some(UserUserGraphCandidateSource.MinUserPerSocialProof),
           socialProofTypes = Some(Seq(UserUserGraphCandidateSource.SocialProofType))
         )
@@ -107,19 +107,19 @@ class UserUserGraphCandidateSource @Inject() (
 
 object UserUserGraphCandidateSource {
   type Target = HasParams
-    with HasClientContext
+    with HasClientContetwittert
     with HasRecentFollowedUserIds
-    with HasExcludedUserIds
+    with HasEtwittercludedUserIds
 
   val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
     Algorithm.UserUserGraph.toString)
-  //Use HomeTimeline for experiment
+  //Use HomeTimeline for etwitterperiment
   val DisplayLocation: RecommendUserDisplayLocation = RecommendUserDisplayLocation.HomeTimeLine
 
   //Default params used in MagicRecs
   val DefaultSeedWeight: Double = 1.0
   val SocialProofType = UserSocialProofType.Follow
-  val MaxNumSocialProofs = 10
+  val MatwitterNumSocialProofs = 10
   val MinUserPerSocialProof: Map[UserSocialProofType, Int] =
     Map[UserSocialProofType, Int]((SocialProofType, 2))
 }

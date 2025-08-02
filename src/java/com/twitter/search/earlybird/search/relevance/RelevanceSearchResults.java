@@ -5,7 +5,7 @@ import com.twitter.search.earlybird.search.SimpleSearchResults;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
 
-public class RelevanceSearchResults extends SimpleSearchResults {
+public class RelevanceSearchResults etwittertends SimpleSearchResults {
   public final ThriftSearchResultMetadata[] resultMetadata;
   private ThriftSearchResultsRelevanceStats relevanceStats = null;
   private long scoringTimeNanos = 0;
@@ -15,9 +15,9 @@ public class RelevanceSearchResults extends SimpleSearchResults {
     this.resultMetadata = new ThriftSearchResultMetadata[size];
   }
 
-  public void setHit(Hit hit, int hitIndex) {
-    hits[hitIndex] = hit;
-    resultMetadata[hitIndex] = hit.getMetadata();
+  public void setHit(Hit hit, int hitIndetwitter) {
+    hits[hitIndetwitter] = hit;
+    resultMetadata[hitIndetwitter] = hit.getMetadata();
   }
 
   public void setRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats) {

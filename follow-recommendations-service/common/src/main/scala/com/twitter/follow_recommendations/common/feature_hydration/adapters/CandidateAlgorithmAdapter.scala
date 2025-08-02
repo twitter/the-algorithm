@@ -9,12 +9,12 @@ import com.twitter.hermit.model.Algorithm.UttProducerOnlineMbcgV1
 import com.twitter.ml.api.DataRecord
 import com.twitter.ml.api.Feature.SparseBinary
 import com.twitter.ml.api.Feature.SparseContinuous
-import com.twitter.ml.api.FeatureContext
+import com.twitter.ml.api.FeatureContetwittert
 import com.twitter.ml.api.IRecordOneToOneAdapter
 import com.twitter.ml.api.util.FDsl._
 
 object CandidateAlgorithmAdapter
-    extends IRecordOneToOneAdapter[Option[UserCandidateSourceDetails]] {
+    etwittertends IRecordOneToOneAdapter[Option[UserCandidateSourceDetails]] {
 
   val CANDIDATE_ALGORITHMS: SparseBinary = new SparseBinary("candidate.source.algorithm_ids")
   val CANDIDATE_SOURCE_SCORES: SparseContinuous =
@@ -22,14 +22,14 @@ object CandidateAlgorithmAdapter
   val CANDIDATE_SOURCE_RANKS: SparseContinuous =
     new SparseContinuous("candidate.source.ranks")
 
-  override val getFeatureContext: FeatureContext = new FeatureContext(
+  override val getFeatureContetwittert: FeatureContetwittert = new FeatureContetwittert(
     CANDIDATE_ALGORITHMS,
     CANDIDATE_SOURCE_SCORES,
     CANDIDATE_SOURCE_RANKS
   )
 
-  /** list of candidate source remaps to avoid creating different features for experimental sources.
-   *  the LHS should contain the experimental source, and the RHS should contain the prod source.
+  /** list of candidate source remaps to avoid creating different features for etwitterperimental sources.
+   *  the LHS should contain the etwitterperimental source, and the RHS should contain the prod source.
    */
   def remapCandidateSource(a: Algorithm): Algorithm = a match {
     case UttProducerOnlineMbcgV1 => UttProducerOfflineMbcgV1

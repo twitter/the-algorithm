@@ -20,7 +20,7 @@ class FullDense(core_layers.Dense):
     outputs = activation(inputs.weight + bias)
 
   Where ``activation`` is the activation function passed as the ``activation``
-  argument (if not ``None``), ``weight`` is a weights matrix created by the layer,
+  argument (if not ``None``), ``weight`` is a weights matritwitter created by the layer,
   and ``bias`` is a bias vector created by the layer.
 
   Arguments:
@@ -29,11 +29,11 @@ class FullDense(core_layers.Dense):
     activation:
       Activation function (callable). Set it to None to maintain a linear activation.
     weight_initializer:
-      Initializer function for the weight matrix.
+      Initializer function for the weight matritwitter.
     bias_initializer:
       Initializer function for the bias.
     weight_regularizer:
-      Regularizer function for the weight matrix.
+      Regularizer function for the weight matritwitter.
       Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
     bias_regularizer:
       Regularizer function for the bias.
@@ -64,21 +64,21 @@ class FullDense(core_layers.Dense):
     activation:
       Activation function (callable).
     weight_initializer:
-      Initializer instance (or name) for the weight matrix.
+      Initializer instance (or name) for the weight matritwitter.
     bias_initializer:
       Initializer instance (or name) for the bias.
     weight:
-      Weight matrix (TensorFlow variable or tensor). (weight)
+      Weight matritwitter (TensorFlow variable or tensor). (weight)
     bias:
       Bias vector, if applicable (TensorFlow variable or tensor).
     weight_regularizer:
-      Regularizer instance for the weight matrix (callable)
+      Regularizer instance for the weight matritwitter (callable)
     bias_regularizer:
       Regularizer instance for the bias (callable).
     activity_regularizer:
       Regularizer instance for the output (callable)
     weight_constraint:
-      Constraint function for the weight matrix.
+      Constraint function for the weight matritwitter.
     bias_constraint:
       Constraint function for the bias.
 
@@ -108,11 +108,11 @@ class FullDense(core_layers.Dense):
       raise ValueError('The last dimension of the inputs to `Dense` '
                        'should be defined. Found `None`.')
     self.input_spec = InputSpec(min_ndim=2,
-                                axes={-1: input_shape[-1]})
+                                atwitteres={-1: input_shape[-1]})
 
     partitioner = None
     if self._num_partitions:
-      partitioner = tf.fixed_size_partitioner(self._num_partitions)
+      partitioner = tf.fitwittered_size_partitioner(self._num_partitions)
 
     self.kernel = self.add_weight(
         'kernel',
@@ -191,7 +191,7 @@ def full_dense(inputs, output_size,
   This layer implements the operation:
   `outputs = activation(inputs.weight + bias)`
   Where `activation` is the activation function passed as the `activation`
-  argument (if not `None`), `weight` is a weights matrix created by the layer,
+  argument (if not `None`), `weight` is a weights matritwitter created by the layer,
   and `bias` is a bias vector created by the layer
   (only if `use_bias` is `True`).
 
@@ -201,13 +201,13 @@ def full_dense(inputs, output_size,
     activation: Activation function (callable). Set it to None to maintain a
       linear activation.
     use_bias: Boolean, whether the layer uses a bias.
-    weight_initializer: Initializer function for the weight matrix.
+    weight_initializer: Initializer function for the weight matritwitter.
       If `None` (default), weights are initialized using the default
       initializer used by `tf.get_variable`.
     bias_initializer:
       Initializer function for the bias.
     weight_regularizer:
-      Regularizer function for the weight matrix.
+      Regularizer function for the weight matritwitter.
       Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
     bias_regularizer:
       Regularizer function for the bias.
@@ -234,11 +234,11 @@ def full_dense(inputs, output_size,
       by the same name.
 
   Returns:
-    Output tensor the same shape as `inputs` except the last dimension is of
+    Output tensor the same shape as `inputs` etwittercept the last dimension is of
     size `units`.
 
   Raises:
-    ValueError: if eager execution is enabled.
+    ValueError: if eager etwitterecution is enabled.
   """
   layer = FullDense(output_size,
                     activation=activation,

@@ -11,7 +11,7 @@ import com.twitter.ml.api.Feature;
  * @deprecated This class is retired and we suggest to switch to schema-based features.
  */
 @Deprecated
-public abstract class BaseLegacyScoreAccumulator<D> extends BaseScoreAccumulator<D> {
+public abstract class BaseLegacyScoreAccumulator<D> etwittertends BaseScoreAccumulator<D> {
 
   public BaseLegacyScoreAccumulator(LightweightLinearModel model) {
     super(model);

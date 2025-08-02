@@ -36,7 +36,7 @@ object TweetStateRecord {
 
   /** When a soft-deleted or bounce deleted tweet is ultimately hard-deleted by an offline job. */
   case class HardDeleted(tweetId: TweetId, createdAt: Long, deletedAt: Long)
-      extends TweetStateRecord {
+      etwittertends TweetStateRecord {
     // timestamp in the mh backend is the hard deletion timestamp
     override def values = Map("timestamp" -> createdAt, "softdelete_timestamp" -> deletedAt)
     def stateKey = TweetKey.LKey.HardDeletionStateKey
@@ -44,25 +44,25 @@ object TweetStateRecord {
   }
 
   /** When a tweet is deleted by the user. It can still be undeleted while in the soft deleted state. */
-  case class SoftDeleted(tweetId: TweetId, createdAt: Long) extends TweetStateRecord {
+  case class SoftDeleted(tweetId: TweetId, createdAt: Long) etwittertends TweetStateRecord {
     def stateKey = TweetKey.LKey.SoftDeletionStateKey
     def name = "soft_deleted"
   }
 
   /** When a tweet is deleted by go/bouncer for violating Twitter Rules. It MAY NOT be undeleted. */
-  case class BounceDeleted(tweetId: TweetId, createdAt: Long) extends TweetStateRecord {
+  case class BounceDeleted(tweetId: TweetId, createdAt: Long) etwittertends TweetStateRecord {
     def stateKey = TweetKey.LKey.BounceDeletionStateKey
     def name = "bounce_deleted"
   }
 
   /** When a tweet is undeleted by an internal system. */
-  case class Undeleted(tweetId: TweetId, createdAt: Long) extends TweetStateRecord {
+  case class Undeleted(tweetId: TweetId, createdAt: Long) etwittertends TweetStateRecord {
     def stateKey = TweetKey.LKey.UnDeletionStateKey
     def name = "undeleted"
   }
 
   /** When a tweet is created using the forceAdd endpoint. */
-  case class ForceAdded(tweetId: TweetId, createdAt: Long) extends TweetStateRecord {
+  case class ForceAdded(tweetId: TweetId, createdAt: Long) etwittertends TweetStateRecord {
     def stateKey = TweetKey.LKey.ForceAddedStateKey
     def name = "force_added"
   }

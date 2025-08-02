@@ -10,7 +10,7 @@ trait ShardFunction[T] {
    * Shard function to shard embedding based on total shards and embedding data.
    * @param shards
    * @param entity
-   * @return Shard index, from 0(Inclusive) to shards(Exclusive))
+   * @return Shard indetwitter, from 0(Inclusive) to shards(Etwitterclusive))
    */
   def apply(shards: Int, entity: EntityEmbedding[T]): Int
 }
@@ -18,9 +18,9 @@ trait ShardFunction[T] {
 /**
  * Randomly shards the embeddings based on number of total shards.
  */
-class RandomShardFunction[T] extends ShardFunction[T] {
+class RandomShardFunction[T] etwittertends ShardFunction[T] {
   def apply(shards: Int, entity: EntityEmbedding[T]): Int = {
-    Random.nextInt(shards)
+    Random.netwittertInt(shards)
   }
 }
 
@@ -35,11 +35,11 @@ class ShardedAppendable[T, P <: RuntimeParams, D <: Distance[D]](
   indices: Seq[Appendable[T, P, D]],
   shardFn: ShardFunction[T],
   shards: Int)
-    extends Appendable[T, P, D] {
+    etwittertends Appendable[T, P, D] {
   override def append(entity: EntityEmbedding[T]): Future[Unit] = {
     val shard = shardFn(shards, entity)
-    val index = indices(shard)
-    index.append(entity)
+    val indetwitter = indices(shard)
+    indetwitter.append(entity)
   }
 
   override def toQueryable: Queryable[T, P, D] = {
@@ -57,7 +57,7 @@ class ShardedAppendable[T, P <: RuntimeParams, D <: Distance[D]](
  */
 class ComposedQueryable[T, P <: RuntimeParams, D <: Distance[D]](
   indices: Seq[Queryable[T, P, D]])
-    extends Queryable[T, P, D] {
+    etwittertends Queryable[T, P, D] {
   private[this] val ordering =
     Ordering.by[NeighborWithDistance[T, D], D](_.distance)
   override def query(
@@ -75,7 +75,7 @@ class ComposedQueryable[T, P <: RuntimeParams, D <: Distance[D]](
     runtimeParams: P
   ): Future[List[NeighborWithDistance[T, D]]] = {
     val futures = Future.collect(
-      indices.map(index => index.queryWithDistance(embedding, numOfNeighbors, runtimeParams))
+      indices.map(indetwitter => indetwitter.queryWithDistance(embedding, numOfNeighbors, runtimeParams))
     )
     futures.map { list =>
       list.flatten

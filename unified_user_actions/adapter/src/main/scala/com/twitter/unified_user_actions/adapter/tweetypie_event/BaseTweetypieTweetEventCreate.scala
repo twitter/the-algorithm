@@ -17,15 +17,15 @@ import com.twitter.unified_user_actions.thriftscala.UserIdentifier
 /**
  * Base class for Tweetypie TweetCreateEvent including Quote, Reply, Retweet, and Create.
  */
-trait BaseTweetypieTweetEventCreate extends BaseTweetypieTweetEvent[TweetCreateEvent] {
-  type ExtractedEvent
+trait BaseTweetypieTweetEventCreate etwittertends BaseTweetypieTweetEvent[TweetCreateEvent] {
+  type EtwittertractedEvent
   protected def actionType: ActionType
 
   /**
    *  This is the country code where actionTweetId is sent from. For the definitions,
    *  check https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/thrift/com/twitter/tweetypie/tweet.thrift?L1001.
    *
-   *  UUA sets this to be consistent with IESource to meet existing use requirement.
+   *  UUA sets this to be consistent with IESource to meet etwitteristing use requirement.
    *
    *  For ServerTweetReply/Retweet/Quote, the geo-tagging country code is not available in TweetCreatEvent.
    *  Thus, user signup country is picked to meet a customer use case.
@@ -42,19 +42,19 @@ trait BaseTweetypieTweetEventCreate extends BaseTweetypieTweetEvent[TweetCreateE
   }
 
   protected def getItem(
-    extractedEvent: ExtractedEvent,
+    etwittertractedEvent: EtwittertractedEvent,
     tweetCreateEvent: TweetCreateEvent
   ): Item
-  protected def extract(tweetCreateEvent: TweetCreateEvent): Option[ExtractedEvent]
+  protected def etwittertract(tweetCreateEvent: TweetCreateEvent): Option[EtwittertractedEvent]
 
   def getUnifiedUserAction(
     tweetCreateEvent: TweetCreateEvent,
     tweetEventFlags: TweetEventFlags
   ): Option[UnifiedUserAction] = {
-    extract(tweetCreateEvent).map { extractedEvent =>
+    etwittertract(tweetCreateEvent).map { etwittertractedEvent =>
       UnifiedUserAction(
         userIdentifier = getUserIdentifier(tweetCreateEvent),
-        item = getItem(extractedEvent, tweetCreateEvent),
+        item = getItem(etwittertractedEvent, tweetCreateEvent),
         actionType = actionType,
         eventMetadata = getEventMetadata(tweetCreateEvent, tweetEventFlags),
         productSurface = None,
@@ -87,10 +87,10 @@ trait BaseTweetypieTweetEventCreate extends BaseTweetypieTweetEvent[TweetCreateE
  * Get UnifiedUserAction from a tweet Create.
  * Note the Create is generated when the tweet is not a Quote/Retweet/Reply.
  */
-object TweetypieCreateEvent extends BaseTweetypieTweetEventCreate {
-  type ExtractedEvent = Long
+object TweetypieCreateEvent etwittertends BaseTweetypieTweetEventCreate {
+  type EtwittertractedEvent = Long
   override protected val actionType: ActionType = ActionType.ServerTweetCreate
-  override protected def extract(tweetCreateEvent: TweetCreateEvent): Option[Long] =
+  override protected def etwittertract(tweetCreateEvent: TweetCreateEvent): Option[Long] =
     Option(tweetCreateEvent.tweet.id)
 
   protected def getItem(
@@ -108,11 +108,11 @@ object TweetypieCreateEvent extends BaseTweetypieTweetEventCreate {
  * Get UnifiedUserAction from a Reply.
  * Note the Reply is generated when someone is replying to a tweet.
  */
-object TweetypieReplyEvent extends BaseTweetypieTweetEventCreate {
+object TweetypieReplyEvent etwittertends BaseTweetypieTweetEventCreate {
   case class PredicateOutput(tweetId: Long, userId: Long)
-  override type ExtractedEvent = PredicateOutput
+  override type EtwittertractedEvent = PredicateOutput
   override protected val actionType: ActionType = ActionType.ServerTweetReply
-  override protected def extract(tweetCreateEvent: TweetCreateEvent): Option[PredicateOutput] =
+  override protected def etwittertract(tweetCreateEvent: TweetCreateEvent): Option[PredicateOutput] =
     tweetCreateEvent.tweet.coreData
       .flatMap(_.reply).flatMap(r =>
         r.inReplyToStatusId.map(tweetId => PredicateOutput(tweetId, r.inReplyToUserId)))
@@ -135,10 +135,10 @@ object TweetypieReplyEvent extends BaseTweetypieTweetEventCreate {
  * Get UnifiedUserAction from a Quote.
  * Note the Quote is generated when someone is quoting (retweeting with comment) a tweet.
  */
-object TweetypieQuoteEvent extends BaseTweetypieTweetEventCreate {
+object TweetypieQuoteEvent etwittertends BaseTweetypieTweetEventCreate {
   override protected val actionType: ActionType = ActionType.ServerTweetQuote
-  type ExtractedEvent = QuotedTweet
-  override protected def extract(tweetCreateEvent: TweetCreateEvent): Option[QuotedTweet] =
+  type EtwittertractedEvent = QuotedTweet
+  override protected def etwittertract(tweetCreateEvent: TweetCreateEvent): Option[QuotedTweet] =
     tweetCreateEvent.tweet.quotedTweet
 
   override protected def getItem(
@@ -158,10 +158,10 @@ object TweetypieQuoteEvent extends BaseTweetypieTweetEventCreate {
  * Get UnifiedUserAction from a Retweet.
  * Note the Retweet is generated when someone is retweeting (without comment) a tweet.
  */
-object TweetypieRetweetEvent extends BaseTweetypieTweetEventCreate {
-  override type ExtractedEvent = Share
+object TweetypieRetweetEvent etwittertends BaseTweetypieTweetEventCreate {
+  override type EtwittertractedEvent = Share
   override protected val actionType: ActionType = ActionType.ServerTweetRetweet
-  override protected def extract(tweetCreateEvent: TweetCreateEvent): Option[Share] =
+  override protected def etwittertract(tweetCreateEvent: TweetCreateEvent): Option[Share] =
     tweetCreateEvent.tweet.coreData.flatMap(_.share)
 
   override protected def getItem(share: Share, tweetCreateEvent: TweetCreateEvent): Item =
@@ -179,10 +179,10 @@ object TweetypieRetweetEvent extends BaseTweetypieTweetEventCreate {
  * Note the Edit is generated when someone is editing their quote or default tweet. The edit will
  * generate a new Tweet.
  */
-object TweetypieEditEvent extends BaseTweetypieTweetEventCreate {
-  override type ExtractedEvent = Long
+object TweetypieEditEvent etwittertends BaseTweetypieTweetEventCreate {
+  override type EtwittertractedEvent = Long
   override protected def actionType: ActionType = ActionType.ServerTweetEdit
-  override protected def extract(tweetCreateEvent: TweetCreateEvent): Option[Long] =
+  override protected def etwittertract(tweetCreateEvent: TweetCreateEvent): Option[Long] =
     TweetypieEventUtils.editedTweetIdFromTweet(tweetCreateEvent.tweet)
 
   override protected def getItem(

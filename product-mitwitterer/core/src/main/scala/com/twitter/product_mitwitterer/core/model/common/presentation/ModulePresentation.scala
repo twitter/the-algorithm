@@ -1,0 +1,3 @@
+package com.twitter.product_mitwitterer.core.model.common.presentation
+
+trait ModulePresentation etwittertends UniversalPresentation

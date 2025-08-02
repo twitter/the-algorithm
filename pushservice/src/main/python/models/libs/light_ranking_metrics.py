@@ -1,10 +1,10 @@
 from functools import partial
 
-from twitter.cortex.ml.embeddings.deepbird.grouped_metrics.configuration import (
+from twitter.cortetwitter.ml.embeddings.deepbird.grouped_metrics.configuration import (
   GroupedMetricsConfiguration,
 )
-from twitter.cortex.ml.embeddings.deepbird.grouped_metrics.helpers import (
-  extract_prediction_from_prediction_record,
+from twitter.cortetwitter.ml.embeddings.deepbird.grouped_metrics.helpers import (
+  etwittertract_prediction_from_prediction_record,
 )
 
 
@@ -26,10 +26,10 @@ def score_loss_at_n(labels, predictions, lightN):
 
   labels_with_predictions = zip(labels, predictions)
   labels_with_sorted_predictions = sorted(
-    labels_with_predictions, key=lambda x: x[1], reverse=True
+    labels_with_predictions, key=lambda twitter: twitter[1], reverse=True
   )[:lightN]
-  labels_top1_light = max([label for label, _ in labels_with_sorted_predictions])
-  labels_top1_heavy = max(labels)
+  labels_top1_light = matwitter([label for label, _ in labels_with_sorted_predictions])
+  labels_top1_heavy = matwitter(labels)
 
   return labels_top1_heavy - labels_top1_light
 
@@ -53,7 +53,7 @@ def cgr_at_nk(labels, predictions, lightN, heavyK):
 
     labels_with_predictions = zip(labels, predictions)
     labels_with_sorted_predictions = sorted(
-      labels_with_predictions, key=lambda x: x[1], reverse=True
+      labels_with_predictions, key=lambda twitter: twitter[1], reverse=True
     )[:lightN]
     labels_topN_light = [label for label, _ in labels_with_sorted_predictions]
 
@@ -68,7 +68,7 @@ def cgr_at_nk(labels, predictions, lightN, heavyK):
 
     out = 0.0
     if cg_heavy != 0:
-      out = max(cg_light / cg_heavy, 0)
+      out = matwitter(cg_light / cg_heavy, 0)
 
   return out
 
@@ -105,7 +105,7 @@ def recall_at_nk(labels, predictions, n=None, k=None, w=None):
 
     labels_with_predictions = zip(labels, predictions)
     sorted_labels_with_predictions = sorted(
-      labels_with_predictions, key=lambda x: x[0], reverse=True
+      labels_with_predictions, key=lambda twitter: twitter[0], reverse=True
     )
 
     order_sorted_labels_predictions = zip(range(len(labels)), *zip(*sorted_labels_with_predictions))
@@ -113,7 +113,7 @@ def recall_at_nk(labels, predictions, n=None, k=None, w=None):
     order_with_predictions = [
       (order, pred) for order, label, pred in order_sorted_labels_predictions
     ]
-    order_with_sorted_predictions = sorted(order_with_predictions, key=lambda x: x[1], reverse=True)
+    order_with_sorted_predictions = sorted(order_with_predictions, key=lambda twitter: twitter[1], reverse=True)
 
     pred_sorted_order_at_n = [order for order, _ in order_with_sorted_predictions][:safe_n]
 
@@ -131,41 +131,41 @@ def recall_at_nk(labels, predictions, n=None, k=None, w=None):
   return out
 
 
-class ExpectedLossGroupedMetricsConfiguration(GroupedMetricsConfiguration):
+class EtwitterpectedLossGroupedMetricsConfiguration(GroupedMetricsConfiguration):
   """
-  This is the Expected Loss Grouped metric computation configuration.
+  This is the Etwitterpected Loss Grouped metric computation configuration.
   """
 
   def __init__(self, lightNs=[]):
     """
     Args:
-      lightNs (list): size of the list at which of Initial candidates to compute Expected Loss. (LightRanking)
+      lightNs (list): size of the list at which of Initial candidates to compute Etwitterpected Loss. (LightRanking)
     """
     self.lightNs = lightNs
 
   @property
   def name(self):
-    return "ExpectedLoss"
+    return "EtwitterpectedLoss"
 
   @property
   def metrics_dict(self):
     metrics_to_compute = {}
     for lightN in self.lightNs:
-      metric_name = "ExpectedLoss_atLight_" + str(lightN)
+      metric_name = "EtwitterpectedLoss_atLight_" + str(lightN)
       metrics_to_compute[metric_name] = partial(score_loss_at_n, lightN=lightN)
     return metrics_to_compute
 
-  def extract_label(self, prec, drec, drec_label):
+  def etwittertract_label(self, prec, drec, drec_label):
     return drec_label
 
-  def extract_prediction(self, prec, drec, drec_label):
-    return extract_prediction_from_prediction_record(prec)
+  def etwittertract_prediction(self, prec, drec, drec_label):
+    return etwittertract_prediction_from_prediction_record(prec)
 
 
 class CGRGroupedMetricsConfiguration(GroupedMetricsConfiguration):
   """
   This is the Cumulative Gain Ratio (CGR) Grouped metric computation configuration.
-  CGR at the max length of each session is the default.
+  CGR at the matwitter length of each session is the default.
   CGR at additional positions can be computed by specifying a list of 'n's and 'k's
   """
 
@@ -191,17 +191,17 @@ class CGRGroupedMetricsConfiguration(GroupedMetricsConfiguration):
         metrics_to_compute[metric_name] = partial(cgr_at_nk, lightN=lightN, heavyK=heavyK)
     return metrics_to_compute
 
-  def extract_label(self, prec, drec, drec_label):
+  def etwittertract_label(self, prec, drec, drec_label):
     return drec_label
 
-  def extract_prediction(self, prec, drec, drec_label):
-    return extract_prediction_from_prediction_record(prec)
+  def etwittertract_prediction(self, prec, drec, drec_label):
+    return etwittertract_prediction_from_prediction_record(prec)
 
 
 class RecallGroupedMetricsConfiguration(GroupedMetricsConfiguration):
   """
   This is the Recall Grouped metric computation configuration.
-  Recall at the max length of each session is the default.
+  Recall at the matwitter length of each session is the default.
   Recall at additional positions can be computed by specifying a list of 'n's and 'k's
   """
 
@@ -248,8 +248,8 @@ class RecallGroupedMetricsConfiguration(GroupedMetricsConfiguration):
           )
     return metrics_to_compute
 
-  def extract_label(self, prec, drec, drec_label):
+  def etwittertract_label(self, prec, drec, drec_label):
     return drec_label
 
-  def extract_prediction(self, prec, drec, drec_label):
-    return extract_prediction_from_prediction_record(prec)
+  def etwittertract_prediction(self, prec, drec, drec_label):
+    return etwittertract_prediction_from_prediction_record(prec)

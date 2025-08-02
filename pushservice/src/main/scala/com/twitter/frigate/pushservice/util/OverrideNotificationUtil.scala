@@ -25,7 +25,7 @@ object OverrideNotificationUtil {
    * Gets Override Info for the current notification.
    * @param candidate [[PushCandidate]] object representing the recommendation candidate
    * @param stats     StatsReceiver to track stats for this function as well as the subsequent funcs. called
-   * @return          Returns OverrideInfo if CollapseInfo exists, else None
+   * @return          Returns OverrideInfo if CollapseInfo etwitterists, else None
    */
 
   def getOverrideInfo(
@@ -83,7 +83,7 @@ object OverrideNotificationUtil {
               notifsInLastOverrideChain.last,
               targetHistory,
               stats).getOrElse(PushConstants.DefaultLookBackForHistory.ago.inMilliseconds)
-        if (numNotifsInLastOverrideChain < target.params(FSParams.MaxMrPushSends24HoursParam) &&
+        if (numNotifsInLastOverrideChain < target.params(FSParams.MatwitterMrPushSends24HoursParam) &&
           timestampOfFirstNotifInOverrideChain > PushConstants.DefaultLookBackForHistory.ago.inMilliseconds) {
           Some(prevOverrideInfo.collapseInfo)
         } else {

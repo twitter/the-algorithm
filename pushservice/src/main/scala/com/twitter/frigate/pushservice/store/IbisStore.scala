@@ -21,7 +21,7 @@ import com.twitter.ibis2.service.thriftscala.NotificationNotSentCode
 import com.twitter.ibis2.service.thriftscala.TargetFanoutResult.NotSentReason
 import com.twitter.util.Future
 
-trait Ibis2Store extends store.Ibis2Store {
+trait Ibis2Store etwittertends store.Ibis2Store {
   def send(ibis2Request: Ibis2Request, candidate: PushCandidate): Future[IbisResponse]
 }
 
@@ -29,7 +29,7 @@ case class PushIbis2Store(
   ibisClient: Ibis2Service.MethodPerEndpoint
 )(
   implicit val statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends Ibis2Store {
+    etwittertends Ibis2Store {
   private val log = MRLogger(this.getClass.getSimpleName)
   private val stats = statsReceiver.scope("ibis_v2_store")
   private val statsByCrt = stats.scope("byCrt")
@@ -74,12 +74,12 @@ case class PushIbis2Store(
             IbisResponse(Fail, Some(response))
         }
       }
-      .onFailure { ex =>
+      .onFailure { etwitter =>
         bStats.counter("failures").incr()
-        val exceptionName = ex.getClass.getCanonicalName
-        bStats.scope("failures").counter(exceptionName).incr()
-        failuresByCrt.counter(exceptionName, commonRecommendationType.name).incr()
-        failuresByIbisModel.counter(exceptionName, ibisModel).incr()
+        val etwitterceptionName = etwitter.getClass.getCanonicalName
+        bStats.scope("failures").counter(etwitterceptionName).incr()
+        failuresByCrt.counter(etwitterceptionName, commonRecommendationType.name).incr()
+        failuresByIbisModel.counter(etwitterceptionName, ibisModel).incr()
       }
   }
 
@@ -99,14 +99,14 @@ case class PushIbis2Store(
   }
 
   def send(ibis2Request: Ibis2Request, candidate: PushCandidate): Future[IbisResponse] = {
-    val requestWithIID = if (ibis2Request.flowControl.exists(_.externalIid.isDefined)) {
+    val requestWithIID = if (ibis2Request.flowControl.etwitterists(_.etwitterternalIid.isDefined)) {
       ibis2Request
     } else {
       ibis2Request.copy(
         flowControl = Some(
           ibis2Request.flowControl
             .getOrElse(FlowControl())
-            .copy(externalIid = Some(candidate.impressionId))
+            .copy(etwitterternalIid = Some(candidate.impressionId))
         )
       )
     }
@@ -125,10 +125,10 @@ case class PushIbis2Store(
           }
         }
       }
-      .onFailure { ex =>
+      .onFailure { etwitter =>
         log.warning(
-          s"Ibis Request failure: ${ex.getClass.getCanonicalName} \n For IbisRequest: $ibis2Request")
-        log.error(ex, ex.getMessage)
+          s"Ibis Request failure: ${etwitter.getClass.getCanonicalName} \n For IbisRequest: $ibis2Request")
+        log.error(etwitter, etwitter.getMessage)
       }
   }
 
@@ -159,7 +159,7 @@ case class PushIbis2Store(
   }
 }
 
-case class StagingIbis2Store(remoteIbis2Store: PushIbis2Store) extends Ibis2Store {
+case class StagingIbis2Store(remoteIbis2Store: PushIbis2Store) etwittertends Ibis2Store {
 
   final def addDarkWriteFlagIbis2Request(
     isTeamMember: Boolean,

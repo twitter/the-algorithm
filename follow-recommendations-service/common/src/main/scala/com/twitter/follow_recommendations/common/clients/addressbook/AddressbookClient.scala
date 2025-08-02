@@ -18,8 +18,8 @@ import com.twitter.wtf.scalding.jobs.address_book.ABUtil.normalizePhoneNumber
 import com.twitter.hermit.usercontacts.thriftscala.{UserContacts => tUserContacts}
 import com.twitter.stitch.Stitch
 import com.twitter.strato.client.Fetcher
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class AddressbookClient @Inject() (
@@ -32,7 +32,7 @@ class AddressbookClient @Inject() (
     identifiers: Seq[RecordIdentifier],
     batchSize: Int,
     edgeType: EdgeType,
-    maxFetches: Int,
+    matwitterFetches: Int,
     queryOption: Option[QueryOption]
   ): Stitch[Seq[AddressBookGetResponse]] = {
     Stitch
@@ -45,7 +45,7 @@ class AddressbookClient @Inject() (
               edgeType = edgeType.toThrift,
               queryType = QueryType.UserId,
               queryOption = queryOption.map(_.toThrift),
-              maxFetches = maxFetches,
+              matwitterFetches = matwitterFetches,
               resultBatchSize = batchSize
             )))
         }
@@ -56,7 +56,7 @@ class AddressbookClient @Inject() (
     identifiers: Seq[RecordIdentifier],
     batchSize: Int,
     edgeType: EdgeType,
-    maxFetches: Int,
+    matwitterFetches: Int,
     queryOption: Option[QueryOption]
   ): Stitch[Seq[AddressBookGetResponse]] = {
     Stitch
@@ -69,7 +69,7 @@ class AddressbookClient @Inject() (
               edgeType = edgeType.toThrift,
               queryType = QueryType.Contact,
               queryOption = queryOption.map(_.toThrift),
-              maxFetches = maxFetches,
+              matwitterFetches = matwitterFetches,
               resultBatchSize = batchSize
             )))
         }
@@ -88,7 +88,7 @@ class AddressbookClient @Inject() (
     batchSize: Int,
     edgeType: EdgeType,
     fetcherOption: Option[Fetcher[Long, Unit, tUserContacts]] = None,
-    maxFetches: Int = 1,
+    matwitterFetches: Int = 1,
     queryOption: Option[QueryOption] = None,
   ): Stitch[Seq[Long]] = {
     fetcherOption match {
@@ -96,7 +96,7 @@ class AddressbookClient @Inject() (
         getUsersFromManhattan(userId, fetcher).flatMap { userContacts =>
           if (userContacts.isEmpty) {
             stats.counter("mhEmptyThenFromAbService").incr()
-            getResponseFromService(identifiers, batchSize, edgeType, maxFetches, queryOption)
+            getResponseFromService(identifiers, batchSize, edgeType, matwitterFetches, queryOption)
               .map(_.flatMap(_.users).flatten.distinct)
           } else {
             stats.counter("fromManhattan").incr()
@@ -105,21 +105,21 @@ class AddressbookClient @Inject() (
         }
       case None =>
         stats.counter("fromAbService").incr()
-        getResponseFromService(identifiers, batchSize, edgeType, maxFetches, queryOption)
+        getResponseFromService(identifiers, batchSize, edgeType, matwitterFetches, queryOption)
           .map(_.flatMap(_.users).flatten.distinct)
     }
   }
 
   def getHashedContacts(
     normalizeFn: String => String,
-    extractField: String,
+    etwittertractField: String,
   )(
     userId: Long,
     identifiers: Seq[RecordIdentifier],
     batchSize: Int,
     edgeType: EdgeType,
     fetcherOption: Option[Fetcher[String, Unit, STPResultFeature]] = None,
-    maxFetches: Int = 1,
+    matwitterFetches: Int = 1,
     queryOption: Option[QueryOption] = None,
   ): Stitch[Seq[String]] = {
 
@@ -131,14 +131,14 @@ class AddressbookClient @Inject() (
               identifiers,
               batchSize,
               edgeType,
-              maxFetches,
+              matwitterFetches,
               queryOption)
               .map { response =>
                 for {
                   resp <- response
                   contacts <- resp.contacts
                   contactsThrift = contacts.map(Contact.fromThrift)
-                  contactsSet = extractField match {
+                  contactsSet = etwittertractField match {
                     case "emails" => contactsThrift.flatMap(_.emails.toSeq.flatten)
                     case "phoneNumbers" => contactsThrift.flatMap(_.phoneNumbers.toSeq.flatten)
                   }
@@ -150,13 +150,13 @@ class AddressbookClient @Inject() (
           }
         }
       case None => {
-        getContactsResponseFromService(identifiers, batchSize, edgeType, maxFetches, queryOption)
+        getContactsResponseFromService(identifiers, batchSize, edgeType, matwitterFetches, queryOption)
           .map { response =>
             for {
               resp <- response
               contacts <- resp.contacts
               contactsThrift = contacts.map(Contact.fromThrift)
-              contactsSet = extractField match {
+              contactsSet = etwittertractField match {
                 case "emails" => contactsThrift.flatMap(_.emails.toSeq.flatten)
                 case "phoneNumbers" => contactsThrift.flatMap(_.phoneNumbers.toSeq.flatten)
               }
@@ -195,8 +195,8 @@ object AddressbookClient {
       case (EdgeType.Forward, true) =>
         Some(
           QueryOption(
-            onlyDiscoverableInExpansion = false,
-            onlyConfirmedInExpansion = false,
+            onlyDiscoverableInEtwitterpansion = false,
+            onlyConfirmedInEtwitterpansion = false,
             onlyDiscoverableInResult = false,
             onlyConfirmedInResult = false,
             fetchGlobalApiNamespace = false,
@@ -207,8 +207,8 @@ object AddressbookClient {
       case (EdgeType.Forward, false) =>
         Some(
           QueryOption(
-            onlyDiscoverableInExpansion = false,
-            onlyConfirmedInExpansion = false,
+            onlyDiscoverableInEtwitterpansion = false,
+            onlyConfirmedInEtwitterpansion = false,
             onlyDiscoverableInResult = false,
             onlyConfirmedInResult = false,
             fetchGlobalApiNamespace = false,

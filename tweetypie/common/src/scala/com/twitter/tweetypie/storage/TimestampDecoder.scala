@@ -10,31 +10,31 @@ import scala.util.control.NonFatal
 
 sealed abstract class TimestampType(val keyName: String)
 object TimestampType {
-  object Default extends TimestampType("timestamp")
-  object SoftDelete extends TimestampType("softdelete_timestamp")
+  object Default etwittertends TimestampType("timestamp")
+  object SoftDelete etwittertends TimestampType("softdelete_timestamp")
 }
 
 /**
  * TimestampDecoder gets the timestamps associated with state records. The Manhattan timestamp is
- * used for legacy records (with value "1"), otherwise the timestamp is extracted from the
+ * used for legacy records (with value "1"), otherwise the timestamp is etwittertracted from the
  * JSON value.
  *
  * See "Metadata" in README.md for further information about state records.
  */
 object TimestampDecoder {
-  case class UnparsableJson(msg: String, t: Throwable) extends Exception(msg, t) with NoStackTrace
-  case class MissingJsonTimestamp(msg: String) extends Exception(msg) with NoStackTrace
-  case class UnexpectedJsonValue(msg: String) extends Exception(msg) with NoStackTrace
-  case class MissingManhattanTimestamp(msg: String) extends Exception(msg) with NoStackTrace
+  case class UnparsableJson(msg: String, t: Throwable) etwittertends Etwitterception(msg, t) with NoStackTrace
+  case class MissingJsonTimestamp(msg: String) etwittertends Etwitterception(msg) with NoStackTrace
+  case class UnetwitterpectedJsonValue(msg: String) etwittertends Etwitterception(msg) with NoStackTrace
+  case class MissingManhattanTimestamp(msg: String) etwittertends Etwitterception(msg) with NoStackTrace
 
   private[storage] val LegacyValue: Array[Byte] = Array('1')
 
   /**
    * The first backfill of tweet data to Manhattan supplied timestamps in milliseconds where
-   * nanoseconds were expected. The result is that some values have an incorrect Manhattan
+   * nanoseconds were etwitterpected. The result is that some values have an incorrect Manhattan
    * timestamp. For these bad timestamps, time.inNanoseconds is actually milliseconds.
    *
-   * For example, the deletion record for tweet 22225781 has Manhattan timestamp 1970-01-01 00:23:24 +0000.
+   * For etwitterample, the deletion record for tweet 22225781 has Manhattan timestamp 1970-01-01 00:23:24 +0000.
    * Contrast with the deletion record for tweet 435404491999813632 with Manhattan timestamp 2014-11-09 14:24:04 +0000
    *
    * This threshold value comes from the last time in milliseconds that was interpreted
@@ -74,7 +74,7 @@ object TimestampDecoder {
               case i: Integer => Return(i.toLong)
               case _ =>
                 Throw(
-                  UnexpectedJsonValue(s"Unexpected value for ${tsType.keyName} in record data $m")
+                  UnetwitterpectedJsonValue(s"Unetwitterpected value for ${tsType.keyName} in record data $m")
                 )
             }
           case None =>

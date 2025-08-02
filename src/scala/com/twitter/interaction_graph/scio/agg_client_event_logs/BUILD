@@ -6,7 +6,7 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         ":interaction_graph_agg_client_event_logs_edge_daily-scala",
-        ":interaction_graph_agg_client_event_logs_vertex_daily-scala",
+        ":interaction_graph_agg_client_event_logs_vertetwitter_daily-scala",
         "beam-internal/src/main/scala/com/twitter/beam/io/dal",
         "beam-internal/src/main/scala/com/twitter/scio_internal/job",
         "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
@@ -44,12 +44,12 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "interaction_graph_agg_client_event_logs_vertex_daily",
-    description = "User vertex with client events features",
-    java_schema = "com.twitter.interaction_graph.thriftjava.Vertex",
+    base_name = "interaction_graph_agg_client_event_logs_vertetwitter_daily",
+    description = "User vertetwitter with client events features",
+    java_schema = "com.twitter.interaction_graph.thriftjava.Vertetwitter",
     platform = "java8",
     role = "cassowary",
-    scala_schema = "com.twitter.interaction_graph.thriftscala.Vertex",
+    scala_schema = "com.twitter.interaction_graph.thriftscala.Vertetwitter",
     segment_type = "partitioned",
     tags = ["bazel-compatible"],
     java_dependencies = [

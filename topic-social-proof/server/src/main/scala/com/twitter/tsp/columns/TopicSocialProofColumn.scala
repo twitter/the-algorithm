@@ -8,18 +8,18 @@ import com.twitter.strato.config.AllowAll
 import com.twitter.strato.config.ContactInfo
 import com.twitter.strato.config.Policy
 import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
+import com.twitter.strato.data.Description.PlainTetwittert
 import com.twitter.strato.data.Lifecycle.Production
 import com.twitter.strato.fed.StratoFed
 import com.twitter.strato.thrift.ScroogeConv
 import com.twitter.tsp.thriftscala.TopicSocialProofRequest
 import com.twitter.tsp.thriftscala.TopicSocialProofResponse
 import com.twitter.tsp.service.TopicSocialProofService
-import javax.inject.Inject
+import javatwitter.inject.Inject
 
 class TopicSocialProofColumn @Inject() (
   topicSocialProofService: TopicSocialProofService)
-    extends StratoFed.Column(TopicSocialProofColumn.Path)
+    etwittertends StratoFed.Column(TopicSocialProofColumn.Path)
     with StratoFed.Fetch.Stitch {
 
   override type Key = TopicSocialProofRequest
@@ -30,7 +30,7 @@ class TopicSocialProofColumn @Inject() (
   override val viewConv: Conv[View] = Conv.ofType
   override val valueConv: Conv[Value] = ScroogeConv.fromStruct[TopicSocialProofResponse]
   override val metadata: OpMetadata =
-    OpMetadata(lifecycle = Some(Production), Some(PlainText("Topic Social Proof Federated Column")))
+    OpMetadata(lifecycle = Some(Production), Some(PlainTetwittert("Topic Social Proof Federated Column")))
 
   override def fetch(key: Key, view: View): Stitch[Result[Value]] = {
     topicSocialProofService

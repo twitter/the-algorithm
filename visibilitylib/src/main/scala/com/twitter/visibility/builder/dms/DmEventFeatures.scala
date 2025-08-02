@@ -16,7 +16,7 @@ import com.twitter.stitch.NotFound
 import com.twitter.visibility.common.dm_sources.DmConversationSource
 import com.twitter.visibility.features._
 
-case class InvalidDmEventFeatureException(message: String) extends Exception(message)
+case class InvalidDmEventFeatureEtwitterception(message: String) etwittertends Etwitterception(message)
 
 class DmEventFeatures(
   dmEventSource: DmEventSource,
@@ -131,7 +131,7 @@ class DmEventFeatures(
       case Some(_: eventType.type) =>
         Stitch.True
       case None =>
-        Stitch.exception(InvalidDmEventFeatureException(s"$eventType event type not found"))
+        Stitch.etwitterception(InvalidDmEventFeatureEtwitterception(s"$eventType event type not found"))
       case _ =>
         Stitch.False
     }
@@ -156,10 +156,10 @@ class DmEventFeatures(
                   case _ => Stitch.False
                 }
             case _ =>
-              Stitch.exception(InvalidDmEventFeatureException("Conversation id not found"))
+              Stitch.etwitterception(InvalidDmEventFeatureEtwitterception("Conversation id not found"))
           }
         case (None, _) =>
-          Stitch.exception(InvalidDmEventFeatureException("Event type not found"))
+          Stitch.etwitterception(InvalidDmEventFeatureEtwitterception("Event type not found"))
         case _ => Stitch.False
       }
 
@@ -174,12 +174,12 @@ class DmEventFeatures(
         case (Some(EventType.MessageCreate), Some(userId)) =>
           condition(userId).rescue {
             case NotFound =>
-              Stitch.exception(InvalidDmEventFeatureException("initiating user not found"))
+              Stitch.etwitterception(InvalidDmEventFeatureEtwitterception("initiating user not found"))
           }
         case (None, _) =>
-          Stitch.exception(InvalidDmEventFeatureException("DmEvent type is missing"))
+          Stitch.etwitterception(InvalidDmEventFeatureEtwitterception("DmEvent type is missing"))
         case (Some(EventType.MessageCreate), _) =>
-          Stitch.exception(InvalidDmEventFeatureException("initiating user id is missing"))
+          Stitch.etwitterception(InvalidDmEventFeatureEtwitterception("initiating user id is missing"))
         case _ => Stitch.False
       }
 
@@ -238,8 +238,8 @@ class DmEventFeatures(
       case Some(convoId) =>
         dmConversationSource
           .getDeleteInfo(convoId, dmEventId).rescue {
-            case e: java.lang.IllegalArgumentException =>
-              Stitch.exception(InvalidDmEventFeatureException("Invalid conversation id"))
+            case e: java.lang.IllegalArgumentEtwitterception =>
+              Stitch.etwitterception(InvalidDmEventFeatureEtwitterception("Invalid conversation id"))
           }.flatMap {
             case Some(StoredDelete(None)) => Stitch.True
             case _ => Stitch.False
@@ -255,8 +255,8 @@ class DmEventFeatures(
       case Some(convoId) =>
         dmConversationSource
           .getPerspectivalMessageInfo(convoId, dmEventId).rescue {
-            case e: java.lang.IllegalArgumentException =>
-              Stitch.exception(InvalidDmEventFeatureException("Invalid conversation id"))
+            case e: java.lang.IllegalArgumentEtwitterception =>
+              Stitch.etwitterception(InvalidDmEventFeatureEtwitterception("Invalid conversation id"))
           }.flatMap {
             case Some(StoredPerspectivalMessageInfo(Some(hidden), _)) if hidden =>
               Stitch.True
@@ -289,9 +289,9 @@ class DmEventFeatures(
                 EventType.CsFeedbackDismissed | EventType.WelcomeMessageCreate |
                 EventType.JoinConversation),
               None) =>
-          Stitch.exception(InvalidDmEventFeatureException("Initiating user id is missing"))
+          Stitch.etwitterception(InvalidDmEventFeatureEtwitterception("Initiating user id is missing"))
         case (None, _) =>
-          Stitch.exception(InvalidDmEventFeatureException("DmEvent type is missing"))
+          Stitch.etwitterception(InvalidDmEventFeatureEtwitterception("DmEvent type is missing"))
         case _ => Stitch.True
       }
 

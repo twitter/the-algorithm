@@ -1,14 +1,14 @@
 package com.twitter.search.earlybird_root;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import javax.annotation.Nullable;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import java.util.concurrent.Etwitterecutors;
+import java.util.concurrent.ScheduledEtwitterecutorService;
+import javatwitter.annotation.Nullable;
+import javatwitter.inject.Named;
+import javatwitter.inject.Singleton;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.google.common.util.concurrent.TwitterRateLimiterProxyFactory;
+import com.google.common.util.concurrent.TwitterRateLimiterProtwitteryFactory;
 import com.google.inject.Provides;
 
 import com.twitter.app.Flag;
@@ -22,7 +22,7 @@ import com.twitter.search.earlybird_root.filters.DisableClientByTierFilter;
 import com.twitter.search.earlybird_root.quota.ConfigBasedQuotaConfig;
 import com.twitter.search.earlybird_root.quota.ConfigRepoBasedQuotaManager;
 
-public class QuotaModule extends TwitterModule {
+public class QuotaModule etwittertends TwitterModule {
   @VisibleForTesting
   public static final String NAMED_QUOTA_CONFIG_PATH = "quotaConfigPath";
   public static final String NAMED_CLIENT_QUOTA_KEY = "clientQuotaKey";
@@ -38,7 +38,7 @@ public class QuotaModule extends TwitterModule {
   private final Flag<String> clientQuotaKeyFlag = createFlag(
       "client_quota_key",
       "quota",
-      "The key that will be used to extract client quotas",
+      "The key that will be used to etwittertract client quotas",
       Flaggable.ofString());
 
   private final Flag<Boolean> requireQuotaConfigForClientsFlag = createFlag(
@@ -72,8 +72,8 @@ public class QuotaModule extends TwitterModule {
   @Singleton
   ClientIdQuotaFilter provideConfigRepoBasedClientIdQuotaFilter(
       ConfigRepoBasedQuotaManager configRepoBasedQuotaManager,
-      TwitterRateLimiterProxyFactory rateLimiterProxyFactory) throws Exception {
-    return new ClientIdQuotaFilter(configRepoBasedQuotaManager, rateLimiterProxyFactory);
+      TwitterRateLimiterProtwitteryFactory rateLimiterProtwitteryFactory) throws Etwitterception {
+    return new ClientIdQuotaFilter(configRepoBasedQuotaManager, rateLimiterProtwitteryFactory);
   }
 
   @Provides
@@ -83,14 +83,14 @@ public class QuotaModule extends TwitterModule {
       @Nullable @Named(NAMED_CLIENT_QUOTA_KEY) String clientQuotaKey,
       @Nullable @Named(NAMED_REQUIRE_QUOTA_CONFIG_FOR_CLIENTS) boolean requireQuotaConfigForClients,
       Clock clock
-  ) throws Exception {
-    ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(
+  ) throws Etwitterception {
+    ScheduledEtwitterecutorService etwitterecutorService = Etwitterecutors.newSingleThreadScheduledEtwitterecutor(
         new ThreadFactoryBuilder()
             .setNameFormat("quota-config-reloader")
             .setDaemon(true)
             .build());
     return ConfigBasedQuotaConfig.newConfigBasedQuotaConfig(
-        quotaConfigPath, clientQuotaKey, requireQuotaConfigForClients, executorService, clock);
+        quotaConfigPath, clientQuotaKey, requireQuotaConfigForClients, etwitterecutorService, clock);
   }
 
   @Provides

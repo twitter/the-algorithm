@@ -22,7 +22,7 @@ import scala.math._
  * Also, if you are using this code in a place where you care about memory footprint, be careful
  * not to materialize any of the lazy vals unless you need them.
  */
-sealed trait SimClustersEmbedding extends Equals {
+sealed trait SimClustersEmbedding etwittertends Equals {
   import SimClustersEmbedding._
 
   /**
@@ -62,8 +62,8 @@ sealed trait SimClustersEmbedding extends Equals {
 
   lazy val logNorm: Double = CosineSimilarityUtil.logNormArray(sortedScores)
 
-  lazy val expScaledNorm: Double =
-    CosineSimilarityUtil.expScaledNormArray(sortedScores, DefaultExponent)
+  lazy val etwitterpScaledNorm: Double =
+    CosineSimilarityUtil.etwitterpScaledNormArray(sortedScores, DefaultEtwitterponent)
 
   /**
    * The L2 Normalized Embedding. Optimize for Cosine Similarity Calculation.
@@ -74,8 +74,8 @@ sealed trait SimClustersEmbedding extends Equals {
   lazy val logNormalizedSortedScores: Array[Double] =
     CosineSimilarityUtil.applyNormArray(sortedScores, logNorm)
 
-  lazy val expScaledNormalizedSortedScores: Array[Double] =
-    CosineSimilarityUtil.applyNormArray(sortedScores, expScaledNorm)
+  lazy val etwitterpScaledNormalizedSortedScores: Array[Double] =
+    CosineSimilarityUtil.applyNormArray(sortedScores, etwitterpScaledNorm)
 
   /**
    * The Standard Deviation of an Embedding.
@@ -110,7 +110,7 @@ sealed trait SimClustersEmbedding extends Equals {
   }
 
   /**
-   * Return the score of a given clusterId. If not exist, return default.
+   * Return the score of a given clusterId. If not etwitterist, return default.
    */
   def getOrElse(clusterId: ClusterId, default: Double = 0.0): Double = {
     require(default >= 0.0)
@@ -153,11 +153,11 @@ sealed trait SimClustersEmbedding extends Equals {
           i2 += 1
         } else if (sortedClusterIds(i1) > another.sortedClusterIds(i2)) {
           l += Tuple2(another.sortedClusterIds(i2), another.sortedScores(i2))
-          // another cluster is lower. Increment it to see if the next one matches this's
+          // another cluster is lower. Increment it to see if the netwittert one matches this's
           i2 += 1
         } else {
           l += Tuple2(sortedClusterIds(i1), sortedScores(i1))
-          // this cluster is lower. Increment it to see if the next one matches anothers's
+          // this cluster is lower. Increment it to see if the netwittert one matches anothers's
           i1 += 1
         }
       }
@@ -215,12 +215,12 @@ sealed trait SimClustersEmbedding extends Equals {
       another.logNormalizedSortedScores)
   }
 
-  def expScaledCosineSimilarity(another: SimClustersEmbedding): Double = {
+  def etwitterpScaledCosineSimilarity(another: SimClustersEmbedding): Double = {
     CosineSimilarityUtil.dotProductForSortedClusterAndScores(
       sortedClusterIds,
-      expScaledNormalizedSortedScores,
+      etwitterpScaledNormalizedSortedScores,
       another.sortedClusterIds,
-      another.expScaledNormalizedSortedScores)
+      another.etwitterpScaledNormalizedSortedScores)
   }
 
   /**
@@ -247,7 +247,7 @@ sealed trait SimClustersEmbedding extends Equals {
    * Treat each Simclusters embedding as fuzzy set, calculate the fuzzy set similarity
    * metrics of two embeddings
    *
-   * Paper 2.2.1: https://openreview.net/pdf?id=SkxXg2C5FX
+   * Paper 2.2.1: https://openreview.net/pdf?id=Sktwittertwitterg2C5Ftwitter
    */
   def fuzzyJaccardSimilarity(another: SimClustersEmbedding): Double = {
     if (this.isEmpty || another.isEmpty) {
@@ -269,7 +269,7 @@ sealed trait SimClustersEmbedding extends Equals {
       while (i1 < v1C.length && i2 < v2C.length) {
         if (v1C(i1) == v2C(i2)) {
           numerator += min(v1S(i1), v2S(i2))
-          denominator += max(v1S(i1), v2S(i2))
+          denominator += matwitter(v1S(i1), v2S(i2))
           i1 += 1
           i2 += 1
         } else if (v1C(i1) > v2C(i2)) {
@@ -334,10 +334,10 @@ sealed trait SimClustersEmbedding extends Equals {
         i1 += 1
         i2 += 1
       } else if (sortedClusterIds(i1) > another.sortedClusterIds(i2)) {
-        // v2 cluster is lower. Increment it to see if the next one matches v1's
+        // v2 cluster is lower. Increment it to see if the netwittert one matches v1's
         i2 += 1
       } else {
-        // v1 cluster is lower. Increment it to see if the next one matches v2's
+        // v1 cluster is lower. Increment it to see if the netwittert one matches v2's
         i1 += 1
       }
     }
@@ -347,30 +347,30 @@ sealed trait SimClustersEmbedding extends Equals {
   /**
    * Return the largest product cluster scores
    */
-  def maxElementwiseProduct(another: SimClustersEmbedding): Double = {
+  def matwitterElementwiseProduct(another: SimClustersEmbedding): Double = {
     var i1 = 0
     var i2 = 0
-    var maxProduct: Double = 0.0
+    var matwitterProduct: Double = 0.0
 
     while (i1 < sortedClusterIds.length && i2 < another.sortedClusterIds.length) {
       if (sortedClusterIds(i1) == another.sortedClusterIds(i2)) {
         val product = sortedScores(i1) * another.sortedScores(i2)
-        if (product > maxProduct) maxProduct = product
+        if (product > matwitterProduct) matwitterProduct = product
         i1 += 1
         i2 += 1
       } else if (sortedClusterIds(i1) > another.sortedClusterIds(i2)) {
-        // v2 cluster is lower. Increment it to see if the next one matches v1's
+        // v2 cluster is lower. Increment it to see if the netwittert one matches v1's
         i2 += 1
       } else {
-        // v1 cluster is lower. Increment it to see if the next one matches v2's
+        // v1 cluster is lower. Increment it to see if the netwittert one matches v2's
         i1 += 1
       }
     }
-    maxProduct
+    matwitterProduct
   }
 
   /**
-   * Return a new SimClustersEmbedding with Max Embedding Size.
+   * Return a new SimClustersEmbedding with Matwitter Embedding Size.
    *
    * Prefer to truncate on embedding construction where possible. Doing so is cheaper.
    */
@@ -435,8 +435,8 @@ sealed trait SimClustersEmbedding extends Equals {
      * differently. To provide a stable hash code, we take the same approach as how a
      * `case class(clusters: Seq[Int], scores: Seq[Double])` would be hashed. See
      * ScalaRunTime._hashCode and MurmurHash3.productHash
-     * https://github.com/scala/scala/blob/2.12.x/src/library/scala/runtime/ScalaRunTime.scala#L167
-     * https://github.com/scala/scala/blob/2.12.x/src/library/scala/util/hashing/MurmurHash3.scala#L64
+     * https://github.com/scala/scala/blob/2.12.twitter/src/library/scala/runtime/ScalaRunTime.scala#L167
+     * https://github.com/scala/scala/blob/2.12.twitter/src/library/scala/util/hashing/MurmurHash3.scala#L64
      *
      * Note that the hashcode is arguably incorrect in this case:
      *   (1 -> 1.0, 2 -> 0.0).hashcode == (1 -> 1.0).hashcode  // returns false
@@ -451,7 +451,7 @@ object SimClustersEmbedding {
   val EmptyEmbedding: SimClustersEmbedding =
     DefaultSimClustersEmbedding(Array.empty, Array.empty, Array.empty, Array.empty)
 
-  val DefaultExponent: Double = 0.3
+  val DefaultEtwitterponent: Double = 0.3
 
   // Descending by score then ascending by ClusterId
   implicit val order: Ordering[(ClusterId, Double)] =
@@ -531,13 +531,13 @@ object SimClustersEmbedding {
   }
 
   /**
-   * Support a fixed size SimClustersEmbedding Sum
+   * Support a fitwittered size SimClustersEmbedding Sum
    */
   def sum(
     simClustersEmbeddings: Iterable[SimClustersEmbedding],
-    maxSize: Int
+    matwitterSize: Int
   ): SimClustersEmbedding = {
-    sum(simClustersEmbeddings).truncate(maxSize)
+    sum(simClustersEmbeddings).truncate(matwitterSize)
   }
 
   /**
@@ -553,13 +553,13 @@ object SimClustersEmbedding {
   }
 
   /**
-   * Support a fixed size SimClustersEmbedding Mean
+   * Support a fitwittered size SimClustersEmbedding Mean
    */
   def mean(
     simClustersEmbeddings: Iterable[SimClustersEmbedding],
-    maxSize: Int
+    matwitterSize: Int
   ): SimClustersEmbedding = {
-    mean(simClustersEmbeddings).truncate(maxSize)
+    mean(simClustersEmbeddings).truncate(matwitterSize)
   }
 }
 
@@ -568,14 +568,14 @@ case class DefaultSimClustersEmbedding(
   override val scores: Array[Double],
   override val sortedClusterIds: Array[ClusterId],
   override val sortedScores: Array[Double])
-    extends SimClustersEmbedding {
+    etwittertends SimClustersEmbedding {
 
   override def toString: String =
     s"DefaultSimClustersEmbedding(${clusterIds.zip(scores).mkString(",")})"
 }
 
 object DefaultSimClustersEmbedding {
-  // To support existing code which builds embeddings from a Seq
+  // To support etwitteristing code which builds embeddings from a Seq
   def apply(embedding: Seq[(ClusterId, Double)]): SimClustersEmbedding = SimClustersEmbedding(
     embedding)
 }

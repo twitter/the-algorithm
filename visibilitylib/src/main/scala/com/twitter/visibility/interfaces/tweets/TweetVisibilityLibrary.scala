@@ -107,8 +107,8 @@ object TweetVisibilityLibrary {
         invitedToConversationRepo,
         libraryStatsReceiver
       )
-    val exclusiveTweetFeatures =
-      new ExclusiveTweetFeatures(userRelationshipSource, libraryStatsReceiver)
+    val etwitterclusiveTweetFeatures =
+      new EtwitterclusiveTweetFeatures(userRelationshipSource, libraryStatsReceiver)
 
     val viewerSearchSafetyFeatures = new ViewerSearchSafetyFeatures(
       UserSearchSafetySource.fromStrato(stratoClient, stratoClientStatsReceiver),
@@ -118,7 +118,7 @@ object TweetVisibilityLibrary {
       UserSensitiveMediaSettingsSource.fromStrato(stratoClient, stratoClientStatsReceiver),
       libraryStatsReceiver)
 
-    val toxicReplyFilterFeature = new ToxicReplyFilterFeature(statsReceiver = libraryStatsReceiver)
+    val totwittericReplyFilterFeature = new TotwittericReplyFilterFeature(statsReceiver = libraryStatsReceiver)
 
     val misinfoPolicySource =
       MisinformationPolicySource.fromStrato(stratoClient, stratoClientStatsReceiver)
@@ -154,7 +154,7 @@ object TweetVisibilityLibrary {
       vfEngineCounter.incr()
 
       val contentId = TweetId(r.tweet.id)
-      val viewerId = r.viewerContext.userId
+      val viewerId = r.viewerContetwittert.userId
       val authorId = coreData.userId
       val tweetGenericMediaKeys = r.tweet.mediaRefs
         .getOrElse(Seq.empty)
@@ -172,7 +172,7 @@ object TweetVisibilityLibrary {
         visibilityLibrary.featureMapBuilder(
           Seq(
             mutedKeywordFeatures.forTweet(r.tweet, viewerId, authorId),
-            viewerFeatures.forViewerContext(r.viewerContext),
+            viewerFeatures.forViewerContetwittert(r.viewerContetwittert),
             viewerSearchSafetyFeatures.forViewerId(viewerId),
             viewerSensitiveMediaSettingsFeatures.forViewerId(viewerId),
             relationshipFeatures.forAuthorId(authorId, viewerId),
@@ -186,9 +186,9 @@ object TweetVisibilityLibrary {
             _.withConstantFeature(TweetIsInnerQuotedTweet, r.isInnerQuotedTweet),
             _.withConstantFeature(TweetIsRetweet, r.isRetweet),
             _.withConstantFeature(TweetIsSourceTweet, r.isSourceTweet),
-            misinfoPolicyFeatures.forTweet(r.tweet, r.viewerContext),
-            exclusiveTweetFeatures.forTweet(r.tweet, r.viewerContext),
-            communityTweetFeatures.forTweet(r.tweet, r.viewerContext),
+            misinfoPolicyFeatures.forTweet(r.tweet, r.viewerContetwittert),
+            etwitterclusiveTweetFeatures.forTweet(r.tweet, r.viewerContetwittert),
+            communityTweetFeatures.forTweet(r.tweet, r.viewerContetwittert),
             tweetMediaMetadataFeatures
               .forTweet(
                 r.tweet,
@@ -196,18 +196,18 @@ object TweetVisibilityLibrary {
                 visibilityDeciderGates.enableFetchTweetMediaMetadata()),
             trustedFriendsTweetFeatures.forTweet(r.tweet, viewerId),
             editTweetFeatures.forTweet(r.tweet),
-            toxicReplyFilterFeature.forTweet(r.tweet, viewerId),
+            totwittericReplyFilterFeature.forTweet(r.tweet, viewerId),
           )
         )
 
-      val languageCode = r.viewerContext.requestLanguageCode.getOrElse("en")
-      val countryCode = r.viewerContext.requestCountryCode
+      val languageCode = r.viewerContetwittert.requestLanguageCode.getOrElse("en")
+      val countryCode = r.viewerContetwittert.requestCountryCode
 
       val response = visibilityLibrary
         .runRuleEngine(
           contentId,
           featureMap,
-          r.viewerContext,
+          r.viewerContetwittert,
           r.safetyLevel
         )
         .map(
@@ -249,7 +249,7 @@ object TweetVisibilityLibrary {
             _,
             visibilityDeciderGates.enableVerdictScribingTVL,
             verdictLogger,
-            r.viewerContext.userId,
+            r.viewerContetwittert.userId,
             r.safetyLevel))
 
       runStitchStartMs = elapsed().inMilliseconds

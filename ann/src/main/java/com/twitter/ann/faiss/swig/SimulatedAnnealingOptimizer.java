@@ -8,7 +8,7 @@
 
 package com.twitter.ann.faiss;
 
-public class SimulatedAnnealingOptimizer extends SimulatedAnnealingParameters {
+public class SimulatedAnnealingOptimizer etwittertends SimulatedAnnealingParameters {
   private transient long swigCPtr;
 
   protected SimulatedAnnealingOptimizer(long cPtr, boolean cMemoryOwn) {

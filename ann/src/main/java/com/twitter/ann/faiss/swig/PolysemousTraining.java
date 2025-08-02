@@ -8,7 +8,7 @@
 
 package com.twitter.ann.faiss;
 
-public class PolysemousTraining extends SimulatedAnnealingParameters {
+public class PolysemousTraining etwittertends SimulatedAnnealingParameters {
   private transient long swigCPtr;
 
   protected PolysemousTraining(long cPtr, boolean cMemoryOwn) {
@@ -60,12 +60,12 @@ public class PolysemousTraining extends SimulatedAnnealingParameters {
     return swigfaissJNI.PolysemousTraining_dis_weight_factor_get(swigCPtr, this);
   }
 
-  public void setMax_memory(long value) {
-    swigfaissJNI.PolysemousTraining_max_memory_set(swigCPtr, this, value);
+  public void setMatwitter_memory(long value) {
+    swigfaissJNI.PolysemousTraining_matwitter_memory_set(swigCPtr, this, value);
   }
 
-  public long getMax_memory() {
-    return swigfaissJNI.PolysemousTraining_max_memory_get(swigCPtr, this);
+  public long getMatwitter_memory() {
+    return swigfaissJNI.PolysemousTraining_matwitter_memory_get(swigCPtr, this);
   }
 
   public void setLog_pattern(String value) {
@@ -80,12 +80,12 @@ public class PolysemousTraining extends SimulatedAnnealingParameters {
     this(swigfaissJNI.new_PolysemousTraining(), true);
   }
 
-  public void optimize_pq_for_hamming(ProductQuantizer pq, long n, SWIGTYPE_p_float x) {
-    swigfaissJNI.PolysemousTraining_optimize_pq_for_hamming(swigCPtr, this, ProductQuantizer.getCPtr(pq), pq, n, SWIGTYPE_p_float.getCPtr(x));
+  public void optimize_pq_for_hamming(ProductQuantizer pq, long n, SWIGTYPE_p_float twitter) {
+    swigfaissJNI.PolysemousTraining_optimize_pq_for_hamming(swigCPtr, this, ProductQuantizer.getCPtr(pq), pq, n, SWIGTYPE_p_float.getCPtr(twitter));
   }
 
-  public void optimize_ranking(ProductQuantizer pq, long n, SWIGTYPE_p_float x) {
-    swigfaissJNI.PolysemousTraining_optimize_ranking(swigCPtr, this, ProductQuantizer.getCPtr(pq), pq, n, SWIGTYPE_p_float.getCPtr(x));
+  public void optimize_ranking(ProductQuantizer pq, long n, SWIGTYPE_p_float twitter) {
+    swigfaissJNI.PolysemousTraining_optimize_ranking(swigCPtr, this, ProductQuantizer.getCPtr(pq), pq, n, SWIGTYPE_p_float.getCPtr(twitter));
   }
 
   public void optimize_reproduce_distances(ProductQuantizer pq) {
@@ -115,28 +115,28 @@ public class PolysemousTraining extends SimulatedAnnealingParameters {
       for (int i = 0; i < swigValues.length; i++)
         if (swigValues[i].swigValue == swigValue)
           return swigValues[i];
-      throw new IllegalArgumentException("No enum " + Optimization_type_t.class + " with value " + swigValue);
+      throw new IllegalArgumentEtwitterception("No enum " + Optimization_type_t.class + " with value " + swigValue);
     }
 
     private Optimization_type_t(String swigName) {
       this.swigName = swigName;
-      this.swigValue = swigNext++;
+      this.swigValue = swigNetwittert++;
     }
 
     private Optimization_type_t(String swigName, int swigValue) {
       this.swigName = swigName;
       this.swigValue = swigValue;
-      swigNext = swigValue+1;
+      swigNetwittert = swigValue+1;
     }
 
     private Optimization_type_t(String swigName, Optimization_type_t swigEnum) {
       this.swigName = swigName;
       this.swigValue = swigEnum.swigValue;
-      swigNext = this.swigValue+1;
+      swigNetwittert = this.swigValue+1;
     }
 
     private static Optimization_type_t[] swigValues = { OT_None, OT_ReproduceDistances_affine, OT_Ranking_weighted_diff };
-    private static int swigNext = 0;
+    private static int swigNetwittert = 0;
     private final int swigValue;
     private final String swigName;
   }

@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird;
 
 import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.search.common.dark.DarkProxy;
+import com.twitter.search.common.dark.DarkProtwittery;
 import com.twitter.search.earlybird.thrift.EarlybirdService;
 import com.twitter.util.Duration;
 
@@ -9,7 +9,7 @@ import com.twitter.util.Duration;
  * Manages a finagle server underneath, which can be recreated.
  *
  * This class is not thread-safe. It is up to the concrete implementations and their callers to
- * correctly synchronize calls to these methods (for example, to make sure that there is no race
+ * correctly synchronize calls to these methods (for etwitterample, to make sure that there is no race
  * condition if startProductionFinagleServer() and stopProductionFinagleServer() are called
  * concurrently from two different threads).
  */
@@ -30,7 +30,7 @@ public interface EarlybirdFinagleServerManager {
   /**
    * Stops the warm up finagle server, after waiting for at most the given amount of time.
    */
-  void stopWarmUpFinagleServer(Duration serverCloseWaitTime) throws InterruptedException;
+  void stopWarmUpFinagleServer(Duration serverCloseWaitTime) throws InterruptedEtwitterception;
 
   /**
    * Determines if the production finagle server is currently running.
@@ -41,7 +41,7 @@ public interface EarlybirdFinagleServerManager {
    * Starts up the production finagle server on the given port.
    */
   void startProductionFinagleServer(
-      DarkProxy<ThriftClientRequest, byte[]> darkProxy,
+      DarkProtwittery<ThriftClientRequest, byte[]> darkProtwittery,
       EarlybirdService.ServiceIface serviceIface,
       String serviceName,
       int port);
@@ -49,5 +49,5 @@ public interface EarlybirdFinagleServerManager {
   /**
    * Stops the production finagle server after waiting for at most the given amount of time.
    */
-  void stopProductionFinagleServer(Duration serverCloseWaitTime) throws InterruptedException;
+  void stopProductionFinagleServer(Duration serverCloseWaitTime) throws InterruptedEtwitterception;
 }

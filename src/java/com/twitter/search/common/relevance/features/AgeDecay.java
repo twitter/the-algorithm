@@ -11,13 +11,13 @@ public class AgeDecay {
   public static final double SLOPE_COEFF = 4.0;
   public static final double LN_HALF = Math.log(0.5);
   public final double halflife;
-  public final double maxBoost;
+  public final double matwitterBoost;
   public final double base;
   public final double slope;
 
   /** Creates a new AgeDecay instance. */
-  public AgeDecay(double base, double maxBoost, double halflife, double slope) {
-    this.maxBoost = maxBoost;
+  public AgeDecay(double base, double matwitterBoost, double halflife, double slope) {
+    this.matwitterBoost = matwitterBoost;
     this.base = base;
     this.halflife = halflife;
     this.slope = slope;
@@ -52,7 +52,7 @@ public class AgeDecay {
    * construct the object with.
    */
   public double compute(double age) {
-    return compute(base, maxBoost, halflife, slope, age);
+    return compute(base, matwitterBoost, halflife, slope, age);
   }
 
   /**
@@ -60,29 +60,29 @@ public class AgeDecay {
    * object.
    */
   public static double compute(
-      double base, double maxBoost, double halflife, double slope, double age) {
-    return base + ((maxBoost - base) / (1 + Math.exp(slope * (age - halflife))));
+      double base, double matwitterBoost, double halflife, double slope, double age) {
+    return base + ((matwitterBoost - base) / (1 + Math.etwitterp(slope * (age - halflife))));
   }
 
   public static double compute(
-      double base, double maxBoost, double halflife, double age) {
+      double base, double matwitterBoost, double halflife, double age) {
     Preconditions.checkArgument(halflife != 0);
-    return compute(base, maxBoost, halflife, SLOPE_COEFF / halflife, age);
+    return compute(base, matwitterBoost, halflife, SLOPE_COEFF / halflife, age);
   }
 
   /**
-   * Another nicer exponential decay function. Returns a value in (0, 1]
+   * Another nicer etwitterponential decay function. Returns a value in (0, 1]
    */
-  public static double computeExponential(double halflife, double exp, double age) {
-    return Math.exp(LN_HALF * Math.pow(age, exp) / Math.pow(halflife, exp));
+  public static double computeEtwitterponential(double halflife, double etwitterp, double age) {
+    return Math.etwitterp(LN_HALF * Math.pow(age, etwitterp) / Math.pow(halflife, etwitterp));
   }
 
   /**
-   * Exponential decay with remapping of the value from (0,1] to (min,max]
+   * Etwitterponential decay with remapping of the value from (0,1] to (min,matwitter]
    */
-  public static double computeExponential(double halflife, double exp, double age,
-                                          double minBoost, double maxBoost) {
-    double decay = computeExponential(halflife, exp, age);  // in (0, 1]
-    return (maxBoost - minBoost) * decay + minBoost;
+  public static double computeEtwitterponential(double halflife, double etwitterp, double age,
+                                          double minBoost, double matwitterBoost) {
+    double decay = computeEtwitterponential(halflife, etwitterp, age);  // in (0, 1]
+    return (matwitterBoost - minBoost) * decay + minBoost;
   }
 }

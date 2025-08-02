@@ -10,7 +10,7 @@ import com.twitter.timelines.data_processing.ml_util.aggregation_framework.{
   TypedAggregateGroup
 }
 
-object TimelinesAggregationKeyValInjections extends TimelinesAggregationConfigTrait {
+object TimelinesAggregationKeyValInjections etwittertends TimelinesAggregationConfigTrait {
 
   import OfflineAggregateInjections.getInjection
 
@@ -41,7 +41,7 @@ object TimelinesAggregationKeyValInjections extends TimelinesAggregationConfigTr
 
   override def outputHdfsPath: String = "/user/timelines/processed/aggregates_v2"
 
-  // Since this object is not used to execute any online or offline aggregates job, but is meant
+  // Since this object is not used to etwitterecute any online or offline aggregates job, but is meant
   // to store all PDT enabled KeyValInjections, we do not need to construct a physical store.
   // We use the identity operation as a default.
   override def mkPhysicalStore(store: AggregateStore): AggregateStore = store

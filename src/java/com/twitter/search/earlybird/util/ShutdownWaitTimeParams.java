@@ -27,7 +27,7 @@ public class ShutdownWaitTimeParams {
    * the task to shut down.
    */
   public static ShutdownWaitTimeParams indefinitely() {
-    return new ShutdownWaitTimeParams(Long.MAX_VALUE, TimeUnit.DAYS);
+    return new ShutdownWaitTimeParams(Long.MAtwitter_VALUE, TimeUnit.DAYS);
   }
 
   /**

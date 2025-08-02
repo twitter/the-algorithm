@@ -15,16 +15,16 @@ object TweetIdRange {
     range match {
       case r: TweetIdRange => r
       case _ =>
-        throw new IllegalArgumentException(s"Only Tweet ID range is supported. Found: $range")
+        throw new IllegalArgumentEtwitterception(s"Only Tweet ID range is supported. Found: $range")
     }
   }
 }
 
 /**
- * A range of Tweet IDs with exclusive bounds.
+ * A range of Tweet IDs with etwitterclusive bounds.
  */
 case class TweetIdRange(fromId: Option[TweetId] = None, toId: Option[TweetId] = None)
-    extends TimelineRange {
+    etwittertends TimelineRange {
 
   throwIfInvalid()
 

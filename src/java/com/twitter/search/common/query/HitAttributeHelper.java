@@ -20,9 +20,9 @@ public class HitAttributeHelper implements HitAttributeProvider {
   // This is a mapping of type T query nodes to rank id
   private final Map<Query, Integer> nodeToRankMap;
 
-  // This is meant to expand individual Query nodes into multiple ranks,
-  // for example, expanding a multi_term_disjunction to include a rank for each disjunction value.
-  private final Map<Query, List<Integer>> expandedNodeToRankMap;
+  // This is meant to etwitterpand individual Query nodes into multiple ranks,
+  // for etwitterample, etwitterpanding a multi_term_disjunction to include a rank for each disjunction value.
+  private final Map<Query, List<Integer>> etwitterpandedNodeToRankMap;
 
   // A single-entry cache for hit attribution, so we can reuse the immediate result. Will be used
   // only when lastDocId matches
@@ -33,11 +33,11 @@ public class HitAttributeHelper implements HitAttributeProvider {
       HitAttributeCollector collector,
       Function<Integer, String> fieldIdsToFieldNames,
       Map<Query, Integer> nodeToRankMap,
-      Map<Query, List<Integer>> expandedNodeToRankMap) {
+      Map<Query, List<Integer>> etwitterpandedNodeToRankMap) {
     this.collector = collector;
     this.fieldIdsToFieldNames = fieldIdsToFieldNames;
     this.nodeToRankMap = nodeToRankMap;
-    this.expandedNodeToRankMap = expandedNodeToRankMap;
+    this.etwitterpandedNodeToRankMap = etwitterpandedNodeToRankMap;
   }
 
   /**
@@ -45,7 +45,7 @@ public class HitAttributeHelper implements HitAttributeProvider {
    * instance and fields.
    *
    * @param collector a collector instance
-   * @param fieldIdsToFieldNames a list of field names indexed by id
+   * @param fieldIdsToFieldNames a list of field names indetwittered by id
    */
   public HitAttributeHelper(HitAttributeCollector collector, String[] fieldIdsToFieldNames) {
     this(collector,
@@ -59,7 +59,7 @@ public class HitAttributeHelper implements HitAttributeProvider {
   }
 
   /**
-   * Returns hit attribution information indexed by node rank
+   * Returns hit attribution information indetwittered by node rank
    *
    * @param docId the document id
    * @return a mapping from the query's node rank to a list of field names that were hit.
@@ -79,7 +79,7 @@ public class HitAttributeHelper implements HitAttributeProvider {
 
   /**
    * Adds a new node and its respective rank to the helper's node-to-rank map
-   * Will throw an exception if attempting to add/update an existing node
+   * Will throw an etwitterception if attempting to add/update an etwitteristing node
    *
    * @param node the query node
    * @param rank the rank associated with the node
@@ -96,7 +96,7 @@ public class HitAttributeHelper implements HitAttributeProvider {
     return nodeToRankMap;
   }
 
-  public Map<Query, List<Integer>> getExpandedNodeToRankMap() {
-    return expandedNodeToRankMap;
+  public Map<Query, List<Integer>> getEtwitterpandedNodeToRankMap() {
+    return etwitterpandedNodeToRankMap;
   }
 }

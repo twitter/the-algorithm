@@ -30,9 +30,9 @@ class UnifiedUserActionsConsumer(
       .keyDeserializer(UnKeyedSerde.deserializer)
       .valueDeserializer(ScalaSerdes.Thrift[UnifiedUserAction].deserializer)
       .dest(uuaDest)
-      .maxPollRecords(maxPollRecords)
-      .maxPollInterval(maxPollInterval)
-      .fetchMax(fetchMax)
+      .matwitterPollRecords(matwitterPollRecords)
+      .matwitterPollInterval(matwitterPollInterval)
+      .fetchMatwitter(fetchMatwitter)
       .seekStrategy(SeekStrategy.END)
       .enableAutoCommit(false) // AtLeastOnceProcessor performs commits manually
       .withConfig(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SASL_SSL.toString)
@@ -48,7 +48,7 @@ class UnifiedUserActionsConsumer(
       topic = uuaTopic,
       consumer = kafkaClient,
       processor = processor.apply,
-      maxPendingRequests = maxPendingRequests,
+      matwitterPendingRequests = matwitterPendingRequests,
       workerThreads = workerThreads,
       commitIntervalMs = commitIntervalMs,
       statsReceiver = statsReceiver.scope(processorName)
@@ -58,10 +58,10 @@ class UnifiedUserActionsConsumer(
 }
 
 object UnifiedUserActionsConsumer {
-  val maxPollRecords = 1000
-  val maxPollInterval = 5.minutes
-  val fetchMax = 1.megabytes
-  val maxPendingRequests = 1000
+  val matwitterPollRecords = 1000
+  val matwitterPollInterval = 5.minutes
+  val fetchMatwitter = 1.megabytes
+  val matwitterPendingRequests = 1000
   val workerThreads = 16
   val commitIntervalMs = 10.seconds.inMilliseconds
   val processorName = "unified_user_actions_processor"

@@ -10,42 +10,42 @@ enum RecommendTweetDisplayLocation {
   WelcomeFlow        = 2
   NetworkDigest      = 3
   BackfillDigest     = 4
-  NetworkDigestExp1  = 5
-  NetworkDigestExp2  = 6 // deprecated
-  NetworkDigestExp3  = 7 // deprecated
+  NetworkDigestEtwitterp1  = 5
+  NetworkDigestEtwitterp2  = 6 // deprecated
+  NetworkDigestEtwitterp3  = 7 // deprecated
   HttpEndpoint       = 8
   HomeTimeline1      = 9
   HomeTimeline2      = 10
   HomeTimeline3      = 11
   HomeTimeline4      = 12
   Poptart            = 13
-  NetworkDigestExp4  = 14
-  NetworkDigestExp5  = 15
-  NetworkDigestExp6  = 16
-  NetworkDigestExp7  = 17
-  NetworkDigestExp8  = 18
-  NetworkDigestExp9  = 19
+  NetworkDigestEtwitterp4  = 14
+  NetworkDigestEtwitterp5  = 15
+  NetworkDigestEtwitterp6  = 16
+  NetworkDigestEtwitterp7  = 17
+  NetworkDigestEtwitterp8  = 18
+  NetworkDigestEtwitterp9  = 19
   InstantTimeline1   = 20 // AB1 + whitelist
   InstantTimeline2   = 21 // AB1 + !whitelist
   InstantTimeline3   = 22 // AB2 + whitelist
   InstantTimeline4   = 23 // AB2 + !whitelist
   BackfillDigestActive  = 24 // deprecated
   BackfillDigestDormant = 25 // deprecated
-  ExploreUS             = 26 // deprecated
-  ExploreBR             = 27 // deprecated
-  ExploreIN             = 28 // deprecated
-  ExploreES             = 29 // deprecated
-  ExploreJP             = 30 // deprecated
+  EtwitterploreUS             = 26 // deprecated
+  EtwitterploreBR             = 27 // deprecated
+  EtwitterploreIN             = 28 // deprecated
+  EtwitterploreES             = 29 // deprecated
+  EtwitterploreJP             = 30 // deprecated
   MagicRecs             = 31
   MagicRecs1            = 32
   MagicRecs2            = 33
   MagicRecs3            = 34
   SMSDiscover           = 35
   FastFollower          = 36
-  InstantTimeline5      = 37 // for instant timeline experiment
-  InstantTimeline6      = 38 // for instant timeline experiment
-  InstantTimeline7      = 39 // for instant timeline experiment
-  InstantTimeline8      = 40 // for instant timeline experiment
+  InstantTimeline5      = 37 // for instant timeline etwitterperiment
+  InstantTimeline6      = 38 // for instant timeline etwitterperiment
+  InstantTimeline7      = 39 // for instant timeline etwitterperiment
+  InstantTimeline8      = 40 // for instant timeline etwitterperiment
   LoggedOutProfile      = 41
   LoggedOutPermalink    = 42
   Poptart2              = 43
@@ -76,9 +76,9 @@ struct RecommendTweetRequest {
   1: required i64                                   requesterId           // user id of the requesting user
   2: required RecommendTweetDisplayLocation         displayLocation       // display location from the client
   3: optional i64                                   clientId              // twitter api client id
-  4: optional i32                                   maxResults            // number of suggested results to return
-  5: optional list<i64>                             excludedTweetIds      // list of tweet ids to exclude from response
-  6: optional list<i64>                             excludedAuthorIds     // list of author ids to exclude from response
+  4: optional i32                                   matwitterResults            // number of suggested results to return
+  5: optional list<i64>                             etwittercludedTweetIds      // list of tweet ids to etwitterclude from response
+  6: optional list<i64>                             etwittercludedAuthorIds     // list of author ids to etwitterclude from response
   7: optional i64                                   guestId               // guestId
   8: optional string                                languageCode          // Language code
   9: optional string                                countryCode           // Country code
@@ -88,7 +88,7 @@ struct RecommendTweetRequest {
 }
 
 struct Bucket {
-  1: required string                                experimentName        // name of experiment (or not). experiment could be production or whatever fits
+  1: required string                                etwitterperimentName        // name of etwitterperiment (or not). etwitterperiment could be production or whatever fits
   2: required string                                bucket                // name of bucket (may or may not be a DDG bucket, e.g., production)
 }
 
@@ -97,9 +97,9 @@ struct RelatedTweetRequest {
   2: required RelatedTweetDisplayLocation           displayLocation       // display location from the client
   3: optional i64                                   clientId              // twitter api client id
   4: optional i64                                   requesterId           // user id of the requesting user
-  5: optional i32                                   maxResults            // number of suggested results to return
-  6: optional list<i64>                             excludeTweetIds       // list of tweet ids to exclude from response
-  7: optional list<i64>                             excludedAuthorIds     // list of author ids to exclude from response
+  5: optional i32                                   matwitterResults            // number of suggested results to return
+  6: optional list<i64>                             etwittercludeTweetIds       // list of tweet ids to etwitterclude from response
+  7: optional list<i64>                             etwittercludedAuthorIds     // list of author ids to etwitterclude from response
   8: optional i64                                   guestId               // guestId
   9: optional string                                languageCode          // Language code
   10: optional string                               countryCode           // Country code
@@ -140,10 +140,10 @@ struct RecommendedTweet {
   2: required i64                            authorId
   3: required list<i64>                      socialProof
   4: required string                         feedbackToken
-  5: optional list<i64>                      favBy          // optionally provide a list of users who fav'ed the tweet if exist
+  5: optional list<i64>                      favBy          // optionally provide a list of users who fav'ed the tweet if etwitterist
   6: optional tweet.RecommendedTweetFeatures tweetFeatures  // the features of a recommended tweet
   7: optional SocialProofType                socialProofType // type of social proof. favBy should be deprecated soon
-  8: optional string                         socialProofOverride // should be set only for DDGs, for en-only experiments. SocialProofType is ignored when this field is set
+  8: optional string                         socialProofOverride // should be set only for DDGs, for en-only etwitterperiments. SocialProofType is ignored when this field is set
   9: optional Algorithm                      algorithm // algorithm used 
   10: optional double                        score     // score
   11: optional bool                          isFollowingAuthor // true if the target user follows the author of the tweet 
@@ -159,7 +159,7 @@ struct RelatedTweet {
 struct RecommendTweetResponse {
   1: required list<RecommendedTweet> tweets
   2: optional DDGBucket              bucket                // deprecated
-  3: optional Bucket                 assignedBucket        // for client-side experimentation
+  3: optional Bucket                 assignedBucket        // for client-side etwitterperimentation
 }
 
 struct RelatedTweetResponse {

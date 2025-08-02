@@ -37,13 +37,13 @@ class VarianceScaling(object):
     mode = mode.lower()
     if mode not in {"fan_in", "fan_out", "fan_avg"}:
       raise ValueError(
-        "Invalid `mode` argument: " 'expected on of {"fan_in", "fan_out", "fan_avg"} ' "but got",
+        "Invalid `mode` argument: " 'etwitterpected on of {"fan_in", "fan_out", "fan_avg"} ' "but got",
         mode,
       )
     distribution = distribution.lower()
     if distribution not in {"normal", "uniform"}:
       raise ValueError(
-        "Invalid `distribution` argument: " 'expected one of {"normal", "uniform"} ' "but got",
+        "Invalid `distribution` argument: " 'etwitterpected one of {"normal", "uniform"} ' "but got",
         distribution,
       )
     self.scale = scale
@@ -57,11 +57,11 @@ class VarianceScaling(object):
 
     scale = self.scale
     if self.mode == "fan_in":
-      scale /= max(1.0, fan_in)
+      scale /= matwitter(1.0, fan_in)
     elif self.mode == "fan_out":
-      scale /= max(1.0, fan_out)
+      scale /= matwitter(1.0, fan_out)
     else:
-      scale /= max(1.0, float(fan_in + fan_out) / 2)
+      scale /= matwitter(1.0, float(fan_in + fan_out) / 2)
     if self.distribution == "normal":
       stddev = np.sqrt(scale) / 0.87962566103423978
       return K.truncated_normal(shape, 0.0, stddev, dtype=dtype, seed=self.seed)
@@ -79,7 +79,7 @@ class VarianceScaling(object):
 
 
 def customized_glorot_uniform(seed=None, fan_in=None, fan_out=None):
-  """Glorot uniform initializer, also called Xavier uniform initializer.
+  """Glorot uniform initializer, also called twitteravier uniform initializer.
   It draws samples from a uniform distribution within [-limit, limit]
   where `limit` is `sqrt(6 / (fan_in + fan_out))`
   where `fan_in` is the number of input units in the weight tensor
@@ -99,7 +99,7 @@ def customized_glorot_uniform(seed=None, fan_in=None, fan_out=None):
 
 
 def customized_glorot_norm(seed=None, fan_in=None, fan_out=None):
-  """Glorot norm initializer, also called Xavier uniform initializer.
+  """Glorot norm initializer, also called twitteravier uniform initializer.
   It draws samples from a uniform distribution within [-limit, limit]
   where `limit` is `sqrt(6 / (fan_in + fan_out))`
   where `fan_in` is the number of input units in the weight tensor

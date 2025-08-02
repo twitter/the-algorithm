@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.segment;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -10,17 +10,17 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 
-import org.apache.thrift.TException;
+import org.apache.thrift.TEtwitterception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchCustomGauge;
 import com.twitter.search.common.metrics.SearchRequestStats;
 import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentUtil;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
+import com.twitter.search.common.schema.thriftjava.ThriftIndetwitteringEvent;
 import com.twitter.search.common.util.io.ReaderWithStatsFactory;
 import com.twitter.search.common.util.io.TransformingRecordReader;
 import com.twitter.search.common.util.io.dl.DLMultiStreamReader;
@@ -30,7 +30,7 @@ import com.twitter.search.common.util.io.dl.SegmentDLUtil;
 import com.twitter.search.common.util.io.recordreader.RecordReader;
 import com.twitter.search.common.util.io.recordreader.RecordReaderFactory;
 import com.twitter.search.common.util.thrift.ThriftUtils;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
+import com.twitter.search.earlybird.EarlybirdIndetwitterConfig;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
 import com.twitter.search.earlybird.document.DocumentFactory;
 import com.twitter.search.earlybird.document.TweetDocument;
@@ -40,12 +40,12 @@ public class DLSegmentDataReaderSet implements SegmentDataReaderSet {
   private static final Logger LOG = LoggerFactory.getLogger(DLSegmentDataReaderSet.class);
 
   public static final SearchRequestStats STATUS_DL_READ_STATS =
-      SearchRequestStats.export("status_dlreader", TimeUnit.MICROSECONDS, false);
+      SearchRequestStats.etwitterport("status_dlreader", TimeUnit.MICROSECONDS, false);
   private static final SearchRequestStats UPDATE_EVENT_DL_READ_STATS =
-      SearchRequestStats.export("update_events_dlreader", TimeUnit.MICROSECONDS, false);
-  // The number of tweets not indexed because they failed deserialization.
+      SearchRequestStats.etwitterport("update_events_dlreader", TimeUnit.MICROSECONDS, false);
+  // The number of tweets not indetwittered because they failed deserialization.
   private static final SearchCounter STATUS_SKIPPED_DUE_TO_FAILED_DESERIALIZATION_COUNTER =
-      SearchCounter.export("statuses_skipped_due_to_failed_deserialization");
+      SearchCounter.etwitterport("statuses_skipped_due_to_failed_deserialization");
 
   @VisibleForTesting
   public static final int FRESH_READ_THRESHOLD = (int) TimeUnit.MINUTES.toMillis(1);
@@ -58,7 +58,7 @@ public class DLSegmentDataReaderSet implements SegmentDataReaderSet {
 
   private final DLReaderWriterFactory dlFactory;
   private final RecordReaderFactory<byte[]> dlUpdateEventsFactory;
-  private final EarlybirdIndexConfig indexConfig;
+  private final EarlybirdIndetwitterConfig indetwitterConfig;
   private final Clock clock;
 
   private RecordReader<TweetDocument> documentReader;
@@ -70,10 +70,10 @@ public class DLSegmentDataReaderSet implements SegmentDataReaderSet {
 
   DLSegmentDataReaderSet(
       DLReaderWriterFactory dlFactory,
-      final EarlybirdIndexConfig indexConfig,
-      Clock clock) throws IOException {
+      final EarlybirdIndetwitterConfig indetwitterConfig,
+      Clock clock) throws IOEtwitterception {
     this.dlFactory = dlFactory;
-    this.indexConfig = indexConfig;
+    this.indetwitterConfig = indetwitterConfig;
     this.clock = clock;
 
     this.dlUpdateEventsFactory = new ReaderWithStatsFactory(
@@ -85,7 +85,7 @@ public class DLSegmentDataReaderSet implements SegmentDataReaderSet {
         new TransformingRecordReader<>(updateEventsMultiReader, record ->
             (record != null) ? deserializeTVE(record.getBytes()) : null);
 
-    SearchCustomGauge.export("open_dl_update_events_streams", updateEventReaders::size);
+    SearchCustomGauge.etwitterport("open_dl_update_events_streams", updateEventReaders::size);
   }
 
   private ThriftVersionedEvents deserializeTVE(byte[] bytes) {
@@ -93,14 +93,14 @@ public class DLSegmentDataReaderSet implements SegmentDataReaderSet {
     try {
       ThriftUtils.fromCompactBinaryFormat(bytes, event);
       return event;
-    } catch (TException e) {
+    } catch (TEtwitterception e) {
       LOG.error("error deserializing TVE", e);
       return null;
     }
   }
 
   @Override
-  public void attachDocumentReaders(SegmentInfo segmentInfo) throws IOException {
+  public void attachDocumentReaders(SegmentInfo segmentInfo) throws IOEtwitterception {
     // Close any document reader left open before.
     if (documentReader != null) {
       LOG.warn("Previous documentReader not closed: {}", documentReader);
@@ -110,7 +110,7 @@ public class DLSegmentDataReaderSet implements SegmentDataReaderSet {
   }
 
   @Override
-  public void attachUpdateReaders(SegmentInfo segmentInfo) throws IOException {
+  public void attachUpdateReaders(SegmentInfo segmentInfo) throws IOEtwitterception {
     if (updateEventsMultiReader == null) {
       return;
     }
@@ -143,8 +143,8 @@ public class DLSegmentDataReaderSet implements SegmentDataReaderSet {
     }
     try {
       dlFactory.close();
-    } catch (IOException e) {
-      LOG.error("Exception while closing DL factory", e);
+    } catch (IOEtwitterception e) {
+      LOG.error("Etwitterception while closing DL factory", e);
     }
   }
 
@@ -166,11 +166,11 @@ public class DLSegmentDataReaderSet implements SegmentDataReaderSet {
   }
 
   @Override
-  public RecordReader<TweetDocument> newDocumentReader(SegmentInfo segmentInfo) throws IOException {
+  public RecordReader<TweetDocument> newDocumentReader(SegmentInfo segmentInfo) throws IOEtwitterception {
     String topic = SegmentDLUtil.getDLTopicForTweets(segmentInfo.getSegmentName(),
         EarlybirdConfig.getPenguinVersion(), dlReaderVersion);
     final long timeSliceId = segmentInfo.getTimeSliceID();
-    final DocumentFactory<ThriftIndexingEvent> docFactory = indexConfig.createDocumentFactory();
+    final DocumentFactory<ThriftIndetwitteringEvent> docFactory = indetwitterConfig.createDocumentFactory();
 
     // Create the underlying DLRecordReader wrapped with the tweet reader stats.
     RecordReader<byte[]> dlReader = new ReaderWithStatsFactory(
@@ -187,10 +187,10 @@ public class DLSegmentDataReaderSet implements SegmentDataReaderSet {
         new Function<byte[], TweetDocument>() {
           @Override
           public TweetDocument apply(byte[] input) {
-            ThriftIndexingEvent event = new ThriftIndexingEvent();
+            ThriftIndetwitteringEvent event = new ThriftIndetwitteringEvent();
             try {
               ThriftUtils.fromCompactBinaryFormat(input, event);
-            } catch (TException e) {
+            } catch (TEtwitterception e) {
               LOG.error("Could not deserialize status document", e);
               STATUS_SKIPPED_DUE_TO_FAILED_DESERIALIZATION_COUNTER.increment();
               return null;

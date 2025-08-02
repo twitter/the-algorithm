@@ -23,7 +23,7 @@ class DiscoverTwitterPushCandidate(
 )(
   implicit val statsScoped: StatsReceiver,
   pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
+    etwittertends PushCandidate
     with DiscoverTwitterCandidate
     with DiscoverTwitterPushIbis2Hydrator
     with DiscoverTwitterNtabRequestHydrator {
@@ -45,7 +45,7 @@ class DiscoverTwitterPushCandidate(
 }
 
 case class AddressBookPushCandidatePredicates(config: Config)
-    extends BasicRFPHPredicates[DiscoverTwitterPushCandidate] {
+    etwittertends BasicRFPHPredicates[DiscoverTwitterPushCandidate] {
 
   implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
 
@@ -60,7 +60,7 @@ case class AddressBookPushCandidatePredicates(config: Config)
 }
 
 case class CompleteOnboardingPushCandidatePredicates(config: Config)
-    extends BasicRFPHPredicates[DiscoverTwitterPushCandidate] {
+    etwittertends BasicRFPHPredicates[DiscoverTwitterPushCandidate] {
 
   implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
 
@@ -75,7 +75,7 @@ case class CompleteOnboardingPushCandidatePredicates(config: Config)
 }
 
 case class PopGeoTweetCandidatePredicates(override val config: Config)
-    extends OutOfNetworkTweetPredicates[OutOfNetworkTweetPushCandidate] {
+    etwittertends OutOfNetworkTweetPredicates[OutOfNetworkTweetPushCandidate] {
 
   implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
 

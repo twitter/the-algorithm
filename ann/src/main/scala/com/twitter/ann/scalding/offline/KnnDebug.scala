@@ -1,7 +1,7 @@
 package com.twitter.ann.scalding.offline
 
 import com.twitter.core_workflows.user_model.thriftscala.CondensedUserState
-import com.twitter.cortex.ml.embeddings.common.{DataSourceManager, GraphEdge, Helpers, UserKind}
+import com.twitter.cortetwitter.ml.embeddings.common.{DataSourceManager, GraphEdge, Helpers, UserKind}
 import com.twitter.ml.featurestore.lib.UserId
 import com.twitter.entityembeddings.neighbors.thriftscala.{EntityKey, NearestNeighbors}
 import com.twitter.pluck.source.core_workflows.user_model.CondensedUserStateScalaDataset
@@ -52,7 +52,7 @@ object KnnDebug {
     followDataset: Option[TypedPipe[GraphEdge[UserId, UserId]]] = None,
     consumerStatesDataset: Option[TypedPipe[CondensedUserState]] = None,
     minFollows: Int = 25,
-    maxFollows: Int = 50
+    matwitterFollows: Int = 50
   )(
     implicit dateRange: DateRange
   ): TypedPipe[(String, String, String, String)] = {
@@ -75,7 +75,7 @@ object KnnDebug {
 
     val consumerFollows: TypedPipe[ConsumerAssoc] =
       getConsumerAssociations(followGraph, usernames, reducers)
-        .filter { uFollow => (uFollow.assoc.size > minFollows && uFollow.assoc.size < maxFollows) }
+        .filter { uFollow => (uFollow.assoc.size > minFollows && uFollow.assoc.size < matwitterFollows) }
 
     val neighborGraph: TypedPipe[GraphEdge[UserId, UserId]] = neighborsPipe
       .limit(limit)

@@ -8,7 +8,7 @@ import com.twitter.unified_user_actions.thriftscala._
 import com.twitter.unified_user_actions.thriftscala.Item.TweetInfo
 
 object ClientEventImpression {
-  object TweetLingerImpression extends BaseClientEvent(ActionType.ClientTweetLingerImpression) {
+  object TweetLingerImpression etwittertends BaseClientEvent(ActionType.ClientTweetLingerImpression) {
     override def getUuaItem(
       ceItem: LogEventItem,
       logEvent: LogEvent
@@ -37,7 +37,7 @@ object ClientEventImpression {
    * To make parity with iesource's definition, render impression for quoted Tweets would emit
    * 2 events: 1 for the quoting Tweet and 1 for the original Tweet!!!
    */
-  object TweetRenderImpression extends BaseClientEvent(ActionType.ClientTweetRenderImpression) {
+  object TweetRenderImpression etwittertends BaseClientEvent(ActionType.ClientTweetRenderImpression) {
     override def toUnifiedUserAction(logEvent: LogEvent): Seq[UnifiedUserAction] = {
 
       val logBase: Option[LogBase] = logEvent.logBase
@@ -104,9 +104,9 @@ object ClientEventImpression {
     }
   }
 
-  object TweetGalleryImpression extends BaseClientEvent(ActionType.ClientTweetGalleryImpression)
+  object TweetGalleryImpression etwittertends BaseClientEvent(ActionType.ClientTweetGalleryImpression)
 
-  object TweetDetailsImpression extends BaseClientEvent(ActionType.ClientTweetDetailsImpression) {
+  object TweetDetailsImpression etwittertends BaseClientEvent(ActionType.ClientTweetDetailsImpression) {
 
     case class EventNamespaceInternal(
       client: String,
@@ -117,7 +117,7 @@ object ClientEventImpression {
       action: String)
 
     def isTweetDetailsImpression(eventNamespaceOpt: Option[EventNamespace]): Boolean =
-      eventNamespaceOpt.exists { eventNamespace =>
+      eventNamespaceOpt.etwitterists { eventNamespace =>
         val eventNamespaceInternal = EventNamespaceInternal(
           client = eventNamespace.client.getOrElse(""),
           page = eventNamespace.page.getOrElse(""),
@@ -150,7 +150,7 @@ object ClientEventImpression {
     private def isOtherAppClientTweetDetailsImpression(
       eventNamespace: EventNamespaceInternal
     ): Boolean = {
-      val excludedClients = Set(
+      val etwittercludedClients = Set(
         "web",
         "m5",
         "m2",
@@ -161,7 +161,7 @@ object ClientEventImpression {
         "android",
         "android_tablet",
         "deck")
-      (!excludedClients.contains(eventNamespace.client)) && eventNamespace.page
+      (!etwittercludedClients.contains(eventNamespace.client)) && eventNamespace.page
         .equalsIgnoreCase("tweet") && eventNamespace.section
         .equalsIgnoreCase("") && eventNamespace.component
         .equalsIgnoreCase("tweet") && eventNamespace.element

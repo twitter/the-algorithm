@@ -1,6 +1,6 @@
 with vars as (
     SELECT
-    UNIX_MILLIS("{QUERY_DATE}") AS currentTs,
+    UNItwitter_MILLIS("{QUERY_DATE}") AS currentTs,
     TIMESTAMP("{START_TIME}") AS startTime,
     TIMESTAMP("{END_TIME}") AS endTime,
     {MIN_SCORE_THRESHOLD} AS tweetEmbeddingsMinClusterScore,

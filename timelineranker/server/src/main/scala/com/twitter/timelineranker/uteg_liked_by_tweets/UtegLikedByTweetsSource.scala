@@ -54,10 +54,10 @@ class UtegLikedByTweetsSource(
   private[this] val debugAuthorsMonitoringProvider =
     DependencyProvider.from(MonitoringParams.DebugAuthorsAllowListParam)
 
-  private[this] val maxFollowedUsersProvider =
-    DependencyProvider.value(RecapParams.MaxFollowedUsers.default)
+  private[this] val matwitterFollowedUsersProvider =
+    DependencyProvider.value(RecapParams.MatwitterFollowedUsers.default)
   private[this] val followGraphDataTransform =
-    new FollowGraphDataTransform(followGraphDataProvider, maxFollowedUsersProvider)
+    new FollowGraphDataTransform(followGraphDataProvider, matwitterFollowedUsersProvider)
 
   private[this] val searchResultsTransform =
     new UtegLikedByTweetsSearchResultsTransform(
@@ -74,7 +74,7 @@ class UtegLikedByTweetsSource(
 
   private[this] val candidateGenerationTransform = new CandidateGenerationTransform(baseScope)
 
-  private[this] val maxCandidatesToFetchFromUtegProvider = DependencyProvider { query =>
+  private[this] val matwitterCandidatesToFetchFromUtegProvider = DependencyProvider { query =>
     query.utegLikedByTweetsOptions
       .map(_.utegCount).getOrElse(
         query.utegLikedByTweetsOptions match {
@@ -90,7 +90,7 @@ class UtegLikedByTweetsSource(
     isInNetwork(envelope.query)
 
   private[this] def isInNetwork(query: RecapQuery): Boolean =
-    query.utegLikedByTweetsOptions.exists(_.isInNetwork)
+    query.utegLikedByTweetsOptions.etwitterists(_.isInNetwork)
 
   private[this] def isInNetwork(hydratedEnvelope: HydratedCandidatesAndFeaturesEnvelope): Boolean =
     isInNetwork(hydratedEnvelope.candidateEnvelope)
@@ -102,14 +102,14 @@ class UtegLikedByTweetsSource(
       ifFalse = new UTEGRecommendationsFilterBuilder[RecapQuery](
         enablingGate =
           RecapQuery.paramGate(UtegLikedByTweetsParams.UTEGRecommendationsFilter.EnableParam),
-        excludeTweetGate =
-          RecapQuery.paramGate(UtegLikedByTweetsParams.UTEGRecommendationsFilter.ExcludeTweetParam),
-        excludeRetweetGate = RecapQuery.paramGate(
-          UtegLikedByTweetsParams.UTEGRecommendationsFilter.ExcludeRetweetParam),
-        excludeReplyGate =
-          RecapQuery.paramGate(UtegLikedByTweetsParams.UTEGRecommendationsFilter.ExcludeReplyParam),
-        excludeQuoteGate = RecapQuery.paramGate(
-          UtegLikedByTweetsParams.UTEGRecommendationsFilter.ExcludeQuoteTweetParam
+        etwittercludeTweetGate =
+          RecapQuery.paramGate(UtegLikedByTweetsParams.UTEGRecommendationsFilter.EtwittercludeTweetParam),
+        etwittercludeRetweetGate = RecapQuery.paramGate(
+          UtegLikedByTweetsParams.UTEGRecommendationsFilter.EtwittercludeRetweetParam),
+        etwittercludeReplyGate =
+          RecapQuery.paramGate(UtegLikedByTweetsParams.UTEGRecommendationsFilter.EtwittercludeReplyParam),
+        etwittercludeQuoteGate = RecapQuery.paramGate(
+          UtegLikedByTweetsParams.UTEGRecommendationsFilter.EtwittercludeQuoteTweetParam
         ),
         statsReceiver = baseScope
       ).build
@@ -117,15 +117,15 @@ class UtegLikedByTweetsSource(
 
   private[this] val utegResultsTransform = new UTEGResultsTransform(
     userTweetEntityGraphClient,
-    maxCandidatesToFetchFromUtegProvider,
+    matwitterCandidatesToFetchFromUtegProvider,
     recommendationsFilter,
     socialProofTypes
   )
 
   private[this] val earlybirdScoreMultiplierProvider =
     DependencyProvider.from(UtegLikedByTweetsParams.EarlybirdScoreMultiplierParam)
-  private[this] val maxCandidatesToReturnToCallerProvider = DependencyProvider { query =>
-    query.maxCount.getOrElse(query.params(UtegLikedByTweetsParams.DefaultMaxTweetCount))
+  private[this] val matwitterCandidatesToReturnToCallerProvider = DependencyProvider { query =>
+    query.matwitterCount.getOrElse(query.params(UtegLikedByTweetsParams.DefaultMatwitterTweetCount))
   }
 
   private[this] val minNumFavedByUserIdsProvider = DependencyProvider { query =>
@@ -176,7 +176,7 @@ class UtegLikedByTweetsSource(
       predicate = isInNetwork,
       ifTrue = FutureArrow.identity,
       ifFalse = new CombinedScoreAndTruncateTransform(
-        maxTweetCountProvider = maxCandidatesToReturnToCallerProvider,
+        matwitterTweetCountProvider = matwitterCandidatesToReturnToCallerProvider,
         earlybirdScoreMultiplierProvider = earlybirdScoreMultiplierProvider,
         numAdditionalRepliesProvider =
           DependencyProvider.from(UtegLikedByTweetsParams.NumAdditionalRepliesParam),
@@ -184,14 +184,14 @@ class UtegLikedByTweetsSource(
       )
     )
 
-  private[this] val excludeRecommendedRepliesToNonFollowedUsersGate: Gate[RecapQuery] =
+  private[this] val etwittercludeRecommendedRepliesToNonFollowedUsersGate: Gate[RecapQuery] =
     RecapQuery.paramGate(
-      UtegLikedByTweetsParams.UTEGRecommendationsFilter.ExcludeRecommendedRepliesToNonFollowedUsersParam)
+      UtegLikedByTweetsParams.UTEGRecommendationsFilter.EtwittercludeRecommendedRepliesToNonFollowedUsersParam)
 
   private[this] def enableUseFollowGraphDataForRecommendedReplies(
     envelope: CandidateEnvelope
   ): Boolean =
-    excludeRecommendedRepliesToNonFollowedUsersGate(envelope.query)
+    etwittercludeRecommendedRepliesToNonFollowedUsersGate(envelope.query)
 
   val dynamicHydratedTweetsFilter: FutureArrow[CandidateEnvelope, CandidateEnvelope] =
     FutureArrow.choose[CandidateEnvelope, CandidateEnvelope](
@@ -250,8 +250,8 @@ class UtegLikedByTweetsSource(
         RecapQuery.paramGate(UtegLikedByTweetsParams.EnableContentFeaturesHydrationParam),
       enableTokensInContentFeaturesGate =
         RecapQuery.paramGate(UtegLikedByTweetsParams.EnableTokensInContentFeaturesHydrationParam),
-      enableTweetTextInContentFeaturesGate = RecapQuery.paramGate(
-        UtegLikedByTweetsParams.EnableTweetTextInContentFeaturesHydrationParam),
+      enableTweetTetwittertInContentFeaturesGate = RecapQuery.paramGate(
+        UtegLikedByTweetsParams.EnableTweetTetwittertInContentFeaturesHydrationParam),
       enableConversationControlContentFeaturesGate = RecapQuery.paramGate(
         UtegLikedByTweetsParams.EnableConversationControlInContentFeaturesHydrationParam),
       enableTweetMediaHydrationGate = RecapQuery.paramGate(

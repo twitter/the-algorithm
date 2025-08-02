@@ -3,13 +3,13 @@ package com.twitter.search.common.relevance;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.Etwitterecutors;
+import java.util.concurrent.ScheduledEtwitterecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-import scala.runtime.BoxedUnit;
+import scala.runtime.BotwitteredUnit;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.twitter.finagle.Service;
-import com.twitter.finagle.ThriftMux;
+import com.twitter.finagle.ThriftMutwitter;
 import com.twitter.finagle.builder.ClientBuilder;
 import com.twitter.finagle.builder.ClientConfig;
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
@@ -51,10 +51,10 @@ public final class TrendsThriftDataServiceManager {
 
   @VisibleForTesting
   protected static final Map<String, String> DEFAULT_TRENDS_PARAMS_MAP = ImmutableMap.of(
-      "MAX_ITEMS_TO_RETURN", "10");   // we only take top 10 for each woeid.
+      "MAtwitter_ITEMS_TO_RETURN", "10");   // we only take top 10 for each woeid.
 
   @VisibleForTesting
-  protected static final int MAX_TRENDS_PER_WOEID = 10;
+  protected static final int MAtwitter_TRENDS_PER_WOEID = 10;
 
   private final Duration requestTimeout;
   private final Duration refreshDelayDuration;
@@ -65,18 +65,18 @@ public final class TrendsThriftDataServiceManager {
   private final List<NGramCache> trendsCacheList;
 
   private final SearchCounter getAvailableSuccessCounter =
-      RelevanceStats.exportLong("trends_extractor_get_available_success");
+      RelevanceStats.etwitterportLong("trends_etwittertractor_get_available_success");
   private final SearchCounter getAvailableFailureCounter =
-      RelevanceStats.exportLong("trends_extractor_get_available_failure");
+      RelevanceStats.etwitterportLong("trends_etwittertractor_get_available_failure");
   private final SearchCounter getTrendsSuccessCounter =
-      RelevanceStats.exportLong("trends_extractor_success_fetch");
+      RelevanceStats.etwitterportLong("trends_etwittertractor_success_fetch");
   private final SearchCounter getTrendsFailureCounter =
-      RelevanceStats.exportLong("trends_extractor_failed_fetch");
+      RelevanceStats.etwitterportLong("trends_etwittertractor_failed_fetch");
   private final SearchCounter updateFailureCounter =
-      RelevanceStats.exportLong("trends_extractor_failed_update");
+      RelevanceStats.etwitterportLong("trends_etwittertractor_failed_update");
 
   private final ServiceIdentifier serviceIdentifier;
-  private ScheduledExecutorService scheduler;
+  private ScheduledEtwitterecutorService scheduler;
 
 
   @VisibleForTesting
@@ -125,10 +125,10 @@ public final class TrendsThriftDataServiceManager {
    */
   public synchronized void startAutoRefresh() {
     if (scheduler == null) {
-      scheduler = Executors.newSingleThreadScheduledExecutor(
+      scheduler = Etwitterecutors.newSingleThreadScheduledEtwitterecutor(
           new ThreadFactoryBuilder().setDaemon(true).setNameFormat(
               "trends-data-refresher[%d]").build());
-      scheduler.scheduleAtFixedRate(
+      scheduler.scheduleAtFitwitteredRate(
           trendsUpdater,
           refreshDelayDuration.inSeconds(),
           reloadIntervalDuration.inSeconds(),
@@ -137,22 +137,22 @@ public final class TrendsThriftDataServiceManager {
   }
 
   /**
-   * Stop auto refresh. Wait for the current execution thread to finish.
+   * Stop auto refresh. Wait for the current etwitterecution thread to finish.
    * This is a blocking call.
    */
   public synchronized void stopAutoRefresh() {
     if (scheduler != null) {
       scheduler.shutdown(); // Disable new tasks from being submitted
       try {
-        // Wait a while for existing tasks to terminate
+        // Wait a while for etwitteristing tasks to terminate
         if (!scheduler.awaitTermination(DEFAULT_TIME_TO_KILL_SEC, TimeUnit.SECONDS)) {
-          scheduler.shutdownNow(); // Cancel currently executing tasks
+          scheduler.shutdownNow(); // Cancel currently etwitterecuting tasks
           // Wait a while for tasks to respond to being cancelled
           if (!scheduler.awaitTermination(DEFAULT_TIME_TO_KILL_SEC, TimeUnit.SECONDS)) {
-            LOG.info("Executor thread pool did not terminate.");
+            LOG.info("Etwitterecutor thread pool did not terminate.");
           }
         }
-      } catch (InterruptedException ie) {
+      } catch (InterruptedEtwitterception ie) {
         // (Re-)Cancel if current thread also interrupted
         scheduler.shutdownNow();
         // Preserve interrupt status
@@ -208,7 +208,7 @@ public final class TrendsThriftDataServiceManager {
         ClientConfig.Yes
         >
         builder = ClientBuilder.get()
-          .stack(ThriftMux.client())
+          .stack(ThriftMutwitter.client())
           .name("trends_thrift_data_service_manager_content")
           .dest("")
           .retries(numRetries)
@@ -216,7 +216,7 @@ public final class TrendsThriftDataServiceManager {
           .tcpConnectTimeout(requestTimeout)
           .requestTimeout(requestTimeout);
     ClientBuilder mtlsBuilder =
-        new MtlsClientBuilder.MtlsClientBuilderSyntax<>(builder).mutualTls(serviceIdentifier);
+        new MtlsClientBuilder.MtlsClientBuilderSyntatwitter<>(builder).mutualTls(serviceIdentifier);
 
     return ClientBuilder.safeBuild(mtlsBuilder);
   }
@@ -237,7 +237,7 @@ public final class TrendsThriftDataServiceManager {
         ClientConfig.Yes
         >
         builder = ClientBuilder.get()
-          .stack(ThriftMux.client())
+          .stack(ThriftMutwitter.client())
           .name("trends_thrift_data_service_manager_metadata")
           .dest("")
           .retries(numRetries)
@@ -245,7 +245,7 @@ public final class TrendsThriftDataServiceManager {
           .tcpConnectTimeout(requestTimeout)
           .requestTimeout(requestTimeout);
     ClientBuilder mtlsBuilder =
-        new MtlsClientBuilder.MtlsClientBuilderSyntax<>(builder).mutualTls(serviceIdentifier);
+        new MtlsClientBuilder.MtlsClientBuilderSyntatwitter<>(builder).mutualTls(serviceIdentifier);
 
     return ClientBuilder.safeBuild(mtlsBuilder);
   }
@@ -266,28 +266,28 @@ public final class TrendsThriftDataServiceManager {
       populateCacheFromTrendsService();
     }
 
-    private Future<BoxedUnit> populateCacheFromTrendsService() {
+    private Future<BotwitteredUnit> populateCacheFromTrendsService() {
       long startTime = System.currentTimeMillis();
       AtomicLong numTrendsReceived = new AtomicLong(0);
       return metadataClient.getAvailable().flatMap(locations -> {
         if (locations == null) {
           getAvailableFailureCounter.increment();
           LOG.warn("Failed to get woeids from trends.");
-          return Future.value(BoxedUnit.UNIT);
+          return Future.value(BotwitteredUnit.UNIT);
         }
         getAvailableSuccessCounter.increment();
         return populateCacheFromTrendLocations(locations, numTrendsReceived);
       }).onFailure(throwable -> {
         LOG.info("Update failed", throwable);
         updateFailureCounter.increment();
-        return BoxedUnit.UNIT;
+        return BotwitteredUnit.UNIT;
       }).ensure(() -> {
         logRefreshStatus(startTime, numTrendsReceived);
-        return BoxedUnit.UNIT;
+        return BotwitteredUnit.UNIT;
       });
     }
 
-    private Future<BoxedUnit> populateCacheFromTrendLocations(
+    private Future<BotwitteredUnit> populateCacheFromTrendLocations(
         List<Location> locations,
         AtomicLong numTrendsReceived) {
       List<Future<TrendsPlusResponse>> trendsPlusFutures = locations.stream()
@@ -298,22 +298,22 @@ public final class TrendsThriftDataServiceManager {
           Future.collectToTry(trendsPlusFutures);
       return trendsPlusFuture.map(tryResponses -> {
         populateCacheFromResponses(tryResponses, numTrendsReceived);
-        return BoxedUnit.UNIT;
+        return BotwitteredUnit.UNIT;
       });
     }
 
     private Future<TrendsPlusResponse> makeTrendsPlusRequest(Location location) {
       TrendsPlusRequest request = new TrendsPlusRequest()
           .setWoeid(location.getWoeid())
-          .setMaxTrends(MAX_TRENDS_PER_WOEID);
+          .setMatwitterTrends(MAtwitter_TRENDS_PER_WOEID);
       long startTime = System.currentTimeMillis();
       return contentClient.getTrendsPlus(request)
           .onSuccess(response -> {
             getTrendsSuccessCounter.increment();
-            return BoxedUnit.UNIT;
+            return BotwitteredUnit.UNIT;
           }).onFailure(throwable -> {
             getTrendsFailureCounter.increment();
-            return BoxedUnit.UNIT;
+            return BotwitteredUnit.UNIT;
           });
     }
 

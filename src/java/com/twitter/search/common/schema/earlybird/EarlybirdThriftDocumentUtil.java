@@ -1,12 +1,12 @@
 package com.twitter.search.common.schema.earlybird;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import com.twitter.common.text.util.TokenStreamSerializer;
+import com.twitter.common.tetwittert.util.TokenStreamSerializer;
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
 import com.twitter.search.common.schema.base.ThriftDocumentUtil;
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
@@ -179,11 +179,11 @@ public final class EarlybirdThriftDocumentUtil {
   }
 
   /**
-   * Get resolved links text.
+   * Get resolved links tetwittert.
    */
-  public static String getResolvedLinksText(ThriftDocument document) {
+  public static String getResolvedLinksTetwittert(ThriftDocument document) {
     return ThriftDocumentUtil.getStringValue(
-        document, EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName(), ID_MAPPING);
+        document, EarlybirdFieldConstant.RESOLVED_LINKS_TEtwitterT_FIELD.getFieldName(), ID_MAPPING);
   }
 
   /**
@@ -195,7 +195,7 @@ public final class EarlybirdThriftDocumentUtil {
   }
 
   /**
-   * First remove the old timestamp if they exist.
+   * First remove the old timestamp if they etwitterist.
    * Then add the created at and created at csf fields to the given thrift document.
    */
   public static void replaceCreatedAtAndCreatedAtCSF(ThriftDocument document, int value) {
@@ -223,10 +223,10 @@ public final class EarlybirdThriftDocumentUtil {
         EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD.getFieldName())) {
       return EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD;
     } else if (field.getFieldName().startsWith(
-        EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD.getFieldName())) {
-      return EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD;
+        EarlybirdFieldConstant.EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD.getFieldName())) {
+      return EarlybirdFieldConstant.EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD;
     } else {
-      throw new IllegalArgumentException("Not a feature field: " + field);
+      throw new IllegalArgumentEtwitterception("Not a feature field: " + field);
     }
   }
 
@@ -290,8 +290,8 @@ public final class EarlybirdThriftDocumentUtil {
     List<ThriftField> fields = document.getFields();
     if (fields != null) {
       Iterator<ThriftField> fieldsIterator = fields.iterator();
-      while (fieldsIterator.hasNext()) {
-        if (fieldsIterator.next().getFieldConfigId() == fieldConstant.getFieldId()) {
+      while (fieldsIterator.hasNetwittert()) {
+        if (fieldsIterator.netwittert().getFieldConfigId() == fieldConstant.getFieldId()) {
           fieldsIterator.remove();
         }
       }
@@ -321,7 +321,7 @@ public final class EarlybirdThriftDocumentUtil {
   public static void addNormalizedMinEngagementField(
       ThriftDocument doc,
       String fieldName,
-      int normalizedNumEngagements) throws IOException {
+      int normalizedNumEngagements) throws IOEtwitterception {
     if (normalizedNumEngagements < 1) {
       return;
     }

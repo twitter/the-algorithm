@@ -4,8 +4,8 @@ import com.twitter.conversions.DurationOps._
 import com.twitter.timelineranker.config.RequestScopes
 import com.twitter.timelineranker.config.RuntimeConfiguration
 import com.twitter.timelineranker.parameters.ConfigBuilder
-import com.twitter.timelineranker.parameters.revchron.ReverseChronTimelineQueryContextBuilder
-import com.twitter.timelineranker.parameters.util.RequestContextBuilderImpl
+import com.twitter.timelineranker.parameters.revchron.ReverseChronTimelineQueryContetwittertBuilder
+import com.twitter.timelineranker.parameters.util.RequestContetwittertBuilderImpl
 import com.twitter.timelineranker.source.ReverseChronHomeTimelineSource
 import com.twitter.timelineranker.visibility.RealGraphFollowGraphDataProvider
 import com.twitter.timelineranker.visibility.SgsFollowGraphDataFields
@@ -17,7 +17,7 @@ import com.twitter.util.Duration
 class ReverseChronHomeTimelineRepositoryBuilder(
   config: RuntimeConfiguration,
   configBuilder: ConfigBuilder)
-    extends CandidatesRepositoryBuilder(config) {
+    etwittertends CandidatesRepositoryBuilder(config) {
 
   override val clientSubId = "home_materialization"
   override val requestScope: RequestScope = RequestScopes.HomeTimelineMaterialization
@@ -58,15 +58,15 @@ class ReverseChronHomeTimelineRepositoryBuilder(
       config.statsReceiver
     )
 
-    val contextBuilder = new ReverseChronTimelineQueryContextBuilder(
+    val contetwittertBuilder = new ReverseChronTimelineQueryContetwittertBuilder(
       configBuilder.rootConfig,
       config,
-      new RequestContextBuilderImpl(config.configApiConfiguration.requestContextFactory)
+      new RequestContetwittertBuilderImpl(config.configApiConfiguration.requestContetwittertFactory)
     )
 
     new ReverseChronHomeTimelineRepository(
       reverseChronTimelineSource,
-      contextBuilder
+      contetwittertBuilder
     )
   }
 }

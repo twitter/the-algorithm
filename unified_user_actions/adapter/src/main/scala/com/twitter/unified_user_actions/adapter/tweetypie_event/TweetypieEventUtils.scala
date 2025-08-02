@@ -5,11 +5,11 @@ import com.twitter.tweetypie.thriftscala.EditControlEdit
 import com.twitter.tweetypie.thriftscala.Tweet
 
 sealed trait TweetypieTweetType
-object TweetTypeDefault extends TweetypieTweetType
-object TweetTypeReply extends TweetypieTweetType
-object TweetTypeRetweet extends TweetypieTweetType
-object TweetTypeQuote extends TweetypieTweetType
-object TweetTypeEdit extends TweetypieTweetType
+object TweetTypeDefault etwittertends TweetypieTweetType
+object TweetTypeReply etwittertends TweetypieTweetType
+object TweetTypeRetweet etwittertends TweetypieTweetType
+object TweetTypeQuote etwittertends TweetypieTweetType
+object TweetTypeEdit etwittertends TweetypieTweetType
 
 object TweetypieEventUtils {
   def editedTweetIdFromTweet(tweet: Tweet): Option[Long] = tweet.editControl.flatMap {

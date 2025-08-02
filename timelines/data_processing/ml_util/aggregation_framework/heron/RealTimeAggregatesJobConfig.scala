@@ -26,10 +26,10 @@ import com.twitter.timelines.data_processing.ml_util.transforms.OneToSomeTransfo
  *                            While preTransforms defined at AggregateGroup are applied to each aggregate group, onlinePreTransforms are applied to the whole producer source.
  * @param keyedByUserEnabled boolean value to enable/disable merging user-level features from Feature Store
  * @param keyedByAuthorEnabled boolean value to enable/disable merging author-level features from Feature Store
- * @param enableUserReindexingNighthawkBtreeStore boolean value to enable reindexing RTAs on user id with btree backed nighthawk
- * @param enableUserReindexingNighthawkHashStore boolean value to enable reindexing RTAs on user id with hash backed nighthawk
- * @param userReindexingNighthawkBtreeStoreConfig NH btree store config used in reindexing user RTAs
- * @param userReindexingNighthawkHashStoreConfig NH hash store config used in reindexing user RTAs
+ * @param enableUserReindetwitteringNighthawkBtreeStore boolean value to enable reindetwittering RTAs on user id with btree backed nighthawk
+ * @param enableUserReindetwitteringNighthawkHashStore boolean value to enable reindetwittering RTAs on user id with hash backed nighthawk
+ * @param userReindetwitteringNighthawkBtreeStoreConfig NH btree store config used in reindetwittering user RTAs
+ * @param userReindetwitteringNighthawkHashStoreConfig NH hash store config used in reindetwittering user RTAs
  */
 case class RealTimeAggregatesJobConfig(
   appId: String,
@@ -51,11 +51,11 @@ case class RealTimeAggregatesJobConfig(
   keyedByUserEnabled: Boolean = false,
   keyedByAuthorEnabled: Boolean = false,
   keyedByTweetEnabled: Boolean = false,
-  enableUserReindexingNighthawkBtreeStore: Boolean = false,
-  enableUserReindexingNighthawkHashStore: Boolean = false,
-  userReindexingNighthawkBtreeStoreConfig: NighthawkUnderlyingStoreConfig =
+  enableUserReindetwitteringNighthawkBtreeStore: Boolean = false,
+  enableUserReindetwitteringNighthawkHashStore: Boolean = false,
+  userReindetwitteringNighthawkBtreeStoreConfig: NighthawkUnderlyingStoreConfig =
     NighthawkUnderlyingStoreConfig(),
-  userReindexingNighthawkHashStoreConfig: NighthawkUnderlyingStoreConfig =
+  userReindetwitteringNighthawkHashStoreConfig: NighthawkUnderlyingStoreConfig =
     NighthawkUnderlyingStoreConfig()) {
 
   /**

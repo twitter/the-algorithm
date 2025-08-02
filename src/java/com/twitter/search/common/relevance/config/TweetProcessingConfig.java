@@ -101,14 +101,14 @@ public final class TweetProcessingConfig {
    * Returns the value of the given property as a string.
    *
    * @param property The property.
-   * @throws ConfigurationException If the given property is not found in the config.
+   * @throws ConfigurationEtwitterception If the given property is not found in the config.
    */
   public static String getString(String property) {
     try {
       return relevanceConfig.getString(property);
-    } catch (ConfigurationException e) {
+    } catch (ConfigurationEtwitterception e) {
       LOG.error("Fatal error: could not get config string " + property, e);
-      throw new RuntimeException(e);
+      throw new RuntimeEtwitterception(e);
     }
   }
 }

@@ -15,7 +15,7 @@ object ServerFlagNames {
  * Initializes references to the flag values defined in the aurora.deploy file.
  * To check what the flag values are initialized in runtime, search FlagsModule in stdout
  */
-object ServerFlagsModule extends TwitterModule {
+object ServerFlagsModule etwittertends TwitterModule {
 
   import ServerFlagNames._
 

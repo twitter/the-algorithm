@@ -15,7 +15,7 @@ case class RetweetSpamRequest(
   retweetId: TweetId,
   sourceUserId: UserId,
   sourceTweetId: TweetId,
-  sourceTweetText: String,
+  sourceTweetTetwittert: String,
   sourceUserName: Option[String],
   safetyMetaData: Option[SafetyMetaData])
 
@@ -29,7 +29,7 @@ object ScarecrowRetweetSpamChecker {
     Retweet(
       id = req.retweetId,
       sourceUserId = req.sourceUserId,
-      text = req.sourceTweetText,
+      tetwittert = req.sourceTweetTetwittert,
       sourceTweetId = req.sourceTweetId,
       safetyMetaData = req.safetyMetaData
     )
@@ -44,16 +44,16 @@ object ScarecrowRetweetSpamChecker {
         case (TieredActionResult.NotSpam, _, _) => Spam.AllowFuture
         case (TieredActionResult.SilentFail, _, _) => Spam.SilentFailFuture
         case (TieredActionResult.UrlSpam, _, denyMessage) =>
-          Future.exception(TweetCreateFailure.State(TweetCreateState.UrlSpam, denyMessage))
+          Future.etwitterception(TweetCreateFailure.State(TweetCreateState.UrlSpam, denyMessage))
         case (TieredActionResult.Deny, _, denyMessage) =>
-          Future.exception(TweetCreateFailure.State(TweetCreateState.Spam, denyMessage))
+          Future.etwitterception(TweetCreateFailure.State(TweetCreateState.Spam, denyMessage))
         case (TieredActionResult.DenyByIpiPolicy, _, denyMessage) =>
-          Future.exception(Spam.DisabledByIpiFailure(request.sourceUserName, denyMessage))
+          Future.etwitterception(Spam.DisabledByIpiFailure(request.sourceUserName, denyMessage))
         case (TieredActionResult.RateLimit, _, denyMessage) =>
-          Future.exception(
-            TweetCreateFailure.State(TweetCreateState.SafetyRateLimitExceeded, denyMessage))
+          Future.etwitterception(
+            TweetCreateFailure.State(TweetCreateState.SafetyRateLimitEtwitterceeded, denyMessage))
         case (TieredActionResult.Bounce, Some(b), _) =>
-          Future.exception(TweetCreateFailure.Bounced(b))
+          Future.etwitterception(TweetCreateFailure.Bounced(b))
       }
 
     req => {

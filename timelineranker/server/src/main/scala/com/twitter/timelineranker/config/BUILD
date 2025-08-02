@@ -7,7 +7,7 @@ scala_library(
         "3rdparty/jvm/com/twitter/storehaus:core",
         "3rdparty/jvm/org/apache/thrift:libthrift",
         "abdecider",
-        "cortex-tweet-annotate/service/src/main/thrift:thrift-scala",
+        "cortetwitter-tweet-annotate/service/src/main/thrift:thrift-scala",
         "decider",
         "featureswitches/featureswitches-core/src/main/scala",
         "finagle-internal/mtls/src/main/scala/com/twitter/finagle/mtls/authentication",
@@ -16,7 +16,7 @@ scala_library(
         "finagle/finagle-stats",
         "finagle/finagle-thrift/src/main/java",
         "finagle/finagle-thrift/src/main/scala",
-        "finagle/finagle-thriftmux/src/main/scala",
+        "finagle/finagle-thriftmutwitter/src/main/scala",
         "loglens/loglens-logging/src/main/scala",
         "merlin/util/src/main/scala",
         "servo/decider",
@@ -59,7 +59,7 @@ scala_library(
         "util/util-core/src/main/scala/com/twitter/conversions",
         "util/util-stats/src/main/scala",
     ],
-    exports = [
+    etwitterports = [
         "src/thrift/com/twitter/recos/user_tweet_entity_graph:user_tweet_entity_graph-scala",
     ],
 )

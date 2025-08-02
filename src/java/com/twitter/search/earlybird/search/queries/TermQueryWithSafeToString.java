@@ -1,14 +1,14 @@
 package com.twitter.search.earlybird.search.queries;
 
-import org.apache.lucene.index.Term;
+import org.apache.lucene.indetwitter.Term;
 import org.apache.lucene.search.TermQuery;
 
 /**
  * Work around an issue where IntTerms and LongTerms are not valid utf8,
- * so calling toString on any TermQuery containing an IntTerm or a LongTerm may cause exceptions.
+ * so calling toString on any TermQuery containing an IntTerm or a LongTerm may cause etwitterceptions.
  * This code should produce the same output as TermQuery.toString
  */
-public final class TermQueryWithSafeToString extends TermQuery {
+public final class TermQueryWithSafeToString etwittertends TermQuery {
   private final String termValueForToString;
 
   public TermQueryWithSafeToString(Term term, String termValueForToString) {

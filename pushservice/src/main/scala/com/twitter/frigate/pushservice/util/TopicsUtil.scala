@@ -4,7 +4,7 @@ import com.twitter.contentrecommender.thriftscala.DisplayLocation
 import com.twitter.finagle.stats.Stat
 import com.twitter.frigate.common.base.TargetUser
 import com.twitter.frigate.common.predicate.CommonOutNetworkTweetCandidatesSourcePredicates.authorNotBeingFollowedPredicate
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
+import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContetwittert
 import com.twitter.frigate.pushservice.model.PushTypes.Target
 import com.twitter.frigate.pushservice.model.PushTypes
 import com.twitter.frigate.pushservice.store.UttEntityHydrationQuery
@@ -13,17 +13,17 @@ import com.twitter.hermit.predicate.Predicate
 import com.twitter.hermit.predicate.socialgraph.RelationEdge
 import com.twitter.interests.thriftscala.InterestRelationType
 import com.twitter.interests.thriftscala.InterestRelationship
-import com.twitter.interests.thriftscala.InterestedInInterestLookupContext
+import com.twitter.interests.thriftscala.InterestedInInterestLookupContetwittert
 import com.twitter.interests.thriftscala.InterestedInInterestModel
 import com.twitter.interests.thriftscala.ProductId
 import com.twitter.interests.thriftscala.UserInterest
 import com.twitter.interests.thriftscala.UserInterestData
 import com.twitter.interests.thriftscala.UserInterests
-import com.twitter.interests.thriftscala.{TopicListingViewerContext => TopicListingViewerContextCR}
+import com.twitter.interests.thriftscala.{TopicListingViewerContetwittert => TopicListingViewerContetwittertCR}
 import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
 import com.twitter.storehaus.ReadableStore
 import com.twitter.timelines.configapi.Param
-import com.twitter.topiclisting.TopicListingViewerContext
+import com.twitter.topiclisting.TopicListingViewerContetwittert
 import com.twitter.topiclisting.utt.LocalizedEntity
 import com.twitter.tsp.thriftscala.TopicListingSetting
 import com.twitter.tsp.thriftscala.TopicSocialProofRequest
@@ -56,9 +56,9 @@ object TopicsUtil {
     semanticCoreEntityIds: Set[Long],
     uttEntityHydrationStore: UttEntityHydrationStore
   ): Future[Map[Long, LocalizedEntity]] = {
-    buildTopicListingViewerContext(target)
-      .flatMap { topicListingViewerContext =>
-        val query = UttEntityHydrationQuery(topicListingViewerContext, semanticCoreEntityIds.toSeq)
+    buildTopicListingViewerContetwittert(target)
+      .flatMap { topicListingViewerContetwittert =>
+        val query = UttEntityHydrationQuery(topicListingViewerContetwittert, semanticCoreEntityIds.toSeq)
         val localizedTopicEntitiesFut =
           uttEntityHydrationStore.getLocalizedTopicEntities(query).map(_.flatten)
         localizedTopicEntitiesFut.map { localizedTopicEntities =>
@@ -70,46 +70,46 @@ object TopicsUtil {
   }
 
   /**
-   * Fetch explict followed interests i.e Topics for targetUser
+   * Fetch etwitterplict followed interests i.e Topics for targetUser
    *
    * @param targetUser: [[Target]] object representing a user eligible for MagicRecs notification
    * @return: list of all Topics(Interests) Followed by targetUser
    */
   def getTopicsFollowedByUser(
     targetUser: Target,
-    interestsWithLookupContextStore: ReadableStore[
-      InterestsLookupRequestWithContext,
+    interestsWithLookupContetwittertStore: ReadableStore[
+      InterestsLookupRequestWithContetwittert,
       UserInterests
     ],
     followedTopicsStats: Stat
   ): Future[Option[Seq[UserInterest]]] = {
-    buildTopicListingViewerContext(targetUser).flatMap { topicListingViewerContext =>
-      // explicit interests relation query
-      val explicitInterestsLookupRequest = InterestsLookupRequestWithContext(
+    buildTopicListingViewerContetwittert(targetUser).flatMap { topicListingViewerContetwittert =>
+      // etwitterplicit interests relation query
+      val etwitterplicitInterestsLookupRequest = InterestsLookupRequestWithContetwittert(
         targetUser.targetId,
         Some(
-          InterestedInInterestLookupContext(
-            explicitContext = None,
-            inferredContext = None,
+          InterestedInInterestLookupContetwittert(
+            etwitterplicitContetwittert = None,
+            inferredContetwittert = None,
             productId = Some(ProductId.Followable),
-            topicListingViewerContext = Some(topicListingViewerContext.toThrift),
-            disableExplicit = None,
+            topicListingViewerContetwittert = Some(topicListingViewerContetwittert.toThrift),
+            disableEtwitterplicit = None,
             disableImplicit = Some(true)
           )
         )
       )
 
-      // filter explicit follow relationships from response
-      interestsWithLookupContextStore.get(explicitInterestsLookupRequest).map {
+      // filter etwitterplicit follow relationships from response
+      interestsWithLookupContetwittertStore.get(etwitterplicitInterestsLookupRequest).map {
         _.flatMap { userInterests =>
           val followedTopics = userInterests.interests.map {
             _.filter {
               case UserInterest(_, Some(interestData)) =>
                 interestData match {
                   case UserInterestData.InterestedIn(interestedIn) =>
-                    interestedIn.exists {
-                      case InterestedInInterestModel.ExplicitModel(explicitModel) =>
-                        explicitModel match {
+                    interestedIn.etwitterists {
+                      case InterestedInInterestModel.EtwitterplicitModel(etwitterplicitModel) =>
+                        etwitterplicitModel match {
                           case InterestRelationship.V1(v1) =>
                             v1.relation == InterestRelationType.Followed
 
@@ -136,12 +136,12 @@ object TopicsUtil {
    *
    * @param target : [[Target]] object respresenting MagicRecs user
    *
-   * @return: [[TopicListingViewerContext]] for querying topics
+   * @return: [[TopicListingViewerContetwittert]] for querying topics
    */
-  def buildTopicListingViewerContext(target: Target): Future[TopicListingViewerContext] = {
+  def buildTopicListingViewerContetwittert(target: Target): Future[TopicListingViewerContetwittert] = {
     Future.join(target.inferredUserDeviceLanguage, target.countryCode, target.targetUser).map {
       case (inferredLanguage, countryCode, userInfo) =>
-        TopicListingViewerContext(
+        TopicListingViewerContetwittert(
           userId = Some(target.targetId),
           guestId = None,
           deviceId = None,
@@ -158,10 +158,10 @@ object TopicsUtil {
    *
    * @param target : [[Target]] object respresenting MagicRecs user
    *
-   * @return: [[TopicListingViewerContext]] for querying topics
+   * @return: [[TopicListingViewerContetwittert]] for querying topics
    */
-  def buildTopicListingViewerContextForCR(target: Target): Future[TopicListingViewerContextCR] = {
-    TopicsUtil.buildTopicListingViewerContext(target).map(_.toThrift)
+  def buildTopicListingViewerContetwittertForCR(target: Target): Future[TopicListingViewerContetwittertCR] = {
+    TopicsUtil.buildTopicListingViewerContetwittert(target).map(_.toThrift)
   }
 
   /**
@@ -180,7 +180,7 @@ object TopicsUtil {
     edgeStore: ReadableStore[RelationEdge, Boolean],
     scoreThresholdParam: Param[Double]
   ): Future[Seq[TweetWithTopicProof]] = {
-    buildTopicListingViewerContextForCR(inputTarget).flatMap { topicListingContext =>
+    buildTopicListingViewerContetwittertForCR(inputTarget).flatMap { topicListingContetwittert =>
       val tweetIds: Set[Long] = tweets.map(_.tweet.id).toSet
       val tweetIdsToTweetyPie = tweets.map(tp => tp.tweet.id -> tp).toMap
       val topicSocialProofRequest =
@@ -189,7 +189,7 @@ object TopicsUtil {
           tweetIds,
           DisplayLocation.MagicRecsRecommendTopicTweets,
           TopicListingSetting.Followable,
-          topicListingContext)
+          topicListingContetwittert)
 
       topicSocialProofServiceStore
         .get(topicSocialProofRequest).flatMap {
@@ -197,10 +197,10 @@ object TopicsUtil {
             val topicProofCandidates = topicSocialProofResponse.socialProofs.collect {
               case (tweetId, topicsWithScore)
                   if topicsWithScore.nonEmpty && topicsWithScore
-                    .maxBy(_.score).score >= inputTarget
+                    .matwitterBy(_.score).score >= inputTarget
                     .params(scoreThresholdParam) =>
-                // Get the topic with max score if there are any topics returned
-                val topicWithScore = topicsWithScore.maxBy(_.score)
+                // Get the topic with matwitter score if there are any topics returned
+                val topicWithScore = topicsWithScore.matwitterBy(_.score)
                 TweetWithTopicProof(
                   tweetId,
                   topicWithScore.topicId,
@@ -226,7 +226,7 @@ object TopicsUtil {
    * @param topicSocialProofServiceStore store to query topic social proof
    * @param enableTopicAnnotation whether to enable topic annotation
    * @param topicScoreThreshold  threshold for topic score
-   * @return a (tweetId, TopicWithScore) map where the topic with highest topic score (if exists) is chosen
+   * @return a (tweetId, TopicWithScore) map where the topic with highest topic score (if etwitterists) is chosen
    */
   def getTopicsWithScoreMap(
     target: PushTypes.Target,
@@ -238,7 +238,7 @@ object TopicsUtil {
 
     if (enableTopicAnnotation) {
       TopicsUtil
-        .buildTopicListingViewerContextForCR(target).flatMap { topicListingContext =>
+        .buildTopicListingViewerContetwittertForCR(target).flatMap { topicListingContetwittert =>
           val tweetIds = Tweets.keySet
           val topicSocialProofRequest =
             TopicSocialProofRequest(
@@ -246,7 +246,7 @@ object TopicsUtil {
               tweetIds,
               DisplayLocation.MagicRecsRecommendTopicTweets,
               TopicListingSetting.Followable,
-              topicListingContext)
+              topicListingContetwittert)
 
           topicSocialProofServiceStore
             .get(topicSocialProofRequest).map {
@@ -255,8 +255,8 @@ object TopicsUtil {
                   .collect {
                     case (tweetId, topicsWithScore)
                         if topicsWithScore.nonEmpty && Tweets(tweetId).nonEmpty
-                          && topicsWithScore.maxBy(_.score).score >= topicScoreThreshold =>
-                      tweetId -> topicsWithScore.maxBy(_.score)
+                          && topicsWithScore.matwitterBy(_.score).score >= topicScoreThreshold =>
+                      tweetId -> topicsWithScore.matwitterBy(_.score)
                   }
 
               }

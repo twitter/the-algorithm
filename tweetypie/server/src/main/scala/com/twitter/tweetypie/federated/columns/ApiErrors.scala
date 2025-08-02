@@ -20,23 +20,23 @@ object ApiErrors {
   val UserDeniedRetweetErr = toErr(ApiError.CurrentUserSuspended)
 
   // Errs ported from StatusesUpdateController
-  val RateLimitExceededErr = toErr(ApiError.OverStatusUpdateLimit, "User")
+  val RateLimitEtwitterceededErr = toErr(ApiError.OverStatusUpdateLimit, "User")
   val TweetUrlSpamErr = toErr(ApiError.TieredActionTweetUrlSpam)
   val TweetSpammerErr = toErr(ApiError.TieredActionTweetSpammer)
   val CaptchaChallengeErr = toErr(ApiError.TieredActionChallengeCaptcha)
-  val SafetyRateLimitExceededErr = toErr(ApiError.UserActionRateLimitExceeded, "User")
-  val TweetCannotBeBlankErr = // was MissingRequiredParameterException
-    toErr(ApiError.ForbiddenMissingParameter, "tweet_text or media")
-  val TweetTextTooLongErr = toErr(ApiError.StatusTooLongError)
+  val SafetyRateLimitEtwitterceededErr = toErr(ApiError.UserActionRateLimitEtwitterceeded, "User")
+  val TweetCannotBeBlankErr = // was MissingRequiredParameterEtwitterception
+    toErr(ApiError.ForbiddenMissingParameter, "tweet_tetwittert or media")
+  val TweetTetwittertTooLongErr = toErr(ApiError.StatusTooLongError)
   val MalwareTweetErr = toErr(ApiError.StatusMalwareError)
   val DuplicateTweetErr = toErr(ApiError.DuplicateStatusError)
   val CurrentUserSuspendedErr = toErr(ApiError.CurrentUserSuspended)
-  val MentionLimitExceededErr = toErr(ApiError.MentionLimitInTweetExceeded)
-  val UrlLimitExceededErr = toErr(ApiError.UrlLimitInTweetExceeded)
-  val HashtagLimitExceededErr = toErr(ApiError.HashtagLimitInTweetExceeded)
-  val CashtagLimitExceededErr = toErr(ApiError.CashtagLimitInTweetExceeded)
-  val HashtagLengthLimitExceededErr = toErr(ApiError.HashtagLengthLimitInTweetExceeded)
-  val TooManyAttachmentTypesErr = toErr(ApiError.AttachmentTypesLimitInTweetExceeded)
+  val MentionLimitEtwitterceededErr = toErr(ApiError.MentionLimitInTweetEtwitterceeded)
+  val UrlLimitEtwitterceededErr = toErr(ApiError.UrlLimitInTweetEtwitterceeded)
+  val HashtagLimitEtwitterceededErr = toErr(ApiError.HashtagLimitInTweetEtwitterceeded)
+  val CashtagLimitEtwitterceededErr = toErr(ApiError.CashtagLimitInTweetEtwitterceeded)
+  val HashtagLengthLimitEtwitterceededErr = toErr(ApiError.HashtagLengthLimitInTweetEtwitterceeded)
+  val TooManyAttachmentTypesErr = toErr(ApiError.AttachmentTypesLimitInTweetEtwitterceeded)
   val InvalidAttachmentUrlErr = toErr(ApiError.InvalidParameter("attachment_url"))
   val InReplyToTweetNotFoundErr = toErr(ApiError.InReplyToTweetNotFound)
   val InvalidAdditionalFieldErr = toErr(ApiError.GenericBadRequest)
@@ -53,7 +53,7 @@ object ApiErrors {
   // Errors ported from StatusesDestroyController
   val DeletePermissionErr = toErr(ApiError.StatusActionPermissionError("delete"))
 
-  // See StatusesUpdateController#GenericErrorException
+  // See StatusesUpdateController#GenericErrorEtwitterception
   val GenericTweetCreateErr = toErr(ApiError.UnknownInterpreterError, "Tweet creation failed")
   val InvalidBatchModeParameterErr = toErr(ApiError.InvalidParameter("batch_mode"))
   val CannotConvoControlAndCommunitiesErr =
@@ -67,7 +67,7 @@ object ApiErrors {
 
   val SuperFollowCreateNotAuthorizedErr = toErr(ApiError.SuperFollowsCreateNotAuthorized)
   val SuperFollowInvalidParamsErr = toErr(ApiError.SuperFollowsInvalidParams)
-  val ExclusiveTweetEngagementNotAllowedErr = toErr(ApiError.ExclusiveTweetEngagementNotAllowed)
+  val EtwitterclusiveTweetEngagementNotAllowedErr = toErr(ApiError.EtwitterclusiveTweetEngagementNotAllowed)
 
   val SafetyLevelMissingErr = toErr(ApiError.MissingParameter("safety_level"))
 
@@ -104,7 +104,7 @@ object ApiErrors {
       case _ => Err.BadRequest
     }
     val errMessage = s"${apiError.message.format(args.mkString(","))} (${apiError.code})"
-    val errContext = Some(Err.Context.Api11Error(apiError.code))
-    Err(errCode, errMessage, errContext)
+    val errContetwittert = Some(Err.Contetwittert.Api11Error(apiError.code))
+    Err(errCode, errMessage, errContetwittert)
   }
 }

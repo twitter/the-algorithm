@@ -2,14 +2,14 @@ package com.twitter.simclustersann
 
 import com.google.inject.Module
 import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.mtls.thriftmux.Mtls
+import com.twitter.finatra.mtls.thriftmutwitter.Mtls
 import com.twitter.finatra.thrift.ThriftServer
 import com.twitter.finatra.thrift.filters._
 import com.twitter.finatra.thrift.routing.ThriftRouter
 import com.twitter.inject.thrift.modules.ThriftClientIdModule
-import com.twitter.relevance_platform.common.exceptions._
+import com.twitter.relevance_platform.common.etwitterceptions._
 import com.twitter.simclustersann.controllers.SimClustersANNController
-import com.twitter.simclustersann.exceptions.InvalidRequestForSimClustersAnnVariantExceptionMapper
+import com.twitter.simclustersann.etwitterceptions.InvalidRequestForSimClustersAnnVariantEtwitterceptionMapper
 import com.twitter.simclustersann.modules._
 import com.twitter.simclustersann.thriftscala.SimClustersANNService
 import com.twitter.finagle.Filter
@@ -19,9 +19,9 @@ import com.twitter.relevance_platform.common.filters.DarkTrafficFilterModule
 import com.twitter.relevance_platform.common.filters.ClientStatsFilter
 import com.twitter.simclustersann.common.FlagNames.DisableWarmup
 
-object SimClustersAnnServerMain extends SimClustersAnnServer
+object SimClustersAnnServerMain etwittertends SimClustersAnnServer
 
-class SimClustersAnnServer extends ThriftServer with Mtls {
+class SimClustersAnnServer etwittertends ThriftServer with Mtls {
   flag(
     name = DisableWarmup,
     default = false,
@@ -35,7 +35,7 @@ class SimClustersAnnServer extends ThriftServer with Mtls {
     ServiceNameMapperModule,
     ClusterConfigMapperModule,
     ClusterConfigModule,
-    ClusterTweetIndexProviderModule,
+    ClusterTweetIndetwitterProviderModule,
     DeciderModule,
     EmbeddingStoreModule,
     FlagsModule,
@@ -54,11 +54,11 @@ class SimClustersAnnServer extends ThriftServer with Mtls {
       .filter[TraceIdMDCFilter]
       .filter[ThriftMDCFilter]
       .filter[ClientStatsFilter]
-      .filter[ExceptionMappingFilter]
+      .filter[EtwitterceptionMappingFilter]
       .filter[Filter.TypeAgnostic, DarkTrafficFilterType]
-      .exceptionMapper[InvalidRequestForSimClustersAnnVariantExceptionMapper]
-      .exceptionMapper[DeadlineExceededExceptionMapper]
-      .exceptionMapper[UnhandledExceptionMapper]
+      .etwitterceptionMapper[InvalidRequestForSimClustersAnnVariantEtwitterceptionMapper]
+      .etwitterceptionMapper[DeadlineEtwitterceededEtwitterceptionMapper]
+      .etwitterceptionMapper[UnhandledEtwitterceptionMapper]
       .add[SimClustersANNController]
   }
 

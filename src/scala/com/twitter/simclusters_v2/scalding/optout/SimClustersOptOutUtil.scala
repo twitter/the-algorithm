@@ -6,7 +6,7 @@ import com.twitter.octain.identifiers.thriftscala.RawId
 import com.twitter.octain.p13n.batch.P13NPreferencesScalaDataset
 import com.twitter.octain.p13n.preferences.CompositeInterest
 import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding.TypedPipe
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
@@ -122,20 +122,20 @@ object SimClustersOptOutUtil {
     newNumClustersPerUser: TypedPipe[Int],
     modelVersion: String,
     alertEmail: String
-  ): Execution[Unit] = {
-    val oldNumUsersExec = oldNumClustersPerUser.aggregate(size).toOptionExecution
-    val newNumUsersExec = newNumClustersPerUser.aggregate(size).toOptionExecution
+  ): Etwitterecution[Unit] = {
+    val oldNumUsersEtwitterec = oldNumClustersPerUser.aggregate(size).toOptionEtwitterecution
+    val newNumUsersEtwitterec = newNumClustersPerUser.aggregate(size).toOptionEtwitterecution
 
-    val oldMedianExec = oldNumClustersPerUser
+    val oldMedianEtwitterec = oldNumClustersPerUser
       .aggregate(QTreeAggregatorLowerBound(0.5))
-      .toOptionExecution
+      .toOptionEtwitterecution
 
-    val newMedianExec = newNumClustersPerUser
+    val newMedianEtwitterec = newNumClustersPerUser
       .aggregate(QTreeAggregatorLowerBound(0.5))
-      .toOptionExecution
+      .toOptionEtwitterecution
 
-    Execution
-      .zip(oldNumUsersExec, newNumUsersExec, oldMedianExec, newMedianExec)
+    Etwitterecution
+      .zip(oldNumUsersEtwitterec, newNumUsersEtwitterec, oldMedianEtwitterec, newMedianEtwitterec)
       .map {
         case (Some(oldNumUsers), Some(newNumUsers), Some(oldMedian), Some(newMedian)) =>
           val deltaNum = (newNumUsers - oldNumUsers).toDouble / oldNumUsers.toDouble

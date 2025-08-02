@@ -25,13 +25,13 @@ case class EntityTweetsProduction(deciderGateBuilder: DeciderGateBuilder) {
 
   val booleanFeatureSwitchOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
     EnableTokensInContentFeaturesHydrationParam,
-    EnableTweetTextInContentFeaturesHydrationParam,
+    EnableTweetTetwittertInContentFeaturesHydrationParam,
     EnableConversationControlInContentFeaturesHydrationParam,
     EnableTweetMediaHydrationParam
   )
 
   val intFeatureSwitchOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-    MaxFollowedUsersParam
+    MatwitterFollowedUsersParam
   )
 
   val config: BaseConfig = new BaseConfigBuilder()

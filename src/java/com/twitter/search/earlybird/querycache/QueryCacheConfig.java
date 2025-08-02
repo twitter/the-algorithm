@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird.querycache;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileNotFoundEtwitterception;
 import java.io.FileReader;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class QueryCacheConfig {
   QueryCacheConfig(Reader reader, SearchStatsReceiver statsReceiver) {
     this.statsReceiver = statsReceiver;
     if (reader == null) {
-      throw new RuntimeException("Query cache config not loaded");
+      throw new RuntimeEtwitterception("Query cache config not loaded");
     }
     loadConfig(reader);
   }
@@ -57,11 +57,11 @@ public class QueryCacheConfig {
     if (configFile != null) {
       try {
         return new FileReader(configFile);
-      } catch (FileNotFoundException e) {
-        // This should not happen as the caller should make sure that the file exists before
+      } catch (FileNotFoundEtwitterception e) {
+        // This should not happen as the caller should make sure that the file etwitterists before
         // calling this function.
-        LOG.error("Unexpected exception", e);
-        throw new RuntimeException("Query cache config file not loaded!", e);
+        LOG.error("Unetwitterpected etwitterception", e);
+        throw new RuntimeEtwitterception("Query cache config file not loaded!", e);
       }
     }
     return null;
@@ -69,7 +69,7 @@ public class QueryCacheConfig {
 
   private static File openConfigFile(String configFilePath) {
     File configFile = new File(configFilePath);
-    if (!configFile.exists()) {
+    if (!configFile.etwitterists()) {
       LOG.warn("QueryCache config file [" + configFile + "] not found");
       configFile = null;
     } else {
@@ -89,8 +89,8 @@ public class QueryCacheConfig {
       QueryCacheFilter cacheFilter = (QueryCacheFilter) data;
       try {
         cacheFilter.sanityCheck();
-      } catch (QueryCacheFilter.InvalidEntryException e) {
-        throw new RuntimeException(e);
+      } catch (QueryCacheFilter.InvalidEntryEtwitterception e) {
+        throw new RuntimeEtwitterception(e);
       }
       cacheFilter.createQueryCounter(statsReceiver);
       filters.add(cacheFilter);

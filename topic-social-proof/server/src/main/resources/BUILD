@@ -1,6 +1,6 @@
 resources(
     sources = [
-        "*.xml",
+        "*.twitterml",
         "*.yml",
         "config/*.yml",
     ],

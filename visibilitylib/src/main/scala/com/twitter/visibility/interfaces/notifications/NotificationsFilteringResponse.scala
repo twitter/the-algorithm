@@ -6,8 +6,8 @@ import scala.collection.immutable.Set
 
 sealed trait NotificationsFilteringResponse
 
-case object Allow extends NotificationsFilteringResponse
+case object Allow etwittertends NotificationsFilteringResponse
 
-case class Filtered(action: Action) extends NotificationsFilteringResponse
+case class Filtered(action: Action) etwittertends NotificationsFilteringResponse
 
-case class Failed(features: Set[Feature[_]]) extends NotificationsFilteringResponse
+case class Failed(features: Set[Feature[_]]) etwittertends NotificationsFilteringResponse

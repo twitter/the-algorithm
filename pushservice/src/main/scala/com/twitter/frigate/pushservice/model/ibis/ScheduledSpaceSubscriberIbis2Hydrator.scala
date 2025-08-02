@@ -4,7 +4,7 @@ import com.twitter.frigate.pushservice.model.ScheduledSpaceSubscriberPushCandida
 import com.twitter.frigate.pushservice.util.PushIbisUtil._
 import com.twitter.util.Future
 
-trait ScheduledSpaceSubscriberIbis2Hydrator extends Ibis2HydratorForCandidate {
+trait ScheduledSpaceSubscriberIbis2Hydrator etwittertends Ibis2HydratorForCandidate {
   self: ScheduledSpaceSubscriberPushCandidate =>
 
   override lazy val senderId: Option[Long] = hostId
@@ -19,8 +19,8 @@ trait ScheduledSpaceSubscriberIbis2Hydrator extends Ibis2HydratorForCandidate {
           ) ++ audioSpace.flatMap(_.title.map("space_title" -> _))
         }
       case _ =>
-        Future.exception(
-          new RuntimeException("Unable to get host id for ScheduledSpaceSubscriberIbis2Hydrator"))
+        Future.etwitterception(
+          new RuntimeEtwitterception("Unable to get host id for ScheduledSpaceSubscriberIbis2Hydrator"))
     }
   }
 

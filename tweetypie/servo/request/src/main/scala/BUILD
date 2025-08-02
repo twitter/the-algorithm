@@ -14,7 +14,7 @@ scala_library(
         "twitter-config/yaml",
         "util/util-stats/src/main/scala",
     ],
-    exports = [
+    etwitterports = [
         "tweetypie/servo/util",
     ],
 )

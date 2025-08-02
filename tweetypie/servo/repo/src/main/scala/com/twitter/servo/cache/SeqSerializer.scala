@@ -7,4 +7,4 @@ package com.twitter.servo.cache
  * @param itemSizeEstimate estimated size in bytes of individual elements
  */
 class SeqSerializer[T](itemSerializer: Serializer[T], itemSizeEstimate: Int = 8)
-    extends IterableSerializer[T, Seq[T]](() => Seq.newBuilder[T], itemSerializer, itemSizeEstimate)
+    etwittertends IterableSerializer[T, Seq[T]](() => Seq.newBuilder[T], itemSerializer, itemSizeEstimate)

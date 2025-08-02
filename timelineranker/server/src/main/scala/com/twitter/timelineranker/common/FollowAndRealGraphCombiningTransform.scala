@@ -5,8 +5,8 @@ import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.servo.util.FutureArrow
 import com.twitter.timelineranker.core.CandidateEnvelope
 import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.parameters.recap.RecapQueryContext
-import com.twitter.timelineranker.parameters.in_network_tweets.InNetworkTweetParams.RecycledMaxFollowedUsersEnableAntiDilutionParam
+import com.twitter.timelineranker.parameters.recap.RecapQueryContetwittert
+import com.twitter.timelineranker.parameters.in_network_tweets.InNetworkTweetParams.RecycledMatwitterFollowedUsersEnableAntiDilutionParam
 import com.twitter.timelineranker.visibility.FollowGraphDataProvider
 import com.twitter.timelines.earlybird.common.options.AuthorScoreAdjustments
 import com.twitter.util.Future
@@ -16,23 +16,23 @@ import com.twitter.util.Future
  * derived from the earlybirdOptions passed in the query
  *
  * @param followGraphDataProvider data provider to be used for fetching updated mutual follow info
- * @param maxFollowedUsersProvider max number of users to return
+ * @param matwitterFollowedUsersProvider matwitter number of users to return
  * @param enableRealGraphUsersProvider should we augment using real graph data?
- * @param maxRealGraphAndFollowedUsersProvider max combined users to return, overrides maxFollowedUsersProvider above
+ * @param matwitterRealGraphAndFollowedUsersProvider matwitter combined users to return, overrides matwitterFollowedUsersProvider above
  * @param statsReceiver scoped stats received
  */
 class FollowAndRealGraphCombiningTransform(
   followGraphDataProvider: FollowGraphDataProvider,
-  maxFollowedUsersProvider: DependencyProvider[Int],
+  matwitterFollowedUsersProvider: DependencyProvider[Int],
   enableRealGraphUsersProvider: DependencyProvider[Boolean],
-  maxRealGraphAndFollowedUsersProvider: DependencyProvider[Int],
+  matwitterRealGraphAndFollowedUsersProvider: DependencyProvider[Int],
   imputeRealGraphAuthorWeightsProvider: DependencyProvider[Boolean],
   imputeRealGraphAuthorWeightsPercentileProvider: DependencyProvider[Int],
   statsReceiver: StatsReceiver)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+    etwittertends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
 
-  // Number of authors in the seedset after mixing followed users and real graph users
-  // Only have this stat if user follows >= maxFollowedUsers and enableRealGraphUsers is true and onlyRealGraphUsers is false
+  // Number of authors in the seedset after mitwittering followed users and real graph users
+  // Only have this stat if user follows >= matwitterFollowedUsers and enableRealGraphUsers is true and onlyRealGraphUsers is false
   val numFollowAndRealGraphUsersStat: Stat = statsReceiver.stat("numFollowAndRealGraphUsers")
   val numFollowAndRealGraphUsersFromFollowGraphStat =
     statsReceiver.scope("numFollowAndRealGraphUsers").stat("FollowGraphUsers")
@@ -42,25 +42,25 @@ class FollowAndRealGraphCombiningTransform(
     statsReceiver.scope("numFollowAndRealGraphUsers").counter()
 
   // Number of authors in the seedset with only followed users
-  // Only have this stat if user follows >= maxFollowedUsers and enableRealGraphUsers is false
+  // Only have this stat if user follows >= matwitterFollowedUsers and enableRealGraphUsers is false
   val numFollowedUsersStat: Stat = statsReceiver.stat("numFollowedUsers")
 
   // Number of authors in the seedset with only followed users
-  // Only have this stat if user follows < maxFollowedUsers
-  val numFollowedUsersLessThanMaxStat: Stat = statsReceiver.stat("numFollowedUsersLessThanMax")
-  val numFollowedUsersLessThanMaxCounter =
-    statsReceiver.scope("numFollowedUsersLessThanMax").counter()
-  val numFollowedUsersMoreThanMaxStat: Stat = statsReceiver.stat("numFollowedUsersMoreThanMax")
-  val numFollowedUsersMoreThanMaxCounter =
-    statsReceiver.scope("numFollowedUsersMoreThanMax").counter()
+  // Only have this stat if user follows < matwitterFollowedUsers
+  val numFollowedUsersLessThanMatwitterStat: Stat = statsReceiver.stat("numFollowedUsersLessThanMatwitter")
+  val numFollowedUsersLessThanMatwitterCounter =
+    statsReceiver.scope("numFollowedUsersLessThanMatwitter").counter()
+  val numFollowedUsersMoreThanMatwitterStat: Stat = statsReceiver.stat("numFollowedUsersMoreThanMatwitter")
+  val numFollowedUsersMoreThanMatwitterCounter =
+    statsReceiver.scope("numFollowedUsersMoreThanMatwitter").counter()
 
   val realGraphAuthorWeightsSumProdStat: Stat = statsReceiver.stat("realGraphAuthorWeightsSumProd")
-  val realGraphAuthorWeightsSumMinExpStat: Stat =
-    statsReceiver.stat("realGraphAuthorWeightsSumMinExp")
-  val realGraphAuthorWeightsSumP50ExpStat: Stat =
-    statsReceiver.stat("realGraphAuthorWeightsSumP50Exp")
-  val realGraphAuthorWeightsSumP95ExpStat: Stat =
-    statsReceiver.stat("realGraphAuthorWeightsSumP95Exp")
+  val realGraphAuthorWeightsSumMinEtwitterpStat: Stat =
+    statsReceiver.stat("realGraphAuthorWeightsSumMinEtwitterp")
+  val realGraphAuthorWeightsSumP50EtwitterpStat: Stat =
+    statsReceiver.stat("realGraphAuthorWeightsSumP50Etwitterp")
+  val realGraphAuthorWeightsSumP95EtwitterpStat: Stat =
+    statsReceiver.stat("realGraphAuthorWeightsSumP95Etwitterp")
   val numAuthorsWithoutRealgraphScoreStat: Stat =
     statsReceiver.stat("numAuthorsWithoutRealgraphScore")
 
@@ -76,43 +76,43 @@ class FollowAndRealGraphCombiningTransform(
       ).map {
         case (followedUserIds, mutedUserIds) =>
           // Anti-dilution param for DDG-16198
-          val recycledMaxFollowedUsersEnableAntiDilutionParamProvider =
-            DependencyProvider.from(RecycledMaxFollowedUsersEnableAntiDilutionParam)
+          val recycledMatwitterFollowedUsersEnableAntiDilutionParamProvider =
+            DependencyProvider.from(RecycledMatwitterFollowedUsersEnableAntiDilutionParam)
 
-          val maxFollowedUsers = {
-            if (followedUserIds.size > RecapQueryContext.MaxFollowedUsers.default && recycledMaxFollowedUsersEnableAntiDilutionParamProvider(
+          val matwitterFollowedUsers = {
+            if (followedUserIds.size > RecapQueryContetwittert.MatwitterFollowedUsers.default && recycledMatwitterFollowedUsersEnableAntiDilutionParamProvider(
                 envelope.query)) {
-              // trigger experiment
-              maxFollowedUsersProvider(envelope.query)
+              // trigger etwitterperiment
+              matwitterFollowedUsersProvider(envelope.query)
             } else {
-              maxFollowedUsersProvider(envelope.query)
+              matwitterFollowedUsersProvider(envelope.query)
             }
           }
 
           val filteredRealGraphUserIds = realGraphData.keySet
             .filterNot(mutedUserIds)
-            .take(maxFollowedUsers)
+            .take(matwitterFollowedUsers)
             .toSeq
 
           val filteredFollowedUserIds = followedUserIds.filterNot(mutedUserIds)
 
-          if (followedUserIds.size < maxFollowedUsers) {
-            numFollowedUsersLessThanMaxStat.add(filteredFollowedUserIds.size)
+          if (followedUserIds.size < matwitterFollowedUsers) {
+            numFollowedUsersLessThanMatwitterStat.add(filteredFollowedUserIds.size)
             // stats
-            numFollowedUsersLessThanMaxCounter.incr()
+            numFollowedUsersLessThanMatwitterCounter.incr()
             (filteredFollowedUserIds, false)
           } else {
-            numFollowedUsersMoreThanMaxStat.add(filteredFollowedUserIds.size)
-            numFollowedUsersMoreThanMaxCounter.incr()
+            numFollowedUsersMoreThanMatwitterStat.add(filteredFollowedUserIds.size)
+            numFollowedUsersMoreThanMatwitterCounter.incr()
             if (enableRealGraphUsersProvider(envelope.query)) {
-              val maxRealGraphAndFollowedUsersNum =
-                maxRealGraphAndFollowedUsersProvider(envelope.query)
+              val matwitterRealGraphAndFollowedUsersNum =
+                matwitterRealGraphAndFollowedUsersProvider(envelope.query)
               require(
-                maxRealGraphAndFollowedUsersNum >= maxFollowedUsers,
-                "maxRealGraphAndFollowedUsers must be greater than or equal to maxFollowedUsers."
+                matwitterRealGraphAndFollowedUsersNum >= matwitterFollowedUsers,
+                "matwitterRealGraphAndFollowedUsers must be greater than or equal to matwitterFollowedUsers."
               )
-              val recentFollowedUsersNum = RecapQueryContext.MaxFollowedUsers.bounds
-                .apply(maxRealGraphAndFollowedUsersNum - filteredRealGraphUserIds.size)
+              val recentFollowedUsersNum = RecapQueryContetwittert.MatwitterFollowedUsers.bounds
+                .apply(matwitterRealGraphAndFollowedUsersNum - filteredRealGraphUserIds.size)
 
               val recentFollowedUsers =
                 filteredFollowedUserIds
@@ -164,21 +164,21 @@ class FollowAndRealGraphCombiningTransform(
           if (imputeRealGraphAuthorWeightsProvider(envelope.query) && realGraphData.nonEmpty) {
             val imputedScorePercentile =
               imputeRealGraphAuthorWeightsPercentileProvider(envelope.query) / 100.0
-            val existingAuthorIdScores = realGraphData.values.toList.sorted
-            val imputedScoreIndex = Math.min(
-              existingAuthorIdScores.length - 1,
-              (existingAuthorIdScores.length * imputedScorePercentile).toInt)
-            val imputedScore = existingAuthorIdScores(imputedScoreIndex)
+            val etwitteristingAuthorIdScores = realGraphData.values.toList.sorted
+            val imputedScoreIndetwitter = Math.min(
+              etwitteristingAuthorIdScores.length - 1,
+              (etwitteristingAuthorIdScores.length * imputedScorePercentile).toInt)
+            val imputedScore = etwitteristingAuthorIdScores(imputedScoreIndetwitter)
 
             val updatedAuthorScoreMap = realGraphData ++ authorIdsWithoutRealgraphScores
               .map(_ -> imputedScore).toMap
             imputedScorePercentile match {
               case 0.0 =>
-                realGraphAuthorWeightsSumMinExpStat.add(updatedAuthorScoreMap.values.sum.toFloat)
+                realGraphAuthorWeightsSumMinEtwitterpStat.add(updatedAuthorScoreMap.values.sum.toFloat)
               case 0.5 =>
-                realGraphAuthorWeightsSumP50ExpStat.add(updatedAuthorScoreMap.values.sum.toFloat)
+                realGraphAuthorWeightsSumP50EtwitterpStat.add(updatedAuthorScoreMap.values.sum.toFloat)
               case 0.95 =>
-                realGraphAuthorWeightsSumP95ExpStat.add(updatedAuthorScoreMap.values.sum.toFloat)
+                realGraphAuthorWeightsSumP95EtwitterpStat.add(updatedAuthorScoreMap.values.sum.toFloat)
               case _ =>
             }
             val earlybirdOptionsWithUpdatedAuthorScoreMap = envelope.query.earlybirdOptions

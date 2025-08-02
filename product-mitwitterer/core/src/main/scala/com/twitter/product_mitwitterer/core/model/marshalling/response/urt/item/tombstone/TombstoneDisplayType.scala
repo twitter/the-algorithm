@@ -1,0 +1,9 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.item.tombstone
+
+sealed trait TombstoneDisplayType
+
+case object TweetUnavailable etwittertends TombstoneDisplayType
+case object DisconnectedRepliesAncestor etwittertends TombstoneDisplayType
+case object DisconnectedRepliesDescendant etwittertends TombstoneDisplayType
+case object Inline etwittertends TombstoneDisplayType
+case object NonCompliant etwittertends TombstoneDisplayType

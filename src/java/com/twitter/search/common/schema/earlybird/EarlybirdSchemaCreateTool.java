@@ -6,7 +6,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
-import com.twitter.common.text.util.TokenStreamSerializer;
+import com.twitter.common.tetwittert.util.TokenStreamSerializer;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.schema.AnalyzerFactory;
 import com.twitter.search.common.schema.DynamicSchema;
@@ -32,21 +32,21 @@ import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT_V2;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EMBEDS_URL_COUNT;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EMBEDS_URL_COUNT_V2;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_1;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_2;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_3;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_4;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_FEATURE_UNUSED_BITS_0_24_8;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_12_30_2;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_13_30_2;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_14_10_22;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_16;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_17;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_18;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_19;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_20;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_4_31_1;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EXTENDED_TEST_FEATURE_UNUSED_BITS_7_6_26;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_1;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_2;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_3;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_4;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EtwitterTENDED_FEATURE_UNUSED_BITS_0_24_8;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_12_30_2;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_13_30_2;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_14_10_22;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_16;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_17;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_18;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_19;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_20;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_4_31_1;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_7_6_26;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FAKE_FAVORITE_COUNT;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FAKE_QUOTE_COUNT;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FAKE_REPLY_COUNT;
@@ -57,7 +57,7 @@ import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.FROM_VERIFIED_ACCOUNT_FLAG;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_CARD_FLAG;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_CONSUMER_VIDEO_FLAG;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_EXPANDO_CARD_FLAG;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_EtwitterPANDO_CARD_FLAG;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_IMAGE_URL_FLAG;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_LINK_FLAG;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.HAS_MULTIPLE_HASHTAGS_OR_TRENDS_FLAG;
@@ -104,7 +104,7 @@ import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.NUM_STOCKS;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.PARUS_SCORE;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.PBLOCK_SCORE;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.PERISCOPE_EXISTS;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.PERISCOPE_EtwitterISTS;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.PERISCOPE_HAS_BEEN_FEATURED;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.PERISCOPE_IS_CURRENTLY_FEATURED;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.PERISCOPE_IS_FROM_QUALITY_SOURCE;
@@ -121,8 +121,8 @@ import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.RETWEET_COUNT;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.RETWEET_COUNT_V2;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.SPAMMY_TWEET_CONTENT_SCORE;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.TEXT_SCORE;
-import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.TOXICITY_SCORE;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.TEtwitterT_SCORE;
+import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.TOtwitterICITY_SCORE;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.TWEET_SIGNATURE;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.USER_REPUTATION;
 import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant.VIDEO_VIEW_COUNT;
@@ -139,19 +139,19 @@ import static com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants
 public final class EarlybirdSchemaCreateTool {
   // How many times a schema is built
   private static final SearchCounter SCHEMA_BUILD_COUNT =
-      SearchCounter.export("schema_build_count");
+      SearchCounter.etwitterport("schema_build_count");
 
   // Number of integers for the column of ENCODED_TWEET_FEATURES_FIELD.
   @VisibleForTesting
   public static final int NUMBER_OF_INTEGERS_FOR_FEATURES = 5;
 
-  // Number of integers for the column of EXTENDED_ENCODED_TWEET_FEATURES_FIELD.
-  // extra 80 bytes
+  // Number of integers for the column of EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD.
+  // etwittertra 80 bytes
   // In realtime cluster, assuming 19 segments total, and 8388608 docs per segment
   // this would amount to about 12.75GB of memory needed
   //
   @VisibleForTesting
-  public static final int NUMBER_OF_INTEGERS_FOR_EXTENDED_FEATURES = 20;
+  public static final int NUMBER_OF_INTEGERS_FOR_EtwitterTENDED_FEATURES = 20;
 
   @VisibleForTesting
   public static final Map<String, FeatureConfiguration> FEATURE_CONFIGURATION_MAP
@@ -161,9 +161,9 @@ public final class EarlybirdSchemaCreateTool {
       EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD.getFieldName();
 
   private static String getBaseFieldName(String fullName) {
-    int index = fullName.indexOf(SchemaBuilder.CSF_VIEW_NAME_SEPARATOR);
-    Preconditions.checkArgument(index > 0);
-    return fullName.substring(0, index);
+    int indetwitter = fullName.indetwitterOf(SchemaBuilder.CSF_VIEW_NAME_SEPARATOR);
+    Preconditions.checkArgument(indetwitter > 0);
+    return fullName.substring(0, indetwitter);
   }
 
   private static String getBaseFieldName(EarlybirdFieldConstant fieldConstant) {
@@ -171,9 +171,9 @@ public final class EarlybirdSchemaCreateTool {
   }
 
   private static String getFeatureNameInField(EarlybirdFieldConstant fieldConstant) {
-    int index = fieldConstant.getFieldName().indexOf(SchemaBuilder.CSF_VIEW_NAME_SEPARATOR);
-    Preconditions.checkArgument(index > 0);
-    return fieldConstant.getFieldName().substring(index + 1);
+    int indetwitter = fieldConstant.getFieldName().indetwitterOf(SchemaBuilder.CSF_VIEW_NAME_SEPARATOR);
+    Preconditions.checkArgument(indetwitter > 0);
+    return fieldConstant.getFieldName().substring(indetwitter + 1);
   }
 
   // defining all features
@@ -181,7 +181,7 @@ public final class EarlybirdSchemaCreateTool {
     // Add individual tweet encoded features as views on top of
     // EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD
 
-    // int intIndex, int bitStartPos, int bitLength
+    // int intIndetwitter, int bitStartPos, int bitLength
     newEarlybirdFeatureConfiguration(IS_RETWEET_FLAG, ThriftCSFType.BOOLEAN, 0, 0, 1);
     newEarlybirdFeatureConfiguration(IS_OFFENSIVE_FLAG, ThriftCSFType.BOOLEAN, 0, 1, 1);
     newEarlybirdFeatureConfiguration(HAS_LINK_FLAG, ThriftCSFType.BOOLEAN, 0, 2, 1);
@@ -191,14 +191,14 @@ public final class EarlybirdSchemaCreateTool {
     newEarlybirdFeatureConfiguration(HAS_MULTIPLE_HASHTAGS_OR_TRENDS_FLAG,
         ThriftCSFType.BOOLEAN, 0, 6, 1);
     newEarlybirdFeatureConfiguration(FROM_VERIFIED_ACCOUNT_FLAG, ThriftCSFType.BOOLEAN, 0, 7, 1);
-    newEarlybirdFeatureConfiguration(TEXT_SCORE, ThriftCSFType.INT, 0, 8, 8);
+    newEarlybirdFeatureConfiguration(TEtwitterT_SCORE, ThriftCSFType.INT, 0, 8, 8);
     newEarlybirdFeatureConfiguration(LANGUAGE, ThriftCSFType.INT, 0, 16, 8);
     newEarlybirdFeatureConfiguration(LINK_LANGUAGE, ThriftCSFType.INT, 0, 24, 8);
 
     newEarlybirdFeatureConfiguration(HAS_IMAGE_URL_FLAG, ThriftCSFType.BOOLEAN, 1, 0, 1);
     newEarlybirdFeatureConfiguration(HAS_VIDEO_URL_FLAG, ThriftCSFType.BOOLEAN, 1, 1, 1);
     newEarlybirdFeatureConfiguration(HAS_NEWS_URL_FLAG, ThriftCSFType.BOOLEAN, 1, 2, 1);
-    newEarlybirdFeatureConfiguration(HAS_EXPANDO_CARD_FLAG, ThriftCSFType.BOOLEAN, 1, 3, 1);
+    newEarlybirdFeatureConfiguration(HAS_EtwitterPANDO_CARD_FLAG, ThriftCSFType.BOOLEAN, 1, 3, 1);
     newEarlybirdFeatureConfiguration(HAS_MULTIPLE_MEDIA_FLAG, ThriftCSFType.BOOLEAN, 1, 4, 1);
     newEarlybirdFeatureConfiguration(PROFILE_IS_EGG_FLAG, ThriftCSFType.BOOLEAN, 1, 5, 1);
     newEarlybirdFeatureConfiguration(NUM_MENTIONS, ThriftCSFType.INT, 1, 6, 2);     // 0, 1, 2, 3+
@@ -250,7 +250,7 @@ public final class EarlybirdSchemaCreateTool {
 
     // Unused bits from bit 24 to bit 31 (8 bits).
     // This used to be a feature that was decommissioned (SEARCHQUAL-10321)
-    newEarlybirdFeatureConfiguration(EXTENDED_FEATURE_UNUSED_BITS_0_24_8,
+    newEarlybirdFeatureConfiguration(EtwitterTENDED_FEATURE_UNUSED_BITS_0_24_8,
         ThriftCSFType.INT, 0, 24, 8);
 
     newEarlybirdFeatureConfiguration(REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT,
@@ -282,7 +282,7 @@ public final class EarlybirdSchemaCreateTool {
     newEarlybirdFeatureConfiguration(LABEL_SPAM_FLAG,           ThriftCSFType.BOOLEAN, 4, 29, 1);
     newEarlybirdFeatureConfiguration(LABEL_SPAM_HI_RCL_FLAG,    ThriftCSFType.BOOLEAN, 4, 30, 1);
 
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_4_31_1,
+    newEarlybirdFeatureConfiguration(EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_4_31_1,
         ThriftCSFType.INT, 4, 31, 1);
 
     newEarlybirdFeatureConfiguration(WEIGHTED_RETWEET_COUNT,
@@ -294,7 +294,7 @@ public final class EarlybirdSchemaCreateTool {
     newEarlybirdFeatureConfiguration(WEIGHTED_QUOTE_COUNT,
         ThriftCSFType.DOUBLE, 5, 24, 8, ThriftFeatureUpdateConstraint.INC_ONLY);
 
-    newEarlybirdFeatureConfiguration(PERISCOPE_EXISTS,
+    newEarlybirdFeatureConfiguration(PERISCOPE_EtwitterISTS,
         ThriftCSFType.BOOLEAN, 6, 0, 1);
     newEarlybirdFeatureConfiguration(PERISCOPE_HAS_BEEN_FEATURED,
         ThriftCSFType.BOOLEAN, 6, 1, 1);
@@ -309,7 +309,7 @@ public final class EarlybirdSchemaCreateTool {
         ThriftCSFType.BOOLEAN, 6, 5, 1);
 
     // remaining bits for integer 6
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_7_6_26,
+    newEarlybirdFeatureConfiguration(EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_7_6_26,
         ThriftCSFType.INT, 6, 6, 26);
 
     // The decaying counters can become smaller
@@ -349,8 +349,8 @@ public final class EarlybirdSchemaCreateTool {
         ThriftCSFType.INT, 10, 8, 4);
 
     // Remaining bits for integer 10
-    // Production Toxicity and PBlock score from HML (go/toxicity, go/pblock)
-    newEarlybirdFeatureConfiguration(TOXICITY_SCORE,
+    // Production Totwittericity and PBlock score from HML (go/totwittericity, go/pblock)
+    newEarlybirdFeatureConfiguration(TOtwitterICITY_SCORE,
         ThriftCSFType.DOUBLE, 10, 12, 10);
     newEarlybirdFeatureConfiguration(PBLOCK_SCORE,
         ThriftCSFType.DOUBLE, 10, 22, 10);
@@ -365,19 +365,19 @@ public final class EarlybirdSchemaCreateTool {
     newEarlybirdFeatureConfiguration(BLINK_QUOTE_COUNT,
         ThriftCSFType.DOUBLE, 11, 24, 8, ThriftFeatureUpdateConstraint.POSITIVE);
 
-    // Experimental health model scores from HML
-    newEarlybirdFeatureConfiguration(EXPERIMENTAL_HEALTH_MODEL_SCORE_1,
+    // Etwitterperimental health model scores from HML
+    newEarlybirdFeatureConfiguration(EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_1,
         ThriftCSFType.DOUBLE, 12, 0, 10);
-    newEarlybirdFeatureConfiguration(EXPERIMENTAL_HEALTH_MODEL_SCORE_2,
+    newEarlybirdFeatureConfiguration(EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_2,
         ThriftCSFType.DOUBLE, 12, 10, 10);
-    newEarlybirdFeatureConfiguration(EXPERIMENTAL_HEALTH_MODEL_SCORE_3,
+    newEarlybirdFeatureConfiguration(EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_3,
         ThriftCSFType.DOUBLE, 12, 20, 10);
     // remaining bits for integer 12
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_12_30_2,
+    newEarlybirdFeatureConfiguration(EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_12_30_2,
         ThriftCSFType.INT, 12, 30, 2);
 
-    // Experimental health model scores from HML (cont.)
-    newEarlybirdFeatureConfiguration(EXPERIMENTAL_HEALTH_MODEL_SCORE_4,
+    // Etwitterperimental health model scores from HML (cont.)
+    newEarlybirdFeatureConfiguration(EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_4,
         ThriftCSFType.DOUBLE, 13, 0, 10);
     // Production pSpammyTweet score from HML (go/pspammytweet)
     newEarlybirdFeatureConfiguration(P_SPAMMY_TWEET_SCORE,
@@ -386,28 +386,28 @@ public final class EarlybirdSchemaCreateTool {
     newEarlybirdFeatureConfiguration(P_REPORTED_TWEET_SCORE,
         ThriftCSFType.DOUBLE, 13, 20, 10);
     // remaining bits for integer 13
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_13_30_2,
+    newEarlybirdFeatureConfiguration(EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_13_30_2,
         ThriftCSFType.INT, 13, 30, 2);
 
-    // Experimental health model scores from HML (cont.)
+    // Etwitterperimental health model scores from HML (cont.)
     // Prod Spammy Tweet Content model score from Platform Manipulation (go/spammy-tweet-content)
     newEarlybirdFeatureConfiguration(SPAMMY_TWEET_CONTENT_SCORE,
         ThriftCSFType.DOUBLE, 14, 0, 10);
     // remaining bits for integer 14
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_14_10_22,
+    newEarlybirdFeatureConfiguration(EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_14_10_22,
         ThriftCSFType.INT, 14, 10, 22);
 
-    // Note that the integer index below is 0-based, but the index j in UNUSED_BITS_{j} below
+    // Note that the integer indetwitter below is 0-based, but the indetwitter j in UNUSED_BITS_{j} below
     // is 1-based.
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_16,
+    newEarlybirdFeatureConfiguration(EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_16,
         ThriftCSFType.INT, 15, 0, 32);
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_17,
+    newEarlybirdFeatureConfiguration(EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_17,
         ThriftCSFType.INT, 16, 0, 32);
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_18,
+    newEarlybirdFeatureConfiguration(EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_18,
         ThriftCSFType.INT, 17, 0, 32);
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_19,
+    newEarlybirdFeatureConfiguration(EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_19,
         ThriftCSFType.INT, 18, 0, 32);
-    newEarlybirdFeatureConfiguration(EXTENDED_TEST_FEATURE_UNUSED_BITS_20,
+    newEarlybirdFeatureConfiguration(EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_20,
         ThriftCSFType.INT, 19, 0, 32);
   }
 
@@ -417,7 +417,7 @@ public final class EarlybirdSchemaCreateTool {
    * Get schema for the Earlybird.
    */
   public static DynamicSchema buildSchema(EarlybirdCluster cluster)
-      throws Schema.SchemaValidationException {
+      throws Schema.SchemaValidationEtwitterception {
     SCHEMA_BUILD_COUNT.increment();
     return new DynamicSchema(new ImmutableSchema(buildThriftSchema(cluster),
                                                  new AnalyzerFactory(),
@@ -425,30 +425,30 @@ public final class EarlybirdSchemaCreateTool {
   }
 
   /**
-   * Get schema for the Earlybird, can throw runtime exception.  This is mostly for static schema
+   * Get schema for the Earlybird, can throw runtime etwitterception.  This is mostly for static schema
    * usage, which does not care about schema updates.
    */
   @VisibleForTesting
-  public static DynamicSchema buildSchemaWithRuntimeException(EarlybirdCluster cluster) {
+  public static DynamicSchema buildSchemaWithRuntimeEtwitterception(EarlybirdCluster cluster) {
     try {
       return buildSchema(cluster);
-    } catch (Schema.SchemaValidationException e) {
-      throw new RuntimeException(e);
+    } catch (Schema.SchemaValidationEtwitterception e) {
+      throw new RuntimeEtwitterception(e);
     }
   }
 
   private static FeatureConfiguration newEarlybirdFeatureConfiguration(
       EarlybirdFieldConstant fieldConstant,
       ThriftCSFType type,
-      int intIndex, int bitStartPos, int bitLength,
+      int intIndetwitter, int bitStartPos, int bitLength,
       ThriftFeatureUpdateConstraint... constraints) {
 
     if (!fieldConstant.isFlagFeatureField() && type == ThriftCSFType.BOOLEAN) {
-      throw new IllegalArgumentException(
+      throw new IllegalArgumentEtwitterception(
           "Non-flag feature field configured with boolean Thrift type: " + fieldConstant);
     }
     if (fieldConstant.isFlagFeatureField() && type != ThriftCSFType.BOOLEAN) {
-      throw new IllegalArgumentException(
+      throw new IllegalArgumentEtwitterception(
           "Flag feature field configured with non-boolean Thrift type: " + fieldConstant);
     }
 
@@ -457,7 +457,7 @@ public final class EarlybirdSchemaCreateTool {
     FeatureConfiguration.Builder builder = FeatureConfiguration.builder()
         .withName(name)
         .withType(type)
-        .withBitRange(intIndex, bitStartPos, bitLength);
+        .withBitRange(intIndetwitter, bitStartPos, bitLength);
     // remove the following line once we configure features purely by the schema
     builder.withBaseField(baseFieldName);
 
@@ -494,26 +494,26 @@ public final class EarlybirdSchemaCreateTool {
     // ID field, used for partitioning
     builder.withPartitionFieldId(0)
         .withSortableLongTermField(EarlybirdFieldConstant.ID_FIELD.getFieldName())
-        // Text Fields that are searched by default
-        .withTextField(EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName(), true)
+        // Tetwittert Fields that are searched by default
+        .withTetwittertField(EarlybirdFieldConstant.RESOLVED_LINKS_TEtwitterT_FIELD.getFieldName(), true)
         .withSearchFieldByDefault(
-            EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName(), 0.1f)
-        .withPretokenizedTextField(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(), true)
-        .withSearchFieldByDefault(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(), 1.0f);
-    builder.withTweetSpecificNormalization(EarlybirdFieldConstant.TEXT_FIELD.getFieldName())
-        .withTextField(EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName(), true)
+            EarlybirdFieldConstant.RESOLVED_LINKS_TEtwitterT_FIELD.getFieldName(), 0.1f)
+        .withPretokenizedTetwittertField(EarlybirdFieldConstant.TEtwitterT_FIELD.getFieldName(), true)
+        .withSearchFieldByDefault(EarlybirdFieldConstant.TEtwitterT_FIELD.getFieldName(), 1.0f);
+    builder.withTweetSpecificNormalization(EarlybirdFieldConstant.TEtwitterT_FIELD.getFieldName())
+        .withTetwittertField(EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName(), true)
         .withSearchFieldByDefault(
             EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName(), 0.2f)
 
-        // Text fields not searched by default
-        .withTextField(EarlybirdFieldConstant.FROM_USER_FIELD.getFieldName(), false)
-        .withTextField(EarlybirdFieldConstant.TO_USER_FIELD.getFieldName(), false)
+        // Tetwittert fields not searched by default
+        .withTetwittertField(EarlybirdFieldConstant.FROM_USER_FIELD.getFieldName(), false)
+        .withTetwittertField(EarlybirdFieldConstant.TO_USER_FIELD.getFieldName(), false)
 
         // cards are not searched by default, and have weight 0.
-        .withPretokenizedTextField(EarlybirdFieldConstant.CARD_TITLE_FIELD.getFieldName(), false)
-        .withPretokenizedTextField(
+        .withPretokenizedTetwittertField(EarlybirdFieldConstant.CARD_TITLE_FIELD.getFieldName(), false)
+        .withPretokenizedTetwittertField(
             EarlybirdFieldConstant.CARD_DESCRIPTION_FIELD.getFieldName(), false)
-        .withTextField(EarlybirdFieldConstant.CARD_LANG.getFieldName(), false)
+        .withTetwittertField(EarlybirdFieldConstant.CARD_LANG.getFieldName(), false)
 
         // Out-of-order append fields
         .withLongTermField(EarlybirdFieldConstant.LIKED_BY_USER_ID_FIELD.getFieldName())
@@ -522,41 +522,41 @@ public final class EarlybirdSchemaCreateTool {
 
         // No Position fields, sorted alphabetically
         .withPretokenizedNoPositionField(EarlybirdFieldConstant.CARD_DOMAIN_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.CARD_NAME_FIELD.getFieldName())
+        .withIndetwitteredNotTokenizedField(EarlybirdFieldConstant.CARD_NAME_FIELD.getFieldName())
         .withIntTermField(EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName())
+        .withIndetwitteredNotTokenizedField(EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName())
+        .withIndetwitteredNotTokenizedField(EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName())
         .withLongTermField(EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName())
         .withLongTermField(EarlybirdFieldConstant.IN_REPLY_TO_TWEET_ID_FIELD.getFieldName())
         .withLongTermField(EarlybirdFieldConstant.IN_REPLY_TO_USER_ID_FIELD.getFieldName())
         .withLongTermField(EarlybirdFieldConstant.RETWEET_SOURCE_TWEET_ID_FIELD.getFieldName())
         .withLongTermField(EarlybirdFieldConstant.RETWEET_SOURCE_USER_ID_FIELD.getFieldName())
         .withLongTermField(EarlybirdFieldConstant.CONVERSATION_ID_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.PLACE_ID_FIELD.getFieldName())
-        .withTextField(EarlybirdFieldConstant.PLACE_FULL_NAME_FIELD.getFieldName(), false)
-        .withIndexedNotTokenizedField(
+        .withIndetwitteredNotTokenizedField(EarlybirdFieldConstant.PLACE_ID_FIELD.getFieldName())
+        .withTetwittertField(EarlybirdFieldConstant.PLACE_FULL_NAME_FIELD.getFieldName(), false)
+        .withIndetwitteredNotTokenizedField(
             EarlybirdFieldConstant.PLACE_COUNTRY_CODE_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(
+        .withIndetwitteredNotTokenizedField(
             EarlybirdFieldConstant.PROFILE_GEO_COUNTRY_CODE_FIELD.getFieldName())
-        .withTextField(EarlybirdFieldConstant.PROFILE_GEO_REGION_FIELD.getFieldName(), false)
-        .withTextField(EarlybirdFieldConstant.PROFILE_GEO_LOCALITY_FIELD.getFieldName(), false)
-        .withTermTextLookup(EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName())
-        .withTermTextLookup(EarlybirdFieldConstant.IN_REPLY_TO_USER_ID_FIELD.getFieldName())
+        .withTetwittertField(EarlybirdFieldConstant.PROFILE_GEO_REGION_FIELD.getFieldName(), false)
+        .withTetwittertField(EarlybirdFieldConstant.PROFILE_GEO_LOCALITY_FIELD.getFieldName(), false)
+        .withTermTetwittertLookup(EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName())
+        .withTermTetwittertLookup(EarlybirdFieldConstant.IN_REPLY_TO_USER_ID_FIELD.getFieldName())
         .withPretokenizedNoPositionField(EarlybirdFieldConstant.HASHTAGS_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(ImmutableSchema.HF_PHRASE_PAIRS_FIELD)
-        .withIndexedNotTokenizedField(ImmutableSchema.HF_TERM_PAIRS_FIELD)
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.IMAGE_LINKS_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.ISO_LANGUAGE_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.LINKS_FIELD.getFieldName())
+        .withIndetwitteredNotTokenizedField(ImmutableSchema.HF_PHRASE_PAIRS_FIELD)
+        .withIndetwitteredNotTokenizedField(ImmutableSchema.HF_TERM_PAIRS_FIELD)
+        .withIndetwitteredNotTokenizedField(EarlybirdFieldConstant.IMAGE_LINKS_FIELD.getFieldName())
+        .withIndetwitteredNotTokenizedField(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName())
+        .withIndetwitteredNotTokenizedField(EarlybirdFieldConstant.ISO_LANGUAGE_FIELD.getFieldName())
+        .withIndetwitteredNotTokenizedField(EarlybirdFieldConstant.LINKS_FIELD.getFieldName())
         .withIntTermField(EarlybirdFieldConstant.LINK_CATEGORY_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.MENTIONS_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.NEWS_LINKS_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.NORMALIZED_SOURCE_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.PLACE_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.SOURCE_FIELD.getFieldName())
+        .withIndetwitteredNotTokenizedField(EarlybirdFieldConstant.MENTIONS_FIELD.getFieldName())
+        .withIndetwitteredNotTokenizedField(EarlybirdFieldConstant.NEWS_LINKS_FIELD.getFieldName())
+        .withIndetwitteredNotTokenizedField(EarlybirdFieldConstant.NORMALIZED_SOURCE_FIELD.getFieldName())
+        .withIndetwitteredNotTokenizedField(EarlybirdFieldConstant.PLACE_FIELD.getFieldName())
+        .withIndetwitteredNotTokenizedField(EarlybirdFieldConstant.SOURCE_FIELD.getFieldName())
         .withPretokenizedNoPositionField(EarlybirdFieldConstant.STOCKS_FIELD.getFieldName())
-        .withIndexedNotTokenizedField(EarlybirdFieldConstant.VIDEO_LINKS_FIELD.getFieldName())
+        .withIndetwitteredNotTokenizedField(EarlybirdFieldConstant.VIDEO_LINKS_FIELD.getFieldName())
         .withIntTermField(NORMALIZED_FAVORITE_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD.getFieldName())
         .withIntTermField(NORMALIZED_REPLY_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD.getFieldName())
         .withIntTermField(NORMALIZED_RETWEET_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD.getFieldName())
@@ -568,33 +568,33 @@ public final class EarlybirdSchemaCreateTool {
         .withLongTermField(EarlybirdFieldConstant.DIRECTED_AT_USER_ID_FIELD.getFieldName())
 
         // Named entity fields
-        .withIndexedNotTokenizedField(
+        .withIndetwitteredNotTokenizedField(
             EarlybirdFieldConstant.NAMED_ENTITY_FROM_URL_FIELD.getFieldName(), true)
-        .withIndexedNotTokenizedField(
-            EarlybirdFieldConstant.NAMED_ENTITY_FROM_TEXT_FIELD.getFieldName(), true)
-        .withIndexedNotTokenizedField(
+        .withIndetwitteredNotTokenizedField(
+            EarlybirdFieldConstant.NAMED_ENTITY_FROM_TEtwitterT_FIELD.getFieldName(), true)
+        .withIndetwitteredNotTokenizedField(
             EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_URL_FIELD.getFieldName(), true)
-        .withIndexedNotTokenizedField(
-            EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_TEXT_FIELD.getFieldName(), true)
+        .withIndetwitteredNotTokenizedField(
+            EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_TEtwitterT_FIELD.getFieldName(), true)
 
         // camelCase-tokenized user handles and tokenized user names, not searchable by default
-        .withPretokenizedTextField(
+        .withPretokenizedTetwittertField(
             EarlybirdFieldConstant.CAMELCASE_USER_HANDLE_FIELD.getFieldName(), false)
-        .withPretokenizedTextField(
+        .withPretokenizedTetwittertField(
             EarlybirdFieldConstant.TOKENIZED_USER_NAME_FIELD.getFieldName(), false)
 
-        .withIndexedNotTokenizedField(
+        .withIndetwitteredNotTokenizedField(
             EarlybirdFieldConstant.SPACE_ID_FIELD.getFieldName())
-        .withTextField(EarlybirdFieldConstant.SPACE_ADMIN_FIELD.getFieldName(), false)
-        .withPretokenizedTextField(EarlybirdFieldConstant.SPACE_TITLE_FIELD.getFieldName(), false)
-        .withTextField(EarlybirdFieldConstant.TOKENIZED_SPACE_ADMIN_FIELD.getFieldName(), true)
-        .withPretokenizedTextField(
+        .withTetwittertField(EarlybirdFieldConstant.SPACE_ADMIN_FIELD.getFieldName(), false)
+        .withPretokenizedTetwittertField(EarlybirdFieldConstant.SPACE_TITLE_FIELD.getFieldName(), false)
+        .withTetwittertField(EarlybirdFieldConstant.TOKENIZED_SPACE_ADMIN_FIELD.getFieldName(), true)
+        .withPretokenizedTetwittertField(
             EarlybirdFieldConstant.CAMELCASE_TOKENIZED_SPACE_ADMIN_FIELD.getFieldName(), false)
-        .withPretokenizedTextField(
+        .withPretokenizedTetwittertField(
             EarlybirdFieldConstant.TOKENIZED_SPACE_ADMIN_DISPLAY_NAME_FIELD.getFieldName(), false)
-        .withPretokenizedTextField(
+        .withPretokenizedTetwittertField(
             EarlybirdFieldConstant.URL_DESCRIPTION_FIELD.getFieldName(), false)
-        .withPretokenizedTextField(
+        .withPretokenizedTetwittertField(
             EarlybirdFieldConstant.URL_TITLE_FIELD.getFieldName(), false);
 
     builder
@@ -641,14 +641,14 @@ public final class EarlybirdSchemaCreateTool {
         .withColumnStrideField(EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_CSF.getFieldName(),
             ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
         .withColumnStrideField(
-            EarlybirdFieldConstant.EXCLUSIVE_CONVERSATION_AUTHOR_ID_CSF.getFieldName(),
+            EarlybirdFieldConstant.EtwitterCLUSIVE_CONVERSATION_AUTHOR_ID_CSF.getFieldName(),
             ThriftCSFType.LONG, 1, false, loadCSFIntoRAMDefault)
 
     /* Semicolon on separate line to preserve git blame. */;
 
     builder.withColumnStrideField(
-        EarlybirdFieldConstants.EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        ThriftCSFType.INT, NUMBER_OF_INTEGERS_FOR_EXTENDED_FEATURES,
+        EarlybirdFieldConstants.EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        ThriftCSFType.INT, NUMBER_OF_INTEGERS_FOR_EtwitterTENDED_FEATURES,
         true, loadCSFIntoRAMDefault);
 
     for (Map.Entry<String, FeatureConfiguration> entry : FEATURE_CONFIGURATION_MAP.entrySet()) {
@@ -690,7 +690,7 @@ public final class EarlybirdSchemaCreateTool {
             EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_URL_FIELD.getFieldName(),
             true, false, false)
         .withFacetConfigs(
-            EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_TEXT_FIELD.getFieldName(),
+            EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_TEtwitterT_FIELD.getFieldName(),
             true, false, false)
         .withFacetConfigs(
             EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName(),

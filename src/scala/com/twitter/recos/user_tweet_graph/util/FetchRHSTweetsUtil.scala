@@ -21,8 +21,8 @@ object FetchRHSTweetsUtil {
 
         val tweetIds = new ListBuffer[Long]()
         if (tweetIdsIterator != null) {
-          while (tweetIdsIterator.hasNext) {
-            val rightNode = tweetIdsIterator.nextLong()
+          while (tweetIdsIterator.hasNetwittert) {
+            val rightNode = tweetIdsIterator.netwittertLong()
             val edgeType = tweetIdsIterator.currentEdgeType()
             if (allowedActionStrings.contains(UserTweetEdgeTypeMask(edgeType).toString))
               tweetIds += rightNode

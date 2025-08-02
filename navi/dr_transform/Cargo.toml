@@ -20,9 +20,9 @@ once_cell = "1.17.0"
 rand = "0.8.5"
 itertools = "0.10.5"
 anyhow = "1.0.70"
-[target.'cfg(not(target_os="linux"))'.dependencies]
+[target.'cfg(not(target_os="linutwitter"))'.dependencies]
 ort = {git ="https://github.com/pykeio/ort.git", features=["profiling"], tag="v1.14.6"}
-[target.'cfg(target_os="linux")'.dependencies]
+[target.'cfg(target_os="linutwitter")'.dependencies]
 ort = {git ="https://github.com/pykeio/ort.git", features=["profiling", "tensorrt", "cuda", "copy-dylibs"], tag="v1.14.6"}
 [dev-dependencies]
 criterion = "0.3.0"

@@ -5,14 +5,14 @@ import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraph
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
 import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.socialgraph.thriftscala.RelationshipType
 import com.twitter.stitch.Stitch
 import com.twitter.strato.generated.client.onboarding.userrecs.StrongTiePredictionFeaturesOnUserClientColumn
-import javax.inject.Singleton
-import javax.inject.Inject
+import javatwitter.inject.Singleton
+import javatwitter.inject.Inject
 
 /**
  * Returns mutual follows. It first gets mutual follows from recent 100 follows and followers, and then unions this
@@ -22,12 +22,12 @@ import javax.inject.Inject
 class MutualFollowStrongTiePredictionSource @Inject() (
   sgsClient: SocialGraphClient,
   strongTiePredictionFeaturesOnUserClientColumn: StrongTiePredictionFeaturesOnUserClientColumn)
-    extends CandidateSource[HasClientContext with HasRecentFollowedUserIds, CandidateUser] {
+    etwittertends CandidateSource[HasClientContetwittert with HasRecentFollowedUserIds, CandidateUser] {
   val identifier: CandidateSourceIdentifier =
     MutualFollowStrongTiePredictionSource.Identifier
 
   override def apply(
-    target: HasClientContext with HasRecentFollowedUserIds
+    target: HasClientContetwittert with HasRecentFollowedUserIds
   ): Stitch[Seq[CandidateUser]] = {
     target.getOptionalUserId match {
       case Some(userId) =>

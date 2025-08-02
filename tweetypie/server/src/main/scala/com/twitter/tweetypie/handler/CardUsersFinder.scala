@@ -2,18 +2,18 @@ package com.twitter.tweetypie
 package handler
 
 import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.CardReferenceUriExtractor
+import com.twitter.tweetypie.core.CardReferenceUriEtwittertractor
 import com.twitter.tweetypie.core.NonTombstone
 import com.twitter.tweetypie.core.Tombstone
 import com.twitter.tweetypie.repository.CardUsersRepository
-import com.twitter.tweetypie.repository.CardUsersRepository.Context
+import com.twitter.tweetypie.repository.CardUsersRepository.Contetwittert
 import com.twitter.tweetypie.thriftscala.CardReference
 
 /**
  * Finds a set of UserId that may be mentioned when replying to a tweet that has a card.
  *
  * Replies created without 'auto_populate_reply_metadata' include both 'site' and 'author' users to
- * have a more exhaustive list of mentions to match against.  This is needed because iOS and Android
+ * have a more etwitterhaustive list of mentions to match against.  This is needed because iOS and Android
  * have had different implementations client-side for years.
  */
 object CardUsersFinder {
@@ -23,7 +23,7 @@ object CardUsersFinder {
     urls: Seq[String],
     perspectiveUserId: UserId) {
     val uris: Seq[String] = cardReference match {
-      case Some(CardReferenceUriExtractor(cardUri)) =>
+      case Some(CardReferenceUriEtwittertractor(cardUri)) =>
         cardUri match {
           case NonTombstone(uri) => Seq(uri)
           case Tombstone => Nil
@@ -31,7 +31,7 @@ object CardUsersFinder {
       case _ => urls
     }
 
-    val context: CardUsersRepository.Context = Context(perspectiveUserId)
+    val contetwittert: CardUsersRepository.Contetwittert = Contetwittert(perspectiveUserId)
   }
 
   type Type = Request => Stitch[Set[UserId]]
@@ -46,7 +46,7 @@ object CardUsersFinder {
   def apply(cardUserRepo: CardUsersRepository.Type): Type =
     request =>
       Stitch
-        .traverse(request.uris) { uri => cardUserRepo(uri, request.context) }
+        .traverse(request.uris) { uri => cardUserRepo(uri, request.contetwittert) }
         // select the last, non-None Set of users ids
         .map(r => r.flatten.reverse.headOption.getOrElse(Set.empty))
 }

@@ -1,23 +1,23 @@
 package com.twitter.tweetypie
 package repository
 
-import com.twitter.expandodo.thriftscala._
+import com.twitter.etwitterpandodo.thriftscala._
 import com.twitter.stitch.SeqGroup
 import com.twitter.stitch.Stitch
 import com.twitter.stitch.compat.LegacySeqGroup
-import com.twitter.tweetypie.backends.Expandodo
+import com.twitter.tweetypie.backends.Etwitterpandodo
 
 sealed trait Card2Key {
   def toCard2Request: Card2Request
 }
 
-final case class UrlCard2Key(url: String) extends Card2Key {
+final case class UrlCard2Key(url: String) etwittertends Card2Key {
   override def toCard2Request: Card2Request =
     Card2Request(`type` = Card2RequestType.ByUrl, url = Some(url))
 }
 
 final case class ImmediateValuesCard2Key(values: Seq[Card2ImmediateValue], tweetId: TweetId)
-    extends Card2Key {
+    etwittertends Card2Key {
   override def toCard2Request: Card2Request =
     Card2Request(
       `type` = Card2RequestType.ByImmediateValues,
@@ -29,8 +29,8 @@ final case class ImmediateValuesCard2Key(values: Seq[Card2ImmediateValue], tweet
 object Card2Repository {
   type Type = (Card2Key, Card2RequestOptions) => Stitch[Card2]
 
-  def apply(getCards2: Expandodo.GetCards2, maxRequestSize: Int): Type = {
-    case class RequestGroup(opts: Card2RequestOptions) extends SeqGroup[Card2Key, Option[Card2]] {
+  def apply(getCards2: Etwitterpandodo.GetCards2, matwitterRequestSize: Int): Type = {
+    case class RequestGroup(opts: Card2RequestOptions) etwittertends SeqGroup[Card2Key, Option[Card2]] {
       override def run(keys: Seq[Card2Key]): Future[Seq[Try[Option[Card2]]]] =
         LegacySeqGroup.liftToSeqTry(
           getCards2((keys.map(_.toCard2Request), opts)).map { res =>
@@ -45,7 +45,7 @@ object Card2Repository {
           }
         )
 
-      override def maxSize: Int = maxRequestSize
+      override def matwitterSize: Int = matwitterRequestSize
     }
 
     (card2Key, opts) =>

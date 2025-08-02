@@ -7,7 +7,7 @@ struct Header {
 }
 
 struct Title {
- 1: required string text
+ 1: required string tetwittert
 }
 
 struct Footer {
@@ -15,14 +15,14 @@ struct Footer {
 }
 
 struct Action {
- 1: required string text
+ 1: required string tetwittert
  2: required string actionURL
 }
 
 struct UserList {
   1: required bool userBioEnabled
   2: required bool userBioTruncated
-  3: optional i64 userBioMaxLines
+  3: optional i64 userBioMatwitterLines
   4: optional FeedbackAction feedbackAction
 }
 

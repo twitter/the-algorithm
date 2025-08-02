@@ -11,7 +11,7 @@ Visibility Filtering library is currently being reviewed and rebuilt, and part o
 SafetyLevel
 ===========
 
-Represents the product context in which the Viewer is requesting to view the Content (e.g. Timeline, Profile).
+Represents the product contetwittert in which the Viewer is requesting to view the Content (e.g. Timeline, Profile).
 
 Features
 ========
@@ -31,7 +31,7 @@ Returns a boolean when given map of Features. Conditions can be combined to dete
 Policy
 ======
 
-Rules are expressed as a sequence in priority order to create a Visibility Policy. The library has one policy
+Rules are etwitterpressed as a sequence in priority order to create a Visibility Policy. The library has one policy
 per SafetyLevel.
 
 RuleEngine
@@ -48,4 +48,4 @@ SafetyLabelType
 ===============
 
 Describes a particular policy violation for a given noun instance, and usually leads to reduced visibility of the
-labeled entity in product surfaces. There are many deprecated, and experimental safety label types. Labels with these safety label types have no effect on VF. Additionally, some safety label types are not used, and not designed for VF.
+labeled entity in product surfaces. There are many deprecated, and etwitterperimental safety label types. Labels with these safety label types have no effect on VF. Additionally, some safety label types are not used, and not designed for VF.

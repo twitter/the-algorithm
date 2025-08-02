@@ -15,8 +15,8 @@ object CrtDeciderPredicate {
   ): NamedPredicate[PushCandidate] = {
     Predicate
       .from { (candidate: PushCandidate) =>
-        val prefix = "frigate_pushservice_"
-        val deciderKey = prefix + candidate.commonRecType
+        val prefitwitter = "frigate_pushservice_"
+        val deciderKey = prefitwitter + candidate.commonRecType
         decider.feature(deciderKey).isAvailable
       }
       .withStats(statsReceiver.scope(s"predicate_$name"))

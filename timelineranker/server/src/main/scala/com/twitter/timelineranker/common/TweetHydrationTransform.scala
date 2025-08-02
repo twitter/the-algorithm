@@ -1,7 +1,7 @@
 package com.twitter.timelineranker.common
 
 import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.IndividualRequestTimeoutException
+import com.twitter.finagle.IndividualRequestTimeoutEtwitterception
 import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
 import com.twitter.servo.util.FutureArrow
 import com.twitter.timelineranker.core.CandidateEnvelope
@@ -16,7 +16,7 @@ object TweetHydrationTransform {
   val EmptyHydratedTweetsFuture: Future[HydratedTweets] = Future.value(EmptyHydratedTweets)
 }
 
-object CandidateTweetHydrationTransform extends TweetHydrationTransform {
+object CandidateTweetHydrationTransform etwittertends TweetHydrationTransform {
   override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
     hydrate(
       searchResults = envelope.searchResults,
@@ -25,7 +25,7 @@ object CandidateTweetHydrationTransform extends TweetHydrationTransform {
   }
 }
 
-object SourceTweetHydrationTransform extends TweetHydrationTransform {
+object SourceTweetHydrationTransform etwittertends TweetHydrationTransform {
   override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
     hydrate(
       searchResults = envelope.sourceSearchResults,
@@ -35,15 +35,15 @@ object SourceTweetHydrationTransform extends TweetHydrationTransform {
 }
 
 // Static IRTE to indicate timeout in tweet hydrator. Placeholder timeout duration of 0 millis is used
-// since we are only concerned with the source of the exception.
-object TweetHydrationTimeoutException extends IndividualRequestTimeoutException(0.millis) {
+// since we are only concerned with the source of the etwitterception.
+object TweetHydrationTimeoutEtwitterception etwittertends IndividualRequestTimeoutEtwitterception(0.millis) {
   serviceName = "tweetHydrator"
 }
 
 /**
  * Transform which hydrates tweets in the CandidateEnvelope
  **/
-trait TweetHydrationTransform extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+trait TweetHydrationTransform etwittertends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
 
   import TweetHydrationTransform._
 

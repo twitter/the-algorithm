@@ -2,12 +2,12 @@ package com.twitter.visibility.interfaces.tweets
 
 import com.twitter.tweetypie.thriftscala.Tweet
 import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 
 case class TweetVisibilityRequest(
   tweet: Tweet,
   safetyLevel: SafetyLevel,
-  viewerContext: ViewerContext,
+  viewerContetwittert: ViewerContetwittert,
   isInnerQuotedTweet: Boolean,
   isRetweet: Boolean,
   hydrateConversationControl: Boolean = false,

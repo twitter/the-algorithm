@@ -6,7 +6,7 @@ import com.twitter.visibility.rules.Condition.Not
 object InterstitialIf {
 
   object ViewerMutedKeyword
-      extends RuleWithConstantAction(
+      etwittertends RuleWithConstantAction(
         Interstitial(Reason.MutedKeyword),
         And(
           Not(Condition.IsFocalTweet),
@@ -15,7 +15,7 @@ object InterstitialIf {
       )
 
   object ViewerBlockedAuthor
-      extends RuleWithConstantAction(
+      etwittertends RuleWithConstantAction(
         Interstitial(Reason.ViewerBlocksAuthor),
         And(
           Not(Condition.IsFocalTweet),
@@ -24,7 +24,7 @@ object InterstitialIf {
       )
 
   object ViewerHardMutedAuthor
-      extends RuleWithConstantAction(
+      etwittertends RuleWithConstantAction(
         Interstitial(Reason.ViewerHardMutedAuthor),
         And(
           Not(Condition.IsFocalTweet),
@@ -36,7 +36,7 @@ object InterstitialIf {
       )
 
   object ViewerReportedAuthor
-      extends RuleWithConstantAction(
+      etwittertends RuleWithConstantAction(
         Interstitial(Reason.ViewerReportedAuthor),
         Condition.ViewerReportsAuthor
       )

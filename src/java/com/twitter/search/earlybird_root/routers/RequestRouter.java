@@ -10,7 +10,7 @@ import com.twitter.search.common.futures.Futures;
 import com.twitter.search.earlybird.thrift.EarlybirdDebugInfo;
 import com.twitter.search.earlybird.thrift.EarlybirdRequestResponse;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.util.Future;
 import com.twitter.util.Try;
 
@@ -24,16 +24,16 @@ public abstract class RequestRouter {
    * Saved request and response, to be included in debug info.
    */
   class RequestResponse {
-    // Where is this request sent to. Freeform text like "realtime", "archive", etc.
+    // Where is this request sent to. Freeform tetwittert like "realtime", "archive", etc.
     private String sentTo;
-    private EarlybirdRequestContext requestContext;
+    private EarlybirdRequestContetwittert requestContetwittert;
     private Future<EarlybirdResponse> earlybirdResponseFuture;
 
     RequestResponse(String sentTo,
-                           EarlybirdRequestContext requestContext,
+                           EarlybirdRequestContetwittert requestContetwittert,
                            Future<EarlybirdResponse> earlybirdResponseFuture) {
       this.sentTo = sentTo;
-      this.requestContext = requestContext;
+      this.requestContetwittert = requestContetwittert;
       this.earlybirdResponseFuture = earlybirdResponseFuture;
     }
 
@@ -41,8 +41,8 @@ public abstract class RequestRouter {
       return sentTo;
     }
 
-    public EarlybirdRequestContext getRequestContext() {
-      return requestContext;
+    public EarlybirdRequestContetwittert getRequestContetwittert() {
+      return requestContetwittert;
     }
 
     Future<EarlybirdResponse> getEarlybirdResponseFuture() {
@@ -52,9 +52,9 @@ public abstract class RequestRouter {
 
   /**
    * Forward a request to different clusters and merge the responses back into one response.
-   * @param requestContext
+   * @param requestContetwittert
    */
-  public abstract Future<EarlybirdResponse> route(EarlybirdRequestContext requestContext);
+  public abstract Future<EarlybirdResponse> route(EarlybirdRequestContetwittert requestContetwittert);
 
   /**
    * Save a request (and its response future) to be included in debug info.
@@ -62,13 +62,13 @@ public abstract class RequestRouter {
   void saveRequestResponse(
       List<RequestResponse> requestResponses,
       String sentTo,
-      EarlybirdRequestContext earlybirdRequestContext,
+      EarlybirdRequestContetwittert earlybirdRequestContetwittert,
       Future<EarlybirdResponse> earlybirdResponseFuture
   ) {
     requestResponses.add(
         new RequestResponse(
             sentTo,
-            earlybirdRequestContext,
+            earlybirdRequestContetwittert,
             earlybirdResponseFuture
         )
     );
@@ -76,10 +76,10 @@ public abstract class RequestRouter {
 
   Future<EarlybirdResponse> maybeAttachSentRequestsToDebugInfo(
       List<RequestResponse> requestResponses,
-      EarlybirdRequestContext requestContext,
+      EarlybirdRequestContetwittert requestContetwittert,
       Future<EarlybirdResponse> response
   ) {
-    if (requestContext.getRequest().getDebugMode() >= 4) {
+    if (requestContetwittert.getRequest().getDebugMode() >= 4) {
       return this.attachSentRequestsToDebugInfo(
           response,
           requestResponses
@@ -113,7 +113,7 @@ public abstract class RequestRouter {
       }
 
       Future<EarlybirdResponse> responseWithRequests = allResponsesFuture.map(allResponses -> {
-        // Get all individual response "Trys" and see if we can extract something from them
+        // Get all individual response "Trys" and see if we can etwittertract something from them
         // that we can attach to the debugInfo.
         for (int i = 0; i < allResponses.size(); i++) {
 
@@ -128,7 +128,7 @@ public abstract class RequestRouter {
 
             EarlybirdRequestResponse reqResp = new EarlybirdRequestResponse();
             reqResp.setSentTo(requestResponses.get(i).getSentTo());
-            reqResp.setRequest(requestResponses.get(i).getRequestContext().getRequest());
+            reqResp.setRequest(requestResponses.get(i).getRequestContetwittert().getRequest());
             reqResp.setResponse(attachedResponse.toString());
 
             mainResponse.debugInfo.addToSentRequests(reqResp);

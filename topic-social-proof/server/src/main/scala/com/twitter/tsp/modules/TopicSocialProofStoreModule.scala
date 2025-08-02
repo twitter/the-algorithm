@@ -21,7 +21,7 @@ import com.twitter.tsp.stores.TopicSocialProofStore.TopicSocialProof
 import com.twitter.tsp.utils.LZ4Injection
 import com.twitter.tsp.utils.SeqObjectInjection
 
-object TopicSocialProofStoreModule extends TwitterModule {
+object TopicSocialProofStoreModule etwittertends TwitterModule {
   override def modules: Seq[Module] = Seq(UnifiedCacheClient)
 
   @Provides
@@ -58,7 +58,7 @@ object TopicSocialProofStoreModule extends TwitterModule {
       ObservedCachedReadableStore.from[TopicSocialProofStore.Query, Seq[TopicSocialProof]](
         memcachedStore,
         ttl = 10.minutes,
-        maxKeys = 16777215, // ~ avg 160B, < 3000MB
+        matwitterKeys = 16777215, // ~ avg 160B, < 3000MB
         cacheName = "topic_social_proof_cache",
         windowSize = 10000L
       )(statsReceiver.scope("InMemoryCachedTopicSocialProofStore"))

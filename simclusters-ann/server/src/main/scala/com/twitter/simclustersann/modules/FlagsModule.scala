@@ -3,7 +3,7 @@ package com.twitter.simclustersann.modules
 import com.twitter.inject.TwitterModule
 import com.twitter.simclustersann.common.FlagNames
 
-object FlagsModule extends TwitterModule {
+object FlagsModule etwittertends TwitterModule {
 
   flag[Int](
     name = FlagNames.ServiceTimeout,
@@ -36,9 +36,9 @@ object FlagsModule extends TwitterModule {
   )
 
   flag[Int](
-    name = FlagNames.MaxTopTweetPerCluster,
+    name = FlagNames.MatwitterTopTweetPerCluster,
     default = 200,
-    help = "Maximum number of tweets to take per each simclusters"
+    help = "Matwitterimum number of tweets to take per each simclusters"
   )
 
 }

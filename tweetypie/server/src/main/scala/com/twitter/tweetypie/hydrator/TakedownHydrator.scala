@@ -17,9 +17,9 @@ import com.twitter.tweetypie.util.Takedowns
  * [[com.twitter.tseng.withholding.thriftscala.UnspecifiedReason]].
  */
 object TakedownHydrator {
-  type Type = ValueHydrator[Option[Takedowns], Ctx]
+  type Type = ValueHydrator[Option[Takedowns], Cttwitter]
 
-  case class Ctx(tweetTakedowns: Takedowns, underlyingTweetCtx: TweetCtx) extends TweetCtx.Proxy
+  case class Cttwitter(tweetTakedowns: Takedowns, underlyingTweetCttwitter: TweetCttwitter) etwittertends TweetCttwitter.Protwittery
 
   val hydratedFields: Set[FieldByPath] =
     Set(
@@ -28,18 +28,18 @@ object TakedownHydrator {
     )
 
   def apply(repo: UserTakedownRepository.Type): Type =
-    ValueHydrator[Option[Takedowns], Ctx] { (curr, ctx) =>
-      repo(ctx.userId).liftToTry.map {
+    ValueHydrator[Option[Takedowns], Cttwitter] { (curr, cttwitter) =>
+      repo(cttwitter.userId).liftToTry.map {
         case Return(userReasons) =>
-          val reasons = Seq.concat(ctx.tweetTakedowns.reasons, userReasons).toSet
+          val reasons = Seq.concat(cttwitter.tweetTakedowns.reasons, userReasons).toSet
           ValueState.delta(curr, Some(Takedowns(reasons)))
         case Throw(_) =>
           ValueState.partial(curr, hydratedFields)
       }
-    }.onlyIf { (_, ctx) =>
+    }.onlyIf { (_, cttwitter) =>
       (
-        ctx.tweetFieldRequested(Tweet.TakedownCountryCodesField) ||
-        ctx.tweetFieldRequested(Tweet.TakedownReasonsField)
-      ) && ctx.hasTakedown
+        cttwitter.tweetFieldRequested(Tweet.TakedownCountryCodesField) ||
+        cttwitter.tweetFieldRequested(Tweet.TakedownReasonsField)
+      ) && cttwitter.hasTakedown
     }
 }

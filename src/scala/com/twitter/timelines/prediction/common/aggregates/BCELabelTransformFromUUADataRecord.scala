@@ -1,7 +1,7 @@
 package com.twitter.timelines.prediction.common.aggregates
 
 import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
+import com.twitter.ml.api.FeatureContetwittert
 import com.twitter.ml.api.ITransform
 import com.twitter.ml.api.constant.SharedFeatures
 import java.lang.{Double => JDouble}
@@ -23,7 +23,7 @@ import com.twitter.timelines.prediction.features.common.CombinedFeatures
  * and then re-use the function in EngagementTypeConverte to add the binary label to the datarecord.
  **/
 
-object BCELabelTransformFromUUADataRecord extends ITransform {
+object BCELabelTransformFromUUADataRecord etwittertends ITransform {
 
   val dwellTimeFeatureToEngagementMap = Map(
     TimelinesSharedFeatures.TWEET_DETAIL_DWELL_TIME_MS -> EngagementType.TweetDetailDwell,
@@ -47,8 +47,8 @@ object BCELabelTransformFromUUADataRecord extends ITransform {
       None
     }
   }
-  override def transformContext(featureContext: FeatureContext): FeatureContext = {
-    featureContext.addFeatures(
+  override def transformContetwittert(featureContetwittert: FeatureContetwittert): FeatureContetwittert = {
+    featureContetwittert.addFeatures(
       (CombinedFeatures.TweetDetailDwellEngagements ++ CombinedFeatures.ProfileDwellEngagements ++ CombinedFeatures.FullscreenVideoDwellEngagements).toSeq: _*)
   }
   override def transform(record: DataRecord): Unit = {

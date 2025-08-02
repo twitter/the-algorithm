@@ -13,23 +13,23 @@ import com.twitter.timelines.configapi.{
 }
 import com.twitter.timelines.model.TweetId
 import com.twitter.timelines.model.UserId
-import com.twitter.timelineservice.DeviceContext
+import com.twitter.timelineservice.DeviceContetwittert
 
 object RecapQuery {
 
   val EngagedTweetsSupportedTweetKindOption: TweetKindOption.ValueSet = TweetKindOption(
     includeReplies = false,
     includeRetweets = false,
-    includeExtendedReplies = false,
+    includeEtwittertendedReplies = false,
     includeOriginalTweetsAndQuotes = true
   )
 
-  val DefaultSearchOperator: SearchOperator.Value = SearchOperator.Exclude
+  val DefaultSearchOperator: SearchOperator.Value = SearchOperator.Etwitterclude
   def fromThrift(query: thrift.RecapQuery): RecapQuery = {
 
     RecapQuery(
       userId = query.userId,
-      maxCount = query.maxCount,
+      matwitterCount = query.matwitterCount,
       range = query.range.map(TimelineRange.fromThrift),
       options = query.options
         .map(options => TweetKindOption.fromThrift(options.to[Set]))
@@ -38,9 +38,9 @@ object RecapQuery {
         .map(SearchOperator.fromThrift)
         .getOrElse(DefaultSearchOperator),
       earlybirdOptions = query.earlybirdOptions.map(EarlybirdOptions.fromThrift),
-      deviceContext = query.deviceContext.map(DeviceContext.fromThrift),
+      deviceContetwittert = query.deviceContetwittert.map(DeviceContetwittert.fromThrift),
       authorIds = query.authorIds,
-      excludedTweetIds = query.excludedTweetIds,
+      etwittercludedTweetIds = query.etwittercludedTweetIds,
       searchClientSubId = query.searchClientSubId,
       candidateTweetSourceId =
         query.candidateTweetSourceId.flatMap(CandidateTweetSourceId.fromThrift),
@@ -56,7 +56,7 @@ object RecapQuery {
       tweetIds = Some(query.tweetIds),
       searchOperator = DefaultSearchOperator,
       earlybirdOptions = query.earlybirdOptions.map(EarlybirdOptions.fromThrift),
-      deviceContext = query.deviceContext.map(DeviceContext.fromThrift),
+      deviceContetwittert = query.deviceContetwittert.map(DeviceContetwittert.fromThrift),
       candidateTweetSourceId =
         query.candidateTweetSourceId.flatMap(CandidateTweetSourceId.fromThrift),
       hydratesContentFeatures = query.hydratesContentFeatures
@@ -70,19 +70,19 @@ object RecapQuery {
 
     if (!(options.isEmpty ||
         (options == EngagedTweetsSupportedTweetKindOption))) {
-      throw new IllegalArgumentException(s"Unsupported TweetKindOption value: $options")
+      throw new IllegalArgumentEtwitterception(s"Unsupported TweetKindOption value: $options")
     }
 
     RecapQuery(
       userId = query.userId,
-      maxCount = query.maxCount,
+      matwitterCount = query.matwitterCount,
       range = query.range.map(TimelineRange.fromThrift),
       options = options,
       searchOperator = DefaultSearchOperator,
       earlybirdOptions = query.earlybirdOptions.map(EarlybirdOptions.fromThrift),
-      deviceContext = query.deviceContext.map(DeviceContext.fromThrift),
+      deviceContetwittert = query.deviceContetwittert.map(DeviceContetwittert.fromThrift),
       authorIds = query.userIds,
-      excludedTweetIds = query.excludedTweetIds,
+      etwittercludedTweetIds = query.etwittercludedTweetIds,
     )
   }
 
@@ -97,20 +97,20 @@ object RecapQuery {
 
     RecapQuery(
       userId = query.userId,
-      maxCount = query.maxCount,
+      matwitterCount = query.matwitterCount,
       range = query.range.map(TimelineRange.fromThrift),
       options = options,
       searchOperator = DefaultSearchOperator,
       earlybirdOptions = query.earlybirdOptions.map(EarlybirdOptions.fromThrift),
-      deviceContext = query.deviceContext.map(DeviceContext.fromThrift),
-      excludedTweetIds = query.excludedTweetIds,
+      deviceContetwittert = query.deviceContetwittert.map(DeviceContetwittert.fromThrift),
+      etwittercludedTweetIds = query.etwittercludedTweetIds,
       semanticCoreIds = query.semanticCoreIds.map(_.map(SemanticCoreAnnotation.fromThrift).toSet),
       hashtags = query.hashtags.map(_.toSet),
       languages = query.languages.map(_.map(Language.fromThrift).toSet),
       candidateTweetSourceId =
         query.candidateTweetSourceId.flatMap(CandidateTweetSourceId.fromThrift),
       includeNullcastTweets = query.includeNullcastTweets,
-      includeTweetsFromArchiveIndex = query.includeTweetsFromArchiveIndex,
+      includeTweetsFromArchiveIndetwitter = query.includeTweetsFromArchiveIndetwitter,
       authorIds = query.authorIds,
       hydratesContentFeatures = query.hydratesContentFeatures
     )
@@ -123,12 +123,12 @@ object RecapQuery {
 
     RecapQuery(
       userId = query.userId,
-      maxCount = query.maxCount,
+      matwitterCount = query.matwitterCount,
       range = query.range.map(TimelineRange.fromThrift),
       options = options,
       earlybirdOptions = query.earlybirdOptions.map(EarlybirdOptions.fromThrift),
-      deviceContext = query.deviceContext.map(DeviceContext.fromThrift),
-      excludedTweetIds = query.excludedTweetIds,
+      deviceContetwittert = query.deviceContetwittert.map(DeviceContetwittert.fromThrift),
+      etwittercludedTweetIds = query.etwittercludedTweetIds,
       utegLikedByTweetsOptions = for {
         utegCount <- query.utegCount
         weightedFollowings <- query.weightedFollowings.map(_.toMap)
@@ -148,10 +148,10 @@ object RecapQuery {
   val paramGate: (Param[Boolean] => Gate[RecapQuery]) = HasParams.paramGate
 
   type DependencyProvider[+T] = ConfigApiDependencyProvider[RecapQuery, T]
-  object DependencyProvider extends DependencyProviderFunctions[RecapQuery]
+  object DependencyProvider etwittertends DependencyProviderFunctions[RecapQuery]
 
   type FutureDependencyProvider[+T] = ConfigApiFutureDependencyProvider[RecapQuery, T]
-  object FutureDependencyProvider extends FutureDependencyProviderFunctions[RecapQuery]
+  object FutureDependencyProvider etwittertends FutureDependencyProviderFunctions[RecapQuery]
 }
 
 /**
@@ -159,35 +159,35 @@ object RecapQuery {
  */
 case class RecapQuery(
   userId: UserId,
-  maxCount: Option[Int] = None,
+  matwitterCount: Option[Int] = None,
   range: Option[TimelineRange] = None,
   options: TweetKindOption.ValueSet = TweetKindOption.None,
   searchOperator: SearchOperator.Value = RecapQuery.DefaultSearchOperator,
   earlybirdOptions: Option[EarlybirdOptions] = None,
-  deviceContext: Option[DeviceContext] = None,
+  deviceContetwittert: Option[DeviceContetwittert] = None,
   authorIds: Option[Seq[UserId]] = None,
   tweetIds: Option[Seq[TweetId]] = None,
   semanticCoreIds: Option[Set[SemanticCoreAnnotation]] = None,
   hashtags: Option[Set[String]] = None,
   languages: Option[Set[Language]] = None,
-  excludedTweetIds: Option[Seq[TweetId]] = None,
+  etwittercludedTweetIds: Option[Seq[TweetId]] = None,
   // options used only for yml tweets
   utegLikedByTweetsOptions: Option[UtegLikedByTweetsOptions] = None,
   searchClientSubId: Option[String] = None,
   override val params: Params = Params.Empty,
   candidateTweetSourceId: Option[CandidateTweetSourceId.Value] = None,
   includeNullcastTweets: Option[Boolean] = None,
-  includeTweetsFromArchiveIndex: Option[Boolean] = None,
+  includeTweetsFromArchiveIndetwitter: Option[Boolean] = None,
   hydratesContentFeatures: Option[Boolean] = None)
-    extends HasParams {
+    etwittertends HasParams {
 
   override def toString: String = {
-    s"RecapQuery(userId: $userId, maxCount: $maxCount, range: $range, options: $options, searchOperator: $searchOperator, " +
-      s"earlybirdOptions: $earlybirdOptions, deviceContext: $deviceContext, authorIds: $authorIds, " +
-      s"tweetIds: $tweetIds, semanticCoreIds: $semanticCoreIds, hashtags: $hashtags, languages: $languages, excludedTweetIds: $excludedTweetIds, " +
+    s"RecapQuery(userId: $userId, matwitterCount: $matwitterCount, range: $range, options: $options, searchOperator: $searchOperator, " +
+      s"earlybirdOptions: $earlybirdOptions, deviceContetwittert: $deviceContetwittert, authorIds: $authorIds, " +
+      s"tweetIds: $tweetIds, semanticCoreIds: $semanticCoreIds, hashtags: $hashtags, languages: $languages, etwittercludedTweetIds: $etwittercludedTweetIds, " +
       s"utegLikedByTweetsOptions: $utegLikedByTweetsOptions, searchClientSubId: $searchClientSubId, " +
       s"params: $params, candidateTweetSourceId: $candidateTweetSourceId, includeNullcastTweets: $includeNullcastTweets, " +
-      s"includeTweetsFromArchiveIndex: $includeTweetsFromArchiveIndex), hydratesContentFeatures: $hydratesContentFeatures"
+      s"includeTweetsFromArchiveIndetwitter: $includeTweetsFromArchiveIndetwitter), hydratesContentFeatures: $hydratesContentFeatures"
   }
 
   def throwIfInvalid(): Unit = {
@@ -195,7 +195,7 @@ case class RecapQuery(
       elements.toSet.size == elements.size
     }
 
-    maxCount.foreach { max => require(max > 0, "maxCount must be a positive integer") }
+    matwitterCount.foreach { matwitter => require(matwitter > 0, "matwitterCount must be a positive integer") }
     range.foreach(_.throwIfInvalid())
     earlybirdOptions.foreach(_.throwIfInvalid())
     tweetIds.foreach { ids => require(ids.nonEmpty, "tweetIds must be nonEmpty if present") }
@@ -213,14 +213,14 @@ case class RecapQuery(
     val thriftOptions = Some(TweetKindOption.toThrift(options))
     thrift.RecapQuery(
       userId,
-      maxCount,
+      matwitterCount,
       range.map(_.toTimelineRangeThrift),
       deprecatedMinCount = None,
       thriftOptions,
       earlybirdOptions.map(_.toThrift),
-      deviceContext.map(_.toThrift),
+      deviceContetwittert.map(_.toThrift),
       authorIds,
-      excludedTweetIds,
+      etwittercludedTweetIds,
       Some(SearchOperator.toThrift(searchOperator)),
       searchClientSubId,
       candidateTweetSourceId.flatMap(CandidateTweetSourceId.toThrift)
@@ -233,7 +233,7 @@ case class RecapQuery(
       userId,
       tweetIds.get,
       earlybirdOptions.map(_.toThrift),
-      deviceContext.map(_.toThrift),
+      deviceContetwittert.map(_.toThrift),
       candidateTweetSourceId.flatMap(CandidateTweetSourceId.toThrift)
     )
   }
@@ -242,18 +242,18 @@ case class RecapQuery(
     val thriftTweetKindOptions = Some(TweetKindOption.toThrift(options))
     thrift.EntityTweetsQuery(
       userId = userId,
-      maxCount = maxCount,
+      matwitterCount = matwitterCount,
       range = range.map(_.toTimelineRangeThrift),
       tweetKindOptions = thriftTweetKindOptions,
       earlybirdOptions = earlybirdOptions.map(_.toThrift),
-      deviceContext = deviceContext.map(_.toThrift),
-      excludedTweetIds = excludedTweetIds,
+      deviceContetwittert = deviceContetwittert.map(_.toThrift),
+      etwittercludedTweetIds = etwittercludedTweetIds,
       semanticCoreIds = semanticCoreIds.map(_.map(_.toThrift)),
       hashtags = hashtags,
       languages = languages.map(_.map(_.toThrift)),
       candidateTweetSourceId.flatMap(CandidateTweetSourceId.toThrift),
       includeNullcastTweets = includeNullcastTweets,
-      includeTweetsFromArchiveIndex = includeTweetsFromArchiveIndex,
+      includeTweetsFromArchiveIndetwitter = includeTweetsFromArchiveIndetwitter,
       authorIds = authorIds
     )
   }
@@ -263,13 +263,13 @@ case class RecapQuery(
     val thriftTweetKindOptions = Some(TweetKindOption.toThrift(options))
     thrift.UtegLikedByTweetsQuery(
       userId = userId,
-      maxCount = maxCount,
+      matwitterCount = matwitterCount,
       utegCount = utegLikedByTweetsOptions.map(_.utegCount),
       range = range.map(_.toTimelineRangeThrift),
       tweetKindOptions = thriftTweetKindOptions,
       earlybirdOptions = earlybirdOptions.map(_.toThrift),
-      deviceContext = deviceContext.map(_.toThrift),
-      excludedTweetIds = excludedTweetIds,
+      deviceContetwittert = deviceContetwittert.map(_.toThrift),
+      etwittercludedTweetIds = etwittercludedTweetIds,
       isInNetwork = utegLikedByTweetsOptions.map(_.isInNetwork).get,
       weightedFollowings = utegLikedByTweetsOptions.map(_.weightedFollowings),
       candidateTweetSourceId = candidateTweetSourceId.flatMap(CandidateTweetSourceId.toThrift)

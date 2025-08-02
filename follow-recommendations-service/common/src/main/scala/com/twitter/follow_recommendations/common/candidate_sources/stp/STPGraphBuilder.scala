@@ -4,11 +4,11 @@ import com.twitter.finagle.stats.Stat
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
 import com.twitter.follow_recommendations.common.models.STPGraph
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class STPGraphBuilder @Inject() (
@@ -19,7 +19,7 @@ class STPGraphBuilder @Inject() (
   private val firstDegreeStat: Stat = stats.stat("first_degree_edges")
   private val secondDegreeStat: Stat = stats.stat("second_degree_edges")
   def apply(
-    target: HasClientContext with HasParams with HasRecentFollowedUserIds
+    target: HasClientContetwittert with HasParams with HasRecentFollowedUserIds
   ): Stitch[STPGraph] = stpFirstDegreeFetcher
     .getFirstDegreeEdges(target).flatMap { firstDegreeEdges =>
       firstDegreeStat.add(firstDegreeEdges.size)

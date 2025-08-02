@@ -9,7 +9,7 @@ The former manages a set of ``CalibratorFeatures``
 Ultimately, the ``Calibrator`` should produce an initialized layer via its ``to_layer()`` method.
 """
 
-from .common_calibrators import calibrate_discretizer_and_export, add_discretizer_arguments  # noqa: F401
+from .common_calibrators import calibrate_discretizer_and_etwitterport, add_discretizer_arguments  # noqa: F401
 from .calibrator import Calibrator  # noqa: F401
 from .mdl import MDLCalibrator  # noqa: F401
 from .isotonic import IsotonicCalibrator  # noqa: F401

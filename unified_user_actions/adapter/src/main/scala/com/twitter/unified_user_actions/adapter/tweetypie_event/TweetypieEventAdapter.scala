@@ -11,7 +11,7 @@ import com.twitter.tweetypie.thriftscala.TweetDeleteEvent
 import com.twitter.tweetypie.thriftscala.TweetEventFlags
 import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
 
-class TweetypieEventAdapter extends AbstractAdapter[TweetEvent, UnKeyed, UnifiedUserAction] {
+class TweetypieEventAdapter etwittertends AbstractAdapter[TweetEvent, UnKeyed, UnifiedUserAction] {
   import TweetypieEventAdapter._
   override def adaptOneToKeyedMany(
     tweetEvent: TweetEvent,

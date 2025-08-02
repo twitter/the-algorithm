@@ -4,24 +4,24 @@ from typing import List, Optional
 
 from .lib.params import BlockParams, ClemNetParams, ConvParams, DenseParams, TopLayerParams
 
-from pydantic import BaseModel, Extra, NonNegativeFloat
+from pydantic import BaseModel, Etwittertra, NonNegativeFloat
 import tensorflow.compat.v1 as tf
 
 
 # checkstyle: noqa
 
 
-class ExtendedBaseModel(BaseModel):
+class EtwittertendedBaseModel(BaseModel):
   class Config:
-    extra = Extra.forbid
+    etwittertra = Etwittertra.forbid
 
 
-class SparseFeaturesParams(ExtendedBaseModel):
+class SparseFeaturesParams(EtwittertendedBaseModel):
   bits: int
   embedding_size: int
 
 
-class FeaturesParams(ExtendedBaseModel):
+class FeaturesParams(EtwittertendedBaseModel):
   sparse_features: Optional[SparseFeaturesParams]
 
 
@@ -29,7 +29,7 @@ class ModelTypeEnum(str, enum.Enum):
   clemnet: str = "clemnet"
 
 
-class ModelParams(ExtendedBaseModel):
+class ModelParams(EtwittertendedBaseModel):
   name: ModelTypeEnum
   features: FeaturesParams
   architecture: ClemNetParams
@@ -40,7 +40,7 @@ class TaskNameEnum(str, enum.Enum):
   engagement: str = "Engagement"
 
 
-class Task(ExtendedBaseModel):
+class Task(EtwittertendedBaseModel):
   name: TaskNameEnum
   label: str
   score_weight: NonNegativeFloat
@@ -52,7 +52,7 @@ DEFAULT_TASKS = [
 ]
 
 
-class GraphParams(ExtendedBaseModel):
+class GraphParams(EtwittertendedBaseModel):
   tasks: List[Task] = DEFAULT_TASKS
   model: ModelParams
   weight: Optional[str]

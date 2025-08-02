@@ -7,8 +7,8 @@ scala_library(
         "snowflake:id",
         "src/java/com/twitter/ml/api/constant",
         "src/scala/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/rux/landing_page/data_pipeline:labeled_rux_service_scribe-scala",
-        "src/scala/com/twitter/rux/landing_page/data_pipeline:landing_page_labeled_data_record-java",
+        "src/scala/com/twitter/rutwitter/landing_page/data_pipeline:labeled_rutwitter_service_scribe-scala",
+        "src/scala/com/twitter/rutwitter/landing_page/data_pipeline:landing_page_labeled_data_record-java",
         "src/scala/com/twitter/scalding_internal/dalv2",
         "src/scala/com/twitter/scalding_internal/dalv2/dataset",
         "src/scala/com/twitter/scalding_internal/job",
@@ -25,8 +25,8 @@ scala_library(
 )
 
 hadoop_binary(
-    name = "rux_landing_ddg_analysis-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.tweet_similarity.evaluation.RUXLandingDdgAnalysisAdhocApp",
+    name = "rutwitter_landing_ddg_analysis-adhoc",
+    main = "com.twitter.simclusters_v2.scalding.tweet_similarity.evaluation.RUtwitterLandingDdgAnalysisAdhocApp",
     platform = "java8",
     runtime_platform = "java8",
     tags = [

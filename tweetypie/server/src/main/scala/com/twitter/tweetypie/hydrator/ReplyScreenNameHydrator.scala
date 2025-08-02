@@ -9,19 +9,19 @@ import com.twitter.tweetypie.thriftscala._
 object ReplyScreenNameHydrator {
   import TweetLenses.Reply.{inReplyToScreenName => screenNameLens}
 
-  type Type = ValueHydrator[Option[Reply], TweetCtx]
+  type Type = ValueHydrator[Option[Reply], TweetCttwitter]
 
   val hydratedField: FieldByPath =
     fieldByPath(Tweet.CoreDataField, TweetCoreData.ReplyField, Reply.InReplyToScreenNameField)
 
-  def once(h: ValueHydrator[Option[Reply], TweetCtx]): Type =
+  def once(h: ValueHydrator[Option[Reply], TweetCttwitter]): Type =
     TweetHydration.completeOnlyOnce(
       hydrationType = HydrationType.ReplyScreenName,
       hydrator = h
     )
 
   def apply[C](repo: UserIdentityRepository.Type): ValueHydrator[Option[Reply], C] =
-    ValueHydrator[Reply, C] { (reply, ctx) =>
+    ValueHydrator[Reply, C] { (reply, cttwitter) =>
       val key = UserKey(reply.inReplyToUserId)
 
       repo(key).liftToTry.map {

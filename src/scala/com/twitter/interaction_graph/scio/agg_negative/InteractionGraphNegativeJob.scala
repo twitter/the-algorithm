@@ -1,7 +1,7 @@
 package com.twitter.interaction_graph.scio.agg_negative
 
 import com.google.api.services.bigquery.model.TimePartitioning
-import com.spotify.scio.ScioContext
+import com.spotify.scio.ScioContetwittert
 import com.spotify.scio.values.SCollection
 import com.twitter.algebird.mutable.PriorityQueueMonoid
 import com.twitter.beam.io.dal.DAL
@@ -20,7 +20,7 @@ import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.scio_internal.job.ScioBeamJob
 import com.twitter.scrooge.ThriftStruct
 import com.twitter.socialgraph.hadoop.SocialgraphUnfollowsScalaDataset
-import com.twitter.tcdc.bqblaster.beam.syntax._
+import com.twitter.tcdc.bqblaster.beam.syntatwitter._
 import com.twitter.tcdc.bqblaster.core.avro.TypedProjection
 import com.twitter.tcdc.bqblaster.core.transform.RootTransform
 import com.twitter.timelines.real_graph.thriftscala.RealGraphFeaturesTest
@@ -33,16 +33,16 @@ import flockdb_tools.datasets.flock.FlockReportAsSpamEdgesScalaDataset
 import java.time.Instant
 import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
 
-object InteractionGraphNegativeJob extends ScioBeamJob[InteractionGraphNegativeOption] {
-  val maxDestinationIds = 500 // p99 is about 500
+object InteractionGraphNegativeJob etwittertends ScioBeamJob[InteractionGraphNegativeOption] {
+  val matwitterDestinationIds = 500 // p99 is about 500
   def getFeatureCounts(e: Edge): Int = e.features.size
   val negativeEdgeOrdering = Ordering.by[Edge, Int](getFeatureCounts)
   val negativeEdgeReverseOrdering = negativeEdgeOrdering.reverse
   implicit val pqMonoid: PriorityQueueMonoid[Edge] =
-    new PriorityQueueMonoid[Edge](maxDestinationIds)(negativeEdgeOrdering)
+    new PriorityQueueMonoid[Edge](matwitterDestinationIds)(negativeEdgeOrdering)
 
   override protected def configurePipeline(
-    sc: ScioContext,
+    sc: ScioContetwittert,
     opts: InteractionGraphNegativeOption
   ): Unit = {
 
@@ -92,7 +92,7 @@ object InteractionGraphNegativeJob extends ScioBeamJob[InteractionGraphNegativeO
     val negativeFeatures: SCollection[KeyVal[Long, UserSession]] =
       allEdgeFeatures
         .keyBy(_.sourceId)
-        .topByKey(maxDestinationIds)(Ordering.by(_.features.size))
+        .topByKey(matwitterDestinationIds)(Ordering.by(_.features.size))
         .map {
           case (srcId, pqEdges) =>
             val topKNeg =
@@ -123,11 +123,11 @@ object InteractionGraphNegativeJob extends ScioBeamJob[InteractionGraphNegativeO
       .Builder()
       .withPrependedFields("dateHour" -> TypedProjection.fromConstant(ingestionDate))
     val timePartitioning = new TimePartitioning()
-      .setType("DAY").setField("dateHour").setExpirationMs(21.days.inMilliseconds)
+      .setType("DAY").setField("dateHour").setEtwitterpirationMs(21.days.inMilliseconds)
     val bqWriter = BigQueryIO
       .write[Edge]
       .to(s"${bqDataset}.interaction_graph_agg_negative_edge_snapshot")
-      .withExtendedErrorInfo()
+      .withEtwittertendedErrorInfo()
       .withTimePartitioning(timePartitioning)
       .withLoadJobProjectId("twttr-recos-ml-prod")
       .withThriftSupport(bqFieldsTransform.build(), AvroConverter.Legacy)
@@ -145,7 +145,7 @@ object InteractionGraphNegativeJob extends ScioBeamJob[InteractionGraphNegativeO
 
   def readSnapshot[T <: ThriftStruct](
     dataset: SnapshotDALDataset[T],
-    sc: ScioContext
+    sc: ScioContetwittert
   ): SCollection[T] = {
     sc.customInput(
       s"Reading most recent snaphost ${dataset.role.name}.${dataset.logicalName}",

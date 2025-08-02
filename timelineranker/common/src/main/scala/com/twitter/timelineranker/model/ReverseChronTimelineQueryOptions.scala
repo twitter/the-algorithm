@@ -9,18 +9,18 @@ object ReverseChronTimelineQueryOptions {
     options: thrift.ReverseChronTimelineQueryOptions
   ): ReverseChronTimelineQueryOptions = {
     ReverseChronTimelineQueryOptions(
-      getTweetsFromArchiveIndex = options.getTweetsFromArchiveIndex
+      getTweetsFromArchiveIndetwitter = options.getTweetsFromArchiveIndetwitter
     )
   }
 }
 
-case class ReverseChronTimelineQueryOptions(getTweetsFromArchiveIndex: Boolean = true)
-    extends TimelineQueryOptions {
+case class ReverseChronTimelineQueryOptions(getTweetsFromArchiveIndetwitter: Boolean = true)
+    etwittertends TimelineQueryOptions {
 
   throwIfInvalid()
 
   def toThrift: thrift.ReverseChronTimelineQueryOptions = {
-    thrift.ReverseChronTimelineQueryOptions(getTweetsFromArchiveIndex = getTweetsFromArchiveIndex)
+    thrift.ReverseChronTimelineQueryOptions(getTweetsFromArchiveIndetwitter = getTweetsFromArchiveIndetwitter)
   }
 
   def toTimelineQueryOptionsThrift: thrift.TimelineQueryOptions = {

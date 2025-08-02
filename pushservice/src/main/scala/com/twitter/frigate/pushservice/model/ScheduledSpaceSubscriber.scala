@@ -30,7 +30,7 @@ class ScheduledSpaceSubscriberPushCandidate(
 )(
   implicit val statsScoped: StatsReceiver,
   pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
+    etwittertends PushCandidate
     with ScheduledSpaceSubscriberCandidate
     with SpaceCandidateFanoutDetails
     with ScheduledSpaceSubscriberIbis2Hydrator
@@ -69,7 +69,7 @@ class ScheduledSpaceSubscriberPushCandidate(
 }
 
 case class ScheduledSpaceSubscriberCandidatePredicates(config: Config)
-    extends BasicSendHandlerPredicates[ScheduledSpaceSubscriberPushCandidate] {
+    etwittertends BasicSendHandlerPredicates[ScheduledSpaceSubscriberPushCandidate] {
 
   implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
 

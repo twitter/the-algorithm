@@ -3,20 +3,20 @@ package com.twitter.search.earlybird;
 import java.io.BufferedWriter;
 import java.io.Closeable;
 import java.io.File;
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.EtwitterecutionEtwitterception;
+import java.util.concurrent.EtwitterecutorService;
+import java.util.concurrent.Etwitterecutors;
+import java.util.concurrent.RejectedEtwitterecutionEtwitterception;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.GuardedBy;
+import javatwitter.annotation.Nullable;
+import javatwitter.annotation.concurrent.GuardedBy;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Charsets;
@@ -29,17 +29,17 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.AtomicLongMap;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.IndetwitterSearcher;
 import org.apache.thrift.TBase;
-import org.apache.thrift.TException;
+import org.apache.thrift.TEtwitterception;
 import org.apache.thrift.TSerializer;
-import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.KeeperEtwitterception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.twitter.common.collections.Pair;
 import com.twitter.common.util.Clock;
-import com.twitter.common.zookeeper.ServerSet.UpdateException;
+import com.twitter.common.zookeeper.ServerSet.UpdateEtwitterception;
 import com.twitter.common.zookeeper.ZooKeeperClient;
 import com.twitter.decider.Decider;
 import com.twitter.finagle.Failure;
@@ -59,8 +59,8 @@ import com.twitter.search.common.search.termination.QueryTimeoutFactory;
 import com.twitter.search.common.util.FinagleUtil;
 import com.twitter.search.common.util.GCUtil;
 import com.twitter.search.common.util.ml.tensorflow_engine.TensorflowModelsManager;
-import com.twitter.search.common.util.zookeeper.ZooKeeperProxy;
-import com.twitter.search.core.earlybird.index.inverted.QueryCostTracker;
+import com.twitter.search.common.util.zookeeper.ZooKeeperProtwittery;
+import com.twitter.search.core.earlybird.indetwitter.inverted.QueryCostTracker;
 import com.twitter.search.earlybird.admin.LastSearchesSummary;
 import com.twitter.search.earlybird.admin.QueriedFieldsAndSchemaStats;
 import com.twitter.search.earlybird.common.ClientIdUtil;
@@ -70,8 +70,8 @@ import com.twitter.search.earlybird.common.EarlybirdRequestPreLogger;
 import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
 import com.twitter.search.earlybird.common.RequestResponsePair;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
-import com.twitter.search.earlybird.exception.TransientException;
+import com.twitter.search.earlybird.etwitterception.EarlybirdStartupEtwitterception;
+import com.twitter.search.earlybird.etwitterception.TransientEtwitterception;
 import com.twitter.search.earlybird.ml.ScoringModelsManager;
 import com.twitter.search.earlybird.partition.AudioSpaceTable;
 import com.twitter.search.earlybird.partition.DynamicPartitionConfig;
@@ -79,7 +79,7 @@ import com.twitter.search.earlybird.partition.EarlybirdStartup;
 import com.twitter.search.earlybird.partition.MultiSegmentTermDictionaryManager;
 import com.twitter.search.earlybird.partition.PartitionConfig;
 import com.twitter.search.earlybird.partition.PartitionManager;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
+import com.twitter.search.earlybird.partition.SearchIndetwitteringMetricSet;
 import com.twitter.search.earlybird.partition.SegmentManager;
 import com.twitter.search.earlybird.partition.SegmentSyncConfig;
 import com.twitter.search.earlybird.partition.SegmentVulture;
@@ -95,7 +95,7 @@ import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
 import com.twitter.search.earlybird.thrift.EarlybirdStatusResponse;
 import com.twitter.search.earlybird.thrift.ThriftSearchResult;
 import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.util.OneTaskScheduledExecutorManager;
+import com.twitter.search.earlybird.util.OneTaskScheduledEtwitterecutorManager;
 import com.twitter.search.earlybird.util.TermCountMonitor;
 import com.twitter.search.earlybird.util.TweetCountMonitor;
 import com.twitter.snowflake.id.SnowflakeId;
@@ -115,7 +115,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
   private static final Duration SERVER_CLOSE_WAIT_TIME = Duration.apply(5L, TimeUnit.SECONDS);
 
   private static final Failure QUEUE_FULL_FAILURE =
-      Failure.rejected("Rejected due to full executor queue");
+      Failure.rejected("Rejected due to full etwitterecutor queue");
 
   private final int port = EarlybirdConfig.getThriftPort();
   private final int warmUpPort = EarlybirdConfig.getWarmUpThriftPort();
@@ -133,7 +133,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
       "responses_for_client_id_%s_with_response_code_%s";
 
   // Loading cache for per finagle-client-id stats. Storing them in a loading cache key-ed by
-  // finagle client id so we don't export the stat multiple times.
+  // finagle client id so we don't etwitterport the stat multiple times.
   private final LoadingCache<String, SearchTimerStats> requestCountersByFinagleClientId =
       CacheBuilder.newBuilder().build(
           new CacheLoader<String, SearchTimerStats>() {
@@ -168,7 +168,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
 
   // Loading cache for per finagle client id and client id stats. These are stored separate
   // from the other stats because they are key-ed by the pair of finagle client id and client id
-  // in order to make sure the stats are only exported once.
+  // in order to make sure the stats are only etwitterported once.
   // In the key-pair the first element is the finagle client id while the second element is the
   // client id.
   private final LoadingCache<Pair<String, String>, SearchRateCounter>
@@ -185,7 +185,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
           });
 
   // Loading cache for per-client-id latency stats. Stored in a loading cache here mainly because
-  // the tests assert the mock stats receiver that each stat is only exported once.
+  // the tests assert the mock stats receiver that each stat is only etwitterported once.
   private final LoadingCache<String, SearchTimerStats> clientIdSearchStats =
       CacheBuilder.newBuilder().build(
           new CacheLoader<String, SearchTimerStats>() {
@@ -236,7 +236,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
       CacheBuilder.newBuilder().build(
           new CacheLoader<String, AtomicReference<RequestResponsePair>>() {
             @Override
-            public AtomicReference<RequestResponsePair> load(String key) throws Exception {
+            public AtomicReference<RequestResponsePair> load(String key) throws Etwitterception {
               return new AtomicReference<>(null);
             }
           });
@@ -246,7 +246,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
   private final SearchTimerStats overallScoringTimePerHitStats;
   private final Percentile<Integer> overallScoringNumHitsProcessedStats;
 
-  private final EarlybirdIndexConfig earlybirdIndexConfig;
+  private final EarlybirdIndetwitterConfig earlybirdIndetwitterConfig;
   private final DynamicPartitionConfig dynamicPartitionConfig;
   private final SegmentManager segmentManager;
   private final UpdateableEarlybirdStateManager stateManager;
@@ -255,12 +255,12 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
   private final SearchLongGauge startupTimeGauge;
 
   // Time spent in an internal thread pool queue, between the time we get the search request
-  // from finagle until it actually starts being executed.
+  // from finagle until it actually starts being etwitterecuted.
   private final SearchTimerStats internalQueueWaitTimeStats;
 
-  // Tracking request that have exceeded their allocated timeout prior to us actually being able
-  // to start executing the search.
-  private final SearchCounter requestTimeoutExceededBeforeSearchCounter;
+  // Tracking request that have etwitterceeded their allocated timeout prior to us actually being able
+  // to start etwitterecuting the search.
+  private final SearchCounter requestTimeoutEtwitterceededBeforeSearchCounter;
   // Current number of running searcher threads.
   private final SearchLongGauge numSearcherThreadsGauge;
   private final QueryTimeoutFactory queryTimeoutFactory;
@@ -289,13 +289,13 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
   private final EarlybirdFinagleServerManager finagleServerManager;
 
   // If a search request comes in with a client-side start time, and we see that based on that
-  // the timeout has expired, whether we should drop that query immediately.
+  // the timeout has etwitterpired, whether we should drop that query immediately.
   private final boolean skipTimedOutRequests =
       EarlybirdConfig.getBool("skip_timedout_requests", false);
 
   // client of szookeeper.local.twitter.com.
   // This is used to perform distributed locking and layout reading etc.
-  private final ZooKeeperProxy sZooKeeperClient;
+  private final ZooKeeperProtwittery sZooKeeperClient;
 
   private final Decider decider;
 
@@ -303,9 +303,9 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
 
   private final List<Closeable> toClose = new ArrayList<>();
 
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
+  private final SearchIndetwitteringMetricSet searchIndetwitteringMetricSet;
 
-  private final EarlybirdDarkProxy earlybirdDarkProxy;
+  private final EarlybirdDarkProtwittery earlybirdDarkProtwittery;
 
   private final ImmutableMap<EarlybirdResponseCode, SearchCounter> responseCodeCounters;
   private final SegmentSyncConfig segmentSyncConfig;
@@ -318,9 +318,9 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
   private final AtomicLongMap<String> queriedFieldsCounts = AtomicLongMap.create();
 
   public EarlybirdServer(QueryCacheManager queryCacheManager,
-                         ZooKeeperProxy sZkClient,
+                         ZooKeeperProtwittery sZkClient,
                          Decider decider,
-                         EarlybirdIndexConfig earlybirdIndexConfig,
+                         EarlybirdIndetwitterConfig earlybirdIndetwitterConfig,
                          DynamicPartitionConfig dynamicPartitionConfig,
                          PartitionManager partitionManager,
                          SegmentManager segmentManager,
@@ -338,17 +338,17 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
                          TensorflowModelsManager tensorflowModelsManager,
                          Clock clock,
                          MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-                         EarlybirdDarkProxy earlybirdDarkProxy,
+                         EarlybirdDarkProtwittery earlybirdDarkProtwittery,
                          SegmentSyncConfig segmentSyncConfig,
                          QueryTimeoutFactory queryTimeoutFactory,
                          EarlybirdStartup earlybirdStartup,
                          QualityFactor qualityFactor,
-                         SearchIndexingMetricSet searchIndexingMetricSet) {
+                         SearchIndetwitteringMetricSet searchIndetwitteringMetricSet) {
     LOG.info("Creating EarlybirdServer");
     this.decider = decider;
     this.clock = clock;
     this.sZooKeeperClient = sZkClient;
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
+    this.earlybirdIndetwitterConfig = earlybirdIndetwitterConfig;
     this.dynamicPartitionConfig = dynamicPartitionConfig;
     this.segmentManager = segmentManager;
     this.queryCacheManager = queryCacheManager;
@@ -365,8 +365,8 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
     this.scoringModelsManager = scoringModelsManager;
     this.tensorflowModelsManager = tensorflowModelsManager;
     this.multiSegmentTermDictionaryManager = multiSegmentTermDictionaryManager;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.earlybirdDarkProxy = earlybirdDarkProxy;
+    this.searchIndetwitteringMetricSet = searchIndetwitteringMetricSet;
+    this.earlybirdDarkProtwittery = earlybirdDarkProtwittery;
     this.segmentSyncConfig = segmentSyncConfig;
     this.queryTimeoutFactory = queryTimeoutFactory;
     this.earlybirdStartup = earlybirdStartup;
@@ -386,7 +386,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
         "tier_name_" + partitionConfig.getTierName()).set(1);
 
     earlybirdServerStatsReceiver.getLongGauge("partition").set(
-        partitionConfig.getIndexingHashPartitionID());
+        partitionConfig.getIndetwitteringHashPartitionID());
     earlybirdServerStatsReceiver.getLongGauge("replica").set(
         partitionConfig.getHostPositionWithinHashPartition());
     earlybirdServerStatsReceiver.getLongGauge("penguin_version").set(
@@ -400,8 +400,8 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
     this.startupTimeGauge = earlybirdServerStatsReceiver.getLongGauge("startup_time_millis");
     this.internalQueueWaitTimeStats = earlybirdServerStatsReceiver.getTimerStats(
         "internal_queue_wait_time", TimeUnit.MILLISECONDS, false, true, false);
-    this.requestTimeoutExceededBeforeSearchCounter = earlybirdServerStatsReceiver.getCounter(
-        "request_timeout_exceeded_before_search");
+    this.requestTimeoutEtwitterceededBeforeSearchCounter = earlybirdServerStatsReceiver.getCounter(
+        "request_timeout_etwitterceeded_before_search");
     this.numSearcherThreadsGauge =
         earlybirdServerStatsReceiver.getLongGauge("num_searcher_threads");
     this.overallScoringTimePerQueryStats = earlybirdServerStatsReceiver.getTimerStats(
@@ -447,7 +447,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
   }
 
   private void initManagers() {
-    LOG.info("Created EarlybirdIndexConfig: " + earlybirdIndexConfig.getClass().getSimpleName());
+    LOG.info("Created EarlybirdIndetwitterConfig: " + earlybirdIndetwitterConfig.getClass().getSimpleName());
 
     segmentManager.addUpdateListener(queryCacheManager);
   }
@@ -490,26 +490,26 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
     // WARNING: The default 'DefaultQueryCache' maintains a static reference to the weight forever,
     // causing a memory leak. Our weights hold references to an entire segment so the memory leak is
     // significant.
-    IndexSearcher.setDefaultQueryCache(null);
+    IndetwitterSearcher.setDefaultQueryCache(null);
   }
 
   /**
    * Starts the earlybird server.
    */
-  public void start() throws EarlybirdStartupException {
+  public void start() throws EarlybirdStartupEtwitterception {
     // Make sure this is at the top of the function before other parts of the system start running
     new EarlybirdBlacklistHandler(Clock.SYSTEM_CLOCK, sZooKeeperClient)
-        .blockThenExitIfBlacklisted();
+        .blockThenEtwitteritIfBlacklisted();
 
     Stopwatch startupWatch = Stopwatch.createStarted();
-    EarlybirdStatus.beginEvent(EARLYBIRD_STARTUP, searchIndexingMetricSet.startupInProgress);
+    EarlybirdStatus.beginEvent(EARLYBIRD_STARTUP, searchIndetwitteringMetricSet.startupInProgress);
 
     LOG.info("java.library.path is: " + System.getProperty("java.library.path"));
 
     PartitionConfig partitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
 
     SegmentVulture.removeUnusedSegments(partitionManager, partitionConfig,
-        earlybirdIndexConfig.getSchema().getMajorVersionNumber(), segmentSyncConfig);
+        earlybirdIndetwitterConfig.getSchema().getMajorVersionNumber(), segmentSyncConfig);
 
     // Start the schema manager
     schedule(stateManager);
@@ -517,21 +517,21 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
     Closeable closeable = earlybirdStartup.start();
     toClose.add(closeable);
     if (EarlybirdStatus.getStatusCode() == EarlybirdStatusCode.STOPPING) {
-      LOG.info("Server is shutdown. Exiting...");
+      LOG.info("Server is shutdown. Etwitteriting...");
       return;
     }
 
     startupTimeGauge.set(startupWatch.elapsed(TimeUnit.MILLISECONDS));
 
-    EarlybirdStatus.endEvent(EARLYBIRD_STARTUP, searchIndexingMetricSet.startupInProgress);
+    EarlybirdStatus.endEvent(EARLYBIRD_STARTUP, searchIndetwitteringMetricSet.startupInProgress);
 
     GCUtil.runGC();  // Attempt to force a full GC before joining the serverset
 
     try {
       startThriftService(null, true);
-    } catch (InterruptedException e) {
+    } catch (InterruptedEtwitterception e) {
       LOG.info("Interrupted while starting thrift server, quitting earlybird");
-      throw new EarlybirdStartupException("Interrupted while starting thrift server");
+      throw new EarlybirdStartupEtwitterception("Interrupted while starting thrift server");
     }
 
     EarlybirdStatus.THRIFT_SERVICE_STARTED.set(true);
@@ -555,7 +555,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
    * If searcherThreads is null, it uses the value specified by EarlybirdConfig.
    */
   public void startThriftService(@Nullable Integer searcherThreads, boolean isStartingUp)
-      throws InterruptedException {
+      throws InterruptedEtwitterception {
     synchronized (shutdownLock) {
       if (!finagleServerManager.isWarmUpServerRunning()
           && !finagleServerManager.isProductionServerRunning()) {
@@ -576,7 +576,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
 
           try {
             warmUpManager.warmUp();
-          } catch (UpdateException e) {
+          } catch (UpdateEtwitterception e) {
             LOG.warn("Could not join or leave the warm up server set.", e);
           } finally {
             finagleServerManager.stopWarmUpFinagleServer(SERVER_CLOSE_WAIT_TIME);
@@ -589,7 +589,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
         if (EarlybirdStatus.getStatusCode() != EarlybirdStatusCode.STOPPING) {
           LOG.info("Opening production thrift port...");
           finagleServerManager.startProductionFinagleServer(
-              earlybirdDarkProxy.getDarkProxy(), this, SERVICE_NAME, port);
+              earlybirdDarkProtwittery.getDarkProtwittery(), this, SERVICE_NAME, port);
           EarlybirdStatus.THRIFT_PORT_OPEN.set(true);
 
           if (REGISTER_WITH_ZK_ON_STARTUP) {
@@ -597,12 +597,12 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
             try {
               joinServerSet("internal start-up");
 
-              // Join separate server set for ServiceProxy on Archive Earlybirds
+              // Join separate server set for ServiceProtwittery on Archive Earlybirds
               if (!EarlybirdConfig.isAurora()) {
-                joinServerSetForServiceProxy();
+                joinServerSetForServiceProtwittery();
               }
-            } catch (UpdateException e) {
-              throw new RuntimeException("Unable to join ServerSet during startup.", e);
+            } catch (UpdateEtwitterception e) {
+              throw new RuntimeEtwitterception("Unable to join ServerSet during startup.", e);
             }
           }
         }
@@ -617,7 +617,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
     synchronized (shutdownLock) {
       try {
         leaveServerSet(shouldShutDown ? "internal shutdown" : "admin stopThriftService");
-      } catch (UpdateException e) {
+      } catch (UpdateEtwitterception e) {
         LOG.warn("Leaving production ServerSet failed.", e);
       }
 
@@ -627,7 +627,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
           futurePoolManager.stopUnderlyingFuturePool(
               SERVER_CLOSE_WAIT_TIME.inSeconds(), TimeUnit.SECONDS);
           numSearcherThreadsGauge.set(0);
-        } catch (InterruptedException e) {
+        } catch (InterruptedEtwitterception e) {
           LOG.error("Interrupted while stopping thrift service", e);
           Thread.currentThread().interrupt();
         }
@@ -674,10 +674,10 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
   }
 
   /**
-   * Get a text summary for which fields did we use in a schema.
+   * Get a tetwittert summary for which fields did we use in a schema.
    */
   public Future<String> getQueriedFieldsAndSchemaStats() {
-    ImmutableSchemaInterface schema = this.earlybirdIndexConfig.getSchema().getSchemaSnapshot();
+    ImmutableSchemaInterface schema = this.earlybirdIndetwitterConfig.getSchema().getSchemaSnapshot();
 
     QueriedFieldsAndSchemaStats summary = new QueriedFieldsAndSchemaStats(schema,
         queriedFieldsCounts);
@@ -701,14 +701,14 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
         LOG.info("No queryCacheManager to shut down");
       }
 
-      earlybirdIndexConfig.getResourceCloser().shutdownExecutor();
+      earlybirdIndetwitterConfig.getResourceCloser().shutdownEtwitterecutor();
 
       isShuttingDown = true;
       LOG.info("Closing {} closeables.", toClose.size());
       for (Closeable closeable : toClose) {
         closeable.close();
       }
-    } catch (InterruptedException | IOException e) {
+    } catch (InterruptedEtwitterception | IOEtwitterception e) {
       EarlybirdStatus.setStatus(EarlybirdStatusCode.UNHEALTHY, e.getMessage());
       LOG.error("Interrupted during shutdown, status set to UNHEALTHY");
     }
@@ -723,7 +723,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
     EarlybirdRequestUtil.recordClientClockDiff(request);
 
     if (!futurePoolManager.isPoolReady()) {
-      return Future.exception(new TransientException("Earlybird not yet able to handle requests."));
+      return Future.etwitterception(new TransientEtwitterception("Earlybird not yet able to handle requests."));
     }
 
     return futurePoolManager.apply(new Function0<EarlybirdResponse>() {
@@ -733,7 +733,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
       }
     }).rescue(Function.func(
         // respond with Nack when the queue is full
-        t -> Future.exception((t instanceof RejectedExecutionException) ? QUEUE_FULL_FAILURE : t)));
+        t -> Future.etwitterception((t instanceof RejectedEtwitterecutionEtwitterception) ? QUEUE_FULL_FAILURE : t)));
   }
 
   private EarlybirdResponse doSearch(EarlybirdRequest request, long requestReceivedTimeMillis) {
@@ -757,15 +757,15 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
       EarlybirdThriftRequestLoggingUtil.REQUEST_BUFFER.offer(request);
     }
 
-    EarlybirdRequestUtil.logAndFixExcessiveValues(request);
+    EarlybirdRequestUtil.logAndFitwitterEtwittercessiveValues(request);
 
     final EarlybirdSearcher searcher = new EarlybirdSearcher(
         request,
         segmentManager,
         audioSpaceTable,
         queryCacheManager,
-        earlybirdIndexConfig.getSchema().getSchemaSnapshot(),
-        earlybirdIndexConfig.getCluster(),
+        earlybirdIndetwitterConfig.getSchema().getSchemaSnapshot(),
+        earlybirdIndetwitterConfig.getCluster(),
         dynamicPartitionConfig.getCurrentPartitionConfig(),
         decider,
         tweetsSearcherStats,
@@ -782,7 +782,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
       if (skipTimedOutRequests
           && searcher.getTerminationTracker().getTimeoutEndTimeWithReservation()
           <= clock.nowMillis()) {
-        requestTimeoutExceededBeforeSearchCounter.increment();
+        requestTimeoutEtwitterceededBeforeSearchCounter.increment();
         response = new EarlybirdResponse();
         response.setResponseCode(EarlybirdResponseCode.SERVER_TIMEOUT_ERROR);
       } else {
@@ -791,7 +791,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
       }
     } finally {
       if (response == null) {
-        // This can only happen if we failed to catch an exception in the searcher.
+        // This can only happen if we failed to catch an etwitterception in the searcher.
         LOG.error("Response was null: " + request.toString());
         response = new EarlybirdResponse();
         response.setResponseCode(EarlybirdResponseCode.TRANSIENT_ERROR);
@@ -831,12 +831,12 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
       // /var/log/earlybird/earlybird.failed_requests).
       getClientIdResponseCodeCounter(clientId, response.getResponseCode()).increment();
 
-      // Export request latency as a stat.
+      // Etwitterport request latency as a stat.
       clientIdSearchStats.getUnchecked(clientId).timerIncrement(reqLatency);
       requestCountersByFinagleClientId.getUnchecked(finagleClientId).timerIncrement(reqLatency);
       addEarlybirdServerStats(response, queueWaitTime);
-      // Export scoring stats for the request.
-      exportScoringTimeStats(response, clientId);
+      // Etwitterport scoring stats for the request.
+      etwitterportScoringTimeStats(response, clientId);
     }
 
     Set<String> queriedFields = searcher.getQueriedFields();
@@ -852,8 +852,8 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
       for (ThriftSearchResult result : response.getSearchResults().getResults()) {
         long tweetId = result.getId();
         if (SnowflakeId.isSnowflakeId(tweetId)) {
-          long ageMillis = Math.max(0L,
-              currentTime - SnowflakeId.unixTimeMillisFromId(tweetId));
+          long ageMillis = Math.matwitter(0L,
+              currentTime - SnowflakeId.unitwitterTimeMillisFromId(tweetId));
           int ageDays = Duration.fromMilliseconds(ageMillis).inDays();
 
           if (EarlybirdConfig.isRealtimeOrProtected()) {
@@ -872,7 +872,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
       lastRequestPerClientId.get(clientId).set(
           new RequestResponsePair(request, searcher.getParsedQuery(),
               searcher.getLuceneQuery(), response));
-    } catch (ExecutionException ex) {
+    } catch (EtwitterecutionEtwitterception etwitter) {
       // Not a big problem, we'll just notice that the admin page doesn't work, and it
       // probably won't happen.
     }
@@ -881,7 +881,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
     return response;
   }
 
-  private void exportScoringTimeStats(EarlybirdResponse response, String clientId) {
+  private void etwitterportScoringTimeStats(EarlybirdResponse response, String clientId) {
     if (response.isSetSearchResults()
         && response.getSearchResults().isSetScoringTimeNanos()
         && response.getSearchResults().isSetNumHitsProcessed()) {
@@ -902,7 +902,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
       this.overallScoringTimePerQueryStats.timerIncrement(scoringTimeNanos);
 
       // The num hits processed stats here are scoped only to queries that were actually scored.
-      // This would exclude queries like term stats (that would otherwise have huge num hits
+      // This would etwitterclude queries like term stats (that would otherwise have huge num hits
       // processed).
       this.clientIdScoringNumHitsProcessedStats.getUnchecked(clientId).record(numHitsProcessed);
       this.overallScoringNumHitsProcessedStats.record(numHitsProcessed);
@@ -914,7 +914,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
     EarlybirdServerStats earlybirdServerStats = new EarlybirdServerStats();
     response.setEarlybirdServerStats(earlybirdServerStats);
     earlybirdServerStats.setHostname(DatabaseConfig.getLocalHostname());
-    earlybirdServerStats.setPartition(curPartitionConfig.getIndexingHashPartitionID());
+    earlybirdServerStats.setPartition(curPartitionConfig.getIndetwitteringHashPartitionID());
     earlybirdServerStats.setTierName(curPartitionConfig.getTierName());
     earlybirdServerStats.setCurrentQps(searchStats.getRequestRate());
     earlybirdServerStats.setQueueTimeMillis(queueWaitTime);
@@ -924,36 +924,36 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
   }
 
   @Override
-  public void joinServerSet(String username) throws UpdateException {
+  public void joinServerSet(String username) throws UpdateEtwitterception {
     serverSetManager.joinServerSet(username);
   }
 
 
   @Override
-  public int getNumberOfServerSetMembers() throws InterruptedException,
-      ZooKeeperClient.ZooKeeperConnectionException, KeeperException {
+  public int getNumberOfServerSetMembers() throws InterruptedEtwitterception,
+      ZooKeeperClient.ZooKeeperConnectionEtwitterception, KeeperEtwitterception {
     return serverSetManager.getNumberOfServerSetMembers();
   }
 
   @Override
-  public void leaveServerSet(String username) throws UpdateException {
+  public void leaveServerSet(String username) throws UpdateEtwitterception {
     serverSetManager.leaveServerSet(username);
   }
 
   @Override
-  public void joinServerSetForServiceProxy() {
-    serverSetManager.joinServerSetForServiceProxy();
+  public void joinServerSetForServiceProtwittery() {
+    serverSetManager.joinServerSetForServiceProtwittery();
   }
 
   @VisibleForTesting
   protected static class EarlybirdThriftRequestLoggingUtil {
-    private static final int DEFAULT_MAX_ENTRIES_TO_LOG = 50000;
+    private static final int DEFAULT_MAtwitter_ENTRIES_TO_LOG = 50000;
     private static final int DEFAULT_BUFFER_SIZE = 10000;
     private static final int DEFAULT_LOGGING_SLEEP_MS = 100;
 
     @VisibleForTesting
     protected static volatile boolean thriftLoggerBusy = false;
-    private static final ExecutorService LOGGING_EXECUTOR = Executors.newCachedThreadPool();
+    private static final EtwitterecutorService LOGGING_EtwitterECUTOR = Etwitterecutors.newCachedThreadPool();
 
     // Synchronized circular buffer used for buffering requests.
     // If buffer is full, the oldest requests are replaced. This should not be a problem for
@@ -965,24 +965,24 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
 
     /**
      * Create a separate thread to log thrift request to the given file. If a thread is already
-     * logging thrift requests, this does nothing and throws an IOException indicating that the
+     * logging thrift requests, this does nothing and throws an IOEtwitterception indicating that the
      * logging thread is busy.
      *
      * @param logFile File to log to.
-     * @param maxEntriesToLog Number of entries to log.
+     * @param matwitterEntriesToLog Number of entries to log.
      * @param postLoggingHook Code to run after logging finishes. Only used for testing as of now.
      */
     @VisibleForTesting
     protected static synchronized void startThriftLogging(final File logFile,
-                                                          final int maxEntriesToLog,
+                                                          final int matwitterEntriesToLog,
                                                           final Runnable postLoggingHook)
-        throws IOException {
+        throws IOEtwitterception {
       if (thriftLoggerBusy) {
-        throw new IOException("Already busy logging thrift request. No action taken.");
+        throw new IOEtwitterception("Already busy logging thrift request. No action taken.");
       }
 
       if (!logFile.canWrite()) {
-        throw new IOException("Unable to open log file for writing:  " + logFile);
+        throw new IOEtwitterception("Unable to open log file for writing:  " + logFile);
       }
 
       final BufferedWriter thriftLogWriter =
@@ -994,10 +994,10 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
       REQUEST_BUFFER.clear();
       thriftLoggerBusy = true;
       LOG.info("Started to log thrift requests into file " + logFile.getAbsolutePath());
-      LOGGING_EXECUTOR.submit(() -> {
+      LOGGING_EtwitterECUTOR.submit(() -> {
         try {
           int count = 0;
-          while (count < maxEntriesToLog) {
+          while (count < matwitterEntriesToLog) {
             if (REQUEST_BUFFER.isEmpty()) {
               Thread.sleep(DEFAULT_LOGGING_SLEEP_MS);
               continue;
@@ -1008,7 +1008,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
               String logLine = serializeThriftObject(ebRequest, serializer);
               thriftLogWriter.write(logLine);
               count++;
-            } catch (TException e) {
+            } catch (TEtwitterception e) {
               LOG.warn("Unable to serialize EarlybirdRequest for logging.", e);
             }
           }
@@ -1029,7 +1029,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
      * Serialize a thrift object to a base 64 encoded string.
      */
     private static String serializeThriftObject(TBase<?, ?> tObject, TSerializer serializer)
-        throws TException {
+        throws TEtwitterception {
       return new Base64().encodeToString(serializer.serialize(tObject)) + "\n";
     }
   }
@@ -1041,9 +1041,9 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
    * @param numRequestsToLog Number of requests to collect.  Default value of 50000 used if
    * 0 or negative numbers are pass in.
    */
-  public void startThriftLogging(File logFile, int numRequestsToLog) throws IOException {
+  public void startThriftLogging(File logFile, int numRequestsToLog) throws IOEtwitterception {
     int requestToLog = numRequestsToLog <= 0
-        ? EarlybirdThriftRequestLoggingUtil.DEFAULT_MAX_ENTRIES_TO_LOG : numRequestsToLog;
+        ? EarlybirdThriftRequestLoggingUtil.DEFAULT_MAtwitter_ENTRIES_TO_LOG : numRequestsToLog;
     EarlybirdThriftRequestLoggingUtil.startThriftLogging(logFile, requestToLog, null);
   }
 
@@ -1070,7 +1070,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
     stateManager.setNoShutdownWhenNotInLayout(noShutdown);
   }
 
-  private void schedule(OneTaskScheduledExecutorManager manager) {
+  private void schedule(OneTaskScheduledEtwitterecutorManager manager) {
     if (!isShuttingDown) {
       manager.schedule();
       toClose.add(manager);
@@ -1078,7 +1078,7 @@ public class EarlybirdServer implements EarlybirdService.ServiceIface, ServerSet
   }
 
   public DynamicSchema getSchema() {
-    return earlybirdIndexConfig.getSchema();
+    return earlybirdIndetwitterConfig.getSchema();
   }
 
   public AudioSpaceTable getAudioSpaceTable() {

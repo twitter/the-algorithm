@@ -14,7 +14,7 @@ scala_library(
         "tweetypie/server/src/main/scala/com/twitter/tweetypie",
         "tweetypie/common/src/scala/com/twitter/tweetypie/client_id",
         "tweetypie/common/src/scala/com/twitter/tweetypie/thriftscala/entities",
-        "tweetypie/common/src/scala/com/twitter/tweetypie/tweettext",
+        "tweetypie/common/src/scala/com/twitter/tweetypie/tweettetwittert",
         "twitter-config/yaml",
         "util/util-hashing/src/main/scala",
         "util/util-slf4j-api/src/main/scala/com/twitter/util/logging",

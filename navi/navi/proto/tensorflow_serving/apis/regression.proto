@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 option cc_enable_arenas = true;
 
@@ -7,12 +7,12 @@ import "tensorflow_serving/apis/model.proto";
 
 package tensorflow.serving;
 
-// Regression result for a single item (tensorflow.Example).
+// Regression result for a single item (tensorflow.Etwitterample).
 message Regression {
   float value = 1;
 }
 
-// Contains one result per input example, in the same order as the input in
+// Contains one result per input etwitterample, in the same order as the input in
 // RegressionRequest.
 message RegressionResult {
   repeated Regression regressions = 1;

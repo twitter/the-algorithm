@@ -15,7 +15,7 @@ import java.lang.{Long => JLong}
 import java.lang.{Number => JNumber}
 
 case class TypedLatestMetric[T <: JNumber](defaultValue: Double = 0.0)
-    extends TimedValueAggregationMetric[T] {
+    etwittertends TimedValueAggregationMetric[T] {
   override val operatorName = "latest"
 
   override def plus(
@@ -54,7 +54,7 @@ case class TypedLatestMetric[T <: JNumber](defaultValue: Double = 0.0)
     )
 }
 
-object LatestMetric extends EasyMetric {
+object LatestMetric etwittertends EasyMetric {
   override def forFeatureType[T](
     featureType: FeatureType
   ): Option[AggregationMetric[T, _]] = {

@@ -27,8 +27,8 @@ WITH
       IF(actionType = "ClientTweetVideoPlayback50", 1, NULL) AS videoPlayback50Action
     FROM `twttr-bql-unified-prod.unified_user_actions_engagements.streaming_unified_user_actions_engagements`, vars
     WHERE (DATE(dateHour) >= DATE(vars.start_date) AND DATE(dateHour) <= DATE(vars.end_date))
-      AND eventMetadata.sourceTimestampMs >= UNIX_MILLIS(vars.start_date) 
-      AND eventMetadata.sourceTimestampMs <= UNIX_MILLIS(vars.end_date)
+      AND eventMetadata.sourceTimestampMs >= UNItwitter_MILLIS(vars.start_date) 
+      AND eventMetadata.sourceTimestampMs <= UNItwitter_MILLIS(vars.end_date)
       AND (actionType = "ServerTweetReply"
               OR actionType = "ServerTweetRetweet"
               OR actionType = "ServerTweetFav"

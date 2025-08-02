@@ -76,12 +76,12 @@ public class ClusteringParameters {
     return swigfaissJNI.ClusteringParameters_int_centroids_get(swigCPtr, this);
   }
 
-  public void setUpdate_index(boolean value) {
-    swigfaissJNI.ClusteringParameters_update_index_set(swigCPtr, this, value);
+  public void setUpdate_indetwitter(boolean value) {
+    swigfaissJNI.ClusteringParameters_update_indetwitter_set(swigCPtr, this, value);
   }
 
-  public boolean getUpdate_index() {
-    return swigfaissJNI.ClusteringParameters_update_index_get(swigCPtr, this);
+  public boolean getUpdate_indetwitter() {
+    return swigfaissJNI.ClusteringParameters_update_indetwitter_get(swigCPtr, this);
   }
 
   public void setFrozen_centroids(boolean value) {
@@ -100,12 +100,12 @@ public class ClusteringParameters {
     return swigfaissJNI.ClusteringParameters_min_points_per_centroid_get(swigCPtr, this);
   }
 
-  public void setMax_points_per_centroid(int value) {
-    swigfaissJNI.ClusteringParameters_max_points_per_centroid_set(swigCPtr, this, value);
+  public void setMatwitter_points_per_centroid(int value) {
+    swigfaissJNI.ClusteringParameters_matwitter_points_per_centroid_set(swigCPtr, this, value);
   }
 
-  public int getMax_points_per_centroid() {
-    return swigfaissJNI.ClusteringParameters_max_points_per_centroid_get(swigCPtr, this);
+  public int getMatwitter_points_per_centroid() {
+    return swigfaissJNI.ClusteringParameters_matwitter_points_per_centroid_get(swigCPtr, this);
   }
 
   public void setSeed(int value) {

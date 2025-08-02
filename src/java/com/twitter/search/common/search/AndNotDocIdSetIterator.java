@@ -1,40 +1,40 @@
 package com.twitter.search.common.search;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import org.apache.lucene.search.DocIdSetIterator;
 
-public class AndNotDocIdSetIterator extends DocIdSetIterator {
-  private int nextDelDoc;
+public class AndNotDocIdSetIterator etwittertends DocIdSetIterator {
+  private int netwittertDelDoc;
   private final DocIdSetIterator baseIter;
   private final DocIdSetIterator notIter;
   private int currID;
 
   /** Creates a new AndNotDocIdSetIterator instance. */
   public AndNotDocIdSetIterator(DocIdSetIterator baseIter, DocIdSetIterator notIter)
-          throws IOException {
-    nextDelDoc = notIter.nextDoc();
+          throws IOEtwitterception {
+    netwittertDelDoc = notIter.netwittertDoc();
     this.baseIter = baseIter;
     this.notIter = notIter;
     currID = -1;
   }
 
   @Override
-  public int advance(int target) throws IOException {
+  public int advance(int target) throws IOEtwitterception {
     currID = baseIter.advance(target);
     if (currID == DocIdSetIterator.NO_MORE_DOCS) {
       return currID;
     }
 
-    if (nextDelDoc != DocIdSetIterator.NO_MORE_DOCS) {
-      if (currID < nextDelDoc) {
+    if (netwittertDelDoc != DocIdSetIterator.NO_MORE_DOCS) {
+      if (currID < netwittertDelDoc) {
         return currID;
-      } else if (currID == nextDelDoc) {
-        return nextDoc();
+      } else if (currID == netwittertDelDoc) {
+        return netwittertDoc();
       } else {
-        nextDelDoc = notIter.advance(currID);
-        if (currID == nextDelDoc) {
-          return nextDoc();
+        netwittertDelDoc = notIter.advance(currID);
+        if (currID == netwittertDelDoc) {
+          return netwittertDoc();
         }
       }
     }
@@ -47,17 +47,17 @@ public class AndNotDocIdSetIterator extends DocIdSetIterator {
   }
 
   @Override
-  public int nextDoc() throws IOException {
-    currID = baseIter.nextDoc();
-    if (nextDelDoc != DocIdSetIterator.NO_MORE_DOCS) {
+  public int netwittertDoc() throws IOEtwitterception {
+    currID = baseIter.netwittertDoc();
+    if (netwittertDelDoc != DocIdSetIterator.NO_MORE_DOCS) {
       while (currID != DocIdSetIterator.NO_MORE_DOCS) {
-        if (currID < nextDelDoc) {
+        if (currID < netwittertDelDoc) {
           return currID;
         } else {
-          if (currID == nextDelDoc) {
-            currID = baseIter.nextDoc();
+          if (currID == netwittertDelDoc) {
+            currID = baseIter.netwittertDoc();
           }
-          nextDelDoc = notIter.advance(currID);
+          netwittertDelDoc = notIter.advance(currID);
         }
       }
     }

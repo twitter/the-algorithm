@@ -3,7 +3,7 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/com/twitter/bijection:scrooge",
-        "3rdparty/jvm/javax/inject:javax.inject",
+        "3rdparty/jvm/javatwitter/inject:javatwitter.inject",
         "3rdparty/src/jvm/com/twitter/storehaus:core",
         "discovery-ds/src/main/thrift/com/twitter/dds/jobs/repeated_profile_visits:profile_visit-scala",
         "flock-client/src/main/thrift:thrift-scala",
@@ -17,7 +17,7 @@ scala_library(
         "src/scala/com/twitter/storehaus_internal/offline",
         "src/scala/com/twitter/storehaus_internal/util",
         "src/scala/com/twitter/twistly/common",
-        "src/thrift/com/twitter/experiments/general_metrics:general_metrics-scala",
+        "src/thrift/com/twitter/etwitterperiments/general_metrics:general_metrics-scala",
         "src/thrift/com/twitter/frigate/data_pipeline:frigate-user-history-thrift-scala",
         "src/thrift/com/twitter/onboarding/relevance/tweet_engagement:tweet_engagement-scala",
         "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",

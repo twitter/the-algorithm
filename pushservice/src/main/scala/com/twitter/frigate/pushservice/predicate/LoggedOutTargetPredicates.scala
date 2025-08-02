@@ -6,7 +6,7 @@ import com.twitter.frigate.pushservice.model.PushTypes.Target
 import com.twitter.frigate.common.predicate.{FatiguePredicate => CommonFatiguePredicate}
 import com.twitter.hermit.predicate.NamedPredicate
 import com.twitter.conversions.DurationOps._
-import com.twitter.frigate.common.util.Experiments.LoggedOutRecsHoldback
+import com.twitter.frigate.common.util.Etwitterperiments.LoggedOutRecsHoldback
 import com.twitter.hermit.predicate.Predicate
 
 object LoggedOutTargetPredicates {
@@ -19,7 +19,7 @@ object LoggedOutTargetPredicates {
     CommonFatiguePredicate
       .magicRecsPushTargetFatiguePredicate(
         minInterval = 24.hours,
-        maxInInterval = 1
+        matwitterInInterval = 1
       ).withStats(statsReceiver.scope(name))
       .withName(name)
   }
@@ -37,10 +37,10 @@ object LoggedOutTargetPredicates {
         case Some(guest) => guest
         case _ =>
           guestIdNotFoundCounter.incr()
-          throw new IllegalStateException("guest_id_not_found")
+          throw new IllegalStateEtwitterception("guest_id_not_found")
       }
       target.abDecider
-        .bucket(LoggedOutRecsHoldback.exptName, GuestRecipient(guestId)).map(_.name) match {
+        .bucket(LoggedOutRecsHoldback.etwitterptName, GuestRecipient(guestId)).map(_.name) match {
         case Some(LoggedOutRecsHoldback.control) =>
           controlBucketCounter.incr()
           false

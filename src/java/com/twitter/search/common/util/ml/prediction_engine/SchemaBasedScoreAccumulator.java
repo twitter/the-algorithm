@@ -10,7 +10,7 @@ import com.twitter.search.modeling.common.TweetFeaturesUtils;
 /**
  * Score accumulator for schema-based features.
  */
-public class SchemaBasedScoreAccumulator extends BaseScoreAccumulator<ThriftSearchResultFeatures> {
+public class SchemaBasedScoreAccumulator etwittertends BaseScoreAccumulator<ThriftSearchResultFeatures> {
 
   public SchemaBasedScoreAccumulator(LightweightLinearModel model) {
     super(model);
@@ -39,11 +39,11 @@ public class SchemaBasedScoreAccumulator extends BaseScoreAccumulator<ThriftSear
     }
   }
 
-  private void addSchemaContinuousFeatures(Map<Integer, ? extends Number> valueMap) {
+  private void addSchemaContinuousFeatures(Map<Integer, ? etwittertends Number> valueMap) {
     if (valueMap == null || valueMap.isEmpty()) {
       return;
     }
-    for (Map.Entry<Integer, ? extends Number> entry : valueMap.entrySet()) {
+    for (Map.Entry<Integer, ? etwittertends Number> entry : valueMap.entrySet()) {
       Integer id = entry.getKey();
       if (TweetFeaturesUtils.isFeatureDiscrete(id)) {
         continue;  // we don't process any discrete features now

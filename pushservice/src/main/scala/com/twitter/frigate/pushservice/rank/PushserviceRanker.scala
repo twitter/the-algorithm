@@ -4,7 +4,7 @@ import com.twitter.frigate.common.base.CandidateDetails
 import com.twitter.frigate.common.base.Ranker
 import com.twitter.util.Future
 
-trait PushserviceRanker[T, C] extends Ranker[T, C] {
+trait PushserviceRanker[T, C] etwittertends Ranker[T, C] {
 
   /**
    * Initial Ranking of input candidates

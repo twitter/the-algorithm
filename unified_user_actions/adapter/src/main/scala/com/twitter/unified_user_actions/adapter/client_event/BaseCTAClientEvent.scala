@@ -9,7 +9,7 @@ import com.twitter.unified_user_actions.thriftscala._
 import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
 
 abstract class BaseCTAClientEvent(actionType: ActionType)
-    extends BaseClientEvent(actionType = actionType) {
+    etwittertends BaseClientEvent(actionType = actionType) {
 
   override def toUnifiedUserAction(logEvent: LogEvent): Seq[UnifiedUserAction] = {
     val logBase: Option[LogBase] = logEvent.logBase

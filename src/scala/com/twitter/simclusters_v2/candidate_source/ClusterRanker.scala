@@ -2,7 +2,7 @@ package com.twitter.simclusters_v2.candidate_source
 
 import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
 
-object ClusterRanker extends Enumeration {
+object ClusterRanker etwittertends Enumeration {
   val RankByNormalizedFavScore: ClusterRanker.Value = Value
   val RankByFavScore: ClusterRanker.Value = Value
   val RankByFollowScore: ClusterRanker.Value = Value
@@ -50,7 +50,7 @@ object ClusterRanker extends Enumeration {
     rankedClustersWithScores.toSeq
       .sortBy(_._2) // sort in ascending order
       .takeRight(topK)
-      .map { case (clusterId, scores) => clusterId -> math.max(scores._1, 1e-4) }
+      .map { case (clusterId, scores) => clusterId -> math.matwitter(scores._1, 1e-4) }
       .toMap
   }
 }

@@ -20,7 +20,7 @@ object InteractionGraphAggFlockUtil {
       .withName(s"${featureName.toString} - Converting flock edge to interaction graph input")
       .map { edge =>
         // NOTE: getUpdatedAt gives time in the seconds resolution
-        // Because we use .extend() when reading the data source, the updatedAt time might be larger than the dateRange.
+        // Because we use .etwittertend() when reading the data source, the updatedAt time might be larger than the dateRange.
         // We need to cap them, otherwise, DateUtil.diffDays gives incorrect results.
         val start = (edge.updatedAt * 1000L).min(dateInterval.getEnd.toInstant.getMillis)
         val end = dateInterval.getStart.toInstant.getMillis

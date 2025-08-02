@@ -23,7 +23,7 @@ import com.twitter.visibility.features.AuthorUserLabels
 import com.twitter.visibility.features.FeatureMap
 import com.twitter.visibility.models.ContentId.NotificationId
 import com.twitter.visibility.models.SafetyLevel.NotificationsWriterV2
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 import com.twitter.visibility.rules.State.FeatureFailed
 import com.twitter.visibility.rules.State.MissingFeature
 import com.twitter.visibility.rules.Action
@@ -101,8 +101,8 @@ object NotificationsVisibilityLibrary {
               visibilityLibrary.runRuleEngine(
                 contentId =
                 featureMap = resolvedFeatureMap,
-                viewerContext =
-                  ViewerContext.fromContextWithViewerIdFallback(Some(notification.target)),
+                viewerContetwittert =
+                  ViewerContetwittert.fromContetwittertWithViewerIdFallback(Some(notification.target)),
                 safetyLevel = NotificationsWriterV2
               )
             }
@@ -110,8 +110,8 @@ object NotificationsVisibilityLibrary {
             visibilityLibrary.runRuleEngine(
               contentId = NotificationId(tweetId = None),
               featureMap = featureMap,
-              viewerContext =
-                ViewerContext.fromContextWithViewerIdFallback(Some(notification.target)),
+              viewerContetwittert =
+                ViewerContetwittert.fromContetwittertWithViewerIdFallback(Some(notification.target)),
               safetyLevel = NotificationsWriterV2
             )
           }

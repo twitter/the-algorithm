@@ -10,27 +10,27 @@ sealed trait EngagementType {
 }
 
 object EngagementType {
-  object Click extends EngagementType {
+  object Click etwittertends EngagementType {
     override val toThrift: TEngagementType = TEngagementType.Click
 
     override val toOfflineThrift: OfflineEngagementType = OfflineEngagementType.Click
   }
-  object Like extends EngagementType {
+  object Like etwittertends EngagementType {
     override val toThrift: TEngagementType = TEngagementType.Like
 
     override val toOfflineThrift: OfflineEngagementType = OfflineEngagementType.Like
   }
-  object Mention extends EngagementType {
+  object Mention etwittertends EngagementType {
     override val toThrift: TEngagementType = TEngagementType.Mention
 
     override val toOfflineThrift: OfflineEngagementType = OfflineEngagementType.Mention
   }
-  object Retweet extends EngagementType {
+  object Retweet etwittertends EngagementType {
     override val toThrift: TEngagementType = TEngagementType.Retweet
 
     override val toOfflineThrift: OfflineEngagementType = OfflineEngagementType.Retweet
   }
-  object ProfileView extends EngagementType {
+  object ProfileView etwittertends EngagementType {
     override val toThrift: TEngagementType = TEngagementType.ProfileView
 
     override val toOfflineThrift: OfflineEngagementType = OfflineEngagementType.ProfileView
@@ -43,7 +43,7 @@ object EngagementType {
     case TEngagementType.Retweet => Retweet
     case TEngagementType.ProfileView => ProfileView
     case TEngagementType.EnumUnknownEngagementType(i) =>
-      throw new UnknownEngagementTypeException(
+      throw new UnknownEngagementTypeEtwitterception(
         s"Unknown engagement type thrift enum with value: ${i}")
   }
 
@@ -55,8 +55,8 @@ object EngagementType {
       case OfflineEngagementType.Retweet => Retweet
       case OfflineEngagementType.ProfileView => ProfileView
       case OfflineEngagementType.EnumUnknownEngagementType(i) =>
-        throw new UnknownEngagementTypeException(
+        throw new UnknownEngagementTypeEtwitterception(
           s"Unknown engagement type offline thrift enum with value: ${i}")
     }
 }
-class UnknownEngagementTypeException(message: String) extends Exception(message)
+class UnknownEngagementTypeEtwitterception(message: String) etwittertends Etwitterception(message)

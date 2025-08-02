@@ -16,7 +16,7 @@ import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaEntry;
  * Builds a model with schema-based features, here all features are tracked by Id.
  * This class is very similar to LegacyModelBuilder, which will eventually be deprecated.
  */
-public class SchemaBasedModelBuilder extends BaseModelBuilder {
+public class SchemaBasedModelBuilder etwittertends BaseModelBuilder {
   private final Map<String, FeatureData> featuresByName;
   private final Map<Integer, Double> binaryFeatures;
   private final Map<Integer, Double> continuousFeatures;
@@ -70,21 +70,21 @@ public class SchemaBasedModelBuilder extends BaseModelBuilder {
           break;
         default:
           // other values are not supported yet
-          throw new IllegalArgumentException(
+          throw new IllegalArgumentEtwitterception(
               String.format("Unsupported feature type: %s", feature));
       }
-    } else if (baseName.endsWith(DISCRETIZER_NAME_SUFFIX)
-        && parser.getExtension().containsKey(DiscretizerTransform.DEFAULT_RANGE_EXT)) {
+    } else if (baseName.endsWith(DISCRETIZER_NAME_SUFFItwitter)
+        && parser.getEtwittertension().containsKey(DiscretizerTransform.DEFAULT_RANGE_EtwitterT)) {
 
       String featureName =
-          baseName.substring(0, baseName.length() - DISCRETIZER_NAME_SUFFIX.length());
+          baseName.substring(0, baseName.length() - DISCRETIZER_NAME_SUFFItwitter.length());
 
       feature = featuresByName.get(featureName);
       if (feature == null) {
         return;
       }
 
-      String rangeSpec = parser.getExtension().get(DiscretizerTransform.DEFAULT_RANGE_EXT);
+      String rangeSpec = parser.getEtwittertension().get(DiscretizerTransform.DEFAULT_RANGE_EtwitterT);
       discretizedFeatureRanges.put(feature.id, new DiscretizedFeatureRange(weight, rangeSpec));
     }
   }

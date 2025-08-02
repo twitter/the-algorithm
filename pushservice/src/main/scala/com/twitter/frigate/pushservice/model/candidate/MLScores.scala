@@ -3,12 +3,12 @@ package com.twitter.frigate.pushservice.model.candidate
 import com.twitter.frigate.common.base.FeatureMap
 import com.twitter.frigate.common.rec_types.RecTypes
 import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.ml.HydrationContextBuilder
+import com.twitter.frigate.pushservice.ml.HydrationContetwittertBuilder
 import com.twitter.frigate.pushservice.ml.PushMLModelScorer
 import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
 import com.twitter.frigate.pushservice.params.PushMLModel
 import com.twitter.frigate.pushservice.params.WeightedOpenOrNtabClickModel
-import com.twitter.nrel.hydration.push.HydrationContext
+import com.twitter.nrel.hydration.push.HydrationContetwittert
 import com.twitter.timelines.configapi.FSParam
 import com.twitter.util.Future
 import java.util.concurrent.ConcurrentHashMap
@@ -19,7 +19,7 @@ trait MLScores {
 
   self: PushCandidate =>
 
-  lazy val candidateHydrationContext: Future[HydrationContext] = HydrationContextBuilder.build(self)
+  lazy val candidateHydrationContetwittert: Future[HydrationContetwittert] = HydrationContetwittertBuilder.build(self)
 
   def weightedOpenOrNtabClickModelScorer: PushMLModelScorer
 
@@ -44,15 +44,15 @@ trait MLScores {
   }
 
   // The ML scores that also depend on other candidates and are only available after all candidates are processed
-  // For example, the likelihood info for Importance Sampling
+  // For etwitterample, the likelihood info for Importance Sampling
   private lazy val crossCandidateMlScores: CMap[String, Double] =
     new ConcurrentHashMap[String, Double]().asScala
 
   def populateCrossCandidateMlScores(scoreName: String, score: Double): Unit = {
     if (crossCandidateMlScores.contains(scoreName)) {
-      throw new Exception(
+      throw new Etwitterception(
         s"$scoreName has been populated in the CrossCandidateMlScores!\n" +
-          s"Existing crossCandidateMlScores are ${crossCandidateMlScores}\n"
+          s"Etwitteristing crossCandidateMlScores are ${crossCandidateMlScores}\n"
       )
     }
     crossCandidateMlScores += scoreName -> score
@@ -90,8 +90,8 @@ trait MLScores {
 
   /* After we unify the ranking and filtering models, we follow the iteration process below
      When improving the WeightedOONC model,
-     1) Run experiment which only replace the ranking model
-     2) Make decisions according to the experiment results
+     1) Run etwitterperiment which only replace the ranking model
+     2) Make decisions according to the etwitterperiment results
      3) Use the ranking model for filtering
      4) Adjust percentile thresholds if necessary
    */
@@ -106,7 +106,7 @@ trait MLScores {
   ): Future[Option[Double]] = {
     mrWeightedOpenOrNtabClickRankingProbability.flatMap {
       case Some(rankingScore) =>
-        // Adds ranking score to feature map (we must ensure the feature key is also in the feature context)
+        // Adds ranking score to feature map (we must ensure the feature key is also in the feature contetwittert)
         mergeFeatures(
           FeatureMap(
             numericFeatures = Map("scribe.WeightedOpenOrNtabClickProbability" -> rankingScore)
@@ -293,7 +293,7 @@ trait MLScores {
     } else {
       modelScores.map { internalScores =>
         if (internalScores.keySet.intersect(crossCandidateMlScores.keySet).nonEmpty) {
-          throw new Exception(
+          throw new Etwitterception(
             "crossCandidateMlScores overlap internalModelScores\n" +
               s"internalScores keySet: ${internalScores.keySet}\n" +
               s"crossCandidateScores keySet: ${crossCandidateMlScores.keySet}\n"

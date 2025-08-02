@@ -1,0 +1,19 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/model",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/model/request",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/product/list_tweets/param",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/model/cursor",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/model/query/ads",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/pipeline",
+    ],
+    etwitterports = [
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/model/cursor",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/model/query/ads",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/pipeline",
+    ],
+)

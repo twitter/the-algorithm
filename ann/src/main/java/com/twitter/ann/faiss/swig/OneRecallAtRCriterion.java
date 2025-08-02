@@ -8,7 +8,7 @@
 
 package com.twitter.ann.faiss;
 
-public class OneRecallAtRCriterion extends AutoTuneCriterion {
+public class OneRecallAtRCriterion etwittertends AutoTuneCriterion {
   private transient long swigCPtr;
 
   protected OneRecallAtRCriterion(long cPtr, boolean cMemoryOwn) {

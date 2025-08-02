@@ -1,12 +1,12 @@
 package com.twitter.visibility.builder.tweets
 
 import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType.ExperimentalNudge
+import com.twitter.spam.rtf.thriftscala.SafetyLabelType.EtwitterperimentalNudge
 import com.twitter.spam.rtf.thriftscala.SafetyLabelType.SemanticCoreMisinformation
 import com.twitter.spam.rtf.thriftscala.SafetyLabelType.UnsafeUrl
 import com.twitter.visibility.common.LocalizedNudgeSource
 import com.twitter.visibility.common.actions.TweetVisibilityNudgeReason
-import com.twitter.visibility.common.actions.TweetVisibilityNudgeReason.ExperimentalNudgeSafetyLabelReason
+import com.twitter.visibility.common.actions.TweetVisibilityNudgeReason.EtwitterperimentalNudgeSafetyLabelReason
 import com.twitter.visibility.common.actions.TweetVisibilityNudgeReason.SemanticCoreMisinformationLabelReason
 import com.twitter.visibility.common.actions.TweetVisibilityNudgeReason.UnsafeURLLabelReason
 import com.twitter.visibility.rules.LocalizedNudge
@@ -19,8 +19,8 @@ class TweetVisibilityNudgeSourceWrapper(localizedNudgeSource: LocalizedNudgeSour
     countryCode: Option[String]
   ): Option[LocalizedNudge] =
     reason match {
-      case ExperimentalNudgeSafetyLabelReason =>
-        fetchNudge(ExperimentalNudge, languageCode, countryCode)
+      case EtwitterperimentalNudgeSafetyLabelReason =>
+        fetchNudge(EtwitterperimentalNudge, languageCode, countryCode)
       case SemanticCoreMisinformationLabelReason =>
         fetchNudge(SemanticCoreMisinformation, languageCode, countryCode)
       case UnsafeURLLabelReason =>

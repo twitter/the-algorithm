@@ -16,11 +16,11 @@ struct Score {
   3: optional string scoreType
 }(hasPersonalData='false')
 
-// Contains (1) the ML-based heavy ranker and score (2) scores and rankers in producer experiment framework
+// Contains (1) the ML-based heavy ranker and score (2) scores and rankers in producer etwitterperiment framework
 struct Scores {
   1: required list<Score> scores
   2: optional string selectedRankerId
-  3: required bool isInProducerScoringExperiment
+  3: required bool isInProducerScoringEtwitterperiment
 }(hasPersonalData='false')
 
 struct RankingInfo {
@@ -38,7 +38,7 @@ struct ScoringDetails {
     6: optional map<string, RankingInfo> infoPerRankingStage  // scoring and ranking info per ranking stage
 }(hasPersonalData='true')
 
-// exactly the same as a data record, except that we store the feature name instead of the id
+// etwitteractly the same as a data record, etwittercept that we store the feature name instead of the id
 struct DebugDataRecord {
   1: optional set<string> binaryFeatures;                     // stores BINARY features
   2: optional map<string, double> continuousFeatures;         // stores CONTINUOUS features

@@ -16,9 +16,9 @@ import com.twitter.unified_user_actions.kafka.serde.NullableScalaSerdes
 import com.twitter.util.Duration
 import com.twitter.util.StorageUnit
 import com.twitter.util.logging.Logging
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
-object KafkaProcessorTweetypieEventModule extends TwitterModule with Logging {
+object KafkaProcessorTweetypieEventModule etwittertends TwitterModule with Logging {
   override def modules: Seq[inject.Module] = Seq(FlagsModule)
 
   private val tweetypieEventAdapter = new TweetypieEventAdapter
@@ -36,13 +36,13 @@ object KafkaProcessorTweetypieEventModule extends TwitterModule with Logging {
     @Flag(FlagsModule.kafkaSinkTopics) kafkaSinkTopics: Seq[String],
     @Flag(FlagsModule.kafkaGroupId) kafkaGroupId: String,
     @Flag(FlagsModule.kafkaProducerClientId) kafkaProducerClientId: String,
-    @Flag(FlagsModule.kafkaMaxPendingRequests) kafkaMaxPendingRequests: Int,
+    @Flag(FlagsModule.kafkaMatwitterPendingRequests) kafkaMatwitterPendingRequests: Int,
     @Flag(FlagsModule.kafkaWorkerThreads) kafkaWorkerThreads: Int,
     @Flag(FlagsModule.commitInterval) commitInterval: Duration,
-    @Flag(FlagsModule.maxPollRecords) maxPollRecords: Int,
-    @Flag(FlagsModule.maxPollInterval) maxPollInterval: Duration,
+    @Flag(FlagsModule.matwitterPollRecords) matwitterPollRecords: Int,
+    @Flag(FlagsModule.matwitterPollInterval) matwitterPollInterval: Duration,
     @Flag(FlagsModule.sessionTimeout) sessionTimeout: Duration,
-    @Flag(FlagsModule.fetchMax) fetchMax: StorageUnit,
+    @Flag(FlagsModule.fetchMatwitter) fetchMatwitter: StorageUnit,
     @Flag(FlagsModule.batchSize) batchSize: StorageUnit,
     @Flag(FlagsModule.linger) linger: Duration,
     @Flag(FlagsModule.bufferMem) bufferMem: StorageUnit,
@@ -63,11 +63,11 @@ object KafkaProcessorTweetypieEventModule extends TwitterModule with Logging {
       sourceValueDeserializer = NullableScalaSerdes
         .Thrift[TweetEvent](statsReceiver.counter("deserializerErrors")).deserializer,
       commitInterval = commitInterval,
-      maxPollRecords = maxPollRecords,
-      maxPollInterval = maxPollInterval,
+      matwitterPollRecords = matwitterPollRecords,
+      matwitterPollInterval = matwitterPollInterval,
       sessionTimeout = sessionTimeout,
-      fetchMax = fetchMax,
-      processorMaxPendingRequests = kafkaMaxPendingRequests,
+      fetchMatwitter = fetchMatwitter,
+      processorMatwitterPendingRequests = kafkaMatwitterPendingRequests,
       processorWorkerThreads = kafkaWorkerThreads,
       adapter = tweetypieEventAdapter,
       kafkaSinkTopics = kafkaSinkTopics,

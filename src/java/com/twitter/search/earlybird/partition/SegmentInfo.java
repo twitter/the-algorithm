@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird.partition;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.io.OutputStreamWriter;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -22,10 +22,10 @@ import com.twitter.search.common.schema.earlybird.FlushVersion;
 import com.twitter.search.common.util.LogFormatUtil;
 import com.twitter.search.common.util.io.flushable.FlushInfo;
 import com.twitter.search.common.util.io.flushable.PersistentFile;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
+import com.twitter.search.earlybird.EarlybirdIndetwitterConfig;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.index.EarlybirdSegment;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
+import com.twitter.search.earlybird.indetwitter.EarlybirdSegment;
+import com.twitter.search.earlybird.indetwitter.EarlybirdSegmentFactory;
 
 public class SegmentInfo implements Comparable<SegmentInfo> {
   private static final Logger LOG = LoggerFactory.getLogger(SegmentInfo.class);
@@ -35,7 +35,7 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
 
   // Delay before deleting a segment
   private final long timeToWaitBeforeClosingMillis = EarlybirdConfig.getLong(
-      "defer_index_closing_time_millis", 600000L);
+      "defer_indetwitter_closing_time_millis", 600000L);
   // How many times deletions are retired.
   private final AtomicInteger deletionRetries = new AtomicInteger(5);
 
@@ -44,58 +44,58 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
 
   // Bits managed by various SegmentProcessors and PartitionManager.
   private volatile boolean isEnabled   = true;   // True if the segment is enabled.
-  private volatile boolean isIndexing  = false;  // True during indexing.
-  private volatile boolean isComplete  = false;  // True when indexing is complete.
-  private volatile boolean isClosed    = false;  // True if indexSegment is closed.
-  private volatile boolean wasIndexed  = false;  // True if the segment was indexed from scratch.
+  private volatile boolean isIndetwittering  = false;  // True during indetwittering.
+  private volatile boolean isComplete  = false;  // True when indetwittering is complete.
+  private volatile boolean isClosed    = false;  // True if indetwitterSegment is closed.
+  private volatile boolean wasIndetwittered  = false;  // True if the segment was indetwittered from scratch.
   private volatile boolean failedOptimize = false;  // optimize attempt failed.
   private AtomicBoolean beingUploaded = new AtomicBoolean();  // segment is being copied to HDFS
 
   private final SegmentSyncInfo segmentSyncInfo;
-  private final EarlybirdIndexConfig earlybirdIndexConfig;
+  private final EarlybirdIndetwitterConfig earlybirdIndetwitterConfig;
 
-  private final EarlybirdSegment indexSegment;
+  private final EarlybirdSegment indetwitterSegment;
 
   private final AtomicLong updatesStreamOffsetTimestamp = new AtomicLong(0);
 
   public SegmentInfo(Segment segment,
                      EarlybirdSegmentFactory earlybirdSegmentFactory,
-                     SegmentSyncConfig syncConfig) throws IOException {
+                     SegmentSyncConfig syncConfig) throws IOEtwitterception {
     this(segment, earlybirdSegmentFactory, new SegmentSyncInfo(syncConfig, segment));
   }
 
   @VisibleForTesting
   public SegmentInfo(Segment segment,
                      EarlybirdSegmentFactory earlybirdSegmentFactory,
-                     SegmentSyncInfo segmentSyncInfo) throws IOException {
+                     SegmentSyncInfo segmentSyncInfo) throws IOEtwitterception {
     this(earlybirdSegmentFactory.newEarlybirdSegment(segment, segmentSyncInfo),
         segmentSyncInfo,
         segment,
-        earlybirdSegmentFactory.getEarlybirdIndexConfig());
+        earlybirdSegmentFactory.getEarlybirdIndetwitterConfig());
   }
 
   public SegmentInfo(
       EarlybirdSegment earlybirdSegment,
       SegmentSyncInfo segmentSyncInfo,
       Segment segment,
-      EarlybirdIndexConfig earlybirdIndexConfig
+      EarlybirdIndetwitterConfig earlybirdIndetwitterConfig
   ) {
-    this.indexSegment = earlybirdSegment;
+    this.indetwitterSegment = earlybirdSegment;
     this.segmentSyncInfo = segmentSyncInfo;
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
+    this.earlybirdIndetwitterConfig = earlybirdIndetwitterConfig;
     this.segment = segment;
   }
 
-  public EarlybirdSegment getIndexSegment() {
-    return indexSegment;
+  public EarlybirdSegment getIndetwitterSegment() {
+    return indetwitterSegment;
   }
 
-  public SegmentIndexStats getIndexStats() {
-    return indexSegment.getIndexStats();
+  public SegmentIndetwitterStats getIndetwitterStats() {
+    return indetwitterSegment.getIndetwitterStats();
   }
 
-  public EarlybirdIndexConfig getEarlybirdIndexConfig() {
-    return earlybirdIndexConfig;
+  public EarlybirdIndetwitterConfig getEarlybirdIndetwitterConfig() {
+    return earlybirdIndetwitterConfig;
   }
 
   public long getTimeSliceID() {
@@ -119,15 +119,15 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
   }
 
   public boolean isOptimized() {
-    return indexSegment.isOptimized();
+    return indetwitterSegment.isOptimized();
   }
 
-  public boolean wasIndexed() {
-    return wasIndexed;
+  public boolean wasIndetwittered() {
+    return wasIndetwittered;
   }
 
-  public void setWasIndexed(boolean wasIndexed) {
-    this.wasIndexed = wasIndexed;
+  public void setWasIndetwittered(boolean wasIndetwittered) {
+    this.wasIndetwittered = wasIndetwittered;
   }
 
   public boolean isFailedOptimize() {
@@ -138,12 +138,12 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
     this.failedOptimize = true;
   }
 
-  public boolean isIndexing() {
-    return isIndexing;
+  public boolean isIndetwittering() {
+    return isIndetwittering;
   }
 
-  public void setIndexing(boolean indexing) {
-    this.isIndexing = indexing;
+  public void setIndetwittering(boolean indetwittering) {
+    this.isIndetwittering = indetwittering;
   }
 
   public boolean isComplete() {
@@ -162,8 +162,8 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
     this.beingUploaded.set(beingUploaded);
   }
 
-  public boolean casBeingUploaded(boolean expectation, boolean updateValue) {
-    return beingUploaded.compareAndSet(expectation, updateValue);
+  public boolean casBeingUploaded(boolean etwitterpectation, boolean updateValue) {
+    return beingUploaded.compareAndSet(etwitterpectation, updateValue);
   }
 
   @VisibleForTesting
@@ -171,8 +171,8 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
     this.isComplete = complete;
   }
 
-  public boolean needsIndexing() {
-    return isEnabled && !isIndexing && !isComplete;
+  public boolean needsIndetwittering() {
+    return isEnabled && !isIndetwittering && !isComplete;
   }
 
   @Override
@@ -204,8 +204,8 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
     builder.append(getSegmentName()).append(" [");
     builder.append(isEnabled ? "enabled, " : "disabled, ");
 
-    if (isIndexing) {
-      builder.append("indexing, ");
+    if (isIndetwittering) {
+      builder.append("indetwittering, ");
     }
 
     if (isComplete) {
@@ -216,11 +216,11 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
       builder.append("optimized, ");
     }
 
-    if (wasIndexed) {
-      builder.append("wasIndexed, ");
+    if (wasIndetwittered) {
+      builder.append("wasIndetwittered, ");
     }
 
-    builder.append("IndexSync:");
+    builder.append("IndetwitterSync:");
     this.segmentSyncInfo.addDebugInfo(builder);
 
     return builder.append("]").toString();
@@ -231,18 +231,18 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
   }
 
   /**
-   * Delete the index segment directory corresponding to this segment info. Return true if deleted
+   * Delete the indetwitter segment directory corresponding to this segment info. Return true if deleted
    * successfully; otherwise, false.
    */
-  public boolean deleteLocalIndexedSegmentDirectoryImmediately() {
+  public boolean deleteLocalIndetwitteredSegmentDirectoryImmediately() {
     if (isClosed) {
       LOG.info("SegmentInfo is already closed: " + toString());
       return true;
     }
 
-    Preconditions.checkNotNull(indexSegment, "indexSegment should never be null.");
+    Preconditions.checkNotNull(indetwitterSegment, "indetwitterSegment should never be null.");
     isClosed = true;
-    indexSegment.destroyImmediately();
+    indetwitterSegment.destroyImmediately();
 
     SegmentSyncConfig sync = getSyncInfo().getSegmentSyncConfig();
     try {
@@ -250,36 +250,36 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
       FileUtils.forceDelete(new File(dirToClear));
       LOG.info("Deleted segment directory: " + toString());
       return true;
-    } catch (IOException e) {
+    } catch (IOEtwitterception e) {
       LOG.error("Cannot clean up segment directory for segment: " + toString(), e);
       return false;
     }
   }
 
   /**
-   * Delete the index segment directory after some configured delay.
+   * Delete the indetwitter segment directory after some configured delay.
    * Note that we don't delete segments that are being uploaded.
    * If a segment is being uploaded when we try to delete, close() retries the deletion later.
    */
-  public void deleteIndexSegmentDirectoryAfterDelay() {
+  public void deleteIndetwitterSegmentDirectoryAfterDelay() {
     LOG.info("Scheduling SegmentInfo for deletion: " + toString());
-    getEarlybirdIndexConfig().getResourceCloser().closeResourceQuietlyAfterDelay(
+    getEarlybirdIndetwitterConfig().getResourceCloser().closeResourceQuietlyAfterDelay(
         timeToWaitBeforeClosingMillis, () -> {
           // Atomically check and set the being uploaded flag, if it is not set.
           if (beingUploaded.compareAndSet(false, true)) {
             // If successfully set the flag to true, we can delete immediately
             setIsEnabled(false);
-            deleteLocalIndexedSegmentDirectoryImmediately();
-            LOG.info("Deleted index segment dir for segment: "
+            deleteLocalIndetwitteredSegmentDirectoryImmediately();
+            LOG.info("Deleted indetwitter segment dir for segment: "
                 + getSegment().getSegmentName());
           } else {
             // If the flag is already true (compareAndSet fails), we need to reschedule.
             if (deletionRetries.decrementAndGet() > 0) {
               LOG.warn("Segment is being uploaded, will retry deletion later. SegmentInfo: "
                   + getSegment().getSegmentName());
-              deleteIndexSegmentDirectoryAfterDelay();
+              deleteIndetwitterSegmentDirectoryAfterDelay();
             } else {
-              LOG.warn("Failed to cleanup index segment dir for segment: "
+              LOG.warn("Failed to cleanup indetwitter segment dir for segment: "
                   + getSegment().getSegmentName());
             }
           }
@@ -295,7 +295,7 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
   }
 
   public String getZkNodeName() {
-    return getSegmentName() + getFlushVersion().getVersionFileExtension();
+    return getSegmentName() + getFlushVersion().getVersionFileEtwittertension();
   }
 
   static String getSyncDirName(String parentDir, String dbName, String version) {
@@ -319,14 +319,14 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
    * Flushes this segment to the given directory.
    *
    * @param dir The directory to flush the segment to.
-   * @throws IOException If the segment could not be flushed.
+   * @throws IOEtwitterception If the segment could not be flushed.
    */
-  public void flush(Directory dir) throws IOException {
+  public void flush(Directory dir) throws IOEtwitterception {
     LOG.info("Flushing segment: {}", getSegmentName());
     try (PersistentFile.Writer writer = PersistentFile.getWriter(dir, getSegmentName())) {
       FlushInfo flushInfo = new FlushInfo();
       flushInfo.addLongProperty(UPDATE_STREAM_OFFSET_TIMESTAMP, getUpdatesStreamOffsetTimestamp());
-      getIndexSegment().flush(flushInfo, writer.getDataSerializer());
+      getIndetwitterSegment().flush(flushInfo, writer.getDataSerializer());
 
       OutputStreamWriter infoFileWriter = new OutputStreamWriter(writer.getInfoFileOutputStream());
       FlushInfo.flushAsYaml(flushInfo, infoFileWriter);
@@ -334,7 +334,7 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
   }
 
   /**
-   * Makes a new SegmentInfo out of the current segment info, except that we switch the underlying
+   * Makes a new SegmentInfo out of the current segment info, etwittercept that we switch the underlying
    * segment.
    */
   public SegmentInfo copyWithEarlybirdSegment(EarlybirdSegment optimizedSegment) {
@@ -342,7 +342,7 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
     // info and rebuild everything that can change.
     TimeSlice newTimeSlice = new TimeSlice(
       getTimeSliceID(),
-      EarlybirdConfig.getMaxSegmentSize(),
+      EarlybirdConfig.getMatwitterSegmentSize(),
       segment.getHashPartitionID(),
       segment.getNumHashPartitions()
     );
@@ -354,7 +354,7 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
             segmentSyncInfo.getSegmentSyncConfig(),
             newSegment),
         newSegment,
-        earlybirdIndexConfig
+        earlybirdIndetwitterConfig
     );
   }
 
@@ -362,14 +362,14 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
    * Loads the segment from the given directory.
    *
    * @param dir The directory to load the segment from.
-   * @throws IOException If the segment could not be loaded.
+   * @throws IOEtwitterception If the segment could not be loaded.
    */
-  public void load(Directory dir) throws IOException {
+  public void load(Directory dir) throws IOEtwitterception {
     LOG.info("Loading segment: {}", getSegmentName());
     try (PersistentFile.Reader reader = PersistentFile.getReader(dir, getSegmentName())) {
       FlushInfo flushInfo = FlushInfo.loadFromYaml(reader.getInfoInputStream());
       setUpdatesStreamOffsetTimestamp(flushInfo.getLongProperty(UPDATE_STREAM_OFFSET_TIMESTAMP));
-      getIndexSegment().load(reader.getDataInputStream(), flushInfo);
+      getIndetwitterSegment().load(reader.getDataInputStream(), flushInfo);
     }
   }
 
@@ -378,12 +378,12 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
       return "disabled";
     }
 
-    if (isIndexing()) {
-      return "indexing";
+    if (isIndetwittering()) {
+      return "indetwittering";
     }
 
     if (isComplete()) {
-      return "indexed";
+      return "indetwittered";
     }
 
     return "pending";
@@ -397,9 +397,9 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
     StringBuilder out = new StringBuilder();
     out.append("Segment: " + getSegmentName() + "\n");
     out.append("Total documents: " + LogFormatUtil.formatInt(
-        getIndexStats().getStatusCount()) + "\n");
+        getIndetwitterStats().getStatusCount()) + "\n");
     out.append("Query caches:\n");
-    for (Pair<String, Long> data : indexSegment.getQueryCachesData()) {
+    for (Pair<String, Long> data : indetwitterSegment.getQueryCachesData()) {
       out.append("  " + data.getFirst());
       out.append(": ");
       out.append(LogFormatUtil.formatInt(data.getSecond()));
@@ -412,17 +412,17 @@ public class SegmentInfo implements Comparable<SegmentInfo> {
     return "status: " + getShortStatus() + "\n"
         + "id: " + getTimeSliceID() + "\n"
         + "name: " + getSegmentName() + "\n"
-        + "statusCount: " + getIndexStats().getStatusCount() + "\n"
-        + "deleteCount: " + getIndexStats().getDeleteCount() + "\n"
-        + "partialUpdateCount: " + getIndexStats().getPartialUpdateCount() + "\n"
-        + "outOfOrderUpdateCount: " + getIndexStats().getOutOfOrderUpdateCount() + "\n"
+        + "statusCount: " + getIndetwitterStats().getStatusCount() + "\n"
+        + "deleteCount: " + getIndetwitterStats().getDeleteCount() + "\n"
+        + "partialUpdateCount: " + getIndetwitterStats().getPartialUpdateCount() + "\n"
+        + "outOfOrderUpdateCount: " + getIndetwitterStats().getOutOfOrderUpdateCount() + "\n"
         + "isEnabled: " + isEnabled() + "\n"
-        + "isIndexing: " + isIndexing() + "\n"
+        + "isIndetwittering: " + isIndetwittering() + "\n"
         + "isComplete: " + isComplete() + "\n"
         + "isFlushed: " + getSyncInfo().isFlushed() + "\n"
         + "isOptimized: " + isOptimized() + "\n"
         + "isLoaded: " + getSyncInfo().isLoaded() + "\n"
-        + "wasIndexed: " + wasIndexed() + "\n"
-        + "queryCachesCardinality: " + indexSegment.getQueryCachesCardinality() + "\n";
+        + "wasIndetwittered: " + wasIndetwittered() + "\n"
+        + "queryCachesCardinality: " + indetwitterSegment.getQueryCachesCardinality() + "\n";
   }
 }

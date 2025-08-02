@@ -4,8 +4,8 @@ import com.twitter.inject.Test
 import com.twitter.unified_user_actions.adapter.common.AdapterUtils
 import com.twitter.util.Time
 
-class AdapterUtilsSpec extends Test {
-  trait Fixture {
+class AdapterUtilsSpec etwittertends Test {
+  trait Fitwitterture {
 
     val frozenTime: Time = Time.fromMilliseconds(1658949273000L)
     val languageCode = "en"
@@ -13,7 +13,7 @@ class AdapterUtilsSpec extends Test {
   }
 
   test("tests") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val actual = Time.fromMilliseconds(AdapterUtils.currentTimestampMs)
         assert(frozenTime === actual)

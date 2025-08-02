@@ -4,7 +4,7 @@ import com.twitter.gizmoduck.{thriftscala => t}
 import com.twitter.util.Time
 import com.twitter.visibility.util.NamingUtils
 
-sealed trait UserLabelValue extends SafetyLabelType {
+sealed trait UserLabelValue etwittertends SafetyLabelType {
   lazy val name: String = NamingUtils.getFriendlyName(this)
 }
 
@@ -15,7 +15,7 @@ case class UserLabel(
   labelValue: UserLabelValue,
   source: Option[LabelSource] = None)
 
-object UserLabelValue extends SafetyLabelType {
+object UserLabelValue etwittertends SafetyLabelType {
 
   private lazy val nameToValueMap: Map[String, UserLabelValue] =
     List.map(l => l.name.toLowerCase -> l).toMap
@@ -40,23 +40,23 @@ object UserLabelValue extends SafetyLabelType {
     t.LabelValue.DuplicateContent -> DuplicateContent,
     t.LabelValue.EngagementSpammer -> EngagementSpammer,
     t.LabelValue.EngagementSpammerHighRecall -> EngagementSpammerHighRecall,
-    t.LabelValue.ExperimentalPfmUser1 -> ExperimentalPfmUser1,
-    t.LabelValue.ExperimentalPfmUser2 -> ExperimentalPfmUser2,
-    t.LabelValue.ExperimentalPfmUser3 -> ExperimentalPfmUser3,
-    t.LabelValue.ExperimentalPfmUser4 -> ExperimentalPfmUser4,
-    t.LabelValue.ExperimentalSeh1 -> ExperimentalSeh1,
-    t.LabelValue.ExperimentalSeh2 -> ExperimentalSeh2,
-    t.LabelValue.ExperimentalSeh3 -> ExperimentalSeh3,
-    t.LabelValue.ExperimentalSehUser4 -> ExperimentalSehUser4,
-    t.LabelValue.ExperimentalSehUser5 -> ExperimentalSehUser5,
-    t.LabelValue.ExperimentalSensitiveIllegal1 -> ExperimentalSensitiveIllegal1,
-    t.LabelValue.ExperimentalSensitiveIllegal2 -> ExperimentalSensitiveIllegal2,
+    t.LabelValue.EtwitterperimentalPfmUser1 -> EtwitterperimentalPfmUser1,
+    t.LabelValue.EtwitterperimentalPfmUser2 -> EtwitterperimentalPfmUser2,
+    t.LabelValue.EtwitterperimentalPfmUser3 -> EtwitterperimentalPfmUser3,
+    t.LabelValue.EtwitterperimentalPfmUser4 -> EtwitterperimentalPfmUser4,
+    t.LabelValue.EtwitterperimentalSeh1 -> EtwitterperimentalSeh1,
+    t.LabelValue.EtwitterperimentalSeh2 -> EtwitterperimentalSeh2,
+    t.LabelValue.EtwitterperimentalSeh3 -> EtwitterperimentalSeh3,
+    t.LabelValue.EtwitterperimentalSehUser4 -> EtwitterperimentalSehUser4,
+    t.LabelValue.EtwitterperimentalSehUser5 -> EtwitterperimentalSehUser5,
+    t.LabelValue.EtwitterperimentalSensitiveIllegal1 -> EtwitterperimentalSensitiveIllegal1,
+    t.LabelValue.EtwitterperimentalSensitiveIllegal2 -> EtwitterperimentalSensitiveIllegal2,
     t.LabelValue.FakeSignupDeferredRemediation -> FakeSignupDeferredRemediation,
     t.LabelValue.FakeSignupHoldback -> FakeSignupHoldback,
     t.LabelValue.GoreAndViolenceHighPrecision -> GoreAndViolenceHighPrecision,
     t.LabelValue.GoreAndViolenceReportedHeuristics -> GoreAndViolenceReportedHeuristics,
-    t.LabelValue.HealthExperimentation1 -> HealthExperimentation1,
-    t.LabelValue.HealthExperimentation2 -> HealthExperimentation2,
+    t.LabelValue.HealthEtwitterperimentation1 -> HealthEtwitterperimentation1,
+    t.LabelValue.HealthEtwitterperimentation2 -> HealthEtwitterperimentation2,
     t.LabelValue.HighRiskVerification -> HighRiskVerification,
     t.LabelValue.LikelyIvs -> LikelyIvs,
     t.LabelValue.LiveLowQuality -> LiveLowQuality,
@@ -71,7 +71,7 @@ object UserLabelValue extends SafetyLabelType {
     t.LabelValue.NsfwNearPerfect -> NsfwNearPerfect,
     t.LabelValue.NsfwReportedHeuristics -> NsfwReportedHeuristics,
     t.LabelValue.NsfwSensitive -> NsfwSensitive,
-    t.LabelValue.NsfwText -> NsfwText,
+    t.LabelValue.NsfwTetwittert -> NsfwTetwittert,
     t.LabelValue.ReadOnly -> ReadOnly,
     t.LabelValue.RecentAbuseStrike -> RecentAbuseStrike,
     t.LabelValue.RecentMisinfoStrike -> RecentMisinfoStrike,
@@ -93,7 +93,7 @@ object UserLabelValue extends SafetyLabelType {
     t.LabelValue.DeprecatedMigration50 -> Deprecated,
     t.LabelValue.DmSpammer -> Deprecated,
     t.LabelValue.DuplicateContentHoldback -> Deprecated,
-    t.LabelValue.FakeAccountExperiment -> Deprecated,
+    t.LabelValue.FakeAccountEtwitterperiment -> Deprecated,
     t.LabelValue.FakeAccountReadonly -> Deprecated,
     t.LabelValue.FakeAccountRecaptcha -> Deprecated,
     t.LabelValue.FakeAccountSspc -> Deprecated,
@@ -116,7 +116,7 @@ object UserLabelValue extends SafetyLabelType {
     t.LabelValue.SearchBlacklistHoldback -> Deprecated,
     t.LabelValue.SpamHighRecallHoldback -> Deprecated,
     t.LabelValue.SpamRepeatOffender -> Deprecated,
-    t.LabelValue.SpammerExperiment -> Deprecated,
+    t.LabelValue.SpammerEtwitterperiment -> Deprecated,
     t.LabelValue.TrendBlacklist -> Deprecated,
     t.LabelValue.VerifiedDeceptiveIdentity -> Deprecated,
     t.LabelValue.BrandSafetyNsfaAggregate -> Deprecated,
@@ -138,70 +138,70 @@ object UserLabelValue extends SafetyLabelType {
       Deprecated -> t.LabelValue.EnumUnknownLabelValue(DeprecatedEnumValue),
     )
 
-  case object Abusive extends UserLabelValue
-  case object AbusiveHighRecall extends UserLabelValue
-  case object AgathaSpamTopUser extends UserLabelValue
-  case object BirdwatchDisabled extends UserLabelValue
-  case object BlinkBad extends UserLabelValue
-  case object BlinkQuestionable extends UserLabelValue
-  case object BlinkWorst extends UserLabelValue
-  case object Compromised extends UserLabelValue
-  case object DelayedRemediation extends UserLabelValue
-  case object DoNotAmplify extends UserLabelValue
-  case object DoNotCharge extends UserLabelValue
-  case object DownrankSpamReply extends UserLabelValue
-  case object DuplicateContent extends UserLabelValue
-  case object EngagementSpammer extends UserLabelValue
-  case object EngagementSpammerHighRecall extends UserLabelValue
-  case object ExperimentalPfmUser1 extends UserLabelValue
-  case object ExperimentalPfmUser2 extends UserLabelValue
-  case object ExperimentalPfmUser3 extends UserLabelValue
-  case object ExperimentalPfmUser4 extends UserLabelValue
-  case object ExperimentalSeh1 extends UserLabelValue
-  case object ExperimentalSeh2 extends UserLabelValue
-  case object ExperimentalSeh3 extends UserLabelValue
-  case object ExperimentalSehUser4 extends UserLabelValue
-  case object ExperimentalSehUser5 extends UserLabelValue
-  case object ExperimentalSensitiveIllegal1 extends UserLabelValue
-  case object ExperimentalSensitiveIllegal2 extends UserLabelValue
-  case object FakeSignupDeferredRemediation extends UserLabelValue
-  case object FakeSignupHoldback extends UserLabelValue
-  case object GoreAndViolenceHighPrecision extends UserLabelValue
-  case object GoreAndViolenceReportedHeuristics extends UserLabelValue
-  case object HealthExperimentation1 extends UserLabelValue
-  case object HealthExperimentation2 extends UserLabelValue
-  case object HighRiskVerification extends UserLabelValue
-  case object LegalOpsCase extends UserLabelValue
-  case object LikelyIvs extends UserLabelValue
-  case object LiveLowQuality extends UserLabelValue
-  case object LowQuality extends UserLabelValue
-  case object LowQualityHighRecall extends UserLabelValue
-  case object NotificationSpamHeuristics extends UserLabelValue
-  case object NotGraduated extends UserLabelValue
-  case object NsfwAvatarImage extends UserLabelValue
-  case object NsfwBannerImage extends UserLabelValue
-  case object NsfwHighPrecision extends UserLabelValue
-  case object NsfwHighRecall extends UserLabelValue
-  case object NsfwNearPerfect extends UserLabelValue
-  case object NsfwReportedHeuristics extends UserLabelValue
-  case object NsfwSensitive extends UserLabelValue
-  case object NsfwText extends UserLabelValue
-  case object ReadOnly extends UserLabelValue
-  case object RecentAbuseStrike extends UserLabelValue
-  case object RecentProfileModification extends UserLabelValue
-  case object RecentMisinfoStrike extends UserLabelValue
-  case object RecentSuspension extends UserLabelValue
-  case object RecommendationsBlacklist extends UserLabelValue
-  case object SearchBlacklist extends UserLabelValue
-  case object SoftReadOnly extends UserLabelValue
-  case object SpamHighRecall extends UserLabelValue
-  case object SpammyUserModelHighPrecision extends UserLabelValue
-  case object StateMediaAccount extends UserLabelValue
-  case object TsViolation extends UserLabelValue
-  case object UnconfirmedEmailSignup extends UserLabelValue
+  case object Abusive etwittertends UserLabelValue
+  case object AbusiveHighRecall etwittertends UserLabelValue
+  case object AgathaSpamTopUser etwittertends UserLabelValue
+  case object BirdwatchDisabled etwittertends UserLabelValue
+  case object BlinkBad etwittertends UserLabelValue
+  case object BlinkQuestionable etwittertends UserLabelValue
+  case object BlinkWorst etwittertends UserLabelValue
+  case object Compromised etwittertends UserLabelValue
+  case object DelayedRemediation etwittertends UserLabelValue
+  case object DoNotAmplify etwittertends UserLabelValue
+  case object DoNotCharge etwittertends UserLabelValue
+  case object DownrankSpamReply etwittertends UserLabelValue
+  case object DuplicateContent etwittertends UserLabelValue
+  case object EngagementSpammer etwittertends UserLabelValue
+  case object EngagementSpammerHighRecall etwittertends UserLabelValue
+  case object EtwitterperimentalPfmUser1 etwittertends UserLabelValue
+  case object EtwitterperimentalPfmUser2 etwittertends UserLabelValue
+  case object EtwitterperimentalPfmUser3 etwittertends UserLabelValue
+  case object EtwitterperimentalPfmUser4 etwittertends UserLabelValue
+  case object EtwitterperimentalSeh1 etwittertends UserLabelValue
+  case object EtwitterperimentalSeh2 etwittertends UserLabelValue
+  case object EtwitterperimentalSeh3 etwittertends UserLabelValue
+  case object EtwitterperimentalSehUser4 etwittertends UserLabelValue
+  case object EtwitterperimentalSehUser5 etwittertends UserLabelValue
+  case object EtwitterperimentalSensitiveIllegal1 etwittertends UserLabelValue
+  case object EtwitterperimentalSensitiveIllegal2 etwittertends UserLabelValue
+  case object FakeSignupDeferredRemediation etwittertends UserLabelValue
+  case object FakeSignupHoldback etwittertends UserLabelValue
+  case object GoreAndViolenceHighPrecision etwittertends UserLabelValue
+  case object GoreAndViolenceReportedHeuristics etwittertends UserLabelValue
+  case object HealthEtwitterperimentation1 etwittertends UserLabelValue
+  case object HealthEtwitterperimentation2 etwittertends UserLabelValue
+  case object HighRiskVerification etwittertends UserLabelValue
+  case object LegalOpsCase etwittertends UserLabelValue
+  case object LikelyIvs etwittertends UserLabelValue
+  case object LiveLowQuality etwittertends UserLabelValue
+  case object LowQuality etwittertends UserLabelValue
+  case object LowQualityHighRecall etwittertends UserLabelValue
+  case object NotificationSpamHeuristics etwittertends UserLabelValue
+  case object NotGraduated etwittertends UserLabelValue
+  case object NsfwAvatarImage etwittertends UserLabelValue
+  case object NsfwBannerImage etwittertends UserLabelValue
+  case object NsfwHighPrecision etwittertends UserLabelValue
+  case object NsfwHighRecall etwittertends UserLabelValue
+  case object NsfwNearPerfect etwittertends UserLabelValue
+  case object NsfwReportedHeuristics etwittertends UserLabelValue
+  case object NsfwSensitive etwittertends UserLabelValue
+  case object NsfwTetwittert etwittertends UserLabelValue
+  case object ReadOnly etwittertends UserLabelValue
+  case object RecentAbuseStrike etwittertends UserLabelValue
+  case object RecentProfileModification etwittertends UserLabelValue
+  case object RecentMisinfoStrike etwittertends UserLabelValue
+  case object RecentSuspension etwittertends UserLabelValue
+  case object RecommendationsBlacklist etwittertends UserLabelValue
+  case object SearchBlacklist etwittertends UserLabelValue
+  case object SoftReadOnly etwittertends UserLabelValue
+  case object SpamHighRecall etwittertends UserLabelValue
+  case object SpammyUserModelHighPrecision etwittertends UserLabelValue
+  case object StateMediaAccount etwittertends UserLabelValue
+  case object TsViolation etwittertends UserLabelValue
+  case object UnconfirmedEmailSignup etwittertends UserLabelValue
 
-  case object Deprecated extends UserLabelValue
-  case object Unknown extends UserLabelValue
+  case object Deprecated etwittertends UserLabelValue
+  case object Unknown etwittertends UserLabelValue
 
   def fromThrift(userLabelValue: t.LabelValue): UserLabelValue = {
     thriftToModelMap.get(userLabelValue) match {

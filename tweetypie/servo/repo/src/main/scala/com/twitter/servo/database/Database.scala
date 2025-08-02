@@ -55,7 +55,7 @@ object Database {
    *   directly to the select. The use cases for this function are situations
    *   where the SELECT statement takes multiple parameters.
    *
-   *   Example:
+   *   Etwitterample:
    *     // A repository that takes Seq[Long]s of userids and returns
    *     // Item objects of a parameterized item type.
    *     Database.keyValueRepository[Seq[Long], Long, Item, Item](
@@ -91,12 +91,12 @@ object Database {
 trait Database {
   def select[A](query: String, builder: Builder[A], params: Any*): Future[Seq[A]]
   def selectOne[A](query: String, builder: Builder[A], params: Any*): Future[Option[A]]
-  def execute(query: String, params: Any*): Future[Int]
+  def etwitterecute(query: String, params: Any*): Future[Int]
   def insert(query: String, params: Any*): Future[Long]
   def release(): Unit
 }
 
-object NullDatabase extends Database {
+object NullDatabase etwittertends Database {
   override def select[Unit](query: String, builder: Builder[Unit], params: Any*) =
     Future.value(Seq.empty[Unit])
 
@@ -105,7 +105,7 @@ object NullDatabase extends Database {
 
   override def release() = ()
 
-  override def execute(query: String, params: Any*) =
+  override def etwitterecute(query: String, params: Any*) =
     Future.value(0)
 
   override def insert(query: String, params: Any*) =
@@ -114,10 +114,10 @@ object NullDatabase extends Database {
 
 object AggregateByKey {
   def apply[K, R, A](
-    extractKey: R => K,
+    etwittertractKey: R => K,
     reduce: Seq[R] => A,
     pruneDuplicates: Boolean = false
-  ) = new AggregateByKey(extractKey, reduce, pruneDuplicates)
+  ) = new AggregateByKey(etwittertractKey, reduce, pruneDuplicates)
 
   /**
    * In the event that the item type (V) does not carry an aggregation key then we can have
@@ -149,7 +149,7 @@ object AggregateByKey {
 }
 
 /**
- * Basic aggregator that extracts keys from a Row, groups into a Seq by those keys, and
+ * Basic aggregator that etwittertracts keys from a Row, groups into a Seq by those keys, and
  * performs some reduction step to mash those into an aggregated object.  Order is not
  * necessarily kept between the retrieving rows from the database and passing them into
  * reduce.
@@ -163,8 +163,8 @@ object AggregateByKey {
  * @tparam A
  *   what we collect groups of R into
  *
- * @param extractKey
- *   function to extract a key from a row object
+ * @param etwittertractKey
+ *   function to etwittertract a key from a row object
  *
  * @param reduce
  *   function that can take a sequence of rows and combine them into an aggregate
@@ -175,10 +175,10 @@ object AggregateByKey {
  *   likely lose ordering.
  */
 class AggregateByKey[K, R, A](
-  extractKey: R => K,
+  etwittertractKey: R => K,
   reduce: Seq[R] => A,
   pruneDuplicates: Boolean = false)
-    extends (Seq[R] => Seq[(K, A)]) {
+    etwittertends (Seq[R] => Seq[(K, A)]) {
   override def apply(input: Seq[R]): Seq[(K, A)] = {
     val collectionMap = new HashMap[K, Growable[R] with Iterable[R]]
 
@@ -190,7 +190,7 @@ class AggregateByKey[K, R, A](
       }
 
     input foreach { element =>
-      (collectionMap.getOrElseUpdate(extractKey(element), emptyCollection)) += element
+      (collectionMap.getOrElseUpdate(etwittertractKey(element), emptyCollection)) += element
     }
 
     collectionMap map {

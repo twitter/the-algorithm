@@ -21,13 +21,13 @@ import com.twitter.tweetypie.thriftscala._
  */
 object PreviousTweetCountsHydrator {
 
-  case class Ctx(
+  case class Cttwitter(
     editControl: Option[EditControl],
     featureSwitchResults: Option[FeatureSwitchResults],
-    underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+    underlyingTweetCttwitter: TweetCttwitter)
+      etwittertends TweetCttwitter.Protwittery
 
-  type Type = ValueHydrator[Option[StatusCounts], Ctx]
+  type Type = ValueHydrator[Option[StatusCounts], Cttwitter]
 
   val hydratedField: FieldByPath = fieldByPath(Tweet.PreviousCountsField)
 
@@ -106,20 +106,20 @@ object PreviousTweetCountsHydrator {
       }
     }
 
-    ValueHydrator[Option[StatusCounts], Ctx] { (inputStatusCounts, ctx) =>
+    ValueHydrator[Option[StatusCounts], Cttwitter] { (inputStatusCounts, cttwitter) =>
       val countsFields: Set[FieldId] = TweetCountsHydrator.filterRequestedCounts(
-        ctx.opts.forUserId.getOrElse(ctx.userId),
-        ctx.opts.include.countsFields,
+        cttwitter.opts.forUserId.getOrElse(cttwitter.userId),
+        cttwitter.opts.include.countsFields,
         shouldHydrateBookmarksCount,
-        ctx.featureSwitchResults
+        cttwitter.featureSwitchResults
       )
 
-      ctx.editControl match {
+      cttwitter.editControl match {
         case Some(EditControl.Edit(edit)) =>
           edit.editControlInitial match {
             case Some(initial) =>
               val previousStatusCounts: Stitch[ValueState[StatusCounts]] =
-                getPreviousEngagementCounts(ctx.tweetId, initial.editTweetIds, countsFields)
+                getPreviousEngagementCounts(cttwitter.tweetId, initial.editTweetIds, countsFields)
 
               // Add the new aggregated StatusCount to the TweetData and return it
               previousStatusCounts.map { valueState =>
@@ -134,18 +134,18 @@ object PreviousTweetCountsHydrator {
 
         case _ =>
           // If the tweet has an EditControlInitial - it's the first Tweet in the Edit Chain
-          // or has no EditControl - it could be an old Tweet from when no Edit Controls existed
+          // or has no EditControl - it could be an old Tweet from when no Edit Controls etwitteristed
           // then the previous counts are set to be equal to None.
           Stitch.value(ValueState.unit(None))
       }
-    }.onlyIf { (_, ctx: Ctx) =>
+    }.onlyIf { (_, cttwitter: Cttwitter) =>
       // only run if the CountsField was requested; note this is ran both on read and write path
       TweetCountsHydrator
         .filterRequestedCounts(
-          ctx.opts.forUserId.getOrElse(ctx.userId),
-          ctx.opts.include.countsFields,
+          cttwitter.opts.forUserId.getOrElse(cttwitter.userId),
+          cttwitter.opts.include.countsFields,
           shouldHydrateBookmarksCount,
-          ctx.featureSwitchResults
+          cttwitter.featureSwitchResults
         ).nonEmpty
     }
   }

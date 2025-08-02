@@ -4,22 +4,22 @@ import com.twitter.timelines.configapi.FSBoundedParam
 import com.twitter.timelines.configapi.FSParam
 
 object ReverseChronParams {
-  import ReverseChronTimelineQueryContext._
+  import ReverseChronTimelineQueryContetwittert._
 
   /**
    * Controls limit on the number of followed users fetched from SGS when materializing home timelines.
    */
-  object MaxFollowedUsersParam
-      extends FSBoundedParam(
-        "reverse_chron_max_followed_users",
-        default = MaxFollowedUsers.default,
-        min = MaxFollowedUsers.bounds.minInclusive,
-        max = MaxFollowedUsers.bounds.maxInclusive
+  object MatwitterFollowedUsersParam
+      etwittertends FSBoundedParam(
+        "reverse_chron_matwitter_followed_users",
+        default = MatwitterFollowedUsers.default,
+        min = MatwitterFollowedUsers.bounds.minInclusive,
+        matwitter = MatwitterFollowedUsers.bounds.matwitterInclusive
       )
 
-  object ReturnEmptyWhenOverMaxFollowsParam
-      extends FSParam(
-        name = "reverse_chron_return_empty_when_over_max_follows",
+  object ReturnEmptyWhenOverMatwitterFollowsParam
+      etwittertends FSParam(
+        name = "reverse_chron_return_empty_when_over_matwitter_follows",
         default = true
       )
 
@@ -28,7 +28,7 @@ object ReverseChronParams {
    * so that search will not return tweets that are directed at non-followed users.
    */
   object DirectedAtNarrowcastingViaSearchParam
-      extends FSParam(
+      etwittertends FSParam(
         name = "reverse_chron_directed_at_narrowcasting_via_search",
         default = false
       )
@@ -38,7 +38,7 @@ object ReverseChronParams {
    * from search and use this metadata for post filtering.
    */
   object PostFilteringBasedOnSearchMetadataEnabledParam
-      extends FSParam(
+      etwittertends FSParam(
         name = "reverse_chron_post_filtering_based_on_search_metadata_enabled",
         default = true
       )

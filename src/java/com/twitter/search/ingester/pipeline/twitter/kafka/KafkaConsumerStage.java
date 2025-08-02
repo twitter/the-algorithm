@@ -10,12 +10,12 @@ import com.google.common.base.Preconditions;
 
 import org.apache.commons.pipeline.Pipeline;
 import org.apache.commons.pipeline.StageDriver;
-import org.apache.commons.pipeline.StageException;
+import org.apache.commons.pipeline.StageEtwitterception;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.SaslAuthenticationException;
-import org.apache.kafka.common.errors.SerializationException;
+import org.apache.kafka.common.errors.SaslAuthenticationEtwitterception;
+import org.apache.kafka.common.errors.SerializationEtwitterception;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,20 +23,20 @@ import com.twitter.search.common.decider.DeciderUtil;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchRateCounter;
 import com.twitter.search.ingester.pipeline.twitter.TwitterBaseStage;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
+import com.twitter.search.ingester.pipeline.util.PipelineStageEtwitterception;
 import com.twitter.search.ingester.pipeline.util.PipelineUtil;
 
 /**
  * A stage to read Thrift payloads from a Kafka topic.
  */
-public abstract class KafkaConsumerStage<R> extends TwitterBaseStage<Void, R> {
+public abstract class KafkaConsumerStage<R> etwittertends TwitterBaseStage<Void, R> {
   private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerStage.class);
   private static final String SHUT_DOWN_ON_AUTH_FAIL = "shut_down_on_authentication_fail";
   private String kafkaClientId;
   private String kafkaTopicName;
   private String kafkaConsumerGroupId;
   private String kafkaClusterPath;
-  private int maxPollRecords = 1;
+  private int matwitterPollRecords = 1;
   private int pollTimeoutMs = 1000;
   private boolean partitioned;
   private String deciderKey;
@@ -70,11 +70,11 @@ public abstract class KafkaConsumerStage<R> extends TwitterBaseStage<Void, R> {
   }
 
   private void commonInnerSetupStats() {
-    pollCount = SearchCounter.export(getStageNamePrefix() + "_poll_count");
+    pollCount = SearchCounter.etwitterport(getStageNamePrefitwitter() + "_poll_count");
     deserializationErrorCount =
-        SearchCounter.export(getStageNamePrefix() + "_deserialization_error_count");
+        SearchCounter.etwitterport(getStageNamePrefitwitter() + "_deserialization_error_count");
     droppedMessages =
-        SearchRateCounter.export(getStageNamePrefix() + "_dropped_messages");
+        SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_dropped_messages");
   }
 
   @Override
@@ -98,7 +98,7 @@ public abstract class KafkaConsumerStage<R> extends TwitterBaseStage<Void, R> {
         deserializer,
         kafkaClientId,
         kafkaConsumerGroupId,
-        maxPollRecords);
+        matwitterPollRecords);
     if (partitioned) {
       kafkaConsumer.assign(Collections.singletonList(
           new TopicPartition(kafkaTopicName, wireModule.getPartition())));
@@ -113,8 +113,8 @@ public abstract class KafkaConsumerStage<R> extends TwitterBaseStage<Void, R> {
   }
 
   @Override
-  public void innerProcess(Object obj) throws StageException {
-    StageDriver driver = ((Pipeline) stageContext).getStageDriver(this);
+  public void innerProcess(Object obj) throws StageEtwitterception {
+    StageDriver driver = ((Pipeline) stageContetwittert).getStageDriver(this);
     while (driver.getState() == StageDriver.State.RUNNING) {
       pollAndEmit();
     }
@@ -124,30 +124,30 @@ public abstract class KafkaConsumerStage<R> extends TwitterBaseStage<Void, R> {
   }
 
   @VisibleForTesting
-  void pollAndEmit() throws StageException {
+  void pollAndEmit() throws StageEtwitterception {
     try {
       List<R> records = poll();
       for (R record : records) {
         emitAndCount(record);
       }
-    } catch (PipelineStageException e) {
-      throw new StageException(this, e);
+    } catch (PipelineStageEtwitterception e) {
+      throw new StageEtwitterception(this, e);
     }
   }
 
   /***
    * Poll Kafka and get the items from the topic. Record stats.
    * @return
-   * @throws PipelineStageException
+   * @throws PipelineStageEtwitterception
    */
-  public List<R> pollFromTopic() throws PipelineStageException {
+  public List<R> pollFromTopic() throws PipelineStageEtwitterception {
     long startingTime = startProcessing();
     List<R> polledItems = poll();
     endProcessing(startingTime);
     return polledItems;
   }
 
-  private List<R> poll() throws PipelineStageException  {
+  private List<R> poll() throws PipelineStageEtwitterception  {
     List<R> recordsFromKafka = new ArrayList<>();
     try {
       ConsumerRecords<Long, R> records = kafkaConsumer.poll(Duration.ofMillis(pollTimeoutMs));
@@ -160,18 +160,18 @@ public abstract class KafkaConsumerStage<R> extends TwitterBaseStage<Void, R> {
         }
       });
 
-    } catch (SerializationException e) {
+    } catch (SerializationEtwitterception e) {
       deserializationErrorCount.increment();
       LOG.error("Failed to deserialize the value.", e);
-    } catch (SaslAuthenticationException e) {
+    } catch (SaslAuthenticationEtwitterception e) {
       if (DeciderUtil.isAvailableForRandomRecipient(decider, SHUT_DOWN_ON_AUTH_FAIL)) {
-        wireModule.getPipelineExceptionHandler()
+        wireModule.getPipelineEtwitterceptionHandler()
             .logAndShutdown("Authentication error connecting to Kafka broker: " + e);
       } else {
-        throw new PipelineStageException(this, "Kafka Authentication Error", e);
+        throw new PipelineStageEtwitterception(this, "Kafka Authentication Error", e);
       }
-    } catch (Exception e) {
-      throw new PipelineStageException(e);
+    } catch (Etwitterception e) {
+      throw new PipelineStageEtwitterception(e);
     }
 
     return recordsFromKafka;
@@ -182,7 +182,7 @@ public abstract class KafkaConsumerStage<R> extends TwitterBaseStage<Void, R> {
     try {
       kafkaConsumer.close();
       LOG.info("Kafka kafkaConsumer for {} was closed", getFullStageName());
-    } catch (Exception e) {
+    } catch (Etwitterception e) {
       log.error("Failed to close Kafka kafkaConsumer", e);
     }
   }
@@ -214,8 +214,8 @@ public abstract class KafkaConsumerStage<R> extends TwitterBaseStage<Void, R> {
   }
 
   @SuppressWarnings("unused")  // set from pipeline config
-  public void setMaxPollRecords(int maxPollRecords) {
-    this.maxPollRecords = maxPollRecords;
+  public void setMatwitterPollRecords(int matwitterPollRecords) {
+    this.matwitterPollRecords = matwitterPollRecords;
   }
 
   @SuppressWarnings("unused")  // set from pipeline config

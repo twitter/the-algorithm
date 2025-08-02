@@ -1,0 +1,6 @@
+package com.twitter.product_mitwitterer.core.service.candidate_decorator_etwitterecutor
+
+import com.twitter.product_mitwitterer.core.functional_component.decorator.Decoration
+import com.twitter.product_mitwitterer.core.service.EtwitterecutorResult
+
+case class CandidateDecoratorEtwitterecutorResult(result: Seq[Decoration]) etwittertends EtwitterecutorResult

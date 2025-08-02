@@ -4,7 +4,7 @@ package com.twitter.search.core.earlybird.facets;
  * This accumulator does not accumulate the facet counts when {@link #add(long, int, int, int)}
  * is called.
  */
-public class DummyFacetAccumulator<R> extends FacetAccumulator<R> {
+public class DummyFacetAccumulator<R> etwittertends FacetAccumulator<R> {
 
   @Override
   public int add(long termID, int scoreIncrement, int penaltyCount, int tweepCred) {

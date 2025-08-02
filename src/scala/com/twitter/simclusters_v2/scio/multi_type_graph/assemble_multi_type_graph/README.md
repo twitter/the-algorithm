@@ -16,7 +16,7 @@ If you want to run an adhoc job with your ldap, you will need access to multiple
 ### Running an adhoc job
 
 ```bash
-export GCP_PROJECT_NAME='twttr-recos-ml-prod'
+etwitterport GCP_PROJECT_NAME='twttr-recos-ml-prod'
 
 ./bazel bundle src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/assemble_multi_type_graph:assemble-multi-type-graph-scio-adhoc-app
 
@@ -36,8 +36,8 @@ Scheduling a job will require a service account as `recos-platform`.
 Remember this account will need permissions to read all the required dataset. 
 
 ```bash
-export SERVICE_ACCOUNT='recos-platform'
-export GCP_PROJECT_NAME='twttr-recos-ml-prod'
+etwitterport SERVICE_ACCOUNT='recos-platform'
+etwitterport GCP_PROJECT_NAME='twttr-recos-ml-prod'
 
 bin/d6w schedule \
   ${GCP_PROJECT_NAME}/us-central1/assemble-multi-type-graph-scio-batch-app \

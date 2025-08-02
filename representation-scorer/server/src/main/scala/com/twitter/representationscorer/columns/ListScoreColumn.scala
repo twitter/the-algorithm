@@ -17,20 +17,20 @@ import com.twitter.strato.catalog.OpMetadata
 import com.twitter.strato.config.ContactInfo
 import com.twitter.strato.config.Policy
 import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
+import com.twitter.strato.data.Description.PlainTetwittert
 import com.twitter.strato.data.Lifecycle
 import com.twitter.strato.fed._
 import com.twitter.strato.thrift.ScroogeConv
 import com.twitter.util.Future
 import com.twitter.util.Return
 import com.twitter.util.Throw
-import javax.inject.Inject
+import javatwitter.inject.Inject
 
 class ListScoreColumn @Inject() (scoreStore: ScoreStore)
-    extends StratoFed.Column("recommendations/representation_scorer/listScore")
+    etwittertends StratoFed.Column("recommendations/representation_scorer/listScore")
     with StratoFed.Fetch.Stitch {
 
-  override val policy: Policy = Common.rsxReadPolicy
+  override val policy: Policy = Common.rstwitterReadPolicy
 
   override type Key = ListScoreId
   override type View = Unit
@@ -45,7 +45,7 @@ class ListScoreColumn @Inject() (scoreStore: ScoreStore)
   override val metadata: OpMetadata = OpMetadata(
     lifecycle = Some(Lifecycle.Production),
     description = Some(
-      PlainText(
+      PlainTetwittert(
         "Scoring for multiple candidate entities against a single target entity"
       ))
   )

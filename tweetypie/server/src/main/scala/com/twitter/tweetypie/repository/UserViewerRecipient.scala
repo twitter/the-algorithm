@@ -1,7 +1,7 @@
 package com.twitter.tweetypie
 package repository
 
-import com.twitter.context.thriftscala.Viewer
+import com.twitter.contetwittert.thriftscala.Viewer
 import com.twitter.featureswitches.Recipient
 import com.twitter.featureswitches.TOOClient
 import com.twitter.featureswitches.UserAgent
@@ -9,20 +9,20 @@ import com.twitter.tweetypie.StatsReceiver
 import com.twitter.tweetypie.User
 import com.twitter.tweetypie.UserId
 import com.twitter.tweetypie.client_id.ClientIdHelper
-import com.twitter.tweetypie.repository.UserViewerRecipient.UserIdMismatchException
+import com.twitter.tweetypie.repository.UserViewerRecipient.UserIdMismatchEtwitterception
 
 /**
- * Provides a Recipient backed by a Gizmoduck User and TwitterContext Viewer for
+ * Provides a Recipient backed by a Gizmoduck User and TwitterContetwittert Viewer for
  * use in FeatureSwitch validation.
  */
 object UserViewerRecipient {
-  object UserIdMismatchException extends Exception
+  object UserIdMismatchEtwitterception etwittertends Etwitterception
 
   def apply(user: User, viewer: Viewer, stats: StatsReceiver): Option[Recipient] = {
     // This is a workaround for thrift API clients that allow users to Tweet on behalf
     // of other Twitter users. This is similar to go/contributors, however some platforms
     // have enabled workflows that don't use the go/contributors auth platform, and
-    // therefore the TwitterContext Viewer isn't set up correctly for contributor requests.
+    // therefore the TwitterContetwittert Viewer isn't set up correctly for contributor requests.
     if (viewer.userId.contains(user.id)) {
       Some(new UserViewerRecipient(user, viewer))
     } else {
@@ -39,10 +39,10 @@ object UserViewerRecipient {
 class UserViewerRecipient(
   user: User,
   viewer: Viewer)
-    extends Recipient {
+    etwittertends Recipient {
 
   if (!viewer.userId.contains(user.id)) {
-    throw UserIdMismatchException
+    throw UserIdMismatchEtwitterception
   }
 
   override def userId: Option[UserId] = viewer.userId

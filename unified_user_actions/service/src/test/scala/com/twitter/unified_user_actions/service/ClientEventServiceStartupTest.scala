@@ -26,7 +26,7 @@ import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
 import com.twitter.util.Duration
 import com.twitter.util.StorageUnit
 
-class ClientEventServiceStartupTest extends KafkaFeatureTest {
+class ClientEventServiceStartupTest etwittertends KafkaFeatureTest {
   private val inputTopic =
     kafkaTopic(UnKeyedSerde, ScalaSerdes.Thrift[LogEvent], name = "source")
   private val outputTopic =
@@ -38,7 +38,7 @@ class ClientEventServiceStartupTest extends KafkaFeatureTest {
     "kafka.source.topic" -> inputTopic.topic,
     "kafka.sink.topics" -> outputTopic.topic,
     "kafka.consumer.fetch.min" -> "6.megabytes",
-    "kafka.max.pending.requests" -> "100",
+    "kafka.matwitter.pending.requests" -> "100",
     "kafka.worker.threads" -> "1",
     "kafka.trust.store.enable" -> "false",
     "kafka.producer.batch.size" -> "0.byte",

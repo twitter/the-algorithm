@@ -6,7 +6,7 @@ import com.twitter.scalding_internal.job.RequiredBinaryComparators.ordSer
 import com.twitter.scalding.typed.TypedPipe
 import com.twitter.scalding.{DateRange, Days, Stat, UniqueID}
 import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
+import com.twitter.simclusters_v2.scalding.embedding.common.EtwitterternalDataSources
 import com.twitter.simclusters_v2.thriftscala.{
   LeftNode,
   Noun,
@@ -37,7 +37,7 @@ object AssembleMultiTypeGraph {
       case _: Noun.TweetId => 5
     }
 
-    override def compare(x: Noun, y: Noun): Int = (x, y) match {
+    override def compare(twitter: Noun, y: Noun): Int = (twitter, y) match {
       case (Noun.UserId(a), Noun.UserId(b)) => a compare b
       case (Noun.Country(a), Noun.Country(b)) => a compare b
       case (Noun.Language(a), Noun.Language(b)) => a compare b
@@ -51,10 +51,10 @@ object AssembleMultiTypeGraph {
 
   implicit val rightNodeTypeWithNounOrdering: Ordering[RightNode] =
     new Ordering[RightNode] {
-      override def compare(x: RightNode, y: RightNode): Int = {
+      override def compare(twitter: RightNode, y: RightNode): Int = {
         Ordering
           .Tuple2(rightNodeTypeOrdering, nounOrdering)
-          .compare((x.rightNodeType, x.noun), (y.rightNodeType, y.noun))
+          .compare((twitter.rightNodeType, twitter.noun), (y.rightNodeType, y.noun))
       }
     }
 
@@ -389,7 +389,7 @@ object AssembleMultiTypeGraph {
   )(
     implicit uniqueID: UniqueID
   ): TypedPipe[(RightNodeType, Seq[(Noun, Double)])] = {
-    val maxAcrossRightNounType: Int = topKConfig.valuesIterator.max
+    val matwitterAcrossRightNounType: Int = topKConfig.valuesIterator.matwitter
     fullGraph
       .map {
         case (leftNode, rightNodeWithWeight) =>
@@ -404,8 +404,8 @@ object AssembleMultiTypeGraph {
           (rightNode.rightNodeType, (rightNode.noun, freq))
       }
       .group(rightNodeTypeOrdering)
-      // Note: if maxAcrossRightNounType is >15M, it might result in OOM on reducer
-      .sortedReverseTake(maxAcrossRightNounType)(Ordering.by(_._2))
+      // Note: if matwitterAcrossRightNounType is >15M, it might result in OOM on reducer
+      .sortedReverseTake(matwitterAcrossRightNounType)(Ordering.by(_._2))
       // An alternative to using group followed by sortedReverseTake is to define TopKMonoids,
       // one for each RightNodeType to get the most frequent rightNouns
       .map {
@@ -454,49 +454,49 @@ object AssembleMultiTypeGraph {
 
     // ieSource tweet engagements data for tweet favs, replies, retweets - from last 14 days
     val tweetSource: TypedPipe[InteractionEvent] =
-      ExternalDataSources.ieSourceTweetEngagementsSource(dateRange =
+      EtwitterternalDataSources.ieSourceTweetEngagementsSource(dateRange =
         DateRange(dateRange.end - Days(14), dateRange.end))
 
     // user-user fav edges
     val userUserFavEdges: TypedPipe[(UserId, UserId, Double)] =
-      ExternalDataSources.getFavEdges(HalfLifeInDaysForFavScore)
+      EtwitterternalDataSources.getFavEdges(HalfLifeInDaysForFavScore)
 
     // user-user follow edges
     val userUserFollowEdges: TypedPipe[(UserId, UserId)] =
-      filterInvalidUsers(ExternalDataSources.flockFollowsSource, validUsers)
+      filterInvalidUsers(EtwitterternalDataSources.flockFollowsSource, validUsers)
 
     // user-user block edges
     val userUserBlockEdges: TypedPipe[(UserId, UserId)] =
-      filterInvalidUsers(ExternalDataSources.flockBlocksSource, validUsers)
+      filterInvalidUsers(EtwitterternalDataSources.flockBlocksSource, validUsers)
 
     // user-user abuse report edges
     val userUserAbuseReportEdges: TypedPipe[(UserId, UserId)] =
-      filterInvalidUsers(ExternalDataSources.flockReportAsAbuseSource, validUsers)
+      filterInvalidUsers(EtwitterternalDataSources.flockReportAsAbuseSource, validUsers)
 
     // user-user spam report edges
     val userUserSpamReportEdges: TypedPipe[(UserId, UserId)] =
-      filterInvalidUsers(ExternalDataSources.flockReportAsSpamSource, validUsers)
+      filterInvalidUsers(EtwitterternalDataSources.flockReportAsSpamSource, validUsers)
 
     // user-signup country edges
     val userSignUpCountryEdges: TypedPipe[(UserId, (Country, Language))] =
-      ExternalDataSources.userSource
+      EtwitterternalDataSources.userSource
 
     // user-consumed language edges
     val userConsumedLanguageEdges: TypedPipe[(UserId, Seq[(Language, Double)])] =
-      ExternalDataSources.inferredUserConsumedLanguageSource
+      EtwitterternalDataSources.inferredUserConsumedLanguageSource
 
     // user-topic follow edges
     val topicUserFollowedByEdges: TypedPipe[(TopicId, UserId)] =
-      ExternalDataSources.topicFollowGraphSource
+      EtwitterternalDataSources.topicFollowGraphSource
 
     // user-MRNotifOpenOrClick events from last 7 days
     val userMRNotifOpenOrClickEvents: TypedPipe[MagicRecsNotificationLite] =
-      ExternalDataSources.magicRecsNotficationOpenOrClickEventsSource(dateRange =
+      EtwitterternalDataSources.magicRecsNotficationOpenOrClickEventsSource(dateRange =
         DateRange(dateRange.end - Days(7), dateRange.end))
 
     // user-searchQuery strings from last 7 days
     val userSearchQueryEdges: TypedPipe[(UserId, String)] =
-      ExternalDataSources.adaptiveSearchScribeLogsSource(dateRange =
+      EtwitterternalDataSources.adaptiveSearchScribeLogsSource(dateRange =
         DateRange(dateRange.end - Days(7), dateRange.end))
 
     getUserTweetInteractionGraph(tweetSource) ++

@@ -146,7 +146,7 @@ TWMLAPI uint64_t TensorRecordWriter::write(twml::TensorRecord &record) {
   for (auto id_tensor_pairs : record.getRawTensors()) {
     m_thrift_writer.writeInt64(id_tensor_pairs.first);
 
-    // all tensors written as RawTensor Thrift except for StringTensors
+    // all tensors written as RawTensor Thrift etwittercept for StringTensors
     // this avoids the overhead of converting little endian to big endian
     if (id_tensor_pairs.second.getType() == TWML_TYPE_STRING)
       writeTensor(id_tensor_pairs.second);

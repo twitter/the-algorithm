@@ -10,5 +10,5 @@ object HasMediaHydrator {
   def apply(hasMedia: Tweet => Boolean): Type =
     ValueHydrator
       .map[Option[Boolean], Tweet] { (_, tweet) => ValueState.modified(Some(hasMedia(tweet))) }
-      .onlyIf((curr, ctx) => curr.isEmpty)
+      .onlyIf((curr, cttwitter) => curr.isEmpty)
 }

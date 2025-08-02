@@ -3,10 +3,10 @@ package com.twitter.search.feature_update_service;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import javax.inject.Inject;
-import javax.inject.Named;
+import javatwitter.inject.Inject;
+import javatwitter.inject.Named;
 
-import scala.runtime.BoxedUnit;
+import scala.runtime.BotwitteredUnit;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -16,18 +16,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
-import com.twitter.common_internal.text.version.PenguinVersion;
+import com.twitter.common_internal.tetwittert.version.PenguinVersion;
 import com.twitter.decider.Decider;
-import com.twitter.finagle.mux.ClientDiscardedRequestException;
+import com.twitter.finagle.mutwitter.ClientDiscardedRequestEtwitterception;
 import com.twitter.finagle.thrift.ClientId;
 import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer;
 import com.twitter.inject.annotations.Flag;
 import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
+import com.twitter.search.common.schema.thriftjava.ThriftIndetwitteringEvent;
+import com.twitter.search.common.schema.thriftjava.ThriftIndetwitteringEventType;
 import com.twitter.search.feature_update_service.modules.EarlybirdUtilModule;
 import com.twitter.search.feature_update_service.modules.FinagleKafkaProducerModule;
 import com.twitter.search.feature_update_service.stats.FeatureUpdateStats;
@@ -42,7 +42,7 @@ import com.twitter.tweetypie.thriftjava.GetTweetFieldsRequest;
 import com.twitter.tweetypie.thriftjava.TweetInclude;
 import com.twitter.tweetypie.thriftjava.TweetService;
 import com.twitter.tweetypie.thriftjava.TweetVisibilityPolicy;
-import com.twitter.util.ExecutorServiceFuturePool;
+import com.twitter.util.EtwitterecutorServiceFuturePool;
 import com.twitter.util.Function;
 import com.twitter.util.Future;
 import com.twitter.util.Futures;
@@ -59,10 +59,10 @@ public class FeatureUpdateController implements FeatureUpdateService.ServiceIfac
           "write_events_to_kafka_update_events_realtime_cg";
 
   private final SearchRateCounter droppedKafkaUpdateEvents =
-      SearchRateCounter.export("dropped_kafka_update_events");
+      SearchRateCounter.etwitterport("dropped_kafka_update_events");
 
   private final SearchRateCounter droppedKafkaUpdateEventsRealtimeCg =
-          SearchRateCounter.export("dropped_kafka_update_events_realtime_cg");
+          SearchRateCounter.etwitterport("dropped_kafka_update_events_realtime_cg");
   private final Clock clock;
   private final Decider decider;
   private final BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducer;
@@ -72,7 +72,7 @@ public class FeatureUpdateController implements FeatureUpdateService.ServiceIfac
   private final FeatureUpdateStats stats;
   private final String kafkaUpdateEventsTopicName;
   private final String kafkaUpdateEventsTopicNameRealtimeCg;
-  private final ExecutorServiceFuturePool futurePool;
+  private final EtwitterecutorServiceFuturePool futurePool;
   private final TweetService.ServiceIface tweetService;
 
   @Inject
@@ -89,7 +89,7 @@ public class FeatureUpdateController implements FeatureUpdateService.ServiceIfac
       String kafkaUpdateEventsTopicName,
       @Flag(FinagleKafkaProducerModule.KAFKA_TOPIC_NAME_UPDATE_EVENTS_FLAG_REALTIME_CG)
       String kafkaUpdateEventsTopicNameRealtimeCg,
-      ExecutorServiceFuturePool futurePool,
+      EtwitterecutorServiceFuturePool futurePool,
       TweetService.ServiceIface tweetService
   ) {
     this.clock = clock;
@@ -108,7 +108,7 @@ public class FeatureUpdateController implements FeatureUpdateService.ServiceIfac
   public Future<FeatureUpdateResponse> process(FeatureUpdateRequest featureUpdate) {
     long requestStartTimeMillis = clock.nowMillis();
 
-    // Export overall and per-client request rate stats
+    // Etwitterport overall and per-client request rate stats
     final String requestClientId;
     if (featureUpdate.getRequestClientId() != null
         && !featureUpdate.getRequestClientId().isEmpty()) {
@@ -129,7 +129,7 @@ public class FeatureUpdateController implements FeatureUpdateService.ServiceIfac
       return Future.value(errorResponse);
     }
 
-    ThriftIndexingEvent event = featureUpdate.getEvent();
+    ThriftIndetwitteringEvent event = featureUpdate.getEvent();
     return writeToKafka(event, requestStartTimeMillis)
         .map(responsesList -> {
           stats.clientResponse(requestClientId, FeatureUpdateResponseCode.SUCCESS);
@@ -138,10 +138,10 @@ public class FeatureUpdateController implements FeatureUpdateService.ServiceIfac
         })
         .handle(Function.func(throwable -> {
           FeatureUpdateResponseCode responseCode;
-          // if either Realtime or RealtimeCG throws an exception, it will return a failure
-          if (throwable instanceof ClientDiscardedRequestException) {
+          // if either Realtime or RealtimeCG throws an etwitterception, it will return a failure
+          if (throwable instanceof ClientDiscardedRequestEtwitterception) {
             responseCode = FeatureUpdateResponseCode.CLIENT_CANCEL_ERROR;
-            LOG.info("ClientDiscardedRequestException received from client: " + requestClientId,
+            LOG.info("ClientDiscardedRequestEtwitterception received from client: " + requestClientId,
                 throwable);
           } else {
             responseCode = FeatureUpdateResponseCode.TRANSIENT_ERROR;
@@ -157,12 +157,12 @@ public class FeatureUpdateController implements FeatureUpdateService.ServiceIfac
 
   /**
    * In writeToKafka(), we use Futures.collect() to aggregate results for two RPC calls
-   * Futures.collect() means that if either one of the Future fails then it will return an Exception
+   * Futures.collect() means that if either one of the Future fails then it will return an Etwitterception
    * only when both Realtime & RealtimeCG succeed, then it will return a success flag
    * The FeatureUpdateResponse is more like an ACK message, and the upstream (feature update ingester)
    * will not be affected much even if it failed (as long as the kafka message is written)
    */
-  private Future<List<BoxedUnit>> writeToKafka(ThriftIndexingEvent event,
+  private Future<List<BotwitteredUnit>> writeToKafka(ThriftIndetwitteringEvent event,
                                                long requestStartTimeMillis) {
     return Futures.collect(Lists.newArrayList(
         writeToKafkaInternal(event, WRITE_TO_KAFKA_DECIDER_KEY, droppedKafkaUpdateEvents,
@@ -174,7 +174,7 @@ public class FeatureUpdateController implements FeatureUpdateService.ServiceIfac
 
   }
 
-  private Future<BoxedUnit> writeToKafkaInternal(ThriftIndexingEvent event, String deciderKey,
+  private Future<BotwitteredUnit> writeToKafkaInternal(ThriftIndetwitteringEvent event, String deciderKey,
      SearchRateCounter droppedStats, String topicName, long userId,
      BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> producer) {
     if (!DeciderUtil.isAvailableForRandomRecipient(decider, deciderKey)) {
@@ -190,12 +190,12 @@ public class FeatureUpdateController implements FeatureUpdateService.ServiceIfac
       return Futures.flatten(futurePool.apply(() ->
               producer.send(producerRecord)
                       .map(record -> {
-                        SearchCounter.export(String.format(
+                        SearchCounter.etwitterport(String.format(
                           KAFKA_SEND_COUNT_FORMAT, record.topic(), record.partition())).increment();
-                        return BoxedUnit.UNIT;
+                        return BotwitteredUnit.UNIT;
                       })));
-    } catch (Exception e) {
-      return Future.exception(e);
+    } catch (Etwitterception e) {
+      return Future.etwitterception(e);
     }
   }
 
@@ -221,25 +221,25 @@ public class FeatureUpdateController implements FeatureUpdateService.ServiceIfac
       return tweetService.get_tweet_fields(getTweetFieldsRequest).map(
           tweetFieldsResults -> tweetFieldsResults.get(
               0).tweetResult.getFound().tweet.core_data.user_id);
-    } catch (Exception e) {
-      return Future.exception(e);
+    } catch (Etwitterception e) {
+      return Future.etwitterception(e);
     }
   }
 
   private ThriftVersionedEvents convertToThriftVersionedEvents(
-      long userId, ThriftIndexingEvent event) {
-    ThriftIndexingEvent thriftIndexingEvent = event.deepCopy()
-        .setEventType(ThriftIndexingEventType.PARTIAL_UPDATE);
+      long userId, ThriftIndetwitteringEvent event) {
+    ThriftIndetwitteringEvent thriftIndetwitteringEvent = event.deepCopy()
+        .setEventType(ThriftIndetwitteringEventType.PARTIAL_UPDATE);
 
-    ImmutableMap.Builder<Byte, ThriftIndexingEvent> versionedEventsBuilder =
+    ImmutableMap.Builder<Byte, ThriftIndetwitteringEvent> versionedEventsBuilder =
         new ImmutableMap.Builder<>();
     for (PenguinVersion penguinVersion : penguinVersions) {
-      versionedEventsBuilder.put(penguinVersion.getByteValue(), thriftIndexingEvent);
+      versionedEventsBuilder.put(penguinVersion.getByteValue(), thriftIndetwitteringEvent);
     }
 
     IngesterThriftVersionedEvents thriftVersionedEvents =
         new IngesterThriftVersionedEvents(userId, versionedEventsBuilder.build());
-    thriftVersionedEvents.setId(thriftIndexingEvent.getUid());
+    thriftVersionedEvents.setId(thriftIndetwitteringEvent.getUid());
     return thriftVersionedEvents;
   }
 }

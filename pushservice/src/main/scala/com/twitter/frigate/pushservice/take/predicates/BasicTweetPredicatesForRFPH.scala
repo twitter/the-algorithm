@@ -6,7 +6,7 @@ import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
 import com.twitter.hermit.predicate.NamedPredicate
 
 trait BasicTweetPredicatesForRFPH[C <: PushCandidate with TweetCandidate with TweetDetails]
-    extends BasicTweetPredicates
+    etwittertends BasicTweetPredicates
     with BasicRFPHPredicates[C] {
 
   // specific predicates per candidate type before basic tweet predicates
@@ -26,7 +26,7 @@ trait BasicTweetPredicatesForRFPH[C <: PushCandidate with TweetCandidate with Tw
  */
 trait BasicTweetPredicatesForRFPHWithoutSGSPredicates[
   C <: PushCandidate with TweetCandidate with TweetDetails]
-    extends BasicTweetPredicatesWithoutSGSPredicates
+    etwittertends BasicTweetPredicatesWithoutSGSPredicates
     with BasicRFPHPredicates[C] {
 
   // specific predicates per candidate type before basic tweet predicates

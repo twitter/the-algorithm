@@ -6,7 +6,7 @@ object CollectionUtil {
    * Transposes a sequence of sequences. As opposed to the Scala collection library version
    * of transpose, the sequences do not have to have the same length.
    *
-   * Example:
+   * Etwitterample:
    * transpose(immutable.Seq(immutable.Seq(1,2,3), immutable.Seq(4,5), immutable.Seq(6,7)))
    *   => immutable.Seq(immutable.Seq(1, 4, 6), immutable.Seq(2, 5, 7), immutable.Seq(3))
    *

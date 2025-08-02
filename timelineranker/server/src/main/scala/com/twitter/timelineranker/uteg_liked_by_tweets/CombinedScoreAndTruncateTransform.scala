@@ -21,16 +21,16 @@ object CombinedScoreAndTruncateTransform {
  * Note: scoring and truncation only applies to out of network candidates
  */
 class CombinedScoreAndTruncateTransform(
-  maxTweetCountProvider: DependencyProvider[Int],
+  matwitterTweetCountProvider: DependencyProvider[Int],
   earlybirdScoreMultiplierProvider: DependencyProvider[Double],
   numAdditionalRepliesProvider: DependencyProvider[Int],
   statsReceiver: StatsReceiver)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+    etwittertends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
   import CombinedScoreAndTruncateTransform._
 
   private[this] val scopedStatsReceiver = statsReceiver.scope("CombinedScoreAndTruncateTransform")
-  private[this] val earlybirdScoreX100Stat = scopedStatsReceiver.stat("earlybirdScoreX100")
-  private[this] val realGraphScoreX100Stat = scopedStatsReceiver.stat("realGraphScoreX100")
+  private[this] val earlybirdScoretwitter100Stat = scopedStatsReceiver.stat("earlybirdScoretwitter100")
+  private[this] val realGraphScoretwitter100Stat = scopedStatsReceiver.stat("realGraphScoretwitter100")
   private[this] val additionalReplyCounter = scopedStatsReceiver.counter("additionalReplies")
   private[this] val resultCounter = scopedStatsReceiver.counter("results")
 
@@ -48,15 +48,15 @@ class CombinedScoreAndTruncateTransform(
   }
 
   override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val maxCount = maxTweetCountProvider(envelope.query)
+    val matwitterCount = matwitterTweetCountProvider(envelope.query)
     val earlybirdScoreMultiplier = earlybirdScoreMultiplierProvider(envelope.query)
     val realGraphScoreMultiplier = DefaultRealGraphWeight
 
     val searchResultsAndScore = envelope.searchResults.map { searchResult =>
       val realGraphScore = getRealGraphScore(searchResult, envelope.utegResults)
       val earlybirdScore = getEarlybirdScore(searchResult.metadata)
-      earlybirdScoreX100Stat.add(earlybirdScore.toFloat * 100)
-      realGraphScoreX100Stat.add(realGraphScore.toFloat * 100)
+      earlybirdScoretwitter100Stat.add(earlybirdScore.toFloat * 100)
+      realGraphScoretwitter100Stat.add(realGraphScore.toFloat * 100)
       val combinedScore =
         realGraphScoreMultiplier * realGraphScore + earlybirdScoreMultiplier * earlybirdScore
       (searchResult, combinedScore)
@@ -70,7 +70,7 @@ class CombinedScoreAndTruncateTransform(
 
     val (topResults, remainingResults) = otherSearchResults
       .sortBy(_._2)(Ordering[Double].reverse).map(_._1).splitAt(
-        maxCount - randomSearchResults.length)
+        matwitterCount - randomSearchResults.length)
 
     val numAdditionalReplies = numAdditionalRepliesProvider(envelope.query)
     val additionalReplies = {

@@ -14,7 +14,7 @@ private[hnsw] object DistanceFunctionGenerator {
       case _ => metric
     }
 
-    val distFnIndex = new DistanceFunction[T, T] {
+    val distFnIndetwitter = new DistanceFunction[T, T] {
       override def distance(id1: T, id2: T) =
         updatedMetric.absoluteDistance(
           idToEmbeddingFn(id1),
@@ -27,11 +27,11 @@ private[hnsw] object DistanceFunctionGenerator {
         updatedMetric.absoluteDistance(embedding, idToEmbeddingFn(id))
     }
 
-    DistanceFunctionGenerator(distFnIndex, distFnQuery, metric == Cosine)
+    DistanceFunctionGenerator(distFnIndetwitter, distFnQuery, metric == Cosine)
   }
 }
 
 private[hnsw] case class DistanceFunctionGenerator[T](
-  index: DistanceFunction[T, T],
+  indetwitter: DistanceFunction[T, T],
   query: DistanceFunction[EmbeddingVector, T],
   shouldNormalize: Boolean)

@@ -48,7 +48,7 @@ scala_library(
         "timelines/data_processing/ml_util/aggregation_framework/scalding/sources",
         "timelines/data_processing/ml_util/sampling:sampling_utils",
     ],
-    exports = [
+    etwitterports = [
         "3rdparty/src/jvm/com/twitter/summingbird:scalding",
         "src/scala/com/twitter/storehaus_internal/manhattan/config",
         "src/scala/com/twitter/summingbird_internal/runner/store_config",

@@ -7,12 +7,12 @@ import com.twitter.util.Future
 
 /**
  * Given a tweet creation event, parse for UserUserGraph edges. Specifically, when a new tweet is
- * created, extract the valid mentioned and mediatagged users in the tweet and create edges for them
+ * created, etwittertract the valid mentioned and mediatagged users in the tweet and create edges for them
  */
 class TweetEventToUserUserGraphBuilder(
 )(
   override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[TweetCreateEventDetails, UserUserEdge] {
+    etwittertends EventToMessageBuilder[TweetCreateEventDetails, UserUserEdge] {
   private val tweetOrQuoteEventCounter = statsReceiver.counter("num_tweet_or_quote_event")
   private val nonTweetOrQuoteEventCounter = statsReceiver.counter("num_non_tweet_or_quote_event")
   private val mentionEdgeCounter = statsReceiver.counter("num_mention_edge")

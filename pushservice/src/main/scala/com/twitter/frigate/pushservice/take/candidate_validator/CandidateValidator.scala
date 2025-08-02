@@ -12,7 +12,7 @@ import com.twitter.hermit.predicate.Predicate
 import com.twitter.hermit.predicate.SequentialPredicate
 import com.twitter.util.Future
 
-trait CandidateValidator extends TakeCommonPredicates {
+trait CandidateValidator etwittertends TakeCommonPredicates {
 
   override implicit val statsReceiver: StatsReceiver = config.statsReceiver
 
@@ -29,22 +29,22 @@ trait CandidateValidator extends TakeCommonPredicates {
   ): List[NamedPredicate[C]] = {
     val target = candidate.target
     val skipFilters: Boolean =
-      target.pushContext.flatMap(_.skipFilters).getOrElse(false) || target.params(
+      target.pushContetwittert.flatMap(_.skipFilters).getOrElse(false) || target.params(
         PushFeatureSwitchParams.SkipPostRankingFilters)
 
     if (skipFilters) {
       skipFiltersCounter.incr()
       if (target.isEmailUser) emailUserSkipFiltersCounter.incr()
 
-      val predicatesToEnable = target.pushContext.flatMap(_.predicatesToEnable).getOrElse(Nil)
+      val predicatesToEnable = target.pushContetwittert.flatMap(_.predicatesToEnable).getOrElse(Nil)
       if (predicatesToEnable.nonEmpty) enablePredicatesCounter.incr()
 
-      // if we skip predicates on pushContext, only enable the explicitly specified predicates
+      // if we skip predicates on pushContetwittert, only enable the etwitterplicitly specified predicates
       predicates.filter(predicatesToEnable.contains)
     } else predicates
   }
 
-  protected def executeSequentialPredicates[C <: PushCandidate](
+  protected def etwitterecuteSequentialPredicates[C <: PushCandidate](
     candidate: C,
     predicates: List[NamedPredicate[C]]
   ): Future[Option[Predicate[C]]] = {
@@ -54,7 +54,7 @@ trait CandidateValidator extends TakeCommonPredicates {
     sequentialPredicate.track(Seq(candidate)).map(_.head)
   }
 
-  protected def executeConcurrentPredicates[C <: PushCandidate](
+  protected def etwitterecuteConcurrentPredicates[C <: PushCandidate](
     candidate: C,
     predicates: List[NamedPredicate[C]]
   ): Future[List[Predicate[C]]] = {
@@ -74,7 +74,7 @@ trait CandidateValidator extends TakeCommonPredicates {
       case Some(predicates) =>
         predicates.asInstanceOf[List[NamedPredicate[C]]]
       case _ =>
-        throw new IllegalStateException(
+        throw new IllegalStateEtwitterception(
           s"Unknown CommonRecommendationType for Predicates: ${CRT.name}")
     }
   }

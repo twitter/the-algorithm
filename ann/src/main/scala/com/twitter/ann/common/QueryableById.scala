@@ -11,8 +11,8 @@ import com.twitter.stitch.Stitch
  *
  * @tparam T1 type of the query.
  * @tparam T2 type of the result.
- * @tparam P runtime parameters supported by the index.
- * @tparam D distance function used in the index.
+ * @tparam P runtime parameters supported by the indetwitter.
+ * @tparam D distance function used in the indetwitter.
  */
 trait QueryableById[T1, T2, P <: RuntimeParams, D <: Distance[D]] {
   def queryById(

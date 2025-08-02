@@ -3,7 +3,7 @@ package config
 
 import com.twitter.conversions.DurationOps._
 import com.twitter.finagle.Backoff
-import com.twitter.finagle.memcached.exp.localMemcachedPort
+import com.twitter.finagle.memcached.etwitterp.localMemcachedPort
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.finagle.ssl.OpportunisticTls
 import com.twitter.finagle.thrift.ClientId
@@ -18,7 +18,7 @@ import com.twitter.tweetypie.service._
 import com.twitter.tweetypie.storage.ManhattanTweetStorageClient
 import com.twitter.util.Duration
 
-case class InProcessCacheConfig(ttl: Duration, maximumSize: Int)
+case class InProcessCacheConfig(ttl: Duration, matwitterimumSize: Int)
 
 class TweetServiceSettings(val flags: TweetServiceFlags) {
 
@@ -38,7 +38,7 @@ class TweetServiceSettings(val flags: TweetServiceFlags) {
   /** dc is less specific than zone, zone=atla, dc=atl */
   val dc: String = zone.dropRight(1)
 
-  /** one of: prod, staging, dev, testbox */
+  /** one of: prod, staging, dev, testbotwitter */
   val env: Env.Value = flags.env()
 
   /** instanceId of this aurora instance */
@@ -49,24 +49,24 @@ class TweetServiceSettings(val flags: TweetServiceFlags) {
 
   /** The Name to resolve to find the memcached cluster */
   val twemcacheDest: String =
-    // If twemcacheDest is explicitly set, always prefer that to
+    // If twemcacheDest is etwitterplicitly set, always prefer that to
     // localMemcachedPort.
     flags.twemcacheDest.get
-    // Testbox uses this global flag to specify the location of the
+    // Testbotwitter uses this global flag to specify the location of the
     // local memcached instance.
       .orElse(localMemcachedPort().map("/$/inet/localhost/" + _))
-      // If no explicit Name is specified, use the default.
+      // If no etwitterplicit Name is specified, use the default.
       .getOrElse(flags.twemcacheDest())
 
   /** Read/write data through Cache */
   val withCache: Boolean = flags.withCache()
 
   /**
-   * The TFlock queue to use for background indexing operations. For
+   * The TFlock queue to use for background indetwittering operations. For
    * production, this should always be the low priority queue, to
    * allow foreground operations to be processed first.
    */
-  val backgroundIndexingPriority: Priority = flags.backgroundIndexingPriority()
+  val backgroundIndetwitteringPriority: Priority = flags.backgroundIndetwitteringPriority()
 
   /** Set certain decider gates to this overridden value */
   val deciderOverrides: Map[String, Boolean] =
@@ -153,8 +153,8 @@ class TweetServiceSettings(val flags: TweetServiceFlags) {
   /** how often to flush aggregated count updates for tweet counts */
   val aggregatedTweetCountsFlushInterval: Duration = 5.seconds
 
-  /** maximum number of keys for which aggregated cached count updates may be cached */
-  val maxAggregatedCountsSize = 1000
+  /** matwitterimum number of keys for which aggregated cached count updates may be cached */
+  val matwitterAggregatedCountsSize = 1000
 
   /** ramp up period for decidering up forked traffic (if enabled) to the full decidered value */
   val forkingRampUp: Duration = 3.minutes
@@ -165,24 +165,24 @@ class TweetServiceSettings(val flags: TweetServiceFlags) {
   /** number of threads to use in thread pool for language identification */
   val numPenguinThreads = 4
 
-  /** maximum number of tweets that clients can request per getTweets RPC call */
-  val maxGetTweetsRequestSize = 200
+  /** matwitterimum number of tweets that clients can request per getTweets RPC call */
+  val matwitterGetTweetsRequestSize = 200
 
-  /** maximum batch size for any batched request (getTweets is exempt, it has its own limiting) */
-  val maxRequestSize = 200
+  /** matwitterimum batch size for any batched request (getTweets is etwitterempt, it has its own limiting) */
+  val matwitterRequestSize = 200
 
   /**
-   * maximum size to allow the thrift response buffer to grow before resetting it.  this is set to
-   * approximately the current value of `srv/thrift/response_payload_bytes.p999`, meaning roughly
+   * matwitterimum size to allow the thrift response buffer to grow before resetting it.  this is set to
+   * approtwitterimately the current value of `srv/thrift/response_payload_bytes.p999`, meaning roughly
    * 1 out of 1000 requests will cause the buffer to be reset.
    */
-  val maxThriftBufferSize: Int = 200 * 1024
+  val matwitterThriftBufferSize: Int = 200 * 1024
 
   // ********* timeouts and backoffs **********
 
   /** backoffs for OptimisticLockingCache lockAndSet operations */
   val lockingCacheBackoffs: Stream[Duration] =
-    Backoff.exponentialJittered(10.millisecond, 50.milliseconds).take(3).toStream
+    Backoff.etwitterponentialJittered(10.millisecond, 50.milliseconds).take(3).toStream
 
   /** retry once on timeout with no backoff */
   val defaultTimeoutBackoffs: Stream[Duration] = Stream(0.milliseconds).toStream
@@ -192,15 +192,15 @@ class TweetServiceSettings(val flags: TweetServiceFlags) {
 
   /** backoffs for retrying failed async-write actions after first retry failure */
   val asyncWriteRetryBackoffs: Stream[Duration] =
-    Backoff.exponential(10.milliseconds, 2).take(9).toStream.map(_ min 1.second)
+    Backoff.etwitterponential(10.milliseconds, 2).take(9).toStream.map(_ min 1.second)
 
   /** backoffs for retrying failed deferredrpc enqueues */
   val deferredrpcBackoffs: Stream[Duration] =
-    Backoff.exponential(10.milliseconds, 2).take(3).toStream
+    Backoff.etwitterponential(10.milliseconds, 2).take(3).toStream
 
   /** backoffs for retrying failed cache updates for replicated events */
   val replicatedEventCacheBackoffs: Stream[Duration] =
-    Backoff.exponential(100.milliseconds, 2).take(10).toStream
+    Backoff.etwitterponential(100.milliseconds, 2).take(10).toStream
 
   val escherbirdConfig: Escherbird.Config =
     Escherbird.Config(
@@ -208,8 +208,8 @@ class TweetServiceSettings(val flags: TweetServiceFlags) {
       timeoutBackoffs = defaultTimeoutBackoffs
     )
 
-  val expandodoConfig: Expandodo.Config =
-    Expandodo.Config(
+  val etwitterpandodoConfig: Etwitterpandodo.Config =
+    Etwitterpandodo.Config(
       requestTimeout = 300.milliseconds,
       timeoutBackoffs = defaultTimeoutBackoffs,
       serverErrorBackoffs = Backoff.const(0.millis).take(3).toStream
@@ -226,11 +226,11 @@ class TweetServiceSettings(val flags: TweetServiceFlags) {
     GeoScrubEventStore.Config(
       read = GeoScrubEventStore.EndpointConfig(
         requestTimeout = 200.milliseconds,
-        maxRetryCount = 1
+        matwitterRetryCount = 1
       ),
       write = GeoScrubEventStore.EndpointConfig(
         requestTimeout = 1.second,
-        maxRetryCount = 1
+        matwitterRetryCount = 1
       )
     )
 
@@ -239,11 +239,11 @@ class TweetServiceSettings(val flags: TweetServiceFlags) {
       readTimeout = 300.milliseconds,
       writeTimeout = 300.milliseconds,
       // We bump the timeout value to 800ms because modifyAndGet is called only in async request path in GeoScrub daemon
-      // and we do not expect sync/realtime apps calling this thrift method
+      // and we do not etwitterpect sync/realtime apps calling this thrift method
       modifyAndGetTimeout = 800.milliseconds,
       modifyAndGetTimeoutBackoffs = Backoff.const(0.millis).take(3).toStream,
       defaultTimeoutBackoffs = defaultTimeoutBackoffs,
-      gizmoduckExceptionBackoffs = Backoff.const(0.millis).take(3).toStream
+      gizmoduckEtwitterceptionBackoffs = Backoff.const(0.millis).take(3).toStream
     )
 
   val limiterBackendConfig: LimiterBackend.Config =
@@ -264,7 +264,7 @@ class TweetServiceSettings(val flags: TweetServiceFlags) {
       readTimeout = 100.milliseconds,
       writeTimeout = 400.milliseconds,
       timeoutBackoffs = defaultTimeoutBackoffs,
-      scarecrowExceptionBackoffs = Backoff.const(0.millis).take(3).toStream
+      scarecrowEtwitterceptionBackoffs = Backoff.const(0.millis).take(3).toStream
     )
 
   val socialGraphSeviceConfig: SocialGraphService.Config =
@@ -276,7 +276,7 @@ class TweetServiceSettings(val flags: TweetServiceFlags) {
   val talonConfig: Talon.Config =
     Talon.Config(
       shortenTimeout = 500.milliseconds,
-      expandTimeout = 150.milliseconds,
+      etwitterpandTimeout = 150.milliseconds,
       timeoutBackoffs = defaultTimeoutBackoffs,
       transientErrorBackoffs = Backoff.const(0.millis).take(3).toStream
     )
@@ -291,7 +291,7 @@ class TweetServiceSettings(val flags: TweetServiceFlags) {
     TFlock.Config(
       requestTimeout = 300.milliseconds,
       timeoutBackoffs = defaultTimeoutBackoffs,
-      flockExceptionBackoffs = Backoff.const(0.millis).take(3).toStream,
+      flockEtwitterceptionBackoffs = Backoff.const(0.millis).take(3).toStream,
       overCapacityBackoffs = Stream.empty,
       defaultPageSize = tflockPageSize
     )
@@ -300,35 +300,35 @@ class TweetServiceSettings(val flags: TweetServiceFlags) {
     TFlock.Config(
       requestTimeout = 400.milliseconds,
       timeoutBackoffs = defaultTimeoutBackoffs,
-      flockExceptionBackoffs = Backoff.const(0.millis).take(3).toStream,
-      overCapacityBackoffs = Backoff.exponential(10.millis, 2).take(3).toStream
+      flockEtwitterceptionBackoffs = Backoff.const(0.millis).take(3).toStream,
+      overCapacityBackoffs = Backoff.etwitterponential(10.millis, 2).take(3).toStream
     )
 
   val timelineServiceConfig: TimelineService.Config = {
-    val tlsExceptionBackoffs = Backoff.const(0.millis).take(3).toStream
+    val tlsEtwitterceptionBackoffs = Backoff.const(0.millis).take(3).toStream
     TimelineService.Config(
       writeRequestPolicy =
         Backend.TimeoutPolicy(4.seconds) >>>
           TimelineService.FailureBackoffsPolicy(
             timeoutBackoffs = defaultTimeoutBackoffs,
-            tlsExceptionBackoffs = tlsExceptionBackoffs
+            tlsEtwitterceptionBackoffs = tlsEtwitterceptionBackoffs
           ),
       readRequestPolicy =
         Backend.TimeoutPolicy(400.milliseconds) >>>
           TimelineService.FailureBackoffsPolicy(
             timeoutBackoffs = defaultTimeoutBackoffs,
-            tlsExceptionBackoffs = tlsExceptionBackoffs
+            tlsEtwitterceptionBackoffs = tlsEtwitterceptionBackoffs
           )
     )
   }
 
   val tweetStorageConfig: ManhattanTweetStorageClient.Config = {
     val remoteZone = zone match {
-      case "atla" => "pdxa"
-      case "pdxa" => "atla"
+      case "atla" => "pdtwittera"
+      case "pdtwittera" => "atla"
       case "atla" | "localhost" => "atla"
       case _ =>
-        throw new IllegalArgumentException(s"Cannot configure remote DC for unknown zone '$zone'")
+        throw new IllegalArgumentEtwitterception(s"Cannot configure remote DC for unknown zone '$zone'")
     }
     ManhattanTweetStorageClient.Config(
       applicationId = "tbird_mh",
@@ -336,7 +336,7 @@ class TweetServiceSettings(val flags: TweetServiceFlags) {
       localTimeout = 290.milliseconds,
       remoteDestination = s"/srv#/prod/$remoteZone/manhattan/cylon.native-thrift",
       remoteTimeout = 1.second,
-      maxRequestsPerBatch = 25,
+      matwitterRequestsPerBatch = 25,
       serviceIdentifier = serviceIdentifier,
       opportunisticTlsLevel = OpportunisticTls.Required
     )
@@ -369,13 +369,13 @@ class TweetServiceSettings(val flags: TweetServiceFlags) {
   val eraseUserTweetsPageSize = 100
 
   val getStoredTweetsByUserPageSize = 20
-  val getStoredTweetsByUserMaxPages = 30
+  val getStoredTweetsByUserMatwitterPages = 30
 
   // ********* ttls **********
 
   // Unfortunately, this tombstone TTL applies equally to the case
   // where the tweet was deleted and the case that the tweet does not
-  // exist or is unavailable. If we could differentiate between those
+  // etwitterist or is unavailable. If we could differentiate between those
   // cases, we'd cache deleted for a long time and not
   // found/unavailable for a short time. We chose 100
   // milliseconds for the minimum TTL because there are known cases in
@@ -385,7 +385,7 @@ class TweetServiceSettings(val flags: TweetServiceFlags) {
   // the fanned-out tweet and the window for which these inconsistent
   // results will be available.
   val tweetTombstoneTtl: CachedResult.CachedNotFound[TweetId] => Duration =
-    TombstoneTtl.linear(min = 100.milliseconds, max = 1.day, from = 5.minutes, to = 5.hours)
+    TombstoneTtl.linear(min = 100.milliseconds, matwitter = 1.day, from = 5.minutes, to = 5.hours)
 
   val tweetMemcacheTtl: Duration = 14.days
   val urlMemcacheTtl: Duration = 1.hour
@@ -410,14 +410,14 @@ class TweetServiceSettings(val flags: TweetServiceFlags) {
 
   val cacheClientPendingRequestLimit: Int = flags.memcachePendingRequestLimit()
 
-  val deviceSourceInProcessCacheMaxSize = 10000
+  val deviceSourceInProcessCacheMatwitterSize = 10000
 
   val inProcessCacheConfigOpt: Option[InProcessCacheConfig] =
     if (flags.enableInProcessCache()) {
       Some(
         InProcessCacheConfig(
           ttl = flags.inProcessCacheTtlMs().milliseconds,
-          maximumSize = flags.inProcessCacheSize()
+          matwitterimumSize = flags.inProcessCacheSize()
         )
       )
     } else {
@@ -437,20 +437,20 @@ class TweetServiceSettings(val flags: TweetServiceFlags) {
   val tweetCountsCacheChunkSize = 18
 
   val duplicateTweetFinderSettings: DuplicateTweetFinder.Settings =
-    DuplicateTweetFinder.Settings(numTweetsToCheck = 10, maxDuplicateAge = 12.hours)
+    DuplicateTweetFinder.Settings(numTweetsToCheck = 10, matwitterDuplicateAge = 12.hours)
 
   val backendWarmupSettings: Warmup.Settings =
     Warmup.Settings(
       // Try for twenty seconds to warm up the backends before giving
       // up.
-      maxWarmupDuration = 20.seconds,
+      matwitterWarmupDuration = 20.seconds,
       // Only allow up to 50 outstanding warmup requests of any kind
       // to be outstanding at a time.
-      maxOutstandingRequests = 50,
+      matwitterOutstandingRequests = 50,
       // These timeouts are just over the p999 latency observed in ATLA
       // for requests to these backends.
       requestTimeouts = Map(
-        "expandodo" -> 120.milliseconds,
+        "etwitterpandodo" -> 120.milliseconds,
         "geo_relevance" -> 50.milliseconds,
         "gizmoduck" -> 200.milliseconds,
         "memcache" -> 50.milliseconds,
@@ -464,12 +464,12 @@ class TweetServiceSettings(val flags: TweetServiceFlags) {
       reliability = Warmup.Reliably(
         // Consider a backend warmed up if 99% of requests are succeeding.
         reliabilityThreshold = 0.99,
-        // When performing warmup, use a maximum of 10 concurrent
+        // When performing warmup, use a matwitterimum of 10 concurrent
         // requests to each backend.
         concurrency = 10,
         // Do not allow more than this many attempts to perform the
         // warmup action before giving up.
-        maxAttempts = 1000
+        matwitterAttempts = 1000
       )
     )
 }

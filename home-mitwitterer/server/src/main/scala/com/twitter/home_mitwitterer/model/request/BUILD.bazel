@@ -1,0 +1,15 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "dspbidder/thrift/src/main/thrift/com/twitter/dspbidder/commons:thrift-scala",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/common",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/marshalling/request",
+        "timelineservice/common:model",
+    ],
+    etwitterports = [
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/marshalling/request",
+    ],
+)

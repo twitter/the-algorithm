@@ -1,6 +1,6 @@
 package com.twitter.search.common.util.ml.tensorflow_engine;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +29,7 @@ import com.twitter.util.Await;
 /**
  * TensorflowModelsManager manages the lifecyle of TF models.
  */
-public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
+public class TensorflowModelsManager etwittertends BaseModelsManager<TFModelRunner>  {
 
   private static final Logger LOG = LoggerFactory.getLogger(TensorflowModelsManager.class);
 
@@ -47,12 +47,12 @@ public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
   public TensorflowModelsManager(
       Supplier<Map<String, AbstractFile>> activeModelsSupplier,
       boolean shouldUnloadInactiveModels,
-      String statsPrefix
+      String statsPrefitwitter
   ) {
     this(
       activeModelsSupplier,
       shouldUnloadInactiveModels,
-      statsPrefix,
+      statsPrefitwitter,
       () -> true,
       () -> true,
       null
@@ -62,7 +62,7 @@ public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
   public TensorflowModelsManager(
       Supplier<Map<String, AbstractFile>> activeModelsSupplier,
       boolean shouldUnloadInactiveModels,
-      String statsPrefix,
+      String statsPrefitwitter,
       Supplier<Boolean> serveModels,
       Supplier<Boolean> loadModels,
       DynamicSchema dynamicSchema
@@ -70,7 +70,7 @@ public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
     super(
       activeModelsSupplier,
       shouldUnloadInactiveModels,
-      statsPrefix,
+      statsPrefitwitter,
       serveModels,
       loadModels
     );
@@ -81,7 +81,7 @@ public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
 
   /**
    * The ML API feature ids for tensorflow scoring are hashes of their feature names. This hashing
-   * could be expensive to do for every search request. Instead, allow the map from schema feature
+   * could be etwitterpensive to do for every search request. Instead, allow the map from schema feature
    * id to ML API id to be updated whenever the schema is reloaded.
    */
   public void updateFeatureSchemaIdToMlIdMap(ThriftSearchFeatureSchema schema) {
@@ -110,7 +110,7 @@ public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
    * Load an individual model and make it available for inference.
    */
   public TFModelRunner readModelFromDirectory(
-    AbstractFile modelDir) throws IOException {
+    AbstractFile modelDir) throws IOEtwitterception {
 
     ModelLocator modelLocator =
       ModelLocator$.MODULE$.apply(
@@ -120,9 +120,9 @@ public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
 
     try {
       Await.result(modelLocator.ensureLocalPresent(true));
-    } catch (Exception e) {
+    } catch (Etwitterception e) {
       LOG.error("Couldn't find model " + modelDir.toString(), e);
-      throw new IOException("Couldn't find model " + modelDir.toString());
+      throw new IOEtwitterception("Couldn't find model " + modelDir.toString());
     }
 
     Session session = SavedModelBundle.load(modelLocator.localPath(), TF_TAGS).session();
@@ -150,8 +150,8 @@ public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
   /**
    * Creates a no-op instance. It can be used for tests or when the models are disabled.
    */
-  public static TensorflowModelsManager createNoOp(String statsPrefix) {
-    return new TensorflowModelsManager(Collections::emptyMap, false, statsPrefix) {
+  public static TensorflowModelsManager createNoOp(String statsPrefitwitter) {
+    return new TensorflowModelsManager(Collections::emptyMap, false, statsPrefitwitter) {
       @Override
       public void run() { }
 
@@ -171,7 +171,7 @@ public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
   public static TensorflowModelsManager createUsingConfigFile(
       AbstractFile configFile,
       boolean shouldUnloadInactiveModels,
-      String statsPrefix,
+      String statsPrefitwitter,
       Supplier<Boolean> serveModels,
       Supplier<Boolean> loadModels,
       DynamicSchema dynamicSchema) {
@@ -180,7 +180,7 @@ public class TensorflowModelsManager extends BaseModelsManager<TFModelRunner>  {
     return new TensorflowModelsManager(
       new ConfigSupplier(configFile),
       shouldUnloadInactiveModels,
-      statsPrefix,
+      statsPrefitwitter,
       serveModels,
       loadModels,
       dynamicSchema

@@ -31,7 +31,7 @@ object RecapUserFeatureAggregation {
       RecapFeatures.MATCH_SEARCHER_MAIN_LANG,
       RecapFeatures.MATCH_SEARCHER_LANGS,
       RecapFeatures.TWEET_COUNT_FROM_USER_IN_SNAPSHOT,
-      RecapFeatures.TEXT_SCORE,
+      RecapFeatures.TEtwitterT_SCORE,
       RealGraphDataRecordFeatures.NUM_RETWEETS_EWMA,
       RealGraphDataRecordFeatures.NUM_RETWEETS_NON_ZERO_DAYS,
       RealGraphDataRecordFeatures.NUM_RETWEETS_ELAPSED_DAYS,
@@ -92,7 +92,7 @@ object RecapUserFeatureAggregation {
     RecapFeatures.VIDEO_VIEW_COUNT,
     RecapFeatures.IS_RETWEET,
     RecapFeatures.IS_REPLY,
-    RecapFeatures.IS_EXTENDED_REPLY,
+    RecapFeatures.IS_EtwitterTENDED_REPLY,
     RecapFeatures.HAS_LINK,
     RecapFeatures.HAS_TREND,
     RecapFeatures.LINK_LANGUAGE,
@@ -135,7 +135,7 @@ object RecapUserFeatureAggregation {
     RecapFeatures.MATCH_SEARCHER_MAIN_LANG,
     RecapFeatures.MATCH_SEARCHER_LANGS,
     RecapFeatures.TWEET_COUNT_FROM_USER_IN_SNAPSHOT,
-    RecapFeatures.TEXT_SCORE,
+    RecapFeatures.TEtwitterT_SCORE,
     RecapFeatures.BIDIRECTIONAL_FAV_COUNT,
     RecapFeatures.UNIDIRECTIONAL_FAV_COUNT,
     RecapFeatures.BIDIRECTIONAL_REPLY_COUNT,
@@ -261,7 +261,7 @@ object RecapUserFeatureAggregation {
     TimelinesSharedFeatures.LABEL_NSFW_HI_RCL_FLAG,
     TimelinesSharedFeatures.LABEL_SPAM_FLAG,
     TimelinesSharedFeatures.LABEL_SPAM_HI_RCL_FLAG,
-    TimelinesSharedFeatures.PERISCOPE_EXISTS,
+    TimelinesSharedFeatures.PERISCOPE_EtwitterISTS,
     TimelinesSharedFeatures.PERISCOPE_IS_LIVE,
     TimelinesSharedFeatures.PERISCOPE_HAS_BEEN_FEATURED,
     TimelinesSharedFeatures.PERISCOPE_IS_CURRENTLY_FEATURED,
@@ -375,7 +375,7 @@ object RecapUserFeatureAggregation {
 
   val LabelsV2: Set[Feature.Binary] = RecapLabelsForAggregation ++ Set(
     RecapFeatures.IS_REPLIED,
-    RecapFeatures.IS_PHOTO_EXPANDED,
+    RecapFeatures.IS_PHOTO_EtwitterPANDED,
     RecapFeatures.IS_VIDEO_PLAYBACK_50
   )
 

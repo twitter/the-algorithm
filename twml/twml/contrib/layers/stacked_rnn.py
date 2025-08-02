@@ -62,7 +62,7 @@ def _create_unidirectional_rnn_cell(num_units, dropout, cell_type):
     with tf.variable_scope(scope_name):
       outputs, final_states = tf.nn.static_rnn(
         multi_cell,
-        tf.unstack(inputs, axis=1),
+        tf.unstack(inputs, atwitteris=1),
         dtype=inputs.dtype,
         sequence_length=sequence_lengths)
       return final_states[-1].h
@@ -149,7 +149,7 @@ class StackedRNN(twml.layers.Layer):
     """
     Arguments:
       inputs:
-        A tensor of size [batch_size, max_sequence_length, embedding_size].
+        A tensor of size [batch_size, matwitter_sequence_length, embedding_size].
       sequence_lengths:
         The length of each input sequence in the batch. Should be of size [batch_size].
     Returns:
@@ -165,7 +165,7 @@ def stacked_rnn(inputs, sequence_lengths, num_units,
   """Functional interface for StackedRNN
   Arguments:
     inputs:
-      A tensor of size [batch_size, max_sequence_length, embedding_size].
+      A tensor of size [batch_size, matwitter_sequence_length, embedding_size].
     sequence_lengths:
       The length of each input sequence in the batch. Should be of size [batch_size].
     num_units:

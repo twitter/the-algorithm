@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -11,7 +11,7 @@ option java_multiple_files = true;
 option java_package = "org.tensorflow.util";
 option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// Available modes for extracting debugging information from a Tensor.
+// Available modes for etwittertracting debugging information from a Tensor.
 // TODO(cais): Document the detailed column names and semantics in a separate
 // markdown file once the implementation settles.
 enum TensorDebugMode {
@@ -41,14 +41,14 @@ enum TensorDebugMode {
   // Applicable to float, integer and boolean dtypes.
   FULL_HEALTH = 4;
 
-  // Provides full runtime shape information, up to a maximum rank, beyond
+  // Provides full runtime shape information, up to a matwitterimum rank, beyond
   // which the dimension sizes are truncated.
   SHAPE = 5;
 
   // Full numeric summary.
   // Including device, dtype, shape, counts of various types of values
   // (Infinity, NaN, negative, zero, positive), and summary statistics
-  // (minimum, maximum, mean and variance).
+  // (minimum, matwitterimum, mean and variance).
   // Applicable to float, integer and boolean dtypes.
   FULL_NUMERICS = 6;
 
@@ -91,15 +91,15 @@ message DebugEvent {
     // Information about a debugged graph.
     DebuggedGraph debugged_graph = 8;
 
-    // Execution of an op or a Graph (e.g., a tf.function).
-    Execution execution = 9;
+    // Etwitterecution of an op or a Graph (e.g., a tf.function).
+    Etwitterecution etwitterecution = 9;
 
-    // A graph execution trace: Contains information about the intermediate
-    // tensors computed during the graph execution.
-    GraphExecutionTrace graph_execution_trace = 10;
+    // A graph etwitterecution trace: Contains information about the intermediate
+    // tensors computed during the graph etwitterecution.
+    GraphEtwitterecutionTrace graph_etwitterecution_trace = 10;
 
-    // The ID of the graph (i.e., FuncGraph) executed here: applicable only
-    // to the execution of a FuncGraph.
+    // The ID of the graph (i.e., FuncGraph) etwitterecuted here: applicable only
+    // to the etwitterecution of a FuncGraph.
     string graph_id = 11;
 
     // A device on which debugger-instrumented ops and/or tensors reside.
@@ -123,7 +123,7 @@ message DebugMetadata {
   string tfdbg_run_id = 3;
 }
 
-// Content of a source file involved in the execution of the debugged TensorFlow
+// Content of a source file involved in the etwitterecution of the debugged TensorFlow
 // program.
 message SourceFile {
   // Path to the file.
@@ -156,7 +156,7 @@ message CodeLocation {
 
   // ID to a stack frame, each of which is pointed to
   // by a unique ID. The ordering of the frames is consistent with Python's
-  // `traceback.extract_tb()`.
+  // `traceback.etwittertract_tb()`.
   repeated string stack_frame_ids = 2;
 }
 
@@ -211,8 +211,8 @@ message DebuggedGraph {
   // This graph may include the debugger-inserted ops.
   bytes instrumented_graph_def = 5;
 
-  // IDs of the immediate enclosing context (graph), if any.
-  string outer_context_id = 6;
+  // IDs of the immediate enclosing contetwittert (graph), if any.
+  string outer_contetwittert_id = 6;
 }
 
 // A device on which ops and/or tensors are instrumented by the debugger.
@@ -227,10 +227,10 @@ message DebuggedDevice {
   int32 device_id = 2;
 }
 
-// Data relating to the eager execution of an op or a Graph.
+// Data relating to the eager etwitterecution of an op or a Graph.
 // For a op that generates N output tensors (N >= 0), only one
-// Execution proto will be used to describe the execution event.
-message Execution {
+// Etwitterecution proto will be used to describe the etwitterecution event.
+message Etwitterecution {
   // Op type (e.g., "MatMul").
   // In the case of a Graph, this is the name of the Graph.
   string op_type = 1;
@@ -238,8 +238,8 @@ message Execution {
   // Number of output tensors.
   int32 num_outputs = 2;
 
-  // The graph that's executed: applicable only to the eager
-  // execution of a FuncGraph.
+  // The graph that's etwitterecuted: applicable only to the eager
+  // etwitterecution of a FuncGraph.
   string graph_id = 3;
 
   // IDs of the input tensors (if available).
@@ -256,7 +256,7 @@ message Execution {
   // The length of this should match `num_outputs`.
   repeated TensorProto tensor_protos = 7;
 
-  // Stack trace of the eager execution.
+  // Stack trace of the eager etwitterecution.
   CodeLocation code_location = 8;
 
   // Debugged-generated IDs of the devices on which the output tensors reside.
@@ -268,16 +268,16 @@ message Execution {
   // such as fetches and feeds.
 }
 
-// Data relating to an execution of a Graph (e.g., an eager execution of a
+// Data relating to an etwitterecution of a Graph (e.g., an eager etwitterecution of a
 // FuncGraph).
 // The values of the intermediate tensors computed in the graph are recorded
-// in this proto. A graph execution may correspond to one or more pieces of
-// `GraphExecutionTrace`, depending on whether the instrumented tensor values
+// in this proto. A graph etwitterecution may correspond to one or more pieces of
+// `GraphEtwitterecutionTrace`, depending on whether the instrumented tensor values
 // are summarized in an aggregated or separate fashion.
-message GraphExecutionTrace {
-  // Unique ID of the context that the executed op(s) belong to (e.g., a
+message GraphEtwitterecutionTrace {
+  // Unique ID of the contetwittert that the etwitterecuted op(s) belong to (e.g., a
   // compiled concrete tf.function).
-  string tfdbg_context_id = 1;
+  string tfdbg_contetwittert_id = 1;
 
   // Name of the op (applicable only in the case of the `FULL_TENSOR` trace
   // level).

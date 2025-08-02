@@ -2,7 +2,7 @@ package com.twitter.search.earlybird.common.userupdates;
 
 import java.util.Date;
 
-import com.twitter.search.common.indexing.thriftjava.UserUpdateType;
+import com.twitter.search.common.indetwittering.thriftjava.UserUpdateType;
 
 /**
  * Contains an update for a user.

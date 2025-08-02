@@ -31,27 +31,27 @@ object UserImageService {
     updateTweetMediaTimeout: Duration,
     timeoutBackoffs: Stream[Duration]) {
 
-    def apply(svc: UserImageService, ctx: Backend.Context): UserImageService =
+    def apply(svc: UserImageService, cttwitter: Backend.Contetwittert): UserImageService =
       new UserImageService {
         val processTweetMedia: FutureArrow[ProcessTweetMediaRequest, ProcessTweetMediaResponse] =
-          policy("processTweetMedia", processTweetMediaTimeout, ctx)(svc.processTweetMedia)
+          policy("processTweetMedia", processTweetMediaTimeout, cttwitter)(svc.processTweetMedia)
         val updateProductMetadata: FutureArrow[UpdateProductMetadataRequest, Unit] =
-          policy("updateProductMetadata", processTweetMediaTimeout, ctx)(svc.updateProductMetadata)
+          policy("updateProductMetadata", processTweetMediaTimeout, cttwitter)(svc.updateProductMetadata)
         val updateTweetMedia: FutureArrow[UpdateTweetMediaRequest, UpdateTweetMediaResponse] =
-          policy("updateTweetMedia", updateTweetMediaTimeout, ctx)(svc.updateTweetMedia)
+          policy("updateTweetMedia", updateTweetMediaTimeout, cttwitter)(svc.updateTweetMedia)
       }
 
     private[this] def policy[A, B](
       name: String,
       requestTimeout: Duration,
-      ctx: Context
+      cttwitter: Contetwittert
     ): Builder[A, B] =
       defaultPolicy(
         name = name,
         requestTimeout = requestTimeout,
         retryPolicy = retryPolicy,
-        ctx = ctx,
-        exceptionCategorizer = {
+        cttwitter = cttwitter,
+        etwitterceptionCategorizer = {
           case _: uis.BadRequest => Some("success")
           case _ => None
         }

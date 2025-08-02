@@ -12,7 +12,7 @@ import com.twitter.strato.config.Has
 import com.twitter.strato.config.Path
 import com.twitter.strato.config.Policy
 import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
+import com.twitter.strato.data.Description.PlainTetwittert
 import com.twitter.strato.data.Lifecycle.Production
 import com.twitter.strato.fed.StratoFed
 import com.twitter.strato.response.Err
@@ -28,13 +28,13 @@ import com.twitter.util.Try
 
 class GetStoredTweetsColumn(
   getStoredTweets: thrift.GetStoredTweetsRequest => Future[Seq[thrift.GetStoredTweetsResult]])
-    extends StratoFed.Column(GetStoredTweetsColumn.Path)
+    etwittertends StratoFed.Column(GetStoredTweetsColumn.Path)
     with StratoFed.Fetch.Stitch {
 
   override val contactInfo: ContactInfo = TweetypieContactInfo
   override val metadata: OpMetadata = OpMetadata(
     lifecycle = Some(Production),
-    description = Some(PlainText("Fetches hydrated Tweets regardless of Tweet state."))
+    description = Some(PlainTetwittert("Fetches hydrated Tweets regardless of Tweet state."))
   )
   override val policy: Policy = AnyOf(
     Seq(
@@ -58,7 +58,7 @@ class GetStoredTweetsColumn(
   }
 
   private case class Group(view: GetStoredTweetsView)
-      extends MapGroup[TweetId, Fetch.Result[GetStoredTweetsResponse]] {
+      etwittertends MapGroup[TweetId, Fetch.Result[GetStoredTweetsResponse]] {
     override protected def run(
       keys: Seq[TweetId]
     ): Future[TweetId => Try[Result[GetStoredTweetsResponse]]] = {

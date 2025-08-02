@@ -57,7 +57,7 @@ case class UserKnownForReadableStore(
   knownForStoreDec11: ReadableStore[Long, ClustersUserIsKnownFor],
   knownForStoreUpdated: ReadableStore[Long, ClustersUserIsKnownFor],
   knownForStore2020: ReadableStore[Long, ClustersUserIsKnownFor])
-    extends ReadableStore[Query, ClustersUserIsKnownFor] {
+    etwittertends ReadableStore[Query, ClustersUserIsKnownFor] {
 
   override def get(query: Query): Future[Option[ClustersUserIsKnownFor]] = {
     query.modelVersion match {
@@ -68,7 +68,7 @@ case class UserKnownForReadableStore(
       case ModelVersion.Model20m145k2020 =>
         knownForStore2020.get(query.userId)
       case c =>
-        throw new IllegalArgumentException(
+        throw new IllegalArgumentEtwitterception(
           s"Never heard of $c before! Is this a new model version?")
     }
   }

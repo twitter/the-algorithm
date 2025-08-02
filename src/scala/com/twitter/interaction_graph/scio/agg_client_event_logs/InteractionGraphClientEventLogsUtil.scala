@@ -6,7 +6,7 @@ import com.twitter.interaction_graph.scio.common.FeatureKey
 import com.twitter.interaction_graph.scio.common.InteractionGraphRawInput
 import com.twitter.interaction_graph.thriftscala.Edge
 import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.Vertex
+import com.twitter.interaction_graph.thriftscala.Vertetwitter
 import com.twitter.wtf.scalding.client_event_processing.thriftscala.InteractionDetails
 import com.twitter.wtf.scalding.client_event_processing.thriftscala.InteractionType
 import com.twitter.wtf.scalding.client_event_processing.thriftscala.UserInteraction
@@ -21,7 +21,7 @@ object InteractionGraphClientEventLogsUtil {
     safeUsers: SCollection[Long]
   )(
     implicit jobCounters: InteractionGraphClientEventLogsCountersTrait
-  ): (SCollection[Vertex], SCollection[Edge]) = {
+  ): (SCollection[Vertetwitter], SCollection[Edge]) = {
 
     val unfilteredFeatureInput = userInteractions
       .flatMap {

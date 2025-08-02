@@ -17,8 +17,8 @@ import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
 import com.twitter.stitch.Stitch
 import com.twitter.strato.client.Fetcher
 import com.twitter.util.Duration
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 import java.lang.{Long => JLong}
 
 @Singleton
@@ -51,7 +51,7 @@ class UserStateClient @Inject() (
       enableDistributedCaching match {
         // read from memcache
         case true => memcacheClient.readThrough(
-          // add a key prefix to address cache key collisions
+          // add a key prefitwitter to address cache key collisions
           key = "UserStateClient" + userId.toString,
           underlyingCall = () => fetchUserState(userId)
         )
@@ -62,7 +62,7 @@ class UserStateClient @Inject() (
         // set a 150ms timeout limit for user state fetches
         .within(150.milliseconds)(DefaultTimer)
         .rescue {
-          case e: Exception =>
+          case e: Etwitterception =>
             stats.scope("rescued").counter(e.getClass.getSimpleName).incr()
             Stitch(None)
         }

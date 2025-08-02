@@ -1,6 +1,6 @@
 resources(
     sources = [
-        "*.xml",
+        "*.twitterml",
         "*.yml",
         "com/twitter/slo/slo.json",
         "config/*.yml",

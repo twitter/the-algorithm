@@ -30,7 +30,7 @@ object TargetPredicates {
   )(
     implicit statsReceiver: StatsReceiver
   ): NamedPredicate[T] = {
-    val name = param.getClass.getSimpleName.stripSuffix("$")
+    val name = param.getClass.getSimpleName.stripSuffitwitter("$")
     Predicate
       .from { target: T => target.params(param) }
       .withStats(statsReceiver.scope(s"param_${name}_controlled_predicate"))
@@ -38,9 +38,9 @@ object TargetPredicates {
   }
 
   /**
-   * Use the predicate except fn is true., Same as the candidate version but for Target
+   * Use the predicate etwittercept fn is true., Same as the candidate version but for Target
    */
-  def exceptedPredicate[T <: TargetUser](
+  def etwitterceptedPredicate[T <: TargetUser](
     name: String,
     fn: T => Future[Boolean],
     predicate: Predicate[T]
@@ -86,7 +86,7 @@ object TargetPredicates {
       .fromAsync { target: T =>
         target.deviceInfo
           .map { info =>
-            info.exists { deviceInfo =>
+            info.etwitterists { deviceInfo =>
               deviceInfo.isRecommendationsEligible ||
               deviceInfo.isNewsEligible ||
               deviceInfo.isTopicsEligible ||
@@ -111,7 +111,7 @@ object TargetPredicates {
             CommonFatiguePredicate
               .magicRecsPushTargetFatiguePredicate(
                 interval = pushCapInfo.fatigueInterval,
-                maxInInterval = pushCapInfo.pushcap
+                matwitterInInterval = pushCapInfo.pushcap
               )
               .apply(Seq(target))
               .map(_.headOption.getOrElse(false))
@@ -121,7 +121,7 @@ object TargetPredicates {
       .withName(name)
   }
 
-  def teamExceptedPredicate[T <: TargetUser](
+  def teamEtwitterceptedPredicate[T <: TargetUser](
     predicate: NamedPredicate[T]
   )(
     implicit stats: StatsReceiver
@@ -184,7 +184,7 @@ object TargetPredicates {
                 CommonFatiguePredicate
                   .magicRecsPushTargetFatiguePredicate(
                     interval = 24.hours,
-                    maxInInterval = target.params(PushFeatureSwitchParams.OptoutExptPushCapParam)
+                    matwitterInInterval = target.params(PushFeatureSwitchParams.OptoutEtwitterptPushCapParam)
                   )
                   .apply(Seq(target))
                   .map { values =>
@@ -203,10 +203,10 @@ object TargetPredicates {
   }
 
   /**
-   * Predicate used to specify CRT fatigue given interval and max number of candidates within interval.
+   * Predicate used to specify CRT fatigue given interval and matwitter number of candidates within interval.
    * @param crt                   The specific CRT that this predicate is being applied to
    * @param intervalParam         The fatigue interval
-   * @param maxInIntervalParam    The max number of the given CRT's candidates that are acceptable
+   * @param matwitterInIntervalParam    The matwitter number of the given CRT's candidates that are acceptable
    *                              in the interval
    * @param stats                 StatsReceiver
    * @return                      Target Predicate
@@ -214,16 +214,16 @@ object TargetPredicates {
   def pushRecTypeFatiguePredicate(
     crt: CRT,
     intervalParam: Param[Duration],
-    maxInIntervalParam: FSBoundedParam[Int],
+    matwitterInIntervalParam: FSBoundedParam[Int],
     stats: StatsReceiver
   ): Predicate[Target] =
     Predicate.fromAsync { target: Target =>
       val interval = target.params(intervalParam)
-      val maxIninterval = target.params(maxInIntervalParam)
+      val matwitterIninterval = target.params(matwitterInIntervalParam)
       CommonFatiguePredicate
         .recTypeTargetFatiguePredicate(
           interval = interval,
-          maxInInterval = maxIninterval,
+          matwitterInInterval = matwitterIninterval,
           recommendationType = crt,
           notificationDisplayLocation = NotificationDisplayLocation.PushToMobileDevice,
           minInterval = 30.minutes
@@ -236,7 +236,7 @@ object TargetPredicates {
   ): NamedPredicate[Target] = {
     val name = "inline_action_fatigue"
     val predicateRequests = statsReceiver.scope(name).counter("requests")
-    val targetIsInExpt = statsReceiver.scope(name).counter("target_in_expt")
+    val targetIsInEtwitterpt = statsReceiver.scope(name).counter("target_in_etwitterpt")
     val predicateEnabled = statsReceiver.scope(name).counter("enabled")
     val predicateDisabled = statsReceiver.scope(name).counter("disabled")
     val inlineFatigueDisabled = statsReceiver.scope(name).counter("inline_fatigue_disabled")
@@ -245,7 +245,7 @@ object TargetPredicates {
       .fromAsync { target: Target =>
         predicateRequests.incr()
         if (target.params(PushFeatureSwitchParams.TargetInInlineActionAppVisitFatigue)) {
-          targetIsInExpt.incr()
+          targetIsInEtwitterpt.incr()
           target.inlineActionHistory.map { inlineHistory =>
             if (inlineHistory.nonEmpty && target.params(
                 PushFeatureSwitchParams.EnableInlineActionAppVisitFatigue)) {
@@ -276,14 +276,14 @@ object TargetPredicates {
   ): NamedPredicate[T] = {
     val name = "mr_web_notifs_holdback"
     Predicate
-      .fromAsync { targetUserContext: T =>
-        targetUserContext.deviceInfo.map { deviceInfoOpt =>
-          val isPrimaryWeb = deviceInfoOpt.exists {
-            _.guessedPrimaryClient.exists { clientType =>
+      .fromAsync { targetUserContetwittert: T =>
+        targetUserContetwittert.deviceInfo.map { deviceInfoOpt =>
+          val isPrimaryWeb = deviceInfoOpt.etwitterists {
+            _.guessedPrimaryClient.etwitterists { clientType =>
               clientType == MobileClientType.Web
             }
           }
-          !(isPrimaryWeb && targetUserContext.params(PushFeatureSwitchParams.MRWebHoldbackParam))
+          !(isPrimaryWeb && targetUserContetwittert.params(PushFeatureSwitchParams.MRWebHoldbackParam))
         }
       }
       .withStats(stats.scope(s"predicate_$name"))

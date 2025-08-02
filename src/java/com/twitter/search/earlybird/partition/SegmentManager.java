@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.partition;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -31,15 +31,15 @@ import com.twitter.search.common.partitioning.base.Segment;
 import com.twitter.search.common.partitioning.base.TimeSlice;
 import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
+import com.twitter.search.earlybird.EarlybirdIndetwitterConfig;
 import com.twitter.search.earlybird.common.CaughtUpMonitor;
 import com.twitter.search.earlybird.common.userupdates.UserScrubGeoMap;
 import com.twitter.search.earlybird.common.userupdates.UserUpdate;
 import com.twitter.search.earlybird.common.userupdates.UserUpdatesChecker;
 import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
+import com.twitter.search.earlybird.etwitterception.CriticalEtwitterceptionHandler;
+import com.twitter.search.earlybird.indetwitter.EarlybirdSegmentFactory;
+import com.twitter.search.earlybird.indetwitter.EarlybirdSingleSegmentSearcher;
 import com.twitter.search.earlybird.search.EarlybirdLuceneSearcher;
 import com.twitter.search.earlybird.search.EarlybirdMultiSegmentSearcher;
 import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
@@ -49,18 +49,18 @@ import com.twitter.tweetypie.thriftjava.UserScrubGeoEvent;
 public class SegmentManager {
   private static final Logger LOG = LoggerFactory.getLogger(SegmentManager.class);
   private final Clock clock;
-  private static final String STATS_PREFIX = "segment_manager_";
+  private static final String STATS_PREFItwitter = "segment_manager_";
   private static final SearchLongGauge SEGMENT_COUNT_STATS =
-          SearchLongGauge.export(STATS_PREFIX + "total_segments");
+          SearchLongGauge.etwitterport(STATS_PREFItwitter + "total_segments");
   private static final SearchCounter OPTIMIZED_SEGMENTS =
-          SearchCounter.export(STATS_PREFIX + "optimized_segments");
+          SearchCounter.etwitterport(STATS_PREFItwitter + "optimized_segments");
   private static final SearchCounter UNOPTIMIZED_SEGMENTS =
-          SearchCounter.export(STATS_PREFIX + "unoptimized_segments");
+          SearchCounter.etwitterport(STATS_PREFItwitter + "unoptimized_segments");
 
   public enum Filter {
     All(info -> true),
     Enabled(SegmentInfo::isEnabled),
-    NeedsIndexing(SegmentInfo::needsIndexing),
+    NeedsIndetwittering(SegmentInfo::needsIndetwittering),
     Complete(SegmentInfo::isComplete);
 
     private final Predicate<SegmentInfo> predicate;
@@ -69,12 +69,12 @@ public class SegmentManager {
       this.predicate = predicate;
     }
 
-    private static final Map<String, Filter> NAME_INDEX =
-        Maps.newHashMapWithExpectedSize(Filter.values().length);
+    private static final Map<String, Filter> NAME_INDEtwitter =
+        Maps.newHashMapWithEtwitterpectedSize(Filter.values().length);
 
     static {
       for (Filter filter : Filter.values()) {
-        NAME_INDEX.put(filter.name().toLowerCase(), filter);
+        NAME_INDEtwitter.put(filter.name().toLowerCase(), filter);
       }
     }
 
@@ -86,7 +86,7 @@ public class SegmentManager {
         return null;
       }
 
-      return NAME_INDEX.get(str.toLowerCase());
+      return NAME_INDEtwitter.get(str.toLowerCase());
     }
   }
 
@@ -115,24 +115,24 @@ public class SegmentManager {
 
   private final Set<Long> badTimesliceIds = new HashSet<>();
 
-  private final int maxEnabledSegments;
-  private final int maxSegmentSize;
+  private final int matwitterEnabledSegments;
+  private final int matwitterSegmentSize;
   private final EarlybirdSegmentFactory earlybirdSegmentFactory;
   private final UserTable userTable;
   private final UserScrubGeoMap userScrubGeoMap;
-  private final EarlybirdIndexConfig earlybirdIndexConfig;
+  private final EarlybirdIndetwitterConfig earlybirdIndetwitterConfig;
   private final DynamicPartitionConfig dynamicPartitionConfig;
   private final UserUpdatesChecker userUpdatesChecker;
   private final SegmentSyncConfig segmentSyncConfig;
   private final EarlybirdSearcherStats searcherStats;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final CaughtUpMonitor indexCaughtUpMonitor;
+  private final SearchIndetwitteringMetricSet searchIndetwitteringMetricSet;
+  private final CriticalEtwitterceptionHandler criticalEtwitterceptionHandler;
+  private final CaughtUpMonitor indetwitterCaughtUpMonitor;
 
   public SegmentManager(
       DynamicPartitionConfig dynamicPartitionConfig,
-      EarlybirdIndexConfig earlybirdIndexConfig,
-      SearchIndexingMetricSet searchIndexingMetricSet,
+      EarlybirdIndetwitterConfig earlybirdIndetwitterConfig,
+      SearchIndetwitteringMetricSet searchIndetwitteringMetricSet,
       EarlybirdSearcherStats searcherStats,
       SearchStatsReceiver earlybirdStatsReceiver,
       UserUpdatesChecker userUpdatesChecker,
@@ -140,9 +140,9 @@ public class SegmentManager {
       UserTable userTable,
       UserScrubGeoMap userScrubGeoMap,
       Clock clock,
-      int maxSegmentSize,
-      CriticalExceptionHandler criticalExceptionHandler,
-      CaughtUpMonitor indexCaughtUpMonitor) {
+      int matwitterSegmentSize,
+      CriticalEtwitterceptionHandler criticalEtwitterceptionHandler,
+      CaughtUpMonitor indetwitterCaughtUpMonitor) {
 
     PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
 
@@ -150,30 +150,30 @@ public class SegmentManager {
     this.userScrubGeoMap = userScrubGeoMap;
 
     this.earlybirdSegmentFactory = new EarlybirdSegmentFactory(
-        earlybirdIndexConfig,
-        searchIndexingMetricSet,
+        earlybirdIndetwitterConfig,
+        searchIndetwitteringMetricSet,
         searcherStats,
         clock);
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
-    this.maxEnabledSegments = curPartitionConfig.getMaxEnabledLocalSegments();
+    this.earlybirdIndetwitterConfig = earlybirdIndetwitterConfig;
+    this.matwitterEnabledSegments = curPartitionConfig.getMatwitterEnabledLocalSegments();
     this.dynamicPartitionConfig = dynamicPartitionConfig;
     this.userUpdatesChecker = userUpdatesChecker;
     this.segmentSyncConfig = segmentSyncConfig;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
+    this.searchIndetwitteringMetricSet = searchIndetwitteringMetricSet;
     this.searcherStats = searcherStats;
     this.clock = clock;
-    this.maxSegmentSize = maxSegmentSize;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.indexCaughtUpMonitor = indexCaughtUpMonitor;
+    this.matwitterSegmentSize = matwitterSegmentSize;
+    this.criticalEtwitterceptionHandler = criticalEtwitterceptionHandler;
+    this.indetwitterCaughtUpMonitor = indetwitterCaughtUpMonitor;
 
     earlybirdStatsReceiver.getCustomGauge("total_loaded_segments",
         segmentWriters::size);
-    earlybirdStatsReceiver.getCustomGauge("total_indexed_documents",
-        this::getNumIndexedDocuments);
+    earlybirdStatsReceiver.getCustomGauge("total_indetwittered_documents",
+        this::getNumIndetwitteredDocuments);
     earlybirdStatsReceiver.getCustomGauge("total_segment_size_bytes",
         this::getTotalSegmentSizeOnDisk);
-    earlybirdStatsReceiver.getCustomGauge("earlybird_index_depth_millis",
-        this::getIndexDepthMillis);
+    earlybirdStatsReceiver.getCustomGauge("earlybird_indetwitter_depth_millis",
+        this::getIndetwitterDepthMillis);
   }
 
   /**
@@ -191,17 +191,17 @@ public class SegmentManager {
       hasSegments = true;
 
       sb.append(String.format("\nSegment (%s): isClosed: %5s, isComplete: %5s, "
-              + "isEnabled: %5s, isIndexing: %5s, isOptimized: %5s, wasIndexed: %5s",
+              + "isEnabled: %5s, isIndetwittering: %5s, isOptimized: %5s, wasIndetwittered: %5s",
           segmentInfo.getSegmentName(),
           segmentInfo.isClosed(),
           segmentInfo.isComplete(),
           segmentInfo.isEnabled(),
-          segmentInfo.isIndexing(),
+          segmentInfo.isIndetwittering(),
           segmentInfo.isOptimized(),
-          segmentInfo.wasIndexed()
+          segmentInfo.wasIndetwittered()
       ));
 
-      sb.append(String.format(" | Index stats: %s", segmentInfo.getIndexStats().toString()));
+      sb.append(String.format(" | Indetwitter stats: %s", segmentInfo.getIndetwitterStats().toString()));
     }
     if (!hasSegments) {
       sb.append(" No segments.");
@@ -214,16 +214,16 @@ public class SegmentManager {
     return dynamicPartitionConfig.getCurrentPartitionConfig();
   }
 
-  public int getMaxEnabledSegments() {
-    return maxEnabledSegments;
+  public int getMatwitterEnabledSegments() {
+    return matwitterEnabledSegments;
   }
 
   public EarlybirdSegmentFactory getEarlybirdSegmentFactory() {
     return earlybirdSegmentFactory;
   }
 
-  public EarlybirdIndexConfig getEarlybirdIndexConfig() {
-    return earlybirdIndexConfig;
+  public EarlybirdIndetwitterConfig getEarlybirdIndetwitterConfig() {
+    return earlybirdIndetwitterConfig;
   }
 
   public UserTable getUserTable() {
@@ -258,7 +258,7 @@ public class SegmentManager {
         .iterator();
   }
 
-  private void createAndPutSegmentInfo(Segment segment) throws IOException {
+  private void createAndPutSegmentInfo(Segment segment) throws IOEtwitterception {
     LOG.info("Creating new SegmentInfo for segment " + segment.getSegmentName());
     putSegmentInfo(new SegmentInfo(segment, earlybirdSegmentFactory, segmentSyncConfig));
   }
@@ -266,10 +266,10 @@ public class SegmentManager {
   /**
    * Updates the list of segments managed by this manager, based on the given list.
    */
-  public void updateSegments(List<Segment> segmentsList) throws IOException {
+  public void updateSegments(List<Segment> segmentsList) throws IOEtwitterception {
     // Truncate to the amount of segments we want to keep enabled.
     List<Segment> truncatedSegmentList =
-        SegmentManager.truncateSegmentList(segmentsList, maxEnabledSegments);
+        SegmentManager.truncateSegmentList(segmentsList, matwitterEnabledSegments);
 
     final long newestTimeSliceID = getNewestTimeSliceID();
     final Set<Long> segmentsToDisable = new HashSet<>(segmentWriters.keySet());
@@ -308,12 +308,12 @@ public class SegmentManager {
       disableSegment(segmentID);
     }
 
-    // Update segment stats and other exported variables.
+    // Update segment stats and other etwitterported variables.
     updateStats();
   }
 
   /**
-   * Re-export stats after a segment has changed, or the set of segments has changed.
+   * Re-etwitterport stats after a segment has changed, or the set of segments has changed.
    */
   public void updateStats() {
     // Update the partition count stats.
@@ -330,29 +330,29 @@ public class SegmentManager {
     }
   }
 
-  private long getIndexDepthMillis() {
+  private long getIndetwitterDepthMillis() {
     long oldestTimeSliceID = getOldestEnabledTimeSliceID();
     if (oldestTimeSliceID == SegmentInfo.INVALID_ID) {
       return 0;
     } else {
       // Compute timestamp from timesliceId, which is also a snowflake tweetId
       long timestamp = SnowflakeIdParser.getTimestampFromTweetId(oldestTimeSliceID);
-      // Set current index depth in milliseconds
-      long indexDepthInMillis = System.currentTimeMillis() - timestamp;
-      // Index depth should never be negative.
-      if (indexDepthInMillis < 0) {
-        LOG.warn("Negative index depth. Large time skew on this Earlybird?");
+      // Set current indetwitter depth in milliseconds
+      long indetwitterDepthInMillis = System.currentTimeMillis() - timestamp;
+      // Indetwitter depth should never be negative.
+      if (indetwitterDepthInMillis < 0) {
+        LOG.warn("Negative indetwitter depth. Large time skew on this Earlybird?");
         return 0;
       } else {
-        return indexDepthInMillis;
+        return indetwitterDepthInMillis;
       }
     }
   }
 
-  private void updateExportedSegmentStats() {
-    int index = 0;
+  private void updateEtwitterportedSegmentStats() {
+    int indetwitter = 0;
     for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.NEW_TO_OLD)) {
-      SegmentIndexStatsExporter.export(segmentInfo, index++);
+      SegmentIndetwitterStatsEtwitterporter.etwitterport(segmentInfo, indetwitter++);
     }
   }
 
@@ -369,7 +369,7 @@ public class SegmentManager {
 
   public long getNewestTimeSliceID() {
     final Iterator<SegmentInfo> segments = getSegmentInfos(Filter.All, Order.NEW_TO_OLD).iterator();
-    return segments.hasNext() ? segments.next().getTimeSliceID() : SegmentInfo.INVALID_ID;
+    return segments.hasNetwittert() ? segments.netwittert().getTimeSliceID() : SegmentInfo.INVALID_ID;
   }
 
   /**
@@ -411,7 +411,7 @@ public class SegmentManager {
    */
   public boolean removeSegmentInfo(long timeSliceID) {
     if (timeSliceID == getNewestTimeSliceID()) {
-      throw new RuntimeException("Cannot drop segment of current time-slice " + timeSliceID);
+      throw new RuntimeEtwitterception("Cannot drop segment of current time-slice " + timeSliceID);
     }
 
     ISegmentWriter removed = segmentWriters.get(timeSliceID);
@@ -421,20 +421,20 @@ public class SegmentManager {
 
     LOG.info("Removing segment {}", removed.getSegmentInfo());
     Preconditions.checkState(!removed.getSegmentInfo().isEnabled());
-    removed.getSegmentInfo().getIndexSegment().close();
+    removed.getSegmentInfo().getIndetwitterSegment().close();
     segmentWriters.remove(timeSliceID);
 
     String segmentName = removed.getSegmentInfo().getSegmentName();
     updateAllListeners("Removed segment " + segmentName);
     LOG.info("Removed segment " + segmentName);
-    updateExportedSegmentStats();
+    updateEtwitterportedSegmentStats();
     updateStats();
     return true;
   }
 
   /**
    * Add the given SegmentWriter into the segmentWriters map.
-   * If a segment with the same timesliceID already exists in the map, the old one is replaced
+   * If a segment with the same timesliceID already etwitterists in the map, the old one is replaced
    * with the new one; this should only happen in the archive.
    *
    * The replaced segment is destroyed after a delay to allow in-flight requests to finish.
@@ -443,7 +443,7 @@ public class SegmentManager {
     ISegmentWriter usedSegmentWriter;
 
     SegmentWriter segmentWriter
-        = new SegmentWriter(info, searchIndexingMetricSet.updateFreshness);
+        = new SegmentWriter(info, searchIndetwitteringMetricSet.updateFreshness);
 
     if (!info.isOptimized()) {
       LOG.info("Inserting an optimizing segment writer for segment: {}",
@@ -451,9 +451,9 @@ public class SegmentManager {
 
       usedSegmentWriter = new OptimizingSegmentWriter(
           segmentWriter,
-          criticalExceptionHandler,
-          searchIndexingMetricSet,
-          indexCaughtUpMonitor);
+          criticalEtwitterceptionHandler,
+          searchIndetwitteringMetricSet,
+          indetwitterCaughtUpMonitor);
     } else {
       usedSegmentWriter = segmentWriter;
     }
@@ -474,7 +474,7 @@ public class SegmentManager {
           + "Old SegmentInfo: {} New SegmentInfo: {}", oldSegmentInfo, newSegmentInfo);
 
       if (!oldSegmentInfo.isClosed()) {
-        oldSegmentInfo.deleteIndexSegmentDirectoryAfterDelay();
+        oldSegmentInfo.deleteIndetwitterSegmentDirectoryAfterDelay();
       }
     } else {
       long newestTimeSliceID = getNewestTimeSliceID();
@@ -489,17 +489,17 @@ public class SegmentManager {
     }
 
     updateAllListeners("Added segment " + newSegmentInfo.getTimeSliceID());
-    updateExportedSegmentStats();
+    updateEtwitterportedSegmentStats();
     updateStats();
   }
 
-  private SegmentInfo createSegmentInfo(long timesliceID) throws IOException {
+  private SegmentInfo createSegmentInfo(long timesliceID) throws IOEtwitterception {
     PartitionConfig partitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
 
     TimeSlice timeSlice = new TimeSlice(
         timesliceID,
-        maxSegmentSize,
-        partitionConfig.getIndexingHashPartitionID(),
+        matwitterSegmentSize,
+        partitionConfig.getIndetwitteringHashPartitionID(),
         partitionConfig.getNumPartitions());
 
     SegmentInfo segmentInfo =
@@ -512,14 +512,14 @@ public class SegmentManager {
    * Create a new optimizing segment writer and add it to the map.
    */
   public OptimizingSegmentWriter createAndPutOptimizingSegmentWriter(
-      long timesliceID) throws IOException {
+      long timesliceID) throws IOEtwitterception {
     SegmentInfo segmentInfo = createSegmentInfo(timesliceID);
 
     OptimizingSegmentWriter writer = new OptimizingSegmentWriter(
-        new SegmentWriter(segmentInfo, searchIndexingMetricSet.updateFreshness),
-        criticalExceptionHandler,
-        searchIndexingMetricSet,
-        indexCaughtUpMonitor);
+        new SegmentWriter(segmentInfo, searchIndetwitteringMetricSet.updateFreshness),
+        criticalEtwitterceptionHandler,
+        searchIndetwitteringMetricSet,
+        indetwitterCaughtUpMonitor);
 
     putSegmentWriter(writer);
     return writer;
@@ -528,11 +528,11 @@ public class SegmentManager {
   /**
    * Create a new segment writer.
    */
-  public SegmentWriter createSegmentWriter(long timesliceID) throws IOException {
+  public SegmentWriter createSegmentWriter(long timesliceID) throws IOEtwitterception {
     SegmentInfo segmentInfo = createSegmentInfo(timesliceID);
 
     SegmentWriter writer = new SegmentWriter(
-        segmentInfo, searchIndexingMetricSet.updateFreshness);
+        segmentInfo, searchIndetwitteringMetricSet.updateFreshness);
 
     return writer;
   }
@@ -544,7 +544,7 @@ public class SegmentManager {
     for (SegmentUpdateListener listener : updateListeners) {
       try {
         listener.update(segmentInfos, message);
-      } catch (Exception e) {
+      } catch (Etwitterception e) {
         LOG.warn("SegmentManager: Unable to call update() on listener.", e);
       }
     }
@@ -564,12 +564,12 @@ public class SegmentManager {
    * If found, its timeslice id is returned.
    * If none found, -1 is returned.
    */
-  public long lookupTimeSliceID(long statusID) throws IOException {
+  public long lookupTimeSliceID(long statusID) throws IOEtwitterception {
     SegmentInfo segmentInfo = getSegmentInfoForID(statusID);
     if (segmentInfo == null) {
       return -1;
     }
-    if (!segmentInfo.getIndexSegment().hasDocument(statusID)) {
+    if (!segmentInfo.getIndetwitterSegment().hasDocument(statusID)) {
         return -1;
     }
 
@@ -581,10 +581,10 @@ public class SegmentManager {
    * segments.
    */
   @VisibleForTesting
-  public static List<Segment> truncateSegmentList(List<Segment> segmentList, int maxNumSegments) {
+  public static List<Segment> truncateSegmentList(List<Segment> segmentList, int matwitterNumSegments) {
     // Maybe cut-off the beginning of the sorted list of IDs.
-    if (maxNumSegments > 0 && maxNumSegments < segmentList.size()) {
-      return segmentList.subList(segmentList.size() - maxNumSegments, segmentList.size());
+    if (matwitterNumSegments > 0 && matwitterNumSegments < segmentList.size()) {
+      return segmentList.subList(segmentList.size() - matwitterNumSegments, segmentList.size());
     } else {
       return segmentList;
     }
@@ -604,7 +604,7 @@ public class SegmentManager {
    * Returns a searcher for all segments.
    */
   public EarlybirdMultiSegmentSearcher getMultiSearcher(ImmutableSchemaInterface schemaSnapshot)
-      throws IOException {
+      throws IOEtwitterception {
     return new EarlybirdMultiSegmentSearcher(
         schemaSnapshot,
         getSearchers(schemaSnapshot, Filter.All, Order.NEW_TO_OLD),
@@ -618,19 +618,19 @@ public class SegmentManager {
   @Nullable
   public EarlybirdLuceneSearcher getSearcher(
       Segment segment,
-      ImmutableSchemaInterface schemaSnapshot) throws IOException {
+      ImmutableSchemaInterface schemaSnapshot) throws IOEtwitterception {
     return getSearcher(segment.getTimeSliceID(), schemaSnapshot);
   }
 
   /**
-   * Get max tweet id across all enabled segments.
-   * @return max tweet id or -1 if none found
+   * Get matwitter tweet id across all enabled segments.
+   * @return matwitter tweet id or -1 if none found
    */
-  public long getMaxTweetIdFromEnabledSegments() {
+  public long getMatwitterTweetIdFromEnabledSegments() {
     for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.NEW_TO_OLD)) {
-      long maxTweetId = segmentInfo.getIndexSegment().getMaxTweetId();
-      if (maxTweetId != -1) {
-        return maxTweetId;
+      long matwitterTweetId = segmentInfo.getIndetwitterSegment().getMatwitterTweetId();
+      if (matwitterTweetId != -1) {
+        return matwitterTweetId;
       }
     }
 
@@ -638,26 +638,26 @@ public class SegmentManager {
   }
 
   /**
-   * Create a tweet index searcher on the segment represented by the timeslice id.  For production
+   * Create a tweet indetwitter searcher on the segment represented by the timeslice id.  For production
    * search session, the schema snapshot should be always passed in to make sure that the schema
    * usage inside scoring is consistent.
    *
    * For non-production usage, like one-off debugging search, you can use the function call without
    * the schema snapshot.
    *
-   * @param timeSliceID the timeslice id, which represents the index segment
+   * @param timeSliceID the timeslice id, which represents the indetwitter segment
    * @param schemaSnapshot the schema snapshot
-   * @return the tweet index searcher
+   * @return the tweet indetwitter searcher
    */
   @Nullable
   public EarlybirdSingleSegmentSearcher getSearcher(
       long timeSliceID,
-      ImmutableSchemaInterface schemaSnapshot) throws IOException {
+      ImmutableSchemaInterface schemaSnapshot) throws IOEtwitterception {
     SegmentInfo segmentInfo = getSegmentInfo(timeSliceID);
     if (segmentInfo == null) {
       return null;
     }
-    return segmentInfo.getIndexSegment().getSearcher(userTable, schemaSnapshot);
+    return segmentInfo.getIndetwitterSegment().getSearcher(userTable, schemaSnapshot);
   }
 
   /**
@@ -668,12 +668,12 @@ public class SegmentManager {
    * @return A new searcher for the segment with the given timeslice ID.
    */
   @Nullable
-  public EarlybirdSingleSegmentSearcher getSearcher(long timeSliceID) throws IOException {
+  public EarlybirdSingleSegmentSearcher getSearcher(long timeSliceID) throws IOEtwitterception {
     SegmentInfo segmentInfo = getSegmentInfo(timeSliceID);
     if (segmentInfo == null) {
       return null;
     }
-    return segmentInfo.getIndexSegment().getSearcher(userTable);
+    return segmentInfo.getIndetwitterSegment().getSearcher(userTable);
   }
 
   @Nullable
@@ -694,11 +694,11 @@ public class SegmentManager {
   private List<EarlybirdSingleSegmentSearcher> getSearchers(
       ImmutableSchemaInterface schemaSnapshot,
       Filter filter,
-      Order order) throws IOException {
+      Order order) throws IOEtwitterception {
     List<EarlybirdSingleSegmentSearcher> searchers = Lists.newArrayList();
     for (SegmentInfo segmentInfo : getSegmentInfos(filter, order)) {
       EarlybirdSingleSegmentSearcher searcher =
-          segmentInfo.getIndexSegment().getSearcher(userTable, schemaSnapshot);
+          segmentInfo.getIndetwitterSegment().getSearcher(userTable, schemaSnapshot);
       if (searcher != null) {
         searchers.add(searcher);
       }
@@ -729,31 +729,31 @@ public class SegmentManager {
   }
 
   /**
-   * Index the given user update. Returns false if the given update is skipped.
+   * Indetwitter the given user update. Returns false if the given update is skipped.
    */
-  public boolean indexUserUpdate(UserUpdate userUpdate) {
-    return userTable.indexUserUpdate(userUpdatesChecker, userUpdate);
+  public boolean indetwitterUserUpdate(UserUpdate userUpdate) {
+    return userTable.indetwitterUserUpdate(userUpdatesChecker, userUpdate);
   }
 
   /**
-   * Index the given UserScrubGeoEvent.
+   * Indetwitter the given UserScrubGeoEvent.
    * @param userScrubGeoEvent
    */
-  public void indexUserScrubGeoEvent(UserScrubGeoEvent userScrubGeoEvent) {
-    userScrubGeoMap.indexUserScrubGeoEvent(userScrubGeoEvent);
+  public void indetwitterUserScrubGeoEvent(UserScrubGeoEvent userScrubGeoEvent) {
+    userScrubGeoMap.indetwitterUserScrubGeoEvent(userScrubGeoEvent);
   }
 
   /**
-   * Return how many documents this segment manager has indexed in all of its enabled segments.
+   * Return how many documents this segment manager has indetwittered in all of its enabled segments.
    */
-  public long getNumIndexedDocuments() {
+  public long getNumIndetwitteredDocuments() {
     // Order here doesn't matter, we just want all enabled segments, and allocate
     // as little as needed.
-    long indexedDocs = 0;
+    long indetwitteredDocs = 0;
     for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.OLD_TO_NEW)) {
-      indexedDocs += segmentInfo.getIndexSegment().getIndexStats().getStatusCount();
+      indetwitteredDocs += segmentInfo.getIndetwitterSegment().getIndetwitterStats().getStatusCount();
     }
-    return indexedDocs;
+    return indetwitteredDocs;
   }
 
   /**
@@ -763,7 +763,7 @@ public class SegmentManager {
   public long getNumPartialUpdates() {
     long partialUpdates = 0;
     for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.OLD_TO_NEW)) {
-      partialUpdates += segmentInfo.getIndexSegment().getIndexStats().getPartialUpdateCount();
+      partialUpdates += segmentInfo.getIndetwitterSegment().getIndetwitterStats().getPartialUpdateCount();
     }
     return partialUpdates;
   }
@@ -786,28 +786,28 @@ public class SegmentManager {
   }
 
   /**
-   * Remove old segments until we have less than or equal to the number of max enabled segments.
+   * Remove old segments until we have less than or equal to the number of matwitter enabled segments.
    */
-  public void removeExcessSegments() {
+  public void removeEtwittercessSegments() {
     int removedSegmentCount = 0;
-    while (segmentWriters.size() > getMaxEnabledSegments()) {
+    while (segmentWriters.size() > getMatwitterEnabledSegments()) {
       long timesliceID = getOldestEnabledTimeSliceID();
       disableSegment(timesliceID);
       removeSegmentInfo(timesliceID);
       removedSegmentCount += 1;
     }
-    LOG.info("Segment manager removed {} excess segments", removedSegmentCount);
+    LOG.info("Segment manager removed {} etwittercess segments", removedSegmentCount);
   }
 
   /**
-   * Returns total index size on disk across all enabled segments in this segment manager.
+   * Returns total indetwitter size on disk across all enabled segments in this segment manager.
    */
   private long getTotalSegmentSizeOnDisk() {
-    long totalIndexSize = 0;
+    long totalIndetwitterSize = 0;
     for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.OLD_TO_NEW)) {
-      totalIndexSize += segmentInfo.getIndexSegment().getIndexStats().getIndexSizeOnDiskInBytes();
+      totalIndetwitterSize += segmentInfo.getIndetwitterSegment().getIndetwitterStats().getIndetwitterSizeOnDiskInBytes();
     }
-    return totalIndexSize;
+    return totalIndetwitterSize;
   }
 
   @VisibleForTesting

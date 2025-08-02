@@ -8,7 +8,7 @@ case class ByteCountingMemcacheFactory(
   statsReceiver: StatsReceiver,
   delimiter: String = constants.Colon,
   checksumSize: Int = 8) // memcached checksums are u64s
-    extends MemcacheFactory {
+    etwittertends MemcacheFactory {
 
   def apply() =
     new ByteCountingMemcache(memcacheFactory(), statsReceiver, delimiter, checksumSize)
@@ -17,14 +17,14 @@ case class ByteCountingMemcacheFactory(
 /**
  * A decorator around a Memcache that counts the rough number
  * of bytes transferred, bucketed & rolled up by in/out, method name,
- * and key prefix
+ * and key prefitwitter
  */
 class ByteCountingMemcache(
   underlying: Memcache,
   statsReceiver: StatsReceiver,
   delimiter: String,
   checksumSize: Int)
-    extends Memcache {
+    etwittertends Memcache {
   val scopedReceiver = statsReceiver.scope("memcache").scope("bytes")
 
   val outStat = scopedReceiver.stat("out")
@@ -69,8 +69,8 @@ class ByteCountingMemcache(
 
   // get namespace from key
   protected[this] def ns(key: String) = {
-    val idx = math.min(key.size - 1, math.max(key.lastIndexOf(delimiter), 0))
-    key.substring(0, idx).replaceAll(delimiter, "_")
+    val idtwitter = math.min(key.size - 1, math.matwitter(key.lastIndetwitterOf(delimiter), 0))
+    key.substring(0, idtwitter).replaceAll(delimiter, "_")
   }
 
   override def get(keys: Seq[String]): Future[KeyValueResult[String, Array[Byte]]] = {

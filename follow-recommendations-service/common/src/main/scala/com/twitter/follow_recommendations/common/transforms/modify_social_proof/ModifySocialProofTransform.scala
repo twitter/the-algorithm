@@ -12,15 +12,15 @@ import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.models.FollowProof
 import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
 import com.twitter.graph_feature_service.thriftscala.EdgeType
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.snowflake.id.SnowflakeId
 import com.twitter.stitch.Stitch
 import com.twitter.timelines.configapi.HasParams
 import com.twitter.util.logging.Logging
 import com.twitter.util.Duration
 import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 object ModifySocialProof {
   val GfsLagDuration: Duration = 14.days
@@ -43,23 +43,23 @@ object ModifySocialProof {
   ): CandidateUser = {
     // create updated set of social proof
     val updatedFollowedByOpt = candidate.followedBy match {
-      case Some(existingFollowedBy) => Some((followProof.followedBy ++ existingFollowedBy).distinct)
+      case Some(etwitteristingFollowedBy) => Some((followProof.followedBy ++ etwitteristingFollowedBy).distinct)
       case None if followProof.followedBy.nonEmpty => Some(followProof.followedBy.distinct)
       case _ => None
     }
 
     val updatedFollowProof = updatedFollowedByOpt.map { updatedFollowedBy =>
-      val updatedCount = followProof.numIds.max(updatedFollowedBy.size)
+      val updatedCount = followProof.numIds.matwitter(updatedFollowedBy.size)
       // track stats
       val numSocialProofAdded = updatedFollowedBy.size - candidate.followedBy.size
-      addCandidatesWithSocialContextCountStat(stats, numSocialProofAdded)
+      addCandidatesWithSocialContetwittertCountStat(stats, numSocialProofAdded)
       FollowProof(updatedFollowedBy, updatedCount)
     }
 
     candidate.setFollowProof(updatedFollowProof)
   }
 
-  private def addCandidatesWithSocialContextCountStat(
+  private def addCandidatesWithSocialContetwittertCountStat(
     statsReceiver: StatsReceiver,
     count: Int
   ): Unit = {
@@ -81,7 +81,7 @@ class ModifySocialProof @Inject() (
   socialGraphClient: SocialGraphClient,
   statsReceiver: StatsReceiver,
   decider: Decider = Decider.True)
-    extends Logging {
+    etwittertends Logging {
   import ModifySocialProof._
 
   private val stats = statsReceiver.scope(this.getClass.getSimpleName)
@@ -94,12 +94,12 @@ class ModifySocialProof @Inject() (
   /**
    * For each candidate provided, we get the intersectionIds between the user and the candidate,
    * appending the unique results to the social proof (followedBy field) if not already previously
-   * seen we query GFS for all users, except for cases specified via the mustCallSgs field or for
+   * seen we query GFS for all users, etwittercept for cases specified via the mustCallSgs field or for
    * very new users, who would not have any data in GFS, due to the lag duration of the service's
    * processing. this is determined by GfsLagDuration
    * @param userId id of the target user whom we provide recommendations for
    * @param candidates list of candidates
-   * @param intersectionIdsNum if provided, determines the maximum number of accounts we want to be hydrated for social proof
+   * @param intersectionIdsNum if provided, determines the matwitterimum number of accounts we want to be hydrated for social proof
    * @param mustCallSgs Determines if we should query SGS regardless of user age or not.
    * @return list of candidates updated with additional social proof
    */
@@ -113,8 +113,8 @@ class ModifySocialProof @Inject() (
     gfsIntersectionIds: Int = GfsIntersectionIds,
     sgsIntersectionIds: Int = SgsIntersectionIds,
   ): Stitch[Seq[CandidateUser]] = {
-    addCandidatesWithSocialContextCountStat(
-      stats.scope("social_context_count_before_hydration"),
+    addCandidatesWithSocialContetwittertCountStat(
+      stats.scope("social_contetwittert_count_before_hydration"),
       candidates.count(_.followedBy.isDefined)
     )
     val candidateIds = candidates.map(_.id)
@@ -128,7 +128,7 @@ class ModifySocialProof @Inject() (
 
     // if new query sgs
     val (candidateToIntersectionIdsMapFut, isGfs) =
-      if (!enableGfsRequests || mustCallSgs || userAgeOpt.exists(_ < gfsLagDuration)) {
+      if (!enableGfsRequests || mustCallSgs || userAgeOpt.etwitterists(_ < gfsLagDuration)) {
         (
           if (callSgsCachedColumn)
             socialGraphClient.getIntersectionsFromCachedColumn(
@@ -153,7 +153,7 @@ class ModifySocialProof @Inject() (
     val finalCandidates = candidateToIntersectionIdsMapFut
       .map { candidateToIntersectionIdsMap =>
         {
-          previousProofEmptyCounter.incr(candidates.count(_.followedBy.exists(_.isEmpty)))
+          previousProofEmptyCounter.incr(candidates.count(_.followedBy.etwitterists(_.isEmpty)))
           candidates.map { candidate =>
             addIntersectionIdsToCandidate(
               candidate,
@@ -164,7 +164,7 @@ class ModifySocialProof @Inject() (
       }
       .within(250.milliseconds)(DefaultTimer)
       .rescue {
-        case e: Exception =>
+        case e: Etwitterception =>
           error(e.getMessage)
           if (isGfs) {
             gfsStats.scope("rescued").counter(e.getClass.getSimpleName).incr()
@@ -175,9 +175,9 @@ class ModifySocialProof @Inject() (
       }
 
     finalCandidates.onSuccess { candidatesSeq =>
-      emptyFollowProofCounter.incr(candidatesSeq.count(_.followedBy.exists(_.isEmpty)))
-      addCandidatesWithSocialContextCountStat(
-        stats.scope("social_context_count_after_hydration"),
+      emptyFollowProofCounter.incr(candidatesSeq.count(_.followedBy.etwitterists(_.isEmpty)))
+      addCandidatesWithSocialContetwittertCountStat(
+        stats.scope("social_contetwittert_count_after_hydration"),
         candidatesSeq.count(_.followedBy.isDefined)
       )
     }
@@ -190,11 +190,11 @@ class ModifySocialProof @Inject() (
  */
 @Singleton
 class ModifySocialProofTransform @Inject() (modifySocialProof: ModifySocialProof)
-    extends GatedTransform[HasClientContext with HasParams, CandidateUser]
+    etwittertends GatedTransform[HasClientContetwittert with HasParams, CandidateUser]
     with Logging {
 
   override def transform(
-    target: HasClientContext with HasParams,
+    target: HasClientContetwittert with HasParams,
     candidates: Seq[CandidateUser]
   ): Stitch[Seq[CandidateUser]] =
     target.getOptionalUserId

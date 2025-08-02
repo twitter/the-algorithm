@@ -13,7 +13,7 @@ import scala.collection.JavaConverters._
  * the implementation should be private to the cache,
  * to inhibit peeking
  */
-trait Checksum extends Any
+trait Checksum etwittertends Any
 
 object ScopedCacheKey {
   private[ScopedCacheKey] val builder = new ThreadLocalStringBuilder(64)
@@ -77,7 +77,7 @@ trait ReadCache[K, V] {
 /**
  * allows one ReadCache to wrap another
  */
-trait ReadCacheWrapper[K, V, This <: ReadCache[K, V]] extends ReadCache[K, V] {
+trait ReadCacheWrapper[K, V, This <: ReadCache[K, V]] etwittertends ReadCache[K, V] {
   def underlyingCache: This
 
   override def get(keys: Seq[K]) = underlyingCache.get(keys)
@@ -90,7 +90,7 @@ trait ReadCacheWrapper[K, V, This <: ReadCache[K, V]] extends ReadCache[K, V] {
 /**
  * Simple trait for a cache supporting multi-get and single set
  */
-trait Cache[K, V] extends ReadCache[K, V] {
+trait Cache[K, V] etwittertends ReadCache[K, V] {
   def add(key: K, value: V): Future[Boolean]
 
   def checkAndSet(key: K, value: V, checksum: Checksum): Future[Boolean]
@@ -106,7 +106,7 @@ trait Cache[K, V] extends ReadCache[K, V] {
   }
 
   /**
-   * Replaces the value for an existing key.  If the key doesn't exist, this has no effect.
+   * Replaces the value for an etwitteristing key.  If the key doesn't etwitterist, this has no effect.
    * @return true if replaced, false if not found
    */
   def replace(key: K, value: V): Future[Boolean]
@@ -121,7 +121,7 @@ trait Cache[K, V] extends ReadCache[K, V] {
 /**
  * allows one cache to wrap another
  */
-trait CacheWrapper[K, V] extends Cache[K, V] with ReadCacheWrapper[K, V, Cache[K, V]] {
+trait CacheWrapper[K, V] etwittertends Cache[K, V] with ReadCacheWrapper[K, V, Cache[K, V]] {
   override def add(key: K, value: V) = underlyingCache.add(key, value)
 
   override def checkAndSet(key: K, value: V, checksum: Checksum) =
@@ -138,18 +138,18 @@ trait CacheWrapper[K, V] extends Cache[K, V] with ReadCacheWrapper[K, V, Cache[K
  * Switch between two caches with a decider value
  */
 class DeciderableCache[K, V](primary: Cache[K, V], secondary: Cache[K, V], isAvailable: => Boolean)
-    extends CacheWrapper[K, V] {
+    etwittertends CacheWrapper[K, V] {
   override def underlyingCache = if (isAvailable) primary else secondary
 }
 
 private object MutableMapCache {
-  case class IntChecksum(i: Int) extends AnyVal with Checksum
+  case class IntChecksum(i: Int) etwittertends AnyVal with Checksum
 }
 
 /**
  * implementation of a Cache with a mutable.Map
  */
-class MutableMapCache[K, V](underlying: mutable.Map[K, V]) extends Cache[K, V] {
+class MutableMapCache[K, V](underlying: mutable.Map[K, V]) etwittertends Cache[K, V] {
   import MutableMapCache.IntChecksum
 
   protected[this] def checksum(value: V): Checksum = IntChecksum(value.hashCode)
@@ -157,8 +157,8 @@ class MutableMapCache[K, V](underlying: mutable.Map[K, V]) extends Cache[K, V] {
   override def get(keys: Seq[K]): Future[KeyValueResult[K, V]] = Future {
     val founds = Map.newBuilder[K, V]
     val iter = keys.iterator
-    while (iter.hasNext) {
-      val key = iter.next()
+    while (iter.hasNetwittert) {
+      val key = iter.netwittert()
       synchronized {
         underlying.get(key)
       } match {
@@ -174,8 +174,8 @@ class MutableMapCache[K, V](underlying: mutable.Map[K, V]) extends Cache[K, V] {
   override def getWithChecksum(keys: Seq[K]): Future[CsKeyValueResult[K, V]] = Future {
     val founds = Map.newBuilder[K, (Return[V], Checksum)]
     val iter = keys.iterator
-    while (iter.hasNext) {
-      val key = iter.next()
+    while (iter.hasNetwittert) {
+      val key = iter.netwittert()
       synchronized {
         underlying.get(key)
       } match {
@@ -245,15 +245,15 @@ class MutableMapCache[K, V](underlying: mutable.Map[K, V]) extends Cache[K, V] {
 /**
  * In-memory implementation of a cache with LRU semantics and a TTL.
  */
-class ExpiringLruCache[K, V](ttl: Duration, maximumSize: Int)
-    extends MutableMapCache[K, V](
+class EtwitterpiringLruCache[K, V](ttl: Duration, matwitterimumSize: Int)
+    etwittertends MutableMapCache[K, V](
       // TODO: consider wiring the Cache interface directly to the
       // Guava Cache, instead of introducing two layers of indirection
       CacheBuilder.newBuilder
         .asInstanceOf[CacheBuilder[K, V]]
-        .expireAfterWrite(ttl.inMilliseconds, TimeUnit.MILLISECONDS)
-        .initialCapacity(maximumSize)
-        .maximumSize(maximumSize)
+        .etwitterpireAfterWrite(ttl.inMilliseconds, TimeUnit.MILLISECONDS)
+        .initialCapacity(matwitterimumSize)
+        .matwitterimumSize(matwitterimumSize)
         .build[K, V]()
         .asMap
         .asScala
@@ -262,7 +262,7 @@ class ExpiringLruCache[K, V](ttl: Duration, maximumSize: Int)
 /**
  * An empty cache that stays empty
  */
-class NullCache[K, V] extends Cache[K, V] {
+class NullCache[K, V] etwittertends Cache[K, V] {
   lazy val futureTrue = Future.value(true)
   override def get(keys: Seq[K]) = Future.value(KeyValueResult(notFound = keys.toSet))
   override def getWithChecksum(keys: Seq[K]) = Future.value(KeyValueResult(notFound = keys.toSet))

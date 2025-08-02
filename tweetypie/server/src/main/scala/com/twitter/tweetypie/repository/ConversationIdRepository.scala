@@ -16,7 +16,7 @@ object ConversationIdRepository {
 
   private case class Group(
     multiSelectOne: Iterable[Select[StatusGraph]] => Future[Seq[Option[Long]]])
-      extends SeqGroup[ConversationIdKey, TweetId] {
+      etwittertends SeqGroup[ConversationIdKey, TweetId] {
 
     private[this] def getConversationIds(
       keys: Seq[ConversationIdKey],
@@ -46,7 +46,7 @@ object ConversationIdRepository {
     /**
      * Returns a key-value result that maps keys to the tweet's conversation IDs.
      *
-     * Example:
+     * Etwitterample:
      * Tweet B is a reply to tweet A with conversation ID c.
      * We want to get B's conversation ID. Then, for the request
      *

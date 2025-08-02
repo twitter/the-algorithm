@@ -43,100 +43,100 @@ sealed trait Reason {
   lazy val name: String = NamingUtils.getFriendlyName(this)
 }
 
-sealed abstract class ActionWithReason(reason: Reason) extends Action {
+sealed abstract class ActionWithReason(reason: Reason) etwittertends Action {
   override lazy val fullName: String = s"${this.name}/${reason.name}"
 }
 
 object Reason {
 
-  case object Bounce extends Reason
+  case object Bounce etwittertends Reason
 
-  case object ViewerReportedAuthor extends Reason
-  case object ViewerReportedTweet extends Reason
+  case object ViewerReportedAuthor etwittertends Reason
+  case object ViewerReportedTweet etwittertends Reason
 
-  case object DeactivatedAuthor extends Reason
-  case object OffboardedAuthor extends Reason
-  case object ErasedAuthor extends Reason
-  case object ProtectedAuthor extends Reason
-  case object SuspendedAuthor extends Reason
-  case object ViewerIsUnmentioned extends Reason
+  case object DeactivatedAuthor etwittertends Reason
+  case object OffboardedAuthor etwittertends Reason
+  case object ErasedAuthor etwittertends Reason
+  case object ProtectedAuthor etwittertends Reason
+  case object SuspendedAuthor etwittertends Reason
+  case object ViewerIsUnmentioned etwittertends Reason
 
-  case object Nsfw extends Reason
-  case object NsfwMedia extends Reason
-  case object NsfwViewerIsUnderage extends Reason
-  case object NsfwViewerHasNoStatedAge extends Reason
-  case object NsfwLoggedOut extends Reason
-  case object PossiblyUndesirable extends Reason
+  case object Nsfw etwittertends Reason
+  case object NsfwMedia etwittertends Reason
+  case object NsfwViewerIsUnderage etwittertends Reason
+  case object NsfwViewerHasNoStatedAge etwittertends Reason
+  case object NsfwLoggedOut etwittertends Reason
+  case object PossiblyUndesirable etwittertends Reason
 
-  case object AbuseEpisodic extends Reason
-  case object AbuseEpisodicEncourageSelfHarm extends Reason
-  case object AbuseEpisodicHatefulConduct extends Reason
-  case object AbuseGlorificationOfViolence extends Reason
-  case object AbuseGratuitousGore extends Reason
-  case object AbuseMobHarassment extends Reason
-  case object AbuseMomentOfDeathOrDeceasedUser extends Reason
-  case object AbusePrivateInformation extends Reason
-  case object AbuseRightToPrivacy extends Reason
-  case object AbuseThreatToExpose extends Reason
-  case object AbuseViolentSexualConduct extends Reason
-  case object AbuseViolentThreatHatefulConduct extends Reason
-  case object AbuseViolentThreatOrBounty extends Reason
+  case object AbuseEpisodic etwittertends Reason
+  case object AbuseEpisodicEncourageSelfHarm etwittertends Reason
+  case object AbuseEpisodicHatefulConduct etwittertends Reason
+  case object AbuseGlorificationOfViolence etwittertends Reason
+  case object AbuseGratuitousGore etwittertends Reason
+  case object AbuseMobHarassment etwittertends Reason
+  case object AbuseMomentOfDeathOrDeceasedUser etwittertends Reason
+  case object AbusePrivateInformation etwittertends Reason
+  case object AbuseRightToPrivacy etwittertends Reason
+  case object AbuseThreatToEtwitterpose etwittertends Reason
+  case object AbuseViolentSetwitterualConduct etwittertends Reason
+  case object AbuseViolentThreatHatefulConduct etwittertends Reason
+  case object AbuseViolentThreatOrBounty etwittertends Reason
 
-  case object MutedKeyword extends Reason
-  case object Unspecified extends Reason
+  case object MutedKeyword etwittertends Reason
+  case object Unspecified etwittertends Reason
 
-  case object UntrustedUrl extends Reason
+  case object UntrustedUrl etwittertends Reason
 
-  case object SpamReplyDownRank extends Reason
+  case object SpamReplyDownRank etwittertends Reason
 
-  case object LowQualityTweet extends Reason
+  case object LowQualityTweet etwittertends Reason
 
-  case object LowQualityMention extends Reason
+  case object LowQualityMention etwittertends Reason
 
-  case object SpamHighRecallTweet extends Reason
+  case object SpamHighRecallTweet etwittertends Reason
 
-  case object TweetLabelDuplicateContent extends Reason
+  case object TweetLabelDuplicateContent etwittertends Reason
 
-  case object TweetLabelDuplicateMention extends Reason
+  case object TweetLabelDuplicateMention etwittertends Reason
 
-  case object PdnaTweet extends Reason
+  case object PdnaTweet etwittertends Reason
 
-  case object TweetLabeledSpam extends Reason
+  case object TweetLabeledSpam etwittertends Reason
 
-  case object OneOff extends Reason
-  case object VotingMisinformation extends Reason
-  case object HackedMaterials extends Reason
-  case object Scams extends Reason
-  case object PlatformManipulation extends Reason
+  case object OneOff etwittertends Reason
+  case object VotingMisinformation etwittertends Reason
+  case object HackedMaterials etwittertends Reason
+  case object Scams etwittertends Reason
+  case object PlatformManipulation etwittertends Reason
 
-  case object FirstPageSearchResult extends Reason
+  case object FirstPageSearchResult etwittertends Reason
 
-  case object MisinfoCivic extends Reason
-  case object MisinfoCrisis extends Reason
-  case object MisinfoGeneric extends Reason
-  case object MisinfoMedical extends Reason
-  case object Misleading extends Reason
-  case object ExclusiveTweet extends Reason
-  case object CommunityNotAMember extends Reason
-  case object CommunityTweetHidden extends Reason
-  case object CommunityTweetCommunityIsSuspended extends Reason
-  case object CommunityTweetAuthorRemoved extends Reason
-  case object InternalPromotedContent extends Reason
-  case object TrustedFriendsTweet extends Reason
-  case object Toxicity extends Reason
-  case object StaleTweet extends Reason
-  case object DmcaWithheld extends Reason
-  case object LegalDemandsWithheld extends Reason
-  case object LocalLawsWithheld extends Reason
-  case object HatefulConduct extends Reason
-  case object AbusiveBehavior extends Reason
+  case object MisinfoCivic etwittertends Reason
+  case object MisinfoCrisis etwittertends Reason
+  case object MisinfoGeneric etwittertends Reason
+  case object MisinfoMedical etwittertends Reason
+  case object Misleading etwittertends Reason
+  case object EtwitterclusiveTweet etwittertends Reason
+  case object CommunityNotAMember etwittertends Reason
+  case object CommunityTweetHidden etwittertends Reason
+  case object CommunityTweetCommunityIsSuspended etwittertends Reason
+  case object CommunityTweetAuthorRemoved etwittertends Reason
+  case object InternalPromotedContent etwittertends Reason
+  case object TrustedFriendsTweet etwittertends Reason
+  case object Totwittericity etwittertends Reason
+  case object StaleTweet etwittertends Reason
+  case object DmcaWithheld etwittertends Reason
+  case object LegalDemandsWithheld etwittertends Reason
+  case object LocalLawsWithheld etwittertends Reason
+  case object HatefulConduct etwittertends Reason
+  case object AbusiveBehavior etwittertends Reason
 
-  case object NotSupportedOnDevice extends Reason
+  case object NotSupportedOnDevice etwittertends Reason
 
-  case object IpiDevelopmentOnly extends Reason
-  case object InterstitialDevelopmentOnly extends Reason
+  case object IpiDevelopmentOnly etwittertends Reason
+  case object InterstitialDevelopmentOnly etwittertends Reason
 
-  case class FosnrReason(appealableReason: AppealableReason) extends Reason
+  case class FosnrReason(appealableReason: AppealableReason) etwittertends Reason
 
   def toDropReason(reason: Reason): Option[DropReason] =
     reason match {
@@ -144,7 +144,7 @@ object Reason {
       case CommunityTweetHidden => Some(DropReason.CommunityTweetHidden)
       case CommunityTweetCommunityIsSuspended => Some(DropReason.CommunityTweetCommunityIsSuspended)
       case DmcaWithheld => Some(DropReason.DmcaWithheld)
-      case ExclusiveTweet => Some(DropReason.ExclusiveTweet)
+      case EtwitterclusiveTweet => Some(DropReason.EtwitterclusiveTweet)
       case InternalPromotedContent => Some(DropReason.InternalPromotedContent)
       case LegalDemandsWithheld => Some(DropReason.LegalDemandsWithheld)
       case LocalLawsWithheld => Some(DropReason.LocalLawsWithheld)
@@ -169,7 +169,7 @@ object Reason {
       case DropReason.CommunityTweetHidden => CommunityTweetHidden
       case DropReason.CommunityTweetCommunityIsSuspended => CommunityTweetCommunityIsSuspended
       case DropReason.DmcaWithheld => DmcaWithheld
-      case DropReason.ExclusiveTweet => ExclusiveTweet
+      case DropReason.EtwitterclusiveTweet => EtwitterclusiveTweet
       case DropReason.InternalPromotedContent => InternalPromotedContent
       case DropReason.LegalDemandsWithheld => LegalDemandsWithheld
       case DropReason.LocalLawsWithheld => LocalLawsWithheld
@@ -268,49 +268,49 @@ sealed trait Epitaph {
 
 object Epitaph {
 
-  case object Unavailable extends Epitaph
+  case object Unavailable etwittertends Epitaph
 
-  case object Blocked extends Epitaph
-  case object BlockedBy extends Epitaph
-  case object Reported extends Epitaph
+  case object Blocked etwittertends Epitaph
+  case object BlockedBy etwittertends Epitaph
+  case object Reported etwittertends Epitaph
 
-  case object BounceDeleted extends Epitaph
-  case object Deleted extends Epitaph
-  case object NotFound extends Epitaph
-  case object PublicInterest extends Epitaph
+  case object BounceDeleted etwittertends Epitaph
+  case object Deleted etwittertends Epitaph
+  case object NotFound etwittertends Epitaph
+  case object PublicInterest etwittertends Epitaph
 
-  case object Bounced extends Epitaph
-  case object Protected extends Epitaph
-  case object Suspended extends Epitaph
-  case object Offboarded extends Epitaph
-  case object Deactivated extends Epitaph
+  case object Bounced etwittertends Epitaph
+  case object Protected etwittertends Epitaph
+  case object Suspended etwittertends Epitaph
+  case object Offboarded etwittertends Epitaph
+  case object Deactivated etwittertends Epitaph
 
-  case object MutedKeyword extends Epitaph
-  case object Underage extends Epitaph
-  case object NoStatedAge extends Epitaph
-  case object LoggedOutAge extends Epitaph
-  case object SuperFollowsContent extends Epitaph
+  case object MutedKeyword etwittertends Epitaph
+  case object Underage etwittertends Epitaph
+  case object NoStatedAge etwittertends Epitaph
+  case object LoggedOutAge etwittertends Epitaph
+  case object SuperFollowsContent etwittertends Epitaph
 
-  case object Moderated extends Epitaph
-  case object ForEmergencyUseOnly extends Epitaph
-  case object UnavailableWithoutLink extends Epitaph
-  case object CommunityTweetHidden extends Epitaph
-  case object CommunityTweetMemberRemoved extends Epitaph
-  case object CommunityTweetCommunityIsSuspended extends Epitaph
+  case object Moderated etwittertends Epitaph
+  case object ForEmergencyUseOnly etwittertends Epitaph
+  case object UnavailableWithoutLink etwittertends Epitaph
+  case object CommunityTweetHidden etwittertends Epitaph
+  case object CommunityTweetMemberRemoved etwittertends Epitaph
+  case object CommunityTweetCommunityIsSuspended etwittertends Epitaph
 
-  case object UserSuspended extends Epitaph
+  case object UserSuspended etwittertends Epitaph
 
-  case object DevelopmentOnly extends Epitaph
+  case object DevelopmentOnly etwittertends Epitaph
 
-  case object AdultMedia extends Epitaph
-  case object ViolentMedia extends Epitaph
-  case object OtherSensitiveMedia extends Epitaph
+  case object AdultMedia etwittertends Epitaph
+  case object ViolentMedia etwittertends Epitaph
+  case object OtherSensitiveMedia etwittertends Epitaph
 
-  case object DmcaWithheldMedia extends Epitaph
-  case object LegalDemandsWithheldMedia extends Epitaph
-  case object LocalLawsWithheldMedia extends Epitaph
+  case object DmcaWithheldMedia etwittertends Epitaph
+  case object LegalDemandsWithheldMedia etwittertends Epitaph
+  case object LocalLawsWithheldMedia etwittertends Epitaph
 
-  case object ToxicReplyFiltered extends Epitaph
+  case object TotwittericReplyFiltered etwittertends Epitaph
 }
 
 sealed trait IsInterstitial {
@@ -335,7 +335,7 @@ object IsLimitedEngagements {
   }
 }
 
-sealed abstract class ActionWithEpitaph(epitaph: Epitaph) extends Action {
+sealed abstract class ActionWithEpitaph(epitaph: Epitaph) etwittertends Action {
   override lazy val fullName: String = s"${this.name}/${epitaph.name}"
 }
 
@@ -343,7 +343,7 @@ case class Appealable(
   reason: Reason,
   violationLevel: ViolationLevel,
   localizedMessage: Option[LocalizedMessage] = None)
-    extends ActionWithReason(reason)
+    etwittertends ActionWithReason(reason)
     with IsAppealable {
 
   override val severity: Int = 17
@@ -361,7 +361,7 @@ case class Appealable(
 }
 
 case class Drop(reason: Reason, applicableCountries: Option[Seq[String]] = None)
-    extends ActionWithReason(reason) {
+    etwittertends ActionWithReason(reason) {
 
   override val severity: Int = 16
   override def toActionThrift(): thriftscala.Action =
@@ -378,7 +378,7 @@ case class Interstitial(
   reason: Reason,
   localizedMessage: Option[LocalizedMessage] = None,
   applicableCountries: Option[Seq[String]] = None)
-    extends ActionWithReason(reason)
+    etwittertends ActionWithReason(reason)
     with IsInterstitial {
 
   override val severity: Int = 10
@@ -410,7 +410,7 @@ case class InterstitialLimitedEngagements(
   limitedEngagementReason: Option[LimitedEngagementReason],
   localizedMessage: Option[LocalizedMessage] = None,
   policy: Option[LimitedActionsPolicy] = None)
-    extends ActionWithReason(reason)
+    etwittertends ActionWithReason(reason)
     with IsInterstitial
     with IsLimitedEngagements {
 
@@ -439,7 +439,7 @@ case class InterstitialLimitedEngagements(
   )
 }
 
-case object Allow extends Action {
+case object Allow etwittertends Action {
 
   override val severity: Int = -1
   override def toActionThrift(): thriftscala.Action =
@@ -448,7 +448,7 @@ case object Allow extends Action {
   override def toHealthActionTypeThrift: Option[HealthActionType] = None
 }
 
-case object NotEvaluated extends Action {
+case object NotEvaluated etwittertends Action {
 
   override val severity: Int = -1
   override def toActionThrift(): thriftscala.Action =
@@ -458,7 +458,7 @@ case object NotEvaluated extends Action {
 }
 
 case class Tombstone(epitaph: Epitaph, applicableCountryCodes: Option[Seq[String]] = None)
-    extends ActionWithEpitaph(epitaph) {
+    etwittertends ActionWithEpitaph(epitaph) {
 
   override val severity: Int = 15
   override def toActionThrift(): thriftscala.Action =
@@ -467,7 +467,7 @@ case class Tombstone(epitaph: Epitaph, applicableCountryCodes: Option[Seq[String
   override def toHealthActionTypeThrift: Option[HealthActionType] = Some(HealthActionType.Tombstone)
 }
 
-case class LocalizedTombstone(reason: TombstoneReason, message: LocalizedMessage) extends Action {
+case class LocalizedTombstone(reason: TombstoneReason, message: LocalizedMessage) etwittertends Action {
   override lazy val fullName: String = s"${this.name}/${NamingUtils.getFriendlyName(reason)}"
 
   override val severity: Int = 15
@@ -481,7 +481,7 @@ case class LocalizedTombstone(reason: TombstoneReason, message: LocalizedMessage
   override def toHealthActionTypeThrift: Option[HealthActionType] = Some(HealthActionType.Tombstone)
 }
 
-case class DownrankHomeTimeline(reason: Option[DownrankHomeTimelineReason]) extends Action {
+case class DownrankHomeTimeline(reason: Option[DownrankHomeTimelineReason]) etwittertends Action {
 
   override val severity: Int = 9
   override def toActionThrift(): thriftscala.Action =
@@ -497,7 +497,7 @@ case class DownrankHomeTimeline(reason: Option[DownrankHomeTimelineReason]) exte
   override def toHealthActionTypeThrift: Option[HealthActionType] = Some(HealthActionType.Downrank)
 }
 
-case class Avoid(avoidReason: Option[AvoidReason] = None) extends Action {
+case class Avoid(avoidReason: Option[AvoidReason] = None) etwittertends Action {
 
   override val severity: Int = 1
   override def toActionThrift(): thriftscala.Action =
@@ -513,7 +513,7 @@ case class Avoid(avoidReason: Option[AvoidReason] = None) extends Action {
   override def toHealthActionTypeThrift: Option[HealthActionType] = Some(HealthActionType.Avoid)
 }
 
-case object Downrank extends Action {
+case object Downrank etwittertends Action {
 
   override val severity: Int = 0
   override def toActionThrift(): thriftscala.Action =
@@ -522,7 +522,7 @@ case object Downrank extends Action {
   override def toHealthActionTypeThrift: Option[HealthActionType] = Some(HealthActionType.Downrank)
 }
 
-case object ConversationSectionLowQuality extends Action {
+case object ConversationSectionLowQuality etwittertends Action {
 
   override val severity: Int = 4
   override def toActionThrift(): thriftscala.Action =
@@ -532,7 +532,7 @@ case object ConversationSectionLowQuality extends Action {
     HealthActionType.ConversationSectionLowQuality)
 }
 
-case object ConversationSectionAbusiveQuality extends Action {
+case object ConversationSectionAbusiveQuality etwittertends Action {
 
   override val severity: Int = 5
   override def toActionThrift(): thriftscala.Action =
@@ -549,7 +549,7 @@ case object ConversationSectionAbusiveQuality extends Action {
 case class LimitedEngagements(
   reason: LimitedEngagementReason,
   policy: Option[LimitedActionsPolicy] = None)
-    extends Action
+    etwittertends Action
     with IsLimitedEngagements {
 
   override val severity: Int = 6
@@ -576,7 +576,7 @@ case class EmergencyDynamicInterstitial(
   linkOpt: Option[String],
   localizedMessage: Option[LocalizedMessage] = None,
   policy: Option[LimitedActionsPolicy] = None)
-    extends Action
+    etwittertends Action
     with IsInterstitial
     with IsLimitedEngagements {
 
@@ -612,7 +612,7 @@ case class SoftIntervention(
   detailsUrl: Option[String] = None,
   displayType: Option[SoftInterventionDisplayType] = None,
   fleetInterstitial: Option[FleetInterstitial] = None)
-    extends Action {
+    etwittertends Action {
 
   override val severity: Int = 7
   def toSoftInterventionThrift(): thriftscala.SoftIntervention =
@@ -644,7 +644,7 @@ case class TweetInterstitial(
   tweetVisibilityNudge: Option[TweetVisibilityNudge] = None,
   abusiveQuality: Option[ConversationSectionAbusiveQuality.type] = None,
   appealable: Option[Appealable] = None)
-    extends Action {
+    etwittertends Action {
 
   override val severity: Int = 12
   override def toActionThrift(): thriftscala.Action =
@@ -668,11 +668,11 @@ case class TweetInterstitial(
 
 sealed trait LocalizedNudgeActionType
 object LocalizedNudgeActionType {
-  case object Reply extends LocalizedNudgeActionType
-  case object Retweet extends LocalizedNudgeActionType
-  case object Like extends LocalizedNudgeActionType
-  case object Share extends LocalizedNudgeActionType
-  case object Unspecified extends LocalizedNudgeActionType
+  case object Reply etwittertends LocalizedNudgeActionType
+  case object Retweet etwittertends LocalizedNudgeActionType
+  case object Like etwittertends LocalizedNudgeActionType
+  case object Share etwittertends LocalizedNudgeActionType
+  case object Unspecified etwittertends LocalizedNudgeActionType
 
   def toThrift(
     localizedNudgeActionType: LocalizedNudgeActionType
@@ -702,7 +702,7 @@ case class LocalizedNudgeActionPayload(
   iconName: Option[String],
   ctaTitle: Option[String],
   ctaUrl: Option[String],
-  postCtaText: Option[String]) {
+  postCtaTetwittert: Option[String]) {
 
   def toThrift(): thriftscala.TweetVisibilityNudgeActionPayload = {
     thriftscala.TweetVisibilityNudgeActionPayload(
@@ -711,7 +711,7 @@ case class LocalizedNudgeActionPayload(
       iconName = iconName,
       ctaTitle = ctaTitle,
       ctaUrl = ctaUrl,
-      postCtaText = postCtaText
+      postCtaTetwittert = postCtaTetwittert
     )
   }
 }
@@ -726,7 +726,7 @@ object LocalizedNudgeActionPayload {
       iconName = stratoNudgeActionPayload.iconName,
       ctaTitle = stratoNudgeActionPayload.ctaTitle,
       ctaUrl = stratoNudgeActionPayload.ctaUrl,
-      postCtaText = stratoNudgeActionPayload.postCtaText
+      postCtaTetwittert = stratoNudgeActionPayload.postCtaTetwittert
     )
 }
 
@@ -762,7 +762,7 @@ case object LocalizedNudge {
 case class TweetVisibilityNudge(
   reason: TweetVisibilityNudgeReason,
   localizedNudge: Option[LocalizedNudge] = None)
-    extends Action {
+    etwittertends Action {
 
   override val severity: Int = 3
   override def toActionThrift(): thriftscala.Action =
@@ -787,15 +787,15 @@ case class TweetVisibilityNudge(
 trait BaseComplianceTweetNotice {
   val complianceTweetNoticeEventType: ComplianceTweetNoticeEventType
   val details: Option[String]
-  val extendedDetailsUrl: Option[String]
+  val etwittertendedDetailsUrl: Option[String]
 }
 
 case class ComplianceTweetNoticePreEnrichment(
   reason: Reason,
   complianceTweetNoticeEventType: ComplianceTweetNoticeEventType,
   details: Option[String] = None,
-  extendedDetailsUrl: Option[String] = None)
-    extends Action
+  etwittertendedDetailsUrl: Option[String] = None)
+    etwittertends Action
     with BaseComplianceTweetNotice {
 
   override val severity: Int = 2
@@ -804,7 +804,7 @@ case class ComplianceTweetNoticePreEnrichment(
       ComplianceTweetNoticeEventTypeConverter.toThrift(complianceTweetNoticeEventType),
       ComplianceTweetNoticeEventTypeConverter.eventTypeToLabelTitle(complianceTweetNoticeEventType),
       details,
-      extendedDetailsUrl
+      etwittertendedDetailsUrl
     )
 
   override def toActionThrift(): thriftscala.Action =
@@ -820,7 +820,7 @@ case class ComplianceTweetNoticePreEnrichment(
       labelTitle = ComplianceTweetNoticeEventTypeConverter.eventTypeToLabelTitle(
         complianceTweetNoticeEventType),
       details = details,
-      extendedDetailsUrl = extendedDetailsUrl
+      etwittertendedDetailsUrl = etwittertendedDetailsUrl
     )
   }
 }
@@ -829,8 +829,8 @@ case class ComplianceTweetNotice(
   complianceTweetNoticeEventType: ComplianceTweetNoticeEventType,
   labelTitle: Option[String] = None,
   details: Option[String] = None,
-  extendedDetailsUrl: Option[String] = None)
-    extends Action
+  etwittertendedDetailsUrl: Option[String] = None)
+    etwittertends Action
     with BaseComplianceTweetNotice {
 
   override val severity: Int = 2
@@ -839,7 +839,7 @@ case class ComplianceTweetNotice(
       ComplianceTweetNoticeEventTypeConverter.toThrift(complianceTweetNoticeEventType),
       labelTitle,
       details,
-      extendedDetailsUrl
+      etwittertendedDetailsUrl
     )
 
   override def toActionThrift(): thriftscala.Action =
@@ -902,15 +902,15 @@ sealed trait State {
 }
 
 object State {
-  case object Pending extends State
-  case object Disabled extends State
-  final case class MissingFeature(features: Set[Feature[_]]) extends State
-  final case class FeatureFailed(features: Map[Feature[_], Throwable]) extends State
-  final case class RuleFailed(throwable: Throwable) extends State
-  case object Skipped extends State
-  case object ShortCircuited extends State
-  case object Heldback extends State
-  case object Evaluated extends State
+  case object Pending etwittertends State
+  case object Disabled etwittertends State
+  final case class MissingFeature(features: Set[Feature[_]]) etwittertends State
+  final case class FeatureFailed(features: Map[Feature[_], Throwable]) etwittertends State
+  final case class RuleFailed(throwable: Throwable) etwittertends State
+  case object Skipped etwittertends State
+  case object ShortCircuited etwittertends State
+  case object Heldback etwittertends State
+  case object Evaluated etwittertends State
 }
 
 case class RuleResult(action: Action, state: State)

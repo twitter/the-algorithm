@@ -6,9 +6,9 @@ import com.twitter.tweetypie.store.TweetStoreEvent.RetryStrategy
 import com.twitter.tweetypie.thriftscala.AsyncIncrBookmarkCountRequest
 import com.twitter.tweetypie.thriftscala.AsyncWriteAction
 
-object IncrBookmarkCount extends TweetStore.SyncModule {
+object IncrBookmarkCount etwittertends TweetStore.SyncModule {
   case class Event(tweetId: TweetId, delta: Int, timestamp: Time)
-      extends SyncTweetStoreEvent("incr_bookmark_count") {
+      etwittertends SyncTweetStoreEvent("incr_bookmark_count") {
     val toAsyncRequest: AsyncIncrBookmarkCountRequest =
       AsyncIncrBookmarkCountRequest(tweetId = tweetId, delta = delta)
   }
@@ -17,7 +17,7 @@ object IncrBookmarkCount extends TweetStore.SyncModule {
     val incrBookmarkCount: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val incrBookmarkCount: FutureEffect[Event] = wrap(underlying.incrBookmarkCount)
   }
 
@@ -37,9 +37,9 @@ object IncrBookmarkCount extends TweetStore.SyncModule {
   }
 }
 
-object AsyncIncrBookmarkCount extends TweetStore.AsyncModule {
+object AsyncIncrBookmarkCount etwittertends TweetStore.AsyncModule {
   case class Event(tweetId: TweetId, delta: Int, timestamp: Time)
-      extends AsyncTweetStoreEvent("async_incr_bookmark_event") {
+      etwittertends AsyncTweetStoreEvent("async_incr_bookmark_event") {
     override def enqueueRetry(service: ThriftTweetService, action: AsyncWriteAction): Future[Unit] =
       Future.Unit
 
@@ -50,7 +50,7 @@ object AsyncIncrBookmarkCount extends TweetStore.AsyncModule {
     def asyncIncrBookmarkCount: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val asyncIncrBookmarkCount: FutureEffect[Event] = wrap(
       underlying.asyncIncrBookmarkCount)
   }
@@ -65,9 +65,9 @@ object AsyncIncrBookmarkCount extends TweetStore.AsyncModule {
   }
 }
 
-object ReplicatedIncrBookmarkCount extends TweetStore.ReplicatedModule {
+object ReplicatedIncrBookmarkCount etwittertends TweetStore.ReplicatedModule {
   case class Event(tweetId: TweetId, delta: Int)
-      extends ReplicatedTweetStoreEvent("replicated_incr_bookmark_count") {
+      etwittertends ReplicatedTweetStoreEvent("replicated_incr_bookmark_count") {
     override def retryStrategy: RetryStrategy = NoRetry
   }
 
@@ -75,7 +75,7 @@ object ReplicatedIncrBookmarkCount extends TweetStore.ReplicatedModule {
     val replicatedIncrBookmarkCount: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val replicatedIncrBookmarkCount: FutureEffect[Event] = wrap(
       underlying.replicatedIncrBookmarkCount)
   }

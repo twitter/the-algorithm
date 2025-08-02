@@ -1,6 +1,6 @@
 package com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations
 
-import com.twitter.ml.api.{Feature, FeatureContext}
+import com.twitter.ml.api.{Feature, FeatureContetwittert}
 import com.twitter.ml.api.constant.SharedFeatures
 
 object UserFeatures {
@@ -11,9 +11,9 @@ object UserFeatures {
       "user.simclusters.interested_in"
     ) // User's interestedIn simcluster embeddding
 
-  val UserCountryFeature = new Feature.Text("user.country") // user's country code
+  val UserCountryFeature = new Feature.Tetwittert("user.country") // user's country code
 
-  val UserLanguageFeature = new Feature.Text("user.language") // user's language
+  val UserLanguageFeature = new Feature.Tetwittert("user.language") // user's language
 
   val FollowedTopicIdFeatures =
     new Feature.SparseBinary(
@@ -42,7 +42,7 @@ object UserFeatures {
       "target_topic.simclusters"
     ) // SimCluster embedding of the target topic
 
-  val FeatureContext = new FeatureContext(
+  val FeatureContetwittert = new FeatureContetwittert(
     UserIdFeature,
     UserSimClusterFeatures,
     UserCountryFeature,

@@ -9,7 +9,7 @@ WITH
     SELECT
         userId64 as userId,
         promotedTweetId as tweetId,
-        UNIX_MILLIS(timestamp) AS tsMillis,
+        UNItwitter_MILLIS(timestamp) AS tsMillis,
         lineItemId
     FROM `twttr-rev-core-data-prod.core_served_impressions.spend`, vars
     WHERE TIMESTAMP(_batchEnd) >= vars.start_date AND TIMESTAMP(_batchEnd) <= vars.end_date
@@ -21,7 +21,7 @@ WITH
   line_items AS (
       SELECT
         id AS lineItemId,
-        end_time.posixTime AS endTime
+        end_time.positwitterTime AS endTime
       FROM
         `twttr-rev-core-data-prod.rev_ads_production.line_items`
   )

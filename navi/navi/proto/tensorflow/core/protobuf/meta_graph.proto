@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -24,7 +24,7 @@ option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobu
 // training, run inference. It can be used to serialize/de-serialize memory
 // objects necessary for running computation in a graph when crossing the
 // process boundary. It can be used for long term storage of graphs,
-// cross-language execution of graphs, etc.
+// cross-language etwitterecution of graphs, etc.
 //   MetaInfoDef
 //   GraphDef
 //   SaverDef
@@ -32,7 +32,7 @@ option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobu
 //   TensorInfo
 //   SignatureDef
 message MetaGraphDef {
-  // Meta information regarding the graph to be exported.  To be used by users
+  // Meta information regarding the graph to be etwitterported.  To be used by users
   // of this protocol buffer to encode information regarding their meta graph.
   message MetaInfoDef {
     // User specified Version string. Can be the name of the model and revision,
@@ -50,7 +50,7 @@ message MetaGraphDef {
     // User supplied tag(s) on the meta_graph and included graph_def.
     //
     // MetaGraphDefs should be tagged with their capabilities or use-cases.
-    // Examples: "train", "serve", "gpu", "tpu", etc.
+    // Etwitteramples: "train", "serve", "gpu", "tpu", etc.
     // These tags enable loaders to access the MetaGraph(s) appropriate for a
     // specific use-case or runtime environment.
     repeated string tags = 4;
@@ -91,7 +91,7 @@ message MetaGraphDef {
   // Asset file def to be used with the defined graph.
   repeated AssetFileDef asset_file_def = 6;
 
-  // Extra information about the structure of functions and stateful objects.
+  // Etwittertra information about the structure of functions and stateful objects.
   SavedObjectGraph object_graph_def = 7;
 }
 
@@ -152,13 +152,13 @@ message MetaGraphDef {
 //                                to_proto=YourPythonObject.to_proto,
 //                                from_proto=YourPythonObject.from_proto)
 //    These functions will be invoked to serialize and de-serialize the
-//    collection. For example,
+//    collection. For etwitterample,
 //    ops.register_proto_function(ops.GraphKeys.GLOBAL_VARIABLES,
 //                                proto_type=variable_pb2.VariableDef,
 //                                to_proto=Variable.to_proto,
 //                                from_proto=Variable.from_proto)
 message CollectionDef {
-  // NodeList is used for collecting nodes in graph. For example
+  // NodeList is used for collecting nodes in graph. For etwitterample
   // collection_def {
   //   key: "summaries"
   //   value {
@@ -173,7 +173,7 @@ message CollectionDef {
   }
 
   // BytesList is used for collecting strings and serialized protobufs. For
-  // example:
+  // etwitterample:
   // collection_def {
   //   key: "trainable_variables"
   //   value {
@@ -243,7 +243,7 @@ message TensorInfo {
     // For dense `Tensor`s, the name of the tensor in the graph.
     string name = 1;
     // There are many possible encodings of sparse matrices
-    // (https://en.wikipedia.org/wiki/Sparse_matrix).  Currently, TensorFlow
+    // (https://en.wikipedia.org/wiki/Sparse_matritwitter).  Currently, TensorFlow
     // uses only the COO encoding.  This is supported and documented in the
     // SparseTensor Python class.
     CooSparse coo_sparse = 4;
@@ -251,7 +251,7 @@ message TensorInfo {
     CompositeTensor composite_tensor = 5;
   }
   DataType dtype = 2;
-  // The static shape should be recorded here, to the extent that it can
+  // The static shape should be recorded here, to the etwittertent that it can
   // be known in advance.  In the case of a SparseTensor, this field describes
   // the logical shape of the represented tensor (aka dense_shape).
   TensorShapeProto tensor_shape = 3;
@@ -260,13 +260,13 @@ message TensorInfo {
 // SignatureDef defines the signature of a computation supported by a TensorFlow
 // graph.
 //
-// For example, a model with two loss computations, sharing a single input,
+// For etwitterample, a model with two loss computations, sharing a single input,
 // might have the following signature_def map, in a MetaGraphDef message.
 //
 // Note that across the two SignatureDefs "loss_A" and "loss_B", the input key,
 // output key, and method_name are identical, and will be used by system(s) that
 // implement or rely upon this particular loss method. The output tensor names
-// differ, demonstrating how different outputs can exist for the same method.
+// differ, demonstrating how different outputs can etwitterist for the same method.
 //
 // signature_def {
 //   key: "loss_A"
@@ -319,7 +319,7 @@ message SignatureDef {
   map<string, TensorInfo> inputs = 1;
   // Named output parameters.
   map<string, TensorInfo> outputs = 2;
-  // Extensible method_name information enabling third-party users to mark a
+  // Etwittertensible method_name information enabling third-party users to mark a
   // SignatureDef as supporting a particular method. This enables producers and
   // consumers of SignatureDefs, e.g. a model definition library and a serving
   // library to have a clear hand-off regarding the semantics of a computation.
@@ -336,7 +336,7 @@ message AssetFileDef {
   // The tensor to bind the asset filename to.
   TensorInfo tensor_info = 1;
   // The filename within an assets directory. Note: does not include the path
-  // prefix, i.e. directories. For an asset at /tmp/path/vocab.txt, the filename
-  // would be "vocab.txt".
+  // prefitwitter, i.e. directories. For an asset at /tmp/path/vocab.ttwittert, the filename
+  // would be "vocab.ttwittert".
   string filename = 2;
 }

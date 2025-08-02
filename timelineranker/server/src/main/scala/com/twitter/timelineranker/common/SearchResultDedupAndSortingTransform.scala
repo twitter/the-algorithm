@@ -10,7 +10,7 @@ import scala.collection.mutable
  * Remove duplicate search results and order them reverse-chron.
  */
 object SearchResultDedupAndSortingTransform
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+    etwittertends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
   def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
     val seenTweetIds = mutable.Set.empty[TweetId]
     val dedupedResults = envelope.searchResults

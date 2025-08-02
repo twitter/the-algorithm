@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.twitter.search.common.partitioning.base.PartitionMappingManager;
 import com.twitter.search.earlybird_root.visitors.MultiTermDisjunctionPerPartitionVisitor;
 import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twitter.search.queryparser.query.QueryParserEtwitterception;
 
 public final class EarlybirdRootQueryUtils {
 
@@ -41,7 +41,7 @@ public final class EarlybirdRootQueryUtils {
         if (q != null && q != query) {
           m.put(i, q);
         }
-      } catch (QueryParserException e) {
+      } catch (QueryParserEtwitterception e) {
         // Should not happen, put and log error here just in case
         m.put(i, query);
         LOG.error(

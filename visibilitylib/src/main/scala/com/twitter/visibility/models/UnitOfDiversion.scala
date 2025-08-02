@@ -6,11 +6,11 @@ trait UnitOfDiversion {
 }
 
 object UnitOfDiversion {
-  case class ConversationId(conversationId: Long) extends UnitOfDiversion {
+  case class ConversationId(conversationId: Long) etwittertends UnitOfDiversion {
     override def apply: (String, Any) = ("conversation_id", conversationId)
   }
 
-  case class TweetId(tweetId: Long) extends UnitOfDiversion {
+  case class TweetId(tweetId: Long) etwittertends UnitOfDiversion {
     override def apply: (String, Any) = ("tweet_id", tweetId)
   }
 }

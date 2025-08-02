@@ -13,7 +13,7 @@ import com.twitter.search.common.facets.CountFacetSearchParam;
 import com.twitter.search.common.facets.FacetSearchParam;
 import com.twitter.search.common.facets.thriftjava.FacetFieldRequest;
 import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
+import com.twitter.search.core.earlybird.indetwitter.inverted.InvertedIndetwitter;
 
 /**
  * Global facet aggregator across all fields.
@@ -32,7 +32,7 @@ public class FacetCountAggregator implements FacetTermCollector {
       List<FacetSearchParam> facetSearchParams,
       Schema schema,
       FacetIDMap facetIDMap,
-      Map<String, InvertedIndex> labelProviderMap) {
+      Map<String, InvertedIndetwitter> labelProviderMap) {
 
     aggregators = Maps.newHashMap();
     facetSearchParamMap = Maps.newHashMap();
@@ -40,12 +40,12 @@ public class FacetCountAggregator implements FacetTermCollector {
     // Check params:
     for (FacetSearchParam facetSearchParam : facetSearchParams) {
       if (!(facetSearchParam instanceof CountFacetSearchParam)) {
-        throw new IllegalArgumentException(
+        throw new IllegalArgumentEtwitterception(
             "this collector only supports CountFacetSearchParam; got " + facetSearchParam);
       }
       if (facetSearchParam.getFacetFieldRequest().getPath() != null
           && !facetSearchParam.getFacetFieldRequest().getPath().isEmpty()) {
-        throw new IllegalArgumentException(
+        throw new IllegalArgumentEtwitterception(
             "this collector dosen't support hierarchical facets: "
             + facetSearchParam.getFacetFieldRequest().getPath());
       }
@@ -55,7 +55,7 @@ public class FacetCountAggregator implements FacetTermCollector {
           schema == null ? null : schema.getFacetFieldByFacetName(field);
 
       if (facetField == null || !labelProviderMap.containsKey(facetField.getName())) {
-        throw new IllegalStateException("facet field: " + field + " is not defined");
+        throw new IllegalStateEtwitterception("facet field: " + field + " is not defined");
       }
 
       int fieldId = facetIDMap.getFacetField(facetField).getFacetId();

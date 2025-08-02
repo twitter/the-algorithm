@@ -8,12 +8,12 @@ import com.twitter.search.common.caching.TopTweetsCacheUtil;
 import com.twitter.search.common.caching.filter.ServicePostProcessor;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class TopTweetsServicePostProcessor
-    extends ServicePostProcessor<EarlybirdRequestContext, EarlybirdResponse> {
+    etwittertends ServicePostProcessor<EarlybirdRequestContetwittert, EarlybirdResponse> {
   private static final Logger LOG = LoggerFactory.getLogger(TopTweetsServicePostProcessor.class);
 
   public static final int CACHE_AGE_IN_MS = 600000;
@@ -26,10 +26,10 @@ public class TopTweetsServicePostProcessor
   }
 
   @Override
-  public void processServiceResponse(EarlybirdRequestContext requestContext,
+  public void processServiceResponse(EarlybirdRequestContetwittert requestContetwittert,
                                      EarlybirdResponse serviceResponse) {
 
-    EarlybirdRequest originalRequest = requestContext.getRequest();
+    EarlybirdRequest originalRequest = requestContetwittert.getRequest();
     LOG.debug("Writing to top tweets cache. Request: {}, Response: {}",
         originalRequest, serviceResponse);
     TopTweetsCacheUtil.cacheResults(originalRequest,

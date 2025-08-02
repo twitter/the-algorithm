@@ -2,18 +2,18 @@ package com.twitter.tweetypie.decider.overrides
 
 import com.twitter.decider.LocalOverrides
 
-object TweetyPieDeciderOverrides extends LocalOverrides.Namespace("tweetypie", "tweetypie_") {
+object TweetyPieDeciderOverrides etwittertends LocalOverrides.Namespace("tweetypie", "tweetypie_") {
   val CheckSpamOnRetweet: LocalOverrides.Override = feature("check_spam_on_retweet")
   val CheckSpamOnTweet: LocalOverrides.Override = feature("check_spam_on_tweet")
   val ConversationControlUseFeatureSwitchResults: LocalOverrides.Override = feature(
     "conversation_control_use_feature_switch_results")
   val ConversationControlTweetCreateEnabled: LocalOverrides.Override = feature(
     "conversation_control_tweet_create_enabled")
-  val EnableExclusiveTweetControlValidation: LocalOverrides.Override = feature(
-    "enable_exclusive_tweet_control_validation")
+  val EnableEtwitterclusiveTweetControlValidation: LocalOverrides.Override = feature(
+    "enable_etwitterclusive_tweet_control_validation")
   val EnableHotKeyCaches: LocalOverrides.Override = feature("enable_hot_key_caches")
   val HydrateConversationMuted: LocalOverrides.Override = feature("hydrate_conversation_muted")
-  val HydrateExtensionsOnWrite: LocalOverrides.Override = feature("hydrate_extensions_on_write")
+  val HydrateEtwittertensionsOnWrite: LocalOverrides.Override = feature("hydrate_etwittertensions_on_write")
   val HydrateEscherbirdAnnotations: LocalOverrides.Override = feature(
     "hydrate_escherbird_annotations")
   val HydrateGnipProfileGeoEnrichment: LocalOverrides.Override = feature(
@@ -22,7 +22,7 @@ object TweetyPieDeciderOverrides extends LocalOverrides.Namespace("tweetypie", "
   val HydratePerspectivesEditsForOtherSafetyLevels: LocalOverrides.Override = feature(
     "hydrate_perspectives_edits_for_other_levels")
   val HydrateScrubEngagements: LocalOverrides.Override = feature("hydrate_scrub_engagements")
-  val LogRepoExceptions: LocalOverrides.Override = feature("log_repo_exceptions")
+  val LogRepoEtwitterceptions: LocalOverrides.Override = feature("log_repo_etwitterceptions")
   val MediaRefsHydratorIncludePastedMedia: LocalOverrides.Override = feature(
     "media_refs_hydrator_include_pasted_media")
   val ShortCircuitLikelyPartialTweetReads: LocalOverrides.Override = feature(

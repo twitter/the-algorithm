@@ -5,17 +5,17 @@ import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.ml.api.Feature.Continuous
 import com.twitter.ml.api.util.FDsl._
 import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
+import com.twitter.ml.api.FeatureContetwittert
 import com.twitter.ml.api.IRecordOneToOneAdapter
 import com.twitter.util.Time
 
 /**
  * This adapter mimics UserRecentWTFImpressionsAndFollowsAdapter (for user) and
- * RecentWTFImpressionsFeatureAdapter (for candidate) for extracting recent impression
- * and follow features. This adapter extracts user, candidate, and pair-wise features.
+ * RecentWTFImpressionsFeatureAdapter (for candidate) for etwittertracting recent impression
+ * and follow features. This adapter etwittertracts user, candidate, and pair-wise features.
  */
 object PreFetchedFeatureAdapter
-    extends IRecordOneToOneAdapter[
+    etwittertends IRecordOneToOneAdapter[
       (HasPreFetchedFeature, CandidateUser)
     ] {
 
@@ -74,10 +74,10 @@ object PreFetchedFeatureAdapter
     dr.setFeatureValue(USER_NUM_RECENT_FOLLOWED_IMPRESSIONS, target.numFollowedImpressions.toDouble)
     dr.setFeatureValue(
       USER_LAST_FOLLOWED_IMPRESSION_DURATION,
-      target.lastFollowedImpressionDurationMs.getOrElse(Long.MaxValue).toDouble)
+      target.lastFollowedImpressionDurationMs.getOrElse(Long.MatwitterValue).toDouble)
     dr
   }
-  override def getFeatureContext: FeatureContext = new FeatureContext(
+  override def getFeatureContetwittert: FeatureContetwittert = new FeatureContetwittert(
     USER_NUM_RECENT_IMPRESSIONS,
     USER_LAST_IMPRESSION_DURATION,
     CANDIDATE_NUM_RECENT_IMPRESSIONS,

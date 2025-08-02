@@ -6,14 +6,14 @@ import com.twitter.ml.api.DataSetPipe
 import com.twitter.scalding._
 import com.twitter.scalding.typed.TypedPipe
 import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv2.remote_access.EtwitterplicitLocation
 import com.twitter.scalding_internal.dalv2.remote_access.Proc3Atla
-import com.twitter.scalding_internal.job.TwitterExecutionApp
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
 import com.twitter.simclusters_v2.hdfs_sources.TweetSimilarityUnhydratedPairsSource
-import com.twitter.simclusters_v2.scalding.common.LogFavBasedPersistentTweetEmbeddingMhExportSource
+import com.twitter.simclusters_v2.scalding.common.LogFavBasedPersistentTweetEmbeddingMhEtwitterportSource
 import com.twitter.simclusters_v2.scalding.tweet_similarity.TweetPairLabelCollectionUtil.FeaturedTweet
 import com.twitter.simclusters_v2.thriftscala.LabelledTweetPairs
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
+import com.twitter.wtf.scalding.jobs.common.ScheduledEtwitterecutionApp
 import java.util.TimeZone
 
 /**
@@ -33,7 +33,7 @@ object TrainingDataCollectionJob {
   ): DataSetPipe = {
 
     val persistentEmbeddingRecords =
-      TypedPipe.from(new LogFavBasedPersistentTweetEmbeddingMhExportSource(range = dateRange))
+      TypedPipe.from(new LogFavBasedPersistentTweetEmbeddingMhEtwitterportSource(range = dateRange))
 
     val tweetAuthorPairs =
       TweetPairLabelCollectionUtil.getTweetAuthorPairs(dateRange.prepend(Days(LookbackDays)))
@@ -62,7 +62,7 @@ object TrainingDataCollectionJob {
       useAuthorFeatures)
   }
 
-  def getTrainTestExec(
+  def getTrainTestEtwitterec(
     dataSetPipe: DataSetPipe,
     splitBy: Option[String],
     trainDataset: TimePartitionedDALDataset[DataRecord],
@@ -71,17 +71,17 @@ object TrainingDataCollectionJob {
   )(
     implicit timeZone: TimeZone,
     dateRange: DateRange
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     splitBy match {
       case Some("time") =>
-        TrainingDataCollectionUtil.getTrainTestByTimeExec(
+        TrainingDataCollectionUtil.getTrainTestByTimeEtwitterec(
           dataSetPipe,
           dateRange.end - Hours(testLookbackHours),
           trainDataset,
           testDataset,
           outputPath)(dateRange)
       case Some("query_tweet") =>
-        TrainingDataCollectionUtil.getTrainTestByQueryExec(
+        TrainingDataCollectionUtil.getTrainTestByQueryEtwitterec(
           dataSetPipe,
           testRatio,
           trainDataset,
@@ -89,7 +89,7 @@ object TrainingDataCollectionJob {
           outputPath)(dateRange)
       // Default at no splitting
       case _ =>
-        TrainingDataCollectionUtil.getTrainTestByQueryExec(
+        TrainingDataCollectionUtil.getTrainTestByQueryEtwitterec(
           dataSetPipe,
           0.0,
           trainDataset,
@@ -103,20 +103,20 @@ object TrainingDataCollectionJob {
 scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/tweet_similarity:training_data_collection-adhoc \
 --user cassowary \
 --submitter hadoopnest2.atla.twitter.com \
---hadoop-properties "mapreduce.reduce.java.opts=-Xmx8000m mapreduce.reduce.memory.mb=8000 scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=2000 mapreduce.task.timeout=0" \
+--hadoop-properties "mapreduce.reduce.java.opts=-twittermtwitter8000m mapreduce.reduce.memory.mb=8000 scalding.with.reducers.set.etwitterplicitly=true mapreduce.job.reduces=2000 mapreduce.task.timeout=0" \
 --main-class com.twitter.simclusters_v2.scalding.tweet_similarity.TrainingDataCollectionAdhocApp -- \
 --date 2020-04-15 \
 --input_path /user/cassowary/adhoc/unhydrated_pairs/2020-04-15_30min/ \
---output_path /user/cassowary/adhoc/training_data/2020-04-15_30min_2xneg_qtweet_split \
+--output_path /user/cassowary/adhoc/training_data/2020-04-15_30min_2twitterneg_qtweet_split \
 --split_by query_tweet
  * */
-object TrainingDataCollectionAdhocApp extends TwitterExecutionApp {
+object TrainingDataCollectionAdhocApp etwittertends TwitterEtwitterecutionApp {
   implicit val timeZone: TimeZone = DateOps.UTC
   implicit val dateParser: DateParser = DateParser.default
 
-  override def job: Execution[Unit] =
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args: Args =>
+  override def job: Etwitterecution[Unit] =
+    Etwitterecution.withId { implicit uniqueId =>
+      Etwitterecution.withArgs { args: Args =>
         implicit val dateRange: DateRange = DateRange.parse(args.list("date"))
         val useAuthorFeatures: Boolean = args.boolean("use_author_features")
         val inputPath: String = args("input_path")
@@ -131,7 +131,7 @@ object TrainingDataCollectionAdhocApp extends TwitterExecutionApp {
           useAuthorFeatures,
           labelledPairs
         )
-        TrainingDataCollectionJob.getTrainTestExec(
+        TrainingDataCollectionJob.getTrainTestEtwitterec(
           dataSetPipe,
           splitBy,
           TweetSimilarityTrainDatarecords30MinJavaDataset,
@@ -146,7 +146,7 @@ object TrainingDataCollectionAdhocApp extends TwitterExecutionApp {
   capesospy-v2 update --build_locally --start_cron \
   training_data_collection_30min src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
-object TrainingDataCollection30MinScheduledApp extends ScheduledExecutionApp {
+object TrainingDataCollection30MinScheduledApp etwittertends ScheduledEtwitterecutionApp {
 
   private val outputPath: String =
     "/user/cassowary/processed/tweet_similarity/training_data_30min"
@@ -161,13 +161,13 @@ object TrainingDataCollection30MinScheduledApp extends ScheduledExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val useAuthorFeatures: Boolean = args.boolean("use_author_features")
     val splitBy: Option[String] = args.optional("split_by")
 
     val unhydratedPairs = DAL
       .read(TweetSimilarityUnhydratedPairs30MinScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(Proc3Atla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(Proc3Atla))
       .toTypedPipe
 
     val dataSetPipe = TrainingDataCollectionJob.getHydratedDataPipe(
@@ -175,7 +175,7 @@ object TrainingDataCollection30MinScheduledApp extends ScheduledExecutionApp {
       useAuthorFeatures,
       unhydratedPairs
     )
-    TrainingDataCollectionJob.getTrainTestExec(
+    TrainingDataCollectionJob.getTrainTestEtwitterec(
       dataSetPipe,
       splitBy,
       TweetSimilarityTrainDatarecords30MinJavaDataset,
@@ -188,7 +188,7 @@ object TrainingDataCollection30MinScheduledApp extends ScheduledExecutionApp {
 capesospy-v2 update --build_locally --start_cron \
   training_data_collection_120min src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
-object TrainingDataCollection120MinScheduledApp extends ScheduledExecutionApp {
+object TrainingDataCollection120MinScheduledApp etwittertends ScheduledEtwitterecutionApp {
 
   private val outputPath: String =
     "/user/cassowary/processed/tweet_similarity/training_data_120min"
@@ -203,13 +203,13 @@ object TrainingDataCollection120MinScheduledApp extends ScheduledExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val useAuthorFeatures: Boolean = args.boolean("use_author_features")
     val splitBy: Option[String] = args.optional("split_by")
 
     val unhydratedPairs = DAL
       .read(TweetSimilarityUnhydratedPairs120MinScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(Proc3Atla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(Proc3Atla))
       .toTypedPipe
 
     val dataSetPipe = TrainingDataCollectionJob.getHydratedDataPipe(
@@ -218,7 +218,7 @@ object TrainingDataCollection120MinScheduledApp extends ScheduledExecutionApp {
       unhydratedPairs
     )
 
-    TrainingDataCollectionJob.getTrainTestExec(
+    TrainingDataCollectionJob.getTrainTestEtwitterec(
       dataSetPipe,
       splitBy,
       TweetSimilarityTrainDatarecords120MinJavaDataset,

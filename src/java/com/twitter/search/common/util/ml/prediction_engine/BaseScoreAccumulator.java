@@ -43,6 +43,6 @@ public abstract class BaseScoreAccumulator<D> {
    * Returns the score as a value mapped between 0 and 1.
    */
   protected final double getSigmoidScore() {
-    return 1 / (1 + Math.exp(-score));
+    return 1 / (1 + Math.etwitterp(-score));
   }
 }

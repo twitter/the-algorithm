@@ -13,7 +13,7 @@ import com.twitter.search.earlybird.config.TierServingBoundaryEndPoint;
 public class RootClusterBoundaryInfo implements ServingRange {
 
   private final TierServingBoundaryEndPoint servingRangeSince;
-  private final TierServingBoundaryEndPoint servingRangeMax;
+  private final TierServingBoundaryEndPoint servingRangeMatwitter;
 
   /**
    * Build a time boundary information
@@ -22,20 +22,20 @@ public class RootClusterBoundaryInfo implements ServingRange {
       Date startDate,
       Date clusterEndDate,
       String sinceIdBoundaryString,
-      String maxIdBoundaryString,
+      String matwitterIdBoundaryString,
       Clock clock) {
     this.servingRangeSince = TierServingBoundaryEndPoint
         .newTierServingBoundaryEndPoint(sinceIdBoundaryString, startDate, clock);
-    this.servingRangeMax = TierServingBoundaryEndPoint
-        .newTierServingBoundaryEndPoint(maxIdBoundaryString, clusterEndDate, clock);
+    this.servingRangeMatwitter = TierServingBoundaryEndPoint
+        .newTierServingBoundaryEndPoint(matwitterIdBoundaryString, clusterEndDate, clock);
   }
 
   public long getServingRangeSinceId() {
     return servingRangeSince.getBoundaryTweetId();
   }
 
-  public long getServingRangeMaxId() {
-    return servingRangeMax.getBoundaryTweetId();
+  public long getServingRangeMatwitterId() {
+    return servingRangeMatwitter.getBoundaryTweetId();
   }
 
   public long getServingRangeSinceTimeSecondsFromEpoch() {
@@ -43,6 +43,6 @@ public class RootClusterBoundaryInfo implements ServingRange {
   }
 
   public long getServingRangeUntilTimeSecondsFromEpoch() {
-    return servingRangeMax.getBoundaryTimeSecondsFromEpoch();
+    return servingRangeMatwitter.getBoundaryTimeSecondsFromEpoch();
   }
 }

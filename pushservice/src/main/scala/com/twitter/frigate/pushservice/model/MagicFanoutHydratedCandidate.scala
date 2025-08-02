@@ -2,7 +2,7 @@ package com.twitter.frigate.pushservice.model
 
 import com.twitter.escherbird.common.thriftscala.QualifiedId
 import com.twitter.escherbird.metadata.thriftscala.BasicMetadata
-import com.twitter.escherbird.metadata.thriftscala.EntityIndexFields
+import com.twitter.escherbird.metadata.thriftscala.EntityIndetwitterFields
 import com.twitter.escherbird.metadata.thriftscala.EntityMegadata
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base.MagicFanoutCandidate
@@ -61,13 +61,13 @@ object FanoutReasonEntities {
   }
 }
 
-trait MagicFanoutHydratedCandidate extends PushCandidate with MagicFanoutCandidate {
+trait MagicFanoutHydratedCandidate etwittertends PushCandidate with MagicFanoutCandidate {
   lazy val fanoutReasonEntities: FanoutReasonEntities =
     FanoutReasonEntities.from(candidateMagicEventsReasons.map(_.reason))
 }
 
 trait MagicFanoutEventHydratedCandidate
-    extends MagicFanoutHydratedCandidate
+    etwittertends MagicFanoutHydratedCandidate
     with MagicFanoutEventCandidate
     with RichEventFutCandidate {
 
@@ -109,8 +109,8 @@ trait MagicFanoutEventHydratedCandidate
         for {
           entityMegadata <- entityMegadataOpt
           basicMetadata: BasicMetadata <- entityMegadata.basicMetadata
-          indexableFields: EntityIndexFields <- basicMetadata.indexableFields
-          tags <- indexableFields.tags
+          indetwitterableFields: EntityIndetwitterFields <- basicMetadata.indetwitterableFields
+          tags <- indetwitterableFields.tags
         } yield {
           ((semanticEntityForQuery.domainId, semanticEntityForQuery.entityId), tags.toSet)
         }
@@ -136,7 +136,7 @@ trait MagicFanoutEventHydratedCandidate
   override lazy val eventResultFut: Future[Event] = eventFut.map {
     case Some(eventResult) => eventResult
     case _ =>
-      throw new IllegalArgumentException("event is None for MagicFanoutEventHydratedCandidate")
+      throw new IllegalArgumentEtwitterception("event is None for MagicFanoutEventHydratedCandidate")
   }
   override val rankScore: Option[Double] = None
   override val predictionScore: Option[Double] = None

@@ -5,7 +5,7 @@ import com.twitter.escherbird.common.thriftscala.Domains
 import com.twitter.escherbird.metadata.thriftscala.EntityMegadata
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
+import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContetwittert
 import com.twitter.frigate.magic_events.thriftscala.FanoutEvent
 import com.twitter.frigate.magic_events.thriftscala.MagicEventsReason
 import com.twitter.frigate.magic_events.thriftscala.TargetID
@@ -61,17 +61,17 @@ object CandidateHydrationUtil {
     }.toMap
   }
 
-  private def getTweetCandidateSocialContextUsers(
-    candidate: RawCandidate with SocialContextActions,
+  private def getTweetCandidateSocialContetwittertUsers(
+    candidate: RawCandidate with SocialContetwittertActions,
     userMap: Map[Long, User]
   ): Map[Long, Option[User]] = {
-    candidate.socialContextUserIds.map { userId => userId -> userMap.get(userId) }.toMap
+    candidate.socialContetwittertUserIds.map { userId => userId -> userMap.get(userId) }.toMap
   }
 
-  type TweetWithSocialContextTraits = TweetCandidate with TweetDetails with SocialContextActions
+  type TweetWithSocialContetwittertTraits = TweetCandidate with TweetDetails with SocialContetwittertActions
 
   def getHydratedCandidateForTweetRetweet(
-    candidate: RawCandidate with TweetWithSocialContextTraits,
+    candidate: RawCandidate with TweetWithSocialContetwittertTraits,
     userMap: Map[Long, User],
     copyIds: CopyIds
   )(
@@ -80,14 +80,14 @@ object CandidateHydrationUtil {
   ): TweetRetweetPushCandidate = {
     new TweetRetweetPushCandidate(
       candidate = candidate,
-      socialContextUserMap = Future.value(getTweetCandidateSocialContextUsers(candidate, userMap)),
+      socialContetwittertUserMap = Future.value(getTweetCandidateSocialContetwittertUsers(candidate, userMap)),
       author = Future.value(getCandidateAuthorFromUserMap(candidate, userMap)),
       copyIds: CopyIds
     )
   }
 
   def getHydratedCandidateForTweetFavorite(
-    candidate: RawCandidate with TweetWithSocialContextTraits,
+    candidate: RawCandidate with TweetWithSocialContetwittertTraits,
     userMap: Map[Long, User],
     copyIds: CopyIds
   )(
@@ -96,7 +96,7 @@ object CandidateHydrationUtil {
   ): TweetFavoritePushCandidate = {
     new TweetFavoritePushCandidate(
       candidate = candidate,
-      socialContextUserMap = Future.value(getTweetCandidateSocialContextUsers(candidate, userMap)),
+      socialContetwittertUserMap = Future.value(getTweetCandidateSocialContetwittertUsers(candidate, userMap)),
       author = Future.value(getCandidateAuthorFromUserMap(candidate, userMap)),
       copyIds = copyIds
     )
@@ -244,7 +244,7 @@ object CandidateHydrationUtil {
             semanticEntityResults
           )
         case _ =>
-          throw new IllegalArgumentException(
+          throw new IllegalArgumentEtwitterception(
             "event candidate hydration errors" + candidate.frigateNotification.toString)
       }
   }
@@ -252,11 +252,11 @@ object CandidateHydrationUtil {
   def getHydratedCandidateForMagicFanoutNewsEvent(
     candidate: RawCandidate with MagicFanoutNewsEventCandidate,
     copyIds: CopyIds,
-    lexServiceStore: ReadableStore[EventRequest, LiveEvent],
+    letwitterServiceStore: ReadableStore[EventRequest, LiveEvent],
     fanoutMetadataStore: ReadableStore[(Long, Long), FanoutEvent],
     semanticCoreMegadataStore: ReadableStore[SemanticEntityForQuery, EntityMegadata],
     simClusterToEntityStore: ReadableStore[Int, SimClustersInferredEntities],
-    interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests],
+    interestsLookupStore: ReadableStore[InterestsLookupRequestWithContetwittert, UserInterests],
     uttEntityHydrationStore: UttEntityHydrationStore
   )(
     implicit stats: StatsReceiver,
@@ -289,7 +289,7 @@ object CandidateHydrationUtil {
             fanoutEvent = magicFanoutEventHydratedInfo.fanoutEvent,
             semanticEntityResults = magicFanoutEventHydratedInfo.semanticEntityResults,
             simClusterToEntities = simClusterToEntityMapping,
-            lexServiceStore = lexServiceStore,
+            letwitterServiceStore = letwitterServiceStore,
             interestsLookupStore = interestsLookupStore,
             uttEntityHydrationStore = uttEntityHydrationStore
           )
@@ -301,10 +301,10 @@ object CandidateHydrationUtil {
       with MagicFanoutSportsEventCandidate
       with MagicFanoutSportsScoreInformation,
     copyIds: CopyIds,
-    lexServiceStore: ReadableStore[EventRequest, LiveEvent],
+    letwitterServiceStore: ReadableStore[EventRequest, LiveEvent],
     fanoutMetadataStore: ReadableStore[(Long, Long), FanoutEvent],
     semanticCoreMegadataStore: ReadableStore[SemanticEntityForQuery, EntityMegadata],
-    interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests],
+    interestsLookupStore: ReadableStore[InterestsLookupRequestWithContetwittert, UserInterests],
     uttEntityHydrationStore: UttEntityHydrationStore
   )(
     implicit stats: StatsReceiver,
@@ -323,7 +323,7 @@ object CandidateHydrationUtil {
         fanoutEvent = magicFanoutEventHydratedInfo.fanoutEvent,
         semanticEntityResults = magicFanoutEventHydratedInfo.semanticEntityResults,
         simClusterToEntities = Map.empty,
-        lexServiceStore = lexServiceStore,
+        letwitterServiceStore = letwitterServiceStore,
         interestsLookupStore = interestsLookupStore,
         uttEntityHydrationStore = uttEntityHydrationStore
       )
@@ -378,8 +378,8 @@ object CandidateHydrationUtil {
           )
         }
       case _ =>
-        Future.exception(
-          new IllegalStateException(
+        Future.etwitterception(
+          new IllegalStateEtwitterception(
             "Missing Space Host Id for hydrating ScheduledSpaceSubscriberCandidate"))
     }
   }
@@ -405,8 +405,8 @@ object CandidateHydrationUtil {
           )
         }
       case _ =>
-        Future.exception(
-          new RuntimeException(
+        Future.etwitterception(
+          new RuntimeEtwitterception(
             "Missing Space Host Id for hydrating ScheduledSpaceSpeakerCandidate"))
     }
   }
@@ -425,7 +425,7 @@ object CandidateHydrationUtil {
   }
 
   def isNsfwAccount(user: User, nsfwTokens: Seq[String]): Boolean = {
-    def hasNsfwToken(str: String): Boolean = nsfwTokens.exists(str.toLowerCase().contains(_))
+    def hasNsfwToken(str: String): Boolean = nsfwTokens.etwitterists(str.toLowerCase().contains(_))
 
     val name = user.profile.map(_.name).getOrElse("")
     val screenName = user.profile.map(_.screenName).getOrElse("")

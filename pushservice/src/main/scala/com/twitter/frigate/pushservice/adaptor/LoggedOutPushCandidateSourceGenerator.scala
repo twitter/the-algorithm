@@ -10,8 +10,8 @@ import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
 import com.twitter.storehaus.ReadableStore
 import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
 import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweets
-import com.twitter.content_mixer.thriftscala.ContentMixerRequest
-import com.twitter.content_mixer.thriftscala.ContentMixerResponse
+import com.twitter.content_mitwitterer.thriftscala.ContentMitwittererRequest
+import com.twitter.content_mitwitterer.thriftscala.ContentMitwittererResponse
 import com.twitter.geoduck.common.thriftscala.Location
 import com.twitter.hermit.pop_geo.thriftscala.PopTweetsInPlace
 import com.twitter.recommendation.interests.discovery.core.model.InterestDomain
@@ -22,7 +22,7 @@ class LoggedOutPushCandidateSourceGenerator(
   safeCachedTweetyPieStoreV2: ReadableStore[Long, TweetyPieResult],
   cachedTweetyPieStoreV2NoVF: ReadableStore[Long, TweetyPieResult],
   cachedTweetyPieStoreV2: ReadableStore[Long, TweetyPieResult],
-  contentMixerStore: ReadableStore[ContentMixerRequest, ContentMixerResponse],
+  contentMitwittererStore: ReadableStore[ContentMitwittererRequest, ContentMitwittererResponse],
   softUserLocationStore: ReadableStore[Long, Location],
   topTweetsByGeoStore: ReadableStore[InterestDomain[String], Map[String, List[(Long, Double)]]],
   topTweetsByGeoV2VersionedStore: ReadableStore[String, PopTweetsInPlace],
@@ -35,7 +35,7 @@ class LoggedOutPushCandidateSourceGenerator(
     Seq(
       TripGeoCandidatesAdaptor(
         tripTweetCandidateStore,
-        contentMixerStore,
+        contentMitwittererStore,
         safeCachedTweetyPieStoreV2,
         cachedTweetyPieStoreV2NoVF,
         globalStats

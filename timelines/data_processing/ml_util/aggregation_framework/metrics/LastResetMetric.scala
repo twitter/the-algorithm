@@ -6,7 +6,7 @@ import com.twitter.ml.api.util.SRichDataRecord
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.ConversionUtils._
 import com.twitter.util.Duration
 import com.twitter.util.Time
-import scala.math.max
+import scala.math.matwitter
 
 /**
  * This metric measures how recently an action has taken place. A value of 1.0
@@ -14,7 +14,7 @@ import scala.math.max
  * action has not taken place and is reset to 1 when the action happens. So lower
  * value indicates a stale or older action.
  *
- * For example consider an action of "user liking a video". The last reset metric
+ * For etwitterample consider an action of "user liking a video". The last reset metric
  * value changes as follows for a half life of 1 day.
  *
  * ----------------------------------------------------------------------------
@@ -28,7 +28,7 @@ import scala.math.max
  *
  * @tparam T
  */
-case class TypedLastResetMetric[T]() extends TimedValueAggregationMetric[T] {
+case class TypedLastResetMetric[T]() etwittertends TimedValueAggregationMetric[T] {
   import AggregationMetricCommon._
 
   override val operatorName = "last_reset"
@@ -38,13 +38,13 @@ case class TypedLastResetMetric[T]() extends TimedValueAggregationMetric[T] {
     feature: Option[Feature[T]],
     timestampFeature: Feature[JLong]
   ): TimedValue[Double] = {
-    val featureExists: Boolean = feature match {
+    val featureEtwitterists: Boolean = feature match {
       case Some(f) => SRichDataRecord(record).hasFeature(f)
       case None => true
     }
 
     TimedValue[Double](
-      value = booleanToDouble(featureExists),
+      value = booleanToDouble(featureEtwitterists),
       timestamp = Time.fromMilliseconds(getTimestamp(record, timestampFeature))
     )
   }
@@ -83,7 +83,7 @@ case class TypedLastResetMetric[T]() extends TimedValueAggregationMetric[T] {
     }
 
     TimedValue[Double](
-      value = max(newerTimedValue.value, optionallyDecayedOlderValue),
+      value = matwitter(newerTimedValue.value, optionallyDecayedOlderValue),
       timestamp = newerTimedValue.timestamp
     )
   }
@@ -99,7 +99,7 @@ case class TypedLastResetMetric[T]() extends TimedValueAggregationMetric[T] {
  * any feature type as opposed to being tied to a specific type.
  * See EasyMetric.scala for more details on why this is useful.
  */
-object LastResetMetric extends EasyMetric {
+object LastResetMetric etwittertends EasyMetric {
   override def forFeatureType[T](
     featureType: FeatureType
   ): Option[AggregationMetric[T, _]] =

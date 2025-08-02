@@ -24,14 +24,14 @@ object ResponseStatsTrackUtils {
     )
 
     val broadcastStats = BroadcastStatsReceiver(receivers)
-    val broadcastStatsWithExpts = BroadcastStatsReceiver(newReceivers ++ receivers)
+    val broadcastStatsWithEtwitterpts = BroadcastStatsReceiver(newReceivers ++ receivers)
 
     if (response.status == PushStatus.Sent) {
       if (target.isModelTrainingData) {
         broadcastStats.counter("num_training_data_recs_sent").incr()
       }
     }
-    broadcastStatsWithExpts.counter(response.status.toString).incr()
+    broadcastStatsWithEtwitterpts.counter(response.status.toString).incr()
     if (response.status == PushStatus.Filtered) {
       broadcastStats
         .scope(response.status.toString)

@@ -10,7 +10,7 @@ using namespace tensorflow;
 REGISTER_OP("FeatureId")
 .Attr("feature_names: list(string)")
 .Output("output: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 
@@ -29,18 +29,18 @@ class FeatureId : public OpKernel {
     std::vector<string> input_vector;
 
  public:
-  explicit FeatureId(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_names", &input_vector));
+  etwitterplicit FeatureId(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("feature_names", &input_vector));
   }
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     // Get size of the input_vector and create TensorShape shape
     const int total_size = static_cast<int>(input_vector.size());
     TensorShape shape = {total_size};
 
     // Create an output tensor
     Tensor* output_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, shape,
+    OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, shape,
                              &output_tensor));
     auto output_flat = output_tensor->flat<int64>();
 

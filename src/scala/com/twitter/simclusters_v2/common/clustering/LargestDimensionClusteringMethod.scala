@@ -3,7 +3,7 @@ package com.twitter.simclusters_v2.common.clustering
 /**
  * Groups entities by a single embedding dimension with the largest score.
  */
-class LargestDimensionClusteringMethod extends ClusteringMethod {
+class LargestDimensionClusteringMethod etwittertends ClusteringMethod {
 
   /**
    * @param embeddings   map of entity IDs and corresponding embeddings

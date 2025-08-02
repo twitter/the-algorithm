@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -20,10 +20,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.twitter.common_internal.analytics.test_user_filter.TestUserFilter;
-import com.twitter.common_internal.text.version.PenguinVersion;
+import com.twitter.common_internal.tetwittert.version.PenguinVersion;
 import com.twitter.metastore.client_v2.MetastoreClient;
 import com.twitter.metastore.data.MetastoreColumn;
-import com.twitter.metastore.data.MetastoreException;
+import com.twitter.metastore.data.MetastoreEtwitterception;
 import com.twitter.metastore.data.MetastoreRow;
 import com.twitter.metastore.data.MetastoreValue;
 import com.twitter.search.common.metrics.RelevanceStats;
@@ -42,7 +42,7 @@ public class UserPropertiesManager {
   private static final Logger LOG = LoggerFactory.getLogger(UserPropertiesManager.class);
 
   @VisibleForTesting
-  protected static final List<MetastoreColumn<? extends TBase<?, ?>>> COLUMNS =
+  protected static final List<MetastoreColumn<? etwittertends TBase<?, ?>>> COLUMNS =
       ImmutableList.of(MetastoreColumn.TWEEPCRED);           // contains tweepcred value
 
   // same spam threshold that is use in tweeypie to spread user level spam to tweets, all tweets
@@ -52,42 +52,42 @@ public class UserPropertiesManager {
 
   @VisibleForTesting
   static final SearchRequestStats MANHATTAN_METASTORE_STATS =
-      SearchRequestStats.export("manhattan_metastore_get", true);
+      SearchRequestStats.etwitterport("manhattan_metastore_get", true);
 
   private static final MetastoreGetColumnStats GET_TWEEP_CRED
       = new MetastoreGetColumnStats("tweep_cred");
 
   @VisibleForTesting
-  static final SearchRateCounter MISSING_REPUTATION_COUNTER = RelevanceStats.exportRate(
+  static final SearchRateCounter MISSING_REPUTATION_COUNTER = RelevanceStats.etwitterportRate(
       "num_missing_reputation");
   @VisibleForTesting
-  static final SearchRateCounter INVALID_REPUTATION_COUNTER = RelevanceStats.exportRate(
+  static final SearchRateCounter INVALID_REPUTATION_COUNTER = RelevanceStats.etwitterportRate(
       "num_invalid_reputation");
   @VisibleForTesting
-  static final SearchRateCounter ACCEPTED_REPUTATION_COUNTER = RelevanceStats.exportRate(
+  static final SearchRateCounter ACCEPTED_REPUTATION_COUNTER = RelevanceStats.etwitterportRate(
       "num_accepted_reputation");
   @VisibleForTesting
-  static final SearchRateCounter SKIPPED_REPUTATION_CHECK_COUNTER = RelevanceStats.exportRate(
+  static final SearchRateCounter SKIPPED_REPUTATION_CHECK_COUNTER = RelevanceStats.etwitterportRate(
       "num_skipped_reputation_check_for_test_user");
   @VisibleForTesting
-  static final SearchCounter DEFAULT_REPUTATION_COUNTER = SearchCounter.export(
+  static final SearchCounter DEFAULT_REPUTATION_COUNTER = SearchCounter.etwitterport(
       "messages_default_reputation_count");
   @VisibleForTesting
   static final SearchCounter MESSAGE_FROM_TEST_USER =
-      SearchCounter.export("messages_from_test_user");
+      SearchCounter.etwitterport("messages_from_test_user");
 
   // User level bits that are spread onto tweets
-  private static final SearchRateCounter IS_USER_NSFW_COUNTER = RelevanceStats.exportRate(
+  private static final SearchRateCounter IS_USER_NSFW_COUNTER = RelevanceStats.etwitterportRate(
       "num_is_nsfw");
-  private static final SearchRateCounter IS_USER_SPAM_COUNTER = RelevanceStats.exportRate(
+  private static final SearchRateCounter IS_USER_SPAM_COUNTER = RelevanceStats.etwitterportRate(
       "num_is_spam");
 
   // count how many tweets has "possibly_sensitive" set to true in the original json message
-  private static final SearchRateCounter IS_SENSITIVE_FROM_JSON_COUNTER = RelevanceStats.exportRate(
+  private static final SearchRateCounter IS_SENSITIVE_FROM_JSON_COUNTER = RelevanceStats.etwitterportRate(
       "num_is_sensitive_in_json");
 
   private static final SearchCounter SENSITIVE_BITS_COUNTER =
-      SearchCounter.export("messages_sensitive_bits_set_count");
+      SearchCounter.etwitterport("messages_sensitive_bits_set_count");
 
   private final MetastoreClient metastoreClient;
   private final UserPropertiesManager.MetastoreGetColumnStats tweepCredStats;
@@ -130,23 +130,23 @@ public class UserPropertiesManager {
     private final SearchCounter totalRequests;
 
     @VisibleForTesting MetastoreGetColumnStats(String columnName) {
-      String prefix = "manhattan_metastore_get_" + columnName;
-      notReturned = SearchCounter.export(prefix + "_response_not_returned");
-      metastoreSuccess = SearchCounter.export(prefix + "_response_success");
-      metastoreNotFound = SearchCounter.export(prefix + "_response_not_found");
-      metastoreBadInput = SearchCounter.export(prefix + "_response_bad_input");
-      metastoreTransientError = SearchCounter.export(prefix + "_response_transient_error");
-      metastorePermanentError = SearchCounter.export(prefix + "_response_permanent_error");
+      String prefitwitter = "manhattan_metastore_get_" + columnName;
+      notReturned = SearchCounter.etwitterport(prefitwitter + "_response_not_returned");
+      metastoreSuccess = SearchCounter.etwitterport(prefitwitter + "_response_success");
+      metastoreNotFound = SearchCounter.etwitterport(prefitwitter + "_response_not_found");
+      metastoreBadInput = SearchCounter.etwitterport(prefitwitter + "_response_bad_input");
+      metastoreTransientError = SearchCounter.etwitterport(prefitwitter + "_response_transient_error");
+      metastorePermanentError = SearchCounter.etwitterport(prefitwitter + "_response_permanent_error");
       metastoreUnknownResponseCode =
-          SearchCounter.export(prefix + "_response_unknown_response_code");
-      // Have a distinguishable prefix for the total requests stat so that we can use it to get
-      // a viz rate against wild-carded "prefix_response_*" stats.
-      totalRequests = SearchCounter.export(prefix + "_requests");
+          SearchCounter.etwitterport(prefitwitter + "_response_unknown_response_code");
+      // Have a distinguishable prefitwitter for the total requests stat so that we can use it to get
+      // a viz rate against wild-carded "prefitwitter_response_*" stats.
+      totalRequests = SearchCounter.etwitterport(prefitwitter + "_requests");
     }
 
     /**
      * Tracks metastore get column stats for an individual user's response.
-     * @param responseCode the response code received from metastore. Expected to be null if no
+     * @param responseCode the response code received from metastore. Etwitterpected to be null if no
      *        response came back at all.
      */
     private void trackMetastoreResponseCode(@Nullable ResponseCode responseCode) {
@@ -259,7 +259,7 @@ public class UserPropertiesManager {
           public Map<Long, ManhattanUserProperties> apply(Map<Long, MetastoreRow> response) {
             long latencyMs = System.currentTimeMillis() - start;
             Map<Long, ManhattanUserProperties> resultMap =
-                Maps.newHashMapWithExpectedSize(userIds.size());
+                Maps.newHashMapWithEtwitterpectedSize(userIds.size());
 
             for (Long userId : userIds) {
               MetastoreRow row = response.get(userId);
@@ -274,7 +274,7 @@ public class UserPropertiesManager {
           @Override
           public Map<Long, ManhattanUserProperties> apply(Throwable t) {
             long latencyMs = System.currentTimeMillis() - start;
-            LOG.error("Exception talking to metastore after " + latencyMs + " ms.", t);
+            LOG.error("Etwitterception talking to metastore after " + latencyMs + " ms.", t);
 
             MANHATTAN_METASTORE_STATS.requestComplete(latencyMs, 0, false);
             return Collections.emptyMap();
@@ -304,9 +304,9 @@ public class UserPropertiesManager {
               getOrCreateManhattanUserProperties(userId, resultMap);
           manhattanUserProperties.setTweepcred(tweepCred.getScore());
         }
-      } catch (MetastoreException e) {
+      } catch (MetastoreEtwitterception e) {
         // guaranteed not to be thrown if ResponseCode.OK
-        LOG.warn("Unexpected MetastoreException parsing userinfo column!", e);
+        LOG.warn("Unetwitterpected MetastoreEtwitterception parsing userinfo column!", e);
       }
     }
   }

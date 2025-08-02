@@ -18,7 +18,7 @@ case class MediaMetadata(
   sizes: Set[MediaSize],
   mediaInfo: MediaInfo,
   productMetadata: Option[mic.UserDefinedProductMetadata] = None,
-  extensionsReply: Option[ByteBuffer] = None,
+  etwittertensionsReply: Option[ByteBuffer] = None,
   additionalMetadata: Option[mic.AdditionalMetadata] = None) {
   def assetUrlHttp: String = MediaUrl.httpsToHttp(assetUrlHttps)
 
@@ -32,7 +32,7 @@ case class MediaMetadata(
   ): MediaEntity = {
     // Abort if we accidentally try to replace the media. This
     // indicates a logic error that caused mismatched media info.
-    // This could be internal or external to TweetyPie.
+    // This could be internal or etwitterternal to TweetyPie.
     require(
       mediaEntity.mediaId == mediaKey.mediaId,
       "Tried to update media with mediaId=%s with mediaInfo.mediaId=%s"
@@ -44,7 +44,7 @@ case class MediaMetadata(
       mediaUrlHttps = assetUrlHttps,
       sizes = sizes,
       mediaInfo = Some(mediaInfo),
-      extensionsReply = extensionsReply,
+      etwittertensionsReply = etwittertensionsReply,
       // the following two fields are deprecated and will be removed soon
       nsfw = false,
       mediaPath = MediaUrl.mediaPathFromUrl(assetUrlHttps),

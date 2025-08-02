@@ -2,7 +2,7 @@
 """
 ``twml.trainers.Trainer`` is a wrapper around `tf.estimator.Estimator
 <https://www.tensorflow.org/versions/master/api_docs/python/tf/estimator/Estimator>`_
-to expose an easier to use API by
+to etwitterpose an easier to use API by
 hiding rarely used config knobs and supplying default values.
 
 The `Trainer` facilitates multi-phase training commonly used at Twitter: e.g.
@@ -17,7 +17,7 @@ Please note that we have four learning rate decay functions to choose from.
 Additionally, each trainer can only take one learning rate decay function and its parameters.
 If that is not the case, it will throw an error.
 Also, please note that the learning rate decay is a positional argument and should be placed as
-the last argument to the trainer, as you can see in the example above.
+the last argument to the trainer, as you can see in the etwitterample above.
 The four learning decays options are:
 
 1. inverse_learning_rate_decay:
@@ -27,7 +27,7 @@ The four learning decays options are:
   ::
 
     decayed_learning_rate = learning_rate / (1 + decay_rate * global_step /decay_step)
-    final_decayed_learning_rate = max(decayed_learning_rate, min_learning_rate)
+    final_decayed_learning_rate = matwitter(decayed_learning_rate, min_learning_rate)
 
 
 2. polynomial_learning_rate_decay:
@@ -46,8 +46,8 @@ The four learning decays options are:
 
   Piecewise constant from boundaries and interval values.
 
-  Example: use a learning rate that's 1.0 for the first 100001 steps, 0.5 for
-  the next 10000 steps, and 0.1 for any additional steps.
+  Etwitterample: use a learning rate that's 1.0 for the first 100001 steps, 0.5 for
+  the netwittert 10000 steps, and 0.1 for any additional steps.
 
   ::
 
@@ -56,7 +56,7 @@ The four learning decays options are:
     values = [1.0, 0.5, 0.1]
     learning_rate = tf.train.piecewise_constant(global_step, boundaries, values)
 
-4. exponential_learning_rate_decay:
+4. etwitterponential_learning_rate_decay:
 
   The function returns the decayed learning rate. It is computed as:
 
@@ -81,7 +81,7 @@ from threading import Thread
 
 from twitter.common.metrics import AtomicGauge
 from twitter.deepbird.stats_server import utils as stats_server_utils
-from twitter.deepbird.stats_server.stats_exporter import StatsExporter
+from twitter.deepbird.stats_server.stats_etwitterporter import StatsEtwitterporter
 from twitter.ml.common import metrics
 from twitter.ml.common.kubernetes import kubectl_delete_by_name, Resource
 from twitter.ml.twml.status import get_distributed_training_job_status, TrainingJobStatus
@@ -89,13 +89,13 @@ from twitter.ml.twml.status import get_distributed_training_job_status, Training
 from absl import logging
 from twml.optimizers import LazyAdamOptimizer, optimize_loss, OPTIMIZER_SUMMARIES
 from twml.contrib.optimizers import DeepGradientCompressionOptimizer
-from twml.tracking import ExperimentTracker
+from twml.tracking import EtwitterperimentTracker
 from twml.util import (delete_file_or_dir,
                        get_distributed_training_job_path,
                        sanitize_hdfs_path)
 try:
   from urllib import quote as encode_url
-except ImportError:
+etwittercept ImportError:
   from urllib.parse import quote as encode_url
 import tensorflow.compat.v1 as tf
 import tensorflow
@@ -103,7 +103,7 @@ import tensorflow_hub as hub
 
 import twitter.ml.twml.kubernetes.status as k8s_status
 import twml
-import twml.export_output_fns
+import twml.etwitterport_output_fns
 import twml.learning_rate_decay
 import twml.metrics
 
@@ -114,7 +114,7 @@ _CLUSTER_TEMPLATE = Template('''{
     "chief": [$CHIEF],
     "worker": [$WORKER]
   },
-  "task": {"type": "$TYPE", "index": $INDEX}
+  "task": {"type": "$TYPE", "indetwitter": $INDEtwitter}
 }
 ''')
 
@@ -131,17 +131,17 @@ def init_from_checkpoint(init_dir, init_map):
 class Trainer(object):
   """
   This class wraps ``tf.estimator.Estimator`` to make construction, saving, and loading easier.
-  Supports multi-phase training (for example, use a Trainer for MDL calibration, then
+  Supports multi-phase training (for etwitterample, use a Trainer for MDL calibration, then
   another for training the rest of the model, then another for isotonic calibration).
   The Trainer also implements a training and evaluation loop via the ``learn()`` method.
-  Each Trainer is associated to a fixed set of hyper parameters (params), and a single model
+  Each Trainer is associated to a fitwittered set of hyper parameters (params), and a single model
   specified by ``build_graph``. Given these constraints, a single Trainer can be called
   multiple times for training and evaluation over multiple epochs.
 
   However, if you intend to try different sets of hyper-parameters, we recommend you instantiate
-  a different Trainer for each such experiment. That way, each experiment can be tracked
+  a different Trainer for each such etwitterperiment. That way, each etwitterperiment can be tracked
   in a different ``save_dir``. Indeed, after calling ``learn``, a Trainer's save_dir will contain
-  checkpoints of the model (its graph, and variables), and the history of metrics (for example,
+  checkpoints of the model (its graph, and variables), and the history of metrics (for etwitterample,
   evaluation accuracy at each epoch), and other store observations like the average time per step.
   The latter metrics can be viewed by pointing
   TensorBoard to the save_dir and accessing TensorBoard via your browser.
@@ -169,7 +169,7 @@ class Trainer(object):
       build_graph_fn:
         A function for building tensorflow graphs.
         This matches TensorFlow Estimator's model_fn signature.
-        For example,
+        For etwitterample,
 
         .. code-block:: python
 
@@ -201,7 +201,7 @@ class Trainer(object):
           config:
             the RunConfig object passed to Estimator constructor.
 
-        This function is expected to return a dictionary containing the following keys:
+        This function is etwitterpected to return a dictionary containing the following keys:
 
         * 'output': a node representing model output; required.
         * 'loss': (required) a loss node used for optimization; required for training and
@@ -254,9 +254,9 @@ class Trainer(object):
         Defaults to None. If set defines the number of steps in the
         `tf.train.ProfileHook <https://www.tensorflow.org/api_docs/python/tf/train/ProfilerHook>`_.
         Captures CPU/GPU profiling information every ``profiler_steps`` steps or seconds.
-        When executing ``learn``, ``train`` or ``predict`` methods,
+        When etwitterecuting ``learn``, ``train`` or ``predict`` methods,
         with ``profiler_steps`` set to a number,
-        a ``timeline_X.json`` file is created in the save_dir. This file contains profiling data
+        a ``timeline_twitter.json`` file is created in the save_dir. This file contains profiling data
         storedin Chrome trace format. To view stored data, use the Chrome browser to follow
         these steps:
 
@@ -269,7 +269,7 @@ class Trainer(object):
 
         Note: this argument is ignored when a non-None ``hooks`` argument is pasesd to
         ``train``, ``learn``, or ``predict`` methods. The hook can be added manually by passing
-        ``trainer.train(..., hooks=myhooks.extend(trainer.get_train_hooks()))``, for example.
+        ``trainer.train(..., hooks=myhooks.etwittertend(trainer.get_train_hooks()))``, for etwitterample.
     """
 
     if tensorflow.__version__ >= "2.0":
@@ -281,7 +281,7 @@ class Trainer(object):
     self._tensorboard_handle = None
     self._current_estimator_spec = None  # holds the current estimator spec
     self._profiler_steps = profiler_steps
-    self._export_output_fn = None
+    self._etwitterport_output_fn = None
     self._is_early_stopping = False
 
     # NOTE: Sanitize all HDFS paths first.
@@ -319,38 +319,38 @@ class Trainer(object):
 
       run_config = tf.estimator.RunConfig(
         session_config=session_config,
-        keep_checkpoint_max=self._params.get('keep_checkpoint_max', 20),
+        keep_checkpoint_matwitter=self._params.get('keep_checkpoint_matwitter', 20),
         log_step_count_steps=10000,
         save_checkpoints_secs=self._params.get('save_checkpoints_secs', 600),
         tf_random_seed=self._tf_random_seed())
     elif not isinstance(run_config, tf.estimator.RunConfig):
-      raise ValueError("Expecting run_config argument of type None or tf.estimator.RunConfig"
+      raise ValueError("Etwitterpecting run_config argument of type None or tf.estimator.RunConfig"
         "Got %s instead." % type(run_config).__name__)
     elif os.environ.get('TWML_HOGWILD_PORTS'):
       raise ValueError("Custom RunConfig not supported with Hogwild")
 
     if run_config.model_dir is None and save_dir is None:
       raise ValueError(
-          "Expecting either save_dir or run_config.model_dir to be specified. Got None for each.")
+          "Etwitterpecting either save_dir or run_config.model_dir to be specified. Got None for each.")
     elif run_config.model_dir is None:
       run_config = run_config.replace(model_dir=save_dir)
     elif save_dir is None:
       save_dir = run_config.model_dir
 
     self._save_dir = save_dir
-    self.experiment_tracker = ExperimentTracker(self._params, run_config, self._save_dir)
+    self.etwitterperiment_tracker = EtwitterperimentTracker(self._params, run_config, self._save_dir)
 
     # Check if should delete the tsd running this training job. In certain use case when 
     # there are other tf operations following trainer.train_and_evaluate (or trainer.learn),
-    # additional state files need to be specified to ensure those steps are executed after job restart.
+    # additional state files need to be specified to ensure those steps are etwitterecuted after job restart.
     kwargs['gke_state_files'] = kwargs.get('gke_state_files', ['_SUCCESS'])
-    self._maybe_del_tsd_exit(kwargs['gke_state_files'])
+    self._maybe_del_tsd_etwitterit(kwargs['gke_state_files'])
     logging.info("Checkpoint and event files will be saved at save_dir=%s", save_dir)
     self._optimize_loss_fn = self.get_train_op if optimize_loss_fn is None else optimize_loss_fn
 
     # overwrite the current save_dir
-    if self._params.get('overwrite_save_dir') and tf.io.gfile.exists(self._save_dir):
-      logging.info("Trainer overwriting existing save directory: %s (params.overwrite_save_dir)"
+    if self._params.get('overwrite_save_dir') and tf.io.gfile.etwitterists(self._save_dir):
+      logging.info("Trainer overwriting etwitteristing save directory: %s (params.overwrite_save_dir)"
                    % self._save_dir)
       # if distributed or hogwild:
       if self._params.get('distributed', False):
@@ -364,17 +364,17 @@ class Trainer(object):
       else:
         delete_file_or_dir(self._save_dir)
 
-    # Exposing stats to a /vars.json endpoint that will be collected
+    # Etwitterposing stats to a /vars.json endpoint that will be collected
     # by the absorber
     if self._params.get('stats_port'):
       try:
         stats_server_utils.start_stats_server(self._params.get('stats_port'), self._save_dir)
-      except Exception as err:
+      etwittercept Etwitterception as err:
         logging.error('Failed to start the stats server. Error: %s', str(err))
 
     checkpoint = os.path.join(self._save_dir, 'checkpoint')
-    if tf.io.gfile.exists(checkpoint):
-      logging.info("The provided save_dir directory %s already exists."
+    if tf.io.gfile.etwitterists(checkpoint):
+      logging.info("The provided save_dir directory %s already etwitterists."
                    " Training will be resumed."
                    % checkpoint)
 
@@ -383,8 +383,8 @@ class Trainer(object):
     if init_from_dir is not None and init_map is None:
       raise ValueError("Need to provide init_map when init_from_dir is provided.")
 
-    if not tf.io.gfile.exists(self._save_dir):
-      # so tensorboard can point to a directory that exists
+    if not tf.io.gfile.etwitterists(self._save_dir):
+      # so tensorboard can point to a directory that etwitterists
       tf.io.gfile.mkdir(self._save_dir)
 
     self._estimator = tf.estimator.Estimator(
@@ -406,10 +406,10 @@ class Trainer(object):
     elif "tensorboard_port" in self._params.values() and self._params.tensorboard_port is not None:
       self.start_tensorboard(self._params.tensorboard_port)
 
-    # Export gauge that will track whether a model was exported
-    self.stats_exporter = StatsExporter("twml.trainer")
-    self.export_gauge = AtomicGauge('export_model')
-    self.stats_exporter.register_metrics(self.export_gauge)
+    # Etwitterport gauge that will track whether a model was etwitterported
+    self.stats_etwitterporter = StatsEtwitterporter("twml.trainer")
+    self.etwitterport_gauge = AtomicGauge('etwitterport_model')
+    self.stats_etwitterporter.register_metrics(self.etwitterport_gauge)
 
   def _hogwild_setup(self):
     """
@@ -462,7 +462,7 @@ class Trainer(object):
 
     if 'train_batch_size' in param_values:
       if not isinstance(self._params.train_batch_size, int):
-        raise ValueError("Expecting params.train_batch_size to be an integer.")
+        raise ValueError("Etwitterpecting params.train_batch_size to be an integer.")
       if self._params.train_batch_size <= 0:
         raise ValueError("train_batch_size needs to be positive")
     else:
@@ -470,7 +470,7 @@ class Trainer(object):
 
     if 'eval_batch_size' in param_values:
       if not isinstance(self._params.eval_batch_size, int):
-        raise ValueError("Expecting params.eval_batch_size to be an integer.")
+        raise ValueError("Etwitterpecting params.eval_batch_size to be an integer.")
       if self._params.eval_batch_size <= 0:
         raise ValueError("eval_batch_size needs to be positive.")
     else:
@@ -481,12 +481,12 @@ class Trainer(object):
       # we only need to support training discontinuation for distributed training
       # bc we are still using TSDs on GKE for distributed training
       raise ValueError(
-        "Expecting params.distributed to be set if "
+        "Etwitterpecting params.distributed to be set if "
         "params.distributed_training_cleanup is set."
       )
 
-  def _get_cluster_config(self, name, index):
-    """Create a tensorflow cluster config from ports, name and index"""
+  def _get_cluster_config(self, name, indetwitter):
+    """Create a tensorflow cluster config from ports, name and indetwitter"""
     host = '"localhost:%d"'
     ps = host % self._ports[0]
     chief = host % self._ports[1]
@@ -496,7 +496,7 @@ class Trainer(object):
       CHIEF=chief,
       WORKER=workers,
       TYPE=name,
-      INDEX=index,
+      INDEtwitter=indetwitter,
     )
     return config
 
@@ -518,10 +518,10 @@ class Trainer(object):
     return self._estimator.config.num_worker_replicas
 
   @property
-  def worker_index(self):
+  def worker_indetwitter(self):
     """
-    returns index of worker in the cluster
-    chief has index 0
+    returns indetwitter of worker in the cluster
+    chief has indetwitter 0
     non-chief workers have indices 1 through (num_workers - 1)
     """
     return self._estimator.config.global_id_in_cluster
@@ -534,7 +534,7 @@ class Trainer(object):
   def set_estimator(self, estimator):
     """ sets the estimator used internally by Trainer """
     if not isinstance(estimator, tf.estimator.Estimator):
-      raise ValueError("Expecting tf.estimator.Estimator")
+      raise ValueError("Etwitterpecting tf.estimator.Estimator")
     self._estimator = estimator
     self._params = self.estimator.params
 
@@ -617,7 +617,7 @@ class Trainer(object):
     )
     return train_op
 
-  def export_model_effects(self, export_path, feature_spec=None, log_features=True):
+  def etwitterport_model_effects(self, etwitterport_path, feature_spec=None, log_features=True):
 
     # DO NOT CHANGE THE ORDER.
     # This needs to be done before registering the model.
@@ -627,18 +627,18 @@ class Trainer(object):
         feature_names = ['.'.join(features[fid]['featureName'].split('.')[1:]) for fid in features.keys()]
         features_to_log = ','.join(feature_names)
         try:
-          model_hash = self.experiment_tracker.compute_model_hash(export_path)
-          metrics.log_usage('dbv2', 'export_model_effects', 'v1', custom_attrs=[model_hash, "feature config present", features_to_log])
-        except:  # noqa: T803
+          model_hash = self.etwitterperiment_tracker.compute_model_hash(etwitterport_path)
+          metrics.log_usage('dbv2', 'etwitterport_model_effects', 'v1', custom_attrs=[model_hash, "feature config present", features_to_log])
+        etwittercept:  # noqa: T803
           logging.info("Failed to log Feature Config features")
 
-      twml.contrib.export.export_fn.export_feature_spec(export_path, feature_spec)
-      export_start_time = time.time()
-      self.experiment_tracker.export_feature_spec(feature_spec)
-      logging.info("Exported feature spec to ML Metastore in %s seconds.", time.time() - export_start_time)
+      twml.contrib.etwitterport.etwitterport_fn.etwitterport_feature_spec(etwitterport_path, feature_spec)
+      etwitterport_start_time = time.time()
+      self.etwitterperiment_tracker.etwitterport_feature_spec(feature_spec)
+      logging.info("Etwitterported feature spec to ML Metastore in %s seconds.", time.time() - etwitterport_start_time)
 
-    self.experiment_tracker.register_model(str(export_path))
-    self.export_gauge.increment()
+    self.etwitterperiment_tracker.register_model(str(etwitterport_path))
+    self.etwitterport_gauge.increment()
 
   @property
   def best_or_latest_checkpoint(self):
@@ -657,74 +657,74 @@ class Trainer(object):
   def latest_checkpoint(self):
     return self.estimator.latest_checkpoint()
 
-  def export_model(self, serving_input_receiver_fn,
-                   export_output_fn=None,
-                   export_dir=None, checkpoint_path=None,
+  def etwitterport_model(self, serving_input_receiver_fn,
+                   etwitterport_output_fn=None,
+                   etwitterport_dir=None, checkpoint_path=None,
                    feature_spec=None,
                    log_features=True):
     """
-    Export the model for prediction. Typically, the exported model
+    Etwitterport the model for prediction. Typically, the etwitterported model
     will later be run in production servers. This method is called
-    by the user to export the PREDICTgraph to disk.
+    by the user to etwitterport the PREDICTgraph to disk.
 
-    Internally, this method calls `tf.estimator.Estimator.export_savedmodel
-    <https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator#export_savedmodel>`_.
+    Internally, this method calls `tf.estimator.Estimator.etwitterport_savedmodel
+    <https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator#etwitterport_savedmodel>`_.
 
-    Note that a valid self._export_output_fn is required.
-    If export_ouput_fn is provided, it is used to set the self._export_output_fn.
+    Note that a valid self._etwitterport_output_fn is required.
+    If etwitterport_ouput_fn is provided, it is used to set the self._etwitterport_output_fn.
 
     Args:
       serving_input_receiver_fn:
         function preparing the model for inference requests.
         This funtion returns the ``features`` dict passed to ``build_graph``.
-      export_dir:
-        directory to export a SavedModel for prediction servers.
-        Defaults to ``[save_dir]/exported_models``.
+      etwitterport_dir:
+        directory to etwitterport a SavedModel for prediction servers.
+        Defaults to ``[save_dir]/etwitterported_models``.
       checkpoint_path:
-        the checkpoint path to export. If None (the default), the most recent checkpoint
+        the checkpoint path to etwitterport. If None (the default), the most recent checkpoint
         found within the model directory is chosen.
-      export_output_fn:
-        Function to export the graph_output (output of build_graph) for
+      etwitterport_output_fn:
+        Function to etwitterport the graph_output (output of build_graph) for
         prediction. Takes a graph_output dict as sole argument and returns
-        the export_output_fns dict.
-        Defaults to `twml.export_output_fns.default_output_fn`.
+        the etwitterport_output_fns dict.
+        Defaults to `twml.etwitterport_output_fns.default_output_fn`.
 
     Return:
-      returns a string path to exported directory.
+      returns a string path to etwitterported directory.
 
-    # set the export output function
+    # set the etwitterport output function
     """
     if not self.is_chief():
-      logging.info("Trainer.export_model ignored due to the process not being chief.")
+      logging.info("Trainer.etwitterport_model ignored due to the process not being chief.")
       return
 
-    self._export_output_fn = export_output_fn or twml.export_output_fns.default_output_fn
+    self._etwitterport_output_fn = etwitterport_output_fn or twml.etwitterport_output_fns.default_output_fn
 
-    if not callable(self._export_output_fn):
+    if not callable(self._etwitterport_output_fn):
       raise RuntimeError(
-        "Expecting export_output_fn function. Got %s."
-        % type(self._export_output_fn).__name__)
+        "Etwitterpecting etwitterport_output_fn function. Got %s."
+        % type(self._etwitterport_output_fn).__name__)
 
-    if export_dir:
-      export_dir = sanitize_hdfs_path(export_dir)
+    if etwitterport_dir:
+      etwitterport_dir = sanitize_hdfs_path(etwitterport_dir)
 
     if checkpoint_path:
       checkpoint_path = sanitize_hdfs_path(checkpoint_path)
     else:
       checkpoint_path = self.best_or_latest_checkpoint
 
-    # actually export the model using the Estimator API
-    export_path = self._estimator.export_savedmodel(
-      export_dir_base=export_dir or os.path.join(self._save_dir, 'exported_models'),
+    # actually etwitterport the model using the Estimator API
+    etwitterport_path = self._estimator.etwitterport_savedmodel(
+      etwitterport_dir_base=etwitterport_dir or os.path.join(self._save_dir, 'etwitterported_models'),
       serving_input_receiver_fn=serving_input_receiver_fn,
       checkpoint_path=checkpoint_path)
 
-    # export_path is bytes, need to convert to string for python3 to work.
-    logging.info("The exported model path is: " + str(export_path))
+    # etwitterport_path is bytes, need to convert to string for python3 to work.
+    logging.info("The etwitterported model path is: " + str(etwitterport_path))
 
-    self.export_model_effects(export_path, feature_spec, log_features)
+    self.etwitterport_model_effects(etwitterport_path, feature_spec, log_features)
 
-    return export_path
+    return etwitterport_path
 
   def _model_fn(self, features, labels, mode, params, config=None):
     """
@@ -769,14 +769,14 @@ class Trainer(object):
           for metric_name in metric_ops:
             tf.summary.scalar(
               name="training_metric_" + metric_name,
-              tensor=metric_ops[metric_name][1])  # index 0 contains value_op, 1 contains update_op
+              tensor=metric_ops[metric_name][1])  # indetwitter 0 contains value_op, 1 contains update_op
 
-    if mode == tf.estimator.ModeKeys.PREDICT and self._export_output_fn is not None:
+    if mode == tf.estimator.ModeKeys.PREDICT and self._etwitterport_output_fn is not None:
       # note that this is ignored by the predict method.
-      # Estimator only uses export_output_fn for export_model.
-      export_outputs = self._export_output_fn(graph_output)
+      # Estimator only uses etwitterport_output_fn for etwitterport_model.
+      etwitterport_outputs = self._etwitterport_output_fn(graph_output)
     else:
-      export_outputs = None
+      etwitterport_outputs = None
 
     if mode == tf.estimator.ModeKeys.EVAL and self._metric_fn:
       eval_metric_ops = self._metric_fn(graph_output=graph_output, labels=labels, weights=weights)
@@ -796,7 +796,7 @@ class Trainer(object):
     self._current_estimator_spec = tf.estimator.EstimatorSpec(
       mode=mode,
       predictions=preds,
-      export_outputs=export_outputs,
+      etwitterport_outputs=etwitterport_outputs,
       loss=loss,
       train_op=train_op,
       eval_metric_ops=eval_metric_ops,
@@ -868,14 +868,14 @@ class Trainer(object):
       return True
     return False
 
-  def _exit_ps_after_training_complete(self):
+  def _etwitterit_ps_after_training_complete(self):
     """
     Helper function to shutdown parameter server after training job complete (either succeed or failed).
     """
     if not self.is_ps():
       return
 
-    # No need to exit ps if on the same machine
+    # No need to etwitterit ps if on the same machine
     if os.environ.get('TWML_HOGWILD_PORTS'):
       return
 
@@ -898,32 +898,32 @@ class Trainer(object):
         base_job_path=get_distributed_training_job_path()
       )
 
-    def wait_complete_then_exit():
-      retry_max = 60
+    def wait_complete_then_etwitterit():
+      retry_matwitter = 60
       retry = 0
       while True:
         try:
           training_status = get_job_status()
           if training_status == TrainingJobStatus.FINISHED:
             logging.info("Distributed training job succeed, shutting down parameter server.")
-            os._exit(0)
+            os._etwitterit(0)
           elif training_status == TrainingJobStatus.FAILED:
             logging.info("Distributed training job failed, shutting down parameter server.")
-            os._exit(0)
+            os._etwitterit(0)
           elif training_status == TrainingJobStatus.NOT_FOUND:
-            raise Exception("Distributed training job status not found.")
+            raise Etwitterception("Distributed training job status not found.")
           else:
             poke_interval = random.randrange(60, 90)  # prevent spike QPS to aurora endpoint
             time.sleep(poke_interval)
             retry = 0
-        except Exception as e:
-          if retry >= retry_max:
-            raise e  # only exception in this thread, won't fail parameter server thread
+        etwittercept Etwitterception as e:
+          if retry >= retry_matwitter:
+            raise e  # only etwitterception in this thread, won't fail parameter server thread
           retry += 1
           poke_interval = random.randrange(60, 90) + retry * 10
           logging.warn("Error getting distributed training job status, will retry after %s seconds." % poke_interval)
           time.sleep(poke_interval)
-    Thread(target=wait_complete_then_exit).start()
+    Thread(target=wait_complete_then_etwitterit).start()
 
   def get_eval_hooks(self):  # pylint: disable=no-self-use
     """ Return SessionRunHooks used during evaluation."""
@@ -944,28 +944,28 @@ class Trainer(object):
     return hooks
 
   def learn(self, train_input_fn=None, eval_input_fn=None,
-            train_max_steps=None,
+            train_matwitter_steps=None,
             train_steps=None, eval_steps=None,
             train_hooks=None, eval_hooks=None,
             early_stop_metric=None, early_stop_patience=-1,
             early_stop_minimize=True, early_stop_tolerance=0, start_epoch=0,
-            exporters=None, export_output_fn=None, max_duration=None):
+            etwitterporters=None, etwitterport_output_fn=None, matwitter_duration=None):
     """
-    Train and evaluate the estimator for ``train_max_steps`` steps.
+    Train and evaluate the estimator for ``train_matwitter_steps`` steps.
     Each epoch involves ``train_steps`` training steps followed
     by ``eval_steps`` evaluation steps. Note that each step
     is a ``session.run()``, that is, each batch is a step.
 
     Args:
-      train_max_steps:
-        maximum number of global steps of training to run.
-        Defaults to params.train_max_steps.
+      train_matwitter_steps:
+        matwitterimum number of global steps of training to run.
+        Defaults to params.train_matwitter_steps.
         None-values cause learn() to terminate after *one* call to train() and evaluate(),
         which is usually useful when using train_steps=-1
         Non-positive values trains indefinitely in a loop (use with caution),
         which is usually useful when used with early stopping.
       train_steps:
-        number of training steps per epoch. For example, 100 means each
+        number of training steps per epoch. For etwitterample, 100 means each
         training epoch will end after processing 100 batches.
         Defaults to params.train_steps.
         Non-positive values and None-values go through the entire training set each epoch.
@@ -984,45 +984,45 @@ class Trainer(object):
       start_epoch:
         The epoch from which to start learn. If you want to do training and evaluation
         for N epochs, you can call ``learn()`` in a loop as follows:
-      exporters:
-        List of exporters called at the end of each evaluation run.
+      etwitterporters:
+        List of etwitterporters called at the end of each evaluation run.
         Defaults to none.
-      export_output_fn:
-        The output format to use for exported models.
-        Only used if exporters is not None.
+      etwitterport_output_fn:
+        The output format to use for etwitterported models.
+        Only used if etwitterporters is not None.
 
         .. code-block:: python
 
-          for epoch in range(1,max_epoch):
+          for epoch in range(1,matwitter_epoch):
             trainer.learn(start_epoch=epoch)
 
     Early-stopping arguments:
       early_stop_metric:
         String specifying the metric to early-stop on. Required with positive
-        ``early_stop_patience``. For example, 'accuracy', 'accuracy_0', 'loss', etc.
-        The string is used to extract the relevant tensor Op from the dict returned by
+        ``early_stop_patience``. For etwitterample, 'accuracy', 'accuracy_0', 'loss', etc.
+        The string is used to etwittertract the relevant tensor Op from the dict returned by
         the get_eval_metric_ops method. For ``metrics`` pass to the constructor,
         the string is one of those. For multi-class (that is, multi-metric)
         metrics, the string may be appended with a ``_0``, ``_1``, etc. or one
         of the ``multi_metric_names`` (one per class).
       early_stop_patience:
-        Maximum number of epochs to wait for an improvement in the early_stop_metric
-        before breaking off training. For example, a patience of 10 means that
+        Matwitterimum number of epochs to wait for an improvement in the early_stop_metric
+        before breaking off training. For etwitterample, a patience of 10 means that
         training will have 10 epochs to improve the metric before it is killed.
         Whenever the metric is improved before running out of patience,
         patience is reset to ``early_stop_patience``.
         Defaults to -1 (that is, no early-stopping).
       early_stop_minimize:
         Set this to True (the default) for metrics that need to be minimized
-        (like ``loss``). Metrics like ``accuracy`` that need to be maximized
+        (like ``loss``). Metrics like ``accuracy`` that need to be matwitterimized
         should set this to False.
       early_stop_tolerance:
         A non-negative tolerance for comparing early_stop_metric.
-        E.g. when maximizing the condition is current_metric > best_metric + tolerance.
+        E.g. when matwitterimizing the condition is current_metric > best_metric + tolerance.
         Defaults to 0.
-      max_duration:
+      matwitter_duration:
         A float. When this argument is defined, the job will automatically terminate after
-        `max_duration` seconds if it has not already compeleted. 
+        `matwitter_duration` seconds if it has not already compeleted. 
 
     Returns:
       The directory where the checkpoints were saved.
@@ -1034,22 +1034,22 @@ class Trainer(object):
     # pylint: disable=too-many-branches
 
     if not callable(train_input_fn):
-      raise ValueError("Expecting callable train_input_fn function")
+      raise ValueError("Etwitterpecting callable train_input_fn function")
     if not callable(eval_input_fn):
-      raise ValueError("Expecting callable eval_input_fn function")
+      raise ValueError("Etwitterpecting callable eval_input_fn function")
 
     if os.environ.get('TF_CONFIG'):
       raise ValueError("trainer.learn() can not be used with distributed / hogwild setups")
 
-    if exporters and export_output_fn:
-      self._export_output_fn = export_output_fn
+    if etwitterporters and etwitterport_output_fn:
+      self._etwitterport_output_fn = etwitterport_output_fn
 
     train_hooks = self.get_train_hooks() if train_hooks is None else train_hooks
     eval_hooks = self.get_eval_hooks() if eval_hooks is None else eval_hooks
     eval_hooks = [] if eval_hooks is None else eval_hooks
 
-    if train_max_steps is None:
-      train_max_steps = self.params.get('train_max_steps')
+    if train_matwitter_steps is None:
+      train_matwitter_steps = self.params.get('train_matwitter_steps')
 
     if train_steps is None:
       train_steps = self.params.train_steps
@@ -1062,7 +1062,7 @@ class Trainer(object):
       eval_steps = None
 
     if early_stop_patience > 0:
-      assert train_max_steps is not None, "Early stopping and max_steps=None are not compatible."
+      assert train_matwitter_steps is not None, "Early stopping and matwitter_steps=None are not compatible."
       # prepare early stopping hook (which also handles logic here)
       self._is_early_stopping = True
       early_stop_hook = twml.hooks.EarlyStopHook(
@@ -1076,36 +1076,36 @@ class Trainer(object):
       # add early stop hook to eval hooks
       eval_hooks.append(early_stop_hook)
 
-    if max_duration is not None:
+    if matwitter_duration is not None:
       train_early_stop_duration_hook = twml.hooks.EarlyStopDuration(
-        max_duration=max_duration,
-        exit_on_end=False,
+        matwitter_duration=matwitter_duration,
+        etwitterit_on_end=False,
         save_dir=self._save_dir,
         overwrite=True,
       )
       train_hooks.append(train_early_stop_duration_hook)
 
       eval_early_stop_duration_hook = twml.hooks.EarlyStopDuration(
-        max_duration=max_duration,
-        exit_on_end=False,
+        matwitter_duration=matwitter_duration,
+        etwitterit_on_end=False,
         save_dir=self._save_dir,
         overwrite=True,
       )
       eval_hooks.append(eval_early_stop_duration_hook)
 
     if not self._is_early_stopping:
-      if (train_max_steps is not None) and (train_max_steps <= 0):
-        if ((max_duration is not None) and (max_duration < 0)) or (max_duration is None):
-          logging.warn("train.max_steps is non-positive, and no early or duration stopping is configured. "
+      if (train_matwitter_steps is not None) and (train_matwitter_steps <= 0):
+        if ((matwitter_duration is not None) and (matwitter_duration < 0)) or (matwitter_duration is None):
+          logging.warn("train.matwitter_steps is non-positive, and no early or duration stopping is configured. "
                       "Training job will loop forever.")
 
-    if train_max_steps is not None and train_max_steps > 0:
-      # we can't pass max_steps AND steps to estimator.train.
-      # so we pass steps to estimator.train and max_steps to this hook instead...
-      stop_at_step_hook = twml.hooks.StopAtStepHook(last_step=train_max_steps)
+    if train_matwitter_steps is not None and train_matwitter_steps > 0:
+      # we can't pass matwitter_steps AND steps to estimator.train.
+      # so we pass steps to estimator.train and matwitter_steps to this hook instead...
+      stop_at_step_hook = twml.hooks.StopAtStepHook(last_step=train_matwitter_steps)
       train_hooks.append(stop_at_step_hook)
 
-    with self.experiment_tracker.track_experiment(eval_hooks,
+    with self.etwitterperiment_tracker.track_etwitterperiment(eval_hooks,
                                                   lambda: self.current_estimator_spec):
       # alternate training and evaluation epochs
       epoch = start_epoch
@@ -1117,21 +1117,21 @@ class Trainer(object):
         eval_result = self._estimator.evaluate(
           eval_input_fn, steps=eval_steps, hooks=eval_hooks)
 
-        if exporters:
+        if etwitterporters:
           checkpoint_path = self.estimator.latest_checkpoint()
-          for exporter in exporters:
-            export_path = os.path.join(self._save_dir, "export", exporter.name)
-            exporter.export(
-              estimator=self.estimator, export_path=export_path,
+          for etwitterporter in etwitterporters:
+            etwitterport_path = os.path.join(self._save_dir, "etwitterport", etwitterporter.name)
+            etwitterporter.etwitterport(
+              estimator=self.estimator, etwitterport_path=etwitterport_path,
               checkpoint_path=checkpoint_path, eval_result=eval_result,
-              is_the_final_export=False)
+              is_the_final_etwitterport=False)
 
-        # If train_max_step is none. Terminate after one loop.
-        if train_max_steps is None:
+        # If train_matwitter_step is none. Terminate after one loop.
+        if train_matwitter_steps is None:
           break
 
         # If stop_at_step_hook requested a stop, break
-        if train_max_steps > 0 and stop_at_step_hook.stop_requested:
+        if train_matwitter_steps > 0 and stop_at_step_hook.stop_requested:
           break
 
         # early-stopping logic is handled internally by the hook
@@ -1144,28 +1144,28 @@ class Trainer(object):
 
     return self._save_dir
 
-  def get_train_spec(self, input_fn, max_steps=None, hooks=None):
+  def get_train_spec(self, input_fn, matwitter_steps=None, hooks=None):
     """Get the TrainSpec used by ``tf.train.train_and_evaluate``."""
     if not callable(input_fn):
-      raise ValueError("Expecting callable train_input_fn")
+      raise ValueError("Etwitterpecting callable train_input_fn")
 
-    if max_steps is None:
-      max_steps = self.params.train_max_steps
+    if matwitter_steps is None:
+      matwitter_steps = self.params.train_matwitter_steps
 
-    if max_steps is not None and max_steps <= 0:
-      max_steps = None
+    if matwitter_steps is not None and matwitter_steps <= 0:
+      matwitter_steps = None
 
     hooks = self.get_train_hooks() if hooks is None else hooks
 
     return tf.estimator.TrainSpec(input_fn=input_fn,
-                                  max_steps=max_steps,
+                                  matwitter_steps=matwitter_steps,
                                   hooks=hooks)
 
   def get_eval_spec(self, input_fn, steps=None, delay=None, period=None,
-                    hooks=None, exporters=None):
+                    hooks=None, etwitterporters=None):
     """Get the EvalSpec used by ``tf.train.train_and_evaluate``."""
     if not callable(input_fn):
-      raise ValueError("Expecting callable eval_input_fn")
+      raise ValueError("Etwitterpecting callable eval_input_fn")
 
     if steps is None:
       steps = self.params.eval_steps
@@ -1189,26 +1189,26 @@ class Trainer(object):
                                  start_delay_secs=delay,
                                  throttle_secs=period,
                                  hooks=hooks,
-                                 exporters=exporters)
+                                 etwitterporters=etwitterporters)
 
   def train_and_evaluate(self, train_input_fn=None, eval_input_fn=None,
-                         train_max_steps=None, eval_steps=None,
+                         train_matwitter_steps=None, eval_steps=None,
                          eval_delay=None, eval_period=None,
                          train_hooks=None, eval_hooks=None,
                          early_stop_metric=None, early_stop_patience=-1,
-                         early_stop_minimize=True, early_stop_tolerance=0, exporters=None,
-                         export_output_fn=None, max_duration=None):
+                         early_stop_minimize=True, early_stop_tolerance=0, etwitterporters=None,
+                         etwitterport_output_fn=None, matwitter_duration=None):
     """
-    Train and evaluate the estimator for ``train_max_steps``
+    Train and evaluate the estimator for ``train_matwitter_steps``
     using ``tf.estimator.train_and_evaluate``.
     With a cluster configuration provided in the ``TF_CONFIG`` environment variable, this method
     can be used for distributed training (multi-node or multi-process).
-    Unlike the ``learn`` method, training is continuous with ``train_max_steps``.
+    Unlike the ``learn`` method, training is continuous with ``train_matwitter_steps``.
     For distributed use case, evaluation happens periodically.
     That is, after ``eval_delay`` seconds, an evaluation epoch of ``eval_step`` steps
     occurs every ``eval_period`` seconds. Evaluation happens on the most recent checkpoint.
     TF defaults to saving checkpoints every 10 mins.
-    For local use case, training occurs for train_max_steps epochs followed by a
+    For local use case, training occurs for train_matwitter_steps epochs followed by a
     single evaluation. For local use case we therefore recommend using learn() instead
     as it provides early-stopping and multiple evaluations.
 
@@ -1226,9 +1226,9 @@ class Trainer(object):
         Function to iterate through training set. It is passed to estimator.train_and_evalute
       eval_input_fn:
         Function to iterate through evaluation set. It is passed to estimator.train_and_evalute.
-      train_max_steps:
-        maximum number of global steps of training to run.
-        Defaults to params.train_max_steps.
+      train_matwitter_steps:
+        matwitterimum number of global steps of training to run.
+        Defaults to params.train_matwitter_steps.
         Non-positive values and None-values train indefinitely (use with caution).
       eval_steps:
         number of steps per evaluation.
@@ -1241,66 +1241,66 @@ class Trainer(object):
         Start the first evaluation after eval_delay. Defaults to params.eval_delay or 2*60s.
       eval_period:
         Run an evaluation every eval_period seconds. Defaults to params.eval_period or 10*60s.
-      exporters:
-        List of exporters called at the end of each evaluation run.
+      etwitterporters:
+        List of etwitterporters called at the end of each evaluation run.
         Defaults to none.
-      export_output_fn:
-        The output format to use for exported models.
-        Only used if exporters is not None.
+      etwitterport_output_fn:
+        The output format to use for etwitterported models.
+        Only used if etwitterporters is not None.
 
     Early-stopping arguments:
       early_stop_metric:
         String specifying the metric to early-stop on. Required with positive
-        ``early_stop_patience``. For example, 'accuracy', 'accuracy_0', 'loss', etc.
-        The string is used to extract the relevant tensor Op from the dict returned by
+        ``early_stop_patience``. For etwitterample, 'accuracy', 'accuracy_0', 'loss', etc.
+        The string is used to etwittertract the relevant tensor Op from the dict returned by
         the get_eval_metric_ops method. For ``metrics`` pass to the constructor,
         the string is one of those. For multi-class (that is, multi-metric)
         metrics, the string may be appended with a ``_0``, ``_1``, etc. or one
         of the ``multi_metric_names`` (one per class).
       early_stop_patience:
-        Maximum number of epochs to wait for an improvement in the early_stop_metric
-        before breaking off training. For example, a patience of 10 means that
+        Matwitterimum number of epochs to wait for an improvement in the early_stop_metric
+        before breaking off training. For etwitterample, a patience of 10 means that
         training will have 10 epochs to improve the metric before it is killed.
         Whenever the metric is improved before running out of patience,
         patience is reset to ``early_stop_patience``.
         Defaults to -1 (that is, no early-stopping).
       early_stop_minimize:
         Set this to True (the default) for metrics that need to be minimized
-        (like ``loss``). Metrics like ``accuracy`` that need to be maximized
+        (like ``loss``). Metrics like ``accuracy`` that need to be matwitterimized
         should set this to False.
       early_stop_tolerance:
         A non-negative tolerance for comparing early_stop_metric.
-        E.g. when maximizing the condition is current_metric > best_metric + tolerance.
+        E.g. when matwitterimizing the condition is current_metric > best_metric + tolerance.
         Defaults to 0.
-      max_duration:
+      matwitter_duration:
         A float. When this argument is defined, the job will automatically terminate after
-        `max_duration` seconds if it has not already compeleted. 
+        `matwitter_duration` seconds if it has not already compeleted. 
 
     Returns:
       The directory where the checkpoints were saved.
     """
 
-    logging.info("WARNING: Trainer.train_and_evaluate is an EXPERIMENTAL API.")
+    logging.info("WARNING: Trainer.train_and_evaluate is an EtwitterPERIMENTAL API.")
     logging.info("Trainer.train_and_evaluate may change or be removed in future versions.")
 
     if not callable(train_input_fn):
-      raise ValueError("Expecting callable train_input_fn function")
+      raise ValueError("Etwitterpecting callable train_input_fn function")
     if not callable(eval_input_fn):
-      raise ValueError("Expecting callable eval_input_fn function")
+      raise ValueError("Etwitterpecting callable eval_input_fn function")
 
-    self._exit_ps_after_training_complete()
+    self._etwitterit_ps_after_training_complete()
 
-    # Maybe export in eval processes.
+    # Maybe etwitterport in eval processes.
     if self.is_evaluator():
       if self.params.get("eval_name") is not None:
-        # Do not export if running special eval.
-        exporters = None
-        export_output_fn = None
-      elif exporters and export_output_fn:
-        self._export_output_fn = export_output_fn
+        # Do not etwitterport if running special eval.
+        etwitterporters = None
+        etwitterport_output_fn = None
+      elif etwitterporters and etwitterport_output_fn:
+        self._etwitterport_output_fn = etwitterport_output_fn
       else:
         # Default option.
-        self._export_output_fn = None
+        self._etwitterport_output_fn = None
 
     train_hooks = self.get_train_hooks() if train_hooks is None else train_hooks
     train_hooks = [] if train_hooks is None else train_hooks
@@ -1308,8 +1308,8 @@ class Trainer(object):
     eval_hooks = self.get_eval_hooks() if eval_hooks is None else eval_hooks
     eval_hooks = [] if eval_hooks is None else eval_hooks
 
-    if train_max_steps is None:
-      train_max_steps = self.params.get('train_max_steps')
+    if train_matwitter_steps is None:
+      train_matwitter_steps = self.params.get('train_matwitter_steps')
 
     if eval_steps is None:
       eval_steps = self.params.eval_steps
@@ -1323,7 +1323,7 @@ class Trainer(object):
 
     if early_stop_patience > 0:
       # when training hooks detect this file, they request a stop to training
-      early_stop_path = os.path.join(self._save_dir, 'earlystop_now.txt')
+      early_stop_path = os.path.join(self._save_dir, 'earlystop_now.ttwittert')
       # prepare early stopping hook (which also handles logic here)
 
       self._is_early_stopping = True
@@ -1336,36 +1336,36 @@ class Trainer(object):
         tolerance=early_stop_tolerance,
         get_estimator_spec_fn=lambda: self.current_estimator_spec,
         file_path=early_stop_path,
-        exit_on_end=os.environ.get('TF_CONFIG') is not None)  # only exit for distributed jobs
+        etwitterit_on_end=os.environ.get('TF_CONFIG') is not None)  # only etwitterit for distributed jobs
       # add early stop hook to eval hooks
       eval_hooks.append(eval_early_stop_hook)
 
       # prepare the commensurate training hook
-      train_early_stop_hook = twml.hooks.StopIfExistsHook(early_stop_path)
+      train_early_stop_hook = twml.hooks.StopIfEtwitteristsHook(early_stop_path)
       train_hooks.append(train_early_stop_hook)
 
-    if max_duration is not None:
+    if matwitter_duration is not None:
       train_early_stop_duration_hook = twml.hooks.EarlyStopDuration(
-        max_duration=max_duration,
-        exit_on_end=False,
+        matwitter_duration=matwitter_duration,
+        etwitterit_on_end=False,
         save_dir=self._save_dir,
         overwrite=self.is_chief()
       )
       eval_early_stop_duration_hook = twml.hooks.EarlyStopDuration(
-        max_duration=max_duration,
-        exit_on_end=os.environ.get('TF_CONFIG') is not None,
+        matwitter_duration=matwitter_duration,
+        etwitterit_on_end=os.environ.get('TF_CONFIG') is not None,
         save_dir=self._save_dir,
         overwrite=False
-      )  # only exit for distributed jobs
+      )  # only etwitterit for distributed jobs
 
       train_hooks.append(train_early_stop_duration_hook)
       eval_hooks.append(eval_early_stop_duration_hook)
 
-    with self.experiment_tracker.track_experiment(eval_hooks, lambda: self.current_estimator_spec):
-      train_spec = self.get_train_spec(train_input_fn, train_max_steps, train_hooks)
+    with self.etwitterperiment_tracker.track_etwitterperiment(eval_hooks, lambda: self.current_estimator_spec):
+      train_spec = self.get_train_spec(train_input_fn, train_matwitter_steps, train_hooks)
       eval_spec = self.get_eval_spec(eval_input_fn, eval_steps,
                                      eval_delay, eval_period,
-                                     eval_hooks, exporters)
+                                     eval_hooks, etwitterporters)
       self._train_and_evaluate(train_spec, eval_spec)
 
     if self.is_chief():
@@ -1380,8 +1380,8 @@ class Trainer(object):
     """
     try:
       tf.estimator.train_and_evaluate(self._estimator, train_spec, eval_spec)
-    except twml.errors.EarlyStopError:
-      # Ignore the exception if on evaluator.
+    etwittercept twml.errors.EarlyStopError:
+      # Ignore the etwitterception if on evaluator.
       if self.is_evaluator():
         pass
       else:
@@ -1393,7 +1393,7 @@ class Trainer(object):
 
     Args:
       steps:
-        number of steps for which to perform training. For example, 100 means each
+        number of steps for which to perform training. For etwitterample, 100 means each
         evaluation will end after processing 100 batches.
         Defaults to None. i.e. trains on the entire dataset a single time.
         Non-positive values and None-values go through the entire training set each epoch.
@@ -1406,7 +1406,7 @@ class Trainer(object):
       raise ValueError("trainer.train() can not be used with distributed / hogwild setups")
 
     if not callable(input_fn):
-      raise ValueError("Expecting callable input_fn function")
+      raise ValueError("Etwitterpecting callable input_fn function")
 
     if self._is_early_stopping:
       raise ValueError("Can not call train() after learn() when using early stopping.")
@@ -1421,7 +1421,7 @@ class Trainer(object):
 
     Args:
       steps:
-        number of steps for which to perform evaluation. For example, 100 means each
+        number of steps for which to perform evaluation. For etwitterample, 100 means each
         evaluation will end after processing 100 batches.
         Defaults to None. i.e. evaluates on the entire dataset a single time.
         Negative values and None-values go through the entire training set each epoch.
@@ -1447,7 +1447,7 @@ class Trainer(object):
       return None
 
     if not callable(input_fn):
-      raise ValueError("Expecting callable input_fn function")
+      raise ValueError("Etwitterpecting callable input_fn function")
 
     hooks = self.get_eval_hooks() if hooks is None else hooks
     hooks = [] if hooks is None else hooks
@@ -1455,7 +1455,7 @@ class Trainer(object):
     # for consistency with train/learn
     eval_steps = None if steps is not None and steps < 0 else steps
 
-    with self.experiment_tracker.track_experiment(hooks, lambda: self.current_estimator_spec, name=name):
+    with self.etwitterperiment_tracker.track_etwitterperiment(hooks, lambda: self.current_estimator_spec, name=name):
       checkpoint = self.best_or_latest_checkpoint
       computed_metrics = self._estimator.evaluate(
         input_fn,
@@ -1484,23 +1484,23 @@ class Trainer(object):
       else:
         port = self.params.tensorboard_port
 
-    mldash_path = 'experiments'
-    if self.experiment_tracker.path:
-      mldash_path += '/%s' % encode_url(self.experiment_tracker.experiment_id)
+    mldash_path = 'etwitterperiments'
+    if self.etwitterperiment_tracker.path:
+      mldash_path += '/%s' % encode_url(self.etwitterperiment_tracker.etwitterperiment_id)
     tensorboard_args = ['--logdir=%s' % self._save_dir, '--port=%d' % port]
 
     try:
       args = ['email_and_launch_tensorboard', mldash_path, '--'] + tensorboard_args
       self._tensorboard_handle = subprocess.Popen(args)
-    except OSError:
+    etwittercept OSError:
       try:
         self._tensorboard_handle = subprocess.Popen(['tensorboard'] + tensorboard_args)
-      except OSError:
+      etwittercept OSError:
         try:
           # this will work with Twitter internal pants build when run locally
           args = ['./pants', 'run', 'twml:tensorboard', '--'] + tensorboard_args
           self._tensorboard_handle = subprocess.Popen(args)
-        except OSError:
+        etwittercept OSError:
           logging.error("No tensorboard installed, won't able to visualize training in tensorboard.")
 
   def stop_tensorboard(self):
@@ -1532,8 +1532,8 @@ class Trainer(object):
       calibrator:
         a twml.Calibrator instance or a dict of the form {name(str): twml.Calibrator}.
       steps:
-        Maximum steps to accumulate examples for calibration. Optional.
-        If not specified, examples will be accumulated until all downsampled parts are processed.
+        Matwitterimum steps to accumulate etwitteramples for calibration. Optional.
+        If not specified, etwitteramples will be accumulated until all downsampled parts are processed.
       input_fn:
         Function to iterate through training set. It is passed to estimator.train.
       hooks:
@@ -1543,7 +1543,7 @@ class Trainer(object):
     """
 
     if not callable(input_fn):
-      raise ValueError("Expecting callable input_fn function")
+      raise ValueError("Etwitterpecting callable input_fn function")
 
     # making everything a dict to avoid multiple ifs
     if isinstance(calibrator, twml.contrib.calibrators.Calibrator):
@@ -1552,11 +1552,11 @@ class Trainer(object):
     # This is a dummy call to train, since we cannot predict without training
     # from the Estimator API
     self._estimator.train(input_fn, steps=1)
-    max_steps = steps if steps is not None else -1
+    matwitter_steps = steps if steps is not None else -1
     for name, clbrt in sorted(calibrator.items(), key=itemgetter(0)):
       count = 0
-      for out in self._estimator.predict(input_fn, hooks=hooks, yield_single_examples=False):
-        if max_steps > 0 and count > max_steps:
+      for out in self._estimator.predict(input_fn, hooks=hooks, yield_single_etwitteramples=False):
+        if matwitter_steps > 0 and count > matwitter_steps:
           break
         clbrt.accumulate_feature(out)
         count += 1
@@ -1565,7 +1565,7 @@ class Trainer(object):
     # this step is done to allow us to keep the current phases event file for
     # visualization on Tensorboard. It removes all files that
     # are not event files. This piece of code should be deprecated when
-    # we deprecate the MDL calibrator (CX-12329)
+    # we deprecate the MDL calibrator (Ctwitter-12329)
     for fname in tf.io.gfile.listdir(self._save_dir):
       if not fname.startswith("events"):
         tf.io.gfile.remove(os.path.join(self._save_dir, fname))
@@ -1606,94 +1606,94 @@ class Trainer(object):
 
     return self.estimator.predict(*args, **kwargs)
 
-  def hub_export(self,
+  def hub_etwitterport(self,
                  name,
                  serving_input_receiver_fn,
-                 export_dir=None,
+                 etwitterport_dir=None,
                  checkpoint_path=None,
-                 export_task_type_overrider=None):
+                 etwitterport_task_type_overrider=None):
     """
-    Exports registered modules into a save directory.
+    Etwitterports registered modules into a save directory.
 
-    This method creates a directory under export_path with the save TF Hub.
-    One sub-directory (named export_name) per module registered via register_module_for_export.
+    This method creates a directory under etwitterport_path with the save TF Hub.
+    One sub-directory (named etwitterport_name) per module registered via register_module_for_etwitterport.
 
     Arguments:
       name:
-        unique name of the module to export.
+        unique name of the module to etwitterport.
       serving_input_receiver_fn:
         A function with no arguments that returns a ServingInputReceiver.
-        This is used with the estimator passed to export() to build the graph (in PREDICT mode)
-        that registers the modules for export. The model in that graph is never run,
+        This is used with the estimator passed to etwitterport() to build the graph (in PREDICT mode)
+        that registers the modules for etwitterport. The model in that graph is never run,
         so the actual data provided by this input fn does not matter.
-      export_dir:
-        A string containing a directory where to write the export directories.
+      etwitterport_dir:
+        A string containing a directory where to write the etwitterport directories.
         Defaults to the save_dir.
       checkpoint_path:
-        The checkpoint path to export. Defaults to the latest.
-      export_task_type_overrider:
-        Specifies the task type that will override the default task type used for export
+        The checkpoint path to etwitterport. Defaults to the latest.
+      etwitterport_task_type_overrider:
+        Specifies the task type that will override the default task type used for etwitterport
         (hogwild training defaults to evaluator, otherwise, defaults to chief)
     """
-    if export_task_type_overrider:
-      if not self.is_task_type(export_task_type_overrider):
+    if etwitterport_task_type_overrider:
+      if not self.is_task_type(etwitterport_task_type_overrider):
         logging.info(
-          f"Trainer.hub_export ignored due to process not being {export_task_type_overrider}")
+          f"Trainer.hub_etwitterport ignored due to process not being {etwitterport_task_type_overrider}")
         return
     else:
       if self._using_hogwild:
         if not self.is_evaluator():
-          logging.info("Trainer.hub_export ignored due to the process not being evaluator.")
+          logging.info("Trainer.hub_etwitterport ignored due to the process not being evaluator.")
           return
       else:
         if not self.is_chief():
-          logging.info("Trainer.hub_export ignored due to the process not being chief.")
+          logging.info("Trainer.hub_etwitterport ignored due to the process not being chief.")
           return
 
-    if export_dir:
-      export_dir = sanitize_hdfs_path(export_dir)
+    if etwitterport_dir:
+      etwitterport_dir = sanitize_hdfs_path(etwitterport_dir)
 
     if checkpoint_path:
       checkpoint_path = sanitize_hdfs_path(checkpoint_path)
     else:
       checkpoint_path = self.best_or_latest_checkpoint
 
-    export_dir = export_dir if export_dir is not None else self._save_dir
-    exporter = hub.LatestModuleExporter(name, serving_input_receiver_fn)
-    # The path_exporter by default contains a timestamp directory in its path.
-    path_exporter = exporter.export(estimator=self.estimator,
-                                    export_path=export_dir,
+    etwitterport_dir = etwitterport_dir if etwitterport_dir is not None else self._save_dir
+    etwitterporter = hub.LatestModuleEtwitterporter(name, serving_input_receiver_fn)
+    # The path_etwitterporter by default contains a timestamp directory in its path.
+    path_etwitterporter = etwitterporter.etwitterport(estimator=self.estimator,
+                                    etwitterport_path=etwitterport_dir,
                                     checkpoint_path=checkpoint_path)
 
-    # LatestModuleExporter.export() returns a binary string on Cloud ML Engine
+    # LatestModuleEtwitterporter.etwitterport() returns a binary string on Cloud ML Engine
     # but tf.io.gfile.listdir() does not; this is an issue when joining paths
-    if isinstance(path_exporter, bytes):
-      path_exporter = path_exporter.decode()
+    if isinstance(path_etwitterporter, bytes):
+      path_etwitterporter = path_etwitterporter.decode()
 
-    # Copying the saved hub module to export_dir so we don't need to specify
+    # Copying the saved hub module to etwitterport_dir so we don't need to specify
     # the timestamp when loading the module.
-    # This is a workaround due to the current implementation of hub.LatestModuleExporter.
+    # This is a workaround due to the current implementation of hub.LatestModuleEtwitterporter.
     # This works for multiple hub modules.
-    hub_exported_modules = tf.io.gfile.listdir(path_exporter)
+    hub_etwitterported_modules = tf.io.gfile.listdir(path_etwitterporter)
 
-    backup_dir = os.path.join(export_dir, "backups",
+    backup_dir = os.path.join(etwitterport_dir, "backups",
                               datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
 
-    for folder in hub_exported_modules:
-      hub_module_oldpath = os.path.join(path_exporter, folder)
-      hub_module_newpath = os.path.join(export_dir, folder)
+    for folder in hub_etwitterported_modules:
+      hub_module_oldpath = os.path.join(path_etwitterporter, folder)
+      hub_module_newpath = os.path.join(etwitterport_dir, folder)
 
-      # If the destination already exists, move to backup
-      if tf.io.gfile.exists(hub_module_newpath):
-        # Ensure backup_dir exists
+      # If the destination already etwitterists, move to backup
+      if tf.io.gfile.etwitterists(hub_module_newpath):
+        # Ensure backup_dir etwitterists
         tf.io.gfile.makedirs(backup_dir)
         hub_module_backup = os.path.join(backup_dir, folder)
         tf.io.gfile.rename(hub_module_newpath, hub_module_backup)
 
       tf.io.gfile.rename(hub_module_oldpath, hub_module_newpath)
 
-    # Since the timestamped folder exists but is empty, we can delete it.
-    tf.io.gfile.rmtree(path_exporter)
+    # Since the timestamped folder etwitterists but is empty, we can delete it.
+    tf.io.gfile.rmtree(path_etwitterporter)
 
   def _is_on_gke(self) -> bool:
     """Returns True if running on gke."""
@@ -1702,14 +1702,14 @@ class Trainer(object):
       return False
     return True
 
-  def _maybe_del_tsd_exit(self, state_files) -> None:
-    """Handle potential early exit and TwitterSetDeployment deletion.
+  def _maybe_del_tsd_etwitterit(self, state_files) -> None:
+    """Handle potential early etwitterit and TwitterSetDeployment deletion.
 
       If:
         - distributed training
         - running GKE
-        - training is finished (all state_files exists)
-      we will exit early and not restart work
+        - training is finished (all state_files etwitterists)
+      we will etwitterit early and not restart work
 
       If --distributed_training_cleanup = True then we will also handle
       cleaning up the TwitterSetDeployments.
@@ -1718,29 +1718,29 @@ class Trainer(object):
         state_files: A python list indicate state files to determine the finish 
         state of the job.
     """
-    # job type that is responsible for experiment tracking will remain alive
-    # until it marks the experiment as finished.
-    if self.experiment_tracker._env_eligible_for_recording_experiment:
-      exp_status = self.experiment_tracker.get_run_status()
-      if exp_status and exp_status not in {'Success', 'Failed'}:
+    # job type that is responsible for etwitterperiment tracking will remain alive
+    # until it marks the etwitterperiment as finished.
+    if self.etwitterperiment_tracker._env_eligible_for_recording_etwitterperiment:
+      etwitterp_status = self.etwitterperiment_tracker.get_run_status()
+      if etwitterp_status and etwitterp_status not in {'Success', 'Failed'}:
         logging.info(
-          f"Not exiting early because experiment is still {exp_status}."
+          f"Not etwitteriting early because etwitterperiment is still {etwitterp_status}."
         )
         return
 
     # do not bother if we are on prem
     if not self._is_on_gke():
-      logging.info("No need to exit early because running on prem.")
+      logging.info("No need to etwitterit early because running on prem.")
       return
 
     states = [
-      twml.util.file_exist_in_dir(self._save_dir, state_file) for state_file in state_files]
+      twml.util.file_etwitterist_in_dir(self._save_dir, state_file) for state_file in state_files]
     do_not_restart = (self._params.get('distributed') and all(states))
     if not do_not_restart:
       return
 
     logging.info(
-      f"Exiting early because a _SUCCESS file already exists in {self._save_dir}")
+      f"Etwitteriting early because a _SUCCESS file already etwitterists in {self._save_dir}")
     if self._params.get('distributed_training_cleanup'):
       resource_name = '-'.join([
         os.environ['TWML_JOB_NAME'],
@@ -1751,7 +1751,7 @@ class Trainer(object):
       # each job type will manage its own deletion so that deletion happens
       # in the trainer init call for every job type
       # otherwise we may kill another job type during an important
-      # process like experiment tracking management (handled by the evaluator
+      # process like etwitterperiment tracking management (handled by the evaluator
       kubectl_delete_by_name(
         zone=None,
         namespace=os.environ['TWML_JOB_ROLE'],
@@ -1759,7 +1759,7 @@ class Trainer(object):
         resource_name=resource_name,
         wait=False,
       )
-    sys.exit(0)
+    sys.etwitterit(0)
 
   def write_state_to_disk(self, save_dir, filename='_SUCCESS') -> None:
     """Write state file to disk to indicate the state of training process. This is usually used 
@@ -1769,8 +1769,8 @@ class Trainer(object):
       file_name: A str indicate the state file. Default to `_SUCCESS`.
     """
     file_path = os.path.join(save_dir, filename)
-    if tf.io.gfile.exists(file_path):
-      tf.logging.warn(f'{file_path} already exist.')
+    if tf.io.gfile.etwitterists(file_path):
+      tf.logging.warn(f'{file_path} already etwitterist.')
       return
 
     with tf.io.gfile.GFile(file_path, 'w') as f:

@@ -3,7 +3,7 @@ package com.twitter.frigate.pushservice.module
 import com.google.inject.Singleton
 import com.twitter.decider.Decider
 import com.twitter.decider.RandomRecipient
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
+import com.twitter.finatra.mtls.thriftmutwitter.modules.MtlsClient
 import com.twitter.frigate.pushservice.thriftscala.PushService
 import com.twitter.inject.Injector
 import com.twitter.inject.thrift.modules.ReqRepDarkTrafficFilterModule
@@ -14,10 +14,10 @@ import com.twitter.inject.thrift.modules.ReqRepDarkTrafficFilterModule
  */
 @Singleton
 object PushServiceDarkTrafficModule
-    extends ReqRepDarkTrafficFilterModule[PushService.ReqRepServicePerEndpoint]
+    etwittertends ReqRepDarkTrafficFilterModule[PushService.ReqRepServicePerEndpoint]
     with MtlsClient {
 
-  override def label: String = "frigate-pushservice-diffy-proxy"
+  override def label: String = "frigate-pushservice-diffy-protwittery"
 
   /**
    * Function to determine if the request should be "sampled", e.g.

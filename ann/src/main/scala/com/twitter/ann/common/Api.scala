@@ -27,8 +27,8 @@ trait Queryable[T, P <: RuntimeParams, D <: Distance[D]] {
    * ANN query for ids.
    * @param embedding: Embedding/Vector to be queried with.
    * @param numOfNeighbors: Number of neighbours to be queried for.
-   * @param runtimeParams: Runtime params associated with index to control accuracy/latency etc.
-   * @return List of approximate nearest neighbour ids.
+   * @param runtimeParams: Runtime params associated with indetwitter to control accuracy/latency etc.
+   * @return List of approtwitterimate nearest neighbour ids.
    */
   def query(
     embedding: EmbeddingVector,
@@ -40,8 +40,8 @@ trait Queryable[T, P <: RuntimeParams, D <: Distance[D]] {
    * ANN query for ids with distance.
    * @param embedding: Embedding/Vector to be queried with.
    * @param numOfNeighbors: Number of neighbours to be queried for.
-   * @param runtimeParams: Runtime params associated with index to control accuracy/latency etc.
-   * @return List of approximate nearest neighbour ids with distance from the query embedding.
+   * @param runtimeParams: Runtime params associated with indetwitter to control accuracy/latency etc.
+   * @return List of approtwitterimate nearest neighbour ids with distance from the query embedding.
    */
   def queryWithDistance(
     embedding: EmbeddingVector,
@@ -50,16 +50,16 @@ trait Queryable[T, P <: RuntimeParams, D <: Distance[D]] {
   ): Future[List[NeighborWithDistance[T, D]]]
 }
 
-// Query interface for ANN over indexes that are grouped
-trait QueryableGrouped[T, P <: RuntimeParams, D <: Distance[D]] extends Queryable[T, P, D] {
+// Query interface for ANN over indetwitteres that are grouped
+trait QueryableGrouped[T, P <: RuntimeParams, D <: Distance[D]] etwittertends Queryable[T, P, D] {
 
   /**
    * ANN query for ids.
    * @param embedding: Embedding/Vector to be queried with.
    * @param numOfNeighbors: Number of neighbours to be queried for.
-   * @param runtimeParams: Runtime params associated with index to control accuracy/latency etc.
-   * @param key: Optional key to lookup specific ANN index and perform query there
-   * @return List of approximate nearest neighbour ids.
+   * @param runtimeParams: Runtime params associated with indetwitter to control accuracy/latency etc.
+   * @param key: Optional key to lookup specific ANN indetwitter and perform query there
+   * @return List of approtwitterimate nearest neighbour ids.
    */
   def query(
     embedding: EmbeddingVector,
@@ -72,9 +72,9 @@ trait QueryableGrouped[T, P <: RuntimeParams, D <: Distance[D]] extends Queryabl
    * ANN query for ids with distance.
    * @param embedding: Embedding/Vector to be queried with.
    * @param numOfNeighbors: Number of neighbours to be queried for.
-   * @param runtimeParams: Runtime params associated with index to control accuracy/latency etc.
-   * @param key: Optional key to lookup specific ANN index and perform query there
-   * @return List of approximate nearest neighbour ids with distance from the query embedding.
+   * @param runtimeParams: Runtime params associated with indetwitter to control accuracy/latency etc.
+   * @param key: Optional key to lookup specific ANN indetwitter and perform query there
+   * @return List of approtwitterimate nearest neighbour ids with distance from the query embedding.
    */
   def queryWithDistance(
     embedding: EmbeddingVector,
@@ -85,14 +85,14 @@ trait QueryableGrouped[T, P <: RuntimeParams, D <: Distance[D]] extends Queryabl
 }
 
 /**
- * Runtime params associated with index to control accuracy/latency etc while querying.
+ * Runtime params associated with indetwitter to control accuracy/latency etc while querying.
  */
 trait RuntimeParams {}
 
 /**
  * ANN query result with distance.
  * @param neighbor : Id of the neighbours
- * @param distance: Distance of neighbour from query ex: D: CosineDistance, L2Distance, InnerProductDistance
+ * @param distance: Distance of neighbour from query etwitter: D: CosineDistance, L2Distance, InnerProductDistance
  */
 case class NeighborWithDistance[T, D <: Distance[D]](neighbor: T, distance: D)
 
@@ -107,7 +107,7 @@ case class NeighborWithSeed[T1, T2](seed: T1, neighbor: T2)
  * ANN query result with distance with seed entity for which this neighbor was provided.
  * @param seed: Seed Id for which ann query was called
  * @param neighbor : Id of the neighbours
- * @param distance: Distance of neighbour from query ex: D: CosineDistance, L2Distance, InnerProductDistance
+ * @param distance: Distance of neighbour from query etwitter: D: CosineDistance, L2Distance, InnerProductDistance
  */
 case class NeighborWithDistanceWithSeed[T1, T2, D <: Distance[D]](
   seed: T1,
@@ -117,34 +117,34 @@ case class NeighborWithDistanceWithSeed[T1, T2, D <: Distance[D]](
 trait RawAppendable[P <: RuntimeParams, D <: Distance[D]] {
 
   /**
-   * Append an embedding in an index.
+   * Append an embedding in an indetwitter.
    * @param embedding: Embedding/Vector
    * @return Future of long id associated with embedding autogenerated.
    */
   def append(embedding: EmbeddingVector): Future[Long]
 
   /**
-   * Convert an Appendable to Queryable interface to query an index.
+   * Convert an Appendable to Queryable interface to query an indetwitter.
    */
   def toQueryable: Queryable[Long, P, D]
 }
 
-// Index building interface for ANN.
+// Indetwitter building interface for ANN.
 trait Appendable[T, P <: RuntimeParams, D <: Distance[D]] {
 
   /**
-   *  Append an entity with embedding in an index.
+   *  Append an entity with embedding in an indetwitter.
    * @param entity: Entity with its embedding
    */
   def append(entity: EntityEmbedding[T]): Future[Unit]
 
   /**
-   * Convert an Appendable to Queryable interface to query an index.
+   * Convert an Appendable to Queryable interface to query an indetwitter.
    */
   def toQueryable: Queryable[T, P, D]
 }
 
-// Updatable index interface for ANN.
+// Updatable indetwitter interface for ANN.
 trait Updatable[T] {
   def update(entity: EntityEmbedding[T]): Future[Unit]
 }

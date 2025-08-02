@@ -4,7 +4,7 @@ package store
 import com.twitter.timelineservice.fanout.thriftscala.FanoutService
 import com.twitter.tweetypie.thriftscala._
 
-trait FanoutServiceStore extends TweetStoreBase[FanoutServiceStore] with AsyncInsertTweet.Store {
+trait FanoutServiceStore etwittertends TweetStoreBase[FanoutServiceStore] with AsyncInsertTweet.Store {
   def wrap(w: TweetStore.Wrap): FanoutServiceStore =
     new TweetStoreWrapper(w, this) with FanoutServiceStore with AsyncInsertTweet.StoreWrapper
 }
@@ -25,8 +25,8 @@ object FanoutServiceStore {
               user = event.user,
               sourceTweet = event.sourceTweet,
               sourceUser = event.sourceUser,
-              additionalContext = event.additionalContext,
-              transientContext = event.transientContext
+              additionalContetwittert = event.additionalContetwittert,
+              transientContetwittert = event.transientContetwittert
             )
           )
         }

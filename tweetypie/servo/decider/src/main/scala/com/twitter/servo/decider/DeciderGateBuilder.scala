@@ -5,7 +5,7 @@ import com.twitter.servo.util.Gate
 import com.twitter.servo.gate.DeciderGate
 
 /**
- * Convenience syntax for creating decider gates
+ * Convenience syntatwitter for creating decider gates
  */
 class DeciderGateBuilder(decider: Decider) {
 
@@ -31,11 +31,11 @@ class DeciderGateBuilder(decider: Decider) {
     linearGate(key).contramap[T] { _ => () }
 
   /**
-   * expGate should be used when the probability of the gate returning true needs to
-   * increase exponentially with the availability of feature.
+   * etwitterpGate should be used when the probability of the gate returning true needs to
+   * increase etwitterponentially with the availability of feature.
    */
-  def expGate(key: DeciderKeyName, exponent: Int): Gate[Unit] =
-    DeciderGate.exp(keyToFeature(key), exponent)
+  def etwitterpGate(key: DeciderKeyName, etwitterponent: Int): Gate[Unit] =
+    DeciderGate.etwitterp(keyToFeature(key), etwitterponent)
 
   def keyToFeature(key: DeciderKeyName): Feature = decider.feature(key.toString)
 }

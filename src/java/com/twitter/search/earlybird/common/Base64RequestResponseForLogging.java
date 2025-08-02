@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird.common;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.thrift.TException;
+import org.apache.thrift.TEtwitterception;
 import org.apache.thrift.TSerializer;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.slf4j.Logger;
@@ -66,7 +66,7 @@ public final class Base64RequestResponseForLogging {
       // is needed.
       clearedRequest.unsetClientRequestTimeMs();
       return base64.encodeToString(serializer.serialize(clearedRequest));
-    } catch (TException e) {
+    } catch (TEtwitterception e) {
       GENERAL_LOG.error("Failed to serialize request for logging.", e);
       return "failed_to_serialize";
     }
@@ -75,7 +75,7 @@ public final class Base64RequestResponseForLogging {
   private String asBase64(EarlybirdResponse earlybirdResponse) {
     try {
       return base64.encodeToString(serializer.serialize(earlybirdResponse));
-    } catch (TException e) {
+    } catch (TEtwitterception e) {
       GENERAL_LOG.error("Failed to serialize response for logging.", e);
       return "failed_to_serialize";
     }

@@ -20,13 +20,13 @@ The Tweepcred PageRank implementation also includes a number of optimizations to
 ========================================== TweepcredBatchJob.scala ==========================================
 
 
-This is a Scala class that represents a batch job for computing the "tweepcred" (Twitter credibility) score for Twitter users using weighted or unweighted PageRank algorithm. The class extends the AnalyticsIterativeBatchJob class, which is part of the Scalding framework used for data processing on Hadoop.
+This is a Scala class that represents a batch job for computing the "tweepcred" (Twitter credibility) score for Twitter users using weighted or unweighted PageRank algorithm. The class etwittertends the AnalyticsIterativeBatchJob class, which is part of the Scalding framework used for data processing on Hadoop.
 
 The class defines various properties and methods that are used to configure and run the batch job. The args parameter represents the command-line arguments that are passed to the batch job, such as the --weighted flag that determines whether to use the weighted PageRank algorithm or not.
 
-The run method overrides the run method of the base class and prints the batch statistics after the job has finished. The children method defines a list of child jobs that need to be executed as part of the batch job. The messageHeader method returns a string that represents the header of the batch job message.
+The run method overrides the run method of the base class and prints the batch statistics after the job has finished. The children method defines a list of child jobs that need to be etwitterecuted as part of the batch job. The messageHeader method returns a string that represents the header of the batch job message.
 
-========================================== ExtractTweepcred.scala ==========================================
+========================================== EtwittertractTweepcred.scala ==========================================
 
 This class is a Scalding job that calculates "tweepcred" from a given pagerank file. Tweepcred is a measure of reputation for Twitter users that takes into account the number of followers they have and the number of people they follow. If the optional argument post_adjust is set to true (default value), then the pagerank values are adjusted based on the user's follower-to-following ratio.
 
@@ -53,20 +53,20 @@ It reads the graph data, which is either a TSV file or a combination of flock ed
 It generates the initial pagerank as the starting point for the pagerank computation.
 It writes the number of nodes to a TSV file and dumps the nodes to another TSV file.
 It has several options like weighted, flock_edges_only, and input_pagerank to fine-tune the pagerank calculation.
-It also has options for the WeightedPageRank and ExtractTweepcred jobs, like output_pagerank, output_tweepcred, maxiterations, jumpprob, threshold, and post_adjust.
+It also has options for the WeightedPageRank and EtwittertractTweepcred jobs, like output_pagerank, output_tweepcred, matwitteriterations, jumpprob, threshold, and post_adjust.
 The PreparePageRankData class has several helper functions like getFlockEdges, getRealGraphEdges, getFlockRealGraphEdges, and getCsvEdges that read the graph data from different sources like DAL, InteractionGraph, or CSV files. It also has the generateInitialPagerank function that generates the initial pagerank from the graph data.
 
 ========================================== WeightedPageRank.scala ==========================================
 
 WeightedPageRank is a class that performs the weighted PageRank algorithm on a given graph.
 
-The algorithm starts from a given PageRank value and performs one iteration, then tests for convergence. If convergence has not been reached, the algorithm clones itself and starts the next PageRank job with the updated PageRank as input. If convergence has been reached, the algorithm starts the ExtractTweepcred job instead.
+The algorithm starts from a given PageRank value and performs one iteration, then tests for convergence. If convergence has not been reached, the algorithm clones itself and starts the netwittert PageRank job with the updated PageRank as input. If convergence has been reached, the algorithm starts the EtwittertractTweepcred job instead.
 
-The class takes in several options, including the working directory, total number of nodes, nodes file, PageRank file, total difference, whether to perform weighted PageRank, the current iteration, maximum iterations to run, probability of a random jump, and whether to do post adjust.
+The class takes in several options, including the working directory, total number of nodes, nodes file, PageRank file, total difference, whether to perform weighted PageRank, the current iteration, matwitterimum iterations to run, probability of a random jump, and whether to do post adjust.
 
 The algorithm reads a nodes file that includes the source node ID, destination node IDs, weights, and mass prior. The algorithm also reads an input PageRank file that includes the source node ID and mass input. The algorithm then performs one iteration of the PageRank algorithm and writes the output PageRank to a file.
 
-The algorithm tests for convergence by calculating the total difference between the input and output PageRank masses. If convergence has not been reached, the algorithm clones itself and starts the next PageRank job. If convergence has been reached, the algorithm starts the ExtractTweepcred job.
+The algorithm tests for convergence by calculating the total difference between the input and output PageRank masses. If convergence has not been reached, the algorithm clones itself and starts the netwittert PageRank job. If convergence has been reached, the algorithm starts the EtwittertractTweepcred job.
 
 ========================================== Reputation.scala ==========================================
 

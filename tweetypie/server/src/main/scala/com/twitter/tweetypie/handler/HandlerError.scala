@@ -1,8 +1,8 @@
 package com.twitter.tweetypie
 package handler
 
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.servo.exception.thriftscala.ClientErrorCause
+import com.twitter.servo.etwitterception.thriftscala.ClientError
+import com.twitter.servo.etwitterception.thriftscala.ClientErrorCause
 import com.twitter.stitch.NotFound
 import com.twitter.stitch.Stitch
 import com.twitter.tweetypie.core.FilteredState.Unavailable._
@@ -11,11 +11,11 @@ private[tweetypie] object HandlerError {
 
   def translateNotFoundToClientError[U](tweetId: TweetId): PartialFunction[Throwable, Stitch[U]] = {
     case NotFound =>
-      Stitch.exception(HandlerError.tweetNotFound(tweetId))
+      Stitch.etwitterception(HandlerError.tweetNotFound(tweetId))
     case TweetDeleted | BounceDeleted =>
-      Stitch.exception(HandlerError.tweetNotFound(tweetId, true))
+      Stitch.etwitterception(HandlerError.tweetNotFound(tweetId, true))
     case SourceTweetNotFound(deleted) =>
-      Stitch.exception(HandlerError.tweetNotFound(tweetId, deleted))
+      Stitch.etwitterception(HandlerError.tweetNotFound(tweetId, deleted))
   }
 
   def tweetNotFound(tweetId: TweetId, deleted: Boolean = false): ClientError =
@@ -27,11 +27,11 @@ private[tweetypie] object HandlerError {
   def userNotFound(userId: UserId): ClientError =
     ClientError(ClientErrorCause.BadRequest, s"user not found: $userId")
 
-  def tweetNotFoundException(tweetId: TweetId): Future[Nothing] =
-    Future.exception(tweetNotFound(tweetId))
+  def tweetNotFoundEtwitterception(tweetId: TweetId): Future[Nothing] =
+    Future.etwitterception(tweetNotFound(tweetId))
 
-  def userNotFoundException(userId: UserId): Future[Nothing] =
-    Future.exception(userNotFound(userId))
+  def userNotFoundEtwitterception(userId: UserId): Future[Nothing] =
+    Future.etwitterception(userNotFound(userId))
 
   def getRequired[A, B](
     optionFutureArrow: FutureArrow[A, Option[B]],
@@ -39,7 +39,7 @@ private[tweetypie] object HandlerError {
   ): FutureArrow[A, B] =
     FutureArrow(key =>
       optionFutureArrow(key).flatMap {
-        case Some(x) => Future.value(x)
+        case Some(twitter) => Future.value(twitter)
         case None => notFound(key)
       })
 }

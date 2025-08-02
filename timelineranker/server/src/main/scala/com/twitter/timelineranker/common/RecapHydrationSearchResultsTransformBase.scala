@@ -8,7 +8,7 @@ import com.twitter.timelines.model.TweetId
 import com.twitter.util.Future
 
 trait RecapHydrationSearchResultsTransformBase
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+    etwittertends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
   protected def statsReceiver: StatsReceiver
   protected def searchClient: SearchClient
   private[this] val numResultsFromSearchStat = statsReceiver.stat("numResultsFromSearch")

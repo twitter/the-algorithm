@@ -32,7 +32,7 @@ object CreativesContainerMaterializationRepository {
     materializeAsTweet: backends.CreativesContainerService.MaterializeAsTweet
   ): GetTweetType = {
     case class RequestGroup(opts: Option[tp.GetTweetOptions])
-        extends SeqGroup[ccs.MaterializeAsTweetRequest, tp.GetTweetResult] {
+        etwittertends SeqGroup[ccs.MaterializeAsTweetRequest, tp.GetTweetResult] {
       override protected def run(
         keys: Seq[MaterializeAsTweetRequest]
       ): Future[Seq[Try[GetTweetResult]]] =
@@ -48,7 +48,7 @@ object CreativesContainerMaterializationRepository {
     materializeAsTweetFields: backends.CreativesContainerService.MaterializeAsTweetFields
   ): GetTweetFieldsType = {
     case class RequestGroup(opts: tp.GetTweetFieldsOptions)
-        extends SeqGroup[ccs.MaterializeAsTweetFieldsRequest, tp.GetTweetFieldsResult] {
+        etwittertends SeqGroup[ccs.MaterializeAsTweetFieldsRequest, tp.GetTweetFieldsResult] {
       override protected def run(
         keys: Seq[MaterializeAsTweetFieldsRequest]
       ): Future[Seq[Try[GetTweetFieldsResult]]] =

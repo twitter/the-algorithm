@@ -16,8 +16,8 @@ import tensorflow.compat.v1 as tf
 # checkstyle: noqa
 
 
-def get_model_type_to_tensors_to_change_axis():
-  model_type_to_tensors_to_change_axis = {
+def get_model_type_to_tensors_to_change_atwitteris():
+  model_type_to_tensors_to_change_atwitteris = {
     "magic_recs/model/batch_normalization/beta": ([0], "continuous"),
     "magic_recs/model/batch_normalization/gamma": ([0], "continuous"),
     "magic_recs/model/batch_normalization/moving_mean": ([0], "continuous"),
@@ -32,11 +32,11 @@ def get_model_type_to_tensors_to_change_axis():
     "magic_recs/model/logits/OONC_logits/clem_net/block2/channel_wise_dense/kernel": ([1], "all"),
   }
 
-  return model_type_to_tensors_to_change_axis
+  return model_type_to_tensors_to_change_atwitteris
 
 
 def mkdirp(dirname):
-  if not tf.io.gfile.exists(dirname):
+  if not tf.io.gfile.etwitterists(dirname):
     tf.io.gfile.makedirs(dirname)
 
 
@@ -45,7 +45,7 @@ def rename_dir(dirname, dst):
 
 
 def rmdir(dirname):
-  if tf.io.gfile.exists(dirname):
+  if tf.io.gfile.etwitterists(dirname):
     if tf.io.gfile.isdir(dirname):
       tf.io.gfile.rmtree(dirname)
     else:
@@ -71,7 +71,7 @@ def get_continunous_mapping_from_feat_list(old_feature_list, new_feature_list):
   new_var_ind, old_var_ind = [], []
   for this_new_id, this_new_name in enumerate(new_feature_list):
     if this_new_name in old_feature_list:
-      this_old_id = old_feature_list.index(this_new_name)
+      this_old_id = old_feature_list.indetwitter(this_new_name)
       new_var_ind.append(this_new_id)
       old_var_ind.append(this_old_id)
   return np.asarray(old_var_ind), np.asarray(new_var_ind)
@@ -87,7 +87,7 @@ def get_continuous_mapping_from_feat_dict(old_feature_dict, new_feature_dict):
   new_cont = new_feature_dict["continuous"]
   new_bin = new_feature_dict["binary"]
 
-  _dummy_sparse_feat = [f"sparse_feature_{_idx}" for _idx in range(100)]
+  _dummy_sparse_feat = [f"sparse_feature_{_idtwitter}" for _idtwitter in range(100)]
 
   cont_old_var_ind, cont_new_var_ind = get_continunous_mapping_from_feat_list(old_cont, new_cont)
 
@@ -108,13 +108,13 @@ def warm_start_from_var_dict(
   var_ind_dict,
   output_dir,
   new_len_var,
-  var_to_change_dict_fn=get_model_type_to_tensors_to_change_axis,
+  var_to_change_dict_fn=get_model_type_to_tensors_to_change_atwitteris,
 ):
   """
   Parameters:
       old_ckpt_path (str): path to the old checkpoint path
-      new_var_ind (array of int): index to overlapping features in new var between old and new feature list.
-      old_var_ind (array of int): index to overlapping features in old var between old and new feature list.
+      new_var_ind (array of int): indetwitter to overlapping features in new var between old and new feature list.
+      old_var_ind (array of int): indetwitter to overlapping features in old var between old and new feature list.
 
       output_dir (str): dir that used to write modified checkpoint
       new_len_var ({str:int}): number of feature in the new feature list.
@@ -158,7 +158,7 @@ def warm_start_from_var_dict(
       else:
         new_var = old_var
       var = tf.Variable(new_var, name=var_name)
-    assert count == len(tensors_to_change.keys()), "not all variables are exchanged.\n"
+    assert count == len(tensors_to_change.keys()), "not all variables are etwitterchanged.\n"
     saver = tf.train.Saver()
     sess.run(tf.global_variables_initializer())
     saver.save(sess, output_path)
@@ -216,14 +216,14 @@ def get_feature_list_for_light_ranking(feature_list_path, data_spec_path):
   feature_config_builder = twml.contrib.feature_config.FeatureConfigBuilder(
     data_spec_path=data_spec_path
   )
-  feature_config_builder = feature_config_builder.extract_feature_group(
-    feature_regexes=string_feat_list,
+  feature_config_builder = feature_config_builder.etwittertract_feature_group(
+    feature_regetwitteres=string_feat_list,
     group_name="continuous",
     default_value=-1,
     type_filter=["CONTINUOUS"],
   )
   feature_config = feature_config_builder.build()
-  feature_list = feature_config_builder._feature_group_extraction_configs[0].feature_map[
+  feature_list = feature_config_builder._feature_group_etwittertraction_configs[0].feature_map[
     "CONTINUOUS"
   ]
   return feature_list
@@ -236,15 +236,15 @@ def get_feature_list_for_heavy_ranking(feature_list_path, data_spec_path):
   feature_config_builder = twml.contrib.feature_config.FeatureConfigBuilder(
     data_spec_path=data_spec_path
   )
-  feature_config_builder = feature_config_builder.extract_feature_group(
-    feature_regexes=string_feat_list,
+  feature_config_builder = feature_config_builder.etwittertract_feature_group(
+    feature_regetwitteres=string_feat_list,
     group_name="continuous",
     default_value=-1,
     type_filter=["CONTINUOUS"],
   )
 
-  feature_config_builder = feature_config_builder.extract_feature_group(
-    feature_regexes=string_feat_list,
+  feature_config_builder = feature_config_builder.etwittertract_feature_group(
+    feature_regetwitteres=string_feat_list,
     group_name="binary",
     default_value=False,
     type_filter=["BINARY"],
@@ -252,11 +252,11 @@ def get_feature_list_for_heavy_ranking(feature_list_path, data_spec_path):
 
   feature_config_builder = feature_config_builder.build()
 
-  continuous_feature_list = feature_config_builder._feature_group_extraction_configs[0].feature_map[
+  continuous_feature_list = feature_config_builder._feature_group_etwittertraction_configs[0].feature_map[
     "CONTINUOUS"
   ]
 
-  binary_feature_list = feature_config_builder._feature_group_extraction_configs[1].feature_map[
+  binary_feature_list = feature_config_builder._feature_group_etwittertraction_configs[1].feature_map[
     "BINARY"
   ]
   return {"continuous": continuous_feature_list, "binary": binary_feature_list}

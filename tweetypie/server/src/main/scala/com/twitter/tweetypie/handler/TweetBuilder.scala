@@ -17,15 +17,15 @@ import com.twitter.tweetypie.media.Media
 import com.twitter.tweetypie.repository.StratoCommunityAccessRepository.CommunityAccess
 import com.twitter.tweetypie.repository._
 import com.twitter.tweetypie.serverutil.DeviceSourceParser
-import com.twitter.tweetypie.serverutil.ExtendedTweetMetadataBuilder
+import com.twitter.tweetypie.serverutil.EtwittertendedTweetMetadataBuilder
 import com.twitter.tweetypie.store._
 import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.thriftscala.entities.EntityExtractor
-import com.twitter.tweetypie.tweettext._
+import com.twitter.tweetypie.thriftscala.entities.EntityEtwittertractor
+import com.twitter.tweetypie.tweettetwittert._
 import com.twitter.tweetypie.util.CommunityAnnotation
 import com.twitter.tweetypie.util.CommunityUtil
-import com.twitter.twittertext.Regex.{VALID_URL => UrlPattern}
-import com.twitter.twittertext.TwitterTextParser
+import com.twitter.twittertetwittert.Regetwitter.{VALID_URL => UrlPattern}
+import com.twitter.twittertetwittert.TwitterTetwittertParser
 
 case class TweetBuilderResult(
   tweet: Tweet,
@@ -43,7 +43,7 @@ object TweetBuilder {
   import PostTweet._
   import Preprocessor._
   import TweetCreateState.{Spam => CreateStateSpam, _}
-  import TweetText._
+  import TweetTetwittert._
   import UpstreamFailure._
 
   type Type = FutureArrow[PostTweetRequest, TweetBuilderResult]
@@ -53,29 +53,29 @@ object TweetBuilder {
   private[this] val _unitMutation = Future.value(Mutation.unit[Any])
   def MutationUnitFuture[T]: Future[Mutation[T]] = _unitMutation.asInstanceOf[Future[Mutation[T]]]
 
-  case class MissingConversationId(inReplyToTweetId: TweetId) extends RuntimeException
+  case class MissingConversationId(inReplyToTweetId: TweetId) etwittertends RuntimeEtwitterception
 
-  case class TextVisibility(
-    visibleTextRange: Option[TextRange],
-    totalTextDisplayLength: Offset.DisplayUnit,
-    visibleText: String) {
-    val isExtendedTweet: Boolean = totalTextDisplayLength.toInt > OriginalMaxDisplayLength
+  case class TetwittertVisibility(
+    visibleTetwittertRange: Option[TetwittertRange],
+    totalTetwittertDisplayLength: Offset.DisplayUnit,
+    visibleTetwittert: String) {
+    val isEtwittertendedTweet: Boolean = totalTetwittertDisplayLength.toInt > OriginalMatwitterDisplayLength
 
     /**
-     *  Going forward we will be moving away from quoted-tweets urls in tweet text, but we
-     *  have a backwards-compat layer in Tweetypie which adds the QT url to text to provide
+     *  Going forward we will be moving away from quoted-tweets urls in tweet tetwittert, but we
+     *  have a backwards-compat layer in Tweetypie which adds the QT url to tetwittert to provide
      *  support for all clients to read in a backwards-compatible way until they upgrade.
      *
-     *  Tweets can become extended as their display length can go beyond 140
+     *  Tweets can become etwittertended as their display length can go beyond 140
      *  after adding the QT short url. Therefore, we are adding below function
      *  to account for legacy formatting during read-time and generate a self-permalink.
      */
-    def isExtendedWithExtraChars(extraChars: Int): Boolean =
-      totalTextDisplayLength.toInt > (OriginalMaxDisplayLength - extraChars)
+    def isEtwittertendedWithEtwittertraChars(etwittertraChars: Int): Boolean =
+      totalTetwittertDisplayLength.toInt > (OriginalMatwitterDisplayLength - etwittertraChars)
   }
 
-  /** Max number of users that can be tagged on a single tweet */
-  val MaxMediaTagCount = 10
+  /** Matwitter number of users that can be tagged on a single tweet */
+  val MatwitterMediaTagCount = 10
 
   val MobileWebApp = "oauth:49152"
   val M2App = "oauth:3033294"
@@ -105,18 +105,18 @@ object TweetBuilder {
     userFields + UserField.View
 
   /**
-   * Converts repository exceptions into an API-compatible exception type
+   * Converts repository etwitterceptions into an API-compatible etwitterception type
    */
-  def convertRepoExceptions[A](
+  def convertRepoEtwitterceptions[A](
     notFoundState: TweetCreateState,
     failureHandler: Throwable => Throwable
   ): PartialFunction[Throwable, Stitch[A]] = {
     // stitch.NotFound is converted to the supplied TweetCreateState, wrapped in TweetCreateFailure
-    case NotFound => Stitch.exception(TweetCreateFailure.State(notFoundState))
-    // OverCapacity exceptions should not be translated and should bubble up to the top
-    case ex: OverCapacity => Stitch.exception(ex)
-    // Other exceptions are wrapped in the supplied failureHandler
-    case ex => Stitch.exception(failureHandler(ex))
+    case NotFound => Stitch.etwitterception(TweetCreateFailure.State(notFoundState))
+    // OverCapacity etwitterceptions should not be translated and should bubble up to the top
+    case etwitter: OverCapacity => Stitch.etwitterception(etwitter)
+    // Other etwitterceptions are wrapped in the supplied failureHandler
+    case etwitter => Stitch.etwitterception(failureHandler(etwitter))
   }
 
   /**
@@ -128,7 +128,7 @@ object TweetBuilder {
 
     userId =>
       userRepo(UserKey(userId), opts)
-        .rescue(convertRepoExceptions[User](UserNotFound, UserLookupFailure(_)))
+        .rescue(convertRepoEtwitterceptions[User](UserNotFound, UserLookupFailure(_)))
   }
 
   /**
@@ -140,7 +140,7 @@ object TweetBuilder {
 
     (userId, forUserId) =>
       userRepo(UserKey(userId), opts.copy(forUserId = Some(forUserId)))
-        .rescue(convertRepoExceptions[User](SourceUserNotFound, UserLookupFailure(_)))
+        .rescue(convertRepoEtwitterceptions[User](SourceUserNotFound, UserLookupFailure(_)))
   }
 
   /**
@@ -183,10 +183,10 @@ object TweetBuilder {
         if (DeviceSourceParser.isValid(appIdStr)) {
           devSrcRepo(appIdStr)
         } else {
-          Stitch.exception(NotFound)
+          Stitch.etwitterception(NotFound)
         }
 
-      result.rescue(convertRepoExceptions(DeviceSourceNotFound, DeviceSourceLookupFailure(_)))
+      result.rescue(convertRepoEtwitterceptions(DeviceSourceNotFound, DeviceSourceLookupFailure(_)))
     }
 
   /**
@@ -197,22 +197,22 @@ object TweetBuilder {
    */
   def validateUser(user: User): Future[Unit] =
     if (user.safety.isEmpty)
-      Future.exception(UserSafetyEmptyException)
+      Future.etwitterception(UserSafetyEmptyEtwitterception)
     else if (user.profile.isEmpty)
-      Future.exception(UserProfileEmptyException)
+      Future.etwitterception(UserProfileEmptyEtwitterception)
     else if (user.safety.get.deactivated)
-      Future.exception(TweetCreateFailure.State(UserDeactivated))
+      Future.etwitterception(TweetCreateFailure.State(UserDeactivated))
     else if (user.safety.get.suspended)
-      Future.exception(TweetCreateFailure.State(UserSuspended))
-    else if (user.labels.exists(_.labels.exists(_.labelValue == LabelValue.ReadOnly)))
-      Future.exception(TweetCreateFailure.State(CreateStateSpam))
+      Future.etwitterception(TweetCreateFailure.State(UserSuspended))
+    else if (user.labels.etwitterists(_.labels.etwitterists(_.labelValue == LabelValue.ReadOnly)))
+      Future.etwitterception(TweetCreateFailure.State(CreateStateSpam))
     else if (user.userType == UserType.Frictionless)
-      Future.exception(TweetCreateFailure.State(UserNotFound))
+      Future.etwitterception(TweetCreateFailure.State(UserNotFound))
     else if (user.userType == UserType.Soft)
-      Future.exception(TweetCreateFailure.State(UserNotFound))
+      Future.etwitterception(TweetCreateFailure.State(UserNotFound))
     else if (user.safety.get.accessPolicy == AccessPolicy.BounceAll ||
       user.safety.get.accessPolicy == AccessPolicy.BounceAllPublicWrites)
-      Future.exception(TweetCreateFailure.State(UserReadonly))
+      Future.etwitterception(TweetCreateFailure.State(UserReadonly))
     else
       Future.Unit
 
@@ -229,35 +229,35 @@ object TweetBuilder {
       if (rootCommunityIds == replyCommunityIds) {
         Future.Unit
       } else {
-        Future.exception(TweetCreateFailure.State(CommunityReplyTweetNotAllowed))
+        Future.etwitterception(TweetCreateFailure.State(CommunityReplyTweetNotAllowed))
       }
     } else {
       Future.Unit
     }
   }
 
-  // Project requirements do not allow exclusive tweets to be replies.
-  // All exclusive tweets must be root tweets.
-  def validateExclusiveTweetNotReplies(
-    exclusiveTweetControls: Option[ExclusiveTweetControl],
+  // Project requirements do not allow etwitterclusive tweets to be replies.
+  // All etwitterclusive tweets must be root tweets.
+  def validateEtwitterclusiveTweetNotReplies(
+    etwitterclusiveTweetControls: Option[EtwitterclusiveTweetControl],
     replyResult: Option[ReplyBuilder.Result]
   ): Future[Unit] = {
-    val isInReplyToTweet = replyResult.exists(_.reply.inReplyToStatusId.isDefined)
-    if (exclusiveTweetControls.isDefined && isInReplyToTweet) {
-      Future.exception(TweetCreateFailure.State(SuperFollowsInvalidParams))
+    val isInReplyToTweet = replyResult.etwitterists(_.reply.inReplyToStatusId.isDefined)
+    if (etwitterclusiveTweetControls.isDefined && isInReplyToTweet) {
+      Future.etwitterception(TweetCreateFailure.State(SuperFollowsInvalidParams))
     } else {
       Future.Unit
     }
   }
 
-  // Invalid parameters for Exclusive Tweets:
+  // Invalid parameters for Etwitterclusive Tweets:
   // - Community field set # Tweets can not be both at the same time.
-  def validateExclusiveTweetParams(
-    exclusiveTweetControls: Option[ExclusiveTweetControl],
+  def validateEtwitterclusiveTweetParams(
+    etwitterclusiveTweetControls: Option[EtwitterclusiveTweetControl],
     communities: Option[Communities]
   ): Future[Unit] = {
-    if (exclusiveTweetControls.isDefined && CommunityUtil.hasCommunity(communities)) {
-      Future.exception(TweetCreateFailure.State(SuperFollowsInvalidParams))
+    if (etwitterclusiveTweetControls.isDefined && CommunityUtil.hasCommunity(communities)) {
+      Future.etwitterception(TweetCreateFailure.State(SuperFollowsInvalidParams))
     } else {
       Future.Unit
     }
@@ -267,9 +267,9 @@ object TweetBuilder {
     trustedFriendsControl: Option[TrustedFriendsControl],
     replyResult: Option[ReplyBuilder.Result]
   ): Future[Unit] = {
-    val isInReplyToTweet = replyResult.exists(_.reply.inReplyToStatusId.isDefined)
+    val isInReplyToTweet = replyResult.etwitterists(_.reply.inReplyToStatusId.isDefined)
     if (trustedFriendsControl.isDefined && isInReplyToTweet) {
-      Future.exception(TweetCreateFailure.State(TrustedFriendsInvalidParams))
+      Future.etwitterception(TweetCreateFailure.State(TrustedFriendsInvalidParams))
     } else {
       Future.Unit
     }
@@ -279,151 +279,151 @@ object TweetBuilder {
     trustedFriendsControl: Option[TrustedFriendsControl],
     conversationControl: Option[TweetCreateConversationControl],
     communities: Option[Communities],
-    exclusiveTweetControl: Option[ExclusiveTweetControl]
+    etwitterclusiveTweetControl: Option[EtwitterclusiveTweetControl]
   ): Future[Unit] = {
     if (trustedFriendsControl.isDefined &&
       (conversationControl.isDefined || CommunityUtil.hasCommunity(
-        communities) || exclusiveTweetControl.isDefined)) {
-      Future.exception(TweetCreateFailure.State(TrustedFriendsInvalidParams))
+        communities) || etwitterclusiveTweetControl.isDefined)) {
+      Future.etwitterception(TweetCreateFailure.State(TrustedFriendsInvalidParams))
     } else {
       Future.Unit
     }
   }
 
   /**
-   * Checks the weighted tweet text length using twitter-text, as used by clients.
+   * Checks the weighted tweet tetwittert length using twitter-tetwittert, as used by clients.
    * This should ensure that any tweet the client deems valid will also be deemed
    * valid by Tweetypie.
    */
-  def prevalidateTextLength(text: String, stats: StatsReceiver): Future[Unit] = {
-    val twitterTextConfig = TwitterTextParser.TWITTER_TEXT_DEFAULT_CONFIG
-    val twitterTextResult = TwitterTextParser.parseTweet(text, twitterTextConfig)
-    val textTooLong = !twitterTextResult.isValid && text.length > 0
+  def prevalidateTetwittertLength(tetwittert: String, stats: StatsReceiver): Future[Unit] = {
+    val twitterTetwittertConfig = TwitterTetwittertParser.TWITTER_TEtwitterT_DEFAULT_CONFIG
+    val twitterTetwittertResult = TwitterTetwittertParser.parseTweet(tetwittert, twitterTetwittertConfig)
+    val tetwittertTooLong = !twitterTetwittertResult.isValid && tetwittert.length > 0
 
-    Future.when(textTooLong) {
-      val weightedLength = twitterTextResult.weightedLength
+    Future.when(tetwittertTooLong) {
+      val weightedLength = twitterTetwittertResult.weightedLength
       log.debug(
         s"Weighted length too long. weightedLength: $weightedLength" +
-          s", Tweet text: '${diffshow.show(text)}'"
+          s", Tweet tetwittert: '${diffshow.show(tetwittert)}'"
       )
-      stats.counter("check_weighted_length/text_too_long").incr()
-      Future.exception(TweetCreateFailure.State(TextTooLong))
+      stats.counter("check_weighted_length/tetwittert_too_long").incr()
+      Future.etwitterception(TweetCreateFailure.State(TetwittertTooLong))
     }
   }
 
   /**
-   * Checks that the tweet text is neither blank nor too long.
+   * Checks that the tweet tetwittert is neither blank nor too long.
    */
-  def validateTextLength(
-    text: String,
-    visibleText: String,
+  def validateTetwittertLength(
+    tetwittert: String,
+    visibleTetwittert: String,
     replyResult: Option[ReplyBuilder.Result],
     stats: StatsReceiver
   ): Future[Unit] = {
-    val utf8Length = Offset.Utf8.length(text)
+    val utf8Length = Offset.Utf8.length(tetwittert)
 
-    def visibleTextTooLong =
-      Offset.DisplayUnit.length(visibleText) > Offset.DisplayUnit(MaxVisibleWeightedEmojiLength)
+    def visibleTetwittertTooLong =
+      Offset.DisplayUnit.length(visibleTetwittert) > Offset.DisplayUnit(MatwitterVisibleWeightedEmojiLength)
 
     def utf8LengthTooLong =
-      utf8Length > Offset.Utf8(MaxUtf8Length)
+      utf8Length > Offset.Utf8(MatwitterUtf8Length)
 
-    if (isBlank(text)) {
-      stats.counter("validate_text_length/text_cannot_be_blank").incr()
-      Future.exception(TweetCreateFailure.State(TextCannotBeBlank))
-    } else if (replyResult.exists(_.replyTextIsEmpty(text))) {
-      stats.counter("validate_text_length/reply_text_cannot_be_blank").incr()
-      Future.exception(TweetCreateFailure.State(TextCannotBeBlank))
-    } else if (visibleTextTooLong) {
-      // Final check that visible text does not exceed MaxVisibleWeightedEmojiLength
+    if (isBlank(tetwittert)) {
+      stats.counter("validate_tetwittert_length/tetwittert_cannot_be_blank").incr()
+      Future.etwitterception(TweetCreateFailure.State(TetwittertCannotBeBlank))
+    } else if (replyResult.etwitterists(_.replyTetwittertIsEmpty(tetwittert))) {
+      stats.counter("validate_tetwittert_length/reply_tetwittert_cannot_be_blank").incr()
+      Future.etwitterception(TweetCreateFailure.State(TetwittertCannotBeBlank))
+    } else if (visibleTetwittertTooLong) {
+      // Final check that visible tetwittert does not etwitterceed MatwitterVisibleWeightedEmojiLength
       // characters.
-      // prevalidateTextLength() does some portion of validation as well, most notably
-      // weighted length on raw, unescaped text.
-      stats.counter("validate_text_length/text_too_long.visible_length_explicit").incr()
+      // prevalidateTetwittertLength() does some portion of validation as well, most notably
+      // weighted length on raw, unescaped tetwittert.
+      stats.counter("validate_tetwittert_length/tetwittert_too_long.visible_length_etwitterplicit").incr()
       log.debug(
-        s"Explicit MaxVisibleWeightedLength visible length check failed. " +
-          s"visibleText: '${diffshow.show(visibleText)}' and " +
-          s"total text: '${diffshow.show(text)}'"
+        s"Etwitterplicit MatwitterVisibleWeightedLength visible length check failed. " +
+          s"visibleTetwittert: '${diffshow.show(visibleTetwittert)}' and " +
+          s"total tetwittert: '${diffshow.show(tetwittert)}'"
       )
-      Future.exception(TweetCreateFailure.State(TextTooLong))
+      Future.etwitterception(TweetCreateFailure.State(TetwittertTooLong))
     } else if (utf8LengthTooLong) {
-      stats.counter("validate_text_length/text_too_long.utf8_length").incr()
-      Future.exception(TweetCreateFailure.State(TextTooLong))
+      stats.counter("validate_tetwittert_length/tetwittert_too_long.utf8_length").incr()
+      Future.etwitterception(TweetCreateFailure.State(TetwittertTooLong))
     } else {
-      stats.stat("validate_text_length/utf8_length").add(utf8Length.toInt)
+      stats.stat("validate_tetwittert_length/utf8_length").add(utf8Length.toInt)
       Future.Unit
     }
   }
 
-  def getTextVisibility(
-    text: String,
+  def getTetwittertVisibility(
+    tetwittert: String,
     replyResult: Option[ReplyBuilder.Result],
     urlEntities: Seq[UrlEntity],
     mediaEntities: Seq[MediaEntity],
     attachmentUrl: Option[String]
-  ): TextVisibility = {
-    val totalTextLength = Offset.CodePoint.length(text)
-    val totalTextDisplayLength = Offset.DisplayUnit.length(text)
+  ): TetwittertVisibility = {
+    val totalTetwittertLength = Offset.CodePoint.length(tetwittert)
+    val totalTetwittertDisplayLength = Offset.DisplayUnit.length(tetwittert)
 
     /**
      * visibleEnd for multiple scenarios:
      *
-     *  normal tweet + media - fromIndex of mediaEntity (hydrated from last media permalink)
-     *  quote tweet + media - fromIndex of mediaEntity
-     *  replies + media - fromIndex of mediaEntity
-     *  normal quote tweet - total text length (visible text range will be None)
+     *  normal tweet + media - fromIndetwitter of mediaEntity (hydrated from last media permalink)
+     *  quote tweet + media - fromIndetwitter of mediaEntity
+     *  replies + media - fromIndetwitter of mediaEntity
+     *  normal quote tweet - total tetwittert length (visible tetwittert range will be None)
      *  tweets with other attachments (DM deep links)
-     *  fromIndex of the last URL entity
+     *  fromIndetwitter of the last URL entity
      */
     val visibleEnd = mediaEntities.headOption
-      .map(_.fromIndex)
-      .orElse(attachmentUrl.flatMap(_ => urlEntities.lastOption).map(_.fromIndex))
-      .map(from => (from - 1).max(0)) // for whitespace, unless there is none
+      .map(_.fromIndetwitter)
+      .orElse(attachmentUrl.flatMap(_ => urlEntities.lastOption).map(_.fromIndetwitter))
+      .map(from => (from - 1).matwitter(0)) // for whitespace, unless there is none
       .map(Offset.CodePoint(_))
-      .getOrElse(totalTextLength)
+      .getOrElse(totalTetwittertLength)
 
     val visibleStart = replyResult match {
       case Some(rr) => rr.visibleStart.min(visibleEnd)
       case None => Offset.CodePoint(0)
     }
 
-    if (visibleStart.toInt == 0 && visibleEnd == totalTextLength) {
-      TextVisibility(
-        visibleTextRange = None,
-        totalTextDisplayLength = totalTextDisplayLength,
-        visibleText = text
+    if (visibleStart.toInt == 0 && visibleEnd == totalTetwittertLength) {
+      TetwittertVisibility(
+        visibleTetwittertRange = None,
+        totalTetwittertDisplayLength = totalTetwittertDisplayLength,
+        visibleTetwittert = tetwittert
       )
     } else {
-      val charFrom = visibleStart.toCodeUnit(text)
-      val charTo = charFrom.offsetByCodePoints(text, visibleEnd - visibleStart)
-      val visibleText = text.substring(charFrom.toInt, charTo.toInt)
+      val charFrom = visibleStart.toCodeUnit(tetwittert)
+      val charTo = charFrom.offsetByCodePoints(tetwittert, visibleEnd - visibleStart)
+      val visibleTetwittert = tetwittert.substring(charFrom.toInt, charTo.toInt)
 
-      TextVisibility(
-        visibleTextRange = Some(TextRange(visibleStart.toInt, visibleEnd.toInt)),
-        totalTextDisplayLength = totalTextDisplayLength,
-        visibleText = visibleText
+      TetwittertVisibility(
+        visibleTetwittertRange = Some(TetwittertRange(visibleStart.toInt, visibleEnd.toInt)),
+        totalTetwittertDisplayLength = totalTetwittertDisplayLength,
+        visibleTetwittert = visibleTetwittert
       )
     }
   }
 
   def isValidHashtag(entity: HashtagEntity): Boolean =
-    TweetText.codePointLength(entity.text) <= TweetText.MaxHashtagLength
+    TweetTetwittert.codePointLength(entity.tetwittert) <= TweetTetwittert.MatwitterHashtagLength
 
   /**
    * Validates that the number of various entities are within the limits, and the
    * length of hashtags are with the limit.
    */
   def validateEntities(tweet: Tweet): Future[Unit] =
-    if (getMentions(tweet).length > TweetText.MaxMentions)
-      Future.exception(TweetCreateFailure.State(MentionLimitExceeded))
-    else if (getUrls(tweet).length > TweetText.MaxUrls)
-      Future.exception(TweetCreateFailure.State(UrlLimitExceeded))
-    else if (getHashtags(tweet).length > TweetText.MaxHashtags)
-      Future.exception(TweetCreateFailure.State(HashtagLimitExceeded))
-    else if (getCashtags(tweet).length > TweetText.MaxCashtags)
-      Future.exception(TweetCreateFailure.State(CashtagLimitExceeded))
-    else if (getHashtags(tweet).exists(e => !isValidHashtag(e)))
-      Future.exception(TweetCreateFailure.State(HashtagLengthLimitExceeded))
+    if (getMentions(tweet).length > TweetTetwittert.MatwitterMentions)
+      Future.etwitterception(TweetCreateFailure.State(MentionLimitEtwitterceeded))
+    else if (getUrls(tweet).length > TweetTetwittert.MatwitterUrls)
+      Future.etwitterception(TweetCreateFailure.State(UrlLimitEtwitterceeded))
+    else if (getHashtags(tweet).length > TweetTetwittert.MatwitterHashtags)
+      Future.etwitterception(TweetCreateFailure.State(HashtagLimitEtwitterceeded))
+    else if (getCashtags(tweet).length > TweetTetwittert.MatwitterCashtags)
+      Future.etwitterception(TweetCreateFailure.State(CashtagLimitEtwitterceeded))
+    else if (getHashtags(tweet).etwitterists(e => !isValidHashtag(e)))
+      Future.etwitterception(TweetCreateFailure.State(HashtagLengthLimitEtwitterceeded))
     else
       Future.Unit
 
@@ -455,7 +455,7 @@ object TweetBuilder {
         .map(tweet =>
           unsettableAdditionalFieldIds(tweet) ++ rejectedAdditionalFieldIds(tweet)) match {
         case Some(unsettableFieldIds) if unsettableFieldIds.nonEmpty =>
-          Future.exception(
+          Future.etwitterception(
             TweetCreateFailure.State(
               InvalidAdditionalField,
               Some(unsettableAdditionalFieldIdsErrorMessage(unsettableFieldIds))
@@ -491,14 +491,14 @@ object TweetBuilder {
         MutationUnitFuture
       } else {
         getUserMediaTagRateLimit((getUserId(tweet), dark)).flatMap { remainingMediaTagCount =>
-          val maxMediaTagCount = math.min(remainingMediaTagCount, MaxMediaTagCount)
+          val matwitterMediaTagCount = math.min(remainingMediaTagCount, MatwitterMediaTagCount)
 
           val taggedUserIds =
             mediaTags.values.flatten.toSeq.collect {
               case MediaTag(MediaTagType.User, Some(userId), _, _) => userId
             }.distinct
 
-          val droppedTagCount = taggedUserIds.size - maxMediaTagCount
+          val droppedTagCount = taggedUserIds.size - matwitterMediaTagCount
           if (droppedTagCount > 0) stats.counter("over_limit_tags").incr(droppedTagCount)
 
           val userQueryOpts =
@@ -508,7 +508,7 @@ object TweetBuilder {
               forUserId = Some(getUserId(tweet))
             )
 
-          val keys = taggedUserIds.take(maxMediaTagCount).map(UserKey.byId)
+          val keys = taggedUserIds.take(matwitterMediaTagCount).map(UserKey.byId)
           val keyOpts = keys.map((_, userQueryOpts))
 
           Stitch.run {
@@ -522,7 +522,7 @@ object TweetBuilder {
                     val validMediaTags =
                       mediaTags.filter {
                         case MediaTag(MediaTagType.User, Some(userId), _, _) =>
-                          userMap.get(userId).exists(_.mediaView.exists(_.canMediaTag))
+                          userMap.get(userId).etwitterists(_.mediaView.etwitterists(_.canMediaTag))
                         case _ => false
                       }
                     val invalidCount = mediaTags.size - validMediaTags.size
@@ -565,22 +565,22 @@ object TweetBuilder {
             case None =>
               Future.Done
             case Some(tweetCreateState) =>
-              Future.exception(TweetCreateFailure.State(tweetCreateState))
+              Future.etwitterception(TweetCreateFailure.State(tweetCreateState))
           }
       case Some(Communities(communities)) if communities.length > 1 =>
         // Not allowed to specify more than one community ID.
-        Future.exception(TweetCreateFailure.State(TweetCreateState.InvalidAdditionalField))
+        Future.etwitterception(TweetCreateFailure.State(TweetCreateState.InvalidAdditionalField))
       case _ => Future.Done
     }
 
-  private[this] val CardUriSchemeRegex = "(?i)^(?:card|tombstone):".r
+  private[this] val CardUriSchemeRegetwitter = "(?i)^(?:card|tombstone):".r
 
   /**
    * Is the given String a URI that is allowed as a card reference
-   * without a matching URL in the text?
+   * without a matching URL in the tetwittert?
    */
   def hasCardsUriScheme(uri: String): Boolean =
-    CardUriSchemeRegex.findPrefixMatchOf(uri).isDefined
+    CardUriSchemeRegetwitter.findPrefitwitterMatchOf(uri).isDefined
 
   val InvalidAdditionalFieldEmptyUrlEntities: TweetCreateFailure.State =
     TweetCreateFailure.State(
@@ -607,62 +607,62 @@ object TweetBuilder {
     )
 
   type CardReferenceBuilder =
-    (Tweet, UrlShortener.Context) => Future[Mutation[Tweet]]
+    (Tweet, UrlShortener.Contetwittert) => Future[Mutation[Tweet]]
 
   def cardReferenceBuilder(
     cardReferenceValidator: CardReferenceValidationHandler.Type,
     urlShortener: UrlShortener.Type
   ): CardReferenceBuilder =
-    (tweet, urlShortenerCtx) => {
+    (tweet, urlShortenerCttwitter) => {
       getCardReference(tweet) match {
         case Some(CardReference(uri)) =>
           for {
             cardUri <-
               if (hasCardsUriScheme(uri)) {
-                // This is an explicit card references that does not
-                // need a corresponding URL in the text.
+                // This is an etwitterplicit card references that does not
+                // need a corresponding URL in the tetwittert.
                 Future.value(uri)
               } else if (UrlPattern.matcher(uri).matches) {
                 // The card reference is being used to specify which URL
                 // card to show. We need to verify that the URL is
-                // actually in the tweet text, or it can be effectively
+                // actually in the tweet tetwittert, or it can be effectively
                 // used to bypass the tweet length limit.
                 val urlEntities = getUrls(tweet)
 
                 if (urlEntities.isEmpty) {
                   // Fail fast if there can't possibly be a matching URL entity
-                  Future.exception(InvalidAdditionalFieldEmptyUrlEntities)
+                  Future.etwitterception(InvalidAdditionalFieldEmptyUrlEntities)
                 } else {
-                  // Look for the URL in the expanded URL entities. If
+                  // Look for the URL in the etwitterpanded URL entities. If
                   // it is present, then map it to the t.co shortened
                   // version of the URL.
                   urlEntities
                     .collectFirst {
-                      case urlEntity if urlEntity.expanded.exists(_ == uri) =>
+                      case urlEntity if urlEntity.etwitterpanded.etwitterists(_ == uri) =>
                         Future.value(urlEntity.url)
                     }
                     .getOrElse {
                       // The URL may have been altered when it was
-                      // returned from Talon, such as expanding a pasted
+                      // returned from Talon, such as etwitterpanding a pasted
                       // t.co link. In this case, we t.co-ize the link and
                       // make sure that the corresponding t.co is present
                       // as a URL entity.
-                      urlShortener((uri, urlShortenerCtx)).flatMap { shortened =>
-                        if (urlEntities.exists(_.url == shortened.shortUrl)) {
+                      urlShortener((uri, urlShortenerCttwitter)).flatMap { shortened =>
+                        if (urlEntities.etwitterists(_.url == shortened.shortUrl)) {
                           Future.value(shortened.shortUrl)
                         } else {
-                          Future.exception(InvalidAdditionalFieldNonMatchingUrlAndShortUrl)
+                          Future.etwitterception(InvalidAdditionalFieldNonMatchingUrlAndShortUrl)
                         }
                       }
                     }
                 }
               } else {
-                Future.exception(InvalidAdditionalFieldInvalidUri)
+                Future.etwitterception(InvalidAdditionalFieldInvalidUri)
               }
 
             validatedCardUri <- cardReferenceValidator((getUserId(tweet), cardUri)).rescue {
-              case CardReferenceValidationFailedException =>
-                Future.exception(InvalidAdditionalFieldInvalidCardUri)
+              case CardReferenceValidationFailedEtwitterception =>
+                Future.etwitterception(InvalidAdditionalFieldInvalidCardUri)
             }
           } yield {
             TweetLenses.cardReference.mutation(
@@ -680,12 +680,12 @@ object TweetBuilder {
   def filterInvalidData(
     validateTweetMediaTags: (Tweet, Boolean) => Future[Mutation[Tweet]],
     cardReferenceBuilder: CardReferenceBuilder
-  ): (Tweet, PostTweetRequest, UrlShortener.Context) => Future[Tweet] =
-    (tweet: Tweet, request: PostTweetRequest, urlShortenerCtx: UrlShortener.Context) => {
+  ): (Tweet, PostTweetRequest, UrlShortener.Contetwittert) => Future[Tweet] =
+    (tweet: Tweet, request: PostTweetRequest, urlShortenerCttwitter: UrlShortener.Contetwittert) => {
       Future
         .join(
           validateTweetMediaTags(tweet, request.dark),
-          cardReferenceBuilder(tweet, urlShortenerCtx)
+          cardReferenceBuilder(tweet, urlShortenerCttwitter)
         )
         .map {
           case (mediaMutation, cardRefMutation) =>
@@ -712,7 +712,7 @@ object TweetBuilder {
     attachmentBuilder: AttachmentBuilder.Type,
     duplicateTweetFinder: DuplicateTweetFinder.Type,
     spamChecker: Spam.Checker[TweetSpamRequest],
-    filterInvalidData: (Tweet, PostTweetRequest, UrlShortener.Context) => Future[Tweet],
+    filterInvalidData: (Tweet, PostTweetRequest, UrlShortener.Contetwittert) => Future[Tweet],
     updateUserCounts: (User, Tweet) => Future[User],
     validateConversationControl: ConversationControlBuilder.Validate.Type,
     conversationControlBuilder: ConversationControlBuilder.Type,
@@ -723,27 +723,27 @@ object TweetBuilder {
     editControlBuilder: EditControlBuilder.Type,
     featureSwitches: FeatureSwitches
   ): TweetBuilder.Type = {
-    val entityExtractor = EntityExtractor.mutationWithoutUrls.endo
+    val entityEtwittertractor = EntityEtwittertractor.mutationWithoutUrls.endo
     val getUser = userLookup(userRepo)
     val getDeviceSource = deviceSourceLookup(deviceSourceRepo)
 
     // create a tco of the permalink for given a tweetId
-    val permalinkShortener = (tweetId: TweetId, ctx: UrlShortener.Context) =>
-      urlShortener((s"https://twitter.com/i/web/status/$tweetId", ctx)).rescue {
+    val permalinkShortener = (tweetId: TweetId, cttwitter: UrlShortener.Contetwittert) =>
+      urlShortener((s"https://twitter.com/i/web/status/$tweetId", cttwitter)).rescue {
         // propagate OverCapacity
-        case e: OverCapacity => Future.exception(e)
+        case e: OverCapacity => Future.etwitterception(e)
         // convert any other failure into UrlShorteningFailure
-        case e => Future.exception(UrlShorteningFailure(e))
+        case e => Future.etwitterception(UrlShorteningFailure(e))
       }
 
-    def extractGeoSearchRequestId(tweetGeoOpt: Option[TweetCreateGeo]): Option[GeoSearchRequestId] =
+    def etwittertractGeoSearchRequestId(tweetGeoOpt: Option[TweetCreateGeo]): Option[GeoSearchRequestId] =
       for {
         tweetGeo <- tweetGeoOpt
         geoSearchRequestId <- tweetGeo.geoSearchRequestId
       } yield GeoSearchRequestId(geoSearchRequestId.id)
 
     def featureSwitchResults(user: User, stats: StatsReceiver): Option[FeatureSwitchResults] =
-      TwitterContext()
+      TwitterContetwittert()
         .flatMap { viewer =>
           UserViewerRecipient(user, viewer, stats)
         }.map { recipient =>
@@ -755,7 +755,7 @@ object TweetBuilder {
         () <- validateRequest(request)
 
         (tweetId, user, devsrc) <- Future.join(
-          tweetIdGenerator().rescue { case t => Future.exception(SnowflakeFailure(t)) },
+          tweetIdGenerator().rescue { case t => Future.etwitterception(SnowflakeFailure(t)) },
           Stitch.run(getUser(request.userId)),
           Stitch.run(getDeviceSource(request.createdVia))
         )
@@ -775,9 +775,9 @@ object TweetBuilder {
         )
 
         // strip illegal chars, normalize newlines, collapse blank lines, etc.
-        text = preprocessText(request.text)
+        tetwittert = preprocessTetwittert(request.tetwittert)
 
-        () <- prevalidateTextLength(text, stats)
+        () <- prevalidateTetwittertLength(tetwittert, stats)
 
         attachmentResult <- attachmentBuilder(
           AttachmentBuilderRequest(
@@ -792,11 +792,11 @@ object TweetBuilder {
           )
         )
 
-        // updated text with appended attachment url, if any.
-        text <- Future.value(
+        // updated tetwittert with appended attachment url, if any.
+        tetwittert <- Future.value(
           attachmentResult.attachmentUrl match {
-            case None => text
-            case Some(url) => s"$text $url"
+            case None => tetwittert
+            case Some(url) => s"$tetwittert $url"
           }
         )
 
@@ -804,7 +804,7 @@ object TweetBuilder {
           TweetSpamRequest(
             tweetId = tweetId,
             userId = request.userId,
-            text = text,
+            tetwittert = tetwittert,
             mediaTags = request.additionalFields.flatMap(_.mediaTags),
             safetyMetaData = request.safetyMetaData,
             inReplyToTweetId = request.inReplyToTweetId,
@@ -816,7 +816,7 @@ object TweetBuilder {
         safety = user.safety.get
         createdAt = SnowflakeId(tweetId).time
 
-        urlShortenerCtx = UrlShortener.Context(
+        urlShortenerCttwitter = UrlShortener.Contetwittert(
           tweetId = tweetId,
           userId = user.id,
           createdAt = createdAt,
@@ -830,12 +830,12 @@ object TweetBuilder {
           authorId = request.userId,
           authorScreenName = user.profile.map(_.screenName).get,
           inReplyToTweetId = request.inReplyToTweetId,
-          tweetText = text,
+          tweetTetwittert = tetwittert,
           prependImplicitMentions = request.autoPopulateReplyMetadata,
           enableTweetToNarrowcasting = request.enableTweetToNarrowcasting,
-          excludeUserIds = request.excludeReplyUserIds.getOrElse(Nil),
+          etwittercludeUserIds = request.etwittercludeReplyUserIds.getOrElse(Nil),
           spamResult = spamResult,
-          batchMode = request.transientContext.flatMap(_.batchCompose)
+          batchMode = request.transientContetwittert.flatMap(_.batchCompose)
         )
 
         replyResult <- replyBuilder(replyRequest)
@@ -845,9 +845,9 @@ object TweetBuilder {
           case Some(r) if r.reply.inReplyToStatusId.nonEmpty =>
             r.conversationId match {
               case None =>
-                // Throw this specific exception to make it easier to
+                // Throw this specific etwitterception to make it easier to
                 // count how often we hit this corner case.
-                Future.exception(MissingConversationId(r.reply.inReplyToStatusId.get))
+                Future.etwitterception(MissingConversationId(r.reply.inReplyToStatusId.get))
               case conversationIdOpt => Future.value(conversationIdOpt)
             }
           case _ => Future.value(None)
@@ -857,13 +857,13 @@ object TweetBuilder {
         // the conversation's ConversationControl.
         // Note: currently we only validate conversation controls access on replies,
         // therefore we use the conversationId from the inReplyToStatus.
-        // Validate that the exclusive tweet control option is only used by allowed users.
+        // Validate that the etwitterclusive tweet control option is only used by allowed users.
         () <- validateTweetWrite(
           TweetWriteValidator.Request(
             replyConversationId,
             request.userId,
-            request.exclusiveTweetControlOptions,
-            replyResult.flatMap(_.exclusiveTweetControl),
+            request.etwitterclusiveTweetControlOptions,
+            replyResult.flatMap(_.etwitterclusiveTweetControl),
             request.trustedFriendsControlOptions,
             replyResult.flatMap(_.trustedFriendsControl),
             attachmentResult.quotedTweet,
@@ -882,7 +882,7 @@ object TweetBuilder {
 
         () <- nudgeBuilder(
           NudgeBuilderRequest(
-            text = text,
+            tetwittert = tetwittert,
             inReplyToTweetId = replyOpt.flatMap(_.inReplyToStatusId),
             conversationId = if (convoId == tweetId) None else Some(convoId),
             hasQuotedTweet = attachmentResult.quotedTweet.nonEmpty,
@@ -891,17 +891,17 @@ object TweetBuilder {
           )
         )
 
-        // updated text with implicit reply mentions inserted, if any
-        text <- Future.value(
-          replyResult.map(_.tweetText).getOrElse(text)
+        // updated tetwittert with implicit reply mentions inserted, if any
+        tetwittert <- Future.value(
+          replyResult.map(_.tweetTetwittert).getOrElse(tetwittert)
         )
 
-        // updated text with urls replaced with t.cos
-        ((text, urlEntities), (geoCoords, placeIdOpt)) <- Future.join(
-          urlEntityBuilder((text, urlShortenerCtx))
+        // updated tetwittert with urls replaced with t.cos
+        ((tetwittert, urlEntities), (geoCoords, placeIdOpt)) <- Future.join(
+          urlEntityBuilder((tetwittert, urlShortenerCttwitter))
             .map {
-              case (text, urlEntities) =>
-                UrlEntityBuilder.updateTextAndUrls(text, urlEntities)(partialHtmlEncode)
+              case (tetwittert, urlEntities) =>
+                UrlEntityBuilder.updateTetwittertAndUrls(tetwittert, urlEntities)(partialHtmlEncode)
             },
           if (request.geo.isEmpty)
             Future.value((None, None))
@@ -915,15 +915,15 @@ object TweetBuilder {
             ).map(r => (r.geoCoordinates, r.placeId))
         )
 
-        // updated text with trailing media url
-        MediaBuilder.Result(text, mediaEntities, mediaKeys) <-
+        // updated tetwittert with trailing media url
+        MediaBuilder.Result(tetwittert, mediaEntities, mediaKeys) <-
           request.mediaUploadIds.getOrElse(Nil) match {
-            case Nil => Future.value(MediaBuilder.Result(text, Nil, Nil))
+            case Nil => Future.value(MediaBuilder.Result(tetwittert, Nil, Nil))
             case ids =>
               mediaBuilder(
                 MediaBuilder.Request(
                   mediaUploadIds = ids,
-                  text = text,
+                  tetwittert = tetwittert,
                   tweetId = tweetId,
                   userId = user.id,
                   userScreenName = user.profile.get.screenName,
@@ -937,27 +937,27 @@ object TweetBuilder {
 
         () <- Future.when(!request.dark) {
           val reqInfo =
-            DuplicateTweetFinder.RequestInfo.fromPostTweetRequest(request, text)
+            DuplicateTweetFinder.RequestInfo.fromPostTweetRequest(request, tetwittert)
 
           duplicateTweetFinder(reqInfo).flatMap {
             case None => Future.Unit
             case Some(duplicateId) =>
               log.debug(s"timeline_duplicate_check_failed:$duplicateId")
-              Future.exception(TweetCreateFailure.State(TweetCreateState.Duplicate))
+              Future.etwitterception(TweetCreateFailure.State(TweetCreateState.Duplicate))
           }
         }
 
-        textVisibility = getTextVisibility(
-          text = text,
+        tetwittertVisibility = getTetwittertVisibility(
+          tetwittert = tetwittert,
           replyResult = replyResult,
           urlEntities = urlEntities,
           mediaEntities = mediaEntities,
           attachmentUrl = attachmentResult.attachmentUrl
         )
 
-        () <- validateTextLength(
-          text = text,
-          visibleText = textVisibility.visibleText,
+        () <- validateTetwittertLength(
+          tetwittert = tetwittert,
+          visibleTetwittert = tetwittertVisibility.visibleTetwittert,
           replyResult = replyResult,
           stats = stats
         )
@@ -967,21 +967,21 @@ object TweetBuilder {
             .flatMap(CommunityAnnotation.additionalFieldsToCommunityIDs)
             .map(ids => Communities(communityIds = ids))
 
-        rootExclusiveControls = request.exclusiveTweetControlOptions.map { _ =>
-          ExclusiveTweetControl(request.userId)
+        rootEtwitterclusiveControls = request.etwitterclusiveTweetControlOptions.map { _ =>
+          EtwitterclusiveTweetControl(request.userId)
         }
 
-        () <- validateExclusiveTweetNotReplies(rootExclusiveControls, replyResult)
-        () <- validateExclusiveTweetParams(rootExclusiveControls, communities)
+        () <- validateEtwitterclusiveTweetNotReplies(rootEtwitterclusiveControls, replyResult)
+        () <- validateEtwitterclusiveTweetParams(rootEtwitterclusiveControls, communities)
 
-        replyExclusiveControls = replyResult.flatMap(_.exclusiveTweetControl)
+        replyEtwitterclusiveControls = replyResult.flatMap(_.etwitterclusiveTweetControl)
 
         // The userId is pulled off of the request rather than being supplied
-        // via the ExclusiveTweetControlOptions because additional fields
+        // via the EtwitterclusiveTweetControlOptions because additional fields
         // can be set by clients to contain any value they want.
         // This could include userIds that don't match their actual userId.
-        // Only one of replyResult or request.exclusiveTweetControlOptions will be defined.
-        exclusiveTweetControl = replyExclusiveControls.orElse(rootExclusiveControls)
+        // Only one of replyResult or request.etwitterclusiveTweetControlOptions will be defined.
+        etwitterclusiveTweetControl = replyEtwitterclusiveControls.orElse(rootEtwitterclusiveControls)
 
         rootTrustedFriendsControl = request.trustedFriendsControlOptions.map { options =>
           TrustedFriendsControl(options.trustedFriendsListId)
@@ -992,7 +992,7 @@ object TweetBuilder {
           rootTrustedFriendsControl,
           request.conversationControl,
           communities,
-          exclusiveTweetControl
+          etwitterclusiveTweetControl
         )
 
         replyTrustedFriendsControl = replyResult.flatMap(_.trustedFriendsControl)
@@ -1006,7 +1006,7 @@ object TweetBuilder {
             communities = communities,
             trustedFriendsControl = trustedFriendsControl,
             conversationControl = request.conversationControl,
-            exclusiveTweetControl = exclusiveTweetControl,
+            etwitterclusiveTweetControl = etwitterclusiveTweetControl,
             userId = request.userId
           ))
 
@@ -1017,7 +1017,7 @@ object TweetBuilder {
 
         coreData = TweetCoreData(
           userId = request.userId,
-          text = text,
+          tetwittert = tetwittert,
           createdAtSecs = createdAt.inSeconds,
           createdVia = devsrc.internalName,
           reply = replyOpt,
@@ -1048,16 +1048,16 @@ object TweetBuilder {
           media = Some(mediaEntities),
           mediaKeys = if (mediaKeys.nonEmpty) Some(mediaKeys) else None,
           contributor = getContributor(request.userId),
-          visibleTextRange = textVisibility.visibleTextRange,
+          visibleTetwittertRange = tetwittertVisibility.visibleTetwittertRange,
           selfThreadMetadata = replyResult.flatMap(_.selfThreadMetadata),
           directedAtUserMetadata = replyResult.map(_.directedAtMetadata),
           composerSource = request.composerSource,
           quotedTweet = attachmentResult.quotedTweet,
-          exclusiveTweetControl = exclusiveTweetControl,
+          etwitterclusiveTweetControl = etwitterclusiveTweetControl,
           trustedFriendsControl = trustedFriendsControl,
           collabControl = collabControl,
           noteTweet = request.noteTweetOptions.map(options =>
-            NoteTweet(options.noteTweetId, options.isExpandable))
+            NoteTweet(options.noteTweetId, options.isEtwitterpandable))
         )
 
         editControl <- editControlBuilder(
@@ -1070,7 +1070,7 @@ object TweetBuilder {
 
         tweet <- Future.value(tweet.copy(editControl = editControl))
 
-        tweet <- Future.value(entityExtractor(tweet))
+        tweet <- Future.value(entityEtwittertractor(tweet))
 
         () <- validateEntities(tweet)
 
@@ -1100,21 +1100,21 @@ object TweetBuilder {
         )
 
         // For certain tweets we want to write a self-permalink which is used to generate modified
-        // tweet text for legacy clients that contains a link. NOTE: this permalink is for
+        // tweet tetwittert for legacy clients that contains a link. NOTE: this permalink is for
         // the tweet being created - we also create permalinks for related tweets further down
         // e.g. if this tweet is an edit, we might create a permalink for the initial tweet as well
         tweet <- {
-          val isBeyond140 = textVisibility.isExtendedWithExtraChars(attachmentResult.extraChars)
+          val isBeyond140 = tetwittertVisibility.isEtwittertendedWithEtwittertraChars(attachmentResult.etwittertraChars)
           val isEditTweet = request.editOptions.isDefined
-          val isMixedMedia = Media.isMixedMedia(mediaEntities)
+          val isMitwitteredMedia = Media.isMitwitteredMedia(mediaEntities)
           val isNoteTweet = request.noteTweetOptions.isDefined
 
-          if (isBeyond140 || isEditTweet || isMixedMedia || isNoteTweet)
-            permalinkShortener(tweetId, urlShortenerCtx)
+          if (isBeyond140 || isEditTweet || isMitwitteredMedia || isNoteTweet)
+            permalinkShortener(tweetId, urlShortenerCttwitter)
               .map { selfPermalink =>
                 tweet.copy(
                   selfPermalink = Some(selfPermalink),
-                  extendedTweetMetadata = Some(ExtendedTweetMetadataBuilder(tweet, selfPermalink))
+                  etwittertendedTweetMetadata = Some(EtwittertendedTweetMetadataBuilder(tweet, selfPermalink))
                 )
               }
           else {
@@ -1140,7 +1140,7 @@ object TweetBuilder {
                 // we need to write a self permalink. We create it here in
                 // TweetBuilder and pass it through to the tweet store to
                 // be written to the initial tweet.
-                permalinkShortener(edit.initialTweetId, urlShortenerCtx).map(Some(_))
+                permalinkShortener(edit.initialTweetId, urlShortenerCttwitter).map(Some(_))
               } else {
                 Future.value(None)
               }
@@ -1159,7 +1159,7 @@ object TweetBuilder {
           case _ => Future.value(None)
         }
 
-        tweet <- filterInvalidData(tweet, request, urlShortenerCtx)
+        tweet <- filterInvalidData(tweet, request, urlShortenerCttwitter)
 
         () <- validateEdit(tweet, request.editOptions)
 
@@ -1171,7 +1171,7 @@ object TweetBuilder {
           user,
           createdAt,
           isSilentFail = spamResult == Spam.SilentFail,
-          geoSearchRequestId = extractGeoSearchRequestId(request.geo),
+          geoSearchRequestId = etwittertractGeoSearchRequestId(request.geo),
           initialTweetUpdateRequest = initialTweetUpdateRequest
         )
       }

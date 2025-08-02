@@ -1,13 +1,13 @@
 package com.twitter.search.common.query;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Explanation;
+import org.apache.lucene.indetwitter.LeafReaderContetwittert;
+import org.apache.lucene.indetwitter.Term;
+import org.apache.lucene.search.Etwitterplanation;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.Weight;
 
@@ -15,7 +15,7 @@ import org.apache.lucene.search.Weight;
  * Weight implementation that adds attribute collection support for an underlying query.
  * Meant to be used in conjunction with {@link IdentifiableQuery}.
  */
-public class IdentifiableQueryWeight extends Weight {
+public class IdentifiableQueryWeight etwittertends Weight {
   private final Weight inner;
   private final FieldRankHitInfo queryId;
   private final HitAttributeCollector attrCollector;
@@ -30,15 +30,15 @@ public class IdentifiableQueryWeight extends Weight {
   }
 
   @Override
-  public Explanation explain(LeafReaderContext context, int doc)
-      throws IOException {
-    return inner.explain(context, doc);
+  public Etwitterplanation etwitterplain(LeafReaderContetwittert contetwittert, int doc)
+      throws IOEtwitterception {
+    return inner.etwitterplain(contetwittert, doc);
   }
 
   @Override
-  public Scorer scorer(LeafReaderContext context) throws IOException {
-    attrCollector.clearHitAttributions(context, queryId);
-    Scorer innerScorer = inner.scorer(context);
+  public Scorer scorer(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
+    attrCollector.clearHitAttributions(contetwittert, queryId);
+    Scorer innerScorer = inner.scorer(contetwittert);
     if (innerScorer != null) {
       return new IdentifiableQueryScorer(this, innerScorer, queryId, attrCollector);
     } else {
@@ -47,12 +47,12 @@ public class IdentifiableQueryWeight extends Weight {
   }
 
   @Override
-  public void extractTerms(Set<Term> terms) {
-    inner.extractTerms(terms);
+  public void etwittertractTerms(Set<Term> terms) {
+    inner.etwittertractTerms(terms);
   }
 
   @Override
-  public boolean isCacheable(LeafReaderContext ctx) {
-    return inner.isCacheable(ctx);
+  public boolean isCacheable(LeafReaderContetwittert cttwitter) {
+    return inner.isCacheable(cttwitter);
   }
 }

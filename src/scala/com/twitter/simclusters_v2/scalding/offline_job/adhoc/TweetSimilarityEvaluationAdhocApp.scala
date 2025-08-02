@@ -4,9 +4,9 @@ import com.twitter.bijection.{Bufferable, Injection}
 import com.twitter.scalding._
 import com.twitter.scalding.commons.source.VersionedKeyValSource
 import com.twitter.simclusters_v2.common.{ClusterId, CosineSimilarityUtil, TweetId}
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseRowMatrix
+import com.twitter.simclusters_v2.scalding.common.matritwitter.SparseRowMatritwitter
 import com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobUtil
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
+import com.twitter.wtf.scalding.jobs.common.AdhocEtwitterecutionApp
 import java.util.TimeZone
 
 /**
@@ -25,7 +25,7 @@ import java.util.TimeZone
      --date 2021-01-27 2021-01-28 \
      --output /user/recos-platform/adhoc/tweet_embedding_01_27_28_sample_tweets
  */
-object TweetSimilarityEvaluationSamplingAdhocApp extends AdhocExecutionApp {
+object TweetSimilarityEvaluationSamplingAdhocApp etwittertends AdhocEtwitterecutionApp {
 
   override def runOnDateRange(
     args: Args
@@ -33,7 +33,7 @@ object TweetSimilarityEvaluationSamplingAdhocApp extends AdhocExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     val random = new java.util.Random(args.long("seed", 20200322L))
 
@@ -53,7 +53,7 @@ object TweetSimilarityEvaluationSamplingAdhocApp extends AdhocExecutionApp {
       .map {
         case (tweetId, tweetFavs) =>
           val bucket = math.log10(tweetFavs + 1.0).toInt
-          bucket -> (tweetId, random.nextDouble())
+          bucket -> (tweetId, random.netwittertDouble())
       }
       .group
       .sortedReverseTake(topK)(Ordering.by(_._2))
@@ -65,7 +65,7 @@ object TweetSimilarityEvaluationSamplingAdhocApp extends AdhocExecutionApp {
               (tweetId, bucket, bucketSize)
           }
       }
-      .writeExecution(
+      .writeEtwitterecution(
         TypedTsv[(Long, Int, Int)](output)
       )
 
@@ -74,7 +74,7 @@ object TweetSimilarityEvaluationSamplingAdhocApp extends AdhocExecutionApp {
 
 /**
  *
- * A job for evaluating the performance of an approximate nearest neighbor search method with a brute
+ * A job for evaluating the performance of an approtwitterimate nearest neighbor search method with a brute
  * force method.
  *
  * Evaluation method:
@@ -85,7 +85,7 @@ object TweetSimilarityEvaluationSamplingAdhocApp extends AdhocExecutionApp {
  * for these tweets using the brute force method and use up to top 100 neighbors with the cosine
  * similarity score >0.8 for each tweet as ground-truth set G.
  *
- * We then compute the nearest neighbors for these tweets based on the approximate nearest neighbor search: for each tweet, we find the top clusters, and then find top tweets in each cluster as potential candidates. We rank these potential candidates by the cosine similarity scores and take top 100 as prediction set P. We evaluate the precision and recall using
+ * We then compute the nearest neighbors for these tweets based on the approtwitterimate nearest neighbor search: for each tweet, we find the top clusters, and then find top tweets in each cluster as potential candidates. We rank these potential candidates by the cosine similarity scores and take top 100 as prediction set P. We evaluate the precision and recall using
  *
  * Precision = |P \intersect G| / |P|
  * Recall = |P \intersect G| / |G|
@@ -103,7 +103,7 @@ object TweetSimilarityEvaluationSamplingAdhocApp extends AdhocExecutionApp {
   --tweets /user/recos-platform/adhoc/tweet_embedding_01_27_28_sample_tweets \
   --output  /user/recos-platform/adhoc/tweet_embedding_evaluation_01_27_28_t05_k50_1
  */
-object TweetSimilarityEvaluationAdhocApp extends AdhocExecutionApp {
+object TweetSimilarityEvaluationAdhocApp etwittertends AdhocEtwitterecutionApp {
 
   implicit val inj1: Injection[List[(Int, Double)], Array[Byte]] =
     Bufferable.injectionOf[List[(Int, Double)]]
@@ -124,7 +124,7 @@ object TweetSimilarityEvaluationAdhocApp extends AdhocExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     // path to read the tweet -> top cluster data set. should be the same from the SimClustersTweetEmbeddingAdhocApp job
     val tweetTopKClustersPath = args("tweet_top_k")
@@ -145,25 +145,25 @@ object TweetSimilarityEvaluationAdhocApp extends AdhocExecutionApp {
     val output = args("output")
 
     // read tweet -> top clusters data set
-    val tweetTopKClusters: SparseRowMatrix[TweetId, ClusterId, Double] =
-      SparseRowMatrix(
+    val tweetTopKClusters: SparseRowMatritwitter[TweetId, ClusterId, Double] =
+      SparseRowMatritwitter(
         TypedPipe
           .from(
             VersionedKeyValSource[TweetId, List[(ClusterId, Double)]](tweetTopKClustersPath)
           )
           .mapValues(_.filter(_._2 > 0.001).toMap),
-        isSkinnyMatrix = true
+        isSkinnyMatritwitter = true
       ).rowL2Normalize
 
     // read cluster -> top tweets data set
-    val clusterTopTweets: SparseRowMatrix[ClusterId, TweetId, Double] =
-      SparseRowMatrix(
+    val clusterTopTweets: SparseRowMatritwitter[ClusterId, TweetId, Double] =
+      SparseRowMatritwitter(
         TypedPipe
           .from(
             VersionedKeyValSource[ClusterId, List[(TweetId, Double)]](clusterTopKTweetsPath)
           )
           .mapValues(_.filter(_._2 > 0.02).toMap),
-        isSkinnyMatrix = false
+        isSkinnyMatritwitter = false
       )
 
     // read the sampled tweets from TweetSimilarityEvaluationSamplingAdhocApp
@@ -176,25 +176,25 @@ object TweetSimilarityEvaluationAdhocApp extends AdhocExecutionApp {
     // compute ground-truth top similar tweets for each sampled tweets.
     // for each sampled tweets, we compute their similarity with every tweets in the tweet -> top clusters data set.
     // we filter out those with similarity score smaller than the threshold and keep top k as the ground truth similar tweets
-    val groundTruthData = tweetTopKClusters.toSparseMatrix
-      .multiplySkinnySparseRowMatrix(
-        tweetEmbeddingSubset.toSparseMatrix.transpose.toSparseRowMatrix(true),
+    val groundTruthData = tweetTopKClusters.toSparseMatritwitter
+      .multiplySkinnySparseRowMatritwitter(
+        tweetEmbeddingSubset.toSparseMatritwitter.transpose.toSparseRowMatritwitter(true),
         numReducersOpt = Some(5000)
       )
-      .toSparseMatrix
+      .toSparseMatritwitter
       .transpose
       .filter((_, _, v) => v > threshold)
       .sortWithTakePerRow(topK)(Ordering.by(-_._2))
 
-    // compute approximate similar tweets for each sampled tweets.
-    // this is achieved by multiplying "sampled_tweets -> top clusters" matrix with "cluster -> top tweets" matrix.
-    // note that in the implementation, we first compute the transponse of this matrix in order to ultlize the optimization done on skinny matrices
-    val predictionData = clusterTopTweets.toSparseMatrix.transpose
-      .multiplySkinnySparseRowMatrix(
-        tweetEmbeddingSubset.toSparseMatrix.transpose.toSparseRowMatrix(true),
+    // compute approtwitterimate similar tweets for each sampled tweets.
+    // this is achieved by multiplying "sampled_tweets -> top clusters" matritwitter with "cluster -> top tweets" matritwitter.
+    // note that in the implementation, we first compute the transponse of this matritwitter in order to ultlize the optimization done on skinny matrices
+    val predictionData = clusterTopTweets.toSparseMatritwitter.transpose
+      .multiplySkinnySparseRowMatritwitter(
+        tweetEmbeddingSubset.toSparseMatritwitter.transpose.toSparseRowMatritwitter(true),
         numReducersOpt = Some(5000)
       )
-      .toSparseMatrix
+      .toSparseMatritwitter
       .transpose
       .toTypedPipe
       .map {
@@ -219,7 +219,7 @@ object TweetSimilarityEvaluationAdhocApp extends AdhocExecutionApp {
       .group
       .sortedReverseTake(topK)(Ordering.by(_._2))
 
-    // Exist in Ground Truth but not exist in Predication
+    // Etwitterist in Ground Truth but not etwitterist in Predication
     val potentialData =
       groundTruthData
         .leftJoin(predictionData)
@@ -253,7 +253,7 @@ object TweetSimilarityEvaluationAdhocApp extends AdhocExecutionApp {
                 formatList(predictedTweets)))
         }
 
-    // for each tweet, compare the approximate topk and ground-truth topk.
+    // for each tweet, compare the approtwitterimate topk and ground-truth topk.
     // compute precision and recall, then averaging them per bucket.
     val eval = tweetSubset
       .map {
@@ -302,10 +302,10 @@ object TweetSimilarityEvaluationAdhocApp extends AdhocExecutionApp {
       }
 
     // output the eval results and some sample results for eyeballing
-    Execution
+    Etwitterecution
       .zip(
         eval
-          .writeExecution(TypedTsv(output)),
+          .writeEtwitterecution(TypedTsv(output)),
         groundTruthData
           .map {
             case (tweetId, neighbors) =>
@@ -315,7 +315,7 @@ object TweetSimilarityEvaluationAdhocApp extends AdhocExecutionApp {
                 }
                 .mkString(",")
           }
-          .writeExecution(
+          .writeEtwitterecution(
             TypedTsv(args("output") + "_ground_truth")
           ),
         predictionData
@@ -327,7 +327,7 @@ object TweetSimilarityEvaluationAdhocApp extends AdhocExecutionApp {
                 }
                 .mkString(",")
           }
-          .writeExecution(
+          .writeEtwitterecution(
             TypedTsv(args("output") + "_prediction")
           ),
         potentialData
@@ -338,7 +338,7 @@ object TweetSimilarityEvaluationAdhocApp extends AdhocExecutionApp {
                   case (id, score) => s"$id:$score"
                 }
                 .mkString(",")
-          }.writeExecution(
+          }.writeEtwitterecution(
             TypedTsv(args("output") + "_potential")
           ),
         debuggingData
@@ -353,7 +353,7 @@ object TweetSimilarityEvaluationAdhocApp extends AdhocExecutionApp {
                     }.mkString("C")
                 }.mkString("B")
               s"${tweetId}A$value"
-          }.writeExecution(
+          }.writeEtwitterecution(
             TypedTsv(args("output") + "_debugging")
           )
       )

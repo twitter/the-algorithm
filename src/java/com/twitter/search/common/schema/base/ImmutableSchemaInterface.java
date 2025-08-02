@@ -1,7 +1,7 @@
 package com.twitter.search.common.schema.base;
 
-import javax.annotation.concurrent.Immutable;
-import javax.annotation.concurrent.ThreadSafe;
+import javatwitter.annotation.concurrent.Immutable;
+import javatwitter.annotation.concurrent.ThreadSafe;
 
 /**
  * This interface carries the same signature as Schema with the only difference that this schema
@@ -10,5 +10,5 @@ import javax.annotation.concurrent.ThreadSafe;
  */
 @Immutable
 @ThreadSafe
-public interface ImmutableSchemaInterface extends Schema {
+public interface ImmutableSchemaInterface etwittertends Schema {
 }

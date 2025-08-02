@@ -4,7 +4,7 @@ package store
 import com.twitter.tweetypie.store.TweetEventDataScrubber.scrub
 import com.twitter.tweetypie.thriftscala._
 
-object UndeleteTweet extends TweetStore.SyncModule {
+object UndeleteTweet etwittertends TweetStore.SyncModule {
 
   /**
    * A TweetStoreEvent for Undeletion.
@@ -22,11 +22,11 @@ object UndeleteTweet extends TweetStore.SyncModule {
     quotedUser: Option[User] = None,
     parentUserId: Option[UserId] = None,
     quoterHasAlreadyQuotedTweet: Boolean = false)
-      extends SyncTweetStoreEvent("undelete_tweet")
+      etwittertends SyncTweetStoreEvent("undelete_tweet")
       with QuotedTweetOps {
     def internalTweet: CachedTweet =
       _internalTweet.getOrElse(
-        throw new IllegalStateException(
+        throw new IllegalStateEtwitterception(
           s"internalTweet should have been set in WritePathHydration, ${this}"
         )
       )
@@ -51,7 +51,7 @@ object UndeleteTweet extends TweetStore.SyncModule {
     val undeleteTweet: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val undeleteTweet: FutureEffect[Event] = wrap(underlying.undeleteTweet)
   }
 
@@ -75,7 +75,7 @@ object UndeleteTweet extends TweetStore.SyncModule {
   }
 }
 
-object AsyncUndeleteTweet extends TweetStore.AsyncModule {
+object AsyncUndeleteTweet etwittertends TweetStore.AsyncModule {
 
   object Event {
     def fromAsyncRequest(request: AsyncUndeleteTweetRequest): TweetStoreEventOrRetry[Event] =
@@ -112,7 +112,7 @@ object AsyncUndeleteTweet extends TweetStore.AsyncModule {
     quotedUser: Option[User],
     parentUserId: Option[UserId] = None,
     quoterHasAlreadyQuotedTweet: Boolean = false)
-      extends AsyncTweetStoreEvent("async_undelete_tweet")
+      etwittertends AsyncTweetStoreEvent("async_undelete_tweet")
       with QuotedTweetOps
       with TweetStoreTweetEvent {
 
@@ -156,7 +156,7 @@ object AsyncUndeleteTweet extends TweetStore.AsyncModule {
   }
 
   case class RetryEvent(action: AsyncWriteAction, event: Event)
-      extends TweetStoreRetryEvent[Event] {
+      etwittertends TweetStoreRetryEvent[Event] {
 
     override val eventType: AsyncWriteEventType.Undelete.type = AsyncWriteEventType.Undelete
     override val scribedTweetOnFailure: Option[Tweet] = Some(event.tweet)
@@ -167,7 +167,7 @@ object AsyncUndeleteTweet extends TweetStore.AsyncModule {
     val retryAsyncUndeleteTweet: FutureEffect[TweetStoreRetryEvent[Event]]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val asyncUndeleteTweet: FutureEffect[Event] = wrap(underlying.asyncUndeleteTweet)
     override val retryAsyncUndeleteTweet: FutureEffect[TweetStoreRetryEvent[Event]] = wrap(
       underlying.retryAsyncUndeleteTweet)
@@ -177,7 +177,7 @@ object AsyncUndeleteTweet extends TweetStore.AsyncModule {
     def apply(
       cachingTweetStore: CachingTweetStore,
       eventBusEnqueueStore: TweetEventBusStore,
-      indexingStore: TweetIndexingStore,
+      indetwitteringStore: TweetIndetwitteringStore,
       replicatingStore: ReplicatingTweetStore,
       mediaServiceStore: MediaServiceStore,
       timelineUpdatingStore: TlsTimelineUpdatingStore
@@ -186,14 +186,14 @@ object AsyncUndeleteTweet extends TweetStore.AsyncModule {
         Seq(
           cachingTweetStore,
           eventBusEnqueueStore,
-          indexingStore,
+          indetwitteringStore,
           replicatingStore,
           mediaServiceStore,
           timelineUpdatingStore
         )
 
-      def build[E <: TweetStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
-        FutureEffect.inParallel[E](stores.map(extract): _*)
+      def build[E <: TweetStoreEvent](etwittertract: Store => FutureEffect[E]): FutureEffect[E] =
+        FutureEffect.inParallel[E](stores.map(etwittertract): _*)
 
       new Store {
         override val asyncUndeleteTweet: FutureEffect[Event] = build(_.asyncUndeleteTweet)
@@ -204,19 +204,19 @@ object AsyncUndeleteTweet extends TweetStore.AsyncModule {
   }
 }
 
-object ReplicatedUndeleteTweet extends TweetStore.ReplicatedModule {
+object ReplicatedUndeleteTweet etwittertends TweetStore.ReplicatedModule {
 
   case class Event(
     tweet: Tweet,
     cachedTweet: CachedTweet,
     quoterHasAlreadyQuotedTweet: Boolean = false)
-      extends ReplicatedTweetStoreEvent("replicated_undelete_tweet")
+      etwittertends ReplicatedTweetStoreEvent("replicated_undelete_tweet")
 
   trait Store {
     val replicatedUndeleteTweet: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val replicatedUndeleteTweet: FutureEffect[Event] = wrap(
       underlying.replicatedUndeleteTweet)
   }

@@ -2,7 +2,7 @@ package com.twitter.tweetypie.config
 
 import com.twitter.config.yaml.YamlMap
 import com.twitter.tweetypie.serverutil.PartnerMedia
-import scala.util.matching.Regex
+import scala.util.matching.Regetwitter
 
 /**
  * Helpers for loading resources bundled with Tweetypie. We load them
@@ -10,6 +10,6 @@ import scala.util.matching.Regex
  * loading code.
  */
 object Resources {
-  def loadPartnerMediaRegexes(): Seq[Regex] =
+  def loadPartnerMediaRegetwitteres(): Seq[Regetwitter] =
     PartnerMedia.load(YamlMap.load("/partner_media.yml"))
 }

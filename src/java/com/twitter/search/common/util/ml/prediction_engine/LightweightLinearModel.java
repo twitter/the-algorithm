@@ -2,9 +2,9 @@ package com.twitter.search.common.util.ml.prediction_engine;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Map;
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 
@@ -30,11 +30,11 @@ import com.twitter.search.common.file.AbstractFile;
  *
  * Use this class, and ScoreAccumulator, ONLY when runtime is a major concern. Otherwise, consider
  * using Prediction Engine as a library. Ideally, we should access directly the structures that
- * Prediction Engine creates when it loads a model, instead of parsing a text file with the
+ * Prediction Engine creates when it loads a model, instead of parsing a tetwittert file with the
  * feature weights.
  *
  * The discretized feature bins created by MDL may be too fine to be displayed properly in the
- * parsed text file and there may be bins with the same min value. A binary search finding the
+ * parsed tetwittert file and there may be bins with the same min value. A binary search finding the
  * bin for a same feature value therefore may end up with different bins/scores in different runs,
  * producing unstable scores. See SEARCHQUAL-15957 for more detail.
  *
@@ -55,7 +55,7 @@ public class LightweightLinearModel {
   protected final Map<Integer, Double> continuousFeaturesById;
   protected final Map<Integer, DiscretizedFeature> discretizedFeaturesById;
 
-  private static final String SCHEMA_BASED_SUFFIX = ".schema_based";
+  private static final String SCHEMA_BASED_SUFFItwitter = ".schema_based";
 
   LightweightLinearModel(
       String modelName,
@@ -126,22 +126,22 @@ public class LightweightLinearModel {
   }
 
   /**
-   * Loads a model from a text file.
+   * Loads a model from a tetwittert file.
    *
    * See the javadoc of the constructor for more details on how to create the file from a trained
    * Prediction Engine model.
    *
-   * If schemaBased is true, the featureContext is ignored.
+   * If schemaBased is true, the featureContetwittert is ignored.
    */
   public static LightweightLinearModel load(
       String modelName,
       BufferedReader reader,
       boolean schemaBased,
-      CompositeFeatureContext featureContext) throws IOException {
+      CompositeFeatureContetwittert featureContetwittert) throws IOEtwitterception {
 
     ModelBuilder builder = schemaBased
-        ? new SchemaBasedModelBuilder(modelName, featureContext.getFeatureSchema())
-        : new LegacyModelBuilder(modelName, featureContext.getLegacyContext());
+        ? new SchemaBasedModelBuilder(modelName, featureContetwittert.getFeatureSchema())
+        : new LegacyModelBuilder(modelName, featureContetwittert.getLegacyContetwittert());
     String line;
     while ((line = reader.readLine()) != null) {
       builder.parseLine(line);
@@ -150,18 +150,18 @@ public class LightweightLinearModel {
   }
 
   /**
-   * Loads a model from a local text file.
+   * Loads a model from a local tetwittert file.
    *
    * See the javadoc of the constructor for more details on how to create the file from a trained
    * Prediction Engine model.
    */
   public static LightweightLinearModel loadFromLocalFile(
       String modelName,
-      CompositeFeatureContext featureContext,
-      String fileName) throws IOException {
+      CompositeFeatureContetwittert featureContetwittert,
+      String fileName) throws IOEtwitterception {
     try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-      boolean schemaBased = modelName.endsWith(SCHEMA_BASED_SUFFIX);
-      return load(modelName, reader, schemaBased, featureContext);
+      boolean schemaBased = modelName.endsWith(SCHEMA_BASED_SUFFItwitter);
+      return load(modelName, reader, schemaBased, featureContetwittert);
     }
   }
 
@@ -172,11 +172,11 @@ public class LightweightLinearModel {
    * Prediction Engine model.
    */
   public static LightweightLinearModel load(
-      String modelName, CompositeFeatureContext featureContext, AbstractFile modelFile)
-      throws IOException {
+      String modelName, CompositeFeatureContetwittert featureContetwittert, AbstractFile modelFile)
+      throws IOEtwitterception {
     try (BufferedReader reader = modelFile.getCharSource().openBufferedStream()) {
-      boolean schemaBased = modelName.endsWith(SCHEMA_BASED_SUFFIX);
-      return load(modelName, reader, schemaBased, featureContext);
+      boolean schemaBased = modelName.endsWith(SCHEMA_BASED_SUFFItwitter);
+      return load(modelName, reader, schemaBased, featureContetwittert);
     }
   }
 

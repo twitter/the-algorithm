@@ -11,7 +11,7 @@ import com.twitter.visibility.rules.Rule.DisabledRuleResult
 import com.twitter.visibility.rules.Rule.EvaluatedRuleResult
 import com.twitter.visibility.rules.State._
 import com.twitter.visibility.rules._
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
+import com.twitter.visibility.rules.providers.ProvidedEvaluationContetwittert
 import com.twitter.visibility.rules.providers.PolicyProvider
 
 class VisibilityRulePreprocessor private (
@@ -19,19 +19,19 @@ class VisibilityRulePreprocessor private (
   policyProviderOpt: Option[PolicyProvider] = None) {
 
   private[engine] def filterEvaluableRules(
-    evaluationContext: ProvidedEvaluationContext,
+    evaluationContetwittert: ProvidedEvaluationContetwittert,
     resultBuilder: VisibilityResultBuilder,
     rules: Seq[Rule]
   ): (VisibilityResultBuilder, Seq[Rule]) = {
     val (builder, ruleList) = rules.foldLeft((resultBuilder, Seq.empty[Rule])) {
-      case ((builder, nextPassRules), rule) =>
-        if (evaluationContext.ruleEnabledInContext(rule)) {
+      case ((builder, netwittertPassRules), rule) =>
+        if (evaluationContetwittert.ruleEnabledInContetwittert(rule)) {
           val missingFeatures: Set[Feature[_]] = rule.featureDependencies.collect {
             case feature: Feature[_] if !builder.featureMap.contains(feature) => feature
           }
 
           if (missingFeatures.isEmpty) {
-            (builder, nextPassRules :+ rule)
+            (builder, netwittertPassRules :+ rule)
           } else {
             metricsRecorder.recordRuleMissingFeatures(rule.name, missingFeatures)
             (
@@ -39,41 +39,41 @@ class VisibilityRulePreprocessor private (
                 rule,
                 RuleResult(NotEvaluated, MissingFeature(missingFeatures))
               ),
-              nextPassRules
+              netwittertPassRules
             )
           }
         } else {
-          (builder.withRuleResult(rule, DisabledRuleResult), nextPassRules)
+          (builder.withRuleResult(rule, DisabledRuleResult), netwittertPassRules)
         }
     }
     (builder, ruleList)
   }
 
   private[visibility] def preFilterRules(
-    evaluationContext: ProvidedEvaluationContext,
+    evaluationContetwittert: ProvidedEvaluationContetwittert,
     resolvedFeatureMap: Map[Feature[_], Any],
     resultBuilder: VisibilityResultBuilder,
     rules: Seq[Rule]
   ): (VisibilityResultBuilder, Seq[Rule]) = {
     val isResolvedFeatureMap = resultBuilder.featureMap.isInstanceOf[ResolvedFeatureMap]
     val (builder, ruleList) = rules.foldLeft((resultBuilder, Seq.empty[Rule])) {
-      case ((builder, nextPassRules), rule) =>
-        rule.preFilter(evaluationContext, resolvedFeatureMap, NullABDecider) match {
+      case ((builder, netwittertPassRules), rule) =>
+        rule.preFilter(evaluationContetwittert, resolvedFeatureMap, NullABDecider) match {
           case NeedsFullEvaluation =>
-            (builder, nextPassRules :+ rule)
+            (builder, netwittertPassRules :+ rule)
           case NotFiltered =>
-            (builder, nextPassRules :+ rule)
+            (builder, netwittertPassRules :+ rule)
           case Filtered if isResolvedFeatureMap =>
-            (builder, nextPassRules :+ rule)
+            (builder, netwittertPassRules :+ rule)
           case Filtered =>
-            (builder.withRuleResult(rule, EvaluatedRuleResult), nextPassRules)
+            (builder.withRuleResult(rule, EvaluatedRuleResult), netwittertPassRules)
         }
     }
     (builder, ruleList)
   }
 
   private[visibility] def evaluate(
-    evaluationContext: ProvidedEvaluationContext,
+    evaluationContetwittert: ProvidedEvaluationContetwittert,
     safetyLevel: SafetyLevel,
     resultBuilder: VisibilityResultBuilder
   ): (VisibilityResultBuilder, Seq[Rule]) = {
@@ -83,8 +83,8 @@ class VisibilityRulePreprocessor private (
       case None => RuleBase.RuleMap(safetyLevel)
     }
 
-    if (evaluationContext.params(safetyLevel.enabledParam)) {
-      evaluate(evaluationContext, visibilityPolicy, resultBuilder)
+    if (evaluationContetwittert.params(safetyLevel.enabledParam)) {
+      evaluate(evaluationContetwittert, visibilityPolicy, resultBuilder)
     } else {
       metricsRecorder.recordAction(safetyLevel, "disabled")
 
@@ -99,7 +99,7 @@ class VisibilityRulePreprocessor private (
   }
 
   private[visibility] def evaluate(
-    evaluationContext: ProvidedEvaluationContext,
+    evaluationContetwittert: ProvidedEvaluationContetwittert,
     visibilityPolicy: VisibilityPolicy,
     resultBuilder: VisibilityResultBuilder,
   ): (VisibilityResultBuilder, Seq[Rule]) = {
@@ -107,7 +107,7 @@ class VisibilityRulePreprocessor private (
     val rules: Seq[Rule] = visibilityPolicy.forContentId(resultBuilder.contentId)
 
     val (secondPassBuilder, secondPassRules) =
-      filterEvaluableRules(evaluationContext, resultBuilder, rules)
+      filterEvaluableRules(evaluationContetwittert, resultBuilder, rules)
 
     val secondPassFeatureMap = secondPassBuilder.featureMap
 
@@ -119,9 +119,9 @@ class VisibilityRulePreprocessor private (
       feature =>
         Try(secondPassFeatureMap.getConstant(feature)) match {
           case Return(value) => (feature, value)
-          case Throw(ex) =>
-            metricsRecorder.recordFailedFeature(feature, ex)
-            (feature, FeatureFailedPlaceholderObject(ex))
+          case Throw(etwitter) =>
+            metricsRecorder.recordFailedFeature(feature, etwitter)
+            (feature, FeatureFailedPlaceholderObject(etwitter))
         }
     }
 
@@ -131,7 +131,7 @@ class VisibilityRulePreprocessor private (
       }.toMap
 
     val (preFilteredResultBuilder, preFilteredRules) = preFilterRules(
-      evaluationContext,
+      evaluationContetwittert,
       resolvedFeatureMap,
       secondPassBuilder,
       secondPassRules

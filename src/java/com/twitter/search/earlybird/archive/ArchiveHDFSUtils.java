@@ -1,10 +1,10 @@
 package com.twitter.search.earlybird.archive;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regetwitter.Matcher;
+import java.util.regetwitter.Pattern;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.hadoop.fs.FileStatus;
@@ -32,7 +32,7 @@ public final class ArchiveHDFSUtils {
 
   /**
    * Check if a given segment already has its indices built on hdfs.
-   * @return true if the indices exist on hdfs; otherwise, false.
+   * @return true if the indices etwitterist on hdfs; otherwise, false.
    */
   public static boolean hasSegmentIndicesOnHDFS(SegmentSyncConfig sync, SegmentInfo segment) {
     LOG.info("checking segment on hdfs: " + segment
@@ -40,12 +40,12 @@ public final class ArchiveHDFSUtils {
     FileSystem fs = null;
     try {
       fs = HdfsUtil.getHdfsFileSystem();
-      String hdfsBaseDirPrefix = segment.getSyncInfo()
-          .getHdfsSyncDirPrefix();
-      FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefix));
+      String hdfsBaseDirPrefitwitter = segment.getSyncInfo()
+          .getHdfsSyncDirPrefitwitter();
+      FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefitwitter));
       return statuses != null && statuses.length > 0;
-    } catch (IOException ex) {
-      LOG.error("Failed checking segment on hdfs: " + segment, ex);
+    } catch (IOEtwitterception etwitter) {
+      LOG.error("Failed checking segment on hdfs: " + segment, etwitter);
       return false;
     } finally {
       IOUtils.closeQuietly(fs);
@@ -53,9 +53,9 @@ public final class ArchiveHDFSUtils {
   }
 
   /**
-   * Delete the segment index directories on the HDFS. If 'deleteCurrentDir' is true, the
-   * index directory with the end date matching 'segment' will be deleted. If 'deleteOlderDirs',
-   * the index directories with the end date earlier than the the segment enddate will be deleted.
+   * Delete the segment indetwitter directories on the HDFS. If 'deleteCurrentDir' is true, the
+   * indetwitter directory with the end date matching 'segment' will be deleted. If 'deleteOlderDirs',
+   * the indetwitter directories with the end date earlier than the the segment enddate will be deleted.
    *
    */
   public static void deleteHdfsSegmentDir(SegmentSyncConfig sync, SegmentInfo segment,
@@ -64,14 +64,14 @@ public final class ArchiveHDFSUtils {
     try {
       fs = HdfsUtil.getHdfsFileSystem();
       String hdfsFlushDir = segment.getSyncInfo().getHdfsFlushDir();
-      String hdfsBaseDirPrefix = segment.getSyncInfo()
-          .getHdfsSyncDirPrefix();
-      String endDateStr = extractEndDate(hdfsBaseDirPrefix);
+      String hdfsBaseDirPrefitwitter = segment.getSyncInfo()
+          .getHdfsSyncDirPrefitwitter();
+      String endDateStr = etwittertractEndDate(hdfsBaseDirPrefitwitter);
       if (endDateStr != null) {
-        hdfsBaseDirPrefix = hdfsBaseDirPrefix.replace(endDateStr, "*");
+        hdfsBaseDirPrefitwitter = hdfsBaseDirPrefitwitter.replace(endDateStr, "*");
       }
       String[] hdfsDirs = {segment.getSyncInfo().getHdfsTempFlushDir(),
-          hdfsBaseDirPrefix};
+          hdfsBaseDirPrefitwitter};
       for (String hdfsDir : hdfsDirs) {
         FileStatus[] statuses = fs.globStatus(new Path(hdfsDir));
         if (statuses != null && statuses.length > 0) {
@@ -90,7 +90,7 @@ public final class ArchiveHDFSUtils {
           }
         }
       }
-    } catch (IOException e) {
+    } catch (IOEtwitterception e) {
       LOG.error("Error delete Segment Dir :" + segment, e);
     } finally {
       IOUtils.closeQuietly(fs);
@@ -99,7 +99,7 @@ public final class ArchiveHDFSUtils {
 
   /**
    * Given a segment, check if there is any indices built on HDFS; if yes, return the end date
-   * of the index built on HDFS; otherwise, return null.
+   * of the indetwitter built on HDFS; otherwise, return null.
    */
   public static Date getSegmentEndDateOnHdfs(SegmentSyncConfig sync, SegmentInfo segment) {
     if (sync.isSegmentLoadFromHdfsEnabled()) {
@@ -108,24 +108,24 @@ public final class ArchiveHDFSUtils {
 
       FileSystem fs = null;
       try {
-        String hdfsBaseDirPrefix = segment.getSyncInfo()
-            .getHdfsSyncDirPrefix();
-        String endDateStr = extractEndDate(hdfsBaseDirPrefix);
+        String hdfsBaseDirPrefitwitter = segment.getSyncInfo()
+            .getHdfsSyncDirPrefitwitter();
+        String endDateStr = etwittertractEndDate(hdfsBaseDirPrefitwitter);
         if (endDateStr == null) {
           return null;
         }
-        hdfsBaseDirPrefix = hdfsBaseDirPrefix.replace(endDateStr, "*");
+        hdfsBaseDirPrefitwitter = hdfsBaseDirPrefitwitter.replace(endDateStr, "*");
 
         fs = HdfsUtil.getHdfsFileSystem();
-        FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefix));
+        FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefitwitter));
         if (statuses != null && statuses.length > 0) {
           Path hdfsSyncPath = statuses[statuses.length - 1].getPath();
           String hdfsSyncPathName = hdfsSyncPath.getName();
-          endDateStr = extractEndDate(hdfsSyncPathName);
+          endDateStr = etwittertractEndDate(hdfsSyncPathName);
           return Segment.getSegmentEndDate(endDateStr);
         }
-      } catch (Exception ex) {
-        LOG.error("Failed getting segment from hdfs: " + segment, ex);
+      } catch (Etwitterception etwitter) {
+        LOG.error("Failed getting segment from hdfs: " + segment, etwitter);
         return null;
       } finally {
         IOUtils.closeQuietly(fs);
@@ -134,7 +134,7 @@ public final class ArchiveHDFSUtils {
     return null;
   }
 
-  private static String extractEndDate(String segmentDirPattern) {
+  private static String etwittertractEndDate(String segmentDirPattern) {
     Matcher matcher = SEGMENT_NAME_PATTERN.matcher(segmentDirPattern);
     if (!matcher.find()) {
       return null;
@@ -142,17 +142,17 @@ public final class ArchiveHDFSUtils {
 
     try {
       return matcher.group(MATCHER_GROUP_END_DATE);
-    } catch (IllegalStateException e) {
+    } catch (IllegalStateEtwitterception e) {
       LOG.error("Match operation failed: " + segmentDirPattern, e);
       return null;
-    } catch (IndexOutOfBoundsException e) {
-      LOG.error(" No group in the pattern with the given index : " + segmentDirPattern, e);
+    } catch (IndetwitterOutOfBoundsEtwitterception e) {
+      LOG.error(" No group in the pattern with the given indetwitter : " + segmentDirPattern, e);
       return null;
     }
   }
 
   /**
-   * Converts the given date to a path, using the given separator. For example, if the sate is
+   * Converts the given date to a path, using the given separator. For etwitterample, if the sate is
    * January 5, 2019, and the separator is "/", this method will return "2019/01/05".
    */
   public static String dateToPath(Date date, String separator) {

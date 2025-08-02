@@ -57,7 +57,7 @@ case class ProdConfig(
   override val tunableMap: TunableMap,
 )(
   implicit val statsReceiver: StatsReceiver)
-    extends {
+    etwittertends {
   // Due to trait initialization logic in Scala, any abstract members declared in Config or
   // DeployConfig should be declared in this block. Otherwise the abstract member might initialize to
   // null if invoked before object creation finishing.
@@ -96,7 +96,7 @@ case class ProdConfig(
 
   val userTweetEntityGraphDest = "/s/cassowary/user_tweet_entity_graph"
   val userUserGraphDest = "/s/cassowary/user_user_graph"
-  val lexServiceDest = "/s/live-video/timeline-thrift"
+  val letwitterServiceDest = "/s/live-video/timeline-thrift"
   val entityGraphCacheDest = "/s/cache/pushservice_entity_graph"
 
   override val pushIbisV2Store = {
@@ -110,7 +110,7 @@ case class ProdConfig(
       mTLSServiceIdentifier = Some(serviceIdentifier)
     )
 
-    // according to ibis team, it is safe to retry on timeout, write & channel closed exceptions.
+    // according to ibis team, it is safe to retry on timeout, write & channel closed etwitterceptions.
     val pushIbisClient = new Ibis2Service.FinagledClient(
       new DynamicRequestMeterFilter(
         tunableMap(PushServiceTunableKeys.IbisQpsLimitTunableKey),

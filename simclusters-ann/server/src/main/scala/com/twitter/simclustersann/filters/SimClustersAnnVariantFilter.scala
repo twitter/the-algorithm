@@ -6,17 +6,17 @@ import com.twitter.finagle.SimpleFilter
 import com.twitter.relevance_platform.simclustersann.multicluster.ServiceNameMapper
 import com.twitter.scrooge.Request
 import com.twitter.scrooge.Response
-import com.twitter.simclustersann.exceptions.InvalidRequestForSimClustersAnnVariantException
+import com.twitter.simclustersann.etwitterceptions.InvalidRequestForSimClustersAnnVariantEtwitterception
 import com.twitter.simclustersann.thriftscala.SimClustersANNService
 import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class SimClustersAnnVariantFilter @Inject() (
   serviceNameMapper: ServiceNameMapper,
   serviceIdentifier: ServiceIdentifier,
-) extends SimpleFilter[Request[SimClustersANNService.GetTweetCandidates.Args], Response[
+) etwittertends SimpleFilter[Request[SimClustersANNService.GetTweetCandidates.Args], Response[
       SimClustersANNService.GetTweetCandidates.SuccessType
     ]] {
   override def apply(
@@ -38,16 +38,16 @@ class SimClustersAnnVariantFilter @Inject() (
 
     val actualServiceName = serviceIdentifier.service
 
-    val expectedServiceName = serviceNameMapper.getServiceName(modelVersion, embeddingType)
+    val etwitterpectedServiceName = serviceNameMapper.getServiceName(modelVersion, embeddingType)
 
-    expectedServiceName match {
+    etwitterpectedServiceName match {
       case Some(name) if name == actualServiceName => ()
       case _ =>
-        throw InvalidRequestForSimClustersAnnVariantException(
+        throw InvalidRequestForSimClustersAnnVariantEtwitterception(
           modelVersion,
           embeddingType,
           actualServiceName,
-          expectedServiceName)
+          etwitterpectedServiceName)
     }
   }
 }

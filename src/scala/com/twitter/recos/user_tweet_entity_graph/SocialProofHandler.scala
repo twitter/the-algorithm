@@ -31,7 +31,7 @@ class SocialProofHandler(
   entitySocialProofRunner: EntitySocialProofRunner,
   decider: UserTweetEntityGraphDecider,
   statsReceiver: StatsReceiver)
-    extends RequestHandler[SocialProofThriftRequest, SocialProofThriftResponse] {
+    etwittertends RequestHandler[SocialProofThriftRequest, SocialProofThriftResponse] {
   private val stats = statsReceiver.scope(this.getClass.getSimpleName)
 
   private def getThriftSocialProof(

@@ -4,10 +4,10 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import com.twitter.search.earlybird.search.queries.SinceMaxIDFilter;
+import com.twitter.search.earlybird.search.queries.SinceMatwitterIDFilter;
 
 public class SearchResultsInfo {
-  public static final long NO_ID = SinceMaxIDFilter.NO_FILTER;
+  public static final long NO_ID = SinceMatwitterIDFilter.NO_FILTER;
   public static final int NO_TIME = -1;
 
   private int numHitsProcessed = 0;
@@ -16,10 +16,10 @@ public class SearchResultsInfo {
   private boolean earlyTerminated = false;
   private String earlyTerminationReason = null;
 
-  private long maxSearchedStatusID = NO_ID;
+  private long matwitterSearchedStatusID = NO_ID;
   private long minSearchedStatusID = NO_ID;
 
-  private int maxSearchedTime = NO_TIME;
+  private int matwitterSearchedTime = NO_TIME;
   private int minSearchedTime = NO_TIME;
 
   // Map from time thresholds (in milliseconds) to number of results more recent than this period.
@@ -41,16 +41,16 @@ public class SearchResultsInfo {
     this.numSearchedSegments = numSearchedSegments;
   }
 
-  public final long getMaxSearchedStatusID() {
-    return maxSearchedStatusID;
+  public final long getMatwitterSearchedStatusID() {
+    return matwitterSearchedStatusID;
   }
 
   public final long getMinSearchedStatusID() {
     return minSearchedStatusID;
   }
 
-  public final int getMaxSearchedTime() {
-    return maxSearchedTime;
+  public final int getMatwitterSearchedTime() {
+    return matwitterSearchedTime;
   }
 
   public final int getMinSearchedTime() {
@@ -58,23 +58,23 @@ public class SearchResultsInfo {
   }
 
   public boolean isSetSearchedStatusIDs() {
-    return maxSearchedStatusID != NO_ID && minSearchedStatusID != NO_ID;
+    return matwitterSearchedStatusID != NO_ID && minSearchedStatusID != NO_ID;
   }
 
   public boolean isSetSearchedTimes() {
-    return maxSearchedTime != NO_TIME && minSearchedTime != NO_TIME;
+    return matwitterSearchedTime != NO_TIME && minSearchedTime != NO_TIME;
   }
 
-  public void setMaxSearchedStatusID(long maxSearchedStatusID) {
-    this.maxSearchedStatusID = maxSearchedStatusID;
+  public void setMatwitterSearchedStatusID(long matwitterSearchedStatusID) {
+    this.matwitterSearchedStatusID = matwitterSearchedStatusID;
   }
 
   public void setMinSearchedStatusID(long minSearchedStatusID) {
     this.minSearchedStatusID = minSearchedStatusID;
   }
 
-  public void setMaxSearchedTime(int maxSearchedTime) {
-    this.maxSearchedTime = maxSearchedTime;
+  public void setMatwitterSearchedTime(int matwitterSearchedTime) {
+    this.matwitterSearchedTime = matwitterSearchedTime;
   }
 
   public void setMinSearchedTime(int minSearchedTime) {

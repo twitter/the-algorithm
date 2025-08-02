@@ -139,7 +139,7 @@ class AuthorFeatures(userSource: UserSource, statsReceiver: StatsReceiver) {
 
   private def authorIsSuspended(safety: Option[Safety]): Boolean = {
     authorIsSuspended.incr()
-    safety.exists(_.suspended)
+    safety.etwitterists(_.suspended)
   }
 
   def authorIsProtected(author: User): Boolean =
@@ -155,12 +155,12 @@ class AuthorFeatures(userSource: UserSource, statsReceiver: StatsReceiver) {
 
   private def authorIsDeactivated(safety: Option[Safety]): Boolean = {
     authorIsDeactivated.incr()
-    safety.exists(_.deactivated)
+    safety.etwitterists(_.deactivated)
   }
 
   def authorIsErased(author: User): Boolean = {
     authorIsErased.incr()
-    author.safety.exists(_.erased)
+    author.safety.etwitterists(_.erased)
   }
 
   def authorIsOffboarded(authorId: Long): Stitch[Boolean] = {
@@ -177,7 +177,7 @@ class AuthorFeatures(userSource: UserSource, statsReceiver: StatsReceiver) {
 
   def authorIsNsfwUser(safety: Option[Safety]): Boolean = {
     authorIsNsfwUser.incr()
-    safety.exists(_.nsfwUser)
+    safety.etwitterists(_.nsfwUser)
   }
 
   def authorIsNsfwAdminOpt(author: User): Option[Boolean] = {
@@ -206,7 +206,7 @@ class AuthorFeatures(userSource: UserSource, statsReceiver: StatsReceiver) {
 
   private def authorIsVerified(safety: Option[Safety]): Boolean = {
     authorIsVerified.incr()
-    safety.exists(_.verified)
+    safety.etwitterists(_.verified)
   }
 
   def authorScreenName(author: User): Option[String] = {

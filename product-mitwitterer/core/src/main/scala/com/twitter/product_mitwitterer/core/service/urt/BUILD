@@ -1,0 +1,20 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/javatwitter/inject:javatwitter.inject",
+        "configapi/configapi-core",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/marshaller/response/urt",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/marshalling/response/urt",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/pipeline/product",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/product",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/product/registry",
+        "product-mitwitterer/core/src/main/thrift/com/twitter/product_mitwitterer/core:thrift-scala",
+        "stitch/stitch-core",
+        "util/util-core:scala",
+        "util/util-jackson/src/main/scala/com/twitter/util/jackson",
+    ],
+)

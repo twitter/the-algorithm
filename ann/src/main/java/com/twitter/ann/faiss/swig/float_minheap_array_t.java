@@ -122,8 +122,8 @@ public class float_minheap_array_t {
     swigfaissJNI.float_minheap_array_t_reorder(swigCPtr, this);
   }
 
-  public void per_line_extrema(SWIGTYPE_p_float vals_out, LongVector idx_out) {
-    swigfaissJNI.float_minheap_array_t_per_line_extrema(swigCPtr, this, SWIGTYPE_p_float.getCPtr(vals_out), SWIGTYPE_p_long_long.getCPtr(idx_out.data()), idx_out);
+  public void per_line_etwittertrema(SWIGTYPE_p_float vals_out, LongVector idtwitter_out) {
+    swigfaissJNI.float_minheap_array_t_per_line_etwittertrema(swigCPtr, this, SWIGTYPE_p_float.getCPtr(vals_out), SWIGTYPE_p_long_long.getCPtr(idtwitter_out.data()), idtwitter_out);
   }
 
   public float_minheap_array_t() {

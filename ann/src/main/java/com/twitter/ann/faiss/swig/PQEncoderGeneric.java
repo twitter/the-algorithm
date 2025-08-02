@@ -73,8 +73,8 @@ public class PQEncoderGeneric {
     this(swigfaissJNI.new_PQEncoderGeneric__SWIG_1(SWIGTYPE_p_unsigned_char.getCPtr(code), nbits), true);
   }
 
-  public void encode(long x) {
-    swigfaissJNI.PQEncoderGeneric_encode(swigCPtr, this, x);
+  public void encode(long twitter) {
+    swigfaissJNI.PQEncoderGeneric_encode(swigCPtr, this, twitter);
   }
 
 }

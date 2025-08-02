@@ -4,14 +4,14 @@ use serde_json::Value;
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Root {
-    #[serde(rename = "common_prefix")]
-    pub common_prefix: String,
+    #[serde(rename = "common_prefitwitter")]
+    pub common_prefitwitter: String,
     #[serde(rename = "densification_transform_spec")]
     pub densification_transform_spec: DensificationTransformSpec,
     #[serde(rename = "identity_transform_spec")]
     pub identity_transform_spec: Vec<IdentityTransformSpec>,
-    #[serde(rename = "complex_feature_type_transform_spec")]
-    pub complex_feature_type_transform_spec: Vec<ComplexFeatureTypeTransformSpec>,
+    #[serde(rename = "completwitter_feature_type_transform_spec")]
+    pub completwitter_feature_type_transform_spec: Vec<CompletwitterFeatureTypeTransformSpec>,
     #[serde(rename = "input_features_map")]
     pub input_features_map: Value,
 }
@@ -34,8 +34,8 @@ pub struct Discrete {
     pub generic_feature_type: i64,
     #[serde(rename = "feature_identifier")]
     pub feature_identifier: String,
-    #[serde(rename = "fixed_length")]
-    pub fixed_length: i64,
+    #[serde(rename = "fitwittered_length")]
+    pub fitwittered_length: i64,
     #[serde(rename = "default_value")]
     pub default_value: DefaultValue,
     #[serde(rename = "input_features")]
@@ -59,9 +59,9 @@ pub struct InputFeature {
     pub full_feature_name: String,
     #[serde(rename = "feature_type")]
     pub feature_type: i64,
-    pub index: i64,
-    #[serde(rename = "maybe_exclude")]
-    pub maybe_exclude: bool,
+    pub indetwitter: i64,
+    #[serde(rename = "maybe_etwitterclude")]
+    pub maybe_etwitterclude: bool,
     pub tag: String,
     #[serde(rename = "added_at")]
     pub added_at: i64,
@@ -75,8 +75,8 @@ pub struct Cont {
     pub generic_feature_type: i64,
     #[serde(rename = "feature_identifier")]
     pub feature_identifier: String,
-    #[serde(rename = "fixed_length")]
-    pub fixed_length: i64,
+    #[serde(rename = "fitwittered_length")]
+    pub fitwittered_length: i64,
     #[serde(rename = "default_value")]
     pub default_value: DefaultValue,
     #[serde(rename = "input_features")]
@@ -91,8 +91,8 @@ pub struct Binary {
     pub generic_feature_type: i64,
     #[serde(rename = "feature_identifier")]
     pub feature_identifier: String,
-    #[serde(rename = "fixed_length")]
-    pub fixed_length: i64,
+    #[serde(rename = "fitwittered_length")]
+    pub fitwittered_length: i64,
     #[serde(rename = "default_value")]
     pub default_value: DefaultValue,
     #[serde(rename = "input_features")]
@@ -107,8 +107,8 @@ pub struct StringType {
     pub generic_feature_type: i64,
     #[serde(rename = "feature_identifier")]
     pub feature_identifier: String,
-    #[serde(rename = "fixed_length")]
-    pub fixed_length: i64,
+    #[serde(rename = "fitwittered_length")]
+    pub fitwittered_length: i64,
     #[serde(rename = "default_value")]
     pub default_value: DefaultValue,
     #[serde(rename = "input_features")]
@@ -123,8 +123,8 @@ pub struct Blob {
     pub generic_feature_type: i64,
     #[serde(rename = "feature_identifier")]
     pub feature_identifier: String,
-    #[serde(rename = "fixed_length")]
-    pub fixed_length: i64,
+    #[serde(rename = "fitwittered_length")]
+    pub fitwittered_length: i64,
     #[serde(rename = "default_value")]
     pub default_value: DefaultValue,
     #[serde(rename = "input_features")]
@@ -144,16 +144,16 @@ pub struct IdentityTransformSpec {
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct ComplexFeatureTypeTransformSpec {
+pub struct CompletwitterFeatureTypeTransformSpec {
     #[serde(rename = "feature_id")]
     pub feature_id: i64,
     #[serde(rename = "full_feature_name")]
     pub full_feature_name: String,
     #[serde(rename = "feature_type")]
     pub feature_type: i64,
-    pub index: i64,
-    #[serde(rename = "maybe_exclude")]
-    pub maybe_exclude: bool,
+    pub indetwitter: i64,
+    #[serde(rename = "maybe_etwitterclude")]
+    pub maybe_etwitterclude: bool,
     pub tag: String,
     #[serde(rename = "tensor_data_type")]
     pub tensor_data_type: Option<i64>,
@@ -173,9 +173,9 @@ pub struct InputFeatureMapRecord {
     pub full_feature_name: String,
     #[serde(rename = "feature_type")]
     pub feature_type: i64,
-    pub index: i64,
-    #[serde(rename = "maybe_exclude")]
-    pub maybe_exclude: bool,
+    pub indetwitter: i64,
+    #[serde(rename = "maybe_etwitterclude")]
+    pub maybe_etwitterclude: bool,
     pub tag: String,
     #[serde(rename = "added_at")]
     pub added_at: i64,

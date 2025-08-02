@@ -2,7 +2,7 @@ package com.twitter.search.earlybird.search;
 
 import java.util.List;
 
-public class SimpleSearchResults extends SearchResultsInfo {
+public class SimpleSearchResults etwittertends SearchResultsInfo {
   protected Hit[] hits;
   protected int numHits;
 
@@ -29,7 +29,7 @@ public class SimpleSearchResults extends SearchResultsInfo {
     this.numHits = numHits;
   }
 
-  public Hit getHit(int hitIndex) {
-    return hits[hitIndex];
+  public Hit getHit(int hitIndetwitter) {
+    return hits[hitIndetwitter];
   }
 }

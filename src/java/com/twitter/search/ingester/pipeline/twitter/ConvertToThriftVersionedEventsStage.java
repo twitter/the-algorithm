@@ -1,45 +1,45 @@
 package com.twitter.search.ingester.pipeline.twitter;
 
-import javax.naming.NamingException;
+import javatwitter.naming.NamingEtwitterception;
 
-import org.apache.commons.pipeline.StageException;
+import org.apache.commons.pipeline.StageEtwitterception;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducedTypes;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
 import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
 import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeEtwitterception;
 
 @ConsumedTypes(IngesterTwitterMessage.class)
 @ProducedTypes(ThriftVersionedEvents.class)
-public class ConvertToThriftVersionedEventsStage extends TwitterBaseStage
+public class ConvertToThriftVersionedEventsStage etwittertends TwitterBaseStage
     <IngesterTwitterMessage, IngesterThriftVersionedEvents> {
   private ThriftVersionedEventsConverter converter;
 
   @Override
-  public void doInnerPreprocess() throws StageException, NamingException {
+  public void doInnerPreprocess() throws StageEtwitterception, NamingEtwitterception {
     super.doInnerPreprocess();
     innerSetup();
   }
 
   @Override
-  protected void innerSetup() throws NamingException {
+  protected void innerSetup() throws NamingEtwitterception {
     converter = new ThriftVersionedEventsConverter(wireModule.getPenguinVersions());
   }
 
   @Override
-  public void innerProcess(Object obj) throws StageException {
+  public void innerProcess(Object obj) throws StageEtwitterception {
     if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not an IngesterTwitterMessage: " + obj);
+      throw new StageEtwitterception(this, "Object is not an IngesterTwitterMessage: " + obj);
     }
 
     IngesterTwitterMessage ingesterTwitterMessage = (IngesterTwitterMessage) obj;
     IngesterThriftVersionedEvents maybeEvents = tryToConvert(ingesterTwitterMessage);
 
     if (maybeEvents == null) {
-      throw new StageException(
+      throw new StageEtwitterception(
           this, "Object is not a retweet or a reply: " + ingesterTwitterMessage);
     }
 
@@ -52,8 +52,8 @@ public class ConvertToThriftVersionedEventsStage extends TwitterBaseStage
     IngesterThriftVersionedEvents maybeEvents = tryToConvert(message);
 
     if (maybeEvents == null) {
-      throw new PipelineStageRuntimeException("Object is not a retweet or reply, does not have to"
-          + " pass to next stage");
+      throw new PipelineStageRuntimeEtwitterception("Object is not a retweet or reply, does not have to"
+          + " pass to netwittert stage");
     }
 
     return maybeEvents;

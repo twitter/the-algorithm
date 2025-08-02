@@ -274,7 +274,7 @@ def flip_disliked_labels(metric_fn):
 
     Args:
       graph_output: A dict of tensors.
-      labels: labels of training samples, which is a 2D tensor of shape batch_size x 3: [OONCs, engagements, dislikes]
+      labels: labels of training samples, which is a 2D tensor of shape batch_size twitter 3: [OONCs, engagements, dislikes]
       weights: A tensor of float32 to indicate the per record weight.
 
     Returns:
@@ -283,7 +283,7 @@ def flip_disliked_labels(metric_fn):
     # We want to multiply the label of the observation by 0 only when it is disliked
     disliked_mask = generate_disliked_mask(labels)
 
-    # Extract OONC and engagement labels only.
+    # Etwittertract OONC and engagement labels only.
     labels = tf.reshape(labels[:, 0:2], shape=[-1, 2])
 
     # Labels will be set to 0 if it is disliked.

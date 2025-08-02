@@ -10,7 +10,7 @@ java_library(
         "3rdparty/jvm/org/apache/hadoop:hadoop-client-default",
         "3rdparty/jvm/org/apache/thrift:libthrift",
         "src/java/com/twitter/common/base",
-        "src/java/com/twitter/common/text/token",
+        "src/java/com/twitter/common/tetwittert/token",
         "src/java/com/twitter/search/common/encoding/features",
         "src/java/com/twitter/search/common/features",
         "src/java/com/twitter/search/common/metrics",

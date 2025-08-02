@@ -3,162 +3,162 @@ package com.twitter.visibility.configapi.params
 import com.twitter.timelines.configapi.EnumParam
 import com.twitter.timelines.configapi.Param
 
-abstract class RuleParam[T](override val default: T) extends Param(default) {
+abstract class RuleParam[T](override val default: T) etwittertends Param(default) {
   override val statName: String = s"RuleParam/${this.getClass.getSimpleName}"
 }
 
 abstract class EnumRuleParam[T <: Enumeration](override val default: T#Value, override val enum: T)
-    extends EnumParam(default, enum) {
+    etwittertends EnumParam(default, enum) {
   override val statName: String = s"RuleParam/${this.getClass.getSimpleName}"
 }
 
 private[visibility] object RuleParams {
-  object True extends RuleParam(true)
-  object False extends RuleParam(false)
+  object True etwittertends RuleParam(true)
+  object False etwittertends RuleParam(false)
 
-  object TestHoldbackParam extends RuleParam(true)
+  object TestHoldbackParam etwittertends RuleParam(true)
 
-  object TweetConversationControlEnabledParam extends RuleParam(default = false)
+  object TweetConversationControlEnabledParam etwittertends RuleParam(default = false)
 
-  object EnableLimitRepliesFollowersConversationRule extends RuleParam(default = false)
+  object EnableLimitRepliesFollowersConversationRule etwittertends RuleParam(default = false)
 
-  object CommunityTweetsEnabledParam extends RuleParam(default = false)
+  object CommunityTweetsEnabledParam etwittertends RuleParam(default = false)
 
-  object DropCommunityTweetWithUndefinedCommunityRuleEnabledParam extends RuleParam(default = false)
+  object DropCommunityTweetWithUndefinedCommunityRuleEnabledParam etwittertends RuleParam(default = false)
 
-  object EnableHighPSpammyTweetScoreSearchTweetLabelDropRuleParam extends RuleParam(false)
+  object EnableHighPSpammyTweetScoreSearchTweetLabelDropRuleParam etwittertends RuleParam(false)
 
-  object EnableSmyteSpamTweetRuleParam extends RuleParam(false)
+  object EnableSmyteSpamTweetRuleParam etwittertends RuleParam(false)
 
   object EnableHighSpammyTweetContentScoreSearchLatestTweetLabelDropRuleParam
-      extends RuleParam(false)
+      etwittertends RuleParam(false)
 
-  object EnableHighSpammyTweetContentScoreSearchTopTweetLabelDropRuleParam extends RuleParam(false)
+  object EnableHighSpammyTweetContentScoreSearchTopTweetLabelDropRuleParam etwittertends RuleParam(false)
 
-  object NotGraduatedUserLabelRuleHoldbackExperimentParam extends RuleParam(default = false)
+  object NotGraduatedUserLabelRuleHoldbackEtwitterperimentParam etwittertends RuleParam(default = false)
 
-  object EnableGoreAndViolenceTopicHighRecallTweetLabelRule extends RuleParam(default = false)
+  object EnableGoreAndViolenceTopicHighRecallTweetLabelRule etwittertends RuleParam(default = false)
 
-  object EnableBlinkBadDownrankingRuleParam extends RuleParam(false)
-  object EnableBlinkWorstDownrankingRuleParam extends RuleParam(false)
+  object EnableBlinkBadDownrankingRuleParam etwittertends RuleParam(false)
+  object EnableBlinkWorstDownrankingRuleParam etwittertends RuleParam(false)
 
   object EnableHighSpammyTweetContentScoreTrendsTopTweetLabelDropRuleParam
-      extends RuleParam(default = false)
+      etwittertends RuleParam(default = false)
 
   object EnableHighSpammyTweetContentScoreTrendsLatestTweetLabelDropRuleParam
-      extends RuleParam(default = false)
+      etwittertends RuleParam(default = false)
 
-  object EnableCopypastaSpamDownrankConvosAbusiveQualityRule extends RuleParam(default = false)
-  object EnableCopypastaSpamSearchDropRule extends RuleParam(default = false)
+  object EnableCopypastaSpamDownrankConvosAbusiveQualityRule etwittertends RuleParam(default = false)
+  object EnableCopypastaSpamSearchDropRule etwittertends RuleParam(default = false)
 
-  object EnableSpammyUserModelTweetDropRuleParam extends RuleParam(default = false)
+  object EnableSpammyUserModelTweetDropRuleParam etwittertends RuleParam(default = false)
 
-  object EnableAvoidNsfwRulesParam extends RuleParam(false)
+  object EnableAvoidNsfwRulesParam etwittertends RuleParam(false)
 
-  object EnableReportedTweetInterstitialRule extends RuleParam(default = false)
+  object EnableReportedTweetInterstitialRule etwittertends RuleParam(default = false)
 
-  object EnableReportedTweetInterstitialSearchRule extends RuleParam(default = false)
+  object EnableReportedTweetInterstitialSearchRule etwittertends RuleParam(default = false)
 
-  object EnableDropExclusiveTweetContentRule extends RuleParam(default = false)
+  object EnableDropEtwitterclusiveTweetContentRule etwittertends RuleParam(default = false)
 
-  object EnableDropExclusiveTweetContentRuleFailClosed extends RuleParam(default = false)
+  object EnableDropEtwitterclusiveTweetContentRuleFailClosed etwittertends RuleParam(default = false)
 
-  object EnableTombstoneExclusiveQtProfileTimelineParam extends RuleParam(default = false)
+  object EnableTombstoneEtwitterclusiveQtProfileTimelineParam etwittertends RuleParam(default = false)
 
-  object EnableDropAllExclusiveTweetsRuleParam extends RuleParam(false)
-  object EnableDropAllExclusiveTweetsRuleFailClosedParam extends RuleParam(false)
+  object EnableDropAllEtwitterclusiveTweetsRuleParam etwittertends RuleParam(false)
+  object EnableDropAllEtwitterclusiveTweetsRuleFailClosedParam etwittertends RuleParam(false)
 
-  object EnableDownrankSpamReplySectioningRuleParam extends RuleParam(default = false)
-  object EnableNsfwTextSectioningRuleParam extends RuleParam(default = false)
+  object EnableDownrankSpamReplySectioningRuleParam etwittertends RuleParam(default = false)
+  object EnableNsfwTetwittertSectioningRuleParam etwittertends RuleParam(default = false)
 
-  object EnableSearchIpiSafeSearchWithoutUserInQueryDropRule extends RuleParam(false)
+  object EnableSearchIpiSafeSearchWithoutUserInQueryDropRule etwittertends RuleParam(false)
 
-  object PromotedTweetHealthEnforcementHoldback extends RuleParam(default = true)
-  object EnableTimelineHomePromotedTweetHealthEnforcementRules extends RuleParam(default = false)
+  object PromotedTweetHealthEnforcementHoldback etwittertends RuleParam(default = true)
+  object EnableTimelineHomePromotedTweetHealthEnforcementRules etwittertends RuleParam(default = false)
 
-  object EnableMutedKeywordFilteringSpaceTitleNotificationsRuleParam extends RuleParam(false)
+  object EnableMutedKeywordFilteringSpaceTitleNotificationsRuleParam etwittertends RuleParam(false)
 
-  object EnableDropTweetsWithGeoRestrictedMediaRuleParam extends RuleParam(default = false)
+  object EnableDropTweetsWithGeoRestrictedMediaRuleParam etwittertends RuleParam(default = false)
 
-  object EnableDropAllTrustedFriendsTweetsRuleParam extends RuleParam(false)
-  object EnableDropTrustedFriendsTweetContentRuleParam extends RuleParam(false)
+  object EnableDropAllTrustedFriendsTweetsRuleParam etwittertends RuleParam(false)
+  object EnableDropTrustedFriendsTweetContentRuleParam etwittertends RuleParam(false)
 
-  object EnableDropAllCollabInvitationTweetsRuleParam extends RuleParam(false)
+  object EnableDropAllCollabInvitationTweetsRuleParam etwittertends RuleParam(false)
 
-  object EnableNsfwTextHighPrecisionDropRuleParam extends RuleParam(false)
+  object EnableNsfwTetwittertHighPrecisionDropRuleParam etwittertends RuleParam(false)
 
-  object EnableLikelyIvsUserLabelDropRule extends RuleParam(false)
+  object EnableLikelyIvsUserLabelDropRule etwittertends RuleParam(false)
 
-  object EnableCardUriRootDomainCardDenylistRule extends RuleParam(false)
-  object EnableCommunityNonMemberPollCardRule extends RuleParam(false)
-  object EnableCommunityNonMemberPollCardRuleFailClosed extends RuleParam(false)
+  object EnableCardUriRootDomainCardDenylistRule etwittertends RuleParam(false)
+  object EnableCommunityNonMemberPollCardRule etwittertends RuleParam(false)
+  object EnableCommunityNonMemberPollCardRuleFailClosed etwittertends RuleParam(false)
 
-  object EnableExperimentalNudgeEnabledParam extends RuleParam(false)
+  object EnableEtwitterperimentalNudgeEnabledParam etwittertends RuleParam(false)
 
-  object NsfwHighPrecisionUserLabelAvoidTweetRuleEnabledParam extends RuleParam(default = false)
+  object NsfwHighPrecisionUserLabelAvoidTweetRuleEnabledParam etwittertends RuleParam(default = false)
 
-  object EnableNewAdAvoidanceRulesParam extends RuleParam(false)
+  object EnableNewAdAvoidanceRulesParam etwittertends RuleParam(false)
 
-  object EnableNsfaHighRecallAdAvoidanceParam extends RuleParam(false)
+  object EnableNsfaHighRecallAdAvoidanceParam etwittertends RuleParam(false)
 
-  object EnableNsfaKeywordsHighPrecisionAdAvoidanceParam extends RuleParam(false)
+  object EnableNsfaKeywordsHighPrecisionAdAvoidanceParam etwittertends RuleParam(false)
 
-  object EnableStaleTweetDropRuleParam extends RuleParam(false)
-  object EnableStaleTweetDropRuleFailClosedParam extends RuleParam(false)
+  object EnableStaleTweetDropRuleParam etwittertends RuleParam(false)
+  object EnableStaleTweetDropRuleFailClosedParam etwittertends RuleParam(false)
 
-  object EnableDeleteStateTweetRulesParam extends RuleParam(default = false)
+  object EnableDeleteStateTweetRulesParam etwittertends RuleParam(default = false)
 
-  object EnableSpacesSharingNsfwDropRulesParam extends RuleParam(default = true)
+  object EnableSpacesSharingNsfwDropRulesParam etwittertends RuleParam(default = true)
 
-  object EnableViewerIsSoftUserDropRuleParam extends RuleParam(default = false)
+  object EnableViewerIsSoftUserDropRuleParam etwittertends RuleParam(default = false)
 
-  object EnablePdnaQuotedTweetTombstoneRuleParam extends RuleParam(default = true)
-  object EnableSpamQuotedTweetTombstoneRuleParam extends RuleParam(default = true)
+  object EnablePdnaQuotedTweetTombstoneRuleParam etwittertends RuleParam(default = true)
+  object EnableSpamQuotedTweetTombstoneRuleParam etwittertends RuleParam(default = true)
 
-  object EnableNsfwHpQuotedTweetDropRuleParam extends RuleParam(default = false)
-  object EnableNsfwHpQuotedTweetTombstoneRuleParam extends RuleParam(default = false)
+  object EnableNsfwHpQuotedTweetDropRuleParam etwittertends RuleParam(default = false)
+  object EnableNsfwHpQuotedTweetTombstoneRuleParam etwittertends RuleParam(default = false)
 
   object EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRuleParam
-      extends RuleParam(default = false)
+      etwittertends RuleParam(default = false)
   object EnableInnerQuotedTweetViewerMutesAuthorInterstitialRuleParam
-      extends RuleParam(default = false)
+      etwittertends RuleParam(default = false)
 
 
-  object EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam extends RuleParam(false)
+  object EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam etwittertends RuleParam(false)
 
-  object EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam extends RuleParam(false)
+  object EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam etwittertends RuleParam(false)
 
   object EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam
-      extends RuleParam(false)
+      etwittertends RuleParam(false)
 
-  object EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam extends RuleParam(false)
+  object EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam etwittertends RuleParam(false)
 
-  object EnableLegacySensitiveMediaHomeTimelineRulesParam extends RuleParam(true)
+  object EnableLegacySensitiveMediaHomeTimelineRulesParam etwittertends RuleParam(true)
 
-  object EnableLegacySensitiveMediaConversationRulesParam extends RuleParam(true)
+  object EnableLegacySensitiveMediaConversationRulesParam etwittertends RuleParam(true)
 
-  object EnableLegacySensitiveMediaProfileTimelineRulesParam extends RuleParam(true)
+  object EnableLegacySensitiveMediaProfileTimelineRulesParam etwittertends RuleParam(true)
 
-  object EnableLegacySensitiveMediaTweetDetailRulesParam extends RuleParam(true)
+  object EnableLegacySensitiveMediaTweetDetailRulesParam etwittertends RuleParam(true)
 
-  object EnableLegacySensitiveMediaDirectMessagesRulesParam extends RuleParam(true)
+  object EnableLegacySensitiveMediaDirectMessagesRulesParam etwittertends RuleParam(true)
 
-  object EnableToxicReplyFilteringConversationRulesParam extends RuleParam(false)
-  object EnableToxicReplyFilteringNotificationsRulesParam extends RuleParam(false)
+  object EnableTotwittericReplyFilteringConversationRulesParam etwittertends RuleParam(false)
+  object EnableTotwittericReplyFilteringNotificationsRulesParam etwittertends RuleParam(false)
 
-  object EnableSearchQueryMatchesTweetAuthorConditionParam extends RuleParam(default = false)
+  object EnableSearchQueryMatchesTweetAuthorConditionParam etwittertends RuleParam(default = false)
 
-  object EnableSearchBasicBlockMuteRulesParam extends RuleParam(default = false)
+  object EnableSearchBasicBlockMuteRulesParam etwittertends RuleParam(default = false)
 
-  object EnableAbusiveBehaviorDropRuleParam extends RuleParam(default = false)
-  object EnableAbusiveBehaviorInterstitialRuleParam extends RuleParam(default = false)
-  object EnableAbusiveBehaviorLimitedEngagementsRuleParam extends RuleParam(default = false)
+  object EnableAbusiveBehaviorDropRuleParam etwittertends RuleParam(default = false)
+  object EnableAbusiveBehaviorInterstitialRuleParam etwittertends RuleParam(default = false)
+  object EnableAbusiveBehaviorLimitedEngagementsRuleParam etwittertends RuleParam(default = false)
 
-  object EnableNotGraduatedDownrankConvosAbusiveQualityRuleParam extends RuleParam(default = false)
-  object EnableNotGraduatedSearchDropRuleParam extends RuleParam(default = false)
-  object EnableNotGraduatedDropRuleParam extends RuleParam(default = false)
+  object EnableNotGraduatedDownrankConvosAbusiveQualityRuleParam etwittertends RuleParam(default = false)
+  object EnableNotGraduatedSearchDropRuleParam etwittertends RuleParam(default = false)
+  object EnableNotGraduatedDropRuleParam etwittertends RuleParam(default = false)
 
-  object EnableFosnrRuleParam extends RuleParam(default = false)
+  object EnableFosnrRuleParam etwittertends RuleParam(default = false)
 
-  object EnableAuthorBlocksViewerDropRuleParam extends RuleParam(default = false)
+  object EnableAuthorBlocksViewerDropRuleParam etwittertends RuleParam(default = false)
 }

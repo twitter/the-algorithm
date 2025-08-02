@@ -1,0 +1,6 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urp
+
+sealed trait TopicPageHeaderDisplayType
+
+case object BasicTopicPageHeaderDisplayType etwittertends TopicPageHeaderDisplayType
+case object PersonalizedTopicPageHeaderDisplayType etwittertends TopicPageHeaderDisplayType

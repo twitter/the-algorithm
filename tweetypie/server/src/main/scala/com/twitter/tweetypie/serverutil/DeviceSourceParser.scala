@@ -5,7 +5,7 @@ package com.twitter.tweetypie.serverutil
  * neccesary when you need to request information about a client from
  * a service that only knows about clients in terms of oauthIds.
  *
- * This happens either by parsing out an explicit "oauth:" app id or
+ * This happens either by parsing out an etwitterplicit "oauth:" app id or
  * using a mapping from old non oauth clientIds like "web" and "sms"
  * to oauthIds that have retroactively been assigned to those clients.
  * If the legacy id cannot be found in the map and it's a non-numeric
@@ -39,7 +39,7 @@ object DeviceSourceParser {
    * id.
    *
    * The string must consist of the characters "oauth:" followed by a
-   * non-negative, decimal long. The text is case-insensitive, and
+   * non-negative, decimal long. The tetwittert is case-insensitive, and
    * whitespace at the beginning or end is ignored.
    *
    * We want to accept input as liberally as possible, because if we
@@ -55,11 +55,11 @@ object DeviceSourceParser {
 
     _ match {
       case OAuthAppIdRe(digits) =>
-        // We should only get NumberFormatException when the number is
-        // larger than a Long, because the regex will rule out all of
+        // We should only get NumberFormatEtwitterception when the number is
+        // larger than a Long, because the regetwitter will rule out all of
         // the other invalid cases.
         try Some(digits.toLong)
-        catch { case _: NumberFormatException => None }
+        catch { case _: NumberFormatEtwitterception => None }
       case _ =>
         None
     }

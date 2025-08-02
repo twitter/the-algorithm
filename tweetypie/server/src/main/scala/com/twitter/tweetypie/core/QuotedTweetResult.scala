@@ -16,12 +16,12 @@ sealed trait QuotedTweetResult {
 }
 
 object QuotedTweetResult {
-  case object NotFound extends QuotedTweetResult {
+  case object NotFound etwittertends QuotedTweetResult {
     def filteredReason: None.type = None
     def toOption: None.type = None
     def map(f: TweetResult => TweetResult): NotFound.type = this
   }
-  case class Filtered(state: FilteredState.Unavailable) extends QuotedTweetResult {
+  case class Filtered(state: FilteredState.Unavailable) etwittertends QuotedTweetResult {
     def filteredReason: Option[FilteredReason] =
       state match {
         case st: FilteredState.HasFilteredReason => Some(st.filteredReason)
@@ -30,7 +30,7 @@ object QuotedTweetResult {
     def toOption: None.type = None
     def map(f: TweetResult => TweetResult): Filtered = this
   }
-  case class Found(result: TweetResult) extends QuotedTweetResult {
+  case class Found(result: TweetResult) etwittertends QuotedTweetResult {
     def filteredReason: Option[FilteredReason] = result.value.suppress.map(_.filteredReason)
     def toOption: Option[TweetResult] = Some(result)
     def map(f: TweetResult => TweetResult): QuotedTweetResult = Found(f(result))

@@ -36,7 +36,7 @@ object SemanticCoreAnnotationStore {
  * Given a tweet Id, return the list of annotations defined by the TSIG team.
  */
 case class SemanticCoreAnnotationStore(stratoStore: ReadableStore[TweetId, TopicAnnotationValue])
-    extends ReadableStore[TweetId, Seq[SemanticCoreAnnotationStore.TopicAnnotation]] {
+    etwittertends ReadableStore[TweetId, Seq[SemanticCoreAnnotationStore.TopicAnnotation]] {
   import SemanticCoreAnnotationStore._
 
   override def multiGet[K1 <: TweetId](

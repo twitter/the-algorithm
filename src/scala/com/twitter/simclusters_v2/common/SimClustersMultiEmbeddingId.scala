@@ -27,13 +27,13 @@ object SimClustersMultiEmbeddingId {
   def toEmbeddingType(multiEmbeddingType: MultiEmbeddingType): EmbeddingType = {
     MultiEmbeddingTypeToEmbeddingType.getOrElse(
       multiEmbeddingType,
-      throw new IllegalArgumentException(s"Invalid type: $multiEmbeddingType"))
+      throw new IllegalArgumentEtwitterception(s"Invalid type: $multiEmbeddingType"))
   }
 
   def toMultiEmbeddingType(embeddingType: EmbeddingType): MultiEmbeddingType = {
     EmbeddingTypeToMultiEmbeddingType.getOrElse(
       embeddingType,
-      throw new IllegalArgumentException(s"Invalid type: $embeddingType")
+      throw new IllegalArgumentEtwitterception(s"Invalid type: $embeddingType")
     )
   }
 
@@ -49,7 +49,7 @@ object SimClustersMultiEmbeddingId {
         InternalId.TopicSubId(
           TopicSubId(topicId.entityId, topicId.language, topicId.country, subId))
       case _ =>
-        throw new IllegalArgumentException(
+        throw new IllegalArgumentEtwitterception(
           s"Invalid simClusters InternalId ${simClustersMultiEmbeddingId.internalId}")
     }
     ThriftEmbeddingId(
@@ -67,7 +67,7 @@ object SimClustersMultiEmbeddingId {
       case InternalId.TopicSubId(topicSubId) =>
         topicSubId.subId
       case _ =>
-        throw new IllegalArgumentException(
+        throw new IllegalArgumentEtwitterception(
           s"Invalid SimClustersEmbeddingId InternalId type, $simClustersEmbeddingId")
     }
   }
@@ -88,7 +88,7 @@ object SimClustersMultiEmbeddingId {
         )
 
       case _ =>
-        throw new IllegalArgumentException(
+        throw new IllegalArgumentEtwitterception(
           s"Invalid SimClustersEmbeddingId InternalId type, $simClustersEmbeddingId")
     }
   }

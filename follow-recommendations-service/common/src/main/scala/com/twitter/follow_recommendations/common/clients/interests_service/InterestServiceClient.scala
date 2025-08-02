@@ -20,7 +20,7 @@ import com.twitter.strato.thrift.ScroogeConvImplicits._
 class InterestServiceClient @Inject() (
   stratoClient: Client,
   statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends Logging {
+    etwittertends Logging {
 
   val interestsServiceStratoColumnPath = "interests/interestedInInterests"
   val stats = statsReceiver.scope("interest_service_client")
@@ -36,10 +36,10 @@ class InterestServiceClient @Inject() (
     userId: Long
   ): Stitch[Seq[Long]] = {
     fetchInterestRelationships(userId)
-      .map(_.toSeq.flatten.flatMap(extractUttInterest))
+      .map(_.toSeq.flatten.flatMap(etwittertractUttInterest))
   }
 
-  def extractUttInterest(
+  def etwittertractUttInterest(
     interestRelationShip: InterestRelationship
   ): Option[Long] = {
     interestRelationShip match {
@@ -56,10 +56,10 @@ class InterestServiceClient @Inject() (
     userId: Long
   ): Stitch[Seq[String]] = {
     fetchInterestRelationships(userId)
-      .map(_.toSeq.flatten.flatMap(extractCustomInterest))
+      .map(_.toSeq.flatten.flatMap(etwittertractCustomInterest))
   }
 
-  def extractCustomInterest(
+  def etwittertractCustomInterest(
     interestRelationShip: InterestRelationship
   ): Option[String] = {
     interestRelationShip match {
@@ -107,7 +107,7 @@ class InterestServiceClient @Inject() (
     interestData match {
       case UserInterestData.InterestedIn(interestModels) =>
         interestModels.collect {
-          case InterestedInInterestModel.ExplicitModel(model) => model
+          case InterestedInInterestModel.EtwitterplicitModel(model) => model
         }
       case _ => Nil
     }

@@ -16,9 +16,9 @@ import com.twitter.visibility.features.FeatureMap
 import com.twitter.visibility.models.ContentId.QuotedTweetRelationship
 import com.twitter.visibility.models.SafetyLevel
 import com.twitter.visibility.models.UserUnavailableStateEnum
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 import com.twitter.visibility.rules.Drop
-import com.twitter.visibility.rules.EvaluationContext
+import com.twitter.visibility.rules.EvaluationContetwittert
 import com.twitter.visibility.rules.Reason.AuthorBlocksViewer
 import com.twitter.visibility.rules.Reason.DeactivatedAuthor
 import com.twitter.visibility.rules.Reason.ErasedAuthor
@@ -28,7 +28,7 @@ import com.twitter.visibility.rules.Reason.SuspendedAuthor
 import com.twitter.visibility.rules.Reason.ViewerBlocksAuthor
 import com.twitter.visibility.rules.Reason.ViewerHardMutedAuthor
 import com.twitter.visibility.rules.Reason.ViewerMutesAuthor
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
+import com.twitter.visibility.rules.providers.ProvidedEvaluationContetwittert
 import com.twitter.visibility.rules.utils.ShimUtils
 
 case class TweetAndAuthor(tweetId: Long, authorId: Long)
@@ -36,7 +36,7 @@ case class TweetAndAuthor(tweetId: Long, authorId: Long)
 case class QuotedTweetVisibilityRequest(
   quotedTweet: TweetAndAuthor,
   outerTweet: TweetAndAuthor,
-  viewerContext: ViewerContext,
+  viewerContetwittert: ViewerContetwittert,
   safetyLevel: SafetyLevel)
 
 object QuotedTweetVisibilityLibrary {
@@ -56,7 +56,7 @@ object QuotedTweetVisibilityLibrary {
     val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
 
     {
-      case QuotedTweetVisibilityRequest(quotedTweet, outerTweet, viewerContext, safetyLevel) =>
+      case QuotedTweetVisibilityRequest(quotedTweet, outerTweet, viewerContetwittert, safetyLevel) =>
         vfEngineCounter.incr()
         val contentId = QuotedTweetRelationship(
           outer = outerTweet.tweetId,
@@ -65,7 +65,7 @@ object QuotedTweetVisibilityLibrary {
 
         val innerAuthorId = quotedTweet.authorId
         val outerAuthorId = outerTweet.authorId
-        val viewerId = viewerContext.userId
+        val viewerId = viewerContetwittert.userId
         val isFeatureHydrationInShimEnabled = enableVfFeatureHydration()
 
         val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
@@ -77,7 +77,7 @@ object QuotedTweetVisibilityLibrary {
 
         val featureMap = visibilityLibrary.featureMapBuilder(
           Seq(
-            viewerFeatures.forViewerContext(viewerContext),
+            viewerFeatures.forViewerContetwittert(viewerContetwittert),
             authorFeatures.forAuthorId(innerAuthorId),
             relationshipFeatures.forAuthorId(innerAuthorId, viewerId),
             quotedTweetFeatures.forOuterAuthor(outerAuthorId, innerAuthorId)
@@ -85,10 +85,10 @@ object QuotedTweetVisibilityLibrary {
         )
 
         val resp = if (isFeatureHydrationInShimEnabled) {
-          val evaluationContext = ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-            evaluationContext = EvaluationContext(
+          val evaluationContetwittert = ProvidedEvaluationContetwittert.injectRuntimeRulesIntoEvaluationContetwittert(
+            evaluationContetwittert = EvaluationContetwittert(
               SafetyLevel.QuotedTweetRules,
-              visibilityLibrary.getParams(viewerContext, SafetyLevel.QuotedTweetRules),
+              visibilityLibrary.getParams(viewerContetwittert, SafetyLevel.QuotedTweetRules),
               visibilityLibrary.statsReceiver)
           )
 
@@ -97,7 +97,7 @@ object QuotedTweetVisibilityLibrary {
               featureMap,
               SafetyLevel.QuotedTweetRules,
               contentId,
-              evaluationContext)
+              evaluationContetwittert)
 
           FeatureMap.resolve(preFilteredFeatureMap, libraryStatsReceiver).flatMap {
             resolvedFeatureMap =>
@@ -105,7 +105,7 @@ object QuotedTweetVisibilityLibrary {
                 .runRuleEngine(
                   contentId,
                   resolvedFeatureMap,
-                  viewerContext,
+                  viewerContetwittert,
                   SafetyLevel.QuotedTweetRules
                 )
           }
@@ -114,7 +114,7 @@ object QuotedTweetVisibilityLibrary {
             .runRuleEngine(
               contentId,
               featureMap,
-              viewerContext,
+              viewerContetwittert,
               SafetyLevel.QuotedTweetRules
             )
         }
@@ -139,7 +139,7 @@ object QuotedTweetVisibilityLibrary {
                 UserUnavailableStateVisibilityRequest(
                   safetyLevel,
                   quotedTweet.tweetId,
-                  viewerContext,
+                  viewerContetwittert,
                   userState,
                   isRetweet = false,
                   isInnerQuotedTweet = true,

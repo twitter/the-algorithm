@@ -1,14 +1,14 @@
 package com.twitter.visibility.features
 
-import com.twitter.finagle.mux.ClientDiscardedRequestException
+import com.twitter.finagle.mutwitter.ClientDiscardedRequestEtwitterception
 import com.twitter.finagle.stats.NullStatsReceiver
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.stitch.Stitch
-import scala.language.existentials
+import scala.language.etwitteristentials
 
-class MissingFeatureException(feature: Feature[_]) extends Exception("Missing value for " + feature)
+class MissingFeatureEtwitterception(feature: Feature[_]) etwittertends Etwitterception("Missing value for " + feature)
 
-case class FeatureFailedException(feature: Feature[_], exception: Throwable) extends Exception
+case class FeatureFailedEtwitterception(feature: Feature[_], etwitterception: Throwable) etwittertends Etwitterception
 
 private[visibility] case class FeatureFailedPlaceholderObject(throwable: Throwable)
 
@@ -29,19 +29,19 @@ class FeatureMap(
     map.get(feature) match {
       case _ if constantMap.contains(feature) =>
         Stitch.value(getConstant(feature))
-      case Some(x) =>
-        x.asInstanceOf[Stitch[T]]
+      case Some(twitter) =>
+        twitter.asInstanceOf[Stitch[T]]
       case _ =>
-        Stitch.exception(new MissingFeatureException(feature))
+        Stitch.etwitterception(new MissingFeatureEtwitterception(feature))
     }
   }
 
   def getConstant[T](feature: Feature[T]): T = {
     constantMap.get(feature) match {
-      case Some(x) =>
-        x.asInstanceOf[T]
+      case Some(twitter) =>
+        twitter.asInstanceOf[T]
       case _ =>
-        throw new MissingFeatureException(feature)
+        throw new MissingFeatureEtwitterception(feature)
     }
   }
 
@@ -73,10 +73,10 @@ object FeatureMap {
 
           featureStitch
             .handle {
-              case ffe: FeatureFailedException =>
+              case ffe: FeatureFailedEtwitterception =>
                 featureFailureStat.counter().incr()
-                featureFailureStat.counter(ffe.exception.getClass.getName).incr()
-                (feature, FeatureFailedPlaceholderObject(ffe.exception))
+                featureFailureStat.counter(ffe.etwitterception.getClass.getName).incr()
+                (feature, FeatureFailedPlaceholderObject(ffe.etwitterception))
             }
             .ensure {
               featureStatsReceiver.counter("requests").incr()
@@ -93,8 +93,8 @@ object FeatureMap {
     val rescueValue = v.rescue {
       case e =>
         e match {
-          case cdre: ClientDiscardedRequestException => Stitch.exception(cdre)
-          case _ => Stitch.exception(FeatureFailedException(k, e))
+          case cdre: ClientDiscardedRequestEtwitterception => Stitch.etwitterception(cdre)
+          case _ => Stitch.etwitterception(FeatureFailedEtwitterception(k, e))
         }
     }
 
@@ -103,7 +103,7 @@ object FeatureMap {
 }
 
 class ResolvedFeatureMap(private[visibility] val resolvedMap: Map[Feature[_], Any])
-    extends FeatureMap(Map.empty, resolvedMap) {
+    etwittertends FeatureMap(Map.empty, resolvedMap) {
 
   override def equals(other: Any): Boolean = other match {
     case otherResolvedFeatureMap: ResolvedFeatureMap =>

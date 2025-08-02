@@ -2,7 +2,7 @@ package com.twitter.search.earlybird.config;
 
 import java.util.Date;
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -12,7 +12,7 @@ import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
 
 /**
  * The start or end boundary of a tier's serving range.
- * This is used to add since_id and max_id operators onto search queries.
+ * This is used to add since_id and matwitter_id operators onto search queries.
  */
 public class TierServingBoundaryEndPoint {
   @VisibleForTesting
@@ -49,7 +49,7 @@ public class TierServingBoundaryEndPoint {
    * </li>
    * <li>
    * "absolute_tweet_id_and_timestamp_millis:id:timestamp" a tweet ID/timestamp is given
-   *                                                       explicitly as the serving range
+   *                                                       etwitterplicitly as the serving range
    *                                                       boundary.
    * </li>
    * <li>
@@ -71,7 +71,7 @@ public class TierServingBoundaryEndPoint {
     } else if (boundaryString.trim().startsWith(RELATIVE_TO_CURRENT_TIME_MS)) {
       return getRelativeBoundary(boundaryString, clock);
     } else {
-      throw new IllegalStateException("Cannot parse serving range string: " + boundaryString);
+      throw new IllegalStateEtwitterception("Cannot parse serving range string: " + boundaryString);
     }
   }
 
@@ -84,19 +84,19 @@ public class TierServingBoundaryEndPoint {
           -1L, TierConfig.DEFAULT_TIER_START_DATE.getTime() / 1000, null, clock);
     } else if (boundaryDate.equals(TierConfig.DEFAULT_TIER_END_DATE)) {
       return new TierServingBoundaryEndPoint(
-          Long.MAX_VALUE, TierConfig.DEFAULT_TIER_END_DATE.getTime() / 1000, null, clock);
+          Long.MAtwitter_VALUE, TierConfig.DEFAULT_TIER_END_DATE.getTime() / 1000, null, clock);
     } else {
-      // convert data start / end dates into since / max ID.
+      // convert data start / end dates into since / matwitter ID.
       long boundaryTimeMillis = boundaryDate.getTime();
       if (!SnowflakeIdParser.isUsableSnowflakeTimestamp(boundaryTimeMillis)) {
-        throw new IllegalStateException("Serving time range can not be determined, because "
+        throw new IllegalStateEtwitterception("Serving time range can not be determined, because "
             + boundaryDate + " is before Twitter switched to snowflake tweet IDs.");
       }
-      // Earlybird since_id is inclusive and max_id is exclusive. We substract 1 here.
-      // Consider example:
-      //   full0:  5000 (inclusive) - 6000 (exclusive)
-      //   full1:  6000 (inclusive) - 7000 (exclusive)
-      // For tier full0, we should use max_id 5999 instead of 6000.
+      // Earlybird since_id is inclusive and matwitter_id is etwitterclusive. We substract 1 here.
+      // Consider etwitterample:
+      //   full0:  5000 (inclusive) - 6000 (etwitterclusive)
+      //   full1:  6000 (inclusive) - 7000 (etwitterclusive)
+      // For tier full0, we should use matwitter_id 5999 instead of 6000.
       // For tier full1, we should use since_id 5999 instead of 6000.
       // Hence we substract 1 here.
       long adjustedTweetId =

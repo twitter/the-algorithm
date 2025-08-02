@@ -36,7 +36,7 @@ The default ``DataRecordTrainer.[train,evaluate,learn]()`` reads these datarecor
 The data is a read from multiple ``part-*.[compression]`` files.
 The default behavior of ``DataRecordTrainer`` is to read sparse features from ``DataRecords``.
 This is a legacy default piping format at Twitter.
-The ``DataRecordTrainer`` is flexible enough for research and yet simple enough
+The ``DataRecordTrainer`` is fletwitterible enough for research and yet simple enough
 for a new beginner ML practioner.
 
 By means of the feature string to key hashing function,
@@ -44,7 +44,7 @@ the ``[train,eval]_feature_config`` constructor arguments
 control which features can be used as sample labels, sample weights,
 or sample features.
 Samples ids, and feature keys, feature values and feature weights
-can be skipped, included, excluded or used as labels, weights, or features.
+can be skipped, included, etwittercluded or used as labels, weights, or features.
 This allows you to easily define and control sparse distributions of
 named features.
 
@@ -78,7 +78,7 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
 
   For use-cases that differ from this common Twitter use-case,
   further Trainer methods can be overridden.
-  If that still doesn't provide enough flexibility, the user can always
+  If that still doesn't provide enough fletwitteribility, the user can always
   use the tf.estimator.Esimator or tf.session.run directly.
   """
 
@@ -175,20 +175,20 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
       "base_path": data_dir,
       "start_datetime": start_datetime,
       "end_datetime": end_datetime,
-      "datetime_prefix_format": datetime_format,
-      "extension": "lzo",
+      "datetime_prefitwitter_format": datetime_format,
+      "etwittertension": "lzo",
       "parallelism": data_threads,
       "hour_resolution": hour_resolution,
       "sort": True,
     }
 
     # no cache of data file paths, just get the list by scraping the directory
-    if not files_list_path or not tf.io.gfile.exists(files_list_path):
+    if not files_list_path or not tf.io.gfile.etwitterists(files_list_path):
       # twml.util.list_files_by_datetime returns None if data_dir is None.
       # twml.util.list_files_by_datetime passes through data_dir if data_dir is a list
       files_list = twml.util.list_files_by_datetime(**list_files_by_datetime_args)
     else:
-      # the cached data file paths file exists.
+      # the cached data file paths file etwitterists.
       files_info = twml.util.read_file(files_list_path, decode="json")
       # use the cached list if data params match current params,
       #  or if current params are None
@@ -213,7 +213,7 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
                          "If you instead want to use the paths in files_list, ensure that "
                          "data_dir, start_datetime, and end_datetime are None.")
 
-    if maybe_save and files_list_path and (overwrite or not tf.io.gfile.exists(files_list_path)):
+    if maybe_save and files_list_path and (overwrite or not tf.io.gfile.etwitterists(files_list_path)):
       save_dict = {}
       save_dict["files"] = files_list
       save_dict["data_dir"] = data_dir
@@ -290,9 +290,9 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
       help="Path for a json file storing information on training data.\n"
            "Specifically, the file at files_list should contain the dataset parameters "
            "for constructing the list of data files, and the list of data file paths.\n"
-           "If the json file does not exist, other args are used to construct the "
+           "If the json file does not etwitterist, other args are used to construct the "
            "training files list, and that list will be saved to the indicated json file.\n"
-           "If the json file does exist, and current args are consistent with "
+           "If the json file does etwitterist, and current args are consistent with "
            "saved args, or are all None, then the saved files list will be used.\n"
            "If current args are not consistent with the saved args, then error out "
            "if train_overwrite_files_list==False, else overwrite files_list with "
@@ -301,9 +301,9 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
       "--train.overwrite_files_list", "--train_overwrite_files_list", action="store_true", default=False,
       dest="train_overwrite_files_list",
       help="When the --train.files_list param is used, indicates whether to "
-           "overwrite the existing --train.files_list when there are differences "
+           "overwrite the etwitteristing --train.files_list when there are differences "
            "between the current and saved dataset args. Default (False) is to "
-           "error out if files_list exists and differs from current params.")
+           "error out if files_list etwitterists and differs from current params.")
     parser.add_argument(
       "--train.data_dir", "--train_data_dir", type=str, default=None,
       dest="train_data_dir",
@@ -329,9 +329,9 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
       help="Path for a json file storing information on evaluation data.\n"
            "Specifically, the file at files_list should contain the dataset parameters "
            "for constructing the list of data files, and the list of data file paths.\n"
-           "If the json file does not exist, other args are used to construct the "
+           "If the json file does not etwitterist, other args are used to construct the "
            "evaluation files list, and that list will be saved to the indicated json file.\n"
-           "If the json file does exist, and current args are consistent with "
+           "If the json file does etwitterist, and current args are consistent with "
            "saved args, or are all None, then the saved files list will be used.\n"
            "If current args are not consistent with the saved args, then error out "
            "if eval_overwrite_files_list==False, else overwrite files_list with "
@@ -340,9 +340,9 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
       "--eval.overwrite_files_list", "--eval_overwrite_files_list", action="store_true", default=False,
       dest="eval_overwrite_files_list",
       help="When the --eval.files_list param is used, indicates whether to "
-           "overwrite the existing --eval.files_list when there are differences "
+           "overwrite the etwitteristing --eval.files_list when there are differences "
            "between the current and saved dataset args. Default (False) is to "
-           "error out if files_list exists and differs from current params.")
+           "error out if files_list etwitterists and differs from current params.")
     parser.add_argument(
       "--eval.data_dir", "--eval_data_dir", type=str, default=None,
       dest="eval_data_dir",
@@ -389,14 +389,14 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
       dest="train_parts_downsampling_rate",
       type=float, default=None,
       help="A float value in (0.0, 1.0] that indicates the factor by which to downsample part \
-      files. For example, a value of 0.2 means only 20 percent of part files become part of the \
+      files. For etwitterample, a value of 0.2 means only 20 percent of part files become part of the \
       dataset.")
     parser.add_argument(
       "--eval.parts_downsampling_rate", "--eval_parts_downsampling_rate",
       dest="eval_parts_downsampling_rate",
       type=float, default=None,
       help="A float value in (0.0, 1.0] that indicates the factor by which to downsample part \
-      files. For example, a value of 0.2 means only 20 percent of part files become part of the \
+      files. For etwitterample, a value of 0.2 means only 20 percent of part files become part of the \
       dataset.")
     parser.add_argument(
       "--allow_train_eval_overlap",
@@ -411,13 +411,13 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
     )
     return parser
 
-  def contrib_run_feature_importances(self, feature_importances_parse_fn=None, write_to_hdfs=True, extra_groups=None, datarecord_filter_fn=None, datarecord_filter_run_name=None):
+  def contrib_run_feature_importances(self, feature_importances_parse_fn=None, write_to_hdfs=True, etwittertra_groups=None, datarecord_filter_fn=None, datarecord_filter_run_name=None):
     """Compute feature importances on a trained model (this is a contrib feature)
     Args:
       feature_importances_parse_fn (fn): The same parse_fn that we use for training/evaluation.
         Defaults to feature_config.get_parse_fn()
       write_to_hdfs (bool): Setting this to True writes the feature importance metrics to HDFS
-    extra_groups (dict<str, list<str>>): A dictionary mapping the name of extra feature groups to the list of
+    etwittertra_groups (dict<str, list<str>>): A dictionary mapping the name of etwittertra feature groups to the list of
       the names of the features in the group
     datarecord_filter_fn (function): a function takes a single data sample in com.twitter.ml.api.ttypes.DataRecord format
         and return a boolean value, to indicate if this data record should be kept in feature importance module or not.
@@ -431,7 +431,7 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
       kwargs["stopping_metric"] = self._params.feature_importance_metric
       kwargs["sensitivity"] = self._params.feature_importance_sensitivity
       kwargs["dont_build_tree"] = self._params.dont_build_tree
-      kwargs["extra_groups"] = extra_groups
+      kwargs["etwittertra_groups"] = etwittertra_groups
       if self._params.feature_importance_is_metric_larger_the_better:
         # The user has specified that the stopping metric is one where larger values are better (e.g. ROC_AUC)
         kwargs["is_metric_larger_the_better"] = True
@@ -448,7 +448,7 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
       data_dir=self._params.get('feature_importance_data_dir'),
       feature_config=self._feature_config,
       algorithm=algorithm,
-      record_count=self._params.feature_importance_example_count,
+      record_count=self._params.feature_importance_etwitterample_count,
       parse_fn=feature_importances_parse_fn,
       datarecord_filter_fn=datarecord_filter_fn,
       **kwargs)
@@ -471,36 +471,36 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
         trainer=self, feature_importances=feature_importances)
     return feature_importances
 
-  def export_model(self, serving_input_receiver_fn=None,
-                   export_output_fn=None,
-                   export_dir=None, checkpoint_path=None,
+  def etwitterport_model(self, serving_input_receiver_fn=None,
+                   etwitterport_output_fn=None,
+                   etwitterport_dir=None, checkpoint_path=None,
                    feature_spec=None):
     """
-    Export the model for prediction. Typically, the exported model
+    Etwitterport the model for prediction. Typically, the etwitterported model
     will later be run in production servers. This method is called
-    by the user to export the PREDICT graph to disk.
+    by the user to etwitterport the PREDICT graph to disk.
 
-    Internally, this method calls `tf.estimator.Estimator.export_savedmodel
-    <https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator#export_savedmodel>`_.
+    Internally, this method calls `tf.estimator.Estimator.etwitterport_savedmodel
+    <https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator#etwitterport_savedmodel>`_.
 
     Args:
       serving_input_receiver_fn (Function):
         function preparing the model for inference requests.
         If not set; defaults to the the serving input receiver fn set by the FeatureConfig.
-      export_output_fn (Function):
-        Function to export the graph_output (output of build_graph) for
+      etwitterport_output_fn (Function):
+        Function to etwitterport the graph_output (output of build_graph) for
         prediction. Takes a graph_output dict as sole argument and returns
-        the export_output_fns dict.
-        Defaults to ``twml.export_output_fns.batch_prediction_continuous_output_fn``.
-      export_dir:
-        directory to export a SavedModel for prediction servers.
-        Defaults to ``[save_dir]/exported_models``.
+        the etwitterport_output_fns dict.
+        Defaults to ``twml.etwitterport_output_fns.batch_prediction_continuous_output_fn``.
+      etwitterport_dir:
+        directory to etwitterport a SavedModel for prediction servers.
+        Defaults to ``[save_dir]/etwitterported_models``.
       checkpoint_path:
-        the checkpoint path to export. If None (the default), the most recent checkpoint
+        the checkpoint path to etwitterport. If None (the default), the most recent checkpoint
         found within the model directory ``save_dir`` is chosen.
 
     Returns:
-      The export directory where the PREDICT graph is saved.
+      The etwitterport directory where the PREDICT graph is saved.
     """
     if serving_input_receiver_fn is None:
       if self._feature_config is None:
@@ -510,23 +510,23 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
     if feature_spec is None:
       if self._feature_config is None:
         raise ValueError("feature_spec can not be inferred."
-                         "Please pass feature_spec=feature_config.get_feature_spec() to the trainer.export_model method")
+                         "Please pass feature_spec=feature_config.get_feature_spec() to the trainer.etwitterport_model method")
       else:
         feature_spec = self._feature_config.get_feature_spec()
 
     if isinstance(serving_input_receiver_fn, twml.feature_config.FeatureConfig):
       raise ValueError("Cannot pass FeatureConfig as a parameter to serving_input_receiver_fn")
     elif not callable(serving_input_receiver_fn):
-      raise ValueError("Expecting Function for serving_input_receiver_fn")
+      raise ValueError("Etwitterpecting Function for serving_input_receiver_fn")
 
-    if export_output_fn is None:
-      export_output_fn = twml.export_output_fns.batch_prediction_continuous_output_fn
+    if etwitterport_output_fn is None:
+      etwitterport_output_fn = twml.etwitterport_output_fns.batch_prediction_continuous_output_fn
 
-    return super(DataRecordTrainer, self).export_model(
-      export_dir=export_dir,
+    return super(DataRecordTrainer, self).etwitterport_model(
+      etwitterport_dir=etwitterport_dir,
       serving_input_receiver_fn=serving_input_receiver_fn,
       checkpoint_path=checkpoint_path,
-      export_output_fn=export_output_fn,
+      etwitterport_output_fn=etwitterport_output_fn,
       feature_spec=feature_spec,
     )
 
@@ -563,7 +563,7 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
         a Tensor, i.e. it's an initializable iterator, set it to True. Otherwise, default value
         (false) is used for most plain iterators.
       log_tf_data_summaries (optional):
-        A boolean indicator denoting whether to add a `tf.data.experimental.StatsAggregator` to the
+        A boolean indicator denoting whether to add a `tf.data.etwitterperimental.StatsAggregator` to the
         tf.data pipeline. This adds summaries of pipeline utilization and buffer sizes to the output
         events files. This requires that `initializable` is `True` above.
 
@@ -576,7 +576,7 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
       parse_fn = self._feature_config.get_parse_fn()
 
     if not callable(parse_fn):
-      raise ValueError("Expecting parse_fn to be a function.")
+      raise ValueError("Etwitterpecting parse_fn to be a function.")
 
     if log_tf_data_summaries and not initializable:
       raise ValueError("Require `initializable` if `log_tf_data_summaries`.")
@@ -586,10 +586,10 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
 
     if not shuffle and self.num_workers > 1 and self.params.train_dataset_shards is None:
       num_shards = self.num_workers
-      shard_index = self.worker_index
+      shard_indetwitter = self.worker_indetwitter
     else:
       num_shards = self.params.train_dataset_shards
-      shard_index = self.params.train_dataset_shard_index
+      shard_indetwitter = self.params.train_dataset_shard_indetwitter
 
     return lambda: twml.input_fns.default_input_fn(
       files=self._train_files,
@@ -600,7 +600,7 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
       keep_rate=self.params.train_keep_rate,
       parts_downsampling_rate=self.params.train_parts_downsampling_rate,
       shards=num_shards,
-      shard_index=shard_index,
+      shard_indetwitter=shard_indetwitter,
       shuffle=shuffle,
       shuffle_files=(shuffle if shuffle_files is None else shuffle_files),
       interleave=interleave,
@@ -640,7 +640,7 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
         a Tensor, i.e. it's an initializable iterator, set it to True. Otherwise, default value
         (false) is used for most plain iterators.
       log_tf_data_summaries (optional):
-        A boolean indicator denoting whether to add a `tf.data.experimental.StatsAggregator` to the
+        A boolean indicator denoting whether to add a `tf.data.etwitterperimental.StatsAggregator` to the
         tf.data pipeline. This adds summaries of pipeline utilization and buffer sizes to the output
         events files. This requires that `initializable` is `True` above.
 
@@ -656,7 +656,7 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
       raise ValueError("`eval_files` was not present in `params` passed to `DataRecordTrainer`")
 
     if not callable(parse_fn):
-      raise ValueError("Expecting parse_fn to be a function.")
+      raise ValueError("Etwitterpecting parse_fn to be a function.")
 
     if log_tf_data_summaries and not initializable:
       raise ValueError("Require `initializable` if `log_tf_data_summaries`.")
@@ -758,12 +758,12 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
   def _model_fn(self, features, labels, mode, params, config=None):
     """
     Overrides the _model_fn to correct for the features shape of the sparse features
-    extracted with the contrib.FeatureConfig
+    etwittertracted with the contrib.FeatureConfig
     """
     if isinstance(self._feature_config, twml.contrib.feature_config.FeatureConfig):
-      # Fix the shape of the features. The features dictionary will be modified to
+      # Fitwitter the shape of the features. The features dictionary will be modified to
       # contain the shape changes.
-      twml.util.fix_shape_sparse(features, self._feature_config)
+      twml.util.fitwitter_shape_sparse(features, self._feature_config)
     return super(DataRecordTrainer, self)._model_fn(
       features=features,
       labels=labels,
@@ -791,20 +791,20 @@ class DataRecordTrainer(Trainer):  # pylint: disable=abstract-method
                                              save_calibrator=save_calibrator,
                                              hooks=hooks)
 
-  def save_checkpoints_and_export_model(self,
+  def save_checkpoints_and_etwitterport_model(self,
                                         serving_input_receiver_fn,
-                                        export_output_fn=None,
-                                        export_dir=None,
+                                        etwitterport_output_fn=None,
+                                        etwitterport_dir=None,
                                         checkpoint_path=None,
                                         input_fn=None):
     """
-    Exports saved module after saving checkpoint to save_dir.
+    Etwitterports saved module after saving checkpoint to save_dir.
     Please note that to use this method, you need to assign a loss to the output
     of the build_graph (for the train mode).
-    See export_model for more detailed information.
+    See etwitterport_model for more detailed information.
     """
     self.train(input_fn=input_fn, steps=1)
-    self.export_model(serving_input_receiver_fn, export_output_fn, export_dir, checkpoint_path)
+    self.etwitterport_model(serving_input_receiver_fn, etwitterport_output_fn, etwitterport_dir, checkpoint_path)
 
   def save_checkpoints_and_evaluate(self,
                                     input_fn=None,

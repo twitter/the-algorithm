@@ -23,20 +23,20 @@ class ProducerBasedRelatedTweetsHandler(
   bipartiteGraph: BipartiteGraph,
   userRecentFollowersStore: ReadableStore[UserRecentFollowersStore.Query, Seq[UserId]],
   statsReceiver: StatsReceiver)
-    extends RequestHandler[ProducerBasedRelatedTweetRequest, RelatedTweetResponse] {
+    etwittertends RequestHandler[ProducerBasedRelatedTweetRequest, RelatedTweetResponse] {
   private val stats = statsReceiver.scope(this.getClass.getSimpleName)
 
   override def apply(request: ProducerBasedRelatedTweetRequest): Future[RelatedTweetResponse] = {
     trackFutureBlockStats(stats) {
-      val maxResults = request.maxResults.getOrElse(200)
-      val maxNumFollowers = request.maxNumFollowers.getOrElse(500)
+      val matwitterResults = request.matwitterResults.getOrElse(200)
+      val matwitterNumFollowers = request.matwitterNumFollowers.getOrElse(500)
       val minScore = request.minScore.getOrElse(0.0)
-      val maxTweetAge = request.maxTweetAgeInHours.getOrElse(48)
+      val matwitterTweetAge = request.matwitterTweetAgeInHours.getOrElse(48)
       val minResultDegree = request.minResultDegree.getOrElse(50)
       val minCooccurrence = request.minCooccurrence.getOrElse(4)
-      val excludeTweetIds = request.excludeTweetIds.getOrElse(Seq.empty).toSet
+      val etwittercludeTweetIds = request.etwittercludeTweetIds.getOrElse(Seq.empty).toSet
 
-      val followersFut = fetchFollowers(request.producerId, Some(maxNumFollowers))
+      val followersFut = fetchFollowers(request.producerId, Some(matwitterNumFollowers))
       followersFut.map { followers =>
         val rhsTweetIds = FetchRHSTweetsUtil.fetchRHSTweets(
           followers,
@@ -55,9 +55,9 @@ class ProducerBasedRelatedTweetsHandler(
           .filter { relatedTweet =>
             FilterUtil.tweetAgeFilter(
               relatedTweet.tweetId,
-              Duration(maxTweetAge, HOURS)) && (relatedTweet.score > minScore) && (!excludeTweetIds
+              Duration(matwitterTweetAge, HOURS)) && (relatedTweet.score > minScore) && (!etwittercludeTweetIds
               .contains(relatedTweet.tweetId))
-          }.take(maxResults)
+          }.take(matwitterResults)
         stats.stat("response_size").add(relatedTweets.size)
         RelatedTweetResponse(tweets = relatedTweets)
       }
@@ -66,10 +66,10 @@ class ProducerBasedRelatedTweetsHandler(
 
   private def fetchFollowers(
     producerId: Long,
-    maxNumFollower: Option[Int],
+    matwitterNumFollower: Option[Int],
   ): Future[Seq[Long]] = {
     val query =
-      UserRecentFollowersStore.Query(producerId, maxNumFollower, None)
+      UserRecentFollowersStore.Query(producerId, matwitterNumFollower, None)
 
     val followersFut = userRecentFollowersStore.get(query)
     followersFut.map { followersOpt =>

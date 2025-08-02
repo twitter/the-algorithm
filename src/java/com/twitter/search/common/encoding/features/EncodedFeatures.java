@@ -16,7 +16,7 @@ public class EncodedFeatures {
 
   // setByte is agnostic to signed / unsigned bytes.
   protected final EncodedFeatures setByte(byte count, int bitshift, long inverseMask) {
-    value = (int) ((value & inverseMask) | ((count & 0xffL) << bitshift));
+    value = (int) ((value & inverseMask) | ((count & 0twitterffL) << bitshift));
     return this;
   }
 
@@ -24,18 +24,18 @@ public class EncodedFeatures {
    * Sets the value but only if greater. setByteIfGreater assumes unsigned bytes.
    */
   public final EncodedFeatures setByteIfGreater(byte newCount, int bitshift, long inversemask) {
-    if ((getByte(bitshift) & 0xff) < (newCount & 0xff)) {
+    if ((getByte(bitshift) & 0twitterff) < (newCount & 0twitterff)) {
       setByte(newCount, bitshift, inversemask);
     }
     return this;
   }
 
   protected final int getByte(int bitshift) {
-    return (int) (((value & 0xffffffffL) >>> bitshift) & 0xffL);
+    return (int) (((value & 0twitterffffffffL) >>> bitshift) & 0twitterffL);
   }
 
   protected final int getByteMasked(int bitshift, long mask) {
-    return (int) (((value & mask) >>> bitshift) & 0xffL);
+    return (int) (((value & mask) >>> bitshift) & 0twitterffL);
   }
 
   protected final EncodedFeatures setBit(int bit, boolean flag) {
@@ -53,6 +53,6 @@ public class EncodedFeatures {
 
   @Override
   public String toString() {
-    return String.format("%x", value);
+    return String.format("%twitter", value);
   }
 }

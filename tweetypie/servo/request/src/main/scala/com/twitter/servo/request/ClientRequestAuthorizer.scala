@@ -7,7 +7,7 @@ import com.twitter.util.Future
 /**
  * Collects per-request stats by method-name and client.
  */
-trait ClientRequestAuthorizer extends ((String, Option[String]) => Future[Unit]) { self =>
+trait ClientRequestAuthorizer etwittertends ((String, Option[String]) => Future[Unit]) { self =>
 
   /**
    * @param methodName the name of the Service method being called
@@ -32,14 +32,14 @@ trait ClientRequestAuthorizer extends ((String, Option[String]) => Future[Unit])
 }
 
 object ClientRequestAuthorizer {
-  case class UnauthorizedException(msg: String) extends Exception(msg)
+  case class UnauthorizedEtwitterception(msg: String) etwittertends Etwitterception(msg)
 
-  protected[this] val noClientIdException =
-    Future.exception(new UnauthorizedException("No ClientId specified"))
-  protected[this] val unauthorizedException =
-    new UnauthorizedException("Your ClientId is not authorized.")
-  protected[this] val overRateLimitException =
-    new UnauthorizedException("Your ClientId is over the allowed rate limit.")
+  protected[this] val noClientIdEtwitterception =
+    Future.etwitterception(new UnauthorizedEtwitterception("No ClientId specified"))
+  protected[this] val unauthorizedEtwitterception =
+    new UnauthorizedEtwitterception("Your ClientId is not authorized.")
+  protected[this] val overRateLimitEtwitterception =
+    new UnauthorizedEtwitterception("Your ClientId is over the allowed rate limit.")
 
   /**
    * Increment stats counters for this request.
@@ -80,14 +80,14 @@ object ClientRequestAuthorizer {
    * The filter should take in methodName and clientId and return a Boolean decision
    *
    * Note: Requires requests to have ClientIds.
-   * @param exception return this exception if the request does not pass the filter
+   * @param etwitterception return this etwitterception if the request does not pass the filter
    */
   def filtered(
     filter: (String, String) => Boolean,
-    exception: Exception = unauthorizedException
+    etwitterception: Etwitterception = unauthorizedEtwitterception
   ): ClientRequestAuthorizer =
     new ClientRequestAuthorizer {
-      val futureException = Future.exception(exception)
+      val futureEtwitterception = Future.etwitterception(etwitterception)
 
       override def apply(methodName: String, clientIdStrOpt: Option[String]): Future[Unit] = {
         clientIdStrOpt match {
@@ -95,9 +95,9 @@ object ClientRequestAuthorizer {
             if (filter(methodName, clientIdStr))
               Future.Done
             else
-              futureException
+              futureEtwitterception
           case None =>
-            noClientIdException
+            noClientIdEtwitterception
         }
       }
     }
@@ -119,17 +119,17 @@ object ClientRequestAuthorizer {
 
   /**
    * Consult a (presumably) Decider-backed predicate to authorize requests by ClientId.
-   * @param exception return this exception if the request does not pass the filter
+   * @param etwitterception return this etwitterception if the request does not pass the filter
    */
   def deciderable(
     isAvailable: String => Boolean,
-    exception: Exception = unauthorizedException
+    etwitterception: Etwitterception = unauthorizedEtwitterception
   ): ClientRequestAuthorizer =
     filtered(
       { (_, clientIdStr) =>
         isAvailable(clientIdStr)
       },
-      exception
+      etwitterception
     )
 
   /**
@@ -139,7 +139,7 @@ object ClientRequestAuthorizer {
    * @param limitPerSecond Number of calls per second we can tolerate
    */
   def rateLimited(limitPerSecond: Double): ClientRequestAuthorizer = {
-    gated(RateLimitingGate.uniform(limitPerSecond), overRateLimitException)
+    gated(RateLimitingGate.uniform(limitPerSecond), overRateLimitEtwitterception)
   }
 
   /**
@@ -148,9 +148,9 @@ object ClientRequestAuthorizer {
    */
   def gated(
     gate: Gate[Unit],
-    exception: Exception = unauthorizedException
+    etwitterception: Etwitterception = unauthorizedEtwitterception
   ): ClientRequestAuthorizer = {
-    deciderable(_ => gate(), exception)
+    deciderable(_ => gate(), etwitterception)
   }
 
   /**

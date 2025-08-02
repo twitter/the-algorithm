@@ -6,128 +6,128 @@ sealed trait FilterReason {
 
 object FilterReason {
 
-  case object NoReason extends FilterReason {
+  case object NoReason etwittertends FilterReason {
     override val reason: String = "no_reason"
   }
 
-  case class ParamReason(paramName: String) extends FilterReason {
+  case class ParamReason(paramName: String) etwittertends FilterReason {
     override val reason: String = s"param_$paramName"
   }
 
-  case object ExcludedId extends FilterReason {
-    override val reason: String = "excluded_id_from_request"
+  case object EtwittercludedId etwittertends FilterReason {
+    override val reason: String = "etwittercluded_id_from_request"
   }
 
-  case object ProfileSidebarBlacklist extends FilterReason {
+  case object ProfileSidebarBlacklist etwittertends FilterReason {
     override val reason: String = "profile_sidebar_blacklisted_id"
   }
 
-  case object CuratedAccountsCompetitorList extends FilterReason {
+  case object CuratedAccountsCompetitorList etwittertends FilterReason {
     override val reason: String = "curated_blacklisted_id"
   }
 
-  case class InvalidRelationshipTypes(relationshipTypes: String) extends FilterReason {
+  case class InvalidRelationshipTypes(relationshipTypes: String) etwittertends FilterReason {
     override val reason: String = s"invalid_relationship_types $relationshipTypes"
   }
 
-  case object ProfileId extends FilterReason {
+  case object ProfileId etwittertends FilterReason {
     override val reason: String = "candidate_has_same_id_as_profile"
   }
 
-  case object DismissedId extends FilterReason {
+  case object DismissedId etwittertends FilterReason {
     override val reason: String = s"dismissed_candidate"
   }
 
-  case object OptedOutId extends FilterReason {
+  case object OptedOutId etwittertends FilterReason {
     override val reason: String = s"candidate_opted_out_from_criteria_in_request"
   }
 
   // gizmoduck predicates
-  case object NoUser extends FilterReason {
+  case object NoUser etwittertends FilterReason {
     override val reason: String = "no_user_result_from_gizmoduck"
   }
 
-  case object AddressBookUndiscoverable extends FilterReason {
+  case object AddressBookUndiscoverable etwittertends FilterReason {
     override val reason: String = "not_discoverable_via_address_book"
   }
 
-  case object PhoneBookUndiscoverable extends FilterReason {
+  case object PhoneBookUndiscoverable etwittertends FilterReason {
     override val reason: String = "not_discoverable_via_phone_book"
   }
 
-  case object Deactivated extends FilterReason {
+  case object Deactivated etwittertends FilterReason {
     override val reason: String = "deactivated"
   }
 
-  case object Suspended extends FilterReason {
+  case object Suspended etwittertends FilterReason {
     override val reason: String = "suspended"
   }
 
-  case object Restricted extends FilterReason {
+  case object Restricted etwittertends FilterReason {
     override val reason: String = "restricted"
   }
 
-  case object NsfwUser extends FilterReason {
+  case object NsfwUser etwittertends FilterReason {
     override val reason: String = "nsfwUser"
   }
 
-  case object NsfwAdmin extends FilterReason {
+  case object NsfwAdmin etwittertends FilterReason {
     override val reason: String = "nsfwAdmin"
   }
 
-  case object HssSignal extends FilterReason {
+  case object HssSignal etwittertends FilterReason {
     override val reason: String = "hssSignal"
   }
 
-  case object IsProtected extends FilterReason {
+  case object IsProtected etwittertends FilterReason {
     override val reason: String = "isProtected"
   }
 
-  case class CountryTakedown(countryCode: String) extends FilterReason {
+  case class CountryTakedown(countryCode: String) etwittertends FilterReason {
     override val reason: String = s"takedown_in_$countryCode"
   }
 
-  case object Blink extends FilterReason {
+  case object Blink etwittertends FilterReason {
     override val reason: String = "blink"
   }
 
-  case object AlreadyFollowed extends FilterReason {
+  case object AlreadyFollowed etwittertends FilterReason {
     override val reason: String = "already_followed"
   }
 
-  case object InvalidRelationship extends FilterReason {
+  case object InvalidRelationship etwittertends FilterReason {
     override val reason: String = "invalid_relationship"
   }
 
-  case object NotFollowingTargetUser extends FilterReason {
+  case object NotFollowingTargetUser etwittertends FilterReason {
     override val reason: String = "not_following_target_user"
   }
 
-  case object CandidateSideHoldback extends FilterReason {
+  case object CandidateSideHoldback etwittertends FilterReason {
     override val reason: String = "candidate_side_holdback"
   }
 
-  case object Inactive extends FilterReason {
+  case object Inactive etwittertends FilterReason {
     override val reason: String = "inactive"
   }
 
-  case object MissingRecommendabilityData extends FilterReason {
+  case object MissingRecommendabilityData etwittertends FilterReason {
     override val reason: String = "missing_recommendability_data"
   }
 
-  case object HighTweetVelocity extends FilterReason {
+  case object HighTweetVelocity etwittertends FilterReason {
     override val reason: String = "high_tweet_velocity"
   }
 
-  case object AlreadyRecommended extends FilterReason {
+  case object AlreadyRecommended etwittertends FilterReason {
     override val reason: String = "already_recommended"
   }
 
-  case object MinStateNotMet extends FilterReason {
+  case object MinStateNotMet etwittertends FilterReason {
     override val reason: String = "min_state_user_not_met"
   }
 
-  case object FailOpen extends FilterReason {
+  case object FailOpen etwittertends FilterReason {
     override val reason: String = "fail_open"
   }
 }

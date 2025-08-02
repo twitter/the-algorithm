@@ -1,25 +1,25 @@
 package com.twitter.search.earlybird.search.queries;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
+import org.apache.lucene.indetwitter.LeafReader;
+import org.apache.lucene.indetwitter.LeafReaderContetwittert;
+import org.apache.lucene.indetwitter.NumericDocValues;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.IndetwitterSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Weight;
 
 import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
+import com.twitter.search.core.earlybird.indetwitter.util.RangeFilterDISI;
 
-public final class FeatureValueInAcceptListOrUnsetFilter extends Query {
+public final class FeatureValueInAcceptListOrUnsetFilter etwittertends Query {
 
   private final String featureName;
   private final Set<Long> idsAcceptList;
@@ -68,44 +68,44 @@ public final class FeatureValueInAcceptListOrUnsetFilter extends Query {
   }
 
   @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
+  public Weight createWeight(IndetwitterSearcher searcher, ScoreMode scoreMode, float boost) {
     return new DefaultFilterWeight(this) {
       @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
+      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
         return new FeatureValueInAcceptListOrUnsetDocIdSetIterator(
-            context.reader(), featureName, idsAcceptList);
+            contetwittert.reader(), featureName, idsAcceptList);
       }
     };
   }
 
   private static final class FeatureValueInAcceptListOrUnsetDocIdSetIterator
-      extends RangeFilterDISI {
+      etwittertends RangeFilterDISI {
     private final NumericDocValues featureDocValues;
     private final Set<Long> idsAcceptList;
 
     FeatureValueInAcceptListOrUnsetDocIdSetIterator(
-        LeafReader indexReader, String featureName, Set<Long> ids) throws IOException {
-      super(indexReader);
-      this.featureDocValues = indexReader.getNumericDocValues(featureName);
+        LeafReader indetwitterReader, String featureName, Set<Long> ids) throws IOEtwitterception {
+      super(indetwitterReader);
+      this.featureDocValues = indetwitterReader.getNumericDocValues(featureName);
       this.idsAcceptList = ids;
     }
 
     @Override
-    public boolean shouldReturnDoc() throws IOException {
-      // If featureDocValues is null, that means there were no documents indexed with the given
+    public boolean shouldReturnDoc() throws IOEtwitterception {
+      // If featureDocValues is null, that means there were no documents indetwittered with the given
       // field in the current segment.
       //
-      // The advanceExact() method returns false if it cannot find the given docId in the
-      // NumericDocValues instance. So if advanceExact() returns false then we know the feature is
+      // The advanceEtwitteract() method returns false if it cannot find the given docId in the
+      // NumericDocValues instance. So if advanceEtwitteract() returns false then we know the feature is
       // unset.
       // However, for realtime Earlybirds we have a custom implementation of NumericDocValues,
-      // ColumnStrideFieldDocValues, which will contain an entry for every indexed docId and use a
+      // ColumnStrideFieldDocValues, which will contain an entry for every indetwittered docId and use a
       // value of 0 to indicate that a feature is unset.
       //
       // So to check if a feature is unset for a given docId, we first need to check if we can find
       // the docId, and then we additionally need to check if the feature value is 0.
       return featureDocValues == null
-          || !featureDocValues.advanceExact(docID())
+          || !featureDocValues.advanceEtwitteract(docID())
           || featureDocValues.longValue() == 0
           || idsAcceptList.contains(featureDocValues.longValue());
     }

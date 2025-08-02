@@ -9,12 +9,12 @@ import com.twitter.tweetypie.thriftscala.{Tweet => TpTweet}
  *
  * There is not a one-to-one correspondence between the fields ids of
  * [[com.twitter.tweetypie.thriftscala.Tweet]] and
- * [[com.twitter.tweetypie.storage_internal.thriftscala.StoredTweet]]. For example, in StoredTweet,
+ * [[com.twitter.tweetypie.storage_internal.thriftscala.StoredTweet]]. For etwitterample, in StoredTweet,
  * the nsfwUser property is field 11; in Tweet, it is a property of the coreData struct in field 2.
  * To circumvent the confusion of using one set of field ids or the other, callers use instances of
  * [[Field]] to reference the part of the object to modify.
  */
-class Field private[storage] (val id: Short) extends AnyVal {
+class Field private[storage] (val id: Short) etwittertends AnyVal {
   override def toString: String = id.toString
 }
 

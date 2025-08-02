@@ -23,11 +23,11 @@ import com.twitter.util.Duration
 import com.twitter.util.Future
 import com.twitter.util.StorageUnit
 import com.twitter.util.logging.Logging
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.header.Headers
 
-object KafkaProcessorClientEventModule extends TwitterModule with Logging {
+object KafkaProcessorClientEventModule etwittertends TwitterModule with Logging {
   override def modules: Seq[FlagsModule.type] = Seq(FlagsModule)
 
   private val clientEventAdapter = new ClientEventAdapter
@@ -45,13 +45,13 @@ object KafkaProcessorClientEventModule extends TwitterModule with Logging {
     @Flag(FlagsModule.kafkaSinkTopics) kafkaSinkTopics: Seq[String],
     @Flag(FlagsModule.kafkaGroupId) kafkaGroupId: String,
     @Flag(FlagsModule.kafkaProducerClientId) kafkaProducerClientId: String,
-    @Flag(FlagsModule.kafkaMaxPendingRequests) kafkaMaxPendingRequests: Int,
+    @Flag(FlagsModule.kafkaMatwitterPendingRequests) kafkaMatwitterPendingRequests: Int,
     @Flag(FlagsModule.kafkaWorkerThreads) kafkaWorkerThreads: Int,
     @Flag(FlagsModule.commitInterval) commitInterval: Duration,
-    @Flag(FlagsModule.maxPollRecords) maxPollRecords: Int,
-    @Flag(FlagsModule.maxPollInterval) maxPollInterval: Duration,
+    @Flag(FlagsModule.matwitterPollRecords) matwitterPollRecords: Int,
+    @Flag(FlagsModule.matwitterPollInterval) matwitterPollInterval: Duration,
     @Flag(FlagsModule.sessionTimeout) sessionTimeout: Duration,
-    @Flag(FlagsModule.fetchMax) fetchMax: StorageUnit,
+    @Flag(FlagsModule.fetchMatwitter) fetchMatwitter: StorageUnit,
     @Flag(FlagsModule.fetchMin) fetchMin: StorageUnit,
     @Flag(FlagsModule.batchSize) batchSize: StorageUnit,
     @Flag(FlagsModule.linger) linger: Duration,
@@ -73,12 +73,12 @@ object KafkaProcessorClientEventModule extends TwitterModule with Logging {
       sourceValueDeserializer = NullableScalaSerdes
         .Thrift[LogEvent](statsReceiver.counter("deserializerErrors")).deserializer,
       commitInterval = commitInterval,
-      maxPollRecords = maxPollRecords,
-      maxPollInterval = maxPollInterval,
+      matwitterPollRecords = matwitterPollRecords,
+      matwitterPollInterval = matwitterPollInterval,
       sessionTimeout = sessionTimeout,
-      fetchMax = fetchMax,
+      fetchMatwitter = fetchMatwitter,
       fetchMin = fetchMin,
-      processorMaxPendingRequests = kafkaMaxPendingRequests,
+      processorMatwitterPendingRequests = kafkaMatwitterPendingRequests,
       processorWorkerThreads = kafkaWorkerThreads,
       adapter = clientEventAdapter,
       kafkaSinkTopics = kafkaSinkTopics,
@@ -102,7 +102,7 @@ object KafkaProcessorClientEventModule extends TwitterModule with Logging {
   /**
    * ClientEvent producer is different from the defaultProducer.
    * While the defaultProducer publishes every event to all sink topics, ClientEventProducer (this producer) requires
-   * exactly 2 sink topics: Topic with all events (impressions and engagements) and Topic with engagements only.
+   * etwitteractly 2 sink topics: Topic with all events (impressions and engagements) and Topic with engagements only.
    * And the publishing is based the action type.
    */
   def clientEventProducer(
@@ -119,7 +119,7 @@ object KafkaProcessorClientEventModule extends TwitterModule with Logging {
       updateProductSurfaceTypeCounters(statsReceiver, v, sinkTopic)
       updateProcessingTimeStats(statsReceiver, v)
 
-      // If we were to enable xDC replicator, then we can safely remove the Zone header since xDC
+      // If we were to enable twitterDC replicator, then we can safely remove the Zone header since twitterDC
       // replicator works in the following way:
       //  - If the message does not have a header, the replicator will assume it is local and
       //    set the header, copy the message

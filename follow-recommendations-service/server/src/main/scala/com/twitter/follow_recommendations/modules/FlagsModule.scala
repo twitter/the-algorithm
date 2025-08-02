@@ -1,7 +1,7 @@
 package com.twitter.follow_recommendations.modules
 import com.twitter.inject.TwitterModule
 
-object FlagsModule extends TwitterModule {
+object FlagsModule etwittertends TwitterModule {
   flag[Boolean](
     name = "fetch_prod_promoted_accounts",
     help = "Whether or not to fetch production promoted accounts (true / false)"

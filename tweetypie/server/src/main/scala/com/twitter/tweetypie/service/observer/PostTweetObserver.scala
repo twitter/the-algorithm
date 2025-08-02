@@ -27,7 +27,7 @@ private[service] object PostTweetObserver {
     val CommunityGroupId = 8L
     val CommunityDomainId = 31L
     req.additionalFields
-      .flatMap(_.escherbirdEntityAnnotations).exists { e =>
+      .flatMap(_.escherbirdEntityAnnotations).etwitterists { e =>
         e.entityAnnotations.collect {
           case TweetEntityAnnotation(CommunityGroupId, CommunityDomainId, _) => true
         }.nonEmpty
@@ -47,8 +47,8 @@ private[service] object PostTweetObserver {
     val tweetToNarrowcastingCounter = optionsScope.counter("tweet_to_narrowcasting")
     val autoPopulateReplyMetadataCounter = optionsScope.counter("auto_populate_reply_metadata")
     val attachmentUrlCounter = optionsScope.counter("attachment_url")
-    val excludeReplyUserIdsCounter = optionsScope.counter("exclude_reply_user_ids")
-    val excludeReplyUserIdsStat = optionsScope.stat("exclude_reply_user_ids")
+    val etwittercludeReplyUserIdsCounter = optionsScope.counter("etwitterclude_reply_user_ids")
+    val etwittercludeReplyUserIdsStat = optionsScope.stat("etwitterclude_reply_user_ids")
     val uniquenessIdCounter = optionsScope.counter("uniqueness_id")
     val batchModeScope = optionsScope.scope("batch_mode")
     val batchModeFirstCounter = batchModeScope.counter("first")
@@ -67,16 +67,16 @@ private[service] object PostTweetObserver {
       if (request.enableTweetToNarrowcasting) tweetToNarrowcastingCounter.incr()
       if (request.autoPopulateReplyMetadata) autoPopulateReplyMetadataCounter.incr()
       if (request.attachmentUrl.nonEmpty) attachmentUrlCounter.incr()
-      if (request.excludeReplyUserIds.exists(_.nonEmpty)) excludeReplyUserIdsCounter.incr()
+      if (request.etwittercludeReplyUserIds.etwitterists(_.nonEmpty)) etwittercludeReplyUserIdsCounter.incr()
       if (isCommunity(request)) communitiesCounter.incr()
       if (request.uniquenessId.nonEmpty) uniquenessIdCounter.incr()
-      request.transientContext.flatMap(_.batchCompose).foreach {
+      request.transientContetwittert.flatMap(_.batchCompose).foreach {
         case BatchComposeMode.BatchFirst => batchModeFirstCounter.incr()
         case BatchComposeMode.BatchSubsequent => batchModeSubsequentCounter.incr()
         case _ =>
       }
 
-      excludeReplyUserIdsStat.add(request.excludeReplyUserIds.size)
+      etwittercludeReplyUserIdsStat.add(request.etwittercludeReplyUserIds.size)
     }
   }
 }

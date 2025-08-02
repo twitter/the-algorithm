@@ -12,15 +12,15 @@ import com.twitter.tweetypie.thriftscala._
 /**
  * Scrub geo information from Tweets.
  */
-object ScrubGeo extends TweetStore.SyncModule {
+object ScrubGeo etwittertends TweetStore.SyncModule {
 
   case class Event(
     tweetIdSet: Set[TweetId],
     userId: UserId,
     optUser: Option[User],
     timestamp: Time,
-    enqueueMax: Boolean)
-      extends SyncTweetStoreEvent("scrub_geo")
+    enqueueMatwitter: Boolean)
+      etwittertends SyncTweetStoreEvent("scrub_geo")
       with TweetStoreTweetEvent {
 
     val tweetIds: Seq[TweetId] = tweetIdSet.toSeq
@@ -40,7 +40,7 @@ object ScrubGeo extends TweetStore.SyncModule {
     val scrubGeo: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val scrubGeo: FutureEffect[Event] = wrap(underlying.scrubGeo)
   }
 
@@ -65,15 +65,15 @@ object ScrubGeo extends TweetStore.SyncModule {
   }
 }
 
-object ReplicatedScrubGeo extends TweetStore.ReplicatedModule {
+object ReplicatedScrubGeo etwittertends TweetStore.ReplicatedModule {
 
-  case class Event(tweetIds: Seq[TweetId]) extends ReplicatedTweetStoreEvent("replicated_scrub_geo")
+  case class Event(tweetIds: Seq[TweetId]) etwittertends ReplicatedTweetStoreEvent("replicated_scrub_geo")
 
   trait Store {
     val replicatedScrubGeo: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val replicatedScrubGeo: FutureEffect[Event] = wrap(underlying.replicatedScrubGeo)
   }
 
@@ -95,23 +95,23 @@ object ReplicatedScrubGeo extends TweetStore.ReplicatedModule {
  *
  * See http://go/geoscrub for more details.
  */
-object ScrubGeoUpdateUserTimestamp extends TweetStore.SyncModule {
+object ScrubGeoUpdateUserTimestamp etwittertends TweetStore.SyncModule {
 
   case class Event(userId: UserId, timestamp: Time, optUser: Option[User])
-      extends SyncTweetStoreEvent("scrub_geo_update_user_timestamp")
+      etwittertends SyncTweetStoreEvent("scrub_geo_update_user_timestamp")
       with TweetStoreTweetEvent {
 
     def mightHaveGeotaggedStatuses: Boolean =
       optUser.forall(_.account.forall(_.hasGeotaggedStatuses == true))
 
-    def maxTweetId: TweetId = SnowflakeId.firstIdFor(timestamp + 1.millisecond) - 1
+    def matwitterTweetId: TweetId = SnowflakeId.firstIdFor(timestamp + 1.millisecond) - 1
 
     override def toTweetEventData: Seq[TweetEventData] =
       Seq(
         TweetEventData.UserScrubGeoEvent(
           UserScrubGeoEvent(
             userId = userId,
-            maxTweetId = maxTweetId
+            matwitterTweetId = matwitterTweetId
           )
         )
       )
@@ -122,7 +122,7 @@ object ScrubGeoUpdateUserTimestamp extends TweetStore.SyncModule {
      * it was added to cache.
      */
     def cacheHandler: LockingCache.Handler[Cached[Time]] = {
-      case Some(c) if c.value.exists(_ >= timestamp) => None
+      case Some(c) if c.value.etwitterists(_ >= timestamp) => None
       case _ => Some(Cached(Some(timestamp), CachedValueStatus.Found, Time.now))
     }
   }
@@ -131,7 +131,7 @@ object ScrubGeoUpdateUserTimestamp extends TweetStore.SyncModule {
     val scrubGeoUpdateUserTimestamp: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val scrubGeoUpdateUserTimestamp: FutureEffect[Event] = wrap(
       underlying.scrubGeoUpdateUserTimestamp)
   }

@@ -24,25 +24,25 @@ object AggregatesV2AdaptedSource {
   val DefaultTrimThreshold = 0
 }
 
-trait AggregatesV2AdaptedSource extends AggregatesV2AdaptedSourceBase[DataRecord] {
+trait AggregatesV2AdaptedSource etwittertends AggregatesV2AdaptedSourceBase[DataRecord] {
   override def storageFormatCodec: Injection[DataRecord, Array[Byte]] =
     CompactThriftCodec[DataRecord]
   override def toDataRecord(v: DataRecord): DataRecord = v
 }
 
 trait AggregatesV2AdaptedSourceBase[StorageFormat]
-    extends TypedFeatureSource[AggregatesV2Tuple]
+    etwittertends TypedFeatureSource[AggregatesV2Tuple]
     with AdaptedFeatureSource[AggregatesV2Tuple]
     with BatchPairImplicits {
 
-  /* Output root path of aggregates v2 job, excluding store name and version */
+  /* Output root path of aggregates v2 job, etwittercluding store name and version */
   def rootPath: String
 
   /* Name of store under root path to read */
   def storeName: String
 
-  // max bijection failures
-  def maxFailures: Int = 0
+  // matwitter bijection failures
+  def matwitterFailures: Int = 0
 
   /* Aggregate config used to generate above output */
   def aggregates: Set[TypedAggregateGroup[_]]
@@ -67,7 +67,7 @@ trait AggregatesV2AdaptedSourceBase[StorageFormat]
     VersionedKeyValSource[AggregationKey, (BatchID, StorageFormat)](
       path = storePath,
       sourceVersion = None,
-      maxFailures = maxFailures
+      matwitterFailures = matwitterFailures
     )
   }
 
@@ -81,7 +81,7 @@ trait AggregatesV2AdaptedSourceBase[StorageFormat]
 
   private def mostRecentVersion: Long = {
     require(!availableVersions.isEmpty, s"$storeName has no available versions")
-    availableVersions.max
+    availableVersions.matwitter
   }
 
   def versionToUse: Long =
@@ -90,11 +90,11 @@ trait AggregatesV2AdaptedSourceBase[StorageFormat]
         .map(sourceVersion =>
           availableVersions.filter(_ <= sourceVersion) match {
             case Seq() =>
-              throw new IllegalArgumentException(
+              throw new IllegalArgumentEtwitterception(
                 "No version older than version: %s, available versions: %s"
                   .format(sourceVersion, availableVersions)
               )
-            case versionList => versionList.max
+            case versionList => versionList.matwitter
           })
         .getOrElse(mostRecentVersion)
     } else {
@@ -109,7 +109,7 @@ trait AggregatesV2AdaptedSourceBase[StorageFormat]
       VersionedKeyValSource[AggregationKey, (BatchID, StorageFormat)](
         path = storePath,
         sourceVersion = Some(versionToUse),
-        maxFailures = maxFailures
+        matwitterFailures = matwitterFailures
       )
     }
     TypedPipe.from(vkvsToUse).map {
@@ -127,10 +127,10 @@ case class AggregatesV2FeatureSource(
   override val storeName: String,
   override val aggregates: Set[TypedAggregateGroup[_]],
   override val trimThreshold: Double = 0,
-  override val maxFailures: Int = 0,
+  override val matwitterFailures: Int = 0,
 )(
   implicit val dateRange: DateRange)
-    extends AggregatesV2AdaptedSource {
+    etwittertends AggregatesV2AdaptedSource {
 
   // Increment end date by 1 millisec since summingbird output for date D is stored at (D+1)T00
   override val sourceVersionOpt: Some[Long] = Some(dateRange.end.timestamp + 1)
@@ -146,8 +146,8 @@ case class AggregatesV2MostRecentFeatureSource(
   override val storeName: String,
   override val aggregates: Set[TypedAggregateGroup[_]],
   override val trimThreshold: Double = AggregatesV2AdaptedSource.DefaultTrimThreshold,
-  override val maxFailures: Int = 0)
-    extends AggregatesV2AdaptedSource {
+  override val matwitterFailures: Int = 0)
+    etwittertends AggregatesV2AdaptedSource {
 
   override val sourceVersionOpt: None.type = None
 }
@@ -163,8 +163,8 @@ case class AggregatesV2MostRecentFeatureSourceBeforeDate(
   override val aggregates: Set[TypedAggregateGroup[_]],
   override val trimThreshold: Double = AggregatesV2AdaptedSource.DefaultTrimThreshold,
   beforeDate: RichDate,
-  override val maxFailures: Int = 0)
-    extends AggregatesV2AdaptedSource {
+  override val matwitterFailures: Int = 0)
+    etwittertends AggregatesV2AdaptedSource {
 
   override val enableMostRecentBeforeSourceVersion = true
   override val sourceVersionOpt: Some[Long] = Some(beforeDate.timestamp + 1)

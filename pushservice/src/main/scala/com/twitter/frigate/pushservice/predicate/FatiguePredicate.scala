@@ -15,7 +15,7 @@ object FatiguePredicate {
    * corresponding to a given rec type.
    *
    * @param interval
-   * @param maxInInterval
+   * @param matwitterInInterval
    * @param minInterval
    * @param recommendationType
    * @param statsReceiver
@@ -23,7 +23,7 @@ object FatiguePredicate {
    */
   def recTypeOnly(
     interval: Duration,
-    maxInInterval: Int,
+    matwitterInInterval: Int,
     minInterval: Duration,
     recommendationType: CommonRecommendationType,
     notificationDisplayLocation: DisplayLocation = DisplayLocation.PushToMobileDevice
@@ -32,7 +32,7 @@ object FatiguePredicate {
   ): NamedPredicate[PushCandidate] = {
     build(
       interval = interval,
-      maxInInterval = maxInInterval,
+      matwitterInInterval = matwitterInInterval,
       minInterval = minInterval,
       filterHistory = recOnlyFilter(recommendationType),
       notificationDisplayLocation = notificationDisplayLocation
@@ -46,14 +46,14 @@ object FatiguePredicate {
    * corresponding to specified rec types
    *
    * @param interval
-   * @param maxInInterval
+   * @param matwitterInInterval
    * @param minInterval
    * @param statsReceiver
    * @return
    */
   def recTypeSetOnly(
     interval: Duration,
-    maxInInterval: Int,
+    matwitterInInterval: Int,
     minInterval: Duration,
     recTypes: Set[CommonRecommendationType],
     notificationDisplayLocation: DisplayLocation = DisplayLocation.PushToMobileDevice
@@ -63,7 +63,7 @@ object FatiguePredicate {
     val name = "rec_type_set_fatigue"
     build(
       interval = interval,
-      maxInInterval = maxInInterval,
+      matwitterInInterval = matwitterInInterval,
       minInterval = minInterval,
       filterHistory = recTypesOnlyFilter(recTypes),
       notificationDisplayLocation = notificationDisplayLocation

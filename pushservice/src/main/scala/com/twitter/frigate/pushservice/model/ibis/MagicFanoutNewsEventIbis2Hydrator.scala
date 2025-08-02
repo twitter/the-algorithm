@@ -8,7 +8,7 @@ import com.twitter.frigate.pushservice.predicate.magic_fanout.MagicFanoutPredica
 import com.twitter.frigate.pushservice.util.PushIbisUtil._
 import com.twitter.util.Future
 
-trait MagicFanoutNewsEventIbis2Hydrator extends Ibis2HydratorForCandidate {
+trait MagicFanoutNewsEventIbis2Hydrator etwittertends Ibis2HydratorForCandidate {
   self: PushCandidate with MagicFanoutEventHydratedCandidate =>
 
   override lazy val senderId: Option[Long] = {

@@ -13,8 +13,8 @@ import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common.CosineSimilarityUtil
 import com.twitter.simclusters_v2.hdfs_sources._
 import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
+import com.twitter.wtf.scalding.jobs.common.AdhocEtwitterecutionApp
+import com.twitter.wtf.scalding.jobs.common.ScheduledEtwitterecutionApp
 import java.util.TimeZone
 
 /**
@@ -22,7 +22,7 @@ capesospy-v2 update --build_locally --start_cron \
   --start_cron similar_users_by_simclusters_embeddings_job \
   src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
-object SimilarUsersBySimClustersEmbeddingBatchApp extends ScheduledExecutionApp {
+object SimilarUsersBySimClustersEmbeddingBatchApp etwittertends ScheduledEtwitterecutionApp {
 
   override val firstTime: RichDate = RichDate("2019-07-10")
 
@@ -77,9 +77,9 @@ object SimilarUsersBySimClustersEmbeddingBatchApp extends ScheduledExecutionApp 
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
-    Execution
+    Etwitterecution
       .zip(
         SimilarUsersBySimClustersEmbedding
           .getTopUsersRelatedToUser(
@@ -87,9 +87,9 @@ object SimilarUsersBySimClustersEmbeddingBatchApp extends ScheduledExecutionApp 
             topProducersForClusterEmbeddingByFavScore
           )
           .map { case (key, value) => KeyVal(key, value) }
-          .writeDALVersionedKeyValExecution(
+          .writeDALVersionedKeyValEtwitterecution(
             SimilarUsersByFavBasedProducerEmbeddingScalaDataset,
-            D.Suffix(outputByFav)
+            D.Suffitwitter(outputByFav)
           ),
         SimilarUsersBySimClustersEmbedding
           .getTopUsersRelatedToUser(
@@ -97,9 +97,9 @@ object SimilarUsersBySimClustersEmbeddingBatchApp extends ScheduledExecutionApp 
             topProducersForClusterEmbeddingByFollowScore
           )
           .map { case (key, value) => KeyVal(key, value) }
-          .writeDALVersionedKeyValExecution(
+          .writeDALVersionedKeyValEtwitterecution(
             SimilarUsersByFollowBasedProducerEmbeddingScalaDataset,
-            D.Suffix(outputByFollow)
+            D.Suffitwitter(outputByFollow)
           )
       ).unit
   }
@@ -114,7 +114,7 @@ object SimilarUsersBySimClustersEmbeddingBatchApp extends ScheduledExecutionApp 
   --tool com.twitter.simclusters_v2.scalding.embedding.SimilarUsersBySimClustersEmbeddingAdhocApp \
   -- --date 2019-07-10T00 2019-07-10T23
  */
-object SimilarUsersBySimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
+object SimilarUsersBySimClustersEmbeddingAdhocApp etwittertends AdhocEtwitterecutionApp {
 
   private val outputByFav =
     "/user/recos-platform/adhoc/similar_users_by_simclusters_embeddings/by_fav"
@@ -165,14 +165,14 @@ object SimilarUsersBySimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
-    Execution
+    Etwitterecution
       .zip(
         SimilarUsersBySimClustersEmbedding
           .getTopUsersRelatedToUser(
             topClusterEmbeddingsByFavScore,
-            topProducersForClusterEmbeddingByFavScore).writeExecution(
+            topProducersForClusterEmbeddingByFavScore).writeEtwitterecution(
             VersionedKeyValSource[Long, Candidates](outputByFav))
           .getCounters
           .flatMap {
@@ -183,12 +183,12 @@ object SimilarUsersBySimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
                   case (statKey, value) =>
                     println(s"${statKey.group}\t${statKey.counter}\t$value")
                 }
-              Execution.unit
+              Etwitterecution.unit
           },
         SimilarUsersBySimClustersEmbedding
           .getTopUsersRelatedToUser(
             topClusterEmbeddingsByFollowScore,
-            topProducersForClusterEmbeddingByFollowScore).writeExecution(
+            topProducersForClusterEmbeddingByFollowScore).writeEtwitterecution(
             VersionedKeyValSource[Long, Candidates](outputByFollow))
           .getCounters
           .flatMap {
@@ -199,15 +199,15 @@ object SimilarUsersBySimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
                   case (statKey, value) =>
                     println(s"${statKey.group}\t${statKey.counter}\t$value")
                 }
-              Execution.unit
+              Etwitterecution.unit
           }
       ).unit
   }
 }
 
 object SimilarUsersBySimClustersEmbedding {
-  private val maxUsersPerCluster = 300
-  private val maxClustersPerUser = 50
+  private val matwitterUsersPerCluster = 300
+  private val matwitterClustersPerUser = 50
   private val topK = 100
 
   def getTopUsersRelatedToUser(
@@ -225,7 +225,7 @@ object SimilarUsersBySimClustersEmbedding {
       clusterScores.flatMap {
         case (userId, topSimClustersWithScore) =>
           val targetUserClusters =
-            topSimClustersWithScore.topClusters.sortBy(-_.score).take(maxClustersPerUser)
+            topSimClustersWithScore.topClusters.sortBy(-_.score).take(matwitterClustersPerUser)
 
           targetUserClusters.map { simClusterWithScore =>
             numUserClusterPair.inc()
@@ -238,7 +238,7 @@ object SimilarUsersBySimClustersEmbedding {
         numClusterProducerPair.inc()
         val targetProducers = topProducersWithScore.topProducers
           .sortBy(-_.score)
-          .take(maxUsersPerCluster)
+          .take(matwitterUsersPerCluster)
         targetProducers.map { topProducerWithScore =>
           persistedFullClusterId.clusterId -> topProducerWithScore.userId
         }
@@ -262,7 +262,7 @@ object SimilarUsersBySimClustersEmbedding {
     val userEmbeddingsAllGrouped = clusterScores.map {
       case (userId, topSimClustersWithScore) =>
         val targetUserClusters =
-          topSimClustersWithScore.topClusters.sortBy(-_.score).take(maxClustersPerUser)
+          topSimClustersWithScore.topClusters.sortBy(-_.score).take(matwitterClustersPerUser)
         val embedding = targetUserClusters.map { simClustersWithScore =>
           simClustersWithScore.clusterId -> simClustersWithScore.score
         }.toMap

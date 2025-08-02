@@ -27,9 +27,9 @@ struct EditControlInitial {
 
   /**
    * Specifies whether the Tweet has any intrinsic properties that mean it can't be edited
-   * (for example, we have a business rule that poll Tweets can't be edited).
+   * (for etwitterample, we have a business rule that poll Tweets can't be edited).
    *
-   * If a Tweet edit expires due to time frame or number of edits, this field still is set
+   * If a Tweet edit etwitterpires due to time frame or number of edits, this field still is set
    * to true for Tweets that could have been edited.
    */
   4: optional bool is_edit_eligible

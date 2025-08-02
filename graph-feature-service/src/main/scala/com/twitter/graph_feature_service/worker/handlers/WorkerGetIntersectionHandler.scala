@@ -12,13 +12,13 @@ import com.twitter.graph_feature_service.worker.util.GraphContainer
 import com.twitter.servo.request.RequestHandler
 import com.twitter.util.Future
 import java.nio.ByteBuffer
-import javax.inject.{Inject, Singleton}
+import javatwitter.inject.{Inject, Singleton}
 
 @Singleton
 class WorkerGetIntersectionHandler @Inject() (
   graphContainer: GraphContainer,
   statsReceiver: StatsReceiver)
-    extends RequestHandler[WorkerIntersectionRequest, WorkerIntersectionResponse] {
+    etwittertends RequestHandler[WorkerIntersectionRequest, WorkerIntersectionResponse] {
 
   import WorkerGetIntersectionHandler._
 

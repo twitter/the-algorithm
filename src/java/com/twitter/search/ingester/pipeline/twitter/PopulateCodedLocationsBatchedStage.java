@@ -1,16 +1,16 @@
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.Collection;
-import javax.naming.NamingException;
+import javatwitter.naming.NamingEtwitterception;
 
-import org.apache.commons.pipeline.StageException;
+import org.apache.commons.pipeline.StageEtwitterception;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducesConsumed;
 
 import com.twitter.search.ingester.model.IngesterTwitterMessage;
 import com.twitter.search.ingester.pipeline.util.BatchedElement;
 import com.twitter.search.ingester.pipeline.util.ManhattanCodedLocationProvider;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
+import com.twitter.search.ingester.pipeline.util.PipelineStageEtwitterception;
 import com.twitter.util.Future;
 
 /**
@@ -19,7 +19,7 @@ import com.twitter.util.Future;
 @ConsumedTypes(IngesterTwitterMessage.class)
 @ProducesConsumed
 public final class PopulateCodedLocationsBatchedStage
-    extends TwitterBatchedBaseStage<IngesterTwitterMessage, IngesterTwitterMessage> {
+    etwittertends TwitterBatchedBaseStage<IngesterTwitterMessage, IngesterTwitterMessage> {
   private static final String GEOCODE_DATASET_NAME = "ingester_geocode_profile_location";
 
   private ManhattanCodedLocationProvider manhattanCodedLocationProvider = null;
@@ -27,24 +27,24 @@ public final class PopulateCodedLocationsBatchedStage
   /**
    * Require lat/lon from TwitterMessage instead of lookup from coded_locations,
    * do not batch sql, and simply emit messages passed in with regions populated on them
-   * rather than emitting to indexing queues.
+   * rather than emitting to indetwittering queues.
    */
   @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
+  protected void doInnerPreprocess() throws StageEtwitterception, NamingEtwitterception {
     super.doInnerPreprocess();
     commonInnerSetup();
   }
 
   @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
+  protected void innerSetup() throws PipelineStageEtwitterception, NamingEtwitterception {
     super.innerSetup();
     commonInnerSetup();
   }
 
-  private void commonInnerSetup() throws NamingException {
+  private void commonInnerSetup() throws NamingEtwitterception {
     this.manhattanCodedLocationProvider = ManhattanCodedLocationProvider.createWithEndpoint(
         wireModule.getJavaManhattanKVEndpoint(),
-        getStageNamePrefix(),
+        getStageNamePrefitwitter(),
         GEOCODE_DATASET_NAME);
   }
 
@@ -62,7 +62,7 @@ public final class PopulateCodedLocationsBatchedStage
   protected Future<Collection<IngesterTwitterMessage>> innerProcessBatch(Collection<BatchedElement
       <IngesterTwitterMessage, IngesterTwitterMessage>> batch) {
 
-    Collection<IngesterTwitterMessage> batchedElements = extractOnlyElementsFromBatch(batch);
+    Collection<IngesterTwitterMessage> batchedElements = etwittertractOnlyElementsFromBatch(batch);
     return manhattanCodedLocationProvider.populateCodedLatLon(batchedElements);
   }
 

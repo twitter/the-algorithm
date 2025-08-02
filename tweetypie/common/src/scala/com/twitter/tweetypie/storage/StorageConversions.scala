@@ -25,11 +25,11 @@ object StorageConversions {
       share.parentStatusId
     )
 
-  def toStoredQuotedTweet(qt: QuotedTweet, text: String): Option[StoredQuotedTweet] =
+  def toStoredQuotedTweet(qt: QuotedTweet, tetwittert: String): Option[StoredQuotedTweet] =
     qt.permalink
       .filterNot { p =>
-        text.contains(p.shortUrl)
-      } // omit StoredQuotedTweet when url already in text
+        tetwittert.contains(p.shortUrl)
+      } // omit StoredQuotedTweet when url already in tetwittert
       .map { p =>
         StoredQuotedTweet(
           qt.tweetId,
@@ -79,7 +79,7 @@ object StorageConversions {
       )
     }
 
-  // The language and ids fields are for compatibility with existing tweets stored in manhattan.
+  // The language and ids fields are for compatibility with etwitteristing tweets stored in manhattan.
   def toStoredNarrowcast(narrowcast: Narrowcast): StoredNarrowcast =
     StoredNarrowcast(
       language = Some(Seq.empty),
@@ -98,7 +98,7 @@ object StorageConversions {
       StoredTweet(
         id = tweet.id,
         userId = Some(TweetLenses.userId(tweet)),
-        text = Some(TweetLenses.text(tweet)),
+        tetwittert = Some(TweetLenses.tetwittert(tweet)),
         createdVia = Some(TweetLenses.createdVia(tweet)),
         createdAtSec = Some(TweetLenses.createdAt(tweet)),
         reply =
@@ -114,7 +114,7 @@ object StorageConversions {
         nullcast = Some(TweetLenses.nullcast(tweet)),
         trackingId = TweetLenses.trackingId(tweet),
         quotedTweet = TweetLenses.quotedTweet(tweet).flatMap { qt =>
-          toStoredQuotedTweet(qt, TweetLenses.text(tweet))
+          toStoredQuotedTweet(qt, TweetLenses.tetwittert(tweet))
         }
       )
     toStoredAdditionalFields(tweet, storedTweet)
@@ -122,7 +122,7 @@ object StorageConversions {
 
   /**
    * Does not need core data to be set. Constructs on disk tweet by avoiding the TweetLenses object
-   * and only extracting the specified fields.
+   * and only etwittertracting the specified fields.
    *
    * NOTE: Assumes that specified fields are set in the tweet.
    *
@@ -189,7 +189,7 @@ object StorageConversions {
             None
       )
 
-    if (fields.map(_.id).exists(AdditionalFields.isAdditionalFieldId))
+    if (fields.map(_.id).etwitterists(AdditionalFields.isAdditionalFieldId))
       toStoredAdditionalFields(tpTweet, storedTweet)
     else
       storedTweet
@@ -216,7 +216,7 @@ object StorageConversions {
         ShortenedUrl(
           shortUrl = qt.shortUrl,
           longUrl = "", // will be hydrated later via tweetypie's QuotedTweetRefUrlsHydrator
-          displayText = "" //will be hydrated later via tweetypie's QuotedTweetRefUrlsHydrator
+          displayTetwittert = "" //will be hydrated later via tweetypie's QuotedTweetRefUrlsHydrator
         )
       )
     )
@@ -231,14 +231,14 @@ object StorageConversions {
 
   def fromStoredMediaEntity(media: StoredMediaEntity): MediaEntity =
     MediaEntity(
-      fromIndex = -1, // will get filled in later
-      toIndex = -1, // will get filled in later
+      fromIndetwitter = -1, // will get filled in later
+      toIndetwitter = -1, // will get filled in later
       url = null, // will get filled in later
       mediaPath = "", // field is obsolete
       mediaUrl = null, // will get filled in later
       mediaUrlHttps = null, // will get filled in later
       displayUrl = null, // will get filled in later
-      expandedUrl = null, // will get filled in later
+      etwitterpandedUrl = null, // will get filled in later
       mediaId = media.id,
       nsfw = false,
       sizes = Set(
@@ -261,7 +261,7 @@ object StorageConversions {
     val coreData =
       TweetCoreData(
         userId = storedTweet.userId.get,
-        text = storedTweet.text.get,
+        tetwittert = storedTweet.tetwittert.get,
         createdVia = storedTweet.createdVia.get,
         createdAtSecs = storedTweet.createdAtSec.get,
         reply = storedTweet.reply.map(fromStoredReply),
@@ -275,7 +275,7 @@ object StorageConversions {
         conversationId = storedTweet.reply.flatMap(_.conversationId),
         placeId = storedTweet.geo.flatMap(_.name),
         coordinates = storedTweet.geo.map(fromStoredGeo),
-        hasMedia = if (storedTweet.media.exists(_.nonEmpty)) Some(true) else None
+        hasMedia = if (storedTweet.media.etwitterists(_.nonEmpty)) Some(true) else None
       )
 
     // retweets should never have their media, but some tweets incorrectly do.
@@ -300,7 +300,7 @@ object StorageConversions {
     fromStoredTweet(
       storedTweet.copy(
         userId = storedTweet.userId.orElse(Some(-1L)),
-        text = storedTweet.text.orElse(Some("")),
+        tetwittert = storedTweet.tetwittert.orElse(Some("")),
         createdVia = storedTweet.createdVia.orElse(Some("")),
         createdAtSec = storedTweet.createdAtSec.orElse(Some(-1L))
       ))
@@ -320,12 +320,12 @@ object StorageConversions {
     DeletedTweet(
       id = storedTweet.id,
       userId = storedTweet.userId,
-      text = storedTweet.text,
+      tetwittert = storedTweet.tetwittert,
       createdAtSecs = storedTweet.createdAtSec,
       share = storedTweet.share.map(toDeletedShare),
       media = storedTweet.media.map(_.map(toDeletedMediaEntity)),
       noteTweetId = noteTweetOption.map(_.id),
-      isExpandable = noteTweetOption.flatMap(_.isExpandable)
+      isEtwitterpandable = noteTweetOption.flatMap(_.isEtwitterpandable)
     )
   }
 

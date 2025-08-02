@@ -18,7 +18,7 @@ class TweetEventToUserTweetGraphBuilder(
   decider: RecosInjectorDecider
 )(
   override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[TweetCreateEventDetails, UserTweetEntityEdge] {
+    etwittertends EventToMessageBuilder[TweetCreateEventDetails, UserTweetEntityEdge] {
 
   private val numRetweetEdgesCounter = statsReceiver.counter("num_retweet_edge")
   private val numIsDecider = statsReceiver.counter("num_decider_enabled")

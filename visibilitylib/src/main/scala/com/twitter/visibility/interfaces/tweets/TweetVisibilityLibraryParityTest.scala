@@ -1,8 +1,8 @@
 package com.twitter.visibility.interfaces.tweets
 
 import com.twitter.spam.rtf.{thriftscala => t}
-import com.twitter.context.TwitterContext
-import com.twitter.context.thriftscala.Viewer
+import com.twitter.contetwittert.TwitterContetwittert
+import com.twitter.contetwittert.thriftscala.Viewer
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.stitch.Stitch
 import com.twitter.strato.catalog.Fetch
@@ -12,7 +12,7 @@ import com.twitter.strato.thrift.ScroogeConvImplicits._
 import com.twitter.visibility.builder.VisibilityResult
 import com.twitter.visibility.common.tweets.TweetVisibilityResultMapper
 import com.twitter.visibility.models.SafetyLevel.toThrift
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 import com.twitter.visibility.thriftscala.TweetVisibilityResult
 
 class TweetVisibilityLibraryParityTest(statsReceiver: StatsReceiver, stratoClient: Client) {
@@ -35,23 +35,23 @@ class TweetVisibilityLibraryParityTest(statsReceiver: StatsReceiver, stratoClien
   ): Stitch[Unit] = {
     requests.incr()
 
-    val twitterContext = TwitterContext(TwitterContextPermit)
+    val twitterContetwittert = TwitterContetwittert(TwitterContetwittertPermit)
 
     val viewer: Option[Viewer] = {
 
-      val remoteViewerContext = ViewerContext.fromContext
+      val remoteViewerContetwittert = ViewerContetwittert.fromContetwittert
 
-      if (remoteViewerContext != req.viewerContext) {
-        val updatedRemoteViewerContext = remoteViewerContext.copy(
-          userId = req.viewerContext.userId
+      if (remoteViewerContetwittert != req.viewerContetwittert) {
+        val updatedRemoteViewerContetwittert = remoteViewerContetwittert.copy(
+          userId = req.viewerContetwittert.userId
         )
 
-        if (updatedRemoteViewerContext == req.viewerContext) {
-          twitterContext() match {
+        if (updatedRemoteViewerContetwittert == req.viewerContetwittert) {
+          twitterContetwittert() match {
             case None =>
-              Some(Viewer(userId = req.viewerContext.userId))
+              Some(Viewer(userId = req.viewerContetwittert.userId))
             case Some(v) =>
-              Some(v.copy(userId = req.viewerContext.userId))
+              Some(v.copy(userId = req.viewerContetwittert.userId))
           }
         } else {
           None
@@ -61,7 +61,7 @@ class TweetVisibilityLibraryParityTest(statsReceiver: StatsReceiver, stratoClien
       }
     }
 
-    val tweetypieContext = TweetypieContext(
+    val tweetypieContetwittert = TweetypieContetwittert(
       isQuotedTweet = req.isInnerQuotedTweet,
       isRetweet = req.isRetweet,
       hydrateConversationControl = req.hydrateConversationControl
@@ -69,10 +69,10 @@ class TweetVisibilityLibraryParityTest(statsReceiver: StatsReceiver, stratoClien
 
     val parityCheck: Stitch[Fetch.Result[TweetVisibilityResult]] = {
       Stitch.callFuture {
-        TweetypieContext.let(tweetypieContext) {
+        TweetypieContetwittert.let(tweetypieContetwittert) {
           viewer match {
             case Some(viewer) =>
-              twitterContext.let(viewer) {
+              twitterContetwittert.let(viewer) {
                 Stitch.run(fetcher.fetch(req.tweet.id, toThrift(req.safetyLevel)))
               }
             case None =>

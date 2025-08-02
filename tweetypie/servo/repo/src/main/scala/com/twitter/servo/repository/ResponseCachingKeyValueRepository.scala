@@ -6,14 +6,14 @@ import com.twitter.util._
 object ResponseCachingKeyValueRepository {
 
   /**
-   * An cache filter that excludes cached future responses that are already fulfilled.
+   * An cache filter that etwittercludes cached future responses that are already fulfilled.
    * Using this policy ensures that this repository will only ever have one outstanding request for the same item.
    */
   def refreshSatisfied[K, V]: (K, Future[Option[V]]) => Boolean =
     (_, v) => v.isDefined
 
   /**
-   * An cache filter that excludes cached future response that are failures
+   * An cache filter that etwittercludes cached future response that are failures
    */
   def refreshFailures[K, V]: (K, Future[Option[V]]) => Boolean =
     (_, v) =>
@@ -45,7 +45,7 @@ class ResponseCachingKeyValueRepository[Q <: Seq[K], K, V](
   cache: InProcessCache[K, Future[Option[V]]],
   newQuery: SubqueryBuilder[Q, K],
   observer: CacheObserver = NullCacheObserver)
-    extends KeyValueRepository[Q, K, V] {
+    etwittertends KeyValueRepository[Q, K, V] {
   private[this] def load(query: Q, promises: Seq[(K, Promise[Option[V]])]): Unit = {
     if (promises.nonEmpty) {
       underlying(newQuery(promises map { case (k, _) => k }, query)) respond {
@@ -59,12 +59,12 @@ class ResponseCachingKeyValueRepository[Q <: Seq[K], K, V](
     def toInterruptible: Future[Option[V]]
   }
 
-  private case class CachedResult[K, V](result: Future[Option[V]]) extends RefreshResult[K, V] {
+  private case class CachedResult[K, V](result: Future[Option[V]]) etwittertends RefreshResult[K, V] {
     def toInterruptible = result.interruptible
   }
 
   private case class LoadResult[K, V](keyToLoad: K, result: Promise[Option[V]])
-      extends RefreshResult[K, V] {
+      etwittertends RefreshResult[K, V] {
     def toInterruptible = result.interruptible
   }
 

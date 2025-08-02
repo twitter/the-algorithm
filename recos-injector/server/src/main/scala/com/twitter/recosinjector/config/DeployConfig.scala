@@ -7,7 +7,7 @@ import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.store.TweetCreationTimeMHStore
 import com.twitter.frigate.common.util.Finagle._
 import com.twitter.frigate.common.util.{UrlInfo, UrlInfoInjection, UrlResolver}
-import com.twitter.gizmoduck.thriftscala.{LookupContext, QueryFields, User, UserService}
+import com.twitter.gizmoduck.thriftscala.{LookupContetwittert, QueryFields, User, UserService}
 import com.twitter.hermit.store.common.{ObservedCachedReadableStore, ObservedMemcachedReadableStore}
 import com.twitter.hermit.store.gizmoduck.GizmoduckUserStore
 import com.twitter.hermit.store.tweetypie.TweetyPieStore
@@ -29,11 +29,11 @@ import com.twitter.util.Future
 
 /*
  * Any finagle clients should not be defined as lazy. If defined lazy,
- * ClientRegistry.expAllRegisteredClientsResolved() call in init will not ensure that the clients
+ * ClientRegistry.etwitterpAllRegisteredClientsResolved() call in init will not ensure that the clients
  * are active before thrift endpoint is active. We want the clients to be active, because zookeeper
  * resolution triggered by first request(s) might result in the request(s) failing.
  */
-trait DeployConfig extends Config with CacheConfig {
+trait DeployConfig etwittertends Config with CacheConfig {
   implicit def statsReceiver: StatsReceiver
 
   def log: Logger
@@ -89,7 +89,7 @@ trait DeployConfig extends Config with CacheConfig {
       QueryFields.Labels,
       QueryFields.Safety
     )
-    val context: LookupContext = LookupContext(
+    val contetwittert: LookupContetwittert = LookupContetwittert(
       includeDeactivated = true,
       safetyLevel = Some(SafetyLevel.Recommendations)
     )
@@ -97,7 +97,7 @@ trait DeployConfig extends Config with CacheConfig {
     GizmoduckUserStore(
       client = gizmoduckClient,
       queryFields = queryFields,
-      context = context,
+      contetwittert = contetwittert,
       statsReceiver = statsReceiver
     )
   }
@@ -135,7 +135,7 @@ trait DeployConfig extends Config with CacheConfig {
     TweetyPieStore(
       tweetyPieClient,
       getTweetOptions,
-      convertExceptionsToNotFound = false // Do not suppress TweetyPie errors. Leave it to caller
+      convertEtwitterceptionsToNotFound = false // Do not suppress TweetyPie errors. Leave it to caller
     )
   }
 
@@ -165,7 +165,7 @@ trait DeployConfig extends Config with CacheConfig {
     ObservedCachedReadableStore.from(
       memcachedStore,
       ttl = 1.minutes,
-      maxKeys = 1e5.toInt,
+      matwitterKeys = 1e5.toInt,
       windowSize = 10000L,
       cacheName = "url_store_in_proc_cache"
     )(statsReceiver.scope("url_store_in_proc_cache"))
@@ -186,7 +186,7 @@ trait DeployConfig extends Config with CacheConfig {
     )
 
     val endpoint = ManhattanKVEndpointBuilder(client)
-      .defaultMaxTimeout(700.milliseconds)
+      .defaultMatwitterTimeout(700.milliseconds)
       .statsReceiver(
         statsReceiver
           .scope(serviceIdentifier.zone)
@@ -211,5 +211,5 @@ trait DeployConfig extends Config with CacheConfig {
   }
 
   // wait for all serversets to populate
-  override def init(): Future[Unit] = ClientRegistry.expAllRegisteredClientsResolved().unit
+  override def init(): Future[Unit] = ClientRegistry.etwitterpAllRegisteredClientsResolved().unit
 }

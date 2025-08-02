@@ -7,7 +7,7 @@ import com.twitter.strato.client.{Client => StratoClient}
 import com.twitter.tweetypie.Future
 import com.twitter.tweetypie.UserId
 import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.thriftscala.ExclusiveTweetControl
+import com.twitter.tweetypie.thriftscala.EtwitterclusiveTweetControl
 import com.twitter.tweetypie.thriftscala.TweetCreateState
 
 object StratoSuperFollowRelationsRepository {
@@ -21,7 +21,7 @@ object StratoSuperFollowRelationsRepository {
       client.fetcher[HasSuperFollowingRelationshipRequest, Boolean](column)
 
     (authorId, viewerId) => {
-      // Owner of an exclusive tweet chain can respond to their own
+      // Owner of an etwitterclusive tweet chain can respond to their own
       // tweets / replies, despite not super following themselves
       if (authorId == viewerId) {
         Stitch.True
@@ -36,14 +36,14 @@ object StratoSuperFollowRelationsRepository {
 
   object Validate {
     def apply(
-      exclusiveTweetControl: Option[ExclusiveTweetControl],
+      etwitterclusiveTweetControl: Option[EtwitterclusiveTweetControl],
       userId: UserId,
       superFollowRelationsRepo: StratoSuperFollowRelationsRepository.Type
     ): Future[Unit] = {
       Stitch
         .run {
-          exclusiveTweetControl.map(_.conversationAuthorId) match {
-            // Don't do exclusive tweet validation on non exclusive tweets.
+          etwitterclusiveTweetControl.map(_.conversationAuthorId) match {
+            // Don't do etwitterclusive tweet validation on non etwitterclusive tweets.
             case None =>
               Stitch.value(true)
 
@@ -53,7 +53,7 @@ object StratoSuperFollowRelationsRepository {
         }.map {
           case true => Future.Unit
           case false =>
-            Future.exception(TweetCreateFailure.State(TweetCreateState.SourceTweetNotFound))
+            Future.etwitterception(TweetCreateFailure.State(TweetCreateState.SourceTweetNotFound))
         }.flatten
     }
   }

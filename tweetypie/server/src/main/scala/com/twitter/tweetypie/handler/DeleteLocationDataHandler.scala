@@ -37,7 +37,7 @@ object DeleteLocationDataHandler {
           // Due to clock skew, it's possible for the last scrub
           // timestamp to be larger than the timestamp from the request,
           // but we ignore that so that we keep a faithful record of
-          // user requests. The execution of such events will end up a
+          // user requests. The etwitterecution of such events will end up a
           // no-op.
           val event =
             DeleteLocationData(

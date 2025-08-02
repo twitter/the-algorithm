@@ -12,7 +12,7 @@ scala_library(
         "ann/src/main/scala/com/twitter/ann/util",
         "ann/src/main/thrift/com/twitter/ann/common:ann-common-scala",
         "finatra/inject/inject-server/src/main/scala",
-        "src/scala/com/twitter/cortex/ml/embeddings/common:Helpers",
+        "src/scala/com/twitter/cortetwitter/ml/embeddings/common:Helpers",
         "twitter-server-internal/src/main/scala",
         "util/util-logging/src/main/scala",
     ],

@@ -62,7 +62,7 @@ private object LoadTestQueryRecorder {
 
 class StatsLoadTestQueryRecorder[T](
   statsReceiver: StatsReceiver)
-    extends LoadTestQueryRecorder[T] {
+    etwittertends LoadTestQueryRecorder[T] {
   private[this] val numResultsStats = statsReceiver.stat("number_of_results")
   private[this] val recallStats = statsReceiver.stat("recall")
   private[this] val top1RecallStats = statsReceiver.stat("top_1_recall")
@@ -86,27 +86,27 @@ class StatsLoadTestQueryRecorder[T](
 }
 
 trait LoadTestBuildRecorder {
-  def recordIndexCreation(
-    indexSize: Int,
-    indexLatency: Duration,
+  def recordIndetwitterCreation(
+    indetwitterSize: Int,
+    indetwitterLatency: Duration,
     toQueryableLatency: Duration
   ): Unit
 }
 
 class StatsLoadTestBuildRecorder(
   statsReceiver: StatsReceiver)
-    extends LoadTestBuildRecorder {
-  private[this] val indexLatencyGauge = statsReceiver.addGauge("index_latency_ms")(_)
-  private[this] val indexSizeGauge = statsReceiver.addGauge("index_size")(_)
+    etwittertends LoadTestBuildRecorder {
+  private[this] val indetwitterLatencyGauge = statsReceiver.addGauge("indetwitter_latency_ms")(_)
+  private[this] val indetwitterSizeGauge = statsReceiver.addGauge("indetwitter_size")(_)
   private[this] val toQueryableGauge = statsReceiver.addGauge("to_queryable_latency_ms")(_)
 
-  override def recordIndexCreation(
-    indexSize: Int,
-    indexLatency: Duration,
+  override def recordIndetwitterCreation(
+    indetwitterSize: Int,
+    indetwitterLatency: Duration,
     toQueryableLatency: Duration
   ): Unit = {
-    indexLatencyGauge(indexLatency.inMillis)
-    indexSizeGauge(indexSize)
+    indetwitterLatencyGauge(indetwitterLatency.inMillis)
+    indetwitterSizeGauge(indetwitterSize)
     toQueryableGauge(toQueryableLatency.inMillis)
   }
 }
@@ -126,7 +126,7 @@ class InMemoryLoadTestQueryRecorder[T](
   // Use latch period of bottom. We will compute a new snapshot every time we call computeSnapshot
   private[this] val latencyHistogram: MetricsBucketedHistogram =
     new MetricsBucketedHistogram("latencyhistogram", latchPeriod = Duration.Bottom))
-    extends LoadTestQueryRecorder[T] {
+    etwittertends LoadTestQueryRecorder[T] {
   private[this] val counter = new AtomicInteger(0)
   private[this] val countMoreThan10Results = new AtomicInteger(0)
   private[this] val recallSum = new AtomicDouble(0.0)
@@ -186,18 +186,18 @@ class InMemoryLoadTestQueryRecorder[T](
   }
 }
 
-class InMemoryLoadTestBuildRecorder extends LoadTestBuildRecorder {
-  var indexLatency: Duration = Duration.Zero
-  var indexSize: Int = 0
+class InMemoryLoadTestBuildRecorder etwittertends LoadTestBuildRecorder {
+  var indetwitterLatency: Duration = Duration.Zero
+  var indetwitterSize: Int = 0
   var toQueryableLatency: Duration = Duration.Zero
 
-  override def recordIndexCreation(
+  override def recordIndetwitterCreation(
     size: Int,
-    indexLatencyArg: Duration,
+    indetwitterLatencyArg: Duration,
     toQueryableLatencyArg: Duration
   ): Unit = {
-    indexLatency = indexLatencyArg
-    indexSize = size
+    indetwitterLatency = indetwitterLatencyArg
+    indetwitterSize = size
     toQueryableLatency = toQueryableLatencyArg
   }
 }
@@ -207,7 +207,7 @@ class InMemoryLoadTestBuildRecorder extends LoadTestBuildRecorder {
  */
 class ComposedLoadTestQueryRecorder[T](
   recorders: Seq[LoadTestQueryRecorder[T]])
-    extends LoadTestQueryRecorder[T] {
+    etwittertends LoadTestQueryRecorder[T] {
   override def recordQueryResult(
     trueNeighbors: Seq[T],
     foundNeighbors: Seq[T],
@@ -222,10 +222,10 @@ class ComposedLoadTestQueryRecorder[T](
  */
 class ComposedLoadTestBuildRecorder(
   recorders: Seq[LoadTestBuildRecorder])
-    extends LoadTestBuildRecorder {
-  override def recordIndexCreation(
-    indexSize: Int,
-    indexLatency: Duration,
+    etwittertends LoadTestBuildRecorder {
+  override def recordIndetwitterCreation(
+    indetwitterSize: Int,
+    indetwitterLatency: Duration,
     toQueryableLatency: Duration
-  ): Unit = recorders.foreach { _.recordIndexCreation(indexSize, indexLatency, toQueryableLatency) }
+  ): Unit = recorders.foreach { _.recordIndetwitterCreation(indetwitterSize, indetwitterLatency, toQueryableLatency) }
 }

@@ -1,14 +1,14 @@
 package com.twitter.search.common.schema;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
-import com.twitter.common.text.util.PositionIncrementAttributeSerializer;
-import com.twitter.common.text.util.TokenStreamSerializer;
+import com.twitter.common.tetwittert.util.PositionIncrementAttributeSerializer;
+import com.twitter.common.tetwittert.util.TokenStreamSerializer;
 import com.twitter.search.common.schema.base.FieldNameToIdMapping;
 import com.twitter.search.common.schema.thriftjava.ThriftDocument;
 import com.twitter.search.common.schema.thriftjava.ThriftField;
@@ -66,7 +66,7 @@ public class ThriftDocumentBuilder {
   }
 
   /**
-   * Add a long field. This is indexed as a
+   * Add a long field. This is indetwittered as a
    * {@link com.twitter.search.common.util.analysis.LongTermAttribute}
    */
   public final ThriftDocumentBuilder withLongField(String fieldName, long value) {
@@ -78,7 +78,7 @@ public class ThriftDocumentBuilder {
   }
 
   /**
-   * Add an int field. This is indexed as a
+   * Add an int field. This is indetwittered as a
    * {@link com.twitter.search.common.util.analysis.IntTermAttribute}
    */
   public final ThriftDocumentBuilder withIntField(String fieldName, int value) {
@@ -125,16 +125,16 @@ public class ThriftDocumentBuilder {
   /**
    * Added a field whose value is a Lucene TokenStream.
    * The Lucene TokenStream is serialized using Twitter's
-   * {@link com.twitter.common.text.util.TokenStreamSerializer}
+   * {@link com.twitter.common.tetwittert.util.TokenStreamSerializer}
    */
   public final ThriftDocumentBuilder withTokenStreamField(String fieldName,
-                                                          @Nullable String tokenStreamText,
+                                                          @Nullable String tokenStreamTetwittert,
                                                           byte[] tokenStream) {
     if (tokenStream == null) {
       return this;
     }
     ThriftFieldData fieldData = new ThriftFieldData()
-        .setStringValue(tokenStreamText).setTokenStreamValue(tokenStream);
+        .setStringValue(tokenStreamTetwittert).setTokenStreamValue(tokenStream);
     ThriftField field = new ThriftField()
         .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
     doc.addToFields(field);
@@ -144,14 +144,14 @@ public class ThriftDocumentBuilder {
   /**
    * Add a field whose value is a String.
    * @param fieldName Name of the field where the string will be added.
-   * @param text This string is indexed as is (not analyzed).
+   * @param tetwittert This string is indetwittered as is (not analyzed).
    */
-  public final ThriftDocumentBuilder withStringField(String fieldName, String text) {
-    if (text == null || text.isEmpty()) {
+  public final ThriftDocumentBuilder withStringField(String fieldName, String tetwittert) {
+    if (tetwittert == null || tetwittert.isEmpty()) {
       return this;
     }
 
-    ThriftFieldData fieldData = new ThriftFieldData().setStringValue(text);
+    ThriftFieldData fieldData = new ThriftFieldData().setStringValue(tetwittert);
     ThriftField field = new ThriftField()
         .setFieldConfigId(idMapping.getFieldID(fieldName)).setFieldData(fieldData);
     doc.addToFields(field);
@@ -160,7 +160,7 @@ public class ThriftDocumentBuilder {
 
   /**
    * Add a field whose value is a geo coordinate.
-   * Earlybird will process the coordinates into geo hashes before indexing.
+   * Earlybird will process the coordinates into geo hashes before indetwittering.
    */
   public final ThriftDocumentBuilder withGeoField(String fieldName,
                                                   double lat, double lon, int acc) {
@@ -191,11 +191,11 @@ public class ThriftDocumentBuilder {
       PayloadWeightedTokenizer tokenizer = new PayloadWeightedTokenizer(tokens);
       serialized = PAYLOAD_WEIGHTED_SERIALIZER_PER_THREAD.get().serialize(tokenizer);
       tokenizer.close();
-    } catch (IOException e) {
+    } catch (IOEtwitterception e) {
       LOG.log(Level.WARNING,
           "Failed to add PayloadWeightedTokenizer field. Bad token weight list: " + tokens, e);
       return this;
-    } catch (NumberFormatException e) {
+    } catch (NumberFormatEtwitterception e) {
       LOG.log(Level.WARNING,
           "Failed to add PayloadWeightedTokenizer field. Cannot parse token weight: " + tokens, e);
       return this;
@@ -210,7 +210,7 @@ public class ThriftDocumentBuilder {
    * The field will contain a LongTermTokenStream.
    */
   public final ThriftDocumentBuilder withLongIDsField(String fieldName,
-      List<Long> longList)  throws IOException {
+      List<Long> longList)  throws IOEtwitterception {
 
     if (longList == null || longList.isEmpty()) {
         return this;

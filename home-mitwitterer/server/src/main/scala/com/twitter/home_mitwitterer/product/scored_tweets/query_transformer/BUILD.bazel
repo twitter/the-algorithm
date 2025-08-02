@@ -1,0 +1,23 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    dependencies = [
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/model",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/model/request",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/product/scored_tweets/feature_hydrator",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/product/scored_tweets/param",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/util",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/util/earlybird",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/transformer",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/pipeline",
+        "src/thrift/com/twitter/timelineranker:thrift-scala",
+        "timelineranker/common/src/main/scala/com/twitter/timelineranker/model",
+        "timelines:util",
+        "timelines/src/main/scala/com/twitter/timelines/common/model",
+        "timelines/src/main/scala/com/twitter/timelines/earlybird/common/options",
+        "timelines/src/main/scala/com/twitter/timelines/earlybird/common/utils",
+        "timelines/src/main/scala/com/twitter/timelines/model/candidate",
+        "timelineservice/common:model",
+    ],
+)

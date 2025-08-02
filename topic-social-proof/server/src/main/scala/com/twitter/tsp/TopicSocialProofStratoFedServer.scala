@@ -19,9 +19,9 @@ import com.twitter.tsp.modules.UttClientModule
 import com.twitter.tsp.modules.UttLocalizationModule
 import com.twitter.util.Future
 
-object TopicSocialProofStratoFedServerMain extends TopicSocialProofStratoFedServer
+object TopicSocialProofStratoFedServerMain etwittertends TopicSocialProofStratoFedServer
 
-trait TopicSocialProofStratoFedServer extends StratoFedServer {
+trait TopicSocialProofStratoFedServer etwittertends StratoFedServer {
   override def dest: String = "/s/topic-social-proof/topic-social-proof"
 
   override val modules: Seq[Module] =

@@ -1,25 +1,25 @@
 package com.twitter.search.earlybird.search.queries;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
+import org.apache.lucene.indetwitter.LeafReader;
+import org.apache.lucene.indetwitter.LeafReaderContetwittert;
+import org.apache.lucene.indetwitter.NumericDocValues;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.IndetwitterSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Weight;
 
 import com.twitter.search.common.query.DefaultFilterWeight;
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.util.AllDocsIterator;
+import com.twitter.search.core.earlybird.indetwitter.util.RangeFilterDISI;
 
-public final class BadUserRepFilter extends Query {
+public final class BadUserRepFilter etwittertends Query {
   /**
    * Creates a query that filters out results coming from users with bad reputation.
    *
@@ -62,36 +62,36 @@ public final class BadUserRepFilter extends Query {
   }
 
   @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
+  public Weight createWeight(IndetwitterSearcher searcher, ScoreMode scoreMode, float boost) {
     return new DefaultFilterWeight(this) {
       @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        LeafReader reader = context.reader();
-        if (!(reader instanceof EarlybirdIndexSegmentAtomicReader)) {
+      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
+        LeafReader reader = contetwittert.reader();
+        if (!(reader instanceof EarlybirdIndetwitterSegmentAtomicReader)) {
           return new AllDocsIterator(reader);
         }
 
-        return new BadUserExcludeDocIdSetIterator(
-            (EarlybirdIndexSegmentAtomicReader) context.reader(), minTweepCred);
+        return new BadUserEtwittercludeDocIdSetIterator(
+            (EarlybirdIndetwitterSegmentAtomicReader) contetwittert.reader(), minTweepCred);
       }
     };
   }
 
-  private static final class BadUserExcludeDocIdSetIterator extends RangeFilterDISI {
+  private static final class BadUserEtwittercludeDocIdSetIterator etwittertends RangeFilterDISI {
     private final NumericDocValues userReputationDocValues;
     private final int minTweepCred;
 
-    BadUserExcludeDocIdSetIterator(EarlybirdIndexSegmentAtomicReader indexReader,
-                                   int minTweepCred) throws IOException {
-      super(indexReader);
+    BadUserEtwittercludeDocIdSetIterator(EarlybirdIndetwitterSegmentAtomicReader indetwitterReader,
+                                   int minTweepCred) throws IOEtwitterception {
+      super(indetwitterReader);
       this.userReputationDocValues =
-          indexReader.getNumericDocValues(EarlybirdFieldConstant.USER_REPUTATION.getFieldName());
+          indetwitterReader.getNumericDocValues(EarlybirdFieldConstant.USER_REPUTATION.getFieldName());
       this.minTweepCred = minTweepCred;
     }
 
     @Override
-    public boolean shouldReturnDoc() throws IOException {
-      // We need this explicit casting to byte, because of how we encode and decode features in our
+    public boolean shouldReturnDoc() throws IOEtwitterception {
+      // We need this etwitterplicit casting to byte, because of how we encode and decode features in our
       // encoded_tweet_features field. If a feature is an int (uses all 32 bits of the int), then
       // encoding the feature and then decoding it preserves its original value. However, if the
       // feature does not use the entire int (and especially if it uses bits somewhere in the middle
@@ -108,7 +108,7 @@ public final class BadUserRepFilter extends Query {
       // produced by those normalizers, as well as all code that depends on those values.
       //
       // So for now, just cast this value to a byte, to get the proper negative value.
-      return userReputationDocValues.advanceExact(docID())
+      return userReputationDocValues.advanceEtwitteract(docID())
           && ((byte) userReputationDocValues.longValue() >= minTweepCred);
     }
   }

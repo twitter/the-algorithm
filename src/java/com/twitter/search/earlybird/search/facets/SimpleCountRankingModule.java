@@ -8,7 +8,7 @@ import com.twitter.search.core.earlybird.facets.FacetCountState.FacetFieldResult
 import com.twitter.search.earlybird.search.EarlybirdLuceneSearcher;
 import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
 
-public class SimpleCountRankingModule extends FacetRankingModule {
+public class SimpleCountRankingModule etwittertends FacetRankingModule {
 
   @Override
   public void prepareResults(
@@ -16,8 +16,8 @@ public class SimpleCountRankingModule extends FacetRankingModule {
       FacetCountState<ThriftFacetFieldResults> facetCountState) {
     Iterator<FacetFieldResults<ThriftFacetFieldResults>> fieldResultsIterator =
             facetCountState.getFacetFieldResultsIterator();
-    while (fieldResultsIterator.hasNext()) {
-      FacetFieldResults<ThriftFacetFieldResults> state = fieldResultsIterator.next();
+    while (fieldResultsIterator.hasNetwittert()) {
+      FacetFieldResults<ThriftFacetFieldResults> state = fieldResultsIterator.netwittert();
       if (!state.isFinished()) {
         Schema.FieldInfo facetField =
                 facetCountState.getSchema().getFacetFieldByFacetName(state.facetName);

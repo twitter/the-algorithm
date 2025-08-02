@@ -24,7 +24,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResult;
 import com.twitter.search.earlybird.thrift.ThriftSearchResults;
 import com.twitter.search.earlybird_root.collectors.RecencyMergeCollector;
 import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.util.Future;
 
 import static com.twitter.search.earlybird_root.mergers.RecencyResponseMerger
@@ -36,45 +36,45 @@ import static com.twitter.search.earlybird_root.mergers.RecencyResponseMerger
 import static com.twitter.search.earlybird_root.mergers.RecencyResponseMerger
     .EarlyTerminationTrimmingStats.Type.NOT_EARLY_TERMINATED;
 import static com.twitter.search.earlybird_root.mergers.RecencyResponseMerger
-    .EarlyTerminationTrimmingStats.Type.TERMINATED_GOT_EXACT_NUM_RESULTS;
+    .EarlyTerminationTrimmingStats.Type.TERMINATED_GOT_EtwitterACT_NUM_RESULTS;
 import static com.twitter.search.earlybird_root.mergers.RecencyResponseMerger
     .EarlyTerminationTrimmingStats.Type.TRUNCATED;
 
 /**
  * Merger class to merge recency search EarlybirdResponse objects.
  */
-public class RecencyResponseMerger extends EarlybirdResponseMerger {
+public class RecencyResponseMerger etwittertends EarlybirdResponseMerger {
   private static final Logger LOG = LoggerFactory.getLogger(RecencyResponseMerger.class);
 
   private static final SearchTimerStats RECENCY_TIMER =
-      SearchTimerStats.export("merge_recency", TimeUnit.NANOSECONDS, false, true);
+      SearchTimerStats.etwitterport("merge_recency", TimeUnit.NANOSECONDS, false, true);
 
   @VisibleForTesting
   static final String TERMINATED_COLLECTED_ENOUGH_RESULTS =
       "terminated_collected_enough_results";
 
-  // Allowed replication lag relative to all replicas.  Replication lag exceeding
+  // Allowed replication lag relative to all replicas.  Replication lag etwitterceeding
   // this amount may result in some tweets from the replica not returned in search.
   private static final long ALLOWED_REPLICATION_LAG_MS = 10000;
 
   private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
 
   @VisibleForTesting
-  static final SearchCounter RECENCY_ZERO_RESULT_COUNT_AFTER_FILTERING_MAX_MIN_IDS =
-      SearchCounter.export("merger_recency_zero_result_count_after_filtering_max_min_ids");
+  static final SearchCounter RECENCY_ZERO_RESULT_COUNT_AFTER_FILTERING_MAtwitter_MIN_IDS =
+      SearchCounter.etwitterport("merger_recency_zero_result_count_after_filtering_matwitter_min_ids");
 
   @VisibleForTesting
   static final SearchCounter RECENCY_TRIMMED_TOO_MANY_RESULTS_COUNT =
-      SearchCounter.export("merger_recency_trimmed_too_many_results_count");
+      SearchCounter.etwitterport("merger_recency_trimmed_too_many_results_count");
 
   private static final SearchCounter RECENCY_TIER_MERGE_EARLY_TERMINATED_WITH_NOT_ENOUGH_RESULTS =
-      SearchCounter.export("merger_recency_tier_merge_early_terminated_with_not_enough_results");
+      SearchCounter.etwitterport("merger_recency_tier_merge_early_terminated_with_not_enough_results");
 
   private static final SearchCounter RECENCY_CLEARED_EARLY_TERMINATION_COUNT =
-      SearchCounter.export("merger_recency_cleared_early_termination_count");
+      SearchCounter.etwitterport("merger_recency_cleared_early_termination_count");
 
   /**
-   * Results were truncated because merged results exceeded the requested numResults.
+   * Results were truncated because merged results etwitterceeded the requested numResults.
    */
   @VisibleForTesting
   static final String MERGING_EARLY_TERMINATION_REASON_TRUNCATED =
@@ -108,7 +108,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
        */
       ALREADY_EARLY_TERMINATED,
       /**
-       * Was not terminated when merged, but results were filtered due to min/max ranges.
+       * Was not terminated when merged, but results were filtered due to min/matwitter ranges.
        */
       FILTERED,
       /**
@@ -116,16 +116,16 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
        */
       TRUNCATED,
       /**
-       * Was not terminated when merged, but results were filtered due to min/max ranges and
+       * Was not terminated when merged, but results were filtered due to min/matwitter ranges and
        * truncated.
        */
       FILTERED_AND_TRUNCATED,
       /**
-       * When the search asks for X result, and we get exactly X results back, without trimming
+       * When the search asks for twitter result, and we get etwitteractly twitter results back, without trimming
        * or truncating on the tail side (min_id side), we still mark the search as early terminated.
        * This is because later tiers possibly has more results.
        */
-      TERMINATED_GOT_EXACT_NUM_RESULTS,
+      TERMINATED_GOT_EtwitterACT_NUM_RESULTS,
     }
 
     /**
@@ -134,21 +134,21 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
      */
     private final ImmutableMap<Type, SearchCounter> searchCounterMap;
 
-    EarlyTerminationTrimmingStats(String prefix) {
+    EarlyTerminationTrimmingStats(String prefitwitter) {
       Map<Type, SearchCounter> tempMap = Maps.newEnumMap(Type.class);
 
       tempMap.put(NOT_EARLY_TERMINATED,
-          SearchCounter.export(prefix + "_not_early_terminated_after_merging"));
+          SearchCounter.etwitterport(prefitwitter + "_not_early_terminated_after_merging"));
       tempMap.put(ALREADY_EARLY_TERMINATED,
-          SearchCounter.export(prefix + "_early_terminated_before_merge_trimming"));
+          SearchCounter.etwitterport(prefitwitter + "_early_terminated_before_merge_trimming"));
       tempMap.put(TRUNCATED,
-          SearchCounter.export(prefix + "_early_terminated_after_merging_truncated"));
+          SearchCounter.etwitterport(prefitwitter + "_early_terminated_after_merging_truncated"));
       tempMap.put(FILTERED,
-          SearchCounter.export(prefix + "_early_terminated_after_merging_filtered"));
+          SearchCounter.etwitterport(prefitwitter + "_early_terminated_after_merging_filtered"));
       tempMap.put(FILTERED_AND_TRUNCATED,
-          SearchCounter.export(prefix + "_early_terminated_after_merging_filtered_and_truncated"));
-      tempMap.put(TERMINATED_GOT_EXACT_NUM_RESULTS,
-          SearchCounter.export(prefix + "_early_terminated_after_merging_got_exact_num_results"));
+          SearchCounter.etwitterport(prefitwitter + "_early_terminated_after_merging_filtered_and_truncated"));
+      tempMap.put(TERMINATED_GOT_EtwitterACT_NUM_RESULTS,
+          SearchCounter.etwitterport(prefitwitter + "_early_terminated_after_merging_got_etwitteract_num_results"));
 
       searchCounterMap = Maps.immutableEnumMap(tempMap);
     }
@@ -160,11 +160,11 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
 
   private final EarlybirdFeatureSchemaMerger featureSchemaMerger;
 
-  public RecencyResponseMerger(EarlybirdRequestContext requestContext,
+  public RecencyResponseMerger(EarlybirdRequestContetwittert requestContetwittert,
                                List<Future<EarlybirdResponse>> responses,
                                ResponseAccumulator mode,
                                EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    super(requestContext, responses, mode);
+    super(requestContetwittert, responses, mode);
     this.featureSchemaMerger = featureSchemaMerger;
   }
 
@@ -180,16 +180,16 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
 
   @Override
   protected EarlybirdResponse internalMerge(EarlybirdResponse mergedResponse) {
-    // The merged maxSearchedStatusId and minSearchedStatusId
-    long maxId = findMaxFullySearchedStatusID();
+    // The merged matwitterSearchedStatusId and minSearchedStatusId
+    long matwitterId = findMatwitterFullySearchedStatusID();
     long minId = findMinFullySearchedStatusID();
 
     RecencyMergeCollector collector = new RecencyMergeCollector(responses.size());
     int totalResultSize = addResponsesToCollector(collector);
     ThriftSearchResults searchResults = collector.getAllSearchResults();
 
-    TrimStats trimStats = trimResults(searchResults, minId, maxId);
-    setMergedMaxSearchedStatusId(searchResults, maxId);
+    TrimStats trimStats = trimResults(searchResults, minId, matwitterId);
+    setMergedMatwitterSearchedStatusId(searchResults, matwitterId);
     setMergedMinSearchedStatusId(
         searchResults, minId, trimStats.getResultsTruncatedFromTailCount() > 0);
 
@@ -210,7 +210,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
 
     featureSchemaMerger.collectAndSetFeatureSchemaInResponse(
         searchResults,
-        requestContext,
+        requestContetwittert,
         "merger_recency_tier",
         accumulatedResponses.getSuccessResponses());
 
@@ -226,7 +226,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
    * After merge, we get [102, 101, 92], with minResultId == 92. Since results from
    * partition 2 is not early terminated, 92 is the tier bottom here. Since results are
    * filtered, early termination for merged result is set to true, so blender will call again,
-   * with maxDocId == 91. This time we get result:
+   * with matwitterDocId == 91. This time we get result:
    * Results from partition 1: [91 81], minSearchedStatusId is 81
    * Results from partition 2: [], minSearchedStatusId is still 92
    * After merge we get [] and minSearchedStatusId is still 92. No progress can be made on
@@ -234,11 +234,11 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
    *
    * So in this case, we clear the early termination flag to tell blender there is no more
    * result in this tier. Tweets below tier bottom will be missed, but that also happens
-   * without this step, as the next pagination call will return empty results anyway.
+   * without this step, as the netwittert pagination call will return empty results anyway.
    * So even if there is NOT overlap between tiers, this is still better.
    *
    * Return true if early termination is cleared due to this, otherwise return false.
-   * To be safe, we do nothing here to keep existing behavior and only override it in
+   * To be safe, we do nothing here to keep etwitteristing behavior and only override it in
    * StrictRecencyResponseMerger.
    */
   protected boolean clearEarlyTerminationIfReachingTierBottom(EarlybirdResponse mergedResponse) {
@@ -246,7 +246,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
   }
 
   /**
-   * Determines if the merged response should be early-terminated when it has exactly as many
+   * Determines if the merged response should be early-terminated when it has etwitteractly as many
    * trimmed results as requested, as is not early-terminated because of other reasons.
    */
   protected boolean shouldEarlyTerminateWhenEnoughTrimmedResults() {
@@ -296,7 +296,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
         earlyTerminationInfo.setEarlyTerminated(true);
         earlyTerminationInfo.addToMergedEarlyTerminationReasons(
             TERMINATED_COLLECTED_ENOUGH_RESULTS);
-        stats.getCounterFor(TERMINATED_GOT_EXACT_NUM_RESULTS).increment();
+        stats.getCounterFor(TERMINATED_GOT_EtwitterACT_NUM_RESULTS).increment();
       } else {
         stats.getCounterFor(NOT_EARLY_TERMINATED).increment();
       }
@@ -374,7 +374,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
 
     if (accumulatedResponses.isMergingPartitionsWithinATier()) {
       // When merging partitions, the min ID should be the largest among the min IDs.
-      return Collections.max(accumulatedResponses.getMinIds());
+      return Collections.matwitter(accumulatedResponses.getMinIds());
     } else {
       // When merging tiers, the min ID should be the smallest among the min IDs.
       return Collections.min(accumulatedResponses.getMinIds());
@@ -382,31 +382,31 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
   }
 
   /**
-   * Find the max status id that has been _completely_ searched across all partitions. The
-   * smallest max status id across all partitions.
+   * Find the matwitter status id that has been _completely_ searched across all partitions. The
+   * smallest matwitter status id across all partitions.
    *
-   * This is where we reconcile replication lag by selecting the oldest maxid from the
+   * This is where we reconcile replication lag by selecting the oldest matwitterid from the
    * partitions searched.
    *
-   * @return the max searched status id found
+   * @return the matwitter searched status id found
    */
-   protected long findMaxFullySearchedStatusID() {
-    List<Long> maxIDs = accumulatedResponses.getMaxIds();
-    if (maxIDs.isEmpty()) {
-      return Long.MAX_VALUE;
+   protected long findMatwitterFullySearchedStatusID() {
+    List<Long> matwitterIDs = accumulatedResponses.getMatwitterIds();
+    if (matwitterIDs.isEmpty()) {
+      return Long.MAtwitter_VALUE;
     }
-    Collections.sort(maxIDs);
+    Collections.sort(matwitterIDs);
 
-    final long newest = maxIDs.get(maxIDs.size() - 1);
+    final long newest = matwitterIDs.get(matwitterIDs.size() - 1);
     final long newestTimestamp = SnowflakeIdParser.getTimestampFromTweetId(newest);
 
-    for (int i = 0; i < maxIDs.size(); i++) {
-      long oldest = maxIDs.get(i);
+    for (int i = 0; i < matwitterIDs.size(); i++) {
+      long oldest = matwitterIDs.get(i);
       long oldestTimestamp = SnowflakeIdParser.getTimestampFromTweetId(oldest);
       long deltaMs = newestTimestamp - oldestTimestamp;
 
       if (i == 0) {
-        LOG.debug("Max delta is {}", deltaMs);
+        LOG.debug("Matwitter delta is {}", deltaMs);
       }
 
       if (deltaMs < ALLOWED_REPLICATION_LAG_MS) {
@@ -434,19 +434,19 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
   protected TrimStats trimResults(
       ThriftSearchResults searchResults,
       long mergedMin,
-      long mergedMax) {
+      long mergedMatwitter) {
     if (!searchResults.isSetResults() || searchResults.getResultsSize() == 0) {
       // no results, no trimming needed
       return TrimStats.EMPTY_STATS;
     }
 
-    if (requestContext.getRequest().getSearchQuery().isSetSearchStatusIds()) {
+    if (requestContetwittert.getRequest().getSearchQuery().isSetSearchStatusIds()) {
       // Not a normal search, no trimming needed
       return TrimStats.EMPTY_STATS;
     }
 
     TrimStats trimStats = new TrimStats();
-    trimExactDups(searchResults, trimStats);
+    trimEtwitteractDups(searchResults, trimStats);
 
     int numResultsRequested = computeNumResultsToKeep();
     if (shouldSkipTrimmingWhenNotEnoughResults(searchResults, numResultsRequested)) {
@@ -458,7 +458,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
 
     if (accumulatedResponses.isMergingPartitionsWithinATier()) {
       trimResultsBasedSearchedRange(
-          searchResults, trimStats, numResultsRequested, mergedMin, mergedMax);
+          searchResults, trimStats, numResultsRequested, mergedMin, mergedMatwitter);
     }
 
     // Respect "computeNumResultsToKeep()" here, only keep "computeNumResultsToKeep()" results.
@@ -480,9 +480,9 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
 
 
   /**
-   * Trim results based on search range. The search range [x, y] is determined by:
-   *   x is the maximun of the minimun search IDs;
-   *   y is the minimun of the maximum search IDs.
+   * Trim results based on search range. The search range [twitter, y] is determined by:
+   *   twitter is the matwitterimun of the minimun search IDs;
+   *   y is the minimun of the matwitterimum search IDs.
    *
    * Ids out side of this range are removed.
    * If we do not get enough results after the removal, we add IDs back until we get enough results.
@@ -493,7 +493,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
                                              TrimStats trimStats,
                                              int numResultsRequested,
                                              long mergedMin,
-                                             long mergedMax) {
+                                             long mergedMatwitter) {
     ///////////////////////////////////////////////////////////////////
     // we have more results than requested, let's do some trimming
     ///////////////////////////////////////////////////////////////////
@@ -501,21 +501,21 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
     // Save the original results before trimming
     List<ThriftSearchResult> originalResults = searchResults.getResults();
 
-    filterResultsByMergedMinMaxIds(searchResults, mergedMax, mergedMin, trimStats);
+    filterResultsByMergedMinMatwitterIds(searchResults, mergedMatwitter, mergedMin, trimStats);
 
     // This does happen. It is hard to say what we should do here so we just return the original
     // result here.
     if (searchResults.getResultsSize() == 0) {
-      RECENCY_ZERO_RESULT_COUNT_AFTER_FILTERING_MAX_MIN_IDS.increment();
+      RECENCY_ZERO_RESULT_COUNT_AFTER_FILTERING_MAtwitter_MIN_IDS.increment();
       searchResults.setResults(originalResults);
 
-      // Clean up min/mix filtered count, since we're bringing back whatever we just filtered.
-      trimStats.clearMaxIdFilterCount();
+      // Clean up min/mitwitter filtered count, since we're bringing back whatever we just filtered.
+      trimStats.clearMatwitterIdFilterCount();
       trimStats.clearMinIdFilterCount();
 
       if (LOG.isDebugEnabled() || responseMessageBuilder.isDebugMode()) {
         String errMsg = "No trimming is done as filtered results is empty. "
-            + "maxId=" + mergedMax + ",minId=" + mergedMin;
+            + "matwitterId=" + mergedMatwitter + ",minId=" + mergedMin;
         LOG.debug(errMsg);
         responseMessageBuilder.append(errMsg + "\n");
       }
@@ -550,7 +550,7 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
             ThriftSearchResult result = originalResults.get(i);
             if (result.getId() > firstTrimmedResultId) {
               trimmedResults.add(result);
-              trimStats.decreaseMaxIdFilterCount();
+              trimStats.decreaseMatwitterIdFilterCount();
               if (trimmedResults.size() >= numResultsRequested) {
                 break;
               }
@@ -593,10 +593,10 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
     searchResults.setMinSearchedStatusID(merged);
   }
 
-  private void setMergedMaxSearchedStatusId(
+  private void setMergedMatwitterSearchedStatusId(
       ThriftSearchResults searchResults,
-      long currentMergedMax) {
-    if (accumulatedResponses.getMaxIds().isEmpty()) {
+      long currentMergedMatwitter) {
+    if (accumulatedResponses.getMatwitterIds().isEmpty()) {
       return;
     }
 
@@ -604,28 +604,28 @@ public class RecencyResponseMerger extends EarlybirdResponseMerger {
     if (searchResults == null
         || !searchResults.isSetResults()
         || searchResults.getResultsSize() == 0) {
-      merged = currentMergedMax;
+      merged = currentMergedMatwitter;
     } else {
       List<ThriftSearchResult> results = searchResults.getResults();
       long firstResultId = results.get(0).getId();
       long lastResultId = results.get(results.size() - 1).getId();
-      long maxResultId = Math.max(firstResultId, lastResultId);
-      merged = Math.max(maxResultId, currentMergedMax);
+      long matwitterResultId = Math.matwitter(firstResultId, lastResultId);
+      merged = Math.matwitter(matwitterResultId, currentMergedMatwitter);
     }
 
-    searchResults.setMaxSearchedStatusID(merged);
+    searchResults.setMatwitterSearchedStatusID(merged);
   }
 
-  protected static void filterResultsByMergedMinMaxIds(
-      ThriftSearchResults results, long maxStatusId, long minStatusId, TrimStats trimStats) {
+  protected static void filterResultsByMergedMinMatwitterIds(
+      ThriftSearchResults results, long matwitterStatusId, long minStatusId, TrimStats trimStats) {
     List<ThriftSearchResult> trimedResults =
         Lists.newArrayListWithCapacity(results.getResultsSize());
 
     for (ThriftSearchResult result : results.getResults()) {
       long statusId = result.getId();
 
-      if (statusId > maxStatusId) {
-        trimStats.increaseMaxIdFilterCount();
+      if (statusId > matwitterStatusId) {
+        trimStats.increaseMatwitterIdFilterCount();
       } else if (statusId < minStatusId) {
         trimStats.increaseMinIdFilterCount();
       } else {

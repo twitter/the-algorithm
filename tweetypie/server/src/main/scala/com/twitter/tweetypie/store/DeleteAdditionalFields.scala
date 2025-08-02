@@ -3,10 +3,10 @@ package store
 
 import com.twitter.tweetypie.thriftscala._
 
-object DeleteAdditionalFields extends TweetStore.SyncModule {
+object DeleteAdditionalFields etwittertends TweetStore.SyncModule {
 
   case class Event(tweetId: TweetId, fieldIds: Seq[FieldId], userId: UserId, timestamp: Time)
-      extends SyncTweetStoreEvent("delete_additional_fields") {
+      etwittertends SyncTweetStoreEvent("delete_additional_fields") {
 
     def toAsyncRequest: AsyncDeleteAdditionalFieldsRequest =
       AsyncDeleteAdditionalFieldsRequest(
@@ -21,7 +21,7 @@ object DeleteAdditionalFields extends TweetStore.SyncModule {
     val deleteAdditionalFields: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val deleteAdditionalFields: FutureEffect[Event] = wrap(
       underlying.deleteAdditionalFields)
   }
@@ -44,7 +44,7 @@ object DeleteAdditionalFields extends TweetStore.SyncModule {
   }
 }
 
-object AsyncDeleteAdditionalFields extends TweetStore.AsyncModule {
+object AsyncDeleteAdditionalFields etwittertends TweetStore.AsyncModule {
 
   object Event {
     def fromAsyncRequest(
@@ -70,7 +70,7 @@ object AsyncDeleteAdditionalFields extends TweetStore.AsyncModule {
     userId: UserId,
     optUser: Option[User],
     timestamp: Time)
-      extends AsyncTweetStoreEvent("async_delete_additional_fields")
+      etwittertends AsyncTweetStoreEvent("async_delete_additional_fields")
       with TweetStoreTweetEvent {
 
     def toAsyncRequest(
@@ -99,7 +99,7 @@ object AsyncDeleteAdditionalFields extends TweetStore.AsyncModule {
   }
 
   case class RetryEvent(action: AsyncWriteAction, event: Event)
-      extends TweetStoreRetryEvent[Event] {
+      etwittertends TweetStoreRetryEvent[Event] {
 
     override val eventType: AsyncWriteEventType.DeleteAdditionalFields.type =
       AsyncWriteEventType.DeleteAdditionalFields
@@ -111,7 +111,7 @@ object AsyncDeleteAdditionalFields extends TweetStore.AsyncModule {
     val retryAsyncDeleteAdditionalFields: FutureEffect[TweetStoreRetryEvent[Event]]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val asyncDeleteAdditionalFields: FutureEffect[Event] = wrap(
       underlying.asyncDeleteAdditionalFields)
     override val retryAsyncDeleteAdditionalFields: FutureEffect[TweetStoreRetryEvent[Event]] = wrap(
@@ -134,8 +134,8 @@ object AsyncDeleteAdditionalFields extends TweetStore.AsyncModule {
           eventBusEnqueueStore
         )
 
-      def build[E <: TweetStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
-        FutureEffect.inParallel[E](stores.map(extract): _*)
+      def build[E <: TweetStoreEvent](etwittertract: Store => FutureEffect[E]): FutureEffect[E] =
+        FutureEffect.inParallel[E](stores.map(etwittertract): _*)
 
       new Store {
         override val asyncDeleteAdditionalFields: FutureEffect[Event] = build(
@@ -147,16 +147,16 @@ object AsyncDeleteAdditionalFields extends TweetStore.AsyncModule {
   }
 }
 
-object ReplicatedDeleteAdditionalFields extends TweetStore.ReplicatedModule {
+object ReplicatedDeleteAdditionalFields etwittertends TweetStore.ReplicatedModule {
 
   case class Event(tweetId: TweetId, fieldIds: Seq[FieldId])
-      extends ReplicatedTweetStoreEvent("replicated_delete_additional_fields")
+      etwittertends ReplicatedTweetStoreEvent("replicated_delete_additional_fields")
 
   trait Store {
     val replicatedDeleteAdditionalFields: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val replicatedDeleteAdditionalFields: FutureEffect[Event] =
       wrap(underlying.replicatedDeleteAdditionalFields)
   }

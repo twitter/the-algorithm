@@ -109,13 +109,13 @@ public class ProductQuantizer {
     return (cPtr == 0) ? null : new ClusteringParameters(cPtr, false);
   }
 
-  public void setAssign_index(Index value) {
-    swigfaissJNI.ProductQuantizer_assign_index_set(swigCPtr, this, Index.getCPtr(value), value);
+  public void setAssign_indetwitter(Indetwitter value) {
+    swigfaissJNI.ProductQuantizer_assign_indetwitter_set(swigCPtr, this, Indetwitter.getCPtr(value), value);
   }
 
-  public Index getAssign_index() {
-    long cPtr = swigfaissJNI.ProductQuantizer_assign_index_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Index(cPtr, false);
+  public Indetwitter getAssign_indetwitter() {
+    long cPtr = swigfaissJNI.ProductQuantizer_assign_indetwitter_get(swigCPtr, this);
+    return (cPtr == 0) ? null : new Indetwitter(cPtr, false);
   }
 
   public void setCentroids(FloatVector value) {
@@ -132,8 +132,8 @@ public class ProductQuantizer {
     return (cPtr == 0) ? null : new SWIGTYPE_p_float(cPtr, false);
   }
 
-  public void train(int n, SWIGTYPE_p_float x) {
-    swigfaissJNI.ProductQuantizer_train(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x));
+  public void train(int n, SWIGTYPE_p_float twitter) {
+    swigfaissJNI.ProductQuantizer_train(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(twitter));
   }
 
   public ProductQuantizer(long d, long M, long nbits) {
@@ -152,60 +152,60 @@ public class ProductQuantizer {
     swigfaissJNI.ProductQuantizer_set_params(swigCPtr, this, SWIGTYPE_p_float.getCPtr(centroids), m);
   }
 
-  public void compute_code(SWIGTYPE_p_float x, SWIGTYPE_p_unsigned_char code) {
-    swigfaissJNI.ProductQuantizer_compute_code(swigCPtr, this, SWIGTYPE_p_float.getCPtr(x), SWIGTYPE_p_unsigned_char.getCPtr(code));
+  public void compute_code(SWIGTYPE_p_float twitter, SWIGTYPE_p_unsigned_char code) {
+    swigfaissJNI.ProductQuantizer_compute_code(swigCPtr, this, SWIGTYPE_p_float.getCPtr(twitter), SWIGTYPE_p_unsigned_char.getCPtr(code));
   }
 
-  public void compute_codes(SWIGTYPE_p_float x, SWIGTYPE_p_unsigned_char codes, long n) {
-    swigfaissJNI.ProductQuantizer_compute_codes(swigCPtr, this, SWIGTYPE_p_float.getCPtr(x), SWIGTYPE_p_unsigned_char.getCPtr(codes), n);
+  public void compute_codes(SWIGTYPE_p_float twitter, SWIGTYPE_p_unsigned_char codes, long n) {
+    swigfaissJNI.ProductQuantizer_compute_codes(swigCPtr, this, SWIGTYPE_p_float.getCPtr(twitter), SWIGTYPE_p_unsigned_char.getCPtr(codes), n);
   }
 
-  public void compute_codes_with_assign_index(SWIGTYPE_p_float x, SWIGTYPE_p_unsigned_char codes, long n) {
-    swigfaissJNI.ProductQuantizer_compute_codes_with_assign_index(swigCPtr, this, SWIGTYPE_p_float.getCPtr(x), SWIGTYPE_p_unsigned_char.getCPtr(codes), n);
+  public void compute_codes_with_assign_indetwitter(SWIGTYPE_p_float twitter, SWIGTYPE_p_unsigned_char codes, long n) {
+    swigfaissJNI.ProductQuantizer_compute_codes_with_assign_indetwitter(swigCPtr, this, SWIGTYPE_p_float.getCPtr(twitter), SWIGTYPE_p_unsigned_char.getCPtr(codes), n);
   }
 
-  public void decode(SWIGTYPE_p_unsigned_char code, SWIGTYPE_p_float x) {
-    swigfaissJNI.ProductQuantizer_decode__SWIG_0(swigCPtr, this, SWIGTYPE_p_unsigned_char.getCPtr(code), SWIGTYPE_p_float.getCPtr(x));
+  public void decode(SWIGTYPE_p_unsigned_char code, SWIGTYPE_p_float twitter) {
+    swigfaissJNI.ProductQuantizer_decode__SWIG_0(swigCPtr, this, SWIGTYPE_p_unsigned_char.getCPtr(code), SWIGTYPE_p_float.getCPtr(twitter));
   }
 
-  public void decode(SWIGTYPE_p_unsigned_char code, SWIGTYPE_p_float x, long n) {
-    swigfaissJNI.ProductQuantizer_decode__SWIG_1(swigCPtr, this, SWIGTYPE_p_unsigned_char.getCPtr(code), SWIGTYPE_p_float.getCPtr(x), n);
+  public void decode(SWIGTYPE_p_unsigned_char code, SWIGTYPE_p_float twitter, long n) {
+    swigfaissJNI.ProductQuantizer_decode__SWIG_1(swigCPtr, this, SWIGTYPE_p_unsigned_char.getCPtr(code), SWIGTYPE_p_float.getCPtr(twitter), n);
   }
 
   public void compute_code_from_distance_table(SWIGTYPE_p_float tab, SWIGTYPE_p_unsigned_char code) {
     swigfaissJNI.ProductQuantizer_compute_code_from_distance_table(swigCPtr, this, SWIGTYPE_p_float.getCPtr(tab), SWIGTYPE_p_unsigned_char.getCPtr(code));
   }
 
-  public void compute_distance_table(SWIGTYPE_p_float x, SWIGTYPE_p_float dis_table) {
-    swigfaissJNI.ProductQuantizer_compute_distance_table(swigCPtr, this, SWIGTYPE_p_float.getCPtr(x), SWIGTYPE_p_float.getCPtr(dis_table));
+  public void compute_distance_table(SWIGTYPE_p_float twitter, SWIGTYPE_p_float dis_table) {
+    swigfaissJNI.ProductQuantizer_compute_distance_table(swigCPtr, this, SWIGTYPE_p_float.getCPtr(twitter), SWIGTYPE_p_float.getCPtr(dis_table));
   }
 
-  public void compute_inner_prod_table(SWIGTYPE_p_float x, SWIGTYPE_p_float dis_table) {
-    swigfaissJNI.ProductQuantizer_compute_inner_prod_table(swigCPtr, this, SWIGTYPE_p_float.getCPtr(x), SWIGTYPE_p_float.getCPtr(dis_table));
+  public void compute_inner_prod_table(SWIGTYPE_p_float twitter, SWIGTYPE_p_float dis_table) {
+    swigfaissJNI.ProductQuantizer_compute_inner_prod_table(swigCPtr, this, SWIGTYPE_p_float.getCPtr(twitter), SWIGTYPE_p_float.getCPtr(dis_table));
   }
 
-  public void compute_distance_tables(long nx, SWIGTYPE_p_float x, SWIGTYPE_p_float dis_tables) {
-    swigfaissJNI.ProductQuantizer_compute_distance_tables(swigCPtr, this, nx, SWIGTYPE_p_float.getCPtr(x), SWIGTYPE_p_float.getCPtr(dis_tables));
+  public void compute_distance_tables(long ntwitter, SWIGTYPE_p_float twitter, SWIGTYPE_p_float dis_tables) {
+    swigfaissJNI.ProductQuantizer_compute_distance_tables(swigCPtr, this, ntwitter, SWIGTYPE_p_float.getCPtr(twitter), SWIGTYPE_p_float.getCPtr(dis_tables));
   }
 
-  public void compute_inner_prod_tables(long nx, SWIGTYPE_p_float x, SWIGTYPE_p_float dis_tables) {
-    swigfaissJNI.ProductQuantizer_compute_inner_prod_tables(swigCPtr, this, nx, SWIGTYPE_p_float.getCPtr(x), SWIGTYPE_p_float.getCPtr(dis_tables));
+  public void compute_inner_prod_tables(long ntwitter, SWIGTYPE_p_float twitter, SWIGTYPE_p_float dis_tables) {
+    swigfaissJNI.ProductQuantizer_compute_inner_prod_tables(swigCPtr, this, ntwitter, SWIGTYPE_p_float.getCPtr(twitter), SWIGTYPE_p_float.getCPtr(dis_tables));
   }
 
-  public void search(SWIGTYPE_p_float x, long nx, SWIGTYPE_p_unsigned_char codes, long ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMaxT_float_int64_t_t_t res, boolean init_finalize_heap) {
-    swigfaissJNI.ProductQuantizer_search__SWIG_0(swigCPtr, this, SWIGTYPE_p_float.getCPtr(x), nx, SWIGTYPE_p_unsigned_char.getCPtr(codes), ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMaxT_float_int64_t_t_t.getCPtr(res), init_finalize_heap);
+  public void search(SWIGTYPE_p_float twitter, long ntwitter, SWIGTYPE_p_unsigned_char codes, long ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMatwitterT_float_int64_t_t_t res, boolean init_finalize_heap) {
+    swigfaissJNI.ProductQuantizer_search__SWIG_0(swigCPtr, this, SWIGTYPE_p_float.getCPtr(twitter), ntwitter, SWIGTYPE_p_unsigned_char.getCPtr(codes), ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMatwitterT_float_int64_t_t_t.getCPtr(res), init_finalize_heap);
   }
 
-  public void search(SWIGTYPE_p_float x, long nx, SWIGTYPE_p_unsigned_char codes, long ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMaxT_float_int64_t_t_t res) {
-    swigfaissJNI.ProductQuantizer_search__SWIG_1(swigCPtr, this, SWIGTYPE_p_float.getCPtr(x), nx, SWIGTYPE_p_unsigned_char.getCPtr(codes), ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMaxT_float_int64_t_t_t.getCPtr(res));
+  public void search(SWIGTYPE_p_float twitter, long ntwitter, SWIGTYPE_p_unsigned_char codes, long ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMatwitterT_float_int64_t_t_t res) {
+    swigfaissJNI.ProductQuantizer_search__SWIG_1(swigCPtr, this, SWIGTYPE_p_float.getCPtr(twitter), ntwitter, SWIGTYPE_p_unsigned_char.getCPtr(codes), ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMatwitterT_float_int64_t_t_t.getCPtr(res));
   }
 
-  public void search_ip(SWIGTYPE_p_float x, long nx, SWIGTYPE_p_unsigned_char codes, long ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMinT_float_int64_t_t_t res, boolean init_finalize_heap) {
-    swigfaissJNI.ProductQuantizer_search_ip__SWIG_0(swigCPtr, this, SWIGTYPE_p_float.getCPtr(x), nx, SWIGTYPE_p_unsigned_char.getCPtr(codes), ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMinT_float_int64_t_t_t.getCPtr(res), init_finalize_heap);
+  public void search_ip(SWIGTYPE_p_float twitter, long ntwitter, SWIGTYPE_p_unsigned_char codes, long ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMinT_float_int64_t_t_t res, boolean init_finalize_heap) {
+    swigfaissJNI.ProductQuantizer_search_ip__SWIG_0(swigCPtr, this, SWIGTYPE_p_float.getCPtr(twitter), ntwitter, SWIGTYPE_p_unsigned_char.getCPtr(codes), ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMinT_float_int64_t_t_t.getCPtr(res), init_finalize_heap);
   }
 
-  public void search_ip(SWIGTYPE_p_float x, long nx, SWIGTYPE_p_unsigned_char codes, long ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMinT_float_int64_t_t_t res) {
-    swigfaissJNI.ProductQuantizer_search_ip__SWIG_1(swigCPtr, this, SWIGTYPE_p_float.getCPtr(x), nx, SWIGTYPE_p_unsigned_char.getCPtr(codes), ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMinT_float_int64_t_t_t.getCPtr(res));
+  public void search_ip(SWIGTYPE_p_float twitter, long ntwitter, SWIGTYPE_p_unsigned_char codes, long ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMinT_float_int64_t_t_t res) {
+    swigfaissJNI.ProductQuantizer_search_ip__SWIG_1(swigCPtr, this, SWIGTYPE_p_float.getCPtr(twitter), ntwitter, SWIGTYPE_p_unsigned_char.getCPtr(codes), ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMinT_float_int64_t_t_t.getCPtr(res));
   }
 
   public void setSdc_table(FloatVector value) {
@@ -221,12 +221,12 @@ public class ProductQuantizer {
     swigfaissJNI.ProductQuantizer_compute_sdc_table(swigCPtr, this);
   }
 
-  public void search_sdc(SWIGTYPE_p_unsigned_char qcodes, long nq, SWIGTYPE_p_unsigned_char bcodes, long ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMaxT_float_int64_t_t_t res, boolean init_finalize_heap) {
-    swigfaissJNI.ProductQuantizer_search_sdc__SWIG_0(swigCPtr, this, SWIGTYPE_p_unsigned_char.getCPtr(qcodes), nq, SWIGTYPE_p_unsigned_char.getCPtr(bcodes), ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMaxT_float_int64_t_t_t.getCPtr(res), init_finalize_heap);
+  public void search_sdc(SWIGTYPE_p_unsigned_char qcodes, long nq, SWIGTYPE_p_unsigned_char bcodes, long ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMatwitterT_float_int64_t_t_t res, boolean init_finalize_heap) {
+    swigfaissJNI.ProductQuantizer_search_sdc__SWIG_0(swigCPtr, this, SWIGTYPE_p_unsigned_char.getCPtr(qcodes), nq, SWIGTYPE_p_unsigned_char.getCPtr(bcodes), ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMatwitterT_float_int64_t_t_t.getCPtr(res), init_finalize_heap);
   }
 
-  public void search_sdc(SWIGTYPE_p_unsigned_char qcodes, long nq, SWIGTYPE_p_unsigned_char bcodes, long ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMaxT_float_int64_t_t_t res) {
-    swigfaissJNI.ProductQuantizer_search_sdc__SWIG_1(swigCPtr, this, SWIGTYPE_p_unsigned_char.getCPtr(qcodes), nq, SWIGTYPE_p_unsigned_char.getCPtr(bcodes), ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMaxT_float_int64_t_t_t.getCPtr(res));
+  public void search_sdc(SWIGTYPE_p_unsigned_char qcodes, long nq, SWIGTYPE_p_unsigned_char bcodes, long ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMatwitterT_float_int64_t_t_t res) {
+    swigfaissJNI.ProductQuantizer_search_sdc__SWIG_1(swigCPtr, this, SWIGTYPE_p_unsigned_char.getCPtr(qcodes), nq, SWIGTYPE_p_unsigned_char.getCPtr(bcodes), ncodes, SWIGTYPE_p_faiss__HeapArrayT_faiss__CMatwitterT_float_int64_t_t_t.getCPtr(res));
   }
 
   public final static class train_type_t {
@@ -250,28 +250,28 @@ public class ProductQuantizer {
       for (int i = 0; i < swigValues.length; i++)
         if (swigValues[i].swigValue == swigValue)
           return swigValues[i];
-      throw new IllegalArgumentException("No enum " + train_type_t.class + " with value " + swigValue);
+      throw new IllegalArgumentEtwitterception("No enum " + train_type_t.class + " with value " + swigValue);
     }
 
     private train_type_t(String swigName) {
       this.swigName = swigName;
-      this.swigValue = swigNext++;
+      this.swigValue = swigNetwittert++;
     }
 
     private train_type_t(String swigName, int swigValue) {
       this.swigName = swigName;
       this.swigValue = swigValue;
-      swigNext = swigValue+1;
+      swigNetwittert = swigValue+1;
     }
 
     private train_type_t(String swigName, train_type_t swigEnum) {
       this.swigName = swigName;
       this.swigValue = swigEnum.swigValue;
-      swigNext = this.swigValue+1;
+      swigNetwittert = this.swigValue+1;
     }
 
     private static train_type_t[] swigValues = { Train_default, Train_hot_start, Train_shared, Train_hypercube, Train_hypercube_pca };
-    private static int swigNext = 0;
+    private static int swigNetwittert = 0;
     private final int swigValue;
     private final String swigName;
   }

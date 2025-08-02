@@ -4,10 +4,10 @@ import com.twitter.timelineranker.{thriftscala => thrift}
 
 /**
  * Represents what this language is associated with.
- * For example, "user" is one of the scopes and "event"
+ * For etwitterample, "user" is one of the scopes and "event"
  * could be another scope.
  */
-object LanguageScope extends Enumeration {
+object LanguageScope etwittertends Enumeration {
 
   // User scope means that the language is the user's language.
   val User: Value = Value(thrift.LanguageScope.User.value)
@@ -25,7 +25,7 @@ object LanguageScope extends Enumeration {
       case thrift.LanguageScope.Event =>
         Event
       case _ =>
-        throw new IllegalArgumentException(s"Unsupported language scope: $scope")
+        throw new IllegalArgumentEtwitterception(s"Unsupported language scope: $scope")
     }
   }
 
@@ -40,7 +40,7 @@ object LanguageScope extends Enumeration {
       case LanguageScope.Event =>
         thrift.LanguageScope.Event
       case _ =>
-        throw new IllegalArgumentException(s"Unsupported language scope: $scope")
+        throw new IllegalArgumentEtwitterception(s"Unsupported language scope: $scope")
     }
   }
 }

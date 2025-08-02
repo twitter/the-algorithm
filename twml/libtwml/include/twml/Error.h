@@ -3,7 +3,7 @@
 
 #ifdef __cplusplus
 #include <stddef.h>
-#include <stdexcept>
+#include <stdetwittercept>
 #include <stdint.h>
 #include <string>
 

@@ -1,10 +1,10 @@
 package com.twitter.tweetypie.serverutil
 
 import com.twitter.config.yaml.YamlMap
-import scala.util.matching.Regex
+import scala.util.matching.Regetwitter
 
 object PartnerMedia {
-  def load(yamlMap: YamlMap): Seq[Regex] =
+  def load(yamlMap: YamlMap): Seq[Regetwitter] =
     (httpOrHttps(yamlMap) ++ httpOnly(yamlMap)).map(_.r)
 
   private def httpOrHttps(yamlMap: YamlMap): Seq[String] =

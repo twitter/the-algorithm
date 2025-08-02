@@ -18,7 +18,7 @@ java_library(
         "3rdparty/jvm/org/apache/lucene:lucene-facet",
         "3rdparty/jvm/org/apache/thrift:libthrift",
         "src/java/com/twitter/common/base",
-        "src/java/com/twitter/common/text/util:token-util",
+        "src/java/com/twitter/common/tetwittert/util:token-util",
         "src/thrift/com/twitter/search/common:features-java",
         "src/thrift/com/twitter/search/common:schema-java",
     ],

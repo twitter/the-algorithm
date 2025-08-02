@@ -8,7 +8,7 @@
 
 package com.twitter.ann.faiss;
 
-public class IDSelectorArray extends IDSelector {
+public class IDSelectorArray etwittertends IDSelector {
   private transient long swigCPtr;
 
   protected IDSelectorArray(long cPtr, boolean cMemoryOwn) {

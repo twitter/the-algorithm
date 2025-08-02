@@ -18,19 +18,19 @@ public class FacetsResponseValidator implements ServiceResponseValidator<Earlybi
   @Override
   public Future<EarlybirdResponse> validate(EarlybirdResponse response) {
     if (!response.isSetSearchResults() || !response.getSearchResults().isSetResults()) {
-      return Future.exception(
-          new IllegalStateException(cluster + " didn't set search results."));
+      return Future.etwitterception(
+          new IllegalStateEtwitterception(cluster + " didn't set search results."));
     }
 
     if (!response.isSetFacetResults()) {
-      return Future.exception(
-          new IllegalStateException(
+      return Future.etwitterception(
+          new IllegalStateEtwitterception(
               cluster + " facets response does not have the facetResults field set."));
     }
 
     if (response.getFacetResults().getFacetFields().isEmpty()) {
-      return Future.exception(
-          new IllegalStateException(
+      return Future.etwitterception(
+          new IllegalStateEtwitterception(
               cluster + " facets response does not have any facet fields set."));
     }
 

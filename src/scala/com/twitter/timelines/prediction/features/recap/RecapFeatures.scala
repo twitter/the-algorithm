@@ -5,16 +5,16 @@ import com.twitter.ml.api.Feature.Binary
 import com.twitter.ml.api.Feature.Continuous
 import com.twitter.ml.api.Feature.Discrete
 import com.twitter.ml.api.Feature.SparseBinary
-import com.twitter.ml.api.Feature.Text
+import com.twitter.ml.api.Feature.Tetwittert
 import scala.collection.JavaConverters._
 
-object RecapFeatures extends RecapFeatures("")
-object InReplyToRecapFeatures extends RecapFeatures("in_reply_to_tweet")
+object RecapFeatures etwittertends RecapFeatures("")
+object InReplyToRecapFeatures etwittertends RecapFeatures("in_reply_to_tweet")
 
-class RecapFeatures(prefix: String) {
+class RecapFeatures(prefitwitter: String) {
   private def name(featureName: String): String = {
-    if (prefix.nonEmpty) {
-      s"$prefix.$featureName"
+    if (prefitwitter.nonEmpty) {
+      s"$prefitwitter.$featureName"
     } else {
       featureName
     }
@@ -28,20 +28,20 @@ class RecapFeatures(prefix: String) {
     new Binary(name("recap.client.is_android_tablet"), Set(ClientType).asJava)
 
   // features from userAgent
-  val CLIENT_NAME = new Text(name("recap.user_agent.client_name"), Set(ClientType).asJava)
+  val CLIENT_NAME = new Tetwittert(name("recap.user_agent.client_name"), Set(ClientType).asJava)
   val CLIENT_SOURCE = new Discrete(name("recap.user_agent.client_source"), Set(ClientType).asJava)
-  val CLIENT_VERSION = new Text(name("recap.user_agent.client_version"), Set(ClientVersion).asJava)
+  val CLIENT_VERSION = new Tetwittert(name("recap.user_agent.client_version"), Set(ClientVersion).asJava)
   val CLIENT_VERSION_CODE =
-    new Text(name("recap.user_agent.client_version_code"), Set(ClientVersion).asJava)
-  val DEVICE = new Text(name("recap.user_agent.device"), Set(DeviceType).asJava)
+    new Tetwittert(name("recap.user_agent.client_version_code"), Set(ClientVersion).asJava)
+  val DEVICE = new Tetwittert(name("recap.user_agent.device"), Set(DeviceType).asJava)
   val FROM_DOG_FOOD = new Binary(name("recap.meta.from_dog_food"), Set(UserAgent).asJava)
   val FROM_TWITTER_CLIENT =
     new Binary(name("recap.user_agent.from_twitter_client"), Set(UserAgent).asJava)
-  val MANUFACTURER = new Text(name("recap.user_agent.manufacturer"), Set(UserAgent).asJava)
-  val MODEL = new Text(name("recap.user_agent.model"), Set(UserAgent).asJava)
+  val MANUFACTURER = new Tetwittert(name("recap.user_agent.manufacturer"), Set(UserAgent).asJava)
+  val MODEL = new Tetwittert(name("recap.user_agent.model"), Set(UserAgent).asJava)
   val NETWORK_CONNECTION =
     new Discrete(name("recap.user_agent.network_connection"), Set(UserAgent).asJava)
-  val SDK_VERSION = new Text(name("recap.user_agent.sdk_version"), Set(AppId, UserAgent).asJava)
+  val SDK_VERSION = new Tetwittert(name("recap.user_agent.sdk_version"), Set(AppId, UserAgent).asJava)
 
   // engagement
   val IS_RETWEETED = new Binary(
@@ -234,8 +234,8 @@ class RecapFeatures(prefix: String) {
   val IS_OPEN_LINKED = new Binary(
     name("recap.engagement.is_open_linked"),
     Set(EngagementsPrivate, LinksClickedOn).asJava)
-  val IS_PHOTO_EXPANDED =
-    new Binary(name("recap.engagement.is_photo_expanded"), Set(EngagementsPrivate).asJava)
+  val IS_PHOTO_EtwitterPANDED =
+    new Binary(name("recap.engagement.is_photo_etwitterpanded"), Set(EngagementsPrivate).asJava)
   val IS_VIDEO_VIEWED =
     new Binary(name("recap.engagement.is_video_viewed"), Set(EngagementsPrivate).asJava)
   val IS_VIDEO_PLAYBACK_START =
@@ -299,31 +299,31 @@ class RecapFeatures(prefix: String) {
     new Binary("recap.engagement.is_topic_spec_neg_engagement", Set(EngagementsPrivate).asJava)
   val IS_UNFOLLOW_TOPIC =
     new Binary("recap.engagement.is_unfollow_topic", Set(EngagementsPrivate).asJava)
-  val IS_UNFOLLOW_TOPIC_EXPLICIT_POSITIVE_LABEL =
+  val IS_UNFOLLOW_TOPIC_EtwitterPLICIT_POSITIVE_LABEL =
     new Binary(
-      "recap.engagement.is_unfollow_topic_explicit_positive_label",
+      "recap.engagement.is_unfollow_topic_etwitterplicit_positive_label",
       Set(EngagementsPrivate).asJava)
   val IS_UNFOLLOW_TOPIC_IMPLICIT_POSITIVE_LABEL =
     new Binary(
       "recap.engagement.is_unfollow_topic_implicit_positive_label",
       Set(EngagementsPrivate).asJava)
-  val IS_UNFOLLOW_TOPIC_STRONG_EXPLICIT_NEGATIVE_LABEL =
+  val IS_UNFOLLOW_TOPIC_STRONG_EtwitterPLICIT_NEGATIVE_LABEL =
     new Binary(
-      "recap.engagement.is_unfollow_topic_strong_explicit_negative_label",
+      "recap.engagement.is_unfollow_topic_strong_etwitterplicit_negative_label",
       Set(EngagementsPrivate).asJava)
-  val IS_UNFOLLOW_TOPIC_EXPLICIT_NEGATIVE_LABEL =
+  val IS_UNFOLLOW_TOPIC_EtwitterPLICIT_NEGATIVE_LABEL =
     new Binary(
-      "recap.engagement.is_unfollow_topic_explicit_negative_label",
+      "recap.engagement.is_unfollow_topic_etwitterplicit_negative_label",
       Set(EngagementsPrivate).asJava)
   val IS_NOT_INTERESTED_IN =
     new Binary("recap.engagement.is_not_interested_in", Set(EngagementsPrivate).asJava)
-  val IS_NOT_INTERESTED_IN_EXPLICIT_POSITIVE_LABEL =
+  val IS_NOT_INTERESTED_IN_EtwitterPLICIT_POSITIVE_LABEL =
     new Binary(
-      "recap.engagement.is_not_interested_in_explicit_positive_label",
+      "recap.engagement.is_not_interested_in_etwitterplicit_positive_label",
       Set(EngagementsPrivate).asJava)
-  val IS_NOT_INTERESTED_IN_EXPLICIT_NEGATIVE_LABEL =
+  val IS_NOT_INTERESTED_IN_EtwitterPLICIT_NEGATIVE_LABEL =
     new Binary(
-      "recap.engagement.is_not_interested_in_explicit_negative_label",
+      "recap.engagement.is_not_interested_in_etwitterplicit_negative_label",
       Set(EngagementsPrivate).asJava)
   val IS_CARET_CLICKED =
     new Binary(name("recap.engagement.is_caret_clicked"), Set(EngagementsPrivate).asJava)
@@ -446,7 +446,7 @@ class RecapFeatures(prefix: String) {
   val IS_PROFILE_CLICKED_AND_PROFILE_BLOCK = new Binary(
     name("recap.engagement.is_profile_clicked_and_profile_block"),
     Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  // This derived label is the union of bad profile click engagements and existing negative feedback
+  // This derived label is the union of bad profile click engagements and etwitteristing negative feedback
   val IS_NEGATIVE_FEEDBACK_V2 = new Binary(
     name("recap.engagement.is_negative_feedback_v2"),
     Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
@@ -588,8 +588,8 @@ class RecapFeatures(prefix: String) {
     new Binary(name("recap.tweetfeature.is_reply"), Set(PublicReplies, PrivateReplies).asJava)
   val IS_RETWEET =
     new Binary(name("recap.tweetfeature.is_retweet"), Set(PublicRetweets, PrivateRetweets).asJava)
-  val IS_EXTENDED_REPLY = new Binary(
-    name("recap.tweetfeature.is_extended_reply"),
+  val IS_EtwitterTENDED_REPLY = new Binary(
+    name("recap.tweetfeature.is_etwittertended_reply"),
     Set(PublicReplies, PrivateReplies).asJava)
   val MATCH_UI_LANG = new Binary(
     name("recap.tweetfeature.match_ui_lang"),
@@ -685,7 +685,7 @@ class RecapFeatures(prefix: String) {
   val MENTIONED_SCREEN_NAMES = new SparseBinary(
     "entities.users.mentioned_screen_names",
     Set(DisplayName, UserVisibleFlag).asJava)
-  val MENTIONED_SCREEN_NAME = new Text(
+  val MENTIONED_SCREEN_NAME = new Tetwittert(
     "entities.users.mentioned_screen_names.member",
     Set(DisplayName, UserVisibleFlag).asJava)
   val HASHTAGS = new SparseBinary(
@@ -704,7 +704,7 @@ class RecapFeatures(prefix: String) {
     name("recap.searchfeature.fav_count"),
     Set(CountOfPrivateLikes, CountOfPublicLikes).asJava)
   val BLENDER_SCORE = new Continuous(name("recap.searchfeature.blender_score"))
-  val TEXT_SCORE = new Continuous(name("recap.searchfeature.text_score"))
+  val TEtwitterT_SCORE = new Continuous(name("recap.searchfeature.tetwittert_score"))
 
   // features related to content source
   val SOURCE_TYPE = new Discrete(name("recap.source.type"))
@@ -744,8 +744,8 @@ class RecapFeatures(prefix: String) {
     Set(EngagementScore).asJava)
   val PREDICTED_IS_CLICKED =
     new Continuous(name("recap.engagement_predicted.is_clicked"), Set(EngagementScore).asJava)
-  val PREDICTED_IS_PHOTO_EXPANDED = new Continuous(
-    name("recap.engagement_predicted.is_photo_expanded"),
+  val PREDICTED_IS_PHOTO_EtwitterPANDED = new Continuous(
+    name("recap.engagement_predicted.is_photo_etwitterpanded"),
     Set(EngagementScore).asJava)
   val PREDICTED_IS_DONT_LIKE =
     new Continuous(name("recap.engagement_predicted.is_dont_like"), Set(EngagementScore).asJava)

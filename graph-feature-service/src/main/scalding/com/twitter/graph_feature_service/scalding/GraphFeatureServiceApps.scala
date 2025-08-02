@@ -1,7 +1,7 @@
 package com.twitter.graph_feature_service.scalding
 
 import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding.RichDate
 import com.twitter.scalding.UniqueID
 import java.util.Calendar
@@ -14,7 +14,7 @@ import sun.util.calendar.BaseCalendar
   scalding remote run --target graph-feature-service/src/main/scalding/com/twitter/graph_feature_service/scalding:graph_feature_service_adhoc_job
  */
 object GraphFeatureServiceAdhocApp
-    extends GraphFeatureServiceMainJob
+    etwittertends GraphFeatureServiceMainJob
     with GraphFeatureServiceAdhocBaseApp {}
 
 /**
@@ -24,7 +24,7 @@ object GraphFeatureServiceAdhocApp
  * The workflows config above should automatically trigger once each month.
  */
 object GraphFeatureServiceScheduledApp
-    extends GraphFeatureServiceMainJob
+    etwittertends GraphFeatureServiceMainJob
     with GraphFeatureServiceScheduledBaseApp {
   override def firstTime: RichDate = RichDate("2018-05-18")
 
@@ -35,7 +35,7 @@ object GraphFeatureServiceScheduledApp
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     // Only run the value Graphs on Tuesday, Thursday, Saturday
     val overrideEnableValueGraphs = {
       val dayOfWeek = dateRange.start.toCalendar.get(Calendar.DAY_OF_WEEK)

@@ -27,48 +27,48 @@ def get_feature_config(data_spec_path, label):
       ("encoded_tweet_features.num_mentions", "A"),
       ("encoded_tweet_features.reply_count", "A"),
       ("encoded_tweet_features.retweet_count", "A"),
-      ("encoded_tweet_features.text_score", "A"),
+      ("encoded_tweet_features.tetwittert_score", "A"),
       ("encoded_tweet_features.user_reputation", "A"),
-      ("extended_encoded_tweet_features.decayed_favorite_count", "A"),
-      ("extended_encoded_tweet_features.decayed_quote_count", "A"),
-      ("extended_encoded_tweet_features.decayed_reply_count", "A"),
-      ("extended_encoded_tweet_features.decayed_retweet_count", "A"),
-      ("extended_encoded_tweet_features.embeds_impression_count_v2", "A"),
-      ("extended_encoded_tweet_features.embeds_url_count_v2", "A"),
-      ("extended_encoded_tweet_features.fake_favorite_count", "A"),
-      ("extended_encoded_tweet_features.fake_quote_count", "A"),
-      ("extended_encoded_tweet_features.fake_reply_count", "A"),
-      ("extended_encoded_tweet_features.fake_retweet_count", "A"),
-      ("extended_encoded_tweet_features.favorite_count_v2", "A"),
-      ("extended_encoded_tweet_features.label_dup_content_flag", "A"),
-      ("extended_encoded_tweet_features.label_nsfw_hi_prc_flag", "A"),
-      ("extended_encoded_tweet_features.label_nsfw_hi_rcl_flag", "A"),
-      ("extended_encoded_tweet_features.label_spam_hi_rcl_flag", "A"),
-      ("extended_encoded_tweet_features.periscope_exists", "A"),
-      ("extended_encoded_tweet_features.periscope_has_been_featured", "A"),
-      ("extended_encoded_tweet_features.periscope_is_currently_featured", "A"),
-      ("extended_encoded_tweet_features.periscope_is_from_quality_source", "A"),
-      ("extended_encoded_tweet_features.periscope_is_live", "A"),
-      ("extended_encoded_tweet_features.quote_count", "A"),
-      ("extended_encoded_tweet_features.reply_count_v2", "A"),
-      ("extended_encoded_tweet_features.retweet_count_v2", "A"),
-      ("extended_encoded_tweet_features.weighted_favorite_count", "A"),
-      ("extended_encoded_tweet_features.weighted_quote_count", "A"),
-      ("extended_encoded_tweet_features.weighted_reply_count", "A"),
-      ("extended_encoded_tweet_features.weighted_retweet_count", "A"),
+      ("etwittertended_encoded_tweet_features.decayed_favorite_count", "A"),
+      ("etwittertended_encoded_tweet_features.decayed_quote_count", "A"),
+      ("etwittertended_encoded_tweet_features.decayed_reply_count", "A"),
+      ("etwittertended_encoded_tweet_features.decayed_retweet_count", "A"),
+      ("etwittertended_encoded_tweet_features.embeds_impression_count_v2", "A"),
+      ("etwittertended_encoded_tweet_features.embeds_url_count_v2", "A"),
+      ("etwittertended_encoded_tweet_features.fake_favorite_count", "A"),
+      ("etwittertended_encoded_tweet_features.fake_quote_count", "A"),
+      ("etwittertended_encoded_tweet_features.fake_reply_count", "A"),
+      ("etwittertended_encoded_tweet_features.fake_retweet_count", "A"),
+      ("etwittertended_encoded_tweet_features.favorite_count_v2", "A"),
+      ("etwittertended_encoded_tweet_features.label_dup_content_flag", "A"),
+      ("etwittertended_encoded_tweet_features.label_nsfw_hi_prc_flag", "A"),
+      ("etwittertended_encoded_tweet_features.label_nsfw_hi_rcl_flag", "A"),
+      ("etwittertended_encoded_tweet_features.label_spam_hi_rcl_flag", "A"),
+      ("etwittertended_encoded_tweet_features.periscope_etwitterists", "A"),
+      ("etwittertended_encoded_tweet_features.periscope_has_been_featured", "A"),
+      ("etwittertended_encoded_tweet_features.periscope_is_currently_featured", "A"),
+      ("etwittertended_encoded_tweet_features.periscope_is_from_quality_source", "A"),
+      ("etwittertended_encoded_tweet_features.periscope_is_live", "A"),
+      ("etwittertended_encoded_tweet_features.quote_count", "A"),
+      ("etwittertended_encoded_tweet_features.reply_count_v2", "A"),
+      ("etwittertended_encoded_tweet_features.retweet_count_v2", "A"),
+      ("etwittertended_encoded_tweet_features.weighted_favorite_count", "A"),
+      ("etwittertended_encoded_tweet_features.weighted_quote_count", "A"),
+      ("etwittertended_encoded_tweet_features.weighted_reply_count", "A"),
+      ("etwittertended_encoded_tweet_features.weighted_retweet_count", "A"),
       ("timelines.earlybird.visible_token_ratio", "A")
     ]
   ).add_labels([
-    label,                                 # Tensor index: 0
-    "itl.engagement.is_clicked",           # Tensor index: 1
-    "itl.engagement.is_favorited",         # Tensor index: 2
-    "itl.engagement.is_open_linked",       # Tensor index: 3
-    "itl.engagement.is_photo_expanded",    # Tensor index: 4
-    "itl.engagement.is_profile_clicked",   # Tensor index: 5
-    "itl.engagement.is_replied",           # Tensor index: 6
-    "itl.engagement.is_retweeted",         # Tensor index: 7
-    "itl.engagement.is_video_playback_50",  # Tensor index: 8
-    "timelines.earlybird_score",           # Tensor index: 9
+    label,                                 # Tensor indetwitter: 0
+    "itl.engagement.is_clicked",           # Tensor indetwitter: 1
+    "itl.engagement.is_favorited",         # Tensor indetwitter: 2
+    "itl.engagement.is_open_linked",       # Tensor indetwitter: 3
+    "itl.engagement.is_photo_etwitterpanded",    # Tensor indetwitter: 4
+    "itl.engagement.is_profile_clicked",   # Tensor indetwitter: 5
+    "itl.engagement.is_replied",           # Tensor indetwitter: 6
+    "itl.engagement.is_retweeted",         # Tensor indetwitter: 7
+    "itl.engagement.is_video_playback_50",  # Tensor indetwitter: 8
+    "timelines.earlybird_score",           # Tensor indetwitter: 9
   ]) \
     .define_weight("meta.record_weight/type=earlybird") \
     .build()

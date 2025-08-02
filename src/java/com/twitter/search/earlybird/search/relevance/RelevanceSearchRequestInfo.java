@@ -11,7 +11,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
 import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
 
-public class RelevanceSearchRequestInfo extends SearchRequestInfo {
+public class RelevanceSearchRequestInfo etwittertends SearchRequestInfo {
   private final ThriftSearchRelevanceOptions relevanceOptions;
 
   public RelevanceSearchRequestInfo(
@@ -29,16 +29,16 @@ public class RelevanceSearchRequestInfo extends SearchRequestInfo {
   }
 
   @Override
-  protected int calculateMaxHitsToProcess(ThriftSearchQuery thriftSearchQuery) {
+  protected int calculateMatwitterHitsToProcess(ThriftSearchQuery thriftSearchQuery) {
     ThriftSearchRelevanceOptions searchRelevanceOptions = thriftSearchQuery.getRelevanceOptions();
 
     // Don't use the value from the ThriftSearchQuery object if one is provided in the
     // relevance options
-    int requestedMaxHitsToProcess = searchRelevanceOptions.isSetMaxHitsToProcess()
-        ? searchRelevanceOptions.getMaxHitsToProcess()
-        : super.calculateMaxHitsToProcess(thriftSearchQuery);
+    int requestedMatwitterHitsToProcess = searchRelevanceOptions.isSetMatwitterHitsToProcess()
+        ? searchRelevanceOptions.getMatwitterHitsToProcess()
+        : super.calculateMatwitterHitsToProcess(thriftSearchQuery);
 
-    return qualityFactorMaxHitsToProcess(getNumResultsRequested(), requestedMaxHitsToProcess);
+    return qualityFactorMatwitterHitsToProcess(getNumResultsRequested(), requestedMatwitterHitsToProcess);
   }
 
   public ThriftSearchRelevanceOptions getRelevanceOptions() {
@@ -46,21 +46,21 @@ public class RelevanceSearchRequestInfo extends SearchRequestInfo {
   }
 
   /**
-   * Reduces maxHitsToProcess based on quality factor. Never reduces it beyond
+   * Reduces matwitterHitsToProcess based on quality factor. Never reduces it beyond
    * numResults.
    * @param numResults
-   * @param maxHitsToProcess
-   * @return Reduced maxHitsToProcess.
+   * @param matwitterHitsToProcess
+   * @return Reduced matwitterHitsToProcess.
    */
-  public int qualityFactorMaxHitsToProcess(int numResults, int maxHitsToProcess) {
+  public int qualityFactorMatwitterHitsToProcess(int numResults, int matwitterHitsToProcess) {
     Preconditions.checkNotNull(qualityFactor);
 
-    // Do not quality factor if there is no lower bound on maxHitsToProcess.
-    if (numResults > maxHitsToProcess) {
-      return maxHitsToProcess;
+    // Do not quality factor if there is no lower bound on matwitterHitsToProcess.
+    if (numResults > matwitterHitsToProcess) {
+      return matwitterHitsToProcess;
     }
 
     double currentQualityFactor = qualityFactor.get();
-    return Math.max(numResults, (int) (currentQualityFactor * maxHitsToProcess));
+    return Math.matwitter(numResults, (int) (currentQualityFactor * matwitterHitsToProcess));
   }
 }

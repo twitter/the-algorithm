@@ -14,7 +14,7 @@ import com.twitter.util.Future
  * Converts a WriteEvent to UserUserGraph's messages, including Mention and Mediatag messages
  */
 class SocialWriteEventToUserUserGraphBuilder()(override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[WriteEvent, UserUserEdge] {
+    etwittertends EventToMessageBuilder[WriteEvent, UserUserEdge] {
   private val followOrFrictionlessFollowCounter =
     statsReceiver.counter("num_follow_or_frictionless")
   private val notFollowOrFrictionlessFollowCounter =

@@ -1,18 +1,18 @@
 package com.twitter.simclusters_v2.scalding.embedding.abuse
 
 import com.twitter.scalding._
-import com.twitter.scalding.source.TypedText
+import com.twitter.scalding.source.TypedTetwittert
 import com.twitter.scalding_internal.dalv2.DALWrite.{D, _}
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.hdfs_sources.SearchAbuseSimclusterFeaturesManhattanScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
+import com.twitter.simclusters_v2.scalding.common.matritwitter.SparseMatritwitter
 import com.twitter.simclusters_v2.scalding.embedding.abuse.AbuseSimclusterFeaturesScaldingJob.buildKeyValDataSet
 import com.twitter.simclusters_v2.scalding.embedding.abuse.AdhocAbuseSimClusterFeaturesScaldingJob.{
   abuseInteractionSearchGraph,
   buildSearchAbuseScores,
   impressionInteractionSearchGraph
 }
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getUserInterestedInSparseMatrix
+import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getUserInterestedInSparseMatritwitter
 import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
 import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.{ClusterId, UserId}
 import com.twitter.simclusters_v2.thriftscala.{
@@ -20,7 +20,7 @@ import com.twitter.simclusters_v2.thriftscala.{
   SimClustersEmbedding,
   SingleSideUserScores
 }
-import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, ScheduledExecutionApp}
+import com.twitter.wtf.scalding.jobs.common.{AdhocEtwitterecutionApp, ScheduledEtwitterecutionApp}
 import java.util.TimeZone
 
 object AbuseSimclusterFeaturesScaldingJob {
@@ -33,14 +33,14 @@ object AbuseSimclusterFeaturesScaldingJob {
   private[this] val EmptySimCluster = SimClustersEmbedding(List())
 
   def buildKeyValDataSet(
-    normalizedSimClusterMatrix: SparseMatrix[UserId, ClusterId, Double],
-    unhealthyGraph: SparseMatrix[UserId, UserId, Double],
-    healthyGraph: SparseMatrix[UserId, UserId, Double]
+    normalizedSimClusterMatritwitter: SparseMatritwitter[UserId, ClusterId, Double],
+    unhealthyGraph: SparseMatritwitter[UserId, UserId, Double],
+    healthyGraph: SparseMatritwitter[UserId, UserId, Double]
   ): TypedPipe[KeyVal[Long, SingleSideUserScores]] = {
 
     val searchAbuseScores =
       buildSearchAbuseScores(
-        normalizedSimClusterMatrix,
+        normalizedSimClusterMatritwitter,
         unhealthyGraph = unhealthyGraph,
         healthyGraph = healthyGraph
       )
@@ -85,10 +85,10 @@ object AbuseSimclusterFeaturesScaldingJob {
 
 /**
  * This job creates single-side features used to predict the abuse reports in search. The features
- * are put into manhattan and availabe in feature store. We expect that search will be able to use
+ * are put into manhattan and availabe in feature store. We etwitterpect that search will be able to use
  * these features directly. They may be useful for other models as well.
  */
-object SearchAbuseSimclusterFeaturesScaldingJob extends ScheduledExecutionApp {
+object SearchAbuseSimclusterFeaturesScaldingJob etwittertends ScheduledEtwitterecutionApp {
   override def firstTime: RichDate = RichDate("2021-02-01")
 
   override def batchIncrement: Duration =
@@ -98,19 +98,19 @@ object SearchAbuseSimclusterFeaturesScaldingJob extends ScheduledExecutionApp {
     isAdhoc = false,
     isManhattanKeyVal = true,
     modelVersion = ModelVersion.Model20m145kUpdated,
-    pathSuffix = "search_abuse_simcluster_features"
+    pathSuffitwitter = "search_abuse_simcluster_features"
   )
 
   def buildDataset(
   )(
     implicit dateRange: DateRange,
-  ): Execution[TypedPipe[KeyVal[Long, SingleSideUserScores]]] = {
-    Execution.getMode.map { implicit mode =>
-      val normalizedSimClusterMatrix = getUserInterestedInSparseMatrix.rowL2Normalize
+  ): Etwitterecution[TypedPipe[KeyVal[Long, SingleSideUserScores]]] = {
+    Etwitterecution.getMode.map { implicit mode =>
+      val normalizedSimClusterMatritwitter = getUserInterestedInSparseMatritwitter.rowL2Normalize
       val abuseSearchGraph = abuseInteractionSearchGraph()(dateRange, mode)
       val impressionSearchGraph = impressionInteractionSearchGraph()(dateRange, mode)
 
-      buildKeyValDataSet(normalizedSimClusterMatrix, abuseSearchGraph, impressionSearchGraph)
+      buildKeyValDataSet(normalizedSimClusterMatritwitter, abuseSearchGraph, impressionSearchGraph)
     }
   }
 
@@ -120,13 +120,13 @@ object SearchAbuseSimclusterFeaturesScaldingJob extends ScheduledExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
-    // Extend the date range to a total of 19 days. Search keeps 21 days of data.
+  ): Etwitterecution[Unit] = {
+    // Etwittertend the date range to a total of 19 days. Search keeps 21 days of data.
     val dateRangeSearchData = dateRange.prepend(Days(12))
     buildDataset()(dateRangeSearchData).flatMap { dataset =>
-      dataset.writeDALVersionedKeyValExecution(
+      dataset.writeDALVersionedKeyValEtwitterecution(
         dataset = SearchAbuseSimclusterFeaturesManhattanScalaDataset,
-        pathLayout = D.Suffix(OutputPath)
+        pathLayout = D.Suffitwitter(OutputPath)
       )
     }
   }
@@ -138,17 +138,17 @@ object SearchAbuseSimclusterFeaturesScaldingJob extends ScheduledExecutionApp {
  * scalding remote run \
  * --target src/scala/com/twitter/simclusters_v2/scalding/embedding/abuse:abuse-prod \
  * --main-class com.twitter.simclusters_v2.scalding.embedding.abuse.AdhocSearchAbuseSimclusterFeaturesScaldingJob \
- * --hadoop-properties "mapreduce.job.split.metainfo.maxsize=-1" \
+ * --hadoop-properties "mapreduce.job.split.metainfo.matwittersize=-1" \
  * --cluster bluebird-qus1 --submitter hadoopnest-bluebird-1.qus1.twitter.com \
  * -- --date 2021-02-01 2021-02-02 \
  * --outputPath AdhocSearchAbuseSimclusterFeaturesScaldingJob-test1
  */
-object AdhocSearchAbuseSimclusterFeaturesScaldingJob extends AdhocExecutionApp {
+object AdhocSearchAbuseSimclusterFeaturesScaldingJob etwittertends AdhocEtwitterecutionApp {
   def toTsv(
-    datasetExecution: Execution[TypedPipe[KeyVal[Long, SingleSideUserScores]]],
+    datasetEtwitterecution: Etwitterecution[TypedPipe[KeyVal[Long, SingleSideUserScores]]],
     outputPath: String
-  ): Execution[Unit] = {
-    datasetExecution.flatMap { dataset =>
+  ): Etwitterecution[Unit] = {
+    datasetEtwitterecution.flatMap { dataset =>
       dataset
         .map { keyVal =>
           (
@@ -159,7 +159,7 @@ object AdhocSearchAbuseSimclusterFeaturesScaldingJob extends AdhocExecutionApp {
             keyVal.value.authorUnhealthyScore
           )
         }
-        .writeExecution(TypedText.tsv(outputPath))
+        .writeEtwitterecution(TypedTetwittert.tsv(outputPath))
     }
   }
 
@@ -169,7 +169,7 @@ object AdhocSearchAbuseSimclusterFeaturesScaldingJob extends AdhocExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     toTsv(
       SearchAbuseSimclusterFeaturesScaldingJob.buildDataset()(dateRange),
       args("outputPath")

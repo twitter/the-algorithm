@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird_root;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import javatwitter.inject.Inject;
+import javatwitter.inject.Named;
 
 import com.twitter.search.common.decider.SearchDecider;
 import com.twitter.search.common.metrics.SearchCounter;
@@ -34,14 +34,14 @@ public class PartitionAccessController {
     String partitionDeciderName =
         String.format("cluster_%s_skip_tier_%s_partition_%s", clusterName, tierName, partitionNum);
     if (decider.isAvailable(partitionDeciderName)) {
-      SearchCounter.export(partitionDeciderName).increment();
+      SearchCounter.etwitterport(partitionDeciderName).increment();
       return false;
     }
 
     String clientDeciderName = String.format("cluster_%s_skip_tier_%s_partition_%s_client_id_%s",
         clusterName, tierName, partitionNum, clientId);
     if (decider.isAvailable(clientDeciderName)) {
-      SearchCounter.export(clientDeciderName).increment();
+      SearchCounter.etwitterport(clientDeciderName).increment();
       return false;
     }
 
@@ -49,7 +49,7 @@ public class PartitionAccessController {
         "cluster_%s_skip_tier_%s_partition_%s_request_type_%s",
         clusterName, tierName, partitionNum, requestType.getNormalizedName());
     if (decider.isAvailable(requestTypeDeciderName)) {
-      SearchCounter.export(requestTypeDeciderName).increment();
+      SearchCounter.etwitterport(requestTypeDeciderName).increment();
       return false;
     }
 
@@ -57,7 +57,7 @@ public class PartitionAccessController {
         "cluster_%s_skip_tier_%s_partition_%s_client_id_%s_request_type_%s",
         clusterName, tierName, partitionNum, clientId, requestType.getNormalizedName());
     if (decider.isAvailable(clientRequestTypeDeciderName)) {
-      SearchCounter.export(clientRequestTypeDeciderName).increment();
+      SearchCounter.etwitterport(clientRequestTypeDeciderName).increment();
       return false;
     }
 

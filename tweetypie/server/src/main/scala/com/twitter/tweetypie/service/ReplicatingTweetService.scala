@@ -6,14 +6,14 @@ import com.twitter.servo.forked.Forked
 import com.twitter.tweetypie.service.ReplicatingTweetService.GatedReplicationClient
 
 /**
- * Wraps an underlying ThriftTweetService, transforming external requests to replicated requests.
+ * Wraps an underlying ThriftTweetService, transforming etwitterternal requests to replicated requests.
  */
 object ReplicatingTweetService {
   // Can be used to associate replication client with a gate that determines
   // if a replication request should be performed.
   case class GatedReplicationClient(client: ThriftTweetService, gate: Gate[Unit]) {
-    def execute(executor: Forked.Executor, action: ThriftTweetService => Unit): Unit = {
-      if (gate()) executor { () => action(client) }
+    def etwitterecute(etwitterecutor: Forked.Etwitterecutor, action: ThriftTweetService => Unit): Unit = {
+      if (gate()) etwitterecutor { () => action(client) }
     }
   }
 }
@@ -21,10 +21,10 @@ object ReplicatingTweetService {
 class ReplicatingTweetService(
   protected val underlying: ThriftTweetService,
   replicationTargets: Seq[GatedReplicationClient],
-  executor: Forked.Executor,
-) extends TweetServiceProxy {
+  etwitterecutor: Forked.Etwitterecutor,
+) etwittertends TweetServiceProtwittery {
   private[this] def replicateRead(action: ThriftTweetService => Unit): Unit =
-    replicationTargets.foreach(_.execute(executor, action))
+    replicationTargets.foreach(_.etwitterecute(etwitterecutor, action))
 
   override def getTweetCounts(request: GetTweetCountsRequest): Future[Seq[GetTweetCountsResult]] = {
     replicateRead(_.replicatedGetTweetCounts(request))
@@ -39,7 +39,7 @@ class ReplicatingTweetService(
   }
 
   override def getTweets(request: GetTweetsRequest): Future[Seq[GetTweetResult]] = {
-    if (!request.options.exists(_.doNotCache)) {
+    if (!request.options.etwitterists(_.doNotCache)) {
       replicateRead(_.replicatedGetTweets(request))
     }
     underlying.getTweets(request)

@@ -27,14 +27,14 @@ import com.twitter.tweetypie.thriftscala.FieldByPath
  * Long-term we will move this logic to the write path and backfill the field for old Tweets.
  */
 object MediaRefsHydrator {
-  type Type = ValueHydrator[Option[Seq[MediaRef]], Ctx]
+  type Type = ValueHydrator[Option[Seq[MediaRef]], Cttwitter]
 
-  case class Ctx(
+  case class Cttwitter(
     media: Seq[MediaEntity],
     mediaKeys: Seq[MediaKey],
     urlEntities: Seq[UrlEntity],
-    underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy {
+    underlyingTweetCttwitter: TweetCttwitter)
+      etwittertends TweetCttwitter.Protwittery {
     def includePastedMedia: Boolean = opts.include.pastedMedia
   }
 
@@ -57,17 +57,17 @@ object MediaRefsHydrator {
         ))
     }
 
-  // Fetch MediaRefs from pasted media Tweet URLs in the Tweet text
+  // Fetch MediaRefs from pasted media Tweet URLs in the Tweet tetwittert
   def getPastedMediaRefs(
     repo: TweetRepository.Optional,
-    ctx: Ctx,
+    cttwitter: Cttwitter,
     includePastedMedia: Gate[Unit]
   ): Stitch[Seq[MediaRef]] = {
-    if (includePastedMedia() && ctx.includePastedMedia) {
+    if (includePastedMedia() && cttwitter.includePastedMedia) {
 
-      // Extract Tweet ids from pasted media permalinks in the Tweet text
+      // Etwittertract Tweet ids from pasted media permalinks in the Tweet tetwittert
       val pastedMediaTweetIds: Seq[TweetId] =
-        PastedMediaHydrator.pastedIdsAndEntities(ctx.tweetId, ctx.urlEntities).map(_._1)
+        PastedMediaHydrator.pastedIdsAndEntities(cttwitter.tweetId, cttwitter.urlEntities).map(_._1)
 
       val opts = TweetQuery.Options(
         include = TweetQuery.Include(
@@ -95,30 +95,30 @@ object MediaRefsHydrator {
     repo: TweetRepository.Optional,
     includePastedMedia: Gate[Unit]
   ): Type = {
-    ValueHydrator[Option[Seq[MediaRef]], Ctx] { (curr, ctx) =>
+    ValueHydrator[Option[Seq[MediaRef]], Cttwitter] { (curr, cttwitter) =>
       // Fetch mediaRefs from Tweet media
-      val storedMediaRefs: Seq[MediaRef] = ctx.media.map { mediaEntity =>
+      val storedMediaRefs: Seq[MediaRef] = cttwitter.media.map { mediaEntity =>
         // Use MediaKeyHydrator.infer to determine the media key from the media entity
-        val mediaKey = MediaKeyHydrator.infer(Some(ctx.mediaKeys), mediaEntity)
+        val mediaKey = MediaKeyHydrator.infer(Some(cttwitter.mediaKeys), mediaEntity)
         mediaKeyToMediaRef(mediaKey)
       }
 
       // Fetch mediaRefs from pasted media
-      getPastedMediaRefs(repo, ctx, includePastedMedia).liftToTry.map {
+      getPastedMediaRefs(repo, cttwitter, includePastedMedia).liftToTry.map {
         case Return(pastedMediaRefs) =>
           // Combine the refs from the Tweet's own media and those from pasted media, then limit
-          // to MaxMediaEntitiesPerTweet.
+          // to MatwitterMediaEntitiesPerTweet.
           val limitedRefs =
-            (storedMediaRefs ++ pastedMediaRefs).take(PastedMediaHydrator.MaxMediaEntitiesPerTweet)
+            (storedMediaRefs ++ pastedMediaRefs).take(PastedMediaHydrator.MatwitterMediaEntitiesPerTweet)
 
           ValueState.delta(curr, optionalizeSeq(limitedRefs))
         case Throw(_) =>
           ValueState.partial(optionalizeSeq(storedMediaRefs), hydratedField)
       }
 
-    }.onlyIf { (_, ctx) =>
-      ctx.tweetFieldRequested(Tweet.MediaRefsField) ||
-      ctx.opts.safetyLevel != SafetyLevel.FilterNone
+    }.onlyIf { (_, cttwitter) =>
+      cttwitter.tweetFieldRequested(Tweet.MediaRefsField) ||
+      cttwitter.opts.safetyLevel != SafetyLevel.FilterNone
     }
   }
 }

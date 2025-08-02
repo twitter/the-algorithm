@@ -14,7 +14,7 @@ REGISTER_OP("FeatureMask")
 .Attr("list_keep: list(int)")
 .Output("mask: bool")
 
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 
@@ -36,18 +36,18 @@ class FeatureMask : public OpKernel {
   std::set<int64> feature_set_keep;
 
  public:
-  explicit FeatureMask(OpKernelConstruction* context)
-      : OpKernel(context) {
+  etwitterplicit FeatureMask(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {
         std::vector<int64> feature_list_keep;
-        OP_REQUIRES_OK(context, context->GetAttr("list_keep", &feature_list_keep));
+        OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("list_keep", &feature_list_keep));
         // create set that contains the content of the feature_list_keep, since tensorflow does not allow
         // me to directly ouput the contents of list_keep to a set
         feature_set_keep = std::set<int64>(feature_list_keep.begin(), feature_list_keep.end());
       }
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     // Get size of the input_vector and create TensorShape shape
-    const Tensor& input = context->input(0);
+    const Tensor& input = contetwittert->input(0);
 
     auto keep = input.flat<T>();
 
@@ -59,7 +59,7 @@ class FeatureMask : public OpKernel {
 
     TensorShape shape_out = {total_size_out};
 
-    OP_REQUIRES_OK(context, context->allocate_output(0, shape_out, &output_mask));
+    OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, shape_out, &output_mask));
 
     auto output_mask_ = output_mask->flat<bool>();
 

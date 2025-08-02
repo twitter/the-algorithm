@@ -6,7 +6,7 @@ sealed trait ClientConfig {
   val environment: EnvironmentConfig
 }
 
-class AbstractClientConfig(isEngagementOnly: Boolean, env: EnvironmentConfig) extends ClientConfig {
+class AbstractClientConfig(isEngagementOnly: Boolean, env: EnvironmentConfig) etwittertends ClientConfig {
   override val cluster: ClusterConfig = {
     env match {
       case Environments.Prod => Clusters.ProdCluster
@@ -30,7 +30,7 @@ object KafkaConfigs {
    * Use this config when you mainly need impression data and data volume is not an issue.
    */
   case object ProdUnifiedUserActions
-      extends AbstractClientConfig(isEngagementOnly = false, env = Environments.Prod)
+      etwittertends AbstractClientConfig(isEngagementOnly = false, env = Environments.Prod)
 
   /*
    * Unified User Actions Kafka config with engagements events only.
@@ -38,7 +38,7 @@ object KafkaConfigs {
    * than our main config.
    */
   case object ProdUnifiedUserActionsEngagementOnly
-      extends AbstractClientConfig(isEngagementOnly = true, env = Environments.Prod)
+      etwittertends AbstractClientConfig(isEngagementOnly = true, env = Environments.Prod)
 
   /*
    * Staging Environment for integration and testing. This is not a production config.
@@ -47,7 +47,7 @@ object KafkaConfigs {
    * Use this config when you mainly need impression data and data volume is not an issue.
    */
   case object StagingUnifiedUserActions
-      extends AbstractClientConfig(isEngagementOnly = false, env = Environments.Staging)
+      etwittertends AbstractClientConfig(isEngagementOnly = false, env = Environments.Staging)
 
   /*
    * Staging Environment for integration and testing. This is not a production config.
@@ -57,5 +57,5 @@ object KafkaConfigs {
    * than our main config.
    */
   case object StagingUnifiedUserActionsEngagementOnly
-      extends AbstractClientConfig(isEngagementOnly = true, env = Environments.Staging)
+      etwittertends AbstractClientConfig(isEngagementOnly = true, env = Environments.Staging)
 }

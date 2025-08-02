@@ -14,15 +14,15 @@ import com.twitter.usersignalservice.thriftscala.Signal
 import com.twitter.usersignalservice.thriftscala.SignalType
 import com.twitter.util.Future
 import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 case class RealGraphOonFetcher @Inject() (
   stratoClient: Client,
   timer: Timer,
   stats: StatsReceiver)
-    extends StratoSignalFetcher[UserId, Unit, CandidateSeq] {
+    etwittertends StratoSignalFetcher[UserId, Unit, CandidateSeq] {
   import RealGraphOonFetcher._
   override type RawSignalType = Candidate
   override val name: String = this.getClass.getCanonicalName
@@ -56,7 +56,7 @@ case class RealGraphOonFetcher @Inject() (
                   SignalType.RealGraphOon,
                   RealGraphOonFetcher.DefaultTimestamp,
                   Some(InternalId.UserId(c.userId)))
-            }.take(query.maxResults.getOrElse(Int.MaxValue)))
+            }.take(query.matwitterResults.getOrElse(Int.MatwitterValue)))
       }
   }
 }

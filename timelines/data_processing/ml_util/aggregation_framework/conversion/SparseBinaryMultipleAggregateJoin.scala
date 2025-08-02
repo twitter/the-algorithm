@@ -36,8 +36,8 @@ object SparseBinaryMultipleAggregateJoin {
 
     val commonKeyToAggregateMap = aggregateMaps
       .foldLeft(emptyPipe) {
-        case (union: TypedPipe[CommonMap], next: TypedPipe[CommonMap]) =>
-          union ++ next
+        case (union: TypedPipe[CommonMap], netwittert: TypedPipe[CommonMap]) =>
+          union ++ netwittert
       }
       .group
       .toList
@@ -87,7 +87,7 @@ object SparseBinaryMultipleAggregateJoin {
                 mergePolicy.mergeRecord(
                   inputRecord,
                   aggregateRecords,
-                  joinConfig.aggregates.featureContext
+                  joinConfig.aggregates.featureContetwittert
                 )
               }
             }
@@ -95,15 +95,15 @@ object SparseBinaryMultipleAggregateJoin {
           inputRecord
       }
 
-    val joinedFeatureContext = joinConfigs
-      .foldLeft(source.featureContext) {
+    val joinedFeatureContetwittert = joinConfigs
+      .foldLeft(source.featureContetwittert) {
         case (left, joinConfig) =>
           joinConfig.mergePolicies.foldLeft(left) {
             case (soFar, mergePolicy) =>
-              mergePolicy.mergeContext(soFar, joinConfig.aggregates.featureContext)
+              mergePolicy.mergeContetwittert(soFar, joinConfig.aggregates.featureContetwittert)
           }
       }
 
-    DataSetPipe(joinedRecords, joinedFeatureContext)
+    DataSetPipe(joinedRecords, joinedFeatureContetwittert)
   }
 }

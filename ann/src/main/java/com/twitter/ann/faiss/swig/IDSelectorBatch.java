@@ -8,7 +8,7 @@
 
 package com.twitter.ann.faiss;
 
-public class IDSelectorBatch extends IDSelector {
+public class IDSelectorBatch etwittertends IDSelector {
   private transient long swigCPtr;
 
   protected IDSelectorBatch(long cPtr, boolean cMemoryOwn) {

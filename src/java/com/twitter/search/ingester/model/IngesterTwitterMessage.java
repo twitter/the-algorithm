@@ -2,12 +2,12 @@ package com.twitter.search.ingester.model;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Longs;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
+import com.twitter.common_internal.tetwittert.version.PenguinVersion;
 import com.twitter.search.common.debug.thriftjava.DebugEvents;
 import com.twitter.search.common.partitioning.base.HashPartitionFunction;
 import com.twitter.search.common.partitioning.base.Partitionable;
@@ -17,8 +17,8 @@ import com.twitter.search.common.relevance.entities.TwitterMessage;
  * A Twitter "status" object (e.g. a message)
  *
  */
-public class IngesterTwitterMessage extends TwitterMessage
-    implements Comparable<IndexerStatus>, IndexerStatus, Partitionable {
+public class IngesterTwitterMessage etwittertends TwitterMessage
+    implements Comparable<IndetwittererStatus>, IndetwittererStatus, Partitionable {
   private final DebugEvents debugEvents;
 
   public IngesterTwitterMessage(Long twitterId, List<PenguinVersion> supportedPenguinVersions) {
@@ -34,7 +34,7 @@ public class IngesterTwitterMessage extends TwitterMessage
   }
 
   @Override
-  public int compareTo(IndexerStatus o) {
+  public int compareTo(IndetwittererStatus o) {
     return Longs.compare(getId(), o.getId());
   }
 
@@ -49,10 +49,10 @@ public class IngesterTwitterMessage extends TwitterMessage
     return HashPartitionFunction.hashCode(getId());
   }
 
-  public boolean isIndexable(boolean indexProtectedTweets) {
+  public boolean isIndetwitterable(boolean indetwitterProtectedTweets) {
     return getFromUserScreenName().isPresent()
         && getId() != INT_FIELD_NOT_PRESENT
-        && (indexProtectedTweets || !isUserProtected());
+        && (indetwitterProtectedTweets || !isUserProtected());
   }
 
   @Override

@@ -3,7 +3,7 @@ package handler
 
 import com.twitter.servo.cache.Cache
 import com.twitter.servo.util.Scribe
-import com.twitter.tweetypie.serverutil.ExceptionCounter
+import com.twitter.tweetypie.serverutil.EtwitterceptionCounter
 import com.twitter.tweetypie.thriftscala.PostTweetResult
 import com.twitter.tweetypie.util.TweetCreationLock.Key
 import com.twitter.tweetypie.util.TweetCreationLock.State
@@ -13,20 +13,20 @@ import scala.util.control.NoStackTrace
 import scala.util.control.NonFatal
 
 /**
- * This exception is returned from TweetCreationLock if there is an
+ * This etwitterception is returned from TweetCreationLock if there is an
  * in-progress cache entry for this key. It is possible that the key
- * exists because the key was not properly cleaned up, but it's
+ * etwitterists because the key was not properly cleaned up, but it's
  * impossible to differentiate between these cases. We resolve this by
  * returning TweetCreationInProgress and having a (relatively) short TTL
  * on the cache entry so that the client and/or user may retry.
  */
-case object TweetCreationInProgress extends Exception with NoStackTrace
+case object TweetCreationInProgress etwittertends Etwitterception with NoStackTrace
 
 /**
  * Thrown when the TweetCreationLock discovers that there is already
  * a tweet with the specified uniqueness id.
  */
-case class DuplicateTweetCreation(tweetId: TweetId) extends Exception with NoStackTrace
+case class DuplicateTweetCreation(tweetId: TweetId) etwittertends Etwitterception with NoStackTrace
 
 trait TweetCreationLock {
   def apply(
@@ -46,19 +46,19 @@ object CacheBasedTweetCreationLock {
    * that key in the cache has been changed (by another process or
    * cache eviction).
    */
-  case object UnexpectedCacheState extends Exception with NoStackTrace
+  case object UnetwitterpectedCacheState etwittertends Etwitterception with NoStackTrace
 
   /**
    * Thrown when the process of updating the lock cache failed more
    * than the allowed number of times.
    */
-  case class RetriesExhausted(failures: Seq[Exception]) extends Exception with NoStackTrace
+  case class RetriesEtwitterhausted(failures: Seq[Etwitterception]) etwittertends Etwitterception with NoStackTrace
 
-  def shouldRetry(e: Exception): Boolean =
+  def shouldRetry(e: Etwitterception): Boolean =
     e match {
       case TweetCreationInProgress => false
       case _: DuplicateTweetCreation => false
-      case _: RetriesExhausted => false
+      case _: RetriesEtwitterhausted => false
       case _ => true
     }
 
@@ -107,7 +107,7 @@ object CacheBasedTweetCreationLock {
 /**
  * This class adds locking around Tweet creation, to prevent creating
  * duplicate tweets when two identical requests arrive simultaneously.
- * A lock is created in cache using the user id and a hash of the tweet text
+ * A lock is created in cache using the user id and a hash of the tweet tetwittert
  * in the case of tweets, or the source_status_id in the case of retweets.
  * If another process attempts to lock for the same user and hash, the request
  * fails as a duplicate.  The lock lasts for 10 seconds if it is not deleted.
@@ -118,14 +118,14 @@ object CacheBasedTweetCreationLock {
  * When a request with a uniqueness id is successful, the id of the
  * created tweet will be stored in the cache so that subsequent
  * requests can retrieve the originally-created tweet rather than
- * duplicating creation or getting an exception.
+ * duplicating creation or getting an etwitterception.
  */
 class CacheBasedTweetCreationLock(
   cache: Cache[Key, State],
-  maxTries: Int,
+  matwitterTries: Int,
   stats: StatsReceiver,
   logUniquenessId: FutureEffect[(String, TweetId)])
-    extends TweetCreationLock {
+    etwittertends TweetCreationLock {
   import CacheBasedTweetCreationLock._
 
   private[this] val eventCounters = stats.scope("event")
@@ -136,23 +136,23 @@ class CacheBasedTweetCreationLock(
   }
 
   private[this] def retryLoop[A](action: => Future[A]): Future[A] = {
-    def go(failures: List[Exception]): Future[A] =
-      if (failures.length >= maxTries) {
-        Future.exception(RetriesExhausted(failures.reverse))
+    def go(failures: List[Etwitterception]): Future[A] =
+      if (failures.length >= matwitterTries) {
+        Future.etwitterception(RetriesEtwitterhausted(failures.reverse))
       } else {
         action.rescue {
-          case e: Exception if shouldRetry(e) => go(e :: failures)
+          case e: Etwitterception if shouldRetry(e) => go(e :: failures)
         }
       }
 
     go(Nil)
   }
 
-  private[this] val lockerExceptions = ExceptionCounter(stats)
+  private[this] val lockerEtwitterceptions = EtwitterceptionCounter(stats)
 
   /**
    * Obtain the lock for creating a tweet. If this method completes
-   * without throwing an exception, then the lock value was
+   * without throwing an etwitterception, then the lock value was
    * successfully set in cache, which indicates a high probability
    * that this is the only process that is attempting to create this
    * tweet. (The uncertainty comes from the possibility of lock
@@ -162,10 +162,10 @@ class CacheBasedTweetCreationLock(
    *   trying to create this tweet.
    *
    * @throws DuplicateTweetCreation if a tweet has already been
-   *   created for a duplicate request. The exception has the id of
+   *   created for a duplicate request. The etwitterception has the id of
    *   the created tweet.
    *
-   * @throws RetriesExhausted if obtaining the lock failed more than
+   * @throws RetriesEtwitterhausted if obtaining the lock failed more than
    *   the requisite number of times.
    */
   private[this] def obtainLock(k: Key, token: Long): Future[Time] = retryLoop {
@@ -182,10 +182,10 @@ class CacheBasedTweetCreationLock(
             .add(k, State.InProgress(token, lockTime))
             .flatMap {
               case true => Future.value(lockTime)
-              case false => Future.exception(UnexpectedCacheState)
+              case false => Future.etwitterception(UnetwitterpectedCacheState)
             }
         case Some((Throw(e), _)) =>
-          Future.exception(e)
+          Future.etwitterception(e)
         case Some((Return(st), cs)) =>
           st match {
             case State.Unlocked =>
@@ -195,7 +195,7 @@ class CacheBasedTweetCreationLock(
                 .checkAndSet(k, State.InProgress(token, lockTime), cs)
                 .flatMap {
                   case true => Future.value(lockTime)
-                  case false => Future.exception(UnexpectedCacheState)
+                  case false => Future.etwitterception(UnetwitterpectedCacheState)
                 }
             case State.InProgress(cachedToken, creationStartedTimestamp) =>
               if (cachedToken == token) {
@@ -216,14 +216,14 @@ class CacheBasedTweetCreationLock(
                   )
                 }
                 stats.stat("in_progress_age_ms").add(tweetCreationAge.inMilliseconds)
-                Future.exception(TweetCreationInProgress)
+                Future.etwitterception(TweetCreationInProgress)
               }
             case State.AlreadyCreated(tweetId, creationStartedTimestamp) =>
               // Another process successfully created a tweet for this
               // key.
               val tweetCreationAge = Time.now - creationStartedTimestamp
               stats.stat("already_created_age_ms").add(tweetCreationAge.inMilliseconds)
-              Future.exception(DuplicateTweetCreation(tweetId))
+              Future.etwitterception(DuplicateTweetCreation(tweetId))
           }
       }
   }
@@ -239,7 +239,7 @@ class CacheBasedTweetCreationLock(
       // Instead of deleting the value, we attempt to write Unlocked,
       // because we only want to delete it if it was the value that we
       // wrote ourselves, and there is no delete call that is
-      // conditional on the extant value.
+      // conditional on the etwittertant value.
       cache
         .getWithChecksum(Seq(k))
         .flatMap(kvr => Future.const(kvr(k)))
@@ -288,7 +288,7 @@ class CacheBasedTweetCreationLock(
   /**
    * Mark that a tweet has been successfully created. Subsequent calls
    * to `apply` with this key will receive a DuplicateTweetCreation
-   * exception with the specified id.
+   * etwitterception with the specified id.
    */
   private[this] def creationComplete(k: Key, tweetId: TweetId, lockTime: Time): Future[Unit] =
     // Unconditionally set the state because regardless of the
@@ -300,14 +300,14 @@ class CacheBasedTweetCreationLock(
       // If this fails, it's OK for the request to complete
       // successfully, because it's more harmful to create the tweet
       // and return failure than it is to complete it successfully,
-      // but fail to honor the uniqueness id next time.
+      // but fail to honor the uniqueness id netwittert time.
       .handle { case NonFatal(_) => }
 
   private[this] def createWithLock(
     k: Key,
     create: => Future[PostTweetResult]
   ): Future[PostTweetResult] = {
-    val token = Random.nextLong
+    val token = Random.netwittertLong
     event(k, "lock_attempted")
 
     obtainLock(k, token)
@@ -318,13 +318,13 @@ class CacheBasedTweetCreationLock(
         // how frequently this happens, because this means that the
         // only sign that this is happening will be duplicate tweet
         // creations.
-        case RetriesExhausted(failures) =>
+        case RetriesEtwitterhausted(failures) =>
           event(k, "lock_failure_ignored")
           // Treat this as the time that we obtained the lock.
           Time.now
       }
       .onFailure {
-        case e => lockerExceptions(e)
+        case e => lockerEtwitterceptions(e)
       }
       .flatMap { lockTime =>
         create.transform {
@@ -334,7 +334,7 @@ class CacheBasedTweetCreationLock(
             k.uniquenessId.foreach { u => logUniquenessId((u, tweet.id)) }
 
             // Update the lock entry to remember the id of the tweet we
-            // created and extend the TTL.
+            // created and etwittertend the TTL.
             creationComplete(k, tweet.id, lockTime).before(Future.const(r))
           case other =>
             other match {
@@ -370,7 +370,7 @@ class CacheBasedTweetCreationLock(
    * retained.
    *
    * @throws DuplicateTweetCreation if a tweet has already been
-   *   created by a previous request. The exception has the id of the
+   *   created by a previous request. The etwitterception has the id of the
    *   created tweet.
    *
    * @throws TweetCreationInProgress. See the documentation above.

@@ -15,7 +15,7 @@ import ch.qos.logback.core.spi.FilterReply
  * accomplished by changing the log levels of loggers, because the logger levels are global. We want
  * to change the semantics for specific destinations (appenders).
  */
-class OnlyImportantLogsLoggingFilter extends Filter[ILoggingEvent] {
+class OnlyImportantLogsLoggingFilter etwittertends Filter[ILoggingEvent] {
   private[this] def notImportant(loggerName: String): Boolean =
     !loggerName.startsWith("com.twitter.tweetypie")
 

@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -47,7 +47,7 @@ message AttrValue {
 
     // This is a placeholder only used in nodes defined inside a
     // function.  It indicates the attr value will be supplied when
-    // the function is instantiated.  For example, let us suppose a
+    // the function is instantiated.  For etwitterample, let us suppose a
     // node "N" in function "FN". "N" has an attr "A" with value
     // placeholder = "foo". When FN is instantiated with attr "foo"
     // set to "bar", the instantiated node N's attr A will have been

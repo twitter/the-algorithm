@@ -6,9 +6,9 @@ import com.twitter.finagle.stats._
  * Stores scoped StatsReceivers in a map to avoid unnecessary object creation.
  */
 class MemoizingStatsReceiver(val self: StatsReceiver)
-    extends StatsReceiver
+    etwittertends StatsReceiver
     with DelegatingStatsReceiver
-    with Proxy {
+    with Protwittery {
   def underlying: Seq[StatsReceiver] = Seq(self)
 
   val repr = self.repr
@@ -37,9 +37,9 @@ class MemoizingStatsReceiver(val self: StatsReceiver)
     metricBuilder.name -> metricBuilder.verbosity)
 
   def addGauge(metricBuilder: MetricBuilder)(f: => Float): Gauge = {
-    // scalafix:off StoreGaugesAsMemberVariables
+    // scalafitwitter:off StoreGaugesAsMemberVariables
     self.addGauge(metricBuilder)(f)
-    // scalafix:on StoreGaugesAsMemberVariables
+    // scalafitwitter:on StoreGaugesAsMemberVariables
   }
 
   override def scope(name: String): StatsReceiver = scopeMemo(name)

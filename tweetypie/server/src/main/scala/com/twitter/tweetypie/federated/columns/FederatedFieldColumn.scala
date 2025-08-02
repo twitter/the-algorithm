@@ -10,12 +10,12 @@ import com.twitter.strato.config.AllowAll
 import com.twitter.strato.config.ContactInfo
 import com.twitter.strato.config.Policy
 import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
+import com.twitter.strato.data.Description.PlainTetwittert
 import com.twitter.strato.data.Lifecycle.Production
 import com.twitter.strato.data.Type
 import com.twitter.strato.data.Val
 import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.opcontext.OpContext
+import com.twitter.strato.opcontetwittert.OpContetwittert
 import com.twitter.strato.serialization.MVal
 import com.twitter.strato.serialization.Thrift
 import com.twitter.strato.util.Strings
@@ -42,8 +42,8 @@ class FederatedFieldColumn(
   stratoValueType: Type,
   tfield: TField,
   pathOverride: Option[String] = None)
-    extends StratoFed.Column(pathOverride.getOrElse(FederatedFieldColumn.makeColumnPath(tfield)))
-    with StratoFed.Fetch.StitchWithContext
+    etwittertends StratoFed.Column(pathOverride.getOrElse(FederatedFieldColumn.makeColumnPath(tfield)))
+    with StratoFed.Fetch.StitchWithContetwittert
     with StratoFed.Put.Stitch {
 
   type Key = Long
@@ -57,10 +57,10 @@ class FederatedFieldColumn(
   override val policy: Policy = AllowAll
 
   /*
-   * A fetch that proxies GetTweetFieldsColumn.fetch but only requests and
+   * A fetch that protwitteries GetTweetFieldsColumn.fetch but only requests and
    * returns one specific field.
    */
-  override def fetch(tweetId: Key, view: View, opContext: OpContext): Stitch[Result[Value]] = {
+  override def fetch(tweetId: Key, view: View, opContetwittert: OpContetwittert): Stitch[Result[Value]] = {
 
     val twitterUserId: Option[UserId] = Access.getTwitterUserId match {
       // Access.getTwitterUserId should return a value when request is made on behalf of a user
@@ -107,7 +107,7 @@ class FederatedFieldColumn(
   override val contactInfo: ContactInfo = TweetypieContactInfo
   override val metadata: OpMetadata = OpMetadata(
     lifecycle = Some(Production),
-    description = Some(PlainText(s"A federated column for the field tweet.$stratoValueType"))
+    description = Some(PlainTetwittert(s"A federated column for the field tweet.$stratoValueType"))
   )
 }
 
@@ -130,12 +130,12 @@ object FederatedFieldColumn {
    * path name scheme for tweetypie to pick them up
    */
   def makeColumnPath(tField: TField) = {
-    val columnName = Strings.toCamelCase(tField.name.stripSuffix("id"))
+    val columnName = Strings.toCamelCase(tField.name.stripSuffitwitter("id"))
     s"tweetypie/fields/${columnName}.Tweet"
   }
 
   def makeV1ColumnPath(tField: TField): String = {
-    val columnName = Strings.toCamelCase(tField.name.stripSuffix("id"))
+    val columnName = Strings.toCamelCase(tField.name.stripSuffitwitter("id"))
     s"tweetypie/fields/$columnName-V1.Tweet"
   }
 }

@@ -3,7 +3,7 @@ package com.twitter.frigate.pushservice.params
 /**
  * Enum for naming scores we will scribe for non-personalized high quality candidate generation
  */
-object HighQualityScribingScores extends Enumeration {
+object HighQualityScribingScores etwittertends Enumeration {
   type Name = Value
   val HeavyRankingScore = Value
   val NonPersonalizedQualityScoreUsingCnn = Value
@@ -14,7 +14,7 @@ object HighQualityScribingScores extends Enumeration {
 /**
  * Enum for quality upranking transform
  */
-object MrQualityUprankingTransformTypeEnum extends Enumeration {
+object MrQualityUprankingTransformTypeEnum etwittertends Enumeration {
   val Linear = Value
   val Sigmoid = Value
 }
@@ -22,31 +22,31 @@ object MrQualityUprankingTransformTypeEnum extends Enumeration {
 /**
  * Enum for quality partial upranking transform
  */
-object MrQualityUprankingPartialTypeEnum extends Enumeration {
+object MrQualityUprankingPartialTypeEnum etwittertends Enumeration {
   val All = Value
   val Oon = Value
 }
 
 /**
- * Enum for bucket membership in DDG 10220 Mr Bold Title Favorite Retweet Notification experiment
+ * Enum for bucket membership in DDG 10220 Mr Bold Title Favorite Retweet Notification etwitterperiment
  */
-object MRBoldTitleFavoriteAndRetweetExperimentEnum extends Enumeration {
+object MRBoldTitleFavoriteAndRetweetEtwitterperimentEnum etwittertends Enumeration {
   val ShortTitle = Value
 }
 
 /**
  * Enum for ML filtering predicates
  */
-object QualityPredicateEnum extends Enumeration {
+object QualityPredicateEnum etwittertends Enumeration {
   val WeightedOpenOrNtabClick = Value
-  val ExplicitOpenOrNtabClickFilter = Value
+  val EtwitterplicitOpenOrNtabClickFilter = Value
   val AlwaysTrue = Value // Disable ML filtering
 }
 
 /**
- * Enum to specify normalization used in BigFiltering experiments
+ * Enum to specify normalization used in BigFiltering etwitterperiments
  */
-object BigFilteringNormalizationEnum extends Enumeration {
+object BigFilteringNormalizationEnum etwittertends Enumeration {
   val NormalizationDisabled = Value
   val NormalizeByNotSendingScore = Value
 }
@@ -54,7 +54,7 @@ object BigFilteringNormalizationEnum extends Enumeration {
 /**
  * Enum for inline actions
  */
-object InlineActionsEnum extends Enumeration {
+object InlineActionsEnum etwittertends Enumeration {
   val Favorite = Value
   val Follow = Value
   val Reply = Value
@@ -64,23 +64,23 @@ object InlineActionsEnum extends Enumeration {
 /**
  * Enum for template format
  */
-object IbisTemplateFormatEnum extends Enumeration {
+object IbisTemplateFormatEnum etwittertends Enumeration {
   val template1 = Value
 }
 
 /**
  * Enum for Store name for Top Tweets By Geo
  */
-object TopTweetsForGeoCombination extends Enumeration {
+object TopTweetsForGeoCombination etwittertends Enumeration {
   val Default = Value
   val AccountsTweetFavAsBackfill = Value
-  val AccountsTweetFavIntermixed = Value
+  val AccountsTweetFavIntermitwittered = Value
 }
 
 /**
  * Enum for scoring function for Top Tweets By Geo
  */
-object TopTweetsForGeoRankingFunction extends Enumeration {
+object TopTweetsForGeoRankingFunction etwittertends Enumeration {
   val Score = Value
   val GeohashLengthAndThenScore = Value
 }
@@ -88,14 +88,14 @@ object TopTweetsForGeoRankingFunction extends Enumeration {
 /**
  * Enum for which version of popgeo tweets to be using
  */
-object PopGeoTweetVersion extends Enumeration {
+object PopGeoTweetVersion etwittertends Enumeration {
   val Prod = Value
 }
 
 /**
- * Enum for Subtext in Android header
+ * Enum for Subtetwittert in Android header
  */
-object SubtextForAndroidPushHeader extends Enumeration {
+object SubtetwittertForAndroidPushHeader etwittertends Enumeration {
   val None = Value
   val TargetHandler = Value
   val TargetTagHandler = Value
@@ -104,12 +104,12 @@ object SubtextForAndroidPushHeader extends Enumeration {
   val AuthorName = Value
 }
 
-object NsfwTextDetectionModel extends Enumeration {
+object NsfwTetwittertDetectionModel etwittertends Enumeration {
   val ProdModel = Value
   val RetrainedModel = Value
 }
 
-object HighQualityCandidateGroupEnum extends Enumeration {
+object HighQualityCandidateGroupEnum etwittertends Enumeration {
   val AgeBucket = Value
   val Language = Value
   val Topic = Value
@@ -118,7 +118,7 @@ object HighQualityCandidateGroupEnum extends Enumeration {
   val Admin1 = Value
 }
 
-object CrtGroupEnum extends Enumeration {
+object CrtGroupEnum etwittertends Enumeration {
   val Twistly = Value
   val Frs = Value
   val F1 = Value
@@ -129,7 +129,7 @@ object CrtGroupEnum extends Enumeration {
   val None = Value
 }
 
-object SportGameEnum extends Enumeration {
+object SportGameEnum etwittertends Enumeration {
   val Soccer = Value
   val Nfl = Value
 }

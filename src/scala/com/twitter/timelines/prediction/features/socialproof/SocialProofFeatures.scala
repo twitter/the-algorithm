@@ -40,7 +40,7 @@ abstract class SocialProofUserGroundTruth(userIds: Seq[UserId], count: Int) {
 }
 
 case class FavoritedBySocialProofUserGroundTruth(userIds: Seq[UserId] = Seq.empty, count: Int = 0)
-    extends SocialProofUserGroundTruth(userIds, count) {
+    etwittertends SocialProofUserGroundTruth(userIds, count) {
 
   override val featureDisplayedUsers = SocialProofDisplayedFavoritedByUsers
   override val featureDisplayedUserCount = SocialProofDisplayedFavoritedByUserCount
@@ -49,7 +49,7 @@ case class FavoritedBySocialProofUserGroundTruth(userIds: Seq[UserId] = Seq.empt
 }
 
 case class RetweetedBySocialProofUserGroundTruth(userIds: Seq[UserId] = Seq.empty, count: Int = 0)
-    extends SocialProofUserGroundTruth(userIds, count) {
+    etwittertends SocialProofUserGroundTruth(userIds, count) {
 
   override val featureDisplayedUsers = SocialProofDisplayedRetweetedByUsers
   override val featureDisplayedUserCount = SocialProofDisplayedRetweetedByUserCount
@@ -58,7 +58,7 @@ case class RetweetedBySocialProofUserGroundTruth(userIds: Seq[UserId] = Seq.empt
 }
 
 case class RepliedBySocialProofUserGroundTruth(userIds: Seq[UserId] = Seq.empty, count: Int = 0)
-    extends SocialProofUserGroundTruth(userIds, count) {
+    etwittertends SocialProofUserGroundTruth(userIds, count) {
 
   override val featureDisplayedUsers = SocialProofDisplayedRepliedByUsers
   override val featureDisplayedUserCount = SocialProofDisplayedRepliedByUserCount

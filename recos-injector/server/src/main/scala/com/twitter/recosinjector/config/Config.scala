@@ -35,7 +35,7 @@ trait Config { self =>
 
   def serviceIdentifier: ServiceIdentifier
 
-  def outputKafkaTopicPrefix: String
+  def outputKafkaTopicPrefitwitter: String
 
   def init(): Future[Unit] = Future.Done
 }

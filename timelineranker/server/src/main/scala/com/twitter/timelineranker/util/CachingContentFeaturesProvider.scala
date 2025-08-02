@@ -13,9 +13,9 @@ import com.twitter.util.Future
 
 object CachingContentFeaturesProvider {
   private sealed trait CacheResult
-  private object CacheFailure extends CacheResult
-  private object CacheMiss extends CacheResult
-  private case class CacheHit(t: ContentFeatures) extends CacheResult
+  private object CacheFailure etwittertends CacheResult
+  private object CacheMiss etwittertends CacheResult
+  private case class CacheHit(t: ContentFeatures) etwittertends CacheResult
   def isHit(result: CacheResult): Boolean = result != CacheMiss && result != CacheFailure
   def isMiss(result: CacheResult): Boolean = result == CacheMiss
 }
@@ -24,7 +24,7 @@ class CachingContentFeaturesProvider(
   underlying: ContentFeaturesProvider,
   contentFeaturesCache: Store[TweetId, ContentFeatures],
   statsReceiver: StatsReceiver)
-    extends ContentFeaturesProvider {
+    etwittertends ContentFeaturesProvider {
   import CachingContentFeaturesProvider._
 
   private val scopedStatsReceiver = statsReceiver.scope("CachingContentFeaturesProvider")
@@ -105,12 +105,12 @@ class CachingContentFeaturesProvider(
   private def writeToCache(results: Map[TweetId, ContentFeatures]): Unit = {
     if (results.nonEmpty) {
       cacheWritesCounter.incr(results.size)
-      val indexedResults = results.map {
+      val indetwitteredResults = results.map {
         case (tweetId, contentFeatures) =>
           (tweetId, Some(contentFeatures))
       }
       contentFeaturesCache
-        .multiPut(indexedResults)
+        .multiPut(indetwitteredResults)
         .map {
           case (_, statusFu) =>
             cacheWriteObserver(statusFu)

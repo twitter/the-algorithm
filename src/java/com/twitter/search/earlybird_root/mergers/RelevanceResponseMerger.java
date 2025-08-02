@@ -28,20 +28,20 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResult;
 import com.twitter.search.earlybird.thrift.ThriftSearchResults;
 import com.twitter.search.earlybird_root.collectors.RelevanceMergeCollector;
 import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.util.Future;
 
 /**
  * Merger class to merge relevance search EarlybirdResponse objects
  */
-public class RelevanceResponseMerger extends EarlybirdResponseMerger {
+public class RelevanceResponseMerger etwittertends EarlybirdResponseMerger {
   private static final Logger LOG = LoggerFactory.getLogger(RelevanceResponseMerger.class);
 
   private static final SearchTimerStats TIMER =
-      SearchTimerStats.export("merge_relevance", TimeUnit.NANOSECONDS, false, true);
+      SearchTimerStats.etwitterport("merge_relevance", TimeUnit.NANOSECONDS, false, true);
 
   private static final SearchCounter RELVEANCE_TIER_MERGE_EARLY_TERMINATED_WITH_NOT_ENOUGH_RESULTS =
-      SearchCounter.export("merger_relevance_tier_merge_early_terminated_with_not_enough_results");
+      SearchCounter.etwitterport("merger_relevance_tier_merge_early_terminated_with_not_enough_results");
 
   private static final String PARTITION_NUM_RESULTS_COUNTER_SKIP_STATS =
       "merger_relevance_post_trimmed_results_skip_stat_tier_%s_partition_%d";
@@ -62,12 +62,12 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
   // The number of partitions are not meaningful when it is invoked through multi-tier merging.
   private final int numPartitions;
 
-  public RelevanceResponseMerger(EarlybirdRequestContext requestContext,
+  public RelevanceResponseMerger(EarlybirdRequestContetwittert requestContetwittert,
                                  List<Future<EarlybirdResponse>> responses,
                                  ResponseAccumulator mode,
                                  EarlybirdFeatureSchemaMerger featureSchemaMerger,
                                  int numPartitions) {
-    super(requestContext, responses, mode);
+    super(requestContetwittert, responses, mode);
     this.featureSchemaMerger = Preconditions.checkNotNull(featureSchemaMerger);
     this.numPartitions = numPartitions;
   }
@@ -84,8 +84,8 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
 
   @Override
   protected EarlybirdResponse internalMerge(EarlybirdResponse mergedResponse) {
-    final ThriftSearchQuery searchQuery = requestContext.getRequest().getSearchQuery();
-    long maxId = findMaxFullySearchedStatusID();
+    final ThriftSearchQuery searchQuery = requestContetwittert.getRequest().getSearchQuery();
+    long matwitterId = findMatwitterFullySearchedStatusID();
     long minId = findMinFullySearchedStatusID();
 
     Preconditions.checkNotNull(searchQuery);
@@ -100,7 +100,7 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
     TrimStats trimStats = trimResults(searchResults);
     featureSchemaMerger.collectAndSetFeatureSchemaInResponse(
         searchResults,
-        requestContext,
+        requestContetwittert,
         "merger_relevance_tier",
         accumulatedResponses.getSuccessResponses());
 
@@ -111,8 +111,8 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
         .setHitCounts(aggregateHitCountMap())
         .setLanguageHistogram(aggregateLanguageHistograms());
 
-    if (!accumulatedResponses.getMaxIds().isEmpty()) {
-      searchResults.setMaxSearchedStatusID(maxId);
+    if (!accumulatedResponses.getMatwitterIds().isEmpty()) {
+      searchResults.setMatwitterSearchedStatusID(matwitterId);
     }
 
     if (!accumulatedResponses.getMinIds().isEmpty()) {
@@ -131,7 +131,7 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
    * If any of the partitions has an early termination, the tier merge must also early terminate.
    *
    * If a partition early terminated (we haven't fully searched that partition), and we instead
-   * moved onto the next tier, there will be a gap of unsearched results.
+   * moved onto the netwittert tier, there will be a gap of unsearched results.
    *
    * If our early termination condition was only if we had enough results, we could get bad quality
    * results by only looking at 20 hits when asking for 20 results.
@@ -141,9 +141,9 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
                                                boolean foundEarlyTermination) {
 
     // Don't use computeNumResultsToKeep because if returnAllResults is true, it will be
-    // Integer.MAX_VALUE and we will always log a stat that we didn't get enough results
+    // Integer.MAtwitter_VALUE and we will always log a stat that we didn't get enough results
     int resultsRequested;
-    EarlybirdRequest request = requestContext.getRequest();
+    EarlybirdRequest request = requestContetwittert.getRequest();
     if (request.isSetNumResultsToReturnAtRoot()) {
       resultsRequested = request.getNumResultsToReturnAtRoot();
     } else {
@@ -193,17 +193,17 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
   }
 
   /**
-   * Find the max status id that has been searched. Since no results are trimmed for Relevance mode,
-   * it should be the largest among the max IDs.
+   * Find the matwitter status id that has been searched. Since no results are trimmed for Relevance mode,
+   * it should be the largest among the matwitter IDs.
    */
-  private long findMaxFullySearchedStatusID() {
-    // The max ID should be the largest among the max IDs
-    return accumulatedResponses.getMaxIds().isEmpty() ? 0
-        : Collections.max(accumulatedResponses.getMaxIds());
+  private long findMatwitterFullySearchedStatusID() {
+    // The matwitter ID should be the largest among the matwitter IDs
+    return accumulatedResponses.getMatwitterIds().isEmpty() ? 0
+        : Collections.matwitter(accumulatedResponses.getMatwitterIds());
   }
 
   /**
-   * Return all the searchResults except duplicates.
+   * Return all the searchResults etwittercept duplicates.
    *
    * @param searchResults ThriftSearchResults that hold the to be trimmed List<ThriftSearchResult>
    * @return TrimStats containing statistics about how many results being removed
@@ -214,13 +214,13 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
       return TrimStats.EMPTY_STATS;
     }
 
-    if (requestContext.getRequest().getSearchQuery().isSetSearchStatusIds()) {
+    if (requestContetwittert.getRequest().getSearchQuery().isSetSearchStatusIds()) {
       // Not a normal search, no trimming needed
       return TrimStats.EMPTY_STATS;
     }
 
     TrimStats trimStats = new TrimStats();
-    trimExactDups(searchResults, trimStats);
+    trimEtwitteractDups(searchResults, trimStats);
 
     truncateResults(searchResults, trimStats);
 
@@ -254,12 +254,12 @@ public class RelevanceResponseMerger extends EarlybirdResponseMerger {
       String tierName = response.getEarlybirdServerStats().getTierName();
       int partition = response.getEarlybirdServerStats().getPartition();
       if (partition >= 0 && partition < numPartitions) {
-        SearchCounter.export(String.format(PARTITION_NUM_RESULTS_COUNTER_NAME_FORMAT,
+        SearchCounter.etwitterport(String.format(PARTITION_NUM_RESULTS_COUNTER_NAME_FORMAT,
             tierName,
             partition))
             .add(numResultsKept);
       } else {
-        SearchCounter.export(String.format(PARTITION_NUM_RESULTS_COUNTER_SKIP_STATS,
+        SearchCounter.etwitterport(String.format(PARTITION_NUM_RESULTS_COUNTER_SKIP_STATS,
             tierName,
             partition)).increment();
       }

@@ -67,22 +67,22 @@ object TweetKey {
       case SimClustersEmbeddingId(embeddingType, modelVersion, InternalId.TweetId(tweetId)) =>
         TweetKey(tweetId, ModelVersions.toKnownForModelVersion(modelVersion), embeddingType)
       case id =>
-        throw new IllegalArgumentException(s"Invalid $id for TweetKey")
+        throw new IllegalArgumentEtwitterception(s"Invalid $id for TweetKey")
     }
   }
 
 }
 
 case class TopKClustersForTweetKeyReadableStore(
-  proxyMap: Map[(EmbeddingType, String), ReadableStore[EntityWithVersion, TopKClustersWithScores]],
+  protwitteryMap: Map[(EmbeddingType, String), ReadableStore[EntityWithVersion, TopKClustersWithScores]],
   halfLifeDuration: Duration,
   topKClustersWithScoresToSeq: TopKClustersWithScores => Seq[(Int, Double)],
-  maxResult: Option[Int] = None)
-    extends ReadableStore[TweetKey, Seq[(Int, Double)]] {
+  matwitterResult: Option[Int] = None)
+    etwittertends ReadableStore[TweetKey, Seq[(Int, Double)]] {
 
-  private val modifiedProxyMap = proxyMap.map {
-    case ((embeddingType, modelVersion), proxy) =>
-      (embeddingType, modelVersion) -> proxy.composeKeyMapping { key: TweetKey =>
+  private val modifiedProtwitteryMap = protwitteryMap.map {
+    case ((embeddingType, modelVersion), protwittery) =>
+      (embeddingType, modelVersion) -> protwittery.composeKeyMapping { key: TweetKey =>
         EntityWithVersion(
           SimClusterEntity.TweetId(key.tweetId),
           // Fast fail if the model version is invalid.
@@ -94,13 +94,13 @@ case class TopKClustersForTweetKeyReadableStore(
     keys: Set[K1]
   ): Map[K1, Future[Option[Seq[(Int, Double)]]]] = {
     val (validKeys, invalidKeys) = keys.partition { tweetKey =>
-      proxyMap.contains((tweetKey.embeddingType, tweetKey.modelVersion)) &&
+      protwitteryMap.contains((tweetKey.embeddingType, tweetKey.modelVersion)) &&
       halfLifeDuration.inMilliseconds == Configs.HalfLifeInMs
     }
 
     val resultsFuture = validKeys.groupBy(key => (key.embeddingType, key.modelVersion)).flatMap {
       case (typeModelTuple, subKeys) =>
-        modifiedProxyMap(typeModelTuple).multiGet(subKeys)
+        modifiedProtwitteryMap(typeModelTuple).multiGet(subKeys)
     }
 
     resultsFuture.mapValues { topKClustersWithScoresFut =>
@@ -109,9 +109,9 @@ case class TopKClustersForTweetKeyReadableStore(
           topKClustersWithScores <- topKClustersWithScoresOpt
         } yield {
           val results = topKClustersWithScoresToSeq(topKClustersWithScores)
-          maxResult match {
-            case Some(max) =>
-              results.take(max)
+          matwitterResult match {
+            case Some(matwitter) =>
+              results.take(matwitter)
             case None =>
               results
           }
@@ -123,7 +123,7 @@ case class TopKClustersForTweetKeyReadableStore(
 
 object TopKClustersForTweetKeyReadableStore {
   // Use Prod cache by default
-  def defaultProxyMap(
+  def defaultProtwitteryMap(
     serviceIdentifier: ServiceIdentifier
   ): Map[(EmbeddingType, String), ReadableStore[EntityWithVersion, TopKClustersWithScores]] =
     SimClustersProfile.tweetJobProfileMap(Environment.Prod).mapValues { profile =>
@@ -136,20 +136,20 @@ object TopKClustersForTweetKeyReadableStore {
     serviceIdentifier: ServiceIdentifier
   ): ReadableStore[TweetKey, Seq[(Int, Double)]] =
     TopKClustersForTweetKeyReadableStore(
-      defaultProxyMap(serviceIdentifier),
+      defaultProtwitteryMap(serviceIdentifier),
       defaultHalfLife,
       getTopClustersWithScoresByFavClusterNormalizedScore
     )
 
   def overrideLimitDefaultStore(
-    maxResult: Int,
+    matwitterResult: Int,
     serviceIdentifier: ServiceIdentifier
   ): ReadableStore[TweetKey, Seq[(Int, Double)]] = {
     TopKClustersForTweetKeyReadableStore(
-      defaultProxyMap(serviceIdentifier),
+      defaultProtwitteryMap(serviceIdentifier),
       defaultHalfLife,
       getTopClustersWithScoresByFavClusterNormalizedScore,
-      Some(maxResult)
+      Some(matwitterResult)
     )
   }
 

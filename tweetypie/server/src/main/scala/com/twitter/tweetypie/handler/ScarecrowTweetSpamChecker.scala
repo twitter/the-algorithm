@@ -6,7 +6,7 @@ import com.twitter.relevance.feature_store.thriftscala.FeatureData
 import com.twitter.relevance.feature_store.thriftscala.FeatureValue
 import com.twitter.service.gen.scarecrow.thriftscala.TieredAction
 import com.twitter.service.gen.scarecrow.thriftscala.TieredActionResult
-import com.twitter.service.gen.scarecrow.thriftscala.TweetContext
+import com.twitter.service.gen.scarecrow.thriftscala.TweetContetwittert
 import com.twitter.service.gen.scarecrow.thriftscala.TweetNew
 import com.twitter.spam.features.thriftscala.SafetyMetaData
 import com.twitter.stitch.Stitch
@@ -19,7 +19,7 @@ import com.twitter.tweetypie.thriftscala.TweetMediaTags
 case class TweetSpamRequest(
   tweetId: TweetId,
   userId: UserId,
-  text: String,
+  tetwittert: String,
   mediaTags: Option[TweetMediaTags],
   safetyMetaData: Option[SafetyMetaData],
   inReplyToTweetId: Option[TweetId],
@@ -66,7 +66,7 @@ object ScarecrowTweetSpamChecker {
     TweetNew(
       id = req.tweetId,
       userId = req.userId,
-      text = req.text,
+      tetwittert = req.tetwittert,
       additionalInputFeatures = additionalInputFeatures,
       safetyMetaData = req.safetyMetaData,
       inReplyToStatusId = req.inReplyToTweetId
@@ -79,16 +79,16 @@ object ScarecrowTweetSpamChecker {
       case (TieredActionResult.SilentFail, _, _) => Spam.SilentFailFuture
       case (TieredActionResult.DenyByIpiPolicy, _, _) => Spam.DisabledByIpiPolicyFuture
       case (TieredActionResult.UrlSpam, _, denyMessage) =>
-        Future.exception(TweetCreateFailure.State(TweetCreateState.UrlSpam, denyMessage))
+        Future.etwitterception(TweetCreateFailure.State(TweetCreateState.UrlSpam, denyMessage))
       case (TieredActionResult.Deny, _, denyMessage) =>
-        Future.exception(TweetCreateFailure.State(TweetCreateState.Spam, denyMessage))
+        Future.etwitterception(TweetCreateFailure.State(TweetCreateState.Spam, denyMessage))
       case (TieredActionResult.Captcha, _, denyMessage) =>
-        Future.exception(TweetCreateFailure.State(TweetCreateState.SpamCaptcha, denyMessage))
+        Future.etwitterception(TweetCreateFailure.State(TweetCreateState.SpamCaptcha, denyMessage))
       case (TieredActionResult.RateLimit, _, denyMessage) =>
-        Future.exception(
-          TweetCreateFailure.State(TweetCreateState.SafetyRateLimitExceeded, denyMessage))
+        Future.etwitterception(
+          TweetCreateFailure.State(TweetCreateState.SafetyRateLimitEtwitterceeded, denyMessage))
       case (TieredActionResult.Bounce, Some(b), _) =>
-        Future.exception(TweetCreateFailure.Bounced(b))
+        Future.etwitterception(TweetCreateFailure.Bounced(b))
     }
 
   def fromSpamCheckRepository(
@@ -98,7 +98,7 @@ object ScarecrowTweetSpamChecker {
     val handler = tieredActionHandler(stats)
     req => {
       Trace.record("com.twitter.tweetypie.ScarecrowTweetSpamChecker.userId=" + req.userId)
-      Stitch.run(repo(requestToScarecrowTweet(req), TweetContext.Creation)).flatMap { resp =>
+      Stitch.run(repo(requestToScarecrowTweet(req), TweetContetwittert.Creation)).flatMap { resp =>
         handler(resp.tieredAction)
       }
     }

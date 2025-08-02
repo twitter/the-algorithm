@@ -5,10 +5,10 @@ import com.twitter.timelineservice.model.TimelineId
 
 case class RankedTimelineQuery(
   override val id: TimelineId,
-  override val maxCount: Option[Int] = None,
+  override val matwitterCount: Option[Int] = None,
   override val range: Option[TimelineRange] = None,
   override val options: Option[RankedTimelineQueryOptions] = None)
-    extends TimelineQuery(thrift.TimelineQueryType.Ranked, id, maxCount, range, options) {
+    etwittertends TimelineQuery(thrift.TimelineQueryType.Ranked, id, matwitterCount, range, options) {
 
   throwIfInvalid()
 }

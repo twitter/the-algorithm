@@ -6,24 +6,24 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         ":interaction_graph_history_aggregated_raw_edge_daily-scala",
-        ":interaction_graph_history_aggregated_vertex_daily-scala",
+        ":interaction_graph_history_aggregated_vertetwitter_daily-scala",
         ":interaction_graph_aggregated_edge_daily-scala",
-        ":interaction_graph_aggregated_vertex_daily-scala",
+        ":interaction_graph_aggregated_vertetwitter_daily-scala",
         ":interaction_graph_history_aggregated_edge_snapshot-scala",
-        ":interaction_graph_history_aggregated_vertex_snapshot-scala",
+        ":interaction_graph_history_aggregated_vertetwitter_snapshot-scala",
         ":real_graph_features-scala",
         "beam-internal/src/main/scala/com/twitter/beam/io/dal",
         "beam-internal/src/main/scala/com/twitter/scio_internal/job",
         "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
         "consumer-data-tools/src/main/scala/com/twitter/cde/scio/dal_read",
         "src/scala/com/twitter/interaction_graph/scio/agg_address_book:interaction_graph_agg_address_book_edge_snapshot-scala",
-        "src/scala/com/twitter/interaction_graph/scio/agg_address_book:interaction_graph_agg_address_book_vertex_snapshot-scala",
+        "src/scala/com/twitter/interaction_graph/scio/agg_address_book:interaction_graph_agg_address_book_vertetwitter_snapshot-scala",
         "src/scala/com/twitter/interaction_graph/scio/agg_client_event_logs:interaction_graph_agg_client_event_logs_edge_daily-scala",
-        "src/scala/com/twitter/interaction_graph/scio/agg_client_event_logs:interaction_graph_agg_client_event_logs_vertex_daily-scala",
+        "src/scala/com/twitter/interaction_graph/scio/agg_client_event_logs:interaction_graph_agg_client_event_logs_vertetwitter_daily-scala",
         "src/scala/com/twitter/interaction_graph/scio/agg_direct_interactions:interaction_graph_agg_direct_interactions_edge_daily-scala",
-        "src/scala/com/twitter/interaction_graph/scio/agg_direct_interactions:interaction_graph_agg_direct_interactions_vertex_daily-scala",
+        "src/scala/com/twitter/interaction_graph/scio/agg_direct_interactions:interaction_graph_agg_direct_interactions_vertetwitter_daily-scala",
         "src/scala/com/twitter/interaction_graph/scio/agg_flock:interaction_graph_agg_flock_edge_snapshot-scala",
-        "src/scala/com/twitter/interaction_graph/scio/agg_flock:interaction_graph_agg_flock_vertex_snapshot-scala",
+        "src/scala/com/twitter/interaction_graph/scio/agg_flock:interaction_graph_agg_flock_vertetwitter_snapshot-scala",
         "src/scala/com/twitter/interaction_graph/scio/common",
         "src/scala/com/twitter/interaction_graph/scio/ml/scores:real_graph_in_scores-scala",
         "src/scala/com/twitter/interaction_graph/scio/ml/scores:real_graph_oon_scores-scala",
@@ -52,12 +52,12 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "interaction_graph_history_aggregated_vertex_daily",
-    description = "User vertex with all features",
-    java_schema = "com.twitter.interaction_graph.thriftjava.Vertex",
+    base_name = "interaction_graph_history_aggregated_vertetwitter_daily",
+    description = "User vertetwitter with all features",
+    java_schema = "com.twitter.interaction_graph.thriftjava.Vertetwitter",
     platform = "java8",
     role = "cassowary",
-    scala_schema = "com.twitter.interaction_graph.thriftscala.Vertex",
+    scala_schema = "com.twitter.interaction_graph.thriftscala.Vertetwitter",
     segment_type = "partitioned",
     tags = ["bazel-compatible"],
     java_dependencies = [
@@ -96,12 +96,12 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "interaction_graph_history_aggregated_vertex_snapshot",
-    description = "User vertex with all features",
-    java_schema = "com.twitter.interaction_graph.thriftjava.Vertex",
+    base_name = "interaction_graph_history_aggregated_vertetwitter_snapshot",
+    description = "User vertetwitter with all features",
+    java_schema = "com.twitter.interaction_graph.thriftjava.Vertetwitter",
     platform = "java8",
     role = "cassowary",
-    scala_schema = "com.twitter.interaction_graph.thriftscala.Vertex",
+    scala_schema = "com.twitter.interaction_graph.thriftscala.Vertetwitter",
     segment_type = "snapshot",
     tags = ["bazel-compatible"],
     java_dependencies = [
@@ -130,12 +130,12 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "interaction_graph_aggregated_vertex_daily",
-    description = "User vertex with all features",
-    java_schema = "com.twitter.interaction_graph.thriftjava.Vertex",
+    base_name = "interaction_graph_aggregated_vertetwitter_daily",
+    description = "User vertetwitter with all features",
+    java_schema = "com.twitter.interaction_graph.thriftjava.Vertetwitter",
     platform = "java8",
     role = "cassowary",
-    scala_schema = "com.twitter.interaction_graph.thriftscala.Vertex",
+    scala_schema = "com.twitter.interaction_graph.thriftscala.Vertetwitter",
     segment_type = "partitioned",
     tags = ["bazel-compatible"],
     java_dependencies = [

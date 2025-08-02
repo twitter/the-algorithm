@@ -4,11 +4,11 @@ import com.twitter.follow_recommendations.common.models.GeohashAndCountryCode
 import com.twitter.geoduck.common.thriftscala.Location
 import com.twitter.geoduck.common.thriftscala.PlaceQuery
 import com.twitter.geoduck.common.thriftscala.ReverseGeocodeIPRequest
-import com.twitter.geoduck.service.thriftscala.GeoContext
+import com.twitter.geoduck.service.thriftscala.GeoContetwittert
 import com.twitter.geoduck.thriftscala.ReverseGeocoder
 import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class ReverseGeocodeClient @Inject() (rgcService: ReverseGeocoder.MethodPerEndpoint) {
@@ -47,8 +47,8 @@ class ReverseGeocodeClient @Inject() (rgcService: ReverseGeocoder.MethodPerEndpo
 
 object ReverseGeocodeClient {
 
-  val DefaultGeoduckIPRequestContext: GeoContext =
-    GeoContext(allPlaceTypes = true, includeGeohash = true, includeCountryCode = true)
+  val DefaultGeoduckIPRequestContetwittert: GeoContetwittert =
+    GeoContetwittert(allPlaceTypes = true, includeGeohash = true, includeCountryCode = true)
 
   // All these geohashes are guessed by IP (Logical Location Source).
   // So take the four letters to make sure it is consistent with LocationServiceClient

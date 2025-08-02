@@ -1,0 +1,6 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.item.message
+
+sealed trait UserFacepileDisplayType
+
+case object LargeUserFacepileDisplayType etwittertends UserFacepileDisplayType
+case object CompactUserFacepileDisplayType etwittertends UserFacepileDisplayType

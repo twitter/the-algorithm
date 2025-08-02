@@ -1,10 +1,10 @@
 DECLARE date_latest_tweet, date_latest_follows DATE;
 SET date_latest_tweet = (
-  SELECT PARSE_DATE('%Y%m%d', SUBSTRING(MAX(partition_id), 1, 8)) AS partition_id
+  SELECT PARSE_DATE('%Y%m%d', SUBSTRING(MAtwitter(partition_id), 1, 8)) AS partition_id
   FROM `twttr-bq-tweetsource-pub-prod.user.INFORMATION_SCHEMA.PARTITIONS`
   WHERE partition_id IS NOT NULL AND partition_id != '__NULL__' AND table_name="public_tweets");
 SET date_latest_follows = (
-  SELECT PARSE_DATE('%Y%m%d', MAX(partition_id)) AS partition_id
+  SELECT PARSE_DATE('%Y%m%d', MAtwitter(partition_id)) AS partition_id
   FROM `twttr-recos-ml-prod.user_events.INFORMATION_SCHEMA.PARTITIONS`
   WHERE partition_id IS NOT NULL AND partition_id != '__NULL__' AND table_name="valid_user_follows");
 

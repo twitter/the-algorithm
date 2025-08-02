@@ -1,0 +1,23 @@
+<included>
+    <appender name="ALL-FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>tweetypie-all.log</file>
+        <append>true</append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FitwitteredWindowRollingPolicy">
+            <fileNamePattern>tweetypie-all-%i.log</fileNamePattern>
+            <minIndetwitter>1</minIndetwitter>
+            <matwitterIndetwitter>20</matwitterIndetwitter>
+        </rollingPolicy>
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <matwitterFileSize>800MB</matwitterFileSize>
+        </triggeringPolicy>
+        <encoder>
+            <pattern>
+                %date [%thread] %-5level %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ALL"  class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="ALL-FILE" />
+    </appender>
+</included>

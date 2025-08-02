@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird_root;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import javatwitter.inject.Inject;
+import javatwitter.inject.Singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +34,7 @@ public class EarlybirdTierThrottleDeciders {
    */
   public String getTierThrottleDeciderKey(String clusterName, String tierName) {
     String deciderKey = String.format(TIER_THROTTLE_DECIDER_KEY_FORMAT, clusterName, tierName);
-    if (!decider.getDecider().feature(deciderKey).exists()) {
+    if (!decider.getDecider().feature(deciderKey).etwitterists()) {
       LOG.warn("Decider key {} not found. Will always return unavailable.", deciderKey);
     }
     return deciderKey;

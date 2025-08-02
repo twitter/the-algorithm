@@ -16,7 +16,7 @@ case class BufferedEdgeWriter(
   edgeCollector: EdgeCollector,
   statsReceiver: StatsReceiver,
   isRunning: () => Boolean)
-    extends Runnable {
+    etwittertends Runnable {
   val logger = Logger()
   private val queueRemoveCounter = statsReceiver.counter("queueRemove")
   private val queueSleepCounter = statsReceiver.counter("queueSleep")

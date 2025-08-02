@@ -8,7 +8,7 @@ import java.lang.{Boolean => JBoolean}
  * Case class used as shared argument for
  * getAggregateValue() and setAggregateValue() in AggregationMetric.
  *
- * @param aggregatePrefix Prefix for aggregate feature name
+ * @param aggregatePrefitwitter Prefitwitter for aggregate feature name
  * @param feature Simple (non-aggregate) feature being aggregated. This
    is optional; if None, then the label is aggregated on its own without
    being crossed with any feature.
@@ -17,7 +17,7 @@ import java.lang.{Boolean => JBoolean}
  * @param halfLife Half life being used for aggregation
  */
 case class AggregateFeature[T](
-  aggregatePrefix: String,
+  aggregatePrefitwitter: String,
   feature: Option[Feature[T]],
   label: Option[Feature[JBoolean]],
   halfLife: Duration) {
@@ -30,8 +30,8 @@ case class AggregateFeature[T](
    * for faster processing. String building turns
    * out to be a significant bottleneck.
    */
-  val featurePrefix: String = List(
-    aggregatePrefix,
+  val featurePrefitwitter: String = List(
+    aggregatePrefitwitter,
     aggregateType,
     labelName,
     featureName,

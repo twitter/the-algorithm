@@ -12,22 +12,22 @@
 template<typename InputType, typename RecordType>
 class DecodeBatchPredictionRequestKernel : public OpKernel {
  public:
-  explicit DecodeBatchPredictionRequestKernel(OpKernelConstruction* context)
-      : OpKernel(context) {
+  etwitterplicit DecodeBatchPredictionRequestKernel(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {
     std::vector<int64> keep_features;
     std::vector<int64> keep_codes;
 
     std::vector<int64> label_features;
     std::vector<int64> weight_features;
 
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("keep_features", &keep_features));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("keep_codes", &keep_codes));
 
-    OP_REQUIRES_OK(context, context->GetAttr("label_features", &label_features));
-    OP_REQUIRES_OK(context, context->GetAttr("weight_features", &weight_features));
-    OP_REQUIRES_OK(context, context->GetAttr("decode_mode", &m_decode_mode));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("label_features", &label_features));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("weight_features", &weight_features));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("decode_mode", &m_decode_mode));
 
-    OP_REQUIRES(context, keep_features.size() == keep_codes.size(),
+    OP_REQUIRES(contetwittert, keep_features.size() == keep_codes.size(),
                 errors::InvalidArgument("keep keys and values must have same size."));
 
 #ifdef USE_DENSE_HASH
@@ -56,8 +56,8 @@ class DecodeBatchPredictionRequestKernel : public OpKernel {
   int64 m_decode_mode;
 
   template<typename ResourceType>
-  void Decode(OpKernelContext* context, ResourceType *resource) {
-    resource->input = context->input(0);
+  void Decode(OpKernelContetwittert* contetwittert, ResourceType *resource) {
+    resource->input = contetwittert->input(0);
     const uint8_t *input_bytes = getInputBytes<InputType>(resource->input, 0);
     int num_labels = static_cast<int>(m_labels_map.size());
     int num_weights = static_cast<int>(m_weights_map.size());
@@ -98,7 +98,7 @@ REGISTER_OP("DecodeAndHashBatchPredictionRequestV2")
 A tensorflow OP that decodes a list/batch of data records and creates a handle to the batch of hashed data records.
 
 Compared to DecodeAndHashBatchPredictionRequest, DecodeAndHashBatchPredictionRequestV2 is used for training instead
-of serving. Thus label_features and weight_features[optional] must be passed, and labels and weights are extracted in
+of serving. Thus label_features and weight_features[optional] must be passed, and labels and weights are etwittertracted in
 the output.
 DecodeAndHashBatchPredictionRequestV2 controls what DataRecords we want to process together in a batch in training.
 For instance, we can put all instances for a query in the same batch when training a ranking model.
@@ -126,19 +126,19 @@ class DecodeAndHashBatchPredictionRequestV2 :
     public DecodeBatchPredictionRequestKernel<InputType, twml::HashedDataRecord> {
 
 public:
-  DecodeAndHashBatchPredictionRequestV2(OpKernelConstruction *context)
-    : DecodeBatchPredictionRequestKernel<InputType, twml::HashedDataRecord>(context) {
+  DecodeAndHashBatchPredictionRequestV2(OpKernelConstruction *contetwittert)
+    : DecodeBatchPredictionRequestKernel<InputType, twml::HashedDataRecord>(contetwittert) {
   }
 
  private:
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
       HashedDataRecordResource *resource = nullptr;
       OP_REQUIRES_OK(
-        context,
-        makeResourceHandle<HashedDataRecordResource>(context, 0, &resource));
+        contetwittert,
+        makeResourceHandle<HashedDataRecordResource>(contetwittert, 0, &resource));
 
-      this->Decode(context, resource);
+      this->Decode(contetwittert, resource);
 
       // Each datarecord has a copy of common features.
       // Initialize total_size by common_size * num_records
@@ -150,8 +150,8 @@ public:
       }
 
       resource->total_size = total_size;
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -189,21 +189,21 @@ template<typename InputType>
 class DecodeBatchPredictionRequestV2 :
     public DecodeBatchPredictionRequestKernel<InputType, twml::DataRecord> {
 public:
-  DecodeBatchPredictionRequestV2(OpKernelConstruction *context)
-    : DecodeBatchPredictionRequestKernel<InputType, twml::DataRecord>(context) {
+  DecodeBatchPredictionRequestV2(OpKernelConstruction *contetwittert)
+    : DecodeBatchPredictionRequestKernel<InputType, twml::DataRecord>(contetwittert) {
   }
 
 private:
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
       DataRecordResource *resource = nullptr;
       OP_REQUIRES_OK(
-        context,
-        makeResourceHandle<DataRecordResource>(context, 0, &resource));
-      this->Decode(context, resource);
+        contetwittert,
+        makeResourceHandle<DataRecordResource>(contetwittert, 0, &resource));
+      this->Decode(contetwittert, resource);
       resource->keep_map = &(this->m_keep_map);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };

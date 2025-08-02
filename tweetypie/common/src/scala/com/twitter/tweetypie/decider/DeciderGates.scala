@@ -11,12 +11,12 @@ import scala.collection.mutable
 trait DeciderGates {
   def overrides: Map[String, Boolean] = Map.empty
   def decider: Decider
-  def prefix: String
+  def prefitwitter: String
 
   protected val seenFeatures: mutable.HashSet[String] = new mutable.HashSet[String]
 
   private def deciderFeature(name: String): Feature = {
-    decider.feature(prefix + "_" + name)
+    decider.feature(prefitwitter + "_" + name)
   }
 
   def withOverride[T](name: String, mkGate: Feature => Gate[T]): Gate[T] = {

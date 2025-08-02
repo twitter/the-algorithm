@@ -3,7 +3,7 @@ package com.twitter.follow_recommendations.common.candidate_sources.recent_engag
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import com.twitter.dds.jobs.repeated_profile_visits.thriftscala.ProfileVisitorInfo
-import com.twitter.experiments.general_metrics.thriftscala.IdType
+import com.twitter.etwitterperiments.general_metrics.thriftscala.IdType
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.follow_recommendations.common.clients.real_time_real_graph.Engagement
 import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
@@ -12,18 +12,18 @@ import com.twitter.timelines.configapi.HasParams
 import com.twitter.timelines.configapi.Params
 import com.twitter.hermit.model.Algorithm
 import com.twitter.inject.Logging
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.rux.RepeatedProfileVisitsAggregateClientColumn
+import com.twitter.strato.generated.client.rutwitter.RepeatedProfileVisitsAggregateClientColumn
 
 @Singleton
 class RepeatedProfileVisitsSource @Inject() (
   repeatedProfileVisitsAggregateClientColumn: RepeatedProfileVisitsAggregateClientColumn,
   realTimeRealGraphClient: RealTimeRealGraphClient,
   statsReceiver: StatsReceiver)
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser]
+    etwittertends CandidateSource[HasParams with HasClientContetwittert, CandidateUser]
     with Logging {
 
   val identifier: CandidateSourceIdentifier =
@@ -112,7 +112,7 @@ class RepeatedProfileVisitsSource @Inject() (
     repeatedVisitedAccountsStitch.map { candidates =>
       // Now check if we should includeCandidates (e.g. whether user is in control bucket or treatment buckets).
       if (candidates.isEmpty) {
-        // User has not visited any accounts above bucketing threshold. We will not bucket user into experiment. Just
+        // User has not visited any accounts above bucketing threshold. We will not bucket user into etwitterperiment. Just
         // don't return no candidates.
         noRepeatedProfileVisitsAboveBucketingThresholdCounter.incr()
         Seq.empty
@@ -120,7 +120,7 @@ class RepeatedProfileVisitsSource @Inject() (
         hasRepeatedProfileVisitsAboveBucketingThresholdCounter.incr()
         if (!params.getBoolean(RepeatedProfileVisitsParams.IncludeCandidates)) {
           // User has reached bucketing criteria. We check whether to include candidates (e.g. checking which bucket
-          // the user is in for the experiment). In this case the user is in a bucket to not include any candidates.
+          // the user is in for the etwitterperiment). In this case the user is in a bucket to not include any candidates.
           noIncludeCandidatesCounter.incr()
           Seq.empty
         } else {
@@ -144,7 +144,7 @@ class RepeatedProfileVisitsSource @Inject() (
     }
   }
 
-  override def apply(request: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
+  override def apply(request: HasParams with HasClientContetwittert): Stitch[Seq[CandidateUser]] = {
     request.getOptionalUserId
       .map { userId =>
         getRecommendations(request.params, userId)

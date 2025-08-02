@@ -5,26 +5,26 @@ import com.twitter.timelines.configapi.FSParam
 
 object PopGeoSourceParams {
   case object PopGeoSourceGeoHashMinPrecision
-      extends FSBoundedParam[Int](
+      etwittertends FSBoundedParam[Int](
         "pop_geo_source_geo_hash_min_precision",
         default = 2,
         min = 0,
-        max = 10)
+        matwitter = 10)
 
-  case object PopGeoSourceGeoHashMaxPrecision
-      extends FSBoundedParam[Int](
-        "pop_geo_source_geo_hash_max_precision",
+  case object PopGeoSourceGeoHashMatwitterPrecision
+      etwittertends FSBoundedParam[Int](
+        "pop_geo_source_geo_hash_matwitter_precision",
         default = 4,
         min = 0,
-        max = 10)
+        matwitter = 10)
 
   case object PopGeoSourceReturnFromAllPrecisions
-      extends FSParam[Boolean]("pop_geo_source_return_from_all_precisions", default = false)
+      etwittertends FSParam[Boolean]("pop_geo_source_return_from_all_precisions", default = false)
 
-  case object PopGeoSourceMaxResultsPerPrecision
-      extends FSBoundedParam[Int](
-        "pop_geo_source_max_results_per_precision",
+  case object PopGeoSourceMatwitterResultsPerPrecision
+      etwittertends FSBoundedParam[Int](
+        "pop_geo_source_matwitter_results_per_precision",
         default = 200,
         min = 0,
-        max = 1000)
+        matwitter = 1000)
 }

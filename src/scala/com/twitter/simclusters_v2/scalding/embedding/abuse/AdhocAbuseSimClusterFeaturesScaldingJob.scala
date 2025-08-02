@@ -4,29 +4,29 @@ import com.twitter.ml.api.Feature
 import com.twitter.ml.api.util.SRichDataRecord
 import com.twitter.scalding.Args
 import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding.UniqueID
 import com.twitter.scalding._
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.DALWrite.D
 import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.dataset.DAL.DALSourceBuilderExtension
+import com.twitter.scalding_internal.dalv2.dataset.DAL.DALSourceBuilderEtwittertension
 import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
-import com.twitter.search.common.features.ExternalTweetFeature
-import com.twitter.search.common.features.SearchContextFeature
+import com.twitter.search.common.features.EtwitterternalTweetFeature
+import com.twitter.search.common.features.SearchContetwittertFeature
 import com.twitter.search.tweet_ranking.scalding.datasets.TweetEngagementRawTrainingDataDailyJavaDataset
 import com.twitter.simclusters_v2.common.ClusterId
 import com.twitter.simclusters_v2.hdfs_sources.AdhocAbuseSimclusterFeaturesScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
+import com.twitter.simclusters_v2.scalding.common.matritwitter.SparseMatritwitter
 import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.NumBlocksP95
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getFlockBlocksSparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getUserInterestedInSparseMatrix
+import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getFlockBlocksSparseMatritwitter
+import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getUserInterestedInSparseMatritwitter
 import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.UserId
 import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
+import com.twitter.simclusters_v2.scalding.embedding.common.EtwitterternalDataSources
 import com.twitter.simclusters_v2.thriftscala.ModelVersion
 import com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
+import com.twitter.wtf.scalding.jobs.common.AdhocEtwitterecutionApp
 import com.twitter.wtf.scalding.jobs.common.CassowaryJob
 import java.util.TimeZone
 
@@ -45,9 +45,9 @@ object AdhocAbuseSimClusterFeatureKeys {
  * Adhoc job that is still in development. The job builds features that are meant to be useful for
  * search.
  *
- * Features are built from existing SimCluster representations and the interaction graphs.
+ * Features are built from etwitteristing SimCluster representations and the interaction graphs.
  *
- * Example command:
+ * Etwitterample command:
  * scalding remote run \
  * --target src/scala/com/twitter/simclusters_v2/scalding/embedding/abuse:abuse-adhoc \
  * --main-class com.twitter.simclusters_v2.scalding.embedding.abuse.AdhocAbuseSimClusterFeaturesScaldingJob \
@@ -55,21 +55,21 @@ object AdhocAbuseSimClusterFeatureKeys {
  * --hadoop-properties "mapreduce.job.user.classpath.first=true" -- \
  * --hdfs --date 2020/11/24 2020/12/14 --partitionName second_run --dalEnvironment Prod
  */
-object AdhocAbuseSimClusterFeaturesScaldingJob extends AdhocExecutionApp with CassowaryJob {
+object AdhocAbuseSimClusterFeaturesScaldingJob etwittertends AdhocEtwitterecutionApp with CassowaryJob {
   override def jobName: String = "AdhocAbuseScaldingJob"
 
   import AdhocAbuseSimClusterFeatureKeys._
 
-  val tweetAuthorFeature = new Feature.Discrete(ExternalTweetFeature.TWEET_AUTHOR_ID.getName)
-  val searcherIdFeature = new Feature.Discrete(SearchContextFeature.SEARCHER_ID.getName)
-  val isReportedFeature = new Feature.Binary(ExternalTweetFeature.IS_REPORTED.getName)
+  val tweetAuthorFeature = new Feature.Discrete(EtwitterternalTweetFeature.TWEET_AUTHOR_ID.getName)
+  val searcherIdFeature = new Feature.Discrete(SearchContetwittertFeature.SEARCHER_ID.getName)
+  val isReportedFeature = new Feature.Binary(EtwitterternalTweetFeature.IS_REPORTED.getName)
   val HalfLifeInDaysForFavScore = 100
 
   private val outputPathThrift: String = EmbeddingUtil.getHdfsPath(
     isAdhoc = false,
     isManhattanKeyVal = false,
     modelVersion = ModelVersion.Model20m145kUpdated,
-    pathSuffix = "abuse_simcluster_features"
+    pathSuffitwitter = "abuse_simcluster_features"
   )
 
   def searchDataRecords(
@@ -88,8 +88,8 @@ object AdhocAbuseSimClusterFeaturesScaldingJob extends AdhocExecutionApp with Ca
   )(
     implicit dateRange: DateRange,
     mode: Mode
-  ): SparseMatrix[UserId, UserId, Double] = {
-    val abuseMatrixEntries = searchDataRecords()
+  ): SparseMatritwitter[UserId, UserId, Double] = {
+    val abuseMatritwitterEntries = searchDataRecords()
       .flatMap { dataRecord =>
         val sDataRecord = SRichDataRecord(dataRecord)
         val authorIdOption = sDataRecord.getFeatureValueOpt(tweetAuthorFeature)
@@ -104,15 +104,15 @@ object AdhocAbuseSimClusterFeaturesScaldingJob extends AdhocExecutionApp with Ca
           (userId: UserId, authorId: UserId, 1.0)
         }
       }
-    SparseMatrix.apply[UserId, UserId, Double](abuseMatrixEntries)
+    SparseMatritwitter.apply[UserId, UserId, Double](abuseMatritwitterEntries)
   }
 
   def impressionInteractionSearchGraph(
   )(
     implicit dateRange: DateRange,
     mode: Mode
-  ): SparseMatrix[UserId, UserId, Double] = {
-    val impressionMatrixEntries = searchDataRecords
+  ): SparseMatritwitter[UserId, UserId, Double] = {
+    val impressionMatritwitterEntries = searchDataRecords
       .flatMap { dataRecord =>
         val sDataRecord = SRichDataRecord(dataRecord)
         val authorIdOption = sDataRecord.getFeatureValueOpt(tweetAuthorFeature)
@@ -125,7 +125,7 @@ object AdhocAbuseSimClusterFeaturesScaldingJob extends AdhocExecutionApp with Ca
           (userId: UserId, authorId: UserId, 1.0)
         }
       }
-    SparseMatrix.apply[UserId, UserId, Double](impressionMatrixEntries)
+    SparseMatritwitter.apply[UserId, UserId, Double](impressionMatritwitterEntries)
   }
 
   case class SingleSideScores(
@@ -135,19 +135,19 @@ object AdhocAbuseSimClusterFeaturesScaldingJob extends AdhocExecutionApp with Ca
     healthyAuthorClusterScores: TypedPipe[(UserId, SimClustersEmbedding)])
 
   def buildSearchAbuseScores(
-    normalizedSimClusterMatrix: SparseMatrix[UserId, ClusterId, Double],
-    unhealthyGraph: SparseMatrix[UserId, UserId, Double],
-    healthyGraph: SparseMatrix[UserId, UserId, Double]
+    normalizedSimClusterMatritwitter: SparseMatritwitter[UserId, ClusterId, Double],
+    unhealthyGraph: SparseMatritwitter[UserId, UserId, Double],
+    healthyGraph: SparseMatritwitter[UserId, UserId, Double]
   ): SingleSideScores = {
     SingleSideScores(
       unhealthyConsumerClusterScores = SingleSideInteractionTransformation
-        .clusterScoresFromGraphs(normalizedSimClusterMatrix, unhealthyGraph),
+        .clusterScoresFromGraphs(normalizedSimClusterMatritwitter, unhealthyGraph),
       unhealthyAuthorClusterScores = SingleSideInteractionTransformation
-        .clusterScoresFromGraphs(normalizedSimClusterMatrix, unhealthyGraph.transpose),
+        .clusterScoresFromGraphs(normalizedSimClusterMatritwitter, unhealthyGraph.transpose),
       healthyConsumerClusterScores = SingleSideInteractionTransformation
-        .clusterScoresFromGraphs(normalizedSimClusterMatrix, healthyGraph),
+        .clusterScoresFromGraphs(normalizedSimClusterMatritwitter, healthyGraph),
       healthyAuthorClusterScores = SingleSideInteractionTransformation
-        .clusterScoresFromGraphs(normalizedSimClusterMatrix, healthyGraph.transpose)
+        .clusterScoresFromGraphs(normalizedSimClusterMatritwitter, healthyGraph.transpose)
     )
   }
 
@@ -157,27 +157,27 @@ object AdhocAbuseSimClusterFeaturesScaldingJob extends AdhocExecutionApp with Ca
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
-    Execution.getMode.flatMap { implicit mode =>
-      val normalizedSimClusterMatrix = getUserInterestedInSparseMatrix.rowL2Normalize
+  ): Etwitterecution[Unit] = {
+    Etwitterecution.getMode.flatMap { implicit mode =>
+      val normalizedSimClusterMatritwitter = getUserInterestedInSparseMatritwitter.rowL2Normalize
 
       val abuseSearchGraph = abuseInteractionSearchGraph()
       val impressionSearchGraph = impressionInteractionSearchGraph()
 
       val searchAbuseScores = buildSearchAbuseScores(
-        normalizedSimClusterMatrix,
+        normalizedSimClusterMatritwitter,
         unhealthyGraph = abuseSearchGraph,
         healthyGraph = impressionSearchGraph)
 
       // Step 2a: Read FlockBlocks for unhealthy interactions and user-user-fav for healthy interactions
       val flockBlocksSparseGraph =
-        getFlockBlocksSparseMatrix(NumBlocksP95, dateRange.prepend(Years(1)))
+        getFlockBlocksSparseMatritwitter(NumBlocksP95, dateRange.prepend(Years(1)))
 
-      val favSparseGraph = SparseMatrix.apply[UserId, UserId, Double](
-        ExternalDataSources.getFavEdges(HalfLifeInDaysForFavScore))
+      val favSparseGraph = SparseMatritwitter.apply[UserId, UserId, Double](
+        EtwitterternalDataSources.getFavEdges(HalfLifeInDaysForFavScore))
 
       val blocksAbuseScores = buildSearchAbuseScores(
-        normalizedSimClusterMatrix,
+        normalizedSimClusterMatritwitter,
         unhealthyGraph = flockBlocksSparseGraph,
         healthyGraph = favSparseGraph
       )
@@ -204,10 +204,10 @@ object AdhocAbuseSimClusterFeaturesScaldingJob extends AdhocExecutionApp with Ca
         )
       )
 
-      pairedScores.writeDALSnapshotExecution(
+      pairedScores.writeDALSnapshotEtwitterecution(
         AdhocAbuseSimclusterFeaturesScalaDataset,
         D.Daily,
-        D.Suffix(outputPathThrift),
+        D.Suffitwitter(outputPathThrift),
         D.Parquet,
         dateRange.`end`,
         partitions = Set(D.Partition("partition", args("partitionName"), D.PartitionType.String))

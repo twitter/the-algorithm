@@ -43,11 +43,11 @@ class AnnLoadTestWorker(
 
   /**
    * @param queries List of tuple of query embedding and corresponding list of truth set of ids associated with the embedding
-   * @param qps the maximum number of request per second to send to the queryable. Note that if you
+   * @param qps the matwitterimum number of request per second to send to the queryable. Note that if you
    *            do not set the concurrency level high enough you may not be able to achieve this.
    * @param duration         how long to perform the load test.
    * @param configuration    Query configuration encapsulating runtime params and recorder.
-   * @param concurrencyLevel The maximum number of concurrent requests to the queryable at a time.
+   * @param concurrencyLevel The matwitterimum number of concurrent requests to the queryable at a time.
    *                         Note that you may not be able to achieve this number of concurrent
    *                         requests if you do not have the QPS set high enough.
    *
@@ -80,9 +80,9 @@ class AnnLoadTestWorker(
 
     Future.Unit.before {
       AsyncStream
-        .fromSeq(limitedStream).mapConcurrent(concurrencyLevel) { index =>
+        .fromSeq(limitedStream).mapConcurrent(concurrencyLevel) { indetwitter =>
           asyncMeter.await(1).flatMap { _ =>
-            performQuery(configuration, queryable, queries(index))
+            performQuery(configuration, queryable, queries(indetwitter))
           }
         }.size
     }

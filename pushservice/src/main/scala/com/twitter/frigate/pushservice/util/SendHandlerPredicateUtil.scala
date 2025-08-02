@@ -19,7 +19,7 @@ class SendHandlerPredicateUtil()(globalStats: StatsReceiver) {
     globalStats.scope("SendHandler")
   private val validateStats: StatsReceiver = statsReceiver.scope("validate")
 
-  private def updateFilteredStatusExptStats(candidate: PushCandidate, predName: String): Unit = {
+  private def updateFilteredStatusEtwitterptStats(candidate: PushCandidate, predName: String): Unit = {
 
     val recTypeStat = globalStats.scope(
       candidate.commonRecType.toString
@@ -104,7 +104,7 @@ class SendHandlerPredicateUtil()(globalStats: StatsReceiver) {
     predResultFuture.map {
       case (Some(pred: NamedPredicate[_])) =>
         validateStats.counter("filtered_by_named_general_predicate").incr()
-        updateFilteredStatusExptStats(candidate, pred.name)
+        updateFilteredStatusEtwitterptStats(candidate, pred.name)
         ResultWithDebugInfo(
           Invalid(Some(pred.name)),
           Nil
@@ -112,7 +112,7 @@ class SendHandlerPredicateUtil()(globalStats: StatsReceiver) {
 
       case Some(_) =>
         validateStats.counter("filtered_by_unnamed_general_predicate").incr()
-        updateFilteredStatusExptStats(candidate, predName = "unk")
+        updateFilteredStatusEtwitterptStats(candidate, predName = "unk")
         ResultWithDebugInfo(
           Invalid(Some("unnamed_candidate_predicate")),
           Nil

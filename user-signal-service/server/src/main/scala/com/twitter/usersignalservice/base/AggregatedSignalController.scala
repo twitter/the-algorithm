@@ -15,7 +15,7 @@ case class AggregatedSignalController(
   signalsWeightMapInfo: Map[SignalType, Double],
   stats: StatsReceiver,
   timer: Timer)
-    extends ReadableStore[Query, Seq[Signal]] {
+    etwittertends ReadableStore[Query, Seq[Signal]] {
 
   val name: String = this.getClass.getCanonicalName
   val statsReceiver: StatsReceiver = stats.scope(name)
@@ -31,14 +31,14 @@ case class AggregatedSignalController(
             allSignals
               .groupBy(_.targetInternalId).collect {
                 case (Some(internalId), signals) =>
-                  val mostRecentEnagementTime = signals.map(_.timestamp).max
+                  val mostRecentEnagementTime = signals.map(_.timestamp).matwitter
                   val totalWeight =
                     signals
                       .map(signal => signalsWeightMapInfo.getOrElse(signal.signalType, 0.0)).sum
                   (Signal(query.signalType, mostRecentEnagementTime, Some(internalId)), totalWeight)
               }.toSeq.sortBy { case (signal, weight) => (-weight, -signal.timestamp) }
               .map(_._1)
-              .take(query.maxResults.getOrElse(Int.MaxValue))
+              .take(query.matwitterResults.getOrElse(Int.MatwitterValue))
           }
         aggregatedSignals.map(Some(_))
       }.raiseWithin(Timeout)(timer).handle {

@@ -1,7 +1,7 @@
 #pragma once
 #include <stdbool.h>
 #ifdef __cplusplus
-extern "C" {
+etwittertern "C" {
 #endif
   typedef enum {
     TWML_TYPE_FLOAT32 = 1,
@@ -31,6 +31,6 @@ extern "C" {
 
 #define TWMLAPI __attribute__((visibility("default")))
 
-#ifndef TWML_INDEX_BASE
-#define TWML_INDEX_BASE 0
+#ifndef TWML_INDEtwitter_BASE
+#define TWML_INDEtwitter_BASE 0
 #endif

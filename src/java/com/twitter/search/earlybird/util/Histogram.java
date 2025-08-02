@@ -12,7 +12,7 @@ import com.google.common.base.Preconditions;
  * The histogram view is returned as a list of {@link Histogram.Entry}s.
  * <p/>
  * Bucket boundaries are inclusive on the upper boundaries. Given buckets of [0, 10, 100],
- * items will be places in 4 bins, { X <= 0, 0 < X <= 10, 10 < X <= 100, X > 100 }.
+ * items will be places in 4 bins, { twitter <= 0, 0 < twitter <= 10, 10 < twitter <= 100, twitter > 100 }.
  * <p/>
  * This class is not thread safe.
  *

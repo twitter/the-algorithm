@@ -1,20 +1,20 @@
 package com.twitter.tweetypie
 package repository
 
-import com.twitter.expandodo.thriftscala._
+import com.twitter.etwitterpandodo.thriftscala._
 import com.twitter.stitch.SeqGroup
 import com.twitter.stitch.Stitch
 import com.twitter.stitch.compat.LegacySeqGroup
-import com.twitter.tweetypie.backends.Expandodo
+import com.twitter.tweetypie.backends.Etwitterpandodo
 
 object CardUsersRepository {
   type CardUri = String
-  type Type = (CardUri, Context) => Stitch[Option[Set[UserId]]]
+  type Type = (CardUri, Contetwittert) => Stitch[Option[Set[UserId]]]
 
-  case class Context(perspectiveUserId: UserId) extends AnyVal
+  case class Contetwittert(perspectiveUserId: UserId) etwittertends AnyVal
 
-  case class GetUsersGroup(perspectiveId: UserId, getCardUsers: Expandodo.GetCardUsers)
-      extends SeqGroup[CardUri, GetCardUsersResponse] {
+  case class GetUsersGroup(perspectiveId: UserId, getCardUsers: Etwitterpandodo.GetCardUsers)
+      etwittertends SeqGroup[CardUri, GetCardUsersResponse] {
     protected override def run(keys: Seq[CardUri]): Future[Seq[Try[GetCardUsersResponse]]] =
       LegacySeqGroup.liftToSeqTry(
         getCardUsers(
@@ -26,9 +26,9 @@ object CardUsersRepository {
       )
   }
 
-  def apply(getCardUsers: Expandodo.GetCardUsers): Type =
-    (cardUri, ctx) =>
-      Stitch.call(cardUri, GetUsersGroup(ctx.perspectiveUserId, getCardUsers)).map { resp =>
+  def apply(getCardUsers: Etwitterpandodo.GetCardUsers): Type =
+    (cardUri, cttwitter) =>
+      Stitch.call(cardUri, GetUsersGroup(cttwitter.perspectiveUserId, getCardUsers)).map { resp =>
         val authorUserIds = resp.authorUserIds.map(_.toSet)
         val siteUserIds = resp.siteUserIds.map(_.toSet)
 

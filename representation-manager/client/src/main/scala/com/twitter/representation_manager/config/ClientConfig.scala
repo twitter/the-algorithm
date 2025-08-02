@@ -5,7 +5,7 @@ import com.twitter.simclusters_v2.thriftscala.ModelVersion
 
 /*
  * This is RMS client config class.
- * We only support setting up in memory cache params for now, but we expect to enable other
+ * We only support setting up in memory cache params for now, but we etwitterpect to enable other
  * customisations in the near future e.g. request timeout
  *
  * --------------------------------------------
@@ -22,4 +22,4 @@ class ClientConfig(inMemCacheParamsOverrides: Map[
   val inMemoryCacheConfig = new InMemoryCacheConfig(inMemCacheParams)
 }
 
-object DefaultClientConfig extends ClientConfig
+object DefaultClientConfig etwittertends ClientConfig

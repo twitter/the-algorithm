@@ -1,7 +1,7 @@
 package com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion
 
 import com.twitter.ml.api._
-import com.twitter.ml.api.FeatureContext
+import com.twitter.ml.api.FeatureContetwittert
 import scala.collection.JavaConverters._
 
 /*
@@ -10,17 +10,17 @@ import scala.collection.JavaConverters._
  * Does not rename any of the aggregate features for simplicity.
  * Avoid using this merge policy if at all possible.
  */
-object PickFirstRecordPolicy extends SparseBinaryMergePolicy {
+object PickFirstRecordPolicy etwittertends SparseBinaryMergePolicy {
   val dataRecordMerger: DataRecordMerger = new DataRecordMerger
 
   override def mergeRecord(
     mutableInputRecord: DataRecord,
     aggregateRecords: List[DataRecord],
-    aggregateContext: FeatureContext
+    aggregateContetwittert: FeatureContetwittert
   ): Unit =
     aggregateRecords.headOption
       .foreach(aggregateRecord => dataRecordMerger.merge(mutableInputRecord, aggregateRecord))
 
-  override def aggregateFeaturesPostMerge(aggregateContext: FeatureContext): Set[Feature[_]] =
-    aggregateContext.getAllFeatures.asScala.toSet
+  override def aggregateFeaturesPostMerge(aggregateContetwittert: FeatureContetwittert): Set[Feature[_]] =
+    aggregateContetwittert.getAllFeatures.asScala.toSet
 }

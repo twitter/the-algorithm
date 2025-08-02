@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird_root.mergers;
 
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -32,10 +32,10 @@ class EarlybirdResponseDebugMessageBuilder {
 
   @VisibleForTesting
   protected final SearchCounter insufficientValidResponseCounter =
-      SearchCounter.export("insufficient_valid_partition_responses_count");
+      SearchCounter.etwitterport("insufficient_valid_partition_responses_count");
   @VisibleForTesting
   protected final SearchCounter validPartitionResponseCounter =
-      SearchCounter.export("valid_partition_response_count");
+      SearchCounter.etwitterport("valid_partition_response_count");
 
   // the combined debug string for all earlybird responses
   private final StringBuilder debugString;

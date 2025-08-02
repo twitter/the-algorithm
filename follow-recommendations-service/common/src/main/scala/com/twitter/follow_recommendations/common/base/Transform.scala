@@ -33,7 +33,7 @@ trait Transform[-T, C] {
   }
 
   /**
-   * sequential composition. we execute this' transform first, followed by the other's transform
+   * sequential composition. we etwitterecute this' transform first, followed by the other's transform
    */
   def andThen[T1 <: T](other: Transform[T1, C]): Transform[T1, C] = {
     val original = this
@@ -62,7 +62,7 @@ trait Transform[-T, C] {
   }
 }
 
-trait GatedTransform[T <: HasParams, C] extends Transform[T, C] {
+trait GatedTransform[T <: HasParams, C] etwittertends Transform[T, C] {
   def gated(param: Param[Boolean]): Transform[T, C] = {
     val original = this
     (target: T, items: Seq[C]) => {
@@ -80,6 +80,6 @@ object Transform {
   val InputCandidatesStat = "input_candidates_stat"
 }
 
-class IdentityTransform[T, C] extends Transform[T, C] {
+class IdentityTransform[T, C] etwittertends Transform[T, C] {
   override def transform(target: T, items: Seq[C]): Stitch[Seq[C]] = Stitch.value(items)
 }

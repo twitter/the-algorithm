@@ -8,7 +8,7 @@ import com.twitter.util.Future
 object Scribe {
 
   /**
-   * Returns a new FutureEffect for scribing text to the specified category.
+   * Returns a new FutureEffect for scribing tetwittert to the specified category.
    */
   def apply(
     category: String,
@@ -17,7 +17,7 @@ object Scribe {
     Scribe(loggingHandler(category = category, statsReceiver = statsReceiver))
 
   /**
-   * Returns a new FutureEffect for scribing text to the specified logging handler.
+   * Returns a new FutureEffect for scribing tetwittert to the specified logging handler.
    */
   def apply(handler: Handler): FutureEffect[String] =
     FutureEffect[String] { msg =>
@@ -62,12 +62,12 @@ object Scribe {
   def loggingHandler(
     category: String,
     formatter: Formatter = BareFormatter,
-    maxQueueSize: Int = 5000,
+    matwitterQueueSize: Int = 5000,
     statsReceiver: StatsReceiver = NullStatsReceiver
   ): Handler =
     new QueueingHandler(
       ScribeHandler(category = category, formatter = formatter, statsReceiver = statsReceiver)(),
-      maxQueueSize = maxQueueSize
+      matwitterQueueSize = matwitterQueueSize
     )
 
   /**

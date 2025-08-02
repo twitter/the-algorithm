@@ -6,7 +6,7 @@ import com.twitter.frigate.pushservice.take.predicates.candidate_map.SendHandler
 import com.twitter.hermit.predicate.Predicate
 import com.twitter.util.Future
 
-class SendHandlerPreCandidateValidator(override val config: Config) extends CandidateValidator {
+class SendHandlerPreCandidateValidator(override val config: Config) etwittertends CandidateValidator {
 
   override protected val candidatePredicatesMap =
     SendHandlerCandidatePredicatesMap.preCandidatePredicates(config)
@@ -19,6 +19,6 @@ class SendHandlerPreCandidateValidator(override val config: Config) extends Cand
     val predicates = sendHandlerPrePredicates ++ candidatePredicates
 
     sendHandlerPreCandidateValidatorStats.incr()
-    executeSequentialPredicates(candidate, predicates)
+    etwitterecuteSequentialPredicates(candidate, predicates)
   }
 }

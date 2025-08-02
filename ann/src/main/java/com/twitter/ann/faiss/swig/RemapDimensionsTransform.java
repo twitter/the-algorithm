@@ -8,7 +8,7 @@
 
 package com.twitter.ann.faiss;
 
-public class RemapDimensionsTransform extends VectorTransform {
+public class RemapDimensionsTransform etwittertends VectorTransform {
   private transient long swigCPtr;
 
   protected RemapDimensionsTransform(long cPtr, boolean cMemoryOwn) {
@@ -57,12 +57,12 @@ public class RemapDimensionsTransform extends VectorTransform {
     this(swigfaissJNI.new_RemapDimensionsTransform__SWIG_2(d_in, d_out), true);
   }
 
-  public void apply_noalloc(long n, SWIGTYPE_p_float x, SWIGTYPE_p_float xt) {
-    swigfaissJNI.RemapDimensionsTransform_apply_noalloc(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x), SWIGTYPE_p_float.getCPtr(xt));
+  public void apply_noalloc(long n, SWIGTYPE_p_float twitter, SWIGTYPE_p_float twittert) {
+    swigfaissJNI.RemapDimensionsTransform_apply_noalloc(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(twitter), SWIGTYPE_p_float.getCPtr(twittert));
   }
 
-  public void reverse_transform(long n, SWIGTYPE_p_float xt, SWIGTYPE_p_float x) {
-    swigfaissJNI.RemapDimensionsTransform_reverse_transform(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(xt), SWIGTYPE_p_float.getCPtr(x));
+  public void reverse_transform(long n, SWIGTYPE_p_float twittert, SWIGTYPE_p_float twitter) {
+    swigfaissJNI.RemapDimensionsTransform_reverse_transform(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(twittert), SWIGTYPE_p_float.getCPtr(twitter));
   }
 
   public RemapDimensionsTransform() {

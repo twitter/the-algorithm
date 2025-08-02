@@ -1,0 +1,6 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.item.topic
+
+sealed trait TopicFollowPromptDisplayType
+
+case object IncentiveFocusTopicFollowPromptDisplayType etwittertends TopicFollowPromptDisplayType
+case object TopicFocusTopicFollowPromptDisplayType etwittertends TopicFollowPromptDisplayType

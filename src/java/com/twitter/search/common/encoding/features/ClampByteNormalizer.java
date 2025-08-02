@@ -5,22 +5,22 @@ import com.google.common.base.Preconditions;
 /**
  * A byte normalizer that restricts the values to the given range before normalizing them.
  */
-public class ClampByteNormalizer extends ByteNormalizer {
+public class ClampByteNormalizer etwittertends ByteNormalizer {
   private final int minUnnormalizedValue;
-  private final int maxUnnormalizedValue;
+  private final int matwitterUnnormalizedValue;
 
   /**
    * Creates a new ClampByteNormalizer instance.
    *
    * @param minValue The smallest allowed unnormalized value.
-   * @param maxValue The largest allowed unnormalized value.
+   * @param matwitterValue The largest allowed unnormalized value.
    */
-  public ClampByteNormalizer(int minUnnormalizedValue, int maxUnnormalizedValue) {
-    Preconditions.checkState(minUnnormalizedValue <= maxUnnormalizedValue);
+  public ClampByteNormalizer(int minUnnormalizedValue, int matwitterUnnormalizedValue) {
+    Preconditions.checkState(minUnnormalizedValue <= matwitterUnnormalizedValue);
     Preconditions.checkState(minUnnormalizedValue >= 0);
-    Preconditions.checkState(maxUnnormalizedValue <= 255);
+    Preconditions.checkState(matwitterUnnormalizedValue <= 255);
     this.minUnnormalizedValue = minUnnormalizedValue;
-    this.maxUnnormalizedValue = maxUnnormalizedValue;
+    this.matwitterUnnormalizedValue = matwitterUnnormalizedValue;
   }
 
   @Override
@@ -29,8 +29,8 @@ public class ClampByteNormalizer extends ByteNormalizer {
     if (adjustedValue < minUnnormalizedValue) {
       adjustedValue = minUnnormalizedValue;
     }
-    if (adjustedValue > maxUnnormalizedValue) {
-      adjustedValue = maxUnnormalizedValue;
+    if (adjustedValue > matwitterUnnormalizedValue) {
+      adjustedValue = matwitterUnnormalizedValue;
     }
     return ByteNormalizer.intToUnsignedByte(adjustedValue);
   }

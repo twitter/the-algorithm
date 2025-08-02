@@ -4,11 +4,11 @@ import com.twitter.abdecider.ABDeciderFactory
 import com.twitter.abdecider.LoggingABDecider
 import com.twitter.app.Flag
 import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.http.HttpMuxer
+import com.twitter.finagle.ThriftMutwitter
+import com.twitter.finagle.http.HttpMutwitterer
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.finagle.mtls.server.MtlsStackServer._
-import com.twitter.finagle.mux.transport.OpportunisticTls
+import com.twitter.finagle.mutwitter.transport.OpportunisticTls
 import com.twitter.finagle.thrift.ClientId
 import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
 import com.twitter.finatra.kafka.domain.KafkaGroupId
@@ -16,11 +16,11 @@ import com.twitter.finatra.kafka.domain.SeekStrategy
 import com.twitter.finatra.kafka.serde.ScalaSerdes
 import com.twitter.frigate.common.util.ElfOwlFilter
 import com.twitter.frigate.common.util.ElfOwlFilter.ByLdapGroup
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph
+import com.twitter.graphjet.bipartite.NodeMetadataLeftIndetwitteredPowerLawMultiSegmentBipartiteGraph
 import com.twitter.logging._
 import com.twitter.recos.decider.UserTweetEntityGraphDecider
 import com.twitter.recos.graph_common.FinagleStatsReceiverWrapper
-import com.twitter.recos.graph_common.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphBuilder
+import com.twitter.recos.graph_common.NodeMetadataLeftIndetwitteredPowerLawMultiSegmentBipartiteGraphBuilder
 import com.twitter.recos.internal.thriftscala.RecosHoseMessage
 import com.twitter.recos.model.Constants
 import com.twitter.recos.user_tweet_entity_graph.RecosConfig._
@@ -39,7 +39,7 @@ import org.apache.kafka.common.config.SslConfigs
 import org.apache.kafka.common.security.auth.SecurityProtocol
 import org.apache.kafka.common.serialization.StringDeserializer
 
-object Main extends TwitterServer with JDK14Logging with Deciderable {
+object Main etwittertends TwitterServer with JDK14Logging with Deciderable {
   profile =>
 
   val shardId: Flag[Int] = flag("shardId", 0, "Shard ID")
@@ -57,8 +57,8 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
   val serviceEnv: Flag[String] = flag("service.env", "Service Env")
   val serviceName: Flag[String] = flag("service.name", "Service Name")
 
-  private val maxNumSegments =
-    flag("maxNumSegments", graphBuilderConfig.maxNumSegments, "the number of segments in the graph")
+  private val matwitterNumSegments =
+    flag("matwitterNumSegments", graphBuilderConfig.matwitterNumSegments, "the number of segments in the graph")
 
   private val statsReceiverWrapper = FinagleStatsReceiverWrapper(statsReceiver)
 
@@ -67,7 +67,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
   private val shutdownTimeout = flag(
     "service.shutdownTimeout",
     5.seconds,
-    "Maximum amount of time to wait for pending requests to complete on shutdown"
+    "Matwitterimum amount of time to wait for pending requests to complete on shutdown"
   )
 
   // ********* logging **********
@@ -124,7 +124,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
         level = Some(loggingLevel),
         useParents = false,
         handlers = QueueingHandler(
-          maxQueueSize = 10000,
+          matwitterQueueSize = 10000,
           handler = ScribeHandler(
             category = "client_event",
             formatter = BareFormatter
@@ -166,9 +166,9 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
       .withConfig(SaslConfigs.SASL_KERBEROS_SERVER_NAME, "kafka")
   }
   def main(): Unit = {
-    log.info("building graph with maxNumSegments = " + profile.maxNumSegments())
-    val graph = NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraphBuilder(
-      graphBuilderConfig.copy(maxNumSegments = profile.maxNumSegments()),
+    log.info("building graph with matwitterNumSegments = " + profile.matwitterNumSegments())
+    val graph = NodeMetadataLeftIndetwitteredPowerLawMultiSegmentBipartiteGraphBuilder(
+      graphBuilderConfig.copy(matwitterNumSegments = profile.matwitterNumSegments()),
       statsReceiverWrapper
     )
 
@@ -237,7 +237,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
     )
     log.info(s"ServiceIdentifier = ${serviceIdentifier.toString}")
 
-    val thriftServer = ThriftMux.server
+    val thriftServer = ThriftMutwitter.server
       .withOpportunisticTls(OpportunisticTls.Required)
       .withMutualTls(serviceIdentifier)
       .serveIface(servicePort(), userTweetEntityGraph)
@@ -246,7 +246,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
     log.info("servicePort: " + servicePort().toString)
 
     log.info("adding shutdown hook")
-    onExit {
+    onEtwitterit {
       graphWriter.shutdown()
       thriftServer.close(shutdownTimeout().fromNow)
     }

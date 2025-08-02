@@ -1,6 +1,6 @@
 package com.twitter.simclustersann.modules
 
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
+import com.twitter.finatra.mtls.thriftmutwitter.modules.MtlsThriftWebFormsModule
 import com.twitter.finatra.thrift.ThriftServer
 import com.twitter.simclusters_v2.thriftscala.EmbeddingType
 import com.twitter.simclusters_v2.thriftscala.InternalId
@@ -19,7 +19,7 @@ import com.twitter.simclustersann.thriftscala.SimClustersANNService
 import scala.collection.mutable
 
 class CustomMtlsThriftWebFormsModule[T: ClassTag](server: ThriftServer)
-    extends MtlsThriftWebFormsModule[T](server: ThriftServer) {
+    etwittertends MtlsThriftWebFormsModule[T](server: ThriftServer) {
 
   private val Nbsp = "&nbsp;"
   private val LdapGroups = Seq("recosplat-sensitive-data-medium", "simclusters-ann-admins")
@@ -34,12 +34,12 @@ class CustomMtlsThriftWebFormsModule[T: ClassTag](server: ThriftServer)
           internalId = InternalId.TweetId(tweetId)
         ),
         config = SimClustersANNConfig(
-          maxNumResults = 10,
+          matwitterNumResults = 10,
           minScore = 0.0,
           candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-          maxTopTweetsPerCluster = 400,
-          maxScanClusters = 50,
-          maxTweetCandidateAgeHours = 24,
+          matwitterTopTweetsPerCluster = 400,
+          matwitterScanClusters = 50,
+          matwitterTweetCandidateAgeHours = 24,
           minTweetCandidateAgeHours = 0,
           annAlgorithm = ScoringAlgorithm.CosineSimilarity
         )
@@ -68,7 +68,7 @@ class CustomMtlsThriftWebFormsModule[T: ClassTag](server: ThriftServer)
   def renderTimeline(r: AnyRef): Future[ServiceResponseView] = {
     val simClustersANNTweetCandidates = r match {
       case response: Iterable[_] =>
-        response.map(x => x.asInstanceOf[SimClustersANNTweetCandidate]).toSeq
+        response.map(twitter => twitter.asInstanceOf[SimClustersANNTweetCandidate]).toSeq
       case _ => Seq()
     }
     renderTweets(simClustersANNTweetCandidates)

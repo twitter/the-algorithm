@@ -8,7 +8,7 @@ import com.twitter.visibility.rules.Filtered
 import com.twitter.visibility.rules.Rule
 import com.twitter.visibility.rules.RuleBase
 import com.twitter.visibility.rules.RuleBase.RuleMap
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
+import com.twitter.visibility.rules.providers.ProvidedEvaluationContetwittert
 import com.twitter.visibility.rules.providers.PolicyProvider
 
 object ShimUtils {
@@ -17,7 +17,7 @@ object ShimUtils {
     featureMap: FeatureMap,
     safetyLevel: SafetyLevel,
     contentId: ContentId,
-    evaluationContext: ProvidedEvaluationContext,
+    evaluationContetwittert: ProvidedEvaluationContetwittert,
     policyProviderOpt: Option[PolicyProvider] = None,
   ): FeatureMap = {
     val safetyLevelRules: Seq[Rule] = policyProviderOpt match {
@@ -29,7 +29,7 @@ object ShimUtils {
     }
 
     val afterDisabledRules =
-      safetyLevelRules.filter(evaluationContext.ruleEnabledInContext)
+      safetyLevelRules.filter(evaluationContetwittert.ruleEnabledInContetwittert)
 
     val afterMissingFeatureRules =
       afterDisabledRules.filter(rule => {
@@ -44,7 +44,7 @@ object ShimUtils {
       })
 
     val afterPreFilterRules = afterMissingFeatureRules.filter(rule => {
-      rule.preFilter(evaluationContext, featureMap.constantMap, null) match {
+      rule.preFilter(evaluationContetwittert, featureMap.constantMap, null) match {
         case Filtered =>
           false
         case _ =>

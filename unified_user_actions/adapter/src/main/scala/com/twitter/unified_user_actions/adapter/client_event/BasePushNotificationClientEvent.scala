@@ -5,7 +5,7 @@ import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
 import com.twitter.unified_user_actions.thriftscala._
 
 abstract class BasePushNotificationClientEvent(actionType: ActionType)
-    extends BaseClientEvent(actionType = actionType) {
+    etwittertends BaseClientEvent(actionType = actionType) {
 
   override def getUuaItem(
     ceItem: LogEventItem,

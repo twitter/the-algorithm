@@ -1,6 +1,6 @@
 package com.twitter.search.common.schema;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.List;
@@ -9,9 +9,9 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
-import javax.annotation.concurrent.ThreadSafe;
+import javatwitter.annotation.Nullable;
+import javatwitter.annotation.concurrent.Immutable;
+import javatwitter.annotation.concurrent.ThreadSafe;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -26,15 +26,15 @@ import com.google.common.collect.Sets;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.facet.FacetsConfig;
-import org.apache.lucene.index.DocValuesType;
-import org.apache.lucene.index.FieldInfos;
-import org.apache.lucene.index.IndexOptions;
+import org.apache.lucene.indetwitter.DocValuesType;
+import org.apache.lucene.indetwitter.FieldInfos;
+import org.apache.lucene.indetwitter.IndetwitterOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.twitter.common.collections.Pair;
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.search.common.features.ExternalTweetFeature;
+import com.twitter.common.tetwittert.util.TokenStreamSerializer;
+import com.twitter.search.common.features.EtwitterternalTweetFeature;
 import com.twitter.search.common.features.SearchResultFeature;
 import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
 import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaEntry;
@@ -46,7 +46,7 @@ import com.twitter.search.common.schema.base.EarlybirdFieldType;
 import com.twitter.search.common.schema.base.FeatureConfiguration;
 import com.twitter.search.common.schema.base.FieldWeightDefault;
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
+import com.twitter.search.common.schema.base.IndetwitteredNumericFieldSettings;
 import com.twitter.search.common.schema.thriftjava.ThriftAnalyzer;
 import com.twitter.search.common.schema.thriftjava.ThriftCSFFieldSettings;
 import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
@@ -54,7 +54,7 @@ import com.twitter.search.common.schema.thriftjava.ThriftCSFViewSettings;
 import com.twitter.search.common.schema.thriftjava.ThriftFacetFieldSettings;
 import com.twitter.search.common.schema.thriftjava.ThriftFieldConfiguration;
 import com.twitter.search.common.schema.thriftjava.ThriftFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexedFieldSettings;
+import com.twitter.search.common.schema.thriftjava.ThriftIndetwitteredFieldSettings;
 import com.twitter.search.common.schema.thriftjava.ThriftSchema;
 import com.twitter.search.common.schema.thriftjava.ThriftSearchFieldSettings;
 import com.twitter.search.common.schema.thriftjava.ThriftTokenStreamSerializer;
@@ -72,11 +72,11 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
           .add(ThriftCSFType.LONG)
           .build();
 
-  private static final SearchCounter FEATURES_EXISTED_IN_OLD_SCHEMA =
-      SearchCounter.export("features_existed_in_old_schema");
+  private static final SearchCounter FEATURES_EtwitterISTED_IN_OLD_SCHEMA =
+      SearchCounter.etwitterport("features_etwitteristed_in_old_schema");
 
-  // Currently our index uses 4 bits to store the facet field id.
-  public static final int MAX_FACET_FIELD_ID = 15;
+  // Currently our indetwitter uses 4 bits to store the facet field id.
+  public static final int MAtwitter_FACET_FIELD_ID = 15;
 
   public static final String HF_TERM_PAIRS_FIELD = "hf_term_pairs";
   public static final String HF_PHRASE_PAIRS_FIELD = "hf_phrase_pairs";
@@ -109,7 +109,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
    */
   public ImmutableSchema(ThriftSchema thriftSchema,
                          AnalyzerFactory analyzerFactory,
-                         String featureSchemaVersionPrefix) throws SchemaValidationException {
+                         String featureSchemaVersionPrefitwitter) throws SchemaValidationEtwitterception {
     Pair<Integer, String> versionPair = parseVersionString(thriftSchema.getVersion());
     this.majorVersionNumber = thriftSchema.getMajorVersionNumber();
     this.minorVersionNumber = thriftSchema.getMinorVersionNumber();
@@ -140,16 +140,16 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
       int fieldId = entry.getKey();
 
       if (tmpMap.containsKey(fieldId)) {
-        throw new SchemaValidationException("Duplicate field id " + fieldId);
+        throw new SchemaValidationEtwitterception("Duplicate field id " + fieldId);
       }
 
       ThriftFieldConfiguration config = entry.getValue();
       FieldInfo fieldInfo = parseThriftFieldSettings(fieldId, config, csfViewFields);
       validate(fieldInfo);
       if (fieldInfo.getFieldType().isFacetField()) {
-        if (numFacets > MAX_FACET_FIELD_ID) {
-          throw new SchemaValidationException(
-              "Maximum supported facet field ID is:  " + MAX_FACET_FIELD_ID);
+        if (numFacets > MAtwitter_FACET_FIELD_ID) {
+          throw new SchemaValidationEtwitterception(
+              "Matwitterimum supported facet field ID is:  " + MAtwitter_FACET_FIELD_ID);
         }
         numFacets++;
         facetNameToFieldMap.put(fieldInfo.getFieldType().getFacetName(), fieldInfo);
@@ -161,7 +161,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
 
       tmpMap.put(fieldId, fieldInfo);
 
-      if (fieldInfo.getFieldType().isIndexHFTermPairs()) {
+      if (fieldInfo.getFieldType().isIndetwitterHFTermPairs()) {
         requiresHfPairFields = true;
       }
       if (fieldInfo.getName().equals(HF_TERM_PAIRS_FIELD)) {
@@ -175,11 +175,11 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
     this.numFacetFields = numFacets;
     this.csfFacetFields = ImmutableSet.copyOf(tmpSet);
 
-    // If any field requires high frequency term/phrase pair fields, make sure they exist
+    // If any field requires high frequency term/phrase pair fields, make sure they etwitterist
     if (requiresHfPairFields) {
       if (!hasHfTermPairField || !hasHfPhrasePairField) {
-        throw new SchemaValidationException(
-            "High frequency term/phrase pair fields do not exist in the schema.");
+        throw new SchemaValidationEtwitterception(
+            "High frequency term/phrase pair fields do not etwitterist in the schema.");
       }
     }
 
@@ -206,42 +206,42 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
 
     for (FieldInfo fi : getFieldInfos()) {
       // CSF fields are not searchable. All other fields are.
-      if (fi.getFieldType().isIndexedField()) {
+      if (fi.getFieldType().isIndetwitteredField()) {
         fieldWeightMapBuilder.put(
             fi.getName(),
             new FieldWeightDefault(
-                fi.getFieldType().isTextSearchableByDefault(),
-                fi.getFieldType().getTextSearchableFieldWeight()));
+                fi.getFieldType().isTetwittertSearchableByDefault(),
+                fi.getFieldType().getTetwittertSearchableFieldWeight()));
       }
     }
 
     this.fieldWeightMap = fieldWeightMapBuilder.build();
-    // Create features with extra Earlybird derived fields, extra fields won't change the version
+    // Create features with etwittertra Earlybird derived fields, etwittertra fields won't change the version
     // but they do change the checksum.
     this.searchFeatureSchema = createSearchResultFeatureSchema(
-        featureSchemaVersionPrefix, fieldSettingsMapByName, featureConfigMapByName);
+        featureSchemaVersionPrefitwitter, fieldSettingsMapByName, featureConfigMapByName);
   }
 
   /**
-   * Add a set of features to a schema if they don't exist yet, and update the schema checksum.
-   * if there's conflict, RuntimeException will be thrown.
+   * Add a set of features to a schema if they don't etwitterist yet, and update the schema checksum.
+   * if there's conflict, RuntimeEtwitterception will be thrown.
    * Old map won't be touched, a new map will be returned will old and new data combined.
    */
   public static Map<Integer, ThriftSearchFeatureSchemaEntry> appendToFeatureSchema(
       Map<Integer, ThriftSearchFeatureSchemaEntry> oldEntryMap,
-      Set<? extends SearchResultFeature> features) throws SchemaValidationException {
+      Set<? etwittertends SearchResultFeature> features) throws SchemaValidationEtwitterception {
     if (oldEntryMap == null) {
-      throw new SchemaValidationException(
+      throw new SchemaValidationEtwitterception(
           "Cannot append features to schema, the entryMap is null");
     }
-    // make a copy of the existing map
+    // make a copy of the etwitteristing map
     ImmutableMap.Builder<Integer, ThriftSearchFeatureSchemaEntry> builder =
         ImmutableSortedMap.<Integer, ThriftSearchFeatureSchemaEntry>naturalOrder()
             .putAll(oldEntryMap);
 
     for (SearchResultFeature feature : features) {
       if (oldEntryMap.containsKey(feature.getId())) {
-        FEATURES_EXISTED_IN_OLD_SCHEMA.increment();
+        FEATURES_EtwitterISTED_IN_OLD_SCHEMA.increment();
       } else {
         builder.put(feature.getId(), new ThriftSearchFeatureSchemaEntry()
             .setFeatureName(feature.getName())
@@ -252,29 +252,29 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
   }
 
   /**
-   * Append external features to create a new schema.
+   * Append etwitterternal features to create a new schema.
    * @param oldSchema The old schema to build on top of
    * @param features a list of features to be appended to the schema
-   * @param versionSuffix the version suffix, if not-null, it will be attached to the end of
+   * @param versionSuffitwitter the version suffitwitter, if not-null, it will be attached to the end of
    * original schema's version.
    * @return A new schema object with the appended fields
-   * @throws SchemaValidationException thrown when the checksum cannot be computed
+   * @throws SchemaValidationEtwitterception thrown when the checksum cannot be computed
    */
   public static ThriftSearchFeatureSchema appendToCreateNewFeatureSchema(
       ThriftSearchFeatureSchema oldSchema,
-      Set<ExternalTweetFeature> features,
-      @Nullable String versionSuffix) throws SchemaValidationException {
+      Set<EtwitterternalTweetFeature> features,
+      @Nullable String versionSuffitwitter) throws SchemaValidationEtwitterception {
 
     ThriftSearchFeatureSchema newSchema = new ThriftSearchFeatureSchema();
     // copy over all the entries plus the new ones
     newSchema.setEntries(appendToFeatureSchema(oldSchema.getEntries(), features));
 
     ThriftSearchFeatureSchemaSpecifier spec = new ThriftSearchFeatureSchemaSpecifier();
-    // the version is directly inherited or with a suffix
-    Preconditions.checkArgument(versionSuffix == null || !versionSuffix.isEmpty());
-    spec.setVersion(versionSuffix == null
+    // the version is directly inherited or with a suffitwitter
+    Preconditions.checkArgument(versionSuffitwitter == null || !versionSuffitwitter.isEmpty());
+    spec.setVersion(versionSuffitwitter == null
         ? oldSchema.getSchemaSpecifier().getVersion()
-        : oldSchema.getSchemaSpecifier().getVersion() + versionSuffix);
+        : oldSchema.getSchemaSpecifier().getVersion() + versionSuffitwitter);
     spec.setChecksum(getChecksum(newSchema.getEntries()));
     newSchema.setSchemaSpecifier(spec);
     return newSchema;
@@ -282,19 +282,19 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
 
   @Override
   public FieldInfos getLuceneFieldInfos(Predicate<String> acceptedFields) {
-    List<org.apache.lucene.index.FieldInfo> acceptedFieldInfos = Lists.newArrayList();
+    List<org.apache.lucene.indetwitter.FieldInfo> acceptedFieldInfos = Lists.newArrayList();
     for (FieldInfo fi : getFieldInfos()) {
       if (acceptedFields == null || acceptedFields.apply(fi.getName())) {
         acceptedFieldInfos.add(convert(fi.getName(), fi.getFieldId(), fi.getFieldType()));
       }
     }
     return new FieldInfos(acceptedFieldInfos.toArray(
-        new org.apache.lucene.index.FieldInfo[acceptedFieldInfos.size()]));
+        new org.apache.lucene.indetwitter.FieldInfo[acceptedFieldInfos.size()]));
   }
 
   private FieldInfo parseThriftFieldSettings(int fieldId, ThriftFieldConfiguration fieldConfig,
                                              Map<Integer, ThriftFieldConfiguration> csfViewFields)
-      throws SchemaValidationException {
+      throws SchemaValidationEtwitterception {
     FieldInfo fieldInfo
         = new FieldInfo(fieldId, fieldConfig.getFieldName(), new EarlybirdFieldType());
     ThriftFieldSettings fieldSettings = fieldConfig.getSettings();
@@ -302,20 +302,20 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
 
     boolean settingFound = false;
 
-    if (fieldSettings.isSetIndexedFieldSettings()) {
+    if (fieldSettings.isSetIndetwitteredFieldSettings()) {
       if (fieldSettings.isSetCsfFieldSettings() || fieldSettings.isSetCsfViewSettings()) {
-        throw new SchemaValidationException("ThriftFieldSettings: Only one of "
-            + "'indexedFieldSettings', 'csfFieldSettings', 'csfViewSettings' can be set.");
+        throw new SchemaValidationEtwitterception("ThriftFieldSettings: Only one of "
+            + "'indetwitteredFieldSettings', 'csfFieldSettings', 'csfViewSettings' can be set.");
       }
 
-      applyIndexedFieldSettings(fieldInfo, fieldSettings.getIndexedFieldSettings());
+      applyIndetwitteredFieldSettings(fieldInfo, fieldSettings.getIndetwitteredFieldSettings());
       settingFound = true;
     }
 
     if (fieldSettings.isSetCsfFieldSettings()) {
-      if (fieldSettings.isSetIndexedFieldSettings() || fieldSettings.isSetCsfViewSettings()) {
-        throw new SchemaValidationException("ThriftFieldSettings: Only one of "
-            + "'indexedFieldSettings', 'csfFieldSettings', 'csfViewSettings' can be set.");
+      if (fieldSettings.isSetIndetwitteredFieldSettings() || fieldSettings.isSetCsfViewSettings()) {
+        throw new SchemaValidationEtwitterception("ThriftFieldSettings: Only one of "
+            + "'indetwitteredFieldSettings', 'csfFieldSettings', 'csfViewSettings' can be set.");
       }
 
       applyCsfFieldSettings(fieldInfo, fieldSettings.getCsfFieldSettings());
@@ -323,11 +323,11 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
     }
 
     if (fieldSettings.isSetFacetFieldSettings()) {
-      if (!fieldSettings.isSetIndexedFieldSettings() && !(fieldSettings.isSetCsfFieldSettings()
+      if (!fieldSettings.isSetIndetwitteredFieldSettings() && !(fieldSettings.isSetCsfFieldSettings()
           && fieldSettings.getFacetFieldSettings().isUseCSFForFacetCounting()
           && CAN_FACET_ON_CSF_TYPES.contains(fieldSettings.getCsfFieldSettings().getCsfType()))) {
-        throw new SchemaValidationException("ThriftFieldSettings: 'facetFieldSettings' can only be "
-            + "used in combination with 'indexedFieldSettings' or with 'csfFieldSettings' "
+        throw new SchemaValidationEtwitterception("ThriftFieldSettings: 'facetFieldSettings' can only be "
+            + "used in combination with 'indetwitteredFieldSettings' or with 'csfFieldSettings' "
             + "where 'isUseCSFForFacetCounting' was set to true and ThriftCSFType is a type that "
             + "can be faceted on.");
       }
@@ -337,9 +337,9 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
     }
 
     if (fieldSettings.isSetCsfViewSettings()) {
-      if (fieldSettings.isSetIndexedFieldSettings() || fieldSettings.isSetCsfFieldSettings()) {
-        throw new SchemaValidationException("ThriftFieldSettings: Only one of "
-            + "'indexedFieldSettings', 'csfFieldSettings', 'csfViewSettings' can be set.");
+      if (fieldSettings.isSetIndetwitteredFieldSettings() || fieldSettings.isSetCsfFieldSettings()) {
+        throw new SchemaValidationEtwitterception("ThriftFieldSettings: Only one of "
+            + "'indetwitteredFieldSettings', 'csfFieldSettings', 'csfViewSettings' can be set.");
       }
 
       // add this field now, but apply settings later to make sure the base field was added properly
@@ -349,16 +349,16 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
     }
 
     if (!settingFound) {
-      throw new SchemaValidationException("ThriftFieldSettings: One of 'indexedFieldSettings', "
+      throw new SchemaValidationEtwitterception("ThriftFieldSettings: One of 'indetwitteredFieldSettings', "
           + "'csfFieldSettings' or 'facetFieldSettings' must be set.");
     }
 
     // search field settings are optional
     if (fieldSettings.isSetSearchFieldSettings()) {
-      if (!fieldSettings.isSetIndexedFieldSettings()) {
-        throw new SchemaValidationException(
+      if (!fieldSettings.isSetIndetwitteredFieldSettings()) {
+        throw new SchemaValidationEtwitterception(
             "ThriftFieldSettings: 'searchFieldSettings' can only be "
-                + "used in combination with 'indexedFieldSettings'");
+                + "used in combination with 'indetwitteredFieldSettings'");
       }
 
       applySearchFieldSettings(fieldInfo, fieldSettings.getSearchFieldSettings());
@@ -368,7 +368,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
   }
 
   private void applyCsfFieldSettings(FieldInfo fieldInfo, ThriftCSFFieldSettings settings)
-      throws SchemaValidationException {
+      throws SchemaValidationEtwitterception {
     // csfType is required - no need to check if it's set
     fieldInfo.getFieldType().setDocValuesType(DocValuesType.NUMERIC);
     fieldInfo.getFieldType().setCsfType(settings.getCsfType());
@@ -377,17 +377,17 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
       fieldInfo.getFieldType().setDocValuesType(DocValuesType.BINARY);
       fieldInfo.getFieldType().setCsfVariableLength();
     } else {
-      if (settings.isSetFixedLengthSettings()) {
-        fieldInfo.getFieldType().setCsfFixedLengthSettings(
-            settings.getFixedLengthSettings().getNumValuesPerDoc(),
-            settings.getFixedLengthSettings().isUpdateable());
-        if (settings.getFixedLengthSettings().getNumValuesPerDoc() > 1) {
+      if (settings.isSetFitwitteredLengthSettings()) {
+        fieldInfo.getFieldType().setCsfFitwitteredLengthSettings(
+            settings.getFitwitteredLengthSettings().getNumValuesPerDoc(),
+            settings.getFitwitteredLengthSettings().isUpdateable());
+        if (settings.getFitwitteredLengthSettings().getNumValuesPerDoc() > 1) {
           fieldInfo.getFieldType().setDocValuesType(DocValuesType.BINARY);
         }
       } else {
-        throw new SchemaValidationException(
+        throw new SchemaValidationEtwitterception(
             "ThriftCSFFieldSettings: Either variableLength should be set to 'true', "
-                + "or fixedLengthSettings should be set.");
+                + "or fitwitteredLengthSettings should be set.");
       }
     }
 
@@ -399,12 +399,12 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
 
   private void applyCsfViewFieldSettings(FieldInfo fieldInfo, FieldInfo baseField,
                                          ThriftCSFViewSettings settings)
-      throws SchemaValidationException {
+      throws SchemaValidationEtwitterception {
     // csfType is required - no need to check if it's set
     fieldInfo.getFieldType().setDocValuesType(DocValuesType.NUMERIC);
     fieldInfo.getFieldType().setCsfType(settings.getCsfType());
 
-    fieldInfo.getFieldType().setCsfFixedLengthSettings(1 /* numValuesPerDoc*/,
+    fieldInfo.getFieldType().setCsfFitwitteredLengthSettings(1 /* numValuesPerDoc*/,
         false /* updateable*/);
 
     fieldInfo.getFieldType().setCsfViewSettings(fieldInfo.getName(), settings, baseField);
@@ -414,7 +414,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
     if (settings.isSetFacetName()) {
       fieldInfo.getFieldType().setFacetName(settings.getFacetName());
     } else {
-      // fall back to field name if no facet name is explicitly provided
+      // fall back to field name if no facet name is etwitterplicitly provided
       fieldInfo.getFieldType().setFacetName(fieldInfo.getName());
     }
     fieldInfo.getFieldType().setStoreFacetSkiplist(settings.isStoreSkiplist());
@@ -422,9 +422,9 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
     fieldInfo.getFieldType().setUseCSFForFacetCounting(settings.isUseCSFForFacetCounting());
   }
 
-  private void applyIndexedFieldSettings(FieldInfo fieldInfo, ThriftIndexedFieldSettings settings)
-      throws SchemaValidationException {
-    fieldInfo.getFieldType().setIndexedField(true);
+  private void applyIndetwitteredFieldSettings(FieldInfo fieldInfo, ThriftIndetwitteredFieldSettings settings)
+      throws SchemaValidationEtwitterception {
+    fieldInfo.getFieldType().setIndetwitteredField(true);
     fieldInfo.getFieldType().setStored(settings.isStored());
     fieldInfo.getFieldType().setTokenized(settings.isTokenized());
     fieldInfo.getFieldType().setStoreTermVectors(settings.isStoreTermVectors());
@@ -432,32 +432,32 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
     fieldInfo.getFieldType().setStoreTermVectorPositions(settings.isStoreTermVectorPositions());
     fieldInfo.getFieldType().setStoreTermVectorPayloads(settings.isStoreTermVectorPayloads());
     fieldInfo.getFieldType().setOmitNorms(settings.isOmitNorms());
-    fieldInfo.getFieldType().setIndexHFTermPairs(settings.isIndexHighFreqTermPairs());
+    fieldInfo.getFieldType().setIndetwitterHFTermPairs(settings.isIndetwitterHighFreqTermPairs());
     fieldInfo.getFieldType().setUseTweetSpecificNormalization(
         settings.deprecated_performTweetSpecificNormalizations);
 
-    if (settings.isSetIndexOptions()) {
-      switch (settings.getIndexOptions()) {
+    if (settings.isSetIndetwitterOptions()) {
+      switch (settings.getIndetwitterOptions()) {
         case DOCS_ONLY :
-          fieldInfo.getFieldType().setIndexOptions(IndexOptions.DOCS);
+          fieldInfo.getFieldType().setIndetwitterOptions(IndetwitterOptions.DOCS);
           break;
         case DOCS_AND_FREQS :
-          fieldInfo.getFieldType().setIndexOptions(IndexOptions.DOCS_AND_FREQS);
+          fieldInfo.getFieldType().setIndetwitterOptions(IndetwitterOptions.DOCS_AND_FREQS);
           break;
         case DOCS_AND_FREQS_AND_POSITIONS :
-          fieldInfo.getFieldType().setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+          fieldInfo.getFieldType().setIndetwitterOptions(IndetwitterOptions.DOCS_AND_FREQS_AND_POSITIONS);
           break;
         case DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS :
-          fieldInfo.getFieldType().setIndexOptions(
-              IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+          fieldInfo.getFieldType().setIndetwitterOptions(
+              IndetwitterOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
           break;
         default:
-          throw new SchemaValidationException("Unknown value for IndexOptions: "
-              + settings.getIndexOptions());
+          throw new SchemaValidationEtwitterception("Unknown value for IndetwitterOptions: "
+              + settings.getIndetwitterOptions());
       }
-    } else if (settings.isIndexed()) {
+    } else if (settings.isIndetwittered()) {
       // default for backward-compatibility
-      fieldInfo.getFieldType().setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+      fieldInfo.getFieldType().setIndetwitterOptions(IndetwitterOptions.DOCS_AND_FREQS_AND_POSITIONS);
     }
 
     fieldInfo.getFieldType().setStorePerPositionPayloads(settings.isStorePerPositionPayloads());
@@ -465,11 +465,11 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
         settings.getDefaultPerPositionPayloadLength());
     fieldInfo.getFieldType().setBecomesImmutable(!settings.isSupportOutOfOrderAppends());
     fieldInfo.getFieldType().setSupportOrderedTerms(settings.isSupportOrderedTerms());
-    fieldInfo.getFieldType().setSupportTermTextLookup(settings.isSupportTermTextLookup());
+    fieldInfo.getFieldType().setSupportTermTetwittertLookup(settings.isSupportTermTetwittertLookup());
 
     if (settings.isSetNumericFieldSettings()) {
       fieldInfo.getFieldType().setNumericFieldSettings(
-          new IndexedNumericFieldSettings(settings.getNumericFieldSettings()));
+          new IndetwitteredNumericFieldSettings(settings.getNumericFieldSettings()));
     }
 
     if (settings.isSetTokenStreamSerializer()) {
@@ -479,13 +479,13 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
   }
 
   private void applySearchFieldSettings(FieldInfo fieldInfo, ThriftSearchFieldSettings settings)
-      throws SchemaValidationException {
-    fieldInfo.getFieldType().setTextSearchableFieldWeight(
-        (float) settings.getTextSearchableFieldWeight());
-    fieldInfo.getFieldType().setTextSearchableByDefault(settings.isTextDefaultSearchable());
+      throws SchemaValidationEtwitterception {
+    fieldInfo.getFieldType().setTetwittertSearchableFieldWeight(
+        (float) settings.getTetwittertSearchableFieldWeight());
+    fieldInfo.getFieldType().setTetwittertSearchableByDefault(settings.isTetwittertDefaultSearchable());
   }
 
-  private void validate(FieldInfo fieldInfo) throws SchemaValidationException {
+  private void validate(FieldInfo fieldInfo) throws SchemaValidationEtwitterception {
   }
 
   private TokenStreamSerializer.Builder buildTokenStreamSerializerProvider(
@@ -495,14 +495,14 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
       try {
         builder.add((TokenStreamSerializer.AttributeSerializer) Class.forName(serializerName)
             .newInstance());
-      } catch (InstantiationException e) {
-        throw new RuntimeException(
+      } catch (InstantiationEtwitterception e) {
+        throw new RuntimeEtwitterception(
             "Unable to instantiate AttributeSerializer for name " + serializerName);
-      } catch (IllegalAccessException e) {
-        throw new RuntimeException(
+      } catch (IllegalAccessEtwitterception e) {
+        throw new RuntimeEtwitterception(
             "Unable to instantiate AttributeSerializer for name " + serializerName);
-      } catch (ClassNotFoundException e) {
-        throw new RuntimeException(
+      } catch (ClassNotFoundEtwitterception e) {
+        throw new RuntimeEtwitterception(
             "Unable to instantiate AttributeSerializer for name " + serializerName);
       }
     }
@@ -543,7 +543,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
 
   /**
    * This is the preferred method to check whether a field configuration is in schema.
-   * One can also use getFieldInfo and do null checks, but should be careful about excessive
+   * One can also use getFieldInfo and do null checks, but should be careful about etwittercessive
    * warning logging resulting from looking up fields not in schema.
    */
   @Override
@@ -553,7 +553,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
 
   /**
    * This is the preferred method to check whether a field configuration is in schema.
-   * One can also use getFieldInfo and do null checks, but should be careful about excessive
+   * One can also use getFieldInfo and do null checks, but should be careful about etwittercessive
    * warning logging resulting from looking up fields not in schema.
    */
   @Override
@@ -572,27 +572,27 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
     return getFieldInfo(fieldConfigId, null);
   }
 
-  private org.apache.lucene.index.FieldInfo convert(String fieldName,
-                                                    int index,
+  private org.apache.lucene.indetwitter.FieldInfo convert(String fieldName,
+                                                    int indetwitter,
                                                     EarlybirdFieldType type) {
-    return new org.apache.lucene.index.FieldInfo(
+    return new org.apache.lucene.indetwitter.FieldInfo(
         fieldName,                          // String name
-        index,                              // int number
+        indetwitter,                              // int number
         type.storeTermVectors(),            // boolean storeTermVector
         type.omitNorms(),                   // boolean omitNorms
         type.isStorePerPositionPayloads(),  // boolean storePayloads
-        type.indexOptions(),                // IndexOptions indexOptions
+        type.indetwitterOptions(),                // IndetwitterOptions indetwitterOptions
         type.docValuesType(),               // DocValuesType docValues
         -1,                                 // long dvGen
         Maps.<String, String>newHashMap(),  // Map<String, String> attributes
         0,                                  // int pointDataDimensionCount
-        0,                                  // int pointIndexDimensionCount
+        0,                                  // int pointIndetwitterDimensionCount
         0,                                  // int pointNumBytes
         false);                             // boolean softDeletesField
   }
 
   /**
-   * Get FieldInfo for the given field name, or null if the field does not exist.
+   * Get FieldInfo for the given field name, or null if the field does not etwitterist.
    */
   @Override
   @Nullable
@@ -618,8 +618,8 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
     if (override != null) {
       try {
         return merge(fieldConfigId, fieldInfo, override);
-      } catch (SchemaValidationException e) {
-        throw new RuntimeException(e);
+      } catch (SchemaValidationEtwitterception e) {
+        throw new RuntimeEtwitterception(e);
       }
     }
 
@@ -673,23 +673,23 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
   }
 
   /**
-   * Parses a version string like "16: renamed field x into y" into a version number and
+   * Parses a version string like "16: renamed field twitter into y" into a version number and
    * a string description.
    * @return a Pair of the version number and the description
    */
   private static Pair<Integer, String> parseVersionString(String version)
-      throws SchemaValidationException {
+      throws SchemaValidationEtwitterception {
     Preconditions.checkNotNull(version, "Schema must have a version number and description.");
-    int colonIndex = version.indexOf(':');
-    if (colonIndex == -1) {
-      throw new SchemaValidationException("Malformed version string: " + version);
+    int colonIndetwitter = version.indetwitterOf(':');
+    if (colonIndetwitter == -1) {
+      throw new SchemaValidationEtwitterception("Malformed version string: " + version);
     }
     try {
-      int versionNumber = Integer.parseInt(version.substring(0, colonIndex));
-      String versionDesc = version.substring(colonIndex + 1);
+      int versionNumber = Integer.parseInt(version.substring(0, colonIndetwitter));
+      String versionDesc = version.substring(colonIndetwitter + 1);
       return Pair.of(versionNumber, versionDesc);
-    } catch (Exception e) {
-      throw new SchemaValidationException("Malformed version string: " + version, e);
+    } catch (Etwitterception e) {
+      throw new SchemaValidationEtwitterception("Malformed version string: " + version, e);
     }
   }
 
@@ -705,7 +705,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
   private Pair<ImmutableMap<String, FeatureConfiguration>,
       ImmutableMap<Integer, FeatureConfiguration>> buildFeatureMaps(
       final Map<Integer, ThriftFieldConfiguration> csvViewFields)
-      throws SchemaValidationException {
+      throws SchemaValidationEtwitterception {
 
     final ImmutableMap.Builder<String, FeatureConfiguration> featureConfigMapByNameBuilder =
         ImmutableMap.builder();
@@ -718,7 +718,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
       FieldInfo baseFieldInfo =
           getFieldInfo(fieldSettings.getCsfViewSettings().getBaseFieldConfigId());
       if (baseFieldInfo == null) {
-        throw new SchemaValidationException("Base field (id="
+        throw new SchemaValidationEtwitterception("Base field (id="
             + fieldSettings.getCsfViewSettings().getBaseFieldConfigId() + ") not found.");
       }
       applyCsfViewFieldSettings(fieldInfo, baseFieldInfo, fieldSettings.getCsfViewSettings());
@@ -754,7 +754,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
     }
 
     EarlybirdFieldType fieldType = fieldInfo.getFieldType();
-    if (fieldType.docValuesType() != org.apache.lucene.index.DocValuesType.NUMERIC) {
+    if (fieldType.docValuesType() != org.apache.lucene.indetwitter.DocValuesType.NUMERIC) {
       return null;
     }
 
@@ -769,9 +769,9 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
   private FieldInfo merge(int fieldConfigId,
                           FieldInfo fieldInfo,
                           ThriftFieldConfiguration overrideConfig)
-      throws SchemaValidationException {
+      throws SchemaValidationEtwitterception {
 
-    throw new UnsupportedOperationException("Field override config not supported");
+    throw new UnsupportedOperationEtwitterception("Field override config not supported");
   }
 
   @Override
@@ -790,9 +790,9 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
   }
 
   private ThriftSearchFeatureSchema createSearchResultFeatureSchema(
-      String featureSchemaVersionPrefix,
+      String featureSchemaVersionPrefitwitter,
       Map<String, FieldInfo> allFieldSettings,
-      Map<String, FeatureConfiguration> featureConfigurations) throws SchemaValidationException {
+      Map<String, FeatureConfiguration> featureConfigurations) throws SchemaValidationEtwitterception {
     final ImmutableMap.Builder<Integer, ThriftSearchFeatureSchemaEntry> builder =
         new ImmutableMap.Builder<>();
 
@@ -818,24 +818,24 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
         LOG.error("Invalid CSFType encountered for csf field: {}", field.getKey());
       }
     }
-    Map<Integer, ThriftSearchFeatureSchemaEntry> indexOnlySchemaEntries = builder.build();
+    Map<Integer, ThriftSearchFeatureSchemaEntry> indetwitterOnlySchemaEntries = builder.build();
 
-    // Add earlybird derived features, they are defined in ExternalTweetFeatures and used in the
-    // scoring function. They are no different from those auto-generated index-based features
+    // Add earlybird derived features, they are defined in EtwitterternalTweetFeatures and used in the
+    // scoring function. They are no different from those auto-generated indetwitter-based features
     // viewed from outside Earlybird.
     Map<Integer, ThriftSearchFeatureSchemaEntry> entriesWithEBFeatures =
         appendToFeatureSchema(
-            indexOnlySchemaEntries, ExternalTweetFeature.EARLYBIRD_DERIVED_FEATURES);
+            indetwitterOnlySchemaEntries, EtwitterternalTweetFeature.EARLYBIRD_DERIVED_FEATURES);
 
     // Add other features needed for tweet ranking from EarlybirdRankingDerivedFeature.
     Map<Integer, ThriftSearchFeatureSchemaEntry> allSchemaEntries = appendToFeatureSchema(
-        entriesWithEBFeatures, ExternalTweetFeature.EARLYBIRD_RANKING_DERIVED_FEATURES);
+        entriesWithEBFeatures, EtwitterternalTweetFeature.EARLYBIRD_RANKING_DERIVED_FEATURES);
 
     long schemaEntriesChecksum = getChecksum(allSchemaEntries);
-    SearchLongGauge.export("feature_schema_checksum", new AtomicLong(schemaEntriesChecksum));
+    SearchLongGauge.etwitterport("feature_schema_checksum", new AtomicLong(schemaEntriesChecksum));
 
     String schemaVersion = String.format(
-        "%s.%d.%d", featureSchemaVersionPrefix, majorVersionNumber, minorVersionNumber);
+        "%s.%d.%d", featureSchemaVersionPrefitwitter, majorVersionNumber, minorVersionNumber);
     ThriftSearchFeatureSchemaSpecifier schemaSpecifier =
         new ThriftSearchFeatureSchemaSpecifier(schemaVersion, schemaEntriesChecksum);
 
@@ -851,7 +851,7 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
   // this method to produce the same checksum for schemaEntrie1 and schemaEntrie2, even if
   // the checksums are computed in different JVMs, etc.
   private static long getChecksum(Map<Integer, ThriftSearchFeatureSchemaEntry> schemaEntries)
-      throws SchemaValidationException {
+      throws SchemaValidationEtwitterception {
     SortedMap<Integer, ThriftSearchFeatureSchemaEntry> sortedSchemaEntries =
         new TreeMap<Integer, ThriftSearchFeatureSchemaEntry>(schemaEntries);
 
@@ -867,14 +867,14 @@ public class ImmutableSchema implements ImmutableSchemaInterface {
       }
       objectOutputStream.flush();
       return crc32OutputStream.getValue();
-    } catch (IOException e) {
-      throw new SchemaValidationException("Could not serialize feature schema entries.", e);
+    } catch (IOEtwitterception e) {
+      throw new SchemaValidationEtwitterception("Could not serialize feature schema entries.", e);
     } finally {
       Preconditions.checkNotNull(objectOutputStream);
       try {
         objectOutputStream.close();
-      } catch (IOException e) {
-        throw new SchemaValidationException("Could not close ObjectOutputStream.", e);
+      } catch (IOEtwitterception e) {
+        throw new SchemaValidationEtwitterception("Could not close ObjectOutputStream.", e);
       }
     }
   }

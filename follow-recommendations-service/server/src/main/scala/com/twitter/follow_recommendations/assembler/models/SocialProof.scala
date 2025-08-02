@@ -1,16 +1,16 @@
 package com.twitter.follow_recommendations.assembler.models
 
-import com.twitter.stringcenter.client.core.ExternalString
+import com.twitter.stringcenter.client.core.EtwitterternalString
 
 sealed trait SocialProof
 
-case class GeoContextProof(popularInCountryText: ExternalString) extends SocialProof
-case class FollowedByUsersProof(text1: ExternalString, text2: ExternalString, textN: ExternalString)
-    extends SocialProof
+case class GeoContetwittertProof(popularInCountryTetwittert: EtwitterternalString) etwittertends SocialProof
+case class FollowedByUsersProof(tetwittert1: EtwitterternalString, tetwittert2: EtwitterternalString, tetwittertN: EtwitterternalString)
+    etwittertends SocialProof
 
-sealed trait SocialText {
-  def text: String
+sealed trait SocialTetwittert {
+  def tetwittert: String
 }
 
-case class GeoSocialText(text: String) extends SocialText
-case class FollowedByUsersText(text: String) extends SocialText
+case class GeoSocialTetwittert(tetwittert: String) etwittertends SocialTetwittert
+case class FollowedByUsersTetwittert(tetwittert: String) etwittertends SocialTetwittert

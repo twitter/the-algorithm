@@ -28,7 +28,7 @@ class OutOfNetworkTweetPushCandidate(
 )(
   implicit stats: StatsReceiver,
   pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
+    etwittertends PushCandidate
     with OutOfNetworkTweetCandidate
     with TopicCandidate
     with TweetAuthorDetails
@@ -54,7 +54,7 @@ class OutOfNetworkTweetPushCandidate(
 }
 
 case class OutOfNetworkTweetCandidatePredicates(override val config: Config)
-    extends OutOfNetworkTweetPredicates[OutOfNetworkTweetPushCandidate] {
+    etwittertends OutOfNetworkTweetPredicates[OutOfNetworkTweetPushCandidate] {
 
   implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
 

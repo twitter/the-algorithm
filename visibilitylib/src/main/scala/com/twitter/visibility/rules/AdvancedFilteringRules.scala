@@ -6,7 +6,7 @@ import com.twitter.visibility.rules.Condition._
 import com.twitter.visibility.rules.Reason.Unspecified
 
 object NoConfirmedEmailRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Unspecified),
       And(
         NonAuthorViewer,
@@ -17,7 +17,7 @@ object NoConfirmedEmailRule
     )
 
 object NoConfirmedPhoneRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Unspecified),
       And(
         NonAuthorViewer,
@@ -28,7 +28,7 @@ object NoConfirmedPhoneRule
     )
 
 object NoDefaultProfileImageRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Unspecified),
       And(
         NonAuthorViewer,
@@ -39,7 +39,7 @@ object NoDefaultProfileImageRule
     )
 
 object NoNewUsersRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Unspecified),
       And(
         NonAuthorViewer,
@@ -49,7 +49,7 @@ object NoNewUsersRule
     )
 
 object NoNotFollowedByRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Unspecified),
       And(
         NonAuthorViewer,
@@ -60,7 +60,7 @@ object NoNotFollowedByRule
     )
 
 object OnlyPeopleIFollowRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Unspecified),
       And(
         NonAuthorViewer,

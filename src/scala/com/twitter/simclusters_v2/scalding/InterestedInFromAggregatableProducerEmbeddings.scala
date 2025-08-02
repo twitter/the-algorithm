@@ -5,7 +5,7 @@ import com.twitter.dal.client.dataset.SnapshotDALDataset
 import com.twitter.scalding._
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite.WriteExtension
+import com.twitter.scalding_internal.dalv2.DALWrite.WriteEtwittertension
 import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
 import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
@@ -16,7 +16,7 @@ import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
 import com.twitter.simclusters_v2.hdfs_sources.AggregatableProducerSimclustersEmbeddingsByLogFavScore2020ScalaDataset
 import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedInFromAggregatableProducerEmbeddings20M145K2020ScalaDataset
 import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2UserToInterestedInFromAggregatableProducerEmbeddings20M145K2020ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserAndNeighborsFixedPathSource
+import com.twitter.simclusters_v2.hdfs_sources.UserAndNeighborsFitwitteredPathSource
 import com.twitter.simclusters_v2.hdfs_sources.UserUserNormalizedGraphScalaDataset
 import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
 import com.twitter.simclusters_v2.thriftscala.InternalId
@@ -26,8 +26,8 @@ import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
 import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
 import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
 import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusters
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
+import com.twitter.wtf.scalding.jobs.common.AdhocEtwitterecutionApp
+import com.twitter.wtf.scalding.jobs.common.ScheduledEtwitterecutionApp
 import java.util.TimeZone
 
 /**
@@ -46,7 +46,7 @@ import java.util.TimeZone
  * capesospy-v2 update --build_locally --start_cron interested_in_from_ape_2020 \
  * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
  */
-object InterestedInFromAPE2020BatchApp extends InterestedInFromAggregatableProducerEmbeddingsBase {
+object InterestedInFromAPE2020BatchApp etwittertends InterestedInFromAggregatableProducerEmbeddingsBase {
 
   override val firstTime: RichDate = RichDate("2021-03-03")
 
@@ -67,7 +67,7 @@ object InterestedInFromAPE2020BatchApp extends InterestedInFromAggregatableProdu
   ] = SimclustersV2UserToInterestedInFromAggregatableProducerEmbeddings20M145K2020ScalaDataset
 }
 
-trait InterestedInFromAggregatableProducerEmbeddingsBase extends ScheduledExecutionApp {
+trait InterestedInFromAggregatableProducerEmbeddingsBase etwittertends ScheduledEtwitterecutionApp {
   def modelVersion: ModelVersion
 
   def interestedInFromAPEOutputKVDataset: KeyValDALDataset[
@@ -86,11 +86,11 @@ trait InterestedInFromAggregatableProducerEmbeddingsBase extends ScheduledExecut
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     //Input args for the run
     val socialProofThreshold = args.int("socialProofThreshold", 2)
-    val maxClustersFromProducer = args.int("maxClustersPerProducer", 5)
-    val maxClustersPerUserFinalResult = args.int("maxInterestedInClustersPerUser", 200)
+    val matwitterClustersFromProducer = args.int("matwitterClustersPerProducer", 5)
+    val matwitterClustersPerUserFinalResult = args.int("matwitterInterestedInClustersPerUser", 200)
 
     //Path variables
     val interestedInFromProducersPath =
@@ -115,19 +115,19 @@ trait InterestedInFromAggregatableProducerEmbeddingsBase extends ScheduledExecut
     val result = InterestedInFromAggregatableProducerEmbeddingsBase.run(
       userUserGraph,
       producerEmbeddings,
-      maxClustersFromProducer,
+      matwitterClustersFromProducer,
       socialProofThreshold,
-      maxClustersPerUserFinalResult,
+      matwitterClustersPerUserFinalResult,
       modelVersion)
 
-    val keyValExec =
+    val keyValEtwitterec =
       result
         .map { case (userId, clusters) => KeyVal(userId, clusters) }
-        .writeDALVersionedKeyValExecution(
+        .writeDALVersionedKeyValEtwitterecution(
           interestedInFromAPEOutputKVDataset,
-          D.Suffix(interestedInFromProducersPath)
+          D.Suffitwitter(interestedInFromProducersPath)
         )
-    val thriftExec =
+    val thriftEtwitterec =
       result
         .map {
           case (userId, clusters) =>
@@ -136,14 +136,14 @@ trait InterestedInFromAggregatableProducerEmbeddingsBase extends ScheduledExecut
               ModelVersions.toKnownForModelVersion(modelVersion),
               clusters.clusterIdToScores)
         }
-        .writeDALSnapshotExecution(
+        .writeDALSnapshotEtwitterecution(
           interestedInFromAPEOutputThriftDatset,
           D.Daily,
-          D.Suffix(interestedInFromProducersThriftPath),
+          D.Suffitwitter(interestedInFromProducersThriftPath),
           D.EBLzo(),
           dateRange.end
         )
-    Execution.zip(keyValExec, thriftExec).unit
+    Etwitterecution.zip(keyValEtwitterec, thriftEtwitterec).unit
   }
 }
 
@@ -157,23 +157,23 @@ trait InterestedInFromAggregatableProducerEmbeddingsBase extends ScheduledExecut
  * --cluster bluebird-qus1 \
  * --main-class com.twitter.simclusters_v2.scalding.InterestedInFromAPE2020AdhocApp \
  * --target src/scala/com/twitter/simclusters_v2/scalding:interested_in_from_ape_2020-adhoc \
- * --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M'" \
+ * --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-twittermtwitter7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-twittermtwitter7618M'" \
  * -- --outputDir /gcs/user/cassowary/adhoc/your_ldap/interested_in_from_ape_2020_keyval --date 2021-03-05
  */
-object InterestedInFromAPE2020AdhocApp extends AdhocExecutionApp {
+object InterestedInFromAPE2020AdhocApp etwittertends AdhocEtwitterecutionApp {
   override def runOnDateRange(
     args: Args
   )(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val outputDir = args("outputDir")
     val socialProofThreshold = args.int("socialProofThreshold", 2)
-    val maxClustersPerUserFinalResult = args.int("maxInterestedInClustersPerUser", 200)
-    val maxClustersFromProducer = args.int("maxClustersFromProducer", 5)
+    val matwitterClustersPerUserFinalResult = args.int("matwitterInterestedInClustersPerUser", 200)
+    val matwitterClustersFromProducer = args.int("matwitterClustersFromProducer", 5)
     val inputGraph = args.optional("graphInputDir") match {
-      case Some(inputDir) => TypedPipe.from(UserAndNeighborsFixedPathSource(inputDir))
+      case Some(inputDir) => TypedPipe.from(UserAndNeighborsFitwitteredPathSource(inputDir))
       case None =>
         DAL
           .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(30))
@@ -191,13 +191,13 @@ object InterestedInFromAPE2020AdhocApp extends AdhocExecutionApp {
     val result = InterestedInFromAggregatableProducerEmbeddingsBase.run(
       inputGraph,
       producerEmbeddings,
-      maxClustersFromProducer,
+      matwitterClustersFromProducer,
       socialProofThreshold,
-      maxClustersPerUserFinalResult,
+      matwitterClustersPerUserFinalResult,
       ModelVersion.Model20m145k2020)
 
     result
-      .writeExecution(AdhocKeyValSources.interestedInSource(outputDir))
+      .writeEtwitterecution(AdhocKeyValSources.interestedInSource(outputDir))
   }
 }
 
@@ -209,13 +209,13 @@ object InterestedInFromAggregatableProducerEmbeddingsBase {
   /**
    * Helper function to prune the embeddings
    * @param embeddingsWithScore embeddings
-   * @param maxClusters number of clusters to keep, per userId
+   * @param matwitterClusters number of clusters to keep, per userId
    * @param uniqueId for stats
    * @return
    */
   def getPrunedEmbeddings(
     embeddingsWithScore: TypedPipe[(UserId, Seq[(ClusterId, Float)])],
-    maxClusters: Int
+    matwitterClusters: Int
   )(
     implicit uniqueId: UniqueID
   ): TypedPipe[(UserId, Array[(ClusterId, Float)])] = {
@@ -230,12 +230,12 @@ object InterestedInFromAggregatableProducerEmbeddingsBase {
         numProducerMappings.inc()
         val clusterSize = clusterArray.size
         totalClustersCoverageProducerEmbeddings.incBy(clusterSize)
-        val prunedList = if (clusterSize > maxClusters) {
+        val prunedList = if (clusterSize > matwitterClusters) {
           numProducersWithLargeClusterMappings.inc()
           clusterArray
             .sortBy {
               case (_, knownForScore) => -knownForScore
-            }.take(maxClusters)
+            }.take(matwitterClusters)
         } else {
           numProducersWithSmallClusterMappings.inc()
           clusterArray
@@ -245,7 +245,7 @@ object InterestedInFromAggregatableProducerEmbeddingsBase {
   }
 
   /**
-   * helper function to remove all scores except follow and logFav
+   * helper function to remove all scores etwittercept follow and logFav
    * @param interestedInResult interestedIn clusters for a user
    * @return
    */
@@ -257,7 +257,7 @@ object InterestedInFromAggregatableProducerEmbeddingsBase {
         val fullClusterListWithDiscardedScores = fullClusterList.map {
           case (clusterId, clusterDetails) =>
             val clusterDetailsWithoutSocial = UserToInterestedInClusterScores(
-              // We are not planning to use the other scores except for logFav and Follow.
+              // We are not planning to use the other scores etwittercept for logFav and Follow.
               // Hence, setting others as None for now, we can add them back when needed
               followScore = clusterDetails.followScore,
               logFavScore = clusterDetails.logFavScore,
@@ -291,9 +291,9 @@ object InterestedInFromAggregatableProducerEmbeddingsBase {
   def run(
     userUserGraph: TypedPipe[UserAndNeighbors],
     producerEmbeddings: TypedPipe[(SimClustersEmbeddingId, SimClustersEmbedding)],
-    maxClustersFromProducer: Int,
+    matwitterClustersFromProducer: Int,
     socialProofThreshold: Int,
-    maxClustersPerUserFinalResult: Int,
+    matwitterClustersPerUserFinalResult: Int,
     modelVersion: ModelVersion
   )(
     implicit uniqueId: UniqueID
@@ -321,10 +321,10 @@ object InterestedInFromAggregatableProducerEmbeddingsBase {
             userUserGraph,
             getPrunedEmbeddings(
               getNormalizedEmbeddings(producerEmbeddingsWithScore),
-              maxClustersFromProducer),
+              matwitterClustersFromProducer),
             socialProofThreshold,
           ))),
-      maxClustersPerUserFinalResult,
+      matwitterClustersPerUserFinalResult,
       ModelVersions.toKnownForModelVersion(modelVersion)
     )
     result

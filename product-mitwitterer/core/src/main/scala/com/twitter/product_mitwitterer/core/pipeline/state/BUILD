@@ -1,0 +1,33 @@
+scala_library(
+    sources = [
+        "*.scala",
+    ],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/model/candidate",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/feature",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/feature/featuremap",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/feature/featuremap/asyncfeaturemap",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/decorator:decoration",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/common",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/common/presentation",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/marshalling/request",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/pipeline:query",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/service",
+    ],
+    etwitterports = [
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/model/candidate",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/feature",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/feature/featuremap",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/feature/featuremap/asyncfeaturemap",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/decorator:decoration",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/common",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/common/presentation",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/marshalling/request",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/pipeline:query",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/service",
+    ],
+)

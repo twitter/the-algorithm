@@ -16,8 +16,8 @@ import com.twitter.visibility.common.stitch.StitchHelpers
 import com.twitter.visibility.features.FeatureMap
 import com.twitter.visibility.models.ContentId.SpaceId
 import com.twitter.visibility.models.ContentId.SpacePlusUserId
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
+import com.twitter.visibility.rules.EvaluationContetwittert
+import com.twitter.visibility.rules.providers.ProvidedEvaluationContetwittert
 import com.twitter.visibility.rules.utils.ShimUtils
 
 object SpaceVisibilityLibrary {
@@ -63,7 +63,7 @@ object SpaceVisibilityLibrary {
       vfEngineCounter.incr()
 
       val isVfFeatureHydrationEnabled = enableVfFeatureHydrationSpaceShim()
-      val viewerId = r.viewerContext.userId
+      val viewerId = r.viewerContetwittert.userId
       val authorIds: Option[Seq[Long]] = r.spaceHostAndAdminUserIds
       val contentId = {
         (viewerId, authorIds) match {
@@ -76,20 +76,20 @@ object SpaceVisibilityLibrary {
         visibilityLibrary.featureMapBuilder(
           Seq(
             spaceFeatures.forSpaceAndAuthorIds(r.spaceId, viewerId, authorIds),
-            viewerFeatures.forViewerContext(r.viewerContext),
+            viewerFeatures.forViewerContetwittert(r.viewerContetwittert),
           )
         )
 
       val resp = if (isVfFeatureHydrationEnabled) {
-        val evaluationContext = ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-          evaluationContext = EvaluationContext(
+        val evaluationContetwittert = ProvidedEvaluationContetwittert.injectRuntimeRulesIntoEvaluationContetwittert(
+          evaluationContetwittert = EvaluationContetwittert(
             r.safetyLevel,
-            visibilityLibrary.getParams(r.viewerContext, r.safetyLevel),
+            visibilityLibrary.getParams(r.viewerContetwittert, r.safetyLevel),
             visibilityLibrary.statsReceiver)
         )
 
         val preFilteredFeatureMap =
-          ShimUtils.preFilterFeatureMap(featureMap, r.safetyLevel, contentId, evaluationContext)
+          ShimUtils.preFilterFeatureMap(featureMap, r.safetyLevel, contentId, evaluationContetwittert)
 
         FeatureMap
           .resolve(preFilteredFeatureMap, libraryStatsReceiver).flatMap { resolvedFeatureMap =>
@@ -97,7 +97,7 @@ object SpaceVisibilityLibrary {
               .runRuleEngine(
                 contentId,
                 resolvedFeatureMap,
-                r.viewerContext,
+                r.viewerContetwittert,
                 r.safetyLevel
               )
           }
@@ -106,7 +106,7 @@ object SpaceVisibilityLibrary {
           .runRuleEngine(
             contentId,
             featureMap,
-            r.viewerContext,
+            r.viewerContetwittert,
             r.safetyLevel
           )
       }

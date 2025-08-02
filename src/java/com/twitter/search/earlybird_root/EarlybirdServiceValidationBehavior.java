@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird_root;
 
-import org.apache.thrift.TException;
+import org.apache.thrift.TEtwitterception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +14,7 @@ import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
 import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
 
 public class EarlybirdServiceValidationBehavior
-    extends ValidationBehavior.DefaultValidationBehavior<EarlybirdRequest, EarlybirdResponse> {
+    etwittertends ValidationBehavior.DefaultValidationBehavior<EarlybirdRequest, EarlybirdResponse> {
   private static final Logger LOG =
       LoggerFactory.getLogger(EarlybirdServiceValidationBehavior.class);
 
@@ -22,9 +22,9 @@ public class EarlybirdServiceValidationBehavior
           new EarlybirdDebugInfo().setHost("earlybird_root");
 
   private static final SearchCounter INVALID_SUCCESS_RESPONSE_THRESHOLD_TOO_LOW =
-      SearchCounter.export("invalid_success_response_threshold_too_low");
+      SearchCounter.etwitterport("invalid_success_response_threshold_too_low");
   private static final SearchCounter INVALID_SUCCESS_RESPONSE_THRESHOLD_TOO_HIGH =
-      SearchCounter.export("invalid_success_response_threshold_too_high");
+      SearchCounter.etwitterport("invalid_success_response_threshold_too_high");
 
   protected EarlybirdResponse createErrorResponse(String errorMsg) {
     EarlybirdResponse response = new EarlybirdResponse(EarlybirdResponseCode.CLIENT_ERROR, 0);
@@ -40,13 +40,13 @@ public class EarlybirdServiceValidationBehavior
 
   @Override
   public EarlybirdResponse getResponseIfInvalidRequest(EarlybirdRequest request) {
-    // First, fix up the query.
+    // First, fitwitter up the query.
     EarlybirdRequestUtil.checkAndSetCollectorParams(request);
-    EarlybirdRequestUtil.logAndFixExcessiveValues(request);
+    EarlybirdRequestUtil.logAndFitwitterEtwittercessiveValues(request);
 
     try {
       request.validate();
-    } catch (TException e) {
+    } catch (TEtwitterception e) {
       String errorMsg = "Invalid EarlybirdRequest. " + request;
       LOG.warn(errorMsg);
       return createErrorResponse(errorMsg);

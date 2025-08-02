@@ -17,10 +17,10 @@ object ServoCachedValueSerializer {
 
   /**
    * Thrown when the fields of the servo CachedValue struct do not
-   * satisfy the invariants expected by this serialization code.
+   * satisfy the invariants etwitterpected by this serialization code.
    */
-  case class UnexpectedCachedValueState(cachedValue: CachedValue) extends Exception {
-    def message: String = s"Unexpected state for CachedValue. Value was: $cachedValue"
+  case class UnetwitterpectedCachedValueState(cachedValue: CachedValue) etwittertends Etwitterception {
+    def message: String = s"Unetwitterpected state for CachedValue. Value was: $cachedValue"
   }
 
   val CachedValueThriftSerializer: CompactThriftSerializer[CachedValue] = CompactThriftSerializer(
@@ -49,16 +49,16 @@ object ServoCachedValueSerializer {
  */
 case class ServoCachedValueSerializer[V <: ThriftStruct](
   codec: ThriftStructCodec[V],
-  expiry: Try[V] => Time,
+  etwitterpiry: Try[V] => Time,
   softTtl: SoftTtl[Try[V]])
-    extends ValueSerializer[Try[V]] {
-  import ServoCachedValueSerializer.UnexpectedCachedValueState
+    etwittertends ValueSerializer[Try[V]] {
+  import ServoCachedValueSerializer.UnetwitterpectedCachedValueState
   import ServoCachedValueSerializer.CachedValueThriftSerializer
 
   private[this] val ValueThriftSerializer = CompactThriftSerializer(codec)
 
   /**
-   * Return an expiry based on the value and a
+   * Return an etwitterpiry based on the value and a
    * TCompactProtocol-encoded servo CachedValue struct with the
    * following fields defined:
    *
@@ -74,7 +74,7 @@ case class ServoCachedValueSerializer[V <: ThriftStruct](
    *
    * No other fields will be defined.
    *
-   * @throws IllegalArgumentException if called with a value that
+   * @throws IllegalArgumentEtwitterception if called with a value that
    *   should not be cached.
    */
   override def serialize(value: Try[V]): Option[(Time, Buf)] = {
@@ -86,7 +86,7 @@ case class ServoCachedValueSerializer[V <: ThriftStruct](
 
       val serialized = Buf.ByteArray.Owned(CachedValueThriftSerializer.toBytes(cachedValue))
 
-      (expiry(value), serialized)
+      (etwitterpiry(value), serialized)
     }
 
     value match {
@@ -105,23 +105,23 @@ case class ServoCachedValueSerializer[V <: ThriftStruct](
    * value will be [[CacheResult.Fresh]] or [[CacheResult.Stale]]
    * depending on the result of {{{softTtl.isFresh}}}.
    *
-   * @throws UnexpectedCachedValueState if the state of the
+   * @throws UnetwitterpectedCachedValueState if the state of the
    *   [[CachedValue]] could not be produced by [[serialize]]
    */
   override def deserialize(buf: Buf): CacheResult[Try[V]] = {
-    val cachedValue = CachedValueThriftSerializer.fromBytes(Buf.ByteArray.Owned.extract(buf))
+    val cachedValue = CachedValueThriftSerializer.fromBytes(Buf.ByteArray.Owned.etwittertract(buf))
     val hasValue = cachedValue.value.isDefined
     val isValid =
       (hasValue && cachedValue.status == CachedValueStatus.Found) ||
         (!hasValue && cachedValue.status == CachedValueStatus.NotFound)
 
     if (!isValid) {
-      // Exceptions thrown by deserialization are recorded and treated
+      // Etwitterceptions thrown by deserialization are recorded and treated
       // as a cache miss by CacheOperations, so throwing this
-      // exception will cause the value in cache to be
+      // etwitterception will cause the value in cache to be
       // overwritten. There will be stats recorded whenever this
       // happens.
-      throw UnexpectedCachedValueState(cachedValue)
+      throw UnetwitterpectedCachedValueState(cachedValue)
     }
 
     val value =

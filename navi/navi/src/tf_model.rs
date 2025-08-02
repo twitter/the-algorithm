@@ -22,7 +22,7 @@ pub mod tf {
     use crate::tf_proto::tensorflow_serving::prediction_log::LogType;
     use crate::tf_proto::tensorflow_serving::{PredictionLog, PredictLog};
     use crate::tf_proto::ConfigProto;
-    use anyhow::{Context, Result};
+    use anyhow::{Contetwittert, Result};
     use serde_json::Value;
 
     use crate::TensorReturnEnum;
@@ -31,7 +31,7 @@ pub mod tf {
         INFERENCE_FAILED_REQUESTS_BY_MODEL, NUM_REQUESTS_FAILED, NUM_REQUESTS_FAILED_BY_MODEL,
     };
     use crate::predict_service::Model;
-    use crate::{MAX_NUM_INPUTS, utils};
+    use crate::{MAtwitter_NUM_INPUTS, utils};
 
     #[derive(Debug)]
     pub enum TFTensorEnum {
@@ -45,15 +45,15 @@ pub mod tf {
 
     #[derive(Debug)]
     pub struct TFModel {
-        pub model_idx: usize,
+        pub model_idtwitter: usize,
         pub bundle: SavedModelBundle,
-        pub input_names: ArrayVec<String, MAX_NUM_INPUTS>,
+        pub input_names: ArrayVec<String, MAtwitter_NUM_INPUTS>,
         pub input_info: Vec<TensorInfo>,
         pub input_ops: Vec<Operation>,
         pub output_names: Vec<String>,
         pub output_info: Vec<TensorInfo>,
         pub output_ops: Vec<Operation>,
-        pub export_dir: String,
+        pub etwitterport_dir: String,
         pub version: i64,
         pub inter_op: i32,
         pub intra_op: i32,
@@ -63,10 +63,10 @@ pub mod tf {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             write!(
                 f,
-                "idx: {}, tensorflow model_name:{}, export_dir:{}, version:{}, inter:{}, intra:{}",
-                self.model_idx,
-                MODEL_SPECS[self.model_idx],
-                self.export_dir,
+                "idtwitter: {}, tensorflow model_name:{}, etwitterport_dir:{}, version:{}, inter:{}, intra:{}",
+                self.model_idtwitter,
+                MODEL_SPECS[self.model_idtwitter],
+                self.etwitterport_dir,
                 self.version,
                 self.inter_op,
                 self.intra_op
@@ -75,19 +75,19 @@ pub mod tf {
     }
 
     impl TFModel {
-        pub fn new(idx: usize, version: String, model_config: &Value) -> Result<TFModel> {
+        pub fn new(idtwitter: usize, version: String, model_config: &Value) -> Result<TFModel> {
             // Create input variables for our addition
             let config = ConfigProto {
                 intra_op_parallelism_threads: utils::get_config_or(
                     model_config,
                     "intra_op_parallelism",
-                    &ARGS.intra_op_parallelism[idx],
+                    &ARGS.intra_op_parallelism[idtwitter],
                 )
                 .parse()?,
                 inter_op_parallelism_threads: utils::get_config_or(
                     model_config,
                     "inter_op_parallelism",
-                    &ARGS.inter_op_parallelism[idx],
+                    &ARGS.inter_op_parallelism[idtwitter],
                 )
                 .parse()?,
                 ..Default::default()
@@ -97,21 +97,21 @@ pub mod tf {
             config.encode(&mut buf).unwrap();
             let mut opts = SessionOptions::new();
             opts.set_config(&buf)?;
-            let export_dir = format!("{}/{}", ARGS.model_dir[idx], version);
+            let etwitterport_dir = format!("{}/{}", ARGS.model_dir[idtwitter], version);
             let mut graph = Graph::new();
-            let bundle = SavedModelBundle::load(&opts, ["serve"], &mut graph, &export_dir)
-                .context("error load model")?;
+            let bundle = SavedModelBundle::load(&opts, ["serve"], &mut graph, &etwitterport_dir)
+                .contetwittert("error load model")?;
             let signature = bundle
                 .meta_graph_def()
-                .get_signature(&ARGS.serving_sig[idx])
-                .context("error finding signature")?;
-            let input_names = INPUTS[idx]
+                .get_signature(&ARGS.serving_sig[idtwitter])
+                .contetwittert("error finding signature")?;
+            let input_names = INPUTS[idtwitter]
                 .get_or_init(|| {
                     let input_spec = signature
                         .inputs()
                         .iter()
                         .map(|p| p.0.clone())
-                        .collect::<ArrayVec<String, MAX_NUM_INPUTS>>();
+                        .collect::<ArrayVec<String, MAtwitter_NUM_INPUTS>>();
                     info!(
                         "input not set from cli, now we set from model metadata:{:?}",
                         input_spec
@@ -124,7 +124,7 @@ pub mod tf {
                 .map(|i| {
                     signature
                         .get_input(i)
-                        .context("error finding input op info")
+                        .contetwittert("error finding input op info")
                         .unwrap()
                         .clone()
                 })
@@ -135,21 +135,21 @@ pub mod tf {
                 .map(|i| {
                     graph
                         .operation_by_name_required(&i.name().name)
-                        .context("error finding input op")
+                        .contetwittert("error finding input op")
                         .unwrap()
                 })
                 .collect_vec();
 
             info!("Model Input size: {}", input_info.len());
 
-            let output_names = OUTPUTS[idx].to_vec().clone();
+            let output_names = OUTPUTS[idtwitter].to_vec().clone();
 
             let output_info = output_names
                 .iter()
                 .map(|o| {
                     signature
                         .get_output(o)
-                        .context("error finding output op info")
+                        .contetwittert("error finding output op info")
                         .unwrap()
                         .clone()
                 })
@@ -160,13 +160,13 @@ pub mod tf {
                 .map(|o| {
                     graph
                         .operation_by_name_required(&o.name().name)
-                        .context("error finding output op")
+                        .contetwittert("error finding output op")
                         .unwrap()
                 })
                 .collect_vec();
 
             let tf_model = TFModel {
-                model_idx: idx,
+                model_idtwitter: idtwitter,
                 bundle,
                 input_names,
                 input_info,
@@ -174,7 +174,7 @@ pub mod tf {
                 output_names,
                 output_info,
                 output_ops,
-                export_dir,
+                etwitterport_dir,
                 version: Args::version_str_to_epoch(&version)?,
                 inter_op: config.inter_op_parallelism_threads,
                 intra_op: config.intra_op_parallelism_threads,
@@ -191,8 +191,8 @@ pub mod tf {
             input_dims: Option<Vec<i64>>,
         ) -> Vec<u64> {
             // if input size is 1, we just specify a single dimension to outgoing tensor matching the
-            // size of the input tensor. This is for backwards compatiblity with existing Navi clients
-            // which specify input as a single string tensor (like tfexample) and use batching support.
+            // size of the input tensor. This is for backwards compatiblity with etwitteristing Navi clients
+            // which specify input as a single string tensor (like tfetwitterample) and use batching support.
             let mut dims = vec![];
             if input_size > 1 {
                 if batch_size == 1 && input_dims.is_some() {
@@ -200,7 +200,7 @@ pub mod tf {
                     input_dims
                         .unwrap()
                         .iter()
-                        .for_each(|axis| dims.push(*axis as u64));
+                        .for_each(|atwitteris| dims.push(*atwitteris as u64));
                 } else {
                     dims.push(batch_size);
                     dims.push(t.len() as u64 / batch_size);
@@ -220,7 +220,7 @@ pub mod tf {
                 TensorInputEnum::String(t) => {
                     let strings = t
                         .into_iter()
-                        .map(|x| unsafe { String::from_utf8_unchecked(x) })
+                        .map(|twitter| unsafe { String::from_utf8_unchecked(twitter) })
                         .collect_vec();
                     TFTensorEnum::String(
                         Tensor::new(&TFModel::get_tftensor_dimensions(
@@ -291,7 +291,7 @@ pub mod tf {
             batch_size: u64,
             output_size: u64,
         ) -> (Tensor<T>, u64) {
-            let tensor_output = args.fetch::<T>(*token_output).expect("fetch output failed");
+            let tensor_output = args.fetch::<T>(*token_output).etwitterpect("fetch output failed");
             let mut tensor_width = tensor_output.dims()[1];
             if batch_size == 1 && output_size > 1 {
                 tensor_width = tensor_output.dims().iter().fold(1, |mut total, &val| {
@@ -307,28 +307,28 @@ pub mod tf {
         fn warmup(&self) -> Result<()> {
             // warm up
             let warmup_file = format!(
-                "{}/assets.extra/tf_serving_warmup_requests",
-                self.export_dir
+                "{}/assets.etwittertra/tf_serving_warmup_requests",
+                self.etwitterport_dir
             );
-            if std::path::Path::new(&warmup_file).exists() {
+            if std::path::Path::new(&warmup_file).etwitterists() {
                 use std::io::Cursor;
                 info!(
                     "found warmup assets in {}, now perform warming up",
                     warmup_file
                 );
-                let f = std::fs::File::open(warmup_file).context("cannot open warmup file")?;
+                let f = std::fs::File::open(warmup_file).contetwittert("cannot open warmup file")?;
                 // let mut buf = Vec::new();
                 let read = std::io::BufReader::new(f);
                 let mut reader = RecordReader::new(read);
                 let mut warmup_cnt = 0;
                 loop {
-                    let next = reader.read_next_owned();
-                    match next {
+                    let netwittert = reader.read_netwittert_owned();
+                    match netwittert {
                         Ok(res) => match res {
                             Some(vec) => {
                                 // info!("read one tfRecord");
                                 match PredictionLog::decode(&mut Cursor::new(vec))
-                                    .context("can't parse PredictonLog")?
+                                    .contetwittert("can't parse PredictonLog")?
                                 {
                                     PredictionLog {
                                         log_metadata: _,
@@ -338,12 +338,12 @@ pub mod tf {
                                                 response: _,
                                             })),
                                     } => {
-                                        if warmup_cnt == ARGS.max_warmup_records {
-                                            //warm up to max_warmup_records  records
+                                        if warmup_cnt == ARGS.matwitter_warmup_records {
+                                            //warm up to matwitter_warmup_records  records
                                             warn!(
-                                                "reached max warmup {} records, exit warmup for {}",
-                                                ARGS.max_warmup_records,
-                                                MODEL_SPECS[self.model_idx]
+                                                "reached matwitter warmup {} records, etwitterit warmup for {}",
+                                                ARGS.matwitter_warmup_records,
+                                                MODEL_SPECS[self.model_idtwitter]
                                             );
                                             break;
                                         }
@@ -400,14 +400,14 @@ pub mod tf {
                 .collect_vec();
 
             let mut args = SessionRunArgs::new();
-            for (index, tf_tensor) in batched_tensors.iter().enumerate() {
+            for (indetwitter, tf_tensor) in batched_tensors.iter().enumerate() {
                 match tf_tensor {
-                    TFTensorEnum::String(inner) => args.add_feed(&self.input_ops[index], 0, inner),
-                    TFTensorEnum::Int(inner) => args.add_feed(&self.input_ops[index], 0, inner),
-                    TFTensorEnum::Int64(inner) => args.add_feed(&self.input_ops[index], 0, inner),
-                    TFTensorEnum::Float(inner) => args.add_feed(&self.input_ops[index], 0, inner),
-                    TFTensorEnum::Double(inner) => args.add_feed(&self.input_ops[index], 0, inner),
-                    TFTensorEnum::Boolean(inner) => args.add_feed(&self.input_ops[index], 0, inner),
+                    TFTensorEnum::String(inner) => args.add_feed(&self.input_ops[indetwitter], 0, inner),
+                    TFTensorEnum::Int(inner) => args.add_feed(&self.input_ops[indetwitter], 0, inner),
+                    TFTensorEnum::Int64(inner) => args.add_feed(&self.input_ops[indetwitter], 0, inner),
+                    TFTensorEnum::Float(inner) => args.add_feed(&self.input_ops[indetwitter], 0, inner),
+                    TFTensorEnum::Double(inner) => args.add_feed(&self.input_ops[indetwitter], 0, inner),
+                    TFTensorEnum::Boolean(inner) => args.add_feed(&self.input_ops[indetwitter], 0, inner),
                 }
             }
             // For output ops, we receive the same op object by name. Actual tensor tokens are available at different offsets.
@@ -416,31 +416,31 @@ pub mod tf {
                 .output_ops
                 .iter()
                 .enumerate()
-                .map(|(idx, op)| args.request_fetch(op, idx as i32))
+                .map(|(idtwitter, op)| args.request_fetch(op, idtwitter as i32))
                 .collect_vec();
             match self.bundle.session.run(&mut args) {
                 Ok(_) => (),
                 Err(e) => {
                     NUM_REQUESTS_FAILED.inc_by(batch_size);
                     NUM_REQUESTS_FAILED_BY_MODEL
-                        .with_label_values(&[&MODEL_SPECS[self.model_idx]])
+                        .with_label_values(&[&MODEL_SPECS[self.model_idtwitter]])
                         .inc_by(batch_size);
                     INFERENCE_FAILED_REQUESTS_BY_MODEL
-                        .with_label_values(&[&MODEL_SPECS[self.model_idx]])
+                        .with_label_values(&[&MODEL_SPECS[self.model_idtwitter]])
                         .inc_by(batch_size);
-                    panic!("{model}: {e:?}", model = MODEL_SPECS[self.model_idx], e = e);
+                    panic!("{model}: {e:?}", model = MODEL_SPECS[self.model_idtwitter], e = e);
                 }
             }
             let mut predict_return = vec![];
             // Check the output.
-            for (index, token_output) in token_outputs.iter().enumerate() {
+            for (indetwitter, token_output) in token_outputs.iter().enumerate() {
                 // same ops, with type info at different offsets.
-                let (res, width) = match self.output_ops[index].output_type(index) {
+                let (res, width) = match self.output_ops[indetwitter].output_type(indetwitter) {
                     DataType::Float => {
                         let (tensor_output, tensor_width) =
                             TFModel::fetch_output(&mut args, token_output, batch_size, output_size);
                         (
-                            TensorReturnEnum::FloatTensorReturn(Box::new(tensor_output)),
+                            TensorReturnEnum::FloatTensorReturn(Botwitter::new(tensor_output)),
                             tensor_width,
                         )
                     }
@@ -448,7 +448,7 @@ pub mod tf {
                         let (tensor_output, tensor_width) =
                             TFModel::fetch_output(&mut args, token_output, batch_size, output_size);
                         (
-                            TensorReturnEnum::Int64TensorReturn(Box::new(tensor_output)),
+                            TensorReturnEnum::Int64TensorReturn(Botwitter::new(tensor_output)),
                             tensor_width,
                         )
                     }
@@ -456,7 +456,7 @@ pub mod tf {
                         let (tensor_output, tensor_width) =
                             TFModel::fetch_output(&mut args, token_output, batch_size, output_size);
                         (
-                            TensorReturnEnum::Int32TensorReturn(Box::new(tensor_output)),
+                            TensorReturnEnum::Int32TensorReturn(Botwitter::new(tensor_output)),
                             tensor_width,
                         )
                     }
@@ -464,14 +464,14 @@ pub mod tf {
                         let (tensor_output, tensor_width) =
                             TFModel::fetch_output(&mut args, token_output, batch_size, output_size);
                         (
-                            TensorReturnEnum::StringTensorReturn(Box::new(tensor_output)),
+                            TensorReturnEnum::StringTensorReturn(Botwitter::new(tensor_output)),
                             tensor_width,
                         )
                     }
                     _ => panic!("Unsupported return type!"),
                 };
                 let width = width as usize;
-                for b in batch_ends[index].iter_mut() {
+                for b in batch_ends[indetwitter].iter_mut() {
                     *b *= width;
                 }
                 predict_return.push(res)
@@ -481,8 +481,8 @@ pub mod tf {
             (predict_return, batch_ends)
         }
         #[inline(always)]
-        fn model_idx(&self) -> usize {
-            self.model_idx
+        fn model_idtwitter(&self) -> usize {
+            self.model_idtwitter
         }
         #[inline(always)]
         fn version(&self) -> i64 {

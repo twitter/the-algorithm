@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit
 object InProcessCache {
 
   /**
-   * Apply a read filter to exclude items in an InProcessCache
+   * Apply a read filter to etwitterclude items in an InProcessCache
    */
   def withFilter[K, V](
     underlying: InProcessCache[K, V]
@@ -33,18 +33,18 @@ trait InProcessCache[K, V] {
 /**
  * In-process implementation of a cache with LRU semantics and a TTL.
  */
-class ExpiringLruInProcessCache[K, V](
+class EtwitterpiringLruInProcessCache[K, V](
   ttl: Duration,
-  maximumSize: Int,
+  matwitterimumSize: Int,
   removalListener: Option[RemovalListener[K, V]] = None: None.type)
-    extends InProcessCache[K, V] {
+    etwittertends InProcessCache[K, V] {
 
   private[this] val cacheBuilder =
     CacheBuilder.newBuilder
       .asInstanceOf[CacheBuilder[K, V]]
-      .expireAfterWrite(ttl.inMilliseconds, TimeUnit.MILLISECONDS)
-      .initialCapacity(maximumSize)
-      .maximumSize(maximumSize)
+      .etwitterpireAfterWrite(ttl.inMilliseconds, TimeUnit.MILLISECONDS)
+      .initialCapacity(matwitterimumSize)
+      .matwitterimumSize(matwitterimumSize)
 
   private[this] val cache =
     removalListener match {

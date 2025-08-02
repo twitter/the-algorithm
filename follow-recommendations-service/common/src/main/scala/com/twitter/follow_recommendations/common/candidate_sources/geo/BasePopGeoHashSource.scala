@@ -5,19 +5,19 @@ import com.twitter.finagle.stats.Counter
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.models.HasGeohashAndCountryCode
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
+import javatwitter.inject.Inject
 
 @Singleton
 class BasePopGeohashSource @Inject() (
   popGeoSource: CandidateSource[String, CandidateUser],
   statsReceiver: StatsReceiver)
-    extends CandidateSource[
-      HasParams with HasClientContext with HasGeohashAndCountryCode,
+    etwittertends CandidateSource[
+      HasParams with HasClientContetwittert with HasGeohashAndCountryCode,
       CandidateUser
     ]
     with BasePopGeohashSourceConfig {
@@ -34,7 +34,7 @@ class BasePopGeohashSource @Inject() (
     "BasePopGeohashSource")
 
   override def apply(
-    target: HasParams with HasClientContext with HasGeohashAndCountryCode
+    target: HasParams with HasClientContetwittert with HasGeohashAndCountryCode
   ): Stitch[Seq[CandidateUser]] = {
     if (!candidateSourceEnabled(target)) {
       return Stitch.Nil
@@ -42,7 +42,7 @@ class BasePopGeohashSource @Inject() (
     target.geohashAndCountryCode
       .flatMap(_.geohash).map { geohash =>
         foundGeohashCounter.incr()
-        val keys = (minGeohashLength(target) to math.min(maxGeohashLength(target), geohash.length))
+        val keys = (minGeohashLength(target) to math.min(matwitterGeohashLength(target), geohash.length))
           .map("geohash_" + geohash.take(_)).reverse
         if (returnResultFromAllPrecision(target)) {
           Stitch
@@ -54,7 +54,7 @@ class BasePopGeohashSource @Inject() (
             .collect(keys.map(popGeoSource.apply)).map(
               _.find(_.nonEmpty)
                 .getOrElse(Nil)
-                .take(maxResults(target)).map(_.withCandidateSource(identifier))
+                .take(matwitterResults(target)).map(_.withCandidateSource(identifier))
             )
         }
       }.getOrElse {
@@ -65,10 +65,10 @@ class BasePopGeohashSource @Inject() (
 }
 
 trait BasePopGeohashSourceConfig {
-  type Target = HasParams with HasClientContext
-  def maxResults(target: Target): Int = 200
+  type Target = HasParams with HasClientContetwittert
+  def matwitterResults(target: Target): Int = 200
   def minGeohashLength(target: Target): Int = 2
-  def maxGeohashLength(target: Target): Int = 4
+  def matwitterGeohashLength(target: Target): Int = 4
   def returnResultFromAllPrecision(target: Target): Boolean = false
   def candidateSourceEnabled(target: Target): Boolean = false
 }

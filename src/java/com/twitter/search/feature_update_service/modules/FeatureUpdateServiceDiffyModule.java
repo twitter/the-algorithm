@@ -2,7 +2,7 @@ package com.twitter.search.feature_update_service.modules;
 
 import com.twitter.decider.Decider;
 import com.twitter.inject.Injector;
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsJavaDarkTrafficFilterModule;
+import com.twitter.finatra.mtls.thriftmutwitter.modules.MtlsJavaDarkTrafficFilterModule;
 import com.twitter.search.common.decider.DeciderUtil;
 import com.twitter.util.Function;
 
@@ -11,7 +11,7 @@ import com.twitter.util.Function;
  * Provide a filter that sends dark traffic to diffy, if the diffy.dest command-line parameter
  * is non-empty. If diffy.dest is empty, just provide a no-op filter.
  */
-public class FeatureUpdateServiceDiffyModule extends MtlsJavaDarkTrafficFilterModule {
+public class FeatureUpdateServiceDiffyModule etwittertends MtlsJavaDarkTrafficFilterModule {
   @Override
   public String destFlagName() {
     return "diffy.dest";

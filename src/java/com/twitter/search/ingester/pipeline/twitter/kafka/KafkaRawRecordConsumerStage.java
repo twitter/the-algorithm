@@ -13,7 +13,7 @@ import com.twitter.util.Time;
  */
 @ConsumedTypes(String.class)
 @ProducedTypes(KafkaRawRecord.class)
-public class KafkaRawRecordConsumerStage extends KafkaConsumerStage<KafkaRawRecord> {
+public class KafkaRawRecordConsumerStage etwittertends KafkaConsumerStage<KafkaRawRecord> {
   public KafkaRawRecordConsumerStage() {
     super(getDeserializer());
   }

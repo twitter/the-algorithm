@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird_root.routers;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import javatwitter.inject.Inject;
+import javatwitter.inject.Named;
 
 import com.twitter.common.util.Clock;
 import com.twitter.finagle.Service;
@@ -11,24 +11,24 @@ import com.twitter.search.earlybird.thrift.EarlybirdRequest;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
 import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.earlybird_root.common.InjectionNames;
 import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
 
-public class RecencyRequestRouter extends AbstractRecencyAndRelevanceRequestRouter {
+public class RecencyRequestRouter etwittertends AbstractRecencyAndRelevanceRequestRouter {
   private static final SearchCounter SKIPPED_ARCHIVE_DUE_TO_REALTIME_EARLY_TERMINATION_COUNTER =
-      SearchCounter.export("recency_skipped_archive_due_to_realtime_early_termination");
+      SearchCounter.etwitterport("recency_skipped_archive_due_to_realtime_early_termination");
   private static final SearchCounter SKIPPED_ARCHIVE_DUE_TO_REALTIME_ENOUGH_RESULTS_COUNTER =
-      SearchCounter.export("recency_skipped_archive_due_to_realtime_enough_results");
+      SearchCounter.etwitterport("recency_skipped_archive_due_to_realtime_enough_results");
 
   @Inject
   public RecencyRequestRouter(
       @Named(InjectionNames.REALTIME)
-      Service<EarlybirdRequestContext, EarlybirdResponse> realtime,
+      Service<EarlybirdRequestContetwittert, EarlybirdResponse> realtime,
       @Named(InjectionNames.PROTECTED)
-      Service<EarlybirdRequestContext, EarlybirdResponse> protectedRealtime,
+      Service<EarlybirdRequestContetwittert, EarlybirdResponse> protectedRealtime,
       @Named(InjectionNames.FULL_ARCHIVE)
-      Service<EarlybirdRequestContext, EarlybirdResponse> fullArchive,
+      Service<EarlybirdRequestContetwittert, EarlybirdResponse> fullArchive,
       @Named(RecencyRequestRouterModule.REALTIME_TIME_RANGE_FILTER)
       EarlybirdTimeRangeFilter realtimeTimeRangeFilter,
       @Named(RecencyRequestRouterModule.PROTECTED_TIME_RANGE_FILTER)

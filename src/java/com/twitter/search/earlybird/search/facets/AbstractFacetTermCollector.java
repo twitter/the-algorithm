@@ -6,9 +6,9 @@ import java.util.Set;
 import com.twitter.search.core.earlybird.facets.FacetIDMap;
 import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
 import com.twitter.search.core.earlybird.facets.FacetTermCollector;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
 import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
+import com.twitter.search.earlybird.thrift.ThriftSearchResultEtwittertraMetadata;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
 
 public abstract class AbstractFacetTermCollector implements FacetTermCollector {
@@ -34,21 +34,21 @@ public abstract class AbstractFacetTermCollector implements FacetTermCollector {
     return fieldId < 0 ? null : facetIdMap.getFacetFieldByFacetID(fieldId).getFacetName();
   }
 
-  protected ThriftSearchResultExtraMetadata getExtraMetadata(ThriftSearchResult result) {
+  protected ThriftSearchResultEtwittertraMetadata getEtwittertraMetadata(ThriftSearchResult result) {
     ThriftSearchResultMetadata metadata = result.getMetadata();
-    if (!metadata.isSetExtraMetadata()) {
-      metadata.setExtraMetadata(new ThriftSearchResultExtraMetadata());
+    if (!metadata.isSetEtwittertraMetadata()) {
+      metadata.setEtwittertraMetadata(new ThriftSearchResultEtwittertraMetadata());
     }
-    return metadata.getExtraMetadata();
+    return metadata.getEtwittertraMetadata();
   }
 
   protected String getTermFromProvider(
       String facetName, long termID, FacetLabelProvider provider) {
-    return provider.getLabelAccessor().getTermText(termID);
+    return provider.getLabelAccessor().getTermTetwittert(termID);
   }
 
   protected String getTermFromFacet(long termID, int fieldID, Set<String> facetsToCollectFrom) {
-    if (termID == EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
+    if (termID == EarlybirdIndetwitterSegmentAtomicReader.TERM_NOT_FOUND) {
       return null;
     }
 

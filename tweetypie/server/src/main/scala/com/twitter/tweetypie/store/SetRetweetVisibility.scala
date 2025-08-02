@@ -3,7 +3,7 @@ package store
 
 import com.twitter.tweetypie.thriftscala._
 
-object SetRetweetVisibility extends TweetStore.SyncModule {
+object SetRetweetVisibility etwittertends TweetStore.SyncModule {
 
   case class Event(
     retweetId: TweetId,
@@ -12,7 +12,7 @@ object SetRetweetVisibility extends TweetStore.SyncModule {
     retweetUserId: UserId,
     srcTweetUserId: UserId,
     timestamp: Time)
-      extends SyncTweetStoreEvent("set_retweet_visibility") {
+      etwittertends SyncTweetStoreEvent("set_retweet_visibility") {
     def toAsyncRequest: AsyncSetRetweetVisibilityRequest =
       AsyncSetRetweetVisibilityRequest(
         retweetId = retweetId,
@@ -28,7 +28,7 @@ object SetRetweetVisibility extends TweetStore.SyncModule {
     val setRetweetVisibility: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     val setRetweetVisibility: FutureEffect[Event] = wrap(underlying.setRetweetVisibility)
   }
 
@@ -47,7 +47,7 @@ object SetRetweetVisibility extends TweetStore.SyncModule {
   }
 }
 
-object AsyncSetRetweetVisibility extends TweetStore.AsyncModule {
+object AsyncSetRetweetVisibility etwittertends TweetStore.AsyncModule {
 
   case class Event(
     retweetId: TweetId,
@@ -56,7 +56,7 @@ object AsyncSetRetweetVisibility extends TweetStore.AsyncModule {
     retweetUserId: UserId,
     srcTweetUserId: UserId,
     timestamp: Time)
-      extends AsyncTweetStoreEvent("async_set_retweet_visibility") {
+      etwittertends AsyncTweetStoreEvent("async_set_retweet_visibility") {
     def toAsyncRequest(action: Option[AsyncWriteAction] = None): AsyncSetRetweetVisibilityRequest =
       AsyncSetRetweetVisibilityRequest(
         retweetId = retweetId,
@@ -89,7 +89,7 @@ object AsyncSetRetweetVisibility extends TweetStore.AsyncModule {
   }
 
   case class RetryEvent(action: AsyncWriteAction, event: Event)
-      extends TweetStoreRetryEvent[Event] {
+      etwittertends TweetStoreRetryEvent[Event] {
 
     override val eventType: AsyncWriteEventType.SetRetweetVisibility.type =
       AsyncWriteEventType.SetRetweetVisibility
@@ -101,7 +101,7 @@ object AsyncSetRetweetVisibility extends TweetStore.AsyncModule {
     val retryAsyncSetRetweetVisibility: FutureEffect[TweetStoreRetryEvent[Event]]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     val asyncSetRetweetVisibility: FutureEffect[Event] = wrap(underlying.asyncSetRetweetVisibility)
     val retryAsyncSetRetweetVisibility: FutureEffect[TweetStoreRetryEvent[Event]] = wrap(
       underlying.retryAsyncSetRetweetVisibility)
@@ -110,7 +110,7 @@ object AsyncSetRetweetVisibility extends TweetStore.AsyncModule {
   object Store {
 
     /**
-     * [[TweetIndexingStore]] - archive or unarchive a retweet edge in TFlock RetweetGraph
+     * [[TweetIndetwitteringStore]] - archive or unarchive a retweet edge in TFlock RetweetGraph
      * [[TweetCountsCacheUpdatingStore]] - modify the retweet count directly in cache.
      * [[ReplicatingTweetStore]] - replicate this [[Event]] in the other DC.
      * [[RetweetArchivalEnqueueStore]] - publish RetweetArchivalEvent to "retweet_archival_events" event stream.
@@ -118,21 +118,21 @@ object AsyncSetRetweetVisibility extends TweetStore.AsyncModule {
      * @see [[ReplicatedSetRetweetVisibility.Store.apply]]
      */
     def apply(
-      tweetIndexingStore: TweetIndexingStore,
+      tweetIndetwitteringStore: TweetIndetwitteringStore,
       tweetCountsCacheUpdatingStore: TweetCountsCacheUpdatingStore,
       replicatingTweetStore: ReplicatingTweetStore,
       retweetArchivalEnqueueStore: RetweetArchivalEnqueueStore
     ): Store = {
       val stores: Seq[Store] =
         Seq(
-          tweetIndexingStore,
+          tweetIndetwitteringStore,
           tweetCountsCacheUpdatingStore,
           replicatingTweetStore,
           retweetArchivalEnqueueStore
         )
 
-      def build[E <: TweetStoreEvent, S](extract: Store => FutureEffect[E]): FutureEffect[E] =
-        FutureEffect.inParallel[E](stores.map(extract): _*)
+      def build[E <: TweetStoreEvent, S](etwittertract: Store => FutureEffect[E]): FutureEffect[E] =
+        FutureEffect.inParallel[E](stores.map(etwittertract): _*)
 
       new Store {
         override val asyncSetRetweetVisibility: FutureEffect[Event] = build(
@@ -144,16 +144,16 @@ object AsyncSetRetweetVisibility extends TweetStore.AsyncModule {
   }
 }
 
-object ReplicatedSetRetweetVisibility extends TweetStore.ReplicatedModule {
+object ReplicatedSetRetweetVisibility etwittertends TweetStore.ReplicatedModule {
 
   case class Event(srcId: TweetId, visible: Boolean)
-      extends ReplicatedTweetStoreEvent("replicated_set_retweet_visibility")
+      etwittertends ReplicatedTweetStoreEvent("replicated_set_retweet_visibility")
 
   trait Store {
     val replicatedSetRetweetVisibility: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val replicatedSetRetweetVisibility: FutureEffect[Event] =
       wrap(underlying.replicatedSetRetweetVisibility)
   }

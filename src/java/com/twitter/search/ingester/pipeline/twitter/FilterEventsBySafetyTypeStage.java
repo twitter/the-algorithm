@@ -3,11 +3,11 @@ package com.twitter.search.ingester.pipeline.twitter;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.Nonnull;
+import javatwitter.annotation.Nonnull;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import org.apache.commons.pipeline.StageException;
+import org.apache.commons.pipeline.StageEtwitterception;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducedTypes;
 import org.slf4j.Logger;
@@ -17,7 +17,7 @@ import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchDelayStats;
 import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
 import com.twitter.search.ingester.model.IngesterTweetEvent;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeEtwitterception;
 import com.twitter.tweetypie.thriftjava.Tweet;
 import com.twitter.tweetypie.thriftjava.TweetCreateEvent;
 import com.twitter.tweetypie.thriftjava.TweetEvent;
@@ -30,7 +30,7 @@ import com.twitter.tweetypie.thriftjava.TweetEventFlags;
  */
 @ConsumedTypes(IngesterTweetEvent.class)
 @ProducedTypes(IngesterTweetEvent.class)
-public class FilterEventsBySafetyTypeStage extends TwitterBaseStage
+public class FilterEventsBySafetyTypeStage etwittertends TwitterBaseStage
         <IngesterTweetEvent, IngesterTweetEvent> {
   private static final Logger LOG = LoggerFactory.getLogger(FilterEventsBySafetyTypeStage.class);
 
@@ -62,12 +62,12 @@ public class FilterEventsBySafetyTypeStage extends TwitterBaseStage
   }
 
   /**
-   * To be called by XML config. Can be made private after we delete ACP code.
+   * To be called by twitterML config. Can be made private after we delete ACP code.
    */
   public void setSafetyType(@Nonnull String safetyTypeString) {
     this.safetyType = SafetyType.valueOf(safetyTypeString);
     if (this.safetyType == SafetyType.INVALID) {
-      throw new UnsupportedOperationException(
+      throw new UnsupportedOperationEtwitterception(
               "Can't create a stage that permits 'INVALID' safetytypes");
     }
   }
@@ -80,50 +80,50 @@ public class FilterEventsBySafetyTypeStage extends TwitterBaseStage
 
   @Override
   protected void innerSetupStats() {
-    totalEventsCount = SearchCounter.export(getStageNamePrefix() + "_total_events_count");
-    createEventsCount = SearchCounter.export(getStageNamePrefix() + "_create_events_count");
+    totalEventsCount = SearchCounter.etwitterport(getStageNamePrefitwitter() + "_total_events_count");
+    createEventsCount = SearchCounter.etwitterport(getStageNamePrefitwitter() + "_create_events_count");
     createPublicEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_create_public_events_count");
+            SearchCounter.etwitterport(getStageNamePrefitwitter() + "_create_public_events_count");
     createProtectedEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_create_protected_events_count");
+            SearchCounter.etwitterport(getStageNamePrefitwitter() + "_create_protected_events_count");
     createRestrictedEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_create_restricted_events_count");
+            SearchCounter.etwitterport(getStageNamePrefitwitter() + "_create_restricted_events_count");
     createInvalidSafetyTypeCount =
-            SearchCounter.export(getStageNamePrefix() + "_create_missing_or_unknown_safetytype");
+            SearchCounter.etwitterport(getStageNamePrefitwitter() + "_create_missing_or_unknown_safetytype");
     deleteEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_delete_events_count");
+            SearchCounter.etwitterport(getStageNamePrefitwitter() + "_delete_events_count");
     deletePublicEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_delete_public_events_count");
+            SearchCounter.etwitterport(getStageNamePrefitwitter() + "_delete_public_events_count");
     deleteProtectedEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_delete_protected_events_count");
+            SearchCounter.etwitterport(getStageNamePrefitwitter() + "_delete_protected_events_count");
     deleteRestrictedEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_delete_restricted_events_count");
+            SearchCounter.etwitterport(getStageNamePrefitwitter() + "_delete_restricted_events_count");
     deleteInvalidSafetyTypeCount =
-            SearchCounter.export(getStageNamePrefix() + "_delete_missing_or_unknown_safetytype");
+            SearchCounter.etwitterport(getStageNamePrefitwitter() + "_delete_missing_or_unknown_safetytype");
     otherEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_other_events_count");
+            SearchCounter.etwitterport(getStageNamePrefitwitter() + "_other_events_count");
 
-    tweetCreateDelayStats = SearchDelayStats.export(
-            "create_histogram_" + getStageNamePrefix(), 90,
+    tweetCreateDelayStats = SearchDelayStats.etwitterport(
+            "create_histogram_" + getStageNamePrefitwitter(), 90,
             TimeUnit.SECONDS, TimeUnit.MILLISECONDS);
   }
 
   @Override
-  public void innerProcess(Object obj) throws StageException {
+  public void innerProcess(Object obj) throws StageEtwitterception {
     if (obj instanceof IngesterTweetEvent) {
       IngesterTweetEvent tweetEvent = (IngesterTweetEvent) obj;
       if (tryToRecordCreateLatency(tweetEvent)) {
         emitAndCount(tweetEvent);
       }
     } else {
-      throw new StageException(this, "Object is not a IngesterTweetEvent: " + obj);
+      throw new StageEtwitterception(this, "Object is not a IngesterTweetEvent: " + obj);
     }
   }
 
   @Override
   protected IngesterTweetEvent innerRunStageV2(IngesterTweetEvent tweetEvent) {
     if (!tryToRecordCreateLatency(tweetEvent)) {
-      throw new PipelineStageRuntimeException("Event does not have to pass to the next stage.");
+      throw new PipelineStageRuntimeEtwitterception("Event does not have to pass to the netwittert stage.");
     }
     return tweetEvent;
   }
@@ -188,8 +188,8 @@ public class FilterEventsBySafetyTypeStage extends TwitterBaseStage
     invalidSafetyTypeByEventTypeStatMap.putIfAbsent(eventType, new ConcurrentHashMap<>());
     SearchCounter stat = invalidSafetyTypeByEventTypeStatMap.get(eventType).computeIfAbsent(
             safetyTypeString,
-            safetyTypeStr -> SearchCounter.export(
-                    getStageNamePrefix()
+            safetyTypeStr -> SearchCounter.etwitterport(
+                    getStageNamePrefitwitter()
                             + String.format("_%s_missing_or_unknown_safetytype_%s",
                             eventType, safetyTypeStr)));
     stat.increment();

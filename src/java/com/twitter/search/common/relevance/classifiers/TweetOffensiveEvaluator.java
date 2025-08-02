@@ -1,12 +1,12 @@
 package com.twitter.search.common.relevance.classifiers;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.Etwitterecutors;
+import java.util.concurrent.ScheduledEtwitterecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.google.common.base.Joiner;
@@ -19,37 +19,37 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.common.text.token.TokenizedCharSequence;
-import com.twitter.common.text.token.attribute.TokenType;
+import com.twitter.common.tetwittert.language.LocaleUtil;
+import com.twitter.common.tetwittert.token.TokenizedCharSequence;
+import com.twitter.common.tetwittert.token.attribute.TokenType;
 import com.twitter.common.util.Clock;
-import com.twitter.common_internal.text.pipeline.TwitterNgramGenerator;
-import com.twitter.common_internal.text.topic.BlacklistedTopics;
-import com.twitter.common_internal.text.topic.BlacklistedTopics.FilterMode;
-import com.twitter.common_internal.text.version.PenguinVersion;
+import com.twitter.common_internal.tetwittert.pipeline.TwitterNgramGenerator;
+import com.twitter.common_internal.tetwittert.topic.BlacklistedTopics;
+import com.twitter.common_internal.tetwittert.topic.BlacklistedTopics.FilterMode;
+import com.twitter.common_internal.tetwittert.version.PenguinVersion;
 import com.twitter.search.common.metrics.RelevanceStats;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchRateCounter;
 import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.relevance.features.TweetTextQuality;
+import com.twitter.search.common.relevance.features.TweetTetwittertFeatures;
+import com.twitter.search.common.relevance.features.TweetTetwittertQuality;
 import com.twitter.search.common.util.io.periodic.PeriodicFileLoader;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.search.common.util.text.TokenizerHelper;
+import com.twitter.search.common.util.tetwittert.NormalizerHelper;
+import com.twitter.search.common.util.tetwittert.TokenizerHelper;
 
 /**
- * Determines if tweet text or username contains potentially offensive language.
+ * Determines if tweet tetwittert or username contains potentially offensive language.
  */
-public class TweetOffensiveEvaluator extends TweetEvaluator {
+public class TweetOffensiveEvaluator etwittertends TweetEvaluator {
   private static final Logger LOG = LoggerFactory.getLogger(TweetOffensiveEvaluator.class);
 
-  private static final int MAX_OFFENSIVE_TERMS = 2;
+  private static final int MAtwitter_OFFENSIVE_TERMS = 2;
 
   private final File filterDirectory;
   private static final File DEFAULT_FILTER_DIR = new File("");
-  private static final String ADULT_TOKEN_FILE_NAME = "adult_tokens.txt";
-  private static final String OFFENSIVE_TOPIC_FILE_NAME = "offensive_topics.txt";
-  private static final String OFFENSIVE_SUBSTRING_FILE_NAME = "offensive_substrings.txt";
+  private static final String ADULT_TOKEN_FILE_NAME = "adult_tokens.ttwittert";
+  private static final String OFFENSIVE_TOPIC_FILE_NAME = "offensive_topics.ttwittert";
+  private static final String OFFENSIVE_SUBSTRING_FILE_NAME = "offensive_substrings.ttwittert";
 
   private static final ThreadLocal<TwitterNgramGenerator> NGRAM_GENERATOR_HOLDER =
       new ThreadLocal<TwitterNgramGenerator>() {
@@ -58,7 +58,7 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
           // It'll generate ngrams from TokenizedCharSequence, which contains tokenization results,
           // so it doesn't matter which Penguin version to use here.
           return new TwitterNgramGenerator.Builder(PenguinVersion.PENGUIN_6)
-              .setSize(1, MAX_OFFENSIVE_TERMS)
+              .setSize(1, MAtwitter_OFFENSIVE_TERMS)
               .build();
         }
       };
@@ -73,8 +73,8 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
   private final AtomicReference<ByteSource> offensiveSubstringFileContents = new
     AtomicReference<>();
 
-  private final SearchCounter sensitiveTextCounter =
-      RelevanceStats.exportLong("num_sensitive_text");
+  private final SearchCounter sensitiveTetwittertCounter =
+      RelevanceStats.etwitterportLong("num_sensitive_tetwittert");
 
   public TweetOffensiveEvaluator() {
     this(DEFAULT_FILTER_DIR);
@@ -85,60 +85,60 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
   ) {
     this.filterDirectory = filterDirectory;
     adultTokenFileContents.set(BlacklistedTopics.getResource(
-      BlacklistedTopics.DATA_PREFIX + ADULT_TOKEN_FILE_NAME));
+      BlacklistedTopics.DATA_PREFItwitter + ADULT_TOKEN_FILE_NAME));
     offensiveTokenFileContents.set(BlacklistedTopics.getResource(
-      BlacklistedTopics.DATA_PREFIX + OFFENSIVE_TOPIC_FILE_NAME));
+      BlacklistedTopics.DATA_PREFItwitter + OFFENSIVE_TOPIC_FILE_NAME));
     offensiveSubstringFileContents.set(BlacklistedTopics.getResource(
-      BlacklistedTopics.DATA_PREFIX + OFFENSIVE_SUBSTRING_FILE_NAME));
+      BlacklistedTopics.DATA_PREFItwitter + OFFENSIVE_SUBSTRING_FILE_NAME));
 
     try {
       rebuildBlacklistedTopics();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+    } catch (IOEtwitterception e) {
+      throw new RuntimeEtwitterception(e);
     }
 
-    ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(
+    ScheduledEtwitterecutorService etwitterecutor = Etwitterecutors.newSingleThreadScheduledEtwitterecutor(
       new ThreadFactoryBuilder()
         .setNameFormat("offensive-evaluator-blacklist-reloader")
         .setDaemon(true)
         .build());
-    initPeriodicFileLoader(adultTokenFileContents, ADULT_TOKEN_FILE_NAME, executor);
-    initPeriodicFileLoader(offensiveTokenFileContents, OFFENSIVE_TOPIC_FILE_NAME, executor);
-    initPeriodicFileLoader(offensiveSubstringFileContents, OFFENSIVE_SUBSTRING_FILE_NAME, executor);
+    initPeriodicFileLoader(adultTokenFileContents, ADULT_TOKEN_FILE_NAME, etwitterecutor);
+    initPeriodicFileLoader(offensiveTokenFileContents, OFFENSIVE_TOPIC_FILE_NAME, etwitterecutor);
+    initPeriodicFileLoader(offensiveSubstringFileContents, OFFENSIVE_SUBSTRING_FILE_NAME, etwitterecutor);
   }
 
   private void initPeriodicFileLoader(
     AtomicReference<ByteSource> byteSource,
     String fileName,
-    ScheduledExecutorService executor) {
+    ScheduledEtwitterecutorService etwitterecutor) {
     File file = new File(filterDirectory, fileName);
     try {
       PeriodicFileLoader loader = new PeriodicFileLoader(
         "offensive-evaluator-" + fileName,
         file.getPath(),
-        executor,
+        etwitterecutor,
         Clock.SYSTEM_CLOCK) {
         @Override
-        protected void accept(InputStream stream) throws IOException {
+        protected void accept(InputStream stream) throws IOEtwitterception {
           byteSource.set(ByteSource.wrap(IOUtils.toByteArray(stream)));
           rebuildBlacklistedTopics();
         }
       };
       loader.init();
-    } catch (Exception e) {
+    } catch (Etwitterception e) {
       // Not the end of the world if we couldn't load the file, we already loaded the resource.
       LOG.error("Could not load offensive topic filter " + fileName + " from ConfigBus", e);
     }
   }
 
-  private void rebuildBlacklistedTopics() throws IOException {
+  private void rebuildBlacklistedTopics() throws IOEtwitterception {
     offensiveTopics.set(new BlacklistedTopics.Builder(false)
-      .loadFilterFromSource(adultTokenFileContents.get(), FilterMode.EXACT)
+      .loadFilterFromSource(adultTokenFileContents.get(), FilterMode.EtwitterACT)
       .loadFilterFromSource(offensiveSubstringFileContents.get(), FilterMode.SUBSTRING)
       .build());
 
     offensiveUsersTopics.set(new BlacklistedTopics.Builder(false)
-      .loadFilterFromSource(offensiveTokenFileContents.get(), FilterMode.EXACT)
+      .loadFilterFromSource(offensiveTokenFileContents.get(), FilterMode.EtwitterACT)
       .loadFilterFromSource(offensiveSubstringFileContents.get(), FilterMode.SUBSTRING)
       .build());
   }
@@ -153,7 +153,7 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
     }
 
     if (tweet.isSensitiveContent()) {
-      sensitiveTextCounter.increment();
+      sensitiveTetwittertCounter.increment();
     }
 
     // Check for user name.
@@ -161,27 +161,27 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
         "Missing from-user screen name");
 
     for (PenguinVersion penguinVersion : tweet.getSupportedPenguinVersions()) {
-      TweetTextQuality textQuality = tweet.getTweetTextQuality(penguinVersion);
+      TweetTetwittertQuality tetwittertQuality = tweet.getTweetTetwittertQuality(penguinVersion);
 
       if (tweet.isSensitiveContent()) {
-        textQuality.addBoolQuality(TweetTextQuality.BooleanQualityType.SENSITIVE);
+        tetwittertQuality.addBoolQuality(TweetTetwittertQuality.BooleanQualityType.SENSITIVE);
       }
 
       // Check if username has an offensive term
       if (isUserNameOffensive(
           tweet.getFromUserScreenName().get(), offensiveUsersFilter, penguinVersion)) {
-        SearchRateCounter offensiveUserCounter = RelevanceStats.exportRate(
+        SearchRateCounter offensiveUserCounter = RelevanceStats.etwitterportRate(
             "num_offensive_user_" + penguinVersion.name().toLowerCase());
         offensiveUserCounter.increment();
-        textQuality.addBoolQuality(TweetTextQuality.BooleanQualityType.OFFENSIVE_USER);
+        tetwittertQuality.addBoolQuality(TweetTetwittertQuality.BooleanQualityType.OFFENSIVE_USER);
       }
 
       // Check if tweet has an offensive term
       if (isTweetOffensive(tweet, offensiveFilter, penguinVersion)) {
-        SearchRateCounter offensiveTextCounter = RelevanceStats.exportRate(
-            "num_offensive_text_" + penguinVersion.name().toLowerCase());
-        offensiveTextCounter.increment();
-        textQuality.addBoolQuality(TweetTextQuality.BooleanQualityType.OFFENSIVE);
+        SearchRateCounter offensiveTetwittertCounter = RelevanceStats.etwitterportRate(
+            "num_offensive_tetwittert_" + penguinVersion.name().toLowerCase());
+        offensiveTetwittertCounter.increment();
+        tetwittertQuality.addBoolQuality(TweetTetwittertQuality.BooleanQualityType.OFFENSIVE);
       }
     }
   }
@@ -205,14 +205,14 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
   private boolean isTweetOffensive(final TwitterMessage tweet,
                                    BlacklistedTopics offensiveFilter,
                                    PenguinVersion penguinVersion) {
-    TweetTextFeatures textFeatures = tweet.getTweetTextFeatures(penguinVersion);
+    TweetTetwittertFeatures tetwittertFeatures = tweet.getTweetTetwittertFeatures(penguinVersion);
 
     boolean tweetHasOffensiveTerm = false;
 
-    // Check for tweet text.
+    // Check for tweet tetwittert.
     List<TokenizedCharSequence> ngrams =
         NGRAM_GENERATOR_HOLDER.get().generateNgramsAsTokenizedCharSequence(
-            textFeatures.getTokenSequence(), tweet.getLocale());
+            tetwittertFeatures.getTokenSequence(), tweet.getLocale());
     for (TokenizedCharSequence ngram : ngrams) {
       // skip URL ngram
       if (!ngram.getTokensOf(TokenType.URL).isEmpty()) {
@@ -229,7 +229,7 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
     // in the original string, this made us miss some offensive words this way. Here we do another
     // pass of check using just the tokens generated by the tokenizer. (See SEARCHQUAL-8907)
     if (!tweetHasOffensiveTerm) {
-      for (String ngramStr : textFeatures.getTokens()) {
+      for (String ngramStr : tetwittertFeatures.getTokens()) {
         // skip URLs
         if (ngramStr.startsWith("http://") || ngramStr.startsWith("https://")) {
           continue;
@@ -243,10 +243,10 @@ public class TweetOffensiveEvaluator extends TweetEvaluator {
 
     if (!tweetHasOffensiveTerm) {
       // check for resolved URLs
-      String resolvedUrlsText =
-          Joiner.on(" ").skipNulls().join(textFeatures.getResolvedUrlTokens());
+      String resolvedUrlsTetwittert =
+          Joiner.on(" ").skipNulls().join(tetwittertFeatures.getResolvedUrlTokens());
       List<String> ngramStrs = NGRAM_GENERATOR_HOLDER.get().generateNgramsAsString(
-          resolvedUrlsText, LocaleUtil.UNKNOWN);
+          resolvedUrlsTetwittert, LocaleUtil.UNKNOWN);
       for (String ngram : ngramStrs) {
         if (!StringUtils.isBlank(ngram) && offensiveFilter.filter(ngram)) {
           tweetHasOffensiveTerm = true;

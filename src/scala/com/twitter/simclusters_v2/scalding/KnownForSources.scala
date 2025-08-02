@@ -6,14 +6,14 @@ import com.twitter.scalding._
 import com.twitter.scalding.typed.TypedPipe
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
+import com.twitter.scalding_internal.dalv2.remote_access.{EtwitterplicitLocation, ProcAtla}
 import com.twitter.scalding_internal.job.analytics_batch.{
-  AnalyticsBatchExecution,
-  AnalyticsBatchExecutionArgs,
+  AnalyticsBatchEtwitterecution,
+  AnalyticsBatchEtwitterecutionArgs,
   BatchDescription,
   BatchFirstTime,
   BatchIncrement,
-  TwitterScheduledExecutionApp
+  TwitterScheduledEtwitterecutionApp
 }
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common.ModelVersions
@@ -36,7 +36,7 @@ object KnownForSources {
     fromKeyVal(
       DAL
         .readMostRecentSnapshotNoOlderThan(d, noOlderThan)
-        .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+        .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
         .toTypedPipe,
       modelVersionToKeep
     )
@@ -98,9 +98,9 @@ object KnownForSources {
 
   private val log = Logger()
 
-  def readKnownFor(textFile: String): TypedPipe[(Long, Array[(Int, Float)])] = {
+  def readKnownFor(tetwittertFile: String): TypedPipe[(Long, Array[(Int, Float)])] = {
     TypedPipe
-      .from(TextLine(textFile))
+      .from(TetwittertLine(tetwittertFile))
       .flatMap { str =>
         if (!str.startsWith("#")) {
           try {
@@ -119,10 +119,10 @@ object KnownForSources {
               Some((userId, res.result()))
             } else None
           } catch {
-            case ex: Throwable =>
+            case etwitter: Throwable =>
               log.warning(
-                s"Error while loading knownFor from $textFile for line <$str>: " +
-                  ex.getMessage
+                s"Error while loading knownFor from $tetwittertFile for line <$str>: " +
+                  etwitter.getMessage
               )
               None
           }
@@ -141,21 +141,21 @@ object KnownForSources {
   def writeKnownForTypedTsv(
     input: TypedPipe[(Long, Array[(Int, Float)])],
     outputDir: String
-  ): Execution[Unit] = {
-    stringifyKnownFor(input).writeExecution(TypedTsv(outputDir))
+  ): Etwitterecution[Unit] = {
+    stringifyKnownFor(input).writeEtwitterecution(TypedTsv(outputDir))
   }
 
   def makeKnownForTypedTsv(
     input: TypedPipe[(Long, Array[(Int, Float)])],
     outputDir: String
-  ): Execution[TypedPipe[(Long, Array[(Int, Float)])]] = {
-    Execution.getMode.flatMap { mode =>
+  ): Etwitterecution[TypedPipe[(Long, Array[(Int, Float)])]] = {
+    Etwitterecution.getMode.flatMap { mode =>
       try {
-        val dest = TextLine(outputDir)
+        val dest = TetwittertLine(outputDir)
         dest.validateTaps(mode)
-        Execution.from(KnownForSources.readKnownFor(outputDir))
+        Etwitterecution.from(KnownForSources.readKnownFor(outputDir))
       } catch {
-        case ivs: InvalidSourceException =>
+        case ivs: InvalidSourceEtwitterception =>
           writeKnownForTypedTsv(input, outputDir).map { _ => input }
       }
     }
@@ -182,7 +182,7 @@ object KnownForSources {
 capesospy-v2 update --build_locally --start_cron known_for_to_mh \
  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
  */
-object KnownForToMHBatch extends TwitterScheduledExecutionApp {
+object KnownForToMHBatch etwittertends TwitterScheduledEtwitterecutionApp {
 
   import KnownForSources._
 
@@ -231,16 +231,16 @@ object KnownForToMHBatch extends TwitterScheduledExecutionApp {
 
   private val outputPath: String = InternalDataPaths.RawKnownForDec11Path
 
-  private val execArgs = AnalyticsBatchExecutionArgs(
+  private val etwitterecArgs = AnalyticsBatchEtwitterecutionArgs(
     batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
     firstTime = BatchFirstTime(RichDate(firstTime)),
     lastTime = None,
     batchIncrement = BatchIncrement(batchIncrement)
   )
 
-  override def scheduledJob: Execution[Unit] =
-    AnalyticsBatchExecution(execArgs) { implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
+  override def scheduledJob: Etwitterecution[Unit] =
+    AnalyticsBatchEtwitterecution(etwitterecArgs) { implicit dateRange =>
+      Etwitterecution.withId { implicit uniqueId =>
         val numKnownForUsers = Stat("num_known_for_users")
 
         val userSource =
@@ -265,9 +265,9 @@ object KnownForToMHBatch extends TwitterScheduledExecutionApp {
         }
 
         Util.printCounters(
-          result.writeDALVersionedKeyValExecution(
+          result.writeDALVersionedKeyValEtwitterecution(
             dataset = SimclustersV2RawKnownFor20M145KDec11ScalaDataset,
-            pathLayout = D.Suffix(outputPath)
+            pathLayout = D.Suffitwitter(outputPath)
           )
         )
       }

@@ -23,7 +23,7 @@ object GuiceNamedConstants {
   final val UTT_SEED_ACCOUNTS_FETCHER = "utt_seed_accounts_fetcher"
 
   final val ELECTION_CANDIDATES_FETCHER = "election_candidates_fetcher"
-  final val POST_NUX_WTF_FEATURES_FETCHER = "post_nux_wtf_features_fetcher"
+  final val POST_NUtwitter_WTF_FEATURES_FETCHER = "post_nutwitter_wtf_features_fetcher"
 
   final val USER_USER_GRAPH_FETCHER = "user_user_graph_fetcher"
   final val DISMISS_STORE_SCANNER = "dismiss_store_scanner"
@@ -33,7 +33,7 @@ object GuiceNamedConstants {
   final val STP_DBV2_SCORER = "stp_dbv2_scorer"
   final val STP_RAB_DBV2_SCORER = "stp_rab_dbv2_scorer"
 
-  final val EXTENDED_NETWORK = "extended_network_candidates"
+  final val EtwitterTENDED_NETWORK = "etwittertended_network_candidates"
 
   // scoring client constants
   final val WTF_PROD_DEEPBIRDV2_CLIENT = "wtf_prod_deepbirdv2_client"

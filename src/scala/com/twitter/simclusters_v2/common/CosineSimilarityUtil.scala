@@ -45,17 +45,17 @@ object CosineSimilarityUtil {
   }
 
   /**
-   * Calculate the exp scaled norm score
+   * Calculate the etwitterp scaled norm score
    * */
-  def expScaledNorm[T](v: Map[T, Double], exponent: Double): Double = {
-    math.pow(sumOfSquares(v), exponent)
+  def etwitterpScaledNorm[T](v: Map[T, Double], etwitterponent: Double): Double = {
+    math.pow(sumOfSquares(v), etwitterponent)
   }
 
   /**
-   * Calculate the exp scaled norm score
+   * Calculate the etwitterp scaled norm score
    * */
-  def expScaledNormArray(v: Array[Double], exponent: Double): Double = {
-    math.pow(sumOfSquaresArray(v), exponent)
+  def etwitterpScaledNormArray(v: Array[Double], etwitterponent: Double): Double = {
+    math.pow(sumOfSquaresArray(v), etwitterponent)
   }
 
   /**
@@ -82,7 +82,7 @@ object CosineSimilarityUtil {
    * @return a map with normalized weight
    */
   def applyNorm[T](v: Map[T, Double], norm: Double): Map[T, Double] = {
-    if (norm == 0) v else v.mapValues(x => x / norm)
+    if (norm == 0) v else v.mapValues(twitter => twitter / norm)
   }
 
   /**
@@ -157,38 +157,38 @@ object CosineSimilarityUtil {
   }
 
   /**
-   * Normalize the weight vector with exponentially scaled norm. If the input weight vector
+   * Normalize the weight vector with etwitterponentially scaled norm. If the input weight vector
    * is empty or its norm is 0, return the original map.
    *
    * @param v        a map from cluster id to its weight
-   * @param exponent the exponent we apply to the weight vector's norm
+   * @param etwitterponent the etwitterponent we apply to the weight vector's norm
    *
-   * @return a map with exp scaled normalized weight
+   * @return a map with etwitterp scaled normalized weight
    * */
-  def expScaledNormalize[T](
+  def etwitterpScaledNormalize[T](
     v: Map[T, Double],
-    exponent: Option[Double] = None,
+    etwitterponent: Option[Double] = None,
     maybeNorm: Option[Double] = None
   ): Map[T, Double] = {
-    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.expScaledNorm(v, exponent.getOrElse(0.3)))
+    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.etwitterpScaledNorm(v, etwitterponent.getOrElse(0.3)))
     applyNorm(v, norm)
   }
 
   /**
-   * Normalize the weight vector with exponentially scaled norm. If the input weight vector
+   * Normalize the weight vector with etwitterponentially scaled norm. If the input weight vector
    * is empty or its norm is 0, return the original map.
    *
    * @param v        an array of weights
-   * @param exponent the exponent we apply to the weight vector's norm
+   * @param etwitterponent the etwitterponent we apply to the weight vector's norm
    *
-   * @return an array with exp scaled normalized weight, in the same order as v
+   * @return an array with etwitterp scaled normalized weight, in the same order as v
    * */
-  def expScaledNormalizeArray(
+  def etwitterpScaledNormalizeArray(
     v: Array[Double],
-    exponent: Double,
+    etwitterponent: Double,
     maybeNorm: Option[Double] = None
   ): Array[Double] = {
-    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.expScaledNormArray(v, exponent))
+    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.etwitterpScaledNormArray(v, etwitterponent))
     applyNormArray(v, norm)
   }
 
@@ -239,10 +239,10 @@ object CosineSimilarityUtil {
         i1 += 1
         i2 += 1
       } else if (v1C(i1) > v2C(i2)) {
-        // v2 cluster is lower. Increment it to see if the next one matches v1's
+        // v2 cluster is lower. Increment it to see if the netwittert one matches v1's
         i2 += 1
       } else {
-        // v1 cluster is lower. Increment it to see if the next one matches v2's
+        // v1 cluster is lower. Increment it to see if the netwittert one matches v2's
         i1 += 1
       }
     }

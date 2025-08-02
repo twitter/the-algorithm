@@ -1,3 +1,3 @@
 #!/bin/sh
 
-exit 0
+etwitterit 0

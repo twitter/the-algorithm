@@ -1,6 +1,6 @@
 package com.twitter.interaction_graph.scio.agg_notifications
 
-import com.spotify.scio.ScioContext
+import com.spotify.scio.ScioContetwittert
 import com.spotify.scio.values.SCollection
 import com.twitter.beam.io.dal.DAL
 import com.twitter.beam.io.fs.multiformat.DiskFormat
@@ -15,9 +15,9 @@ import com.twitter.scio_internal.job.ScioBeamJob
 import com.twitter.statebird.v2.thriftscala.Environment
 import com.twitter.tweetsource.public_tweets.PublicTweetsScalaDataset
 
-object InteractionGraphNotificationsJob extends ScioBeamJob[InteractionGraphNotificationsOption] {
+object InteractionGraphNotificationsJob etwittertends ScioBeamJob[InteractionGraphNotificationsOption] {
   override protected def configurePipeline(
-    sc: ScioContext,
+    sc: ScioContetwittert,
     opts: InteractionGraphNotificationsOption
   ): Unit = {
 

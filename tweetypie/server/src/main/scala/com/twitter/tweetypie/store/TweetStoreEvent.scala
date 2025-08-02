@@ -16,14 +16,14 @@ object TweetStoreEvent {
   /**
    * Indicates that the event type doesn't support retries.
    */
-  case object NoRetry extends RetryStrategy
+  case object NoRetry etwittertends RetryStrategy
 
   /**
    * Indicates that if an event handler encounters a failure, it should enqueue a
    * retry to be performed asynchronously.
    */
   case class EnqueueAsyncRetry(enqueueRetry: (ThriftTweetService, AsyncWriteAction) => Future[Unit])
-      extends RetryStrategy
+      etwittertends RetryStrategy
 
   /**
    * Indicates that if an event handler encounters a failure, it should retry
@@ -31,13 +31,13 @@ object TweetStoreEvent {
    * the failure.
    */
   case class LocalRetryThenScribeFailure(toFailedAsyncWrite: AsyncWriteAction => FailedAsyncWrite)
-      extends RetryStrategy
+      etwittertends RetryStrategy
 
   /**
    * Indicates that if an event handler encounters a failure, it should retry
    * the event locally some number of times.
    */
-  case object ReplicatedEventLocalRetry extends RetryStrategy
+  case object ReplicatedEventLocalRetry etwittertends RetryStrategy
 }
 
 /**
@@ -56,17 +56,17 @@ sealed trait TweetStoreEvent {
   def retryStrategy: RetryStrategy
 }
 
-abstract class SyncTweetStoreEvent(val name: String) extends TweetStoreEvent {
+abstract class SyncTweetStoreEvent(val name: String) etwittertends TweetStoreEvent {
   override def retryStrategy: RetryStrategy = TweetStoreEvent.NoRetry
 }
 
-abstract class AsyncTweetStoreEvent(val name: String) extends TweetStoreEvent {
+abstract class AsyncTweetStoreEvent(val name: String) etwittertends TweetStoreEvent {
   def enqueueRetry(service: ThriftTweetService, action: AsyncWriteAction): Future[Unit]
 
   override def retryStrategy: RetryStrategy = TweetStoreEvent.EnqueueAsyncRetry(enqueueRetry)
 }
 
-abstract class ReplicatedTweetStoreEvent(val name: String) extends TweetStoreEvent {
+abstract class ReplicatedTweetStoreEvent(val name: String) etwittertends TweetStoreEvent {
   override def retryStrategy: RetryStrategy = TweetStoreEvent.ReplicatedEventLocalRetry
 }
 
@@ -90,7 +90,7 @@ trait TweetStoreTweetEvent {
  * The abstract parent class for an event that indicates a particular action
  * for a particular event that needs to be retried via the async-write-retrying mechanism.
  */
-abstract class TweetStoreRetryEvent[E <: AsyncTweetStoreEvent] extends TweetStoreEvent {
+abstract class TweetStoreRetryEvent[E <: AsyncTweetStoreEvent] etwittertends TweetStoreEvent {
   override val name = "async_write_retry"
 
   def action: AsyncWriteAction

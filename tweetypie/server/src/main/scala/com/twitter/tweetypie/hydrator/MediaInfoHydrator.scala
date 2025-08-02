@@ -10,7 +10,7 @@ import com.twitter.tweetypie.thriftscala._
 import java.nio.ByteBuffer
 
 object MediaInfoHydrator {
-  type Ctx = MediaEntityHydrator.Uncacheable.Ctx
+  type Cttwitter = MediaEntityHydrator.Uncacheable.Cttwitter
   type Type = MediaEntityHydrator.Uncacheable.Type
 
   private[this] val log = Logger(getClass)
@@ -18,12 +18,12 @@ object MediaInfoHydrator {
   def apply(repo: MediaMetadataRepository.Type, stats: StatsReceiver): Type = {
     val attributableUserCounter = stats.counter("attributable_user")
 
-    ValueHydrator[MediaEntity, Ctx] { (curr, ctx) =>
+    ValueHydrator[MediaEntity, Cttwitter] { (curr, cttwitter) =>
       val request =
         toMediaMetadataRequest(
           mediaEntity = curr,
-          tweetId = ctx.tweetId,
-          extensionsArgs = ctx.opts.extensionsArgs
+          tweetId = cttwitter.tweetId,
+          etwittertensionsArgs = cttwitter.opts.etwittertensionsArgs
         )
 
       request match {
@@ -38,17 +38,17 @@ object MediaInfoHydrator {
                 curr,
                 metadata.updateEntity(
                   mediaEntity = curr,
-                  tweetUserId = ctx.userId,
-                  includeAdditionalMetadata = ctx.includeAdditionalMetadata
+                  tweetUserId = cttwitter.userId,
+                  includeAdditionalMetadata = cttwitter.includeAdditionalMetadata
                 )
               )
 
-            case Throw(ex) if !PartialEntityCleaner.isPartialMedia(curr) =>
-              log.info("Ignored media info repo failure, media entity already hydrated", ex)
+            case Throw(etwitter) if !PartialEntityCleaner.isPartialMedia(curr) =>
+              log.info("Ignored media info repo failure, media entity already hydrated", etwitter)
               ValueState.unmodified(curr)
 
-            case Throw(ex) =>
-              log.error("Media info hydration failed", ex)
+            case Throw(etwitter) =>
+              log.error("Media info hydration failed", etwitter)
               ValueState.partial(curr, MediaEntityHydrator.hydratedField)
           }
       }
@@ -58,7 +58,7 @@ object MediaInfoHydrator {
   def toMediaMetadataRequest(
     mediaEntity: MediaEntity,
     tweetId: TweetId,
-    extensionsArgs: Option[ByteBuffer]
+    etwittertensionsArgs: Option[ByteBuffer]
   ): Option[MediaMetadataRequest] =
     mediaEntity.isProtected.map { isProtected =>
       val mediaKey = MediaKeyUtil.get(mediaEntity)
@@ -67,7 +67,7 @@ object MediaInfoHydrator {
         tweetId = tweetId,
         mediaKey = mediaKey,
         isProtected = isProtected,
-        extensionsArgs = extensionsArgs
+        etwittertensionsArgs = etwittertensionsArgs
       )
     }
 }

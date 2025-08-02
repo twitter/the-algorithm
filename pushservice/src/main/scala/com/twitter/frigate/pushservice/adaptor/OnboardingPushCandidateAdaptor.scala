@@ -16,7 +16,7 @@ import com.twitter.util.Future
 
 class OnboardingPushCandidateAdaptor(
   globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
+    etwittertends CandidateSource[Target, RawCandidate]
     with CandidateSourceEligible[Target, RawCandidate] {
 
   override val name: String = this.getClass.getSimpleName
@@ -44,14 +44,14 @@ class OnboardingPushCandidateAdaptor(
         .pushRecTypeFatiguePredicate(
           CRT.AddressBookUploadPush,
           FS.FatigueForOnboardingPushes,
-          FS.MaxOnboardingPushInInterval,
+          FS.MatwitterOnboardingPushInInterval,
           stats)(Seq(target)).map(_.head)
     val completeOnboardingFatigue =
       TargetPredicates
         .pushRecTypeFatiguePredicate(
           CRT.CompleteOnboardingPush,
           FS.FatigueForOnboardingPushes,
-          FS.MaxOnboardingPushInInterval,
+          FS.MatwitterOnboardingPushInInterval,
           stats)(Seq(target)).map(_.head)
 
     Future

@@ -84,7 +84,7 @@ object TweetEngagementRatioPredicate {
           .getOrElse(PushConstants.TweetLikesFeatureName, 0.0)
         val replyCount = candidate.numericFeatures
           .getOrElse(PushConstants.TweetRepliesFeatureName, 0.0)
-        val ratio = replyCount / likeCount.max(1)
+        val ratio = replyCount / likeCount.matwitter(1)
         val isOonCandidate = RecTypes.isOutOfNetworkTweetRecType(candidate.commonRecType) ||
           RecTypes.outOfNetworkTopicTweetTypes.contains(candidate.commonRecType)
 

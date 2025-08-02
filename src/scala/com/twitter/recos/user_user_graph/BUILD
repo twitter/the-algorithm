@@ -14,7 +14,7 @@ scala_library(
         "finagle/finagle-http/src/main/scala",
         "finagle/finagle-memcached/src/main/scala",
         "finagle/finagle-stats/src/main/scala",
-        "finagle/finagle-thriftmux/src/main/scala",
+        "finagle/finagle-thriftmutwitter/src/main/scala",
         "servo/request/src/main/scala",
         "servo/util/src/main/scala",
         "src/resources/com/twitter/recos:decider",

@@ -15,7 +15,7 @@ scala_library(
 
 jvm_binary(
     name = "interaction_graph_scores_scio",
-    main = "com.twitter.interaction_graph.scio.ml.scores.InteractionGraphScoreExportJob",
+    main = "com.twitter.interaction_graph.scio.ml.scores.InteractionGraphScoreEtwitterportJob",
     platform = "java8",
     tags = ["bazel-compatible"],
     dependencies = [

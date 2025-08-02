@@ -25,7 +25,7 @@ import com.twitter.visibility.features.CardIsPoll
 import com.twitter.visibility.features.CardUriHost
 import com.twitter.visibility.features.FeatureMap
 import com.twitter.visibility.models.ContentId.CardId
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 
 object CardVisibilityLibrary {
   type Type = CardVisibilityRequest => Stitch[VisibilityResult]
@@ -78,11 +78,11 @@ object CardVisibilityLibrary {
 
   private[this] def getCommunityFeatures(
     tweetOpt: Option[tweetypiethrift.Tweet],
-    viewerContext: ViewerContext,
+    viewerContetwittert: ViewerContetwittert,
     communityTweetFeatures: CommunityTweetFeatures
   ): FeatureMapBuilder => FeatureMapBuilder = {
     tweetOpt match {
-      case Some(tweet) => communityTweetFeatures.forTweet(tweet, viewerContext)
+      case Some(tweet) => communityTweetFeatures.forTweet(tweet, viewerContetwittert)
       case _ => identity
     }
   }
@@ -117,7 +117,7 @@ object CardVisibilityLibrary {
       val elapsed = Stopwatch.start()
       var runStitchStartMs = 0L
 
-      val viewerId: Option[UserId] = r.viewerContext.userId
+      val viewerId: Option[UserId] = r.viewerContetwittert.userId
 
       val featureMap =
         visibilityLibrary
@@ -135,8 +135,8 @@ object CardVisibilityLibrary {
                   }
                 }
               ),
-              getCommunityFeatures(r.tweetOpt, r.viewerContext, communityTweetFeatures),
-              getRelationshipFeatures(r.authorId, r.viewerContext.userId, relationshipFeatures),
+              getCommunityFeatures(r.tweetOpt, r.viewerContetwittert, communityTweetFeatures),
+              getRelationshipFeatures(r.authorId, r.viewerContetwittert.userId, relationshipFeatures),
               getTweetFeatures(r.tweetOpt, tweetFeatures),
               _.withConstantFeature(CardIsPoll, r.isPollCardType)
             )
@@ -146,7 +146,7 @@ object CardVisibilityLibrary {
         .runRuleEngine(
           CardId(r.cardUri),
           featureMap,
-          r.viewerContext,
+          r.viewerContetwittert,
           r.safetyLevel
         )
         .onSuccess(_ => {
@@ -165,7 +165,7 @@ object CardVisibilityLibrary {
           visibilityLibrary.runRuleEngine(
             CardId(r.cardUri),
             resolvedFeatureMap,
-            r.viewerContext,
+            r.viewerContetwittert,
             r.safetyLevel
           )
         }

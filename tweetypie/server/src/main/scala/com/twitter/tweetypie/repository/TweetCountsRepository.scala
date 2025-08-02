@@ -17,27 +17,27 @@ sealed trait TweetCountKey {
   def toString: String
 }
 
-case class RetweetsKey(tweetId: TweetId) extends TweetCountKey {
+case class RetweetsKey(tweetId: TweetId) etwittertends TweetCountKey {
   lazy val toSelect: Select[StatusGraph] = RetweetsGraph.from(tweetId)
   override lazy val toString: String = "cnts:rt:" + tweetId
 }
 
-case class RepliesKey(tweetId: TweetId) extends TweetCountKey {
+case class RepliesKey(tweetId: TweetId) etwittertends TweetCountKey {
   lazy val toSelect: Select[StatusGraph] = RepliesToTweetsGraph.from(tweetId)
   override lazy val toString: String = "cnts:re:" + tweetId
 }
 
-case class FavsKey(tweetId: TweetId) extends TweetCountKey {
+case class FavsKey(tweetId: TweetId) etwittertends TweetCountKey {
   lazy val toSelect: Select[StatusGraph] = FavoritesGraph.to(tweetId)
   override lazy val toString: String = "cnts:fv:" + tweetId
 }
 
-case class QuotesKey(tweetId: TweetId) extends TweetCountKey {
+case class QuotesKey(tweetId: TweetId) etwittertends TweetCountKey {
   lazy val toSelect: Select[StatusGraph] = QuotersGraph.from(tweetId)
   override lazy val toString: String = "cnts:qt:" + tweetId
 }
 
-case class BookmarksKey(tweetId: TweetId) extends TweetCountKey {
+case class BookmarksKey(tweetId: TweetId) etwittertends TweetCountKey {
   lazy val toSelect: Select[StatusGraph] = BookmarksGraph.to(tweetId)
   override lazy val toString: String = "cnts:bm:" + tweetId
 }
@@ -45,13 +45,13 @@ case class BookmarksKey(tweetId: TweetId) extends TweetCountKey {
 object TweetCountsRepository {
   type Type = TweetCountKey => Stitch[Count]
 
-  def apply(tflock: TFlockClient, maxRequestSize: Int): Type = {
-    object RequestGroup extends SeqGroup[TweetCountKey, Count] {
+  def apply(tflock: TFlockClient, matwitterRequestSize: Int): Type = {
+    object RequestGroup etwittertends SeqGroup[TweetCountKey, Count] {
       override def run(keys: Seq[TweetCountKey]): Future[Seq[Try[MediaId]]] = {
         val selects = MultiSelect[StatusGraph]() ++= keys.map(_.toSelect)
         LegacySeqGroup.liftToSeqTry(tflock.multiCount(selects).map(counts => counts.map(_.toLong)))
       }
-      override val maxSize: Int = maxRequestSize
+      override val matwitterSize: Int = matwitterRequestSize
     }
 
     key => Stitch.call(key, RequestGroup)

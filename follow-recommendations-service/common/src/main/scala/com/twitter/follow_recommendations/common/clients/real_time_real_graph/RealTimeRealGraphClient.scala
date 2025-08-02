@@ -6,7 +6,7 @@ import com.twitter.conversions.DurationOps._
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.snowflake.id.SnowflakeId
 import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.ml.featureStore.TimelinesUserVertexOnUserClientColumn
+import com.twitter.strato.generated.client.ml.featureStore.TimelinesUserVertetwitterOnUserClientColumn
 import com.twitter.strato.generated.client.onboarding.userrecs.RealGraphScoresMhOnUserClientColumn
 import com.twitter.util.Duration
 import com.twitter.util.Time
@@ -14,12 +14,12 @@ import com.twitter.wtf.real_time_interaction_graph.thriftscala._
 
 @Singleton
 class RealTimeRealGraphClient @Inject() (
-  timelinesUserVertexOnUserClientColumn: TimelinesUserVertexOnUserClientColumn,
+  timelinesUserVertetwitterOnUserClientColumn: TimelinesUserVertetwitterOnUserClientColumn,
   realGraphScoresMhOnUserClientColumn: RealGraphScoresMhOnUserClientColumn) {
 
-  def mapUserVertexToEngagementAndFilter(userVertex: UserVertex): Map[Long, Seq[Engagement]] = {
-    val minTimestamp = (Time.now - RealTimeRealGraphClient.MaxEngagementAge).inMillis
-    userVertex.outgoingInteractionMap.mapValues { interactions =>
+  def mapUserVertetwitterToEngagementAndFilter(userVertetwitter: UserVertetwitter): Map[Long, Seq[Engagement]] = {
+    val minTimestamp = (Time.now - RealTimeRealGraphClient.MatwitterEngagementAge).inMillis
+    userVertetwitter.outgoingInteractionMap.mapValues { interactions =>
       interactions
         .flatMap { interaction => RealTimeRealGraphClient.toEngagement(interaction) }.filter(
           _.timestamp >= minTimestamp)
@@ -27,11 +27,11 @@ class RealTimeRealGraphClient @Inject() (
   }
 
   def getRecentProfileViewEngagements(userId: Long): Stitch[Map[Long, Seq[Engagement]]] = {
-    timelinesUserVertexOnUserClientColumn.fetcher
+    timelinesUserVertetwitterOnUserClientColumn.fetcher
       .fetch(userId).map(_.v).map { input =>
         input
-          .map { userVertex =>
-            val targetToEngagements = mapUserVertexToEngagementAndFilter(userVertex)
+          .map { userVertetwitter =>
+            val targetToEngagements = mapUserVertetwitterToEngagementAndFilter(userVertetwitter)
             targetToEngagements.mapValues { engagements =>
               engagements.filter(engagement =>
                 engagement.engagementType == EngagementType.ProfileView)
@@ -47,8 +47,8 @@ class RealTimeRealGraphClient @Inject() (
     includeNonDirectFollowCandidates: Boolean
   ): Stitch[Seq[CandidateUser]] = {
     val isNewUser =
-      SnowflakeId.timeFromIdOpt(userId).exists { signupTime =>
-        (Time.now - signupTime) < RealTimeRealGraphClient.MaxNewUserAge
+      SnowflakeId.timeFromIdOpt(userId).etwitterists { signupTime =>
+        (Time.now - signupTime) < RealTimeRealGraphClient.MatwitterNewUserAge
       }
     val updatedEngagementScoreMap =
       if (isNewUser)
@@ -57,10 +57,10 @@ class RealTimeRealGraphClient @Inject() (
 
     Stitch
       .join(
-        timelinesUserVertexOnUserClientColumn.fetcher.fetch(userId).map(_.v),
+        timelinesUserVertetwitterOnUserClientColumn.fetcher.fetch(userId).map(_.v),
         realGraphScoresMhOnUserClientColumn.fetcher.fetch(userId).map(_.v)).map {
-        case (Some(userVertex), Some(neighbors)) =>
-          val engagements = mapUserVertexToEngagementAndFilter(userVertex)
+        case (Some(userVertetwitter), Some(neighbors)) =>
+          val engagements = mapUserVertetwitterToEngagementAndFilter(userVertetwitter)
 
           val candidatesAndScores: Seq[(Long, Double, Seq[EngagementType])] =
             EngagementScorer.apply(engagements, engagementScoreMap = updatedEngagementScoreMap)
@@ -74,7 +74,7 @@ class RealTimeRealGraphClient @Inject() (
           val candidates =
             (if (includeNonDirectFollowCandidates) nonDirectFollows else Seq.empty) ++
               (if (includeDirectFollowCandidates)
-                 directFollows.take(RealTimeRealGraphClient.MaxNumDirectFollow)
+                 directFollows.take(RealTimeRealGraphClient.MatwitterNumDirectFollow)
                else Seq.empty)
 
           candidates.map {
@@ -112,9 +112,9 @@ object RealTimeRealGraphClient {
     }
   }
 
-  val MaxNumDirectFollow = 50
-  val MaxEngagementAge: Duration = 14.days
-  val MaxNewUserAge: Duration = 30.days
+  val MatwitterNumDirectFollow = 50
+  val MatwitterEngagementAge: Duration = 14.days
+  val MatwitterNewUserAge: Duration = 30.days
   val ProfileViewScore = 0.4
   val EngagementScoreMap = Map(
     EngagementType.Like -> 1.0,

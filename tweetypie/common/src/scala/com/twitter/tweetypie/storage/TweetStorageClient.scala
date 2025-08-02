@@ -30,13 +30,13 @@ object TweetStorageClient {
   object GetTweet {
     sealed trait Response
     object Response {
-      case class Found(tweet: Tweet) extends Response
-      object NotFound extends Response
-      object Deleted extends Response
+      case class Found(tweet: Tweet) etwittertends Response
+      object NotFound etwittertends Response
+      object Deleted etwittertends Response
       // On BounceDeleted, provide the full Tweet so that implementations
       // (i.e. ManhattanTweetStorageClient) don't not need to be aware of the specific tweet
       // fields required by callers for proper processing of bounced deleted tweets.
-      case class BounceDeleted(tweet: Tweet) extends Response
+      case class BounceDeleted(tweet: Tweet) etwittertends Response
     }
   }
 
@@ -47,16 +47,16 @@ object TweetStorageClient {
       override def toString: String = message
     }
     object Error {
-      case object TweetIsCorrupt extends Error("stored tweet data is corrupt and cannot be decoded")
+      case object TweetIsCorrupt etwittertends Error("stored tweet data is corrupt and cannot be decoded")
 
       case object ScrubbedFieldsPresent
-          extends Error("stored tweet fields that should be scrubbed are still present")
+          etwittertends Error("stored tweet fields that should be scrubbed are still present")
 
       case object TweetFieldsMissingOrInvalid
-          extends Error("expected tweet fields are missing or contain invalid values")
+          etwittertends Error("etwitterpected tweet fields are missing or contain invalid values")
 
       case object TweetShouldBeHardDeleted
-          extends Error("stored tweet that should be hard deleted is still present")
+          etwittertends Error("stored tweet that should be hard deleted is still present")
     }
 
     sealed trait Response
@@ -74,7 +74,7 @@ object TweetStorageClient {
       /**
        * Tweet data was found, possibly state records and/or scrubbed field records.
        */
-      sealed trait FoundAny extends Response with StoredTweetMetadata {
+      sealed trait FoundAny etwittertends Response with StoredTweetMetadata {
         def tweet: Tweet
       }
 
@@ -95,7 +95,7 @@ object TweetStorageClient {
       /**
        * No records for this tweet id were found in storage
        */
-      case class NotFound(id: TweetId) extends Response
+      case class NotFound(id: TweetId) etwittertends Response
 
       /**
        * Data related to the Tweet id was found but could not be loaded successfully. The
@@ -107,7 +107,7 @@ object TweetStorageClient {
         allStates: Seq[TweetStateRecord],
         scrubbedFields: Set[FieldId],
         errs: Seq[Error],
-      ) extends Response
+      ) etwittertends Response
           with StoredTweetMetadata
           with StoredTweetErrors
 
@@ -119,7 +119,7 @@ object TweetStorageClient {
         state: Option[TweetStateRecord.HardDeleted],
         allStates: Seq[TweetStateRecord],
         scrubbedFields: Set[FieldId],
-      ) extends Response
+      ) etwittertends Response
           with StoredTweetMetadata
 
       /**
@@ -131,7 +131,7 @@ object TweetStorageClient {
         state: Option[TweetStateRecord],
         allStates: Seq[TweetStateRecord],
         scrubbedFields: Set[FieldId],
-      ) extends FoundAny
+      ) etwittertends FoundAny
 
       /**
        * Tweet data was found, and the most recent state record found indicates deletion.
@@ -141,7 +141,7 @@ object TweetStorageClient {
         state: Option[TweetStateRecord],
         allStates: Seq[TweetStateRecord],
         scrubbedFields: Set[FieldId],
-      ) extends FoundAny
+      ) etwittertends FoundAny
 
       /**
        * Tweet data was found, however errors were detected in the stored data. Required
@@ -155,7 +155,7 @@ object TweetStorageClient {
         allStates: Seq[TweetStateRecord],
         scrubbedFields: Set[FieldId],
         errs: Seq[Error],
-      ) extends FoundAny
+      ) etwittertends FoundAny
           with StoredTweetErrors
     }
   }
@@ -168,9 +168,9 @@ object TweetStorageClient {
     sealed trait Response
     object Response {
       case class Deleted(deletedAtMillis: Option[Long], createdAtMillis: Option[Long])
-          extends Response
+          etwittertends Response
       case class NotDeleted(id: TweetId, ineligibleLKey: Option[TweetKey.LKey])
-          extends Throwable
+          etwittertends Throwable
           with Response
     }
   }
@@ -186,9 +186,9 @@ object TweetStorageClient {
     sealed trait UndeleteResponseCode
 
     object UndeleteResponseCode {
-      object Success extends UndeleteResponseCode
-      object BackupNotFound extends UndeleteResponseCode
-      object NotCreated extends UndeleteResponseCode
+      object Success etwittertends UndeleteResponseCode
+      object BackupNotFound etwittertends UndeleteResponseCode
+      object NotCreated etwittertends UndeleteResponseCode
     }
   }
 

@@ -14,7 +14,7 @@ namespace twml {
           const Tensor &bin_vals,
           const Tensor &feature_offsets,
           int output_bits,
-          const Map<int64_t, int64_t> &ID_to_index,
+          const Map<int64_t, int64_t> &ID_to_indetwitter,
           int64_t start_compute,
           int64_t end_compute,
           int64_t output_start) {
@@ -28,9 +28,9 @@ namespace twml {
     uint64_t in_idsStride = input_ids.getStride(0);
     uint64_t in_valsStride = input_vals.getStride(0);
 
-    auto xsData = bin_vals.getData<T>();
+    auto twittersData = bin_vals.getData<T>();
     auto ysData = bin_ids.getData<int64_t>();
-    uint64_t xsStride = bin_vals.getStride(0);
+    uint64_t twittersStride = bin_vals.getStride(0);
     uint64_t ysStride = bin_ids.getStride(0);
 
     auto offsetData = feature_offsets.getData<int64_t>();
@@ -44,8 +44,8 @@ namespace twml {
       int64_t feature_ID = in_idsData[i * in_idsStride];
       T val = in_valsData[i * in_valsStride];
 
-      auto iter = ID_to_index.find(feature_ID);
-      if (iter == ID_to_index.end()) {
+      auto iter = ID_to_indetwitter.find(feature_ID);
+      if (iter == ID_to_indetwitter.end()) {
         // feature not calibrated
         // modulo add operation for new key from feature ID
         int64_t ikey = feature_ID % (output_size - total_bins) + total_bins;
@@ -58,13 +58,13 @@ namespace twml {
 
       // Perform interpolation
       uint64_t offset = offsetData[ikey];
-      uint64_t next_offset = (ikey == (int64_t)(fsize - 1)) ? total_bins : offsetData[ikey + 1];
-      uint64_t mainSize = next_offset - offset;
+      uint64_t netwittert_offset = (ikey == (int64_t)(fsize - 1)) ? total_bins : offsetData[ikey + 1];
+      uint64_t mainSize = netwittert_offset - offset;
 
-      const T *lxsData = xsData + offset;
+      const T *ltwittersData = twittersData + offset;
       const int64_t *lysData = ysData + offset;
       int64_t okey;
-      okey = interpolation<T, int64_t>(lxsData, xsStride,
+      okey = interpolation<T, int64_t>(ltwittersData, twittersStride,
                                        lysData, ysStride,
                                        val, mainSize,
                                        NEAREST, 0);
@@ -81,7 +81,7 @@ namespace twml {
           const Tensor &bin_vals,
           const Tensor &feature_offsets,
           int output_bits,
-          const Map<int64_t, int64_t> &ID_to_index,
+          const Map<int64_t, int64_t> &ID_to_indetwitter,
           int start_compute,
           int end_compute,
           int output_start) {
@@ -150,13 +150,13 @@ namespace twml {
     case TWML_TYPE_FLOAT:
       twml::discretizerInfer<float>(output_keys, output_vals,
                   input_ids, input_vals,
-                  bin_ids, bin_vals, feature_offsets, output_bits, ID_to_index,
+                  bin_ids, bin_vals, feature_offsets, output_bits, ID_to_indetwitter,
                   start_compute, end_compute, output_start);
       break;
     case TWML_TYPE_DOUBLE:
       twml::discretizerInfer<double>(output_keys, output_vals,
                    input_ids, input_vals,
-                   bin_ids, bin_vals, feature_offsets, output_bits, ID_to_index,
+                   bin_ids, bin_vals, feature_offsets, output_bits, ID_to_indetwitter,
                    start_compute, end_compute, output_start);
       break;
     default:

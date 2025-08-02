@@ -6,7 +6,7 @@ import org.apache.beam.sdk.options.Default
 import org.apache.beam.sdk.options.Description
 import org.apache.beam.sdk.options.Validation.Required
 
-trait InteractionGraphAggDirectInteractionsOption extends DALOptions with DateRangeOptions {
+trait InteractionGraphAggDirectInteractionsOption etwittertends DALOptions with DateRangeOptions {
   @Required
   @Description("Output path for storing the final dataset")
   def getOutputPath: String

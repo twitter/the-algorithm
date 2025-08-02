@@ -3,7 +3,7 @@ package com.twitter.search.common.encoding.features;
 /**
  * Normalizes using the logic described in {@link SingleBytePositiveFloatUtil}.
  */
-public class SingleBytePositiveFloatNormalizer extends ByteNormalizer {
+public class SingleBytePositiveFloatNormalizer etwittertends ByteNormalizer {
 
   @Override
   public byte normalize(double val) {

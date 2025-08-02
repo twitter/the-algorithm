@@ -4,7 +4,7 @@ import com.twitter.tweetypie.thriftscala.AsyncWriteAction
 import com.twitter.tweetypie.thriftscala.RetweetArchivalEvent
 
 trait RetweetArchivalEnqueueStore
-    extends TweetStoreBase[RetweetArchivalEnqueueStore]
+    etwittertends TweetStoreBase[RetweetArchivalEnqueueStore]
     with AsyncSetRetweetVisibility.Store {
   def wrap(w: TweetStore.Wrap): RetweetArchivalEnqueueStore =
     new TweetStoreWrapper(w, this)

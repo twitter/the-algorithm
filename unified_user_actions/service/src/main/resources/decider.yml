@@ -83,7 +83,7 @@ PublishClientTweetUnretweet:
   default_availability: 0
 PublishClientTweetClickCaret:
   default_availability: 0
-PublishClientTweetPhotoExpand:
+PublishClientTweetPhotoEtwitterpand:
   default_availability: 0
 PublishClientTweetClickMentionScreenName:
   default_availability: 0
@@ -221,7 +221,7 @@ PublishClientTweetVideoPlaybackComplete:
   default_availability: 0
 PublishClientTweetEmailClick:
   default_availability: 0
-PublishClientAppExit:
+PublishClientAppEtwitterit:
   default_availability: 0
 PublishClientTweetGalleryImpression:
   default_availability: 0
@@ -263,7 +263,7 @@ PublishServerPromotedTweetClickHashtag:
   default_availability: 0
 PublishServerPromotedTweetOpenLink:
   default_availability: 0
-PublishServerPromotedTweetCarouselSwipeNext:
+PublishServerPromotedTweetCarouselSwipeNetwittert:
   default_availability: 0
 PublishServerPromotedTweetCarouselSwipePrevious:
   default_availability: 0

@@ -55,12 +55,12 @@ main = JVMProcess(
   name = SERVICE_NAME,
   jvm = Java11(
    heap                     = HEAP_SIZE,
-   extra_jvm_flags =
+   etwittertra_jvm_flags =
       '-Djava.net.preferIPv4Stack=true'
 
-      ' -XX:+UseNUMA'
-      ' -XX:+AggressiveOpts'
-      ' -XX:+PerfDisableSharedMem'
+      ' -twittertwitter:+UseNUMA'
+      ' -twittertwitter:+AggressiveOpts'
+      ' -twittertwitter:+PerfDisableSharedMem'
 
       ' -Dlog_level={{profile.log_level}}'
       ' -Dlog.access.output=access.log'
@@ -105,13 +105,13 @@ job_template = Service(
     initial_interval_secs     = 100,
     interval_secs             = 60,
     timeout_secs              = 60,
-    max_consecutive_failures  = 4
+    matwitter_consecutive_failures  = 4
   ),
   update_config               = UpdateConfig(
     batch_size                = 50,
     watch_secs                = 90,
-    max_per_shard_failures    = 3,
-    max_total_failures        = 0,
+    matwitter_per_shard_failures    = 3,
+    matwitter_total_failures        = 0,
     rollback_on_failure       = False
   )
 )
@@ -150,7 +150,7 @@ devel_job = job_template(
 ).bind(profile = DEVEL)
 
 jobs = []
-for cluster in ['atla', 'pdxa']:
+for cluster in ['atla', 'pdtwittera']:
   jobs.append(prod_job(cluster = cluster))
   jobs.append(staging_job(cluster = cluster))
   jobs.append(devel_job(cluster = cluster))

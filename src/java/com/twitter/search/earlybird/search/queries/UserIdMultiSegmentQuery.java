@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.search.queries;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -8,23 +8,23 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
+import org.apache.lucene.indetwitter.LeafReaderContetwittert;
+import org.apache.lucene.indetwitter.Term;
+import org.apache.lucene.indetwitter.Terms;
+import org.apache.lucene.indetwitter.TermsEnum;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.BulkScorer;
 import org.apache.lucene.search.ConstantScoreQuery;
 import org.apache.lucene.search.ConstantScoreWeight;
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.IndetwitterSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.ScoreMode;
@@ -39,19 +39,19 @@ import com.twitter.search.common.metrics.SearchTimerStats;
 import com.twitter.search.common.query.HitAttributeHelper;
 import com.twitter.search.common.query.IDDisjunctionQuery;
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
+import com.twitter.search.common.schema.base.IndetwitteredNumericFieldSettings;
 import com.twitter.search.common.schema.base.Schema;
 import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
 import com.twitter.search.common.search.termination.QueryTimeout;
 import com.twitter.search.common.util.analysis.LongTermAttributeImpl;
 import com.twitter.search.common.util.analysis.SortableLongTermAttributeImpl;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
-import com.twitter.search.core.earlybird.index.inverted.MultiSegmentTermDictionary;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentData;
+import com.twitter.search.core.earlybird.indetwitter.inverted.InvertedIndetwitter;
+import com.twitter.search.core.earlybird.indetwitter.inverted.MultiSegmentTermDictionary;
 import com.twitter.search.earlybird.partition.MultiSegmentTermDictionaryManager;
 import com.twitter.search.earlybird.queryparser.EarlybirdQueryHelper;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twitter.search.queryparser.query.QueryParserEtwitterception;
 
 /**
  * A variant of a multi-term ID disjunction query (similar to {@link UserIdMultiSegmentQuery}),
@@ -61,8 +61,8 @@ import com.twitter.search.queryparser.query.QueryParserException;
  * By default, a IDDisjunctionQuery (or Lucene's MultiTermQuery), does a term dictionary lookup
  * for all of the terms in its disjunction, and it does it once for each segment (or AtomicReader)
  * that the query is searching.
- * This means that when the term dictionary is large, and the term lookups are expensive, and when
- * we are searching multiple segments, the query needs to make num_terms * num_segments expensive
+ * This means that when the term dictionary is large, and the term lookups are etwitterpensive, and when
+ * we are searching multiple segments, the query needs to make num_terms * num_segments etwitterpensive
  * term dictionary lookups.
  *
  * With the help of a MultiSegmentTermDictionary, this multi-term disjunction query implementation
@@ -77,38 +77,38 @@ import com.twitter.search.queryparser.query.QueryParserException;
  * When performing lookups in the MultiSegmentTermDictionary, for each supported segment, we save
  * a list of termIds from that segment for all the searched terms that appear in that segment.
  *
- * For example, when querying for UserIdMultiSegmentQuery with user ids: {1L, 2L, 3L} and
- * segments: {1, 2}, where segment 1 has user ids {1L, 2L} indexed under termIds {100, 200},
- * and segment 2 has user ids {1L, 2L, 3L} indexed under termIds {200, 300, 400}, we will build
+ * For etwitterample, when querying for UserIdMultiSegmentQuery with user ids: {1L, 2L, 3L} and
+ * segments: {1, 2}, where segment 1 has user ids {1L, 2L} indetwittered under termIds {100, 200},
+ * and segment 2 has user ids {1L, 2L, 3L} indetwittered under termIds {200, 300, 400}, we will build
  * up the following map once:
  *   segment1 -> [100, 200]
  *   segment2 -> [200, 300, 400]
  */
-public class UserIdMultiSegmentQuery extends Query {
+public class UserIdMultiSegmentQuery etwittertends Query {
   @VisibleForTesting
   public static final SearchTimerStats TERM_LOOKUP_STATS =
-      SearchTimerStats.export("multi_segment_query_term_lookup", TimeUnit.NANOSECONDS, false);
+      SearchTimerStats.etwitterport("multi_segment_query_term_lookup", TimeUnit.NANOSECONDS, false);
   public static final SearchTimerStats QUERY_FROM_PRECOMPUTED =
-      SearchTimerStats.export("multi_segment_query_from_precomputed", TimeUnit.NANOSECONDS, false);
+      SearchTimerStats.etwitterport("multi_segment_query_from_precomputed", TimeUnit.NANOSECONDS, false);
   public static final SearchTimerStats QUERY_REGULAR =
-      SearchTimerStats.export("multi_segment_query_regular", TimeUnit.NANOSECONDS, false);
+      SearchTimerStats.etwitterport("multi_segment_query_regular", TimeUnit.NANOSECONDS, false);
 
   @VisibleForTesting
-  public static final SearchCounter USED_MULTI_SEGMENT_TERM_DICTIONARY_COUNT = SearchCounter.export(
+  public static final SearchCounter USED_MULTI_SEGMENT_TERM_DICTIONARY_COUNT = SearchCounter.etwitterport(
       "user_id_multi_segment_query_used_multi_segment_term_dictionary_count");
   @VisibleForTesting
-  public static final SearchCounter USED_ORIGINAL_TERM_DICTIONARY_COUNT = SearchCounter.export(
+  public static final SearchCounter USED_ORIGINAL_TERM_DICTIONARY_COUNT = SearchCounter.etwitterport(
       "user_id_multi_segment_query_used_original_term_dictionary_count");
 
   private static final SearchCounter NEW_QUERY_COUNT =
-      SearchCounter.export("user_id_multi_segment_new_query_count");
+      SearchCounter.etwitterport("user_id_multi_segment_new_query_count");
   private static final SearchCounter OLD_QUERY_COUNT =
-      SearchCounter.export("user_id_multi_segment_old_query_count");
+      SearchCounter.etwitterport("user_id_multi_segment_old_query_count");
 
   private static final HashMap<String, SearchCounter> QUERY_COUNT_BY_QUERY_NAME = new HashMap<>();
   private static final HashMap<String, SearchCounter> QUERY_COUNT_BY_FIELD_NAME = new HashMap<>();
 
-  private static final String DECIDER_KEY_PREFIX = "use_multi_segment_id_disjunction_queries_in_";
+  private static final String DECIDER_KEY_PREFItwitter = "use_multi_segment_id_disjunction_queries_in_";
 
   /**
    * Returns a new user ID disjunction query.
@@ -135,11 +135,11 @@ public class UserIdMultiSegmentQuery extends Query {
       EarlybirdCluster earlybirdCluster,
       List<Integer> ranks,
       @Nullable HitAttributeHelper hitAttributeHelper,
-      @Nullable QueryTimeout queryTimeout) throws QueryParserException {
+      @Nullable QueryTimeout queryTimeout) throws QueryParserEtwitterception {
     QUERY_COUNT_BY_QUERY_NAME.computeIfAbsent(queryName, name ->
-        SearchCounter.export("multi_segment_query_name_" + name)).increment();
+        SearchCounter.etwitterport("multi_segment_query_name_" + name)).increment();
     QUERY_COUNT_BY_FIELD_NAME.computeIfAbsent(field, name ->
-        SearchCounter.export("multi_segment_query_count_for_field_" + name)).increment();
+        SearchCounter.etwitterport("multi_segment_query_count_for_field_" + name)).increment();
 
     if (DeciderUtil.isAvailableForRandomRecipient(decider, getDeciderName(earlybirdCluster))) {
       NEW_QUERY_COUNT.increment();
@@ -161,7 +161,7 @@ public class UserIdMultiSegmentQuery extends Query {
 
   @VisibleForTesting
   public static String getDeciderName(EarlybirdCluster earlybirdCluster) {
-    return DECIDER_KEY_PREFIX + earlybirdCluster.name().toLowerCase();
+    return DECIDER_KEY_PREFItwitter + earlybirdCluster.name().toLowerCase();
   }
 
   private final boolean useOrderPreservingEncoding;
@@ -174,11 +174,11 @@ public class UserIdMultiSegmentQuery extends Query {
 
   private final List<Integer> ranks;
   // For each segment where we have a multi-segment term dictionary, this map will contain the
-  // termIds of all the terms that actually appear in that segment's index.
+  // termIds of all the terms that actually appear in that segment's indetwitter.
   @Nullable
-  private Map<InvertedIndex, List<TermRankPair>> termIdsPerSegment;
+  private Map<InvertedIndetwitter, List<TermRankPair>> termIdsPerSegment;
 
-  // A wrap class helps to associate termId with corresponding search operator rank if exist
+  // A wrap class helps to associate termId with corresponding search operator rank if etwitterist
   private final class TermRankPair {
     private final int termId;
     private final int rank;
@@ -223,14 +223,14 @@ public class UserIdMultiSegmentQuery extends Query {
     }
 
     if (!schemaSnapshot.hasField(field)) {
-      throw new IllegalStateException("Tried to search a field which does not exist in schema");
+      throw new IllegalStateEtwitterception("Tried to search a field which does not etwitterist in schema");
     }
     this.fieldInfo = Preconditions.checkNotNull(schemaSnapshot.getFieldInfo(field));
 
-    IndexedNumericFieldSettings numericFieldSettings =
+    IndetwitteredNumericFieldSettings numericFieldSettings =
         fieldInfo.getFieldType().getNumericFieldSettings();
     if (numericFieldSettings == null) {
-      throw new IllegalStateException("Id field is not numerical");
+      throw new IllegalStateEtwitterception("Id field is not numerical");
     }
 
     this.useOrderPreservingEncoding = numericFieldSettings.isUseSortableEncoding();
@@ -262,10 +262,10 @@ public class UserIdMultiSegmentQuery extends Query {
         : LongTermAttributeImpl.newBytesRef();
 
     termIdsPerSegment = Maps.newHashMap();
-    List<? extends InvertedIndex> segmentIndexes = multiSegmentTermDictionary.getSegmentIndexes();
+    List<? etwittertends InvertedIndetwitter> segmentIndetwitteres = multiSegmentTermDictionary.getSegmentIndetwitteres();
 
-    for (int idx = 0; idx < ids.size(); ++idx) {
-      long longTerm = ids.get(idx);
+    for (int idtwitter = 0; idtwitter < ids.size(); ++idtwitter) {
+      long longTerm = ids.get(idtwitter);
 
       if (useOrderPreservingEncoding) {
         SortableLongTermAttributeImpl.copyLongToBytesRef(termRef, longTerm);
@@ -274,22 +274,22 @@ public class UserIdMultiSegmentQuery extends Query {
       }
 
       int[] termIds = multiSegmentTermDictionary.lookupTermIds(termRef);
-      Preconditions.checkState(segmentIndexes.size() == termIds.length,
-          "SegmentIndexes: %s, field: %s, termIds: %s",
-          segmentIndexes.size(), field, termIds.length);
+      Preconditions.checkState(segmentIndetwitteres.size() == termIds.length,
+          "SegmentIndetwitteres: %s, field: %s, termIds: %s",
+          segmentIndetwitteres.size(), field, termIds.length);
 
-      for (int indexId = 0; indexId < termIds.length; indexId++) {
-        int termId = termIds[indexId];
-        if (termId != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
-          InvertedIndex fieldIndex = segmentIndexes.get(indexId);
+      for (int indetwitterId = 0; indetwitterId < termIds.length; indetwitterId++) {
+        int termId = termIds[indetwitterId];
+        if (termId != EarlybirdIndetwitterSegmentAtomicReader.TERM_NOT_FOUND) {
+          InvertedIndetwitter fieldIndetwitter = segmentIndetwitteres.get(indetwitterId);
 
-          List<TermRankPair> termIdsList = termIdsPerSegment.get(fieldIndex);
+          List<TermRankPair> termIdsList = termIdsPerSegment.get(fieldIndetwitter);
           if (termIdsList == null) {
             termIdsList = Lists.newArrayList();
-            termIdsPerSegment.put(fieldIndex, termIdsList);
+            termIdsPerSegment.put(fieldIndetwitter, termIdsList);
           }
           termIdsList.add(new TermRankPair(
-              termId, ranks.size() > 0 ? ranks.get(idx) : -1));
+              termId, ranks.size() > 0 ? ranks.get(idtwitter) : -1));
         }
       }
     }
@@ -299,7 +299,7 @@ public class UserIdMultiSegmentQuery extends Query {
   }
 
   @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
+  public Weight createWeight(IndetwitterSearcher searcher, ScoreMode scoreMode, float boost) {
     return new UserIdMultiSegmentQueryWeight(searcher, scoreMode, boost);
   }
 
@@ -338,12 +338,12 @@ public class UserIdMultiSegmentQuery extends Query {
     return builder.toString();
   }
 
-  private final class UserIdMultiSegmentQueryWeight extends ConstantScoreWeight {
-    private final IndexSearcher searcher;
+  private final class UserIdMultiSegmentQueryWeight etwittertends ConstantScoreWeight {
+    private final IndetwitterSearcher searcher;
     private final ScoreMode scoreMode;
 
     private UserIdMultiSegmentQueryWeight(
-        IndexSearcher searcher,
+        IndetwitterSearcher searcher,
         ScoreMode scoreMode,
         float boost) {
       super(UserIdMultiSegmentQuery.this, boost);
@@ -352,27 +352,27 @@ public class UserIdMultiSegmentQuery extends Query {
     }
 
     @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      Weight weight = rewrite(context);
+    public Scorer scorer(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
+      Weight weight = rewrite(contetwittert);
       if (weight != null) {
-        return weight.scorer(context);
+        return weight.scorer(contetwittert);
       } else {
         return null;
       }
     }
 
     @Override
-    public BulkScorer bulkScorer(LeafReaderContext context) throws IOException {
-      Weight weight = rewrite(context);
+    public BulkScorer bulkScorer(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
+      Weight weight = rewrite(contetwittert);
       if (weight != null) {
-        return weight.bulkScorer(context);
+        return weight.bulkScorer(contetwittert);
       } else {
         return null;
       }
     }
 
     @Override
-    public void extractTerms(Set<Term> terms) {
+    public void etwittertractTerms(Set<Term> terms) {
       terms.addAll(ids
           .stream()
           .map(id -> new Term(field, LongTermAttributeImpl.copyIntoNewBytesRef(id)))
@@ -380,14 +380,14 @@ public class UserIdMultiSegmentQuery extends Query {
     }
 
     @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
+    public boolean isCacheable(LeafReaderContetwittert cttwitter) {
       return true;
     }
 
-    private Weight rewrite(LeafReaderContext context) throws IOException {
-      final Terms terms = context.reader().terms(field);
+    private Weight rewrite(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
+      final Terms terms = contetwittert.reader().terms(field);
       if (terms == null) {
-        // field does not exist
+        // field does not etwitterist
         return null;
       }
       final TermsEnum termsEnum = terms.iterator();
@@ -397,13 +397,13 @@ public class UserIdMultiSegmentQuery extends Query {
       // See if the segment is supported by the multi-segment term dictionary. If so, build up
       // the query using the termIds from the multi-segment term dictionary.
       // If not (for the current segment), do the term lookups directly in the queried segment.
-      InvertedIndex fieldIndex = getFieldIndexFromMultiTermDictionary(context);
-      if (fieldIndex != null) {
+      InvertedIndetwitter fieldIndetwitter = getFieldIndetwitterFromMultiTermDictionary(contetwittert);
+      if (fieldIndetwitter != null) {
         createTermIdsPerSegment();
 
         USED_MULTI_SEGMENT_TERM_DICTIONARY_COUNT.increment();
         SearchTimer timer = QUERY_FROM_PRECOMPUTED.startNewTimer();
-        bq = addPrecomputedTermQueries(fieldIndex, termsEnum);
+        bq = addPrecomputedTermQueries(fieldIndetwitter, termsEnum);
         QUERY_FROM_PRECOMPUTED.stopTimerAndIncrement(timer);
       } else {
         USED_ORIGINAL_TERM_DICTIONARY_COUNT.increment();
@@ -420,27 +420,27 @@ public class UserIdMultiSegmentQuery extends Query {
 
     /**
      * If the multi-segment term dictionary supports this segment/LeafReader, then return the
-     * InvertedIndex representing this segment.
+     * InvertedIndetwitter representing this segment.
      *
      * If the segment being queried right now is not in the multi-segment term dictionary (e.g.
      * if it's not optimized yet), return null.
      */
     @Nullable
-    private InvertedIndex getFieldIndexFromMultiTermDictionary(LeafReaderContext context)
-        throws IOException {
+    private InvertedIndetwitter getFieldIndetwitterFromMultiTermDictionary(LeafReaderContetwittert contetwittert)
+        throws IOEtwitterception {
       if (multiSegmentTermDictionary == null) {
         return null;
       }
 
-      if (context.reader() instanceof EarlybirdIndexSegmentAtomicReader) {
-        EarlybirdIndexSegmentAtomicReader reader =
-            (EarlybirdIndexSegmentAtomicReader) context.reader();
+      if (contetwittert.reader() instanceof EarlybirdIndetwitterSegmentAtomicReader) {
+        EarlybirdIndetwitterSegmentAtomicReader reader =
+            (EarlybirdIndetwitterSegmentAtomicReader) contetwittert.reader();
 
-        EarlybirdIndexSegmentData segmentData = reader.getSegmentData();
-        InvertedIndex fieldIndex = segmentData.getFieldIndex(field);
+        EarlybirdIndetwitterSegmentData segmentData = reader.getSegmentData();
+        InvertedIndetwitter fieldIndetwitter = segmentData.getFieldIndetwitter(field);
 
-        if (multiSegmentTermDictionary.supportSegmentIndex(fieldIndex)) {
-          return fieldIndex;
+        if (multiSegmentTermDictionary.supportSegmentIndetwitter(fieldIndetwitter)) {
+          return fieldIndetwitter;
         }
       }
 
@@ -448,17 +448,17 @@ public class UserIdMultiSegmentQuery extends Query {
     }
 
     private BooleanQuery addPrecomputedTermQueries(
-        InvertedIndex fieldIndex,
-        TermsEnum termsEnum) throws IOException {
+        InvertedIndetwitter fieldIndetwitter,
+        TermsEnum termsEnum) throws IOEtwitterception {
 
       BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
       int numClauses = 0;
 
-      List<TermRankPair> termRankPairs = termIdsPerSegment.get(fieldIndex);
+      List<TermRankPair> termRankPairs = termIdsPerSegment.get(fieldIndetwitter);
       if (termRankPairs != null) {
         for (TermRankPair pair : termRankPairs) {
           int termId = pair.getTermId();
-          if (numClauses >= BooleanQuery.getMaxClauseCount()) {
+          if (numClauses >= BooleanQuery.getMatwitterClauseCount()) {
             BooleanQuery saved = bqBuilder.build();
             bqBuilder = new BooleanQuery.Builder();
             bqBuilder.add(saved, BooleanClause.Occur.SHOULD);
@@ -483,7 +483,7 @@ public class UserIdMultiSegmentQuery extends Query {
       return bqBuilder.build();
     }
 
-    private BooleanQuery addTermQueries(TermsEnum termsEnum) throws IOException {
+    private BooleanQuery addTermQueries(TermsEnum termsEnum) throws IOEtwitterception {
       final BytesRef termRef = useOrderPreservingEncoding
           ? SortableLongTermAttributeImpl.newBytesRef()
           : LongTermAttributeImpl.newBytesRef();
@@ -491,16 +491,16 @@ public class UserIdMultiSegmentQuery extends Query {
       BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
       int numClauses = 0;
 
-      for (int idx = 0; idx < ids.size(); ++idx) {
-        long longTerm = ids.get(idx);
+      for (int idtwitter = 0; idtwitter < ids.size(); ++idtwitter) {
+        long longTerm = ids.get(idtwitter);
         if (useOrderPreservingEncoding) {
           SortableLongTermAttributeImpl.copyLongToBytesRef(termRef, longTerm);
         } else {
           LongTermAttributeImpl.copyLongToBytesRef(termRef, longTerm);
         }
 
-        if (termsEnum.seekExact(termRef)) {
-          if (numClauses >= BooleanQuery.getMaxClauseCount()) {
+        if (termsEnum.seekEtwitteract(termRef)) {
+          if (numClauses >= BooleanQuery.getMatwitterClauseCount()) {
             BooleanQuery saved = bqBuilder.build();
             bqBuilder = new BooleanQuery.Builder();
             bqBuilder.add(saved, BooleanClause.Occur.SHOULD);
@@ -510,7 +510,7 @@ public class UserIdMultiSegmentQuery extends Query {
           if (ranks.size() > 0) {
             bqBuilder.add(EarlybirdQueryHelper.maybeWrapWithHitAttributionCollector(
                               new SimpleTermQuery(termsEnum, termsEnum.ord()),
-                              ranks.get(idx),
+                              ranks.get(idtwitter),
                               fieldInfo,
                               hitAttributeHelper),
                           BooleanClause.Occur.SHOULD);

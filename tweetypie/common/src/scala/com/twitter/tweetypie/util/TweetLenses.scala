@@ -1,7 +1,7 @@
 package com.twitter.tweetypie.util
 
 import com.twitter.dataproducts.enrichments.thriftscala.ProfileGeoEnrichment
-import com.twitter.expandodo.thriftscala._
+import com.twitter.etwitterpandodo.thriftscala._
 import com.twitter.mediaservices.commons.thriftscala.MediaKey
 import com.twitter.mediaservices.commons.tweetmedia.thriftscala._
 import com.twitter.servo.data.Lens
@@ -233,11 +233,11 @@ object TweetLenses {
       (t, v) => t.copy(profileGeoEnrichment = v)
     )
 
-  val visibleTextRange: Lens[Tweet, Option[TextRange]] =
-    tweetLens[Option[TextRange]](
-      _.visibleTextRange,
+  val visibleTetwittertRange: Lens[Tweet, Option[TetwittertRange]] =
+    tweetLens[Option[TetwittertRange]](
+      _.visibleTetwittertRange,
       {
-        case (t, v) => t.copy(visibleTextRange = v)
+        case (t, v) => t.copy(visibleTetwittertRange = v)
       })
 
   val selfPermalink: Lens[Tweet, Option[ShortenedUrl]] =
@@ -247,11 +247,11 @@ object TweetLenses {
         case (t, v) => t.copy(selfPermalink = v)
       })
 
-  val extendedTweetMetadata: Lens[Tweet, Option[ExtendedTweetMetadata]] =
-    tweetLens[Option[ExtendedTweetMetadata]](
-      _.extendedTweetMetadata,
+  val etwittertendedTweetMetadata: Lens[Tweet, Option[EtwittertendedTweetMetadata]] =
+    tweetLens[Option[EtwittertendedTweetMetadata]](
+      _.etwittertendedTweetMetadata,
       {
-        case (t, v) => t.copy(extendedTweetMetadata = v)
+        case (t, v) => t.copy(etwittertendedTweetMetadata = v)
       })
 
   object TweetCoreData {
@@ -262,12 +262,12 @@ object TweetLenses {
         val userId = v
         c.copy(userId = userId)
       })
-    val text: Lens[TweetCoreData, String] = checkEq[TweetCoreData, String](
-      _.text,
+    val tetwittert: Lens[TweetCoreData, String] = checkEq[TweetCoreData, String](
+      _.tetwittert,
       { (c, v) =>
         // Pleases the compiler: https://github.com/scala/bug/issues/9171
-        val text = v
-        c.copy(text = text)
+        val tetwittert = v
+        c.copy(tetwittert = tetwittert)
       })
     val createdAt: Lens[TweetCoreData, TweetId] =
       checkEq[TweetCoreData, Long](_.createdAtSecs, (c, v) => c.copy(createdAtSecs = v))
@@ -392,7 +392,7 @@ object TweetLenses {
   }
 
   val userId: Lens[Tweet, UserId] = requiredCoreData andThen TweetCoreData.userId
-  val text: Lens[Tweet, String] = requiredCoreData andThen TweetCoreData.text
+  val tetwittert: Lens[Tweet, String] = requiredCoreData andThen TweetCoreData.tetwittert
   val createdVia: Lens[Tweet, String] = requiredCoreData andThen TweetCoreData.createdVia
   val createdAt: Lens[Tweet, ConversationId] = requiredCoreData andThen TweetCoreData.createdAt
   val reply: Lens[Tweet, Option[Reply]] = requiredCoreData andThen TweetCoreData.reply
@@ -417,28 +417,28 @@ object TweetLenses {
   object CashtagEntity {
     val indices: Lens[CashtagEntity, (Short, Short)] =
       checkEq[CashtagEntity, (Short, Short)](
-        t => (t.fromIndex, t.toIndex),
-        (t, v) => t.copy(fromIndex = v._1, toIndex = v._2)
+        t => (t.fromIndetwitter, t.toIndetwitter),
+        (t, v) => t.copy(fromIndetwitter = v._1, toIndetwitter = v._2)
       )
-    val text: Lens[CashtagEntity, String] =
-      checkEq[CashtagEntity, String](_.text, (t, text) => t.copy(text = text))
+    val tetwittert: Lens[CashtagEntity, String] =
+      checkEq[CashtagEntity, String](_.tetwittert, (t, tetwittert) => t.copy(tetwittert = tetwittert))
   }
 
   object HashtagEntity {
     val indices: Lens[HashtagEntity, (Short, Short)] =
       checkEq[HashtagEntity, (Short, Short)](
-        t => (t.fromIndex, t.toIndex),
-        (t, v) => t.copy(fromIndex = v._1, toIndex = v._2)
+        t => (t.fromIndetwitter, t.toIndetwitter),
+        (t, v) => t.copy(fromIndetwitter = v._1, toIndetwitter = v._2)
       )
-    val text: Lens[HashtagEntity, String] =
-      checkEq[HashtagEntity, String](_.text, (t, text) => t.copy(text = text))
+    val tetwittert: Lens[HashtagEntity, String] =
+      checkEq[HashtagEntity, String](_.tetwittert, (t, tetwittert) => t.copy(tetwittert = tetwittert))
   }
 
   object MediaEntity {
     val indices: Lens[MediaEntity, (Short, Short)] =
       checkEq[MediaEntity, (Short, Short)](
-        t => (t.fromIndex, t.toIndex),
-        (t, v) => t.copy(fromIndex = v._1, toIndex = v._2)
+        t => (t.fromIndetwitter, t.toIndetwitter),
+        (t, v) => t.copy(fromIndetwitter = v._1, toIndetwitter = v._2)
       )
     val mediaSizes: Lens[MediaEntity, collection.Set[MediaSize]] =
       checkEq[MediaEntity, scala.collection.Set[MediaSize]](
@@ -462,8 +462,8 @@ object TweetLenses {
   object MentionEntity {
     val indices: Lens[MentionEntity, (Short, Short)] =
       checkEq[MentionEntity, (Short, Short)](
-        t => (t.fromIndex, t.toIndex),
-        (t, v) => t.copy(fromIndex = v._1, toIndex = v._2)
+        t => (t.fromIndetwitter, t.toIndetwitter),
+        (t, v) => t.copy(fromIndetwitter = v._1, toIndetwitter = v._2)
       )
     val screenName: Lens[MentionEntity, String] =
       checkEq[MentionEntity, String](
@@ -475,8 +475,8 @@ object TweetLenses {
   object UrlEntity {
     val indices: Lens[UrlEntity, (Short, Short)] =
       checkEq[UrlEntity, (Short, Short)](
-        t => (t.fromIndex, t.toIndex),
-        (t, v) => t.copy(fromIndex = v._1, toIndex = v._2)
+        t => (t.fromIndetwitter, t.toIndetwitter),
+        (t, v) => t.copy(fromIndetwitter = v._1, toIndetwitter = v._2)
       )
     val url: Lens[UrlEntity, String] =
       checkEq[UrlEntity, String](_.url, (t, url) => t.copy(url = url))

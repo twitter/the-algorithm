@@ -6,9 +6,9 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javatwitter.inject.Inject;
+import javatwitter.inject.Named;
+import javatwitter.inject.Singleton;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -40,9 +40,9 @@ import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
 import com.twitter.search.earlybird.thrift.EarlybirdService.ServiceIface;
 import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
-import com.twitter.search.earlybird_root.filters.RequestContextToEarlybirdRequestFilter;
+import com.twitter.search.earlybird_root.filters.RequestContetwittertToEarlybirdRequestFilter;
 import com.twitter.util.Function;
 import com.twitter.util.Future;
 
@@ -59,7 +59,7 @@ public class EarlybirdServiceChainBuilder {
 
   private final EarlybirdTierThrottleDeciders tierThrottleDeciders;
 
-  private final RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter;
+  private final RequestContetwittertToEarlybirdRequestFilter requestContetwittertToEarlybirdRequestFilter;
 
   private final SearchDecider decider;
   private final String normalizedSearchRootName;
@@ -76,7 +76,7 @@ public class EarlybirdServiceChainBuilder {
   @Inject
   public EarlybirdServiceChainBuilder(
       PartitionConfig partitionConfig,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
+      RequestContetwittertToEarlybirdRequestFilter requestContetwittertToEarlybirdRequestFilter,
       EarlybirdTierThrottleDeciders tierThrottleDeciders,
       @Named(SearchRootModule.NAMED_NORMALIZED_SEARCH_ROOT_NAME) String normalizedSearchRootName,
       SearchDecider decider,
@@ -86,7 +86,7 @@ public class EarlybirdServiceChainBuilder {
       StatsReceiver statsReceiver) {
     this.partitionAccessController = partitionAccessController;
     this.tierThrottleDeciders = Preconditions.checkNotNull(tierThrottleDeciders);
-    this.requestContextToEarlybirdRequestFilter = requestContextToEarlybirdRequestFilter;
+    this.requestContetwittertToEarlybirdRequestFilter = requestContetwittertToEarlybirdRequestFilter;
     this.normalizedSearchRootName = normalizedSearchRootName;
     this.decider = decider;
     this.statsReceiver = statsReceiver;
@@ -96,7 +96,7 @@ public class EarlybirdServiceChainBuilder {
       LOG.error(
           "No tier found in config file {} Did you set SEARCH_ENV correctly?",
           tierConfig.getConfigFileType());
-      throw new RuntimeException("No tier found in tier config file.");
+      throw new RuntimeEtwitterception("No tier found in tier config file.");
     }
 
     // Get the tier info from the tier config yml file
@@ -111,13 +111,13 @@ public class EarlybirdServiceChainBuilder {
   }
 
   /** Builds the chain of services that should be queried on each request. */
-  public List<Service<EarlybirdRequestContext, EarlybirdResponse>> buildServiceChain(
-      ScatterGatherSupport<EarlybirdRequestContext, EarlybirdResponse> support,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport) {
+  public List<Service<EarlybirdRequestContetwittert, EarlybirdResponse>> buildServiceChain(
+      ScatterGatherSupport<EarlybirdRequestContetwittert, EarlybirdResponse> support,
+      PartitionLoggingSupport<EarlybirdRequestContetwittert> partitionLoggingSupport) {
     // Make sure the tier serving ranges do not overlap and do not have gaps.
     TierInfoUtil.checkTierServingRanges(tierInfos);
 
-    List<Service<EarlybirdRequestContext, EarlybirdResponse>> chain = Lists.newArrayList();
+    List<Service<EarlybirdRequestContetwittert, EarlybirdResponse>> chain = Lists.newArrayList();
 
     for (TierInfo tierInfo : tierInfos) {
       String tierName = tierInfo.getTierName();
@@ -129,7 +129,7 @@ public class EarlybirdServiceChainBuilder {
           rewrittenPartitionPath = partitionPath + "/" + tierName;
         }
 
-        clientServiceBuilder.initializeWithPathSuffix(
+        clientServiceBuilder.initializeWithPathSuffitwitter(
             tierInfo.getTierName(),
             numPartitions,
             rewrittenPartitionPath);
@@ -137,9 +137,9 @@ public class EarlybirdServiceChainBuilder {
         try {
           chain.add(createTierService(
                         support, tierInfo, clientServiceBuilder, partitionLoggingSupport));
-        } catch (Exception e) {
+        } catch (Etwitterception e) {
           LOG.error("Failed to build clients for tier: {}", tierInfo.getTierName());
-          throw new RuntimeException(e);
+          throw new RuntimeEtwitterception(e);
         }
 
       } else {
@@ -150,11 +150,11 @@ public class EarlybirdServiceChainBuilder {
     return chain;
   }
 
-  private Service<EarlybirdRequestContext, EarlybirdResponse> createTierService(
-      ScatterGatherSupport<EarlybirdRequestContext, EarlybirdResponse> support,
+  private Service<EarlybirdRequestContetwittert, EarlybirdResponse> createTierService(
+      ScatterGatherSupport<EarlybirdRequestContetwittert, EarlybirdResponse> support,
       final TierInfo tierInfo,
       RootClientServiceBuilder<ServiceIface> builder,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport) {
+      PartitionLoggingSupport<EarlybirdRequestContetwittert> partitionLoggingSupport) {
 
     final String tierName = tierInfo.getTierName();
     RequestSuccessStats stats = new RequestSuccessStats(tierName);
@@ -173,10 +173,10 @@ public class EarlybirdServiceChainBuilder {
         tierName,
         statsReceiver,
         decider);
-    List<Service<EarlybirdRequestContext, EarlybirdResponse>> clients = Lists.newArrayList();
+    List<Service<EarlybirdRequestContetwittert, EarlybirdResponse>> clients = Lists.newArrayList();
     ClientLatencyFilter latencyFilter = new ClientLatencyFilter(tierName);
     for (Service<EarlybirdRequest, EarlybirdResponse> client : services) {
-        clients.add(requestContextToEarlybirdRequestFilter
+        clients.add(requestContetwittertToEarlybirdRequestFilter
             .andThen(backupFilter)
             .andThen(latencyFilter)
             .andThen(client));
@@ -186,16 +186,16 @@ public class EarlybirdServiceChainBuilder {
 
     // Build the scatter gather service for this tier.
     // Each tier has their own stats.
-    ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse> scatterGatherService =
+    ScatterGatherService<EarlybirdRequestContetwittert, EarlybirdResponse> scatterGatherService =
         new ScatterGatherService<>(
             support, clients, stats, partitionLoggingSupport);
 
-    SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> tierThrottleFilter =
+    SimpleFilter<EarlybirdRequestContetwittert, EarlybirdResponse> tierThrottleFilter =
         getTierThrottleFilter(tierInfo, tierName);
 
     EarlybirdTimeRangeFilter timeRangeFilter =
         EarlybirdTimeRangeFilter.newTimeRangeFilterWithQueryRewriter(
-            (requestContext, userOverride) -> new TierInfoWrapper(tierInfo, userOverride),
+            (requestContetwittert, userOverride) -> new TierInfoWrapper(tierInfo, userOverride),
             decider);
 
     return tierThrottleFilter
@@ -203,7 +203,7 @@ public class EarlybirdServiceChainBuilder {
         .andThen(scatterGatherService);
   }
 
-  private SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> getTierThrottleFilter(
+  private SimpleFilter<EarlybirdRequestContetwittert, EarlybirdResponse> getTierThrottleFilter(
       final TierInfo tierInfo,
       final String tierName) {
 
@@ -211,8 +211,8 @@ public class EarlybirdServiceChainBuilder {
     final String tierThrottleDeciderKey = tierThrottleDeciders.getTierThrottleDeciderKey(
         normalizedSearchRootName, tierName);
 
-    SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> tierThrottleFilter =
-        new SimpleFilter<EarlybirdRequestContext, EarlybirdResponse>() {
+    SimpleFilter<EarlybirdRequestContetwittert, EarlybirdResponse> tierThrottleFilter =
+        new SimpleFilter<EarlybirdRequestContetwittert, EarlybirdResponse>() {
           private final Map<TierInfo.RequestReadType, SearchCounter> readCounts =
               getReadCountsMap();
 
@@ -221,38 +221,38 @@ public class EarlybirdServiceChainBuilder {
                 Maps.newEnumMap(TierInfo.RequestReadType.class);
             for (TierInfo.RequestReadType readType : TierInfo.RequestReadType.values()) {
               readCountsMap.put(readType,
-                  SearchCounter.export("earlybird_tier_" + tierName + "_"
+                  SearchCounter.etwitterport("earlybird_tier_" + tierName + "_"
                       + readType.name().toLowerCase() + "_read_count"));
             }
             return Collections.unmodifiableMap(readCountsMap);
           }
 
           private final SearchCounter tierRequestDroppedByDeciderCount =
-              SearchCounter.export("earlybird_tier_" + tierName
+              SearchCounter.etwitterport("earlybird_tier_" + tierName
                   + "_request_dropped_by_decider_count");
 
           @Override
           public Future<EarlybirdResponse> apply(
-              EarlybirdRequestContext requestContext,
-              Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+              EarlybirdRequestContetwittert requestContetwittert,
+              Service<EarlybirdRequestContetwittert, EarlybirdResponse> service) {
 
             // a blank response is returned when a request is dropped by decider, or
             // a request is sent as a dark read.
             final Future<EarlybirdResponse> blankTierResponse = Future.value(TIER_SKIPPED_RESPONSE);
             if (tierThrottleDeciders.shouldSendRequestToTier(tierThrottleDeciderKey)) {
               TierInfoWrapper tierInfoWrapper =
-                  new TierInfoWrapper(tierInfo, requestContext.useOverrideTierConfig());
+                  new TierInfoWrapper(tierInfo, requestContetwittert.useOverrideTierConfig());
 
               TierInfo.RequestReadType readType = tierInfoWrapper.getReadType();
               readCounts.get(readType).increment();
               switch (readType) {
                 case DARK:
                   // dark read: call backend but do not wait for results
-                  service.apply(requestContext);
+                  service.apply(requestContetwittert);
                   return blankTierResponse;
                 case GREY:
                   // grey read: call backend, wait for results, but discard results.
-                  return service.apply(requestContext).flatMap(
+                  return service.apply(requestContetwittert).flatMap(
                       new Function<EarlybirdResponse, Future<EarlybirdResponse>>() {
                         @Override
                         public Future<EarlybirdResponse> apply(EarlybirdResponse v1) {
@@ -262,9 +262,9 @@ public class EarlybirdServiceChainBuilder {
                       });
                 case LIGHT:
                   // light read: return the future from the backend service.
-                  return service.apply(requestContext);
+                  return service.apply(requestContetwittert);
                 default:
-                  throw new RuntimeException("Unknown read type: " + readType);
+                  throw new RuntimeEtwitterception("Unknown read type: " + readType);
               }
             } else {
               // Request is dropped by throttle decider

@@ -12,11 +12,11 @@ import com.twitter.finatra.kafka.producers.FinagleKafkaProducerBuilder
 import com.twitter.finatra.kafka.serde.ScalaSerdes
 import com.twitter.finatra.kafka.serde.UnKeyedSerde
 import com.twitter.finatra.kafka.test.KafkaFeatureTest
-import com.twitter.iesource.thriftscala.ClientEventContext
+import com.twitter.iesource.thriftscala.ClientEventContetwittert
 import com.twitter.iesource.thriftscala.TweetImpression
 import com.twitter.iesource.thriftscala.ClientType
-import com.twitter.iesource.thriftscala.ContextualEventNamespace
-import com.twitter.iesource.thriftscala.EngagingContext
+import com.twitter.iesource.thriftscala.ContetwittertualEventNamespace
+import com.twitter.iesource.thriftscala.EngagingContetwittert
 import com.twitter.iesource.thriftscala.EventSource
 import com.twitter.iesource.thriftscala.InteractionDetails
 import com.twitter.iesource.thriftscala.InteractionEvent
@@ -31,7 +31,7 @@ import com.twitter.unified_user_actions.thriftscala.KeyedUuaTweet
 import com.twitter.util.Duration
 import com.twitter.util.StorageUnit
 
-class RekeyUuaIesourceServiceStartupTest extends KafkaFeatureTest {
+class RekeyUuaIesourceServiceStartupTest etwittertends KafkaFeatureTest {
   private val inputTopic =
     kafkaTopic(ScalaSerdes.Long, ScalaSerdes.CompactThrift[InteractionEvent], name = "source")
   private val outputTopic =
@@ -43,7 +43,7 @@ class RekeyUuaIesourceServiceStartupTest extends KafkaFeatureTest {
     "kafka.source.topic" -> inputTopic.topic,
     "kafka.sink.topics" -> outputTopic.topic,
     "kafka.consumer.fetch.min" -> "6.megabytes",
-    "kafka.max.pending.requests" -> "100",
+    "kafka.matwitter.pending.requests" -> "100",
     "kafka.worker.threads" -> "1",
     "kafka.trust.store.enable" -> "false",
     "kafka.producer.batch.size" -> "0.byte",
@@ -139,9 +139,9 @@ class RekeyUuaIesourceServiceStartupTest extends KafkaFeatureTest {
       interactionType = Some(InteractionType.TweetRenderImpression),
       details = InteractionDetails.TweetRenderImpression(TweetImpression()),
       additionalEngagingUserIdentifiers = UserIdentifier(),
-      engagingContext = EngagingContext.ClientEventContext(
-        ClientEventContext(
-          clientEventNamespace = ContextualEventNamespace(),
+      engagingContetwittert = EngagingContetwittert.ClientEventContetwittert(
+        ClientEventContetwittert(
+          clientEventNamespace = ContetwittertualEventNamespace(),
           clientType = ClientType.Iphone,
           displayLocation = DisplayLocation(1)))
     )

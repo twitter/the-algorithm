@@ -111,7 +111,7 @@ object TimelineConversationsVisibilityLibrary {
                     .forTweetWithSafetyLabelsAndAuthorId(
                       safetyLabels = constantTweetSafetyLabels,
                       authorId = authorId,
-                      viewerId = request.viewerContext.userId)
+                      viewerId = request.viewerContetwittert.userId)
                 case _ => fosnrPefetchedLabelsRelationshipFeatures.forNonFosnr()
               }
 
@@ -184,26 +184,26 @@ object TimelineConversationsVisibilityLibrary {
             if (request.minimalSectioningOnly) TimelineConversationsDownrankingMinimal
             else TimelineConversationsDownranking
 
-          val evaluationContextBuilder = visibilityLibrary
-            .evaluationContextBuilder(request.viewerContext)
+          val evaluationContetwittertBuilder = visibilityLibrary
+            .evaluationContetwittertBuilder(request.viewerContetwittert)
             .withUnitOfDiversion(UnitOfDiversion.ConversationId(request.conversationId))
 
           visibilityLibrary
             .runRuleEngineBatch(
               request.tweetIds.map(TweetId),
               featureMapProvider,
-              evaluationContextBuilder,
+              evaluationContetwittertBuilder,
               safetyLevel
             )
             .map { results: Seq[Try[VisibilityResult]] =>
-              val (succeededRequests, _) = results.partition(_.exists(_.finished))
+              val (succeededRequests, _) = results.partition(_.etwitterists(_.finished))
               val visibilityResultMap = succeededRequests.flatMap {
                 case Return(result) =>
                   scribeVisibilityVerdict(
                     result,
                     visibilityDeciderGates.enableVerdictScribingTCVL,
                     verdictLogger,
-                    request.viewerContext.userId,
+                    request.viewerContetwittert.userId,
                     safetyLevel)
                   result.contentId match {
                     case TweetId(id) => Some((id, result))

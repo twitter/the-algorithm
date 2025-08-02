@@ -10,10 +10,10 @@ import com.twitter.util.Try
 import com.twitter.util.logging.Logging
 import java.util.Locale
 
-object HourlyDirectoryWithSuccessFileListing extends Logging {
+object HourlyDirectoryWithSuccessFileListing etwittertends Logging {
   private val SUCCESS_FILE_NAME = "_SUCCESS"
 
-  def listHourlyIndexDirectories(
+  def listHourlyIndetwitterDirectories(
     root: AbstractFile,
     startingFrom: Time,
     count: Int,
@@ -57,7 +57,7 @@ object HourlyDirectoryWithSuccessFileListing extends Logging {
       if (file.canRead) {
         Try(FileUtils.getFileHandle(folder))
       } else {
-        Throw(new IllegalArgumentException(s"Found ${file.toString} but can't read it"))
+        Throw(new IllegalArgumentEtwitterception(s"Found ${file.toString} but can't read it"))
       }
     }
   }

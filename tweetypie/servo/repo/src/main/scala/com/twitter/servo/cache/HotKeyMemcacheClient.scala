@@ -3,7 +3,7 @@ package com.twitter.servo.cache
 import com.twitter.finagle.memcached.Client
 import com.twitter.finagle.memcached.protocol.Value
 import com.twitter.finagle.memcached.GetResult
-import com.twitter.finagle.memcached.ProxyClient
+import com.twitter.finagle.memcached.ProtwitteryClient
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.finagle.tracing.Trace
 import com.twitter.io.Buf
@@ -31,17 +31,17 @@ object HotKeyCachingCache {
  *  {{{
  *    new HotKeyMemcacheClient(
  *      underlyingCache = Memcached.client. ... .newRichClient(destination),
- *      inProcessCache = ExpiringLruInProcessCache(ttl = 10.seconds, maximumSize = 100),
+ *      inProcessCache = EtwitterpiringLruInProcessCache(ttl = 10.seconds, matwitterimumSize = 100),
  *      statsReceiver = statsReceiver.scope("inprocess")
  *    )
  *  }}}
  */
 class HotKeyMemcacheClient(
-  override val proxyClient: Client,
+  override val protwitteryClient: Client,
   inProcessCache: InProcessCache[String, Value],
   statsReceiver: StatsReceiver,
   label: Option[String] = None)
-    extends ProxyClient {
+    etwittertends ProtwitteryClient {
   import HotKeyCachingCache._
 
   private val promotions = statsReceiver.counter("promotions")
@@ -49,7 +49,7 @@ class HotKeyMemcacheClient(
   private val misses = statsReceiver.counter("misses")
 
   private def cacheIfPromoted(key: String, value: Value): Unit = {
-    if (value.flags.exists(MemcacheFlags.shouldPromote)) {
+    if (value.flags.etwitterists(MemcacheFlags.shouldPromote)) {
       logger.debug(s"Promoting hot-key $key flagged by memcached backend to in-process cache.")
       Trace.recordBinary("hot_key_cache.hot_key_promoted", s"${label.getOrElse("")},$key")
       promotions.incr()
@@ -75,14 +75,14 @@ class HotKeyMemcacheClient(
       )
     }
 
-    proxyClient.getResult(newKeys).map { result =>
+    protwitteryClient.getResult(newKeys).map { result =>
       result.hits.foreach { case (k, v) => cacheIfPromoted(k, v) }
       result.copy(hits = result.hits ++ resultsFromInProcessCache)
     }
   }
 
   /**
-   * Exposes whether or not a key was promoted to the in-process hot key cache. In most cases, users
+   * Etwitterposes whether or not a key was promoted to the in-process hot key cache. In most cases, users
    * of [[HotKeyMemcacheClient]] should not need to know this. However, they may if hot key caching
    * conflicts with other layers of caching they are using.
    */
@@ -100,7 +100,7 @@ object MemcacheFlags {
    * Memcache flags are returned as an unsigned integer, represented as a decimal string.
    *
    * Check whether the bit in position 0 ([[FrequencyBasedPromotion]]) or the bit in position 1
-   * ([[BandwidthBasedPromotion]]) is set to 1 (zero-index from least-significant bit).
+   * ([[BandwidthBasedPromotion]]) is set to 1 (zero-indetwitter from least-significant bit).
    */
   def shouldPromote(flagsBuf: Buf): Boolean = {
     val flags = flagsBuf match { case Buf.Utf8(s) => s.toInt }

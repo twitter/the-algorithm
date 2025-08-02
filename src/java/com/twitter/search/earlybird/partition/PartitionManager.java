@@ -7,34 +7,34 @@ import com.google.common.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
+import com.twitter.search.common.concurrent.ScheduledEtwitterecutorServiceFactory;
 import com.twitter.search.common.config.Config;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchStatsReceiver;
 import com.twitter.search.earlybird.EarlybirdStatus;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
+import com.twitter.search.earlybird.etwitterception.CriticalEtwitterceptionHandler;
+import com.twitter.search.earlybird.etwitterception.EarlybirdStartupEtwitterception;
 import com.twitter.search.earlybird.querycache.QueryCacheManager;
 import com.twitter.search.earlybird.segment.SegmentDataProvider;
 import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
-import com.twitter.search.earlybird.util.OneTaskScheduledExecutorManager;
+import com.twitter.search.earlybird.util.OneTaskScheduledEtwitterecutorManager;
 import com.twitter.search.earlybird.util.PeriodicActionParams;
 import com.twitter.search.earlybird.util.ShutdownWaitTimeParams;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twitter.search.queryparser.query.QueryParserEtwitterception;
 
 /**
- * PartitionManager is responsible for indexing data for a partition, including Tweets and Users.
+ * PartitionManager is responsible for indetwittering data for a partition, including Tweets and Users.
  */
-public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
+public abstract class PartitionManager etwittertends OneTaskScheduledEtwitterecutorManager {
   private static final Logger LOG = LoggerFactory.getLogger(PartitionManager.class);
 
-  private static final SearchCounter IGNORED_EXCEPTIONS =
-      SearchCounter.export("partition_manager_ignored_exceptions");
+  private static final SearchCounter IGNORED_EtwitterCEPTIONS =
+      SearchCounter.etwitterport("partition_manager_ignored_etwitterceptions");
 
   private static final String PARTITION_MANAGER_THREAD_NAME = "PartitionManager";
   private static final boolean THREAD_IS_DAEMON = true;
-  protected static final String INDEX_CURRENT_SEGMENT = "indexing the current segment";
+  protected static final String INDEtwitter_CURRENT_SEGMENT = "indetwittering the current segment";
   protected static final String SETUP_QUERY_CACHE = "setting up query cache";
 
   protected final SegmentManager segmentManager;
@@ -42,32 +42,32 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
   // Should be updated by info read from ZK
   protected final DynamicPartitionConfig dynamicPartitionConfig;
 
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
+  private final SearchIndetwitteringMetricSet searchIndetwitteringMetricSet;
 
   private boolean partitionManagerFirstLoop = true;
 
   public PartitionManager(QueryCacheManager queryCacheManager,
                           SegmentManager segmentManager,
                           DynamicPartitionConfig dynamicPartitionConfig,
-                          ScheduledExecutorServiceFactory executorServiceFactory,
-                          SearchIndexingMetricSet searchIndexingMetricSet,
+                          ScheduledEtwitterecutorServiceFactory etwitterecutorServiceFactory,
+                          SearchIndetwitteringMetricSet searchIndetwitteringMetricSet,
                           SearchStatsReceiver searchStatsReceiver,
-                          CriticalExceptionHandler criticalExceptionHandler) {
+                          CriticalEtwitterceptionHandler criticalEtwitterceptionHandler) {
     super(
-        executorServiceFactory,
+        etwitterecutorServiceFactory,
         PARTITION_MANAGER_THREAD_NAME,
         THREAD_IS_DAEMON,
-        PeriodicActionParams.withFixedDelay(
+        PeriodicActionParams.withFitwitteredDelay(
           EarlybirdConfig.getInt("time_slice_roll_check_interval_ms", 500),
           TimeUnit.MILLISECONDS),
         ShutdownWaitTimeParams.indefinitely(),
         searchStatsReceiver,
-        criticalExceptionHandler);
+        criticalEtwitterceptionHandler);
 
     this.segmentManager = segmentManager;
     this.queryCacheManager = queryCacheManager;
     this.dynamicPartitionConfig = dynamicPartitionConfig;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
+    this.searchIndetwitteringMetricSet = searchIndetwitteringMetricSet;
   }
 
   /**
@@ -81,27 +81,27 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
         validateSegments();
         segmentManager.logState("After startUp");
       } catch (Throwable t) {
-        criticalExceptionHandler.handle(this, t);
-        shutDownIndexing();
-        throw new RuntimeException("PartitionManager unhandled exception, stopping scheduler", t);
+        criticalEtwitterceptionHandler.handle(this, t);
+        shutDownIndetwittering();
+        throw new RuntimeEtwitterception("PartitionManager unhandled etwitterception, stopping scheduler", t);
       }
     }
 
     try {
       testHookAfterSleep();
-      indexingLoop(partitionManagerFirstLoop);
-    } catch (InterruptedException e) {
+      indetwitteringLoop(partitionManagerFirstLoop);
+    } catch (InterruptedEtwitterception e) {
       LOG.warn("PartitionManager thread interrupted, stoping scheduler", e);
-      shutDownIndexing();
-      throw new RuntimeException("PartitionManager thread interrupted", e);
-    } catch (Exception e) {
-      LOG.error("Exception in indexing PartitionManager loop", e);
-      IGNORED_EXCEPTIONS.increment();
+      shutDownIndetwittering();
+      throw new RuntimeEtwitterception("PartitionManager thread interrupted", e);
+    } catch (Etwitterception e) {
+      LOG.error("Etwitterception in indetwittering PartitionManager loop", e);
+      IGNORED_EtwitterCEPTIONS.increment();
     } catch (Throwable t) {
-      LOG.error("Unhandled exception in indexing PartitionManager loop", t);
-      criticalExceptionHandler.handle(this, t);
-      shutDownIndexing();
-      throw new RuntimeException("PartitionManager unhandled exception, stopping scheduler", t);
+      LOG.error("Unhandled etwitterception in indetwittering PartitionManager loop", t);
+      criticalEtwitterceptionHandler.handle(this, t);
+      shutDownIndetwittering();
+      throw new RuntimeEtwitterception("PartitionManager unhandled etwitterception, stopping scheduler", t);
     } finally {
       partitionManagerFirstLoop = false;
     }
@@ -116,27 +116,27 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
   /**
    * Starts up this partition manager.
    */
-  protected abstract void startUp() throws Exception;
+  protected abstract void startUp() throws Etwitterception;
 
   /**
-   * Runs one indexing iteration.
+   * Runs one indetwittering iteration.
    *
-   * @param firstLoop Determines if this is the first time the indexing loop is running.
+   * @param firstLoop Determines if this is the first time the indetwittering loop is running.
    */
-  protected abstract void indexingLoop(boolean firstLoop) throws Exception;
+  protected abstract void indetwitteringLoop(boolean firstLoop) throws Etwitterception;
 
   /**
-   * Shuts down all indexing.
+   * Shuts down all indetwittering.
    */
-  protected abstract void shutDownIndexing();
+  protected abstract void shutDownIndetwittering();
 
   @Override
   public void shutdownComponent() {
-    shutDownIndexing();
+    shutDownIndetwittering();
   }
 
   /**
-   * Notifies all other threads that the partition manager has become current (ie. has indexed all
+   * Notifies all other threads that the partition manager has become current (ie. has indetwittered all
    * available events).
    */
   public void becomeCurrent() {
@@ -151,21 +151,21 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
     queryCacheManager.setWorkerPoolSizeAfterStartup();
   }
 
-  protected void setupQueryCacheIfNeeded() throws QueryParserException {
+  protected void setupQueryCacheIfNeeded() throws QueryParserEtwitterception {
     queryCacheManager.setupTasksIfNeeded(segmentManager);
   }
 
-  // Only for tests, used for testing exception handling
+  // Only for tests, used for testing etwitterception handling
   private static TestHook testHookBeforeStartUp;
   private static TestHook testHookAfterSleep;
 
-  private static void testHookBeforeStartUp() throws Exception {
+  private static void testHookBeforeStartUp() throws Etwitterception {
     if (Config.environmentIsTest() && testHookBeforeStartUp != null) {
       testHookBeforeStartUp.run();
     }
   }
 
-  private static void testHookAfterSleep() throws Exception {
+  private static void testHookAfterSleep() throws Etwitterception {
     if (Config.environmentIsTest() && testHookAfterSleep != null) {
       testHookAfterSleep.run();
     }
@@ -176,13 +176,13 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
     try {
       runImpl();
     } catch (Throwable t) {
-      LOG.error("Unhandled exception in PartitionManager loop", t);
-      throw new RuntimeException(t.getMessage());
+      LOG.error("Unhandled etwitterception in PartitionManager loop", t);
+      throw new RuntimeEtwitterception(t.getMessage());
     }
   }
 
-  public SearchIndexingMetricSet getSearchIndexingMetricSet() {
-    return searchIndexingMetricSet;
+  public SearchIndetwitteringMetricSet getSearchIndetwitteringMetricSet() {
+    return searchIndetwitteringMetricSet;
   }
 
   /**
@@ -195,21 +195,21 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
     if (Config.environmentIsTest()) {
       testHookBeforeStartUp = testHook;
     } else {
-      throw new RuntimeException("Trying to set startup test hook in non-test code!!");
+      throw new RuntimeEtwitterception("Trying to set startup test hook in non-test code!!");
     }
   }
 
   /**
-   * Allows tests to run code before the indexing loop.
+   * Allows tests to run code before the indetwittering loop.
    *
-   * @param testHook The code to run before the indexing loop.
+   * @param testHook The code to run before the indetwittering loop.
    */
   @VisibleForTesting
   public static void setTestHookAfterSleep(TestHook testHook) {
     if (Config.environmentIsTest()) {
       testHookAfterSleep = testHook;
     } else {
-      throw new RuntimeException("Trying to set test hook in non-test code!!");
+      throw new RuntimeEtwitterception("Trying to set test hook in non-test code!!");
     }
   }
 
@@ -222,7 +222,7 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
     /**
      * Defines the code that should be run.
      */
-    void run() throws Exception;
+    void run() throws Etwitterception;
   }
 
   /**
@@ -234,8 +234,8 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
   public abstract boolean isCaughtUpForTests();
 
   @VisibleForTesting
-  protected void validateSegments() throws EarlybirdStartupException {
-    // This is necessary because many tests rely on starting partition manager but not indexing any
+  protected void validateSegments() throws EarlybirdStartupEtwitterception {
+    // This is necessary because many tests rely on starting partition manager but not indetwittering any
     // tweets. However, we do not want Earlybirds to start in production if they are not serving any
     // tweets. (SEARCH-24238)
     if (Config.environmentIsTest()) {
@@ -245,10 +245,10 @@ public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
   }
 
   @VisibleForTesting
-  protected void validateSegmentsForNonTest() throws EarlybirdStartupException {
+  protected void validateSegmentsForNonTest() throws EarlybirdStartupEtwitterception {
     // Subclasses can override this and provide additional checks.
-    if (segmentManager.getNumIndexedDocuments() == 0) {
-      throw new EarlybirdStartupException("Earlybird has zero indexed documents.");
+    if (segmentManager.getNumIndetwitteredDocuments() == 0) {
+      throw new EarlybirdStartupEtwitterception("Earlybird has zero indetwittered documents.");
     }
   }
 }

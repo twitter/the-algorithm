@@ -55,7 +55,7 @@ object TargetNtabCaretClickFatiguePredicate {
             val fatiguePeriod =
               if (hasUserDislikeInLast30Days(feedbackDetailsDeduped) && target.params(
                   PushFeatureSwitchParams.EnableReducedFatigueRulesForSeeLessOften)) {
-                durationToFilterMRForSeeLessOftenExpt(
+                durationToFilterMRForSeeLessOftenEtwitterpt(
                   feedbackDetailsDeduped,
                   target.params(FeatureSwitchParams.NumberOfDaysToFilterMRForSeeLessOften),
                   target.params(FeatureSwitchParams.NumberOfDaysToReducePushCapForSeeLessOften),

@@ -1,9 +1,9 @@
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.concurrent.CompletableFuture;
-import javax.naming.NamingException;
+import javatwitter.naming.NamingEtwitterception;
 
-import org.apache.commons.pipeline.StageException;
+import org.apache.commons.pipeline.StageEtwitterception;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducesConsumed;
 
@@ -12,27 +12,27 @@ import com.twitter.util.Function;
 
 @ConsumedTypes(IngesterTwitterMessage.class)
 @ProducesConsumed
-public class RetrieveNamedEntitiesSingleTweetStage extends TwitterBaseStage
+public class RetrieveNamedEntitiesSingleTweetStage etwittertends TwitterBaseStage
     <IngesterTwitterMessage, CompletableFuture<IngesterTwitterMessage>> {
 
   private NamedEntityHandler namedEntityHandler;
 
   @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
+  protected void doInnerPreprocess() throws StageEtwitterception, NamingEtwitterception {
     innerSetup();
   }
 
   @Override
   protected void innerSetup() {
     namedEntityHandler = new NamedEntityHandler(
-        wireModule.getNamedEntityFetcher(), decider, getStageNamePrefix(),
+        wireModule.getNamedEntityFetcher(), decider, getStageNamePrefitwitter(),
         "single_tweet");
   }
 
   @Override
-  public void innerProcess(Object obj) throws StageException {
+  public void innerProcess(Object obj) throws StageEtwitterception {
     if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not a IngesterTwitterMessage object: " + obj);
+      throw new StageEtwitterception(this, "Object is not a IngesterTwitterMessage object: " + obj);
     }
     IngesterTwitterMessage twitterMessage = (IngesterTwitterMessage) obj;
 

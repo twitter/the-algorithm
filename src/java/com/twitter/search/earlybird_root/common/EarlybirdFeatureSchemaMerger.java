@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.annotation.concurrent.ThreadSafe;
+import javatwitter.annotation.concurrent.ThreadSafe;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -29,7 +29,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResults;
 public class EarlybirdFeatureSchemaMerger {
   private static final Logger LOG = LoggerFactory.getLogger(EarlybirdFeatureSchemaMerger.class);
 
-  private static final SearchLongGauge NUM_FEATURE_SCHEMAS_MAP = SearchLongGauge.export(
+  private static final SearchLongGauge NUM_FEATURE_SCHEMAS_MAP = SearchLongGauge.etwitterport(
       "earlybird_feature_schema_cached_cnt");
 
   private class Stats {
@@ -42,34 +42,34 @@ public class EarlybirdFeatureSchemaMerger {
     public final SearchCounter numInvalidRankingModeRequests;
     public final SearchCounter numEmptyResponses;
 
-    public Stats(String prefix) {
+    public Stats(String prefitwitter) {
       this.fieldFormatResponses =
-          SearchCounter.export(
-              "earlybird_feature_schema_" + prefix + "_field_format_feature_responses");
+          SearchCounter.etwitterport(
+              "earlybird_feature_schema_" + prefitwitter + "_field_format_feature_responses");
       this.mapFormatResponses =
-          SearchCounter.export(
-              "earlybird_feature_schema_" + prefix + "_map_format_feature_responses");
+          SearchCounter.etwitterport(
+              "earlybird_feature_schema_" + prefitwitter + "_map_format_feature_responses");
       this.mapFormatSavedSchemaResponses =
-          SearchCounter.export(
-              "earlybird_feature_schema_" + prefix + "_map_format_feature_saved_schema_responses");
+          SearchCounter.etwitterport(
+              "earlybird_feature_schema_" + prefitwitter + "_map_format_feature_saved_schema_responses");
       this.mapFormatAllDownstreamMissingSchema =
-          SearchCounter.export(
-              "earlybird_feature_schema_" + prefix
+          SearchCounter.etwitterport(
+              "earlybird_feature_schema_" + prefitwitter
                   + "_map_format_feature_all_downstream_missing_schema_error");
       this.mapFormatOneDownstreamMissingSchema =
-          SearchCounter.export(
-              "earlybird_feature_schema_" + prefix
+          SearchCounter.etwitterport(
+              "earlybird_feature_schema_" + prefitwitter
                   + "_map_format_feature_one_downstream_missing_schema_error");
       this.mapFormatSchemaCachedMismatch =
-          SearchCounter.export(
-              "earlybird_feature_schema_" + prefix
+          SearchCounter.etwitterport(
+              "earlybird_feature_schema_" + prefitwitter
                   + "_map_format_feature_schema_cached_mismatch_error");
       this.numInvalidRankingModeRequests =
-          SearchCounter.export(
-              "earlybird_feature_schema_" + prefix + "_num_invalid_ranking_mode_requests");
+          SearchCounter.etwitterport(
+              "earlybird_feature_schema_" + prefitwitter + "_num_invalid_ranking_mode_requests");
       this.numEmptyResponses =
-          SearchCounter.export(
-              "earlybird_feature_schema_" + prefix
+          SearchCounter.etwitterport(
+              "earlybird_feature_schema_" + prefitwitter
                   + "_num_empty_response_without_schema");
     }
   }
@@ -92,17 +92,17 @@ public class EarlybirdFeatureSchemaMerger {
    * (This is done inside earlybird roots)
    *
    * @param searchResults the response
-   * @param requestContext the request, which should record the client cached feature schemas
-   * @param statPrefix the stats prefix string
+   * @param requestContetwittert the request, which should record the client cached feature schemas
+   * @param statPrefitwitter the stats prefitwitter string
    * @param successfulResponses all successfull responses from downstream
    */
   public void collectAndSetFeatureSchemaInResponse(
       ThriftSearchResults searchResults,
-      EarlybirdRequestContext requestContext,
-      String statPrefix,
+      EarlybirdRequestContetwittert requestContetwittert,
+      String statPrefitwitter,
       List<EarlybirdResponse> successfulResponses) {
-    Stats stats = getOrCreateMergeStat(statPrefix);
-    EarlybirdRequest request = requestContext.getRequest();
+    Stats stats = getOrCreateMergeStat(statPrefitwitter);
+    EarlybirdRequest request = requestContetwittert.getRequest();
     if (!request.isSetSearchQuery()
           || !request.getSearchQuery().isSetResultMetadataOptions()
           || !request.getSearchQuery().getResultMetadataOptions().isReturnSearchResultFeatures()) {
@@ -120,7 +120,7 @@ public class EarlybirdFeatureSchemaMerger {
     }
 
     Set<ThriftSearchFeatureSchemaSpecifier> availableSchemasInClient =
-        requestContext.getFeatureSchemasAvailableInClient();
+        requestContetwittert.getFeatureSchemasAvailableInClient();
     if (availableSchemasInClient != null && availableSchemasInClient.contains(schemaMostOccurred)) {
       // The client already knows the schema that we used for this response, so we don't need to
       // send it the full schema, just the ThriftSearchFeatureSchemaSpecifier.
@@ -147,21 +147,21 @@ public class EarlybirdFeatureSchemaMerger {
   /**
    * Merge the feature schema from each cluster's response and return it to the client.
    * (This is done inside superroot)
-   * @param requestContext the search request context
+   * @param requestContetwittert the search request contetwittert
    * @param mergedResponse the merged result inside the superroot
    * @param realtimeResponse the realtime tier resposne
    * @param protectedResponse the protected tier response
    * @param fullArchiveResponse the full archive tier response
-   * @param statsPrefix
+   * @param statsPrefitwitter
    */
   public void mergeFeatureSchemaAcrossClusters(
-      EarlybirdRequestContext requestContext,
+      EarlybirdRequestContetwittert requestContetwittert,
       EarlybirdResponse mergedResponse,
-      String statsPrefix,
+      String statsPrefitwitter,
       EarlybirdResponse realtimeResponse,
       EarlybirdResponse protectedResponse,
       EarlybirdResponse fullArchiveResponse) {
-    Stats superrootStats = getOrCreateMergeStat(statsPrefix);
+    Stats superrootStats = getOrCreateMergeStat(statsPrefitwitter);
 
     // Only try to merge feature schema if there are search results.
     ThriftSearchResults mergedResults = Preconditions.checkNotNull(
@@ -172,7 +172,7 @@ public class EarlybirdFeatureSchemaMerger {
       return;
     }
 
-    EarlybirdRequest request = requestContext.getRequest();
+    EarlybirdRequest request = requestContetwittert.getRequest();
     if (!request.isSetSearchQuery()
         || !request.getSearchQuery().isSetResultMetadataOptions()
         || !request.getSearchQuery().getResultMetadataOptions().isReturnSearchResultFeatures()) {
@@ -202,8 +202,8 @@ public class EarlybirdFeatureSchemaMerger {
         schema, fullArchiveResponse, request, superrootStats);
 
     if (schema != null) {
-      if (requestContext.getFeatureSchemasAvailableInClient() != null
-          && requestContext.getFeatureSchemasAvailableInClient().contains(
+      if (requestContetwittert.getFeatureSchemasAvailableInClient() != null
+          && requestContetwittert.getFeatureSchemasAvailableInClient().contains(
           schema.getSchemaSpecifier())) {
         mergedResults.setFeatureSchema(
             new ThriftSearchFeatureSchema().setSchemaSpecifier(schema.getSchemaSpecifier()));
@@ -229,32 +229,32 @@ public class EarlybirdFeatureSchemaMerger {
     }
 
     synchronized (this) {
-      String oldExportedSchemaName = null;
+      String oldEtwitterportedSchemaName = null;
       if (!featureSchemas.isEmpty()) {
-        oldExportedSchemaName = getExportSchemasName();
+        oldEtwitterportedSchemaName = getEtwitterportSchemasName();
       }
 
       if (featureSchemas.putIfAbsent(schema.getSchemaSpecifier(), schema) == null) {
         LOG.info("Add new feature schema {} into the list", schema);
         NUM_FEATURE_SCHEMAS_MAP.set(featureSchemas.size());
 
-        if (oldExportedSchemaName != null) {
-          SearchLongGauge.export(oldExportedSchemaName).reset();
+        if (oldEtwitterportedSchemaName != null) {
+          SearchLongGauge.etwitterport(oldEtwitterportedSchemaName).reset();
         }
-        SearchLongGauge.export(getExportSchemasName()).set(1);
-        LOG.info("Expanded feature schema: {}", ImmutableList.copyOf(featureSchemas.keySet()));
+        SearchLongGauge.etwitterport(getEtwitterportSchemasName()).set(1);
+        LOG.info("Etwitterpanded feature schema: {}", ImmutableList.copyOf(featureSchemas.keySet()));
       }
     }
   }
 
-  private String getExportSchemasName() {
+  private String getEtwitterportSchemasName() {
     StringBuilder builder = new StringBuilder("earlybird_feature_schema_cached");
-    TreeSet<String> exportedVersions = new TreeSet<>();
+    TreeSet<String> etwitterportedVersions = new TreeSet<>();
 
-    // We do not need checksum for exported vars as all cached schemas are from the majority of the
+    // We do not need checksum for etwitterported vars as all cached schemas are from the majority of the
     // responses.
-    featureSchemas.keySet().stream().forEach(key -> exportedVersions.add(key.getVersion()));
-    exportedVersions.stream().forEach(version -> {
+    featureSchemas.keySet().stream().forEach(key -> etwitterportedVersions.add(key.getVersion()));
+    etwitterportedVersions.stream().forEach(version -> {
       builder.append('_');
       builder.append(version);
     });
@@ -262,34 +262,34 @@ public class EarlybirdFeatureSchemaMerger {
   }
 
   // Get the updated the feature schema based on the earlybird response from the search cluster.
-  // . If the existingSchema is not null, the function would return the existing schema.  Under the
+  // . If the etwitteristingSchema is not null, the function would return the etwitteristing schema.  Under the
   //   situation, we would still check whether the feature in earlybird response is valid.
-  // . Otherwise, the function would extract the feature schema from the earlybird response.
+  // . Otherwise, the function would etwittertract the feature schema from the earlybird response.
   private ThriftSearchFeatureSchema updateReturnSchemaForClusterResponse(
-      ThriftSearchFeatureSchema existingSchema,
+      ThriftSearchFeatureSchema etwitteristingSchema,
       EarlybirdResponse clusterResponse,
       EarlybirdRequest request,
       Stats stats) {
     // If there is no response or search result for this cluster, do not update returned schema.
     if ((clusterResponse == null) || !clusterResponse.isSetSearchResults()) {
-      return existingSchema;
+      return etwitteristingSchema;
     }
     ThriftSearchResults results = clusterResponse.getSearchResults();
     if (results.getResults().isEmpty()) {
-      return existingSchema;
+      return etwitteristingSchema;
     }
 
     if (!results.isSetFeatureSchema() || !results.getFeatureSchema().isSetSchemaSpecifier()) {
       stats.mapFormatOneDownstreamMissingSchema.increment();
       LOG.error("The downstream response {} is missing feature schema for request {}",
           clusterResponse, request);
-      return existingSchema;
+      return etwitteristingSchema;
     }
 
     ThriftSearchFeatureSchema schema = results.getFeatureSchema();
 
-    // Even if existingSchema is already set, we would still try to cache the returned schema.
-    // In this way, the next time earlybird roots don't have to send the full schema back again.
+    // Even if etwitteristingSchema is already set, we would still try to cache the returned schema.
+    // In this way, the netwittert time earlybird roots don't have to send the full schema back again.
     if (schema.isSetEntries()) {
       addNewSchema(schema);
     } else if (featureSchemas.containsKey(schema.getSchemaSpecifier())) {
@@ -301,7 +301,7 @@ public class EarlybirdFeatureSchemaMerger {
           schema.getSchemaSpecifier(), request, clusterResponse);
     }
 
-    ThriftSearchFeatureSchema updatedSchema = existingSchema;
+    ThriftSearchFeatureSchema updatedSchema = etwitteristingSchema;
     if (updatedSchema == null) {
       updatedSchema = featureSchemas.get(schema.getSchemaSpecifier());
       if (updatedSchema != null) {
@@ -318,7 +318,7 @@ public class EarlybirdFeatureSchemaMerger {
       List<EarlybirdResponse> successfulResponses) {
     boolean hasResults = false;
     Map<ThriftSearchFeatureSchemaSpecifier, MutableInt> schemaCount =
-        Maps.newHashMapWithExpectedSize(successfulResponses.size());
+        Maps.newHashMapWithEtwitterpectedSize(successfulResponses.size());
     for (EarlybirdResponse response : successfulResponses) {
       if (!response.isSetSearchResults()
           || response.getSearchResults().getResultsSize() == 0) {
@@ -363,11 +363,11 @@ public class EarlybirdFeatureSchemaMerger {
     return schemaMostOccurred;
   }
 
-  private Stats getOrCreateMergeStat(String statPrefix) {
-    Stats stats = mergeStats.get(statPrefix);
+  private Stats getOrCreateMergeStat(String statPrefitwitter) {
+    Stats stats = mergeStats.get(statPrefitwitter);
     if (stats == null) {
-      Stats newStats = new Stats(statPrefix);
-      stats = mergeStats.putIfAbsent(statPrefix, newStats);
+      Stats newStats = new Stats(statPrefitwitter);
+      stats = mergeStats.putIfAbsent(statPrefitwitter, newStats);
       if (stats == null) {
         stats = newStats;
       }

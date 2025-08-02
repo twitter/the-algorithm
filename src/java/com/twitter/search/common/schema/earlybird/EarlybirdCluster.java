@@ -6,7 +6,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * A list of existing Earlybird clusters.
+ * A list of etwitteristing Earlybird clusters.
  */
 public enum EarlybirdCluster {
   /**
@@ -40,7 +40,7 @@ public enum EarlybirdCluster {
   }
 
   public static boolean isTwitterMemoryFormatCluster(EarlybirdCluster cluster) {
-    return isClusterInSet(cluster, TWITTER_IN_MEMORY_INDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS);
+    return isClusterInSet(cluster, TWITTER_IN_MEMORY_INDEtwitter_FORMAT_GENERAL_PURPOSE_CLUSTERS);
   }
 
   public static boolean hasEarlybirds(EarlybirdCluster cluster) {
@@ -56,13 +56,13 @@ public enum EarlybirdCluster {
 
   @VisibleForTesting
   public static final ImmutableSet<EarlybirdCluster>
-          TWITTER_IN_MEMORY_INDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS =
+          TWITTER_IN_MEMORY_INDEtwitter_FORMAT_GENERAL_PURPOSE_CLUSTERS =
       ImmutableSet.of(
           REALTIME,
           PROTECTED);
 
   @VisibleForTesting
-  public static final ImmutableSet<EarlybirdCluster> TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS =
+  public static final ImmutableSet<EarlybirdCluster> TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS =
       ImmutableSet.of(
           REALTIME,
           PROTECTED,

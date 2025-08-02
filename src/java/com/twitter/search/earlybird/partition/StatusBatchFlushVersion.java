@@ -27,7 +27,7 @@ public enum StatusBatchFlushVersion {
     return this.ordinal();
   }
 
-  public String getVersionFileExtension() {
+  public String getVersionFileEtwittertension() {
       return DELIMITER + ordinal();
   }
 

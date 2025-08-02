@@ -6,13 +6,13 @@ import com.twitter.geoduck.backend.relevance.thriftscala.ReportResult
 import com.twitter.geoduck.backend.relevance.thriftscala.ConversionReport
 import com.twitter.geoduck.backend.searchrequestid.thriftscala.SearchRequestID
 import com.twitter.geoduck.backend.tweetid.thriftscala.TweetID
-import com.twitter.geoduck.common.thriftscala.GeoduckException
+import com.twitter.geoduck.common.thriftscala.GeoduckEtwitterception
 import com.twitter.geoduck.service.identifier.thriftscala.PlaceIdentifier
 import com.twitter.servo.util.FutureArrow
 import com.twitter.tweetypie.thriftscala._
 
 trait GeoSearchRequestIDStore
-    extends TweetStoreBase[GeoSearchRequestIDStore]
+    etwittertends TweetStoreBase[GeoSearchRequestIDStore]
     with AsyncInsertTweet.Store {
   def wrap(w: TweetStore.Wrap): GeoSearchRequestIDStore =
     new TweetStoreWrapper[GeoSearchRequestIDStore](w, this)
@@ -27,10 +27,10 @@ object GeoSearchRequestIDStore {
   private val log = Logger(getClass)
 
   object FailureHandler {
-    def translateException(failure: ReportResult.Failure): GeoduckException = {
+    def translateEtwitterception(failure: ReportResult.Failure): GeoduckEtwitterception = {
       failure.failure match {
-        case ReportFailure.Failure(exception) => exception
-        case _ => GeoduckException("Unknown failure: " + failure.toString)
+        case ReportFailure.Failure(etwitterception) => etwitterception
+        case _ => GeoduckEtwitterception("Unknown failure: " + failure.toString)
       }
     }
   }
@@ -42,7 +42,7 @@ object GeoSearchRequestIDStore {
         FutureEffect
           .fromPartial[ReportResult] {
             case unionFailure: ReportResult.Failure =>
-              Future.exception(FailureHandler.translateException(unionFailure))
+              Future.etwitterception(FailureHandler.translateEtwitterception(unionFailure))
           }
           .contramapFuture(conversionReporter)
 

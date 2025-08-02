@@ -28,9 +28,9 @@ import com.twitter.util.Duration
 import com.twitter.util.Future
 import com.twitter.util.StorageUnit
 import com.twitter.util.logging.Logging
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
-object KafkaProcessorRekeyUuaModule extends TwitterModule with Logging {
+object KafkaProcessorRekeyUuaModule etwittertends TwitterModule with Logging {
   override def modules = Seq(FlagsModule)
 
   private val adapter = new RekeyUuaAdapter
@@ -48,13 +48,13 @@ object KafkaProcessorRekeyUuaModule extends TwitterModule with Logging {
     @Flag(FlagsModule.kafkaSinkTopics) kafkaSinkTopics: Seq[String],
     @Flag(FlagsModule.kafkaGroupId) kafkaGroupId: String,
     @Flag(FlagsModule.kafkaProducerClientId) kafkaProducerClientId: String,
-    @Flag(FlagsModule.kafkaMaxPendingRequests) kafkaMaxPendingRequests: Int,
+    @Flag(FlagsModule.kafkaMatwitterPendingRequests) kafkaMatwitterPendingRequests: Int,
     @Flag(FlagsModule.kafkaWorkerThreads) kafkaWorkerThreads: Int,
     @Flag(FlagsModule.commitInterval) commitInterval: Duration,
-    @Flag(FlagsModule.maxPollRecords) maxPollRecords: Int,
-    @Flag(FlagsModule.maxPollInterval) maxPollInterval: Duration,
+    @Flag(FlagsModule.matwitterPollRecords) matwitterPollRecords: Int,
+    @Flag(FlagsModule.matwitterPollInterval) matwitterPollInterval: Duration,
     @Flag(FlagsModule.sessionTimeout) sessionTimeout: Duration,
-    @Flag(FlagsModule.fetchMax) fetchMax: StorageUnit,
+    @Flag(FlagsModule.fetchMatwitter) fetchMatwitter: StorageUnit,
     @Flag(FlagsModule.batchSize) batchSize: StorageUnit,
     @Flag(FlagsModule.linger) linger: Duration,
     @Flag(FlagsModule.bufferMem) bufferMem: StorageUnit,
@@ -72,11 +72,11 @@ object KafkaProcessorRekeyUuaModule extends TwitterModule with Logging {
       kafkaGroupId = kafkaGroupId,
       kafkaSourceTopic = kafkaSourceTopic,
       commitInterval = commitInterval,
-      maxPollRecords = maxPollRecords,
-      maxPollInterval = maxPollInterval,
+      matwitterPollRecords = matwitterPollRecords,
+      matwitterPollInterval = matwitterPollInterval,
       sessionTimeout = sessionTimeout,
-      fetchMax = fetchMax,
-      processorMaxPendingRequests = kafkaMaxPendingRequests,
+      fetchMatwitter = fetchMatwitter,
+      processorMatwitterPendingRequests = kafkaMatwitterPendingRequests,
       processorWorkerThreads = kafkaWorkerThreads,
       adapter = adapter,
       kafkaSinkTopics = kafkaSinkTopics,
@@ -107,7 +107,7 @@ object KafkaProcessorRekeyUuaModule extends TwitterModule with Logging {
     decider: Decider,
   ): Future[Unit] =
     if (decider.isAvailable(feature = s"RekeyUUA${v.actionType}", Some(SimpleRecipient(k))))
-      // If we were to enable xDC replicator, then we can safely remove the Zone header since xDC
+      // If we were to enable twitterDC replicator, then we can safely remove the Zone header since twitterDC
       // replicator works in the following way:
       //  - If the message does not have a header, the replicator will assume it is local and
       //    set the header, copy the message
@@ -128,12 +128,12 @@ object KafkaProcessorRekeyUuaModule extends TwitterModule with Logging {
     kafkaGroupId: String,
     kafkaSourceTopic: String,
     commitInterval: Duration = ClientConfigs.kafkaCommitIntervalDefault,
-    maxPollRecords: Int = ClientConfigs.consumerMaxPollRecordsDefault,
-    maxPollInterval: Duration = ClientConfigs.consumerMaxPollIntervalDefault,
+    matwitterPollRecords: Int = ClientConfigs.consumerMatwitterPollRecordsDefault,
+    matwitterPollInterval: Duration = ClientConfigs.consumerMatwitterPollIntervalDefault,
     sessionTimeout: Duration = ClientConfigs.consumerSessionTimeoutDefault,
-    fetchMax: StorageUnit = ClientConfigs.consumerFetchMaxDefault,
+    fetchMatwitter: StorageUnit = ClientConfigs.consumerFetchMatwitterDefault,
     fetchMin: StorageUnit = ClientConfigs.consumerFetchMinDefault,
-    processorMaxPendingRequests: Int,
+    processorMatwitterPendingRequests: Int,
     processorWorkerThreads: Int,
     adapter: AbstractAdapter[UnifiedUserAction, Long, KeyedUuaTweet],
     kafkaSinkTopics: Seq[String],
@@ -182,12 +182,12 @@ object KafkaProcessorRekeyUuaModule extends TwitterModule with Logging {
       sourceValueDeserializer = NullableScalaSerdes
         .Thrift[UnifiedUserAction](statsReceiver.counter("deserializerErrors")).deserializer,
       commitInterval = commitInterval,
-      maxPollRecords = maxPollRecords,
-      maxPollInterval = maxPollInterval,
+      matwitterPollRecords = matwitterPollRecords,
+      matwitterPollInterval = matwitterPollInterval,
       sessionTimeout = sessionTimeout,
-      fetchMax = fetchMax,
+      fetchMatwitter = fetchMatwitter,
       fetchMin = fetchMin,
-      processorMaxPendingRequests = processorMaxPendingRequests,
+      processorMatwitterPendingRequests = processorMatwitterPendingRequests,
       processorWorkerThreads = processorWorkerThreads,
       adapter = adapter,
       kafkaProducersAndSinkTopics =

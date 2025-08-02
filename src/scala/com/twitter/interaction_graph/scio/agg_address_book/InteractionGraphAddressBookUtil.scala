@@ -6,7 +6,7 @@ import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil
 import com.twitter.interaction_graph.scio.common.InteractionGraphRawInput
 import com.twitter.interaction_graph.thriftscala.Edge
 import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.Vertex
+import com.twitter.interaction_graph.thriftscala.Vertetwitter
 
 object InteractionGraphAddressBookUtil {
   val EMAIL = "email"
@@ -20,7 +20,7 @@ object InteractionGraphAddressBookUtil {
     addressBook: SCollection[UserMatchesRecord]
   )(
     implicit addressBookCounters: InteractionGraphAddressBookCountersTrait
-  ): (SCollection[Vertex], SCollection[Edge]) = {
+  ): (SCollection[Vertetwitter], SCollection[Edge]) = {
     // First construct a data with (src, dst, name), where name can be "email", "phone", or "both"
     val addressBookTypes: SCollection[((Long, Long), String)] = addressBook.flatMap { record =>
       record.forwardMatches.toSeq.flatMap { matchDetails =>

@@ -1,9 +1,9 @@
 package com.twitter.search.earlybird.partition;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Iterator;
 
-import scala.runtime.BoxedUnit;
+import scala.runtime.BotwitteredUnit;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.twitter.search.common.config.Config;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchLongGauge;
 import com.twitter.search.common.metrics.SearchRateCounter;
@@ -23,14 +23,14 @@ import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
 import com.twitter.search.common.util.GCUtil;
 import com.twitter.search.earlybird.EarlybirdStatus;
 import com.twitter.search.earlybird.common.CaughtUpMonitor;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.OutOfOrderRealtimeTweetIDMapper;
+import com.twitter.search.earlybird.etwitterception.CriticalEtwitterceptionHandler;
+import com.twitter.search.earlybird.indetwitter.OutOfOrderRealtimeTweetIDMapper;
 import com.twitter.search.earlybird.querycache.QueryCacheManager;
 import com.twitter.search.earlybird.util.CoordinatedEarlybirdActionInterface;
 import com.twitter.util.Await;
 import com.twitter.util.Duration;
 import com.twitter.util.Future;
-import com.twitter.util.TimeoutException;
+import com.twitter.util.TimeoutEtwitterception;
 
 /**
  * This class handles incoming new Tweets. It is responsible for creating segments for the incoming
@@ -42,60 +42,60 @@ public class TweetCreateHandler {
 
   public static final long LATE_TWEET_TIME_BUFFER_MS = Duration.fromMinutes(1).inMilliseconds();
 
-  private static final String STATS_PREFIX = "tweet_create_handler_";
+  private static final String STATS_PREFItwitter = "tweet_create_handler_";
 
   // To get a better idea of which of these succeeded and so on, see stats in SegmentManager.
-  private IndexingResultCounts indexingResultCounts;
+  private IndetwitteringResultCounts indetwitteringResultCounts;
   private static final SearchRateCounter TWEETS_IN_WRONG_SEGMENT =
-      SearchRateCounter.export(STATS_PREFIX + "tweets_in_wrong_segment");
+      SearchRateCounter.etwitterport(STATS_PREFItwitter + "tweets_in_wrong_segment");
   private static final SearchRateCounter SEGMENTS_CLOSED_EARLY =
-      SearchRateCounter.export(STATS_PREFIX + "segments_closed_early");
+      SearchRateCounter.etwitterport(STATS_PREFItwitter + "segments_closed_early");
   private static final SearchRateCounter INSERTED_IN_CURRENT_SEGMENT =
-      SearchRateCounter.export(STATS_PREFIX + "inserted_in_current_segment");
+      SearchRateCounter.etwitterport(STATS_PREFItwitter + "inserted_in_current_segment");
   private static final SearchRateCounter INSERTED_IN_PREVIOUS_SEGMENT =
-      SearchRateCounter.export(STATS_PREFIX + "inserted_in_previous_segment");
+      SearchRateCounter.etwitterport(STATS_PREFItwitter + "inserted_in_previous_segment");
   private static final NewSegmentStats NEW_SEGMENT_STATS = new NewSegmentStats();
   private static final SearchCounter CREATED_SEGMENTS =
-      SearchCounter.export(STATS_PREFIX + "created_segments");
+      SearchCounter.etwitterport(STATS_PREFItwitter + "created_segments");
   private static final SearchRateCounter INCOMING_TWEETS =
-          SearchRateCounter.export(STATS_PREFIX + "incoming_tweets");
-  private static final SearchRateCounter INDEXING_SUCCESS =
-          SearchRateCounter.export(STATS_PREFIX + "indexing_success");
-  private static final SearchRateCounter INDEXING_FAILURE =
-          SearchRateCounter.export(STATS_PREFIX + "indexing_failure");
+          SearchRateCounter.etwitterport(STATS_PREFItwitter + "incoming_tweets");
+  private static final SearchRateCounter INDEtwitterING_SUCCESS =
+          SearchRateCounter.etwitterport(STATS_PREFItwitter + "indetwittering_success");
+  private static final SearchRateCounter INDEtwitterING_FAILURE =
+          SearchRateCounter.etwitterport(STATS_PREFItwitter + "indetwittering_failure");
 
   // Various stats and logging around creation of new segments, put in this
   // class so that the code is not watered down too much by this.
   private static class NewSegmentStats {
-    private static final String NEW_SEGMENT_STATS_PREFIX =
-      STATS_PREFIX + "new_segment_";
+    private static final String NEW_SEGMENT_STATS_PREFItwitter =
+      STATS_PREFItwitter + "new_segment_";
 
     private static final SearchCounter START_NEW_AFTER_REACHING_LIMIT =
-        SearchCounter.export(NEW_SEGMENT_STATS_PREFIX + "start_after_reaching_limit");
-    private static final SearchCounter START_NEW_AFTER_EXCEEDING_MAX_ID =
-        SearchCounter.export(NEW_SEGMENT_STATS_PREFIX + "start_after_exceeding_max_id");
+        SearchCounter.etwitterport(NEW_SEGMENT_STATS_PREFItwitter + "start_after_reaching_limit");
+    private static final SearchCounter START_NEW_AFTER_EtwitterCEEDING_MAtwitter_ID =
+        SearchCounter.etwitterport(NEW_SEGMENT_STATS_PREFItwitter + "start_after_etwitterceeding_matwitter_id");
     private static final SearchCounter TIMESLICE_SET_TO_CURRENT_ID =
-        SearchCounter.export(NEW_SEGMENT_STATS_PREFIX + "timeslice_set_to_current_id");
-    private static final SearchCounter TIMESLICE_SET_TO_MAX_ID =
-        SearchCounter.export(NEW_SEGMENT_STATS_PREFIX + "timeslice_set_to_max_id");
-    private static final SearchLongGauge TIMESPAN_BETWEEN_MAX_AND_CURRENT =
-        SearchLongGauge.export(NEW_SEGMENT_STATS_PREFIX + "timespan_between_id_and_max");
+        SearchCounter.etwitterport(NEW_SEGMENT_STATS_PREFItwitter + "timeslice_set_to_current_id");
+    private static final SearchCounter TIMESLICE_SET_TO_MAtwitter_ID =
+        SearchCounter.etwitterport(NEW_SEGMENT_STATS_PREFItwitter + "timeslice_set_to_matwitter_id");
+    private static final SearchLongGauge TIMESPAN_BETWEEN_MAtwitter_AND_CURRENT =
+        SearchLongGauge.etwitterport(NEW_SEGMENT_STATS_PREFItwitter + "timespan_between_id_and_matwitter");
 
     void recordCreateNewSegment() {
       CREATED_SEGMENTS.increment();
     }
 
     void recordStartAfterReachingTweetsLimit(int numDocs, int numDocsCutoff,
-                                             int maxSegmentSize, int lateTweetBuffer) {
+                                             int matwitterSegmentSize, int lateTweetBuffer) {
       START_NEW_AFTER_REACHING_LIMIT.increment();
       LOG.info(String.format(
           "Will create new segment: numDocs=%,d, numDocsCutoff=%,d"
-              + " | maxSegmentSize=%,d, lateTweetBuffer=%,d",
-          numDocs, numDocsCutoff, maxSegmentSize, lateTweetBuffer));
+              + " | matwitterSegmentSize=%,d, lateTweetBuffer=%,d",
+          numDocs, numDocsCutoff, matwitterSegmentSize, lateTweetBuffer));
     }
 
-    void recordStartAfterExceedingLargestValidTweetId(long tweetId, long largestValidTweetId) {
-      START_NEW_AFTER_EXCEEDING_MAX_ID.increment();
+    void recordStartAfterEtwitterceedingLargestValidTweetId(long tweetId, long largestValidTweetId) {
+      START_NEW_AFTER_EtwitterCEEDING_MAtwitter_ID.increment();
       LOG.info(String.format(
           "Will create new segment: tweetDd=%,d, largestValidTweetID for segment=%,d",
           tweetId, largestValidTweetId));
@@ -107,29 +107,29 @@ public class TweetCreateHandler {
           + " id={}", tweetID);
     }
 
-    void recordSettingTimesliceToMaxTweetId(long tweetID, long maxTweetID) {
-      TIMESLICE_SET_TO_MAX_ID.increment();
+    void recordSettingTimesliceToMatwitterTweetId(long tweetID, long matwitterTweetID) {
+      TIMESLICE_SET_TO_MAtwitter_ID.increment();
       LOG.info("Creating new segment: tweet that triggered it doesn't have the largest id"
-          + " we've seen. tweetId={}, maxTweetId={}",
-          tweetID, maxTweetID);
+          + " we've seen. tweetId={}, matwitterTweetId={}",
+          tweetID, matwitterTweetID);
       long timeDifference =
-          SnowflakeIdParser.getTimeDifferenceBetweenTweetIDs(maxTweetID, tweetID);
-      LOG.info("Time difference between max seen and last seen: {} ms", timeDifference);
-      TIMESPAN_BETWEEN_MAX_AND_CURRENT.set(timeDifference);
+          SnowflakeIdParser.getTimeDifferenceBetweenTweetIDs(matwitterTweetID, tweetID);
+      LOG.info("Time difference between matwitter seen and last seen: {} ms", timeDifference);
+      TIMESPAN_BETWEEN_MAtwitter_AND_CURRENT.set(timeDifference);
     }
 
-    void wrapNewSegmentCreation(long tweetID, long maxTweetID,
+    void wrapNewSegmentCreation(long tweetID, long matwitterTweetID,
                                 long currentSegmentTimesliceBoundary,
                                 long largestValidTweetIDForCurrentSegment) {
-      long timeDifferenceStartToMax = SnowflakeIdParser.getTimeDifferenceBetweenTweetIDs(
+      long timeDifferenceStartToMatwitter = SnowflakeIdParser.getTimeDifferenceBetweenTweetIDs(
           largestValidTweetIDForCurrentSegment,
           currentSegmentTimesliceBoundary);
       LOG.info("Time between timeslice boundary and largest valid tweet id: {} ms",
-          timeDifferenceStartToMax);
+          timeDifferenceStartToMatwitter);
 
-      LOG.info("Created new segment: (tweetId={}, maxTweetId={}, maxTweetId-tweetId={} "
+      LOG.info("Created new segment: (tweetId={}, matwitterTweetId={}, matwitterTweetId-tweetId={} "
               + " | currentSegmentTimesliceBoundary={}, largestValidTweetIDForSegment={})",
-          tweetID, maxTweetID, maxTweetID - tweetID, currentSegmentTimesliceBoundary,
+          tweetID, matwitterTweetID, matwitterTweetID - tweetID, currentSegmentTimesliceBoundary,
           largestValidTweetIDForCurrentSegment);
     }
   }
@@ -137,54 +137,54 @@ public class TweetCreateHandler {
 
   private final SegmentManager segmentManager;
   private final MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager;
-  private final int maxSegmentSize;
+  private final int matwitterSegmentSize;
   private final int lateTweetBuffer;
 
-  private long maxTweetID = Long.MIN_VALUE;
+  private long matwitterTweetID = Long.MIN_VALUE;
 
   private long largestValidTweetIDForCurrentSegment;
   private long currentSegmentTimesliceBoundary;
   private OptimizingSegmentWriter currentSegment;
   private OptimizingSegmentWriter previousSegment;
   private final QueryCacheManager queryCacheManager;
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
+  private final CriticalEtwitterceptionHandler criticalEtwitterceptionHandler;
+  private final SearchIndetwitteringMetricSet searchIndetwitteringMetricSet;
   private final CoordinatedEarlybirdActionInterface postOptimizationRebuildsAction;
   private final CoordinatedEarlybirdActionInterface gcAction;
-  private final CaughtUpMonitor indexCaughtUpMonitor;
+  private final CaughtUpMonitor indetwitterCaughtUpMonitor;
   private final OptimizationAndFlushingCoordinationLock optimizationAndFlushingCoordinationLock;
 
   public TweetCreateHandler(
       SegmentManager segmentManager,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler,
+      SearchIndetwitteringMetricSet searchIndetwitteringMetricSet,
+      CriticalEtwitterceptionHandler criticalEtwitterceptionHandler,
       MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
       QueryCacheManager queryCacheManager,
       CoordinatedEarlybirdActionInterface postOptimizationRebuildsAction,
       CoordinatedEarlybirdActionInterface gcAction,
       int lateTweetBuffer,
-      int maxSegmentSize,
-      CaughtUpMonitor indexCaughtUpMonitor,
+      int matwitterSegmentSize,
+      CaughtUpMonitor indetwitterCaughtUpMonitor,
       OptimizationAndFlushingCoordinationLock optimizationAndFlushingCoordinationLock
   ) {
     this.segmentManager = segmentManager;
-    this.criticalExceptionHandler = criticalExceptionHandler;
+    this.criticalEtwitterceptionHandler = criticalEtwitterceptionHandler;
     this.multiSegmentTermDictionaryManager = multiSegmentTermDictionaryManager;
     this.queryCacheManager = queryCacheManager;
-    this.indexingResultCounts = new IndexingResultCounts();
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
+    this.indetwitteringResultCounts = new IndetwitteringResultCounts();
+    this.searchIndetwitteringMetricSet = searchIndetwitteringMetricSet;
     this.postOptimizationRebuildsAction = postOptimizationRebuildsAction;
     this.gcAction = gcAction;
-    this.indexCaughtUpMonitor = indexCaughtUpMonitor;
+    this.indetwitterCaughtUpMonitor = indetwitterCaughtUpMonitor;
 
-    Preconditions.checkState(lateTweetBuffer < maxSegmentSize);
+    Preconditions.checkState(lateTweetBuffer < matwitterSegmentSize);
     this.lateTweetBuffer = lateTweetBuffer;
-    this.maxSegmentSize = maxSegmentSize;
+    this.matwitterSegmentSize = matwitterSegmentSize;
     this.optimizationAndFlushingCoordinationLock = optimizationAndFlushingCoordinationLock;
   }
 
-  void prepareAfterStartingWithIndex(long maxIndexedTweetId) {
-    LOG.info("Preparing after starting with an index.");
+  void prepareAfterStartingWithIndetwitter(long matwitterIndetwitteredTweetId) {
+    LOG.info("Preparing after starting with an indetwitter.");
 
     Iterator<SegmentInfo> segmentInfosIterator =
         segmentManager
@@ -192,29 +192,29 @@ public class TweetCreateHandler {
             .iterator();
 
     // Setup the last segment.
-    Verify.verify(segmentInfosIterator.hasNext(), "at least one segment expected");
+    Verify.verify(segmentInfosIterator.hasNetwittert(), "at least one segment etwitterpected");
     ISegmentWriter lastWriter = segmentManager.getSegmentWriterForID(
-        segmentInfosIterator.next().getTimeSliceID());
+        segmentInfosIterator.netwittert().getTimeSliceID());
     Verify.verify(lastWriter != null);
 
     LOG.info("TweetCreateHandler found last writer: {}", lastWriter.getSegmentInfo().toString());
     this.currentSegmentTimesliceBoundary = lastWriter.getSegmentInfo().getTimeSliceID();
     this.largestValidTweetIDForCurrentSegment =
-        OutOfOrderRealtimeTweetIDMapper.calculateMaxTweetID(currentSegmentTimesliceBoundary);
+        OutOfOrderRealtimeTweetIDMapper.calculateMatwitterTweetID(currentSegmentTimesliceBoundary);
     this.currentSegment = (OptimizingSegmentWriter) lastWriter;
 
-    if (maxIndexedTweetId == -1) {
-      maxTweetID = lastWriter.getSegmentInfo().getIndexSegment().getMaxTweetId();
-      LOG.info("Max tweet id = {}", maxTweetID);
+    if (matwitterIndetwitteredTweetId == -1) {
+      matwitterTweetID = lastWriter.getSegmentInfo().getIndetwitterSegment().getMatwitterTweetId();
+      LOG.info("Matwitter tweet id = {}", matwitterTweetID);
     } else {
       // See SEARCH-31032
-      maxTweetID = maxIndexedTweetId;
+      matwitterTweetID = matwitterIndetwitteredTweetId;
     }
 
     // If we have a previous segment that's not optimized, set it up too, we still need to pick
     // it up for optimization and we might still be able to add tweets to it.
-    if (segmentInfosIterator.hasNext()) {
-      SegmentInfo previousSegmentInfo = segmentInfosIterator.next();
+    if (segmentInfosIterator.hasNetwittert()) {
+      SegmentInfo previousSegmentInfo = segmentInfosIterator.netwittert();
       if (!previousSegmentInfo.isOptimized()) {
         ISegmentWriter previousSegmentWriter = segmentManager.getSegmentWriterForID(
             previousSegmentInfo.getTimeSliceID());
@@ -234,23 +234,23 @@ public class TweetCreateHandler {
     }
   }
 
-  private void updateIndexFreshness() {
-    searchIndexingMetricSet.highestStatusId.set(maxTweetID);
+  private void updateIndetwitterFreshness() {
+    searchIndetwitteringMetricSet.highestStatusId.set(matwitterTweetID);
 
     long tweetTimestamp = SnowflakeIdParser.getTimestampFromTweetId(
-        searchIndexingMetricSet.highestStatusId.get());
-    searchIndexingMetricSet.freshestTweetTimeMillis.set(tweetTimestamp);
+        searchIndetwitteringMetricSet.highestStatusId.get());
+    searchIndetwitteringMetricSet.freshestTweetTimeMillis.set(tweetTimestamp);
   }
 
   /**
-   * Index a new TVE representing a Tweet create event.
+   * Indetwitter a new TVE representing a Tweet create event.
    */
-  public void handleTweetCreate(ThriftVersionedEvents tve) throws IOException {
+  public void handleTweetCreate(ThriftVersionedEvents tve) throws IOEtwitterception {
     INCOMING_TWEETS.increment();
     long id = tve.getId();
-    maxTweetID = Math.max(id, maxTweetID);
+    matwitterTweetID = Math.matwitter(id, matwitterTweetID);
 
-    updateIndexFreshness();
+    updateIndetwitterFreshness();
 
     boolean shouldCreateNewSegment = false;
 
@@ -258,14 +258,14 @@ public class TweetCreateHandler {
       shouldCreateNewSegment = true;
       LOG.info("Will create new segment: current segment is null");
     } else {
-      int numDocs = currentSegment.getSegmentInfo().getIndexSegment().getNumDocs();
-      int numDocsCutoff = maxSegmentSize - lateTweetBuffer;
+      int numDocs = currentSegment.getSegmentInfo().getIndetwitterSegment().getNumDocs();
+      int numDocsCutoff = matwitterSegmentSize - lateTweetBuffer;
       if (numDocs >= numDocsCutoff) {
         NEW_SEGMENT_STATS.recordStartAfterReachingTweetsLimit(numDocs, numDocsCutoff,
-            maxSegmentSize, lateTweetBuffer);
+            matwitterSegmentSize, lateTweetBuffer);
         shouldCreateNewSegment = true;
       } else if (id > largestValidTweetIDForCurrentSegment) {
-        NEW_SEGMENT_STATS.recordStartAfterExceedingLargestValidTweetId(id,
+        NEW_SEGMENT_STATS.recordStartAfterEtwitterceedingLargestValidTweetId(id,
             largestValidTweetIDForCurrentSegment);
         shouldCreateNewSegment = true;
       }
@@ -280,18 +280,18 @@ public class TweetCreateHandler {
       // least LATE_TWEET_TIME_BUFFER between when we created the new segment and when we optimize
       // the previous segment, in case there are late tweets.
       // We leave a large (150k, typically) buffer in the segment so that we don't have to close
-      // the previousSegment before LATE_TWEET_TIME_BUFFER has passed, but if we index
+      // the previousSegment before LATE_TWEET_TIME_BUFFER has passed, but if we indetwitter
       // lateTweetBuffer Tweets before optimizing, then we must optimize,
-      // so that we don't insert more than max segment size tweets into the previous segment.
+      // so that we don't insert more than matwitter segment size tweets into the previous segment.
       long relativeTweetAgeMs =
           SnowflakeIdParser.getTimeDifferenceBetweenTweetIDs(id, currentSegmentTimesliceBoundary);
 
       boolean needToOptimize = false;
-      int numDocs = previousSegment.getSegmentInfo().getIndexSegment().getNumDocs();
+      int numDocs = previousSegment.getSegmentInfo().getIndetwitterSegment().getNumDocs();
       String previousSegmentName = previousSegment.getSegmentInfo().getSegmentName();
-      if (numDocs >= maxSegmentSize) {
-        LOG.info(String.format("Previous segment (%s) reached maxSegmentSize, need to optimize it."
-            + " numDocs=%,d, maxSegmentSize=%,d", previousSegmentName, numDocs, maxSegmentSize));
+      if (numDocs >= matwitterSegmentSize) {
+        LOG.info(String.format("Previous segment (%s) reached matwitterSegmentSize, need to optimize it."
+            + " numDocs=%,d, matwitterSegmentSize=%,d", previousSegmentName, numDocs, matwitterSegmentSize));
         needToOptimize = true;
       } else if (relativeTweetAgeMs > LATE_TWEET_TIME_BUFFER_MS) {
         LOG.info(String.format("Previous segment (%s) is old enough, we can optimize it."
@@ -319,27 +319,27 @@ public class TweetCreateHandler {
       segmentWriter = currentSegment;
     }
 
-    SearchTimer timer = searchIndexingMetricSet.statusStats.startNewTimer();
-    ISegmentWriter.Result result = segmentWriter.indexThriftVersionedEvents(tve);
-    searchIndexingMetricSet.statusStats.stopTimerAndIncrement(timer);
+    SearchTimer timer = searchIndetwitteringMetricSet.statusStats.startNewTimer();
+    ISegmentWriter.Result result = segmentWriter.indetwitterThriftVersionedEvents(tve);
+    searchIndetwitteringMetricSet.statusStats.stopTimerAndIncrement(timer);
 
     if (result == ISegmentWriter.Result.SUCCESS) {
-      INDEXING_SUCCESS.increment();
+      INDEtwitterING_SUCCESS.increment();
     } else {
-      INDEXING_FAILURE.increment();
+      INDEtwitterING_FAILURE.increment();
     }
 
-    indexingResultCounts.countResult(result);
+    indetwitteringResultCounts.countResult(result);
   }
 
   /**
-   * Many tests need to verify behavior with segments optimized & unoptimized, so we need to expose
+   * Many tests need to verify behavior with segments optimized & unoptimized, so we need to etwitterpose
    * this.
    */
   @VisibleForTesting
   public Future<SegmentInfo> optimizePreviousSegment() {
     String segmentName = previousSegment.getSegmentInfo().getSegmentName();
-    previousSegment.getSegmentInfo().setIndexing(false);
+    previousSegment.getSegmentInfo().setIndetwittering(false);
     LOG.info("Optimizing previous segment: {}", segmentName);
     segmentManager.logState("Starting optimization for segment: " + segmentName);
 
@@ -347,8 +347,8 @@ public class TweetCreateHandler {
         .startOptimization(gcAction, optimizationAndFlushingCoordinationLock)
         .map(this::postOptimizationSteps)
         .onFailure(t -> {
-          criticalExceptionHandler.handle(this, t);
-          return BoxedUnit.UNIT;
+          criticalEtwitterceptionHandler.handle(this, t);
+          return BotwitteredUnit.UNIT;
         });
 
     waitForOptimizationIfInTest(future);
@@ -363,15 +363,15 @@ public class TweetCreateHandler {
    * started optimizing is not ready.
    *
    * In prod we don't have this problem. Segments run for 10 hours and optimization is 20 minutes
-   * so there's no need for extra synchronization.
+   * so there's no need for etwittertra synchronization.
    */
   private void waitForOptimizationIfInTest(Future<SegmentInfo> future) {
     if (Config.environmentIsTest()) {
       try {
         Await.ready(future);
         LOG.info("Optimizing is done");
-      } catch (InterruptedException | TimeoutException ex) {
-        LOG.info("Exception while optimizing", ex);
+      } catch (InterruptedEtwitterception | TimeoutEtwitterception etwitter) {
+        LOG.info("Etwitterception while optimizing", etwitter);
       }
     }
   }
@@ -420,15 +420,15 @@ public class TweetCreateHandler {
                 optimizedSegmentInfo);
 
             // This is a serial full GC and it defragments the memory so things can run smoothly
-            // until the next segment rolls. What we have observed is that if we don't do that
+            // until the netwittert segment rolls. What we have observed is that if we don't do that
             // later on some earlybirds can have promotion failures on an old gen that hasn't
             // reached the initiating occupancy limit and these promotions failures can trigger a
             // long (1.5 min) full GC. That usually happens because of fragmentation issues.
             GCUtil.runGC();
-            // Wait for indexing to catch up before rejoining the serverset. We only need to do
+            // Wait for indetwittering to catch up before rejoining the serverset. We only need to do
             // this if the host has already finished startup.
             if (EarlybirdStatus.hasStarted()) {
-              indexCaughtUpMonitor.resetAndWaitUntilCaughtUp();
+              indetwitterCaughtUpMonitor.resetAndWaitUntilCaughtUp();
             }
           });
     } finally {
@@ -440,25 +440,25 @@ public class TweetCreateHandler {
   }
 
   /**
-   * Many tests rely on precise segment boundaries, so we expose this to allow them to create a
+   * Many tests rely on precise segment boundaries, so we etwitterpose this to allow them to create a
    * particular segment.
    */
   @VisibleForTesting
-  public void createNewSegment(long tweetID) throws IOException {
+  public void createNewSegment(long tweetID) throws IOEtwitterception {
     NEW_SEGMENT_STATS.recordCreateNewSegment();
 
     if (previousSegment != null) {
       // We shouldn't have more than one unoptimized segment, so if we get to this point and the
       // previousSegment has not been optimized and set to null, start optimizing it before
-      // creating the next one. Note that this is a weird case and would only happen if we get
-      // Tweets with drastically different IDs than we expect, or there is a large amount of time
+      // creating the netwittert one. Note that this is a weird case and would only happen if we get
+      // Tweets with drastically different IDs than we etwitterpect, or there is a large amount of time
       // where no Tweets are created in this partition.
       LOG.error("Creating new segment for Tweet {} when the previous segment {} was not sealed. "
           + "Current segment: {}. Documents: {}. largestValidTweetIDForSegment: {}.",
           tweetID,
           previousSegment.getSegmentInfo().getTimeSliceID(),
           currentSegment.getSegmentInfo().getTimeSliceID(),
-          currentSegment.getSegmentInfo().getIndexSegment().getNumDocs(),
+          currentSegment.getSegmentInfo().getIndetwitterSegment().getNumDocs(),
           largestValidTweetIDForCurrentSegment);
       optimizePreviousSegment();
       SEGMENTS_CLOSED_EARLY.increment();
@@ -473,8 +473,8 @@ public class TweetCreateHandler {
     // with that ID, so the Tweet being processed goes into the new segment.
     //
     // Case 2:
-    // If the tweetID is bigger than the max tweetID, then this method is being called directly from
-    // tests, so we didn't update the maxTweetID, so we can create a new segment with the new
+    // If the tweetID is bigger than the matwitter tweetID, then this method is being called directly from
+    // tests, so we didn't update the matwitterTweetID, so we can create a new segment with the new
     // Tweet ID.
     //
     // Case 3:
@@ -483,43 +483,43 @@ public class TweetCreateHandler {
     // some tweets from the previous segment would be in the wrong segment, so create a segment
     // that has a greater ID than any Tweets that we have seen.
     //
-    //   Example:
+    //   Etwitterample:
     //     - We have seen tweets 3, 10, 5, 6.
     //     - We now see tweet 7 and we decide it's time to create a new segment.
     //     - The new segment will start at tweet 11. It can't start at tweet 7, because
     //       tweet 10 will be in the wrong segment.
     //     - Tweet 7 that we just saw will end up in the previous segment.
-    if (maxTweetID <= tweetID) {
+    if (matwitterTweetID <= tweetID) {
       currentSegmentTimesliceBoundary = tweetID;
       NEW_SEGMENT_STATS.recordSettingTimesliceToCurrentTweet(tweetID);
     } else {
-      currentSegmentTimesliceBoundary = maxTweetID + 1;
-      NEW_SEGMENT_STATS.recordSettingTimesliceToMaxTweetId(tweetID, maxTweetID);
+      currentSegmentTimesliceBoundary = matwitterTweetID + 1;
+      NEW_SEGMENT_STATS.recordSettingTimesliceToMatwitterTweetId(tweetID, matwitterTweetID);
     }
     currentSegment = segmentManager.createAndPutOptimizingSegmentWriter(
         currentSegmentTimesliceBoundary);
 
-    currentSegment.getSegmentInfo().setIndexing(true);
+    currentSegment.getSegmentInfo().setIndetwittering(true);
 
     largestValidTweetIDForCurrentSegment =
-        OutOfOrderRealtimeTweetIDMapper.calculateMaxTweetID(currentSegmentTimesliceBoundary);
+        OutOfOrderRealtimeTweetIDMapper.calculateMatwitterTweetID(currentSegmentTimesliceBoundary);
 
-    NEW_SEGMENT_STATS.wrapNewSegmentCreation(tweetID, maxTweetID,
+    NEW_SEGMENT_STATS.wrapNewSegmentCreation(tweetID, matwitterTweetID,
         currentSegmentTimesliceBoundary, largestValidTweetIDForCurrentSegment);
 
-    segmentManager.removeExcessSegments();
+    segmentManager.removeEtwittercessSegments();
   }
 
   void logState() {
     LOG.info("TweetCreateHandler:");
-    LOG.info(String.format("  tweets sent for indexing: %,d",
-        indexingResultCounts.getIndexingCalls()));
+    LOG.info(String.format("  tweets sent for indetwittering: %,d",
+        indetwitteringResultCounts.getIndetwitteringCalls()));
     LOG.info(String.format("  non-retriable failure: %,d",
-        indexingResultCounts.getFailureNotRetriable()));
+        indetwitteringResultCounts.getFailureNotRetriable()));
     LOG.info(String.format("  retriable failure: %,d",
-        indexingResultCounts.getFailureRetriable()));
-    LOG.info(String.format("  successfully indexed: %,d",
-        indexingResultCounts.getIndexingSuccess()));
+        indetwitteringResultCounts.getFailureRetriable()));
+    LOG.info(String.format("  successfully indetwittered: %,d",
+        indetwitteringResultCounts.getIndetwitteringSuccess()));
     LOG.info(String.format("  tweets in wrong segment: %,d", TWEETS_IN_WRONG_SEGMENT.getCount()));
     LOG.info(String.format("  segments closed early: %,d", SEGMENTS_CLOSED_EARLY.getCount()));
   }

@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird;
 
-import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.KeeperEtwitterception;
 
 import com.twitter.common.zookeeper.ServerSet;
 import com.twitter.common.zookeeper.ZooKeeperClient;
@@ -12,29 +12,29 @@ public interface ServerSetMember {
   /**
    * Makes this server join its server set.
    *
-   * @throws ServerSet.UpdateException
+   * @throws ServerSet.UpdateEtwitterception
    * @param requestSource
    */
-  void joinServerSet(String requestSource) throws ServerSet.UpdateException;
+  void joinServerSet(String requestSource) throws ServerSet.UpdateEtwitterception;
 
   /**
    * Makes this server leave its server set.
    *
-   * @throws ServerSet.UpdateException
+   * @throws ServerSet.UpdateEtwitterception
    * @param requestSource
    */
-  void leaveServerSet(String requestSource) throws ServerSet.UpdateException;
+  void leaveServerSet(String requestSource) throws ServerSet.UpdateEtwitterception;
 
   /**
    * Gets and returns the current number of members in this server's server set.
    *
    * @return number of members currently in this host's server set.
-   * @throws InterruptedException
-   * @throws ZooKeeperClient.ZooKeeperConnectionException
-   * @throws KeeperException
+   * @throws InterruptedEtwitterception
+   * @throws ZooKeeperClient.ZooKeeperConnectionEtwitterception
+   * @throws KeeperEtwitterception
    */
-  int getNumberOfServerSetMembers() throws InterruptedException,
-      ZooKeeperClient.ZooKeeperConnectionException, KeeperException;
+  int getNumberOfServerSetMembers() throws InterruptedEtwitterception,
+      ZooKeeperClient.ZooKeeperConnectionEtwitterception, KeeperEtwitterception;
 
   /**
    * Checks if this earlybird is in the server set.
@@ -46,10 +46,10 @@ public interface ServerSetMember {
   /**
    * Should only be called for Archive Earlybirds.
    *
-   * Join ServerSet for ServiceProxy with a named admin port and with a zookeeper path that Service
-   * Proxy can translate to a domain name label that is less than 64 characters (due to the size
+   * Join ServerSet for ServiceProtwittery with a named admin port and with a zookeeper path that Service
+   * Protwittery can translate to a domain name label that is less than 64 characters (due to the size
    * limit for domain name labels described here: https://tools.ietf.org/html/rfc1035)
-   * This will allow us to access Earlybirds that are not on mesos via ServiceProxy.
+   * This will allow us to access Earlybirds that are not on mesos via ServiceProtwittery.
    */
-  void joinServerSetForServiceProxy();
+  void joinServerSetForServiceProtwittery();
 }

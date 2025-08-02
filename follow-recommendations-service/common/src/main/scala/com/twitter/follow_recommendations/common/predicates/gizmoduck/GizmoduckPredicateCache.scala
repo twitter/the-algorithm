@@ -18,12 +18,12 @@ import com.twitter.util.Duration
  */
 object GizmoduckPredicateCache {
 
-  private[GizmoduckPredicateCache] class TimeTicker extends Ticker {
+  private[GizmoduckPredicateCache] class TimeTicker etwittertends Ticker {
     override def read(): Long = Time.now.inNanoseconds
   }
 
   def apply[K, V](
-    maxCacheSize: Int,
+    matwitterCacheSize: Int,
     ttl: Duration,
     statsReceiver: StatsReceiver
   ): Cache[K, V] = {
@@ -31,9 +31,9 @@ object GizmoduckPredicateCache {
     val cache: Cache[K, V] =
       CacheBuilder
         .newBuilder()
-        .maximumSize(maxCacheSize)
+        .matwitterimumSize(matwitterCacheSize)
         .asInstanceOf[CacheBuilder[K, V]]
-        .expireAfterWrite(ttl.inSeconds, TimeUnit.SECONDS)
+        .etwitterpireAfterWrite(ttl.inSeconds, TimeUnit.SECONDS)
         .recordStats()
         .ticker(new TimeTicker())
         .build()

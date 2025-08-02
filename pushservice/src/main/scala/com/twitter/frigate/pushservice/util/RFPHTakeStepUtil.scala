@@ -7,8 +7,8 @@ import com.twitter.frigate.common.base.Invalid
 import com.twitter.frigate.common.base.OK
 import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
 import com.twitter.frigate.pushservice.refresh_handler.ResultWithDebugInfo
-import com.twitter.frigate.pushservice.predicate.BigFilteringEpsilonGreedyExplorationPredicate
-import com.twitter.frigate.pushservice.predicate.MlModelsHoldbackExperimentPredicate
+import com.twitter.frigate.pushservice.predicate.BigFilteringEpsilonGreedyEtwitterplorationPredicate
+import com.twitter.frigate.pushservice.predicate.MlModelsHoldbackEtwitterperimentPredicate
 import com.twitter.frigate.pushservice.take.candidate_validator.RFPHCandidateValidator
 import com.twitter.frigate.pushservice.thriftscala.PushStatus
 import com.twitter.hermit.predicate.NamedPredicate
@@ -23,19 +23,19 @@ class RFPHTakeStepUtil()(globalStats: StatsReceiver) {
   private val validatorStats = takeStats.scope("validator")
   private val validatorLatency: Stat = validatorStats.stat("latency")
 
-  private val executedPredicatesInTandem: Counter =
-    takeStats.counter("predicates_executed_in_tandem")
+  private val etwitterecutedPredicatesInTandem: Counter =
+    takeStats.counter("predicates_etwitterecuted_in_tandem")
 
   private val bigFilteringEpsGreedyPredicate: NamedPredicate[PushCandidate] =
-    BigFilteringEpsilonGreedyExplorationPredicate()(takeStats)
+    BigFilteringEpsilonGreedyEtwitterplorationPredicate()(takeStats)
   private val bigFilteringEpsGreedyStats: StatsReceiver =
     takeStats.scope("big_filtering_eps_greedy_predicate")
 
   private val modelPredicate: NamedPredicate[PushCandidate] =
-    MlModelsHoldbackExperimentPredicate()(takeStats)
+    MlModelsHoldbackEtwitterperimentPredicate()(takeStats)
   private val mlPredicateStats: StatsReceiver = takeStats.scope("ml_predicate")
 
-  private def updateFilteredStatusExptStats(candidate: PushCandidate, predName: String): Unit = {
+  private def updateFilteredStatusEtwitterptStats(candidate: PushCandidate, predName: String): Unit = {
 
     val recTypeStat = globalStats.scope(
       candidate.commonRecType.toString
@@ -59,7 +59,7 @@ class RFPHTakeStepUtil()(globalStats: StatsReceiver) {
           modelPredicate.apply(Seq(candidate))
         ).flatMap {
           case (Seq(true), Seq(true)) =>
-            executedPredicatesInTandem.incr()
+            etwitterecutedPredicatesInTandem.incr()
 
             bigFilteringEpsGreedyStats
               .scope(candidate.commonRecType.toString)
@@ -89,7 +89,7 @@ class RFPHTakeStepUtil()(globalStats: StatsReceiver) {
     predResultFuture.map {
       case (Some(pred: NamedPredicate[_]), candPredicateResults) =>
         takeStats.counter("filtered_by_named_general_predicate").incr()
-        updateFilteredStatusExptStats(candidate, pred.name)
+        updateFilteredStatusEtwitterptStats(candidate, pred.name)
         ResultWithDebugInfo(
           Invalid(Some(pred.name)),
           candPredicateResults
@@ -97,7 +97,7 @@ class RFPHTakeStepUtil()(globalStats: StatsReceiver) {
 
       case (Some(_), candPredicateResults) =>
         takeStats.counter("filtered_by_unnamed_general_predicate").incr()
-        updateFilteredStatusExptStats(candidate, predName = "unk")
+        updateFilteredStatusEtwitterptStats(candidate, predName = "unk")
         ResultWithDebugInfo(
           Invalid(Some("unnamed_candidate_predicate")),
           candPredicateResults

@@ -21,7 +21,7 @@ class SocialWriteEventProcessor(
   userUserGraphMessageBuilder: EventToMessageBuilder[WriteEvent, UserUserEdge]
 )(
   override implicit val statsReceiver: StatsReceiver)
-    extends EventBusProcessor[WriteEvent] {
+    etwittertends EventBusProcessor[WriteEvent] {
 
   override def processEvent(event: WriteEvent): Future[Unit] = {
     userUserGraphMessageBuilder.processEvent(event).map { edges =>

@@ -7,14 +7,14 @@ import java.util.Queue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import javax.naming.NamingException;
+import javatwitter.naming.NamingEtwitterception;
 
-import scala.runtime.BoxedUnit;
+import scala.runtime.BotwitteredUnit;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 
-import org.apache.commons.pipeline.StageException;
+import org.apache.commons.pipeline.StageEtwitterception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,16 +22,16 @@ import com.twitter.search.common.metrics.SearchCustomGauge;
 import com.twitter.search.common.metrics.SearchRateCounter;
 import com.twitter.search.common.metrics.SearchTimerStats;
 import com.twitter.search.ingester.pipeline.util.BatchedElement;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
+import com.twitter.search.ingester.pipeline.util.PipelineStageEtwitterception;
 import com.twitter.util.Function;
 import com.twitter.util.Future;
 
-public abstract class TwitterBatchedBaseStage<T, R> extends
+public abstract class TwitterBatchedBaseStage<T, R> etwittertends
     TwitterBaseStage<T, CompletableFuture<R>> {
   private static final Logger LOG = LoggerFactory.getLogger(TwitterBatchedBaseStage.class);
 
   protected final Queue<BatchedElement<T, R>> queue =
-      Queues.newLinkedBlockingQueue(MAX_BATCHING_QUEUE_SIZE);
+      Queues.newLinkedBlockingQueue(MAtwitter_BATCHING_QUEUE_SIZE);
 
   private int batchedStageBatchSize = 100;
   private int forceProcessAfterMs = 500;
@@ -41,13 +41,13 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
   private SearchRateCounter timeBasedQueueFlush;
   private SearchRateCounter sizeBasedQueueFlush;
   private SearchRateCounter eventsFailed;
-  private SearchRateCounter numberOfCallsToNextBatchIfReady;
-  private SearchTimerStats batchExecutionTime;
-  private SearchTimerStats batchFailedExecutionTime;
+  private SearchRateCounter numberOfCallsToNetwittertBatchIfReady;
+  private SearchTimerStats batchEtwitterecutionTime;
+  private SearchTimerStats batchFailedEtwitterecutionTime;
   private SearchRateCounter validElements;
   private SearchRateCounter batchedElements;
   private SearchRateCounter emittedElements;
-  private static final int MAX_BATCHING_QUEUE_SIZE = 10000;
+  private static final int MAtwitter_BATCHING_QUEUE_SIZE = 10000;
 
   // force the implementing class to set type correctly to avoid catching issues at runtime
   protected abstract Class<T> getQueueObjectType();
@@ -61,7 +61,7 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
   protected void updateBatchSize() {
   }
 
-  protected Collection<T> extractOnlyElementsFromBatch(Collection<BatchedElement<T, R>> batch) {
+  protected Collection<T> etwittertractOnlyElementsFromBatch(Collection<BatchedElement<T, R>> batch) {
     Collection<T> elementsOnly = new ArrayList<>();
 
     for (BatchedElement<T, R> batchedElement : batch) {
@@ -81,7 +81,7 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
   /**
    * Tranform from type T to U element.
    * T and U might be different types so this function will help with the transformation
-   * if the incoming T element is filtered out and is bypass directly to the next stage
+   * if the incoming T element is filtered out and is bypass directly to the netwittert stage
    * that takes incoming objects of type U
    *
    * @param element incoming element
@@ -99,21 +99,21 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
   }
 
   private void commonInnerSetupStats() {
-    timeBasedQueueFlush = SearchRateCounter.export(getStageNamePrefix()
+    timeBasedQueueFlush = SearchRateCounter.etwitterport(getStageNamePrefitwitter()
         + "_time_based_queue_flush");
-    sizeBasedQueueFlush = SearchRateCounter.export(getStageNamePrefix()
+    sizeBasedQueueFlush = SearchRateCounter.etwitterport(getStageNamePrefitwitter()
         + "_size_based_queue_flush");
-    batchExecutionTime = SearchTimerStats.export(getStageNamePrefix()
-        + "_batch_execution_time", TimeUnit.MILLISECONDS, false, true);
-    batchFailedExecutionTime = SearchTimerStats.export(getStageNamePrefix()
-        + "_batch_failed_execution_time", TimeUnit.MILLISECONDS, false, true);
-    eventsFailed = SearchRateCounter.export(getStageNamePrefix() + "_events_dropped");
-    SearchCustomGauge.export(getStageNamePrefix() + "_batched_stage_queue_size", queue::size);
-    numberOfCallsToNextBatchIfReady = SearchRateCounter.export(getStageNamePrefix()
-        + "_calls_to_nextBatchIfReady");
-    validElements = SearchRateCounter.export(getStageNamePrefix() + "_valid_elements");
-    batchedElements = SearchRateCounter.export(getStageNamePrefix() + "_batched_elements");
-    emittedElements = SearchRateCounter.export(getStageNamePrefix() + "_emitted_elements");
+    batchEtwitterecutionTime = SearchTimerStats.etwitterport(getStageNamePrefitwitter()
+        + "_batch_etwitterecution_time", TimeUnit.MILLISECONDS, false, true);
+    batchFailedEtwitterecutionTime = SearchTimerStats.etwitterport(getStageNamePrefitwitter()
+        + "_batch_failed_etwitterecution_time", TimeUnit.MILLISECONDS, false, true);
+    eventsFailed = SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_events_dropped");
+    SearchCustomGauge.etwitterport(getStageNamePrefitwitter() + "_batched_stage_queue_size", queue::size);
+    numberOfCallsToNetwittertBatchIfReady = SearchRateCounter.etwitterport(getStageNamePrefitwitter()
+        + "_calls_to_netwittertBatchIfReady");
+    validElements = SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_valid_elements");
+    batchedElements = SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_batched_elements");
+    emittedElements = SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_emitted_elements");
   }
 
   @Override
@@ -122,8 +122,8 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
   }
 
   // return a possible batch of elements to process. If we have enough for one batch
-  protected Optional<Collection<BatchedElement<T, R>>> nextBatchIfReady() {
-    numberOfCallsToNextBatchIfReady.increment();
+  protected Optional<Collection<BatchedElement<T, R>>> netwittertBatchIfReady() {
+    numberOfCallsToNetwittertBatchIfReady.increment();
     Optional<Collection<BatchedElement<T, R>>> batch = Optional.empty();
 
     if (!queue.isEmpty()) {
@@ -144,14 +144,14 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
   }
 
   @Override
-  public void innerProcess(Object obj) throws StageException {
+  public void innerProcess(Object obj) throws StageEtwitterception {
     T element;
     if (getQueueObjectType().isInstance(obj)) {
       element = getQueueObjectType().cast(obj);
     } else {
-      throw new StageException(this, "Trying to add an object of the wrong type to a queue. "
+      throw new StageEtwitterception(this, "Trying to add an object of the wrong type to a queue. "
           + getQueueObjectType().getSimpleName()
-          + " is the expected type");
+          + " is the etwitterpected type");
     }
 
    if (!tryToAddElementToBatch(element)) {
@@ -187,7 +187,7 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
   }
 
   private void tryToSendBatchedRequest() {
-    Optional<Collection<BatchedElement<T, R>>> maybeToProcess = nextBatchIfReady();
+    Optional<Collection<BatchedElement<T, R>>> maybeToProcess = netwittertBatchIfReady();
     if (maybeToProcess.isPresent()) {
       Collection<BatchedElement<T, R>> batch = maybeToProcess.get();
       lastProcessingTime = clock.nowMillis();
@@ -197,7 +197,7 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
   }
 
   private void tryToSendBatchedRequestV2() {
-    Optional<Collection<BatchedElement<T, R>>> maybeToProcess = nextBatchIfReady();
+    Optional<Collection<BatchedElement<T, R>>> maybeToProcess = netwittertBatchIfReady();
     if (maybeToProcess.isPresent()) {
       Collection<BatchedElement<T, R>> batch = maybeToProcess.get();
       lastProcessingTime = clock.nowMillis();
@@ -207,8 +207,8 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
   }
 
   private void processBatch(Collection<BatchedElement<T, R>> batch,
-                            Function<Collection<R>, BoxedUnit> onSuccess,
-                            Function<Throwable, BoxedUnit> onFailure) {
+                            Function<Collection<R>, BotwitteredUnit> onSuccess,
+                            Function<Throwable, BotwitteredUnit> onFailure) {
     updateBatchSize();
 
     Future<Collection<R>> futureComputation = innerProcessBatch(batch);
@@ -218,89 +218,89 @@ public abstract class TwitterBatchedBaseStage<T, R> extends
     futureComputation.onFailure(onFailure);
   }
 
-  private Function<Collection<R>, BoxedUnit> getOnSuccessFunction(long started) {
+  private Function<Collection<R>, BotwitteredUnit> getOnSuccessFunction(long started) {
     return Function.cons((elements) -> {
       elements.forEach(this::emitAndCount);
-      batchExecutionTime.timerIncrement(clock.nowMillis() - started);
+      batchEtwitterecutionTime.timerIncrement(clock.nowMillis() - started);
     });
   }
 
-  private Function<Collection<R>, BoxedUnit> getOnSuccessFunctionV2(Collection<BatchedElement<T, R>>
+  private Function<Collection<R>, BotwitteredUnit> getOnSuccessFunctionV2(Collection<BatchedElement<T, R>>
                                                                         batch, long started) {
     return Function.cons((elements) -> {
       Iterator<BatchedElement<T, R>> iterator = batch.iterator();
       for (R element : elements) {
-        if (iterator.hasNext()) {
-          iterator.next().getCompletableFuture().complete(element);
+        if (iterator.hasNetwittert()) {
+          iterator.netwittert().getCompletableFuture().complete(element);
         } else {
           LOG.error("Getting Response from Batched Request, but no CompleteableFuture object"
               + " to complete.");
         }
       }
-      batchExecutionTime.timerIncrement(clock.nowMillis() - started);
+      batchEtwitterecutionTime.timerIncrement(clock.nowMillis() - started);
 
     });
   }
 
-  private Function<Throwable, BoxedUnit> getOnFailureFunction(Collection<BatchedElement<T, R>>
+  private Function<Throwable, BotwitteredUnit> getOnFailureFunction(Collection<BatchedElement<T, R>>
                                                                     batch, long started) {
     return Function.cons((throwable) -> {
       batch.forEach(batchedElement -> {
         eventsFailed.increment();
-        // pass the tweet event down better to index an incomplete event than nothing at all
+        // pass the tweet event down better to indetwitter an incomplete event than nothing at all
         emitAndCount(transform(batchedElement.getItem()));
       });
-      batchFailedExecutionTime.timerIncrement(clock.nowMillis() - started);
+      batchFailedEtwitterecutionTime.timerIncrement(clock.nowMillis() - started);
       LOG.error("Failed processing batch", throwable);
     });
   }
 
-  private Function<Throwable, BoxedUnit> getOnFailureFunctionV2(Collection<BatchedElement<T, R>>
+  private Function<Throwable, BotwitteredUnit> getOnFailureFunctionV2(Collection<BatchedElement<T, R>>
                                                                   batch, long started) {
     return Function.cons((throwable) -> {
       batch.forEach(batchedElement -> {
         eventsFailed.increment();
         R itemTransformed = transform(batchedElement.getItem());
-        // complete the future, its better to index an incomplete event than nothing at all
+        // complete the future, its better to indetwitter an incomplete event than nothing at all
         batchedElement.getCompletableFuture().complete(itemTransformed);
       });
-      batchFailedExecutionTime.timerIncrement(clock.nowMillis() - started);
+      batchFailedEtwitterecutionTime.timerIncrement(clock.nowMillis() - started);
       LOG.error("Failed processing batch", throwable);
     });
   }
 
   @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
+  protected void doInnerPreprocess() throws StageEtwitterception, NamingEtwitterception {
     try {
       commonInnerSetup();
-    } catch (PipelineStageException e) {
-      throw new StageException(this, e);
+    } catch (PipelineStageEtwitterception e) {
+      throw new StageEtwitterception(this, e);
     }
   }
 
-  private void commonInnerSetup() throws PipelineStageException, NamingException {
+  private void commonInnerSetup() throws PipelineStageEtwitterception, NamingEtwitterception {
     updateBatchSize();
 
     if (batchedStageBatchSize < 1) {
-      throw new PipelineStageException(this,
+      throw new PipelineStageEtwitterception(this,
           "Batch size must be set at least to 1 for batched stages but is set to"
               + batchedStageBatchSize);
     }
 
     if (forceProcessAfterMs < 1) {
-      throw new PipelineStageException(this, "forceProcessAfterMs needs to be at least 1 "
+      throw new PipelineStageEtwitterception(this, "forceProcessAfterMs needs to be at least 1 "
           + "ms but is set to " + forceProcessAfterMs);
     }
   }
 
   @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
+  protected void innerSetup() throws PipelineStageEtwitterception, NamingEtwitterception {
     commonInnerSetup();
   }
 
   // Setters for configuration parameters
-  public void setBatchedStageBatchSize(int maxElementsToWaitFor) {
-    this.batchedStageBatchSize = maxElementsToWaitFor;
+  public void setBatchedStageBatchSize(int matwitterElementsToWaitFor) {
+    this.batchedStageBatchSize = matwitterElementsToWaitFor;
   }
 
   public void setForceProcessAfter(int forceProcessAfterMS) {

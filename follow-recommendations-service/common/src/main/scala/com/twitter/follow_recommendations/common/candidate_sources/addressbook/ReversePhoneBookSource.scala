@@ -10,14 +10,14 @@ import com.twitter.follow_recommendations.common.clients.phone_storage_service.P
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueWithStats
 import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.strato.generated.client.onboarding.userrecs.ReversePhoneContactsClientColumn
 import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class ReversePhoneBookSource @Inject() (
@@ -25,7 +25,7 @@ class ReversePhoneBookSource @Inject() (
   pssClient: PhoneStorageServiceClient,
   addressBookClient: AddressbookClient,
   statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser] {
+    etwittertends CandidateSource[HasParams with HasClientContetwittert, CandidateUser] {
 
   override val identifier: CandidateSourceIdentifier = ReversePhoneBookSource.Identifier
   private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getSimpleName)
@@ -33,7 +33,7 @@ class ReversePhoneBookSource @Inject() (
   /**
    * Generate a list of candidates for the target
    */
-  override def apply(target: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
+  override def apply(target: HasParams with HasClientContetwittert): Stitch[Seq[CandidateUser]] = {
     val reverseCandidatesFromPhones: Stitch[Seq[Long]] = target.getOptionalUserId
       .map { userId =>
         pssClient

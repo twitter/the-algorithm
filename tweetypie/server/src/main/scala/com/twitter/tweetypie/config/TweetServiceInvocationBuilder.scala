@@ -3,7 +3,7 @@ package com.twitter.tweetypie.config
 import com.twitter.finagle.thrift.ClientId
 import com.twitter.servo.util.FutureArrow
 import com.twitter.tweetypie._
-import com.twitter.tweetypie.service.{ClientIdSettingTweetServiceProxy, TweetServiceProxy}
+import com.twitter.tweetypie.service.{ClientIdSettingTweetServiceProtwittery, TweetServiceProtwittery}
 
 /**
  * This class builds deciderable ThriftTweetService and FutureArrows that respect the
@@ -16,13 +16,13 @@ class ServiceInvocationBuilder(
 
   def withClientId(clientId: ClientId): ServiceInvocationBuilder =
     new ServiceInvocationBuilder(
-      new ClientIdSettingTweetServiceProxy(clientId, service),
+      new ClientIdSettingTweetServiceProtwittery(clientId, service),
       simulateDeferredrpcCallbacks
     )
 
   def asyncVia(asyncService: ThriftTweetService): ServiceInvocationBuilder =
     new ServiceInvocationBuilder(
-      new TweetServiceProxy {
+      new TweetServiceProtwittery {
         override def underlying: ThriftTweetService =
           if (simulateDeferredrpcCallbacks) service else asyncService
       },

@@ -25,7 +25,7 @@ scala_library(
         "visibility/lib/src/main/scala/com/twitter/visibility/util",
         "visibility/lib/src/main/thrift/com/twitter/visibility/safety_label_store:safety-label-store-scala",
     ],
-    exports = [
+    etwitterports = [
         "visibility/common/src/main/scala/com/twitter/visibility/common",
         "visibility/lib/src/main/scala/com/twitter/visibility",
     ],

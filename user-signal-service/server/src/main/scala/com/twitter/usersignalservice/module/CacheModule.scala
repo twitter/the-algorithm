@@ -1,7 +1,7 @@
 package com.twitter.usersignalservice.module
 
 import com.google.inject.Provides
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 import com.twitter.finagle.memcached.Client
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.finagle.stats.StatsReceiver
@@ -11,7 +11,7 @@ import com.twitter.storehaus_internal.memcache.MemcacheStore
 import com.twitter.storehaus_internal.util.ZkEndPoint
 import com.twitter.storehaus_internal.util.ClientName
 
-object CacheModule extends TwitterModule {
+object CacheModule etwittertends TwitterModule {
   private val cacheDest =
     flag[String](name = "cache_module.dest", help = "Path to memcache service")
   private val timeout =

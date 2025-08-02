@@ -40,7 +40,7 @@ class TWMLAPI HashedDataRecord : public TensorRecord {
 
   uint64_t totalSize() const { return m_keys.size(); }
 
-  void extendSize(int delta_size) {
+  void etwittertendSize(int delta_size) {
     int count = m_keys.size() + delta_size;
     m_keys.reserve(count);
     m_transformed_keys.reserve(count);

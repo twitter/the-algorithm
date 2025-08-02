@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.search.relevance.collectors;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import com.google.common.base.Preconditions;
 
@@ -23,7 +23,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
  * RelevanceTopCollector is a results collector that collects the top numResults by
  * score, filtering out duplicates.
  */
-public class RelevanceTopCollector extends AbstractRelevanceCollector {
+public class RelevanceTopCollector etwittertends AbstractRelevanceCollector {
   // Search results are collected in a min-heap.
   protected final RandomAccessPriorityQueue<RelevanceHit, TweetIntegerShingleSignature> minQueue;
 
@@ -113,7 +113,7 @@ public class RelevanceTopCollector extends AbstractRelevanceCollector {
   }
 
   @Override
-  protected void doCollectWithScore(final long tweetID, final float score) throws IOException {
+  protected void doCollectWithScore(final long tweetID, final float score) throws IOEtwitterception {
     ThriftSearchResultMetadata metadata = collectMetadata();
     scoringFunction.populateResultMetadataBasedOnScoringData(
         searchRequestInfo.getSearchQuery().getResultMetadataOptions(),
@@ -126,14 +126,14 @@ public class RelevanceTopCollector extends AbstractRelevanceCollector {
   public EarlyTerminationState innerShouldCollectMore() {
     // Note that numHitsCollected here might be less than num results collected in the
     // TwitterEarlyTerminationCollector, if we hit dups or there are very low scores.
-    if (numHitsCollected >= getMaxHitsToProcess()) {
-      return setEarlyTerminationState(EarlyTerminationState.TERMINATED_MAX_HITS_EXCEEDED);
+    if (numHitsCollected >= getMatwitterHitsToProcess()) {
+      return setEarlyTerminationState(EarlyTerminationState.TERMINATED_MAtwitter_HITS_EtwitterCEEDED);
     }
     return EarlyTerminationState.COLLECTING;
   }
 
   @Override
-  protected RelevanceSearchResults doGetRelevanceResults() throws IOException {
+  protected RelevanceSearchResults doGetRelevanceResults() throws IOEtwitterception {
     return getRelevanceResultsInternal();
   }
 

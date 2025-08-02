@@ -23,7 +23,7 @@ class TweetSocialProofHandler(
   tweetSocialProofRunner: TweetSocialProofRunner,
   decider: UserTweetEntityGraphDecider,
   statsReceiver: StatsReceiver)
-    extends RequestHandler[SocialProofThriftRequest, SocialProofThriftResponse] {
+    etwittertends RequestHandler[SocialProofThriftRequest, SocialProofThriftResponse] {
   private val stats = statsReceiver.scope(this.getClass.getSimpleName)
 
   def getThriftSocialProof(
@@ -41,7 +41,7 @@ class TweetSocialProofHandler(
               connectingUsers.asScala.map { Long2long }.toSeq)
         }.toMap
       case _ =>
-        throw new Exception("TweetSocialProofHandler gets wrong TweetSocialProof response")
+        throw new Etwitterception("TweetSocialProofHandler gets wrong TweetSocialProof response")
     }
   }
 

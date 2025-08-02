@@ -1,6 +1,6 @@
 package com.twitter.search.common.query;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import com.google.common.base.Preconditions;
 
@@ -12,7 +12,7 @@ import org.apache.lucene.search.Weight;
  * Scorer implementation that adds attribute collection support for an underlying query.
  * Meant to be used in conjunction with {@link IdentifiableQuery}.
  */
-public class IdentifiableQueryScorer extends FilteredScorer {
+public class IdentifiableQueryScorer etwittertends FilteredScorer {
   private final FieldRankHitInfo queryId;
   private final HitAttributeCollector attrCollector;
 
@@ -34,8 +34,8 @@ public class IdentifiableQueryScorer extends FilteredScorer {
       }
 
       @Override
-      public int nextDoc() throws IOException {
-        int docid = superDISI.nextDoc();
+      public int netwittertDoc() throws IOEtwitterception {
+        int docid = superDISI.netwittertDoc();
         if (docid != NO_MORE_DOCS) {
           attrCollector.collectScorerAttribution(docid, queryId);
         }
@@ -43,7 +43,7 @@ public class IdentifiableQueryScorer extends FilteredScorer {
       }
 
       @Override
-      public int advance(int target) throws IOException {
+      public int advance(int target) throws IOEtwitterception {
         int docid = superDISI.advance(target);
         if (docid != NO_MORE_DOCS) {
           attrCollector.collectScorerAttribution(docid, queryId);

@@ -14,14 +14,14 @@ import com.twitter.search.feature_update_service.whitelist.ClientIdWhitelist;
 import com.twitter.util.Future;
 
 @Singleton
-public class ClientIdWhitelistFilter extends AbstractThriftFilter {
+public class ClientIdWhitelistFilter etwittertends AbstractThriftFilter {
   private final boolean enabled;
   private final ClientIdWhitelist whitelist;
 
   private final SearchRateCounter unknownClientIdStat =
-      SearchRateCounter.export("unknown_client_id");
+      SearchRateCounter.etwitterport("unknown_client_id");
   private final SearchRateCounter noClientIdStat =
-      SearchRateCounter.export("no_client_id");
+      SearchRateCounter.etwitterport("no_client_id");
 
   @Inject
   public ClientIdWhitelistFilter(

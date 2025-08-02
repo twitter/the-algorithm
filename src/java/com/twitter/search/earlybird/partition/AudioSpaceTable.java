@@ -13,8 +13,8 @@ import com.twitter.util.Duration;
 import com.twitter.util.Time;
 
 public class AudioSpaceTable {
-  private static final String STATS_PREFIX = "audio_space_";
-  private static final Duration AUDIO_EVENT_EXPIRATION_DURATION =
+  private static final String STATS_PREFItwitter = "audio_space_";
+  private static final Duration AUDIO_EVENT_EtwitterPIRATION_DURATION =
       Duration.fromHours(12);
 
   private final Set<String> startedSpaces;
@@ -28,19 +28,19 @@ public class AudioSpaceTable {
   private final Clock clock;
 
   private final SearchRateCounter audioSpaceStarts =
-      SearchRateCounter.export(STATS_PREFIX + "stream_starts");
+      SearchRateCounter.etwitterport(STATS_PREFItwitter + "stream_starts");
   private final SearchRateCounter audioSpaceFinishes =
-      SearchRateCounter.export(STATS_PREFIX + "stream_finishes");
+      SearchRateCounter.etwitterport(STATS_PREFItwitter + "stream_finishes");
   private final SearchRateCounter isRunningCalls =
-      SearchRateCounter.export(STATS_PREFIX + "is_running_calls");
+      SearchRateCounter.etwitterport(STATS_PREFItwitter + "is_running_calls");
   private final SearchRateCounter audioSpaceDuplicateStarts =
-      SearchRateCounter.export(STATS_PREFIX + "duplicate_start_events");
+      SearchRateCounter.etwitterport(STATS_PREFItwitter + "duplicate_start_events");
   private final SearchRateCounter audioSpaceDuplicateFinishes =
-      SearchRateCounter.export(STATS_PREFIX + "duplicate_finish_events");
+      SearchRateCounter.etwitterport(STATS_PREFItwitter + "duplicate_finish_events");
   private final SearchRateCounter startsProcessedAfterCorrespondingFinishes =
-      SearchRateCounter.export(STATS_PREFIX + "starts_processed_after_corresponding_finishes");
+      SearchRateCounter.etwitterport(STATS_PREFItwitter + "starts_processed_after_corresponding_finishes");
   private final SearchRateCounter finishesProcessedWithoutCorrespondingStarts =
-      SearchRateCounter.export(STATS_PREFIX + "finishes_processed_without_corresponding_starts");
+      SearchRateCounter.etwitterport(STATS_PREFItwitter + "finishes_processed_without_corresponding_starts");
 
   public AudioSpaceTable(Clock clock) {
     // We read and write from different threads, so we need a thread-safe set implementation.
@@ -48,13 +48,13 @@ public class AudioSpaceTable {
     finishedSpaces = new ConcurrentSkipListSet<>();
     timestampedSpaceEvents = new ArrayDeque<>();
     this.clock = clock;
-    SearchCustomGauge.export(STATS_PREFIX + "live", this::getNumberOfLiveAudioSpaces);
-    SearchCustomGauge.export(STATS_PREFIX + "retained_starts", startedSpaces::size);
-    SearchCustomGauge.export(STATS_PREFIX + "retained_finishes", finishedSpaces::size);
+    SearchCustomGauge.etwitterport(STATS_PREFItwitter + "live", this::getNumberOfLiveAudioSpaces);
+    SearchCustomGauge.etwitterport(STATS_PREFItwitter + "retained_starts", startedSpaces::size);
+    SearchCustomGauge.etwitterport(STATS_PREFItwitter + "retained_finishes", finishedSpaces::size);
   }
 
   private int getNumberOfLiveAudioSpaces() {
-    // This call is a bit expensive, but I logged it and it's getting called once a minute, at
+    // This call is a bit etwitterpensive, but I logged it and it's getting called once a minute, at
     // the beginning of the minute, so it's fine.
     int count = 0;
     for (String startedSpace : startedSpaces) {
@@ -73,8 +73,8 @@ public class AudioSpaceTable {
     Time now = Time.fromMilliseconds(clock.nowMillis());
     while (oldest != null) {
       Duration durationSinceInsert = now.minus(oldest.getFirst());
-      if (durationSinceInsert.compareTo(AUDIO_EVENT_EXPIRATION_DURATION) > 0) {
-        // This event has expired, so we purge it and move on to the next.
+      if (durationSinceInsert.compareTo(AUDIO_EVENT_EtwitterPIRATION_DURATION) > 0) {
+        // This event has etwitterpired, so we purge it and move on to the netwittert.
         String oldSpaceId = oldest.getSecond();
         startedSpaces.remove(oldSpaceId);
         finishedSpaces.remove(oldSpaceId);

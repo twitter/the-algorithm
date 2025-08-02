@@ -13,7 +13,7 @@ import com.twitter.search.earlybird.thrift.EarlybirdRequest;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.util.Future;
 
-public class NamedMultiTermDisjunctionStatsFilter extends
+public class NamedMultiTermDisjunctionStatsFilter etwittertends
     SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
 
     private static final String STAT_FORMAT = "named_disjunction_size_client_%s_key_%s";

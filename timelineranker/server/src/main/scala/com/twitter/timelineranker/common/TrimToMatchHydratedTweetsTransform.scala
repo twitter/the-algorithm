@@ -12,7 +12,7 @@ import com.twitter.util.Future
  * down to match the hydrated tweets.)
  */
 object TrimToMatchHydratedTweetsTransform
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+    etwittertends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
   override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
     val filteredSearchResults =
       trimSearchResults(envelope.searchResults, envelope.hydratedTweets.outerTweets)

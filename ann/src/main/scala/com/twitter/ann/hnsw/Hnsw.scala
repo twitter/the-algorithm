@@ -5,7 +5,7 @@ import com.twitter.ann.common.EmbeddingType._
 import com.twitter.ann.common.Metric.toThrift
 import com.twitter.ann.common._
 import com.twitter.ann.common.thriftscala.DistanceMetric
-import com.twitter.ann.hnsw.HnswIndex.RandomProvider
+import com.twitter.ann.hnsw.HnswIndetwitter.RandomProvider
 import com.twitter.util.Future
 import java.util.Random
 import java.util.concurrent.ConcurrentHashMap
@@ -19,8 +19,8 @@ private[hnsw] object Hnsw {
     dimension: Int,
     metric: Metric[D],
     efConstruction: Int,
-    maxM: Int,
-    expectedElements: Int,
+    matwitterM: Int,
+    etwitterpectedElements: Int,
     futurePool: ReadWriteFuturePool,
     idEmbeddingMap: IdEmbeddingMap[T]
   ): Hnsw[T, D] = {
@@ -29,35 +29,35 @@ private[hnsw] object Hnsw {
     }
     val distFn =
       DistanceFunctionGenerator(metric, (key: T) => idEmbeddingMap.get(key))
-    val internalIndex = new HnswIndex[T, EmbeddingVector](
-      distFn.index,
+    val internalIndetwitter = new HnswIndetwitter[T, EmbeddingVector](
+      distFn.indetwitter,
       distFn.query,
       efConstruction,
-      maxM,
-      expectedElements,
+      matwitterM,
+      etwitterpectedElements,
       randomProvider
     )
     new Hnsw[T, D](
       dimension,
       metric,
-      internalIndex,
+      internalIndetwitter,
       futurePool,
       idEmbeddingMap,
       distFn.shouldNormalize,
-      LockedAccess.apply(expectedElements)
+      LockedAccess.apply(etwitterpectedElements)
     )
   }
 }
 
 private[hnsw] object LockedAccess {
-  protected[hnsw] def apply[T](expectedElements: Int): LockedAccess[T] =
-    DefaultLockedAccess(new ConcurrentHashMap[T, Lock](expectedElements))
+  protected[hnsw] def apply[T](etwitterpectedElements: Int): LockedAccess[T] =
+    DefaultLockedAccess(new ConcurrentHashMap[T, Lock](etwitterpectedElements))
   protected[hnsw] def apply[T](): LockedAccess[T] =
     DefaultLockedAccess(new ConcurrentHashMap[T, Lock]())
 }
 
 private[hnsw] case class DefaultLockedAccess[T](locks: ConcurrentHashMap[T, Lock])
-    extends LockedAccess[T] {
+    etwittertends LockedAccess[T] {
   override def lockProvider(item: T) = locks.computeIfAbsent(item, (_: T) => new ReentrantLock())
 }
 
@@ -78,36 +78,36 @@ private[hnsw] trait LockedAccess[T] {
 private[hnsw] class Hnsw[T, D <: Distance[D]](
   dimension: Int,
   metric: Metric[D],
-  hnswIndex: HnswIndex[T, EmbeddingVector],
+  hnswIndetwitter: HnswIndetwitter[T, EmbeddingVector],
   readWriteFuturePool: ReadWriteFuturePool,
   idEmbeddingMap: IdEmbeddingMap[T],
   shouldNormalize: Boolean,
   lockedAccess: LockedAccess[T] = LockedAccess.apply[T]())
-    extends Appendable[T, HnswParams, D]
+    etwittertends Appendable[T, HnswParams, D]
     with Queryable[T, HnswParams, D]
     with Updatable[T] {
   override def append(entity: EntityEmbedding[T]): Future[Unit] = {
     readWriteFuturePool.write {
-      val indexDimension = entity.embedding.length
+      val indetwitterDimension = entity.embedding.length
       assert(
-        toThrift(metric) == DistanceMetric.EditDistance || indexDimension == dimension,
-        s"Dimension mismatch for index(${indexDimension}) and embedding($dimension)"
+        toThrift(metric) == DistanceMetric.EditDistance || indetwitterDimension == dimension,
+        s"Dimension mismatch for indetwitter(${indetwitterDimension}) and embedding($dimension)"
       )
 
       lockedAccess.lock(entity.id) {
         // To make this thread-safe, we are using ConcurrentHashMap#putIfAbsent underneath,
-        // so if there is a pre-existing item, put() will return something that is not null
+        // so if there is a pre-etwitteristing item, put() will return something that is not null
         val embedding = idEmbeddingMap.putIfAbsent(entity.id, updatedEmbedding(entity.embedding))
 
-        if (embedding == null) { // New element - insert into the index
-          hnswIndex.insert(entity.id)
-        } else { // Existing element - update the embedding and graph structure
-          throw new IllegalDuplicateInsertException(
+        if (embedding == null) { // New element - insert into the indetwitter
+          hnswIndetwitter.insert(entity.id)
+        } else { // Etwitteristing element - update the embedding and graph structure
+          throw new IllegalDuplicateInsertEtwitterception(
             "Append method does not permit duplicates (try using update method): " + entity.id)
         }
       }
     } onFailure { e =>
-      Future.exception(e)
+      Future.etwitterception(e)
     }
   }
 
@@ -127,13 +127,13 @@ private[hnsw] class Hnsw[T, D <: Distance[D]](
     numOfNeighbours: Int,
     runtimeParams: HnswParams
   ): Future[List[NeighborWithDistance[T, D]]] = {
-    val indexDimension = embedding.length
+    val indetwitterDimension = embedding.length
     assert(
-      toThrift(metric) == DistanceMetric.EditDistance || indexDimension == dimension,
-      s"Dimension mismatch for index(${indexDimension}) and embedding($dimension)"
+      toThrift(metric) == DistanceMetric.EditDistance || indetwitterDimension == dimension,
+      s"Dimension mismatch for indetwitter(${indetwitterDimension}) and embedding($dimension)"
     )
     readWriteFuturePool.read {
-      hnswIndex
+      hnswIndetwitter
         .searchKnn(updatedEmbedding(embedding), numOfNeighbours, runtimeParams.ef)
         .asScala
         .map { nn =>
@@ -154,7 +154,7 @@ private[hnsw] class Hnsw[T, D <: Distance[D]](
     }
   }
 
-  def getIndex: HnswIndex[T, EmbeddingVector] = hnswIndex
+  def getIndetwitter: HnswIndetwitter[T, EmbeddingVector] = hnswIndetwitter
   def getDimen: Int = dimension
   def getMetric: Metric[D] = metric
   def getIdEmbeddingMap: IdEmbeddingMap[T] = idEmbeddingMap
@@ -162,22 +162,22 @@ private[hnsw] class Hnsw[T, D <: Distance[D]](
     entity: EntityEmbedding[T]
   ): Future[Unit] = {
     readWriteFuturePool.write {
-      val indexDimension = entity.embedding.length
+      val indetwitterDimension = entity.embedding.length
       assert(
-        toThrift(metric) == DistanceMetric.EditDistance || indexDimension == dimension,
-        s"Dimension mismatch for index(${indexDimension}) and embedding($dimension)"
+        toThrift(metric) == DistanceMetric.EditDistance || indetwitterDimension == dimension,
+        s"Dimension mismatch for indetwitter(${indetwitterDimension}) and embedding($dimension)"
       )
 
       lockedAccess.lock(entity.id) {
         val embedding = idEmbeddingMap.put(entity.id, updatedEmbedding(entity.embedding))
-        if (embedding == null) { // New element - insert into the index
-          hnswIndex.insert(entity.id)
-        } else { // Existing element - update the embedding and graph structure
-          hnswIndex.reInsert(entity.id);
+        if (embedding == null) { // New element - insert into the indetwitter
+          hnswIndetwitter.insert(entity.id)
+        } else { // Etwitteristing element - update the embedding and graph structure
+          hnswIndetwitter.reInsert(entity.id);
         }
       }
     } onFailure { e =>
-      Future.exception(e)
+      Future.etwitterception(e)
     }
   }
 }

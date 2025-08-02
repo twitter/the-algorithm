@@ -3,7 +3,7 @@ package com.twitter.follow_recommendations.common.base
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.stitch.Stitch
 import com.twitter.util.Duration
-import com.twitter.util.TimeoutException
+import com.twitter.util.TimeoutEtwitterception
 
 /**
  * Ranker is a special kind of transform that would only change the order of a list of items.
@@ -12,7 +12,7 @@ import com.twitter.util.TimeoutException
  * @tparam Target target to recommend the candidates
  * @tparam Candidate candidate type to rank
  */
-trait Ranker[Target, Candidate] extends Transform[Target, Candidate] { ranker =>
+trait Ranker[Target, Candidate] etwittertends Transform[Target, Candidate] { ranker =>
 
   def rank(target: Target, candidates: Seq[Candidate]): Stitch[Seq[Candidate]]
 
@@ -59,7 +59,7 @@ trait Ranker[Target, Candidate] extends Transform[Target, Candidate] { ranker =>
           .rank(target, candidates)
           .within(timeout)(com.twitter.finagle.util.DefaultTimer)
           .rescue {
-            case _: TimeoutException =>
+            case _: TimeoutEtwitterception =>
               timeoutCounter.incr()
               Stitch.value(candidates)
           }
@@ -84,7 +84,7 @@ object Ranker {
   }
 }
 
-class IdentityRanker[Target, Candidate] extends Ranker[Target, Candidate] {
+class IdentityRanker[Target, Candidate] etwittertends Ranker[Target, Candidate] {
   def rank(target: Target, candidates: Seq[Candidate]): Stitch[Seq[Candidate]] =
     Stitch.value(candidates)
 }

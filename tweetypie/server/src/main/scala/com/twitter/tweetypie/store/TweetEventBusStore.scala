@@ -4,7 +4,7 @@ package store
 import com.twitter.tweetypie.thriftscala._
 
 trait TweetEventBusStore
-    extends TweetStoreBase[TweetEventBusStore]
+    etwittertends TweetStoreBase[TweetEventBusStore]
     with AsyncDeleteAdditionalFields.Store
     with AsyncDeleteTweet.Store
     with AsyncInsertTweet.Store
@@ -202,7 +202,7 @@ object TweetEventDataScrubber {
     tweet.copy(
       cards = None,
       card2 = None,
-      media = tweet.media.map(_.map { mediaEntity => mediaEntity.copy(extensionsReply = None) }),
+      media = tweet.media.map(_.map { mediaEntity => mediaEntity.copy(etwittertensionsReply = None) }),
       previousCounts = None,
       editPerspective = None
     )

@@ -13,10 +13,10 @@ import com.twitter.visibility.builder.FeatureMapBuilder
 import com.twitter.visibility.common.UserId
 import com.twitter.visibility.common.UserSource
 import com.twitter.visibility.features._
-import com.twitter.visibility.interfaces.common.blender.BlenderVFRequestContext
-import com.twitter.visibility.interfaces.common.search.SearchVFRequestContext
+import com.twitter.visibility.interfaces.common.blender.BlenderVFRequestContetwittert
+import com.twitter.visibility.interfaces.common.search.SearchVFRequestContetwittert
 import com.twitter.visibility.models.UserAge
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 
 class ViewerFeatures(userSource: UserSource, statsReceiver: StatsReceiver) {
   private[this] val scopedStatsReceiver = statsReceiver.scope("viewer_features")
@@ -48,40 +48,40 @@ class ViewerFeatures(userSource: UserSource, statsReceiver: StatsReceiver) {
   private[this] val viewerIsSoftUserCtr =
     scopedStatsReceiver.scope(ViewerIsSoftUser.name).counter("requests")
 
-  def forViewerBlenderContext(
-    blenderContext: BlenderVFRequestContext,
-    viewerContext: ViewerContext
+  def forViewerBlenderContetwittert(
+    blenderContetwittert: BlenderVFRequestContetwittert,
+    viewerContetwittert: ViewerContetwittert
   ): FeatureMapBuilder => FeatureMapBuilder =
-    forViewerContext(viewerContext)
+    forViewerContetwittert(viewerContetwittert)
       .andThen(
         _.withConstantFeature(
           ViewerOptInBlocking,
-          blenderContext.userSearchSafetySettings.optInBlocking)
+          blenderContetwittert.userSearchSafetySettings.optInBlocking)
           .withConstantFeature(
             ViewerOptInFiltering,
-            blenderContext.userSearchSafetySettings.optInFiltering)
+            blenderContetwittert.userSearchSafetySettings.optInFiltering)
       )
 
-  def forViewerSearchContext(
-    searchContext: SearchVFRequestContext,
-    viewerContext: ViewerContext
+  def forViewerSearchContetwittert(
+    searchContetwittert: SearchVFRequestContetwittert,
+    viewerContetwittert: ViewerContetwittert
   ): FeatureMapBuilder => FeatureMapBuilder =
-    forViewerContext(viewerContext)
+    forViewerContetwittert(viewerContetwittert)
       .andThen(
         _.withConstantFeature(
           ViewerOptInBlocking,
-          searchContext.userSearchSafetySettings.optInBlocking)
+          searchContetwittert.userSearchSafetySettings.optInBlocking)
           .withConstantFeature(
             ViewerOptInFiltering,
-            searchContext.userSearchSafetySettings.optInFiltering)
+            searchContetwittert.userSearchSafetySettings.optInFiltering)
       )
 
-  def forViewerContext(viewerContext: ViewerContext): FeatureMapBuilder => FeatureMapBuilder =
-    forViewerId(viewerContext.userId)
+  def forViewerContetwittert(viewerContetwittert: ViewerContetwittert): FeatureMapBuilder => FeatureMapBuilder =
+    forViewerId(viewerContetwittert.userId)
       .andThen(
-        _.withConstantFeature(RequestCountryCode, requestCountryCode(viewerContext))
+        _.withConstantFeature(RequestCountryCode, requestCountryCode(viewerContetwittert))
       ).andThen(
-        _.withConstantFeature(RequestIsVerifiedCrawler, requestIsVerifiedCrawler(viewerContext))
+        _.withConstantFeature(RequestIsVerifiedCrawler, requestIsVerifiedCrawler(viewerContetwittert))
       )
 
   def forViewerId(viewerId: Option[UserId]): FeatureMapBuilder => FeatureMapBuilder = { builder =>
@@ -149,7 +149,7 @@ class ViewerFeatures(userSource: UserSource, statsReceiver: StatsReceiver) {
     viewer: User,
     safetyCheck: Safety => Boolean
   ): Boolean = {
-    viewer.safety.exists(safetyCheck)
+    viewer.safety.etwitterists(safetyCheck)
   }
 
   def viewerIsProtected(viewerId: Option[UserId]): Stitch[Boolean] =
@@ -194,7 +194,7 @@ class ViewerFeatures(userSource: UserSource, statsReceiver: StatsReceiver) {
     (viewerId match {
       case Some(id) =>
         userSource
-          .getExtendedProfile(id).map(_.ageInYears)
+          .getEtwittertendedProfile(id).map(_.ageInYears)
           .handle {
             case NotFound => None
           }.ensure {
@@ -216,14 +216,14 @@ class ViewerFeatures(userSource: UserSource, statsReceiver: StatsReceiver) {
     }
   }
 
-  def requestCountryCode(viewerContext: ViewerContext): Option[String] = {
+  def requestCountryCode(viewerContetwittert: ViewerContetwittert): Option[String] = {
     requestCountryCode.incr()
-    viewerContext.requestCountryCode
+    viewerContetwittert.requestCountryCode
   }
 
-  def requestIsVerifiedCrawler(viewerContext: ViewerContext): Boolean = {
+  def requestIsVerifiedCrawler(viewerContetwittert: ViewerContetwittert): Boolean = {
     requestIsVerifiedCrawler.incr()
-    viewerContext.isVerifiedCrawler
+    viewerContetwittert.isVerifiedCrawler
   }
 
   def viewerCountryCode(viewerId: Option[UserId]): Stitch[String] =

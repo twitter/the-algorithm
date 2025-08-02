@@ -6,7 +6,7 @@ import com.twitter.servo.repository._
 import com.twitter.util.{Future, Return, Try}
 
 object KeyValueHydrator {
-  // KeyValueHydrator extends this function type
+  // KeyValueHydrator etwittertends this function type
   type FunctionType[Q, K, V] = (Q, Future[KeyValueResult[K, V]]) => Future[Mutation[V]]
   type Filter[Q, K, V] = (Q, Future[KeyValueResult[K, V]]) => Future[Boolean]
 
@@ -61,19 +61,19 @@ object KeyValueHydrator {
  *
  * Forms a monoid with KeyValueHydrator.unit as unit and `also` as the combining function.
  */
-trait KeyValueHydrator[Q, K, V] extends KeyValueHydrator.FunctionType[Q, K, V] {
+trait KeyValueHydrator[Q, K, V] etwittertends KeyValueHydrator.FunctionType[Q, K, V] {
   protected[this] val unitMutation = Mutation.unit[V]
   protected[this] val futureUnitMutation = Future.value(unitMutation)
 
   /**
    * Combines two KeyValueHydrators.  Forms a monoid with KeyValueHydator.unit
    */
-  def also(next: KeyValueHydrator[Q, K, V]): KeyValueHydrator[Q, K, V] =
-    KeyValueHydrator.inParallel(this, next)
+  def also(netwittert: KeyValueHydrator[Q, K, V]): KeyValueHydrator[Q, K, V] =
+    KeyValueHydrator.inParallel(this, netwittert)
 
   /**
    * Turns a single KeyValueHydrator into a RepositoryFilter by applying the Mutation to
-   * found values in the KeyValueResult.  If the mutation throws an exception, it will
+   * found values in the KeyValueResult.  If the mutation throws an etwitterception, it will
    * be caught and the resulting key/value paired moved to the failed map of the resulting
    * KeyValueResult.
    */
@@ -84,7 +84,7 @@ trait KeyValueHydrator[Q, K, V] extends KeyValueHydrator.FunctionType[Q, K, V] {
         futureResults map { results =>
           results.mapValues {
             case Return(Some(value)) => Try(Some(update(value)))
-            case x => x
+            case twitter => twitter
           }
         }
       }

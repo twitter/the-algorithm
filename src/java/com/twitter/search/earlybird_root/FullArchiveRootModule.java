@@ -3,9 +3,9 @@ package com.twitter.search.earlybird_root;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javatwitter.annotation.Nullable;
+import javatwitter.inject.Named;
+import javatwitter.inject.Singleton;
 
 import com.google.inject.Key;
 import com.google.inject.Provides;
@@ -40,13 +40,13 @@ import com.twitter.search.earlybird_root.caching.StrictRecencyCache;
 import com.twitter.search.earlybird_root.caching.TermStatsCache;
 import com.twitter.search.earlybird_root.caching.TopTweetsCache;
 import com.twitter.search.earlybird_root.caching.TopTweetsServicePostProcessor;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.filters.RequestContextToEarlybirdRequestFilter;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
+import com.twitter.search.earlybird_root.filters.RequestContetwittertToEarlybirdRequestFilter;
 import com.twitter.util.Future;
 
 import static com.twitter.search.earlybird_root.EarlybirdCommonModule.NAMED_ALT_CLIENT;
 
-public class FullArchiveRootModule extends TwitterModule {
+public class FullArchiveRootModule etwittertends TwitterModule {
   private static final String CLUSTER = "archive_full";
   private static final String ALT_TRAFFIC_PERCENTAGE_DECIDER_KEY =
       "full_archive_alt_client_traffic_percentage";
@@ -74,7 +74,7 @@ public class FullArchiveRootModule extends TwitterModule {
   }
 
   @Provides
-  PartitionLoggingSupport<EarlybirdRequestContext> providePartitionLoggingSupport() {
+  PartitionLoggingSupport<EarlybirdRequestContetwittert> providePartitionLoggingSupport() {
     return new EarlybirdServicePartitionLoggingSupport();
   }
 
@@ -89,7 +89,7 @@ public class FullArchiveRootModule extends TwitterModule {
   @Named(NAMED_ALT_CLIENT)
   EarlybirdServiceChainBuilder provideAltEarlybirdServiceChainBuilder(
       @Named(NAMED_ALT_CLIENT) @Nullable PartitionConfig altPartitionConfig,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
+      RequestContetwittertToEarlybirdRequestFilter requestContetwittertToEarlybirdRequestFilter,
       EarlybirdTierThrottleDeciders tierThrottleDeciders,
       @Named(SearchRootModule.NAMED_NORMALIZED_SEARCH_ROOT_NAME) String normalizedSearchRootName,
       SearchDecider decider,
@@ -105,7 +105,7 @@ public class FullArchiveRootModule extends TwitterModule {
 
     return new EarlybirdServiceChainBuilder(
         altPartitionConfig,
-        requestContextToEarlybirdRequestFilter,
+        requestContetwittertToEarlybirdRequestFilter,
         tierThrottleDeciders,
         normalizedSearchRootName,
         decider,
@@ -123,7 +123,7 @@ public class FullArchiveRootModule extends TwitterModule {
   EarlybirdChainedScatterGatherService provideAltEarlybirdChainedScatterGatherService(
       @Named(NAMED_ALT_CLIENT) @Nullable EarlybirdServiceChainBuilder altServiceChainBuilder,
       EarlybirdServiceScatterGatherSupport scatterGatherSupport,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport
+      PartitionLoggingSupport<EarlybirdRequestContetwittert> partitionLoggingSupport
   ) {
     if (altServiceChainBuilder == null) {
       return null;
@@ -138,7 +138,7 @@ public class FullArchiveRootModule extends TwitterModule {
 
   @Provides
   @Singleton
-  Service<EarlybirdRequestContext, List<Future<EarlybirdResponse>>>
+  Service<EarlybirdRequestContetwittert, List<Future<EarlybirdResponse>>>
   provideEarlybirdChainedScatterGatherService(
       EarlybirdChainedScatterGatherService chainedScatterGatherService,
       @Named(NAMED_ALT_CLIENT) @Nullable
@@ -147,7 +147,7 @@ public class FullArchiveRootModule extends TwitterModule {
   ) {
     if (forceAltClientFlag.apply()) {
       if (altChainedScatterGatherService == null) {
-        throw new RuntimeException(
+        throw new RuntimeEtwitterception(
             "alt client cannot be null when 'force_alt_client' is set to true");
       } else {
         return altChainedScatterGatherService;
@@ -172,11 +172,11 @@ public class FullArchiveRootModule extends TwitterModule {
   Cache<EarlybirdRequest, EarlybirdResponse> provideRecencyCache(
       JavaClient client,
       DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
+      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFItwitter) String serializedKeyPrefitwitter,
+      @Named(SearchRootModule.NAMED_CACHE_KEY_MAtwitter_BYTES) int cacheKeyMatwitterBytes,
+      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAtwitter_BYTES) int cacheValueMatwitterBytes) {
     return EarlybirdCacheCommonModule.createCache(client, decider, CLUSTER + "_recency_root",
-        serializedKeyPrefix, TimeUnit.HOURS.toMillis(2), cacheKeyMaxBytes, cacheValueMaxBytes);
+        serializedKeyPrefitwitter, TimeUnit.HOURS.toMillis(2), cacheKeyMatwitterBytes, cacheValueMatwitterBytes);
   }
 
   @Provides
@@ -185,11 +185,11 @@ public class FullArchiveRootModule extends TwitterModule {
   Cache<EarlybirdRequest, EarlybirdResponse> provideRelevanceCache(
       JavaClient client,
       DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
+      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFItwitter) String serializedKeyPrefitwitter,
+      @Named(SearchRootModule.NAMED_CACHE_KEY_MAtwitter_BYTES) int cacheKeyMatwitterBytes,
+      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAtwitter_BYTES) int cacheValueMatwitterBytes) {
     return EarlybirdCacheCommonModule.createCache(client, decider, CLUSTER + "_relevance_root",
-        serializedKeyPrefix, TimeUnit.HOURS.toMillis(2), cacheKeyMaxBytes, cacheValueMaxBytes);
+        serializedKeyPrefitwitter, TimeUnit.HOURS.toMillis(2), cacheKeyMatwitterBytes, cacheValueMatwitterBytes);
   }
 
   @Provides
@@ -198,11 +198,11 @@ public class FullArchiveRootModule extends TwitterModule {
   Cache<EarlybirdRequest, EarlybirdResponse> provideStrictRecencyCache(
       JavaClient client,
       DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
+      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFItwitter) String serializedKeyPrefitwitter,
+      @Named(SearchRootModule.NAMED_CACHE_KEY_MAtwitter_BYTES) int cacheKeyMatwitterBytes,
+      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAtwitter_BYTES) int cacheValueMatwitterBytes) {
     return EarlybirdCacheCommonModule.createCache(client, decider, CLUSTER + "_strict_recency_root",
-        serializedKeyPrefix, TimeUnit.HOURS.toMillis(2), cacheKeyMaxBytes, cacheValueMaxBytes);
+        serializedKeyPrefitwitter, TimeUnit.HOURS.toMillis(2), cacheKeyMatwitterBytes, cacheValueMatwitterBytes);
   }
 
   @Provides
@@ -211,11 +211,11 @@ public class FullArchiveRootModule extends TwitterModule {
   Cache<EarlybirdRequest, EarlybirdResponse> provideTermStatsCache(
       JavaClient client,
       DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
+      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFItwitter) String serializedKeyPrefitwitter,
+      @Named(SearchRootModule.NAMED_CACHE_KEY_MAtwitter_BYTES) int cacheKeyMatwitterBytes,
+      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAtwitter_BYTES) int cacheValueMatwitterBytes) {
     return EarlybirdCacheCommonModule.createCache(client, decider, CLUSTER + "_termstats_root",
-        serializedKeyPrefix, TimeUnit.MINUTES.toMillis(5), cacheKeyMaxBytes, cacheValueMaxBytes);
+        serializedKeyPrefitwitter, TimeUnit.MINUTES.toMillis(5), cacheKeyMatwitterBytes, cacheValueMatwitterBytes);
   }
 
   @Provides
@@ -224,12 +224,12 @@ public class FullArchiveRootModule extends TwitterModule {
   Cache<EarlybirdRequest, EarlybirdResponse> provideTopTweetsCache(
       JavaClient client,
       DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
+      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFItwitter) String serializedKeyPrefitwitter,
+      @Named(SearchRootModule.NAMED_CACHE_KEY_MAtwitter_BYTES) int cacheKeyMatwitterBytes,
+      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAtwitter_BYTES) int cacheValueMatwitterBytes) {
     return EarlybirdCacheCommonModule.createCache(client, decider, CLUSTER + "_toptweets_root",
-        serializedKeyPrefix, TopTweetsServicePostProcessor.CACHE_AGE_IN_MS,
-        cacheKeyMaxBytes, cacheValueMaxBytes);
+        serializedKeyPrefitwitter, TopTweetsServicePostProcessor.CACHE_AGE_IN_MS,
+        cacheKeyMatwitterBytes, cacheValueMatwitterBytes);
   }
 
   @Provides

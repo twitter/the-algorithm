@@ -15,7 +15,7 @@ object WorkerFlagNames {
  * Initializes references to the flag values defined in the aurora.deploy file.
  * To check what the flag values are initialized in runtime, search FlagsModule in stdout
  */
-object WorkerFlagModule extends TwitterModule {
+object WorkerFlagModule etwittertends TwitterModule {
 
   import WorkerFlagNames._
 

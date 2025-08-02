@@ -20,7 +20,7 @@ case class SimClustersEmbeddingStore(
   stores: Map[
     (EmbeddingType, ModelVersion),
     ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ]) extends ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] {
+  ]) etwittertends ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] {
 
   private val lookupStores =
     stores
@@ -45,7 +45,7 @@ case class SimClustersEmbeddingStore(
     } else {
       val head = ks.head
       val notSameType =
-        ks.exists(k => k.embeddingType != head.embeddingType || k.modelVersion != head.modelVersion)
+        ks.etwitterists(k => k.embeddingType != head.embeddingType || k.modelVersion != head.modelVersion)
       if (!notSameType) {
         findStore(head) match {
           case Some(store) => store.multiGet(ks)

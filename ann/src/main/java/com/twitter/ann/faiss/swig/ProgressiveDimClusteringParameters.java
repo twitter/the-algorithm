@@ -8,7 +8,7 @@
 
 package com.twitter.ann.faiss;
 
-public class ProgressiveDimClusteringParameters extends ClusteringParameters {
+public class ProgressiveDimClusteringParameters etwittertends ClusteringParameters {
   private transient long swigCPtr;
 
   protected ProgressiveDimClusteringParameters(long cPtr, boolean cMemoryOwn) {

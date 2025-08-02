@@ -5,7 +5,7 @@ import com.twitter.takedown.util.TakedownReasons
 import com.twitter.tseng.withholding.thriftscala.TakedownReason
 import com.twitter.tweetypie.thriftscala._
 
-object Takedown extends TweetStore.SyncModule {
+object Takedown etwittertends TweetStore.SyncModule {
 
   case class Event(
     tweet: Tweet, // for CachingTweetStore / ManhattanTweetStore / ReplicatedTakedown
@@ -21,7 +21,7 @@ object Takedown extends TweetStore.SyncModule {
     scribeForAudit: Boolean = true,
     // If ManhattanTweetStore should update countryCodes and reasons
     updateCodesAndReasons: Boolean = false)
-      extends SyncTweetStoreEvent("takedown") {
+      etwittertends SyncTweetStoreEvent("takedown") {
     def toAsyncRequest(): AsyncTakedownRequest =
       AsyncTakedownRequest(
         tweet = tweet,
@@ -42,7 +42,7 @@ object Takedown extends TweetStore.SyncModule {
     val takedown: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val takedown: FutureEffect[Event] = wrap(underlying.takedown)
   }
 
@@ -69,7 +69,7 @@ object Takedown extends TweetStore.SyncModule {
   }
 }
 
-object AsyncTakedown extends TweetStore.AsyncModule {
+object AsyncTakedown etwittertends TweetStore.AsyncModule {
 
   object Event {
     def fromAsyncRequest(request: AsyncTakedownRequest): TweetStoreEventOrRetry[Event] =
@@ -104,7 +104,7 @@ object AsyncTakedown extends TweetStore.AsyncModule {
     byUserId: Option[UserId], // for Guano
     eventbusEnqueue: Boolean,
     scribeForAudit: Boolean)
-      extends AsyncTweetStoreEvent("async_takedown")
+      etwittertends AsyncTweetStoreEvent("async_takedown")
       with TweetStoreTweetEvent {
 
     def toAsyncRequest(action: Option[AsyncWriteAction] = None): AsyncTakedownRequest =
@@ -141,7 +141,7 @@ object AsyncTakedown extends TweetStore.AsyncModule {
   }
 
   case class RetryEvent(action: AsyncWriteAction, event: Event)
-      extends TweetStoreRetryEvent[Event] {
+      etwittertends TweetStoreRetryEvent[Event] {
 
     override val eventType: AsyncWriteEventType.Takedown.type = AsyncWriteEventType.Takedown
     override val scribedTweetOnFailure: Option[Tweet] = Some(event.tweet)
@@ -152,7 +152,7 @@ object AsyncTakedown extends TweetStore.AsyncModule {
     val retryAsyncTakedown: FutureEffect[TweetStoreRetryEvent[Event]]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val asyncTakedown: FutureEffect[Event] = wrap(underlying.asyncTakedown)
     override val retryAsyncTakedown: FutureEffect[TweetStoreRetryEvent[Event]] = wrap(
       underlying.retryAsyncTakedown)
@@ -171,8 +171,8 @@ object AsyncTakedown extends TweetStore.AsyncModule {
           eventBusEnqueueStore
         )
 
-      def build[E <: TweetStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
-        FutureEffect.inParallel[E](stores.map(extract): _*)
+      def build[E <: TweetStoreEvent](etwittertract: Store => FutureEffect[E]): FutureEffect[E] =
+        FutureEffect.inParallel[E](stores.map(etwittertract): _*)
 
       new Store {
         override val asyncTakedown: FutureEffect[Event] = build(_.asyncTakedown)
@@ -183,15 +183,15 @@ object AsyncTakedown extends TweetStore.AsyncModule {
   }
 }
 
-object ReplicatedTakedown extends TweetStore.ReplicatedModule {
+object ReplicatedTakedown etwittertends TweetStore.ReplicatedModule {
 
-  case class Event(tweet: Tweet) extends ReplicatedTweetStoreEvent("takedown")
+  case class Event(tweet: Tweet) etwittertends ReplicatedTweetStoreEvent("takedown")
 
   trait Store {
     val replicatedTakedown: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val replicatedTakedown: FutureEffect[Event] = wrap(underlying.replicatedTakedown)
   }
 

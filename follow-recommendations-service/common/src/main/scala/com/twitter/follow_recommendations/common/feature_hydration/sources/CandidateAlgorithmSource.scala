@@ -10,10 +10,10 @@ import com.twitter.follow_recommendations.common.feature_hydration.common.Featur
 import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
+import com.twitter.follow_recommendations.common.models.HasSimilarToContetwittert
 import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.ml.api.FeatureContetwittert
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.timelines.configapi.HasParams
 
@@ -24,17 +24,17 @@ import com.twitter.timelines.configapi.HasParams
 
 @Provides
 @Singleton
-class CandidateAlgorithmSource @Inject() (stats: StatsReceiver) extends FeatureSource {
+class CandidateAlgorithmSource @Inject() (stats: StatsReceiver) etwittertends FeatureSource {
 
   override val id: FeatureSourceId = FeatureSourceId.CandidateAlgorithmSourceId
 
-  override val featureContext: FeatureContext = CandidateAlgorithmAdapter.getFeatureContext
+  override val featureContetwittert: FeatureContetwittert = CandidateAlgorithmAdapter.getFeatureContetwittert
 
   override def hydrateFeatures(
-    t: HasClientContext
+    t: HasClientContetwittert
       with HasPreFetchedFeature
       with HasParams
-      with HasSimilarToContext
+      with HasSimilarToContetwittert
       with HasDisplayLocation, // we don't use the target here
     candidates: Seq[CandidateUser]
   ): Stitch[Map[CandidateUser, DataRecord]] = {

@@ -27,7 +27,7 @@ object DataPaths {
 
 /**
  * These should only be accessed from simclusters_v2 data pipeline for intermediate data, these
- * are not opt-out compliant and shouldn't be exposed externally.
+ * are not opt-out compliant and shouldn't be etwitterposed etwitterternally.
  */
 object InternalDataPaths {
   // Internal versions, not to be read or written outside of simcluster_v2

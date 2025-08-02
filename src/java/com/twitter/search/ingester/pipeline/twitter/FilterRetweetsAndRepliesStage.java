@@ -1,20 +1,20 @@
 package com.twitter.search.ingester.pipeline.twitter;
 
-import org.apache.commons.pipeline.StageException;
+import org.apache.commons.pipeline.StageEtwitterception;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducedTypes;
 
 import com.twitter.search.common.decider.DeciderUtil;
 import com.twitter.search.common.metrics.SearchRateCounter;
 import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeEtwitterception;
 
 /**
  * Filters out tweets that are not retweets or replies.
  */
 @ConsumedTypes(IngesterTwitterMessage.class)
 @ProducedTypes(IngesterTwitterMessage.class)
-public class FilterRetweetsAndRepliesStage extends TwitterBaseStage
+public class FilterRetweetsAndRepliesStage etwittertends TwitterBaseStage
     <IngesterTwitterMessage, IngesterTwitterMessage> {
   private static final String EMIT_RETWEET_AND_REPLY_ENGAGEMENTS_DECIDER_KEY =
       "ingester_realtime_emit_retweet_and_reply_engagements";
@@ -32,18 +32,18 @@ public class FilterRetweetsAndRepliesStage extends TwitterBaseStage
   @Override
   protected void innerSetupStats() {
     filteredRetweetsCount =
-        SearchRateCounter.export(getStageNamePrefix() + "_filtered_retweets_count");
+        SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_filtered_retweets_count");
     filteredRepliesToTweetsCount =
-        SearchRateCounter.export(getStageNamePrefix() + "_filtered_replies_to_tweets_count");
+        SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_filtered_replies_to_tweets_count");
     incomingRetweetsAndRepliesToTweetsCount =
-        SearchRateCounter.export(
-            getStageNamePrefix() + "_incoming_retweets_and_replies_to_tweets_count");
+        SearchRateCounter.etwitterport(
+            getStageNamePrefitwitter() + "_incoming_retweets_and_replies_to_tweets_count");
   }
 
   @Override
-  public void innerProcess(Object obj) throws StageException {
+  public void innerProcess(Object obj) throws StageEtwitterception {
     if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not an IngesterTwitterMessage: " + obj);
+      throw new StageEtwitterception(this, "Object is not an IngesterTwitterMessage: " + obj);
     }
 
     IngesterTwitterMessage status = (IngesterTwitterMessage) obj;
@@ -55,7 +55,7 @@ public class FilterRetweetsAndRepliesStage extends TwitterBaseStage
   @Override
   public IngesterTwitterMessage runStageV2(IngesterTwitterMessage message) {
     if (!tryToFilter(message)) {
-      throw new PipelineStageRuntimeException("Does not have to pass to the next stage.");
+      throw new PipelineStageRuntimeEtwitterception("Does not have to pass to the netwittert stage.");
     }
     return message;
   }

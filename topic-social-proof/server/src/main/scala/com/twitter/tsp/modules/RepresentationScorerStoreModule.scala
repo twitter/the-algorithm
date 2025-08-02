@@ -16,7 +16,7 @@ import com.twitter.storehaus.ReadableStore
 import com.twitter.strato.client.{Client => StratoClient}
 import com.twitter.tsp.stores.RepresentationScorerStore
 
-object RepresentationScorerStoreModule extends TwitterModule {
+object RepresentationScorerStoreModule etwittertends TwitterModule {
   override def modules: Seq[Module] = Seq(UnifiedCacheClient)
 
   private val tspRepresentationScoringColumnPath: Flag[String] = flag[String](
@@ -41,7 +41,7 @@ object RepresentationScorerStoreModule extends TwitterModule {
     )(
       valueInjection = BinaryScalaCodec(Score),
       statsReceiver = statsReceiver.scope("RepresentationScorerStore"),
-      keyToString = { k: ScoreId => s"rsx/$k" }
+      keyToString = { k: ScoreId => s"rstwitter/$k" }
     )
   }
 }

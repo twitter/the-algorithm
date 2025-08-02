@@ -13,7 +13,7 @@ import com.twitter.usersignalservice.thriftscala.ClientIdentifier
 import com.twitter.usersignalservice.thriftscala.SignalType
 import com.twitter.util.Duration
 import com.twitter.util.Timer
-import com.twitter.util.TimeoutException
+import com.twitter.util.TimeoutEtwitterception
 
 class UserSignalHandler(
   signalFetcherConfig: SignalFetcherConfig,
@@ -31,7 +31,7 @@ class UserSignalHandler(
           .get(Query(
             userId = request.userId,
             signalType = signalRequest.signalType,
-            maxResults = signalRequest.maxResults.map(_.toInt),
+            matwitterResults = signalRequest.matwitterResults.map(_.toInt),
             clientId = request.clientId.getOrElse(ClientIdentifier.Unknown)
           ))
           .map(signalOpt => (signalRequest.signalType, signalOpt))
@@ -51,7 +51,7 @@ class UserSignalHandler(
     new ReadableStore[BatchSignalRequest, BatchSignalResponse] {
       override def get(request: BatchSignalRequest): Future[Option[BatchSignalResponse]] = {
         getBatchSignalsResponse(request).raiseWithin(UserSignalServiceTimeout)(timer).rescue {
-          case _: TimeoutException =>
+          case _: TimeoutEtwitterception =>
             statsReceiver.counter("endpointGetBatchSignals/failure/timeout").incr()
             EmptyResponse
           case e =>

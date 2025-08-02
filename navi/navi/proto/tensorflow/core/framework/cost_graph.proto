@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -23,9 +23,9 @@ message CostGraphDef {
     // The id of the node. Node ids are only unique inside a partition.
     int32 id = 3;
 
-    // Inputs of this node. They must be executed before this node can be
-    // executed. An input is a particular output of another node, specified
-    // by the node id and the output index.
+    // Inputs of this node. They must be etwitterecuted before this node can be
+    // etwitterecuted. An input is a particular output of another node, specified
+    // by the node id and the output indetwitter.
     message InputInfo {
       int32 preceding_node = 1;
       int32 preceding_port = 2;

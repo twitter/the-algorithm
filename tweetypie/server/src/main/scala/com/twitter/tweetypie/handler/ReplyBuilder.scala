@@ -4,17 +4,17 @@ package handler
 import com.twitter.stitch.Stitch
 import com.twitter.tweetypie.core.TweetCreateFailure
 import com.twitter.tweetypie.repository._
-import com.twitter.tweetypie.serverutil.ExceptionCounter
+import com.twitter.tweetypie.serverutil.EtwitterceptionCounter
 import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.tweettext.Offset
-import com.twitter.twittertext.Extractor
+import com.twitter.tweetypie.tweettetwittert.Offset
+import com.twitter.twittertetwittert.Etwittertractor
 import scala.annotation.tailrec
 import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.util.control.NoStackTrace
 
 object ReplyBuilder {
-  private val extractor = new Extractor
+  private val etwittertractor = new Etwittertractor
   private val InReplyToTweetNotFound =
     TweetCreateFailure.State(TweetCreateState.InReplyToTweetNotFound)
 
@@ -22,10 +22,10 @@ object ReplyBuilder {
     authorId: UserId,
     authorScreenName: String,
     inReplyToTweetId: Option[TweetId],
-    tweetText: String,
+    tweetTetwittert: String,
     prependImplicitMentions: Boolean,
     enableTweetToNarrowcasting: Boolean,
-    excludeUserIds: Seq[UserId],
+    etwittercludeUserIds: Seq[UserId],
     spamResult: Spam.Result,
     batchMode: Option[BatchComposeMode])
 
@@ -37,24 +37,24 @@ object ReplyBuilder {
     conversationId: Option[ConversationId],
     selfThreadMetadata: Option[SelfThreadMetadata],
     community: Option[Communities] = None,
-    exclusiveTweetControl: Option[ExclusiveTweetControl] = None,
+    etwitterclusiveTweetControl: Option[EtwitterclusiveTweetControl] = None,
     trustedFriendsControl: Option[TrustedFriendsControl] = None,
     editControl: Option[EditControl] = None) {
     // Creates a Result by providing the fields that differ between legacy and simplified replies.
     def toResult(
-      tweetText: String,
+      tweetTetwittert: String,
       directedAtMetadata: DirectedAtUserMetadata,
       visibleStart: Offset.CodePoint = Offset.CodePoint(0),
     ): Result =
       Result(
         reply,
-        tweetText,
+        tweetTetwittert,
         directedAtMetadata,
         conversationId,
         selfThreadMetadata,
         visibleStart,
         community,
-        exclusiveTweetControl,
+        etwitterclusiveTweetControl,
         trustedFriendsControl,
         editControl
       )
@@ -62,50 +62,50 @@ object ReplyBuilder {
 
   /**
    * @param reply              the Reply object to include in the tweet.
-   * @param tweetText          updated tweet text which may include prepended at-mentions, trimmed
+   * @param tweetTetwittert          updated tweet tetwittert which may include prepended at-mentions, trimmed
    * @param directedAtMetadata see DirectedAtHydrator for usage.
    * @param conversationId     conversation id to assign to the tweet.
    * @param selfThreadMetadata returns the result of `SelfThreadBuilder`
-   * @param visibleStart       offset into `tweetText` separating hideable at-mentions from the
-   *                           visible text.
+   * @param visibleStart       offset into `tweetTetwittert` separating hideable at-mentions from the
+   *                           visible tetwittert.
    */
   case class Result(
     reply: Reply,
-    tweetText: String,
+    tweetTetwittert: String,
     directedAtMetadata: DirectedAtUserMetadata,
     conversationId: Option[ConversationId] = None,
     selfThreadMetadata: Option[SelfThreadMetadata] = None,
     visibleStart: Offset.CodePoint = Offset.CodePoint(0),
     community: Option[Communities] = None,
-    exclusiveTweetControl: Option[ExclusiveTweetControl] = None,
+    etwitterclusiveTweetControl: Option[EtwitterclusiveTweetControl] = None,
     trustedFriendsControl: Option[TrustedFriendsControl] = None,
     editControl: Option[EditControl] = None) {
 
     /**
-     * @param finalText final tweet text after any server-side additions.
-     * @return true iff the final tweet text consists exclusively of a hidden reply mention prefix.
+     * @param finalTetwittert final tweet tetwittert after any server-side additions.
+     * @return true iff the final tweet tetwittert consists etwitterclusively of a hidden reply mention prefitwitter.
      *         When this happens there's no content to the reply and thus the tweet creation should
      *         fail.
      */
-    def replyTextIsEmpty(finalText: String): Boolean = {
+    def replyTetwittertIsEmpty(finalTetwittert: String): Boolean = {
 
-      // Length of the tweet text originally output via ReplyBuilder.Result before server-side
+      // Length of the tweet tetwittert originally output via ReplyBuilder.Result before server-side
       // additions (e.g. media, quoted-tweet URLs)
-      val origTextLength = Offset.CodePoint.length(tweetText)
+      val origTetwittertLength = Offset.CodePoint.length(tweetTetwittert)
 
-      // Length of the tweet text after server-side additions.
-      val finalTextLength = Offset.CodePoint.length(finalText)
+      // Length of the tweet tetwittert after server-side additions.
+      val finalTetwittertLength = Offset.CodePoint.length(finalTetwittert)
 
-      val prefixWasEntireText = origTextLength == visibleStart
-      val textLenUnchanged = origTextLength == finalTextLength
+      val prefitwitterWasEntireTetwittert = origTetwittertLength == visibleStart
+      val tetwittertLenUnchanged = origTetwittertLength == finalTetwittertLength
 
-      prefixWasEntireText && textLenUnchanged
+      prefitwitterWasEntireTetwittert && tetwittertLenUnchanged
     }
   }
 
   type Type = Request => Future[Option[Result]]
 
-  private object InvalidUserException extends NoStackTrace
+  private object InvalidUserEtwitterception etwittertends NoStackTrace
 
   /**
    * A user ID and screen name used for building replies.
@@ -131,13 +131,13 @@ object ReplyBuilder {
     private def toUser(mt: MediaTag): User =
       mt match {
         case MediaTag(_, Some(id), Some(screenName), _) => User(id, screenName)
-        case _ => throw InvalidUserException
+        case _ => throw InvalidUserEtwitterception
       }
 
     private def toUser(e: MentionEntity): User =
       e match {
         case MentionEntity(_, _, screenName, Some(id), _, _) => User(id, screenName)
-        case _ => throw InvalidUserException
+        case _ => throw InvalidUserEtwitterception
       }
 
     private def toUser(d: DirectedAtUser) = User(d.userId, d.screenName)
@@ -157,165 +157,165 @@ object ReplyBuilder {
 
     private trait ReplyType {
 
-      val allExcludedUserIds: Set[UserId]
+      val allEtwittercludedUserIds: Set[UserId]
 
       def directedAt: Option[User]
-      def requiredTextMention: Option[User]
+      def requiredTetwittertMention: Option[User]
 
-      def isExcluded(u: User): Boolean = allExcludedUserIds.contains(u.id)
+      def isEtwittercluded(u: User): Boolean = allEtwittercludedUserIds.contains(u.id)
 
-      def buildPrefix(otherMentions: Seq[User], maxImplicits: Int): String = {
+      def buildPrefitwitter(otherMentions: Seq[User], matwitterImplicits: Int): String = {
         val seen = new mutable.HashSet[UserId]
-        seen ++= allExcludedUserIds
-        // Never exclude the required mention
-        seen --= requiredTextMention.map(_.id)
+        seen ++= allEtwittercludedUserIds
+        // Never etwitterclude the required mention
+        seen --= requiredTetwittertMention.map(_.id)
 
-        (requiredTextMention.toSeq ++ otherMentions)
+        (requiredTetwittertMention.toSeq ++ otherMentions)
           .filter(u => seen.add(u.id))
-          .take(maxImplicits.max(requiredTextMention.size))
+          .take(matwitterImplicits.matwitter(requiredTetwittertMention.size))
           .map(u => s"@${u.screenName}")
           .mkString(" ")
       }
     }
 
     private case class SelfReply(
-      allExcludedUserIds: Set[UserId],
+      allEtwittercludedUserIds: Set[UserId],
       enableTweetToNarrowcasting: Boolean)
-        extends ReplyType {
+        etwittertends ReplyType {
 
       private def srcTweetDirectedAt: Option[User] = getDirectedAtUser(srcTweet).map(toUser)
 
       override def directedAt: Option[User] =
         if (!enableTweetToNarrowcasting) None
-        else Seq.concat(rtUser, srcTweetDirectedAt).find(!isExcluded(_))
+        else Seq.concat(rtUser, srcTweetDirectedAt).find(!isEtwittercluded(_))
 
-      override def requiredTextMention: Option[User] =
-        // Make sure the directedAt user is in the text to avoid confusion
+      override def requiredTetwittertMention: Option[User] =
+        // Make sure the directedAt user is in the tetwittert to avoid confusion
         directedAt
     }
 
-    private case class BatchSubsequentReply(allExcludedUserIds: Set[UserId]) extends ReplyType {
+    private case class BatchSubsequentReply(allEtwittercludedUserIds: Set[UserId]) etwittertends ReplyType {
 
       override def directedAt: Option[User] = None
 
-      override def requiredTextMention: Option[User] = None
+      override def requiredTetwittertMention: Option[User] = None
 
-      override def buildPrefix(otherMentions: Seq[User], maxImplicits: Int): String = ""
+      override def buildPrefitwitter(otherMentions: Seq[User], matwitterImplicits: Int): String = ""
     }
 
     private case class RegularReply(
-      allExcludedUserIds: Set[UserId],
+      allEtwittercludedUserIds: Set[UserId],
       enableTweetToNarrowcasting: Boolean)
-        extends ReplyType {
+        etwittertends ReplyType {
 
       override def directedAt: Option[User] =
         Some(srcUser)
-          .filterNot(isExcluded)
+          .filterNot(isEtwittercluded)
           .filter(_ => enableTweetToNarrowcasting)
 
-      override def requiredTextMention: Option[User] =
+      override def requiredTetwittertMention: Option[User] =
         // Include the source tweet's author as a mention in the reply, even if the reply is not
         // narrowcasted to that user.  All non-self-reply tweets require this mention.
         Some(srcUser)
     }
 
     /**
-     * Computes an implicit mention prefix to add to the tweet text as well as any directed-at user.
+     * Computes an implicit mention prefitwitter to add to the tweet tetwittert as well as any directed-at user.
      *
      * The first implicit mention is the source-tweet's author unless the reply is a self-reply, in
      * which case it inherits the DirectedAtUser from the source tweet, though the current author is
-     * never added.  This mention, if it exists, is the only mention that may be used to direct-at a
+     * never added.  This mention, if it etwitterists, is the only mention that may be used to direct-at a
      * user and is the user that ends up in DirectedAtUserMetadata.  If the user replied to a
-     * retweet and the reply doesn't explicitly mention the retweet author, then the retweet author
-     * will be next, followed by source tweet mentions and source tweet photo-tagged users.
+     * retweet and the reply doesn't etwitterplicitly mention the retweet author, then the retweet author
+     * will be netwittert, followed by source tweet mentions and source tweet photo-tagged users.
      *
-     * Users in excludedScreenNames originate from the PostTweetRequest and are filtered out of any
+     * Users in etwittercludedScreenNames originate from the PostTweetRequest and are filtered out of any
      * non-leading mention.
      *
-     * Note on maxImplicits:
-     * This method returns at most 'maxImplicits' mentions unless 'maxImplicits' is 0 and a
+     * Note on matwitterImplicits:
+     * This method returns at most 'matwitterImplicits' mentions unless 'matwitterImplicits' is 0 and a
      * directed-at mention is required, in which case it returns 1.  If this happens the reply may
      * fail downstream validation checks (e.g. TweetBuilder).  With 280 visible character limit it's
-     * theoretically possible to explicitly mention 93 users (280 / 3) but this bug shouldn't really
+     * theoretically possible to etwitterplicitly mention 93 users (280 / 3) but this bug shouldn't really
      * be an issue because:
-     * 1.) Most replies don't have 50 explicit mentions
+     * 1.) Most replies don't have 50 etwitterplicit mentions
      * 2.) TOO-clients have switched to batchMode=Subsequent for self-replies which disable
       source tweet's directed-at user inheritance
-     * 3.) Requests rarely are rejected due to mention_limit_exceeded
+     * 3.) Requests rarely are rejected due to mention_limit_etwitterceeded
      * If this becomes a problem we could reopen the mention limit discussion, specifically if the
-     * backend should allow 51 while the explicit limit remains at 50.
+     * backend should allow 51 while the etwitterplicit limit remains at 50.
      *
      * Note on batchMode:
-     * Implicit mention prefix will be empty string if batchMode is BatchSubsequent. This is to
+     * Implicit mention prefitwitter will be empty string if batchMode is BatchSubsequent. This is to
      * support batch composer.
      */
-    def implicitMentionPrefixAndDAU(
-      maxImplicits: Int,
-      excludedUsers: Seq[User],
+    def implicitMentionPrefitwitterAndDAU(
+      matwitterImplicits: Int,
+      etwittercludedUsers: Seq[User],
       author: User,
       enableTweetToNarrowcasting: Boolean,
       batchMode: Option[BatchComposeMode]
     ): (String, Option[User]) = {
-      def allExcludedUserIds =
-        (excludedUsers ++ Seq(author)).map(_.id).toSet
+      def allEtwittercludedUserIds =
+        (etwittercludedUsers ++ Seq(author)).map(_.id).toSet
 
       val replyType =
         if (author.id == srcUser.id) {
           if (batchMode.contains(BatchComposeMode.BatchSubsequent)) {
-            BatchSubsequentReply(allExcludedUserIds)
+            BatchSubsequentReply(allEtwittercludedUserIds)
           } else {
-            SelfReply(allExcludedUserIds, enableTweetToNarrowcasting)
+            SelfReply(allEtwittercludedUserIds, enableTweetToNarrowcasting)
           }
         } else {
-          RegularReply(allExcludedUserIds, enableTweetToNarrowcasting)
+          RegularReply(allEtwittercludedUserIds, enableTweetToNarrowcasting)
         }
 
-      val prefix =
-        replyType.buildPrefix(
+      val prefitwitter =
+        replyType.buildPrefitwitter(
           otherMentions = List.concat(rtUser, srcTweetMentionedUsers, photoTaggedUsers),
-          maxImplicits = maxImplicits
+          matwitterImplicits = matwitterImplicits
         )
 
-      (prefix, replyType.directedAt)
+      (prefitwitter, replyType.directedAt)
     }
 
     /**
-     * Finds the longest possible prefix of whitespace separated @-mentions, restricted to
+     * Finds the longest possible prefitwitter of whitespace separated @-mentions, restricted to
      * @-mentions that are derived from the reply chain.
      */
-    def hideablePrefix(
-      text: String,
+    def hideablePrefitwitter(
+      tetwittert: String,
       cardUsers: Seq[User],
-      explicitMentions: Seq[Extractor.Entity]
+      etwitterplicitMentions: Seq[Etwittertractor.Entity]
     ): Offset.CodePoint = {
       val allowedMentions =
         (srcTweetMentionedUsers.toSet + srcUser ++ rtUser.toSet ++ photoTaggedUsers ++ cardUsers)
           .map(_.screenName.toLowerCase)
-      val len = Offset.CodeUnit.length(text)
+      val len = Offset.CodeUnit.length(tetwittert)
 
-      // To allow NO-BREAK SPACE' (U+00A0) in the prefix need .isSpaceChar
+      // To allow NO-BREAK SPACE' (U+00A0) in the prefitwitter need .isSpaceChar
       def isWhitespace(c: Char) = c.isWhitespace || c.isSpaceChar
 
       @tailrec
       def skipWs(offset: Offset.CodeUnit): Offset.CodeUnit =
-        if (offset == len || !isWhitespace(text.charAt(offset.toInt))) offset
+        if (offset == len || !isWhitespace(tetwittert.charAt(offset.toInt))) offset
         else skipWs(offset.incr)
 
       @tailrec
-      def go(offset: Offset.CodeUnit, mentions: Stream[Extractor.Entity]): Offset.CodeUnit =
+      def go(offset: Offset.CodeUnit, mentions: Stream[Etwittertractor.Entity]): Offset.CodeUnit =
         if (offset == len) offset
         else {
           mentions match {
-            // if we are at the next mention, and it is allowed, skip past and recurse
-            case next #:: tail if next.getStart == offset.toInt =>
-              if (!allowedMentions.contains(next.getValue.toLowerCase)) offset
-              else go(skipWs(Offset.CodeUnit(next.getEnd)), tail)
-            // we found non-mention text
+            // if we are at the netwittert mention, and it is allowed, skip past and recurse
+            case netwittert #:: tail if netwittert.getStart == offset.toInt =>
+              if (!allowedMentions.contains(netwittert.getValue.toLowerCase)) offset
+              else go(skipWs(Offset.CodeUnit(netwittert.getEnd)), tail)
+            // we found non-mention tetwittert
             case _ => offset
           }
         }
 
-      go(Offset.CodeUnit(0), explicitMentions.toStream).toCodePoint(text)
+      go(Offset.CodeUnit(0), etwitterplicitMentions.toStream).toCodePoint(tetwittert)
     }
   }
 
@@ -327,17 +327,17 @@ object ReplyBuilder {
     )
 
   /**
-   * A builder that generates reply from `inReplyToTweetId` or tweet text
+   * A builder that generates reply from `inReplyToTweetId` or tweet tetwittert
    *
    * There are two kinds of "reply":
    * 1. reply to tweet, which is generated from `inReplyToTweetId`.
    *
    * A valid reply-to-tweet satisfies the following conditions:
-   * 1). the tweet that is in-reply-to exists (and is visible to the user creating the tweet)
+   * 1). the tweet that is in-reply-to etwitterists (and is visible to the user creating the tweet)
    * 2). the author of the in-reply-to tweet is mentioned anywhere in the tweet, or
    *     this is a tweet that is in reply to the author's own tweet
    *
-   * 2. reply to user, is generated when the tweet text starts with @user_name.  This is only
+   * 2. reply to user, is generated when the tweet tetwittert starts with @user_name.  This is only
    * attempted if PostTweetRequest.enableTweetToNarrowcasting is true (default).
    */
   def apply(
@@ -349,9 +349,9 @@ object ReplyBuilder {
     unmentionedEntitiesRepo: UnmentionedEntitiesRepository.Type,
     enableRemoveUnmentionedImplicits: Gate[Unit],
     stats: StatsReceiver,
-    maxMentions: Int
+    matwitterMentions: Int
   ): Type = {
-    val exceptionCounters = ExceptionCounter(stats)
+    val etwitterceptionCounters = EtwitterceptionCounter(stats)
     val modeScope = stats.scope("mode")
     val compatModeCounter = modeScope.counter("compat")
     val simpleModeCounter = modeScope.counter("simple")
@@ -402,14 +402,14 @@ object ReplyBuilder {
         )
 
       Stitch.run(relationshipRepo(inReplyToBlocksTweeter)).flatMap {
-        case true => Future.exception(InReplyToTweetNotFound)
+        case true => Future.etwitterception(InReplyToTweetNotFound)
         case false => Future.Unit
       }
     }
 
     def checkIPIPolicy(request: Request, reply: Reply): Future[Unit] = {
       if (request.spamResult == Spam.DisabledByIpiPolicy) {
-        Future.exception(Spam.DisabledByIpiFailure(reply.inReplyToScreenName))
+        Future.etwitterception(Spam.DisabledByIpiFailure(reply.inReplyToScreenName))
       } else {
         Future.Unit
       }
@@ -449,12 +449,12 @@ object ReplyBuilder {
     def getReplySource(tweetId: TweetId, forUserId: UserId): Future[ReplySource] =
       for {
         tweet <- getTweet(tweetId, forUserId).flatMap {
-          case None => Future.exception(InReplyToTweetNotFound)
+          case None => Future.etwitterception(InReplyToTweetNotFound)
           case Some(t) => Future.value(t)
         }
 
         user <- getUser(UserKey(getUserId(tweet))).flatMap {
-          case None => Future.exception(InReplyToTweetNotFound)
+          case None => Future.etwitterception(InReplyToTweetNotFound)
           case Some(u) => Future.value(u)
         }
 
@@ -473,27 +473,27 @@ object ReplyBuilder {
      * the reply will be computed against the source tweet.  If `prependImplicitMentions` is true
      * and source tweet can't be found or isn't visible to replier, then this method will return
      * a `InReplyToTweetNotFound` failure.  If `prependImplicitMentions` is false, then the reply
-     * text must either mention the source tweet user, or it must be a reply to self; if both of
+     * tetwittert must either mention the source tweet user, or it must be a reply to self; if both of
      * those conditions fail, then `None` is returned.
      */
     def makeReplyToTweet(
       inReplyToTweetId: TweetId,
-      text: String,
+      tetwittert: String,
       author: User,
       prependImplicitMentions: Boolean,
       enableTweetToNarrowcasting: Boolean,
-      excludeUserIds: Seq[UserId],
+      etwittercludeUserIds: Seq[UserId],
       batchMode: Option[BatchComposeMode]
     ): Future[Option[Result]] = {
-      val explicitMentions: Seq[Extractor.Entity] =
-        extractor.extractMentionedScreennamesWithIndices(text).asScala.toSeq
+      val etwitterplicitMentions: Seq[Etwittertractor.Entity] =
+        etwittertractor.etwittertractMentionedScreennamesWithIndices(tetwittert).asScala.toSeq
       val mentionedScreenNames =
-        explicitMentions.map(_.getValue.toLowerCase).toSet
+        etwitterplicitMentions.map(_.getValue.toLowerCase).toSet
 
       /**
        * If `prependImplicitMentions` is true, or the reply author is the same as the in-reply-to
-       * author, then the reply text doesn't have to mention the in-reply-to author.  Otherwise,
-       * check that the text contains a mention of the reply author.
+       * author, then the reply tetwittert doesn't have to mention the in-reply-to author.  Otherwise,
+       * check that the tetwittert contains a mention of the reply author.
        */
       def isValidReplyTo(inReplyToUser: User): Boolean =
         prependImplicitMentions ||
@@ -507,9 +507,9 @@ object ReplyBuilder {
             conversationId = getConversationId(replySrc.srcTweet),
             selfThreadMetadata = selfThreadBuilder.build(author.id, replySrc.srcTweet),
             community = replySrc.srcTweet.communities,
-            // Reply tweets retain the same exclusive
+            // Reply tweets retain the same etwitterclusive
             // tweet controls as the tweet being replied to.
-            exclusiveTweetControl = replySrc.srcTweet.exclusiveTweetControl,
+            etwitterclusiveTweetControl = replySrc.srcTweet.etwitterclusiveTweetControl,
             trustedFriendsControl = replySrc.srcTweet.trustedFriendsControl,
             editControl = replySrc.srcTweet.editControl
           )
@@ -517,55 +517,55 @@ object ReplyBuilder {
           if (isValidReplyTo(replySrc.srcUser)) {
             if (prependImplicitMentions) {
 
-              // Simplified Replies mode - append server-side generated prefix to passed in text
+              // Simplified Replies mode - append server-side generated prefitwitter to passed in tetwittert
               simpleModeCounter.incr()
-              // remove the in-reply-to tweet author from the excluded users, in-reply-to tweet author will always be a directedAtUser
-              val filteredExcludedIds =
-                excludeUserIds.filterNot(uid => uid == TweetLenses.userId(replySrc.srcTweet))
+              // remove the in-reply-to tweet author from the etwittercluded users, in-reply-to tweet author will always be a directedAtUser
+              val filteredEtwittercludedIds =
+                etwittercludeUserIds.filterNot(uid => uid == TweetLenses.userId(replySrc.srcTweet))
               for {
                 unmentionedUserIds <- getUnmentionedUsers(replySrc)
-                excludedUsers <- getUsers(filteredExcludedIds ++ unmentionedUserIds)
-                (prefix, directedAtUser) = replySrc.implicitMentionPrefixAndDAU(
-                  maxImplicits = math.max(0, maxMentions - explicitMentions.size),
-                  excludedUsers = excludedUsers,
+                etwittercludedUsers <- getUsers(filteredEtwittercludedIds ++ unmentionedUserIds)
+                (prefitwitter, directedAtUser) = replySrc.implicitMentionPrefitwitterAndDAU(
+                  matwitterImplicits = math.matwitter(0, matwitterMentions - etwitterplicitMentions.size),
+                  etwittercludedUsers = etwittercludedUsers,
                   author = author,
                   enableTweetToNarrowcasting = enableTweetToNarrowcasting,
                   batchMode = batchMode
                 )
               } yield {
-                // prefix or text (or both) can be empty strings.  Add " " separator and adjust
-                // prefix length only when both prefix and text are non-empty.
-                val textChunks = Seq(prefix, text).map(_.trim).filter(_.nonEmpty)
-                val tweetText = textChunks.mkString(" ")
+                // prefitwitter or tetwittert (or both) can be empty strings.  Add " " separator and adjust
+                // prefitwitter length only when both prefitwitter and tetwittert are non-empty.
+                val tetwittertChunks = Seq(prefitwitter, tetwittert).map(_.trim).filter(_.nonEmpty)
+                val tweetTetwittert = tetwittertChunks.mkString(" ")
                 val visibleStart =
-                  if (textChunks.size == 2) {
-                    Offset.CodePoint.length(prefix + " ")
+                  if (tetwittertChunks.size == 2) {
+                    Offset.CodePoint.length(prefitwitter + " ")
                   } else {
-                    Offset.CodePoint.length(prefix)
+                    Offset.CodePoint.length(prefitwitter)
                   }
 
                 Some(
                   baseResult.toResult(
-                    tweetText = tweetText,
+                    tweetTetwittert = tweetTetwittert,
                     directedAtMetadata = DirectedAtUserMetadata(directedAtUser.map(_.id)),
                     visibleStart = visibleStart
                   )
                 )
               }
             } else {
-              // Backwards-compatibility mode - walk from beginning of text until find visibleStart
+              // Backwards-compatibility mode - walk from beginning of tetwittert until find visibleStart
               compatModeCounter.incr()
               for {
                 cardUserIds <- replySrc.allCardUsers(author, replyCardUsersFinder)
                 cardUsers <- getUsers(cardUserIds.toSeq)
-                optUserIdentity <- extractReplyToUser(text)
+                optUserIdentity <- etwittertractReplyToUser(tetwittert)
                 directedAtUserId = optUserIdentity.map(_.id).filter(_ => enableTweetToNarrowcasting)
               } yield {
                 Some(
                   baseResult.toResult(
-                    tweetText = text,
+                    tweetTetwittert = tetwittert,
                     directedAtMetadata = DirectedAtUserMetadata(directedAtUserId),
-                    visibleStart = replySrc.hideablePrefix(text, cardUsers, explicitMentions),
+                    visibleStart = replySrc.hideablePrefitwitter(tetwittert, cardUsers, etwitterplicitMentions),
                   )
                 )
               }
@@ -575,25 +575,25 @@ object ReplyBuilder {
           }
         }
         .handle {
-          // if `getReplySource` throws this exception, but we aren't computing implicit
+          // if `getReplySource` throws this etwitterception, but we aren't computing implicit
           // mentions, then we fall back to the reply-to-user case instead of reply-to-tweet
           case InReplyToTweetNotFound if !prependImplicitMentions => None
         }
     }
 
-    def makeReplyToUser(text: String): Future[Option[Result]] =
-      extractReplyToUser(text).map(_.map { user =>
-        Result(replyToUser(user), text, DirectedAtUserMetadata(Some(user.id)))
+    def makeReplyToUser(tetwittert: String): Future[Option[Result]] =
+      etwittertractReplyToUser(tetwittert).map(_.map { user =>
+        Result(replyToUser(user), tetwittert, DirectedAtUserMetadata(Some(user.id)))
       })
 
-    def extractReplyToUser(text: String): Future[Option[User]] =
-      Option(extractor.extractReplyScreenname(text)) match {
+    def etwittertractReplyToUser(tetwittert: String): Future[Option[User]] =
+      Option(etwittertractor.etwittertractReplyScreenname(tetwittert)) match {
         case None => Future.None
         case Some(screenName) => getUser(UserKey(screenName))
       }
 
     FutureArrow[Request, Option[Result]] { request =>
-      exceptionCounters {
+      etwitterceptionCounters {
         (request.inReplyToTweetId.filter(_ > 0) match {
           case None =>
             Future.None
@@ -601,11 +601,11 @@ object ReplyBuilder {
           case Some(tweetId) =>
             makeReplyToTweet(
               tweetId,
-              request.tweetText,
+              request.tweetTetwittert,
               User(request.authorId, request.authorScreenName),
               request.prependImplicitMentions,
               request.enableTweetToNarrowcasting,
-              request.excludeUserIds,
+              request.etwittercludeUserIds,
               request.batchMode
             )
         }).flatMap {
@@ -622,7 +622,7 @@ object ReplyBuilder {
             // directed-at tweets from a blocked user.) These tweets
             // will not cause notifications for the blocking user,
             // despite the presence of the reply struct.
-            makeReplyToUser(request.tweetText)
+            makeReplyToUser(request.tweetTetwittert)
 
           case None =>
             Future.None

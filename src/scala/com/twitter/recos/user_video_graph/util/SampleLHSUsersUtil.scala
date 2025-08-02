@@ -10,21 +10,21 @@ object SampleLHSUsersUtil {
   // sample userId nodes
   def sampleLHSUsers(
     maskedTweetId: Long,
-    maxNumSamplesPerNeighbor: Int,
+    matwitterNumSamplesPerNeighbor: Int,
     bipartiteGraph: BipartiteGraph
   ): Seq[Long] = {
     val sampledUserIdsIterator = bipartiteGraph
       .getRandomRightNodeEdges(
         maskedTweetId,
-        maxNumSamplesPerNeighbor,
+        matwitterNumSamplesPerNeighbor,
         new Random(System.currentTimeMillis)).asInstanceOf[MultiSegmentIterator[
         BipartiteGraphSegment
       ]]
 
     val userIds = new ListBuffer[Long]()
     if (sampledUserIdsIterator != null) {
-      while (sampledUserIdsIterator.hasNext) {
-        val leftNode = sampledUserIdsIterator.nextLong()
+      while (sampledUserIdsIterator.hasNetwittert) {
+        val leftNode = sampledUserIdsIterator.netwittertLong()
         // If a user likes too many things, we risk including spammy behavior.
         if (bipartiteGraph.getLeftNodeDegree(leftNode) < 100)
           userIds += leftNode

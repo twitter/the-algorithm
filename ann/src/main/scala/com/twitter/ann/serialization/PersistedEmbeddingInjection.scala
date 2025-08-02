@@ -13,7 +13,7 @@ import scala.util.Try
  */
 class PersistedEmbeddingInjection[T](
   idByteInjection: Injection[T, Array[Byte]])
-    extends Injection[EntityEmbedding[T], PersistedEmbedding] {
+    etwittertends Injection[EntityEmbedding[T], PersistedEmbedding] {
   override def apply(entity: EntityEmbedding[T]): PersistedEmbedding = {
     val byteBuffer = ByteBuffer.wrap(idByteInjection(entity.id))
     PersistedEmbedding(byteBuffer, embeddingSerDe.toThrift(entity.embedding))

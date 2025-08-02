@@ -5,9 +5,9 @@ import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
 import com.twitter.follow_recommendations.common.models.STPGraph
 import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.timelines.configapi.HasParams
 import com.twitter.util.logging.Logging
@@ -17,8 +17,8 @@ import com.twitter.wtf.scalding.jobs.strong_tie_prediction.STPRecord
 abstract class BaseOnlineSTPSource(
   stpGraphBuilder: STPGraphBuilder,
   baseStatsReceiver: StatsReceiver)
-    extends CandidateSource[
-      HasClientContext with HasParams with HasRecentFollowedUserIds,
+    etwittertends CandidateSource[
+      HasClientContetwittert with HasParams with HasRecentFollowedUserIds,
       CandidateUser
     ]
     with Logging {
@@ -29,11 +29,11 @@ abstract class BaseOnlineSTPSource(
 
   def getCandidates(
     records: Seq[STPRecord],
-    request: HasClientContext with HasParams with HasRecentFollowedUserIds
+    request: HasClientContetwittert with HasParams with HasRecentFollowedUserIds
   ): Stitch[Seq[CandidateUser]]
 
   override def apply(
-    request: HasClientContext with HasParams with HasRecentFollowedUserIds
+    request: HasClientContetwittert with HasParams with HasRecentFollowedUserIds
   ): Stitch[Seq[CandidateUser]] =
     request.getOptionalUserId
       .map { userId =>

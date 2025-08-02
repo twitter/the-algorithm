@@ -9,38 +9,38 @@ import org.slf4j.LoggerFactory;
 import com.twitter.search.common.caching.CacheUtil;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twitter.search.queryparser.query.QueryParserEtwitterception;
 import com.twitter.search.queryparser.util.IdTimeRanges;
 
-public class RecencyAndRelevanceCachePostProcessor extends EarlybirdCachePostProcessor {
+public class RecencyAndRelevanceCachePostProcessor etwittertends EarlybirdCachePostProcessor {
 
   private static final Logger LOG =
       LoggerFactory.getLogger(RecencyAndRelevanceCachePostProcessor.class);
 
   protected Optional<EarlybirdResponse> postProcessCacheResponse(
       EarlybirdRequest earlybirdRequest,
-      EarlybirdResponse earlybirdResponse, long sinceID, long maxID) {
+      EarlybirdResponse earlybirdResponse, long sinceID, long matwitterID) {
     return CacheUtil.postProcessCacheResult(
-        earlybirdRequest, earlybirdResponse, sinceID, maxID);
+        earlybirdRequest, earlybirdResponse, sinceID, matwitterID);
   }
 
   @Override
   public final Optional<EarlybirdResponse> processCacheResponse(
-      EarlybirdRequestContext requestContext,
+      EarlybirdRequestContetwittert requestContetwittert,
       EarlybirdResponse cacheResponse) {
-    EarlybirdRequest originalRequest = requestContext.getRequest();
+    EarlybirdRequest originalRequest = requestContetwittert.getRequest();
     Preconditions.checkArgument(originalRequest.isSetSearchQuery());
 
     IdTimeRanges ranges;
-    Query query = requestContext.getParsedQuery();
+    Query query = requestContetwittert.getParsedQuery();
     if (query != null) {
       try {
         ranges = IdTimeRanges.fromQuery(query);
-      } catch (QueryParserException e) {
+      } catch (QueryParserEtwitterception e) {
         LOG.error(
-            "Exception when parsing since and max IDs. Request: {} Response: {}",
+            "Etwitterception when parsing since and matwitter IDs. Request: {} Response: {}",
             originalRequest,
             cacheResponse,
             e);
@@ -51,16 +51,16 @@ public class RecencyAndRelevanceCachePostProcessor extends EarlybirdCachePostPro
     }
 
     Optional<Long> sinceID;
-    Optional<Long> maxID;
+    Optional<Long> matwitterID;
     if (ranges != null) {
-      sinceID = ranges.getSinceIDExclusive();
-      maxID = ranges.getMaxIDInclusive();
+      sinceID = ranges.getSinceIDEtwitterclusive();
+      matwitterID = ranges.getMatwitterIDInclusive();
     } else {
       sinceID = Optional.absent();
-      maxID = Optional.absent();
+      matwitterID = Optional.absent();
     }
 
     return postProcessCacheResponse(
-        originalRequest, cacheResponse, sinceID.or(0L), maxID.or(Long.MAX_VALUE));
+        originalRequest, cacheResponse, sinceID.or(0L), matwitterID.or(Long.MAtwitter_VALUE));
   }
 }

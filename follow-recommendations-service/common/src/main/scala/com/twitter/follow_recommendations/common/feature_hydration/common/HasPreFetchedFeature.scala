@@ -5,13 +5,13 @@ import com.twitter.follow_recommendations.common.models.HasWtfImpressions
 import com.twitter.follow_recommendations.common.models.WtfImpression
 import com.twitter.util.Time
 
-trait HasPreFetchedFeature extends HasMutualFollowedUserIds with HasWtfImpressions {
+trait HasPreFetchedFeature etwittertends HasMutualFollowedUserIds with HasWtfImpressions {
 
   lazy val followedImpressions: Seq[WtfImpression] = {
     for {
       wtfImprList <- wtfImpressions.toSeq
       wtfImpr <- wtfImprList
-      if recentFollowedUserIds.exists(_.contains(wtfImpr.candidateId))
+      if recentFollowedUserIds.etwitterists(_.contains(wtfImpr.candidateId))
     } yield wtfImpr
   }
 
@@ -19,7 +19,7 @@ trait HasPreFetchedFeature extends HasMutualFollowedUserIds with HasWtfImpressio
 
   lazy val lastFollowedImpressionDurationMs: Option[Long] = {
     if (followedImpressions.nonEmpty) {
-      Some((Time.now - followedImpressions.map(_.latestTime).max).inMillis)
+      Some((Time.now - followedImpressions.map(_.latestTime).matwitter).inMillis)
     } else None
   }
 }

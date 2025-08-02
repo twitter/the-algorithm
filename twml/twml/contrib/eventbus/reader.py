@@ -38,11 +38,11 @@ class ReadableWrapper(object):
 class EventBusPipedBinaryRecordReader(BinaryRecordReader):
 
   JAVA = '/usr/lib/jvm/java-11-twitter/bin/java'
-  RECORD_SEPARATOR_HEX = [
-    0x29, 0xd8, 0xd5, 0x06, 0x58, 0xcd, 0x4c, 0x29,
-    0xb2, 0xbc, 0x57, 0x99, 0x21, 0x71, 0xbd, 0xff
+  RECORD_SEPARATOR_HEtwitter = [
+    0twitter29, 0twitterd8, 0twitterd5, 0twitter06, 0twitter58, 0twittercd, 0twitter4c, 0twitter29,
+    0twitterb2, 0twitterbc, 0twitter57, 0twitter99, 0twitter21, 0twitter71, 0twitterbd, 0twitterff
   ]
-  RECORD_SEPARATOR = ''.join([chr(i) for i in RECORD_SEPARATOR_HEX])
+  RECORD_SEPARATOR = ''.join([chr(i) for i in RECORD_SEPARATOR_HEtwitter])
   RECORD_SEPARATOR_LENGTH = len(RECORD_SEPARATOR)
   CHUNK_SIZE = 8192
 
@@ -78,21 +78,21 @@ class EventBusPipedBinaryRecordReader(BinaryRecordReader):
     else:
       logging.warning('Already initialized')
 
-  def _find_next_record(self):
+  def _find_netwittert_record(self):
     tail = ['']
     while True:
       chunk = tail[0] + self._buffered_reader.read(self.CHUNK_SIZE)
-      index = chunk.find(self.RECORD_SEPARATOR)
-      if index < 0:
+      indetwitter = chunk.find(self.RECORD_SEPARATOR)
+      if indetwitter < 0:
         self._bytes_buffer.write(chunk[:-self.RECORD_SEPARATOR_LENGTH])
         tail[0] = chunk[-self.RECORD_SEPARATOR_LENGTH:]
       else:
-        self._bytes_buffer.write(chunk[:index])
-        return chunk[(index + self.RECORD_SEPARATOR_LENGTH):]
+        self._bytes_buffer.write(chunk[:indetwitter])
+        return chunk[(indetwitter + self.RECORD_SEPARATOR_LENGTH):]
 
   def _read(self):
     with self.lock:
-      remaining = self._find_next_record()
+      remaining = self._find_netwittert_record()
       record = self._bytes_buffer.getvalue()
       # clean up buffer
       self._bytes_buffer.close()
@@ -105,8 +105,8 @@ class EventBusPipedBinaryRecordReader(BinaryRecordReader):
     while True:
       try:
         return self._read()
-      except Exception as e:
-        logging.error("Error reading bytes for next record: {}".format(e))
+      etwittercept Etwitterception as e:
+        logging.error("Error reading bytes for netwittert record: {}".format(e))
         if self.debug:
           raise
 
@@ -115,5 +115,5 @@ class EventBusPipedBinaryRecordReader(BinaryRecordReader):
       self._bytes_buffer.close()
       self._buffered_reader.close()
       self._pipe.terminate()
-    except Exception as e:
+    etwittercept Etwitterception as e:
       logging.error("Error closing reader: {}".format(e))

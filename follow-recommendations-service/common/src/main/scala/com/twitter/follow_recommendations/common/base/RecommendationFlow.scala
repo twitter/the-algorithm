@@ -1,11 +1,11 @@
 package com.twitter.follow_recommendations.common.base
 
 import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineResult
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.model.common.UniversalNoun
+import com.twitter.product_mitwitterer.core.model.common.identifier.RecommendationPipelineIdentifier
+import com.twitter.product_mitwitterer.core.pipeline.recommendation.RecommendationPipelineResult
+import com.twitter.product_mitwitterer.core.quality_factor.QualityFactorObserver
 import com.twitter.stitch.Stitch
 
 /**
@@ -43,7 +43,7 @@ trait BaseRecommendationFlow[Target, Candidate <: UniversalNoun[Long]] {
  * 4. ranker: ranking of candidates (could be composed of multiple stages, light ranking, heavy ranking and etc)
  * 5. postRankerTransform: deduping, grouping, rule based promotion / demotions and etc
  * 6. validateCandidates: heavy filters to determine the eligibility of the candidates.
- *    will only be applied to candidates that we expect to return.
+ *    will only be applied to candidates that we etwitterpect to return.
  * 7. transformResults: transform the individual candidates into desired format (e.g. hydrate social proof)
  *
  * Note that the actual implementations may not need to implement all the steps if not needed
@@ -52,17 +52,17 @@ trait BaseRecommendationFlow[Target, Candidate <: UniversalNoun[Long]] {
  * Theoretically, the actual implementation could override the above flow to add
  * more steps (e.g. add a transform step before ranking).
  * But it is recommended to add the additional steps into this base flow if the step proves
- * to have significant justification, or merge it into an existing step if it is a minor change.
+ * to have significant justification, or merge it into an etwitteristing step if it is a minor change.
  *
  * @tparam Target type of target request
  * @tparam Candidate type of candidate to return
  */
 trait RecommendationFlow[Target, Candidate <: UniversalNoun[Long]]
-    extends BaseRecommendationFlow[Target, Candidate]
+    etwittertends BaseRecommendationFlow[Target, Candidate]
     with SideEffectsUtil[Target, Candidate] {
 
   /**
-   * optionally update or enrich the request before executing the flows
+   * optionally update or enrich the request before etwitterecuting the flows
    */
   protected def updateTarget(target: Target): Stitch[Target] = Stitch.value(target)
 
@@ -172,7 +172,7 @@ trait RecommendationFlow[Target, Candidate <: UniversalNoun[Long]]
      * A basic recommendation flow looks like this:
      *
      * 1. fetch candidates from candidate sources
-     * 2. blend candidates with existing candidates
+     * 2. blend candidates with etwitteristing candidates
      * 3. filter the candidates (light filters) before ranking
      * 4. ranking
      * 5. filter and truncate the candidates using postRankerCandidateFilter

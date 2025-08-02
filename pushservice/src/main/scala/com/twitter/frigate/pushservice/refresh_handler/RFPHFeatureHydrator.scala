@@ -3,9 +3,9 @@ package com.twitter.frigate.pushservice.refresh_handler
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base.CandidateDetails
 import com.twitter.frigate.common.base.FeatureMap
-import com.twitter.frigate.data_pipeline.features_common.MrRequestContextForFeatureStore
+import com.twitter.frigate.data_pipeline.features_common.MrRequestContetwittertForFeatureStore
 import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.ml.HydrationContextBuilder
+import com.twitter.frigate.pushservice.ml.HydrationContetwittertBuilder
 import com.twitter.frigate.pushservice.params.PushParams
 import com.twitter.frigate.pushservice.util.MrUserStateUtil
 import com.twitter.nrel.heavyranker.FeatureHydrator
@@ -25,20 +25,20 @@ class RFPHFeatureHydrator(
 
   private def hydrateFromRelevanceHydrator(
     candidateDetails: Seq[CandidateDetails[PushCandidate]],
-    mrRequestContextForFeatureStore: MrRequestContextForFeatureStore
+    mrRequestContetwittertForFeatureStore: MrRequestContetwittertForFeatureStore
   ): Future[Unit] = {
     val pushCandidates = candidateDetails.map(_.candidate)
-    val candidatesAndContextsFut = Future.collect(pushCandidates.map { pc =>
-      val contextFut = HydrationContextBuilder.build(pc)
-      contextFut.map { ctx => (pc, ctx) }
+    val candidatesAndContetwittertsFut = Future.collect(pushCandidates.map { pc =>
+      val contetwittertFut = HydrationContetwittertBuilder.build(pc)
+      contetwittertFut.map { cttwitter => (pc, cttwitter) }
     })
-    candidatesAndContextsFut.flatMap { candidatesAndContexts =>
-      val contexts = candidatesAndContexts.map(_._2)
-      val resultsFut = featureHydrator.hydrateCandidate(contexts, mrRequestContextForFeatureStore)
+    candidatesAndContetwittertsFut.flatMap { candidatesAndContetwitterts =>
+      val contetwitterts = candidatesAndContetwitterts.map(_._2)
+      val resultsFut = featureHydrator.hydrateCandidate(contetwitterts, mrRequestContetwittertForFeatureStore)
       resultsFut.map { hydrationResult =>
-        candidatesAndContexts.foreach {
-          case (pushCandidate, context) =>
-            val resultFeatures = hydrationResult.getOrElse(context, FeatureMap())
+        candidatesAndContetwitterts.foreach {
+          case (pushCandidate, contetwittert) =>
+            val resultFeatures = hydrationResult.getOrElse(contetwittert, FeatureMap())
             pushCandidate.mergeFeatures(resultFeatures)
         }
       }
@@ -47,7 +47,7 @@ class RFPHFeatureHydrator(
 
   def candidateFeatureHydration(
     candidateDetails: Seq[CandidateDetails[PushCandidate]],
-    mrRequestContextForFeatureStore: MrRequestContextForFeatureStore
+    mrRequestContetwittertForFeatureStore: MrRequestContetwittertForFeatureStore
   ): Future[Seq[CandidateDetails[PushCandidate]]] = {
     candidateDetails.headOption match {
       case Some(cand) =>
@@ -58,7 +58,7 @@ class RFPHFeatureHydrator(
         } else {
           featureHydrationEnabledCounter.incr()
           for {
-            _ <- hydrateFromRelevanceHydrator(candidateDetails, mrRequestContextForFeatureStore)
+            _ <- hydrateFromRelevanceHydrator(candidateDetails, mrRequestContetwittertForFeatureStore)
           } yield {
             candidateDetails
           }

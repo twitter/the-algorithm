@@ -17,12 +17,12 @@ import com.twitter.search.common.metrics.SearchLongGauge;
 public class DynamicPartitionConfig {
   private static final Logger LOG = LoggerFactory.getLogger(DynamicPartitionConfig.class);
   private static final SearchCounter FAILED_UPDATE_COUNTER_NAME =
-      SearchCounter.export("dynamic_partition_config_failed_update");
+      SearchCounter.etwitterport("dynamic_partition_config_failed_update");
   private static final SearchCounter SUCCESSFUL_UPDATE_COUNTER =
-      SearchCounter.export("dynamic_partition_config_successful_update");
+      SearchCounter.etwitterport("dynamic_partition_config_successful_update");
   // We assume that DynamicPartitionConfig is practically a singleton in Earlybird app.
   private static final SearchLongGauge NUM_REPLICAS_IN_HASH_PARTITION =
-      SearchLongGauge.export("dynamic_partition_config_num_replicas_in_hash_partition");
+      SearchLongGauge.etwitterport("dynamic_partition_config_num_replicas_in_hash_partition");
 
   private final PartitionConfig curPartitionConfig;
 
@@ -44,8 +44,8 @@ public class DynamicPartitionConfig {
     // For now, we only allow the number of replicas in this partition to be dynamically updated.
     // Ensure that the only things that have changed between the previous
     if (curPartitionConfig.getClusterName().equals(partitionConfig.getClusterName())
-        && (curPartitionConfig.getMaxEnabledLocalSegments()
-            == partitionConfig.getMaxEnabledLocalSegments())
+        && (curPartitionConfig.getMatwitterEnabledLocalSegments()
+            == partitionConfig.getMatwitterEnabledLocalSegments())
         && (curPartitionConfig.getNumPartitions() == partitionConfig.getNumPartitions())
         && (curPartitionConfig.getTierStartDate().equals(partitionConfig.getTierStartDate()))
         && (curPartitionConfig.getTierEndDate().equals(partitionConfig.getTierEndDate()))

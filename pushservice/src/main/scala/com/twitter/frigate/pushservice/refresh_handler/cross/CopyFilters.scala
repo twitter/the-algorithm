@@ -11,19 +11,19 @@ private[cross] class CopyFilters(statsReceiver: StatsReceiver) {
 
   private val copyPredicates = new CopyPredicates(statsReceiver.scope("copy_predicate"))
 
-  def execute(rawCandidate: RawCandidate, pushCopies: Seq[MRPushCopy]): Future[Seq[MRPushCopy]] = {
+  def etwitterecute(rawCandidate: RawCandidate, pushCopies: Seq[MRPushCopy]): Future[Seq[MRPushCopy]] = {
     val candidateCopyPairs: Seq[CandidateCopyPair] =
       pushCopies.map(CandidateCopyPair(rawCandidate, _))
 
     val compositePredicate: Predicate[CandidateCopyPair] = rawCandidate match {
       case _: F1FirstDegree | _: OutOfNetworkTweetCandidate | _: EventCandidate |
           _: TopicProofTweetCandidate | _: ListPushCandidate | _: HermitInterestBasedUserFollow |
-          _: UserFollowWithoutSocialContextCandidate | _: DiscoverTwitterCandidate |
+          _: UserFollowWithoutSocialContetwittertCandidate | _: DiscoverTwitterCandidate |
           _: TopTweetImpressionsCandidate | _: TrendTweetCandidate |
           _: SubscribedSearchTweetCandidate | _: DigestCandidate =>
         copyPredicates.alwaysTruePredicate
 
-      case _: SocialContextActions => copyPredicates.displaySocialContextPredicate
+      case _: SocialContetwittertActions => copyPredicates.displaySocialContetwittertPredicate
 
       case _ => copyPredicates.unrecognizedCandidatePredicate // block unrecognised candidates
     }

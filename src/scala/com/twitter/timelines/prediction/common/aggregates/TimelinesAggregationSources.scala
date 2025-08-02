@@ -17,14 +17,14 @@ object TimelinesAggregationSources {
     name = "timelines_daily_recap",
     timestampFeature = TIMESTAMP,
     dalDataSet = Some(RecapDataRecordsAggMinimalJavaDataset),
-    scaldingSuffixType = Some("dal"),
+    scaldingSuffitwitterType = Some("dal"),
     withValidation = true
   )
   val timelinesDailyTwitterWideSource = OfflineAggregateSource(
     name = "timelines_daily_twitter_wide",
     timestampFeature = TIMESTAMP,
     scaldingHdfsPath = Some("/user/timelines/processed/suggests/recap/twitter_wide_data_records"),
-    scaldingSuffixType = Some("daily"),
+    scaldingSuffitwitterType = Some("daily"),
     withValidation = true
   )
 
@@ -32,7 +32,7 @@ object TimelinesAggregationSources {
     name = "timelines_daily_list_timeline",
     timestampFeature = TIMESTAMP,
     scaldingHdfsPath = Some("/user/timelines/processed/suggests/recap/all_features/list"),
-    scaldingSuffixType = Some("hourly"),
+    scaldingSuffitwitterType = Some("hourly"),
     withValidation = true
   )
 
@@ -40,6 +40,6 @@ object TimelinesAggregationSources {
     name = "timelines_daily_home_latest",
     timestampFeature = HomeLatestUserAggregatesFeatures.AGGREGATE_TIMESTAMP_MS,
     scaldingHdfsPath = Some("/user/timelines/processed/p_home_latest/user_aggregates"),
-    scaldingSuffixType = Some("daily")
+    scaldingSuffitwitterType = Some("daily")
   )
 }

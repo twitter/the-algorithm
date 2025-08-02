@@ -2,8 +2,8 @@ package com.twitter.follow_recommendations.common.base
 
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.follow_recommendations.common.base.EnrichedCandidateSource.toEnriched
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
 
 // a helper structure to register and select candidate sources based on identifiers
 trait CandidateSourceRegistry[Target, Candidate] {
@@ -21,7 +21,7 @@ trait CandidateSourceRegistry[Target, Candidate] {
     }.toMap
 
     if (map.size != sources.size) {
-      throw new IllegalArgumentException("Duplicate Candidate Source Identifiers")
+      throw new IllegalArgumentEtwitterception("Duplicate Candidate Source Identifiers")
     }
 
     map

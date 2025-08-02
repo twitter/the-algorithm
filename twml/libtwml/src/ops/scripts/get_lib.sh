@@ -1,2 +1,2 @@
 #!/bin/sh
-PEX_INTERPRETER=1 "$PYTHON_ENV" "$LIBTWML_HOME"/src/ops/scripts/get_lib.py
+PEtwitter_INTERPRETER=1 "$PYTHON_ENV" "$LIBTWML_HOME"/src/ops/scripts/get_lib.py

@@ -4,9 +4,9 @@ import com.twitter.servo.decider.DeciderGateBuilder
 import com.twitter.timelines.configapi._
 
 object ReverseChronProduction {
-  val intFeatureSwitchParams = Seq(ReverseChronParams.MaxFollowedUsersParam)
+  val intFeatureSwitchParams = Seq(ReverseChronParams.MatwitterFollowedUsersParam)
   val booleanFeatureSwitchParams = Seq(
-    ReverseChronParams.ReturnEmptyWhenOverMaxFollowsParam,
+    ReverseChronParams.ReturnEmptyWhenOverMatwitterFollowsParam,
     ReverseChronParams.DirectedAtNarrowcastingViaSearchParam,
     ReverseChronParams.PostFilteringBasedOnSearchMetadataEnabledParam
   )

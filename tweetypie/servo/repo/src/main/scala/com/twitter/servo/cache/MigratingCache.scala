@@ -16,13 +16,13 @@ class MigratingReadCache[K, V](
   cache: ReadCache[K, V],
   darkCache: Cache[K, V],
   statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends ReadCache[K, V] {
+    etwittertends ReadCache[K, V] {
 
   private[this] val scopedStatsReceiver = statsReceiver.scope("migrating_read_cache")
   private[this] val getScope = scopedStatsReceiver.scope("get")
   private[this] val getMismatchedResultsCounter = getScope.counter("mismatched_results")
   private[this] val getMissingResultsCounter = getScope.counter("missing_results")
-  private[this] val getUnexpectedResultsCounter = getScope.counter("unexpected_results")
+  private[this] val getUnetwitterpectedResultsCounter = getScope.counter("unetwitterpected_results")
   private[this] val getMatchingResultsCounter = getScope.counter("matching_results")
 
   private[this] val getWithChecksumScope = scopedStatsReceiver.scope("get_with_cheksum")
@@ -30,8 +30,8 @@ class MigratingReadCache[K, V](
     getWithChecksumScope.counter("mismatched_results")
   private[this] val getWithChecksumMissingResultsCounter =
     getWithChecksumScope.counter("missing_results")
-  private[this] val getWithChecksumUnexpectedResultsCounter =
-    getWithChecksumScope.counter("unexpected_results")
+  private[this] val getWithChecksumUnetwitterpectedResultsCounter =
+    getWithChecksumScope.counter("unetwitterpected_results")
   private[this] val getWithChecksumMatchingResultsCounter =
     getWithChecksumScope.counter("matching_results")
 
@@ -50,7 +50,7 @@ class MigratingReadCache[K, V](
               darkCache.set(k, v)
             // remove if necessary
             case (Return.None, Return(Some(_)) | Throw(_)) =>
-              getUnexpectedResultsCounter.incr()
+              getUnetwitterpectedResultsCounter.incr()
               darkCache.delete(k)
             // do nothing otherwise
             case _ =>
@@ -78,7 +78,7 @@ class MigratingReadCache[K, V](
               darkCache.set(k, v)
             // remove if necessary
             case (Return.None, Return(Some(_)) | Throw(_)) =>
-              getWithChecksumUnexpectedResultsCounter.incr()
+              getWithChecksumUnetwitterpectedResultsCounter.incr()
               darkCache.delete(k)
             // do nothing otherwise
             case _ =>
@@ -103,13 +103,13 @@ class MigratingReadCache[K, V](
  *
  * Writes to the darkCache are not locking writes, so there is some risk of inconsistencies from
  * race conditions. However, writes to the darkCache only occur if they succeed in the cache, so
- * if a checkAndSet fails, for example, no write is issued to the darkCache.
+ * if a checkAndSet fails, for etwitterample, no write is issued to the darkCache.
  */
 class MigratingCache[K, V](
   cache: Cache[K, V],
   darkCache: Cache[K, V],
   statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends MigratingReadCache(cache, darkCache, statsReceiver)
+    etwittertends MigratingReadCache(cache, darkCache, statsReceiver)
     with Cache[K, V] {
   override def add(key: K, value: V): Future[Boolean] = {
     cache.add(key, value) onSuccess { wasAdded =>
@@ -157,7 +157,7 @@ class MigratingTtlCache[K, V](
   cache: TtlCache[K, V],
   darkCache: TtlCache[K, V],
   ttl: (K, V) => Duration)
-    extends MigratingReadCache(cache, new TtlCacheToCache(darkCache, ttl))
+    etwittertends MigratingReadCache(cache, new TtlCacheToCache(darkCache, ttl))
     with TtlCache[K, V] {
   override def add(key: K, value: V, ttl: Duration): Future[Boolean] = {
     cache.add(key, value, ttl) onSuccess { wasAdded =>
@@ -211,7 +211,7 @@ class MigratingMemcache(
   cache: Memcache,
   darkCache: Memcache,
   ttl: (String, Array[Byte]) => Duration)
-    extends MigratingTtlCache[String, Array[Byte]](cache, darkCache, ttl)
+    etwittertends MigratingTtlCache[String, Array[Byte]](cache, darkCache, ttl)
     with Memcache {
   def incr(key: String, delta: Long = 1): Future[Option[Long]] = {
     cache.incr(key, delta) onSuccess {

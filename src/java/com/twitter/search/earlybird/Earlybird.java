@@ -1,9 +1,9 @@
 package com.twitter.search.earlybird;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.UnknownHostEtwitterception;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -18,20 +18,20 @@ import org.slf4j.LoggerFactory;
 import com.twitter.app.Flag;
 import com.twitter.app.Flaggable;
 import com.twitter.finagle.Http;
-import com.twitter.finagle.http.HttpMuxer;
+import com.twitter.finagle.http.HttpMutwitterer;
 import com.twitter.search.common.aurora.AuroraInstanceKey;
 import com.twitter.search.common.config.Config;
 import com.twitter.search.common.config.LoggerConfiguration;
 import com.twitter.search.common.constants.SearchThriftWebFormsAccess;
 import com.twitter.search.common.metrics.BuildInfoStats;
 import com.twitter.search.common.util.Kerberos;
-import com.twitter.search.common.util.PlatformStatsExporter;
+import com.twitter.search.common.util.PlatformStatsEtwitterporter;
 import com.twitter.search.earlybird.admin.EarlybirdAdminManager;
 import com.twitter.search.earlybird.admin.EarlybirdHealthHandler;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
 import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
-import com.twitter.search.earlybird.exception.UncaughtExceptionHandler;
+import com.twitter.search.earlybird.etwitterception.EarlybirdStartupEtwitterception;
+import com.twitter.search.earlybird.etwitterception.UncaughtEtwitterceptionHandler;
 import com.twitter.search.earlybird.factory.EarlybirdServerFactory;
 import com.twitter.search.earlybird.factory.EarlybirdWireModule;
 import com.twitter.search.earlybird.thrift.EarlybirdService;
@@ -46,9 +46,9 @@ import com.twitter.thriftwebforms.ThriftServiceSettings;
 import com.twitter.thriftwebforms.ThriftWebFormsSettings;
 import com.twitter.thriftwebforms.TwitterServerThriftWebForms;
 import com.twitter.util.Await;
-import com.twitter.util.TimeoutException;
+import com.twitter.util.TimeoutEtwitterception;
 
-public class Earlybird extends AbstractTwitterServer {
+public class Earlybird etwittertends AbstractTwitterServer {
   private static final Logger LOG = LoggerFactory.getLogger(Earlybird.class);
 
   // Flags defined here need to be processed before setting override values to EarlybirdConfig.
@@ -72,8 +72,8 @@ public class Earlybird extends AbstractTwitterServer {
           property -> property.name(),
           property -> property.createFlag(flag())));
 
-  private final UncaughtExceptionHandler uncaughtExceptionHandler =
-      new UncaughtExceptionHandler();
+  private final UncaughtEtwitterceptionHandler uncaughtEtwitterceptionHandler =
+      new UncaughtEtwitterceptionHandler();
 
   private EarlybirdServer earlybirdServer;
   private EarlybirdAdminManager earlybirdAdminManager;
@@ -81,7 +81,7 @@ public class Earlybird extends AbstractTwitterServer {
   public Earlybird() {
     // Default health handler is added inside Lifecycle trait.  To override that we need to set it
     // in the constructor since HttpAdminServer is started before Earlybird.preMain() is called.
-    HttpMuxer.addHandler("/health", new EarlybirdHealthHandler());
+    HttpMutwitterer.addHandler("/health", new EarlybirdHealthHandler());
   }
 
   /**
@@ -135,7 +135,7 @@ public class Earlybird extends AbstractTwitterServer {
   private void logEarlybirdInfo() {
     try {
       LOG.info("Hostname: {}", InetAddress.getLocalHost().getHostName());
-    } catch (UnknownHostException e) {
+    } catch (UnknownHostEtwitterception e) {
       LOG.info("Unable to be get local host: {}", e.getMessage());
     }
     LOG.info("Earlybird info [Name: {}, Zone: {}, Env: {}]",
@@ -152,9 +152,9 @@ public class Earlybird extends AbstractTwitterServer {
     EarlybirdServerFactory earlybirdFactory = new EarlybirdServerFactory();
     try {
       return earlybirdFactory.makeEarlybirdServer(earlybirdWireModule);
-    } catch (IOException e) {
-      LOG.error("Exception while constructing EarlybirdServer.", e);
-      throw new RuntimeException(e);
+    } catch (IOEtwitterception e) {
+      LOG.error("Etwitterception while constructing EarlybirdServer.", e);
+      throw new RuntimeEtwitterception(e);
     }
   }
 
@@ -183,7 +183,7 @@ public class Earlybird extends AbstractTwitterServer {
 
   @Override
   public Http.Server configureAdminHttpServer(Http.Server server) {
-    return server.withMonitor(uncaughtExceptionHandler);
+    return server.withMonitor(uncaughtEtwitterceptionHandler);
   }
 
   @Override
@@ -192,15 +192,15 @@ public class Earlybird extends AbstractTwitterServer {
     logEarlybirdInfo();
     LOG.info("Starting preMain()");
 
-    BuildInfoStats.export();
-    PlatformStatsExporter.exportPlatformStats();
+    BuildInfoStats.etwitterport();
+    PlatformStatsEtwitterporter.etwitterportPlatformStats();
 
-    // Use our own exception handler to monitor all unhandled exceptions.
-    Thread.setDefaultUncaughtExceptionHandler((thread, e) -> {
-      LOG.error("Invoked default uncaught exception handler.");
-      uncaughtExceptionHandler.handle(e);
+    // Use our own etwitterception handler to monitor all unhandled etwitterceptions.
+    Thread.setDefaultUncaughtEtwitterceptionHandler((thread, e) -> {
+      LOG.error("Invoked default uncaught etwitterception handler.");
+      uncaughtEtwitterceptionHandler.handle(e);
     });
-    LOG.info("Registered unhandled exception monitor.");
+    LOG.info("Registered unhandled etwitterception monitor.");
 
     Kerberos.kinit(
         EarlybirdConfig.getString("kerberos_user", ""),
@@ -210,7 +210,7 @@ public class Earlybird extends AbstractTwitterServer {
     LOG.info("Creating earlybird server.");
     earlybirdServer = makeEarlybirdServer();
 
-    uncaughtExceptionHandler.setShutdownHook(() -> {
+    uncaughtEtwitterceptionHandler.setShutdownHook(() -> {
       earlybirdServer.shutdown();
       this.close();
     });
@@ -228,7 +228,7 @@ public class Earlybird extends AbstractTwitterServer {
   }
 
   @Override
-  public void main() throws InterruptedException, TimeoutException, EarlybirdStartupException {
+  public void main() throws InterruptedEtwitterception, TimeoutEtwitterception, EarlybirdStartupEtwitterception {
     innerMain();
   }
 
@@ -237,15 +237,15 @@ public class Earlybird extends AbstractTwitterServer {
    * with reflection being done in App.scala looking for a method named "main".
    */
   @VisibleForTesting
-  void innerMain() throws TimeoutException, InterruptedException, EarlybirdStartupException {
+  void innerMain() throws TimeoutEtwitterception, InterruptedEtwitterception, EarlybirdStartupEtwitterception {
     LOG.info("Starting main().");
 
-    // If this method throws, TwitterServer will catch the exception and call close, so we don't
+    // If this method throws, TwitterServer will catch the etwitterception and call close, so we don't
     // catch it here.
     try {
       earlybirdServer.start();
     } catch (Throwable throwable) {
-      LOG.error("Exception while starting:", throwable);
+      LOG.error("Etwitterception while starting:", throwable);
       throw throwable;
     }
 
@@ -254,14 +254,14 @@ public class Earlybird extends AbstractTwitterServer {
   }
 
   @Override
-  public void onExit() {
-    LOG.info("Starting onExit()");
+  public void onEtwitterit() {
+    LOG.info("Starting onEtwitterit()");
     earlybirdServer.shutdown();
     try {
       earlybirdAdminManager.doShutdown();
-    } catch (InterruptedException e) {
+    } catch (InterruptedEtwitterception e) {
       LOG.warn("earlybirdAdminManager shutdown was interrupted with " + e);
     }
-    LOG.info("onExit() complete.");
+    LOG.info("onEtwitterit() complete.");
   }
 }

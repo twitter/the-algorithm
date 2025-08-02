@@ -14,7 +14,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResults;
  * <p/>
  * It also implements two public methods to retrieve the top-k or all results.
  */
-public class RecencyMergeCollector extends MultiwayMergeCollector<ThriftSearchResult> {
+public class RecencyMergeCollector etwittertends MultiwayMergeCollector<ThriftSearchResult> {
 
   // Container for the final results array and also stats like numHitsProcessed etc...
   protected final ThriftSearchResults finalResults = new ThriftSearchResults();

@@ -9,7 +9,7 @@
     "dependencies": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
+        "name": "packer-client-no-petwitter",
         "version": "latest"
       }
     ],
@@ -32,8 +32,8 @@
       "name": "staging",
       "targets": [
         {
-          "name": "uua-enricher-enrichment-planner-pdxa",
-          "key": "pdxa/discode/staging/uua-enrichment-planner"
+          "name": "uua-enricher-enrichment-planner-pdtwittera",
+          "key": "pdtwittera/discode/staging/uua-enrichment-planner"
         }
       ]
     }

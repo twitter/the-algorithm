@@ -6,7 +6,7 @@ java_library(
     dependencies = [
         "3rdparty/jvm/commons-lang",
         "cuad/projects/ner/thrift:thrift-java",
-        "periscope/api-proxy-thrift/thrift/src/main/thrift:thrift-java",
+        "periscope/api-protwittery-thrift/thrift/src/main/thrift:thrift-java",
         "scrooge/scrooge-core/src/main/scala",
         "src/java/com/twitter/common/collections",
         "stitch/stitch-core",

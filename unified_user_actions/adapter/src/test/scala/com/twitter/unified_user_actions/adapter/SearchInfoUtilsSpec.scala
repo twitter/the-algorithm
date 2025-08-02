@@ -28,12 +28,12 @@ import org.scalatest.prop.TableFor2
 
 @RunWith(classOf[JUnitRunner])
 class SearchInfoUtilsSpec
-    extends AnyFunSuite
+    etwittertends AnyFunSuite
     with Matchers
     with Mockito
     with TableDrivenPropertyChecks {
 
-  trait Fixture {
+  trait Fitwitterture {
     def mkControllerData(
       queryOpt: Option[String],
       querySourceOpt: Option[Int] = None,
@@ -81,7 +81,7 @@ class SearchInfoUtilsSpec
   }
 
   test("getQueryOptFromControllerDataFromItem should return query if present in controller data") {
-    new Fixture {
+    new Fitwitterture {
 
       val controllerData: ControllerData = mkControllerData(Some("twitter"))
       val suggestionDetails: SuggestionDetails =
@@ -93,7 +93,7 @@ class SearchInfoUtilsSpec
   }
 
   test("getRequestJoinId should return requestJoinId if present in controller data") {
-    new Fixture {
+    new Fitwitterture {
 
       val controllerData: ControllerData = mkControllerData(
         Some("twitter"),
@@ -110,7 +110,7 @@ class SearchInfoUtilsSpec
   }
 
   test("getQueryOptFromControllerDataFromItem should return None if no suggestion details") {
-    new Fixture {
+    new Fitwitterture {
 
       val suggestionDetails: SuggestionDetails = SuggestionDetails()
       val item: Item = Item(suggestionDetails = Some(suggestionDetails))
@@ -120,7 +120,7 @@ class SearchInfoUtilsSpec
   }
 
   test("getQueryOptFromSearchDetails should return query if present") {
-    new Fixture {
+    new Fitwitterture {
 
       val searchDetails: SearchDetails = SearchDetails(query = Some("twitter"))
       val result: Option[String] = new SearchInfoUtils(Item()).getQueryOptFromSearchDetails(
@@ -131,7 +131,7 @@ class SearchInfoUtilsSpec
   }
 
   test("getQueryOptFromSearchDetails should return None if not present") {
-    new Fixture {
+    new Fitwitterture {
 
       val searchDetails: SearchDetails = SearchDetails()
       val result: Option[String] = new SearchInfoUtils(Item()).getQueryOptFromSearchDetails(
@@ -142,7 +142,7 @@ class SearchInfoUtilsSpec
   }
 
   test("getQuerySourceOptFromControllerDataFromItem should return QuerySource if present") {
-    new Fixture {
+    new Fitwitterture {
 
       // 1 is Typed Query
       val controllerData: ControllerData = mkControllerData(Some("twitter"), Some(1))
@@ -159,7 +159,7 @@ class SearchInfoUtilsSpec
   }
 
   test("getQuerySourceOptFromControllerDataFromItem should return None if not present") {
-    new Fixture {
+    new Fitwitterture {
 
       val controllerData: ControllerData = mkControllerData(Some("twitter"), None)
 
@@ -174,7 +174,7 @@ class SearchInfoUtilsSpec
   }
 
   test("Decoding Tweet Result Sources bitmap") {
-    new Fixture {
+    new Fitwitterture {
 
       TweetResultSource.list
         .foreach { tweetResultSource =>
@@ -195,10 +195,10 @@ class SearchInfoUtilsSpec
   }
 
   test("Decoding multiple Tweet Result Sources") {
-    new Fixture {
+    new Fitwitterture {
 
       val tweetResultSources: Set[TweetResultSource] =
-        Set(TweetResultSource.QueryInteractionGraph, TweetResultSource.QueryExpansion)
+        Set(TweetResultSource.QueryInteractionGraph, TweetResultSource.QueryEtwitterpansion)
       val bitmap: Long = tweetResultSources.foldLeft(0L) {
         case (acc, source) => acc + (1 << source.getValue())
       }
@@ -218,7 +218,7 @@ class SearchInfoUtilsSpec
   }
 
   test("Decoding User Result Sources bitmap") {
-    new Fixture {
+    new Fitwitterture {
 
       UserResultSource.list
         .foreach { userResultSource =>
@@ -239,10 +239,10 @@ class SearchInfoUtilsSpec
   }
 
   test("Decoding multiple User Result Sources") {
-    new Fixture {
+    new Fitwitterture {
 
       val userResultSources: Set[UserResultSource] =
-        Set(UserResultSource.QueryInteractionGraph, UserResultSource.ExpertSearch)
+        Set(UserResultSource.QueryInteractionGraph, UserResultSource.EtwitterpertSearch)
       val bitmap: Long = userResultSources.foldLeft(0L) {
         case (acc, source) => acc + (1 << source.getValue())
       }
@@ -262,7 +262,7 @@ class SearchInfoUtilsSpec
   }
 
   test("getQueryFilterTabType should return correct query filter type") {
-    new Fixture {
+    new Fitwitterture {
       val infoUtils = new SearchInfoUtils(Item())
       val eventsToBeChecked: TableFor2[Option[EventNamespace], Option[SearchQueryFilterType]] =
         Table(
@@ -335,8 +335,8 @@ class SearchInfoUtilsSpec
           (
             Some(EventNamespace(client = Some("iphone"))),
             None
-          ), // if both element and section missing, expect None
-          (None, None), // if namespace is missing from LogEvent, expect None
+          ), // if both element and section missing, etwitterpect None
+          (None, None), // if namespace is missing from LogEvent, etwitterpect None
         )
 
       forEvery(eventsToBeChecked) {

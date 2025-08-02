@@ -1,7 +1,7 @@
 package com.twitter.search.feature_update_service.modules;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javatwitter.inject.Named;
+import javatwitter.inject.Singleton;
 
 import com.google.inject.Provides;
 
@@ -10,13 +10,13 @@ import com.twitter.common.util.Clock;
 import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer;
 import com.twitter.inject.TwitterModule;
 import com.twitter.inject.annotations.Flag;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.util.io.kafka.CompactThriftSerializer;
 import com.twitter.search.common.util.io.kafka.FinagleKafkaClientUtils;
 import com.twitter.search.common.util.io.kafka.SearchPartitioner;
 import com.twitter.search.common.util.io.kafka.SearchPartitionerRealtimeCg;
 
-public class FinagleKafkaProducerModule extends TwitterModule {
+public class FinagleKafkaProducerModule etwittertends TwitterModule {
   public static final String KAFKA_DEST_FLAG = "kafka.dest";
   public static final String KAFKA_TOPIC_NAME_UPDATE_EVENTS_FLAG =
       "kafka.topic.name.update_events";

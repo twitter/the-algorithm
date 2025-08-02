@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -11,7 +11,7 @@ option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobu
 // Option for watching a node in TensorFlow Debugger (tfdbg).
 message DebugTensorWatch {
   // Name of the node to watch.
-  // Use "*" for wildcard. But note: currently, regex is not supported in
+  // Use "*" for wildcard. But note: currently, regetwitter is not supported in
   // general.
   string node_name = 1;
 
@@ -32,7 +32,7 @@ message DebugTensorWatch {
   // Supported URL formats are:
   //   - file:///foo/tfdbg_dump: Writes out Event content to file
   //     /foo/tfdbg_dump.  Assumes all directories can be created if they don't
-  //     already exist.
+  //     already etwitterist.
   //   - grpc://localhost:11011: Sends an RPC request to an EventListener
   //     service running at localhost:11011 with the event.
   //   - memcbk:///event_key: Routes tensors to clients using the
@@ -60,7 +60,7 @@ message DebugOptions {
   repeated DebugTensorWatch debug_tensor_watch_opts = 4;
 
   // Caller-specified global step count.
-  // Note that this is distinct from the session run count and the executor
+  // Note that this is distinct from the session run count and the etwitterecutor
   // step count.
   int64 global_step = 10;
 

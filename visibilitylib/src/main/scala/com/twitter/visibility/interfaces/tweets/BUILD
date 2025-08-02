@@ -10,7 +10,7 @@ scala_library(
         "featureswitches/featureswitches-core/src/main/scala",
         "mediaservices/media-util/src/main/scala",
         "servo/decider/src/main/scala",
-        "src/thrift/com/twitter/context:twitter-context-scala",
+        "src/thrift/com/twitter/contetwittert:twitter-contetwittert-scala",
         "src/thrift/com/twitter/escherbird:media-annotation-structs-scala",
         "src/thrift/com/twitter/gizmoduck:user-thrift-scala",
         "src/thrift/com/twitter/spam/rtf:safety-level-scala",
@@ -19,7 +19,7 @@ scala_library(
         "stitch/stitch-core",
         "strato/src/main/scala/com/twitter/strato/catalog",
         "strato/src/main/scala/com/twitter/strato/client",
-        "twitter-context/src/main/scala",
+        "twitter-contetwittert/src/main/scala",
         "visibility/common/src/main/scala/com/twitter/visibility/common",
         "visibility/common/src/main/scala/com/twitter/visibility/common/actions/converter/scala",
         "visibility/common/src/main/scala/com/twitter/visibility/common/tweets",
@@ -40,7 +40,7 @@ scala_library(
         "visibility/lib/src/main/scala/com/twitter/visibility/util",
         "visibility/lib/src/main/thrift/com/twitter/visibility/logging:vf-logging-scala",
     ],
-    exports = [
+    etwitterports = [
         "visibility/common/src/main/scala/com/twitter/visibility/common",
         "visibility/lib/src/main/scala/com/twitter/visibility",
     ],

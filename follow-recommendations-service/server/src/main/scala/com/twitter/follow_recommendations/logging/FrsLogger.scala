@@ -13,16 +13,16 @@ import com.twitter.follow_recommendations.models.ScoringUserRequest
 import com.twitter.follow_recommendations.models.ScoringUserResponse
 import com.twitter.inject.annotations.Flag
 import com.twitter.logging.LoggerFactory
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.model.marshalling.request.ClientContetwittert
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.scribelib.marshallers.ClientDataProvider
-import com.twitter.scribelib.marshallers.ExternalRefererDataProvider
+import com.twitter.scribelib.marshallers.EtwitterternalRefererDataProvider
 import com.twitter.scribelib.marshallers.ScribeSerialization
 import com.twitter.timelines.configapi.HasParams
 import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Named
+import javatwitter.inject.Singleton
 
 /**
  * This is the standard logging class we use to log data into:
@@ -42,7 +42,7 @@ class FrsLogger @Inject() (
   @Named(GuiceNamedConstants.FLOW_LOGGER) flowLoggerFactory: LoggerFactory,
   stats: StatsReceiver,
   @Flag("log_results") serviceShouldLogResults: Boolean)
-    extends ScribeSerialization {
+    etwittertends ScribeSerialization {
   private val logger = loggerFactory.apply()
   private val flowLogger = flowLoggerFactory.apply()
   private val logRecommendationCounter = stats.counter("scribe_recommendation")
@@ -61,7 +61,7 @@ class FrsLogger @Inject() (
         serializeThrift(
           log,
           FrsLogger.LogCategory,
-          FrsLogger.mkProvider(request.clientContext)
+          FrsLogger.mkProvider(request.clientContetwittert)
         ))
     }
   }
@@ -78,12 +78,12 @@ class FrsLogger @Inject() (
         serializeThrift(
           log,
           FrsLogger.LogCategory,
-          FrsLogger.mkProvider(request.toRecommendationRequest.clientContext)
+          FrsLogger.mkProvider(request.toRecommendationRequest.clientContetwittert)
         ))
     }
   }
 
-  def logRecommendationFlowData[Target <: HasClientContext with HasIsSoftUser with HasParams](
+  def logRecommendationFlowData[Target <: HasClientContetwittert with HasIsSoftUser with HasParams](
     request: Target,
     flowData: RecommendationFlowData[Target]
   ): Unit = {
@@ -94,7 +94,7 @@ class FrsLogger @Inject() (
         serializeThrift(
           log,
           FrsLogger.FlowLogCategory,
-          FrsLogger.mkProvider(request.clientContext)
+          FrsLogger.mkProvider(request.clientContetwittert)
         ))
     }
   }
@@ -120,34 +120,34 @@ object FrsLogger {
   val LogCategory = "follow_recommendations_logs"
   val FlowLogCategory = "frs_recommendation_flow_logs"
 
-  def mkProvider(clientContext: ClientContext) = new ClientDataProvider {
+  def mkProvider(clientContetwittert: ClientContetwittert) = new ClientDataProvider {
 
     /** The id of the current user. When the user is logged out, this method should return None. */
-    override val userId: Option[Long] = clientContext.userId
+    override val userId: Option[Long] = clientContetwittert.userId
 
     /** The id of the guest, which is present in logged-in or loged-out states */
-    override val guestId: Option[Long] = clientContext.guestId
+    override val guestId: Option[Long] = clientContetwittert.guestId
 
     /** The personalization id (pid) of the user, used to personalize Twitter services */
     override val personalizationId: Option[String] = None
 
     /** The id of the individual device the user is currently using. This id will be unique for different users' devices. */
-    override val deviceId: Option[String] = clientContext.deviceId
+    override val deviceId: Option[String] = clientContetwittert.deviceId
 
     /** The OAuth application id of the application the user is currently using */
-    override val clientApplicationId: Option[Long] = clientContext.appId
+    override val clientApplicationId: Option[Long] = clientContetwittert.appId
 
     /** The OAuth parent application id of the application the user is currently using */
     override val parentApplicationId: Option[Long] = None
 
     /** The two-letter, upper-case country code used to designate the country from which the scribe event occurred */
-    override val countryCode: Option[String] = clientContext.countryCode
+    override val countryCode: Option[String] = clientContetwittert.countryCode
 
     /** The two-letter, lower-case language code used to designate the probably language spoken by the scribe event initiator */
-    override val languageCode: Option[String] = clientContext.languageCode
+    override val languageCode: Option[String] = clientContetwittert.languageCode
 
     /** The user-agent header used to identify the client browser or device that the user is currently active on */
-    override val userAgent: Option[String] = clientContext.userAgent
+    override val userAgent: Option[String] = clientContetwittert.userAgent
 
     /** Whether the user is accessing Twitter via a secured connection */
     override val isSsl: Option[Boolean] = Some(true)
@@ -156,9 +156,9 @@ object FrsLogger {
     override val referer: Option[String] = None
 
     /**
-     * The external site, partner, or email that lead to the current Twitter application. Returned value consists of a
+     * The etwitterternal site, partner, or email that lead to the current Twitter application. Returned value consists of a
      * tuple including the encrypted referral data and the type of referral
      */
-    override val externalReferer: Option[ExternalRefererDataProvider] = None
+    override val etwitterternalReferer: Option[EtwitterternalRefererDataProvider] = None
   }
 }

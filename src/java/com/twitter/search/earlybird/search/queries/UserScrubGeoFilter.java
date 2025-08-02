@@ -1,22 +1,22 @@
 package com.twitter.search.earlybird.search.queries;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Objects;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
+import org.apache.lucene.indetwitter.LeafReaderContetwittert;
+import org.apache.lucene.indetwitter.NumericDocValues;
 
 import com.twitter.search.common.metrics.SearchRateCounter;
 import com.twitter.search.common.query.FilteredQuery;
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
 import com.twitter.search.earlybird.common.userupdates.UserScrubGeoMap;
-import com.twitter.search.earlybird.index.TweetIDMapper;
+import com.twitter.search.earlybird.indetwitter.TweetIDMapper;
 
 /**
  * Filter that can be used with searches over geo field postings lists in order to filter out tweets
  * that have been geo scrubbed. Determines if a tweet has been geo scrubbed by comparing the
- * tweet's id against the max scrubbed tweet id for that tweet's author, which is stored in the
+ * tweet's id against the matwitter scrubbed tweet id for that tweet's author, which is stored in the
  * UserScrubGeoMap.
  *
  * See: go/realtime-geo-filtering
@@ -26,7 +26,7 @@ public class UserScrubGeoFilter implements FilteredQuery.DocIdFilterFactory {
   private UserScrubGeoMap userScrubGeoMap;
 
   private final SearchRateCounter totalRequestsUsingFilterCounter =
-      SearchRateCounter.export("user_scrub_geo_filter_total_requests");
+      SearchRateCounter.etwitterport("user_scrub_geo_filter_total_requests");
 
   public static FilteredQuery.DocIdFilterFactory getDocIdFilterFactory(
       UserScrubGeoMap userScrubGeoMap) {
@@ -39,7 +39,7 @@ public class UserScrubGeoFilter implements FilteredQuery.DocIdFilterFactory {
   }
 
   @Override
-  public FilteredQuery.DocIdFilter getDocIdFilter(LeafReaderContext context) throws IOException {
+  public FilteredQuery.DocIdFilter getDocIdFilter(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
     // To determine if a given doc has been geo scrubbed we need two pieces of information about the
     // doc: the associated tweet id and the user id of the tweet's author. We can get the tweet id
     // from the TweetIDMapper for the segment we are currently searching, and we can get the user id
@@ -48,13 +48,13 @@ public class UserScrubGeoFilter implements FilteredQuery.DocIdFilterFactory {
     //
     // With this information we can check the UserScrubGeoMap to find out if the tweet has been
     // geo scrubbed and filter it out accordingly.
-    final EarlybirdIndexSegmentAtomicReader currTwitterReader =
-        (EarlybirdIndexSegmentAtomicReader) context.reader();
+    final EarlybirdIndetwitterSegmentAtomicReader currTwitterReader =
+        (EarlybirdIndetwitterSegmentAtomicReader) contetwittert.reader();
     final TweetIDMapper tweetIdMapper =
         (TweetIDMapper) currTwitterReader.getSegmentData().getDocIDToTweetIDMapper();
     final NumericDocValues fromUserIdDocValues = currTwitterReader.getNumericDocValues(
         EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName());
-    return (docId) -> fromUserIdDocValues.advanceExact(docId)
+    return (docId) -> fromUserIdDocValues.advanceEtwitteract(docId)
         && !userScrubGeoMap.isTweetGeoScrubbed(
             tweetIdMapper.getTweetID(docId), fromUserIdDocValues.longValue());
   }

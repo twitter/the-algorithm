@@ -5,14 +5,14 @@ import com.google.common.base.Optional;
 import com.twitter.search.common.caching.TopTweetsCacheUtil;
 import com.twitter.search.common.caching.filter.CacheRequestNormalizer;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 
-public class TopTweetsCacheRequestNormalizer extends
-    CacheRequestNormalizer<EarlybirdRequestContext, EarlybirdRequest> {
+public class TopTweetsCacheRequestNormalizer etwittertends
+    CacheRequestNormalizer<EarlybirdRequestContetwittert, EarlybirdRequest> {
 
   @Override
-  public Optional<EarlybirdRequest> normalizeRequest(EarlybirdRequestContext requestContext) {
+  public Optional<EarlybirdRequest> normalizeRequest(EarlybirdRequestContetwittert requestContetwittert) {
     return Optional.fromNullable(
-        TopTweetsCacheUtil.normalizeTopTweetsRequestForCache(requestContext.getRequest()));
+        TopTweetsCacheUtil.normalizeTopTweetsRequestForCache(requestContetwittert.getRequest()));
   }
 }

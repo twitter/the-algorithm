@@ -4,7 +4,7 @@ package prefetcheddata
 
 import com.twitter.consumer_privacy.mention_controls.thriftscala.UnmentionInfo
 import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.LookupContext
+import com.twitter.gizmoduck.thriftscala.LookupContetwittert
 import com.twitter.gizmoduck.thriftscala.QueryFields
 import com.twitter.gizmoduck.thriftscala.UserResult
 import com.twitter.spam.rtf.thriftscala.SafetyLevel
@@ -18,9 +18,9 @@ import com.twitter.tweetypie.backends.Gizmoduck
 import com.twitter.tweetypie.thriftscala.Tweet
 import com.twitter.util.Throwables
 import com.twitter.vibes.thriftscala.VibeV2
-import com.twitter.weaverbird.common.GetRequestContext
+import com.twitter.weaverbird.common.GetRequestContetwittert
 import com.twitter.weaverbird.common.PerTOOAppCallerStats
-import com.twitter.weaverbird.common.RequestContext
+import com.twitter.weaverbird.common.RequestContetwittert
 import com.twitter.weaverbird.converters.tweet.WeaverbirdEntitySetMutations
 import com.twitter.weaverbird.converters.tweet.WeaverbirdTweetMutations
 import com.twitter.weaverbird.hydrators._
@@ -35,7 +35,7 @@ private[federated] final case class PrefetchedDataRequest(
   unmentionInfo: Option[UnmentionInfo] = None,
   vibe: Option[VibeV2] = None,
   safetyLevel: SafetyLevel,
-  requestContext: RequestContext)
+  requestContetwittert: RequestContetwittert)
 
 private[federated] final case class PrefetchedDataResponse(value: PrefetchedData)
 
@@ -69,7 +69,7 @@ private[federated] object PrefetchedDataRepository {
         // For Tweet writes, filteredReason will always be None.
         filteredReason = None,
         safetyLevel = request.safetyLevel,
-        requestContext = request.requestContext,
+        requestContetwittert = request.requestContetwittert,
         entityRenderingOptions = EntityRenderingOptions()
       )
 
@@ -103,7 +103,7 @@ private[federated] object PrefetchedDataRepository {
           // Tweet write path since the newly created Tweet may not
           // be fully persisted yet in tbird Manhattan.
           val shortCircuitedPrefetchedData = prefetchedData.copy(
-            onCacheMiss = CacheMissStrategy.ShortCircuitExisting
+            onCacheMiss = CacheMissStrategy.ShortCircuitEtwitteristing
           )
 
           PrefetchedDataResponse(shortCircuitedPrefetchedData)
@@ -120,29 +120,29 @@ private[federated] object PrefetchedDataRepositoryBuilder {
 
     case class GetUserResultById(
       queryFields: Set[QueryFields],
-      lookupContext: LookupContext,
-    ) extends SeqGroup[UserId, UserResult] {
+      lookupContetwittert: LookupContetwittert,
+    ) etwittertends SeqGroup[UserId, UserResult] {
       override def run(keys: Seq[UserId]): Future[Seq[Try[UserResult]]] =
-        LegacySeqGroup.liftToSeqTry(getUserResultsById((lookupContext, keys, queryFields)))
+        LegacySeqGroup.liftToSeqTry(getUserResultsById((lookupContetwittert, keys, queryFields)))
 
-      override def maxSize: Int = 100
+      override def matwitterSize: Int = 100
     }
 
     val stitchGetUserResultById: UserRepository.GetUserResultById =
-      (userId: UserId, queryFields: Set[QueryFields], lookupContext: LookupContext) =>
-        Stitch.call(userId, GetUserResultById(queryFields, lookupContext))
+      (userId: UserId, queryFields: Set[QueryFields], lookupContetwittert: LookupContetwittert) =>
+        Stitch.call(userId, GetUserResultById(queryFields, lookupContetwittert))
 
     val userRepository = new UserRepository(stitchGetUserResultById, repoStats)
 
-    // Note, this is weaverbird.common.GetRequestContext
-    val getRequestContext = new GetRequestContext()
+    // Note, this is weaverbird.common.GetRequestContetwittert
+    val getRequestContetwittert = new GetRequestContetwittert()
 
     // TwiggyUserHydrator is needed to hydrate TwiggyUsers for CWC and misc. logic
-    val twiggyUserHydrator = new TwiggyUserHydrator(userRepository, getRequestContext)
+    val twiggyUserHydrator = new TwiggyUserHydrator(userRepository, getRequestContetwittert)
 
     val weaverbirdMutations = new WeaverbirdTweetMutations(
       new WeaverbirdEntitySetMutations(
-        new PerTOOAppCallerStats(statsReceiver, getRequestContext)
+        new PerTOOAppCallerStats(statsReceiver, getRequestContetwittert)
       )
     )
 

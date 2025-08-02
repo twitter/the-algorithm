@@ -213,20 +213,20 @@ object RealGraphDataRecordFeatureStoreFeatures {
   )
 
   def convertFeatureToLegacyName(
-    prefix: String,
+    prefitwitter: String,
     variance: String = "variance"
   ): Map[Feature[EdgeEntityId[UserId, UserId], _ >: Long with Double <: AnyVal], String] =
     edgeFeatureToLegacyName.flatMap {
       case (k, v) =>
         Seq(
-          k.NonZeroDays -> s"${prefix}.${v}.non_zero_days",
-          k.DaysSinceLast -> s"${prefix}.${v}.days_since_last",
-          k.ElapsedDays -> s"${prefix}.${v}.elapsed_days",
-          k.Ewma -> s"${prefix}.${v}.ewma",
-          k.Mean -> s"${prefix}.${v}.mean",
-          k.Variance -> s"${prefix}.${v}.${variance}",
+          k.NonZeroDays -> s"${prefitwitter}.${v}.non_zero_days",
+          k.DaysSinceLast -> s"${prefitwitter}.${v}.days_since_last",
+          k.ElapsedDays -> s"${prefitwitter}.${v}.elapsed_days",
+          k.Ewma -> s"${prefitwitter}.${v}.ewma",
+          k.Mean -> s"${prefitwitter}.${v}.mean",
+          k.Variance -> s"${prefitwitter}.${v}.${variance}",
         )
     } ++ Map(
-      RealGraph.Weight -> (prefix + ".weight")
+      RealGraph.Weight -> (prefitwitter + ".weight")
     )
 }

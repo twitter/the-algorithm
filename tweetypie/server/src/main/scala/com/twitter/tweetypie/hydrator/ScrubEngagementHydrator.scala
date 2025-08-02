@@ -11,13 +11,13 @@ import com.twitter.visibility.results.counts.EngagementCounts
  * Redact Tweet.counts (StatusCounts) for some visibility results
  */
 object ScrubEngagementHydrator {
-  type Type = ValueHydrator[Option[StatusCounts], Ctx]
+  type Type = ValueHydrator[Option[StatusCounts], Cttwitter]
 
-  case class Ctx(filteredState: Option[FilteredState.Suppress])
+  case class Cttwitter(filteredState: Option[FilteredState.Suppress])
 
   def apply(): Type =
-    ValueHydrator.map[Option[StatusCounts], Ctx] { (curr: Option[StatusCounts], ctx: Ctx) =>
-      ctx.filteredState match {
+    ValueHydrator.map[Option[StatusCounts], Cttwitter] { (curr: Option[StatusCounts], cttwitter: Cttwitter) =>
+      cttwitter.filteredState match {
         case Some(FilteredState.Suppress(FilteredReason.SafetyResult(result))) if curr.nonEmpty =>
           ValueState.delta(curr, EngagementCounts.scrubEngagementCounts(result.action, curr))
         case _ =>

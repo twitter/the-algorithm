@@ -25,8 +25,8 @@ int64_t ThriftReader::readInt64() {
 
 double ThriftReader::readDouble() {
   double val;
-  int64_t *val_proxy = reinterpret_cast<int64_t*>(&val);
-  *val_proxy = readInt64();
+  int64_t *val_protwittery = reinterpret_cast<int64_t*>(&val);
+  *val_protwittery = readInt64();
   return val;
 }
 

@@ -19,7 +19,7 @@ object TrackingId {
         parsedCountCounter.incr()
         Some(id)
       } catch {
-        case _: NumberFormatException =>
+        case _: NumberFormatEtwitterception =>
           parseFailedCounter.incr()
           log.warn(s"invalid tracking ID: '$s'")
           None

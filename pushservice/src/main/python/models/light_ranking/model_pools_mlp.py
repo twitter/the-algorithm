@@ -5,7 +5,7 @@ from twml.contrib.layers import ZscoreNormalization
 from ...libs.customized_full_sparse import FullSparse
 from ...libs.get_feat_config import FEAT_CONFIG_DEFAULT_VAL as MISSING_VALUE_MARKER
 from ...libs.model_utils import (
-  _sparse_feature_fixup,
+  _sparse_feature_fitwitterup,
   adaptive_transformation,
   filter_nans_and_infs,
   get_dense_out,
@@ -69,7 +69,7 @@ def deepnorm_light_ranking(
   #            Feature Selection & Embedding
   # --------------------------------------------------------
   if use_gbdt:
-    sparse_gbdt_features = _sparse_feature_fixup(features["gbdt_sparse"], params.input_size_bits)
+    sparse_gbdt_features = _sparse_feature_fitwitterup(features["gbdt_sparse"], params.input_size_bits)
     if input_dropout_rate is not None:
       sparse_gbdt_features = tensor_dropout(
         sparse_gbdt_features, input_dropout_rate, is_training, sparse_tensor=True
@@ -128,13 +128,13 @@ def deepnorm_light_ranking(
 
       if params.use_missing_sub_branch:
         dense_embed = tf.concat(
-          [filled_feature_embed, missing_feature_embed], axis=1, name="merge_dense_emb"
+          [filled_feature_embed, missing_feature_embed], atwitteris=1, name="merge_dense_emb"
         )
       else:
         dense_embed = filled_feature_embed
 
     with tf.variable_scope("sparse_branch"):
-      sparse_discrete_features = _sparse_feature_fixup(
+      sparse_discrete_features = _sparse_feature_fitwitterup(
         features["sparse_no_continuous"], params.input_size_bits
       )
       if input_dropout_rate is not None:
@@ -149,7 +149,7 @@ def deepnorm_light_ranking(
 
     total_embed = tf.concat(
       [dense_embed, discrete_features_embed],
-      axis=1,
+      atwitteris=1,
       name="total_embed",
     )
 
@@ -171,10 +171,10 @@ def deepnorm_light_ranking(
     embed_list = [total_embed] + [None for _ in range(params.num_mlp_layers)]
     dense_types = [emb_dense_type] + [mlp_dense_type for _ in range(params.num_mlp_layers - 1)]
 
-    for xl in range(1, params.num_mlp_layers + 1):
-      neurons = params.mlp_neuron_scale ** (params.num_mlp_layers + 1 - xl)
-      embed_list[xl] = get_dense_out(
-        embed_list[xl - 1], neurons, activation=base_activation, dense_type=dense_types[xl - 1]
+    for twitterl in range(1, params.num_mlp_layers + 1):
+      neurons = params.mlp_neuron_scale ** (params.num_mlp_layers + 1 - twitterl)
+      embed_list[twitterl] = get_dense_out(
+        embed_list[twitterl - 1], neurons, activation=base_activation, dense_type=dense_types[twitterl - 1]
       )
 
     if params.task_name in ["Sent", "HeavyRankPosition", "HeavyRankProbability"]:

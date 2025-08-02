@@ -7,7 +7,7 @@ import com.twitter.visibility.rules.Condition.Not
 object TombstoneIf {
 
   object AuthorIsProtected
-      extends RuleWithConstantAction(
+      etwittertends RuleWithConstantAction(
         Tombstone(Epitaph.Protected),
         And(
           Condition.LoggedOutOrViewerNotFollowingAuthor,
@@ -16,7 +16,7 @@ object TombstoneIf {
       )
 
   object ReplyIsModeratedByRootAuthor
-      extends RuleWithConstantAction(
+      etwittertends RuleWithConstantAction(
         Tombstone(Epitaph.Moderated),
         And(
           Not(IsFocalTweet),
@@ -25,19 +25,19 @@ object TombstoneIf {
       )
 
   object ViewerIsBlockedByAuthor
-      extends OnlyWhenNotAuthorViewerRule(
+      etwittertends OnlyWhenNotAuthorViewerRule(
         Tombstone(Epitaph.BlockedBy),
         Condition.AuthorBlocksViewer
       )
 
   object AuthorIsDeactivated
-      extends RuleWithConstantAction(
+      etwittertends RuleWithConstantAction(
         Tombstone(Epitaph.Deactivated),
         Condition.DeactivatedAuthor
       )
 
   object AuthorIsSuspended
-      extends RuleWithConstantAction(
+      etwittertends RuleWithConstantAction(
         Tombstone(Epitaph.Suspended),
         Condition.SuspendedAuthor
       )

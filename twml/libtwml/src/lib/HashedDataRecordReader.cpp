@@ -38,7 +38,7 @@ void HashedDataRecordReader::readBinary(
   CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
 
   int32_t length = readInt32();
-  record->extendSize(length);
+  record->etwittertendSize(length);
   int64_t id, code;
   for (int32_t i = 0; i < length; i++) {
     id = readInt64();
@@ -58,7 +58,7 @@ void HashedDataRecordReader::readContinuous(
   CHECK_THRIFT_TYPE(readByte(), TTYPE_DOUBLE, "value_type");
 
   int32_t length = readInt32();
-  record->extendSize(length);
+  record->etwittertendSize(length);
   int64_t id, code;
   for (int32_t i = 0; i < length; i++) {
     id = readInt64();
@@ -85,12 +85,12 @@ void HashedDataRecordReader::readDiscrete(
   CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "value_type");
 
   int32_t length = readInt32();
-  record->extendSize(length);
+  record->etwittertendSize(length);
   int64_t id, code;
   for (int32_t i = 0; i < length; i++) {
     id = readInt64();
     if (keepId(id, code)) {
-      int64_t transformed_key = mixDiscreteIdAndValue(id, readInt64());
+      int64_t transformed_key = mitwitterDiscreteIdAndValue(id, readInt64());
       record->addKey(id, transformed_key, code, DR_DISCRETE);
     } else {
       skip<int64_t>();
@@ -106,14 +106,14 @@ void HashedDataRecordReader::readString(
   CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "value_type");
 
   int32_t length = readInt32();
-  record->extendSize(length);
+  record->etwittertendSize(length);
   int64_t id, code;
   for (int32_t i = 0; i < length; i++) {
     id = readInt64();
     if (keepId(id, code)) {
       const uint8_t *begin = nullptr;
       int32_t str_len = getRawBuffer<uint8_t>(&begin);
-      int64_t transformed_key = mixStringIdAndValue(id, str_len, begin);
+      int64_t transformed_key = mitwitterStringIdAndValue(id, str_len, begin);
       record->addKey(id, transformed_key, code, DR_STRING);
     } else {
       int32_t str_len = readInt32();
@@ -130,7 +130,7 @@ void HashedDataRecordReader::readSparseBinary(
   CHECK_THRIFT_TYPE(readByte(), TTYPE_SET, "value_type");
 
   int32_t length = readInt32();
-  record->extendSize(length);
+  record->etwittertendSize(length);
   int64_t id, code;
   for (int32_t i = 0; i < length; i++) {
     id = readInt64();
@@ -140,7 +140,7 @@ void HashedDataRecordReader::readSparseBinary(
       for (int32_t j = 0; j < set_length; j++) {
         const uint8_t *begin = nullptr;
         int32_t str_len = getRawBuffer<uint8_t>(&begin);
-        int64_t transformed_key = mixStringIdAndValue(id, str_len, begin);
+        int64_t transformed_key = mitwitterStringIdAndValue(id, str_len, begin);
         record->addKey(id, transformed_key, code, DR_SPARSE_BINARY);
       }
     } else {
@@ -162,7 +162,7 @@ void HashedDataRecordReader::readSparseContinuous(
   CHECK_THRIFT_TYPE(readByte(), TTYPE_MAP, "value_type");
 
   int32_t length = readInt32();
-  record->extendSize(length);
+  record->etwittertendSize(length);
   int64_t id, code;
   for (int32_t i = 0; i < length; i++) {
     id = readInt64();
@@ -176,7 +176,7 @@ void HashedDataRecordReader::readSparseContinuous(
         int64_t transformed_key = 0;
         switch(m_decode_mode) {
           case DecodeMode::hash_fname_and_valname:
-            transformed_key = mixStringIdAndValue(id, str_len, begin);
+            transformed_key = mitwitterStringIdAndValue(id, str_len, begin);
             break;
           default:  // m_decode_mode == DecodeMode::hash_valname == 0 is default
             twml_get_feature_id(&transformed_key, str_len, reinterpret_cast<const char *>(begin));

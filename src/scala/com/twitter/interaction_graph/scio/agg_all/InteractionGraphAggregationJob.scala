@@ -2,21 +2,21 @@ package com.twitter.interaction_graph.scio.agg_all
 
 import com.google.cloud.bigquery.BigQueryOptions
 import com.google.cloud.bigquery.QueryJobConfiguration
-import com.spotify.scio.ScioContext
+import com.spotify.scio.ScioContetwittert
 import com.spotify.scio.ScioMetrics
 import com.spotify.scio.values.SCollection
 import com.twitter.beam.io.dal.DAL
 import com.twitter.beam.io.dal.DAL.DiskFormat
 import com.twitter.beam.io.dal.DAL.PathLayout
 import com.twitter.beam.io.dal.DAL.WriteOptions
-import com.twitter.beam.io.exception.DataNotFoundException
+import com.twitter.beam.io.etwitterception.DataNotFoundEtwitterception
 import com.twitter.beam.job.ServiceIdentifierOptions
 import com.twitter.interaction_graph.scio.agg_all.InteractionGraphAggregationTransform._
 import com.twitter.interaction_graph.scio.common.DateUtil
 import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil
 import com.twitter.interaction_graph.scio.common.UserUtil
 import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.Vertex
+import com.twitter.interaction_graph.thriftscala.Vertetwitter
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.scio_internal.job.ScioBeamJob
 import com.twitter.statebird.v2.thriftscala.Environment
@@ -32,7 +32,7 @@ import org.apache.beam.sdk.transforms.SerializableFunction
 import org.joda.time.Interval
 import scala.collection.JavaConverters._
 
-object InteractionGraphAggregationJob extends ScioBeamJob[InteractionGraphAggregationOption] {
+object InteractionGraphAggregationJob etwittertends ScioBeamJob[InteractionGraphAggregationOption] {
 
   // to parse latest date from the BQ table we're reading from
   val parseDateRow = new SerializableFunction[SchemaAndRecord, String] {
@@ -42,21 +42,21 @@ object InteractionGraphAggregationJob extends ScioBeamJob[InteractionGraphAggreg
     }
   }
 
-  // note that we're using the prob_explicit for real_graph_features (for Home)
+  // note that we're using the prob_etwitterplicit for real_graph_features (for Home)
   val parseRow = new SerializableFunction[SchemaAndRecord, ScoredEdge] {
     override def apply(record: SchemaAndRecord): ScoredEdge = {
       val genericRecord: GenericRecord = record.getRecord()
       ScoredEdge(
         genericRecord.get("source_id").asInstanceOf[Long],
         genericRecord.get("destination_id").asInstanceOf[Long],
-        genericRecord.get("prob_explicit").asInstanceOf[Double],
+        genericRecord.get("prob_etwitterplicit").asInstanceOf[Double],
         genericRecord.get("followed").asInstanceOf[Boolean],
       )
     }
   }
 
   override def runPipeline(
-    sc: ScioContext,
+    sc: ScioContetwittert,
     opts: InteractionGraphAggregationOption
   ): Unit = {
 
@@ -80,18 +80,18 @@ object InteractionGraphAggregationJob extends ScioBeamJob[InteractionGraphAggreg
       val queryConfig = QueryJobConfiguration.of(query)
       val results = bqClient.query(queryConfig).getValues.asScala.toSeq
       if (results.isEmpty || results.head.get(0).getLongValue == 0) {
-        throw new DataNotFoundException(s"$dateStr not present in $fullBqTableName.")
+        throw new DataNotFoundEtwitterception(s"$dateStr not present in $fullBqTableName.")
       }
     }
     sc.run()
   }
 
   override protected def configurePipeline(
-    scioContext: ScioContext,
+    scioContetwittert: ScioContetwittert,
     pipelineOptions: InteractionGraphAggregationOption
   ): Unit = {
     @transient
-    implicit lazy val sc: ScioContext = scioContext
+    implicit lazy val sc: ScioContetwittert = scioContetwittert
     implicit lazy val dateInterval: Interval = pipelineOptions.interval
     val yesterday = DateUtil.subtract(dateInterval, Duration.fromDays(1))
 
@@ -110,12 +110,12 @@ object InteractionGraphAggregationJob extends ScioBeamJob[InteractionGraphAggreg
     val bqTableName: String = "scores"
     val fullBqTableName: String = s"$project:$datasetName.$bqTableName"
 
-    val scoreExport: SCollection[ScoredEdge] =
+    val scoreEtwitterport: SCollection[ScoredEdge] =
       sc.customInput(
         s"Read from BQ table $fullBqTableName",
         BigQueryIO
           .read(parseRow)
-          .fromQuery(s"""SELECT source_id, destination_id, prob_explicit, followed
+          .fromQuery(s"""SELECT source_id, destination_id, prob_etwitterplicit, followed
                |FROM `$project.$datasetName.$bqTableName`
                |WHERE ds = '$dateStr'""".stripMargin)
           .usingStandardSql()
@@ -124,24 +124,24 @@ object InteractionGraphAggregationJob extends ScioBeamJob[InteractionGraphAggreg
 
     val source = InteractionGraphAggregationSource(pipelineOptions)
 
-    val (addressEdgeFeatures, addressVertexFeatures) = source.readAddressBookFeatures()
+    val (addressEdgeFeatures, addressVertetwitterFeatures) = source.readAddressBookFeatures()
 
-    val (clientEventLogsEdgeFeatures, clientEventLogsVertexFeatures) =
+    val (clientEventLogsEdgeFeatures, clientEventLogsVertetwitterFeatures) =
       source.readClientEventLogsFeatures(dateInterval)
 
-    val (flockEdgeFeatures, flockVertexFeatures) = source.readFlockFeatures()
+    val (flockEdgeFeatures, flockVertetwitterFeatures) = source.readFlockFeatures()
 
-    val (directInteractionsEdgeFeatures, directInteractionsVertexFeatures) =
+    val (directInteractionsEdgeFeatures, directInteractionsVertetwitterFeatures) =
       source.readDirectInteractionsFeatures(dateInterval)
 
     val invalidUsers = UserUtil.getInvalidUsers(source.readFlatUsers())
 
-    val (prevAggEdge, prevAggVertex) = source.readAggregatedFeatures(yesterday)
+    val (prevAggEdge, prevAggVertetwitter) = source.readAggregatedFeatures(yesterday)
 
-    val prevAggregatedVertex: SCollection[Vertex] =
+    val prevAggregatedVertetwitter: SCollection[Vertetwitter] =
       UserUtil
-        .filterUsersByIdMapping[Vertex](
-          prevAggVertex,
+        .filterUsersByIdMapping[Vertetwitter](
+          prevAggVertetwitter,
           invalidUsers,
           v => v.userId
         )
@@ -164,14 +164,14 @@ object InteractionGraphAggregationJob extends ScioBeamJob[InteractionGraphAggreg
           Seq(e => e.sourceId, e => e.destinationId)
         )
 
-    val aggregatedActivityVertexDaily = UserUtil
-      .filterUsersByIdMapping[Vertex](
+    val aggregatedActivityVertetwitterDaily = UserUtil
+      .filterUsersByIdMapping[Vertetwitter](
         FeatureGeneratorUtil
-          .combineVertexFeatures(
-            clientEventLogsVertexFeatures ++
-              directInteractionsVertexFeatures ++
-              addressVertexFeatures ++
-              flockVertexFeatures
+          .combineVertetwitterFeatures(
+            clientEventLogsVertetwitterFeatures ++
+              directInteractionsVertetwitterFeatures ++
+              addressVertetwitterFeatures ++
+              flockVertetwitterFeatures
           ),
         invalidUsers,
         v => v.userId
@@ -181,11 +181,11 @@ object InteractionGraphAggregationJob extends ScioBeamJob[InteractionGraphAggreg
     val aggregatedActivityEdgeDaily = FeatureGeneratorUtil
       .combineEdgeFeatures(clientEventLogsEdgeFeatures ++ directInteractionsEdgeFeatures)
 
-    // Vertex level, Add the decay sum for history and daily
-    val aggregatedActivityVertex = FeatureGeneratorUtil
-      .combineVertexFeaturesWithDecay(
-        prevAggregatedVertex,
-        aggregatedActivityVertexDaily,
+    // Vertetwitter level, Add the decay sum for history and daily
+    val aggregatedActivityVertetwitter = FeatureGeneratorUtil
+      .combineVertetwitterFeaturesWithDecay(
+        prevAggregatedVertetwitter,
+        aggregatedActivityVertetwitterDaily,
         InteractionGraphScoringConfig.ONE_MINUS_ALPHA,
         InteractionGraphScoringConfig.ALPHA
       )
@@ -201,7 +201,7 @@ object InteractionGraphAggregationJob extends ScioBeamJob[InteractionGraphAggreg
       .filter(FeatureGeneratorUtil.edgeWithFeatureOtherThanDwellTime)
       .withName("removing edges that only have dwell time features")
 
-    val edgeKeyedScores = scoreExport.keyBy { e => (e.sourceId, e.destinationId) }
+    val edgeKeyedScores = scoreEtwitterport.keyBy { e => (e.sourceId, e.destinationId) }
 
     val scoredAggregatedActivityEdge = aggregatedActivityEdge
       .keyBy { e => (e.sourceId, e.destinationId) }
@@ -229,7 +229,7 @@ object InteractionGraphAggregationJob extends ScioBeamJob[InteractionGraphAggreg
         .leftOuterJoin(combinedFeatures)
         .map {
           case (_, (scoredEdge, combinedFeaturesOpt)) =>
-            if (combinedFeaturesOpt.exists(_.features.nonEmpty)) {
+            if (combinedFeaturesOpt.etwitterists(_.features.nonEmpty)) {
               ScioMetrics.counter("after joining scored edge with features", "has features").inc()
               Edge(
                 sourceId = scoredEdge.sourceId,
@@ -249,13 +249,13 @@ object InteractionGraphAggregationJob extends ScioBeamJob[InteractionGraphAggreg
         }
 
     val realGraphFeatures =
-      getTopKTimelineFeatures(aggregatedActivityScoredEdge, pipelineOptions.getMaxDestinationIds)
+      getTopKTimelineFeatures(aggregatedActivityScoredEdge, pipelineOptions.getMatwitterDestinationIds)
 
-    aggregatedActivityVertex.saveAsCustomOutput(
-      "Write History Aggregated Vertex Records",
-      DAL.writeSnapshot[Vertex](
-        dataset = InteractionGraphHistoryAggregatedVertexSnapshotScalaDataset,
-        pathLayout = PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_vertex"),
+    aggregatedActivityVertetwitter.saveAsCustomOutput(
+      "Write History Aggregated Vertetwitter Records",
+      DAL.writeSnapshot[Vertetwitter](
+        dataset = InteractionGraphHistoryAggregatedVertetwitterSnapshotScalaDataset,
+        pathLayout = PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_vertetwitter"),
         endDate = Instant.ofEpochMilli(dateInterval.getEndMillis),
         diskFormat = DiskFormat.Parquet,
         environmentOverride = Environment.valueOf(dalWriteEnvironment),
@@ -275,12 +275,12 @@ object InteractionGraphAggregationJob extends ScioBeamJob[InteractionGraphAggreg
       )
     )
 
-    aggregatedActivityVertexDaily.saveAsCustomOutput(
-      "Write Daily Aggregated Vertex Records",
-      DAL.write[Vertex](
-        dataset = InteractionGraphAggregatedVertexDailyScalaDataset,
+    aggregatedActivityVertetwitterDaily.saveAsCustomOutput(
+      "Write Daily Aggregated Vertetwitter Records",
+      DAL.write[Vertetwitter](
+        dataset = InteractionGraphAggregatedVertetwitterDailyScalaDataset,
         pathLayout =
-          PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_vertex_daily"),
+          PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_vertetwitter_daily"),
         interval = dateInterval,
         diskFormat = DiskFormat.Parquet,
         environmentOverride = Environment.valueOf(dalWriteEnvironment),

@@ -11,7 +11,7 @@ import com.twitter.timelines.util.stats.RequestScope
 import com.twitter.util.Duration
 
 class EntityTweetsRepositoryBuilder(config: RuntimeConfiguration, configBuilder: ConfigBuilder)
-    extends CandidatesRepositoryBuilder(config) {
+    etwittertends CandidatesRepositoryBuilder(config) {
 
   // Default client id for this repository if the upstream requests doesn't indicate one.
   override val clientSubId = "community"
@@ -25,7 +25,7 @@ class EntityTweetsRepositoryBuilder(config: RuntimeConfiguration, configBuilder:
 
   /**
    * [1] timeout is derived from p9999 TLR <-> Earlybird latency and shall be less than
-   *     request timeout of timelineranker client within downstream timelinemixer, which is
+   *     request timeout of timelineranker client within downstream timelinemitwitterer, which is
    *     1s now
    *
    * [2] processing timeout is less than request timeout [1] with 100ms space for networking and

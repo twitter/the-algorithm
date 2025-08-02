@@ -1,6 +1,6 @@
 package com.twitter.search.common.relevance.entities;
 
-import java.text.Normalizer;
+import java.tetwittert.Normalizer;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Set;
@@ -15,8 +15,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.twitter.common.text.transformer.HTMLTagRemovalTransformer;
-import com.twitter.common_internal.text.extractor.EmojiExtractor;
+import com.twitter.common.tetwittert.transformer.HTMLTagRemovalTransformer;
+import com.twitter.common_internal.tetwittert.etwittertractor.EmojiEtwittertractor;
 import com.twitter.search.common.metrics.SearchRateCounter;
 import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
 
@@ -29,20 +29,20 @@ public final class TwitterMessageUtil {
   @VisibleForTesting
   static final ConcurrentMap<Field, Counters> COUNTERS_MAP = Maps.newConcurrentMap();
   // We truncate the location string because we used to use a MySQL table to store the geocoding
-  // information.  In the MySQL table, the location string was fix width of 30 characters.
+  // information.  In the MySQL table, the location string was fitwitter width of 30 characters.
   // We have migrated to Manhattan and the location string is no longer limited to 30 character.
   // However, in order to correctly lookup location geocode from Manhattan, we still need to
   // truncate the location just like we did before.
-  private static final int MAX_LOCATION_LEN = 30;
+  private static final int MAtwitter_LOCATION_LEN = 30;
 
-  // Note: we strip tags to index source, as typically source contains <a href=...> tags.
+  // Note: we strip tags to indetwitter source, as typically source contains <a href=...> tags.
   // Sometimes we get a source where stripping fails, as the URL in the tag was
-  // excessively long.  We drop these sources, as there is little reason to index them.
-  private static final int MAX_SOURCE_LEN = 64;
+  // etwittercessively long.  We drop these sources, as there is little reason to indetwitter them.
+  private static final int MAtwitter_SOURCE_LEN = 64;
 
   private static HTMLTagRemovalTransformer tagRemovalTransformer = new HTMLTagRemovalTransformer();
 
-  private static final String STAT_PREFIX = "twitter_message_";
+  private static final String STAT_PREFItwitter = "twitter_message_";
 
   public enum Field {
     FROM_USER_DISPLAY_NAME,
@@ -51,7 +51,7 @@ public final class TwitterMessageUtil {
     ORIG_SOURCE,
     SHARED_USER_DISPLAY_NAME,
     SOURCE,
-    TEXT,
+    TEtwitterT,
     TO_USER_SCREEN_NAME;
 
     public String getNameForStats() {
@@ -69,16 +69,16 @@ public final class TwitterMessageUtil {
 
     Counters(Field field) {
       String fieldNameForStats = field.getNameForStats();
-      truncatedCounter = SearchRateCounter.export(
-          STAT_PREFIX + "truncated_" + fieldNameForStats);
-      tweetsWithStrippedSupplementaryCharsCounter = SearchRateCounter.export(
-          STAT_PREFIX + "tweets_with_stripped_supplementary_chars_" + fieldNameForStats);
-      strippedSupplementaryCharsCounter = SearchRateCounter.export(
-          STAT_PREFIX + "stripped_supplementary_chars_" + fieldNameForStats);
-      nonStrippedEmojiCharsCounter = SearchRateCounter.export(
-          STAT_PREFIX + "non_stripped_emoji_chars_" + fieldNameForStats);
-      emojisAtTruncateBoundaryCounter = SearchRateCounter.export(
-          STAT_PREFIX + "emojis_at_truncate_boundary_" + fieldNameForStats);
+      truncatedCounter = SearchRateCounter.etwitterport(
+          STAT_PREFItwitter + "truncated_" + fieldNameForStats);
+      tweetsWithStrippedSupplementaryCharsCounter = SearchRateCounter.etwitterport(
+          STAT_PREFItwitter + "tweets_with_stripped_supplementary_chars_" + fieldNameForStats);
+      strippedSupplementaryCharsCounter = SearchRateCounter.etwitterport(
+          STAT_PREFItwitter + "stripped_supplementary_chars_" + fieldNameForStats);
+      nonStrippedEmojiCharsCounter = SearchRateCounter.etwitterport(
+          STAT_PREFItwitter + "non_stripped_emoji_chars_" + fieldNameForStats);
+      emojisAtTruncateBoundaryCounter = SearchRateCounter.etwitterport(
+          STAT_PREFItwitter + "emojis_at_truncate_boundary_" + fieldNameForStats);
     }
 
     SearchRateCounter getTruncatedCounter() {
@@ -111,37 +111,37 @@ public final class TwitterMessageUtil {
   // Note: the monorail enforces a limit of 15 characters for screen names,
   // but some users with up to 20 character names were grandfathered-in.  To allow
   // those users to be searchable, support up to 20 chars.
-  private static final int MAX_SCREEN_NAME_LEN = 20;
+  private static final int MAtwitter_SCREEN_NAME_LEN = 20;
 
-  // Note: we expect the current limit to be 10K. Also, all supplementary unicode characters (with
-  // the exception of emojis, maybe) will be removed and not counted as total length. Added alert
-  // for text truncation rate as well. SEARCH-9512
-  private static final int MAX_TWEET_TEXT_LEN = 10000;
+  // Note: we etwitterpect the current limit to be 10K. Also, all supplementary unicode characters (with
+  // the etwitterception of emojis, maybe) will be removed and not counted as total length. Added alert
+  // for tetwittert truncation rate as well. SEARCH-9512
+  private static final int MAtwitter_TWEET_TEtwitterT_LEN = 10000;
 
   @VisibleForTesting
   static final SearchRateCounter FILTERED_NO_STATUS_ID =
-      SearchRateCounter.export(STAT_PREFIX + "filtered_no_status_id");
+      SearchRateCounter.etwitterport(STAT_PREFItwitter + "filtered_no_status_id");
   @VisibleForTesting
   static final SearchRateCounter FILTERED_NO_FROM_USER =
-      SearchRateCounter.export(STAT_PREFIX + "filtered_no_from_user");
+      SearchRateCounter.etwitterport(STAT_PREFItwitter + "filtered_no_from_user");
   @VisibleForTesting
   static final SearchRateCounter FILTERED_LONG_SCREEN_NAME =
-      SearchRateCounter.export(STAT_PREFIX + "filtered_long_screen_name");
+      SearchRateCounter.etwitterport(STAT_PREFItwitter + "filtered_long_screen_name");
   @VisibleForTesting
-  static final SearchRateCounter FILTERED_NO_TEXT =
-      SearchRateCounter.export(STAT_PREFIX + "filtered_no_text");
+  static final SearchRateCounter FILTERED_NO_TEtwitterT =
+      SearchRateCounter.etwitterport(STAT_PREFItwitter + "filtered_no_tetwittert");
   @VisibleForTesting
   static final SearchRateCounter FILTERED_NO_DATE =
-      SearchRateCounter.export(STAT_PREFIX + "filtered_no_date");
+      SearchRateCounter.etwitterport(STAT_PREFItwitter + "filtered_no_date");
   @VisibleForTesting
   static final SearchRateCounter NULLCAST_TWEET =
-      SearchRateCounter.export(STAT_PREFIX + "filter_nullcast_tweet");
+      SearchRateCounter.etwitterport(STAT_PREFItwitter + "filter_nullcast_tweet");
   @VisibleForTesting
   static final SearchRateCounter NULLCAST_TWEET_ACCEPTED =
-      SearchRateCounter.export(STAT_PREFIX + "nullcast_tweet_accepted");
+      SearchRateCounter.etwitterport(STAT_PREFItwitter + "nullcast_tweet_accepted");
   @VisibleForTesting
   static final SearchRateCounter INCONSISTENT_TWEET_ID_AND_CREATED_AT =
-      SearchRateCounter.export(STAT_PREFIX + "inconsistent_tweet_id_and_created_at_ms");
+      SearchRateCounter.etwitterport(STAT_PREFItwitter + "inconsistent_tweet_id_and_created_at_ms");
 
   /** Strips the given source from the message with the given ID. */
   private static String stripSource(String source, Long messageId) {
@@ -151,10 +151,10 @@ public final class TwitterMessageUtil {
     // Always strip emojis from sources: they don't really make sense in this field.
     String strippedSource = stripSupplementaryChars(
         tagRemovalTransformer.transform(source).toString(), Field.SOURCE, true);
-    if (strippedSource.length() > MAX_SOURCE_LEN) {
+    if (strippedSource.length() > MAtwitter_SOURCE_LEN) {
       LOG.warn("Message "
           + messageId
-          + " contains stripped source that exceeds MAX_SOURCE_LEN. Removing: "
+          + " contains stripped source that etwitterceeds MAtwitter_SOURCE_LEN. Removing: "
           + strippedSource);
       COUNTERS_MAP.get(Field.SOURCE).getTruncatedCounter().increment();
       return null;
@@ -169,7 +169,7 @@ public final class TwitterMessageUtil {
   private static String stripAndTruncateLocation(String location) {
     // Always strip emojis from locations: they don't really make sense in this field.
     String strippedLocation = stripSupplementaryChars(location, Field.NORMALIZED_LOCATION, true);
-    return truncateString(strippedLocation, MAX_LOCATION_LEN, Field.NORMALIZED_LOCATION, true);
+    return truncateString(strippedLocation, MAtwitter_LOCATION_LEN, Field.NORMALIZED_LOCATION, true);
   }
 
   /**
@@ -233,15 +233,15 @@ public final class TwitterMessageUtil {
     }
     String fromUserScreenName = message.getFromUserScreenName().get();
 
-    if (fromUserScreenName.length() > MAX_SCREEN_NAME_LEN) {
+    if (fromUserScreenName.length() > MAtwitter_SCREEN_NAME_LEN) {
       LOG.warn("Message " + message.getId() + " has a user screen name longer than "
-               + MAX_SCREEN_NAME_LEN + " characters: " + message.getFromUserScreenName()
+               + MAtwitter_SCREEN_NAME_LEN + " characters: " + message.getFromUserScreenName()
                + ". Skipping.");
       FILTERED_LONG_SCREEN_NAME.increment();
       return false;
     }
 
-    // Remove supplementary characters and truncate these text fields.
+    // Remove supplementary characters and truncate these tetwittert fields.
     if (message.getFromUserDisplayName().isPresent()) {
       message.setFromUserDisplayName(stripSupplementaryChars(
           message.getFromUserDisplayName().get(),
@@ -256,23 +256,23 @@ public final class TwitterMessageUtil {
       message.setToUserScreenName(
           truncateString(
               strippedToUserScreenName,
-              MAX_SCREEN_NAME_LEN,
+              MAtwitter_SCREEN_NAME_LEN,
               Field.TO_USER_SCREEN_NAME,
               stripEmojisForFields.contains(Field.TO_USER_SCREEN_NAME)));
     }
 
-    String strippedText = stripSupplementaryChars(
-        message.getText(),
-        Field.TEXT,
-        stripEmojisForFields.contains(Field.TEXT));
-    message.setText(truncateString(
-        strippedText,
-        MAX_TWEET_TEXT_LEN,
-        Field.TEXT,
-        stripEmojisForFields.contains(Field.TEXT)));
+    String strippedTetwittert = stripSupplementaryChars(
+        message.getTetwittert(),
+        Field.TEtwitterT,
+        stripEmojisForFields.contains(Field.TEtwitterT));
+    message.setTetwittert(truncateString(
+        strippedTetwittert,
+        MAtwitter_TWEET_TEtwitterT_LEN,
+        Field.TEtwitterT,
+        stripEmojisForFields.contains(Field.TEtwitterT)));
 
-    if (StringUtils.isBlank(message.getText())) {
-      FILTERED_NO_TEXT.increment();
+    if (StringUtils.isBlank(message.getTetwittert())) {
+      FILTERED_NO_TEtwitterT.increment();
       return false;
     }
 
@@ -309,7 +309,7 @@ public final class TwitterMessageUtil {
       return false;
     }
 
-    // Remove supplementary characters from these text fields.
+    // Remove supplementary characters from these tetwittert fields.
     message.setSharedUserDisplayName(stripSupplementaryChars(
         message.getSharedUserDisplayName(),
         Field.SHARED_USER_DISPLAY_NAME,
@@ -319,18 +319,18 @@ public final class TwitterMessageUtil {
   }
 
   /**
-   * Strips non indexable chars from the text.
+   * Strips non indetwitterable chars from the tetwittert.
    *
-   * Returns the resulting string, which may be the same object as the text argument when
+   * Returns the resulting string, which may be the same object as the tetwittert argument when
    * no stripping or truncation is necessary.
    *
-   * Non-indexed characters are "supplementary unicode" that are not emojis. Note that
-   * supplementary unicode are still characters that seem worth indexing, as many characters
-   * in CJK languages are supplementary. However this would make the size of our index
-   * explode (~186k supplementary characters exist), so it's not feasible.
+   * Non-indetwittered characters are "supplementary unicode" that are not emojis. Note that
+   * supplementary unicode are still characters that seem worth indetwittering, as many characters
+   * in CJK languages are supplementary. However this would make the size of our indetwitter
+   * etwitterplode (~186k supplementary characters etwitterist), so it's not feasible.
    *
-   * @param text The text to strip
-   * @param field The field this text is from
+   * @param tetwittert The tetwittert to strip
+   * @param field The field this tetwittert is from
    * @param stripSupplementaryEmojis Whether or not to strip supplementary emojis. Note that this
    * parameter name isn't 100% accurate. This parameter is meant to replicate behavior prior to
    * adding support for *not* stripping supplementary emojis. The prior behavior would turn an
@@ -340,11 +340,11 @@ public final class TwitterMessageUtil {
    */
   @VisibleForTesting
   public static String stripSupplementaryChars(
-      String text,
+      String tetwittert,
       Field field,
       boolean stripSupplementaryEmojis) {
-    if (text == null || text.isEmpty()) {
-      return text;
+    if (tetwittert == null || tetwittert.isEmpty()) {
+      return tetwittert;
     }
 
     // Initialize an empty map so that if we choose not to strip emojis,
@@ -353,20 +353,20 @@ public final class TwitterMessageUtil {
     NavigableMap<Integer, Integer> emojiPositions = new TreeMap<>();
 
     if (!stripSupplementaryEmojis) {
-      emojiPositions = EmojiExtractor.getEmojiPositions(text);
+      emojiPositions = EmojiEtwittertractor.getEmojiPositions(tetwittert);
     }
 
-    StringBuilder strippedTextBuilder = new StringBuilder();
+    StringBuilder strippedTetwittertBuilder = new StringBuilder();
     int sequenceStart = 0;
     int i = 0;
-    while (i < text.length()) {
-      if (Character.isSupplementaryCodePoint(text.codePointAt(i))) {
+    while (i < tetwittert.length()) {
+      if (Character.isSupplementaryCodePoint(tetwittert.codePointAt(i))) {
         // Check if this supplementary character is an emoji
         if (!emojiPositions.containsKey(i)) {
           // It's not an emoji, or we want to strip emojis, so strip it
 
-          // text[i] and text[i + 1] are part of a supplementary code point.
-          strippedTextBuilder.append(text.substring(sequenceStart, i));
+          // tetwittert[i] and tetwittert[i + 1] are part of a supplementary code point.
+          strippedTetwittertBuilder.append(tetwittert.substring(sequenceStart, i));
           sequenceStart = i + 2;  // skip 2 chars
           i = sequenceStart;
           COUNTERS_MAP.get(field).getStrippedSupplementaryCharsCounter().increment();
@@ -379,15 +379,15 @@ public final class TwitterMessageUtil {
         ++i;
       }
     }
-    if (sequenceStart < text.length()) {
-      strippedTextBuilder.append(text.substring(sequenceStart));
+    if (sequenceStart < tetwittert.length()) {
+      strippedTetwittertBuilder.append(tetwittert.substring(sequenceStart));
     }
 
-    String strippedText = strippedTextBuilder.toString();
-    if (strippedText.length() < text.length()) {
+    String strippedTetwittert = strippedTetwittertBuilder.toString();
+    if (strippedTetwittert.length() < tetwittert.length()) {
       COUNTERS_MAP.get(field).getTweetsWithStrippedSupplementaryCharsCounter().increment();
     }
-    return strippedText;
+    return strippedTetwittert;
   }
 
   /**
@@ -397,48 +397,48 @@ public final class TwitterMessageUtil {
    * So if a single emoji takes up 4 UTF-16 characters, that counts as 4 for the truncation,
    * not just 1.
    *
-   * @param text The text to truncate
-   * @param maxLength The maximum length of the string after truncation
+   * @param tetwittert The tetwittert to truncate
+   * @param matwitterLength The matwitterimum length of the string after truncation
    * @param field The field from which this string cames
-   * @param splitEmojisAtMaxLength If true, don't worry about emojis and just truncate at maxLength,
-   * potentially splitting them. If false, truncate before the emoji if truncating at maxLength
+   * @param splitEmojisAtMatwitterLength If true, don't worry about emojis and just truncate at matwitterLength,
+   * potentially splitting them. If false, truncate before the emoji if truncating at matwitterLength
    * would cause the emoji to be split.
    */
   @VisibleForTesting
   static String truncateString(
-      String text,
-      int maxLength,
+      String tetwittert,
+      int matwitterLength,
       Field field,
-      boolean splitEmojisAtMaxLength) {
-    Preconditions.checkArgument(maxLength > 0);
+      boolean splitEmojisAtMatwitterLength) {
+    Preconditions.checkArgument(matwitterLength > 0);
 
-    if ((text == null) || (text.length() <= maxLength)) {
-      return text;
+    if ((tetwittert == null) || (tetwittert.length() <= matwitterLength)) {
+      return tetwittert;
     }
 
-    int truncatePoint = maxLength;
+    int truncatePoint = matwitterLength;
     NavigableMap<Integer, Integer> emojiPositions;
     // If we want to consider emojis we should not strip on an emoji boundary.
-    if (!splitEmojisAtMaxLength) {
-      emojiPositions = EmojiExtractor.getEmojiPositions(text);
+    if (!splitEmojisAtMatwitterLength) {
+      emojiPositions = EmojiEtwittertractor.getEmojiPositions(tetwittert);
 
-      // Get the last emoji before maxlength.
-      Map.Entry<Integer, Integer> lastEmojiBeforeMaxLengthEntry =
-          emojiPositions.lowerEntry(maxLength);
+      // Get the last emoji before matwitterlength.
+      Map.Entry<Integer, Integer> lastEmojiBeforeMatwitterLengthEntry =
+          emojiPositions.lowerEntry(matwitterLength);
 
-      if (lastEmojiBeforeMaxLengthEntry != null) {
-        int lowerEmojiEnd = lastEmojiBeforeMaxLengthEntry.getKey()
-            + lastEmojiBeforeMaxLengthEntry.getValue();
+      if (lastEmojiBeforeMatwitterLengthEntry != null) {
+        int lowerEmojiEnd = lastEmojiBeforeMatwitterLengthEntry.getKey()
+            + lastEmojiBeforeMatwitterLengthEntry.getValue();
 
         // If the last emoji would be truncated, truncate before the last emoji.
         if (lowerEmojiEnd > truncatePoint) {
-          truncatePoint = lastEmojiBeforeMaxLengthEntry.getKey();
+          truncatePoint = lastEmojiBeforeMatwitterLengthEntry.getKey();
           COUNTERS_MAP.get(field).getEmojisAtTruncateBoundaryCounter().increment();
         }
       }
     }
 
     COUNTERS_MAP.get(field).getTruncatedCounter().increment();
-    return text.substring(0, truncatePoint);
+    return tetwittert.substring(0, truncatePoint);
   }
 }

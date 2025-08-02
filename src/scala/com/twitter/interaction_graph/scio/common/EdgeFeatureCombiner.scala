@@ -130,7 +130,7 @@ class EdgeFeatureCombiner(instanceEdge: Edge, featureMap: Map[FeatureName, EFeat
 
 /**
  * This portion contains the actual combination logic. For now, we only implement a simple
- * additive combiner, but in future we'd like to have things like time-weighted (exponential
+ * additive combiner, but in future we'd like to have things like time-weighted (etwitterponential
  * decay, maybe) values.
  */
 
@@ -162,10 +162,10 @@ trait EFeatureCombiner {
 
 case class WeightedAdditiveEdgeCombiner(
   override val edgeFeature: Option[EdgeFeature] = None,
-  override val startingDay: Int = Integer.MAX_VALUE,
+  override val startingDay: Int = Integer.MAtwitter_VALUE,
   override val endingDay: Int = Integer.MIN_VALUE,
   override val timeSeriesStatistics: Option[TimeSeriesStatistics] = None)
-    extends EFeatureCombiner {
+    etwittertends EFeatureCombiner {
 
   override def updateTSS(
     feature: EdgeFeature,
@@ -191,10 +191,10 @@ case class WeightedAdditiveEdgeCombiner(
 
   def setFeature(feature: EdgeFeature, alpha: Double, day: Int): WeightedAdditiveEdgeCombiner = {
     val newStartingDay = Math.min(startingDay, day)
-    val newEndingDay = Math.max(endingDay, day)
+    val newEndingDay = Math.matwitter(endingDay, day)
 
     val numDaysSinceLast =
-      if (feature.tss.numDaysSinceLast.exists(_ > 0))
+      if (feature.tss.numDaysSinceLast.etwitterists(_ > 0))
         feature.tss.numDaysSinceLast
       else Some(feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1)
 
@@ -244,12 +244,12 @@ case class WeightedAdditiveEdgeCombiner(
     alpha: Double,
     day: Int
   ): WeightedAdditiveEdgeCombiner = copy(
-    endingDay = Math.max(endingDay, day),
+    endingDay = Math.matwitter(endingDay, day),
     timeSeriesStatistics = updateTSS(feature, alpha)
   )
 
-  override def dropFeature: Boolean = timeSeriesStatistics.exists(tss =>
-    tss.numDaysSinceLast.exists(_ > InteractionGraphUtils.MAX_DAYS_RETENTION) ||
+  override def dropFeature: Boolean = timeSeriesStatistics.etwitterists(tss =>
+    tss.numDaysSinceLast.etwitterists(_ > InteractionGraphUtils.MAtwitter_DAYS_RETENTION) ||
       tss.ewma < InteractionGraphUtils.MIN_FEATURE_VALUE)
 
   override def isSet = edgeFeature.isDefined
@@ -264,17 +264,17 @@ case class WeightedAdditiveEdgeCombiner(
  */
 case class BooleanOrEdgeCombiner(
   override val edgeFeature: Option[EdgeFeature] = None,
-  override val startingDay: Int = Integer.MAX_VALUE,
+  override val startingDay: Int = Integer.MAtwitter_VALUE,
   override val endingDay: Int = Integer.MIN_VALUE,
   override val timeSeriesStatistics: Option[TimeSeriesStatistics] = None)
-    extends EFeatureCombiner {
+    etwittertends EFeatureCombiner {
 
   override def updateTSS(
     feature: EdgeFeature,
     alpha: Double
   ): Option[TimeSeriesStatistics] = {
     val value = timeSeriesStatistics.map(tss => Math.floor(tss.ewma))
-    val newValue = if (value.exists(_ == 1.0) || feature.tss.mean > 0.0) 1.0 else 0.0
+    val newValue = if (value.etwitterists(_ == 1.0) || feature.tss.mean > 0.0) 1.0 else 0.0
     timeSeriesStatistics.map(tss =>
       tss.copy(
         mean = newValue,
@@ -285,7 +285,7 @@ case class BooleanOrEdgeCombiner(
 
   override def addToTSS(feature: EdgeFeature): Option[TimeSeriesStatistics] = {
     val value = timeSeriesStatistics.map(tss => Math.floor(tss.ewma))
-    val newValue = if (value.exists(_ == 1.0) || feature.tss.mean > 0.0) 1.0 else 0.0
+    val newValue = if (value.etwitterists(_ == 1.0) || feature.tss.mean > 0.0) 1.0 else 0.0
     timeSeriesStatistics.map(tss => tss.copy(mean = newValue, ewma = newValue))
   }
 
@@ -298,10 +298,10 @@ case class BooleanOrEdgeCombiner(
 
   def setFeature(feature: EdgeFeature, alpha: Double, day: Int): BooleanOrEdgeCombiner = {
     val newStartingDay = Math.min(startingDay, day)
-    val newEndingDay = Math.max(endingDay, day)
+    val newEndingDay = Math.matwitter(endingDay, day)
 
     val numDaysSinceLast =
-      if (feature.tss.numDaysSinceLast.exists(_ > 0))
+      if (feature.tss.numDaysSinceLast.etwitterists(_ > 0))
         feature.tss.numDaysSinceLast.get
       else feature.tss.numElapsedDays - feature.tss.numNonZeroDays + 1
 
@@ -324,7 +324,7 @@ case class BooleanOrEdgeCombiner(
   }
 
   override def getFinalFeature(totalDays: Int): Option[EdgeFeature] =
-    if (timeSeriesStatistics.exists(tss => tss.ewma < 1.0)) None
+    if (timeSeriesStatistics.etwitterists(tss => tss.ewma < 1.0)) None
     else {
       if (edgeFeature.isEmpty || dropFeature) return None
       edgeFeature.map(ef =>
@@ -338,7 +338,7 @@ case class BooleanOrEdgeCombiner(
     alpha: Double,
     day: Int
   ): BooleanOrEdgeCombiner = copy(
-    endingDay = Math.max(endingDay, day),
+    endingDay = Math.matwitter(endingDay, day),
     timeSeriesStatistics = updateTSS(feature, alpha)
   )
 

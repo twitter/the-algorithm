@@ -45,8 +45,8 @@ class SearchInfoUtils(item: LogEventItem) {
       searchControllerData.itemTypesControllerData
     }
 
-  def checkBit(bitmap: Long, idx: Int): Boolean = {
-    (bitmap / Math.pow(2, idx)).toInt % 2 == 1
+  def checkBit(bitmap: Long, idtwitter: Int): Boolean = {
+    (bitmap / Math.pow(2, idtwitter)).toInt % 2 == 1
   }
 
   def getQueryOptFromSearchDetails(logEvent: LogEvent): Option[String] = {

@@ -20,11 +20,11 @@ object WritePathQueryOptions {
         Tweet.CardReferenceField.id,
         Tweet.MediaTagsField.id,
         Tweet.SelfPermalinkField.id,
-        Tweet.ExtendedTweetMetadataField.id,
-        Tweet.VisibleTextRangeField.id,
+        Tweet.EtwittertendedTweetMetadataField.id,
+        Tweet.VisibleTetwittertRangeField.id,
         Tweet.NsfaHighRecallLabelField.id,
         Tweet.CommunitiesField.id,
-        Tweet.ExclusiveTweetControlField.id,
+        Tweet.EtwitterclusiveTweetControlField.id,
         Tweet.TrustedFriendsControlField.id,
         Tweet.CollabControlField.id,
         Tweet.EditControlField.id,
@@ -95,7 +95,7 @@ object WritePathQueryOptions {
       includeCounts = true,
       cause = TweetQuery.Cause.Read,
       forUser = user,
-      // We pass in the safetyLevel so that the inner tweet's are excluded
+      // We pass in the safetyLevel so that the inner tweet's are etwittercluded
       // from the TweetCreateEvent we send to EventBus. If this were emitted,
       // live pipeline would publish counts to the clients.
       safetyLevel = SafetyLevel.TweetWritesApi
@@ -134,7 +134,7 @@ object WritePathQueryOptions {
       forUserId = Some(forUser.id),
       cardsPlatformKey = writePathHydrationOptions.cardsPlatformKey,
       languageTag = forUser.account.map(_.language).getOrElse("en"),
-      extensionsArgs = writePathHydrationOptions.extensionsArgs,
+      etwittertensionsArgs = writePathHydrationOptions.etwittertensionsArgs,
       safetyLevel = safetyLevel,
       simpleQuotedTweet = writePathHydrationOptions.simpleQuotedTweet
     )
@@ -144,7 +144,7 @@ object WritePathQueryOptions {
     TweetQuery.Options(
       include = BaseDeleteInclude,
       cacheControl = CacheControl.ReadOnlyCache,
-      extensionsArgs = None,
+      etwittertensionsArgs = None,
       requireSourceTweet = false // retweet should be deletable even if source tweet missing
     )
 

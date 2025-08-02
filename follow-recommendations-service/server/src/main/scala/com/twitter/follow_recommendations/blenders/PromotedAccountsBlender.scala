@@ -7,12 +7,12 @@ import com.twitter.follow_recommendations.common.models.AdMetadata
 import com.twitter.follow_recommendations.common.models.Recommendation
 import com.twitter.inject.Logging
 import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class PromotedAccountsBlender @Inject() (statsReceiver: StatsReceiver)
-    extends Transform[Int, Recommendation]
+    etwittertends Transform[Int, Recommendation]
     with Logging {
 
   import PromotedAccountsBlender._
@@ -24,13 +24,13 @@ class PromotedAccountsBlender @Inject() (statsReceiver: StatsReceiver)
   val promotedAccountsStats = stats.scope(NumPromotedAccounts)
 
   override def transform(
-    maxResults: Int,
+    matwitterResults: Int,
     items: Seq[Recommendation]
   ): Stitch[Seq[Recommendation]] = {
     val (promoted, organic) = items.partition(_.isPromotedAccount)
     val promotedIds = promoted.map(_.id).toSet
     val dedupedOrganic = organic.filterNot(u => promotedIds.contains(u.id))
-    val blended = blendPromotedAccount(dedupedOrganic, promoted, maxResults)
+    val blended = blendPromotedAccount(dedupedOrganic, promoted, matwitterResults)
     val (outputPromoted, outputOrganic) = blended.partition(_.isPromotedAccount)
     inputOrganicAccounts.incr(dedupedOrganic.size)
     inputPromotedAccounts.incr(promoted.size)
@@ -52,7 +52,7 @@ class PromotedAccountsBlender @Inject() (statsReceiver: StatsReceiver)
    * merge a list of positioned users, aka. promoted, and a list of organic
    * users.  The positioned promoted users are pre-sorted with regards to their
    * position ascendingly.  Only requirement about position is to be within the
-   * range, i.e, can not exceed the combined length if merge is successful, ok
+   * range, i.e, can not etwitterceed the combined length if merge is successful, ok
    * to be at the last position, but not beyond.
    * For more detailed description of location position:
    * http://confluence.local.twitter.com/display/ADS/Promoted+Tweets+in+Timeline+Design+Document
@@ -62,10 +62,10 @@ class PromotedAccountsBlender @Inject() (statsReceiver: StatsReceiver)
     organicUsers: Seq[Recommendation],
     promotedUsers: Seq[Recommendation]
   ): Seq[Recommendation] = {
-    def mergeAccountWithIndex(
+    def mergeAccountWithIndetwitter(
       organicUsers: Seq[Recommendation],
       promotedUsers: Seq[Recommendation],
-      index: Int
+      indetwitter: Int
     ): Stream[Recommendation] = {
       if (promotedUsers.isEmpty) organicUsers.toStream
       else {
@@ -73,14 +73,14 @@ class PromotedAccountsBlender @Inject() (statsReceiver: StatsReceiver)
         val promotedTail = promotedUsers.tail
         promotedHead.adMetadata match {
           case Some(AdMetadata(position, _)) =>
-            if (position < 0) mergeAccountWithIndex(organicUsers, promotedTail, index)
-            else if (position == index)
-              promotedHead #:: mergeAccountWithIndex(organicUsers, promotedTail, index)
+            if (position < 0) mergeAccountWithIndetwitter(organicUsers, promotedTail, indetwitter)
+            else if (position == indetwitter)
+              promotedHead #:: mergeAccountWithIndetwitter(organicUsers, promotedTail, indetwitter)
             else if (organicUsers.isEmpty) organicUsers.toStream
             else {
               val organicHead = organicUsers.head
               val organicTail = organicUsers.tail
-              organicHead #:: mergeAccountWithIndex(organicTail, promotedUsers, index + 1)
+              organicHead #:: mergeAccountWithIndetwitter(organicTail, promotedUsers, indetwitter + 1)
             }
           case _ =>
             logger.error("Unknown Candidate type in mergePromotedAccounts")
@@ -89,27 +89,27 @@ class PromotedAccountsBlender @Inject() (statsReceiver: StatsReceiver)
       }
     }
 
-    mergeAccountWithIndex(organicUsers, promotedUsers, 0)
+    mergeAccountWithIndetwitter(organicUsers, promotedUsers, 0)
   }
 
   private[this] def blendPromotedAccount(
     organic: Seq[Recommendation],
     promoted: Seq[Recommendation],
-    maxResults: Int
+    matwitterResults: Int
   ): Seq[Recommendation] = {
 
     val merged = mergePromotedAccounts(organic, promoted)
-    val mergedServed = merged.take(maxResults)
+    val mergedServed = merged.take(matwitterResults)
     val promotedServed = promoted.intersect(mergedServed)
 
     if (isBlendPromotedNeeded(
         mergedServed.size - promotedServed.size,
         promotedServed.size,
-        maxResults
+        matwitterResults
       )) {
       mergedServed
     } else {
-      organic.take(maxResults)
+      organic.take(matwitterResults)
     }
   }
 
@@ -117,13 +117,13 @@ class PromotedAccountsBlender @Inject() (statsReceiver: StatsReceiver)
   private[blenders] def isBlendPromotedNeeded(
     organicSize: Int,
     promotedSize: Int,
-    maxResults: Int
+    matwitterResults: Int
   ): Boolean = {
     (organicSize > 1) &&
     (promotedSize > 0) &&
     (promotedSize < organicSize) &&
     (promotedSize <= 2) &&
-    (maxResults > 1)
+    (matwitterResults > 1)
   }
 }
 

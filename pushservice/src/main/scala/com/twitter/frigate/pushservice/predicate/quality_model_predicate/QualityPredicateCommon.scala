@@ -9,7 +9,7 @@ import com.twitter.hermit.predicate.NamedPredicate
 import com.twitter.hermit.predicate.Predicate
 import com.twitter.util.Future
 
-object PDauCohort extends Enumeration {
+object PDauCohort etwittertends Enumeration {
   type PDauCohort = Value
 
   val cohort1 = Value
@@ -128,8 +128,8 @@ object PDauCohortUtil {
 
 trait QualityPredicateBase {
   def name: String
-  def thresholdExtractor: Target => Future[Double]
-  def scoreExtractor: PushCandidate => Future[Option[Double]]
+  def thresholdEtwittertractor: Target => Future[Double]
+  def scoreEtwittertractor: PushCandidate => Future[Option[Double]]
   def isPredicateEnabled: PushCandidate => Future[Boolean] = _ => Future.True
   def comparator: (Double, Double) => Boolean =
     (score: Double, threshold: Double) => score >= threshold
@@ -147,8 +147,8 @@ trait QualityPredicateBase {
       .fromAsync { candidate: PushCandidate =>
         isPredicateEnabled(candidate).flatMap {
           case true =>
-            scoreExtractor(candidate).flatMap { scoreOpt =>
-              thresholdExtractor(candidate.target).map { threshold =>
+            scoreEtwittertractor(candidate).flatMap { scoreOpt =>
+              thresholdEtwittertractor(candidate.target).map { threshold =>
                 val score = scoreOpt.getOrElse(0.0)
                 val result = comparator(score, threshold)
                 PDauCohortUtil.updateStats(candidate.target, name, result)

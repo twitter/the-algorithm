@@ -13,11 +13,11 @@ enum DisplayLocation {
     PROFILE_TOP_FOLLOWING = 42
     PROFILE_TOP_FOLLOWERS = 43
     PEOPLE_PLUS_PLUS = 47
-    EXPLORE_TAB = 57
+    EtwitterPLORE_TAB = 57
     MagicRecs = 59        # Account recommendation in notification
     AB_UPLOAD_INJECTION = 60
     /**
-     * To prevent setting 2 display locations with the same index in FRS.
+     * To prevent setting 2 display locations with the same indetwitter in FRS.
      *
      * The display location should be added to the following files:
      *  - follow-recommendations-service/thrift/src/main/thrift/display_location.thrift
@@ -25,30 +25,30 @@ enum DisplayLocation {
      *  - follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models/DisplayLocation.scala
    */
     CAMPAIGN_FORM = 61
-    RUX_LANDING_PAGE = 62
+    RUtwitter_LANDING_PAGE = 62
     PROFILE_BONUS_FOLLOW = 63
-    ELECTION_EXPLORE_WTF = 64
+    ELECTION_EtwitterPLORE_WTF = 64
     HTL_BONUS_FOLLOW = 65
     TOPIC_LANDING_PAGE_HEADER = 66
-    NUX_PYMK = 67
-    NUX_INTERESTS = 68
+    NUtwitter_PYMK = 67
+    NUtwitter_INTERESTS = 68
     REACTIVE_FOLLOW = 69
-    RUX_PYMK = 70
+    RUtwitter_PYMK = 70
     INDIA_COVID19_CURATED_ACCOUNTS_WTF = 71
-    NUX_TOPIC_BONUS_FOLLOW = 72
+    NUtwitter_TOPIC_BONUS_FOLLOW = 72
     TWEET_NOTIFICATION_RECS = 73
     HTL_SPACE_HOSTS = 74
-    POST_NUX_FOLLOW_TASK = 75
+    POST_NUtwitter_FOLLOW_TASK = 75
     TOPIC_LANDING_PAGE = 76
     USER_TYPEAHEAD_PREFETCH = 77
     HOME_TIMELINE_RELATABLE_ACCOUNTS = 78
-    NUX_GEO_CATEGORY = 79
-    NUX_INTERESTS_CATEGORY = 80
-    NUX_PYMK_CATEGORY = 81
+    NUtwitter_GEO_CATEGORY = 79
+    NUtwitter_INTERESTS_CATEGORY = 80
+    NUtwitter_PYMK_CATEGORY = 81
     TOP_ARTICLES = 82
     HOME_TIMELINE_TWEET_RECS = 83
     HTL_BULK_FRIEND_FOLLOWS = 84
-    NUX_AUTO_FOLLOW = 85
+    NUtwitter_AUTO_FOLLOW = 85
     SEARCH_BONUS_FOLLOW = 86
     CONTENT_RECOMMENDER = 87
     HOME_TIMELINE_REVERSE_CHRON = 88

@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.util;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.io.Writer;
 
 import com.google.gson.stream.JsonWriter;
@@ -21,48 +21,48 @@ public class JsonViewerWriter implements ViewerWriter {
 
 
   @Override
-  public ViewerWriter beginArray() throws IOException {
+  public ViewerWriter beginArray() throws IOEtwitterception {
     writer.beginArray();
     return this;
   }
 
   @Override
-  public ViewerWriter beginObject() throws IOException {
+  public ViewerWriter beginObject() throws IOEtwitterception {
     writer.beginObject();
     return this;
   }
 
   @Override
-  public ViewerWriter endArray() throws IOException {
+  public ViewerWriter endArray() throws IOEtwitterception {
     writer.endArray();
     return this;
   }
 
   @Override
-  public ViewerWriter endObject() throws IOException {
+  public ViewerWriter endObject() throws IOEtwitterception {
     writer.endObject();
     return this;
   }
 
   @Override
-  public ViewerWriter name(String field) throws IOException {
+  public ViewerWriter name(String field) throws IOEtwitterception {
     writer.name(field);
     return this;
   }
 
   @Override
-  public ViewerWriter value(String s) throws IOException {
+  public ViewerWriter value(String s) throws IOEtwitterception {
     writer.value(s);
     return this;
   }
 
   @Override
-  public ViewerWriter newline() throws IOException {
+  public ViewerWriter newline() throws IOEtwitterception {
     out.append('\n');
     return this;
   }
 
-  public void flush() throws IOException {
+  public void flush() throws IOEtwitterception {
     out.flush();
   }
 }

@@ -2,18 +2,18 @@ package com.twitter.search.common.schema;
 
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
-import org.apache.lucene.index.IndexOptions;
+import org.apache.lucene.indetwitter.IndetwitterOptions;
 
 /**
  * A Lucene numeric field, similar to the LegacyIntField, LegacyLongField, etc. Lucene classes that
  * were removed in Lucene 7.0.0.
  */
-public final class NumericField extends Field {
+public final class NumericField etwittertends Field {
   private static final FieldType NUMERIC_FIELD_TYPE = new FieldType();
   static {
     NUMERIC_FIELD_TYPE.setTokenized(true);
     NUMERIC_FIELD_TYPE.setOmitNorms(true);
-    NUMERIC_FIELD_TYPE.setIndexOptions(IndexOptions.DOCS);
+    NUMERIC_FIELD_TYPE.setIndetwitterOptions(IndetwitterOptions.DOCS);
     NUMERIC_FIELD_TYPE.freeze();
   }
 
@@ -37,7 +37,7 @@ public final class NumericField extends Field {
 
   // We could replace the static methods with constructors, but I think that would make it much
   // easier to accidentally use NumericField(String, int) instead of NumericField(String, long),
-  // for example, leading to hard to debug errors.
+  // for etwitterample, leading to hard to debug errors.
   private NumericField(String fieldName) {
     super(fieldName, NUMERIC_FIELD_TYPE);
   }

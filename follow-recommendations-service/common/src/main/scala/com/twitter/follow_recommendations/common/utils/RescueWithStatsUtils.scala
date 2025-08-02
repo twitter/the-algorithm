@@ -4,7 +4,7 @@ import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.follow_recommendations.common.base.StatsUtil
 import com.twitter.stitch.Stitch
 import com.twitter.util.Duration
-import com.twitter.util.TimeoutException
+import com.twitter.util.TimeoutEtwitterception
 
 object RescueWithStatsUtils {
   def rescueWithStats[T](
@@ -13,7 +13,7 @@ object RescueWithStatsUtils {
     source: String
   ): Stitch[Seq[T]] = {
     StatsUtil.profileStitchSeqResults(s, stats.scope(source)).rescue {
-      case _: Exception => Stitch.Nil
+      case _: Etwitterception => Stitch.Nil
     }
   }
 
@@ -23,7 +23,7 @@ object RescueWithStatsUtils {
     source: String
   ): Stitch[Option[T]] = {
     StatsUtil.profileStitchOptionalResults(s, stats.scope(source)).rescue {
-      case _: Exception => Stitch.None
+      case _: Etwitterception => Stitch.None
     }
   }
 
@@ -39,11 +39,11 @@ object RescueWithStatsUtils {
         s.within(timeout)(com.twitter.finagle.util.DefaultTimer),
         hydratedScopeSource)
       .rescue {
-        case _: TimeoutException =>
+        case _: TimeoutEtwitterception =>
           hydratedScopeSource.counter("timeout").incr()
           Stitch.Nil
-        case _: Exception =>
-          hydratedScopeSource.counter("exception").incr()
+        case _: Etwitterception =>
+          hydratedScopeSource.counter("etwitterception").incr()
           Stitch.Nil
       }
   }

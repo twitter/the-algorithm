@@ -50,7 +50,7 @@ def main() -> None:
     warm_start_folder = os.path.join(args.warm_start_base_dir, "best_checkpoint")
     job_name = os.path.basename(args.save_dir)
     ws_output_ckpt_folder = os.path.join(args.warm_start_base_dir, f"warm_start_for_{job_name}")
-    if tf.io.gfile.exists(ws_output_ckpt_folder):
+    if tf.io.gfile.etwitterists(ws_output_ckpt_folder):
       tf.io.gfile.rmtree(ws_output_ckpt_folder)
 
     tf.io.gfile.mkdir(ws_output_ckpt_folder)
@@ -86,7 +86,7 @@ def main() -> None:
   if args.distributed or args.num_workers is not None:
     learn = trainer.train_and_evaluate
 
-  if not args.directly_export_best:
+  if not args.directly_etwitterport_best:
     logging.info("Starting training")
     start = datetime.now()
     learn(
@@ -99,22 +99,22 @@ def main() -> None:
     )
     logging.info(f"Total training time: {datetime.now() - start}")
   else:
-    logging.info("Directly exporting the model")
+    logging.info("Directly etwitterporting the model")
 
-  if not args.export_dir:
-    args.export_dir = os.path.join(args.save_dir, "exported_models")
+  if not args.etwitterport_dir:
+    args.etwitterport_dir = os.path.join(args.save_dir, "etwitterported_models")
 
-  logging.info(f"Exporting the model to {args.export_dir}.")
+  logging.info(f"Etwitterporting the model to {args.etwitterport_dir}.")
   start = datetime.now()
-  twml.contrib.export.export_fn.export_all_models(
+  twml.contrib.etwitterport.etwitterport_fn.etwitterport_all_models(
     trainer=trainer,
-    export_dir=args.export_dir,
+    etwitterport_dir=args.etwitterport_dir,
     parse_fn=feature_config.get_parse_fn(),
     serving_input_receiver_fn=feature_config.get_serving_input_receiver_fn(),
-    export_output_fn=twml.export_output_fns.batch_prediction_continuous_output_fn,
+    etwitterport_output_fn=twml.etwitterport_output_fns.batch_prediction_continuous_output_fn,
   )
 
-  logging.info(f"Total model export time: {datetime.now() - start}")
+  logging.info(f"Total model etwitterport time: {datetime.now() - start}")
   logging.info(f"The MLP directory is: {args.save_dir}")
 
   continuous_binary_feat_list_save_path = os.path.join(

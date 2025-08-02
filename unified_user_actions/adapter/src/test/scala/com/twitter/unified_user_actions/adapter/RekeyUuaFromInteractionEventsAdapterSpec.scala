@@ -1,24 +1,24 @@
 package com.twitter.unified_user_actions.adapter
 
 import com.twitter.inject.Test
-import com.twitter.unified_user_actions.adapter.TestFixtures.InteractionEventsFixtures
+import com.twitter.unified_user_actions.adapter.TestFitwittertures.InteractionEventsFitwittertures
 import com.twitter.unified_user_actions.adapter.uua_aggregates.RekeyUuaFromInteractionEventsAdapter
 import com.twitter.util.Time
 import org.scalatest.prop.TableDrivenPropertyChecks
 
-class RekeyUuaFromInteractionEventsAdapterSpec extends Test with TableDrivenPropertyChecks {
+class RekeyUuaFromInteractionEventsAdapterSpec etwittertends Test with TableDrivenPropertyChecks {
   test("ClientTweetRenderImpressions") {
-    new InteractionEventsFixtures {
+    new InteractionEventsFitwittertures {
       Time.withTimeAt(frozenTime) { _ =>
         assert(
           RekeyUuaFromInteractionEventsAdapter.adaptEvent(baseInteractionEvent) === Seq(
-            expectedBaseKeyedUuaTweet))
+            etwitterpectedBaseKeyedUuaTweet))
       }
     }
   }
 
   test("Filter out logged out users") {
-    new InteractionEventsFixtures {
+    new InteractionEventsFitwittertures {
       Time.withTimeAt(frozenTime) { _ =>
         assert(RekeyUuaFromInteractionEventsAdapter.adaptEvent(loggedOutInteractionEvent) === Nil)
       }
@@ -26,7 +26,7 @@ class RekeyUuaFromInteractionEventsAdapterSpec extends Test with TableDrivenProp
   }
 
   test("Filter out detail impressions") {
-    new InteractionEventsFixtures {
+    new InteractionEventsFitwittertures {
       Time.withTimeAt(frozenTime) { _ =>
         assert(
           RekeyUuaFromInteractionEventsAdapter.adaptEvent(detailImpressionInteractionEvent) === Nil)

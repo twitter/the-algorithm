@@ -3,7 +3,7 @@ package com.twitter.recos.user_tweet_entity_graph
 import java.util.Random
 import com.twitter.concurrent.AsyncQueue
 import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph
+import com.twitter.graphjet.bipartite.NodeMetadataLeftIndetwitteredMultiSegmentBipartiteGraph
 import com.twitter.graphjet.algorithms.RecommendationInfo
 import com.twitter.graphjet.algorithms.socialproof.{
   SocialProofResult,
@@ -27,7 +27,7 @@ import scala.collection.JavaConverters._
  * reads from the graph and computes social proofs.
  */
 class TweetSocialProofRunner(
-  bipartiteGraph: NodeMetadataLeftIndexedMultiSegmentBipartiteGraph,
+  bipartiteGraph: NodeMetadataLeftIndetwitteredMultiSegmentBipartiteGraph,
   salsaRunnerConfig: SalsaRunnerConfig,
   statsReceiver: StatsReceiver) {
   private val log: Logger = Logger()
@@ -92,7 +92,7 @@ class TweetSocialProofRunner(
 
   /**
    * Attempt to retrieve a TweetSocialProof thread from the runner pool
-   * to execute a socialProofRequest
+   * to etwitterecute a socialProofRequest
    */
   private def handleSocialProofRequest(socialProofRequest: SocialProofJavaRequest) = {
     pollCounter.incr()
@@ -110,7 +110,7 @@ class TweetSocialProofRunner(
           // if we did not get a social proof in time, then fail fast here and immediately put it back
           log.warning("socialProof polling timeout")
           pollTimeoutCounter.incr()
-          throw new RuntimeException("socialProof poll timeout")
+          throw new RuntimeEtwitterception("socialProof poll timeout")
           Nil
         }
       } ensure {

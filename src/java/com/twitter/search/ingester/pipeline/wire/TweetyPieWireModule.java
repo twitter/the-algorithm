@@ -1,9 +1,9 @@
 package com.twitter.search.ingester.pipeline.wire;
 
-import java.util.concurrent.TimeoutException;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import java.util.concurrent.TimeoutEtwitterception;
+import javatwitter.naming.Contetwittert;
+import javatwitter.naming.InitialContetwittert;
+import javatwitter.naming.NamingEtwitterception;
 
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.slf4j.Logger;
@@ -13,12 +13,12 @@ import com.twitter.common_internal.zookeeper.TwitterServerSet;
 import com.twitter.finagle.Name;
 import com.twitter.finagle.Resolvers;
 import com.twitter.finagle.Service;
-import com.twitter.finagle.ThriftMux;
+import com.twitter.finagle.ThriftMutwitter;
 import com.twitter.finagle.builder.ClientBuilder;
 import com.twitter.finagle.builder.ClientConfig;
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
-import com.twitter.finagle.mtls.client.MtlsThriftMuxClient;
-import com.twitter.finagle.mux.transport.OpportunisticTls;
+import com.twitter.finagle.mtls.client.MtlsThriftMutwitterClient;
+import com.twitter.finagle.mutwitter.transport.OpportunisticTls;
 import com.twitter.finagle.service.RetryPolicy;
 import com.twitter.finagle.stats.DefaultStatsReceiver;
 import com.twitter.finagle.thrift.ClientId;
@@ -50,29 +50,29 @@ final class TweetyPieWireModule {
   }
 
   private static TwitterServerSet.Service getTweetyPieZkServerSetService()
-      throws NamingException {
-    Context jndiContext = new InitialContext();
+      throws NamingEtwitterception {
+    Contetwittert jndiContetwittert = new InitialContetwittert();
     TwitterServerSet.Service service = new TwitterServerSet.Service(
-        (String) jndiContext.lookup(TWEETYPIE_SD_ZK_ROLE),
-        (String) jndiContext.lookup(TWEETYPIE_SD_ZK_ENV),
-        (String) jndiContext.lookup(TWEETYPIE_SD_ZK_NAME));
+        (String) jndiContetwittert.lookup(TWEETYPIE_SD_ZK_ROLE),
+        (String) jndiContetwittert.lookup(TWEETYPIE_SD_ZK_ENV),
+        (String) jndiContetwittert.lookup(TWEETYPIE_SD_ZK_NAME));
     LOG.info("TweetyPie ZK path: {}", TwitterServerSet.getPath(service));
     return service;
   }
 
   static TweetService.ServiceToClient getTweetyPieClient(
-      String clientIdString, ServiceIdentifier serviceIdentifier) throws NamingException {
+      String clientIdString, ServiceIdentifier serviceIdentifier) throws NamingEtwitterception {
     TwitterServerSet.Service service = getTweetyPieZkServerSetService();
 
-    // Use explicit Name types so we can force a wait on resolution (COORD-479)
+    // Use etwitterplicit Name types so we can force a wait on resolution (COORD-479)
     String destString = String.format("/cluster/local/%s/%s/%s",
         service.getRole(), service.getEnv(), service.getName());
     Name destination = Resolvers.eval(destString);
     try {
       Await.ready(WaitForServerSets.ready(destination, Duration.fromMilliseconds(10000)));
-    } catch (TimeoutException e) {
+    } catch (TimeoutEtwitterception e) {
       LOG.warn("Timed out while resolving Zookeeper ServerSet", e);
-    } catch (InterruptedException e) {
+    } catch (InterruptedEtwitterception e) {
       LOG.warn("Interrupted while resolving Zookeeper ServerSet", e);
       Thread.currentThread().interrupt();
     }
@@ -80,9 +80,9 @@ final class TweetyPieWireModule {
     LOG.info("Creating Tweetypie client with ID: {}", clientIdString);
     ClientId clientId = new ClientId(clientIdString);
 
-    MtlsThriftMuxClient mtlsThriftMuxClient = new MtlsThriftMuxClient(
-        ThriftMux.client().withClientId(clientId));
-    ThriftMux.Client tmuxClient = mtlsThriftMuxClient
+    MtlsThriftMutwitterClient mtlsThriftMutwitterClient = new MtlsThriftMutwitterClient(
+        ThriftMutwitter.client().withClientId(clientId));
+    ThriftMutwitter.Client tmutwitterClient = mtlsThriftMutwitterClient
         .withMutualTls(serviceIdentifier)
         .withOpportunisticTls(OpportunisticTls.Required());
 
@@ -92,7 +92,7 @@ final class TweetyPieWireModule {
         ClientConfig.Yes,
         ClientConfig.Yes,
         ClientConfig.Yes> builder = ClientBuilder.get()
-        .stack(tmuxClient)
+        .stack(tmutwitterClient)
         .name("retrieve_cards_tweetypie_client")
         .dest(destination)
         .reportTo(DefaultStatsReceiver.get())
@@ -101,7 +101,7 @@ final class TweetyPieWireModule {
         .timeout(Duration.fromMilliseconds(TWEETYPIE_TOTAL_TIMEOUT_MS))
         .retryPolicy(RetryPolicy.tries(
             TWEETYPIE_REQUEST_NUM_TRIES,
-            RetryPolicy.TimeoutAndWriteExceptionsOnly()));
+            RetryPolicy.TimeoutAndWriteEtwitterceptionsOnly()));
 
     Service<ThriftClientRequest, byte[]> clientBuilder = ClientBuilder.safeBuild(builder);
 

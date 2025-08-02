@@ -1,8 +1,8 @@
 # SimClusters ANN
 
-SimClusters ANN is a service that returns tweet candidate recommendations given a SimClusters embedding. The service implements tweet recommendations based on the Approximate Cosine Similarity algorithm.
+SimClusters ANN is a service that returns tweet candidate recommendations given a SimClusters embedding. The service implements tweet recommendations based on the Approtwitterimate Cosine Similarity algorithm.
 
-The cosine similarity between two Tweet SimClusters Embedding represents the relevance level of two tweets in SimCluster space. The traditional algorithm for calculating cosine similarity is expensive and hard to support by the existing infrastructure. Therefore, the Approximate Cosine Similarity algorithm is introduced to save response time by reducing I/O operations.
+The cosine similarity between two Tweet SimClusters Embedding represents the relevance level of two tweets in SimCluster space. The traditional algorithm for calculating cosine similarity is etwitterpensive and hard to support by the etwitteristing infrastructure. Therefore, the Approtwitterimate Cosine Similarity algorithm is introduced to save response time by reducing I/O operations.
 
 ## Background
 SimClusters V2 runtime infra introduces the SimClusters and its online and offline approaches. A heron job builds the mapping between SimClusters and Tweets. The job saves top 400 Tweets for a SimClusters and top 100 SimClusters for a Tweet. Favorite score and follow score are two types of tweet score.  In the document, the top 100 SimClusters based on the favorite score for a Tweet stands for the Tweet SimClusters Embedding. 
@@ -12,10 +12,10 @@ The cosine similarity between two Tweet SimClusters Embedding presents the relev
 
 SimClusters from the Linear Algebra Perspective discussed the difference between the dot-product and cosine similarity in SimCluster space. We believe the cosine similarity approach is better because it avoids the bias of tweet popularity.
 
- However, calculating the cosine similarity between two Tweets is pretty expensive in Tweet candidate generation. In TWISTLY, we scan at most 15,000 (6 source tweets * 25 clusters * 100 tweets per clusters) tweet candidates for every Home Timeline request. The traditional algorithm needs to make API calls to fetch 15,000 tweet SimCluster embeddings. Consider that we need to process over 6,000 RPS, it’s hard to support by the existing infrastructure.  
+ However, calculating the cosine similarity between two Tweets is pretty etwitterpensive in Tweet candidate generation. In TWISTLY, we scan at most 15,000 (6 source tweets * 25 clusters * 100 tweets per clusters) tweet candidates for every Home Timeline request. The traditional algorithm needs to make API calls to fetch 15,000 tweet SimCluster embeddings. Consider that we need to process over 6,000 RPS, it’s hard to support by the etwitteristing infrastructure.  
 
 
-## SimClusters Approximate Cosine Similarity Core Algorithm
+## SimClusters Approtwitterimate Cosine Similarity Core Algorithm
 
 1. Provide a source SimCluster Embedding *SV*, *SV = [(SC1, Score), (SC2, Score), (SC3, Score) …]*
 
@@ -27,7 +27,7 @@ SimClusters from the Linear Algebra Perspective discussed the difference between
 | SC2 |  T3: Score | T4: Score  |  ... |
 
 
-3. Based on the previous table, generate an *(M x N) x N* Matrix *R*. The *R* represents the approximate SimCluster embeddings for *MxN* tweets. The embedding only contains top *N* SimClusters from *SV*. Only top *M* tweets from each SimCluster have the score. Others are 0. 
+3. Based on the previous table, generate an *(M twitter N) twitter N* Matritwitter *R*. The *R* represents the approtwitterimate SimCluster embeddings for *MtwitterN* tweets. The embedding only contains top *N* SimClusters from *SV*. Only top *M* tweets from each SimCluster have the score. Others are 0. 
 
 |   |  SC1 |  SC2 | ...   |
 |---|---|---|---|
@@ -35,15 +35,15 @@ SimClusters from the Linear Algebra Perspective discussed the difference between
 | T2 |  Score | 0 |  ... |
 | T3 |  0 | Score  |  ... |
 
-4. Compute the dot product between source vector and the approximate vectors for each tweet. (Calculate *R • SV^T*). Take top *X* tweets. In Prod, *X = 200*
+4. Compute the dot product between source vector and the approtwitterimate vectors for each tweet. (Calculate *R • SV^T*). Take top *twitter* tweets. In Prod, *twitter = 200*
 
-5. Fetch *X* tweet SimClusters Embedding, Calculate Cosine Similarity between *X* tweets and *SV*, Return top *Y* above a certain threshold *Z*.
+5. Fetch *twitter* tweet SimClusters Embedding, Calculate Cosine Similarity between *twitter* tweets and *SV*, Return top *Y* above a certain threshold *Z*.
 
-Approximate Cosine Similarity is an approximate algorithm. Instead of fetching *M * N* tweets embedding, it only fetches *X* tweets embedding. In prod, *X / M * N * 100% = 6%*. Based on the metrics during TWISTLY development, most of the response time is consumed by I/O operation. The Approximate Cosine Similarity is a good approach to save a large amount of response time. 
+Approtwitterimate Cosine Similarity is an approtwitterimate algorithm. Instead of fetching *M * N* tweets embedding, it only fetches *twitter* tweets embedding. In prod, *twitter / M * N * 100% = 6%*. Based on the metrics during TWISTLY development, most of the response time is consumed by I/O operation. The Approtwitterimate Cosine Similarity is a good approach to save a large amount of response time. 
 
-The idea of the approximate algorithm is based on the assumption that the higher dot-product between source tweets’ SimCluster embedding and candidate tweet’s limited SimCluster Embedding, the possibility that these two tweets are relevant is higher. Additional Cosine Similarity filter is to guarantee that the results are not affected by popularity bias.  
+The idea of the approtwitterimate algorithm is based on the assumption that the higher dot-product between source tweets’ SimCluster embedding and candidate tweet’s limited SimCluster Embedding, the possibility that these two tweets are relevant is higher. Additional Cosine Similarity filter is to guarantee that the results are not affected by popularity bias.  
 
-Adjusting the M, N, X, Y, Z is able to balance the precision and recall for different products. The implementation of approximate cosine similarity is used by TWISTLY, Interest-based tweet recommendation, Similar Tweet in RUX, and Author based recommendation. This algorithm is also suitable for future user or entity recommendation based on SimClusters Embedding. 
+Adjusting the M, N, twitter, Y, Z is able to balance the precision and recall for different products. The implementation of approtwitterimate cosine similarity is used by TWISTLY, Interest-based tweet recommendation, Similar Tweet in RUtwitter, and Author based recommendation. This algorithm is also suitable for future user or entity recommendation based on SimClusters Embedding. 
 
 
 # -------------------------------

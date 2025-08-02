@@ -39,7 +39,7 @@ object CandidatePredicatesMap {
       TwistlyTweet -> oonTweetCandidatePredicates,
       TwistlyPhoto -> oonTweetCandidatePredicates,
       TwistlyVideo -> oonTweetCandidatePredicates,
-      ExploreVideoTweet -> oonTweetCandidatePredicates,
+      EtwitterploreVideoTweet -> oonTweetCandidatePredicates,
       UserInterestinTweet -> oonTweetCandidatePredicates,
       UserInterestinPhoto -> oonTweetCandidatePredicates,
       UserInterestinVideo -> oonTweetCandidatePredicates,

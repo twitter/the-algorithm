@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird.common;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import javatwitter.inject.Inject;
+import javatwitter.inject.Singleton;
 
 import org.apache.thrift.protocol.TProtocolFactory;
 
@@ -10,7 +10,7 @@ import com.twitter.search.common.util.thrift.ThriftToBytesFilter;
 import com.twitter.search.earlybird.thrift.EarlybirdService;
 
 @Singleton
-public class EarlybirdThriftBackend extends EarlybirdService.ServiceToClient {
+public class EarlybirdThriftBackend etwittertends EarlybirdService.ServiceToClient {
 
   /**
    * Wrapping the bytes svc back to a EarlybirdService.ServiceToClient, which

@@ -30,7 +30,7 @@ import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
 import com.twitter.storehaus.ReadableStore
 import com.twitter.strato.client.{Client => StratoClient}
 import com.twitter.tweetypie.util.UserId
-import javax.inject.Inject
+import javatwitter.inject.Inject
 
 class TopicSimClustersEmbeddingStore @Inject() (
   stratoClient: StratoClient,
@@ -71,7 +71,7 @@ class TopicSimClustersEmbeddingStore @Inject() (
     ObservedCachedReadableStore.from[SemanticCoreTopicSeedStore.Key, Seq[UserId]](
       store = memcacheStore,
       ttl = 6.hours,
-      maxKeys = 20e3.toInt,
+      matwitterKeys = 20e3.toInt,
       cacheName = "topic_producer_seed_store_cache",
       windowSize = 5000
     )(stats.scope("topic_producer_seed_store_cache"))

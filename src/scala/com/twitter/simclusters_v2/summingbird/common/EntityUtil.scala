@@ -2,7 +2,7 @@ package com.twitter.simclusters_v2.summingbird.common
 
 import com.twitter.cuad.ner.thriftscala.WholeEntityType
 import com.twitter.simclusters_v2.summingbird.common.Implicits.thriftDecayedValueMonoid
-import com.twitter.simclusters_v2.thriftscala.{Scores, SimClusterEntity, TweetTextEntity}
+import com.twitter.simclusters_v2.thriftscala.{Scores, SimClusterEntity, TweetTetwittertEntity}
 import scala.collection.Map
 
 private[summingbird] object EntityUtil {
@@ -31,14 +31,14 @@ private[summingbird] object EntityUtil {
     entity match {
       case SimClusterEntity.TweetId(id) => s"t_id:$id"
       case SimClusterEntity.SpaceId(id) => s"space_id:$id"
-      case SimClusterEntity.TweetEntity(textEntity) =>
-        textEntity match {
-          case TweetTextEntity.Hashtag(str) => s"$str[h_tag]"
-          case TweetTextEntity.Penguin(penguin) =>
-            s"${penguin.textEntity}[penguin]"
-          case TweetTextEntity.Ner(ner) =>
-            s"${ner.textEntity}[ner_${WholeEntityType(ner.wholeEntityType)}]"
-          case TweetTextEntity.SemanticCore(semanticCore) =>
+      case SimClusterEntity.TweetEntity(tetwittertEntity) =>
+        tetwittertEntity match {
+          case TweetTetwittertEntity.Hashtag(str) => s"$str[h_tag]"
+          case TweetTetwittertEntity.Penguin(penguin) =>
+            s"${penguin.tetwittertEntity}[penguin]"
+          case TweetTetwittertEntity.Ner(ner) =>
+            s"${ner.tetwittertEntity}[ner_${WholeEntityType(ner.wholeEntityType)}]"
+          case TweetTetwittertEntity.SemanticCore(semanticCore) =>
             s"[sc:${semanticCore.entityId}]"
         }
     }

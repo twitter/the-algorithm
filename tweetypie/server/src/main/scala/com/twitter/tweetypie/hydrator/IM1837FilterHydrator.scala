@@ -6,17 +6,17 @@ import com.twitter.tweetypie.core._
 import com.twitter.stitch.Stitch
 
 object IM1837FilterHydrator {
-  type Type = ValueHydrator[Unit, TweetCtx]
+  type Type = ValueHydrator[Unit, TweetCttwitter]
 
   private val Drop =
-    Stitch.exception(FilteredState.Unavailable.DropUnspecified)
+    Stitch.etwitterception(FilteredState.Unavailable.DropUnspecified)
   private val Success = Stitch.value(ValueState.unmodified(()))
 
   def apply(): Type =
-    ValueHydrator[Unit, TweetCtx] { (_, ctx) =>
-      val userAgent = TwitterContext().flatMap(_.userAgent)
-      val userAgentAffected = userAgent.exists(IM1837.isAffectedClient)
-      val mightCrash = userAgentAffected && IM1837.textMightCrashIOS(ctx.text)
+    ValueHydrator[Unit, TweetCttwitter] { (_, cttwitter) =>
+      val userAgent = TwitterContetwittert().flatMap(_.userAgent)
+      val userAgentAffected = userAgent.etwitterists(IM1837.isAffectedClient)
+      val mightCrash = userAgentAffected && IM1837.tetwittertMightCrashIOS(cttwitter.tetwittert)
 
       if (mightCrash) Drop else Success
     }

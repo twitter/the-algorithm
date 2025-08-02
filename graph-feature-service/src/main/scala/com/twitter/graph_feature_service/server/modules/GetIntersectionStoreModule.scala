@@ -16,13 +16,13 @@ import com.twitter.storehaus.ReadableStore
 import com.twitter.storehaus_internal.memcache.MemcacheStore
 import com.twitter.storehaus_internal.util.{ClientName, ZkEndPoint}
 import com.twitter.util.Duration
-import javax.inject.{Named, Singleton}
+import javatwitter.inject.{Named, Singleton}
 
 /**
  * Initialize the MemCache based GetIntersectionStore.
  * The Key of MemCache is UserId~CandidateId~FeatureTypes~IntersectionIdLimit.
  */
-object GetIntersectionStoreModule extends TwitterModule {
+object GetIntersectionStoreModule etwittertends TwitterModule {
 
   private[this] val requestTimeout: Duration = 25.millis
   private[this] val retries: Int = 0

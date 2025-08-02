@@ -11,8 +11,8 @@ import com.twitter.follow_recommendations.products.common.Product
 import com.twitter.follow_recommendations.products.common.ProductRequest
 import com.twitter.follow_recommendations.products.home_timeline_tweet_recs.configapi.HomeTimelineTweetRecsParams._
 import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 /*
  * This "DisplayLocation" is used to generate user recommendations using the ContentRecommenderFlow. These recommendations are later used downstream
@@ -22,7 +22,7 @@ import javax.inject.Singleton
 class HomeTimelineTweetRecsProduct @Inject() (
   contentRecommenderFlow: ContentRecommenderFlow,
   contentRecommenderRequestBuilder: ContentRecommenderRequestBuilder)
-    extends Product {
+    etwittertends Product {
   override val name: String = "Home Timeline Tweet Recs"
 
   override val identifier: String = "home-timeline-tweet-recs"

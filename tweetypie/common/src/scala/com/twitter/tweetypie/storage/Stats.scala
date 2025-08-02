@@ -14,7 +14,7 @@ object Stats {
   ): Unit =
     getStat(rpcName, paramName, stats).add(width)
 
-  // Updates the counters for each Additional field. The idea here is to expose the QPS for each
+  // Updates the counters for each Additional field. The idea here is to etwitterpose the QPS for each
   // additional field
   private[storage] def updatePerFieldQpsCounters(
     rpcName: String,

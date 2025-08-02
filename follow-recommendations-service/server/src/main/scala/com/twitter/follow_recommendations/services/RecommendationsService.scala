@@ -6,8 +6,8 @@ import com.twitter.follow_recommendations.models.RecommendationRequest
 import com.twitter.follow_recommendations.models.RecommendationResponse
 import com.twitter.stitch.Stitch
 import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class RecommendationsService @Inject() (

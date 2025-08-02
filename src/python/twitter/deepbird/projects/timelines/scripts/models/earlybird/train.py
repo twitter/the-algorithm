@@ -1,6 +1,6 @@
 # checkstyle: noqa
 import tensorflow.compat.v1 as tf
-from tensorflow.python.estimator.export.export import build_raw_serving_input_receiver_fn
+from tensorflow.python.estimator.etwitterport.etwitterport import build_raw_serving_input_receiver_fn
 from tensorflow.python.framework import dtypes
 from tensorflow.python.ops import array_ops
 import tensorflow_hub as hub
@@ -10,10 +10,10 @@ from tensorflow.compat.v1 import logging
 from twitter.deepbird.projects.timelines.configs import all_configs
 from twml.trainers import DataRecordTrainer
 from twml.contrib.calibrators.common_calibrators import build_percentile_discretizer_graph
-from twml.contrib.calibrators.common_calibrators import calibrate_discretizer_and_export
+from twml.contrib.calibrators.common_calibrators import calibrate_discretizer_and_etwitterport
 from .metrics import get_multi_binary_class_metric_fn
-from .constants import TARGET_LABEL_IDX, PREDICTED_CLASSES
-from .example_weights import add_weight_arguments, make_weights_tensor
+from .constants import TARGET_LABEL_IDtwitter, PREDICTED_CLASSES
+from .etwitterample_weights import add_weight_arguments, make_weights_tensor
 from .lolly.data_helpers import get_lolly_logits
 from .lolly.tf_model_initializer_builder import TFModelInitializerBuilder
 from .lolly.reader import LollyModelReader
@@ -79,42 +79,42 @@ def build_graph(features, label, mode, params, config=None):
   if mode != "infer":
     lolly_activations = get_lolly_logits(label)
 
-    if opt.print_data_examples:
-      logits = print_data_example(logits, lolly_activations, features)
+    if opt.print_data_etwitteramples:
+      logits = print_data_etwitterample(logits, lolly_activations, features)
 
     if params.replicate_lolly:
       loss = tf.reduce_mean(tf.math.squared_difference(logits, lolly_activations))
     else:
       batch_size = tf.shape(label)[0]
-      target_label = tf.reshape(tensor=label[:, TARGET_LABEL_IDX], shape=(batch_size, 1))
+      target_label = tf.reshape(tensor=label[:, TARGET_LABEL_IDtwitter], shape=(batch_size, 1))
       loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=target_label, logits=logits)
       loss = twml.util.weighted_average(loss, weights)
 
     num_labels = tf.shape(label)[1]
     eb_scores = tf.tile(lolly_activations, [1, num_labels])
     logits = tf.tile(logits, [1, num_labels])
-    logits = tf.concat([logits, eb_scores], axis=1)
+    logits = tf.concat([logits, eb_scores], atwitteris=1)
 
   output = tf.nn.sigmoid(logits)
 
   return {"output": output, "loss": loss, "weights": weights}
 
-def print_data_example(logits, lolly_activations, features):
+def print_data_etwitterample(logits, lolly_activations, features):
   return tf.Print(
     logits,
     [logits, lolly_activations, tf.reshape(features['keys'], (1, -1)), tf.reshape(tf.multiply(features['values'], -1.0), (1, -1))],
-    message="DATA EXAMPLE = ",
+    message="DATA EtwitterAMPLE = ",
     summarize=10000
   )
 
 def earlybird_output_fn(graph_output):
-  export_outputs = {
+  etwitterport_outputs = {
     tf.saved_model.signature_constants.DEFAULT_SERVING_SIGNATURE_DEF_KEY:
-      tf.estimator.export.PredictOutput(
+      tf.estimator.etwitterport.PredictOutput(
         {"prediction": tf.identity(graph_output["output"], name="output_scores")}
       )
   }
-  return export_outputs
+  return etwitterport_outputs
 
 if __name__ == "__main__":
   parser = DataRecordTrainer.add_parser_arguments()
@@ -122,19 +122,19 @@ if __name__ == "__main__":
   parser = twml.contrib.calibrators.add_discretizer_arguments(parser)
 
   parser.add_argument("--label", type=str, help="label for the engagement")
-  parser.add_argument("--model.use_existing_discretizer", action="store_true",
-                      dest="model_use_existing_discretizer",
+  parser.add_argument("--model.use_etwitteristing_discretizer", action="store_true",
+                      dest="model_use_etwitteristing_discretizer",
                       help="Load a pre-trained calibration or train a new one")
   parser.add_argument("--input_size_bits", type=int)
-  parser.add_argument("--export_module_name", type=str, default="base_mlp", dest="export_module_name")
+  parser.add_argument("--etwitterport_module_name", type=str, default="base_mlp", dest="etwitterport_module_name")
   parser.add_argument("--feature_config", type=str)
   parser.add_argument("--replicate_lolly", type=bool, default=False, dest="replicate_lolly",
                       help="Train a regression model with MSE loss and the logged Earlybird score as a label")
   parser.add_argument("--lolly_model_tsv", type=str, required=False, dest="lolly_model_tsv",
                       help="Initialize with weights and discretizer bins available in the given Lolly model tsv file"
                       "No discretizer gets trained or loaded if set.")
-  parser.add_argument("--print_data_examples", type=bool, default=False, dest="print_data_examples",
-                      help="Prints 'DATA EXAMPLE = [[tf logit]][[logged lolly logit]][[feature ids][feature values]]'")
+  parser.add_argument("--print_data_etwitteramples", type=bool, default=False, dest="print_data_etwitteramples",
+                      help="Prints 'DATA EtwitterAMPLE = [[tf logit]][[logged lolly logit]][[feature ids][feature values]]'")
   add_weight_arguments(parser)
 
   opt = parser.parse_args()
@@ -148,16 +148,16 @@ if __name__ == "__main__":
     keep_fields=("ids", "keys", "values", "batch_size", "total_size", "codes"))
 
   if not opt.lolly_model_tsv:
-    if opt.model_use_existing_discretizer:
-      logging.info("Skipping discretizer calibration [model.use_existing_discretizer=True]")
+    if opt.model_use_etwitteristing_discretizer:
+      logging.info("Skipping discretizer calibration [model.use_etwitteristing_discretizer=True]")
       logging.info(f"Using calibration at {opt.discretizer_save_dir}")
     else:
-      logging.info("Calibrating new discretizer [model.use_existing_discretizer=False]")
+      logging.info("Calibrating new discretizer [model.use_etwitteristing_discretizer=False]")
       calibrator = twml.contrib.calibrators.HashingDiscretizerCalibrator(
         opt.discretizer_num_bins,
         opt.discretizer_output_size_bits
       )
-      calibrate_discretizer_and_export(name="recap_earlybird_hashing_discretizer",
+      calibrate_discretizer_and_etwitterport(name="recap_earlybird_hashing_discretizer",
                                        params=opt,
                                        calibrator=calibrator,
                                        build_graph_fn=build_percentile_discretizer_graph,
@@ -201,12 +201,12 @@ if __name__ == "__main__":
         dtype=dtypes.int64)
     }
     serving_input_receiver_fn = build_raw_serving_input_receiver_fn(serving_input_in_earlybird)
-    twml.contrib.export.export_fn.export_all_models(
+    twml.contrib.etwitterport.etwitterport_fn.etwitterport_all_models(
       trainer=trainer,
-      export_dir=opt.export_dir,
+      etwitterport_dir=opt.etwitterport_dir,
       parse_fn=parse_fn,
       serving_input_receiver_fn=serving_input_receiver_fn,
-      export_output_fn=earlybird_output_fn,
+      etwitterport_output_fn=earlybird_output_fn,
       feature_spec=feature_config.get_feature_spec()
     )
-    logging.info("The export model path is: " + opt.export_dir)
+    logging.info("The etwitterport model path is: " + opt.etwitterport_dir)

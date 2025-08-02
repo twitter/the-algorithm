@@ -7,7 +7,7 @@ import com.twitter.summingbird.Counter
  * A summingbird Counter which is associated with a predicate which operates on
  * [[com.twitter.ml.api.DataRecord]] instances.
  *
- * For example, for a data record which represents a Tweet, one could define a predicate
+ * For etwitterample, for a data record which represents a Tweet, one could define a predicate
  * which checks whether the Tweet contains a binary feature representing the presence of
  * an image. The counter can then be used to represent the the count of Tweets with
  * images processed.

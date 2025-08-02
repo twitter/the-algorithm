@@ -1,6 +1,6 @@
 DECLARE date_start, date_end DATE;
 SET date_end = (
-  SELECT PARSE_DATE('%Y%m%d', MAX(partition_id)) AS partition_id
+  SELECT PARSE_DATE('%Y%m%d', MAtwitter(partition_id)) AS partition_id
   FROM `twttr-bq-cassowary-prod.user.INFORMATION_SCHEMA.PARTITIONS`
   WHERE partition_id IS NOT NULL AND partition_id != '__NULL__' AND table_name="interaction_graph_labels_daily"
 );
@@ -24,7 +24,7 @@ COALESCE(T1.source_id, T2.source_id) AS source_id,
 COALESCE(T1.destination_id, T2.destination_id) AS destination_id,
 COUNT(DISTINCT(T1.dateHour)) AS num_days,
 MIN(COALESCE(num_tweets,0)) AS num_tweets, -- all rows' num_tweets should be the same
-COALESCE(DATE_DIFF(date_end, DATE(MAX(T1.dateHour)), DAY),30) AS days_since_last_interaction,
+COALESCE(DATE_DIFF(date_end, DATE(MAtwitter(T1.dateHour)), DAY),30) AS days_since_last_interaction,
 COUNT(DISTINCT(label)) AS label_types,
 COUNTIF(label="num_follows") AS num_follows,
 COUNTIF(label="num_favorites") AS num_favorites,

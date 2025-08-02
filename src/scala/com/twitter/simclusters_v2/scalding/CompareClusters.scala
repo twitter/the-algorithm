@@ -1,7 +1,7 @@
 package com.twitter.simclusters_v2.scalding
 
-import com.twitter.scalding.{DateOps, DateParser, Execution, Stat, TypedPipe, TypedTsv, UniqueID}
-import com.twitter.scalding_internal.job.TwitterExecutionApp
+import com.twitter.scalding.{DateOps, DateParser, Etwitterecution, Stat, TypedPipe, TypedTsv, UniqueID}
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
 import com.twitter.simclusters_v2.common.{ClusterId, UserId}
 import com.twitter.simclusters_v2.scalding.common.Util
 import com.twitter.simclusters_v2.scalding.common.Util.Distribution
@@ -9,7 +9,7 @@ import com.twitter.simclusters_v2.scalding.common.Util.Distribution
 object CompareClusters {
   def norm(a: Iterable[Float]): Float = {
     math
-      .sqrt(a.map { x => x * x }.sum).toFloat
+      .sqrt(a.map { twitter => twitter * twitter }.sum).toFloat
   }
 
   def cosine(a: Map[Long, Float], b: Map[Long, Float]): Float = {
@@ -33,7 +33,7 @@ object CompareClusters {
     oldKnownFor: TypedPipe[(UserId, List[(ClusterId, Float)])]
   )(
     implicit uniqueID: UniqueID
-  ): Execution[String] = {
+  ): Etwitterecution[String] = {
 
     val emptyToSomething = Stat("no_assignment_to_some")
     val somethingToEmpty = Stat("some_assignment_to_none")
@@ -41,7 +41,7 @@ object CompareClusters {
     val sameCluster = Stat("same_cluster")
     val diffCluster = Stat("diff_cluster")
 
-    val calculateStatExec = newKnownFor
+    val calculateStatEtwitterec = newKnownFor
       .outerJoin(oldKnownFor)
       .map {
         case (userId, (newKnownForListOpt, oldKnownForListOpt)) =>
@@ -70,14 +70,14 @@ object CompareClusters {
           }
           userId
       }
-      .toIterableExecution
+      .toIterableEtwitterecution
 
-    Util.getCustomCountersString(calculateStatExec)
+    Util.getCustomCountersString(calculateStatEtwitterec)
   }
 
   /**
    * Compare two cluster assignments in terms of cosine similarity of corresponding clusters.
-   * Excludes clusters which are too small
+   * Etwittercludes clusters which are too small
    * @param knownForA
    * @param knownForB
    * @param minSizeOfBiggerCluster Set to 10 or some such.
@@ -92,8 +92,8 @@ object CompareClusters {
       .outerJoin(knownForB)
       .collect {
         case (clusterId, (membersInAOpt, membersInBOpt))
-            if membersInAOpt.exists(_.size >= minSizeOfBiggerCluster) || membersInBOpt
-              .exists(_.size >= minSizeOfBiggerCluster) =>
+            if membersInAOpt.etwitterists(_.size >= minSizeOfBiggerCluster) || membersInBOpt
+              .etwitterists(_.size >= minSizeOfBiggerCluster) =>
           val membersInA =
             membersInAOpt.map(_.toMap).getOrElse(Map.empty[Long, Float])
           val membersInB =
@@ -102,21 +102,21 @@ object CompareClusters {
       }
   }
 
-  def summarize(clusterToCosines: TypedPipe[(Int, Float)]): Execution[Option[Distribution]] = {
-    clusterToCosines.values.map(x => List(x)).sum.toOptionExecution.map { listOpt =>
+  def summarize(clusterToCosines: TypedPipe[(Int, Float)]): Etwitterecution[Option[Distribution]] = {
+    clusterToCosines.values.map(twitter => List(twitter)).sum.toOptionEtwitterecution.map { listOpt =>
       listOpt.map { list => Util.distributionFromArray(list.map(_.toDouble).toArray) }
     }
   }
 }
 
-object CompareClustersAdhoc extends TwitterExecutionApp {
+object CompareClustersAdhoc etwittertends TwitterEtwitterecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
   implicit val dp = DateParser.default
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
+  def job: Etwitterecution[Unit] =
+    Etwitterecution.getConfigMode.flatMap {
       case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
+        Etwitterecution.withId { implicit uniqueId =>
           val args = config.getArgs
 
           val knownForA = KnownForSources.transpose(KnownForSources.readKnownFor(args("knownForA")))
@@ -125,7 +125,7 @@ object CompareClustersAdhoc extends TwitterExecutionApp {
           CompareClusters
             .compare(knownForA, knownForB, minSizeOfBiggerCluster = 10)
             .map { case (cId, cos) => "%d\t%.2f".format(cId, cos) }
-            .writeExecution(TypedTsv(args("outputDir")))
+            .writeEtwitterecution(TypedTsv(args("outputDir")))
         }
     }
 }

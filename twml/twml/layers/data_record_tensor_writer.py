@@ -10,7 +10,7 @@ import libtwml
 class DataRecordTensorWriter(Layer):
   """
   A layer that packages keys and dense tensors into a DataRecord.
-  This layer was initially added to support exporting user embeddings as tensors.
+  This layer was initially added to support etwitterporting user embeddings as tensors.
 
   Arguments:
       keys:

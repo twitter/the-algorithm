@@ -6,9 +6,9 @@ import com.twitter.graphql.thriftscala.AuthHeaders
 import com.twitter.graphql.thriftscala.Authentication
 import com.twitter.graphql.thriftscala.Document
 import com.twitter.graphql.thriftscala.GraphQlRequest
-import com.twitter.graphql.thriftscala.GraphqlExecutionService
+import com.twitter.graphql.thriftscala.GraphqlEtwitterecutionService
 import com.twitter.graphql.thriftscala.Variables
-import com.twitter.unified_user_actions.enricher.ImplementationException
+import com.twitter.unified_user_actions.enricher.ImplementationEtwitterception
 import com.twitter.unified_user_actions.enricher.graphql.GraphqlRspParser
 import com.twitter.unified_user_actions.enricher.hcache.LocalCache
 import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
@@ -21,9 +21,9 @@ import com.twitter.util.Future
 
 class DefaultHydrator(
   cache: LocalCache[EnrichmentKey, DynMap],
-  graphqlClient: GraphqlExecutionService.FinagledClient,
+  graphqlClient: GraphqlEtwitterecutionService.FinagledClient,
   scopedStatsReceiver: StatsReceiver = NullStatsReceiver)
-    extends AbstractHydrator(scopedStatsReceiver) {
+    etwittertends AbstractHydrator(scopedStatsReceiver) {
 
   private def constructGraphqlReq(
     enrichmentKey: EnrichmentKey
@@ -31,8 +31,8 @@ class DefaultHydrator(
     enrichmentKey.keyType match {
       case EnrichmentIdType.TweetId =>
         GraphQlRequest(
-          // see go/graphiql/M5sHxua-RDiRtTn48CAhng
-          document = Document.DocumentId("M5sHxua-RDiRtTn48CAhng"),
+          // see go/graphiql/M5sHtwitterua-RDiRtTn48CAhng
+          document = Document.DocumentId("M5sHtwitterua-RDiRtTn48CAhng"),
           operationName = Some("TweetHydration"),
           variables = Some(
             Variables.JsonEncodedVariables(s"""{"rest_id": "${enrichmentKey.id}"}""")
@@ -42,7 +42,7 @@ class DefaultHydrator(
           )
         )
       case _ =>
-        throw new ImplementationException(
+        throw new ImplementationEtwitterception(
           s"Missing implementation for hydration of type ${enrichmentKey.keyType}")
     }
 

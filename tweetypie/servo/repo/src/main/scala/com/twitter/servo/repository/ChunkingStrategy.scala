@@ -3,18 +3,18 @@ package com.twitter.servo.repository
 object ChunkingStrategy {
 
   /**
-   * A chunking strategy for breaking a query into fixed size chunks, with the last
+   * A chunking strategy for breaking a query into fitwittered size chunks, with the last
    * chunk possibly being any size between 1 and chunkSize.
    */
-  def fixedSize[K](chunkSize: Int): Seq[K] => Seq[Seq[K]] = {
-    fixedSize(chunkSize, keysAsQuery[K])
+  def fitwitteredSize[K](chunkSize: Int): Seq[K] => Seq[Seq[K]] = {
+    fitwitteredSize(chunkSize, keysAsQuery[K])
   }
 
   /**
-   * A chunking strategy for breaking a query into fixed size chunks, with the last
+   * A chunking strategy for breaking a query into fitwittered size chunks, with the last
    * chunk possibly being any size between 1 and chunkSize.
    */
-  def fixedSize[Q <: Seq[K], K](
+  def fitwitteredSize[Q <: Seq[K], K](
     chunkSize: Int,
     newQuery: SubqueryBuilder[Q, K]
   ): Q => Seq[Q] = { query =>
@@ -23,25 +23,25 @@ object ChunkingStrategy {
 
   /**
    * A chunking strategy for breaking a query into roughly equal sized chunks no
-   * larger than maxSize.  The last chunk may be slightly smaller due to rounding.
+   * larger than matwitterSize.  The last chunk may be slightly smaller due to rounding.
    */
-  def equalSize[K](maxSize: Int): Seq[K] => Seq[Seq[K]] = {
-    equalSize(maxSize, keysAsQuery[K])
+  def equalSize[K](matwitterSize: Int): Seq[K] => Seq[Seq[K]] = {
+    equalSize(matwitterSize, keysAsQuery[K])
   }
 
   /**
    * A chunking strategy for breaking a query into roughly equal sized chunks no
-   * larger than maxSize.  The last chunk may be slightly smaller due to rounding.
+   * larger than matwitterSize.  The last chunk may be slightly smaller due to rounding.
    */
   def equalSize[Q <: Seq[K], K](
-    maxSize: Int,
+    matwitterSize: Int,
     newQuery: SubqueryBuilder[Q, K]
   ): Q => Seq[Q] = { query =>
     {
-      if (query.size <= maxSize) {
+      if (query.size <= matwitterSize) {
         Seq(query)
       } else {
-        val chunkCount = math.ceil(query.size / maxSize.toDouble)
+        val chunkCount = math.ceil(query.size / matwitterSize.toDouble)
         val chunkSize = math.ceil(query.size / chunkCount).toInt
         query.distinct.grouped(chunkSize) map { newQuery(_, query) } toSeq
       }

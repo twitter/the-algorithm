@@ -15,7 +15,7 @@ object SocialGraphEngagement {
   /**
    * This is "Follow" event to indicate user1 follows user2 captured in ServerProfileFollow
    */
-  object ProfileFollow extends BaseSocialGraphWriteEvent[FollowGraphEvent] {
+  object ProfileFollow etwittertends BaseSocialGraphWriteEvent[FollowGraphEvent] {
     override def uuaActionType: UuaActionType = UuaActionType.ServerProfileFollow
 
     override def getSubType(
@@ -39,7 +39,7 @@ object SocialGraphEngagement {
    * Both Unfollow and Follow use the struct FollowGraphEvent, but are treated in its individual case
    * class.
    */
-  object ProfileUnfollow extends BaseSocialGraphWriteEvent[FollowGraphEvent] {
+  object ProfileUnfollow etwittertends BaseSocialGraphWriteEvent[FollowGraphEvent] {
     override def uuaActionType: UuaActionType = UuaActionType.ServerProfileUnfollow
 
     override def getSubType(
@@ -58,7 +58,7 @@ object SocialGraphEngagement {
   /**
    * This is "Block" event to indicate user1 blocks user2 captured in ServerProfileBlock
    */
-  object ProfileBlock extends BaseSocialGraphWriteEvent[BlockGraphEvent] {
+  object ProfileBlock etwittertends BaseSocialGraphWriteEvent[BlockGraphEvent] {
     override def uuaActionType: UuaActionType = UuaActionType.ServerProfileBlock
 
     override def getSubType(
@@ -78,7 +78,7 @@ object SocialGraphEngagement {
    * Both Unblock and Block use struct BlockGraphEvent, but are treated in its individual case
    * class.
    */
-  object ProfileUnblock extends BaseSocialGraphWriteEvent[BlockGraphEvent] {
+  object ProfileUnblock etwittertends BaseSocialGraphWriteEvent[BlockGraphEvent] {
     override def uuaActionType: UuaActionType = UuaActionType.ServerProfileUnblock
 
     override def getSubType(
@@ -95,7 +95,7 @@ object SocialGraphEngagement {
   /**
    * This is "Mute" event to indicate user1 mutes user2 captured in ServerProfileMute
    */
-  object ProfileMute extends BaseSocialGraphWriteEvent[MuteGraphEvent] {
+  object ProfileMute etwittertends BaseSocialGraphWriteEvent[MuteGraphEvent] {
     override def uuaActionType: UuaActionType = UuaActionType.ServerProfileMute
 
     override def getSubType(
@@ -113,7 +113,7 @@ object SocialGraphEngagement {
    * Both Unmute and Mute use the struct MuteGraphEvent, but are treated in its individual case
    * class.
    */
-  object ProfileUnmute extends BaseSocialGraphWriteEvent[MuteGraphEvent] {
+  object ProfileUnmute etwittertends BaseSocialGraphWriteEvent[MuteGraphEvent] {
     override def uuaActionType: UuaActionType = UuaActionType.ServerProfileUnmute
 
     override def getSubType(
@@ -125,7 +125,7 @@ object SocialGraphEngagement {
       e.map(_.result)
   }
 
-  object ProfileReportAsSpam extends BaseReportSocialGraphWriteEvent[ReportAsSpamGraphEvent] {
+  object ProfileReportAsSpam etwittertends BaseReportSocialGraphWriteEvent[ReportAsSpamGraphEvent] {
     override def uuaActionType: UuaActionType = UuaActionType.ServerProfileReport
     override def socialGraphAction: Action = Action.ReportAsSpam
 
@@ -140,7 +140,7 @@ object SocialGraphEngagement {
       e.map(_.result)
   }
 
-  object ProfileReportAsAbuse extends BaseReportSocialGraphWriteEvent[ReportAsAbuseGraphEvent] {
+  object ProfileReportAsAbuse etwittertends BaseReportSocialGraphWriteEvent[ReportAsAbuseGraphEvent] {
     override def uuaActionType: UuaActionType = UuaActionType.ServerProfileReport
     override def socialGraphAction: Action = Action.ReportAsAbuse
 

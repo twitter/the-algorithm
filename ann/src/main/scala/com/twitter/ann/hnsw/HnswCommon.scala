@@ -1,7 +1,7 @@
 package com.twitter.ann.hnsw
 
 import com.twitter.ann.common.RuntimeParams
-import com.twitter.ann.common.thriftscala.HnswIndexMetadata
+import com.twitter.ann.common.thriftscala.HnswIndetwitterMetadata
 import com.twitter.ann.common.thriftscala.HnswRuntimeParam
 import com.twitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
 import com.twitter.bijection.Injection
@@ -12,10 +12,10 @@ import scala.util.Success
 import scala.util.Try
 
 object HnswCommon {
-  private[hnsw] lazy val MetadataCodec = new ThriftByteBufferCodec(HnswIndexMetadata)
-  private[hnsw] val MetaDataFileName = "hnsw_index_metadata"
+  private[hnsw] lazy val MetadataCodec = new ThriftByteBufferCodec(HnswIndetwitterMetadata)
+  private[hnsw] val MetaDataFileName = "hnsw_indetwitter_metadata"
   private[hnsw] val EmbeddingMappingFileName = "hnsw_embedding_mapping"
-  private[hnsw] val InternalIndexDir = "hnsw_internal_index"
+  private[hnsw] val InternalIndetwitterDir = "hnsw_internal_indetwitter"
   private[hnsw] val HnswInternalMetadataFileName = "hnsw_internal_metadata"
   private[hnsw] val HnswInternalGraphFileName = "hnsw_internal_graph"
 
@@ -35,18 +35,18 @@ object HnswCommon {
             Success(
               HnswParams(hnswParam.ef)
             )
-          case p => Failure(new IllegalArgumentException(s"Expected HnswRuntimeParam got $p"))
+          case p => Failure(new IllegalArgumentEtwitterception(s"Etwitterpected HnswRuntimeParam got $p"))
         }
     }
 
-  def isValidHnswIndex(path: AbstractFile): Boolean = {
+  def isValidHnswIndetwitter(path: AbstractFile): Boolean = {
     path.isDirectory &&
     path.hasSuccessFile &&
-    path.getChild(MetaDataFileName).exists() &&
-    path.getChild(EmbeddingMappingFileName).exists() &&
-    path.getChild(InternalIndexDir).exists() &&
-    path.getChild(InternalIndexDir).getChild(HnswInternalMetadataFileName).exists() &&
-    path.getChild(InternalIndexDir).getChild(HnswInternalGraphFileName).exists()
+    path.getChild(MetaDataFileName).etwitterists() &&
+    path.getChild(EmbeddingMappingFileName).etwitterists() &&
+    path.getChild(InternalIndetwitterDir).etwitterists() &&
+    path.getChild(InternalIndetwitterDir).getChild(HnswInternalMetadataFileName).etwitterists() &&
+    path.getChild(InternalIndetwitterDir).getChild(HnswInternalGraphFileName).etwitterists()
   }
 }
 
@@ -57,6 +57,6 @@ object HnswCommon {
  *          ef cannot be set lower than the number of queried nearest neighbors k.
  *          The value ef of can be anything between k and the size of the dataset.
  */
-case class HnswParams(ef: Int) extends RuntimeParams {
+case class HnswParams(ef: Int) etwittertends RuntimeParams {
   override def toString: String = s"HnswParams(ef = $ef)"
 }

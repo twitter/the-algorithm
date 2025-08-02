@@ -7,7 +7,7 @@ object MergeUtil {
    * by their weights. All weights need to be greater than or equal to zero. In addition,
    * the sum of weights should be greater than zero.
    *
-   * Example usage of this function:
+   * Etwitterample usage of this function:
    * Input weighted Item {{CS1, 3}, {CS2, 2}, {CS3, 5}}
    * Output stream: (CS1, CS1, CS1, CS2, CS2, CS3, CS3, CS3, CS3, CS3, CS1, CS1, CS1, CS2,...}
    *
@@ -30,22 +30,22 @@ object MergeUtil {
         weights.forall {
           _ >= 0
         },
-        "Negative weight exists for sampling")
+        "Negative weight etwitterists for sampling")
       val cumulativeWeight = weights.scanLeft(0.0)(_ + _).tail
       assert(cumulativeWeight.last > 0, "Sum of the sampling weights is not positive")
 
-      var weightIdx = 0
+      var weightIdtwitter = 0
       var weight = 0
 
-      def next(): Stream[T] = {
-        val tmpIdx = weightIdx
+      def netwittert(): Stream[T] = {
+        val tmpIdtwitter = weightIdtwitter
         weight = weight + 1
-        weight = if (weight >= weights(weightIdx)) 0 else weight
-        weightIdx = if (weight == 0) weightIdx + 1 else weightIdx
-        weightIdx = if (weightIdx == weights.length) 0 else weightIdx
-        items(tmpIdx) #:: next()
+        weight = if (weight >= weights(weightIdtwitter)) 0 else weight
+        weightIdtwitter = if (weight == 0) weightIdtwitter + 1 else weightIdtwitter
+        weightIdtwitter = if (weightIdtwitter == weights.length) 0 else weightIdtwitter
+        items(tmpIdtwitter) #:: netwittert()
       }
-      next()
+      netwittert()
     }
   }
 }

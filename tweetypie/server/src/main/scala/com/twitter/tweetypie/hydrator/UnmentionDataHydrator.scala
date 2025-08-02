@@ -6,23 +6,23 @@ import com.twitter.tweetypie.thriftscala.MentionEntity
 import com.twitter.tweetypie.unmentions.thriftscala.UnmentionData
 
 object UnmentionDataHydrator {
-  type Type = ValueHydrator[Option[UnmentionData], Ctx]
+  type Type = ValueHydrator[Option[UnmentionData], Cttwitter]
 
-  case class Ctx(
+  case class Cttwitter(
     conversationId: Option[TweetId],
     mentions: Seq[MentionEntity],
-    underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+    underlyingTweetCttwitter: TweetCttwitter)
+      etwittertends TweetCttwitter.Protwittery
 
   def apply(): Type = {
-    ValueHydrator.map[Option[UnmentionData], Ctx] { (_, ctx) =>
-      val mentionedUserIds: Seq[UserId] = ctx.mentions.flatMap(_.userId)
+    ValueHydrator.map[Option[UnmentionData], Cttwitter] { (_, cttwitter) =>
+      val mentionedUserIds: Seq[UserId] = cttwitter.mentions.flatMap(_.userId)
 
       ValueState.modified(
-        Some(UnmentionData(ctx.conversationId, Option(mentionedUserIds).filter(_.nonEmpty)))
+        Some(UnmentionData(cttwitter.conversationId, Option(mentionedUserIds).filter(_.nonEmpty)))
       )
     }
-  }.onlyIf { (_, ctx) =>
-    ctx.tweetFieldRequested(Tweet.UnmentionDataField)
+  }.onlyIf { (_, cttwitter) =>
+    cttwitter.tweetFieldRequested(Tweet.UnmentionDataField)
   }
 }

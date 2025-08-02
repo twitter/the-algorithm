@@ -12,7 +12,7 @@ import com.twitter.interaction_graph.thriftscala.{EdgeFeature => TEdgeFeature}
 import com.twitter.pluck.source.user_audits.UserAuditFinalScalaDataset
 import com.twitter.scalding.DateRange
 import com.twitter.scalding.Days
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding.Stat
 import com.twitter.scalding.UniqueID
 import com.twitter.scalding.typed.TypedPipe
@@ -24,7 +24,7 @@ import com.twitter.wtf.candidate.thriftscala.CandidateSeq
 import java.nio.ByteBuffer
 import java.util.TimeZone
 
-trait GraphFeatureServiceMainJob extends GraphFeatureServiceBaseJob {
+trait GraphFeatureServiceMainJob etwittertends GraphFeatureServiceBaseJob {
 
   // keeping hdfsPath as a separate variable in order to override it in unit tests
   protected val hdfsPath: String = BaseHdfsPath
@@ -37,7 +37,7 @@ trait GraphFeatureServiceMainJob extends GraphFeatureServiceBaseJob {
 
   protected val bufferSize: Int = 1 << 26
 
-  protected val maxNumKeys: Int = 1 << 24
+  protected val matwitterNumKeys: Int = 1 << 24
 
   protected val numReducers: Int = NumGraphShards
 
@@ -57,7 +57,7 @@ trait GraphFeatureServiceMainJob extends GraphFeatureServiceBaseJob {
     path: String
   )(
     implicit dateRange: DateRange
-  ): Execution[TypedPipe[(Int, Unit)]] = {
+  ): Etwitterecution[TypedPipe[(Int, Unit)]] = {
     ScaldingUtil
       .writeConstDB[Long, Long](
         graph.withDescription(s"sharding $path"),
@@ -68,9 +68,9 @@ trait GraphFeatureServiceMainJob extends GraphFeatureServiceBaseJob {
             getHdfsPath(path, Some(hdfsPath)),
             Time.fromMilliseconds(dateRange.end.timestamp)
           ),
-        Int.MaxValue,
+        Int.MatwitterValue,
         bufferSize,
-        maxNumKeys,
+        matwitterNumKeys,
         numReducers,
         outputStreamBufferSize
       )(
@@ -78,10 +78,10 @@ trait GraphFeatureServiceMainJob extends GraphFeatureServiceBaseJob {
         valueInj,
         Ordering[(Long, Long)]
       )
-      .forceToDiskExecution
+      .forceToDiskEtwitterecution
   }
 
-  def extractFeature(
+  def etwittertractFeature(
     featureList: Seq[TEdgeFeature],
     featureName: FeatureName
   ): Option[Float] = {
@@ -92,7 +92,7 @@ trait GraphFeatureServiceMainJob extends GraphFeatureServiceBaseJob {
   }
 
   /**
-   * Function to extract a subgraph (e.g., follow graph) from real graph and take top K by real graph
+   * Function to etwittertract a subgraph (e.g., follow graph) from real graph and take top K by real graph
    * weight.
    *
    * @param input input real graph
@@ -112,7 +112,7 @@ trait GraphFeatureServiceMainJob extends GraphFeatureServiceBaseJob {
           (srcId, (destId, features.realGraphScore))
       }
       .group
-      // auto reducer estimation only allocates 15 reducers, so setting an explicit number here
+      // auto reducer estimation only allocates 15 reducers, so setting an etwitterplicit number here
       .withReducers(2000)
       .sortedReverseTake(TopKRealGraph)(Ordering.by(_._2))
       .flatMap {
@@ -179,10 +179,10 @@ trait GraphFeatureServiceMainJob extends GraphFeatureServiceBaseJob {
         val featureList = edge.features
         val edgeFeature = EdgeFeature(
           edge.weight.getOrElse(0.0).toFloat,
-          extractFeature(featureList, FeatureName.NumMutualFollows),
-          extractFeature(featureList, FeatureName.NumFavorites),
-          extractFeature(featureList, FeatureName.NumRetweets),
-          extractFeature(featureList, FeatureName.NumMentions)
+          etwittertractFeature(featureList, FeatureName.NumMutualFollows),
+          etwittertractFeature(featureList, FeatureName.NumFavorites),
+          etwittertractFeature(featureList, FeatureName.NumRetweets),
+          etwittertractFeature(featureList, FeatureName.NumMentions)
         )
         (edge.sourceId, (edge.destinationId, edgeFeature))
       }
@@ -228,14 +228,14 @@ trait GraphFeatureServiceMainJob extends GraphFeatureServiceBaseJob {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     val processValueGraphs = enableValueGraphs.getOrElse(Configs.EnableValueGraphs)
     val processKeyGraphs = enableKeyGraphs.getOrElse(Configs.EnableKeyGraphs)
 
     if (!processKeyGraphs && !processValueGraphs) {
       // Skip the batch job
-      Execution.unit
+      Etwitterecution.unit
     } else {
       // val favoriteGraphStat = Stat("NumFavoriteEdges")
       // val retweetGraphStat = Stat("NumRetweetEdges")
@@ -255,7 +255,7 @@ trait GraphFeatureServiceMainJob extends GraphFeatureServiceBaseJob {
       // val mentionGraph =
       //   getSubGraph(realGraphAggregates, _.mentionScore.isDefined, mentionGraphStat)
 
-      val writeValDataSetExecutions = if (processValueGraphs) {
+      val writeValDataSetEtwitterecutions = if (processValueGraphs) {
         Seq(
           (followGraph, shardingByValue, FollowOutValPath),
           (followGraph.swap, shardingByValue, FollowInValPath)
@@ -271,7 +271,7 @@ trait GraphFeatureServiceMainJob extends GraphFeatureServiceBaseJob {
         Seq.empty
       }
 
-      val writeKeyDataSetExecutions = if (processKeyGraphs) {
+      val writeKeyDataSetEtwitterecutions = if (processKeyGraphs) {
         Seq(
           (followGraph, shardingByKey, FollowOutKeyPath),
           (followGraph.swap, shardingByKey, FollowInKeyPath)
@@ -287,8 +287,8 @@ trait GraphFeatureServiceMainJob extends GraphFeatureServiceBaseJob {
         Seq.empty
       }
 
-      Execution
-        .sequence((writeValDataSetExecutions ++ writeKeyDataSetExecutions).map {
+      Etwitterecution
+        .sequence((writeValDataSetEtwitterecutions ++ writeKeyDataSetEtwitterecutions).map {
           case (graph, shardingMethod, path) =>
             writeGraphToDB(graph, shardingMethod, path)
         }).unit

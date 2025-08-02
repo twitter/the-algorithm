@@ -30,7 +30,7 @@ class NamedEntityHandler {
   private static final String RETRIEVE_NAMED_ENTITIES_DECIDER_KEY =
       "ingester_all_retrieve_named_entities_%s";
 
-  // Named entities are only extracted in English, Spanish, and Japanese
+  // Named entities are only etwittertracted in English, Spanish, and Japanese
   private static final Set<String> NAMED_ENTITY_LANGUAGES = ImmutableSet.of("en", "es", "ja");
 
   private final NamedEntityFetcher namedEntityFetcher;
@@ -46,19 +46,19 @@ class NamedEntityHandler {
   private IngesterStageTimer retrieveNamedEntitiesTimer;
 
   NamedEntityHandler(
-      NamedEntityFetcher namedEntityFetcher, Decider decider, String statsPrefix,
-      String deciderSuffix) {
+      NamedEntityFetcher namedEntityFetcher, Decider decider, String statsPrefitwitter,
+      String deciderSuffitwitter) {
     this.namedEntityFetcher = namedEntityFetcher;
     this.decider = decider;
-    this.deciderKey = String.format(RETRIEVE_NAMED_ENTITIES_DECIDER_KEY, deciderSuffix);
+    this.deciderKey = String.format(RETRIEVE_NAMED_ENTITIES_DECIDER_KEY, deciderSuffitwitter);
 
-    lookupStat = SearchRateCounter.export(statsPrefix + "_lookups");
-    successStat = SearchRateCounter.export(statsPrefix + "_success");
-    namedEntityCountStat = SearchRateCounter.export(statsPrefix + "_named_entity_count");
-    errorStat = SearchRateCounter.export(statsPrefix + "_error");
-    emptyResponseStat = SearchRateCounter.export(statsPrefix + "_empty_response");
-    deciderSkippedStat = SearchRateCounter.export(statsPrefix + "_decider_skipped");
-    retrieveNamedEntitiesTimer = new IngesterStageTimer(statsPrefix + "_request_timer");
+    lookupStat = SearchRateCounter.etwitterport(statsPrefitwitter + "_lookups");
+    successStat = SearchRateCounter.etwitterport(statsPrefitwitter + "_success");
+    namedEntityCountStat = SearchRateCounter.etwitterport(statsPrefitwitter + "_named_entity_count");
+    errorStat = SearchRateCounter.etwitterport(statsPrefitwitter + "_error");
+    emptyResponseStat = SearchRateCounter.etwitterport(statsPrefitwitter + "_empty_response");
+    deciderSkippedStat = SearchRateCounter.etwitterport(statsPrefitwitter + "_decider_skipped");
+    retrieveNamedEntitiesTimer = new IngesterStageTimer(statsPrefitwitter + "_request_timer");
   }
 
   Future<Fetch.Result<NamedEntities>> retrieve(IngesterTwitterMessage message) {
@@ -94,7 +94,7 @@ class NamedEntityHandler {
       return false;
     }
 
-    // Named entities are only extracted in certain languages, so we can skip tweets
+    // Named entities are only etwittertracted in certain languages, so we can skip tweets
     // in other languages
     return NAMED_ENTITY_LANGUAGES.contains(message.getLanguage());
   }

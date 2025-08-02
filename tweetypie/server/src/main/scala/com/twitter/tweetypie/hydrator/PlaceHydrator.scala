@@ -7,22 +7,22 @@ import com.twitter.tweetypie.repository._
 import com.twitter.tweetypie.thriftscala._
 
 object PlaceHydrator {
-  type Type = ValueHydrator[Option[Place], TweetCtx]
+  type Type = ValueHydrator[Option[Place], TweetCttwitter]
 
   val HydratedField: FieldByPath = fieldByPath(Tweet.PlaceField)
 
   def apply(repo: PlaceRepository.Type): Type =
-    ValueHydrator[Option[Place], TweetCtx] { (_, ctx) =>
-      val key = PlaceKey(ctx.placeId.get, ctx.opts.languageTag)
+    ValueHydrator[Option[Place], TweetCttwitter] { (_, cttwitter) =>
+      val key = PlaceKey(cttwitter.placeId.get, cttwitter.opts.languageTag)
       repo(key).liftToTry.map {
         case Return(place) => ValueState.modified(Some(place))
         case Throw(NotFound) => ValueState.UnmodifiedNone
         case Throw(_) => ValueState.partial(None, HydratedField)
       }
-    }.onlyIf { (curr, ctx) =>
+    }.onlyIf { (curr, cttwitter) =>
       curr.isEmpty &&
-      ctx.tweetFieldRequested(Tweet.PlaceField) &&
-      !ctx.isRetweet &&
-      ctx.placeId.nonEmpty
+      cttwitter.tweetFieldRequested(Tweet.PlaceField) &&
+      !cttwitter.isRetweet &&
+      cttwitter.placeId.nonEmpty
     }
 }

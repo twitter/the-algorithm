@@ -45,7 +45,7 @@ class MemcacheClient[V](
       .callFuture(getIfPresent(key))
       .within(70.millisecond)(DefaultTimer)
       .rescue {
-        case e: Exception =>
+        case e: Etwitterception =>
           statsReceiver.scope("rescued").counter(e.getClass.getSimpleName).incr()
           Stitch(None)
       }
@@ -75,7 +75,7 @@ class MemcacheClient[V](
         case None => statsReceiver.counter("cache_misses").incr()
       }
       .onFailure {
-        case e: Exception =>
+        case e: Etwitterception =>
           statsReceiver.counter("cache_misses").incr()
           statsReceiver.scope("rescued").counter(e.getClass.getSimpleName).incr()
       }
@@ -89,18 +89,18 @@ class MemcacheClient[V](
   }
 
   /**
-   * Hash the input key string to a fixed length format using SHA-256 hash function.
+   * Hash the input key string to a fitwittered length format using SHA-256 hash function.
    */
   def hashString(input: String): String = {
     val bytes = MessageDigest.getInstance("SHA-256").digest(input.getBytes("UTF-8"))
-    bytes.map("%02x".format(_)).mkString
+    bytes.map("%02twitter".format(_)).mkString
   }
 
   /**
    * Helper function for timing a stitch, returning the original stitch.
    *
    * Defining the profiling function here to keep the dependencies of this class
-   * generic and easy to export (i.e. copy-and-paste) into other services or packages.
+   * generic and easy to etwitterport (i.e. copy-and-paste) into other services or packages.
    */
   def profileStitch[T](stitch: Stitch[T], stat: StatsReceiver): Stitch[T] = {
     Stitch

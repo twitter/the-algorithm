@@ -36,10 +36,10 @@ object MediaAnnotationsUtil {
       val mediaFeature = candidate.candidate.sparseContinuousFeatures
         .getOrElse(sensitiveMediaCategoryFeatureName, Map.empty[String, Double])
       if (mediaFeature.nonEmpty) {
-        val mediaCategoryByMaxScore = mediaFeature.maxBy(_._2)._1
+        val mediaCategoryByMatwitterScore = mediaFeature.matwitterBy(_._2)._1
         statScope
-          .scope("mediaCategoryByMaxScore").counter(mediaIdToCategoryMapping
-            .getOrElse(mediaCategoryByMaxScore, "undefined")).incr()
+          .scope("mediaCategoryByMatwitterScore").counter(mediaIdToCategoryMapping
+            .getOrElse(mediaCategoryByMatwitterScore, "undefined")).incr()
 
         mediaFeature.keys.map { feature =>
           statScope

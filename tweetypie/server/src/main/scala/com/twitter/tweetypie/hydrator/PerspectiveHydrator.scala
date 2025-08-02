@@ -12,11 +12,11 @@ import com.twitter.tweetypie.thriftscala.FieldByPath
 import com.twitter.tweetypie.thriftscala.StatusPerspective
 
 object PerspectiveHydrator {
-  type Type = ValueHydrator[Option[StatusPerspective], Ctx]
+  type Type = ValueHydrator[Option[StatusPerspective], Cttwitter]
   val hydratedField: FieldByPath = fieldByPath(Tweet.PerspectiveField)
 
-  case class Ctx(featureSwitchResults: Option[FeatureSwitchResults], underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+  case class Cttwitter(featureSwitchResults: Option[FeatureSwitchResults], underlyingTweetCttwitter: TweetCttwitter)
+      etwittertends TweetCttwitter.Protwittery
 
   val Types: Set[tls.PerspectiveType] =
     Set(
@@ -59,8 +59,8 @@ object PerspectiveHydrator {
     val statsByLevel =
       SafetyLevel.list.map(level => (level, stats.counter(level.name, "calls"))).toMap
 
-    ValueHydrator[Option[StatusPerspective], Ctx] { (_, ctx) =>
-      val res: Stitch[tls.TimelineEntryPerspective] = if (ctx.isRetweet) {
+    ValueHydrator[Option[StatusPerspective], Cttwitter] { (_, cttwitter) =>
+      val res: Stitch[tls.TimelineEntryPerspective] = if (cttwitter.isRetweet) {
         Stitch.value(
           tls.TimelineEntryPerspective(
             favorited = false,
@@ -72,17 +72,17 @@ object PerspectiveHydrator {
         )
       } else {
         statsByLevel
-          .getOrElse(ctx.opts.safetyLevel, stats.counter(ctx.opts.safetyLevel.name, "calls"))
+          .getOrElse(cttwitter.opts.safetyLevel, stats.counter(cttwitter.opts.safetyLevel.name, "calls"))
           .incr()
 
         repo(
           Query(
-            userId = ctx.opts.forUserId.get,
-            tweetId = ctx.tweetId,
+            userId = cttwitter.opts.forUserId.get,
+            tweetId = cttwitter.tweetId,
             types = evaluatePerspectiveTypes(
-              ctx.opts.forUserId.get,
+              cttwitter.opts.forUserId.get,
               shouldHydrateBookmarksPerspective,
-              ctx.featureSwitchResults)
+              cttwitter.featureSwitchResults)
           ))
       }
 
@@ -91,7 +91,7 @@ object PerspectiveHydrator {
           ValueState.modified(
             Some(
               StatusPerspective(
-                userId = ctx.opts.forUserId.get,
+                userId = cttwitter.opts.forUserId.get,
                 favorited = perspective.favorited,
                 retweeted = perspective.retweeted,
                 retweetId = perspective.retweetId,
@@ -103,10 +103,10 @@ object PerspectiveHydrator {
         case _ => partialResult
       }
 
-    }.onlyIf { (curr, ctx) =>
+    }.onlyIf { (curr, cttwitter) =>
       curr.isEmpty &&
-      ctx.opts.forUserId.nonEmpty &&
-      (ctx.tweetFieldRequested(Tweet.PerspectiveField) || ctx.opts.excludeReported)
+      cttwitter.opts.forUserId.nonEmpty &&
+      (cttwitter.tweetFieldRequested(Tweet.PerspectiveField) || cttwitter.opts.etwittercludeReported)
     }
   }
 }

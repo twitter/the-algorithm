@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.archive;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -17,12 +17,12 @@ import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
+import com.twitter.search.common.schema.thriftjava.ThriftIndetwitteringEvent;
 import com.twitter.search.common.util.io.MergingSortedRecordReader;
 import com.twitter.search.common.util.io.recordreader.RecordReader;
 import com.twitter.search.earlybird.config.TierConfig;
 import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.ThriftIndexingEventDocumentFactory;
+import com.twitter.search.earlybird.document.ThriftIndetwitteringEventDocumentFactory;
 import com.twitter.search.earlybird.document.TweetDocument;
 
 
@@ -47,16 +47,16 @@ public class ArchiveTimeSlicer {
     private Date endDate;
     private int statusCount;
     private final DailyStatusBatches directory;
-    private final ArchiveEarlybirdIndexConfig earlybirdIndexConfig;
+    private final ArchiveEarlybirdIndetwitterConfig earlybirdIndetwitterConfig;
 
     // This list is always ordered from oldest day, to the newest day.
     // For the on-disk archive, we reverse the days in getTweetReaders().
     private final List<DailyStatusBatch> batches = Lists.newArrayList();
 
     private ArchiveTimeSlice(DailyStatusBatches directory,
-                             ArchiveEarlybirdIndexConfig earlybirdIndexConfig) {
+                             ArchiveEarlybirdIndetwitterConfig earlybirdIndetwitterConfig) {
       this.directory = directory;
-      this.earlybirdIndexConfig = earlybirdIndexConfig;
+      this.earlybirdIndetwitterConfig = earlybirdIndetwitterConfig;
     }
 
     public Date getEndDate() {
@@ -75,15 +75,15 @@ public class ArchiveTimeSlicer {
      * Returns a reader for reading tweets from this timeslice.
      *
      * @param archiveSegment The segment to which the timeslice belongs.
-     * @param documentFactory The ThriftIndexingEvent to TweetDocument converter.
+     * @param documentFactory The ThriftIndetwitteringEvent to TweetDocument converter.
      * @param filter A filter that determines what dates should be read.
      */
     public RecordReader<TweetDocument> getStatusReader(
         ArchiveSegment archiveSegment,
-        DocumentFactory<ThriftIndexingEvent> documentFactory,
-        Predicate<Date> filter) throws IOException {
+        DocumentFactory<ThriftIndetwitteringEvent> documentFactory,
+        Predicate<Date> filter) throws IOEtwitterception {
       // We no longer support ThriftStatus based document factories.
-      Preconditions.checkState(documentFactory instanceof ThriftIndexingEventDocumentFactory);
+      Preconditions.checkState(documentFactory instanceof ThriftIndetwitteringEventDocumentFactory);
 
       final int hashPartitionID = archiveSegment.getHashPartitionID();
       List<RecordReader<TweetDocument>> readers = new ArrayList<>(batches.size());
@@ -97,8 +97,8 @@ public class ArchiveTimeSlicer {
           PartitionedBatch partitionedBatch = batch.getPartition(hashPartitionID);
           // Don't even try to create a reader if the partition is empty.
           // There does not seem to be any problem in production now, but HDFS FileSystem's javadoc
-          // does indicate that listStatus() is allowed to throw a FileNotFoundException if the
-          // partition does not exist. This check makes the code more robust against future
+          // does indicate that listStatus() is allowed to throw a FileNotFoundEtwitterception if the
+          // partition does not etwitterist. This check makes the code more robust against future
           // HDFS FileSystem implementation changes.
           if (partitionedBatch.getStatusCount() > 0) {
             RecordReader<TweetDocument> tweetReaders = partitionedBatch.getTweetReaders(
@@ -119,10 +119,10 @@ public class ArchiveTimeSlicer {
     }
 
     private List<DailyStatusBatch> orderBatchesForReading(List<DailyStatusBatch> orderedBatches) {
-      // For the index formats using stock lucene, we want the most recent days to be indexed first.
-      // In the twitter in-memory optimized indexes, older tweets will be added first, and
+      // For the indetwitter formats using stock lucene, we want the most recent days to be indetwittered first.
+      // In the twitter in-memory optimized indetwitteres, older tweets will be added first, and
       // optimization will reverse the documents to make most recent tweets be first.
-      return this.earlybirdIndexConfig.isUsingLIFODocumentOrdering()
+      return this.earlybirdIndetwitterConfig.isUsingLIFODocumentOrdering()
           ? orderedBatches : Lists.reverse(orderedBatches);
     }
 
@@ -130,12 +130,12 @@ public class ArchiveTimeSlicer {
       // We always want to retrieve larger tweet ids first.
       // LIFO means that the smaller ids get inserted first --> ASCENDING order.
       // FIFO would mean that we want to first insert the larger ids --> DESCENDING order.
-      return this.earlybirdIndexConfig.isUsingLIFODocumentOrdering()
+      return this.earlybirdIndetwitterConfig.isUsingLIFODocumentOrdering()
           ? ASCENDING : DESCENDING;
     }
 
     /**
-     * Returns the smallest indexed tweet ID in this timeslice for the given partition.
+     * Returns the smallest indetwittered tweet ID in this timeslice for the given partition.
      *
      * @param hashPartitionID The partition.
      */
@@ -155,23 +155,23 @@ public class ArchiveTimeSlicer {
     }
 
     /**
-     * Returns the highest indexed tweet ID in this timeslice for the given partition.
+     * Returns the highest indetwittered tweet ID in this timeslice for the given partition.
      *
      * @param hashPartitionID The partition.
      */
-    public long getMaxStatusID(int hashPartitionID) {
+    public long getMatwitterStatusID(int hashPartitionID) {
       if (batches.isEmpty()) {
-        return Long.MAX_VALUE;
+        return Long.MAtwitter_VALUE;
       }
 
       for (int i = batches.size() - 1; i >= 0; i--) {
-        long maxStatusID = batches.get(i).getPartition(hashPartitionID).getMaxStatusID();
-        if (maxStatusID != DailyStatusBatch.EMPTY_BATCH_STATUS_ID) {
-          return maxStatusID;
+        long matwitterStatusID = batches.get(i).getPartition(hashPartitionID).getMatwitterStatusID();
+        if (matwitterStatusID != DailyStatusBatch.EMPTY_BATCH_STATUS_ID) {
+          return matwitterStatusID;
         }
       }
 
-      return Long.MAX_VALUE;
+      return Long.MAtwitter_VALUE;
     }
 
     /**
@@ -192,40 +192,40 @@ public class ArchiveTimeSlicer {
     }
   }
 
-  private final int maxSegmentSize;
+  private final int matwitterSegmentSize;
   private final DailyStatusBatches dailyStatusBatches;
   private final Date tierStartDate;
   private final Date tierEndDate;
-  private final ArchiveEarlybirdIndexConfig earlybirdIndexConfig;
+  private final ArchiveEarlybirdIndetwitterConfig earlybirdIndetwitterConfig;
 
   private List<ArchiveTimeSlice> lastCachedTimeslices = null;
 
-  public ArchiveTimeSlicer(int maxSegmentSize,
+  public ArchiveTimeSlicer(int matwitterSegmentSize,
                            DailyStatusBatches dailyStatusBatches,
-                           ArchiveEarlybirdIndexConfig earlybirdIndexConfig) {
-    this(maxSegmentSize, dailyStatusBatches, TierConfig.DEFAULT_TIER_START_DATE,
-        TierConfig.DEFAULT_TIER_END_DATE, earlybirdIndexConfig);
+                           ArchiveEarlybirdIndetwitterConfig earlybirdIndetwitterConfig) {
+    this(matwitterSegmentSize, dailyStatusBatches, TierConfig.DEFAULT_TIER_START_DATE,
+        TierConfig.DEFAULT_TIER_END_DATE, earlybirdIndetwitterConfig);
   }
 
-  public ArchiveTimeSlicer(int maxSegmentSize,
+  public ArchiveTimeSlicer(int matwitterSegmentSize,
                            DailyStatusBatches dailyStatusBatches,
                            Date tierStartDate,
                            Date tierEndDate,
-                           ArchiveEarlybirdIndexConfig earlybirdIndexConfig) {
-    this.maxSegmentSize = maxSegmentSize;
+                           ArchiveEarlybirdIndetwitterConfig earlybirdIndetwitterConfig) {
+    this.matwitterSegmentSize = matwitterSegmentSize;
     this.dailyStatusBatches = dailyStatusBatches;
     this.tierStartDate = tierStartDate;
     this.tierEndDate = tierEndDate;
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
+    this.earlybirdIndetwitterConfig = earlybirdIndetwitterConfig;
   }
 
-  private boolean cacheIsValid() throws IOException {
+  private boolean cacheIsValid() throws IOEtwitterception {
     return lastCachedTimeslices != null
         && !lastCachedTimeslices.isEmpty()
         && cacheIsValid(lastCachedTimeslices.get(lastCachedTimeslices.size() - 1).endDate);
   }
 
-  private boolean cacheIsValid(Date lastDate) throws IOException {
+  private boolean cacheIsValid(Date lastDate) throws IOEtwitterception {
     if (lastCachedTimeslices == null || lastCachedTimeslices.isEmpty()) {
       return false;
     }
@@ -234,21 +234,21 @@ public class ArchiveTimeSlicer {
     Calendar cal = Calendar.getInstance();
     cal.setTime(lastDate);
     cal.add(Calendar.DATE, 1);
-    Date nextDate = cal.getTime();
+    Date netwittertDate = cal.getTime();
 
-    boolean foundBatch = dailyStatusBatches.hasValidBatchForDay(nextDate);
+    boolean foundBatch = dailyStatusBatches.hasValidBatchForDay(netwittertDate);
 
     LOG.info("Checking cache: Looked for valid batch for day {}. Found: {}",
-        DailyStatusBatches.DATE_FORMAT.format(nextDate), foundBatch);
+        DailyStatusBatches.DATE_FORMAT.format(netwittertDate), foundBatch);
 
     return !foundBatch;
   }
 
   private boolean timesliceIsFull(ArchiveTimeSlice timeSlice, DailyStatusBatch batch) {
-    return timeSlice.statusCount + batch.getMaxPerPartitionStatusCount() > maxSegmentSize;
+    return timeSlice.statusCount + batch.getMatwitterPerPartitionStatusCount() > matwitterSegmentSize;
   }
 
-  private void doTimeSlicing() throws IOException {
+  private void doTimeSlicing() throws IOEtwitterception {
     dailyStatusBatches.refresh();
 
     lastCachedTimeslices = Lists.newArrayList();
@@ -265,13 +265,13 @@ public class ArchiveTimeSlicer {
         if (currentTimeSlice != null) {
           LOG.info("Filled timeslice: " + currentTimeSlice.getDescription());
         }
-        currentTimeSlice = new ArchiveTimeSlice(dailyStatusBatches, earlybirdIndexConfig);
+        currentTimeSlice = new ArchiveTimeSlice(dailyStatusBatches, earlybirdIndetwitterConfig);
         currentTimeSlice.startDate = batch.getDate();
         lastCachedTimeslices.add(currentTimeSlice);
       }
 
       currentTimeSlice.endDate = batch.getDate();
-      currentTimeSlice.statusCount += batch.getMaxPerPartitionStatusCount();
+      currentTimeSlice.statusCount += batch.getMatwitterPerPartitionStatusCount();
       currentTimeSlice.batches.add(batch);
     }
     LOG.info("Last timeslice: {}", currentTimeSlice.getDescription());
@@ -283,7 +283,7 @@ public class ArchiveTimeSlicer {
   /**
    * Returns all timeslices for this earlybird.
    */
-  public List<ArchiveTimeSlice> getTimeSlices() throws IOException {
+  public List<ArchiveTimeSlice> getTimeSlices() throws IOEtwitterception {
     if (cacheIsValid()) {
       return lastCachedTimeslices;
     }
@@ -298,7 +298,7 @@ public class ArchiveTimeSlicer {
   /**
    * Return the timeslices that overlap the tier start/end date ranges if they are specified
    */
-  public List<ArchiveTimeSlice> getTimeSlicesInTierRange() throws IOException {
+  public List<ArchiveTimeSlice> getTimeSlicesInTierRange() throws IOEtwitterception {
     List<ArchiveTimeSlice> timeSlices = getTimeSlices();
     if (tierStartDate == TierConfig.DEFAULT_TIER_START_DATE
         && tierEndDate == TierConfig.DEFAULT_TIER_END_DATE) {

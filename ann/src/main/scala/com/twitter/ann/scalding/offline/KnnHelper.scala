@@ -1,26 +1,26 @@
 package com.twitter.ann.scalding.offline
 
 import com.twitter.ann.common._
-import com.twitter.ann.hnsw.{HnswParams, TypedHnswIndex}
+import com.twitter.ann.hnsw.{HnswParams, TypedHnswIndetwitter}
 import com.twitter.bijection.Injection
-import com.twitter.cortex.ml.embeddings.common.{EntityKind, Helpers, UserKind}
+import com.twitter.cortetwitter.ml.embeddings.common.{EntityKind, Helpers, UserKind}
 import com.twitter.entityembeddings.neighbors.thriftscala.{EntityKey, NearestNeighbors, Neighbor}
 import com.twitter.ml.api.embedding.Embedding
 import com.twitter.ml.api.embedding.EmbeddingMath.{Float => math}
 import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
 import com.twitter.ml.featurestore.lib.{EntityId, UserId}
 import com.twitter.scalding.typed.{TypedPipe, UnsortedGrouped}
-import com.twitter.scalding.{Args, DateRange, Stat, TextLine, UniqueID}
+import com.twitter.scalding.{Args, DateRange, Stat, TetwittertLine, UniqueID}
 import com.twitter.search.common.file.AbstractFile
 import com.twitter.util.{Await, FuturePool}
 import scala.util.Random
 
-case class Index[T, D <: Distance[D]](
+case class Indetwitter[T, D <: Distance[D]](
   injection: Injection[T, Array[Byte]],
   metric: Metric[D],
   dimension: Int,
   directory: AbstractFile) {
-  lazy val annIndex = TypedHnswIndex.loadIndex[T, D](
+  lazy val annIndetwitter = TypedHnswIndetwitter.loadIndetwitter[T, D](
     dimension,
     metric,
     injection,
@@ -43,7 +43,7 @@ object KnnHelper {
     filterPath match {
       case Some(fileName: String) =>
         val filterUserIds: TypedPipe[UserId] = TypedPipe
-          .from(TextLine(fileName))
+          .from(TetwittertLine(fileName))
           .flatMap { idLine =>
             Helpers.optionalToLong(idLine)
           }
@@ -81,11 +81,11 @@ object KnnHelper {
     val metric = uncastMetric.asInstanceOf[Metric[D]]
     abstractFile match {
       case Some(directory: AbstractFile) =>
-        val index = Index(injection, metric, dimension, directory)
+        val indetwitter = Indetwitter(injection, metric, dimension, directory)
         consumerEmbeddings
           .map { embedding =>
             val knn = Await.result(
-              index.annIndex.queryWithDistance(
+              indetwitter.annIndetwitter.queryWithDistance(
                 Embedding(embedding.embedding.toArray),
                 numNeighbors,
                 HnswParams(ef)
@@ -149,7 +149,7 @@ object KnnHelper {
   }
 
   /**
-   * Calculate the nearest neighbors exhaustively between two entity embeddings using one as query and other as the search space.
+   * Calculate the nearest neighbors etwitterhaustively between two entity embeddings using one as query and other as the search space.
    * @param queryEmbeddings entity embeddings for queries
    * @param searchSpaceEmbeddings entity embeddings for search space
    * @param metric distance metric
@@ -159,7 +159,7 @@ object KnnHelper {
    * @param isSearchSpaceLarger Used for optimization: Is the search space larger than the query space? Ignored if numOfSearchGroups > 1.
    * @param numOfSearchGroups we divide the search space into these groups (randomly). Useful when the search space is too large. Overrides isSearchSpaceLarger.
    * @param numReplicas Each search group will be responsible for 1/numReplicas queryEmebeddings.
-   *                    This might speed up the search when the size of the index embeddings is
+   *                    This might speed up the search when the size of the indetwitter embeddings is
    *                    large.
    * @tparam A type of query entity
    * @tparam B type of search space entity
@@ -184,20 +184,20 @@ object KnnHelper {
     val filteredQueryEmbeddings = queryIdsFilter match {
       case Some(filter) => {
         queryEmbeddings.groupBy(_.entityId).hashJoin(filter.asKeys).map {
-          case (x, (embedding, _)) => embedding
+          case (twitter, (embedding, _)) => embedding
         }
       }
       case None => queryEmbeddings
     }
 
     if (numOfSearchGroups > 1) {
-      val indexingStrategy = BruteForceIndexingStrategy(metric)
-      findNearestNeighboursWithIndexingStrategy(
+      val indetwitteringStrategy = BruteForceIndetwitteringStrategy(metric)
+      findNearestNeighboursWithIndetwitteringStrategy(
         queryEmbeddings,
         searchSpaceEmbeddings,
         numNeighbors,
         numOfSearchGroups,
-        indexingStrategy,
+        indetwitteringStrategy,
         numReplicas,
         Some(reducers),
         useCounters = useCounters
@@ -215,7 +215,7 @@ object KnnHelper {
   }
 
   /**
-   * Calculate the nearest neighbors using the specified indexing strategy between two entity
+   * Calculate the nearest neighbors using the specified indetwittering strategy between two entity
    * embeddings using one as query and other as the search space.
    * @param queryEmbeddings entity embeddings for queries
    * @param searchSpaceEmbeddings entity embeddings for search space. You should be able to fit
@@ -229,28 +229,28 @@ object KnnHelper {
    * @param numReplicas Each search group will be responsible for 1/numReplicas queryEmebeddings.
    *                    By increasing this number, we can parallelize the work and reduce end to end
    *                    running times.
-   * @param indexingStrategy How we will search for nearest neighbors within a search group
+   * @param indetwitteringStrategy How we will search for nearest neighbors within a search group
    * @param queryShards one step we have is to fan out the query embeddings. We create one entry
    *                    per search group. If numOfSearchGroups is large, then this fan out can take
    *                    a long time. You can shard the query shard first to parallelize this
    *                    process. One way to estimate what value to use:
    *                    queryEmbeddings.size * numOfSearchGroups / queryShards should be around 1GB.
-   * @param searchSpaceShards this param is similar to queryShards. Except it shards the search
+   * @param searchSpaceShards this param is similar to queryShards. Etwittercept it shards the search
    *                          space when numReplicas is too large. One way to estimate what value
    *                          to use: searchSpaceEmbeddings.size * numReplicas / searchSpaceShards
    *                          should be around 1GB.
    * @tparam A type of query entity
    * @tparam B type of search space entity
    * @tparam D type of distance
-   * @return a pipe keyed by the index embedding. The values are the list of numNeighbors nearest
+   * @return a pipe keyed by the indetwitter embedding. The values are the list of numNeighbors nearest
    *         neighbors along with their distances.
    */
-  def findNearestNeighboursWithIndexingStrategy[A <: EntityId, B <: EntityId, D <: Distance[D]](
+  def findNearestNeighboursWithIndetwitteringStrategy[A <: EntityId, B <: EntityId, D <: Distance[D]](
     queryEmbeddings: TypedPipe[EmbeddingWithEntity[A]],
     searchSpaceEmbeddings: TypedPipe[EmbeddingWithEntity[B]],
     numNeighbors: Int,
     numOfSearchGroups: Int,
-    indexingStrategy: IndexingStrategy[D],
+    indetwitteringStrategy: IndetwitteringStrategy[D],
     numReplicas: Int = 1,
     reducersOption: Option[Int] = None,
     queryShards: Option[Int] = None,
@@ -273,7 +273,7 @@ object KnnHelper {
 
     val groupedSearchSpaceEmbeddings = shardedSearchSpace
       .flatMap { entityEmbedding =>
-        val searchGroup = Random.nextInt(numOfSearchGroups)
+        val searchGroup = Random.netwittertInt(numOfSearchGroups)
         (0 until numReplicas).map { replica =>
           (NNKey(searchGroup, replica, Some(numReplicas)), entityEmbedding)
         }
@@ -283,33 +283,33 @@ object KnnHelper {
 
     val groupedQueryEmbeddings = shardedQueries
       .flatMap { entity =>
-        val replica = Random.nextInt(numReplicas)
+        val replica = Random.netwittertInt(numReplicas)
         (0 until numOfSearchGroups).map { searchGroup =>
           (NNKey(searchGroup, replica, Some(numReplicas)), entity)
         }
       }.group
       .withReducers(reducersOption.getOrElse(numOfSearchGroups * numReplicas))
 
-    val numberAnnIndexQueries = Stat("NumberAnnIndexQueries")
-    val annIndexQueryTotalMs = Stat("AnnIndexQueryTotalMs")
-    val numberIndexBuilds = Stat("NumberIndexBuilds")
-    val annIndexBuildTotalMs = Stat("AnnIndexBuildTotalMs")
+    val numberAnnIndetwitterQueries = Stat("NumberAnnIndetwitterQueries")
+    val annIndetwitterQueryTotalMs = Stat("AnnIndetwitterQueryTotalMs")
+    val numberIndetwitterBuilds = Stat("NumberIndetwitterBuilds")
+    val annIndetwitterBuildTotalMs = Stat("AnnIndetwitterBuildTotalMs")
     val groupedKnn = groupedQueryEmbeddings
       .cogroup(groupedSearchSpaceEmbeddings) {
         case (_, queryIter, searchSpaceIter) =>
-          // This index build happens numReplicas times. Ideally we could serialize the queryable.
-          // And only build the index once per search group.
+          // This indetwitter build happens numReplicas times. Ideally we could serialize the queryable.
+          // And only build the indetwitter once per search group.
           // The issues with that now are:
           // - The HNSW queryable is not serializable in scalding
           // - The way that map reduce works requires that there is a job that write out the search
           //   space embeddings numReplicas times. In the current setup, we can do that by sharding
           //   the embeddings first and then fanning out. But if we had a single queryable, we would
           //   not be able to shard it easily and writing this out would take a long time.
-          val indexBuildStartTime = System.currentTimeMillis()
-          val queryable = indexingStrategy.buildIndex(searchSpaceIter)
+          val indetwitterBuildStartTime = System.currentTimeMillis()
+          val queryable = indetwitteringStrategy.buildIndetwitter(searchSpaceIter)
           if (useCounters) {
-            numberIndexBuilds.inc()
-            annIndexBuildTotalMs.incBy(System.currentTimeMillis() - indexBuildStartTime)
+            numberIndetwitterBuilds.inc()
+            annIndetwitterBuildTotalMs.incBy(System.currentTimeMillis() - indetwitterBuildStartTime)
           }
           queryIter.flatMap { query =>
             val queryStartTime = System.currentTimeMillis()
@@ -322,8 +322,8 @@ object KnnHelper {
                 (query.entityId, (neighbor.neighbor, neighbor.distance))
               }
             if (useCounters) {
-              numberAnnIndexQueries.inc()
-              annIndexQueryTotalMs.incBy(System.currentTimeMillis() - queryStartTime)
+              numberAnnIndetwitterQueries.inc()
+              annIndetwitterQueryTotalMs.incBy(System.currentTimeMillis() - queryStartTime)
             }
             queryToTopNeighbors
           }
@@ -431,8 +431,8 @@ object KnnHelper {
   private[this] case class NNKey(
     searchGroup: Int,
     replica: Int,
-    maxReplica: Option[Int] = None) {
+    matwitterReplica: Option[Int] = None) {
     override def hashCode(): Int =
-      maxReplica.map(_ * searchGroup + replica).getOrElse(super.hashCode())
+      matwitterReplica.map(_ * searchGroup + replica).getOrElse(super.hashCode())
   }
 }

@@ -1,6 +1,6 @@
 package com.twitter.follow_recommendations.common.base
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
 import com.twitter.stitch.Stitch
 
 /**

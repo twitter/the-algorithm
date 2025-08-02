@@ -15,7 +15,7 @@ job = Job(
     worker_machine_type='{{profile.machine}}',
     worker_disk_type=WorkerDiskType('HDD'),
   ),
-  extra_args={
+  etwittertra_args={
     "environment": '{{profile.environment}}',
     "date": Quote('{{profile.date}}'),
   },

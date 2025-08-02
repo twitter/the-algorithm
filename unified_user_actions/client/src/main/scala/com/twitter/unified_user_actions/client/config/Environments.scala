@@ -5,11 +5,11 @@ sealed trait EnvironmentConfig {
 }
 
 object Environments {
-  case object Prod extends EnvironmentConfig {
+  case object Prod etwittertends EnvironmentConfig {
     override val name: String = Constants.UuaProdEnv
   }
 
-  case object Staging extends EnvironmentConfig {
+  case object Staging etwittertends EnvironmentConfig {
     override val name: String = Constants.UuaStagingEnv
   }
 }

@@ -6,7 +6,7 @@
 #include <string>
 
 #ifdef __cplusplus
-extern "C" {
+etwittertern "C" {
 #endif
 
   struct twml_tensor__;
@@ -58,7 +58,7 @@ TWMLAPI uint64_t getSizeOf(twml_type type);
 #endif
 
 #ifdef __cplusplus
-extern "C" {
+etwittertern "C" {
 #endif
     TWMLAPI twml_err twml_tensor_create(twml_tensor *tensor, void *data,
                                         int ndims, uint64_t *dims,

@@ -19,7 +19,7 @@ case class KeyedRecord(aggregateType: AggregateType.Value, record: DataRecord)
  *
  * @param aggregateType the aggregate type
  * @param recordMap a map with key of type Long and value of type DataRecord
- *  where the key indicates the index and the value indicating the record
+ *  where the key indicates the indetwitter and the value indicating the record
  *
   **/
 case class KeyedRecordMap(

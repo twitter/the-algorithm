@@ -1,7 +1,7 @@
 package com.twitter.follow_recommendations.common.candidate_sources.base
 
 import com.twitter.follow_recommendations.common.models.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
 import com.twitter.stitch.Stitch
 
 /**
@@ -10,7 +10,7 @@ import com.twitter.stitch.Stitch
  * @tparam Target target type
  * @tparam Candidate output candidate types
  */
-trait TweetAuthorsCandidateSource[-Target, +Candidate] extends CandidateSource[Target, Candidate] {
+trait TweetAuthorsCandidateSource[-Target, +Candidate] etwittertends CandidateSource[Target, Candidate] {
 
   /**
    * fetch Tweet candidates

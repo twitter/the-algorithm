@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird.document;
 
-import com.twitter.common.text.token.TokenProcessor;
-import com.twitter.common.text.token.TwitterTokenStream;
+import com.twitter.common.tetwittert.token.TokenProcessor;
+import com.twitter.common.tetwittert.token.TwitterTokenStream;
 import com.twitter.decider.Decider;
 import com.twitter.search.common.decider.DeciderUtil;
 import com.twitter.search.common.metrics.SearchCounter;
@@ -13,15 +13,15 @@ import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.Earlyb
 
 public class TruncationTokenStreamWriter implements SchemaDocumentFactory.TokenStreamRewriter {
   private static final int NEVER_TRUNCATE_CHARS_BELOW_POSITION = 140;
-  private static final String TRUNCATE_LONG_TWEETS_DECIDER_KEY_PREFIX =
+  private static final String TRUNCATE_LONG_TWEETS_DECIDER_KEY_PREFItwitter =
       "truncate_long_tweets_in_";
-  private static final String NUM_TWEET_CHARACTERS_SUPPORTED_DECIDER_KEY_PREFIX =
+  private static final String NUM_TWEET_CHARACTERS_SUPPORTED_DECIDER_KEY_PREFItwitter =
       "num_tweet_characters_supported_in_";
 
   private static final SearchCounter NUM_TWEETS_TRUNCATED =
-      SearchCounter.export("num_tweets_truncated");
+      SearchCounter.etwitterport("num_tweets_truncated");
   private static final SearchLongGauge NUM_TWEET_CHARACTERS_SUPPORTED =
-      SearchLongGauge.export("num_tweet_characters_supported");
+      SearchLongGauge.etwitterport("num_tweet_characters_supported");
 
   private final Decider decider;
   private final String truncateLongTweetsDeciderKey;
@@ -34,22 +34,22 @@ public class TruncationTokenStreamWriter implements SchemaDocumentFactory.TokenS
     this.decider = decider;
 
     this.truncateLongTweetsDeciderKey =
-        TRUNCATE_LONG_TWEETS_DECIDER_KEY_PREFIX + cluster.name().toLowerCase();
+        TRUNCATE_LONG_TWEETS_DECIDER_KEY_PREFItwitter + cluster.name().toLowerCase();
     this.numCharsSupportedDeciderKey =
-        NUM_TWEET_CHARACTERS_SUPPORTED_DECIDER_KEY_PREFIX + cluster.name().toLowerCase();
+        NUM_TWEET_CHARACTERS_SUPPORTED_DECIDER_KEY_PREFItwitter + cluster.name().toLowerCase();
   }
 
   @Override
   public TwitterTokenStream rewrite(Schema.FieldInfo fieldInfo, TwitterTokenStream stream) {
-    if (EarlybirdFieldConstant.TEXT_FIELD.getFieldName().equals(fieldInfo.getName())) {
-      final int maxPosition = getTruncatePosition();
-      NUM_TWEET_CHARACTERS_SUPPORTED.set(maxPosition);
-      if (maxPosition >= NEVER_TRUNCATE_CHARS_BELOW_POSITION) {
+    if (EarlybirdFieldConstant.TEtwitterT_FIELD.getFieldName().equals(fieldInfo.getName())) {
+      final int matwitterPosition = getTruncatePosition();
+      NUM_TWEET_CHARACTERS_SUPPORTED.set(matwitterPosition);
+      if (matwitterPosition >= NEVER_TRUNCATE_CHARS_BELOW_POSITION) {
         return new TokenProcessor(stream) {
           @Override
           public final boolean incrementToken() {
             if (incrementInputStream()) {
-              if (offset() < maxPosition) {
+              if (offset() < matwitterPosition) {
                 return true;
               }
               NUM_TWEETS_TRUNCATED.increment();
@@ -70,17 +70,17 @@ public class TruncationTokenStreamWriter implements SchemaDocumentFactory.TokenS
    * @return the truncation position or -1 if truncation is disabled.
    */
   private int getTruncatePosition() {
-    int maxPosition;
+    int matwitterPosition;
     if (!DeciderUtil.isAvailableForRandomRecipient(decider, truncateLongTweetsDeciderKey)) {
       return -1;
     }
-    maxPosition = DeciderUtil.getAvailability(decider, numCharsSupportedDeciderKey);
+    matwitterPosition = DeciderUtil.getAvailability(decider, numCharsSupportedDeciderKey);
 
-    if (maxPosition < NEVER_TRUNCATE_CHARS_BELOW_POSITION) {
+    if (matwitterPosition < NEVER_TRUNCATE_CHARS_BELOW_POSITION) {
       // Never truncate below NEVER_TRUNCATE_CHARS_BELOW_POSITION chars
-      maxPosition = NEVER_TRUNCATE_CHARS_BELOW_POSITION;
+      matwitterPosition = NEVER_TRUNCATE_CHARS_BELOW_POSITION;
     }
 
-    return maxPosition;
+    return matwitterPosition;
   }
 }

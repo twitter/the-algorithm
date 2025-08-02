@@ -10,10 +10,10 @@ using namespace tensorflow;
 REGISTER_OP("IsotonicCalibration")
 .Attr("T: {float, double}")
 .Input("input: T")
-.Input("xs: T")
+.Input("twitters: T")
 .Input("ys: T")
 .Output("output: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
   // output shape should be the same as input shape.
   c->set_output(0, c->input(0));
   return Status::OK();
@@ -23,16 +23,16 @@ This operation calibrates probabilities by fitting to a piece-wise non-decreasin
 
 Input
   input: A tensor containing uncalibrated probabilities.
-  xs: A tensor containing the boundaries of the bins.
+  twitters: A tensor containing the boundaries of the bins.
   ys: A tensor contianing calibrated values for the corresponding bins.
 
-Expected Sizes:
+Etwitterpected Sizes:
   input: [batch_size, num_labels].
-  xs, ys: [num_labels, num_bins].
+  twitters, ys: [num_labels, num_bins].
 
-Expected Types:
+Etwitterpected Types:
   input: float or double.
-  xs, ys: same as input.
+  twitters, ys: same as input.
 
 Outputs
   output: A tensor containing calibrated probabilities with same shape and size as input.
@@ -42,29 +42,29 @@ Outputs
 template<typename T>
 class IsotonicCalibration : public OpKernel {
  public:
-  explicit IsotonicCalibration(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  etwitterplicit IsotonicCalibration(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {}
 
 
-  void Compute(OpKernelContext* context) override {
-    const Tensor& input = context->input(0);
-    const Tensor& xs = context->input(1);
-    const Tensor& ys = context->input(2);
+  void Compute(OpKernelContetwittert* contetwittert) override {
+    const Tensor& input = contetwittert->input(0);
+    const Tensor& twitters = contetwittert->input(1);
+    const Tensor& ys = contetwittert->input(2);
 
     Tensor* output = nullptr;
     OP_REQUIRES_OK(
-      context,
-      context->allocate_output(0, input.shape(), &output));
+      contetwittert,
+      contetwittert->allocate_output(0, input.shape(), &output));
 
     try {
       const twml::Tensor twml_input = TFTensor_to_twml_tensor(input);
-      const twml::Tensor twml_xs = TFTensor_to_twml_tensor(xs);
+      const twml::Tensor twml_twitters = TFTensor_to_twml_tensor(twitters);
       const twml::Tensor twml_ys = TFTensor_to_twml_tensor(ys);
       twml::Tensor twml_output = TFTensor_to_twml_tensor(*output);
 
-      twml::linearInterpolation(twml_output, twml_input, twml_xs, twml_ys);
-    }  catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      twml::linearInterpolation(twml_output, twml_input, twml_twitters, twml_ys);
+    }  catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };

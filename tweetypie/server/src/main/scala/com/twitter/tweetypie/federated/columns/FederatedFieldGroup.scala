@@ -44,7 +44,7 @@ object FederatedFieldGroupBuilder {
 case class FederatedFieldGroup(
   getTweetFieldsHandler: GetTweetFieldsRequest => Future[Seq[GetTweetFieldsResult]],
   options: GroupOptions)
-    extends MapGroup[FederatedFieldReq, GetTweetFieldsResult] {
+    etwittertends MapGroup[FederatedFieldReq, GetTweetFieldsResult] {
   override protected def run(
     reqs: Seq[FederatedFieldReq]
   ): Future[FederatedFieldReq => Try[GetTweetFieldsResult]] = {
@@ -80,7 +80,7 @@ case class FederatedFieldGroup(
           response.find(_.tweetId == req.tweetId) match {
             case Some(result) => Try(result)
             case None =>
-              Throw(new NoSuchElementException(s"response not found for tweet: ${req.tweetId}"))
+              Throw(new NoSuchElementEtwitterception(s"response not found for tweet: ${req.tweetId}"))
           }
         }
     }

@@ -1,0 +1,22 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    scalac_plugins = ["no-roomba"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/javatwitter/inject:javatwitter.inject",
+        "onboarding/service/thrift/src/main/thrift:thrift-scala",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/candidate_source/fletwitterible_injection_pipeline",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/model/candidate",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/pipeline/candidate",
+    ],
+    etwitterports = [
+        "3rdparty/jvm/javatwitter/inject:javatwitter.inject",
+        "onboarding/service/thrift/src/main/thrift:thrift-scala",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/candidate_source/fletwitterible_injection_pipeline",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/model/candidate",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/pipeline/candidate",
+    ],
+)

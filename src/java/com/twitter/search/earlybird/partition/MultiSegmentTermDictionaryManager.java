@@ -1,11 +1,11 @@
 package com.twitter.search.earlybird.partition;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -23,12 +23,12 @@ import com.twitter.search.common.metrics.SearchLongGauge;
 import com.twitter.search.common.metrics.SearchStatsReceiver;
 import com.twitter.search.common.metrics.SearchTimerStats;
 import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
-import com.twitter.search.core.earlybird.index.inverted.MultiSegmentTermDictionary;
-import com.twitter.search.core.earlybird.index.inverted.MultiSegmentTermDictionaryWithFastutil;
-import com.twitter.search.core.earlybird.index.inverted.OptimizedMemoryIndex;
+import com.twitter.search.core.earlybird.indetwitter.inverted.InvertedIndetwitter;
+import com.twitter.search.core.earlybird.indetwitter.inverted.MultiSegmentTermDictionary;
+import com.twitter.search.core.earlybird.indetwitter.inverted.MultiSegmentTermDictionaryWithFastutil;
+import com.twitter.search.core.earlybird.indetwitter.inverted.OptimizedMemoryIndetwitter;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.index.EarlybirdSegment;
+import com.twitter.search.earlybird.indetwitter.EarlybirdSegment;
 import com.twitter.search.earlybird.partition.SegmentManager.Filter;
 import com.twitter.search.earlybird.partition.SegmentManager.Order;
 
@@ -43,7 +43,7 @@ public class MultiSegmentTermDictionaryManager {
 
   @VisibleForTesting
   public static final SearchTimerStats TERM_DICTIONARY_CREATION_STATS =
-      SearchTimerStats.export("multi_segment_term_dictionary_manager_build_dictionary",
+      SearchTimerStats.etwitterport("multi_segment_term_dictionary_manager_build_dictionary",
           TimeUnit.MILLISECONDS, false);
 
   public static final MultiSegmentTermDictionaryManager NOOP_INSTANCE =
@@ -55,7 +55,7 @@ public class MultiSegmentTermDictionaryManager {
         }
       };
 
-  private static final String MANAGER_DISABLED_DECIDER_KEY_PREFIX =
+  private static final String MANAGER_DISABLED_DECIDER_KEY_PREFItwitter =
       "multi_segment_term_dictionary_manager_disabled_in_";
 
   public static class Config {
@@ -77,7 +77,7 @@ public class MultiSegmentTermDictionaryManager {
 
   @VisibleForTesting
   public static String getManagerDisabledDeciderName(EarlybirdCluster earlybirdCluster) {
-    return MANAGER_DISABLED_DECIDER_KEY_PREFIX + earlybirdCluster.name().toLowerCase();
+    return MANAGER_DISABLED_DECIDER_KEY_PREFItwitter + earlybirdCluster.name().toLowerCase();
   }
 
   private static final class FieldStats {
@@ -180,7 +180,7 @@ public class MultiSegmentTermDictionaryManager {
          this.multiSegmentTermDictionaryMap = createNewDictionaries(segmentsToMerge);
          this.previousSegmentsToMerge = segmentsToMerge;
          return true;
-       } catch (IOException e) {
+       } catch (IOEtwitterception e) {
          LOG.error("Unable to build multi segment term dictionaries", e);
          return false;
        } finally {
@@ -204,7 +204,7 @@ public class MultiSegmentTermDictionaryManager {
 
     List<SegmentInfo> segmentsToMerge = Lists.newArrayList();
     for (SegmentInfo segmentInfo : segmentInfos) {
-      if (segmentInfo.getIndexSegment().isOptimized()) {
+      if (segmentInfo.getIndetwitterSegment().isOptimized()) {
         segmentsToMerge.add(segmentInfo);
       }
     }
@@ -237,28 +237,28 @@ public class MultiSegmentTermDictionaryManager {
    * failures to build, and only replace the entire map of all the fields are built successfully.
    */
   private ImmutableMap<String, MultiSegmentTermDictionary> createNewDictionaries(
-      List<SegmentInfo> segments) throws IOException {
+      List<SegmentInfo> segments) throws IOEtwitterception {
 
     Map<String, MultiSegmentTermDictionary> map = Maps.newHashMap();
 
     for (String field : config.managedFieldNames()) {
       LOG.info("Merging term dictionaries for field {}", field);
 
-      List<OptimizedMemoryIndex> indexesToMerge = findFieldIndexesToMerge(segments, field);
+      List<OptimizedMemoryIndetwitter> indetwitteresToMerge = findFieldIndetwitteresToMerge(segments, field);
 
-      if (indexesToMerge.isEmpty()) {
-        LOG.info("No indexes to merge for field {}", field);
+      if (indetwitteresToMerge.isEmpty()) {
+        LOG.info("No indetwitteres to merge for field {}", field);
       } else {
         long start = System.currentTimeMillis();
 
         MultiSegmentTermDictionary multiSegmentTermDictionary =
-            mergeDictionaries(field, indexesToMerge);
+            mergeDictionaries(field, indetwitteresToMerge);
 
         map.put(field, multiSegmentTermDictionary);
 
         long elapsed = System.currentTimeMillis() - start;
         LOG.info("Done merging term dictionary for field {}, for {} segments in {}ms",
-            field, indexesToMerge.size(), elapsed);
+            field, indetwitteresToMerge.size(), elapsed);
 
         FieldStats fieldStats = fieldTimerStats.get(field);
         fieldStats.buildTime.timerIncrement(elapsed);
@@ -269,46 +269,46 @@ public class MultiSegmentTermDictionaryManager {
     return ImmutableMap.copyOf(map);
   }
 
-  private List<OptimizedMemoryIndex> findFieldIndexesToMerge(
-      List<SegmentInfo> segments, String field) throws IOException {
+  private List<OptimizedMemoryIndetwitter> findFieldIndetwitteresToMerge(
+      List<SegmentInfo> segments, String field) throws IOEtwitterception {
 
-    List<OptimizedMemoryIndex> indexesToMerge = Lists.newArrayList();
+    List<OptimizedMemoryIndetwitter> indetwitteresToMerge = Lists.newArrayList();
 
     for (SegmentInfo segment : segments) {
-      EarlybirdSegment indexSegment = segment.getIndexSegment();
-      Preconditions.checkState(indexSegment.isOptimized(),
-          "Expect segment to be optimized: %s", segment);
+      EarlybirdSegment indetwitterSegment = segment.getIndetwitterSegment();
+      Preconditions.checkState(indetwitterSegment.isOptimized(),
+          "Etwitterpect segment to be optimized: %s", segment);
 
-      InvertedIndex fieldIndex = Preconditions.checkNotNull(indexSegment.getIndexReader())
-          .getSegmentData().getFieldIndex(field);
+      InvertedIndetwitter fieldIndetwitter = Preconditions.checkNotNull(indetwitterSegment.getIndetwitterReader())
+          .getSegmentData().getFieldIndetwitter(field);
 
       // See SEARCH-11952
-      // We will only have a InvertedIndex/OptimizedMemoryIndex here
-      // in the in-memory non-lucene-based indexes, and not in the archive. We can somewhat
-      // reasonably extend this to work with the archive by making the dictionaries work with
-      // TermsEnum's directly instead of OptimizedMemoryIndex's. Leaving this as a further
-      // extension for now.
-      if (fieldIndex != null) {
-        if (fieldIndex instanceof OptimizedMemoryIndex) {
-          indexesToMerge.add((OptimizedMemoryIndex) fieldIndex);
+      // We will only have a InvertedIndetwitter/OptimizedMemoryIndetwitter here
+      // in the in-memory non-lucene-based indetwitteres, and not in the archive. We can somewhat
+      // reasonably etwittertend this to work with the archive by making the dictionaries work with
+      // TermsEnum's directly instead of OptimizedMemoryIndetwitter's. Leaving this as a further
+      // etwittertension for now.
+      if (fieldIndetwitter != null) {
+        if (fieldIndetwitter instanceof OptimizedMemoryIndetwitter) {
+          indetwitteresToMerge.add((OptimizedMemoryIndetwitter) fieldIndetwitter);
         } else {
-          LOG.info("Found field index for field {} in segment {} of type {}",
-              field, segment, fieldIndex.getClass());
+          LOG.info("Found field indetwitter for field {} in segment {} of type {}",
+              field, segment, fieldIndetwitter.getClass());
         }
       } else {
-        LOG.info("Found null field index for field {} in segment {}", field, segment);
+        LOG.info("Found null field indetwitter for field {} in segment {}", field, segment);
       }
     }
-    LOG.info("Found good fields for {} out of {} segments", indexesToMerge.size(),
+    LOG.info("Found good fields for {} out of {} segments", indetwitteresToMerge.size(),
             segments.size());
 
-    return indexesToMerge;
+    return indetwitteresToMerge;
   }
 
   private MultiSegmentTermDictionary mergeDictionaries(
       String field,
-      List<OptimizedMemoryIndex> indexes) {
+      List<OptimizedMemoryIndetwitter> indetwitteres) {
     // May change this if we get a better implementation in the future.
-    return new MultiSegmentTermDictionaryWithFastutil(field, indexes);
+    return new MultiSegmentTermDictionaryWithFastutil(field, indetwitteres);
   }
 }

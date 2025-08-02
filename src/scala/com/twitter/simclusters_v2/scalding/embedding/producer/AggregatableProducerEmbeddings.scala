@@ -2,9 +2,9 @@ package com.twitter.simclusters_v2.scalding.embedding.producer
 
 import com.twitter.scalding._
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scalding_internal.source.lzo_scrooge.FixedPathLzoScrooge
+import com.twitter.scalding_internal.source.lzo_scrooge.FitwitteredPathLzoScrooge
 import com.twitter.simclusters_v2.hdfs_sources.{DataSources, InterestedInSources}
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
+import com.twitter.simclusters_v2.scalding.common.matritwitter.{SparseMatritwitter, SparseRowMatritwitter}
 import com.twitter.simclusters_v2.scalding.embedding.ProducerEmbeddingsFromInterestedIn
 import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.{
   ClusterId,
@@ -17,7 +17,7 @@ import java.util.TimeZone
 
 /**
  * This file implements a new Producer SimClusters Embeddings.
- * The differences with existing producer embeddings are:
+ * The differences with etwitteristing producer embeddings are:
  *
  * 1) the embedding scores are not normalized, so that one can aggregate multiple producer embeddings by adding them.
  * 2) we use log-fav scores in the user-producer graph and user-simclusters graph.
@@ -30,7 +30,7 @@ import java.util.TimeZone
  *  unnormalized and aggregatable.
  *
  */
-trait AggregatableProducerEmbeddingsBaseApp extends SimClustersEmbeddingBaseJob[ProducerId] {
+trait AggregatableProducerEmbeddingsBaseApp etwittertends SimClustersEmbeddingBaseJob[ProducerId] {
 
   val userToProducerScoringFn: NeighborWithWeights => Double
   val userToClusterScoringFn: UserToInterestedInClusterScores => Double
@@ -45,19 +45,19 @@ trait AggregatableProducerEmbeddingsBaseApp extends SimClustersEmbeddingBaseJob[
 
   override def thresholdForEmbeddingScores: Double = 0.01
 
-  override def prepareNounToUserMatrix(
+  override def prepareNounToUserMatritwitter(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): SparseMatrix[ProducerId, UserId, Double] = {
+  ): SparseMatritwitter[ProducerId, UserId, Double] = {
 
-    SparseMatrix(
+    SparseMatritwitter(
       ProducerEmbeddingsFromInterestedIn
         .getFilteredUserUserNormalizedGraph(
           DataSources.userUserNormalizedGraphSource,
           DataSources.userNormsAndCounts,
           userToProducerScoringFn,
-          _.faverCount.exists(
+          _.faverCount.etwitterists(
             _ > minNumFavers
           )
         )
@@ -67,21 +67,21 @@ trait AggregatableProducerEmbeddingsBaseApp extends SimClustersEmbeddingBaseJob[
         })
   }
 
-  override def prepareUserToClusterMatrix(
+  override def prepareUserToClusterMatritwitter(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): SparseRowMatrix[UserId, ClusterId, Double] = {
-    SparseRowMatrix(
+  ): SparseRowMatritwitter[UserId, ClusterId, Double] = {
+    SparseRowMatritwitter(
       ProducerEmbeddingsFromInterestedIn
-        .getUserSimClustersMatrix(
+        .getUserSimClustersMatritwitter(
           InterestedInSources
             .simClustersInterestedInSource(modelVersion, dateRange.embiggen(Days(5)), timeZone),
           userToClusterScoringFn,
           modelVersion
         )
         .mapValues(_.toMap),
-      isSkinnyMatrix = true
+      isSkinnyMatritwitter = true
     )
   }
 
@@ -94,7 +94,7 @@ trait AggregatableProducerEmbeddingsBaseApp extends SimClustersEmbeddingBaseJob[
     timeZone: TimeZone,
     uniqueID: UniqueID
   ): TypedPipe[(ProducerId, Seq[(ClusterId, Double)])] = {
-    embeddings.join(prepareNounToUserMatrix.rowL2Norms).map {
+    embeddings.join(prepareNounToUserMatritwitter.rowL2Norms).map {
       case (producerId, (embeddingVec, norm)) =>
         producerId -> embeddingVec.map {
           case (id, score) => (id, score * norm)
@@ -102,13 +102,13 @@ trait AggregatableProducerEmbeddingsBaseApp extends SimClustersEmbeddingBaseJob[
     }
   }
 
-  override final def writeClusterToNounsIndex(
+  override final def writeClusterToNounsIndetwitter(
     output: TypedPipe[(ClusterId, Seq[(ProducerId, Double)])]
   )(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = { Execution.unit } // we do not need this for now
+  ): Etwitterecution[Unit] = { Etwitterecution.unit } // we do not need this for now
 
   /**
    * Override this method to write the manhattan dataset.
@@ -119,7 +119,7 @@ trait AggregatableProducerEmbeddingsBaseApp extends SimClustersEmbeddingBaseJob[
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit]
+  ): Etwitterecution[Unit]
 
   /**
    * Override this method to writethrough the thrift dataset.
@@ -130,17 +130,17 @@ trait AggregatableProducerEmbeddingsBaseApp extends SimClustersEmbeddingBaseJob[
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit]
+  ): Etwitterecution[Unit]
 
   val embeddingType: EmbeddingType
 
-  override final def writeNounToClustersIndex(
+  override final def writeNounToClustersIndetwitter(
     output: TypedPipe[(ProducerId, Seq[(ClusterId, Double)])]
   )(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val convertedEmbeddings = convertEmbeddingToAggregatableEmbeddings(output)
       .map {
         case (producerId, topSimClustersWithScore) =>
@@ -159,10 +159,10 @@ trait AggregatableProducerEmbeddingsBaseApp extends SimClustersEmbeddingBaseJob[
     val keyValuePairs = convertedEmbeddings.map { simClustersEmbeddingWithId =>
       KeyVal(simClustersEmbeddingWithId.embeddingId, simClustersEmbeddingWithId.embedding)
     }
-    val manhattanExecution = writeToManhattan(keyValuePairs)
+    val manhattanEtwitterecution = writeToManhattan(keyValuePairs)
 
-    val thriftExecution = writeToThrift(convertedEmbeddings)
+    val thriftEtwitterecution = writeToThrift(convertedEmbeddings)
 
-    Execution.zip(manhattanExecution, thriftExecution).unit
+    Etwitterecution.zip(manhattanEtwitterecution, thriftEtwitterecution).unit
   }
 }

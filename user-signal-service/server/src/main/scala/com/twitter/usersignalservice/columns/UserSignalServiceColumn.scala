@@ -14,15 +14,15 @@ import com.twitter.strato.thrift.ScroogeConv
 import com.twitter.usersignalservice.service.UserSignalService
 import com.twitter.usersignalservice.thriftscala.BatchSignalRequest
 import com.twitter.usersignalservice.thriftscala.BatchSignalResponse
-import javax.inject.Inject
+import javatwitter.inject.Inject
 
 class UserSignalServiceColumn @Inject() (userSignalService: UserSignalService)
-    extends StratoFed.Column(UserSignalServiceColumn.Path)
+    etwittertends StratoFed.Column(UserSignalServiceColumn.Path)
     with StratoFed.Fetch.Stitch {
 
   override val metadata: OpMetadata = OpMetadata(
     lifecycle = Some(Lifecycle.Production),
-    description = Some(Description.PlainText("User Signal Service Federated Column")))
+    description = Some(Description.PlainTetwittert("User Signal Service Federated Column")))
 
   override def ops: Ops = super.ops
 

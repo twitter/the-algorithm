@@ -52,7 +52,7 @@ object RateLimitingGate {
 }
 
 @deprecated("Use RateLimitingGate.uniform", "2.8.2")
-class RateLimitingGate[T](permitsPerSecond: Double) extends util.Gate[T] {
+class RateLimitingGate[T](permitsPerSecond: Double) etwittertends util.Gate[T] {
   private[this] val rateLimiter: RateLimiter = RateLimiter.create(permitsPerSecond)
 
   /**

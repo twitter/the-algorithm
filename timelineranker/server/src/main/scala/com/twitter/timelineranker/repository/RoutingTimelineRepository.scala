@@ -6,14 +6,14 @@ import com.twitter.util.Future
 class RoutingTimelineRepository(
   reverseChronTimelineRepository: ReverseChronHomeTimelineRepository,
   rankedTimelineRepository: RankedHomeTimelineRepository)
-    extends TimelineRepository {
+    etwittertends TimelineRepository {
 
   override def get(query: TimelineQuery): Future[Timeline] = {
     query match {
       case q: ReverseChronTimelineQuery => reverseChronTimelineRepository.get(q)
       case q: RankedTimelineQuery => rankedTimelineRepository.get(q)
       case _ =>
-        throw new IllegalArgumentException(
+        throw new IllegalArgumentEtwitterception(
           s"Query types other than RankedTimelineQuery and ReverseChronTimelineQuery are not supported. Found: $query"
         )
     }

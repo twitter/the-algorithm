@@ -1,13 +1,13 @@
 package com.twitter.search.earlybird.search.queries;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.TermsEnum;
+import org.apache.lucene.indetwitter.LeafReaderContetwittert;
+import org.apache.lucene.indetwitter.PostingsEnum;
+import org.apache.lucene.indetwitter.TermsEnum;
 import org.apache.lucene.search.ConstantScoreScorer;
 import org.apache.lucene.search.ConstantScoreWeight;
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.IndetwitterSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.ScoreMode;
@@ -19,7 +19,7 @@ import org.apache.lucene.search.Weight;
  *
  * This is can be used for constant score queries, where only iterating on the postings is required.
  */
-class SimpleTermQuery extends Query {
+class SimpleTermQuery etwittertends Query {
   private final TermsEnum termsEnum;
   private final long termId;
 
@@ -29,8 +29,8 @@ class SimpleTermQuery extends Query {
   }
 
   @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
+  public Weight createWeight(IndetwitterSearcher searcher, ScoreMode scoreMode, float boost)
+      throws IOEtwitterception {
     return new SimpleTermQueryWeight(scoreMode);
   }
 
@@ -55,7 +55,7 @@ class SimpleTermQuery extends Query {
     return "SimpleTermQuery(" + field + ":" + termId + ")";
   }
 
-  private class SimpleTermQueryWeight extends ConstantScoreWeight {
+  private class SimpleTermQueryWeight etwittertends ConstantScoreWeight {
     private final ScoreMode scoreMode;
 
     public SimpleTermQueryWeight(ScoreMode scoreMode) {
@@ -69,8 +69,8 @@ class SimpleTermQuery extends Query {
     }
 
     @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      termsEnum.seekExact(termId);
+    public Scorer scorer(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
+      termsEnum.seekEtwitteract(termId);
 
       PostingsEnum docs = termsEnum.postings(
           null, scoreMode.needsScores() ? PostingsEnum.FREQS : PostingsEnum.NONE);
@@ -79,7 +79,7 @@ class SimpleTermQuery extends Query {
     }
 
     @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
+    public boolean isCacheable(LeafReaderContetwittert cttwitter) {
       return true;
     }
   }

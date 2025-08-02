@@ -8,9 +8,9 @@ import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
 import com.twitter.inject.TwitterModule
 import com.twitter.logging.LoggerFactory
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
-object ABDeciderModule extends TwitterModule {
+object ABDeciderModule etwittertends TwitterModule {
   @Provides
   @Singleton
   def provideABDecider(

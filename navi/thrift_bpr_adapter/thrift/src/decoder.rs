@@ -8,7 +8,7 @@ enum FeatureVal {
 
 // A Feture has a name and a value
 // The name for now is 'id' of type string
-// Eventually this needs to be flexible - example to accomodate feature-id
+// Eventually this needs to be fletwitterible - etwitterample to accomodate feature-id
 struct Feature {
   id: String,
   val: FeatureVal,
@@ -34,7 +34,7 @@ impl Record {
   }
 }
 
-// This is the main API used by external components
+// This is the main API used by etwitterternal components
 // Given a serialized input, decode it into Records
 fn decode(input: Vec<u8>) -> Vec<Record> {
   // For helping define the interface

@@ -53,7 +53,7 @@ case class ContentFeatures(
   semanticCoreAnnotations: Option[Seq[TweetEntityAnnotation]],
   selfThreadMetadata: Option[SelfThreadMetadata],
   tokens: Option[Seq[String]],
-  tweetText: Option[String],
+  tweetTetwittert: Option[String],
   conversationControl: Option[ConversationControl]) {
   def toThrift: thrift.ContentFeatures =
     thrift.ContentFeatures.V1(toThriftV1)
@@ -101,7 +101,7 @@ case class ContentFeatures(
       semanticCoreAnnotations = semanticCoreAnnotations,
       selfThreadMetadata = selfThreadMetadata,
       tokens = tokens,
-      tweetText = tweetText,
+      tweetTetwittert = tweetTetwittert,
       conversationControl = conversationControl,
       media = media
     )
@@ -164,7 +164,7 @@ object ContentFeatures {
     }
 
   private val failure =
-    Failure[ContentFeatures](new Exception("Failure to convert content features from thrift"))
+    Failure[ContentFeatures](new Etwitterception("Failure to convert content features from thrift"))
 
   def tryFromThrift(contentFeaturesThrift: thrift.ContentFeatures): ScalaTry[ContentFeatures] =
     fromThrift(contentFeaturesThrift) match {
@@ -215,7 +215,7 @@ object ContentFeatures {
       semanticCoreAnnotations = contentFeaturesV1.semanticCoreAnnotations,
       selfThreadMetadata = contentFeaturesV1.selfThreadMetadata,
       tokens = contentFeaturesV1.tokens.map(_.toSeq),
-      tweetText = contentFeaturesV1.tweetText,
+      tweetTetwittert = contentFeaturesV1.tweetTetwittert,
       conversationControl = contentFeaturesV1.conversationControl,
       media = contentFeaturesV1.media
     )

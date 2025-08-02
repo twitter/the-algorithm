@@ -2,16 +2,16 @@ package com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_
 
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSourceParams.CandidateSourceEnabled
-import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSourceParams.LocaleToExcludeFromRecommendation
+import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSourceParams.LocaleToEtwittercludeFromRecommendation
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 import com.twitter.strato.generated.client.onboarding.UserPreferredLanguagesOnUserClientColumn
 import com.twitter.strato.generated.client.onboarding.userrecs.LocaleFollowPpmiClientColumn
 import com.twitter.timelines.configapi.HasParams
@@ -25,12 +25,12 @@ class PPMILocaleFollowSource @Inject() (
   userPreferredLanguagesOnUserClientColumn: UserPreferredLanguagesOnUserClientColumn,
   localeFollowPpmiClientColumn: LocaleFollowPpmiClientColumn,
   statsReceiver: StatsReceiver)
-    extends CandidateSource[HasClientContext with HasParams, CandidateUser] {
+    etwittertends CandidateSource[HasClientContetwittert with HasParams, CandidateUser] {
 
   override val identifier: CandidateSourceIdentifier = PPMILocaleFollowSource.Identifier
   private val stats = statsReceiver.scope("PPMILocaleFollowSource")
 
-  override def apply(target: HasClientContext with HasParams): Stitch[Seq[CandidateUser]] = {
+  override def apply(target: HasClientContetwittert with HasParams): Stitch[Seq[CandidateUser]] = {
     (for {
       countryCode <- target.getCountryCode
       userId <- target.getOptionalUserId
@@ -41,7 +41,7 @@ class PPMILocaleFollowSource @Inject() (
             locale.length
           }
           val filteredLocale =
-            locale.filter(!target.params(LocaleToExcludeFromRecommendation).contains(_))
+            locale.filter(!target.params(LocaleToEtwittercludeFromRecommendation).contains(_))
           stats.addGauge("postFilterLocale") {
             filteredLocale.length
           }
@@ -50,7 +50,7 @@ class PPMILocaleFollowSource @Inject() (
           } else Stitch(Seq.empty)
         }
         .map(_.sortBy(_.score)(Ordering[Option[Double]].reverse)
-          .take(PPMILocaleFollowSource.DefaultMaxCandidatesToReturn))
+          .take(PPMILocaleFollowSource.DefaultMatwitterCandidatesToReturn))
     }).getOrElse(Stitch.Nil)
   }
 
@@ -80,5 +80,5 @@ class PPMILocaleFollowSource @Inject() (
 
 object PPMILocaleFollowSource {
   val Identifier = CandidateSourceIdentifier(Algorithm.PPMILocaleFollow.toString)
-  val DefaultMaxCandidatesToReturn = 100
+  val DefaultMatwitterCandidatesToReturn = 100
 }

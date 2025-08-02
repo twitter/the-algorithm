@@ -4,7 +4,7 @@ import com.twitter.bijection.Codec
 import com.twitter.bijection.scrooge.BinaryScalaCodec
 import com.twitter.dds.jobs.repeated_profile_visits.thriftscala.ProfileVisitSet
 import com.twitter.dds.jobs.repeated_profile_visits.thriftscala.ProfileVisitorInfo
-import com.twitter.experiments.general_metrics.thriftscala.IdType
+import com.twitter.etwitterperiments.general_metrics.thriftscala.IdType
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.simclusters_v2.thriftscala.InternalId
 import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
@@ -17,8 +17,8 @@ import com.twitter.usersignalservice.thriftscala.Signal
 import com.twitter.usersignalservice.thriftscala.SignalType
 import com.twitter.util.Future
 import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 case class ProfileVisitMetadata(
   targetId: Option[Long],
@@ -32,7 +32,7 @@ case class ProfileVisitsFetcher @Inject() (
   manhattanKVClientMtlsParams: ManhattanKVClientMtlsParams,
   timer: Timer,
   stats: StatsReceiver)
-    extends ManhattanSignalFetcher[ProfileVisitorInfo, ProfileVisitSet] {
+    etwittertends ManhattanSignalFetcher[ProfileVisitorInfo, ProfileVisitSet] {
   import ProfileVisitsFetcher._
 
   override type RawSignalType = ProfileVisitMetadata
@@ -84,7 +84,7 @@ case class ProfileVisitsFetcher @Inject() (
             -visitCountMap(query.signalType)(profileVisitMetadata).getOrElse(0))
           .map(profileVisitMetadata =>
             signalFromProfileVisit(profileVisitMetadata, query.signalType))
-          .take(query.maxResults.getOrElse(Int.MaxValue))
+          .take(query.matwitterResults.getOrElse(Int.MatwitterValue))
       }
   }
 }
@@ -138,6 +138,6 @@ object ProfileVisitsFetcher {
     profileVisitMetadata: ProfileVisitMetadata,
     signalType: SignalType
   ): Boolean = {
-    visitCountMap(signalType)(profileVisitMetadata).exists(_ >= minVisitCountMap(signalType))
+    visitCountMap(signalType)(profileVisitMetadata).etwitterists(_ >= minVisitCountMap(signalType))
   }
 }

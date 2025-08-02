@@ -2,7 +2,7 @@ package com.twitter.simclusters_v2.scalding.embedding.common
 
 import com.twitter.simclusters_v2.thriftscala._
 import java.net.InetAddress
-import java.net.UnknownHostException
+import java.net.UnknownHostEtwitterception
 
 object EmbeddingUtil {
 
@@ -46,15 +46,15 @@ object EmbeddingUtil {
    * @param isAdhoc Whether the dataset was generated from an adhoc run
    * @param isManhattanKeyVal Whether the dataset is written as KeyVal and is intended to be imported to Manhattan
    * @param modelVersion The model version of SimClusters KnownFor that is used to generate the embedding
-   * @param pathSuffix Any additional path structure suffixed at the end of the path
-   * @return The consolidated HDFS path, for example:
+   * @param pathSuffitwitter Any additional path structure suffitwittered at the end of the path
+   * @return The consolidated HDFS path, for etwitterample:
    *         /user/cassowary/adhoc/manhattan_sequence_files/simclusters_embeddings/model_20m_145k_updated/...
    */
   def getHdfsPath(
     isAdhoc: Boolean,
     isManhattanKeyVal: Boolean,
     modelVersion: ModelVersion,
-    pathSuffix: String
+    pathSuffitwitter: String
   ): String = {
     val adhoc = if (isAdhoc) "adhoc/" else ""
 
@@ -62,39 +62,39 @@ object EmbeddingUtil {
 
     val gcs: String =
       try {
-        InetAddress.getAllByName("metadata.google.internal") // throws Exception if not in GCP.
+        InetAddress.getAllByName("metadata.google.internal") // throws Etwitterception if not in GCP.
         "/gcs"
       } catch {
-        case _: UnknownHostException => ""
+        case _: UnknownHostEtwitterception => ""
       }
 
     val datasetType = if (isManhattanKeyVal) "manhattan_sequence_files" else "processed"
 
     val path = s"/user/$user/$adhoc$datasetType/simclusters_embeddings"
 
-    s"$gcs${path}_${ModelVersionPathMap(modelVersion)}_$pathSuffix"
+    s"$gcs${path}_${ModelVersionPathMap(modelVersion)}_$pathSuffitwitter"
   }
 
-  def favScoreExtractor(u: UserToInterestedInClusterScores): (Double, ScoreType.ScoreType) = {
+  def favScoreEtwittertractor(u: UserToInterestedInClusterScores): (Double, ScoreType.ScoreType) = {
     (u.favScoreClusterNormalizedOnly.getOrElse(0.0), ScoreType.FavScore)
   }
 
-  def followScoreExtractor(u: UserToInterestedInClusterScores): (Double, ScoreType.ScoreType) = {
+  def followScoreEtwittertractor(u: UserToInterestedInClusterScores): (Double, ScoreType.ScoreType) = {
     (u.followScoreClusterNormalizedOnly.getOrElse(0.0), ScoreType.FollowScore)
   }
 
-  def logFavScoreExtractor(u: UserToInterestedInClusterScores): (Double, ScoreType.ScoreType) = {
+  def logFavScoreEtwittertractor(u: UserToInterestedInClusterScores): (Double, ScoreType.ScoreType) = {
     (u.logFavScoreClusterNormalizedOnly.getOrElse(0.0), ScoreType.LogFavScore)
   }
 
-  // Define all scores to extract from the SimCluster InterestedIn source
-  val scoreExtractors: Seq[UserToInterestedInClusterScores => (Double, ScoreType.ScoreType)] =
+  // Define all scores to etwittertract from the SimCluster InterestedIn source
+  val scoreEtwittertractors: Seq[UserToInterestedInClusterScores => (Double, ScoreType.ScoreType)] =
     Seq(
-      favScoreExtractor,
-      followScoreExtractor
+      favScoreEtwittertractor,
+      followScoreEtwittertractor
     )
 
-  object ScoreType extends Enumeration {
+  object ScoreType etwittertends Enumeration {
     type ScoreType = Value
     val FavScore: Value = Value(1)
     val FollowScore: Value = Value(2)

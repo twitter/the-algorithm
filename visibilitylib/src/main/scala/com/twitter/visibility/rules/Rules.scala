@@ -17,88 +17,88 @@ import com.twitter.visibility.rules.Condition.SoftViewer
 import com.twitter.visibility.rules.Reason._
 
 object DropAllRule
-    extends AlwaysActRule(
+    etwittertends AlwaysActRule(
       Drop(Unspecified)
     )
 
 object AllowAllRule
-    extends AlwaysActRule(
+    etwittertends AlwaysActRule(
       Allow
     )
 
 object TestRule
-    extends AlwaysActRule(
+    etwittertends AlwaysActRule(
       Drop(Unspecified)
     )
 
 object DeactivatedAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Drop(DeactivatedAuthor),
       Condition.DeactivatedAuthor
     )
 
 object ErasedAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Drop(ErasedAuthor),
       Condition.ErasedAuthor
     )
 
 object OffboardedAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Drop(OffboardedAuthor),
       Condition.OffboardedAuthor
     )
 
 object DropNsfwUserAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Drop(Nsfw),
       Condition.NsfwUserAuthor
     )
 
 object DropNsfwUserAuthorViewerOptInFilteringOnSearchRule
-    extends ViewerOptInFilteringOnSearchRule(
+    etwittertends ViewerOptInFilteringOnSearchRule(
       Drop(Nsfw),
       Condition.NsfwUserAuthor
     )
 
 object InterstitialNsfwUserAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Interstitial(Nsfw),
       Condition.NsfwUserAuthor
     )
 
 object DropNsfwAdminAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Drop(Nsfw),
       Condition.NsfwAdminAuthor
     )
 
 object DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule
-    extends ViewerOptInFilteringOnSearchRule(
+    etwittertends ViewerOptInFilteringOnSearchRule(
       Drop(Nsfw),
       Condition.NsfwAdminAuthor
     )
 
 object InterstitialNsfwAdminAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Interstitial(Nsfw),
       Condition.NsfwAdminAuthor
     )
 
 object ProtectedAuthorDropRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Reason.ProtectedAuthor),
       And(Condition.LoggedOutOrViewerNotFollowingAuthor, Condition.ProtectedAuthor)
     )
 
 object ProtectedAuthorTombstoneRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Tombstone(Epitaph.Protected),
       And(Condition.LoggedOutOrViewerNotFollowingAuthor, Condition.ProtectedAuthor)
     )
 
 object DropAllProtectedAuthorRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Reason.ProtectedAuthor),
       Condition.ProtectedAuthor
     ) {
@@ -106,13 +106,13 @@ object DropAllProtectedAuthorRule
 }
 
 object ProtectedQuoteTweetAuthorRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Reason.ProtectedAuthor),
       And(Condition.OuterAuthorNotFollowingAuthor, Condition.ProtectedAuthor)
     )
 
 object DropProtectedViewerIfPresentRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Reason.Unspecified),
       And(Condition.LoggedInViewer, Condition.ProtectedViewer)
     ) {
@@ -120,42 +120,42 @@ object DropProtectedViewerIfPresentRule
 }
 
 object SuspendedAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Drop(SuspendedAuthor),
       Condition.SuspendedAuthor
     )
 
 object SuspendedViewerRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Drop(Unspecified),
       Condition.SuspendedViewer
     )
 
 object DeactivatedViewerRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Drop(Unspecified),
       Condition.DeactivatedViewer
     )
 
 object ViewerIsUnmentionedRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Drop(Reason.ViewerIsUnmentioned),
       Condition.ViewerIsUnmentioned
     )
 
 abstract class AuthorBlocksViewerRule(override val action: Action)
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       action,
       Condition.AuthorBlocksViewer
     )
 
 object AuthorBlocksViewerDropRule
-    extends AuthorBlocksViewerRule(
+    etwittertends AuthorBlocksViewerRule(
       Drop(Reason.AuthorBlocksViewer)
     )
 
 object DeciderableAuthorBlocksViewerDropRule
-    extends AuthorBlocksViewerRule(
+    etwittertends AuthorBlocksViewerRule(
       Drop(Reason.AuthorBlocksViewer)
     ) {
   override def enabled: Seq[RuleParam[Boolean]] =
@@ -163,103 +163,103 @@ object DeciderableAuthorBlocksViewerDropRule
 }
 
 object AuthorBlocksViewerTombstoneRule
-    extends AuthorBlocksViewerRule(
+    etwittertends AuthorBlocksViewerRule(
       Tombstone(Epitaph.BlockedBy)
     )
 
 object ViewerBlocksAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Drop(Reason.ViewerBlocksAuthor),
       Condition.ViewerBlocksAuthor
     )
 
 object ViewerBlocksAuthorViewerOptInBlockingOnSearchRule
-    extends ViewerOptInBlockingOnSearchRule(
+    etwittertends ViewerOptInBlockingOnSearchRule(
       Drop(Reason.ViewerBlocksAuthor),
       Condition.ViewerBlocksAuthor
     )
 
 object ViewerMutesAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Drop(Reason.ViewerMutesAuthor),
       Condition.ViewerMutesAuthor
     )
 
 object ViewerMutesAuthorViewerOptInBlockingOnSearchRule
-    extends ViewerOptInBlockingOnSearchRule(
+    etwittertends ViewerOptInBlockingOnSearchRule(
       Drop(Reason.ViewerMutesAuthor),
       Condition.ViewerMutesAuthor
     )
 
 object AuthorBlocksOuterAuthorRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Reason.AuthorBlocksViewer),
       And(Not(Condition.IsSelfQuote), Condition.AuthorBlocksOuterAuthor)
     )
 
 object ViewerMutesAndDoesNotFollowAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Drop(Reason.ViewerHardMutedAuthor),
       And(Condition.ViewerMutesAuthor, Not(Condition.ViewerDoesFollowAuthor))
     )
 
 object AuthorBlocksViewerUnspecifiedRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Drop(Reason.Unspecified),
       Condition.AuthorBlocksViewer
     )
 
 object ViewerHasMatchingMutedKeywordForNotificationsRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Drop(Reason.MutedKeyword),
       Condition.ViewerHasMatchingKeywordForNotifications
     )
 
 object ViewerHasMatchingMutedKeywordForHomeTimelineRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Drop(Reason.MutedKeyword),
       Condition.ViewerHasMatchingKeywordForHomeTimeline
     )
 
-trait HasPromotedTweetHealthEnforcement extends WithGate {
+trait HasPromotedTweetHealthEnforcement etwittertends WithGate {
   override def holdbacks: Seq[RuleParam[Boolean]] = Seq(PromotedTweetHealthEnforcementHoldback)
   override def enabled: Seq[RuleParam[Boolean]] = Seq(
     EnableTimelineHomePromotedTweetHealthEnforcementRules)
 }
 
 object ViewerHasMatchingMutedKeywordForHomeTimelinePromotedTweetRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Drop(Reason.MutedKeyword),
       Condition.ViewerHasMatchingKeywordForHomeTimeline
     )
     with HasPromotedTweetHealthEnforcement
 
 object ViewerHasMatchingMutedKeywordForTweetRepliesRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Drop(Reason.MutedKeyword),
       Condition.ViewerHasMatchingKeywordForTweetReplies
     )
 
 object MutedKeywordForTweetRepliesInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Interstitial(Reason.MutedKeyword),
       Condition.ViewerHasMatchingKeywordForTweetReplies
     )
 
 object MutedKeywordForQuotedTweetTweetDetailInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Interstitial(Reason.MutedKeyword),
       And(Condition.IsQuotedInnerTweet, Condition.ViewerHasMatchingKeywordForTweetReplies)
     )
 
 object ViewerMutesAuthorInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Interstitial(Reason.ViewerMutesAuthor),
       Condition.ViewerMutesAuthor
     )
 
 object ViewerMutesAuthorInnerQuotedTweetInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Interstitial(Reason.ViewerMutesAuthor),
       And(Condition.ViewerMutesAuthor, IsQuotedInnerTweet)
     ) {
@@ -268,20 +268,20 @@ object ViewerMutesAuthorInnerQuotedTweetInterstitialRule
 }
 
 object ViewerMutesAuthorHomeTimelinePromotedTweetRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Drop(Reason.ViewerMutesAuthor),
       Condition.ViewerMutesAuthor
     )
     with HasPromotedTweetHealthEnforcement
 
 object ViewerBlocksAuthorInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Interstitial(Reason.ViewerBlocksAuthor),
       Condition.ViewerBlocksAuthor
     )
 
 object ViewerBlocksAuthorInnerQuotedTweetInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Interstitial(Reason.ViewerBlocksAuthor),
       And(Condition.ViewerBlocksAuthor, IsQuotedInnerTweet)
     ) {
@@ -290,26 +290,26 @@ object ViewerBlocksAuthorInnerQuotedTweetInterstitialRule
 }
 
 object ViewerBlocksAuthorHomeTimelinePromotedTweetRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Drop(Reason.ViewerBlocksAuthor),
       Condition.ViewerBlocksAuthor
     )
     with HasPromotedTweetHealthEnforcement
 
 object ViewerReportsAuthorInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Interstitial(Reason.ViewerReportedAuthor),
       Condition.ViewerReportsAuthor
     )
 
 object ViewerIsAuthorDropRule
-    extends RuleWithConstantAction(Drop(Unspecified), Not(NonAuthorViewer))
+    etwittertends RuleWithConstantAction(Drop(Unspecified), Not(NonAuthorViewer))
 
-object ViewerIsNotAuthorDropRule extends RuleWithConstantAction(Drop(Unspecified), NonAuthorViewer)
+object ViewerIsNotAuthorDropRule etwittertends RuleWithConstantAction(Drop(Unspecified), NonAuthorViewer)
 
-object RetweetDropRule extends RuleWithConstantAction(Drop(Unspecified), Retweet)
+object RetweetDropRule etwittertends RuleWithConstantAction(Drop(Unspecified), Retweet)
 
-object ViewerIsSoftUserDropRule extends RuleWithConstantAction(Drop(ViewerIsSoftUser), SoftViewer) {
+object ViewerIsSoftUserDropRule etwittertends RuleWithConstantAction(Drop(ViewerIsSoftUser), SoftViewer) {
 
   override val enabled: Seq[RuleParam[Boolean]] = Seq(EnableViewerIsSoftUserDropRuleParam)
 }

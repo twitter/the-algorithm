@@ -13,7 +13,7 @@ import com.twitter.strato.catalog.Fetch;
 import com.twitter.strato.client.Client;
 import com.twitter.strato.client.Fetcher;
 import com.twitter.strato.data.Conv;
-import com.twitter.strato.opcontext.ServeWithin;
+import com.twitter.strato.opcontetwittert.ServeWithin;
 import com.twitter.strato.thrift.TBaseConv;
 import com.twitter.util.Duration;
 import com.twitter.util.Future;

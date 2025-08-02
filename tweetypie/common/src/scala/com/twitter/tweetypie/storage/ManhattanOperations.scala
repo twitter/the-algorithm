@@ -22,7 +22,7 @@ case class TweetManhattanRecord(key: TweetKey, value: TweetManhattanValue) {
    * all of the information from the record. It is not intended for
    * producing machine-readable values.
    *
-   * This conversion is relatively expensive, so beware of using it in
+   * This conversion is relatively etwitterpensive, so beware of using it in
    * hot code paths.
    */
   override def toString: String = {
@@ -34,15 +34,15 @@ case class TweetManhattanRecord(key: TweetKey, value: TweetManhattanValue) {
 
           case _: TweetKey.LKey.FieldKey =>
             val tFieldBlob = TFieldBlobCodec.fromByteBuffer(value.contents)
-            s"TFieldBlob(${tFieldBlob.field}, 0x${Buf.slowHexString(tFieldBlob.content)})"
+            s"TFieldBlob(${tFieldBlob.field}, 0twitter${Buf.slowHetwitterString(tFieldBlob.content)})"
 
           case TweetKey.LKey.Unknown(_) =>
-            "0x" + Buf.slowHexString(Buf.ByteBuffer.Shared(value.contents))
+            "0twitter" + Buf.slowHetwitterString(Buf.ByteBuffer.Shared(value.contents))
         }
       } catch {
         case NonFatal(e) =>
-          val hexValue = Buf.slowHexString(Buf.ByteBuffer.Shared(value.contents))
-          s"0x$hexValue (failed to decode due to $e)"
+          val hetwitterValue = Buf.slowHetwitterString(Buf.ByteBuffer.Shared(value.contents))
+          s"0twitter$hetwitterValue (failed to decode due to $e)"
       }
 
     s"$key => ${value.copy(contents = valueString)}"
@@ -55,14 +55,14 @@ object ManhattanOperations {
   type Delete = (TweetKey, Option[Time]) => Stitch[Unit]
   type DeleteRange = TweetId => Stitch[Unit]
 
-  object PkeyInjection extends Injection[TweetId, String] {
+  object PkeyInjection etwittertends Injection[TweetId, String] {
     override def apply(tweetId: TweetId): String = TweetKey.padTweetIdStr(tweetId)
     override def invert(str: String): scala.util.Try[TweetId] = scala.util.Try(str.toLong)
   }
 
-  case class InvalidLkey(lkeyStr: String) extends Exception
+  case class InvalidLkey(lkeyStr: String) etwittertends Etwitterception
 
-  object LkeyInjection extends Injection[TweetKey.LKey, String] {
+  object LkeyInjection etwittertends Injection[TweetKey.LKey, String] {
     override def apply(lkey: TweetKey.LKey): String = lkey.toString
     override def invert(str: String): scala.util.Try[TweetKey.LKey] =
       scala.util.Success(TweetKey.LKey.fromString(str))

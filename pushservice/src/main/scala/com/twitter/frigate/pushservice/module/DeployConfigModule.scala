@@ -14,10 +14,10 @@ import com.twitter.frigate.pushservice.config.StagingConfig
 import com.twitter.frigate.pushservice.params.ShardParams
 import com.twitter.inject.TwitterModule
 import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ConfigRepoLocalPath
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
+import com.twitter.product_mitwitterer.core.module.product_mitwitterer_flags.ProductMitwittererFlagModule.ConfigRepoLocalPath
+import com.twitter.product_mitwitterer.core.module.product_mitwitterer_flags.ProductMitwittererFlagModule.ServiceLocal
 
-object DeployConfigModule extends TwitterModule {
+object DeployConfigModule etwittertends TwitterModule {
 
   @Provides
   @Singleton
@@ -62,7 +62,7 @@ object DeployConfigModule extends TwitterModule {
           tunableMap = tunableMap,
           shardParams = shardParams
         )(statsReceiver)
-      case env => throw new Exception(s"Unknown environment $env")
+      case env => throw new Etwitterception(s"Unknown environment $env")
     }
   }
 }

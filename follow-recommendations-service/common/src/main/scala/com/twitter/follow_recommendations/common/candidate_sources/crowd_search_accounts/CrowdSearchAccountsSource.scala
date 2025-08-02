@@ -8,18 +8,18 @@ import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.models.HasGeohashAndCountryCode
 import com.twitter.hermit.model.Algorithm
 import com.twitter.onboarding.relevance.crowd_search_accounts.thriftscala.CrowdSearchAccounts
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.strato.generated.client.onboarding.userrecs.CrowdSearchAccountsClientColumn
 import com.twitter.timelines.configapi.HasParams
 import com.twitter.util.Duration
 import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
-object AccountsFilteringAndRankingLogicId extends Enumeration {
+object AccountsFilteringAndRankingLogicId etwittertends Enumeration {
   type AccountsFilteringAndRankingLogicId = Value
 
   val NewSearchesDaily: AccountsFilteringAndRankingLogicId = Value("new_searches_daily")
@@ -29,10 +29,10 @@ object AccountsFilteringAndRankingLogicId extends Enumeration {
 }
 
 object CrowdSearchAccountsSource {
-  val MaxCacheSize = 500
+  val MatwitterCacheSize = 500
   val CacheTTL: Duration = Duration.fromHours(24)
 
-  type Target = HasParams with HasClientContext with HasGeohashAndCountryCode
+  type Target = HasParams with HasClientContetwittert with HasGeohashAndCountryCode
 
   val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
     Algorithm.CrowdSearchAccounts.toString)
@@ -42,7 +42,7 @@ object CrowdSearchAccountsSource {
 class CrowdSearchAccountsSource @Inject() (
   crowdSearchAccountsClientColumn: CrowdSearchAccountsClientColumn,
   statsReceiver: StatsReceiver,
-) extends CandidateSource[CrowdSearchAccountsSource.Target, CandidateUser]
+) etwittertends CandidateSource[CrowdSearchAccountsSource.Target, CandidateUser]
     with Logging {
 
   /** @see [[CandidateSourceIdentifier]] */
@@ -56,7 +56,7 @@ class CrowdSearchAccountsSource @Inject() (
   private val errorStats = stats.counter("error")
 
   private val cache = StitchCache[String, Option[CrowdSearchAccounts]](
-    maxCacheSize = CrowdSearchAccountsSource.MaxCacheSize,
+    matwitterCacheSize = CrowdSearchAccountsSource.MatwitterCacheSize,
     ttl = CrowdSearchAccountsSource.CacheTTL,
     statsReceiver = statsReceiver.scope(identifier.name, "cache"),
     underlyingCall = (k: String) => {

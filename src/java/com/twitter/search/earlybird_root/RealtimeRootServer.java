@@ -1,14 +1,14 @@
 package com.twitter.search.earlybird_root;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import javatwitter.inject.Inject;
+import javatwitter.inject.Singleton;
 
 import com.twitter.finagle.Service;
 import com.twitter.search.common.root.SearchRootServer;
 import com.twitter.search.earlybird.thrift.EarlybirdService;
 
 @Singleton
-public class RealtimeRootServer extends SearchRootServer<EarlybirdService.ServiceIface> {
+public class RealtimeRootServer etwittertends SearchRootServer<EarlybirdService.ServiceIface> {
 
   @Inject
   public RealtimeRootServer(RealtimeRootService svc, Service<byte[], byte[]> byteSvc) {

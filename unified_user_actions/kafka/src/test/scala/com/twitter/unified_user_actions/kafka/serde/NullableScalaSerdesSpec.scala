@@ -4,7 +4,7 @@ import com.twitter.finagle.stats.InMemoryStatsReceiver
 import com.twitter.inject.Test
 import com.twitter.unified_user_actions.thriftscala._
 
-class NullableScalaSerdesSpec extends Test {
+class NullableScalaSerdesSpec etwittertends Test {
   val counter = (new InMemoryStatsReceiver).counter("nullCounts")
   val nullableDeserializer = NullableScalaSerdes.Thrift[UnifiedUserActionSpec](counter).deserializer
   val serializer = NullableScalaSerdes.Thrift[UnifiedUserActionSpec]().serializer
@@ -20,7 +20,7 @@ class NullableScalaSerdesSpec extends Test {
     counter.apply() should equal(1)
   }
 
-  test("rate limited logger when there's an exception") {
+  test("rate limited logger when there's an etwitterception") {
     for (_ <- 1 to 10) {
       nullableDeserializer.deserialize("", "Whatever".getBytes) should be(
         null.asInstanceOf[UnifiedUserActionSpec])

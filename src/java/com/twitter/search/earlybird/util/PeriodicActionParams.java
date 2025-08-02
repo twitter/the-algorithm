@@ -6,12 +6,12 @@ import java.util.concurrent.TimeUnit;
  * Specifies timing and type of period actions that we schedule.
  *
  * See:
- *  https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ScheduledExecutorService.html
+ *  https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ScheduledEtwitterecutorService.html
  */
 public final class PeriodicActionParams {
   private enum DelayType {
-    FIXED_DELAY,
-    FIXED_RATE
+    FItwitterED_DELAY,
+    FItwitterED_RATE
   }
 
   private long initialDelayDuration;
@@ -46,34 +46,34 @@ public final class PeriodicActionParams {
     this.intervalUnit = intervalUnit;
   }
 
-  // Runs start at times start, start+X, start+2*X etc., so they can possibly overlap.
-  public static PeriodicActionParams atFixedRate(
+  // Runs start at times start, start+twitter, start+2*twitter etc., so they can possibly overlap.
+  public static PeriodicActionParams atFitwitteredRate(
       long intervalDuration,
       TimeUnit intervalUnit) {
-    return new PeriodicActionParams(DelayType.FIXED_RATE, 0,
+    return new PeriodicActionParams(DelayType.FItwitterED_RATE, 0,
         intervalDuration, intervalUnit);
   }
 
   // Delay between every run.
   // The order of what happens is:
-  //   initial delay, run task, wait X time, run task, wait X time, etc.
+  //   initial delay, run task, wait twitter time, run task, wait twitter time, etc.
   // Runs can't overlap.
-  public static PeriodicActionParams withIntialWaitAndFixedDelay(
+  public static PeriodicActionParams withIntialWaitAndFitwitteredDelay(
       long initialDelayDuration,
       long intervalDuration,
       TimeUnit intervalUnit) {
-    return new PeriodicActionParams(DelayType.FIXED_DELAY, initialDelayDuration,
+    return new PeriodicActionParams(DelayType.FItwitterED_DELAY, initialDelayDuration,
         intervalDuration, intervalUnit);
   }
 
   // Delay between every run.
-  public static PeriodicActionParams withFixedDelay(
+  public static PeriodicActionParams withFitwitteredDelay(
       long intervalDuration,
       TimeUnit intervalUnit) {
-    return withIntialWaitAndFixedDelay(0, intervalDuration, intervalUnit);
+    return withIntialWaitAndFitwitteredDelay(0, intervalDuration, intervalUnit);
   }
 
-  boolean isFixedDelay() {
-    return this.delayType == DelayType.FIXED_DELAY;
+  boolean isFitwitteredDelay() {
+    return this.delayType == DelayType.FItwitterED_DELAY;
   }
 }

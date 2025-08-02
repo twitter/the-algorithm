@@ -9,7 +9,7 @@ trait SelfThreadBuilder {
   def requiredReplySourceFields: Set[TField] =
     Set(
       Tweet.CoreDataField, // for Reply and ConversationId
-      Tweet.SelfThreadMetadataField // for continuing existing self-threads
+      Tweet.SelfThreadMetadataField // for continuing etwitteristing self-threads
     )
 
   def build(authorUserId: UserId, replySourceTweet: Tweet): Option[SelfThreadMetadata]
@@ -55,9 +55,9 @@ object SelfThreadBuilder {
 
     // root_thread/branch provides visibility into how frequently self-threads
     // get branched - that is, when the author self-replies to a non-leaf tweet
-    // in an existing thread. Knowing the frequency of branching will help us
+    // in an etwitteristing thread. Knowing the frequency of branching will help us
     // determine the priority of accounting for branching in various
-    // tweet-delete use cases. Currently we do not fix up the root tweet's
+    // tweet-delete use cases. Currently we do not fitwitter up the root tweet's
     // SelfThreadMetadata when its reply tweets are deleted.
     val rootThreadBranchCounter = rootThreadStats.counter("branch")
 
@@ -91,7 +91,7 @@ object SelfThreadBuilder {
               // inReplyToStatusId (directed-at user)
 
               // requiredReplySourceFields requires coreData and conversationId
-              // is required so this would have previously thrown an exception
+              // is required so this would have previously thrown an etwitterception
               // in ReplyBuilder if the read was partial
               val convoId = replySourceTweet.coreData.get.conversationId.get
               Some(SelfThreadMetadata(id = convoId, isLeaf = true))
@@ -108,7 +108,7 @@ object SelfThreadBuilder {
           // ID).
           //
           // In the future replying to a different user *might* be part of a
-          // self-thread but we wouldn't mark it as such until the *next* tweet
+          // self-thread but we wouldn't mark it as such until the *netwittert* tweet
           // is created (at which time the self_thread daemon goes back and
           // marks the first tweet as in the self-thread.
           None

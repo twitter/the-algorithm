@@ -20,7 +20,7 @@ object SimClustersMultiEmbeddingStore {
    */
   case class SimClustersMultiEmbeddingWrapperStore(
     sourceStore: ReadableStore[SimClustersMultiEmbeddingId, SimClustersMultiEmbedding])
-      extends ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] {
+      etwittertends ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] {
 
     override def get(k: SimClustersEmbeddingId): Future[Option[SimClustersEmbedding]] = {
       sourceStore.get(toMultiEmbeddingId(k)).map(_.map(toSimClustersEmbedding(k, _)))
@@ -53,13 +53,13 @@ object SimClustersMultiEmbeddingStore {
         case SimClustersMultiEmbedding.Values(values) =>
           val subId = toSubId(id)
           if (subId >= values.embeddings.size) {
-            throw new IllegalArgumentException(
+            throw new IllegalArgumentEtwitterception(
               s"SimClustersMultiEmbeddingId $id is over the size of ${values.embeddings.size}")
           } else {
             values.embeddings(subId).embedding
           }
         case _ =>
-          throw new IllegalArgumentException(
+          throw new IllegalArgumentEtwitterception(
             s"Invalid SimClustersMultiEmbedding $id, $multiEmbedding")
       }
     }

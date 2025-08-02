@@ -40,7 +40,7 @@ import org.apache.kafka.streams.StreamsBuilder
 import org.apache.kafka.streams.scala.kstream.Consumed
 import org.apache.kafka.streams.scala.kstream.KStream
 import org.apache.kafka.streams.scala.kstream.Produced
-object EnrichmentPlannerServiceMain extends EnrichmentPlannerService {
+object EnrichmentPlannerServiceMain etwittertends EnrichmentPlannerService {
   val ApplicationId = "uua-enrichment-planner"
   val InputTopic = "unified_user_actions"
   val OutputPartitionedTopic = "unified_user_actions_keyed_dev"
@@ -54,7 +54,7 @@ object EnrichmentPlannerServiceMain extends EnrichmentPlannerService {
  * 2. For the write, it optionally randomly downsample the events when publishing, controlled by a Decider
  * 3. The output's key would be the first step of the repartitioning, most likely the EnrichmentKey of the Tweet type.
  */
-class EnrichmentPlannerService extends FinatraDslToCluster with SecureKafkaStreamsConfig {
+class EnrichmentPlannerService etwittertends FinatraDslToCluster with SecureKafkaStreamsConfig {
   import EnrichmentPlannerServiceMain._
 
   val kafkaOutputCluster: Flag[String] = flag(
@@ -126,13 +126,13 @@ class EnrichmentPlannerService extends FinatraDslToCluster with SecureKafkaStrea
           case _ => None
         }).seq
       }
-      // execute our driver logics
+      // etwitterecute our driver logics
       .flatMap((_: UnKeyed, envelop: EnrichmentEnvelop) => {
         // flatMap and Await.result is used here because our driver interface allows for
         // both synchronous (repartition logic) and async operations (hydration logic), but in here
         // we purely just need to repartition synchronously, and thus the flatMap + Await.result
         // is used to simplify and make testing much easier.
-        val (keyOpt, value) = Await.result(driver.execute(NullKey, Future.value(envelop)))
+        val (keyOpt, value) = Await.result(driver.etwitterecute(NullKey, Future.value(envelop)))
         keyOpt.map(key => (key, value)).seq
       })
       // then finally we sample based on the output keys
@@ -173,10 +173,10 @@ class EnrichmentPlannerService extends FinatraDslToCluster with SecureKafkaStrea
       .consumer.requestTimeout(30.seconds)
       .consumer.sessionTimeout(30.seconds)
       .consumer.fetchMin(1.megabyte)
-      .consumer.fetchMax(5.megabyte)
+      .consumer.fetchMatwitter(5.megabyte)
       .consumer.receiveBuffer(32.megabytes)
-      .consumer.maxPollInterval(1.minute)
-      .consumer.maxPollRecords(50000)
+      .consumer.matwitterPollInterval(1.minute)
+      .consumer.matwitterPollRecords(50000)
       .producer.clientId(s"$ApplicationId-producer")
       .producer.batchSize(16.kilobytes)
       .producer.bufferMemorySize(256.megabyte)

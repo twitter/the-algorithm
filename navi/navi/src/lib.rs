@@ -1,6 +1,6 @@
 #[macro_use]
-extern crate lazy_static;
-extern crate core;
+etwittertern crate lazy_static;
+etwittertern crate core;
 
 use serde_json::Value;
 use tokio::sync::oneshot::Sender;
@@ -15,7 +15,7 @@ pub mod batch;
 pub mod bootstrap;
 pub mod cli_args;
 pub mod metrics;
-pub mod onnx_model;
+pub mod onntwitter_model;
 pub mod predict_service;
 pub mod tf_model;
 pub mod torch_model;
@@ -103,15 +103,15 @@ pub type SerializedInput = Vec<u8>;
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 pub const NAME: &str = env!("CARGO_PKG_NAME");
 pub type ModelFactory<T> = fn(usize, String, &Value) -> anyhow::Result<T>;
-pub const MAX_NUM_MODELS: usize = 16;
-pub const MAX_NUM_OUTPUTS: usize = 30;
-pub const MAX_NUM_INPUTS: usize = 120;
+pub const MAtwitter_NUM_MODELS: usize = 16;
+pub const MAtwitter_NUM_OUTPUTS: usize = 30;
+pub const MAtwitter_NUM_INPUTS: usize = 120;
 pub const META_INFO: &str = "META.json";
 
 //use a heap allocated generic type here so that both
-//Tensorflow & Pytorch implementation can return their Tensor wrapped in a Box
-//without an extra memcopy to Vec
-pub type TensorReturn<T> = Box<dyn Deref<Target = [T]>>;
+//Tensorflow & Pytorch implementation can return their Tensor wrapped in a Botwitter
+//without an etwittertra memcopy to Vec
+pub type TensorReturn<T> = Botwitter<dyn Deref<Target = [T]>>;
 
 //returned tensor may be int64 i.e., a list of relevant ad ids
 pub enum TensorReturnEnum {
@@ -212,4 +212,4 @@ pub enum PredictMessage<T: Model> {
 #[derive(Debug)]
 pub struct Callback(Sender<PredictResult>, usize);
 
-pub const MAX_VERSIONS_PER_MODEL: usize = 2;
+pub const MAtwitter_VERSIONS_PER_MODEL: usize = 2;

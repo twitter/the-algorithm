@@ -67,7 +67,7 @@ private[storm] object PersistentTweetJob {
       .filter {
         case (_, (_, Some(statusCounts))) =>
           // Only consider tweets which has more than 8 favorite
-          statusCounts.favoriteCount.exists(_ >= MinFavoriteCount)
+          statusCounts.favoriteCount.etwitterists(_ >= MinFavoriteCount)
         case _ =>
           false
       }
@@ -102,7 +102,7 @@ private[storm] object PersistentTweetJob {
             )
           }
       }
-      .observe("num_of_extra_embedding")
+      .observe("num_of_etwittertra_embedding")
       .sumByKey(persistentTweetEmbeddingStoreWithLatestAggregation)(
         Implicits.persistentSimClustersEmbeddingMonoid)
       .name("persistent_embeddings_producer")
@@ -117,7 +117,7 @@ private[storm] object PersistentTweetJob {
               tweetEmbedding,
               SimClustersEmbeddingMetadata(
                 updatedAtMs = Some(eventTimeMs),
-                // We're not aggregating the existing embedding, we're replacing it. The count
+                // We're not aggregating the etwitteristing embedding, we're replacing it. The count
                 // therefore needs to be the absolute fav count for this tweet, not the delta.
                 updatedCount = statusCounts.favoriteCount.map(_ + 1)
               )
@@ -136,15 +136,15 @@ private[storm] object PersistentTweetJob {
     thus we may not store embeddings for all 2^(i+3) where 0 <= i <= tweetFavCount.
    */
   private def lastQualifiedUpdatedCount(
-    existingUpdateCount: Option[Long],
+    etwitteristingUpdateCount: Option[Long],
     deltaUpdateCount: Option[Long]
   ): Option[Int] = {
-    val existing = existingUpdateCount.getOrElse(0L)
-    val sum = existing + deltaUpdateCount.getOrElse(0L)
-    qualifiedSet.filter { i => (existing < i) && (i <= sum) }.lastOption
+    val etwitteristing = etwitteristingUpdateCount.getOrElse(0L)
+    val sum = etwitteristing + deltaUpdateCount.getOrElse(0L)
+    qualifiedSet.filter { i => (etwitteristing < i) && (i <= sum) }.lastOption
   }
 
-  // Only 2 Power n while n >= 3 is qualified for Persistent. The max = 16,777,216
+  // Only 2 Power n while n >= 3 is qualified for Persistent. The matwitter = 16,777,216
   private lazy val qualifiedSet = 3
     .until(25).map { i => Math.pow(2, i).toInt }.toSet
 

@@ -20,7 +20,7 @@ The following describes the method to re-generate the required (typically the la
 
 Solution
 ~~~~~~~~~~
-1. Copy **the second to last version** of the problematic data to canaries folder. For example, if 11/20's job keeps failing, then copy the 11/19's data.
+1. Copy **the second to last version** of the problematic data to canaries folder. For etwitterample, if 11/20's job keeps failing, then copy the 11/19's data.
 
 .. code:: bash
 
@@ -34,7 +34,7 @@ Solution
 
 3. Deschedule the production job and kill the current run:
 
-For example,
+For etwitterample,
 
 .. code:: bash
 
@@ -71,10 +71,10 @@ We can see the slight difference of size:
 
 7. Verify the new run succeeded and job is unblocked.
 
-Example
+Etwitterample
 ~~~~~~~~
 
-There is an example in https://phabricator.twitter.biz/D591174
+There is an etwitterample in https://phabricator.twitter.biz/D591174
 
 
 [Batch] Skipping the offline job ahead
@@ -96,7 +96,7 @@ We will need to skip the job ahead. Unfortunately, this involves manual effort. 
 
 2. Copy the latest version of the store to the same HDFS directory but with a different destination name. The name MUST be the same as the above inserted version.
 
-For example, if the ADP team manually inserted a version on 12/09/2020, then we can see the version by running
+For etwitterample, if the ADP team manually inserted a version on 12/09/2020, then we can see the version by running
 
 .. code:: bash
 
@@ -106,12 +106,12 @@ For example, if the ADP team manually inserted a version on 12/09/2020, then we 
 
 where `1607472000000` is the timestamp of 12/09/2020.
 Then you will need to duplicate the latest version of the store to a dir of `1607472000000`.
-For example,
+For etwitterample,
 
 .. code:: bash
 
   $ hadoop --config /etc/hadoop/hadoop-conf-proc2-atla/ distcp -m 1000 /atla/proc2/user/timelines/processed/aggregates_v2/user_original_author_aggregates/1605052800000 /atla/proc2/user/timelines/processed/aggregates_v2/user_original_author_aggregates/1607472000000
 
-3. Go to the EagleEye UI of the job and click on the "Skip Ahead" button to the desired datetime. In our example, it should be `2020-12-09 12am`
+3. Go to the EagleEye UI of the job and click on the "Skip Ahead" button to the desired datetime. In our etwitterample, it should be `2020-12-09 12am`
 
 4. Wait for the job to start. Now the job should be running the 2020-12-09 partition.

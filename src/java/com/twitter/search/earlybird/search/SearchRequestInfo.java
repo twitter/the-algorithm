@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird.search;
 
 import java.util.List;
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 
@@ -22,10 +22,10 @@ public class SearchRequestInfo {
   private final boolean getInReplyToStatusId;
   private final boolean getReferenceAuthorId;
   private final boolean getFromUserId;
-  private final boolean collectExclusiveConversationAuthorId;
+  private final boolean collectEtwitterclusiveConversationAuthorId;
 
   private final int numResultsRequested;
-  private final int maxHitsToProcess;
+  private final int matwitterHitsToProcess;
   private final List<String> facetFieldNames;
   private long timestamp;
 
@@ -39,10 +39,10 @@ public class SearchRequestInfo {
 
   private IdTimeRanges idTimeRanges;
 
-  private static final int DEFAULT_MAX_HITS = 1000;
+  private static final int DEFAULT_MAtwitter_HITS = 1000;
 
-  private static final SearchCounter RESET_MAX_HITS_TO_PROCESS_COUNTER =
-      SearchCounter.export("search_request_info_reset_max_hits_to_process");
+  private static final SearchCounter RESET_MAtwitter_HITS_TO_PROCESS_COUNTER =
+      SearchCounter.etwitterport("search_request_info_reset_matwitter_hits_to_process");
 
   public SearchRequestInfo(
       ThriftSearchQuery searchQuery,
@@ -68,39 +68,39 @@ public class SearchRequestInfo {
       this.getReferenceAuthorId =
           searchQuery.getResultMetadataOptions().isGetReferencedTweetAuthorId();
       this.getFromUserId = searchQuery.getResultMetadataOptions().isGetFromUserId();
-      this.collectExclusiveConversationAuthorId =
-          searchQuery.getResultMetadataOptions().isGetExclusiveConversationAuthorId();
+      this.collectEtwitterclusiveConversationAuthorId =
+          searchQuery.getResultMetadataOptions().isGetEtwitterclusiveConversationAuthorId();
     } else {
       this.collectResultLocation = false;
       this.getInReplyToStatusId = false;
       this.getReferenceAuthorId = false;
       this.getFromUserId = false;
-      this.collectExclusiveConversationAuthorId = false;
+      this.collectEtwitterclusiveConversationAuthorId = false;
     }
 
     this.qualityFactor = qualityFactor;
 
     this.numResultsRequested = searchQuery.getCollectorParams().getNumResultsToReturn();
-    this.maxHitsToProcess = calculateMaxHitsToProcess(searchQuery);
+    this.matwitterHitsToProcess = calculateMatwitterHitsToProcess(searchQuery);
     this.terminationTracker = terminationTracker;
     this.facetFieldNames = searchQuery.getFacetFieldNames();
   }
 
   /**
-   * Gets the value to be used as max hits to process for this query. The base class gets it from
+   * Gets the value to be used as matwitter hits to process for this query. The base class gets it from
    * the searchQuery directly, and uses a default if that's not set.
    *
-   * Subclasses can override this to compute a different value for max hits to process.
+   * Subclasses can override this to compute a different value for matwitter hits to process.
    */
-  protected int calculateMaxHitsToProcess(ThriftSearchQuery thriftSearchQuery) {
-    int maxHits = thriftSearchQuery.getCollectorParams().isSetTerminationParams()
-        ? thriftSearchQuery.getCollectorParams().getTerminationParams().getMaxHitsToProcess() : 0;
+  protected int calculateMatwitterHitsToProcess(ThriftSearchQuery thriftSearchQuery) {
+    int matwitterHits = thriftSearchQuery.getCollectorParams().isSetTerminationParams()
+        ? thriftSearchQuery.getCollectorParams().getTerminationParams().getMatwitterHitsToProcess() : 0;
 
-    if (maxHits <= 0) {
-      maxHits = DEFAULT_MAX_HITS;
-      RESET_MAX_HITS_TO_PROCESS_COUNTER.increment();
+    if (matwitterHits <= 0) {
+      matwitterHits = DEFAULT_MAtwitter_HITS;
+      RESET_MAtwitter_HITS_TO_PROCESS_COUNTER.increment();
     }
-    return maxHits;
+    return matwitterHits;
   }
 
   public final ThriftSearchQuery getSearchQuery() {
@@ -115,8 +115,8 @@ public class SearchRequestInfo {
     return numResultsRequested;
   }
 
-  public final int getMaxHitsToProcess() {
-    return maxHitsToProcess;
+  public final int getMatwitterHitsToProcess() {
+    return matwitterHitsToProcess;
   }
 
   public boolean isCollectConversationId() {
@@ -135,8 +135,8 @@ public class SearchRequestInfo {
     return getReferenceAuthorId;
   }
 
-  public boolean isCollectExclusiveConversationAuthorId() {
-    return collectExclusiveConversationAuthorId;
+  public boolean isCollectEtwitterclusiveConversationAuthorId() {
+    return collectEtwitterclusiveConversationAuthorId;
   }
 
   public final IdTimeRanges getIdTimeRanges() {

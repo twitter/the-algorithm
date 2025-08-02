@@ -6,7 +6,7 @@ import com.twitter.representationscorer.scorestore.TopicTweetsCosineSimilarityAg
 import com.twitter.simclusters_v2.common.TweetId
 import com.twitter.simclusters_v2.score.AggregatedScoreStore
 import com.twitter.simclusters_v2.thriftscala.ScoreInternalId.GenericPairScoreId
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm.CortexTopicTweetLabel
+import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm.CortetwitterTopicTweetLabel
 import com.twitter.simclusters_v2.thriftscala.{
   EmbeddingType,
   InternalId,
@@ -32,9 +32,9 @@ import com.twitter.util.Future
  * all available embedding types. We calculate all the scores here, so the caller can do filtering
  * & score caching on their side. This will make it possible to DDG different embedding scores.
  *
- * 2. For external calls from Cortex. We return true (or 1.0) for any given (topic, tweet) if their
+ * 2. For etwitterternal calls from Cortetwitter. We return true (or 1.0) for any given (topic, tweet) if their
  * cosine similarity passes the threshold for any of the embedding types.
- * The expected input type is
+ * The etwitterpected input type is
  * ScoreId(
  *  PairEmbeddingCosineSimilarity,
  *  GenericPairScoreId(TopicId, TweetId)
@@ -43,34 +43,34 @@ import com.twitter.util.Future
 case class TopicTweetsCosineSimilarityAggregateStore(
   scoreKeys: Seq[ScoreKey],
   statsReceiver: StatsReceiver)
-    extends AggregatedScoreStore {
+    etwittertends AggregatedScoreStore {
 
-  def toCortexScore(scoresMap: Map[ScoreKey, Double]): Double = {
-    val passThreshold = scoresMap.exists {
+  def toCortetwitterScore(scoresMap: Map[ScoreKey, Double]): Double = {
+    val passThreshold = scoresMap.etwitterists {
       case (_, score) => score >= MinCosineSimilarityScore
     }
     if (passThreshold) 1.0 else 0.0
   }
 
   /**
-   * To be called by Cortex through Unified Score API ONLY. Calculates all possible (topic, tweet),
+   * To be called by Cortetwitter through Unified Score API ONLY. Calculates all possible (topic, tweet),
    * return 1.0 if any of the embedding scores passes the minimum threshold.
    *
-   * Expect a GenericPairScoreId(PairEmbeddingCosineSimilarity, (TopicId, TweetId)) as input
+   * Etwitterpect a GenericPairScoreId(PairEmbeddingCosineSimilarity, (TopicId, TweetId)) as input
    */
   override def get(k: ThriftScoreId): Future[Option[ThriftScore]] = {
     StatsUtil.trackOptionStats(statsReceiver) {
       (k.algorithm, k.internalId) match {
-        case (CortexTopicTweetLabel, GenericPairScoreId(genericPairScoreId)) =>
+        case (CortetwitterTopicTweetLabel, GenericPairScoreId(genericPairScoreId)) =>
           (genericPairScoreId.id1, genericPairScoreId.id2) match {
             case (InternalId.TopicId(topicId), InternalId.TweetId(tweetId)) =>
               TopicTweetsCosineSimilarityAggregateStore
                 .getRawScoresMap(topicId, tweetId, scoreKeys, scoreFacadeStore)
-                .map { scoresMap => Some(ThriftScore(toCortexScore(scoresMap))) }
+                .map { scoresMap => Some(ThriftScore(toCortetwitterScore(scoresMap))) }
             case (InternalId.TweetId(tweetId), InternalId.TopicId(topicId)) =>
               TopicTweetsCosineSimilarityAggregateStore
                 .getRawScoresMap(topicId, tweetId, scoreKeys, scoreFacadeStore)
-                .map { scoresMap => Some(ThriftScore(toCortexScore(scoresMap))) }
+                .map { scoresMap => Some(ThriftScore(toCortetwitterScore(scoresMap))) }
             case _ =>
               Future.None
             // Do not accept other InternalId combinations

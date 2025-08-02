@@ -7,13 +7,13 @@ import com.twitter.ml.api.thriftscala.{DataRecord => TDataRecord}
 import com.twitter.ml.api.util.ScalaToJavaDataRecordConversions
 import com.twitter.timelines.configapi.HasParams
 import com.twitter.timelines.configapi.Params
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.common.UniversalNoun
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
 
-trait FollowableEntity extends UniversalNoun[Long]
+trait FollowableEntity etwittertends UniversalNoun[Long]
 
 trait Recommendation
-    extends FollowableEntity
+    etwittertends FollowableEntity
     with HasReason
     with HasAdMetadata
     with HasTrackingToken {
@@ -37,7 +37,7 @@ case class CandidateUser(
   override val params: Params = Params.Invalid,
   override val engagements: Seq[EngagementType] = Nil,
   override val recommendationFlowIdentifier: Option[String] = None)
-    extends Recommendation
+    etwittertends Recommendation
     with HasUserCandidateSourceDetails
     with HasDataRecord
     with HasScores
@@ -48,7 +48,7 @@ case class CandidateUser(
 
   val rankerIdsStr: Option[Seq[String]] = {
     val strs = scores.map(_.scores.flatMap(_.rankerId.map(_.toString)))
-    if (strs.exists(_.nonEmpty)) strs else None
+    if (strs.etwitterists(_.nonEmpty)) strs else None
   }
 
   val thriftDataRecord: Option[TDataRecord] = for {
@@ -131,7 +131,7 @@ case class CandidateUser(
 
   def addScore(score: Score): CandidateUser = {
     val newScores = scores match {
-      case Some(existingScores) => existingScores.copy(scores = existingScores.scores :+ score)
+      case Some(etwitteristingScores) => etwitteristingScores.copy(scores = etwitteristingScores.scores :+ score)
       case None => Scores(Seq(score))
     }
     this.copy(scores = Some(newScores))

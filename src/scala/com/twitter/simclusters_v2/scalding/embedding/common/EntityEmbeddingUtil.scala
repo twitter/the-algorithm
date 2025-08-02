@@ -13,7 +13,7 @@ import com.twitter.wtf.entity_real_graph.thriftscala.FeatureName
 
 object EntityEmbeddingUtil {
 
-  def getEntityUserMatrix(
+  def getEntityUserMatritwitter(
     entityRealGraphSource: TypedPipe[Edge],
     halfLife: HalfLifeScores.HalfLifeScoresType,
     entityType: EntityType
@@ -21,7 +21,7 @@ object EntityEmbeddingUtil {
     entityRealGraphSource
       .flatMap {
         case Edge(userId, entity, consumerFeatures, _, _)
-            if consumerFeatures.exists(_.exists(_.featureName == FeatureName.Favorites)) &&
+            if consumerFeatures.etwitterists(_.etwitterists(_.featureName == FeatureName.Favorites)) &&
               EntityUtil.getEntityType(entity) == entityType =>
           for {
             features <- consumerFeatures
@@ -34,13 +34,13 @@ object EntityEmbeddingUtil {
       }
   }
 
-  object HalfLifeScores extends Enumeration {
+  object HalfLifeScores etwittertends Enumeration {
     type HalfLifeScoresType = Value
     val OneDay: Value = Value(1)
     val SevenDays: Value = Value(7)
     val FourteenDays: Value = Value(14)
     val ThirtyDays: Value = Value(30)
-    val SixtyDays: Value = Value(60)
+    val SitwittertyDays: Value = Value(60)
   }
 
   case class EntityEmbeddingsJobConfig(
@@ -58,7 +58,7 @@ object EntityEmbeddingUtil {
         EntityType.valueOf(args.getOrElse("entity-type", default = "")) match {
           case Some(entityType) => entityType
           case _ =>
-            throw new IllegalArgumentException(
+            throw new IllegalArgumentEtwitterception(
               s"Argument [--entity-type] must be provided. Supported options [" +
                 s"${EntityType.SemanticCore.name}, ${EntityType.Hashtag.name}]")
         }

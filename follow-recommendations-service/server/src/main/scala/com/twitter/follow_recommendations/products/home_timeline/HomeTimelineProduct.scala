@@ -3,7 +3,7 @@ package com.twitter.follow_recommendations.products.home_timeline
 import com.twitter.follow_recommendations.assembler.models.ActionConfig
 import com.twitter.follow_recommendations.assembler.models.FollowedByUsersProof
 import com.twitter.follow_recommendations.assembler.models.FooterConfig
-import com.twitter.follow_recommendations.assembler.models.GeoContextProof
+import com.twitter.follow_recommendations.assembler.models.GeoContetwittertProof
 import com.twitter.follow_recommendations.assembler.models.HeaderConfig
 import com.twitter.follow_recommendations.assembler.models.Layout
 import com.twitter.follow_recommendations.assembler.models.TitleConfig
@@ -17,27 +17,27 @@ import com.twitter.follow_recommendations.flows.ads.PromotedAccountsFlowRequest
 import com.twitter.follow_recommendations.blenders.PromotedAccountsBlender
 import com.twitter.follow_recommendations.common.models.DisplayLocation
 import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlFlow
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilder
+import com.twitter.follow_recommendations.flows.post_nutwitter_ml.PostNutwitterMlFlow
+import com.twitter.follow_recommendations.flows.post_nutwitter_ml.PostNutwitterMlRequestBuilder
 import com.twitter.follow_recommendations.products.common.Product
 import com.twitter.follow_recommendations.products.common.ProductRequest
 import com.twitter.follow_recommendations.products.home_timeline.configapi.HomeTimelineParams._
 import com.twitter.inject.Injector
-import com.twitter.product_mixer.core.model.marshalling.request
-import com.twitter.product_mixer.core.product.guice.ProductScope
+import com.twitter.product_mitwitterer.core.model.marshalling.request
+import com.twitter.product_mitwitterer.core.product.guice.ProductScope
 import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class HomeTimelineProduct @Inject() (
-  postNuxMlFlow: PostNuxMlFlow,
-  postNuxMlRequestBuilder: PostNuxMlRequestBuilder,
+  postNutwitterMlFlow: PostNutwitterMlFlow,
+  postNutwitterMlRequestBuilder: PostNutwitterMlRequestBuilder,
   promotedAccountsFlow: PromotedAccountsFlow,
   promotedAccountsBlender: PromotedAccountsBlender,
   productScope: ProductScope,
   injector: Injector,
-) extends Product {
+) etwittertends Product {
 
   override val name: String = "Home Timeline"
 
@@ -48,15 +48,15 @@ class HomeTimelineProduct @Inject() (
   override def selectWorkflows(
     request: ProductRequest
   ): Stitch[Seq[BaseRecommendationFlow[ProductRequest, _ <: Recommendation]]] = {
-    postNuxMlRequestBuilder.build(request).map { postNuxMlRequest =>
+    postNutwitterMlRequestBuilder.build(request).map { postNutwitterMlRequest =>
       Seq(
-        postNuxMlFlow.mapKey({ request: ProductRequest => postNuxMlRequest }),
+        postNutwitterMlFlow.mapKey({ request: ProductRequest => postNutwitterMlRequest }),
         promotedAccountsFlow.mapKey(mkPromotedAccountsRequest))
     }
   }
 
   override val blender: Transform[ProductRequest, Recommendation] = {
-    promotedAccountsBlender.mapTarget[ProductRequest](getMaxResults)
+    promotedAccountsBlender.mapTarget[ProductRequest](getMatwitterResults)
   }
 
   private val identityTransform = new IdentityTransform[ProductRequest, Recommendation]
@@ -69,7 +69,7 @@ class HomeTimelineProduct @Inject() (
     Stitch.value(request.params(EnableProduct))
 
   override def layout: Option[Layout] = {
-    productMixerProduct.map { product =>
+    productMitwittererProduct.map { product =>
       val homeTimelineStrings = productScope.let(product) {
         injector.instance[HomeTimelineStrings]
       }
@@ -83,7 +83,7 @@ class HomeTimelineProduct @Inject() (
               homeTimelineStrings.whoToFollowFollowedByManyUserDoubleString,
               homeTimelineStrings.whoToFollowFollowedByManyUserMultipleString
             ),
-            GeoContextProof(homeTimelineStrings.whoToFollowPopularInCountryKey)
+            GeoContetwittertProof(homeTimelineStrings.whoToFollowPopularInCountryKey)
           )),
         footer = Some(
           FooterConfig(
@@ -92,23 +92,23 @@ class HomeTimelineProduct @Inject() (
     }
   }
 
-  override def productMixerProduct: Option[request.Product] = Some(HTLProductMixer)
+  override def productMitwittererProduct: Option[request.Product] = Some(HTLProductMitwitterer)
 
   private[home_timeline] def mkPromotedAccountsRequest(
     req: ProductRequest
   ): PromotedAccountsFlowRequest = {
     PromotedAccountsFlowRequest(
-      req.recommendationRequest.clientContext,
+      req.recommendationRequest.clientContetwittert,
       req.params,
       req.recommendationRequest.displayLocation,
       None,
-      req.recommendationRequest.excludedIds.getOrElse(Nil)
+      req.recommendationRequest.etwittercludedIds.getOrElse(Nil)
     )
   }
 
-  private[home_timeline] def getMaxResults(req: ProductRequest): Int = {
-    req.recommendationRequest.maxResults.getOrElse(
-      req.params(DefaultMaxResults)
+  private[home_timeline] def getMatwitterResults(req: ProductRequest): Int = {
+    req.recommendationRequest.matwitterResults.getOrElse(
+      req.params(DefaultMatwitterResults)
     )
   }
 }

@@ -6,15 +6,15 @@ import com.twitter.scalding._
 import com.twitter.scalding.commons.source.VersionedKeyValSource
 import com.twitter.scalding.typed.TypedPipe
 import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv2.remote_access.EtwitterplicitLocation
 import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.job.TwitterExecutionApp
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.NormsAndCountsFixedPathSource
+import com.twitter.simclusters_v2.hdfs_sources.NormsAndCountsFitwitteredPathSource
 import com.twitter.simclusters_v2.hdfs_sources.ProducerNormsAndCountsScalaDataset
 import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedInScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserAndNeighborsFixedPathSource
+import com.twitter.simclusters_v2.hdfs_sources.UserAndNeighborsFitwitteredPathSource
 import com.twitter.simclusters_v2.hdfs_sources.UserUserNormalizedGraphScalaDataset
 import com.twitter.simclusters_v2.scalding.BipartiteClusterEvaluationClasses._
 import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
@@ -26,14 +26,14 @@ import com.twitter.simclusters_v2.thriftscala.NormsAndCounts
 import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
 import scala.collection.JavaConverters._
 
-object BipartiteClusterEvaluation extends TwitterExecutionApp {
+object BipartiteClusterEvaluation etwittertends TwitterEtwitterecutionApp {
 
   implicit val tz: java.util.TimeZone = DateOps.UTC
   implicit val dp = DateParser.default
 
   private def getClusterL2Norms(
     knownFor: TypedPipe[(Long, Array[(Int, Float)])]
-  ): Execution[Map[Int, Float]] = {
+  ): Etwitterecution[Map[Int, Float]] = {
     knownFor
       .flatMap {
         case (_, clusterArray) =>
@@ -43,13 +43,13 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
           }
       }
       .sum
-      .getExecution
-      .map(_.mapValues { x => math.sqrt(x).toFloat })
+      .getEtwitterecution
+      .map(_.mapValues { twitter => math.sqrt(twitter).toFloat })
   }
 
   def l2NormalizeKnownFor(
     knownFor: TypedPipe[(Long, Array[(Int, Float)])]
-  ): Execution[TypedPipe[(Long, Array[(Int, Float)])]] = {
+  ): Etwitterecution[TypedPipe[(Long, Array[(Int, Float)])]] = {
     getClusterL2Norms(knownFor).map { clusterToNorms =>
       knownFor.mapValues { clusterScoresArray =>
         clusterScoresArray.map {
@@ -74,9 +74,9 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
    * --outputDir /user/frigate/your_ldap/dirFor_updatedKnownFor20M_145K_dec11_usingSims20190127_unnormalizedInputScores/bpQualityForInterestedInUsing20190329On20190329Graph_perCluster \
    * --toEmailAddress your_ldap@twitter.com --modelVersion 20M_145K_updated
    */
-  override def job: Execution[Unit] = Execution.getConfigMode.flatMap {
+  override def job: Etwitterecution[Unit] = Etwitterecution.getConfigMode.flatMap {
     case (config, mode) =>
-      Execution.withId { implicit uniqueId =>
+      Etwitterecution.withId { implicit uniqueId =>
         val args = config.getArgs
 
         val interestedIn = args.optional("interestedInDir") match {
@@ -89,7 +89,7 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
                 SimclustersV2InterestedInScalaDataset,
                 Days(20)
               )
-              .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+              .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
               .toTypedPipe
               .map {
                 case KeyVal(key, value) => (key, value)
@@ -110,56 +110,56 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
 
         val toEmailAddressOpt = args.optional("toEmailAddress")
 
-        val knownForExec = if (shouldL2NormalizeKnownFor) {
+        val knownForEtwitterec = if (shouldL2NormalizeKnownFor) {
           l2NormalizeKnownFor(inputKnownFor)
         } else {
-          Execution.from(inputKnownFor)
+          Etwitterecution.from(inputKnownFor)
         }
 
-        val finalExec = knownForExec.flatMap { knownFor =>
+        val finalEtwitterec = knownForEtwitterec.flatMap { knownFor =>
           val graph = args.optional("graphInputDir") match {
             case Some(dir) =>
-              TypedPipe.from(UserAndNeighborsFixedPathSource(dir))
+              TypedPipe.from(UserAndNeighborsFitwitteredPathSource(dir))
             case None =>
               DAL
                 .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(20))
-                .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+                .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
                 .toTypedPipe
           }
 
           val producerNormsAndCounts = args.optional("normsAndCountsDir") match {
             case Some(dir) =>
-              TypedPipe.from(NormsAndCountsFixedPathSource(args(dir)))
+              TypedPipe.from(NormsAndCountsFitwitteredPathSource(args(dir)))
             case None =>
               DAL
                 .readMostRecentSnapshotNoOlderThan(ProducerNormsAndCountsScalaDataset, Days(20))
-                .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+                .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
                 .toTypedPipe
           }
 
-          val clusterIncomingVolumesExec = loadOrMake(
+          val clusterIncomingVolumesEtwitterec = loadOrMake(
             computeClusterIncomingVolumes(knownFor, producerNormsAndCounts, useLogFavWeights),
             modelVersion,
             args("incomingVolumesResultsDir")
           )
 
-          val resultsWithOutgoingVolumesExec = loadOrMake(
+          val resultsWithOutgoingVolumesEtwitterec = loadOrMake(
             getResultsWithOutgoingVolumes(graph, interestedIn, useLogFavWeights),
             modelVersion,
             args("outgoingVolumesResultsDir")
           )
 
-          val finalPerClusterResultsExec =
+          val finalPerClusterResultsEtwitterec =
             finalPerClusterResults(
               knownFor,
               interestedIn,
-              resultsWithOutgoingVolumesExec,
-              clusterIncomingVolumesExec)
+              resultsWithOutgoingVolumesEtwitterec,
+              clusterIncomingVolumesEtwitterec)
               .flatMap { pipe => loadOrMake(pipe, modelVersion, args("outputDir")) }
 
-          finalPerClusterResultsExec.flatMap { finalPerClusterResults =>
+          finalPerClusterResultsEtwitterec.flatMap { finalPerClusterResults =>
             val perClusterResults = finalPerClusterResults.values
-            val distributionResultsExec = getClusterResultsSummary(perClusterResults).map {
+            val distributionResultsEtwitterec = getClusterResultsSummary(perClusterResults).map {
               case Some(summary) =>
                 "Summary of results across clusters: \n" +
                   Util.prettyJsonMapper.writeValueAsString(summary)
@@ -167,7 +167,7 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
                 "No summary of results! The cluster level results pipe must be empty!"
             }
 
-            val overallResultsExec = perClusterResults.sum.toOptionExecution.map {
+            val overallResultsEtwitterec = perClusterResults.sum.toOptionEtwitterecution.map {
               case Some(overallQuality) =>
                 "Overall Quality: \n" +
                   Util.prettyJsonMapper.writeValueAsString(
@@ -177,7 +177,7 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
                 "No overall quality! The cluster level results pipe must be empty!"
             }
 
-            Execution.zip(distributionResultsExec, overallResultsExec).map {
+            Etwitterecution.zip(distributionResultsEtwitterec, overallResultsEtwitterec).map {
               case (distResults, overallResults) =>
                 toEmailAddressOpt.foreach { address =>
                   Util.sendEmail(
@@ -190,7 +190,7 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
             }
           }
         }
-        Util.printCounters(finalExec)
+        Util.printCounters(finalEtwitterec)
       }
   }
 
@@ -306,7 +306,7 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
     useLogFavWeights: Boolean
   ): TypedPipe[(Int, BipartiteClusterQuality)] = {
     producerNormsAndCounts
-      .map { x => (x.userId, x) }
+      .map { twitter => (twitter.userId, twitter) }
       .join(knownFor)
       .withReducers(100)
       .flatMap {
@@ -344,7 +344,7 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
     pipe: TypedPipe[(Int, BipartiteClusterQuality)],
     modelVersion: String,
     path: String
-  ): Execution[TypedPipe[(Int, BipartiteClusterQuality)]] = {
+  ): Etwitterecution[TypedPipe[(Int, BipartiteClusterQuality)]] = {
     val mapped = pipe.map {
       case (clusterId, struct) => ((modelVersion, clusterId), struct)
     }
@@ -358,11 +358,11 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
     pipe: TypedPipe[(K, V)],
     dest: VersionedKeyValSource[K, V],
     path: String
-  ): Execution[TypedPipe[(K, V)]] =
-    Execution.getMode.flatMap { mode =>
-      if (dest.resourceExists(mode)) {
+  ): Etwitterecution[TypedPipe[(K, V)]] =
+    Etwitterecution.getMode.flatMap { mode =>
+      if (dest.resourceEtwitterists(mode)) {
         println(s"validated path $path")
-        Execution.from(TypedPipe.from(dest))
+        Etwitterecution.from(TypedPipe.from(dest))
       } else {
         println(s"Could not load from $path")
         pipe.writeThrough(dest)
@@ -372,19 +372,19 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
   def precisionOfWholeGraph(
     knownFor: TypedPipe[(Long, Array[(Int, Float)])],
     interestedIn: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    clusterIncomingVolumesExec: Execution[TypedPipe[(Int, BipartiteClusterQuality)]]
-  ): Execution[Option[Double]] = {
-    val knownForSizeExec = knownFor.aggregate(Aggregator.size).toOptionExecution
-    val interestedInSizeExec =
-      interestedIn.aggregate(Aggregator.size).toOptionExecution
-    val numExec = clusterIncomingVolumesExec.flatMap { volumes =>
-      volumes.values.flatMap(_.favWtSumOfIncomingFavEdges).sum.toOptionExecution
+    clusterIncomingVolumesEtwitterec: Etwitterecution[TypedPipe[(Int, BipartiteClusterQuality)]]
+  ): Etwitterecution[Option[Double]] = {
+    val knownForSizeEtwitterec = knownFor.aggregate(Aggregator.size).toOptionEtwitterecution
+    val interestedInSizeEtwitterec =
+      interestedIn.aggregate(Aggregator.size).toOptionEtwitterecution
+    val numEtwitterec = clusterIncomingVolumesEtwitterec.flatMap { volumes =>
+      volumes.values.flatMap(_.favWtSumOfIncomingFavEdges).sum.toOptionEtwitterecution
     }
-    Execution.zip(numExec, interestedInSizeExec, knownForSizeExec).map {
+    Etwitterecution.zip(numEtwitterec, interestedInSizeEtwitterec, knownForSizeEtwitterec).map {
       case (Some(num), Some(interestedInSize), Some(knownForSize)) =>
         Some(num / interestedInSize / knownForSize)
-      case x @ _ =>
-        println("Precision of whole graph zip: " + x)
+      case twitter @ _ =>
+        println("Precision of whole graph zip: " + twitter)
         None
     }
   }
@@ -392,16 +392,16 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
   def finalPerClusterResults(
     knownFor: TypedPipe[(Long, Array[(Int, Float)])],
     interestedIn: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    resultsWithOutgoingVolumesExec: Execution[TypedPipe[(Int, BipartiteClusterQuality)]],
-    incomingVolumesExec: Execution[TypedPipe[(Int, BipartiteClusterQuality)]]
-  ): Execution[TypedPipe[(Int, BipartiteClusterQuality)]] = {
+    resultsWithOutgoingVolumesEtwitterec: Etwitterecution[TypedPipe[(Int, BipartiteClusterQuality)]],
+    incomingVolumesEtwitterec: Etwitterecution[TypedPipe[(Int, BipartiteClusterQuality)]]
+  ): Etwitterecution[TypedPipe[(Int, BipartiteClusterQuality)]] = {
     val knownForTranspose = KnownForSources.transpose(knownFor)
 
-    val precisionOfWholeGraphExec =
-      precisionOfWholeGraph(knownFor, interestedIn, incomingVolumesExec)
+    val precisionOfWholeGraphEtwitterec =
+      precisionOfWholeGraph(knownFor, interestedIn, incomingVolumesEtwitterec)
 
-    Execution
-      .zip(resultsWithOutgoingVolumesExec, incomingVolumesExec, precisionOfWholeGraphExec)
+    Etwitterecution
+      .zip(resultsWithOutgoingVolumesEtwitterec, incomingVolumesEtwitterec, precisionOfWholeGraphEtwitterec)
       .map {
         case (resultsWithOutgoingVolumes, clusterIncomingVolumes, precisionOfWholeGraph) =>
           println("Precision of whole graph " + precisionOfWholeGraph)
@@ -435,8 +435,8 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
       sampledEdges.map { sampledEdge =>
         val knownForScore = knownFor.getOrElse(sampledEdge.followeeId, 0.0f)
         sampledEdge.copy(
-          predictedFollowScore = sampledEdge.followScoreToCluster.map { x => x * knownForScore },
-          predictedFavScore = sampledEdge.favScoreToCluster.map { x => x * knownForScore }
+          predictedFollowScore = sampledEdge.followScoreToCluster.map { twitter => twitter * knownForScore },
+          predictedFavScore = sampledEdge.favScoreToCluster.map { twitter => twitter * knownForScore }
         )
       }
     }
@@ -453,12 +453,12 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
       Util.computeCorrelation(pairs.iterator)
     }
     val relativePrecisionNum = {
-      if (qualityWithOutgoingVolumes.interestedInSize.exists(_ > 0) && knownFor.nonEmpty) {
+      if (qualityWithOutgoingVolumes.interestedInSize.etwitterists(_ > 0) && knownFor.nonEmpty) {
         qualityWithOutgoingVolumes.favWtSumOfInClusterFavEdges
           .getOrElse(0.0) / qualityWithOutgoingVolumes.interestedInSize.get / knownFor.size
       } else 0.0
     }
-    val relativePrecision = if (precisionOfWholeGraph.exists(_ > 0.0)) {
+    val relativePrecision = if (precisionOfWholeGraph.etwitterists(_ > 0.0)) {
       Some(relativePrecisionNum / precisionOfWholeGraph.get)
     } else None
     qualityWithOutgoingVolumes.copy(
@@ -476,10 +476,10 @@ object BipartiteClusterEvaluation extends TwitterExecutionApp {
   }
 }
 
-object DumpBpQuality extends TwitterExecutionApp {
-  def job: Execution[Unit] = Execution.getConfigMode.flatMap {
+object DumpBpQuality etwittertends TwitterEtwitterecutionApp {
+  def job: Etwitterecution[Unit] = Etwitterecution.getConfigMode.flatMap {
     case (config, mode) =>
-      Execution.withId { implicit uniqueId =>
+      Etwitterecution.withId { implicit uniqueId =>
         val args = config.getArgs
         val inputDir = args("inputDir")
 
@@ -505,7 +505,7 @@ object DumpBpQuality extends TwitterExecutionApp {
                   .writeValueAsString(rec)
                   .replaceAll("\n", " ")
             }
-            .toIterableExecution
+            .toIterableEtwitterecution
             .map { strings => println(strings.mkString("\n")) }
         }
       }

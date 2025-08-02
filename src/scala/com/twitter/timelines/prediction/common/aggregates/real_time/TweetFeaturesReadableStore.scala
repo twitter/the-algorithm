@@ -14,7 +14,7 @@ class TweetFeaturesReadableStore(
   featureStoreClient: FeatureStoreClient,
   tweetEntity: Entity[TweetId],
   tweetFeaturesAdapter: TimelinesAdapterBase[PredictionRecord])
-    extends ReadableStore[Set[Long], DataRecord] {
+    etwittertends ReadableStore[Set[Long], DataRecord] {
 
   override def multiGet[K <: Set[Long]](keys: Set[K]): Map[K, Future[Option[DataRecord]]] = {
     val orderedKeys: Seq[K] = keys.toSeq
@@ -39,12 +39,12 @@ class TweetFeaturesReadableStore(
     orderedKeys: Seq[K],
     predictionRecordsFut: Future[Seq[PredictionRecord]]
   ): Map[K, Future[Option[DataRecord]]] = {
-    orderedKeys.zipWithIndex.map {
-      case (tweetIdSet, index) =>
+    orderedKeys.zipWithIndetwitter.map {
+      case (tweetIdSet, indetwitter) =>
         val dataRecordFutOpt: Future[Option[DataRecord]] = predictionRecordsFut.map {
           predictionRecords =>
-            predictionRecords.lift(index).flatMap { predictionRecordAtIndex: PredictionRecord =>
-              tweetFeaturesAdapter.adaptToDataRecords(predictionRecordAtIndex).asScala.headOption
+            predictionRecords.lift(indetwitter).flatMap { predictionRecordAtIndetwitter: PredictionRecord =>
+              tweetFeaturesAdapter.adaptToDataRecords(predictionRecordAtIndetwitter).asScala.headOption
             }
         }
         (tweetIdSet, dataRecordFutOpt)

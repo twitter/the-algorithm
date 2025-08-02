@@ -9,7 +9,7 @@ import com.twitter.notificationservice.feedback.thriftscala.InlineFeedback
 import com.twitter.notificationservice.feedback.thriftscala.FeedbackValue
 import com.twitter.notificationservice.feedback.thriftscala.YesOrNoAnswer
 
-object FeedbackTypeEnum extends Enumeration {
+object FeedbackTypeEnum etwittertends Enumeration {
   val Unknown = Value
   val CaretDislike = Value
   val InlineDislike = Value
@@ -43,7 +43,7 @@ trait FeedbackModel {
 case class CaretFeedbackModel(
   caretFeedbackDetails: CaretFeedbackDetails,
   notificationOpt: Option[FrigateNotification] = None)
-    extends FeedbackModel {
+    etwittertends FeedbackModel {
 
   override def timestampMs: Long = caretFeedbackDetails.eventTimestamp
 
@@ -65,7 +65,7 @@ case class CaretFeedbackModel(
 case class InlineFeedbackModel(
   feedback: FeedbackPromptValue,
   notificationOpt: Option[FrigateNotification] = None)
-    extends FeedbackModel {
+    etwittertends FeedbackModel {
 
   override def timestampMs: Long = feedback.createdAt.inMilliseconds
 
@@ -89,7 +89,7 @@ case class InlineFeedbackModel(
 case class PromptFeedbackModel(
   feedback: FeedbackPromptValue,
   notificationOpt: Option[FrigateNotification] = None)
-    extends FeedbackModel {
+    etwittertends FeedbackModel {
 
   override def timestampMs: Long = feedback.createdAt.inMilliseconds
 

@@ -45,7 +45,7 @@ object PartialEntityCleaner {
 
   private[this] val urls =
     clean[UrlEntity](e =>
-      isNullOrEmpty(e.url) || isNullOrEmpty(e.expanded) || isNullOrEmpty(e.display))
+      isNullOrEmpty(e.url) || isNullOrEmpty(e.etwitterpanded) || isNullOrEmpty(e.display))
 
   private[this] val media =
     Mutation[Seq[MediaEntity]] { mediaEntities =>
@@ -56,13 +56,13 @@ object PartialEntityCleaner {
     }
 
   def isPartialMedia(e: MediaEntity): Boolean =
-    e.fromIndex < 0 ||
-      e.toIndex <= 0 ||
+    e.fromIndetwitter < 0 ||
+      e.toIndetwitter <= 0 ||
       isNullOrEmpty(e.url) ||
       isNullOrEmpty(e.displayUrl) ||
       isNullOrEmpty(e.mediaUrl) ||
       isNullOrEmpty(e.mediaUrlHttps) ||
-      isNullOrEmpty(e.expandedUrl) ||
+      isNullOrEmpty(e.etwitterpandedUrl) ||
       e.mediaInfo.isEmpty ||
       e.mediaKey.isEmpty ||
       (MediaKeyClassifier.isImage(MediaKeyUtil.get(e)) && containsInvalidSizeVariant(e.sizes))
@@ -71,10 +71,10 @@ object PartialEntityCleaner {
     clean[UserMention](e => e.screenName.isEmpty || e.name.isEmpty)
 
   def isNullOrEmpty(optString: Option[String]): Boolean =
-    optString.isEmpty || optString.exists(isNullOrEmpty(_))
+    optString.isEmpty || optString.etwitterists(isNullOrEmpty(_))
 
   def isNullOrEmpty(str: String): Boolean = str == null || str.isEmpty
 
   def containsInvalidSizeVariant(sizes: Set[MediaSize]): Boolean =
-    sizes.exists(size => size.height == 0 || size.width == 0)
+    sizes.etwitterists(size => size.height == 0 || size.width == 0)
 }

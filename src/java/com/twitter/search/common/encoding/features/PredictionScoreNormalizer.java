@@ -24,7 +24,7 @@ public class PredictionScoreNormalizer {
   /**
    * Returns the normalized int value for prediction score {@code score} by multiplying
    * by {@code normalizingBase}, and round the result.
-   * @throws IllegalArgumentException when parameter {@code score} is not within [0.0, 1.0]
+   * @throws IllegalArgumentEtwitterception when parameter {@code score} is not within [0.0, 1.0]
    */
   public int normalize(double score) {
     Preconditions.checkArgument(isScoreWithinRange(score));
@@ -33,12 +33,12 @@ public class PredictionScoreNormalizer {
 
   /**
    * Converts the normalized int value back to a double score by dividing by {@code normalizingBase}
-   * @throws IllegalStateException when the denormalized value is not within [0.0, 1.0]
+   * @throws IllegalStateEtwitterception when the denormalized value is not within [0.0, 1.0]
    */
   public double denormalize(int normalizedScore) {
     double denormalizedValue = normalizedScore / this.normalizingBase;
     if (!isScoreWithinRange(denormalizedValue)) {
-      throw new IllegalStateException(
+      throw new IllegalStateEtwitterception(
           String.format("The denormalized value %s is not within [0.0, 1.0]", denormalizedValue)
       );
     }

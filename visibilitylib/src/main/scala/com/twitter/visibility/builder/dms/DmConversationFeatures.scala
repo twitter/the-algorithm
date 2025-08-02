@@ -13,7 +13,7 @@ import com.twitter.visibility.common.UserId
 import com.twitter.visibility.common.dm_sources.DmConversationSource
 import com.twitter.visibility.features._
 
-case class InvalidDmConversationFeatureException(message: String) extends Exception(message)
+case class InvalidDmConversationFeatureEtwitterception(message: String) etwittertends Etwitterception(message)
 
 class DmConversationFeatures(
   dmConversationSource: DmConversationSource,
@@ -33,11 +33,11 @@ class DmConversationFeatures(
         DmConversationHasValidLastReadableEventId,
         dmConversationHasValidLastReadableEventId(dmConversationId, viewerIdOpt))
       .withFeature(
-        DmConversationInfoExists,
-        dmConversationInfoExists(dmConversationId, viewerIdOpt))
+        DmConversationInfoEtwitterists,
+        dmConversationInfoEtwitterists(dmConversationId, viewerIdOpt))
       .withFeature(
-        DmConversationTimelineExists,
-        dmConversationTimelineExists(dmConversationId, viewerIdOpt))
+        DmConversationTimelineEtwitterists,
+        dmConversationTimelineEtwitterists(dmConversationId, viewerIdOpt))
       .withFeature(
         AuthorIsSuspended,
         dmConversationHasSuspendedParticipant(dmConversationId, viewerIdOpt))
@@ -61,10 +61,10 @@ class DmConversationFeatures(
           case Some(ConversationType.OneToOneDm | ConversationType.SecretOneToOneDm) =>
             Stitch.True
           case None =>
-            Stitch.exception(InvalidDmConversationFeatureException("Conversation type not found"))
+            Stitch.etwitterception(InvalidDmConversationFeatureEtwitterception("Conversation type not found"))
           case _ => Stitch.False
         }
-      case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
+      case _ => Stitch.etwitterception(InvalidDmConversationFeatureEtwitterception("Viewer id missing"))
     }
 
   private[dms] def dmConversationHasEmptyTimeline(
@@ -83,7 +83,7 @@ class DmConversationFeatures(
               supportsReactions = Some(true)
             )
           ),
-          maxCount = 10
+          matwitterCount = 10
         )
       ).map(_.forall(entries => entries.isEmpty))
 
@@ -94,12 +94,12 @@ class DmConversationFeatures(
     viewerIdOpt match {
       case Some(viewerId) =>
         dmConversationSource
-          .getConversationLastReadableEventId(dmConversationId, viewerId).map(_.exists(id =>
+          .getConversationLastReadableEventId(dmConversationId, viewerId).map(_.etwitterists(id =>
             id > 0L))
-      case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
+      case _ => Stitch.etwitterception(InvalidDmConversationFeatureEtwitterception("Viewer id missing"))
     }
 
-  private[dms] def dmConversationInfoExists(
+  private[dms] def dmConversationInfoEtwitterists(
     dmConversationId: DmConversationId,
     viewerIdOpt: Option[UserId]
   ): Stitch[Boolean] =
@@ -107,10 +107,10 @@ class DmConversationFeatures(
       case Some(viewerId) =>
         dmConversationSource
           .getDmConversationInfo(dmConversationId, viewerId).map(_.isDefined)
-      case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
+      case _ => Stitch.etwitterception(InvalidDmConversationFeatureEtwitterception("Viewer id missing"))
     }
 
-  private[dms] def dmConversationTimelineExists(
+  private[dms] def dmConversationTimelineEtwitterists(
     dmConversationId: DmConversationId,
     viewerIdOpt: Option[UserId]
   ): Stitch[Boolean] =
@@ -126,7 +126,7 @@ class DmConversationFeatures(
               supportsReactions = Some(true)
             )
           ),
-          maxCount = 1
+          matwitterCount = 1
         )
       ).map {
         case Some(TimelineLookupState.NotFound) | None => false
@@ -146,11 +146,11 @@ class DmConversationFeatures(
               Stitch
                 .collect(participants.map(condition)).map(_.contains(true)).rescue {
                   case NotFound =>
-                    Stitch.exception(InvalidDmConversationFeatureException("User not found"))
+                    Stitch.etwitterception(InvalidDmConversationFeatureEtwitterception("User not found"))
                 }
             case _ => Stitch.False
           }
-      case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
+      case _ => Stitch.etwitterception(InvalidDmConversationFeatureEtwitterception("Viewer id missing"))
     }
 
   def dmConversationHasSuspendedParticipant(
@@ -191,6 +191,6 @@ class DmConversationFeatures(
             case Some(participants) => participants.contains(viewerId)
             case _ => false
           }
-      case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
+      case _ => Stitch.etwitterception(InvalidDmConversationFeatureEtwitterception("Viewer id missing"))
     }
 }

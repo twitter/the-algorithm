@@ -1,6 +1,6 @@
 package com.twitter.simclusters_v2.scalding.evaluation
 
-import com.twitter.scalding.{Execution, TypedPipe, UniqueID}
+import com.twitter.scalding.{Etwitterecution, TypedPipe, UniqueID}
 import com.twitter.simclusters_v2.thriftscala.{
   CandidateTweet,
   CandidateTweets,
@@ -22,7 +22,7 @@ case class UserEngagerCounts(
   numDistinctRetweetEngagers: Long)
 
 /**
- * Tweet side statistics, e.x. number of tweets, authors, etc.
+ * Tweet side statistics, e.twitter. number of tweets, authors, etc.
  */
 case class TweetStats(
   numTweets: Long,
@@ -44,7 +44,7 @@ case class LabelCorrelations(
   pearsonCoefficientForLikes: Double,
   cosineSimilarityGlobal: Double,
   cosineSimilarityPerUserAvg: Double) {
-  private val f = java.text.NumberFormat.getInstance
+  private val f = java.tetwittert.NumberFormat.getInstance
   def format(): String = {
     Seq(
       s"\tPearson Coefficient: ${f.format(pearsonCoefficientForLikes)}",
@@ -71,7 +71,7 @@ case class LabeledTweetsResults(
   tweetEngagementCounts: TweetEngagementCounts,
   tweetEngagementRates: TweetEngagementRates,
   labelCorrelations: Option[LabelCorrelations] = None) {
-  private val f = java.text.NumberFormat.getInstance
+  private val f = java.tetwittert.NumberFormat.getInstance
 
   def format(title: String = ""): String = {
     val str = Seq(
@@ -102,7 +102,7 @@ case class LabeledTweetsResults(
 }
 
 case class CandidateResults(tweetStats: TweetStats, numDistinctTargetUsers: Long) {
-  private val f = java.text.NumberFormat.getInstance
+  private val f = java.tetwittert.NumberFormat.getInstance
 
   def format(title: String = ""): String = {
     val str = Seq(
@@ -126,7 +126,7 @@ object EvaluationMetricHelper {
   }
 
   /**
-   * Core engagements are user actions that count towards core metrics, e.x. like, RT, etc
+   * Core engagements are user actions that count towards core metrics, e.twitter. like, RT, etc
    */
   private def hasCoreEngagements(labels: TweetLabels): Boolean = {
     labels.isRetweeted ||
@@ -145,7 +145,7 @@ object EvaluationMetricHelper {
   /**
    * Return outer join of reference tweets and candidate tweets, keyed by (targetUserId, tweetId).
    * The output of this can then be reused to fetch the inner join / left / right join,
-   * without having to redo the expensive join
+   * without having to redo the etwitterpensive join
    *
    * NOTE: Assumes the uniqueness of keys (i.e. (targetId, tweetId)). Make sure to dedup tweetIds
    * for each targetId, otherwise .join() will yield duplicate results.
@@ -186,29 +186,29 @@ object EvaluationMetricHelper {
       }
   }
 
-  def getUniqueCount[T](pipe: TypedPipe[T])(implicit ord: scala.Ordering[T]): Execution[Long] = {
+  def getUniqueCount[T](pipe: TypedPipe[T])(implicit ord: scala.Ordering[T]): Etwitterecution[Long] = {
     pipe.distinct
       .aggregate(size)
-      .toOptionExecution
+      .toOptionEtwitterecution
       .map(_.getOrElse(0L))
   }
 
   def countUniqueEngagedUsersBy(
     labeledTweetsPipe: TypedPipe[LabeledTweet],
     f: TweetLabels => Boolean
-  ): Execution[Long] = {
+  ): Etwitterecution[Long] = {
     getUniqueCount[Long](labeledTweetsPipe.collect { case t if f(t.labels) => t.targetUserId })
   }
 
-  def countUniqueLabeledTargetUsers(labeledTweetsPipe: TypedPipe[LabeledTweet]): Execution[Long] = {
+  def countUniqueLabeledTargetUsers(labeledTweetsPipe: TypedPipe[LabeledTweet]): Etwitterecution[Long] = {
     getUniqueCount[Long](labeledTweetsPipe.map(_.targetUserId))
   }
 
-  def countUniqueCandTargetUsers(candidatePipe: TypedPipe[CandidateTweets]): Execution[Long] = {
+  def countUniqueCandTargetUsers(candidatePipe: TypedPipe[CandidateTweets]): Etwitterecution[Long] = {
     getUniqueCount[Long](candidatePipe.map(_.targetUserId))
   }
 
-  def countUniqueLabeledAuthors(labeledTweetPipe: TypedPipe[LabeledTweet]): Execution[Long] = {
+  def countUniqueLabeledAuthors(labeledTweetPipe: TypedPipe[LabeledTweet]): Etwitterecution[Long] = {
     getUniqueCount[Long](labeledTweetPipe.map(_.authorId))
   }
 
@@ -220,7 +220,7 @@ object EvaluationMetricHelper {
     engagementCount: TweetEngagementCounts
   ): TweetEngagementRates = {
     val numTweets = basicStats.numTweets.toDouble
-    if (numTweets <= 0) throw new IllegalArgumentException("Invalid tweet counts")
+    if (numTweets <= 0) throw new IllegalArgumentEtwitterception("Invalid tweet counts")
     val likeRate = engagementCount.like / numTweets
     val rtRate = engagementCount.retweet / numTweets
     val clickRate = engagementCount.click / numTweets
@@ -231,12 +231,12 @@ object EvaluationMetricHelper {
   /**
    * Helper function to calculate the basic stats for a pipe of candidate tweets
    */
-  def getTweetStatsForCandidateExec(
+  def getTweetStatsForCandidateEtwitterec(
     candidatePipe: TypedPipe[CandidateTweets]
-  ): Execution[TweetStats] = {
+  ): Etwitterecution[TweetStats] = {
     val pipe = candidatePipe.map { candTweets =>
       (candTweets.targetUserId, candTweets.recommendedTweets)
-    }.sumByKey // Dedup by targetId, in case there exists multiple entries.
+    }.sumByKey // Dedup by targetId, in case there etwitterists multiple entries.
 
     val distinctTweetPipe = pipe.flatMap(_._2.map(_.tweetId)).distinct.aggregate(size)
 
@@ -249,7 +249,7 @@ object EvaluationMetricHelper {
       .sum
       .map {
         case (numTweets, scoreSum) =>
-          if (numTweets <= 0) throw new IllegalArgumentException("Invalid tweet counts")
+          if (numTweets <= 0) throw new IllegalArgumentEtwitterception("Invalid tweet counts")
           val avgScore = scoreSum / numTweets.toDouble
           (numTweets, avgScore)
       }
@@ -258,15 +258,15 @@ object EvaluationMetricHelper {
         case (numDistinctTweet, (numTweets, avgScore)) =>
           // no author side information for candidate tweets yet
           TweetStats(numTweets, numDistinctTweet, None, Some(avgScore))
-      }.getOrElseExecution(TweetStats(0L, 0L, None, None))
+      }.getOrElseEtwitterecution(TweetStats(0L, 0L, None, None))
   }
 
   /**
    * Helper function to count the total number of engagements
    */
-  def getLabeledEngagementCountExec(
+  def getLabeledEngagementCountEtwitterec(
     labeledTweets: TypedPipe[LabeledTweet]
-  ): Execution[TweetEngagementCounts] = {
+  ): Etwitterecution[TweetEngagementCounts] = {
     labeledTweets
       .map { labeledTweet =>
         val like = toLong(labeledTweet.labels.isLiked)
@@ -281,26 +281,26 @@ object EvaluationMetricHelper {
         case (like, retweet, click, hasEngagement) =>
           TweetEngagementCounts(like, retweet, click, hasEngagement)
       }
-      .getOrElseExecution(TweetEngagementCounts(0L, 0L, 0L, 0L))
+      .getOrElseEtwitterecution(TweetEngagementCounts(0L, 0L, 0L, 0L))
   }
 
   /**
    * Count the total number of unique users who have engaged with tweets
    */
-  def getTargetUserStatsForLabeledTweetsExec(
+  def getTargetUserStatsForLabeledTweetsEtwitterec(
     labeledTweetsPipe: TypedPipe[LabeledTweet]
-  ): Execution[UserEngagerCounts] = {
-    val numUniqueTargetUsersExec = countUniqueLabeledTargetUsers(labeledTweetsPipe)
-    val numUniqueLikeUsersExec =
+  ): Etwitterecution[UserEngagerCounts] = {
+    val numUniqueTargetUsersEtwitterec = countUniqueLabeledTargetUsers(labeledTweetsPipe)
+    val numUniqueLikeUsersEtwitterec =
       countUniqueEngagedUsersBy(labeledTweetsPipe, labels => labels.isLiked)
-    val numUniqueRetweetUsersExec =
+    val numUniqueRetweetUsersEtwitterec =
       countUniqueEngagedUsersBy(labeledTweetsPipe, labels => labels.isRetweeted)
 
-    Execution
+    Etwitterecution
       .zip(
-        numUniqueTargetUsersExec,
-        numUniqueLikeUsersExec,
-        numUniqueRetweetUsersExec
+        numUniqueTargetUsersEtwitterec,
+        numUniqueLikeUsersEtwitterec,
+        numUniqueRetweetUsersEtwitterec
       )
       .map {
         case (numTarget, like, retweet) =>
@@ -315,16 +315,16 @@ object EvaluationMetricHelper {
   /**
    * Helper function to calculate the basic stats for a pipe of labeled tweets.
    */
-  def getTweetStatsForLabeledTweetsExec(
+  def getTweetStatsForLabeledTweetsEtwitterec(
     labeledTweetPipe: TypedPipe[LabeledTweet]
-  ): Execution[TweetStats] = {
-    val uniqueAuthorsExec = countUniqueLabeledAuthors(labeledTweetPipe)
+  ): Etwitterecution[TweetStats] = {
+    val uniqueAuthorsEtwitterec = countUniqueLabeledAuthors(labeledTweetPipe)
 
-    val uniqueTweetExec =
-      labeledTweetPipe.map(_.tweetId).distinct.aggregate(size).getOrElseExecution(0L)
-    val scoresExec = labeledTweetPipe
+    val uniqueTweetEtwitterec =
+      labeledTweetPipe.map(_.tweetId).distinct.aggregate(size).getOrElseEtwitterecution(0L)
+    val scoresEtwitterec = labeledTweetPipe
       .map { t => (t.targetUserId, (1, t.algorithmScore.getOrElse(0.0))) }
-      .sumByKey // Dedup by targetId, in case there exists multiple entries.
+      .sumByKey // Dedup by targetId, in case there etwitterists multiple entries.
       .map {
         case (uid, (c1, c2)) =>
           (c1.toLong, c2)
@@ -332,14 +332,14 @@ object EvaluationMetricHelper {
       .sum
       .map {
         case (numTweets, scoreSum) =>
-          if (numTweets <= 0) throw new IllegalArgumentException("Invalid tweet counts")
+          if (numTweets <= 0) throw new IllegalArgumentEtwitterception("Invalid tweet counts")
           val avgScore = scoreSum / numTweets.toDouble
           (numTweets, Option(avgScore))
       }
-      .getOrElseExecution((0L, None))
+      .getOrElseEtwitterecution((0L, None))
 
-    Execution
-      .zip(uniqueAuthorsExec, uniqueTweetExec, scoresExec)
+    Etwitterecution
+      .zip(uniqueAuthorsEtwitterec, uniqueTweetEtwitterec, scoresEtwitterec)
       .map {
         case (numDistinctAuthors, numUniqueTweets, (numTweets, avgScores)) =>
           TweetStats(numTweets, numUniqueTweets, Some(numDistinctAuthors), avgScores)
@@ -365,12 +365,12 @@ object EvaluationMetricHelper {
    */
   private def getEvaluationResultsForCandidates(
     candidatePipe: TypedPipe[CandidateTweets]
-  ): Execution[CandidateResults] = {
-    val tweetStatsExec = getTweetStatsForCandidateExec(candidatePipe)
-    val numDistinctTargetUsersExec = countUniqueCandTargetUsers(candidatePipe)
+  ): Etwitterecution[CandidateResults] = {
+    val tweetStatsEtwitterec = getTweetStatsForCandidateEtwitterec(candidatePipe)
+    val numDistinctTargetUsersEtwitterec = countUniqueCandTargetUsers(candidatePipe)
 
-    Execution
-      .zip(tweetStatsExec, numDistinctTargetUsersExec)
+    Etwitterecution
+      .zip(tweetStatsEtwitterec, numDistinctTargetUsersEtwitterec)
       .map {
         case (tweetStats, numDistinctTargetUsers) =>
           CandidateResults(tweetStats, numDistinctTargetUsers)
@@ -383,13 +383,13 @@ object EvaluationMetricHelper {
   private def getEvaluationResultsForLabeledTweets(
     labeledTweetPipe: TypedPipe[LabeledTweet],
     getLabelCorrelations: Boolean = false
-  ): Execution[LabeledTweetsResults] = {
-    val tweetStatsExec = getTweetStatsForLabeledTweetsExec(labeledTweetPipe)
-    val userStatsExec = getTargetUserStatsForLabeledTweetsExec(labeledTweetPipe)
-    val engagementCountExec = getLabeledEngagementCountExec(labeledTweetPipe)
+  ): Etwitterecution[LabeledTweetsResults] = {
+    val tweetStatsEtwitterec = getTweetStatsForLabeledTweetsEtwitterec(labeledTweetPipe)
+    val userStatsEtwitterec = getTargetUserStatsForLabeledTweetsEtwitterec(labeledTweetPipe)
+    val engagementCountEtwitterec = getLabeledEngagementCountEtwitterec(labeledTweetPipe)
 
-    val correlationsExec = if (getLabelCorrelations) {
-      Execution
+    val correlationsEtwitterec = if (getLabelCorrelations) {
+      Etwitterecution
         .zip(
           LabelCorrelationsHelper.pearsonCoefficientForLike(labeledTweetPipe),
           LabelCorrelationsHelper.cosineSimilarityForLike(labeledTweetPipe),
@@ -399,11 +399,11 @@ object EvaluationMetricHelper {
             Some(LabelCorrelations(pearsonCoeff, globalCos, avgCos))
         }
     } else {
-      ValuePipe(None).getOrElseExecution(None) // Empty pipe with a None value
+      ValuePipe(None).getOrElseEtwitterecution(None) // Empty pipe with a None value
     }
 
-    Execution
-      .zip(tweetStatsExec, engagementCountExec, userStatsExec, correlationsExec)
+    Etwitterecution
+      .zip(tweetStatsEtwitterec, engagementCountEtwitterec, userStatsEtwitterec, correlationsEtwitterec)
       .map {
         case (tweetStats, engagementCount, engagerCount, correlationsOpt) =>
           val engagementRate = getEngagementRate(tweetStats, engagementCount)
@@ -419,7 +419,7 @@ object EvaluationMetricHelper {
   private def runAllEvalForCandidates(
     candidatePipe: TypedPipe[CandidateTweets],
     outerJoinPipe: TypedPipe[((Long, Long), (Option[ReferenceTweet], Option[CandidateTweet]))]
-  ): Execution[(CandidateResults, CandidateResults)] = {
+  ): Etwitterecution[(CandidateResults, CandidateResults)] = {
     val t0 = System.currentTimeMillis()
 
     val candidateNotInIntersectionPipe =
@@ -431,7 +431,7 @@ object EvaluationMetricHelper {
         .map { case (targetUserId, candTweets) => CandidateTweets(targetUserId, candTweets) }
         .forceToDisk
 
-    Execution
+    Etwitterecution
       .zip(
         getEvaluationResultsForCandidates(candidatePipe),
         getEvaluationResultsForCandidates(candidateNotInIntersectionPipe)
@@ -442,7 +442,7 @@ object EvaluationMetricHelper {
     outerJoinPipe: TypedPipe[((Long, Long), (Option[ReferenceTweet], Option[CandidateTweet]))]
   )(
     implicit uniqueID: UniqueID
-  ): Execution[(LabeledTweetsResults, LabeledTweetsResults, LabeledTweetsResults)] = {
+  ): Etwitterecution[(LabeledTweetsResults, LabeledTweetsResults, LabeledTweetsResults)] = {
     val t0 = System.currentTimeMillis()
     val intersectionTweetsPipe = outerJoinPipe.collect {
       case ((targetUserId, tweetId), (Some(refTweet), Some(candTweet))) =>
@@ -452,7 +452,7 @@ object EvaluationMetricHelper {
     val likedTweetsPipe = intersectionTweetsPipe.filter(_.labels.isLiked)
     val notLikedTweetsPipe = intersectionTweetsPipe.filter(!_.labels.isLiked)
 
-    Execution
+    Etwitterecution
       .zip(
         getEvaluationResultsForLabeledTweets(intersectionTweetsPipe, getLabelCorrelations = true),
         getEvaluationResultsForLabeledTweets(likedTweetsPipe),
@@ -463,7 +463,7 @@ object EvaluationMetricHelper {
   private def runAllEvalForReferences(
     referencePipe: TypedPipe[ReferenceTweets],
     outerJoinPipe: TypedPipe[((Long, Long), (Option[ReferenceTweet], Option[CandidateTweet]))]
-  ): Execution[(LabeledTweetsResults, LabeledTweetsResults)] = {
+  ): Etwitterecution[(LabeledTweetsResults, LabeledTweetsResults)] = {
     val t0 = System.currentTimeMillis()
     val labeledReferenceNotInIntersectionPipe =
       outerJoinPipe.collect {
@@ -471,7 +471,7 @@ object EvaluationMetricHelper {
           LabeledTweet(targetUserId, refTweet.tweetId, refTweet.authorId, refTweet.labels, None)
       }.forceToDisk
 
-    Execution
+    Etwitterecution
       .zip(
         getEvaluationResultsForLabeledTweets(getLabeledReference(referencePipe)),
         getEvaluationResultsForLabeledTweets(labeledReferenceNotInIntersectionPipe)
@@ -483,27 +483,27 @@ object EvaluationMetricHelper {
     candidatePipe: TypedPipe[CandidateTweets]
   )(
     implicit uniqueID: UniqueID
-  ): Execution[String] = {
+  ): Etwitterecution[String] = {
     val t0 = System.currentTimeMillis()
 
-    // Force everything to disk to maximize data re-use
-    Execution
+    // Force everything to disk to matwitterimize data re-use
+    Etwitterecution
       .zip(
-        referencePipe.forceToDiskExecution,
-        candidatePipe.forceToDiskExecution
+        referencePipe.forceToDiskEtwitterecution,
+        candidatePipe.forceToDiskEtwitterecution
       ).flatMap {
         case (referenceDiskPipe, candidateDiskPipe) =>
-          outerJoinReferenceAndCandidate(referenceDiskPipe, candidateDiskPipe).forceToDiskExecution
+          outerJoinReferenceAndCandidate(referenceDiskPipe, candidateDiskPipe).forceToDiskEtwitterecution
             .flatMap { outerJoinPipe =>
-              val referenceResultsExec = runAllEvalForReferences(referenceDiskPipe, outerJoinPipe)
-              val intersectionResultsExec = runAllEvalForIntersection(outerJoinPipe)
-              val candidateResultsExec = runAllEvalForCandidates(candidateDiskPipe, outerJoinPipe)
+              val referenceResultsEtwitterec = runAllEvalForReferences(referenceDiskPipe, outerJoinPipe)
+              val intersectionResultsEtwitterec = runAllEvalForIntersection(outerJoinPipe)
+              val candidateResultsEtwitterec = runAllEvalForCandidates(candidateDiskPipe, outerJoinPipe)
 
-              Execution
+              Etwitterecution
                 .zip(
-                  referenceResultsExec,
-                  intersectionResultsExec,
-                  candidateResultsExec
+                  referenceResultsEtwitterec,
+                  intersectionResultsEtwitterec,
+                  candidateResultsEtwitterec
                 ).map {
                   case (
                         (allReference, referenceNotInIntersection),

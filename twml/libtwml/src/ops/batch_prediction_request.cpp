@@ -36,16 +36,16 @@ Outputs
 
 class DecodeAndHashBatchPredictionRequest : public OpKernel {
  public:
-  explicit DecodeAndHashBatchPredictionRequest(OpKernelConstruction* context)
-      : OpKernel(context) {
+  etwitterplicit DecodeAndHashBatchPredictionRequest(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {
     std::vector<int64> keep_features;
     std::vector<int64> keep_codes;
 
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
-    OP_REQUIRES_OK(context, context->GetAttr("decode_mode", &m_decode_mode));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("keep_features", &keep_features));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("keep_codes", &keep_codes));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("decode_mode", &m_decode_mode));
 
-    OP_REQUIRES(context, keep_features.size() == keep_codes.size(),
+    OP_REQUIRES(contetwittert, keep_features.size() == keep_codes.size(),
                 errors::InvalidArgument("keep keys and values must have same size."));
 
 #ifdef USE_DENSE_HASH
@@ -61,14 +61,14 @@ class DecodeAndHashBatchPredictionRequest : public OpKernel {
   twml::Map<int64_t, int64_t> m_keep_map;
   int64 m_decode_mode;
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
       HashedDataRecordResource *resource = nullptr;
-      OP_REQUIRES_OK(context, makeResourceHandle<HashedDataRecordResource>(context, 0, &resource));
+      OP_REQUIRES_OK(contetwittert, makeResourceHandle<HashedDataRecordResource>(contetwittert, 0, &resource));
 
       // Store the input bytes in the resource so it isnt freed before the resource.
       // This is necessary because we are not copying the contents for tensors.
-      resource->input = context->input(0);
+      resource->input = contetwittert->input(0);
       const uint8_t *input_bytes = resource->input.flat<uint8>().data();
       twml::HashedDataRecordReader reader;
       twml::HashedBatchPredictionRequest bpr;
@@ -92,8 +92,8 @@ class DecodeAndHashBatchPredictionRequest : public OpKernel {
       resource->total_size = total_size;
       resource->num_labels = 0;
       resource->num_weights = 0;
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -128,15 +128,15 @@ Outputs
 
 class DecodeBatchPredictionRequest : public OpKernel {
  public:
-  explicit DecodeBatchPredictionRequest(OpKernelConstruction* context)
-      : OpKernel(context) {
+  etwitterplicit DecodeBatchPredictionRequest(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {
     std::vector<int64> keep_features;
     std::vector<int64> keep_codes;
 
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("keep_features", &keep_features));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("keep_codes", &keep_codes));
 
-    OP_REQUIRES(context, keep_features.size() == keep_codes.size(),
+    OP_REQUIRES(contetwittert, keep_features.size() == keep_codes.size(),
                 errors::InvalidArgument("keep keys and values must have same size."));
 
 #ifdef USE_DENSE_HASH
@@ -151,14 +151,14 @@ class DecodeBatchPredictionRequest : public OpKernel {
  private:
   twml::Map<int64_t, int64_t> m_keep_map;
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
       DataRecordResource *resource = nullptr;
-      OP_REQUIRES_OK(context, makeResourceHandle<DataRecordResource>(context, 0, &resource));
+      OP_REQUIRES_OK(contetwittert, makeResourceHandle<DataRecordResource>(contetwittert, 0, &resource));
 
       // Store the input bytes in the resource so it isnt freed before the resource.
       // This is necessary because we are not copying the contents for tensors.
-      resource->input = context->input(0);
+      resource->input = contetwittert->input(0);
       const uint8_t *input_bytes = resource->input.flat<uint8>().data();
       twml::DataRecordReader reader;
       twml::BatchPredictionRequest bpr;
@@ -172,8 +172,8 @@ class DecodeBatchPredictionRequest : public OpKernel {
       resource->num_weights = 0;
       resource->num_labels = 0;
       resource->keep_map = &m_keep_map;
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };

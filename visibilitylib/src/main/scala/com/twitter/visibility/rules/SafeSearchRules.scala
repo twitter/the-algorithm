@@ -3,8 +3,8 @@ package com.twitter.visibility.rules
 import com.twitter.visibility.configapi.params.RuleParam
 import com.twitter.visibility.configapi.params.RuleParams.EnableDownrankSpamReplySectioningRuleParam
 import com.twitter.visibility.configapi.params.RuleParams.EnableNotGraduatedSearchDropRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableNsfwTextSectioningRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.NotGraduatedUserLabelRuleHoldbackExperimentParam
+import com.twitter.visibility.configapi.params.RuleParams.EnableNsfwTetwittertSectioningRuleParam
+import com.twitter.visibility.configapi.params.RuleParams.NotGraduatedUserLabelRuleHoldbackEtwitterperimentParam
 import com.twitter.visibility.models.TweetSafetyLabelType
 import com.twitter.visibility.models.UserLabelValue
 import com.twitter.visibility.rules.Condition.And
@@ -22,7 +22,7 @@ import com.twitter.visibility.rules.RuleActionSourceBuilder.TweetSafetyLabelSour
 case object SafeSearchTweetRules {
 
   object SafeSearchAbusiveTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
+      etwittertends NonAuthorViewerOptInFilteringWithTweetLabelRule(
         Drop(Unspecified),
         TweetSafetyLabelType.Abusive
       )
@@ -32,65 +32,65 @@ case object SafeSearchTweetRules {
   }
 
   object SafeSearchNsfwHighPrecisionTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
+      etwittertends NonAuthorViewerOptInFilteringWithTweetLabelRule(
         Drop(Nsfw),
         TweetSafetyLabelType.NsfwHighPrecision
       )
 
   object SafeSearchGoreAndViolenceHighPrecisionTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
+      etwittertends NonAuthorViewerOptInFilteringWithTweetLabelRule(
         Drop(Nsfw),
         TweetSafetyLabelType.GoreAndViolenceHighPrecision
       )
 
   object SafeSearchNsfwReportedHeuristicsTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
+      etwittertends NonAuthorViewerOptInFilteringWithTweetLabelRule(
         Drop(Nsfw),
         TweetSafetyLabelType.NsfwReportedHeuristics
       )
 
   object SafeSearchGoreAndViolenceReportedHeuristicsTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
+      etwittertends NonAuthorViewerOptInFilteringWithTweetLabelRule(
         Drop(Nsfw),
         TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
       )
 
   object SafeSearchNsfwCardImageTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
+      etwittertends NonAuthorViewerOptInFilteringWithTweetLabelRule(
         Drop(Nsfw),
         TweetSafetyLabelType.NsfwCardImage
       )
 
   object SafeSearchNsfwHighRecallTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
+      etwittertends NonAuthorViewerOptInFilteringWithTweetLabelRule(
         Drop(Nsfw),
         TweetSafetyLabelType.NsfwHighRecall
       )
 
   object SafeSearchNsfwVideoTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
+      etwittertends NonAuthorViewerOptInFilteringWithTweetLabelRule(
         Drop(Nsfw),
         TweetSafetyLabelType.NsfwVideo
       )
 
-  object SafeSearchNsfwTextTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
+  object SafeSearchNsfwTetwittertTweetLabelRule
+      etwittertends NonAuthorViewerOptInFilteringWithTweetLabelRule(
         Drop(Nsfw),
-        TweetSafetyLabelType.NsfwText
+        TweetSafetyLabelType.NsfwTetwittert
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTextSectioningRuleParam)
+    override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTetwittertSectioningRuleParam)
   }
 
-  object SafeSearchNsfwTextAuthorLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+  object SafeSearchNsfwTetwittertAuthorLabelRule
+      etwittertends ViewerOptInFilteringOnSearchUserLabelRule(
         Drop(Nsfw),
         UserLabelValue.DownrankSpamReply
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTextSectioningRuleParam)
+    override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTetwittertSectioningRuleParam)
   }
 
   object SafeSearchGoreAndViolenceTweetLabelRule
-      extends ConditionWithTweetLabelRule(
+      etwittertends ConditionWithTweetLabelRule(
         Drop(Unspecified),
         And(
           NonAuthorViewer,
@@ -101,13 +101,13 @@ case object SafeSearchTweetRules {
       )
 
   object SafeSearchUntrustedUrlTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
+      etwittertends NonAuthorViewerOptInFilteringWithTweetLabelRule(
         Drop(Unspecified),
         TweetSafetyLabelType.UntrustedUrl
       )
 
   object SafeSearchDownrankSpamReplyTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
+      etwittertends NonAuthorViewerOptInFilteringWithTweetLabelRule(
         Drop(Unspecified),
         TweetSafetyLabelType.DownrankSpamReply
       ) {
@@ -116,7 +116,7 @@ case object SafeSearchTweetRules {
   }
 
   object SafeSearchDownrankSpamReplyAuthorLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+      etwittertends ViewerOptInFilteringOnSearchUserLabelRule(
         Drop(Unspecified),
         UserLabelValue.DownrankSpamReply
       ) {
@@ -125,19 +125,19 @@ case object SafeSearchTweetRules {
   }
 
   object SafeSearchAutomationNonFollowerTweetLabelRule
-      extends NonFollowerViewerOptInFilteringWithTweetLabelRule(
+      etwittertends NonFollowerViewerOptInFilteringWithTweetLabelRule(
         Drop(Unspecified),
         TweetSafetyLabelType.Automation
       )
 
   object SafeSearchDuplicateMentionNonFollowerTweetLabelRule
-      extends NonFollowerViewerOptInFilteringWithTweetLabelRule(
+      etwittertends NonFollowerViewerOptInFilteringWithTweetLabelRule(
         Drop(Unspecified),
         TweetSafetyLabelType.DuplicateMention
       )
 
   object SafeSearchBystanderAbusiveTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
+      etwittertends NonAuthorViewerOptInFilteringWithTweetLabelRule(
         Drop(Unspecified),
         TweetSafetyLabelType.BystanderAbusive
       )
@@ -146,70 +146,70 @@ case object SafeSearchTweetRules {
 case object UnsafeSearchTweetRules {
 
   object UnsafeSearchNsfwHighPrecisionInterstitialAllUsersTweetLabelRule
-      extends ConditionWithTweetLabelRule(
+      etwittertends ConditionWithTweetLabelRule(
         Interstitial(Nsfw),
         Not(ViewerOptInFilteringOnSearch),
         TweetSafetyLabelType.NsfwHighPrecision
       )
 
   object UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelRule
-      extends ConditionWithTweetLabelRule(
+      etwittertends ConditionWithTweetLabelRule(
         Interstitial(Nsfw),
         Not(ViewerOptInFilteringOnSearch),
         TweetSafetyLabelType.GoreAndViolenceHighPrecision
       )
 
   object UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelDropRule
-      extends ConditionWithTweetLabelRule(
+      etwittertends ConditionWithTweetLabelRule(
         Drop(Nsfw),
         Not(ViewerOptInFilteringOnSearch),
         TweetSafetyLabelType.GoreAndViolenceHighPrecision
       )
 
   object UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelRule
-      extends ConditionWithTweetLabelRule(
+      etwittertends ConditionWithTweetLabelRule(
         Interstitial(Nsfw),
         Not(ViewerOptInFilteringOnSearch),
         TweetSafetyLabelType.NsfwReportedHeuristics
       )
 
   object UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelDropRule
-      extends ConditionWithTweetLabelRule(
+      etwittertends ConditionWithTweetLabelRule(
         Drop(Nsfw),
         Not(ViewerOptInFilteringOnSearch),
         TweetSafetyLabelType.NsfwReportedHeuristics
       )
 
   object UnsafeSearchNsfwHighPrecisionAllUsersTweetLabelDropRule
-      extends ConditionWithTweetLabelRule(
+      etwittertends ConditionWithTweetLabelRule(
         Drop(Nsfw),
         Not(ViewerOptInFilteringOnSearch),
         TweetSafetyLabelType.NsfwHighPrecision
       )
 
   object UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule
-      extends ConditionWithTweetLabelRule(
+      etwittertends ConditionWithTweetLabelRule(
         Interstitial(Nsfw),
         Not(ViewerOptInFilteringOnSearch),
         TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
       )
 
   object UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelDropRule
-      extends ConditionWithTweetLabelRule(
+      etwittertends ConditionWithTweetLabelRule(
         Drop(Nsfw),
         Not(ViewerOptInFilteringOnSearch),
         TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
       )
 
   object UnsafeSearchNsfwCardImageAllUsersTweetLabelRule
-      extends ConditionWithTweetLabelRule(
+      etwittertends ConditionWithTweetLabelRule(
         Interstitial(Nsfw),
         Not(ViewerOptInFilteringOnSearch),
         TweetSafetyLabelType.NsfwCardImage
       )
 
   object UnsafeSearchNsfwCardImageAllUsersTweetLabelDropRule
-      extends ConditionWithTweetLabelRule(
+      etwittertends ConditionWithTweetLabelRule(
         Drop(Nsfw),
         Not(ViewerOptInFilteringOnSearch),
         TweetSafetyLabelType.NsfwCardImage
@@ -220,104 +220,104 @@ case object UnsafeSearchTweetRules {
 case object SafeSearchUserRules {
 
   object SafeSearchAbusiveUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+      etwittertends ViewerOptInFilteringOnSearchUserLabelRule(
         Drop(Unspecified),
         UserLabelValue.Abusive
       )
 
   object SafeSearchAbusiveHighRecallUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+      etwittertends ViewerOptInFilteringOnSearchUserLabelRule(
         Drop(Unspecified),
         UserLabelValue.AbusiveHighRecall,
         LoggedOutOrViewerNotFollowingAuthor
       )
 
   object SafeSearchHighRecallUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+      etwittertends ViewerOptInFilteringOnSearchUserLabelRule(
         Drop(Nsfw),
         UserLabelValue.NsfwHighRecall,
         LoggedOutOrViewerNotFollowingAuthor
       )
 
   object SafeSearchCompromisedUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+      etwittertends ViewerOptInFilteringOnSearchUserLabelRule(
         Drop(Unspecified),
         UserLabelValue.Compromised
       )
 
   object SafeSearchDuplicateContentUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+      etwittertends ViewerOptInFilteringOnSearchUserLabelRule(
         Drop(Unspecified),
         UserLabelValue.DuplicateContent
       )
 
   object SafeSearchLowQualityUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+      etwittertends ViewerOptInFilteringOnSearchUserLabelRule(
         Drop(Unspecified),
         UserLabelValue.LowQuality
       )
 
   object SafeSearchNsfwHighPrecisionUserLabelRule
-      extends ConditionWithUserLabelRule(
+      etwittertends ConditionWithUserLabelRule(
         Drop(Nsfw),
         LoggedOutOrViewerOptInFiltering,
         UserLabelValue.NsfwHighPrecision
       )
 
   object SafeSearchNsfwAvatarImageUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+      etwittertends ViewerOptInFilteringOnSearchUserLabelRule(
         Drop(Nsfw),
         UserLabelValue.NsfwAvatarImage
       )
 
   object SafeSearchNsfwBannerImageUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+      etwittertends ViewerOptInFilteringOnSearchUserLabelRule(
         Drop(Nsfw),
         UserLabelValue.NsfwBannerImage
       )
 
   object SafeSearchNsfwNearPerfectAuthorRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+      etwittertends ViewerOptInFilteringOnSearchUserLabelRule(
         Drop(Nsfw),
         UserLabelValue.NsfwNearPerfect
       )
 
   object SafeSearchReadOnlyUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+      etwittertends ViewerOptInFilteringOnSearchUserLabelRule(
         Drop(Unspecified),
         UserLabelValue.ReadOnly
       )
 
   object SafeSearchSpamHighRecallUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+      etwittertends ViewerOptInFilteringOnSearchUserLabelRule(
         Drop(Unspecified),
         UserLabelValue.SpamHighRecall
       )
 
   object SafeSearchSearchBlacklistUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+      etwittertends ViewerOptInFilteringOnSearchUserLabelRule(
         Drop(Unspecified),
         UserLabelValue.SearchBlacklist
       )
 
-  object SafeSearchNsfwTextUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+  object SafeSearchNsfwTetwittertUserLabelRule
+      etwittertends ViewerOptInFilteringOnSearchUserLabelRule(
         Drop(Unspecified),
-        UserLabelValue.NsfwText
+        UserLabelValue.NsfwTetwittert
       ) {
     override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableNsfwTextSectioningRuleParam)
+      Seq(EnableNsfwTetwittertSectioningRuleParam)
   }
 
   object SafeSearchDoNotAmplifyNonFollowersUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+      etwittertends ViewerOptInFilteringOnSearchUserLabelRule(
         Drop(Unspecified),
         UserLabelValue.DoNotAmplify,
         prerequisiteCondition = Not(ViewerDoesFollowAuthor)
       )
 
   object SafeSearchNotGraduatedNonFollowersUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+      etwittertends ViewerOptInFilteringOnSearchUserLabelRule(
         Drop(Unspecified),
         UserLabelValue.NotGraduated,
         prerequisiteCondition = Not(ViewerDoesFollowAuthor)
@@ -326,7 +326,7 @@ case object SafeSearchUserRules {
       Seq(EnableNotGraduatedSearchDropRuleParam)
 
     override def holdbacks: Seq[RuleParam[Boolean]] =
-      Seq(NotGraduatedUserLabelRuleHoldbackExperimentParam)
+      Seq(NotGraduatedUserLabelRuleHoldbackEtwitterperimentParam)
 
   }
 }

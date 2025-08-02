@@ -34,7 +34,7 @@ object TweetStore {
   /**
    * A Wrap operation that applies standardized metrics collection to the FutureEffect.
    */
-  case class Tracked(stats: StatsReceiver) extends Wrap {
+  case class Tracked(stats: StatsReceiver) etwittertends Wrap {
     def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
       FutureEffect[E] { event =>
         Stat.timeFuture(stats.scope(event.name).stat("latency_ms")) {
@@ -46,7 +46,7 @@ object TweetStore {
   /**
    * A Wrap operation that makes the FutureEffect enabled according to the given gate.
    */
-  case class Gated(gate: Gate[Unit]) extends Wrap {
+  case class Gated(gate: Gate[Unit]) etwittertends Wrap {
     def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
       handler.enabledBy(gate)
   }
@@ -54,7 +54,7 @@ object TweetStore {
   /**
    * A Wrap operation that updates the FutureEffect to ignore failures.
    */
-  object IgnoreFailures extends Wrap {
+  object IgnoreFailures etwittertends Wrap {
     def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
       handler.ignoreFailures
   }
@@ -62,7 +62,7 @@ object TweetStore {
   /**
    * A Wrap operation that updates the FutureEffect to ignore failures upon completion.
    */
-  object IgnoreFailuresUponCompletion extends Wrap {
+  object IgnoreFailuresUponCompletion etwittertends Wrap {
     def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
       handler.ignoreFailuresUponCompletion
   }
@@ -70,7 +70,7 @@ object TweetStore {
   /**
    * A Wrap operation that applies a RetryHandler to FutureEffects.
    */
-  case class Retry(retryHandler: RetryHandler[Unit]) extends Wrap {
+  case class Retry(retryHandler: RetryHandler[Unit]) etwittertends Wrap {
     def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
       handler.retry(retryHandler)
   }
@@ -78,7 +78,7 @@ object TweetStore {
   /**
    * A Wrap operation that applies a RetryHandler to FutureEffects.
    */
-  case class ReplicatedEventRetry(retryHandler: RetryHandler[Unit]) extends Wrap {
+  case class ReplicatedEventRetry(retryHandler: RetryHandler[Unit]) etwittertends Wrap {
     def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
       FutureEffect[E] { event =>
         event.retryStrategy match {
@@ -100,7 +100,7 @@ object TweetStore {
   )(
     stats: StatsReceiver,
     action: AsyncWriteAction)
-      extends Wrap {
+      etwittertends Wrap {
 
     override def apply[E <: TweetStoreEvent](handler: FutureEffect[E]): FutureEffect[E] =
       FutureEffect[E] { event =>
@@ -130,8 +130,8 @@ object TweetStore {
           .retry(RetryHandler.failuresOnly(enqueueRetryPolicy, timer, stats.scope("enqueue_retry")))
 
       handler.rescue {
-        case ex =>
-          TweetStore.log.warning(ex, s"will retry $action")
+        case etwitter =>
+          TweetStore.log.warning(etwitter, s"will retry $action")
           retryInitCounter.incr()
           enqueueRetryHandler
       }
@@ -141,20 +141,20 @@ object TweetStore {
       handler: FutureEffect[E],
       toFailedAsyncWrite: AsyncWriteAction => FailedAsyncWrite
     ): FutureEffect[E] = {
-      val exhaustedCounter = stats.counter("retries_exhausted")
+      val etwitterhaustedCounter = stats.counter("retries_etwitterhausted")
 
-      // scribe events that failed after exhausting all retries
+      // scribe events that failed after etwitterhausting all retries
       val scribeEventHandler =
         FutureEffect[E](_ => scribe(toFailedAsyncWrite(action)))
 
-      // wraps `handle` with a retry policy to retry failures with a backoff. if we exhaust
+      // wraps `handle` with a retry policy to retry failures with a backoff. if we etwitterhaust
       // all retries, then we pass the event to `scribeEventStore` to scribe the failure.
       handler
         .retry(RetryHandler.failuresOnly(localRetryPolicy, timer, stats))
         .rescue {
-          case ex =>
-            TweetStore.log.warning(ex, s"exhausted retries on $action")
-            exhaustedCounter.incr()
+          case etwitter =>
+            TweetStore.log.warning(etwitter, s"etwitterhausted retries on $action")
+            etwitterhaustedCounter.incr()
             scribeEventHandler
         }
     }
@@ -172,7 +172,7 @@ object TweetStore {
   /**
    * Parent trait for defining a "module" that defines a sync TweetStoreEvent.
    */
-  trait SyncModule extends Module {
+  trait SyncModule etwittertends Module {
     type Event <: SyncTweetStoreEvent
   }
 
@@ -180,7 +180,7 @@ object TweetStore {
    * Parent trait for defining a "module" that defines an async TweetStoreEvent and a
    * TweetStoreRetryEvent.
    */
-  trait AsyncModule extends Module {
+  trait AsyncModule etwittertends Module {
     type Event <: AsyncTweetStoreEvent
     type RetryEvent <: TweetStoreRetryEvent[Event]
   }
@@ -188,7 +188,7 @@ object TweetStore {
   /**
    * Parent trait for defining a "module" that defines a replicated TweetStoreEvent.
    */
-  trait ReplicatedModule extends Module {
+  trait ReplicatedModule etwittertends Module {
     type Event <: ReplicatedTweetStoreEvent
   }
 }
@@ -243,7 +243,7 @@ trait TweetStoreBase[Self] {
 
 /**
  * An abstract base class for tweet store instances that wrap another tweet store instance.
- * You can mix event-specific store wrapper traits into this class to automatically
+ * You can mitwitter event-specific store wrapper traits into this class to automatically
  * have the event-specific handlers wrapped.
  */
 abstract class TweetStoreWrapper[+T](
@@ -254,7 +254,7 @@ abstract class TweetStoreWrapper[+T](
  * A TweetStore that has a handler for all possible TweetStoreEvents.
  */
 trait TotalTweetStore
-    extends AsyncDeleteAdditionalFields.Store
+    etwittertends AsyncDeleteAdditionalFields.Store
     with AsyncDeleteTweet.Store
     with AsyncIncrBookmarkCount.Store
     with AsyncIncrFavCount.Store

@@ -5,8 +5,8 @@ import java.util.Optional;
 import com.twitter.common.optional.Optionals;
 import com.twitter.search.common.util.FinagleUtil;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.strato.opcontext.Attribution;
-import com.twitter.strato.opcontext.HttpEndpoint;
+import com.twitter.strato.opcontetwittert.Attribution;
+import com.twitter.strato.opcontetwittert.HttpEndpoint;
 
 public final class ClientIdUtil {
   // Blenders should always set the EarlybirdRequest.clientId field. It should be set to the Finagle
@@ -22,7 +22,7 @@ public final class ClientIdUtil {
 
   private static final String CLIENT_ID_FOR_UNKNOWN_CLIENTS = "unknown_client_id";
 
-  private static final String CLIENT_ID_PREFIX = "client_id_";
+  private static final String CLIENT_ID_PREFItwitter = "client_id_";
 
   private static final String FINAGLE_CLIENT_ID_AND_CLIENT_ID_PATTERN =
       "finagle_id_%s_and_client_id_%s";
@@ -52,7 +52,7 @@ public final class ClientIdUtil {
 
   /** Formats the given clientId into a string that can be used for stats. */
   public static String formatClientId(String clientId) {
-    return CLIENT_ID_PREFIX + clientId;
+    return CLIENT_ID_PREFItwitter + clientId;
   }
 
   /**

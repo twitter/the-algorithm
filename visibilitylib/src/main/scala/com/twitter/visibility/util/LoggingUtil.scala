@@ -5,11 +5,11 @@ import com.twitter.logging._
 
 object LoggingUtil {
 
-  val ExperimentationLog: String = "vf_abdecider"
+  val EtwitterperimentationLog: String = "vf_abdecider"
 
   def mkDefaultHandlerFactory(statsReceiver: StatsReceiver): () => Handler = {
     QueueingHandler(
-      maxQueueSize = 10000,
+      matwitterQueueSize = 10000,
       handler = ScribeHandler(
         category = "client_event",
         formatter = BareFormatter,
@@ -21,7 +21,7 @@ object LoggingUtil {
 
   def mkDefaultLoggerFactory(statsReceiver: StatsReceiver): LoggerFactory = {
     LoggerFactory(
-      node = ExperimentationLog,
+      node = EtwitterperimentationLog,
       level = Some(Level.INFO),
       useParents = false,
       handlers = List(mkDefaultHandlerFactory(statsReceiver))

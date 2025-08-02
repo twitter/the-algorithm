@@ -1,10 +1,10 @@
 package com.twitter.tweetypie.matching
 
-import com.twitter.common.text.pipeline.TwitterLanguageIdentifier
-import com.twitter.common_internal.text.version.PenguinVersion
+import com.twitter.common.tetwittert.pipeline.TwitterLanguageIdentifier
+import com.twitter.common_internal.tetwittert.version.PenguinVersion
 import java.util.Locale
 
-object TweetTokenizer extends Tokenizer {
+object TweetTokenizer etwittertends Tokenizer {
   type LocalePicking = Option[Locale] => Tokenizer
 
   /**
@@ -21,25 +21,25 @@ object TweetTokenizer extends Tokenizer {
 
   /**
    * Get a Tokenizer that performs Tweet language detection, and uses
-   * that result to tokenize the text. If you already know the locale of
-   * the tweet text, use `Tokenizer.get`, because it's much
+   * that result to tokenize the tetwittert. If you already know the locale of
+   * the tweet tetwittert, use `Tokenizer.get`, because it's much
    * cheaper.
    */
   def get(version: PenguinVersion): Tokenizer =
     new Tokenizer {
-      override def tokenize(text: String): TokenSequence = {
-        val locale = tweetLangIdentifier.identify(text).getLocale
-        Tokenizer.get(locale, version).tokenize(text)
+      override def tokenize(tetwittert: String): TokenSequence = {
+        val locale = tweetLangIdentifier.identify(tetwittert).getLocale
+        Tokenizer.get(locale, version).tokenize(tetwittert)
       }
     }
 
   private[this] val Default = get(Tokenizer.DefaultPenguinVersion)
 
   /**
-   * Tokenize the given text using Tweet language detection and
+   * Tokenize the given tetwittert using Tweet language detection and
    * `Tokenizer.DefaultPenguinVersion`. Prefer `Tokenizer.forLocale` if
-   * you already know the language of the text.
+   * you already know the language of the tetwittert.
    */
-  override def tokenize(tweetText: String): TokenSequence =
-    Default.tokenize(tweetText)
+  override def tokenize(tweetTetwittert: String): TokenSequence =
+    Default.tokenize(tweetTetwittert)
 }

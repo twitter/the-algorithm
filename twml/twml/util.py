@@ -15,7 +15,7 @@ from twitter.deepbird.hparam import HParams
 from twitter.deepbird.io.util import (
   _get_feature_id,  # noqa: F401
   feature_id,  # noqa: F401
-  preprocess_feature_regex,  # noqa: F401
+  preprocess_feature_regetwitter,  # noqa: F401
   preprocess_path,  # noqa: F401
   sanitize_hdfs_path,  # noqa: F401
   is_string,  # noqa: F401
@@ -25,7 +25,7 @@ from twitter.deepbird.io.util import (
 from twitter.deepbird.io.legacy.util import (
   batch_apply,  # noqa: F401
   boolean_mask,  # noqa: F401
-  fixed_length_tensor,  # noqa: F401
+  fitwittered_length_tensor,  # noqa: F401
 )
 from twitter.deepbird.sparse.util import (
   convert_to_sparse,  # noqa: F401
@@ -34,7 +34,7 @@ from twitter.deepbird.sparse.util import (
 
 from dateutil import rrule
 from joblib import delayed, Parallel
-from six import string_types
+from sitwitter import string_types
 
 from absl import logging
 from libtwml import CLIB, OPLIB  # noqa: F401
@@ -74,7 +74,7 @@ def _return_tensors_from_checkpoint_folder(init_dir, model_name=None):
   reader = tf.train.NewCheckpointReader(model_path)
   try:
     return (reader.debug_string().decode("utf-8"))
-  except OSError:
+  etwittercept OSError:
     logging.error('Could not decode the string')
 
 
@@ -113,8 +113,8 @@ def get_scope_dict(init_dir, incoming_scope_name, current_scope_name, model_name
 
 def get_init_map(
         init_from_dir,
-        exclude_var_names=None,
-        exclude_name_scopes=None,
+        etwitterclude_var_names=None,
+        etwitterclude_name_scopes=None,
         name_scope_to_remove=None,
         name_scope_to_prepend=None):
   """
@@ -137,10 +137,10 @@ def get_init_map(
   Parameters
   ----------
   init_from_dir: Directory containing checkpoint
-  exclude_var_names: list[str]
-    List of variables in the checkpoint that should be excluded from the map.
-  exclude_name_scopes: list[str]
-    List of name_scopes in the checkpoint model that should be excluded from the map.
+  etwitterclude_var_names: list[str]
+    List of variables in the checkpoint that should be etwittercluded from the map.
+  etwitterclude_name_scopes: list[str]
+    List of name_scopes in the checkpoint model that should be etwittercluded from the map.
   name_scope_to_remove: str
     portion of name_scope for checkpoint variables that should not be included in variable names
     for new model.
@@ -155,8 +155,8 @@ def get_init_map(
   """
   vars_to_restore = get_checkpoint_variable_names(
     init_from_dir,
-    exclude_var_names=exclude_var_names,
-    exclude_scopes=exclude_name_scopes,
+    etwitterclude_var_names=etwitterclude_var_names,
+    etwitterclude_scopes=etwitterclude_name_scopes,
   )
 
   if name_scope_to_prepend is not None:
@@ -185,16 +185,16 @@ def get_init_map(
   return init_map
 
 
-def get_checkpoint_variable_names(model_dir, exclude_var_names=None, exclude_scopes=None):
+def get_checkpoint_variable_names(model_dir, etwitterclude_var_names=None, etwitterclude_scopes=None):
   """
   Gets a list of variable names from the latest checkpoint in model_dir.
-  Removes variables with scope defined by exclude_scopes, and/or with names defined by
-  exclude_var_names.
+  Removes variables with scope defined by etwitterclude_scopes, and/or with names defined by
+  etwitterclude_var_names.
 
   Args:
     model_dir (str): Directory containing checkpoint file for the pre-trained model
-    exclude_var_names (list): Optional variable names to exclude (can include full/partial scope)
-    exclude_scopes (list): Optional scopes to exclude
+    etwitterclude_var_names (list): Optional variable names to etwitterclude (can include full/partial scope)
+    etwitterclude_scopes (list): Optional scopes to etwitterclude
 
   Returns:
     list: variable names
@@ -203,13 +203,13 @@ def get_checkpoint_variable_names(model_dir, exclude_var_names=None, exclude_sco
   variables_and_shapes = tf.train.list_variables(checkpoint_path)
 
   def _keep(name):
-    if exclude_scopes and any(name.startswith(exc_scope) for exc_scope in exclude_scopes):
+    if etwitterclude_scopes and any(name.startswith(etwitterc_scope) for etwitterc_scope in etwitterclude_scopes):
       return False
-    if exclude_var_names and any(name.endswith(exc_var) for exc_var in exclude_var_names):
+    if etwitterclude_var_names and any(name.endswith(etwitterc_var) for etwitterc_var in etwitterclude_var_names):
       return False
     return True
 
-  names = [x[0] for x in variables_and_shapes if _keep(x[0])]
+  names = [twitter[0] for twitter in variables_and_shapes if _keep(twitter[0])]
 
   return names
 
@@ -221,7 +221,7 @@ def to_snake_case(name):
   intermediate = re.sub('(.)([A-Z][a-z0-9]+)', r'\1_\2', name)
   insecure = re.sub('([a-z])([A-Z])', r'\1_\2', intermediate).lower()
   # If the class is private the name starts with "_" which is not secure
-  # for creating scopes. We prefix the name with "private" in this case.
+  # for creating scopes. We prefitwitter the name with "private" in this case.
   if insecure[0] != '_':
     return insecure
   return 'private' + insecure
@@ -243,15 +243,15 @@ def copy_phase_inputs(init_dir, dest_dir):
       if files.endswith(".json.tf"):
         src_file = os.path.join(init_dir, files)
         dest_file = os.path.join(dest_dir, files)
-        if not tf.io.gfile.exists(dest_dir):
+        if not tf.io.gfile.etwitterists(dest_dir):
           # creates the folder
           try:
             tf.io.gfile.makedirs(dest_dir)
           # to prevent racing condition
-          except OSError:
+          etwittercept OSError:
             if not tf.io.gfile.isdir(dest_dir):
               raise
-        # dest_file may be old if it exists and
+        # dest_file may be old if it etwitterists and
         # dest_file gets copied several times in distributed training
         tf.io.gfile.copy(src_file, dest_file, overwrite=True)
 
@@ -293,7 +293,7 @@ def rehash_sparse_features_nbits(sp_a, nbits, hash_fn=multiplicative_hash):
   values = sp_a.values
   dense_shape = sp_a.dense_shape
 
-  indices = tf.stack([sample_ids, feature_ids], axis=1)
+  indices = tf.stack([sample_ids, feature_ids], atwitteris=1)
 
   sp_a = tf.SparseTensor(indices, values, dense_shape)
 
@@ -305,7 +305,7 @@ def rehash_sparse_features_nbits(sp_a, nbits, hash_fn=multiplicative_hash):
 def convert_to_hparams(opt):
   """
   Converts argparse.Namespace object to twitter.deepbird.hparam.hparam.HParams.
-  Note that tensorflow.contrib.training.HParams is gone in TF 2.x, and we forward ported
+  Note that tensorflow.contrib.training.HParams is gone in TF 2.twitter, and we forward ported
   tensorflow.contrib.training.HParams to twitter.deepbird.hparam.hapram.HParams.
 
   NOTE: If you are using estimators, please don't call this method and directly pass python dict
@@ -331,7 +331,7 @@ def convert_to_hparams(opt):
   # Note: .items() makes a copy in python 2.7, but that is fine since the performance isn't critical.
   for key, val in params_dict.items():
     val = params_dict[key]
-    # Fix the path if the value is a string
+    # Fitwitter the path if the value is a string
     if isinstance(val, str):
       params.add_hparam(key, sanitize_hdfs_path(val))
     else:
@@ -387,8 +387,8 @@ def dynamic_partition(features, partitions, num_partitions=2, name=None):
     else:
       results = tf.dynamic_partition(feature, partitions[key], num_partitions[key], name_key)
       # Append the result to the proper output container
-    for idx, result in enumerate(results):
-      outputs[idx][key] = result
+    for idtwitter, result in enumerate(results):
+      outputs[idtwitter][key] = result
 
   # if input is tuple, convert list of lists back to list of tuples
   if isinstance(features, tuple):
@@ -415,7 +415,7 @@ def write_file(filename, contents, encode=False):
   if encode == 'json':
     contents = json.dumps(contents)
   elif not is_string(contents):
-    raise ValueError("Expecting string for encode=False")
+    raise ValueError("Etwitterpecting string for encode=False")
 
   graph = tf.Graph()
   with graph.as_default():
@@ -493,7 +493,7 @@ def weighted_average(values, weights):
   return tf.reduce_sum(tf.multiply(values, weights)) / tf.reduce_sum(weights)
 
 
-def backup_checkpoint(checkpoint_path_prefix,
+def backup_checkpoint(checkpoint_path_prefitwitter,
                       backup_path='backup',
                       empty_backup=True):
   """
@@ -501,8 +501,8 @@ def backup_checkpoint(checkpoint_path_prefix,
   This function is used by the Trainer for early-stopping.
 
   Arguments:
-    checkpoint_path_prefix:
-      Prefix of the path to the checkpoint files.
+    checkpoint_path_prefitwitter:
+      Prefitwitter of the path to the checkpoint files.
     backup_path:
       path to a directory where checkpoint files will be backed up.
     empty_backup:
@@ -512,9 +512,9 @@ def backup_checkpoint(checkpoint_path_prefix,
   Returns:
     The number of backed up files.
   """
-  checkpoint_file_prefix = os.path.basename(checkpoint_path_prefix)
+  checkpoint_file_prefitwitter = os.path.basename(checkpoint_path_prefitwitter)
 
-  if tf.io.gfile.exists(backup_path) and empty_backup:
+  if tf.io.gfile.etwitterists(backup_path) and empty_backup:
     tf.io.gfile.rmtree(backup_path)
 
   tf.io.gfile.mkdir(backup_path)
@@ -522,23 +522,23 @@ def backup_checkpoint(checkpoint_path_prefix,
   n_backup = 0
   # copy all checkpoint files to backup directory (TODO use gfile.glob instead)
   try:
-    checkpoint_files = tf.io.gfile.glob(checkpoint_path_prefix + "*")
+    checkpoint_files = tf.io.gfile.glob(checkpoint_path_prefitwitter + "*")
     if len(checkpoint_files) == 0:
-      raise twml.errors.CheckpointNotFoundError("%s not found" % checkpoint_path_prefix)
+      raise twml.errors.CheckpointNotFoundError("%s not found" % checkpoint_path_prefitwitter)
     for filename in checkpoint_files:
       n_backup += 1
       tf.io.gfile.copy(
         src=filename,
         dst=os.path.join(backup_path, os.path.basename(filename))
       )
-  except tf.errors.OpError as ex:
+  etwittercept tf.errors.OpError as etwitter:
     raise twml.errors.CheckpointNotFoundError(
-      f"{str(ex)}\n {checkpoint_path_prefix} not found."
+      f"{str(etwitter)}\n {checkpoint_path_prefitwitter} not found."
     )
 
   # tf.train.latest_checkpoint needs the 'checkpoint' file.
   with tf.io.gfile.GFile(os.path.join(backup_path, 'checkpoint'), 'w') as f:
-    f.write('model_checkpoint_path: "%s"\n' % checkpoint_file_prefix)
+    f.write('model_checkpoint_path: "%s"\n' % checkpoint_file_prefitwitter)
 
   return n_backup
 
@@ -564,8 +564,8 @@ def set_only_checkpoint(source_path, dest_path, remove_source=True):
       This deletes the source directory (and any remaining contents).
   """
   # make it so that source_path checkpoint is the only checkpoint
-  source_path_prefix = tf.train.latest_checkpoint(source_path)
-  if source_path_prefix is not None:
+  source_path_prefitwitter = tf.train.latest_checkpoint(source_path)
+  if source_path_prefitwitter is not None:
     # remove intermediate checkpoints
     for filename in tf.io.gfile.listdir(dest_path):
       if filename.startswith("model.ckpt"):
@@ -585,31 +585,31 @@ def list_files_by_datetime(
   base_path,
   start_datetime,
   end_datetime=None,
-  datetime_prefix_format='%Y/%m/%d/%H',
-  extension='lzo',
+  datetime_prefitwitter_format='%Y/%m/%d/%H',
+  etwittertension='lzo',
   parallelism=1,
   hour_resolution=1,
   sort=False
 ):
-  """List files matching `base_path/dt_prefix_format/*.extension` for the requested datetime range.
+  """List files matching `base_path/dt_prefitwitter_format/*.etwittertension` for the requested datetime range.
 
   Args:
     base_path:
       The base path. If `None`, returns `None`.
     start_datetime:
       A `datetime.datetime` or string representing the start of the range (inclusive).
-      If `None`, it returns `list_files(base_path, extension, sort)`.
+      If `None`, it returns `list_files(base_path, etwittertension, sort)`.
     end_datetime:
       A `datetime.datetime` or string representing the end of the range (inclusive).
       If `None`, assumed to be the same as start_datetime.
-    datetime_prefix_format:
+    datetime_prefitwitter_format:
       Format compatible with `datetime.datetime.strftime`
       (https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior).
-    extension:
-      The extension of the files composing the dataset (e.g. 'lzo').
+    etwittertension:
+      The etwittertension of the files composing the dataset (e.g. 'lzo').
     parallelism:
       The number of threads used to process list patterns (this is mostly useful
-      when dealing with filesystems such as HDFS in which listing files is a potentially expensive
+      when dealing with filesystems such as HDFS in which listing files is a potentially etwitterpensive
       operation).
     hour_resolution:
       The separation between consecutive hours. The default value is 1.
@@ -629,7 +629,7 @@ def list_files_by_datetime(
     return None
 
   if start_datetime is None:
-    return list_files(base_path, extension, sort)
+    return list_files(base_path, etwittertension, sort)
 
   # Do this in case people want to use a single day for training.
   if end_datetime is None:
@@ -639,10 +639,10 @@ def list_files_by_datetime(
   assert start_datetime <= end_datetime
 
   if isinstance(start_datetime, str):
-    start_datetime = datetime.strptime(start_datetime, datetime_prefix_format)
+    start_datetime = datetime.strptime(start_datetime, datetime_prefitwitter_format)
 
   if isinstance(end_datetime, str):
-    end_datetime = datetime.strptime(end_datetime, datetime_prefix_format)
+    end_datetime = datetime.strptime(end_datetime, datetime_prefitwitter_format)
 
   assert isinstance(start_datetime, datetime)
   assert isinstance(end_datetime, datetime)
@@ -652,13 +652,13 @@ def list_files_by_datetime(
   def _handle_missing_globs(pattern):
     try:
       return tf.io.gfile.glob(pattern)
-    except tf.errors.NotFoundError as e:
+    etwittercept tf.errors.NotFoundError as e:
       tf.logging.warning(e.message)
       return []
 
-  # a set is used because there might be some repeated globs depending on dt_prefix_format
+  # a set is used because there might be some repeated globs depending on dt_prefitwitter_format
   globs = {
-    os.path.join(base_path, dt.strftime(datetime_prefix_format), '*.%s' % extension)
+    os.path.join(base_path, dt.strftime(datetime_prefitwitter_format), '*.%s' % etwittertension)
     for dt in rrule.rrule(
       freq=rrule.HOURLY, interval=hour_resolution, dtstart=start_datetime, until=end_datetime)
   }
@@ -691,7 +691,7 @@ def limit_sparse_tensor_size(sparse_tf, input_size_bits, mask_indices=True):
       The number of bits allocated to the input size.
       Input size will be power(2,input_size_bits).
       Note that twml.limit_bits truncates any feature keys that
-      exceed the input size.
+      etwitterceed the input size.
     mask_indices:
       If mask indices is False; only the shape is changed. Defaults to True.
   """
@@ -787,7 +787,7 @@ def change_name_scope_from_dir(init_scope_name, final_scope_name, save_dir):
 
 def hub_import(input, module, module_name, trainable=False):
   """
-  Loads exported hub module.
+  Loads etwitterported hub module.
 
   Args:
     input:
@@ -795,7 +795,7 @@ def hub_import(input, module, module_name, trainable=False):
     module:
       module path
     module_name:
-      signature of the exported hub module
+      signature of the etwitterported hub module
   """
   import tensorflow_hub as hub # noqa: F402
   hub_module = hub.Module(module, trainable=trainable)
@@ -803,9 +803,9 @@ def hub_import(input, module, module_name, trainable=False):
   return output
 
 
-def _extract_hash_space_bits(feature_config):
+def _etwittertract_hash_space_bits(feature_config):
   """
-  Extract Sparse Shapes for contrib.FeatureConfig.
+  Etwittertract Sparse Shapes for contrib.FeatureConfig.
   Arguments:
     feature_config:
       Feature Configuration of the type contrib.FeatureConfig
@@ -816,24 +816,24 @@ def _extract_hash_space_bits(feature_config):
     fc_type = type(feature_config)
     raise TypeError(f"Feature config must be of type contrib.FeatureConfig: {fc_type}")
   sparse_shapes_dict = {}
-  for config in feature_config.sparse_extraction_configs:
+  for config in feature_config.sparse_etwittertraction_configs:
     sparse_shapes_dict[config.output_name] = config.hash_space_bits
   return sparse_shapes_dict
 
 
-def fix_shape_sparse(features, feature_config):
+def fitwitter_shape_sparse(features, feature_config):
   """
-  Modifies the shape of features which are extracted using the hashing trick.
+  Modifies the shape of features which are etwittertracted using the hashing trick.
   Features itself is changed by this function.
   Arguments:
     features:
-      Feature dictionary extracted by the feature config
+      Feature dictionary etwittertracted by the feature config
     feature_config:
       Feature Configuration of the type contrib.FeatureConfig
   """
   if not isinstance(feature_config, twml.contrib.feature_config.FeatureConfig):
     raise TypeError(f"Feature config must be of type contrib.FeatureConfig, currently of {type(feature_config)}")
-  sparse_shape = _extract_hash_space_bits(feature_config)
+  sparse_shape = _etwittertract_hash_space_bits(feature_config)
   if not isinstance(features, dict):
     raise TypeError(f"features must be of dictionary type, it is of {type(features)} type")
   for key in set(features) & set(sparse_shape):
@@ -853,9 +853,9 @@ def touch_file_in_dir(directory, filename):
     f.write("")
 
 
-def file_exist_in_dir(directory: str, filename: str) -> bool:
+def file_etwitterist_in_dir(directory: str, filename: str) -> bool:
   file_path = os.path.join(directory, filename)
-  return tf.io.gfile.exists(file_path)
+  return tf.io.gfile.etwitterists(file_path)
 
 
 def copy_to_local(remote, local, filename, overwrite=False):
@@ -876,7 +876,7 @@ def copy_recursive(src, dst, overwrite=False):
   Arguments:
     src: Source directory.
     dst: Destination directory.
-    overwrite: Specifies if files are to be overwritten if they exist.
+    overwrite: Specifies if files are to be overwritten if they etwitterist.
   """
 
   src = src.rstrip("/")
@@ -922,7 +922,7 @@ def get_distributed_training_job_path():
 
 def do_every_n_steps(action, num_steps):
   """
-  Execute a sequence of TensorFlow operations only once in a while.
+  Etwitterecute a sequence of TensorFlow operations only once in a while.
   Specifically, `action` is performed if `global_step` is a
     multiple of `num_steps`
 
@@ -934,7 +934,7 @@ def do_every_n_steps(action, num_steps):
 
   Returns:
     A TensorFlow op with no output tensors, like a tf.print() or tf.no_op().
-    You must use tf.control_dependencies() to execute the op.
+    You must use tf.control_dependencies() to etwitterecute the op.
 
   """
   global_step = tf.train.get_or_create_global_step()

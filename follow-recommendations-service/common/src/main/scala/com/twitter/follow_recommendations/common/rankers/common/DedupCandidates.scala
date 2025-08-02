@@ -1,6 +1,6 @@
 package com.twitter.follow_recommendations.common.rankers.common
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+import com.twitter.product_mitwitterer.core.model.common.UniversalNoun
 import scala.collection.mutable
 
 object DedupCandidates {

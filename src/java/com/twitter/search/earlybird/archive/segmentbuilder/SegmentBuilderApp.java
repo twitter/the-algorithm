@@ -14,7 +14,7 @@ import com.twitter.inject.server.AbstractTwitterServer;
 import com.twitter.util.Future;
 import com.twitter.util.Time;
 
-public class SegmentBuilderApp extends AbstractTwitterServer {
+public class SegmentBuilderApp etwittertends AbstractTwitterServer {
   private static final Logger LOG = LoggerFactory.getLogger(SegmentBuilderApp.class);
 
   public SegmentBuilderApp() {
@@ -39,9 +39,9 @@ public class SegmentBuilderApp extends AbstractTwitterServer {
         "the job instance number",
         Flaggable.ofInt());
 
-    createFlag("segmentZkLockExpirationHours",
+    createFlag("segmentZkLockEtwitterpirationHours",
         0,
-        "max hours to hold the zookeeper lock while building segment",
+        "matwitter hours to hold the zookeeper lock while building segment",
         Flaggable.ofInt());
 
     createFlag("startupSleepMins",
@@ -49,7 +49,7 @@ public class SegmentBuilderApp extends AbstractTwitterServer {
         "sleep multiplier of startupSleepMins before job runs",
         Flaggable.ofLong());
 
-    createFlag("maxRetriesOnFailure",
+    createFlag("matwitterRetriesOnFailure",
         3,
         "how many times we should try to rebuild a segment when failure happens",
         Flaggable.ofInt());
@@ -84,7 +84,7 @@ public class SegmentBuilderApp extends AbstractTwitterServer {
   @Override
   public void start() {
     SegmentBuilder segmentBuilder = injector().instance(SegmentBuilder.class);
-    closeOnExit((Time time) -> {
+    closeOnEtwitterit((Time time) -> {
       segmentBuilder.doShutdown();
       return Future.Unit();
     });

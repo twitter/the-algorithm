@@ -4,16 +4,16 @@ import com.twitter.util.Future
 
 object PushIbisUtil {
 
-  def getSocialContextModelValues(socialContextUserIds: Seq[Long]): Map[String, String] = {
+  def getSocialContetwittertModelValues(socialContetwittertUserIds: Seq[Long]): Map[String, String] = {
 
-    val socialContextSize = socialContextUserIds.size
+    val socialContetwittertSize = socialContetwittertUserIds.size
 
-    val (displaySocialContexts, otherCount) = {
-      if (socialContextSize < 3) (socialContextUserIds, 0)
-      else (socialContextUserIds.take(1), socialContextSize - 1)
+    val (displaySocialContetwitterts, otherCount) = {
+      if (socialContetwittertSize < 3) (socialContetwittertUserIds, 0)
+      else (socialContetwittertUserIds.take(1), socialContetwittertSize - 1)
     }
 
-    val usersValue = displaySocialContexts.map(_.toString).mkString(",")
+    val usersValue = displaySocialContetwitterts.map(_.toString).mkString(",")
 
     if (otherCount > 0) Map("social_users" -> s"$usersValue+$otherCount")
     else Map("social_users" -> usersValue)

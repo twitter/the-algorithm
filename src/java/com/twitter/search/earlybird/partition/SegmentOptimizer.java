@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.partition;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +22,10 @@ public final class SegmentOptimizer {
   public static boolean optimize(SegmentInfo segmentInfo) {
     try {
       return optimizeThrowing(segmentInfo);
-    } catch (Exception e) {
+    } catch (Etwitterception e) {
       // This is a bad situation, as earlybird can't run with too many un-optimized
       // segments in memory.
-      LOG.error("Exception while optimizing segment " + segmentInfo.getSegmentName() + ": ", e);
+      LOG.error("Etwitterception while optimizing segment " + segmentInfo.getSegmentName() + ": ", e);
       segmentInfo.setFailedOptimize();
       return false;
     }
@@ -33,24 +33,24 @@ public final class SegmentOptimizer {
 
   public static boolean needsOptimization(SegmentInfo segmentInfo) {
     return segmentInfo.isComplete() && !segmentInfo.isOptimized()
-        && !segmentInfo.isFailedOptimize() && !segmentInfo.isIndexing();
+        && !segmentInfo.isFailedOptimize() && !segmentInfo.isIndetwittering();
   }
 
-  private static boolean optimizeThrowing(SegmentInfo segmentInfo) throws IOException {
+  private static boolean optimizeThrowing(SegmentInfo segmentInfo) throws IOEtwitterception {
     if (!needsOptimization(segmentInfo)) {
       return false;
     }
 
     String gaugeName =
         String.format(OPTIMIZING_SEGMENT_GAUGE_PATTERN, segmentInfo.getSegmentName());
-    SearchIndexingMetricSet.StartupMetric metric =
-        new SearchIndexingMetricSet.StartupMetric(gaugeName);
+    SearchIndetwitteringMetricSet.StartupMetric metric =
+        new SearchIndetwitteringMetricSet.StartupMetric(gaugeName);
 
     String eventName =
         String.format(OPTIMIZING_SEGMENT_EVENT_PATTERN, segmentInfo.getSegmentName());
     EarlybirdStatus.beginEvent(eventName, metric);
     try {
-      segmentInfo.getIndexSegment().optimizeIndexes();
+      segmentInfo.getIndetwitterSegment().optimizeIndetwitteres();
     } finally {
       EarlybirdStatus.endEvent(eventName, metric);
     }

@@ -4,7 +4,7 @@ import com.twitter.scalding.Args
 import com.twitter.scalding.DateRange
 import com.twitter.scalding.Days
 import com.twitter.scalding.Duration
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding.RichDate
 import com.twitter.scalding.TypedPipe
 import com.twitter.scalding.TypedTsv
@@ -15,7 +15,7 @@ import com.twitter.simclusters_v2.common.UserId
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.DALWrite._
 import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv2.remote_access.EtwitterplicitLocation
 import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.hdfs_sources._
@@ -23,8 +23,8 @@ import com.twitter.simclusters_v2.thriftscala.ClusterType
 import com.twitter.simclusters_v2.thriftscala.ClustersUserIsKnownFor
 import com.twitter.simclusters_v2.thriftscala.SemanticCoreEntityWithScore
 import com.twitter.simclusters_v2.thriftscala.UserToKnownForClusters
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
+import com.twitter.wtf.scalding.jobs.common.AdhocEtwitterecutionApp
+import com.twitter.wtf.scalding.jobs.common.ScheduledEtwitterecutionApp
 import java.util.TimeZone
 import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
 import com.twitter.simclusters_v2.scalding.common.Util
@@ -70,7 +70,7 @@ capesospy-v2 update --build_locally --start_cron \
   --start_cron known_for_optout_daily \
   src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
  */
-object KnownForOptOutDailyBatchJob extends ScheduledExecutionApp {
+object KnownForOptOutDailyBatchJob etwittertends ScheduledEtwitterecutionApp {
   override def firstTime: RichDate = RichDate("2021-03-29")
 
   override def batchIncrement: Duration = Days(1)
@@ -81,7 +81,7 @@ object KnownForOptOutDailyBatchJob extends ScheduledExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     val optedOutEntitiesPipe = SimClustersOptOutUtil
       .getP13nOptOutSources(dateRange.embiggen(Days(2)), ClusterType.KnownFor)
@@ -98,7 +98,7 @@ object KnownForOptOutDailyBatchJob extends ScheduledExecutionApp {
       .map { case KeyVal(k, v) => (k, v) }
       .count("num_users_with_2020_knownfor")
 
-    val filtered2020KnownForExec = {
+    val filtered2020KnownForEtwitterec = {
       val filtered2020KnownForData = KnownForOptOut
         .filterOptedOutKnownFor(
           knownForPipe = knownFor2020,
@@ -108,30 +108,30 @@ object KnownForOptOutDailyBatchJob extends ScheduledExecutionApp {
         .count("num_users_with_compliant_2020_knownfor")
         .forceToDisk
 
-      Execution
+      Etwitterecution
         .zip(
           filtered2020KnownForData
             .map { case (k, v) => KeyVal(k, v) }
-            .writeDALVersionedKeyValExecution(
+            .writeDALVersionedKeyValEtwitterecution(
               SimclustersV2KnownFor20M145K2020ScalaDataset,
-              D.Suffix(DataPaths.KnownFor2020Path)
+              D.Suffitwitter(DataPaths.KnownFor2020Path)
             ),
           filtered2020KnownForData
             .map {
               case (userId, ClustersUserIsKnownFor(modelVersion, clusters)) =>
                 UserToKnownForClusters(userId, modelVersion, clusters)
             }
-            .writeDALSnapshotExecution(
+            .writeDALSnapshotEtwitterecution(
               dataset = SimclustersV2KnownFor20M145K2020ThriftScalaDataset,
               updateStep = D.Daily,
-              pathLayout = D.Suffix(DataPaths.KnownFor2020ThriftDatasetPath),
+              pathLayout = D.Suffitwitter(DataPaths.KnownFor2020ThriftDatasetPath),
               fmt = D.Parquet,
               endDate = dateRange.end
             )
         ).unit
     }
 
-    Util.printCounters(filtered2020KnownForExec)
+    Util.printCounters(filtered2020KnownForEtwitterec)
 
   }
 }
@@ -144,17 +144,17 @@ object KnownForOptOutDailyBatchJob extends ScheduledExecutionApp {
   --tool com.twitter.simclusters_v2.scalding.optout.KnownForOptOutAdhocJob \
  -- --date 2019-10-12
  */
-object KnownForOptOutAdhocJob extends AdhocExecutionApp {
+object KnownForOptOutAdhocJob etwittertends AdhocEtwitterecutionApp {
   override def runOnDateRange(
     args: Args
   )(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val knownForPipe = DAL
       .readMostRecentSnapshotNoOlderThan(SimclustersV2RawKnownFor20M145KDec11ScalaDataset, Days(30))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
       .toTypedPipe
       .map { case KeyVal(k, v) => (k, v) }
       .count("num_users_with_knownfor")
@@ -193,6 +193,6 @@ object KnownForOptOutAdhocJob extends AdhocExecutionApp {
       }
 
     val outputPath = "/user/recos-platform/adhoc/knownfor_optout"
-    output.writeExecution(TypedTsv(outputPath))
+    output.writeEtwitterecution(TypedTsv(outputPath))
   }
 }

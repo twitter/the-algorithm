@@ -2,9 +2,9 @@ package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.naming.NamingException;
+import javatwitter.naming.NamingEtwitterception;
 
-import scala.runtime.BoxedUnit;
+import scala.runtime.BotwitteredUnit;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -25,7 +25,7 @@ import com.twitter.util.Function;
 import com.twitter.util.Future;
 import com.twitter.util.Promise;
 
-public abstract class EventBusReaderStage<T extends TBase<?, ?>> extends TwitterBaseStage
+public abstract class EventBusReaderStage<T etwittertends TBase<?, ?>> etwittertends TwitterBaseStage
     <Void, Void> {
   private static final Logger LOG = LoggerFactory.getLogger(EventBusReaderStage.class);
 
@@ -40,9 +40,9 @@ public abstract class EventBusReaderStage<T extends TBase<?, ?>> extends Twitter
 
   private EventBusSubscriber<T> eventBusSubscriber = null;
 
-  // XML configuration options
+  // twitterML configuration options
   private String eventBusSubscriberId;
-  private int maxConcurrentEvents;
+  private int matwitterConcurrentEvents;
   private SearchDecider searchDecider;
 
   protected EventBusReaderStage() {
@@ -51,15 +51,15 @@ public abstract class EventBusReaderStage<T extends TBase<?, ?>> extends Twitter
   @Override
   protected void initStats() {
     super.initStats();
-    totalEventsCount = SearchCounter.export(getStageNamePrefix() + "_total_events_count");
+    totalEventsCount = SearchCounter.etwitterport(getStageNamePrefitwitter() + "_total_events_count");
   }
 
   @Override
-  protected void doInnerPreprocess() throws NamingException {
+  protected void doInnerPreprocess() throws NamingEtwitterception {
     searchDecider = new SearchDecider(decider);
 
     if (stageDriver == null) {
-      stageDriver = ((Pipeline) stageContext).getStageDriver(this);
+      stageDriver = ((Pipeline) stageContetwittert).getStageDriver(this);
     }
 
     eventBusReaderEnabledDeciderKey = String.format(
@@ -70,19 +70,19 @@ public abstract class EventBusReaderStage<T extends TBase<?, ?>> extends Twitter
     PipelineUtil.feedStartObjectToStage(this);
   }
 
-  protected abstract PromiseContainer<BoxedUnit, T> eventAndPromiseToContainer(
+  protected abstract PromiseContainer<BotwitteredUnit, T> eventAndPromiseToContainer(
       T incomingEvent,
-      Promise<BoxedUnit> p);
+      Promise<BotwitteredUnit> p);
 
-  private Future<BoxedUnit> processEvent(T incomingEvent) {
-    Promise<BoxedUnit> p = new Promise<>();
-    PromiseContainer<BoxedUnit, T> promiseContainer = eventAndPromiseToContainer(incomingEvent, p);
+  private Future<BotwitteredUnit> processEvent(T incomingEvent) {
+    Promise<BotwitteredUnit> p = new Promise<>();
+    PromiseContainer<BotwitteredUnit, T> promiseContainer = eventAndPromiseToContainer(incomingEvent, p);
     totalEventsCount.increment();
     emitAndCount(promiseContainer);
     return p;
   }
 
-  private void closeEventBusSubscriber() throws Exception {
+  private void closeEventBusSubscriber() throws Etwitterception {
     if (eventBusSubscriber != null) {
       Await.result(eventBusSubscriber.close());
       eventBusSubscriber = null;
@@ -101,7 +101,7 @@ public abstract class EventBusReaderStage<T extends TBase<?, ?>> extends Twitter
           Function.func(this::processEvent),
           getThriftClass(),
           eventBusSubscriberId,
-          maxConcurrentEvents);
+          matwitterConcurrentEvents);
 
     }
     Preconditions.checkNotNull(eventBusSubscriber);
@@ -132,8 +132,8 @@ public abstract class EventBusReaderStage<T extends TBase<?, ?>> extends Twitter
         if (eventBusReaderEnabledAvailability == 0) {
           try {
             closeEventBusSubscriber();
-          } catch (Exception e) {
-            LOG.warn("Exception while closing eventbus subscriber", e);
+          } catch (Etwitterception e) {
+            LOG.warn("Etwitterception while closing eventbus subscriber", e);
           }
         } else {
           startUpEventBusSubscriber();
@@ -143,17 +143,17 @@ public abstract class EventBusReaderStage<T extends TBase<?, ?>> extends Twitter
 
       try {
         clock.waitFor(TimeUnit.SECONDS.toMillis(DECIDER_POLL_INTERVAL_IN_SECS));
-      } catch (InterruptedException e) {
+      } catch (InterruptedEtwitterception e) {
         interrupted = true;
       }
     }
     LOG.info("StageDriver is not RUNNING anymore, closing EventBus subscriber");
     try {
       closeEventBusSubscriber();
-    } catch (InterruptedException e) {
+    } catch (InterruptedEtwitterception e) {
       interrupted = true;
-    } catch (Exception e) {
-      LOG.warn("Exception while closing eventbus subscriber", e);
+    } catch (Etwitterception e) {
+      LOG.warn("Etwitterception while closing eventbus subscriber", e);
     } finally {
       if (interrupted) {
         Thread.currentThread().interrupt();
@@ -161,21 +161,21 @@ public abstract class EventBusReaderStage<T extends TBase<?, ?>> extends Twitter
     }
   }
 
-  // This is needed to set the value from XML config.
+  // This is needed to set the value from twitterML config.
   public void setEventBusSubscriberId(String eventBusSubscriberId) {
     this.eventBusSubscriberId = eventBusSubscriberId;
     LOG.info("EventBusReaderStage with eventBusSubscriberId: {}", eventBusSubscriberId);
   }
 
-  // This is needed to set the value from XML config.
+  // This is needed to set the value from twitterML config.
   public void setEnvironment(String environment) {
     this.environment = environment;
     LOG.info("Ingester is running in {}", environment);
   }
 
-  // This is needed to set the value from XML config.
-  public void setMaxConcurrentEvents(int maxConcurrentEvents) {
-    this.maxConcurrentEvents = maxConcurrentEvents;
+  // This is needed to set the value from twitterML config.
+  public void setMatwitterConcurrentEvents(int matwitterConcurrentEvents) {
+    this.matwitterConcurrentEvents = matwitterConcurrentEvents;
   }
 
   @VisibleForTesting

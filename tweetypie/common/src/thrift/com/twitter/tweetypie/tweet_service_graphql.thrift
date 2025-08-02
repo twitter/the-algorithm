@@ -6,10 +6,10 @@ namespace java com.twitter.tweetypie.thriftjava.graphql
  * Reasons for defining "prefetch" structs:
  * i)  It enables GraphQL prefetch caching
  * ii) All tweet mutation operations are defined to support prefetch caching for API consistency
- *     and future flexibility. (Populating the cache with VF results being a potential use case.)
+ *     and future fletwitteribility. (Populating the cache with VF results being a potential use case.)
  */
 include "com/twitter/ads/callback/engagement_request.thrift"
-include "com/twitter/strato/graphql/existsAndPrefetch.thrift"
+include "com/twitter/strato/graphql/etwitteristsAndPrefetch.thrift"
 
 struct UnretweetRequest {
   /**
@@ -48,7 +48,7 @@ struct UnretweetResponse {
 
 struct UnretweetResponseWithSubqueryPrefetchItems {
   1: optional UnretweetResponse data
-  2: optional existsAndPrefetch.PrefetchedData subqueryPrefetchItems
+  2: optional etwitteristsAndPrefetch.PrefetchedData subqueryPrefetchItems
 }
 
 
@@ -81,7 +81,7 @@ struct CreateRetweetResponse {
 
 struct CreateRetweetResponseWithSubqueryPrefetchItems {
   1: optional CreateRetweetResponse data
-  2: optional existsAndPrefetch.PrefetchedData subqueryPrefetchItems
+  2: optional etwitteristsAndPrefetch.PrefetchedData subqueryPrefetchItems
 }
 
 struct TweetReply {
@@ -90,10 +90,10 @@ struct TweetReply {
     strato.json.numbers.type='string',
     strato.description='The id of the tweet that this tweet is replying to.'
   )
-  //@see com.twitter.tweetypie.thriftscala.PostTweetRequest.exclude_reply_user_ids
-  2: list<i64> exclude_reply_user_ids = [] (
+  //@see com.twitter.tweetypie.thriftscala.PostTweetRequest.etwitterclude_reply_user_ids
+  2: list<i64> etwitterclude_reply_user_ids = [] (
     strato.json.numbers.type='string',
-    strato.description='Screen names appearing in the mention prefix can be excluded. Because the mention prefix must always include the leading mention to preserve directed-at addressing for the in-reply-to tweet author, attempting to exclude that user id will have no effect. Specifying a user id not in the prefix will be silently ignored.'
+    strato.description='Screen names appearing in the mention prefitwitter can be etwittercluded. Because the mention prefitwitter must always include the leading mention to preserve directed-at addressing for the in-reply-to tweet author, attempting to etwitterclude that user id will have no effect. Specifying a user id not in the prefitwitter will be silently ignored.'
   )
 } (strato.graphql.typename='TweetReply')
 
@@ -125,7 +125,7 @@ struct TweetMedia {
   )
 } (strato.graphql.typename='TweetMedia')
 
-//This is similar to the APITweetAnnotation struct except that here all the id fields are required.
+//This is similar to the APITweetAnnotation struct etwittercept that here all the id fields are required.
 struct TweetAnnotation {
   1: i64 group_id (strato.json.numbers.type='string')
   2: i64 domain_id (strato.json.numbers.type='string')
@@ -169,10 +169,10 @@ enum BatchComposeMode {
  *   tweet_service.thrift/PostTweetRequest.conversation_control
  *
  * These types are isomorphic/equivalent to tweet_service.thrift/TweetCreateConversationControl* to
- * avoid exposing internal service thrift types.
+ * avoid etwitterposing internal service thrift types.
  */
 enum ConversationControlMode {
-  BY_INVITATION = 1 (strato.description='Users that the conversation owner mentions by @screenname in the tweet text are invited.')
+  BY_INVITATION = 1 (strato.description='Users that the conversation owner mentions by @screenname in the tweet tetwittert are invited.')
   COMMUNITY = 2 (strato.description='The conversation owner, invited users, and users who the conversation owner follows can reply.')
 } (
   strato.graphql.typename='ConversationControlMode'
@@ -186,9 +186,9 @@ struct TweetConversationControl {
 )
 
 // empty for now, but intended to be populated in later iterations of the super follows project.
-struct ExclusiveTweetControlOptions {} (
-  strato.description='Marks a tweet as exclusive. See go/superfollows.',
-  strato.graphql.typename='ExclusiveTweetControlOptions',
+struct EtwitterclusiveTweetControlOptions {} (
+  strato.description='Marks a tweet as etwitterclusive. See go/superfollows.',
+  strato.graphql.typename='EtwitterclusiveTweetControlOptions',
 )
 
 struct EditOptions {
@@ -198,17 +198,17 @@ struct EditOptions {
   strato.graphql.typename='EditOptions',
 )
 
-struct TweetPeriscopeContext {
+struct TweetPeriscopeContetwittert {
   1: bool is_live = 0 (
     strato.description='Indicates if the tweet contains live streaming video. A value of false is equivalent to this struct being undefined in the CreateTweetRequest.'
   )
 
-  // Note that the REST API also defines a context_periscope_creator_id param. The GraphQL
-  // API infers this value from the TwitterContext Viewer.userId since it should always be
+  // Note that the REST API also defines a contetwittert_periscope_creator_id param. The GraphQL
+  // API infers this value from the TwitterContetwittert Viewer.userId since it should always be
   // the same as the Tweet.coreData.userId which is also inferred from Viewer.userId.
 } (
   strato.description='Specifies information about live video streaming. Note that the Periscope product was shut down in March 2021, however some live video streaming features remain in the Twitter app. This struct keeps the Periscope naming convention to retain parity and traceability to other areas of the codebase that also retain the Periscope name.',
-  strato.graphql.typename='TweetPeriscopeContext',
+  strato.graphql.typename='TweetPeriscopeContetwittert',
 )
 
 struct TrustedFriendsControlOptions {
@@ -223,7 +223,7 @@ struct TrustedFriendsControlOptions {
 
 enum CollabControlType {
   COLLAB_INVITATION = 1 (strato.description='This represents a CollabInvitation.')
-  // Note that a CollabTweet cannot be created through external graphql request,
+  // Note that a CollabTweet cannot be created through etwitterternal graphql request,
   // rather a user can create a CollabInvitation (which is automatically nullcasted) and a
   // public CollabTweet will be created when all Collaborators have accepted the CollabInvitation,
   // triggering a strato column to instantiate the CollabTweet directly
@@ -252,8 +252,8 @@ struct NoteTweetOptions {
   3: optional list<i64> mentioned_user_ids (
   strato.description = 'User ids of mentioned users in the NoteTweet. This is used to set conversation control on the Tweet, send mentioned user ids to TLS'
   )
-  4: optional bool is_expandable (
-  strato.description = 'Specifies if the Tweet can be expanded into the NoteTweet, or if they have the same text'
+  4: optional bool is_etwitterpandable (
+  strato.description = 'Specifies if the Tweet can be etwitterpanded into the NoteTweet, or if they have the same tetwittert'
   )
 } (
   strato.graphql.typename='NoteTweetOptions',
@@ -271,8 +271,8 @@ struct UndoOptions {
 )
 
 struct CreateTweetRequest {
-  1: string tweet_text = "" (
-    strato.description='The user-supplied text of the tweet. Defaults to empty string. Leading & trailing whitespace are trimmed, remaining value may be empty if and only if one or more media entity ids are also provided.'
+  1: string tweet_tetwittert = "" (
+    strato.description='The user-supplied tetwittert of the tweet. Defaults to empty string. Leading & trailing whitespace are trimmed, remaining value may be empty if and only if one or more media entity ids are also provided.'
   )
 
   // @see com.twitter.tweetypie.thriftscala.PostTweetRequest.nullcast
@@ -292,7 +292,7 @@ struct CreateTweetRequest {
 
   // @see com.twitter.tweetypie.thriftscala.PostTweetRequest.attachment_url
   5: optional string attachment_url (
-    strato.description='Tweet permalink (i.e. Quoted Tweet) or Direct Message deep link. This URL is not included in the visible_text_range.'
+    strato.description='Tweet permalink (i.e. Quoted Tweet) or Direct Message deep link. This URL is not included in the visible_tetwittert_range.'
   )
 
   // @see com.twitter.tweetypie.thriftscala.Tweet.card_reference
@@ -320,15 +320,15 @@ struct CreateTweetRequest {
     strato.description='Batch Compose Mode. See go/batchcompose'
   )
 
-  12: optional ExclusiveTweetControlOptions exclusive_tweet_control_options (
-    strato.description='When defined, this tweet will be marked as exclusive. Leave undefined to signify a regular, non-exclusive tweet. See go/superfollows.'
+  12: optional EtwitterclusiveTweetControlOptions etwitterclusive_tweet_control_options (
+    strato.description='When defined, this tweet will be marked as etwitterclusive. Leave undefined to signify a regular, non-etwitterclusive tweet. See go/superfollows.'
   )
 
   13: optional TweetConversationControl conversation_control (
     strato.description='Restrict replies to this tweet. See http://go/dont-at-me-api. Only valid for conversation root tweets. Applies to all replies to this tweet.'
   )
 
-  14: optional TweetPeriscopeContext periscope (
+  14: optional TweetPeriscopeContetwittert periscope (
     strato.description='Specifies information about live video streaming. Note that the Periscope product was shut down in March 2021, however some live video streaming features remain in the Twitter app. This struct keeps the Periscope naming convention to retain parity and traceability to other areas of the codebase that also retain the Periscope name. Note: A value of periscope.isLive=false is equivalent to this struct being left undefined.'
   )
 
@@ -364,7 +364,7 @@ struct CreateTweetResponse {
 
 struct CreateTweetResponseWithSubqueryPrefetchItems {
   1: optional CreateTweetResponse data
-  2: optional existsAndPrefetch.PrefetchedData subqueryPrefetchItems
+  2: optional etwitteristsAndPrefetch.PrefetchedData subqueryPrefetchItems
 }
 
 // Request struct, ResponseStruct, ResponseWithPrefetchStruct
@@ -387,5 +387,5 @@ struct DeleteTweetResponse {
 
 struct DeleteTweetResponseWithSubqueryPrefetchItems {
   1: optional DeleteTweetResponse data
-  2: optional existsAndPrefetch.PrefetchedData subqueryPrefetchItems
+  2: optional etwitteristsAndPrefetch.PrefetchedData subqueryPrefetchItems
 }

@@ -40,7 +40,7 @@ object DataSetPipeSketchJoin {
 
     DataSetPipe(
       joinedRecords,
-      FeatureContext.merge(inputDataSet.featureContext, joinFeaturesDataSet.featureContext)
+      FeatureContetwittert.merge(inputDataSet.featureContetwittert, joinFeaturesDataSet.featureContetwittert)
     )
   }
 }

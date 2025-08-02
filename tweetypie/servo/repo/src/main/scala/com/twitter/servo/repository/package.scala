@@ -21,7 +21,7 @@ package object repository {
   /**
    * A KeyValueRepository is a type of repository that handles bulk gets of data.  The query
    * defines the values to fetch, and is usually made of up of a Seq[K], possibly with other
-   * contextual information needed to perform the query.  The result is a KeyValueResult,
+   * contetwittertual information needed to perform the query.  The result is a KeyValueResult,
    * which contains a break-out of found, notFound, and failed key lookups.  The set of
    * keys may or may-not be computable locally from the query.  This top-level type does not
    * require that the keys are computable from the query, but certain instances, such as

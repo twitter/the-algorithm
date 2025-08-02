@@ -8,4 +8,4 @@ trait HasUttInterests {
   def uttInterestIds: Option[Seq[Long]]
 }
 
-trait HasInterestIds extends HasCustomInterests with HasUttInterests {}
+trait HasInterestIds etwittertends HasCustomInterests with HasUttInterests {}

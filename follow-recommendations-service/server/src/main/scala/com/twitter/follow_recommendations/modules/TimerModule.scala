@@ -6,7 +6,7 @@ import com.twitter.finagle.memcached.ZookeeperStateMonitor.DefaultTimer
 import com.twitter.inject.TwitterModule
 import com.twitter.util.Timer
 
-object TimerModule extends TwitterModule {
+object TimerModule etwittertends TwitterModule {
   @Provides
   @Singleton
   def providesTimer: Timer = DefaultTimer

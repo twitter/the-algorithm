@@ -7,7 +7,7 @@ import java.lang.{Double => JDouble}
 import java.lang.{Long => JLong}
 
 case class TypedSumMetric(
-) extends TypedSumLikeMetric[JDouble] {
+) etwittertends TypedSumLikeMetric[JDouble] {
   import AggregationMetricCommon._
 
   override val operatorName = "sum"
@@ -40,7 +40,7 @@ case class TypedSumMetric(
  * Syntactic sugar for the sum metric that works with continuous features.
  * See EasyMetric.scala for more details on why this is useful.
  */
-object SumMetric extends EasyMetric {
+object SumMetric etwittertends EasyMetric {
   override def forFeatureType[T](
     featureType: FeatureType
   ): Option[AggregationMetric[T, _]] =

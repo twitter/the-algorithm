@@ -85,7 +85,7 @@ namespace twml {
 }  // namespace twml
 
 twml_err twml_add1(twml_tensor output, const twml_tensor input) {
-  HANDLE_EXCEPTIONS(
+  HANDLE_EtwitterCEPTIONS(
     auto out = twml::getTensor(output);
     auto in = twml::getConstTensor(input);
     twml::add1(*out, *in););
@@ -93,7 +93,7 @@ twml_err twml_add1(twml_tensor output, const twml_tensor input) {
 }
 
 twml_err twml_copy(twml_tensor output, const twml_tensor input) {
-  HANDLE_EXCEPTIONS(
+  HANDLE_EtwitterCEPTIONS(
     auto out = twml::getTensor(output);
     auto in = twml::getConstTensor(input);
     twml::copy(*out, *in););
@@ -117,15 +117,15 @@ inline twml_err twml_get_feature_id_internal(int64_t *result,
     ssize_t n = utf8_to_utf16((const uint8_t *) str, k, out, out_size);
     if (n < 0) throw std::invalid_argument("error while converting from utf8 to utf16");
 
-    MurmurHash3_x64_128(out, n * sizeof(uint16_t), 0, out2);
+    MurmurHash3_twitter64_128(out, n * sizeof(uint16_t), 0, out2);
     n = utf8_to_utf16((const uint8_t *) (str + k + 1), len - k - 1, &out2[4], out2_size - 8);
     if (n < 0) throw std::invalid_argument("error while converting from utf8 to utf16");
 
-    MurmurHash3_x64_128(out2, (n * sizeof(uint16_t)) + 8, 0, hash);
+    MurmurHash3_twitter64_128(out2, (n * sizeof(uint16_t)) + 8, 0, hash);
   } else {
     ssize_t n = utf8_to_utf16((const uint8_t *)str, len, out, out_size);
     if (n < 0) throw std::invalid_argument("error while converting from utf8 to utf16");
-    MurmurHash3_x64_128(out, n * sizeof(uint16_t), 0, hash);
+    MurmurHash3_twitter64_128(out, n * sizeof(uint16_t), 0, hash);
   }
   int64_t id;
   memcpy(&id, hash, sizeof(int64_t));
@@ -134,17 +134,17 @@ inline twml_err twml_get_feature_id_internal(int64_t *result,
   return TWML_ERR_NONE;
 }
 
-static const int UTF16_STR_MAX_SIZE = 1024;
+static const int UTF16_STR_MAtwitter_SIZE = 1024;
 
 twml_err twml_get_feature_id(int64_t *result, const uint64_t len, const char *str) {
   try {
-    uint16_t out[UTF16_STR_MAX_SIZE];
-    uint16_t out2[UTF16_STR_MAX_SIZE];
+    uint16_t out[UTF16_STR_MAtwitter_SIZE];
+    uint16_t out2[UTF16_STR_MAtwitter_SIZE];
     return twml_get_feature_id_internal(result,
-                                        UTF16_STR_MAX_SIZE, out,
-                                        UTF16_STR_MAX_SIZE, out2,
+                                        UTF16_STR_MAtwitter_SIZE, out,
+                                        UTF16_STR_MAtwitter_SIZE, out2,
                                         len, str);
-  } catch(const std::invalid_argument &ex) {
+  } catch(const std::invalid_argument &etwitter) {
     // If the space on the stack is not enough, try using the heap.
     // len + 1 is needed because a null terminating character is added at the end.
     std::vector<uint16_t> out(len + 1);

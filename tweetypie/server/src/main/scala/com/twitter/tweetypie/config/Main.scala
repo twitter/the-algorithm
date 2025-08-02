@@ -4,7 +4,7 @@ package config
 import com.twitter.app.Flag
 import com.twitter.app.Flaggable
 import com.twitter.app.Flags
-import com.twitter.finagle.http.HttpMuxer
+import com.twitter.finagle.http.HttpMutwitterer
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.finagle.mtls.authorization.server.MtlsServerSessionTrackerFilter
 import com.twitter.finagle.mtls.server.MtlsStackServer._
@@ -12,13 +12,13 @@ import com.twitter.finagle.param.Reporter
 import com.twitter.finagle.ssl.OpportunisticTls
 import com.twitter.finagle.util.NullReporterFactory
 import com.twitter.finagle.Thrift
-import com.twitter.finagle.ThriftMux
+import com.twitter.finagle.ThriftMutwitter
 import com.twitter.flockdb.client.thriftscala.Priority
 import com.twitter.inject.Injector
 import com.twitter.inject.annotations.{Flags => InjectFlags}
 import com.twitter.scrooge.ThriftEnum
 import com.twitter.scrooge.ThriftEnumObject
-import com.twitter.server.handler.IndexHandler
+import com.twitter.server.handler.IndetwitterHandler
 import com.twitter.strato.catalog.Catalog
 import com.twitter.strato.fed.StratoFed
 import com.twitter.strato.fed.server.StratoFedServer
@@ -30,14 +30,14 @@ import com.twitter.tweetypie.serverutil.ActivityService
 import java.net.InetSocketAddress
 import scala.reflect.ClassTag
 
-object Env extends Enumeration {
+object Env etwittertends Enumeration {
   val dev: Env.Value = Value
   val staging: Env.Value = Value
   val prod: Env.Value = Value
 }
 
 class TweetServiceFlags(flag: Flags, injector: => Injector) {
-  implicit object EnvFlaggable extends Flaggable[Env.Value] {
+  implicit object EnvFlaggable etwittertends Flaggable[Env.Value] {
     def parse(s: String): Env.Value =
       s match {
         // Handle Aurora env names that are different from tweetypie's names
@@ -49,10 +49,10 @@ class TweetServiceFlags(flag: Flags, injector: => Injector) {
   }
 
   val zone: Flag[String] =
-    flag("zone", "localhost", "One of: atla, pdxa, localhost, etc.")
+    flag("zone", "localhost", "One of: atla, pdtwittera, localhost, etc.")
 
   val env: Flag[Env.Value] =
-    flag("env", Env.dev, "One of: testbox, dev, staging, prod")
+    flag("env", Env.dev, "One of: testbotwitter, dev, staging, prod")
 
   val twemcacheDest: Flag[String] =
     flag(
@@ -146,7 +146,7 @@ class TweetServiceFlags(flag: Flags, injector: => Injector) {
    * implicit val flaggablePriority: Flaggable[Priority] = flaggableThriftEnum(Priority)
    * }}}
    *
-   * In this example, the enumeration value `Priority.Low` can be
+   * In this etwitterample, the enumeration value `Priority.Low` can be
    * represented as the string "Low", "low", or "LOW".
    */
   def flaggableThriftEnum[T <: ThriftEnum: ClassTag](enum: ThriftEnumObject[T]): Flaggable[T] =
@@ -155,7 +155,7 @@ class TweetServiceFlags(flag: Flags, injector: => Injector) {
         .valueOf(stringValue)
         .getOrElse {
           val validValues = enum.list.map(_.name).mkString(", ")
-          throw new IllegalArgumentException(
+          throw new IllegalArgumentEtwitterception(
             s"Invalid value ${stringValue}. Valid values include: ${validValues}"
           )
         }
@@ -163,13 +163,13 @@ class TweetServiceFlags(flag: Flags, injector: => Injector) {
 
   implicit val flaggablePriority: Flaggable[Priority] = flaggableThriftEnum(Priority)
 
-  val backgroundIndexingPriority: Flag[Priority] =
+  val backgroundIndetwitteringPriority: Flag[Priority] =
     flag(
-      "backgroundIndexingPriority",
+      "backgroundIndetwitteringPriority",
       Priority.Low,
       "specifies the queue to use for \"background\" tflock operations, such as removing edges " +
-        "for deleted Tweets. This exists for testing scenarios, when it is useful to see the " +
-        "effects of background indexing operations sooner. In production, this should always be " +
+        "for deleted Tweets. This etwitterists for testing scenarios, when it is useful to see the " +
+        "effects of background indetwittering operations sooner. In production, this should always be " +
         "set to \"low\" (the default)."
     )
 
@@ -184,7 +184,7 @@ class TweetServiceFlags(flag: Flags, injector: => Injector) {
     )
 
   val inProcessCacheSize: Flag[Int] =
-    flag("inProcessCacheSize", 1700, "maximum items in in-process cache")
+    flag("inProcessCacheSize", 1700, "matwitterimum items in in-process cache")
 
   val inProcessCacheTtlMs: Flag[Int] =
     flag("inProcessCacheTtlMs", 10000, "milliseconds that hot keys are stored in memory")
@@ -235,7 +235,7 @@ class TweetServiceFlags(flag: Flags, injector: => Injector) {
       1500,
       """|Specifies a number of milliseconds before which we will short-circuit likely
          |partial reads from MH and return a NotFound tweet response state. After
-         |experimenting we went with 1500 ms.""".stripMargin
+         |etwitterperimenting we went with 1500 ms.""".stripMargin
     )
 
   val stringCenterProjects: Flag[Seq[String]] =
@@ -248,13 +248,13 @@ class TweetServiceFlags(flag: Flags, injector: => Injector) {
     flag("international.languages", "Supported languages config file")
 }
 
-class TweetypieMain extends StratoFedServer {
+class TweetypieMain etwittertends StratoFedServer {
   override def dest: String = "/s/tweetypie/tweetypie:federated"
 
   val tweetServiceFlags: TweetServiceFlags = new TweetServiceFlags(flag, injector)
 
-  // display all the registered HttpMuxer handlers
-  HttpMuxer.addHandler("", new IndexHandler)
+  // display all the registered HttpMutwitterer handlers
+  HttpMutwitterer.addHandler("", new IndetwitterHandler)
 
   private[this] lazy val serverBuilder = {
     val settings = new TweetServiceSettings(tweetServiceFlags)
@@ -265,9 +265,9 @@ class TweetypieMain extends StratoFedServer {
 
     val mtlsTrackedService = mtlsSessionTrackerFilter.andThen(ActivityService(serverBuilder.build))
 
-    val thriftMuxServer = ThriftMux.server
-    // by default, finagle logs exceptions to chickadee, which is deprecated and
-    // basically unused.  to avoid wasted overhead, we explicitly disable the reporter.
+    val thriftMutwitterServer = ThriftMutwitter.server
+    // by default, finagle logs etwitterceptions to chickadee, which is deprecated and
+    // basically unused.  to avoid wasted overhead, we etwitterplicitly disable the reporter.
       .configured(Reporter(NullReporterFactory))
       .withLabel("tweetypie")
       .withMutualTls(tweetServiceFlags.serviceIdentifier())
@@ -275,8 +275,8 @@ class TweetypieMain extends StratoFedServer {
       .configured(Thrift.param.ServiceClass(Some(classOf[ThriftTweetService])))
       .serve(tweetServiceFlags.servicePort(), mtlsTrackedService)
 
-    closeOnExit(thriftMuxServer)
-    await(thriftMuxServer)
+    closeOnEtwitterit(thriftMutwitterServer)
+    await(thriftMutwitterServer)
 
     serverBuilder
   }
@@ -311,4 +311,4 @@ class TweetypieMain extends StratoFedServer {
   }
 }
 
-object Main extends TweetypieMain
+object Main etwittertends TweetypieMain

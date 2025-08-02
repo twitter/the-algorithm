@@ -1,15 +1,15 @@
 package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
 
-import com.twitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
+import com.twitter.cortetwitter.deepbird.thriftjava.DeepbirdPredictionService
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
 import com.twitter.follow_recommendations.common.rankers.common.RankerId
 import com.twitter.ml.api.DataRecord
 import com.twitter.ml.api.Feature
 import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Named
+import javatwitter.inject.Singleton
 
 /**
  * This scorer assigns random values between 0 and 1 to each candidate as scores.
@@ -20,7 +20,7 @@ class RandomScorer @Inject() (
   @Named(GuiceNamedConstants.WTF_PROD_DEEPBIRDV2_CLIENT)
   override val deepbirdClient: DeepbirdPredictionService.ServiceToClient,
   override val baseStats: StatsReceiver)
-    extends DeepbirdScorer {
+    etwittertends DeepbirdScorer {
   override val id = RankerId.RandomRanker
   private val rnd = new scala.util.Random(System.currentTimeMillis())
 
@@ -29,11 +29,11 @@ class RandomScorer @Inject() (
       Future.Nil
     } else {
       // All candidates are assigned a random value between 0 and 1 as score.
-      Future.value(dataRecords.map(_ => Option(rnd.nextDouble())))
+      Future.value(dataRecords.map(_ => Option(rnd.netwittertDouble())))
     }
   }
 
-  override val modelName = "PostNuxRandomRanker"
+  override val modelName = "PostNutwitterRandomRanker"
 
   // This is not needed since we are overriding the `predict` function, but we have to override
   // `predictionFeature` anyway.

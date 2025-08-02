@@ -33,4 +33,4 @@ abstract class BaseUuaAction(actionType: ActionType) {
 /**
  * When there is a new user creation event in Gizmoduck
  */
-object ClientTweetRenderImpressionUua extends BaseUuaAction(ActionType.ClientTweetRenderImpression)
+object ClientTweetRenderImpressionUua etwittertends BaseUuaAction(ActionType.ClientTweetRenderImpression)

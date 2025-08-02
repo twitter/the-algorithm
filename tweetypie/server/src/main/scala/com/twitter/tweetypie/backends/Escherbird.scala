@@ -19,18 +19,18 @@ object Escherbird {
 
   case class Config(requestTimeout: Duration, timeoutBackoffs: Stream[Duration]) {
 
-    def apply(svc: Escherbird, ctx: Backend.Context): Escherbird =
+    def apply(svc: Escherbird, cttwitter: Backend.Contetwittert): Escherbird =
       new Escherbird {
         val annotate: FutureArrow[Tweet, Seq[TweetEntityAnnotation]] =
-          policy("annotate", requestTimeout, ctx)(svc.annotate)
+          policy("annotate", requestTimeout, cttwitter)(svc.annotate)
       }
 
     private[this] def policy[A, B](
       name: String,
       requestTimeout: Duration,
-      ctx: Context
+      cttwitter: Contetwittert
     ): Builder[A, B] =
-      defaultPolicy(name, requestTimeout, retryPolicy, ctx)
+      defaultPolicy(name, requestTimeout, retryPolicy, cttwitter)
 
     private[this] def retryPolicy[B]: RetryPolicy[Try[B]] =
       RetryPolicyBuilder.timeouts[Any](timeoutBackoffs)

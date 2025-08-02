@@ -10,7 +10,7 @@ import com.twitter.util.Future
  * Transform which uses an instance of a VisiblityEnforcer to filter down HydratedTweets
  */
 class VisibilityEnforcingTransform(visibilityEnforcer: VisibilityEnforcer)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+    etwittertends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
   override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
     visibilityEnforcer.apply(Some(envelope.query.userId), envelope.hydratedTweets.outerTweets).map {
       visibleTweets =>

@@ -6,7 +6,7 @@ import com.twitter.dal.client.dataset.KeyValDALDataset
 import com.twitter.pluck.source.cassowary.FollowingsCosineSimilaritiesManhattanSource
 import com.twitter.scalding._
 import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.job.TwitterExecutionApp
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
 import com.twitter.scalding_internal.job.analytics_batch._
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common.ModelVersions
@@ -64,7 +64,7 @@ object ClusterEvaluation {
     }
   }
 
-  object ClusterResultsMonoid extends Monoid[ClusterResults] {
+  object ClusterResultsMonoid etwittertends Monoid[ClusterResults] {
     override def zero = ClusterResults(0, 0, 0, 0, samplerMonoid.zero)
     override def plus(l: ClusterResults, r: ClusterResults) = ClusterResults(
       l.numEdgesInsideCluster + r.numEdgesInsideCluster,
@@ -113,26 +113,26 @@ object ClusterEvaluation {
    * Evaluate each cluster with respect to the provided graph.
    * @param graph graph represented via the adjacency lists of each node, needs to be symmetrized i.e. if u is in v's adjlist, then v needs to be in u's adjlist as well
    * @param clusters cluster memberships of each node.
-   * @param statsPrefix convenience argument to act as prefix for stats counters
+   * @param statsPrefitwitter convenience argument to act as prefitwitter for stats counters
    * @return key-value pipe with clusterId as key and (size of the cluster, quality struct) as value
    */
   def clusterLevelEvaluation(
     graph: TypedPipe[(Long, Map[Long, Float])],
     clusters: TypedPipe[(Long, Array[(Int, Float)])],
-    statsPrefix: String = ""
+    statsPrefitwitter: String = ""
   )(
     implicit uniqueId: UniqueID
-  ): Execution[TypedPipe[(Int, (Int, ClusterQuality))]] = {
-    val numRealClusters = Stat(s"${statsPrefix}/numRealClusters")
-    val numFakeClusters = Stat(s"${statsPrefix}/numFakeClusters")
+  ): Etwitterecution[TypedPipe[(Int, (Int, ClusterQuality))]] = {
+    val numRealClusters = Stat(s"${statsPrefitwitter}/numRealClusters")
+    val numFakeClusters = Stat(s"${statsPrefitwitter}/numFakeClusters")
 
-    val numNodesAndEdgesExec = graph
+    val numNodesAndEdgesEtwitterec = graph
       .map {
         case (nId, nbrMap) =>
           (1L, nbrMap.size.toLong, nbrMap.values.sum.toDouble)
-      }.sum.getExecution
+      }.sum.getEtwitterecution
 
-    numNodesAndEdgesExec.map {
+    numNodesAndEdgesEtwitterec.map {
       case (numNodes, numEdges, sumOfAllEdgeWts) =>
         println("numNodes " + numNodes)
         println("numEdges " + numEdges)
@@ -236,7 +236,7 @@ object ClusterEvaluation {
 
   def summarizePerClusterResults(
     perClusterResults: TypedPipe[(Int, (Int, ClusterQuality))]
-  ): Execution[Option[OverallResults]] = {
+  ): Etwitterecution[Option[OverallResults]] = {
     perClusterResults
       .map {
         case (clusterId, (size, quality)) =>
@@ -285,7 +285,7 @@ object ClusterEvaluation {
           )
       }
       .sum
-      .toOptionExecution
+      .toOptionEtwitterecution
       .map { opt =>
         opt.map {
           case (
@@ -343,11 +343,11 @@ object ClusterEvaluation {
   def overallEvaluation(
     graph: TypedPipe[(Long, Map[Long, Float])],
     clusters: TypedPipe[(Long, Array[(Int, Float)])],
-    statsPrefix: String
+    statsPrefitwitter: String
   )(
     implicit uniqueId: UniqueID
-  ): Execution[Option[OverallResults]] = {
-    clusterLevelEvaluation(graph, clusters, statsPrefix).flatMap(summarizePerClusterResults)
+  ): Etwitterecution[Option[OverallResults]] = {
+    clusterLevelEvaluation(graph, clusters, statsPrefitwitter).flatMap(summarizePerClusterResults)
   }
 }
 
@@ -359,19 +359,19 @@ object ClusterEvaluation {
  * --simsInputDir /user/frigate/your_ldap/commonDirForClusterEvaluation/classifiedSims_20190314_copiedFromAtlaProc \
  * --topK 20000000 --date 2019-03-18 --minActiveFollowers 400 \
  * --topUsersDir /user/frigate/your_ldap/commonDirForClusterEvaluation/top20MUsers_minActiveFollowers400_20190215 \
- * --maxSimsNeighborsForEval 40 \
+ * --matwitterSimsNeighborsForEval 40 \
  * --preparedSimsGraph /user/frigate/your_ldap/commonDirForClusterEvaluation/symmetrized_classifiedSims20190318_top20MUsers \
  * --outputDir /user/frigate/your_ldap/dirFor_updatedKnownFor20M_145K_dec11_usingSims20190127_unnormalizedInputScores/knownForClusterEvaluation \
  * --knownForDir /user/frigate/your_ldap/dirFor_updatedKnownFor20M_145K_dec11_usingSims20190127_unnormalizedInputScores/knownFor
  */
-object ClusterEvaluationAdhoc extends TwitterExecutionApp {
+object ClusterEvaluationAdhoc etwittertends TwitterEtwitterecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
   implicit val dp = DateParser.default
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
+  def job: Etwitterecution[Unit] =
+    Etwitterecution.getConfigMode.flatMap {
       case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
+        Etwitterecution.withId { implicit uniqueId =>
           val args = config.getArgs
           val knownFor = args
             .optional("knownForDir").map { location =>
@@ -382,7 +382,7 @@ object ClusterEvaluationAdhoc extends TwitterExecutionApp {
           val topK = args.int("topK")
           val date = DateRange.parse(args("date"))
 
-          val topUsersExec =
+          val topUsersEtwitterec =
             TopUsersSimilarityGraph
               .topUsers(
                 DAL.readMostRecentSnapshot(UsersourceFlatScalaDataset, date).toTypedPipe,
@@ -393,24 +393,24 @@ object ClusterEvaluationAdhoc extends TwitterExecutionApp {
               .count("num_top_users")
               .make(TypedTsv(args("topUsersDir")))
 
-          val simsGraphExec = topUsersExec.flatMap { topUsers =>
+          val simsGraphEtwitterec = topUsersEtwitterec.flatMap { topUsers =>
             TopUsersSimilarityGraph.makeGraph(
               TopUsersSimilarityGraph.getSubgraphFromUserGroupedInput(
                 TypedPipe.from(WTFCandidatesSource(args("simsInputDir"))),
                 topUsers,
-                args.int("maxSimsNeighborsForEval", 40),
+                args.int("matwitterSimsNeighborsForEval", 40),
                 degreeThresholdForStat = 5
               ),
               args("preparedSimsGraph")
             )
           }
 
-          val fullExec = simsGraphExec.flatMap { sims =>
+          val fullEtwitterec = simsGraphEtwitterec.flatMap { sims =>
             ClusterEvaluation
               .clusterLevelEvaluation(sims, knownFor, "eval")
               .flatMap { clusterResultsPipe =>
-                val clusterResults = clusterResultsPipe.forceToDiskExecution
-                val outputExec = clusterResults.flatMap { pipe =>
+                val clusterResults = clusterResultsPipe.forceToDiskEtwitterecution
+                val outputEtwitterec = clusterResults.flatMap { pipe =>
                   pipe
                     .map {
                       case (clusterId, (clusterSize, quality)) =>
@@ -426,10 +426,10 @@ object ClusterEvaluationAdhoc extends TwitterExecutionApp {
                             quality.relativePrecisionNumerator.getOrElse(0.0),
                             quality.weightAndProductOfNodeScoresCorrelation.getOrElse(0.0)
                           )
-                    }.writeExecution(TypedTsv(args("outputDir")))
+                    }.writeEtwitterecution(TypedTsv(args("outputDir")))
                 }
 
-                val printExec = clusterResults.flatMap { pipe =>
+                val printEtwitterec = clusterResults.flatMap { pipe =>
                   ClusterEvaluation.summarizePerClusterResults(pipe).map {
                     case Some(res) =>
                       println("Overall results: " + Util.prettyJsonMapper.writeValueAsString(res))
@@ -438,16 +438,16 @@ object ClusterEvaluationAdhoc extends TwitterExecutionApp {
                   }
                 }
 
-                Execution.zip(outputExec, printExec)
+                Etwitterecution.zip(outputEtwitterec, printEtwitterec)
               }
           }
 
-          Util.printCounters(fullExec)
+          Util.printCounters(fullEtwitterec)
         }
     }
 }
 
-trait ClusterEvaluationBatch extends TwitterScheduledExecutionApp {
+trait ClusterEvaluationBatch etwittertends TwitterScheduledEtwitterecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
   implicit val dp = DateParser.default
 
@@ -457,7 +457,7 @@ trait ClusterEvaluationBatch extends TwitterScheduledExecutionApp {
 
   def batchIncrement: Duration
 
-  private lazy val execArgs = AnalyticsBatchExecutionArgs(
+  private lazy val etwitterecArgs = AnalyticsBatchEtwitterecutionArgs(
     batchDesc = BatchDescription(batchDescription),
     firstTime = BatchFirstTime(RichDate(firstTime)),
     lastTime = None,
@@ -474,10 +474,10 @@ trait ClusterEvaluationBatch extends TwitterScheduledExecutionApp {
 
   def baselineKnownForModelVersion: String
 
-  override def scheduledJob: Execution[Unit] =
-    AnalyticsBatchExecution(execArgs) { implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
+  override def scheduledJob: Etwitterecution[Unit] =
+    AnalyticsBatchEtwitterecution(etwitterecArgs) { implicit dateRange =>
+      Etwitterecution.withId { implicit uniqueId =>
+        Etwitterecution.withArgs { args =>
           val baselineKnownFor =
             KnownForSources.fromKeyVal(
               DAL
@@ -500,8 +500,8 @@ trait ClusterEvaluationBatch extends TwitterScheduledExecutionApp {
 
           val minActiveFollowers = args.int("minActiveFollowers")
           val topK = args.int("topK")
-          val maxSimsNeighborsForEval =
-            args.int("maxSimsNeighborsForEval", 40)
+          val matwitterSimsNeighborsForEval =
+            args.int("matwitterSimsNeighborsForEval", 40)
 
           val topUsers = TopUsersSimilarityGraph
             .topUsers(
@@ -518,28 +518,28 @@ trait ClusterEvaluationBatch extends TwitterScheduledExecutionApp {
             .getSubgraphFromUserGroupedInput(
               fullGraph = inputSimsGraph,
               usersToInclude = topUsers,
-              maxNeighborsPerNode = maxSimsNeighborsForEval,
+              matwitterNeighborsPerNode = matwitterSimsNeighborsForEval,
               degreeThresholdForStat = 2
             )
-            .forceToDiskExecution
+            .forceToDiskEtwitterecution
             .flatMap { symmetrizedSims =>
-              val baselineResultsExec = ClusterEvaluation
+              val baselineResultsEtwitterec = ClusterEvaluation
                 .overallEvaluation(symmetrizedSims, baselineKnownFor, "baselineKnownForEval")
-              val newResultsExec = ClusterEvaluation
+              val newResultsEtwitterec = ClusterEvaluation
                 .overallEvaluation(symmetrizedSims, knownFor, "newKnownForEval")
               val minSizeOfBiggerClusterForComparison = 10
-              val compareExec = CompareClusters.summarize(
+              val compareEtwitterec = CompareClusters.summarize(
                 CompareClusters.compare(
                   KnownForSources.transpose(baselineKnownFor),
                   KnownForSources.transpose(knownFor),
                   minSizeOfBiggerCluster = minSizeOfBiggerClusterForComparison
                 ))
 
-              Execution
-                .zip(baselineResultsExec, newResultsExec, compareExec)
+              Etwitterecution
+                .zip(baselineResultsEtwitterec, newResultsEtwitterec, compareEtwitterec)
                 .map {
                   case (oldResults, newResults, compareResults) =>
-                    val emailText =
+                    val emailTetwittert =
                       s"Evaluation Results for baseline knownFor: $baselineKnownForModelVersion \n" +
                         Util.prettyJsonMapper.writeValueAsString(oldResults) +
                         "\n\n-------------------\n\n" +
@@ -554,7 +554,7 @@ trait ClusterEvaluationBatch extends TwitterScheduledExecutionApp {
 
                     Util
                       .sendEmail(
-                        emailText,
+                        emailTetwittert,
                         s"Evaluation results comparing $knownForModelVersion with baseline $baselineKnownForModelVersion",
                         emailAddress)
                     ()
@@ -569,7 +569,7 @@ trait ClusterEvaluationBatch extends TwitterScheduledExecutionApp {
  * capesospy-v2 update --build_locally --start_cron cluster_evaluation_for_20M_145k \
  * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
  */
-object ClusterEvaluationFor20M145K extends ClusterEvaluationBatch {
+object ClusterEvaluationFor20M145K etwittertends ClusterEvaluationBatch {
   override val firstTime: String = "2019-06-11"
 
   override val batchIncrement: Duration = Days(7)
@@ -589,7 +589,7 @@ object ClusterEvaluationFor20M145K extends ClusterEvaluationBatch {
  * capesospy-v2 update --build_locally --start_cron cluster_evaluation_for_20M_145k_2020 \
  * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
  */
-object ClusterEvaluationFor20M145K2020 extends ClusterEvaluationBatch {
+object ClusterEvaluationFor20M145K2020 etwittertends ClusterEvaluationBatch {
   override val firstTime: String = "2021-01-25"
 
   override val batchIncrement: Duration = Days(7)

@@ -10,15 +10,15 @@ import com.twitter.recos.entities.thriftscala.SemanticEntityScore
 import com.twitter.scalding._
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv2.remote_access.EtwitterplicitLocation
 import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common.SemanticCoreEntityId
 import com.twitter.simclusters_v2.common.UserId
 import com.twitter.simclusters_v2.hdfs_sources.SimilarTopicsFromTopicFollowGraphScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseRowMatrix
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
+import com.twitter.simclusters_v2.scalding.common.matritwitter.SparseRowMatritwitter
+import com.twitter.wtf.scalding.jobs.common.AdhocEtwitterecutionApp
+import com.twitter.wtf.scalding.jobs.common.ScheduledEtwitterecutionApp
 import java.util.TimeZone
 
 /**
@@ -29,14 +29,14 @@ import java.util.TimeZone
  *
   * It works as follows:
  *
-  *  1. it first reads the data set of user to topics follow graph, and construct a sparse matrix M with
+  *  1. it first reads the data set of user to topics follow graph, and construct a sparse matritwitter M with
  *    N rows and K columns, where N is the number of users, and K is the number of topics.
- *    In the matrix, M(u,i) = 1 if user u follows topic i; otherwise it is 0. In the sparse matrix,
+ *    In the matritwitter, M(u,i) = 1 if user u follows topic i; otherwise it is 0. In the sparse matritwitter,
  *    we only save non-zero elements.
  *
-  *  2. we do l2-normalization for each column of the matrix M, to get a normalized version M'.
+  *  2. we do l2-normalization for each column of the matritwitter M, to get a normalized version M'.
  *
-  *  3. we get topic-topic similarity matrix S = M'.transpose.multiply(M'). The resulting matrix will
+  *  3. we get topic-topic similarity matritwitter S = M'.transpose.multiply(M'). The resulting matritwitter will
  *    contain the similarities between all topics, i.e., S(i,j) is the similarity we mentioned above.
  *
   *  4. for each topic, we only keep its K similar topics with largest similarity scores, while not
@@ -48,7 +48,7 @@ import java.util.TimeZone
  * --start_cron similar_topics_from_topic_follow_graph \
  * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
-object SimilarTopicsFromTopicFollowGraphScheduledApp extends ScheduledExecutionApp {
+object SimilarTopicsFromTopicFollowGraphScheduledApp etwittertends ScheduledEtwitterecutionApp {
   import SimilarTopics._
 
   private val outputPath: String =
@@ -64,14 +64,14 @@ object SimilarTopicsFromTopicFollowGraphScheduledApp extends ScheduledExecutionA
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val numSimilarTopics = args.int("numSimilarTopics", default = 100)
     val scoreThreshold = args.double("scoreThreshold", default = 0.01)
 
     val numOutputTopics = Stat("NumOutputTopics")
 
     computeSimilarTopics(
-      getExplicitFollowedTopics,
+      getEtwitterplicitFollowedTopics,
       getFollowableTopics,
       numSimilarTopics,
       scoreThreshold)
@@ -85,10 +85,10 @@ object SimilarTopicsFromTopicFollowGraphScheduledApp extends ScheduledExecutionA
                 SemanticEntityScore(SemanticCoreEntity(similarTopicId), score)
             }))
       }
-      .writeDALVersionedKeyValExecution(
+      .writeDALVersionedKeyValEtwitterecution(
         SimilarTopicsFromTopicFollowGraphScalaDataset,
-        D.Suffix(outputPath),
-        version = ExplicitEndTime(dateRange.end)
+        D.Suffitwitter(outputPath),
+        version = EtwitterplicitEndTime(dateRange.end)
       )
   }
 
@@ -101,7 +101,7 @@ object SimilarTopicsFromTopicFollowGraphScheduledApp extends ScheduledExecutionA
  --submitter  hadoopnest1.atla.twitter.com  \
  --  --date 2020-04-28
  */
-object SimilarTopicsFromTopicFollowGraphAdhocApp extends AdhocExecutionApp {
+object SimilarTopicsFromTopicFollowGraphAdhocApp etwittertends AdhocEtwitterecutionApp {
   import SimilarTopics._
 
   override def runOnDateRange(
@@ -110,14 +110,14 @@ object SimilarTopicsFromTopicFollowGraphAdhocApp extends AdhocExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val numSimilarTopics = args.int("numSimilarTopics", default = 100)
     val scoreThreshold = args.double("scoreThreshold", default = 0.01)
 
     val numOutputTopics = Stat("NumOutputTopics")
 
     computeSimilarTopics(
-      getExplicitFollowedTopics,
+      getEtwitterplicitFollowedTopics,
       getFollowableTopics,
       numSimilarTopics,
       scoreThreshold)
@@ -131,7 +131,7 @@ object SimilarTopicsFromTopicFollowGraphAdhocApp extends AdhocExecutionApp {
             }
             .mkString(",")
       }
-      .writeExecution(
+      .writeEtwitterecution(
         TypedTsv("/user/cassowary/adhoc/topic_recos/similar_topics")
       )
   }
@@ -159,8 +159,8 @@ object SimilarTopics {
         case fullMetadata if fullMetadata.domainId == UTTDomain =>
           for {
             basicMetadata <- fullMetadata.basicMetadata
-            indexableFields <- basicMetadata.indexableFields
-            tags <- indexableFields.tags
+            indetwitterableFields <- basicMetadata.indetwitterableFields
+            tags <- indetwitterableFields.tags
             if tags.contains(FollowableTag)
           } yield {
             NumFollowableTopics.inc()
@@ -171,7 +171,7 @@ object SimilarTopics {
       .forceToDisk
   }
 
-  def getExplicitFollowedTopics(
+  def getEtwitterplicitFollowedTopics(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
@@ -179,7 +179,7 @@ object SimilarTopics {
 
     DAL
       .readMostRecentSnapshotNoOlderThan(UserTopicRelationSnapshotScalaDataset, Days(7))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
       .toTypedPipe
       .collect {
         case userInterestsRelationSnapshot: UserInterestsRelationSnapshot
@@ -199,20 +199,20 @@ object SimilarTopics {
     scoreThreshold: Double
   ): TypedPipe[(SemanticCoreEntityId, Seq[(SemanticCoreEntityId, Double)])] = {
     val userTopicFollowGraph =
-      SparseRowMatrix[UserId, SemanticCoreEntityId, Double](
+      SparseRowMatritwitter[UserId, SemanticCoreEntityId, Double](
         userTopicsFollowGraph,
-        isSkinnyMatrix = true)
+        isSkinnyMatritwitter = true)
         .filterCols(followableTopics) // filter out unfollowable topics
         .colL2Normalize // normalization
         // due to the small number of the topics,
-        // Scalding only allocates 1-2 mappers for the next step which makes it take unnecessarily long time.
+        // Scalding only allocates 1-2 mappers for the netwittert step which makes it take unnecessarily long time.
         // Changing it to 10 to make it a bit faster
         .forceToDisk(numShardsOpt = Some(10))
 
     userTopicFollowGraph
-      .transposeAndMultiplySkinnySparseRowMatrix(userTopicFollowGraph)
+      .transposeAndMultiplySkinnySparseRowMatritwitter(userTopicFollowGraph)
       .filter { (i, j, v) =>
-        // exclude topic itself from being considered as similar; also the similarity score should
+        // etwitterclude topic itself from being considered as similar; also the similarity score should
         // be larger than a threshold
         i != j && v > scoreThreshold
       }

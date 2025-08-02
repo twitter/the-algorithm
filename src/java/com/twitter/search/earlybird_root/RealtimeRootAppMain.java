@@ -8,7 +8,7 @@ import com.google.inject.Module;
 import com.twitter.search.common.root.SearchRootAppMain;
 import com.twitter.search.earlybird.thrift.EarlybirdService;
 
-public class RealtimeRootAppMain extends SearchRootAppMain<RealtimeRootServer> {
+public class RealtimeRootAppMain etwittertends SearchRootAppMain<RealtimeRootServer> {
   /**
    * Boilerplate for the Java-friendly AbstractTwitterServer
    */
@@ -19,7 +19,7 @@ public class RealtimeRootAppMain extends SearchRootAppMain<RealtimeRootServer> {
   }
 
   @Override
-  protected Collection<? extends Module> getAdditionalModules() {
+  protected Collection<? etwittertends Module> getAdditionalModules() {
     return Arrays.asList(
         new EarlybirdCommonModule(),
         new EarlybirdCacheCommonModule(),

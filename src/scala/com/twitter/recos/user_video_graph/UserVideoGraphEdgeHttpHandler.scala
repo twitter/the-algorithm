@@ -16,7 +16,7 @@ import java.util.Random
 import scala.collection.mutable.ListBuffer
 
 class UserTweetGraphEdgeHttpHandler(graph: MultiSegmentPowerLawBipartiteGraph)
-    extends Service[Request, Response] {
+    etwittertends Service[Request, Response] {
   private val log = Logger("UserTweetGraphEdgeHttpHandler")
   private val tweetIDMask = new TweetIDMask()
 
@@ -40,8 +40,8 @@ class UserTweetGraphEdgeHttpHandler(graph: MultiSegmentPowerLawBipartiteGraph)
         ]]
     val tweets = new ListBuffer[Edge]()
     if (iterator != null) {
-      while (iterator.hasNext) {
-        val rightNode = iterator.nextLong()
+      while (iterator.hasNetwittert) {
+        val rightNode = iterator.netwittertLong()
         val edgeType = iterator.currentEdgeType()
         tweets += Edge(
           tweetIDMask.restore(rightNode),
@@ -78,7 +78,7 @@ class UserTweetGraphEdgeHttpHandler(graph: MultiSegmentPowerLawBipartiteGraph)
       }.mkString("\n<br>\n")
 
     response.setContentString(
-      HTMLUtil.html.replace("XXXXX", comment + tweetContent + "\n<hr/>\n" + tweetEdges.toString()))
+      HTMLUtil.html.replace("twittertwittertwittertwittertwitter", comment + tweetContent + "\n<hr/>\n" + tweetEdges.toString()))
     Future.value(response)
   }
 
@@ -91,7 +91,7 @@ class UserTweetGraphEdgeHttpHandler(graph: MultiSegmentPowerLawBipartiteGraph)
         ]]
     val terms = new ListBuffer[Long]()
     if (iterator != null) {
-      while (iterator.hasNext) { terms += iterator.nextLong() }
+      while (iterator.hasNetwittert) { terms += iterator.netwittertLong() }
     }
     terms.distinct
   }

@@ -4,7 +4,7 @@ import com.twitter.escherbird.metadata.thriftscala.EntityMegadata
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base.MagicFanoutEventCandidate
 import com.twitter.frigate.common.base.RecommendationType
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
+import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContetwittert
 import com.twitter.frigate.common.util.HighPriorityLocaleUtil
 import com.twitter.frigate.magic_events.thriftscala.FanoutEvent
 import com.twitter.frigate.magic_events.thriftscala.FanoutMetadata
@@ -34,7 +34,7 @@ import com.twitter.livevideo.common.ids.CountryId
 import com.twitter.livevideo.common.ids.UserId
 import com.twitter.livevideo.timeline.domain.v2.Event
 import com.twitter.livevideo.timeline.domain.v2.HydrationOptions
-import com.twitter.livevideo.timeline.domain.v2.LookupContext
+import com.twitter.livevideo.timeline.domain.v2.LookupContetwittert
 import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
 import com.twitter.storehaus.ReadableStore
 import com.twitter.topiclisting.utt.LocalizedEntity
@@ -46,13 +46,13 @@ abstract class MagicFanoutEventPushCandidate(
   override val fanoutEvent: Option[FanoutEvent],
   override val semanticEntityResults: Map[SemanticEntityForQuery, Option[EntityMegadata]],
   simClusterToEntities: Map[Int, Option[SimClustersInferredEntities]],
-  lexServiceStore: ReadableStore[EventRequest, Event],
-  interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests],
+  letwitterServiceStore: ReadableStore[EventRequest, Event],
+  interestsLookupStore: ReadableStore[InterestsLookupRequestWithContetwittert, UserInterests],
   uttEntityHydrationStore: UttEntityHydrationStore
 )(
   implicit statsScoped: StatsReceiver,
   pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
+    etwittertends PushCandidate
     with MagicFanoutEventHydratedCandidate
     with MagicFanoutEventCandidate
     with EventNTabRequestHydrator
@@ -61,7 +61,7 @@ abstract class MagicFanoutEventPushCandidate(
 
   override lazy val eventFut: Future[Option[Event]] = {
     eventRequestFut.flatMap {
-      case Some(eventRequest) => lexServiceStore.get(eventRequest)
+      case Some(eventRequest) => letwitterServiceStore.get(eventRequest)
       case _ => Future.None
     }
   }
@@ -107,7 +107,7 @@ abstract class MagicFanoutEventPushCandidate(
       }
     }
 
-  val reverseIndexedTopicIds = candidate.candidateMagicEventsReasons
+  val reverseIndetwitteredTopicIds = candidate.candidateMagicEventsReasons
     .filter(_.source.contains(ReasonSource.UttTopicFollowGraph))
     .map(_.reason).collect {
       case TargetID.SemanticCoreID(semanticCoreID) => semanticCoreID.entityId
@@ -164,9 +164,9 @@ abstract class MagicFanoutEventPushCandidate(
   override lazy val followedTopicLocalizedEntities: Future[Set[LocalizedEntity]] = {
 
     val isNewSignupTargetingReason = candidateMagicEventsReasons.size == 1 &&
-      candidateMagicEventsReasons.headOption.exists(_.source.contains(ReasonSource.NewSignup))
+      candidateMagicEventsReasons.headOption.etwitterists(_.source.contains(ReasonSource.NewSignup))
 
-    val shouldFetchTopicFollows = reverseIndexedTopicIds.nonEmpty || isNewSignupTargetingReason
+    val shouldFetchTopicFollows = reverseIndetwitteredTopicIds.nonEmpty || isNewSignupTargetingReason
 
     val topicFollows = if (shouldFetchTopicFollows) {
       TopicsUtil
@@ -191,7 +191,7 @@ abstract class MagicFanoutEventPushCandidate(
         eventSemanticCoreEntityIds.toSet.intersect(followedTopicIds.toSet)
       } else {
         // check against the fanout reason of topics
-        followedTopicIds.toSet.intersect(reverseIndexedTopicIds)
+        followedTopicIds.toSet.intersect(reverseIndetwitteredTopicIds)
       }
 
       TopicsUtil
@@ -253,7 +253,7 @@ abstract class MagicFanoutEventPushCandidate(
             Some(
               EventRequest(
                 eventId,
-                lookupContext = LookupContext(
+                lookupContetwittert = LookupContetwittert(
                   hydrationOptions = HydrationOptions(
                     includeSquareImage = shouldHydrateSquareImage,
                     includePrimaryImage = shouldHydratePrimaryImage
@@ -267,7 +267,7 @@ abstract class MagicFanoutEventPushCandidate(
             Some(
               EventRequest(
                 eventId,
-                lookupContext = LookupContext(
+                lookupContetwittert = LookupContetwittert(
                   language = inferredUserDeviceLanguage,
                   countryCode = accountCountryCode
                 )
@@ -280,13 +280,13 @@ abstract class MagicFanoutEventPushCandidate(
     val isHighPriorityPushOpt = for {
       countryCode <- countryCodeOpt
       nfyMetadata <- newsForYouMetadata
-      eventContext <- nfyMetadata.eventContextScribe
+      eventContetwittert <- nfyMetadata.eventContetwittertScribe
     } yield {
       val highPriorityLocales = HighPriorityLocaleUtil.getHighPriorityLocales(
-        eventContext = eventContext,
+        eventContetwittert = eventContetwittert,
         defaultLocalesOpt = nfyMetadata.locales)
       val highPriorityGeos = HighPriorityLocaleUtil.getHighPriorityGeos(
-        eventContext = eventContext,
+        eventContetwittert = eventContetwittert,
         defaultGeoPlaceIdsOpt = nfyMetadata.placeIds)
       val isHighPriorityLocalePush =
         highPriorityLocales.flatMap(_.country).map(CountryId(_)).contains(CountryId(countryCode))

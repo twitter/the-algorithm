@@ -24,17 +24,17 @@ object PersistentTweetEmbeddingStore {
   val LogFavBased20m145k2020Dataset = "log_fav_based_tweet_20m_145k_2020_embeddings"
   val LogFavBased20m145kUpdatedDataset = "log_fav_based_tweet_20m_145k_updated_embeddings"
 
-  val DefaultMaxLength = 15
+  val DefaultMatwitterLength = 15
 
   def mostRecentTweetEmbeddingStore(
     stratoClient: Client,
     column: String,
-    maxLength: Int = DefaultMaxLength
+    matwitterLength: Int = DefaultMatwitterLength
   ): ReadableStore[TweetId, SimClustersEmbedding] = {
     StratoFetchableStore
       .withUnitView[(TweetId, Timestamp), PersistentSimClustersEmbedding](stratoClient, column)
       .composeKeyMapping[TweetId]((_, LatestEmbeddingVersion))
-      .mapValues(_.embedding.truncate(maxLength))
+      .mapValues(_.embedding.truncate(matwitterLength))
   }
 
   def longestL2NormTweetEmbeddingStore(
@@ -50,7 +50,7 @@ object PersistentTweetEmbeddingStore {
     mhMtlsParams: ManhattanKVClientMtlsParams,
     dataset: String,
     statsReceiver: StatsReceiver,
-    maxLength: Int = DefaultMaxLength
+    matwitterLength: Int = DefaultMatwitterLength
   ): ReadableStore[TweetId, SimClustersEmbedding] =
     ManhattanFromStratoStore
       .createPersistentTweetStore(
@@ -58,13 +58,13 @@ object PersistentTweetEmbeddingStore {
         mhMtlsParams = mhMtlsParams,
         statsReceiver = statsReceiver
       ).composeKeyMapping[TweetId]((_, LatestEmbeddingVersion))
-      .mapValues[SimClustersEmbedding](_.embedding.truncate(maxLength))
+      .mapValues[SimClustersEmbedding](_.embedding.truncate(matwitterLength))
 
   def longestL2NormTweetEmbeddingStoreManhattan(
     mhMtlsParams: ManhattanKVClientMtlsParams,
     dataset: String,
     statsReceiver: StatsReceiver,
-    maxLength: Int = 50
+    matwitterLength: Int = 50
   ): ReadableStore[TweetId, SimClustersEmbedding] =
     ManhattanFromStratoStore
       .createPersistentTweetStore(
@@ -72,7 +72,7 @@ object PersistentTweetEmbeddingStore {
         mhMtlsParams = mhMtlsParams,
         statsReceiver = statsReceiver
       ).composeKeyMapping[TweetId]((_, LongestL2EmbeddingVersion))
-      .mapValues[SimClustersEmbedding](_.embedding.truncate(maxLength))
+      .mapValues[SimClustersEmbedding](_.embedding.truncate(matwitterLength))
 
   /**
    * The writeable store for Persistent Tweet embedding. Only available in SimClusters package.

@@ -12,7 +12,7 @@ import com.twitter.finatra.kafkastreams.config.SecureKafkaStreamsConfig
 import com.twitter.finatra.kafkastreams.partitioning.StaticPartitioning
 import com.twitter.finatra.mtls.modules.ServiceIdentifierModule
 import com.twitter.finatra.kafkastreams.dsl.FinatraDslFlatMapAsync
-import com.twitter.graphql.thriftscala.GraphqlExecutionService
+import com.twitter.graphql.thriftscala.GraphqlEtwitterecutionService
 import com.twitter.logging.Logging
 import com.twitter.unified_user_actions.enricher.driver.EnrichmentDriver
 import com.twitter.unified_user_actions.enricher.hcache.LocalCache
@@ -26,16 +26,16 @@ import com.twitter.unified_user_actions.service.module.GraphqlClientProviderModu
 import com.twitter.util.Future
 import org.apache.kafka.common.record.CompressionType
 import org.apache.kafka.streams.StreamsBuilder
-import org.apache.kafka.streams.processor.RecordContext
-import org.apache.kafka.streams.processor.TopicNameExtractor
+import org.apache.kafka.streams.processor.RecordContetwittert
+import org.apache.kafka.streams.processor.TopicNameEtwittertractor
 import org.apache.kafka.streams.scala.kstream.Consumed
 import org.apache.kafka.streams.scala.kstream.Produced
 import com.twitter.unified_user_actions.enricher.driver.EnrichmentPlanUtils._
 
-object EnricherServiceMain extends EnricherService
+object EnricherServiceMain etwittertends EnricherService
 
 class EnricherService
-    extends FinatraDslFlatMapAsync
+    etwittertends FinatraDslFlatMapAsync
     with StaticPartitioning
     with SecureKafkaStreamsConfig
     with Logging {
@@ -50,7 +50,7 @@ class EnricherService
   )
 
   override protected def configureKafkaStreams(builder: StreamsBuilder): Unit = {
-    val graphqlClient = injector.instance[GraphqlExecutionService.FinagledClient]
+    val graphqlClient = injector.instance[GraphqlEtwitterecutionService.FinagledClient]
     val localCache = injector.instance[LocalCache[EnrichmentKey, DynMap]]
     val statsReceiver = injector.instance[StatsReceiver]
     val driver = new EnrichmentDriver(
@@ -71,16 +71,16 @@ class EnricherService
         numWorkers = 10000
       ) { (enrichmentKey: EnrichmentKey, enrichmentEnvelop: EnrichmentEnvelop) =>
         driver
-          .execute(Some(enrichmentKey), Future.value(enrichmentEnvelop))
+          .etwitterecute(Some(enrichmentKey), Future.value(enrichmentEnvelop))
           .map(tuple => tuple._1.map(key => (key, tuple._2)).seq)
       }
 
-    val topicExtractor: TopicNameExtractor[EnrichmentKey, EnrichmentEnvelop] =
-      (_: EnrichmentKey, envelop: EnrichmentEnvelop, _: RecordContext) =>
+    val topicEtwittertractor: TopicNameEtwittertractor[EnrichmentKey, EnrichmentEnvelop] =
+      (_: EnrichmentKey, envelop: EnrichmentEnvelop, _: RecordContetwittert) =>
         envelop.plan.getLastCompletedStage.outputTopic.getOrElse(
-          throw new IllegalStateException("Missing output topic in the last completed stage"))
+          throw new IllegalStateEtwitterception("Missing output topic in the last completed stage"))
 
-    kstream.to(topicExtractor)(
+    kstream.to(topicEtwittertractor)(
       Produced.`with`(ScalaSerdes.Thrift[EnrichmentKey], ScalaSerdes.Thrift[EnrichmentEnvelop]))
   }
 
@@ -92,10 +92,10 @@ class EnricherService
       .consumer.requestTimeout(30.seconds)
       .consumer.sessionTimeout(30.seconds)
       .consumer.fetchMin(1.megabyte)
-      .consumer.fetchMax(5.megabytes)
+      .consumer.fetchMatwitter(5.megabytes)
       .consumer.receiveBuffer(32.megabytes)
-      .consumer.maxPollInterval(1.minute)
-      .consumer.maxPollRecords(50000)
+      .consumer.matwitterPollInterval(1.minute)
+      .consumer.matwitterPollRecords(50000)
       .producer.clientId(s"${applicationId()}-producer")
       .producer.batchSize(16.kilobytes)
       .producer.bufferMemorySize(256.megabyte)

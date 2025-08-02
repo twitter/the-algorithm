@@ -4,11 +4,11 @@ import com.twitter.logging.Logger
 import com.twitter.scalding._
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
-import com.twitter.scalding_internal.job.TwitterExecutionApp
+import com.twitter.scalding_internal.dalv2.remote_access.{EtwitterplicitLocation, ProcAtla}
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
 import com.twitter.scalding_internal.job.analytics_batch._
 import com.twitter.simclusters_v2.hdfs_sources.{
-  NormsAndCountsFixedPathSource,
+  NormsAndCountsFitwitteredPathSource,
   ProducerNormsAndCountsScalaDataset
 }
 import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
@@ -99,7 +99,7 @@ object ProducerNormsAndCounts {
   }
 }
 
-object ProducerNormsAndCountsBatch extends TwitterScheduledExecutionApp {
+object ProducerNormsAndCountsBatch etwittertends TwitterScheduledEtwitterecutionApp {
   private val firstTime: String = "2018-06-16"
   implicit val tz = DateOps.UTC
   implicit val parser = DateParser.default
@@ -110,24 +110,24 @@ object ProducerNormsAndCountsBatch extends TwitterScheduledExecutionApp {
   private val outputPath: String = "/user/cassowary/processed/producer_norms_and_counts"
   private val log = Logger()
 
-  private val execArgs = AnalyticsBatchExecutionArgs(
+  private val etwitterecArgs = AnalyticsBatchEtwitterecutionArgs(
     batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
     firstTime = BatchFirstTime(RichDate(firstTime)),
     lastTime = None,
     batchIncrement = BatchIncrement(batchIncrement)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) {
+  override def scheduledJob: Etwitterecution[Unit] = AnalyticsBatchEtwitterecution(etwitterecArgs) {
     implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
+      Etwitterecution.withId { implicit uniqueId =>
+        Etwitterecution.withArgs { args =>
           Util.printCounters(
             ProducerNormsAndCounts
               .run(halfLifeInDaysForFavScore)
-              .writeDALSnapshotExecution(
+              .writeDALSnapshotEtwitterecution(
                 ProducerNormsAndCountsScalaDataset,
                 D.Daily,
-                D.Suffix(outputPath),
+                D.Suffitwitter(outputPath),
                 D.EBLzo(),
                 dateRange.end)
           )
@@ -136,23 +136,23 @@ object ProducerNormsAndCountsBatch extends TwitterScheduledExecutionApp {
   }
 }
 
-object ProducerNormsAndCountsAdhoc extends TwitterExecutionApp {
+object ProducerNormsAndCountsAdhoc etwittertends TwitterEtwitterecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
   implicit val dp = DateParser.default
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
+  def job: Etwitterecution[Unit] =
+    Etwitterecution.getConfigMode.flatMap {
       case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
+        Etwitterecution.withId { implicit uniqueId =>
           val args = config.getArgs
           implicit val date = DateRange.parse(args.list("date"))
 
           Util.printCounters(
             ProducerNormsAndCounts
               .run(halfLifeInDaysForFavScore = 100)
-              .forceToDiskExecution.flatMap { result =>
-                Execution.zip(
-                  result.writeExecution(NormsAndCountsFixedPathSource(args("outputDir"))),
+              .forceToDiskEtwitterecution.flatMap { result =>
+                Etwitterecution.zip(
+                  result.writeEtwitterecution(NormsAndCountsFitwitteredPathSource(args("outputDir"))),
                   result.printSummary("Producer norms and counts")
                 )
               }
@@ -161,21 +161,21 @@ object ProducerNormsAndCountsAdhoc extends TwitterExecutionApp {
     }
 }
 
-object DumpNormsAndCountsAdhoc extends TwitterExecutionApp {
+object DumpNormsAndCountsAdhoc etwittertends TwitterEtwitterecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
+  def job: Etwitterecution[Unit] =
+    Etwitterecution.getConfigMode.flatMap {
       case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
+        Etwitterecution.withId { implicit uniqueId =>
           val args = config.getArgs
 
           val users = args.list("users").map(_.toLong).toSet
           val input = args.optional("inputDir") match {
-            case Some(inputDir) => TypedPipe.from(NormsAndCountsFixedPathSource(inputDir))
+            case Some(inputDir) => TypedPipe.from(NormsAndCountsFitwitteredPathSource(inputDir))
             case None =>
               DAL
                 .readMostRecentSnapshotNoOlderThan(ProducerNormsAndCountsScalaDataset, Days(30))
-                .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+                .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
                 .toTypedPipe
           }
 
@@ -187,7 +187,7 @@ object DumpNormsAndCountsAdhoc extends TwitterExecutionApp {
                 case rec if users.contains(rec.userId) =>
                   Util.prettyJsonMapper.writeValueAsString(rec).replaceAll("\n", " ")
               }
-              .toIterableExecution
+              .toIterableEtwitterecution
               .map { strings => println(strings.mkString("\n")) }
           }
         }

@@ -81,7 +81,7 @@ object SuccessRateTracker {
  *
  * @param average Strategy for recording an average, usually over a window
  */
-class AverageSuccessRateTracker(average: Average) extends SuccessRateTracker {
+class AverageSuccessRateTracker(average: Average) etwittertends SuccessRateTracker {
   def record(successes: Int, failures: Int): Unit =
     average.record(successes, successes + failures)
 
@@ -89,15 +89,15 @@ class AverageSuccessRateTracker(average: Average) extends SuccessRateTracker {
 }
 
 /**
- * EwmaSuccessRateTracker computes a failure rate with exponential decay over a time bound.
+ * EwmaSuccessRateTracker computes a failure rate with etwitterponential decay over a time bound.
  *
  * @param halfLife determines the rate of decay. Assuming a hypothetical service that is initially
  * 100% successful and then instantly switches to 50% successful, it will take `halfLife` time
  * for this tracker to report a success rate of ~75%.
  */
-class EwmaSuccessRateTracker(halfLife: Duration) extends SuccessRateTracker {
-  // math.exp(-x) = 0.50 when x == ln(2)
-  // math.exp(-x / Tau) == math.exp(-x / halfLife * ln(2)) therefore when x/halfLife == 1, the
+class EwmaSuccessRateTracker(halfLife: Duration) etwittertends SuccessRateTracker {
+  // math.etwitterp(-twitter) = 0.50 when twitter == ln(2)
+  // math.etwitterp(-twitter / Tau) == math.etwitterp(-twitter / halfLife * ln(2)) therefore when twitter/halfLife == 1, the
   // decay output is 0.5
   private[this] val Tau: Double = halfLife.inNanoseconds.toDouble / math.log(2.0)
 
@@ -110,12 +110,12 @@ class EwmaSuccessRateTracker(halfLife: Duration) extends SuccessRateTracker {
     val total = successes + failures
     if (total == 0) return
 
-    val observation = (failures.toDouble / total) max 0.0 min 1.0
+    val observation = (failures.toDouble / total) matwitter 0.0 min 1.0
 
     synchronized {
       val time = EwmaSuccessRateTracker.nanoTime()
-      val delta = ((time - stamp) max 0L).toDouble
-      val weight = math.exp(-delta / Tau)
+      val delta = ((time - stamp) matwitter 0L).toDouble
+      val weight = math.etwitterp(-delta / Tau)
       decayingFailureRate = (decayingFailureRate * weight) + (observation * (1.0 - weight))
       stamp = time
     }
@@ -146,7 +146,7 @@ object EwmaSuccessRateTracker {
   }
 
   /**
-   * Execute body with the time function replaced by `timeFunction`
+   * Etwitterecute body with the time function replaced by `timeFunction`
    * WARNING: This is only meant for testing purposes.
    */
   private[this] def withNanoTimeFunction[A](

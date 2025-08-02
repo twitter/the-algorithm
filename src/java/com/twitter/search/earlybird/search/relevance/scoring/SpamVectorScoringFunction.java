@@ -1,10 +1,10 @@
 package com.twitter.search.earlybird.search.relevance.scoring;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import org.apache.lucene.search.Explanation;
+import org.apache.lucene.search.Etwitterplanation;
 
 import com.twitter.search.common.relevance.features.RelevanceSignalConstants;
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
@@ -14,7 +14,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
 
-public class SpamVectorScoringFunction extends ScoringFunction {
+public class SpamVectorScoringFunction etwittertends ScoringFunction {
   private static final int MIN_TWEEPCRED_WITH_LINK =
       EarlybirdConfig.getInt("min_tweepcred_with_non_whitelisted_link", 25);
 
@@ -31,7 +31,7 @@ public class SpamVectorScoringFunction extends ScoringFunction {
   }
 
   @Override
-  protected float score(float luceneQueryScore) throws IOException {
+  protected float score(float luceneQueryScore) throws IOEtwitterception {
     if (documentFeatures.isFlagSet(EarlybirdFieldConstant.FROM_VERIFIED_ACCOUNT_FLAG)) {
       return NOT_SPAM_SCORE;
     }
@@ -48,7 +48,7 @@ public class SpamVectorScoringFunction extends ScoringFunction {
     int tweepcred = (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.USER_REPUTATION);
 
     // For new user, tweepcred is set to a sentinel value of -128, specified at
-    // src/thrift/com/twitter/search/common/indexing/status.thrift
+    // src/thrift/com/twitter/search/common/indetwittering/status.thrift
     if (tweepcred >= tweepCredThreshold
         || tweepcred == (int) RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL) {
       return NOT_SPAM_SCORE;
@@ -70,7 +70,7 @@ public class SpamVectorScoringFunction extends ScoringFunction {
   }
 
   @Override
-  protected Explanation doExplain(float luceneScore) {
+  protected Etwitterplanation doEtwitterplain(float luceneScore) {
     return null;
   }
 

@@ -12,14 +12,14 @@ import com.twitter.search.common.metrics.SearchRateCounter;
 public class NonPagingAssert {
     private static final Logger LOG = LoggerFactory.getLogger(NonPagingAssert.class);
 
-    private static final String ASSERT_STAT_PREFIX = "non_paging_assert_";
+    private static final String ASSERT_STAT_PREFItwitter = "non_paging_assert_";
 
     private final String name;
     private final SearchRateCounter assertCounter;
 
     public NonPagingAssert(String name) {
         this.name = name;
-        this.assertCounter = SearchRateCounter.export(ASSERT_STAT_PREFIX + name);
+        this.assertCounter = SearchRateCounter.etwitterport(ASSERT_STAT_PREFItwitter + name);
     }
 
     public void assertFailed() {

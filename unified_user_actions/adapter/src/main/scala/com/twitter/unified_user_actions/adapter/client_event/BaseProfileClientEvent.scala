@@ -9,7 +9,7 @@ import com.twitter.unified_user_actions.thriftscala.Item
 import com.twitter.unified_user_actions.thriftscala.ProfileInfo
 
 abstract class BaseProfileClientEvent(actionType: ActionType)
-    extends BaseClientEvent(actionType = actionType) {
+    etwittertends BaseClientEvent(actionType = actionType) {
   override def isItemTypeValid(itemTypeOpt: Option[ItemType]): Boolean =
     ItemTypeFilterPredicates.isItemTypeProfile(itemTypeOpt)
 

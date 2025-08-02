@@ -1,6 +1,6 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
-package tensorflow.data.experimental;
+package tensorflow.data.etwitterperimental;
 
 import "tensorflow/core/framework/tensor.proto";
 import "tensorflow/core/framework/tensor_shape.proto";

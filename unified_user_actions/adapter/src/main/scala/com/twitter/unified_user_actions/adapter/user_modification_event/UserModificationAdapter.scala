@@ -10,7 +10,7 @@ import com.twitter.unified_user_actions.adapter.user_modification_event.UserUpda
 import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
 
 class UserModificationAdapter
-    extends AbstractAdapter[UserModification, UnKeyed, UnifiedUserAction] {
+    etwittertends AbstractAdapter[UserModification, UnKeyed, UnifiedUserAction] {
 
   import UserModificationAdapter._
 
@@ -34,7 +34,7 @@ object UserModificationAdapter {
       } else if (e.erase.isDefined) {
         None
       } else {
-        throw new IllegalArgumentException(
+        throw new IllegalArgumentEtwitterception(
           "None of the possible events is defined, there must be something with the source")
       }
     }

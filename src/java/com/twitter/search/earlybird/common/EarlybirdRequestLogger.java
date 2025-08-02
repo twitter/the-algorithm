@@ -8,12 +8,12 @@ import scala.Option;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
 
-import com.twitter.context.TwitterContext;
-import com.twitter.context.thriftscala.Viewer;
+import com.twitter.contetwittert.TwitterContetwittert;
+import com.twitter.contetwittert.thriftscala.Viewer;
 import com.twitter.decider.Decider;
 import com.twitter.finagle.thrift.ClientId;
 import com.twitter.finagle.thrift.ClientId$;
-import com.twitter.search.TwitterContextPermit;
+import com.twitter.search.TwitterContetwittertPermit;
 import com.twitter.search.common.constants.thriftjava.ThriftQuerySource;
 import com.twitter.search.common.decider.DeciderUtil;
 import com.twitter.search.common.logging.RPCLogger;
@@ -32,11 +32,11 @@ import static com.twitter.search.common.util.earlybird.EarlybirdResponseUtil
     .responseConsideredFailed;
 
 
-public class EarlybirdRequestLogger extends RPCLogger {
-  protected enum ExtraFields {
-    QUERY_MAX_HITS_TO_PROCESS,
-    COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS,
-    RELEVANCE_OPTIONS_MAX_HITS_TO_PROCESS,
+public class EarlybirdRequestLogger etwittertends RPCLogger {
+  protected enum EtwittertraFields {
+    QUERY_MAtwitter_HITS_TO_PROCESS,
+    COLLECTOR_PARAMS_MAtwitter_HITS_TO_PROCESS,
+    RELEVANCE_OPTIONS_MAtwitter_HITS_TO_PROCESS,
     NUM_HITS_PROCESSED,
     QUERY_COST,
     CPU_TOTAL,
@@ -45,12 +45,12 @@ public class EarlybirdRequestLogger extends RPCLogger {
     FINAGLE_CLIENT_ID
   }
 
-  protected enum ShardOnlyExtraFields {
+  protected enum ShardOnlyEtwittertraFields {
     NUM_SEARCHED_SEGMENTS,
     SCORING_TIME_NANOS
   }
 
-  protected enum RootOnlyExtraFields {
+  protected enum RootOnlyEtwittertraFields {
     CACHING_ALLOWED,
     DEBUG_MODE,
     CACHE_HIT,
@@ -79,22 +79,22 @@ public class EarlybirdRequestLogger extends RPCLogger {
       String loggerName, int latencyWarnThreshold, Decider decider) {
 
     return new EarlybirdRequestLogger(loggerName, latencyWarnThreshold,
-        decider, true, RPCLogger.Fields.values(), ExtraFields.values(),
-        RootOnlyExtraFields.values());
+        decider, true, RPCLogger.Fields.values(), EtwittertraFields.values(),
+        RootOnlyEtwittertraFields.values());
   }
 
   static EarlybirdRequestLogger buildForShard(
       String loggerName, int latencyWarnThreshold, Decider decider) {
 
     return new EarlybirdRequestLogger(loggerName, latencyWarnThreshold,
-        decider, false, RPCLogger.Fields.values(), ExtraFields.values(),
-        ShardOnlyExtraFields.values());
+        decider, false, RPCLogger.Fields.values(), EtwittertraFields.values(),
+        ShardOnlyEtwittertraFields.values());
   }
 
   @VisibleForTesting
   EarlybirdRequestLogger(String loggerName, int latencyWarnThreshold, Decider decider) {
     this(loggerName, latencyWarnThreshold, decider, false, RPCLogger.Fields.values(),
-        ExtraFields.values(), RootOnlyExtraFields.values(), ShardOnlyExtraFields.values());
+        EtwittertraFields.values(), RootOnlyEtwittertraFields.values(), ShardOnlyEtwittertraFields.values());
   }
 
   private EarlybirdRequestLogger(String loggerName, int latencyWarnThreshold, Decider decider,
@@ -119,7 +119,7 @@ public class EarlybirdRequestLogger extends RPCLogger {
       setRequestLogEntries(entry, request);
       setResponseLogEntries(entry, response);
       if (timer != null) {
-        entry.setField(ExtraFields.CPU_TOTAL, Long.toString(timer.getElapsedCpuTotal()));
+        entry.setField(EtwittertraFields.CPU_TOTAL, Long.toString(timer.getElapsedCpuTotal()));
       }
 
       boolean wasError = response != null && responseConsideredFailed(response.getResponseCode());
@@ -168,8 +168,8 @@ public class EarlybirdRequestLogger extends RPCLogger {
         NO_QUERY_SOURCE_FAILURE_RATIO_COUNTER.requestFinished(!wasError);
       }
 
-    } catch (Exception e) {
-      LOG.error("Exception building log entry ", e);
+    } catch (Etwitterception e) {
+      LOG.error("Etwitterception building log entry ", e);
     }
   }
 
@@ -182,56 +182,56 @@ public class EarlybirdRequestLogger extends RPCLogger {
       ThriftSearchQuery searchQuery = request.getSearchQuery();
       entry.setField(Fields.QUERY, searchQuery.getSerializedQuery());
 
-      if (searchQuery.isSetMaxHitsToProcess()) {
-        entry.setField(ExtraFields.QUERY_MAX_HITS_TO_PROCESS,
-                       Integer.toString(searchQuery.getMaxHitsToProcess()));
+      if (searchQuery.isSetMatwitterHitsToProcess()) {
+        entry.setField(EtwittertraFields.QUERY_MAtwitter_HITS_TO_PROCESS,
+                       Integer.toString(searchQuery.getMatwitterHitsToProcess()));
       }
 
       if (searchQuery.isSetCollectorParams()
           && searchQuery.getCollectorParams().isSetTerminationParams()
-          && searchQuery.getCollectorParams().getTerminationParams().isSetMaxHitsToProcess()) {
-        entry.setField(ExtraFields.COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS,
+          && searchQuery.getCollectorParams().getTerminationParams().isSetMatwitterHitsToProcess()) {
+        entry.setField(EtwittertraFields.COLLECTOR_PARAMS_MAtwitter_HITS_TO_PROCESS,
                        Integer.toString(searchQuery.getCollectorParams().getTerminationParams()
-                                        .getMaxHitsToProcess()));
+                                        .getMatwitterHitsToProcess()));
       }
 
       if (searchQuery.isSetRelevanceOptions()
-          && searchQuery.getRelevanceOptions().isSetMaxHitsToProcess()) {
-        entry.setField(ExtraFields.RELEVANCE_OPTIONS_MAX_HITS_TO_PROCESS,
-                       Integer.toString(searchQuery.getRelevanceOptions().getMaxHitsToProcess()));
+          && searchQuery.getRelevanceOptions().isSetMatwitterHitsToProcess()) {
+        entry.setField(EtwittertraFields.RELEVANCE_OPTIONS_MAtwitter_HITS_TO_PROCESS,
+                       Integer.toString(searchQuery.getRelevanceOptions().getMatwitterHitsToProcess()));
       }
     }
 
     entry.setField(Fields.NUM_REQUESTED, Integer.toString(numRequestedForLog(request)));
 
     if (request.isSetQuerySource()) {
-      entry.setField(ExtraFields.QUERY_SOURCE, request.getQuerySource().name());
+      entry.setField(EtwittertraFields.QUERY_SOURCE, request.getQuerySource().name());
     }
 
     if (request.isSetClientId()) {
-      entry.setField(ExtraFields.CLIENT_ID, request.getClientId());
+      entry.setField(EtwittertraFields.CLIENT_ID, request.getClientId());
     }
 
-    entry.setField(RootOnlyExtraFields.CACHING_ALLOWED,
+    entry.setField(RootOnlyEtwittertraFields.CACHING_ALLOWED,
                    Boolean.toString(EarlybirdRequestUtil.isCachingAllowed(request)));
 
-    entry.setField(RootOnlyExtraFields.DEBUG_MODE, Byte.toString(request.getDebugMode()));
+    entry.setField(RootOnlyEtwittertraFields.DEBUG_MODE, Byte.toString(request.getDebugMode()));
 
     Option<ClientId> clientIdOption = ClientId$.MODULE$.current();
     if (clientIdOption.isDefined()) {
-      entry.setField(ExtraFields.FINAGLE_CLIENT_ID, clientIdOption.get().name());
+      entry.setField(EtwittertraFields.FINAGLE_CLIENT_ID, clientIdOption.get().name());
     }
 
-    setLogEntriesFromTwitterContext(entry);
+    setLogEntriesFromTwitterContetwittert(entry);
   }
 
   @VisibleForTesting
-  Option<Viewer> getTwitterContext() {
-    return TwitterContext.acquire(TwitterContextPermit.get()).apply();
+  Option<Viewer> getTwitterContetwittert() {
+    return TwitterContetwittert.acquire(TwitterContetwittertPermit.get()).apply();
   }
 
-  private void setLogEntriesFromTwitterContext(LogEntry entry) {
-    Option<Viewer> viewerOption = getTwitterContext();
+  private void setLogEntriesFromTwitterContetwittert(LogEntry entry) {
+    Option<Viewer> viewerOption = getTwitterContetwittert();
     if (viewerOption.nonEmpty()) {
       Viewer viewer = viewerOption.get();
 
@@ -242,7 +242,7 @@ public class EarlybirdRequestLogger extends RPCLogger {
         // specially with command line tools like cut/sed/awk
         userAgent = userAgent.replace(",", "%2C");
 
-        entry.setField(RootOnlyExtraFields.USER_AGENT, userAgent);
+        entry.setField(RootOnlyEtwittertraFields.USER_AGENT, userAgent);
       }
     }
   }
@@ -253,20 +253,20 @@ public class EarlybirdRequestLogger extends RPCLogger {
       entry.setField(Fields.RESPONSE_CODE, String.valueOf(response.getResponseCode()));
       entry.setField(Fields.RESPONSE_TIME_MICROS, Long.toString(response.getResponseTimeMicros()));
       if (response.isSetSearchResults()) {
-        entry.setField(ExtraFields.NUM_HITS_PROCESSED,
+        entry.setField(EtwittertraFields.NUM_HITS_PROCESSED,
             Integer.toString(response.getSearchResults().getNumHitsProcessed()));
-        entry.setField(ExtraFields.QUERY_COST,
+        entry.setField(EtwittertraFields.QUERY_COST,
             Double.toString(response.getSearchResults().getQueryCost()));
         if (response.getSearchResults().isSetScoringTimeNanos()) {
-          entry.setField(ShardOnlyExtraFields.SCORING_TIME_NANOS,
+          entry.setField(ShardOnlyEtwittertraFields.SCORING_TIME_NANOS,
               Long.toString(response.getSearchResults().getScoringTimeNanos()));
         }
       }
       if (response.isSetCacheHit()) {
-        entry.setField(RootOnlyExtraFields.CACHE_HIT, String.valueOf(response.isCacheHit()));
+        entry.setField(RootOnlyEtwittertraFields.CACHE_HIT, String.valueOf(response.isCacheHit()));
       }
       if (response.isSetNumSearchedSegments()) {
-        entry.setField(ShardOnlyExtraFields.NUM_SEARCHED_SEGMENTS,
+        entry.setField(ShardOnlyEtwittertraFields.NUM_SEARCHED_SEGMENTS,
             Integer.toString(response.getNumSearchedSegments()));
       }
     }
@@ -284,7 +284,7 @@ public class EarlybirdRequestLogger extends RPCLogger {
       num =  request.getSearchQuery().isSetCollectorParams()
           ? request.getSearchQuery().getCollectorParams().getNumResultsToReturn() : 0;
       if (request.getSearchQuery().getSearchStatusIdsSize() > 0) {
-        num = Math.max(num, request.getSearchQuery().getSearchStatusIdsSize());
+        num = Math.matwitter(num, request.getSearchQuery().getSearchStatusIdsSize());
       }
     }
     return num;

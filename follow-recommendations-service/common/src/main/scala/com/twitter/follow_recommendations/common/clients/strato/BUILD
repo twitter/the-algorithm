@@ -4,7 +4,7 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/com/google/inject:guice",
-        "3rdparty/jvm/com/google/inject/extensions:guice-assistedinject",
+        "3rdparty/jvm/com/google/inject/etwittertensions:guice-assistedinject",
         "3rdparty/jvm/net/codingwell:scala-guice",
         "3rdparty/jvm/org/slf4j:slf4j-api",
         "finatra/inject/inject-core/src/main/scala",
@@ -18,7 +18,7 @@ scala_library(
         "src/thrift/com/twitter/onboarding/relevance/relatable_accounts:relatable_accounts-scala",
         "src/thrift/com/twitter/onboarding/relevance/store:store-scala",
         "src/thrift/com/twitter/recos/user_user_graph:user_user_graph-scala",
-        "src/thrift/com/twitter/search/account_search/extended_network:extended_network_users-scala",
+        "src/thrift/com/twitter/search/account_search/etwittertended_network:etwittertended_network_users-scala",
         "src/thrift/com/twitter/service/metastore/gen:thrift-scala",
         "src/thrift/com/twitter/wtf/candidate:wtf-candidate-scala",
         "src/thrift/com/twitter/wtf/ml:wtf-ml-output-thrift-scala",

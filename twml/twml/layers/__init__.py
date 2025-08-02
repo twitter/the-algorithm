@@ -17,5 +17,5 @@ from .mdl import MDL  # noqa: F401
 from .partition import Partition  # noqa: F401
 from .percentile_discretizer import PercentileDiscretizer  # noqa: F401
 from .sequential import Sequential  # noqa: F401
-from .sparse_max_norm import MaxNorm, sparse_max_norm, SparseMaxNorm  # noqa: F401
+from .sparse_matwitter_norm import MatwitterNorm, sparse_matwitter_norm, SparseMatwitterNorm  # noqa: F401
 from .stitch import Stitch  # noqa: F401

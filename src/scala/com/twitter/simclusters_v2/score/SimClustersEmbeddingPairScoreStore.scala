@@ -13,7 +13,7 @@ object SimClustersEmbeddingPairScoreStore {
   private case class SimClustersEmbeddingInternalPairScoreStore(
     simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding],
     score: (SimClustersEmbedding, SimClustersEmbedding) => Future[Option[Double]])
-      extends PairScoreStore[
+      etwittertends PairScoreStore[
         SimClustersEmbeddingPairScoreId,
         SimClustersEmbeddingId,
         SimClustersEmbeddingId,
@@ -102,7 +102,7 @@ object SimClustersEmbeddingPairScoreStore {
     )
   }
 
-  def buildExpScaledCosineSimilarityStore(
+  def buildEtwitterpScaledCosineSimilarityStore(
     simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
   ): PairScoreStore[
     SimClustersEmbeddingPairScoreId,
@@ -112,17 +112,17 @@ object SimClustersEmbeddingPairScoreStore {
     SimClustersEmbedding
   ] = {
 
-    def expScaledCosineSimilarity: (
+    def etwitterpScaledCosineSimilarity: (
       SimClustersEmbedding,
       SimClustersEmbedding
     ) => Future[Option[Double]] = {
       case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.expScaledCosineSimilarity(embedding2)))
+        Future.value(Some(embedding1.etwitterpScaledCosineSimilarity(embedding2)))
     }
 
     SimClustersEmbeddingInternalPairScoreStore(
       simClustersEmbeddingStore,
-      expScaledCosineSimilarity
+      etwitterpScaledCosineSimilarity
     )
   }
 

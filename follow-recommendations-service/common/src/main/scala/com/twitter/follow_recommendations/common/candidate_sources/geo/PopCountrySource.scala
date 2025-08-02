@@ -8,19 +8,19 @@ import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.models.HasGeohashAndCountryCode
 import com.twitter.follow_recommendations.common.models.HasUserState
 import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
+import javatwitter.inject.Inject
 
 @Singleton
 class PopCountrySource @Inject() (
   popGeoSource: PopGeoSource,
   statsReceiver: StatsReceiver)
-    extends CandidateSource[
-      HasClientContext with HasParams with HasUserState with HasGeohashAndCountryCode,
+    etwittertends CandidateSource[
+      HasClientContetwittert with HasParams with HasUserState with HasGeohashAndCountryCode,
       CandidateUser
     ] {
 
@@ -33,16 +33,16 @@ class PopCountrySource @Inject() (
   val missingCountryCodeCounter: Counter = stats.counter("missing_country_code_value")
 
   override def apply(
-    target: HasClientContext with HasParams with HasUserState with HasGeohashAndCountryCode
+    target: HasClientContetwittert with HasParams with HasUserState with HasGeohashAndCountryCode
   ): Stitch[Seq[CandidateUser]] = {
     target.geohashAndCountryCode
       .flatMap(_.countryCode).map { countryCode =>
         foundCountryCodeCounter.incr()
-        if (target.userState.exists(PopCountrySource.BlacklistedTargetUserStates.contains)) {
+        if (target.userState.etwitterists(PopCountrySource.BlacklistedTargetUserStates.contains)) {
           Stitch.Nil
         } else {
           popGeoSource("country_" + countryCode)
-            .map(_.take(PopCountrySource.MaxResults).map(_.withCandidateSource(identifier)))
+            .map(_.take(PopCountrySource.MatwitterResults).map(_.withCandidateSource(identifier)))
         }
       }.getOrElse {
         missingCountryCodeCounter.incr()
@@ -54,7 +54,7 @@ class PopCountrySource @Inject() (
 object PopCountrySource {
   val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
     Algorithm.PopCountry.toString)
-  val MaxResults = 40
+  val MatwitterResults = 40
   val BlacklistedTargetUserStates: Set[UserState] = Set(
     UserState.HeavyTweeter,
     UserState.HeavyNonTweeter,

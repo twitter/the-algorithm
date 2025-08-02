@@ -17,9 +17,9 @@ bin/d6w create \
   --bind=profile.project=${GCP_PROJECT_NAME} \
   --bind=profile.user_name=${USER} \
   --bind=profile.date="2021-12-01" \
-  --bind=profile.machine="n2d-highmem-16" --ignore-existing
+  --bind=profile.machine="n2d-highmem-16" --ignore-etwitteristing
  */
-object RightNodeSimHashScioAdhocApp extends RightNodeSimHashScioBaseApp {
+object RightNodeSimHashScioAdhocApp etwittertends RightNodeSimHashScioBaseApp {
   override val isAdhoc: Boolean = true
   override val rightNodeSimHashSnapshotDataset: SnapshotDALDataset[RightNodeSimHashSketch] =
     RightNodeSimHashScioAdhocScalaDataset
@@ -36,7 +36,7 @@ bin/d6w schedule \
   --bind=profile.date="2021-12-01" \
   --bind=profile.machine="n2d-highmem-16"
  */
-object RightNodeSimHashScioBatchApp extends RightNodeSimHashScioBaseApp {
+object RightNodeSimHashScioBatchApp etwittertends RightNodeSimHashScioBaseApp {
   override val isAdhoc: Boolean = false
   override val rightNodeSimHashSnapshotDataset: SnapshotDALDataset[RightNodeSimHashSketch] =
     RightNodeSimHashScioScalaDataset

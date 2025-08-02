@@ -49,19 +49,19 @@ struct RecommendTweetEntityRequest {
   4: required map<i64,double>                            seedsWithWeights
 
   // number of suggested results per recommendation entity type
-  5: optional map<RecommendationType, i32>               maxResultsByType
+  5: optional map<RecommendationType, i32>               matwitterResultsByType
 
   // the tweet age threshold in milliseconds
-  6: optional i64                                        maxTweetAgeInMillis
+  6: optional i64                                        matwitterTweetAgeInMillis
 
-  // list of tweet ids to exclude from response
-  7: optional list<i64>                                  excludedTweetIds
+  // list of tweet ids to etwitterclude from response
+  7: optional list<i64>                                  etwittercludedTweetIds
 
-  // max user social proof size per engagement type
-  8: optional i32                                        maxUserSocialProofSize
+  // matwitter user social proof size per engagement type
+  8: optional i32                                        matwitterUserSocialProofSize
 
-  // max tweet social proof size per user
-  9: optional i32                                        maxTweetSocialProofSize
+  // matwitter tweet social proof size per user
+  9: optional i32                                        matwitterTweetSocialProofSize
 
   // min user social proof size per each recommendation entity type
   10: optional map<RecommendationType, i32>              minUserSocialProofSizes
@@ -81,10 +81,10 @@ struct RecommendTweetEntityRequest {
   14: optional set<i64>                                  tweetAuthors
 
   // the tweet engagement age threshold in milliseconds
-  15: optional i64                                       maxEngagementAgeInMillis
+  15: optional i64                                       matwitterEngagementAgeInMillis
 
   // the recommendations will not return any tweet authored by the following users
-  16: optional set<i64>                                  excludedTweetAuthors
+  16: optional set<i64>                                  etwittercludedTweetAuthors
 }
 
 struct TweetRecommendation {
@@ -143,7 +143,7 @@ struct SocialProofResponse {
 struct RecommendationSocialProofRequest {
   /**
    * Clients can request social proof from multiple recommendation types in a single request.
-   * NOTE: Avoid mixing tweet social proof requests with entity social proof requests as the
+   * NOTE: Avoid mitwittering tweet social proof requests with entity social proof requests as the
    * underlying library call retrieves these differently.
    */
   1: required map<RecommendationType, set<i64>>           recommendationIdsForSocialProof
@@ -179,7 +179,7 @@ service UserTweetEntityGraph {
    *
    * Currently this supports url social proof generation for Guide.
    *
-   * This endpoint is flexible enough to support social proof generation for all recommendation
+   * This endpoint is fletwitterible enough to support social proof generation for all recommendation
    * types, and should be used for all future clients of this service.
    */
   RecommendationSocialProofResponse findRecommendationSocialProofs(RecommendationSocialProofRequest request)

@@ -4,45 +4,45 @@ import com.twitter.ads.spendserver.thriftscala.SpendServerEvent
 import com.twitter.unified_user_actions.thriftscala._
 
 object AdsCallbackEngagement {
-  object PromotedTweetFav extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetFav)
+  object PromotedTweetFav etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetFav)
 
-  object PromotedTweetUnfav extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetUnfav)
+  object PromotedTweetUnfav etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetUnfav)
 
-  object PromotedTweetReply extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetReply)
+  object PromotedTweetReply etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetReply)
 
   object PromotedTweetRetweet
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetRetweet)
+      etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetRetweet)
 
   object PromotedTweetBlockAuthor
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetBlockAuthor)
+      etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetBlockAuthor)
 
   object PromotedTweetUnblockAuthor
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetUnblockAuthor)
+      etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetUnblockAuthor)
 
   object PromotedTweetComposeTweet
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetComposeTweet)
+      etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetComposeTweet)
 
-  object PromotedTweetClick extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetClick)
+  object PromotedTweetClick etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetClick)
 
-  object PromotedTweetReport extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetReport)
+  object PromotedTweetReport etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetReport)
 
   object PromotedProfileFollow
-      extends ProfileAdsCallbackEngagement(ActionType.ServerPromotedProfileFollow)
+      etwittertends ProfileAdsCallbackEngagement(ActionType.ServerPromotedProfileFollow)
 
   object PromotedProfileUnfollow
-      extends ProfileAdsCallbackEngagement(ActionType.ServerPromotedProfileUnfollow)
+      etwittertends ProfileAdsCallbackEngagement(ActionType.ServerPromotedProfileUnfollow)
 
   object PromotedTweetMuteAuthor
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetMuteAuthor)
+      etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetMuteAuthor)
 
   object PromotedTweetClickProfile
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetClickProfile)
+      etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetClickProfile)
 
   object PromotedTweetClickHashtag
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetClickHashtag)
+      etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetClickHashtag)
 
   object PromotedTweetOpenLink
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetOpenLink) {
+      etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetOpenLink) {
     override def getItem(input: SpendServerEvent): Option[Item] = {
       input.engagementEvent.flatMap { e =>
         e.impressionData.flatMap { i =>
@@ -57,69 +57,69 @@ object AdsCallbackEngagement {
     }
   }
 
-  object PromotedTweetCarouselSwipeNext
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetCarouselSwipeNext)
+  object PromotedTweetCarouselSwipeNetwittert
+      etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetCarouselSwipeNetwittert)
 
   object PromotedTweetCarouselSwipePrevious
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetCarouselSwipePrevious)
+      etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetCarouselSwipePrevious)
 
   object PromotedTweetLingerImpressionShort
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetLingerImpressionShort)
+      etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetLingerImpressionShort)
 
   object PromotedTweetLingerImpressionMedium
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetLingerImpressionMedium)
+      etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetLingerImpressionMedium)
 
   object PromotedTweetLingerImpressionLong
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetLingerImpressionLong)
+      etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetLingerImpressionLong)
 
   object PromotedTweetClickSpotlight
-      extends BaseTrendAdsCallbackEngagement(ActionType.ServerPromotedTweetClickSpotlight)
+      etwittertends BaseTrendAdsCallbackEngagement(ActionType.ServerPromotedTweetClickSpotlight)
 
   object PromotedTweetViewSpotlight
-      extends BaseTrendAdsCallbackEngagement(ActionType.ServerPromotedTweetViewSpotlight)
+      etwittertends BaseTrendAdsCallbackEngagement(ActionType.ServerPromotedTweetViewSpotlight)
 
   object PromotedTrendView
-      extends BaseTrendAdsCallbackEngagement(ActionType.ServerPromotedTrendView)
+      etwittertends BaseTrendAdsCallbackEngagement(ActionType.ServerPromotedTrendView)
 
   object PromotedTrendClick
-      extends BaseTrendAdsCallbackEngagement(ActionType.ServerPromotedTrendClick)
+      etwittertends BaseTrendAdsCallbackEngagement(ActionType.ServerPromotedTrendClick)
 
   object PromotedTweetVideoPlayback25
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoPlayback25)
+      etwittertends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoPlayback25)
 
   object PromotedTweetVideoPlayback50
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoPlayback50)
+      etwittertends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoPlayback50)
 
   object PromotedTweetVideoPlayback75
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoPlayback75)
+      etwittertends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoPlayback75)
 
   object PromotedTweetVideoAdPlayback25
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoAdPlayback25)
+      etwittertends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoAdPlayback25)
 
   object PromotedTweetVideoAdPlayback50
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoAdPlayback50)
+      etwittertends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoAdPlayback50)
 
   object PromotedTweetVideoAdPlayback75
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoAdPlayback75)
+      etwittertends BaseVideoAdsCallbackEngagement(ActionType.ServerPromotedTweetVideoAdPlayback75)
 
   object TweetVideoAdPlayback25
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerTweetVideoAdPlayback25)
+      etwittertends BaseVideoAdsCallbackEngagement(ActionType.ServerTweetVideoAdPlayback25)
 
   object TweetVideoAdPlayback50
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerTweetVideoAdPlayback50)
+      etwittertends BaseVideoAdsCallbackEngagement(ActionType.ServerTweetVideoAdPlayback50)
 
   object TweetVideoAdPlayback75
-      extends BaseVideoAdsCallbackEngagement(ActionType.ServerTweetVideoAdPlayback75)
+      etwittertends BaseVideoAdsCallbackEngagement(ActionType.ServerTweetVideoAdPlayback75)
 
   object PromotedTweetDismissWithoutReason
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetDismissWithoutReason)
+      etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetDismissWithoutReason)
 
   object PromotedTweetDismissUninteresting
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetDismissUninteresting)
+      etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetDismissUninteresting)
 
   object PromotedTweetDismissRepetitive
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetDismissRepetitive)
+      etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetDismissRepetitive)
 
   object PromotedTweetDismissSpam
-      extends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetDismissSpam)
+      etwittertends BaseAdsCallbackEngagement(ActionType.ServerPromotedTweetDismissSpam)
 }

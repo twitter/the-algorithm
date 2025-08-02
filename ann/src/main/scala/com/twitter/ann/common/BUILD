@@ -15,7 +15,7 @@ scala_library(
         "src/scala/com/twitter/ml/api/embedding",
         "stitch/stitch-core",
     ],
-    exports = [
+    etwitterports = [
         "3rdparty/jvm/com/twitter/bijection:core",
     ],
 )

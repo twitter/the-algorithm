@@ -6,20 +6,20 @@ import com.twitter.summingbird._
 object SummerWithSumValues {
   /*
   A common pattern in heron is to use .sumByKeys to aggregate a value in a store, and then continue
-  processing with the aggregated value. Unfortunately, .sumByKeys returns the existing value from the
+  processing with the aggregated value. Unfortunately, .sumByKeys returns the etwitteristing value from the
   store and the delta separately, leaving you to manually combine them.
 
-  Example without sumValues:
+  Etwitterample without sumValues:
 
    someKeyedProducer
     .sumByKeys(score)(monoid)
     .map {
-      case (key, (existingValueOpt, delta)) =>
+      case (key, (etwitteristingValueOpt, delta)) =>
         // if you want the value that was actually written to the store, you have to combine
-        // existingValueOpt and delta yourself
+        // etwitteristingValueOpt and delta yourself
     }
 
-  Example with sumValues:
+  Etwitterample with sumValues:
 
    someKeyedProducer
     .sumByKeys(score)(monoid)

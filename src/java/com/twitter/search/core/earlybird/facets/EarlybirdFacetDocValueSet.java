@@ -6,16 +6,16 @@ import java.util.Map.Entry;
 import com.google.common.base.Preconditions;
 
 import org.apache.lucene.facet.FacetsConfig;
-import org.apache.lucene.index.ReaderUtil;
-import org.apache.lucene.index.SortedSetDocValues;
+import org.apache.lucene.indetwitter.ReaderUtil;
+import org.apache.lucene.indetwitter.SortedSetDocValues;
 import org.apache.lucene.util.BytesRef;
 import org.apache.lucene.util.BytesRefBuilder;
 
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
+import com.twitter.search.core.earlybird.indetwitter.inverted.InvertedIndetwitter;
 
-public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
+public class EarlybirdFacetDocValueSet etwittertends SortedSetDocValues {
   private final AbstractFacetCountingArray countingArray;
-  private final InvertedIndex[] labelProviders;
+  private final InvertedIndetwitter[] labelProviders;
   private final String[] fieldNames;
   private final int[] starts;
   private final BytesRefBuilder ordCache;
@@ -25,7 +25,7 @@ public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
   private int pointer = -1;
   private boolean hasMoreOrds = false;
 
-  public static final String FIELD_NAME = FacetsConfig.DEFAULT_INDEX_FIELD_NAME;
+  public static final String FIELD_NAME = FacetsConfig.DEFAULT_INDEtwitter_FIELD_NAME;
 
   /**
    * Creates a new EarlybirdFacetDocValueSet from the provided FacetCountingArray.
@@ -34,14 +34,14 @@ public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
                                    Map<String, FacetLabelProvider> labelProviderMap,
                                    FacetIDMap facetIdMap) {
     this.countingArray = countingArray;
-    labelProviders = new InvertedIndex[facetIdMap.getNumberOfFacetFields()];
+    labelProviders = new InvertedIndetwitter[facetIdMap.getNumberOfFacetFields()];
     fieldNames = new String[facetIdMap.getNumberOfFacetFields()];
     for (Entry<String, FacetLabelProvider> entry : labelProviderMap.entrySet()) {
       FacetLabelProvider labelProvider = entry.getValue();
-      if (labelProvider instanceof InvertedIndex) {
+      if (labelProvider instanceof InvertedIndetwitter) {
         FacetIDMap.FacetField facetField = facetIdMap.getFacetFieldByFacetName(entry.getKey());
         if (facetField != null) {
-          labelProviders[facetField.getFacetId()] = (InvertedIndex) labelProvider;
+          labelProviders[facetField.getFacetId()] = (InvertedIndetwitter) labelProvider;
           fieldNames[facetField.getFacetId()] = entry.getKey();
         }
       }
@@ -59,7 +59,7 @@ public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
       }
     }
 
-    // added to so that mapping from ord to index works via ReaderUtil.subIndex
+    // added to so that mapping from ord to indetwitter works via ReaderUtil.subIndetwitter
     starts[labelProviders.length] = totalTerms;
   }
 
@@ -69,7 +69,7 @@ public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
   }
 
   @Override
-  public long nextOrd() {
+  public long netwittertOrd() {
     if (!hasMoreOrds || currentFacet == FacetCountingArray.UNASSIGNED) {
       return SortedSetDocValues.NO_MORE_ORDS;
     }
@@ -97,12 +97,12 @@ public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
 
   @Override
   public BytesRef lookupOrd(long ord) {
-    int idx = ReaderUtil.subIndex((int) ord, this.starts);
-    if (labelProviders[idx] != null) {
-      int termID = (int) ord - starts[idx];
+    int idtwitter = ReaderUtil.subIndetwitter((int) ord, this.starts);
+    if (labelProviders[idtwitter] != null) {
+      int termID = (int) ord - starts[idtwitter];
       BytesRef term = new BytesRef();
-      labelProviders[idx].getTerm(termID, term);
-      String name = fieldNames[idx];
+      labelProviders[idtwitter].getTerm(termID, term);
+      String name = fieldNames[idtwitter];
       String val = FacetsConfig.pathToString(new String[] {name, term.utf8ToString()});
       ordCache.copyChars(val);
     } else {
@@ -113,7 +113,7 @@ public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
 
   @Override
   public long lookupTerm(BytesRef key) {
-    throw new UnsupportedOperationException();
+    throw new UnsupportedOperationEtwitterception();
   }
 
   @Override
@@ -127,7 +127,7 @@ public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
   }
 
   @Override
-  public int nextDoc() {
+  public int netwittertDoc() {
     return ++docID;
   }
 
@@ -142,7 +142,7 @@ public class EarlybirdFacetDocValueSet extends SortedSetDocValues {
   }
 
   @Override
-  public boolean advanceExact(int target) {
+  public boolean advanceEtwitteract(int target) {
     return advance(target) != FacetCountingArray.UNASSIGNED;
   }
 

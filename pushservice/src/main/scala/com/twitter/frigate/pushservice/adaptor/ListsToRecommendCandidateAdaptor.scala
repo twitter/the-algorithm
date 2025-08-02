@@ -23,7 +23,7 @@ case class ListsToRecommendCandidateAdaptor(
   geoDuckV2Store: ReadableStore[Long, LocationResponse],
   idsStore: ReadableStore[RecommendedListsRequest, RecommendedListsResponse],
   globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
+    etwittertends CandidateSource[Target, RawCandidate]
     with CandidateSourceEligible[Target, RawCandidate] {
 
   override val name: String = this.getClass.getSimpleName
@@ -132,7 +132,7 @@ case class ListsToRecommendCandidateAdaptor(
   private val pushCapFatiguePredicate = TargetPredicates.pushRecTypeFatiguePredicate(
     CommonRecommendationType.List,
     PushFeatureSwitchParams.ListRecommendationsPushInterval,
-    PushFeatureSwitchParams.MaxListRecommendationsPushGivenInterval,
+    PushFeatureSwitchParams.MatwitterListRecommendationsPushGivenInterval,
     stats,
   )
   override def isCandidateSourceAvailable(target: Target): Future[Boolean] = {

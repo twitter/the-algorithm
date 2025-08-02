@@ -11,11 +11,11 @@ import com.twitter.util.Future
 
 /**
  * Provide a uniform access layer for all kind of Score.
- * @param readableStores readable stores indexed by the ScoringAlgorithm they implement
+ * @param readableStores readable stores indetwittered by the ScoringAlgorithm they implement
  */
 class ScoreFacadeStore private (
   stores: Map[ScoringAlgorithm, ReadableStore[ThriftScoreId, ThriftScore]])
-    extends ReadableStore[ThriftScoreId, ThriftScore] {
+    etwittertends ReadableStore[ThriftScoreId, ThriftScore] {
 
   override def get(k: ThriftScoreId): Future[Option[ThriftScore]] = {
     findStore(k).get(k)
@@ -27,7 +27,7 @@ class ScoreFacadeStore private (
       Map.empty
     } else {
       val head = ks.head
-      val notSameType = ks.exists(k => k.algorithm != head.algorithm)
+      val notSameType = ks.etwitterists(k => k.algorithm != head.algorithm)
       if (!notSameType) {
         findStore(head).multiGet(ks)
       } else {
@@ -41,12 +41,12 @@ class ScoreFacadeStore private (
     }
   }
 
-  // If not store mapping, fast return a IllegalArgumentException.
+  // If not store mapping, fast return a IllegalArgumentEtwitterception.
   private def findStore(id: ThriftScoreId): ReadableStore[ThriftScoreId, ThriftScore] = {
     stores.get(id.algorithm) match {
       case Some(store) => store
       case None =>
-        throw new IllegalArgumentException(s"The Scoring Algorithm ${id.algorithm} doesn't exist.")
+        throw new IllegalArgumentEtwitterception(s"The Scoring Algorithm ${id.algorithm} doesn't etwitterist.")
     }
   }
 
@@ -54,7 +54,7 @@ class ScoreFacadeStore private (
 
 object ScoreFacadeStore {
   /*
-  Build a ScoreFacadeStore which exposes stats for all requests (under "all") and per scoring algorithm:
+  Build a ScoreFacadeStore which etwitterposes stats for all requests (under "all") and per scoring algorithm:
 
     score_facade_store/all/<observed readable store metrics for all requests>
     score_facade_store/<scoring algorithm>/<observed readable store metrics for this algorithm's requests>

@@ -6,7 +6,7 @@ scala_library(
     dependencies = [
         "addressbook/thrift/src/thrift/com/twitter/addressbook:thrift-scala",
         "addressbook/thrift/src/thrift/com/twitter/addressbook/datatypes:thrift-scala",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
+        "finatra-internal/mtls-thriftmutwitter/src/main/scala",
         "finatra/inject/inject-thrift-client",
         "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/addressbook/models",
         "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/common",

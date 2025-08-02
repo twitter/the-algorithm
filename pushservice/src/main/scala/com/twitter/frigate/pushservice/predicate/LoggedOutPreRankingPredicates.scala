@@ -11,13 +11,13 @@ import com.twitter.hermit.predicate.NamedPredicate
 class LoggedOutPreRankingPredicatesBuilder(implicit statsReceiver: StatsReceiver) {
 
   private val TweetPredicates = List[NamedPredicate[PushCandidate]](
-    TweetObjectExistsPredicate[
+    TweetObjectEtwitteristsPredicate[
       TweetCandidate with TweetDetails
     ].applyOnlyToTweetCandidatesWithTweetDetails
-      .withName("tweet_object_exists"),
-    PredicatesForCandidate.oldTweetRecsPredicate.applyOnlyToTweetCandidateWithTargetAndABDeciderAndMaxTweetAge
+      .withName("tweet_object_etwitterists"),
+    PredicatesForCandidate.oldTweetRecsPredicate.applyOnlyToTweetCandidateWithTargetAndABDeciderAndMatwitterTweetAge
       .withName("old_tweet"),
-    PredicatesForCandidate.tweetIsNotAreply.applyOnlyToTweetCandidateWithoutSocialContextWithTweetDetails
+    PredicatesForCandidate.tweetIsNotAreply.applyOnlyToTweetCandidateWithoutSocialContetwittertWithTweetDetails
       .withName("tweet_candidate_not_a_reply"),
     TweetAuthorPredicates
       .recTweetAuthorUnsuitable[TweetCandidate with TweetAuthorDetails]

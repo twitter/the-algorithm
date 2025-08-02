@@ -28,7 +28,7 @@ case class TopTweetImpressionsCandidateAdaptor(
   tweetyPieStoreNoVF: ReadableStore[Long, TweetyPieResult],
   tweetImpressionsStore: TweetImpressionsStore,
   globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
+    etwittertends CandidateSource[Target, RawCandidate]
     with CandidateSourceEligible[Target, RawCandidate] {
 
   private val stats = globalStats.scope("TopTweetImpressionsAdaptor")
@@ -38,7 +38,7 @@ case class TopTweetImpressionsCandidateAdaptor(
   private val noneligibleUsersCounter = stats.counter("noneligible_users")
   private val meetsMinTweetsRequiredCounter = stats.counter("meets_min_tweets_required")
   private val belowMinTweetsRequiredCounter = stats.counter("below_min_tweets_required")
-  private val aboveMaxInboundFavoritesCounter = stats.counter("above_max_inbound_favorites")
+  private val aboveMatwitterInboundFavoritesCounter = stats.counter("above_matwitter_inbound_favorites")
   private val meetsImpressionsRequiredCounter = stats.counter("meets_impressions_required")
   private val belowImpressionsRequiredCounter = stats.counter("below_impressions_required")
   private val meetsFavoritesThresholdCounter = stats.counter("meets_favorites_threshold")
@@ -123,13 +123,13 @@ case class TopTweetImpressionsCandidateAdaptor(
   }
 
   private def getTflockStoreResults(targetUser: Target): Future[Seq[Long]] = {
-    val maxResults = targetUser.params(FS.TopTweetImpressionsRecentTweetsByAuthorStoreMaxResults)
-    val maxAge = targetUser.params(FS.TopTweetImpressionsTotalFavoritesLimitNumDaysSearch)
+    val matwitterResults = targetUser.params(FS.TopTweetImpressionsRecentTweetsByAuthorStoreMatwitterResults)
+    val matwitterAge = targetUser.params(FS.TopTweetImpressionsTotalFavoritesLimitNumDaysSearch)
     val recentTweetsQuery =
       RecentTweetsQuery(
         userIds = Seq(targetUser.targetId),
-        maxResults = maxResults,
-        maxAge = maxAge.days
+        matwitterResults = matwitterResults,
+        matwitterAge = matwitterAge.days
       )
     recentTweetsFromTflockStore
       .get(recentTweetsQuery).map {
@@ -193,7 +193,7 @@ case class TopTweetImpressionsCandidateAdaptor(
       val isUnderLimit = isUnderTotalInboundFavoritesLimit(tweetyPieResults, totalFavoritesLimit)
       if (isUnderLimit) eligibleUsersCounter.incr()
       else {
-        aboveMaxInboundFavoritesCounter.incr()
+        aboveMatwitterInboundFavoritesCounter.incr()
         noneligibleUsersCounter.incr()
       }
       isUnderLimit
@@ -223,11 +223,11 @@ case class TopTweetImpressionsCandidateAdaptor(
     tweetIds: Seq[Long]
   ): Future[Seq[TweetImpressionsCandidate]] = {
     lazy val minNumImpressions: Long = inputTarget.params(FS.TopTweetImpressionsMinRequired)
-    lazy val maxNumLikes: Long = inputTarget.params(FS.TopTweetImpressionsMaxFavoritesPerTweet)
+    lazy val matwitterNumLikes: Long = inputTarget.params(FS.TopTweetImpressionsMatwitterFavoritesPerTweet)
     for {
       filteredImpressionsMap <- getFilteredImpressionsMap(tweetIds, minNumImpressions)
       tweetIdsFilteredByFavorites <-
-        getTweetIdsFilteredByFavorites(filteredImpressionsMap.keySet, tweetyPieResults, maxNumLikes)
+        getTweetIdsFilteredByFavorites(filteredImpressionsMap.keySet, tweetyPieResults, matwitterNumLikes)
     } yield {
       if (filteredImpressionsMap.nonEmpty) eligibleUsersAfterImpressionsFilter.incr()
       if (tweetIdsFilteredByFavorites.nonEmpty) eligibleUsersAfterFavoritesFilter.incr()
@@ -265,12 +265,12 @@ case class TopTweetImpressionsCandidateAdaptor(
   private def getTweetIdsFilteredByFavorites(
     filteredTweetIds: Set[Long],
     tweetyPieResults: Map[Long, TweetyPieResult],
-    maxNumLikes: Long
+    matwitterNumLikes: Long
   ): Future[Seq[Long]] = {
     val filteredByFavoritesTweetIds = filteredTweetIds.filter { tweetId =>
       val tweetyPieResultOpt = tweetyPieResults.get(tweetId)
-      val isValid = tweetyPieResultOpt.exists { tweetyPieResult =>
-        getFavoriteCounts(tweetyPieResult) <= maxNumLikes
+      val isValid = tweetyPieResultOpt.etwitterists { tweetyPieResult =>
+        getFavoriteCounts(tweetyPieResult) <= matwitterNumLikes
       }
       if (isValid) meetsFavoritesThresholdCounter.incr()
       else aboveFavoritesThresholdCounter.incr()
@@ -282,14 +282,14 @@ case class TopTweetImpressionsCandidateAdaptor(
   private def getMostImpressionsTweet(
     filteredResults: Seq[TweetImpressionsCandidate]
   ): TweetImpressionsCandidate = {
-    val maxImpressions: Long = filteredResults.map {
+    val matwitterImpressions: Long = filteredResults.map {
       _.impressionsCountOpt.getOrElse(0L)
-    }.max
+    }.matwitter
 
     val mostImpressionsCandidates: Seq[TweetImpressionsCandidate] =
-      filteredResults.filter(_.impressionsCountOpt.getOrElse(0L) == maxImpressions)
+      filteredResults.filter(_.impressionsCountOpt.getOrElse(0L) == matwitterImpressions)
 
-    mostImpressionsCandidates.maxBy(_.tweetId)
+    mostImpressionsCandidates.matwitterBy(_.tweetId)
   }
 
   private def getImpressionsCounts(

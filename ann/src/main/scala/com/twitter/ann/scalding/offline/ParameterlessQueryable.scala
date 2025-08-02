@@ -14,7 +14,7 @@ private[offline] case class ParameterlessQueryable[T, P <: RuntimeParams, D <: D
    * @param embedding      : Embedding/Vector to be queried with.
    * @param numOfNeighbors : Number of neighbours to be queried for.
    *
-   * @return List of approximate nearest neighbour ids with distance from the query embedding.
+   * @return List of approtwitterimate nearest neighbour ids with distance from the query embedding.
    */
   def queryWithDistance(
     embedding: EmbeddingVector,

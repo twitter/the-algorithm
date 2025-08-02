@@ -11,23 +11,23 @@ import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
 import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
 import com.twitter.search.earlybird.thrift.ThriftSearchResults;
 import com.twitter.search.earlybird_root.collectors.RelevanceMergeCollector;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.util.Future;
 
 /**
  * Merger class to merge toptweets EarlybirdResponse objects
  */
-public class TopTweetsResponseMerger extends EarlybirdResponseMerger {
+public class TopTweetsResponseMerger etwittertends EarlybirdResponseMerger {
 
   private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
 
   private static final SearchTimerStats TIMER =
-      SearchTimerStats.export("merge_top_tweets", TimeUnit.NANOSECONDS, false, true);
+      SearchTimerStats.etwitterport("merge_top_tweets", TimeUnit.NANOSECONDS, false, true);
 
-  public TopTweetsResponseMerger(EarlybirdRequestContext requestContext,
+  public TopTweetsResponseMerger(EarlybirdRequestContetwittert requestContetwittert,
                                  List<Future<EarlybirdResponse>> responses,
                                  ResponseAccumulator mode) {
-    super(requestContext, responses, mode);
+    super(requestContetwittert, responses, mode);
   }
 
   @Override
@@ -42,7 +42,7 @@ public class TopTweetsResponseMerger extends EarlybirdResponseMerger {
 
   @Override
   protected EarlybirdResponse internalMerge(EarlybirdResponse mergedResponse) {
-    final ThriftSearchQuery searchQuery = requestContext.getRequest().getSearchQuery();
+    final ThriftSearchQuery searchQuery = requestContetwittert.getRequest().getSearchQuery();
 
     Preconditions.checkNotNull(searchQuery);
     Preconditions.checkState(searchQuery.isSetRankingMode());

@@ -2,17 +2,17 @@ package com.twitter.tweetypie
 package repository
 
 import com.ibm.icu.util.ULocale
-import com.twitter.common.text.pipeline.TwitterLanguageIdentifier
+import com.twitter.common.tetwittert.pipeline.TwitterLanguageIdentifier
 import com.twitter.stitch.Stitch
 import com.twitter.stitch.compat.LegacySeqGroup
-import com.twitter.tweetypie.repository.LanguageRepository.Text
+import com.twitter.tweetypie.repository.LanguageRepository.Tetwittert
 import com.twitter.tweetypie.thriftscala._
 import com.twitter.util.FuturePool
 import com.twitter.util.logging.Logger
 
 object LanguageRepository {
-  type Type = Text => Stitch[Option[Language]]
-  type Text = String
+  type Type = Tetwittert => Stitch[Option[Language]]
+  type Tetwittert = String
 }
 
 object PenguinLanguageRepository {
@@ -24,15 +24,15 @@ object PenguinLanguageRepository {
 
   def apply(futurePool: FuturePool): LanguageRepository.Type = {
     val identifyOne =
-      FutureArrow[Text, Option[Language]] { text =>
+      FutureArrow[Tetwittert, Option[Language]] { tetwittert =>
         futurePool {
           try {
-            Some(identifier.identify(text))
+            Some(identifier.identify(tetwittert))
           } catch {
-            case e: IllegalArgumentException =>
-              val userId = TwitterContext().map(_.userId)
-              val encodedText = com.twitter.util.Base64StringEncoder.encode(text.getBytes)
-              log.info(s"${e.getMessage} : USER ID - $userId : TEXT - $encodedText")
+            case e: IllegalArgumentEtwitterception =>
+              val userId = TwitterContetwittert().map(_.userId)
+              val encodedTetwittert = com.twitter.util.Base64StringEncoder.encode(tetwittert.getBytes)
+              log.info(s"${e.getMessage} : USER ID - $userId : TEtwitterT - $encodedTetwittert")
               None
           }
         }.map {
@@ -48,6 +48,6 @@ object PenguinLanguageRepository {
         }
       }
 
-    text => Stitch.call(text, LegacySeqGroup(identifyOne.liftSeq))
+    tetwittert => Stitch.call(tetwittert, LegacySeqGroup(identifyOne.liftSeq))
   }
 }

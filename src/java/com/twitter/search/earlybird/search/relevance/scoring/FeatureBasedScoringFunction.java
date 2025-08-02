@@ -1,13 +1,13 @@
 package com.twitter.search.earlybird.search.relevance.scoring;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -18,7 +18,7 @@ import com.google.common.collect.Maps;
 import com.google.common.primitives.Ints;
 import com.google.common.primitives.Longs;
 
-import org.apache.lucene.search.Explanation;
+import org.apache.lucene.search.Etwitterplanation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +26,7 @@ import com.twitter.common_internal.bloomfilter.BloomFilter;
 import com.twitter.search.common.constants.SearchCardType;
 import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
 import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.features.ExternalTweetFeature;
+import com.twitter.search.common.features.EtwitterternalTweetFeature;
 import com.twitter.search.common.features.FeatureHandler;
 import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaEntry;
 import com.twitter.search.common.features.thrift.ThriftSearchFeatureType;
@@ -35,20 +35,20 @@ import com.twitter.search.common.query.QueryCommonFieldHitsVisitor;
 import com.twitter.search.common.ranking.thriftjava.ThriftRankingParams;
 import com.twitter.search.common.relevance.features.AgeDecay;
 import com.twitter.search.common.relevance.features.RelevanceSignalConstants;
-import com.twitter.search.common.relevance.text.VisibleTokenRatioNormalizer;
+import com.twitter.search.common.relevance.tetwittert.VisibleTokenRatioNormalizer;
 import com.twitter.search.common.results.thriftjava.FieldHitList;
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
 import com.twitter.search.common.util.LongIntConverter;
 import com.twitter.search.common.util.lang.ThriftLanguageUtil;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
 import com.twitter.search.earlybird.common.userupdates.UserTable;
 import com.twitter.search.earlybird.search.AntiGamingFilter;
 import com.twitter.search.earlybird.search.relevance.LinearScoringData;
 import com.twitter.search.earlybird.search.relevance.LinearScoringData.SkipReason;
 import com.twitter.search.earlybird.search.relevance.LinearScoringParams;
 import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
+import com.twitter.search.earlybird.thrift.ThriftSearchResultEtwittertraMetadata;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
@@ -56,17 +56,17 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
 import com.twitter.search.earlybird.thrift.ThriftSocialFilterType;
 
 /**
- * Base class for scoring functions that rely on the extracted features stored in LinearScoringData.
+ * Base class for scoring functions that rely on the etwittertracted features stored in LinearScoringData.
  *
- * Extensions of this class must implement 2 methods:
+ * Etwittertensions of this class must implement 2 methods:
  *
  * - computeScore
- * - generateExplanationForScoring
+ * - generateEtwitterplanationForScoring
  *
  * They are called for scoring and generating the debug information of the document that it's
  * currently being evaluated. The field 'data' holds the features of the document.
  */
-public abstract class FeatureBasedScoringFunction extends ScoringFunction {
+public abstract class FeatureBasedScoringFunction etwittertends ScoringFunction {
   private static final Logger LOG = LoggerFactory.getLogger(FeatureBasedScoringFunction.class);
 
   // A multiplier that's applied to all scores to avoid scores too low.
@@ -86,7 +86,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
                       EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT.getFieldId(),
                       EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT.getFieldId());
 
-  // Name of the scoring function. Used for generating explanations.
+  // Name of the scoring function. Used for generating etwitterplanations.
   private final String functionName;
 
   private final BloomFilter trustedFilter;
@@ -123,7 +123,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
       ThriftSearchQuery searchQuery,
       AntiGamingFilter antiGamingFilter,
       ThriftSearchResultType searchResultType,
-      UserTable userTable) throws IOException {
+      UserTable userTable) throws IOEtwitterception {
     super(schema);
 
     this.functionName = functionName;
@@ -166,7 +166,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
   }
 
   /**
-   * Returns the LinearScoringData instance associated with the current doc ID. If it doesn't exist,
+   * Returns the LinearScoringData instance associated with the current doc ID. If it doesn't etwitterist,
    * an empty LinearScoringData is created.
    */
   @Override
@@ -185,24 +185,24 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
   }
 
   /**
-   * Normal the lucene score, which was unbounded, to a range of [1.0, maxLuceneScoreBoost].
+   * Normal the lucene score, which was unbounded, to a range of [1.0, matwitterLuceneScoreBoost].
    * The normalized value increases almost linearly in the lucene score range 2.0 ~ 7.0, where
    * most queries fall in. For rare long tail queries, like some hashtags, they have high idf and
    * thus high lucene score, the normalized value won't have much difference between tweets.
    * The normalization function is:
    *   ls = luceneScore
-   *   norm = min(max, 1 + (max - 1.0) / 2.4 * ln(1 + ls)
+   *   norm = min(matwitter, 1 + (matwitter - 1.0) / 2.4 * ln(1 + ls)
    */
-  static float normalizeLuceneScore(float luceneScore, float maxBoost) {
-    return (float) Math.min(maxBoost, 1.0 + (maxBoost - 1.0) / 2.4 * Math.log1p(luceneScore));
+  static float normalizeLuceneScore(float luceneScore, float matwitterBoost) {
+    return (float) Math.min(matwitterBoost, 1.0 + (matwitterBoost - 1.0) / 2.4 * Math.log1p(luceneScore));
   }
 
   @Override
-  protected float score(float luceneQueryScore) throws IOException {
+  protected float score(float luceneQueryScore) throws IOEtwitterception {
     return scoreInternal(luceneQueryScore, null);
   }
 
-  protected LinearScoringData updateLinearScoringData(float luceneQueryScore) throws IOException {
+  protected LinearScoringData updateLinearScoringData(float luceneQueryScore) throws IOEtwitterception {
     // Reset the data for each tweet!!!
     LinearScoringData data = new LinearScoringData();
     docIdToScoringData.put(getCurrentDocID(), data);
@@ -217,7 +217,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
       return data;
     }
 
-    data.textScore = (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.TEXT_SCORE);
+    data.tetwittertScore = (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.TEtwitterT_SCORE);
     data.tokenAt140DividedByNumTokensBucket = VISIBLE_TOKEN_RATIO_NORMALIZER.denormalize(
         (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.VISIBLE_TOKEN_RATIO));
     data.fromUserId = documentFeatures.getFeatureValue(EarlybirdFieldConstant.FROM_USER_ID_CSF);
@@ -304,10 +304,10 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
           && data.userRep != RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL) {
         data.skipReason = SkipReason.LOW_REPUTATION;
         return data;
-      } else if (data.textScore < params.textScoreMinVal
-                 // don't filter unset text scores, use goodwill value
-                 && data.textScore != RelevanceSignalConstants.UNSET_TEXT_SCORE_SENTINEL) {
-        data.skipReason = SkipReason.LOW_TEXT_SCORE;
+      } else if (data.tetwittertScore < params.tetwittertScoreMinVal
+                 // don't filter unset tetwittert scores, use goodwill value
+                 && data.tetwittertScore != RelevanceSignalConstants.UNSET_TEtwitterT_SCORE_SENTINEL) {
+        data.skipReason = SkipReason.LOW_TEtwitterT_SCORE;
         return data;
       } else if (data.retweetCountPostLog2 != LinearScoringData.UNSET_SIGNAL_VALUE
                  && data.retweetCountPostLog2 < params.retweetMinVal) {
@@ -321,8 +321,8 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     }
 
     // if sentinel value is set, assume goodwill score and let scoring continue.
-    if (data.textScore == RelevanceSignalConstants.UNSET_TEXT_SCORE_SENTINEL) {
-      data.textScore = RelevanceSignalConstants.GOODWILL_TEXT_SCORE;
+    if (data.tetwittertScore == RelevanceSignalConstants.UNSET_TEtwitterT_SCORE_SENTINEL) {
+      data.tetwittertScore = RelevanceSignalConstants.GOODWILL_TEtwitterT_SCORE;
     }
     if (data.userRep == RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL) {
       data.userRep = RelevanceSignalConstants.GOODWILL_REPUTATION;
@@ -415,7 +415,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     data.hasEnglishUIAndDifferentTweetLang = data.hasDifferentLang
         && params.uiLangId == ThriftLanguage.ENGLISH.getValue();
 
-    // Exposed all these features for the clients.
+    // Etwitterposed all these features for the clients.
     data.isSensitiveContent =
         documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_SENSITIVE_CONTENT);
     data.hasMultipleMediaFlag =
@@ -430,8 +430,8 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
         (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.PREV_USER_TWEET_ENGAGEMENT);
 
     // health model scores by HML
-    data.toxicityScore = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.TOXICITY_SCORE);
+    data.totwittericityScore = documentFeatures.getUnnormalizedFeatureValue(
+        EarlybirdFieldConstant.TOtwitterICITY_SCORE);
     data.pBlockScore = documentFeatures.getUnnormalizedFeatureValue(
         EarlybirdFieldConstant.PBLOCK_SCORE);
     data.pSpammyTweetScore = documentFeatures.getUnnormalizedFeatureValue(
@@ -441,39 +441,39 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     data.spammyTweetContentScore = documentFeatures.getUnnormalizedFeatureValue(
         EarlybirdFieldConstant.SPAMMY_TWEET_CONTENT_SCORE
     );
-    data.experimentalHealthModelScore1 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_1);
-    data.experimentalHealthModelScore2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_2);
-    data.experimentalHealthModelScore3 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_3);
-    data.experimentalHealthModelScore4 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_4);
+    data.etwitterperimentalHealthModelScore1 = documentFeatures.getUnnormalizedFeatureValue(
+        EarlybirdFieldConstant.EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_1);
+    data.etwitterperimentalHealthModelScore2 = documentFeatures.getUnnormalizedFeatureValue(
+        EarlybirdFieldConstant.EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_2);
+    data.etwitterperimentalHealthModelScore3 = documentFeatures.getUnnormalizedFeatureValue(
+        EarlybirdFieldConstant.EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_3);
+    data.etwitterperimentalHealthModelScore4 = documentFeatures.getUnnormalizedFeatureValue(
+        EarlybirdFieldConstant.EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_4);
 
     return data;
   }
 
   protected float scoreInternal(
-      float luceneQueryScore, ExplanationWrapper explanation) throws IOException {
+      float luceneQueryScore, EtwitterplanationWrapper etwitterplanation) throws IOEtwitterception {
     LinearScoringData data = updateLinearScoringData(luceneQueryScore);
     if (data.skipReason != null && data.skipReason != SkipReason.NOT_SKIPPED) {
-      return finalizeScore(data, explanation, SKIP_HIT);
+      return finalizeScore(data, etwitterplanation, SKIP_HIT);
     }
 
-    double score = computeScore(data, explanation != null);
-    return postScoreComputation(data, score, true, explanation);
+    double score = computeScore(data, etwitterplanation != null);
+    return postScoreComputation(data, score, true, etwitterplanation);
   }
 
   protected float postScoreComputation(
       LinearScoringData data,
       double score,
       boolean boostScoreWithHitAttribution,
-      ExplanationWrapper explanation) throws IOException {
+      EtwitterplanationWrapper etwitterplanation) throws IOEtwitterception {
     double modifiedScore = score;
     data.scoreBeforeBoost = modifiedScore;
     if (params.applyBoosts) {
       modifiedScore =
-          applyBoosts(data, modifiedScore, boostScoreWithHitAttribution, explanation != null);
+          applyBoosts(data, modifiedScore, boostScoreWithHitAttribution, etwitterplanation != null);
     }
     // Final adjustment to avoid too-low scores.
     modifiedScore *= SCORE_ADJUSTER;
@@ -489,7 +489,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
 
     // clear field hits
     this.fieldHitAttribution = null;
-    return finalizeScore(data, explanation, modifiedScore);
+    return finalizeScore(data, etwitterplanation, modifiedScore);
   }
 
   /**
@@ -498,19 +498,19 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
    * @param data Original LinearScoringData (to be modified with boosts here)
    * @param score Score generated by the feature-based scoring function
    * @param withHitAttribution Determines if hit attribution data should be included.
-   * @param forExplanation Indicates if the score will be computed for generating the explanation.
+   * @param forEtwitterplanation Indicates if the score will be computed for generating the etwitterplanation.
    * @return Score after applying promotion/demotion
    */
   private double applyBoosts(
       LinearScoringData data,
       double score,
       boolean withHitAttribution,
-      boolean forExplanation) {
+      boolean forEtwitterplanation) {
     double boostedScore = score;
 
     if (params.useLuceneScoreAsBoost) {
       data.normalizedLuceneScore = normalizeLuceneScore(
-          (float) data.luceneScore, (float) params.maxLuceneScoreBoost);
+          (float) data.luceneScore, (float) params.matwitterLuceneScoreBoost);
       boostedScore *= data.normalizedLuceneScore;
     }
     if (data.isOffensive) {
@@ -615,13 +615,13 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     }
 
     // Hit Attribute Demotion
-    // Scoring is currently based on tokenized user name, text, and url in the tweet
+    // Scoring is currently based on tokenized user name, tetwittert, and url in the tweet
     // If hit attribute collection is enabled, we demote score based on these fields
     if (hitAttributeHelper != null && params.enableHitDemotion) {
 
       Map<Integer, List<String>> hitMap;
-      if (forExplanation && fieldHitAttribution != null) {
-        // if this scoring call is for generating an explanation,
+      if (forEtwitterplanation && fieldHitAttribution != null) {
+        // if this scoring call is for generating an etwitterplanation,
         // we'll use the fieldHitAttribution found in the search result's metadata because
         // collectors are not called during the debug workflow
         hitMap = Maps.transformValues(fieldHitAttribution.getHitMap(), FieldHitList::getHitFields);
@@ -634,13 +634,13 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
 
       data.hitFields.addAll(uniqueFieldHits);
       // there should always be fields that are hit
-      // if there aren't, we assume this is a call from 'explain' in debug mode
+      // if there aren't, we assume this is a call from 'etwitterplain' in debug mode
       // do not override hit attribute data if in debug mode
       if (!uniqueFieldHits.isEmpty()) {
         // demotions based strictly on field hits
         if (uniqueFieldHits.size() == 1) {
           if (uniqueFieldHits.contains(
-                  EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName())) {
+                  EarlybirdFieldConstant.RESOLVED_LINKS_TEtwitterT_FIELD.getFieldName())) {
             // if url was the only field that was hit, demote
             data.hasUrlOnlyHitDemotionApplied = true;
             boostedScore *= params.urlOnlyHitDemotion;
@@ -650,16 +650,16 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
             data.hasNameOnlyHitDemotionApplied = true;
             boostedScore *= params.nameOnlyHitDemotion;
           }
-        } else if (!uniqueFieldHits.contains(EarlybirdFieldConstant.TEXT_FIELD.getFieldName())
+        } else if (!uniqueFieldHits.contains(EarlybirdFieldConstant.TEtwitterT_FIELD.getFieldName())
             && !uniqueFieldHits.contains(EarlybirdFieldConstant.MENTIONS_FIELD.getFieldName())
             && !uniqueFieldHits.contains(EarlybirdFieldConstant.HASHTAGS_FIELD.getFieldName())
             && !uniqueFieldHits.contains(EarlybirdFieldConstant.STOCKS_FIELD.getFieldName())) {
-          // if text or special text was never hit, demote
-          data.hasNoTextHitDemotionApplied = true;
-          boostedScore *= params.noTextHitDemotion;
+          // if tetwittert or special tetwittert was never hit, demote
+          data.hasNoTetwittertHitDemotionApplied = true;
+          boostedScore *= params.noTetwittertHitDemotion;
         } else if (uniqueFieldHits.size() == 2) {
           // demotions based on field hit combinations
-          // want to demote if we only hit two of the fields (one being text)
+          // want to demote if we only hit two of the fields (one being tetwittert)
           // but with separate terms
           Set<String> fieldIntersections = QueryCommonFieldHitsVisitor.findIntersection(
               hitAttributeHelper.getNodeToRankMap(),
@@ -669,18 +669,18 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
           if (fieldIntersections.isEmpty()) {
             if (uniqueFieldHits.contains(
                     EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName())) {
-              // if name is hit but has no hits in common with text, demote
+              // if name is hit but has no hits in common with tetwittert, demote
               // want to demote cases where we hit part of the person's name
-              // and tweet text separately
-              data.hasSeparateTextAndNameHitDemotionApplied = true;
-              boostedScore *= params.separateTextAndNameHitDemotion;
+              // and tweet tetwittert separately
+              data.hasSeparateTetwittertAndNameHitDemotionApplied = true;
+              boostedScore *= params.separateTetwittertAndNameHitDemotion;
             } else if (uniqueFieldHits.contains(
-                           EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName())) {
-              // if url is hit but has no hits in common with text, demote
+                           EarlybirdFieldConstant.RESOLVED_LINKS_TEtwitterT_FIELD.getFieldName())) {
+              // if url is hit but has no hits in common with tetwittert, demote
               // want to demote cases where we hit a potential domain keyword
-              // and tweet text separately
-              data.hasSeparateTextAndUrlHitDemotionApplied = true;
-              boostedScore *= params.separateTextAndUrlHitDemotion;
+              // and tweet tetwittert separately
+              data.hasSeparateTetwittertAndUrlHitDemotionApplied = true;
+              boostedScore *= params.separateTetwittertAndUrlHitDemotion;
             }
           }
         }
@@ -711,234 +711,234 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
   /**
    * Computes the score of the document that it's currently being evaluated.
    *
-   * The extracted features from the document are available in the field 'data'.
+   * The etwittertracted features from the document are available in the field 'data'.
    *
    * @param data The LinearScoringData instance that will store the document features.
-   * @param forExplanation Indicates if the score will be computed for generating the explanation.
+   * @param forEtwitterplanation Indicates if the score will be computed for generating the etwitterplanation.
    */
   protected abstract double computeScore(
-      LinearScoringData data, boolean forExplanation) throws IOException;
+      LinearScoringData data, boolean forEtwitterplanation) throws IOEtwitterception;
 
   private float finalizeScore(
       LinearScoringData scoringData,
-      ExplanationWrapper explanation,
-      double score) throws IOException {
+      EtwitterplanationWrapper etwitterplanation,
+      double score) throws IOEtwitterception {
     scoringData.scoreReturned = score;
-    if (explanation != null) {
-      explanation.explanation = generateExplanation(scoringData);
+    if (etwitterplanation != null) {
+      etwitterplanation.etwitterplanation = generateEtwitterplanation(scoringData);
     }
     return (float) score;
   }
 
   @Override
-  protected void initializeNextSegment(EarlybirdIndexSegmentAtomicReader reader)
-      throws IOException {
+  protected void initializeNetwittertSegment(EarlybirdIndetwitterSegmentAtomicReader reader)
+      throws IOEtwitterception {
     if (antiGamingFilter != null) {
       antiGamingFilter.startSegment(reader);
     }
   }
 
   /*
-   * Generate the scoring explanation for debug.
+   * Generate the scoring etwitterplanation for debug.
    */
-  private Explanation generateExplanation(LinearScoringData scoringData) throws IOException {
-    final List<Explanation> details = Lists.newArrayList();
+  private Etwitterplanation generateEtwitterplanation(LinearScoringData scoringData) throws IOEtwitterception {
+    final List<Etwitterplanation> details = Lists.newArrayList();
 
-    details.add(Explanation.match(0.0f, "[PROPERTIES] "
-        + scoringData.getPropertyExplanation()));
+    details.add(Etwitterplanation.match(0.0f, "[PROPERTIES] "
+        + scoringData.getPropertyEtwitterplanation()));
 
     // 1. Filters
     boolean isHit = scoringData.skipReason == SkipReason.NOT_SKIPPED;
     if (scoringData.skipReason == SkipReason.ANTIGAMING) {
-      details.add(Explanation.noMatch("SKIPPED for antigaming"));
+      details.add(Etwitterplanation.noMatch("SKIPPED for antigaming"));
     }
     if (scoringData.skipReason == SkipReason.LOW_REPUTATION) {
-      details.add(Explanation.noMatch(
+      details.add(Etwitterplanation.noMatch(
           String.format("SKIPPED for low reputation: %.3f < %.3f",
               scoringData.userRep, params.reputationMinVal)));
     }
-    if (scoringData.skipReason == SkipReason.LOW_TEXT_SCORE) {
-      details.add(Explanation.noMatch(
-          String.format("SKIPPED for low text score: %.3f < %.3f",
-              scoringData.textScore, params.textScoreMinVal)));
+    if (scoringData.skipReason == SkipReason.LOW_TEtwitterT_SCORE) {
+      details.add(Etwitterplanation.noMatch(
+          String.format("SKIPPED for low tetwittert score: %.3f < %.3f",
+              scoringData.tetwittertScore, params.tetwittertScoreMinVal)));
     }
     if (scoringData.skipReason == SkipReason.LOW_RETWEET_COUNT) {
-      details.add(Explanation.noMatch(
+      details.add(Etwitterplanation.noMatch(
           String.format("SKIPPED for low retweet count: %.3f < %.3f",
               scoringData.retweetCountPostLog2, params.retweetMinVal)));
     }
     if (scoringData.skipReason == SkipReason.LOW_FAV_COUNT) {
-      details.add(Explanation.noMatch(
+      details.add(Etwitterplanation.noMatch(
           String.format("SKIPPED for low fav count: %.3f < %.3f",
               scoringData.favCountPostLog2, params.favMinVal)));
     }
     if (scoringData.skipReason == SkipReason.SOCIAL_FILTER) {
-      details.add(Explanation.noMatch("SKIPPED for not in the right social circle"));
+      details.add(Etwitterplanation.noMatch("SKIPPED for not in the right social circle"));
     }
 
-    // 2. Explanation depending on the scoring type
-    generateExplanationForScoring(scoringData, isHit, details);
+    // 2. Etwitterplanation depending on the scoring type
+    generateEtwitterplanationForScoring(scoringData, isHit, details);
 
-    // 3. Explanation depending on boosts
+    // 3. Etwitterplanation depending on boosts
     if (params.applyBoosts) {
-      generateExplanationForBoosts(scoringData, isHit, details);
+      generateEtwitterplanationForBoosts(scoringData, isHit, details);
     }
 
     // 4. Final score filter.
     if (scoringData.skipReason == SkipReason.LOW_FINAL_SCORE) {
-      details.add(Explanation.noMatch("SKIPPED for low final score: " + scoringData.scoreFinal));
+      details.add(Etwitterplanation.noMatch("SKIPPED for low final score: " + scoringData.scoreFinal));
       isHit = false;
     }
 
     String hostAndSegment = String.format("%s host = %s  segment = %s",
         functionName, DatabaseConfig.getLocalHostname(), DatabaseConfig.getDatabase());
     if (isHit) {
-      return Explanation.match((float) scoringData.scoreFinal, hostAndSegment, details);
+      return Etwitterplanation.match((float) scoringData.scoreFinal, hostAndSegment, details);
     } else {
-      return Explanation.noMatch(hostAndSegment, details);
+      return Etwitterplanation.noMatch(hostAndSegment, details);
     }
   }
 
   /**
-   * Generates the explanation for the document that is currently being evaluated.
+   * Generates the etwitterplanation for the document that is currently being evaluated.
    *
    * Implementations of this method must use the 'details' parameter to collect its output.
    *
    * @param scoringData Scoring components for the document
    * @param isHit Indicates whether the document is not skipped
-   * @param details Details of the explanation. Used to collect the output.
+   * @param details Details of the etwitterplanation. Used to collect the output.
    */
-  protected abstract void generateExplanationForScoring(
-      LinearScoringData scoringData, boolean isHit, List<Explanation> details) throws IOException;
+  protected abstract void generateEtwitterplanationForScoring(
+      LinearScoringData scoringData, boolean isHit, List<Etwitterplanation> details) throws IOEtwitterception;
 
   /**
-   * Generates the boosts part of the explanation for the document that is currently
+   * Generates the boosts part of the etwitterplanation for the document that is currently
    * being evaluated.
    */
-  private void generateExplanationForBoosts(
+  private void generateEtwitterplanationForBoosts(
       LinearScoringData scoringData,
       boolean isHit,
-      List<Explanation> details) {
-    List<Explanation> boostDetails = Lists.newArrayList();
+      List<Etwitterplanation> details) {
+    List<Etwitterplanation> boostDetails = Lists.newArrayList();
 
-    boostDetails.add(Explanation.match((float) scoringData.scoreBeforeBoost, "Score before boost"));
+    boostDetails.add(Etwitterplanation.match((float) scoringData.scoreBeforeBoost, "Score before boost"));
 
 
     // Lucene score boost
     if (params.useLuceneScoreAsBoost) {
-      boostDetails.add(Explanation.match(
+      boostDetails.add(Etwitterplanation.match(
           (float) scoringData.normalizedLuceneScore,
-          String.format("[x] Lucene score boost, luceneScore=%.3f",
+          String.format("[twitter] Lucene score boost, luceneScore=%.3f",
               scoringData.luceneScore)));
     }
 
     // card boost
     if (scoringData.hasCardBoostApplied) {
-      boostDetails.add(Explanation.match((float) params.hasCardBoosts[scoringData.cardType],
-          "[x] card boost for type " + SearchCardType.cardTypeFromByteValue(scoringData.cardType)));
+      boostDetails.add(Etwitterplanation.match((float) params.hasCardBoosts[scoringData.cardType],
+          "[twitter] card boost for type " + SearchCardType.cardTypeFromByteValue(scoringData.cardType)));
     }
 
     // Offensive
     if (scoringData.isOffensive) {
-      boostDetails.add(Explanation.match((float) params.offensiveDamping, "[x] Offensive damping"));
+      boostDetails.add(Etwitterplanation.match((float) params.offensiveDamping, "[twitter] Offensive damping"));
     } else {
-      boostDetails.add(Explanation.match(LinearScoringData.NO_BOOST_VALUE,
+      boostDetails.add(Etwitterplanation.match(LinearScoringData.NO_BOOST_VALUE,
           String.format("Not Offensive, damping=%.3f", params.offensiveDamping)));
     }
 
     // Spam
     if (scoringData.spamUserDampApplied) {
-      boostDetails.add(Explanation.match((float) params.spamUserDamping, "[x] Spam"));
+      boostDetails.add(Etwitterplanation.match((float) params.spamUserDamping, "[twitter] Spam"));
     }
     // NSFW
     if (scoringData.nsfwUserDampApplied) {
-      boostDetails.add(Explanation.match((float) params.nsfwUserDamping, "[X] NSFW"));
+      boostDetails.add(Etwitterplanation.match((float) params.nsfwUserDamping, "[twitter] NSFW"));
     }
     // Bot
     if (scoringData.botUserDampApplied) {
-      boostDetails.add(Explanation.match((float) params.botUserDamping, "[X] Bot"));
+      boostDetails.add(Etwitterplanation.match((float) params.botUserDamping, "[twitter] Bot"));
     }
 
     // Multiple hashtags or trends
     if (scoringData.hasMultipleHashtagsOrTrends) {
-      boostDetails.add(Explanation.match((float) params.multipleHashtagsOrTrendsDamping,
-          "[x] Multiple hashtags or trends boost"));
+      boostDetails.add(Etwitterplanation.match((float) params.multipleHashtagsOrTrendsDamping,
+          "[twitter] Multiple hashtags or trends boost"));
     } else {
-      boostDetails.add(Explanation.match(LinearScoringData.NO_BOOST_VALUE,
+      boostDetails.add(Etwitterplanation.match(LinearScoringData.NO_BOOST_VALUE,
           String.format("No multiple hashtags or trends, damping=%.3f",
               params.multipleHashtagsOrTrendsDamping)));
     }
 
     if (scoringData.tweetHasTrendsBoostApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.tweetHasTrendBoost, "[x] Tweet has trend boost"));
+      boostDetails.add(Etwitterplanation.match(
+          (float) params.tweetHasTrendBoost, "[twitter] Tweet has trend boost"));
     }
 
     if (scoringData.hasMedialUrlBoostApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.tweetHasMediaUrlBoost, "[x] Media url boost"));
+      boostDetails.add(Etwitterplanation.match(
+          (float) params.tweetHasMediaUrlBoost, "[twitter] Media url boost"));
     }
 
     if (scoringData.hasNewsUrlBoostApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.tweetHasNewsUrlBoost, "[x] News url boost"));
+      boostDetails.add(Etwitterplanation.match(
+          (float) params.tweetHasNewsUrlBoost, "[twitter] News url boost"));
     }
 
-    boostDetails.add(Explanation.match(0.0f, "[FIELDS HIT] " + scoringData.hitFields));
+    boostDetails.add(Etwitterplanation.match(0.0f, "[FIELDS HIT] " + scoringData.hitFields));
 
-    if (scoringData.hasNoTextHitDemotionApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.noTextHitDemotion, "[x] No text hit demotion"));
+    if (scoringData.hasNoTetwittertHitDemotionApplied) {
+      boostDetails.add(Etwitterplanation.match(
+          (float) params.noTetwittertHitDemotion, "[twitter] No tetwittert hit demotion"));
     }
 
     if (scoringData.hasUrlOnlyHitDemotionApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.urlOnlyHitDemotion, "[x] URL only hit demotion"));
+      boostDetails.add(Etwitterplanation.match(
+          (float) params.urlOnlyHitDemotion, "[twitter] URL only hit demotion"));
     }
 
     if (scoringData.hasNameOnlyHitDemotionApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.nameOnlyHitDemotion, "[x] Name only hit demotion"));
+      boostDetails.add(Etwitterplanation.match(
+          (float) params.nameOnlyHitDemotion, "[twitter] Name only hit demotion"));
     }
 
-    if (scoringData.hasSeparateTextAndNameHitDemotionApplied) {
-      boostDetails.add(Explanation.match((float) params.separateTextAndNameHitDemotion,
-          "[x] Separate text/name demotion"));
+    if (scoringData.hasSeparateTetwittertAndNameHitDemotionApplied) {
+      boostDetails.add(Etwitterplanation.match((float) params.separateTetwittertAndNameHitDemotion,
+          "[twitter] Separate tetwittert/name demotion"));
     }
 
-    if (scoringData.hasSeparateTextAndUrlHitDemotionApplied) {
-      boostDetails.add(Explanation.match((float) params.separateTextAndUrlHitDemotion,
-          "[x] Separate text/url demotion"));
+    if (scoringData.hasSeparateTetwittertAndUrlHitDemotionApplied) {
+      boostDetails.add(Etwitterplanation.match((float) params.separateTetwittertAndUrlHitDemotion,
+          "[twitter] Separate tetwittert/url demotion"));
     }
 
     if (scoringData.tweetFromVerifiedAccountBoostApplied) {
-      boostDetails.add(Explanation.match((float) params.tweetFromVerifiedAccountBoost,
-          "[x] Verified account boost"));
+      boostDetails.add(Etwitterplanation.match((float) params.tweetFromVerifiedAccountBoost,
+          "[twitter] Verified account boost"));
     }
 
     if (scoringData.tweetFromBlueVerifiedAccountBoostApplied) {
-      boostDetails.add(Explanation.match((float) params.tweetFromBlueVerifiedAccountBoost,
-          "[x] Blue-verified account boost"));
+      boostDetails.add(Etwitterplanation.match((float) params.tweetFromBlueVerifiedAccountBoost,
+          "[twitter] Blue-verified account boost"));
     }
 
     if (scoringData.selfTweetBoostApplied) {
-      boostDetails.add(Explanation.match((float) params.selfTweetBoost,
-          "[x] Self tweet boost"));
+      boostDetails.add(Etwitterplanation.match((float) params.selfTweetBoost,
+          "[twitter] Self tweet boost"));
     }
 
     if (scoringData.skipReason == LinearScoringData.SkipReason.SOCIAL_FILTER) {
-      boostDetails.add(Explanation.noMatch("SKIPPED for social filter"));
+      boostDetails.add(Etwitterplanation.noMatch("SKIPPED for social filter"));
     } else {
       if (scoringData.directFollowBoostApplied) {
-        boostDetails.add(Explanation.match((float) params.directFollowBoost,
-            "[x] Direct follow boost"));
+        boostDetails.add(Etwitterplanation.match((float) params.directFollowBoost,
+            "[twitter] Direct follow boost"));
       }
       if (scoringData.trustedCircleBoostApplied) {
-        boostDetails.add(Explanation.match((float) params.trustedCircleBoost,
-            "[x] Trusted circle boost"));
+        boostDetails.add(Etwitterplanation.match((float) params.trustedCircleBoost,
+            "[twitter] Trusted circle boost"));
       }
       if (scoringData.outOfNetworkReplyPenaltyApplied) {
-        boostDetails.add(Explanation.match((float) params.outOfNetworkReplyPenalty,
+        boostDetails.add(Etwitterplanation.match((float) params.outOfNetworkReplyPenalty,
             "[-] Out of network reply penalty"));
       }
     }
@@ -950,11 +950,11 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
             ThriftLanguage.findByValue(scoringData.tweetLangId)).getLanguage(),
         ThriftLanguageUtil.getLocaleOf(ThriftLanguage.findByValue(params.uiLangId)).getLanguage());
     if (scoringData.uiLangMult == 1.0) {
-      boostDetails.add(Explanation.match(
+      boostDetails.add(Etwitterplanation.match(
           LinearScoringData.NO_BOOST_VALUE, "No UI Language demotion: " + langDetails));
     } else {
-      boostDetails.add(Explanation.match(
-          (float) scoringData.uiLangMult, "[x] UI LangMult: " + langDetails));
+      boostDetails.add(Etwitterplanation.match(
+          (float) scoringData.uiLangMult, "[twitter] UI LangMult: " + langDetails));
     }
     StringBuilder userLangDetails = new StringBuilder();
     userLangDetails.append("userLang=[");
@@ -966,12 +966,12 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
     }
     userLangDetails.append("]");
     if (!params.useUserLanguageInfo) {
-      boostDetails.add(Explanation.noMatch(
+      boostDetails.add(Etwitterplanation.noMatch(
           "No User Language Demotion: " + userLangDetails.toString()));
     } else {
-      boostDetails.add(Explanation.match(
+      boostDetails.add(Etwitterplanation.match(
           (float) scoringData.userLangMult,
-          "[x] User LangMult: " + userLangDetails.toString()));
+          "[twitter] User LangMult: " + userLangDetails.toString()));
     }
 
     // Age decay
@@ -980,36 +980,36 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
         scoringData.tweetAgeInSeconds, params.ageDecaySlope,
         params.ageDecayBase, params.ageDecayHalflife);
     if (params.useAgeDecay) {
-      boostDetails.add(Explanation.match(
-          (float) scoringData.ageDecayMult, "[x] AgeDecay: " + ageDecayDetails));
+      boostDetails.add(Etwitterplanation.match(
+          (float) scoringData.ageDecayMult, "[twitter] AgeDecay: " + ageDecayDetails));
     } else {
-      boostDetails.add(Explanation.match(1.0f, "Age decay disabled: " + ageDecayDetails));
+      boostDetails.add(Etwitterplanation.match(1.0f, "Age decay disabled: " + ageDecayDetails));
     }
 
     // Score adjuster
-    boostDetails.add(Explanation.match(SCORE_ADJUSTER, "[x] score adjuster"));
+    boostDetails.add(Etwitterplanation.match(SCORE_ADJUSTER, "[twitter] score adjuster"));
 
-    Explanation boostCombo = isHit
-        ? Explanation.match((float) scoringData.scoreAfterBoost,
+    Etwitterplanation boostCombo = isHit
+        ? Etwitterplanation.match((float) scoringData.scoreAfterBoost,
           "(MATCH) After Boosts and Demotions:", boostDetails)
-        : Explanation.noMatch("After Boosts and Demotions:", boostDetails);
+        : Etwitterplanation.noMatch("After Boosts and Demotions:", boostDetails);
 
     details.add(boostCombo);
   }
 
   @Override
-  protected Explanation doExplain(float luceneQueryScore) throws IOException {
-    // Run the scorer again and get the explanation.
-    ExplanationWrapper explanation = new ExplanationWrapper();
-    scoreInternal(luceneQueryScore, explanation);
-    return explanation.explanation;
+  protected Etwitterplanation doEtwitterplain(float luceneQueryScore) throws IOEtwitterception {
+    // Run the scorer again and get the etwitterplanation.
+    EtwitterplanationWrapper etwitterplanation = new EtwitterplanationWrapper();
+    scoreInternal(luceneQueryScore, etwitterplanation);
+    return etwitterplanation.etwitterplanation;
   }
 
   @Override
   public void populateResultMetadataBasedOnScoringData(
       ThriftSearchResultMetadataOptions options,
       ThriftSearchResultMetadata metadata,
-      LinearScoringData data) throws IOException {
+      LinearScoringData data) throws IOEtwitterception {
     metadata.setResultType(searchResultType);
     metadata.setScore(data.scoreReturned);
     metadata.setFromUserId(data.fromUserId);
@@ -1077,17 +1077,17 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
         .setHasCard(data.hasCard)
         .setHasVisibleLink(data.hasVisibleLink)
         .setParusScore(data.parusScore)
-        .setTextScore(data.textScore)
+        .setTetwittertScore(data.tetwittertScore)
         .setUserRep(data.userRep)
         .setTokenAt140DividedByNumTokensBucket(data.tokenAt140DividedByNumTokensBucket);
 
-    if (!metadata.isSetExtraMetadata()) {
-      metadata.setExtraMetadata(new ThriftSearchResultExtraMetadata());
+    if (!metadata.isSetEtwittertraMetadata()) {
+      metadata.setEtwittertraMetadata(new ThriftSearchResultEtwittertraMetadata());
     }
-    ThriftSearchResultExtraMetadata extraMetadata = metadata.getExtraMetadata();
+    ThriftSearchResultEtwittertraMetadata etwittertraMetadata = metadata.getEtwittertraMetadata();
 
     // Promotion/Demotion features
-    extraMetadata.setUserLangScore(data.userLangMult)
+    etwittertraMetadata.setUserLangScore(data.userLangMult)
         .setHasDifferentLang(data.hasDifferentLang)
         .setHasEnglishTweetAndDifferentUILang(data.hasEnglishTweetAndDifferentUILang)
         .setHasEnglishUIAndDifferentTweetLang(data.hasEnglishUIAndDifferentTweetLang)
@@ -1106,20 +1106,20 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
         .setFromBlueVerifiedAccount(data.isFromBlueVerifiedAccount);
 
     // Health model scores features
-    extraMetadata
-        .setToxicityScore(data.toxicityScore)
+    etwittertraMetadata
+        .setTotwittericityScore(data.totwittericityScore)
         .setPBlockScore(data.pBlockScore)
         .setPSpammyTweetScore(data.pSpammyTweetScore)
         .setPReportedTweetScore(data.pReportedTweetScore)
         .setSpammyTweetContentScore(data.spammyTweetContentScore)
-        .setExperimentalHealthModelScore1(data.experimentalHealthModelScore1)
-        .setExperimentalHealthModelScore2(data.experimentalHealthModelScore2)
-        .setExperimentalHealthModelScore3(data.experimentalHealthModelScore3)
-        .setExperimentalHealthModelScore4(data.experimentalHealthModelScore4);
+        .setEtwitterperimentalHealthModelScore1(data.etwitterperimentalHealthModelScore1)
+        .setEtwitterperimentalHealthModelScore2(data.etwitterperimentalHealthModelScore2)
+        .setEtwitterperimentalHealthModelScore3(data.etwitterperimentalHealthModelScore3)
+        .setEtwitterperimentalHealthModelScore4(data.etwitterperimentalHealthModelScore4);
 
-    // Return all extra features for clients to consume.
+    // Return all etwittertra features for clients to consume.
     if (options.isGetAllFeatures()) {
-      extraMetadata.setIsSensitiveContent(data.isSensitiveContent)
+      etwittertraMetadata.setIsSensitiveContent(data.isSensitiveContent)
           .setHasMultipleMediaFlag(data.hasMultipleMediaFlag)
           .setProfileIsEggFlag(data.profileIsEggFlag)
           .setIsUserNewFlag(data.isUserNewFlag)
@@ -1135,16 +1135,16 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
       // If the features are unset, and they were requested, then we can retrieve them. If they are
       // already set, then we don't need to re-read the document features, and the reader
       // is probably positioned over the wrong document so it will return incorrect results.
-      if (!extraMetadata.isSetFeatures()) {
+      if (!etwittertraMetadata.isSetFeatures()) {
         // We ignore all features with default values when returning them in the response,
         // because it saves a lot of network bandwidth.
         ThriftSearchResultFeatures features = createFeaturesForDocument(data, true).getFeatures();
-        extraMetadata.setFeatures(features);
+        etwittertraMetadata.setFeatures(features);
       }
 
       // The raw score may have changed since we created the features, so we should update it.
-      extraMetadata.getFeatures().getDoubleValues()
-          .put(ExternalTweetFeature.RAW_EARLYBIRD_SCORE.getId(), data.scoreFinal);
+      etwittertraMetadata.getFeatures().getDoubleValues()
+          .put(EtwitterternalTweetFeature.RAW_EARLYBIRD_SCORE.getId(), data.scoreFinal);
     }
 
     metadata
@@ -1154,11 +1154,11 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
 
   /**
    * Create earlybird basic features and dervied features for current document.
-   * @return a FeatureHandler object where you can keep adding extra feature values, or you can
+   * @return a FeatureHandler object where you can keep adding etwittertra feature values, or you can
    * call .getFeatures() on it to get a Thrift object to return.
    */
   protected FeatureHandler createFeaturesForDocument(
-      LinearScoringData data, boolean ignoreDefaultValues) throws IOException {
+      LinearScoringData data, boolean ignoreDefaultValues) throws IOEtwitterception {
     ThriftSearchResultFeatures features = documentFeatures.getSearchResultFeatures(getSchema());
     if (!ignoreDefaultValues) {
       setDefaultFeatureValues(features);
@@ -1166,22 +1166,22 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
 
     // add derived features
     return new FeatureHandler(features, ignoreDefaultValues)
-        .addDouble(ExternalTweetFeature.LUCENE_SCORE, data.luceneScore)
-        .addInt(ExternalTweetFeature.TWEET_AGE_IN_SECS, data.tweetAgeInSeconds)
-        .addBoolean(ExternalTweetFeature.IS_SELF_TWEET, data.isSelfTweet)
-        .addBoolean(ExternalTweetFeature.IS_FOLLOW_RETWEET, data.isFollow && data.isRetweet)
-        .addBoolean(ExternalTweetFeature.IS_TRUSTED_RETWEET, data.isTrusted && data.isRetweet)
-        .addBoolean(ExternalTweetFeature.AUTHOR_IS_FOLLOW, data.isFollow)
-        .addBoolean(ExternalTweetFeature.AUTHOR_IS_TRUSTED, data.isTrusted)
-        .addBoolean(ExternalTweetFeature.AUTHOR_IS_ANTISOCIAL, data.isUserAntiSocial)
-        .addBoolean(ExternalTweetFeature.HAS_DIFF_LANG, data.hasDifferentLang)
-        .addBoolean(ExternalTweetFeature.HAS_ENGLISH_TWEET_DIFF_UI_LANG,
+        .addDouble(EtwitterternalTweetFeature.LUCENE_SCORE, data.luceneScore)
+        .addInt(EtwitterternalTweetFeature.TWEET_AGE_IN_SECS, data.tweetAgeInSeconds)
+        .addBoolean(EtwitterternalTweetFeature.IS_SELF_TWEET, data.isSelfTweet)
+        .addBoolean(EtwitterternalTweetFeature.IS_FOLLOW_RETWEET, data.isFollow && data.isRetweet)
+        .addBoolean(EtwitterternalTweetFeature.IS_TRUSTED_RETWEET, data.isTrusted && data.isRetweet)
+        .addBoolean(EtwitterternalTweetFeature.AUTHOR_IS_FOLLOW, data.isFollow)
+        .addBoolean(EtwitterternalTweetFeature.AUTHOR_IS_TRUSTED, data.isTrusted)
+        .addBoolean(EtwitterternalTweetFeature.AUTHOR_IS_ANTISOCIAL, data.isUserAntiSocial)
+        .addBoolean(EtwitterternalTweetFeature.HAS_DIFF_LANG, data.hasDifferentLang)
+        .addBoolean(EtwitterternalTweetFeature.HAS_ENGLISH_TWEET_DIFF_UI_LANG,
             data.hasEnglishTweetAndDifferentUILang)
-        .addBoolean(ExternalTweetFeature.HAS_ENGLISH_UI_DIFF_TWEET_LANG,
+        .addBoolean(EtwitterternalTweetFeature.HAS_ENGLISH_UI_DIFF_TWEET_LANG,
             data.hasEnglishUIAndDifferentTweetLang)
-        .addDouble(ExternalTweetFeature.SEARCHER_LANG_SCORE, data.userLangMult)
-        .addDouble(ExternalTweetFeature.QUERY_SPECIFIC_SCORE, data.querySpecificScore)
-        .addDouble(ExternalTweetFeature.AUTHOR_SPECIFIC_SCORE, data.authorSpecificScore);
+        .addDouble(EtwitterternalTweetFeature.SEARCHER_LANG_SCORE, data.userLangMult)
+        .addDouble(EtwitterternalTweetFeature.QUERY_SPECIFIC_SCORE, data.querySpecificScore)
+        .addDouble(EtwitterternalTweetFeature.AUTHOR_SPECIFIC_SCORE, data.authorSpecificScore);
   }
 
   /**
@@ -1189,7 +1189,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
    * ThriftSearchResultFeatures instance.
    *
    * This method is needed because some models do not work properly with missing features. Instead,
-   * they expect all features to be present even if they are unset (their values are 0).
+   * they etwitterpect all features to be present even if they are unset (their values are 0).
    */
   protected void setDefaultFeatureValues(ThriftSearchResultFeatures features) {
     for (Map.Entry<Integer, ThriftSearchFeatureSchemaEntry> entry
@@ -1208,7 +1208,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
             features.getDoubleValues().putIfAbsent(featureId, 0.0);
             break;
           default:
-            throw new IllegalArgumentException(
+            throw new IllegalArgumentEtwitterception(
                 "Should set default values only for integer, long or double features. Instead, "
                 + "found feature " + featureId + " of type " + schemaEntry.getFeatureType());
         }
@@ -1264,8 +1264,8 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
       ThriftSearchFeatureType type, int featureId) {
     return ALLOWED_TYPES_FOR_DEFAULT_FEATURE_VALUES.contains(type)
         && !NUMERIC_FEATURES_FOR_WHICH_DEFAULTS_SHOULD_NOT_BE_SET.contains(featureId)
-        && (ExternalTweetFeature.EARLYBIRD_INDEXED_FEATURE_IDS.contains(featureId)
-            || ExternalTweetFeature.EARLYBIRD_DERIVED_FEATURE_IDS.contains(featureId));
+        && (EtwitterternalTweetFeature.EARLYBIRD_INDEtwitterED_FEATURE_IDS.contains(featureId)
+            || EtwitterternalTweetFeature.EARLYBIRD_DERIVED_FEATURE_IDS.contains(featureId));
   }
 
   @Override
@@ -1291,9 +1291,9 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
           relevanceStats.setNumSkippedForLowReputation(
               relevanceStats.getNumSkippedForLowReputation() + 1);
           break;
-        case LOW_TEXT_SCORE:
-          relevanceStats.setNumSkippedForLowTextScore(
-              relevanceStats.getNumSkippedForLowTextScore() + 1);
+        case LOW_TEtwitterT_SCORE:
+          relevanceStats.setNumSkippedForLowTetwittertScore(
+              relevanceStats.getNumSkippedForLowTetwittertScore() + 1);
           break;
         case SOCIAL_FILTER:
           relevanceStats.setNumSkippedForSocialFilter(
@@ -1345,16 +1345,16 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
   }
 
   @VisibleForTesting
-  static final class ExplanationWrapper {
-    private Explanation explanation;
+  static final class EtwitterplanationWrapper {
+    private Etwitterplanation etwitterplanation;
 
-    public Explanation getExplanation() {
-      return explanation;
+    public Etwitterplanation getEtwitterplanation() {
+      return etwitterplanation;
     }
 
     @Override
     public String toString() {
-      return explanation.toString();
+      return etwitterplanation.toString();
     }
   }
 }

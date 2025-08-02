@@ -2,7 +2,7 @@ package com.twitter.timelines.prediction.common.aggregates.real_time
 
 import com.twitter.dal.personal_data.thriftjava.PersonalDataType.UserState
 import com.twitter.ml.api.Feature.Binary
-import com.twitter.ml.api.{DataRecord, Feature, FeatureContext, RichDataRecord}
+import com.twitter.ml.api.{DataRecord, Feature, FeatureContetwittert, RichDataRecord}
 import com.twitter.ml.featurestore.catalog.entities.core.Author
 import com.twitter.ml.featurestore.catalog.features.magicrecs.UserActivity
 import com.twitter.ml.featurestore.lib.data.PredictionRecord
@@ -13,7 +13,7 @@ import java.lang.{Boolean => JBoolean}
 import java.util
 import scala.collection.JavaConverters._
 
-object AuthorFeaturesAdapter extends TimelinesAdapterBase[PredictionRecord] {
+object AuthorFeaturesAdapter etwittertends TimelinesAdapterBase[PredictionRecord] {
   val UserStateBoundFeature: BoundFeature[UserId, FSDiscrete] = UserActivity.UserState.bind(Author)
   val UserFeaturesSet: BoundFeatureSet = BoundFeatureSet(UserStateBoundFeature)
 
@@ -54,7 +54,7 @@ object AuthorFeaturesAdapter extends TimelinesAdapterBase[PredictionRecord] {
   val UserStateBooleanFeatures: Set[Feature[_]] = userStateToFeatureMap.values.toSet
 
   private val allFeatures: Seq[Feature[_]] = UserStateBooleanFeatures.toSeq
-  override def getFeatureContext: FeatureContext = new FeatureContext(allFeatures: _*)
+  override def getFeatureContetwittert: FeatureContetwittert = new FeatureContetwittert(allFeatures: _*)
   override def commonFeatures: Set[Feature[_]] = Set.empty
 
   override def adaptToDataRecords(record: PredictionRecord): util.List[DataRecord] = {

@@ -37,7 +37,7 @@ enum UserSocialProofType {
 
 struct GetRecentEdgesRequest {
   1: required i64                          requestId        // the node to query from
-  2: optional i32                          maxNumEdges      // the max number of recent edges
+  2: optional i32                          matwitterNumEdges      // the matwitter number of recent edges
 }
 
 struct RecentEdge {

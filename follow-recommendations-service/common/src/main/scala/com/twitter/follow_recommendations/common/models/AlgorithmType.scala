@@ -10,7 +10,7 @@ package com.twitter.follow_recommendations.common.models
  *
  * Note that an algorithm can fall under more than one of these categories.
  */
-object AlgorithmType extends Enumeration {
+object AlgorithmType etwittertends Enumeration {
   type AlgorithmType = Value
 
   val Social: Value = Value("social")

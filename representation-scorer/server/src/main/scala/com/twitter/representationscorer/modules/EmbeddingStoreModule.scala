@@ -20,9 +20,9 @@ import com.twitter.simclusters_v2.thriftscala.ModelVersion._
 import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
 import com.twitter.storehaus.ReadableStore
 import com.twitter.util.Timer
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
-object EmbeddingStoreModule extends TwitterModule {
+object EmbeddingStoreModule etwittertends TwitterModule {
   @Singleton
   @Provides
   def providesEmbeddingStore(
@@ -33,7 +33,7 @@ object EmbeddingStoreModule extends TwitterModule {
     decider: Decider,
     stats: StatsReceiver
   ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
-    val cacheHashKeyPrefix: String = "RMS"
+    val cacheHashKeyPrefitwitter: String = "RMS"
     val embeddingStoreClient = new LegacyRMS(
       serviceIdentifier,
       memCachedClient,
@@ -41,7 +41,7 @@ object EmbeddingStoreModule extends TwitterModule {
       decider,
       clientId,
       timer,
-      cacheHashKeyPrefix
+      cacheHashKeyPrefitwitter
     )
 
     val underlyingStores: Map[

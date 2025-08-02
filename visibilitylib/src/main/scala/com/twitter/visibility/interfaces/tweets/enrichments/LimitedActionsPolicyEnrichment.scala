@@ -32,7 +32,7 @@ object LimitedActionsPolicyEnrichment {
   val DefaultPromptType = "basic"
   val LimitedActionsPolicyEnrichmentScope = "limited_actions_policy_enrichment"
   val MissingLimitedActionTypesScope = "missing_limited_action_types"
-  val ExecutedScope = "executed"
+  val EtwitterecutedScope = "etwitterecuted"
 
   def apply(
     result: VisibilityResult,
@@ -75,19 +75,19 @@ object LimitedActionsPolicyEnrichment {
       featureSwitches,
       statsReceiver
     )
-    val executedCounter = statsReceiver.scope(ExecutedScope)
+    val etwitterecutedCounter = statsReceiver.scope(EtwitterecutedScope)
 
     verdict match {
       case le: LimitedEngagements => {
-        executedCounter.counter("").incr()
-        executedCounter.counter(le.name).incr()
+        etwitterecutedCounter.counter("").incr()
+        etwitterecutedCounter.counter(le.name).incr()
         le.copy(
           policy = limitedActionsPolicyForReason_(le.getLimitedEngagementReason)
         )
       }
       case ile: InterstitialLimitedEngagements => {
-        executedCounter.counter("").incr()
-        executedCounter.counter(ile.name).incr()
+        etwitterecutedCounter.counter("").incr()
+        etwitterecutedCounter.counter(ile.name).incr()
         ile.copy(
           policy = limitedActionsPolicyForReason_(
             ile.getLimitedEngagementReason
@@ -95,8 +95,8 @@ object LimitedActionsPolicyEnrichment {
         )
       }
       case edi: EmergencyDynamicInterstitial => {
-        executedCounter.counter("").incr()
-        executedCounter.counter(edi.name).incr()
+        etwitterecutedCounter.counter("").incr()
+        etwitterecutedCounter.counter(edi.name).incr()
         EmergencyDynamicInterstitial(
           copy = edi.copy,
           linkOpt = edi.linkOpt,

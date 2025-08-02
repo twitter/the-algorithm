@@ -42,7 +42,7 @@ class FullSparse(defaultFullSparse):
       self.use_sparse_grads,
       default_use_binary_values,
       name="sparse_mm",
-      partition_axis=self.partition_axis,
+      partition_atwitteris=self.partition_atwitteris,
       num_partitions=self.num_partitions,
       compress_ids=self._use_compression,
       cast_indices_dtype=self._cast_indices_dtype,

@@ -18,7 +18,7 @@ object ClientRequestObserver {
 class ClientRequestObserver(
   statsReceiver: StatsReceiver,
   observeAuthorizationAttempts: Boolean = true)
-    extends ((String, Option[Seq[String]]) => Future[Unit]) {
+    etwittertends ((String, Option[Seq[String]]) => Future[Unit]) {
   import ClientRequestObserver.noClientIdKey
 
   protected[this] val scopedReceiver = statsReceiver.scope("client_request")
@@ -55,4 +55,4 @@ class ClientRequestObserver(
   def authorized(methodName: String, clientIdStr: String): Unit = {}
 }
 
-object NullClientRequestObserver extends ClientRequestObserver(NullStatsReceiver)
+object NullClientRequestObserver etwittertends ClientRequestObserver(NullStatsReceiver)

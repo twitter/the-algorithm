@@ -13,7 +13,7 @@ object Utils {
    * @return The list of CandidateUser with ranking/scoring info added.
    */
   def addRankingInfo(candidates: Seq[CandidateUser], rankingStage: String): Seq[CandidateUser] = {
-    candidates.zipWithIndex.map {
+    candidates.zipWithIndetwitter.map {
       case (candidate, rank) =>
         // 1-based ranking for better readability
         candidate.addInfoPerRankingStage(rankingStage, candidate.scores, rank + 1)

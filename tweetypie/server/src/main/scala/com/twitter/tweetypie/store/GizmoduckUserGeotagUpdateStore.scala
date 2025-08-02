@@ -1,14 +1,14 @@
 package com.twitter.tweetypie
 package store
 
-import com.twitter.gizmoduck.thriftscala.LookupContext
+import com.twitter.gizmoduck.thriftscala.LookupContetwittert
 import com.twitter.gizmoduck.thriftscala.ModifiedAccount
 import com.twitter.gizmoduck.thriftscala.ModifiedUser
 import com.twitter.tweetypie.backends.Gizmoduck
 import com.twitter.tweetypie.thriftscala._
 
 trait GizmoduckUserGeotagUpdateStore
-    extends TweetStoreBase[GizmoduckUserGeotagUpdateStore]
+    etwittertends TweetStoreBase[GizmoduckUserGeotagUpdateStore]
     with AsyncInsertTweet.Store
     with ScrubGeoUpdateUserTimestamp.Store {
   def wrap(w: TweetStore.Wrap): GizmoduckUserGeotagUpdateStore =
@@ -40,7 +40,7 @@ object GizmoduckUserGeotagUpdateStore {
     def setHasGeotaggedStatuses(value: Boolean): FutureEffect[UserId] = {
       val modifiedAccount = ModifiedAccount(hasGeotaggedStatuses = Some(value))
       val modifiedUser = ModifiedUser(account = Some(modifiedAccount))
-      FutureEffect(userId => modifyAndGet((LookupContext(), userId, modifiedUser)).unit)
+      FutureEffect(userId => modifyAndGet((LookupContetwittert(), userId, modifiedUser)).unit)
     }
 
     new GizmoduckUserGeotagUpdateStore {
@@ -50,7 +50,7 @@ object GizmoduckUserGeotagUpdateStore {
           .onSuccess(_ => setCounter.incr())
           .onlyIf { e =>
             // only with geo info and an account that doesn't yet have geotagged statuses flag set
-            hasGeo(e.tweet) && (e.user.account.exists(!_.hasGeotaggedStatuses))
+            hasGeo(e.tweet) && (e.user.account.etwitterists(!_.hasGeotaggedStatuses))
           }
 
       override val retryAsyncInsertTweet: FutureEffect[

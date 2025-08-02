@@ -1,18 +1,18 @@
 package com.twitter.search.common.query;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.apache.lucene.index.FilteredTermsEnum;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
+import org.apache.lucene.indetwitter.FilteredTermsEnum;
+import org.apache.lucene.indetwitter.Terms;
+import org.apache.lucene.indetwitter.TermsEnum;
 import org.apache.lucene.search.MultiTermQuery;
 import org.apache.lucene.util.AttributeSource;
 import org.apache.lucene.util.BytesRef;
 
 
-public class MultiTermDisjunctionQuery extends MultiTermQuery {
+public class MultiTermDisjunctionQuery etwittertends MultiTermQuery {
 
   private final Set<BytesRef> values;
 
@@ -24,19 +24,19 @@ public class MultiTermDisjunctionQuery extends MultiTermQuery {
 
   @Override
   protected TermsEnum getTermsEnum(Terms terms, AttributeSource atts)
-      throws IOException {
+      throws IOEtwitterception {
     final TermsEnum termsEnum = terms.iterator();
     final Iterator<BytesRef> it = values.iterator();
 
     return new FilteredTermsEnum(termsEnum) {
-      @Override protected AcceptStatus accept(BytesRef term) throws IOException {
+      @Override protected AcceptStatus accept(BytesRef term) throws IOEtwitterception {
         return AcceptStatus.YES;
       }
 
-      @Override public BytesRef next() throws IOException {
-        while (it.hasNext()) {
-          BytesRef termRef = it.next();
-          if (termsEnum.seekExact(termRef)) {
+      @Override public BytesRef netwittert() throws IOEtwitterception {
+        while (it.hasNetwittert()) {
+          BytesRef termRef = it.netwittert();
+          if (termsEnum.seekEtwitteract(termRef)) {
             return termRef;
           }
         }

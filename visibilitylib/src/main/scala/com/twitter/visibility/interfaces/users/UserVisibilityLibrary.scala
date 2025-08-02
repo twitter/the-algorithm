@@ -17,10 +17,10 @@ import com.twitter.visibility.common.UserRelationshipSource
 import com.twitter.visibility.common.UserSearchSafetySource
 import com.twitter.visibility.common.UserSource
 import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.context.thriftscala.UserVisibilityFilteringContext
+import com.twitter.visibility.contetwittert.thriftscala.UserVisibilityFilteringContetwittert
 import com.twitter.visibility.models.ContentId.UserId
 import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 import com.twitter.visibility.rules.Reason.Unspecified
 import com.twitter.visibility.rules.Allow
 import com.twitter.visibility.rules.Drop
@@ -28,7 +28,7 @@ import com.twitter.visibility.rules.RuleBase
 
 object UserVisibilityLibrary {
   type Type =
-    (User, SafetyLevel, ViewerContext, UserVisibilityFilteringContext) => Stitch[VisibilityResult]
+    (User, SafetyLevel, ViewerContetwittert, UserVisibilityFilteringContetwittert) => Stitch[VisibilityResult]
 
   def apply(
     visibilityLibrary: VisibilityLibrary,
@@ -60,9 +60,9 @@ object UserVisibilityLibrary {
     val advancedFilteringFeatures =
       new ViewerAdvancedFilteringFeatures(userSource, libraryStatsReceiver)
 
-    (user, safetyLevel, viewerContext, userVisibilityFilteringContext) => {
+    (user, safetyLevel, viewerContetwittert, userVisibilityFilteringContetwittert) => {
       val contentId = UserId(user.id)
-      val viewerId = viewerContext.userId
+      val viewerId = viewerContetwittert.userId
 
       if (!RuleBase.hasUserRules(safetyLevel)) {
         noUserRulesCounter.incr()
@@ -78,19 +78,19 @@ object UserVisibilityLibrary {
           val featureMap =
             visibilityLibrary.featureMapBuilder(
               Seq(
-                viewerFeatures.forViewerContext(viewerContext),
+                viewerFeatures.forViewerContetwittert(viewerContetwittert),
                 viewerSafeSearchFeatures.forViewerId(viewerId),
                 relationshipFeatures.forAuthor(user, viewerId),
                 authorFeatures.forAuthor(user),
                 advancedFilteringFeatures.forViewerId(viewerId),
-                searchFeatures.forSearchContext(userVisibilityFilteringContext.searchContext)
+                searchFeatures.forSearchContetwittert(userVisibilityFilteringContetwittert.searchContetwittert)
               )
             )
 
           visibilityLibrary.runRuleEngine(
             contentId,
             featureMap,
-            viewerContext,
+            viewerContetwittert,
             safetyLevel
           )
 

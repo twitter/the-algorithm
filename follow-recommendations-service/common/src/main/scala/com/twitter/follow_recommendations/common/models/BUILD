@@ -9,11 +9,11 @@ scala_library(
         "hermit/hermit-core/src/main/scala/com/twitter/hermit/constants",
         "hermit/hermit-core/src/main/scala/com/twitter/hermit/model",
         "hermit/hermit-ml/src/main/scala/com/twitter/hermit/ml/models",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/identifier",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/request",
-        "product-mixer/core/src/main/thrift/com/twitter/product_mixer/core:thrift-scala",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/candidate_source",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/common",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/common/identifier",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/marshalling/request",
+        "product-mitwitterer/core/src/main/thrift/com/twitter/product_mitwitterer/core:thrift-scala",
         "scrooge/scrooge-serializer/src/main/scala",
         "src/java/com/twitter/ml/api:api-base",
         "src/scala/com/twitter/ml/api/util",
@@ -23,7 +23,7 @@ scala_library(
         "user-signal-service/thrift/src/main/thrift:thrift-scala",
         "util/util-slf4j-api/src/main/scala/com/twitter/util/logging",
     ],
-    exports = [
+    etwitterports = [
         "util/util-slf4j-api/src/main/scala/com/twitter/util/logging",
     ],
 )

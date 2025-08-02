@@ -5,7 +5,7 @@ import com.twitter.spam.rtf.{thriftscala => s}
 import com.twitter.util.Time
 import com.twitter.visibility.util.NamingUtils
 
-sealed trait TweetSafetyLabelType extends SafetyLabelType with Product with Serializable {
+sealed trait TweetSafetyLabelType etwittertends SafetyLabelType with Product with Serializable {
   lazy val name: String = NamingUtils.getFriendlyName(this)
 }
 
@@ -17,7 +17,7 @@ case class TweetSafetyLabel(
   score: Option[Double] = None,
   safetyLabelSource: Option[SafetyLabelSource] = None)
 
-object TweetSafetyLabelType extends SafetyLabelType {
+object TweetSafetyLabelType etwittertends SafetyLabelType {
 
   val List: List[TweetSafetyLabelType] = s.SafetyLabelType.list.map(fromThrift)
 
@@ -46,10 +46,10 @@ object TweetSafetyLabelType extends SafetyLabelType {
     s.SafetyLabelType.Bounce -> Bounce,
     s.SafetyLabelType.BounceEdits -> BounceEdits,
     s.SafetyLabelType.BrandSafetyNsfaAggregate -> BrandSafetyNsfaAggregate,
-    s.SafetyLabelType.BrandSafetyExperimental1 -> BrandSafetyExperimental1,
-    s.SafetyLabelType.BrandSafetyExperimental2 -> BrandSafetyExperimental2,
-    s.SafetyLabelType.BrandSafetyExperimental3 -> BrandSafetyExperimental3,
-    s.SafetyLabelType.BrandSafetyExperimental4 -> BrandSafetyExperimental4,
+    s.SafetyLabelType.BrandSafetyEtwitterperimental1 -> BrandSafetyEtwitterperimental1,
+    s.SafetyLabelType.BrandSafetyEtwitterperimental2 -> BrandSafetyEtwitterperimental2,
+    s.SafetyLabelType.BrandSafetyEtwitterperimental3 -> BrandSafetyEtwitterperimental3,
+    s.SafetyLabelType.BrandSafetyEtwitterperimental4 -> BrandSafetyEtwitterperimental4,
     s.SafetyLabelType.BystanderAbusive -> BystanderAbusive,
     s.SafetyLabelType.CopypastaSpam -> CopypastaSpam,
     s.SafetyLabelType.DoNotAmplify -> DoNotAmplify,
@@ -58,8 +58,8 @@ object TweetSafetyLabelType extends SafetyLabelType {
     s.SafetyLabelType.DuplicateMention -> DuplicateMention,
     s.SafetyLabelType.DynamicProductAd -> DynamicProductAd,
     s.SafetyLabelType.EdiDevelopmentOnly -> EdiDevelopmentOnly,
-    s.SafetyLabelType.ExperimentalNudge -> ExperimentalNudge,
-    s.SafetyLabelType.ExperimentalSensitiveIllegal2 -> ExperimentalSensitiveIllegal2,
+    s.SafetyLabelType.EtwitterperimentalNudge -> EtwitterperimentalNudge,
+    s.SafetyLabelType.EtwitterperimentalSensitiveIllegal2 -> EtwitterperimentalSensitiveIllegal2,
     s.SafetyLabelType.ForEmergencyUseOnly -> ForEmergencyUseOnly,
     s.SafetyLabelType.GoreAndViolence -> GoreAndViolence,
     s.SafetyLabelType.GoreAndViolenceHighPrecision -> GoreAndViolenceHighPrecision,
@@ -74,8 +74,8 @@ object TweetSafetyLabelType extends SafetyLabelType {
     s.SafetyLabelType.HighPblockScore -> HighPblockScore,
     s.SafetyLabelType.HighProactiveTosScore -> HighProactiveTosScore,
     s.SafetyLabelType.HighSpammyTweetContentScore -> HighSpammyTweetContentScore,
-    s.SafetyLabelType.HighToxicityScore -> HighToxicityScore,
-    s.SafetyLabelType.HighlyReportedAndMidhighToxicityScore -> HighlyReportedAndMidhighToxicityScore,
+    s.SafetyLabelType.HighTotwittericityScore -> HighTotwittericityScore,
+    s.SafetyLabelType.HighlyReportedAndMidhighTotwittericityScore -> HighlyReportedAndMidhighTotwittericityScore,
     s.SafetyLabelType.HighlyReportedTweet -> HighlyReportedTweet,
     s.SafetyLabelType.InterstitialDevelopmentOnly -> InterstitialDevelopmentOnly,
     s.SafetyLabelType.IpiDevelopmentOnly -> IpiDevelopmentOnly,
@@ -92,8 +92,8 @@ object TweetSafetyLabelType extends SafetyLabelType {
     s.SafetyLabelType.NsfwHighPrecision -> NsfwHighPrecision,
     s.SafetyLabelType.NsfwHighRecall -> NsfwHighRecall,
     s.SafetyLabelType.NsfwReportedHeuristics -> NsfwReportedHeuristics,
-    s.SafetyLabelType.NsfwText -> NsfwText,
-    s.SafetyLabelType.NsfwTextHighPrecision -> NsfwTextHighPrecision,
+    s.SafetyLabelType.NsfwTetwittert -> NsfwTetwittert,
+    s.SafetyLabelType.NsfwTetwittertHighPrecision -> NsfwTetwittertHighPrecision,
     s.SafetyLabelType.NsfwVideo -> NsfwVideo,
     s.SafetyLabelType.PNegMultimodalHighPrecision -> PNegMultimodalHighPrecision,
     s.SafetyLabelType.PNegMultimodalHighRecall -> PNegMultimodalHighRecall,
@@ -121,54 +121,54 @@ object TweetSafetyLabelType extends SafetyLabelType {
     s.SafetyLabelType.BystanderAbusive2 -> Deprecated,
     s.SafetyLabelType.BystanderAbusive3 -> Deprecated,
     s.SafetyLabelType.DeprecatedLabel144 -> Deprecated,
-    s.SafetyLabelType.Experimental10Seh -> Deprecated,
-    s.SafetyLabelType.Experimental11Seh -> Deprecated,
-    s.SafetyLabelType.Experimental12Seh -> Deprecated,
-    s.SafetyLabelType.Experimental13Seh -> Deprecated,
-    s.SafetyLabelType.Experimental14Seh -> Deprecated,
-    s.SafetyLabelType.Experimental15Seh -> Deprecated,
-    s.SafetyLabelType.Experimental16Seh -> Deprecated,
-    s.SafetyLabelType.Experimental17Seh -> Deprecated,
-    s.SafetyLabelType.Experimental18Seh -> Deprecated,
-    s.SafetyLabelType.Experimental19Seh -> Deprecated,
-    s.SafetyLabelType.Experimental1Seh -> Deprecated,
-    s.SafetyLabelType.Experimental20Seh -> Deprecated,
-    s.SafetyLabelType.Experimental21Seh -> Deprecated,
-    s.SafetyLabelType.Experimental22Seh -> Deprecated,
-    s.SafetyLabelType.Experimental23Seh -> Deprecated,
-    s.SafetyLabelType.Experimental24Seh -> Deprecated,
-    s.SafetyLabelType.Experimental25Seh -> Deprecated,
-    s.SafetyLabelType.Experimental2Seh -> Deprecated,
-    s.SafetyLabelType.Experimental3Seh -> Deprecated,
-    s.SafetyLabelType.Experimental4Seh -> Deprecated,
-    s.SafetyLabelType.Experimental5Seh -> Deprecated,
-    s.SafetyLabelType.Experimental6Seh -> Deprecated,
-    s.SafetyLabelType.Experimental7Seh -> Deprecated,
-    s.SafetyLabelType.Experimental8Seh -> Deprecated,
-    s.SafetyLabelType.Experimental9Seh -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore1 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore10 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore2 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore3 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore4 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore5 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore6 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore7 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore8 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore9 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSensitiveIllegal1 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSensitiveIllegal3 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSensitiveIllegal4 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSensitiveIllegal5 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSensitiveIllegal6 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSpam1 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSpam2 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSpam3 -> Deprecated,
-    s.SafetyLabelType.Experimentation -> Deprecated,
-    s.SafetyLabelType.Experimentation2 -> Deprecated,
-    s.SafetyLabelType.Experimentation3 -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental10Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental11Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental12Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental13Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental14Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental15Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental16Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental17Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental18Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental19Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental1Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental20Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental21Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental22Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental23Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental24Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental25Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental2Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental3Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental4Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental5Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental6Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental7Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental8Seh -> Deprecated,
+    s.SafetyLabelType.Etwitterperimental9Seh -> Deprecated,
+    s.SafetyLabelType.EtwitterperimentalHighHealthModelScore1 -> Deprecated,
+    s.SafetyLabelType.EtwitterperimentalHighHealthModelScore10 -> Deprecated,
+    s.SafetyLabelType.EtwitterperimentalHighHealthModelScore2 -> Deprecated,
+    s.SafetyLabelType.EtwitterperimentalHighHealthModelScore3 -> Deprecated,
+    s.SafetyLabelType.EtwitterperimentalHighHealthModelScore4 -> Deprecated,
+    s.SafetyLabelType.EtwitterperimentalHighHealthModelScore5 -> Deprecated,
+    s.SafetyLabelType.EtwitterperimentalHighHealthModelScore6 -> Deprecated,
+    s.SafetyLabelType.EtwitterperimentalHighHealthModelScore7 -> Deprecated,
+    s.SafetyLabelType.EtwitterperimentalHighHealthModelScore8 -> Deprecated,
+    s.SafetyLabelType.EtwitterperimentalHighHealthModelScore9 -> Deprecated,
+    s.SafetyLabelType.EtwitterperimentalSensitiveIllegal1 -> Deprecated,
+    s.SafetyLabelType.EtwitterperimentalSensitiveIllegal3 -> Deprecated,
+    s.SafetyLabelType.EtwitterperimentalSensitiveIllegal4 -> Deprecated,
+    s.SafetyLabelType.EtwitterperimentalSensitiveIllegal5 -> Deprecated,
+    s.SafetyLabelType.EtwitterperimentalSensitiveIllegal6 -> Deprecated,
+    s.SafetyLabelType.EtwitterperimentalSpam1 -> Deprecated,
+    s.SafetyLabelType.EtwitterperimentalSpam2 -> Deprecated,
+    s.SafetyLabelType.EtwitterperimentalSpam3 -> Deprecated,
+    s.SafetyLabelType.Etwitterperimentation -> Deprecated,
+    s.SafetyLabelType.Etwitterperimentation2 -> Deprecated,
+    s.SafetyLabelType.Etwitterperimentation3 -> Deprecated,
     s.SafetyLabelType.HighlyReportedImage -> Deprecated,
-    s.SafetyLabelType.HighToxicityHoldbackModelScore -> Deprecated,
+    s.SafetyLabelType.HighTotwittericityHoldbackModelScore -> Deprecated,
     s.SafetyLabelType.LowQualityHighRecall -> Deprecated,
     s.SafetyLabelType.MagicRecsDenylist -> Deprecated,
     s.SafetyLabelType.MisinfoCovid19 -> Deprecated,
@@ -184,7 +184,7 @@ object TweetSafetyLabelType extends SafetyLabelType {
     s.SafetyLabelType.PMisinfoCombined50 -> Deprecated,
     s.SafetyLabelType.PMisinfoDenylist -> Deprecated,
     s.SafetyLabelType.PMisinfoPVeracityNudge -> Deprecated,
-    s.SafetyLabelType.PoliticalTweetExperimental1 -> Deprecated,
+    s.SafetyLabelType.PoliticalTweetEtwitterperimental1 -> Deprecated,
     s.SafetyLabelType.ProactiveTosHighRecall -> Deprecated,
     s.SafetyLabelType.ProactiveTosHighRecallContainsSelfHarm -> Deprecated,
     s.SafetyLabelType.ProactiveTosHighRecallEncourageSelfHarm -> Deprecated,
@@ -210,96 +210,96 @@ object TweetSafetyLabelType extends SafetyLabelType {
       Deprecated -> s.SafetyLabelType.EnumUnknownSafetyLabelType(DeprecatedEnumValue),
     )
 
-  case object Abusive extends TweetSafetyLabelType
-  case object AbusiveBehavior extends TweetSafetyLabelType
-  case object AbusiveBehaviorInsults extends TweetSafetyLabelType
-  case object AbusiveBehaviorViolentThreat extends TweetSafetyLabelType
-  case object AbusiveBehaviorMajorAbuse extends TweetSafetyLabelType
-  case object AbusiveHighRecall extends TweetSafetyLabelType
-  case object Automation extends TweetSafetyLabelType
-  case object AutomationHighRecall extends TweetSafetyLabelType
-  case object Bounce extends TweetSafetyLabelType
-  case object BystanderAbusive extends TweetSafetyLabelType
-  case object NsfaHighRecall extends TweetSafetyLabelType
-  case object DuplicateContent extends TweetSafetyLabelType
-  case object DuplicateMention extends TweetSafetyLabelType
-  case object GoreAndViolence extends TweetSafetyLabelType {
+  case object Abusive etwittertends TweetSafetyLabelType
+  case object AbusiveBehavior etwittertends TweetSafetyLabelType
+  case object AbusiveBehaviorInsults etwittertends TweetSafetyLabelType
+  case object AbusiveBehaviorViolentThreat etwittertends TweetSafetyLabelType
+  case object AbusiveBehaviorMajorAbuse etwittertends TweetSafetyLabelType
+  case object AbusiveHighRecall etwittertends TweetSafetyLabelType
+  case object Automation etwittertends TweetSafetyLabelType
+  case object AutomationHighRecall etwittertends TweetSafetyLabelType
+  case object Bounce etwittertends TweetSafetyLabelType
+  case object BystanderAbusive etwittertends TweetSafetyLabelType
+  case object NsfaHighRecall etwittertends TweetSafetyLabelType
+  case object DuplicateContent etwittertends TweetSafetyLabelType
+  case object DuplicateMention etwittertends TweetSafetyLabelType
+  case object GoreAndViolence etwittertends TweetSafetyLabelType {
 
     val DeprecatedAt: Time = Time.at("2019-09-12 00:00:00 UTC")
   }
-  case object GoreAndViolenceHighRecall extends TweetSafetyLabelType
-  case object LiveLowQuality extends TweetSafetyLabelType
-  case object LowQuality extends TweetSafetyLabelType
-  case object LowQualityMention extends TweetSafetyLabelType
-  case object NsfwCardImage extends TweetSafetyLabelType
-  case object NsfwHighRecall extends TweetSafetyLabelType
-  case object NsfwHighPrecision extends TweetSafetyLabelType
-  case object NsfwVideo extends TweetSafetyLabelType
-  case object Pdna extends TweetSafetyLabelType
+  case object GoreAndViolenceHighRecall etwittertends TweetSafetyLabelType
+  case object LiveLowQuality etwittertends TweetSafetyLabelType
+  case object LowQuality etwittertends TweetSafetyLabelType
+  case object LowQualityMention etwittertends TweetSafetyLabelType
+  case object NsfwCardImage etwittertends TweetSafetyLabelType
+  case object NsfwHighRecall etwittertends TweetSafetyLabelType
+  case object NsfwHighPrecision etwittertends TweetSafetyLabelType
+  case object NsfwVideo etwittertends TweetSafetyLabelType
+  case object Pdna etwittertends TweetSafetyLabelType
 
-  case object RecommendationsLowQuality extends TweetSafetyLabelType
-  case object SearchBlacklist extends TweetSafetyLabelType
-  case object Spam extends TweetSafetyLabelType
-  case object SpamHighRecall extends TweetSafetyLabelType
-  case object UntrustedUrl extends TweetSafetyLabelType
-  case object HighToxicityScore extends TweetSafetyLabelType
-  case object HighPblockScore extends TweetSafetyLabelType
-  case object SearchBlacklistHighRecall extends TweetSafetyLabelType
-  case object ForEmergencyUseOnly extends TweetSafetyLabelType
-  case object HighProactiveTosScore extends TweetSafetyLabelType
-  case object SafetyCrisis extends TweetSafetyLabelType
-  case object MisinfoCivic extends TweetSafetyLabelType
-  case object MisinfoCrisis extends TweetSafetyLabelType
-  case object MisinfoGeneric extends TweetSafetyLabelType
-  case object MisinfoMedical extends TweetSafetyLabelType
-  case object AdsManagerDenyList extends TweetSafetyLabelType
-  case object GoreAndViolenceHighPrecision extends TweetSafetyLabelType
-  case object NsfwReportedHeuristics extends TweetSafetyLabelType
-  case object GoreAndViolenceReportedHeuristics extends TweetSafetyLabelType
-  case object HighPSpammyTweetScore extends TweetSafetyLabelType
-  case object DoNotAmplify extends TweetSafetyLabelType
-  case object HighlyReportedTweet extends TweetSafetyLabelType
-  case object AgathaSpam extends TweetSafetyLabelType
-  case object SmyteSpamTweet extends TweetSafetyLabelType
-  case object SemanticCoreMisinformation extends TweetSafetyLabelType
-  case object HighPReportedTweetScore extends TweetSafetyLabelType
-  case object HighSpammyTweetContentScore extends TweetSafetyLabelType
-  case object GoreAndViolenceTopicHighRecall extends TweetSafetyLabelType
-  case object CopypastaSpam extends TweetSafetyLabelType
-  case object ExperimentalSensitiveIllegal2 extends TweetSafetyLabelType
-  case object DownrankSpamReply extends TweetSafetyLabelType
-  case object NsfwText extends TweetSafetyLabelType
-  case object HighlyReportedAndMidhighToxicityScore extends TweetSafetyLabelType
-  case object DynamicProductAd extends TweetSafetyLabelType
-  case object TombstoneDevelopmentOnly extends TweetSafetyLabelType
-  case object TweetContainsHatefulConductSlurHighSeverity extends TweetSafetyLabelType
-  case object TweetContainsHatefulConductSlurMediumSeverity extends TweetSafetyLabelType
-  case object TweetContainsHatefulConductSlurLowSeverity extends TweetSafetyLabelType
-  case object RitoActionedTweet extends TweetSafetyLabelType
-  case object ExperimentalNudge extends TweetSafetyLabelType
-  case object PNegMultimodalHighPrecision extends TweetSafetyLabelType
-  case object PNegMultimodalHighRecall extends TweetSafetyLabelType
-  case object BrandSafetyNsfaAggregate extends TweetSafetyLabelType
-  case object HighCryptospamScore extends TweetSafetyLabelType
-  case object IpiDevelopmentOnly extends TweetSafetyLabelType
-  case object BounceEdits extends TweetSafetyLabelType
-  case object UnsafeUrl extends TweetSafetyLabelType
-  case object InterstitialDevelopmentOnly extends TweetSafetyLabelType
-  case object EdiDevelopmentOnly extends TweetSafetyLabelType
-  case object NsfwTextHighPrecision extends TweetSafetyLabelType
-  case object HatefulConduct extends TweetSafetyLabelType
-  case object HatefulConductViolentThreat extends TweetSafetyLabelType
-  case object NsfaHighPrecision extends TweetSafetyLabelType
-  case object BrandSafetyExperimental1 extends TweetSafetyLabelType
-  case object BrandSafetyExperimental2 extends TweetSafetyLabelType
-  case object BrandSafetyExperimental3 extends TweetSafetyLabelType
-  case object BrandSafetyExperimental4 extends TweetSafetyLabelType
+  case object RecommendationsLowQuality etwittertends TweetSafetyLabelType
+  case object SearchBlacklist etwittertends TweetSafetyLabelType
+  case object Spam etwittertends TweetSafetyLabelType
+  case object SpamHighRecall etwittertends TweetSafetyLabelType
+  case object UntrustedUrl etwittertends TweetSafetyLabelType
+  case object HighTotwittericityScore etwittertends TweetSafetyLabelType
+  case object HighPblockScore etwittertends TweetSafetyLabelType
+  case object SearchBlacklistHighRecall etwittertends TweetSafetyLabelType
+  case object ForEmergencyUseOnly etwittertends TweetSafetyLabelType
+  case object HighProactiveTosScore etwittertends TweetSafetyLabelType
+  case object SafetyCrisis etwittertends TweetSafetyLabelType
+  case object MisinfoCivic etwittertends TweetSafetyLabelType
+  case object MisinfoCrisis etwittertends TweetSafetyLabelType
+  case object MisinfoGeneric etwittertends TweetSafetyLabelType
+  case object MisinfoMedical etwittertends TweetSafetyLabelType
+  case object AdsManagerDenyList etwittertends TweetSafetyLabelType
+  case object GoreAndViolenceHighPrecision etwittertends TweetSafetyLabelType
+  case object NsfwReportedHeuristics etwittertends TweetSafetyLabelType
+  case object GoreAndViolenceReportedHeuristics etwittertends TweetSafetyLabelType
+  case object HighPSpammyTweetScore etwittertends TweetSafetyLabelType
+  case object DoNotAmplify etwittertends TweetSafetyLabelType
+  case object HighlyReportedTweet etwittertends TweetSafetyLabelType
+  case object AgathaSpam etwittertends TweetSafetyLabelType
+  case object SmyteSpamTweet etwittertends TweetSafetyLabelType
+  case object SemanticCoreMisinformation etwittertends TweetSafetyLabelType
+  case object HighPReportedTweetScore etwittertends TweetSafetyLabelType
+  case object HighSpammyTweetContentScore etwittertends TweetSafetyLabelType
+  case object GoreAndViolenceTopicHighRecall etwittertends TweetSafetyLabelType
+  case object CopypastaSpam etwittertends TweetSafetyLabelType
+  case object EtwitterperimentalSensitiveIllegal2 etwittertends TweetSafetyLabelType
+  case object DownrankSpamReply etwittertends TweetSafetyLabelType
+  case object NsfwTetwittert etwittertends TweetSafetyLabelType
+  case object HighlyReportedAndMidhighTotwittericityScore etwittertends TweetSafetyLabelType
+  case object DynamicProductAd etwittertends TweetSafetyLabelType
+  case object TombstoneDevelopmentOnly etwittertends TweetSafetyLabelType
+  case object TweetContainsHatefulConductSlurHighSeverity etwittertends TweetSafetyLabelType
+  case object TweetContainsHatefulConductSlurMediumSeverity etwittertends TweetSafetyLabelType
+  case object TweetContainsHatefulConductSlurLowSeverity etwittertends TweetSafetyLabelType
+  case object RitoActionedTweet etwittertends TweetSafetyLabelType
+  case object EtwitterperimentalNudge etwittertends TweetSafetyLabelType
+  case object PNegMultimodalHighPrecision etwittertends TweetSafetyLabelType
+  case object PNegMultimodalHighRecall etwittertends TweetSafetyLabelType
+  case object BrandSafetyNsfaAggregate etwittertends TweetSafetyLabelType
+  case object HighCryptospamScore etwittertends TweetSafetyLabelType
+  case object IpiDevelopmentOnly etwittertends TweetSafetyLabelType
+  case object BounceEdits etwittertends TweetSafetyLabelType
+  case object UnsafeUrl etwittertends TweetSafetyLabelType
+  case object InterstitialDevelopmentOnly etwittertends TweetSafetyLabelType
+  case object EdiDevelopmentOnly etwittertends TweetSafetyLabelType
+  case object NsfwTetwittertHighPrecision etwittertends TweetSafetyLabelType
+  case object HatefulConduct etwittertends TweetSafetyLabelType
+  case object HatefulConductViolentThreat etwittertends TweetSafetyLabelType
+  case object NsfaHighPrecision etwittertends TweetSafetyLabelType
+  case object BrandSafetyEtwitterperimental1 etwittertends TweetSafetyLabelType
+  case object BrandSafetyEtwitterperimental2 etwittertends TweetSafetyLabelType
+  case object BrandSafetyEtwitterperimental3 etwittertends TweetSafetyLabelType
+  case object BrandSafetyEtwitterperimental4 etwittertends TweetSafetyLabelType
 
-  case object FosnrHatefulConduct extends TweetSafetyLabelType
-  case object FosnrHatefulConductLowSeveritySlur extends TweetSafetyLabelType
+  case object FosnrHatefulConduct etwittertends TweetSafetyLabelType
+  case object FosnrHatefulConductLowSeveritySlur etwittertends TweetSafetyLabelType
 
-  case object Deprecated extends TweetSafetyLabelType
-  case object Unknown extends TweetSafetyLabelType
+  case object Deprecated etwittertends TweetSafetyLabelType
+  case object Unknown etwittertends TweetSafetyLabelType
 
   def fromThrift(safetyLabelType: s.SafetyLabelType): TweetSafetyLabelType =
     thriftToModelMap.get(safetyLabelType) match {

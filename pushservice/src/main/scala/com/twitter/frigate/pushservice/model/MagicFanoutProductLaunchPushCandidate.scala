@@ -27,7 +27,7 @@ class MagicFanoutProductLaunchPushCandidate(
 )(
   implicit val statsScoped: StatsReceiver,
   pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
+    etwittertends PushCandidate
     with MagicFanoutProductLaunchCandidate
     with MagicFanoutProductLaunchIbis2Hydrator
     with MagicFanoutProductLaunchNtabRequestHydrator {
@@ -56,7 +56,7 @@ class MagicFanoutProductLaunchPushCandidate(
 }
 
 case class MagicFanoutProductLaunchPushCandidatePredicates(config: Config)
-    extends BasicSendHandlerPredicates[MagicFanoutProductLaunchPushCandidate] {
+    etwittertends BasicSendHandlerPredicates[MagicFanoutProductLaunchPushCandidate] {
 
   implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
 
@@ -65,18 +65,18 @@ case class MagicFanoutProductLaunchPushCandidatePredicates(config: Config)
   ] =
     List(
       PredicatesForCandidate.isDeviceEligibleForCreatorPush,
-      PredicatesForCandidate.exceptedPredicate(
-        "excepted_is_target_blue_verified",
+      PredicatesForCandidate.etwitterceptedPredicate(
+        "etwittercepted_is_target_blue_verified",
         MagicFanoutPredicatesUtil.shouldSkipBlueVerifiedCheckForCandidate,
         PredicatesForCandidate.isTargetBlueVerified.flip
       ), // no need to send if target is already Blue Verified
-      PredicatesForCandidate.exceptedPredicate(
-        "excepted_is_target_legacy_verified",
+      PredicatesForCandidate.etwitterceptedPredicate(
+        "etwittercepted_is_target_legacy_verified",
         MagicFanoutPredicatesUtil.shouldSkipLegacyVerifiedCheckForCandidate,
         PredicatesForCandidate.isTargetLegacyVerified.flip
       ), // no need to send if target is already Legacy Verified
-      PredicatesForCandidate.exceptedPredicate(
-        "excepted_is_target_super_follow_creator",
+      PredicatesForCandidate.etwitterceptedPredicate(
+        "etwittercepted_is_target_super_follow_creator",
         MagicFanoutPredicatesUtil.shouldSkipSuperFollowCreatorCheckForCandidate,
         PredicatesForCandidate.isTargetSuperFollowCreator.flip
       ), // no need to send if target is already Super Follow Creator

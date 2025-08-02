@@ -1,11 +1,11 @@
 # Deciders that can be used to control load on TLR or its backends.
-enable_max_concurrency_limiting:
-  comment: "When enabled, limit maxConcurrency filter. Note: Requires system property maxConcurrency to be set."
+enable_matwitter_concurrency_limiting:
+  comment: "When enabled, limit matwitterConcurrency filter. Note: Requires system property matwitterConcurrency to be set."
   default_availability: 0
 
 # Deciders related to testing / debugging.
-enable_routing_to_ranker_dev_proxy:
-  comment: "Route dark traffic to the TimelineRanker development proxy. 100% means ~100% of requests to a host."
+enable_routing_to_ranker_dev_protwittery:
+  comment: "Route dark traffic to the TimelineRanker development protwittery. 100% means ~100% of requests to a host."
   default_availability: 0
 
 # Deciders related to authorization.
@@ -15,44 +15,44 @@ client_request_authorization:
 client_write_whitelist:
   comment: "Enable authorization of write protected requests from only whitelisted clients"
   default_availability: 0
-allow_timeline_mixer_recap_prod:
-  comment: "Allow requests from production TimelineMixer/recap"
+allow_timeline_mitwitterer_recap_prod:
+  comment: "Allow requests from production TimelineMitwitterer/recap"
   default_availability: 10000
-allow_timeline_mixer_recycled_prod:
-  comment: "Allow requests from production TimelineMixer/recycled"
+allow_timeline_mitwitterer_recycled_prod:
+  comment: "Allow requests from production TimelineMitwitterer/recycled"
   default_availability: 10000
-allow_timeline_mixer_hydrate_prod:
-  comment: "Allow requests from production TimelineMixer/hydrate"
+allow_timeline_mitwitterer_hydrate_prod:
+  comment: "Allow requests from production TimelineMitwitterer/hydrate"
   default_availability: 10000
-allow_timeline_mixer_hydrate_recos_prod:
-  comment: "Allow requests from production TimelineMixer/hydrate_recos"
+allow_timeline_mitwitterer_hydrate_recos_prod:
+  comment: "Allow requests from production TimelineMitwitterer/hydrate_recos"
   default_availability: 10000
-allow_timeline_mixer_seed_authors_prod:
-  comment: "Allow requests from production TimelineMixer/seed_author_ids"
+allow_timeline_mitwitterer_seed_authors_prod:
+  comment: "Allow requests from production TimelineMitwitterer/seed_author_ids"
   default_availability: 10000
-allow_timeline_mixer_simcluster_prod:
-  comment: "Allow requests from production TimelineMixer/simcluster"
+allow_timeline_mitwitterer_simcluster_prod:
+  comment: "Allow requests from production TimelineMitwitterer/simcluster"
   default_availability: 10000
-allow_timeline_mixer_entity_tweets_prod:
-  comment: "Allow requests from production TimelineMixer/entity_tweets"
+allow_timeline_mitwitterer_entity_tweets_prod:
+  comment: "Allow requests from production TimelineMitwitterer/entity_tweets"
   default_availability: 10000
-allow_timeline_mixer_list_prod:
-  comment: "Allow requests from production TimelineMixer/list"
+allow_timeline_mitwitterer_list_prod:
+  comment: "Allow requests from production TimelineMitwitterer/list"
   default_availability: 10000
-allow_timeline_mixer_list_tweet_prod:
-  comment: "Allow requests from production TimelineMixer/list_tweet"
+allow_timeline_mitwitterer_list_tweet_prod:
+  comment: "Allow requests from production TimelineMitwitterer/list_tweet"
   default_availability: 10000
-allow_timeline_mixer_uteg_liked_by_tweets_prod:
-  comment: "Allow requests from production TimelineMixer/uteg_liked_by_tweets"
+allow_timeline_mitwitterer_uteg_liked_by_tweets_prod:
+  comment: "Allow requests from production TimelineMitwitterer/uteg_liked_by_tweets"
   default_availability: 10000
-allow_timeline_mixer_community_prod:
-  comment: "Allow requests from production TimelineMixer/community"
+allow_timeline_mitwitterer_community_prod:
+  comment: "Allow requests from production TimelineMitwitterer/community"
   default_availability: 10000
-allow_timeline_mixer_community_tweet_prod:
-  comment: "Allow requests from production TimelineMixer/community_tweet"
+allow_timeline_mitwitterer_community_tweet_prod:
+  comment: "Allow requests from production TimelineMitwitterer/community_tweet"
   default_availability: 10000
 allow_timeline_scorer_recommended_trend_tweet_prod:
-  comment: "Allow requests from production TimelineMixer/recommended_trend_tweet"
+  comment: "Allow requests from production TimelineMitwitterer/recommended_trend_tweet"
   default_availability: 10000
 
 allow_timeline_scorer_rec_topic_tweets_prod:
@@ -66,14 +66,14 @@ allow_timelinescorer_hydrate_tweet_scoring_prod:
   comment: "Allow requests from production TimelineScorer/hydrate_tweet_scoring"
   default_availability: 10000
 
-allow_timeline_mixer_staging:
-  comment: "Allow requests from staging TimelineMixer"
+allow_timeline_mitwitterer_staging:
+  comment: "Allow requests from staging TimelineMitwitterer"
   default_availability: 10000
 allow_timeline_ranker_warmup:
   comment: "Allow warmup requests from the TLR cluster"
   default_availability: 10000
-allow_timeline_ranker_proxy:
-  comment: "Allow warmup requests from the TimelineRanker proxy"
+allow_timeline_ranker_protwittery:
+  comment: "Allow warmup requests from the TimelineRanker protwittery"
   default_availability: 10000
 allow_timeline_service_prod:
   comment: "Allow requests from production TimelineService"
@@ -87,51 +87,51 @@ rate_limit_override_unknown:
 
 # Deciders related to reverse-chron home timeline materialization.
 multiplier_of_materialization_tweets_fetched:
-  comment: "Multiplier applied to the number of tweets fetched from search expressed as percentage. 100 means 100%. It can be used to fetch more than the number tweets requested by a caller (to improve similarity) or to fetch less than requested to reduce load."
+  comment: "Multiplier applied to the number of tweets fetched from search etwitterpressed as percentage. 100 means 100%. It can be used to fetch more than the number tweets requested by a caller (to improve similarity) or to fetch less than requested to reduce load."
   default_availability: 100
 enable_backfill_filtered_entries:
   comment: "Controls whether to back-fill timeline entries that get filtered out by TweetsPostFilter during home timeline materialization."
   default_availability: 0
 tweets_filtering_lossage_threshold:
-  comment: "If back-filling filtered entries is enabled and if percentage of tweets that get filtered out exceeds this value then we will issue a second call to get more tweets. Default value 2000 == 20%"
+  comment: "If back-filling filtered entries is enabled and if percentage of tweets that get filtered out etwitterceeds this value then we will issue a second call to get more tweets. Default value 2000 == 20%"
   default_availability: 2000
 tweets_filtering_lossage_limit:
-  comment: "We need to ensure that the number of tweets requested by the second call are not unbounded (for example, if everything is filtered out in the first call) therefore we limit the actual filtered out percentage to be no greater than the value below. Default value 6000 == 60%. That is, even if the actual lossage is 90% we will consider it to be only 60% for the purpose of back-filling."
+  comment: "We need to ensure that the number of tweets requested by the second call are not unbounded (for etwitterample, if everything is filtered out in the first call) therefore we limit the actual filtered out percentage to be no greater than the value below. Default value 6000 == 60%. That is, even if the actual lossage is 90% we will consider it to be only 60% for the purpose of back-filling."
   default_availability: 6000
 supplement_follows_with_real_graph:
-  comment: "Whether to fetch additional follows from RealGraph for users with more than the max follows fetched from SGS during home timeline materialization."
+  comment: "Whether to fetch additional follows from RealGraph for users with more than the matwitter follows fetched from SGS during home timeline materialization."
   default_availability: 0
 
 # Deciders related to recap.
 recap_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for recap Tweets. Otherwise those features are not set"
+  comment: "If true, semantic core, penguin, and tweetypie based etwitterpensive features will be hydrated for recap Tweets. Otherwise those features are not set"
   default_availability: 10000
-recap_max_count_multiplier:
-  comment: "We multiply maxCount (caller supplied value) by this multiplier and fetch those many candidates from search so that we are left with sufficient number of candidates after hydration and filtering. 100 == 1.0"
+recap_matwitter_count_multiplier:
+  comment: "We multiply matwitterCount (caller supplied value) by this multiplier and fetch those many candidates from search so that we are left with sufficient number of candidates after hydration and filtering. 100 == 1.0"
   default_availability: 100
-recap_enable_extra_sorting_in_results:
-  comment: "If TLR will do extra sorting in search results"
+recap_enable_etwittertra_sorting_in_results:
+  comment: "If TLR will do etwittertra sorting in search results"
   default_availability: 10000
 
 # Deciders related to recycled tweets.
 recycled_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for recycled Tweets. Otherwise those features are not set"
+  comment: "If true, semantic core, penguin, and tweetypie based etwitterpensive features will be hydrated for recycled Tweets. Otherwise those features are not set"
   default_availability: 0
-recycled_max_count_multiplier:
-  comment: "We multiply maxCount (caller supplied value) by this multiplier and fetch those many candidates from search so that we are left with sufficient number of candidates after hydration and filtering. 100 == 1.0"
+recycled_matwitter_count_multiplier:
+  comment: "We multiply matwitterCount (caller supplied value) by this multiplier and fetch those many candidates from search so that we are left with sufficient number of candidates after hydration and filtering. 100 == 1.0"
   default_availability: 100
 
 # Deciders related to entity tweets.
 entity_tweets_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for entity Tweets. Otherwise those features are not set"
+  comment: "If true, semantic core, penguin, and tweetypie based etwitterpensive features will be hydrated for entity Tweets. Otherwise those features are not set"
   default_availability: 10000
 
 # Deciders related to both recap and recycled tweets
 enable_real_graph_users:
-  comment: "This is used only if user follows >= 1000. If true, expands user seedset with real graph users and recent followed users. Otherwise, user seedset only includes followed users."
+  comment: "This is used only if user follows >= 1000. If true, etwitterpands user seedset with real graph users and recent followed users. Otherwise, user seedset only includes followed users."
   default_availability: 0
-max_real_graph_and_followed_users:
-  comment: "Maximum number of combined real graph users and recent followed users in the user seedset for recap and recycled tweets if enable_real_graph_users is true and only_real_graph_users is false. This is upper bounded by 2000."
+matwitter_real_graph_and_followed_users:
+  comment: "Matwitterimum number of combined real graph users and recent followed users in the user seedset for recap and recycled tweets if enable_real_graph_users is true and only_real_graph_users is false. This is upper bounded by 2000."
   default_availability: 1000
 
 # Deciders related to recap author
@@ -139,15 +139,15 @@ recap_author_enable_new_pipeline:
   comment: "Enable new recap author pipeline"
   default_availability: 0
 recap_author_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for PYLE Tweets. Otherwise those features are not set"
+  comment: "If true, semantic core, penguin, and tweetypie based etwitterpensive features will be hydrated for PYLE Tweets. Otherwise those features are not set"
   default_availability: 0
 
 # Deciders related to recap hydration(rectweet+ranked organic).
 recap_hydration_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for rectweet+ranked organic Tweets. Otherwise those features are not set"
+  comment: "If true, semantic core, penguin, and tweetypie based etwitterpensive features will be hydrated for rectweet+ranked organic Tweets. Otherwise those features are not set"
   default_availability: 0
 
 # Deciders related to uteg liked by tweets
 uteg_liked_by_tweets_enable_content_features_hydration:
-  comment: "If true, semantic core, penguin, and tweetypie based expensive features will be hydrated for rectweet+recycled utegLikedBy Tweets. Otherwise those features are not set"
+  comment: "If true, semantic core, penguin, and tweetypie based etwitterpensive features will be hydrated for rectweet+recycled utegLikedBy Tweets. Otherwise those features are not set"
   default_availability: 0

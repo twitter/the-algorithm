@@ -49,13 +49,13 @@ object UserUnavailableStateVisibilityLibrary {
           )
         )
 
-      val language = r.viewerContext.requestLanguageCode.getOrElse("en")
+      val language = r.viewerContetwittert.requestLanguageCode.getOrElse("en")
 
       val reason = visibilityLibrary
         .runRuleEngine(
           contentId,
           featureMap,
-          r.viewerContext,
+          r.viewerContetwittert,
           r.safetyLevel
         ).map(defaultToDrop(r.userUnavailableState, defaultDropScope))
         .map(tombstoneGenerator(_, language))

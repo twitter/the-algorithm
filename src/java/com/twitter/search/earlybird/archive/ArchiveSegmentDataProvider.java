@@ -1,15 +1,15 @@
 package com.twitter.search.earlybird.archive;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
+import com.twitter.search.common.schema.thriftjava.ThriftIndetwitteringEvent;
 import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
+import com.twitter.search.earlybird.EarlybirdIndetwitterConfig;
 import com.twitter.search.earlybird.archive.ArchiveTimeSlicer.ArchiveTimeSlice;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
 import com.twitter.search.earlybird.document.DocumentFactory;
@@ -27,22 +27,22 @@ public class ArchiveSegmentDataProvider implements SegmentDataProvider {
   private DynamicPartitionConfig dynamicPartitionConfig;
   private final ArchiveTimeSlicer timeSlicer;
 
-  private final DocumentFactory<ThriftIndexingEvent> documentFactory;
+  private final DocumentFactory<ThriftIndetwitteringEvent> documentFactory;
 
   private final SegmentDataReaderSet readerSet;
 
   public ArchiveSegmentDataProvider(
       DynamicPartitionConfig dynamicPartitionConfig,
       ArchiveTimeSlicer timeSlicer,
-      EarlybirdIndexConfig earlybirdIndexConfig) throws IOException {
+      EarlybirdIndetwitterConfig earlybirdIndetwitterConfig) throws IOEtwitterception {
     this.dynamicPartitionConfig = dynamicPartitionConfig;
     this.timeSlicer = timeSlicer;
     this.readerSet = createSegmentDataReaderSet();
-    this.documentFactory = earlybirdIndexConfig.createDocumentFactory();
+    this.documentFactory = earlybirdIndetwitterConfig.createDocumentFactory();
   }
 
   @Override
-  public List<Segment> newSegmentList() throws IOException {
+  public List<Segment> newSegmentList() throws IOEtwitterception {
     List<ArchiveTimeSlice> timeSlices = timeSlicer.getTimeSlicesInTierRange();
     if (timeSlices == null || timeSlices.isEmpty()) {
       return Lists.newArrayList();
@@ -60,8 +60,8 @@ public class ArchiveSegmentDataProvider implements SegmentDataProvider {
   public ArchiveSegment newArchiveSegment(ArchiveTimeSlice archiveTimeSlice) {
     return new ArchiveSegment(
         archiveTimeSlice,
-        dynamicPartitionConfig.getCurrentPartitionConfig().getIndexingHashPartitionID(),
-        EarlybirdConfig.getMaxSegmentSize());
+        dynamicPartitionConfig.getCurrentPartitionConfig().getIndetwitteringHashPartitionID(),
+        EarlybirdConfig.getMatwitterSegmentSize());
   }
 
   @Override
@@ -69,12 +69,12 @@ public class ArchiveSegmentDataProvider implements SegmentDataProvider {
     return readerSet;
   }
 
-  private EmptySegmentDataReaderSet createSegmentDataReaderSet() throws IOException {
+  private EmptySegmentDataReaderSet createSegmentDataReaderSet() throws IOEtwitterception {
     return new EmptySegmentDataReaderSet() {
 
       @Override
       public RecordReader<TweetDocument> newDocumentReader(SegmentInfo segmentInfo)
-          throws IOException {
+          throws IOEtwitterception {
         Segment segment = segmentInfo.getSegment();
         Preconditions.checkArgument(segment instanceof ArchiveSegment);
         return ((ArchiveSegment) segment).getStatusRecordReader(documentFactory);

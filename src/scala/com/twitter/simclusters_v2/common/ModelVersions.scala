@@ -13,7 +13,7 @@ object ModelVersions {
   val Model20M145K2020 = "20M_145K_2020"
 
   // Use Enum for feature switch
-  object Enum extends Enumeration {
+  object Enum etwittertends Enumeration {
     val Model20M145K2020, Model20M145KUpdated: Value = Value
     val enumToSimClustersModelVersionMap: Map[Enum.Value, ModelVersion] = Map(
       Model20M145K2020 -> ModelVersion.Model20m145k2020,

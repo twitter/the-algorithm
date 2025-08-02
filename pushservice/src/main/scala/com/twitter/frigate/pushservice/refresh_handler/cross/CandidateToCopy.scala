@@ -23,53 +23,53 @@ object CandidateToCopy {
         MrPushCopyObjects.FirstDegreeVideoJustTweetedBoldTitle
       ),
       TweetRetweet -> Set(
-        MrPushCopyObjects.TweetRetweetWithOneDisplaySocialContextsWithText,
-        MrPushCopyObjects.TweetRetweetWithTwoDisplaySocialContextsWithText,
-        MrPushCopyObjects.TweetRetweetWithOneDisplayAndKOtherSocialContextsWithText
+        MrPushCopyObjects.TweetRetweetWithOneDisplaySocialContetwittertsWithTetwittert,
+        MrPushCopyObjects.TweetRetweetWithTwoDisplaySocialContetwittertsWithTetwittert,
+        MrPushCopyObjects.TweetRetweetWithOneDisplayAndKOtherSocialContetwittertsWithTetwittert
       ),
       TweetRetweetPhoto -> Set(
-        MrPushCopyObjects.TweetRetweetPhotoWithOneDisplaySocialContextWithText,
-        MrPushCopyObjects.TweetRetweetPhotoWithTwoDisplaySocialContextsWithText,
-        MrPushCopyObjects.TweetRetweetPhotoWithOneDisplayAndKOtherSocialContextsWithText
+        MrPushCopyObjects.TweetRetweetPhotoWithOneDisplaySocialContetwittertWithTetwittert,
+        MrPushCopyObjects.TweetRetweetPhotoWithTwoDisplaySocialContetwittertsWithTetwittert,
+        MrPushCopyObjects.TweetRetweetPhotoWithOneDisplayAndKOtherSocialContetwittertsWithTetwittert
       ),
       TweetRetweetVideo -> Set(
-        MrPushCopyObjects.TweetRetweetVideoWithOneDisplaySocialContextWithText,
-        MrPushCopyObjects.TweetRetweetVideoWithTwoDisplaySocialContextsWithText,
-        MrPushCopyObjects.TweetRetweetVideoWithOneDisplayAndKOtherSocialContextsWithText
+        MrPushCopyObjects.TweetRetweetVideoWithOneDisplaySocialContetwittertWithTetwittert,
+        MrPushCopyObjects.TweetRetweetVideoWithTwoDisplaySocialContetwittertsWithTetwittert,
+        MrPushCopyObjects.TweetRetweetVideoWithOneDisplayAndKOtherSocialContetwittertsWithTetwittert
       ),
       TweetFavorite -> Set(
-        MrPushCopyObjects.TweetLikeOneSocialContextWithText,
-        MrPushCopyObjects.TweetLikeTwoSocialContextWithText,
-        MrPushCopyObjects.TweetLikeMultipleSocialContextWithText
+        MrPushCopyObjects.TweetLikeOneSocialContetwittertWithTetwittert,
+        MrPushCopyObjects.TweetLikeTwoSocialContetwittertWithTetwittert,
+        MrPushCopyObjects.TweetLikeMultipleSocialContetwittertWithTetwittert
       ),
       TweetFavoritePhoto -> Set(
-        MrPushCopyObjects.TweetLikePhotoOneSocialContextWithText,
-        MrPushCopyObjects.TweetLikePhotoTwoSocialContextWithText,
-        MrPushCopyObjects.TweetLikePhotoMultipleSocialContextWithText
+        MrPushCopyObjects.TweetLikePhotoOneSocialContetwittertWithTetwittert,
+        MrPushCopyObjects.TweetLikePhotoTwoSocialContetwittertWithTetwittert,
+        MrPushCopyObjects.TweetLikePhotoMultipleSocialContetwittertWithTetwittert
       ),
       TweetFavoriteVideo -> Set(
-        MrPushCopyObjects.TweetLikeVideoOneSocialContextWithText,
-        MrPushCopyObjects.TweetLikeVideoTwoSocialContextWithText,
-        MrPushCopyObjects.TweetLikeVideoMultipleSocialContextWithText
+        MrPushCopyObjects.TweetLikeVideoOneSocialContetwittertWithTetwittert,
+        MrPushCopyObjects.TweetLikeVideoTwoSocialContetwittertWithTetwittert,
+        MrPushCopyObjects.TweetLikeVideoMultipleSocialContetwittertWithTetwittert
       ),
       UnreadBadgeCount -> Set(MrPushCopyObjects.UnreadBadgeCount),
       InterestBasedTweet -> Set(MrPushCopyObjects.RecommendedForYouTweet),
       InterestBasedPhoto -> Set(MrPushCopyObjects.RecommendedForYouPhoto),
       InterestBasedVideo -> Set(MrPushCopyObjects.RecommendedForYouVideo),
       UserFollow -> Set(
-        MrPushCopyObjects.UserFollowWithOneSocialContext,
-        MrPushCopyObjects.UserFollowWithTwoSocialContext,
-        MrPushCopyObjects.UserFollowOneDisplayAndKOtherSocialContext
+        MrPushCopyObjects.UserFollowWithOneSocialContetwittert,
+        MrPushCopyObjects.UserFollowWithTwoSocialContetwittert,
+        MrPushCopyObjects.UserFollowOneDisplayAndKOtherSocialContetwittert
       ),
       HermitUser -> Set(
-        MrPushCopyObjects.HermitUserWithOneSocialContext,
-        MrPushCopyObjects.HermitUserWithTwoSocialContext,
-        MrPushCopyObjects.HermitUserWithOneDisplayAndKOtherSocialContexts
+        MrPushCopyObjects.HermitUserWithOneSocialContetwittert,
+        MrPushCopyObjects.HermitUserWithTwoSocialContetwittert,
+        MrPushCopyObjects.HermitUserWithOneDisplayAndKOtherSocialContetwitterts
       ),
       TriangularLoopUser -> Set(
-        MrPushCopyObjects.TriangularLoopUserWithOneSocialContext,
-        MrPushCopyObjects.TriangularLoopUserWithTwoSocialContexts,
-        MrPushCopyObjects.TriangularLoopUserOneDisplayAndKotherSocialContext
+        MrPushCopyObjects.TriangularLoopUserWithOneSocialContetwittert,
+        MrPushCopyObjects.TriangularLoopUserWithTwoSocialContetwitterts,
+        MrPushCopyObjects.TriangularLoopUserOneDisplayAndKotherSocialContetwittert
       ),
       ForwardAddressbookUserFollow -> Set(MrPushCopyObjects.ForwardAddressBookUserFollow),
       NewsArticleNewsLanding -> Set(MrPushCopyObjects.NewsArticleNewsLandingCopy),
@@ -83,13 +83,13 @@ object CandidateToCopy {
       ElasticTimelineTweet -> Set(MrPushCopyObjects.RecommendedForYouTweet),
       ElasticTimelinePhoto -> Set(MrPushCopyObjects.RecommendedForYouPhoto),
       ElasticTimelineVideo -> Set(MrPushCopyObjects.RecommendedForYouVideo),
-      ExploreVideoTweet -> Set(MrPushCopyObjects.ExploreVideoTweet),
+      EtwitterploreVideoTweet -> Set(MrPushCopyObjects.EtwitterploreVideoTweet),
       List -> Set(MrPushCopyObjects.ListRecommendation),
       InterestBasedUserFollow -> Set(MrPushCopyObjects.UserFollowInterestBasedCopy),
       PastEmailEngagementTweet -> Set(MrPushCopyObjects.RecommendedForYouTweet),
       PastEmailEngagementPhoto -> Set(MrPushCopyObjects.RecommendedForYouPhoto),
       PastEmailEngagementVideo -> Set(MrPushCopyObjects.RecommendedForYouVideo),
-      ExplorePush -> Set(MrPushCopyObjects.ExplorePush),
+      EtwitterplorePush -> Set(MrPushCopyObjects.EtwitterplorePush),
       ConnectTabPush -> Set(MrPushCopyObjects.ConnectTabPush),
       ConnectTabWithUserPush -> Set(MrPushCopyObjects.ConnectTabWithUserPush),
       AddressBookUploadPush -> Set(MrPushCopyObjects.AddressBookPush),
@@ -125,91 +125,91 @@ object CandidateToCopy {
       MrPushCopyObjects.FirstDegreeVideoJustTweetedBoldTitle -> Set(
         MrNtabCopyObjects.FirstDegreeTweetRecent
       ),
-      MrPushCopyObjects.TweetRetweetWithOneDisplaySocialContextsWithText -> Set(
-        MrNtabCopyObjects.TweetRetweetWithOneDisplaySocialContext
+      MrPushCopyObjects.TweetRetweetWithOneDisplaySocialContetwittertsWithTetwittert -> Set(
+        MrNtabCopyObjects.TweetRetweetWithOneDisplaySocialContetwittert
       ),
-      MrPushCopyObjects.TweetRetweetWithTwoDisplaySocialContextsWithText -> Set(
-        MrNtabCopyObjects.TweetRetweetWithTwoDisplaySocialContexts
+      MrPushCopyObjects.TweetRetweetWithTwoDisplaySocialContetwittertsWithTetwittert -> Set(
+        MrNtabCopyObjects.TweetRetweetWithTwoDisplaySocialContetwitterts
       ),
-      MrPushCopyObjects.TweetRetweetWithOneDisplayAndKOtherSocialContextsWithText -> Set(
-        MrNtabCopyObjects.TweetRetweetWithOneDisplayAndKOtherSocialContexts
+      MrPushCopyObjects.TweetRetweetWithOneDisplayAndKOtherSocialContetwittertsWithTetwittert -> Set(
+        MrNtabCopyObjects.TweetRetweetWithOneDisplayAndKOtherSocialContetwitterts
       ),
-      MrPushCopyObjects.TweetRetweetPhotoWithOneDisplaySocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetRetweetPhotoWithOneDisplaySocialContext
+      MrPushCopyObjects.TweetRetweetPhotoWithOneDisplaySocialContetwittertWithTetwittert -> Set(
+        MrNtabCopyObjects.TweetRetweetPhotoWithOneDisplaySocialContetwittert
       ),
-      MrPushCopyObjects.TweetRetweetPhotoWithTwoDisplaySocialContextsWithText -> Set(
-        MrNtabCopyObjects.TweetRetweetPhotoWithTwoDisplaySocialContexts
+      MrPushCopyObjects.TweetRetweetPhotoWithTwoDisplaySocialContetwittertsWithTetwittert -> Set(
+        MrNtabCopyObjects.TweetRetweetPhotoWithTwoDisplaySocialContetwitterts
       ),
-      MrPushCopyObjects.TweetRetweetPhotoWithOneDisplayAndKOtherSocialContextsWithText -> Set(
-        MrNtabCopyObjects.TweetRetweetPhotoWithOneDisplayAndKOtherSocialContexts
+      MrPushCopyObjects.TweetRetweetPhotoWithOneDisplayAndKOtherSocialContetwittertsWithTetwittert -> Set(
+        MrNtabCopyObjects.TweetRetweetPhotoWithOneDisplayAndKOtherSocialContetwitterts
       ),
-      MrPushCopyObjects.TweetRetweetVideoWithOneDisplaySocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetRetweetVideoWithOneDisplaySocialContext
+      MrPushCopyObjects.TweetRetweetVideoWithOneDisplaySocialContetwittertWithTetwittert -> Set(
+        MrNtabCopyObjects.TweetRetweetVideoWithOneDisplaySocialContetwittert
       ),
-      MrPushCopyObjects.TweetRetweetVideoWithTwoDisplaySocialContextsWithText -> Set(
-        MrNtabCopyObjects.TweetRetweetVideoWithTwoDisplaySocialContexts
+      MrPushCopyObjects.TweetRetweetVideoWithTwoDisplaySocialContetwittertsWithTetwittert -> Set(
+        MrNtabCopyObjects.TweetRetweetVideoWithTwoDisplaySocialContetwitterts
       ),
-      MrPushCopyObjects.TweetRetweetVideoWithOneDisplayAndKOtherSocialContextsWithText -> Set(
-        MrNtabCopyObjects.TweetRetweetVideoWithOneDisplayAndKOtherSocialContexts
+      MrPushCopyObjects.TweetRetweetVideoWithOneDisplayAndKOtherSocialContetwittertsWithTetwittert -> Set(
+        MrNtabCopyObjects.TweetRetweetVideoWithOneDisplayAndKOtherSocialContetwitterts
       ),
-      MrPushCopyObjects.TweetLikeOneSocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetLikeWithOneDisplaySocialContext
+      MrPushCopyObjects.TweetLikeOneSocialContetwittertWithTetwittert -> Set(
+        MrNtabCopyObjects.TweetLikeWithOneDisplaySocialContetwittert
       ),
-      MrPushCopyObjects.TweetLikeTwoSocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetLikeWithTwoDisplaySocialContexts
+      MrPushCopyObjects.TweetLikeTwoSocialContetwittertWithTetwittert -> Set(
+        MrNtabCopyObjects.TweetLikeWithTwoDisplaySocialContetwitterts
       ),
-      MrPushCopyObjects.TweetLikeMultipleSocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetLikeWithOneDisplayAndKOtherSocialContexts
+      MrPushCopyObjects.TweetLikeMultipleSocialContetwittertWithTetwittert -> Set(
+        MrNtabCopyObjects.TweetLikeWithOneDisplayAndKOtherSocialContetwitterts
       ),
-      MrPushCopyObjects.TweetLikePhotoOneSocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetLikePhotoWithOneDisplaySocialContext
+      MrPushCopyObjects.TweetLikePhotoOneSocialContetwittertWithTetwittert -> Set(
+        MrNtabCopyObjects.TweetLikePhotoWithOneDisplaySocialContetwittert
       ),
-      MrPushCopyObjects.TweetLikePhotoTwoSocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetLikePhotoWithTwoDisplaySocialContexts
+      MrPushCopyObjects.TweetLikePhotoTwoSocialContetwittertWithTetwittert -> Set(
+        MrNtabCopyObjects.TweetLikePhotoWithTwoDisplaySocialContetwitterts
       ),
-      MrPushCopyObjects.TweetLikePhotoMultipleSocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetLikePhotoWithOneDisplayAndKOtherSocialContexts
+      MrPushCopyObjects.TweetLikePhotoMultipleSocialContetwittertWithTetwittert -> Set(
+        MrNtabCopyObjects.TweetLikePhotoWithOneDisplayAndKOtherSocialContetwitterts
       ),
-      MrPushCopyObjects.TweetLikeVideoOneSocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetLikeVideoWithOneDisplaySocialContext
+      MrPushCopyObjects.TweetLikeVideoOneSocialContetwittertWithTetwittert -> Set(
+        MrNtabCopyObjects.TweetLikeVideoWithOneDisplaySocialContetwittert
       ),
-      MrPushCopyObjects.TweetLikeVideoTwoSocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetLikeVideoWithTwoDisplaySocialContexts
+      MrPushCopyObjects.TweetLikeVideoTwoSocialContetwittertWithTetwittert -> Set(
+        MrNtabCopyObjects.TweetLikeVideoWithTwoDisplaySocialContetwitterts
       ),
-      MrPushCopyObjects.TweetLikeVideoMultipleSocialContextWithText -> Set(
-        MrNtabCopyObjects.TweetLikeVideoWithOneDisplayAndKOtherSocialContexts
+      MrPushCopyObjects.TweetLikeVideoMultipleSocialContetwittertWithTetwittert -> Set(
+        MrNtabCopyObjects.TweetLikeVideoWithOneDisplayAndKOtherSocialContetwitterts
       ),
       MrPushCopyObjects.UnreadBadgeCount -> Set.empty[MRNtabCopy],
       MrPushCopyObjects.RecommendedForYouTweet -> Set(MrNtabCopyObjects.RecommendedForYouCopy),
       MrPushCopyObjects.RecommendedForYouPhoto -> Set(MrNtabCopyObjects.RecommendedForYouCopy),
       MrPushCopyObjects.RecommendedForYouVideo -> Set(MrNtabCopyObjects.RecommendedForYouCopy),
       MrPushCopyObjects.GeoPopPushCopy -> Set(MrNtabCopyObjects.RecommendedForYouCopy),
-      MrPushCopyObjects.UserFollowWithOneSocialContext -> Set(
-        MrNtabCopyObjects.UserFollowWithOneDisplaySocialContext
+      MrPushCopyObjects.UserFollowWithOneSocialContetwittert -> Set(
+        MrNtabCopyObjects.UserFollowWithOneDisplaySocialContetwittert
       ),
-      MrPushCopyObjects.UserFollowWithTwoSocialContext -> Set(
-        MrNtabCopyObjects.UserFollowWithTwoDisplaySocialContexts
+      MrPushCopyObjects.UserFollowWithTwoSocialContetwittert -> Set(
+        MrNtabCopyObjects.UserFollowWithTwoDisplaySocialContetwitterts
       ),
-      MrPushCopyObjects.UserFollowOneDisplayAndKOtherSocialContext -> Set(
-        MrNtabCopyObjects.UserFollowWithOneDisplayAndKOtherSocialContexts
+      MrPushCopyObjects.UserFollowOneDisplayAndKOtherSocialContetwittert -> Set(
+        MrNtabCopyObjects.UserFollowWithOneDisplayAndKOtherSocialContetwitterts
       ),
-      MrPushCopyObjects.HermitUserWithOneSocialContext -> Set(
-        MrNtabCopyObjects.UserFollowWithOneDisplaySocialContext
+      MrPushCopyObjects.HermitUserWithOneSocialContetwittert -> Set(
+        MrNtabCopyObjects.UserFollowWithOneDisplaySocialContetwittert
       ),
-      MrPushCopyObjects.HermitUserWithTwoSocialContext -> Set(
-        MrNtabCopyObjects.UserFollowWithTwoDisplaySocialContexts
+      MrPushCopyObjects.HermitUserWithTwoSocialContetwittert -> Set(
+        MrNtabCopyObjects.UserFollowWithTwoDisplaySocialContetwitterts
       ),
-      MrPushCopyObjects.HermitUserWithOneDisplayAndKOtherSocialContexts -> Set(
-        MrNtabCopyObjects.UserFollowWithOneDisplayAndKOtherSocialContexts
+      MrPushCopyObjects.HermitUserWithOneDisplayAndKOtherSocialContetwitterts -> Set(
+        MrNtabCopyObjects.UserFollowWithOneDisplayAndKOtherSocialContetwitterts
       ),
-      MrPushCopyObjects.TriangularLoopUserWithOneSocialContext -> Set(
-        MrNtabCopyObjects.TriangularLoopUserWithOneSocialContext
+      MrPushCopyObjects.TriangularLoopUserWithOneSocialContetwittert -> Set(
+        MrNtabCopyObjects.TriangularLoopUserWithOneSocialContetwittert
       ),
-      MrPushCopyObjects.TriangularLoopUserWithTwoSocialContexts -> Set(
-        MrNtabCopyObjects.TriangularLoopUserWithTwoSocialContexts
+      MrPushCopyObjects.TriangularLoopUserWithTwoSocialContetwitterts -> Set(
+        MrNtabCopyObjects.TriangularLoopUserWithTwoSocialContetwitterts
       ),
-      MrPushCopyObjects.TriangularLoopUserOneDisplayAndKotherSocialContext -> Set(
-        MrNtabCopyObjects.TriangularLoopUserOneDisplayAndKOtherSocialContext
+      MrPushCopyObjects.TriangularLoopUserOneDisplayAndKotherSocialContetwittert -> Set(
+        MrNtabCopyObjects.TriangularLoopUserOneDisplayAndKOtherSocialContetwittert
       ),
       MrPushCopyObjects.NewsArticleNewsLandingCopy -> Set(
         MrNtabCopyObjects.NewsArticleNewsLandingCopy
@@ -222,7 +222,7 @@ object CandidateToCopy {
       MrPushCopyObjects.ConnectTabPush -> Set(
         MrNtabCopyObjects.ConnectTabPush
       ),
-      MrPushCopyObjects.ExplorePush -> Set.empty[MRNtabCopy],
+      MrPushCopyObjects.EtwitterplorePush -> Set.empty[MRNtabCopy],
       MrPushCopyObjects.ConnectTabWithUserPush -> Set(
         MrNtabCopyObjects.UserFollowInterestBasedCopy),
       MrPushCopyObjects.AddressBookPush -> Set(MrNtabCopyObjects.AddressBook),
@@ -236,7 +236,7 @@ object CandidateToCopy {
       MrPushCopyObjects.TripGeoTweetPushCopy -> Set(MrNtabCopyObjects.RecommendedForYouCopy),
       MrPushCopyObjects.Digest -> Set(MrNtabCopyObjects.Digest),
       MrPushCopyObjects.TripHqTweetPushCopy -> Set(MrNtabCopyObjects.HighQualityTweet),
-      MrPushCopyObjects.ExploreVideoTweet -> Set(MrNtabCopyObjects.ExploreVideoTweet),
+      MrPushCopyObjects.EtwitterploreVideoTweet -> Set(MrNtabCopyObjects.EtwitterploreVideoTweet),
       MrPushCopyObjects.ListRecommendation -> Set(MrNtabCopyObjects.ListRecommendation),
       MrPushCopyObjects.MagicFanoutCreatorSubscription -> Set(
         MrNtabCopyObjects.MagicFanoutCreatorSubscription),

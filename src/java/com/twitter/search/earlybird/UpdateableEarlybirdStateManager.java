@@ -1,24 +1,24 @@
 package com.twitter.search.earlybird;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Charsets;
 
-import org.apache.thrift.TException;
-import org.apache.zookeeper.KeeperException;
+import org.apache.thrift.TEtwitterception;
+import org.apache.zookeeper.KeeperEtwitterception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.common.zookeeper.ZooKeeperClient;
 import com.twitter.search.common.aurora.AuroraSchedulerClient;
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
+import com.twitter.search.common.concurrent.ScheduledEtwitterecutorServiceFactory;
 import com.twitter.search.common.decider.SearchDecider;
 import com.twitter.search.common.file.LocalFile;
 import com.twitter.search.common.metrics.SearchCounter;
@@ -31,15 +31,15 @@ import com.twitter.search.common.schema.base.Schema;
 import com.twitter.search.common.schema.thriftjava.ThriftSchema;
 import com.twitter.search.common.util.ml.tensorflow_engine.TensorflowModelsManager;
 import com.twitter.search.common.util.thrift.ThriftUtils;
-import com.twitter.search.common.util.zookeeper.ZooKeeperProxy;
+import com.twitter.search.common.util.zookeeper.ZooKeeperProtwittery;
 import com.twitter.search.earlybird.common.NonPagingAssert;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
+import com.twitter.search.earlybird.etwitterception.CriticalEtwitterceptionHandler;
 import com.twitter.search.earlybird.ml.ScoringModelsManager;
 import com.twitter.search.earlybird.partition.DynamicPartitionConfig;
 import com.twitter.search.earlybird.partition.PartitionConfig;
 import com.twitter.search.earlybird.partition.PartitionConfigLoader;
-import com.twitter.search.earlybird.partition.PartitionConfigLoadingException;
-import com.twitter.search.earlybird.util.OneTaskScheduledExecutorManager;
+import com.twitter.search.earlybird.partition.PartitionConfigLoadingEtwitterception;
+import com.twitter.search.earlybird.util.OneTaskScheduledEtwitterecutorManager;
 import com.twitter.search.earlybird.util.PeriodicActionParams;
 import com.twitter.search.earlybird.util.ShutdownWaitTimeParams;
 
@@ -49,13 +49,13 @@ import com.twitter.search.earlybird.util.ShutdownWaitTimeParams;
  * configuration, and periodically updates them from Zookeeper. It also reloads periodically the
  * scoring models from HDFS.
  */
-public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorManager {
+public class UpdateableEarlybirdStateManager etwittertends OneTaskScheduledEtwitterecutorManager {
   private static final Logger LOG = LoggerFactory.getLogger(UpdateableEarlybirdStateManager.class);
-  public static final String SCHEMA_SUFFIX = ".schema.v";
+  public static final String SCHEMA_SUFFItwitter = ".schema.v";
 
   private static final String THREAD_NAME_PATTERN = "state_update-%d";
   private static final boolean THREAD_IS_DAEMON = true;
-  private static final long EXECUTOR_SHUTDOWN_WAIT_SEC = 5;
+  private static final long EtwitterECUTOR_SHUTDOWN_WAIT_SEC = 5;
 
   private static final String DEFAULT_ZK_SCHEMA_LOCATION =
       "/twitter/search/production/earlybird/schema";
@@ -106,11 +106,11 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
   private final SearchCounter notInLayoutShutDownAttemptedCount;
   private final SearchLongGauge noShutdownWhenNotInLayoutGauge;
 
-  private final EarlybirdIndexConfig indexConfig;
+  private final EarlybirdIndetwitterConfig indetwitterConfig;
   private final DynamicPartitionConfig partitionConfig;
   private final String schemaLocationOnLocal;
   private final String schemaLocationOnZK;
-  private final ZooKeeperProxy zkClient;
+  private final ZooKeeperProtwittery zkClient;
   private final AuroraSchedulerClient schedulerClient;
   private final ScoringModelsManager scoringModelsManager;
   private final TensorflowModelsManager tensorflowModelsManager;
@@ -120,64 +120,64 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
   private Clock clock;
 
   public UpdateableEarlybirdStateManager(
-      EarlybirdIndexConfig indexConfig,
+      EarlybirdIndetwitterConfig indetwitterConfig,
       DynamicPartitionConfig partitionConfig,
-      ZooKeeperProxy zooKeeperClient,
+      ZooKeeperProtwittery zooKeeperClient,
       @Nullable  AuroraSchedulerClient schedulerClient,
-      ScheduledExecutorServiceFactory executorServiceFactory,
+      ScheduledEtwitterecutorServiceFactory etwitterecutorServiceFactory,
       ScoringModelsManager scoringModelsManager,
       TensorflowModelsManager tensorflowModelsManager,
       SearchStatsReceiver searchStatsReceiver,
       SearchDecider searchDecider,
-      CriticalExceptionHandler criticalExceptionHandler,
+      CriticalEtwitterceptionHandler criticalEtwitterceptionHandler,
       Clock clock) {
     this(
-        indexConfig,
+        indetwitterConfig,
         partitionConfig,
         DEFAULT_LOCAL_SCHEMA_LOCATION,
         DEFAULT_ZK_SCHEMA_LOCATION,
         DEFAULT_UPDATE_PERIOD_MILLIS,
         zooKeeperClient,
         schedulerClient,
-        executorServiceFactory,
+        etwitterecutorServiceFactory,
         scoringModelsManager,
         tensorflowModelsManager,
         searchStatsReceiver,
         searchDecider,
-        criticalExceptionHandler,
+        criticalEtwitterceptionHandler,
         clock);
   }
 
   protected UpdateableEarlybirdStateManager(
-      EarlybirdIndexConfig indexConfig,
+      EarlybirdIndetwitterConfig indetwitterConfig,
       DynamicPartitionConfig partitionConfig,
       String schemaLocationOnLocal,
       String schemaLocationOnZK,
       long updatePeriodMillis,
-      ZooKeeperProxy zkClient,
+      ZooKeeperProtwittery zkClient,
       @Nullable  AuroraSchedulerClient schedulerClient,
-      ScheduledExecutorServiceFactory executorServiceFactory,
+      ScheduledEtwitterecutorServiceFactory etwitterecutorServiceFactory,
       ScoringModelsManager scoringModelsManager,
       TensorflowModelsManager tensorflowModelsManager,
       SearchStatsReceiver searchStatsReceiver,
       SearchDecider searchDecider,
-      CriticalExceptionHandler criticalExceptionHandler,
+      CriticalEtwitterceptionHandler criticalEtwitterceptionHandler,
       Clock clock) {
     super(
-        executorServiceFactory,
+        etwitterecutorServiceFactory,
         THREAD_NAME_PATTERN,
         THREAD_IS_DAEMON,
-        PeriodicActionParams.withFixedDelay(
+        PeriodicActionParams.withFitwitteredDelay(
           updatePeriodMillis,
           TimeUnit.MILLISECONDS
         ),
         new ShutdownWaitTimeParams(
-          EXECUTOR_SHUTDOWN_WAIT_SEC,
+          EtwitterECUTOR_SHUTDOWN_WAIT_SEC,
           TimeUnit.SECONDS
         ),
         searchStatsReceiver,
-        criticalExceptionHandler);
-    this.indexConfig = indexConfig;
+        criticalEtwitterceptionHandler);
+    this.indetwitterConfig = indetwitterConfig;
     this.partitionConfig = partitionConfig;
     this.schemaLocationOnLocal = schemaLocationOnLocal;
     this.schemaLocationOnZK = schemaLocationOnZK;
@@ -210,7 +210,7 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
     this.noShutdownWhenNotInLayoutGauge = getSearchStatsReceiver().getLongGauge(
         NO_SHUTDOWN_WHEN_NOT_IN_LAYOUT_NAME, noShutdownWhenNotInLayout);
 
-    updateSchemaVersionStats(indexConfig.getSchema());
+    updateSchemaVersionStats(indetwitterConfig.getSchema());
   }
 
   private void updateSchemaVersionStats(Schema schema) {
@@ -222,22 +222,22 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
   }
 
   private void updateSchemaVersionWithThriftSchema(ThriftSchema thriftSchema)
-      throws Schema.SchemaValidationException, DynamicSchema.SchemaUpdateException {
+      throws Schema.SchemaValidationEtwitterception, DynamicSchema.SchemaUpdateEtwitterception {
 
       ImmutableSchema newSchema = new ImmutableSchema(
-          thriftSchema, new AnalyzerFactory(), indexConfig.getCluster().getNameForStats());
-      indexConfig.getSchema().updateSchema(newSchema);
+          thriftSchema, new AnalyzerFactory(), indetwitterConfig.getCluster().getNameForStats());
+      indetwitterConfig.getSchema().updateSchema(newSchema);
       tensorflowModelsManager.updateFeatureSchemaIdToMlIdMap(newSchema.getSearchFeatureSchema());
-      updateSchemaVersionStats(indexConfig.getSchema());
-      LOG.info("Schema updated. New Schema is: \n" + ThriftUtils.toTextFormatSafe(thriftSchema));
+      updateSchemaVersionStats(indetwitterConfig.getSchema());
+      LOG.info("Schema updated. New Schema is: \n" + ThriftUtils.toTetwittertFormatSafe(thriftSchema));
   }
 
-  protected void updateSchema(ZooKeeperProxy zkClientToUse) {
+  protected void updateSchema(ZooKeeperProtwittery zkClientToUse) {
     // There are 3 cases:
-    // 1. Try to locate local schema file to canary, it might fail either because file not exist or
+    // 1. Try to locate local schema file to canary, it might fail either because file not etwitterist or
     // ineligible versions.
     // 2. Canary local schema failed, lookup schema file from zookeeper.
-    // 3. Both local and zookeeper updates failed, we do not update schema. Either schema not exists
+    // 3. Both local and zookeeper updates failed, we do not update schema. Either schema not etwitterists
     // in zookeeper, or this would happened after canary schema: we updated current schema but did
     // not rollback after finished.
     if (updateSchemaFromLocal()) {
@@ -247,7 +247,7 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
       // Host is using schema file from zookeeper
       hostIsCanarySchema.set(0);
     } else {
-      // Schema update failed. Please check schema file exists on zookeeper and make sure
+      // Schema update failed. Please check schema file etwitterists on zookeeper and make sure
       // rollback after canary. Current version: {}.{}
       return;
     }
@@ -257,19 +257,19 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
     ThriftSchema thriftSchema =
         loadCanaryThriftSchemaFromLocal(getCanarySchemaFileOnLocal());
     if (thriftSchema == null) {
-      // It is expected to not find a local schema file. The schema file only exists when the host
+      // It is etwitterpected to not find a local schema file. The schema file only etwitterists when the host
       // is used as canary for schema updates
       return false;
     }
     return updateSchemaFromThriftSchema(thriftSchema);
   }
 
-  private boolean updateSchemaFromZooKeeper(ZooKeeperProxy zkClientToUse) {
+  private boolean updateSchemaFromZooKeeper(ZooKeeperProtwittery zkClientToUse) {
     ThriftSchema thriftSchema = loadThriftSchemaFromZooKeeper(zkClientToUse);
     if (thriftSchema == null) {
-      // It is expected to usually not find a schema file on ZooKeeper; one is only uploaded if the
+      // It is etwitterpected to usually not find a schema file on ZooKeeper; one is only uploaded if the
       // schema changes after the package has been compiled. All the relevant error handling and
-      // logging is expected to be handled by loadThriftSchemaFromZooKeeper().
+      // logging is etwitterpected to be handled by loadThriftSchemaFromZooKeeper().
       failToLoadSchemaCount.increment();
       return false;
     }
@@ -277,7 +277,7 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
   }
 
   private boolean updateSchemaFromThriftSchema(ThriftSchema thriftSchema) {
-    Schema currentSchema = indexConfig.getSchema();
+    Schema currentSchema = indetwitterConfig.getSchema();
     if (thriftSchema.getMajorVersionNumber() != currentSchema.getMajorVersionNumber()) {
       LOG.warn(
           "Major version updates are not allowed. Current major version {}, try to update to {}",
@@ -287,8 +287,8 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
     if (thriftSchema.getMinorVersionNumber() > currentSchema.getMinorVersionNumber()) {
       try {
         updateSchemaVersionWithThriftSchema(thriftSchema);
-      } catch (Schema.SchemaValidationException | DynamicSchema.SchemaUpdateException e) {
-        LOG.warn("Exception while updating schema: ", e);
+      } catch (Schema.SchemaValidationEtwitterception | DynamicSchema.SchemaUpdateEtwitterception e) {
+        LOG.warn("Etwitterception while updating schema: ", e);
         return false;
       }
       return true;
@@ -311,7 +311,7 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
     try {
       if (schedulerClientToUse == null) {
         NonPagingAssert.assertFailed("aurora_scheduler_client_is_null");
-        throw new PartitionConfigLoadingException("AuroraSchedulerClient can not be null.");
+        throw new PartitionConfigLoadingEtwitterception("AuroraSchedulerClient can not be null.");
       }
 
       PartitionConfig newPartitionConfig =
@@ -319,7 +319,7 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
       partitionConfig.setCurrentPartitionConfig(newPartitionConfig);
       lastSuccessfulPartitionConfigReloadTimeMillis.set(System.currentTimeMillis());
       hostIsInLayout.set(1);
-    } catch (PartitionConfigLoadingException e) {
+    } catch (PartitionConfigLoadingEtwitterception e) {
       // Do not change hostIsInLayout's value if we could not load the layout.
       LOG.warn("Failed to load partition config from ZooKeeper.", e);
       failToLoadPartitionConfigCount.increment();
@@ -329,20 +329,20 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
   @Nullable
   private ThriftSchema loadCanaryThriftSchemaFromLocal(LocalFile schemaFile) {
     String schemaString;
-    if (!schemaFile.getFile().exists()) {
+    if (!schemaFile.getFile().etwitterists()) {
       return null;
     }
     try {
       schemaString = schemaFile.getCharSource().read();
-    } catch (IOException e) {
+    } catch (IOEtwitterception e) {
       LOG.warn("Fail to read from local schema file.");
       return null;
     }
     ThriftSchema thriftSchema = new ThriftSchema();
     try {
-      ThriftUtils.fromTextFormat(schemaString, thriftSchema);
+      ThriftUtils.fromTetwittertFormat(schemaString, thriftSchema);
       return thriftSchema;
-    } catch (TException e) {
+    } catch (TEtwitterception e) {
       LOG.warn("Unable to deserialize ThriftSchema loaded locally from {}.\n{}",
           schemaFile.getName(), e);
       return null;
@@ -350,23 +350,23 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
   }
 
   @Nullable
-  private ThriftSchema loadThriftSchemaFromZooKeeper(ZooKeeperProxy zkClientToUse) {
+  private ThriftSchema loadThriftSchemaFromZooKeeper(ZooKeeperProtwittery zkClientToUse) {
     String schemaPathOnZk = getFullSchemaPathOnZK();
     byte[] rawBytes;
     try {
       rawBytes = zkClientToUse.getData(schemaPathOnZk, false, null);
-    } catch (KeeperException.NoNodeException e) {
+    } catch (KeeperEtwitterception.NoNodeEtwitterception e) {
       didNotFindSchemaCount.increment();
       return null;
-    } catch (KeeperException e) {
-      LOG.warn("Exception while loading schema from ZK at {}.\n{}", schemaPathOnZk, e);
+    } catch (KeeperEtwitterception e) {
+      LOG.warn("Etwitterception while loading schema from ZK at {}.\n{}", schemaPathOnZk, e);
       return null;
-    } catch (InterruptedException e) {
+    } catch (InterruptedEtwitterception e) {
       Thread.currentThread().interrupt();
       LOG.warn("Interrupted while loading schema from ZK at {}.\n{}", schemaPathOnZk, e);
       return null;
-    } catch (ZooKeeperClient.ZooKeeperConnectionException e) {
-      LOG.warn("Exception while loading schema from ZK at {}.\n{}", schemaPathOnZk, e);
+    } catch (ZooKeeperClient.ZooKeeperConnectionEtwitterception e) {
+      LOG.warn("Etwitterception while loading schema from ZK at {}.\n{}", schemaPathOnZk, e);
       return null;
     }
     if (rawBytes == null) {
@@ -376,9 +376,9 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
     String schemaString = new String(rawBytes, Charsets.UTF_8);
     ThriftSchema thriftSchema = new ThriftSchema();
     try {
-      ThriftUtils.fromTextFormat(schemaString, thriftSchema);
+      ThriftUtils.fromTetwittertFormat(schemaString, thriftSchema);
       return thriftSchema;
-    } catch (TException e) {
+    } catch (TEtwitterception e) {
       LOG.warn("Unable to deserialize ThriftSchema loaded from ZK at {}.\n{}", schemaPathOnZk, e);
       return null;
     }
@@ -386,9 +386,9 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
 
   @VisibleForTesting
   protected String getSchemaFileName() {
-    return indexConfig.getCluster().name().toLowerCase()
-        + UpdateableEarlybirdStateManager.SCHEMA_SUFFIX
-        + indexConfig.getSchema().getMajorVersionNumber();
+    return indetwitterConfig.getCluster().name().toLowerCase()
+        + UpdateableEarlybirdStateManager.SCHEMA_SUFFItwitter
+        + indetwitterConfig.getSchema().getMajorVersionNumber();
   }
 
   @VisibleForTesting
@@ -421,12 +421,12 @@ public class UpdateableEarlybirdStateManager extends OneTaskScheduledExecutorMan
       // We had an issue where HDFS operations were blocking, so reloading these models
       // was finishing at the same time on each instance and after that every time an instance
       // was reloading models, it was happening at the same time. This caused issues with HDFS
-      // load. We now place a "guard" waiting time after each reload so that the execution time
+      // load. We now place a "guard" waiting time after each reload so that the etwitterecution time
       // on every instance is different and these calls can't easily sync to the same point in time.
-      int sleepSeconds = random.nextInt(30 * 60);
+      int sleepSeconds = random.netwittertInt(30 * 60);
       LOG.info("Sleeping for {} seconds", sleepSeconds);
       clock.waitFor(sleepSeconds * 1000);
-    } catch (InterruptedException ex) {
+    } catch (InterruptedEtwitterception etwitter) {
       LOG.info("Interrupted while sleeping");
     }
   }

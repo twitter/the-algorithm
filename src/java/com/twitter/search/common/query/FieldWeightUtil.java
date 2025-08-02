@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.base.Enums;
 import com.google.common.base.Function;
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import com.twitter.search.common.schema.base.FieldWeightDefault;
 import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twitter.search.queryparser.query.QueryParserEtwitterception;
 import com.twitter.search.queryparser.query.annotation.Annotation;
 import com.twitter.search.queryparser.query.annotation.FieldAnnotationUtils;
 import com.twitter.search.queryparser.query.annotation.FieldNameWithBoost;
@@ -48,7 +48,7 @@ public final class FieldWeightUtil {
       Query query,
       Map<T, FieldWeightDefault> defaultFieldWeightMap,
       Map<T, Float> enabledFieldWeightMap,
-      Function<String, T> fieldNameToTyped) throws QueryParserException {
+      Function<String, T> fieldNameToTyped) throws QueryParserEtwitterception {
     return combineDefaultWithAnnotation(
         query,
         defaultFieldWeightMap,
@@ -80,7 +80,7 @@ public final class FieldWeightUtil {
         Map<T, Float> enabledFieldWeightMap,
         Function<String, T> fieldNameToTyped,
         Map<MappableField, T> mappableFieldMap,
-        Function<T, String> typedToFieldName) throws QueryParserException {
+        Function<T, String> typedToFieldName) throws QueryParserEtwitterception {
     List<Annotation> fieldAnnotations = query.getAllAnnotationsOf(Annotation.Type.FIELD);
     List<Annotation> mappableFieldAnnotations =
       query.getAllAnnotationsOf(Annotation.Type.MAPPABLE_FIELD);
@@ -151,7 +151,7 @@ public final class FieldWeightUtil {
           }
           break;
         default:
-          throw new QueryParserException("Unknown field annotation type: " + fieldAnnotation);
+          throw new QueryParserEtwitterception("Unknown field annotation type: " + fieldAnnotation);
       }
     }
 
@@ -161,7 +161,7 @@ public final class FieldWeightUtil {
   public static ImmutableMap<String, Float> combineDefaultWithAnnotation(
       Query query,
       Map<String, FieldWeightDefault> defaultFieldWeightMap,
-      Map<String, Float> enabledFieldWeightMap) throws QueryParserException {
+      Map<String, Float> enabledFieldWeightMap) throws QueryParserEtwitterception {
 
     return combineDefaultWithAnnotation(
         query, defaultFieldWeightMap, enabledFieldWeightMap, Functions.<String>identity());

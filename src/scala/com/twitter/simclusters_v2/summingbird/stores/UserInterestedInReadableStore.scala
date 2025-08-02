@@ -24,11 +24,11 @@ import com.twitter.storehaus_internal.util.HDFSPath
 object UserInterestedInReadableStore {
 
   // Clusters whose size is greater than this will not be considered. This is how the using UTEG
-  // experiment was run (because it could not process such clusters), and we don't have such a
+  // etwitterperiment was run (because it could not process such clusters), and we don't have such a
   // restriction for the Summingbird/Memcache implementation, but noticing that we aren't scoring
-  // tweets correctly in the big clusters. The fix for this seems a little involved, so for now
-  // let's just exclude such clusters.
-  val MaxClusterSizeForUserInterestedInDataset: Int = 5e6.toInt
+  // tweets correctly in the big clusters. The fitwitter for this seems a little involved, so for now
+  // let's just etwitterclude such clusters.
+  val MatwitterClusterSizeForUserInterestedInDataset: Int = 5e6.toInt
 
   val modelVersionToDatasetMap: Map[String, String] = Map(
     ModelVersions.Model20M145KDec11 -> "simclusters_v2_interested_in",
@@ -49,7 +49,7 @@ object UserInterestedInReadableStore {
     ModelVersions.Model20M145K2020 -> "simclusters_v2_interested_in_lite_20m_145k_2020"
   )
 
-  val modelVersionToNextInterestedInDatasetMap: Map[String, String] = Map(
+  val modelVersionToNetwittertInterestedInDatasetMap: Map[String, String] = Map(
     ModelVersions.Model20M145K2020 -> "bet_consumer_embedding_v2"
   )
 
@@ -61,7 +61,7 @@ object UserInterestedInReadableStore {
     modelVersion: String = defaultModelVersion
   ): ReadableStore[UserId, ClustersUserIsInterestedIn] = {
     if (!modelVersionToDatasetMap.contains(modelVersion)) {
-      throw new IllegalArgumentException(
+      throw new IllegalArgumentEtwitterception(
         "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
     }
     this.getStore("simclusters_v2", mhMtlsParams, modelVersionToDatasetMap(modelVersion))
@@ -78,7 +78,7 @@ object UserInterestedInReadableStore {
             if theEmbeddingType == embeddingType && theModelVersion == modelVersion =>
           userId
       }.mapValues(
-        toSimClustersEmbedding(_, embeddingType, Some(MaxClusterSizeForUserInterestedInDataset)))
+        toSimClustersEmbedding(_, embeddingType, Some(MatwitterClusterSizeForUserInterestedInDataset)))
   }
 
   def defaultIIKFLiteStoreWithMtls(
@@ -86,7 +86,7 @@ object UserInterestedInReadableStore {
     modelVersion: String = defaultModelVersion
   ): ReadableStore[Long, ClustersUserIsInterestedIn] = {
     if (!modelVersionToIIKFLiteDatasetMap.contains(modelVersion)) {
-      throw new IllegalArgumentException(
+      throw new IllegalArgumentEtwitterception(
         "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
     }
     getStore("simclusters_v2", mhMtlsParams, modelVersionToIIKFLiteDatasetMap(modelVersion))
@@ -97,7 +97,7 @@ object UserInterestedInReadableStore {
     modelVersion: String = defaultModelVersion
   ): ReadableStore[Long, ClustersUserIsInterestedIn] = {
     if (!modelVersionToDatasetMap.contains(modelVersion)) {
-      throw new IllegalArgumentException(
+      throw new IllegalArgumentEtwitterception(
         "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
     }
     getStore("simclusters_v2", mhMtlsParams, modelVersionToDenserDatasetMap(modelVersion))
@@ -108,7 +108,7 @@ object UserInterestedInReadableStore {
     modelVersion: String = defaultModelVersion
   ): ReadableStore[Long, ClustersUserIsInterestedIn] = {
     if (!modelVersionToDatasetMap.contains(modelVersion)) {
-      throw new IllegalArgumentException(
+      throw new IllegalArgumentEtwitterception(
         "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
     }
     getStore("simclusters_v2", mhMtlsParams, modelVersionToIIAPEDatasetMap(modelVersion))
@@ -141,17 +141,17 @@ object UserInterestedInReadableStore {
       }.mapValues(toSimClustersEmbedding(_, embeddingType))
   }
 
-  def defaultNextInterestedInStoreWithMtls(
+  def defaultNetwittertInterestedInStoreWithMtls(
     mhMtlsParams: ManhattanKVClientMtlsParams,
     embeddingType: EmbeddingType,
     modelVersion: ModelVersion
   ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
-    if (!modelVersionToNextInterestedInDatasetMap.contains(
+    if (!modelVersionToNetwittertInterestedInDatasetMap.contains(
         ModelVersions.toKnownForModelVersion(modelVersion))) {
-      throw new IllegalArgumentException(
+      throw new IllegalArgumentEtwitterception(
         "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
     }
-    val datasetName = modelVersionToNextInterestedInDatasetMap(
+    val datasetName = modelVersionToNetwittertInterestedInDatasetMap(
       ModelVersions.toKnownForModelVersion(modelVersion))
     new SimClustersManhattanReadableStoreForReadWriteDataset(
       appId = "kafka_beam_sink_bet_consumer_embedding_prod",
@@ -168,7 +168,7 @@ object UserInterestedInReadableStore {
     modelVersion: String = defaultModelVersion
   ): ReadableStore[Long, ClustersUserIsInterestedIn] = {
     if (!modelVersionToDatasetMap.contains(modelVersion)) {
-      throw new IllegalArgumentException(
+      throw new IllegalArgumentEtwitterception(
         "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
     }
     this.getStore(appId, mtlsParams, modelVersionToDatasetMap(modelVersion))
@@ -206,19 +206,19 @@ object UserInterestedInReadableStore {
    *
    * @param record ClustersUserIsInterestedIn thrift struct from the MH data set
    * @param embeddingType Embedding Type as defined in com.twitter.simclusters_v2.thriftscala.EmbeddingType
-   * @param maxClusterSizeOpt Option param to set max cluster size.
+   * @param matwitterClusterSizeOpt Option param to set matwitter cluster size.
    *                          We will not filter out clusters based on cluster size if it is None
    * @return
    */
   def toSimClustersEmbedding(
     record: ClustersUserIsInterestedIn,
     embeddingType: EmbeddingType,
-    maxClusterSizeOpt: Option[Int] = None
+    matwitterClusterSizeOpt: Option[Int] = None
   ): SimClustersEmbedding = {
     val embedding = record.clusterIdToScores
       .collect {
-        case (clusterId, clusterScores) if maxClusterSizeOpt.forall { maxClusterSize =>
-              clusterScores.numUsersInterestedInThisClusterUpperBound.exists(_ < maxClusterSize)
+        case (clusterId, clusterScores) if matwitterClusterSizeOpt.forall { matwitterClusterSize =>
+              clusterScores.numUsersInterestedInThisClusterUpperBound.etwitterists(_ < matwitterClusterSize)
             } =>
           val score = embeddingType match {
             case EmbeddingType.FavBasedUserInterestedIn =>
@@ -237,23 +237,23 @@ object UserInterestedInReadableStore {
               clusterScores.logFavScore
             case EmbeddingType.FollowBasedUserInterestedInFromAPE =>
               clusterScores.followScore
-            case EmbeddingType.UserNextInterestedIn =>
+            case EmbeddingType.UserNetwittertInterestedIn =>
               clusterScores.logFavScore
-            case EmbeddingType.LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE =>
+            case EmbeddingType.LogFavBasedUserInterestedMatwitterpoolingAddressBookFromIIAPE =>
               clusterScores.logFavScore
             case EmbeddingType.LogFavBasedUserInterestedAverageAddressBookFromIIAPE =>
               clusterScores.logFavScore
-            case EmbeddingType.LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE =>
+            case EmbeddingType.LogFavBasedUserInterestedBooktypeMatwitterpoolingAddressBookFromIIAPE =>
               clusterScores.logFavScore
-            case EmbeddingType.LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE =>
+            case EmbeddingType.LogFavBasedUserInterestedLargestDimMatwitterpoolingAddressBookFromIIAPE =>
               clusterScores.logFavScore
-            case EmbeddingType.LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE =>
+            case EmbeddingType.LogFavBasedUserInterestedLouvainMatwitterpoolingAddressBookFromIIAPE =>
               clusterScores.logFavScore
-            case EmbeddingType.LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE =>
+            case EmbeddingType.LogFavBasedUserInterestedConnectedMatwitterpoolingAddressBookFromIIAPE =>
               clusterScores.logFavScore
 
             case _ =>
-              throw new IllegalArgumentException(s"unknown EmbeddingType: $embeddingType")
+              throw new IllegalArgumentEtwitterception(s"unknown EmbeddingType: $embeddingType")
           }
           score.map(clusterId -> _)
       }.flatten.toMap

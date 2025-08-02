@@ -2,13 +2,13 @@ package com.twitter.timelineranker.server
 
 import com.twitter.conversions.DurationOps._
 import com.twitter.finagle.mtls.server.MtlsStackServer._
-import com.twitter.finagle.mux
+import com.twitter.finagle.mutwitter
 import com.twitter.finagle.param.Reporter
 import com.twitter.finagle.stats.DefaultStatsReceiver
 import com.twitter.finagle.util.NullReporterFactory
 import com.twitter.finagle.ListeningServer
 import com.twitter.finagle.ServiceFactory
-import com.twitter.finagle.ThriftMux
+import com.twitter.finagle.ThriftMutwitter
 import com.twitter.finagle.mtls.authorization.server.MtlsServerSessionTrackerFilter
 import com.twitter.finagle.ssl.OpportunisticTls
 import com.twitter.finatra.thrift.filters.LoggingMDCFilter
@@ -35,9 +35,9 @@ import org.apache.thrift.protocol.TBinaryProtocol
 import org.apache.thrift.protocol.TCompactProtocol
 import org.apache.thrift.protocol.TProtocolFactory
 
-object Main extends TimelineRankerServer
+object Main etwittertends TimelineRankerServer
 
-class TimelineRankerServer extends {
+class TimelineRankerServer etwittertends {
   override val statsReceiver: MemoizingStatsReceiver = new MemoizingStatsReceiver(
     DefaultStatsReceiver)
 } with TwitterServer with AdminMutableDeciders with ForcibleFeatureValues with WarmupFlag {
@@ -64,36 +64,36 @@ class TimelineRankerServer extends {
   override val defaultCloseGracePeriod = 10.seconds
 
   private[this] def mkServer(
-    labelSuffix: String,
+    labelSuffitwitter: String,
     socketAddress: SocketAddress,
     protocolFactory: TProtocolFactory,
     serviceFactory: ServiceFactory[Array[Byte], Array[Byte]],
     opportunisticTlsLevel: OpportunisticTls.Level,
   ): ListeningServer = {
-    val compressor = Seq(mux.transport.Compression.lz4Compressor(highCompression = false))
-    val decompressor = Seq(mux.transport.Compression.lz4Decompressor())
+    val compressor = Seq(mutwitter.transport.Compression.lz4Compressor(highCompression = false))
+    val decompressor = Seq(mutwitter.transport.Compression.lz4Decompressor())
     val compressionLevel =
-      if (timelineRankerFlags.enableThriftmuxCompression()) {
-        mux.transport.CompressionLevel.Desired
+      if (timelineRankerFlags.enableThriftmutwitterCompression()) {
+        mutwitter.transport.CompressionLevel.Desired
       } else {
-        mux.transport.CompressionLevel.Off
+        mutwitter.transport.CompressionLevel.Off
       }
 
     val mtlsSessionTrackerFilter =
-      new MtlsServerSessionTrackerFilter[mux.Request, mux.Response](statsReceiver)
-    val loggingMDCFilter = { new LoggingMDCFilter }.toFilter[mux.Request, mux.Response]
-    val traceIdMDCFilter = { new TraceIdMDCFilter }.toFilter[mux.Request, mux.Response]
-    val thriftMDCFilter = { new ThriftMDCFilter }.toFilter[mux.Request, mux.Response]
+      new MtlsServerSessionTrackerFilter[mutwitter.Request, mutwitter.Response](statsReceiver)
+    val loggingMDCFilter = { new LoggingMDCFilter }.toFilter[mutwitter.Request, mutwitter.Response]
+    val traceIdMDCFilter = { new TraceIdMDCFilter }.toFilter[mutwitter.Request, mutwitter.Response]
+    val thriftMDCFilter = { new ThriftMDCFilter }.toFilter[mutwitter.Request, mutwitter.Response]
     val filters = mtlsSessionTrackerFilter
       .andThen(loggingMDCFilter)
       .andThen(traceIdMDCFilter)
       .andThen(thriftMDCFilter)
 
-    ThriftMux.server
-    // By default, finagle logs exceptions to chickadee, which is deprecated and
-    // basically unused. To avoid wasted overhead, we explicitly disable the reporter.
+    ThriftMutwitter.server
+    // By default, finagle logs etwitterceptions to chickadee, which is deprecated and
+    // basically unused. To avoid wasted overhead, we etwitterplicitly disable the reporter.
       .configured(Reporter(NullReporterFactory))
-      .withLabel("timelineranker." + labelSuffix)
+      .withLabel("timelineranker." + labelSuffitwitter)
       .withMutualTls(timelineRankerFlags.getServiceIdentifier)
       .withOpportunisticTls(opportunisticTlsLevel)
       .withProtocolFactory(protocolFactory)
@@ -162,10 +162,10 @@ class TimelineRankerServer extends {
 
       mainLogger.info(
         s"Thrift binary server bound to service port [${timelineRankerFlags.servicePort()}]")
-      closeOnExit(server)
+      closeOnEtwitterit(server)
       mainLogger.info(
         s"Thrift compact server bound to service port [${timelineRankerFlags.serviceCompactPort()}]")
-      closeOnExit(compactServer)
+      closeOnEtwitterit(compactServer)
 
       warmup.warmupComplete()
 
@@ -176,7 +176,7 @@ class TimelineRankerServer extends {
       case e: Throwable =>
         e.printStackTrace()
         mainLogger.error(e, s"failure in main")
-        System.exit(1)
+        System.etwitterit(1)
     }
   }
 }

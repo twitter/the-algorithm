@@ -8,28 +8,28 @@ import com.twitter.servo.util.MemoizingStatsReceiver
 import com.twitter.timelines.configapi.Config
 import com.twitter.timelines.configapi.HasParams
 import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 /**
- * CandidateParamsFactory is primarily used for "producer side" experiments, don't use it on consumer side experiments
+ * CandidateParamsFactory is primarily used for "producer side" etwitterperiments, don't use it on consumer side etwitterperiments
  */
 @Singleton
 class CandidateUserParamsFactory[T <: HasParams with HasDisplayLocation] @Inject() (
   config: Config,
-  candidateContextFactory: CandidateUserContextFactory,
+  candidateContetwittertFactory: CandidateUserContetwittertFactory,
   statsReceiver: StatsReceiver) {
   private val stats = new MemoizingStatsReceiver(statsReceiver.scope("configapi_candidate_params"))
-  def apply(candidateContext: CandidateUser, request: T): CandidateUser = {
-    if (candidateContext.params == Params.Invalid) {
+  def apply(candidateContetwittert: CandidateUser, request: T): CandidateUser = {
+    if (candidateContetwittert.params == Params.Invalid) {
       if (request.params(GlobalParams.EnableCandidateParamHydrations)) {
-        candidateContext.copy(params =
-          config(candidateContextFactory(candidateContext, request.displayLocation), stats))
+        candidateContetwittert.copy(params =
+          config(candidateContetwittertFactory(candidateContetwittert, request.displayLocation), stats))
       } else {
-        candidateContext.copy(params = Params.Empty)
+        candidateContetwittert.copy(params = Params.Empty)
       }
     } else {
-      candidateContext
+      candidateContetwittert
     }
   }
 }

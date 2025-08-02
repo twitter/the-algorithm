@@ -18,14 +18,14 @@ case class SimClustersANNWrapperCandidateSource(
   ],
 )(
   statsReceiver: StatsReceiver)
-    extends CandidateSource[SimClustersANNCandidateSource.Query, SimClustersTweetCandidate] {
+    etwittertends CandidateSource[SimClustersANNCandidateSource.Query, SimClustersTweetCandidate] {
 
   override def get(
     query: SimClustersANNCandidateSource.Query
   ): Future[Option[Seq[SimClustersTweetCandidate]]] = {
 
     val enableLookbackSource =
-      query.overrideConfig.exists(_.enableLookbackSource.getOrElse(false))
+      query.overrideConfig.etwitterists(_.enableLookbackSource.getOrElse(false))
 
     val embeddingType = query.sourceEmbeddingId.embeddingType
     val lookbackCandidatesFut =

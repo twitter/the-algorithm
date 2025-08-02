@@ -21,11 +21,11 @@ import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
 import com.twitter.gizmoduck.thriftscala.LabelValue.BlinkBad
 import com.twitter.gizmoduck.thriftscala.LabelValue.BlinkWorst
 import com.twitter.gizmoduck.thriftscala.LabelValue
-import com.twitter.gizmoduck.thriftscala.LookupContext
+import com.twitter.gizmoduck.thriftscala.LookupContetwittert
 import com.twitter.gizmoduck.thriftscala.QueryFields
 import com.twitter.gizmoduck.thriftscala.User
 import com.twitter.gizmoduck.thriftscala.UserResult
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.scrooge.CompactThriftSerializer
 import com.twitter.spam.rtf.thriftscala.SafetyLevel
 import com.twitter.stitch.Stitch
@@ -34,8 +34,8 @@ import com.twitter.timelines.configapi.HasParams
 import com.twitter.util.Duration
 import com.twitter.util.logging.Logging
 import java.lang.{Long => JLong}
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 /**
  * In this filter, we want to check 4 categories of conditions:
@@ -51,7 +51,7 @@ case class GizmoduckPredicate @Inject() (
   client: Client,
   statsReceiver: StatsReceiver,
   decider: Decider = Decider.False)
-    extends Predicate[(HasClientContext with HasParams, CandidateUser)]
+    etwittertends Predicate[(HasClientContetwittert with HasParams, CandidateUser)]
     with Logging {
   private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getName)
 
@@ -63,7 +63,7 @@ case class GizmoduckPredicate @Inject() (
   private val noGizmoduckUserCounter = stats.counter("no_gizmoduck_user_found")
 
   private val gizmoduckCache = StitchCache[JLong, UserResult](
-    maxCacheSize = MaxCacheSize,
+    matwitterCacheSize = MatwitterCacheSize,
     ttl = CacheTTL,
     statsReceiver = stats.scope("cache"),
     underlyingCall = getByUserId
@@ -83,7 +83,7 @@ case class GizmoduckPredicate @Inject() (
 
   // main method used to apply GizmoduckPredicate to a candidate user
   override def apply(
-    pair: (HasClientContext with HasParams, CandidateUser)
+    pair: (HasClientContetwittert with HasParams, CandidateUser)
   ): Stitch[PredicateResult] = {
     val (request, candidate) = pair
     // measure the latency of the getGizmoduckPredicateResult, since this predicate
@@ -95,7 +95,7 @@ case class GizmoduckPredicate @Inject() (
   }
 
   private def getGizmoduckPredicateResult(
-    request: HasClientContext with HasParams,
+    request: HasClientContetwittert with HasParams,
     candidate: CandidateUser
   ): Stitch[PredicateResult] = {
     val timeout: Duration = request.params(GizmoduckGetTimeout)
@@ -103,12 +103,12 @@ case class GizmoduckPredicate @Inject() (
     val deciderKey: String = DeciderKey.EnableGizmoduckCaching.toString
     val enableDistributedCaching: Boolean = decider.isAvailable(deciderKey, Some(RandomRecipient))
 
-    // try getting an existing UserResult from cache if possible
+    // try getting an etwitteristing UserResult from cache if possible
     val userResultStitch: Stitch[UserResult] = 
       enableDistributedCaching match {
         // read from memcache
         case true => memcacheClient.readThrough(
-          // add a key prefix to address cache key collisions
+          // add a key prefitwitter to address cache key collisions
           key = "GizmoduckPredicate" + candidate.id.toString,
           underlyingCall = () => getByUserId(candidate.id)
         )
@@ -145,8 +145,8 @@ case class GizmoduckPredicate @Inject() (
     }
     predicateResultStitch
       .within(timeout)(DefaultTimer)
-      .rescue { // fail-open when timeout or exception
-        case e: Exception =>
+      .rescue { // fail-open when timeout or etwitterception
+        case e: Etwitterception =>
           stats.scope("rescued").counter(e.getClass.getSimpleName).incr()
           invalidPredicateResultCounter.incr()
           Stitch(PredicateResult.Invalid(Set(FailOpen)))
@@ -154,7 +154,7 @@ case class GizmoduckPredicate @Inject() (
   }
 
   private def logPredicateResultEquality(
-    request: HasClientContext with HasParams,
+    request: HasClientContetwittert with HasParams,
     candidate: CandidateUser,
     predicateResult: PredicateResult
   ): Unit = {
@@ -172,7 +172,7 @@ case class GizmoduckPredicate @Inject() (
 
   // method to get PredicateResult from UserResult
   def getPredicateResult(
-    request: HasClientContext with HasParams,
+    request: HasClientContetwittert with HasParams,
     candidate: CandidateUser,
     userResult: UserResult,
   ): PredicateResult = {
@@ -200,7 +200,7 @@ case class GizmoduckPredicate @Inject() (
 
   private def getByUserId(userId: JLong): Stitch[UserResult] = {
     StatsUtil.profileStitch(
-      gizmoduck.getById(userId = userId, queryFields = queryFields, context = lookupContext),
+      gizmoduck.getById(userId = userId, queryFields = queryFields, contetwittert = lookupContetwittert),
       stats.scope("getByUserId")
     )
   }
@@ -208,8 +208,8 @@ case class GizmoduckPredicate @Inject() (
 
 object GizmoduckPredicate {
 
-  private[gizmoduck] val lookupContext: LookupContext =
-    LookupContext(`includeDeactivated` = true, `safetyLevel` = Some(SafetyLevel.Recommendations))
+  private[gizmoduck] val lookupContetwittert: LookupContetwittert =
+    LookupContetwittert(`includeDeactivated` = true, `safetyLevel` = Some(SafetyLevel.Recommendations))
 
   private[gizmoduck] val queryFields: Set[QueryFields] =
     Set(
@@ -274,7 +274,7 @@ object GizmoduckPredicate {
     user.labels
       .map(_.labels.map(_.labelValue))
       .getOrElse(Nil)
-      .exists(BlinkLabels.contains)
+      .etwitterists(BlinkLabels.contains)
     for {
       labels <- user.labels.toSeq
       label <- labels.labels

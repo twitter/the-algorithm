@@ -27,7 +27,7 @@ import com.twitter.util.Timer
  * for dispatching requests to underlying handlers and stores.
  * The DispatchingTweetService instance is wrapped in:
  * - ObservedTweetService        (adds stats counting)
- * - ClientHandlingTweetService  (authentication, exception handling, etc)
+ * - ClientHandlingTweetService  (authentication, etwitterception handling, etc)
  * - ReplicatingTweetService     (replicates some reads)
  *
  * TweetServiceBuilder returns an Activity[ThriftTweetService] which updates
@@ -39,13 +39,13 @@ object TweetServiceBuilder {
     statsReceiver: StatsReceiver,
     timer: Timer,
     deciderGates: TweetypieDeciderGates,
-    featureSwitchesWithExperiments: FeatureSwitches,
-    featureSwitchesWithoutExperiments: FeatureSwitches,
+    featureSwitchesWithEtwitterperiments: FeatureSwitches,
+    featureSwitchesWithoutEtwitterperiments: FeatureSwitches,
     backendClients: BackendClients,
     clientIdHelper: ClientIdHelper,
   ): Activity[ThriftTweetService] = {
     // a forward reference, will be set to the DispatchingTweetService once created
-    val syncTweetService = new MutableTweetServiceProxy(null)
+    val syncTweetService = new MutableTweetServiceProtwittery(null)
 
     val tweetServiceScope = statsReceiver.scope("tweet_service")
 
@@ -57,8 +57,8 @@ object TweetServiceBuilder {
         syncTweetService,
         timer,
         deciderGates,
-        featureSwitchesWithExperiments,
-        featureSwitchesWithoutExperiments,
+        featureSwitchesWithEtwitterperiments,
+        featureSwitchesWithoutEtwitterperiments,
         backendClients,
         clientIdHelper,
       )
@@ -96,21 +96,21 @@ object TweetServiceBuilder {
           ),
           GetTweetsAuthorizer(
             config = dynamicConfig,
-            maxRequestSize = settings.maxGetTweetsRequestSize,
+            matwitterRequestSize = settings.matwitterGetTweetsRequestSize,
             instanceCount = settings.instanceCount,
             enforceRateLimitedClients = deciderGates.enforceRateLimitedClients,
-            maxRequestWidthEnabled = deciderGates.maxRequestWidthEnabled,
+            matwitterRequestWidthEnabled = deciderGates.matwitterRequestWidthEnabled,
             statsReceiver = tweetServiceScope.scope("get_tweets"),
           ),
           GetTweetFieldsAuthorizer(
             config = dynamicConfig,
-            maxRequestSize = settings.maxGetTweetsRequestSize,
+            matwitterRequestSize = settings.matwitterGetTweetsRequestSize,
             instanceCount = settings.instanceCount,
             enforceRateLimitedClients = deciderGates.enforceRateLimitedClients,
-            maxRequestWidthEnabled = deciderGates.maxRequestWidthEnabled,
+            matwitterRequestWidthEnabled = deciderGates.matwitterRequestWidthEnabled,
             statsReceiver = tweetServiceScope.scope("get_tweet_fields"),
           ),
-          RequestSizeAuthorizer(settings.maxRequestSize, deciderGates.maxRequestWidthEnabled),
+          RequestSizeAuthorizer(settings.matwitterRequestSize, deciderGates.matwitterRequestWidthEnabled),
           clientIdHelper,
         )
 
@@ -123,7 +123,7 @@ object TweetServiceBuilder {
           new ReplicatingTweetService(
             underlying = clientHandlingTweetService,
             replicationTargets = backendClients.lowQoSReplicationClients,
-            executor = new forked.QueueExecutor(
+            etwitterecutor = new forked.QueueEtwitterecutor(
               100,
               statsReceiver.scope("replicating_tweet_service")
             ),
@@ -136,7 +136,7 @@ object TweetServiceBuilder {
 }
 
 object DispatchingTweetServiceBuilder {
-  val hasMedia: Tweet => Boolean = MediaIndexHelper(Resources.loadPartnerMediaRegexes())
+  val hasMedia: Tweet => Boolean = MediaIndetwitterHelper(Resources.loadPartnerMediaRegetwitteres())
 
   def apply(
     settings: TweetServiceSettings,
@@ -145,8 +145,8 @@ object DispatchingTweetServiceBuilder {
     syncTweetService: ThriftTweetService,
     timer: Timer,
     deciderGates: TweetypieDeciderGates,
-    featureSwitchesWithExperiments: FeatureSwitches,
-    featureSwitchesWithoutExperiments: FeatureSwitches,
+    featureSwitchesWithEtwitterperiments: FeatureSwitches,
+    featureSwitchesWithoutEtwitterperiments: FeatureSwitches,
     backendClients: BackendClients,
     clientIdHelper: ClientIdHelper,
   ): ThriftTweetService = {
@@ -178,7 +178,7 @@ object DispatchingTweetServiceBuilder {
         stats = statsReceiver,
         timer = timer,
         deciderGates = deciderGates,
-        external = new ExternalServiceRepositories(
+        etwitterternal = new EtwitterternalServiceRepositories(
           clients = backendClients,
           statsReceiver = statsReceiver,
           settings = settings,
@@ -188,13 +188,13 @@ object DispatchingTweetServiceBuilder {
         stratoClient = backendClients.stratoserverClient,
         hasMedia = hasMedia,
         clientIdHelper = clientIdHelper,
-        featureSwitchesWithoutExperiments = featureSwitchesWithoutExperiments,
+        featureSwitchesWithoutEtwitterperiments = featureSwitchesWithoutEtwitterperiments,
       )
 
     val tweetCreationLock =
       new CacheBasedTweetCreationLock(
         cache = caches.tweetCreateLockerCache,
-        maxTries = 3,
+        matwitterTries = 3,
         stats = statsReceiver.scope("tweet_save").scope("locker"),
         logUniquenessId =
           if (settings.scribeUniquenessIds) CacheBasedTweetCreationLock.ScribeUniquenessId
@@ -231,7 +231,7 @@ object DispatchingTweetServiceBuilder {
         settings = settings,
         statsReceiver = statsReceiver,
         deciderGates = deciderGates,
-        featureSwitchesWithExperiments = featureSwitchesWithExperiments,
+        featureSwitchesWithEtwitterperiments = featureSwitchesWithEtwitterperiments,
         clients = backendClients,
         caches = caches,
         repos = logicalRepos,
@@ -290,7 +290,7 @@ object DispatchingTweetServiceBuilder {
       UpdatePossiblySensitiveTweetHandler(
         HandlerError.getRequired(
           TweetRepository.tweetGetter(logicalRepos.optionalTweetRepo, defaultTweetQueryOptions),
-          HandlerError.tweetNotFoundException
+          HandlerError.tweetNotFoundEtwitterception
         ),
         HandlerError.getRequired(
           FutureArrow(
@@ -301,7 +301,7 @@ object DispatchingTweetServiceBuilder {
               )
               .compose(UserKey.byId)
           ),
-          HandlerError.userNotFoundException
+          HandlerError.userNotFoundEtwitterception
         ),
         tweetStores.updatePossiblySensitiveTweet
       )
@@ -316,8 +316,8 @@ object DispatchingTweetServiceBuilder {
     val getDeletedTweetsHandler =
       GetDeletedTweetsHandler(
         getDeletedTweets = backendClients.tweetStorageClient.getDeletedTweets,
-        tweetsExist =
-          GetDeletedTweetsHandler.tweetsExist(backendClients.tweetStorageClient.getTweet),
+        tweetsEtwitterist =
+          GetDeletedTweetsHandler.tweetsEtwitterist(backendClients.tweetStorageClient.getTweet),
         stats = tweetServiceScope.scope("get_deleted_tweets_handler")
       )
 
@@ -344,7 +344,7 @@ object DispatchingTweetServiceBuilder {
         backendClients.tflockReadClient
           .selectPage(select, Some(settings.getStoredTweetsByUserPageSize))
       },
-      maxPages = settings.getStoredTweetsByUserMaxPages
+      matwitterPages = settings.getStoredTweetsByUserMatwitterPages
     )
 
     val getTweetsHandler =
@@ -485,11 +485,11 @@ object TakedownHandlerBuilder {
     TakedownHandler(
       getTweet = HandlerError.getRequired(
         tweetGetter(logicalRepos),
-        HandlerError.tweetNotFoundException
+        HandlerError.tweetNotFoundEtwitterception
       ),
       getUser = HandlerError.getRequired(
         userGetter(logicalRepos),
-        HandlerError.userNotFoundException
+        HandlerError.userNotFoundEtwitterception
       ),
       writeTakedown = tweetStores.takedown
     )
@@ -565,13 +565,13 @@ object EraseUserTweetsHandlerBuilder {
     tweetDeletePathHandler: DefaultTweetDeletePathHandler
   ): FutureEffect[(TweetId, UserId)] =
     FutureEffect[(TweetId, UserId)] {
-      case (tweetId, expectedUserId) =>
+      case (tweetId, etwitterpectedUserId) =>
         tweetDeletePathHandler
           .internalDeleteTweets(
             request = DeleteTweetsRequest(
               Seq(tweetId),
               isUserErasure = true,
-              expectedUserId = Some(expectedUserId)
+              etwitterpectedUserId = Some(etwitterpectedUserId)
             ),
             byUserId = None,
             authenticatedUserId = None,
@@ -611,15 +611,15 @@ object UndeleteTweetHandlerBuilder {
   ): UndeleteTweetHandler.Type =
     UndeleteTweetHandler(
       undelete = tweetStorage.undelete,
-      tweetExists = tweetExists(tweetStorage),
+      tweetEtwitterists = tweetEtwitterists(tweetStorage),
       getUser = FutureArrow(
         UserRepository
           .userGetter(
             logicalRepos.optionalUserRepo,
             UserQueryOptions(
-              // ExtendedProfile is needed to view a user's birthday to
+              // EtwittertendedProfile is needed to view a user's birthday to
               // guarantee we are not undeleting tweets from when a user was < 13
-              TweetBuilder.userFields ++ Set(UserField.ExtendedProfile),
+              TweetBuilder.userFields ++ Set(UserField.EtwittertendedProfile),
               UserVisibility.All,
               filteredAsFailure = false
             )
@@ -635,7 +635,7 @@ object UndeleteTweetHandlerBuilder {
       )
     )
 
-  private def tweetExists(tweetStorage: TweetStorageClient): FutureArrow[TweetId, Boolean] =
+  private def tweetEtwitterists(tweetStorage: TweetStorageClient): FutureArrow[TweetId, Boolean] =
     FutureArrow { id =>
       Stitch
         .run(tweetStorage.getTweet(id))

@@ -22,7 +22,7 @@ object HydrationState {
    * Base `HydrationState`.  It acts as an identity value when combined with any other
    * `HydrationState`.
    */
-  case object Empty extends HydrationState {
+  case object Empty etwittertends HydrationState {
     def isEmpty = true
     def modified = false
     def ++(that: HydrationState): HydrationState = that
@@ -36,7 +36,7 @@ object HydrationState {
     override val completedHydrations: Set[HydrationType] = Set.empty,
     override val failedFields: Set[FieldByPath] = Set.empty,
     override val cacheErrorEncountered: Boolean = false)
-      extends HydrationState {
+      etwittertends HydrationState {
 
     def isEmpty: Boolean = !modified && failedFields.isEmpty && !cacheErrorEncountered
 
@@ -96,11 +96,11 @@ object HydrationState {
     }
 
   /**
-   * Creates a new HydrationState with modified set to true if `next` and `prev` are different,
+   * Creates a new HydrationState with modified set to true if `netwittert` and `prev` are different,
    * or false if they are the same.
    */
-  def delta[A](prev: A, next: A): HydrationState =
-    if (next != prev) modified else empty
+  def delta[A](prev: A, netwittert: A): HydrationState =
+    if (netwittert != prev) modified else empty
 
   /**
    * Join a list of HydrationStates into a single HydrationState.
@@ -113,10 +113,10 @@ object HydrationState {
     val statesSet = states.toSet
 
     HydrationState(
-      modified = states.exists(_.modified),
+      modified = states.etwitterists(_.modified),
       completedHydrations = statesSet.flatMap(_.completedHydrations),
       failedFields = statesSet.flatMap(_.failedFields),
-      cacheErrorEncountered = states.exists(_.cacheErrorEncountered)
+      cacheErrorEncountered = states.etwitterists(_.cacheErrorEncountered)
     )
   }
 }

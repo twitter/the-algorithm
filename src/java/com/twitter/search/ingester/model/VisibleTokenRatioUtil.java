@@ -1,8 +1,8 @@
 package com.twitter.search.ingester.model;
 
-import com.twitter.common.text.token.TokenizedCharSequenceStream;
-import com.twitter.common.text.token.attribute.CharSequenceTermAttribute;
-import com.twitter.search.common.relevance.text.VisibleTokenRatioNormalizer;
+import com.twitter.common.tetwittert.token.TokenizedCharSequenceStream;
+import com.twitter.common.tetwittert.token.attribute.CharSequenceTermAttribute;
+import com.twitter.search.common.relevance.tetwittert.VisibleTokenRatioNormalizer;
 
 public class VisibleTokenRatioUtil {
 
@@ -16,7 +16,7 @@ public class VisibleTokenRatioUtil {
    * visible token percentage (pretending 140 chars is visible as that is old typical tweet
    * size).  Then normalize it down to 4 bits(round it basically)
    */
-  public int extractAndNormalizeTokenPercentage(TokenizedCharSequenceStream tokenSeqStream) {
+  public int etwittertractAndNormalizeTokenPercentage(TokenizedCharSequenceStream tokenSeqStream) {
 
     CharSequenceTermAttribute attr = tokenSeqStream.addAttribute(CharSequenceTermAttribute.class);
 

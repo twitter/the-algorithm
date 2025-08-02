@@ -7,7 +7,7 @@ import com.twitter.tweetypie.{thriftscala => tweetypie}
 /**
  * Enables HydratedTweet entries to be included in a Timeline.
  */
-class HydratedTweetEntry(tweet: tweetypie.Tweet) extends HydratedTweet(tweet) with TimelineEntry {
+class HydratedTweetEntry(tweet: tweetypie.Tweet) etwittertends HydratedTweet(tweet) with TimelineEntry {
 
   def this(hydratedTweet: HydratedTweet) = this(hydratedTweet.tweet)
 

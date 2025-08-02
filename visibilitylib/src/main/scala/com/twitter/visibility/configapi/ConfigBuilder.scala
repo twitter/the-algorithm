@@ -8,7 +8,7 @@ import com.twitter.timelines.configapi.CompositeConfig
 import com.twitter.timelines.configapi.Config
 import com.twitter.util.Memoize
 import com.twitter.visibility.configapi.configs.VisibilityDeciders
-import com.twitter.visibility.configapi.configs.VisibilityExperimentsConfig
+import com.twitter.visibility.configapi.configs.VisibilityEtwitterperimentsConfig
 import com.twitter.visibility.configapi.configs.VisibilityFeatureSwitches
 import com.twitter.visibility.models.SafetyLevel
 
@@ -35,7 +35,7 @@ class ConfigBuilder(
 
   def build(safetyLevel: SafetyLevel): Config = {
     new CompositeConfig(
-      VisibilityExperimentsConfig.config(safetyLevel) :+
+      VisibilityEtwitterperimentsConfig.config(safetyLevel) :+
         VisibilityDeciders.config(deciderGateBuilder, logger, statsReceiver, safetyLevel) :+
         VisibilityFeatureSwitches.config(statsReceiver, logger)
     )

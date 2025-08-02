@@ -7,18 +7,18 @@ import com.twitter.scrooge.Request
 import com.twitter.scrooge.Response
 import com.twitter.simclustersann.thriftscala.SimClustersANNService
 import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class GetTweetCandidatesResponseStatsFilter @Inject() (
   statsReceiver: StatsReceiver)
-    extends SimpleFilter[Request[SimClustersANNService.GetTweetCandidates.Args], Response[
+    etwittertends SimpleFilter[Request[SimClustersANNService.GetTweetCandidates.Args], Response[
       SimClustersANNService.GetTweetCandidates.SuccessType
     ]] {
 
   private[this] val stats = statsReceiver.scope("method_response_stats").scope("getTweetCandidates")
-  private[this] val candidateScoreStats = stats.stat("candidate_score_x1000")
+  private[this] val candidateScoreStats = stats.stat("candidate_score_twitter1000")
   private[this] val emptyResponseCounter = stats.counter("empty")
   private[this] val nonEmptyResponseCounter = stats.counter("non_empty")
   override def apply(

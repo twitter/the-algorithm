@@ -13,7 +13,7 @@ object AdditionalFields {
   /** all known [[Tweet]] field IDs */
   val CompiledFieldIds: Seq[FieldId] = Tweet.metaData.fields.map(_.id)
 
-  /** all known [[Tweet]] fields in the "additional-field" range (excludes id) */
+  /** all known [[Tweet]] fields in the "additional-field" range (etwittercludes id) */
   val CompiledAdditionalFieldMetaDatas: Seq[ThriftStructField[Tweet]] =
     Tweet.metaData.fields.filter(f => isAdditionalFieldId(f.id))
 
@@ -33,10 +33,10 @@ object AdditionalFields {
     // tweet annotation.
     Tweet.CommunitiesField.id,
     // This field should not be set by clients and should opt for
-    // [[PostTweetRequest.ExclusiveTweetControlOptions]].
-    // The exclusiveTweetControl field requires the userId to be set
+    // [[PostTweetRequest.EtwitterclusiveTweetControlOptions]].
+    // The etwitterclusiveTweetControl field requires the userId to be set
     // and we shouldn't trust the client to provide the right one.
-    Tweet.ExclusiveTweetControlField.id,
+    Tweet.EtwitterclusiveTweetControlField.id,
     // This field should not be set by clients and should opt for
     // [[PostTweetRequest.TrustedFriendsControlOptions]].
     // The trustedFriendsControl field requires the trustedFriendsListId to be
@@ -62,7 +62,7 @@ object AdditionalFields {
 
   /**
    * Provides a list of all field IDs that have a value on the tweet which are not known compiled
-   * additional fields (excludes [[Tweet.id]]).
+   * additional fields (etwittercludes [[Tweet.id]]).
    */
   def unsettableAdditionalFieldIds(tweet: Tweet): Seq[FieldId] =
     CompiledFieldIds
@@ -72,7 +72,7 @@ object AdditionalFields {
       tweet._passthroughFields.keys
 
   /**
-   * Provides a list of all field IDs that have a value on the tweet which are explicitly disallowed
+   * Provides a list of all field IDs that have a value on the tweet which are etwitterplicitly disallowed
    * from being set via PostTweetRequest.additionalFields and RetweetRequest.additionalFields
    */
   def rejectedAdditionalFieldIds(tweet: Tweet): Seq[FieldId] =
@@ -84,7 +84,7 @@ object AdditionalFields {
 
   /**
    * Provides a list of all additional field IDs that have a value on the tweet,
-   * compiled and passthrough (excludes Tweet.id).
+   * compiled and passthrough (etwittercludes Tweet.id).
    */
   def nonEmptyAdditionalFieldIds(tweet: Tweet): Seq[FieldId] =
     CompiledAdditionalFieldMetaDatas.collect {

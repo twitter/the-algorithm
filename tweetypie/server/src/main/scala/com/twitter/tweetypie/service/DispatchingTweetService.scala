@@ -2,8 +2,8 @@
 package com.twitter.tweetypie
 package service
 
-import com.twitter.servo.exception.thriftscala.ClientError
-import com.twitter.servo.exception.thriftscala.ClientErrorCause
+import com.twitter.servo.etwitterception.thriftscala.ClientError
+import com.twitter.servo.etwitterception.thriftscala.ClientErrorCause
 import com.twitter.tweetypie.additionalfields.AdditionalFields
 import com.twitter.tweetypie.client_id.ClientIdHelper
 import com.twitter.tweetypie.handler._
@@ -44,7 +44,7 @@ class DispatchingTweetService(
   updatePossiblySensitiveTweetHandler: UpdatePossiblySensitiveTweetHandler.Type,
   userTakedownHandler: UserTakedownHandler.Type,
   clientIdHelper: ClientIdHelper)
-    extends ThriftTweetService {
+    etwittertends ThriftTweetService {
   import AdditionalFields._
 
   // Incoming reads
@@ -77,7 +77,7 @@ class DispatchingTweetService(
   override def setAdditionalFields(request: SetAdditionalFieldsRequest): Future[Unit] = {
     val setFields = AdditionalFields.nonEmptyAdditionalFieldIds(request.additionalFields)
     if (setFields.isEmpty) {
-      Future.exception(
+      Future.etwitterception(
         ClientError(
           ClientErrorCause.BadRequest,
           s"${SetAdditionalFieldsRequest.AdditionalFieldsField.name} is empty, there must be at least one field to set"
@@ -89,7 +89,7 @@ class DispatchingTweetService(
         case Nil =>
           setAdditionalFieldsBuilder(request).flatMap(tweetStore.setAdditionalFields)
         case unsettableFieldIds =>
-          Future.exception(
+          Future.etwitterception(
             ClientError(
               ClientErrorCause.BadRequest,
               unsettableAdditionalFieldIdsErrorMessage(unsettableFieldIds)
@@ -101,11 +101,11 @@ class DispatchingTweetService(
 
   override def deleteAdditionalFields(request: DeleteAdditionalFieldsRequest): Future[Unit] =
     if (request.tweetIds.isEmpty || request.fieldIds.isEmpty) {
-      Future.exception(
+      Future.etwitterception(
         ClientError(ClientErrorCause.BadRequest, "request contains empty tweet ids or field ids")
       )
-    } else if (request.fieldIds.exists(!isAdditionalFieldId(_))) {
-      Future.exception(
+    } else if (request.fieldIds.etwitterists(!isAdditionalFieldId(_))) {
+      Future.etwitterception(
         ClientError(ClientErrorCause.BadRequest, "cannot delete non-additional fields")
       )
     } else {
@@ -129,7 +129,7 @@ class DispatchingTweetService(
   /**
    * Set if a retweet should be included in its source tweet's retweet count.
    *
-   * This is called by our RetweetVisibility daemon when a user enter/exit
+   * This is called by our RetweetVisibility daemon when a user enter/etwitterit
    * suspended or read-only state and all their retweets visibility need to
    * be modified.
    *
@@ -271,9 +271,9 @@ class DispatchingTweetService(
     // The logged "previous Tweet" value is intended to be used when interactively debugging an
     // issue and an engineer flushes the tweet manually, e.g. from tweetypie.cmdline console.
     // Don't log automated flushes originating from tweetypie-daemons to cut down noise.
-    val logExisting = !clientIdHelper.effectiveClientIdRoot.exists(_ == "tweetypie-daemons")
+    val logEtwitteristing = !clientIdHelper.effectiveClientIdRoot.etwitterists(_ == "tweetypie-daemons")
     tweetStore.flush(
-      Flush.Event(request.tweetIds, request.flushTweets, request.flushCounts, logExisting)
+      Flush.Event(request.tweetIds, request.flushTweets, request.flushCounts, logEtwitteristing)
     )
   }
 

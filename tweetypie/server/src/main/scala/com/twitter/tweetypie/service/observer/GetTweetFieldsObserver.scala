@@ -2,13 +2,13 @@ package com.twitter.tweetypie
 package service
 package observer
 
-import com.twitter.servo.exception.thriftscala.ClientError
+import com.twitter.servo.etwitterception.thriftscala.ClientError
 import com.twitter.tweetypie.thriftscala._
 
 private[service] object GetTweetFieldsObserver {
-  type Type = ObserveExchange[GetTweetFieldsRequest, Seq[GetTweetFieldsResult]]
+  type Type = ObserveEtwitterchange[GetTweetFieldsRequest, Seq[GetTweetFieldsResult]]
 
-  def observeExchange(statsReceiver: StatsReceiver): Effect[Type] = {
+  def observeEtwitterchange(statsReceiver: StatsReceiver): Effect[Type] = {
     val resultStateStats = ResultStateStats(statsReceiver)
 
     val stats = statsReceiver.scope("results")
@@ -25,17 +25,17 @@ private[service] object GetTweetFieldsObserver {
         case _ =>
       }
 
-      if (r.quotedTweetResult.exists(_.isInstanceOf[TweetFieldsResultState.Failed]))
+      if (r.quotedTweetResult.etwitterists(_.isInstanceOf[TweetFieldsResultState.Failed]))
         quoteResultFailed.incr()
     }
 
     Effect {
       case (request, response) =>
         response match {
-          case Return(xs) =>
-            xs foreach {
-              case x if isFailedResult(x) =>
-                observeFailedResult(x)
+          case Return(twitters) =>
+            twitters foreach {
+              case twitter if isFailedResult(twitter) =>
+                observeFailedResult(twitter)
                 resultStateStats.failed()
               case _ =>
                 resultStateStats.success()
@@ -59,7 +59,7 @@ private[service] object GetTweetFieldsObserver {
     val forUserIdCounter = optionsScope.counter("for_user_id")
     val cardsPlatformKeyCounter = optionsScope.counter("cards_platform_key")
     val cardsPlatformKeyScope = optionsScope.scope("cards_platform_key")
-    val extensionsArgsCounter = optionsScope.counter("extensions_args")
+    val etwittertensionsArgsCounter = optionsScope.counter("etwittertensions_args")
     val doNotCacheCounter = optionsScope.counter("do_not_cache")
     val simpleQuotedTweetCounter = optionsScope.counter("simple_quoted_tweet")
     val visibilityPolicyScope = optionsScope.scope("visibility_policy")
@@ -87,7 +87,7 @@ private[service] object GetTweetFieldsObserver {
             cardsPlatformKeyScope.counter(cardsPlatformKey).incr()
           }
         }
-        if (options.extensionsArgs.nonEmpty) extensionsArgsCounter.incr()
+        if (options.etwittertensionsArgs.nonEmpty) etwittertensionsArgsCounter.incr()
         if (options.safetyLevel.nonEmpty) {
           safetyLevelCounter.incr()
         } else {
@@ -126,7 +126,7 @@ private[service] object GetTweetFieldsObserver {
    */
   private def isFailedResult(result: GetTweetFieldsResult): Boolean = {
     result.tweetResult.isInstanceOf[TweetFieldsResultState.Failed] ||
-    result.quotedTweetResult.exists(_.isInstanceOf[TweetFieldsResultState.Failed])
+    result.quotedTweetResult.etwitterists(_.isInstanceOf[TweetFieldsResultState.Failed])
   }
 
   private def observeResultState(stats: StatsReceiver): Effect[TweetFieldsResultState] = {

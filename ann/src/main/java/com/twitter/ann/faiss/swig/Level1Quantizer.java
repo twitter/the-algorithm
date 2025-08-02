@@ -36,13 +36,13 @@ public class Level1Quantizer {
     }
   }
 
-  public void setQuantizer(Index value) {
-    swigfaissJNI.Level1Quantizer_quantizer_set(swigCPtr, this, Index.getCPtr(value), value);
+  public void setQuantizer(Indetwitter value) {
+    swigfaissJNI.Level1Quantizer_quantizer_set(swigCPtr, this, Indetwitter.getCPtr(value), value);
   }
 
-  public Index getQuantizer() {
+  public Indetwitter getQuantizer() {
     long cPtr = swigfaissJNI.Level1Quantizer_quantizer_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Index(cPtr, false);
+    return (cPtr == 0) ? null : new Indetwitter(cPtr, false);
   }
 
   public void setNlist(long value) {
@@ -78,17 +78,17 @@ public class Level1Quantizer {
     return (cPtr == 0) ? null : new ClusteringParameters(cPtr, false);
   }
 
-  public void setClustering_index(Index value) {
-    swigfaissJNI.Level1Quantizer_clustering_index_set(swigCPtr, this, Index.getCPtr(value), value);
+  public void setClustering_indetwitter(Indetwitter value) {
+    swigfaissJNI.Level1Quantizer_clustering_indetwitter_set(swigCPtr, this, Indetwitter.getCPtr(value), value);
   }
 
-  public Index getClustering_index() {
-    long cPtr = swigfaissJNI.Level1Quantizer_clustering_index_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new Index(cPtr, false);
+  public Indetwitter getClustering_indetwitter() {
+    long cPtr = swigfaissJNI.Level1Quantizer_clustering_indetwitter_get(swigCPtr, this);
+    return (cPtr == 0) ? null : new Indetwitter(cPtr, false);
   }
 
-  public void train_q1(long n, SWIGTYPE_p_float x, boolean verbose, MetricType metric_type) {
-    swigfaissJNI.Level1Quantizer_train_q1(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x), verbose, metric_type.swigValue());
+  public void train_q1(long n, SWIGTYPE_p_float twitter, boolean verbose, MetricType metric_type) {
+    swigfaissJNI.Level1Quantizer_train_q1(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(twitter), verbose, metric_type.swigValue());
   }
 
   public long coarse_code_size() {
@@ -103,8 +103,8 @@ public class Level1Quantizer {
     return swigfaissJNI.Level1Quantizer_decode_listno(swigCPtr, this, SWIGTYPE_p_unsigned_char.getCPtr(code));
 }
 
-  public Level1Quantizer(Index quantizer, long nlist) {
-    this(swigfaissJNI.new_Level1Quantizer__SWIG_0(Index.getCPtr(quantizer), quantizer, nlist), true);
+  public Level1Quantizer(Indetwitter quantizer, long nlist) {
+    this(swigfaissJNI.new_Level1Quantizer__SWIG_0(Indetwitter.getCPtr(quantizer), quantizer, nlist), true);
   }
 
   public Level1Quantizer() {

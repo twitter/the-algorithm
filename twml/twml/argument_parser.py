@@ -36,7 +36,7 @@ def _set_log_level(level=None):
     return None
   level = level.lower()
   if level not in LOG_LEVELS.keys():
-    raise ValueError(f"Unexpected log level {level} was given but expected one of {LOG_LEVELS.keys()}.")
+    raise ValueError(f"Unetwitterpected log level {level} was given but etwitterpected one of {LOG_LEVELS.keys()}.")
   tf.logging.set_verbosity(LOG_LEVELS[level])
   tf.logging.info(f"Setting tensorflow logging level to {level} or {LOG_LEVELS[level]}")
   return level
@@ -67,8 +67,8 @@ def get_trainer_parser():
          "supports local filesystem path and hdfs://default/<path> which requires "
          "setting HDFS configuration via env variable HADOOP_CONF_DIR ")
   parser.add_argument(
-    "--export_dir", type=str, default=None,
-    help="Path to the directory to export a SavedModel for prediction servers.")
+    "--etwitterport_dir", type=str, default=None,
+    help="Path to the directory to etwitterport a SavedModel for prediction servers.")
   parser.add_argument(
     "--log_aggregation_app_id", type=str, default=None,
     help="specify app_id for log aggregation. disabled by default.")
@@ -90,7 +90,7 @@ def get_trainer_parser():
     help="number of training batches before running evaluation."
          "Defaults to -1 (runs through entire dataset). "
          "Only used for Trainer.[train,learn]. "
-         "For Trainer.train_and_evaluate, use train.max_steps instead. ")
+         "For Trainer.train_and_evaluate, use train.matwitter_steps instead. ")
   parser.add_argument(
     "--eval.steps", "--eval_steps", type=int, default=-1,
     dest="eval_steps",
@@ -112,8 +112,8 @@ def get_trainer_parser():
          "eval.delay is time to wait before doing first eval. "
          "eval.period is time between successive evals.")
   parser.add_argument(
-    "--train.max_steps", "--train_max_steps", type=int, default=None,
-    dest="train_max_steps",
+    "--train.matwitter_steps", "--train_matwitter_steps", type=int, default=None,
+    dest="train_matwitter_steps",
     help="Stop training after this many global steps. Each training batch is its own step."
          "If set to None, step after one train()/evaluate() call. Useful when train.steps=-1."
          "If set to a non-positive value, loop forever. Usually useful with early stopping.")
@@ -125,14 +125,14 @@ def get_trainer_parser():
   parser.add_argument(
     "--train.early_stop_patience", "--early_stop_patience", type=int, default=-1,
     dest="early_stop_patience",
-    help="max number of evaluations (epochs) to wait for an improvement in the early_stop_metric."
+    help="matwitter number of evaluations (epochs) to wait for an improvement in the early_stop_metric."
          "Defaults to -1 (no early-stopping)."
          "NOTE: This can not be enabled when --distributed is also set.")
   parser.add_argument(
     "--train.early_stop_tolerance", "--early_stop_tolerance", type=float, default=0,
     dest="early_stop_tolerance",
     help="a non-negative tolerance for comparing early_stop_metric."
-         "e.g. when maximizing the condition is current_metric > best_metric + tolerance."
+         "e.g. when matwitterimizing the condition is current_metric > best_metric + tolerance."
          "Defaults to 0.")
   parser.add_argument(
     "--train.dataset_shards", "--train_dataset_shards",
@@ -142,8 +142,8 @@ def get_trainer_parser():
     " useful for codistillation and other techniques that require each worker to train on disjoint"
     " partitions of the dataset.")
   parser.add_argument(
-    "--train.dataset_shard_index", "--train_dataset_shard_index",
-    dest="train_dataset_shard_index",
+    "--train.dataset_shard_indetwitter", "--train_dataset_shard_indetwitter",
+    dest="train_dataset_shard_indetwitter",
     type=int, default=None,
     help="An int value (starting at zero) that indicates which partition (shard) of the dataset"
     " to use if --train.dataset_shards is set.")
@@ -155,16 +155,16 @@ def get_trainer_parser():
     " and restart training from scratch.")
   parser.add_argument(
     "--overwrite_save_dir", dest="overwrite_save_dir", action="store_true",
-    help="Delete the contents of the current save_dir if it exists")
+    help="Delete the contents of the current save_dir if it etwitterists")
   parser.add_argument(
     "--data_threads", "--num_threads", type=int, default=2,
     dest="num_threads",
     help="Number of threads to use for loading the dataset. "
          "num_threads is deprecated and to be removed in future versions. Use data_threads.")
   parser.add_argument(
-    "--max_duration", "--max_duration", type=float, default=None,
-    dest="max_duration",
-    help="Maximum duration (in secs) that training/validation will be allowed to run for before being automatically terminated.")
+    "--matwitter_duration", "--matwitter_duration", type=float, default=None,
+    dest="matwitter_duration",
+    help="Matwitterimum duration (in secs) that training/validation will be allowed to run for before being automatically terminated.")
   parser.add_argument(
     "--num_workers", type=int, default=None,
     help="Number of workers to use when training in hogwild manner on a single node.")
@@ -203,27 +203,27 @@ def get_trainer_parser():
     help="Port to listen on for stats endpoints"
   )
   parser.add_argument(
-    "--experiment_tracking_path",
-    dest="experiment_tracking_path",
+    "--etwitterperiment_tracking_path",
+    dest="etwitterperiment_tracking_path",
     type=str, default=None,
-    help="The tracking path of this experiment. Format: \
-        user_name:project_name:experiment_name:run_name. The path is used to track and display \
-        a record of this experiment on ML Dashboard. Note: this embedded experiment tracking is \
+    help="The tracking path of this etwitterperiment. Format: \
+        user_name:project_name:etwitterperiment_name:run_name. The path is used to track and display \
+        a record of this etwitterperiment on ML Dashboard. Note: this embedded etwitterperiment tracking is \
         disabled when the deprecated Model Repo TrackRun is used in your model config. ")
   parser.add_argument(
-    "--disable_experiment_tracking",
-    dest="disable_experiment_tracking",
+    "--disable_etwitterperiment_tracking",
+    dest="disable_etwitterperiment_tracking",
     action="store_true",
-    help="Whether experiment tracking should be disabled.")
+    help="Whether etwitterperiment tracking should be disabled.")
   parser.add_argument(
     "--config.save_checkpoints_secs", "--save_checkpoints_secs", type=int, default=600,
     dest='save_checkpoints_secs',
     help="Configures the tf.estimator.RunConfig.save_checkpoints_secs attribute. "
     "Specifies how often checkpoints are saved in seconds. Defaults to 10*60 seconds.")
   parser.add_argument(
-    "--config.keep_checkpoint_max", "--keep_checkpoint_max", type=int, default=20,
-    dest='keep_checkpoint_max',
-    help="Configures the tf.estimator.RunConfig.keep_checkpoint_max attribute. "
+    "--config.keep_checkpoint_matwitter", "--keep_checkpoint_matwitter", type=int, default=20,
+    dest='keep_checkpoint_matwitter',
+    help="Configures the tf.estimator.RunConfig.keep_checkpoint_matwitter attribute. "
     "Specifies how many checkpoints to keep. Defaults to 20.")
   parser.add_argument(
     "--config.tf_random_seed", "--tf_random_seed", type=int, default=None,
@@ -239,7 +239,7 @@ def get_trainer_parser():
   parser.add_argument(
     "--clip_gradients", type=float, default=None,
     help="If specified, a global clipping is applied to prevent "
-         "the norm of the gradient to exceed this value. Defaults to None.")
+         "the norm of the gradient to etwitterceed this value. Defaults to None.")
   parser.add_argument(
     "--dgc.density", "--dgc_density", type=float, default=0.1,
     dest="dgc_density",
@@ -250,7 +250,7 @@ def get_trainer_parser():
   parser.add_argument(
     "--dgc.density_decay", "--dgc_density_decay", type=bool, default=True,
     dest="dgc_density_decay",
-    help="Specifies whether to (exponentially) decay the gradient density level when"
+    help="Specifies whether to (etwitterponentially) decay the gradient density level when"
          " doing gradient compression. If set 'False', the 'density_decay_steps', "
          "'density_decay_rate' and 'min_density' arguments will be ignored."
   )
@@ -295,11 +295,11 @@ def get_trainer_parser():
     help="""
     There are two algorithms that the module supports, `serial` and `tree`.
       The `serial` algorithm computes feature importances for each feature, and
-      the `tree` algorithm groups features by feature name prefix, computes feature
+      the `tree` algorithm groups features by feature name prefitwitter, computes feature
       importances for groups of features, and then only 'zooms-in' on a group when the
       importance is greater than the `--feature_importance.sensitivity` value. The `tree` algorithm
       will usually run faster, but for relatively unimportant features it will only compute an
-      upper bound rather than an exact importance value. We suggest that users generally stick
+      upper bound rather than an etwitteract importance value. We suggest that users generally stick
       to the `tree` algorithm, unless if they have a very small number of features or
       near-random model performance.
       """)
@@ -307,25 +307,25 @@ def get_trainer_parser():
   parser.add_argument(
     "--feature_importance.sensitivity", dest="feature_importance_sensitivity", type=float, default=0.03,
     help="""
-    The maximum amount that permuting a feature group can cause the model performance (determined
-      by `feature_importance.metric`) to drop before the algorithm decides to not expand the feature
+    The matwitterimum amount that permuting a feature group can cause the model performance (determined
+      by `feature_importance.metric`) to drop before the algorithm decides to not etwitterpand the feature
       group. This is only used for the `tree` algorithm.
     """)
 
   parser.add_argument(
     "--feature_importance.dont_build_tree", dest="dont_build_tree", action="store_true", default=False,
     help="""
-    If True, don't build the feature trie for the tree algorithm and only use the extra_groups
+    If True, don't build the feature trie for the tree algorithm and only use the etwittertra_groups
     """)
 
   parser.add_argument(
     "--feature_importance.split_feature_group_on_period", dest="split_feature_group_on_period", action="store_true", default=False,
-    help="If true, split feature groups by the period rather than the optimal prefix. Only used for the TREE algorithm")
+    help="If true, split feature groups by the period rather than the optimal prefitwitter. Only used for the TREE algorithm")
 
   parser.add_argument(
-    "--feature_importance.example_count", dest="feature_importance_example_count", type=int, default=10000,
+    "--feature_importance.etwitterample_count", dest="feature_importance_etwitterample_count", type=int, default=10000,
     help="""
-    The number of examples used to compute feature importance.
+    The number of etwitteramples used to compute feature importance.
     Larger values yield more reliable results, but also take longer to compute.
     These records are loaded into memory. This number is agnostic to batch size.
     """)
@@ -339,7 +339,7 @@ def get_trainer_parser():
 
   parser.add_argument(
     "--feature_importance.metric", dest="feature_importance_metric", type=str, default="roc_auc",
-    help="The metric used to determine when to stop expanding the feature importance tree. This is only used for the `tree` algorithm.")
+    help="The metric used to determine when to stop etwitterpanding the feature importance tree. This is only used for the `tree` algorithm.")
 
   parser.add_argument(
     "--feature_importance.is_metric_larger_the_better", dest="feature_importance_is_metric_larger_the_better", action="store_true", default=False,
@@ -356,19 +356,19 @@ def get_trainer_parser():
                                           ' --decay_rate 0.0004 --min_learning_rate 0.001',
                                      dest='learning_rate_decay')
 
-  # Create the parser for the "exponential_learning_rate_decay_fn"
-  parser_exponential = subparsers.add_parser('exponential_learning_rate_decay',
-                                             help='Exponential learning rate decay. '
-                                             'Exponential decay implements:'
+  # Create the parser for the "etwitterponential_learning_rate_decay_fn"
+  parser_etwitterponential = subparsers.add_parser('etwitterponential_learning_rate_decay',
+                                             help='Etwitterponential learning rate decay. '
+                                             'Etwitterponential decay implements:'
                                              'decayed_learning_rate = learning_rate * '
-                                             'exponential_decay_rate ^ '
+                                             'etwitterponential_decay_rate ^ '
                                              '(global_step / decay_steps')
-  parser_exponential.add_argument(
+  parser_etwitterponential.add_argument(
     "--decay_steps", type=float, default=None,
-    help="Required for 'exponential' learning_rate_decay.")
-  parser_exponential.add_argument(
-    "--exponential_decay_rate", type=float, default=None,
-    help="Required for 'exponential' learning_rate_decay. Must be positive. ")
+    help="Required for 'etwitterponential' learning_rate_decay.")
+  parser_etwitterponential.add_argument(
+    "--etwitterponential_decay_rate", type=float, default=None,
+    help="Required for 'etwitterponential' learning_rate_decay. Must be positive. ")
 
   # Create the parser for the "polynomial_learning_rate_decay_fn"
   parser_polynomial = subparsers.add_parser('polynomial_learning_rate_decay',
@@ -397,7 +397,7 @@ def get_trainer_parser():
                                                     help='Piecewise Constant '
                                                     'learning rate decay. '
                                                     'For piecewise_constant, '
-                                                    'consider this example: '
+                                                    'consider this etwitterample: '
                                                     'We want to use a learning rate '
                                                     'that is 1.0 for'
                                                     'the first 100000 steps,'
@@ -425,7 +425,7 @@ def get_trainer_parser():
   parser_inverse = subparsers.add_parser('inverse_learning_rate_decay',
                                          help='Inverse Leaning rate decay. '
                                          'Inverse implements:'
-                                         'decayed_lr = max(lr /(1 + decay_rate * '
+                                         'decayed_lr = matwitter(lr /(1 + decay_rate * '
                                          'floor(global_step /decay_step)),'
                                          ' min_learning_rate)'
                                          'When decay_step=1 this mimics the behaviour'
@@ -465,7 +465,7 @@ def get_trainer_parser():
                                                 'See [Loshchilov & Hutter, ICLR2016],\
                                                    SGDR: Stochastic'
                                                 'Gradient Descent with Warm Restarts.'
-                                                'https://arxiv.org/abs/1608.03983'
+                                                'https://artwitteriv.org/abs/1608.03983'
                                                )
   parser_cosine_restart.add_argument(
     "--first_decay_steps", type=float,
@@ -512,10 +512,10 @@ class DefaultSubcommandArgParse(argparse.ArgumentParser):
     in_args = set(arg_strings)
     d_sp = self._DEFAULT_SUBPARSER
     if d_sp is not None and not {'-h', '--help'}.intersection(in_args):
-      for x_val in self._subparsers._actions:
+      for twitter_val in self._subparsers._actions:
         subparser_found = (
-          isinstance(x_val, argparse._SubParsersAction) and
-          in_args.intersection(x_val._name_parser_map.keys())
+          isinstance(twitter_val, argparse._SubParsersAction) and
+          in_args.intersection(twitter_val._name_parser_map.keys())
         )
         if subparser_found:
           break
@@ -532,8 +532,8 @@ class DefaultSubcommandArgParse(argparse.ArgumentParser):
       super(DefaultSubcommandArgParse, self)._check_value(
         action, value
       )
-    except ArgumentError as error:
-      error.message += ("\nERROR: Deepbird is trying to interpret \"{}\" as a value of {}. If this is not what you expected, "
+    etwittercept ArgumentError as error:
+      error.message += ("\nERROR: Deepbird is trying to interpret \"{}\" as a value of {}. If this is not what you etwitterpected, "
         "then most likely one of the following two things are happening: Either one of your cli arguments are not recognized, "
         "probably {} or whichever argument you are passing {} as a value to OR you are passing in an argument after "
         "the `learning_rate_decay` argument.\n").format(value, action.dest, value, value)

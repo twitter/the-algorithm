@@ -4,7 +4,7 @@ scala_library(
     platform = "java8",
     tags = ["bazel-compatible"],
     dependencies = [
-        "src/java/com/twitter/common/text/language:locale-util",
+        "src/java/com/twitter/common/tetwittert/language:locale-util",
         "src/thrift/com/twitter/search:earlybird-scala",
         "src/thrift/com/twitter/search/common:features-scala",
         "src/thrift/com/twitter/timelineranker/server/model:thrift-scala",
@@ -17,7 +17,7 @@ scala_library(
         "timelines/src/main/scala/com/twitter/timelines/util",
         "timelineservice/common/src/main/scala/com/twitter/timelineservice/model",
     ],
-    exports = [
+    etwitterports = [
         "timelines:config-api-base",
     ],
 )

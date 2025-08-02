@@ -12,7 +12,7 @@ use thrift::Result;
 
 fn main() {
   let data_path = "/tmp/current/timelines/output-1";
-  let bin_data: Vec<u8> = std::fs::read(data_path).expect("Could not read file!"); 
+  let bin_data: Vec<u8> = std::fs::read(data_path).etwitterpect("Could not read file!"); 
 
   println!("Length : {}", bin_data.len());
 

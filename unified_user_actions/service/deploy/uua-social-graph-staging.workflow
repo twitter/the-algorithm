@@ -9,7 +9,7 @@
     "dependencies": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
+        "name": "packer-client-no-petwitter",
         "version": "latest"
       }
     ],
@@ -32,8 +32,8 @@
       "name": "staging",
       "targets": [
         {
-          "name": "uua-social-graph-staging-pdxa",
-          "key": "pdxa/discode/staging/uua-social-graph"
+          "name": "uua-social-graph-staging-pdtwittera",
+          "key": "pdtwittera/discode/staging/uua-social-graph"
         }
       ]
     }

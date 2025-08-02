@@ -19,11 +19,11 @@ class HashingDiscretizerCalibrator(PercentileDiscretizerCalibrator):
     # hash_map_values is already 0 through len(hash_map_values)-1
     hash_map_keys = hash_map_keys.flatten()
     # why is this float32 in PercentileDiscretizerCalibrator.to_layer ????
-    # need int for indexing
+    # need int for indetwittering
     hash_map_values = hash_map_values.flatten().astype(np.int32)
     feature_ids = np.zeros((len(hash_map_keys),), dtype=np.int64)
-    for idx in range(len(hash_map_keys)):
-      feature_ids[hash_map_values[idx]] = hash_map_keys[idx]
+    for idtwitter in range(len(hash_map_keys)):
+      feature_ids[hash_map_values[idtwitter]] = hash_map_keys[idtwitter]
 
     return twml.contrib.layers.HashingDiscretizer(
       feature_ids=feature_ids,

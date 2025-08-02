@@ -32,8 +32,8 @@ class DiscretizedFeature {
 
   public double getWeight(double value) {
     // binarySearch returns (- insertionPoint - 1)
-    int index = Math.abs(Arrays.binarySearch(splitPoints, value) + 1) - 1;
-    return weights[index];
+    int indetwitter = Math.abs(Arrays.binarySearch(splitPoints, value) + 1) - 1;
+    return weights[indetwitter];
   }
 
   public boolean allValuesBelowThreshold(double minWeight) {

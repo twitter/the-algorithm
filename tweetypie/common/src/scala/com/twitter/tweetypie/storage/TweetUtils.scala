@@ -3,8 +3,8 @@ package com.twitter.tweetypie.storage
 import com.twitter.logging.Logger
 import com.twitter.scrooge.TFieldBlob
 import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.storage.client.manhattan.kv.DeniedManhattanException
-import com.twitter.storage.client.manhattan.kv.ManhattanException
+import com.twitter.storage.client.manhattan.kv.DeniedManhattanEtwitterception
+import com.twitter.storage.client.manhattan.kv.ManhattanEtwitterception
 import com.twitter.tweetypie.storage.Response._
 import com.twitter.tweetypie.storage_internal.thriftscala.StoredTweet
 import com.twitter.util.Return
@@ -13,7 +13,7 @@ import com.twitter.util.Try
 
 object TweetUtils {
   val log: Logger = Logger("com.twitter.tweetypie.storage.TweetStorageLibrary")
-  import FieldResponseCodec.ValueNotFoundException
+  import FieldResponseCodec.ValueNotFoundEtwitterception
 
   /**
    * It's rare, but we have seen tweets with userId=0, which is likely the result of a
@@ -21,24 +21,24 @@ object TweetUtils {
    * as not found.
    */
   def isValid(tweet: StoredTweet): Boolean =
-    tweet.userId.exists(_ != 0) && tweet.text.nonEmpty &&
+    tweet.userId.etwitterists(_ != 0) && tweet.tetwittert.nonEmpty &&
       tweet.createdVia.nonEmpty && tweet.createdAtSec.nonEmpty
 
   /**
-   * Helper function to extract Scrubbed field Ids from the result returned by reading entire tweet prefix
+   * Helper function to etwittertract Scrubbed field Ids from the result returned by reading entire tweet prefitwitter
    * function.
    *
    * @param records The sequence of MH records for the given tweetId
    *
    * @return The set of scrubbed field ids
    */
-  private[tweetypie] def extractScrubbedFields(records: Seq[TweetManhattanRecord]): Set[Short] =
+  private[tweetypie] def etwittertractScrubbedFields(records: Seq[TweetManhattanRecord]): Set[Short] =
     records
       .map(r => r.lkey)
       .collect { case TweetKey.LKey.ScrubbedFieldKey(fieldId) => fieldId }
       .toSet
 
-  private[tweetypie] val expectedFields =
+  private[tweetypie] val etwitterpectedFields =
     TweetFields.requiredFieldIds.toSet - TweetFields.tweetIdField
 
   /**
@@ -55,7 +55,7 @@ object TweetUtils {
     records: Seq[TweetManhattanRecord]
   ): Option[Long] =
     SnowflakeId
-      .unixTimeMillisOptFromId(tweetId).orElse({
+      .unitwitterTimeMillisOptFromId(tweetId).orElse({
         records
           .find(_.lkey == TweetKey.LKey.CoreFieldsKey)
           .flatMap { coreFields =>
@@ -85,7 +85,7 @@ object TweetUtils {
     val successCount =
       fieldResults.foldLeft(0) {
         case (count, (_, Return(_))) => count + 1
-        case (count, (_, Throw(_: ValueNotFoundException))) => count + 1
+        case (count, (_, Throw(_: ValueNotFoundEtwitterception))) => count + 1
         case (count, _) => count
       }
 
@@ -97,9 +97,9 @@ object TweetUtils {
 
       // If any field was rate limited, then we consider the entire tweet to be rate limited. So first we scan
       // the field results to check such an occurrence.
-      val wasRateLimited = fieldResults.exists { fieldResult =>
+      val wasRateLimited = fieldResults.etwitterists { fieldResult =>
         fieldResult._2 match {
-          case Throw(e: DeniedManhattanException) => true
+          case Throw(e: DeniedManhattanEtwitterception) => true
           case _ => false
         }
       }
@@ -137,15 +137,15 @@ object TweetUtils {
         resp match {
           case Return(_) =>
             fieldId -> FieldResponse(FieldResponseCode.Success, None)
-          case Throw(mhException: ManhattanException) =>
-            val errMsg = s"Exception in $callerName. Key: $keyStr. Error: $mhException"
-            mhException match {
-              case _: ValueNotFoundException => // ValueNotFound is not an error
+          case Throw(mhEtwitterception: ManhattanEtwitterception) =>
+            val errMsg = s"Etwitterception in $callerName. Key: $keyStr. Error: $mhEtwitterception"
+            mhEtwitterception match {
+              case _: ValueNotFoundEtwitterception => // ValueNotFound is not an error
               case _ => log.error(errMsg)
             }
-            fieldId -> FieldResponseCodec.fromThrowable(mhException, Some(errMsg))
+            fieldId -> FieldResponseCodec.fromThrowable(mhEtwitterception, Some(errMsg))
           case Throw(e) =>
-            val errMsg = s"Exception in $callerName. Key: $keyStr. Error: $e"
+            val errMsg = s"Etwitterception in $callerName. Key: $keyStr. Error: $e"
             log.error(errMsg)
             fieldId -> FieldResponse(FieldResponseCode.Error, Some(errMsg))
         }
@@ -199,7 +199,7 @@ object TweetUtils {
     records: Seq[TweetManhattanRecord]
   ): Option[StoredTweet] = {
     val storedTweet = buildStoredTweet(tweetId, records)
-    if (storedTweet.getFieldBlobs(expectedFields).nonEmpty && isValid(storedTweet)) {
+    if (storedTweet.getFieldBlobs(etwitterpectedFields).nonEmpty && isValid(storedTweet)) {
       Some(storedTweet)
     } else {
       None
@@ -215,11 +215,11 @@ object TweetUtils {
     records: Seq[TweetManhattanRecord],
     includeScrubbed: Boolean = false,
   ): Seq[TFieldBlob] = {
-    val scrubbed = extractScrubbedFields(records)
+    val scrubbed = etwittertractScrubbedFields(records)
 
     records
       .flatMap { r =>
-        // extract LKey.FieldKey records if they are not scrubbed and get their TFieldBlobs
+        // etwittertract LKey.FieldKey records if they are not scrubbed and get their TFieldBlobs
         r.key match {
           case fullKey @ TweetKey(_, key: TweetKey.LKey.FieldKey)
               if includeScrubbed || !scrubbed.contains(key.fieldId) =>
@@ -227,7 +227,7 @@ object TweetUtils {
               val fieldBlob = TFieldBlobCodec.fromByteBuffer(r.value.contents)
               if (fieldBlob.field.id != key.fieldId) {
                 throw new AssertionError(
-                  s"Blob stored for $fullKey has unexpected id ${fieldBlob.field.id}"
+                  s"Blob stored for $fullKey has unetwitterpected id ${fieldBlob.field.id}"
                 )
               }
               Some(fieldBlob)
@@ -244,17 +244,17 @@ object TweetUtils {
   }
 
   /**
-   * Its important to bubble up rate limiting exceptions as they would likely be the root cause for other issues
-   * (timeouts etc.), so we scan for this particular exception, and if found, we bubble that up specifically
+   * Its important to bubble up rate limiting etwitterceptions as they would likely be the root cause for other issues
+   * (timeouts etc.), so we scan for this particular etwitterception, and if found, we bubble that up specifically
    *
-   * @param seqOfTries The sequence of tries which may contain within it a rate limit exception
+   * @param seqOfTries The sequence of tries which may contain within it a rate limit etwitterception
    *
-   * @return if a rate limiting exn was detected, this will be a Throw(e: DeniedManhattanException)
+   * @return if a rate limiting etwittern was detected, this will be a Throw(e: DeniedManhattanEtwitterception)
    *         otherwise it will be a Return(_) only if all individual tries succeeded
    */
   private[tweetypie] def collectWithRateLimitCheck(seqOfTries: Seq[Try[Unit]]): Try[Unit] = {
     val rateLimitThrowOpt = seqOfTries.find {
-      case Throw(e: DeniedManhattanException) => true
+      case Throw(e: DeniedManhattanEtwitterception) => true
       case _ => false
     }
 

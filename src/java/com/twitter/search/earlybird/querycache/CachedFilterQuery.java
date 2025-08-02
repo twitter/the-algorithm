@@ -1,18 +1,18 @@
 package com.twitter.search.earlybird.querycache;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Objects;
 import java.util.Set;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
+import org.apache.lucene.indetwitter.IndetwitterReader;
+import org.apache.lucene.indetwitter.LeafReaderContetwittert;
+import org.apache.lucene.indetwitter.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.ConstantScoreScorer;
 import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Etwitterplanation;
+import org.apache.lucene.search.IndetwitterSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.ScoreMode;
@@ -20,31 +20,31 @@ import org.apache.lucene.search.Weight;
 
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.QueryCacheResultForSegment;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.QueryCacheResultForSegment;
 
 /**
  * Query to iterate QueryCache result (the cache)
  */
-public final class CachedFilterQuery extends Query {
-  private static final String STAT_PREFIX = "querycache_serving_";
-  private static final SearchCounter REWRITE_CALLS = SearchCounter.export(
-      STAT_PREFIX + "rewrite_calls");
-  private static final SearchCounter NO_CACHE_FOUND = SearchCounter.export(
-      STAT_PREFIX + "no_cache_found");
-  private static final SearchCounter USED_CACHE_AND_FRESH_DOCS = SearchCounter.export(
-      STAT_PREFIX + "used_cache_and_fresh_docs");
-  private static final SearchCounter USED_CACHE_ONLY = SearchCounter.export(
-      STAT_PREFIX + "used_cache_only");
+public final class CachedFilterQuery etwittertends Query {
+  private static final String STAT_PREFItwitter = "querycache_serving_";
+  private static final SearchCounter REWRITE_CALLS = SearchCounter.etwitterport(
+      STAT_PREFItwitter + "rewrite_calls");
+  private static final SearchCounter NO_CACHE_FOUND = SearchCounter.etwitterport(
+      STAT_PREFItwitter + "no_cache_found");
+  private static final SearchCounter USED_CACHE_AND_FRESH_DOCS = SearchCounter.etwitterport(
+      STAT_PREFItwitter + "used_cache_and_fresh_docs");
+  private static final SearchCounter USED_CACHE_ONLY = SearchCounter.etwitterport(
+      STAT_PREFItwitter + "used_cache_only");
 
 
-  public static class NoSuchFilterException extends Exception {
-    NoSuchFilterException(String filterName) {
-      super("Filter [" + filterName + "] does not exists");
+  public static class NoSuchFilterEtwitterception etwittertends Etwitterception {
+    NoSuchFilterEtwitterception(String filterName) {
+      super("Filter [" + filterName + "] does not etwitterists");
     }
   }
 
-  private static class CachedResultQuery extends Query {
+  private static class CachedResultQuery etwittertends Query {
     private final QueryCacheResultForSegment cachedResult;
 
     public CachedResultQuery(QueryCacheResultForSegment cachedResult) {
@@ -52,11 +52,11 @@ public final class CachedFilterQuery extends Query {
     }
 
     @Override
-    public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
+    public Weight createWeight(IndetwitterSearcher searcher, ScoreMode scoreMode, float boost) {
       return new DefaultFilterWeight(this) {
         @Override
-        protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context)
-            throws IOException {
+        protected DocIdSetIterator getDocIdSetIterator(LeafReaderContetwittert contetwittert)
+            throws IOEtwitterception {
           return cachedResult.getDocIdSet().iterator();
         }
       };
@@ -83,7 +83,7 @@ public final class CachedFilterQuery extends Query {
     }
   }
 
-  private static class CachedResultAndFreshDocsQuery extends Query {
+  private static class CachedResultAndFreshDocsQuery etwittertends Query {
     private final Query cacheLuceneQuery;
     private final QueryCacheResultForSegment cachedResult;
 
@@ -94,33 +94,33 @@ public final class CachedFilterQuery extends Query {
     }
 
     @Override
-    public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
+    public Weight createWeight(IndetwitterSearcher searcher, ScoreMode scoreMode, float boost) {
       return new Weight(this) {
         @Override
-        public void extractTerms(Set<Term> terms) {
+        public void etwittertractTerms(Set<Term> terms) {
         }
 
         @Override
-        public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-          Scorer scorer = scorer(context);
+        public Etwitterplanation etwitterplain(LeafReaderContetwittert contetwittert, int doc) throws IOEtwitterception {
+          Scorer scorer = scorer(contetwittert);
           if ((scorer != null) && (scorer.iterator().advance(doc) == doc)) {
-            return Explanation.match(0f, "Match on id " + doc);
+            return Etwitterplanation.match(0f, "Match on id " + doc);
           }
-          return Explanation.match(0f, "No match on id " + doc);
+          return Etwitterplanation.match(0f, "No match on id " + doc);
         }
 
         @Override
-        public Scorer scorer(LeafReaderContext context) throws IOException {
+        public Scorer scorer(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
           Weight luceneWeight;
           try  {
             luceneWeight = cacheLuceneQuery.createWeight(searcher, scoreMode, boost);
-          } catch (UnsupportedOperationException e) {
+          } catch (UnsupportedOperationEtwitterception e) {
             // Some queries do not support weights. This is fine, it simply means the query has
             // no docs, and means the same thing as a null scorer.
             return null;
           }
 
-          Scorer luceneScorer = luceneWeight.scorer(context);
+          Scorer luceneScorer = luceneWeight.scorer(contetwittert);
           if (luceneScorer == null) {
             return null;
           }
@@ -133,7 +133,7 @@ public final class CachedFilterQuery extends Query {
         }
 
         @Override
-        public boolean isCacheable(LeafReaderContext ctx) {
+        public boolean isCacheable(LeafReaderContetwittert cttwitter) {
           return true;
         }
       };
@@ -164,10 +164,10 @@ public final class CachedFilterQuery extends Query {
 
   private static final Query DUMMY_FILTER = wrapFilter(new Query() {
     @Override
-    public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
+    public Weight createWeight(IndetwitterSearcher searcher, ScoreMode scoreMode, float boost) {
       return new DefaultFilterWeight(this) {
         @Override
-        protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) {
+        protected DocIdSetIterator getDocIdSetIterator(LeafReaderContetwittert contetwittert) {
           return null;
         }
       };
@@ -195,7 +195,7 @@ public final class CachedFilterQuery extends Query {
   private final Query cacheLuceneQuery;
 
   public static Query getCachedFilterQuery(String filterName, QueryCacheManager queryCacheManager)
-      throws NoSuchFilterException {
+      throws NoSuchFilterEtwitterception {
     return wrapFilter(new CachedFilterQuery(filterName, queryCacheManager));
   }
 
@@ -206,10 +206,10 @@ public final class CachedFilterQuery extends Query {
   }
 
   private CachedFilterQuery(String filterName, QueryCacheManager queryCacheManager)
-      throws NoSuchFilterException {
+      throws NoSuchFilterEtwitterception {
     queryCacheFilter = queryCacheManager.getFilter(filterName);
     if (queryCacheFilter == null) {
-      throw new NoSuchFilterException(filterName);
+      throw new NoSuchFilterEtwitterception(filterName);
     }
     queryCacheFilter.incrementUsageStat();
 
@@ -221,8 +221,8 @@ public final class CachedFilterQuery extends Query {
    * Creates a query base on the cache situation
    */
   @Override
-  public Query rewrite(IndexReader reader) {
-    EarlybirdIndexSegmentAtomicReader twitterReader = (EarlybirdIndexSegmentAtomicReader) reader;
+  public Query rewrite(IndetwitterReader reader) {
+    EarlybirdIndetwitterSegmentAtomicReader twitterReader = (EarlybirdIndetwitterSegmentAtomicReader) reader;
     QueryCacheResultForSegment cachedResult =
         twitterReader.getSegmentData().getQueryCacheResult(queryCacheFilter.getFilterName());
     REWRITE_CALLS.increment();
@@ -249,41 +249,41 @@ public final class CachedFilterQuery extends Query {
         // that the segment/reader has new documents.
         cachedResult.getSmallestDocID() > twitterReader.getSmallestDocID()) {
       // The segment has more documents than the cached result. IOW, there are new
-      // documents that are not cached. This happens to latest segment that we're indexing to.
+      // documents that are not cached. This happens to latest segment that we're indetwittering to.
       USED_CACHE_AND_FRESH_DOCS.increment();
       return wrapFilter(new CachedResultAndFreshDocsQuery(cacheLuceneQuery, cachedResult));
     }
 
     // The segment has not grown since the cache was last updated.
-    // This happens mostly to old segments that we're no longer indexing to.
+    // This happens mostly to old segments that we're no longer indetwittering to.
     USED_CACHE_ONLY.increment();
     return wrapFilter(new CachedResultQuery(cachedResult));
   }
 
   @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
+  public Weight createWeight(IndetwitterSearcher searcher, ScoreMode scoreMode, float boost)
+      throws IOEtwitterception {
     final Weight luceneWeight = cacheLuceneQuery.createWeight(searcher, scoreMode, boost);
 
     return new Weight(this) {
       @Override
-      public Scorer scorer(LeafReaderContext context) throws IOException {
-        return luceneWeight.scorer(context);
+      public Scorer scorer(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
+        return luceneWeight.scorer(contetwittert);
       }
 
       @Override
-      public void extractTerms(Set<Term> terms) {
-        luceneWeight.extractTerms(terms);
+      public void etwittertractTerms(Set<Term> terms) {
+        luceneWeight.etwittertractTerms(terms);
       }
 
       @Override
-      public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-        return luceneWeight.explain(context, doc);
+      public Etwitterplanation etwitterplain(LeafReaderContetwittert contetwittert, int doc) throws IOEtwitterception {
+        return luceneWeight.etwitterplain(contetwittert, doc);
       }
 
       @Override
-      public boolean isCacheable(LeafReaderContext ctx) {
-        return luceneWeight.isCacheable(ctx);
+      public boolean isCacheable(LeafReaderContetwittert cttwitter) {
+        return luceneWeight.isCacheable(cttwitter);
       }
     };
   }

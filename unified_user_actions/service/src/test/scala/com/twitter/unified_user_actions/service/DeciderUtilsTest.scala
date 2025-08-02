@@ -11,8 +11,8 @@ import org.junit.runner.RunWith
 import org.scalatestplus.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
-class DeciderUtilsTest extends Test with Mockito {
-  trait Fixture {
+class DeciderUtilsTest etwittertends Test with Mockito {
+  trait Fitwitterture {
     val frozenTime = Time.fromMilliseconds(1658949273000L)
 
     val publishActionTypes =
@@ -47,7 +47,7 @@ class DeciderUtilsTest extends Test with Mockito {
   }
 
   test("Decider Utils") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         DefaultDeciderUtils.shouldPublish(
           decider = decider(),

@@ -8,7 +8,7 @@
 
 package com.twitter.ann.faiss;
 
-public class ITQTransform extends VectorTransform {
+public class ITQTransform etwittertends VectorTransform {
   private transient long swigCPtr;
 
   protected ITQTransform(long cPtr, boolean cMemoryOwn) {
@@ -53,21 +53,21 @@ public class ITQTransform extends VectorTransform {
     return swigfaissJNI.ITQTransform_do_pca_get(swigCPtr, this);
   }
 
-  public void setItq(ITQMatrix value) {
-    swigfaissJNI.ITQTransform_itq_set(swigCPtr, this, ITQMatrix.getCPtr(value), value);
+  public void setItq(ITQMatritwitter value) {
+    swigfaissJNI.ITQTransform_itq_set(swigCPtr, this, ITQMatritwitter.getCPtr(value), value);
   }
 
-  public ITQMatrix getItq() {
+  public ITQMatritwitter getItq() {
     long cPtr = swigfaissJNI.ITQTransform_itq_get(swigCPtr, this);
-    return (cPtr == 0) ? null : new ITQMatrix(cPtr, false);
+    return (cPtr == 0) ? null : new ITQMatritwitter(cPtr, false);
   }
 
-  public void setMax_train_per_dim(int value) {
-    swigfaissJNI.ITQTransform_max_train_per_dim_set(swigCPtr, this, value);
+  public void setMatwitter_train_per_dim(int value) {
+    swigfaissJNI.ITQTransform_matwitter_train_per_dim_set(swigCPtr, this, value);
   }
 
-  public int getMax_train_per_dim() {
-    return swigfaissJNI.ITQTransform_max_train_per_dim_get(swigCPtr, this);
+  public int getMatwitter_train_per_dim() {
+    return swigfaissJNI.ITQTransform_matwitter_train_per_dim_get(swigCPtr, this);
   }
 
   public void setPca_then_itq(LinearTransform value) {
@@ -95,12 +95,12 @@ public class ITQTransform extends VectorTransform {
     this(swigfaissJNI.new_ITQTransform__SWIG_3(), true);
   }
 
-  public void train(long n, SWIGTYPE_p_float x) {
-    swigfaissJNI.ITQTransform_train(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x));
+  public void train(long n, SWIGTYPE_p_float twitter) {
+    swigfaissJNI.ITQTransform_train(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(twitter));
   }
 
-  public void apply_noalloc(long n, SWIGTYPE_p_float x, SWIGTYPE_p_float xt) {
-    swigfaissJNI.ITQTransform_apply_noalloc(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x), SWIGTYPE_p_float.getCPtr(xt));
+  public void apply_noalloc(long n, SWIGTYPE_p_float twitter, SWIGTYPE_p_float twittert) {
+    swigfaissJNI.ITQTransform_apply_noalloc(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(twitter), SWIGTYPE_p_float.getCPtr(twittert));
   }
 
 }

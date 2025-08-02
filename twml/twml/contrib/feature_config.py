@@ -35,7 +35,7 @@ class FeatureConfigBuilder(feature_config.FeatureConfigBuilder):
     ) = self._build()
 
     discretize_dict = {}
-    for config in self._sparse_extraction_configs:
+    for config in self._sparse_etwittertraction_configs:
       if config.discretize_num_bins and config.discretize_output_size_bits:
         if config.discretize_type == "percentile":
           calibrator = twml.contrib.calibrators.PercentileDiscretizerCalibrator
@@ -63,9 +63,9 @@ class FeatureConfigBuilder(feature_config.FeatureConfigBuilder):
       tensor_types=keep_tensors,
       sparse_tensor_types=keep_sparse_tensors,
       feature_types=feature_map,
-      sparse_extraction_configs=self._sparse_extraction_configs,
-      feature_extraction_configs=self._feature_extraction_configs,
-      feature_group_extraction_configs=self._feature_group_extraction_configs,
+      sparse_etwittertraction_configs=self._sparse_etwittertraction_configs,
+      feature_etwittertraction_configs=self._feature_etwittertraction_configs,
+      feature_group_etwittertraction_configs=self._feature_group_etwittertraction_configs,
       image_configs=self._image_configs,
       discretize_config=discretize_dict,
       feature_ids=features_add,
@@ -76,10 +76,10 @@ class FeatureConfigBuilder(feature_config.FeatureConfigBuilder):
     )
 
 
-TensorExtractionConfig = feature_config.TensorExtractionConfig
+TensorEtwittertractionConfig = feature_config.TensorEtwittertractionConfig
 
-FeatureGroupExtractionConfig = feature_config.FeatureGroupExtractionConfig
+FeatureGroupEtwittertractionConfig = feature_config.FeatureGroupEtwittertractionConfig
 
-ImageExtractionConfig = feature_config.ImageExtractionConfig
+ImageEtwittertractionConfig = feature_config.ImageEtwittertractionConfig
 
 _set_tensor_namedtuple = feature_config._set_tensor_namedtuple

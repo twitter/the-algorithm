@@ -1,6 +1,6 @@
 package com.twitter.graph_feature_service.server.stores
 
-import com.twitter.finagle.RequestTimeoutException
+import com.twitter.finagle.RequestTimeoutEtwitterception
 import com.twitter.finagle.stats.{Stat, StatsReceiver}
 import com.twitter.graph_feature_service.server.handlers.ServerGetIntersectionHandler.GetIntersectionRequest
 import com.twitter.graph_feature_service.server.modules.GraphFeatureServiceWorkerClients
@@ -9,14 +9,14 @@ import com.twitter.graph_feature_service.thriftscala._
 import com.twitter.inject.Logging
 import com.twitter.storehaus.ReadableStore
 import com.twitter.util.Future
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 import scala.collection.mutable.ArrayBuffer
 
 @Singleton
 case class GetIntersectionStore(
   graphFeatureServiceWorkerClients: GraphFeatureServiceWorkerClients,
   statsReceiver: StatsReceiver)
-    extends ReadableStore[GetIntersectionQuery, CachedIntersectionResult]
+    etwittertends ReadableStore[GetIntersectionQuery, CachedIntersectionResult]
     with Logging {
 
   import GetIntersectionStore._
@@ -57,7 +57,7 @@ case class GetIntersectionStore(
             worker
               .getIntersection(request)
               .rescue {
-                case _: RequestTimeoutException =>
+                case _: RequestTimeoutEtwitterception =>
                   timeOutCounter.incr()
                   Future.value(DefaultWorkerIntersectionResponse)
                 case e =>
@@ -101,19 +101,19 @@ case class GetIntersectionStore(
 
     for {
       response <- responseList
-      (features, candidateIndex) <- response.results.zipWithIndex
-      (workerValue, featureIndex) <- features.zipWithIndex
+      (features, candidateIndetwitter) <- response.results.zipWithIndetwitter
+      (workerValue, featureIndetwitter) <- features.zipWithIndetwitter
     } {
-      cube(candidateIndex)(featureIndex)(CountIndex) += workerValue.count
-      cube(candidateIndex)(featureIndex)(LeftDegreeIndex) += workerValue.leftNodeDegree
-      cube(candidateIndex)(featureIndex)(RightDegreeIndex) += workerValue.rightNodeDegree
+      cube(candidateIndetwitter)(featureIndetwitter)(CountIndetwitter) += workerValue.count
+      cube(candidateIndetwitter)(featureIndetwitter)(LeftDegreeIndetwitter) += workerValue.leftNodeDegree
+      cube(candidateIndetwitter)(featureIndetwitter)(RightDegreeIndetwitter) += workerValue.rightNodeDegree
 
       if (notZero && workerValue.intersectionIds.nonEmpty) {
-        val arrayBuffer = ids(candidateIndex)(featureIndex) match {
+        val arrayBuffer = ids(candidateIndetwitter)(featureIndetwitter) match {
           case Some(buffer) => buffer
           case None =>
             val buffer = ArrayBuffer[Long]()
-            ids(candidateIndex)(featureIndex) = Some(buffer)
+            ids(candidateIndetwitter)(featureIndetwitter) = Some(buffer)
             buffer
         }
         val intersectionIds = workerValue.intersectionIds
@@ -129,14 +129,14 @@ case class GetIntersectionStore(
       }
     }
 
-    candidates.zipWithIndex.map {
-      case (candidate, candidateIndex) =>
-        candidate -> CachedIntersectionResult(features.indices.map { featureIndex =>
+    candidates.zipWithIndetwitter.map {
+      case (candidate, candidateIndetwitter) =>
+        candidate -> CachedIntersectionResult(features.indices.map { featureIndetwitter =>
           WorkerIntersectionValue(
-            cube(candidateIndex)(featureIndex)(CountIndex),
-            cube(candidateIndex)(featureIndex)(LeftDegreeIndex),
-            cube(candidateIndex)(featureIndex)(RightDegreeIndex),
-            ids(candidateIndex)(featureIndex).getOrElse(Nil)
+            cube(candidateIndetwitter)(featureIndetwitter)(CountIndetwitter),
+            cube(candidateIndetwitter)(featureIndetwitter)(LeftDegreeIndetwitter),
+            cube(candidateIndetwitter)(featureIndetwitter)(RightDegreeIndetwitter),
+            ids(candidateIndetwitter)(featureIndetwitter).getOrElse(Nil)
           )
         })
     }.toMap
@@ -175,7 +175,7 @@ object GetIntersectionStore {
   private val DefaultIntersectionIdLimit = 0
   private val DefaultWorkerIntersectionResponse = WorkerIntersectionResponse()
 
-  private val CountIndex = 0
-  private val LeftDegreeIndex = 1
-  private val RightDegreeIndex = 2
+  private val CountIndetwitter = 0
+  private val LeftDegreeIndetwitter = 1
+  private val RightDegreeIndetwitter = 2
 }

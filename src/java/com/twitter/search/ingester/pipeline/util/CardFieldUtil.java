@@ -2,10 +2,10 @@ package com.twitter.search.ingester.pipeline.util;
 
 import com.google.common.base.Strings;
 
-import com.twitter.expandodo.thriftjava.BindingValue;
-import com.twitter.expandodo.thriftjava.BindingValueType;
-import com.twitter.expandodo.thriftjava.Card2;
-import com.twitter.search.common.util.text.LanguageIdentifierHelper;
+import com.twitter.etwitterpandodo.thriftjava.BindingValue;
+import com.twitter.etwitterpandodo.thriftjava.BindingValueType;
+import com.twitter.etwitterpandodo.thriftjava.Card2;
+import com.twitter.search.common.util.tetwittert.LanguageIdentifierHelper;
 import com.twitter.search.ingester.model.IngesterTwitterMessage;
 
 public final class CardFieldUtil {
@@ -24,7 +24,7 @@ public final class CardFieldUtil {
    * given a bindingKey and card, will return the bindingValue of the given bindingKey
    * if present in card.getBinding_values(). If no match is found return null.
    */
-  public static String extractBindingValue(String bindingKey, Card2 card) {
+  public static String etwittertractBindingValue(String bindingKey, Card2 card) {
     for (BindingValue bindingValue : card.getBinding_values()) {
       if ((bindingValue != null)
           && bindingValue.isSetType()

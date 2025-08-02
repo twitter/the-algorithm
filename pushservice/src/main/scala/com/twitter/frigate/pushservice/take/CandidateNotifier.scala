@@ -34,7 +34,7 @@ class CandidateNotifier(
   implicit statsReceiver: StatsReceiver) {
 
   private lazy val casLockPredicate =
-    CasLockPredicate(casLock, expiryDuration = 10.minutes)(statsReceiver)
+    CasLockPredicate(casLock, etwitterpiryDuration = 10.minutes)(statsReceiver)
   private val candidateNotifierStats = statsReceiver.scope(this.getClass.getSimpleName)
   private val historyWriteCounter =
     candidateNotifierStats.counter("simply_notifier_history_write_num")
@@ -68,8 +68,8 @@ class CandidateNotifier(
       notificationSender.sendIbisDarkWrite(candidate).map(mapIbisResponse)
     } else {
       casLockPredicate(Seq(candidate)).flatMap { casLockResults =>
-        if (casLockResults.head || candidate.target.pushContext
-            .exists(_.skipFilters.contains(true))) {
+        if (casLockResults.head || candidate.target.pushContetwittert
+            .etwitterists(_.skipFilters.contains(true))) {
           Future
             .join(
               candidate.target.isSilentPush,
@@ -122,8 +122,8 @@ class CandidateNotifier(
       notificationSender.sendIbisDarkWrite(candidate).map(mapIbisResponse)
     } else {
       casLockPredicate(Seq(candidate)).flatMap { casLockResults =>
-        if (casLockResults.head || candidate.target.pushContext
-            .exists(_.skipFilters.contains(true))) {
+        if (casLockResults.head || candidate.target.pushContetwittert
+            .etwitterists(_.skipFilters.contains(true))) {
           val response = candidate.target.isSilentPush.flatMap { isSilentPush =>
             candidate
               .frigateNotificationForPersistence(

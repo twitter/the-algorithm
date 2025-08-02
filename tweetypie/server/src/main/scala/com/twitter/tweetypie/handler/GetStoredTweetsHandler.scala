@@ -146,7 +146,7 @@ object GetStoredTweetsHandler {
   private def sanitizeNullMediaFields(tweet: Tweet): Tweet = {
     // Some media fields are initialized as `null` at the storage layer.
     // If the Tweet is meant to be hard deleted, or is not hydrated for
-    // some other reason but the media entities still exist, we sanitize
+    // some other reason but the media entities still etwitterist, we sanitize
     // these fields to allow serialization.
     tweet.copy(media = tweet.media.map(_.map { mediaEntity =>
       mediaEntity.copy(
@@ -154,7 +154,7 @@ object GetStoredTweetsHandler {
         mediaUrl = Option(mediaEntity.mediaUrl).getOrElse(""),
         mediaUrlHttps = Option(mediaEntity.mediaUrlHttps).getOrElse(""),
         displayUrl = Option(mediaEntity.displayUrl).getOrElse(""),
-        expandedUrl = Option(mediaEntity.expandedUrl).getOrElse(""),
+        etwitterpandedUrl = Option(mediaEntity.etwitterpandedUrl).getOrElse(""),
       )
     }))
   }

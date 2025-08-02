@@ -45,20 +45,20 @@ class RFPHStatsRecorder(implicit statsReceiver: StatsReceiver) {
     }
   }
 
-  def refreshRequestExceptionStats(
-    exception: Throwable,
+  def refreshRequestEtwitterceptionStats(
+    etwitterception: Throwable,
     bStats: StatsReceiver
   ): Unit = {
     bStats.counter("failures").incr()
-    bStats.scope("failures").counter(exception.getClass.getCanonicalName).incr()
+    bStats.scope("failures").counter(etwitterception.getClass.getCanonicalName).incr()
   }
 
-  def loggedOutRequestExceptionStats(
-    exception: Throwable,
+  def loggedOutRequestEtwitterceptionStats(
+    etwitterception: Throwable,
     bStats: StatsReceiver
   ): Unit = {
     bStats.counter("logged_out_failures").incr()
-    bStats.scope("failures").counter(exception.getClass.getCanonicalName).incr()
+    bStats.scope("failures").counter(etwitterception.getClass.getCanonicalName).incr()
   }
 
   def rankDistributionStats(

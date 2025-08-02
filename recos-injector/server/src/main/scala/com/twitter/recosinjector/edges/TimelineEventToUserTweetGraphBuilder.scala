@@ -9,7 +9,7 @@ class TimelineEventToUserTweetGraphBuilder(
   userTweetEntityEdgeBuilder: UserTweetEntityEdgeBuilder
 )(
   override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[TweetFavoriteEventDetails, UserTweetEntityEdge] {
+    etwittertends EventToMessageBuilder[TweetFavoriteEventDetails, UserTweetEntityEdge] {
 
   override def shouldProcessEvent(event: TweetFavoriteEventDetails): Future[Boolean] = {
     Future(true)

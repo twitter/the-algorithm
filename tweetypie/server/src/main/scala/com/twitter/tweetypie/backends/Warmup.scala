@@ -16,31 +16,31 @@ object Warmup {
    * Signals that a warmup action was aborted because warmup is
    * complete.
    */
-  object WarmupComplete extends Exception with NoStackTrace
+  object WarmupComplete etwittertends Etwitterception with NoStackTrace
 
   /**
    * Configuration for warmup actions.
    *
-   * @param maxOutstandingRequests: Limit on total number of outstanding warmup requests.
-   * @param maxWarmupDuration: Total amount of time warmup is allowed to take.
+   * @param matwitterOutstandingRequests: Limit on total number of outstanding warmup requests.
+   * @param matwitterWarmupDuration: Total amount of time warmup is allowed to take.
    * @param requestTimeouts: Time limit for individual warmup actions.
    * @param reliability: Criteria for how many times each warmup should be run.
    */
   case class Settings(
-    maxOutstandingRequests: Int,
-    maxWarmupDuration: Duration,
+    matwitterOutstandingRequests: Int,
+    matwitterWarmupDuration: Duration,
     requestTimeouts: Map[String, Duration],
     reliability: Reliably) {
     def toRunner(logger: Logger, timer: Timer): Runner =
       new WithTimeouts(requestTimeouts, timer)
         .within(new Logged(logger))
-        .within(new LimitedConcurrency(maxOutstandingRequests))
+        .within(new LimitedConcurrency(matwitterOutstandingRequests))
         .within(reliability)
 
     def apply[A: Warmup](value: A, logger: Logger, timer: Timer): Future[Unit] =
       toRunner(logger, timer)
         .run(value)
-        .raiseWithin(maxWarmupDuration)(timer)
+        .raiseWithin(matwitterWarmupDuration)(timer)
         .handle { case _ => }
   }
 
@@ -65,7 +65,7 @@ object Warmup {
       }
 
     /**
-     * Execute all of the warmup actions for the given value using
+     * Etwitterecute all of the warmup actions for the given value using
      * this runner.
      */
     final def run[T](t: T)(implicit w: Warmup[T]): Future[Unit] =
@@ -76,21 +76,21 @@ object Warmup {
    * Set a ceiling on the amount of time each kind of warmup action is
    * allowed to take.
    */
-  class WithTimeouts(timeouts: Map[String, Duration], timer: Timer) extends Runner {
+  class WithTimeouts(timeouts: Map[String, Duration], timer: Timer) etwittertends Runner {
     override def runOne(name: String, action: => Future[Unit]): Future[Unit] =
       timeouts.get(name).map(action.raiseWithin(_)(timer)).getOrElse(action)
   }
 
   /**
-   * Execute each action until its reliability is estimated to be
+   * Etwitterecute each action until its reliability is estimated to be
    * above the given threshold. The reliability is initially assumed
-   * to be zero. The reliability is estimated as an exponential moving
+   * to be zero. The reliability is estimated as an etwitterponential moving
    * average, with the new data point given the appropriate weight so
    * that a single data point will no longer be able to push the
    * average below the threshold.
    *
    * The warmup action is considered successful if it does not throw
-   * an exception. No timeouts are applied.
+   * an etwitterception. No timeouts are applied.
    *
    * The threshold must be in the interval [0, 1).
    *
@@ -99,17 +99,17 @@ object Warmup {
    * to happen more rapidly when individual requests have high
    * latency.
    *
-   * maxAttempts limits the total number of tries that we are allowed
+   * matwitterAttempts limits the total number of tries that we are allowed
    * to try to reach the reliability threshold. This is a safety
    * measure to prevent overloading whatever subsystem we are
    * attempting to warm up.
    */
-  case class Reliably(reliabilityThreshold: Double, concurrency: Int, maxAttempts: Int)
-      extends Runner {
+  case class Reliably(reliabilityThreshold: Double, concurrency: Int, matwitterAttempts: Int)
+      etwittertends Runner {
     require(reliabilityThreshold < 1)
     require(reliabilityThreshold >= 0)
     require(concurrency > 0)
-    require(maxAttempts > 0)
+    require(matwitterAttempts > 0)
 
     // Find the weight at which one failure will not push us under the
     // reliabilityThreshold.
@@ -166,7 +166,7 @@ object Warmup {
           }
         }
 
-      go(maxAttempts, 0, Seq.empty)
+      go(matwitterAttempts, 0, Seq.empty)
     }
   }
 
@@ -179,7 +179,7 @@ object Warmup {
    *         The supplied name.
    *
    *     start time:
-   *         The number of milliseconds since the start of the Unix
+   *         The number of milliseconds since the start of the Unitwitter
    *         epoch.
    *
    *     duration:
@@ -187,11 +187,11 @@ object Warmup {
    *
    *     result:
    *         "passed" or "failed" depending on whether the Future
-   *         returned an exception.
+   *         returned an etwitterception.
    *
-   *     exception type:
+   *     etwitterception type:
    *         If the result "failed", then this will be the name of
-   *         the exception that casued the failure. If it "passed",
+   *         the etwitterception that casued the failure. If it "passed",
    *         it will be the empty string.
    *
    * These messages should be sufficient to get a picture of how
@@ -199,7 +199,7 @@ object Warmup {
    * and sorted by type. You can use this information to tune the
    * warmup parameters.
    */
-  class Logged(logger: Logger) extends Runner {
+  class Logged(logger: Logger) etwittertends Runner {
     override def runOne(name: String, action: => Future[Unit]): Future[Unit] = {
       val start = Time.now
       val startStr = start.sinceEpoch.inMilliseconds.toString
@@ -224,7 +224,7 @@ object Warmup {
    * Ensure that no more than the specified number of invocations of a
    * warmup action are happening at one time.
    */
-  class LimitedConcurrency(limit: Int) extends Runner {
+  class LimitedConcurrency(limit: Int) etwittertends Runner {
     private[this] val sem = new AsyncSemaphore(limit)
     override def runOne(name: String, action: => Future[Unit]): Future[Unit] =
       sem.acquireAndRun(action)
@@ -244,7 +244,7 @@ object Warmup {
 
 /**
  * A set of independent warmup actions. Each action should be the
- * minimum work that can be done in order to exercise a code
+ * minimum work that can be done in order to etwitterercise a code
  * path. Runners can be used to e.g. run the actions repeatedly or
  * with timeouts.
  */

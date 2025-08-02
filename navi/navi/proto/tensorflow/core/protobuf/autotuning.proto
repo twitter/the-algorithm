@@ -3,13 +3,13 @@
 //
 // They are in proto format because we want to log them structured. They offer
 // tremendous statistical, testing, and debugging value.
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
 import "google/protobuf/any.proto";
 import "google/protobuf/duration.proto";
-import "tensorflow/stream_executor/dnn.proto";
+import "tensorflow/stream_etwitterecutor/dnn.proto";
 
 option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
@@ -52,7 +52,7 @@ message AutotuneResult {
       ConvKey reference_conv = 11;
       GemmKey reference_gemm = 12;
       CudaConvPlanKey reference_cuda_conv_plan = 14;
-      stream_executor.dnn.AlgorithmProto reference_algorithm = 15;
+      stream_etwitterecutor.dnn.AlgorithmProto reference_algorithm = 15;
     }
 
     int64 buffer_address = 13;
@@ -70,7 +70,7 @@ message AutotuneResult {
 
   // Legacy and unused in new data; superseded by AlgorithmProto.
   message CudaConvPlanKey {
-    string exec_plan_id = 1;
+    string etwitterec_plan_id = 1;
   }
 
   int64 scratch_bytes = 8;
@@ -82,10 +82,10 @@ message AutotuneResult {
     ConvKey conv = 5;
     GemmKey gemm = 6;
     CudaConvPlanKey cuda_conv_plan = 15;
-    stream_executor.dnn.AlgorithmProto algorithm = 16;
+    stream_etwitterecutor.dnn.AlgorithmProto algorithm = 16;
   }
 
-  // Next ID: 17
+  // Netwittert ID: 17
 }
 
 message AutotuningLog {
@@ -97,10 +97,10 @@ message AutotuningLog {
   CudnnVersion cudnn_version = 3;
   ComputeCapability compute_capability = 4;
 
-  // stream_executor::DeviceDescription::pci_bus_id.
+  // stream_etwitterecutor::DeviceDescription::pci_bus_id.
   string device_pci_bus_id = 5;
 
   string blas_version = 6;
 
-  // Next ID: 7
+  // Netwittert ID: 7
 }

@@ -9,7 +9,7 @@ import com.twitter.frigate.common.history.RecItems
 import com.twitter.frigate.common.predicate.FatiguePredicate.build
 import com.twitter.frigate.common.predicate.FatiguePredicate.productLaunchTypeRecTypesOnlyFilter
 import com.twitter.frigate.common.predicate.FatiguePredicate.recOnlyFilter
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
+import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContetwittert
 import com.twitter.frigate.common.store.interests.SemanticCoreEntityId
 import com.twitter.frigate.common.util.IbisAppPushDeviceSettingsUtil
 import com.twitter.frigate.magic_events.thriftscala.CreatorFanoutType
@@ -56,7 +56,7 @@ object MagicFanoutPredicatesForCandidate {
               candidate.target.params(PushFeatureSwitchParams.MagicFanoutRankErgThresholdNonHeavy)
             }
           MagicFanoutPredicatesUtil
-            .checkIfValidErgScEntityReasonExists(
+            .checkIfValidErgScEntityReasonEtwitterists(
               candidate.effectiveMagicEventsReasons,
               rankThreshold
             )
@@ -78,8 +78,8 @@ object MagicFanoutPredicatesForCandidate {
           .recTypeSetOnly(
             notificationDisplayLocation = NotificationDisplayLocation.PushToMobileDevice,
             recTypes = Set(CommonRecommendationType.MagicFanoutNewsEvent),
-            maxInInterval =
-              candidate.target.params(PushFeatureSwitchParams.MFMaxNumberOfPushesInInterval),
+            matwitterInInterval =
+              candidate.target.params(PushFeatureSwitchParams.MFMatwitterNumberOfPushesInInterval),
             interval = candidate.target.params(PushFeatureSwitchParams.MFPushIntervalInHours),
             minInterval = candidate.target.params(PushFeatureSwitchParams.MFMinIntervalFatigue)
           )
@@ -161,13 +161,13 @@ object MagicFanoutPredicatesForCandidate {
   /**
    * Bypass predicate if high priority push
    */
-  def highPriorityNewsEventExceptedPredicate(
+  def highPriorityNewsEventEtwitterceptedPredicate(
     predicate: NamedPredicate[MagicFanoutNewsEventPushCandidate]
   )(
     implicit config: Config
   ): NamedPredicate[MagicFanoutNewsEventPushCandidate] = {
-    PredicatesForCandidate.exceptedPredicate(
-      name = "high_priority_excepted_" + predicate.name,
+    PredicatesForCandidate.etwitterceptedPredicate(
+      name = "high_priority_etwittercepted_" + predicate.name,
       fn = MagicFanoutPredicatesUtil.checkIfHighPriorityNewsEventForCandidate,
       predicate
     )(config.statsReceiver)
@@ -176,13 +176,13 @@ object MagicFanoutPredicatesForCandidate {
   /**
    * Bypass predicate if high priority push
    */
-  def highPriorityEventExceptedPredicate(
+  def highPriorityEventEtwitterceptedPredicate(
     predicate: NamedPredicate[MagicFanoutEventPushCandidate]
   )(
     implicit config: Config
   ): NamedPredicate[MagicFanoutEventPushCandidate] = {
-    PredicatesForCandidate.exceptedPredicate(
-      name = "high_priority_excepted_" + predicate.name,
+    PredicatesForCandidate.etwitterceptedPredicate(
+      name = "high_priority_etwittercepted_" + predicate.name,
       fn = MagicFanoutPredicatesUtil.checkIfHighPriorityEventForCandidate,
       predicate
     )(config.statsReceiver)
@@ -198,7 +198,7 @@ object MagicFanoutPredicatesForCandidate {
       .fromAsync { candidate: MagicFanoutEventPushCandidate =>
         candidate.target.isHeavyUserState.map { isHeavyUser =>
           val simClusterEmbeddings = candidate.newsForYouMetadata.flatMap(
-            _.eventContextScribe.flatMap(_.simClustersEmbeddings))
+            _.eventContetwittertScribe.flatMap(_.simClustersEmbeddings))
           val TopKSimClustersCount = 50
           val eventSimClusterVectorOpt: Option[MagicFanoutPredicatesUtil.SimClusterScores] =
             MagicFanoutPredicatesUtil.getEventSimClusterVector(
@@ -263,7 +263,7 @@ object MagicFanoutPredicatesForCandidate {
           userStore.get(candidate.target.targetId).map { userOpt =>
             val isGeoAllowed = userOpt
               .flatMap(_.account)
-              .exists(_.allowLocationHistoryPersonalization)
+              .etwitterists(_.allowLocationHistoryPersonalization)
             isGeoAllowed
           }
         } else {
@@ -279,7 +279,7 @@ object MagicFanoutPredicatesForCandidate {
    */
   def magicFanoutTopicFollowsTargetingPredicate(
     implicit stats: StatsReceiver,
-    interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests]
+    interestsLookupStore: ReadableStore[InterestsLookupRequestWithContetwittert, UserInterests]
   ): NamedPredicate[MagicFanoutEventHydratedCandidate] = {
     val name = "magicfanout_topic_follows_targeting"
     val scopedStatsReceiver = stats.scope(s"predicate_$name")
@@ -292,7 +292,7 @@ object MagicFanoutPredicatesForCandidate {
   }
 
   /** Requires the magicfanout candidate to have a UserID reason which ranks below the follow
-   * rank threshold. If no UserID target exists the candidate is dropped. */
+   * rank threshold. If no UserID target etwitterists the candidate is dropped. */
   def followRankThreshold(
     threshold: Param[Int]
   )(
@@ -301,10 +301,10 @@ object MagicFanoutPredicatesForCandidate {
     val name = "follow_rank_threshold"
     Predicate
       .from[PushCandidate with MagicFanoutCandidate] { c =>
-        c.candidateMagicEventsReasons.exists { fanoutReason =>
+        c.candidateMagicEventsReasons.etwitterists { fanoutReason =>
           fanoutReason.reason match {
             case TargetID.UserID(_) =>
-              fanoutReason.rank.exists { rank =>
+              fanoutReason.rank.etwitterists { rank =>
                 rank <= c.target.params(threshold)
               }
             case _ => false
@@ -341,7 +341,7 @@ object MagicFanoutPredicatesForCandidate {
     Predicate
       .fromAsync[PushCandidate with MagicFanoutEventPushCandidate] { candidate =>
         val candidateFrigateNotif = candidate.frigateNotification.magicFanoutEventNotification
-        val isEscherbirdEvent = candidateFrigateNotif.exists(_.isEscherbirdEvent.contains(true))
+        val isEscherbirdEvent = candidateFrigateNotif.etwitterists(_.isEscherbirdEvent.contains(true))
         scopedStatsReceiver.counter(s"with_escherbird_flag_$isEscherbirdEvent").incr()
 
         if (isEscherbirdEvent) {
@@ -369,7 +369,7 @@ object MagicFanoutPredicatesForCandidate {
   }
 
   /**
-   *  Checks if the user has custom targeting enabled.If so, bucket the user in experiment. This custom targeting refers to adding
+   *  Checks if the user has custom targeting enabled.If so, bucket the user in etwitterperiment. This custom targeting refers to adding
    *  tweet authors as targets in the eventfanout service.
    * @param stats [StatsReceiver]
    * @return NamedPredicate[PushCandidate with MagicFanoutEventPushCandidate]
@@ -382,7 +382,7 @@ object MagicFanoutPredicatesForCandidate {
 
     Predicate
       .from[PushCandidate with MagicFanoutEventPushCandidate] { candidate =>
-        candidate.candidateMagicEventsReasons.exists { fanoutReason =>
+        candidate.candidateMagicEventsReasons.etwitterists { fanoutReason =>
           fanoutReason.reason match {
             case userIdReason: TargetID.UserID =>
               if (userIdReason.userID.hasCustomTargeting.contains(true)) {
@@ -407,12 +407,12 @@ object MagicFanoutPredicatesForCandidate {
     Predicate
       .fromAsync { candidate: PushCandidate with MagicFanoutProductLaunchCandidate =>
         val target = candidate.target
-        val (interval, maxInInterval, minInterval) = {
+        val (interval, matwitterInInterval, minInterval) = {
           candidate.productLaunchType match {
             case ProductType.BlueVerified =>
               (
                 target.params(PushFeatureSwitchParams.ProductLaunchPushIntervalInHours),
-                target.params(PushFeatureSwitchParams.ProductLaunchMaxNumberOfPushesInInterval),
+                target.params(PushFeatureSwitchParams.ProductLaunchMatwitterNumberOfPushesInInterval),
                 target.params(PushFeatureSwitchParams.ProductLaunchMinIntervalFatigue))
             case _ =>
               (Duration.fromDays(1), 0, Duration.Zero)
@@ -420,7 +420,7 @@ object MagicFanoutPredicatesForCandidate {
         }
         build(
           interval = interval,
-          maxInInterval = maxInInterval,
+          matwitterInInterval = matwitterInInterval,
           minInterval = minInterval,
           filterHistory = productLaunchTypeRecTypesOnlyFilter(
             Set(CommonRecommendationType.MagicFanoutProductLaunch),
@@ -492,18 +492,18 @@ object MagicFanoutPredicatesForCandidate {
     Predicate
       .fromAsync { candidate: PushCandidate with MagicFanoutCreatorEventCandidate =>
         val target = candidate.target
-        val (interval, maxInInterval, minInterval) = {
+        val (interval, matwitterInInterval, minInterval) = {
           candidate.creatorFanoutType match {
             case CreatorFanoutType.UserSubscription =>
               (
                 target.params(PushFeatureSwitchParams.CreatorSubscriptionPushIntervalInHours),
                 target.params(
-                  PushFeatureSwitchParams.CreatorSubscriptionPushMaxNumberOfPushesInInterval),
+                  PushFeatureSwitchParams.CreatorSubscriptionPushMatwitterNumberOfPushesInInterval),
                 target.params(PushFeatureSwitchParams.CreatorSubscriptionPushhMinIntervalFatigue))
             case CreatorFanoutType.NewCreator =>
               (
                 target.params(PushFeatureSwitchParams.NewCreatorPushIntervalInHours),
-                target.params(PushFeatureSwitchParams.NewCreatorPushMaxNumberOfPushesInInterval),
+                target.params(PushFeatureSwitchParams.NewCreatorPushMatwitterNumberOfPushesInInterval),
                 target.params(PushFeatureSwitchParams.NewCreatorPushMinIntervalFatigue))
             case _ =>
               (Duration.fromDays(1), 0, Duration.Zero)
@@ -511,7 +511,7 @@ object MagicFanoutPredicatesForCandidate {
         }
         build(
           interval = interval,
-          maxInInterval = maxInInterval,
+          matwitterInInterval = matwitterInInterval,
           minInterval = minInterval,
           filterHistory = recOnlyFilter(candidate.commonRecType),
           notificationDisplayLocation = NotificationDisplayLocation.PushToMobileDevice

@@ -5,9 +5,9 @@ import com.google.inject.Provides
 import com.twitter.inject.TwitterModule
 import com.twitter.inject.annotations.Flag
 import com.twitter.simclustersann.common.FlagNames.RateLimiterQPS
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
-object RateLimiterModule extends TwitterModule {
+object RateLimiterModule etwittertends TwitterModule {
   flag[Int](
     name = RateLimiterQPS,
     default = 1000,

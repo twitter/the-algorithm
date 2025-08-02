@@ -12,7 +12,7 @@ import com.twitter.tweetypie.ThriftTweetService
 import com.twitter.tweetypie.Tweet
 import com.twitter.tweetypie.backends.Gizmoduck
 import com.twitter.tweetypie.federated.columns._
-import com.twitter.tweetypie.federated.context.GetRequestContext
+import com.twitter.tweetypie.federated.contetwittert.GetRequestContetwittert
 import com.twitter.tweetypie.federated.prefetcheddata.PrefetchedDataRepositoryBuilder
 import com.twitter.tweetypie.federated.promotedcontent.TweetPromotedContentLogger
 import com.twitter.tweetypie.repository.UnmentionInfoRepository
@@ -32,7 +32,7 @@ object StratoCatalogBuilder {
   ): Activity[Catalog[StratoFed.Column]] = {
     val log = Logger(getClass)
 
-    val getRequestContext = new GetRequestContext()
+    val getRequestContetwittert = new GetRequestContetwittert()
     val prefetchedDataRepository =
       PrefetchedDataRepositoryBuilder(getUserResultsById, statsReceiver)
     val unmentionInfoRepository = UnmentionInfoRepository(stratoClient)
@@ -49,18 +49,18 @@ object StratoCatalogBuilder {
     val columns: Seq[StratoFed.Column] = Seq(
       new UnretweetColumn(
         thriftTweetService.unretweet,
-        getRequestContext,
+        getRequestContetwittert,
       ),
       new CreateRetweetColumn(
         thriftTweetService.postRetweet,
-        getRequestContext,
+        getRequestContetwittert,
         prefetchedDataRepository,
         tweetPromotedContentLogger,
         statsReceiver
       ),
       new CreateTweetColumn(
         thriftTweetService.postTweet,
-        getRequestContext,
+        getRequestContetwittert,
         prefetchedDataRepository,
         unmentionInfoRepository,
         vibeRepository,
@@ -70,7 +70,7 @@ object StratoCatalogBuilder {
       ),
       new DeleteTweetColumn(
         thriftTweetService.deleteTweets,
-        getRequestContext,
+        getRequestContetwittert,
       ),
       new GetTweetFieldsColumn(thriftTweetService.getTweetFields, statsReceiver),
       new GetStoredTweetsColumn(thriftTweetService.getStoredTweets),

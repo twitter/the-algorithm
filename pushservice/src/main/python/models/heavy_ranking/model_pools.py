@@ -28,7 +28,7 @@ class MagicRecsClemNet(Graph):
         model = ClemNet(params=self.params.model.architecture)
         eng_logits = model(inputs=inputs, training=training)
 
-      return tf.concat([oonc_logit, eng_logits], axis=1)
+      return tf.concat([oonc_logit, eng_logits], atwitteris=1)
 
 
 ALL_MODELS = {ModelTypeEnum.clemnet: MagicRecsClemNet}

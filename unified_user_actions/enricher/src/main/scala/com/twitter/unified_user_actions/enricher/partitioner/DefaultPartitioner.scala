@@ -13,7 +13,7 @@ object DefaultPartitioner {
   val NullKey: Option[EnrichmentKey] = None
 }
 
-class DefaultPartitioner extends Partitioner {
+class DefaultPartitioner etwittertends Partitioner {
   override def repartition(
     instruction: EnrichmentInstruction,
     envelop: EnrichmentEnvelop

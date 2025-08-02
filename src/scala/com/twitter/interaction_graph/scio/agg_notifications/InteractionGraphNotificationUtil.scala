@@ -9,15 +9,15 @@ object InteractionGraphNotificationUtil {
 
   val PUSH_OPEN_ACTIONS = Set("open", "background_open")
   val NTAB_CLICK_ACTIONS = Set("navigate", "click")
-  val STATUS_ID_REGEX = "^twitter:\\/\\/tweet\\?status_id=([0-9]+).*".r
-  val TWEET_ID_REGEX = "^twitter:\\/\\/tweet.id=([0-9]+).*".r
+  val STATUS_ID_REGEtwitter = "^twitter:\\/\\/tweet\\?status_id=([0-9]+).*".r
+  val TWEET_ID_REGEtwitter = "^twitter:\\/\\/tweet.id=([0-9]+).*".r
 
-  def extractTweetIdFromUrl(url: String): Option[Long] = url match {
-    case STATUS_ID_REGEX(statusId) =>
-      ScioMetrics.counter("regex matching", "status_id=").inc()
+  def etwittertractTweetIdFromUrl(url: String): Option[Long] = url match {
+    case STATUS_ID_REGEtwitter(statusId) =>
+      ScioMetrics.counter("regetwitter matching", "status_id=").inc()
       Some(statusId.toLong)
-    case TWEET_ID_REGEX(tweetId) =>
-      ScioMetrics.counter("regex matching", "tweet?id=").inc()
+    case TWEET_ID_REGEtwitter(tweetId) =>
+      ScioMetrics.counter("regetwitter matching", "tweet?id=").inc()
       Some(tweetId.toLong)
     case _ => None
   }
@@ -32,7 +32,7 @@ object InteractionGraphNotificationUtil {
           (for {
             details <- e.eventDetails
             url <- details.url
-            tweetId <- extractTweetIdFromUrl(url)
+            tweetId <- etwittertractTweetIdFromUrl(url)
           } yield {
             ScioMetrics.counter("event type", "push open").inc()
             (tweetId, FeatureName.NumPushOpens)

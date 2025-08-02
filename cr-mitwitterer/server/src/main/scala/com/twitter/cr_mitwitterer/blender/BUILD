@@ -1,0 +1,20 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/com/twitter/storehaus:core",
+        "3rdparty/jvm/javatwitter/inject:javatwitter.inject",
+        "3rdparty/src/jvm/com/twitter/storehaus:core",
+        "configapi/configapi-core",
+        "content-recommender/thrift/src/main/thrift:thrift-scala",
+        "cr-mitwitterer/server/src/main/scala/com/twitter/cr_mitwitterer/model",
+        "cr-mitwitterer/server/src/main/scala/com/twitter/cr_mitwitterer/param",
+        "cr-mitwitterer/server/src/main/scala/com/twitter/cr_mitwitterer/util",
+        "cr-mitwitterer/thrift/src/main/thrift:thrift-scala",
+        "snowflake/src/main/scala/com/twitter/snowflake/id",
+        "src/scala/com/twitter/simclusters_v2/common",
+        "src/thrift/com/twitter/core_workflows/user_model:user_model-scala",
+    ],
+)

@@ -4,9 +4,9 @@ import com.google.inject.Provides
 import com.twitter.finagle.thrift.ClientId
 import com.twitter.inject.TwitterModule
 import com.twitter.inject.annotations.Flag
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
-object ClientIdModule extends TwitterModule {
+object ClientIdModule etwittertends TwitterModule {
   private final val flagName = "thrift.client.id"
 
   flag[String](

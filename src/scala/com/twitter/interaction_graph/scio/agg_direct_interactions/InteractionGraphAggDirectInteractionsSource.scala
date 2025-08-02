@@ -1,10 +1,10 @@
 package com.twitter.interaction_graph.scio.agg_direct_interactions
 
-import com.spotify.scio.ScioContext
+import com.spotify.scio.ScioContetwittert
 import com.spotify.scio.values.SCollection
 import com.twitter.beam.job.ServiceIdentifierOptions
 import com.twitter.cde.scio.dal_read.SourceUtil
-import com.twitter.timelineservice.thriftscala.ContextualizedFavoriteEvent
+import com.twitter.timelineservice.thriftscala.ContetwittertualizedFavoriteEvent
 import com.twitter.twadoop.user.gen.thriftscala.CombinedUser
 import com.twitter.tweetsource.common.thriftscala.UnhydratedFlatTweet
 import com.twitter.tweetypie.thriftscala.TweetMediaTagEvent
@@ -18,13 +18,13 @@ import tweetsource.common.UnhydratedFlatScalaDataset
 case class InteractionGraphAggDirectInteractionsSource(
   pipelineOptions: InteractionGraphAggDirectInteractionsOption
 )(
-  implicit sc: ScioContext) {
+  implicit sc: ScioContetwittert) {
   val dalEnvironment: String = pipelineOptions
     .as(classOf[ServiceIdentifierOptions])
     .getEnvironment()
 
-  def readFavorites(dateInterval: Interval): SCollection[ContextualizedFavoriteEvent] =
-    SourceUtil.readDALDataset[ContextualizedFavoriteEvent](
+  def readFavorites(dateInterval: Interval): SCollection[ContetwittertualizedFavoriteEvent] =
+    SourceUtil.readDALDataset[ContetwittertualizedFavoriteEvent](
       dataset = TimelineServiceFavoritesScalaDataset,
       interval = dateInterval,
       dalEnvironment = dalEnvironment

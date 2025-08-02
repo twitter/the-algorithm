@@ -31,7 +31,7 @@ import com.twitter.tsp.thriftscala.TspTweetInfo
 import com.twitter.util.JavaTimer
 import com.twitter.util.Timer
 
-object TweetInfoStoreModule extends TwitterModule {
+object TweetInfoStoreModule etwittertends TwitterModule {
   override def modules: Seq[Module] = Seq(UnifiedCacheClient)
   implicit val timer: Timer = new JavaTimer(true)
 
@@ -51,7 +51,7 @@ object TweetInfoStoreModule extends TwitterModule {
         Some(
           TweetHealthModelStoreConfig(
             enablePBlock = true,
-            enableToxicity = true,
+            enableTotwittericity = true,
             enablePSpammy = true,
             enablePReported = true,
             enableSpammyTweetContent = true,
@@ -117,10 +117,10 @@ object TweetInfoStoreModule extends TwitterModule {
       val inMemoryStore = ObservedCachedReadableStore.from(
         memcachedStore,
         ttl = 15.minutes,
-        maxKeys = 8388607, // Check TweetInfo definition. size~92b. Around 736 MB
+        matwitterKeys = 8388607, // Check TweetInfo definition. size~92b. Around 736 MB
         windowSize = 10000L,
         cacheName = "tweet_info_cache",
-        maxMultiGetSize = 20
+        matwitterMultiGetSize = 20
       )(statsReceiver.scope("inMemoryCachedTweetInfoStore"))
 
       inMemoryStore

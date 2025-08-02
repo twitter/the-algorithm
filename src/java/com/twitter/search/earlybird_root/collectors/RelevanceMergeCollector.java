@@ -6,14 +6,14 @@ import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
 
 /**
- * RelevanceMergeCollector class extends (@link RecencyMergeCollector} to do k-way merge of
+ * RelevanceMergeCollector class etwittertends (@link RecencyMergeCollector} to do k-way merge of
  * earlybird responses, but sorted by relevance score.
  *
  * Note that this is a superset of functionality found in
  * {@link com.twitter.search.blender.services.earlybird.relevance.RelevanceCollector}
  * If you make changes here, evaluate if they should be made in RelevanceCollector as well.
  */
-public class RelevanceMergeCollector extends RecencyMergeCollector {
+public class RelevanceMergeCollector etwittertends RecencyMergeCollector {
 
   public RelevanceMergeCollector(int numResponses) {
     super(numResponses, ResultComparators.SCORE_COMPARATOR);

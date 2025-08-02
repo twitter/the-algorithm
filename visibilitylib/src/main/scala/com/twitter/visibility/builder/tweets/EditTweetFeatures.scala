@@ -40,7 +40,7 @@ class EditTweetFeatures(
         ec match {
           case eci: EditControl.Initial => eci.initial.editTweetIds.last != tweet.id
           case ece: EditControl.Edit =>
-            ece.edit.editControlInitial.exists(_.editTweetIds.last != tweet.id)
+            ece.edit.editControlInitial.etwitterists(_.editTweetIds.last != tweet.id)
           case _ => false
         }
     }

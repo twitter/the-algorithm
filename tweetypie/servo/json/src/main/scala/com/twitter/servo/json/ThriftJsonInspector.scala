@@ -1,8 +1,8 @@
 package com.twitter.servo.json
 
-import com.fasterxml.jackson.core.JsonParser
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fastertwitterml.jackson.core.JsonParser
+import com.fastertwitterml.jackson.databind.JsonNode
+import com.fastertwitterml.jackson.databind.ObjectMapper
 import com.twitter.scrooge.ThriftStruct
 import com.twitter.scrooge.ThriftStructCodec
 import com.twitter.scrooge.ThriftStructSerializer
@@ -14,8 +14,8 @@ import org.apache.thrift.protocol.TProtocolFactory
 import org.apache.thrift.protocol.TSimpleJSONProtocol
 import org.apache.thrift.transport.TTransport
 import scala.collection.JavaConverters._
-import scala.language.experimental.macros
-import scala.reflect.macros.blackbox.Context
+import scala.language.etwitterperimental.macros
+import scala.reflect.macros.blackbotwitter.Contetwittert
 
 object ThriftJsonInspector {
   private val mapper = new ObjectMapper()
@@ -27,7 +27,7 @@ object ThriftJsonInspector {
       def codec = _codec
 
       def protocolFactory =
-        // Identical to TSimpleJSONProtocol.Factory except the TProtocol
+        // Identical to TSimpleJSONProtocol.Factory etwittercept the TProtocol
         // returned serializes Thrift pass-through fields with the name
         // "(TField.id)" instead of empty string.
         new TProtocolFactory {
@@ -76,7 +76,7 @@ class ThriftJsonInspector[T <: ThriftStruct](codec: ThriftStructCodec[T]) {
       _.split("/").foldLeft(jsonNode)(_.findPath(_)) match {
         case node if node.isMissingNode => "[invalid-path]"
         case node if node.isContainerNode => node.toString
-        case node => node.asText
+        case node => node.asTetwittert
       }
     }
   }
@@ -103,17 +103,17 @@ class ThriftJsonInspector[T <: ThriftStruct](codec: ThriftStructCodec[T]) {
    * representations of `a` and `b`. If the inputs have the same JSON
    * representation, the result will be the empty string.
    */
-  def diff(a: T, b: T, contextLines: Int = 1): String = {
+  def diff(a: T, b: T, contetwittertLines: Int = 1): String = {
     val linesA = prettyPrint(a).linesIterator.toList.asJava
     val linesB = prettyPrint(b).linesIterator.toList.asJava
     val patch = DiffUtils.diff(linesA, linesB)
-    DiffUtils.generateUnifiedDiff("a", "b", linesA, patch, contextLines).asScala.mkString("\n")
+    DiffUtils.generateUnifiedDiff("a", "b", linesA, patch, contetwittertLines).asScala.mkString("\n")
   }
 }
 
-object syntax {
+object syntatwitter {
   private[this] object CompanionObjectLoader {
-    def load[T](c: Context)(implicit t: c.universe.WeakTypeTag[T]) = {
+    def load[T](c: Contetwittert)(implicit t: c.universe.WeakTypeTag[T]) = {
       val tSym = t.tpe.typeSymbol
       val companion = tSym.asClass.companion
       if (companion == c.universe.NoSymbol) {
@@ -132,11 +132,11 @@ object syntax {
   implicit def thriftStructCodec[T <: ThriftStruct]: ThriftStructCodec[T] =
     macro CompanionObjectLoader.load[T]
 
-  implicit class ThriftJsonSyntax[T <: ThriftStruct](t: T)(implicit codec: ThriftStructCodec[T]) {
+  implicit class ThriftJsonSyntatwitter[T <: ThriftStruct](t: T)(implicit codec: ThriftStructCodec[T]) {
     private[this] def inspector = ThriftJsonInspector(codec)
     def toSimpleJson: JsonNode = inspector.toSimpleJson(t)
     def prettyPrint: String = inspector.prettyPrint(t)
-    def diff(other: T, contextLines: Int = 1): String =
-      inspector.diff(t, other, contextLines)
+    def diff(other: T, contetwittertLines: Int = 1): String =
+      inspector.diff(t, other, contetwittertLines)
   }
 }

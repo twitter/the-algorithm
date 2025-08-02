@@ -29,14 +29,14 @@ abstract class BaseUserModificationEvent(actionType: ActionType) {
     Item.ProfileInfo(
       ProfileInfo(
         actionProfileId = input.userId
-          .getOrElse(throw new IllegalArgumentException("target user_id is missing"))
+          .getOrElse(throw new IllegalArgumentEtwitterception("target user_id is missing"))
       )
     )
 
   protected def getEventMetadata(input: UserModification): EventMetadata =
     EventMetadata(
       sourceTimestampMs = input.updatedAtMsec
-        .getOrElse(throw new IllegalArgumentException("timestamp is required")),
+        .getOrElse(throw new IllegalArgumentEtwitterception("timestamp is required")),
       receivedTimestampMs = AdapterUtils.currentTimestampMs,
       sourceLineage = SourceLineage.ServerGizmoduckUserModificationEvents,
     )
@@ -45,14 +45,14 @@ abstract class BaseUserModificationEvent(actionType: ActionType) {
 /**
  * When there is a new user creation event in Gizmoduck
  */
-object UserCreate extends BaseUserModificationEvent(ActionType.ServerUserCreate) {
+object UserCreate etwittertends BaseUserModificationEvent(ActionType.ServerUserCreate) {
   override protected def getItem(input: UserModification): Item =
     Item.ProfileInfo(
       ProfileInfo(
         actionProfileId = input.create
           .map { user =>
             user.id
-          }.getOrElse(throw new IllegalArgumentException("target user_id is missing")),
+          }.getOrElse(throw new IllegalArgumentEtwitterception("target user_id is missing")),
         name = input.create.flatMap { user =>
           user.profile.map(_.name)
         },
@@ -70,18 +70,18 @@ object UserCreate extends BaseUserModificationEvent(ActionType.ServerUserCreate)
       sourceTimestampMs = input.create
         .map { user =>
           user.updatedAtMsec
-        }.getOrElse(throw new IllegalArgumentException("timestamp is required")),
+        }.getOrElse(throw new IllegalArgumentEtwitterception("timestamp is required")),
       receivedTimestampMs = AdapterUtils.currentTimestampMs,
       sourceLineage = SourceLineage.ServerGizmoduckUserModificationEvents,
     )
 }
 
-object UserUpdate extends BaseUserModificationEvent(ActionType.ServerUserUpdate) {
+object UserUpdate etwittertends BaseUserModificationEvent(ActionType.ServerUserUpdate) {
   override protected def getItem(input: UserModification): Item =
     Item.ProfileInfo(
       ProfileInfo(
         actionProfileId =
-          input.userId.getOrElse(throw new IllegalArgumentException("userId is required")),
+          input.userId.getOrElse(throw new IllegalArgumentEtwitterception("userId is required")),
         profileActionInfo = Some(
           ProfileActionInfo.ServerUserUpdate(
             ServerUserUpdate(updates = input.update.getOrElse(Nil), success = input.success)))

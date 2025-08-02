@@ -6,7 +6,7 @@ import com.twitter.unified_user_actions.thriftscala.Item
 import com.twitter.unified_user_actions.thriftscala.ProfileInfo
 
 abstract class ProfileAdsCallbackEngagement(actionType: ActionType)
-    extends BaseAdsCallbackEngagement(actionType) {
+    etwittertends BaseAdsCallbackEngagement(actionType) {
 
   override protected def getItem(input: SpendServerEvent): Option[Item] = {
     input.engagementEvent.flatMap { e =>

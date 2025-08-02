@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow.serving;
 option cc_enable_arenas = true;
@@ -7,6 +7,6 @@ message LogCollectorConfig {
   // Identifies the type of the LogCollector we will use to collect these logs.
   string type = 1;
 
-  // The prefix to use for the filenames of the logs.
-  string filename_prefix = 2;
+  // The prefitwitter to use for the filenames of the logs.
+  string filename_prefitwitter = 2;
 }

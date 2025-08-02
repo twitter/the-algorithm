@@ -8,7 +8,7 @@ import com.twitter.util.Time
 
 case class TopKClustersForEntityReadableStore(
   underlyingStore: ReadableStore[EntityWithVersion, TopKClustersWithScores])
-    extends ReadableStore[EntityWithVersion, TopKClustersWithScores] {
+    etwittertends ReadableStore[EntityWithVersion, TopKClustersWithScores] {
 
   override def multiGet[K1 <: EntityWithVersion](
     ks: Set[K1]

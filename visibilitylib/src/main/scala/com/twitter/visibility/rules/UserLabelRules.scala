@@ -14,157 +14,157 @@ import com.twitter.visibility.rules.Reason._
 import com.twitter.visibility.rules.RuleActionSourceBuilder.UserSafetyLabelSourceBuilder
 
 object AbusiveRule
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       Abusive
     )
 
 object DoNotAmplifyUserRule
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       DoNotAmplify
     )
 
 object AbusiveHighRecallRule
-    extends AuthorLabelAndNonFollowerViewerRule(
+    etwittertends AuthorLabelAndNonFollowerViewerRule(
       Drop(Unspecified),
       AbusiveHighRecall
     )
 
 object CompromisedRule
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       Compromised
     )
 
 object DuplicateContentRule
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       DuplicateContent
     )
 
 object EngagementSpammerRule
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       EngagementSpammer
     )
 
 object EngagementSpammerHighRecallRule
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       EngagementSpammerHighRecall
     )
 
 object LiveLowQualityRule
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       LiveLowQuality
     )
 
 object LowQualityRule
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       LowQuality
     )
 
 object LowQualityHighRecallRule
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       LowQualityHighRecall
     )
 
 object NotGraduatedRule
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       NotGraduated
     ) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNotGraduatedDropRuleParam)
   override def holdbacks: Seq[RuleParam[Boolean]] = Seq(
-    NotGraduatedUserLabelRuleHoldbackExperimentParam)
+    NotGraduatedUserLabelRuleHoldbackEtwitterperimentParam)
 
 }
 
 abstract class BaseNsfwHighPrecisionRule()
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       UserLabelValue.NsfwHighPrecision
     )
 object NsfwHighPrecisionRule
-    extends BaseNsfwHighPrecisionRule()
+    etwittertends BaseNsfwHighPrecisionRule()
 
 object NsfwHighRecallRule
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       NsfwHighRecall
     )
 
 abstract class BaseNsfwNearPerfectAuthorRule()
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       NsfwNearPerfect
     )
-object NsfwNearPerfectAuthorRule extends BaseNsfwNearPerfectAuthorRule()
+object NsfwNearPerfectAuthorRule etwittertends BaseNsfwNearPerfectAuthorRule()
 
 object NsfwAvatarImageRule
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       NsfwAvatarImage
     )
 
 object NsfwBannerImageRule
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       NsfwBannerImage
     )
 
 object NsfwSensitiveRule
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       NsfwSensitive
     )
 
 object ReadOnlyRule
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       ReadOnly
     )
 
 object RecommendationsBlacklistRule
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       RecommendationsBlacklist
     )
 
 sealed abstract class BaseSpamHighRecallRule(val holdback: RuleParam[Boolean])
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       SpamHighRecall
     ) {
   override val holdbacks: Seq[RuleParam[Boolean]] = Seq(holdback)
 }
 
-object SpamHighRecallRule extends BaseSpamHighRecallRule(RuleParams.False)
+object SpamHighRecallRule etwittertends BaseSpamHighRecallRule(RuleParams.False)
 
-object DeciderableSpamHighRecallRule extends BaseSpamHighRecallRule(RuleParams.False)
+object DeciderableSpamHighRecallRule etwittertends BaseSpamHighRecallRule(RuleParams.False)
 
 object SearchBlacklistRule
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       SearchBlacklist
     )
 
-object SearchNsfwTextRule
-    extends WhenAuthorUserLabelPresentRule(
+object SearchNsfwTetwittertRule
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
-      NsfwText
+      NsfwTetwittert
     ) {
 
   override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableNsfwTextSectioningRuleParam)
+    Seq(EnableNsfwTetwittertSectioningRuleParam)
 }
 
 object SpammyFollowerRule
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       Drop(Unspecified),
       And(
         Or(
@@ -194,7 +194,7 @@ object SpammyFollowerRule
     )
 
 abstract class NonFollowerWithUqfUserLabelDropRule(labelValue: UserLabelValue)
-    extends ConditionWithUserLabelRule(
+    etwittertends ConditionWithUserLabelRule(
       Drop(Unspecified),
       And(
         Or(
@@ -206,43 +206,43 @@ abstract class NonFollowerWithUqfUserLabelDropRule(labelValue: UserLabelValue)
     )
 
 object EngagementSpammerNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
+    etwittertends NonFollowerWithUqfUserLabelDropRule(
       EngagementSpammer
     )
 
 object EngagementSpammerHighRecallNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
+    etwittertends NonFollowerWithUqfUserLabelDropRule(
       EngagementSpammerHighRecall
     )
 
 object SpamHighRecallNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
+    etwittertends NonFollowerWithUqfUserLabelDropRule(
       SpamHighRecall
     )
 
 object CompromisedNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
+    etwittertends NonFollowerWithUqfUserLabelDropRule(
       Compromised
     )
 
 object ReadOnlyNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
+    etwittertends NonFollowerWithUqfUserLabelDropRule(
       ReadOnly
     )
 
 object LowQualityNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
+    etwittertends NonFollowerWithUqfUserLabelDropRule(
       LowQuality
     )
 
 object TsViolationRule
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       TsViolation
     )
 
 object DownrankSpamReplyAllViewersRule
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       DownrankSpamReply
     ) {
@@ -251,7 +251,7 @@ object DownrankSpamReplyAllViewersRule
 }
 
 object DownrankSpamReplyNonAuthorRule
-    extends WhenAuthorUserLabelPresentRule(
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       DownrankSpamReply
     ) {
@@ -260,31 +260,31 @@ object DownrankSpamReplyNonAuthorRule
 }
 
 object DownrankSpamReplyNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(DownrankSpamReply) {
+    etwittertends NonFollowerWithUqfUserLabelDropRule(DownrankSpamReply) {
   override def enabled: Seq[RuleParam[Boolean]] =
     Seq(EnableDownrankSpamReplySectioningRuleParam)
 }
 
-object NsfwTextAllUsersDropRule
-    extends WhenAuthorUserLabelPresentRule(
+object NsfwTetwittertAllUsersDropRule
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
-      NsfwText
+      NsfwTetwittert
     ) {
   override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableNsfwTextSectioningRuleParam)
+    Seq(EnableNsfwTetwittertSectioningRuleParam)
 }
 
-object NsfwTextNonAuthorDropRule
-    extends WhenAuthorUserLabelPresentRule(
+object NsfwTetwittertNonAuthorDropRule
+    etwittertends WhenAuthorUserLabelPresentRule(
       Drop(Unspecified),
       DownrankSpamReply
     ) {
   override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableNsfwTextSectioningRuleParam)
+    Seq(EnableNsfwTetwittertSectioningRuleParam)
 }
 
 abstract class DeciderableSpamHighRecallAuthorLabelRule(action: Action)
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       action,
       And(
         NonAuthorViewer,
@@ -293,7 +293,7 @@ abstract class DeciderableSpamHighRecallAuthorLabelRule(action: Action)
       )
     ) {
   override def preFilter(
-    evaluationContext: EvaluationContext,
+    evaluationContetwittert: EvaluationContetwittert,
     featureMap: Map[Feature[_], Any],
     abDecider: LoggingABDecider
   ): PreFilterResult = {
@@ -302,30 +302,30 @@ abstract class DeciderableSpamHighRecallAuthorLabelRule(action: Action)
 }
 
 object DeciderableSpamHighRecallAuthorLabelDropRule
-    extends DeciderableSpamHighRecallAuthorLabelRule(Drop(Unspecified))
+    etwittertends DeciderableSpamHighRecallAuthorLabelRule(Drop(Unspecified))
 
 object DeciderableSpamHighRecallAuthorLabelTombstoneRule
-    extends DeciderableSpamHighRecallAuthorLabelRule(Tombstone(Epitaph.Unavailable))
+    etwittertends DeciderableSpamHighRecallAuthorLabelRule(Tombstone(Epitaph.Unavailable))
 
 object DoNotAmplifyNonFollowerRule
-    extends AuthorLabelAndNonFollowerViewerRule(
+    etwittertends AuthorLabelAndNonFollowerViewerRule(
       Drop(Unspecified),
       DoNotAmplify
     )
 
 object NotGraduatedNonFollowerRule
-    extends AuthorLabelAndNonFollowerViewerRule(
+    etwittertends AuthorLabelAndNonFollowerViewerRule(
       Drop(Unspecified),
       NotGraduated
     ) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNotGraduatedDropRuleParam)
   override def holdbacks: Seq[RuleParam[Boolean]] = Seq(
-    NotGraduatedUserLabelRuleHoldbackExperimentParam)
+    NotGraduatedUserLabelRuleHoldbackEtwitterperimentParam)
 
 }
 
 object DoNotAmplifySectionUserRule
-    extends AuthorLabelWithNotInnerCircleOfFriendsRule(
+    etwittertends AuthorLabelWithNotInnerCircleOfFriendsRule(
       ConversationSectionAbusiveQuality,
       DoNotAmplify)
     with DoesLogVerdictDecidered {
@@ -336,7 +336,7 @@ object DoNotAmplifySectionUserRule
 
 
 object SpammyUserModelHighPrecisionDropTweetRule
-    extends AuthorLabelAndNonFollowerViewerRule(
+    etwittertends AuthorLabelAndNonFollowerViewerRule(
       Drop(Unspecified),
       SpammyUserModelHighPrecision,
     )
@@ -347,12 +347,12 @@ object SpammyUserModelHighPrecisionDropTweetRule
     DeciderKey.EnableSpammyTweetRuleVerdictLogging
 }
 
-object LikelyIvsLabelNonFollowerDropUserRule extends LikelyIvsLabelNonFollowerDropRule
+object LikelyIvsLabelNonFollowerDropUserRule etwittertends LikelyIvsLabelNonFollowerDropRule
 
-object SearchLikelyIvsLabelNonFollowerDropUserRule extends LikelyIvsLabelNonFollowerDropRule
+object SearchLikelyIvsLabelNonFollowerDropUserRule etwittertends LikelyIvsLabelNonFollowerDropRule
 
 object NsfwHighPrecisionUserLabelAvoidTweetRule
-    extends UserHasLabelRule(
+    etwittertends UserHasLabelRule(
       Avoid(),
       UserLabelValue.NsfwHighPrecision
     ) {

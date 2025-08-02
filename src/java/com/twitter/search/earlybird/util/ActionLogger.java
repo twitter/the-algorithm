@@ -16,7 +16,7 @@ public final class ActionLogger {
   /**
    * Run a function, logging a message at the start and end, and the time it took.
    */
-  public static <T> T call(String message, Callable<T> fn) throws Exception {
+  public static <T> T call(String message, Callable<T> fn) throws Etwitterception {
     LOG.info("Action starting: '{}'.", message);
     Stopwatch stopwatch = Stopwatch.createStarted();
     try {
@@ -32,7 +32,7 @@ public final class ActionLogger {
   /**
    * Run a function, logging a message at the start and end, and the time it took.
    */
-  public static void run(String message, CheckedRunnable fn) throws Exception {
+  public static void run(String message, CheckedRunnable fn) throws Etwitterception {
     call(message, () -> {
       fn.run();
       return null;
@@ -42,8 +42,8 @@ public final class ActionLogger {
   @FunctionalInterface
   public interface CheckedRunnable {
     /**
-     * A nullary function that throws checked exceptions.
+     * A nullary function that throws checked etwitterceptions.
      */
-    void run() throws Exception;
+    void run() throws Etwitterception;
   }
 }

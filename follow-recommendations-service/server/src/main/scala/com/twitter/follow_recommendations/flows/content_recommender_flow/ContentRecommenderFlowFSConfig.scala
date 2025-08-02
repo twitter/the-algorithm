@@ -5,11 +5,11 @@ import com.twitter.timelines.configapi.FSBoundedParam
 import com.twitter.timelines.configapi.FSName
 import com.twitter.timelines.configapi.Param
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
-class ContentRecommenderFlowFSConfig @Inject() () extends FeatureSwitchConfig {
+class ContentRecommenderFlowFSConfig @Inject() () etwittertends FeatureSwitchConfig {
   override val booleanFSParams: Seq[Param[Boolean] with FSName] =
     Seq(
       ContentRecommenderParams.IncludeActivityBasedCandidateSource,
@@ -21,7 +21,7 @@ class ContentRecommenderFlowFSConfig @Inject() () extends FeatureSwitchConfig {
       ContentRecommenderParams.EnableGizmoduckPredicate,
       ContentRecommenderParams.EnableInactivePredicate,
       ContentRecommenderParams.EnableInvalidTargetCandidateRelationshipPredicate,
-      ContentRecommenderParams.IncludeNewFollowingNewFollowingExpansionCandidateSource,
+      ContentRecommenderParams.IncludeNewFollowingNewFollowingEtwitterpansionCandidateSource,
       ContentRecommenderParams.IncludeMoreGeoBasedCandidateSource,
       ContentRecommenderParams.TargetEligibility,
       ContentRecommenderParams.GetFollowersFromSgs,
@@ -45,7 +45,7 @@ class ContentRecommenderFlowFSConfig @Inject() () extends FeatureSwitchConfig {
       ContentRecommenderFlowCandidateSourceWeightsParams.OfflineStrongTiePredictionSourceWeight,
       ContentRecommenderFlowCandidateSourceWeightsParams.TriangularLoopsSourceWeight,
       ContentRecommenderFlowCandidateSourceWeightsParams.UserUserGraphSourceWeight,
-      ContentRecommenderFlowCandidateSourceWeightsParams.NewFollowingNewFollowingExpansionSourceWeight,
+      ContentRecommenderFlowCandidateSourceWeightsParams.NewFollowingNewFollowingEtwitterpansionSourceWeight,
       ContentRecommenderFlowCandidateSourceWeightsParams.NewFollowingSimilarUserSourceWeight,
       ContentRecommenderFlowCandidateSourceWeightsParams.RecentEngagementSimilarUserSourceWeight,
       ContentRecommenderFlowCandidateSourceWeightsParams.RepeatedProfileVisitsSourceWeight,

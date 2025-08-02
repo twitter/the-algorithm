@@ -3,10 +3,10 @@ package com.twitter.search.earlybird_root.caching;
 import com.twitter.search.common.caching.filter.QueryCachePredicate;
 import com.twitter.search.common.decider.SearchDecider;
 import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
 
-public class RecencyQueryCachePredicate extends QueryCachePredicate<EarlybirdRequestContext> {
+public class RecencyQueryCachePredicate etwittertends QueryCachePredicate<EarlybirdRequestContetwittert> {
   private final SearchDecider decider;
   private final String recencyCacheEnabledDeciderKey;
 
@@ -16,7 +16,7 @@ public class RecencyQueryCachePredicate extends QueryCachePredicate<EarlybirdReq
   }
 
   @Override
-  public Boolean shouldQueryCache(EarlybirdRequestContext request) {
+  public Boolean shouldQueryCache(EarlybirdRequestContetwittert request) {
     return EarlybirdRequestType.RECENCY == request.getEarlybirdRequestType()
         && EarlybirdRequestUtil.isCachingAllowed(request.getRequest())
         && decider.isAvailable(recencyCacheEnabledDeciderKey);

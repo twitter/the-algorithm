@@ -89,7 +89,7 @@ case class TopicTweetsCosineSimilarityAggregateStore(
   representationScorerStore: ReadableStore[ThriftScoreId, ThriftScore]
 )(
   statsReceiver: StatsReceiver)
-    extends ReadableStore[(TopicId, TweetId, Seq[ScoreKey]), Map[ScoreKey, Double]] {
+    etwittertends ReadableStore[(TopicId, TweetId, Seq[ScoreKey]), Map[ScoreKey, Double]] {
   import TopicTweetsCosineSimilarityAggregateStore._
 
   override def get(k: (TopicId, TweetId, Seq[ScoreKey])): Future[Option[Map[ScoreKey, Double]]] = {

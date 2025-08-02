@@ -25,14 +25,14 @@ import com.twitter.timelines.prediction.common.aggregates.BCELabelTransformFromU
  * settings until QPS is well-controlled.
  *
  */
-object TimelinesRealTimeAggregatesJobConfigs extends RealTimeAggregatesJobConfigs {
+object TimelinesRealTimeAggregatesJobConfigs etwittertends RealTimeAggregatesJobConfigs {
   import TimelinesOnlineAggregationUtils._
 
   /**
    * We remove input records that do not contain a label/engagement as defined in AllTweetLabels, which includes
-   * explicit user engagements including public, private and impression events. By avoiding ingesting records without
+   * etwitterplicit user engagements including public, private and impression events. By avoiding ingesting records without
    * engagemnts, we guarantee that no distribution shifts occur in computed aggregate features when we add a new spout
-   * to input aggregate sources. Counterfactual signal is still available since we aggregate on explicit dwell
+   * to input aggregate sources. Counterfactual signal is still available since we aggregate on etwitterplicit dwell
    * engagements.
    */
   val NegativeDownsampleTransform =
@@ -44,7 +44,7 @@ object TimelinesRealTimeAggregatesJobConfigs extends RealTimeAggregatesJobConfig
   /**
    * We downsample positive engagements for devel topology to reduce traffic, aiming for equivalent of 10% of prod traffic.
    * First apply consistent downsampling to 10% of users, and then apply downsampling to remove records without
-   * explicit labels. We apply user-consistent sampling to more closely approximate prod query patterns.
+   * etwitterplicit labels. We apply user-consistent sampling to more closely approtwitterimate prod query patterns.
    */
   val StagingUserBasedDownsampleTransform =
     UserDownsampleTransform(
@@ -64,10 +64,10 @@ object TimelinesRealTimeAggregatesJobConfigs extends RealTimeAggregatesJobConfig
     teamName = "timelines",
     teamEmail = "",
     // If one component is hitting GC limit at prod, tune componentToMetaSpaceSizeMap.
-    // Except for Source bolts. Tune componentToRamGigaBytesMap for Source bolts instead.
+    // Etwittercept for Source bolts. Tune componentToRamGigaBytesMap for Source bolts instead.
     componentToMetaSpaceSizeMap = Map(
-      "Tail-FlatMap" -> "-XX:MaxMetaspaceSize=1024M -XX:MetaspaceSize=1024M",
-      "Tail" -> "-XX:MaxMetaspaceSize=2560M -XX:MetaspaceSize=2560M"
+      "Tail-FlatMap" -> "-twittertwitter:MatwitterMetaspaceSize=1024M -twittertwitter:MetaspaceSize=1024M",
+      "Tail" -> "-twittertwitter:MatwitterMetaspaceSize=2560M -twittertwitter:MetaspaceSize=2560M"
     ),
     // If either component is hitting memory limit at prod
     // its memory need to increase: either increase total memory of container (containerRamGigaBytes),
@@ -119,10 +119,10 @@ object TimelinesRealTimeAggregatesJobConfigs extends RealTimeAggregatesJobConfig
     teamName = "timelines",
     teamEmail = "",
     // If one component is hitting GC limit at prod, tune componentToMetaSpaceSizeMap
-    // Except for Source bolts. Tune componentToRamGigaBytesMap for Source bolts instead.
+    // Etwittercept for Source bolts. Tune componentToRamGigaBytesMap for Source bolts instead.
     componentToMetaSpaceSizeMap = Map(
-      "Tail-FlatMap" -> "-XX:MaxMetaspaceSize=1024M -XX:MetaspaceSize=1024M",
-      "Tail" -> "-XX:MaxMetaspaceSize=2560M -XX:MetaspaceSize=2560M"
+      "Tail-FlatMap" -> "-twittertwitter:MatwitterMetaspaceSize=1024M -twittertwitter:MetaspaceSize=1024M",
+      "Tail" -> "-twittertwitter:MatwitterMetaspaceSize=2560M -twittertwitter:MetaspaceSize=2560M"
     ),
     // If either component is hitting memory limit at prod
     // its memory need to increase: either increase total memory of container (containerRamGigaBytes),
@@ -153,29 +153,29 @@ object TimelinesRealTimeAggregatesJobConfigs extends RealTimeAggregatesJobConfig
       StagingUserBasedDownsampleTransform,
       RichITransform(BCELabelTransformFromUUADataRecord),
       NegativeDownsampleTransform),
-    enableUserReindexingNighthawkBtreeStore = true,
-    enableUserReindexingNighthawkHashStore = true,
-    userReindexingNighthawkBtreeStoreConfig = NighthawkUnderlyingStoreConfig(
+    enableUserReindetwitteringNighthawkBtreeStore = true,
+    enableUserReindetwitteringNighthawkHashStore = true,
+    userReindetwitteringNighthawkBtreeStoreConfig = NighthawkUnderlyingStoreConfig(
       serversetPath =
         "/twitter/service/cache-user/test/nighthawk_timelines_real_time_aggregates_btree_test_api",
-      // NOTE: table names are prefixed to every pkey so keep it short
-      tableName = "u_r_v1", // (u)ser_(r)eindexing_v1
+      // NOTE: table names are prefitwittered to every pkey so keep it short
+      tableName = "u_r_v1", // (u)ser_(r)eindetwittering_v1
       // keep ttl <= 1 day because it's keyed on user, and we will have limited hit rates beyond 1 day
       cacheTTL = 1.day
     ),
-    userReindexingNighthawkHashStoreConfig = NighthawkUnderlyingStoreConfig(
+    userReindetwitteringNighthawkHashStoreConfig = NighthawkUnderlyingStoreConfig(
       // For prod: "/s/cache-user/nighthawk_timelines_real_time_aggregates_hash_api",
       serversetPath =
         "/twitter/service/cache-user/test/nighthawk_timelines_real_time_aggregates_hash_test_api",
-      // NOTE: table names are prefixed to every pkey so keep it short
-      tableName = "u_r_v1", // (u)ser_(r)eindexing_v1
+      // NOTE: table names are prefitwittered to every pkey so keep it short
+      tableName = "u_r_v1", // (u)ser_(r)eindetwittering_v1
       // keep ttl <= 1 day because it's keyed on user, and we will have limited hit rates beyond 1 day
       cacheTTL = 1.day
     )
   )
 }
 
-object TimelinesRealTimeAggregatesJob extends RealTimeAggregatesJobBase {
+object TimelinesRealTimeAggregatesJob etwittertends RealTimeAggregatesJobBase {
   override lazy val statsReceiver = DefaultStatsReceiver.scope("timelines_real_time_aggregates")
   override lazy val jobConfigs = TimelinesRealTimeAggregatesJobConfigs
   override lazy val aggregatesToCompute = TimelinesOnlineAggregationConfig.AggregatesToCompute

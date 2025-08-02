@@ -6,7 +6,7 @@ import org.apache.beam.sdk.options.Default
 import org.apache.beam.sdk.options.Description
 import org.apache.beam.sdk.options.Validation.Required
 
-trait InteractionGraphAddressBookOption extends DALOptions with DateRangeOptions {
+trait InteractionGraphAddressBookOption etwittertends DALOptions with DateRangeOptions {
   @Required
   @Description("Output path for storing the final dataset")
   def getOutputPath: String

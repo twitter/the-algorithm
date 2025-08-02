@@ -4,7 +4,7 @@ import com.twitter.conversions.DurationOps._
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.candidate.TargetDecider
 import com.twitter.frigate.common.history.History
-import com.twitter.frigate.common.history.HistoryStoreKeyContext
+import com.twitter.frigate.common.history.HistoryStoreKeyContetwittert
 import com.twitter.frigate.common.history.PushServiceHistoryStore
 import com.twitter.frigate.data_pipeline.thriftscala._
 import com.twitter.frigate.thriftscala.FrigateNotification
@@ -15,7 +15,7 @@ import com.twitter.util.Future
 import com.twitter.util.Time
 
 case class LabeledPushRecsVerifyingStoreKey(
-  historyStoreKey: HistoryStoreKeyContext,
+  historyStoreKey: HistoryStoreKeyContetwittert,
   useHydratedDataset: Boolean,
   verifyHydratedDatasetResults: Boolean) {
   def userId: Long = historyStoreKey.targetUserId
@@ -33,10 +33,10 @@ case class LabeledPushRecsVerifyingStore(
   historyStore: PushServiceHistoryStore
 )(
   implicit stats: StatsReceiver)
-    extends ReadableStore[LabeledPushRecsVerifyingStoreKey, LabeledPushRecsVerifyingStoreResponse] {
+    etwittertends ReadableStore[LabeledPushRecsVerifyingStoreKey, LabeledPushRecsVerifyingStoreResponse] {
 
   private def getByJoiningWithRealHistory(
-    key: HistoryStoreKeyContext
+    key: HistoryStoreKeyContetwittert
   ): Future[Option[UserHistoryValue]] = {
     val historyFut = historyStore.get(key, Some(365.days))
     val toJoinWithRealHistoryFut = labeledPushRecsStore.get(UserHistoryKey.UserId(key.targetUserId))
@@ -103,7 +103,7 @@ case class LabeledPushRecsVerifyingStore(
   }
 }
 
-case class LabeledPushRecsStoreKey(target: TargetDecider, historyStoreKey: HistoryStoreKeyContext) {
+case class LabeledPushRecsStoreKey(target: TargetDecider, historyStoreKey: HistoryStoreKeyContetwittert) {
   def userId: Long = historyStoreKey.targetUserId
 }
 
@@ -116,7 +116,7 @@ case class LabeledPushRecsDecideredStore(
   verifyHydratedLabeledSendsForHistoryDeciderKey: String
 )(
   implicit globalStats: StatsReceiver)
-    extends ReadableStore[LabeledPushRecsStoreKey, UserHistoryValue] {
+    etwittertends ReadableStore[LabeledPushRecsStoreKey, UserHistoryValue] {
   private val log = Logger()
   private val stats = globalStats.scope("LabeledPushRecsDecideredStore")
   private val numComparisons = stats.counter("num_comparisons")

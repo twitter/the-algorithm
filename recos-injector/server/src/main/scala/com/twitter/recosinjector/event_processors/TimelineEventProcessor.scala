@@ -35,7 +35,7 @@ class TimelineEventProcessor(
   tweetypie: Tweetypie
 )(
   override implicit val statsReceiver: StatsReceiver)
-    extends EventBusProcessor[TimelineEvent] {
+    etwittertends EventBusProcessor[TimelineEvent] {
 
   private val processEventDeciderCounter = statsReceiver.counter("num_process_timeline_event")
   private val numFavoriteEventCounter = statsReceiver.counter("num_favorite_event")
@@ -62,7 +62,7 @@ class TimelineEventProcessor(
       action = Action.Favorite,
       engagementTimeMillis = Some(favoriteEvent.eventTimeMs),
       tweetId = favoriteEvent.tweetId, // the tweet, or source tweet if target tweet is a retweet
-      tweetDetails = favoriteEvent.tweet.map(TweetDetails) // tweet always exists
+      tweetDetails = favoriteEvent.tweet.map(TweetDetails) // tweet always etwitterists
     )
     TweetFavoriteEventDetails(userTweetEngagement = engagement)
   }
@@ -76,7 +76,7 @@ class TimelineEventProcessor(
       action = Action.Unfavorite,
       engagementTimeMillis = Some(unfavoriteEvent.eventTimeMs),
       tweetId = unfavoriteEvent.tweetId, // the tweet, or source tweet if target tweet is a retweet
-      tweetDetails = unfavoriteEvent.tweet.map(TweetDetails) // tweet always exists
+      tweetDetails = unfavoriteEvent.tweet.map(TweetDetails) // tweet always etwitterists
     )
     TweetFavoriteEventDetails(userTweetEngagement = engagement)
   }

@@ -1,6 +1,6 @@
 package com.twitter.search.core.earlybird.facets;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.List;
 
 import org.apache.lucene.facet.Facets;
@@ -10,22 +10,22 @@ import com.twitter.search.common.facets.CountFacetSearchParam;
 import com.twitter.search.common.facets.FacetSearchParam;
 import com.twitter.search.common.facets.FacetsFactory;
 import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
 
 /**
  * Factory for EarlybirdFacets
  */
 public class EarlybirdFacetsFactory implements FacetsFactory {
-  private final EarlybirdIndexSegmentAtomicReader reader;
+  private final EarlybirdIndetwitterSegmentAtomicReader reader;
 
-  public EarlybirdFacetsFactory(EarlybirdIndexSegmentAtomicReader reader) {
+  public EarlybirdFacetsFactory(EarlybirdIndetwitterSegmentAtomicReader reader) {
     this.reader = reader;
   }
 
   @Override
   public Facets create(
       List<FacetSearchParam> facetSearchParams,
-      FacetsCollector facetsCollector) throws IOException {
+      FacetsCollector facetsCollector) throws IOEtwitterception {
 
     return new EarlybirdFacets(facetSearchParams, facetsCollector, reader);
   }

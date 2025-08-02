@@ -11,11 +11,11 @@ import com.twitter.common.util.Clock;
 import com.twitter.search.common.util.GCUtil;
 import com.twitter.search.common.util.zktrylock.TryLock;
 import com.twitter.search.earlybird.archive.ArchiveSegmentUpdater;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
+import com.twitter.search.earlybird.indetwitter.EarlybirdSegmentFactory;
 import com.twitter.search.earlybird.partition.SegmentInfo;
 import com.twitter.search.earlybird.partition.SegmentSyncConfig;
 
-public class NotYetBuiltSegment extends SegmentBuilderSegment {
+public class NotYetBuiltSegment etwittertends SegmentBuilderSegment {
   private static final Logger LOG = LoggerFactory.getLogger(NotYetBuiltSegment.class);
 
   public NotYetBuiltSegment(
@@ -31,14 +31,14 @@ public class NotYetBuiltSegment extends SegmentBuilderSegment {
   /**
    * 1. Grab the ZK lock for this segment.
    *   2a. if lock fails, another host is updating; return the SOMEONE_ELSE_IS_BUILDING state.
-   *   2b. if lock succeeds, check again if the updated segment exists on HDFS.
+   *   2b. if lock succeeds, check again if the updated segment etwitterists on HDFS.
    *     3a. if so, just move on.
    *     3b. if not, update the segment.
    *     In both cases, we need to check if the segment can now be marked as BUILT_AND_FINALIZED.
    */
   @Override
   public SegmentBuilderSegment handle()
-      throws SegmentUpdaterException, SegmentInfoConstructionException {
+      throws SegmentUpdaterEtwitterception, SegmentInfoConstructionEtwitterception {
     LOG.info("Handling a not yet built segment: {}", this.getSegmentName());
     Stopwatch stopwatch = Stopwatch.createStarted();
     TryLock lock = getZooKeeperTryLock();
@@ -51,7 +51,7 @@ public class NotYetBuiltSegment extends SegmentBuilderSegment {
       ArchiveSegmentUpdater updater = new ArchiveSegmentUpdater(
           segmentConfig.getTryLockFactory(),
           sync,
-          segmentConfig.getEarlybirdIndexConfig(),
+          segmentConfig.getEarlybirdIndetwitterConfig(),
           Clock.SYSTEM_CLOCK);
 
       boolean success = updater.updateSegment(segmentInfo);
@@ -77,7 +77,7 @@ public class NotYetBuiltSegment extends SegmentBuilderSegment {
     GCUtil.runGC();
 
     if (successRef.get()) {
-      LOG.info("Indexing segment {} took {}", segmentInfo, stopwatch);
+      LOG.info("Indetwittering segment {} took {}", segmentInfo, stopwatch);
       LOG.info("Finished building {}", segmentInfo.getSegment().getSegmentName());
       return new BuiltAndFinalizedSegment(
           segmentInfo, segmentConfig, earlybirdSegmentFactory, 0, sync);
@@ -86,7 +86,7 @@ public class NotYetBuiltSegment extends SegmentBuilderSegment {
       String errMsg = "failed updating segment for: " + segmentInfo
           + " for " + alreadyTried + " times";
       LOG.error(errMsg);
-      if (alreadyTried < segmentConfig.getMaxRetriesOnFailure()) {
+      if (alreadyTried < segmentConfig.getMatwitterRetriesOnFailure()) {
         return new NotYetBuiltSegment(
             createNewSegmentInfo(segmentInfo),
             segmentConfig,
@@ -94,7 +94,7 @@ public class NotYetBuiltSegment extends SegmentBuilderSegment {
             alreadyTried,
             sync);
       } else {
-        throw new SegmentUpdaterException(errMsg);
+        throw new SegmentUpdaterEtwitterception(errMsg);
       }
     }
   }

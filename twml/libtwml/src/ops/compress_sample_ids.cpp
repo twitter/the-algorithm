@@ -10,7 +10,7 @@ REGISTER_OP("CompressSampleIds")
 .Attr("T: {int32}")
 .Input("input: T")
 .Output("output: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     c->set_output(0, c->Vector(c->kUnknownDim));
     return Status::OK();
   });
@@ -19,11 +19,11 @@ REGISTER_OP("CompressSampleIds")
 template<typename T>
 class CompressSampleIds : public OpKernel {
  public:
-  explicit CompressSampleIds(OpKernelConstruction* context) : OpKernel(context) {}
+  etwitterplicit CompressSampleIds(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     // Grab the input tensor
-    const Tensor& input_tensor = context->input(0);
+    const Tensor& input_tensor = contetwittert->input(0);
     auto input = input_tensor.flat<T>();
     const int N = input.size();
 
@@ -34,7 +34,7 @@ class CompressSampleIds : public OpKernel {
     }
 
     OP_REQUIRES(
-      context, !error,
+      contetwittert, !error,
       errors::InvalidArgument(
         "Error in CompressSampleIds. SampleIds must be non-negative and non-decreasing"
       )
@@ -49,8 +49,8 @@ class CompressSampleIds : public OpKernel {
     // Create an output tensor
     Tensor* output_tensor = nullptr;
     OP_REQUIRES_OK(
-      context,
-      context->allocate_output(0, TensorShape({output_size}), &output_tensor)
+      contetwittert,
+      contetwittert->allocate_output(0, TensorShape({output_size}), &output_tensor)
     );
     auto output_flat = output_tensor->flat<T>();
 
@@ -70,7 +70,7 @@ REGISTER_OP("DecompressSampleIds")
 .Attr("T: {int32}")
 .Input("input: T")
 .Output("output: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     c->set_output(0, c->Vector(c->kUnknownDim));
     return Status::OK();
   });
@@ -79,11 +79,11 @@ REGISTER_OP("DecompressSampleIds")
 template<typename T>
 class DecompressSampleIds : public OpKernel {
  public:
-  explicit DecompressSampleIds(OpKernelConstruction* context) : OpKernel(context) {}
+  etwitterplicit DecompressSampleIds(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     // Grab the input tensor
-    const Tensor& input_tensor = context->input(0);
+    const Tensor& input_tensor = contetwittert->input(0);
     auto input = input_tensor.flat<T>();
     const int N = input.size();
 
@@ -96,7 +96,7 @@ class DecompressSampleIds : public OpKernel {
     }
 
     OP_REQUIRES(
-      context, !error,
+      contetwittert, !error,
       errors::InvalidArgument(
         "Error in DecompressSampleIds. Inputs must be non-negative."
       )
@@ -105,8 +105,8 @@ class DecompressSampleIds : public OpKernel {
     // Create an output tensor
     Tensor* output_tensor = nullptr;
     OP_REQUIRES_OK(
-      context,
-      context->allocate_output(0, TensorShape({output_size}),&output_tensor)
+      contetwittert,
+      contetwittert->allocate_output(0, TensorShape({output_size}),&output_tensor)
     );
     auto output_flat = output_tensor->flat<T>();
 

@@ -11,6 +11,6 @@ struct OfflineRecommendationStep {
   2: required set<i64> followedUserIds(personalDataType='UserId')
 }(persisted='true', hasPersonalData='true')
 
-struct OfflineFlowContext {
+struct OfflineFlowContetwittert {
   1: required list<OfflineRecommendationStep> steps
 }(persisted='true', hasPersonalData='true')

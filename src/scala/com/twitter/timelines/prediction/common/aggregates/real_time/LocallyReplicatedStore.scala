@@ -25,7 +25,7 @@ object ServedFeaturesMemcacheConfigBuilder {
   def build(cluster: String, isProd: Boolean = false): StorehausMemcacheConfig =
     StorehausMemcacheConfig(
       destName = getTwCacheDestination(cluster, isProd),
-      keyPrefix = "",
+      keyPrefitwitter = "",
       requestTimeout = 200.milliseconds,
       numTries = 2,
       globalTimeout = 400.milliseconds,
@@ -37,16 +37,16 @@ object ServedFeaturesMemcacheConfigBuilder {
 }
 
 /**
- * If lookup key does not exist locally, make a call to the replicated store(s).
- * If value exists remotely, write the first returned value to the local store
- * and return it. Map any exceptions to None so that the subsequent operations
+ * If lookup key does not etwitterist locally, make a call to the replicated store(s).
+ * If value etwitterists remotely, write the first returned value to the local store
+ * and return it. Map any etwitterceptions to None so that the subsequent operations
  * may proceed.
  */
 class LocallyReplicatedStore[-K, V](
   localStore: Store[K, V],
   remoteStore: ReplicatedReadableStore[K, V],
   scopedStatsReceiver: StatsReceiver)
-    extends Store[K, V] {
+    etwittertends Store[K, V] {
   private[this] val failOpenHandler = new FailOpenHandler(scopedStatsReceiver.scope("failOpen"))
   private[this] val localFailsCounter = scopedStatsReceiver.counter("localFails")
   private[this] val localWritesCounter = scopedStatsReceiver.counter("localWrites")

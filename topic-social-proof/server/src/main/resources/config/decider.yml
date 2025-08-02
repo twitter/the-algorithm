@@ -48,7 +48,7 @@ enable_loadshedding_HomeTimelineSimClusters:
   comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
   default_availability: 0
 
-enable_loadshedding_ExploreTopicTweets:
+enable_loadshedding_EtwitterploreTopicTweets:
   comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
   default_availability: 0
 

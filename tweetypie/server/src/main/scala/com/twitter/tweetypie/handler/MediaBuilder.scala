@@ -8,9 +8,9 @@ import com.twitter.servo.util.FutureArrow
 import com.twitter.tco_util.TcoSlug
 import com.twitter.tweetypie.core._
 import com.twitter.tweetypie.media._
-import com.twitter.tweetypie.serverutil.ExceptionCounter
+import com.twitter.tweetypie.serverutil.EtwitterceptionCounter
 import com.twitter.tweetypie.thriftscala._
-import com.twitter.tweetypie.tweettext.Offset
+import com.twitter.tweetypie.tweettetwittert.Offset
 
 object CreateMediaTco {
   import UpstreamFailure._
@@ -28,9 +28,9 @@ object CreateMediaTco {
 
   def apply(urlShortener: UrlShortener.Type): Type =
     FutureArrow[Request, Media.MediaTco] { req =>
-      val expandedUrl = MediaUrl.Permalink(req.userScreenName, req.tweetId, req.isVideo)
-      val shortenCtx =
-        UrlShortener.Context(
+      val etwitterpandedUrl = MediaUrl.Permalink(req.userScreenName, req.tweetId, req.isVideo)
+      val shortenCttwitter =
+        UrlShortener.Contetwittert(
           userId = req.userId,
           userProtected = req.isProtected,
           tweetId = req.tweetId,
@@ -38,13 +38,13 @@ object CreateMediaTco {
           dark = req.dark
         )
 
-      urlShortener((expandedUrl, shortenCtx))
+      urlShortener((etwitterpandedUrl, shortenCttwitter))
         .flatMap { metadata =>
           metadata.shortUrl match {
             case TcoSlug(slug) =>
               Future.value(
                 Media.MediaTco(
-                  expandedUrl,
+                  etwitterpandedUrl,
                   metadata.shortUrl,
                   MediaUrl.Display.fromTcoSlug(slug)
                 )
@@ -53,14 +53,14 @@ object CreateMediaTco {
             case _ =>
               // should never get here, since shortened urls from talon
               // always start with "http://t.co/", just in case...
-              Future.exception(MediaShortenUrlMalformedFailure)
+              Future.etwitterception(MediaShortenUrlMalformedFailure)
           }
         }
         .rescue {
           case UrlShortener.InvalidUrlError =>
-            // should never get here, since media expandedUrl should always be a valid
+            // should never get here, since media etwitterpandedUrl should always be a valid
             // input to talon.
-            Future.exception(MediaExpandedUrlNotValidFailure)
+            Future.etwitterception(MediaEtwitterpandedUrlNotValidFailure)
         }
     }
 }
@@ -70,7 +70,7 @@ object MediaBuilder {
 
   case class Request(
     mediaUploadIds: Seq[MediaId],
-    text: String,
+    tetwittert: String,
     tweetId: TweetId,
     userId: UserId,
     userScreenName: String,
@@ -79,7 +79,7 @@ object MediaBuilder {
     dark: Boolean = false,
     productMetadata: Option[Map[MediaId, UserDefinedProductMetadata]] = None)
 
-  case class Result(updatedText: String, mediaEntities: Seq[MediaEntity], mediaKeys: Seq[MediaKey])
+  case class Result(updatedTetwittert: String, mediaEntities: Seq[MediaEntity], mediaKeys: Seq[MediaKey])
 
   type Type = FutureArrow[Request, Result]
 
@@ -91,7 +91,7 @@ object MediaBuilder {
     FutureArrow[Request, Result] {
       case Request(
             mediaUploadIds,
-            text,
+            tetwittert,
             tweetId,
             userId,
             screenName,
@@ -117,43 +117,43 @@ object MediaBuilder {
               screenName,
               isProtected,
               createdAt,
-              mediaKeys.exists(MediaKeyClassifier.isVideo(_)),
+              mediaKeys.etwitterists(MediaKeyClassifier.isVideo(_)),
               dark
             )
           )
-        } yield produceResult(text, mediaTco, isProtected, mediaKeys)
-    }.countExceptions(
-        ExceptionCounter(stats)
+        } yield produceResult(tetwittert, mediaTco, isProtected, mediaKeys)
+    }.countEtwitterceptions(
+        EtwitterceptionCounter(stats)
       )
-      .onFailure[Request] { (req, ex) => log.info(req.toString, ex) }
-      .translateExceptions {
-        case e: MediaExceptions.MediaClientException =>
+      .onFailure[Request] { (req, etwitter) => log.info(req.toString, etwitter) }
+      .translateEtwitterceptions {
+        case e: MediaEtwitterceptions.MediaClientEtwitterception =>
           TweetCreateFailure.State(TweetCreateState.InvalidMedia, Some(e.getMessage))
       }
 
   def produceResult(
-    text: String,
+    tetwittert: String,
     mediaTco: Media.MediaTco,
     userIsProtected: Boolean,
     mediaKeys: Seq[MediaKey]
   ): Result = {
 
-    val newText =
-      if (text == "") mediaTco.url
-      else text + " " + mediaTco.url
+    val newTetwittert =
+      if (tetwittert == "") mediaTco.url
+      else tetwittert + " " + mediaTco.url
 
-    val to = Offset.CodePoint.length(newText)
+    val to = Offset.CodePoint.length(newTetwittert)
     val from = to - Offset.CodePoint.length(mediaTco.url)
 
     val mediaEntities =
       mediaKeys.map { mediaKey =>
         MediaEntity(
           mediaKey = Some(mediaKey),
-          fromIndex = from.toShort,
-          toIndex = to.toShort,
+          fromIndetwitter = from.toShort,
+          toIndetwitter = to.toShort,
           url = mediaTco.url,
           displayUrl = mediaTco.displayUrl,
-          expandedUrl = mediaTco.expandedUrl,
+          etwitterpandedUrl = mediaTco.etwitterpandedUrl,
           mediaId = mediaKey.mediaId,
           mediaPath = "", // to be hydrated
           mediaUrl = null, // to be hydrated
@@ -171,6 +171,6 @@ object MediaBuilder {
         )
       }
 
-    Result(newText, mediaEntities, mediaKeys)
+    Result(newTetwittert, mediaEntities, mediaKeys)
   }
 }

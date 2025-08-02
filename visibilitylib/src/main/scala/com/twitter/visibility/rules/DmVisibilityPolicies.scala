@@ -21,7 +21,7 @@ object SensitiveMediaSettingsDirectMessagesBaseRules {
 }
 
 case object DirectMessagesPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       tweetRules = TweetDetailPolicy.tweetRules.diff(LimitedEngagementBaseRules.tweetRules),
       dmRules = Seq(
         DeactivatedAuthorRule,
@@ -31,12 +31,12 @@ case object DirectMessagesPolicy
     )
 
 case object DirectMessagesMutedUsersPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       userRules = Seq(SuspendedAuthorRule)
     )
 
 case object DirectMessagesSearchPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       dmConversationRules = Seq(
         DropDmConversationWithUndefinedConversationInfoRule,
         DropDmConversationWithUndefinedConversationTimelineRule,
@@ -56,7 +56,7 @@ case object DirectMessagesSearchPolicy
     )
 
 case object DirectMessagesPinnedPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       dmConversationRules = Seq(
         DropDmConversationWithUndefinedConversationInfoRule,
         DropDmConversationWithUndefinedConversationTimelineRule,
@@ -76,7 +76,7 @@ case object DirectMessagesPinnedPolicy
     )
 
 case object DirectMessagesConversationListPolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       dmConversationRules = Seq(
         DropDmConversationWithUndefinedConversationInfoRule,
         DropDmConversationWithUndefinedConversationTimelineRule,
@@ -92,7 +92,7 @@ case object DirectMessagesConversationListPolicy
     )
 
 case object DirectMessagesConversationTimelinePolicy
-    extends VisibilityPolicy(
+    etwittertends VisibilityPolicy(
       dmEventRules = Seq(
         InaccessibleDmEventDropRule,
         HiddenAndDeletedDmEventDropRule,
@@ -104,8 +104,8 @@ case object DirectMessagesConversationTimelinePolicy
       policyRuleParams = SensitiveMediaSettingsDirectMessagesBaseRules.policyRuleParams
     )
 
-case object DirectMessagesInboxPolicy
-    extends VisibilityPolicy(
+case object DirectMessagesInbotwitterPolicy
+    etwittertends VisibilityPolicy(
       dmConversationRules = Seq(
         DropDmConversationWithUndefinedConversationInfoRule,
         DropDmConversationWithUndefinedConversationTimelineRule,

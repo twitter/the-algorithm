@@ -1,7 +1,7 @@
 # checkstyle: noqa
 import tensorflow.compat.v1 as tf
 from collections import OrderedDict
-from .constants import EB_SCORE_IDX
+from .constants import EB_SCORE_IDtwitter
 from .lolly.data_helpers import get_lolly_scores
 
 import twml
@@ -9,14 +9,14 @@ import twml
 def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
   """
   This function was copied from twml/metrics.py with the following adjustments:
-    - Override example weights with the ones set in graph_output.
+    - Override etwitterample weights with the ones set in graph_output.
     - Tile labels in order to support per engagement metrics for both TF and Lolly scores.
     - Add lolly_tf_score_MSE metric.
   Note: All custom lines have a comment that starts with 'Added'
   """
   # pylint: disable=invalid-name,dict-keys-not-iterating
   if metrics is None:
-    # remove expensive metrics by default for faster eval
+    # remove etwitterpensive metrics by default for faster eval
     metrics = list(twml.metrics.SUPPORTED_BINARY_CLASS_METRICS.keys())
     metrics.remove('pr_curve')
 
@@ -30,7 +30,7 @@ def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
       weights of the samples..
     """
 
-    # Added to support the example weights overriding.
+    # Added to support the etwitterample weights overriding.
     weights = graph_output["weights"]
     # Added to support per engagement metrics for both TF and Lolly scores.
     labels = tf.tile(labels, [1, 2])
@@ -47,8 +47,8 @@ def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
 
     shape = labels.get_shape()
 
-    # basic sanity check: multi_metric dimension must exist
-    assert len(shape) > class_dim, "Dimension specified by class_dim does not exist."
+    # basic sanity check: multi_metric dimension must etwitterist
+    assert len(shape) > class_dim, "Dimension specified by class_dim does not etwitterist."
 
     num_labels = shape[class_dim]
     # If we are doing multi-class / multi-label metric, the number of classes / labels must
@@ -77,14 +77,14 @@ def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
           # avoid adding duplicate metrics.
           continue
 
-        class_labels = tf.gather(labels, indices=[i], axis=class_dim)
-        class_preds = tf.gather(preds, indices=[i], axis=class_dim)
-        class_hard_preds = tf.gather(hard_preds, indices=[i], axis=class_dim)
+        class_labels = tf.gather(labels, indices=[i], atwitteris=class_dim)
+        class_preds = tf.gather(preds, indices=[i], atwitteris=class_dim)
+        class_hard_preds = tf.gather(hard_preds, indices=[i], atwitteris=class_dim)
 
         if num_weights is None:
           class_weights = None
         elif num_weights == num_labels:
-          class_weights = tf.gather(weights, indices=[i], axis=class_dim)
+          class_weights = tf.gather(weights, indices=[i], atwitteris=class_dim)
         elif num_weights == 1:
           class_weights = weights
         else:
@@ -111,7 +111,7 @@ def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
 
 def get_mse(predictions, labels):
   lolly_scores = get_lolly_scores(labels)
-  tf_scores = predictions[:, EB_SCORE_IDX]
+  tf_scores = predictions[:, EB_SCORE_IDtwitter]
   squared_lolly_tf_score_diff = tf.square(tf.subtract(tf_scores, lolly_scores))
 
   value_op = tf.reduce_mean(squared_lolly_tf_score_diff, name="value_op")

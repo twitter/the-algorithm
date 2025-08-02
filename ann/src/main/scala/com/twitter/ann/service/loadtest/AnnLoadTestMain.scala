@@ -2,7 +2,7 @@ package com.twitter.ann.service.loadtest
 
 import com.twitter.ann.annoy.AnnoyCommon
 import com.twitter.ann.annoy.AnnoyRuntimeParams
-import com.twitter.ann.annoy.TypedAnnoyIndex
+import com.twitter.ann.annoy.TypedAnnoyIndetwitter
 import com.twitter.ann.common._
 import com.twitter.ann.common.thriftscala.{Distance => ServiceDistance}
 import com.twitter.ann.common.thriftscala.{RuntimeParams => ServiceRuntimeParams}
@@ -10,9 +10,9 @@ import com.twitter.ann.faiss.FaissCommon
 import com.twitter.ann.faiss.FaissParams
 import com.twitter.ann.hnsw.HnswCommon
 import com.twitter.ann.hnsw.HnswParams
-import com.twitter.ann.hnsw.TypedHnswIndex
+import com.twitter.ann.hnsw.TypedHnswIndetwitter
 import com.twitter.bijection.Injection
-import com.twitter.cortex.ml.embeddings.common.EntityKind
+import com.twitter.cortetwitter.ml.embeddings.common.EntityKind
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.finagle.util.DefaultTimer
 import com.twitter.finatra.mtls.modules.ServiceIdentifierModule
@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit
  *  $ ./bazel bundle ann/src/main/scala/com/twitter/ann/service/loadtest:bin --bundle-jvm-archive=zip
  *  $ packer add_version --cluster=smf1 $USER ann-loadtest dist/ann-loadtest.zip
  */
-object AnnLoadTestMain extends TwitterServer {
+object AnnLoadTestMain etwittertends TwitterServer {
   private[this] val algo =
     flag[String]("algo", "load test server types: [annoy/hnsw]")
   private[this] val targetQPS =
@@ -34,10 +34,10 @@ object AnnLoadTestMain extends TwitterServer {
     flag[String](
       "query_id_type",
       "query id type for load test: [long/string/int/user/tweet/word/url/tfwId]")
-  private[this] val indexIdType =
+  private[this] val indetwitterIdType =
     flag[String](
-      "index_id_type",
-      "index id type for load test: [long/string/int/user/tweet/word/url/tfwId]")
+      "indetwitter_id_type",
+      "indetwitter id type for load test: [long/string/int/user/tweet/word/url/tfwId]")
   private[this] val metric =
     flag[String]("metric", "metric type for load test: [Cosine/L2/InnerProduct]")
   private[this] val durationSec =
@@ -47,11 +47,11 @@ object AnnLoadTestMain extends TwitterServer {
   private[this] val dimension = flag[Int]("embedding_dimension", "dimension of embeddings")
   private[this] val querySetDir =
     flag[String]("query_set_dir", "", "Directory containing the queries")
-  private[this] val indexSetDir =
+  private[this] val indetwitterSetDir =
     flag[String](
-      "index_set_dir",
+      "indetwitter_set_dir",
       "",
-      "Directory containing the embeddings to be indexed"
+      "Directory containing the embeddings to be indetwittered"
     )
   private[this] val truthSetDir =
     flag[String]("truth_set_dir", "", "Directory containing the truth data")
@@ -60,7 +60,7 @@ object AnnLoadTestMain extends TwitterServer {
   private[this] val serviceDestination =
     flag[String]("service_destination", "wily address of remote query service")
   private[this] val concurrencyLevel =
-    flag[Int]("concurrency_level", 8, "number of concurrent operations on the index")
+    flag[Int]("concurrency_level", 8, "number of concurrent operations on the indetwitter")
 
   // Queries with random embeddings
   private[this] val withRandomQueries =
@@ -69,19 +69,19 @@ object AnnLoadTestMain extends TwitterServer {
     flag[Int]("random_queries_count", 50000, "total random queries")
   private[this] val randomEmbeddingMinValue =
     flag[Float]("random_embedding_min_value", -1.0f, "Min value of random embeddings")
-  private[this] val randomEmbeddingMaxValue =
-    flag[Float]("random_embedding_max_value", 1.0f, "Max value of random embeddings")
+  private[this] val randomEmbeddingMatwitterValue =
+    flag[Float]("random_embedding_matwitter_value", 1.0f, "Matwitter value of random embeddings")
 
   // parameters for annoy
-  private[this] val numOfNodesToExplore =
-    flag[Seq[Int]]("annoy_num_of_nodes_to_explore", Seq(), "number of nodes to explore")
+  private[this] val numOfNodesToEtwitterplore =
+    flag[Seq[Int]]("annoy_num_of_nodes_to_etwitterplore", Seq(), "number of nodes to etwitterplore")
   private[this] val numOfTrees =
     flag[Int]("annoy_num_trees", 0, "number of trees to build")
 
   // parameters for HNSW
   private[this] val efConstruction = flag[Int]("hnsw_ef_construction", "ef for Hnsw construction")
   private[this] val ef = flag[Seq[Int]]("hnsw_ef", Seq(), "ef for Hnsw query")
-  private[this] val maxM = flag[Int]("hnsw_max_m", "maxM for Hnsw")
+  private[this] val matwitterM = flag[Int]("hnsw_matwitter_m", "matwitterM for Hnsw")
 
   // FAISS
   private[this] val nprobe = flag[Seq[Int]]("faiss_nprobe", Seq(), "nprobe for faiss query")
@@ -121,7 +121,7 @@ object AnnLoadTestMain extends TwitterServer {
       .foreach(System.out.println)
 
     Await.result(close())
-    System.exit(0)
+    System.etwitterit(0)
   }
 
   private[this] def getQueries[Q, I]: Seq[Query[I]] = {
@@ -134,7 +134,7 @@ object AnnLoadTestMain extends TwitterServer {
         dimension(),
         randomQueriesCount(),
         randomEmbeddingMinValue(),
-        randomEmbeddingMaxValue()
+        randomEmbeddingMatwitterValue()
       )
 
       queries.map(Query[I](_))
@@ -145,9 +145,9 @@ object AnnLoadTestMain extends TwitterServer {
 
       if (truthSetDir().nonEmpty) {
         // Join the queries with truth set data.
-        assert(indexIdType().nonEmpty, "Index id type is empty")
+        assert(indetwitterIdType().nonEmpty, "Indetwitter id type is empty")
         val truthSetMap =
-          LoadTestUtils.getTruthSetMap[Q, I](truthSetDir(), queryIdType(), indexIdType())
+          LoadTestUtils.getTruthSetMap[Q, I](truthSetDir(), queryIdType(), indetwitterIdType())
         queries.map(entity => Query[I](entity.embedding, truthSetMap(entity.id)))
       } else {
         queries.map(entity => Query[I](entity.embedding))
@@ -161,10 +161,10 @@ object AnnLoadTestMain extends TwitterServer {
   ]: Seq[QueryTimeConfiguration[T, P]] = {
     val queryTimeConfig = algo() match {
       case "annoy" =>
-        assert(numOfNodesToExplore().nonEmpty, "Must specify the num_of_nodes_to_explore")
-        logger.info(s"Querying annoy index with num_of_nodes_to_explore ${numOfNodesToExplore()}")
+        assert(numOfNodesToEtwitterplore().nonEmpty, "Must specify the num_of_nodes_to_etwitterplore")
+        logger.info(s"Querying annoy indetwitter with num_of_nodes_to_etwitterplore ${numOfNodesToEtwitterplore()}")
         for {
-          numNodes <- numOfNodesToExplore()
+          numNodes <- numOfNodesToEtwitterplore()
           numOfNeighbors <- numberOfNeighbors()
         } yield {
           buildQueryTimeConfig[T, AnnoyRuntimeParams](
@@ -178,7 +178,7 @@ object AnnLoadTestMain extends TwitterServer {
         }
       case "hnsw" =>
         assert(ef().nonEmpty, "Must specify ef")
-        logger.info(s"Querying hnsw index with ef ${ef()}")
+        logger.info(s"Querying hnsw indetwitter with ef ${ef()}")
         for {
           ef <- ef()
           numOfNeighbors <- numberOfNeighbors()
@@ -194,7 +194,7 @@ object AnnLoadTestMain extends TwitterServer {
         }
       case "faiss" =>
         assert(nprobe().nonEmpty, "Must specify nprobe")
-        def toNonZeroOptional(x: Int): Option[Int] = if (x != 0) Some(x) else None
+        def toNonZeroOptional(twitter: Int): Option[Int] = if (twitter != 0) Some(twitter) else None
         for {
           numOfNeighbors <- numberOfNeighbors()
           runNProbe <- nprobe()
@@ -222,7 +222,7 @@ object AnnLoadTestMain extends TwitterServer {
             )
           ).asInstanceOf[QueryTimeConfiguration[T, P]]
         }
-      case _ => throw new IllegalArgumentException(s"server type: $algo is not supported yet")
+      case _ => throw new IllegalArgumentEtwitterception(s"server type: $algo is not supported yet")
     }
 
     queryTimeConfig
@@ -242,64 +242,64 @@ object AnnLoadTestMain extends TwitterServer {
           injector.instance[ServiceIdentifier],
           getRuntimeParamInjection[P],
           getDistanceInjection[D],
-          getIndexIdInjection[T]
+          getIndetwitterIdInjection[T]
         )
       }
       case "local" => {
         logger.info("Running load test locally..")
-        assert(indexSetDir().nonEmpty, "Index set path is empty")
+        assert(indetwitterSetDir().nonEmpty, "Indetwitter set path is empty")
         val statsLoadTestBuildRecorder = new StatsLoadTestBuildRecorder(statsReceiver)
         val buildRecorder =
           new ComposedLoadTestBuildRecorder(Seq(inMemoryBuildRecorder, statsLoadTestBuildRecorder))
-        indexEmbeddingsAndGetQueryable[T, P, D](
+        indetwitterEmbeddingsAndGetQueryable[T, P, D](
           buildRecorder,
-          LoadTestUtils.getEmbeddingsSet(indexSetDir(), indexIdType())
+          LoadTestUtils.getEmbeddingsSet(indetwitterSetDir(), indetwitterIdType())
         )
       }
     }
     queryable
   }
 
-  private def indexEmbeddingsAndGetQueryable[T, P <: RuntimeParams, D <: Distance[D]](
+  private def indetwitterEmbeddingsAndGetQueryable[T, P <: RuntimeParams, D <: Distance[D]](
     buildRecorder: LoadTestBuildRecorder,
-    indexSet: Seq[EntityEmbedding[T]]
+    indetwitterSet: Seq[EntityEmbedding[T]]
   ): Future[Queryable[T, P, D]] = {
-    logger.info(s"Indexing entity embeddings in index set with size ${indexSet.size}")
+    logger.info(s"Indetwittering entity embeddings in indetwitter set with size ${indetwitterSet.size}")
     val metric = getDistanceMetric[D]
-    val indexIdInjection = getIndexIdInjection[T]
-    val indexBuilder = new AnnIndexBuildLoadTest(buildRecorder)
+    val indetwitterIdInjection = getIndetwitterIdInjection[T]
+    val indetwitterBuilder = new AnnIndetwitterBuildLoadTest(buildRecorder)
     val appendable = algo() match {
       case "annoy" =>
         assert(numOfTrees() > 0, "Must specify the number of trees for annoy")
         logger.info(
-          s"Creating annoy index locally with num_of_trees: ${numOfTrees()}"
+          s"Creating annoy indetwitter locally with num_of_trees: ${numOfTrees()}"
         )
-        TypedAnnoyIndex
-          .indexBuilder(
+        TypedAnnoyIndetwitter
+          .indetwitterBuilder(
             dimension(),
             numOfTrees(),
             metric,
-            indexIdInjection,
+            indetwitterIdInjection,
             FuturePool.interruptibleUnboundedPool
           )
       case "hnsw" =>
-        assert(efConstruction() > 0 && maxM() > 0, "Must specify ef_construction and max_m")
+        assert(efConstruction() > 0 && matwitterM() > 0, "Must specify ef_construction and matwitter_m")
         logger.info(
-          s"Creating hnsw index locally with max_m: ${maxM()} and ef_construction: ${efConstruction()}"
+          s"Creating hnsw indetwitter locally with matwitter_m: ${matwitterM()} and ef_construction: ${efConstruction()}"
         )
-        TypedHnswIndex
-          .index[T, D](
+        TypedHnswIndetwitter
+          .indetwitter[T, D](
             dimension(),
             metric,
             efConstruction(),
-            maxM(),
-            indexSet.size,
+            matwitterM(),
+            indetwitterSet.size,
             ReadWriteFuturePool(FuturePool.interruptibleUnboundedPool)
           )
     }
 
-    indexBuilder
-      .indexEmbeddings(appendable, indexSet, concurrencyLevel())
+    indetwitterBuilder
+      .indetwitterEmbeddings(appendable, indetwitterSet, concurrencyLevel())
       .asInstanceOf[Future[Queryable[T, P, D]]]
   }
 
@@ -308,9 +308,9 @@ object AnnLoadTestMain extends TwitterServer {
     queryTimeConfig: Seq[QueryTimeConfiguration[T, P]],
     queries: Seq[Query[T]]
   ): Future[Unit] = {
-    val indexQuery = new AnnIndexQueryLoadTest()
+    val indetwitterQuery = new AnnIndetwitterQueryLoadTest()
     val duration = Duration(durationSec().toLong, TimeUnit.SECONDS)
-    indexQuery.performQueries(
+    indetwitterQuery.performQueries(
       queryable,
       targetQPS(),
       duration,
@@ -320,9 +320,9 @@ object AnnLoadTestMain extends TwitterServer {
     )
   }
 
-  // provide index id injection based on argument
-  private[this] def getIndexIdInjection[T]: Injection[T, Array[Byte]] = {
-    val injection = indexIdType() match {
+  // provide indetwitter id injection based on argument
+  private[this] def getIndetwitterIdInjection[T]: Injection[T, Array[Byte]] = {
+    val injection = indetwitterIdType() match {
       case "long" => AnnInjections.LongInjection
       case "string" => AnnInjections.StringInjection
       case "int" => AnnInjections.IntInjection

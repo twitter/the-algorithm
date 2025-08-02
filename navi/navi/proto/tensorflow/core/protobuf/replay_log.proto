@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -20,7 +20,7 @@ message ReplayOp {
 
   oneof op {
     CreateSessionRequest create_session = 1;
-    ExtendSessionRequest extend_session = 2;
+    EtwittertendSessionRequest etwittertend_session = 2;
     PartialRunSetupRequest partial_run_setup = 3;
     RunStepRequest run_step = 4;
     CloseSessionRequest close_session = 5;
@@ -34,7 +34,7 @@ message ReplayOp {
 
   oneof response {
     CreateSessionResponse create_session_response = 21;
-    ExtendSessionResponse extend_session_response = 22;
+    EtwittertendSessionResponse etwittertend_session_response = 22;
     PartialRunSetupResponse partial_run_setup_response = 23;
     RunStepResponse run_step_response = 24;
     CloseSessionResponse close_session_response = 25;

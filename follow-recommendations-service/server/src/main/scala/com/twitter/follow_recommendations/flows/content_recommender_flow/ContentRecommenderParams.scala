@@ -4,82 +4,82 @@ import com.twitter.timelines.configapi.FSBoundedParam
 import com.twitter.timelines.configapi.FSParam
 import com.twitter.timelines.configapi.Param
 
-abstract class ContentRecommenderParams[A](default: A) extends Param[A](default) {
+abstract class ContentRecommenderParams[A](default: A) etwittertends Param[A](default) {
   override val statName: String = "content_recommender/" + this.getClass.getSimpleName
 }
 
 object ContentRecommenderParams {
 
   case object TargetEligibility
-      extends FSParam[Boolean](ContentRecommenderFlowFeatureSwitchKeys.TargetUserEligible, true)
+      etwittertends FSParam[Boolean](ContentRecommenderFlowFeatureSwitchKeys.TargetUserEligible, true)
 
   case object ResultSizeParam
-      extends FSBoundedParam[Int](ContentRecommenderFlowFeatureSwitchKeys.ResultSize, 15, 1, 500)
+      etwittertends FSBoundedParam[Int](ContentRecommenderFlowFeatureSwitchKeys.ResultSize, 15, 1, 500)
   case object BatchSizeParam
-      extends FSBoundedParam[Int](ContentRecommenderFlowFeatureSwitchKeys.BatchSize, 15, 1, 500)
+      etwittertends FSBoundedParam[Int](ContentRecommenderFlowFeatureSwitchKeys.BatchSize, 15, 1, 500)
   case object RecentFollowingPredicateBudgetInMillisecond
-      extends FSBoundedParam[Int](
+      etwittertends FSBoundedParam[Int](
         ContentRecommenderFlowFeatureSwitchKeys.RecentFollowingPredicateBudgetInMillisecond,
         8,
         1,
         50)
   case object FetchCandidateSourceBudgetInMillisecond
-      extends FSBoundedParam[Int](
+      etwittertends FSBoundedParam[Int](
         ContentRecommenderFlowFeatureSwitchKeys.CandidateGenerationBudgetInMillisecond,
         60,
         1,
         80)
   case object EnableRecentFollowingPredicate
-      extends FSParam[Boolean](
+      etwittertends FSParam[Boolean](
         ContentRecommenderFlowFeatureSwitchKeys.EnableRecentFollowingPredicate,
         true)
   case object EnableGizmoduckPredicate
-      extends FSParam[Boolean](
+      etwittertends FSParam[Boolean](
         ContentRecommenderFlowFeatureSwitchKeys.EnableGizmoduckPredicate,
         false)
   case object EnableInactivePredicate
-      extends FSParam[Boolean](
+      etwittertends FSParam[Boolean](
         ContentRecommenderFlowFeatureSwitchKeys.EnableInactivePredicate,
         false)
   case object EnableInvalidTargetCandidateRelationshipPredicate
-      extends FSParam[Boolean](
+      etwittertends FSParam[Boolean](
         ContentRecommenderFlowFeatureSwitchKeys.EnableInvalidTargetCandidateRelationshipPredicate,
         false)
   case object IncludeActivityBasedCandidateSource
-      extends FSParam[Boolean](
+      etwittertends FSParam[Boolean](
         ContentRecommenderFlowFeatureSwitchKeys.IncludeActivityBasedCandidateSource,
         true)
   case object IncludeSocialBasedCandidateSource
-      extends FSParam[Boolean](
+      etwittertends FSParam[Boolean](
         ContentRecommenderFlowFeatureSwitchKeys.IncludeSocialBasedCandidateSource,
         true)
   case object IncludeGeoBasedCandidateSource
-      extends FSParam[Boolean](
+      etwittertends FSParam[Boolean](
         ContentRecommenderFlowFeatureSwitchKeys.IncludeGeoBasedCandidateSource,
         true)
   case object IncludeHomeTimelineTweetRecsCandidateSource
-      extends FSParam[Boolean](
+      etwittertends FSParam[Boolean](
         ContentRecommenderFlowFeatureSwitchKeys.IncludeHomeTimelineTweetRecsCandidateSource,
         false)
   case object IncludeSocialProofEnforcedCandidateSource
-      extends FSParam[Boolean](
+      etwittertends FSParam[Boolean](
         ContentRecommenderFlowFeatureSwitchKeys.IncludeSocialProofEnforcedCandidateSource,
         false)
-  case object IncludeNewFollowingNewFollowingExpansionCandidateSource
-      extends FSParam[Boolean](
-        ContentRecommenderFlowFeatureSwitchKeys.IncludeNewFollowingNewFollowingExpansionCandidateSource,
+  case object IncludeNewFollowingNewFollowingEtwitterpansionCandidateSource
+      etwittertends FSParam[Boolean](
+        ContentRecommenderFlowFeatureSwitchKeys.IncludeNewFollowingNewFollowingEtwitterpansionCandidateSource,
         false)
 
   case object IncludeMoreGeoBasedCandidateSource
-      extends FSParam[Boolean](
+      etwittertends FSParam[Boolean](
         ContentRecommenderFlowFeatureSwitchKeys.IncludeMoreGeoBasedCandidateSource,
         false)
 
   case object GetFollowersFromSgs
-      extends FSParam[Boolean](ContentRecommenderFlowFeatureSwitchKeys.GetFollowersFromSgs, false)
+      etwittertends FSParam[Boolean](ContentRecommenderFlowFeatureSwitchKeys.GetFollowersFromSgs, false)
 
   case object EnableInvalidRelationshipPredicate
-      extends FSParam[Boolean](
+      etwittertends FSParam[Boolean](
         ContentRecommenderFlowFeatureSwitchKeys.EnableInvalidRelationshipPredicate,
         false)
 }

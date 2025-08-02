@@ -1,14 +1,14 @@
 package com.twitter.tweetypie
 package hydrator
 
-import com.twitter.servo.util.ExceptionCounter
+import com.twitter.servo.util.EtwitterceptionCounter
 import com.twitter.stitch.Stitch
 import com.twitter.tweetypie.core.EditState
 import com.twitter.tweetypie.core.ValueState
 import com.twitter.util.Try
 
 /**
- * A ValueHydrator hydrates a value of type `A`, with a hydration context of type `C`,
+ * A ValueHydrator hydrates a value of type `A`, with a hydration contetwittert of type `C`,
  * and produces a value of type ValueState[A] (ValueState encapsulates the value and
  * its associated HydrationState).
  *
@@ -24,10 +24,10 @@ class ValueHydrator[A, C] private (val run: (A, C) => Stitch[ValueState[A]]) {
   /**
    * Apply this hydrator to a value, producing a ValueState.
    */
-  def apply(a: A, ctx: C): Stitch[ValueState[A]] = run(a, ctx)
+  def apply(a: A, cttwitter: C): Stitch[ValueState[A]] = run(a, cttwitter)
 
   /**
-   * Apply with an empty context: only used in tests.
+   * Apply with an empty contetwittert: only used in tests.
    */
   def apply(a: A)(implicit ev: Unit <:< C): Stitch[ValueState[A]] =
     apply(a, ev(()))
@@ -36,29 +36,29 @@ class ValueHydrator[A, C] private (val run: (A, C) => Stitch[ValueState[A]]) {
    * Convert this ValueHydrator to the equivalent EditHydrator.
    */
   def toEditHydrator: EditHydrator[A, C] =
-    EditHydrator[A, C] { (a, ctx) => this.run(a, ctx).map(value => EditState(_ => value)) }
+    EditHydrator[A, C] { (a, cttwitter) => this.run(a, cttwitter).map(value => EditState(_ => value)) }
 
   /**
    * Chains two ValueHydrators in sequence.
    */
-  def andThen(next: ValueHydrator[A, C]): ValueHydrator[A, C] =
-    ValueHydrator[A, C] { (x0, ctx) =>
+  def andThen(netwittert: ValueHydrator[A, C]): ValueHydrator[A, C] =
+    ValueHydrator[A, C] { (twitter0, cttwitter) =>
       for {
-        r1 <- run(x0, ctx)
-        r2 <- next.run(r1.value, ctx)
+        r1 <- run(twitter0, cttwitter)
+        r2 <- netwittert.run(r1.value, cttwitter)
       } yield {
         ValueState(r2.value, r1.state ++ r2.state)
       }
     }
 
   /**
-   * Executes this ValueHydrator conditionally based on a Gate.
+   * Etwitterecutes this ValueHydrator conditionally based on a Gate.
    */
   def ifEnabled(gate: Gate[Unit]): ValueHydrator[A, C] =
     onlyIf((_, _) => gate())
 
   /**
-   * Executes this ValueHydrator conditionally based on a boolean function.
+   * Etwitterecutes this ValueHydrator conditionally based on a boolean function.
    */
   def onlyIf(cond: (A, C) => Boolean): ValueHydrator[A, C] =
     ValueHydrator { (a, c) =>
@@ -85,9 +85,9 @@ class ValueHydrator[A, C] private (val run: (A, C) => Stitch[ValueState[A]]) {
   private def liftOption(default: Option[A]): ValueHydrator[Option[A], C] = {
     val none = Stitch.value(ValueState.unit(None))
 
-    ValueHydrator[Option[A], C] { (a, ctx) =>
+    ValueHydrator[Option[A], C] { (a, cttwitter) =>
       a.orElse(default) match {
-        case Some(a) => this.run(a, ctx).map(s => s.map(Some.apply))
+        case Some(a) => this.run(a, cttwitter).map(s => s.map(Some.apply))
         case None => none
       }
     }
@@ -97,8 +97,8 @@ class ValueHydrator[A, C] private (val run: (A, C) => Stitch[ValueState[A]]) {
    * Converts a ValueHydrator of input type `A` to input type `Seq[A]`.
    */
   def liftSeq: ValueHydrator[Seq[A], C] =
-    ValueHydrator[Seq[A], C] { (as, ctx) =>
-      Stitch.traverse(as)(a => run(a, ctx)).map(rs => ValueState.sequence[A](rs))
+    ValueHydrator[Seq[A], C] { (as, cttwitter) =>
+      Stitch.traverse(as)(a => run(a, cttwitter)).map(rs => ValueState.sequence[A](rs))
     }
 
   /**
@@ -106,8 +106,8 @@ class ValueHydrator[A, C] private (val run: (A, C) => Stitch[ValueState[A]]) {
    */
   def observe(
     stats: StatsReceiver,
-    mkExceptionCounter: (StatsReceiver, String) => ExceptionCounter = (stats, scope) =>
-      new ExceptionCounter(stats, scope)
+    mkEtwitterceptionCounter: (StatsReceiver, String) => EtwitterceptionCounter = (stats, scope) =>
+      new EtwitterceptionCounter(stats, scope)
   ): ValueHydrator[A, C] = {
     val callCounter = stats.counter("calls")
     val noopCounter = stats.counter("noop")
@@ -115,10 +115,10 @@ class ValueHydrator[A, C] private (val run: (A, C) => Stitch[ValueState[A]]) {
     val partialCounter = stats.counter("partial")
     val completedCounter = stats.counter("completed")
 
-    val exceptionCounter = mkExceptionCounter(stats, "failures")
+    val etwitterceptionCounter = mkEtwitterceptionCounter(stats, "failures")
 
-    ValueHydrator[A, C] { (a, ctx) =>
-      this.run(a, ctx).respond {
+    ValueHydrator[A, C] { (a, cttwitter) =>
+      this.run(a, cttwitter).respond {
         case Return(ValueState(_, state)) =>
           callCounter.incr()
 
@@ -129,20 +129,20 @@ class ValueHydrator[A, C] private (val run: (A, C) => Stitch[ValueState[A]]) {
             if (state.failedFields.nonEmpty) partialCounter.incr()
             if (state.completedHydrations.nonEmpty) completedCounter.incr()
           }
-        case Throw(ex) =>
+        case Throw(etwitter) =>
           callCounter.incr()
-          exceptionCounter(ex)
+          etwitterceptionCounter(etwitter)
       }
     }
   }
 
   /**
-   * Produces a new ValueHydrator that uses a lens to extract the value to hydrate,
+   * Produces a new ValueHydrator that uses a lens to etwittertract the value to hydrate,
    * using this hydrator, and then to put the updated value back in the enclosing struct.
    */
   def lensed[B](lens: Lens[B, A]): ValueHydrator[B, C] =
-    ValueHydrator[B, C] { (b, ctx) =>
-      this.run(lens.get(b), ctx).map {
+    ValueHydrator[B, C] { (b, cttwitter) =>
+      this.run(lens.get(b), cttwitter).map {
         case ValueState(value, state) =>
           ValueState(lens.set(b, value), state)
       }
@@ -177,7 +177,7 @@ object ValueHydrator {
    * Creates a `ValueHydrator` from a Mutation.  If the mutation returns None (indicating
    * no change) the hydrator will return an ValueState.unmodified with the input value;
    * otherwise, it will return an ValueState.modified with the mutated value.
-   * If the mutation throws an exception, it will be caught and lifted to Stitch.exception.
+   * If the mutation throws an etwitterception, it will be caught and lifted to Stitch.etwitterception.
    */
   def fromMutation[A, C](mutation: Mutation[A]): ValueHydrator[A, C] =
     ValueHydrator[A, C] { (input, _) =>
@@ -196,5 +196,5 @@ object ValueHydrator {
    * an error it will be caught and converted to a Throw.
    */
   def map[A, C](f: (A, C) => ValueState[A]): ValueHydrator[A, C] =
-    ValueHydrator[A, C] { (a, ctx) => Stitch.const(Try(f(a, ctx))) }
+    ValueHydrator[A, C] { (a, cttwitter) => Stitch.const(Try(f(a, cttwitter))) }
 }

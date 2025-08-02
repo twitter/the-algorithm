@@ -1,0 +1,19 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/javatwitter/inject:javatwitter.inject",
+        "finagle/finagle-memcached/src/main/scala",
+        "finatra/inject/inject-core/src/main/scala",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/param",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/candidate_source",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/pipeline",
+        "src/thrift/com/twitter/search:earlybird-scala",
+        "stitch/stitch-timelineservice/src/main/scala",
+    ],
+    etwitterports = [
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/candidate_source",
+    ],
+)

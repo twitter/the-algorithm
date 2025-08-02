@@ -4,21 +4,21 @@ import com.twitter.util.{Future, Return}
 import scala.collection.mutable
 
 /**
- * uses a forwarding cache to lookup a value by a secondary index.
- * filters out values for which the requested secondary index does not
- * match the actual secondary index (these are treated as a miss)
+ * uses a forwarding cache to lookup a value by a secondary indetwitter.
+ * filters out values for which the requested secondary indetwitter does not
+ * match the actual secondary indetwitter (these are treated as a miss)
  */
 class ForwardingCache[K, F, V](
   forwardingCache: Cache[K, Cached[F]],
-  underlyingCache: SecondaryIndexingCache[F, _, V],
+  underlyingCache: SecondaryIndetwitteringCache[F, _, V],
   primaryKey: V => F,
-  secondaryKey: SecondaryIndexingCache.IndexMapping[K, V],
+  secondaryKey: SecondaryIndetwitteringCache.IndetwitterMapping[K, V],
   lockingCacheFactory: LockingCacheFactory)
-    extends LockingCache[K, Cached[V]] {
+    etwittertends LockingCache[K, Cached[V]] {
   protected[this] case class ForwardingChecksum(
     forwardingChecksum: Checksum,
     underlyingChecksum: Option[Checksum])
-      extends Checksum
+      etwittertends Checksum
 
   protected[this] val lockingUnderlying = lockingCacheFactory(underlyingCache)
   protected[this] val lockingForwarding = lockingCacheFactory(forwardingCache)
@@ -88,12 +88,12 @@ class ForwardingCache[K, F, V](
   // be checked at compile time.
 
   override def getWithChecksum(keys: Seq[K]): Future[CsKeyValueResult[K, Cached[V]]] =
-    Future.exception(new UnsupportedOperationException("Use lockAndSet directly"))
+    Future.etwitterception(new UnsupportedOperationEtwitterception("Use lockAndSet directly"))
 
   override def checkAndSet(key: K, cachedValue: Cached[V], checksum: Checksum): Future[Boolean] =
-    Future.exception(new UnsupportedOperationException("Use lockAndSet directly"))
+    Future.etwitterception(new UnsupportedOperationEtwitterception("Use lockAndSet directly"))
 
-  protected[this] def maybeAddForwardingIndex(
+  protected[this] def maybeAddForwardingIndetwitter(
     key: K,
     cachedPrimaryKey: Cached[F],
     wasAdded: Boolean
@@ -112,10 +112,10 @@ class ForwardingCache[K, F, V](
     cachedPrimaryKey.value match {
       case Some(pKey) =>
         // if a value can be derived from the key, use the underlying cache to add it
-        // the underlying cache will create the secondary index as a side-effect
+        // the underlying cache will create the secondary indetwitter as a side-effect
         underlyingCache.add(pKey, cachedValue)
       case None =>
-        // otherwise, we're just writing a tombstone, so we need to check if it exists
+        // otherwise, we're just writing a tombstone, so we need to check if it etwitterists
         forwardingCache.add(key, cachedPrimaryKey)
     }
   }
@@ -129,15 +129,15 @@ class ForwardingCache[K, F, V](
         cachedValue.value match {
           case Some(value) =>
             // set on the underlying cache, and let it take care of adding
-            // the secondary index
+            // the secondary indetwitter
             val pKey = primaryKey(value)
             lockingUnderlying.lockAndSet(pKey, handler)
           case None =>
             // no underlying value to set, so just write the forwarding entry.
-            // secondaryIndexingCache doesn't lock for this set, so there's
+            // secondaryIndetwitteringCache doesn't lock for this set, so there's
             // no point in our doing it. There's a slight risk of writing an
             // errant tombstone in a race, but the only way to get around this
-            // would be to lock around *all* primary and secondary indexes,
+            // would be to lock around *all* primary and secondary indetwitteres,
             // which could produce deadlocks, which is probably worse.
             val cachedEmptyPKey = cachedValue.copy[F](value = None)
             forwardingCache.set(key, cachedEmptyPKey) map { _ =>
@@ -154,7 +154,7 @@ class ForwardingCache[K, F, V](
     cachedValue.value match {
       case Some(value) =>
         // set on the underlying cache, and let it take care of adding
-        // the secondary index
+        // the secondary indetwitter
         val pKey = primaryKey(value)
         underlyingCache.set(pKey, cachedValue)
       case None =>
@@ -166,7 +166,7 @@ class ForwardingCache[K, F, V](
   override def replace(key: K, cachedValue: Cached[V]): Future[Boolean] = {
     cachedValue.value match {
       case Some(value) =>
-        // replace in the underlying cache, and let it take care of adding the secondary index
+        // replace in the underlying cache, and let it take care of adding the secondary indetwitter
         val pKey = primaryKey(value)
         underlyingCache.replace(pKey, cachedValue)
       case None =>

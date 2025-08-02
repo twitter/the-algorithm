@@ -49,7 +49,7 @@ class TWMLAPI ThriftWriter {
     uint64_t writeInt32(int32_t val);
     uint64_t writeInt64(int64_t val);
     uint64_t writeBinary(const uint8_t *bytes, int32_t num_bytes);
-    // clients expect UTF-8-encoded strings per the Thrift protocol
+    // clients etwitterpect UTF-8-encoded strings per the Thrift protocol
     // (often this is just used to send bytes, not real strings though)
     uint64_t writeString(std::string str);
     uint64_t writeBool(bool val);

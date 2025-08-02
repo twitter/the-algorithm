@@ -13,25 +13,25 @@ import com.twitter.util.Future
 object CasLockPredicate {
   def apply(
     casLock: CasLock,
-    expiryDuration: Duration
+    etwitterpiryDuration: Duration
   )(
     implicit statsReceiver: StatsReceiver
   ): NamedPredicate[PushCandidate] = {
     val stats = statsReceiver.scope("predicate_addcaslock_for_candidate")
     Predicate
       .fromAsync { candidate: PushCandidate =>
-        if (candidate.target.pushContext.exists(_.darkWrite.exists(_ == true))) {
+        if (candidate.target.pushContetwittert.etwitterists(_.darkWrite.etwitterists(_ == true))) {
           Future.True
         } else if (candidate.commonRecType == CommonRecommendationType.MagicFanoutSportsEvent) {
           Future.True
         } else {
           candidate.target.history flatMap { h =>
             val now = candidate.createdAt
-            val expiry = now + expiryDuration
+            val etwitterpiry = now + etwitterpiryDuration
             val oldTimestamp = h.lastNotificationTime map {
               _.inSeconds
             } getOrElse 0
-            casLock.cas(candidate.target.targetId, oldTimestamp, now.inSeconds, expiry) map {
+            casLock.cas(candidate.target.targetId, oldTimestamp, now.inSeconds, etwitterpiry) map {
               casResult =>
                 stats.counter(s"cas_$casResult").incr()
                 casResult == CasSuccess

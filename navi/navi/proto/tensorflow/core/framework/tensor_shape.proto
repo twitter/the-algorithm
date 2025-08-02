@@ -1,6 +1,6 @@
 // Protocol buffer representing the shape of tensors.
 
-syntax = "proto3";
+syntatwitter = "proto3";
 option cc_enable_arenas = true;
 option java_outer_classname = "TensorShapeProtos";
 option java_multiple_files = true;
@@ -25,7 +25,7 @@ message TensorShapeProto {
   };
 
   // Dimensions of the tensor, such as {"input", 30}, {"output", 40}
-  // for a 30 x 40 2D tensor.  If an entry has size -1, this
+  // for a 30 twitter 40 2D tensor.  If an entry has size -1, this
   // corresponds to a dimension of unknown size. The names are
   // optional.
   //

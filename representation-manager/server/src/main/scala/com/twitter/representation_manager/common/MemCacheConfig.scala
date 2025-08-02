@@ -27,8 +27,8 @@ sealed trait MemCacheConfig
 /*
  * This holds params that is required to set up a memcache cache for a single embedding store
  * */
-case class EnabledMemCacheParams(ttl: Duration) extends MemCacheParams
-object DisabledMemCacheParams extends MemCacheParams
+case class EnabledMemCacheParams(ttl: Duration) etwittertends MemCacheParams
+object DisabledMemCacheParams etwittertends MemCacheParams
 
 /*
  * We use this MemcacheConfig as the single source to set up the memcache for all RMS use cases
@@ -36,9 +36,9 @@ object DisabledMemCacheParams extends MemCacheParams
  * */
 object MemCacheConfig {
   val keyHasher: KeyHasher = KeyHasher.FNV1A_64
-  val hashKeyPrefix: String = "RMS"
+  val hashKeyPrefitwitter: String = "RMS"
   val simclustersEmbeddingCacheKeyBuilder =
-    SimClustersEmbeddingIdCacheKeyBuilder(keyHasher.hashKey, hashKeyPrefix)
+    SimClustersEmbeddingIdCacheKeyBuilder(keyHasher.hashKey, hashKeyPrefitwitter)
 
   val cacheParamsMap: Map[
     (EmbeddingType, ModelVersion),
@@ -54,9 +54,9 @@ object MemCacheConfig {
     (FavBasedProducer, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
     (FollowBasedProducer, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
     (AggregatableLogFavBasedProducer, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (RelaxedAggregatableLogFavBasedProducer, Model20m145kUpdated) -> EnabledMemCacheParams(ttl =
+    (RelatwitteredAggregatableLogFavBasedProducer, Model20m145kUpdated) -> EnabledMemCacheParams(ttl =
       12.hours),
-    (RelaxedAggregatableLogFavBasedProducer, Model20m145k2020) -> EnabledMemCacheParams(ttl =
+    (RelatwitteredAggregatableLogFavBasedProducer, Model20m145k2020) -> EnabledMemCacheParams(ttl =
       12.hours),
     // User - InterestedIn Embeddings
     (LogFavBasedUserInterestedInFromAPE, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
@@ -71,25 +71,25 @@ object MemCacheConfig {
     (FilteredUserInterestedInFromPE, Model20m145kUpdated) -> EnabledMemCacheParams(ttl = 12.hours),
     (UnfilteredUserInterestedIn, Model20m145kUpdated) -> EnabledMemCacheParams(ttl = 12.hours),
     (UnfilteredUserInterestedIn, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
-    (UserNextInterestedIn, Model20m145k2020) -> EnabledMemCacheParams(ttl =
+    (UserNetwittertInterestedIn, Model20m145k2020) -> EnabledMemCacheParams(ttl =
       30.minutes), //embedding is updated every 2 hours, keeping it lower to avoid staleness
     (
-      LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE,
+      LogFavBasedUserInterestedMatwitterpoolingAddressBookFromIIAPE,
       Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
     (
       LogFavBasedUserInterestedAverageAddressBookFromIIAPE,
       Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
     (
-      LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE,
+      LogFavBasedUserInterestedBooktypeMatwitterpoolingAddressBookFromIIAPE,
       Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
     (
-      LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE,
+      LogFavBasedUserInterestedLargestDimMatwitterpoolingAddressBookFromIIAPE,
       Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
     (
-      LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE,
+      LogFavBasedUserInterestedLouvainMatwitterpoolingAddressBookFromIIAPE,
       Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
     (
-      LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE,
+      LogFavBasedUserInterestedConnectedMatwitterpoolingAddressBookFromIIAPE,
       Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
     // Topic Embeddings
     (FavTfgTopic, Model20m145k2020) -> EnabledMemCacheParams(ttl = 12.hours),
@@ -100,11 +100,11 @@ object MemCacheConfig {
     embeddingType: EmbeddingType,
     modelVersion: ModelVersion
   ): MemCacheParams = {
-    // When requested (embeddingType, modelVersion) doesn't exist, we return DisabledMemCacheParams
+    // When requested (embeddingType, modelVersion) doesn't etwitterist, we return DisabledMemCacheParams
     cacheParamsMap.getOrElse((embeddingType, modelVersion), DisabledMemCacheParams)
   }
 
-  def getCacheKeyPrefix(embeddingType: EmbeddingType, modelVersion: ModelVersion) =
+  def getCacheKeyPrefitwitter(embeddingType: EmbeddingType, modelVersion: ModelVersion) =
     s"${embeddingType.value}_${modelVersion.value}_"
 
   def getStatsName(embeddingType: EmbeddingType, modelVersion: ModelVersion) =
@@ -129,7 +129,7 @@ object MemCacheConfig {
     val store = cacheParams match {
       case DisabledMemCacheParams => rawStore
       case EnabledMemCacheParams(ttl) =>
-        val memCacheKeyPrefix = MemCacheConfig.getCacheKeyPrefix(
+        val memCacheKeyPrefitwitter = MemCacheConfig.getCacheKeyPrefitwitter(
           embeddingType,
           modelVersion
         )
@@ -144,7 +144,7 @@ object MemCacheConfig {
         )(
           valueInjection = LZ4Injection.compose(BinaryScalaCodec(ThriftSimClustersEmbedding)),
           statsReceiver = stats.scope(statsName),
-          keyToString = { k => memCacheKeyPrefix + k.toString }
+          keyToString = { k => memCacheKeyPrefitwitter + k.toString }
         )
     }
     store.mapValues(SimClustersEmbedding(_))

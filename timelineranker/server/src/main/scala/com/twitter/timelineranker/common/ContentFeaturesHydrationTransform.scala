@@ -24,7 +24,7 @@ class ContentFeaturesHydrationTransformBuilder(
   contentFeaturesCache: Store[TweetId, ContentFeatures],
   enableContentFeaturesGate: Gate[RecapQuery],
   enableTokensInContentFeaturesGate: Gate[RecapQuery],
-  enableTweetTextInContentFeaturesGate: Gate[RecapQuery],
+  enableTweetTetwittertInContentFeaturesGate: Gate[RecapQuery],
   enableConversationControlContentFeaturesGate: Gate[RecapQuery],
   enableTweetMediaHydrationGate: Gate[RecapQuery],
   hydrateInReplyToTweets: Boolean,
@@ -36,7 +36,7 @@ class ContentFeaturesHydrationTransformBuilder(
       tweetHydrator,
       enableContentFeaturesGate,
       enableTokensInContentFeaturesGate,
-      enableTweetTextInContentFeaturesGate,
+      enableTweetTetwittertInContentFeaturesGate,
       enableConversationControlContentFeaturesGate,
       enableTweetMediaHydrationGate,
       scopedStatsReceiver
@@ -70,7 +70,7 @@ class ContentFeaturesHydrationTransform(
   contentFeaturesProvider: ContentFeaturesProvider,
   enableContentFeaturesGate: Gate[RecapQuery],
   hydrateInReplyToTweets: Boolean)
-    extends FutureArrow[
+    etwittertends FutureArrow[
       HydratedCandidatesAndFeaturesEnvelope,
       HydratedCandidatesAndFeaturesEnvelope
     ] {

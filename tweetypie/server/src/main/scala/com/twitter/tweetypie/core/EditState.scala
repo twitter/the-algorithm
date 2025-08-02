@@ -8,7 +8,7 @@ import com.twitter.servo.data.Mutation
  * whether an item was changed, or whether there was an error.
  * EditStates are useful because they are first-class values that can
  * be composed. In particular, it is useful to concurrently access
- * external data to build edits and then apply them.
+ * etwitterternal data to build edits and then apply them.
  *
  * @tparam A The type of the value that is being edited (for instance,
  *           having fields hydrated with data from another service)

@@ -10,7 +10,7 @@ public abstract class ByteNormalizer {
   }
 
   public static int unsignedByteToInt(byte b) {
-    return (int) b & 0xFF;
+    return (int) b & 0twitterFF;
   }
 
   /**

@@ -1,0 +1,16 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    dependencies = [
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/model",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/model/request",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/param",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/util",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/pipeline",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/product",
+        "src/thrift/com/twitter/timelines/common:thrift-scala",
+        "src/thrift/com/twitter/timelineservice/server/internal:thrift-scala",
+        "timelineservice/common:model",
+    ],
+)

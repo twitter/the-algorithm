@@ -4,7 +4,7 @@ import com.twitter.interaction_graph.thriftscala.TimeSeriesStatistics
 
 object InteractionGraphUtils {
   final val MIN_FEATURE_VALUE = Math.pow(0.955, 60)
-  final val MAX_DAYS_RETENTION = 60L
+  final val MAtwitter_DAYS_RETENTION = 60L
   final val MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24
 
   def updateTimeSeriesStatistics(

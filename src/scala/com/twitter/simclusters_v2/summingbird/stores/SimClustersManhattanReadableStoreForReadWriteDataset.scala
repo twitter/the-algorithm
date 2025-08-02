@@ -34,7 +34,7 @@ class SimClustersManhattanReadableStoreForReadWriteDataset(
   label: String,
   mtlsParams: ManhattanKVClientMtlsParams,
   manhattanCluster: ManhattanCluster = Adama)
-    extends ReadableStore[SimClustersEmbeddingId, ClustersUserIsInterestedIn] {
+    etwittertends ReadableStore[SimClustersEmbeddingId, ClustersUserIsInterestedIn] {
   /*
   Setting up a new builder to read from Manhattan RW dataset. This is specifically required for
   BeT project where we update the MH RW dataset (every 2 hours) using cloud shuttle service.
@@ -56,7 +56,7 @@ class SimClustersManhattanReadableStoreForReadWriteDataset(
         // returns result
         val mhValue = Stitch.run(endPoint.get(populatedKey, valueDesc))
         mhValue.map {
-          case Some(x) => Option(x.contents)
+          case Some(twitter) => Option(twitter.contents)
           case _ => None
         }
       case _ => Future.None

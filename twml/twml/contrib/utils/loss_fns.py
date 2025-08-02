@@ -43,7 +43,7 @@ def get_lambda_pair_loss(pairwise_label_scores, pairwise_predicted_scores,
   Note: this loss depends on ranknet cross-entropy
   delta NDCG is applied to ranknet cross-entropy
   Hence, it is still a gradient descent method
-  Check paper http://citeseerx.ist.psu.edu/viewdoc/
+  Check paper http://citeseertwitter.ist.psu.edu/viewdoc/
   download?doi=10.1.1.180.634&rep=rep1&type=pdf for more information
   for more information
   Args:
@@ -92,7 +92,7 @@ def get_listmle_loss(labels, predicted_scores):
   r"""
   listwise learning-to-rank listMLE loss
   Note: Simplified MLE formula is used in here (omit the proof in here)
-  \sum_{s=1}^{n-1} (-predicted_scores + ln(\sum_{i=s}^n exp(predicted_scores)))
+  \sum_{s=1}^{n-1} (-predicted_scores + ln(\sum_{i=s}^n etwitterp(predicted_scores)))
   n is tf.shape(predicted_scores)[0]
   Check paper http://icml2008.cs.helsinki.fi/papers/167.pdf for more information
   Args:
@@ -115,28 +115,28 @@ def get_listmle_loss(labels, predicted_scores):
   temp = tf.reshape(temp, [])
   loss = tf.add(loss, temp)
 
-  exps = tf.exp(predicted_scores_ordered_by_labels)
-  exp_sum = tf.reduce_sum(exps)
-  # clip exp_sum for safer log
-  loss = tf.add(loss, math_fns.safe_log(exp_sum))
+  etwitterps = tf.etwitterp(predicted_scores_ordered_by_labels)
+  etwitterp_sum = tf.reduce_sum(etwitterps)
+  # clip etwitterp_sum for safer log
+  loss = tf.add(loss, math_fns.safe_log(etwitterp_sum))
 
   iteration = tf.constant(0)
 
-  def _cond(iteration, loss, exp_sum, exp):
+  def _cond(iteration, loss, etwitterp_sum, etwitterp):
     return tf.less(iteration, n_data - 2)
 
   def _gen_loop_body():
-    def loop_body(iteration, loss, exp_sum, exps):
-      temp = tf.gather(exps, [iteration])
+    def loop_body(iteration, loss, etwitterp_sum, etwitterps):
+      temp = tf.gather(etwitterps, [iteration])
       temp = tf.reshape(temp, [])
-      exp_sum = tf.subtract(exp_sum, temp)
-      # clip exp_sum for safer log
-      loss = tf.add(loss, math_fns.safe_log(exp_sum))
-      return tf.add(iteration, 1), loss, exp_sum, exps
+      etwitterp_sum = tf.subtract(etwitterp_sum, temp)
+      # clip etwitterp_sum for safer log
+      loss = tf.add(loss, math_fns.safe_log(etwitterp_sum))
+      return tf.add(iteration, 1), loss, etwitterp_sum, etwitterps
     return loop_body
 
-  iteration, loss, exp_sum, exps = tf.while_loop(_cond, _gen_loop_body(),
-    (iteration, loss, exp_sum, exps))
+  iteration, loss, etwitterp_sum, etwitterps = tf.while_loop(_cond, _gen_loop_body(),
+    (iteration, loss, etwitterp_sum, etwitterps))
   loss = loss / tf.cast(n_data, dtype=tf.float32)
   return loss
 
@@ -156,7 +156,7 @@ def _get_ordered_predicted_scores(labels, predicted_scores, n_data):
 def get_attrank_loss(labels, predicted_scores, weights=None):
   """
   Modified listwise learning-to-rank AttRank loss
-  Check paper https://arxiv.org/abs/1804.05936 for more information
+  Check paper https://artwitteriv.org/abs/1804.05936 for more information
   Note: there is an inconsistency between the paper statement and
   their public code
   Args:
@@ -171,7 +171,7 @@ def get_attrank_loss(labels, predicted_scores, weights=None):
   # attention_labels = _get_attentions(labels)
   # attention_labels = tf.reshape(attention_labels, [1, -1])
   # predicted_scores = tf.reshape(predicted_scores, [1, -1])
-  # loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=attention_labels,
+  # loss = tf.reduce_mean(tf.nn.softmatwitter_cross_entropy_with_logits(labels=attention_labels,
   #   logits=predicted_scores))
 
   # The paper proposed the following
@@ -188,11 +188,11 @@ def get_attrank_loss(labels, predicted_scores, weights=None):
 
   # Implemented the following instead
   # _get_attentions is applied to labels
-  # softmax is applied to predicted_scores
+  # softmatwitter is applied to predicted_scores
   reshaped_labels = tf.reshape(labels, [1, -1])
   attention_labels = _get_attentions(reshaped_labels)
   reshaped_predicted_scores = tf.reshape(predicted_scores, [1, -1])
-  attention_predicted_scores = tf.nn.softmax(reshaped_predicted_scores)
+  attention_predicted_scores = tf.nn.softmatwitter(reshaped_predicted_scores)
   loss = _get_attrank_cross_entropy(attention_labels, attention_predicted_scores)
   return loss
 
@@ -201,16 +201,16 @@ def _get_attentions(raw_scores):
   """
   Used in attention weights in AttRank loss
   for a query/batch/batchPreidictionRequest
-  (a rectified softmax function)
+  (a rectified softmatwitter function)
   """
   not_consider = tf.less_equal(raw_scores, 0)
   mask = tf.ones(tf.shape(raw_scores)) - tf.cast(not_consider, dtype=tf.float32)
   mask = tf.cast(mask, dtype=tf.float32)
-  expon_labels = mask * tf.exp(raw_scores)
+  etwitterpon_labels = mask * tf.etwitterp(raw_scores)
 
-  expon_label_sum = tf.reduce_sum(expon_labels)
-  # expon_label_sum is safe as a denominator
-  attentions = math_fns.safe_div(expon_labels, expon_label_sum)
+  etwitterpon_label_sum = tf.reduce_sum(etwitterpon_labels)
+  # etwitterpon_label_sum is safe as a denominator
+  attentions = math_fns.safe_div(etwitterpon_labels, etwitterpon_label_sum)
   return attentions
 
 
@@ -237,7 +237,7 @@ def get_listnet_loss(labels, predicted_scores, weights=None):
   Returns:
     average loss
   """
-  # top one probability is the same as softmax
+  # top one probability is the same as softmatwitter
   labels_top_one_probs = _get_top_one_probs(labels)
   predicted_scores_top_one_probs = _get_top_one_probs(predicted_scores)
 
@@ -257,12 +257,12 @@ def _get_top_one_probs(labels):
   """
   Used in listnet top-one probabilities
   for a query/batch/batchPreidictionRequest
-  (essentially a softmax function)
+  (essentially a softmatwitter function)
   """
-  expon_labels = tf.exp(labels)
-  expon_label_sum = tf.reduce_sum(expon_labels)
-  # expon_label_sum is safe as a denominator
-  attentions = expon_labels / expon_label_sum
+  etwitterpon_labels = tf.etwitterp(labels)
+  etwitterpon_label_sum = tf.reduce_sum(etwitterpon_labels)
+  # etwitterpon_label_sum is safe as a denominator
+  attentions = etwitterpon_labels / etwitterpon_label_sum
   return attentions
 
 

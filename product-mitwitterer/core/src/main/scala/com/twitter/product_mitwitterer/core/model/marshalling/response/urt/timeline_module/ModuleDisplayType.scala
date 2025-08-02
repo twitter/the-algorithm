@@ -1,0 +1,12 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.timeline_module
+
+sealed trait ModuleDisplayType
+
+case object Carousel etwittertends ModuleDisplayType
+case object CompactCarousel etwittertends ModuleDisplayType
+case object ConversationTree etwittertends ModuleDisplayType
+case object GridCarousel etwittertends ModuleDisplayType
+case object Vertical etwittertends ModuleDisplayType
+case object VerticalConversation etwittertends ModuleDisplayType
+case object VerticalGrid etwittertends ModuleDisplayType
+case object VerticalWithContetwittertLine etwittertends ModuleDisplayType

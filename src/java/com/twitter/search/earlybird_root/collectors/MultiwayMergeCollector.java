@@ -56,7 +56,7 @@ public abstract class MultiwayMergeCollector<T> {
   /**
    * Parse the EarlybirdResponse and retrieve list of results to be appended.
    *
-   * @param response earlybird response from where results are extracted
+   * @param response earlybird response from where results are etwittertracted
    * @return  resultsList to be appended
    */
   protected abstract List<T> collectResults(EarlybirdResponse response);
@@ -71,7 +71,7 @@ public abstract class MultiwayMergeCollector<T> {
   /**
    * Get full list of results, after addResponse calls have been invoked.
    *
-   * @return list of results extracted from all EarlybirdResponses that have been collected so far
+   * @return list of results etwittertracted from all EarlybirdResponses that have been collected so far
    */
   protected final List<T> getResultsList() {
     Collections.sort(results, resultComparator);

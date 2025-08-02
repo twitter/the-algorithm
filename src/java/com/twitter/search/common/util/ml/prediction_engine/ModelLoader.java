@@ -1,6 +1,6 @@
 package com.twitter.search.common.util.ml.prediction_engine;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.List;
 import java.util.Map;
 
@@ -23,13 +23,13 @@ import com.twitter.search.common.metrics.SearchStatsReceiver;
  * Loads LightweightLinearModel objects from a directory and provides an interface for reloading
  * them periodically.
  *
- * All the models must support the same features (defined by a FeatureContext) and they are
+ * All the models must support the same features (defined by a FeatureContetwittert) and they are
  * identified by the name of the subdirectory. This is the required directory structure:
  *
  *  /path/to/base-directory
  *      one-model/model.tsv
  *      another-model/model.tsv
- *      experimental-model/model.tsv
+ *      etwitterperimental-model/model.tsv
  *
  * Each subdirectory must contain a file named 'model.tsv' in the format required by
  * LightweightLinearModel.
@@ -39,7 +39,7 @@ public class ModelLoader implements Runnable {
   private static final Logger LOG = LoggerFactory.getLogger(ModelLoader.class);
   private static final String MODEL_FILE_NAME = "model.tsv";
 
-  private final CompositeFeatureContext featureContext;
+  private final CompositeFeatureContetwittert featureContetwittert;
   private final Supplier<AbstractFile> directorySupplier;
 
   private final Map<String, LightweightLinearModel> models;
@@ -51,25 +51,25 @@ public class ModelLoader implements Runnable {
   private final SearchCounter numErrors;
 
   /**
-   * Creates a new instance for a feature context and a base directory.
+   * Creates a new instance for a feature contetwittert and a base directory.
    *
-   * It exports 4 counters:
+   * It etwitterports 4 counters:
    *
-   *   ${counterPrefix}_last_loaded:
+   *   ${counterPrefitwitter}_last_loaded:
    *      Timestamp (in ms) when the last model was loaded.
-   *   ${counterPrefix}_num_models:
+   *   ${counterPrefitwitter}_num_models:
    *      Number of models currently loaded.
-   *   ${counterPrefix}_num_loads:
+   *   ${counterPrefitwitter}_num_loads:
    *      Number of succesful model loads.
-   *   ${counterPrefix}_num_errors:
+   *   ${counterPrefitwitter}_num_errors:
    *      Number of errors occurred while loading the models.
    */
   protected ModelLoader(
-      CompositeFeatureContext featureContext,
+      CompositeFeatureContetwittert featureContetwittert,
       Supplier<AbstractFile> directorySupplier,
-      String counterPrefix,
+      String counterPrefitwitter,
       SearchStatsReceiver statsReceiver) {
-    this.featureContext = featureContext;
+    this.featureContetwittert = featureContetwittert;
 
     // This function returns the base directory every time we call 'run'. We use a function instead
     // of using directly an AbstractFile instance, in case that we can't obtain an instance at
@@ -78,10 +78,10 @@ public class ModelLoader implements Runnable {
     this.models = Maps.newConcurrentMap();
     this.lastModifiedMsByModel = Maps.newConcurrentMap();
 
-    this.lastModelLoadedAtMs = statsReceiver.getLongGauge(counterPrefix + "last_loaded");
-    this.numModels = statsReceiver.getLongGauge(counterPrefix + "num_models");
-    this.numLoads = statsReceiver.getCounter(counterPrefix + "num_loads");
-    this.numErrors = statsReceiver.getCounter(counterPrefix + "num_errors");
+    this.lastModelLoadedAtMs = statsReceiver.getLongGauge(counterPrefitwitter + "last_loaded");
+    this.numModels = statsReceiver.getLongGauge(counterPrefitwitter + "num_models");
+    this.numLoads = statsReceiver.getCounter(counterPrefitwitter + "num_loads");
+    this.numErrors = statsReceiver.getCounter(counterPrefitwitter + "num_errors");
   }
 
   public Optional<LightweightLinearModel> getModel(String name) {
@@ -111,7 +111,7 @@ public class ModelLoader implements Runnable {
           Long lastModified = lastModifiedMsByModel.get(modelName);
           if (lastModified == null || lastModified < currentLastModified) {
             LightweightLinearModel model =
-                LightweightLinearModel.load(modelName, featureContext, modelFile);
+                LightweightLinearModel.load(modelName, featureContetwittert, modelFile);
             if (!models.containsKey(modelName)) {
               LOG.info("Loading model {}.", modelName);
             }
@@ -123,7 +123,7 @@ public class ModelLoader implements Runnable {
           } else {
             LOG.debug("Directory for model {} has not changed.", modelName);
           }
-        } catch (Exception e) {
+        } catch (Etwitterception e) {
           LOG.error("Error loading model from directory: " + directory.getPath(), e);
           this.numErrors.increment();
         }
@@ -132,7 +132,7 @@ public class ModelLoader implements Runnable {
         LOG.info("Finished loading models. Model names: {}", models.keySet());
       }
       this.numModels.set(models.size());
-    } catch (IOException e) {
+    } catch (IOEtwitterception e) {
       LOG.error("Error loading models", e);
       this.numErrors.increment();
     }
@@ -143,11 +143,11 @@ public class ModelLoader implements Runnable {
    */
   public static ModelLoader forDirectory(
       final AbstractFile directory,
-      CompositeFeatureContext featureContext,
-      String counterPrefix,
+      CompositeFeatureContetwittert featureContetwittert,
+      String counterPrefitwitter,
       SearchStatsReceiver statsReceiver) {
     Supplier<AbstractFile> directorySupplier = Suppliers.ofInstance(directory);
-    return new ModelLoader(featureContext, directorySupplier, counterPrefix, statsReceiver);
+    return new ModelLoader(featureContetwittert, directorySupplier, counterPrefitwitter, statsReceiver);
   }
 
   /**
@@ -156,12 +156,12 @@ public class ModelLoader implements Runnable {
   public static ModelLoader forHdfsDirectory(
       final String nameNode,
       final String directory,
-      CompositeFeatureContext featureContext,
-      String counterPrefix,
+      CompositeFeatureContetwittert featureContetwittert,
+      String counterPrefitwitter,
       SearchStatsReceiver statsReceiver) {
     Supplier<AbstractFile> directorySupplier =
         () -> FileUtils.getHdfsFileHandle(directory, nameNode);
-    return new ModelLoader(featureContext, directorySupplier, counterPrefix, statsReceiver);
+    return new ModelLoader(featureContetwittert, directorySupplier, counterPrefitwitter, statsReceiver);
   }
 
   private static final AbstractFile.Filter IS_MODEL_DIR = file -> {
@@ -170,7 +170,7 @@ public class ModelLoader implements Runnable {
         AbstractFile modelFile = file.getChild(MODEL_FILE_NAME);
         return (modelFile != null) && modelFile.canRead();
       }
-    } catch (IOException e) {
+    } catch (IOEtwitterception e) {
       LOG.error("Error reading file: " + file, e);
     }
     return false;

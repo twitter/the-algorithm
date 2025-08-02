@@ -8,7 +8,7 @@ from twitter.deepbird.sparse import SparseTensor  # noqa: F401
 from twitter.deepbird.sparse import sparse_dense_matmul  # noqa: F401
 
 from .util import dynamic_partition, feature_id, limit_bits, limit_sparse_tensor_size  # noqa: F401
-from .util import write_file, fixed_length_tensor, setup_tf_logging_formatter  # noqa: F401
+from .util import write_file, fitwittered_length_tensor, setup_tf_logging_formatter  # noqa: F401
 from .array import Array  # noqa: F401
 
 # Module to parse feature patterns and match them from data_spec.json
@@ -20,7 +20,7 @@ from .readers import *  # noqa: T400
 from .block_format_writer import *  # noqa: T400
 
 # Graph output functions
-from .export_output_fns import *  # noqa: T400
+from .etwitterport_output_fns import *  # noqa: T400
 
 # Input parsers
 from .parsers import *  # noqa: T400
@@ -43,7 +43,7 @@ from . import summary  # noqa: F401
 from . import tensorboard  # noqa: F401
 
 import tensorflow.compat.v1 as tf  # noqa: F402
-tf.disable_eager_execution()
+tf.disable_eager_etwitterecution()
 
 # TODO: Figure out a better way to deal with this.
 if 'OMP_NUM_THREADS' not in os.environ and 'MKL_NUM_THREADS' not in os.environ:

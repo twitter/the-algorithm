@@ -4,12 +4,12 @@ import com.twitter.finatra.decider.modules.DeciderModule
 import com.twitter.finatra.kafka.serde.UnKeyed
 import com.twitter.inject.server.TwitterServer
 import com.twitter.kafka.client.processor.AtLeastOnceProcessor
-import com.twitter.timelineservice.thriftscala.ContextualizedFavoriteEvent
+import com.twitter.timelineservice.thriftscala.ContetwittertualizedFavoriteEvent
 import com.twitter.unified_user_actions.service.module.KafkaProcessorTlsFavsModule
 
-object TlsFavsServiceMain extends TlsFavsService
+object TlsFavsServiceMain etwittertends TlsFavsService
 
-class TlsFavsService extends TwitterServer {
+class TlsFavsService etwittertends TwitterServer {
 
   override val modules = Seq(
     KafkaProcessorTlsFavsModule,
@@ -19,8 +19,8 @@ class TlsFavsService extends TwitterServer {
   override protected def setup(): Unit = {}
 
   override protected def start(): Unit = {
-    val processor = injector.instance[AtLeastOnceProcessor[UnKeyed, ContextualizedFavoriteEvent]]
-    closeOnExit(processor)
+    val processor = injector.instance[AtLeastOnceProcessor[UnKeyed, ContetwittertualizedFavoriteEvent]]
+    closeOnEtwitterit(processor)
     processor.start()
   }
 }

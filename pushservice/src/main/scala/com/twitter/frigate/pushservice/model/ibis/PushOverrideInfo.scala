@@ -57,7 +57,7 @@ object PushOverrideInfo {
   }
 
   /**
-   * Gets the OverrideInfo for the last eligible Override Notification FrigateNotification, if it exists
+   * Gets the OverrideInfo for the last eligible Override Notification FrigateNotification, if it etwitterists
    * @param history           Target's History
    * @param lookbackDuration  Duration in which we would like to obtain the last override notification
    * @param stats             StatsReceiver to track stats for this function
@@ -69,15 +69,15 @@ object PushOverrideInfo {
     stats: StatsReceiver
   ): Option[OverrideInfo] = {
     val overrideInfoEmptyOfLastPush = stats.scope(name).counter("override_info_empty_of_last_push")
-    val overrideInfoExistsForLastPush =
-      stats.scope(name).counter("override_info_exists_for_last_push")
+    val overrideInfoEtwitteristsForLastPush =
+      stats.scope(name).counter("override_info_etwitterists_for_last_push")
     val overrideHistory =
       getOverrideEligiblePushNotifications(history, lookbackDuration, stats)
     if (overrideHistory.isEmpty) {
       overrideInfoEmptyOfLastPush.incr()
       None
     } else {
-      overrideInfoExistsForLastPush.incr()
+      overrideInfoEtwitteristsForLastPush.incr()
       overrideHistory.head.overrideInfo
     }
   }
@@ -87,7 +87,7 @@ object PushOverrideInfo {
    * @param history           Target's History
    * @param overrideChainId   Override Chain Identifier
    * @param stats             StatsReceiver to track stats for this function
-   * @return                  Returns a sequence of FrigateNotification that exist in the override chain
+   * @return                  Returns a sequence of FrigateNotification that etwitterist in the override chain
    */
   def getMrPushNotificationsInOverrideChain(
     history: History,
@@ -114,7 +114,7 @@ object PushOverrideInfo {
    * @param history           Target's History
    * @param stats             StatsReceiver to track stats for this function
    * @return                  Returns the timestamp in milliseconds for the specified notification
-   *                          if it exists History, else None
+   *                          if it etwitterists History, else None
    */
   def getTimestampInMillisForFrigateNotification(
     notification: FrigateNotification,
@@ -148,7 +148,7 @@ object PushOverrideInfo {
    * @param lookbackDuration  Duration in which we would like to obtain previous impression ids
    * @param stats             StatsReceiver to track stats for this function
    * @return                  Returns the impression identifier for the last eligible push notif.
-   *                          if it exists in the target's History, else None.
+   *                          if it etwitterists in the target's History, else None.
    */
   def getImpressionIdsOfPrevEligiblePushNotif(
     history: History,
@@ -161,7 +161,7 @@ object PushOverrideInfo {
       stats.scope(name).counter("override_history_empty_when_fetching_impression_id")
     val overrideHistory = getOverrideEligiblePushNotifications(history, lookbackDuration, stats)
       .filter(frigateNotification =>
-        // Exclude notifications of nonGenericOverrideTypes from being overridden
+        // Etwitterclude notifications of nonGenericOverrideTypes from being overridden
         !RecTypes.nonGenericOverrideTypes.contains(frigateNotification.commonRecommendationType))
 
     if (overrideHistory.isEmpty) {
@@ -182,7 +182,7 @@ object PushOverrideInfo {
    * @param overridableType   Specific MagicFanoutEvent CRT
    * @param eventId           Event identifier for MagicFanoutEventCandidate.
    * @return                  Returns the impression identifiers for the last eligible, eventId-matching
-   *                          MagicFanoutEvent push notifications if they exist in the target's history, else None.
+   *                          MagicFanoutEvent push notifications if they etwitterist in the target's history, else None.
    */
   def getImpressionIdsForPrevEligibleMagicFanoutEventCandidates(
     history: History,
@@ -203,7 +203,7 @@ object PushOverrideInfo {
         .filter(frigateNotification =>
           // Only override notifications with same CRT and eventId
           frigateNotification.commonRecommendationType == overridableType &&
-            frigateNotification.magicFanoutEventNotification.exists(_.eventId == eventId))
+            frigateNotification.magicFanoutEventNotification.etwitterists(_.eventId == eventId))
 
     if (overrideHistory.isEmpty) {
       overrideHistoryEmptyWhenFetchingImpressionId.incr()

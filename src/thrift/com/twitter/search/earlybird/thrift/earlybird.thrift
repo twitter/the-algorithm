@@ -9,10 +9,10 @@ include "com/twitter/search/common/constants/query.thrift"
 include "com/twitter/search/common/constants/search_language.thrift"
 include "com/twitter/search/common/conversation/conversation.thrift"
 include "com/twitter/search/common/features/features.thrift"
-include "com/twitter/search/common/indexing/status.thrift"
+include "com/twitter/search/common/indetwittering/status.thrift"
 include "com/twitter/search/common/query/search.thrift"
 include "com/twitter/search/common/ranking/ranking.thrift"
-include "com/twitter/search/common/results/expansions.thrift"
+include "com/twitter/search/common/results/etwitterpansions.thrift"
 include "com/twitter/search/common/results/highlight.thrift"
 include "com/twitter/search/common/results/hit_attribution.thrift"
 include "com/twitter/search/common/results/hits.thrift"
@@ -85,8 +85,8 @@ enum ThriftTweetSource {
   QIG = 8,
   // used for TOPTWEETS ranking mode
   TOP_TWEET = 9,
-  // used for experimental candidate sources
-  EXPERIMENTAL = 7,
+  // used for etwitterperimental candidate sources
+  EtwitterPERIMENTAL = 7,
   // from Scanr service
   SCANR = 10,
 
@@ -95,7 +95,7 @@ enum ThriftTweetSource {
 }
 
 enum NamedEntitySource {
-  TEXT = 0,
+  TEtwitterT = 0,
   URL = 1,
 
   PLACE_HOLDER2 = 2,
@@ -103,8 +103,8 @@ enum NamedEntitySource {
   PLACE_HOLDER4 = 4,
 }
 
-enum ExperimentCluster {
-  EXP0 = 0, // Send requests to the earlybird-realtime-exp0 cluster
+enum EtwitterperimentCluster {
+  EtwitterP0 = 0, // Send requests to the earlybird-realtime-etwitterp0 cluster
   PLACE_HOLDER1 = 1,
   PLACE_HOLDER2 = 2,
 }
@@ -121,44 +121,44 @@ enum AudioSpaceState {
 
 // Contains all scoring and relevance-filtering related controls and options for Earlybird.
 struct ThriftSearchRelevanceOptions {
-  // Next available field ID: 31 and note that 45 and 50 have been used already
+  // Netwittert available field ID: 31 and note that 45 and 50 have been used already
 
   2: optional bool filterDups = 0         // filter out duplicate search results
   26: optional bool keepDupWithHigherScore = 1 // keep the duplicate tweet with the higher score
 
-  3: optional bool proximityScoring = 0   // whether to do proximity scoring or not
-  4: optional i32 maxConsecutiveSameUser  // filter consecutive results from the same user
+  3: optional bool protwitterimityScoring = 0   // whether to do protwitterimity scoring or not
+  4: optional i32 matwitterConsecutiveSameUser  // filter consecutive results from the same user
   5: optional ranking.ThriftRankingParams rankingParams  // composed by blender
-  // deprecated in favor of the maxHitsToProcess in CollectorParams
-  6: optional i32 maxHitsToProcess // when to early-terminate for relevance
-  7: optional string experimentName      // what relevance experiment is running
-  8: optional string experimentBucket    // what bucket the user is in; DDG defaults to hard-coded 'control'
+  // deprecated in favor of the matwitterHitsToProcess in CollectorParams
+  6: optional i32 matwitterHitsToProcess // when to early-terminate for relevance
+  7: optional string etwitterperimentName      // what relevance etwitterperiment is running
+  8: optional string etwitterperimentBucket    // what bucket the user is in; DDG defaults to hard-coded 'control'
   9: optional bool interpretSinceId = 1   // whether to interpret since_id operator
 
-  24: optional i32 maxHitsPerUser // Overrides ThriftSearchQuery.maxHitsPerUser
+  24: optional i32 matwitterHitsPerUser // Overrides ThriftSearchQuery.matwitterHitsPerUser
 
   // only used by discovery for capping direct follow tweets
-  10: optional i32 maxConsecutiveDirectFollows
+  10: optional i32 matwitterConsecutiveDirectFollows
 
   // Note - the orderByRelevance flag is critical to understanding how merging
   // and trimming works in relevance mode in the search root.
   //
   // When orderByRelevance is true, results are trimmed in score-order.  This means the
-  // client will get the top results from (maxHitsToProcess * numHashPartitions) hits,
+  // client will get the top results from (matwitterHitsToProcess * numHashPartitions) hits,
   // ordered by score.
   //
   // When orderByRelevance is false, results are trimmed in id-order.  This means the
-  // client will get the top results from an approximation of maxHitsToProcess hits
+  // client will get the top results from an approtwitterimation of matwitterHitsToProcess hits
   // (across the entire corpus).  These results ordered by ID.
   14: optional bool orderByRelevance = 0
 
-  // Max blending count for results returned due to from:user rewrites
-  16: optional i32 maxUserBlendCount
+  // Matwitter blending count for results returned due to from:user rewrites
+  16: optional i32 matwitterUserBlendCount
 
-  // The weight for proximity phrases generated while translating the serialized query to the
+  // The weight for protwitterimity phrases generated while translating the serialized query to the
   // lucene query.
-  19: optional double proximityPhraseWeight = 1.0
-  20: optional i32 proximityPhraseSlop = 255
+  19: optional double protwitterimityPhraseWeight = 1.0
+  20: optional i32 protwitterimityPhraseSlop = 255
 
   // Override the weights of searchable fields.
   // Negative weight means the the field is not enabled for search by default,
@@ -174,7 +174,7 @@ struct ThriftSearchRelevanceOptions {
   // if set to true.
   23: optional bool returnAllResults
 
-  // DEPRECATED: All v2 counters will be used explicitly in the scoring function and
+  // DEPRECATED: All v2 counters will be used etwitterplicitly in the scoring function and
   // returned in their own field (in either metadata or feature map in response).
   25: optional bool useEngagementCountersV2 = 0
 
@@ -257,8 +257,8 @@ struct ThriftSearchResultMetadataOptions {
   // Populated by LinearScoringFunction.
   4: optional bool getLuceneScore = 0
 
-  // Deprecated but used to be for Offline feature values for static index
-  5: optional bool deprecated_getExpFeatureValues = 0
+  // Deprecated but used to be for Offline feature values for static indetwitter
+  5: optional bool deprecated_getEtwitterpFeatureValues = 0
 
   // If true, will omit all features derivable from packedFeatures, and set packedFeatures
   // instead.
@@ -290,19 +290,19 @@ struct ThriftSearchResultMetadataOptions {
   // Values must be IDs of CSF fields from EarlybirdFieldConstants.
   13: optional list<i32> requestedFeatureIDs
 
-  // If true, fills in the namedEntities field in ThriftSearchResultExtraMetadata
+  // If true, fills in the namedEntities field in ThriftSearchResultEtwittertraMetadata
   14: optional bool getNamedEntities = 0
 
-  // If true, fills in the entityAnnotations field in ThriftSearchResultExtraMetadata
+  // If true, fills in the entityAnnotations field in ThriftSearchResultEtwittertraMetadata
   15: optional bool getEntityAnnotations = 0
 
-  // If true, fills in the fromUserId field in the ThriftSearchResultExtraMetadata
+  // If true, fills in the fromUserId field in the ThriftSearchResultEtwittertraMetadata
   16: optional bool getFromUserId = 0
 
-  // If true, fills in the spaces field in the ThriftSearchResultExtraMetadata
+  // If true, fills in the spaces field in the ThriftSearchResultEtwittertraMetadata
   17: optional bool getSpaces = 0
 
-  18: optional bool getExclusiveConversationAuthorId = 0
+  18: optional bool getEtwitterclusiveConversationAuthorId = 0
 }(persisted='true')
 
 
@@ -315,7 +315,7 @@ struct ThriftSearchResultMetadataOptions {
 // Most fields are not set when this struct is embedded in ThriftBlenderRequest, and
 // are filled in by the blender before sending to earlybird.
 struct ThriftSearchQuery {
-  // Next available field ID: 42
+  // Netwittert available field ID: 42
 
   // -------- SECTION ZERO: THINGS USED ONLY BY THE BLENDER --------
   // See SEARCHQUAL-2398
@@ -330,11 +330,11 @@ struct ThriftSearchQuery {
   18: optional string queryLang(personalDataType = 'InferredLanguage')
 
   // blender use only
-  // What page of results to return, indexed from 1.
+  // What page of results to return, indetwittered from 1.
   7: optional i32 page = 1
 
   // blender use only
-  // Number of results to skip (for pagination).  Indexed from 0.
+  // Number of results to skip (for pagination).  Indetwittered from 0.
   2: optional i32 deprecated_resultOffset = 0
 
 
@@ -372,9 +372,9 @@ struct ThriftSearchQuery {
   // This is ignored when searchStatusIds is set.
   3: required i32 numResults
 
-  // Maximum number of hits to process by the collector.
-  // deprecated in favor of the maxHitsToProcess in CollectorParams
-  4: optional i32 maxHitsToProcess = 1000
+  // Matwitterimum number of hits to process by the collector.
+  // deprecated in favor of the matwitterHitsToProcess in CollectorParams
+  4: optional i32 matwitterHitsToProcess = 1000
 
   // Collect hit counts for these time periods (in milliseconds).
   30: optional list<i64> hitCountBuckets
@@ -404,18 +404,18 @@ struct ThriftSearchQuery {
   // Limits the number of hits that can be contributed by the same user, for anti-gaming.
   // Set to -1 to disable the anti-gaming filter.  This is ignored when searchStatusIds
   // is set.
-  11: optional i32 maxHitsPerUser = 3
+  11: optional i32 matwitterHitsPerUser = 3
 
-  // Disables anti-gaming filter checks for any tweets that exceed this tweepcred.
-  12: optional i32 maxTweepcredForAntiGaming = 65
+  // Disables anti-gaming filter checks for any tweets that etwitterceed this tweepcred.
+  12: optional i32 matwitterTweepcredForAntiGaming = 65
 
   // -------- PERSONALIZATION-RELATED RELEVANCE OPTIONS --------
   // Take special care with these options when reasoning about caching.  All of these
-  // options, if set, will bypass the cache with the exception of uiLang which is the
+  // options, if set, will bypass the cache with the etwitterception of uiLang which is the
   // only form of personalization allowed for caching.
 
   // User ID of searcher.  This is used for relevance, and will be used for retrieval
-  // by the protected tweets index.  If set, query will not be cached.
+  // by the protected tweets indetwitter.  If set, query will not be cached.
   20: optional i64 searcherId(personalDataType = 'UserId')
 
   // Bloom filter containing trusted user IDs.  If set, query will not be cached.
@@ -434,7 +434,7 @@ struct ThriftSearchQuery {
   // An alternative to fromUserIDFilter64 that relies on the relevance bloom filters
   // for user filtering.  Not currently used in production.  Only supported for realtime
   // searches.
-  // If set, earlybird expects both trustedFilter and directFollowFilter to also be set.
+  // If set, earlybird etwitterpects both trustedFilter and directFollowFilter to also be set.
   17: optional ThriftSocialFilterType socialFilterType
 
   // -------- SECTION FOUR: DEBUG OPTIONS, FORGOTTEN FEATURES --------
@@ -474,12 +474,12 @@ struct ThriftSearchResultGeoLocation {
   3: optional double distanceKm
 }(persisted='true', hasPersonalData = 'true')
 
-// Contains an expanded url and media type from the URL facet fields in earlybird.
+// Contains an etwitterpanded url and media type from the URL facet fields in earlybird.
 // Note: thrift copied from status.thrift with unused fields renamed.
 struct ThriftSearchResultUrl {
-  // Next available field ID: 6.  Fields 2-4 removed.
+  // Netwittert available field ID: 6.  Fields 2-4 removed.
 
-  // Note: this is actually the expanded url.  Rename after deprecated fields are removed.
+  // Note: this is actually the etwitterpanded url.  Rename after deprecated fields are removed.
   1: required string originalUrl
 
   // Media type of the url.
@@ -498,8 +498,8 @@ struct ThriftSearchResultAudioSpace {
 }(persisted='true')
 
 // Even more metadata
-struct ThriftSearchResultExtraMetadata {
-  // Next available field ID: 49
+struct ThriftSearchResultEtwittertraMetadata {
+  // Netwittert available field ID: 49
 
   1: optional double userLangScore
   2: optional bool hasDifferentLang
@@ -559,12 +559,12 @@ struct ThriftSearchResultExtraMetadata {
   33: optional list<tweet_annotation.TweetEntityAnnotation> entityAnnotations
 
   // Health model scores from HML
-  34: optional double toxicityScore // (go/toxicity)
+  34: optional double totwittericityScore // (go/totwittericity)
   35: optional double pBlockScore // (go/pblock)
-  36: optional double experimentalHealthModelScore1
-  37: optional double experimentalHealthModelScore2
-  38: optional double experimentalHealthModelScore3
-  39: optional double experimentalHealthModelScore4
+  36: optional double etwitterperimentalHealthModelScore1
+  37: optional double etwitterperimentalHealthModelScore2
+  38: optional double etwitterperimentalHealthModelScore3
+  39: optional double etwitterperimentalHealthModelScore4
 
   40: optional i64 directedAtUserId
 
@@ -576,7 +576,7 @@ struct ThriftSearchResultExtraMetadata {
   44: optional bool isUserProtected
   45: optional list<ThriftSearchResultAudioSpace> spaces
 
-  46: optional i64 exclusiveConversationAuthorId
+  46: optional i64 etwitterclusiveConversationAuthorId
   47: optional string cardUri
   48: optional bool fromBlueVerifiedAccount(personalDataType = 'UserVerifiedFlag')
 }(persisted='true')
@@ -585,9 +585,9 @@ struct ThriftSearchResultExtraMetadata {
 //
 // NOTE: DO NOT ADD NEW FIELD!!
 // Stop adding new fields to this struct, all new fields should go to
-// ThriftSearchResultExtraMetadata (VM-1897), or there will be performance issues in production.
+// ThriftSearchResultEtwittertraMetadata (VM-1897), or there will be performance issues in production.
 struct ThriftSearchResultMetadata {
-  // Next available field ID: 86
+  // Netwittert available field ID: 86
 
   // -------- BASIC SCORING METADATA --------
 
@@ -602,8 +602,8 @@ struct ThriftSearchResultMetadata {
   // The score will be ScoringFunction.SKIP_HIT when skipped is true.
   43: optional bool skipped
 
-  // optionally a Lucene-style explanation for this result
-  5: optional string explanation
+  // optionally a Lucene-style etwitterplanation for this result
+  5: optional string etwitterplanation
 
 
   // -------- NETWORK-BASED SCORING METADATA --------
@@ -633,7 +633,7 @@ struct ThriftSearchResultMetadata {
   // When hasCard (or packed features equivalent) is true, this is one of SearchCardType.
   49: optional i8 cardType = 0
 
-  // -------- EXTENDED DOCUMENT METADATA --------
+  // -------- EtwitterTENDED DOCUMENT METADATA --------
   // This is additional metadata from facet fields and column stride fields.
   // Return of these fields is controlled by ThriftSearchResultMetadataOptions to
   // allow for fine-grained control over when these fields are returned, as an
@@ -694,8 +694,8 @@ struct ThriftSearchResultMetadata {
   13: optional bool isReply
   14: optional bool hasMultipleHashtagsOrTrends
   23: optional bool fromVerifiedAccount
-  // Static text quality score.  This is actually an int between 0 and 100.
-  30: optional double textScore
+  // Static tetwittert quality score.  This is actually an int between 0 and 100.
+  30: optional double tetwittertScore
   51: optional search_language.ThriftLanguage language
 
   // From integer 1 from EarlybirdFeatureConfiguration:
@@ -713,10 +713,10 @@ struct ThriftSearchResultMetadata {
 
   // From integer 2 from EarlybirdFeatureConfiguration:
 
-  // Retweet, fav, reply, embeds counts, and video view counts are APPROXIMATE ONLY.
+  // Retweet, fav, reply, embeds counts, and video view counts are APPROtwitterIMATE ONLY.
   // Note that retweetCount, favCount and replyCount are not original unnormalized values,
   // but after a log2() function for historical reason, this loses us some granularity.
-  // For more accurate counts, use {retweet, fav, reply}CountV2 in extraMetadata.
+  // For more accurate counts, use {retweet, fav, reply}CountV2 in etwittertraMetadata.
   2: optional i32 retweetCount
   33: optional i32 favCount
   34: optional i32 replyCount
@@ -727,12 +727,12 @@ struct ThriftSearchResultMetadata {
   // Parus score.  This is actually an int between 0 and 100.
   29: optional double parusScore
 
-  // Extra feature data, all new feature fields you want to return from Earlybird should go into
+  // Etwittertra feature data, all new feature fields you want to return from Earlybird should go into
   // this one, the outer one is always reaching its limit of the number of fields JVM can
   // comfortably support!!
-  86: optional ThriftSearchResultExtraMetadata extraMetadata
+  86: optional ThriftSearchResultEtwittertraMetadata etwittertraMetadata
 
-  // Integer 3 is omitted, see expFeatureValues above for more details.
+  // Integer 3 is omitted, see etwitterpFeatureValues above for more details.
 
   // From integer 4 from EarlybirdFeatureConfiguration:
   // Signature, for duplicate detection and removal.
@@ -746,16 +746,16 @@ struct ThriftSearchResultMetadata {
   42: optional list<i64> replyUserIDs64
 
   // Social connection between the search user and this result.
-  19: optional social.ThriftSocialContext socialContext
+  19: optional social.ThriftSocialContetwittert socialContetwittert
 
   // used by RelevanceTimelineSearchWorkflow, whether a tweet should be highlighted or not
   46: optional bool highlightResult
 
-  // used by RelevanceTimelineSearchWorkflow, the highlight context of the highlighted tweet
-  47: optional highlight.ThriftHighlightContext highlightContext
+  // used by RelevanceTimelineSearchWorkflow, the highlight contetwittert of the highlighted tweet
+  47: optional highlight.ThriftHighlightContetwittert highlightContetwittert
 
-  // the penguin version used to tokenize the tweets by the serving earlybird index as defined
-  // in com.twitter.common.text.version.PenguinVersion
+  // the penguin version used to tokenize the tweets by the serving earlybird indetwitter as defined
+  // in com.twitter.common.tetwittert.version.PenguinVersion
   56: optional i8 penguinVersion
 
   69: optional bool isNullcast
@@ -768,7 +768,7 @@ struct ThriftSearchResultMetadata {
 }(persisted='true')
 
 // Query level result stats.
-// Next id: 20
+// Netwittert id: 20
 struct ThriftSearchResultsRelevanceStats {
   1: optional i32 numScored = 0
   // Skipped documents count, they were also scored but their scores got ignored (skipped), note that this is different
@@ -776,7 +776,7 @@ struct ThriftSearchResultsRelevanceStats {
   2: optional i32 numSkipped = 0
   3: optional i32 numSkippedForAntiGaming = 0
   4: optional i32 numSkippedForLowReputation = 0
-  5: optional i32 numSkippedForLowTextScore = 0
+  5: optional i32 numSkippedForLowTetwittertScore = 0
   6: optional i32 numSkippedForSocialFilter = 0
   7: optional i32 numSkippedForLowFinalScore = 0
   8: optional i32 oldestScoredTweetAgeInSeconds = 0
@@ -804,7 +804,7 @@ struct ThriftSearchResultDebugInfo {
 }(persisted='true')
 
 struct ThriftSearchResult {
-  // Next available field ID: 22
+  // Netwittert available field ID: 22
 
   // Result status id.
   1: required i64 id
@@ -825,15 +825,15 @@ struct ThriftSearchResult {
   5: optional ThriftSearchResultMetadata metadata
 
   // Hit highlights for various parts of this tweet
-  // for tweet text
+  // for tweet tetwittert
   6: optional list<hits.ThriftHits> hitHighlights
-  // for the title and description in the card expando.
+  // for the title and description in the card etwitterpando.
   12: optional list<hits.ThriftHits> cardTitleHitHighlights
   13: optional list<hits.ThriftHits> cardDescriptionHitHighlights
 
-  // Expansion types, if expandResult == False, the expansions set should be ignored.
-  8: optional bool expandResult = 0
-  9: optional set<expansions.ThriftTweetExpansionType> expansions
+  // Etwitterpansion types, if etwitterpandResult == False, the etwitterpansions set should be ignored.
+  8: optional bool etwitterpandResult = 0
+  9: optional set<etwitterpansions.ThriftTweetEtwitterpansionType> etwitterpansions
 
   // Only set if this is a promoted tweet
   11: optional adserver_common.AdImpression adImpression
@@ -848,8 +848,8 @@ struct ThriftSearchResult {
   // this field is populated by blender in RelevanceTimelineSearchWorkflow
   15: optional features.ThriftTweetFeatures tweetFeatures
 
-  // the conversation context of a tweet
-  16: optional conversation.ThriftConversationContext conversationContext
+  // the conversation contetwittert of a tweet
+  16: optional conversation.ThriftConversationContetwittert conversationContetwittert
 
   // per-result debugging info that's persisted across merges.
   18: optional ThriftSearchResultDebugInfo debugInfo
@@ -861,7 +861,7 @@ enum ThriftFacetRankingMode {
 }
 
 struct ThriftFacetFieldRequest {
-  // next available field ID: 4
+  // netwittert available field ID: 4
   1: required string fieldName
   2: optional i32 numResults = 5
 
@@ -870,14 +870,14 @@ struct ThriftFacetFieldRequest {
 }(persisted='true')
 
 struct ThriftFacetRequest {
-  // Next available field ID: 7
+  // Netwittert available field ID: 7
   1: optional list<ThriftFacetFieldRequest> facetFields
   5: optional ranking.ThriftFacetRankingOptions facetRankingOptions
   6: optional bool usingQueryCache = 0
 }(persisted='true')
 
 struct ThriftTermRequest {
-  1: optional string fieldName = "text"
+  1: optional string fieldName = "tetwittert"
   2: required string term
 }(persisted='true')
 
@@ -898,7 +898,7 @@ struct ThriftHistogramSettings {
   4: optional i32 binSizeInSeconds   // the bin size, only used if granularity is set to CUSTOM.
 }(persisted='true')
 
-// next id is 4
+// netwittert id is 4
 struct ThriftTermStatisticsRequest {
   1: optional list<ThriftTermRequest> termRequests
   2: optional ThriftHistogramSettings histogramSettings
@@ -913,9 +913,9 @@ struct ThriftTermStatisticsRequest {
   4: optional bool scoreTweetsForRepresentatives = 0
 }(persisted='true')
 
-// Next id is 12
+// Netwittert id is 12
 struct ThriftFacetCountMetadata {
-  // this is the id of the first tweet in the index that contained this facet
+  // this is the id of the first tweet in the indetwitter that contained this facet
   1: optional i64 statusId = -1
 
   // whether the tweet with the above statusId is NSFW, from an antisocial user,
@@ -927,7 +927,7 @@ struct ThriftFacetCountMetadata {
   // NOTE: for native photos we may not be able to determine the user,
   // even though the statusId can be returned. This is because the statusId
   // can be determined from the url, but the user can't and the tweet may
-  // not be in the index anymore. In this case statusId would be set but
+  // not be in the indetwitter anymore. In this case statusId would be set but
   // twitterUserId would not.
   2: optional i64 twitterUserId = -1
 
@@ -942,14 +942,14 @@ struct ThriftFacetCountMetadata {
   4: optional string nativePhotoUrl
 
   // optionally returns some debug information about this facet
-  5: optional string explanation
+  5: optional string etwitterplanation
 
   // the created_at value for the tweet from statusId - only returned
   // if statusId is returned too
   6: optional i64 created_at
 
-  // the maximum tweepcred of the hits that contained this facet
-  7: optional i32 maxTweepCred
+  // the matwitterimum tweepcred of the hits that contained this facet
+  7: optional i32 matwitterTweepCred
 
   // Whether this facet result is force inserted, instead of organically returned from search.
   // This field is only used in Blender to mark the force-inserted facet results
@@ -984,7 +984,7 @@ struct ThriftTermStatisticsResults {
 }(persisted='true')
 
 struct ThriftFacetCount {
-  // the text of the facet
+  // the tetwittert of the facet
   1: required string facetLabel
 
   // deprecated; currently matches weightedCount for backwards-compatibility reasons
@@ -1029,7 +1029,7 @@ struct ThriftFacetResults {
   1: required map<string, ThriftFacetFieldResults> facetFields
   2: optional i32 backgroundNumHits
   // returns optionally a list of user ids that should not get filtered
-  // out by things like antigaming filters, because these users were explicitly
+  // out by things like antigaming filters, because these users were etwitterplicitly
   // queried for
   // Note that ThriftFacetCountMetadata returns already dontFilterUser
   // for facet requests in which case this list is not needed. However, it
@@ -1039,7 +1039,7 @@ struct ThriftFacetResults {
 }
 
 struct ThriftSearchResults {
-  // Next available field ID: 23
+  // Netwittert available field ID: 23
   1: required list<ThriftSearchResult> results = []
 
   // (SEARCH-11950): Now resultOffset is deprecated, so there is no use in numResultsSkipped too.
@@ -1048,14 +1048,14 @@ struct ThriftSearchResults {
   // Number of docs that matched the query and were processed.
   7: optional i32 numHitsProcessed
 
-  // Range of status IDs searched, from max ID to min ID (both inclusive).
+  // Range of status IDs searched, from matwitter ID to min ID (both inclusive).
   // These may be unset in case that the search query contained ID or time
-  // operators that were completely out of range for the given index.
-  10: optional i64 maxSearchedStatusID
+  // operators that were completely out of range for the given indetwitter.
+  10: optional i64 matwitterSearchedStatusID
   11: optional i64 minSearchedStatusID
 
   // Time range that was searched (both inclusive).
-  19: optional i32 maxSearchedTimeSinceEpoch
+  19: optional i32 matwitterSearchedTimeSinceEpoch
   20: optional i32 minSearchedTimeSinceEpoch
 
   12: optional ThriftSearchResultsRelevanceStats relevanceStats
@@ -1075,7 +1075,7 @@ struct ThriftSearchResults {
   // the total cost for this query
   16: optional double queryCost
 
-  // Set to non-0 if this query was terminated early (either due to a timeout, or exceeded query cost)
+  // Set to non-0 if this query was terminated early (either due to a timeout, or etwitterceeded query cost)
   // When getting this response from a single earlybird, this will be set to 1, if the query
   // terminated early.
   // When getting this response from a search root, this should be set to the number of individual
@@ -1098,12 +1098,12 @@ struct ThriftSearchResults {
   // . pick the schema based on the order of: realtime > protected > archive
   // . because of the above ordering, it is possible that archive earlybird schema with a new flush
   //   version (with new bit features) might be lost to older realtime earlybird schema; this is
-  //   considered to to be rare and acceptable because one realtime earlybird deploy would fix it
+  //   considered to to be rare and acceptable because one realtime earlybird deploy would fitwitter it
   21: optional features.ThriftSearchFeatureSchema featureSchema
 
   // How long it took to score the results in earlybird (in nanoseconds). The number of results
   // that were scored should be set in numHitsProcessed.
-  // Expected to only be set for requests that actually do scoring (i.e. Relevance and TopTweets).
+  // Etwitterpected to only be set for requests that actually do scoring (i.e. Relevance and TopTweets).
   22: optional i64 scoringTimeNanos
 
   8: optional i32 deprecated_numDocsProcessed
@@ -1124,21 +1124,21 @@ enum EarlybirdReturnStatusType {
 }
 
 struct AdjustedRequestParams {
-  // Next available field ID: 4
+  // Netwittert available field ID: 4
 
   // Adjusted value for EarlybirdRequest.searchQuery.numResults.
   1: optional i32 numResults
 
-  // Adjusted value for EarlybirdRequest.searchQuery.maxHitsToProcess and
-  // EarlybirdRequest.searchQuery.relevanceOptions.maxHitsToProcess.
-  2: optional i32 maxHitsToProcess
+  // Adjusted value for EarlybirdRequest.searchQuery.matwitterHitsToProcess and
+  // EarlybirdRequest.searchQuery.relevanceOptions.matwitterHitsToProcess.
+  2: optional i32 matwitterHitsToProcess
 
   // Adjusted value for EarlybirdRequest.searchQuery.relevanceOptions.returnAllResults
   3: optional bool returnAllResults
 }
 
 struct EarlybirdRequest {
-  // Next available field ID: 36
+  // Netwittert available field ID: 36
 
   // -------- COMMON REQUEST OPTIONS --------
   // These fields contain options respected by all kinds of earlybird requests.
@@ -1152,7 +1152,7 @@ struct EarlybirdRequest {
   13: optional string clientRequestID
 
   // A string identifying the client that initiated the request.
-  // Ex: macaw-search.prod, webforall.prod, webforall.staging.
+  // Etwitter: macaw-search.prod, webforall.prod, webforall.staging.
   // The intention is to track the load we get from each client, and eventually enforce
   // per-client QPS quotas, but this field could also be used to allow access to certain features
   // only to certain clients, etc.
@@ -1167,15 +1167,15 @@ struct EarlybirdRequest {
 
   // Deprecated. See SEARCH-2784
   // Earlybird requests will be early terminated in a best-effort way to prevent them from
-  // exceeding the given timeout.  If timeout is <= 0 this early termination criteria is
+  // etwitterceeding the given timeout.  If timeout is <= 0 this early termination criteria is
   // disabled.
   17: optional i32 timeoutMs = -1
 
   // Deprecated. See SEARCH-2784
   // Earlybird requests will be early terminated in a best-effort way to prevent them from
-  // exceeding the given query cost.  If maxQueryCost <= 0 this early termination criteria
+  // etwitterceeding the given query cost.  If matwitterQueryCost <= 0 this early termination criteria
   // is disabled.
-  20: optional double maxQueryCost = -1
+  20: optional double matwitterQueryCost = -1
 
 
   // -------- REQUEST-TYPE SPECIFIC OPTIONS --------
@@ -1195,7 +1195,7 @@ struct EarlybirdRequest {
   // Debug mode, 0 for no debug information.
   15: optional i8 debugMode = 0
 
-  // Can be used to pass extra debug arguments to earlybird.
+  // Can be used to pass etwittertra debug arguments to earlybird.
   34: optional EarlybirdDebugOptions debugOptions
 
   // Searches a specific segment by time slice id if set and segment id is > 0.
@@ -1220,7 +1220,7 @@ struct EarlybirdRequest {
   // Each type or earlybird queries (e.g. relevance, or term statistics) has a predefined default
   // threshold value (e.g. 90% or hash partitions need to succeed for a recency query).
   // The client can optionally set the threshold value to be something other than the default,
-  // by setting this field to a value in the range of 0 (exclusive) to 1 (inclusive).
+  // by setting this field to a value in the range of 0 (etwitterclusive) to 1 (inclusive).
   // If this value is set outside of the (0, 1] range, a CLIENT_ERROR EarlybirdResponseCode will
   // be returned.
   25: optional double successfulResponseThreshold
@@ -1252,17 +1252,17 @@ struct EarlybirdRequest {
   // Only has an effect on superroot.
   32: optional bool retokenizeSerializedQuery
 
-  // Flag to ignore tweets that are very recent and could be incompletely indexed.
+  // Flag to ignore tweets that are very recent and could be incompletely indetwittered.
   // If false, will allow queries to see results that may violate implicit streaming
-  // guarantees and will search Tweets that have been partially indexed.
-  // See go/indexing-latency for more details. When enabled, prevents seeing tweets
+  // guarantees and will search Tweets that have been partially indetwittered.
+  // See go/indetwittering-latency for more details. When enabled, prevents seeing tweets
   // that are less than 15 seconds old (or a similarly configured threshold).
-  // May be set to false unless explicitly set to true.
+  // May be set to false unless etwitterplicitly set to true.
   33: optional bool skipVeryRecentTweets = 1
 
-  // Setting an experimental cluster will reroute traffic at the realtime root layer to an experimental
+  // Setting an etwitterperimental cluster will reroute traffic at the realtime root layer to an etwitterperimental
   // Earlybird cluster. This will have no impact if set on requests to anywhere other than realtime root.
-  35: optional ExperimentCluster experimentClusterToUse
+  35: optional EtwitterperimentCluster etwitterperimentClusterToUse
 
   // Caps number of results returned by roots after merging results from different earlybird partitions/clusters. 
   // If not set, ThriftSearchQuery.numResults or CollectorParams.numResultsToReturn will be used to cap results. 
@@ -1279,14 +1279,14 @@ enum EarlybirdResponseCode {
   CLIENT_ERROR = 5,
   PARTITION_SKIPPED = 6,
   // Request was queued up on the server for so long that it timed out, and was not
-  // executed at all.
+  // etwitterecuted at all.
   SERVER_TIMEOUT_ERROR = 7,
   TIER_SKIPPED = 8,
   // Not enough partitions returned a successful response. The merged response will have partition
   // counts and early termination info set, but will not have search results.
   TOO_MANY_PARTITIONS_FAILED_ERROR = 9,
   // Client went over its quota, and the request was throttled.
-  QUOTA_EXCEEDED_ERROR = 10,
+  QUOTA_EtwitterCEEDED_ERROR = 10,
   // Client's request is blocked based on Search Infra's policy. Search Infra can can block client's
   // requests based on the query source of the request.
   REQUEST_BLOCKED_ERROR = 11,
@@ -1312,10 +1312,10 @@ struct EarlybirdDebugInfo {
   1: optional string host
   2: optional string parsedQuery
   3: optional string luceneQuery
-  // Requests sent to dependent services. For example, superroot sends to realtime root,
+  // Requests sent to dependent services. For etwitterample, superroot sends to realtime root,
   // archive root, etc.
   4: optional list<EarlybirdRequestResponse> sentRequests;
-  // segment level debug info (eg. hitsPerSegment, max/minSearchedTime etc.)
+  // segment level debug info (eg. hitsPerSegment, matwitter/minSearchedTime etc.)
   5: optional list<string> collectorDebugInfo
   6: optional list<string> termStatisticsDebugInfo
 }
@@ -1360,7 +1360,7 @@ struct EarlybirdServerStats {
 }
 
 struct EarlybirdResponse {
-  // Next available field ID: 17
+  // Netwittert available field ID: 17
   1: optional ThriftSearchResults searchResults
   5: optional ThriftFacetResults facetResults
   6: optional ThriftTermStatisticsResults termStatisticsResults
@@ -1371,10 +1371,10 @@ struct EarlybirdResponse {
   4: optional string debugString
   8: optional EarlybirdDebugInfo debugInfo
 
-  // Only exists for merged earlybird response.
+  // Only etwitterists for merged earlybird response.
   10: optional i32 numPartitions
   11: optional i32 numSuccessfulPartitions
-  // Only exists for merged earlybird response from multiple tiers.
+  // Only etwitterists for merged earlybird response from multiple tiers.
   13: optional list<TierResponse> perTierResponse
 
   // Total number of segments that were searched. Partially searched segments are fully counted.

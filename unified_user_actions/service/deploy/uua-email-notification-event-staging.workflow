@@ -9,7 +9,7 @@
     "dependencies": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
+        "name": "packer-client-no-petwitter",
         "version": "latest"
       }
     ],
@@ -32,8 +32,8 @@
       "name": "staging",
       "targets": [
         {
-          "name": "uua-email-notification-event-staging-pdxa",
-          "key": "pdxa/discode/staging/uua-email-notification-event"
+          "name": "uua-email-notification-event-staging-pdtwittera",
+          "key": "pdtwittera/discode/staging/uua-email-notification-event"
         }
       ]
     }

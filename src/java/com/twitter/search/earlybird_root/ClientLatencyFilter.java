@@ -13,7 +13,7 @@ import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird_root.filters.EarlybirdSuccessfulResponseHandler;
 import com.twitter.util.Future;
 
-public class ClientLatencyFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+public class ClientLatencyFilter etwittertends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
   // _client_latency_stats_for_ is intended to measure the latency of requests to services that this
   // root depends on. This can be used to measure how long a request takes in transit between when
   // it leaves a root and when a root receives the response, in case this latency is significantly
@@ -23,10 +23,10 @@ public class ClientLatencyFilter extends SimpleFilter<EarlybirdRequest, Earlybir
 
   private final ConcurrentHashMap<String, RequestCounters> requestCounterForClient =
       new ConcurrentHashMap<>();
-  private final String prefix;
+  private final String prefitwitter;
 
-  public ClientLatencyFilter(String prefix) {
-    this.prefix = prefix;
+  public ClientLatencyFilter(String prefitwitter) {
+    this.prefitwitter = prefitwitter;
   }
 
   @Override
@@ -35,7 +35,7 @@ public class ClientLatencyFilter extends SimpleFilter<EarlybirdRequest, Earlybir
 
     RequestCounters requestCounters = requestCounterForClient.computeIfAbsent(
         ClientIdUtil.getClientIdFromRequest(request), client ->
-            new RequestCounters(String.format(STAT_FORMAT, prefix, client)));
+            new RequestCounters(String.format(STAT_FORMAT, prefitwitter, client)));
 
     RequestCountersEventListener<EarlybirdResponse> requestCountersEventListener =
         new RequestCountersEventListener<>(requestCounters, Clock.SYSTEM_CLOCK,

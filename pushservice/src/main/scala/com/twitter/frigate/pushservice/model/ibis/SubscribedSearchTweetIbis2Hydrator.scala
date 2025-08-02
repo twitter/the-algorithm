@@ -5,7 +5,7 @@ import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
 import com.twitter.frigate.pushservice.util.InlineActionUtil
 import com.twitter.util.Future
 
-trait SubscribedSearchTweetIbis2Hydrator extends TweetCandidateIbis2Hydrator {
+trait SubscribedSearchTweetIbis2Hydrator etwittertends TweetCandidateIbis2Hydrator {
   self: SubscribedSearchTweetPushCandidate =>
 
   override lazy val tweetDynamicInlineActionsModelValues = {

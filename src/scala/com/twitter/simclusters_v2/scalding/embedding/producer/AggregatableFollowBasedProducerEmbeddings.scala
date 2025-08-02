@@ -3,7 +3,7 @@ package com.twitter.simclusters_v2.scalding.embedding.producer
 import com.twitter.scalding._
 import com.twitter.scalding_internal.dalv2.DALWrite._
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scalding_internal.source.lzo_scrooge.FixedPathLzoScrooge
+import com.twitter.scalding_internal.source.lzo_scrooge.FitwitteredPathLzoScrooge
 import com.twitter.simclusters_v2.hdfs_sources.AggregatableProducerSimclustersEmbeddingsByFollowScore2020ScalaDataset
 import com.twitter.simclusters_v2.hdfs_sources.AggregatableProducerSimclustersEmbeddingsByFollowScore2020ThriftScalaDataset
 import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
@@ -14,13 +14,13 @@ import com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding
 import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
 import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingWithId
 import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
+import com.twitter.wtf.scalding.jobs.common.AdhocEtwitterecutionApp
+import com.twitter.wtf.scalding.jobs.common.ScheduledEtwitterecutionApp
 import java.util.TimeZone
 
 /**
  * This file implements a new Producer SimClusters Embeddings.
- * The differences with existing producer embeddings are:
+ * The differences with etwitteristing producer embeddings are:
  *
  * 1) the embedding scores are not normalized, so that one can aggregate multiple producer embeddings by adding them.
  * 2) we use follow scores in the user-producer graph and user-simclusters graph.
@@ -31,8 +31,8 @@ import java.util.TimeZone
 capesospy-v2 update --build_locally --start_cron aggregatable_producer_embeddings_by_follow_score_2020 src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
 object AggregatableFollowBasedProducerEmbeddings2020ScheduledApp
-    extends AggregatableFollowBasedProducerEmbeddingsBaseApp
-    with ScheduledExecutionApp {
+    etwittertends AggregatableFollowBasedProducerEmbeddingsBaseApp
+    with ScheduledEtwitterecutionApp {
 
   override val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
   // Not using the EmbeddingUtil.getHdfsPath to preserve the previous functionality.
@@ -43,7 +43,7 @@ object AggregatableFollowBasedProducerEmbeddings2020ScheduledApp
     isAdhoc = false,
     isManhattanKeyVal = false,
     modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_follow_score_thrift"
+    pathSuffitwitter = "producer_simclusters_aggregatable_embeddings_by_follow_score_thrift"
   )
 
   override def batchIncrement: Duration = Days(7)
@@ -56,12 +56,12 @@ object AggregatableFollowBasedProducerEmbeddings2020ScheduledApp
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     output
-      .writeDALVersionedKeyValExecution(
+      .writeDALVersionedKeyValEtwitterecution(
         AggregatableProducerSimclustersEmbeddingsByFollowScore2020ScalaDataset,
-        D.Suffix(outputPath),
-        version = ExplicitEndTime(dateRange.end)
+        D.Suffitwitter(outputPath),
+        version = EtwitterplicitEndTime(dateRange.end)
       )
   }
 
@@ -71,12 +71,12 @@ object AggregatableFollowBasedProducerEmbeddings2020ScheduledApp
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     output
-      .writeDALSnapshotExecution(
+      .writeDALSnapshotEtwitterecution(
         dataset = AggregatableProducerSimclustersEmbeddingsByFollowScore2020ThriftScalaDataset,
         updateStep = D.Daily,
-        pathLayout = D.Suffix(outputPathThrift),
+        pathLayout = D.Suffitwitter(outputPathThrift),
         fmt = D.Parquet,
         endDate = dateRange.end
       )
@@ -92,13 +92,13 @@ scalding remote run \
 --cluster bluebird-qus1 \
 --main-class com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFollowBasedProducerEmbeddings2020AdhocApp \
 --target src/scala/com/twitter/simclusters_v2/scalding/embedding/producer:aggregatable_follow_based_producer_embeddings_job_2020-adhoc \
---hadoop-properties "scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=4000" \
+--hadoop-properties "scalding.with.reducers.set.etwitterplicitly=true mapreduce.job.reduces=4000" \
 -- --date 2021-11-10
  */
 
 object AggregatableFollowBasedProducerEmbeddings2020AdhocApp
-    extends AggregatableFollowBasedProducerEmbeddingsBaseApp
-    with AdhocExecutionApp {
+    etwittertends AggregatableFollowBasedProducerEmbeddingsBaseApp
+    with AdhocEtwitterecutionApp {
 
   override val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
 
@@ -106,14 +106,14 @@ object AggregatableFollowBasedProducerEmbeddings2020AdhocApp
     isAdhoc = true,
     isManhattanKeyVal = true,
     modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_follow_score"
+    pathSuffitwitter = "producer_simclusters_aggregatable_embeddings_by_follow_score"
   )
 
   private val outputPathThrift: String = EmbeddingUtil.getHdfsPath(
     isAdhoc = true,
     isManhattanKeyVal = false,
     modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_follow_score_thrift"
+    pathSuffitwitter = "producer_simclusters_aggregatable_embeddings_by_follow_score_thrift"
   )
 
   override def writeToManhattan(
@@ -122,7 +122,7 @@ object AggregatableFollowBasedProducerEmbeddings2020AdhocApp
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     output
       .flatMap { keyVal =>
         keyVal.value.embedding.map { simClusterWithScore =>
@@ -135,7 +135,7 @@ object AggregatableFollowBasedProducerEmbeddings2020AdhocApp
           )
         }
       }
-      .writeExecution(
+      .writeEtwitterecution(
         // Write to TSV for easier debugging of the adhoc job.
         TypedTsv(outputPath)
       )
@@ -147,16 +147,16 @@ object AggregatableFollowBasedProducerEmbeddings2020AdhocApp
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     output
-      .writeExecution(
-        new FixedPathLzoScrooge(outputPathThrift, SimClustersEmbeddingWithId)
+      .writeEtwitterecution(
+        new FitwitteredPathLzoScrooge(outputPathThrift, SimClustersEmbeddingWithId)
       )
   }
 }
 
 trait AggregatableFollowBasedProducerEmbeddingsBaseApp
-    extends AggregatableProducerEmbeddingsBaseApp {
+    etwittertends AggregatableProducerEmbeddingsBaseApp {
   override val userToProducerScoringFn: NeighborWithWeights => Double =
     _.followScoreNormalizedByNeighborFollowersL2.getOrElse(0.0)
   override val userToClusterScoringFn: UserToInterestedInClusterScores => Double =

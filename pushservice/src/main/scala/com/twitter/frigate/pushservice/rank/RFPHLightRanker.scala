@@ -1,7 +1,7 @@
 package com.twitter.frigate.pushservice.rank
 import com.twitter.contentrecommender.thriftscala.LightRankingCandidate
-import com.twitter.contentrecommender.thriftscala.LightRankingFeatureHydrationContext
-import com.twitter.contentrecommender.thriftscala.MagicRecsFeatureHydrationContext
+import com.twitter.contentrecommender.thriftscala.LightRankingFeatureHydrationContetwittert
+import com.twitter.contentrecommender.thriftscala.MagicRecsFeatureHydrationContetwittert
 import com.twitter.finagle.stats.Counter
 import com.twitter.finagle.stats.Stat
 import com.twitter.finagle.stats.StatsReceiver
@@ -22,7 +22,7 @@ import com.twitter.util.Future
 class RFPHLightRanker(
   lightRanker: MagicRecsServeDataRecordLightRanker,
   stats: StatsReceiver)
-    extends Ranker[Target, PushCandidate] {
+    etwittertends Ranker[Target, PushCandidate] {
 
   private val statsReceiver = stats.scope(this.getClass.getSimpleName)
 
@@ -108,15 +108,15 @@ class RFPHLightRanker(
           case t: TweetCandidate with TweetAuthor => t.authorId
           case _ => None
         }
-        val hydrationContext: LightRankingFeatureHydrationContext =
-          LightRankingFeatureHydrationContext.MagicRecsHydrationContext(
-            MagicRecsFeatureHydrationContext(
+        val hydrationContetwittert: LightRankingFeatureHydrationContetwittert =
+          LightRankingFeatureHydrationContetwittert.MagicRecsHydrationContetwittert(
+            MagicRecsFeatureHydrationContetwittert(
               tweetAuthor = tweetAuthor,
               pushString = tweetCandidate.getPushCopy.flatMap(_.pushStringGroup).map(_.toString))
           )
         LightRankingCandidate(
           tweetId = tweetCandidate.tweetId,
-          hydrationContext = Some(hydrationContext)
+          hydrationContetwittert = Some(hydrationContetwittert)
         )
     }
     val modelName = target.params(PushFeatureSwitchParams.LightRankingModelTypeParam)

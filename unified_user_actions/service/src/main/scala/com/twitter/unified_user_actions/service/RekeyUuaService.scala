@@ -7,9 +7,9 @@ import com.twitter.kafka.client.processor.AtLeastOnceProcessor
 import com.twitter.unified_user_actions.service.module.KafkaProcessorRekeyUuaModule
 import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
 
-object RekeyUuaServiceMain extends RekeyUuaService
+object RekeyUuaServiceMain etwittertends RekeyUuaService
 
-class RekeyUuaService extends TwitterServer {
+class RekeyUuaService etwittertends TwitterServer {
 
   override val modules = Seq(
     KafkaProcessorRekeyUuaModule,
@@ -20,7 +20,7 @@ class RekeyUuaService extends TwitterServer {
 
   override protected def start(): Unit = {
     val processor = injector.instance[AtLeastOnceProcessor[UnKeyed, UnifiedUserAction]]
-    closeOnExit(processor)
+    closeOnEtwitterit(processor)
     processor.start()
   }
 }

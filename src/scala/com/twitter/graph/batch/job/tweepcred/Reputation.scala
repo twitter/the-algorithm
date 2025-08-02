@@ -15,7 +15,7 @@ object Reputation {
     } else {
       // convert log(pagerank) to a number between 0 and 100
       // the two parameters are from a linear fit by converting
-      // max pagerank -> 95
+      // matwitter pagerank -> 95
       // min pagerank -> 15
       val e: Double = 130d + 5.21 * scala.math.log(raw) // log to the base e
       val pos = scala.math.rint(e)
@@ -28,7 +28,7 @@ object Reputation {
   private val threshAbsNumFriendsReps = 2500
   private val constantDivisionFactorGt_threshFriendsToFollowersRatioReps = 3.0
   private val threshFriendsToFollowersRatioUMass = 0.6
-  private val maxDivFactorReps = 50
+  private val matwitterDivFactorReps = 50
 
   /**
    * reduce pagerank of users with low followers but high followings
@@ -37,12 +37,12 @@ object Reputation {
     if (numFollowings > threshAbsNumFriendsReps) {
       val friendsToFollowersRatio = (1.0 + numFollowings) / (1.0 + numFollowers)
       val divFactor =
-        scala.math.exp(
+        scala.math.etwitterp(
           constantDivisionFactorGt_threshFriendsToFollowersRatioReps *
             (friendsToFollowersRatio - threshFriendsToFollowersRatioUMass) *
             scala.math.log(scala.math.log(numFollowings))
         )
-      mass / ((divFactor min maxDivFactorReps) max 1.0)
+      mass / ((divFactor min matwitterDivFactorReps) matwitter 1.0)
     } else {
       mass
     }

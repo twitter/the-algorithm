@@ -15,15 +15,15 @@ import com.twitter.util.Try
  *
  * Thread-safe.
  */
-object CounterSerializer extends Serializer[Long] {
+object CounterSerializer etwittertends Serializer[Long] {
   private[this] val Minus = '-'.toByte
   // The lower bound
   private[this] val Zero = '0'.toByte
   // The upper bound
   private[this] val Nine = '9'.toByte
 
-  // Max length for our byte arrays that'll fit all positive longs
-  private[this] val MaxByteArrayLength = 19
+  // Matwitter length for our byte arrays that'll fit all positive longs
+  private[this] val MatwitterByteArrayLength = 19
 
   override def to(long: Long): Try[Array[Byte]] = Try {
     // NOTE: code based on Long.toString(value), but it avoids creating the
@@ -69,24 +69,24 @@ object CounterSerializer extends Serializer[Long] {
   }
 
   override def from(bytes: Array[Byte]): Try[Long] = Try {
-    // This implementation was about 4x faster than the simple:
+    // This implementation was about 4twitter faster than the simple:
     //    new String(bytes, Charsets.US_ASCII).toLong
 
     if (bytes.length < 1)
-      throw new NumberFormatException("Empty byte arrays are unsupported")
+      throw new NumberFormatEtwitterception("Empty byte arrays are unsupported")
 
     val isNegative = bytes(0) == Minus
     if (isNegative && bytes.length == 1)
-      throw new NumberFormatException(bytes.mkString(","))
+      throw new NumberFormatEtwitterception(bytes.mkString(","))
 
-    // we count in negative numbers so we don't have problems at Long.MaxValue
+    // we count in negative numbers so we don't have problems at Long.MatwitterValue
     var total = 0L
     val endAt = bytes.length
     var i = if (isNegative) 1 else 0
     while (i < endAt) {
       val b = bytes(i)
       if (b < Zero || b > Nine)
-        throw new NumberFormatException(bytes.mkString(","))
+        throw new NumberFormatEtwitterception(bytes.mkString(","))
 
       val int = b - Zero
       total = (total * 10L) - int
@@ -103,12 +103,12 @@ object CounterSerializer extends Serializer[Long] {
   private[this] def stringSize(long: Long): Int = {
     var p = 10
     var i = 1
-    while (i < MaxByteArrayLength) {
+    while (i < MatwitterByteArrayLength) {
       if (long < p) return i
       p *= 10
       i += 1
     }
-    MaxByteArrayLength
+    MatwitterByteArrayLength
   }
 
 }

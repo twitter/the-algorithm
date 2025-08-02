@@ -21,10 +21,10 @@ import com.twitter.visibility.features.ViewerIsCommunityMember
 import com.twitter.visibility.features.ViewerIsCommunityModerator
 import com.twitter.visibility.features.ViewerIsInternalCommunitiesAdmin
 import com.twitter.visibility.models.CommunityTweet
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 
 class CommunityTweetFeaturesV2(communitiesSource: CommunitiesSource)
-    extends CommunityTweetFeatures {
+    etwittertends CommunityTweetFeatures {
   private[this] def forCommunityTweet(
     communityTweet: CommunityTweet
   ): FeatureMapBuilder => FeatureMapBuilder = { builder: FeatureMapBuilder =>
@@ -119,7 +119,7 @@ class CommunityTweetFeaturesV2(communitiesSource: CommunitiesSource)
 
   def forTweet(
     tweet: Tweet,
-    viewerContext: ViewerContext
+    viewerContetwittert: ViewerContetwittert
   ): FeatureMapBuilder => FeatureMapBuilder = {
     CommunityTweet(tweet) match {
       case None => forNonCommunityTweet()

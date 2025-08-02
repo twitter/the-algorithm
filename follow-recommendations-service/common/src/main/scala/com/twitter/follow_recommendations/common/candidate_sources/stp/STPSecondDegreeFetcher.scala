@@ -1,15 +1,15 @@
 package com.twitter.follow_recommendations.common.candidate_sources.stp
 
 import com.twitter.follow_recommendations.common.models.IntermediateSecondDegreeEdge
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.strato.generated.client.onboarding.userrecs.StrongTiePredictionFeaturesOnUserClientColumn
 import com.twitter.timelines.configapi.HasParams
 import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdge
 import com.twitter.wtf.scalding.jobs.strong_tie_prediction.SecondDegreeEdge
 import com.twitter.wtf.scalding.jobs.strong_tie_prediction.SecondDegreeEdgeInfo
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 // Link to code functionality we're migrating
 @Singleton
@@ -26,11 +26,11 @@ class STPSecondDegreeFetcher @Inject() (
     )
   }
 
-  // Use each first-degree edge(w/ candidateId) to expand and find mutual follows.
+  // Use each first-degree edge(w/ candidateId) to etwitterpand and find mutual follows.
   // Then, with the mutual follows, group-by candidateId and join edge information
   // to create secondDegree edges.
   def getSecondDegreeEdges(
-    target: HasClientContext with HasParams,
+    target: HasClientContetwittert with HasParams,
     firstDegreeEdges: Seq[FirstDegreeEdge]
   ): Stitch[Seq[SecondDegreeEdge]] = {
     target.getOptionalUserId
@@ -51,7 +51,7 @@ class STPSecondDegreeFetcher @Inject() (
                   stpFeatures.topMutualFollows
                     .getOrElse(Nil)
                     .map(_.userId)
-                    .take(STPSecondDegreeFetcher.MaxNumOfMutualFollows)
+                    .take(STPSecondDegreeFetcher.MatwitterNumOfMutualFollows)
               } yield topSecondDegreeUserIds.map(
                 IntermediateSecondDegreeEdge(connectingId, _, edgeInfo))
               intermediateSecondDegreeEdges.getOrElse(Nil)
@@ -68,10 +68,10 @@ class STPSecondDegreeFetcher @Inject() (
                   numMutualFollowPath = intermediateEdges.count(_.edgeInfo.mutualFollow),
                   numLowTweepcredFollowPath =
                     intermediateEdges.count(_.edgeInfo.lowTweepcredFollow),
-                  forwardEmailPath = intermediateEdges.exists(_.edgeInfo.forwardEmail),
-                  reverseEmailPath = intermediateEdges.exists(_.edgeInfo.reverseEmail),
-                  forwardPhonePath = intermediateEdges.exists(_.edgeInfo.forwardPhone),
-                  reversePhonePath = intermediateEdges.exists(_.edgeInfo.reversePhone),
+                  forwardEmailPath = intermediateEdges.etwitterists(_.edgeInfo.forwardEmail),
+                  reverseEmailPath = intermediateEdges.etwitterists(_.edgeInfo.reverseEmail),
+                  forwardPhonePath = intermediateEdges.etwitterists(_.edgeInfo.forwardPhone),
+                  reversePhonePath = intermediateEdges.etwitterists(_.edgeInfo.reversePhone),
                   socialProof = intermediateEdges
                     .filter { e => e.edgeInfo.mutualFollow || e.edgeInfo.lowTweepcredFollow }
                     .sortBy(-_.edgeInfo.realGraphWeight)
@@ -82,13 +82,13 @@ class STPSecondDegreeFetcher @Inject() (
           }
           secondaryDegreeEdges.toSeq
             .sortBy(scoreSecondDegreeEdge)
-            .take(STPSecondDegreeFetcher.MaxNumSecondDegreeEdges)
+            .take(STPSecondDegreeFetcher.MatwitterNumSecondDegreeEdges)
         }
       }.getOrElse(Stitch.Nil)
   }
 }
 
 object STPSecondDegreeFetcher {
-  val MaxNumSecondDegreeEdges = 200
-  val MaxNumOfMutualFollows = 50
+  val MatwitterNumSecondDegreeEdges = 200
+  val MatwitterNumOfMutualFollows = 50
 }

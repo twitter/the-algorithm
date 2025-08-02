@@ -14,7 +14,7 @@ import com.twitter.util.Try
 object HardDeleteTweetHandler {
 
   /**
-   * When a tweet is removed lkeys with these prefixes will be deleted permanently.
+   * When a tweet is removed lkeys with these prefitwitteres will be deleted permanently.
    */
   private[storage] def isKeyToBeDeleted(key: TweetKey): Boolean =
     key.lKey match {
@@ -146,7 +146,7 @@ object HardDeleteTweetHandler {
             case Throw(notDeleted: NotDeleted) =>
               hardDeleteTweetCancelled.incr()
               Stitch.value(notDeleted)
-            case Throw(e) => Stitch.exception(e) // this should never happen
+            case Throw(e) => Stitch.etwitterception(e) // this should never happen
           }
         }
   }

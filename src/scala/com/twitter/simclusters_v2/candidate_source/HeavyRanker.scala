@@ -28,7 +28,7 @@ object HeavyRanker {
   class UniformScoreStoreRanker(
     uniformScoringStore: ReadableStore[ThriftScoreId, ThriftScore],
     stats: StatsReceiver)
-      extends HeavyRanker {
+      etwittertends HeavyRanker {
     val fetchCandidateEmbeddingsStat = stats.scope("fetchCandidateEmbeddings")
 
     def rank(

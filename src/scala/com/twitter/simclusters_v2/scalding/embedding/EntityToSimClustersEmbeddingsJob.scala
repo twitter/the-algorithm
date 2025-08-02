@@ -20,9 +20,9 @@ import com.twitter.simclusters_v2.thriftscala.{
 }
 import com.twitter.wtf.entity_real_graph.common.EntityUtil
 import com.twitter.wtf.entity_real_graph.thriftscala.EntityType
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
+import com.twitter.wtf.scalding.jobs.common.AdhocEtwitterecutionApp
 import com.twitter.wtf.scalding.jobs.common.DataSources
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
+import com.twitter.wtf.scalding.jobs.common.ScheduledEtwitterecutionApp
 import java.util.TimeZone
 
 /**
@@ -35,7 +35,7 @@ import java.util.TimeZone
   --user recos-platform \
   -- --date 2019-09-09 --model-version 20M_145K_updated --entity-type SemanticCore
  */
-object EntityToSimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
+object EntityToSimClustersEmbeddingAdhocApp etwittertends AdhocEtwitterecutionApp {
 
   import EmbeddingUtil._
   import EntityEmbeddingUtil._
@@ -47,31 +47,31 @@ object EntityToSimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
     embeddings: TypedPipe[(SimClustersEmbeddingId, (ClusterId, EmbeddingScore))],
     topKEmbeddings: TypedPipe[(SimClustersEmbeddingId, Seq[(ClusterId, EmbeddingScore)])],
     jobConfig: EntityEmbeddingsJobConfig
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
-    val toSimClusterEmbeddingExec = topKEmbeddings
+    val toSimClusterEmbeddingEtwitterec = topKEmbeddings
       .mapValues(SimClustersEmbedding.apply(_).toThrift)
-      .writeExecution(
+      .writeEtwitterecution(
         AdhocKeyValSources.entityToClustersSource(
           EntityToSimClustersEmbeddingsJob.getHdfsPath(
             isAdhoc = true,
             isManhattanKeyVal = true,
-            isReverseIndex = false,
+            isReverseIndetwitter = false,
             jobConfig.modelVersion,
             jobConfig.entityType)))
 
-    val fromSimClusterEmbeddingExec =
-      toReverseIndexSimClusterEmbedding(embeddings, jobConfig.topK)
-        .writeExecution(
+    val fromSimClusterEmbeddingEtwitterec =
+      toReverseIndetwitterSimClusterEmbedding(embeddings, jobConfig.topK)
+        .writeEtwitterecution(
           AdhocKeyValSources.clusterToEntitiesSource(
             EntityToSimClustersEmbeddingsJob.getHdfsPath(
               isAdhoc = true,
               isManhattanKeyVal = true,
-              isReverseIndex = true,
+              isReverseIndetwitter = true,
               jobConfig.modelVersion,
               jobConfig.entityType)))
 
-    Execution.zip(toSimClusterEmbeddingExec, fromSimClusterEmbeddingExec).unit
+    Etwitterecution.zip(toSimClusterEmbeddingEtwitterec, fromSimClusterEmbeddingEtwitterec).unit
   }
 
   override def runOnDateRange(
@@ -80,7 +80,7 @@ object EntityToSimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     val jobConfig = EntityEmbeddingsJobConfig(args, isAdhoc = true)
 
@@ -92,19 +92,19 @@ object EntityToSimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
      */
     val entityRealGraphSource = DataSources.entityRealGraphDailyDataSetSource
 
-    val entityUserMatrix: TypedPipe[(Entity, (UserId, Double))] =
+    val entityUserMatritwitter: TypedPipe[(Entity, (UserId, Double))] =
       (jobConfig.entityType match {
         case EntityType.SemanticCore =>
-          getEntityUserMatrix(entityRealGraphSource, jobConfig.halfLife, EntityType.SemanticCore)
+          getEntityUserMatritwitter(entityRealGraphSource, jobConfig.halfLife, EntityType.SemanticCore)
         case EntityType.Hashtag =>
-          getEntityUserMatrix(entityRealGraphSource, jobConfig.halfLife, EntityType.Hashtag)
+          getEntityUserMatritwitter(entityRealGraphSource, jobConfig.halfLife, EntityType.Hashtag)
         case _ =>
-          throw new IllegalArgumentException(
+          throw new IllegalArgumentEtwitterception(
             s"Argument [--entity-type] must be provided. Supported options [${EntityType.SemanticCore.name}, ${EntityType.Hashtag.name}]")
       }).forceToDisk
 
-    val normalizedUserEntityMatrix =
-      getNormalizedTransposeInputMatrix(entityUserMatrix, numReducers = Some(numReducers))
+    val normalizedUserEntityMatritwitter =
+      getNormalizedTransposeInputMatritwitter(entityUserMatritwitter, numReducers = Some(numReducers))
 
     //determine which data source to use based on model version
     val simClustersSource = jobConfig.modelVersion match {
@@ -116,8 +116,8 @@ object EntityToSimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
 
     val embeddings = computeEmbeddings(
       simClustersSource,
-      normalizedUserEntityMatrix,
-      scoreExtractors,
+      normalizedUserEntityMatritwitter,
+      scoreEtwittertractors,
       ModelVersion.Model20m145kUpdated,
       toSimClustersEmbeddingId(jobConfig.modelVersion),
       numReducers = Some(numReducers * 2)
@@ -138,9 +138,9 @@ object EntityToSimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
   --build_locally \
   --start_cron semantic_core_entity_embeddings_2020_job src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
-object SemanticCoreEntityEmbeddings2020App extends EntityToSimClustersEmbeddingApp
+object SemanticCoreEntityEmbeddings2020App etwittertends EntityToSimClustersEmbeddingApp
 
-trait EntityToSimClustersEmbeddingApp extends ScheduledExecutionApp {
+trait EntityToSimClustersEmbeddingApp etwittertends ScheduledEtwitterecutionApp {
 
   import EmbeddingUtil._
   import EntityEmbeddingUtil._
@@ -160,7 +160,7 @@ trait EntityToSimClustersEmbeddingApp extends ScheduledExecutionApp {
       KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
     ],
     entityEmbeddingsDataset: KeyValDALDataset[KeyVal[SimClustersEmbeddingId, InternalIdEmbedding]]
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     val toSimClustersEmbeddings =
       topKEmbeddings
@@ -168,35 +168,35 @@ trait EntityToSimClustersEmbeddingApp extends ScheduledExecutionApp {
         .map {
           case (entityId, topSimClusters) => KeyVal(entityId, topSimClusters)
         }
-        .writeDALVersionedKeyValExecution(
+        .writeDALVersionedKeyValEtwitterecution(
           clusterEmbeddingsDataset,
-          D.Suffix(
+          D.Suffitwitter(
             EntityToSimClustersEmbeddingsJob.getHdfsPath(
               isAdhoc = false,
               isManhattanKeyVal = true,
-              isReverseIndex = false,
+              isReverseIndetwitter = false,
               jobConfig.modelVersion,
               jobConfig.entityType))
         )
 
     val fromSimClustersEmbeddings =
-      toReverseIndexSimClusterEmbedding(embeddings, jobConfig.topK)
+      toReverseIndetwitterSimClusterEmbedding(embeddings, jobConfig.topK)
         .map {
           case (embeddingId, internalIdsWithScore) =>
             KeyVal(embeddingId, internalIdsWithScore)
         }
-        .writeDALVersionedKeyValExecution(
+        .writeDALVersionedKeyValEtwitterecution(
           entityEmbeddingsDataset,
-          D.Suffix(
+          D.Suffitwitter(
             EntityToSimClustersEmbeddingsJob.getHdfsPath(
               isAdhoc = false,
               isManhattanKeyVal = true,
-              isReverseIndex = true,
+              isReverseIndetwitter = true,
               jobConfig.modelVersion,
               jobConfig.entityType))
         )
 
-    Execution.zip(toSimClustersEmbeddings, fromSimClustersEmbeddings).unit
+    Etwitterecution.zip(toSimClustersEmbeddings, fromSimClustersEmbeddings).unit
   }
 
   override def runOnDateRange(
@@ -205,7 +205,7 @@ trait EntityToSimClustersEmbeddingApp extends ScheduledExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     val jobConfig = EntityEmbeddingsJobConfig(args, isAdhoc = false)
 
@@ -214,8 +214,8 @@ trait EntityToSimClustersEmbeddingApp extends ScheduledExecutionApp {
       ModelVersions.toKnownForModelVersion(jobConfig.modelVersion)
     )
 
-    val reverseIndexEmbeddingsDataset =
-      EntityEmbeddingsSources.getReverseIndexedEntityEmbeddingsDataset(
+    val reverseIndetwitterEmbeddingsDataset =
+      EntityEmbeddingsSources.getReverseIndetwitteredEntityEmbeddingsDataset(
         jobConfig.entityType,
         ModelVersions.toKnownForModelVersion(jobConfig.modelVersion)
       )
@@ -223,13 +223,13 @@ trait EntityToSimClustersEmbeddingApp extends ScheduledExecutionApp {
     val entityRealGraphSource =
       DataSources.entityRealGraphAggregationDataSetSource(dateRange.embiggen(Days(7)))
 
-    val entityUserMatrix: TypedPipe[(Entity, (UserId, Double))] =
-      getEntityUserMatrix(
+    val entityUserMatritwitter: TypedPipe[(Entity, (UserId, Double))] =
+      getEntityUserMatritwitter(
         entityRealGraphSource,
         jobConfig.halfLife,
         jobConfig.entityType).forceToDisk
 
-    val normalizedUserEntityMatrix = getNormalizedTransposeInputMatrix(entityUserMatrix)
+    val normalizedUserEntityMatritwitter = getNormalizedTransposeInputMatritwitter(entityUserMatritwitter)
 
     val simClustersEmbedding = jobConfig.modelVersion match {
       case ModelVersion.Model20m145k2020 =>
@@ -237,28 +237,28 @@ trait EntityToSimClustersEmbeddingApp extends ScheduledExecutionApp {
           InterestedInSources.simClustersInterestedIn2020Source(dateRange, timeZone)
         computeEmbeddings(
           simClustersSource2020,
-          normalizedUserEntityMatrix,
-          scoreExtractors,
+          normalizedUserEntityMatritwitter,
+          scoreEtwittertractors,
           ModelVersion.Model20m145k2020,
           toSimClustersEmbeddingId(ModelVersion.Model20m145k2020)
         )
       case modelVersion =>
-        throw new IllegalArgumentException(s"Model Version ${modelVersion.name} not supported")
+        throw new IllegalArgumentEtwitterception(s"Model Version ${modelVersion.name} not supported")
     }
 
     val topKEmbeddings =
       simClustersEmbedding.group.sortedReverseTake(jobConfig.topK)(Ordering.by(_._2))
 
-    val simClustersEmbeddingsExec =
+    val simClustersEmbeddingsEtwitterec =
       writeOutput(
         simClustersEmbedding,
         topKEmbeddings,
         jobConfig,
         embeddingsDataset,
-        reverseIndexEmbeddingsDataset)
+        reverseIndetwitterEmbeddingsDataset)
 
     // We don't support embeddingsLite for the 2020 model version.
-    val embeddingsLiteExec = if (jobConfig.modelVersion == ModelVersion.Model20m145kUpdated) {
+    val embeddingsLiteEtwitterec = if (jobConfig.modelVersion == ModelVersion.Model20m145kUpdated) {
       topKEmbeddings
         .collect {
           case (
@@ -275,18 +275,18 @@ trait EntityToSimClustersEmbeddingApp extends ScheduledExecutionApp {
               case (clusterId, score) => EmbeddingsLite(entityId, clusterId, score)
             }
           case _ => Nil
-        }.writeDALSnapshotExecution(
+        }.writeDALSnapshotEtwitterecution(
           SimclustersV2EmbeddingsLiteScalaDataset,
           D.Daily,
-          D.Suffix(embeddingsLitePath(ModelVersion.Model20m145kUpdated, "fav_based")),
+          D.Suffitwitter(embeddingsLitePath(ModelVersion.Model20m145kUpdated, "fav_based")),
           D.EBLzo(),
           dateRange.end)
     } else {
-      Execution.unit
+      Etwitterecution.unit
     }
 
-    Execution
-      .zip(simClustersEmbeddingsExec, embeddingsLiteExec).unit
+    Etwitterecution
+      .zip(simClustersEmbeddingsEtwitterec, embeddingsLiteEtwitterec).unit
   }
 }
 
@@ -316,39 +316,39 @@ object EntityToSimClustersEmbeddingsJob {
         modelVersion,
         InternalId.Hashtag(hashtag))
     case (scoreType, entity) =>
-      throw new IllegalArgumentException(
+      throw new IllegalArgumentEtwitterception(
         s"(ScoreType, Entity) ($scoreType, ${entity.toString}) not supported")
   }
 
   /**
    * Generates the output path for the Entity Embeddings Job.
    *
-   * Example Adhoc: /user/recos-platform/processed/adhoc/simclusters_embeddings/hashtag/model_20m_145k_updated
-   * Example Prod: /atla/proc/user/cassowary/processed/simclusters_embeddings/semantic_core/model_20m_145k_dec11
+   * Etwitterample Adhoc: /user/recos-platform/processed/adhoc/simclusters_embeddings/hashtag/model_20m_145k_updated
+   * Etwitterample Prod: /atla/proc/user/cassowary/processed/simclusters_embeddings/semantic_core/model_20m_145k_dec11
    *
    */
   def getHdfsPath(
     isAdhoc: Boolean,
     isManhattanKeyVal: Boolean,
-    isReverseIndex: Boolean,
+    isReverseIndetwitter: Boolean,
     modelVersion: ModelVersion,
     entityType: EntityType
   ): String = {
 
-    val reverseIndex = if (isReverseIndex) "reverse_index/" else ""
+    val reverseIndetwitter = if (isReverseIndetwitter) "reverse_indetwitter/" else ""
 
-    val entityTypeSuffix = entityType match {
+    val entityTypeSuffitwitter = entityType match {
       case EntityType.SemanticCore => "semantic_core"
       case EntityType.Hashtag => "hashtag"
       case _ => "unknown"
     }
 
-    val pathSuffix = s"$reverseIndex$entityTypeSuffix"
+    val pathSuffitwitter = s"$reverseIndetwitter$entityTypeSuffitwitter"
 
-    EmbeddingUtil.getHdfsPath(isAdhoc, isManhattanKeyVal, modelVersion, pathSuffix)
+    EmbeddingUtil.getHdfsPath(isAdhoc, isManhattanKeyVal, modelVersion, pathSuffitwitter)
   }
 
-  def embeddingsLitePath(modelVersion: ModelVersion, pathSuffix: String): String = {
-    s"/user/cassowary/processed/entity_real_graph/simclusters_embedding/lite/$modelVersion/$pathSuffix/"
+  def embeddingsLitePath(modelVersion: ModelVersion, pathSuffitwitter: String): String = {
+    s"/user/cassowary/processed/entity_real_graph/simclusters_embedding/lite/$modelVersion/$pathSuffitwitter/"
   }
 }

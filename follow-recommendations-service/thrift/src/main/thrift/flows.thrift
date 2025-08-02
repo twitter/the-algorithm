@@ -1,5 +1,5 @@
 /*
- * This file defines additional thrift objects that should be specified in FRS request for context of recommendation, specifically the previous recommendations / new interactions in an interactive flow (series of follow steps). These typically are sent from OCF
+ * This file defines additional thrift objects that should be specified in FRS request for contetwittert of recommendation, specifically the previous recommendations / new interactions in an interactive flow (series of follow steps). These typically are sent from OCF
  */
 
 namespace java com.twitter.follow_recommendations.thriftjava
@@ -15,6 +15,6 @@ struct RecommendationStep {
   2: required set<i64> followedUserIds(personalDataType='UserId')
 }(hasPersonalData='true')
 
-struct FlowContext {
+struct FlowContetwittert {
   1: required list<RecommendationStep> steps
 }(hasPersonalData='true')

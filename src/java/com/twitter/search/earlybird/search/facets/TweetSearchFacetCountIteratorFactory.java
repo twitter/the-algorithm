@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.search.facets;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import com.google.common.base.Preconditions;
 
@@ -9,13 +9,13 @@ import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.Earlyb
 import com.twitter.search.core.earlybird.facets.CSFFacetCountIterator;
 import com.twitter.search.core.earlybird.facets.FacetCountIterator;
 import com.twitter.search.core.earlybird.facets.FacetCountIteratorFactory;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
 
 /**
  * Factory of {@link FacetCountIterator} instances for tweet search.
  * It provides a special iterator for the retweets facet.
  */
-public final class TweetSearchFacetCountIteratorFactory extends FacetCountIteratorFactory {
+public final class TweetSearchFacetCountIteratorFactory etwittertends FacetCountIteratorFactory {
   public static final TweetSearchFacetCountIteratorFactory FACTORY =
       new TweetSearchFacetCountIteratorFactory();
 
@@ -24,8 +24,8 @@ public final class TweetSearchFacetCountIteratorFactory extends FacetCountIterat
 
   @Override
   public FacetCountIterator getFacetCountIterator(
-      EarlybirdIndexSegmentAtomicReader reader,
-      Schema.FieldInfo fieldInfo) throws IOException {
+      EarlybirdIndetwitterSegmentAtomicReader reader,
+      Schema.FieldInfo fieldInfo) throws IOEtwitterception {
     Preconditions.checkNotNull(reader);
     Preconditions.checkNotNull(fieldInfo);
     Preconditions.checkArgument(fieldInfo.getFieldType().isUseCSFForFacetCounting());

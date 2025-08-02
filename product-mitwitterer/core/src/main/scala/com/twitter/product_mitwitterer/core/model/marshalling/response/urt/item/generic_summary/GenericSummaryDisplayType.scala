@@ -1,0 +1,5 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.item.generic_summary
+
+sealed trait GenericSummaryItemDisplayType
+
+case object HeroDisplayType etwittertends GenericSummaryItemDisplayType

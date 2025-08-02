@@ -4,7 +4,7 @@ namespace java com.twitter.follow_recommendations.thriftjava
 
 // These are broken into their own union
 // because we can have features that are
-// complex flavors of these (such as Seq)
+// completwitter flavors of these (such as Seq)
 union PrimitiveFeatureValue {
     1: i32 intValue
     2: i64 longValue
@@ -25,7 +25,7 @@ struct DebugParams {
 
 enum DebugCandidateSourceIdentifier {
   UTT_INTERESTS_RELATED_USERS_SOURCE = 0
-  UTT_PRODUCER_EXPANSION_SOURCE = 1
+  UTT_PRODUCER_EtwitterPANSION_SOURCE = 1
   UTT_SEED_ACCOUNT_SOURCE = 2
   BYF_USER_FOLLOW_CLUSTER_SIMS_SOURCE = 3
   BYF_USER_FOLLOW_CLUSTER_SOURCE = 4
@@ -42,11 +42,11 @@ enum DebugCandidateSourceIdentifier {
   FOLLOW2VEC_NEAREST_NEIGHBORS_STORE = 15,
   OFFLINE_STP = 16,
   OFFLINE_STP_BIG = 17,
-  OFFLINE_MUTUAL_FOLLOW_EXPANSION = 18,
+  OFFLINE_MUTUAL_FOLLOW_EtwitterPANSION = 18,
   REPEATED_PROFILE_VISITS = 19,
   TIME_DECAY_FOLLOW2VEC_NEAREST_NEIGHBORS_STORE = 20,
   LINEAR_REGRESSION_FOLLOW2VEC_NEAREST_NEIGHBORS_STORE = 21,
-  REAL_GRAPH_EXPANSION_SOURCE = 22,
+  REAL_GRAPH_EtwitterPANSION_SOURCE = 22,
   RELATABLE_ACCOUNTS_BY_INTEREST = 23,
   EMAIL_TWEET_CLICK = 24,
   GOOD_TWEET_CLICK_ENGAGEMENTS = 25,
@@ -63,7 +63,7 @@ enum DebugCandidateSourceIdentifier {
   BULK_FRIEND_FOLLOWS_NEW_USER = 37,
   ONLINE_STP_EPSCORER = 38,
   ORGANIC_FOLLOW_ACCOUNTS = 39,
-  NUX_LO_HISTORY = 40,
+  NUtwitter_LO_HISTORY = 40,
   TRAFFIC_ATTRIBUTION_ACCOUNTS = 41,
   ONLINE_STP_RAW_ADDRESS_BOOK = 42,
   POP_GEOHASH_QUALITY_FOLLOW = 43,

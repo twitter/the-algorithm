@@ -3,7 +3,7 @@ namespace java com.twitter.tweetypiecomparison.thriftjava
 #@namespace strato com.twitter.tweetypiecomparison
 
 include "com/twitter/tweetypie/tweet_service.thrift"
-include "com/twitter/context/viewer.thrift"
+include "com/twitter/contetwittert/viewer.thrift"
 
 service TweetComparisonService {
   void compare_retweet(

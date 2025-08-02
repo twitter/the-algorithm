@@ -7,8 +7,8 @@ namespace rb TweetyPie
 namespace go tweetypie.tweet
 
 include "com/twitter/escherbird/tweet_annotation.thrift"
-include "com/twitter/expandodo/cards.thrift"
-include "com/twitter/content-health/toxicreplyfilter/filtered_reply_details.thrift"
+include "com/twitter/etwitterpandodo/cards.thrift"
+include "com/twitter/content-health/totwittericreplyfilter/filtered_reply_details.thrift"
 include "com/twitter/dataproducts/enrichments_profilegeo.thrift"
 include "com/twitter/geoduck/public/thriftv1/geoduck_common.thrift"
 include "com/twitter/mediaservices/commons/MediaCommon.thrift"
@@ -38,7 +38,7 @@ include "com/twitter/tweetypie/unmentions/unmentions.thrift"
  *
  * This struct will be present if:
  * 1. This tweet is a reply to another tweet, or
- * 2. This tweet is directed at a user (the tweet's text begins with
+ * 2. This tweet is directed at a user (the tweet's tetwittert begins with
  *    an @mention).
  */
 struct Reply {
@@ -46,7 +46,7 @@ struct Reply {
    * The id of the tweet that this tweet is replying to.
    *
    * This field will be missing for directed-at tweets (tweets whose
-   * text begins with an @mention) that are not replying to another
+   * tetwittert begins with an @mention) that are not replying to another
    * tweet.
    */
   1: optional i64 in_reply_to_status_id (strato.space = "Tweet", strato.name = "inReplyToStatus", personalDataType = 'TweetId', tweetEditAllowed='false')
@@ -104,7 +104,7 @@ struct Share {
    * The id of the tweet that the user retweeted.
    *
    * Often this is the same as source_status_id, but it is different when a
-   * user retweets via another retweet. For example, user A posts tweet id 1,
+   * user retweets via another retweet. For etwitterample, user A posts tweet id 1,
    * user B retweets it, creating tweet 2. If user user C sees B's retweet and
    * retweets it, the result is another retweet of tweet id 1, with the parent
    * status id of tweet 2.
@@ -114,7 +114,7 @@ struct Share {
 
 /**
  * A record mapping a shortened URL (usually t.co) to a long url, and a prettified
- * display text. This is similar to data found in UrlEntity, and may replace that
+ * display tetwittert. This is similar to data found in UrlEntity, and may replace that
  * data in the future.
  */
 struct ShortenedUrl {
@@ -129,10 +129,10 @@ struct ShortenedUrl {
   2: string long_url (personalDataType = 'LongUrl')
 
   /**
-   * Truncated version of expanded URL that does not include protocol and is
+   * Truncated version of etwitterpanded URL that does not include protocol and is
    * limited to 27 characters.
    */
-  3: string display_text (personalDataType = 'LongUrl')
+  3: string display_tetwittert (personalDataType = 'LongUrl')
 }(persisted='true', hasPersonalData = 'true')
 
 /**
@@ -146,8 +146,8 @@ struct ShortenedUrl {
  * guarantee that the quoted tweet is still public and visible.
  *
  * Because a tweet quoting another tweet may not require a permalink URL in
- * the tweet's text, the URLs in ShortenedUrl may be useful to clients that
- * require maintaining a legacy-rendering of the tweet's text with the permalink.
+ * the tweet's tetwittert, the URLs in ShortenedUrl may be useful to clients that
+ * require maintaining a legacy-rendering of the tweet's tetwittert with the permalink.
  * See ShortenedUrl for details. Clients should avoid reading permalink whenever
  * possible and prefer the QuotedTweet's tweet_id and user_id instead.
  *
@@ -223,7 +223,7 @@ struct Place {
   /**
    * The name of this place composed with its parent locations.
    *
-   * For example, the full name for "Brooklyn" would be "Brooklyn, NY". This
+   * For etwitterample, the full name for "Brooklyn" would be "Brooklyn, NY". This
    * name is returned in the language specified by
    * GetTweetOptions.language_tag.
    */
@@ -263,7 +263,7 @@ struct Place {
   /**
    * A simplified polygon that encompasses the place's geometry.
    */
-  11: optional list<GeoCoordinates> bounding_box
+  11: optional list<GeoCoordinates> bounding_botwitter
 
   /**
    * An unordered list of geo service identifiers for places that contain this
@@ -288,7 +288,7 @@ struct Place {
 
 /**
  * A UrlEntity is the position and content of a t.co shortened URL in the
- * tweet's text.
+ * tweet's tetwittert.
  *
  * If Talon returns an error to Tweetypie during tweet hydration, the
  * UrlEntity will be omitted from the response. UrlEntities are not included
@@ -297,16 +297,16 @@ struct Place {
 */
 struct UrlEntity {
   /**
-   * The position of this entity's first character, in zero-indexed Unicode
+   * The position of this entity's first character, in zero-indetwittered Unicode
    * code points.
    */
-  1: i16 from_index
+  1: i16 from_indetwitter
 
   /**
-   * The position after this entity's last character, in zero-indexed Unicode
+   * The position after this entity's last character, in zero-indetwittered Unicode
    * code points.
    */
-  2: i16 to_index
+  2: i16 to_indetwitter
 
   /**
    * Shortened t.co URL.
@@ -319,10 +319,10 @@ struct UrlEntity {
    * This field will always be present on URL entities returned by
    * Tweetypie; it is optional as an implementation artifact.
    */
-  4: optional string expanded (personalDataType = 'LongUrl')
+  4: optional string etwitterpanded (personalDataType = 'LongUrl')
 
   /**
-   * Truncated version of expanded URL that does not include protocol and is
+   * Truncated version of etwitterpanded URL that does not include protocol and is
    * limited to 27 characters.
    *
    * This field will always be present on URL entities returned by
@@ -335,23 +335,23 @@ struct UrlEntity {
 
 /**
  * A MentionEntity is the position and content of a mention, (the "@"
- * character followed by the name of another valid user) in a tweet's text.
+ * character followed by the name of another valid user) in a tweet's tetwittert.
  *
  * If Gizmoduck returns an error to Tweetypie during tweet hydration that
  * MentionEntity will be omitted from the response.
  */
 struct MentionEntity {
   /**
-   * The position of this entity's first character ("@"), in zero-indexed
+   * The position of this entity's first character ("@"), in zero-indetwittered
    * Unicode code points.
    */
-  1: i16 from_index
+  1: i16 from_indetwitter
 
   /**
-   * The position after this entity's last character, in zero-indexed Unicode
+   * The position after this entity's last character, in zero-indetwittered Unicode
    * code points.
    */
-  2: i16 to_index
+  2: i16 to_indetwitter
 
   /**
    * Contents of the mention without the leading "@".
@@ -383,7 +383,7 @@ struct MentionEntity {
 
   /**
    * Indicates if the user referred to by this MentionEntity has been unmentioned
-   * from the conversation.  If this field is set to true, the fromIndex and toIndex
+   * from the conversation.  If this field is set to true, the fromIndetwitter and toIndetwitter
    * fields will have a value of 0.
    *
    * @deprecated isUnmentioned is no longer being populated
@@ -411,48 +411,48 @@ struct SettingsUnmentions {
 
 /**
  * A HashtagEntity is the position and content of a hashtag (a term starting
- * with "#") in a tweet's text.
+ * with "#") in a tweet's tetwittert.
  */
 struct HashtagEntity {
   /**
-   * The position of this entity's first character ("#"), in zero-indexed
+   * The position of this entity's first character ("#"), in zero-indetwittered
    * Unicode code points.
    */
-  1: i16 from_index
+  1: i16 from_indetwitter
 
   /**
-   * The position after this entity's last character, in zero-indexed Unicode
+   * The position after this entity's last character, in zero-indetwittered Unicode
    * code points.
    */
-  2: i16 to_index
+  2: i16 to_indetwitter
 
   /**
    * Contents of the hashtag without the leading "#".
    */
-  3: string text (personalDataType = 'PrivateTweetEntitiesAndMetadata, PublicTweetEntitiesAndMetadata')
+  3: string tetwittert (personalDataType = 'PrivateTweetEntitiesAndMetadata, PublicTweetEntitiesAndMetadata')
 }(persisted = 'true', hasPersonalData = 'true')
 
 /**
  * A CashtagEntity is the position and content of a cashtag (a term starting
- * with "$") in a tweet's text.
+ * with "$") in a tweet's tetwittert.
  */
 struct CashtagEntity {
   /**
-   * The position of this entity's first character, in zero-indexed Unicode
+   * The position of this entity's first character, in zero-indetwittered Unicode
    * code points.
    */
-  1: i16 from_index
+  1: i16 from_indetwitter
 
   /**
-   * The position after this entity's last character, in zero-indexed Unicode
+   * The position after this entity's last character, in zero-indetwittered Unicode
    * code points.
    */
-  2: i16 to_index
+  2: i16 to_indetwitter
 
   /**
    * Contents of the cashtag without the leading "$"
    */
-  3: string text (personalDataType = 'PrivateTweetEntitiesAndMetadata, PublicTweetEntitiesAndMetadata')
+  3: string tetwittert (personalDataType = 'PrivateTweetEntitiesAndMetadata, PublicTweetEntitiesAndMetadata')
 }(persisted = 'true', hasPersonalData = 'true')
 
 enum MediaTagType {
@@ -475,7 +475,7 @@ struct TweetMediaTags {
 }(persisted='true', hasPersonalData = 'true')
 
 /**
- * A UserMention is a user reference not stored in the tweet text.
+ * A UserMention is a user reference not stored in the tweet tetwittert.
  *
  * @deprecated Was used only in ReplyAddresses
  */
@@ -487,7 +487,7 @@ struct UserMention {
 
 /**
  * ReplyAddresses is a list of reply entities which are stored outside of the
- * text.
+ * tetwittert.
  *
  * @deprecated
  */
@@ -713,10 +713,10 @@ struct StatusPerspective {
 }(persisted='true', hasPersonalData = 'true')
 
 /**
- * A Language is a guess about the human language of a tweet's text.
+ * A Language is a guess about the human language of a tweet's tetwittert.
  *
  * Language is determined by TwitterLanguageIdentifier from the
- * com.twitter.common.text package (commonly called "Penguin").
+ * com.twitter.common.tetwittert package (commonly called "Penguin").
  */
 struct Language {
   /**
@@ -742,7 +742,7 @@ struct Language {
 
 /**
  * A SupplementalLanguage is a guess about the human language of a tweet's
- * text.
+ * tetwittert.
  *
  * SupplementalLanguage is typically determined by a third-party translation
  * service. It is only stored when the service detects a different language
@@ -801,7 +801,7 @@ struct CardBindingValues {
 }(persisted='true')
 
 /**
- * A CardReference is a mechanism for explicitly associating a card with a
+ * A CardReference is a mechanism for etwitterplicitly associating a card with a
  * tweet.
  */
 struct CardReference {
@@ -810,7 +810,7 @@ struct CardReference {
    *
    * This URI may reference either a card stored in the card service, or
    * another resource, such as a crawled web page URL. This value supercedes
-   * any URL present in tweet text.
+   * any URL present in tweet tetwittert.
    */
   1: string card_uri
 }(persisted='true')
@@ -819,7 +819,7 @@ struct CardReference {
  * A TweetPivot is a semantic entity related to a tweet.
  *
  * TweetPivots are used to direct to the user to another related location. For
- * example, a "See more about <name>" UI element that takes the user to <url>
+ * etwitterample, a "See more about <name>" UI element that takes the user to <url>
  * when clicked.
  */
 struct TweetPivot {
@@ -835,18 +835,18 @@ struct EscherbirdEntityAnnotations {
   1: list<tweet_annotation.TweetEntityAnnotation> entity_annotations
 }(persisted='true')
 
-struct TextRange {
+struct TetwittertRange {
   /**
-   * The inclusive index of the start of the range, in zero-indexed Unicode
+   * The inclusive indetwitter of the start of the range, in zero-indetwittered Unicode
    * code points.
    */
-  1: required i32 from_index
+  1: required i32 from_indetwitter
 
   /**
-   * The exclusive index of the end of the range, in zero-indexed Unicode
+   * The etwitterclusive indetwitter of the end of the range, in zero-indetwittered Unicode
    * code points.
    */
-  2: required i32 to_index
+  2: required i32 to_indetwitter
 }(persisted='true')
 
 struct TweetCoreData {
@@ -855,18 +855,18 @@ struct TweetCoreData {
   /**
    * The body of the tweet consisting of the user-supplied displayable message
    * and:
-   * - an optional prefix list of @mentions
-   * - an optional suffix attachment url.
+   * - an optional prefitwitter list of @mentions
+   * - an optional suffitwitter attachment url.
    *
-   * The indices from visible_text_range specify the substring of text indended
+   * The indices from visible_tetwittert_range specify the substring of tetwittert indended
    * to be displayed, whose length is limited to 140 display characters.  Note
    * that the visible substring may be longer than 140 characters due to HTML
    * entity encoding of &, <, and > .
 
-   * For retweets the text is that of the original tweet, prepended with "RT
+   * For retweets the tetwittert is that of the original tweet, prepended with "RT
    * @username: " and truncated to 140 characters.
    */
-  2: string text (personalDataType = 'PrivateTweets, PublicTweets')
+  2: string tetwittert (personalDataType = 'PrivateTweets, PublicTweets')
 
   /**
    * The client from which this tweet was created
@@ -878,7 +878,7 @@ struct TweetCoreData {
   /**
    * Time this tweet was created.
    *
-   * This value is seconds since the Unix epoch. For tweets with Snowflake IDs
+   * This value is seconds since the Unitwitter epoch. For tweets with Snowflake IDs
    * this value is redundant, since a millisecond-precision timestamp is part
    * of the id.
    */
@@ -952,7 +952,7 @@ struct TweetCoreData {
    * The impression id of the ad from which this tweet was created.
    *
    * This is set when a user retweets or replies to a promoted tweet. It is
-   * used to attribute the "earned" exposure of an advertisement.
+   * used to attribute the "earned" etwitterposure of an advertisement.
    */
   13: optional i64 tracking_id (personalDataType = 'ImpressionId', tweetEditAllowed='false')
 
@@ -968,9 +968,9 @@ struct TweetCoreData {
    * Whether this tweet has media of any type.
    *
    * Media can be in the form of media entities, media cards, or URLs in the
-   * tweet text that link to media partners.
+   * tweet tetwittert that link to media partners.
    *
-   * @see MediaIndexHelper
+   * @see MediaIndetwitterHelper
    */
   15: optional bool has_media
 
@@ -986,7 +986,7 @@ struct TweetCoreData {
   /**
    * The location where a tweet was sent from.
    *
-   * Place is either published in API request explicitly or implicitly reverse
+   * Place is either published in API request etwitterplicitly or implicitly reverse
    * geocoded from API lat/lon coordinates params.
    *
    * Tweetypie implementation notes:
@@ -1006,26 +1006,26 @@ struct Communities {
 }(persisted='true')
 
 /**
- * Tweet metadata that is present on extended tweets, a tweet whose total text length is greater
+ * Tweet metadata that is present on etwittertended tweets, a tweet whose total tetwittert length is greater
  * than the classic limit of 140 characters.
  */
-struct ExtendedTweetMetadata {
+struct EtwittertendedTweetMetadata {
   /**
    * @deprecated was display_count
    */
   1: i32 unused1 = 0
 
   /**
-   * The index, in unicode code points, at which the tweet text should be truncated
+   * The indetwitter, in unicode code points, at which the tweet tetwittert should be truncated
    * for rendering in a public API backwards-compatible mode.  Once truncated to this
-   * point, the text should be appended with an ellipsis, a space, and the short_url
-   * from self_permalink.  The resulting text must conform to the 140 display glyph
+   * point, the tetwittert should be appended with an ellipsis, a space, and the short_url
+   * from self_permalink.  The resulting tetwittert must conform to the 140 display glyph
    * limit.
    */
-  2: required i32 api_compatible_truncation_index
+  2: required i32 api_compatible_truncation_indetwitter
 
   /**
-   * @deprecated was default_display_truncation_index
+   * @deprecated was default_display_truncation_indetwitter
    */
   3: i32 unused3 = 0
 
@@ -1037,18 +1037,18 @@ struct ExtendedTweetMetadata {
   /**
    * @deprecated was preview_range
    */
-  5: optional TextRange unused5
+  5: optional TetwittertRange unused5
 
   /**
-   * @deprecated was extended_preview_range
+   * @deprecated was etwittertended_preview_range
    */
-  6: optional TextRange unused6
+  6: optional TetwittertRange unused6
 }(persisted='true')
 
 /**
- * @deprecated use TransientCreateContext instead
+ * @deprecated use TransientCreateContetwittert instead
  */
-enum TweetCreateContextKey {
+enum TweetCreateContetwittertKey {
   PERISCOPE_IS_LIVE    = 0,
   PERISCOPE_CREATOR_ID = 1
 }
@@ -1089,7 +1089,7 @@ struct SelfThreadMetadata {
 
   /**
    * Indicates if the tweet with this SelfThreadMetadata is a leaf in the self-thread tree.
-   * This flag might be used to encourage the author to extend their tweetstorm at the end.
+   * This flag might be used to encourage the author to etwittertend their tweetstorm at the end.
    */
   2: bool isLeaf = 0
 }(persisted='true', hasPersonalData = 'true')
@@ -1098,7 +1098,7 @@ struct SelfThreadMetadata {
  * Composer flow used to create this tweet. Unless using the News Camera (go/newscamera)
  * flow, this should be `STANDARD`.
  *
- * When set to `CAMERA`, clients are expected to display the tweet with a different UI
+ * When set to `CAMERA`, clients are etwitterpected to display the tweet with a different UI
  * to emphasize attached media.
  */
 enum ComposerSource {
@@ -1146,9 +1146,9 @@ union ConversationControl {
   3: ConversationControlFollowers followers
 }(persisted='true', hasPersonalData = 'true')
 
-// This tweet metadata shows the exclusivity of a tweet and is used to determine
+// This tweet metadata shows the etwitterclusivity of a tweet and is used to determine
 // whether replies / visibility of a tweet is limited
-struct ExclusiveTweetControl {
+struct EtwitterclusiveTweetControl {
   1: required i64 conversation_author_id (personalDataType = 'UserId')
 }(persisted='true', hasPersonalData = 'true')
 
@@ -1204,7 +1204,7 @@ struct CollabTweet {
  * is sent to another Collaborator to accept or reject collaboration. If and when other
  * Collaborators have accepted, the CollabInvitation is replaced by a CollabTweet which is published
  * publicly and fanned out to followers of all Collaborators. A CollabInvitation will be hidden from
- * anyone except the list of Collaborators using VF. The CollabTweet will then be fanned out like
+ * anyone etwittercept the list of Collaborators using VF. The CollabTweet will then be fanned out like
  * a regular Tweet to the profiles and combined audiences of all Collaborators.
  *
  * A Tweet representing a CollabTweet or CollabInvitation is denoted by the presence of a
@@ -1218,10 +1218,10 @@ union CollabControl {
 /**
  * A Tweet is a message that belongs to a Twitter user.
  *
- * The Tweet struct replaces the deprecated Status struct. All fields except
+ * The Tweet struct replaces the deprecated Status struct. All fields etwittercept
  * id are optional.
  *
- * This struct supports the additional fields flexible schema. Additional fields are
+ * This struct supports the additional fields fletwitterible schema. Additional fields are
  * defined starting from field 101.
  *
  * The guidelines for adding a new Additional field:
@@ -1255,22 +1255,22 @@ struct Tweet {
   2: optional TweetCoreData core_data
 
   /**
-   * URLs extracted from the tweet's text.
+   * URLs etwittertracted from the tweet's tetwittert.
    */
   3: optional list<UrlEntity> urls
 
   /**
-   * Mentions extracted from the tweet's text.
+   * Mentions etwittertracted from the tweet's tetwittert.
    */
   4: optional list<MentionEntity> mentions
 
   /**
-   * Hashtags extracted from the tweet's text.
+   * Hashtags etwittertracted from the tweet's tetwittert.
    */
   5: optional list<HashtagEntity> hashtags
 
   /**
-   * Cashtags extracted from the tweet's text
+   * Cashtags etwittertracted from the tweet's tetwittert
    */
   6: optional list<CashtagEntity> cashtags
 
@@ -1336,7 +1336,7 @@ struct Tweet {
   17: optional cards.Card2 card2
 
   /**
-   * Human language of tweet text as determined by TwitterLanguageIdentifier.
+   * Human language of tweet tetwittert as determined by TwitterLanguageIdentifier.
    */
   18: optional Language language
 
@@ -1349,8 +1349,8 @@ struct Tweet {
    * User responsible for creating this tweet when it is not the same as the
    * core_data.user_id.
    *
-   * This is sensitive information and must not be shared externally (via UI,
-   * API, or streaming) except to the the owner of the tweet
+   * This is sensitive information and must not be shared etwitterternally (via UI,
+   * API, or streaming) etwittercept to the the owner of the tweet
    * (core_data.user_id) or a contributor to the owner's account.
    */
   20: optional Contributor contributor
@@ -1359,8 +1359,8 @@ struct Tweet {
 
   22: optional enrichments_profilegeo.ProfileGeoEnrichment profile_geo_enrichment
 
-  // Maps extension name to value; only populated if the request contained an extension on tweets.
-  // obsolete 24: optional map<string, binary> extensions
+  // Maps etwittertension name to value; only populated if the request contained an etwittertension on tweets.
+  // obsolete 24: optional map<string, binary> etwittertensions
 
   /**
    * Deprecated.
@@ -1370,13 +1370,13 @@ struct Tweet {
 
   /**
    * @deprecated
-   * Strato Tweet Extensions support has moved to birdherd.
+   * Strato Tweet Etwittertensions support has moved to birdherd.
    *
    * Internal thrift clients should query strato columns directly and
-   * not rely upon ext/*.Tweet columns which are designed to serve
+   * not rely upon etwittert/*.Tweet columns which are designed to serve
    * client APIs.
    */
-  26: optional binary extensions_reply
+  26: optional binary etwittertensions_reply
 
   /**
    * Has the requesting user muted the conversation referred to by
@@ -1414,9 +1414,9 @@ struct Tweet {
   31: optional self_thread.SelfThreadInfo self_thread_info
 
   // field 32 to 99 are reserved
-  // field 100 is used for flexible schema proof of concept
+  // field 100 is used for fletwitterible schema proof of concept
   // additional fields
-  // these fields are stored in Manhattan flexible schema
+  // these fields are stored in Manhattan fletwitterible schema
   101: optional TweetMediaTags media_tags
   102: optional SchedulingInfo scheduling_info
 
@@ -1459,7 +1459,7 @@ struct Tweet {
   // @deprecated 2021-07-19
   115: optional safety_label.SafetyLabel recommendations_low_quality_label (personalDataType = 'TweetSafetyLabels')
   // @deprecated 2021-07-19
-  116: optional safety_label.SafetyLabel experimentation_label (personalDataType = 'TweetSafetyLabels')
+  116: optional safety_label.SafetyLabel etwitterperimentation_label (personalDataType = 'TweetSafetyLabels')
 
   117: optional tweet_location_info.TweetLocationInfo tweet_location_info
   118: optional CardReference card_reference
@@ -1474,20 +1474,20 @@ struct Tweet {
 
   // under certain circumstances, including long form tweets, we create and store a self-permalink
   // to this tweet. in the case of a long-form tweet, this will be used in a truncated version
-  // of the tweet text.
+  // of the tweet tetwittert.
   122: optional ShortenedUrl self_permalink
 
-  // metadata that is present on extended tweets.
-  123: optional ExtendedTweetMetadata extended_tweet_metadata
+  // metadata that is present on etwittertended tweets.
+  123: optional EtwittertendedTweetMetadata etwittertended_tweet_metadata
 
   // obsolete 124: crosspost_destinations.CrosspostDestinations crosspost_destinations
 
   // Communities associated with a tweet
   125: optional Communities communities (personalDataType = 'PrivateTweetEntitiesAndMetadata', tweetEditAllowed='false')
 
-  // If some text at the beginning or end of the tweet should be hidden, then this
-  // field indicates the range of text that should be shown in clients.
-  126: optional TextRange visible_text_range
+  // If some tetwittert at the beginning or end of the tweet should be hidden, then this
+  // field indicates the range of tetwittert that should be shown in clients.
+  126: optional TetwittertRange visible_tetwittert_range
 
   // @deprecated 2021-07-19
   127: optional safety_label.SafetyLabel spam_high_recall_label (personalDataType = 'TweetSafetyLabels')
@@ -1538,7 +1538,7 @@ struct Tweet {
   // The composer used to create this tweet. Either via the standard tweet creator or the
   // Camera flow (go/newscamera).
   //
-  // NOTE: this field is only set if a client passed an explicit ComposerSource in the PostTweetRequest.
+  // NOTE: this field is only set if a client passed an etwitterplicit ComposerSource in the PostTweetRequest.
   // News Camera is deprecated and we no longer set ComposerSource in the PostTweetRequest so no new Tweets will
   // have this field.
   153: optional ComposerSource composer_source
@@ -1547,7 +1547,7 @@ struct Tweet {
   154: optional ConversationControl conversation_control
 
   // Determines the super follows requirements for being able to view a tweet.
-  155: optional ExclusiveTweetControl exclusive_tweet_control (tweetEditAllowed='false')
+  155: optional EtwitterclusiveTweetControl etwitterclusive_tweet_control (tweetEditAllowed='false')
 
   // Present for a Trusted Friends tweet, see TrustedFriendsControl for more details.
   156: optional TrustedFriendsControl trusted_friends_control (tweetEditAllowed='false')
@@ -1584,8 +1584,8 @@ struct Tweet {
   */
   164: optional api_fields.TweetPerspective edit_perspective
 
-  // Visibility controls related to Toxic Reply Filtering
-  // go/toxrf for more details
+  // Visibility controls related to Totwitteric Reply Filtering
+  // go/totwitterrf for more details
   165: optional filtered_reply_details.FilteredReplyDetails filtered_reply_details
 
   // The list of mentions that have unmentioned from the tweet's associated conversation
@@ -1608,13 +1608,13 @@ struct Tweet {
     */
   169: optional note_tweet.NoteTweet note_tweet
 
-  // For additional fields, the next available field id is 169.
+  // For additional fields, the netwittert available field id is 169.
   // NOTE: when adding a new additional field, please also update UnrequestedFieldScrubber.scrubKnownFields
 
   /**
    * INTERNAL FIELDS
    *
-   * These fields are used by tweetypie only and should not be accessed externally.
+   * These fields are used by tweetypie only and should not be accessed etwitterternally.
    * The field ids are in descending order, starting with `32767`.
    */
 
@@ -1629,10 +1629,10 @@ struct Tweet {
    *
    * A tweet's DirectedAtUser is hydrated as follows:
    * 1. if this field is present, then DirectedAtUserMetadata.userId is the directed-at user
-   * 2. if this field is absent, then if the tweet has a reply and has a mention starting at text
-   *    index 0 then that user is the directed-at user.
+   * 2. if this field is absent, then if the tweet has a reply and has a mention starting at tetwittert
+   *    indetwitter 0 then that user is the directed-at user.
    *
-   * Note: External clients should use CoreData.directed_at_user.
+   * Note: Etwitterternal clients should use CoreData.directed_at_user.
    */
   32764: optional DirectedAtUserMetadata directed_at_user_metadata
 
@@ -1648,5 +1648,5 @@ struct Tweet {
   32767: optional list<string> tweetypie_only_takedown_country_codes (personalDataType = 'ContentRestrictionStatus')
 
 
-  // for internal fields, the next available field id is 32765 (counting down)
+  // for internal fields, the netwittert available field id is 32765 (counting down)
 }(persisted='true', hasPersonalData = 'true')

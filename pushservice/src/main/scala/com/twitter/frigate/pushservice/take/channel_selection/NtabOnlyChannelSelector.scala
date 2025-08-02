@@ -4,7 +4,7 @@ import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
 import com.twitter.frigate.thriftscala.ChannelName
 import com.twitter.util.Future
 
-class NtabOnlyChannelSelector extends ChannelSelector {
+class NtabOnlyChannelSelector etwittertends ChannelSelector {
   val SELECTOR_NAME = "NtabOnlyChannelSelector"
 
   def getSelectorName(): String = SELECTOR_NAME

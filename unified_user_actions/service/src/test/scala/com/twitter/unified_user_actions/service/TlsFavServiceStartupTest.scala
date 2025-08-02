@@ -14,19 +14,19 @@ import com.twitter.finatra.kafka.serde.UnKeyedSerde
 import com.twitter.finatra.kafka.test.KafkaFeatureTest
 import com.twitter.inject.server.EmbeddedTwitterServer
 import com.twitter.kafka.client.processor.KafkaConsumerClient
-import com.twitter.timelineservice.thriftscala.ContextualizedFavoriteEvent
+import com.twitter.timelineservice.thriftscala.ContetwittertualizedFavoriteEvent
 import com.twitter.timelineservice.thriftscala.FavoriteEvent
 import com.twitter.timelineservice.thriftscala.FavoriteEventUnion
-import com.twitter.timelineservice.thriftscala.LogEventContext
+import com.twitter.timelineservice.thriftscala.LogEventContetwittert
 import com.twitter.unified_user_actions.kafka.ClientConfigs
 import com.twitter.unified_user_actions.service.module.KafkaProcessorTlsFavsModule
 import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
 import com.twitter.util.Duration
 import com.twitter.util.StorageUnit
 
-class TlsFavServiceStartupTest extends KafkaFeatureTest {
+class TlsFavServiceStartupTest etwittertends KafkaFeatureTest {
   private val inputTopic =
-    kafkaTopic(UnKeyedSerde, ScalaSerdes.Thrift[ContextualizedFavoriteEvent], name = "source")
+    kafkaTopic(UnKeyedSerde, ScalaSerdes.Thrift[ContetwittertualizedFavoriteEvent], name = "source")
   private val outputTopic =
     kafkaTopic(UnKeyedSerde, ScalaSerdes.Thrift[UnifiedUserAction], name = "sink")
 
@@ -35,7 +35,7 @@ class TlsFavServiceStartupTest extends KafkaFeatureTest {
     "kafka.producer.client.id" -> "uua",
     "kafka.source.topic" -> inputTopic.topic,
     "kafka.sink.topics" -> outputTopic.topic,
-    "kafka.max.pending.requests" -> "100",
+    "kafka.matwitter.pending.requests" -> "100",
     "kafka.worker.threads" -> "1",
     "kafka.trust.store.enable" -> "false",
     "kafka.producer.batch.size" -> "0.byte",
@@ -78,7 +78,7 @@ class TlsFavServiceStartupTest extends KafkaFeatureTest {
       .clientId("consumer")
       .groupId(KafkaGroupId("validator"))
       .keyDeserializer(UnKeyedSerde.deserializer)
-      .valueDeserializer(ScalaSerdes.Thrift[ContextualizedFavoriteEvent].deserializer)
+      .valueDeserializer(ScalaSerdes.Thrift[ContetwittertualizedFavoriteEvent].deserializer)
       .requestTimeout(Duration.fromSeconds(1))
       .enableAutoCommit(false)
       .seekStrategy(seekStrategy)
@@ -93,7 +93,7 @@ class TlsFavServiceStartupTest extends KafkaFeatureTest {
       .ackMode(AckMode.ALL)
       .batchSize(StorageUnit.zero)
       .keySerializer(UnKeyedSerde.serializer)
-      .valueSerializer(ScalaSerdes.Thrift[ContextualizedFavoriteEvent].serializer)
+      .valueSerializer(ScalaSerdes.Thrift[ContetwittertualizedFavoriteEvent].serializer)
       .build()
   }
 
@@ -124,7 +124,7 @@ class TlsFavServiceStartupTest extends KafkaFeatureTest {
 
     val favoriteEvent = FavoriteEventUnion.Favorite(FavoriteEvent(123L, 123L, 123L, 123L))
     val value =
-      ContextualizedFavoriteEvent(favoriteEvent, LogEventContext("localhost", 123L))
+      ContetwittertualizedFavoriteEvent(favoriteEvent, LogEventContetwittert("localhost", 123L))
 
     try {
       server.assertHealthy()

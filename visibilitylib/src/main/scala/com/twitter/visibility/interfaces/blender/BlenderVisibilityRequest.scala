@@ -2,8 +2,8 @@ package com.twitter.visibility.interfaces.blender
 
 import com.twitter.tweetypie.thriftscala.Tweet
 import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.interfaces.common.blender.BlenderVFRequestContext
+import com.twitter.visibility.models.ViewerContetwittert
+import com.twitter.visibility.interfaces.common.blender.BlenderVFRequestContetwittert
 
 case class BlenderVisibilityRequest(
   tweet: Tweet,
@@ -11,8 +11,8 @@ case class BlenderVisibilityRequest(
   retweetSourceTweet: Option[Tweet] = None,
   isRetweet: Boolean,
   safetyLevel: SafetyLevel,
-  viewerContext: ViewerContext,
-  blenderVFRequestContext: BlenderVFRequestContext) {
+  viewerContetwittert: ViewerContetwittert,
+  blenderVFRequestContetwittert: BlenderVFRequestContetwittert) {
 
   def getTweetID: Long = tweet.id
 

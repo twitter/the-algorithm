@@ -14,7 +14,7 @@ object TimeRange {
   }
 }
 
-case class TimeRange(from: Option[Time], to: Option[Time]) extends TimelineRange {
+case class TimeRange(from: Option[Time], to: Option[Time]) etwittertends TimelineRange {
 
   throwIfInvalid()
 

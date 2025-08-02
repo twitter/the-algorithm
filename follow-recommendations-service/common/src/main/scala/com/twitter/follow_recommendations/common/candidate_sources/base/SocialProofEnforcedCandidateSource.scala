@@ -3,31 +3,31 @@ package com.twitter.follow_recommendations.common.candidate_sources.base
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.transforms.modify_social_proof.ModifySocialProof
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.timelines.configapi.HasParams
 import com.twitter.util.Duration
 
 abstract class SocialProofEnforcedCandidateSource(
-  candidateSource: CandidateSource[HasClientContext with HasParams, CandidateUser],
+  candidateSource: CandidateSource[HasClientContetwittert with HasParams, CandidateUser],
   modifySocialProof: ModifySocialProof,
   minNumSocialProofsRequired: Int,
   override val identifier: CandidateSourceIdentifier,
   baseStatsReceiver: StatsReceiver)
-    extends CandidateSource[HasClientContext with HasParams, CandidateUser] {
+    etwittertends CandidateSource[HasClientContetwittert with HasParams, CandidateUser] {
 
   val statsReceiver = baseStatsReceiver.scope(identifier.name)
 
-  override def apply(target: HasClientContext with HasParams): Stitch[Seq[CandidateUser]] = {
+  override def apply(target: HasClientContetwittert with HasParams): Stitch[Seq[CandidateUser]] = {
     val mustCallSgs: Boolean = target.params(SocialProofEnforcedCandidateSourceParams.MustCallSgs)
     val callSgsCachedColumn: Boolean =
       target.params(SocialProofEnforcedCandidateSourceParams.CallSgsCachedColumn)
     val QueryIntersectionIdsNum: Int =
       target.params(SocialProofEnforcedCandidateSourceParams.QueryIntersectionIdsNum)
-    val MaxNumCandidatesToAnnotate: Int =
-      target.params(SocialProofEnforcedCandidateSourceParams.MaxNumCandidatesToAnnotate)
+    val MatwitterNumCandidatesToAnnotate: Int =
+      target.params(SocialProofEnforcedCandidateSourceParams.MatwitterNumCandidatesToAnnotate)
     val gfsIntersectionIdsNum: Int =
       target.params(SocialProofEnforcedCandidateSourceParams.GfsIntersectionIdsNum)
     val sgsIntersectionIdsNum: Int =
@@ -39,13 +39,13 @@ abstract class SocialProofEnforcedCandidateSource(
       .flatMap { candidates =>
         val candidatesWithoutEnoughSocialProof = candidates
           .collect {
-            case candidate if !candidate.followedBy.exists(_.size >= minNumSocialProofsRequired) =>
+            case candidate if !candidate.followedBy.etwitterists(_.size >= minNumSocialProofsRequired) =>
               candidate
           }
         statsReceiver
           .stat("candidates_with_no_social_proofs").add(candidatesWithoutEnoughSocialProof.size)
         val candidatesToAnnotate =
-          candidatesWithoutEnoughSocialProof.take(MaxNumCandidatesToAnnotate)
+          candidatesWithoutEnoughSocialProof.take(MatwitterNumCandidatesToAnnotate)
         statsReceiver.stat("candidates_to_annotate").add(candidatesToAnnotate.size)
 
         val annotatedCandidatesMapStitch = target.getOptionalUserId
@@ -69,12 +69,12 @@ abstract class SocialProofEnforcedCandidateSource(
         annotatedCandidatesMapStitch.map { annotatedCandidatesMap =>
           candidates
             .flatMap { candidate =>
-              if (candidate.followedBy.exists(_.size >= minNumSocialProofsRequired)) {
+              if (candidate.followedBy.etwitterists(_.size >= minNumSocialProofsRequired)) {
                 Some(candidate)
               } else {
                 annotatedCandidatesMap.get(candidate.id).collect {
                   case annotatedCandidate
-                      if annotatedCandidate.followedBy.exists(
+                      if annotatedCandidate.followedBy.etwitterists(
                         _.size >= minNumSocialProofsRequired) =>
                     annotatedCandidate
                 }

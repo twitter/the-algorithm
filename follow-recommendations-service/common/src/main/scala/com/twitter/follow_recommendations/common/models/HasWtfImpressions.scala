@@ -16,8 +16,8 @@ trait HasWtfImpressions {
     }.getOrElse(Map.empty)
 
   lazy val latestImpressionTime: Time = {
-    if (wtfImpressions.exists(_.nonEmpty)) {
-      wtfImpressions.get.map(_.latestTime).max
+    if (wtfImpressions.etwitterists(_.nonEmpty)) {
+      wtfImpressions.get.map(_.latestTime).matwitter
     } else Time.Top
   }
 

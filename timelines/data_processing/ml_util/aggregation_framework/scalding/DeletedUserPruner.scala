@@ -17,18 +17,18 @@ import com.twitter.timelines.data_processing.ml_util.aggregation_framework.Typed
 import com.twitter.scalding.serialization.macros.impl.ordered_serialization.runtime_helpers.MacroEqualityOrderedSerialization
 import java.{util => ju}
 
-object DeletedUserSeqPruner extends Pruner[Seq[Long]] {
+object DeletedUserSeqPruner etwittertends Pruner[Seq[Long]] {
   implicit val tz: ju.TimeZone = DateOps.UTC
   implicit val userIdSequenceOrdering: MacroEqualityOrderedSerialization[Seq[Long]] =
     ordSer[Seq[Long]]
 
   private[scalding] def pruneDeletedUsers[T](
     input: TypedPipe[T],
-    extractor: T => Seq[Long],
+    etwittertractor: T => Seq[Long],
     deletedUsers: TypedPipe[Long]
   ): TypedPipe[T] = {
     val userIdsAndValues = input.map { t: T =>
-      val userIds: Seq[Long] = extractor(t)
+      val userIds: Seq[Long] = etwittertractor(t)
       (userIds, t)
     }
 
@@ -83,15 +83,15 @@ object AggregationKeyPruner {
           userIdFeatureIds.flatMap { id =>
             aggregationKey.discreteFeaturesById
               .get(id)
-              .orElse(aggregationKey.textFeaturesById.get(id).map(_.toLong))
+              .orElse(aggregationKey.tetwittertFeaturesById.get(id).map(_.toLong))
           }
       }
     }
 
-    // Setting putter to always return None here. The put function is not used within pruneDeletedUsers, this function is just needed for xmap api.
+    // Setting putter to always return None here. The put function is not used within pruneDeletedUsers, this function is just needed for twittermap api.
     def putter: ((AggregationKey, DataRecord), Seq[Long]) => Option[(AggregationKey, DataRecord)] =
       (t, seq) => None
 
-    DeletedUserSeqPruner.xmap(putter, getter)
+    DeletedUserSeqPruner.twittermap(putter, getter)
   }
 }

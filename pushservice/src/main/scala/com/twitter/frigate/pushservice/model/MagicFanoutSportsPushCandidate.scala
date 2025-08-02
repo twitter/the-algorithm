@@ -6,7 +6,7 @@ import com.twitter.frigate.common.base.BaseGameScore
 import com.twitter.frigate.common.base.MagicFanoutSportsEventCandidate
 import com.twitter.frigate.common.base.MagicFanoutSportsScoreInformation
 import com.twitter.frigate.common.base.TeamInfo
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
+import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContetwittert
 import com.twitter.frigate.magic_events.thriftscala.FanoutEvent
 import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
 import com.twitter.frigate.pushservice.config.Config
@@ -27,7 +27,7 @@ import com.twitter.hermit.store.semantic_core.SemanticEntityForQuery
 import com.twitter.interests.thriftscala.UserInterests
 import com.twitter.livevideo.timeline.domain.v2.Event
 import com.twitter.livevideo.timeline.domain.v2.HydrationOptions
-import com.twitter.livevideo.timeline.domain.v2.LookupContext
+import com.twitter.livevideo.timeline.domain.v2.LookupContetwittert
 import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
 import com.twitter.storehaus.ReadableStore
 import com.twitter.util.Future
@@ -40,19 +40,19 @@ class MagicFanoutSportsPushCandidate(
   override val fanoutEvent: Option[FanoutEvent],
   override val semanticEntityResults: Map[SemanticEntityForQuery, Option[EntityMegadata]],
   simClusterToEntities: Map[Int, Option[SimClustersInferredEntities]],
-  lexServiceStore: ReadableStore[EventRequest, Event],
-  interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests],
+  letwitterServiceStore: ReadableStore[EventRequest, Event],
+  interestsLookupStore: ReadableStore[InterestsLookupRequestWithContetwittert, UserInterests],
   uttEntityHydrationStore: UttEntityHydrationStore
 )(
   implicit statsScoped: StatsReceiver,
   pushModelScorer: PushMLModelScorer)
-    extends MagicFanoutEventPushCandidate(
+    etwittertends MagicFanoutEventPushCandidate(
       candidate,
       copyIds,
       fanoutEvent,
       semanticEntityResults,
       simClusterToEntities,
-      lexServiceStore,
+      letwitterServiceStore,
       interestsLookupStore,
       uttEntityHydrationStore)(statsScoped, pushModelScorer)
     with MagicFanoutSportsEventCandidate
@@ -74,7 +74,7 @@ class MagicFanoutSportsPushCandidate(
         Some(
           EventRequest(
             eventId,
-            lookupContext = LookupContext(
+            lookupContetwittert = LookupContetwittert(
               hydrationOptions = HydrationOptions(
                 includeSquareImage = true,
                 includePrimaryImage = true
@@ -88,7 +88,7 @@ class MagicFanoutSportsPushCandidate(
 }
 
 case class MagicFanoutSportsEventCandidatePredicates(config: Config)
-    extends BasicSendHandlerPredicates[MagicFanoutSportsPushCandidate] {
+    etwittertends BasicSendHandlerPredicates[MagicFanoutSportsPushCandidate] {
 
   implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
 
@@ -105,14 +105,14 @@ case class MagicFanoutSportsEventCandidatePredicates(config: Config)
     List(
       PredicatesForCandidate.isDeviceEligibleForNewsOrSports,
       MagicFanoutPredicatesForCandidate.inferredUserDeviceLanguagePredicate,
-      MagicFanoutPredicatesForCandidate.highPriorityEventExceptedPredicate(
+      MagicFanoutPredicatesForCandidate.highPriorityEventEtwitterceptedPredicate(
         MagicFanoutTargetingPredicateWrappersForCandidate
           .magicFanoutTargetingPredicate(statsReceiver, config)
       )(config),
       PredicatesForCandidate.secondaryDormantAccountPredicate(
         statsReceiver
       ),
-      MagicFanoutPredicatesForCandidate.highPriorityEventExceptedPredicate(
+      MagicFanoutPredicatesForCandidate.highPriorityEventEtwitterceptedPredicate(
         MagicFanoutNtabCaretFatiguePredicate()
       )(config),
     )

@@ -6,22 +6,22 @@ import com.twitter.follow_recommendations.common.base.Predicate
 import com.twitter.follow_recommendations.common.base.PredicateResult
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.models.FilterReason.InvalidRelationshipTypes
-import com.twitter.socialgraph.thriftscala.ExistsRequest
-import com.twitter.socialgraph.thriftscala.ExistsResult
-import com.twitter.socialgraph.thriftscala.LookupContext
+import com.twitter.socialgraph.thriftscala.EtwitteristsRequest
+import com.twitter.socialgraph.thriftscala.EtwitteristsResult
+import com.twitter.socialgraph.thriftscala.LookupContetwittert
 import com.twitter.socialgraph.thriftscala.Relationship
 import com.twitter.socialgraph.thriftscala.RelationshipType
 import com.twitter.stitch.Stitch
 import com.twitter.stitch.socialgraph.SocialGraph
 import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 class SgsRelationshipsByUserIdPredicate(
   socialGraph: SocialGraph,
   relationshipMappings: Seq[RelationshipMapping],
   statsReceiver: StatsReceiver)
-    extends Predicate[(Option[Long], CandidateUser)]
+    etwittertends Predicate[(Option[Long], CandidateUser)]
     with Logging {
   private val InvalidFromPrimaryCandidateSourceName = "invalid_from_primary_candidate_source"
   private val InvalidFromCandidateSourceName = "invalid_from_candidate_source"
@@ -40,15 +40,15 @@ class SgsRelationshipsByUserIdPredicate(
     }
     idOpt
       .map { id: Long =>
-        val existsRequest = ExistsRequest(
+        val etwitteristsRequest = EtwitteristsRequest(
           id,
           candidate.id,
           relationships = relationships,
-          context = SgsRelationshipsByUserIdPredicate.UnionLookupContext
+          contetwittert = SgsRelationshipsByUserIdPredicate.UnionLookupContetwittert
         )
         socialGraph
-          .exists(existsRequest).map { existsResult: ExistsResult =>
-            if (existsResult.exists) {
+          .etwitterists(etwitteristsRequest).map { etwitteristsResult: EtwitteristsResult =>
+            if (etwitteristsResult.etwitterists) {
               candidate.getPrimaryCandidateSource match {
                 case Some(candidateSource) =>
                   stats
@@ -81,33 +81,33 @@ class SgsRelationshipsByUserIdPredicate(
 object SgsRelationshipsByUserIdPredicate {
   // OR Operation
   @VisibleForTesting
-  private[follow_recommendations] val UnionLookupContext = Some(
-    LookupContext(performUnion = Some(true)))
+  private[follow_recommendations] val UnionLookupContetwittert = Some(
+    LookupContetwittert(performUnion = Some(true)))
 }
 
 @Singleton
-class ExcludeNonFollowersSgsPredicate @Inject() (
+class EtwittercludeNonFollowersSgsPredicate @Inject() (
   socialGraph: SocialGraph,
   statsReceiver: StatsReceiver)
-    extends SgsRelationshipsByUserIdPredicate(
+    etwittertends SgsRelationshipsByUserIdPredicate(
       socialGraph,
       Seq(RelationshipMapping(RelationshipType.FollowedBy, includeBasedOnRelationship = false)),
       statsReceiver)
 
 @Singleton
-class ExcludeNonFollowingSgsPredicate @Inject() (
+class EtwittercludeNonFollowingSgsPredicate @Inject() (
   socialGraph: SocialGraph,
   statsReceiver: StatsReceiver)
-    extends SgsRelationshipsByUserIdPredicate(
+    etwittertends SgsRelationshipsByUserIdPredicate(
       socialGraph,
       Seq(RelationshipMapping(RelationshipType.Following, includeBasedOnRelationship = false)),
       statsReceiver)
 
 @Singleton
-class ExcludeFollowingSgsPredicate @Inject() (
+class EtwittercludeFollowingSgsPredicate @Inject() (
   socialGraph: SocialGraph,
   statsReceiver: StatsReceiver)
-    extends SgsRelationshipsByUserIdPredicate(
+    etwittertends SgsRelationshipsByUserIdPredicate(
       socialGraph,
       Seq(RelationshipMapping(RelationshipType.Following, includeBasedOnRelationship = true)),
       statsReceiver)

@@ -7,7 +7,7 @@ scala_library(
         "finatra/inject/inject-core/src/main/scala",
         "relevance-platform/src/main/scala/com/twitter/relevance_platform/simclustersann/multicluster",
         "scrooge/scrooge-core/src/main/scala",
-        "simclusters-ann/server/src/main/scala/com/twitter/simclustersann/exceptions",
+        "simclusters-ann/server/src/main/scala/com/twitter/simclustersann/etwitterceptions",
         "simclusters-ann/thrift/src/main/thrift:thrift-scala",
     ],
 )

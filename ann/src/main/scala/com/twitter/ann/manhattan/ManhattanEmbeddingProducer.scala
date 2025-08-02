@@ -19,7 +19,7 @@ private[manhattan] class ManhattanEmbeddingProducer[T](
   keyDescriptor: DescriptorP1L0.DKey[T],
   valueDescriptor: ValueDescriptor.EmptyValue[EmbeddingVector],
   manhattanEndpoint: ManhattanKVEndpoint)
-    extends EmbeddingProducer[T] {
+    etwittertends EmbeddingProducer[T] {
 
   /**
    * Lookup an embedding from manhattan given a key of type T.

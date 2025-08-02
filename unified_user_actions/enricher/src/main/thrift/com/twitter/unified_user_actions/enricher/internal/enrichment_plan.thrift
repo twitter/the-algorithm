@@ -11,8 +11,8 @@ struct EnrichmentPlan {
 
 /**
 * A stage in the enrichment process with respect to the current key. Currently it can be of 2 options:
-* - re-partitioning on an id of type X
-* - hydrating metadata on an id of type X
+* - re-partitioning on an id of type twitter
+* - hydrating metadata on an id of type twitter
 *
 * A stage also moves through different statues from initialized, processing until completion.
 * Each stage contains one or more instructions.
@@ -30,7 +30,7 @@ struct EnrichmentStage {
 
 /**
 * The current processing status of a stage. It should either be done (completion) or not done (initialized).
-* Transient statuses such as "processing" is dangerous since we can't exactly be sure that has been done.
+* Transient statuses such as "processing" is dangerous since we can't etwitteractly be sure that has been done.
 **/
 enum EnrichmentStageStatus {
   Initialized = 0
@@ -38,7 +38,7 @@ enum EnrichmentStageStatus {
 }
 
 /**
-* The type of processing in this stage. For example, repartioning the data or hydrating the data.
+* The type of processing in this stage. For etwitterample, repartioning the data or hydrating the data.
 **/
 enum EnrichmentStageType {
   Repartition = 0

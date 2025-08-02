@@ -6,7 +6,7 @@ import com.twitter.common.util.Clock;
 import com.twitter.search.common.root.WarmupConfig;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
 
-public class EarlybirdProtectedWarmup extends EarlybirdWarmup {
+public class EarlybirdProtectedWarmup etwittertends EarlybirdWarmup {
 
   public EarlybirdProtectedWarmup(Clock clock, WarmupConfig config) {
     super(clock, config);

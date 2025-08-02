@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.archive.segmentbuilder;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -35,22 +35,22 @@ import com.twitter.search.common.metrics.SearchStatsReceiverImpl;
 import com.twitter.search.common.partitioning.zookeeper.SearchZkClient;
 import com.twitter.search.common.util.Kerberos;
 import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.archive.ArchiveOnDiskEarlybirdIndexConfig;
+import com.twitter.search.earlybird.archive.ArchiveOnDiskEarlybirdIndetwitterConfig;
 import com.twitter.search.earlybird.archive.ArchiveSegment;
 import com.twitter.search.earlybird.archive.DailyStatusBatches;
 import com.twitter.search.earlybird.archive.ArchiveTimeSlicer;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
 import com.twitter.search.earlybird.util.ScrubGenUtil;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
+import com.twitter.search.earlybird.etwitterception.CriticalEtwitterceptionHandler;
+import com.twitter.search.earlybird.indetwitter.EarlybirdSegmentFactory;
+import com.twitter.search.earlybird.partition.SearchIndetwitteringMetricSet;
 import com.twitter.search.earlybird.partition.SegmentInfo;
 import com.twitter.search.earlybird.partition.SegmentSyncConfig;
 import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
 
 /**
  * This class provides the core logic to build segment indices offline.
- * For each server, it coordinate via zookeeper to pick the next segment, build the indices for it
+ * For each server, it coordinate via zookeeper to pick the netwittert segment, build the indices for it
  * and upload them to HDFS. A state machine is used to handle the build state transitions. There
  * are three states:
  *  NOT_BUILD_YET: a segment that needs to be built
@@ -79,12 +79,12 @@ public class SegmentBuilder {
   private final ImmutableList<Integer> hashPartitions;
 
   private final SearchStatsReceiver statsReceiver = new SearchStatsReceiverImpl();
-  private final SearchIndexingMetricSet searchIndexingMetricSet =
-      new SearchIndexingMetricSet(statsReceiver);
+  private final SearchIndetwitteringMetricSet searchIndetwitteringMetricSet =
+      new SearchIndetwitteringMetricSet(statsReceiver);
   private final EarlybirdSearcherStats searcherStats =
       new EarlybirdSearcherStats(statsReceiver);
 
-  private final ArchiveOnDiskEarlybirdIndexConfig earlybirdIndexConfig;
+  private final ArchiveOnDiskEarlybirdIndetwitterConfig earlybirdIndetwitterConfig;
 
   private final ZooKeeperTryLockFactory zkTryLockFactory;
   private final RateLimitingSegmentHandler segmentHandler;
@@ -102,31 +102,31 @@ public class SegmentBuilder {
   // Stats
   // The flush version used to build segments
   private static final SearchLongGauge CURRENT_FLUSH_VERSION =
-      SearchLongGauge.export("current_flush_version");
+      SearchLongGauge.etwitterport("current_flush_version");
 
   // Accumulated number and time in seconds spent on building segments locally
   private static SearchCounter segmentsBuiltLocally =
-      SearchCounter.export("segments_built_locally");
+      SearchCounter.etwitterport("segments_built_locally");
   private static SearchCounter timeSpentOnSuccessfulBuildSecs =
-      SearchCounter.export("time_spent_on_successful_build_secs");
+      SearchCounter.etwitterport("time_spent_on_successful_build_secs");
 
   // The total number of segments to be built
   private static final SearchLongGauge SEGMENTS_TO_BUILD =
-      SearchLongGauge.export("segments_to_build");
+      SearchLongGauge.etwitterport("segments_to_build");
 
   // How many segments failed locally
   private static final SearchCounter FAILED_SEGMENTS =
-      SearchCounter.export("failed_segments");
+      SearchCounter.etwitterport("failed_segments");
 
   @Inject
   protected SegmentBuilder(@Flag("onlyRunOnce") boolean onlyRunOnceFlag,
                            @Flag("waitBetweenLoopsMins") int waitBetweenLoopsMinsFlag,
                            @Flag("startup_batch_size") int startUpBatchSizeFlag,
                            @Flag("instance") int instanceFlag,
-                           @Flag("segmentZkLockExpirationHours")
-                                 int segmentZkLockExpirationHoursFlag,
+                           @Flag("segmentZkLockEtwitterpirationHours")
+                                 int segmentZkLockEtwitterpirationHoursFlag,
                            @Flag("startupSleepMins") long startupSleepMinsFlag,
-                           @Flag("maxRetriesOnFailure") int maxRetriesOnFailureFlag,
+                           @Flag("matwitterRetriesOnFailure") int matwitterRetriesOnFailureFlag,
                            @Flag("hash_partitions") List<Integer> hashPartitionsFlag,
                            @Flag("numSegmentBuilderPartitions") int numSegmentBuilderPartitionsFlag,
                            @Flag("waitBetweenSegmentsSecs") int waitBetweenSegmentsSecsFlag,
@@ -137,10 +137,10 @@ public class SegmentBuilder {
         waitBetweenLoopsMinsFlag,
         startUpBatchSizeFlag,
         instanceFlag,
-        segmentZkLockExpirationHoursFlag,
+        segmentZkLockEtwitterpirationHoursFlag,
         startupSleepMinsFlag,
         hashPartitionsFlag,
-        maxRetriesOnFailureFlag,
+        matwitterRetriesOnFailureFlag,
         waitBetweenSegmentsSecsFlag,
         waitBeforeQuitMinsFlag,
         SearchZkClient.getSZooKeeperClient().createZooKeeperTryLockFactory(),
@@ -156,10 +156,10 @@ public class SegmentBuilder {
                            int waitBetweenLoopsMinsFlag,
                            int startUpBatchSizeFlag,
                            int instanceFlag,
-                           int segmentZkLockExpirationHoursFlag,
+                           int segmentZkLockEtwitterpirationHoursFlag,
                            long startupSleepMinsFlag,
                            List<Integer> hashPartitions,
-                           int maxRetriesOnFailure,
+                           int matwitterRetriesOnFailure,
                            int waitBetweenSegmentsSecsFlag,
                            int waitBeforeQuitMinsFlag,
                            ZooKeeperTryLockFactory zooKeeperTryLockFactory,
@@ -190,21 +190,21 @@ public class SegmentBuilder {
       this.hashPartitions = null;
     }
 
-    Amount<Long, Time> segmentZKLockExpirationTime = Amount.of((long)
-        segmentZkLockExpirationHoursFlag, Time.HOURS);
+    Amount<Long, Time> segmentZKLockEtwitterpirationTime = Amount.of((long)
+        segmentZkLockEtwitterpirationHoursFlag, Time.HOURS);
 
-    this.earlybirdIndexConfig =
-        new ArchiveOnDiskEarlybirdIndexConfig(decider, searchIndexingMetricSet,
-            new CriticalExceptionHandler());
+    this.earlybirdIndetwitterConfig =
+        new ArchiveOnDiskEarlybirdIndetwitterConfig(decider, searchIndetwitteringMetricSet,
+            new CriticalEtwitterceptionHandler());
 
     this.segmentConfig = new SegmentConfig(
-        earlybirdIndexConfig,
-        segmentZKLockExpirationTime,
-        maxRetriesOnFailure,
+        earlybirdIndetwitterConfig,
+        segmentZKLockEtwitterpirationTime,
+        matwitterRetriesOnFailure,
         zkTryLockFactory);
     this.segmentFactory = new EarlybirdSegmentFactory(
-        earlybirdIndexConfig,
-        searchIndexingMetricSet,
+        earlybirdIndetwitterConfig,
+        searchIndetwitteringMetricSet,
         searcherStats,
         clock);
     this.segmentBuilderCoordinator = new SegmentBuilderCoordinator(
@@ -214,9 +214,9 @@ public class SegmentBuilder {
 
     this.numSegmentBuilderPartitions = numSegmentBuilderPartitions;
     this.myPartitionId = instance % numSegmentBuilderPartitions;
-    SearchLongGauge.export("segment_builder_partition_id_" + myPartitionId).set(1);
+    SearchLongGauge.etwitterport("segment_builder_partition_id_" + myPartitionId).set(1);
 
-    CURRENT_FLUSH_VERSION.set(earlybirdIndexConfig.getSchema().getMajorVersionNumber());
+    CURRENT_FLUSH_VERSION.set(earlybirdIndetwitterConfig.getSchema().getMajorVersionNumber());
   }
 
   void run() {
@@ -259,25 +259,25 @@ public class SegmentBuilder {
       LOG.info("Starting segment building loop...");
       while (!Thread.currentThread().isInterrupted()) {
         try {
-          indexingLoop();
+          indetwitteringLoop();
           if (onlyRunOnce) {
             LOG.info("only run once is true, breaking");
             break;
           }
           clock.waitFor(waitBetweenLoopsMs);
-        } catch (InterruptedException e) {
+        } catch (InterruptedEtwitterception e) {
           LOG.info("Interrupted, quitting segment builder");
           Thread.currentThread().interrupt();
-        } catch (SegmentInfoConstructionException e) {
+        } catch (SegmentInfoConstructionEtwitterception e) {
           LOG.error("Error creating new segmentInfo, quitting segment builder: ", e);
           break;
-        } catch (SegmentUpdaterException e) {
+        } catch (SegmentUpdaterEtwitterception e) {
           FAILED_SEGMENTS.increment();
           // Before the segment builder quits, sleep for WAIT_BEFORE_QUIT_MINS minutes so that the
-          // FAILED_SEGMENTS stat can be exported.
+          // FAILED_SEGMENTS stat can be etwitterported.
           try {
             clock.waitFor(TimeUnit.MINUTES.toMillis(waitBeforeQuitMins));
-          } catch (InterruptedException ex) {
+          } catch (InterruptedEtwitterception etwitter) {
             LOG.info("Interrupted, quitting segment builder");
             Thread.currentThread().interrupt();
           }
@@ -292,15 +292,15 @@ public class SegmentBuilder {
 
   // Refactoring the run loop to here for unittest
   @VisibleForTesting
-  void indexingLoop()
-      throws SegmentInfoConstructionException, InterruptedException, SegmentUpdaterException {
+  void indetwitteringLoop()
+      throws SegmentInfoConstructionEtwitterception, InterruptedEtwitterception, SegmentUpdaterEtwitterception {
     // This map contains all the segments to be processed; if a segment is built, it will be removed
     // from the map.
     Map<String, SegmentBuilderSegment> buildableSegmentInfoMap;
     try {
       buildableSegmentInfoMap = createSegmentInfoMap();
       printSegmentInfoMap(buildableSegmentInfoMap);
-    } catch (IOException e) {
+    } catch (IOEtwitterception e) {
       LOG.error("Error creating segmentInfoMap: ", e);
       return;
     }
@@ -320,22 +320,22 @@ public class SegmentBuilder {
   protected void doShutdown() {
     LOG.info("doShutdown()...");
     try {
-      earlybirdIndexConfig.getResourceCloser().shutdownExecutor();
-    } catch (InterruptedException e) {
+      earlybirdIndetwitterConfig.getResourceCloser().shutdownEtwitterecutor();
+    } catch (InterruptedEtwitterception e) {
       LOG.error("Interrupted during shutdown. ", e);
     }
 
     LOG.info("Segment builder stopped!");
   }
 
-  private List<ArchiveTimeSlicer.ArchiveTimeSlice> createTimeSlices() throws IOException {
+  private List<ArchiveTimeSlicer.ArchiveTimeSlice> createTimeSlices() throws IOEtwitterception {
     Preconditions.checkState(segmentSyncConfig.getScrubGen().isPresent());
     Date scrubGen = ScrubGenUtil.parseScrubGenToDate(segmentSyncConfig.getScrubGen().get());
 
     final DailyStatusBatches dailyStatusBatches =
         new DailyStatusBatches(zkTryLockFactory, scrubGen);
     final ArchiveTimeSlicer archiveTimeSlicer = new ArchiveTimeSlicer(
-        EarlybirdConfig.getMaxSegmentSize(), dailyStatusBatches, earlybirdIndexConfig);
+        EarlybirdConfig.getMatwitterSegmentSize(), dailyStatusBatches, earlybirdIndetwitterConfig);
 
     Stopwatch stopwatch = Stopwatch.createStarted();
     List<ArchiveTimeSlicer.ArchiveTimeSlice> timeSlices = archiveTimeSlicer.getTimeSlices();
@@ -379,11 +379,11 @@ public class SegmentBuilder {
    * For all the timeslices, create the corresponding SegmentInfo and store in a map
    */
   @VisibleForTesting
-  Map<String, SegmentBuilderSegment> createSegmentInfoMap() throws IOException {
+  Map<String, SegmentBuilderSegment> createSegmentInfoMap() throws IOEtwitterception {
     final List<ArchiveTimeSlicer.ArchiveTimeSlice> timeSlices = createTimeSlices();
 
     List<TimeSliceAndHashPartition> timeSlicePairs = createPairs(timeSlices);
-    // Export how many segments should be built
+    // Etwitterport how many segments should be built
     SEGMENTS_TO_BUILD.set(timeSlicePairs.size());
     LOG.info("Total number of segments to be built across all segment builders: {}",
         timeSlicePairs.size());
@@ -393,7 +393,7 @@ public class SegmentBuilder {
     Map<String, SegmentBuilderSegment> segmentInfoMap = new HashMap<>();
     for (TimeSliceAndHashPartition mySegment : mySegments) {
       ArchiveSegment segment = new ArchiveSegment(mySegment.timeSlice, mySegment.hashPartition,
-          EarlybirdConfig.getMaxSegmentSize());
+          EarlybirdConfig.getMatwitterSegmentSize());
       SegmentInfo segmentInfo = new SegmentInfo(segment, segmentFactory, segmentSyncConfig);
 
       segmentInfoMap.put(segmentInfo.getSegment().getSegmentName(), new NotYetBuiltSegment(
@@ -458,14 +458,14 @@ public class SegmentBuilder {
    */
   @VisibleForTesting
   boolean processSegments(Map<String, SegmentBuilderSegment> segmentInfoMap)
-      throws SegmentInfoConstructionException, SegmentUpdaterException, InterruptedException {
+      throws SegmentInfoConstructionEtwitterception, SegmentUpdaterEtwitterception, InterruptedEtwitterception {
 
     boolean hasBuiltSegment = false;
 
     Iterator<Map.Entry<String, SegmentBuilderSegment>> iter =
         segmentInfoMap.entrySet().iterator();
-    while (iter.hasNext()) {
-      Map.Entry<String, SegmentBuilderSegment> entry = iter.next();
+    while (iter.hasNetwittert()) {
+      Map.Entry<String, SegmentBuilderSegment> entry = iter.netwittert();
       SegmentBuilderSegment originalSegment = entry.getValue();
 
       LOG.info("About to process segment: {}", originalSegment.getSegmentName());
@@ -501,7 +501,7 @@ public class SegmentBuilder {
 
     long sleepMillis = TimeUnit.SECONDS.toMillis(waitBetweenSegmentsSecs);
 
-    // Use randomization so that we can't get all segment builders hitting it at the exact same time
+    // Use randomization so that we can't get all segment builders hitting it at the etwitteract same time
 
     int lowerSleepBoundMillis = (int) (sleepMillis * (1.0 - SLEEP_RANDOMIZATION_RATIO));
     int upperSleepBoundMillis = (int) (sleepMillis * (1.0 + SLEEP_RANDOMIZATION_RATIO));
@@ -509,10 +509,10 @@ public class SegmentBuilder {
   }
 
   /**
-   * Returns a pseudo-random number between min and max, inclusive.
+   * Returns a pseudo-random number between min and matwitter, inclusive.
    */
-  private int randRange(int min, int max) {
-    return random.nextInt((max - min) + 1) + min;
+  private int randRange(int min, int matwitter) {
+    return random.netwittertInt((matwitter - min) + 1) + min;
   }
 
   /**
@@ -530,8 +530,8 @@ public class SegmentBuilder {
 
   private static SegmentSyncConfig getSyncConfig(String scrubGen) {
     if (scrubGen == null || scrubGen.isEmpty()) {
-      throw new RuntimeException(
-          "Scrub gen expected, but could not get it from the arguments.");
+      throw new RuntimeEtwitterception(
+          "Scrub gen etwitterpected, but could not get it from the arguments.");
     }
 
     LOG.info("Scrub gen: " + scrubGen);

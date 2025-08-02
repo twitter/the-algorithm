@@ -10,8 +10,8 @@ import com.twitter.timelines.model.TweetId
 import com.twitter.util.Future
 
 object EntityTweetsSearchResultsTransform {
-  // If EntityTweetsQuery.maxCount is not specified, the following count is used.
-  val DefaultEntityTweetsMaxTweetCount = 200
+  // If EntityTweetsQuery.matwitterCount is not specified, the following count is used.
+  val DefaultEntityTweetsMatwitterTweetCount = 200
 }
 
 /**
@@ -22,24 +22,24 @@ class EntityTweetsSearchResultsTransform(
   searchClient: SearchClient,
   statsReceiver: StatsReceiver,
   logSearchDebugInfo: Boolean = false)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+    etwittertends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
   import EntityTweetsSearchResultsTransform._
 
-  private[this] val maxCountStat = statsReceiver.stat("maxCount")
+  private[this] val matwitterCountStat = statsReceiver.stat("matwitterCount")
   private[this] val numResultsFromSearchStat = statsReceiver.stat("numResultsFromSearch")
 
   override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val maxCount = envelope.query.maxCount.getOrElse(DefaultEntityTweetsMaxTweetCount)
-    maxCountStat.add(maxCount)
+    val matwitterCount = envelope.query.matwitterCount.getOrElse(DefaultEntityTweetsMatwitterTweetCount)
+    matwitterCountStat.add(matwitterCount)
 
     val tweetIdRange = envelope.query.range
       .map(TweetIdRange.fromTimelineRange)
       .getOrElse(TweetIdRange.default)
 
-    val beforeTweetIdExclusive = tweetIdRange.toId
-    val afterTweetIdExclusive = tweetIdRange.fromId
+    val beforeTweetIdEtwitterclusive = tweetIdRange.toId
+    val afterTweetIdEtwitterclusive = tweetIdRange.fromId
 
-    val excludedTweetIds = envelope.query.excludedTweetIds.getOrElse(Seq.empty[TweetId]).toSet
+    val etwittercludedTweetIds = envelope.query.etwittercludedTweetIds.getOrElse(Seq.empty[TweetId]).toSet
     val languages = envelope.query.languages.map(_.map(_.language))
 
     envelope.followGraphData.inNetworkUserIdsFuture.flatMap { inNetworkUserIds =>
@@ -47,20 +47,20 @@ class EntityTweetsSearchResultsTransform(
         .getEntityTweets(
           userId = Some(envelope.query.userId),
           followedUserIds = inNetworkUserIds.toSet,
-          maxCount = maxCount,
-          beforeTweetIdExclusive = beforeTweetIdExclusive,
-          afterTweetIdExclusive = afterTweetIdExclusive,
+          matwitterCount = matwitterCount,
+          beforeTweetIdEtwitterclusive = beforeTweetIdEtwitterclusive,
+          afterTweetIdEtwitterclusive = afterTweetIdEtwitterclusive,
           earlybirdOptions = envelope.query.earlybirdOptions,
           semanticCoreIds = envelope.query.semanticCoreIds,
           hashtags = envelope.query.hashtags,
           languages = languages,
           tweetTypes = TweetTypes.fromTweetKindOption(envelope.query.options),
           searchOperator = envelope.query.searchOperator,
-          excludedTweetIds = excludedTweetIds,
+          etwittercludedTweetIds = etwittercludedTweetIds,
           logSearchDebugInfo = logSearchDebugInfo,
           includeNullcastTweets = envelope.query.includeNullcastTweets.getOrElse(false),
-          includeTweetsFromArchiveIndex =
-            envelope.query.includeTweetsFromArchiveIndex.getOrElse(false),
+          includeTweetsFromArchiveIndetwitter =
+            envelope.query.includeTweetsFromArchiveIndetwitter.getOrElse(false),
           authorIds = envelope.query.authorIds.map(_.toSet)
         ).map { results =>
           numResultsFromSearchStat.add(results.size)

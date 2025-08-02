@@ -20,8 +20,8 @@ public class SegmentSyncInfo {
   private final SegmentSyncConfig syncConfig;
   private final String localSyncDir;
   private final String hdfsFlushDir;
-  private final String hdfsSyncDirPrefix;
-  private final String hdfsUploadDirPrefix;
+  private final String hdfsSyncDirPrefitwitter;
+  private final String hdfsUploadDirPrefitwitter;
   private final String hdfsTempFlushDir;
 
   @VisibleForTesting
@@ -29,8 +29,8 @@ public class SegmentSyncInfo {
     this.segment = segment;
     this.syncConfig = syncConfig;
     this.localSyncDir = syncConfig.getLocalSyncDirName(segment);
-    this.hdfsSyncDirPrefix = syncConfig.getHdfsSyncDirNamePrefix(segment);
-    this.hdfsUploadDirPrefix = syncConfig.getHdfsUploadDirNamePrefix(segment);
+    this.hdfsSyncDirPrefitwitter = syncConfig.getHdfsSyncDirNamePrefitwitter(segment);
+    this.hdfsUploadDirPrefitwitter = syncConfig.getHdfsUploadDirNamePrefitwitter(segment);
     this.hdfsFlushDir = syncConfig.getHdfsFlushDirName(segment);
     this.hdfsTempFlushDir = syncConfig.getHdfsTempFlushDirName(segment);
   }
@@ -66,12 +66,12 @@ public class SegmentSyncInfo {
     return hdfsFlushDir;
   }
 
-  public String getHdfsSyncDirPrefix() {
-    return hdfsSyncDirPrefix;
+  public String getHdfsSyncDirPrefitwitter() {
+    return hdfsSyncDirPrefitwitter;
   }
 
-  public String getHdfsUploadDirPrefix() {
-    return hdfsUploadDirPrefix;
+  public String getHdfsUploadDirPrefitwitter() {
+    return hdfsUploadDirPrefitwitter;
   }
 
   public String getHdfsTempFlushDir() {

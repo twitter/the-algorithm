@@ -5,8 +5,8 @@ package observer
 import com.twitter.tweetypie.thriftscala.GetStoredTweetsRequest
 import com.twitter.tweetypie.thriftscala.GetStoredTweetsResult
 
-private[service] object GetStoredTweetsObserver extends StoredTweetsObserver {
-  type Type = ObserveExchange[GetStoredTweetsRequest, Seq[GetStoredTweetsResult]]
+private[service] object GetStoredTweetsObserver etwittertends StoredTweetsObserver {
+  type Type = ObserveEtwitterchange[GetStoredTweetsRequest, Seq[GetStoredTweetsResult]]
 
   def observeRequest(stats: StatsReceiver): Effect[GetStoredTweetsRequest] = {
     val requestSizeStat = stats.stat("request_size")
@@ -38,7 +38,7 @@ private[service] object GetStoredTweetsObserver extends StoredTweetsObserver {
     }
   }
 
-  def observeExchange(stats: StatsReceiver): Effect[Type] = {
+  def observeEtwitterchange(stats: StatsReceiver): Effect[Type] = {
     val resultStateStats = ResultStateStats(stats)
 
     Effect {

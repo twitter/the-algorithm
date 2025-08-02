@@ -26,6 +26,6 @@ object FlagNames {
   /**
    * Algorithm Parameters
    */
-  final val MaxTopTweetPerCluster = "sim_clusters.ann.max_top_tweets_per_cluster"
+  final val MatwitterTopTweetPerCluster = "sim_clusters.ann.matwitter_top_tweets_per_cluster"
 
 }

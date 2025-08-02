@@ -9,7 +9,7 @@
     "dependencies": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
+        "name": "packer-client-no-petwitter",
         "version": "latest"
       }
     ],
@@ -32,8 +32,8 @@
       "name": "staging",
       "targets": [
         {
-          "name": "rekey-uua-iesource-staging-pdxa",
-          "key": "pdxa/discode/staging/rekey-uua-iesource"
+          "name": "rekey-uua-iesource-staging-pdtwittera",
+          "key": "pdtwittera/discode/staging/rekey-uua-iesource"
         }
       ]
     }

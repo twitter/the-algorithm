@@ -13,7 +13,7 @@ object RectweetUserFeatureAggregation {
       ITLFeatures.IS_CLICKED,
       ITLFeatures.IS_PROFILE_CLICKED,
       ITLFeatures.IS_OPEN_LINKED,
-      ITLFeatures.IS_PHOTO_EXPANDED,
+      ITLFeatures.IS_PHOTO_EtwitterPANDED,
       ITLFeatures.IS_VIDEO_PLAYBACK_50
     )
 
@@ -28,7 +28,7 @@ object RectweetUserFeatureAggregation {
     ITLFeatures.MATCHES_UI_LANG,
     ITLFeatures.MATCHES_SEARCHER_MAIN_LANG,
     ITLFeatures.MATCHES_SEARCHER_LANGS,
-    ITLFeatures.TEXT_SCORE,
+    ITLFeatures.TEtwitterT_SCORE,
     ITLFeatures.LINK_LANGUAGE,
     ITLFeatures.NUM_HASHTAGS,
     ITLFeatures.NUM_MENTIONS,

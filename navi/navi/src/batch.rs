@@ -7,7 +7,7 @@ use tokio::time::Instant;
 
 use crate::bootstrap::{TensorInput, TensorInputEnum};
 use crate::cli_args::{ARGS, MODEL_SPECS};
-use crate::{Callback, MAX_NUM_INPUTS, PredictResult};
+use crate::{Callback, MAtwitter_NUM_INPUTS, PredictResult};
 use crate::metrics::{
     BATCH_SIZE, BATCH_SIZE_BY_MODEL, BLOCKING_REQUEST_NUM, MODEL_INFERENCE_TIME_COLLECTOR,
     NUM_BATCH_PREDICTION, NUM_BATCH_PREDICTION_BY_MODEL, NUM_BATCHES_DROPPED,
@@ -25,7 +25,7 @@ pub struct BatchPredictor<T: Model> {
     pub input_tensors: Vec<Vec<TensorInput>>,
     pub callbacks: Vec<Callback>,
     pub cur_batch_size: usize,
-    pub max_batch_size: usize,
+    pub matwitter_batch_size: usize,
     pub batch_time_out_millis: u64,
     pub queue_reset_ts: Instant,
     pub queue_earliest_rq_ts: Instant,
@@ -35,7 +35,7 @@ impl PredictRequest {
     #[inline(always)]
     pub fn take_input_vals(
         &mut self,
-        inputs: &ArrayVec<String, MAX_NUM_INPUTS>,
+        inputs: &ArrayVec<String, MAtwitter_NUM_INPUTS>,
     ) -> Vec<TensorInput> {
         let mut model_inputs = Vec::<TensorInput>::new();
         for input_name in inputs.as_slice() {
@@ -126,11 +126,11 @@ impl<T: Model> BatchPredictor<T> {
     #[inline(always)]
     pub fn batch_predict(&mut self) {
         BATCH_SIZE_BY_MODEL
-            .with_label_values(&[&MODEL_SPECS[self.model.model_idx()]])
+            .with_label_values(&[&MODEL_SPECS[self.model.model_idtwitter()]])
             .add(self.cur_batch_size as i64);
         BATCH_SIZE.add(self.cur_batch_size as i64);
-        let mut batch_input_tensors = Vec::with_capacity(self.max_batch_size);
-        let mut batch_callbacks = Vec::with_capacity(self.max_batch_size);
+        let mut batch_input_tensors = Vec::with_capacity(self.matwitter_batch_size);
+        let mut batch_callbacks = Vec::with_capacity(self.matwitter_batch_size);
         let mut batch_size = 0;
         //now we swap so we can take two queues to the blocking-send thread and reset current queues
         std::mem::swap(&mut self.input_tensors, &mut batch_input_tensors);
@@ -138,7 +138,7 @@ impl<T: Model> BatchPredictor<T> {
         std::mem::swap(&mut self.cur_batch_size, &mut batch_size);
         let model = self.model.clone();
         let batch_earliest_rq_ts = self.queue_earliest_rq_ts;
-        //info!("batch predict for model:{}, size:{}", self.tf_model.export_dir, vals0.len());
+        //info!("batch predict for model:{}, size:{}", self.tf_model.etwitterport_dir, vals0.len());
         BLOCKING_REQUEST_NUM.inc();
         tokio::task::spawn_blocking(move || {
             //proactively drop stale batches, we drop the entire batch
@@ -149,7 +149,7 @@ impl<T: Model> BatchPredictor<T> {
                 let (tensor_outs, batch_ends) =
                     model.do_predict(batch_input_tensors, batch_size as u64);
                 MODEL_INFERENCE_TIME_COLLECTOR
-                    .with_label_values(&[&MODEL_SPECS[model.model_idx()]])
+                    .with_label_values(&[&MODEL_SPECS[model.model_idtwitter()]])
                     .observe(model_inference_time_start.elapsed().as_millis() as f64);
                 let mut batch_starts = vec![0; tensor_outs.len()];
                 for (i, Callback(resp, _)) in batch_callbacks.into_iter().enumerate() {
@@ -162,10 +162,10 @@ impl<T: Model> BatchPredictor<T> {
                         .send(PredictResult::Ok(tensors_send_back, model.version()))
                         .is_err()
                     {
-                        //use dropped metrics here as this is expected under high load
+                        //use dropped metrics here as this is etwitterpected under high load
                         NUM_REQUESTS_DROPPED.inc();
                         NUM_REQUESTS_DROPPED_BY_MODEL
-                            .with_label_values(&[&MODEL_SPECS[model.model_idx()]])
+                            .with_label_values(&[&MODEL_SPECS[model.model_idtwitter()]])
                             .inc();
                     }
                 }
@@ -174,26 +174,26 @@ impl<T: Model> BatchPredictor<T> {
                     if resp.send(PredictResult::DropDueToOverload).is_err() {
                         NUM_REQUESTS_DROPPED.inc();
                         NUM_REQUESTS_DROPPED_BY_MODEL
-                            .with_label_values(&[&MODEL_SPECS[model.model_idx()]])
+                            .with_label_values(&[&MODEL_SPECS[model.model_idtwitter()]])
                             .inc();
                     }
                 }
                 NUM_BATCHES_DROPPED.inc();
                 NUM_BATCHES_DROPPED_BY_MODEL
-                    .with_label_values(&[&MODEL_SPECS[model.model_idx()]])
+                    .with_label_values(&[&MODEL_SPECS[model.model_idtwitter()]])
                     .inc();
             }
             BLOCKING_REQUEST_NUM.dec();
         });
         NUM_BATCH_PREDICTION.inc();
         NUM_BATCH_PREDICTION_BY_MODEL
-            .with_label_values(&[&MODEL_SPECS[self.model.model_idx()]])
+            .with_label_values(&[&MODEL_SPECS[self.model.model_idtwitter()]])
             .inc();
         // Note:
         //  self.cur_batch_size is swapped with batch_size above
         //  Use the local variable batch_size here
         NUM_PREDICTION_BY_MODEL
-            .with_label_values(&[&MODEL_SPECS[self.model.model_idx()]])
+            .with_label_values(&[&MODEL_SPECS[self.model.model_idtwitter()]])
             .inc_by(batch_size as u64);
     }
     #[inline(always)]

@@ -13,7 +13,7 @@ import com.twitter.visibility.interfaces.tweets.DeletedTweetVisibilityLibrary
 import com.twitter.visibility.models.SafetyLevel
 import com.twitter.visibility.models.TweetDeleteReason
 import com.twitter.visibility.models.TweetDeleteReason.TweetDeleteReason
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 
 /**
  *  Generate FilteredReason for tweet entities in following delete states:
@@ -50,7 +50,7 @@ object DeletedTweetVisibilityRepository {
           DeletedTweetVisibilityLibrary.Request(
             request.tweetId,
             safetyLevel,
-            ViewerContext.fromContextWithViewerIdFallback(request.viewerId),
+            ViewerContetwittert.fromContetwittertWithViewerIdFallback(request.viewerId),
             deleteReason,
             isRetweet,
             request.isInnerQuotedTweet

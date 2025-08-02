@@ -5,9 +5,9 @@ import com.twitter.visibility.rules.Action
 
 trait NotificationsPlatformFilteringResponse
 
-case object AllowVerdict extends NotificationsPlatformFilteringResponse
+case object AllowVerdict etwittertends NotificationsPlatformFilteringResponse
 
-case class FilteredVerdict(action: Action) extends NotificationsPlatformFilteringResponse
+case class FilteredVerdict(action: Action) etwittertends NotificationsPlatformFilteringResponse
 
 case class FailedVerdict(featuresMap: Map[Feature[_], String])
-    extends NotificationsPlatformFilteringResponse
+    etwittertends NotificationsPlatformFilteringResponse

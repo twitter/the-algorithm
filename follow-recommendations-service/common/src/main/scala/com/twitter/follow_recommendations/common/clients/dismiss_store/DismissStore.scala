@@ -7,13 +7,13 @@ import com.twitter.stitch.Stitch
 import com.twitter.strato.catalog.Scan.Slice
 import com.twitter.strato.client.Scanner
 import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Named
+import javatwitter.inject.Singleton
 
 /**
  * this store gets the list of dismissed candidates since a certain time
- * primarily used for filtering out accounts that a user has explicitly dismissed
+ * primarily used for filtering out accounts that a user has etwitterplicitly dismissed
  *
  * we fail open on timeouts, but loudly on other errors
  */
@@ -24,18 +24,18 @@ class DismissStore @Inject() (
       (Long, Long)
     ]), Unit, (Long, (Long, Long)), WhoToFollowDismissEventDetails],
   stats: StatsReceiver)
-    extends Logging {
+    etwittertends Logging {
 
-  private val MaxCandidatesToReturn = 100
+  private val MatwitterCandidatesToReturn = 100
 
   // gets a list of dismissed candidates. if numCandidatesToFetchOption is none, we will fetch the default number of candidates
   def get(
     userId: Long,
     negStartTimeMs: Long,
-    maxCandidatesToFetchOption: Option[Int]
+    matwitterCandidatesToFetchOption: Option[Int]
   ): Stitch[Seq[Long]] = {
 
-    val maxCandidatesToFetch = maxCandidatesToFetchOption.getOrElse(MaxCandidatesToReturn)
+    val matwitterCandidatesToFetch = matwitterCandidatesToFetchOption.getOrElse(MatwitterCandidatesToReturn)
 
     scanner
       .scan(
@@ -43,8 +43,8 @@ class DismissStore @Inject() (
           userId,
           Slice(
             from = None,
-            to = Some((negStartTimeMs, Long.MaxValue)),
-            limit = Some(maxCandidatesToFetch)
+            to = Some((negStartTimeMs, Long.MatwitterValue)),
+            limit = Some(matwitterCandidatesToFetch)
           )
         )
       )

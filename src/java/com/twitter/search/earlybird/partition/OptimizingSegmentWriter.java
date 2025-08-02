@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.partition;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -12,12 +12,12 @@ import com.google.common.base.Verify;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.util.GCUtil;
 import com.twitter.search.earlybird.EarlybirdStatus;
 import com.twitter.search.earlybird.common.CaughtUpMonitor;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.EarlybirdSegment;
+import com.twitter.search.earlybird.etwitterception.CriticalEtwitterceptionHandler;
+import com.twitter.search.earlybird.indetwitter.EarlybirdSegment;
 import com.twitter.search.earlybird.util.CoordinatedEarlybirdActionInterface;
 import com.twitter.util.Future;
 import com.twitter.util.Promise;
@@ -25,7 +25,7 @@ import com.twitter.util.Promise;
 /**
  * This class optimizes a segment without blocking reads or writes.
  *
- * In steady state operation (Indexing or Optimized), it delegates operations directly to a
+ * In steady state operation (Indetwittering or Optimized), it delegates operations directly to a
  * SegmentWriter.
  *
  * Optimization is naturally a copying operation -- we don't need to mutate anything internally.
@@ -40,33 +40,33 @@ import com.twitter.util.Promise;
 public class OptimizingSegmentWriter implements ISegmentWriter {
   private static final Logger LOG = LoggerFactory.getLogger(OptimizingSegmentWriter.class);
 
-  private final AtomicReference<State> state = new AtomicReference<>(State.Indexing);
+  private final AtomicReference<State> state = new AtomicReference<>(State.Indetwittering);
   private final ConcurrentLinkedQueue<ThriftVersionedEvents> queuedEvents =
       new ConcurrentLinkedQueue<>();
 
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
+  private final CriticalEtwitterceptionHandler criticalEtwitterceptionHandler;
+  private final SearchIndetwitteringMetricSet searchIndetwitteringMetricSet;
   private final String segmentName;
   private final Promise<SegmentInfo> optimizationPromise = new Promise<>();
 
   // We use the lock to ensure that the optimizing thread and the writer thread do not attempt
-  // to call indexThriftVersionedEvents on the underlying writer simultaneously.
+  // to call indetwitterThriftVersionedEvents on the underlying writer simultaneously.
   private final Object lock = new Object();
   // The reference to the current writer. Protected by lock.
   private final AtomicReference<SegmentWriter> segmentWriterReference;
 
-  private final CaughtUpMonitor indexCaughtUpMonitor;
+  private final CaughtUpMonitor indetwitterCaughtUpMonitor;
 
   /**
    * The state flow:
-   * Indexing -> Optimizing ->
+   * Indetwittering -> Optimizing ->
    * ONE OF:
    * - Optimized
    * - FailedToOptimize
    */
   @VisibleForTesting
   enum State {
-    Indexing,
+    Indetwittering,
     Optimizing,
     FailedToOptimize,
     Optimized,
@@ -74,17 +74,17 @@ public class OptimizingSegmentWriter implements ISegmentWriter {
 
   public OptimizingSegmentWriter(
       SegmentWriter segmentWriter,
-      CriticalExceptionHandler criticalExceptionHandler,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      CaughtUpMonitor indexCaughtUpMonitor
+      CriticalEtwitterceptionHandler criticalEtwitterceptionHandler,
+      SearchIndetwitteringMetricSet searchIndetwitteringMetricSet,
+      CaughtUpMonitor indetwitterCaughtUpMonitor
   ) {
     Preconditions.checkState(!segmentWriter.getSegmentInfo().isOptimized());
     segmentWriterReference = new AtomicReference<>(segmentWriter);
 
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
+    this.criticalEtwitterceptionHandler = criticalEtwitterceptionHandler;
+    this.searchIndetwitteringMetricSet = searchIndetwitteringMetricSet;
     this.segmentName = segmentWriter.getSegmentInfo().getSegmentName();
-    this.indexCaughtUpMonitor = indexCaughtUpMonitor;
+    this.indetwitterCaughtUpMonitor = indetwitterCaughtUpMonitor;
   }
 
   /**
@@ -105,10 +105,10 @@ public class OptimizingSegmentWriter implements ISegmentWriter {
         gcAction.retryActionUntilRan("gc before optimization", () -> {
           LOG.info("Run GC before optimization");
           GCUtil.runGC();
-          // Wait for indexing to catch up before gcAction rejoins the serverset. We only need to do
+          // Wait for indetwittering to catch up before gcAction rejoins the serverset. We only need to do
           // this if the host has already finished startup.
           if (EarlybirdStatus.hasStarted()) {
-            indexCaughtUpMonitor.resetAndWaitUntilCaughtUp();
+            indetwitterCaughtUpMonitor.resetAndWaitUntilCaughtUp();
           }
         });
       } finally {
@@ -117,7 +117,7 @@ public class OptimizingSegmentWriter implements ISegmentWriter {
         optimizationAndFlushingCoordinationLock.unlock();
       }
 
-      transition(State.Indexing, State.Optimizing);
+      transition(State.Indetwittering, State.Optimizing);
 
       SegmentInfo unoptimizedSegmentInfo = null;
       try {
@@ -127,14 +127,14 @@ public class OptimizingSegmentWriter implements ISegmentWriter {
         Stopwatch stopwatch = Stopwatch.createStarted();
         LOG.info("Started optimizing segment data {}.", segmentName);
         EarlybirdSegment optimizedSegment =
-            unoptimizedSegmentInfo.getIndexSegment().makeOptimizedSegment();
+            unoptimizedSegmentInfo.getIndetwitterSegment().makeOptimizedSegment();
         LOG.info("Finished optimizing segment data {} in {}.", segmentName, stopwatch);
 
         SegmentInfo newSegmentInfo = unoptimizedSegmentInfo
             .copyWithEarlybirdSegment(optimizedSegment);
 
         SegmentWriter optimizedWriter =
-            new SegmentWriter(newSegmentInfo, searchIndexingMetricSet.updateFreshness);
+            new SegmentWriter(newSegmentInfo, searchIndetwitteringMetricSet.updateFreshness);
         Verify.verify(optimizedWriter.getSegmentInfo().isOptimized());
 
         // We want to apply all updates to the new segment twice, because this first call may apply
@@ -162,21 +162,21 @@ public class OptimizingSegmentWriter implements ISegmentWriter {
         }
 
         transition(State.Optimizing, State.FailedToOptimize);
-        optimizationPromise.setException(e);
+        optimizationPromise.setEtwitterception(e);
       }
     }, "optimizing-segment-writer").start();
 
     return optimizationPromise;
   }
 
-  private void applyAllPendingUpdates(SegmentWriter segmentWriter) throws IOException {
+  private void applyAllPendingUpdates(SegmentWriter segmentWriter) throws IOEtwitterception {
     LOG.info("Applying {} queued updates to segment {}.", queuedEvents.size(), segmentName);
     // More events can be enqueued while this method is running, so we track the total applied too.
     long eventCount = 0;
     Stopwatch stopwatch = Stopwatch.createStarted();
     ThriftVersionedEvents update;
     while ((update = queuedEvents.poll()) != null) {
-      segmentWriter.indexThriftVersionedEvents(update);
+      segmentWriter.indetwitterThriftVersionedEvents(update);
       eventCount++;
     }
     LOG.info("Applied {} queued updates to segment {} in {}.",
@@ -184,12 +184,12 @@ public class OptimizingSegmentWriter implements ISegmentWriter {
   }
 
   @Override
-  public Result indexThriftVersionedEvents(ThriftVersionedEvents tve) throws IOException {
+  public Result indetwitterThriftVersionedEvents(ThriftVersionedEvents tve) throws IOEtwitterception {
     synchronized (lock) {
       if (state.get() == State.Optimizing) {
         queuedEvents.add(tve);
       }
-      return segmentWriterReference.get().indexThriftVersionedEvents(tve);
+      return segmentWriterReference.get().indetwitterThriftVersionedEvents(tve);
     }
   }
 

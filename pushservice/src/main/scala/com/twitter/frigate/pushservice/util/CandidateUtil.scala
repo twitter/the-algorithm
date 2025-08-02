@@ -3,8 +3,8 @@ package com.twitter.frigate.pushservice.util
 import com.twitter.contentrecommender.thriftscala.MetricTag
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base.OutOfNetworkTweetCandidate
-import com.twitter.frigate.common.base.SocialContextAction
-import com.twitter.frigate.common.base.SocialContextActions
+import com.twitter.frigate.common.base.SocialContetwittertAction
+import com.twitter.frigate.common.base.SocialContetwittertActions
 import com.twitter.frigate.common.base.TargetInfo
 import com.twitter.frigate.common.base.TargetUser
 import com.twitter.frigate.common.base.TopicProofTweetCandidate
@@ -18,18 +18,18 @@ import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
 import com.twitter.frigate.thriftscala.CommonRecommendationType
 import com.twitter.frigate.thriftscala.CommonRecommendationType.TripGeoTweet
 import com.twitter.frigate.thriftscala.CommonRecommendationType.TripHqTweet
-import com.twitter.frigate.thriftscala.{SocialContextAction => TSocialContextAction}
+import com.twitter.frigate.thriftscala.{SocialContetwittertAction => TSocialContetwittertAction}
 import com.twitter.util.Future
 
 object CandidateUtil {
   private val mrTwistlyMetricTags =
     Seq(MetricTag.PushOpenOrNtabClick, MetricTag.RequestHealthFilterPushOpenBasedTweetEmbedding)
 
-  def getSocialContextActionsFromCandidate(candidate: RawCandidate): Seq[TSocialContextAction] = {
+  def getSocialContetwittertActionsFromCandidate(candidate: RawCandidate): Seq[TSocialContetwittertAction] = {
     candidate match {
-      case candidateWithSocialContex: RawCandidate with SocialContextActions =>
-        candidateWithSocialContex.socialContextActions.map { scAction =>
-          TSocialContextAction(
+      case candidateWithSocialContetwitter: RawCandidate with SocialContetwittertActions =>
+        candidateWithSocialContetwitter.socialContetwittertActions.map { scAction =>
+          TSocialContetwittertAction(
             scAction.userId,
             scAction.timestampInMillis,
             scAction.tweetId
@@ -40,23 +40,23 @@ object CandidateUtil {
   }
 
   /**
-   * Ranking Social Context based on the Real Graph weight
-   * @param socialContextActions  Sequence of Social Context Actions
+   * Ranking Social Contetwittert based on the Real Graph weight
+   * @param socialContetwittertActions  Sequence of Social Contetwittert Actions
    * @param seedsWithWeight       Real Graph map consisting of User ID as key and RG weight as the value
    * @param defaultToRecency      Boolean to represent if we should use the timestamp of the SC to rank
    * @return                      Returns the ranked sequence of SC Actions
    */
-  def getRankedSocialContext(
-    socialContextActions: Seq[SocialContextAction],
+  def getRankedSocialContetwittert(
+    socialContetwittertActions: Seq[SocialContetwittertAction],
     seedsWithWeight: Future[Option[Map[Long, Double]]],
     defaultToRecency: Boolean
-  ): Future[Seq[SocialContextAction]] = {
+  ): Future[Seq[SocialContetwittertAction]] = {
     seedsWithWeight.map {
       case Some(followingsMap) =>
-        socialContextActions.sortBy { action => -followingsMap.getOrElse(action.userId, 0.0) }
+        socialContetwittertActions.sortBy { action => -followingsMap.getOrElse(action.userId, 0.0) }
       case _ =>
-        if (defaultToRecency) socialContextActions.sortBy(-_.timestampInMillis)
-        else socialContextActions
+        if (defaultToRecency) socialContetwittertActions.sortBy(-_.timestampInMillis)
+        else socialContetwittertActions
     }
   }
 

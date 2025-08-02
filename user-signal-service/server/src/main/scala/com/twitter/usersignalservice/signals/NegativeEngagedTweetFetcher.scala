@@ -15,15 +15,15 @@ import com.twitter.usersignalservice.thriftscala.Signal
 import com.twitter.usersignalservice.thriftscala.SignalType
 import com.twitter.util.Future
 import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 case class NegativeEngagedTweetFetcher @Inject() (
   stratoClient: Client,
   timer: Timer,
   stats: StatsReceiver)
-    extends StratoSignalFetcher[(UserId, Long), Unit, UserRecentNegativeEngagedTweets] {
+    etwittertends StratoSignalFetcher[(UserId, Long), Unit, UserRecentNegativeEngagedTweets] {
 
   import NegativeEngagedTweetFetcher._
 
@@ -63,11 +63,11 @@ case class NegativeEngagedTweetFetcher @Inject() (
             )
           }
           .groupBy(_.targetInternalId) // groupBy if there's duplicated authorIds
-          .mapValues(_.maxBy(_.timestamp))
+          .mapValues(_.matwitterBy(_.timestamp))
           .values
           .toSeq
           .sortBy(-_.timestamp)
-          .take(query.maxResults.getOrElse(Int.MaxValue))
+          .take(query.matwitterResults.getOrElse(Int.MatwitterValue))
       }
     }
   }

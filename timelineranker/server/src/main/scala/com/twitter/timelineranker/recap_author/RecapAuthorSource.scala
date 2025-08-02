@@ -32,8 +32,8 @@ import com.twitter.util.Future
  * list of authors to fetch tweets from. The controls available are:
  * 1. The ''filters'' val, which is also overridden
  * by the query options in TweetKindOptions (see Recap.scala, the
- * parent class, for details on how this override works). For example, one
- * can choose to retrieve replies, retweets and/or extended replies
+ * parent class, for details on how this override works). For etwitterample, one
+ * can choose to retrieve replies, retweets and/or etwittertended replies
  * by changing the options passed in, which get added to ''filters''.
  * 2. The visiblityEnforcer passed in, which controls what visibility rules
  * are applied to the tweets returned from earlybird (e.g. mutes, blocks).
@@ -58,7 +58,7 @@ class RecapAuthorSource(
   /*
    * Similar to RecapSource, we filter out tweets directed at non-followed users that
    * are not "replies" i.e. those that begin with the @-handle.
-   * For tweets to non-followed users that are replies, these are "extended replies"
+   * For tweets to non-followed users that are replies, these are "etwittertended replies"
    * and are handled separately by the dynamic filters (see Recap.scala for details).
    * Reply and retweet filtering is also handled by dynamic filters, overriden by
    * TweetKindOptions passed in with the query (again, details in Recap.scala)
@@ -92,20 +92,20 @@ class RecapAuthorSource(
     statsReceiver = baseScope
   )
 
-  private[this] val maxFollowedUsersProvider =
-    DependencyProvider.value(RecapParams.MaxFollowedUsers.default)
+  private[this] val matwitterFollowedUsersProvider =
+    DependencyProvider.value(RecapParams.MatwitterFollowedUsers.default)
   private[this] val followGraphDataTransform =
-    new FollowGraphDataTransform(followGraphDataProvider, maxFollowedUsersProvider)
-  private[this] val maxSearchResultCountProvider = DependencyProvider { query =>
-    query.maxCount.getOrElse(query.params(RecapParams.DefaultMaxTweetCount))
+    new FollowGraphDataTransform(followGraphDataProvider, matwitterFollowedUsersProvider)
+  private[this] val matwitterSearchResultCountProvider = DependencyProvider { query =>
+    query.matwitterCount.getOrElse(query.params(RecapParams.DefaultMatwitterTweetCount))
   }
-  private[this] val relevanceOptionsMaxHitsToProcessProvider =
-    DependencyProvider.from(RecapParams.RelevanceOptionsMaxHitsToProcessParam)
+  private[this] val relevanceOptionsMatwitterHitsToProcessProvider =
+    DependencyProvider.from(RecapParams.RelevanceOptionsMatwitterHitsToProcessParam)
 
   private[this] val retrieveSearchResultsTransform = new RecapAuthorSearchResultsTransform(
     searchClient = searchClient,
-    maxCountProvider = maxSearchResultCountProvider,
-    relevanceOptionsMaxHitsToProcessProvider = relevanceOptionsMaxHitsToProcessProvider,
+    matwitterCountProvider = matwitterSearchResultCountProvider,
+    relevanceOptionsMatwitterHitsToProcessProvider = relevanceOptionsMatwitterHitsToProcessProvider,
     enableSettingTweetTypesWithTweetKindOptionProvider =
       DependencyProvider.from(RecapParams.EnableSettingTweetTypesWithTweetKindOption),
     statsReceiver = baseScope,
@@ -117,8 +117,8 @@ class RecapAuthorSource(
     new UsersSearchResultMonitoringTransform(
       name = "RecapSearchResultsTruncationTransform",
       new RecapSearchResultsTruncationTransform(
-        extraSortBeforeTruncationGate = DependencyProvider.True,
-        maxCountProvider = maxSearchResultCountProvider,
+        etwittertraSortBeforeTruncationGate = DependencyProvider.True,
+        matwitterCountProvider = matwitterSearchResultCountProvider,
         statsReceiver = baseScope.scope("afterSearchResultsTransform")
       ),
       baseScope.scope("afterSearchResultsTransform"),
@@ -141,8 +141,8 @@ class RecapAuthorSource(
         RecapQuery.paramGate(RecapAuthorParams.EnableContentFeaturesHydrationParam),
       enableTokensInContentFeaturesGate =
         RecapQuery.paramGate(RecapAuthorParams.EnableTokensInContentFeaturesHydrationParam),
-      enableTweetTextInContentFeaturesGate =
-        RecapQuery.paramGate(RecapAuthorParams.EnableTweetTextInContentFeaturesHydrationParam),
+      enableTweetTetwittertInContentFeaturesGate =
+        RecapQuery.paramGate(RecapAuthorParams.EnableTweetTetwittertInContentFeaturesHydrationParam),
       enableConversationControlContentFeaturesGate = RecapQuery.paramGate(
         RecapAuthorParams.EnableConversationControlInContentFeaturesHydrationParam),
       enableTweetMediaHydrationGate =

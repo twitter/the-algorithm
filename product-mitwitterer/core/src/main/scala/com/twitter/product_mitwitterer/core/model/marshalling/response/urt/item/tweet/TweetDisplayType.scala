@@ -1,0 +1,16 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.item.tweet
+
+sealed trait TweetDisplayType
+
+case object Tweet etwittertends TweetDisplayType
+case object TweetFollowOnly etwittertends TweetDisplayType
+case object Media etwittertends TweetDisplayType
+case object MomentTimelineTweet etwittertends TweetDisplayType
+case object EmphasizedPromotedTweet etwittertends TweetDisplayType
+case object QuotedTweet etwittertends TweetDisplayType
+case object SelfThread etwittertends TweetDisplayType
+case object CompactPromotedTweet etwittertends TweetDisplayType
+case object TweetWithoutCard etwittertends TweetDisplayType
+case object ReaderModeRoot etwittertends TweetDisplayType
+case object ReaderMode etwittertends TweetDisplayType
+case object CondensedTweet etwittertends TweetDisplayType

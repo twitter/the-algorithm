@@ -7,7 +7,7 @@ bin/d6w create \
   --bind=profile.user_name=your_ldap \
   --bind=profile.date="2022-03-28" \
   --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-tweets-ann-adhoc-job" --ignore-existing
+  --bind=profile.job_name="iikf-tweets-ann-adhoc-job" --ignore-etwitteristing
 
 To run iikf-hl-8-el-50-tweets-ann-adhoc-job (adhoc):
 bin/d6w create \
@@ -18,7 +18,7 @@ bin/d6w create \
   --bind=profile.user_name=your_ldap \
   --bind=profile.date="2022-03-28" \
   --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-hl-8-el-50-tweets-ann-adhoc-job" --ignore-existing
+  --bind=profile.job_name="iikf-hl-8-el-50-tweets-ann-adhoc-job" --ignore-etwitteristing
 
 To run mts-consumer-embeddings-tweets-ann-adhoc-job (adhoc)
 bin/d6w create \
@@ -29,7 +29,7 @@ bin/d6w create \
   --bind=profile.user_name=your_ldap \
   --bind=profile.date="2022-03-28" \
   --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="mts-consumer-embeddings-tweets-ann-adhoc-job" --ignore-existing
+  --bind=profile.job_name="mts-consumer-embeddings-tweets-ann-adhoc-job" --ignore-etwitteristing
 
 
 To schedule iikf-tweets-ann-batch-job (batch)

@@ -5,18 +5,18 @@ import com.twitter.timelines.configapi.FSParam
 
 class PPMILocaleFollowSourceParams {}
 object PPMILocaleFollowSourceParams {
-  case object LocaleToExcludeFromRecommendation
-      extends FSParam[Seq[String]](
-        "ppmilocale_follow_source_locales_to_exclude_from_recommendation",
+  case object LocaleToEtwittercludeFromRecommendation
+      etwittertends FSParam[Seq[String]](
+        "ppmilocale_follow_source_locales_to_etwitterclude_from_recommendation",
         default = Seq.empty)
 
   case object CandidateSourceEnabled
-      extends FSParam[Boolean]("ppmilocale_follow_source_enabled", true)
+      etwittertends FSParam[Boolean]("ppmilocale_follow_source_enabled", true)
 
   case object CandidateSourceWeight
-      extends FSBoundedParam[Double](
+      etwittertends FSBoundedParam[Double](
         "ppmilocale_follow_source_candidate_source_weight",
         default = 1,
         min = 0.001,
-        max = 2000)
+        matwitter = 2000)
 }

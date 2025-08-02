@@ -8,13 +8,13 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
-import javax.naming.NamingException;
+import javatwitter.naming.NamingEtwitterception;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.pipeline.StageException;
+import org.apache.commons.pipeline.StageEtwitterception;
 import org.apache.commons.pipeline.stage.InstrumentedBaseStage;
 
 import com.twitter.common.metrics.Metrics;
@@ -31,14 +31,14 @@ import com.twitter.search.common.metrics.SearchLongGauge;
 import com.twitter.search.common.metrics.SearchRateCounter;
 import com.twitter.search.common.metrics.SearchTimerStats;
 import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+import com.twitter.search.ingester.pipeline.util.PipelineStageEtwitterception;
+import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeEtwitterception;
 import com.twitter.search.ingester.pipeline.wire.WireModule;
 
 /**
  * Common functionality for all stages.
  */
-public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
+public class TwitterBaseStage<T, R> etwittertends InstrumentedBaseStage {
   // Currently, all stages run in separate threads, so we could use simple maps here.
   // However, it seems safer to use concurrent maps, in case we ever change our stage set up.
   // The performance impact should be negligible.
@@ -47,7 +47,7 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
   private final ConcurrentMap<Optional<String>, SearchRateCounter>
     branchEmitBatchObjectsRateCounters = Maps.newConcurrentMap();
 
-  private String stageNamePrefix = null;
+  private String stageNamePrefitwitter = null;
 
   protected WireModule wireModule;
   protected Decider decider;
@@ -58,7 +58,7 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
   private Percentile<Long> processPercentile = null;
   private SearchTimerStats processTimerStats = null;
   private SearchRateCounter droppedItems = null;
-  private SearchLongGauge stageExceptions = null;
+  private SearchLongGauge stageEtwitterceptions = null;
 
   private SearchRateCounter incomingBatchesRateCounter;
   private SearchRateCounter incomingBatchObjectsRateCounter;
@@ -71,59 +71,59 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
 
   private String dropItemsDeciderKey;
 
-  // From XML config.
+  // From twitterML config.
   public void setPassThroughToBranches(String passThroughToBranchesString) {
     // This is a comma-delimited string which is a list of branches to which we just
     // pass through the incoming object without any processing/filtering.
     this.passThroughToBranches = Arrays.asList(passThroughToBranchesString.split(","));
   }
 
-  // From XML config.
+  // From twitterML config.
   public void setAdditionalEmitToBranches(String emitToBranchesString) {
     // This is a comma-delimited string which is a list of branches to which we
     // will emit when we call actuallyEmitAndCount(obj).
     this.additionalEmitToBranches = Arrays.asList(emitToBranchesString.split(","));
   }
 
-  // From XML config.
+  // From twitterML config.
   public void setPassThroughDownstream(boolean passThroughDownstream) {
     // If true, we emit the raw object downstream
     this.passThroughDownstream = passThroughDownstream;
   }
 
-  // From XML config.
+  // From twitterML config.
   public void setEmitDownstream(boolean emitDownstream) {
     // If true, we emit the processed object downstream.
     this.emitDownstream = emitDownstream;
   }
 
   @Override
-  public final void innerPreprocess() throws StageException {
+  public final void innerPreprocess() throws StageEtwitterception {
     try {
       setupEssentialObjects();
       doInnerPreprocess();
-    } catch (NamingException e) {
-      throw new StageException(this, "Failed to initialize stage.", e);
+    } catch (NamingEtwitterception e) {
+      throw new StageEtwitterception(this, "Failed to initialize stage.", e);
     }
   }
 
   /***
    * Sets up all necessary objects for this stage of the Pipeline. Previously, this task was done
    * by the preprocess() method provided by the ACP library.
-   * @throws PipelineStageException
+   * @throws PipelineStageEtwitterception
    */
-  public void setupStageV2() throws PipelineStageException {
+  public void setupStageV2() throws PipelineStageEtwitterception {
     try {
       setupCommonStats();
       innerSetupStats();
       setupEssentialObjects();
       innerSetup();
-    } catch (NamingException e) {
-      throw new PipelineStageException(this, "Failed to initialize stage", e);
+    } catch (NamingEtwitterception e) {
+      throw new PipelineStageEtwitterception(this, "Failed to initialize stage", e);
     }
   }
 
-  protected void innerSetup() throws PipelineStageException, NamingException { }
+  protected void innerSetup() throws PipelineStageEtwitterception, NamingEtwitterception { }
 
   /***
    * Takes in an argument of type T, processes it and returns an argument of Type R. This is the
@@ -139,7 +139,7 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
   /***
    * Takes in an argument of type T, processes it and pushes the processed element to some place.
    * This method does not return anything as any time this method is called on a stage, it means
-   * there is no stage after this one. An example stage is any KafkaProducerStage.
+   * there is no stage after this one. An etwitterample stage is any KafkaProducerStage.
    */
   public void runFinalStageOfBranchV2(T arg) {
     long startingTime = startProcessing();
@@ -158,7 +158,7 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
    */
   public void cleanupStageV2() { }
 
-  private void setupEssentialObjects() throws NamingException {
+  private void setupEssentialObjects() throws NamingEtwitterception {
     wireModule = WireModule.getWireModule();
     decider = wireModule.getDecider();
     clock = wireModule.getClock();
@@ -167,29 +167,29 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
           "drop_items_" + earlybirdCluster.getNameForStats() + "_" + fullStageName;
   }
 
-  protected void doInnerPreprocess() throws StageException, NamingException { }
+  protected void doInnerPreprocess() throws StageEtwitterception, NamingEtwitterception { }
 
   @Override
   protected void initStats() {
     super.initStats();
     setupCommonStats();
-    // Export stage timers
-    SearchCustomGauge.export(stageNamePrefix + "_queue_size",
+    // Etwitterport stage timers
+    SearchCustomGauge.etwitterport(stageNamePrefitwitter + "_queue_size",
         () -> Optional.ofNullable(getQueueSizeAverage()).orElse(0.0));
-    SearchCustomGauge.export(stageNamePrefix + "_queue_percentage_full",
+    SearchCustomGauge.etwitterport(stageNamePrefitwitter + "_queue_percentage_full",
         () -> Optional.ofNullable(getQueuePercentFull()).orElse(0.0));
 
     // This only called once on startup
     // In some unit tests, getQueueCapacity can return null. Hence this guard is added.
     // getQueueCapacity() does not return null here in prod.
-    SearchLongGauge.export(stageNamePrefix + "_queue_capacity")
+    SearchLongGauge.etwitterport(stageNamePrefitwitter + "_queue_capacity")
         .set(getQueueCapacity() == null ? 0 : getQueueCapacity());
   }
 
   private void setupCommonStats() {
-    // If the stage is instantiated only once, the class name is used for stats export
+    // If the stage is instantiated only once, the class name is used for stats etwitterport
     // If the stage is instantiated multiple times, the "stageName" specified in the
-    // pipeline definition xml file is also included.
+    // pipeline definition twitterml file is also included.
     if (StringUtils.isBlank(this.getStageName())) {
       fullStageName = this.getClass().getSimpleName();
     } else {
@@ -199,18 +199,18 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
           this.getStageName());
     }
 
-    stageNamePrefix = Metrics.normalizeName(fullStageName).toLowerCase();
+    stageNamePrefitwitter = Metrics.normalizeName(fullStageName).toLowerCase();
 
-    droppedItems = SearchRateCounter.export(stageNamePrefix + "_dropped_messages");
-    stageExceptions = SearchLongGauge.export(stageNamePrefix + "_stage_exceptions");
+    droppedItems = SearchRateCounter.etwitterport(stageNamePrefitwitter + "_dropped_messages");
+    stageEtwitterceptions = SearchLongGauge.etwitterport(stageNamePrefitwitter + "_stage_etwitterceptions");
 
-    processTimerStats = SearchTimerStats.export(stageNamePrefix, TimeUnit.NANOSECONDS,
+    processTimerStats = SearchTimerStats.etwitterport(stageNamePrefitwitter, TimeUnit.NANOSECONDS,
         true);
-    processPercentile = PercentileUtil.createPercentile(stageNamePrefix);
+    processPercentile = PercentileUtil.createPercentile(stageNamePrefitwitter);
 
-    incomingBatchesRateCounter = SearchRateCounter.export(stageNamePrefix + "_incoming_batches");
+    incomingBatchesRateCounter = SearchRateCounter.etwitterport(stageNamePrefitwitter + "_incoming_batches");
     incomingBatchObjectsRateCounter =
-        SearchRateCounter.export(stageNamePrefix + "_incoming_batch_objects");
+        SearchRateCounter.etwitterport(stageNamePrefitwitter + "_incoming_batch_objects");
   }
 
   protected void innerSetupStats() {
@@ -218,7 +218,7 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
   }
 
   protected SearchCounter makeStageCounter(String counterName) {
-    return SearchCounter.export(getStageNamePrefix() + "_" + counterName);
+    return SearchCounter.etwitterport(getStageNamePrefitwitter() + "_" + counterName);
   }
 
   private SearchRateCounter getEmitObjectsRateCounterFor(Optional<String> maybeBranch) {
@@ -231,24 +231,24 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
 
   private SearchRateCounter getRateCounterFor(
       Optional<String> maybeBranch,
-      String statSuffix,
+      String statSuffitwitter,
       ConcurrentMap<Optional<String>, SearchRateCounter> rateCountersMap) {
     SearchRateCounter rateCounter = rateCountersMap.get(maybeBranch);
     if (rateCounter == null) {
-      String branchSuffix = maybeBranch.map(b -> "_" + b.toLowerCase()).orElse("");
-      rateCounter = SearchRateCounter.export(stageNamePrefix + branchSuffix + "_" + statSuffix);
-      SearchRateCounter existingRateCounter = rateCountersMap.putIfAbsent(maybeBranch, rateCounter);
-      if (existingRateCounter != null) {
+      String branchSuffitwitter = maybeBranch.map(b -> "_" + b.toLowerCase()).orElse("");
+      rateCounter = SearchRateCounter.etwitterport(stageNamePrefitwitter + branchSuffitwitter + "_" + statSuffitwitter);
+      SearchRateCounter etwitteristingRateCounter = rateCountersMap.putIfAbsent(maybeBranch, rateCounter);
+      if (etwitteristingRateCounter != null) {
         Preconditions.checkState(
-            existingRateCounter == rateCounter,
-            "SearchRateCounter.export() should always return the same stat instance.");
+            etwitteristingRateCounter == rateCounter,
+            "SearchRateCounter.etwitterport() should always return the same stat instance.");
       }
     }
     return rateCounter;
   }
 
-  public String getStageNamePrefix() {
-    return stageNamePrefix;
+  public String getStageNamePrefitwitter() {
+    return stageNamePrefitwitter;
   }
 
   public String getFullStageName() {
@@ -256,7 +256,7 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
   }
 
   @Override
-  public void process(Object obj) throws StageException {
+  public void process(Object obj) throws StageEtwitterception {
     long startTime = System.nanoTime();
     try {
       // this needs to be updated before calling super.process() so that innerProcess can actually
@@ -278,13 +278,13 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
       long processTime = System.nanoTime() - startTime;
       processTimerStats.timerIncrement(processTime);
       processPercentile.record(processTime);
-      stageExceptions.set(stats.getExceptionCount());
+      stageEtwitterceptions.set(stats.getEtwitterceptionCount());
     }
   }
 
   protected long startProcessing() {
     long startingTime = System.nanoTime();
-    checkIfObjectShouldBeEmittedOrThrowRuntimeException();
+    checkIfObjectShouldBeEmittedOrThrowRuntimeEtwitterception();
     return startingTime;
   }
 
@@ -294,11 +294,11 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
     processPercentile.record(processTime);
   }
 
-  private void checkIfObjectShouldBeEmittedOrThrowRuntimeException() {
+  private void checkIfObjectShouldBeEmittedOrThrowRuntimeEtwitterception() {
     if (DeciderUtil.isAvailableForRandomRecipient(decider, dropItemsDeciderKey)) {
       droppedItems.increment();
-      throw new PipelineStageRuntimeException("Object does not have to be processed and passed"
-          + " to the next stage");
+      throw new PipelineStageRuntimeEtwitterception("Object does not have to be processed and passed"
+          + " to the netwittert stage");
     }
   }
 
@@ -324,8 +324,8 @@ public class TwitterBaseStage<T, R> extends InstrumentedBaseStage {
       DebugEventUtil.addDebugEventToCollection(
           (Collection<?>) obj, getFullStageName(), clock.nowMillis());
     } else {
-      SearchCounter debugEventsNotSupportedCounter = SearchCounter.export(
-          stageNamePrefix + "_debug_events_not_supported_for_" + obj.getClass());
+      SearchCounter debugEventsNotSupportedCounter = SearchCounter.etwitterport(
+          stageNamePrefitwitter + "_debug_events_not_supported_for_" + obj.getClass());
       debugEventsNotSupportedCounter.increment();
     }
   }

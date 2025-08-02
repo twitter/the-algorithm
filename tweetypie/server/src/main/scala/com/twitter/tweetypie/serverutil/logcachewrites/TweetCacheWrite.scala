@@ -25,7 +25,7 @@ case class TweetCacheWrite(
    *  - Tweet id
    *  - Timestamp:
    *      If the tweet id is a snowflake id, this is an offset since tweet creation.
-   *      If it is not a snowflake id, then this is a Unix epoch time in
+   *      If it is not a snowflake id, then this is a Unitwitter epoch time in
    *      milliseconds. (The idea is that for most tweets, this encoding will make
    *      it easier to see the interval between events and whether it occured soon
    *      after tweet creation.)
@@ -36,7 +36,7 @@ case class TweetCacheWrite(
     val builder = new java.lang.StringBuilder
     val timestampOffset =
       if (SnowflakeId.isSnowflakeId(tweetId)) {
-        SnowflakeId(tweetId).unixTimeMillis.asLong
+        SnowflakeId(tweetId).unitwitterTimeMillis.asLong
       } else {
         0
       }
@@ -63,7 +63,7 @@ case class TweetCacheWrite(
 }
 
 object TweetCacheWrite {
-  case class ParseException(msg: String, cause: Exception) extends RuntimeException(cause) {
+  case class ParseEtwitterception(msg: String, cause: Etwitterception) etwittertends RuntimeEtwitterception(cause) {
     override def getMessage: String = s"Failed to parse as TweetCacheWrite: $msg"
   }
 
@@ -81,7 +81,7 @@ object TweetCacheWrite {
       val timestamp = {
         val offset =
           if (SnowflakeId.isSnowflakeId(tweetId)) {
-            SnowflakeId(tweetId).unixTimeMillis.asLong
+            SnowflakeId(tweetId).unitwitterTimeMillis.asLong
           } else {
             0
           }
@@ -94,6 +94,6 @@ object TweetCacheWrite {
 
       TweetCacheWrite(tweetIdStr.toLong, timestamp, action, value)
     } catch {
-      case e: Exception => throw ParseException(msg, e)
+      case e: Etwitterception => throw ParseEtwitterception(msg, e)
     }
 }

@@ -3,14 +3,14 @@
 Core Concepts
 =============
 
-This page provides an overview of the aggregation framework and goes through examples on how to define aggregate features. In general, we can think of an aggregate feature as a grouped set of records, on which we incrementally update the aggregate feature values, crossed by the provided features and conditional on the provided labels.
+This page provides an overview of the aggregation framework and goes through etwitteramples on how to define aggregate features. In general, we can think of an aggregate feature as a grouped set of records, on which we incrementally update the aggregate feature values, crossed by the provided features and conditional on the provided labels.
 
 AggregateGroup
 --------------
 
-An `AggregateGroup` defines a single unit of aggregate computation, similar to a SQL query. These are executed by the underlying jobs (internally, a `DataRecordAggregationMonoid <https://cgit.twitter.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/DataRecordAggregationMonoid.scala#n42>`_ is applied to `DataRecords` that contain the features to aggregate). Many of these groups can exist to define different types of aggregate features.
+An `AggregateGroup` defines a single unit of aggregate computation, similar to a SQL query. These are etwitterecuted by the underlying jobs (internally, a `DataRecordAggregationMonoid <https://cgit.twitter.biz/source/tree/timelines/data_processing/ml_util/aggregation_framework/DataRecordAggregationMonoid.scala#n42>`_ is applied to `DataRecords` that contain the features to aggregate). Many of these groups can etwitterist to define different types of aggregate features.
 
-Let's start with the following examples of an `AggregateGroup` to discuss the meaning of each of its constructor arguments:
+Let's start with the following etwitteramples of an `AggregateGroup` to discuss the meaning of each of its constructor arguments:
 
 .. code-block:: scala
 
@@ -18,7 +18,7 @@ Let's start with the following examples of an `AggregateGroup` to discuss the me
    val aggregatesToCompute: Set[TypedAggregateGroup[_]] = Set(
      AggregateGroup(
        inputSource = timelinesDailyRecapSource,
-       aggregatePrefix = "user_aggregate_v2",
+       aggregatePrefitwitter = "user_aggregate_v2",
        preTransformOpt = Some(RemoveUserIdZero),
        keys = Set(USER_ID),
        features = Set(HAS_PHOTO),
@@ -44,11 +44,11 @@ Naming and preprocessing
 
 `inputSource` defines the input source of `DataRecords` that we aggregate on. These records contain the relevant features required for aggregation. 
 
-`aggregatePrefix` tells the framework what prefix to use for the aggregate features it generates. A descriptive naming scheme with versioning makes it easier to maintain features as you add or remove them over the long-term.
+`aggregatePrefitwitter` tells the framework what prefitwitter to use for the aggregate features it generates. A descriptive naming scheme with versioning makes it easier to maintain features as you add or remove them over the long-term.
 
 `preTransforms` is a `Seq[com.twitter.ml.api.ITransform] <https://cgit.twitter.biz/source/tree/src/java/com/twitter/ml/api/ITransform.java>`_ that can be applied to the data records read from the input source before they are fed into the `AggregateGroup` to apply aggregation. These transforms are optional but can be useful for certain preprocessing operations for a group's raw input features. 
 
-.. admonition:: Examples
+.. admonition:: Etwitteramples
   
   You can downsample input data records by providing `preTransforms`. In addition, you could also join different input labels (e.g. "is_push_openend" and "is_push_favorited") and transform them into a combined label that is their union ("is_push_engaged") on which aggregate counts will be calculated.
 
@@ -58,10 +58,10 @@ Keys
 
 `keys` is a crucial field in the config. It defines a `Set[com.twitter.ml.api.Feature]` which specifies a set of grouping keys to use for this `AggregateGroup`.
 
-Keys can only be of 3 supported types currently: `DISCRETE`, `STRING` and `SPARSE_BINARY`. Using a discrete or a string/text feature as a key specifies the unit to group records by before applying counting/aggregation operators.
+Keys can only be of 3 supported types currently: `DISCRETE`, `STRING` and `SPARSE_BINARY`. Using a discrete or a string/tetwittert feature as a key specifies the unit to group records by before applying counting/aggregation operators.
 
 
-.. admonition:: Examples
+.. admonition:: Etwitteramples
 
   .. cssclass:: shortlist
 
@@ -69,7 +69,7 @@ Keys can only be of 3 supported types currently: `DISCRETE`, `STRING` and `SPARS
 
   #. If the key is `(USER_ID, AUTHOR_ID)`, then the `AggregateGroup` will output features for each unique user-author pair in the input data.
 
-  #. Finally, using a sparse binary feature as key has special "flattening" or "flatMap" like semantics. For example, consider grouping by `(USER_ID, AUTHOR_INTEREST_IDS)` where `AUTHOR_INTEREST_IDS` is a sparse binary feature which represents a set of topic IDs the author may be tweeting about. This creates one record for each `(user_id, interest_id)` pair - so each record with multiple author interests is flattened before feeding it to the aggregation.
+  #. Finally, using a sparse binary feature as key has special "flattening" or "flatMap" like semantics. For etwitterample, consider grouping by `(USER_ID, AUTHOR_INTEREST_IDS)` where `AUTHOR_INTEREST_IDS` is a sparse binary feature which represents a set of topic IDs the author may be tweeting about. This creates one record for each `(user_id, interest_id)` pair - so each record with multiple author interests is flattened before feeding it to the aggregation.
 
 Features
 --------
@@ -86,13 +86,13 @@ The semantics of how the aggregation works is slightly different based on the ty
 
 #. Binary Feature, Sum Metric - Does not apply. No feature will be computed.
 
-#. Continuous Feature, Count Metric - The count metric treats all features as binary features ignoring their value. For example, suppose we have a continuous feature `NUM_CHARACTERS_IN_TWEET`, and key `USER_ID`. This measures the count of records that have this feature `NUM_CHARACTERS_IN_TWEET` present.
+#. Continuous Feature, Count Metric - The count metric treats all features as binary features ignoring their value. For etwitterample, suppose we have a continuous feature `NUM_CHARACTERS_IN_TWEET`, and key `USER_ID`. This measures the count of records that have this feature `NUM_CHARACTERS_IN_TWEET` present.
 
-#. Continuous Feature, Sum Metric - In the above example, the features measures the sum of (num_characters_in_tweet) over all a user’s records. Dividing this sum feature by the count feature would give the average number of characters in all tweets.
+#. Continuous Feature, Sum Metric - In the above etwitterample, the features measures the sum of (num_characters_in_tweet) over all a user’s records. Dividing this sum feature by the count feature would give the average number of characters in all tweets.
 
 .. admonition:: Unsupported feature types
 
-  `DISCRETE` and `SPARSE` features are not supported by the Sum Metric, because there is no meaning in summing a discrete feature or a sparse feature. You can use them with the CountMetric, but they may not do what you would expect since they will be treated as binary features losing all the information within the feature. The best way to use these is as “keys” and not as “features”.
+  `DISCRETE` and `SPARSE` features are not supported by the Sum Metric, because there is no meaning in summing a discrete feature or a sparse feature. You can use them with the CountMetric, but they may not do what you would etwitterpect since they will be treated as binary features losing all the information within the feature. The best way to use these is as “keys” and not as “features”.
 
 .. admonition:: Setting includeAnyFeature
 
@@ -105,13 +105,13 @@ Labels
 
 We typically use this to represent engagement labels in an ML model, in this case, `IS_FAVORITED`.
 
-In this example, we are grouping by `USER_ID`, the feature is `HAS_PHOTO`, the label is `IS_FAVORITED`, and we are computing `CountMetric`. The system will output a feature for each user that represents the number of favorites on tweets having photos by this `userId`.
+In this etwitterample, we are grouping by `USER_ID`, the feature is `HAS_PHOTO`, the label is `IS_FAVORITED`, and we are computing `CountMetric`. The system will output a feature for each user that represents the number of favorites on tweets having photos by this `userId`.
 
 .. admonition:: Setting includeAnyLabel
 
   If constructor argument `includeAnyLabel` is set (as it is by default), then similar to `any_feature`, the framework automatically appends a label of type `any_label` to the set of all labels you define, which represents not applying any filter or cross.
   
-In this example, `any_label` and `any_feature` are set by default and the system would actually output 4 features for each `user_id`:
+In this etwitterample, `any_label` and `any_feature` are set by default and the system would actually output 4 features for each `user_id`:
 
 .. cssclass:: shortlist
 
@@ -154,8 +154,8 @@ Conceptually, you can also think of it as:
 
 .. code-block:: sql
 
-  INSERT INTO <outputStore>.<aggregatePrefix>
-  SELECT AGG(<features>) /* AGG is <metrics>, which is a exponentially decaying SUM or COUNT etc. based on the halfLifves */
+  INSERT INTO <outputStore>.<aggregatePrefitwitter>
+  SELECT AGG(<features>) /* AGG is <metrics>, which is a etwitterponentially decaying SUM or COUNT etc. based on the halfLifves */
   FROM (
     SELECT preTransformOpt(*) FROM <inputSource>
   ) 
