@@ -41,7 +41,7 @@ import com.twitter.visibility.models.SafetyLevel.DevPlatformGetListTweets
 import com.twitter.visibility.models.SafetyLevel.DirectMessages
 import com.twitter.visibility.models.SafetyLevel.DirectMessagesConversationList
 import com.twitter.visibility.models.SafetyLevel.DirectMessagesConversationTimeline
-import com.twitter.visibility.models.SafetyLevel.DirectMessagesInbox
+import com.twitter.visibility.models.SafetyLevel.DirectMessagesInbotwitter
 import com.twitter.visibility.models.SafetyLevel.DirectMessagesMutedUsers
 import com.twitter.visibility.models.SafetyLevel.DirectMessagesPinned
 import com.twitter.visibility.models.SafetyLevel.DirectMessagesSearch
@@ -50,7 +50,7 @@ import com.twitter.visibility.models.SafetyLevel.ElevatedQuoteTweetTimeline
 import com.twitter.visibility.models.SafetyLevel.EmbedTweetMarkup
 import com.twitter.visibility.models.SafetyLevel.EmbeddedTweet
 import com.twitter.visibility.models.SafetyLevel.EmbedsPublicInterestNotice
-import com.twitter.visibility.models.SafetyLevel.ExploreRecommendations
+import com.twitter.visibility.models.SafetyLevel.EtwitterploreRecommendations
 import com.twitter.visibility.models.SafetyLevel.FilterAll
 import com.twitter.visibility.models.SafetyLevel.FilterAllPlaceholder
 import com.twitter.visibility.models.SafetyLevel.FilterDefault
@@ -80,7 +80,7 @@ import com.twitter.visibility.models.SafetyLevel.Minimal
 import com.twitter.visibility.models.SafetyLevel.ModeratedTweetsTimeline
 import com.twitter.visibility.models.SafetyLevel.Moments
 import com.twitter.visibility.models.SafetyLevel.NearbyTimeline
-import com.twitter.visibility.models.SafetyLevel.NewUserExperience
+import com.twitter.visibility.models.SafetyLevel.NewUserEtwitterperience
 import com.twitter.visibility.models.SafetyLevel.NotificationsIbis
 import com.twitter.visibility.models.SafetyLevel.NotificationsPlatform
 import com.twitter.visibility.models.SafetyLevel.NotificationsPlatformPush
@@ -90,8 +90,8 @@ import com.twitter.visibility.models.SafetyLevel.NotificationsTimelineDeviceFoll
 import com.twitter.visibility.models.SafetyLevel.NotificationsWrite
 import com.twitter.visibility.models.SafetyLevel.NotificationsWriterTweetHydrator
 import com.twitter.visibility.models.SafetyLevel.NotificationsWriterV2
-import com.twitter.visibility.models.SafetyLevel.ProfileMixerFavorites
-import com.twitter.visibility.models.SafetyLevel.ProfileMixerMedia
+import com.twitter.visibility.models.SafetyLevel.ProfileMitwittererFavorites
+import com.twitter.visibility.models.SafetyLevel.ProfileMitwittererMedia
 import com.twitter.visibility.models.SafetyLevel.QuickPromoteTweetEligibility
 import com.twitter.visibility.models.SafetyLevel.QuoteTweetTimeline
 import com.twitter.visibility.models.SafetyLevel.QuotedTweetRules
@@ -99,7 +99,7 @@ import com.twitter.visibility.models.SafetyLevel.RecosVideo
 import com.twitter.visibility.models.SafetyLevel.RecosWritePath
 import com.twitter.visibility.models.SafetyLevel.RepliesGrouping
 import com.twitter.visibility.models.SafetyLevel.ReportCenter
-import com.twitter.visibility.models.SafetyLevel.ReturningUserExperienceFocalTweet
+import com.twitter.visibility.models.SafetyLevel.ReturningUserEtwitterperienceFocalTweet
 import com.twitter.visibility.models.SafetyLevel.Revenue
 import com.twitter.visibility.models.SafetyLevel.SafeSearchMinimal
 import com.twitter.visibility.models.SafetyLevel.SafeSearchStrict
@@ -107,8 +107,8 @@ import com.twitter.visibility.models.SafetyLevel.SearchBlenderUserRules
 import com.twitter.visibility.models.SafetyLevel.SearchHydration
 import com.twitter.visibility.models.SafetyLevel.SearchLatest
 import com.twitter.visibility.models.SafetyLevel.SearchLatestUserRules
-import com.twitter.visibility.models.SafetyLevel.SearchMixerSrpMinimal
-import com.twitter.visibility.models.SafetyLevel.SearchMixerSrpStrict
+import com.twitter.visibility.models.SafetyLevel.SearchMitwittererSrpMinimal
+import com.twitter.visibility.models.SafetyLevel.SearchMitwittererSrpStrict
 import com.twitter.visibility.models.SafetyLevel.SearchPeopleSrp
 import com.twitter.visibility.models.SafetyLevel.SearchPeopleTypeahead
 import com.twitter.visibility.models.SafetyLevel.SearchPhoto
@@ -129,7 +129,7 @@ import com.twitter.visibility.models.SafetyLevel.SpacesParticipants
 import com.twitter.visibility.models.SafetyLevel.SpacesSellerApplicationStatus
 import com.twitter.visibility.models.SafetyLevel.SpacesSharing
 import com.twitter.visibility.models.SafetyLevel.StickersTimeline
-import com.twitter.visibility.models.SafetyLevel.StratoExtLimitedEngagements
+import com.twitter.visibility.models.SafetyLevel.StratoEtwittertLimitedEngagements
 import com.twitter.visibility.models.SafetyLevel.StreamServices
 import com.twitter.visibility.models.SafetyLevel.SuperFollowerConnections
 import com.twitter.visibility.models.SafetyLevel.SuperLike
@@ -183,7 +183,7 @@ import com.twitter.visibility.models.SafetyLevel.ZipbirdConsumerArchives
 sealed trait SafetyLevelGroup { val levels: Set[SafetyLevel] }
 
 object SafetyLevelGroup {
-  case object Ads extends SafetyLevelGroup {
+  case object Ads etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       AdsBusinessSettings,
       AdsCampaign,
@@ -195,13 +195,13 @@ object SafetyLevelGroup {
     )
   }
 
-  case object ArticleTimeline extends SafetyLevelGroup {
+  case object ArticleTimeline etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       ArticleTweetTimeline,
     )
   }
 
-  case object ArticleTweets extends SafetyLevelGroup {
+  case object ArticleTweets etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       TwitterArticleCompose,
       TwitterArticleProfileTab,
@@ -209,7 +209,7 @@ object SafetyLevelGroup {
     )
   }
 
-  case object Birdwatch extends SafetyLevelGroup {
+  case object Birdwatch etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       BirdwatchNoteAuthor,
       BirdwatchNoteTweetsTimeline,
@@ -217,20 +217,20 @@ object SafetyLevelGroup {
     )
   }
 
-  case object Cards extends SafetyLevelGroup {
+  case object Cards etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       CardPollVoting,
       CardsService,
     )
   }
 
-  case object Communities extends SafetyLevelGroup {
+  case object Communities etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       SafetyLevel.Communities
     )
   }
 
-  case object Conversation extends SafetyLevelGroup {
+  case object Conversation etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       ConversationFocalPrehydration,
       ConversationFocalTweet,
@@ -240,13 +240,13 @@ object SafetyLevelGroup {
     )
   }
 
-  case object CreativeContainerService extends SafetyLevelGroup {
+  case object CreativeContainerService etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       AccessInternalPromotedContent
     )
   }
 
-  case object Des extends SafetyLevelGroup {
+  case object Des etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       DevPlatformGetListTweets,
       DesFollowingAndFollowersUserList,
@@ -263,7 +263,7 @@ object SafetyLevelGroup {
     )
   }
 
-  case object DesStream extends SafetyLevelGroup {
+  case object DesStream etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       DesRealtime,
       DesRealtimeSpamEnrichment,
@@ -271,19 +271,19 @@ object SafetyLevelGroup {
     )
   }
 
-  case object Dm extends SafetyLevelGroup {
+  case object Dm etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       DirectMessages,
       DirectMessagesConversationList,
       DirectMessagesConversationTimeline,
-      DirectMessagesInbox,
+      DirectMessagesInbotwitter,
       DirectMessagesMutedUsers,
       DirectMessagesPinned,
       DirectMessagesSearch,
     )
   }
 
-  case object Followers extends SafetyLevelGroup {
+  case object Followers etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       FollowedTopicsTimeline,
       FollowerConnections,
@@ -292,7 +292,7 @@ object SafetyLevelGroup {
     )
   }
 
-  case object Graphql extends SafetyLevelGroup {
+  case object Graphql etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       FilterDefault,
       GraphqlDefault,
@@ -300,14 +300,14 @@ object SafetyLevelGroup {
     )
   }
 
-  case object Jiminy extends SafetyLevelGroup {
+  case object Jiminy etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       HumanizationNudge,
       TweetReplyNudge,
     )
   }
 
-  case object Lists extends SafetyLevelGroup {
+  case object Lists etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       AllSubscribedLists,
       ListHeader,
@@ -319,7 +319,7 @@ object SafetyLevelGroup {
     )
   }
 
-  case object Notifications extends SafetyLevelGroup {
+  case object Notifications etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       NotificationsIbis,
       NotificationsPlatform,
@@ -333,7 +333,7 @@ object SafetyLevelGroup {
     )
   }
 
-  case object Other extends SafetyLevelGroup {
+  case object Other etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       CuratedTrendsRepresentativeTweet,
       CurationPolicyViolations,
@@ -345,14 +345,14 @@ object SafetyLevelGroup {
       EmbeddedTweet,
       EmbedsPublicInterestNotice,
       EmbedTweetMarkup,
-      ExploreRecommendations,
+      EtwitterploreRecommendations,
       WritePathLimitedActionsEnforcement,
       LiveVideoTimeline,
       LivePipelineEngagementCounts,
       Minimal,
       Moments,
       NearbyTimeline,
-      NewUserExperience,
+      NewUserEtwitterperience,
       QuoteTweetTimeline,
       QuotedTweetRules,
       ReportCenter,
@@ -371,7 +371,7 @@ object SafetyLevelGroup {
     )
   }
 
-  case object Profile extends SafetyLevelGroup {
+  case object Profile etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       UserProfileHeader,
       UserSelfViewOnly,
@@ -379,14 +379,14 @@ object SafetyLevelGroup {
     )
   }
 
-  case object Reactions extends SafetyLevelGroup {
+  case object Reactions etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       SignalsReactions,
       SignalsTweetReactingUsers,
     )
   }
 
-  case object Recommendations extends SafetyLevelGroup {
+  case object Recommendations etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       MagicRecs,
       MagicRecsV2,
@@ -398,21 +398,21 @@ object SafetyLevelGroup {
     )
   }
 
-  case object ReturningUserExperience extends SafetyLevelGroup {
+  case object ReturningUserEtwitterperience etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
-      SafetyLevel.ReturningUserExperience,
-      ReturningUserExperienceFocalTweet,
+      SafetyLevel.ReturningUserEtwitterperience,
+      ReturningUserEtwitterperienceFocalTweet,
     )
   }
 
-  case object SafeSearch extends SafetyLevelGroup {
+  case object SafeSearch etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       SafeSearchMinimal,
       SafeSearchStrict,
     )
   }
 
-  case object Search extends SafetyLevelGroup {
+  case object Search etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       SearchHydration,
       SearchLatest,
@@ -428,20 +428,20 @@ object SafetyLevelGroup {
     )
   }
 
-  case object SearchMixer extends SafetyLevelGroup {
+  case object SearchMitwitterer etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
-      SearchMixerSrpMinimal,
-      SearchMixerSrpStrict,
+      SearchMitwittererSrpMinimal,
+      SearchMitwittererSrpStrict,
     )
   }
 
-  case object Socialproof extends SafetyLevelGroup {
+  case object Socialproof etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       SafetyLevel.SocialProof
     )
   }
 
-  case object Spaces extends SafetyLevelGroup {
+  case object Spaces etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       SpaceFleetline,
       SpaceHomeTimelineUpranking,
@@ -455,20 +455,20 @@ object SafetyLevelGroup {
     )
   }
 
-  case object Strato extends SafetyLevelGroup {
+  case object Strato etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
-      StratoExtLimitedEngagements
+      StratoEtwittertLimitedEngagements
     )
   }
 
-  case object Superfollows extends SafetyLevelGroup {
+  case object Superfollows etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       SuperFollowerConnections,
       TimelineProfileSuperFollows,
     )
   }
 
-  case object Testing extends SafetyLevelGroup {
+  case object Testing etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       ForDevelopmentOnly,
       KitchenSinkDevelopment,
@@ -476,7 +476,7 @@ object SafetyLevelGroup {
     )
   }
 
-  case object Timeline extends SafetyLevelGroup {
+  case object Timeline etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       BlockMuteUsersTimeline,
       TimelineBookmark,
@@ -497,26 +497,26 @@ object SafetyLevelGroup {
     )
   }
 
-  case object TopicRecommendations extends SafetyLevelGroup {
+  case object TopicRecommendations etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       SafetyLevel.TopicRecommendations,
       TopicsLandingPageTopicRecommendations,
     )
   }
 
-  case object TimelineProfile extends SafetyLevelGroup {
+  case object TimelineProfile etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       SafetyLevel.TimelineProfile,
       TimelineProfileAll,
       TimelineProfileSpaces,
       TimelineMedia,
-      ProfileMixerMedia,
+      ProfileMitwittererMedia,
       TimelineFavorites,
-      ProfileMixerFavorites
+      ProfileMitwittererFavorites
     )
   }
 
-  case object TimelineHome extends SafetyLevelGroup {
+  case object TimelineHome etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       SafetyLevel.TimelineHome,
       TimelineHomeCommunities,
@@ -528,14 +528,14 @@ object SafetyLevelGroup {
     )
   }
 
-  case object TlsApi extends SafetyLevelGroup {
+  case object TlsApi etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       TimelineConversations,
       TimelineFocalTweet,
     )
   }
 
-  case object TweetDetails extends SafetyLevelGroup {
+  case object TweetDetails etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       TweetDetail,
       TweetDetailNonToo,
@@ -544,7 +544,7 @@ object SafetyLevelGroup {
     )
   }
 
-  case object Special extends SafetyLevelGroup {
+  case object Special etwittertends SafetyLevelGroup {
     override val levels: Set[SafetyLevel] = Set(
       FilterAll,
       FilterAllPlaceholder,

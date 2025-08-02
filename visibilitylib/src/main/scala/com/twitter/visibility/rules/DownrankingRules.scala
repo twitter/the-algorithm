@@ -6,7 +6,7 @@ import com.twitter.visibility.configapi.configs.DeciderKey
 import com.twitter.visibility.configapi.params.FSRuleParams.HighSpammyTweetContentScoreConvoDownrankAbusiveQualityThresholdParam
 import com.twitter.visibility.configapi.params.RuleParams.EnableDownrankSpamReplySectioningRuleParam
 import com.twitter.visibility.configapi.params.RuleParams.EnableNotGraduatedDownrankConvosAbusiveQualityRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.NotGraduatedUserLabelRuleHoldbackExperimentParam
+import com.twitter.visibility.configapi.params.RuleParams.NotGraduatedUserLabelRuleHoldbackEtwitterperimentParam
 import com.twitter.visibility.configapi.params.TimelineConversationsDownrankingSpecificParams._
 import com.twitter.visibility.configapi.params.RuleParam
 import com.twitter.visibility.models.TweetSafetyLabelType
@@ -17,22 +17,22 @@ import com.twitter.visibility.rules.RuleActionSourceBuilder.UserSafetyLabelSourc
 
 object DownrankingRules {
 
-  val ToxicityScoreAboveDownrankAbusiveQualitySectionThresholdCondition: TweetHasLabelWithLanguageScoreAboveThreshold =
+  val TotwittericityScoreAboveDownrankAbusiveQualitySectionThresholdCondition: TweetHasLabelWithLanguageScoreAboveThreshold =
     TweetHasLabelWithLanguageScoreAboveThreshold(
-      safetyLabel = TweetSafetyLabelType.HighToxicityScore,
-      languagesToScoreThresholds = ModelScoreThresholds.ToxicityAbusiveQualityLanguagesToThresholds
+      safetyLabel = TweetSafetyLabelType.HighTotwittericityScore,
+      languagesToScoreThresholds = ModelScoreThresholds.TotwittericityAbusiveQualityLanguagesToThresholds
     )
 
-  val ToxicityScoreAboveDownrankLowQualitySectionThresholdCondition: TweetHasLabelWithLanguageScoreAboveThreshold =
+  val TotwittericityScoreAboveDownrankLowQualitySectionThresholdCondition: TweetHasLabelWithLanguageScoreAboveThreshold =
     TweetHasLabelWithLanguageScoreAboveThreshold(
-      safetyLabel = TweetSafetyLabelType.HighToxicityScore,
-      languagesToScoreThresholds = ModelScoreThresholds.ToxicityLowQualityLanguagesToThresholds
+      safetyLabel = TweetSafetyLabelType.HighTotwittericityScore,
+      languagesToScoreThresholds = ModelScoreThresholds.TotwittericityLowQualityLanguagesToThresholds
     )
 
-  val ToxicityScoreAboveDownrankHighQualitySectionThresholdCondition: TweetHasLabelWithLanguageScoreAboveThreshold =
+  val TotwittericityScoreAboveDownrankHighQualitySectionThresholdCondition: TweetHasLabelWithLanguageScoreAboveThreshold =
     TweetHasLabelWithLanguageScoreAboveThreshold(
-      safetyLabel = TweetSafetyLabelType.HighToxicityScore,
-      languagesToScoreThresholds = ModelScoreThresholds.ToxicityHighQualityLanguagesToThresholds
+      safetyLabel = TweetSafetyLabelType.HighTotwittericityScore,
+      languagesToScoreThresholds = ModelScoreThresholds.TotwittericityHighQualityLanguagesToThresholds
     )
 
   val HighSpammyTweetContentScoreConvoDownrankAbusiveQualityCondition: Condition =
@@ -44,40 +44,40 @@ object DownrankingRules {
     TweetHasLabel(TweetSafetyLabelType.HighCryptospamScore)
 }
 
-object HighToxicityScoreDownrankHighQualitySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
+object HighTotwittericityScoreDownrankHighQualitySectionRule
+    etwittertends ConditionWithNotInnerCircleOfFriendsRule(
       Downrank,
-      DownrankingRules.ToxicityScoreAboveDownrankHighQualitySectionThresholdCondition
+      DownrankingRules.TotwittericityScoreAboveDownrankHighQualitySectionThresholdCondition
     )
     with DoesLogVerdictDecidered {
   override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighToxicityScore))
+    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighTotwittericityScore))
 
   override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
 }
 
-object HighToxicityScoreDownrankLowQualitySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
+object HighTotwittericityScoreDownrankLowQualitySectionRule
+    etwittertends ConditionWithNotInnerCircleOfFriendsRule(
       ConversationSectionLowQuality,
-      DownrankingRules.ToxicityScoreAboveDownrankLowQualitySectionThresholdCondition
+      DownrankingRules.TotwittericityScoreAboveDownrankLowQualitySectionThresholdCondition
     )
     with DoesLogVerdict {
   override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighToxicityScore))
+    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighTotwittericityScore))
 }
 
-object HighToxicityScoreDownrankAbusiveQualitySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
+object HighTotwittericityScoreDownrankAbusiveQualitySectionRule
+    etwittertends ConditionWithNotInnerCircleOfFriendsRule(
       ConversationSectionAbusiveQuality,
-      DownrankingRules.ToxicityScoreAboveDownrankAbusiveQualitySectionThresholdCondition
+      DownrankingRules.TotwittericityScoreAboveDownrankAbusiveQualitySectionThresholdCondition
     )
     with DoesLogVerdict {
   override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighToxicityScore))
+    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighTotwittericityScore))
 }
 
 object UntrustedUrlConversationsTweetLabelRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
+    etwittertends ConditionWithNotInnerCircleOfFriendsRule(
       ConversationSectionAbusiveQuality,
       TweetHasLabel(TweetSafetyLabelType.UntrustedUrl)
     )
@@ -88,7 +88,7 @@ object UntrustedUrlConversationsTweetLabelRule
 }
 
 object DownrankSpamReplyConversationsTweetLabelRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
+    etwittertends ConditionWithNotInnerCircleOfFriendsRule(
       ConversationSectionAbusiveQuality,
       TweetHasLabel(TweetSafetyLabelType.DownrankSpamReply)
     )
@@ -103,7 +103,7 @@ object DownrankSpamReplyConversationsTweetLabelRule
 }
 
 object DownrankSpamReplyConversationsAuthorLabelRule
-    extends AuthorLabelWithNotInnerCircleOfFriendsRule(
+    etwittertends AuthorLabelWithNotInnerCircleOfFriendsRule(
       ConversationSectionAbusiveQuality,
       UserLabelValue.DownrankSpamReply
     )
@@ -118,7 +118,7 @@ object DownrankSpamReplyConversationsAuthorLabelRule
 }
 
 object NotGraduatedConversationsAuthorLabelRule
-    extends AuthorLabelWithNotInnerCircleOfFriendsRule(
+    etwittertends AuthorLabelWithNotInnerCircleOfFriendsRule(
       ConversationSectionLowQuality,
       UserLabelValue.NotGraduated
     )
@@ -128,7 +128,7 @@ object NotGraduatedConversationsAuthorLabelRule
     Seq(EnableNotGraduatedDownrankConvosAbusiveQualityRuleParam)
 
   override def holdbacks: Seq[RuleParam[Boolean]] = Seq(
-    NotGraduatedUserLabelRuleHoldbackExperimentParam)
+    NotGraduatedUserLabelRuleHoldbackEtwitterperimentParam)
 
   override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
   override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
@@ -136,7 +136,7 @@ object NotGraduatedConversationsAuthorLabelRule
 }
 
 object HighProactiveTosScoreTweetLabelDownrankingRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
+    etwittertends ConditionWithNotInnerCircleOfFriendsRule(
       ConversationSectionAbusiveQuality,
       TweetHasLabel(TweetSafetyLabelType.HighProactiveTosScore)
     )
@@ -147,7 +147,7 @@ object HighProactiveTosScoreTweetLabelDownrankingRule
 }
 
 object HighPSpammyTweetScoreDownrankLowQualitySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
+    etwittertends ConditionWithNotInnerCircleOfFriendsRule(
       action = ConversationSectionLowQuality,
       condition = TweetHasLabelWithScoreAboveThreshold(
         TweetSafetyLabelType.HighPSpammyTweetScore,
@@ -163,7 +163,7 @@ object HighPSpammyTweetScoreDownrankLowQualitySectionRule
 }
 
 object HighSpammyTweetContentScoreConvoDownrankAbusiveQualityRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
+    etwittertends ConditionWithNotInnerCircleOfFriendsRule(
       action = ConversationSectionAbusiveQuality,
       condition = And(
         Not(IsTweetInTweetLevelStcmHoldback),
@@ -179,7 +179,7 @@ object HighSpammyTweetContentScoreConvoDownrankAbusiveQualityRule
 }
 
 object HighCryptospamScoreConvoDownrankAbusiveQualityRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
+    etwittertends ConditionWithNotInnerCircleOfFriendsRule(
       action = ConversationSectionAbusiveQuality,
       condition = DownrankingRules.HighCryptospamScoreConvoDownrankAbusiveQualityCondition
     )
@@ -193,7 +193,7 @@ object HighCryptospamScoreConvoDownrankAbusiveQualityRule
 }
 
 object RitoActionedTweetDownrankLowQualitySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
+    etwittertends ConditionWithNotInnerCircleOfFriendsRule(
       action = ConversationSectionLowQuality,
       condition = TweetHasLabel(TweetSafetyLabelType.RitoActionedTweet)
     )

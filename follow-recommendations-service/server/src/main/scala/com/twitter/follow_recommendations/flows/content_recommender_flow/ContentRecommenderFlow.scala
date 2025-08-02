@@ -11,7 +11,7 @@ import com.twitter.follow_recommendations.common.base.RecommendationFlow
 import com.twitter.follow_recommendations.common.base.RecommendationResultsConfig
 import com.twitter.follow_recommendations.common.base.Transform
 import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.predicates.ExcludedUserIdPredicate
+import com.twitter.follow_recommendations.common.predicates.EtwittercludedUserIdPredicate
 import com.twitter.follow_recommendations.common.predicates.InactivePredicate
 import com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicate
 import com.twitter.follow_recommendations.common.predicates.sgs.InvalidRelationshipPredicate
@@ -22,15 +22,15 @@ import com.twitter.follow_recommendations.common.transforms.dedup.DedupTransform
 import com.twitter.follow_recommendations.common.transforms.tracking_token.TrackingTokenTransform
 import com.twitter.follow_recommendations.utils.CandidateSourceHoldbackUtil
 import com.twitter.follow_recommendations.utils.RecommendationFlowBaseSideEffectsUtil
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.quality_factor.BoundsWithDefault
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactor
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactorConfig
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactorObserver
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.quality_factor.BoundsWithDefault
+import com.twitter.product_mitwitterer.core.quality_factor.LinearLatencyQualityFactor
+import com.twitter.product_mitwitterer.core.quality_factor.LinearLatencyQualityFactorConfig
+import com.twitter.product_mitwitterer.core.quality_factor.LinearLatencyQualityFactorObserver
+import com.twitter.product_mitwitterer.core.quality_factor.QualityFactorObserver
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class ContentRecommenderFlow @Inject() (
@@ -42,7 +42,7 @@ class ContentRecommenderFlow @Inject() (
   invalidRelationshipPredicate: InvalidRelationshipPredicate,
   trackingTokenTransform: TrackingTokenTransform,
   baseStatsReceiver: StatsReceiver)
-    extends RecommendationFlow[ContentRecommenderRequest, CandidateUser]
+    etwittertends RecommendationFlow[ContentRecommenderRequest, CandidateUser]
     with RecommendationFlowBaseSideEffectsUtil[ContentRecommenderRequest, CandidateUser]
     with CandidateSourceHoldbackUtil {
 
@@ -51,7 +51,7 @@ class ContentRecommenderFlow @Inject() (
   override val qualityFactorObserver: Option[QualityFactorObserver] = {
     val config = LinearLatencyQualityFactorConfig(
       qualityFactorBounds =
-        BoundsWithDefault(minInclusive = 0.1, maxInclusive = 1.0, default = 1.0),
+        BoundsWithDefault(minInclusive = 0.1, matwitterInclusive = 1.0, default = 1.0),
       initialDelay = 60.seconds,
       targetLatency = 100.milliseconds,
       targetLatencyPercentile = 95.0,
@@ -88,7 +88,7 @@ class ContentRecommenderFlow @Inject() (
       preRankerFilterStats.scope("invalid_relationship_predicate")
 
     object recentFollowingGatedPredicate
-        extends GatedPredicateBase[(ContentRecommenderRequest, CandidateUser)](
+        etwittertends GatedPredicateBase[(ContentRecommenderRequest, CandidateUser)](
           recentFollowingPredicate,
           recentFollowingPredicateStats
         ) {
@@ -97,7 +97,7 @@ class ContentRecommenderFlow @Inject() (
     }
 
     object invalidRelationshipGatedPredicate
-        extends GatedPredicateBase[(ContentRecommenderRequest, CandidateUser)](
+        etwittertends GatedPredicateBase[(ContentRecommenderRequest, CandidateUser)](
           invalidRelationshipPredicate,
           invalidRelationshipPredicateStats
         ) {
@@ -105,8 +105,8 @@ class ContentRecommenderFlow @Inject() (
         item._1.params(ContentRecommenderParams.EnableInvalidRelationshipPredicate)
     }
 
-    ExcludedUserIdPredicate
-      .observe(preRankerFilterStats.scope("exclude_user_id_predicate"))
+    EtwittercludedUserIdPredicate
+      .observe(preRankerFilterStats.scope("etwitterclude_user_id_predicate"))
       .andThen(recentFollowingGatedPredicate.observe(recentFollowingPredicateStats))
       .andThen(invalidRelationshipGatedPredicate.observe(invalidRelationshipPredicateStats))
   }
@@ -194,7 +194,7 @@ class ContentRecommenderFlow @Inject() (
     target: ContentRecommenderRequest
   ): RecommendationResultsConfig = {
     RecommendationResultsConfig(
-      target.maxResults.getOrElse(target.params(ContentRecommenderParams.ResultSizeParam)),
+      target.matwitterResults.getOrElse(target.params(ContentRecommenderParams.ResultSizeParam)),
       target.params(ContentRecommenderParams.BatchSizeParam)
     )
   }

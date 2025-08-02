@@ -23,11 +23,11 @@ jvm_binary(
         "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
         "twitter-server/logback-classic/src/main/scala",
     ],
-    excludes = [
-        exclude("com.twitter.translations", "translations-twitter"),
-        exclude("org.apache.hadoop", "hadoop-aws"),
-        exclude("org.tensorflow"),
-        scala_exclude("com.twitter", "ckoia-scala"),
+    etwittercludes = [
+        etwitterclude("com.twitter.translations", "translations-twitter"),
+        etwitterclude("org.apache.hadoop", "hadoop-aws"),
+        etwitterclude("org.tensorflow"),
+        scala_etwitterclude("com.twitter", "ckoia-scala"),
     ],
 )
 

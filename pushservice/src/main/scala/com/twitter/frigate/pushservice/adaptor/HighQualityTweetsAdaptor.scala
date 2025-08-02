@@ -4,7 +4,7 @@ import com.twitter.finagle.stats.Stat
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base.CandidateSource
 import com.twitter.frigate.common.base.CandidateSourceEligible
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
+import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContetwittert
 import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
 import com.twitter.frigate.pushservice.model.PushTypes.Target
 import com.twitter.frigate.pushservice.params.HighQualityCandidateGroupEnum
@@ -31,31 +31,31 @@ import com.twitter.util.Future
 object HighQualityTweetsHelper {
   def getFollowedTopics(
     target: Target,
-    interestsWithLookupContextStore: ReadableStore[
-      InterestsLookupRequestWithContext,
+    interestsWithLookupContetwittertStore: ReadableStore[
+      InterestsLookupRequestWithContetwittert,
       UserInterests
     ],
     followedTopicsStats: Stat
   ): Future[Seq[Long]] = {
     TopicsUtil
-      .getTopicsFollowedByUser(target, interestsWithLookupContextStore, followedTopicsStats).map {
+      .getTopicsFollowedByUser(target, interestsWithLookupContetwittertStore, followedTopicsStats).map {
         userInterestsOpt =>
           val userInterests = userInterestsOpt.getOrElse(Seq.empty)
-          val extractedTopicIds = userInterests.flatMap {
+          val etwittertractedTopicIds = userInterests.flatMap {
             _.interestId match {
               case SemanticCore(semanticCore) => Some(semanticCore.id)
               case _ => None
             }
           }
-          extractedTopicIds
+          etwittertractedTopicIds
       }
   }
 
   def getTripQueries(
     target: Target,
     enabledGroups: Set[HighQualityCandidateGroupEnum.Value],
-    interestsWithLookupContextStore: ReadableStore[
-      InterestsLookupRequestWithContext,
+    interestsWithLookupContetwittertStore: ReadableStore[
+      InterestsLookupRequestWithContetwittert,
       UserInterests
     ],
     sourceIds: Seq[String],
@@ -63,7 +63,7 @@ object HighQualityTweetsHelper {
   ): Future[Set[TripDomain]] = {
 
     val followedTopicIdsSetFut: Future[Set[Long]] = if (enabledGroups.contains(Topic)) {
-      getFollowedTopics(target, interestsWithLookupContextStore, stat).map(topicIds =>
+      getFollowedTopics(target, interestsWithLookupContetwittertStore, stat).map(topicIds =>
         topicIds.toSet)
     } else {
       Future.value(Set.empty)
@@ -118,11 +118,11 @@ object HighQualityTweetsHelper {
 
 case class HighQualityTweetsAdaptor(
   tripTweetCandidateStore: ReadableStore[TripDomain, TripTweets],
-  interestsWithLookupContextStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests],
+  interestsWithLookupContetwittertStore: ReadableStore[InterestsLookupRequestWithContetwittert, UserInterests],
   tweetyPieStore: ReadableStore[Long, TweetyPieResult],
   tweetyPieStoreNoVF: ReadableStore[Long, TweetyPieResult],
   globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
+    etwittertends CandidateSource[Target, RawCandidate]
     with CandidateSourceEligible[Target, RawCandidate] {
 
   override def name: String = this.getClass.getSimpleName
@@ -144,7 +144,7 @@ case class HighQualityTweetsAdaptor(
       .pushRecTypeFatiguePredicate(
         CommonRecommendationType.TripHqTweet,
         FS.HighQualityTweetsPushInterval,
-        FS.MaxHighQualityTweetsPushGivenInterval,
+        FS.MatwitterHighQualityTweetsPushGivenInterval,
         stats
       )
   }
@@ -155,7 +155,7 @@ case class HighQualityTweetsAdaptor(
     val tripQueriesF: Future[Set[TripDomain]] = HighQualityTweetsHelper.getTripQueries(
       target = target,
       enabledGroups = target.params(FS.HighQualityCandidatesEnableGroups).toSet,
-      interestsWithLookupContextStore = interestsWithLookupContextStore,
+      interestsWithLookupContetwittertStore = interestsWithLookupContetwittertStore,
       sourceIds = target.params(FS.TripTweetCandidateSourceIds),
       stat = followedTopicsStats
     )
@@ -165,7 +165,7 @@ case class HighQualityTweetsAdaptor(
         HighQualityTweetsHelper.getTripQueries(
           target = target,
           enabledGroups = target.params(FS.HighQualityCandidatesFallbackEnabledGroups).toSet,
-          interestsWithLookupContextStore = interestsWithLookupContextStore,
+          interestsWithLookupContetwittertStore = interestsWithLookupContetwittertStore,
           sourceIds = target.params(FS.HighQualityCandidatesFallbackSourceIds),
           stat = followedTopicsStats
         )
@@ -204,7 +204,7 @@ case class HighQualityTweetsAdaptor(
   ): Future[Map[TripDomain, Seq[TripTweet]]] = {
     Future.collect(tripTweetCandidateStore.multiGet(tripQueries)).map { response =>
       response
-        .filter(p => p._2.exists(_.tweets.nonEmpty))
+        .filter(p => p._2.etwitterists(_.tweets.nonEmpty))
         .mapValues(_.map(_.tweets).getOrElse(Seq.empty))
     }
   }

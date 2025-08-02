@@ -1,6 +1,6 @@
 scala_library(
-    name = "fixture",
-    sources = ["EnricherFixture.scala"],
+    name = "fitwitterture",
+    sources = ["EnricherFitwitterture.scala"],
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/org/scalatest",

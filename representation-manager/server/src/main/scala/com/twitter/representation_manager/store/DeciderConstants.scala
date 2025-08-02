@@ -3,8 +3,8 @@ package com.twitter.representation_manager.store
 import com.twitter.servo.decider.DeciderKeyEnum
 
 object DeciderConstants {
-  // Deciders inherited from CR and RSX and only used in LegacyRMS
-  // Their value are manipulated by CR and RSX's yml file and their decider dashboard
+  // Deciders inherited from CR and RStwitter and only used in LegacyRMS
+  // Their value are manipulated by CR and RStwitter's yml file and their decider dashboard
   // We will remove them after migration completed
   val enableLogFavBasedApeEntity20M145KUpdatedEmbeddingCachedStore =
     "enableLogFavBasedApeEntity20M145KUpdatedEmbeddingCachedStore"
@@ -28,7 +28,7 @@ object DeciderConstants {
 }
 
 // Necessary for using servo Gates
-object DeciderKey extends DeciderKeyEnum {
+object DeciderKey etwittertends DeciderKeyEnum {
   val enableLogFavBasedApeEntity20M145KUpdatedEmbeddingCachedStore: Value = Value(
     DeciderConstants.enableLogFavBasedApeEntity20M145KUpdatedEmbeddingCachedStore
   )

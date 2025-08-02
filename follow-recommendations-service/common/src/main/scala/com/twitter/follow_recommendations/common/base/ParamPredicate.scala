@@ -5,7 +5,7 @@ import com.twitter.stitch.Stitch
 import com.twitter.timelines.configapi.HasParams
 import com.twitter.timelines.configapi.Param
 
-case class ParamPredicate[Request <: HasParams](param: Param[Boolean]) extends Predicate[Request] {
+case class ParamPredicate[Request <: HasParams](param: Param[Boolean]) etwittertends Predicate[Request] {
 
   def apply(request: Request): Stitch[PredicateResult] = {
     if (request.params(param)) {

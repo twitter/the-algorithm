@@ -12,12 +12,12 @@ name = "navi_torch"
 path = "src/bin/navi_torch.rs"
 required-features=["torch"]
 [[bin]]
-name = "navi_onnx"
-path = "src/bin/navi_onnx.rs"
-required-features=["onnx"]
+name = "navi_onntwitter"
+path = "src/bin/navi_onntwitter.rs"
+required-features=["onntwitter"]
 [[bin]]
-name = "navi_onnx_test"
-path = "src/bin/bin_tests/navi_onnx_test.rs"
+name = "navi_onntwitter_test"
+path = "src/bin/bin_tests/navi_onntwitter_test.rs"
 [[bin]]
 name = "navi_torch_test"
 path = "src/bin/bin_tests/navi_torch_test.rs"
@@ -27,7 +27,7 @@ required-features=["torch"]
 default=[]
 navi_console=[]
 torch=["tch"]
-onnx=[]
+onntwitter=[]
 tf=["tensorflow"]
 [dependencies]
 itertools = "0.10.5"
@@ -41,7 +41,7 @@ flamegraph = "0.6.1"
 fnv = "1.0.7"
 futures = { version = "0.3", default-features = false }
 image = "0.24.5"
-indexmap = "1.8.1"
+indetwittermap = "1.8.1"
 lazy_static = "1.4"
 libloading = "0.7"
 log = "0.4.17"
@@ -53,7 +53,7 @@ parking_lot = "0.12.1"
 rand = "0.8.5"
 rand_pcg = "0.3.1"
 random = "0.12.2"
-x509-parser = "0.15.0"
+twitter509-parser = "0.15.0"
 sha256 = "1.0.3"
 tonic = { version = "0.6.2", features=['compression', 'tls'] }
 tokio = { version = "1.17.0", features = ["macros", "rt-multi-thread", "fs", "process"] }

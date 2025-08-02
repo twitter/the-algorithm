@@ -10,24 +10,24 @@ import org.slf4j.LoggerFactory;
 
 import com.twitter.finagle.ListeningServer;
 import com.twitter.finagle.Service;
-import com.twitter.finagle.SslException;
-import com.twitter.finagle.ThriftMux;
-import com.twitter.finagle.mtls.server.MtlsThriftMuxServer;
-import com.twitter.finagle.mux.transport.OpportunisticTls;
+import com.twitter.finagle.SslEtwitterception;
+import com.twitter.finagle.ThriftMutwitter;
+import com.twitter.finagle.mtls.server.MtlsThriftMutwitterServer;
+import com.twitter.finagle.mutwitter.transport.OpportunisticTls;
 import com.twitter.finagle.stats.MetricsStatsReceiver;
 import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.finagle.util.ExitGuard;
+import com.twitter.finagle.util.EtwitteritGuard;
 import com.twitter.finagle.zipkin.thrift.ZipkinTracer;
-import com.twitter.search.common.dark.DarkProxy;
+import com.twitter.search.common.dark.DarkProtwittery;
 import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.EarlybirdFinagleServerMonitor;
+import com.twitter.search.earlybird.etwitterception.CriticalEtwitterceptionHandler;
+import com.twitter.search.earlybird.etwitterception.EarlybirdFinagleServerMonitor;
 import com.twitter.search.earlybird.thrift.EarlybirdService;
 import com.twitter.server.filter.AdmissionControl;
 import com.twitter.server.filter.cpuAdmissionControl;
 import com.twitter.util.Await;
 import com.twitter.util.Duration;
-import com.twitter.util.TimeoutException;
+import com.twitter.util.TimeoutEtwitterception;
 
 public class EarlybirdProductionFinagleServerManager implements EarlybirdFinagleServerManager {
   private static final Logger LOG =
@@ -35,12 +35,12 @@ public class EarlybirdProductionFinagleServerManager implements EarlybirdFinagle
 
   private final AtomicReference<ListeningServer> warmUpFinagleServer = new AtomicReference<>();
   private final AtomicReference<ListeningServer> productionFinagleServer = new AtomicReference<>();
-  private final EarlybirdFinagleServerMonitor unhandledExceptionMonitor;
+  private final EarlybirdFinagleServerMonitor unhandledEtwitterceptionMonitor;
 
   public EarlybirdProductionFinagleServerManager(
-      CriticalExceptionHandler criticalExceptionHandler) {
-    this.unhandledExceptionMonitor =
-        new EarlybirdFinagleServerMonitor(criticalExceptionHandler);
+      CriticalEtwitterceptionHandler criticalEtwitterceptionHandler) {
+    this.unhandledEtwitterceptionMonitor =
+        new EarlybirdFinagleServerMonitor(criticalEtwitterceptionHandler);
   }
 
   @Override
@@ -59,7 +59,7 @@ public class EarlybirdProductionFinagleServerManager implements EarlybirdFinagle
   }
 
   @Override
-  public void stopWarmUpFinagleServer(Duration serverCloseWaitTime) throws InterruptedException {
+  public void stopWarmUpFinagleServer(Duration serverCloseWaitTime) throws InterruptedEtwitterception {
     stopFinagleServer(warmUpFinagleServer, serverCloseWaitTime, "Warm up");
   }
 
@@ -69,19 +69,19 @@ public class EarlybirdProductionFinagleServerManager implements EarlybirdFinagle
   }
 
   @Override
-  public void startProductionFinagleServer(DarkProxy<ThriftClientRequest, byte[]> darkProxy,
+  public void startProductionFinagleServer(DarkProtwittery<ThriftClientRequest, byte[]> darkProtwittery,
                                            EarlybirdService.ServiceIface serviceIface,
                                            String serviceName,
                                            int port) {
     TProtocolFactory protocolFactory = new TCompactProtocol.Factory();
     startFinagleServer(productionFinagleServer, "production",
-      darkProxy.toFilter().andThen(new EarlybirdService.Service(serviceIface, protocolFactory)),
+      darkProtwittery.toFilter().andThen(new EarlybirdService.Service(serviceIface, protocolFactory)),
       protocolFactory, serviceName, port);
   }
 
   @Override
   public void stopProductionFinagleServer(Duration serverCloseWaitTime)
-      throws InterruptedException {
+      throws InterruptedEtwitterception {
     stopFinagleServer(productionFinagleServer, serverCloseWaitTime, "Production");
   }
 
@@ -96,22 +96,22 @@ public class EarlybirdProductionFinagleServerManager implements EarlybirdFinagle
       Service<byte[], byte[]> service, String serviceName, int port,
       TProtocolFactory protocolFactory) {
     MetricsStatsReceiver statsReceiver = new MetricsStatsReceiver();
-    ThriftMux.Server server = new MtlsThriftMuxServer(ThriftMux.server())
+    ThriftMutwitter.Server server = new MtlsThriftMutwitterServer(ThriftMutwitter.server())
         .withMutualTls(EarlybirdProperty.getServiceIdentifier())
         .withServiceClass(EarlybirdService.class)
         .withOpportunisticTls(OpportunisticTls.Required())
         .withLabel(serviceName)
         .withStatsReceiver(statsReceiver)
         .withTracer(ZipkinTracer.mk(statsReceiver))
-        .withMonitor(unhandledExceptionMonitor)
+        .withMonitor(unhandledEtwitterceptionMonitor)
         .withProtocolFactory(protocolFactory);
 
     if (cpuAdmissionControl.isDefined()) {
       LOG.info("cpuAdmissionControl flag is set, replacing AuroraThrottlingAdmissionFilter"
-          + " with LinuxCpuAdmissionFilter");
+          + " with LinutwitterCpuAdmissionFilter");
       server = server
           .configured(AdmissionControl.auroraThrottling().off().mk())
-          .configured(AdmissionControl.linuxCpu().useGlobalFlag().mk());
+          .configured(AdmissionControl.linutwitterCpu().useGlobalFlag().mk());
     }
 
     return server.serve(new InetSocketAddress(port), service);
@@ -119,7 +119,7 @@ public class EarlybirdProductionFinagleServerManager implements EarlybirdFinagle
 
   private void stopFinagleServer(AtomicReference<ListeningServer> finagleServer,
                                  Duration serverCloseWaitTime,
-                                 String serverDescription) throws InterruptedException {
+                                 String serverDescription) throws InterruptedEtwitterception {
     try {
       LOG.info("Waiting for " + serverDescription + " finagle server to close. "
                + "Current time is " + System.currentTimeMillis());
@@ -127,25 +127,25 @@ public class EarlybirdProductionFinagleServerManager implements EarlybirdFinagle
       LOG.info("Stopped " + serverDescription + " finagle server. Current time is "
                + System.currentTimeMillis());
       finagleServer.set(null);
-    } catch (TimeoutException e) {
+    } catch (TimeoutEtwitterception e) {
       LOG.warn(serverDescription + " finagle server did not shutdown cleanly.", e);
-    } catch (SslException e) {
-      // Closing the Thrift port seems to throw an SSLException (SSLEngine closed already).
-      // See SEARCH-29449. Log the exception and reset finagleServer, so that future calls to
+    } catch (SslEtwitterception e) {
+      // Closing the Thrift port seems to throw an SSLEtwitterception (SSLEngine closed already).
+      // See SEARCH-29449. Log the etwitterception and reset finagleServer, so that future calls to
       // startProductionFinagleServer() succeed.
-      LOG.warn("Got a SSLException while trying to close the Thrift port.", e);
+      LOG.warn("Got a SSLEtwitterception while trying to close the Thrift port.", e);
       finagleServer.set(null);
-    } catch (InterruptedException e) {
-      // If we catch an InterruptedException here, it means that we're probably shutting down.
-      // We should propagate this exception, and rely on EarlybirdServer.stopThriftService()
+    } catch (InterruptedEtwitterception e) {
+      // If we catch an InterruptedEtwitterception here, it means that we're probably shutting down.
+      // We should propagate this etwitterception, and rely on EarlybirdServer.stopThriftService()
       // to do the right thing.
       throw e;
-    } catch (Exception e) {
+    } catch (Etwitterception e) {
       LOG.error(e.getMessage(), e);
     } finally {
       // If the finagle server does not close cleanly, this line prints details about
-      // the ExitGuards.
-      LOG.info(serverDescription + " server ExitGuard explanation: " + ExitGuard.explainGuards());
+      // the EtwitteritGuards.
+      LOG.info(serverDescription + " server EtwitteritGuard etwitterplanation: " + EtwitteritGuard.etwitterplainGuards());
     }
   }
 }

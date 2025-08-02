@@ -12,7 +12,7 @@ import com.twitter.util.logging.Logging
 @Singleton
 class HydrateCandidateParamsTransform[Target <: HasParams with HasDisplayLocation] @Inject() (
   candidateParamsFactory: CandidateUserParamsFactory[Target])
-    extends Transform[Target, CandidateUser]
+    etwittertends Transform[Target, CandidateUser]
     with Logging {
 
   def transform(target: Target, candidates: Seq[CandidateUser]): Stitch[Seq[CandidateUser]] = {

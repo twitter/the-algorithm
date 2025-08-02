@@ -34,10 +34,10 @@ abstract class BaseCopyFramework(statsReceiver: StatsReceiver) {
 
     if (pushCopiesFromRectype.isEmpty) {
       NoAvailableCopyStat.counter(rawCandidate.commonRecType.name).incr()
-      throw new IllegalStateException(s"No Copy defined for CRT: " + rawCandidate.commonRecType)
+      throw new IllegalStateEtwitterception(s"No Copy defined for CRT: " + rawCandidate.commonRecType)
     }
     pushCopiesFromRectype
-      .map(pushCopySet => copyFilters.execute(rawCandidate, pushCopySet.toSeq))
+      .map(pushCopySet => copyFilters.etwitterecute(rawCandidate, pushCopySet.toSeq))
       .getOrElse(Future.value(Seq.empty))
   }
 

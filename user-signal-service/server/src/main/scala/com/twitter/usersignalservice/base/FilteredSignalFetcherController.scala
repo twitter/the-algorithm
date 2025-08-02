@@ -19,7 +19,7 @@ case class FilteredSignalFetcherController(
   timer: Timer,
   filterSignalFetchers: Map[SignalType, BaseSignalFetcher] =
     Map.empty[SignalType, BaseSignalFetcher])
-    extends ReadableStore[Query, Seq[Signal]] {
+    etwittertends ReadableStore[Query, Seq[Signal]] {
   val statsReceiver: StatsReceiver = stats.scope(this.getClass.getCanonicalName)
 
   override def get(query: Query): Future[Option[Seq[Signal]]] = {
@@ -32,7 +32,7 @@ case class FilteredSignalFetcherController(
         filteredSignals
       }.raiseWithin(BaseSignalFetcher.Timeout)(timer).handle {
         case e =>
-          clientStatsReceiver.scope("FetcherExceptions").counter(e.getClass.getCanonicalName).incr()
+          clientStatsReceiver.scope("FetcherEtwitterceptions").counter(e.getClass.getCanonicalName).incr()
           BaseSignalFetcher.EmptyResponse
       }
   }
@@ -67,7 +67,7 @@ case class FilteredSignalFetcherController(
                   case (signal, internalIdOpt)
                       if internalIdOpt.nonEmpty && !filterSignalsSet.contains(internalIdOpt.get) =>
                     signal
-                }.take(query.maxResults.getOrElse(Int.MaxValue)))
+                }.take(query.matwitterResults.getOrElse(Int.MatwitterValue)))
         }
       }
   }

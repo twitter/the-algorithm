@@ -8,7 +8,7 @@ import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base._
 import com.twitter.frigate.common.rec_types.RecTypes
 import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
-import com.twitter.frigate.pushservice.params.NsfwTextDetectionModel
+import com.twitter.frigate.pushservice.params.NsfwTetwittertDetectionModel
 import com.twitter.frigate.pushservice.params.PushConstants
 import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
 import com.twitter.frigate.pushservice.util.CandidateHydrationUtil
@@ -26,10 +26,10 @@ import com.twitter.util.Time
 
 object HealthPredicates {
 
-  private val NsfwTextDetectionModelMap: Map[NsfwTextDetectionModel.Value, TweetHealthModel] =
+  private val NsfwTetwittertDetectionModelMap: Map[NsfwTetwittertDetectionModel.Value, TweetHealthModel] =
     Map(
-      NsfwTextDetectionModel.ProdModel -> TweetHealthModel.PnsfwTweetText,
-      NsfwTextDetectionModel.RetrainedModel -> TweetHealthModel.ExperimentalHealthModelScore1,
+      NsfwTetwittertDetectionModel.ProdModel -> TweetHealthModel.PnsfwTweetTetwittert,
+      NsfwTetwittertDetectionModel.RetrainedModel -> TweetHealthModel.EtwitterperimentalHealthModelScore1,
     )
 
   private def tweetIsSupportedLanguage(
@@ -63,7 +63,7 @@ object HealthPredicates {
         tweetIdOpt match {
           case Some(tweetId) =>
             val pMediaNsfwRequest =
-              TweetScoringRequest(tweetId, TweetHealthModel.ExperimentalHealthModelScore4)
+              TweetScoringRequest(tweetId, TweetHealthModel.EtwitterperimentalHealthModelScore4)
             tweetHealthScoreStore.get(pMediaNsfwRequest).map {
               case Some(tweetScoringResponse) =>
                 numCandidatesMediaNsfwScoreStats.counter("non_empty").incr()
@@ -71,7 +71,7 @@ object HealthPredicates {
 
                 if (!applyToQuoteTweet) {
                   candidate
-                    .cacheExternalScore("NsfwMediaProbability", Future.value(Some(pMediaNsfwScore)))
+                    .cacheEtwitterternalScore("NsfwMediaProbability", Future.value(Some(pMediaNsfwScore)))
                 }
 
                 val pMediaNsfwShouldBucket =
@@ -151,7 +151,7 @@ object HealthPredicates {
               val candidateSpamScore = tweetScoringResponse.score
 
               candidate
-                .cacheExternalScore("SpammyTweetScore", Future.value(Some(candidateSpamScore)))
+                .cacheEtwitterternalScore("SpammyTweetScore", Future.value(Some(candidateSpamScore)))
 
               val tweetSpamShouldBucket =
                 candidateSpamScore > target.params(
@@ -184,15 +184,15 @@ object HealthPredicates {
       .withName(name)
   }
 
-  def healthSignalScorePnsfwTweetTextPredicate(
+  def healthSignalScorePnsfwTweetTetwittertPredicate(
     tweetHealthScoreStore: ReadableStore[TweetScoringRequest, TweetScoringResponse]
   )(
     implicit stats: StatsReceiver
   ): NamedPredicate[PushCandidate with TweetCandidate] = {
-    val name = "health_signal_store_pnsfw_tweet_text"
+    val name = "health_signal_store_pnsfw_tweet_tetwittert"
     val statsScope = stats.scope(name)
     val allCandidatesCounter = statsScope.counter("all_candidates")
-    val nonEmptyNsfwTextScoreNum = statsScope.counter("non_empty_nsfw_text_score")
+    val nonEmptyNsfwTetwittertScoreNum = statsScope.counter("non_empty_nsfw_tetwittert_score")
     val filteredCounter = statsScope.counter("num_filtered")
     val lowScoreCounter = statsScope.counter("low_score_count")
 
@@ -200,24 +200,24 @@ object HealthPredicates {
       .fromAsync { candidate: PushCandidate with TweetCandidate =>
         val target = candidate.target
         val predEnabled =
-          target.params(PushFeatureSwitchParams.EnableHealthSignalStorePnsfwTweetTextPredicate)
+          target.params(PushFeatureSwitchParams.EnableHealthSignalStorePnsfwTweetTetwittertPredicate)
         if (CandidateUtil.shouldApplyHealthQualityFilters(
             candidate) && predEnabled && tweetIsSupportedLanguage(candidate, Set(""))) {
           allCandidatesCounter.incr()
-          val pnsfwTextRequest =
-            TweetScoringRequest(candidate.tweetId, TweetHealthModel.PnsfwTweetText)
-          tweetHealthScoreStore.get(pnsfwTextRequest).flatMap {
+          val pnsfwTetwittertRequest =
+            TweetScoringRequest(candidate.tweetId, TweetHealthModel.PnsfwTweetTetwittert)
+          tweetHealthScoreStore.get(pnsfwTetwittertRequest).flatMap {
             case Some(tweetScoringResponse) => {
-              nonEmptyNsfwTextScoreNum.incr()
+              nonEmptyNsfwTetwittertScoreNum.incr()
               if (tweetScoringResponse.score < 1e-8) {
                 lowScoreCounter.incr()
               }
 
               candidate
-                .cacheExternalScore(
-                  "NsfwTextProbability-en",
+                .cacheEtwitterternalScore(
+                  "NsfwTetwittertProbability-en",
                   Future.value(Some(tweetScoringResponse.score)))
-              val threshold = target.params(PushFeatureSwitchParams.PnsfwTweetTextThreshold)
+              val threshold = target.params(PushFeatureSwitchParams.PnsfwTweetTetwittertThreshold)
               candidate.cachePredicateInfo(
                 name,
                 tweetScoringResponse.score,
@@ -236,12 +236,12 @@ object HealthPredicates {
       .withName(name)
   }
 
-  def healthSignalScoreMultilingualPnsfwTweetTextPredicate(
+  def healthSignalScoreMultilingualPnsfwTweetTetwittertPredicate(
     tweetHealthScoreStore: ReadableStore[TweetScoringRequest, TweetScoringResponse]
   )(
     implicit stats: StatsReceiver
   ): NamedPredicate[PushCandidate with TweetCandidate] = {
-    val name = "health_signal_store_multilingual_pnsfw_tweet_text"
+    val name = "health_signal_store_multilingual_pnsfw_tweet_tetwittert"
     val statsScope = stats.scope(name)
 
     val allLanguagesIdentifier = "all"
@@ -288,48 +288,48 @@ object HealthPredicates {
         val languageFeatureName = "RecTweet.TweetyPieResult.Language"
 
         lazy val isPredicateEnabledForTarget = target.params(
-          PushFeatureSwitchParams.EnableHealthSignalStoreMultilingualPnsfwTweetTextPredicate)
+          PushFeatureSwitchParams.EnableHealthSignalStoreMultilingualPnsfwTweetTetwittertPredicate)
 
-        lazy val targetNsfwTextDetectionModel: NsfwTextDetectionModel.Value =
-          target.params(PushFeatureSwitchParams.MultilingualPnsfwTweetTextModel)
+        lazy val targetNsfwTetwittertDetectionModel: NsfwTetwittertDetectionModel.Value =
+          target.params(PushFeatureSwitchParams.MultilingualPnsfwTweetTetwittertModel)
 
         lazy val targetPredicateSupportedLanguageSeq: Seq[String] =
-          target.params(PushFeatureSwitchParams.MultilingualPnsfwTweetTextSupportedLanguages)
+          target.params(PushFeatureSwitchParams.MultilingualPnsfwTweetTetwittertSupportedLanguages)
 
-        lazy val bucketingModelSeq: Seq[NsfwTextDetectionModel.Value] =
-          target.params(PushFeatureSwitchParams.MultilingualPnsfwTweetTextBucketingModelList)
+        lazy val bucketingModelSeq: Seq[NsfwTetwittertDetectionModel.Value] =
+          target.params(PushFeatureSwitchParams.MultilingualPnsfwTweetTetwittertBucketingModelList)
 
         lazy val bucketingThresholdPerLanguageSeq: Seq[Double] =
-          target.params(PushFeatureSwitchParams.MultilingualPnsfwTweetTextBucketingThreshold)
+          target.params(PushFeatureSwitchParams.MultilingualPnsfwTweetTetwittertBucketingThreshold)
 
         lazy val filteringThresholdPerLanguageSeq: Seq[Double] =
-          target.params(PushFeatureSwitchParams.MultilingualPnsfwTweetTextFilteringThreshold)
+          target.params(PushFeatureSwitchParams.MultilingualPnsfwTweetTetwittertFilteringThreshold)
 
         if (CandidateUtil.shouldApplyHealthQualityFilters(
             candidate) && isPredicateEnabledForTarget) {
           val candidateLanguage =
             candidate.categoricalFeatures.getOrElse(languageFeatureName, "")
 
-          val indexOfCandidateLanguage =
-            targetPredicateSupportedLanguageSeq.indexOf(candidateLanguage)
+          val indetwitterOfCandidateLanguage =
+            targetPredicateSupportedLanguageSeq.indetwitterOf(candidateLanguage)
 
-          val isCandidateLanguageSupported = indexOfCandidateLanguage >= 0
+          val isCandidateLanguageSupported = indetwitterOfCandidateLanguage >= 0
 
           if (isCandidateLanguageSupported) {
             increaseCounterForLanguage(candidatesCounterMap, candidateLanguage)
 
-            val bucketingModelScoreMap: Map[NsfwTextDetectionModel.Value, Future[Option[Double]]] =
+            val bucketingModelScoreMap: Map[NsfwTetwittertDetectionModel.Value, Future[Option[Double]]] =
               bucketingModelSeq.map { modelName =>
-                NsfwTextDetectionModelMap.get(modelName) match {
-                  case Some(targetNsfwTextDetectionModel) =>
-                    val pnsfwTweetTextRequest: TweetScoringRequest =
-                      TweetScoringRequest(candidate.tweetId, targetNsfwTextDetectionModel)
+                NsfwTetwittertDetectionModelMap.get(modelName) match {
+                  case Some(targetNsfwTetwittertDetectionModel) =>
+                    val pnsfwTweetTetwittertRequest: TweetScoringRequest =
+                      TweetScoringRequest(candidate.tweetId, targetNsfwTetwittertDetectionModel)
 
                     val scoreOptFut: Future[Option[Double]] =
-                      tweetHealthScoreStore.get(pnsfwTweetTextRequest).map(_.map(_.score))
+                      tweetHealthScoreStore.get(pnsfwTweetTetwittertRequest).map(_.map(_.score))
 
                     candidate
-                      .cacheExternalScore("NsfwTextProbability", scoreOptFut)
+                      .cacheEtwitterternalScore("NsfwTetwittertProbability", scoreOptFut)
 
                     modelName -> scoreOptFut
                   case _ =>
@@ -339,7 +339,7 @@ object HealthPredicates {
               }.toMap
 
             val candidateLanguageBucketingThreshold =
-              bucketingThresholdPerLanguageSeq(indexOfCandidateLanguage)
+              bucketingThresholdPerLanguageSeq(indetwitterOfCandidateLanguage)
 
             val userShouldBeBucketedFut: Future[Boolean] =
               Future
@@ -361,9 +361,9 @@ object HealthPredicates {
                   increaseCounterForLanguage(bucketedCounterMap, candidateLanguage)
 
                   val candidateLanguageFilteringThreshold =
-                    filteringThresholdPerLanguageSeq(indexOfCandidateLanguage)
+                    filteringThresholdPerLanguageSeq(indetwitterOfCandidateLanguage)
 
-                  bucketingModelScoreMap.get(targetNsfwTextDetectionModel) match {
+                  bucketingModelScoreMap.get(targetNsfwTetwittertDetectionModel) match {
                     case Some(scoreOptFut) =>
                       scoreOptFut.map {
                         case Some(score) =>
@@ -479,8 +479,8 @@ object HealthPredicates {
                   val nudityRate = if (sumScore > 0) nudityScore / sumScore else 0.0
 
                   candidate
-                    .cacheExternalScore("AuthorNudityScore", Future.value(Some(nudityScore)))
-                  candidate.cacheExternalScore("AuthorNudityRate", Future.value(Some(nudityRate)))
+                    .cacheEtwitterternalScore("AuthorNudityScore", Future.value(Some(nudityScore)))
+                  candidate.cacheEtwitterternalScore("AuthorNudityRate", Future.value(Some(nudityRate)))
 
                   val threshold = if (useAggressiveThresholds) {
                     target.params(
@@ -663,44 +663,44 @@ object HealthPredicates {
               val agathaCalibratedNSFWScore: Double = userHealthSignalValueToDouble(
                 response.signalValues
                   .getOrElse(AgathaCalibratedNsfwDouble, SignalValue.DoubleValue(0.0)))
-              val agathaTextNSFWScore: Double = userHealthSignalValueToDouble(response.signalValues
-                .getOrElse(NsfwTextUserScoreDouble, SignalValue.DoubleValue(0.0)))
+              val agathaTetwittertNSFWScore: Double = userHealthSignalValueToDouble(response.signalValues
+                .getOrElse(NsfwTetwittertUserScoreDouble, SignalValue.DoubleValue(0.0)))
 
               candidate
-                .cacheExternalScore(
+                .cacheEtwitterternalScore(
                   "agathaRecentAbuseStrikeScore",
                   Future.value(Some(agathaRecentAbuseStrikeScore)))
               candidate
-                .cacheExternalScore(
+                .cacheEtwitterternalScore(
                   "agathaCalibratedNSFWScore",
                   Future.value(Some(agathaCalibratedNSFWScore)))
               candidate
-                .cacheExternalScore("agathaTextNSFWScore", Future.value(Some(agathaTextNSFWScore)))
+                .cacheEtwitterternalScore("agathaTetwittertNSFWScore", Future.value(Some(agathaTetwittertNSFWScore)))
 
               val NSFWShouldBucket = agathaCalibratedNSFWScore > target.params(
                 PushFeatureSwitchParams.AgathaCalibratedNSFWBucketThreshold)
-              val textNSFWShouldBucket = agathaTextNSFWScore > target.params(
-                PushFeatureSwitchParams.AgathaTextNSFWBucketThreshold)
+              val tetwittertNSFWShouldBucket = agathaTetwittertNSFWScore > target.params(
+                PushFeatureSwitchParams.AgathaTetwittertNSFWBucketThreshold)
 
-              if (NSFWShouldBucket || textNSFWShouldBucket) {
+              if (NSFWShouldBucket || tetwittertNSFWShouldBucket) {
                 bucketedUserCandidatesCounter.incr()
                 if (NSFWShouldBucket) {
                   scopedStatsReceiver.counter("calibrated_nsfw_bucketed_user_candidates").incr()
                 }
-                if (textNSFWShouldBucket) {
-                  scopedStatsReceiver.counter("text_nsfw_bucketed_user_candidates").incr()
+                if (tetwittertNSFWShouldBucket) {
+                  scopedStatsReceiver.counter("tetwittert_nsfw_bucketed_user_candidates").incr()
                 }
 
-                val (thresholdAgathaNsfw, thresholdTextNsfw) = if (useAggressiveThresholds) {
+                val (thresholdAgathaNsfw, thresholdTetwittertNsfw) = if (useAggressiveThresholds) {
                   (
                     target.params(
                       PushFeatureSwitchParams.AgathaCalibratedNSFWThresholdForMrTwistly),
                     target
-                      .params(PushFeatureSwitchParams.AgathaTextNSFWThresholdForMrTwistly))
+                      .params(PushFeatureSwitchParams.AgathaTetwittertNSFWThresholdForMrTwistly))
                 } else {
                   (
                     target.params(PushFeatureSwitchParams.AgathaCalibratedNSFWThreshold),
-                    target.params(PushFeatureSwitchParams.AgathaTextNSFWThreshold))
+                    target.params(PushFeatureSwitchParams.AgathaTetwittertNSFWThreshold))
                 }
                 candidate.cachePredicateInfo(
                   name + "_agathaNsfw",
@@ -708,13 +708,13 @@ object HealthPredicates {
                   thresholdAgathaNsfw,
                   agathaCalibratedNSFWScore > thresholdAgathaNsfw)
                 candidate.cachePredicateInfo(
-                  name + "_authorTextNsfw",
-                  agathaTextNSFWScore,
-                  thresholdTextNsfw,
-                  agathaTextNSFWScore > thresholdTextNsfw)
+                  name + "_authorTetwittertNsfw",
+                  agathaTetwittertNSFWScore,
+                  thresholdTetwittertNsfw,
+                  agathaTetwittertNSFWScore > thresholdTetwittertNsfw)
 
                 if ((agathaCalibratedNSFWScore > thresholdAgathaNsfw) ||
-                  (agathaTextNSFWScore > thresholdTextNsfw)) {
+                  (agathaTetwittertNSFWScore > thresholdTetwittertNsfw)) {
                   filteredOON.incr()
                   false
                 } else true
@@ -734,7 +734,7 @@ object HealthPredicates {
   def userHealthSignalValueToDouble(signalValue: SignalValue): Double = {
     signalValue match {
       case SignalValue.DoubleValue(value) => value
-      case _ => throw new Exception(f"Could not convert signal value to double")
+      case _ => throw new Etwitterception(f"Could not convert signal value to double")
     }
   }
 }

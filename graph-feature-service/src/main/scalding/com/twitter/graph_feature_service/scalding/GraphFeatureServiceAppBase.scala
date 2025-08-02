@@ -1,14 +1,14 @@
 package com.twitter.graph_feature_service.scalding
 
 import com.twitter.scalding._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
 import com.twitter.scalding_internal.job.analytics_batch.{
-  AnalyticsBatchExecution,
-  AnalyticsBatchExecutionArgs,
+  AnalyticsBatchEtwitterecution,
+  AnalyticsBatchEtwitterecutionArgs,
   BatchDescription,
   BatchFirstTime,
   BatchIncrement,
-  TwitterScheduledExecutionApp
+  TwitterScheduledEtwitterecutionApp
 }
 import java.util.TimeZone
 
@@ -26,13 +26,13 @@ trait GraphFeatureServiceBaseJob {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit]
+  ): Etwitterecution[Unit]
 
   /**
    * Print customized counters in the log
    */
-  def printerCounters[T](execution: Execution[T]): Execution[Unit] = {
-    execution.getCounters
+  def printerCounters[T](etwitterecution: Etwitterecution[T]): Etwitterecution[Unit] = {
+    etwitterecution.getCounters
       .flatMap {
         case (_, counters) =>
           counters.toMap.toSeq
@@ -41,7 +41,7 @@ trait GraphFeatureServiceBaseJob {
               case (statKey, value) =>
                 println(s"${statKey.group}\t${statKey.counter}\t$value")
             }
-          Execution.unit
+          Etwitterecution.unit
       }
   }
 }
@@ -49,9 +49,9 @@ trait GraphFeatureServiceBaseJob {
 /**
  * Trait that wraps things about adhoc jobs.
  */
-trait GraphFeatureServiceAdhocBaseApp extends TwitterExecutionApp with GraphFeatureServiceBaseJob {
-  override def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    Execution.getArgs.flatMap { args: Args =>
+trait GraphFeatureServiceAdhocBaseApp etwittertends TwitterEtwitterecutionApp with GraphFeatureServiceBaseJob {
+  override def job: Etwitterecution[Unit] = Etwitterecution.withId { implicit uniqueId =>
+    Etwitterecution.getArgs.flatMap { args: Args =>
       implicit val dateRange: DateRange = DateRange.parse(args.list("date"))(timeZone, dateParser)
       printerCounters(runOnDateRange())
     }
@@ -64,21 +64,21 @@ trait GraphFeatureServiceAdhocBaseApp extends TwitterExecutionApp with GraphFeat
  * A new daily app only needs to declare the starting date.
  */
 trait GraphFeatureServiceScheduledBaseApp
-    extends TwitterScheduledExecutionApp
+    etwittertends TwitterScheduledEtwitterecutionApp
     with GraphFeatureServiceBaseJob {
 
-  def firstTime: RichDate // for example: RichDate("2018-02-21")
+  def firstTime: RichDate // for etwitterample: RichDate("2018-02-21")
 
   def batchIncrement: Duration = Days(1)
 
-  override def scheduledJob: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    val analyticsArgs = AnalyticsBatchExecutionArgs(
+  override def scheduledJob: Etwitterecution[Unit] = Etwitterecution.withId { implicit uniqueId =>
+    val analyticsArgs = AnalyticsBatchEtwitterecutionArgs(
       batchDesc = BatchDescription(getClass.getName),
       firstTime = BatchFirstTime(firstTime),
       batchIncrement = BatchIncrement(batchIncrement)
     )
 
-    AnalyticsBatchExecution(analyticsArgs) { implicit dateRange =>
+    AnalyticsBatchEtwitterecution(analyticsArgs) { implicit dateRange =>
       printerCounters(runOnDateRange())
     }
   }

@@ -39,10 +39,10 @@ def sort_values(inputs, target, weight, ascending=True):
   '''
   # assert that the length of inputs and target are the same
   if len(inputs) != len(target):
-    raise ValueError('Expecting inputs and target sizes to match')
+    raise ValueError('Etwitterpecting inputs and target sizes to match')
    # assert that the length of inputs and weight are the same
   if len(inputs) != len(weight):
-    raise ValueError('Expecting inputs and weight sizes to match')
+    raise ValueError('Etwitterpecting inputs and weight sizes to match')
   inds = inputs.argsort()
   if not ascending:
     inds = inds[::-1]
@@ -53,7 +53,7 @@ class IsotonicFeature(CalibrationFeature):
   '''
   IsotonicFeature adds values, weights and targets to each feature and then runs
   isotonic regression by calling `sklearn.isotonic.isotonic_regression
-  <http://scikit-learn.org/stable/auto_examples/plot_isotonic_regression.html>`_
+  <http://scikit-learn.org/stable/auto_etwitteramples/plot_isotonic_regression.html>`_
   '''
 
   def _get_bin_boundaries(self, n_samples, bins, similar_bins):
@@ -139,12 +139,12 @@ class IsotonicFeature(CalibrationFeature):
     bin_boundaries = self._get_bin_boundaries(
       len(calibrated_feature_values), bins, similar_bins=similar_bins)
 
-    for sidx, eidx in zip(bin_boundaries, bin_boundaries[1:]):
+    for sidtwitter, eidtwitter in zip(bin_boundaries, bin_boundaries[1:]):
       # separate each one of the arrays based on their respective bins
-      lpreds = srtd_feature_values[int(sidx):int(eidx)]
-      lrpreds = calibrated_feature_values[int(sidx):int(eidx)]
-      ltargets = srtd_feature_targets[int(sidx):int(eidx)]
-      lweights = srtd_feature_weights[int(sidx):int(eidx)]
+      lpreds = srtd_feature_values[int(sidtwitter):int(eidtwitter)]
+      lrpreds = calibrated_feature_values[int(sidtwitter):int(eidtwitter)]
+      ltargets = srtd_feature_targets[int(sidtwitter):int(eidtwitter)]
+      lweights = srtd_feature_weights[int(sidtwitter):int(eidtwitter)]
 
       # calculate the outputs (including the bpreds and rpreds)
       bpreds.append(np.sum(lpreds * lweights) / (np.squeeze(np.sum(lweights))))
@@ -186,7 +186,7 @@ class IsotonicCalibrator(Calibrator):
     self._n_bin = n_bin
     self._similar_bins = similar_bins
     self._ys_input = []
-    self._xs_input = []
+    self._twitters_input = []
     self._isotonic_feature_dict = {}
 
   def accumulate_feature(self, output):
@@ -205,10 +205,10 @@ class IsotonicCalibrator(Calibrator):
 
     Arguments:
       predictions:
-        float matrix of class values. Each dimension corresponds to a different class.
+        float matritwitter of class values. Each dimension corresponds to a different class.
         Shape is ``[n, d]``, where d is the number of classes.
       targets:
-        float matrix of class targets. Each dimension corresponds to a different class.
+        float matritwitter of class targets. Each dimension corresponds to a different class.
         Shape ``[n, d]``, where d is the number of classes.
       weights:
         Defaults to weights of 1.
@@ -216,14 +216,14 @@ class IsotonicCalibrator(Calibrator):
     '''
     if predictions.shape != targets.shape:
       raise ValueError(
-        'Expecting predictions.shape == targets.shape, got %s and %s instead' %
+        'Etwitterpecting predictions.shape == targets.shape, got %s and %s instead' %
         (str(predictions.shape), str(targets.shape)))
     if weights is not None:
       if weights.ndim != 1:
-        raise ValueError('Expecting 1D weight, got %dD instead' % weights.ndim)
+        raise ValueError('Etwitterpecting 1D weight, got %dD instead' % weights.ndim)
       elif weights.size != predictions.shape[0]:
         raise ValueError(
-          'Expecting predictions.shape[0] == weights.size, got %d != %d instead' %
+          'Etwitterpecting predictions.shape[0] == weights.size, got %d != %d instead' %
           (predictions.shape[0], weights.size))
     # iterate through the rows of predictions and sets one class to each row
     if weights is None:
@@ -243,11 +243,11 @@ class IsotonicCalibrator(Calibrator):
   def calibrate(self, debug=False):
     '''
     Calibrates each IsotonicFeature after accumulation is complete.
-    Results are stored in ``self._ys_input`` and ``self._xs_input``
+    Results are stored in ``self._ys_input`` and ``self._twitters_input``
 
     Arguments:
       debug:
-        Defaults to False. If set to true, returns the ``xs_input`` and ``ys_input``.
+        Defaults to False. If set to true, returns the ``twitters_input`` and ``ys_input``.
     '''
     super(IsotonicCalibrator, self).calibrate()
     bias_temp = []
@@ -258,8 +258,8 @@ class IsotonicCalibrator(Calibrator):
       bpreds, rpreds = isotonic_features_dict[class_id].calibrate(bins=self._n_bin, similar_bins=self._similar_bins)
       weight_temp.append(bpreds)
       bias_temp.append(rpreds)
-    # save isotonic results onto a matrix
-    self._xs_input = np.array(weight_temp, dtype=np.float32)
+    # save isotonic results onto a matritwitter
+    self._twitters_input = np.array(weight_temp, dtype=np.float32)
     self._ys_input = np.array(bias_temp, dtype=np.float32)
     logging.info("Isotonic calibration finished.")
     if debug:
@@ -273,7 +273,7 @@ class IsotonicCalibrator(Calibrator):
         name of the saving directory. Default (string): "default".
     '''
     if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate().Cannot save() prior to calibrate()")
+      raise RuntimeError("Etwitterpecting prior call to calibrate().Cannot save() prior to calibrate()")
 
     # This module allows for the calibrator to save be saved as part of
     # Tensorflow Hub (this will allow it to be used in further steps)
@@ -292,26 +292,26 @@ class IsotonicCalibrator(Calibrator):
       # creates the signature to the calibrator module
       hub.add_signature(inputs=inputs, outputs=output, name=name)
 
-    # exports the module to the save_dir
+    # etwitterports the module to the save_dir
     spec = hub.create_module_spec(calibrator_module)
     with tf.Graph().as_default():
       module = hub.Module(spec)
       with tf.Session() as session:
-        module.export(save_dir, session)
+        module.etwitterport(save_dir, session)
 
   def to_layer(self):
     """ Returns a twml.layers.Isotonic Layer that can be used for feature discretization.
     """
     if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate()")
+      raise RuntimeError("Etwitterpecting prior call to calibrate()")
 
     isotonic_layer = twml.layers.Isotonic(
-      n_unit=self._xs_input.shape[0], n_bin=self._xs_input.shape[1],
-      xs_input=self._xs_input, ys_input=self._ys_input,
+      n_unit=self._twitters_input.shape[0], n_bin=self._twitters_input.shape[1],
+      twitters_input=self._twitters_input, ys_input=self._ys_input,
       **self._kwargs)
 
     return isotonic_layer
 
   def get_layer_args(self, name=None):
     """ Returns layer args. See ``Calibrator.get_layer_args`` for more detailed documentation """
-    return {'n_unit': self._xs_input.shape[0], 'n_bin': self._xs_input.shape[1]}
+    return {'n_unit': self._twitters_input.shape[0], 'n_bin': self._twitters_input.shape[1]}

@@ -10,8 +10,8 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         "//:scala-reflect",
-        "3rdparty/jvm/com/fasterxml/jackson/core:jackson-core",
-        "3rdparty/jvm/com/fasterxml/jackson/core:jackson-databind",
+        "3rdparty/jvm/com/fastertwitterml/jackson/core:jackson-core",
+        "3rdparty/jvm/com/fastertwitterml/jackson/core:jackson-databind",
         "3rdparty/jvm/com/googlecode/java-diff-utils:diffutils",
         "3rdparty/jvm/org/apache/thrift:libthrift",
         "scrooge/scrooge-core",

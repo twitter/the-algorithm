@@ -49,8 +49,8 @@ public class PQEncoder8 {
     this(swigfaissJNI.new_PQEncoder8(SWIGTYPE_p_unsigned_char.getCPtr(code), nbits), true);
   }
 
-  public void encode(long x) {
-    swigfaissJNI.PQEncoder8_encode(swigCPtr, this, x);
+  public void encode(long twitter) {
+    swigfaissJNI.PQEncoder8_encode(swigCPtr, this, twitter);
   }
 
 }

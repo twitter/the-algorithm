@@ -4,7 +4,7 @@ import com.twitter.scalding.Args
 import com.twitter.scalding.DateRange
 import com.twitter.scalding.Days
 import com.twitter.scalding.Duration
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding.RichDate
 import com.twitter.scalding.UniqueID
 import com.twitter.simclusters_v2.common.SimClustersEmbedding
@@ -12,7 +12,7 @@ import com.twitter.simclusters_v2.common.clustering.ConnectedComponentsClusterin
 import com.twitter.simclusters_v2.common.clustering.LargestDimensionClusteringMethod
 import com.twitter.simclusters_v2.common.clustering.LouvainClusteringMethod
 import com.twitter.simclusters_v2.common.clustering.MedoidRepresentativeSelectionMethod
-import com.twitter.simclusters_v2.common.clustering.MaxFavScoreRepresentativeSelectionMethod
+import com.twitter.simclusters_v2.common.clustering.MatwitterFavScoreRepresentativeSelectionMethod
 import com.twitter.simclusters_v2.common.clustering.SimilarityFunctions
 import com.twitter.simclusters_v2.hdfs_sources.ClustersMembersConnectedComponentsApeSimilarityScalaDataset
 import com.twitter.simclusters_v2.hdfs_sources.ClustersMembersLargestDimApeSimilarity2DayUpdateScalaDataset
@@ -24,8 +24,8 @@ import com.twitter.simclusters_v2.hdfs_sources.InterestedInTwiceByLargestDimFavS
 import com.twitter.simclusters_v2.hdfs_sources.InterestedInTwiceConnectedComponentsScalaDataset
 import com.twitter.simclusters_v2.hdfs_sources.InterestedInTwiceLouvainScalaDataset
 import com.twitter.simclusters_v2.scalding.embedding.twice.InterestedInTwiceBaseApp.ProducerEmbeddingSource
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
+import com.twitter.wtf.scalding.jobs.common.AdhocEtwitterecutionApp
+import com.twitter.wtf.scalding.jobs.common.ScheduledEtwitterecutionApp
 import java.util.TimeZone
 
 /**
@@ -43,8 +43,8 @@ import java.util.TimeZone
  */*/
 
 object InterestedInTwiceLargestDimScheduledApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with ScheduledExecutionApp {
+    etwittertends InterestedInTwiceBaseApp[SimClustersEmbedding]
+    with ScheduledEtwitterecutionApp {
 
   override def firstTime: RichDate = RichDate("2021-09-02")
   override def batchIncrement: Duration = Days(7)
@@ -69,7 +69,7 @@ object InterestedInTwiceLargestDimScheduledApp
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueId: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     runScheduledApp(
       new LargestDimensionClusteringMethod(),
@@ -87,9 +87,9 @@ object InterestedInTwiceLargestDimScheduledApp
 
 }
 
-object InterestedInTwiceLargestDimMaxFavScoreScheduledApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with ScheduledExecutionApp {
+object InterestedInTwiceLargestDimMatwitterFavScoreScheduledApp
+    etwittertends InterestedInTwiceBaseApp[SimClustersEmbedding]
+    with ScheduledEtwitterecutionApp {
 
   override def firstTime: RichDate = RichDate("2022-06-30")
   override def batchIncrement: Duration = Days(7)
@@ -114,11 +114,11 @@ object InterestedInTwiceLargestDimMaxFavScoreScheduledApp
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueId: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     runScheduledApp(
       new LargestDimensionClusteringMethod(),
-      new MaxFavScoreRepresentativeSelectionMethod[SimClustersEmbedding](),
+      new MatwitterFavScoreRepresentativeSelectionMethod[SimClustersEmbedding](),
       ProducerEmbeddingSource.getAggregatableProducerEmbeddings,
       "interested_in_twice_by_largest_dim_fav_score",
       "clusters_members_largest_dim_ape_similarity",
@@ -132,8 +132,8 @@ object InterestedInTwiceLargestDimMaxFavScoreScheduledApp
 }
 
 object InterestedInTwiceLouvainScheduledApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with ScheduledExecutionApp {
+    etwittertends InterestedInTwiceBaseApp[SimClustersEmbedding]
+    with ScheduledEtwitterecutionApp {
 
   override def firstTime: RichDate = RichDate("2021-09-02")
   override def batchIncrement: Duration = Days(7)
@@ -158,7 +158,7 @@ object InterestedInTwiceLouvainScheduledApp
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueId: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     runScheduledApp(
       new LouvainClusteringMethod(
@@ -179,8 +179,8 @@ object InterestedInTwiceLouvainScheduledApp
 }
 
 object InterestedInTwiceConnectedComponentsScheduledApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with ScheduledExecutionApp {
+    etwittertends InterestedInTwiceBaseApp[SimClustersEmbedding]
+    with ScheduledEtwitterecutionApp {
 
   override def firstTime: RichDate = RichDate("2021-09-02")
   override def batchIncrement: Duration = Days(7)
@@ -204,7 +204,7 @@ object InterestedInTwiceConnectedComponentsScheduledApp
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueId: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     runScheduledApp(
       new ConnectedComponentsClusteringMethod(
@@ -227,7 +227,7 @@ object InterestedInTwiceConnectedComponentsScheduledApp
  *
  * Given that the input sources of TWICE are updated more frequently (e.g., user_user_graph is
  * updated every 2 day), updating TWICE embedding every 2 day will better capture interests of new
- * users and the interest shift of existing users.
+ * users and the interest shift of etwitteristing users.
  *
  * To build & deploy the scheduled job via workflows:
  * {{{
@@ -240,8 +240,8 @@ object InterestedInTwiceConnectedComponentsScheduledApp
  *
  */*/
 object InterestedInTwiceLargestDim2DayUpdateScheduledApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with ScheduledExecutionApp {
+    etwittertends InterestedInTwiceBaseApp[SimClustersEmbedding]
+    with ScheduledEtwitterecutionApp {
 
   override def firstTime: RichDate = RichDate("2022-04-06")
   override def batchIncrement: Duration = Days(2)
@@ -266,7 +266,7 @@ object InterestedInTwiceLargestDim2DayUpdateScheduledApp
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueId: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     runScheduledApp(
       new LargestDimensionClusteringMethod(),
@@ -297,8 +297,8 @@ To build and run a adhoc job with workflows:
 
  */*/
 object InterestedInTwiceLargestDimAdhocApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with AdhocExecutionApp {
+    etwittertends InterestedInTwiceBaseApp[SimClustersEmbedding]
+    with AdhocEtwitterecutionApp {
 
   override def producerProducerSimilarityFnForClustering: (
     SimClustersEmbedding,
@@ -320,7 +320,7 @@ object InterestedInTwiceLargestDimAdhocApp
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueId: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     runAdhocApp(
       new LargestDimensionClusteringMethod(),
@@ -335,9 +335,9 @@ object InterestedInTwiceLargestDimAdhocApp
   }
 }
 
-object InterestedInTwiceLargestDimMaxFavScoreAdhocApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with AdhocExecutionApp {
+object InterestedInTwiceLargestDimMatwitterFavScoreAdhocApp
+    etwittertends InterestedInTwiceBaseApp[SimClustersEmbedding]
+    with AdhocEtwitterecutionApp {
 
   override def producerProducerSimilarityFnForClustering: (
     SimClustersEmbedding,
@@ -359,11 +359,11 @@ object InterestedInTwiceLargestDimMaxFavScoreAdhocApp
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueId: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     runAdhocApp(
       new LargestDimensionClusteringMethod(),
-      new MaxFavScoreRepresentativeSelectionMethod[SimClustersEmbedding](),
+      new MatwitterFavScoreRepresentativeSelectionMethod[SimClustersEmbedding](),
       ProducerEmbeddingSource.getAggregatableProducerEmbeddings,
       "interested_in_twice_by_largest_dim_fav_score",
       "clusters_members_largest_dim_ape_similarity",
@@ -374,8 +374,8 @@ object InterestedInTwiceLargestDimMaxFavScoreAdhocApp
 }
 
 object InterestedInTwiceLouvainAdhocApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with AdhocExecutionApp {
+    etwittertends InterestedInTwiceBaseApp[SimClustersEmbedding]
+    with AdhocEtwitterecutionApp {
 
   override def producerProducerSimilarityFnForClustering: (
     SimClustersEmbedding,
@@ -397,7 +397,7 @@ object InterestedInTwiceLouvainAdhocApp
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueId: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     runAdhocApp(
       new LouvainClusteringMethod(
@@ -415,8 +415,8 @@ object InterestedInTwiceLouvainAdhocApp
 }
 
 object InterestedInTwiceConnectedComponentsAdhocApp
-    extends InterestedInTwiceBaseApp[SimClustersEmbedding]
-    with AdhocExecutionApp {
+    etwittertends InterestedInTwiceBaseApp[SimClustersEmbedding]
+    with AdhocEtwitterecutionApp {
 
   override def producerProducerSimilarityFnForClustering: (
     SimClustersEmbedding,
@@ -438,7 +438,7 @@ object InterestedInTwiceConnectedComponentsAdhocApp
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueId: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     runAdhocApp(
       new ConnectedComponentsClusteringMethod(

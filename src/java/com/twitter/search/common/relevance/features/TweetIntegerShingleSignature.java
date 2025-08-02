@@ -7,7 +7,7 @@ import com.google.common.base.Preconditions;
 
 /**
  * A TweetIntegerShingleSignature object consists of 4 bytes, each representing the signature of
- * a status text sample. The signature bytes are sorted in ascending order and compacted to an
+ * a status tetwittert sample. The signature bytes are sorted in ascending order and compacted to an
  * integer in big endian for serialization.
  *
  * Fuzzy matching of two TweetIntegerShingleSignature objects is met when the number of matching
@@ -93,7 +93,7 @@ public class TweetIntegerShingleSignature {
    */
   @Override
   public int hashCode() {
-    return shingles[0] & 0xFF;
+    return shingles[0] & 0twitterFF;
   }
 
   /**
@@ -124,7 +124,7 @@ public class TweetIntegerShingleSignature {
       // Neither is NO_SIGNATURE, need to compare shingles.
       byte[] otherShingles = otherSignatureInteger.getShingles();
       int numberMatchesNeeded = minShinglesMatch;
-      // expect bytes are in ascending sorted order
+      // etwitterpect bytes are in ascending sorted order
       int i = 0;
       int j = 0;
       while (((numberMatchesNeeded <= (NUM_SHINGLES - i)) // early termination for i

@@ -2,7 +2,7 @@ package com.twitter.interaction_graph.scio.common
 
 import com.twitter.interaction_graph.thriftscala.FeatureName
 
-/** Interaction Graph Raw Input type defines a common type for edge / vertex feature calculation
+/** Interaction Graph Raw Input type defines a common type for edge / vertetwitter feature calculation
  * It has fields: (source Id, destination Id, Feature Name, age of this relationship (in days),
  * and value to be aggregated)
  */

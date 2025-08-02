@@ -15,11 +15,11 @@ struct Score {
   3: optional string scoreType
 }(persisted='true', hasPersonalData='false') // scoring and ranking info per ranking stage
 
-// Contains (1) the ML-based heavy ranker and score (2) scores and rankers in producer experiment framework
+// Contains (1) the ML-based heavy ranker and score (2) scores and rankers in producer etwitterperiment framework
 struct Scores {
   1: required list<Score> scores
   2: optional string selectedRankerId
-  3: required bool isInProducerScoringExperiment
+  3: required bool isInProducerScoringEtwitterperiment
 }(persisted='true', hasPersonalData='false')
 
 struct RankingInfo {

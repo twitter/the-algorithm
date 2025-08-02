@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -12,7 +12,7 @@ option java_package = "org.tensorflow.framework";
 option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/resource_handle_go_proto";
 
 // Protocol buffer representing a handle to a tensorflow resource. Handles are
-// not valid across executions, but can be serialized back and forth from within
+// not valid across etwitterecutions, but can be serialized back and forth from within
 // a single run.
 message ResourceHandleProto {
   // Unique name for the device containing the resource.
@@ -25,7 +25,7 @@ message ResourceHandleProto {
   string name = 3;
 
   // Hash code for the type of the resource. Is only valid in the same device
-  // and in the same execution.
+  // and in the same etwitterecution.
   uint64 hash_code = 4;
 
   // For debug-only, the name of the type pointed to by this handle, if

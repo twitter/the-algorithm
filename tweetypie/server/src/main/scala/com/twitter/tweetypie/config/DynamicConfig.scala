@@ -8,7 +8,7 @@ import com.twitter.tweetypie.client_id.ClientIdHelper
 import com.twitter.util.Activity
 
 case class DynamicConfig(
-  // A map of fully-qualified client ID (including the environment suffix, e.g. tweetypie.prod) to Client case class
+  // A map of fully-qualified client ID (including the environment suffitwitter, e.g. tweetypie.prod) to Client case class
   clientsByFullyQualifiedId: Option[Map[String, Client]],
   // Clients by service identifier parts.
   clientsByRole: Option[Map[String, Seq[Client]]] = None,
@@ -44,7 +44,7 @@ case class DynamicConfig(
    */
   val loadShedEligible: Gate[String] = Gate { (clientId: String) =>
     val env = ClientIdHelper.getClientIdEnv(clientId)
-    clientsByFullyQualifiedId.flatMap(clients => clients.get(clientId)).exists { c =>
+    clientsByFullyQualifiedId.flatMap(clients => clients.get(clientId)).etwitterists { c =>
       c.loadShedEnvs.contains(env)
     }
   }
@@ -94,7 +94,7 @@ object DynamicConfig {
       clientsByRole = clients.map(by(_.role)),
       clientsByService = clients.map(by(_.service)),
       onlyEnvClients = clients.map(_.filter { client =>
-        client.serviceIdentifiers.exists(_.onlyEnv)
+        client.serviceIdentifiers.etwitterists(_.onlyEnv)
       }),
     )
 }

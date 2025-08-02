@@ -29,7 +29,7 @@ class UserTweetGraph(
   endpointLoadShedder: EndpointLoadShedder
 )(
   implicit timer: Timer)
-    extends thriftscala.UserTweetGraph.MethodPerEndpoint {
+    etwittertends thriftscala.UserTweetGraph.MethodPerEndpoint {
 
   private val defaultTimeout: Duration = Duration(50, MILLISECONDS)
   private val EmptyResponse = Future.value(RelatedTweetResponse())
@@ -55,7 +55,7 @@ class UserTweetGraph(
     endpointLoadShedder("tweetBasedRelatedTweets") {
       tweetBasedRelatedTweetsHandler(request).raiseWithin(defaultTimeout)
     }.rescue {
-      case EndpointLoadShedder.LoadSheddingException =>
+      case EndpointLoadShedder.LoadSheddingEtwitterception =>
         EmptyResponse
       case e =>
         log.info("user-tweet-graph_tweetBasedRelatedTweets" + e)
@@ -68,7 +68,7 @@ class UserTweetGraph(
     endpointLoadShedder("producerBasedRelatedTweets") {
       producerBasedRelatedTweetsHandler(request).raiseWithin(defaultTimeout)
     }.rescue {
-      case EndpointLoadShedder.LoadSheddingException =>
+      case EndpointLoadShedder.LoadSheddingEtwitterception =>
         EmptyResponse
       case e =>
         log.info("user-tweet-graph_producerBasedRelatedTweets" + e)
@@ -81,7 +81,7 @@ class UserTweetGraph(
     endpointLoadShedder("consumersBasedRelatedTweets") {
       consumersBasedRelatedTweetsHandler(request).raiseWithin(defaultTimeout)
     }.rescue {
-      case EndpointLoadShedder.LoadSheddingException =>
+      case EndpointLoadShedder.LoadSheddingEtwitterception =>
         EmptyResponse
       case e =>
         log.info("user-tweet-graph_consumersBasedRelatedTweets" + e)

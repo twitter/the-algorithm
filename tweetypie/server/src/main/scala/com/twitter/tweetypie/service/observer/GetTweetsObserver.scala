@@ -2,22 +2,22 @@ package com.twitter.tweetypie
 package service
 package observer
 
-import com.twitter.servo.exception.thriftscala.ClientError
+import com.twitter.servo.etwitterception.thriftscala.ClientError
 import com.twitter.tweetypie.thriftscala.GetTweetOptions
 import com.twitter.tweetypie.thriftscala.GetTweetResult
 import com.twitter.tweetypie.thriftscala.GetTweetsRequest
 
 private[service] object GetTweetsObserver {
-  type Type = ObserveExchange[GetTweetsRequest, Seq[GetTweetResult]]
+  type Type = ObserveEtwitterchange[GetTweetsRequest, Seq[GetTweetResult]]
 
-  def observeExchange(stats: StatsReceiver): Effect[Type] = {
+  def observeEtwitterchange(stats: StatsReceiver): Effect[Type] = {
     val resultStateStats = ResultStateStats(stats)
 
     Effect {
       case (request, response) =>
         response match {
-          case Return(xs) =>
-            xs.foreach {
+          case Return(twitters) =>
+            twitters.foreach {
               case result if Observer.successStatusStates(result.tweetState) =>
                 resultStateStats.success()
               case _ =>
@@ -49,9 +49,9 @@ private[service] object GetTweetsObserver {
     val includeFavoriteCountsCounter = optionsScope.counter("favorite_counts")
     val includeQuoteCountsCounter = optionsScope.counter("quote_counts")
     val bypassVisibilityFilteringCounter = optionsScope.counter("bypass_visibility_filtering")
-    val excludeReportedCounter = optionsScope.counter("exclude_reported")
+    val etwittercludeReportedCounter = optionsScope.counter("etwitterclude_reported")
     val cardsPlatformKeyScope = optionsScope.scope("cards_platform_key")
-    val extensionsArgsCounter = optionsScope.counter("extensions_args")
+    val etwittertensionsArgsCounter = optionsScope.counter("etwittertensions_args")
     val doNotCacheCounter = optionsScope.counter("do_not_cache")
     val additionalFieldsScope = optionsScope.scope("additional_fields")
     val safetyLevelScope = optionsScope.scope("safety_level")
@@ -78,8 +78,8 @@ private[service] object GetTweetsObserver {
         if (options.includeFavoriteCount) includeFavoriteCountsCounter.incr()
         if (options.includeQuoteCount) includeQuoteCountsCounter.incr()
         if (options.bypassVisibilityFiltering) bypassVisibilityFilteringCounter.incr()
-        if (options.excludeReported) excludeReportedCounter.incr()
-        if (options.extensionsArgs.nonEmpty) extensionsArgsCounter.incr()
+        if (options.etwittercludeReported) etwittercludeReportedCounter.incr()
+        if (options.etwittertensionsArgs.nonEmpty) etwittertensionsArgsCounter.incr()
         if (options.doNotCache) doNotCacheCounter.incr()
         if (options.includeProfileGeoEnrichment) includeProfileGeoEnrichment.incr()
         if (options.includeMediaAdditionalMetadata) includeMediaAdditionalMetadata.incr()

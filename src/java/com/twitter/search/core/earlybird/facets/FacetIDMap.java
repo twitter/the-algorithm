@@ -1,6 +1,6 @@
 package com.twitter.search.core.earlybird.facets;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
@@ -15,7 +15,7 @@ import com.twitter.search.common.util.io.flushable.Flushable;
 
 /**
  * Currently a facet is configured by:
- *   - Index field name: The Lucene field name which stores the indexed terms of this facet
+ *   - Indetwitter field name: The Lucene field name which stores the indetwittered terms of this facet
  *   - Facet name:       The name of the facet that the search API specifies to request facet counts.
  *   - Facet id:         An internal id which is used to store the facet forward mapping in the facet counting
  *                       data structures.
@@ -31,7 +31,7 @@ public final class FacetIDMap implements Flushable {
   private FacetIDMap(FacetField[] facetIDToFieldMap) {
     this.facetIDToFieldMap = facetIDToFieldMap;
 
-    facetNameToIDMap = Maps.newHashMapWithExpectedSize(facetIDToFieldMap.length);
+    facetNameToIDMap = Maps.newHashMapWithEtwitterpectedSize(facetIDToFieldMap.length);
     for (int i = 0; i < facetIDToFieldMap.length; i++) {
       facetNameToIDMap.put(facetIDToFieldMap[i].getFacetName(), i);
     }
@@ -111,7 +111,7 @@ public final class FacetIDMap implements Flushable {
     return new FlushHandler(this);
   }
 
-  public static final class FlushHandler extends Flushable.Handler<FacetIDMap> {
+  public static final class FlushHandler etwittertends Flushable.Handler<FacetIDMap> {
     private static final String NUM_FACET_FIELDS_PROP_NAME = "numFacetFields";
 
     private final Schema schema;
@@ -127,7 +127,7 @@ public final class FacetIDMap implements Flushable {
     }
 
     @Override
-    public void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
+    public void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOEtwitterception {
       FacetIDMap toFlush = getObjectToFlush();
       int[] idMap = new int[toFlush.facetIDToFieldMap.length];
       for (int i = 0; i < toFlush.facetIDToFieldMap.length; i++) {
@@ -140,10 +140,10 @@ public final class FacetIDMap implements Flushable {
 
 
     @Override
-    public FacetIDMap doLoad(FlushInfo flushInfo, DataDeserializer in) throws IOException {
+    public FacetIDMap doLoad(FlushInfo flushInfo, DataDeserializer in) throws IOEtwitterception {
       int[] idMap = in.readIntArray();
       if (idMap.length != schema.getNumFacetFields()) {
-        throw new IOException("Wrong number of facet fields. Expected by schema: "
+        throw new IOEtwitterception("Wrong number of facet fields. Etwitterpected by schema: "
                 + schema.getNumFacetFields()
                 + ", but found in serialized segment: " + idMap.length);
       }

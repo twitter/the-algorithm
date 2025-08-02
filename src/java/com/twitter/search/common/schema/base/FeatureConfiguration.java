@@ -2,7 +2,7 @@ package com.twitter.search.common.schema.base;
 
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
@@ -15,7 +15,7 @@ import com.twitter.search.common.schema.thriftjava.ThriftFeatureUpdateConstraint
 // FeatureConfiguration is defined for all the column stride view fields.
 public final class FeatureConfiguration {
   private final String name;
-  private final int intIndex;
+  private final int intIndetwitter;
   // Start position in the given int (0-31)
   private final int bitStartPos;
   // Length in bits of the feature
@@ -23,7 +23,7 @@ public final class FeatureConfiguration {
   // precomputed for reuse
   private final int bitMask;
   private final int inverseBitMask;
-  private final int maxValue;
+  private final int matwitterValue;
 
   private final ThriftCSFType type;
 
@@ -40,7 +40,7 @@ public final class FeatureConfiguration {
   /**
    * Creates a new FeatureConfiguration with a base field.
    *
-   * @param intIndex which integer is the feature in (0 based).
+   * @param intIndetwitter which integer is the feature in (0 based).
    * @param bitStartPos at which bit does the feature start (0-31).
    * @param bitLength length in bits of the feature
    * @param baseField the CSF this feature is stored within.
@@ -49,7 +49,7 @@ public final class FeatureConfiguration {
           String name,
           ThriftCSFType type,
           ThriftCSFType outputType,
-          int intIndex,
+          int intIndetwitter,
           int bitStartPos,
           int bitLength,
           String baseField,
@@ -60,13 +60,13 @@ public final class FeatureConfiguration {
     this.name = MorePreconditions.checkNotBlank(name);
     this.type = Preconditions.checkNotNull(type);
     this.outputType = outputType;
-    this.intIndex = intIndex;
+    this.intIndetwitter = intIndetwitter;
     this.bitStartPos = bitStartPos;
     this.bitLength = bitLength;
     // Technically, int-sized features can use all 32 bits to store a positive value greater than
-    // Integer.MAX_VALUE. But in practice, we will convert the values of those features to Java ints
-    // on the read side, so the max value for those features will still be Integer.MAX_VALUE.
-    this.maxValue = (1 << Math.min(bitLength, Integer.SIZE - 1)) - 1;
+    // Integer.MAtwitter_VALUE. But in practice, we will convert the values of those features to Java ints
+    // on the read side, so the matwitter value for those features will still be Integer.MAtwitter_VALUE.
+    this.matwitterValue = (1 << Math.min(bitLength, Integer.SIZE - 1)) - 1;
     this.bitMask = (int) (((1L << bitLength) - 1) << bitStartPos);
     this.inverseBitMask = ~bitMask;
     this.baseField = baseField;
@@ -78,20 +78,20 @@ public final class FeatureConfiguration {
     return name;
   }
 
-  public int getMaxValue() {
-    return maxValue;
+  public int getMatwitterValue() {
+    return matwitterValue;
   }
 
   @Override
   public String toString() {
     return new StringBuilder().append(name)
-            .append(" (").append(intIndex).append(", ")
+            .append(" (").append(intIndetwitter).append(", ")
             .append(bitStartPos).append(", ")
             .append(bitLength).append(") ").toString();
   }
 
-  public int getValueIndex() {
-    return intIndex;
+  public int getValueIndetwitter() {
+    return intIndetwitter;
   }
 
   public int getBitStartPosition() {
@@ -159,12 +159,12 @@ public final class FeatureConfiguration {
   @Override
   public int hashCode() {
     return (name == null ? 0 : name.hashCode())
-        + intIndex * 7
+        + intIndetwitter * 7
         + bitStartPos * 13
         + bitLength * 23
         + bitMask * 31
         + inverseBitMask * 43
-        + (int) maxValue * 53
+        + (int) matwitterValue * 53
         + (type == null ? 0 : type.hashCode()) * 61
         + (outputType == null ? 0 : outputType.hashCode()) * 71
         + (baseField == null ? 0 : baseField.hashCode()) * 83
@@ -184,7 +184,7 @@ public final class FeatureConfiguration {
         && (bitLength == featureConfiguration.bitLength)
         && (bitMask == featureConfiguration.bitMask)
         && (inverseBitMask == featureConfiguration.inverseBitMask)
-        && (maxValue == featureConfiguration.maxValue)
+        && (matwitterValue == featureConfiguration.matwitterValue)
         && (type == featureConfiguration.type)
         && (outputType == featureConfiguration.outputType)
         && (baseField == featureConfiguration.baseField)
@@ -209,7 +209,7 @@ public final class FeatureConfiguration {
     private String name;
     private ThriftCSFType type;
     private ThriftCSFType outputType;
-    private int intIndex;
+    private int intIndetwitter;
     // Start position in the given int (0-31)
     private int bitStartPos;
     // Length in bits of the feature
@@ -223,7 +223,7 @@ public final class FeatureConfiguration {
         ThriftFeatureNormalizationType.NONE;
 
     public FeatureConfiguration build() {
-      return new FeatureConfiguration(name, type, outputType, intIndex, bitStartPos, bitLength,
+      return new FeatureConfiguration(name, type, outputType, intIndetwitter, bitStartPos, bitLength,
               baseField, featureUpdateConstraints, featureNormalizationType);
     }
 
@@ -249,10 +249,10 @@ public final class FeatureConfiguration {
     }
 
     /**
-     * Sets the bit range at the given intIndex, startPos and length.
+     * Sets the bit range at the given intIndetwitter, startPos and length.
      */
-    public Builder withBitRange(int index, int startPos, int length) {
-      this.intIndex = index;
+    public Builder withBitRange(int indetwitter, int startPos, int length) {
+      this.intIndetwitter = indetwitter;
       this.bitStartPos = startPos;
       this.bitLength = length;
       return this;

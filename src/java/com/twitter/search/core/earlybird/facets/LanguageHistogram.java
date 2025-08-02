@@ -19,19 +19,19 @@ public class LanguageHistogram {
   public static final LanguageHistogram EMPTY_HISTOGRAM = new LanguageHistogram() {
     // Let's make this immutable for safety.
     @Override public void clear() {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationEtwitterception();
     }
 
     @Override public void increment(int languageID) {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationEtwitterception();
     }
 
     @Override public void add(int languageID, int value) {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationEtwitterception();
     }
 
     @Override public void addAll(LanguageHistogram histogram) {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationEtwitterception();
     }
   };
 

@@ -8,17 +8,17 @@ import com.twitter.bijection.scrooge.CompactScalaCodec
 import com.twitter.channels.common.thriftscala.ApiList
 import com.twitter.channels.common.thriftscala.ApiListDisplayLocation
 import com.twitter.channels.common.thriftscala.ApiListView
-import com.twitter.content_mixer.thriftscala.ContentMixer
+import com.twitter.content_mitwitterer.thriftscala.ContentMitwitterer
 import com.twitter.conversions.DurationOps._
-import com.twitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
-import com.twitter.cr_mixer.thriftscala.CrMixer
+import com.twitter.cortetwitter.deepbird.thriftjava.DeepbirdPredictionService
+import com.twitter.cr_mitwitterer.thriftscala.CrMitwitterer
 import com.twitter.datatools.entityservice.entities.sports.thriftscala.BaseballGameLiveUpdate
 import com.twitter.datatools.entityservice.entities.sports.thriftscala.BasketballGameLiveUpdate
 import com.twitter.datatools.entityservice.entities.sports.thriftscala.CricketMatchLiveUpdate
 import com.twitter.datatools.entityservice.entities.sports.thriftscala.NflFootballGameLiveUpdate
 import com.twitter.datatools.entityservice.entities.sports.thriftscala.SoccerMatchLiveUpdate
 import com.twitter.discovery.common.configapi.ConfigParamsBuilder
-import com.twitter.discovery.common.configapi.FeatureContextBuilder
+import com.twitter.discovery.common.configapi.FeatureContetwittertBuilder
 import com.twitter.discovery.common.environment.{Environment => NotifEnvironment}
 import com.twitter.escherbird.common.thriftscala.Domains
 import com.twitter.escherbird.common.thriftscala.QualifiedId
@@ -31,17 +31,17 @@ import com.twitter.escherbird.util.uttclient.CachedUttClientV2
 import com.twitter.escherbird.utt.strato.thriftscala.Environment
 import com.twitter.eventbus.client.EventBusPublisherBuilder
 import com.twitter.events.recos.thriftscala.EventsRecosService
-import com.twitter.explore_ranker.thriftscala.ExploreRanker
+import com.twitter.etwitterplore_ranker.thriftscala.EtwitterploreRanker
 import com.twitter.featureswitches.v2.FeatureSwitches
 import com.twitter.finagle.Memcached
-import com.twitter.finagle.ThriftMux
+import com.twitter.finagle.ThriftMutwitter
 import com.twitter.finagle.client.BackupRequestFilter
 import com.twitter.finagle.client.ClientRegistry
 import com.twitter.finagle.loadbalancer.Balancers
 import com.twitter.finagle.memcached.Client
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.mux.transport.OpportunisticTls
+import com.twitter.finagle.mutwitter.transport.OpportunisticTls
 import com.twitter.finagle.service.Retries
 import com.twitter.finagle.service.RetryPolicy
 import com.twitter.finagle.stats.StatsReceiver
@@ -84,7 +84,7 @@ import com.twitter.frigate.pushservice.rank.RFPHLightRanker
 import com.twitter.frigate.pushservice.rank.RFPHRanker
 import com.twitter.frigate.pushservice.rank.SubscriptionCreatorRanker
 import com.twitter.frigate.pushservice.refresh_handler._
-import com.twitter.frigate.pushservice.refresh_handler.cross.CandidateCopyExpansion
+import com.twitter.frigate.pushservice.refresh_handler.cross.CandidateCopyEtwitterpansion
 import com.twitter.frigate.pushservice.send_handler.SendHandlerPushCandidateHydrator
 import com.twitter.frigate.pushservice.store._
 import com.twitter.frigate.pushservice.take.CandidateNotifier
@@ -110,10 +110,10 @@ import com.twitter.geoduck.service.common.clientmodules.GeoduckUserLocate
 import com.twitter.geoduck.service.common.clientmodules.GeoduckUserLocateModule
 import com.twitter.geoduck.service.thriftscala.LocationResponse
 import com.twitter.geoduck.thriftscala.LocationService
-import com.twitter.gizmoduck.context.thriftscala.ReadConfig
-import com.twitter.gizmoduck.context.thriftscala.TestUserConfig
+import com.twitter.gizmoduck.contetwittert.thriftscala.ReadConfig
+import com.twitter.gizmoduck.contetwittert.thriftscala.TestUserConfig
 import com.twitter.gizmoduck.testusers.client.TestUserClientBuilder
-import com.twitter.gizmoduck.thriftscala.LookupContext
+import com.twitter.gizmoduck.thriftscala.LookupContetwittert
 import com.twitter.gizmoduck.thriftscala.QueryFields
 import com.twitter.gizmoduck.thriftscala.User
 import com.twitter.gizmoduck.thriftscala.UserService
@@ -153,8 +153,8 @@ import com.twitter.ml.api.thriftscala.{DataRecord => ThriftDataRecord}
 import com.twitter.ml.featurestore.catalog.entities.core.{Author => TweetAuthorEntity}
 import com.twitter.ml.featurestore.catalog.entities.core.{User => TargetUserEntity}
 import com.twitter.ml.featurestore.catalog.entities.core.{UserAuthor => UserAuthorEntity}
-import com.twitter.ml.featurestore.catalog.entities.magicrecs.{SocialContext => SocialContextEntity}
-import com.twitter.ml.featurestore.catalog.entities.magicrecs.{UserSocialContext => TargetUserSocialContextEntity}
+import com.twitter.ml.featurestore.catalog.entities.magicrecs.{SocialContetwittert => SocialContetwittertEntity}
+import com.twitter.ml.featurestore.catalog.entities.magicrecs.{UserSocialContetwittert => TargetUserSocialContetwittertEntity}
 import com.twitter.ml.featurestore.timelines.thriftscala.TimelineScorerScoreView
 import com.twitter.notificationservice.api.thriftscala.DeleteCurrentTimelineForUserRequest
 import com.twitter.notificationservice.genericfeedbackstore.FeedbackPromptValue
@@ -175,13 +175,13 @@ import com.twitter.nrel.heavyranker.{TargetFeatureHydrator => RelevanceTargetFea
 import com.twitter.nrel.lightranker.MagicRecsServeDataRecordLightRanker
 import com.twitter.nrel.lightranker.{Config => LightRankerConfig}
 import com.twitter.onboarding.task.service.thriftscala.FatigueFlowEnrollment
-import com.twitter.periscope.api.thriftscala.AudioSpacesLookupContext
+import com.twitter.periscope.api.thriftscala.AudioSpacesLookupContetwittert
 import com.twitter.permissions_storage.thriftscala.AppPermission
 import com.twitter.recommendation.interests.discovery.core.config.{DeployConfig => InterestDeployConfig}
 import com.twitter.recommendation.interests.discovery.popgeo.deploy.PopGeoInterestProvider
 import com.twitter.recos.user_tweet_entity_graph.thriftscala.UserTweetEntityGraph
 import com.twitter.recos.user_user_graph.thriftscala.UserUserGraph
-import com.twitter.rux.common.strato.thriftscala.UserTargetingProperty
+import com.twitter.rutwitter.common.strato.thriftscala.UserTargetingProperty
 import com.twitter.scio.nsfw_user_segmentation.thriftscala.NSFWProducer
 import com.twitter.scio.nsfw_user_segmentation.thriftscala.NSFWUserSegmentation
 import com.twitter.search.earlybird.thriftscala.EarlybirdService
@@ -216,15 +216,15 @@ import com.twitter.strato.generated.client.ml.featureStore.TimelineScorerTweetSc
 import com.twitter.strato.generated.client.notifications.space_device_follow_impl.SpaceDeviceFollowingClientColumn
 import com.twitter.strato.generated.client.periscope.CoreOnAudioSpaceClientColumn
 import com.twitter.strato.generated.client.periscope.ParticipantsOnAudioSpaceClientColumn
-import com.twitter.strato.generated.client.rux.TargetingPropertyOnUserClientColumn
+import com.twitter.strato.generated.client.rutwitter.TargetingPropertyOnUserClientColumn
 import com.twitter.strato.generated.client.socialgraph.graphs.creatorSubscriptionTimeline.{CountEdgesBySourceClientColumn => CreatorSubscriptionNumTweetsColumn}
 import com.twitter.strato.generated.client.translation.service.IsTweetTranslatableClientColumn
 import com.twitter.strato.generated.client.translation.service.platform.MachineTranslateTweetClientColumn
 import com.twitter.strato.generated.client.trends.trip.TripTweetsAirflowProdClientColumn
 import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.taxi.common.AppId
-import com.twitter.taxi.deploy.Cluster
-import com.twitter.taxi.deploy.Env
+import com.twitter.tatwitteri.common.AppId
+import com.twitter.tatwitteri.deploy.Cluster
+import com.twitter.tatwitteri.deploy.Env
 import com.twitter.topiclisting.TopicListing
 import com.twitter.topiclisting.TopicListingBuilder
 import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
@@ -232,7 +232,7 @@ import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweets
 import com.twitter.tsp.thriftscala.TopicSocialProofRequest
 import com.twitter.tsp.thriftscala.TopicSocialProofResponse
 import com.twitter.tweetypie.thriftscala.GetTweetOptions
-import com.twitter.tweetypie.thriftscala.Tweet.VisibleTextRangeField
+import com.twitter.tweetypie.thriftscala.Tweet.VisibleTetwittertRangeField
 import com.twitter.tweetypie.thriftscala.TweetService
 import com.twitter.ubs.thriftscala.AudioSpace
 import com.twitter.ubs.thriftscala.Participants
@@ -248,9 +248,9 @@ import com.twitter.timelinescorer.thriftscala.v1.ScoredTweet
 import com.twitter.ubs.thriftscala.SellerTrack
 import com.twitter.wtf.candidate.thriftscala.CandidateSeq
 
-trait DeployConfig extends Config {
+trait DeployConfig etwittertends Config {
   // Any finagle clients should not be defined as lazy. If defined lazy,
-  // ClientRegistry.expAllRegisteredClientsResolved() call in init will not ensure that the clients
+  // ClientRegistry.etwitterpAllRegisteredClientsResolved() call in init will not ensure that the clients
   // are active before thrift endpoint is active. We want the clients to be active, because zookeeper
   // resolution triggered by first request(s) might result in the request(s) failing.
 
@@ -291,7 +291,7 @@ trait DeployConfig extends Config {
   // Commonly used clients
   val gizmoduckClient = {
 
-    val client = ThriftMux.client
+    val client = ThriftMutwitter.client
       .withMutualTls(serviceIdentifier)
       .withClientId(pushserviceThriftClientId)
       .build[UserService.MethodPerEndpoint](
@@ -299,7 +299,7 @@ trait DeployConfig extends Config {
       )
 
     /**
-     * RequestContext test user config to allow reading test user accounts on pushservice for load
+     * RequestContetwittert test user config to allow reading test user accounts on pushservice for load
      * testing
      */
     val GizmoduckTestUserConfig = TestUserConfig(
@@ -336,27 +336,27 @@ trait DeployConfig extends Config {
   }
 
   lazy val geoduckHydrationClient: Hydration.MethodPerEndpoint = {
-    val servicePerEndpoint = ThriftMux.client
+    val servicePerEndpoint = ThriftMutwitter.client
       .withLabel("geoduck_hydration")
       .withClientId(pushserviceThriftClientId)
       .withMutualTls(serviceIdentifier)
       .methodBuilder("/s/geo/hydration")
       .withTimeoutPerRequest(10.seconds)
       .withTimeoutTotal(10.seconds)
-      .idempotent(maxExtraLoad = 0.0)
+      .idempotent(matwitterEtwittertraLoad = 0.0)
       .servicePerEndpoint[Hydration.ServicePerEndpoint]
     Hydration.MethodPerEndpoint(servicePerEndpoint)
   }
 
   lazy val geoduckLocationClient: LocationService.MethodPerEndpoint = {
-    val servicePerEndpoint = ThriftMux.client
+    val servicePerEndpoint = ThriftMutwitter.client
       .withLabel("geoduck_location")
       .withClientId(pushserviceThriftClientId)
       .withMutualTls(serviceIdentifier)
       .methodBuilder("/s/geo/geoduck_locationservice")
       .withTimeoutPerRequest(10.seconds)
       .withTimeoutTotal(10.seconds)
-      .idempotent(maxExtraLoad = 0.0)
+      .idempotent(matwitterEtwittertraLoad = 0.0)
       .servicePerEndpoint[LocationService.ServicePerEndpoint]
     LocationService.MethodPerEndpoint(servicePerEndpoint)
   }
@@ -389,13 +389,13 @@ trait DeployConfig extends Config {
     ObservedCachedReadableStore.from(
       store,
       ttl = 20.seconds,
-      maxKeys = 1000,
+      matwitterKeys = 1000,
       cacheName = _cacheName,
       windowSize = 10000L
     )(statsReceiver.scope(_cacheName))
   }
 
-  private val deepbirdServiceBase = ThriftMux.client
+  private val deepbirdServiceBase = ThriftMutwitter.client
     .withClientId(pushserviceThriftClientId)
     .withMutualTls(serviceIdentifier)
     .withLoadBalancer(Balancers.p2c())
@@ -454,7 +454,7 @@ trait DeployConfig extends Config {
   )
 
   val stratoClient = {
-    val pushserviceThriftClient = ThriftMux.client.withClientId(pushserviceThriftClientId)
+    val pushserviceThriftClient = ThriftMutwitter.client.withClientId(pushserviceThriftClientId)
     val baseBuilder = Strato
       .Client(pushserviceThriftClient)
       .withMutualTls(serviceIdentifier)
@@ -466,12 +466,12 @@ trait DeployConfig extends Config {
     finalBuilder.build()
   }
 
-  val interestThriftServiceClient = ThriftMux.client
+  val interestThriftServiceClient = ThriftMutwitter.client
     .withClientId(pushserviceThriftClientId)
     .withMutualTls(serviceIdentifier)
     .withRequestTimeout(3.seconds)
     .configured(Retries.Policy(RetryPolicy.tries(1)))
-    .configured(BackupRequestFilter.Configured(maxExtraLoad = 0.0, sendInterrupts = false))
+    .configured(BackupRequestFilter.Configured(matwitterEtwittertraLoad = 0.0, sendInterrupts = false))
     .withStatsReceiver(statsReceiver)
     .build[InterestsThriftService.MethodPerEndpoint](
       dest = "/s/interests-thrift-service/interests-thrift-service",
@@ -575,30 +575,30 @@ trait DeployConfig extends Config {
         "frigate/magicrecs/opendPushByHourAggregated.User")
   }
 
-  private val lexClient: LiveVideoTimelineClient = {
-    val lexService =
+  private val letwitterClient: LiveVideoTimelineClient = {
+    val letwitterService =
       new TimelineService.FinagledClient(
         readOnlyThriftService(
-          name = "lex",
-          dest = lexServiceDest,
-          statsReceiver = statsReceiver.scope("lex-service"),
+          name = "letwitter",
+          dest = letwitterServiceDest,
+          statsReceiver = statsReceiver.scope("letwitter-service"),
           thriftClientId = pushserviceThriftClientId,
           requestTimeout = 5.seconds,
           mTLSServiceIdentifier = Some(serviceIdentifier)
         ),
-        clientParam = RichClientParam(serviceName = "lex")
+        clientParam = RichClientParam(serviceName = "letwitter")
       )
-    new LiveVideoTimelineClient(lexService)
+    new LiveVideoTimelineClient(letwitterService)
   }
 
-  override val lexServiceStore = {
+  override val letwitterServiceStore = {
     ObservedCachedReadableStore.from[EventRequest, LiveEvent](
-      buildStore(LexServiceStore(lexClient), "lexServiceStore"),
+      buildStore(LetwitterServiceStore(letwitterClient), "letwitterServiceStore"),
       ttl = 1.hour,
-      maxKeys = 1000,
-      cacheName = "lexServiceStore_cache",
+      matwitterKeys = 1000,
+      cacheName = "letwitterServiceStore_cache",
       windowSize = 10000L
-    )(statsReceiver.scope("lexServiceStore_cache"))
+    )(statsReceiver.scope("letwitterServiceStore_cache"))
   }
 
   val inferredEntitiesFromInterestedInKeyedByClusterColumn =
@@ -611,7 +611,7 @@ trait DeployConfig extends Config {
     ObservedCachedReadableStore.from[Int, SimClustersInferredEntities](
       buildStore(store, "simcluster_entity_store_cache"),
       ttl = 6.hours,
-      maxKeys = 1000,
+      matwitterKeys = 1000,
       cacheName = "simcluster_entity_store_cache",
       windowSize = 10000L
     )(statsReceiver.scope("simcluster_entity_store_cache"))
@@ -625,7 +625,7 @@ trait DeployConfig extends Config {
     ObservedCachedReadableStore.from[(Long, Long), FanoutEvent](
       buildStore(store, "fanoutMetadataStore"),
       ttl = 10.minutes,
-      maxKeys = 1000,
+      matwitterKeys = 1000,
       cacheName = "fanoutMetadataStore_cache",
       windowSize = 10000L
     )(statsReceiver.scope("fanoutMetadataStore_cache"))
@@ -645,15 +645,15 @@ trait DeployConfig extends Config {
   /**
    * Interests lookup store
    */
-  override val interestsWithLookupContextStore = {
-    ObservedCachedReadableStore.from[InterestsLookupRequestWithContext, Interests](
+  override val interestsWithLookupContetwittertStore = {
+    ObservedCachedReadableStore.from[InterestsLookupRequestWithContetwittert, Interests](
       buildStore(
-        new InterestsWithLookupContextStore(interestThriftServiceClient, statsReceiver),
-        "InterestsWithLookupContextStore"
+        new InterestsWithLookupContetwittertStore(interestThriftServiceClient, statsReceiver),
+        "InterestsWithLookupContetwittertStore"
       ),
       ttl = 1.minute,
-      maxKeys = 1000,
-      cacheName = "interestsWithLookupContextStore_cache",
+      matwitterKeys = 1000,
+      cacheName = "interestsWithLookupContetwittertStore_cache",
       windowSize = 10000L
     )
   }
@@ -663,7 +663,7 @@ trait DeployConfig extends Config {
    */
   override lazy val optOutUserInterestsStore: ReadableStore[Long, Seq[InterestId]] = {
     buildStore(
-      InterestsOptOutwithLookUpContextStore(interestThriftServiceClient),
+      InterestsOptOutwithLookUpContetwittertStore(interestThriftServiceClient),
       "InterestsOptOutStore"
     )
   }
@@ -732,7 +732,7 @@ trait DeployConfig extends Config {
     QueryFields.Takedowns,
     QueryFields.Labels,
     QueryFields.Counts,
-    QueryFields.ExtendedProfile
+    QueryFields.EtwittertendedProfile
   )
 
   // Setting up safeUserStore
@@ -748,7 +748,7 @@ trait DeployConfig extends Config {
         )
       )(statsReceiver.scope("SafeUserStore")),
       ttl = 1.minute,
-      maxKeys = 5e4.toInt,
+      matwitterKeys = 5e4.toInt,
       cacheName = "safeUserStore_cache",
       windowSize = 10000L
     )(statsReceiver.scope("safeUserStore_cache"))
@@ -764,7 +764,7 @@ trait DeployConfig extends Config {
     GizmoduckUserStore(
       client = gizmoduckClient,
       queryFields = Set(QueryFields.Devices),
-      context = LookupContext(includeSoftUsers = true),
+      contetwittert = LookupContetwittert(includeSoftUsers = true),
       statsReceiver = statsReceiver
     )
   )(statsReceiver.scope("devicesUserStore"))
@@ -798,14 +798,14 @@ trait DeployConfig extends Config {
 
   def userTweetEntityGraphDest: String
   def userUserGraphDest: String
-  def lexServiceDest: String
+  def letwitterServiceDest: String
 
   // Setting up the history store
   def frigateHistoryCacheDest: String
 
   val notificationHistoryStore: NotificationHistoryStore = {
 
-    val manhattanStackBasedClient = ThriftMux.client
+    val manhattanStackBasedClient = ThriftMutwitter.client
       .withClientId(notifierThriftClientId)
       .withOpportunisticTls(OpportunisticTls.Required)
       .withMutualTls(
@@ -817,13 +817,13 @@ trait DeployConfig extends Config {
       .withRequestTimeout(10.seconds)
       .withStatsReceiver(statsReceiver)
       .methodBuilder(Omega.wilyName)
-      .withMaxRetries(3)
+      .withMatwitterRetries(3)
 
     NotificationHistoryStore.build(
       "frigate_notifier",
       "frigate_notifications_v2",
       manhattanHistoryMethodBuilder,
-      maxRetryCount = 3
+      matwitterRetryCount = 3
     )
   }
 
@@ -852,8 +852,8 @@ trait DeployConfig extends Config {
       manhattanClientMtlsParams)
     ManhattanKVEndpointBuilder(mhClient)
       .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-      .defaultMaxTimeout(5.seconds)
-      .maxRetryCount(3)
+      .defaultMatwitterTimeout(5.seconds)
+      .matwitterRetryCount(3)
       .statsReceiver(statsReceiver)
       .build()
   }
@@ -862,8 +862,8 @@ trait DeployConfig extends Config {
     val mhClient = ManhattanKVClient("frigate_ntab", Omega.wilyName, manhattanClientMtlsParams)
     ManhattanKVEndpointBuilder(mhClient)
       .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-      .defaultMaxTimeout(5.seconds)
-      .maxRetryCount(3)
+      .defaultMatwitterTimeout(5.seconds)
+      .matwitterRetryCount(3)
       .statsReceiver(statsReceiver)
       .build()
   }
@@ -919,7 +919,7 @@ trait DeployConfig extends Config {
       keyToString = {
         case UserHistoryKey.UserId(userId) => s"HLPRS/$userId"
         case unknownKey =>
-          throw new IllegalArgumentException(s"Unknown userHistoryStore cache key $unknownKey")
+          throw new IllegalArgumentEtwitterception(s"Unknown userHistoryStore cache key $unknownKey")
       }
     )
   }
@@ -933,7 +933,7 @@ trait DeployConfig extends Config {
     val endpoint =
       ManhattanKVEndpointBuilder(client)
         .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-        .defaultMaxTimeout(3.seconds)
+        .defaultMatwitterTimeout(3.seconds)
         .statsReceiver(statsReceiver)
         .build()
 
@@ -978,53 +978,53 @@ trait DeployConfig extends Config {
       manhattanClientMtlsParams
     )
 
-  val crMixerClient: CrMixer.MethodPerEndpoint = new CrMixer.FinagledClient(
+  val crMitwittererClient: CrMitwitterer.MethodPerEndpoint = new CrMitwitterer.FinagledClient(
     readOnlyThriftService(
-      "cr-mixer",
-      "/s/cr-mixer/cr-mixer-plus",
+      "cr-mitwitterer",
+      "/s/cr-mitwitterer/cr-mitwitterer-plus",
       statsReceiver,
       pushserviceThriftClientId,
       requestTimeout = 5.seconds,
       mTLSServiceIdentifier = Some(serviceIdentifier)
     ),
-    clientParam = RichClientParam(serviceName = "cr-mixer")
+    clientParam = RichClientParam(serviceName = "cr-mitwitterer")
   )
 
-  val crMixerStore = CrMixerTweetStore(crMixerClient)(statsReceiver.scope("CrMixerTweetStore"))
+  val crMitwittererStore = CrMitwittererTweetStore(crMitwittererClient)(statsReceiver.scope("CrMitwittererTweetStore"))
 
-  val contentMixerClient: ContentMixer.MethodPerEndpoint = new ContentMixer.FinagledClient(
+  val contentMitwittererClient: ContentMitwitterer.MethodPerEndpoint = new ContentMitwitterer.FinagledClient(
     readOnlyThriftService(
-      "content-mixer",
-      "/s/corgi-shared/content-mixer",
+      "content-mitwitterer",
+      "/s/corgi-shared/content-mitwitterer",
       statsReceiver,
       pushserviceThriftClientId,
       requestTimeout = 5.seconds,
       mTLSServiceIdentifier = Some(serviceIdentifier)
     ),
-    clientParam = RichClientParam(serviceName = "content-mixer")
+    clientParam = RichClientParam(serviceName = "content-mitwitterer")
   )
 
-  val exploreRankerClient: ExploreRanker.MethodPerEndpoint =
-    new ExploreRanker.FinagledClient(
+  val etwitterploreRankerClient: EtwitterploreRanker.MethodPerEndpoint =
+    new EtwitterploreRanker.FinagledClient(
       readOnlyThriftService(
-        "explore-ranker",
-        "/s/explore-ranker/explore-ranker",
+        "etwitterplore-ranker",
+        "/s/etwitterplore-ranker/etwitterplore-ranker",
         statsReceiver,
         pushserviceThriftClientId,
         requestTimeout = 5.seconds,
         mTLSServiceIdentifier = Some(serviceIdentifier)
       ),
-      clientParam = RichClientParam(serviceName = "explore-ranker")
+      clientParam = RichClientParam(serviceName = "etwitterplore-ranker")
     )
 
-  val contentMixerStore = {
-    ObservedReadableStore(ContentMixerStore(contentMixerClient))(
-      statsReceiver.scope("ContentMixerStore"))
+  val contentMitwittererStore = {
+    ObservedReadableStore(ContentMitwittererStore(contentMitwittererClient))(
+      statsReceiver.scope("ContentMitwittererStore"))
   }
 
-  val exploreRankerStore = {
-    ObservedReadableStore(ExploreRankerStore(exploreRankerClient))(
-      statsReceiver.scope("ExploreRankerStore")
+  val etwitterploreRankerStore = {
+    ObservedReadableStore(EtwitterploreRankerStore(etwitterploreRankerClient))(
+      statsReceiver.scope("EtwitterploreRankerStore")
     )
   }
 
@@ -1051,7 +1051,7 @@ trait DeployConfig extends Config {
         includeReplyCount = true,
         includeFavoriteCount = true,
         includeQuotedTweet = true,
-        additionalFieldIds = Seq(VisibleTextRangeField.id)
+        additionalFieldIds = Seq(VisibleTetwittertRangeField.id)
       )
     )
     buildCachedTweetyPieStore(getTweetOptions, "tp_v2")
@@ -1065,7 +1065,7 @@ trait DeployConfig extends Config {
         includeReplyCount = true,
         includeFavoriteCount = true,
         includeQuotedTweet = true,
-        additionalFieldIds = Seq(VisibleTextRangeField.id),
+        additionalFieldIds = Seq(VisibleTetwittertRangeField.id),
       )
     )
     buildCachedTweetyPieStore(getTweetOptions, "tp_v2_noVF")
@@ -1079,7 +1079,7 @@ trait DeployConfig extends Config {
         includeReplyCount = true,
         includeFavoriteCount = true,
         includeQuotedTweet = true,
-        additionalFieldIds = Seq(VisibleTextRangeField.id)
+        additionalFieldIds = Seq(VisibleTetwittertRangeField.id)
       )
     )
     buildCachedTweetyPieStore(getTweetOptions, "sftp_v2")
@@ -1093,7 +1093,7 @@ trait DeployConfig extends Config {
         includeReplyCount = true,
         includeFavoriteCount = true,
         includeQuotedTweet = true,
-        additionalFieldIds = Seq(VisibleTextRangeField.id)
+        additionalFieldIds = Seq(VisibleTetwittertRangeField.id)
       )
     )
     TweetyPieStore.buildUserTweetStore(
@@ -1110,7 +1110,7 @@ trait DeployConfig extends Config {
         includeReplyCount = true,
         includeFavoriteCount = true,
         includeQuotedTweet = true,
-        additionalFieldIds = Seq(VisibleTextRangeField.id)
+        additionalFieldIds = Seq(VisibleTetwittertRangeField.id)
       )
     )
     TweetyPieStore.buildUserTweetStore(
@@ -1212,13 +1212,13 @@ trait DeployConfig extends Config {
       .DefaultStratoFetchableStore(
         fetcher = new ParticipantsOnAudioSpaceClientColumn(stratoClient).fetcher
       ).composeKeyMapping[String](broadcastId =>
-        (broadcastId, AudioSpacesLookupContext(forUserId = None)))
+        (broadcastId, AudioSpacesLookupContetwittert(forUserId = None)))
 
     ObservedCachedReadableStore
       .from(
         store = buildStore(store, "AudioSpaceParticipantsStore"),
         ttl = 20.seconds,
-        maxKeys = 200,
+        matwitterKeys = 200,
         cacheName = "AudioSpaceParticipantsStore",
         windowSize = 200
       )
@@ -1245,14 +1245,14 @@ trait DeployConfig extends Config {
       .DefaultStratoFetchableStore(
         fetcher = new CoreOnAudioSpaceClientColumn(stratoClient).fetcher
       ).composeKeyMapping[String] { broadcastId =>
-        (broadcastId, AudioSpacesLookupContext(forUserId = None))
+        (broadcastId, AudioSpacesLookupContetwittert(forUserId = None))
       }
 
     ObservedCachedReadableStore
       .from(
         store = buildStore(store, "AudioSpaceVisibilityStore"),
         ttl = 1.minute,
-        maxKeys = 5000,
+        matwitterKeys = 5000,
         cacheName = "AudioSpaceVisibilityStore",
         windowSize = 10000L)
   }
@@ -1278,7 +1278,7 @@ trait DeployConfig extends Config {
     defaultPageSize = 1000
   )
 
-  val rawFlockClient = ThriftMux.client
+  val rawFlockClient = ThriftMutwitter.client
     .withClientId(pushserviceThriftClientId)
     .withMutualTls(serviceIdentifier)
     .build[FlockDB.MethodPerEndpoint]("/s/flock/flock")
@@ -1350,18 +1350,18 @@ trait DeployConfig extends Config {
     safeUserTweetTweetyPieStore,
     cachedTweetyPieStoreV2NoVF,
     edgeStore,
-    interestsWithLookupContextStore,
+    interestsWithLookupContetwittertStore,
     uttEntityHydrationStore,
     geoDuckV2Store,
     topTweetsByGeoStore,
     topTweetsByGeoV2VersionedStore,
-    ruxTweetImpressionsStore,
+    rutwitterTweetImpressionsStore,
     recommendedTrendsCandidateSource,
     recentTweetsByAuthorsStore,
     topicSocialProofServiceStore,
-    crMixerStore,
-    contentMixerStore,
-    exploreRankerStore,
+    crMitwittererStore,
+    contentMitwittererStore,
+    etwitterploreRankerStore,
     softUserGeoLocationStore,
     tripTweetCandidateStore,
     popGeoLists,
@@ -1374,7 +1374,7 @@ trait DeployConfig extends Config {
     safeCachedTweetyPieStoreV2,
     cachedTweetyPieStoreV2NoVF,
     cachedTweetyPieStoreV2,
-    contentMixerStore,
+    contentMitwittererStore,
     softUserGeoLocationStore,
     topTweetsByGeoStore,
     topTweetsByGeoV2VersionedStore
@@ -1526,7 +1526,7 @@ trait DeployConfig extends Config {
     ObservedReadableStore(
       RecentTweetsByAuthorsStore.usingRecentTweetsConfig(
         tflockClient,
-        RecentTweetsConfig(maxResults = 1, maxAge = 3.days)
+        RecentTweetsConfig(matwitterResults = 1, matwitterAge = 3.days)
       )
     )(statsReceiver.scope("RecentTweetsFromTflockStore"))
 
@@ -1574,8 +1574,8 @@ trait DeployConfig extends Config {
       tweetAuthorLocationFeatureBuilder
     ).withStats()
 
-  override val socialContextActionsFeatureBuilder =
-    SocialContextActionsFeatureBuilder().withStats()
+  override val socialContetwittertActionsFeatureBuilder =
+    SocialContetwittertActionsFeatureBuilder().withStats()
 
   override val tweetContentFeatureBuilder =
     TweetContentFeatureBuilder(tweetContentFeatureCacheStore).withStats()
@@ -1589,17 +1589,17 @@ trait DeployConfig extends Config {
       TweetAuthorRecentRealGraphFeatures(statsReceiver.scope("TweetAuthorRecentRealGraphFeatures"))
     ).withStats()
 
-  override val socialContextRecentRealGraphFeatureBuilder =
-    SocialContextRecentRealGraphFeatureBuilder(
+  override val socialContetwittertRecentRealGraphFeatureBuilder =
+    SocialContetwittertRecentRealGraphFeatureBuilder(
       RecentRealGraphFeatureBuilder(
         stratoClient,
-        TargetUserSocialContextEntity,
+        TargetUserSocialContetwittertEntity,
         TargetUserEntity,
-        SocialContextEntity,
-        SocialContextRecentRealGraphFeatures(
-          statsReceiver.scope("SocialContextRecentRealGraphFeatures"))
+        SocialContetwittertEntity,
+        SocialContetwittertRecentRealGraphFeatures(
+          statsReceiver.scope("SocialContetwittertRecentRealGraphFeatures"))
       )(statsReceiver
-        .scope("SocialContextRecentRealGraphFeatureBuilder").scope("RecentRealGraphFeatureBuilder"))
+        .scope("SocialContetwittertRecentRealGraphFeatureBuilder").scope("RecentRealGraphFeatureBuilder"))
     ).withStats()
 
   override val tweetSocialProofFeatureBuilder =
@@ -1671,7 +1671,7 @@ trait DeployConfig extends Config {
     })
   }
 
-  val ruxTweetImpressionsStore = new TweetImpressionsStore(stratoClient)
+  val rutwitterTweetImpressionsStore = new TweetImpressionsStore(stratoClient)
 
   override val strongTiesStore: ReadableStore[Long, STPResult] = {
     implicit val valueCodec = new BinaryScalaCodec(STPResult)
@@ -1782,8 +1782,8 @@ trait DeployConfig extends Config {
     )
     val endpoint = ManhattanKVEndpointBuilder(client)
       .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-      .defaultMaxTimeout(3.seconds)
-      .maxRetryCount(2)
+      .defaultMatwitterTimeout(3.seconds)
+      .matwitterRetryCount(2)
       .statsReceiver(statsReceiver)
       .build()
 
@@ -1848,7 +1848,7 @@ trait DeployConfig extends Config {
             .scope("semantic_core_megadata_store")
         ),
         ttl = 1.hour,
-        maxKeys = 1000,
+        matwitterKeys = 1000,
         cacheName = "semantic_core_megadata_cache",
         windowSize = 10000L
       )(statsReceiver.scope("store", name))
@@ -1879,7 +1879,7 @@ trait DeployConfig extends Config {
           stratoClient,
           "semanticCore/soccerMatchScore.Entity"),
         ttl = 10.seconds,
-        maxKeys = 100,
+        matwitterKeys = 100,
         cacheName = "SoccerMatchCachedStore",
         windowSize = 100L
       )(statsReceiver.scope("SoccerMatchCachedStore"))
@@ -1893,7 +1893,7 @@ trait DeployConfig extends Config {
           stratoClient,
           "semanticCore/nflFootballGameScore.Entity"),
         ttl = 10.seconds,
-        maxKeys = 100,
+        matwitterKeys = 100,
         cacheName = "NFLMatchCachedStore",
         windowSize = 100L
       )(statsReceiver.scope("NFLMatchCachedStore"))
@@ -1913,7 +1913,7 @@ trait DeployConfig extends Config {
           AgathaRecentAbuseStrikeDouble,
           AgathaCalibratedNsfwDouble,
           AgathaCseDouble,
-          NsfwTextUserScoreDouble,
+          NsfwTetwittertUserScoreDouble,
           NsfwConsumerScoreDouble)),
       "UserHealthSignalFetcher"
     )
@@ -1923,7 +1923,7 @@ trait DeployConfig extends Config {
           store = ObservedReadableStore(store)(
             statsReceiver.scope("store").scope("user_health_model_score_store")),
           ttl = 12.hours,
-          maxKeys = 16777215,
+          matwitterKeys = 16777215,
           cacheName = "user_health_model_score_store_cache",
           windowSize = 10000L
         )(statsReceiver.scope("store", "user_health_model_score_store_cached"))
@@ -1948,7 +1948,7 @@ trait DeployConfig extends Config {
         store = ObservedReadableStore(store)(
           statsReceiver.scope("store").scope("tweet_health_model_score_store")),
         ttl = 30.minutes,
-        maxKeys = 1000,
+        matwitterKeys = 1000,
         cacheName = "tweet_health_model_score_store_cache",
         windowSize = 10000L
       )(statsReceiver.scope("store", "tweet_health_model_score_store_cached"))
@@ -1962,7 +1962,7 @@ trait DeployConfig extends Config {
     ObservedCachedReadableStore.from[(Long, (String, String)), AppPermission](
       buildStore(store, "mr_app_permission_store"),
       ttl = 30.minutes,
-      maxKeys = 1000,
+      matwitterKeys = 1000,
       cacheName = "mr_app_permission_store_cache",
       windowSize = 10000L
     )(statsReceiver.scope("mr_app_permission_store_cached"))
@@ -1979,12 +1979,12 @@ trait DeployConfig extends Config {
 
   override lazy val candidateFeatureHydrator: CandidateFeatureHydrator =
     CandidateFeatureHydrator(
-      socialContextActionsFeatureBuilder = Some(socialContextActionsFeatureBuilder),
+      socialContetwittertActionsFeatureBuilder = Some(socialContetwittertActionsFeatureBuilder),
       tweetSocialProofFeatureBuilder = Some(tweetSocialProofFeatureBuilder),
       earlybirdFeatureBuilder = Some(earlybirdFeatureBuilder),
       tweetContentFeatureBuilder = Some(tweetContentFeatureBuilder),
       tweetAuthorRecentRealGraphFeatureBuilder = Some(tweetAuthorRecentRealGraphFeatureBuilder),
-      socialContextRecentRealGraphFeatureBuilder = Some(socialContextRecentRealGraphFeatureBuilder),
+      socialContetwittertRecentRealGraphFeatureBuilder = Some(socialContetwittertRecentRealGraphFeatureBuilder),
       tweetAnnotationsFeatureBuilder = Some(tweetAnnotationsFeatureBuilder),
       mrOfflineUserCandidateSparseAggregatesFeatureBuilder =
         Some(mrOfflineUserCandidateSparseAggregatesFeatureBuilder),
@@ -1992,7 +1992,7 @@ trait DeployConfig extends Config {
     )(statsReceiver.scope("push_feature_hydrator"))
 
   private val candidateCopyCross =
-    new CandidateCopyExpansion(statsReceiver.scope("refresh_handler/cross"))
+    new CandidateCopyEtwitterpansion(statsReceiver.scope("refresh_handler/cross"))
 
   override lazy val candidateHydrator: PushCandidateHydrator =
     PushCandidateHydrator(
@@ -2005,13 +2005,13 @@ trait DeployConfig extends Config {
 
   override lazy val sendHandlerCandidateHydrator: SendHandlerPushCandidateHydrator =
     SendHandlerPushCandidateHydrator(
-      lexServiceStore,
+      letwitterServiceStore,
       fanoutMetadataStore,
       semanticCoreMegadataStore,
       safeUserStore,
       simClusterToEntityStore,
       audioSpaceStore,
-      interestsWithLookupContextStore,
+      interestsWithLookupContetwittertStore,
       uttEntityHydrationStore,
       superFollowCreatorTweetCountStore
     )(
@@ -2024,7 +2024,7 @@ trait DeployConfig extends Config {
 
   override lazy val configParamsBuilder: ConfigParamsBuilder = ConfigParamsBuilder(
     config = overridesConfig,
-    featureContextBuilder = FeatureContextBuilder(featureSwitches),
+    featureContetwittertBuilder = FeatureContetwittertBuilder(featureSwitches),
     statsReceiver = statsReceiver
   )
 
@@ -2046,7 +2046,7 @@ trait DeployConfig extends Config {
 
   def buildCachedTweetyPieStore(
     getTweetOptions: Option[GetTweetOptions],
-    keyPrefix: String
+    keyPrefitwitter: String
   ): ReadableStore[Long, TweetyPieResult] = {
     def discardAdditionalMediaInfo(tweetypieResult: TweetyPieResult) = {
       val updatedMedia = tweetypieResult.tweet.media.map { mediaSeq =>
@@ -2069,12 +2069,12 @@ trait DeployConfig extends Config {
     )(
       valueInjection = TweetyPieResultInjection,
       statsReceiver = statsReceiver.scope("TweetyPieStore"),
-      keyToString = { k: Long => s"$keyPrefix/$k" }
+      keyToString = { k: Long => s"$keyPrefitwitter/$k" }
     )
   }
 
   override def init(): Future[Unit] =
-    ClientRegistry.expAllRegisteredClientsResolved().map { clients =>
+    ClientRegistry.etwitterpAllRegisteredClientsResolved().map { clients =>
       log.info("Done resolving clients: " + clients.mkString("[", ", ", "]"))
     }
 
@@ -2113,7 +2113,7 @@ trait DeployConfig extends Config {
         store = StratoFetchableStore
           .withUnitView[UserId, Int](new CreatorSubscriptionNumTweetsColumn(stratoClient).fetcher),
         ttl = 5.minutes,
-        maxKeys = 1000,
+        matwitterKeys = 1000,
         cacheName = "SuperFollowCreatorTweetCountStore",
         windowSize = 10000L
       )(statsReceiver.scope("SuperFollowCreatorTweetCountStore"))

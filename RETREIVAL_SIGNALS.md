@@ -2,11 +2,11 @@
 
 ## Overview
 
-The candidate sourcing stage within the Twitter Recommendation algorithm serves to significantly narrow down the item size from approximately 1 billion to just a few thousand. This process utilizes Twitter user behavior as the primary input for the algorithm. This document comprehensively enumerates all the signals during the candidate sourcing phase.
+The candidate sourcing stage within the Twitter Recommendation algorithm serves to significantly narrow down the item size from approtwitterimately 1 billion to just a few thousand. This process utilizes Twitter user behavior as the primary input for the algorithm. This document comprehensively enumerates all the signals during the candidate sourcing phase.
 
 | Signals               |  Description                                                          |
 | :-------------------- | :-------------------------------------------------------------------- |
-| Author Follow         | The accounts which user explicit follows.                             |
+| Author Follow         | The accounts which user etwitterplicit follows.                             |
 | Author Unfollow       | The accounts which user recently unfollows.                           |
 | Author Mute           | The accounts which user have muted.                                   |
 | Author Block          | The accounts which user have blocked                                  |

@@ -8,11 +8,11 @@ import java.util.function.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import org.apache.lucene.index.LeafReaderContext;
+import org.apache.lucene.indetwitter.LeafReaderContetwittert;
 import org.apache.lucene.search.Query;
 
 /**
- * Not threadsafe, but should be reused across different queries unless the size of the existing
+ * Not threadsafe, but should be reused across different queries unless the size of the etwitteristing
  * one is too small for a new huge serialized query.
  */
 public class HitAttributeCollector {
@@ -50,8 +50,8 @@ public class HitAttributeCollector {
     return new IdentifiableQuery(query, fieldRankHitInfo, this);
   }
 
-  public void clearHitAttributions(LeafReaderContext ctx, FieldRankHitInfo hitInfo) {
-    docBase = ctx.docBase;
+  public void clearHitAttributions(LeafReaderContetwittert cttwitter, FieldRankHitInfo hitInfo) {
+    docBase = cttwitter.docBase;
     hitInfo.resetDocId();
   }
 

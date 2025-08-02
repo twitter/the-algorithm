@@ -141,13 +141,13 @@ object TweetRuleGenerator {
 }
 sealed trait UserType
 object UserType {
-  case object Author extends UserType
+  case object Author etwittertends UserType
 
-  case object Follower extends UserType
+  case object Follower etwittertends UserType
 
-  case object Other extends UserType
+  case object Other etwittertends UserType
 }
-class TweetRuleGenerator extends RuleGenerator {
+class TweetRuleGenerator etwittertends RuleGenerator {
 
   private[rules] val tweetRulesForSurface: Map[SafetyLevel, Seq[Rule]] = generateTweetPolicies()
 
@@ -253,7 +253,7 @@ class TweetRuleGenerator extends RuleGenerator {
       }.map {
         case (safetyLevel, Seq((_, rule))) =>
           (safetyLevel, rule)
-        case _ => throw new Exception("Policy optimization failure")
+        case _ => throw new Etwitterception("Policy optimization failure")
       }
   }
 

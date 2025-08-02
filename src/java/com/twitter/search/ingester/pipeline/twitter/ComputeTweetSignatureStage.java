@@ -1,37 +1,37 @@
 package com.twitter.search.ingester.pipeline.twitter;
 
-import org.apache.commons.pipeline.StageException;
+import org.apache.commons.pipeline.StageEtwitterception;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducesConsumed;
 
-import com.twitter.search.common.relevance.classifiers.TweetQualityFeatureExtractor;
+import com.twitter.search.common.relevance.classifiers.TweetQualityFeatureEtwittertractor;
 import com.twitter.search.ingester.model.IngesterTwitterMessage;
 
 @ConsumedTypes(IngesterTwitterMessage.class)
 @ProducesConsumed
-public class ComputeTweetSignatureStage extends TwitterBaseStage
+public class ComputeTweetSignatureStage etwittertends TwitterBaseStage
     <IngesterTwitterMessage, IngesterTwitterMessage> {
-  private final TweetQualityFeatureExtractor tweetSignatureExtractor =
-      new TweetQualityFeatureExtractor();
+  private final TweetQualityFeatureEtwittertractor tweetSignatureEtwittertractor =
+      new TweetQualityFeatureEtwittertractor();
 
   @Override
-  public void innerProcess(Object obj) throws StageException {
+  public void innerProcess(Object obj) throws StageEtwitterception {
     if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not a TwitterMessage instance: " + obj);
+      throw new StageEtwitterception(this, "Object is not a TwitterMessage instance: " + obj);
     }
 
     IngesterTwitterMessage message = IngesterTwitterMessage.class.cast(obj);
-    extract(message);
+    etwittertract(message);
     emitAndCount(message);
   }
 
-  private void extract(IngesterTwitterMessage message) {
-    tweetSignatureExtractor.extractTweetTextFeatures(message);
+  private void etwittertract(IngesterTwitterMessage message) {
+    tweetSignatureEtwittertractor.etwittertractTweetTetwittertFeatures(message);
   }
 
   @Override
   protected IngesterTwitterMessage innerRunStageV2(IngesterTwitterMessage message) {
-    extract(message);
+    etwittertract(message);
     return message;
   }
 }

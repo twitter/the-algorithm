@@ -17,6 +17,6 @@ scala_library(
         "visibility/lib/src/main/scala/com/twitter/visibility/features",
         "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/common/blender",
         "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/common/search",
-        "visibility/lib/src/main/thrift/com/twitter/visibility/context:vf-context-scala",
+        "visibility/lib/src/main/thrift/com/twitter/visibility/contetwittert:vf-contetwittert-scala",
     ],
 )

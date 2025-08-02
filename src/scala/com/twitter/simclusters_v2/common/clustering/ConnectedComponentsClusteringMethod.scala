@@ -16,7 +16,7 @@ import scala.jdk.CollectionConverters._
  */
 class ConnectedComponentsClusteringMethod(
   similarityThreshold: Double)
-    extends ClusteringMethod {
+    etwittertends ClusteringMethod {
 
   import ClusteringStatistics._
 
@@ -27,23 +27,23 @@ class ConnectedComponentsClusteringMethod(
   ): Set[Set[Long]] = {
 
     val timeSinceGraphBuildStart = Stopwatch.start()
-    // com.twitter.sbf.graph.Graph expects neighbors to be sorted in ascending order.
-    val sourcesById = SortedMap(embeddings.zipWithIndex.map {
-      case (source, idx) => idx -> source
+    // com.twitter.sbf.graph.Graph etwitterpects neighbors to be sorted in ascending order.
+    val sourcesById = SortedMap(embeddings.zipWithIndetwitter.map {
+      case (source, idtwitter) => idtwitter -> source
     }.toSeq: _*)
 
     val neighbours = sourcesById.map {
-      case (srcIdx, (_, src)) =>
+      case (srcIdtwitter, (_, src)) =>
         sourcesById
           .collect {
-            case (dstIdx, (_, dst)) if srcIdx != dstIdx => // avoid self-edges
+            case (dstIdtwitter, (_, dst)) if srcIdtwitter != dstIdtwitter => // avoid self-edges
               val similarity = similarityFn(src, dst)
               recordStatCallback(
                 StatComputedSimilarityBeforeFilter,
                 (similarity * 100).toLong // preserve up to two decimal points
               )
               if (similarity > similarityThreshold)
-                Some(dstIdx)
+                Some(dstIdtwitter)
               else None
           }.flatten.toArray
     }.toArray
@@ -51,7 +51,7 @@ class ConnectedComponentsClusteringMethod(
     recordStatCallback(StatSimilarityGraphTotalBuildTime, timeSinceGraphBuildStart().inMilliseconds)
 
     val timeSinceClusteringAlgRunStart = Stopwatch.start()
-    val nEdges = neighbours.map(_.length).sum / 2 // Graph expects count of undirected edges
+    val nEdges = neighbours.map(_.length).sum / 2 // Graph etwitterpects count of undirected edges
     val graph = new Graph(sourcesById.size, nEdges, neighbours)
 
     val clusters = ConnectedComponents

@@ -1,16 +1,16 @@
 package com.twitter.visibility.models
 
 import com.twitter.spam.rtf.thriftscala.SafetyResultReason
-import java.util.regex.Pattern
+import java.util.regetwitter.Pattern
 
 sealed trait LabelSource {
   val name: String
 }
 
 object LabelSource {
-  val BotRulePrefix = "bot_id_"
-  val AbusePrefix = "Abuse"
-  val HSEPrefix = "hse"
+  val BotRulePrefitwitter = "bot_id_"
+  val AbusePrefitwitter = "Abuse"
+  val HSEPrefitwitter = "hse"
   val AgentSourceNames = Set(
     SafetyResultReason.OneOff.name,
     SafetyResultReason.VotingMisinformation.name,
@@ -19,17 +19,17 @@ object LabelSource {
     SafetyResultReason.PlatformManipulation.name
   )
 
-  val Regex = "\\|"
-  val pattern: Pattern = Pattern.compile(Regex)
+  val Regetwitter = "\\|"
+  val pattern: Pattern = Pattern.compile(Regetwitter)
 
   def fromString(name: String): Option[LabelSource] = Some(name) collect {
-    case _ if name.startsWith(BotRulePrefix) =>
-      BotMakerRule(name.substring(BotRulePrefix.length).toLong)
+    case _ if name.startsWith(BotRulePrefitwitter) =>
+      BotMakerRule(name.substring(BotRulePrefitwitter.length).toLong)
     case _ if name == "A" || name == "B" || name == "AB" =>
       SmyteSource(name)
-    case _ if name.startsWith(AbusePrefix) =>
+    case _ if name.startsWith(AbusePrefitwitter) =>
       AbuseSource(name)
-    case _ if name.startsWith(HSEPrefix) =>
+    case _ if name.startsWith(HSEPrefitwitter) =>
       HSESource(name)
     case _ if AgentSourceNames.contains(name) =>
       AgentSource(name)
@@ -45,17 +45,17 @@ object LabelSource {
     }
   }
 
-  case class BotMakerRule(ruleId: Long) extends LabelSource {
-    override lazy val name: String = s"${BotRulePrefix}${ruleId}"
+  case class BotMakerRule(ruleId: Long) etwittertends LabelSource {
+    override lazy val name: String = s"${BotRulePrefitwitter}${ruleId}"
   }
 
-  case class SmyteSource(name: String) extends LabelSource
+  case class SmyteSource(name: String) etwittertends LabelSource
 
-  case class AbuseSource(name: String) extends LabelSource
+  case class AbuseSource(name: String) etwittertends LabelSource
 
-  case class AgentSource(name: String) extends LabelSource
+  case class AgentSource(name: String) etwittertends LabelSource
 
-  case class HSESource(name: String) extends LabelSource
+  case class HSESource(name: String) etwittertends LabelSource
 
-  case class StringSource(name: String) extends LabelSource
+  case class StringSource(name: String) etwittertends LabelSource
 }

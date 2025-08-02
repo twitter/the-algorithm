@@ -60,7 +60,7 @@ object FreedomOfSpeechNotReach {
 
   private val EligibleTweetSafetyLabelTypesSet = EligibleTweetSafetyLabelTypes.toSet
 
-  def extractTweetSafetyLabel(featureMap: Map[Feature[_], _]): Option[TweetSafetyLabel] = {
+  def etwittertractTweetSafetyLabel(featureMap: Map[Feature[_], _]): Option[TweetSafetyLabel] = {
     val tweetSafetyLabels = featureMap(TweetSafetyLabels)
       .asInstanceOf[Seq[TweetSafetyLabel]]
       .flatMap { tsl =>
@@ -177,21 +177,21 @@ object FreedomOfSpeechNotReachReason {
 
 object FreedomOfSpeechNotReachActions {
 
-  trait FreedomOfSpeechNotReachActionBuilder[T <: Action] extends ActionBuilder[T] {
+  trait FreedomOfSpeechNotReachActionBuilder[T <: Action] etwittertends ActionBuilder[T] {
     def withViolationLevel(violationLevel: ViolationLevel): FreedomOfSpeechNotReachActionBuilder[T]
   }
 
   case class DropAction(violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[Drop] {
+      etwittertends FreedomOfSpeechNotReachActionBuilder[Drop] {
 
     override def actionType: Class[_] = classOf[Drop]
 
     override val actionSeverity = 16
     private def toRuleResult: Reason => RuleResult = Memoize { r => RuleResult(Drop(r), Evaluated) }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+    def build(evaluationContetwittert: EvaluationContetwittert, featureMap: Map[Feature[_], _]): RuleResult = {
       val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
+        FreedomOfSpeechNotReach.etwittertractTweetSafetyLabel(featureMap).map(_.labelType) match {
           case Some(label) =>
             FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
               label,
@@ -209,7 +209,7 @@ object FreedomOfSpeechNotReachActions {
   }
 
   case class AppealableAction(violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
+      etwittertends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
 
     override def actionType: Class[_] = classOf[Appealable]
 
@@ -231,9 +231,9 @@ object FreedomOfSpeechNotReachActions {
       )
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+    def build(evaluationContetwittert: EvaluationContetwittert, featureMap: Map[Feature[_], _]): RuleResult = {
       val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
+        FreedomOfSpeechNotReach.etwittertractTweetSafetyLabel(featureMap).map(_.labelType) match {
           case Some(label) =>
             FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
               label,
@@ -253,7 +253,7 @@ object FreedomOfSpeechNotReachActions {
   case class AppealableAvoidLimitedEngagementsAction(
     violationLevel: ViolationLevel = DefaultViolationLevel,
     limitedActionStrings: Option[Seq[String]])
-      extends FreedomOfSpeechNotReachActionBuilder[Appealable] {
+      etwittertends FreedomOfSpeechNotReachActionBuilder[Appealable] {
 
     override def actionType: Class[_] = classOf[AppealableAvoidLimitedEngagementsAction]
 
@@ -283,11 +283,11 @@ object FreedomOfSpeechNotReachActions {
     }
 
     def build(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): RuleResult = {
       val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
+        FreedomOfSpeechNotReach.etwittertractTweetSafetyLabel(featureMap).map(_.labelType) match {
           case Some(label) =>
             FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
               label,
@@ -305,7 +305,7 @@ object FreedomOfSpeechNotReachActions {
   }
 
   case class AvoidAction(violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[Avoid] {
+      etwittertends FreedomOfSpeechNotReachActionBuilder[Avoid] {
 
     override def actionType: Class[_] = classOf[Avoid]
 
@@ -314,9 +314,9 @@ object FreedomOfSpeechNotReachActions {
       RuleResult(Avoid(None), Evaluated)
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+    def build(evaluationContetwittert: EvaluationContetwittert, featureMap: Map[Feature[_], _]): RuleResult = {
       val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
+        FreedomOfSpeechNotReach.etwittertractTweetSafetyLabel(featureMap).map(_.labelType) match {
           case Some(label) =>
             FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
               label,
@@ -334,7 +334,7 @@ object FreedomOfSpeechNotReachActions {
   }
 
   case class LimitedEngagementsAction(violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[LimitedEngagements] {
+      etwittertends FreedomOfSpeechNotReachActionBuilder[LimitedEngagements] {
 
     override def actionType: Class[_] = classOf[LimitedEngagements]
 
@@ -343,9 +343,9 @@ object FreedomOfSpeechNotReachActions {
       RuleResult(LimitedEngagements(LimitedEngagementReason.NonCompliant, None), Evaluated)
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+    def build(evaluationContetwittert: EvaluationContetwittert, featureMap: Map[Feature[_], _]): RuleResult = {
       val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
+        FreedomOfSpeechNotReach.etwittertractTweetSafetyLabel(featureMap).map(_.labelType) match {
           case Some(label) =>
             FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
               label,
@@ -364,7 +364,7 @@ object FreedomOfSpeechNotReachActions {
 
   case class InterstitialLimitedEngagementsAction(
     violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[InterstitialLimitedEngagements] {
+      etwittertends FreedomOfSpeechNotReachActionBuilder[InterstitialLimitedEngagements] {
 
     override def actionType: Class[_] = classOf[InterstitialLimitedEngagements]
 
@@ -373,9 +373,9 @@ object FreedomOfSpeechNotReachActions {
       RuleResult(InterstitialLimitedEngagements(r, None), Evaluated)
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+    def build(evaluationContetwittert: EvaluationContetwittert, featureMap: Map[Feature[_], _]): RuleResult = {
       val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
+        FreedomOfSpeechNotReach.etwittertractTweetSafetyLabel(featureMap).map(_.labelType) match {
           case Some(label) =>
             FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
               label,
@@ -395,7 +395,7 @@ object FreedomOfSpeechNotReachActions {
   case class InterstitialLimitedEngagementsAvoidAction(
     violationLevel: ViolationLevel = DefaultViolationLevel,
     limitedActionStrings: Option[Seq[String]])
-      extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
+      etwittertends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
 
     override def actionType: Class[_] = classOf[InterstitialLimitedEngagementsAvoidAction]
 
@@ -422,9 +422,9 @@ object FreedomOfSpeechNotReachActions {
       )
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+    def build(evaluationContetwittert: EvaluationContetwittert, featureMap: Map[Feature[_], _]): RuleResult = {
       val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
+        FreedomOfSpeechNotReach.etwittertractTweetSafetyLabel(featureMap).map(_.labelType) match {
           case Some(label) =>
             FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
               labelType = label,
@@ -442,7 +442,7 @@ object FreedomOfSpeechNotReachActions {
   }
 
   case class SoftInterventionAvoidAction(violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
+      etwittertends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
 
     override def actionType: Class[_] = classOf[SoftInterventionAvoidAction]
 
@@ -471,9 +471,9 @@ object FreedomOfSpeechNotReachActions {
       )
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+    def build(evaluationContetwittert: EvaluationContetwittert, featureMap: Map[Feature[_], _]): RuleResult = {
       val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
+        FreedomOfSpeechNotReach.etwittertractTweetSafetyLabel(featureMap).map(_.labelType) match {
           case Some(label) =>
             FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
               label,
@@ -493,7 +493,7 @@ object FreedomOfSpeechNotReachActions {
   case class SoftInterventionAvoidLimitedEngagementsAction(
     violationLevel: ViolationLevel = DefaultViolationLevel,
     limitedActionStrings: Option[Seq[String]])
-      extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
+      etwittertends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
 
     override def actionType: Class[_] = classOf[SoftInterventionAvoidLimitedEngagementsAction]
 
@@ -525,9 +525,9 @@ object FreedomOfSpeechNotReachActions {
       )
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+    def build(evaluationContetwittert: EvaluationContetwittert, featureMap: Map[Feature[_], _]): RuleResult = {
       val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
+        FreedomOfSpeechNotReach.etwittertractTweetSafetyLabel(featureMap).map(_.labelType) match {
           case Some(label) =>
             FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
               label,
@@ -546,7 +546,7 @@ object FreedomOfSpeechNotReachActions {
 
   case class SoftInterventionAvoidAbusiveQualityReplyAction(
     violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
+      etwittertends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
 
     override def actionType: Class[_] = classOf[SoftInterventionAvoidAbusiveQualityReplyAction]
 
@@ -575,9 +575,9 @@ object FreedomOfSpeechNotReachActions {
       )
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+    def build(evaluationContetwittert: EvaluationContetwittert, featureMap: Map[Feature[_], _]): RuleResult = {
       val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
+        FreedomOfSpeechNotReach.etwittertractTweetSafetyLabel(featureMap).map(_.labelType) match {
           case Some(label) =>
             FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
               label,
@@ -600,17 +600,17 @@ object FreedomOfSpeechNotReachRules {
   abstract class OnlyWhenAuthorViewerRule(
     actionBuilder: ActionBuilder[_ <: Action],
     condition: Condition)
-      extends Rule(actionBuilder, And(Not(NonAuthorViewer), condition))
+      etwittertends Rule(actionBuilder, And(Not(NonAuthorViewer), condition))
 
   abstract class OnlyWhenNonAuthorViewerRule(
     actionBuilder: ActionBuilder[_ <: Action],
     condition: Condition)
-      extends Rule(actionBuilder, And(NonAuthorViewer, condition))
+      etwittertends Rule(actionBuilder, And(NonAuthorViewer, condition))
 
   case class ViewerIsAuthorAndTweetHasViolationOfLevel(
     violationLevel: ViolationLevel,
     override val actionBuilder: ActionBuilder[_ <: Action])
-      extends OnlyWhenAuthorViewerRule(
+      etwittertends OnlyWhenAuthorViewerRule(
         actionBuilder,
         Condition.TweetHasViolationOfLevel(violationLevel)
       ) {
@@ -623,7 +623,7 @@ object FreedomOfSpeechNotReachRules {
   case class ViewerIsFollowerAndTweetHasViolationOfLevel(
     violationLevel: ViolationLevel,
     override val actionBuilder: ActionBuilder[_ <: Action])
-      extends OnlyWhenNonAuthorViewerRule(
+      etwittertends OnlyWhenNonAuthorViewerRule(
         actionBuilder,
         And(
           Condition.TweetHasViolationOfLevel(violationLevel),
@@ -641,7 +641,7 @@ object FreedomOfSpeechNotReachRules {
   case class ViewerIsNonFollowerNonAuthorAndTweetHasViolationOfLevel(
     violationLevel: ViolationLevel,
     override val actionBuilder: ActionBuilder[_ <: Action])
-      extends OnlyWhenNonAuthorViewerRule(
+      etwittertends OnlyWhenNonAuthorViewerRule(
         actionBuilder,
         And(
           Condition.TweetHasViolationOfLevel(violationLevel),
@@ -660,7 +660,7 @@ object FreedomOfSpeechNotReachRules {
   case class ViewerIsNonAuthorAndTweetHasViolationOfLevel(
     violationLevel: ViolationLevel,
     override val actionBuilder: ActionBuilder[_ <: Action])
-      extends OnlyWhenNonAuthorViewerRule(
+      etwittertends OnlyWhenNonAuthorViewerRule(
         actionBuilder,
         Condition.TweetHasViolationOfLevel(violationLevel)
       ) {
@@ -675,7 +675,7 @@ object FreedomOfSpeechNotReachRules {
   }
 
   case object TweetHasViolationOfAnyLevelFallbackDropRule
-      extends RuleWithConstantAction(
+      etwittertends RuleWithConstantAction(
         Drop(reason = NotSupportedOnDevice),
         Condition.TweetHasViolationOfAnyLevel
       ) {

@@ -1,12 +1,12 @@
 package com.twitter.tweetypie.config
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.fastertwitterml.jackson.databind.ObjectMapper
+import com.fastertwitterml.jackson.dataformat.yaml.YAMLFactory
+import com.fastertwitterml.jackson.module.scala.DefaultScalaModule
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.util.Try
 
-case object EmptyConfigException extends Exception
+case object EmptyConfigEtwitterception etwittertends Etwitterception
 
 case class ServiceIdentifierPattern(
   role: Option[String],
@@ -25,7 +25,7 @@ case class ServiceIdentifierPattern(
       .forall(identity)
 
   // True if this is the kind of pattern that only specifies environment.
-  // This should be used in rare cases, for example letting all devel clients
+  // This should be used in rare cases, for etwitterample letting all devel clients
   // use permitted methods - like get_tweet_fields.
   def onlyEnv: Boolean =
     role.isEmpty && service.isEmpty && environment.isDefined
@@ -45,7 +45,7 @@ case class Client(
   // Client matches a service identifier if any of its patterns
   // match.
   def matches(id: ServiceIdentifier): Boolean =
-    serviceIdentifiers.exists(_.matches(id))
+    serviceIdentifiers.etwitterists(_.matches(id))
 }
 
 object ClientsParser {
@@ -119,7 +119,7 @@ object ClientsParser {
         .map(_.toClient)
 
     if (parsed.isEmpty)
-      throw EmptyConfigException
+      throw EmptyConfigEtwitterception
     else
       parsed
   }

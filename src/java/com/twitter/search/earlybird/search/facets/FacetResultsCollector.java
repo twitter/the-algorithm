@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.search.facets;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +20,7 @@ import com.twitter.search.core.earlybird.facets.FacetIDMap;
 import com.twitter.search.core.earlybird.facets.FacetIDMap.FacetField;
 import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
 import com.twitter.search.core.earlybird.facets.LanguageHistogram;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
 import com.twitter.search.earlybird.search.AbstractResultsCollector;
 import com.twitter.search.earlybird.search.AntiGamingFilter;
 import com.twitter.search.earlybird.search.EarlybirdLuceneSearcher.FacetSearchResults;
@@ -28,7 +28,7 @@ import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
 import com.twitter.search.earlybird.thrift.ThriftFacetCount;
 import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
 
-public class FacetResultsCollector extends
+public class FacetResultsCollector etwittertends
     AbstractResultsCollector<FacetSearchRequestInfo, FacetSearchResults> {
 
   private final FacetScorer facetScorer;
@@ -87,7 +87,7 @@ public class FacetResultsCollector extends
   }
 
   @Override
-  public void doCollect(long tweetID) throws IOException {
+  public void doCollect(long tweetID) throws IOEtwitterception {
     if (currentAccumulator == null) {
       // Lazily create accumulators.  Most segment / query / facet combinations have no hits.
       currentAccumulator = newPerSegmentAccumulator(currTwitterReader);
@@ -180,11 +180,11 @@ public class FacetResultsCollector extends
     } else {
       return new FacetScorer() {
         @Override
-        protected void startSegment(EarlybirdIndexSegmentAtomicReader reader) {
+        protected void startSegment(EarlybirdIndetwitterSegmentAtomicReader reader) {
         }
 
         @Override
-        public void incrementCounts(Accumulator accumulator, int internalDocID) throws IOException {
+        public void incrementCounts(Accumulator accumulator, int internalDocID) throws IOEtwitterception {
           accumulator.accessor.incrementData.accumulators = accumulator.accumulators;
           accumulator.accessor.incrementData.weightedCountIncrement = 1;
           accumulator.accessor.incrementData.penaltyIncrement = 0;
@@ -200,11 +200,11 @@ public class FacetResultsCollector extends
     }
   }
 
-  protected Accumulator newPerSegmentAccumulator(EarlybirdIndexSegmentAtomicReader indexReader) {
-    final FacetIDMap facetIDMap = indexReader.getFacetIDMap();
+  protected Accumulator newPerSegmentAccumulator(EarlybirdIndetwitterSegmentAtomicReader indetwitterReader) {
+    final FacetIDMap facetIDMap = indetwitterReader.getFacetIDMap();
     final FacetCountIterator accessor =
-        indexReader.getFacetCountingArray().getIterator(
-            indexReader,
+        indetwitterReader.getFacetCountingArray().getIterator(
+            indetwitterReader,
             getSearchRequestInfo().getFacetCountState(),
             TweetSearchFacetCountIteratorFactory.FACTORY);
 
@@ -212,7 +212,7 @@ public class FacetResultsCollector extends
         (FacetAccumulator<ThriftFacetFieldResults>[])
             new FacetAccumulator[facetIDMap.getNumberOfFacetFields()];
 
-    Map<String, FacetLabelProvider> labelProviders = indexReader.getFacetLabelProviders();
+    Map<String, FacetLabelProvider> labelProviders = indetwitterReader.getFacetLabelProviders();
     for (FacetField f : facetIDMap.getFacetFields()) {
       int id = f.getFacetId();
       if (getSearchRequestInfo().getFacetCountState().isCountField(f.getFieldInfo())) {

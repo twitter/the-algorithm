@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.ml;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
@@ -12,12 +12,12 @@ import com.twitter.search.common.file.AbstractFile;
 import com.twitter.search.common.file.FileUtils;
 import com.twitter.search.common.metrics.SearchStatsReceiver;
 import com.twitter.search.common.schema.DynamicSchema;
-import com.twitter.search.common.util.ml.prediction_engine.CompositeFeatureContext;
+import com.twitter.search.common.util.ml.prediction_engine.CompositeFeatureContetwittert;
 import com.twitter.search.common.util.ml.prediction_engine.LightweightLinearModel;
 import com.twitter.search.common.util.ml.prediction_engine.ModelLoader;
 
-import static com.twitter.search.modeling.tweet_ranking.TweetScoringFeatures.CONTEXT;
-import static com.twitter.search.modeling.tweet_ranking.TweetScoringFeatures.FeatureContextVersion.CURRENT_VERSION;
+import static com.twitter.search.modeling.tweet_ranking.TweetScoringFeatures.CONTEtwitterT;
+import static com.twitter.search.modeling.tweet_ranking.TweetScoringFeatures.FeatureContetwittertVersion.CURRENT_VERSION;
 
 /**
  * Loads the scoring models for tweets and provides access to them.
@@ -28,9 +28,9 @@ import static com.twitter.search.modeling.tweet_ranking.TweetScoringFeatures.Fea
  * For production, we load models from 2 sources: classpath and HDFS. If a model is available
  * from HDFS, we return it, otherwise we use the model from the classpath.
  *
- * The models used for default requests (i.e. not experiments) MUST be present in the
+ * The models used for default requests (i.e. not etwitterperiments) MUST be present in the
  * classpath, this allows us to avoid errors if they can't be loaded from HDFS.
- * Models for experiments can live only in HDFS, so we don't need to redeploy Earlybird if we
+ * Models for etwitterperiments can live only in HDFS, so we don't need to redeploy Earlybird if we
  * want to test them.
  */
 public class ScoringModelsManager {
@@ -41,7 +41,7 @@ public class ScoringModelsManager {
    * Used when
    * 1. Testing
    * 2. The scoring models are disabled in the config
-   * 3. Exceptions thrown during loading the scoring models
+   * 3. Etwitterceptions thrown during loading the scoring models
    */
   public static final ScoringModelsManager NO_OP_MANAGER = new ScoringModelsManager() {
     @Override
@@ -77,7 +77,7 @@ public class ScoringModelsManager {
   }
 
   /**
-   * Loads and returns the model with the given name, if one exists.
+   * Loads and returns the model with the given name, if one etwitterists.
    */
   public Optional<LightweightLinearModel> getModel(String modelName) {
     for (ModelLoader loader : loaders) {
@@ -98,16 +98,16 @@ public class ScoringModelsManager {
       SearchStatsReceiver serverStats,
       String hdfsNameNode,
       String hdfsBasedPath,
-      DynamicSchema dynamicSchema) throws IOException {
-    // Create a composite feature context so we can load both legacy and schema-based models
-    CompositeFeatureContext featureContext = new CompositeFeatureContext(
-        CONTEXT, dynamicSchema::getSearchFeatureSchema);
+      DynamicSchema dynamicSchema) throws IOEtwitterception {
+    // Create a composite feature contetwittert so we can load both legacy and schema-based models
+    CompositeFeatureContetwittert featureContetwittert = new CompositeFeatureContetwittert(
+        CONTEtwitterT, dynamicSchema::getSearchFeatureSchema);
     ModelLoader hdfsLoader = createHdfsLoader(
-        serverStats, hdfsNameNode, hdfsBasedPath, featureContext);
+        serverStats, hdfsNameNode, hdfsBasedPath, featureContetwittert);
     ModelLoader classpathLoader = createClasspathLoader(
-        serverStats, featureContext);
+        serverStats, featureContetwittert);
 
-    // Explicitly load the models from the classpath
+    // Etwitterplicitly load the models from the classpath
     classpathLoader.run();
 
     ScoringModelsManager manager = new ScoringModelsManager(hdfsLoader, classpathLoader);
@@ -119,14 +119,14 @@ public class ScoringModelsManager {
       SearchStatsReceiver serverStats,
       String hdfsNameNode,
       String hdfsBasedPath,
-      CompositeFeatureContext featureContext) {
+      CompositeFeatureContetwittert featureContetwittert) {
     String hdfsVersionedPath = hdfsBasedPath + "/" + CURRENT_VERSION.getVersionDirectory();
     LOG.info("Starting to load scoring models from HDFS: {}:{}",
         hdfsNameNode, hdfsVersionedPath);
     return ModelLoader.forHdfsDirectory(
         hdfsNameNode,
         hdfsVersionedPath,
-        featureContext,
+        featureContetwittert,
         "scoring_models_hdfs_",
         serverStats);
   }
@@ -136,8 +136,8 @@ public class ScoringModelsManager {
    */
   @VisibleForTesting
   public static ModelLoader createClasspathLoader(
-      SearchStatsReceiver serverStats, CompositeFeatureContext featureContext)
-      throws IOException {
+      SearchStatsReceiver serverStats, CompositeFeatureContetwittert featureContetwittert)
+      throws IOEtwitterception {
     AbstractFile defaultModelsBaseDir = FileUtils.getTmpDirHandle(
         ScoringModelsManager.class,
         "/com/twitter/search/earlybird/ml/default_models");
@@ -148,7 +148,7 @@ public class ScoringModelsManager {
         defaultModelsDir.getPath());
     return ModelLoader.forDirectory(
         defaultModelsDir,
-        featureContext,
+        featureContetwittert,
         "scoring_models_classpath_",
         serverStats);
   }

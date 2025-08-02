@@ -15,27 +15,27 @@ sealed abstract class CachedResultAction[+V]
 object CachedResultAction {
 
   /** Indicates a key should be fetched from the underlying repo */
-  case object HandleAsMiss extends CachedResultAction[Nothing]
+  case object HandleAsMiss etwittertends CachedResultAction[Nothing]
 
   /** Indicates a key should be returned as not-found, and not fetched from the underlying repo */
-  case object HandleAsNotFound extends CachedResultAction[Nothing]
+  case object HandleAsNotFound etwittertends CachedResultAction[Nothing]
 
   /** Indicates the value should be returned as found */
-  case class HandleAsFound[V](value: V) extends CachedResultAction[V]
+  case class HandleAsFound[V](value: V) etwittertends CachedResultAction[V]
 
   /** Indicates the value should not be cached */
-  case object HandleAsDoNotCache extends CachedResultAction[Nothing]
+  case object HandleAsDoNotCache etwittertends CachedResultAction[Nothing]
 
   /** Indicates that the given action should be applied, and the given function applied to the resulting value */
   case class TransformSubAction[V](action: CachedResultAction[V], f: V => V)
-      extends CachedResultAction[V]
+      etwittertends CachedResultAction[V]
 
   /** Indicates the key should be returned as a failure */
-  case class HandleAsFailed(t: Throwable) extends CachedResultAction[Nothing]
+  case class HandleAsFailed(t: Throwable) etwittertends CachedResultAction[Nothing]
 
   /** Indicates that the value should be refetched asynchronously, be immediately treated
    * as the given action. */
-  case class SoftExpiration[V](action: CachedResultAction[V]) extends CachedResultAction[V]
+  case class SoftEtwitterpiration[V](action: CachedResultAction[V]) etwittertends CachedResultAction[V]
 }
 
 /**
@@ -49,30 +49,30 @@ object CachedResult {
   import CachedResultAction._
 
   /** Indicates the key was not in cache */
-  case class NotFound[K](key: K) extends CachedResult[K, Nothing]
+  case class NotFound[K](key: K) etwittertends CachedResult[K, Nothing]
 
   /** Indicates there was an error fetching the key */
-  case class Failed[K](key: K, t: Throwable) extends CachedResult[K, Nothing]
+  case class Failed[K](key: K, t: Throwable) etwittertends CachedResult[K, Nothing]
 
   /** Indicates the cached value could not be deserialized */
-  case class DeserializationFailed[K](key: K) extends CachedResult[K, Nothing]
+  case class DeserializationFailed[K](key: K) etwittertends CachedResult[K, Nothing]
 
   /** Indicates the cached value could not be serialized */
-  case class SerializationFailed[K](key: K) extends CachedResult[K, Nothing]
+  case class SerializationFailed[K](key: K) etwittertends CachedResult[K, Nothing]
 
   /** Indicates that a NotFound tombstone was found in cached */
   case class CachedNotFound[K](
     key: K,
     cachedAt: Time,
     softTtlStep: Option[Short] = None)
-      extends CachedResult[K, Nothing]
+      etwittertends CachedResult[K, Nothing]
 
   /** Indicates that a Deleted tombstone was found in cached */
   case class CachedDeleted[K](
     key: K,
     cachedAt: Time,
     softTtlStep: Option[Short] = None)
-      extends CachedResult[K, Nothing]
+      etwittertends CachedResult[K, Nothing]
 
   /** Indicates that value was found in cached */
   case class CachedFound[K, V](
@@ -80,10 +80,10 @@ object CachedResult {
     value: V,
     cachedAt: Time,
     softTtlStep: Option[Short] = None)
-      extends CachedResult[K, V]
+      etwittertends CachedResult[K, V]
 
   /** Indicates that value should not be cached until */
-  case class DoNotCache[K](key: K, until: Option[Time]) extends CachedResult[K, Nothing]
+  case class DoNotCache[K](key: K, until: Option[Time]) etwittertends CachedResult[K, Nothing]
 
   type Handler[K, V] = CachedResult[K, V] => CachedResultAction[V]
 
@@ -117,7 +117,7 @@ object CachedResult {
 
     /**
      * Sugar to produce a PartialHandler from a PartialFunction. Successive calls to
-     * isDefined MUST return the same result. Otherwise, take the syntax hit and wire
+     * isDefined MUST return the same result. Otherwise, take the syntatwitter hit and wire
      * up your own PartialHandler.
      */
     def apply[K, V](
@@ -177,156 +177,156 @@ object CachedResult {
   }
 
   /**
-   * A function that takes a cachedAt time and ttl, and returns an expiry time.  This function
+   * A function that takes a cachedAt time and ttl, and returns an etwitterpiry time.  This function
    * _must_ be deterministic with respect to the arguments provided, otherwise, you might get a
-   * MatchError when using this with softTtlExpiration.
+   * MatchError when using this with softTtlEtwitterpiration.
    */
-  type Expiry = (Time, Duration) => Time
+  type Etwitterpiry = (Time, Duration) => Time
 
   /**
-   * An Expiry function with an epsilon of zero.
+   * An Etwitterpiry function with an epsilon of zero.
    */
-  val fixedExpiry: Expiry = (cachedAt: Time, ttl: Duration) => cachedAt + ttl
+  val fitwitteredEtwitterpiry: Etwitterpiry = (cachedAt: Time, ttl: Duration) => cachedAt + ttl
 
   /**
-   * A repeatable "random" expiry function that perturbs the ttl with a random value
-   * no greater than +/-(ttl * maxFactor).
+   * A repeatable "random" etwitterpiry function that perturbs the ttl with a random value
+   * no greater than +/-(ttl * matwitterFactor).
    */
-  def randomExpiry(maxFactor: Float): Expiry = {
-    if (maxFactor == 0) {
-      fixedExpiry
+  def randomEtwitterpiry(matwitterFactor: Float): Etwitterpiry = {
+    if (matwitterFactor == 0) {
+      fitwitteredEtwitterpiry
     } else { (cachedAt: Time, ttl: Duration) =>
       {
-        val factor = (2 * new Random(cachedAt.inMilliseconds).nextFloat - 1) * maxFactor
+        val factor = (2 * new Random(cachedAt.inMilliseconds).netwittertFloat - 1) * matwitterFactor
         cachedAt + ttl + Duration.fromNanoseconds((factor * ttl.inNanoseconds).toLong)
       }
     }
   }
 
   /**
-   * soft-expires CachedFound and CachedNotFound based on a ttl.
+   * soft-etwitterpires CachedFound and CachedNotFound based on a ttl.
    *
    * @param ttl
-   *  values older than this will be considered expired, but still
+   *  values older than this will be considered etwitterpired, but still
    *  returned, and asynchronously refreshed in cache.
-   * @param expiry
-   *  (optional) function to compute the expiry time
+   * @param etwitterpiry
+   *  (optional) function to compute the etwitterpiry time
    */
-  def softTtlExpiration[K, V](
+  def softTtlEtwitterpiration[K, V](
     ttl: Duration,
-    expiry: Expiry = fixedExpiry
+    etwitterpiry: Etwitterpiry = fitwitteredEtwitterpiry
   ): PartialHandler[K, V] =
-    softTtlExpiration(_ => ttl, expiry)
+    softTtlEtwitterpiration(_ => ttl, etwitterpiry)
 
   /**
-   * soft-expires CachedFound and CachedNotFound based on a ttl derived from the value
+   * soft-etwitterpires CachedFound and CachedNotFound based on a ttl derived from the value
    *
    * @param ttl
-   *  values older than this will be considered expired, but still
+   *  values older than this will be considered etwitterpired, but still
    *  returned, and asynchronously refreshed in cache.
-   * @param expiry
-   *  (optional) function to compute the expiry time
+   * @param etwitterpiry
+   *  (optional) function to compute the etwitterpiry time
    */
-  def softTtlExpiration[K, V](
+  def softTtlEtwitterpiration[K, V](
     ttl: Option[V] => Duration,
-    expiry: Expiry
+    etwitterpiry: Etwitterpiry
   ): PartialHandler[K, V] = PartialHandler[K, V] {
-    case CachedFound(_, value, cachedAt, _) if expiry(cachedAt, ttl(Some(value))) < Time.now =>
-      SoftExpiration(HandleAsFound(value))
-    case CachedNotFound(_, cachedAt, _) if expiry(cachedAt, ttl(None)) < Time.now =>
-      SoftExpiration(HandleAsNotFound)
+    case CachedFound(_, value, cachedAt, _) if etwitterpiry(cachedAt, ttl(Some(value))) < Time.now =>
+      SoftEtwitterpiration(HandleAsFound(value))
+    case CachedNotFound(_, cachedAt, _) if etwitterpiry(cachedAt, ttl(None)) < Time.now =>
+      SoftEtwitterpiration(HandleAsNotFound)
   }
 
   /**
-   * soft-expires CachedFound and CachedNotFound based on a ttl derived from both the value
+   * soft-etwitterpires CachedFound and CachedNotFound based on a ttl derived from both the value
    * and the softTtlStep
    *
    * @param ttl
-   *   values older than this will be considered expired, but still returned, and
+   *   values older than this will be considered etwitterpired, but still returned, and
    *  asynchronously refreshed in cache.
-   * @param expiry
-   *   (optional) function to compute the expiry time
+   * @param etwitterpiry
+   *   (optional) function to compute the etwitterpiry time
    */
-  def steppedSoftTtlExpiration[K, V](
+  def steppedSoftTtlEtwitterpiration[K, V](
     ttl: (Option[V], Option[Short]) => Duration,
-    expiry: Expiry = fixedExpiry
+    etwitterpiry: Etwitterpiry = fitwitteredEtwitterpiry
   ): PartialHandler[K, V] = PartialHandler[K, V] {
     case CachedFound(_, value, cachedAt, softTtlStep)
-        if expiry(cachedAt, ttl(Some(value), softTtlStep)) < Time.now =>
-      SoftExpiration(HandleAsFound(value))
+        if etwitterpiry(cachedAt, ttl(Some(value), softTtlStep)) < Time.now =>
+      SoftEtwitterpiration(HandleAsFound(value))
     case CachedNotFound(_, cachedAt, softTtlStep)
-        if expiry(cachedAt, ttl(None, softTtlStep)) < Time.now =>
-      SoftExpiration(HandleAsNotFound)
+        if etwitterpiry(cachedAt, ttl(None, softTtlStep)) < Time.now =>
+      SoftEtwitterpiration(HandleAsNotFound)
     case CachedDeleted(_, cachedAt, softTtlStep)
-        if expiry(cachedAt, ttl(None, softTtlStep)) < Time.now =>
-      SoftExpiration(HandleAsNotFound)
+        if etwitterpiry(cachedAt, ttl(None, softTtlStep)) < Time.now =>
+      SoftEtwitterpiration(HandleAsNotFound)
   }
 
   /**
-   * hard-expires CachedFound and CachedNotFound based on a ttl.
+   * hard-etwitterpires CachedFound and CachedNotFound based on a ttl.
    *
    * @param ttl
    *  values older than this will be considered a miss
-   * @param expiry
-   *  (optional) function to compute the expiry time
+   * @param etwitterpiry
+   *  (optional) function to compute the etwitterpiry time
    */
-  def hardTtlExpiration[K, V](
+  def hardTtlEtwitterpiration[K, V](
     ttl: Duration,
-    expiry: Expiry = fixedExpiry
+    etwitterpiry: Etwitterpiry = fitwitteredEtwitterpiry
   ): PartialHandler[K, V] =
-    hardTtlExpiration(_ => ttl, expiry)
+    hardTtlEtwitterpiration(_ => ttl, etwitterpiry)
 
   /**
-   * hard-expires CachedFound and CachedNotFound based on a ttl derived from the value
+   * hard-etwitterpires CachedFound and CachedNotFound based on a ttl derived from the value
    *
    * @param ttl
    *  values older than this will be considered a miss
-   * @param expiry
-   *  (optional) function to compute the expiry time
+   * @param etwitterpiry
+   *  (optional) function to compute the etwitterpiry time
    */
-  def hardTtlExpiration[K, V](
+  def hardTtlEtwitterpiration[K, V](
     ttl: Option[V] => Duration,
-    expiry: Expiry
+    etwitterpiry: Etwitterpiry
   ): PartialHandler[K, V] = PartialHandler[K, V] {
-    case CachedFound(_, value, cachedAt, _) if expiry(cachedAt, ttl(Some(value))) < Time.now =>
+    case CachedFound(_, value, cachedAt, _) if etwitterpiry(cachedAt, ttl(Some(value))) < Time.now =>
       HandleAsMiss
-    case CachedNotFound(_, cachedAt, _) if expiry(cachedAt, ttl(None)) < Time.now =>
+    case CachedNotFound(_, cachedAt, _) if etwitterpiry(cachedAt, ttl(None)) < Time.now =>
       HandleAsMiss
   }
 
   /**
-   * hard-expires a CachedNotFound tombstone based on a ttl
+   * hard-etwitterpires a CachedNotFound tombstone based on a ttl
    *
    * @param ttl
-   *  values older than this will be considered expired
-   * @param expiry
-   *  (optional) function to compute the expiry time
+   *  values older than this will be considered etwitterpired
+   * @param etwitterpiry
+   *  (optional) function to compute the etwitterpiry time
    */
-  def notFoundHardTtlExpiration[K, V](
+  def notFoundHardTtlEtwitterpiration[K, V](
     ttl: Duration,
-    expiry: Expiry = fixedExpiry
+    etwitterpiry: Etwitterpiry = fitwitteredEtwitterpiry
   ): PartialHandler[K, V] = PartialHandler[K, V] {
     case CachedNotFound(_, cachedAt, _) =>
-      if (expiry(cachedAt, ttl) < Time.now)
+      if (etwitterpiry(cachedAt, ttl) < Time.now)
         HandleAsMiss
       else
         HandleAsNotFound
   }
 
   /**
-   * hard-expires a CachedDeleted tombstone based on a ttl
+   * hard-etwitterpires a CachedDeleted tombstone based on a ttl
    *
    * @param ttl
-   *  values older than this will be considered expired
-   * @param expiry
-   *  (optional) function to compute the expiry time
+   *  values older than this will be considered etwitterpired
+   * @param etwitterpiry
+   *  (optional) function to compute the etwitterpiry time
    */
-  def deletedHardTtlExpiration[K, V](
+  def deletedHardTtlEtwitterpiration[K, V](
     ttl: Duration,
-    expiry: Expiry = fixedExpiry
+    etwitterpiry: Etwitterpiry = fitwitteredEtwitterpiry
   ): PartialHandler[K, V] = PartialHandler[K, V] {
     case CachedDeleted(_, cachedAt, _) =>
-      if (expiry(cachedAt, ttl) < Time.now)
+      if (etwitterpiry(cachedAt, ttl) < Time.now)
         HandleAsMiss
       else
         HandleAsNotFound
@@ -398,9 +398,9 @@ object CachingKeyValueRepository {
  * @param writeSoftTtlStep
  * Write the soft_ttl_step value to indicate number of consistent reads from underlying store
  * @param cacheResultObserver
- * An [[Effect]] of type [[CacheResultObserver.CachingRepositoryResult]] which is useful for examining
+ * An [[Effect]] of type [[CacheResultObserver.CachingRepositoryResult]] which is useful for etwitteramining
  * the results from the cache, underlying storage, and any later read-throughs. The effect is
- * executed asynchronously from the request path and has no bearing on the Future[KeyValueResult]*
+ * etwitterecuted asynchronously from the request path and has no bearing on the Future[KeyValueResult]*
  * returned from this Repository.
  */
 class CachingKeyValueRepository[Q <: Seq[K], K, V](
@@ -414,7 +414,7 @@ class CachingKeyValueRepository[Q <: Seq[K], K, V](
   writeSoftTtlStep: Gate[Unit] = Gate.False,
   cacheResultObserver: CachingKeyValueRepository.CacheResultObserver[K, V] =
     CacheResultObserver.unit[K, V]: Effect[CacheResultObserver.CachingRepositoryResult[K, V]])
-    extends KeyValueRepository[Q, K, V] {
+    etwittertends KeyValueRepository[Q, K, V] {
   import CachedResult._
   import CachedResultAction._
 
@@ -435,8 +435,8 @@ class CachingKeyValueRepository[Q <: Seq[K], K, V](
   ): Option[Short] = {
     if (writeSoftTtlStep() && underlyingResult == cachedResult.value) {
       cachedResult.softTtlStep match {
-        case Some(step) if step < Short.MaxValue => Some((step + 1).toShort)
-        case Some(step) if step == Short.MaxValue => cachedResult.softTtlStep
+        case Some(step) if step < Short.MatwitterValue => Some((step + 1).toShort)
+        case Some(step) if step == Short.MatwitterValue => cachedResult.softTtlStep
         case _ => Some(1)
       }
     } else {
@@ -450,7 +450,7 @@ class CachingKeyValueRepository[Q <: Seq[K], K, V](
     doNotCache: Set[K],
     failures: Map[K, Throwable],
     tombstones: Set[K],
-    softExpirations: Seq[K],
+    softEtwitterpirations: Seq[K],
     transforms: Map[K, (V => V)])
 
   override def apply(keys: Q): Future[KeyValueResult[K, V]] = {
@@ -461,7 +461,7 @@ class CachingKeyValueRepository[Q <: Seq[K], K, V](
         doNotCache,
         failures,
         tombstones,
-        softExpirations,
+        softEtwitterpirations,
         transforms
       ) =
         process(keys, cacheResult)
@@ -469,21 +469,21 @@ class CachingKeyValueRepository[Q <: Seq[K], K, V](
       if (log.isLoggable(Level.TRACE)) {
         log.trace(
           "CachingKVR.apply keys %d hit %d miss %d noCache %d failure %d " +
-            "tombstone %d softexp %d",
+            "tombstone %d softetwitterp %d",
           keys.size,
           hits.size,
           misses.size,
           doNotCache.size,
           failures.size,
           tombstones.size,
-          softExpirations.size
+          softEtwitterpirations.size
         )
       }
       recordCacheStats(
         keys,
         notFound = misses.toSet,
         doNotCache = doNotCache,
-        expired = softExpirations.toSet,
+        etwitterpired = softEtwitterpirations.toSet,
         numFailures = failures.size,
         numTombstones = tombstones.size
       )
@@ -493,9 +493,9 @@ class CachingKeyValueRepository[Q <: Seq[K], K, V](
       val writeToCacheQuery = if (doNotCache.nonEmpty) newQuery(misses, keys) else underlyingQuery
       val futureFromUnderlying = readThrough(underlyingQuery, writeToCacheQuery)
 
-      // async read-through for the expired results, ignore results
-      val softExpirationQuery = newQuery(softExpirations, keys)
-      val futureFromSoftExpiry = readThrough(softExpirationQuery, softExpirationQuery, cacheResult)
+      // async read-through for the etwitterpired results, ignore results
+      val softEtwitterpirationQuery = newQuery(softEtwitterpirations, keys)
+      val futureFromSoftEtwitterpiry = readThrough(softEtwitterpirationQuery, softEtwitterpirationQuery, cacheResult)
 
       // merge all results together
       for {
@@ -503,7 +503,7 @@ class CachingKeyValueRepository[Q <: Seq[K], K, V](
         fromCache = KeyValueResult(hits, tombstones, failures)
         fromUnderlyingTransformed = transformResults(fromUnderlying, transforms)
       } yield {
-        futureFromSoftExpiry.onSuccess { readThroughResults =>
+        futureFromSoftEtwitterpiry.onSuccess { readThroughResults =>
           cacheResultObserver(
             CacheResultObserver.CachingRepositoryResult(
               cacheResult,
@@ -539,7 +539,7 @@ class CachingKeyValueRepository[Q <: Seq[K], K, V](
     val uniqueKeys = keys.distinct
     cache.get(uniqueKeys) handle {
       case t: Throwable =>
-        rateLimitedLogger.logThrowable(t, "exception caught in cache get")
+        rateLimitedLogger.logThrowable(t, "etwitterception caught in cache get")
 
         // treat total cache failure as a fetch that returned all failures
         KeyValueResult(failed = uniqueKeys.map { _ -> t }.toMap)
@@ -559,7 +559,7 @@ class CachingKeyValueRepository[Q <: Seq[K], K, V](
     val misses = new mutable.ArrayBuffer[K]
     val failures = Map.newBuilder[K, Throwable]
     val tombstones = Set.newBuilder[K]
-    val softExpiredKeys = new mutable.ListBuffer[K]
+    val softEtwitterpiredKeys = new mutable.ListBuffer[K]
     val doNotCache = Set.newBuilder[K]
     val transforms = Map.newBuilder[K, (V => V)]
 
@@ -599,8 +599,8 @@ class CachingKeyValueRepository[Q <: Seq[K], K, V](
           case TransformSubAction(subAction, f) =>
             transforms += key -> f
             processAction(subAction)
-          case SoftExpiration(subAction) =>
-            softExpiredKeys += key
+          case SoftEtwitterpiration(subAction) =>
+            softEtwitterpiredKeys += key
             processAction(subAction)
         }
       }
@@ -614,7 +614,7 @@ class CachingKeyValueRepository[Q <: Seq[K], K, V](
       doNotCache.result(),
       failures.result(),
       tombstones.result(),
-      softExpiredKeys,
+      softEtwitterpiredKeys,
       transforms.result()
     )
   }
@@ -623,14 +623,14 @@ class CachingKeyValueRepository[Q <: Seq[K], K, V](
     keys: Seq[K],
     notFound: Set[K],
     doNotCache: Set[K],
-    expired: Set[K],
+    etwitterpired: Set[K],
     numFailures: Int,
     numTombstones: Int
   ): Unit = {
     keys.foreach { key =>
       val wasntFound = notFound.contains(key)
       val keyString = key.toString
-      if (wasntFound || expired.contains(key))
+      if (wasntFound || etwitterpired.contains(key))
         effectiveCacheStats.miss(keyString)
       else
         effectiveCacheStats.hit(keyString)
@@ -640,7 +640,7 @@ class CachingKeyValueRepository[Q <: Seq[K], K, V](
       else
         observer.hit(keyString)
     }
-    observer.expired(expired.size)
+    observer.etwitterpired(etwitterpired.size)
     observer.failure(numFailures)
     observer.tombstone(numTombstones)
     observer.noCache(doNotCache.size)
@@ -661,7 +661,7 @@ class CachingKeyValueRepository[Q <: Seq[K], K, V](
    *
    * @param writeToCacheQuery
    *   the query to pass to the writeToCache method after getting a result back from the
-   *   underlying repository.  this query can be exactly the same as underlyingQuery if
+   *   underlying repository.  this query can be etwitteractly the same as underlyingQuery if
    *   all readThrough keys should be cached, or it may contain a subset of the keys if
    *   some keys should not be written back to cache.
    * @param cacheResult
@@ -726,7 +726,7 @@ class CachingKeyValueRepository[Q <: Seq[K], K, V](
             .lockAndSet(key, LockingCache.PickingHandler(cached, picker))
             .onFailure {
               case t: Throwable =>
-                rateLimitedLogger.logThrowable(t, "exception caught in lockAndSet")
+                rateLimitedLogger.logThrowable(t, "etwitterception caught in lockAndSet")
             }
 
         case Throw(_) => None

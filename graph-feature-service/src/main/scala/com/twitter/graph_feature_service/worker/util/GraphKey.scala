@@ -8,17 +8,17 @@ sealed trait GraphKey {
   def edgeType: EdgeType
 }
 
-sealed trait PartialValueGraph extends GraphKey
+sealed trait PartialValueGraph etwittertends GraphKey
 
 /**
  * Follow Graphs
  */
-object FollowingPartialValueGraph extends PartialValueGraph {
+object FollowingPartialValueGraph etwittertends PartialValueGraph {
 
   override def edgeType: EdgeType = Following
 }
 
-object FollowedByPartialValueGraph extends PartialValueGraph {
+object FollowedByPartialValueGraph etwittertends PartialValueGraph {
 
   override def edgeType: EdgeType = FollowedBy
 }
@@ -26,7 +26,7 @@ object FollowedByPartialValueGraph extends PartialValueGraph {
 /**
  * Mutual Follow Graphs
  */
-object MutualFollowPartialValueGraph extends PartialValueGraph {
+object MutualFollowPartialValueGraph etwittertends PartialValueGraph {
 
   override def edgeType: EdgeType = MutualFollow
 }

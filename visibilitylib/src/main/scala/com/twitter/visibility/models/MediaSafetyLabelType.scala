@@ -3,11 +3,11 @@ package com.twitter.visibility.models
 import com.twitter.visibility.safety_label_store.{thriftscala => s}
 import com.twitter.visibility.util.NamingUtils
 
-sealed trait MediaSafetyLabelType extends SafetyLabelType {
+sealed trait MediaSafetyLabelType etwittertends SafetyLabelType {
   lazy val name: String = NamingUtils.getFriendlyName(this)
 }
 
-object MediaSafetyLabelType extends SafetyLabelType {
+object MediaSafetyLabelType etwittertends SafetyLabelType {
 
   val List: List[MediaSafetyLabelType] = s.MediaSafetyLabelType.list.map(fromThrift)
 
@@ -57,18 +57,18 @@ object MediaSafetyLabelType extends SafetyLabelType {
       Deprecated -> s.MediaSafetyLabelType.EnumUnknownMediaSafetyLabelType(DeprecatedEnumValue),
     )
 
-  case object NsfwHighPrecision extends MediaSafetyLabelType
-  case object NsfwHighRecall extends MediaSafetyLabelType
-  case object NsfwNearPerfect extends MediaSafetyLabelType
-  case object NsfwCardImage extends MediaSafetyLabelType
-  case object Pdna extends MediaSafetyLabelType
-  case object PdnaNoTreatmentIfVerified extends MediaSafetyLabelType
-  case object DmcaWithheld extends MediaSafetyLabelType
-  case object LegalDemandsWithheld extends MediaSafetyLabelType
-  case object LocalLawsWithheld extends MediaSafetyLabelType
+  case object NsfwHighPrecision etwittertends MediaSafetyLabelType
+  case object NsfwHighRecall etwittertends MediaSafetyLabelType
+  case object NsfwNearPerfect etwittertends MediaSafetyLabelType
+  case object NsfwCardImage etwittertends MediaSafetyLabelType
+  case object Pdna etwittertends MediaSafetyLabelType
+  case object PdnaNoTreatmentIfVerified etwittertends MediaSafetyLabelType
+  case object DmcaWithheld etwittertends MediaSafetyLabelType
+  case object LegalDemandsWithheld etwittertends MediaSafetyLabelType
+  case object LocalLawsWithheld etwittertends MediaSafetyLabelType
 
-  case object Deprecated extends MediaSafetyLabelType
-  case object Unknown extends MediaSafetyLabelType
+  case object Deprecated etwittertends MediaSafetyLabelType
+  case object Unknown etwittertends MediaSafetyLabelType
 
   def fromThrift(safetyLabelType: s.MediaSafetyLabelType): MediaSafetyLabelType =
     thriftToModelMap.get(safetyLabelType) match {

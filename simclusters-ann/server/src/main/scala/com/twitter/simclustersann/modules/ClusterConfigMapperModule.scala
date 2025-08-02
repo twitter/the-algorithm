@@ -3,9 +3,9 @@ package com.twitter.simclustersann.modules
 import com.google.inject.Provides
 import com.twitter.inject.TwitterModule
 import com.twitter.relevance_platform.simclustersann.multicluster.ClusterConfigMapper
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
-object ClusterConfigMapperModule extends TwitterModule {
+object ClusterConfigMapperModule etwittertends TwitterModule {
   @Singleton
   @Provides
   def providesClusterConfigMapper(

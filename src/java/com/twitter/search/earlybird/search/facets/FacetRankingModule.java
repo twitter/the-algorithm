@@ -17,7 +17,7 @@ public abstract class FacetRankingModule {
 
   /**
    * Prepares the {@link com.twitter.search.earlybird.thrift.ThriftFacetFieldResults}
-   * in {@link FacetCountState} before they're returned. This extension point therefore allows
+   * in {@link FacetCountState} before they're returned. This etwittertension point therefore allows
    * post-processing the facet results, e.g. for re-ranking or sorting purposes.
    */
   public abstract void prepareResults(

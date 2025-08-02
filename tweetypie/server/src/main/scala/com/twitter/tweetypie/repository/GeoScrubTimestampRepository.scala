@@ -6,7 +6,7 @@ import com.twitter.stitch.Stitch
 import com.twitter.util.Base64Long
 
 case class GeoScrubTimestampKey(userId: UserId)
-    extends ScopedCacheKey("t", "gs", 1, Base64Long.toBase64(userId))
+    etwittertends ScopedCacheKey("t", "gs", 1, Base64Long.toBase64(userId))
 
 object GeoScrubTimestampRepository {
   type Type = UserId => Stitch[Time]

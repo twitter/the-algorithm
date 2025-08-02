@@ -6,13 +6,13 @@ import com.twitter.unified_user_actions.enricher.internal.thriftscala.Enrichment
 import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentStageType.Repartition
 import com.twitter.util.Future
 import EnrichmentPlanUtils._
-import com.twitter.unified_user_actions.enricher.Exceptions
-import com.twitter.unified_user_actions.enricher.ImplementationException
+import com.twitter.unified_user_actions.enricher.Etwitterceptions
+import com.twitter.unified_user_actions.enricher.ImplementationEtwitterception
 import com.twitter.unified_user_actions.enricher.hydrator.Hydrator
 import com.twitter.unified_user_actions.enricher.partitioner.Partitioner
 
 /**
- * A driver that will execute on a key, value tuple and produce an output to a Kafka topic.
+ * A driver that will etwitterecute on a key, value tuple and produce an output to a Kafka topic.
  *
  * The output Kafka topic will depend on the current enrichment plan. In one scenario, the driver
  * will output to a partitioned Kafka topic if the output needs to be repartitioned (after it has
@@ -31,15 +31,15 @@ class EnrichmentDriver(
   partitioner: Partitioner) {
 
   /**
-   * A driver that does the following when being executed.
+   * A driver that does the following when being etwitterecuted.
    *  It checks if we are done with enrichment plan, if not:
    *  - is the current stage repartitioning?
    *    -> remap the output key, update plan accordingly then return with the new partition key
    *  - is the current stage hydration?
    *    -> use the hydrator to hydrate the envelop, update the plan accordingly, then proceed
-   *    recursively unless the next stage is repartitioning or this is the last stage.
+   *    recursively unless the netwittert stage is repartitioning or this is the last stage.
    */
-  def execute(
+  def etwitterecute(
     key: Option[EnrichmentKey],
     envelop: Future[EnrichmentEnvelop]
   ): Future[(Option[EnrichmentKey], EnrichmentEnvelop)] = {
@@ -47,7 +47,7 @@ class EnrichmentDriver(
       val plan = envelop.plan
       if (plan.isEnrichmentComplete) {
         val topic = finalOutputTopic.getOrElse(
-          throw new ImplementationException(
+          throw new ImplementationEtwitterception(
             "A final output Kafka topic is supposed to be used but " +
               "no final output topic was provided."))
         Future.value((key, envelop.copy(plan = plan.markLastStageCompletedWithOutputTopic(topic))))
@@ -56,9 +56,9 @@ class EnrichmentDriver(
 
         currentStage.stageType match {
           case Repartition =>
-            Exceptions.require(
+            Etwitterceptions.require(
               currentStage.instructions.size == 1,
-              s"re-partitioning needs exactly 1 instruction but ${currentStage.instructions.size} was provided")
+              s"re-partitioning needs etwitteractly 1 instruction but ${currentStage.instructions.size} was provided")
 
             val instruction = currentStage.instructions.head
             val outputKey = partitioner.repartition(instruction, envelop)
@@ -69,12 +69,12 @@ class EnrichmentDriver(
             )
             Future.value((outputKey, outputValue))
           case Hydration =>
-            Exceptions.require(
+            Etwitterceptions.require(
               currentStage.instructions.nonEmpty,
               "hydration needs at least one instruction")
 
             // Hydration is either initialized or completed after this, failure state
-            // will have to be handled upstream. Any unhandled exception will abort the entire
+            // will have to be handled upstream. Any unhandled etwitterception will abort the entire
             // stage.
             // This is so that if the error in unrecoverable, the hydrator can choose to return an
             // un-hydrated envelop to tolerate the error.
@@ -88,10 +88,10 @@ class EnrichmentDriver(
                 plan = plan.markStageCompleted(stage = currentStage)
               ))
 
-            // continue executing other stages if it can (locally) until a terminal state
-            execute(key, outputValue)
+            // continue etwitterecuting other stages if it can (locally) until a terminal state
+            etwitterecute(key, outputValue)
           case _ =>
-            throw new ImplementationException(s"Invalid / unsupported stage type $currentStage")
+            throw new ImplementationEtwitterception(s"Invalid / unsupported stage type $currentStage")
         }
       }
     }

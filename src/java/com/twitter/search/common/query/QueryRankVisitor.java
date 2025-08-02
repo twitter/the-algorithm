@@ -7,14 +7,14 @@ import com.google.common.collect.Maps;
 
 import com.twitter.search.queryparser.query.BooleanQuery;
 import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twitter.search.queryparser.query.QueryParserEtwitterception;
 import com.twitter.search.queryparser.query.annotation.Annotation;
 import com.twitter.search.queryparser.visitors.DetectAnnotationVisitor;
 
 /**
  * A visitor that collects node ranks from :r annotation in the query
  */
-public class QueryRankVisitor extends DetectAnnotationVisitor {
+public class QueryRankVisitor etwittertends DetectAnnotationVisitor {
   private final IdentityHashMap<Query, Integer> nodeToRankMap = Maps.newIdentityHashMap();
 
   public QueryRankVisitor() {
@@ -22,7 +22,7 @@ public class QueryRankVisitor extends DetectAnnotationVisitor {
   }
 
   @Override
-  protected boolean visitBooleanQuery(BooleanQuery query) throws QueryParserException {
+  protected boolean visitBooleanQuery(BooleanQuery query) throws QueryParserEtwitterception {
     if (query.hasAnnotationType(Annotation.Type.NODE_RANK)) {
       collectNodeRank(query.getAnnotationOf(Annotation.Type.NODE_RANK).get(), query);
     }
@@ -35,7 +35,7 @@ public class QueryRankVisitor extends DetectAnnotationVisitor {
   }
 
   @Override
-  protected boolean visitQuery(Query query) throws QueryParserException {
+  protected boolean visitQuery(Query query) throws QueryParserEtwitterception {
     if (query.hasAnnotationType(Annotation.Type.NODE_RANK)) {
       collectNodeRank(query.getAnnotationOf(Annotation.Type.NODE_RANK).get(), query);
       return true;

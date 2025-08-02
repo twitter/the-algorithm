@@ -14,7 +14,7 @@ class UserTweetEntityGraph(
   recommendationHandler: RecommendationHandler,
   tweetSocialProofHandler: TweetSocialProofHandler,
   socialProofHandler: SocialProofHandler)
-    extends thriftscala.UserTweetEntityGraph.MethodPerEndpoint {
+    etwittertends thriftscala.UserTweetEntityGraph.MethodPerEndpoint {
 
   override def recommendTweets(
     request: RecommendTweetEntityRequest
@@ -37,7 +37,7 @@ class UserTweetEntityGraph(
    *
    * Currently this supports url social proof generation for Guide.
    *
-   * This endpoint is flexible enough to support social proof generation for all recommendation
+   * This endpoint is fletwitterible enough to support social proof generation for all recommendation
    * types, and should be used for all future clients of this service.
    */
   override def findRecommendationSocialProofs(

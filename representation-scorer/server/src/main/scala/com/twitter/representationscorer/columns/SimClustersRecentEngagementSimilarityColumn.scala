@@ -10,18 +10,18 @@ import com.twitter.strato.catalog.OpMetadata
 import com.twitter.strato.config.ContactInfo
 import com.twitter.strato.config.Policy
 import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
+import com.twitter.strato.data.Description.PlainTetwittert
 import com.twitter.strato.data.Lifecycle
 import com.twitter.strato.fed._
 import com.twitter.strato.thrift.ScroogeConv
-import javax.inject.Inject
+import javatwitter.inject.Inject
 
 class SimClustersRecentEngagementSimilarityColumn @Inject() (scorer: Scorer)
-    extends StratoFed.Column(
+    etwittertends StratoFed.Column(
       "recommendations/representation_scorer/simClustersRecentEngagementSimilarity")
     with StratoFed.Fetch.Stitch {
 
-  override val policy: Policy = Common.rsxReadPolicy
+  override val policy: Policy = Common.rstwitterReadPolicy
 
   override type Key = (UserId, Seq[TweetId])
   override type View = Unit
@@ -37,7 +37,7 @@ class SimClustersRecentEngagementSimilarityColumn @Inject() (scorer: Scorer)
   override val metadata: OpMetadata = OpMetadata(
     lifecycle = Some(Lifecycle.Production),
     description = Some(
-      PlainText(
+      PlainTetwittert(
         "User-Tweet scores based on the user's recent engagements for multiple tweets."
       ))
   )

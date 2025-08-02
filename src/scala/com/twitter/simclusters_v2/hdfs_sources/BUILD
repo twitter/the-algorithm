@@ -18,12 +18,12 @@ scala_library(
 scala_library(
     name = "data_sources",
     sources = [],
-    description = "DAL datasets we wish to expose externally",
+    description = "DAL datasets we wish to etwitterpose etwitterternally",
     platform = "java8",
     tags = ["bazel-compatible"],
     dependencies = [
-        ":ads_fav_based_simclusters_cluster_to_tweet_index-scala",
-        ":ads_fav_click_based_simclusters_cluster_to_tweet_index-scala",
+        ":ads_fav_based_simclusters_cluster_to_tweet_indetwitter-scala",
+        ":ads_fav_click_based_simclusters_cluster_to_tweet_indetwitter-scala",
         ":aggregatable_producer_simclusters_embeddings_by_fav_score-scala",
         ":aggregatable_producer_simclusters_embeddings_by_fav_score_2020-scala",
         ":aggregatable_producer_simclusters_embeddings_by_fav_score_2020_thrift-scala",
@@ -33,18 +33,18 @@ scala_library(
         ":aggregatable_producer_simclusters_embeddings_by_log_fav_score-scala",
         ":aggregatable_producer_simclusters_embeddings_by_log_fav_score_2020-scala",
         ":aggregatable_producer_simclusters_embeddings_by_log_fav_score_2020_thrift-scala",
-        ":aggregatable_producer_simclusters_embeddings_by_log_fav_score_relaxed_fav_engagement_threshold_2020-scala",
-        ":aggregatable_producer_simclusters_embeddings_by_log_fav_score_relaxed_fav_engagement_threshold_2020_thrift-scala",
+        ":aggregatable_producer_simclusters_embeddings_by_log_fav_score_relatwittered_fav_engagement_threshold_2020-scala",
+        ":aggregatable_producer_simclusters_embeddings_by_log_fav_score_relatwittered_fav_engagement_threshold_2020_thrift-scala",
         ":aggregatable_producer_simclusters_embeddings_by_log_fav_score_thrift-scala",
         ":clusters_members_connected_components_ape_similarity-scala",
         ":clusters_members_largest_dim_ape_similarity-scala",
         ":clusters_members_largest_dim_ape_similarity_2_day_update-scala",
         ":clusters_members_louvain_ape_similarity-scala",
         ":co_engagement_top_k_similar_tweets-scala",
-        ":explore_mbcg_user_embeddings_kv-scala",
-        ":fav_based_evergreen_content_simclusters_cluster_to_tweet_index-scala",
-        ":fav_based_simclusters_cluster_to_tweet_index-scala",
-        ":fav_based_video_simclusters_cluster_to_tweet_index-scala",
+        ":etwitterplore_mbcg_user_embeddings_kv-scala",
+        ":fav_based_evergreen_content_simclusters_cluster_to_tweet_indetwitter-scala",
+        ":fav_based_simclusters_cluster_to_tweet_indetwitter-scala",
+        ":fav_based_video_simclusters_cluster_to_tweet_indetwitter-scala",
         ":fav_inferred_language_tfg_topic_embeddings-scala",
         ":fav_tfg_topic_embeddings-scala",
         ":fav_tfg_topic_embeddings_2020-scala",
@@ -58,7 +58,7 @@ scala_library(
         ":interested_in_twice_by_largest_dim_fav_score-scala",
         ":interested_in_twice_connected_components-scala",
         ":interested_in_twice_louvain-scala",
-        ":log_fav_reverse_index_semantic_core_per_language_simclusters_embeddings-scala",
+        ":log_fav_reverse_indetwitter_semantic_core_per_language_simclusters_embeddings-scala",
         ":log_fav_semantic_core_per_language_simclusters_embeddings-scala",
         ":log_fav_tfg_topic_embeddings-scala",
         ":log_fav_tfg_topic_embeddings_parquet-scala",
@@ -80,17 +80,17 @@ scala_library(
         ":producer_top_k_simcluster_embeddings_by_follow_score-scala",
         ":producer_top_k_simcluster_embeddings_by_follow_score_2020-scala",
         ":producer_top_k_simcluster_embeddings_by_follow_score_updated-scala",
-        ":push_open_based_simclusters_cluster_to_tweet_index-scala",
-        ":reply_based_simclusters_cluster_to_tweet_index-scala",
-        ":retweet_based_simclusters_cluster_to_tweet_index-scala",
-        ":reverse_index_hashtag_simclusters_embeddings_updated-scala",
-        ":reverse_index_semantic_core_per_language_simclusters_embeddings-scala",
-        ":reverse_index_semantic_core_simclusters_embeddings-scala",
-        ":reverse_index_semantic_core_simclusters_embeddings_2020-scala",
-        ":reverse_index_semantic_core_simclusters_embeddings_updated-scala",
+        ":push_open_based_simclusters_cluster_to_tweet_indetwitter-scala",
+        ":reply_based_simclusters_cluster_to_tweet_indetwitter-scala",
+        ":retweet_based_simclusters_cluster_to_tweet_indetwitter-scala",
+        ":reverse_indetwitter_hashtag_simclusters_embeddings_updated-scala",
+        ":reverse_indetwitter_semantic_core_per_language_simclusters_embeddings-scala",
+        ":reverse_indetwitter_semantic_core_simclusters_embeddings-scala",
+        ":reverse_indetwitter_semantic_core_simclusters_embeddings_2020-scala",
+        ":reverse_indetwitter_semantic_core_simclusters_embeddings_updated-scala",
         ":right_node_cosine_similarity_scio-scala",
         ":right_node_sim_hash_scio-scala",
-        ":rux_faved_top_k_tweets-scala",
+        ":rutwitter_faved_top_k_tweets-scala",
         ":semantic_core_embeddings_from_producer-scala",
         ":semantic_core_per_language_simclusters_embeddings-scala",
         ":semantic_core_simclusters_embeddings-scala",
@@ -156,7 +156,7 @@ scala_library(
         ":user_user_fav_graph-scala",
         ":user_user_graph-scala",
         ":user_user_normalized_graph-scala",
-        ":video_view_based_simclusters_cluster_to_tweet_index-scala",
+        ":video_view_based_simclusters_cluster_to_tweet_indetwitter-scala",
         "src/scala/com/twitter/simclusters_v2/common",
     ],
 )
@@ -791,7 +791,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "reverse_index_semantic_core_simclusters_embeddings",
+    base_name = "reverse_indetwitter_semantic_core_simclusters_embeddings",
     key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
     platform = "java8",
     role = "cassowary",
@@ -805,7 +805,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "reverse_index_semantic_core_simclusters_embeddings_updated",
+    base_name = "reverse_indetwitter_semantic_core_simclusters_embeddings_updated",
     key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
     platform = "java8",
     role = "cassowary",
@@ -819,7 +819,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "reverse_index_semantic_core_simclusters_embeddings_2020",
+    base_name = "reverse_indetwitter_semantic_core_simclusters_embeddings_2020",
     key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
     platform = "java8",
     role = "cassowary",
@@ -833,7 +833,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "reverse_index_semantic_core_per_language_simclusters_embeddings",
+    base_name = "reverse_indetwitter_semantic_core_per_language_simclusters_embeddings",
     key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
     platform = "java8",
     role = "cassowary",
@@ -847,7 +847,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "log_fav_reverse_index_semantic_core_per_language_simclusters_embeddings",
+    base_name = "log_fav_reverse_indetwitter_semantic_core_per_language_simclusters_embeddings",
     key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
     platform = "java8",
     role = "cassowary",
@@ -967,7 +967,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "reverse_index_hashtag_simclusters_embeddings_updated",
+    base_name = "reverse_indetwitter_hashtag_simclusters_embeddings_updated",
     key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
     platform = "java8",
     role = "cassowary",
@@ -1219,7 +1219,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "aggregatable_producer_simclusters_embeddings_by_log_fav_score_relaxed_fav_engagement_threshold_2020",
+    base_name = "aggregatable_producer_simclusters_embeddings_by_log_fav_score_relatwittered_fav_engagement_threshold_2020",
     key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
     platform = "java8",
     role = "cassowary",
@@ -1341,7 +1341,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "aggregatable_producer_simclusters_embeddings_by_log_fav_score_relaxed_fav_engagement_threshold_2020_thrift",
+    base_name = "aggregatable_producer_simclusters_embeddings_by_log_fav_score_relatwittered_fav_engagement_threshold_2020_thrift",
     java_schema = "com.twitter.simclusters_v2.thriftjava.SimClustersEmbeddingWithId",
     platform = "java8",
     role = "cassowary",
@@ -1596,8 +1596,8 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "rux_faved_top_k_tweets",
-    description = "A dataset that contains the top similar tweets based on rux fav-to-impression ratio",
+    base_name = "rutwitter_faved_top_k_tweets",
+    description = "A dataset that contains the top similar tweets based on rutwitter fav-to-impression ratio",
     java_schema = "com.twitter.simclusters_v2.thriftjava.TweetTopKTweetsWithScore",
     platform = "java8",
     role = "cassowary",
@@ -1946,7 +1946,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "explore_mbcg_user_embeddings_kv",
+    base_name = "etwitterplore_mbcg_user_embeddings_kv",
     key_type = "Long",
     platform = "java8",
     role = "cassowary",
@@ -2051,7 +2051,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "fav_based_simclusters_cluster_to_tweet_index",
+    base_name = "fav_based_simclusters_cluster_to_tweet_indetwitter",
     key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
     platform = "java8",
     role = "cassowary",
@@ -2066,7 +2066,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "video_view_based_simclusters_cluster_to_tweet_index",
+    base_name = "video_view_based_simclusters_cluster_to_tweet_indetwitter",
     key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
     platform = "java8",
     role = "cassowary",
@@ -2081,7 +2081,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "retweet_based_simclusters_cluster_to_tweet_index",
+    base_name = "retweet_based_simclusters_cluster_to_tweet_indetwitter",
     key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
     platform = "java8",
     role = "cassowary",
@@ -2096,7 +2096,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "reply_based_simclusters_cluster_to_tweet_index",
+    base_name = "reply_based_simclusters_cluster_to_tweet_indetwitter",
     key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
     platform = "java8",
     role = "cassowary",
@@ -2111,7 +2111,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "push_open_based_simclusters_cluster_to_tweet_index",
+    base_name = "push_open_based_simclusters_cluster_to_tweet_indetwitter",
     key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
     platform = "java8",
     role = "cassowary",
@@ -2126,7 +2126,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "ads_fav_based_simclusters_cluster_to_tweet_index",
+    base_name = "ads_fav_based_simclusters_cluster_to_tweet_indetwitter",
     key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
     platform = "java8",
     role = "cassowary",
@@ -2141,7 +2141,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "ads_fav_click_based_simclusters_cluster_to_tweet_index",
+    base_name = "ads_fav_click_based_simclusters_cluster_to_tweet_indetwitter",
     key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
     platform = "java8",
     role = "cassowary",
@@ -2156,7 +2156,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "fav_based_evergreen_content_simclusters_cluster_to_tweet_index",
+    base_name = "fav_based_evergreen_content_simclusters_cluster_to_tweet_indetwitter",
     key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
     platform = "java8",
     role = "cassowary",
@@ -2171,7 +2171,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "fav_based_video_simclusters_cluster_to_tweet_index",
+    base_name = "fav_based_video_simclusters_cluster_to_tweet_indetwitter",
     key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
     platform = "java8",
     role = "cassowary",

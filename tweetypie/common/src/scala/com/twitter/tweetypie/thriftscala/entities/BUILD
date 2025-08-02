@@ -8,8 +8,8 @@ scala_library(
         "tweetypie/common/src/thrift/com/twitter/tweetypie:media-entity-scala",
         "tweetypie/common/src/thrift/com/twitter/tweetypie:tweet-scala",
         "tco-util",
-        "tweetypie/common/src/scala/com/twitter/tweetypie/tweettext",
+        "tweetypie/common/src/scala/com/twitter/tweetypie/tweettetwittert",
         "tweetypie/common/src/scala/com/twitter/tweetypie/util",
-        "twitter-text/lib/java/src/main/java/com/twitter/twittertext",
+        "twitter-tetwittert/lib/java/src/main/java/com/twitter/twittertetwittert",
     ],
 )

@@ -55,7 +55,7 @@ object Implicits {
     new TopKTweetsWithScoresMonoid(
       Configs.topKTweetsPerCluster,
       Configs.scoreThresholdForClusterTopKTweetsCache,
-      Configs.OldestTweetInLightIndexInMillis
+      Configs.OldestTweetInLightIndetwitterInMillis
     )(thriftDecayedValueMonoid)
 
   implicit val MultiModeltopKTweetsWithScoresMonoid: Monoid[MultiModelTopKTweetsWithScores] =

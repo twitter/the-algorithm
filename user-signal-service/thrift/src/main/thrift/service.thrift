@@ -7,14 +7,14 @@ include "signal.thrift"
 include "client_identifier.thrift"
 
 struct SignalRequest {
-  1: optional i64 maxResults
+  1: optional i64 matwitterResults
   2: required signal.SignalType signalType
 }
 
 struct BatchSignalRequest {
   1: required i64 userId(personalDataType = "UserId")
   2: required list<SignalRequest> signalRequest
-  # make sure to populate the clientId, otherwise the service would throw exceptions
+  # make sure to populate the clientId, otherwise the service would throw etwitterceptions
   3: optional client_identifier.ClientIdentifier clientId
 }(hasPersonalData='true')
 

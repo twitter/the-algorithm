@@ -7,19 +7,19 @@ import com.twitter.ml.api._
  * different types. Wrapper around AggregationMetric used as syntactic sugar
  * for easier config.
  */
-trait EasyMetric extends Serializable {
+trait EasyMetric etwittertends Serializable {
   /*
    * Given a feature type, fetches the corrrect underlying AggregationMetric
    * to perform this operation over the given feature type, if any. If no such
-   * metric is available, returns None. For example, MEAN cannot be applied
+   * metric is available, returns None. For etwitterample, MEAN cannot be applied
    * to FeatureType.String and would return None.
    *
    * @param featureType Type of feature to fetch metric for
-   * @param useFixedDecay Param to control whether the metric should use fixed decay
+   * @param useFitwitteredDecay Param to control whether the metric should use fitwittered decay
    *   logic (if appropriate)
    * @return Strongly typed aggregation metric to use for this feature type
    *
-   * For example, if the EasyMetric is MEAN and the featureType is
+   * For etwitterample, if the EasyMetric is MEAN and the featureType is
    * FeatureType.Continuous, the underlying AggregationMetric should be a
    * scalar mean. If the EasyMetric is MEAN and the featureType is
    * FeatureType.SparseContinuous, the AggregationMetric returned could be a

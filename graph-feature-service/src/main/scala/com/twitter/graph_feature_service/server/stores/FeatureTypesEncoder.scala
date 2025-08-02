@@ -10,7 +10,7 @@ object FeatureTypesEncoder {
     val byteArray = featureTypes.flatMap { featureType =>
       Array(featureType.leftEdgeType.getValue.toByte, featureType.rightEdgeType.getValue.toByte)
     }.toArray
-    (MurmurHash3.bytesHash(byteArray, RandomSeed) & 0x7fffffff).toString // keep positive
+    (MurmurHash3.bytesHash(byteArray, RandomSeed) & 0twitter7fffffff).toString // keep positive
   }
 
 }

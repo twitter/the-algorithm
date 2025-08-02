@@ -146,7 +146,7 @@ private[real_time] object StormAggregateSourceUtils {
 
   /**
    * Make join key from the client event data record and return both.
-   * @param keyFeature Feature to extract join key value: USER_ID, SOURCE_TWEET_ID, etc.
+   * @param keyFeature Feature to etwittertract join key value: USER_ID, SOURCE_TWEET_ID, etc.
    * @param record DataRecord containing client engagement and basic tweet-side features
    * @return The return type is a tuple of this key and original data record which will be used
    *         in the subsequent leftJoin operation.

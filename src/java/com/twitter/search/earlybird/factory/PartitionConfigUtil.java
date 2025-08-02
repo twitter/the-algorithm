@@ -33,7 +33,7 @@ public final class PartitionConfigUtil {
       // archive earlybird
       TierInfo tierInfo = TierConfig.getTierInfo(tier);
       return new PartitionConfig(tier, tierInfo.getDataStartDate(), tierInfo.getDataEndDate(),
-          partitionId, tierInfo.getMaxTimeslices(), replicaId, numOfInstances,
+          partitionId, tierInfo.getMatwitterTimeslices(), replicaId, numOfInstances,
           tierInfo.getNumPartitions());
     }
   }

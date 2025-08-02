@@ -12,5 +12,5 @@ if __name__ == '__main__':
   # Tensorboard relies on werkzeug for its HTTP server which logs at info level
   # by default
   logging.getLogger('werkzeug').setLevel(logging.WARNING)
-  sys.argv[0] = re.sub(r'(-script\.pyw?|\.exe)?$', '', sys.argv[0])
-  sys.exit(run_main())
+  sys.argv[0] = re.sub(r'(-script\.pyw?|\.etwittere)?$', '', sys.argv[0])
+  sys.etwitterit(run_main())

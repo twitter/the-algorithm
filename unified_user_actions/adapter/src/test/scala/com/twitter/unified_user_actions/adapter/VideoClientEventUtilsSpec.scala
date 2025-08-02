@@ -17,12 +17,12 @@ import org.scalatestplus.junit.JUnitRunner
 
 @RunWith(classOf[JUnitRunner])
 class VideoClientEventUtilsSpec
-    extends AnyFunSuite
+    etwittertends AnyFunSuite
     with Matchers
     with Mockito
     with TableDrivenPropertyChecks {
 
-  trait Fixture {
+  trait Fitwitterture {
     val mediaDetails = Seq[MediaDetails](
       MediaDetails(
         contentId = Some("456"),
@@ -56,9 +56,9 @@ class VideoClientEventUtilsSpec
   }
 
   test("findVideoMetadata") {
-    new Fixture {
+    new Fitwitterture {
       val testData = Table(
-        ("testType", "mediaId", "mediaItems", "amplifyDetails", "expectedOutput"),
+        ("testType", "mediaId", "mediaItems", "amplifyDetails", "etwitterpectedOutput"),
         ("emptyMediaDetails", "123", Seq[MediaDetails](), None, None),
         ("mediaIdNotFound", "111", mediaDetails, None, None),
         ("mediaIdFound", "123", mediaDetails, None, Some(videoMetadata)),
@@ -76,26 +76,26 @@ class VideoClientEventUtilsSpec
           mediaId: String,
           mediaItems: Seq[MediaDetails],
           amplifyDetails: Option[AmplifyDetails],
-          expectedOutput: Option[TweetActionInfo]
+          etwitterpectedOutput: Option[TweetActionInfo]
         ) =>
           val actual = getVideoMetadata(mediaId, mediaItems, amplifyDetails)
-          assert(expectedOutput === actual)
+          assert(etwitterpectedOutput === actual)
       }
     }
   }
 
   test("videoIdFromMediaIdentifier") {
-    new Fixture {
+    new Fitwitterture {
       val testData = Table(
-        ("testType", "mediaIdentifier", "expectedOutput"),
+        ("testType", "mediaIdentifier", "etwitterpectedOutput"),
         ("validMediaIdentifierType", validMediaIdentifier, Some("123")),
         ("invalidMediaIdentifierType", invalidMediaIdentifier, None)
       )
 
       forEvery(testData) {
-        (_: String, mediaIdentifier: MediaIdentifier, expectedOutput: Option[String]) =>
+        (_: String, mediaIdentifier: MediaIdentifier, etwitterpectedOutput: Option[String]) =>
           val actual = videoIdFromMediaIdentifier(mediaIdentifier)
-          assert(expectedOutput === actual)
+          assert(etwitterpectedOutput === actual)
       }
     }
   }

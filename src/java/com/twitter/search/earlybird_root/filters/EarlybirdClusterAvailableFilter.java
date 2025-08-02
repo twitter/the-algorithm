@@ -3,7 +3,7 @@ package com.twitter.search.earlybird_root.filters;
 import java.util.Collections;
 import java.util.Map;
 
-import javax.inject.Inject;
+import javatwitter.inject.Inject;
 
 import com.google.common.collect.Maps;
 
@@ -14,7 +14,7 @@ import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
 import com.twitter.util.Future;
 
@@ -22,11 +22,11 @@ import com.twitter.util.Future;
  * A Finagle filter that determines if a certain cluster is available to the SuperRoot.
  *
  * Normally, all clusters should be available. However, if there's a problem with our systems, and
- * our search clusters are causing issues for other services (time outs, for example), then we might
+ * our search clusters are causing issues for other services (time outs, for etwitterample), then we might
  * want to be disable them, and return errors to our clients.
  */
 public class EarlybirdClusterAvailableFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+    etwittertends SimpleFilter<EarlybirdRequestContetwittert, EarlybirdResponse> {
   private final SearchDecider decider;
   private final EarlybirdCluster cluster;
   private final String allRequestsDeciderKey;
@@ -54,7 +54,7 @@ public class EarlybirdClusterAvailableFilter
       String requestTypeName = requestType.getNormalizedName();
       tempDeciderKeys.put(requestType, "superroot_" + clusterName + "_cluster_available_for_"
                           + requestTypeName + "_requests");
-      tempCounters.put(requestType, SearchCounter.export(
+      tempCounters.put(requestType, SearchCounter.etwitterport(
                            "cluster_available_filter_" + clusterName + "_"
                            + requestTypeName + "_disabled_requests"));
     }
@@ -64,9 +64,9 @@ public class EarlybirdClusterAvailableFilter
 
   @Override
   public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    EarlybirdRequestType requestType = requestContext.getEarlybirdRequestType();
+      EarlybirdRequestContetwittert requestContetwittert,
+      Service<EarlybirdRequestContetwittert, EarlybirdResponse> service) {
+    EarlybirdRequestType requestType = requestContetwittert.getEarlybirdRequestType();
     if (!decider.isAvailable(allRequestsDeciderKey)
         || !decider.isAvailable(requestTypeDeciderKeys.get(requestType))) {
       disabledRequests.get(requestType).increment();
@@ -75,7 +75,7 @@ public class EarlybirdClusterAvailableFilter
                         + requestType.getNormalizedName() + " requests."));
     }
 
-    return service.apply(requestContext);
+    return service.apply(requestContetwittert);
   }
 
   private EarlybirdResponse errorResponse(String debugMessage) {

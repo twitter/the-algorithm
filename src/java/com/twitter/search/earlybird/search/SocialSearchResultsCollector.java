@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.search;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import com.twitter.common.util.Clock;
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
@@ -14,7 +14,7 @@ import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
  * Time: 12:06 PM
  * To change this template use File | Settings | File Templates.
  */
-public class SocialSearchResultsCollector extends SearchResultsCollector {
+public class SocialSearchResultsCollector etwittertends SearchResultsCollector {
 
   private final SocialFilter socialFilter;
 
@@ -32,14 +32,14 @@ public class SocialSearchResultsCollector extends SearchResultsCollector {
   }
 
   @Override
-  public final void doCollect(long tweetID) throws IOException {
+  public final void doCollect(long tweetID) throws IOEtwitterception {
     if (socialFilter == null || socialFilter.accept(curDocId)) {
       results.add(new Hit(currTimeSliceID, tweetID));
     }
   }
 
   @Override
-  public void startSegment() throws IOException {
+  public void startSegment() throws IOEtwitterception {
     if (socialFilter != null) {
       socialFilter.startSegment(currTwitterReader);
     }

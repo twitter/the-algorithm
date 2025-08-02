@@ -7,7 +7,7 @@ import com.twitter.tweetypie.repository._
 import com.twitter.tweetypie.thriftscala._
 
 object ContributorHydrator {
-  type Type = ValueHydrator[Option[Contributor], TweetCtx]
+  type Type = ValueHydrator[Option[Contributor], TweetCttwitter]
 
   val hydratedField: FieldByPath = fieldByPath(Tweet.ContributorField, Contributor.ScreenNameField)
 
@@ -18,7 +18,7 @@ object ContributorHydrator {
     )
 
   def apply(repo: UserIdentityRepository.Type): Type =
-    ValueHydrator[Contributor, TweetCtx] { (curr, _) =>
+    ValueHydrator[Contributor, TweetCttwitter] { (curr, _) =>
       repo(UserKey(curr.userId)).liftToTry.map {
         case Return(userIdent) => ValueState.delta(curr, update(curr, userIdent))
         case Throw(NotFound) => ValueState.unmodified(curr)

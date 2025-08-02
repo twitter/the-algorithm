@@ -7,18 +7,18 @@ import com.twitter.tweetypie.core.FilteredState
 import com.twitter.tweetypie.core.ValueState
 
 object IM3433FilterHydrator {
-  type Type = ValueHydrator[Unit, TweetCtx]
+  type Type = ValueHydrator[Unit, TweetCttwitter]
 
   private val Drop =
-    Stitch.exception(FilteredState.Unavailable.DropUnspecified)
+    Stitch.etwitterception(FilteredState.Unavailable.DropUnspecified)
   private val Success = Stitch.value(ValueState.unmodified(()))
 
   def apply(stats: StatsReceiver): Type = {
 
-    ValueHydrator[Unit, TweetCtx] { (_, ctx) =>
-      val userAgent = TwitterContext().flatMap(_.userAgent)
-      val userAgentAffected = userAgent.exists(IM3433.isAffectedClient)
-      val mightCrash = userAgentAffected && IM3433.textMightCrashIOS(ctx.text)
+    ValueHydrator[Unit, TweetCttwitter] { (_, cttwitter) =>
+      val userAgent = TwitterContetwittert().flatMap(_.userAgent)
+      val userAgentAffected = userAgent.etwitterists(IM3433.isAffectedClient)
+      val mightCrash = userAgentAffected && IM3433.tetwittertMightCrashIOS(cttwitter.tetwittert)
       if (mightCrash) Drop else Success
     }
   }

@@ -1,12 +1,12 @@
 package com.twitter.tweetypie
 package store
 
-import com.twitter.context.thriftscala.FeatureContext
+import com.twitter.contetwittert.thriftscala.FeatureContetwittert
 import com.twitter.tweetypie.core.GeoSearchRequestId
 import com.twitter.tweetypie.store.TweetEventDataScrubber.scrub
 import com.twitter.tweetypie.thriftscala._
 
-object InsertTweet extends TweetStore.SyncModule {
+object InsertTweet etwittertends TweetStore.SyncModule {
 
   case class Event(
     tweet: Tweet,
@@ -21,17 +21,17 @@ object InsertTweet extends TweetStore.SyncModule {
     initialTweetUpdateRequest: Option[InitialTweetUpdateRequest] = None,
     dark: Boolean = false,
     hydrateOptions: WritePathHydrationOptions = WritePathHydrationOptions(),
-    featureContext: Option[FeatureContext] = None,
+    featureContetwittert: Option[FeatureContetwittert] = None,
     geoSearchRequestId: Option[GeoSearchRequestId] = None,
-    additionalContext: Option[collection.Map[TweetCreateContextKey, String]] = None,
-    transientContext: Option[TransientCreateContext] = None,
+    additionalContetwittert: Option[collection.Map[TweetCreateContetwittertKey, String]] = None,
+    transientContetwittert: Option[TransientCreateContetwittert] = None,
     quoterHasAlreadyQuotedTweet: Boolean = false,
     noteTweetMentionedUserIds: Option[Seq[Long]] = None)
-      extends SyncTweetStoreEvent("insert_tweet")
+      etwittertends SyncTweetStoreEvent("insert_tweet")
       with QuotedTweetOps {
     def internalTweet: CachedTweet =
       _internalTweet.getOrElse(
-        throw new IllegalStateException(
+        throw new IllegalStateEtwitterception(
           s"internalTweet should have been set in WritePathHydration, ${this}"
         )
       )
@@ -50,11 +50,11 @@ object InsertTweet extends TweetStore.SyncModule {
         quotedTweet = quotedTweet.map(scrubSourceTweet),
         quotedUser = quotedUser.map(scrubSourceUser),
         parentUserId = parentUserId,
-        featureContext = featureContext,
+        featureContetwittert = featureContetwittert,
         timestamp = timestamp.inMillis,
         geoSearchRequestId = geoSearchRequestId.map(_.requestID),
-        additionalContext = additionalContext,
-        transientContext = transientContext,
+        additionalContetwittert = additionalContetwittert,
+        transientContetwittert = transientContetwittert,
         quoterHasAlreadyQuotedTweet = Some(quoterHasAlreadyQuotedTweet),
         initialTweetUpdateRequest = initialTweetUpdateRequest,
         noteTweetMentionedUserIds = noteTweetMentionedUserIds
@@ -65,7 +65,7 @@ object InsertTweet extends TweetStore.SyncModule {
     val insertTweet: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val insertTweet: FutureEffect[Event] = wrap(underlying.insertTweet)
   }
 
@@ -99,7 +99,7 @@ object InsertTweet extends TweetStore.SyncModule {
   }
 }
 
-object AsyncInsertTweet extends TweetStore.AsyncModule {
+object AsyncInsertTweet etwittertends TweetStore.AsyncModule {
 
   private val log = Logger(getClass)
 
@@ -115,12 +115,12 @@ object AsyncInsertTweet extends TweetStore.AsyncModule {
           sourceTweet = request.sourceTweet,
           sourceUser = request.sourceUser,
           parentUserId = request.parentUserId,
-          featureContext = request.featureContext,
+          featureContetwittert = request.featureContetwittert,
           quotedTweet = request.quotedTweet,
           quotedUser = request.quotedUser,
           geoSearchRequestId = request.geoSearchRequestId,
-          additionalContext = request.additionalContext,
-          transientContext = request.transientContext,
+          additionalContetwittert = request.additionalContetwittert,
+          transientContetwittert = request.transientContetwittert,
           quoterHasAlreadyQuotedTweet = request.quoterHasAlreadyQuotedTweet.getOrElse(false),
           initialTweetUpdateRequest = request.initialTweetUpdateRequest,
           noteTweetMentionedUserIds = request.noteTweetMentionedUserIds
@@ -139,16 +139,16 @@ object AsyncInsertTweet extends TweetStore.AsyncModule {
     sourceTweet: Option[Tweet] = None,
     sourceUser: Option[User] = None,
     parentUserId: Option[UserId] = None,
-    featureContext: Option[FeatureContext] = None,
+    featureContetwittert: Option[FeatureContetwittert] = None,
     quotedTweet: Option[Tweet] = None,
     quotedUser: Option[User] = None,
     geoSearchRequestId: Option[String] = None,
-    additionalContext: Option[collection.Map[TweetCreateContextKey, String]] = None,
-    transientContext: Option[TransientCreateContext] = None,
+    additionalContetwittert: Option[collection.Map[TweetCreateContetwittertKey, String]] = None,
+    transientContetwittert: Option[TransientCreateContetwittert] = None,
     quoterHasAlreadyQuotedTweet: Boolean = false,
     initialTweetUpdateRequest: Option[InitialTweetUpdateRequest] = None,
     noteTweetMentionedUserIds: Option[Seq[Long]] = None)
-      extends AsyncTweetStoreEvent("async_insert_tweet")
+      etwittertends AsyncTweetStoreEvent("async_insert_tweet")
       with QuotedTweetOps
       with TweetStoreTweetEvent {
 
@@ -161,13 +161,13 @@ object AsyncInsertTweet extends TweetStore.AsyncModule {
         sourceUser = sourceUser,
         parentUserId = parentUserId,
         retryAction = action,
-        featureContext = featureContext,
+        featureContetwittert = featureContetwittert,
         timestamp = timestamp.inMillis,
         quotedTweet = quotedTweet,
         quotedUser = quotedUser,
         geoSearchRequestId = geoSearchRequestId,
-        additionalContext = additionalContext,
-        transientContext = transientContext,
+        additionalContetwittert = additionalContetwittert,
+        transientContetwittert = transientContetwittert,
         quoterHasAlreadyQuotedTweet = Some(quoterHasAlreadyQuotedTweet),
         initialTweetUpdateRequest = initialTweetUpdateRequest,
         noteTweetMentionedUserIds = noteTweetMentionedUserIds
@@ -184,8 +184,8 @@ object AsyncInsertTweet extends TweetStore.AsyncModule {
             retweetParentUserId = parentUserId,
             quotedTweet = publicQuotedTweet.map(scrub),
             quotedUser = publicQuotedUser,
-            additionalContext = additionalContext,
-            transientContext = transientContext,
+            additionalContetwittert = additionalContetwittert,
+            transientContetwittert = transientContetwittert,
             quoterHasAlreadyQuotedTweet = Some(quoterHasAlreadyQuotedTweet)
           )
         )
@@ -196,7 +196,7 @@ object AsyncInsertTweet extends TweetStore.AsyncModule {
   }
 
   case class RetryEvent(action: AsyncWriteAction, event: Event)
-      extends TweetStoreRetryEvent[Event] {
+      etwittertends TweetStoreRetryEvent[Event] {
 
     override val eventType: AsyncWriteEventType.Insert.type = AsyncWriteEventType.Insert
     override val scribedTweetOnFailure: Option[Tweet] = Some(event.tweet)
@@ -207,7 +207,7 @@ object AsyncInsertTweet extends TweetStore.AsyncModule {
     val retryAsyncInsertTweet: FutureEffect[TweetStoreRetryEvent[Event]]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val asyncInsertTweet: FutureEffect[Event] = wrap(underlying.asyncInsertTweet)
     override val retryAsyncInsertTweet: FutureEffect[TweetStoreRetryEvent[Event]] = wrap(
       underlying.retryAsyncInsertTweet)
@@ -216,7 +216,7 @@ object AsyncInsertTweet extends TweetStore.AsyncModule {
   object Store {
     def apply(
       replicatingStore: ReplicatingTweetStore,
-      indexingStore: TweetIndexingStore,
+      indetwitteringStore: TweetIndetwitteringStore,
       tweetCountsUpdatingStore: TweetCountsCacheUpdatingStore,
       timelineUpdatingStore: TlsTimelineUpdatingStore,
       eventBusEnqueueStore: TweetEventBusStore,
@@ -228,7 +228,7 @@ object AsyncInsertTweet extends TweetStore.AsyncModule {
       val stores: Seq[Store] =
         Seq(
           replicatingStore,
-          indexingStore,
+          indetwitteringStore,
           timelineUpdatingStore,
           eventBusEnqueueStore,
           fanoutServiceStore,
@@ -238,8 +238,8 @@ object AsyncInsertTweet extends TweetStore.AsyncModule {
           geoSearchRequestIDStore
         )
 
-      def build[E <: TweetStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
-        FutureEffect.inParallel[E](stores.map(extract): _*)
+      def build[E <: TweetStoreEvent](etwittertract: Store => FutureEffect[E]): FutureEffect[E] =
+        FutureEffect.inParallel[E](stores.map(etwittertract): _*)
 
       new Store {
         override val asyncInsertTweet: FutureEffect[Event] = build(_.asyncInsertTweet)
@@ -250,20 +250,20 @@ object AsyncInsertTweet extends TweetStore.AsyncModule {
   }
 }
 
-object ReplicatedInsertTweet extends TweetStore.ReplicatedModule {
+object ReplicatedInsertTweet etwittertends TweetStore.ReplicatedModule {
 
   case class Event(
     tweet: Tweet,
     cachedTweet: CachedTweet,
     quoterHasAlreadyQuotedTweet: Boolean = false,
     initialTweetUpdateRequest: Option[InitialTweetUpdateRequest] = None)
-      extends ReplicatedTweetStoreEvent("replicated_insert_tweet")
+      etwittertends ReplicatedTweetStoreEvent("replicated_insert_tweet")
 
   trait Store {
     val replicatedInsertTweet: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val replicatedInsertTweet: FutureEffect[Event] = wrap(underlying.replicatedInsertTweet)
   }
 

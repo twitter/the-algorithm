@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 import com.twitter.search.common.decider.SearchDecider;
 import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
 import com.twitter.search.earlybird.config.ServingRange;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 
 public class RealtimeServingRangeProvider implements ServingRangeProvider {
 
@@ -21,39 +21,39 @@ public class RealtimeServingRangeProvider implements ServingRangeProvider {
 
   @Override
   public ServingRange getServingRange(
-      final EarlybirdRequestContext requestContext, boolean useBoundaryOverride) {
+      final EarlybirdRequestContetwittert requestContetwittert, boolean useBoundaryOverride) {
     return new ServingRange() {
       @Override
       public long getServingRangeSinceId() {
         long servingRangeStartMillis = TimeUnit.HOURS.toMillis(
-            (decider.featureExists(deciderKey))
+            (decider.featureEtwitterists(deciderKey))
                 ? decider.getAvailability(deciderKey)
                 : DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO);
 
-        long boundaryTime = requestContext.getCreatedTimeMillis() - servingRangeStartMillis;
+        long boundaryTime = requestContetwittert.getCreatedTimeMillis() - servingRangeStartMillis;
         return SnowflakeIdParser.generateValidStatusId(boundaryTime, 0);
       }
 
       @Override
-      public long getServingRangeMaxId() {
+      public long getServingRangeMatwitterId() {
         return SnowflakeIdParser.generateValidStatusId(
-            requestContext.getCreatedTimeMillis(), 0);
+            requestContetwittert.getCreatedTimeMillis(), 0);
       }
 
       @Override
       public long getServingRangeSinceTimeSecondsFromEpoch() {
         long servingRangeStartMillis = TimeUnit.HOURS.toMillis(
-            (decider.featureExists(deciderKey))
+            (decider.featureEtwitterists(deciderKey))
                 ? decider.getAvailability(deciderKey)
                 : DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO);
 
-        long boundaryTime = requestContext.getCreatedTimeMillis() - servingRangeStartMillis;
+        long boundaryTime = requestContetwittert.getCreatedTimeMillis() - servingRangeStartMillis;
         return boundaryTime / 1000;
       }
 
       @Override
       public long getServingRangeUntilTimeSecondsFromEpoch() {
-        return requestContext.getCreatedTimeMillis() / 1000;
+        return requestContetwittert.getCreatedTimeMillis() / 1000;
       }
     };
   }

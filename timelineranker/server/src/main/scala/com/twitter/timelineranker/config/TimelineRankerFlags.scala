@@ -12,23 +12,23 @@ import java.net.InetSocketAddress
 import com.twitter.app.Flag
 
 class TimelineRankerFlags(flag: Flags)
-    extends CommonFlags(flag)
+    etwittertends CommonFlags(flag)
     with ConfigUtils
     with ProvidesServiceIdentifier {
   val dc: Flag[String] = flag(
     "dc",
     "smf1",
-    "Name of data center in which this instance will execute"
+    "Name of data center in which this instance will etwitterecute"
   )
   val environment: Flag[String] = flag(
     "environment",
     "devel",
     "The mesos environment in which this instance will be running"
   )
-  val maxConcurrency: Flag[Int] = flag(
-    "maxConcurrency",
+  val matwitterConcurrency: Flag[Int] = flag(
+    "matwitterConcurrency",
     200,
-    "Maximum concurrent requests"
+    "Matwitterimum concurrent requests"
   )
   val servicePort: Flag[InetSocketAddress] = flag(
     "service.port",
@@ -45,7 +45,7 @@ class TimelineRankerFlags(flag: Flags)
     "service.identifier",
     EmptyServiceIdentifier,
     "service identifier for this service for use with mutual TLS, " +
-      "format is expected to be -service.identifier=\"role:service:environment:zone\""
+      "format is etwitterpected to be -service.identifier=\"role:service:environment:zone\""
   )
 
   val opportunisticTlsLevel = flag[String](
@@ -60,10 +60,10 @@ class TimelineRankerFlags(flag: Flags)
     "Request rate limit to be used by the client request authorizer"
   )
 
-  val enableThriftmuxCompression = flag(
-    "enableThriftmuxServerCompression",
+  val enableThriftmutwitterCompression = flag(
+    "enableThriftmutwitterServerCompression",
     true,
-    "build server with thriftmux compression enabled"
+    "build server with thriftmutwitter compression enabled"
   )
 
   def getDatacenter: Datacenter.Value = getDC(dc())

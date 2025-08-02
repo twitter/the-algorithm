@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -53,7 +53,7 @@ message BundleEntryProto {
   int64 size = 5;
 
   // The CRC32C checksum of the tensor bytes.
-  fixed32 crc32c = 6;
+  fitwittered32 crc32c = 6;
 
   // Iff present, this entry represents a partitioned tensor.  The previous
   // fields are interpreted as follows:

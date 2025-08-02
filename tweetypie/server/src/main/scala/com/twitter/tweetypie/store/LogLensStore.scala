@@ -1,15 +1,15 @@
 package com.twitter.tweetypie
 package store
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.fastertwitterml.jackson.databind.ObjectMapper
+import com.fastertwitterml.jackson.module.scala.DefaultScalaModule
 import com.twitter.finagle.tracing.Trace
 import com.twitter.tweetypie.additionalfields.AdditionalFields
 import com.twitter.tweetypie.client_id.ClientIdHelper
 import com.twitter.tweetypie.media.Media.ownMedia
 
 trait LogLensStore
-    extends TweetStoreBase[LogLensStore]
+    etwittertends TweetStoreBase[LogLensStore]
     with InsertTweet.Store
     with DeleteTweet.Store
     with UndeleteTweet.Store
@@ -51,7 +51,7 @@ object LogLensStore {
 
       // Note: Longs are logged as strings to avoid JSON 53-bit numeric truncation
       private def defaultData: Seq[(String, Any)] = {
-        val viewer = TwitterContext()
+        val viewer = TwitterContetwittert()
         Seq(
           "client_id" -> getOpt(clientIdHelper.effectiveClientId),
           "service_id" -> getOpt(clientIdHelper.effectiveServiceIdentifier),

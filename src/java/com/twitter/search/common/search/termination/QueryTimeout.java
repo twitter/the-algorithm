@@ -9,7 +9,7 @@ public interface QueryTimeout {
   /**
    * Returns true if query processing should terminate, otherwise false.
    */
-  boolean shouldExit();
+  boolean shouldEtwitterit();
 
   /**
    * Register a DocIdTracker for the scope of the query, to determine the last fully-searched

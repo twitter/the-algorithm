@@ -5,7 +5,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.util.text.HighFrequencyTermPairs;
+import com.twitter.search.common.util.tetwittert.HighFrequencyTermPairs;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
 import com.twitter.search.queryparser.parser.SerializedQueryParser;
 import com.twitter.search.queryparser.query.BooleanQuery;
@@ -24,7 +24,7 @@ import com.twitter.search.queryparser.query.Operator;
 import com.twitter.search.queryparser.query.Phrase;
 import com.twitter.search.queryparser.query.Query;
 import com.twitter.search.queryparser.query.QueryNodeUtils;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twitter.search.queryparser.query.QueryParserEtwitterception;
 import com.twitter.search.queryparser.query.QueryVisitor;
 import com.twitter.search.queryparser.query.SpecialTerm;
 import com.twitter.search.queryparser.query.Term;
@@ -34,7 +34,7 @@ import com.twitter.search.queryparser.query.search.SearchOperator;
  * Iterates over the Query, modifying it to include high frequency term pairs, replacing
  * singular high frequency terms where possible.
  *
- * Assumes that this will be used IMMEDIATELY after using HighFrequencyTermPairExtractor
+ * Assumes that this will be used IMMEDIATELY after using HighFrequencyTermPairEtwittertractor
  *
  * There are two primary functions of this visitor:
  *  1. Append hf_term_pairs to each group's root node.
@@ -45,11 +45,11 @@ import com.twitter.search.queryparser.query.search.SearchOperator;
  * processing the root of the group. At this point, we must append relevant hf_term_pairs to this
  * node.
  */
-public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
+public class HighFrequencyTermPairRewriteVisitor etwittertends QueryVisitor<Query> {
   private static final Logger LOG = LoggerFactory.getLogger(
       HighFrequencyTermPairRewriteVisitor.class);
   private static final SearchRateCounter SEARCH_HF_PAIR_COUNTER =
-      SearchRateCounter.export("hf_pair_rewrite");
+      SearchRateCounter.etwitterport("hf_pair_rewrite");
 
   private final ArrayList<HighFrequencyTermQueryGroup> groupList;
   private final IdentityHashMap<Query, Integer> groupIds;
@@ -57,8 +57,8 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
 
   /**
    * Creates a new HighFrequencyTermPairRewriteVisitor. Should be used only IMMEDIATELY after using
-   * a HighFrequencyTermPairExtractor
-   * @param groupList The groups extracted using HighFrequencyTermPairExtractor
+   * a HighFrequencyTermPairEtwittertractor
+   * @param groupList The groups etwittertracted using HighFrequencyTermPairEtwittertractor
    * @param groupIds the mapping from query to the HF term query group
    */
   public HighFrequencyTermPairRewriteVisitor(ArrayList<HighFrequencyTermQueryGroup> groupList,
@@ -68,8 +68,8 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
 
   /**
    * Creates a new HighFrequencyTermPairRewriteVisitor. Should be used only IMMEDIATELY after using
-   * a HighFrequencyTermPairExtractor
-   * @param groupList The groups extracted using HighFrequencyTermPairExtractor
+   * a HighFrequencyTermPairEtwittertractor
+   * @param groupList The groups etwittertracted using HighFrequencyTermPairEtwittertractor
    * @param groupIds the mapping from query to the HF term query group
    * @param allowNegativeOrRewrite whether to allow rewrite for 'or (-terms)'
    */
@@ -83,23 +83,23 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
 
   /**
    * This method logs successful rewrites, and protects against unsuccessful ones by
-   * catching all exceptions and restoring the previous query. 
+   * catching all etwitterceptions and restoring the previous query. 
    */
   public static Query safeRewrite(Query safeQuery, boolean allowNegativeOrRewrite)
-      throws QueryParserException {
+      throws QueryParserEtwitterception {
     Query query = safeQuery;
 
     ArrayList<HighFrequencyTermQueryGroup> groups = Lists.newArrayList();
     IdentityHashMap<Query, Integer> groupIds = Maps.newIdentityHashMap();
 
-    // Step 1: extract high frequency term pairs and phrases.
+    // Step 1: etwittertract high frequency term pairs and phrases.
     try {
-      int hfTermsFound = query.accept(new HighFrequencyTermPairExtractor(groups, groupIds));
+      int hfTermsFound = query.accept(new HighFrequencyTermPairEtwittertractor(groups, groupIds));
       if (hfTermsFound < 2) {
         return query;
       }
-    } catch (Exception e) {
-      LOG.error("Exception while extracting high frequency term pairs", e);
+    } catch (Etwitterception e) {
+      LOG.error("Etwitterception while etwittertracting high frequency term pairs", e);
       return query;
     }
 
@@ -115,8 +115,8 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
       }
       SEARCH_HF_PAIR_COUNTER.increment();
       return query;
-    } catch (Exception e) {
-      LOG.error("Exception rewriting high frequency term pairs", e);
+    } catch (Etwitterception e) {
+      LOG.error("Etwitterception rewriting high frequency term pairs", e);
       return new SerializedQueryParser(EarlybirdConfig.getPenguinVersion()).parse(original);
     }
   }
@@ -125,10 +125,10 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
    * The rewritten query to use the hf_term_pair operators.
    *
    * @param disjunction query node which must have been previously visited by
-   *                    HighFrequencyTermPairExtractor and not had its visitor data cleared.
+   *                    HighFrequencyTermPairEtwittertractor and not had its visitor data cleared.
    */
   @Override
-  public Query visit(Disjunction disjunction) throws QueryParserException {
+  public Query visit(Disjunction disjunction) throws QueryParserEtwitterception {
     return visit((BooleanQuery) disjunction);
   }
 
@@ -136,27 +136,27 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
    * The rewritten query to use the hf_term_pair operators.
    *
    * @param conjunction query node which must have been previously visited by
-   *                    HighFrequencyTermPairExtractor and not had its visitor data cleared.
+   *                    HighFrequencyTermPairEtwittertractor and not had its visitor data cleared.
    */
   @Override
-  public Query visit(Conjunction conjunction) throws QueryParserException {
+  public Query visit(Conjunction conjunction) throws QueryParserEtwitterception {
     return visit((BooleanQuery) conjunction);
   }
 
   /**
    * Applies this visitor to a BooleanQuery.
    */
-  public Query visit(BooleanQuery booleanQuery) throws QueryParserException {
+  public Query visit(BooleanQuery booleanQuery) throws QueryParserEtwitterception {
     HighFrequencyTermQueryGroup group = groupList.get(groupIds.get(booleanQuery));
     queryPreprocess(group);
 
     ArrayList<Query> children = Lists.newArrayList();
     for (Query node : booleanQuery.getChildren()) {
       if (booleanQuery.isTypeOf(Query.QueryType.DISJUNCTION) && node.mustOccur()) {
-        // Potential Example: (* a (+ +b not_c)) => (* (+ +b not_c) [hf_term_pair a b 0.05])
+        // Potential Etwitterample: (* a (+ +b not_c)) => (* (+ +b not_c) [hf_term_pair a b 0.05])
         // Implementation is too difficult and would make this rewriter even MORE complicated for
         // a rarely used query. For now, we ignore it completely. We might gain some benefit in the
-        // future if we decide to create a new extractor and rewriter and rewrite this subquery, and
+        // future if we decide to create a new etwittertractor and rewriter and rewrite this subquery, and
         // that wouldn't complicate things too much.
         children.add(node);
         continue;
@@ -176,10 +176,10 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
    * The rewritten query to use the hf_term_pair operators.
    *
    * @param phraseToVisit query node which must have been previously visited by
-   *               HighFrequencyTermPairExtractor and not had its visitor data cleared.
+   *               HighFrequencyTermPairEtwittertractor and not had its visitor data cleared.
    */
   @Override
-  public Query visit(Phrase phraseToVisit) throws QueryParserException {
+  public Query visit(Phrase phraseToVisit) throws QueryParserEtwitterception {
     Phrase phrase = phraseToVisit;
 
     HighFrequencyTermQueryGroup group = groupList.get(groupIds.get(phrase));
@@ -201,10 +201,10 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
    * The rewritten query to use the hf_term_pair operators.
    *
    * @param termToVisit query node which must have been previously visited by
-   *             HighFrequencyTermPairExtractor and not had its visitor data cleared.
+   *             HighFrequencyTermPairEtwittertractor and not had its visitor data cleared.
    */
   @Override
-  public Query visit(Term termToVisit) throws QueryParserException {
+  public Query visit(Term termToVisit) throws QueryParserEtwitterception {
     Term term = termToVisit;
 
     HighFrequencyTermQueryGroup group = groupList.get(groupIds.get(term));
@@ -227,10 +227,10 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
    * The rewritten query to use the hf_term_pair operators.
    *
    * @param operator query node which must have been previously visited by
-   *                 HighFrequencyTermPairExtractor and not had its visitor data cleared.
+   *                 HighFrequencyTermPairEtwittertractor and not had its visitor data cleared.
    */
   @Override
-  public Query visit(Operator operator) throws QueryParserException {
+  public Query visit(Operator operator) throws QueryParserEtwitterception {
     HighFrequencyTermQueryGroup group = groupList.get(groupIds.get(operator));
     queryPreprocess(group);
 
@@ -241,10 +241,10 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
    * The rewritten query to use the hf_term_pair operators.
    *
    * @param special query node which must have been previously visited by
-   *                HighFrequencyTermPairExtractor and not had its visitor data cleared.
+   *                HighFrequencyTermPairEtwittertractor and not had its visitor data cleared.
    */
   @Override
-  public Query visit(SpecialTerm special) throws QueryParserException {
+  public Query visit(SpecialTerm special) throws QueryParserEtwitterception {
     HighFrequencyTermQueryGroup group = groupList.get(groupIds.get(special));
     queryPreprocess(group);
 
@@ -268,7 +268,7 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
    * operators created from the group's hf terms appended to it.
    */
   private Query queryPostprocess(@Nullable Query query, HighFrequencyTermQueryGroup group)
-      throws QueryParserException {
+      throws QueryParserEtwitterception {
 
     group.numVisits++;
     if (group.numMembers == group.numVisits
@@ -302,9 +302,9 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
    */
   private String getAncestorDistributiveToken(HighFrequencyTermQueryGroup group) {
     String ancestorDistributiveToken = null;
-    if (group.parentGroupIdx >= 0 && groupList.get(group.parentGroupIdx).parentGroupIdx >= 0) {
+    if (group.parentGroupIdtwitter >= 0 && groupList.get(group.parentGroupIdtwitter).parentGroupIdtwitter >= 0) {
       ancestorDistributiveToken =
-              groupList.get(groupList.get(group.parentGroupIdx).parentGroupIdx).distributiveToken;
+              groupList.get(groupList.get(group.parentGroupIdtwitter).parentGroupIdtwitter).distributiveToken;
     }
     return ancestorDistributiveToken;
   }
@@ -317,7 +317,7 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
    * @return The hf_term_pair operators created using the hf terms of the group appended to query.
    */
   private Query appendPairs(@Nullable Query query, HighFrequencyTermQueryGroup group)
-      throws QueryParserException {
+      throws QueryParserEtwitterception {
 
     BooleanQuery query2 = createQueryFromGroup(group);
 
@@ -333,12 +333,12 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
     if (query.isTypeOf(Query.QueryType.CONJUNCTION)
         || query.isTypeOf(Query.QueryType.DISJUNCTION)) {
       // Adding children in this way is safer when its query is a conjunction or disjunction
-      // ex. Other way: (+ +de -la -the) => (+ (+ +de -la -the) -[hf_term_pair la the 0.005])
+      // etwitter. Other way: (+ +de -la -the) => (+ (+ +de -la -the) -[hf_term_pair la the 0.005])
       //     This way: (+ +de -la -the) => (+ +de -la -the -[hf_term_pair la the 0.005])
       return ((BooleanQuery.Builder) query.newBuilder()).addChildren(query2.getChildren()).build();
     } else if (!group.isPositive) {
       // In lucene, [+ (-term1, -term2, ...)] has non-deterministic behavior and the rewrite is not
-      // efficient from query execution perspective.  So, we will not do this rewrite if it is
+      // efficient from query etwitterecution perspective.  So, we will not do this rewrite if it is
       // configured that way.
       if (!allowNegativeOrRewrite) {
         return query;
@@ -365,7 +365,7 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
    * hfTokens, will return null.
    */
   private BooleanQuery createQueryFromGroup(HighFrequencyTermQueryGroup group)
-      throws QueryParserException {
+      throws QueryParserEtwitterception {
 
     if (!group.hfTokens.isEmpty() || group.preusedHFTokens.size() > 1 || group.hasPhrases()) {
       List<Query>  terms = createTermPairsForGroup(group.hfTokens,
@@ -404,7 +404,7 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
     } else if (hfTokens.size() == 1 && optHFTokens.size() > 0) {
       // (* "a b" not_hf c) => (* "a b" not_hf [hf_term_pair a b 0.0] [hf_term_pair a c 0.005])
       // optHFTokens: [a, b] hfTokens: [c] => optHFTokens: [a, b] hfTokens: [a, c]
-      String term = optHFTokens.iterator().next();
+      String term = optHFTokens.iterator().netwittert();
       hfTokens.add(term);
     }
 
@@ -446,7 +446,7 @@ public class HighFrequencyTermPairRewriteVisitor extends QueryVisitor<Query> {
       }
     } else if (createSingle && !tokens.isEmpty()) { // Only one high frequency token
       // Need to add token as a term because it was removed from the query earlier in rewriting.
-      Term newTerm = new Term(tokens.iterator().next());
+      Term newTerm = new Term(tokens.iterator().netwittert());
       terms.add(newTerm);
     }
 

@@ -1,18 +1,18 @@
 package com.twitter.simclusters_v2.scalding.inferred_entities
 
-import com.twitter.algebird.Max
+import com.twitter.algebird.Matwitter
 import com.twitter.scalding.Args
 import com.twitter.scalding.DateRange
 import com.twitter.scalding.Days
 import com.twitter.scalding.Duration
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding.RichDate
 import com.twitter.scalding.TypedPipe
 import com.twitter.scalding.TypedTsv
 import com.twitter.scalding.UniqueID
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv2.remote_access.EtwitterplicitLocation
 import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common.ClusterId
@@ -28,8 +28,8 @@ import com.twitter.simclusters_v2.thriftscala.SemanticCoreEntityWithScore
 import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
 import com.twitter.simclusters_v2.thriftscala.SimClustersSource
 import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
+import com.twitter.wtf.scalding.jobs.common.AdhocEtwitterecutionApp
+import com.twitter.wtf.scalding.jobs.common.ScheduledEtwitterecutionApp
 import java.util.TimeZone
 import com.twitter.onboarding.relevance.source.UttAccountRecommendationsScalaDataset
 import com.twitter.scalding_internal.dalv2.DALWrite.D
@@ -38,7 +38,7 @@ import com.twitter.wtf.entity_real_graph.scalding.common.DataSources
 
 /**
  * Infer interested-in entities for a given user. Depending on how and where the entity source comes
- * from, this can be achieve a number of ways. For example, we can use user->interested-in clusters
+ * from, this can be achieve a number of ways. For etwitterample, we can use user->interested-in clusters
  * and cluster-> semanticcore entity embeddings to derive user->entity. Or, we can use a producers'
  * UTT embeddings and user-user engagement graph to aggregate UTT engagement history.
  */
@@ -46,7 +46,7 @@ object InferredEntitiesFromInterestedIn {
 
   def getUserToKnownForUttEntities(
     dateRange: DateRange,
-    maxUttEntitiesPerUser: Int
+    matwitterUttEntitiesPerUser: Int
   )(
     implicit timeZone: TimeZone
   ): TypedPipe[(UserId, Seq[(Long, Double)])] = {
@@ -58,7 +58,7 @@ object InferredEntitiesFromInterestedIn {
 
     DAL
       .readMostRecentSnapshot(UttAccountRecommendationsScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
       .toTypedPipe
       .flatMapWithValue(validEntities) {
         // Keep only valid Entities
@@ -70,14 +70,14 @@ object InferredEntitiesFromInterestedIn {
         case _ => None
       }
       .group
-      .sortedReverseTake(maxUttEntitiesPerUser)(Ordering.by(_._2))
+      .sortedReverseTake(matwitterUttEntitiesPerUser)(Ordering.by(_._2))
       .toTypedPipe
   }
 
   def filterUTTEntities(
     interestedInEntities: TypedPipe[(UserId, Seq[(UTTEntityId, Int)])],
     minSocialProofThreshold: Int,
-    maxInterestsPerUser: Int
+    matwitterInterestsPerUser: Int
   ): TypedPipe[(UserId, Seq[UTTEntityId])] = {
 
     interestedInEntities
@@ -86,7 +86,7 @@ object InferredEntitiesFromInterestedIn {
           val topEntities = entities
             .filter(_._2 >= minSocialProofThreshold)
             .sortBy(-_._2)
-            .take(maxInterestsPerUser)
+            .take(matwitterInterestsPerUser)
             .map(_._1)
 
           (userId, topEntities)
@@ -106,7 +106,7 @@ object InferredEntitiesFromInterestedIn {
         .flatMap { userAndNeighbors =>
           userAndNeighbors.neighbors.flatMap { neighbor =>
             val producerId = neighbor.neighborId
-            val hasFav = neighbor.favScoreHalfLife100Days.exists(_ > 0)
+            val hasFav = neighbor.favScoreHalfLife100Days.etwitterists(_ > 0)
             val hasFollow = neighbor.isFollowed.contains(true)
 
             if (hasFav || hasFollow) {
@@ -169,12 +169,12 @@ object InferredEntitiesFromInterestedIn {
       .flatMap {
         case (userId, entitiesWithScore) =>
           // Dedup by entityIds in case user is associated with an entity from different clusters
-          entitiesWithScore.map { entity => (userId, Map(entity.entityId -> Max(entity.score))) }
+          entitiesWithScore.map { entity => (userId, Map(entity.entityId -> Matwitter(entity.score))) }
       }
       .sumByKey
       .map {
-        case (userId, entitiesWithMaxScore) =>
-          val inferredEntities = entitiesWithMaxScore.map { entityWithScore =>
+        case (userId, entitiesWithMatwitterScore) =>
+          val inferredEntities = entitiesWithMatwitterScore.map { entityWithScore =>
             InferredEntity(
               entityId = entityWithScore._1,
               score = entityWithScore._2.get,
@@ -193,7 +193,7 @@ capesospy-v2 update --build_locally --start_cron \
   --start_cron inferred_entities_from_interested_in \
   src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
  */
-object InferredInterestedInSemanticCoreEntitiesBatchApp extends ScheduledExecutionApp {
+object InferredInterestedInSemanticCoreEntitiesBatchApp etwittertends ScheduledEtwitterecutionApp {
 
   override def firstTime: RichDate = RichDate("2023-01-01")
 
@@ -212,8 +212,8 @@ object InferredInterestedInSemanticCoreEntitiesBatchApp extends ScheduledExecuti
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
-    Execution.unit
+  ): Etwitterecution[Unit] = {
+    Etwitterecution.unit
 
     val clusterToEntities = InferredEntities
       .getLegibleEntityEmbeddings(dateRange, timeZone)
@@ -236,7 +236,7 @@ object InferredInterestedInSemanticCoreEntitiesBatchApp extends ScheduledExecuti
       InferredEntities.combineResults(inferredEntities2020)
 
     // output cluster -> entity mapping
-    val clusterToEntityExec = clusterToEntities
+    val clusterToEntityEtwitterec = clusterToEntities
       .map {
         case (clusterId, entities) =>
           val inferredEntities = SimClustersInferredEntities(
@@ -244,20 +244,20 @@ object InferredInterestedInSemanticCoreEntitiesBatchApp extends ScheduledExecuti
           )
           KeyVal(clusterId, inferredEntities)
       }
-      .writeDALVersionedKeyValExecution(
+      .writeDALVersionedKeyValEtwitterecution(
         SimclustersInferredEntitiesFromInterestedInKeyedByClusterScalaDataset,
-        D.Suffix(outputPathKeyedByCluster)
+        D.Suffitwitter(outputPathKeyedByCluster)
       )
 
     // output user -> entity mapping
-    val userToEntityExec = combinedInferredInterests
+    val userToEntityEtwitterec = combinedInferredInterests
       .map { case (userId, entities) => KeyVal(userId, entities) }
-      .writeDALVersionedKeyValExecution(
+      .writeDALVersionedKeyValEtwitterecution(
         SimclustersInferredEntitiesFromInterestedInScalaDataset,
-        D.Suffix(outputPath)
+        D.Suffitwitter(outputPath)
       )
 
-    Execution.zip(clusterToEntityExec, userToEntityExec).unit
+    Etwitterecution.zip(clusterToEntityEtwitterec, userToEntityEtwitterec).unit
   }
 }
 
@@ -271,7 +271,7 @@ scalding remote run \
   --user recos-platform \
   -- --date 2019-11-11 --email your_ldap@twitter.com
  */
-object InferredInterestedInSemanticCoreEntitiesAdhocApp extends AdhocExecutionApp {
+object InferredInterestedInSemanticCoreEntitiesAdhocApp etwittertends AdhocEtwitterecutionApp {
   import InferredEntitiesFromInterestedIn._
   override def runOnDateRange(
     args: Args
@@ -279,7 +279,7 @@ object InferredInterestedInSemanticCoreEntitiesAdhocApp extends AdhocExecutionAp
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     val interestedIn = InterestedInSources.simClustersInterestedIn2020Source(dateRange, timeZone)
 
@@ -303,11 +303,11 @@ object InferredInterestedInSemanticCoreEntitiesAdhocApp extends AdhocExecutionAp
         Util.sendEmail(results, "# of interestedIn entities per user", args.getOrElse("email", ""))
       }
 
-    Execution
+    Etwitterecution
       .zip(
         distribution,
         interestedInFromEntityEmbeddings
-          .writeExecution(
+          .writeEtwitterecution(
             TypedTsv("/user/recos-platform/adhoc/debug/interested_in_from_entity_embeddings"))
       ).unit
   }
@@ -324,7 +324,7 @@ scalding remote run \
   --user recos-platform \
   -- --date 2019-11-03 --email your_ldap@twitter.com
  */
-object InferredUTTEntitiesFromInterestedInAdhocApp extends AdhocExecutionApp {
+object InferredUTTEntitiesFromInterestedInAdhocApp etwittertends AdhocEtwitterecutionApp {
   import InferredEntitiesFromInterestedIn._
 
   override def runOnDateRange(
@@ -333,19 +333,19 @@ object InferredUTTEntitiesFromInterestedInAdhocApp extends AdhocExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     val employeeGraphPath = "/user/recos-platform/adhoc/employee_graph_from_user_user/"
-    val employeeGraph = TypedPipe.from(UserAndNeighborsFixedPathSource(employeeGraphPath))
+    val employeeGraph = TypedPipe.from(UserAndNeighborsFitwitteredPathSource(employeeGraphPath))
 
-    val maxKnownForUttsPerProducer = 100
+    val matwitterKnownForUttsPerProducer = 100
     val minSocialProofThreshold = 10
-    val maxInferredInterestsPerUser = 500
+    val matwitterInferredInterestsPerUser = 500
 
     // KnownFor UTT entities
     val userToUttEntities = getUserToKnownForUttEntities(
       dateRange.embiggen(Days(7)),
-      maxKnownForUttsPerProducer
+      matwitterKnownForUttsPerProducer
     ).map { case (userId, entities) => (userId, entities.map(_._1)) }
 
     val userToInterestsEngagementCounts = getUserToUTTEntities(employeeGraph, userToUttEntities)
@@ -353,7 +353,7 @@ object InferredUTTEntitiesFromInterestedInAdhocApp extends AdhocExecutionApp {
     val topInterests = filterUTTEntities(
       userToInterestsEngagementCounts,
       minSocialProofThreshold,
-      maxInferredInterestsPerUser
+      matwitterInferredInterestsPerUser
     ).count("num_users_with_inferred_interests")
 
     // Debugging UTT entities
@@ -361,16 +361,16 @@ object InferredUTTEntitiesFromInterestedInAdhocApp extends AdhocExecutionApp {
       .printSummaryOfNumericColumn(
         topInterests.map { case (k, v) => v.size },
         Some(
-          "# of UTT entities per user, maxKnownForUtt=100, minSocialProof=10, maxInferredPerUser=500")
+          "# of UTT entities per user, matwitterKnownForUtt=100, minSocialProof=10, matwitterInferredPerUser=500")
       ).map { results =>
         Util.sendEmail(results, "# of UTT entities per user", args.getOrElse("email", ""))
       }
 
     val outputPath = "/user/recos-platform/adhoc/inferred_utt_interests"
 
-    Execution
+    Etwitterecution
       .zip(
-        topInterests.writeExecution(TypedTsv(outputPath)),
+        topInterests.writeEtwitterecution(TypedTsv(outputPath)),
         analysis
       ).unit
   }

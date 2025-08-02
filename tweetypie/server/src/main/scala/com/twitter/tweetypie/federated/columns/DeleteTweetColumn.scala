@@ -5,12 +5,12 @@ import com.twitter.strato.catalog.OpMetadata
 import com.twitter.strato.config.ContactInfo
 import com.twitter.strato.config.Policy
 import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
+import com.twitter.strato.data.Description.PlainTetwittert
 import com.twitter.strato.data.Lifecycle.Production
 import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.opcontext.OpContext
+import com.twitter.strato.opcontetwittert.OpContetwittert
 import com.twitter.strato.thrift.ScroogeConv
-import com.twitter.tweetypie.federated.context.GetRequestContext
+import com.twitter.tweetypie.federated.contetwittert.GetRequestContetwittert
 import com.twitter.tweetypie.federated.prefetcheddata.PrefetchedDataResponse
 import com.twitter.tweetypie.thriftscala.TweetDeleteState
 import com.twitter.tweetypie.thriftscala.{graphql => gql}
@@ -19,9 +19,9 @@ import com.twitter.util.Future
 
 class DeleteTweetColumn(
   deleteTweet: thrift.DeleteTweetsRequest => Future[Seq[thrift.DeleteTweetResult]],
-  getRequestContext: GetRequestContext,
-) extends StratoFed.Column(DeleteTweetColumn.Path)
-    with StratoFed.Execute.StitchWithContext
+  getRequestContetwittert: GetRequestContetwittert,
+) etwittertends StratoFed.Column(DeleteTweetColumn.Path)
+    with StratoFed.Etwitterecute.StitchWithContetwittert
     with StratoFed.HandleDarkRequests {
 
   override val policy: Policy = AccessPolicy.TweetMutationCommonAccessPolicies
@@ -36,19 +36,19 @@ class DeleteTweetColumn(
 
   override val contactInfo: ContactInfo = TweetypieContactInfo
   override val metadata: OpMetadata =
-    OpMetadata(Some(Production), Some(PlainText("Deletes a tweet by the calling Twitter user.")))
+    OpMetadata(Some(Production), Some(PlainTetwittert("Deletes a tweet by the calling Twitter user.")))
 
-  override def execute(request: Arg, opContext: OpContext): Stitch[Result] = {
-    val ctx = getRequestContext(opContext)
+  override def etwitterecute(request: Arg, opContetwittert: OpContetwittert): Stitch[Result] = {
+    val cttwitter = getRequestContetwittert(opContetwittert)
 
     val thriftDeleteTweetRequest = thrift.DeleteTweetsRequest(
       tweetIds = Seq(request.tweetId),
-      // byUserId is picked up by the context in tweetypie.deleteTweet,
-      // but we're passing it in here to be explicit
-      byUserId = Some(ctx.twitterUserId),
+      // byUserId is picked up by the contetwittert in tweetypie.deleteTweet,
+      // but we're passing it in here to be etwitterplicit
+      byUserId = Some(cttwitter.twitterUserId),
     )
 
-    val stitchDeleteTweet = handleDarkRequest(opContext)(
+    val stitchDeleteTweet = handleDarkRequest(opContetwittert)(
       light = {
         Stitch.callFuture(deleteTweet(thriftDeleteTweetRequest))
       },

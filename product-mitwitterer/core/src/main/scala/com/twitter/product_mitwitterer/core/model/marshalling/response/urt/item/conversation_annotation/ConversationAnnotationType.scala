@@ -1,0 +1,6 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.item.conversation_annotation
+
+sealed trait ConversationAnnotationType
+
+case object Political etwittertends ConversationAnnotationType
+case object Large etwittertends ConversationAnnotationType

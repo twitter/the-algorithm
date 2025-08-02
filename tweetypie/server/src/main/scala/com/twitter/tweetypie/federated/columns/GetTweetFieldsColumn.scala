@@ -9,10 +9,10 @@ import com.twitter.strato.config.AllowAll
 import com.twitter.strato.config.ContactInfo
 import com.twitter.strato.config.Policy
 import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
+import com.twitter.strato.data.Description.PlainTetwittert
 import com.twitter.strato.data.Lifecycle.Production
 import com.twitter.strato.fed.StratoFed
-import com.twitter.strato.opcontext.OpContext
+import com.twitter.strato.opcontetwittert.OpContetwittert
 import com.twitter.strato.response.Err
 import com.twitter.strato.thrift.ScroogeConv
 import com.twitter.tweetypie.TweetId
@@ -30,8 +30,8 @@ import com.twitter.util.Try
 class GetTweetFieldsColumn(
   handler: GetTweetFieldsRequest => Future[Seq[GetTweetFieldsResult]],
   stats: StatsReceiver)
-    extends StratoFed.Column(GetTweetFieldsColumn.Path)
-    with StratoFed.Fetch.StitchWithContext {
+    etwittertends StratoFed.Column(GetTweetFieldsColumn.Path)
+    with StratoFed.Fetch.StitchWithContetwittert {
 
   /**
    * At this point, this fetch op will reject any requests that specify
@@ -51,12 +51,12 @@ class GetTweetFieldsColumn(
   override val metadata: OpMetadata = OpMetadata(
     lifecycle = Some(Production),
     description =
-      Some(PlainText("Get of tweets that allows fetching only specific subsets of the data.")),
+      Some(PlainTetwittert("Get of tweets that allows fetching only specific subsets of the data.")),
   )
 
-  val safetyOpContextOnlyCounter = stats.counter("safety_op_context_only")
-  val safetyOpContextOnlyValueScope = stats.scope("safety_op_context_only_value")
-  val safetyOpContextOnlyCallerScope = stats.scope("safety_op_context_only_caller")
+  val safetyOpContetwittertOnlyCounter = stats.counter("safety_op_contetwittert_only")
+  val safetyOpContetwittertOnlyValueScope = stats.scope("safety_op_contetwittert_only_value")
+  val safetyOpContetwittertOnlyCallerScope = stats.scope("safety_op_contetwittert_only_caller")
 
   val safetyViewOnlyCounter = stats.counter("safety_view_only")
   val safetyViewOnlyValueScope = stats.scope("safety_view_only_value")
@@ -66,8 +66,8 @@ class GetTweetFieldsColumn(
   val safetyLevelInconsistencyValueScope = stats.scope("safety_level_inconsistency_value")
   val safetyLevelInconsistencyCallerScope = stats.scope("safety_level_inconsistency_caller")
 
-  override def fetch(key: Key, view: View, ctx: OpContext): Stitch[Result[Value]] = {
-    compareSafetyLevel(view, ctx)
+  override def fetch(key: Key, view: View, cttwitter: OpContetwittert): Stitch[Result[Value]] = {
+    compareSafetyLevel(view, cttwitter)
     checkVisibilityPolicyUserVisible(view).flatMap { _ =>
       Stitch.call(key, Group(view))
     }
@@ -84,7 +84,7 @@ class GetTweetFieldsColumn(
     view.visibilityPolicy match {
       case TweetVisibilityPolicy.UserVisible => Stitch.value(Unit)
       case otherValue =>
-        Stitch.exception(
+        Stitch.etwitterception(
           Err(
             Err.BadRequest,
             "GetTweetFields does not support access control on Strato yet. "
@@ -93,9 +93,9 @@ class GetTweetFieldsColumn(
           ))
     }
 
-  /** Compare the SafetyLevels in the View and OpContext */
-  private def compareSafetyLevel(view: View, ctx: OpContext): Unit =
-    (view.safetyLevel, ctx.safetyLevel) match {
+  /** Compare the SafetyLevels in the View and OpContetwittert */
+  private def compareSafetyLevel(view: View, cttwitter: OpContetwittert): Unit =
+    (view.safetyLevel, cttwitter.safetyLevel) match {
       case (None, None) =>
       case (Some(viewSafety), None) => {
         safetyViewOnlyCounter.incr()
@@ -103,18 +103,18 @@ class GetTweetFieldsColumn(
         PreferForwardedServiceIdentifierForStrato.serviceIdentifier
           .foreach(serviceId => safetyViewOnlyCallerScope.counter(serviceId.toString).incr())
       }
-      case (None, Some(ctxSafety)) => {
-        safetyOpContextOnlyCounter.incr()
-        safetyOpContextOnlyValueScope.counter(ctxSafety.name).incr()
+      case (None, Some(cttwitterSafety)) => {
+        safetyOpContetwittertOnlyCounter.incr()
+        safetyOpContetwittertOnlyValueScope.counter(cttwitterSafety.name).incr()
         PreferForwardedServiceIdentifierForStrato.serviceIdentifier
-          .foreach(serviceId => safetyOpContextOnlyCallerScope.counter(serviceId.toString).incr())
+          .foreach(serviceId => safetyOpContetwittertOnlyCallerScope.counter(serviceId.toString).incr())
       }
-      case (Some(viewSafety), Some(ctxSafety)) =>
+      case (Some(viewSafety), Some(cttwitterSafety)) =>
         def safeStringEquals(a: String, b: String) =
           a.toLowerCase().trim().equals(b.toLowerCase().trim())
-        if (!safeStringEquals(viewSafety.name, ctxSafety.name)) {
+        if (!safeStringEquals(viewSafety.name, cttwitterSafety.name)) {
           safetyLevelInconsistencyCounter.incr()
-          safetyLevelInconsistencyValueScope.counter(viewSafety.name + '-' + ctxSafety.name).incr()
+          safetyLevelInconsistencyValueScope.counter(viewSafety.name + '-' + cttwitterSafety.name).incr()
           PreferForwardedServiceIdentifierForStrato.serviceIdentifier
             .foreach(serviceId =>
               safetyLevelInconsistencyCallerScope.counter(serviceId.toString).incr())
@@ -129,7 +129,7 @@ class GetTweetFieldsColumn(
    * and nested case class implicitly captures [[GetTweetFieldsColumn]] reference.
    */
   private case class Group(view: GetTweetFieldsOptions)
-      extends MapGroup[TweetId, Fetch.Result[GetTweetFieldsResult]] {
+      etwittertends MapGroup[TweetId, Fetch.Result[GetTweetFieldsResult]] {
 
     /**
      * Batches given [[TweetId]] lookups in a single [[GetTweetFieldsRequest]]
@@ -160,7 +160,7 @@ class GetTweetFieldsColumn(
             Try {
               throw Err(
                 Err.Dependency,
-                s"Expected one result per tweeet ID, got ${manyResults.length}")
+                s"Etwitterpected one result per tweeet ID, got ${manyResults.length}")
             }
         }
     }

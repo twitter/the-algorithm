@@ -52,12 +52,12 @@ struct TopKClustersWithScores {
 }(hasPersonalData = 'true')
 
 /**
- * Contains top K text entities with corresponding scores.  We're omitting the modelVersion,
+ * Contains top K tetwittert entities with corresponding scores.  We're omitting the modelVersion,
  * since that is included in the memcache key.
  **/
 struct TopKEntitiesWithScores {
-  1: optional map<entity.TweetTextEntity, Scores> topEntitiesByFavClusterNormalizedScore
-  2: optional map<entity.TweetTextEntity, Scores> topEntitiesByFollowClusterNormalizedScore
+  1: optional map<entity.TweetTetwittertEntity, Scores> topEntitiesByFavClusterNormalizedScore
+  2: optional map<entity.TweetTetwittertEntity, Scores> topEntitiesByFollowClusterNormalizedScore
 }(hasPersonalData = 'true')
 
 /**

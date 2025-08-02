@@ -27,12 +27,12 @@ object CommunitiesValidator {
   def apply(): Type =
     (request: Request) => {
       // Order is important: the feature-switch gate is checked only when the
-      // request is both protected & community so that the FS experiment measurements
+      // request is both protected & community so that the FS etwitterperiment measurements
       // are based only on data from requests that are subject to rejection by this validator.
       if (request.isProtected &&
         CommunityUtil.hasCommunity(request.community) &&
         communityProtectedCanCreateTweetGate(request)) {
-        Future.exception(TweetCreateFailure.State(CommunityProtectedUserCannotTweet))
+        Future.etwitterception(TweetCreateFailure.State(CommunityProtectedUserCannotTweet))
       } else {
         Future.Unit
       }

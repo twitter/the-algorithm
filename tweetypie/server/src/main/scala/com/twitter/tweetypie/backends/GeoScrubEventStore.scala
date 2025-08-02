@@ -29,7 +29,7 @@ object GeoScrubEventStore {
   // This modulus determines how user ids get assigned to PKeys, and
   // thus to shards within the MH cluster. The origin of the specific
   // value has been lost to time, but it's important that we don't
-  // change it, or else the existing data will be inaccessible.
+  // change it, or else the etwitteristing data will be inaccessible.
   private[this] val PKeyModulus: Long = 25000L
 
   private[this] def toKey(userId: Long) =
@@ -37,7 +37,7 @@ object GeoScrubEventStore {
       .withPkey(userId % PKeyModulus)
       .withLkey(userId, "_last_scrub")
 
-  def apply(client: ManhattanKVClient, config: Config, ctx: Backend.Context): GeoScrubEventStore = {
+  def apply(client: ManhattanKVClient, config: Config, cttwitter: Backend.Contetwittert): GeoScrubEventStore = {
     new GeoScrubEventStore {
       val getGeoScrubTimestamp: UserId => Stitch[Option[Time]] = {
         val endpoint = config.read.endpoint(client)
@@ -66,11 +66,11 @@ object GeoScrubEventStore {
     }
   }
 
-  case class EndpointConfig(requestTimeout: Duration, maxRetryCount: Int) {
+  case class EndpointConfig(requestTimeout: Duration, matwitterRetryCount: Int) {
     def endpoint(client: ManhattanKVClient): ManhattanKVEndpoint =
       ManhattanKVEndpointBuilder(client)
-        .defaultMaxTimeout(requestTimeout)
-        .maxRetryCount(maxRetryCount)
+        .defaultMatwitterTimeout(requestTimeout)
+        .matwitterRetryCount(matwitterRetryCount)
         .build()
   }
 

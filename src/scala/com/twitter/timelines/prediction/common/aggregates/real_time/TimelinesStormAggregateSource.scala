@@ -26,7 +26,7 @@ import scala.collection.JavaConverters._
 /**
  * Storm Producer for client events generated on Home, Profile, and Search
  */
-class TimelinesStormAggregateSource extends StormAggregateSource {
+class TimelinesStormAggregateSource etwittertends StormAggregateSource {
 
   override val name = "timelines_rta"
   override val timestampFeature = SharedFeatures.TIMESTAMP
@@ -39,7 +39,7 @@ class TimelinesStormAggregateSource extends StormAggregateSource {
   private lazy val FeatureStoreProducerName = "FEATURE_STORE_PRODUCER"
 
   private def isNewUserEvent(event: LogEvent): Boolean = {
-    event.logBase.flatMap(_.userId).flatMap(SnowflakeId.timeFromIdOpt).exists(_.untilNow < 30.days)
+    event.logBase.flatMap(_.userId).flatMap(SnowflakeId.timeFromIdOpt).etwitterists(_.untilNow < 30.days)
   }
 
   private def mkDataRecords(event: LogEvent, dataRecordCounter: Counter): Seq[DataRecord] = {

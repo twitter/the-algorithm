@@ -1,8 +1,8 @@
 package com.twitter.search.earlybird_root.filters;
 
-import javax.inject.Inject;
+import javatwitter.inject.Inject;
 
-public class PreCacheRequestTypeCountFilter extends RequestTypeCountFilter {
+public class PreCacheRequestTypeCountFilter etwittertends RequestTypeCountFilter {
   @Inject
   public PreCacheRequestTypeCountFilter() {
     super("pre_cache");

@@ -39,7 +39,7 @@ class TweetMediaMetadataFeatures(
     mediaKeys: Seq[GenericMediaKey],
     enableFetchMediaMetadata: Boolean
   ) = getMediaAdditionalMetadata(tweet, mediaKeys, enableFetchMediaMetadata)
-    .map(_.exists(_.restrictions.exists(_.isDmca)))
+    .map(_.etwitterists(_.restrictions.etwitterists(_.isDmca)))
 
   private def allowlist(
     tweet: Tweet,

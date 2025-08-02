@@ -8,11 +8,11 @@ import com.twitter.conversions.DurationOps._
 
 object SgsPredicateParams {
   case object SgsRelationshipsPredicateTimeout
-      extends FSBoundedParam[Duration](
+      etwittertends FSBoundedParam[Duration](
         name = "sgs_predicate_relationships_timeout_in_millis",
         default = 300.millisecond,
         min = 1.millisecond,
-        max = 1000.millisecond)
+        matwitter = 1000.millisecond)
       with HasDurationConversion {
     override def durationConversion: DurationConversion = DurationConversion.FromMillis
   }

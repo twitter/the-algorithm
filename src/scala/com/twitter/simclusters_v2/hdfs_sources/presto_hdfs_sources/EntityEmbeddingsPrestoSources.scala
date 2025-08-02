@@ -5,6 +5,6 @@ object EntityEmbeddingsPrestoSources {
   final val SemanticCorePerLanguageSimClustersEmbeddingsDataset =
     SemanticCorePerLanguageSimclustersEmbeddingsPrestoScalaDataset
 
-  final val ReverseIndexSemanticCorePerLanguageSimClustersEmbeddingsDataset =
-    ReverseIndexSemanticCorePerLanguageSimclustersEmbeddingsPrestoScalaDataset
+  final val ReverseIndetwitterSemanticCorePerLanguageSimClustersEmbeddingsDataset =
+    ReverseIndetwitterSemanticCorePerLanguageSimclustersEmbeddingsPrestoScalaDataset
 }

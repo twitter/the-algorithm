@@ -12,7 +12,7 @@ import java.lang.{Long => JLong}
  * Use this trait to implement online summingbird producer that subscribes to
  * spouts and generates a data record.
  */
-trait StormAggregateSource extends AggregateSource {
+trait StormAggregateSource etwittertends AggregateSource {
   def name: String
 
   def timestampFeature: Feature[JLong]

@@ -2,8 +2,8 @@ package com.twitter.search.earlybird_root.routers;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.inject.Inject;
-import javax.inject.Named;
+import javatwitter.inject.Inject;
+import javatwitter.inject.Named;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -20,7 +20,7 @@ import com.twitter.search.earlybird.config.ServingRange;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
 import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.earlybird_root.common.InjectionNames;
 import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
 import com.twitter.search.earlybird_root.filters.ServingRangeProvider;
@@ -37,14 +37,14 @@ import static com.twitter.search.common.util.earlybird.TermStatisticsUtil.determ
  * For TermStats traffic SuperRoot hits both realtime and archive in parallel, and then merges
  * the results.
  */
-public class TermStatsRequestRouter extends RequestRouter {
+public class TermStatsRequestRouter etwittertends RequestRouter {
   private static final Logger LOG = LoggerFactory.getLogger(TermStatsRequestRouter.class);
 
   private static final String SUPERROOT_SKIP_FULL_ARCHIVE_CLUSTER_FOR_TERM_STATS_REQUESTS =
       "superroot_skip_full_archive_cluster_for_term_stats_requests";
 
-  private final Service<EarlybirdRequestContext, EarlybirdResponse> realtimeService;
-  private final Service<EarlybirdRequestContext, EarlybirdResponse> fullArchiveService;
+  private final Service<EarlybirdRequestContetwittert, EarlybirdResponse> realtimeService;
+  private final Service<EarlybirdRequestContetwittert, EarlybirdResponse> fullArchiveService;
 
   private final SearchDecider decider;
 
@@ -53,11 +53,11 @@ public class TermStatsRequestRouter extends RequestRouter {
   @Inject
   public TermStatsRequestRouter(
       @Named(InjectionNames.REALTIME)
-          Service<EarlybirdRequestContext, EarlybirdResponse> realtime,
+          Service<EarlybirdRequestContetwittert, EarlybirdResponse> realtime,
       @Named(TermStatsRequestRouterModule.REALTIME_TIME_RANGE_FILTER)
           EarlybirdTimeRangeFilter realtimeTimeRangeFilter,
       @Named(InjectionNames.FULL_ARCHIVE)
-          Service<EarlybirdRequestContext, EarlybirdResponse> fullArchive,
+          Service<EarlybirdRequestContetwittert, EarlybirdResponse> fullArchive,
       @Named(TermStatsRequestRouterModule.FULL_ARCHIVE_TIME_RANGE_FILTER)
           EarlybirdTimeRangeFilter fullArchiveTimeRangeFilter,
       SearchDecider decider) {
@@ -77,25 +77,25 @@ public class TermStatsRequestRouter extends RequestRouter {
    * Hit both realtime and full-archive clusters then merges term stat request.
    */
   @Override
-  public Future<EarlybirdResponse> route(EarlybirdRequestContext requestContext) {
+  public Future<EarlybirdResponse> route(EarlybirdRequestContetwittert requestContetwittert) {
     List<RequestResponse> requestResponses = new ArrayList<>();
 
-    Future<EarlybirdResponse> realtimeResponseFuture = realtimeService.apply(requestContext);
-    this.saveRequestResponse(requestResponses, "realtime", requestContext, realtimeResponseFuture);
+    Future<EarlybirdResponse> realtimeResponseFuture = realtimeService.apply(requestContetwittert);
+    this.saveRequestResponse(requestResponses, "realtime", requestContetwittert, realtimeResponseFuture);
 
     Future<EarlybirdResponse> archiveResponseFuture =
-        requestContext.getRequest().isGetOlderResults()
+        requestContetwittert.getRequest().isGetOlderResults()
             && !decider.isAvailable(SUPERROOT_SKIP_FULL_ARCHIVE_CLUSTER_FOR_TERM_STATS_REQUESTS)
-            ? fullArchiveService.apply(requestContext)
+            ? fullArchiveService.apply(requestContetwittert)
             : Future.value(emptyResponse());
-    this.saveRequestResponse(requestResponses, "archive", requestContext, archiveResponseFuture);
+    this.saveRequestResponse(requestResponses, "archive", requestContetwittert, archiveResponseFuture);
 
     Future<EarlybirdResponse> mergedResponse =
-        merge(realtimeResponseFuture, archiveResponseFuture, requestContext);
+        merge(realtimeResponseFuture, archiveResponseFuture, requestContetwittert);
 
     return this.maybeAttachSentRequestsToDebugInfo(
         requestResponses,
-        requestContext,
+        requestContetwittert,
         mergedResponse
     );
   }
@@ -106,7 +106,7 @@ public class TermStatsRequestRouter extends RequestRouter {
   private Future<EarlybirdResponse> merge(
       final Future<EarlybirdResponse> realtimeResponseFuture,
       final Future<EarlybirdResponse> archiveResponseFuture,
-      final EarlybirdRequestContext requestContext) {
+      final EarlybirdRequestContetwittert requestContetwittert) {
 
     return realtimeResponseFuture.flatMap(
         new Function<EarlybirdResponse, Future<EarlybirdResponse>>() {
@@ -123,7 +123,7 @@ public class TermStatsRequestRouter extends RequestRouter {
                     if (!EarlybirdResponseUtil.isSuccessfulResponse(archiveResponse)) {
                       return Future.value(
                           mergeWithUnsuccessfulArchiveResponse(
-                              requestContext, realtimeResponse, archiveResponse));
+                              requestContetwittert, realtimeResponse, archiveResponse));
                     }
 
                     List<Future<EarlybirdResponse>> responses =
@@ -133,12 +133,12 @@ public class TermStatsRequestRouter extends RequestRouter {
                             .build();
 
                     EarlybirdResponseMerger merger = new TermStatisticsResponseMerger(
-                        requestContext, responses, new TierResponseAccumulator());
+                        requestContetwittert, responses, new TierResponseAccumulator());
 
                     return merger.merge().map(new Function<EarlybirdResponse, EarlybirdResponse>() {
                       @Override
                       public EarlybirdResponse apply(EarlybirdResponse mergedResponse) {
-                        if (requestContext.getRequest().getDebugMode() > 0) {
+                        if (requestContetwittert.getRequest().getDebugMode() > 0) {
                           mergedResponse.setDebugString(
                               SuperRootResponseMerger.mergeClusterDebugStrings(
                                   realtimeResponse, null, archiveResponse));
@@ -153,7 +153,7 @@ public class TermStatsRequestRouter extends RequestRouter {
   }
 
   private EarlybirdResponse mergeWithUnsuccessfulArchiveResponse(
-      EarlybirdRequestContext requestContext,
+      EarlybirdRequestContetwittert requestContetwittert,
       EarlybirdResponse realtimeResponse,
       EarlybirdResponse archiveResponse) {
     // If the realtime cluster was skipped, and the full archive returned an error
@@ -164,7 +164,7 @@ public class TermStatsRequestRouter extends RequestRouter {
 
     // If the realtime response has results and the full archive cluster returned an error
     // response, we return the realtime response. If the client needs more results, it can paginate,
-    // and on the next request it will get the error response from the full archive cluster.
+    // and on the netwittert request it will get the error response from the full archive cluster.
     if (realtimeResponse.isSetTermStatisticsResults()
         && !realtimeResponse.getTermStatisticsResults().getTermResults().isEmpty()) {
       realtimeResponse.setDebugString(
@@ -172,7 +172,7 @@ public class TermStatsRequestRouter extends RequestRouter {
               + archiveResponse.getResponseCode() + "). "
               + SuperRootResponseMerger.mergeClusterDebugStrings(
               realtimeResponse, null, archiveResponse));
-      return updateMinCompleteBinId(requestContext, realtimeResponse);
+      return updateMinCompleteBinId(requestContetwittert, realtimeResponse);
     }
 
     // If the realtime response has no results, and the full archive cluster returned an error
@@ -197,15 +197,15 @@ public class TermStatsRequestRouter extends RequestRouter {
    * <p>
    * Note that we cannot always set the minCompleteBinId for the realtime results to the bin
    * intersecting the realtime serving boundary: somewhere in the guts of the merging logic, we set
-   * the minCompleteBinId of the merged response to the max of the minCompleteBinIds of the original
+   * the minCompleteBinId of the merged response to the matwitter of the minCompleteBinIds of the original
    * responses. :-(
    */
   private EarlybirdResponse updateMinCompleteBinId(
-      EarlybirdRequestContext requestContext, EarlybirdResponse realtimeResponse) {
+      EarlybirdRequestContetwittert requestContetwittert, EarlybirdResponse realtimeResponse) {
     Preconditions.checkArgument(
         realtimeResponse.getTermStatisticsResults().isSetMinCompleteBinId());
-    int roundedServingRange = roundServingRangeUpToNearestBinId(requestContext, realtimeResponse);
-    int minCompleteBinId = Math.max(
+    int roundedServingRange = roundServingRangeUpToNearestBinId(requestContetwittert, realtimeResponse);
+    int minCompleteBinId = Math.matwitter(
         roundedServingRange,
         realtimeResponse.getTermStatisticsResults().getMinCompleteBinId());
     realtimeResponse.getTermStatisticsResults().setMinCompleteBinId(minCompleteBinId);
@@ -228,7 +228,7 @@ public class TermStatsRequestRouter extends RequestRouter {
    * to the nearest binId at the appropriate resolution.
    */
   private int roundServingRangeUpToNearestBinId(
-      EarlybirdRequestContext request, EarlybirdResponse response) {
+      EarlybirdRequestContetwittert request, EarlybirdResponse response) {
     ServingRange servingRange = realtimeServingRangeProvider.getServingRange(
         request, request.useOverrideTierConfig());
     long servingRangeStartSecs = servingRange.getServingRangeSinceTimeSecondsFromEpoch();

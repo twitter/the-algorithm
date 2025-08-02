@@ -13,7 +13,7 @@ import com.twitter.search.earlybird_root.routers.RelevanceRequestRouterModule;
 import com.twitter.search.earlybird_root.routers.TermStatsRequestRouterModule;
 import com.twitter.search.earlybird_root.routers.TopTweetsRequestRouterModule;
 
-public class SuperRootAppMain extends SearchRootAppMain<SuperRootServer> {
+public class SuperRootAppMain etwittertends SearchRootAppMain<SuperRootServer> {
   /**
    * Boilerplate for the Java-friendly AbstractTwitterServer
    */
@@ -24,7 +24,7 @@ public class SuperRootAppMain extends SearchRootAppMain<SuperRootServer> {
   }
 
   @Override
-  protected Collection<? extends Module> getAdditionalModules() {
+  protected Collection<? etwittertends Module> getAdditionalModules() {
     return Arrays.asList(
         new EarlybirdCommonModule(),
         new SuperRootAppModule(),

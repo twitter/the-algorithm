@@ -6,7 +6,7 @@ import com.twitter.tweetypie.backends.TimelineService
 import com.twitter.tweetypie.thriftscala._
 
 trait TlsTimelineUpdatingStore
-    extends TweetStoreBase[TlsTimelineUpdatingStore]
+    etwittertends TweetStoreBase[TlsTimelineUpdatingStore]
     with AsyncInsertTweet.Store
     with AsyncDeleteTweet.Store
     with AsyncUndeleteTweet.Store {
@@ -28,14 +28,14 @@ object TlsTimelineUpdatingStore {
   /**
    * Converts a TweetyPie Tweet to tls.Tweet
    *
-   * @param explicitCreatedAt when Some, overrides the default getTimestamp defined in package
+   * @param etwitterplicitCreatedAt when Some, overrides the default getTimestamp defined in package
    * object com.twitter.tweetypie
    */
   def tweetToTLSFullTweet(
     hasMedia: Tweet => Boolean
   )(
     tweet: Tweet,
-    explicitCreatedAt: Option[Time],
+    etwitterplicitCreatedAt: Option[Time],
     noteTweetMentionedUserIds: Option[Seq[Long]]
   ): tls.FullTweet =
     tls.FullTweet(
@@ -46,7 +46,7 @@ object TlsTimelineUpdatingStore {
       isNullcasted = TweetLenses.nullcast.get(tweet),
       conversationId = TweetLenses.conversationId.get(tweet).getOrElse(tweet.id),
       narrowcastGeos = Set.empty,
-      createdAtMs = explicitCreatedAt.getOrElse(getTimestamp(tweet)).inMillis,
+      createdAtMs = etwitterplicitCreatedAt.getOrElse(getTimestamp(tweet)).inMillis,
       hasMedia = hasMedia(tweet),
       directedAtUserId = TweetLenses.directedAtUser.get(tweet).map(_.userId),
       retweet = getShare(tweet).map { share =>
@@ -69,7 +69,7 @@ object TlsTimelineUpdatingStore {
         )
       },
       mediaTags = tweet.mediaTags,
-      text = Some(getText(tweet))
+      tetwittert = Some(getTetwittert(tweet))
     )
 
   val logger: Logger = Logger(getClass)
@@ -99,7 +99,7 @@ object TlsTimelineUpdatingStore {
               tls.FullTweetCreateEvent(
                 toTlsTweet(event.tweet, Some(event.timestamp), event.noteTweetMentionedUserIds),
                 event.timestamp.inMillis,
-                featureContext = event.featureContext
+                featureContetwittert = event.featureContetwittert
               )
             )
           }

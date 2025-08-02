@@ -15,8 +15,8 @@ import com.twitter.visibility.common.UserSource
 import com.twitter.visibility.features.FeatureMap
 import com.twitter.visibility.generators.TombstoneGenerator
 import com.twitter.visibility.models.ContentId.MediaId
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
+import com.twitter.visibility.rules.EvaluationContetwittert
+import com.twitter.visibility.rules.providers.ProvidedEvaluationContetwittert
 import com.twitter.visibility.rules.utils.ShimUtils
 
 object MediaVisibilityLibrary {
@@ -49,25 +49,25 @@ object MediaVisibilityLibrary {
       vfEngineCounter.incr()
 
       val contentId = MediaId(r.mediaKey.toStringKey)
-      val languageCode = r.viewerContext.requestLanguageCode.getOrElse("en")
+      val languageCode = r.viewerContetwittert.requestLanguageCode.getOrElse("en")
 
       val featureMap = visibilityLibrary.featureMapBuilder(
         Seq(
-          viewerFeatures.forViewerContext(r.viewerContext),
+          viewerFeatures.forViewerContetwittert(r.viewerContetwittert),
           mediaFeatures.forGenericMediaKey(r.mediaKey),
           mediaMetadataFeatures.forGenericMediaKey(r.mediaKey),
         )
       )
 
-      val evaluationContext = ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-        evaluationContext = EvaluationContext(
+      val evaluationContetwittert = ProvidedEvaluationContetwittert.injectRuntimeRulesIntoEvaluationContetwittert(
+        evaluationContetwittert = EvaluationContetwittert(
           r.safetyLevel,
-          visibilityLibrary.getParams(r.viewerContext, r.safetyLevel),
+          visibilityLibrary.getParams(r.viewerContetwittert, r.safetyLevel),
           visibilityLibrary.statsReceiver)
       )
 
       val preFilteredFeatureMap =
-        ShimUtils.preFilterFeatureMap(featureMap, r.safetyLevel, contentId, evaluationContext)
+        ShimUtils.preFilterFeatureMap(featureMap, r.safetyLevel, contentId, evaluationContetwittert)
 
       val elapsed = Stopwatch.start()
       FeatureMap.resolve(preFilteredFeatureMap, libraryStatsReceiver).flatMap {
@@ -78,7 +78,7 @@ object MediaVisibilityLibrary {
             .runRuleEngine(
               contentId,
               resolvedFeatureMap,
-              r.viewerContext,
+              r.viewerContetwittert,
               r.safetyLevel
             )
             .map(tombstoneGenerator(_, languageCode))

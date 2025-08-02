@@ -1,7 +1,7 @@
 package com.twitter.tsp.handlers
 
 import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mux.ClientDiscardedRequestException
+import com.twitter.finagle.mutwitter.ClientDiscardedRequestEtwitterception
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.util.StatsUtil
 import com.twitter.simclusters_v2.common.SemanticCoreEntityId
@@ -15,7 +15,7 @@ import com.twitter.topic_recos.common.Configs.ConsumerTopicEmbeddingType
 import com.twitter.topic_recos.common.Configs.DefaultModelVersion
 import com.twitter.topic_recos.common.Configs.ProducerTopicEmbeddingType
 import com.twitter.topic_recos.common.Configs.TweetEmbeddingType
-import com.twitter.topiclisting.TopicListingViewerContext
+import com.twitter.topiclisting.TopicListingViewerContetwittert
 import com.twitter.topic_recos.common.LocaleUtil
 import com.twitter.topiclisting.AnnotationRuleProvider
 import com.twitter.tsp.common.DeciderConstants
@@ -38,7 +38,7 @@ import com.twitter.tsp.utils.HealthSignalsUtils
 import com.twitter.util.Future
 import com.twitter.util.Timer
 import com.twitter.util.Duration
-import com.twitter.util.TimeoutException
+import com.twitter.util.TimeoutEtwitterception
 
 import scala.util.Random
 
@@ -76,9 +76,9 @@ class TopicSocialProofHandler(
             .getAllowListTopicsForUser(
               request.userId,
               request.topicListingSetting,
-              TopicListingViewerContext
-                .fromThrift(request.context).copy(languageCode =
-                  LocaleUtil.getStandardLanguageCode(request.context.languageCode)),
+              TopicListingViewerContetwittert
+                .fromThrift(request.contetwittert).copy(languageCode =
+                  LocaleUtil.getStandardLanguageCode(request.contetwittert.languageCode)),
               request.bypassModes.map(_.toSet)
             ).rescue {
               case _ =>
@@ -90,7 +90,7 @@ class TopicSocialProofHandler(
             .collect(
               tweetInfoStore.multiGet(request.tweetIds.toSet)
             ).raiseWithin(TweetInfoStoreTimeout)(timer).rescue {
-              case _: TimeoutException =>
+              case _: TimeoutEtwitterception =>
                 scopedStats.counter("tweetInfoStoreTimeout").incr()
                 Future.value(Map.empty[TweetId, Option[TspTweetInfo]])
               case _ =>
@@ -129,7 +129,7 @@ class TopicSocialProofHandler(
                           _.semanticCoreVersionId == semanticCoreVersionId)
                     })
                 }.raiseWithin(TopicSocialProofStoreTimeout)(timer).rescue {
-                  case _: TimeoutException =>
+                  case _: TimeoutEtwitterception =>
                     scopedStats.counter("topicSocialProofStoreTimeout").incr()
                     Future(Map.empty[TweetId, Seq[TopicSocialProof]])
                   case _ =>
@@ -178,21 +178,21 @@ class TopicSocialProofHandler(
                         statsReceiver = statsReceiver
                       )
 
-                    }.sortBy(-_.score).take(MaxCandidates))
+                    }.sortBy(-_.score).take(MatwitterCandidates))
 
-                    val personalizedContextSocialProofs =
-                      if (target.params(TopicSocialProofParams.EnablePersonalizedContextTopics)) {
-                        val personalizedContextEligibility =
-                          checkPersonalizedContextsEligibility(
+                    val personalizedContetwittertSocialProofs =
+                      if (target.params(TopicSocialProofParams.EnablePersonalizedContetwittertTopics)) {
+                        val personalizedContetwittertEligibility =
+                          checkPersonalizedContetwittertsEligibility(
                             target.params,
                             allowListWithTopicFollowType)
                         val filteredTweets =
-                          filterPersonalizedContexts(socialProofs, tweetInfoMap, target.params)
-                        backfillPersonalizedContexts(
+                          filterPersonalizedContetwitterts(socialProofs, tweetInfoMap, target.params)
+                        backfillPersonalizedContetwitterts(
                           allowListWithTopicFollowType,
                           filteredTweets,
                           request.tags.getOrElse(Map.empty),
-                          personalizedContextEligibility)
+                          personalizedContetwittertEligibility)
                       } else {
                         Map.empty[TweetId, Seq[TopicWithScore]]
                       }
@@ -202,7 +202,7 @@ class TopicSocialProofHandler(
                         (
                           tweetId,
                           proofs
-                            ++ personalizedContextSocialProofs.getOrElse(tweetId, Seq.empty))
+                            ++ personalizedContetwittertSocialProofs.getOrElse(tweetId, Seq.empty))
                     }
 
                     // Note that we will NOT filter out tweets with no TSP in either case
@@ -211,8 +211,8 @@ class TopicSocialProofHandler(
                 }
             }
         }.flatten.raiseWithin(Timeout)(timer).rescue {
-          case _: ClientDiscardedRequestException =>
-            scopedStats.counter("ClientDiscardedRequestException").incr()
+          case _: ClientDiscardedRequestEtwitterception =>
+            scopedStats.counter("ClientDiscardedRequestEtwitterception").incr()
             Future.value(DefaultResponse)
           case err: Err if err.code == Err.Cancelled =>
             scopedStats.counter("CancelledErr").incr()
@@ -277,13 +277,13 @@ class TopicSocialProofHandler(
    */
 
   /***
-   * Consolidate logics relevant to whether Personalized Contexts backfilling should be enabled
+   * Consolidate logics relevant to whether Personalized Contetwitterts backfilling should be enabled
    */
-  private[handlers] def checkPersonalizedContextsEligibility(
+  private[handlers] def checkPersonalizedContetwittertsEligibility(
     params: Params,
     allowListWithTopicFollowType: Map[SemanticCoreEntityId, Option[TopicFollowType]]
-  ): PersonalizedContextEligibility = {
-    val scopedStats = statsReceiver.scope("checkPersonalizedContextsEligibility")
+  ): PersonalizedContetwittertEligibility = {
+    val scopedStats = statsReceiver.scope("checkPersonalizedContetwittertsEligibility")
     val isRecentFavInAllowlist = allowListWithTopicFollowType
       .contains(AnnotationRuleProvider.recentFavTopicId)
 
@@ -308,10 +308,10 @@ class TopicSocialProofHandler(
     if (isYMLEligible)
       scopedStats.counter("isYMLEligible").incr()
 
-    PersonalizedContextEligibility(isRecentFavEligible, isRecentRetweetEligible, isYMLEligible)
+    PersonalizedContetwittertEligibility(isRecentFavEligible, isRecentRetweetEligible, isYMLEligible)
   }
 
-  private[handlers] def filterPersonalizedContexts(
+  private[handlers] def filterPersonalizedContetwitterts(
     socialProofs: Map[TweetId, Seq[TopicWithScore]],
     tweetInfoMap: Map[TweetId, Option[TspTweetInfo]],
     params: Params
@@ -338,7 +338,7 @@ class TopicSocialProofHandler(
             scopedStats.counter("undefinedTweetInfoCount").incr()
           }
 
-          optTweetInfo.exists { tweetInfo: TspTweetInfo =>
+          optTweetInfo.etwitterists { tweetInfo: TspTweetInfo =>
             {
               if (tweetInfo.language.isEmpty) {
                 scopedStats.counter("undefinedLanguageCount").incr()
@@ -359,7 +359,7 @@ class TopicSocialProofHandler(
 
   /***
    * filter tweets with NO evergreen topic social proofs by their health signal scores & tweet languages
-   * i.e., tweets that are possible to be converted into Personalized Context topic tweets
+   * i.e., tweets that are possible to be converted into Personalized Contetwittert topic tweets
    * TBD: whether we are going to apply filters to all topic tweet candidates
    */
   private def applyFilters(
@@ -381,7 +381,7 @@ class TopicSocialProofHandler(
     params: Params
   ): Boolean = {
     !params(
-      TopicSocialProofParams.EnableTopicTweetHealthFilterPersonalizedContexts) || HealthSignalsUtils
+      TopicSocialProofParams.EnableTopicTweetHealthFilterPersonalizedContetwitterts) || HealthSignalsUtils
       .isHealthyTweet(tweetInfoOpt)
   }
 
@@ -389,17 +389,17 @@ class TopicSocialProofHandler(
     tweetInfoOpt: Option[TspTweetInfo],
     params: Params
   ): Boolean = {
-    PersonalizedContextTopicsAllowedLanguageSet
+    PersonalizedContetwittertTopicsAllowedLanguageSet
       .contains(tweetInfoOpt.flatMap(_.language).getOrElse(LocaleUtil.DefaultLanguage))
   }
 
-  private[handlers] def backfillPersonalizedContexts(
+  private[handlers] def backfillPersonalizedContetwitterts(
     allowListWithTopicFollowType: Map[SemanticCoreEntityId, Option[TopicFollowType]],
     socialProofs: Map[TweetId, Seq[TopicWithScore]],
     metricTagsMap: scala.collection.Map[TweetId, scala.collection.Set[MetricTag]],
-    personalizedContextEligibility: PersonalizedContextEligibility
+    personalizedContetwittertEligibility: PersonalizedContetwittertEligibility
   ): Map[TweetId, Seq[TopicWithScore]] = {
-    val scopedStats = statsReceiver.scope("backfillPersonalizedContexts")
+    val scopedStats = statsReceiver.scope("backfillPersonalizedContetwitterts")
     socialProofs.map {
       case (tweetId, topicWithScores) =>
         if (topicWithScores.nonEmpty) {
@@ -408,7 +408,7 @@ class TopicSocialProofHandler(
           val metricTagContainsTweetFav = metricTagsMap
             .getOrElse(tweetId, Set.empty[MetricTag]).contains(MetricTag.TweetFavorite)
           val backfillRecentFav =
-            personalizedContextEligibility.isRecentFavEligible && metricTagContainsTweetFav
+            personalizedContetwittertEligibility.isRecentFavEligible && metricTagContainsTweetFav
           if (metricTagContainsTweetFav)
             scopedStats.counter("MetricTag.TweetFavorite").incr()
           if (backfillRecentFav)
@@ -417,7 +417,7 @@ class TopicSocialProofHandler(
           val metricTagContainsRetweet = metricTagsMap
             .getOrElse(tweetId, Set.empty[MetricTag]).contains(MetricTag.Retweet)
           val backfillRecentRetweet =
-            personalizedContextEligibility.isRecentRetweetEligible && metricTagContainsRetweet
+            personalizedContetwittertEligibility.isRecentRetweetEligible && metricTagContainsRetweet
           if (metricTagContainsRetweet)
             scopedStats.counter("MetricTag.Retweet").incr()
           if (backfillRecentRetweet)
@@ -427,7 +427,7 @@ class TopicSocialProofHandler(
             .getOrElse(tweetId, Set.empty[MetricTag]).contains(
               MetricTag.InterestsRankerRecentSearches)
 
-          val backfillYML = personalizedContextEligibility.isYMLEligible
+          val backfillYML = personalizedContetwittertEligibility.isYMLEligible
           if (backfillYML)
             scopedStats.counter("backfillYML").incr()
 
@@ -484,11 +484,11 @@ class TopicSocialProofHandler(
         loadShedder(displayLocation) {
           getTopicSocialProofResponse(k).map(Some(_))
         }.rescue {
-          case LoadShedder.LoadSheddingException =>
-            statsReceiver.scope(displayLocation).counter("LoadSheddingException").incr()
+          case LoadShedder.LoadSheddingEtwitterception =>
+            statsReceiver.scope(displayLocation).counter("LoadSheddingEtwitterception").incr()
             Future.None
           case _ =>
-            statsReceiver.scope(displayLocation).counter("Exception").incr()
+            statsReceiver.scope(displayLocation).counter("Etwitterception").incr()
             Future.None
         }
       }
@@ -498,9 +498,9 @@ class TopicSocialProofHandler(
 
 object TopicSocialProofHandler {
 
-  private val MaxCandidates = 10
-  // Currently we do hardcode for the language check of PersonalizedContexts Topics
-  private val PersonalizedContextTopicsAllowedLanguageSet: Set[String] =
+  private val MatwitterCandidates = 10
+  // Currently we do hardcode for the language check of PersonalizedContetwitterts Topics
+  private val PersonalizedContetwittertTopicsAllowedLanguageSet: Set[String] =
     Set("pt", "ko", "es", "ja", "tr", "id", "en", "hi", "ar", "fr", "ru")
 
   private val Timeout: Duration = 200.milliseconds
@@ -508,7 +508,7 @@ object TopicSocialProofHandler {
   private val TweetInfoStoreTimeout: Duration = 60.milliseconds
   private val DefaultResponse: TopicSocialProofResponse = TopicSocialProofResponse(Map.empty)
 
-  case class PersonalizedContextEligibility(
+  case class PersonalizedContetwittertEligibility(
     isRecentFavEligible: Boolean,
     isRecentRetweetEligible: Boolean,
     isYMLEligible: Boolean)
@@ -561,7 +561,7 @@ object TopicSocialProofHandler {
     Some(
       TopicWithScore(
         topicId = topicSocialProof.topicId.entityId,
-        score = random.nextDouble(),
+        score = random.netwittertDouble(),
         topicFollowType =
           allowListWithTopicFollowType.getOrElse(topicSocialProof.topicId.entityId, None)
       ))

@@ -40,7 +40,7 @@ def linear_interp1(inputs, ref_inputs, ref_outputs):
     raise ValueError("Input dimensions should be < 2D. But got %d." % ndims)
 
   original_input_shape = tf.shape(inputs)
-  # This is needed because isotonic_calibration expects:
+  # This is needed because isotonic_calibration etwitterpects:
   # - inputs of size [num_samples, num_classes]
   # - ref_inputs, ref_outputs of size [num_classes, num_bins]
   inputs = tf.reshape(inputs, [-1, 1])
@@ -60,7 +60,7 @@ def linear_interp1_by_class(inputs, input_classes, ref_inputs, ref_outputs):
     inputs:
       The query input values.
     input_classes:
-      The class index to use from the reference grid.
+      The class indetwitter to use from the reference grid.
     ref_inputs:
       Reference 2D grid points used for interpolation.
       Each row denotes the grid from a different class.
@@ -80,14 +80,14 @@ def linear_interp1_by_class(inputs, input_classes, ref_inputs, ref_outputs):
   original_input_shape = tf.shape(inputs)
 
   # pass through
-  def in_func(x):
-    return x
+  def in_func(twitter):
+    return twitter
 
-  # indexed function
+  # indetwittered function
   def cond_func(i, fn):
-    idx = input_classes[i]
-    x = tf.expand_dims(fn(), axis=0)
-    return linear_interp1(x, ref_inputs[idx], ref_outputs[idx])
+    idtwitter = input_classes[i]
+    twitter = tf.etwitterpand_dims(fn(), atwitteris=0)
+    return linear_interp1(twitter, ref_inputs[idtwitter], ref_outputs[idtwitter])
 
   # Use while loop for now, needs to be replace by a custom C++ op later.
   outputs = twml.util.batch_apply(in_func, inputs, cond_func=cond_func)

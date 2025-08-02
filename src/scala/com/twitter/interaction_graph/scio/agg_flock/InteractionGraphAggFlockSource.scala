@@ -1,6 +1,6 @@
 package com.twitter.interaction_graph.scio.agg_flock
 
-import com.spotify.scio.ScioContext
+import com.spotify.scio.ScioContetwittert
 import com.spotify.scio.values.SCollection
 import com.twitter.beam.job.ServiceIdentifierOptions
 import com.twitter.flockdb.tools.datasets.flock.thriftscala.FlockEdge
@@ -11,7 +11,7 @@ import org.joda.time.Interval
 case class InteractionGraphAggFlockSource(
   pipelineOptions: InteractionGraphAggFlockOption
 )(
-  implicit sc: ScioContext) {
+  implicit sc: ScioContetwittert) {
   val dalEnvironment: String = pipelineOptions
     .as(classOf[ServiceIdentifierOptions])
     .getEnvironment()

@@ -14,7 +14,7 @@ import com.twitter.util.Future;
  * If the clientId is null but Attribution.httpEndpoint() contains a value it will be set as
  * the clientId.
  */
-public class StratoAttributionClientIdFilter extends
+public class StratoAttributionClientIdFilter etwittertends
     SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
   @Override
   public Future<EarlybirdResponse> apply(

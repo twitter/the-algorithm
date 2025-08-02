@@ -4,7 +4,7 @@ package store
 import com.twitter.tseng.withholding.thriftscala.TakedownReason
 import com.twitter.tweetypie.thriftscala._
 
-object QuotedTweetTakedown extends TweetStore.SyncModule {
+object QuotedTweetTakedown etwittertends TweetStore.SyncModule {
 
   case class Event(
     quotingTweetId: TweetId,
@@ -15,7 +15,7 @@ object QuotedTweetTakedown extends TweetStore.SyncModule {
     takedownReasons: Seq[TakedownReason],
     timestamp: Time,
     optUser: Option[User] = None)
-      extends SyncTweetStoreEvent("quoted_tweet_takedown")
+      etwittertends SyncTweetStoreEvent("quoted_tweet_takedown")
       with TweetStoreTweetEvent {
 
     override def toTweetEventData: Seq[TweetEventData] =
@@ -37,7 +37,7 @@ object QuotedTweetTakedown extends TweetStore.SyncModule {
     val quotedTweetTakedown: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val quotedTweetTakedown: FutureEffect[Event] = wrap(underlying.quotedTweetTakedown)
   }
 

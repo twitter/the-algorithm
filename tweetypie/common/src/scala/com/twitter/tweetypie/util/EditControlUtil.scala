@@ -1,8 +1,8 @@
 package com.twitter.tweetypie.util
 
 import com.twitter.servo.util.Gate
-import com.twitter.tweetypie.util.TweetEditFailure.TweetEditInvalidEditControlException
-import com.twitter.tweetypie.util.TweetEditFailure.TweetEditUpdateEditControlException
+import com.twitter.tweetypie.util.TweetEditFailure.TweetEditInvalidEditControlEtwitterception
+import com.twitter.tweetypie.util.TweetEditFailure.TweetEditUpdateEditControlEtwitterception
 import com.twitter.tweetypie.thriftscala.EditControl
 import com.twitter.tweetypie.thriftscala.EditControlEdit
 import com.twitter.tweetypie.thriftscala.EditControlInitial
@@ -15,7 +15,7 @@ import com.twitter.util.Duration
 
 object EditControlUtil {
 
-  val maxTweetEditsAllowed = 5
+  val matwitterTweetEditsAllowed = 5
   val oldEditTimeWindow = Duration.fromMinutes(30)
   val editTimeWindow = Duration.fromMinutes(60)
 
@@ -31,13 +31,13 @@ object EditControlUtil {
   def makeEditControlInitial(
     tweetId: TweetId,
     createdAt: Time,
-    setEditWindowToSixtyMinutes: Gate[Unit] = Gate(_ => false)
+    setEditWindowToSitwittertyMinutes: Gate[Unit] = Gate(_ => false)
   ): EditControl.Initial = {
-    val editWindow = if (setEditWindowToSixtyMinutes()) editTimeWindow else oldEditTimeWindow
+    val editWindow = if (setEditWindowToSitwittertyMinutes()) editTimeWindow else oldEditTimeWindow
     val initial = EditControlInitial(
       editTweetIds = Seq(tweetId),
       editableUntilMsecs = Some(createdAt.plus(editWindow).inMilliseconds),
-      editsRemaining = Some(maxTweetEditsAllowed),
+      editsRemaining = Some(matwitterTweetEditsAllowed),
       isEditEligible = defaultIsEditEligible,
     )
     EditControl.Initial(initial)
@@ -56,7 +56,7 @@ object EditControlUtil {
           edit.editControlInitial,
           latestTweetId
         )
-      case _ => Throw(TweetEditInvalidEditControlException)
+      case _ => Throw(TweetEditInvalidEditControlEtwitterception)
     }
   }
 
@@ -68,7 +68,7 @@ object EditControlUtil {
     initialTweetEditControl match {
       case Some(initial) =>
         Return(latestTweetId == initial.editTweetIds.last)
-      case _ => Throw(TweetEditInvalidEditControlException)
+      case _ => Throw(TweetEditInvalidEditControlEtwitterception)
     }
   }
 
@@ -81,7 +81,7 @@ object EditControlUtil {
       case Some(EditControl.Initial(initial)) =>
         Return(EditControl.Initial(plusEdit(initial, newEditId)))
 
-      case Some(EditControl.Edit(_)) => Throw(TweetEditUpdateEditControlException)
+      case Some(EditControl.Edit(_)) => Throw(TweetEditUpdateEditControlEtwitterception)
 
       case _ =>
         initialTweet.coreData match {
@@ -90,10 +90,10 @@ object EditControlUtil {
               makeEditControlInitial(
                 tweetId = initialTweet.id,
                 createdAt = Time.fromMilliseconds(coreData.createdAtSecs * 1000),
-                setEditWindowToSixtyMinutes = Gate(_ => true)
+                setEditWindowToSitwittertyMinutes = Gate(_ => true)
               )
             )
-          case None => Throw(new Exception("Tweet Missing Required CoreData"))
+          case None => Throw(new Etwitterception("Tweet Missing Required CoreData"))
         }
     }
   }
@@ -108,7 +108,7 @@ object EditControlUtil {
     val editsCount = newEditTweetIds.size - 1 // as there is the original tweet ID there too.
     initial.copy(
       editTweetIds = newEditTweetIds,
-      editsRemaining = Some(maxTweetEditsAllowed - editsCount),
+      editsRemaining = Some(matwitterTweetEditsAllowed - editsCount),
     )
   }
 
@@ -126,7 +126,7 @@ object EditControlUtil {
   def isInitialTweet(tweet: Tweet): Boolean =
     getInitialTweetId(tweet) == tweet.id
 
-  // Extracted just so that we can easily track where the values of isEditEligible is coming from.
+  // Etwittertracted just so that we can easily track where the values of isEditEligible is coming from.
   private def defaultIsEditEligible: Option[Boolean] = Some(true)
 
   // returns true if it's an edit of a Tweet or an initial Tweet that's been edited
@@ -155,20 +155,20 @@ object EditControlUtil {
       case Some(EditControl.Initial(initial)) =>
         Return(initial.editTweetIds)
       case _ =>
-        Throw(new Exception(s"EditControlInitial not found in $editControl"))
+        Throw(new Etwitterception(s"EditControlInitial not found in $editControl"))
     }
   }
 }
 
 object TweetEditFailure {
-  abstract class TweetEditException(msg: String) extends Exception(msg)
+  abstract class TweetEditEtwitterception(msg: String) etwittertends Etwitterception(msg)
 
-  case object TweetEditGetInitialEditControlException
-      extends TweetEditException("Initial EditControl not found")
+  case object TweetEditGetInitialEditControlEtwitterception
+      etwittertends TweetEditEtwitterception("Initial EditControl not found")
 
-  case object TweetEditInvalidEditControlException
-      extends TweetEditException("Invalid EditControl for initial_tweet")
+  case object TweetEditInvalidEditControlEtwitterception
+      etwittertends TweetEditEtwitterception("Invalid EditControl for initial_tweet")
 
-  case object TweetEditUpdateEditControlException
-      extends TweetEditException("Invalid Edit Control Update")
+  case object TweetEditUpdateEditControlEtwitterception
+      etwittertends TweetEditEtwitterception("Invalid Edit Control Update")
 }

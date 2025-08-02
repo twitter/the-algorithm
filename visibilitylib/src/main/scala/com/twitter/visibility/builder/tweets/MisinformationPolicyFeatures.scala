@@ -9,7 +9,7 @@ import com.twitter.visibility.common.MisinformationPolicySource
 import com.twitter.visibility.features._
 import com.twitter.visibility.models.MisinformationPolicy
 import com.twitter.visibility.models.SemanticCoreMisinformation
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 
 class MisinformationPolicyFeatures(
   misinformationPolicySource: MisinformationPolicySource,
@@ -24,14 +24,14 @@ class MisinformationPolicyFeatures(
 
   def forTweet(
     tweet: Tweet,
-    viewerContext: ViewerContext
+    viewerContetwittert: ViewerContetwittert
   ): FeatureMapBuilder => FeatureMapBuilder = {
     requests.incr()
     tweetMisinformationPolicies.incr()
 
     _.withFeature(
       TweetMisinformationPolicies,
-      misinformationPolicy(tweet.escherbirdEntityAnnotations, viewerContext))
+      misinformationPolicy(tweet.escherbirdEntityAnnotations, viewerContetwittert))
       .withFeature(
         TweetEnglishMisinformationPolicies,
         misinformationPolicyEnglishOnly(tweet.escherbirdEntityAnnotations))
@@ -50,12 +50,12 @@ class MisinformationPolicyFeatures(
 
   def misinformationPolicy(
     escherbirdEntityAnnotations: Option[EscherbirdEntityAnnotations],
-    viewerContext: ViewerContext
+    viewerContetwittert: ViewerContetwittert
   ): Stitch[Seq[MisinformationPolicy]] = {
-    val locale = viewerContext.requestLanguageCode.map { language =>
+    val locale = viewerContetwittert.requestLanguageCode.map { language =>
       MisinformationPolicySource.LanguageAndCountry(
         language = Some(language),
-        country = viewerContext.requestCountryCode
+        country = viewerContetwittert.requestCountryCode
       )
     }
     fetchMisinformationPolicy(escherbirdEntityAnnotations, locale)

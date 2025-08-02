@@ -1,0 +1,20 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/javatwitter/inject:javatwitter.inject",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/candidate_source/account_recommendations_mitwitterer",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/candidate_source/people_discovery",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/decorator/urt",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/marshaller/request",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/pipeline/candidate",
+        "servo/repo/src/main/scala",
+        "src/thrift/com/twitter/hermit/internal:hermit-internal-scala",
+    ],
+    etwitterports = [
+        "3rdparty/jvm/javatwitter/inject:javatwitter.inject",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/pipeline/candidate",
+    ],
+)

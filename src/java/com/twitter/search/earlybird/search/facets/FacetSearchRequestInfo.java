@@ -8,7 +8,7 @@ import com.twitter.search.core.earlybird.facets.FacetCountState;
 import com.twitter.search.earlybird.search.SearchRequestInfo;
 import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
 
-public class FacetSearchRequestInfo extends SearchRequestInfo {
+public class FacetSearchRequestInfo etwittertends SearchRequestInfo {
   protected final FacetCountState facetCountState;
   protected final ThriftFacetRankingOptions rankingOptions;
 

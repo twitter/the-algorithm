@@ -5,9 +5,9 @@ import com.google.inject.Provides
 import com.google.inject.Singleton
 import com.twitter.conversions.DurationOps._
 import com.twitter.core_workflows.user_model.thriftscala.CondensedUserState
-import com.twitter.search.account_search.extended_network.thriftscala.ExtendedNetworkUserKey
-import com.twitter.search.account_search.extended_network.thriftscala.ExtendedNetworkUserVal
-import com.twitter.finagle.ThriftMux
+import com.twitter.search.account_search.etwittertended_network.thriftscala.EtwittertendedNetworkUserKey
+import com.twitter.search.account_search.etwittertended_network.thriftscala.EtwittertendedNetworkUserVal
+import com.twitter.finagle.ThriftMutwitter
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.finagle.thrift.Protocols
 import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
@@ -33,9 +33,9 @@ import com.twitter.wtf.candidate.thriftscala.CandidateSeq
 import com.twitter.wtf.ml.thriftscala.CandidateFeatures
 import com.twitter.wtf.real_time_interaction_graph.thriftscala.Interaction
 import com.twitter.wtf.triangular_loop.thriftscala.{Candidates => TriangularLoopCandidates}
-import com.twitter.strato.opcontext.Attribution._
+import com.twitter.strato.opcontetwittert.Attribution._
 
-object StratoClientModule extends TwitterModule {
+object StratoClientModule etwittertends TwitterModule {
 
   // column paths
   val CosineFollowPath = "recommendations/similarity/similarUsersByFollowGraph.User"
@@ -53,12 +53,12 @@ object StratoClientModule extends TwitterModule {
   val UTTAccountRecommendationsPath = "onboarding/userrecs/utt_account_recommendations"
   val UttSeedAccountsRecommendationPath = "onboarding/userrecs/utt_seed_accounts"
   val UserStatePath = "onboarding/userState.User"
-  val WTFPostNuxFeaturesPath = "ml/featureStore/onboarding/wtfPostNuxFeatures.User"
+  val WTFPostNutwitterFeaturesPath = "ml/featureStore/onboarding/wtfPostNutwitterFeatures.User"
   val ElectionCandidatesPath = "onboarding/electionAccounts"
   val UserUserGraphPath = "recommendations/userUserGraph"
   val WtfDissmissEventsPath = "onboarding/wtfDismissEvents"
   val RelatableAccountsPath = "onboarding/userrecs/relatableAccounts"
-  val ExtendedNetworkCandidatesPath = "search/account_search/extendedNetworkCandidatesMH"
+  val EtwittertendedNetworkCandidatesPath = "search/account_search/etwittertendedNetworkCandidatesMH"
   val LabeledNotificationPath = "frigate/magicrecs/labeledPushRecsAggregated.User"
 
   @Provides
@@ -66,7 +66,7 @@ object StratoClientModule extends TwitterModule {
   def stratoClient(serviceIdentifier: ServiceIdentifier): Client = {
     val timeoutBudget = 500.milliseconds
     StratoClient(
-      ThriftMux.client
+      ThriftMutwitter.client
         .withRequestTimeout(timeoutBudget)
         .withProtocolFactory(Protocols.binaryFactory(
           stringLengthLimit = StringLengthLimit,
@@ -200,22 +200,22 @@ object StratoClientModule extends TwitterModule {
 
   @Provides
   @Singleton
-  @Named(GuiceNamedConstants.POST_NUX_WTF_FEATURES_FETCHER)
-  def wtfPostNuxFeaturesFetcher(stratoClient: Client): Fetcher[Long, Unit, CandidateFeatures] = {
+  @Named(GuiceNamedConstants.POST_NUtwitter_WTF_FEATURES_FETCHER)
+  def wtfPostNutwitterFeaturesFetcher(stratoClient: Client): Fetcher[Long, Unit, CandidateFeatures] = {
     val attribution = ManhattanAppId("starbuck", "wtf_starbuck")
     stratoClient
-      .fetcher[Long, Unit, CandidateFeatures](WTFPostNuxFeaturesPath)
+      .fetcher[Long, Unit, CandidateFeatures](WTFPostNutwitterFeaturesPath)
       .withAttribution(attribution)
   }
 
   @Provides
   @Singleton
-  @Named(GuiceNamedConstants.EXTENDED_NETWORK)
-  def extendedNetworkFetcher(
+  @Named(GuiceNamedConstants.EtwitterTENDED_NETWORK)
+  def etwittertendedNetworkFetcher(
     stratoClient: Client
-  ): Fetcher[ExtendedNetworkUserKey, Unit, ExtendedNetworkUserVal] = {
+  ): Fetcher[EtwittertendedNetworkUserKey, Unit, EtwittertendedNetworkUserVal] = {
     stratoClient
-      .fetcher[ExtendedNetworkUserKey, Unit, ExtendedNetworkUserVal](ExtendedNetworkCandidatesPath)
+      .fetcher[EtwittertendedNetworkUserKey, Unit, EtwittertendedNetworkUserVal](EtwittertendedNetworkCandidatesPath)
   }
 
   @Provides

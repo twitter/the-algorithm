@@ -7,7 +7,7 @@ import com.twitter.visibility.VisibilityLibrary
 import com.twitter.visibility.builder.VisibilityResult
 import com.twitter.visibility.builder.tweets.CommunityTweetFeaturesV2
 import com.twitter.visibility.builder.tweets.EditTweetFeatures
-import com.twitter.visibility.builder.tweets.ExclusiveTweetFeatures
+import com.twitter.visibility.builder.tweets.EtwitterclusiveTweetFeatures
 import com.twitter.visibility.builder.tweets.NilTweetLabelMaps
 import com.twitter.visibility.builder.tweets.TrustedFriendsFeatures
 import com.twitter.visibility.builder.tweets.TweetFeatures
@@ -19,7 +19,7 @@ import com.twitter.visibility.common.UserRelationshipSource
 import com.twitter.visibility.common.UserSource
 import com.twitter.visibility.models.ContentId
 import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 import com.twitter.visibility.rules.Allow
 import com.twitter.visibility.{thriftscala => vfthrift}
 
@@ -39,8 +39,8 @@ object DESRealtimeVisibilityLibrary {
     val authorFeatures = new AuthorFeatures(UserSource.empty, libraryStatsReceiver)
     val viewerFeatures = new ViewerFeatures(UserSource.empty, libraryStatsReceiver)
     val communityTweetFeatures = new CommunityTweetFeaturesV2(CommunitiesSource.empty)
-    val exclusiveTweetFeatures =
-      new ExclusiveTweetFeatures(UserRelationshipSource.empty, libraryStatsReceiver)
+    val etwitterclusiveTweetFeatures =
+      new EtwitterclusiveTweetFeatures(UserRelationshipSource.empty, libraryStatsReceiver)
     val trustedFriendsTweetFeatures = new TrustedFriendsFeatures(TrustedFriendsSource.empty)
     val editTweetFeatures = new EditTweetFeatures(libraryStatsReceiver)
 
@@ -50,7 +50,7 @@ object DESRealtimeVisibilityLibrary {
       val tweet = request.tweet
       val author = request.author
       val viewer = request.viewer
-      val viewerContext = ViewerContext.fromContext
+      val viewerContetwittert = ViewerContetwittert.fromContetwittert
 
       val featureMap =
         visibilityLibrary.featureMapBuilder(
@@ -59,7 +59,7 @@ object DESRealtimeVisibilityLibrary {
             authorFeatures.forAuthorNoDefaults(author),
             viewerFeatures.forViewerNoDefaults(viewer),
             communityTweetFeatures.forTweetOnly(tweet),
-            exclusiveTweetFeatures.forTweetOnly(tweet),
+            etwitterclusiveTweetFeatures.forTweetOnly(tweet),
             trustedFriendsTweetFeatures.forTweetOnly(tweet),
             editTweetFeatures.forTweet(tweet),
           )
@@ -68,13 +68,13 @@ object DESRealtimeVisibilityLibrary {
       val tweetResult = visibilityLibrary.runRuleEngine(
         ContentId.TweetId(tweet.id),
         featureMap,
-        viewerContext,
+        viewerContetwittert,
         safetyLevel
       )
       val authorResult = visibilityLibrary.runRuleEngine(
         ContentId.UserId(author.id),
         featureMap,
-        viewerContext,
+        viewerContetwittert,
         safetyLevel
       )
 

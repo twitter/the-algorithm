@@ -8,7 +8,7 @@
 
 package com.twitter.ann.faiss;
 
-public class OnDiskInvertedLists extends InvertedLists {
+public class OnDiskInvertedLists etwittertends InvertedLists {
   private transient long swigCPtr;
 
   protected OnDiskInvertedLists(long cPtr, boolean cMemoryOwn) {

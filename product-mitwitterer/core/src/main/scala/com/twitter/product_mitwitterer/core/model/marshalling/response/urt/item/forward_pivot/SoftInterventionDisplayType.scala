@@ -1,0 +1,8 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.item.forward_pivot
+
+sealed trait SoftInterventionDisplayType
+
+case object GetTheLatest etwittertends SoftInterventionDisplayType
+case object StayInformed etwittertends SoftInterventionDisplayType
+case object Misleading etwittertends SoftInterventionDisplayType
+case object GovernmentRequested etwittertends SoftInterventionDisplayType

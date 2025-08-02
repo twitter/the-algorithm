@@ -52,9 +52,9 @@ class MDL(Layer):  # noqa: T000
         Used to initialize bin_values, hash_keys, hash_values,
         bin_ids, bin_values and feature_offsets.
       out_bits:
-        Determines the maximum value for output feature IDs.
-        The dense_shape of the SparseTensor returned by lookup(x)
-        will be [x.shape[0], 1 << output_bits].
+        Determines the matwitterimum value for output feature IDs.
+        The dense_shape of the SparseTensor returned by lookup(twitter)
+        will be [twitter.shape[0], 1 << output_bits].
 
     Optional args:
       hash_keys:
@@ -62,29 +62,29 @@ class MDL(Layer):  # noqa: T000
         The hash map (hash_keys->hash_values) is used for two reasons:
           1. divide inputs into two feature spaces: MDL vs non-MDL
           2. transate the MDL features into a hash_feature ID that MDL understands.
-        The hash_map is expected to contain n_feature items.
+        The hash_map is etwitterpected to contain n_feature items.
       hash_values:
         translates the feature IDs into hash_feature IDs for MDL.
       bin_ids:
         a 1D Tensor of size n_feature * n_bin + 1 which contains
         unique IDs to which the MDL features will be translated to.
-        For example, tf.Tensor(np.arange(n_feature * n_bin)) would produce
+        For etwitterample, tf.Tensor(np.arange(n_feature * n_bin)) would produce
         the most efficient output space.
       bin_values:
         a 1D Tensor aligned with bin_ids.
-        For a given hash_feature ID j, it's value bin's are indexed between
+        For a given hash_feature ID j, it's value bin's are indetwittered between
         `j*n_bin` and `j*n_bin + n_bin-1`.
         As such, bin_ids[j*n_bin+i] is translated from a hash_feature ID of j
         and a inputs value between
         `bin_values[j*n_bin + i]` and `bin_values[j*n_bin+i+1]`.
       feature_offsets:
         a 1D Tensor specifying the starting location of bins for a given feature id.
-        For example, tf.Tensor(np.arange(0, bin_values.size, n_bin, dtype='int64')).
+        For etwitterample, tf.Tensor(np.arange(0, bin_values.size, n_bin, dtype='int64')).
     """
     super(MDL, self).__init__(**kwargs)
     tf.logging.warning("MDL will be deprecated. Please use PercentileDiscretizer instead")
 
-    max_mdl_feature = n_feature * (n_bin + 1)
+    matwitter_mdl_feature = n_feature * (n_bin + 1)
     self._n_feature = n_feature
     self._n_bin = n_bin
 
@@ -100,12 +100,12 @@ class MDL(Layer):  # noqa: T000
     )
     self._bin_ids_initializer = tf.constant_initializer(
       bin_ids if bin_ids is not None
-      else np.empty(max_mdl_feature, dtype=np.int64),
+      else np.empty(matwitter_mdl_feature, dtype=np.int64),
       dtype=np.int64
     )
     self._bin_values_initializer = tf.constant_initializer(
       bin_values if bin_values is not None
-      else np.empty(max_mdl_feature, dtype=np.float32),
+      else np.empty(matwitter_mdl_feature, dtype=np.float32),
       dtype=np.float32
     )
     self._feature_offsets_initializer = tf.constant_initializer(
@@ -114,7 +114,7 @@ class MDL(Layer):  # noqa: T000
       dtype=np.int64
     )
 
-    # note that calling build here is an exception as typically __call__ would call build().
+    # note that calling build here is an etwitterception as typically __call__ would call build().
     # We call it here because we need to initialize hash_map.
     # Also note that the variable_scope is set by add_variable in build()
     if not self.built:

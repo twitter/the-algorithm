@@ -44,7 +44,7 @@ object Guano {
             userId = userId,
             byUserId = byUserId,
             statusId = tweet.id,
-            text = "",
+            tetwittert = "",
             reason = passthrough
               .flatMap(_.reason)
               .flatMap { r => guano.UserActionReason.valueOf(r.name) }

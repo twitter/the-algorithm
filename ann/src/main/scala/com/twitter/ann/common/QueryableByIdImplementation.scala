@@ -9,13 +9,13 @@ import com.twitter.stitch.Stitch
  * @param queryable provides a list of neighbors given an embedding.
  * @tparam T1 type of the query.
  * @tparam T2 type of the result.
- * @tparam P runtime parameters supported by the index.
- * @tparam D distance function used in the index.
+ * @tparam P runtime parameters supported by the indetwitter.
+ * @tparam D distance function used in the indetwitter.
  */
 class QueryableByIdImplementation[T1, T2, P <: RuntimeParams, D <: Distance[D]](
   embeddingProducer: EmbeddingProducer[T1],
   queryable: Queryable[T2, P, D])
-    extends QueryableById[T1, T2, P, D] {
+    etwittertends QueryableById[T1, T2, P, D] {
   override def queryById(
     id: T1,
     numOfNeighbors: Int,

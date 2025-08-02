@@ -6,7 +6,7 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         ":interaction_graph_agg_address_book_edge_snapshot-scala",
-        ":interaction_graph_agg_address_book_vertex_snapshot-scala",
+        ":interaction_graph_agg_address_book_vertetwitter_snapshot-scala",
         "3rdparty/jvm/com/twitter/storehaus:algebra",
         "addressbook/jobs/src/main/scala/com/twitter/addressbook/jobs/simplematches:simple_user_matches-scala",
         "beam-internal/src/main/scala/com/twitter/beam/io/dal",
@@ -45,12 +45,12 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "interaction_graph_agg_address_book_vertex_snapshot",
-    description = "User vertex with addressbook features",
-    java_schema = "com.twitter.interaction_graph.thriftjava.Vertex",
+    base_name = "interaction_graph_agg_address_book_vertetwitter_snapshot",
+    description = "User vertetwitter with addressbook features",
+    java_schema = "com.twitter.interaction_graph.thriftjava.Vertetwitter",
     platform = "java8",
     role = "cassowary",
-    scala_schema = "com.twitter.interaction_graph.thriftscala.Vertex",
+    scala_schema = "com.twitter.interaction_graph.thriftscala.Vertetwitter",
     segment_type = "snapshot",
     tags = ["bazel-compatible"],
     java_dependencies = [

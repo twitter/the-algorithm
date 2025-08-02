@@ -13,12 +13,12 @@ import com.twitter.follow_recommendations.common.clients.cache.ThriftEnumOptionB
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.models.FilterReason
 import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.strato.generated.client.onboarding.UserRecommendabilityWithLongKeysOnUserClientColumn
 import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 abstract case class UserStateActivityPredicate(
   userRecommendabilityClient: UserRecommendabilityWithLongKeysOnUserClientColumn,
@@ -26,7 +26,7 @@ abstract case class UserStateActivityPredicate(
   client: Client,
   statsReceiver: StatsReceiver,
   decider: Decider = Decider.False)
-    extends Predicate[(HasParams with HasClientContext, CandidateUser)] {
+    etwittertends Predicate[(HasParams with HasClientContetwittert, CandidateUser)] {
 
   private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getSimpleName)
 
@@ -41,18 +41,18 @@ abstract case class UserStateActivityPredicate(
   )
 
   override def apply(
-    targetAndCandidate: (HasParams with HasClientContext, CandidateUser)
+    targetAndCandidate: (HasParams with HasClientContetwittert, CandidateUser)
   ): Stitch[PredicateResult] = {
     val userRecommendabilityFetcher = userRecommendabilityClient.fetcher
     val (_, candidate) = targetAndCandidate
 
-    val deciderKey: String = DeciderKey.EnableExperimentalCaching.toString
+    val deciderKey: String = DeciderKey.EnableEtwitterperimentalCaching.toString
     val enableDistributedCaching: Boolean = decider.isAvailable(deciderKey, Some(RandomRecipient))
     val userStateStitch: Stitch[Option[UserState]] = 
       enableDistributedCaching match {
         case true => {
           memcacheClient.readThrough(
-            // add a key prefix to address cache key collisions
+            // add a key prefitwitter to address cache key collisions
             key = "UserActivityPredicate" + candidate.id.toString,
             underlyingCall = () => queryUserRecommendable(candidate.id)
           )
@@ -77,7 +77,7 @@ abstract case class UserStateActivityPredicate(
     
     StatsUtil.profileStitch(resultStitch, stats.scope("apply"))
       .rescue {
-        case e: Exception =>
+        case e: Etwitterception =>
           stats.scope("rescued").counter(e.getClass.getSimpleName).incr()
           Stitch(PredicateResult.Invalid(Set(FilterReason.FailOpen)))
       }
@@ -98,7 +98,7 @@ class MinStateUserActivityPredicate @Inject() (
   userRecommendabilityClient: UserRecommendabilityWithLongKeysOnUserClientColumn,
   client: Client,
   statsReceiver: StatsReceiver)
-    extends UserStateActivityPredicate(
+    etwittertends UserStateActivityPredicate(
       userRecommendabilityClient,
       Set(
         UserState.Light,
@@ -116,7 +116,7 @@ class AllTweeterUserActivityPredicate @Inject() (
   userRecommendabilityClient: UserRecommendabilityWithLongKeysOnUserClientColumn,
   client: Client,
   statsReceiver: StatsReceiver)
-    extends UserStateActivityPredicate(
+    etwittertends UserStateActivityPredicate(
       userRecommendabilityClient,
       Set(
         UserState.HeavyTweeter,
@@ -131,7 +131,7 @@ class HeavyTweeterUserActivityPredicate @Inject() (
   userRecommendabilityClient: UserRecommendabilityWithLongKeysOnUserClientColumn,
   client: Client,
   statsReceiver: StatsReceiver)
-    extends UserStateActivityPredicate(
+    etwittertends UserStateActivityPredicate(
       userRecommendabilityClient,
       Set(
         UserState.HeavyTweeter
@@ -145,7 +145,7 @@ class NonNearZeroUserActivityPredicate @Inject() (
   userRecommendabilityClient: UserRecommendabilityWithLongKeysOnUserClientColumn,
   client: Client,
   statsReceiver: StatsReceiver)
-    extends UserStateActivityPredicate(
+    etwittertends UserStateActivityPredicate(
       userRecommendabilityClient,
       Set(
         UserState.New,

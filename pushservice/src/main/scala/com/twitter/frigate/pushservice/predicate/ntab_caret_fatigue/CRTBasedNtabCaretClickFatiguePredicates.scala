@@ -267,8 +267,8 @@ object CRTBasedNtabCaretClickFatiguePredicates {
                       ], Seq[
                         CaretFeedbackDetails
                       ]] = feedbackDetails.groupBy(feedbackDetail =>
-                        feedbackDetail.genericNotificationMetadata.map(x =>
-                          genericTypeToSeeLessOftenType(x.genericType, cand)))
+                        feedbackDetail.genericNotificationMetadata.map(twitter =>
+                          genericTypeToSeeLessOftenType(twitter.genericType, cand)))
 
                       val isOutsideFatiguePeriodSeq =
                         for (elem <- feedbackDetailsGroupedBySeeLessOftenType if elem._1.isDefined)
@@ -592,7 +592,7 @@ object CRTBasedNtabCaretClickFatiguePredicates {
                       pushCap
                     )
 
-                    val excludedCRTs: Set[CommonRecommendationType] =
+                    val etwittercludedCRTs: Set[CommonRecommendationType] =
                       if (cand.target.params(
                           PushFeatureSwitchParams.AdjustTripHqTweetTriggeredNtabCaretClickFatigue)) {
                         RecTypes.f1FirstDegreeTypes ++ RecTypes.HighQualityTweetTypes
@@ -610,7 +610,7 @@ object CRTBasedNtabCaretClickFatiguePredicates {
                       filteredHistory,
                       Seq(
                         filterInlineFeedbackHistory,
-                        NtabCaretClickFatigueUtils.feedbackModelExcludeCRT(excludedCRTs)),
+                        NtabCaretClickFatigueUtils.feedbackModelEtwittercludeCRT(etwittercludedCRTs)),
                       inlineFeedbackFatigueParam,
                       scopedStats
                     )
@@ -650,7 +650,7 @@ object CRTBasedNtabCaretClickFatiguePredicates {
                       filteredHistory,
                       Seq(
                         filterInlineFeedbackHistory,
-                        NtabCaretClickFatigueUtils.feedbackModelExcludeCRT(
+                        NtabCaretClickFatigueUtils.feedbackModelEtwittercludeCRT(
                           RecTypes.f1FirstDegreeTypes)),
                       promptFeedbackFatigueParam,
                       scopedStats
@@ -824,7 +824,7 @@ object CRTBasedNtabCaretClickFatiguePredicates {
                         filteredHistory,
                         Seq(
                           filterInlineFeedbackHistory,
-                          NtabCaretClickFatigueUtils.feedbackModelExcludeCRT(
+                          NtabCaretClickFatigueUtils.feedbackModelEtwittercludeCRT(
                             RecTypes.f1FirstDegreeTypes)),
                         promptFeedbackFatigueParam,
                         scopedStats
@@ -858,7 +858,7 @@ object CRTBasedNtabCaretClickFatiguePredicates {
       .toSeq
       .collect {
         case (impressionId, feedbacks: Seq[FeedbackModel]) if (feedbacks.nonEmpty) =>
-          val latestFeedback = feedbacks.maxBy(feedback => feedback.timestampMs)
+          val latestFeedback = feedbacks.matwitterBy(feedback => feedback.timestampMs)
           if (latestFeedback.feedbackTypeEnum == feedbackType)
             Some(latestFeedback)
           else None

@@ -10,22 +10,22 @@ cd "$(git rev-parse --show-toplevel)"
 
 function usage {
   cat <<EOF
-    $0 --env [devel | prod] --dc [atla | pdxa]
+    $0 --env [devel | prod] --dc [atla | pdtwittera]
 
 Optional:
-    --dc              atla | pdxa
+    --dc              atla | pdtwittera
     --env             devel | prod
 
 EOF
   if [ -n "$1" ] && [ "$1" != "noargs" ]; then
     echo ""
-    echo "Invalid app args encountered! Expecting: $1"
+    echo "Invalid app args encountered! Etwitterpecting: $1"
   fi
 }
 
 if [ $# -lt 1 ]; then
   usage noargs
-  exit 1
+  etwitterit 1
 fi
 
 CLUSTER=
@@ -58,7 +58,7 @@ JAR_NAME="tweet-simclusters-storm-job.tar"
 JOB_NAME="summingbird_simclusters_v2_tweet_alt_job_${ENV}"
 
 BASE_DIR="src/scala/com/twitter/simclusters_v2/summingbird"
-./bazel bundle --bundle-jvm-archive=tar ${BASE_DIR}:tweet-simclusters-storm-job || exit 1
+./bazel bundle --bundle-jvm-archive=tar ${BASE_DIR}:tweet-simclusters-storm-job || etwitterit 1
 
 # initialize the aurora path for a heron job: <dc>/<role>/<env> where <env> can only be devel or prod 
 AURORA_PATH=${AURORA_PATH:="$CLUSTER/$USER/$ENV"}

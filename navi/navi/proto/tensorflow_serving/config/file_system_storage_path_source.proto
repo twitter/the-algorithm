@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow.serving;
 
@@ -65,7 +65,7 @@ message FileSystemStoragePathSourceConfig {
   // How long to wait between file-system polling to look for children of
   // 'base_path', in seconds.
   //
-  // If set to zero, filesystem will be polled exactly once. If set to a
+  // If set to zero, filesystem will be polled etwitteractly once. If set to a
   // negative value (for testing use only), polling will be entirely disabled.
   int64 file_system_poll_wait_seconds = 3;
 
@@ -79,10 +79,10 @@ message FileSystemStoragePathSourceConfig {
   // TODO(b/30898016): Remove 2019-10-31 or later.
   bool fail_if_zero_versions_at_startup = 4 [deprecated = true];
 
-  // If true, the servable is always expected to exist on the underlying
+  // If true, the servable is always etwitterpected to etwitterist on the underlying
   // filesystem. FileSystemStoragePathSource::Create() and ::UpdateConfig() will
   // fail if, for any configured servables, the file system doesn't currently
   // contain at least one version under the base path. In addition, if a polling
-  // loop find the base path empty, it will not unload existing servables.
+  // loop find the base path empty, it will not unload etwitteristing servables.
   bool servable_versions_always_present = 6;
 }

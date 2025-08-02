@@ -8,16 +8,16 @@ import com.twitter.finatra.kafka.serde.UnKeyedSerde
 import com.twitter.inject.annotations.Flag
 import com.twitter.inject.TwitterModule
 import com.twitter.kafka.client.processor.AtLeastOnceProcessor
-import com.twitter.timelineservice.thriftscala.ContextualizedFavoriteEvent
+import com.twitter.timelineservice.thriftscala.ContetwittertualizedFavoriteEvent
 import com.twitter.unified_user_actions.adapter.tls_favs_event.TlsFavsAdapter
 import com.twitter.unified_user_actions.kafka.CompressionTypeFlag
 import com.twitter.unified_user_actions.kafka.serde.NullableScalaSerdes
 import com.twitter.util.Duration
 import com.twitter.util.StorageUnit
 import com.twitter.util.logging.Logging
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
-object KafkaProcessorTlsFavsModule extends TwitterModule with Logging {
+object KafkaProcessorTlsFavsModule etwittertends TwitterModule with Logging {
   override def modules = Seq(FlagsModule)
 
   private val tlsFavsAdapter = new TlsFavsAdapter
@@ -35,13 +35,13 @@ object KafkaProcessorTlsFavsModule extends TwitterModule with Logging {
     @Flag(FlagsModule.kafkaSinkTopics) kafkaSinkTopics: Seq[String],
     @Flag(FlagsModule.kafkaGroupId) kafkaGroupId: String,
     @Flag(FlagsModule.kafkaProducerClientId) kafkaProducerClientId: String,
-    @Flag(FlagsModule.kafkaMaxPendingRequests) kafkaMaxPendingRequests: Int,
+    @Flag(FlagsModule.kafkaMatwitterPendingRequests) kafkaMatwitterPendingRequests: Int,
     @Flag(FlagsModule.kafkaWorkerThreads) kafkaWorkerThreads: Int,
     @Flag(FlagsModule.commitInterval) commitInterval: Duration,
-    @Flag(FlagsModule.maxPollRecords) maxPollRecords: Int,
-    @Flag(FlagsModule.maxPollInterval) maxPollInterval: Duration,
+    @Flag(FlagsModule.matwitterPollRecords) matwitterPollRecords: Int,
+    @Flag(FlagsModule.matwitterPollInterval) matwitterPollInterval: Duration,
     @Flag(FlagsModule.sessionTimeout) sessionTimeout: Duration,
-    @Flag(FlagsModule.fetchMax) fetchMax: StorageUnit,
+    @Flag(FlagsModule.fetchMatwitter) fetchMatwitter: StorageUnit,
     @Flag(FlagsModule.batchSize) batchSize: StorageUnit,
     @Flag(FlagsModule.linger) linger: Duration,
     @Flag(FlagsModule.bufferMem) bufferMem: StorageUnit,
@@ -52,7 +52,7 @@ object KafkaProcessorTlsFavsModule extends TwitterModule with Logging {
     @Flag(FlagsModule.enableTrustStore) enableTrustStore: Boolean,
     @Flag(FlagsModule.trustStoreLocation) trustStoreLocation: String,
     statsReceiver: StatsReceiver,
-  ): AtLeastOnceProcessor[UnKeyed, ContextualizedFavoriteEvent] = {
+  ): AtLeastOnceProcessor[UnKeyed, ContetwittertualizedFavoriteEvent] = {
     KafkaProcessorProvider.provideDefaultAtLeastOnceProcessor(
       name = processorName,
       kafkaSourceCluster = kafkaSourceCluster,
@@ -60,14 +60,14 @@ object KafkaProcessorTlsFavsModule extends TwitterModule with Logging {
       kafkaSourceTopic = kafkaSourceTopic,
       sourceKeyDeserializer = UnKeyedSerde.deserializer,
       sourceValueDeserializer = NullableScalaSerdes
-        .Thrift[ContextualizedFavoriteEvent](
+        .Thrift[ContetwittertualizedFavoriteEvent](
           statsReceiver.counter("deserializerErrors")).deserializer,
       commitInterval = commitInterval,
-      maxPollRecords = maxPollRecords,
-      maxPollInterval = maxPollInterval,
+      matwitterPollRecords = matwitterPollRecords,
+      matwitterPollInterval = matwitterPollInterval,
       sessionTimeout = sessionTimeout,
-      fetchMax = fetchMax,
-      processorMaxPendingRequests = kafkaMaxPendingRequests,
+      fetchMatwitter = fetchMatwitter,
+      processorMatwitterPendingRequests = kafkaMatwitterPendingRequests,
       processorWorkerThreads = kafkaWorkerThreads,
       adapter = tlsFavsAdapter,
       kafkaSinkTopics = kafkaSinkTopics,

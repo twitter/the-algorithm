@@ -21,7 +21,7 @@ class PercentileDiscretizer(Layer):
   Each PercentileDiscretizer input feature is converted to n_bin bins.
   Each PercentileDiscretizer calibration tries to find bin delimiters such
   that the number of features values per bin is roughly equal (for
-  each given PercentileDiscretizer feature). In other words, bins are calibrated to be approx.
+  each given PercentileDiscretizer feature). In other words, bins are calibrated to be approtwitter.
   equiprobable, according to the given calibration data.
   Note that if an input feature is rarely used, so will its associated output bin/features.
   """
@@ -55,9 +55,9 @@ class PercentileDiscretizer(Layer):
         Used to initialize bin_values, hash_keys, hash_values,
         bin_ids, bin_values and feature_offsets.
       out_bits:
-        Determines the maximum value for output feature IDs.
-        The dense_shape of the SparseTensor returned by lookup(x)
-        will be [x.shape[0], 1 << output_bits].
+        Determines the matwitterimum value for output feature IDs.
+        The dense_shape of the SparseTensor returned by lookup(twitter)
+        will be [twitter.shape[0], 1 << output_bits].
 
     Optional args:
       hash_keys:
@@ -67,24 +67,24 @@ class PercentileDiscretizer(Layer):
           PercentileDiscretizer vs non-PercentileDiscretizer
           2. transate the PercentileDiscretizer features into a hash_feature ID that
           PercentileDiscretizer understands.
-        The hash_map is expected to contain n_feature items.
+        The hash_map is etwitterpected to contain n_feature items.
       hash_values:
         translates the feature IDs into hash_feature IDs for PercentileDiscretizer.
       bin_ids:
         a 1D Tensor of size n_feature * n_bin + 1 which contains
         unique IDs to which the PercentileDiscretizer features will be translated to.
-        For example, tf.Tensor(np.arange(n_feature * n_bin)) would produce
+        For etwitterample, tf.Tensor(np.arange(n_feature * n_bin)) would produce
         the most efficient output space.
       bin_values:
         a 1D Tensor aligned with bin_ids.
-        For a given hash_feature ID j, it's value bin's are indexed between
+        For a given hash_feature ID j, it's value bin's are indetwittered between
         `j*n_bin` and `j*n_bin + n_bin-1`.
         As such, bin_ids[j*n_bin+i] is translated from a hash_feature ID of j
         and a inputs value between
         `bin_values[j*n_bin + i]` and `bin_values[j*n_bin+i+1]`.
       feature_offsets:
         a 1D Tensor specifying the starting location of bins for a given feature id.
-        For example, tf.Tensor(np.arange(0, bin_values.size, n_bin, dtype='int64')).
+        For etwitterample, tf.Tensor(np.arange(0, bin_values.size, n_bin, dtype='int64')).
     """
 
     super(PercentileDiscretizer, self).__init__(**kwargs)
@@ -92,7 +92,7 @@ class PercentileDiscretizer(Layer):
     if not self.built:
       self.build(input_shape=None)
 
-    max_discretizer_feature = n_feature * (n_bin + 1)
+    matwitter_discretizer_feature = n_feature * (n_bin + 1)
     self._n_feature = n_feature
     self._n_bin = n_bin
 
@@ -104,9 +104,9 @@ class PercentileDiscretizer(Layer):
     self._hash_values = (hash_values if hash_values is not None else
      np.empty(n_feature, dtype=np.int64))
     self._bin_ids = (bin_ids if bin_ids is not None else
-     np.empty(max_discretizer_feature, dtype=np.int64))
+     np.empty(matwitter_discretizer_feature, dtype=np.int64))
     self._bin_values = (bin_values if bin_values is not None else
-     np.empty(max_discretizer_feature, dtype=np.float32))
+     np.empty(matwitter_discretizer_feature, dtype=np.float32))
     self._feature_offsets = (feature_offsets if feature_offsets is not None else
      np.empty(n_feature, dtype=np.int64))
     self.num_parts = num_parts
@@ -158,9 +158,9 @@ class PercentileDiscretizer(Layer):
       discretizer_keys, discretizer_vals = libtwml.ops.percentile_discretizer_v2(
         input_ids=keys,  # inc key assigned to feature_id, or -1
         input_vals=vals,  # the observed feature values
-        bin_ids=self._bin_ids,  # n_feat X (n_bin+1) 2D arange
+        bin_ids=self._bin_ids,  # n_feat twitter (n_bin+1) 2D arange
         bin_vals=self._bin_values,  # bin boundaries
-        feature_offsets=self._feature_offsets,  # 0 : nbin_1 : max_feat
+        feature_offsets=self._feature_offsets,  # 0 : nbin_1 : matwitter_feat
         output_bits=self._out_bits,
         feature_ids=tf.make_tensor_proto(self._hash_keys),  # feature ids to build internal hash map
         feature_indices=tf.make_tensor_proto(self._hash_values),  # keys associated w/ feat. indices
@@ -171,7 +171,7 @@ class PercentileDiscretizer(Layer):
     else:
       discretizer_keys = twml.util.limit_bits(keys, self._out_bits)
       discretizer_vals = vals
-      # don't 2x the input.
+      # don't 2twitter the input.
       keep_inputs = False
 
     batch_size = tf.to_int64(inputs.dense_shape[0])

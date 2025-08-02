@@ -11,7 +11,7 @@ import com.twitter.timelines.util.stats.RequestScope
 import com.twitter.util.Duration
 
 class RecapAuthorRepositoryBuilder(config: RuntimeConfiguration)
-    extends CandidatesRepositoryBuilder(config) {
+    etwittertends CandidatesRepositoryBuilder(config) {
   override val clientSubId = "recap_by_author"
   override val requestScope: RequestScope = RequestScopes.RecapAuthorSource
   override val followGraphDataFieldsToFetch: SgsFollowGraphDataFields.ValueSet =
@@ -39,7 +39,7 @@ class RecapAuthorRepositoryBuilder(config: RuntimeConfiguration)
     config.underlyingClients.createEarlybirdClient(
       scope = scope,
       requestTimeout = EarlybirdRequestTimeout,
-      // timeout is slight less than timelineranker client timeout in timelinemixer
+      // timeout is slight less than timelineranker client timeout in timelinemitwitterer
       timeout = EarlybirdTimeout,
       retryPolicy = RetryPolicy.Never
     )

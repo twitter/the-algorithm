@@ -2,7 +2,7 @@ package com.twitter.search.earlybird.segment;
 
 import java.util.Optional;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.util.io.EmptyRecordReader;
 import com.twitter.search.common.util.io.recordreader.RecordReader;
 import com.twitter.search.earlybird.document.TweetDocument;
@@ -10,7 +10,7 @@ import com.twitter.search.earlybird.partition.SegmentInfo;
 
 /**
  * A SegmentDataReaderSet that returns no data. Uses a DocumentReader that is
- * always caught up, but never gets exhausted.
+ * always caught up, but never gets etwitterhausted.
  * Can be used for bringing up an earlybird against a static set of segments,
  * and will not incorporate any new updates.
  */
@@ -45,7 +45,7 @@ public class EmptySegmentDataReaderSet implements SegmentDataReaderSet {
 
   @Override
   public RecordReader<TweetDocument> newDocumentReader(SegmentInfo segmentInfo)
-      throws Exception {
+      throws Etwitterception {
     return null;
   }
 

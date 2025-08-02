@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
-import com.twitter.search.common.indexing.thriftjava.PackedFeatures;
+import com.twitter.search.common.indetwittering.thriftjava.PackedFeatures;
 import com.twitter.search.common.schema.base.FeatureConfiguration;
 
 /**
@@ -26,27 +26,27 @@ public abstract class IntegerEncodedFeatures {
   public abstract void setInt(int pos, int value);
 
   /**
-   * Get the maximum number of integers to hold features.
+   * Get the matwitterimum number of integers to hold features.
    * @return the number of integers to represent all features.
    */
   public abstract int getNumInts();
 
   /**
    * Test to see if the given feature is true or non-zero. Useful for one bit features.
-   * @param feature feature to examine
+   * @param feature feature to etwitteramine
    * @return true if feature is non-zero
    */
   public boolean isFlagSet(FeatureConfiguration feature) {
-    return (getInt(feature.getValueIndex()) & feature.getBitMask()) != 0;
+    return (getInt(feature.getValueIndetwitter()) & feature.getBitMask()) != 0;
   }
 
   public IntegerEncodedFeatures setFlag(FeatureConfiguration feature) {
-    setInt(feature.getValueIndex(), getInt(feature.getValueIndex()) | feature.getBitMask());
+    setInt(feature.getValueIndetwitter(), getInt(feature.getValueIndetwitter()) | feature.getBitMask());
     return this;
   }
 
   public IntegerEncodedFeatures clearFlag(FeatureConfiguration feature) {
-    setInt(feature.getValueIndex(), getInt(feature.getValueIndex()) & feature.getInverseBitMask());
+    setInt(feature.getValueIndetwitter(), getInt(feature.getValueIndetwitter()) & feature.getInverseBitMask());
     return this;
   }
 
@@ -68,7 +68,7 @@ public abstract class IntegerEncodedFeatures {
    * @return the value of the feature
    */
   public int getFeatureValue(FeatureConfiguration feature) {
-    return (getInt(feature.getValueIndex()) & feature.getBitMask())
+    return (getInt(feature.getValueIndetwitter()) & feature.getBitMask())
             >>> feature.getBitStartPosition();
   }
 
@@ -79,19 +79,19 @@ public abstract class IntegerEncodedFeatures {
    */
   public IntegerEncodedFeatures setFeatureValue(FeatureConfiguration feature, int value) {
     Preconditions.checkState(
-        value <= feature.getMaxValue(),
-        "Feature value, %s, is greater than the max value allowed for this feature. "
-            + "Feature: %s, Max value: %s",
-        value, feature.getName(), feature.getMaxValue());
+        value <= feature.getMatwitterValue(),
+        "Feature value, %s, is greater than the matwitter value allowed for this feature. "
+            + "Feature: %s, Matwitter value: %s",
+        value, feature.getName(), feature.getMatwitterValue());
 
     // Clear the value of the given feature in its int.
-    int temp = getInt(feature.getValueIndex()) & feature.getInverseBitMask();
+    int temp = getInt(feature.getValueIndetwitter()) & feature.getInverseBitMask();
 
     // Set the new feature value. Applying the bit mask here ensures that other features in the
     // same int are not modified by mistake.
     temp |= (value << feature.getBitStartPosition()) & feature.getBitMask();
 
-    setInt(feature.getValueIndex(), temp);
+    setInt(feature.getValueIndetwitter(), temp);
     return this;
   }
 
@@ -108,12 +108,12 @@ public abstract class IntegerEncodedFeatures {
   }
 
   /**
-   * Increment a feature if its not at its maximum value.
+   * Increment a feature if its not at its matwitterimum value.
    * @return whether the feature is incremented.
    */
-  public boolean incrementIfNotMaximum(FeatureConfiguration feature) {
+  public boolean incrementIfNotMatwitterimum(FeatureConfiguration feature) {
     int newValue = getFeatureValue(feature) + 1;
-    if (newValue <= feature.getMaxValue()) {
+    if (newValue <= feature.getMatwitterValue()) {
       setFeatureValue(feature, newValue);
       return true;
     } else {

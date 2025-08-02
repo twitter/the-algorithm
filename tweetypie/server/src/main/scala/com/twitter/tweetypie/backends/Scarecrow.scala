@@ -7,7 +7,7 @@ import com.twitter.finagle.service.RetryPolicy
 import com.twitter.service.gen.scarecrow.thriftscala.CheckTweetResponse
 import com.twitter.service.gen.scarecrow.thriftscala.Retweet
 import com.twitter.service.gen.scarecrow.thriftscala.TieredAction
-import com.twitter.service.gen.scarecrow.thriftscala.TweetContext
+import com.twitter.service.gen.scarecrow.thriftscala.TweetContetwittert
 import com.twitter.service.gen.scarecrow.thriftscala.TweetNew
 import com.twitter.service.gen.scarecrow.{thriftscala => scarecrow}
 import com.twitter.servo.util.FutureArrow
@@ -17,7 +17,7 @@ object Scarecrow {
   import Backend._
 
   type CheckTweet2 =
-    FutureArrow[(scarecrow.TweetNew, scarecrow.TweetContext), scarecrow.CheckTweetResponse]
+    FutureArrow[(scarecrow.TweetNew, scarecrow.TweetContetwittert), scarecrow.CheckTweetResponse]
   type CheckRetweet = FutureArrow[scarecrow.Retweet, scarecrow.TieredAction]
 
   def fromClient(client: scarecrow.ScarecrowService.MethodPerEndpoint): Scarecrow =
@@ -31,32 +31,32 @@ object Scarecrow {
     readTimeout: Duration,
     writeTimeout: Duration,
     timeoutBackoffs: Stream[Duration],
-    scarecrowExceptionBackoffs: Stream[Duration]) {
-    def apply(svc: Scarecrow, ctx: Backend.Context): Scarecrow =
+    scarecrowEtwitterceptionBackoffs: Stream[Duration]) {
+    def apply(svc: Scarecrow, cttwitter: Backend.Contetwittert): Scarecrow =
       new Scarecrow {
-        val checkTweet2: FutureArrow[(TweetNew, TweetContext), CheckTweetResponse] =
-          writePolicy("checkTweet2", ctx)(svc.checkTweet2)
+        val checkTweet2: FutureArrow[(TweetNew, TweetContetwittert), CheckTweetResponse] =
+          writePolicy("checkTweet2", cttwitter)(svc.checkTweet2)
         val checkRetweet: FutureArrow[Retweet, TieredAction] =
-          writePolicy("checkRetweet", ctx)(svc.checkRetweet)
+          writePolicy("checkRetweet", cttwitter)(svc.checkRetweet)
         def ping(): Future[Unit] = svc.ping()
       }
 
-    private[this] def readPolicy[A, B](name: String, ctx: Context): Builder[A, B] =
-      defaultPolicy(name, readTimeout, readRetryPolicy, ctx)
+    private[this] def readPolicy[A, B](name: String, cttwitter: Contetwittert): Builder[A, B] =
+      defaultPolicy(name, readTimeout, readRetryPolicy, cttwitter)
 
-    private[this] def writePolicy[A, B](name: String, ctx: Context): Builder[A, B] =
-      defaultPolicy(name, writeTimeout, nullRetryPolicy, ctx)
+    private[this] def writePolicy[A, B](name: String, cttwitter: Contetwittert): Builder[A, B] =
+      defaultPolicy(name, writeTimeout, nullRetryPolicy, cttwitter)
 
     private[this] def readRetryPolicy[B]: RetryPolicy[Try[B]] =
       RetryPolicy.combine[Try[B]](
         RetryPolicyBuilder.timeouts[B](timeoutBackoffs),
-        RetryPolicy.backoff(Backoff.fromStream(scarecrowExceptionBackoffs)) {
-          case Throw(ex: scarecrow.InternalServerError) => true
+        RetryPolicy.backoff(Backoff.fromStream(scarecrowEtwitterceptionBackoffs)) {
+          case Throw(etwitter: scarecrow.InternalServerError) => true
         }
       )
 
     private[this] def nullRetryPolicy[B]: RetryPolicy[Try[B]] =
-      // retry policy that runs once, and will not retry on any exception
+      // retry policy that runs once, and will not retry on any etwitterception
       RetryPolicy.backoff(Backoff.fromStream(Stream(0.milliseconds))) {
         case Throw(_) => false
       }

@@ -6,7 +6,7 @@ namespace rb TweetyPie
 namespace go tweetypie
 
 include "com/twitter/tseng/withholding/withholding.thrift"
-include "com/twitter/tweetypie/transient_context.thrift"
+include "com/twitter/tweetypie/transient_contetwittert.thrift"
 include "com/twitter/tweetypie/tweet.thrift"
 include "com/twitter/tweetypie/tweet_audit.thrift"
 include "com/twitter/gizmoduck/user.thrift"
@@ -52,8 +52,8 @@ struct TweetCreateEvent {
    * This is the id of the user who owns
    * tweet.core_data.share.parent_status_id. In many cases this will be the
    * same as source_user.id; it is different when the tweet is created via
-   * another retweet. See the explanation of source_user_id and parent_user_id
-   * in Share for examples.
+   * another retweet. See the etwitterplanation of source_user_id and parent_user_id
+   * in Share for etwitteramples.
    */
   5: optional i64 retweet_parent_user_id (personalDataType = 'UserId')
 
@@ -70,18 +70,18 @@ struct TweetCreateEvent {
   /**
    * Arbitrary passthrough metadata about tweet creation.
    *
-   * See TweetCreateContextKey for more details about the data that may be
+   * See TweetCreateContetwittertKey for more details about the data that may be
    * present here.
    */
-  8: optional map<tweet.TweetCreateContextKey, string> additional_context (personalDataTypeValue='UserId')
+  8: optional map<tweet.TweetCreateContetwittertKey, string> additional_contetwittert (personalDataTypeValue='UserId')
 
   /**
    * Additional request arguments passed through to consumers.
    */
-  9: optional transient_context.TransientCreateContext transient_context
+  9: optional transient_contetwittert.TransientCreateContetwittert transient_contetwittert
 
   /**
-  * Flag exposing if a quoted tweet has been quoted by the user previously.
+  * Flag etwitterposing if a quoted tweet has been quoted by the user previously.
   **/
   10: optional bool quoter_has_already_quoted_tweet
 }(persisted='true', hasPersonalData = 'true')
@@ -102,7 +102,7 @@ struct TweetDeleteEvent {
    * belonging to deactivated accounts).
    *
    * These deletions occur in high volume spikes and the tweets have already been made invisible
-   * externally. You may wish to process them in batches or offline.
+   * etwitterternally. You may wish to process them in batches or offline.
    */
   3: optional bool is_user_erasure
 
@@ -156,7 +156,7 @@ struct TweetScrubGeoEvent {
 
 /**
  * When a user deletes the location information for their tweets, we send one
- * UserScrubGeoEvent with the max tweet ID that was scrubbed (in addition to
+ * UserScrubGeoEvent with the matwitter tweet ID that was scrubbed (in addition to
  * sending multiple TweetScrubGeoEvents as described above).
  *
  * Users cause this by selecting "Delete location information" in Settings ->
@@ -165,7 +165,7 @@ struct TweetScrubGeoEvent {
  */
 struct UserScrubGeoEvent {
   1: i64 user_id (personalDataType = 'UserId')
-  2: i64 max_tweet_id (personalDataType = 'TweetId')
+  2: i64 matwitter_tweet_id (personalDataType = 'TweetId')
 }(persisted='true', hasPersonalData = 'true')
 
 struct TweetTakedownEvent {

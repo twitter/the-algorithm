@@ -20,7 +20,7 @@ class TFModelInitializerBuilder:
             "feature_nameN": 0.0
           },
           "discretized": {
-            # (feature name : index aligned lists of bin_boundaries and weights
+            # (feature name : indetwitter aligned lists of bin_boundaries and weights
             "feature_name_1": {
               "bin_boundaries": [1, ..., inf],
               "weights": [0.0, ..., 0.0]
@@ -51,11 +51,11 @@ class TFModelInitializerBuilder:
     if len(discretized_features) == 0:
       return
 
-    num_bins = max([len(bins) for bins in discretized_features.values()])
+    num_bins = matwitter([len(bins) for bins in discretized_features.values()])
 
     bin_boundaries_and_weights = {}
     for feature_name in discretized_features:
-      bin_boundaries_and_weights[feature_name] = self._extract_bin_boundaries_and_weights(
+      bin_boundaries_and_weights[feature_name] = self._etwittertract_bin_boundaries_and_weights(
         discretized_features[feature_name], num_bins)
 
     tf_model_initializer["features"]["discretized"] = bin_boundaries_and_weights
@@ -63,7 +63,7 @@ class TFModelInitializerBuilder:
   def _dedup_binary_features(self, binary_features, discretized_features):
     [binary_features.pop(feature_name) for feature_name in discretized_features]
 
-  def _extract_bin_boundaries_and_weights(self, discretized_feature_buckets, num_bins):
+  def _etwittertract_bin_boundaries_and_weights(self, discretized_feature_buckets, num_bins):
     bin_boundary_weight_pairs = []
 
     for bucket in discretized_feature_buckets:

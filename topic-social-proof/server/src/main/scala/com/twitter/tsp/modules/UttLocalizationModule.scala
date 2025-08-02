@@ -7,9 +7,9 @@ import com.twitter.topiclisting.TopicListing
 import com.twitter.topiclisting.clients.utt.UttClient
 import com.twitter.topiclisting.utt.UttLocalization
 import com.twitter.topiclisting.utt.UttLocalizationImpl
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
-object UttLocalizationModule extends TwitterModule {
+object UttLocalizationModule etwittertends TwitterModule {
 
   @Provides
   @Singleton

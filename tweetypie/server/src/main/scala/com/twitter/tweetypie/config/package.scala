@@ -1,11 +1,11 @@
 package com.twitter.tweetypie
 
-import com.twitter.context.thriftscala.Viewer
+import com.twitter.contetwittert.thriftscala.Viewer
 
 package object config {
-  // Bring Tweetypie permitted TwitterContext into scope
-  private[config] val TwitterContext =
-    com.twitter.context.TwitterContext(com.twitter.tweetypie.TwitterContextPermit)
+  // Bring Tweetypie permitted TwitterContetwittert into scope
+  private[config] val TwitterContetwittert =
+    com.twitter.contetwittert.TwitterContetwittert(com.twitter.tweetypie.TwitterContetwittertPermit)
 
-  def getAppId: Option[AppId] = TwitterContext().getOrElse(Viewer()).clientApplicationId
+  def getAppId: Option[AppId] = TwitterContetwittert().getOrElse(Viewer()).clientApplicationId
 }

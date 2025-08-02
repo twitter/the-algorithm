@@ -1,7 +1,7 @@
 package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
 
-import com.twitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
-import com.twitter.cortex.deepbird.thriftjava.ModelSelector
+import com.twitter.cortetwitter.deepbird.thriftjava.DeepbirdPredictionService
+import com.twitter.cortetwitter.deepbird.thriftjava.ModelSelector
 import com.twitter.finagle.stats.Stat
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.follow_recommendations.common.models.CandidateUser
@@ -12,19 +12,19 @@ import com.twitter.ml.api.DataRecord
 import com.twitter.ml.api.Feature
 import com.twitter.ml.api.RichDataRecord
 import com.twitter.ml.prediction_service.{BatchPredictionRequest => JBatchPredictionRequest}
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.timelines.configapi.HasParams
 import com.twitter.util.Future
-import com.twitter.util.TimeoutException
+import com.twitter.util.TimeoutEtwitterception
 import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
 
 /**
  * Generic trait that implements the scoring given a deepbirdClient
- * To test out a new model, create a scorer extending this trait, override the modelName and inject the scorer
+ * To test out a new model, create a scorer etwittertending this trait, override the modelName and inject the scorer
  */
-trait DeepbirdScorer extends Scorer {
+trait DeepbirdScorer etwittertends Scorer {
   def modelName: String
   def predictionFeature: Feature.Continuous
   // Set a default batchSize of 100 when making model prediction calls to the Deepbird V2 prediction server
@@ -67,10 +67,10 @@ trait DeepbirdScorer extends Scorer {
    */
   @Deprecated
   def score(
-    target: HasClientContext with HasParams with HasDisplayLocation with HasDebugOptions,
+    target: HasClientContetwittert with HasParams with HasDisplayLocation with HasDebugOptions,
     candidates: Seq[CandidateUser]
   ): Seq[Option[Score]] =
-    throw new UnsupportedOperationException(
+    throw new UnsupportedOperationEtwitterception(
       "For instances of DeepbirdScorer this operation is not defined. Please use " +
         "`def score(records: Seq[DataRecord]): Stitch[Seq[Score]]` " +
         "instead.")
@@ -137,11 +137,11 @@ trait DeepbirdScorer extends Scorer {
               }
             }
             .rescue {
-              case e: TimeoutException => // DBv2 prediction calls that timed out
+              case e: TimeoutEtwitterception => // DBv2 prediction calls that timed out
                 numTimedOutBatchRequests.incr()
                 stats.counter(e.getClass.getSimpleName).incr()
                 Future.value(dataRecords.map(_ => Option(DefaultPredictionScore)))
-              case e: Exception => // other generic DBv2 prediction call failures
+              case e: Etwitterception => // other generic DBv2 prediction call failures
                 stats.counter(e.getClass.getSimpleName).incr()
                 Future.value(dataRecords.map(_ => Option(DefaultPredictionScore)))
             }

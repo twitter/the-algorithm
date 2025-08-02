@@ -6,14 +6,14 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
+import com.twitter.common_internal.tetwittert.version.PenguinVersion;
 import com.twitter.search.common.debug.thriftjava.DebugEvents;
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
 import com.twitter.search.common.schema.thriftjava.ThriftDocument;
 import com.twitter.search.common.schema.thriftjava.ThriftField;
 import com.twitter.search.common.schema.thriftjava.ThriftFieldData;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
+import com.twitter.search.common.schema.thriftjava.ThriftIndetwitteringEvent;
+import com.twitter.search.common.schema.thriftjava.ThriftIndetwitteringEventType;
 import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
 
 /**
@@ -40,10 +40,10 @@ public class ThriftVersionedEventsConverter {
    */
   public IngesterThriftVersionedEvents toDelete(
       long tweetId, long userId, DebugEvents debugEvents) {
-    ThriftIndexingEvent thriftIndexingEvent = new ThriftIndexingEvent()
-        .setEventType(ThriftIndexingEventType.DELETE)
+    ThriftIndetwitteringEvent thriftIndetwitteringEvent = new ThriftIndetwitteringEvent()
+        .setEventType(ThriftIndetwitteringEventType.DELETE)
         .setUid(tweetId);
-    return toThriftVersionedEvents(tweetId, userId, thriftIndexingEvent, debugEvents);
+    return toThriftVersionedEvents(tweetId, userId, thriftIndetwitteringEvent, debugEvents);
   }
 
   /**
@@ -68,11 +68,11 @@ public class ThriftVersionedEventsConverter {
         .setFieldData(new ThriftFieldData().setLongValue(value));
     ThriftDocument document = new ThriftDocument()
         .setFields(Lists.newArrayList(updateField));
-    ThriftIndexingEvent thriftIndexingEvent = new ThriftIndexingEvent()
-        .setEventType(ThriftIndexingEventType.OUT_OF_ORDER_APPEND)
+    ThriftIndetwitteringEvent thriftIndetwitteringEvent = new ThriftIndetwitteringEvent()
+        .setEventType(ThriftIndetwitteringEventType.OUT_OF_ORDER_APPEND)
         .setUid(tweetId)
         .setDocument(document);
-    return toThriftVersionedEvents(tweetId, UNUSED_USER_ID, thriftIndexingEvent, debugEvents);
+    return toThriftVersionedEvents(tweetId, UNUSED_USER_ID, thriftIndetwitteringEvent, debugEvents);
   }
 
 
@@ -98,25 +98,25 @@ public class ThriftVersionedEventsConverter {
         .setFieldData(new ThriftFieldData().setIntValue(value));
     ThriftDocument document = new ThriftDocument()
         .setFields(Lists.newArrayList(updateField));
-    ThriftIndexingEvent thriftIndexingEvent = new ThriftIndexingEvent()
-        .setEventType(ThriftIndexingEventType.PARTIAL_UPDATE)
+    ThriftIndetwitteringEvent thriftIndetwitteringEvent = new ThriftIndetwitteringEvent()
+        .setEventType(ThriftIndetwitteringEventType.PARTIAL_UPDATE)
         .setUid(tweetId)
         .setDocument(document);
-    return toThriftVersionedEvents(tweetId, UNUSED_USER_ID, thriftIndexingEvent, debugEvents);
+    return toThriftVersionedEvents(tweetId, UNUSED_USER_ID, thriftIndetwitteringEvent, debugEvents);
   }
 
-  // Wraps the given ThriftIndexingEvent into a ThriftVersionedEvents instance.
+  // Wraps the given ThriftIndetwitteringEvent into a ThriftVersionedEvents instance.
   private IngesterThriftVersionedEvents toThriftVersionedEvents(
-      long tweetId, long userId, ThriftIndexingEvent thriftIndexingEvent, DebugEvents debugEvents) {
-    if (!thriftIndexingEvent.isSetCreateTimeMillis()
+      long tweetId, long userId, ThriftIndetwitteringEvent thriftIndetwitteringEvent, DebugEvents debugEvents) {
+    if (!thriftIndetwitteringEvent.isSetCreateTimeMillis()
         && (debugEvents != null)
         && debugEvents.isSetCreatedAt()) {
-      thriftIndexingEvent.setCreateTimeMillis(debugEvents.getCreatedAt().getEventTimestampMillis());
+      thriftIndetwitteringEvent.setCreateTimeMillis(debugEvents.getCreatedAt().getEventTimestampMillis());
     }
 
-    Map<Byte, ThriftIndexingEvent> versionedEvents = new HashMap<>();
+    Map<Byte, ThriftIndetwitteringEvent> versionedEvents = new HashMap<>();
     for (PenguinVersion penguinVersion : penguinVersions) {
-      versionedEvents.put(penguinVersion.getByteValue(), thriftIndexingEvent);
+      versionedEvents.put(penguinVersion.getByteValue(), thriftIndetwitteringEvent);
     }
 
     IngesterThriftVersionedEvents events =

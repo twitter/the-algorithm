@@ -55,7 +55,7 @@ object AsyncDeleteAdditionalFieldsBuilder {
     def getUser(userId: UserId): Future[User] =
       Stitch.run(
         userRepo(UserKey.byId(userId), userQueryOpts)
-          .rescue { case NotFound => Stitch.exception(HandlerError.userNotFound(userId)) }
+          .rescue { case NotFound => Stitch.etwitterception(HandlerError.userNotFound(userId)) }
       )
 
     request =>

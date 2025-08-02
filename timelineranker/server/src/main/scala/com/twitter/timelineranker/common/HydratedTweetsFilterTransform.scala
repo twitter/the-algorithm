@@ -16,7 +16,7 @@ object HydratedTweetsFilterTransform {
   val DefaultNumRetweetsAllowed = 1
 
   // Number of duplicate retweets (including the first one) allowed.
-  // For example,
+  // For etwitterample,
   // If there are 7 retweets of a given tweet, the following value will cause 5 of them
   // to be returned after filtering and the additional 2 will be filtered out.
   val NumDuplicateRetweetsAllowed = 5
@@ -28,7 +28,7 @@ object HydratedTweetsFilterTransform {
  *
  * @param useFollowGraphData - use follow graph for filtering; otherwise only does filtering
  *                           independent of follow graph data
- * @param useSourceTweets - only needed when filtering extended replies
+ * @param useSourceTweets - only needed when filtering etwittertended replies
  * @param statsReceiver - scoped stats receiver
  */
 class HydratedTweetsFilterTransform(
@@ -38,7 +38,7 @@ class HydratedTweetsFilterTransform(
   useSourceTweets: Boolean,
   statsReceiver: StatsReceiver,
   numRetweetsAllowed: Int = HydratedTweetsFilterTransform.DefaultNumRetweetsAllowed)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+    etwittertends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
   import HydratedTweetsFilterTransform._
 
   val logger: Logger = Logger.get(getClass.getSimpleName)

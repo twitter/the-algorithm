@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird_root;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javatwitter.inject.Named;
+import javatwitter.inject.Singleton;
 
 import com.google.inject.Key;
 import com.google.inject.Provides;
@@ -29,9 +29,9 @@ import com.twitter.search.earlybird_root.caching.StrictRecencyCache;
 import com.twitter.search.earlybird_root.caching.TermStatsCache;
 import com.twitter.search.earlybird_root.caching.TopTweetsCache;
 import com.twitter.search.earlybird_root.caching.TopTweetsServicePostProcessor;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 
-public class RealtimeRootAppModule extends TwitterModule {
+public class RealtimeRootAppModule etwittertends TwitterModule {
   private static final long RECENCY_CACHE_TTL_MILLIS = 20000L;
   private static final long RELEVANCE_CACHE_TTL_MILLIS = 20000L;
   private static final long FACETS_CACHE_TTL_MILLIS = 300000L;
@@ -53,11 +53,11 @@ public class RealtimeRootAppModule extends TwitterModule {
   Cache<EarlybirdRequest, EarlybirdResponse> provideRecencyCache(
       JavaClient client,
       DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
+      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFItwitter) String serializedKeyPrefitwitter,
+      @Named(SearchRootModule.NAMED_CACHE_KEY_MAtwitter_BYTES) int cacheKeyMatwitterBytes,
+      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAtwitter_BYTES) int cacheValueMatwitterBytes) {
     return EarlybirdCacheCommonModule.createCache(client, decider, "realtime_recency_root",
-        serializedKeyPrefix, RECENCY_CACHE_TTL_MILLIS, cacheKeyMaxBytes, cacheValueMaxBytes);
+        serializedKeyPrefitwitter, RECENCY_CACHE_TTL_MILLIS, cacheKeyMatwitterBytes, cacheValueMatwitterBytes);
   }
 
   @Provides
@@ -66,11 +66,11 @@ public class RealtimeRootAppModule extends TwitterModule {
   Cache<EarlybirdRequest, EarlybirdResponse> provideRelevanceCache(
       JavaClient client,
       DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
+      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFItwitter) String serializedKeyPrefitwitter,
+      @Named(SearchRootModule.NAMED_CACHE_KEY_MAtwitter_BYTES) int cacheKeyMatwitterBytes,
+      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAtwitter_BYTES) int cacheValueMatwitterBytes) {
     return EarlybirdCacheCommonModule.createCache(client, decider, "realtime_relevance_root",
-        serializedKeyPrefix, RELEVANCE_CACHE_TTL_MILLIS, cacheKeyMaxBytes, cacheValueMaxBytes);
+        serializedKeyPrefitwitter, RELEVANCE_CACHE_TTL_MILLIS, cacheKeyMatwitterBytes, cacheValueMatwitterBytes);
   }
 
   @Provides
@@ -79,11 +79,11 @@ public class RealtimeRootAppModule extends TwitterModule {
   Cache<EarlybirdRequest, EarlybirdResponse> provideStrictRecencyCache(
       JavaClient client,
       DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
+      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFItwitter) String serializedKeyPrefitwitter,
+      @Named(SearchRootModule.NAMED_CACHE_KEY_MAtwitter_BYTES) int cacheKeyMatwitterBytes,
+      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAtwitter_BYTES) int cacheValueMatwitterBytes) {
     return EarlybirdCacheCommonModule.createCache(client, decider, "realtime_strict_recency_root",
-        serializedKeyPrefix, RECENCY_CACHE_TTL_MILLIS, cacheKeyMaxBytes, cacheValueMaxBytes);
+        serializedKeyPrefitwitter, RECENCY_CACHE_TTL_MILLIS, cacheKeyMatwitterBytes, cacheValueMatwitterBytes);
   }
 
   @Provides
@@ -92,11 +92,11 @@ public class RealtimeRootAppModule extends TwitterModule {
   Cache<EarlybirdRequest, EarlybirdResponse> provideFacetsCache(
       JavaClient client,
       DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
+      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFItwitter) String serializedKeyPrefitwitter,
+      @Named(SearchRootModule.NAMED_CACHE_KEY_MAtwitter_BYTES) int cacheKeyMatwitterBytes,
+      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAtwitter_BYTES) int cacheValueMatwitterBytes) {
     return EarlybirdCacheCommonModule.createCache(client, decider, "realtime_facets_root",
-        serializedKeyPrefix, FACETS_CACHE_TTL_MILLIS, cacheKeyMaxBytes, cacheValueMaxBytes);
+        serializedKeyPrefitwitter, FACETS_CACHE_TTL_MILLIS, cacheKeyMatwitterBytes, cacheValueMatwitterBytes);
   }
 
   @Provides
@@ -105,11 +105,11 @@ public class RealtimeRootAppModule extends TwitterModule {
   Cache<EarlybirdRequest, EarlybirdResponse> provideTermStatsCache(
       JavaClient client,
       DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
+      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFItwitter) String serializedKeyPrefitwitter,
+      @Named(SearchRootModule.NAMED_CACHE_KEY_MAtwitter_BYTES) int cacheKeyMatwitterBytes,
+      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAtwitter_BYTES) int cacheValueMatwitterBytes) {
     return EarlybirdCacheCommonModule.createCache(client, decider, "realtime_termstats_root",
-        serializedKeyPrefix, TERMSTATS_CACHE_TTL_MILLIS, cacheKeyMaxBytes, cacheValueMaxBytes);
+        serializedKeyPrefitwitter, TERMSTATS_CACHE_TTL_MILLIS, cacheKeyMatwitterBytes, cacheValueMatwitterBytes);
   }
 
   @Provides
@@ -118,12 +118,12 @@ public class RealtimeRootAppModule extends TwitterModule {
   Cache<EarlybirdRequest, EarlybirdResponse> provideTopTweetsCache(
       JavaClient client,
       DefaultForcedCacheMissDecider decider,
-      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFIX) String serializedKeyPrefix,
-      @Named(SearchRootModule.NAMED_CACHE_KEY_MAX_BYTES) int cacheKeyMaxBytes,
-      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAX_BYTES) int cacheValueMaxBytes) {
+      @Named(SearchRootModule.NAMED_SERIALIZED_KEY_PREFItwitter) String serializedKeyPrefitwitter,
+      @Named(SearchRootModule.NAMED_CACHE_KEY_MAtwitter_BYTES) int cacheKeyMatwitterBytes,
+      @Named(SearchRootModule.NAMED_CACHE_VALUE_MAtwitter_BYTES) int cacheValueMatwitterBytes) {
     return EarlybirdCacheCommonModule.createCache(client, decider, "realtime_toptweets_root",
-        serializedKeyPrefix, TopTweetsServicePostProcessor.CACHE_AGE_IN_MS,
-        cacheKeyMaxBytes, cacheValueMaxBytes);
+        serializedKeyPrefitwitter, TopTweetsServicePostProcessor.CACHE_AGE_IN_MS,
+        cacheKeyMatwitterBytes, cacheValueMatwitterBytes);
   }
 
   @Provides
@@ -140,7 +140,7 @@ public class RealtimeRootAppModule extends TwitterModule {
   }
 
   @Provides
-  public PartitionLoggingSupport<EarlybirdRequestContext> providePartitionLoggingSupport() {
+  public PartitionLoggingSupport<EarlybirdRequestContetwittert> providePartitionLoggingSupport() {
     return new EarlybirdServicePartitionLoggingSupport();
   }
 

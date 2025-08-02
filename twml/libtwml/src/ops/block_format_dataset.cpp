@@ -24,7 +24,7 @@ inline std::string stripPath(std::string const &file_name) {
   return file_name.substr(pos + 1);
 }
 
-inline std::string getExtension(std::string const &file_name) {
+inline std::string getEtwittertension(std::string const &file_name) {
   const auto stripped_file_name = stripPath(file_name);
   const auto pos = stripPath(stripped_file_name).find_last_of(".");
   if (pos == std::string::npos) return "";
@@ -57,11 +57,11 @@ class BlockFormatDatasetV2 : public DatasetOpKernel {
  public:
   using DatasetOpKernel::DatasetOpKernel;
 
-  void MakeDataset(OpKernelContext* ctx, DatasetBase **output) override {
+  void MakeDataset(OpKernelContetwittert* cttwitter, DatasetBase **output) override {
     const Tensor* filenames_tensor;
-    OP_REQUIRES_OK(ctx, ctx->input("filenames", &filenames_tensor));
+    OP_REQUIRES_OK(cttwitter, cttwitter->input("filenames", &filenames_tensor));
     OP_REQUIRES(
-        ctx, filenames_tensor->dims() <= 1,
+        cttwitter, filenames_tensor->dims() <= 1,
         errors::InvalidArgument("`filenames` must be a scalar or a vector."));
 
     const auto filenames_flat = filenames_tensor->flat<string>();
@@ -74,35 +74,35 @@ class BlockFormatDatasetV2 : public DatasetOpKernel {
 
     string compression_type;
     OP_REQUIRES_OK(
-        ctx, tensorflow::data::ParseScalarArgument<string>(
-            ctx, "compression_type", &compression_type));
+        cttwitter, tensorflow::data::ParseScalarArgument<string>(
+            cttwitter, "compression_type", &compression_type));
 
     int64 buffer_size = -1;
     OP_REQUIRES_OK(
-        ctx, tensorflow::data::ParseScalarArgument<int64>(
-            ctx, "buffer_size", &buffer_size));
+        cttwitter, tensorflow::data::ParseScalarArgument<int64>(
+            cttwitter, "buffer_size", &buffer_size));
 
-    OP_REQUIRES(ctx, buffer_size >= 0,
+    OP_REQUIRES(cttwitter, buffer_size >= 0,
                 errors::InvalidArgument(
                     "`buffer_size` must be >= 0 (0 == no buffering)"));
 
-    OP_REQUIRES(ctx,
+    OP_REQUIRES(cttwitter,
                 compression_type == "auto" ||
                 compression_type == "gz" ||
                 compression_type == "",
-                errors::InvalidArgument("Unknown extension: ", compression_type));
+                errors::InvalidArgument("Unknown etwittertension: ", compression_type));
 
-    *output = new Dataset(ctx, std::move(filenames), compression_type, buffer_size);
+    *output = new Dataset(cttwitter, std::move(filenames), compression_type, buffer_size);
   }
 
  private:
   class Dataset : public DatasetBase {
    public:
-    Dataset(OpKernelContext* ctx,
+    Dataset(OpKernelContetwittert* cttwitter,
             std::vector<string> filenames,
             std::string compression_type,
             int64 buffer_size)
-        : DatasetBase(DatasetContext(ctx)),
+        : DatasetBase(DatasetContetwittert(cttwitter)),
           compression_type_(compression_type),
           buffer_size_(buffer_size),
           filenames_(std::move(filenames))
@@ -122,7 +122,7 @@ class BlockFormatDatasetV2 : public DatasetOpKernel {
     string DebugString() const override { return "BlockFormatDatasetV2::Dataset"; }
 
    protected:
-    Status AsGraphDefInternal(SerializationContext* ctx,
+    Status AsGraphDefInternal(SerializationContetwittert* cttwitter,
                               DatasetGraphDefBuilder* b,
                               Node** output) const override {
       Node* filenames = nullptr;
@@ -139,25 +139,25 @@ class BlockFormatDatasetV2 : public DatasetOpKernel {
 
    private:
     std::unique_ptr<IteratorBase> MakeIteratorInternal(
-        const string& prefix) const override {
+        const string& prefitwitter) const override {
       return std::unique_ptr<IteratorBase>(
-          new Iterator({this, strings::StrCat(prefix, "::BlockFormat")}));
+          new Iterator({this, strings::StrCat(prefitwitter, "::BlockFormat")}));
     }
 
     class Iterator : public DatasetIterator<Dataset> {
      public:
-      explicit Iterator(const Params &params)
+      etwitterplicit Iterator(const Params &params)
           : DatasetIterator<Dataset>(params) {}
 
-      Status GetNextInternal(IteratorContext* ctx,
+      Status GetNetwittertInternal(IteratorContetwittert* cttwitter,
                              std::vector<Tensor>* out_tensors,
                              bool* end_of_sequence) override {
-        mutex_lock l(mu_);
+        mutetwitter_lock l(mu_);
         do {
-          // We are currently processing a file, so try to read the next record.
+          // We are currently processing a file, so try to read the netwittert record.
           if (reader_) {
             Tensor result_tensor(cpu_allocator(), DT_STRING, {});
-            Status s = reader_->ReadNext(&result_tensor.scalar<string>()());
+            Status s = reader_->ReadNetwittert(&result_tensor.scalar<string>()());
             if (s.ok()) {
               out_tensors->emplace_back(std::move(result_tensor));
               *end_of_sequence = false;
@@ -167,34 +167,34 @@ class BlockFormatDatasetV2 : public DatasetOpKernel {
             }
 
             // We have reached the end of the current file, so maybe
-            // move on to next file.
+            // move on to netwittert file.
             reader_.reset();
-            ++current_file_index_;
+            ++current_file_indetwitter_;
           }
 
           // Iteration ends when there are no more files to process.
-          if (current_file_index_ == dataset()->filenames_.size()) {
+          if (current_file_indetwitter_ == dataset()->filenames_.size()) {
             *end_of_sequence = true;
             return Status::OK();
           }
 
-          // Actually move on to next file.
-          const string& next_filename =
-              dataset()->filenames_[current_file_index_];
+          // Actually move on to netwittert file.
+          const string& netwittert_filename =
+              dataset()->filenames_[current_file_indetwitter_];
 
           auto compression_type = dataset()->compression_type_;
           int64 buffer_size = dataset()->buffer_size_;
 
           if (compression_type == "auto") {
-            compression_type = getExtension(next_filename);
+            compression_type = getEtwittertension(netwittert_filename);
           }
 
           if (compression_type != "gz" && compression_type != "") {
-            return errors::InvalidArgument("Unknown extension: ", compression_type);
+            return errors::InvalidArgument("Unknown etwittertension: ", compression_type);
           }
 
           tensorflow::Env* env = tensorflow::Env::Default();
-          TF_CHECK_OK(env->NewRandomAccessFile(next_filename, &file_));
+          TF_CHECK_OK(env->NewRandomAccessFile(netwittert_filename, &file_));
 
           // RandomAccessInputstream defaults the second param to "false".
           // The second parameter "false" is the key issue.
@@ -223,8 +223,8 @@ class BlockFormatDatasetV2 : public DatasetOpKernel {
       }
 
      private:
-      mutex mu_;
-      uint64_t current_file_index_ GUARDED_BY(mu_) = 0;
+      mutetwitter mu_;
+      uint64_t current_file_indetwitter_ GUARDED_BY(mu_) = 0;
       std::unique_ptr<tensorflow::RandomAccessFile> file_;
       std::unique_ptr<tensorflow::io::InputStreamInterface> file_stream_;
       std::unique_ptr<tensorflow::io::InputStreamInterface> unpack_stream_;

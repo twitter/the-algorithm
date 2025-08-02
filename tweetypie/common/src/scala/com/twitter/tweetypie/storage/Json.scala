@@ -1,7 +1,7 @@
 package com.twitter.tweetypie.storage
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.fastertwitterml.jackson.databind.ObjectMapper
+import com.fastertwitterml.jackson.module.scala.DefaultScalaModule
 
 object Json {
   val TimestampKey = "timestamp"

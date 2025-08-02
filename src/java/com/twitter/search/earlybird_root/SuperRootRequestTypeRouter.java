@@ -2,8 +2,8 @@ package com.twitter.search.earlybird_root;
 
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import javatwitter.inject.Inject;
+import javatwitter.inject.Singleton;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -11,8 +11,8 @@ import com.google.common.collect.Maps;
 import com.twitter.finagle.Service;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.ClientErrorException;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.ClientErrorEtwitterception;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
 import com.twitter.search.earlybird_root.routers.FacetsRequestRouter;
 import com.twitter.search.earlybird_root.routers.RecencyRequestRouter;
@@ -24,7 +24,7 @@ import com.twitter.util.Future;
 
 @Singleton
 public class SuperRootRequestTypeRouter
-    extends Service<EarlybirdRequestContext, EarlybirdResponse>  {
+    etwittertends Service<EarlybirdRequestContetwittert, EarlybirdResponse>  {
 
   private final Map<EarlybirdRequestType, RequestRouter> routingMap;
 
@@ -51,21 +51,21 @@ public class SuperRootRequestTypeRouter
   }
 
   @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequestContext requestContext) {
-    EarlybirdRequest request = requestContext.getRequest();
+  public Future<EarlybirdResponse> apply(EarlybirdRequestContetwittert requestContetwittert) {
+    EarlybirdRequest request = requestContetwittert.getRequest();
     if (request.getSearchQuery() == null) {
-      return Future.exception(new ClientErrorException(
+      return Future.etwitterception(new ClientErrorEtwitterception(
           "Client must fill in search Query object in request"));
     }
 
-    EarlybirdRequestType requestType = requestContext.getEarlybirdRequestType();
+    EarlybirdRequestType requestType = requestContetwittert.getEarlybirdRequestType();
 
     if (routingMap.containsKey(requestType)) {
       RequestRouter router = routingMap.get(requestType);
-      return router.route(requestContext);
+      return router.route(requestContetwittert);
     } else {
-      return Future.exception(
-          new ClientErrorException(
+      return Future.etwitterception(
+          new ClientErrorEtwitterception(
             "Request type " + requestType + " is unsupported.  "
                   + "Sorry this api is a bit hard to use.\n"
                   + "for facets, call earlybirdRequest.setFacetsRequest\n"

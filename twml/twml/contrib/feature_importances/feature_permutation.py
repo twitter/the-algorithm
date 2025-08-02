@@ -24,11 +24,11 @@ class PermutedInputFnFactory(object):
         and return a boolean value, to indicate if this data record should be kept in feature importance module or not.
     """
     if not (data_dir is None) ^ (file_list is None):
-      raise ValueError("Exactly one of data_dir and file_list can be provided. Got {} for data_dir and {} for file_list".format(
+      raise ValueError("Etwitteractly one of data_dir and file_list can be provided. Got {} for data_dir and {} for file_list".format(
         data_dir, file_list))
 
     file_list = file_list if file_list is not None else twml.util.list_files(twml.util.preprocess_path(data_dir))
-    _next_batch = twml.input_fns.default_input_fn(file_list, 1, lambda x: x,
+    _netwittert_batch = twml.input_fns.default_input_fn(file_list, 1, lambda twitter: twitter,
       num_threads=2, shuffle=True, shuffle_files=True)
     self.records = []
     # Validate datarecord_filter_fn
@@ -37,10 +37,10 @@ class PermutedInputFnFactory(object):
     with tf.Session() as sess:
       for i in range(record_count):
         try:
-          record = bytes_to_thrift_object(sess.run(_next_batch)[0], DataRecord)
+          record = bytes_to_thrift_object(sess.run(_netwittert_batch)[0], DataRecord)
           if datarecord_filter_fn is None or datarecord_filter_fn(record):
             self.records.append(record)
-        except tf.errors.OutOfRangeError:
+        etwittercept tf.errors.OutOfRangeError:
           logging.info("Stopping after reading {} records out of {}".format(i, record_count))
           break
       if datarecord_filter_fn:
@@ -74,7 +74,7 @@ class PermutedInputFnFactory(object):
           .batch(batch_size)
           .map(permuted_parse_fn, 4)
           .make_one_shot_iterator()
-          .get_next())
+          .get_netwittert())
     return input_fn
 
 

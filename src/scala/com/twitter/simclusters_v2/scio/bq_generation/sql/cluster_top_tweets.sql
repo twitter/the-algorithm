@@ -1,5 +1,5 @@
 WITH tweet_embedding AS (
--- Expected columns:
+-- Etwitterpected columns:
 -- tweetId, clusterId, tweetScore
   {TWEET_EMBEDDING_SQL}
 ),

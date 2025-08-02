@@ -8,22 +8,22 @@ import com.twitter.follow_recommendations.flows.ads.PromotedAccountsFlowRequest
 import com.twitter.follow_recommendations.blenders.PromotedAccountsBlender
 import com.twitter.follow_recommendations.common.models.DisplayLocation
 import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlFlow
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilder
+import com.twitter.follow_recommendations.flows.post_nutwitter_ml.PostNutwitterMlFlow
+import com.twitter.follow_recommendations.flows.post_nutwitter_ml.PostNutwitterMlRequestBuilder
 import com.twitter.follow_recommendations.products.common.Product
 import com.twitter.follow_recommendations.products.common.ProductRequest
 import com.twitter.follow_recommendations.products.sidebar.configapi.SidebarParams
 import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class SidebarProduct @Inject() (
-  postNuxMlFlow: PostNuxMlFlow,
-  postNuxMlRequestBuilder: PostNuxMlRequestBuilder,
+  postNutwitterMlFlow: PostNutwitterMlFlow,
+  postNutwitterMlRequestBuilder: PostNutwitterMlRequestBuilder,
   promotedAccountsFlow: PromotedAccountsFlow,
   promotedAccountsBlender: PromotedAccountsBlender)
-    extends Product {
+    etwittertends Product {
   override val name: String = "Sidebar"
 
   override val identifier: String = "sidebar"
@@ -33,33 +33,33 @@ class SidebarProduct @Inject() (
   override def selectWorkflows(
     request: ProductRequest
   ): Stitch[Seq[BaseRecommendationFlow[ProductRequest, _ <: Recommendation]]] = {
-    postNuxMlRequestBuilder.build(request).map { postNuxMlRequest =>
+    postNutwitterMlRequestBuilder.build(request).map { postNutwitterMlRequest =>
       Seq(
-        postNuxMlFlow.mapKey({ _: ProductRequest => postNuxMlRequest }),
+        postNutwitterMlFlow.mapKey({ _: ProductRequest => postNutwitterMlRequest }),
         promotedAccountsFlow.mapKey(mkPromotedAccountsRequest)
       )
     }
   }
 
   override val blender: Transform[ProductRequest, Recommendation] = {
-    promotedAccountsBlender.mapTarget[ProductRequest](getMaxResults)
+    promotedAccountsBlender.mapTarget[ProductRequest](getMatwitterResults)
   }
 
   private[sidebar] def mkPromotedAccountsRequest(
     req: ProductRequest
   ): PromotedAccountsFlowRequest = {
     PromotedAccountsFlowRequest(
-      req.recommendationRequest.clientContext,
+      req.recommendationRequest.clientContetwittert,
       req.params,
       req.recommendationRequest.displayLocation,
       None,
-      req.recommendationRequest.excludedIds.getOrElse(Nil)
+      req.recommendationRequest.etwittercludedIds.getOrElse(Nil)
     )
   }
 
-  private[sidebar] def getMaxResults(req: ProductRequest): Int = {
-    req.recommendationRequest.maxResults.getOrElse(
-      req.params(SidebarParams.DefaultMaxResults)
+  private[sidebar] def getMatwitterResults(req: ProductRequest): Int = {
+    req.recommendationRequest.matwitterResults.getOrElse(
+      req.params(SidebarParams.DefaultMatwitterResults)
     )
   }
 

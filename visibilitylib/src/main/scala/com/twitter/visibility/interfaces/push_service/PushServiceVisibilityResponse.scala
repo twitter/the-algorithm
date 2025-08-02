@@ -23,7 +23,7 @@ case class PushServiceVisibilityResponse(
     ).collect { case Some(result) => result }
   }
 
-  val shouldAllow: Boolean = !allVisibilityResults.exists(isDrop(_))
+  val shouldAllow: Boolean = !allVisibilityResults.etwitterists(isDrop(_))
 
   def isDrop(response: VisibilityResult): Boolean = response.verdict match {
     case _: Drop => true

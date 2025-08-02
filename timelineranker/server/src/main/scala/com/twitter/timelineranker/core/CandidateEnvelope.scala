@@ -19,6 +19,6 @@ case class CandidateEnvelope(
   followGraphData: FollowGraphDataFuture = FollowGraphDataFuture.EmptyFollowGraphDataFuture,
   // The source tweets are
   // - the retweeted tweet, for retweets
-  // - the inReplyTo tweet, for extended replies
+  // - the inReplyTo tweet, for etwittertended replies
   sourceSearchResults: Seq[ThriftSearchResult] = CandidateEnvelope.EmptySearchResults,
   sourceHydratedTweets: HydratedTweets = CandidateEnvelope.EmptyHydratedTweets)

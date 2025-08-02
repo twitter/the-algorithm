@@ -17,8 +17,8 @@ public class CaughtUpMonitor {
 
   protected final AtomicBoolean isCaughtUp = new AtomicBoolean(false);
 
-  public CaughtUpMonitor(String statPrefix) {
-    SearchCustomGauge.export(statPrefix + "_is_caught_up", () -> isCaughtUp() ? 1 : 0);
+  public CaughtUpMonitor(String statPrefitwitter) {
+    SearchCustomGauge.etwitterport(statPrefitwitter + "_is_caught_up", () -> isCaughtUp() ? 1 : 0);
   }
 
   public boolean isCaughtUp() {
@@ -41,13 +41,13 @@ public class CaughtUpMonitor {
    */
   public synchronized void resetAndWaitUntilCaughtUp() {
     LOG.info("Waiting to catch up.");
-    // Explicitly set isCaughtUp to false before waiting
+    // Etwitterplicitly set isCaughtUp to false before waiting
     isCaughtUp.set(false);
     try {
       while (!isCaughtUp()) {
         wait();
       }
-    } catch (InterruptedException e) {
+    } catch (InterruptedEtwitterception e) {
       LOG.error("{} was interrupted while waiting to catch up", Thread.currentThread());
     }
     LOG.info("Caught up.");

@@ -17,9 +17,9 @@ bazel bundle src/scala/com/twitter/interaction_graph/scio/ml/labels:interaction_
 
 #### Run Scheduled Job
 ```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-labels-dataflow
+etwitterport PROJECTID=twttr-recos-ml-prod
+etwitterport REGION=us-central1
+etwitterport JOB_NAME=interaction-graph-labels-dataflow
 
 bin/d6w schedule \
   ${PROJECTID}/${REGION}/${JOB_NAME} \

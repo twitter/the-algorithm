@@ -14,8 +14,8 @@ object UnmentionInfoRepository {
   case class UnmentionInfoView(asViewer: Option[Long])
 
   /**
-   * Creates a function that extracts users fields from a tweet and checks
-   * if the extracted users have been unmentioned from the tweet's asssociated conversation.
+   * Creates a function that etwittertracts users fields from a tweet and checks
+   * if the etwittertracted users have been unmentioned from the tweet's asssociated conversation.
    * This function enables the prefetch caching of UnmentionInfo used by graphql during createTweet
    * events and mirrors the logic found in the unmentionInfo Strato column found
    * here: http://go/unmentionInfo.strato
@@ -29,7 +29,7 @@ object UnmentionInfoRepository {
     tweet =>
       tweet.coreData.flatMap(_.conversationId) match {
         case Some(conversationId) =>
-          val viewerUserId = TwitterContext().flatMap(_.userId)
+          val viewerUserId = TwitterContetwittert().flatMap(_.userId)
           fetcher
             .fetch(tweet, UnmentionInfoView(viewerUserId))
             .map(_.v)

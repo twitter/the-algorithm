@@ -30,7 +30,7 @@ scala_library(
         "visibility/lib/src/main/scala/com/twitter/visibility/rules/providers",
         "visibility/lib/src/main/scala/com/twitter/visibility/util",
     ],
-    exports = [
+    etwitterports = [
         "configapi/configapi-core",
         "visibility/common/src/main/scala/com/twitter/visibility/common/actions",
         "visibility/lib/src/main/scala/com/twitter/visibility/builder",

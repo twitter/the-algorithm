@@ -8,7 +8,7 @@ import com.twitter.util.Future
 /**
  * Create a CandidateEnvelope based on the incoming RecapQuery
  */
-object CreateCandidateEnvelopeTransform extends FutureArrow[RecapQuery, CandidateEnvelope] {
+object CreateCandidateEnvelopeTransform etwittertends FutureArrow[RecapQuery, CandidateEnvelope] {
   override def apply(query: RecapQuery): Future[CandidateEnvelope] = {
     Future.value(CandidateEnvelope(query))
   }

@@ -15,15 +15,15 @@ object DeciderGate {
 
   /**
    * Create a Gate[Unit] with a probability of returning true
-   * that increases exponentially with the availability of feature.
+   * that increases etwitterponentially with the availability of feature.
    */
-  def exp(feature: decider.Feature, exponent: Int): Gate[Unit] = {
-    val gate = if (exponent >= 0) linear(feature) else !linear(feature)
+  def etwitterp(feature: decider.Feature, etwitterponent: Int): Gate[Unit] = {
+    val gate = if (etwitterponent >= 0) linear(feature) else !linear(feature)
 
     @tailrec
-    def go(exp: Int): Boolean = if (exp == 0) true else (gate() && go(exp - 1))
+    def go(etwitterp: Int): Boolean = if (etwitterp == 0) true else (gate() && go(etwitterp - 1))
 
-    Gate(_ => go(math.abs(exponent)), "DeciderGate.exp(%s, %s)".format(feature, exponent))
+    Gate(_ => go(math.abs(etwitterponent)), "DeciderGate.etwitterp(%s, %s)".format(feature, etwitterponent))
   }
 
   /**

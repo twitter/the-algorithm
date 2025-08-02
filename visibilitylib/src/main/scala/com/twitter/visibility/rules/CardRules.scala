@@ -17,7 +17,7 @@ import com.twitter.visibility.rules.Condition.TweetIsCommunityTweet
 import com.twitter.visibility.rules.Condition.ViewerIsCommunityMember
 
 object DropProtectedAuthorPollCardRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Reason.ProtectedAuthor),
       And(
         IsPollCard,
@@ -27,7 +27,7 @@ object DropProtectedAuthorPollCardRule
     )
 
 object DropCardUriRootDomainDenylistRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Reason.Unspecified),
       And(CardUriHasRootDomain(CardUriRootDomainDenyListParam))
     ) {
@@ -35,7 +35,7 @@ object DropCardUriRootDomainDenylistRule
 }
 
 object DropCommunityNonMemberPollCardRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Reason.CommunityNotAMember),
       And(
         IsPollCard,

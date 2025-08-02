@@ -7,14 +7,14 @@ import com.twitter.scalding.Args
 import com.twitter.scalding.DateRange
 import com.twitter.scalding.Days
 import com.twitter.scalding.Duration
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding.RichDate
 import com.twitter.scalding.UniqueID
 import com.twitter.scalding.typed.TypedPipe
 import com.twitter.scalding.typed.UnsortedGrouped
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv2.remote_access.EtwitterplicitLocation
 import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common.ModelVersions
@@ -30,8 +30,8 @@ import com.twitter.simclusters_v2.thriftscala.ModelVersion
 import com.twitter.simclusters_v2.thriftscala.SimClusterWithScore
 import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
 import com.twitter.simclusters_v2.thriftscala.TopSimClustersWithScore
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
+import com.twitter.wtf.scalding.jobs.common.AdhocEtwitterecutionApp
+import com.twitter.wtf.scalding.jobs.common.ScheduledEtwitterecutionApp
 import com.twitter.wtf.scalding.jobs.common.StatsUtil._
 import java.util.TimeZone
 
@@ -44,14 +44,14 @@ import java.util.TimeZone
   --user recos-platform \
   -- --date 2019-10-23 --model_version 20M_145K_updated
  */
-object EntityEmbeddingFromProducerEmbeddingAdhocJob extends AdhocExecutionApp {
+object EntityEmbeddingFromProducerEmbeddingAdhocJob etwittertends AdhocEtwitterecutionApp {
   override def runOnDateRange(
     args: Args
   )(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     // step 1: read in (entity, producer) pairs and remove duplicates
     val topK = args.getOrElse("top_k", "100").toInt
 
@@ -60,7 +60,7 @@ object EntityEmbeddingFromProducerEmbeddingAdhocJob extends AdhocExecutionApp {
 
     val entityKnownForProducers =
       EntityEmbeddingFromProducerEmbeddingJob
-        .getNormalizedEntityProducerMatrix(dateRange.embiggen(Days(7)))
+        .getNormalizedEntityProducerMatritwitter(dateRange.embiggen(Days(7)))
         .count("num unique entity producer pairs").map {
           case (entityId, producerId, score) => (producerId, (entityId, score))
         }
@@ -103,7 +103,7 @@ object EntityEmbeddingFromProducerEmbeddingAdhocJob extends AdhocExecutionApp {
 
     // step 4 write results to file
     producerBasedEntityEmbeddings
-      .count("total_count").writeExecution(
+      .count("total_count").writeEtwitterecution(
         AdhocKeyValSources.entityToClustersSource(
           getHdfsPath(isAdhoc = true, isManhattanKeyVal = true, modelVersion, "producer")))
   }
@@ -116,7 +116,7 @@ object EntityEmbeddingFromProducerEmbeddingAdhocJob extends AdhocExecutionApp {
   --build_locally \
   --start_cron entity_embedding_from_producer_embedding_job src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
-object EntityEmbeddingFromProducerEmbeddingScheduledJob extends ScheduledExecutionApp {
+object EntityEmbeddingFromProducerEmbeddingScheduledJob etwittertends ScheduledEtwitterecutionApp {
   override def firstTime: RichDate = RichDate("2019-10-16")
 
   override def batchIncrement: Duration = Days(7)
@@ -127,7 +127,7 @@ object EntityEmbeddingFromProducerEmbeddingScheduledJob extends ScheduledExecuti
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     // parse args: modelVersion, topK
     val topK = args.getOrElse("top_k", "100").toInt
     // only support dec11 now since updated model is not productionized for producer embedding
@@ -137,7 +137,7 @@ object EntityEmbeddingFromProducerEmbeddingScheduledJob extends ScheduledExecuti
 
     val entityKnownForProducers =
       EntityEmbeddingFromProducerEmbeddingJob
-        .getNormalizedEntityProducerMatrix(dateRange.embiggen(Days(7)))
+        .getNormalizedEntityProducerMatritwitter(dateRange.embiggen(Days(7)))
         .count("num unique entity producer pairs").map {
           case (entityId, producerId, score) => (producerId, (entityId, score))
         }
@@ -170,9 +170,9 @@ object EntityEmbeddingFromProducerEmbeddingScheduledJob extends ScheduledExecuti
       .count("total_count")
       .map {
         case (embeddingId, embedding) => KeyVal(embeddingId, embedding)
-      }.writeDALVersionedKeyValExecution(
+      }.writeDALVersionedKeyValEtwitterecution(
         SemanticCoreEmbeddingsFromProducerScalaDataset,
-        D.Suffix(getHdfsPath(isAdhoc = false, isManhattanKeyVal = true, modelVersion, "producer"))
+        D.Suffitwitter(getHdfsPath(isAdhoc = false, isManhattanKeyVal = true, modelVersion, "producer"))
       )
 
   }
@@ -210,13 +210,13 @@ private object EntityEmbeddingFromProducerEmbeddingJob {
         .apply(_).toThrift)
   }
 
-  def getNormalizedEntityProducerMatrix(
+  def getNormalizedEntityProducerMatritwitter(
     implicit dateRange: DateRange
   ): TypedPipe[(Long, Long, Double)] = {
     val uttRecs: TypedPipe[(UTTInterest, InterestBasedUserRecommendations)] =
       DAL
         .readMostRecentSnapshot(UttAccountRecommendationsScalaDataset).withRemoteReadPolicy(
-          ExplicitLocation(ProcAtla)).toTypedPipe.map {
+          EtwitterplicitLocation(ProcAtla)).toTypedPipe.map {
           case KeyVal(interest, candidates) => (interest, candidates)
         }
 

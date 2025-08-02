@@ -24,8 +24,8 @@ object Effect {
    * An effect that only applies to some values.
    */
   def fromPartial[A](f: PartialFunction[A, Unit]): Effect[A] =
-    Effect[A] { x =>
-      if (f.isDefinedAt(x)) f(x)
+    Effect[A] { twitter =>
+      if (f.isDefinedAt(twitter)) f(twitter)
     }
 }
 
@@ -34,10 +34,10 @@ object Effect {
  *
  * Forms a monoid with Effect.unit as unit and `also` as the combining operation.
  */
-trait Effect[A] extends (A => Unit) { self =>
+trait Effect[A] etwittertends (A => Unit) { self =>
 
   /**
-   * An identity function that executes this effect as a side-effect.
+   * An identity function that etwitterecutes this effect as a side-effect.
    */
   lazy val identity: A => A = { value =>
     self(value); value
@@ -47,15 +47,15 @@ trait Effect[A] extends (A => Unit) { self =>
    * Combine effects, so that both effects are performed.
    * Forms a monoid with Effect.unit.
    */
-  def also(next: Effect[A]): Effect[A] =
-    Effect[A](identity andThen next)
+  def also(netwittert: Effect[A]): Effect[A] =
+    Effect[A](identity andThen netwittert)
 
   /**
    * Convert an effect to an effect of a more general type by way
-   * of an extraction function. (contravariant map)
+   * of an etwittertraction function. (contravariant map)
    */
-  def contramap[B](extract: B => A): Effect[B] =
-    Effect[B](extract andThen self)
+  def contramap[B](etwittertract: B => A): Effect[B] =
+    Effect[B](etwittertract andThen self)
 
   /**
    * Perform this effect only if the provided gate returns true.
@@ -77,7 +77,7 @@ trait Effect[A] extends (A => Unit) { self =>
    * for the input.
    */
   def onlyIf(predicate: A => Boolean) =
-    Effect[A] { x =>
-      if (predicate(x)) this(x) else ()
+    Effect[A] { twitter =>
+      if (predicate(twitter)) this(twitter) else ()
     }
 }

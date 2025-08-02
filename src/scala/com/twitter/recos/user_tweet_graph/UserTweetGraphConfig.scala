@@ -6,34 +6,34 @@ import com.twitter.recos.graph_common.MultiSegmentPowerLawBipartiteGraphBuilder.
  * The class holds all the config parameters for recos graph.
  */
 object RecosConfig {
-  val maxNumSegments: Int = 8
-  val maxNumEdgesPerSegment: Int =
+  val matwitterNumSegments: Int = 8
+  val matwitterNumEdgesPerSegment: Int =
     (1 << 28) // 268M edges per segment, should be able to include 2 days' data
-  val expectedNumLeftNodes: Int =
+  val etwitterpectedNumLeftNodes: Int =
     (1 << 26) // should correspond to 67M nodes storage
-  val expectedMaxLeftDegree: Int = 64
-  val leftPowerLawExponent: Double = 16.0 // steep power law as most nodes will have a small degree
-  val expectedNumRightNodes: Int = (1 << 26) // 67M nodes
-  val expectedMaxRightDegree: Int = scala.math.pow(1024, 2).toInt // some nodes will be very popular
-  val rightPowerLawExponent: Double = 4.0 // this will be less steep
+  val etwitterpectedMatwitterLeftDegree: Int = 64
+  val leftPowerLawEtwitterponent: Double = 16.0 // steep power law as most nodes will have a small degree
+  val etwitterpectedNumRightNodes: Int = (1 << 26) // 67M nodes
+  val etwitterpectedMatwitterRightDegree: Int = scala.math.pow(1024, 2).toInt // some nodes will be very popular
+  val rightPowerLawEtwitterponent: Double = 4.0 // this will be less steep
 
   val graphBuilderConfig = GraphBuilderConfig(
-    maxNumSegments = maxNumSegments,
-    maxNumEdgesPerSegment = maxNumEdgesPerSegment,
-    expectedNumLeftNodes = expectedNumLeftNodes,
-    expectedMaxLeftDegree = expectedMaxLeftDegree,
-    leftPowerLawExponent = leftPowerLawExponent,
-    expectedNumRightNodes = expectedNumRightNodes,
-    expectedMaxRightDegree = expectedMaxRightDegree,
-    rightPowerLawExponent = rightPowerLawExponent
+    matwitterNumSegments = matwitterNumSegments,
+    matwitterNumEdgesPerSegment = matwitterNumEdgesPerSegment,
+    etwitterpectedNumLeftNodes = etwitterpectedNumLeftNodes,
+    etwitterpectedMatwitterLeftDegree = etwitterpectedMatwitterLeftDegree,
+    leftPowerLawEtwitterponent = leftPowerLawEtwitterponent,
+    etwitterpectedNumRightNodes = etwitterpectedNumRightNodes,
+    etwitterpectedMatwitterRightDegree = etwitterpectedMatwitterRightDegree,
+    rightPowerLawEtwitterponent = rightPowerLawEtwitterponent
   )
 
-  println("RecosConfig -          maxNumSegments " + maxNumSegments)
-  println("RecosConfig -   maxNumEdgesPerSegment " + maxNumEdgesPerSegment)
-  println("RecosConfig -    expectedNumLeftNodes " + expectedNumLeftNodes)
-  println("RecosConfig -   expectedMaxLeftDegree " + expectedMaxLeftDegree)
-  println("RecosConfig -    leftPowerLawExponent " + leftPowerLawExponent)
-  println("RecosConfig -   expectedNumRightNodes " + expectedNumRightNodes)
-  println("RecosConfig -  expectedMaxRightDegree " + expectedMaxRightDegree)
-  println("RecosConfig -   rightPowerLawExponent " + rightPowerLawExponent)
+  println("RecosConfig -          matwitterNumSegments " + matwitterNumSegments)
+  println("RecosConfig -   matwitterNumEdgesPerSegment " + matwitterNumEdgesPerSegment)
+  println("RecosConfig -    etwitterpectedNumLeftNodes " + etwitterpectedNumLeftNodes)
+  println("RecosConfig -   etwitterpectedMatwitterLeftDegree " + etwitterpectedMatwitterLeftDegree)
+  println("RecosConfig -    leftPowerLawEtwitterponent " + leftPowerLawEtwitterponent)
+  println("RecosConfig -   etwitterpectedNumRightNodes " + etwitterpectedNumRightNodes)
+  println("RecosConfig -  etwitterpectedMatwitterRightDegree " + etwitterpectedMatwitterRightDegree)
+  println("RecosConfig -   rightPowerLawEtwitterponent " + rightPowerLawEtwitterponent)
 }

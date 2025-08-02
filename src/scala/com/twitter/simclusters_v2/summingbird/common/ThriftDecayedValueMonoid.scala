@@ -10,14 +10,14 @@ import com.twitter.algebird_internal.thriftscala.{DecayedValue => ThriftDecayedV
  * Monoid for ThriftDecayedValue
  */
 class ThriftDecayedValueMonoid(halfLifeInMs: Long)(implicit decayedValueMonoid: DecayedValueMonoid)
-    extends Monoid[ThriftDecayedValue] {
+    etwittertends Monoid[ThriftDecayedValue] {
 
   override val zero: ThriftDecayedValue = DecayedValueImplicits.toThrift(decayedValueMonoid.zero)
 
-  override def plus(x: ThriftDecayedValue, y: ThriftDecayedValue): ThriftDecayedValue = {
+  override def plus(twitter: ThriftDecayedValue, y: ThriftDecayedValue): ThriftDecayedValue = {
     DecayedValueImplicits.toThrift(
       decayedValueMonoid
-        .plus(DecayedValueImplicits.toThrift.invert(x), DecayedValueImplicits.toThrift.invert(y))
+        .plus(DecayedValueImplicits.toThrift.invert(twitter), DecayedValueImplicits.toThrift.invert(y))
     )
   }
 

@@ -7,7 +7,7 @@ from collections import OrderedDict
 from absl import logging
 import numpy as np
 import tensorflow.compat.v1 as tf
-from tensorflow.python.ops.lookup_ops import index_table_from_tensor
+from tensorflow.python.ops.lookup_ops import indetwitter_table_from_tensor
 
 import twml
 
@@ -21,7 +21,7 @@ def load_initializers_from_csv(
 ):
   """
   Loads embeddings saved in the `glove format <https://nlp.stanford.edu/projects/glove/>`_.
-  The glove format is a txt file separated by spaces.
+  The glove format is a ttwittert file separated by spaces.
   Each line looks like: "word 0.00001 0.2334 ...".
 
   Arguments:
@@ -29,11 +29,11 @@ def load_initializers_from_csv(
       path to the embeddings file on HDFS (hdfs://default/...)
       or its local_path (/path/to/...).
       The embedding_path may also specify a pattern. In which case, the embeddings
-      are read in the lexical order of the filenames that match the order.
+      are read in the letwitterical order of the filenames that match the order.
     vocab_size:
-      the maximum size of the vocabulary. The top ``vocab_size`` words in the file
+      the matwitterimum size of the vocabulary. The top ``vocab_size`` words in the file
       are included in the vocabulary. If you specify a positive vocab_size,
-      the words are expected to be in descending order of frequency.
+      the words are etwitterpected to be in descending order of frequency.
       This allows the embeddings to be easily filtered to top vocab_size words.
       Reducing the vocab_size acts as a regularizer, preventing the model to overfit on rarer words.
       A negative vocab_size loads all embeddings.
@@ -41,7 +41,7 @@ def load_initializers_from_csv(
       allowing the embedding initializers to fit inside the graph.
     embedding_size:
       Defaults to None. If None, the embedding size is infered from the file name.
-      For example, ``glove.300d.txt`` and ``glove300d200.txt`` will both infrered
+      For etwitterample, ``glove.300d.ttwittert`` and ``glove300d200.ttwittert`` will both infrered
       as ``embedding_size=300``. If this can't be done, the ``embedding_size`` is
       inferred from the first line in the file. If ``embedding_size`` is provided,
       only the last ``embedding_size`` values of each line are considered. This
@@ -65,7 +65,7 @@ def load_initializers_from_csv(
       A tf.constant_initializer containing a vector of word strings of size vocab_size.
     weight_initializer:
       A twml.contrib.initializers.partition_constant_initializer containing
-      the weight matrix of embeddings of size vocab_size x embedding_size.
+      the weight matritwitter of embeddings of size vocab_size twitter embedding_size.
     shape:
       A tuple containing of (vocab_size, embedding_size).
 
@@ -83,7 +83,7 @@ def load_initializers_from_csv(
     is_user_vocab = False
   elif not isinstance(vocab, OrderedDict):
     raise RuntimeError(
-      "Expecting vocab argument of type OrderedDict or None. "
+      "Etwitterpecting vocab argument of type OrderedDict or None. "
       "Got type %s instead." % type(vocab).__name__
     )
 
@@ -95,7 +95,7 @@ def load_initializers_from_csv(
 
   if embedding_size is not None and not isinstance(embedding_size, int):
     raise RuntimeError(
-      "Expecting embedding_size argument of type int or None. "
+      "Etwitterpecting embedding_size argument of type int or None. "
       "Got type %s, instead." % type(embedding_size).__name__
     )
 
@@ -137,7 +137,7 @@ def load_initializers_from_csv(
 
         word_weights = np.asarray(word_weights, dtype=np.float32)
         vocab[word] = word_weights
-      except ValueError:
+      etwittercept ValueError:
         logging.info("Wasn't able to load embeddings for word '%s'. Ignoring it" % word)
 
       vocab_len = len(vocab)
@@ -187,7 +187,7 @@ def add_parser_arguments(parser):
     dest="embedding_path",
     type=str,
     default=None,
-    help="When specified, loads glove embeddings from .txt glove file",
+    help="When specified, loads glove embeddings from .ttwittert glove file",
   )
   parser.add_argument(
     "--embedding.vocab_size",
@@ -214,7 +214,7 @@ class EmbeddingLookup(twml.layers.Layer):
       Initializer function for the vocabulary. Required. The initializer should
       return a list of strings of size vocab_size.
     weight_initializer:
-      Initializer function for the weight matrix of size vocab_size x output_size.
+      Initializer function for the weight matritwitter of size vocab_size twitter output_size.
       This argument defaults to zeros_initializer().
       This is valid when the EmbeddingLookup is the first layer of
       parameters but should be changed otherwise.
@@ -226,18 +226,18 @@ class EmbeddingLookup(twml.layers.Layer):
     num_oov_buckets:
       The number of buckets to use for OOV strings. These bucket ids occur after the vocab bucket
       ids. Hashing is used to assign OOV strings to these buckets. If `num_oov_buckets` is not
-      specified, index `OOV_WORD_ID` is used for OOV strings.
+      specified, indetwitter `OOV_WORD_ID` is used for OOV strings.
     name:
       String, the name of the layer. Layers with the same name will
       share weights, but to avoid mistakes we require ``reuse=True`` in such cases.
     num_partitions:
       Number of partitions to use for the weight variable. Defaults to 1.
-    partition_axis:
-      If num_partitions is specified, the partition axis for the weight variable
+    partition_atwitteris:
+      If num_partitions is specified, the partition atwitteris for the weight variable
       Defaults to 0 (partition by row).
       Must be 0 (row) or 1 (column, does not support yet)
     weight_regularizer:
-      Regularizer function for the weight matrix.
+      Regularizer function for the weight matritwitter.
       Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
     dtype:
       Defaults to tf.float32. Specifies the dtype of the weights.
@@ -266,7 +266,7 @@ class EmbeddingLookup(twml.layers.Layer):
     oov_word_id=None,
     name=None,
     num_partitions=1,
-    partition_axis=0,
+    partition_atwitteris=0,
     weight_regularizer=None,
     dtype=None,
     use_placeholder=True,
@@ -297,7 +297,7 @@ class EmbeddingLookup(twml.layers.Layer):
     self.vocab_size = vocab_size
     self.output_size = output_size
     self.num_partitions = num_partitions
-    self.partition_axis = partition_axis
+    self.partition_atwitteris = partition_atwitteris
     self.weight_regularizer = weight_regularizer
     self.trainable = trainable
     self.oov_word_id = oov_word_id
@@ -308,8 +308,8 @@ class EmbeddingLookup(twml.layers.Layer):
     elif self.oov_word_id is None and self.num_oov_buckets is None:
       self.oov_word_id = OOV_WORD_ID  # use the default OOV word id
 
-    if partition_axis != 0:
-      raise NotImplementedError("embedding_lookup only supports partition_axis = 0")
+    if partition_atwitteris != 0:
+      raise NotImplementedError("embedding_lookup only supports partition_atwitteris = 0")
 
   def build(self, input_shapes):
     """
@@ -333,8 +333,8 @@ class EmbeddingLookup(twml.layers.Layer):
       embedding_weight_initializer = self.weight_initializer
 
     if self.num_partitions:
-      partition_axis = int(self.partition_axis)
-      partitioner = tf.fixed_size_partitioner(self.num_partitions, axis=partition_axis)
+      partition_atwitteris = int(self.partition_atwitteris)
+      partitioner = tf.fitwittered_size_partitioner(self.num_partitions, atwitteris=partition_atwitteris)
     else:
       # Regular variables do not like it when you pass both constant tensors and shape
       if not callable(self.weight_initializer):
@@ -370,7 +370,7 @@ class EmbeddingLookup(twml.layers.Layer):
 
     Arguments:
       inputs:
-        A tensor of word strings. Typically, of size batch_size x seq_len.
+        A tensor of word strings. Typically, of size batch_size twitter seq_len.
       debug:
         When True, prints the input strings and their commensurate input_ids.
         Defaults to False.
@@ -380,15 +380,15 @@ class EmbeddingLookup(twml.layers.Layer):
 
     Returns:
       The mapping of input word strings to output embedding vectors.
-      Given an input of shape ``batch_size x seq_len``, the output has shape
-      ``batch_size x seq_len x embedding_size``.
+      Given an input of shape ``batch_size twitter seq_len``, the output has shape
+      ``batch_size twitter seq_len twitter embedding_size``.
     """
     if self.convert_to_lowercase:
       inputs = tf.strings.lower(inputs)
     if self.num_oov_buckets is None:
-      lookup_table = index_table_from_tensor(self.vocab, default_value=self.oov_word_id)
+      lookup_table = indetwitter_table_from_tensor(self.vocab, default_value=self.oov_word_id)
     else:
-      lookup_table = index_table_from_tensor(self.vocab, num_oov_buckets=self.num_oov_buckets)
+      lookup_table = indetwitter_table_from_tensor(self.vocab, num_oov_buckets=self.num_oov_buckets)
     input_ids = lookup_table.lookup(inputs)
 
     if oov_summaries:

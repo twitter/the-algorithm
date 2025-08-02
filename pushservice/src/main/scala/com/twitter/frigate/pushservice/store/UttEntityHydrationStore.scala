@@ -1,22 +1,22 @@
 package com.twitter.frigate.pushservice.store
 
 import com.twitter.escherbird.util.uttclient.CachedUttClientV2
-import com.twitter.escherbird.util.uttclient.InvalidUttEntityException
+import com.twitter.escherbird.util.uttclient.InvalidUttEntityEtwitterception
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.logging.Logger
 import com.twitter.stitch.Stitch
-import com.twitter.topiclisting.TopicListingViewerContext
+import com.twitter.topiclisting.TopicListingViewerContetwittert
 import com.twitter.topiclisting.utt.LocalizedEntity
 import com.twitter.topiclisting.utt.LocalizedEntityFactory
 import com.twitter.util.Future
 
 /**
  *
- * @param viewerContext: [[TopicListingViewerContext]] for filtering topic
+ * @param viewerContetwittert: [[TopicListingViewerContetwittert]] for filtering topic
  * @param semanticCoreEntityIds: list of semantic core entities to hydrate
  */
 case class UttEntityHydrationQuery(
-  viewerContext: TopicListingViewerContext,
+  viewerContetwittert: TopicListingViewerContetwittert,
   semanticCoreEntityIds: Seq[Long])
 
 /**
@@ -58,7 +58,7 @@ class UttEntityHydrationStore(
           .map { uttEntityMetadata =>
             val localizedEntity = LocalizedEntityFactory.getLocalizedEntity(
               uttEntityMetadata,
-              query.viewerContext,
+              query.viewerContetwittert,
               enableInternationalTopics = true,
               enableTopicDescription = true)
             // update counter
@@ -68,7 +68,7 @@ class UttEntityHydrationStore(
 
             localizedEntity
           }.handle {
-            case e: InvalidUttEntityException =>
+            case e: InvalidUttEntityEtwitterception =>
               log.error(e.getMessage)
               uttEntityNotFound.incr()
               None

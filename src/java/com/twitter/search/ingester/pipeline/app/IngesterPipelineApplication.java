@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.google.common.annotations.VisibleForTesting;
 
 import org.apache.commons.pipeline.Pipeline;
-import org.apache.commons.pipeline.PipelineCreationException;
-import org.apache.commons.pipeline.StageException;
+import org.apache.commons.pipeline.PipelineCreationEtwitterception;
+import org.apache.commons.pipeline.StageEtwitterception;
 import org.apache.commons.pipeline.config.DigesterPipelineFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,14 +22,14 @@ import com.twitter.search.ingester.util.jndi.JndiUtil;
 import com.twitter.server.AbstractTwitterServer;
 import com.twitter.server.handler.DeciderHandler$;
 
-/** Starts the ingester/indexer pipeline. */
-public class IngesterPipelineApplication extends AbstractTwitterServer {
+/** Starts the ingester/indetwitterer pipeline. */
+public class IngesterPipelineApplication etwittertends AbstractTwitterServer {
   private static final Logger LOG = LoggerFactory.getLogger(IngesterPipelineApplication.class);
   private static final String VERSION_2 = "v2";
   private final Flag<String> pipelineConfigFile = flag().create(
       "config_file",
       "",
-      "xml file to load pipeline config from. Required.",
+      "twitterml file to load pipeline config from. Required.",
       Flaggable.ofString());
 
   private final Flag<String> pipelineVersion = flag().create(
@@ -41,7 +41,7 @@ public class IngesterPipelineApplication extends AbstractTwitterServer {
   private final Flag<Integer> partitionArg = flag().create(
       "shard",
       -1,
-      "The partition this indexer is responsible for.",
+      "The partition this indetwitterer is responsible for.",
       Flaggable.ofJavaInteger());
 
   private final Flag<String> deciderOverlay = flag().create(
@@ -119,16 +119,16 @@ public class IngesterPipelineApplication extends AbstractTwitterServer {
           wireModule.getMutableDecisionMaker(),
           wireModule.getDecider()));
 
-      BuildInfoStats.export();
+      BuildInfoStats.etwitterport();
       if (pipelineVersion.get().get().equals(VERSION_2)) {
         runPipelineV2(wireModule);
       } else {
         runPipelineV1(wireModule);
       }
       LOG.info("Pipeline terminated. Ingester is DOWN.");
-    } catch (Exception e) {
-      LOG.error("Exception in pipeline. Ingester is DOWN.", e);
-      throw new RuntimeException(e);
+    } catch (Etwitterception e) {
+      LOG.error("Etwitterception in pipeline. Ingester is DOWN.", e);
+      throw new RuntimeEtwitterception(e);
     }
   }
 
@@ -138,39 +138,39 @@ public class IngesterPipelineApplication extends AbstractTwitterServer {
   }
 
   @VisibleForTesting
-  Pipeline createPipeline(URL pipelineConfigFileURL) throws PipelineCreationException {
+  Pipeline createPipeline(URL pipelineConfigFileURL) throws PipelineCreationEtwitterception {
     DigesterPipelineFactory factory = new DigesterPipelineFactory(pipelineConfigFileURL);
     LOG.info("Pipeline created from {}, about to begin processing...", pipelineConfigFileURL);
     return factory.createPipeline();
   }
 
-  void runPipelineV1(ProductionWireModule wireModule) throws Exception {
+  void runPipelineV1(ProductionWireModule wireModule) throws Etwitterception {
     LOG.info("Running Pipeline V1");
     final File pipelineFile = new File(pipelineConfigFile.get().get());
     URL pipelineConfigFileUrl = pipelineFile.toURI().toURL();
-    wireModule.setPipelineExceptionHandler(new PipelineExceptionImpl(this));
+    wireModule.setPipelineEtwitterceptionHandler(new PipelineEtwitterceptionImpl(this));
     runPipelineV1(pipelineConfigFileUrl);
     shutdownLatch.await();
   }
 
   @VisibleForTesting
-  void runPipelineV1(URL pipelineConfigFileUrl) throws Exception {
+  void runPipelineV1(URL pipelineConfigFileUrl) throws Etwitterception {
     pipeline = createPipeline(pipelineConfigFileUrl);
     pipeline.start();
     started.set(true);
   }
 
-  void runPipelineV2(ProductionWireModule wireModule) throws Exception {
+  void runPipelineV2(ProductionWireModule wireModule) throws Etwitterception {
     LOG.info("Running Pipeline V2");
     int threadsToSpawn = cores.get().get().intValue() - 1;
     RealtimeIngesterPipelineV2 realtimePipeline = new RealtimeIngesterPipelineV2(
         environment.get().get(), cluster.get().get(), threadsToSpawn);
-    wireModule.setPipelineExceptionHandler(new PipelineExceptionImplV2(realtimePipeline));
+    wireModule.setPipelineEtwitterceptionHandler(new PipelineEtwitterceptionImplV2(realtimePipeline));
     realtimePipeline.run();
   }
 
   @Override
-  public void onExit() {
+  public void onEtwitterit() {
     try {
       LOG.info("Attempting to shutdown gracefully.");
         /*
@@ -178,17 +178,17 @@ public class IngesterPipelineApplication extends AbstractTwitterServer {
          * its queue is empty. If there is a backup, finish() waits for the queues to empty.
          */
 
-      // We don't call finish() unless the pipeline exists and has started because if any stage
+      // We don't call finish() unless the pipeline etwitterists and has started because if any stage
       // fails to initialize, no processing is started and not only is calling finish() unnecessary,
       // but it will also deadlock any DedicatedThreadStageDriver.
       if (pipeline != null && started.get()) {
         pipeline.finish();
         finished.set(true);
-        LOG.info("Pipeline exited cleanly.");
+        LOG.info("Pipeline etwitterited cleanly.");
       } else {
         LOG.info("Pipeline not yet started.");
       }
-    } catch (StageException e) {
+    } catch (StageEtwitterception e) {
       LOG.error("Unable to shutdown pipeline.", e);
     }
   }

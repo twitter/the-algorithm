@@ -29,8 +29,8 @@ trait FeatureSwitchConfig {
 
   /**
    * Apply overrides in list when the given FS Key is enabled.
-   * This override type does NOT work with experiments. Params here will be evaluated for every
-   * request IMMEDIATELY, not upon param.apply. If you would like to use an experiment pls use
+   * This override type does NOT work with etwitterperiments. Params here will be evaluated for every
+   * request IMMEDIATELY, not upon param.apply. If you would like to use an etwitterperiment pls use
    * the primitive type or ENUM overrides.
    */
   def gatedOverridesMap: Map[String, Seq[OptionalOverride[_]]] = Map.empty

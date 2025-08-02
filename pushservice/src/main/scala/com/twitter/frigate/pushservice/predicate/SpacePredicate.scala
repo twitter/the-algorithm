@@ -36,7 +36,7 @@ object SpacePredicate {
           case Some(participants) =>
             val allParticipants: Seq[ParticipantUser] =
               (participants.admins ++ participants.speakers ++ participants.listeners).flatten.toSeq
-            val isInSpace = allParticipants.exists { participant =>
+            val isInSpace = allParticipants.etwitterists { participant =>
               participant.twitterUserId.contains(spaceCandidate.target.targetId)
             }
             !isInSpace
@@ -62,7 +62,7 @@ object SpacePredicate {
       .fromAsync[SpaceCandidate with RawCandidate] { spaceCandidate =>
         audioSpaceStore
           .get(spaceCandidate.spaceId)
-          .map(_.exists(_.state.contains(BroadcastState.NotStarted)))
+          .map(_.etwitterists(_.state.contains(BroadcastState.NotStarted)))
           .rescue {
             case Err(Err.Authorization, _, _) =>
               Future.False
@@ -110,7 +110,7 @@ object SpacePredicate {
   ): NamedPredicate[PushCandidate with TweetAuthorDetails] = {
     val name = "recommended_tweet_author_acceptable_to_target_user"
     SocialGraphPredicate
-      .anyRelationExists(
+      .anyRelationEtwitterists(
         edgeStore,
         Set(
           RelationshipType.Blocking,

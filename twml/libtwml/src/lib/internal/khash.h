@@ -14,7 +14,7 @@
    included in all copies or substantial portions of the Software.
 
    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+   EtwitterPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
    BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
@@ -24,7 +24,7 @@
 */
 
 /*
-  An example:
+  An etwitterample:
 
 #include "khash.h"
 KHASH_MAP_INIT_INT(32, char)
@@ -39,7 +39,7 @@ int main() {
    k = kh_get(32, h, 5);
    kh_del(32, h, k);
    for (k = kh_begin(h); k != kh_end(h); ++k)
-      if (kh_exist(h, k)) kh_value(h, k) = 1;
+      if (kh_etwitterist(h, k)) kh_value(h, k) = 1;
    kh_destroy(32, h);
    return 0;
 }
@@ -88,7 +88,7 @@ int main() {
 
   2008-09-19 (0.2.3):
 
-   * Corrected the example
+   * Corrected the etwitterample
    * Improved interfaces
 
   2008-09-11 (0.2.2):
@@ -98,15 +98,15 @@ int main() {
   2008-09-10 (0.2.1):
 
    * Added kh_clear()
-   * Fixed a compiling error
+   * Fitwittered a compiling error
 
   2008-09-02 (0.2.0):
 
-   * Changed to token concatenation which increases flexibility.
+   * Changed to token concatenation which increases fletwitteribility.
 
   2008-08-31 (0.1.2):
 
-   * Fixed a bug in kh_get(), which has not been tested previously.
+   * Fitwittered a bug in kh_get(), which has not been tested previously.
 
   2008-08-31 (0.1.1):
 
@@ -131,13 +131,13 @@ int main() {
 
 /* compiler specific configuration */
 
-#if UINT_MAX == 0xffffffffu
+#if UINT_MAtwitter == 0twitterffffffffu
 typedef unsigned int khint32_t;
-#elif ULONG_MAX == 0xffffffffu
+#elif ULONG_MAtwitter == 0twitterffffffffu
 typedef unsigned long khint32_t;
 #endif
 
-#if ULONG_MAX == ULLONG_MAX
+#if ULONG_MAtwitter == ULLONG_MAtwitter
 typedef unsigned long khint64_t;
 #else
 typedef uint64_t khint64_t;
@@ -162,18 +162,18 @@ typedef uint64_t khint64_t;
 typedef khint32_t khint_t;
 typedef khint_t khiter_t;
 
-#define __ac_isempty(flag, i) ((flag[i>>4]>>((i&0xfU)<<1))&2)
-#define __ac_isdel(flag, i) ((flag[i>>4]>>((i&0xfU)<<1))&1)
-#define __ac_iseither(flag, i) ((flag[i>>4]>>((i&0xfU)<<1))&3)
-#define __ac_set_isdel_false(flag, i) (flag[i>>4]&=~(1ul<<((i&0xfU)<<1)))
-#define __ac_set_isempty_false(flag, i) (flag[i>>4]&=~(2ul<<((i&0xfU)<<1)))
-#define __ac_set_isboth_false(flag, i) (flag[i>>4]&=~(3ul<<((i&0xfU)<<1)))
-#define __ac_set_isdel_true(flag, i) (flag[i>>4]|=1ul<<((i&0xfU)<<1))
+#define __ac_isempty(flag, i) ((flag[i>>4]>>((i&0twitterfU)<<1))&2)
+#define __ac_isdel(flag, i) ((flag[i>>4]>>((i&0twitterfU)<<1))&1)
+#define __ac_iseither(flag, i) ((flag[i>>4]>>((i&0twitterfU)<<1))&3)
+#define __ac_set_isdel_false(flag, i) (flag[i>>4]&=~(1ul<<((i&0twitterfU)<<1)))
+#define __ac_set_isempty_false(flag, i) (flag[i>>4]&=~(2ul<<((i&0twitterfU)<<1)))
+#define __ac_set_isboth_false(flag, i) (flag[i>>4]&=~(3ul<<((i&0twitterfU)<<1)))
+#define __ac_set_isdel_true(flag, i) (flag[i>>4]|=1ul<<((i&0twitterfU)<<1))
 
 #define __ac_fsize(m) ((m) < 16? 1 : (m)>>4)
 
 #ifndef kroundup32
-#define kroundup32(x) (--(x), (x)|=(x)>>1, (x)|=(x)>>2, (x)|=(x)>>4, (x)|=(x)>>8, (x)|=(x)>>16, ++(x))
+#define kroundup32(twitter) (--(twitter), (twitter)|=(twitter)>>1, (twitter)|=(twitter)>>2, (twitter)|=(twitter)>>4, (twitter)|=(twitter)>>8, (twitter)|=(twitter)>>16, ++(twitter))
 #endif
 
 #ifndef kcalloc
@@ -200,13 +200,13 @@ static const double __ac_HASH_UPPER = 0.77;
    } kh_##name##_t;
 
 #define __KHASH_PROTOTYPES(name, khkey_t, khval_t)                \
-   extern kh_##name##_t *kh_init_##name(void);                    \
-   extern void kh_destroy_##name(kh_##name##_t *h);               \
-   extern void kh_clear_##name(kh_##name##_t *h);                 \
-   extern khint_t kh_get_##name(const kh_##name##_t *h, khkey_t key);   \
-   extern int kh_resize_##name(kh_##name##_t *h, khint_t new_n_buckets); \
-   extern khint_t kh_put_##name(kh_##name##_t *h, khkey_t key, int *ret); \
-   extern void kh_del_##name(kh_##name##_t *h, khint_t x);
+   etwittertern kh_##name##_t *kh_init_##name(void);                    \
+   etwittertern void kh_destroy_##name(kh_##name##_t *h);               \
+   etwittertern void kh_clear_##name(kh_##name##_t *h);                 \
+   etwittertern khint_t kh_get_##name(const kh_##name##_t *h, khkey_t key);   \
+   etwittertern int kh_resize_##name(kh_##name##_t *h, khint_t new_n_buckets); \
+   etwittertern khint_t kh_put_##name(kh_##name##_t *h, khkey_t key, int *ret); \
+   etwittertern void kh_del_##name(kh_##name##_t *h, khint_t twitter);
 
 #define __KHASH_IMPL(name, SCOPE, khkey_t, khval_t, kh_is_map, __hash_func, __hash_equal) \
    SCOPE kh_##name##_t *kh_init_##name(void) {                    \
@@ -223,7 +223,7 @@ static const double __ac_HASH_UPPER = 0.77;
    SCOPE void kh_clear_##name(kh_##name##_t *h)                \
    {                                                  \
       if (h && h->flags) {                               \
-         memset(h->flags, 0xaa, __ac_fsize(h->n_buckets) * sizeof(khint32_t)); \
+         memset(h->flags, 0twitteraa, __ac_fsize(h->n_buckets) * sizeof(khint32_t)); \
          h->size = h->n_occupied = 0;                       \
       }                                               \
    }                                                  \
@@ -249,11 +249,11 @@ static const double __ac_HASH_UPPER = 0.77;
          kroundup32(new_n_buckets);                            \
          if (new_n_buckets < 4) new_n_buckets = 4;             \
          if (h->size >= (khint_t)(new_n_buckets * __ac_HASH_UPPER + 0.5)) j = 0; /* requested size is too small */ \
-         else { /* hash table size to be changed (shrink or expand); rehash */ \
+         else { /* hash table size to be changed (shrink or etwitterpand); rehash */ \
             new_flags = (khint32_t*)kmalloc(__ac_fsize(new_n_buckets) * sizeof(khint32_t));  \
             if (!new_flags) return -1;                      \
-            memset(new_flags, 0xaa, __ac_fsize(new_n_buckets) * sizeof(khint32_t)); \
-            if (h->n_buckets < new_n_buckets) { /* expand */      \
+            memset(new_flags, 0twitteraa, __ac_fsize(new_n_buckets) * sizeof(khint32_t)); \
+            if (h->n_buckets < new_n_buckets) { /* etwitterpand */      \
                khkey_t *new_keys = (khkey_t*)krealloc((void *)h->keys, new_n_buckets * sizeof(khkey_t)); \
                if (!new_keys) { kfree(new_flags); return -1; }    \
                h->keys = new_keys;                          \
@@ -280,7 +280,7 @@ static const double __ac_HASH_UPPER = 0.77;
                   i = k & new_mask;                      \
                   while (!__ac_isempty(new_flags, i)) i = (i + (++step)) & new_mask; \
                   __ac_set_isempty_false(new_flags, i);        \
-                  if (i < h->n_buckets && __ac_iseither(h->flags, i) == 0) { /* kick out the existing element */ \
+                  if (i < h->n_buckets && __ac_iseither(h->flags, i) == 0) { /* kick out the etwitteristing element */ \
                      { khkey_t tmp = h->keys[i]; h->keys[i] = key; key = tmp; } \
                      if (kh_is_map) { khval_t tmp = h->vals[i]; h->vals[i] = val; val = tmp; } \
                      __ac_set_isdel_true(h->flags, i); /* mark it as deleted in the old hash table */ \
@@ -306,50 +306,50 @@ static const double __ac_HASH_UPPER = 0.77;
    }                                                  \
    SCOPE khint_t kh_put_##name(kh_##name##_t *h, khkey_t key, int *ret) \
    {                                                  \
-      khint_t x;                                         \
+      khint_t twitter;                                         \
       if (h->n_occupied >= h->upper_bound) { /* update the hash table */ \
          if (h->n_buckets > (h->size<<1)) {                    \
             if (kh_resize_##name(h, h->n_buckets - 1) < 0) { /* clear "deleted" elements */ \
                *ret = -1; return h->n_buckets;                 \
             }                                         \
-         } else if (kh_resize_##name(h, h->n_buckets + 1) < 0) { /* expand the hash table */ \
+         } else if (kh_resize_##name(h, h->n_buckets + 1) < 0) { /* etwitterpand the hash table */ \
             *ret = -1; return h->n_buckets;                    \
          }                                            \
       } /* TODO: to implement automatically shrinking; resize() already support shrinking */ \
       {                                               \
          khint_t k, i, site, last, mask = h->n_buckets - 1, step = 0; \
-         x = site = h->n_buckets; k = __hash_func(key); i = k & mask; \
-         if (__ac_isempty(h->flags, i)) x = i; /* for speed up */ \
+         twitter = site = h->n_buckets; k = __hash_func(key); i = k & mask; \
+         if (__ac_isempty(h->flags, i)) twitter = i; /* for speed up */ \
          else {                                          \
             last = i; \
             while (!__ac_isempty(h->flags, i) && (__ac_isdel(h->flags, i) || !__hash_equal(h->keys[i], key))) { \
                if (__ac_isdel(h->flags, i)) site = i;          \
                i = (i + (++step)) & mask; \
-               if (i == last) { x = site; break; }             \
+               if (i == last) { twitter = site; break; }             \
             }                                         \
-            if (x == h->n_buckets) {                        \
-               if (__ac_isempty(h->flags, i) && site != h->n_buckets) x = site; \
-               else x = i;                               \
+            if (twitter == h->n_buckets) {                        \
+               if (__ac_isempty(h->flags, i) && site != h->n_buckets) twitter = site; \
+               else twitter = i;                               \
             }                                         \
          }                                            \
       }                                               \
-      if (__ac_isempty(h->flags, x)) { /* not present at all */      \
-         h->keys[x] = key;                               \
-         __ac_set_isboth_false(h->flags, x);                   \
+      if (__ac_isempty(h->flags, twitter)) { /* not present at all */      \
+         h->keys[twitter] = key;                               \
+         __ac_set_isboth_false(h->flags, twitter);                   \
          ++h->size; ++h->n_occupied;                           \
          *ret = 1;                                       \
-      } else if (__ac_isdel(h->flags, x)) { /* deleted */            \
-         h->keys[x] = key;                               \
-         __ac_set_isboth_false(h->flags, x);                   \
+      } else if (__ac_isdel(h->flags, twitter)) { /* deleted */            \
+         h->keys[twitter] = key;                               \
+         __ac_set_isboth_false(h->flags, twitter);                   \
          ++h->size;                                      \
          *ret = 2;                                       \
-      } else *ret = 0; /* Don't touch h->keys[x] if present and not deleted */ \
-      return x;                                          \
+      } else *ret = 0; /* Don't touch h->keys[twitter] if present and not deleted */ \
+      return twitter;                                          \
    }                                                  \
-   SCOPE void kh_del_##name(kh_##name##_t *h, khint_t x)          \
+   SCOPE void kh_del_##name(kh_##name##_t *h, khint_t twitter)          \
    {                                                  \
-      if (x != h->n_buckets && !__ac_iseither(h->flags, x)) {        \
-         __ac_set_isdel_true(h->flags, x);                     \
+      if (twitter != h->n_buckets && !__ac_iseither(h->flags, twitter)) {        \
+         __ac_set_isdel_true(h->flags, twitter);                     \
          --h->size;                                      \
       }                                               \
    }
@@ -392,7 +392,7 @@ static const double __ac_HASH_UPPER = 0.77;
   @param  s     Pointer to a null terminated string
   @return       The hash value
  */
-static kh_inline khint_t __ac_X31_hash_string(const char *s)
+static kh_inline khint_t __ac_twitter31_hash_string(const char *s)
 {
    khint_t h = (khint_t)*s;
    if (h) for (++s ; *s; ++s) h = (h << 5) - h + (khint_t)*s;
@@ -403,7 +403,7 @@ static kh_inline khint_t __ac_X31_hash_string(const char *s)
   @param  key   Pointer to a null terminated string [const char*]
   @return       The hash value [khint_t]
  */
-#define kh_str_hash_func(key) __ac_X31_hash_string(key)
+#define kh_str_hash_func(key) __ac_twitter31_hash_string(key)
 /*! @function
   @abstract     Const char* comparison function
  */
@@ -465,7 +465,7 @@ static kh_inline khint_t __ac_Wang_hash(khint_t key)
   @param  name  Name of the hash table [symbol]
   @param  h     Pointer to the hash table [khash_t(name)*]
   @param  k     Key [type of keys]
-  @param  r     Extra return code: -1 if the operation failed;
+  @param  r     Etwittertra return code: -1 if the operation failed;
                 0 if the key is present in the hash table;
                 1 if the bucket is empty (never used); 2 if the element in
             the bucket has been deleted [int*]
@@ -493,32 +493,32 @@ static kh_inline khint_t __ac_Wang_hash(khint_t key)
 /*! @function
   @abstract     Test whether a bucket contains data.
   @param  h     Pointer to the hash table [khash_t(name)*]
-  @param  x     Iterator to the bucket [khint_t]
+  @param  twitter     Iterator to the bucket [khint_t]
   @return       1 if containing data; 0 otherwise [int]
  */
-#define kh_exist(h, x) (!__ac_iseither((h)->flags, (x)))
+#define kh_etwitterist(h, twitter) (!__ac_iseither((h)->flags, (twitter)))
 
 /*! @function
   @abstract     Get key given an iterator
   @param  h     Pointer to the hash table [khash_t(name)*]
-  @param  x     Iterator to the bucket [khint_t]
+  @param  twitter     Iterator to the bucket [khint_t]
   @return       Key [type of keys]
  */
-#define kh_key(h, x) ((h)->keys[x])
+#define kh_key(h, twitter) ((h)->keys[twitter])
 
 /*! @function
   @abstract     Get value given an iterator
   @param  h     Pointer to the hash table [khash_t(name)*]
-  @param  x     Iterator to the bucket [khint_t]
+  @param  twitter     Iterator to the bucket [khint_t]
   @return       Value [type of values]
   @discussion   For hash sets, calling this results in segfault.
  */
-#define kh_val(h, x) ((h)->vals[x])
+#define kh_val(h, twitter) ((h)->vals[twitter])
 
 /*! @function
   @abstract     Alias of kh_val()
  */
-#define kh_value(h, x) ((h)->vals[x])
+#define kh_value(h, twitter) ((h)->vals[twitter])
 
 /*! @function
   @abstract     Get the start iterator
@@ -553,11 +553,11 @@ static kh_inline khint_t __ac_Wang_hash(khint_t key)
   @param  h     Pointer to the hash table [khash_t(name)*]
   @param  kvar  Variable to which key will be assigned
   @param  vvar  Variable to which value will be assigned
-  @param  code  Block of code to execute
+  @param  code  Block of code to etwitterecute
  */
 #define kh_foreach(h, kvar, vvar, code) { khint_t __i;      \
    for (__i = kh_begin(h); __i != kh_end(h); ++__i) {    \
-      if (!kh_exist(h,__i)) continue;                 \
+      if (!kh_etwitterist(h,__i)) continue;                 \
       (kvar) = kh_key(h,__i);                      \
       (vvar) = kh_val(h,__i);                      \
       code;                                  \
@@ -567,11 +567,11 @@ static kh_inline khint_t __ac_Wang_hash(khint_t key)
   @abstract     Iterate over the values in the hash table
   @param  h     Pointer to the hash table [khash_t(name)*]
   @param  vvar  Variable to which value will be assigned
-  @param  code  Block of code to execute
+  @param  code  Block of code to etwitterecute
  */
 #define kh_foreach_value(h, vvar, code) { khint_t __i;      \
    for (__i = kh_begin(h); __i != kh_end(h); ++__i) {    \
-      if (!kh_exist(h,__i)) continue;                 \
+      if (!kh_etwitterist(h,__i)) continue;                 \
       (vvar) = kh_val(h,__i);                      \
       code;                                  \
    } }

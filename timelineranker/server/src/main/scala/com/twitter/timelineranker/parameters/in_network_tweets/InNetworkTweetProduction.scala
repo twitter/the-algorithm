@@ -11,11 +11,11 @@ import com.twitter.servo.decider.DeciderKeyEnum
 object InNetworkTweetProduction {
   val deciderByParam: Map[Param[_], DeciderKeyEnum#Value] = Map[Param[_], DeciderKeyName](
     EnableContentFeaturesHydrationParam -> DeciderKey.RecycledEnableContentFeaturesHydration,
-    MaxCountMultiplierParam -> DeciderKey.RecycledMaxCountMultiplier
+    MatwitterCountMultiplierParam -> DeciderKey.RecycledMatwitterCountMultiplier
   )
 
-  val doubleParams: Seq[MaxCountMultiplierParam.type] = Seq(
-    MaxCountMultiplierParam
+  val doubleParams: Seq[MatwitterCountMultiplierParam.type] = Seq(
+    MatwitterCountMultiplierParam
   )
 
   val booleanDeciderParams: Seq[EnableContentFeaturesHydrationParam.type] = Seq(
@@ -23,20 +23,20 @@ object InNetworkTweetProduction {
   )
 
   val booleanFeatureSwitchParams: Seq[FSParam[Boolean]] = Seq(
-    EnableExcludeSourceTweetIdsQueryParam,
+    EnableEtwittercludeSourceTweetIdsQueryParam,
     EnableTokensInContentFeaturesHydrationParam,
     EnableReplyRootTweetHydrationParam,
-    EnableTweetTextInContentFeaturesHydrationParam,
+    EnableTweetTetwittertInContentFeaturesHydrationParam,
     EnableConversationControlInContentFeaturesHydrationParam,
     EnableTweetMediaHydrationParam,
     EnableEarlybirdReturnAllResultsParam,
     EnableEarlybirdRealtimeCgMigrationParam,
-    RecycledMaxFollowedUsersEnableAntiDilutionParam
+    RecycledMatwitterFollowedUsersEnableAntiDilutionParam
   )
 
   val boundedIntFeatureSwitchParams: Seq[FSBoundedParam[Int]] = Seq(
-    MaxFollowedUsersParam,
-    RelevanceOptionsMaxHitsToProcessParam
+    MatwitterFollowedUsersParam,
+    RelevanceOptionsMatwitterHitsToProcessParam
   )
 }
 

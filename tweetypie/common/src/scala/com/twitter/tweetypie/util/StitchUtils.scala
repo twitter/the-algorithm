@@ -26,8 +26,8 @@ object StitchUtils {
     val success = stats.counter("success")
     val latencyStat = stats.stat("latency_ms")
 
-    val exceptionCounter =
-      new servo.util.ExceptionCounter(stats, "failures")
+    val etwitterceptionCounter =
+      new servo.util.EtwitterceptionCounter(stats, "failures")
 
     stitch =>
       trackLatency(latencyStat, stitch)
@@ -37,18 +37,18 @@ object StitchUtils {
             success.incr()
 
           case Throw(e) =>
-            exceptionCounter(e)
+            etwitterceptionCounter(e)
             requests.incr()
         }
   }
 
-  def translateExceptions[T](
+  def translateEtwitterceptions[T](
     stitch: Stitch[T],
-    translateException: PartialFunction[Throwable, Throwable]
+    translateEtwitterception: PartialFunction[Throwable, Throwable]
   ): Stitch[T] =
     stitch.rescue {
-      case t if translateException.isDefinedAt(t) =>
-        Stitch.exception(translateException(t))
-      case t => Stitch.exception(t)
+      case t if translateEtwitterception.isDefinedAt(t) =>
+        Stitch.etwitterception(translateEtwitterception(t))
+      case t => Stitch.etwitterception(t)
     }
 }

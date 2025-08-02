@@ -8,7 +8,7 @@ import com.twitter.ads.spendserver.thriftscala.SpendServerEvent
 import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
 
 class AdsCallbackEngagementsAdapter
-    extends AbstractAdapter[SpendServerEvent, UnKeyed, UnifiedUserAction] {
+    etwittertends AbstractAdapter[SpendServerEvent, UnKeyed, UnifiedUserAction] {
 
   import AdsCallbackEngagementsAdapter._
 

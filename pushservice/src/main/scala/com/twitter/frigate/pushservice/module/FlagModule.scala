@@ -12,7 +12,7 @@ object FlagName {
   final val isInMemCacheOff = "service.isInMemCacheOff"
 }
 
-object FlagModule extends TwitterModule {
+object FlagModule etwittertends TwitterModule {
 
   val shardId: Flag[Int] = flag[Int](
     name = FlagName.shardId,

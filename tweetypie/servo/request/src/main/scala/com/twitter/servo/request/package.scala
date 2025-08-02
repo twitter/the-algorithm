@@ -12,13 +12,13 @@ package object request {
    *
    * Upon completion of a filter's work, the convention is to either:
    *
-   * a) Return a Future of a request object of type `A` to be passed to the next
+   * a) Return a Future of a request object of type `A` to be passed to the netwittert
    *    member of the filter/handler chain.
    * b) Return a Future response outright in cases where request handling must
-   *    be halted at the current filter (i.e. returning `Future.exception(...)`.
+   *    be halted at the current filter (i.e. returning `Future.etwitterception(...)`.
    *
    * @tparam A
-   *   A type encapsulating all context and data required to satisfy a request.
+   *   A type encapsulating all contetwittert and data required to satisfy a request.
    */
   type RequestFilter[A] = FutureArrow[A, A]
 
@@ -26,7 +26,7 @@ package object request {
    * A handler of requests parameterized on the request and response types.
    *
    * @tparam A
-   *   A type encapsulating all context and data required to satisfy a request.
+   *   A type encapsulating all contetwittert and data required to satisfy a request.
    *
    * @tparam B
    *   A response type.

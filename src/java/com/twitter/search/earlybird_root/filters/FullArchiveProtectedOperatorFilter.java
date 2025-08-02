@@ -2,7 +2,7 @@ package com.twitter.search.earlybird_root.filters;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import javatwitter.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,19 +15,19 @@ import com.twitter.search.earlybird.thrift.EarlybirdDebugInfo;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.queryparser.query.Query;
 import com.twitter.search.queryparser.query.QueryNodeUtils;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twitter.search.queryparser.query.QueryParserEtwitterception;
 import com.twitter.search.queryparser.query.search.SearchOperator;
 import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
 import com.twitter.search.queryparser.visitors.DropAllProtectedOperatorVisitor;
-import com.twitter.search.queryparser.visitors.QueryTreeIndex;
+import com.twitter.search.queryparser.visitors.QueryTreeIndetwitter;
 import com.twitter.util.Future;
 
 /**
  * Full archive service filter validates requests with a protected operator, appends the
- * '[exclude protected]' operator by default, and appends '[filter protected]' operator instead if
+ * '[etwitterclude protected]' operator by default, and appends '[filter protected]' operator instead if
  * 'getProtectedTweetsOnly' request param is set. A client error response is returned if any of the
  * following rules is violated.
  *   1. There is at most one 'protected' operator in the query.
@@ -36,16 +36,16 @@ import com.twitter.util.Future;
  *   4. If there is a positive 'protected' operator, 'followedUserIds' and 'searcherId' request
  *   params must be set.
  */
-public class FullArchiveProtectedOperatorFilter extends
-    SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+public class FullArchiveProtectedOperatorFilter etwittertends
+    SimpleFilter<EarlybirdRequestContetwittert, EarlybirdResponse> {
   private static final Logger LOG =
       LoggerFactory.getLogger(FullArchiveProtectedOperatorFilter.class);
-  private static final SearchOperator EXCLUDE_PROTECTED_OPERATOR =
-      new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.PROTECTED);
+  private static final SearchOperator EtwitterCLUDE_PROTECTED_OPERATOR =
+      new SearchOperator(SearchOperator.Type.EtwitterCLUDE, SearchOperatorConstants.PROTECTED);
   private static final SearchOperator FILTER_PROTECTED_OPERATOR =
       new SearchOperator(SearchOperator.Type.FILTER, SearchOperatorConstants.PROTECTED);
   private static final SearchCounter QUERY_PARSER_FAILURE_COUNT =
-      SearchCounter.export("protected_operator_filter_query_parser_failure_count");
+      SearchCounter.etwitterport("protected_operator_filter_query_parser_failure_count");
 
   private final DropAllProtectedOperatorVisitor dropProtectedOperatorVisitor;
   private final SearchDecider decider;
@@ -60,15 +60,15 @@ public class FullArchiveProtectedOperatorFilter extends
 
   @Override
   public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    Query query = requestContext.getParsedQuery();
+      EarlybirdRequestContetwittert requestContetwittert,
+      Service<EarlybirdRequestContetwittert, EarlybirdResponse> service) {
+    Query query = requestContetwittert.getParsedQuery();
     if (query == null) {
-      return service.apply(requestContext);
+      return service.apply(requestContetwittert);
     }
 
-    QueryTreeIndex queryTreeIndex = QueryTreeIndex.buildFor(query);
-    List<Query> nodeList = queryTreeIndex.getNodeList();
+    QueryTreeIndetwitter queryTreeIndetwitter = QueryTreeIndetwitter.buildFor(query);
+    List<Query> nodeList = queryTreeIndetwitter.getNodeList();
     // try to find a protected operator, returns error response if more than one protected
     // operator is detected
     SearchOperator protectedOperator = null;
@@ -79,7 +79,7 @@ public class FullArchiveProtectedOperatorFilter extends
           if (protectedOperator == null) {
             protectedOperator = searchOp;
           } else {
-            return createErrorResponse("Only one 'protected' operator is expected.");
+            return createErrorResponse("Only one 'protected' operator is etwitterpected.");
           }
         }
       }
@@ -87,11 +87,11 @@ public class FullArchiveProtectedOperatorFilter extends
 
     Query processedQuery;
     if (protectedOperator == null) {
-      // no protected operator is detected, append '[exclude protected]' by default
-      processedQuery = QueryNodeUtils.appendAsConjunction(query, EXCLUDE_PROTECTED_OPERATOR);
+      // no protected operator is detected, append '[etwitterclude protected]' by default
+      processedQuery = QueryNodeUtils.appendAsConjunction(query, EtwitterCLUDE_PROTECTED_OPERATOR);
     } else {
       // protected operator must be in the query root node
-      if (queryTreeIndex.getParentOf(protectedOperator) != query) {
+      if (queryTreeIndetwitter.getParentOf(protectedOperator) != query) {
         return createErrorResponse("'protected' operator must be in the query root node");
       }
       // the query node that contains protected operator must not be negated
@@ -104,9 +104,9 @@ public class FullArchiveProtectedOperatorFilter extends
         return createErrorResponse("The query node that contains a 'protected' operator must"
             + " be a conjunction.");
       }
-      // check the existence of 'followedUserIds' and 'searcherId' if it is a positive operator
+      // check the etwitteristence of 'followedUserIds' and 'searcherId' if it is a positive operator
       if (isPositive(protectedOperator)) {
-        if (!validateRequestParam(requestContext.getRequest())) {
+        if (!validateRequestParam(requestContetwittert.getRequest())) {
           return createErrorResponse("'followedUserIds' and 'searcherId' are required "
               + "by positive 'protected' operator.");
         }
@@ -114,15 +114,15 @@ public class FullArchiveProtectedOperatorFilter extends
       processedQuery = query;
     }
     // update processedQuery if 'getProtectedTweetsOnly' is set to true, it takes precedence over
-    // the existing protected operators
-    if (requestContext.getRequest().isGetProtectedTweetsOnly()) {
-      if (!validateRequestParam(requestContext.getRequest())) {
+    // the etwitteristing protected operators
+    if (requestContetwittert.getRequest().isGetProtectedTweetsOnly()) {
+      if (!validateRequestParam(requestContetwittert.getRequest())) {
         return createErrorResponse("'followedUserIds' and 'searcherId' are required "
             + "when 'getProtectedTweetsOnly' is set to true.");
       }
       try {
         processedQuery = processedQuery.accept(dropProtectedOperatorVisitor);
-      } catch (QueryParserException e) {
+      } catch (QueryParserEtwitterception e) {
         // this should not happen since we already have a parsed query
         QUERY_PARSER_FAILURE_COUNT.increment();
         LOG.warn(
@@ -133,11 +133,11 @@ public class FullArchiveProtectedOperatorFilter extends
     }
 
     if (processedQuery == query) {
-      return service.apply(requestContext);
+      return service.apply(requestContetwittert);
     } else {
-      EarlybirdRequestContext clonedRequestContext =
-          EarlybirdRequestContext.copyRequestContext(requestContext, processedQuery);
-      return service.apply(clonedRequestContext);
+      EarlybirdRequestContetwittert clonedRequestContetwittert =
+          EarlybirdRequestContetwittert.copyRequestContetwittert(requestContetwittert, processedQuery);
+      return service.apply(clonedRequestContetwittert);
     }
   }
 
@@ -149,12 +149,12 @@ public class FullArchiveProtectedOperatorFilter extends
   }
 
   private boolean isPositive(SearchOperator searchOp) {
-    boolean isNegateExclude = searchOp.mustNotOccur()
-        && searchOp.getOperatorType() == SearchOperator.Type.EXCLUDE;
+    boolean isNegateEtwitterclude = searchOp.mustNotOccur()
+        && searchOp.getOperatorType() == SearchOperator.Type.EtwitterCLUDE;
     boolean isPositive = !searchOp.mustNotOccur()
         && (searchOp.getOperatorType() == SearchOperator.Type.INCLUDE
         || searchOp.getOperatorType() == SearchOperator.Type.FILTER);
-    return isNegateExclude || isPositive;
+    return isNegateEtwitterclude || isPositive;
   }
 
   private Future<EarlybirdResponse> createErrorResponse(String errorMsg) {

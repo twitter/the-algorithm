@@ -1,7 +1,7 @@
 package com.twitter.visibility.rules
 
 import com.twitter.contenthealth.sensitivemediasettings.thriftscala.SensitiveMediaSettingsLevel
-import com.twitter.contenthealth.toxicreplyfilter.thriftscala.FilterState
+import com.twitter.contenthealth.totwittericreplyfilter.thriftscala.FilterState
 import com.twitter.conversions.DurationOps._
 import com.twitter.gizmoduck.thriftscala.Label
 import com.twitter.gizmoduck.thriftscala.MuteSurface
@@ -91,9 +91,9 @@ import com.twitter.visibility.util.NamingUtils
 import com.twitter.visibility.{features => feats}
 
 sealed trait PreFilterResult
-case object Filtered extends PreFilterResult
-case object NeedsFullEvaluation extends PreFilterResult
-case object NotFiltered extends PreFilterResult
+case object Filtered etwittertends PreFilterResult
+case object NeedsFullEvaluation etwittertends PreFilterResult
+case object NotFiltered etwittertends PreFilterResult
 
 sealed trait Condition {
   lazy val name: String = NamingUtils.getFriendlyName(this)
@@ -101,11 +101,11 @@ sealed trait Condition {
   def optionalFeatures: Set[Feature[_]]
 
   def preFilter(
-    evaluationContext: EvaluationContext,
+    evaluationContetwittert: EvaluationContetwittert,
     featureMap: Map[Feature[_], _]
   ): PreFilterResult = {
     if (features.forall(featureMap.contains)) {
-      if (apply(evaluationContext, featureMap).asBoolean) {
+      if (apply(evaluationContetwittert, featureMap).asBoolean) {
         NotFiltered
       } else {
         Filtered
@@ -115,16 +115,16 @@ sealed trait Condition {
     }
   }
 
-  def apply(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): Result
+  def apply(evaluationContetwittert: EvaluationContetwittert, featureMap: Map[Feature[_], _]): Result
 }
 
-trait PreFilterOnOptionalFeatures extends Condition {
+trait PreFilterOnOptionalFeatures etwittertends Condition {
   override def preFilter(
-    evaluationContext: EvaluationContext,
+    evaluationContetwittert: EvaluationContetwittert,
     featureMap: Map[Feature[_], _]
   ): PreFilterResult =
     if ((features ++ optionalFeatures).forall(featureMap.contains)) {
-      if (apply(evaluationContext, featureMap).asBoolean) {
+      if (apply(evaluationContetwittert, featureMap).asBoolean) {
         NotFiltered
       } else {
         Filtered
@@ -139,7 +139,7 @@ trait HasSafetyLabelType {
   def hasLabelType(labelType: SafetyLabelType): Boolean = labelTypes.contains(labelType)
 }
 
-sealed trait HasNestedConditions extends HasSafetyLabelType {
+sealed trait HasNestedConditions etwittertends HasSafetyLabelType {
   val conditions: Seq[Condition]
   override lazy val labelTypes: Set[SafetyLabelType] = conditions
     .collect {
@@ -149,41 +149,41 @@ sealed trait HasNestedConditions extends HasSafetyLabelType {
 
 object Result {
   sealed trait ConditionReason
-  case object FoundInnerQuotedTweet extends ConditionReason
-  case object FoundTweetViolationOfSomeLevel extends ConditionReason
-  case class FoundTweetViolationOfLevel(level: ViolationLevel) extends ConditionReason
-  case class FoundTweetLabel(label: TweetSafetyLabelType) extends ConditionReason
-  case class FoundSpaceLabel(label: SpaceSafetyLabelType) extends ConditionReason
-  case class FoundMediaLabel(label: MediaSafetyLabelType) extends ConditionReason
-  case class FoundTweetLabelForPerspectivalUser(label: TweetSafetyLabelType) extends ConditionReason
+  case object FoundInnerQuotedTweet etwittertends ConditionReason
+  case object FoundTweetViolationOfSomeLevel etwittertends ConditionReason
+  case class FoundTweetViolationOfLevel(level: ViolationLevel) etwittertends ConditionReason
+  case class FoundTweetLabel(label: TweetSafetyLabelType) etwittertends ConditionReason
+  case class FoundSpaceLabel(label: SpaceSafetyLabelType) etwittertends ConditionReason
+  case class FoundMediaLabel(label: MediaSafetyLabelType) etwittertends ConditionReason
+  case class FoundTweetLabelForPerspectivalUser(label: TweetSafetyLabelType) etwittertends ConditionReason
   case class FoundTweetLabelWithLanguageScoreAboveThreshold(
     label: TweetSafetyLabelType,
     languagesToScoreThresholds: Map[String, Double])
-      extends ConditionReason
+      etwittertends ConditionReason
   case class FoundTweetLabelWithScoreAboveThreshold(label: TweetSafetyLabelType, threshold: Double)
-      extends ConditionReason
+      etwittertends ConditionReason
   case class FoundTweetLabelWithLanguageIn(
     safetyLabelType: TweetSafetyLabelType,
     languages: Set[String])
-      extends ConditionReason
+      etwittertends ConditionReason
   case class FoundTweetSafetyLabelWithPredicate(safetyLabelType: TweetSafetyLabelType, name: String)
-      extends ConditionReason
-  case class FoundUserLabel(label: UserLabelValue) extends ConditionReason
-  case class FoundMutedKeyword(keyword: String) extends ConditionReason
-  case object HasTweetTimestampAfterCutoff extends ConditionReason
-  case object HasTweetTimestampAfterOffset extends ConditionReason
-  case object HasTweetTimestampBeforeCutoff extends ConditionReason
-  case class IsTweetReplyToParentTweetBeforeDuration(duration: Duration) extends ConditionReason
-  case class IsTweetReplyToRootTweetBeforeDuration(duration: Duration) extends ConditionReason
-  case class HasQuerySource(querySource: ThriftQuerySource) extends ConditionReason
-  case class FoundUserRole(role: String) extends ConditionReason
-  case class ViewerInHrcj(jurisdiction: String) extends ConditionReason
-  case class ViewerOrRequestInCountry(country: String) extends ConditionReason
-  case class ViewerAgeInYears(ageInYears: Int) extends ConditionReason
-  case object NoViewerAge extends ConditionReason
-  case class ParamWasTrue(param: Param[Boolean]) extends ConditionReason
-  case class FoundCardUriRootDomain(domain: String) extends ConditionReason
-  case object Unknown extends ConditionReason
+      etwittertends ConditionReason
+  case class FoundUserLabel(label: UserLabelValue) etwittertends ConditionReason
+  case class FoundMutedKeyword(keyword: String) etwittertends ConditionReason
+  case object HasTweetTimestampAfterCutoff etwittertends ConditionReason
+  case object HasTweetTimestampAfterOffset etwittertends ConditionReason
+  case object HasTweetTimestampBeforeCutoff etwittertends ConditionReason
+  case class IsTweetReplyToParentTweetBeforeDuration(duration: Duration) etwittertends ConditionReason
+  case class IsTweetReplyToRootTweetBeforeDuration(duration: Duration) etwittertends ConditionReason
+  case class HasQuerySource(querySource: ThriftQuerySource) etwittertends ConditionReason
+  case class FoundUserRole(role: String) etwittertends ConditionReason
+  case class ViewerInHrcj(jurisdiction: String) etwittertends ConditionReason
+  case class ViewerOrRequestInCountry(country: String) etwittertends ConditionReason
+  case class ViewerAgeInYears(ageInYears: Int) etwittertends ConditionReason
+  case object NoViewerAge etwittertends ConditionReason
+  case class ParamWasTrue(param: Param[Boolean]) etwittertends ConditionReason
+  case class FoundCardUriRootDomain(domain: String) etwittertends ConditionReason
+  case object Unknown etwittertends ConditionReason
 
   sealed trait Result {
     def asBoolean: Boolean
@@ -191,11 +191,11 @@ object Result {
 
   val SatisfiedResult: Result = Satisfied()
 
-  case class Satisfied(reason: ConditionReason = Unknown) extends Result {
+  case class Satisfied(reason: ConditionReason = Unknown) etwittertends Result {
     override val asBoolean: Boolean = true
   }
 
-  case class Unsatisfied(condition: Condition) extends Result {
+  case class Unsatisfied(condition: Condition) etwittertends Result {
     override val asBoolean: Boolean = false
   }
 
@@ -207,19 +207,19 @@ object Result {
   }
 
   case class FoundSpaceLabelWithScoreAboveThreshold(label: SpaceSafetyLabelType, threshold: Double)
-      extends ConditionReason
+      etwittertends ConditionReason
 }
 
 object Condition {
 
-  abstract class BooleanFeatureCondition(feature: Feature[Boolean]) extends Condition {
+  abstract class BooleanFeatureCondition(feature: Feature[Boolean]) etwittertends Condition {
     override val features: Set[Feature[_]] = Set(feature)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
 
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result =
       if (featureMap(feature).asInstanceOf[Boolean]) {
@@ -229,7 +229,7 @@ object Condition {
       }
   }
 
-  case class ParamIsTrue(param: Param[Boolean]) extends Condition with HasParams {
+  case class ParamIsTrue(param: Param[Boolean]) etwittertends Condition with HasParams {
     override lazy val name: String = s"ParamIsTrue(${NamingUtils.getFriendlyName(param)})"
     override val features: Set[Feature[_]] = Set.empty
     override val optionalFeatures: Set[Feature[_]] = Set.empty
@@ -240,44 +240,44 @@ object Condition {
     override val params: Set[Param[_]] = Set(param)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result =
-      if (evaluationContext.params(param)) {
+      if (evaluationContetwittert.params(param)) {
         SatisfiedResult
       } else {
         UnsatisfiedResult
       }
   }
 
-  case object Never extends Condition {
+  case object Never etwittertends Condition {
     override lazy val name: String = s"""Never"""
     override val features: Set[Feature[_]] = Set.empty
     override val optionalFeatures: Set[Feature[_]] = Set.empty
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def preFilter(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): PreFilterResult = {
       NeedsFullEvaluation
     }
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result =
       UnsatisfiedResult
   }
 
-  class BooleanCondition(value: Boolean) extends Condition {
+  class BooleanCondition(value: Boolean) etwittertends Condition {
     override lazy val name: String = s"""${if (value) "True" else "False"}"""
     override val features: Set[Feature[_]] = Set.empty
     override val optionalFeatures: Set[Feature[_]] = Set.empty
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result =
       value match {
@@ -286,18 +286,18 @@ object Condition {
       }
   }
 
-  case object True extends BooleanCondition(true)
-  case object False extends BooleanCondition(false)
+  case object True etwittertends BooleanCondition(true)
+  case object False etwittertends BooleanCondition(false)
 
   abstract class ContentTakendownInViewerCountry(takedownFeature: Feature[Seq[TakedownReason]])
-      extends Condition {
+      etwittertends Condition {
     override val features: Set[Feature[_]] = Set(takedownFeature)
     override val optionalFeatures: Set[Feature[_]] = Set(RequestCountryCode)
 
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val requestCountryCode = featureMap.get(RequestCountryCode).asInstanceOf[Option[String]]
@@ -311,42 +311,42 @@ object Condition {
   }
 
   case object TweetTakendownInViewerCountry
-      extends ContentTakendownInViewerCountry(TweetTakedownReasons)
+      etwittertends ContentTakendownInViewerCountry(TweetTakedownReasons)
 
   case object AuthorTakendownInViewerCountry
-      extends ContentTakendownInViewerCountry(AuthorTakedownReasons)
+      etwittertends ContentTakendownInViewerCountry(AuthorTakedownReasons)
 
-  case object SuspendedAuthor extends BooleanFeatureCondition(AuthorIsSuspended)
+  case object SuspendedAuthor etwittertends BooleanFeatureCondition(AuthorIsSuspended)
 
-  case object SuspendedViewer extends BooleanFeatureCondition(ViewerIsSuspended)
+  case object SuspendedViewer etwittertends BooleanFeatureCondition(ViewerIsSuspended)
 
-  case object DeactivatedViewer extends BooleanFeatureCondition(ViewerIsDeactivated)
+  case object DeactivatedViewer etwittertends BooleanFeatureCondition(ViewerIsDeactivated)
 
-  case object UnavailableAuthor extends BooleanFeatureCondition(AuthorIsUnavailable)
+  case object UnavailableAuthor etwittertends BooleanFeatureCondition(AuthorIsUnavailable)
 
-  case object IsVerifiedCrawlerViewer extends BooleanFeatureCondition(RequestIsVerifiedCrawler)
+  case object IsVerifiedCrawlerViewer etwittertends BooleanFeatureCondition(RequestIsVerifiedCrawler)
 
-  case object LoggedOutViewer extends Condition {
+  case object LoggedOutViewer etwittertends Condition {
     override val features: Set[Feature[_]] = Set.empty
     override val optionalFeatures: Set[Feature[_]] = Set(ViewerId)
 
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result =
       if (featureMap.contains(ViewerId)) UnsatisfiedResult else Result.SatisfiedResult
   }
 
-  case object IsSelfQuote extends Condition {
+  case object IsSelfQuote etwittertends Condition {
     override val features: Set[Feature[_]] = Set(AuthorId, OuterAuthorId)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
 
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val authorIds = featureMap(AuthorId).asInstanceOf[Set[Long]]
@@ -359,14 +359,14 @@ object Condition {
     }
   }
 
-  case object ViewerIsAuthor extends Condition {
+  case object ViewerIsAuthor etwittertends Condition {
     override val features: Set[Feature[_]] = Set(AuthorId)
     override val optionalFeatures: Set[Feature[_]] = Set(ViewerId)
 
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result =
       if (featureMap.contains(ViewerId)) {
@@ -382,14 +382,14 @@ object Condition {
       }
   }
 
-  case object NonAuthorViewer extends Condition {
+  case object NonAuthorViewer etwittertends Condition {
     override val features: Set[Feature[_]] = Set(AuthorId)
     override val optionalFeatures: Set[Feature[_]] = Set(ViewerId)
 
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result =
       if (featureMap.contains(ViewerId)) {
@@ -406,133 +406,133 @@ object Condition {
   }
 
   case object ViewerFollowsAuthorOfFosnrViolatingTweet
-      extends BooleanFeatureCondition(ViewerFollowsAuthorOfViolatingTweet)
+      etwittertends BooleanFeatureCondition(ViewerFollowsAuthorOfViolatingTweet)
 
   case object ViewerDoesNotFollowAuthorOfFosnrViolatingTweet
-      extends BooleanFeatureCondition(ViewerDoesNotFollowAuthorOfViolatingTweet)
+      etwittertends BooleanFeatureCondition(ViewerDoesNotFollowAuthorOfViolatingTweet)
 
-  case object ViewerDoesFollowAuthor extends BooleanFeatureCondition(ViewerFollowsAuthor)
+  case object ViewerDoesFollowAuthor etwittertends BooleanFeatureCondition(ViewerFollowsAuthor)
 
-  case object AuthorDoesFollowViewer extends BooleanFeatureCondition(AuthorFollowsViewer)
+  case object AuthorDoesFollowViewer etwittertends BooleanFeatureCondition(AuthorFollowsViewer)
 
-  case object AuthorBlocksViewer extends BooleanFeatureCondition(AuthorBlocksViewerFeature)
+  case object AuthorBlocksViewer etwittertends BooleanFeatureCondition(AuthorBlocksViewerFeature)
 
-  case object ViewerBlocksAuthor extends BooleanFeatureCondition(ViewerBlocksAuthorFeature)
+  case object ViewerBlocksAuthor etwittertends BooleanFeatureCondition(ViewerBlocksAuthorFeature)
 
-  case object ViewerIsUnmentioned extends BooleanFeatureCondition(NotificationIsOnUnmentionedViewer)
+  case object ViewerIsUnmentioned etwittertends BooleanFeatureCondition(NotificationIsOnUnmentionedViewer)
 
   case object AuthorBlocksOuterAuthor
-      extends BooleanFeatureCondition(AuthorBlocksOuterAuthorFeature)
+      etwittertends BooleanFeatureCondition(AuthorBlocksOuterAuthorFeature)
 
   case object OuterAuthorFollowsAuthor
-      extends BooleanFeatureCondition(OuterAuthorFollowsAuthorFeature)
+      etwittertends BooleanFeatureCondition(OuterAuthorFollowsAuthorFeature)
 
   case object OuterAuthorIsInnerAuthor
-      extends BooleanFeatureCondition(OuterAuthorIsInnerAuthorFeature)
+      etwittertends BooleanFeatureCondition(OuterAuthorIsInnerAuthorFeature)
 
-  case object ViewerMutesAuthor extends BooleanFeatureCondition(ViewerMutesAuthorFeature)
+  case object ViewerMutesAuthor etwittertends BooleanFeatureCondition(ViewerMutesAuthorFeature)
 
-  case object ViewerReportsAuthor extends BooleanFeatureCondition(ViewerReportsAuthorAsSpam)
-  case object ViewerReportsTweet extends BooleanFeatureCondition(ViewerReportedTweet)
+  case object ViewerReportsAuthor etwittertends BooleanFeatureCondition(ViewerReportsAuthorAsSpam)
+  case object ViewerReportsTweet etwittertends BooleanFeatureCondition(ViewerReportedTweet)
 
-  case object IsQuotedInnerTweet extends BooleanFeatureCondition(TweetIsInnerQuotedTweet)
+  case object IsQuotedInnerTweet etwittertends BooleanFeatureCondition(TweetIsInnerQuotedTweet)
 
-  case object IsSourceTweet extends BooleanFeatureCondition(TweetIsSourceTweet)
+  case object IsSourceTweet etwittertends BooleanFeatureCondition(TweetIsSourceTweet)
 
   case object ViewerMutesRetweetsFromAuthor
-      extends BooleanFeatureCondition(ViewerMutesRetweetsFromAuthorFeature)
+      etwittertends BooleanFeatureCondition(ViewerMutesRetweetsFromAuthorFeature)
 
   case object ConversationRootAuthorDoesFollowViewer
-      extends BooleanFeatureCondition(ConversationRootAuthorFollowsViewer)
+      etwittertends BooleanFeatureCondition(ConversationRootAuthorFollowsViewer)
 
   case object ViewerDoesFollowConversationRootAuthor
-      extends BooleanFeatureCondition(ViewerFollowsConversationRootAuthor)
+      etwittertends BooleanFeatureCondition(ViewerFollowsConversationRootAuthor)
 
-  case object TweetIsCommunityTweet extends BooleanFeatureCondition(TweetIsCommunityTweetFeature)
+  case object TweetIsCommunityTweet etwittertends BooleanFeatureCondition(TweetIsCommunityTweetFeature)
 
   case object NotificationIsOnCommunityTweet
-      extends BooleanFeatureCondition(NotificationIsOnCommunityTweetFeature)
+      etwittertends BooleanFeatureCondition(NotificationIsOnCommunityTweetFeature)
 
-  sealed trait CommunityTweetCommunityUnavailable extends Condition
+  sealed trait CommunityTweetCommunityUnavailable etwittertends Condition
 
   case object CommunityTweetCommunityNotFound
-      extends BooleanFeatureCondition(CommunityTweetCommunityNotFoundFeature)
+      etwittertends BooleanFeatureCondition(CommunityTweetCommunityNotFoundFeature)
       with CommunityTweetCommunityUnavailable
 
   case object CommunityTweetCommunityDeleted
-      extends BooleanFeatureCondition(CommunityTweetCommunityDeletedFeature)
+      etwittertends BooleanFeatureCondition(CommunityTweetCommunityDeletedFeature)
       with CommunityTweetCommunityUnavailable
 
   case object CommunityTweetCommunitySuspended
-      extends BooleanFeatureCondition(CommunityTweetCommunitySuspendedFeature)
+      etwittertends BooleanFeatureCondition(CommunityTweetCommunitySuspendedFeature)
       with CommunityTweetCommunityUnavailable
 
   case object CommunityTweetCommunityVisible
-      extends BooleanFeatureCondition(CommunityTweetCommunityVisibleFeature)
+      etwittertends BooleanFeatureCondition(CommunityTweetCommunityVisibleFeature)
 
   case object ViewerIsInternalCommunitiesAdmin
-      extends BooleanFeatureCondition(ViewerIsInternalCommunitiesAdminFeature)
+      etwittertends BooleanFeatureCondition(ViewerIsInternalCommunitiesAdminFeature)
 
-  case object ViewerIsCommunityAdmin extends BooleanFeatureCondition(ViewerIsCommunityAdminFeature)
+  case object ViewerIsCommunityAdmin etwittertends BooleanFeatureCondition(ViewerIsCommunityAdminFeature)
 
   case object ViewerIsCommunityModerator
-      extends BooleanFeatureCondition(ViewerIsCommunityModeratorFeature)
+      etwittertends BooleanFeatureCondition(ViewerIsCommunityModeratorFeature)
 
   case object ViewerIsCommunityMember
-      extends BooleanFeatureCondition(ViewerIsCommunityMemberFeature)
+      etwittertends BooleanFeatureCondition(ViewerIsCommunityMemberFeature)
 
-  sealed trait CommunityTweetIsModerated extends Condition
+  sealed trait CommunityTweetIsModerated etwittertends Condition
 
   case object CommunityTweetIsHidden
-      extends BooleanFeatureCondition(CommunityTweetIsHiddenFeature)
+      etwittertends BooleanFeatureCondition(CommunityTweetIsHiddenFeature)
       with CommunityTweetIsModerated
 
   case object CommunityTweetAuthorIsRemoved
-      extends BooleanFeatureCondition(CommunityTweetAuthorIsRemovedFeature)
+      etwittertends BooleanFeatureCondition(CommunityTweetAuthorIsRemovedFeature)
       with CommunityTweetIsModerated
 
   case object DoesHaveInnerCircleOfFriendsRelationship
-      extends BooleanFeatureCondition(HasInnerCircleOfFriendsRelationship)
+      etwittertends BooleanFeatureCondition(HasInnerCircleOfFriendsRelationship)
 
   case object TweetIsCommunityConversation
-      extends BooleanFeatureCondition(TweetHasCommunityConversationControl)
+      etwittertends BooleanFeatureCondition(TweetHasCommunityConversationControl)
 
   case object TweetIsByInvitationConversation
-      extends BooleanFeatureCondition(TweetHasByInvitationConversationControl)
+      etwittertends BooleanFeatureCondition(TweetHasByInvitationConversationControl)
 
   case object TweetIsFollowersConversation
-      extends BooleanFeatureCondition(TweetHasFollowersConversationControl)
+      etwittertends BooleanFeatureCondition(TweetHasFollowersConversationControl)
 
   case object ViewerIsTweetConversationRootAuthor
-      extends BooleanFeatureCondition(TweetConversationViewerIsRootAuthor)
+      etwittertends BooleanFeatureCondition(TweetConversationViewerIsRootAuthor)
 
   private case object ViewerIsInvitedToTweetConversationByMention
-      extends BooleanFeatureCondition(TweetConversationViewerIsInvited)
+      etwittertends BooleanFeatureCondition(TweetConversationViewerIsInvited)
 
   private case object ViewerIsInvitedToTweetConversationByReplyMention
-      extends BooleanFeatureCondition(TweetConversationViewerIsInvitedViaReplyMention)
+      etwittertends BooleanFeatureCondition(TweetConversationViewerIsInvitedViaReplyMention)
 
   object ViewerIsInvitedToTweetConversation
-      extends Or(
+      etwittertends Or(
         ViewerIsInvitedToTweetConversationByMention,
         ViewerIsInvitedToTweetConversationByReplyMention)
 
-  object TweetIsExclusiveContent extends BooleanFeatureCondition(TweetIsExclusiveTweet)
-  object ViewerIsExclusiveTweetAuthor
-      extends BooleanFeatureCondition(ViewerIsExclusiveTweetRootAuthor)
-  object ViewerSuperFollowsExclusiveTweetAuthor
-      extends BooleanFeatureCondition(ViewerSuperFollowsExclusiveTweetRootAuthor)
+  object TweetIsEtwitterclusiveContent etwittertends BooleanFeatureCondition(TweetIsEtwitterclusiveTweet)
+  object ViewerIsEtwitterclusiveTweetAuthor
+      etwittertends BooleanFeatureCondition(ViewerIsEtwitterclusiveTweetRootAuthor)
+  object ViewerSuperFollowsEtwitterclusiveTweetAuthor
+      etwittertends BooleanFeatureCondition(ViewerSuperFollowsEtwitterclusiveTweetRootAuthor)
 
-  object TweetIsTrustedFriendsContent extends BooleanFeatureCondition(TweetIsTrustedFriendTweet)
+  object TweetIsTrustedFriendsContent etwittertends BooleanFeatureCondition(TweetIsTrustedFriendTweet)
   object ViewerIsTrustedFriendsTweetAuthor
-      extends BooleanFeatureCondition(ViewerIsTrustedFriendTweetAuthor)
-  object ViewerIsTrustedFriend extends BooleanFeatureCondition(ViewerIsTrustedFriendOfTweetAuthor)
+      etwittertends BooleanFeatureCondition(ViewerIsTrustedFriendTweetAuthor)
+  object ViewerIsTrustedFriend etwittertends BooleanFeatureCondition(ViewerIsTrustedFriendOfTweetAuthor)
 
   object TweetIsCollabInvitationContent
-      extends BooleanFeatureCondition(TweetIsCollabInvitationTweet)
+      etwittertends BooleanFeatureCondition(TweetIsCollabInvitationTweet)
 
   case class TweetHasLabelForPerspectivalUser(safetyLabel: TweetSafetyLabelType)
-      extends Condition
+      etwittertends Condition
       with HasSafetyLabelType {
     override lazy val name: String = s"TweetHasLabelForPerspectivalUser(${safetyLabel.name})"
     override val features: Set[Feature[_]] = Set(TweetSafetyLabels)
@@ -545,7 +545,7 @@ object Condition {
     )
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       if (!featureMap.contains(ViewerId)) {
@@ -557,7 +557,7 @@ object Condition {
           .collectFirst {
             case label
                 if label.labelType == safetyLabel && label.applicableUsers.contains(viewerId)
-                  && ExperimentBase.shouldFilterForSource(evaluationContext.params, label.source) =>
+                  && EtwitterperimentBase.shouldFilterForSource(evaluationContetwittert.params, label.source) =>
               SatisfiedResult
           }.getOrElse(UnsatisfiedResult)
       }
@@ -566,8 +566,8 @@ object Condition {
 
   case class TweetHasLabel(
     safetyLabel: TweetSafetyLabelType,
-    labelSourceExperimentPredicate: Option[(Params, Option[LabelSource]) => Boolean] = None)
-      extends Condition
+    labelSourceEtwitterperimentPredicate: Option[(Params, Option[LabelSource]) => Boolean] = None)
+      etwittertends Condition
       with HasSafetyLabelType {
     override lazy val name: String = s"TweetHasLabel(${safetyLabel.name})"
     override val features: Set[Feature[_]] = Set(TweetSafetyLabels)
@@ -578,13 +578,13 @@ object Condition {
     private val SatisfiedResult: Satisfied = Satisfied(FoundTweetLabel(safetyLabel))
 
     private val labelSourcePredicate: (Params, Option[LabelSource]) => Boolean =
-      labelSourceExperimentPredicate match {
+      labelSourceEtwitterperimentPredicate match {
         case Some(predicate) => predicate
-        case _ => ExperimentBase.shouldFilterForSource
+        case _ => EtwitterperimentBase.shouldFilterForSource
       }
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val labels = featureMap(TweetSafetyLabels).asInstanceOf[Seq[TweetSafetyLabel]]
@@ -592,7 +592,7 @@ object Condition {
         .collectFirst {
           case label
               if label.labelType == safetyLabel
-                && labelSourcePredicate(evaluationContext.params, label.source) =>
+                && labelSourcePredicate(evaluationContetwittert.params, label.source) =>
             SatisfiedResult
         }.getOrElse(UnsatisfiedResult)
     }
@@ -600,7 +600,7 @@ object Condition {
 
   case class SpaceHasLabel(
     safetyLabelType: SpaceSafetyLabelType)
-      extends Condition
+      etwittertends Condition
       with HasSafetyLabelType {
     override lazy val name: String = s"SpaceHasLabel(${safetyLabelType.name})"
     override val features: Set[Feature[_]] = Set(SpaceSafetyLabels)
@@ -611,7 +611,7 @@ object Condition {
     private val SatisfiedResult: Satisfied = Satisfied(FoundSpaceLabel(safetyLabelType))
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val labels = featureMap(SpaceSafetyLabels).asInstanceOf[Seq[SpaceSafetyLabel]]
@@ -625,7 +625,7 @@ object Condition {
 
   case class MediaHasLabel(
     safetyLabelType: MediaSafetyLabelType)
-      extends Condition
+      etwittertends Condition
       with HasSafetyLabelType {
     override lazy val name: String = s"MediaHasLabel(${safetyLabelType.name})"
     override val features: Set[Feature[_]] = Set(MediaSafetyLabels)
@@ -636,7 +636,7 @@ object Condition {
     private val SatisfiedResult: Satisfied = Satisfied(FoundMediaLabel(safetyLabelType))
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val labels = featureMap(MediaSafetyLabels).asInstanceOf[Seq[MediaSafetyLabel]]
@@ -651,7 +651,7 @@ object Condition {
   case class TweetHasLabelWithLanguageScoreAboveThreshold(
     safetyLabel: TweetSafetyLabelType,
     languagesToScoreThresholds: Map[String, Double])
-      extends Condition
+      etwittertends Condition
       with HasSafetyLabelType {
 
     override lazy val name: String =
@@ -677,7 +677,7 @@ object Condition {
     }
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val labels = featureMap(TweetSafetyLabels).asInstanceOf[Seq[TweetSafetyLabel]]
@@ -694,7 +694,7 @@ object Condition {
   case class TweetHasLabelWithScoreAboveThreshold(
     safetyLabel: TweetSafetyLabelType,
     threshold: Double)
-      extends Condition
+      etwittertends Condition
       with HasSafetyLabelType {
 
     override lazy val name: String =
@@ -708,7 +708,7 @@ object Condition {
       Satisfied(FoundTweetLabelWithScoreAboveThreshold(safetyLabel, threshold))
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val labels = featureMap(TweetSafetyLabels).asInstanceOf[Seq[TweetSafetyLabel]]
@@ -716,7 +716,7 @@ object Condition {
         .collectFirst {
           case label
               if label.labelType == safetyLabel
-                && label.score.exists(_ >= threshold) =>
+                && label.score.etwitterists(_ >= threshold) =>
             SatisfiedResult
         }.getOrElse(UnsatisfiedResult)
     }
@@ -725,7 +725,7 @@ object Condition {
   case class TweetHasLabelWithScoreAboveThresholdWithParam(
     safetyLabel: TweetSafetyLabelType,
     thresholdParam: Param[Double])
-      extends Condition
+      etwittertends Condition
       with HasSafetyLabelType
       with HasParams {
     override lazy val name: String =
@@ -737,18 +737,18 @@ object Condition {
     override val params: Set[Param[_]] = Set(thresholdParam)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val labels = featureMap(TweetSafetyLabels).asInstanceOf[Seq[TweetSafetyLabel]]
-      val threshold = evaluationContext.params(thresholdParam)
+      val threshold = evaluationContetwittert.params(thresholdParam)
       val SatisfiedResult =
         Satisfied(FoundTweetLabelWithScoreAboveThreshold(safetyLabel, threshold))
       labels
         .collectFirst {
           case label
               if label.labelType == safetyLabel
-                && label.score.exists(_ >= threshold) =>
+                && label.score.etwitterists(_ >= threshold) =>
             SatisfiedResult
         }.getOrElse(UnsatisfiedResult)
     }
@@ -757,7 +757,7 @@ object Condition {
   case class TweetHasLabelWithLanguageIn(
     safetyLabelType: TweetSafetyLabelType,
     languages: Set[String])
-      extends Condition
+      etwittertends Condition
       with HasSafetyLabelType {
 
     override lazy val name: String =
@@ -779,7 +779,7 @@ object Condition {
     }
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       featureMap(TweetSafetyLabels)
@@ -794,7 +794,7 @@ object Condition {
   case class TweetHasLabelWithLanguagesWithParam(
     safetyLabelType: TweetSafetyLabelType,
     languageParam: Param[Seq[String]])
-      extends Condition
+      etwittertends Condition
       with HasSafetyLabelType
       with HasParams {
     override lazy val name: String =
@@ -815,10 +815,10 @@ object Condition {
     }
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val languages = evaluationContext.params(languageParam).toSet
+      val languages = evaluationContetwittert.params(languageParam).toSet
       val SatisfiedResult: Satisfied =
         Satisfied(FoundTweetLabelWithLanguageIn(safetyLabelType, languages))
       featureMap(TweetSafetyLabels)
@@ -838,7 +838,7 @@ object Condition {
   abstract class TweetHasSafetyLabelWithPredicate(
     private[rules] val safetyLabelType: TweetSafetyLabelType,
     private[rules] val predicate: NamedTweetSafetyLabelPredicate)
-      extends Condition
+      etwittertends Condition
       with HasSafetyLabelType {
 
     override lazy val name: String =
@@ -852,7 +852,7 @@ object Condition {
       Satisfied(Result.FoundTweetSafetyLabelWithPredicate(safetyLabelType, predicate.name))
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       featureMap(TweetSafetyLabels)
@@ -872,19 +872,19 @@ object Condition {
   }
 
   case class WithScoreEqInt(score: Int)
-      extends NamedTweetSafetyLabelPredicate(
-        fn = tweetSafetyLabel => tweetSafetyLabel.score.exists(s => s.intValue() == score),
+      etwittertends NamedTweetSafetyLabelPredicate(
+        fn = tweetSafetyLabel => tweetSafetyLabel.score.etwitterists(s => s.intValue() == score),
         name = "WithScoreEqInt"
       )
   case class TweetHasSafetyLabelWithScoreEqInt(
     override val safetyLabelType: TweetSafetyLabelType,
     score: Int)
-      extends TweetHasSafetyLabelWithPredicate(
+      etwittertends TweetHasSafetyLabelWithPredicate(
         safetyLabelType,
         predicate = WithScoreEqInt(score)
       )
 
-  case class TweetReplyToParentTweetBeforeDuration(duration: Duration) extends Condition {
+  case class TweetReplyToParentTweetBeforeDuration(duration: Duration) etwittertends Condition {
     override val features: Set[Feature[_]] = Set(TweetParentId, TweetTimestamp)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
 
@@ -893,7 +893,7 @@ object Condition {
       Result.IsTweetReplyToParentTweetBeforeDuration(duration))
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       featureMap
@@ -909,7 +909,7 @@ object Condition {
     }
   }
 
-  case class TweetReplyToRootTweetBeforeDuration(duration: Duration) extends Condition {
+  case class TweetReplyToRootTweetBeforeDuration(duration: Duration) etwittertends Condition {
     override val features: Set[Feature[_]] = Set(TweetConversationId, TweetTimestamp)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
 
@@ -918,7 +918,7 @@ object Condition {
       Result.IsTweetReplyToRootTweetBeforeDuration(duration))
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       featureMap
@@ -935,8 +935,8 @@ object Condition {
     }
   }
 
-  case class TweetComposedBefore(cutoffTimestamp: Time) extends Condition {
-    assert(cutoffTimestamp.inMilliseconds > SnowflakeId.FirstSnowflakeIdUnixTime)
+  case class TweetComposedBefore(cutoffTimestamp: Time) etwittertends Condition {
+    assert(cutoffTimestamp.inMilliseconds > SnowflakeId.FirstSnowflakeIdUnitwitterTime)
 
     override val features: Set[Feature[_]] = Set(TweetTimestamp)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
@@ -945,7 +945,7 @@ object Condition {
     private val SatisfiedResult: Satisfied = Satisfied(HasTweetTimestampBeforeCutoff)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       featureMap(TweetTimestamp) match {
@@ -955,8 +955,8 @@ object Condition {
     }
   }
 
-  case class TweetComposedAfter(cutoffTimestamp: Time) extends Condition {
-    assert(cutoffTimestamp.inMilliseconds > SnowflakeId.FirstSnowflakeIdUnixTime)
+  case class TweetComposedAfter(cutoffTimestamp: Time) etwittertends Condition {
+    assert(cutoffTimestamp.inMilliseconds > SnowflakeId.FirstSnowflakeIdUnitwitterTime)
 
     override val features: Set[Feature[_]] = Set(TweetTimestamp)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
@@ -965,7 +965,7 @@ object Condition {
     private val SatisfiedResult: Satisfied = Satisfied(HasTweetTimestampAfterCutoff)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       featureMap(TweetTimestamp) match {
@@ -975,7 +975,7 @@ object Condition {
     }
   }
 
-  case class TweetComposedAfterOffset(offset: Duration) extends Condition {
+  case class TweetComposedAfterOffset(offset: Duration) etwittertends Condition {
     override val features: Set[Feature[_]] = Set(TweetTimestamp)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
 
@@ -983,7 +983,7 @@ object Condition {
     private val SatisfiedResult: Satisfied = Satisfied(HasTweetTimestampAfterOffset)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       featureMap(TweetTimestamp) match {
@@ -994,7 +994,7 @@ object Condition {
   }
 
   case class TweetComposedAfterWithParam(cutoffTimeParam: Param[Time])
-      extends Condition
+      etwittertends Condition
       with HasParams {
     override val features: Set[Feature[_]] = Set(TweetTimestamp)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
@@ -1003,24 +1003,24 @@ object Condition {
     private val SatisfiedResult: Satisfied = Satisfied(HasTweetTimestampAfterCutoff)
 
     override def preFilter(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): PreFilterResult = {
-      val cutoffTimestamp = evaluationContext.params(cutoffTimeParam)
-      if (cutoffTimestamp.inMilliseconds < SnowflakeId.FirstSnowflakeIdUnixTime) {
+      val cutoffTimestamp = evaluationContetwittert.params(cutoffTimeParam)
+      if (cutoffTimestamp.inMilliseconds < SnowflakeId.FirstSnowflakeIdUnitwitterTime) {
         Filtered
       } else {
-        super.preFilter(evaluationContext, featureMap)
+        super.preFilter(evaluationContetwittert, featureMap)
       }
     }
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val cutoffTimestamp = evaluationContext.params(cutoffTimeParam)
+      val cutoffTimestamp = evaluationContetwittert.params(cutoffTimeParam)
       featureMap(TweetTimestamp) match {
-        case _: Time if cutoffTimestamp.inMilliseconds < SnowflakeId.FirstSnowflakeIdUnixTime =>
+        case _: Time if cutoffTimestamp.inMilliseconds < SnowflakeId.FirstSnowflakeIdUnitwitterTime =>
           UnsatisfiedResult
         case timestamp: Time if timestamp > cutoffTimestamp => SatisfiedResult
         case _ => UnsatisfiedResult
@@ -1029,7 +1029,7 @@ object Condition {
   }
 
   case class AuthorHasLabel(labelValue: UserLabelValue, shortCircuitable: Boolean = true)
-      extends Condition
+      etwittertends Condition
       with HasSafetyLabelType {
     override lazy val name: String = s"AuthorHasLabel(${labelValue.name})"
     override val features: Set[Feature[_]] = Set(AuthorUserLabels)
@@ -1040,7 +1040,7 @@ object Condition {
     private val SatisfiedResult: Satisfied = Satisfied(FoundUserLabel(labelValue))
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val labels = featureMap(AuthorUserLabels).asInstanceOf[Seq[Label]].map(UserLabel.fromThrift)
@@ -1048,13 +1048,13 @@ object Condition {
         .collectFirst {
           case label
               if label.labelValue == labelValue
-                && ExperimentBase.shouldFilterForSource(evaluationContext.params, label.source) =>
+                && EtwitterperimentBase.shouldFilterForSource(evaluationContetwittert.params, label.source) =>
             SatisfiedResult
         }.getOrElse(UnsatisfiedResult)
     }
   }
 
-  abstract class ViewerHasRole(role: String) extends Condition {
+  abstract class ViewerHasRole(role: String) etwittertends Condition {
     override lazy val name: String = s"ViewerHasRole(${role})"
     override val features: Set[Feature[_]] = Set(ViewerRoles)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
@@ -1063,7 +1063,7 @@ object Condition {
     private val SatisfiedResult: Satisfied = Satisfied(FoundUserRole(role))
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val roles = featureMap(ViewerRoles).asInstanceOf[Seq[String]]
@@ -1075,9 +1075,9 @@ object Condition {
     }
   }
 
-  case object ViewerIsEmployee extends ViewerHasRole(ViewerRoles.EmployeeRole)
+  case object ViewerIsEmployee etwittertends ViewerHasRole(ViewerRoles.EmployeeRole)
 
-  case class ViewerHasLabel(labelValue: UserLabelValue) extends Condition with HasSafetyLabelType {
+  case class ViewerHasLabel(labelValue: UserLabelValue) etwittertends Condition with HasSafetyLabelType {
     override lazy val name: String = s"ViewerHasLabel(${labelValue.name})"
     override val features: Set[Feature[_]] = Set(ViewerUserLabels)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
@@ -1087,7 +1087,7 @@ object Condition {
     private val SatisfiedResult: Satisfied = Satisfied(FoundUserLabel(labelValue))
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val labels = featureMap(ViewerUserLabels).asInstanceOf[Seq[Label]].map(UserLabel.fromThrift)
@@ -1095,33 +1095,33 @@ object Condition {
         .collectFirst {
           case label
               if label.labelValue == labelValue
-                && ExperimentBase.shouldFilterForSource(evaluationContext.params, label.source) =>
+                && EtwitterperimentBase.shouldFilterForSource(evaluationContetwittert.params, label.source) =>
             SatisfiedResult
         }.getOrElse(UnsatisfiedResult)
     }
   }
 
-  case object DeactivatedAuthor extends BooleanFeatureCondition(AuthorIsDeactivated)
-  case object ErasedAuthor extends BooleanFeatureCondition(AuthorIsErased)
-  case object OffboardedAuthor extends BooleanFeatureCondition(AuthorIsOffboarded)
-  case object ProtectedAuthor extends BooleanFeatureCondition(AuthorIsProtected)
-  case object VerifiedAuthor extends BooleanFeatureCondition(AuthorIsVerified)
-  case object NsfwUserAuthor extends BooleanFeatureCondition(AuthorIsNsfwUser)
-  case object NsfwAdminAuthor extends BooleanFeatureCondition(AuthorIsNsfwAdmin)
-  case object TweetHasNsfwUserAuthor extends BooleanFeatureCondition(TweetHasNsfwUser)
-  case object TweetHasNsfwAdminAuthor extends BooleanFeatureCondition(TweetHasNsfwAdmin)
-  case object TweetHasMedia extends BooleanFeatureCondition(TweetHasMediaFeature)
-  case object TweetHasDmcaMedia extends BooleanFeatureCondition(HasDmcaMediaFeature)
-  case object TweetHasCard extends BooleanFeatureCondition(TweetHasCardFeature)
-  case object IsPollCard extends BooleanFeatureCondition(CardIsPoll)
+  case object DeactivatedAuthor etwittertends BooleanFeatureCondition(AuthorIsDeactivated)
+  case object ErasedAuthor etwittertends BooleanFeatureCondition(AuthorIsErased)
+  case object OffboardedAuthor etwittertends BooleanFeatureCondition(AuthorIsOffboarded)
+  case object ProtectedAuthor etwittertends BooleanFeatureCondition(AuthorIsProtected)
+  case object VerifiedAuthor etwittertends BooleanFeatureCondition(AuthorIsVerified)
+  case object NsfwUserAuthor etwittertends BooleanFeatureCondition(AuthorIsNsfwUser)
+  case object NsfwAdminAuthor etwittertends BooleanFeatureCondition(AuthorIsNsfwAdmin)
+  case object TweetHasNsfwUserAuthor etwittertends BooleanFeatureCondition(TweetHasNsfwUser)
+  case object TweetHasNsfwAdminAuthor etwittertends BooleanFeatureCondition(TweetHasNsfwAdmin)
+  case object TweetHasMedia etwittertends BooleanFeatureCondition(TweetHasMediaFeature)
+  case object TweetHasDmcaMedia etwittertends BooleanFeatureCondition(HasDmcaMediaFeature)
+  case object TweetHasCard etwittertends BooleanFeatureCondition(TweetHasCardFeature)
+  case object IsPollCard etwittertends BooleanFeatureCondition(CardIsPoll)
 
-  case object ProtectedViewer extends BooleanFeatureCondition(ViewerIsProtected)
-  case object SoftViewer extends BooleanFeatureCondition(ViewerIsSoftUser)
+  case object ProtectedViewer etwittertends BooleanFeatureCondition(ViewerIsProtected)
+  case object SoftViewer etwittertends BooleanFeatureCondition(ViewerIsSoftUser)
 
   case object ViewerHasUqfEnabled
-      extends BooleanFeatureCondition(ViewerHasUniversalQualityFilterEnabled)
+      etwittertends BooleanFeatureCondition(ViewerHasUniversalQualityFilterEnabled)
 
-  abstract class ViewerHasMatchingKeywordFor(muteSurface: MuteSurface) extends Condition {
+  abstract class ViewerHasMatchingKeywordFor(muteSurface: MuteSurface) etwittertends Condition {
     override def features: Set[Feature[_]] = Set(feature)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
 
@@ -1132,11 +1132,11 @@ object Condition {
       case MuteSurface.Notifications => ViewerMutesKeywordInTweetForNotifications
       case MuteSurface.TweetReplies => ViewerMutesKeywordInTweetForTweetReplies
 
-      case _ => throw new NoSuchElementException(muteSurface.toString)
+      case _ => throw new NoSuchElementEtwitterception(muteSurface.toString)
     }
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val mutedKeyword = featureMap(feature)
@@ -1146,21 +1146,21 @@ object Condition {
   }
 
   case object ViewerHasMatchingKeywordForHomeTimeline
-      extends ViewerHasMatchingKeywordFor(MuteSurface.HomeTimeline)
+      etwittertends ViewerHasMatchingKeywordFor(MuteSurface.HomeTimeline)
 
   case object ViewerHasMatchingKeywordForNotifications
-      extends ViewerHasMatchingKeywordFor(MuteSurface.Notifications)
+      etwittertends ViewerHasMatchingKeywordFor(MuteSurface.Notifications)
 
   case object ViewerHasMatchingKeywordForTweetReplies
-      extends ViewerHasMatchingKeywordFor(MuteSurface.TweetReplies)
+      etwittertends ViewerHasMatchingKeywordFor(MuteSurface.TweetReplies)
 
-  case object ViewerHasMatchingKeywordForAllSurfaces extends Condition {
+  case object ViewerHasMatchingKeywordForAllSurfaces etwittertends Condition {
     override def features: Set[Feature[_]] = Set(ViewerMutesKeywordInTweetForAllSurfaces)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val mutedKeyword = featureMap(ViewerMutesKeywordInTweetForAllSurfaces)
@@ -1170,7 +1170,7 @@ object Condition {
   }
 
   abstract class ViewerHasMatchingKeywordInSpaceTitleFor(muteSurface: MuteSurface)
-      extends Condition {
+      etwittertends Condition {
     override def features: Set[Feature[_]] = Set(feature)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
 
@@ -1178,11 +1178,11 @@ object Condition {
 
     private val feature: Feature[MutedKeyword] = muteSurface match {
       case MuteSurface.Notifications => ViewerMutesKeywordInSpaceTitleForNotifications
-      case _ => throw new NoSuchElementException(muteSurface.toString)
+      case _ => throw new NoSuchElementEtwitterception(muteSurface.toString)
     }
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val mutedKeyword = featureMap(feature)
@@ -1192,56 +1192,56 @@ object Condition {
   }
 
   case object ViewerHasMatchingKeywordInSpaceTitleForNotifications
-      extends ViewerHasMatchingKeywordInSpaceTitleFor(MuteSurface.Notifications)
+      etwittertends ViewerHasMatchingKeywordInSpaceTitleFor(MuteSurface.Notifications)
 
   case object ViewerFiltersNoConfirmedEmail
-      extends BooleanFeatureCondition(
+      etwittertends BooleanFeatureCondition(
         com.twitter.visibility.features.ViewerFiltersNoConfirmedEmail
       )
 
   case object ViewerFiltersNoConfirmedPhone
-      extends BooleanFeatureCondition(
+      etwittertends BooleanFeatureCondition(
         com.twitter.visibility.features.ViewerFiltersNoConfirmedPhone
       )
 
   case object ViewerFiltersDefaultProfileImage
-      extends BooleanFeatureCondition(
+      etwittertends BooleanFeatureCondition(
         com.twitter.visibility.features.ViewerFiltersDefaultProfileImage
       )
 
   case object ViewerFiltersNewUsers
-      extends BooleanFeatureCondition(
+      etwittertends BooleanFeatureCondition(
         com.twitter.visibility.features.ViewerFiltersNewUsers
       )
 
   case object ViewerFiltersNotFollowedBy
-      extends BooleanFeatureCondition(
+      etwittertends BooleanFeatureCondition(
         com.twitter.visibility.features.ViewerFiltersNotFollowedBy
       )
 
   case object AuthorHasConfirmedEmail
-      extends BooleanFeatureCondition(
+      etwittertends BooleanFeatureCondition(
         com.twitter.visibility.features.AuthorHasConfirmedEmail
       )
 
   case object AuthorHasVerifiedPhone
-      extends BooleanFeatureCondition(
+      etwittertends BooleanFeatureCondition(
         com.twitter.visibility.features.AuthorHasVerifiedPhone
       )
 
   case object AuthorHasDefaultProfileImage
-      extends BooleanFeatureCondition(
+      etwittertends BooleanFeatureCondition(
         com.twitter.visibility.features.AuthorHasDefaultProfileImage
       )
 
-  case object AuthorIsNewAccount extends Condition {
+  case object AuthorIsNewAccount etwittertends Condition {
     override val features: Set[Feature[_]] = Set(AuthorAccountAge)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
 
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val age = featureMap(AuthorAccountAge).asInstanceOf[Duration]
@@ -1254,7 +1254,7 @@ object Condition {
     }
   }
 
-  abstract class ViewerInJurisdiction extends Condition {
+  abstract class ViewerInJurisdiction etwittertends Condition {
     override def features: Set[Feature[_]] = Set.empty
     override val optionalFeatures: Set[Feature[_]] = Set(RequestCountryCode, ViewerCountryCode)
 
@@ -1276,10 +1276,10 @@ object Condition {
     }
   }
 
-  case class ViewerInHrcj(jurisdictions: Set[String]) extends ViewerInJurisdiction {
+  case class ViewerInHrcj(jurisdictions: Set[String]) etwittertends ViewerInJurisdiction {
 
     override def preFilter(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): PreFilterResult =
       featureMap
@@ -1291,7 +1291,7 @@ object Condition {
         .getOrElse(Filtered)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val countryFeatures = getCountryFeatures(featureMap)
@@ -1306,18 +1306,18 @@ object Condition {
   }
 
   case class ViewerOrRequestInJurisdiction(enabledCountriesParam: Param[Seq[String]])
-      extends ViewerInJurisdiction
+      etwittertends ViewerInJurisdiction
       with HasParams
       with PreFilterOnOptionalFeatures {
 
     override val params: Set[Param[_]] = Set(enabledCountriesParam)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val countries: Seq[String] =
-        evaluationContext.params(enabledCountriesParam).map(c => c.toLowerCase)
+        evaluationContetwittert.params(enabledCountriesParam).map(c => c.toLowerCase)
       val countryFeatures = getCountryFeatures(featureMap)
 
       val countryCodeOpt =
@@ -1332,7 +1332,7 @@ object Condition {
   }
 
   case class ViewerAgeInYearsGte(ageToCompare: Int, ignoreEmptyAge: Boolean = false)
-      extends Condition
+      etwittertends Condition
       with PreFilterOnOptionalFeatures {
     override def features: Set[Feature[_]] = Set.empty
     override def optionalFeatures: Set[Feature[_]] = Set(ViewerAge)
@@ -1340,7 +1340,7 @@ object Condition {
     private val unsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result =
       featureMap
@@ -1355,14 +1355,14 @@ object Condition {
         .getOrElse(unsatisfiedResult)
   }
 
-  case class UnderageViewer(ageToCompare: Int) extends Condition with PreFilterOnOptionalFeatures {
+  case class UnderageViewer(ageToCompare: Int) etwittertends Condition with PreFilterOnOptionalFeatures {
     override def features: Set[Feature[_]] = Set.empty
     override def optionalFeatures: Set[Feature[_]] = Set(ViewerAge)
 
     private val unsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result =
       featureMap
@@ -1374,14 +1374,14 @@ object Condition {
         .getOrElse(unsatisfiedResult)
   }
 
-  case object ViewerMissingAge extends Condition with PreFilterOnOptionalFeatures {
+  case object ViewerMissingAge etwittertends Condition with PreFilterOnOptionalFeatures {
     override def features: Set[Feature[_]] = Set.empty
     override def optionalFeatures: Set[Feature[_]] = Set(ViewerAge)
 
     private val unsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result =
       featureMap
@@ -1393,20 +1393,20 @@ object Condition {
         .getOrElse(unsatisfiedResult)
   }
 
-  case object ViewerOptInBlockingOnSearch extends BooleanFeatureCondition(ViewerOptInBlocking)
-  case object ViewerOptInFilteringOnSearch extends BooleanFeatureCondition(ViewerOptInFiltering)
-  case object SelfReply extends BooleanFeatureCondition(TweetIsSelfReply)
-  case object Nullcast extends BooleanFeatureCondition(TweetIsNullcast)
-  case object Moderated extends BooleanFeatureCondition(TweetIsModerated)
-  case object Retweet extends BooleanFeatureCondition(TweetIsRetweet)
+  case object ViewerOptInBlockingOnSearch etwittertends BooleanFeatureCondition(ViewerOptInBlocking)
+  case object ViewerOptInFilteringOnSearch etwittertends BooleanFeatureCondition(ViewerOptInFiltering)
+  case object SelfReply etwittertends BooleanFeatureCondition(TweetIsSelfReply)
+  case object Nullcast etwittertends BooleanFeatureCondition(TweetIsNullcast)
+  case object Moderated etwittertends BooleanFeatureCondition(TweetIsModerated)
+  case object Retweet etwittertends BooleanFeatureCondition(TweetIsRetweet)
 
-  case object IsFirstPageSearchResult extends Condition {
+  case object IsFirstPageSearchResult etwittertends Condition {
     override val features: Set[Feature[_]] = Set(SearchResultsPageNumber)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val searchResultsPageNumber = featureMap(SearchResultsPageNumber).asInstanceOf[Int]
@@ -1418,13 +1418,13 @@ object Condition {
     }
   }
 
-  case object HasSearchCandidateCountGreaterThan45 extends Condition {
+  case object HasSearchCandidateCountGreaterThan45 etwittertends Condition {
     override val features: Set[Feature[_]] = Set(SearchCandidateCount)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val searchCandidateCount = featureMap(SearchCandidateCount).asInstanceOf[Int]
@@ -1436,7 +1436,7 @@ object Condition {
     }
   }
 
-  abstract class HasSearchQuerySource(querySourceToMatch: ThriftQuerySource) extends Condition {
+  abstract class HasSearchQuerySource(querySourceToMatch: ThriftQuerySource) etwittertends Condition {
     override lazy val name: String = s"HasSearchQuerySource(${querySourceToMatch})"
     override val features: Set[Feature[_]] = Set(SearchQuerySource)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
@@ -1444,7 +1444,7 @@ object Condition {
     private val SatisfiedResult: Satisfied = Satisfied(HasQuerySource(querySourceToMatch))
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val querySource = featureMap(SearchQuerySource).asInstanceOf[ThriftQuerySource]
@@ -1456,7 +1456,7 @@ object Condition {
     }
   }
 
-  case object IsTrendClickSourceSearchResult extends Condition {
+  case object IsTrendClickSourceSearchResult etwittertends Condition {
     override val features: Set[Feature[_]] = Set(SearchQuerySource)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
     private val UnsatisfiedResult = Unsatisfied(this)
@@ -1475,24 +1475,24 @@ object Condition {
     }
 
     override def preFilter(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): PreFilterResult =
       checkQuerySource(featureMap, Filtered, NotFiltered)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result =
       checkQuerySource(featureMap, UnsatisfiedResult, Result.SatisfiedResult)
   }
-  case object IsSearchHashtagClick extends HasSearchQuerySource(ThriftQuerySource.HashtagClick)
-  case object IsSearchTrendClick extends HasSearchQuerySource(ThriftQuerySource.TrendClick)
+  case object IsSearchHashtagClick etwittertends HasSearchQuerySource(ThriftQuerySource.HashtagClick)
+  case object IsSearchTrendClick etwittertends HasSearchQuerySource(ThriftQuerySource.TrendClick)
 
   case object SearchQueryHasUser
-      extends BooleanFeatureCondition(com.twitter.visibility.features.SearchQueryHasUser)
+      etwittertends BooleanFeatureCondition(com.twitter.visibility.features.SearchQueryHasUser)
 
-  case class Equals[T](feature: Feature[T], value: T) extends Condition {
+  case class Equals[T](feature: Feature[T], value: T) etwittertends Condition {
 
     override def features: Set[Feature[_]] = Set(feature)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
@@ -1501,7 +1501,7 @@ object Condition {
     private val UnsatisfiedResult: Result = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val featureValue = featureMap(feature).asInstanceOf[T]
@@ -1509,7 +1509,7 @@ object Condition {
     }
   }
 
-  case class FeatureEquals[T](left: Feature[T], right: Feature[T]) extends Condition {
+  case class FeatureEquals[T](left: Feature[T], right: Feature[T]) etwittertends Condition {
 
     override def features: Set[Feature[_]] = Set.empty
     override val optionalFeatures: Set[Feature[_]] = Set(left, right)
@@ -1518,11 +1518,11 @@ object Condition {
     private val UnsatisfiedResult: Result = Unsatisfied(this)
 
     override def preFilter(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): PreFilterResult = {
       if (featureMap.contains(left) && featureMap.contains(right)) {
-        if (apply(evaluationContext, featureMap).asBoolean) {
+        if (apply(evaluationContetwittert, featureMap).asBoolean) {
           NotFiltered
         } else {
           Filtered
@@ -1533,7 +1533,7 @@ object Condition {
     }
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       if (featureMap.contains(left) && featureMap.contains(right)) {
@@ -1547,7 +1547,7 @@ object Condition {
   }
 
   case class And(override val conditions: Condition*)
-      extends Condition
+      etwittertends Condition
       with HasNestedConditions
       with HasParams {
     override lazy val name: String = s"(${conditions.map(_.name).mkString(" And ")})"
@@ -1557,14 +1557,14 @@ object Condition {
       conditions.collect { case p: HasParams => p.params }.flatten.toSet
 
     override def preFilter(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): PreFilterResult = {
       conditions.foldLeft(NotFiltered: PreFilterResult) {
-        case (NotFiltered, condition) => condition.preFilter(evaluationContext, featureMap)
+        case (NotFiltered, condition) => condition.preFilter(evaluationContetwittert, featureMap)
         case (Filtered, _) => Filtered
         case (NeedsFullEvaluation, condition) => {
-          condition.preFilter(evaluationContext, featureMap) match {
+          condition.preFilter(evaluationContetwittert, featureMap) match {
             case Filtered => Filtered
             case _ => NeedsFullEvaluation
           }
@@ -1573,14 +1573,14 @@ object Condition {
     }
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       conditions.foldLeft(Result.SatisfiedResult) {
         case (result @ Unsatisfied(_), _) => result
-        case (Result.SatisfiedResult, condition) => condition.apply(evaluationContext, featureMap)
+        case (Result.SatisfiedResult, condition) => condition.apply(evaluationContetwittert, featureMap)
         case (result @ Satisfied(_), condition) => {
-          condition.apply(evaluationContext, featureMap) match {
+          condition.apply(evaluationContetwittert, featureMap) match {
             case r @ Unsatisfied(_) => r
             case _ => result
           }
@@ -1590,7 +1590,7 @@ object Condition {
   }
 
   case class Or(override val conditions: Condition*)
-      extends Condition
+      etwittertends Condition
       with HasNestedConditions
       with HasParams {
     override lazy val name: String = s"(${conditions.map(_.name).mkString(" Or ")})"
@@ -1602,14 +1602,14 @@ object Condition {
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def preFilter(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): PreFilterResult = {
       conditions.foldLeft(Filtered: PreFilterResult) {
-        case (Filtered, c) => c.preFilter(evaluationContext, featureMap)
+        case (Filtered, c) => c.preFilter(evaluationContetwittert, featureMap)
         case (NotFiltered, _) => NotFiltered
         case (NeedsFullEvaluation, c) => {
-          c.preFilter(evaluationContext, featureMap) match {
+          c.preFilter(evaluationContetwittert, featureMap) match {
             case NotFiltered => NotFiltered
             case _ => NeedsFullEvaluation
           }
@@ -1618,11 +1618,11 @@ object Condition {
     }
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val foundSatisfiedCondition =
-        conditions.find(_.apply(evaluationContext, featureMap).asBoolean)
+        conditions.find(_.apply(evaluationContetwittert, featureMap).asBoolean)
       if (foundSatisfiedCondition.isDefined) {
         Result.SatisfiedResult
       } else {
@@ -1631,7 +1631,7 @@ object Condition {
     }
   }
 
-  case class Not(condition: Condition) extends Condition with HasNestedConditions with HasParams {
+  case class Not(condition: Condition) etwittertends Condition with HasNestedConditions with HasParams {
     override lazy val name: String = s"Not(${condition.name})"
     override val features: Set[Feature[_]] = condition.features
     override val optionalFeatures: Set[Feature[_]] = condition.optionalFeatures
@@ -1642,20 +1642,20 @@ object Condition {
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def preFilter(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): PreFilterResult =
-      condition.preFilter(evaluationContext, featureMap) match {
+      condition.preFilter(evaluationContetwittert, featureMap) match {
         case Filtered => NotFiltered
         case NotFiltered => Filtered
         case _ => NeedsFullEvaluation
       }
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result =
-      if (condition(evaluationContext, featureMap).asBoolean) {
+      if (condition(evaluationContetwittert, featureMap).asBoolean) {
         UnsatisfiedResult
       } else {
         Result.SatisfiedResult
@@ -1719,7 +1719,7 @@ object Condition {
     conditionMap: Map[T, Condition],
     defaultCondition: Condition,
     choiceParam: Param[T])
-      extends Condition
+      etwittertends Condition
       with HasNestedConditions
       with HasParams {
     override lazy val name: String =
@@ -1732,27 +1732,27 @@ object Condition {
     override val params: Set[Param[_]] =
       conditions.collect { case p: HasParams => p.params }.flatten.toSet
 
-    private[this] def getCondition(evaluationContext: EvaluationContext): Condition =
-      conditionMap.getOrElse(evaluationContext.params(choiceParam), defaultCondition)
+    private[this] def getCondition(evaluationContetwittert: EvaluationContetwittert): Condition =
+      conditionMap.getOrElse(evaluationContetwittert.params(choiceParam), defaultCondition)
 
     override def preFilter(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): PreFilterResult =
-      getCondition(evaluationContext).preFilter(evaluationContext, featureMap)
+      getCondition(evaluationContetwittert).preFilter(evaluationContetwittert, featureMap)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result =
-      getCondition(evaluationContext)(evaluationContext, featureMap)
+      getCondition(evaluationContetwittert)(evaluationContetwittert, featureMap)
   }
 
   case class IfElse(
     branchingCondition: Condition,
     ifTrueCondition: Condition,
     ifFalseCondition: Condition)
-      extends Condition
+      etwittertends Condition
       with HasNestedConditions
       with HasParams {
     override lazy val name: String =
@@ -1767,26 +1767,26 @@ object Condition {
       conditions.collect { case p: HasParams => p.params }.flatten.toSet
 
     override def preFilter(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): PreFilterResult =
-      branchingCondition.preFilter(evaluationContext, featureMap) match {
+      branchingCondition.preFilter(evaluationContetwittert, featureMap) match {
         case Filtered =>
-          ifFalseCondition.preFilter(evaluationContext, featureMap)
+          ifFalseCondition.preFilter(evaluationContetwittert, featureMap)
         case NotFiltered =>
-          ifTrueCondition.preFilter(evaluationContext, featureMap)
+          ifTrueCondition.preFilter(evaluationContetwittert, featureMap)
         case _ =>
           NeedsFullEvaluation
       }
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result =
-      if (branchingCondition(evaluationContext, featureMap).asBoolean) {
-        ifTrueCondition(evaluationContext, featureMap)
+      if (branchingCondition(evaluationContetwittert, featureMap).asBoolean) {
+        ifTrueCondition(evaluationContetwittert, featureMap)
       } else {
-        ifFalseCondition(evaluationContext, featureMap)
+        ifFalseCondition(evaluationContetwittert, featureMap)
       }
   }
 
@@ -1794,7 +1794,7 @@ object Condition {
     defaultCondition: Condition,
     alternateConditions: Map[T, Condition],
     bucketIdentifierToUseOnDisagreementParam: Param[Option[T]])
-      extends Condition
+      etwittertends Condition
       with HasNestedConditions
       with HasParams {
 
@@ -1813,30 +1813,30 @@ object Condition {
       conditions.collect { case p: HasParams => p.params }.flatten.toSet
 
     override def preFilter(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): PreFilterResult =
-      if (defaultCondition.preFilter(evaluationContext, featureMap) == Filtered &&
-        alternateConditions.values.forall(_.preFilter(evaluationContext, featureMap) == Filtered)) {
+      if (defaultCondition.preFilter(evaluationContetwittert, featureMap) == Filtered &&
+        alternateConditions.values.forall(_.preFilter(evaluationContetwittert, featureMap) == Filtered)) {
         Filtered
-      } else if (defaultCondition.preFilter(evaluationContext, featureMap) == NotFiltered &&
+      } else if (defaultCondition.preFilter(evaluationContetwittert, featureMap) == NotFiltered &&
         alternateConditions.values.forall(
-          _.preFilter(evaluationContext, featureMap) == NotFiltered)) {
+          _.preFilter(evaluationContetwittert, featureMap) == NotFiltered)) {
         NotFiltered
       } else {
         NeedsFullEvaluation
       }
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val defaultConditionResult: Result = defaultCondition(evaluationContext, featureMap)
+      val defaultConditionResult: Result = defaultCondition(evaluationContetwittert, featureMap)
       val alternateConditionResult: Map[T, Result] =
-        alternateConditions.mapValues(_(evaluationContext, featureMap))
+        alternateConditions.mapValues(_(evaluationContetwittert, featureMap))
 
-      if (alternateConditionResult.values.exists(_.asBoolean != defaultConditionResult.asBoolean)) {
-        evaluationContext.params(bucketIdentifierToUseOnDisagreementParam) match {
+      if (alternateConditionResult.values.etwitterists(_.asBoolean != defaultConditionResult.asBoolean)) {
+        evaluationContetwittert.params(bucketIdentifierToUseOnDisagreementParam) match {
           case Some(bucket) if alternateConditionResult.contains(bucket) =>
             alternateConditionResult(bucket)
           case _ =>
@@ -1852,7 +1852,7 @@ object Condition {
     defaultCondition: Condition,
     alternateConditions: Map[E#Value, Condition],
     bucketIdentifierToUseOnDisagreementParam: EnumParam[E])
-      extends Condition
+      etwittertends Condition
       with HasNestedConditions
       with HasParams {
 
@@ -1874,30 +1874,30 @@ object Condition {
         }.flatten.toSet + bucketIdentifierToUseOnDisagreementParam
 
     override def preFilter(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): PreFilterResult =
-      if (defaultCondition.preFilter(evaluationContext, featureMap) == Filtered &&
-        alternateConditions.values.forall(_.preFilter(evaluationContext, featureMap) == Filtered)) {
+      if (defaultCondition.preFilter(evaluationContetwittert, featureMap) == Filtered &&
+        alternateConditions.values.forall(_.preFilter(evaluationContetwittert, featureMap) == Filtered)) {
         Filtered
-      } else if (defaultCondition.preFilter(evaluationContext, featureMap) == NotFiltered &&
+      } else if (defaultCondition.preFilter(evaluationContetwittert, featureMap) == NotFiltered &&
         alternateConditions.values.forall(
-          _.preFilter(evaluationContext, featureMap) == NotFiltered)) {
+          _.preFilter(evaluationContetwittert, featureMap) == NotFiltered)) {
         NotFiltered
       } else {
         NeedsFullEvaluation
       }
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
-      val defaultConditionResult: Result = defaultCondition(evaluationContext, featureMap)
+      val defaultConditionResult: Result = defaultCondition(evaluationContetwittert, featureMap)
       val alternateConditionResult: Map[E#Value, Result] =
-        alternateConditions.mapValues(_(evaluationContext, featureMap))
+        alternateConditions.mapValues(_(evaluationContetwittert, featureMap))
 
-      if (alternateConditionResult.values.exists(_.asBoolean != defaultConditionResult.asBoolean)) {
-        evaluationContext.params(bucketIdentifierToUseOnDisagreementParam) match {
+      if (alternateConditionResult.values.etwitterists(_.asBoolean != defaultConditionResult.asBoolean)) {
+        evaluationContetwittert.params(bucketIdentifierToUseOnDisagreementParam) match {
           case bucket if alternateConditionResult.contains(bucket) =>
             alternateConditionResult(bucket)
           case _ =>
@@ -1909,14 +1909,14 @@ object Condition {
     }
   }
 
-  case object IsTestTweet extends Condition {
+  case object IsTestTweet etwittertends Condition {
     override val features: Set[Feature[_]] = Set(TweetId)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
 
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       if (!featureMap.contains(TweetId)) {
@@ -1927,13 +1927,13 @@ object Condition {
     }
   }
 
-  case object IsTweetInTweetLevelStcmHoldback extends Condition {
+  case object IsTweetInTweetLevelStcmHoldback etwittertends Condition {
     override val features: Set[Feature[_]] = Set(TweetId)
     override val optionalFeatures: Set[Feature[_]] = Set.empty
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val tweetId: Long = featureMap(TweetId).asInstanceOf[Long]
@@ -1945,7 +1945,7 @@ object Condition {
     }
   }
 
-  case object MediaRestrictedInViewerCountry extends Condition {
+  case object MediaRestrictedInViewerCountry etwittertends Condition {
     override val features: Set[Feature[_]] =
       Set(MediaGeoRestrictionsAllowList, MediaGeoRestrictionsDenyList)
     override val optionalFeatures: Set[Feature[_]] = Set(RequestCountryCode)
@@ -1953,7 +1953,7 @@ object Condition {
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val requestCountryCode = TakedownReasons.normalizeCountryCodeOption(
@@ -1972,73 +1972,73 @@ object Condition {
   }
 
   case object OneToOneDmConversation
-      extends BooleanFeatureCondition(DmConversationIsOneToOneConversation)
+      etwittertends BooleanFeatureCondition(DmConversationIsOneToOneConversation)
 
   case object DmConversationTimelineIsEmpty
-      extends BooleanFeatureCondition(DmConversationHasEmptyTimeline)
+      etwittertends BooleanFeatureCondition(DmConversationHasEmptyTimeline)
 
   case object DmConversationLastReadableEventIdIsValid
-      extends BooleanFeatureCondition(DmConversationHasValidLastReadableEventId)
+      etwittertends BooleanFeatureCondition(DmConversationHasValidLastReadableEventId)
 
   case object ViewerIsDmConversationParticipant
-      extends BooleanFeatureCondition(feats.ViewerIsDmConversationParticipant)
+      etwittertends BooleanFeatureCondition(feats.ViewerIsDmConversationParticipant)
 
-  case object DmConversationInfoExists
-      extends BooleanFeatureCondition(feats.DmConversationInfoExists)
+  case object DmConversationInfoEtwitterists
+      etwittertends BooleanFeatureCondition(feats.DmConversationInfoEtwitterists)
 
-  case object DmConversationTimelineExists
-      extends BooleanFeatureCondition(feats.DmConversationTimelineExists)
+  case object DmConversationTimelineEtwitterists
+      etwittertends BooleanFeatureCondition(feats.DmConversationTimelineEtwitterists)
 
   case object DmEventIsBeforeLastClearedEvent
-      extends BooleanFeatureCondition(DmEventOccurredBeforeLastClearedEvent)
+      etwittertends BooleanFeatureCondition(DmEventOccurredBeforeLastClearedEvent)
 
   case object DmEventIsBeforeJoinConversationEvent
-      extends BooleanFeatureCondition(DmEventOccurredBeforeJoinConversationEvent)
+      etwittertends BooleanFeatureCondition(DmEventOccurredBeforeJoinConversationEvent)
 
-  case object DmEventIsDeleted extends BooleanFeatureCondition(feats.DmEventIsDeleted)
+  case object DmEventIsDeleted etwittertends BooleanFeatureCondition(feats.DmEventIsDeleted)
 
-  case object DmEventIsHidden extends BooleanFeatureCondition(feats.DmEventIsHidden)
+  case object DmEventIsHidden etwittertends BooleanFeatureCondition(feats.DmEventIsHidden)
 
   case object ViewerIsDmEventInitiatingUser
-      extends BooleanFeatureCondition(feats.ViewerIsDmEventInitiatingUser)
+      etwittertends BooleanFeatureCondition(feats.ViewerIsDmEventInitiatingUser)
 
   case object DmEventInOneToOneConversationWithUnavailableUser
-      extends BooleanFeatureCondition(feats.DmEventInOneToOneConversationWithUnavailableUser)
+      etwittertends BooleanFeatureCondition(feats.DmEventInOneToOneConversationWithUnavailableUser)
 
   case object DmEventInOneToOneConversation
-      extends BooleanFeatureCondition(feats.DmEventInOneToOneConversation)
+      etwittertends BooleanFeatureCondition(feats.DmEventInOneToOneConversation)
 
-  case object MessageCreateDmEvent extends BooleanFeatureCondition(DmEventIsMessageCreateEvent)
+  case object MessageCreateDmEvent etwittertends BooleanFeatureCondition(DmEventIsMessageCreateEvent)
 
   case object WelcomeMessageCreateDmEvent
-      extends BooleanFeatureCondition(DmEventIsWelcomeMessageCreateEvent)
+      etwittertends BooleanFeatureCondition(DmEventIsWelcomeMessageCreateEvent)
 
   case object LastMessageReadUpdateDmEvent
-      extends BooleanFeatureCondition(DmEventIsLastMessageReadUpdateEvent)
+      etwittertends BooleanFeatureCondition(DmEventIsLastMessageReadUpdateEvent)
 
   case object JoinConversationDmEvent
-      extends BooleanFeatureCondition(DmEventIsJoinConversationEvent)
+      etwittertends BooleanFeatureCondition(DmEventIsJoinConversationEvent)
 
   case object ConversationCreateDmEvent
-      extends BooleanFeatureCondition(DmEventIsConversationCreateEvent)
+      etwittertends BooleanFeatureCondition(DmEventIsConversationCreateEvent)
 
   case object TrustConversationDmEvent
-      extends BooleanFeatureCondition(DmEventIsTrustConversationEvent)
+      etwittertends BooleanFeatureCondition(DmEventIsTrustConversationEvent)
 
   case object CsFeedbackSubmittedDmEvent
-      extends BooleanFeatureCondition(DmEventIsCsFeedbackSubmitted)
+      etwittertends BooleanFeatureCondition(DmEventIsCsFeedbackSubmitted)
 
   case object CsFeedbackDismissedDmEvent
-      extends BooleanFeatureCondition(DmEventIsCsFeedbackDismissed)
+      etwittertends BooleanFeatureCondition(DmEventIsCsFeedbackDismissed)
 
   case object PerspectivalJoinConversationDmEvent
-      extends BooleanFeatureCondition(feats.DmEventIsPerspectivalJoinConversationEvent)
+      etwittertends BooleanFeatureCondition(feats.DmEventIsPerspectivalJoinConversationEvent)
 
 
   case class SpaceHasLabelWithScoreAboveThresholdWithParam(
     spaceSafetyLabelType: SpaceSafetyLabelType,
     thresholdParam: Param[Double])
-      extends Condition
+      etwittertends Condition
       with HasParams {
     override lazy val name: String =
       s"SpaceHasLabelWithScoreAboveThreshold(${spaceSafetyLabelType.name}, ${NamingUtils.getFriendlyName(thresholdParam)})"
@@ -2048,25 +2048,25 @@ object Condition {
     override val params: Set[Param[_]] = Set(thresholdParam)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val labels = featureMap(SpaceSafetyLabels).asInstanceOf[Seq[SpaceSafetyLabel]]
-      val threshold = evaluationContext.params(thresholdParam)
+      val threshold = evaluationContetwittert.params(thresholdParam)
       val SatisfiedResult =
         Satisfied(FoundSpaceLabelWithScoreAboveThreshold(spaceSafetyLabelType, threshold))
       labels
         .collectFirst {
           case label
               if label.safetyLabelType == spaceSafetyLabelType
-                && label.safetyLabel.score.exists(_ >= threshold) =>
+                && label.safetyLabel.score.etwitterists(_ >= threshold) =>
             SatisfiedResult
         }.getOrElse(UnsatisfiedResult)
     }
   }
 
   case class CardUriHasRootDomain(rootDomainParam: Param[Seq[String]])
-      extends Condition
+      etwittertends Condition
       with HasParams {
     override lazy val name: String =
       s"CardUriHasRootDomain(${NamingUtils.getFriendlyName(rootDomainParam)})"
@@ -2079,13 +2079,13 @@ object Condition {
       host == domain || host.endsWith("." + domain)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val cardUriHost = featureMap(CardUriHost).asInstanceOf[String]
-      val rootDomains = evaluationContext.params(rootDomainParam)
+      val rootDomains = evaluationContetwittert.params(rootDomainParam)
 
-      if (rootDomains.exists(isHostDomainOrSubdomain(_, cardUriHost))) {
+      if (rootDomains.etwitterists(isHostDomainOrSubdomain(_, cardUriHost))) {
         Satisfied(FoundCardUriRootDomain(cardUriHost))
       } else {
         UnsatisfiedResult
@@ -2094,7 +2094,7 @@ object Condition {
   }
 
   case class TweetHasViolationOfLevel(level: ViolationLevel)
-      extends Condition
+      etwittertends Condition
       with HasSafetyLabelType {
 
     override lazy val name: String = s"tweetHasViolationOfLevel(${level})"
@@ -2112,7 +2112,7 @@ object Condition {
         .map(_.asInstanceOf[SafetyLabelType])
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val labels = featureMap(TweetSafetyLabels).asInstanceOf[Seq[TweetSafetyLabel]]
@@ -2124,7 +2124,7 @@ object Condition {
     }
   }
 
-  case object TweetHasViolationOfAnyLevel extends Condition with HasSafetyLabelType {
+  case object TweetHasViolationOfAnyLevel etwittertends Condition with HasSafetyLabelType {
 
     override lazy val name: String = s"tweetHasViolationOfAnyLevel"
 
@@ -2142,7 +2142,7 @@ object Condition {
         .map(_.asInstanceOf[SafetyLabelType])
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val labels = featureMap(TweetSafetyLabels).asInstanceOf[Seq[TweetSafetyLabel]]
@@ -2157,12 +2157,12 @@ object Condition {
     }
   }
 
-  case object TweetIsEditTweet extends BooleanFeatureCondition(TweetIsEditTweetFeature)
-  case object TweetIsStaleTweet extends BooleanFeatureCondition(TweetIsStaleTweetFeature)
+  case object TweetIsEditTweet etwittertends BooleanFeatureCondition(TweetIsEditTweetFeature)
+  case object TweetIsStaleTweet etwittertends BooleanFeatureCondition(TweetIsStaleTweetFeature)
 
 
   case class ViewerHasAdultMediaSettingLevel(settingLevelToCompare: SensitiveMediaSettingsLevel)
-      extends Condition {
+      etwittertends Condition {
     override def features: Set[Feature[_]] = Set(ViewerSensitiveMediaSettings)
 
     override def optionalFeatures: Set[Feature[_]] = Set.empty
@@ -2170,7 +2170,7 @@ object Condition {
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       featureMap
@@ -2186,7 +2186,7 @@ object Condition {
   }
 
   case class ViewerHasViolentMediaSettingLevel(settingLevelToCompare: SensitiveMediaSettingsLevel)
-      extends Condition {
+      etwittertends Condition {
     override def features: Set[Feature[_]] = Set(ViewerSensitiveMediaSettings)
 
     override def optionalFeatures: Set[Feature[_]] = Set.empty
@@ -2194,7 +2194,7 @@ object Condition {
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
 
@@ -2212,7 +2212,7 @@ object Condition {
 
   case class ViewerHasOtherSensitiveMediaSettingLevel(
     settingLevelToCompare: SensitiveMediaSettingsLevel)
-      extends Condition {
+      etwittertends Condition {
     override def features: Set[Feature[_]] = Set(ViewerSensitiveMediaSettings)
 
     override def optionalFeatures: Set[Feature[_]] = Set.empty
@@ -2220,7 +2220,7 @@ object Condition {
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
 
@@ -2236,16 +2236,16 @@ object Condition {
     }
   }
 
-  private[rules] val ToxrfTweetFilteredForAuthor =
-    Equals(ToxicReplyFilterState, FilterState.FilteredFromAuthor)
+  private[rules] val TotwitterrfTweetFilteredForAuthor =
+    Equals(TotwittericReplyFilterState, FilterState.FilteredFromAuthor)
 
-  private[rules] case object ToxrfViewerIsConversationAuthor
-      extends BooleanFeatureCondition(ToxicReplyFilterConversationAuthorIsViewer)
+  private[rules] case object TotwitterrfViewerIsConversationAuthor
+      etwittertends BooleanFeatureCondition(TotwittericReplyFilterConversationAuthorIsViewer)
 
-  val ToxrfFilteredFromAuthorViewer =
-    And(LoggedInViewer, ToxrfTweetFilteredForAuthor, ToxrfViewerIsConversationAuthor)
+  val TotwitterrfFilteredFromAuthorViewer =
+    And(LoggedInViewer, TotwitterrfTweetFilteredForAuthor, TotwitterrfViewerIsConversationAuthor)
 
-  case object SearchQueryMatchesScreenName extends Condition {
+  case object SearchQueryMatchesScreenName etwittertends Condition {
     override def features: Set[Feature[_]] = Set.empty
 
     override def optionalFeatures: Set[Feature[_]] = Set(RawQuery, AuthorScreenName)
@@ -2253,7 +2253,7 @@ object Condition {
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       if (featureMap.contains(RawQuery) && featureMap.contains(AuthorScreenName)) {
@@ -2284,21 +2284,21 @@ object Condition {
   val SearchQueryDoesNotMatchScreenNameDefaultTrueCondition: Choose[Boolean] =
     SearchQueryDoesNotMatchScreenNameConditionBuilder(Condition.True, RuleParams.False)
 
-  case object OptionalNonAuthorViewer extends Condition {
+  case object OptionalNonAuthorViewer etwittertends Condition {
     override val features: Set[Feature[_]] = Set()
     override val optionalFeatures: Set[Feature[_]] = Set(AuthorId, ViewerId)
 
     private val UnsatisfiedResult = Unsatisfied(this)
 
     override def preFilter(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): PreFilterResult = {
       NeedsFullEvaluation
     }
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val authorIdsOpt = featureMap.get(AuthorId).asInstanceOf[Option[Set[Long]]]
@@ -2318,7 +2318,7 @@ object Condition {
 
   case class ViewerLocatedInApplicableCountriesOfMediaWithholdingLabel(
     safetyLabelType: MediaSafetyLabelType)
-      extends ViewerInJurisdiction
+      etwittertends ViewerInJurisdiction
       with HasSafetyLabelType {
 
     override lazy val name: String =
@@ -2343,7 +2343,7 @@ object Condition {
     }
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val labels = featureMap(MediaSafetyLabels).asInstanceOf[Seq[MediaSafetyLabel]]
@@ -2364,7 +2364,7 @@ object Condition {
   }
 
   case class MediaHasLabelWithWorldwideWithholding(safetyLabelType: MediaSafetyLabelType)
-      extends Condition
+      etwittertends Condition
       with HasSafetyLabelType {
 
     override lazy val name: String =
@@ -2379,11 +2379,11 @@ object Condition {
     private val UnsatisfiedResult: Unsatisfied = Unsatisfied(this)
 
     private[this] def isWithheldWorldwide(label: SafetyLabel): Boolean = {
-      label.applicableCountries.map(_.contains("xx")).getOrElse(false)
+      label.applicableCountries.map(_.contains("twittertwitter")).getOrElse(false)
     }
 
     override def apply(
-      evaluationContext: EvaluationContext,
+      evaluationContetwittert: EvaluationContetwittert,
       featureMap: Map[Feature[_], _]
     ): Result = {
       val labels = featureMap(MediaSafetyLabels).asInstanceOf[Seq[MediaSafetyLabel]]

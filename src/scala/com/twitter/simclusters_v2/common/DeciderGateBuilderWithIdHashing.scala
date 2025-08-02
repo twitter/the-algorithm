@@ -4,7 +4,7 @@ import com.twitter.decider.Decider
 import com.twitter.servo.decider.{DeciderGateBuilder, DeciderKeyName}
 import com.twitter.servo.util.Gate
 
-class DeciderGateBuilderWithIdHashing(decider: Decider) extends DeciderGateBuilder(decider) {
+class DeciderGateBuilderWithIdHashing(decider: Decider) etwittertends DeciderGateBuilder(decider) {
 
   def idGateWithHashing[T](key: DeciderKeyName): Gate[T] = {
     val feature = keyToFeature(key)

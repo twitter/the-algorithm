@@ -1,7 +1,7 @@
 package com.twitter.recosinjector.clients
 
 import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.tweetypie.TweetyPie.{TweetyPieException, TweetyPieResult}
+import com.twitter.stitch.tweetypie.TweetyPie.{TweetyPieEtwitterception, TweetyPieResult}
 import com.twitter.storehaus.ReadableStore
 import com.twitter.tweetypie.thriftscala.Tweet
 import com.twitter.util.Future
@@ -18,9 +18,9 @@ class Tweetypie(
       .get(tweetId)
       .map { _.map(_.tweet) }
       .rescue {
-        case e: TweetyPieException =>
+        case e: TweetyPieEtwitterception =>
           // Usually results from trying to query a protected or unsafe tweet
-          failureStats.scope("TweetyPieException").counter(e.result.tweetState.toString).incr()
+          failureStats.scope("TweetyPieEtwitterception").counter(e.result.tweetState.toString).incr()
           Future.None
         case e =>
           failureStats.counter(e.getClass.getSimpleName).incr()

@@ -2,26 +2,26 @@ package com.twitter.visibility.rules.providers
 
 import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
 import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.MixedVisibilityPolicy
+import com.twitter.visibility.rules.MitwitteredVisibilityPolicy
 import com.twitter.visibility.rules.RuleBase
 import com.twitter.visibility.rules.generators.TweetRuleGenerator
 
 class InjectedPolicyProvider(
   visibilityDeciderGates: VisibilityDeciderGates,
   tweetRuleGenerator: TweetRuleGenerator)
-    extends PolicyProvider {
+    etwittertends PolicyProvider {
 
-  private[rules] val policiesForSurface: Map[SafetyLevel, MixedVisibilityPolicy] =
+  private[rules] val policiesForSurface: Map[SafetyLevel, MitwitteredVisibilityPolicy] =
     RuleBase.RuleMap.map {
       case (safetyLevel, policy) =>
         (
           safetyLevel,
-          MixedVisibilityPolicy(
+          MitwitteredVisibilityPolicy(
             originalPolicy = policy,
             additionalTweetRules = tweetRuleGenerator.rulesForSurface(safetyLevel)))
     }
 
-  override def policyForSurface(safetyLevel: SafetyLevel): MixedVisibilityPolicy = {
+  override def policyForSurface(safetyLevel: SafetyLevel): MitwitteredVisibilityPolicy = {
     policiesForSurface(safetyLevel)
   }
 }

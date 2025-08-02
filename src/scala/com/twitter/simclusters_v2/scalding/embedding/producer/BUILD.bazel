@@ -15,11 +15,11 @@ scala_library(
         "src/scala/com/twitter/simclusters_v2/hdfs_sources:aggregatable_producer_simclusters_embeddings_by_log_fav_score-scala",
         "src/scala/com/twitter/simclusters_v2/hdfs_sources/presto_hdfs_sources",
         "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "src/scala/com/twitter/simclusters_v2/scalding/common/matrix",
+        "src/scala/com/twitter/simclusters_v2/scalding/common/matritwitter",
         "src/scala/com/twitter/simclusters_v2/scalding/embedding",
         "src/scala/com/twitter/wtf/entity_real_graph/common",
         "src/scala/com/twitter/wtf/entity_real_graph/scalding/common",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:execution_app",
+        "src/scala/com/twitter/wtf/scalding/jobs/common:etwitterecution_app",
         "src/scala/com/twitter/wtf/scalding/jobs/common:sources",
         "src/scala/com/twitter/wtf/scalding/jobs/common:stats_util",
         "src/thrift/com/twitter/hermit/candidate:hermit-candidate-scala",
@@ -110,8 +110,8 @@ hadoop_binary(
 )
 
 hadoop_binary(
-    name = "aggregatable_logfav_based_producer_embeddings_job_relaxed_fav_engagement_threshold_2020",
-    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableLogFavBasedProducerEmbeddingsRelaxedFavEngagementThreshold2020ScheduledApp",
+    name = "aggregatable_logfav_based_producer_embeddings_job_relatwittered_fav_engagement_threshold_2020",
+    main = "com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableLogFavBasedProducerEmbeddingsRelatwitteredFavEngagementThreshold2020ScheduledApp",
     platform = "java8",
     runtime_platform = "java8",
     tags = [

@@ -2,8 +2,8 @@ package com.twitter.unified_user_actions.adapter.uua_aggregates
 
 import com.twitter.finagle.stats.NullStatsReceiver
 import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.iesource.thriftscala.ClientEventContext
-import com.twitter.iesource.thriftscala.EngagingContext
+import com.twitter.iesource.thriftscala.ClientEventContetwittert
+import com.twitter.iesource.thriftscala.EngagingContetwittert
 import com.twitter.unified_user_actions.adapter.AbstractAdapter
 import com.twitter.iesource.thriftscala.InteractionType
 import com.twitter.iesource.thriftscala.InteractionEvent
@@ -18,7 +18,7 @@ import com.twitter.unified_user_actions.thriftscala.UserIdentifier
  * This is to read directly from InteractionEvents
  */
 class RekeyUuaFromInteractionEventsAdapter
-    extends AbstractAdapter[InteractionEvent, Long, KeyedUuaTweet] {
+    etwittertends AbstractAdapter[InteractionEvent, Long, KeyedUuaTweet] {
 
   import RekeyUuaFromInteractionEventsAdapter._
   override def adaptOneToKeyedMany(
@@ -36,7 +36,7 @@ object RekeyUuaFromInteractionEventsAdapter {
   ): Seq[KeyedUuaTweet] =
     Option(e).flatMap { e =>
       e.interactionType.flatMap {
-        case InteractionType.TweetRenderImpression if !isDetailImpression(e.engagingContext) =>
+        case InteractionType.TweetRenderImpression if !isDetailImpression(e.engagingContetwittert) =>
           getRekeyedUUA(
             input = e,
             actionType = ActionType.ClientTweetRenderImpression,
@@ -75,10 +75,10 @@ object RekeyUuaFromInteractionEventsAdapter {
           ))
     }
 
-  def isDetailImpression(engagingContext: EngagingContext): Boolean =
-    engagingContext match {
-      case EngagingContext.ClientEventContext(
-            ClientEventContext(_, _, _, _, _, _, _, Some(isDetailsImpression), _)
+  def isDetailImpression(engagingContetwittert: EngagingContetwittert): Boolean =
+    engagingContetwittert match {
+      case EngagingContetwittert.ClientEventContetwittert(
+            ClientEventContetwittert(_, _, _, _, _, _, _, Some(isDetailsImpression), _)
           ) if isDetailsImpression =>
         true
       case _ => false

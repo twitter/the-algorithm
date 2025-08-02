@@ -1,18 +1,18 @@
 package com.twitter.search.earlybird.querycache;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.IndetwitterSearcher;
 import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.util.BitDocIdSet;
 import org.apache.lucene.util.BitSet;
-import org.apache.lucene.util.FixedBitSet;
-import org.apache.lucene.util.SparseFixedBitSet;
+import org.apache.lucene.util.FitwitteredBitSet;
+import org.apache.lucene.util.SparseFitwitteredBitSet;
 
 import com.twitter.common.util.Clock;
 import com.twitter.decider.Decider;
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.core.earlybird.index.QueryCacheResultForSegment;
+import com.twitter.search.core.earlybird.indetwitter.QueryCacheResultForSegment;
 import com.twitter.search.earlybird.RecentTweetRestriction;
 import com.twitter.search.earlybird.search.AbstractResultsCollector;
 import com.twitter.search.earlybird.search.SearchRequestInfo;
@@ -22,13 +22,13 @@ import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
 
 import static org.apache.lucene.search.DocIdSetIterator.NO_MORE_DOCS;
 
-import static com.twitter.search.core.earlybird.index.TimeMapper.ILLEGAL_TIME;
+import static com.twitter.search.core.earlybird.indetwitter.TimeMapper.ILLEGAL_TIME;
 
 /**
  * Collector to update the query cache (one segment for a filter)
  */
 public class QueryCacheResultCollector
-    extends AbstractResultsCollector<SearchRequestInfo, SearchResultsInfo> {
+    etwittertends AbstractResultsCollector<SearchRequestInfo, SearchResultsInfo> {
   private static final int UNSET = -1;
 
   private final QueryCacheFilter queryCacheFilter;
@@ -55,24 +55,24 @@ public class QueryCacheResultCollector
   }
 
   @Override
-  public void startSegment() throws IOException {
+  public void startSegment() throws IOEtwitterception {
     // The doc IDs in the optimized segments are always in the 0 .. (segmentSize - 1) range, so we
     // can use a dense bitset to collect the hits. However, unoptimized segments can use any int
     // doc IDs, so we have to use a sparse bitset to collect the hits in those segments.
     if (currTwitterReader.getSegmentData().isOptimized()) {
       switch (queryCacheFilter.getResultSetType()) {
-        case FixedBitSet:
-          bitSet = new FixedBitSet(currTwitterReader.maxDoc());
+        case FitwitteredBitSet:
+          bitSet = new FitwitteredBitSet(currTwitterReader.matwitterDoc());
           break;
-        case SparseFixedBitSet:
-          bitSet = new SparseFixedBitSet(currTwitterReader.maxDoc());
+        case SparseFitwitteredBitSet:
+          bitSet = new SparseFitwitteredBitSet(currTwitterReader.matwitterDoc());
           break;
         default:
-          throw new IllegalStateException(
+          throw new IllegalStateEtwitterception(
               "Unknown ResultSetType: " + queryCacheFilter.getResultSetType().name());
       }
     } else {
-      bitSet = new SparseFixedBitSet(currTwitterReader.maxDoc());
+      bitSet = new SparseFitwitteredBitSet(currTwitterReader.matwitterDoc());
     }
 
     startingDocID = findStartingDocID();
@@ -91,20 +91,20 @@ public class QueryCacheResultCollector
   }
 
   public QueryCacheResultForSegment getCachedResult() {
-    // Note that BitSet.cardinality takes linear time in the size of the maxDoc, so we track
+    // Note that BitSet.cardinality takes linear time in the size of the matwitterDoc, so we track
     // cardinality separately.
     return new QueryCacheResultForSegment(new BitDocIdSet(bitSet, cardinality),
         cardinality, startingDocID);
   }
 
   /**
-   * We don't want to return results less than 15 seconds older than the most recently indexed tweet,
-   * as they might not be completely indexed.
+   * We don't want to return results less than 15 seconds older than the most recently indetwittered tweet,
+   * as they might not be completely indetwittered.
    * We can't simply use the first hit, as some cached filters might not have any hits,
    * e.g. has_engagement in the protected cluster.
    * We can't use a clock because streams can lag.
    */
-  private int findStartingDocID() throws IOException {
+  private int findStartingDocID() throws IOEtwitterception {
     int lastTime = currTwitterReader.getSegmentData().getTimeMapper().getLastTime();
     if (lastTime == ILLEGAL_TIME) {
       return NO_MORE_DOCS;
@@ -116,9 +116,9 @@ public class QueryCacheResultCollector
     }
 
     return SinceUntilFilter.getUntilQuery(untilTime)
-        .createWeight(new IndexSearcher(currTwitterReader), ScoreMode.COMPLETE_NO_SCORES, 1.0f)
-        .scorer(currTwitterReader.getContext())
+        .createWeight(new IndetwitterSearcher(currTwitterReader), ScoreMode.COMPLETE_NO_SCORES, 1.0f)
+        .scorer(currTwitterReader.getContetwittert())
         .iterator()
-        .nextDoc();
+        .netwittertDoc();
   }
 }

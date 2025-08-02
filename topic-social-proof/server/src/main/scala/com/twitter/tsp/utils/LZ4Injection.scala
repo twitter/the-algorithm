@@ -6,7 +6,7 @@ import net.jpountz.lz4.LZ4CompressorWithLength
 import net.jpountz.lz4.LZ4DecompressorWithLength
 import net.jpountz.lz4.LZ4Factory
 
-object LZ4Injection extends Injection[Array[Byte], Array[Byte]] {
+object LZ4Injection etwittertends Injection[Array[Byte], Array[Byte]] {
   private val lz4Factory = LZ4Factory.fastestInstance()
   private val fastCompressor = new LZ4CompressorWithLength(lz4Factory.fastCompressor())
   private val decompressor = new LZ4DecompressorWithLength(lz4Factory.fastDecompressor())

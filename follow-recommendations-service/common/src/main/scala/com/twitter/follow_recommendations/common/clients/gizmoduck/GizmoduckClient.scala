@@ -2,13 +2,13 @@ package com.twitter.follow_recommendations.common.clients.gizmoduck
 
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.gizmoduck.thriftscala.LookupContext
+import com.twitter.gizmoduck.thriftscala.LookupContetwittert
 import com.twitter.gizmoduck.thriftscala.PerspectiveEdge
 import com.twitter.gizmoduck.thriftscala.QueryFields
 import com.twitter.stitch.Stitch
 import com.twitter.stitch.gizmoduck.Gizmoduck
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class GizmoduckClient @Inject() (gizmoduckStitchClient: Gizmoduck, statsReceiver: StatsReceiver) {
@@ -29,13 +29,13 @@ class GizmoduckClient @Inject() (gizmoduckStitchClient: Gizmoduck, statsReceiver
 
   def getUserName(userId: Long, forUserId: Long): Stitch[Option[String]] = {
     val queryFields = GizmoduckClient.GetUserByIdUserNameQueryFields
-    val lookupContext = LookupContext(
+    val lookupContetwittert = LookupContetwittert(
       forUserId = Some(forUserId),
       perspectiveEdges = Some(GizmoduckClient.DefaultPerspectiveEdges)
     )
     // get latency metrics with StatsUtil.profileStitch when calling .getUserById
     val response = StatsUtil.profileStitch(
-      gizmoduckStitchClient.getUserById(userId, queryFields, lookupContext),
+      gizmoduckStitchClient.getUserById(userId, queryFields, lookupContetwittert),
       getUserById
     )
     response.map(_.profile.map(_.name))
@@ -62,7 +62,7 @@ object GizmoduckClient {
   val GetUserByIdQueryFields: Set[QueryFields] = Set(
     QueryFields.Account,
     QueryFields.Counts,
-    QueryFields.ExtendedProfile,
+    QueryFields.EtwittertendedProfile,
     QueryFields.Perspective,
     QueryFields.Profile,
     QueryFields.ProfileDesign,

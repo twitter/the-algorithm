@@ -10,7 +10,7 @@ import com.twitter.search.queryparser.query.Disjunction;
 import com.twitter.search.queryparser.query.Operator;
 import com.twitter.search.queryparser.query.Phrase;
 import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twitter.search.queryparser.query.QueryParserEtwitterception;
 import com.twitter.search.queryparser.query.QueryVisitor;
 import com.twitter.search.queryparser.query.SpecialTerm;
 import com.twitter.search.queryparser.query.Term;
@@ -20,7 +20,7 @@ import com.twitter.search.queryparser.query.annotation.FieldNameWithBoost;
 /**
  * Detects whether the query tree has certain field annotations.
  */
-public class DetectFieldAnnotationVisitor extends QueryVisitor<Boolean> {
+public class DetectFieldAnnotationVisitor etwittertends QueryVisitor<Boolean> {
   private final ImmutableSet<String> fieldNames;
 
   /**
@@ -39,36 +39,36 @@ public class DetectFieldAnnotationVisitor extends QueryVisitor<Boolean> {
   }
 
   @Override
-  public Boolean visit(Disjunction disjunction) throws QueryParserException {
+  public Boolean visit(Disjunction disjunction) throws QueryParserEtwitterception {
     return visitQuery(disjunction) || visitBooleanQuery(disjunction);
   }
 
   @Override
-  public Boolean visit(Conjunction conjunction) throws QueryParserException {
+  public Boolean visit(Conjunction conjunction) throws QueryParserEtwitterception {
     return visitQuery(conjunction) || visitBooleanQuery(conjunction);
   }
 
   @Override
-  public Boolean visit(Phrase phrase) throws QueryParserException {
+  public Boolean visit(Phrase phrase) throws QueryParserEtwitterception {
     return visitQuery(phrase);
   }
 
   @Override
-  public Boolean visit(Term term) throws QueryParserException {
+  public Boolean visit(Term term) throws QueryParserEtwitterception {
     return visitQuery(term);
   }
 
   @Override
-  public Boolean visit(Operator operator) throws QueryParserException {
+  public Boolean visit(Operator operator) throws QueryParserEtwitterception {
     return visitQuery(operator);
   }
 
   @Override
-  public Boolean visit(SpecialTerm special) throws QueryParserException {
+  public Boolean visit(SpecialTerm special) throws QueryParserEtwitterception {
     return visitQuery(special);
   }
 
-  private Boolean visitQuery(Query query) throws QueryParserException {
+  private Boolean visitQuery(Query query) throws QueryParserEtwitterception {
     if (query.hasAnnotations()) {
       for (Annotation annotation : query.getAnnotations()) {
         if (!Annotation.Type.FIELD.equals(annotation.getType())) {
@@ -87,7 +87,7 @@ public class DetectFieldAnnotationVisitor extends QueryVisitor<Boolean> {
     return false;
   }
 
-  private boolean visitBooleanQuery(BooleanQuery query) throws QueryParserException {
+  private boolean visitBooleanQuery(BooleanQuery query) throws QueryParserEtwitterception {
     for (Query subQuery : query.getChildren()) {
       if (subQuery.accept(this)) {
         return true;

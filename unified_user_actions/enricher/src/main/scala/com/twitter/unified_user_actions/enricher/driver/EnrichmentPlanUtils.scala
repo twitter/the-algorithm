@@ -16,21 +16,21 @@ object EnrichmentPlanUtils {
     }
 
     /**
-     * Get the next stage in the enrichment process. Note, if there is none this will throw
-     * an exception.
+     * Get the netwittert stage in the enrichment process. Note, if there is none this will throw
+     * an etwitterception.
      */
     def getCurrentStage: EnrichmentStage = {
-      val next = plan.stages.find(stage => stage.status == Initialized)
-      next match {
+      val netwittert = plan.stages.find(stage => stage.status == Initialized)
+      netwittert match {
         case Some(stage) => stage
-        case None => throw new IllegalStateException("check for plan completion first")
+        case None => throw new IllegalStateEtwitterception("check for plan completion first")
       }
     }
     def getLastCompletedStage: EnrichmentStage = {
       val completed = plan.stages.reverse.find(stage => stage.status == Completion)
       completed match {
         case Some(stage) => stage
-        case None => throw new IllegalStateException("check for plan completion first")
+        case None => throw new IllegalStateEtwitterception("check for plan completion first")
       }
     }
 

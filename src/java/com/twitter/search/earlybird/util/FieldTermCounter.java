@@ -19,9 +19,9 @@ import com.twitter.search.common.metrics.SearchLongGauge;
 
 /**
  * This class is used to count how many times a field happens in hourly and daily stats.
- * It is used by TermCountMonitor for iterating all fields in the index.
+ * It is used by TermCountMonitor for iterating all fields in the indetwitter.
  *
- * There is one exception that this class is also used to count the number of tweets in the index.
+ * There is one etwitterception that this class is also used to count the number of tweets in the indetwitter.
  * Under the situation, the passed in fieldName would be empty string (as TWEET_COUNT_KEY).
  */
 public class FieldTermCounter {
@@ -37,19 +37,19 @@ public class FieldTermCounter {
   private final int startCheckHour;
   // The last date in format "YYYYMMDDHH" that we want to check counts for.
   private final int endCheckHour;
-  // Smallest number of docs we expect to have for each hour.
+  // Smallest number of docs we etwitterpect to have for each hour.
   private final int hourlyMinCount;
-  //Smallest number of docs we expect to have for each day.
+  //Smallest number of docs we etwitterpect to have for each day.
   private final int dailyMinCount;
 
   // Count of tweets for each day, keyed of by the hour in the format "YYYYMMDD".
-  private final Map<Integer, AtomicInteger> exportedHourlyCounts;
+  private final Map<Integer, AtomicInteger> etwitterportedHourlyCounts;
 
   // Count of tweets for each day, keyed of by the day in the format "YYYYMMDD".
   private final Map<Integer, MutableLong> dailyCounts;
 
-  // Only export hourly stats that are below minimum threshold.
-  private final Map<String, SearchLongGauge> exportedStats;
+  // Only etwitterport hourly stats that are below minimum threshold.
+  private final Map<String, SearchLongGauge> etwitterportedStats;
 
   private final SearchLongGauge hoursWithNoTweetsStat;
   private final SearchLongGauge daysWithNoTweetsStat;
@@ -67,49 +67,49 @@ public class FieldTermCounter {
     this.endCheckHour = endCheckHour;
     this.hourlyMinCount = hourlyMinCount;
     this.dailyMinCount = dailyMinCount;
-    this.exportedHourlyCounts = Maps.newHashMap();
+    this.etwitterportedHourlyCounts = Maps.newHashMap();
     this.dailyCounts = Maps.newHashMap();
-    this.exportedStats = Maps.newHashMap();
+    this.etwitterportedStats = Maps.newHashMap();
 
-    this.hoursWithNoTweetsStat = SearchLongGauge.export(getAggregatedNoTweetStatName(true));
-    this.daysWithNoTweetsStat = SearchLongGauge.export(getAggregatedNoTweetStatName(false));
+    this.hoursWithNoTweetsStat = SearchLongGauge.etwitterport(getAggregatedNoTweetStatName(true));
+    this.daysWithNoTweetsStat = SearchLongGauge.etwitterport(getAggregatedNoTweetStatName(false));
   }
 
   /**
-   * Updates the stats exported by this class based on the new counts provided in the given map.
+   * Updates the stats etwitterported by this class based on the new counts provided in the given map.
    */
   public void runWithNewCounts(Map<Integer, MutableInt> newCounts) {
     dailyCounts.clear();
 
     // See go/rb/813442/#comment2566569
-    // 1. Update all existing hours
-    updateExistingHourlyCounts(newCounts);
+    // 1. Update all etwitteristing hours
+    updateEtwitteristingHourlyCounts(newCounts);
 
-    // 2. Add and export all new hours
-    addAndExportNewHourlyCounts(newCounts);
+    // 2. Add and etwitterport all new hours
+    addAndEtwitterportNewHourlyCounts(newCounts);
 
-    // 3. fill in all the missing hours between know min and max days.
+    // 3. fill in all the missing hours between know min and matwitter days.
     fillMissingHourlyCounts();
 
-    // 4. Export as a stat, how many hours don't have any tweets (i.e. <= 0)
-    exportMissingTweetStats();
+    // 4. Etwitterport as a stat, how many hours don't have any tweets (i.e. <= 0)
+    etwitterportMissingTweetStats();
   }
 
   // Input:
   // . the new hourly count map in the current iteration
-  // . the existing hourly count map before the current iteration
-  // If the hourly key matches from the new hourly map to the existing hourly count map, update
-  // the value of the existing hourly count map to the value from the new hourly count map.
-  private void updateExistingHourlyCounts(Map<Integer, MutableInt> newCounts) {
-    for (Map.Entry<Integer, AtomicInteger> exportedCount : exportedHourlyCounts.entrySet()) {
-      Integer date = exportedCount.getKey();
-      AtomicInteger exportedCountValue = exportedCount.getValue();
+  // . the etwitteristing hourly count map before the current iteration
+  // If the hourly key matches from the new hourly map to the etwitteristing hourly count map, update
+  // the value of the etwitteristing hourly count map to the value from the new hourly count map.
+  private void updateEtwitteristingHourlyCounts(Map<Integer, MutableInt> newCounts) {
+    for (Map.Entry<Integer, AtomicInteger> etwitterportedCount : etwitterportedHourlyCounts.entrySet()) {
+      Integer date = etwitterportedCount.getKey();
+      AtomicInteger etwitterportedCountValue = etwitterportedCount.getValue();
 
       MutableInt newCount = newCounts.get(date);
       if (newCount == null) {
-        exportedCountValue.set(0);
+        etwitterportedCountValue.set(0);
       } else {
-        exportedCountValue.set(newCount.intValue());
+        etwitterportedCountValue.set(newCount.intValue());
         // clean up so that we don't check this date again when we look for new hours
         newCounts.remove(date);
       }
@@ -118,38 +118,38 @@ public class FieldTermCounter {
 
   // Input:
   // . the new hourly count map in the current iteration
-  // . the existing hourly count map before the current iteration
-  // This function is called after the above function of updateExistingHourlyCounts() so that all
+  // . the etwitteristing hourly count map before the current iteration
+  // This function is called after the above function of updateEtwitteristingHourlyCounts() so that all
   // matching key value pairs have been removed from the new hourly count map.
-  // Move all remaining valid values from the new hourly count map to the existing hourly count
+  // Move all remaining valid values from the new hourly count map to the etwitteristing hourly count
   // map.
-  private void addAndExportNewHourlyCounts(Map<Integer, MutableInt> newCounts) {
+  private void addAndEtwitterportNewHourlyCounts(Map<Integer, MutableInt> newCounts) {
     for (Map.Entry<Integer, MutableInt> newCount : newCounts.entrySet()) {
       Integer hour = newCount.getKey();
       MutableInt newCountValue = newCount.getValue();
-      Preconditions.checkState(!exportedHourlyCounts.containsKey(hour),
-          "Should have already processed and removed existing hours: " + hour);
+      Preconditions.checkState(!etwitterportedHourlyCounts.containsKey(hour),
+          "Should have already processed and removed etwitteristing hours: " + hour);
 
       AtomicInteger newStat = new AtomicInteger(newCountValue.intValue());
-      exportedHourlyCounts.put(hour, newStat);
+      etwitterportedHourlyCounts.put(hour, newStat);
     }
   }
 
-  // Find whether the existing hourly count map has hourly holes.  If such holes exist, fill 0
-  // values so that they can be exported.
+  // Find whether the etwitteristing hourly count map has hourly holes.  If such holes etwitterist, fill 0
+  // values so that they can be etwitterported.
   private void fillMissingHourlyCounts() {
-    // Figure out the time range for which we should have tweets in the index. At the very least,
+    // Figure out the time range for which we should have tweets in the indetwitter. At the very least,
     // this range should cover [startCheckHour, endCheckHour) if endCheckHour is set, or
-    // [startCheckHour, latestHourInTheIndexWithTweets] if endCheckHour is not set (latest tier or
+    // [startCheckHour, latestHourInTheIndetwitterWithTweets] if endCheckHour is not set (latest tier or
     // realtime cluster).
     int startHour = startCheckHour;
     int endHour = endCheckHour < getHourValue(Calendar.getInstance(TIME_ZONE)) ? endCheckHour : -1;
-    for (int next : exportedHourlyCounts.keySet()) {
-      if (next < startHour) {
-        startHour = next;
+    for (int netwittert : etwitterportedHourlyCounts.keySet()) {
+      if (netwittert < startHour) {
+        startHour = netwittert;
       }
-      if (next > endHour) {
-        endHour = next;
+      if (netwittert > endHour) {
+        endHour = netwittert;
       }
     }
 
@@ -157,17 +157,17 @@ public class FieldTermCounter {
     Calendar hour = getCalendarValue(startHour);
     for (; hour.before(endHourCal); hour.add(Calendar.HOUR_OF_DAY, 1)) {
       int hourValue = getHourValue(hour);
-      if (!exportedHourlyCounts.containsKey(hourValue)) {
-        exportedHourlyCounts.put(hourValue, new AtomicInteger(0));
+      if (!etwitterportedHourlyCounts.containsKey(hourValue)) {
+        etwitterportedHourlyCounts.put(hourValue, new AtomicInteger(0));
       }
     }
   }
 
-  private void exportMissingTweetStats() {
+  private void etwitterportMissingTweetStats() {
     int hoursWithNoTweets = 0;
     int daysWithNoTweets = 0;
 
-    for (Map.Entry<Integer, AtomicInteger> hourlyCount : exportedHourlyCounts.entrySet()) {
+    for (Map.Entry<Integer, AtomicInteger> hourlyCount : etwitterportedHourlyCounts.entrySet()) {
       int hour = hourlyCount.getKey();
       if ((hour < startCheckHour) || (hour >= endCheckHour)) {
         continue;
@@ -181,19 +181,19 @@ public class FieldTermCounter {
       } else {
         dayCount.setValue(dayCount.longValue() + hourlyCount.getValue().get());
       }
-      AtomicInteger exportedCountValue = hourlyCount.getValue();
-      if (exportedCountValue.get() <= hourlyMinCount) {
-        // We do not export hourly too few tweets for index fields as it can 10x the existing
-        // exported stats.
+      AtomicInteger etwitterportedCountValue = hourlyCount.getValue();
+      if (etwitterportedCountValue.get() <= hourlyMinCount) {
+        // We do not etwitterport hourly too few tweets for indetwitter fields as it can 10twitter the etwitteristing
+        // etwitterported stats.
         // We might consider whitelisting some high frequency fields later.
         if (isFieldForTweet()) {
           String statsName = getStatName(hourlyCount.getKey());
-          SearchLongGauge stat = SearchLongGauge.export(statsName);
-          stat.set(exportedCountValue.longValue());
-          exportedStats.put(statsName, stat);
+          SearchLongGauge stat = SearchLongGauge.etwitterport(statsName);
+          stat.set(etwitterportedCountValue.longValue());
+          etwitterportedStats.put(statsName, stat);
         }
         LOG.warn("Found an hour with too few tweets. Field: <{}> Hour: {} count: {}",
-            fieldName, hour, exportedCountValue);
+            fieldName, hour, etwitterportedCountValue);
         hoursWithNoTweets++;
       }
     }
@@ -211,7 +211,7 @@ public class FieldTermCounter {
   }
 
   // When the fieldName is empty string (as TWEET_COUNT_KEY), it means that we are counting the
-  // number of tweets for the index, not for some specific fields.
+  // number of tweets for the indetwitter, not for some specific fields.
   private boolean isFieldForTweet() {
     return TWEET_COUNT_KEY.equals(fieldName);
   }
@@ -219,15 +219,15 @@ public class FieldTermCounter {
   private String getAggregatedNoTweetStatName(boolean hourly) {
     if (isFieldForTweet()) {
       if (hourly) {
-        return "hours_with_no_indexed_tweets_v_" + instanceCounter;
+        return "hours_with_no_indetwittered_tweets_v_" + instanceCounter;
       } else {
-        return "days_with_no_indexed_tweets_v_" + instanceCounter;
+        return "days_with_no_indetwittered_tweets_v_" + instanceCounter;
       }
     } else {
       if (hourly) {
-        return "hours_with_no_indexed_fields_v_" + fieldName + "_" + instanceCounter;
+        return "hours_with_no_indetwittered_fields_v_" + fieldName + "_" + instanceCounter;
       } else {
-        return "days_with_no_indexed_fields_v_" + fieldName + "_" + instanceCounter;
+        return "days_with_no_indetwittered_fields_v_" + fieldName + "_" + instanceCounter;
       }
     }
   }
@@ -240,15 +240,15 @@ public class FieldTermCounter {
   @VisibleForTesting
   static String getStatName(String field, int instance, Integer date) {
     if (TWEET_COUNT_KEY.equals(field)) {
-      return "tweets_indexed_on_hour_v_" + instance + "_" + date;
+      return "tweets_indetwittered_on_hour_v_" + instance + "_" + date;
     } else {
-      return "tweets_indexed_on_hour_v_" + instance + "_" + field + "_" + date;
+      return "tweets_indetwittered_on_hour_v_" + instance + "_" + field + "_" + date;
     }
   }
 
   @VisibleForTesting
-  Map<Integer, AtomicInteger> getExportedCounts() {
-    return Collections.unmodifiableMap(exportedHourlyCounts);
+  Map<Integer, AtomicInteger> getEtwitterportedCounts() {
+    return Collections.unmodifiableMap(etwitterportedHourlyCounts);
   }
 
   @VisibleForTesting
@@ -267,8 +267,8 @@ public class FieldTermCounter {
   }
 
   @VisibleForTesting
-  Map<String, SearchLongGauge> getExportedHourlyCountStats() {
-    return exportedStats;
+  Map<String, SearchLongGauge> getEtwitterportedHourlyCountStats() {
+    return etwitterportedStats;
   }
 
   /**

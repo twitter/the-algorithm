@@ -48,7 +48,7 @@ struct BreadcrumbTweet {
    * - quote_tweet: represents the nested or quoted tweet within the parent container
    *
    * See more details
-   * https://docs.google.com/document/d/16CdSRpsmUUd17yoFH9min3nLBqDVawx4DaZoiqSfCHI/edit#heading=h.nb7tnjrhqxpm
+   * https://docs.google.com/document/d/16CdSRpsmUUd17yoFH9min3nLBqDVawtwitter4DaZoiqSfCHI/edit#heading=h.nb7tnjrhqtwitterpm
    */
   2: required string sourceComponent(personalDataType = 'WebsitePage')
 }(persisted='true', hasPersonalData='true')
@@ -56,8 +56,8 @@ struct BreadcrumbTweet {
 /*
  * ClientEvent's namespaces. See https://docbird.twitter.biz/client_events/client-event-namespaces.html
  *
- * - For Legacy Client Events (LCE), it excludes the client part of the
- * six part namespace (client:page:section:component:element:action)
+ * - For Legacy Client Events (LCE), it etwittercludes the client part of the
+ * sitwitter part namespace (client:page:section:component:element:action)
  * since this part is better captured by clientAppid and clientVersion.
  *
  * - For Behavioral Client Events (BCE), use clientPlatform to identify the client.
@@ -110,14 +110,14 @@ struct EventMetadata {
    *
    *  - ClientEvents && BehavioralClientEvents: Country code could be IP address (geoduck) or
    *      User registration country (gizmoduck) and the former takes precedence.
-   *      We don’t know exactly which one is applied, unfortunately,
+   *      We don’t know etwitteractly which one is applied, unfortunately,
    *      see https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/finatra-internal/international/src/main/scala/com/twitter/finatra/international/CountryIdentifier.scala
    *      The format should be ISO_3166-1_alpha-2.
    *  - ServerTlsFavs: From the request (user’s current location),
-   *      see https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/thrift/com/twitter/context/viewer.thrift?L54
+   *      see https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/thrift/com/twitter/contetwittert/viewer.thrift?L54
    *      The format should be ISO_3166-1_alpha-2.
    *  - ServerTweetypieEvents:
-   *      UUA sets this to be consistent with IESource to meet existing use requirement.
+   *      UUA sets this to be consistent with IESource to meet etwitteristing use requirement.
    *      see https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/thrift/com/twitter/tweetypie/tweet.thrift?L1001.
    *      The definitions here conflicts with the intention of UUA to log the request country code
    *      rather than the signup / geo-tagging country.
@@ -140,9 +140,9 @@ struct EventMetadata {
    * This field is only populated in behavioral client events (BCE).
    *
    * The current UI hierarchy information with human readable labels.
-   * For example, [home,timeline,tweet] or [tab_bar,home,scrollable_content,tweet]
+   * For etwitterample, [home,timeline,tweet] or [tab_bar,home,scrollable_content,tweet]
    *
-   * For more details see https://docs.google.com/document/d/16CdSRpsmUUd17yoFH9min3nLBqDVawx4DaZoiqSfCHI/edit#heading=h.uv3md49i0j4j
+   * For more details see https://docs.google.com/document/d/16CdSRpsmUUd17yoFH9min3nLBqDVawtwitter4DaZoiqSfCHI/edit#heading=h.uv3md49i0j4j
    */
   11: optional list<string> viewHierarchy(personalDataType = 'WebsitePage')
   /*
@@ -152,7 +152,7 @@ struct EventMetadata {
    * the current product surface (e.g. profile page) where an action was taken.
    *
    * The breadcrumb information may only be present for certain preceding product surfaces (e.g. Home Timeline).
-   * See more details in https://docs.google.com/document/d/16CdSRpsmUUd17yoFH9min3nLBqDVawx4DaZoiqSfCHI/edit#heading=h.nb7tnjrhqxpm
+   * See more details in https://docs.google.com/document/d/16CdSRpsmUUd17yoFH9min3nLBqDVawtwitter4DaZoiqSfCHI/edit#heading=h.nb7tnjrhqtwitterpm
    */
   12: optional list<string> breadcrumbViews(personalDataType = 'WebsitePage')
   /*
@@ -162,7 +162,7 @@ struct EventMetadata {
    * current product surface (e.g. profile page) where an action was taken.
    *
    * The breadcrumb information may only be present for certain preceding product surfaces (e.g. Home Timeline).
-   * See more details in https://docs.google.com/document/d/16CdSRpsmUUd17yoFH9min3nLBqDVawx4DaZoiqSfCHI/edit#heading=h.nb7tnjrhqxpm
+   * See more details in https://docs.google.com/document/d/16CdSRpsmUUd17yoFH9min3nLBqDVawtwitter4DaZoiqSfCHI/edit#heading=h.nb7tnjrhqtwitterpm
    */
    13: optional list<BreadcrumbTweet> breadcrumbTweets(personalDataType = 'TweetId')
   /*

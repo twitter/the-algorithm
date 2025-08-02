@@ -41,28 +41,28 @@ class MDLCalibrator(PercentileDiscretizerCalibrator):
         name-scope of the PercentileDiscretizer layer
     """
     n_feature = len(self._discretizer_feature_dict)
-    max_discretizer_feature = n_feature * (self._n_bin + 1)
+    matwitter_discretizer_feature = n_feature * (self._n_bin + 1)
 
     if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate()")
+      raise RuntimeError("Etwitterpecting prior call to calibrate()")
 
     if self._bin_ids.shape[0] != n_feature:
-      raise RuntimeError("Expecting self._bin_ids.shape[0] \
+      raise RuntimeError("Etwitterpecting self._bin_ids.shape[0] \
         != len(self._discretizer_feature_dict)")
     if self._bin_vals.shape[0] != n_feature:
-      raise RuntimeError("Expecting self._bin_vals.shape[0] \
+      raise RuntimeError("Etwitterpecting self._bin_vals.shape[0] \
         != len(self._discretizer_feature_dict)")
 
     # can add at most #features * (n_bin+1) new feature ids
-    if 2**self._out_bits <= max_discretizer_feature:
-      raise ValueError("""Maximum number of features created by discretizer is
+    if 2**self._out_bits <= matwitter_discretizer_feature:
+      raise ValueError("""Matwitterimum number of features created by discretizer is
         %d but requested that the output be limited to %d values (%d bits),
         which is smaller than that. Please ensure the output has enough bits
         to represent at least the new features"""
-                       % (max_discretizer_feature, 2**self._out_bits, self._out_bits))
+                       % (matwitter_discretizer_feature, 2**self._out_bits, self._out_bits))
 
     # build feature_offsets, hash_map_keys, hash_map_values
-    feature_offsets = np.arange(0, max_discretizer_feature,
+    feature_offsets = np.arange(0, matwitter_discretizer_feature,
                                 self._n_bin + 1, dtype='int64')
     hash_map_keys = np.array(list(self._hash_map.keys()), dtype=np.int64)
     hash_map_values = np.array(list(self._hash_map.values()), dtype=np.float32)
@@ -88,7 +88,7 @@ class MDLCalibrator(PercentileDiscretizerCalibrator):
         scope of layer.
     '''
     if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate().Cannot save() prior to calibrate()")
+      raise RuntimeError("Etwitterpecting prior call to calibrate().Cannot save() prior to calibrate()")
 
     layer_args = self.get_layer_args()
 

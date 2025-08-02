@@ -1,0 +1,20 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "configapi/configapi-core/src/main/scala/com/twitter/timelines/configapi",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/functional_component/feature_hydrator",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/model",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/model/request",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/util",
+        "home-mitwitterer/thrift/src/main/thrift:thrift-scala",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/common",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/gate",
+        "src/thrift/com/twitter/gizmoduck:thrift-scala",
+        "stitch/stitch-socialgraph",
+        "timelinemitwitterer/server/src/main/scala/com/twitter/timelinemitwitterer/injection/store/persistence",
+        "timelineservice/common/src/main/scala/com/twitter/timelineservice/model",
+    ],
+)

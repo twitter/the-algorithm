@@ -9,7 +9,7 @@ import com.twitter.stitch.Stitch
  *   implemented here.
  */
 class StitchCaching[K, V](operations: CacheOperations[K, V], repo: K => Stitch[V])
-    extends (K => Stitch[V]) {
+    etwittertends (K => Stitch[V]) {
 
   private[this] val stitchOps = new StitchCacheOperations(operations)
 

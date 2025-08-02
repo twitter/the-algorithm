@@ -7,7 +7,7 @@ import com.twitter.simclusters_v2.hdfs_sources._
 import com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJob._
 import com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobUtil._
 import com.twitter.simclusters_v2.thriftscala.TweetAndClusterScores
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
+import com.twitter.wtf.scalding.jobs.common.ScheduledEtwitterecutionApp
 import java.util.TimeZone
 
 /**
@@ -16,7 +16,7 @@ import java.util.TimeZone
  * capesospy-v2 update --build_locally --start_cron \
  * --start_cron offline_tweet_job src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
-object SimClustersOfflineJobScheduledApp extends ScheduledExecutionApp {
+object SimClustersOfflineJobScheduledApp etwittertends ScheduledEtwitterecutionApp {
   import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
 
   private val tweetClusterScoresDatasetPath: String =
@@ -36,7 +36,7 @@ object SimClustersOfflineJobScheduledApp extends ScheduledExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     val previousTweetClusterScores: TypedPipe[TweetAndClusterScores] =
       if (firstTime.timestamp == dateRange.start.timestamp) { // if it is the first batch
@@ -78,35 +78,35 @@ object SimClustersOfflineJobScheduledApp extends ScheduledExecutionApp {
     val clusterTopKTweets = computeClusterTopKTweets(updatedTweetClusterScores)
       .count("NumClusterTopKSaved")
 
-    val writeTweetClusterScoresExec = updatedTweetClusterScores
-      .writeDALSnapshotExecution(
+    val writeTweetClusterScoresEtwitterec = updatedTweetClusterScores
+      .writeDALSnapshotEtwitterecution(
         SimclustersOfflineTweetClusterScoresScalaDataset,
-        D.Hourly, // note that we use hourly in order to make it flexible for hourly batch size
-        D.Suffix(tweetClusterScoresDatasetPath),
+        D.Hourly, // note that we use hourly in order to make it fletwitterible for hourly batch size
+        D.Suffitwitter(tweetClusterScoresDatasetPath),
         D.EBLzo(),
         dateRange.end
       )
 
-    val writeTweetTopKClustersExec = tweetTopKClusters
-      .writeDALSnapshotExecution(
+    val writeTweetTopKClustersEtwitterec = tweetTopKClusters
+      .writeDALSnapshotEtwitterecution(
         SimclustersOfflineTweetTopKClustersScalaDataset,
-        D.Hourly, // note that we use hourly in order to make it flexible for hourly batch size
-        D.Suffix(tweetTopKClustersDatasetPath),
+        D.Hourly, // note that we use hourly in order to make it fletwitterible for hourly batch size
+        D.Suffitwitter(tweetTopKClustersDatasetPath),
         D.EBLzo(),
         dateRange.end
       )
 
-    val writeClusterTopKTweetsExec = clusterTopKTweets
-      .writeDALSnapshotExecution(
+    val writeClusterTopKTweetsEtwitterec = clusterTopKTweets
+      .writeDALSnapshotEtwitterecution(
         SimclustersOfflineClusterTopKTweetsScalaDataset,
-        D.Hourly, // note that we use hourly in order to make it flexible for hourly batch size
-        D.Suffix(clusterTopKTweetsDatasetPath),
+        D.Hourly, // note that we use hourly in order to make it fletwitterible for hourly batch size
+        D.Suffitwitter(clusterTopKTweetsDatasetPath),
         D.EBLzo(),
         dateRange.end
       )
 
-    Execution
-      .zip(writeTweetClusterScoresExec, writeTweetTopKClustersExec, writeClusterTopKTweetsExec)
+    Etwitterecution
+      .zip(writeTweetClusterScoresEtwitterec, writeTweetTopKClustersEtwitterec, writeClusterTopKTweetsEtwitterec)
       .unit
   }
 

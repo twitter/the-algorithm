@@ -25,7 +25,7 @@ scala_library(
         "visibility/lib/src/main/scala/com/twitter/visibility/features",
         "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/common/tweets",
     ],
-    exports = [
+    etwitterports = [
         "visibility/lib/src/main/scala/com/twitter/visibility",
     ],
 )

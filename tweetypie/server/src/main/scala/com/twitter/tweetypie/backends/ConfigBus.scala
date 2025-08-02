@@ -1,6 +1,6 @@
 package com.twitter.tweetypie.backends
 
-import com.twitter.configbus.client.ConfigbusClientException
+import com.twitter.configbus.client.ConfigbusClientEtwitterception
 import com.twitter.configbus.client.file.PollingConfigSourceBuilder
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.logging.Logger
@@ -38,7 +38,7 @@ object ConfigBus {
     new ConfigBus {
       def file(path: String): Activity[String] = {
         val changes = subscribe(path).run.changes.dedupWith {
-          case (Failed(e1: ConfigbusClientException), Failed(e2: ConfigbusClientException)) =>
+          case (Failed(e1: ConfigbusClientEtwitterception), Failed(e2: ConfigbusClientEtwitterception)) =>
             e1.getMessage == e2.getMessage
           case other =>
             false

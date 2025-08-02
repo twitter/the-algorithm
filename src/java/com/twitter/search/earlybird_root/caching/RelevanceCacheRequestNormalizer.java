@@ -7,12 +7,12 @@ import com.twitter.search.common.caching.filter.CacheRequestNormalizer;
 import com.twitter.search.common.decider.SearchDecider;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 
-public class RelevanceCacheRequestNormalizer extends
-    CacheRequestNormalizer<EarlybirdRequestContext, EarlybirdRequest> {
+public class RelevanceCacheRequestNormalizer etwittertends
+    CacheRequestNormalizer<EarlybirdRequestContetwittert, EarlybirdRequest> {
   private static final SearchCounter RELEVANCE_FORCE_CACHED_LOGGED_IN_REQUEST =
-      SearchCounter.export("relevance_force_cached_logged_in_request");
+      SearchCounter.etwitterport("relevance_force_cached_logged_in_request");
 
   private final SearchDecider decider;
   private final String relevanceStripPersonalizationFieldsDeciderKey;
@@ -26,7 +26,7 @@ public class RelevanceCacheRequestNormalizer extends
   }
 
   @Override
-  public Optional<EarlybirdRequest> normalizeRequest(EarlybirdRequestContext requestContext) {
+  public Optional<EarlybirdRequest> normalizeRequest(EarlybirdRequestContetwittert requestContetwittert) {
     boolean cacheLoggedInRequest =
         decider.isAvailable(relevanceStripPersonalizationFieldsDeciderKey);
 
@@ -35,6 +35,6 @@ public class RelevanceCacheRequestNormalizer extends
     }
 
     return Optional.fromNullable(CacheUtil.normalizeRequestForCache(
-                                     requestContext.getRequest(), cacheLoggedInRequest));
+                                     requestContetwittert.getRequest(), cacheLoggedInRequest));
   }
 }

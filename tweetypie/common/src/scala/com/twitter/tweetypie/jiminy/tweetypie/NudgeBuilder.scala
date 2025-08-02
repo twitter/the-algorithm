@@ -1,6 +1,6 @@
 package com.twitter.tweetypie.jiminy.tweetypie
 
-import com.twitter.finagle.stats.CategorizingExceptionStatsHandler
+import com.twitter.finagle.stats.CategorizingEtwitterceptionStatsHandler
 import com.twitter.finagle.stats.Stat
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.incentives.jiminy.thriftscala._
@@ -15,21 +15,21 @@ import com.twitter.util.Return
 import com.twitter.util.Throw
 
 case class NudgeBuilderRequest(
-  text: String,
+  tetwittert: String,
   inReplyToTweetId: Option[NudgeBuilder.TweetId],
   conversationId: Option[NudgeBuilder.TweetId],
   hasQuotedTweet: Boolean,
   nudgeOptions: Option[CreateTweetNudgeOptions],
   tweetId: Option[NudgeBuilder.TweetId])
 
-trait NudgeBuilder extends FutureArrow[NudgeBuilderRequest, Unit] {
+trait NudgeBuilder etwittertends FutureArrow[NudgeBuilderRequest, Unit] {
 
   /**
    * Check whether the user should receive a nudge instead of creating
    * the Tweet. If nudgeOptions is None, then no nudge check will be
    * performed.
    *
-   * @return a Future.exception containing a [[TweetCreateFailure]] if the
+   * @return a Future.etwitterception containing a [[TweetCreateFailure]] if the
    *   user should be nudged, or Future.Unit if the user should not be
    *   nudged.
    */
@@ -49,7 +49,7 @@ object NudgeBuilder {
     CreateTweetNudgeOptions(
       requestedNudgeTypes = Some(
         Set(
-          TweetNudgeType.PotentiallyToxicTweet,
+          TweetNudgeType.PotentiallyTotwittericTweet,
           TweetNudgeType.ReviseOrMute,
           TweetNudgeType.ReviseOrHideThenBlock,
           TweetNudgeType.ReviseOrBlock
@@ -68,7 +68,7 @@ object NudgeBuilder {
       else TweetType.OriginalTweet
 
     CreateTweetNudgeRequest(
-      tweetText = request.text,
+      tweetTetwittert = request.tetwittert,
       tweetType = tweetType,
       inReplyToTweetId = request.inReplyToTweetId,
       conversationId = request.conversationId,
@@ -91,7 +91,7 @@ object NudgeBuilder {
    *   - no_nudge: The nudge check succeeded, but no nudge was created.
    *
    *   - failures: Calling strato to create a nudge failed. Broken out
-   *     by exception.
+   *     by etwitterception.
    */
 
   def apply(
@@ -104,7 +104,7 @@ object NudgeBuilder {
       private[this] val nudgeCounter = stats.counter("nudge")
       private[this] val noNudgeCounter = stats.counter("no_nudge")
       private[this] val darkRequestCounter = stats.counter("dark_request")
-      private[this] val nudgeExceptionHandler = new CategorizingExceptionStatsHandler
+      private[this] val nudgeEtwitterceptionHandler = new CategorizingEtwitterceptionStatsHandler
 
       override def apply(
         request: NudgeBuilderRequest
@@ -132,14 +132,14 @@ object NudgeBuilder {
               }
               .transform {
                 case Throw(e) =>
-                  nudgeExceptionHandler.record(stats, e)
+                  nudgeEtwitterceptionHandler.record(stats, e)
                   // If we failed to invoke the nudge column, then
                   // just continue on with the Tweet creation.
                   Future.Done
 
                 case Return(CreateTweetNudgeResponse(Some(nudge))) =>
                   nudgeCounter.incr()
-                  Future.exception(TweetCreateFailure.Nudged(nudge = nudge))
+                  Future.etwitterception(TweetCreateFailure.Nudged(nudge = nudge))
 
                 case Return(CreateTweetNudgeResponse(None)) =>
                   noNudgeCounter.incr()
@@ -154,11 +154,11 @@ object NudgeBuilder {
     enableDarkTraffic: Gate[Unit],
     stats: StatsReceiver
   ): NudgeBuilder = {
-    val executer =
-      strato.executer[CreateTweetNudgeRequest, CreateTweetNudgeResponse](
+    val etwitterecuter =
+      strato.etwitterecuter[CreateTweetNudgeRequest, CreateTweetNudgeResponse](
         "incentives/createTweetNudge")
     val nudgeArrow: FutureArrow[CreateTweetNudgeRequest, CreateTweetNudgeResponse] = { req =>
-      Stitch.run(executer.execute(req))
+      Stitch.run(etwitterecuter.etwitterecute(req))
     }
     apply(nudgeArrow, enableDarkTraffic, stats)
   }

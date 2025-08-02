@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
  *   0 will normalize to 0.
  * The log base is 2 by default.
  */
-public class LogByteNormalizer extends ByteNormalizer {
+public class LogByteNormalizer etwittertends ByteNormalizer {
 
   private static final double DEFAULT_BASE = 2;
   private final double base;
@@ -28,12 +28,12 @@ public class LogByteNormalizer extends ByteNormalizer {
   @Override
   public byte normalize(double val) {
     if (val < 0) {
-      throw new IllegalArgumentException("Can't log-normalize negative value " + val);
+      throw new IllegalArgumentEtwitterception("Can't log-normalize negative value " + val);
     } else if (val == 0) {
       return 0;
     } else {
       long logVal = 1 + (long) Math.floor(Math.log(val) / logBase);
-      return logVal > Byte.MAX_VALUE ? Byte.MAX_VALUE : (byte) logVal;
+      return logVal > Byte.MAtwitter_VALUE ? Byte.MAtwitter_VALUE : (byte) logVal;
     }
   }
 
@@ -46,7 +46,7 @@ public class LogByteNormalizer extends ByteNormalizer {
 
   @Override
   public double unnormUpperBound(byte norm) {
-    return norm == Byte.MAX_VALUE
+    return norm == Byte.MAtwitter_VALUE
         ? Double.POSITIVE_INFINITY
         : Math.floor(Math.pow(base, norm));
   }

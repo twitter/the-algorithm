@@ -8,6 +8,6 @@ object Info {
     contactEmail = "no-reply@twitter.com",
     ldapGroup = "representation-scorer-admins",
     jiraProject = "JIRA",
-    links = Seq("http://go.twitter.biz/rsx-runbook")
+    links = Seq("http://go.twitter.biz/rstwitter-runbook")
   )
 }

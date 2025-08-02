@@ -3,12 +3,12 @@ package com.twitter.frigate.pushservice.util
 import com.twitter.contentrecommender.thriftscala.MetricTag
 import com.twitter.frigate.common.base.AlgorithmScore
 import com.twitter.frigate.common.base.OutOfNetworkTweetCandidate
-import com.twitter.frigate.common.base.SocialContextAction
+import com.twitter.frigate.common.base.SocialContetwittertAction
 import com.twitter.frigate.common.base.TopicCandidate
 import com.twitter.frigate.common.base.TripCandidate
 import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
 import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.thriftscala.{SocialContextAction => TSocialContextAction}
+import com.twitter.frigate.thriftscala.{SocialContetwittertAction => TSocialContetwittertAction}
 import com.twitter.frigate.thriftscala.{CommonRecommendationType => CRT}
 import com.twitter.frigate.thriftscala._
 import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
@@ -26,13 +26,13 @@ object PushAdaptorUtil {
   def getFrigateNotificationForUser(
     crt: CRT,
     userId: Long,
-    scActions: Seq[SocialContextAction],
+    scActions: Seq[SocialContetwittertAction],
     pushCopyId: Option[Int],
     ntabCopyId: Option[Int]
   ): FrigateNotification = {
 
     val thriftSCActions = scActions.map { scAction =>
-      TSocialContextAction(
+      TSocialContetwittertAction(
         scAction.userId,
         scAction.timestampInMillis,
         scAction.tweetId
@@ -50,7 +50,7 @@ object PushAdaptorUtil {
   def getFrigateNotificationForTweet(
     crt: CRT,
     tweetId: Long,
-    scActions: Seq[TSocialContextAction],
+    scActions: Seq[TSocialContetwittertAction],
     authorIdOpt: Option[Long],
     pushCopyId: Option[Int],
     ntabCopyId: Option[Int],
@@ -79,10 +79,10 @@ object PushAdaptorUtil {
     )
   }
 
-  def getFrigateNotificationForTweetWithSocialContextActions(
+  def getFrigateNotificationForTweetWithSocialContetwittertActions(
     crt: CRT,
     tweetId: Long,
-    scActions: Seq[SocialContextAction],
+    scActions: Seq[SocialContetwittertAction],
     authorIdOpt: Option[Long],
     pushCopyId: Option[Int],
     ntabCopyId: Option[Int],
@@ -92,7 +92,7 @@ object PushAdaptorUtil {
   ): FrigateNotification = {
 
     val thriftSCActions = scActions.map { scAction =>
-      TSocialContextAction(
+      TSocialContetwittertAction(
         scAction.userId,
         scAction.timestampInMillis,
         scAction.tweetId

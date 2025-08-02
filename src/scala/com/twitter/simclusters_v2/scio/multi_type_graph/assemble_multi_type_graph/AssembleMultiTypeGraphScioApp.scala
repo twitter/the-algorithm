@@ -15,7 +15,7 @@ bin/d6w create \
   --bind=profile.machine="n2-highmem-16"
  */
 
-object AssembleMultiTypeGraphScioAdhocApp extends AssembleMultiTypeGraphScioBaseApp {
+object AssembleMultiTypeGraphScioAdhocApp etwittertends AssembleMultiTypeGraphScioBaseApp {
   override val isAdhoc: Boolean = true
   override val rootMHPath: String = Config.AdhocRootPath
   override val rootThriftPath: String = Config.AdhocRootPath
@@ -32,7 +32,7 @@ bin/d6w schedule \
   --bind=profile.date="2021-11-04" \
   --bind=profile.machine="n2-highmem-16"
  */
-object AssembleMultiTypeGraphScioBatchApp extends AssembleMultiTypeGraphScioBaseApp {
+object AssembleMultiTypeGraphScioBatchApp etwittertends AssembleMultiTypeGraphScioBaseApp {
   override val isAdhoc: Boolean = false
   override val rootMHPath: String = Config.RootMHPath
   override val rootThriftPath: String = Config.RootThriftPath

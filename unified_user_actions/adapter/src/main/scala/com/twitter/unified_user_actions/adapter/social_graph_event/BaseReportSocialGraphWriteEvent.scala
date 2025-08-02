@@ -7,7 +7,7 @@ import com.twitter.unified_user_actions.thriftscala.ProfileActionInfo
 import com.twitter.unified_user_actions.thriftscala.ProfileInfo
 import com.twitter.unified_user_actions.thriftscala.ServerProfileReport
 
-abstract class BaseReportSocialGraphWriteEvent[T] extends BaseSocialGraphWriteEvent[T] {
+abstract class BaseReportSocialGraphWriteEvent[T] etwittertends BaseSocialGraphWriteEvent[T] {
   def socialGraphAction: Action
 
   override def getSocialGraphItem(socialGraphSrcTargetRequest: SrcTargetRequest): Item = {

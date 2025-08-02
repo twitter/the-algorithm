@@ -16,7 +16,7 @@ class FeatureHydrationDataTransform(
   tweetHydrationAndFilteringPipeline: FutureArrow[RecapQuery, CandidateEnvelope],
   languagesService: UserLanguagesTransform,
   userProfileInfoService: UserProfileInfoTransform)
-    extends FutureArrow[RecapQuery, HydratedCandidatesAndFeaturesEnvelope] {
+    etwittertends FutureArrow[RecapQuery, HydratedCandidatesAndFeaturesEnvelope] {
   override def apply(request: RecapQuery): Future[HydratedCandidatesAndFeaturesEnvelope] = {
     Future
       .join(

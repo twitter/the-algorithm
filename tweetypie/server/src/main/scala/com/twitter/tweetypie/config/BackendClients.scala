@@ -17,8 +17,8 @@ import com.twitter.escherbird.thriftscala.{
 }
 import com.twitter.eventbus.client.EventBusPublisher
 import com.twitter.eventbus.client.EventBusPublisherBuilder
-import com.twitter.expandodo.thriftscala.CardsService$FinagleClient
-import com.twitter.expandodo.thriftscala.{CardsService => CardsScroogeIface}
+import com.twitter.etwitterpandodo.thriftscala.CardsService$FinagleClient
+import com.twitter.etwitterpandodo.thriftscala.{CardsService => CardsScroogeIface}
 import com.twitter.finagle._
 import com.twitter.finagle.builder.ClientBuilder
 import com.twitter.finagle.client.Transporter
@@ -34,7 +34,7 @@ import com.twitter.finagle.service._
 import com.twitter.finagle.ssl.OpportunisticTls
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.finagle.thrift.ThriftClientRequest
-import com.twitter.finagle.thriftmux.MethodBuilder
+import com.twitter.finagle.thriftmutwitter.MethodBuilder
 import com.twitter.finagle.tracing.DefaultTracer
 import com.twitter.flockdb.client.thriftscala.FlockDB
 import com.twitter.flockdb.client.FlockResponse
@@ -43,7 +43,7 @@ import com.twitter.flockdb.client.UserTimelineGraph
 import com.twitter.geoduck.backend.hydration.thriftscala.{Hydration => GeoduckHydration}
 import com.twitter.geoduck.backend.relevance.thriftscala.Relevance
 import com.twitter.geoduck.backend.relevance.thriftscala.Relevance$FinagleClient
-import com.twitter.geoduck.backend.relevance.thriftscala.RelevanceContext
+import com.twitter.geoduck.backend.relevance.thriftscala.RelevanceContetwittert
 import com.twitter.geoduck.service.common.clientmodules.GeoduckGeohashLocate
 import com.twitter.geoduck.thriftscala.ReverseGeocoder
 import com.twitter.geoduck.util.service.GeoduckLocate
@@ -63,7 +63,7 @@ import com.twitter.snowflake.client.SnowflakeClient
 import com.twitter.snowflake.thriftscala.Snowflake
 import com.twitter.socialgraph.thriftscala.SocialGraphService$FinagleClient
 import com.twitter.socialgraph.thriftscala.{SocialGraphService => SocialGraphScroogeIface}
-import com.twitter.storage.client.manhattan.kv.Experiments
+import com.twitter.storage.client.manhattan.kv.Etwitterperiments
 import com.twitter.storage.client.manhattan.kv.ManhattanKVClient
 import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
 import com.twitter.storage.client.manhattan.kv.NoMtlsParams
@@ -87,7 +87,7 @@ import com.twitter.user_image_service.thriftscala.UserImageService$FinagleClient
 import com.twitter.user_image_service.thriftscala.{UserImageService => UserImageScroogeIface}
 import com.twitter.util.Throw
 import com.twitter.util.Timer
-import com.twitter.util.{TimeoutException => UtilTimeoutException}
+import com.twitter.util.{TimeoutEtwitterception => UtilTimeoutEtwitterception}
 import scala.util.Random
 
 trait BackendClients {
@@ -103,7 +103,7 @@ trait BackendClients {
   val darkTrafficClient: Service[Array[Byte], Array[Byte]]
   val deleteLocationDataPublisher: EventBusPublisher[DeleteLocationData]
   val escherbird: Escherbird
-  val expandodo: Expandodo
+  val etwitterpandodo: Etwitterpandodo
   val fanoutServiceClient: FanoutService.MethodPerEndpoint
   val geoHydrationLocate: GeoduckLocate
   val geoRelevance: Relevance.MethodPerEndpoint
@@ -142,36 +142,36 @@ trait BackendClients {
 object BackendClients {
   // for most services, tweetypie typically maintains only a single connection to
   // each host in the cluster, and that is enough for normal steady-state work.
-  // to prevent ddos'ing backends during unusual traffic influxes, we set the host
-  // connection limit to be 2-3x the steady-state daily peak, giving plenty of head
-  // room but without allowing an excessive number of connections.
+  // to prevent ddos'ing backends during unusual traffic influtwitteres, we set the host
+  // connection limit to be 2-3twitter the steady-state daily peak, giving plenty of head
+  // room but without allowing an etwittercessive number of connections.
   private val defaultHostConnectionLimit = 3
 
   // 100ms is greater than most gc pauses; smaller values cause more timeouts
   private val defaultConnectTimeout = 100.milliseconds
   // tcpConnect timeout is less than half of defaultConnectTimeout, to allow at least
-  // two tries (except when there is a GC pause)
+  // two tries (etwittercept when there is a GC pause)
   private val defaultTcpConnectTimeout = 20.milliseconds
 
-  private val WriteExceptionsOnly: PartialFunction[Try[Nothing], Boolean] =
-    RetryPolicy.WriteExceptionsOnly
+  private val WriteEtwitterceptionsOnly: PartialFunction[Try[Nothing], Boolean] =
+    RetryPolicy.WriteEtwitterceptionsOnly
 
-  private val ClosedExceptionsOnly: PartialFunction[Try[Nothing], Boolean] = {
-    case Throw(_: ChannelClosedException) => true
+  private val ClosedEtwitterceptionsOnly: PartialFunction[Try[Nothing], Boolean] = {
+    case Throw(_: ChannelClosedEtwitterception) => true
   }
 
-  private val TimeoutExceptionsOnly: PartialFunction[Try[Nothing], Boolean] = {
-    case Throw(_: TimeoutException) => true
-    case Throw(_: UtilTimeoutException) => true
+  private val TimeoutEtwitterceptionsOnly: PartialFunction[Try[Nothing], Boolean] = {
+    case Throw(_: TimeoutEtwitterception) => true
+    case Throw(_: UtilTimeoutEtwitterception) => true
   }
 
   private val NoBackoff = Backoff.const(0.second)
 
-  private def retry(writeExceptions: Int = 100, closedExceptions: Int = 2, timeouts: Int = 0) =
+  private def retry(writeEtwitterceptions: Int = 100, closedEtwitterceptions: Int = 2, timeouts: Int = 0) =
     RetryPolicy.combine(
-      RetryPolicy.backoff(NoBackoff.take(writeExceptions))(WriteExceptionsOnly),
-      RetryPolicy.backoff(NoBackoff.take(closedExceptions))(ClosedExceptionsOnly),
-      RetryPolicy.backoff(NoBackoff.take(timeouts))(TimeoutExceptionsOnly)
+      RetryPolicy.backoff(NoBackoff.take(writeEtwitterceptions))(WriteEtwitterceptionsOnly),
+      RetryPolicy.backoff(NoBackoff.take(closedEtwitterceptions))(ClosedEtwitterceptionsOnly),
+      RetryPolicy.backoff(NoBackoff.take(timeouts))(TimeoutEtwitterceptionsOnly)
     )
 
   implicit val warmup: Warmup[BackendClients] = {
@@ -179,11 +179,11 @@ object BackendClients {
     // different memcache instances. Request multiple keys at a time so
     // that we don't consider the backend warm just because we can get a
     // bunch of successful responses to one cache.
-    val cacheGet = (_: memcached.Client).get(Seq.fill(20)(Random.nextLong.toString))
+    val cacheGet = (_: memcached.Client).get(Seq.fill(20)(Random.netwittertLong.toString))
 
     Warmup
       .empty[BackendClients]
-      .warmField(_.expandodo)
+      .warmField(_.etwitterpandodo)
       .warmField(_.gizmoduck)
       .warmField(_.memcacheClient)(Warmup("memcache")(cacheGet))
       .warmField(_.talon)
@@ -192,7 +192,7 @@ object BackendClients {
       .warmField(_.scarecrow)
       .warmField(_.socialGraphService)
       .warmField(_.timelineService)
-      .warmField(_.geoRelevance)(Warmup("geo_relevance")(_.placeSearch(RelevanceContext())))
+      .warmField(_.geoRelevance)(Warmup("geo_relevance")(_.placeSearch(RelevanceContetwittert())))
   }
 
   def apply(
@@ -214,7 +214,7 @@ object BackendClients {
     /** a Seq builder of finagle.Names loaded via getName */
     val referencedNamesBuilder = Seq.newBuilder[Name]
 
-    /** the default set of exceptions we believe are safe for Tweetypie to retry */
+    /** the default set of etwitterceptions we believe are safe for Tweetypie to retry */
     val defaultResponseClassifier: ResponseClassifier =
       ResponseClassifier.RetryOnChannelClosed.orElse(ResponseClassifier.RetryOnTimeout)
 
@@ -228,10 +228,10 @@ object BackendClients {
       name
     }
 
-    def backendContext(name: String) =
-      Backend.Context(timer, backendsScope.scope(name))
+    def backendContetwittert(name: String) =
+      Backend.Contetwittert(timer, backendsScope.scope(name))
 
-    // by default, retries on most exceptions (see defaultRetryExceptions).  if an rpc is not
+    // by default, retries on most etwitterceptions (see defaultRetryEtwitterceptions).  if an rpc is not
     // idempotent, it should use a different retry policy.
     def clientBuilder(name: String) = {
       ClientBuilder()
@@ -245,10 +245,10 @@ object BackendClients {
         .retryPolicy(retry())
     }
 
-    def thriftMuxClientBuilder(name: String, address: String, clazz: Class[_]) = {
+    def thriftMutwitterClientBuilder(name: String, address: String, clazz: Class[_]) = {
       clientBuilder(name)
         .stack(
-          ThriftMux.client
+          ThriftMutwitter.client
             .withClientId(thriftClientId)
             .withOpportunisticTls(OpportunisticTls.Required)
             .withServiceClass(clazz))
@@ -257,11 +257,11 @@ object BackendClients {
         .mutualTls(settings.serviceIdentifier)
     }
 
-    // Our base ThriftMux.Client
-    // Prefer using thriftMuxMethodBuilder below but
+    // Our base ThriftMutwitter.Client
+    // Prefer using thriftMutwitterMethodBuilder below but
     // can be used to build custom clients (re: darkTrafficClient)
-    def thriftMuxClient(name: String, propagateDeadlines: Boolean = true): ThriftMux.Client = {
-      ThriftMux.client
+    def thriftMutwitterClient(name: String, propagateDeadlines: Boolean = true): ThriftMutwitter.Client = {
+      ThriftMutwitter.client
         .withClientId(thriftClientId)
         .withLabel(name)
         .withStatsReceiver(statsReceiver)
@@ -278,11 +278,11 @@ object BackendClients {
     // If it is unequivocally idempotent you should add .idempotent and
     // leave off any ResponseClassifiers (it will retry on all Throws).  This will also
     // enable backup requests
-    def thriftMuxMethodBuilder(
+    def thriftMutwitterMethodBuilder(
       name: String,
       dest: String,
     ): MethodBuilder = {
-      thriftMuxClient(name)
+      thriftMutwitterClient(name)
         .withLoadBalancer(balancer(minAperture = 2))
         .methodBuilder(dest)
         .withRetryForClassifier(defaultResponseClassifier)
@@ -317,7 +317,7 @@ object BackendClients {
           .configured(
             PendingRequestFilter.Param(limit = Some(settings.cacheClientPendingRequestLimit))
           )
-          .filtered(new MemcacheExceptionLoggingFilter)
+          .filtered(new MemcacheEtwitterceptionLoggingFilter)
           .newRichClient(dest = eval(settings.twemcacheDest), label = "memcache")
 
       /* clients */
@@ -333,7 +333,7 @@ object BackendClients {
       val socialGraphService: SocialGraphService = {
         val finagleClient =
           new SocialGraphService$FinagleClient(
-            thriftMuxClientBuilder(
+            thriftMutwitterClientBuilder(
               "socialgraph",
               "/s/socialgraph/socialgraph",
               classOf[SocialGraphScroogeIface.MethodPerEndpoint]
@@ -343,13 +343,13 @@ object BackendClients {
 
         settings.socialGraphSeviceConfig(
           SocialGraphService.fromClient(finagleClient),
-          backendContext("socialgraph")
+          backendContetwittert("socialgraph")
         )
       }
 
       val tflockClient =
         new FlockDB.FinagledClient(
-          thriftMuxClientBuilder("tflock", "/s/tflock/tflock", classOf[FlockDB.MethodPerEndpoint])
+          thriftMutwitterClientBuilder("tflock", "/s/tflock/tflock", classOf[FlockDB.MethodPerEndpoint])
             .loadBalancer(balancer(minAperture = 5))
             .responseClassifier(FlockResponse.classifier)
             .build(),
@@ -358,48 +358,48 @@ object BackendClients {
         )
 
       val tflockReadClient: TFlockClient =
-        settings.tflockReadConfig(tflockClient, backendContext("tflock"))
+        settings.tflockReadConfig(tflockClient, backendContetwittert("tflock"))
 
       val tflockWriteClient: TFlockClient =
-        settings.tflockWriteConfig(tflockClient, backendContext("tflock"))
+        settings.tflockWriteConfig(tflockClient, backendContetwittert("tflock"))
 
       val gizmoduck: Gizmoduck = {
         val clientBuilder =
-          thriftMuxClientBuilder(
+          thriftMutwitterClientBuilder(
             "gizmoduck",
             "/s/gizmoduck/gizmoduck",
             classOf[UserService.MethodPerEndpoint])
             .loadBalancer(balancer(minAperture = 63))
         val mb = MethodBuilder
           .from(clientBuilder)
-          .idempotent(maxExtraLoad = 1.percent)
+          .idempotent(matwitterEtwittertraLoad = 1.percent)
           .servicePerEndpoint[UserService.ServicePerEndpoint]
 
-        val gizmoduckClient = ThriftMux.Client.methodPerEndpoint(mb)
-        settings.gizmoduckConfig(Gizmoduck.fromClient(gizmoduckClient), backendContext("gizmoduck"))
+        val gizmoduckClient = ThriftMutwitter.Client.methodPerEndpoint(mb)
+        settings.gizmoduckConfig(Gizmoduck.fromClient(gizmoduckClient), backendContetwittert("gizmoduck"))
       }
 
       val merlin: UserRolesService.MethodPerEndpoint = {
-        val thriftClient = thriftMuxMethodBuilder("merlin", "/s/merlin/merlin")
+        val thriftClient = thriftMutwitterMethodBuilder("merlin", "/s/merlin/merlin")
           .withTimeoutPerRequest(100.milliseconds)
           .withTimeoutTotal(400.milliseconds)
           .idempotent(0.01)
           .servicePerEndpoint[UserRolesService.ServicePerEndpoint]
 
-        ThriftMux.Client.methodPerEndpoint(thriftClient)
+        ThriftMutwitter.Client.methodPerEndpoint(thriftClient)
       }
 
       val talon: Talon = {
         val talonClient =
           new Talon$FinagleClient(
-            thriftMuxClientBuilder(
+            thriftMutwitterClientBuilder(
               "talon",
               "/s/talon/backend",
               classOf[TalonScroogeIface.MethodPerEndpoint])
               .build()
           )
 
-        settings.talonConfig(Talon.fromClient(talonClient), backendContext("talon"))
+        settings.talonConfig(Talon.fromClient(talonClient), backendContetwittert("talon"))
       }
 
       val guano = Guano()
@@ -407,7 +407,7 @@ object BackendClients {
       val mediaInfoService: MediaInfoService = {
         val finagleClient =
           new MediaInfoService$FinagleClient(
-            thriftMuxClientBuilder(
+            thriftMutwitterClientBuilder(
               "mediainfo",
               "/s/photurkey/mediainfo",
               classOf[MediaInfoScroogeIface.MethodPerEndpoint])
@@ -417,14 +417,14 @@ object BackendClients {
 
         settings.mediaInfoServiceConfig(
           MediaInfoService.fromClient(finagleClient),
-          backendContext("mediainfo")
+          backendContetwittert("mediainfo")
         )
       }
 
       val userImageService: UserImageService = {
         val finagleClient =
           new UserImageService$FinagleClient(
-            thriftMuxClientBuilder(
+            thriftMutwitterClientBuilder(
               "userImage",
               "/s/user-image-service/uis",
               classOf[UserImageScroogeIface.MethodPerEndpoint])
@@ -433,7 +433,7 @@ object BackendClients {
 
         settings.userImageServiceConfig(
           UserImageService.fromClient(finagleClient),
-          backendContext("userImage")
+          backendContetwittert("userImage")
         )
       }
 
@@ -446,7 +446,7 @@ object BackendClients {
       val timelineService: TimelineService = {
         val timelineServiceClient =
           new tls.TimelineService$FinagleClient(
-            thriftMuxClientBuilder(
+            thriftMutwitterClientBuilder(
               "timelineService",
               "/s/timelineservice/timelineservice",
               classOf[tls.TimelineService.MethodPerEndpoint])
@@ -456,44 +456,44 @@ object BackendClients {
 
         settings.timelineServiceConfig(
           TimelineService.fromClient(timelineServiceClient),
-          backendContext("timelineService")
+          backendContetwittert("timelineService")
         )
       }
 
-      val expandodo: Expandodo = {
+      val etwitterpandodo: Etwitterpandodo = {
         val cardsServiceClient =
           new CardsService$FinagleClient(
-            thriftMuxClientBuilder(
-              "expandodo",
-              "/s/expandodo/server",
+            thriftMutwitterClientBuilder(
+              "etwitterpandodo",
+              "/s/etwitterpandodo/server",
               classOf[CardsScroogeIface.MethodPerEndpoint])
               .loadBalancer(balancer(minAperture = 6))
               .build()
           )
 
-        settings.expandodoConfig(
-          Expandodo.fromClient(cardsServiceClient),
-          backendContext("expandodo")
+        settings.etwitterpandodoConfig(
+          Etwitterpandodo.fromClient(cardsServiceClient),
+          backendContetwittert("etwitterpandodo")
         )
       }
 
       val creativesContainerService: CreativesContainerService = {
-        val mb = thriftMuxMethodBuilder(
+        val mb = thriftMutwitterMethodBuilder(
           "creativesContainerService",
           "/s/creatives-container/creatives-container",
         ).withTimeoutTotal(300.milliseconds)
-          .idempotent(maxExtraLoad = 1.percent)
+          .idempotent(matwitterEtwittertraLoad = 1.percent)
           .servicePerEndpoint[ccs.CreativesContainerService.ServicePerEndpoint]
 
         settings.creativesContainerServiceConfig(
           CreativesContainerService.fromClient(ccs.CreativesContainerService.MethodPerEndpoint(mb)),
-          backendContext("creativesContainerService")
+          backendContetwittert("creativesContainerService")
         )
       }
 
       val scarecrow: Scarecrow = {
         val scarecrowClient = new ScarecrowService$FinagleClient(
-          thriftMuxClientBuilder(
+          thriftMutwitterClientBuilder(
             "scarecrow",
             "/s/abuse/scarecrow",
             classOf[ScarecrowScroogeIface.MethodPerEndpoint])
@@ -503,24 +503,24 @@ object BackendClients {
           stats = statsReceiver
         )
 
-        settings.scarecrowConfig(Scarecrow.fromClient(scarecrowClient), backendContext("scarecrow"))
+        settings.scarecrowConfig(Scarecrow.fromClient(scarecrowClient), backendContetwittert("scarecrow"))
       }
 
       val snowflakeClient: Snowflake.MethodPerEndpoint = {
         eval("/s/snowflake/snowflake") // eagerly resolve the serverset
-        val mb = thriftMuxMethodBuilder(
+        val mb = thriftMutwitterMethodBuilder(
           "snowflake",
           "/s/snowflake/snowflake"
         ).withTimeoutTotal(300.milliseconds)
           .withTimeoutPerRequest(100.milliseconds)
-          .idempotent(maxExtraLoad = 1.percent)
+          .idempotent(matwitterEtwittertraLoad = 1.percent)
 
         SnowflakeClient.snowflakeClient(mb)
       }
 
       val deferredRpcClient =
         new DeferredRPC.FinagledClient(
-          thriftMuxClientBuilder(
+          thriftMutwitterClientBuilder(
             "deferredrpc",
             "/s/kafka-shared/krpc-server-main",
             classOf[DeferredRPC.MethodPerEndpoint])
@@ -533,8 +533,8 @@ object BackendClients {
 
       def deferredTweetypie(target: Target): ThriftTweetService = {
         // When deferring back to the local datacenter, preserve the finagle
-        // context and dtabs. This will ensure that developer dtabs are honored
-        // and that context is preserved in eventbus. (eventbus enqueues only
+        // contetwittert and dtabs. This will ensure that developer dtabs are honored
+        // and that contetwittert is preserved in eventbus. (eventbus enqueues only
         // happen in async requests within the same datacenter.)
         //
         // Effectively, this means we consider deferredrpc requests within the
@@ -546,7 +546,7 @@ object BackendClients {
           new DeferredThriftService(
             deferredRpcClient,
             target,
-            serializeFinagleContexts = isLocal,
+            serializeFinagleContetwitterts = isLocal,
             serializeFinagleDtabs = isLocal
           )
 
@@ -562,7 +562,7 @@ object BackendClients {
 
         // Gates to avoid sending replicated reads from a cluster to itself
         val inATLA = if (settings.zone == "atla") Gate.True else Gate.False
-        val inPDXA = if (settings.zone == "pdxa") Gate.True else Gate.False
+        val inPDtwitterA = if (settings.zone == "pdtwittera") Gate.True else Gate.False
 
         Seq(
           GatedReplicationClient(
@@ -570,8 +570,8 @@ object BackendClients {
             gate = rampUpGate & deciderGates.replicateReadsToATLA & !inATLA
           ),
           GatedReplicationClient(
-            client = deferredTweetypie(Target(Datacenter.Pdxa, "tweetypie-lowqos")),
-            gate = rampUpGate & deciderGates.replicateReadsToPDXA & !inPDXA
+            client = deferredTweetypie(Target(Datacenter.Pdtwittera, "tweetypie-lowqos")),
+            gate = rampUpGate & deciderGates.replicateReadsToPDtwitterA & !inPDtwitterA
           )
         )
       }
@@ -590,11 +590,11 @@ object BackendClients {
 
       val darkTrafficClient: Service[Array[Byte], Array[Byte]] = {
         val thriftService =
-          thriftMuxClient(
+          thriftMutwitterClient(
             "tweetypie.dark",
             propagateDeadlines = false
           ).withRequestTimeout(100.milliseconds)
-            .newService("/s/tweetypie/proxy")
+            .newService("/s/tweetypie/protwittery")
 
         val transformer =
           new Filter[Array[Byte], Array[Byte], ThriftClientRequest, Array[Byte]] {
@@ -609,20 +609,20 @@ object BackendClients {
       }
 
       val geoHydrationClient: GeoduckHydration.MethodPerEndpoint = {
-        val mb = thriftMuxMethodBuilder("geoduck_hydration", "/s/geo/hydration")
+        val mb = thriftMutwitterMethodBuilder("geoduck_hydration", "/s/geo/hydration")
           .withTimeoutPerRequest(100.millis)
-          .idempotent(maxExtraLoad = 1.percent)
-        ThriftMux.Client.methodPerEndpoint(
+          .idempotent(matwitterEtwittertraLoad = 1.percent)
+        ThriftMutwitter.Client.methodPerEndpoint(
           mb.servicePerEndpoint[GeoduckHydration.ServicePerEndpoint])
       }
 
       val geoHydrationLocate: GeoduckLocate = geoHydrationClient.locate
 
       val geoReverseGeocoderClient: ReverseGeocoder.MethodPerEndpoint = {
-        val mb = thriftMuxMethodBuilder("geoduck_reversegeocoder", "/s/geo/geoduck_reversegeocoder")
+        val mb = thriftMutwitterMethodBuilder("geoduck_reversegeocoder", "/s/geo/geoduck_reversegeocoder")
           .withTimeoutPerRequest(100.millis)
-          .idempotent(maxExtraLoad = 1.percent)
-        ThriftMux.Client.methodPerEndpoint(
+          .idempotent(matwitterEtwittertraLoad = 1.percent)
+        ThriftMutwitter.Client.methodPerEndpoint(
           mb.servicePerEndpoint[ReverseGeocoder.ServicePerEndpoint])
       }
 
@@ -635,7 +635,7 @@ object BackendClients {
 
       val geoRelevance =
         new Relevance$FinagleClient(
-          thriftMuxClientBuilder(
+          thriftMutwitterClientBuilder(
             "geoduck_relevance",
             "/s/geo/relevance",
             classOf[Relevance.MethodPerEndpoint])
@@ -666,7 +666,7 @@ object BackendClients {
 
         val limiterBackend = settings.limiterBackendConfig(
           LimiterBackend.fromClient(limiterClient),
-          backendContext("limiter")
+          backendContetwittert("limiter")
         )
 
         LimiterService.fromBackend(
@@ -679,7 +679,7 @@ object BackendClients {
 
       val passbirdClient =
         new PassbirdService$FinagleClient(
-          thriftMuxClientBuilder(
+          thriftMutwitterClientBuilder(
             "passbird",
             "/s/passbird/passbird",
             classOf[PassbirdService.MethodPerEndpoint])
@@ -693,7 +693,7 @@ object BackendClients {
       val escherbird: Escherbird = {
         val escherbirdClient =
           new TweetEntityAnnotationService$FinagleClient(
-            thriftMuxClientBuilder(
+            thriftMutwitterClientBuilder(
               "escherbird",
               "/s/escherbird/annotationservice",
               classOf[TweetEntityAnnotationScroogeIface.MethodPerEndpoint])
@@ -701,7 +701,7 @@ object BackendClients {
           )
         settings.escherbirdConfig(
           Escherbird.fromClient(escherbirdClient),
-          backendContext("escherbird")
+          backendContetwittert("escherbird")
         )
       }
 
@@ -719,13 +719,13 @@ object BackendClients {
             dest = "/s/manhattan/omega.native-thrift",
             mtlsParams = mhMtlsParams,
             label = "mh_omega",
-            Seq(Experiments.ApertureLoadBalancer)
+            Seq(Etwitterperiments.ApertureLoadBalancer)
           )
 
         GeoScrubEventStore(
           mhClient,
           settings.geoScrubEventStoreConfig,
-          backendContext("geoScrubEventStore")
+          backendContetwittert("geoScrubEventStore")
         )
       }
 
@@ -758,7 +758,7 @@ object BackendClients {
 
       val gnipEnricherator: GnipEnricherator = {
         val gnipEnricherator =
-          thriftMuxMethodBuilder(
+          thriftMutwitterMethodBuilder(
             "enricherator",
             "/s/datadelivery-enrichments/enricherator"
           )
@@ -783,7 +783,7 @@ object BackendClients {
             .thriftStruct(AdCallbackEvent)
             .publishTimeout(500.milliseconds)
             .serializeFinagleDtabs(true)
-            .maxQueuedEvents(1000)
+            .matwitterQueuedEvents(1000)
             .kafkaDest("/s/kafka/ads-callback:kafka-tls")
             .build()
 

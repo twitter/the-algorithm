@@ -5,7 +5,7 @@ import com.twitter.servo.util.{FunctionArrow, Effect, FutureArrow, FutureEffect,
 import com.twitter.util.{Future, Try}
 
 /**
- * Useful mixins for request types.
+ * Useful mitwitterins for request types.
  */
 trait HasTraceId {
 
@@ -31,7 +31,7 @@ object RequestFilter {
    * Produce a RequestFilter from a function `A => Try[A]`.
    *
    * The Try is evaluated within a Future. Thus, Throw results are translated
-   * to `Future.exception`s.
+   * to `Future.etwitterception`s.
    */
   def fromTry[A](f: A => Try[A]): RequestFilter[A] = FutureArrow.fromTry(f)
 
@@ -76,7 +76,7 @@ object RequestFilter {
   def masked[A](a: RequestFilter[A]): RequestFilter[A] = a.masked
 
   /**
-   * Produces a RequestFilter that proxies to one of two others, depending on a
+   * Produces a RequestFilter that protwitteries to one of two others, depending on a
    * predicate.
    */
   def choose[A](
@@ -96,7 +96,7 @@ object RequestFilter {
   /**
    * Produces a RequestFilter that authorizes requests by applying an
    * authorization function `A => Future[Unit]`. If the authorizer function
-   * results in a Future exception, requests are failed. Otherwise, they pass.
+   * results in a Future etwitterception, requests are failed. Otherwise, they pass.
    */
   def authorized[A <: Observable](authorizer: ClientRequestAuthorizer): RequestFilter[A] =
     RequestFilter[A] { request =>

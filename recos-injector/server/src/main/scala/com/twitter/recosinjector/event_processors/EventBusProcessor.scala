@@ -53,8 +53,8 @@ trait EventBusProcessor[Event <: ThriftStruct] {
       .onSuccess { _ =>
         log.info(s"EventBus processor ${this.getClass.getSimpleName} is stopped")
       }
-      .onFailure { ex: Throwable =>
-        log.error(ex, s"Exception while stopping EventBus processor ${this.getClass.getSimpleName}")
+      .onFailure { etwitter: Throwable =>
+        log.error(etwitter, s"Etwitterception while stopping EventBus processor ${this.getClass.getSimpleName}")
       }
   }
 }

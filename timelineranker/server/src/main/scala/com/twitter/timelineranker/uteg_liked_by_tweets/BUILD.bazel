@@ -44,7 +44,7 @@ scala_library(
         "util/util-core/src/main/scala/com/twitter/conversions",
         "util/util-stats/src/main/scala",
     ],
-    exports = [
+    etwitterports = [
         "timelineranker/server/src/main/scala/com/twitter/timelineranker/core",
         "timelines/src/main/scala/com/twitter/timelines/clients/user_tweet_entity_graph",
     ],

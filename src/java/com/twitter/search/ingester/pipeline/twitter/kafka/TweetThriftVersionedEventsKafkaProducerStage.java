@@ -1,8 +1,8 @@
 package com.twitter.search.ingester.pipeline.twitter.kafka;
 
-import javax.naming.NamingException;
+import javatwitter.naming.NamingEtwitterception;
 
-import org.apache.commons.pipeline.StageException;
+import org.apache.commons.pipeline.StageEtwitterception;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,14 +11,14 @@ import com.twitter.search.common.debug.DebugEventUtil;
 import com.twitter.search.common.debug.thriftjava.DebugEvents;
 import com.twitter.search.common.metrics.SearchLongGauge;
 import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
+import com.twitter.search.ingester.pipeline.util.PipelineStageEtwitterception;
 
 /**
- * Kafka producer stage to write tweet indexing data as {@code ThriftVersionedEvents}. This stage
- * also handles extra debug event processing.
+ * Kafka producer stage to write tweet indetwittering data as {@code ThriftVersionedEvents}. This stage
+ * also handles etwittertra debug event processing.
  */
 @ConsumedTypes(IngesterThriftVersionedEvents.class)
-public class TweetThriftVersionedEventsKafkaProducerStage extends KafkaProducerStage
+public class TweetThriftVersionedEventsKafkaProducerStage etwittertends KafkaProducerStage
     <IngesterThriftVersionedEvents> {
   private static final int PROCESSING_LATENCY_THRESHOLD_FOR_UPDATES_MILLIS = 30000;
 
@@ -53,17 +53,17 @@ public class TweetThriftVersionedEventsKafkaProducerStage extends KafkaProducerS
   }
 
   private void setupCommonStats() {
-    kafkaProducerLag = SearchLongGauge.export(
-        getStageNamePrefix() + "_kafka_producer_lag_millis");
+    kafkaProducerLag = SearchLongGauge.etwitterport(
+        getStageNamePrefitwitter() + "_kafka_producer_lag_millis");
   }
 
   @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
+  protected void innerSetup() throws PipelineStageEtwitterception, NamingEtwitterception {
     super.innerSetup();
   }
 
   @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
+  protected void doInnerPreprocess() throws StageEtwitterception, NamingEtwitterception {
     super.doInnerPreprocess();
     commonInnerSetup();
   }
@@ -73,9 +73,9 @@ public class TweetThriftVersionedEventsKafkaProducerStage extends KafkaProducerS
   }
 
   @Override
-  public void innerProcess(Object obj) throws StageException {
+  public void innerProcess(Object obj) throws StageEtwitterception {
     if (!(obj instanceof IngesterThriftVersionedEvents)) {
-      throw new StageException(this, "Object is not IngesterThriftVersionedEvents: " + obj);
+      throw new StageEtwitterception(this, "Object is not IngesterThriftVersionedEvents: " + obj);
     }
 
     IngesterThriftVersionedEvents events = (IngesterThriftVersionedEvents) obj;

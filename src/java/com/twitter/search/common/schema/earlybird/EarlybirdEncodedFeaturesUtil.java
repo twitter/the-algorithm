@@ -28,8 +28,8 @@ public final class EarlybirdEncodedFeaturesUtil {
       byte[] data, int offset) {
     EarlybirdEncodedFeatures features = EarlybirdEncodedFeatures.newEncodedTweetFeatures(
         schema, baseField);
-    for (int idx = 0; idx < features.getNumInts(); ++idx) {
-      features.setInt(idx, CSFTypeUtil.convertFromBytes(data, offset, idx));
+    for (int idtwitter = 0; idtwitter < features.getNumInts(); ++idtwitter) {
+      features.setInt(idtwitter, CSFTypeUtil.convertFromBytes(data, offset, idtwitter));
     }
     return features;
   }

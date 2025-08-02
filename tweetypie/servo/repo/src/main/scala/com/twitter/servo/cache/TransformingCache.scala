@@ -13,7 +13,7 @@ import scala.collection.{breakOut, mutable}
 class ValueTransformingReadCache[K, V1, V2](
   underlyingCache: ReadCache[K, V2],
   transformer: Transformer[V1, V2])
-    extends ReadCache[K, V1] {
+    etwittertends ReadCache[K, V1] {
   // overridden to avoid mapping the unneeded keyMap
   override def get(keys: Seq[K]): Future[KeyValueResult[K, V1]] = {
     underlyingCache.get(keys) map { lr =>
@@ -64,12 +64,12 @@ class KeyValueTransformingReadCache[K1, K2, V1, V2](
   underlyingCache: ReadCache[K2, V2],
   transformer: Transformer[V1, V2],
   underlyingKey: K1 => K2)
-    extends ReadCache[K1, V1] {
+    etwittertends ReadCache[K1, V1] {
 
   // make keymapping for key recovery later
   private[this] def mappedKeys(
     keys: Seq[K1]
-  ): (IndexedSeq[K2], Map[K2, K1]) = {
+  ): (IndetwitteredSeq[K2], Map[K2, K1]) = {
     val k2s = new ArrayBuffer[K2](keys.size)
     val k2k1s: Map[K2, K1] =
       keys.map { key =>
@@ -143,7 +143,7 @@ class KeyValueTransformingReadCache[K1, K2, V1, V2](
 }
 
 class KeyTransformingCache[K1, K2, V](underlyingCache: Cache[K2, V], underlyingKey: K1 => K2)
-    extends KeyValueTransformingCache[K1, K2, V, V](
+    etwittertends KeyValueTransformingCache[K1, K2, V, V](
       underlyingCache,
       Transformer.identity,
       underlyingKey
@@ -157,7 +157,7 @@ class KeyTransformingCache[K1, K2, V](underlyingCache: Cache[K2, V], underlyingK
 class ValueTransformingCache[K, V1, V2](
   underlyingCache: Cache[K, V2],
   transformer: Transformer[V1, V2])
-    extends ValueTransformingReadCache[K, V1, V2](underlyingCache, transformer)
+    etwittertends ValueTransformingReadCache[K, V1, V2](underlyingCache, transformer)
     with Cache[K, V1] {
   private[this] def to(v1: V1): Future[V2] = Future.const(transformer.to(v1))
 
@@ -189,7 +189,7 @@ class KeyValueTransformingCache[K1, K2, V1, V2](
   underlyingCache: Cache[K2, V2],
   transformer: Transformer[V1, V2],
   underlyingKey: K1 => K2)
-    extends KeyValueTransformingReadCache[K1, K2, V1, V2](
+    etwittertends KeyValueTransformingReadCache[K1, K2, V1, V2](
       underlyingCache,
       transformer,
       underlyingKey
@@ -221,7 +221,7 @@ class KeyValueTransformingCache[K1, K2, V1, V2](
 class ValueTransformingTtlCache[K, V1, V2](
   underlyingCache: TtlCache[K, V2],
   transformer: Transformer[V1, V2])
-    extends ValueTransformingReadCache[K, V1, V2](underlyingCache, transformer)
+    etwittertends ValueTransformingReadCache[K, V1, V2](underlyingCache, transformer)
     with TtlCache[K, V1] {
   private[this] def to(v1: V1): Future[V2] = Future.const(transformer.to(v1))
 
@@ -258,7 +258,7 @@ class KeyValueTransformingTtlCache[K1, K2, V1, V2](
   underlyingCache: TtlCache[K2, V2],
   transformer: Transformer[V1, V2],
   underlyingKey: K1 => K2)
-    extends KeyValueTransformingReadCache[K1, K2, V1, V2](
+    etwittertends KeyValueTransformingReadCache[K1, K2, V1, V2](
       underlyingCache,
       transformer,
       underlyingKey
@@ -288,7 +288,7 @@ class KeyValueTransformingTtlCache[K1, K2, V1, V2](
 }
 
 class KeyTransformingTtlCache[K1, K2, V](underlyingCache: TtlCache[K2, V], underlyingKey: K1 => K2)
-    extends KeyValueTransformingTtlCache[K1, K2, V, V](
+    etwittertends KeyValueTransformingTtlCache[K1, K2, V, V](
       underlyingCache,
       Transformer.identity,
       underlyingKey
@@ -297,7 +297,7 @@ class KeyTransformingTtlCache[K1, K2, V](underlyingCache: TtlCache[K2, V], under
 class KeyTransformingLockingCache[K1, K2, V](
   underlyingCache: LockingCache[K2, V],
   underlyingKey: K1 => K2)
-    extends KeyValueTransformingCache[K1, K2, V, V](
+    etwittertends KeyValueTransformingCache[K1, K2, V, V](
       underlyingCache,
       Transformer.identity,
       underlyingKey
@@ -312,7 +312,7 @@ class KeyTransformingLockingCache[K1, K2, V](
 class KeyTransformingCounterCache[K1, K2](
   underlyingCache: CounterCache[K2],
   underlyingKey: K1 => K2)
-    extends KeyTransformingCache[K1, K2, Long](underlyingCache, underlyingKey)
+    etwittertends KeyTransformingCache[K1, K2, Long](underlyingCache, underlyingKey)
     with CounterCache[K1] {
   override def incr(key: K1, delta: Int = 1): Future[Option[Long]] = {
     underlyingCache.incr(underlyingKey(key), delta)

@@ -4,13 +4,13 @@ import com.twitter.algebird.{DecayedValueMonoid, Monoid, OptionMonoid}
 import com.twitter.algebird_internal.thriftscala.{DecayedValue => ThriftDecayedValue}
 import com.twitter.scalding.{TypedPipe, _}
 import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
+import com.twitter.scalding_internal.dalv2.remote_access.{EtwitterplicitLocation, ProcAtla}
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common.{Timestamp, TweetId, UserId}
 import com.twitter.simclusters_v2.hdfs_sources._
 import com.twitter.simclusters_v2.summingbird.common.{Configs, ThriftDecayedValueMonoid}
 import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.timelineservice.thriftscala.{ContextualizedFavoriteEvent, FavoriteEventUnion}
+import com.twitter.timelineservice.thriftscala.{ContetwittertualizedFavoriteEvent, FavoriteEventUnion}
 import java.util.TimeZone
 import twadoop_config.configuration.log_categories.group.timeline.TimelineServiceFavoritesScalaDataset
 
@@ -46,7 +46,7 @@ object SimClustersOfflineJobUtil {
         SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
         dateRange.embiggen(Days(30))
       )
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
       .toTypedPipe
       .map {
         case KeyVal(key, value) => (key, value)
@@ -58,9 +58,9 @@ object SimClustersOfflineJobUtil {
   ): TypedPipe[(UserId, TweetId, Timestamp)] = {
     DAL
       .read(TimelineServiceFavoritesScalaDataset, dateRange) // Note: this is a hourly source
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
       .toTypedPipe
-      .flatMap { cfe: ContextualizedFavoriteEvent =>
+      .flatMap { cfe: ContetwittertualizedFavoriteEvent =>
         cfe.event match {
           case FavoriteEventUnion.Favorite(fav) =>
             Some((fav.userId, fav.tweetId, fav.eventTimeMs))
@@ -73,17 +73,17 @@ object SimClustersOfflineJobUtil {
 
   class PersistedScoresMonoid(
     implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid)
-      extends Monoid[PersistedScores] {
+      etwittertends Monoid[PersistedScores] {
 
     private val optionalThriftDecayedValueMonoid =
       new OptionMonoid[ThriftDecayedValue]()
 
     override val zero: PersistedScores = PersistedScores()
 
-    override def plus(x: PersistedScores, y: PersistedScores): PersistedScores = {
+    override def plus(twitter: PersistedScores, y: PersistedScores): PersistedScores = {
       PersistedScores(
         optionalThriftDecayedValueMonoid.plus(
-          x.score,
+          twitter.score,
           y.score
         )
       )

@@ -8,7 +8,7 @@ import com.twitter.tweetypie.thriftscala._
  * events, and enqueues those to a deferredrpc-backed ThriftTweetService instance.
  */
 trait AsyncEnqueueStore
-    extends TweetStoreBase[AsyncEnqueueStore]
+    etwittertends TweetStoreBase[AsyncEnqueueStore]
     with InsertTweet.Store
     with DeleteTweet.Store
     with UndeleteTweet.Store

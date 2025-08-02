@@ -50,7 +50,7 @@ public final class EarlybirdProperty<T> {
   public static final EarlybirdProperty<String> PENGUIN_VERSION =
       new EarlybirdProperty<>(
           "penguin_version",
-          "The penguin version to index.",
+          "The penguin version to indetwitter.",
           PropertyType.STRING,
           false);
 
@@ -117,7 +117,7 @@ public final class EarlybirdProperty<T> {
 
   public static final EarlybirdProperty<String> EARLYBIRD_NAME = new EarlybirdProperty<>(
       "earlybird_name",
-      "Name in the service path of Earlybird without hash partition suffix",
+      "Name in the service path of Earlybird without hash partition suffitwitter",
       PropertyType.STRING,
       true,
       true);
@@ -151,7 +151,7 @@ public final class EarlybirdProperty<T> {
   public static final EarlybirdProperty<String> ANTISOCIAL_USERUPDATES_DL_STREAM =
       new EarlybirdProperty<>(
           "antisocial_userupdates_dl_stream",
-          "DL stream name for antisocial user updates without DL version suffix",
+          "DL stream name for antisocial user updates without DL version suffitwitter",
           PropertyType.STRING,
           false);
 
@@ -194,16 +194,16 @@ public final class EarlybirdProperty<T> {
           PropertyType.BOOLEAN,
           false);
 
-  public static final EarlybirdProperty<String> HDFS_INDEX_SYNC_DIR = new EarlybirdProperty<>(
-      "hdfs_index_sync_dir",
-      "HDFS directory to sync index data",
+  public static final EarlybirdProperty<String> HDFS_INDEtwitter_SYNC_DIR = new EarlybirdProperty<>(
+      "hdfs_indetwitter_sync_dir",
+      "HDFS directory to sync indetwitter data",
       PropertyType.STRING,
       true);
 
-  public static final EarlybirdProperty<Boolean> READ_INDEX_FROM_PROD_LOCATION =
+  public static final EarlybirdProperty<Boolean> READ_INDEtwitter_FROM_PROD_LOCATION =
       new EarlybirdProperty<>(
-      "read_index_from_prod_location",
-      "Read index from prod to speed up startup on staging / loadtest",
+      "read_indetwitter_from_prod_location",
+      "Read indetwitter from prod to speed up startup on staging / loadtest",
       PropertyType.BOOLEAN,
       false);
 
@@ -219,10 +219,10 @@ public final class EarlybirdProperty<T> {
       PropertyType.STRING,
       false);
 
-  public static final EarlybirdProperty<Integer> MAX_CONCURRENT_SEGMENT_INDEXERS =
+  public static final EarlybirdProperty<Integer> MAtwitter_CONCURRENT_SEGMENT_INDEtwitterERS =
       new EarlybirdProperty<>(
-        "max_concurrent_segment_indexers",
-        "Maximum number of segments indexed concurrently",
+        "matwitter_concurrent_segment_indetwitterers",
+        "Matwitterimum number of segments indetwittered concurrently",
         PropertyType.INT,
         false);
 
@@ -254,9 +254,9 @@ public final class EarlybirdProperty<T> {
         PropertyType.INT,
         false);
 
-  public static final EarlybirdProperty<Integer> MAX_ALLOWED_REPLICAS_NOT_IN_SERVER_SET =
+  public static final EarlybirdProperty<Integer> MAtwitter_ALLOWED_REPLICAS_NOT_IN_SERVER_SET =
       new EarlybirdProperty<>(
-          "max_allowed_replicas_not_in_server_set",
+          "matwitter_allowed_replicas_not_in_server_set",
           "How many replicas are allowed to be missing from the Earlybird server set.",
           PropertyType.INT,
           false);
@@ -268,10 +268,10 @@ public final class EarlybirdProperty<T> {
           PropertyType.BOOLEAN,
           false);
 
-  public static final EarlybirdProperty<Integer> MAX_QUEUE_SIZE =
+  public static final EarlybirdProperty<Integer> MAtwitter_QUEUE_SIZE =
       new EarlybirdProperty<>(
-          "max_queue_size",
-          "Maximum size of searcher worker executor queue. If <= 0 queue is unbounded.",
+          "matwitter_queue_size",
+          "Matwitterimum size of searcher worker etwitterecutor queue. If <= 0 queue is unbounded.",
           PropertyType.INT,
           false);
 
@@ -326,8 +326,8 @@ public final class EarlybirdProperty<T> {
           .map(field -> {
             try {
               return (EarlybirdProperty<?>) field.get(EarlybirdProperty.class);
-            } catch (Exception e) {
-              throw new RuntimeException(e);
+            } catch (Etwitterception e) {
+              throw new RuntimeEtwitterception(e);
             }
           })
           .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));

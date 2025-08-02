@@ -14,13 +14,13 @@ class UserFilter(
   private val filtered = stats.counter("filtered")
 
   private def isUnsafe(user: User): Boolean =
-    user.safety.exists { s =>
+    user.safety.etwitterists { s =>
       s.deactivated || s.suspended || s.restricted || s.nsfwUser || s.nsfwAdmin || s.isProtected
     }
 
   private def hasNsfwHighPrecisionLabel(user: User): Boolean =
-    user.labels.exists {
-      _.labels.exists(_.labelValue == LabelValue.NsfwHighPrecision)
+    user.labels.etwitterists {
+      _.labels.etwitterists(_.labelValue == LabelValue.NsfwHighPrecision)
     }
 
   /**
@@ -40,7 +40,7 @@ class UserFilter(
       case _ => gizmoduck.getUser(userId)
     }
 
-    userFut.map(_.exists { user =>
+    userFut.map(_.etwitterists { user =>
       val isValidUser = !isUnsafe(user) && !hasNsfwHighPrecisionLabel(user)
       if (!isValidUser) filtered.incr()
       isValidUser
@@ -57,7 +57,7 @@ class UserFilter(
     gizmoduck
       .getUser(userId)
       .map { userOpt =>
-        val isValidUser = userOpt.exists { user =>
+        val isValidUser = userOpt.etwitterists { user =>
           !(isUnsafe(user) || hasNsfwHighPrecisionLabel(user))
         }
         if (!isValidUser) {

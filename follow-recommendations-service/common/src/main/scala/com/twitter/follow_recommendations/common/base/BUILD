@@ -8,11 +8,11 @@ scala_library(
         "finagle/finagle-core/src/main",
         "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
         "hermit/hermit-core/src/main/scala/com/twitter/hermit/model",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/recommendation",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/candidate_source",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/pipeline/recommendation",
         "stitch/stitch-core",
     ],
-    exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/recommendation",
+    etwitterports = [
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/pipeline/recommendation",
     ],
 )

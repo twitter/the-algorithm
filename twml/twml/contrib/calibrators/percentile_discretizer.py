@@ -24,14 +24,14 @@ class PercentileDiscretizerFeature(CalibrationFeature):
   def _gather_debug_info(values, indices, bin_vals, bin_counts_buffer):
     '''
     Determine how many training values fell into a given bin during calibration.
-    This is calculated by finding the index of the first appearance of each bin
+    This is calculated by finding the indetwitter of the first appearance of each bin
     boundary in values (values may repeat, so that isn't trivially in indices.)
-    Subtracting each bin boundary index from the next tells you how many values fall in
+    Subtracting each bin boundary indetwitter from the netwittert tells you how many values fall in
     that bin.
     To get this to calculate the last bin correctly, len(values) is appended to the
     list of bound indices.
 
-    This assumes that ``bin_vals`` excludes np.inf bin boundaries when
+    This assumes that ``bin_vals`` etwittercludes np.inf bin boundaries when
     PercentileDiscretizer was calibrated
     with fewer values than bins.
 
@@ -45,19 +45,19 @@ class PercentileDiscretizerFeature(CalibrationFeature):
       bin_counts_buffer:
         ndarray buffer for returning the PercentileDiscretizer histogram
     '''
-    # np.flatnonzero(np.diff(x)) gives you the indices i in x s.t. x[i] != x[i+1]
-    # append index of the last bin since that cannot be empty with how
+    # np.flatnonzero(np.diff(twitter)) gives you the indices i in twitter s.t. twitter[i] != twitter[i+1]
+    # append indetwitter of the last bin since that cannot be empty with how
     # PercentileDiscretizer is implemented
     nonempty_bins = np.append(np.flatnonzero(np.diff(bin_vals)), len(bin_vals) - 1)
     bin_start_indices = indices.take(nonempty_bins)
 
-    # if multiples of a bin's lower bound value exist, find the first one
-    for (i, idx) in enumerate(bin_start_indices):
-      cur_idx = idx
-      while cur_idx > 0 and values[cur_idx] == values[cur_idx - 1]:
-        bin_start_indices[i] = cur_idx = cur_idx - 1
+    # if multiples of a bin's lower bound value etwitterist, find the first one
+    for (i, idtwitter) in enumerate(bin_start_indices):
+      cur_idtwitter = idtwitter
+      while cur_idtwitter > 0 and values[cur_idtwitter] == values[cur_idtwitter - 1]:
+        bin_start_indices[i] = cur_idtwitter = cur_idtwitter - 1
 
-    # the end of each bin is the start of the next bin,
+    # the end of each bin is the start of the netwittert bin,
     # until the last, which is the end of the array
     # broadcast the counts to the nonempty bins, 0 otherwise
     bin_counts_buffer[:] = 0
@@ -73,19 +73,19 @@ class PercentileDiscretizerFeature(CalibrationFeature):
 
     Arguments:
       bin_vals:
-        Row in the PercentileDiscretizerCalibrator.bin_vals matrix corresponding to this feature.
+        Row in the PercentileDiscretizerCalibrator.bin_vals matritwitter corresponding to this feature.
         Will be updated with the results of the calibration.
         A 1D ndarray.
       percentiles:
         1D array of size n_bin with values ranging from 0 to 1.
-        For example, ``percentiles = np.linspace(0, 1, num=self._n_bin+1, dtype=np.float32)``
+        For etwitterample, ``percentiles = np.linspace(0, 1, num=self._n_bin+1, dtype=np.float32)``
       percentile_indices:
         Empty 1D array of size n_bin used to store intermediate results when
         calling twml.twml_optim_nearest_interpolation().
-        For example, np.empty(self._n_bin + 1, dtype=np.float32).
+        For etwitterample, np.empty(self._n_bin + 1, dtype=np.float32).
       bin_counts_buffer:
         optional ndarray buffer used for retaining count of values per PercentileDiscretizer
-        bucket (for debug and feature exploration purposes)
+        bucket (for debug and feature etwitterploration purposes)
 
     Returns:
       calibrated bin_vals for use by ``PercentileDiscretizerCalibrator``
@@ -93,7 +93,7 @@ class PercentileDiscretizerFeature(CalibrationFeature):
     if self._calibrated:
       raise RuntimeError("Can only calibrate once")
     if bin_vals.ndim != 1:
-      raise RuntimeError("Expecting bin_vals row")
+      raise RuntimeError("Etwitterpecting bin_vals row")
 
     # # concatenate values and weights buffers
     self._concat_arrays()
@@ -148,7 +148,7 @@ class PercentileDiscretizerFeature(CalibrationFeature):
       # Performs the binary search to find the indices corresponding to the percentiles
       err = twml.CLIB.twml_optim_nearest_interpolation(
         percentile_indices_tarray.handle, percentiles_tarray.handle,  # output, input
-        weights_tarray.handle, indices_float_tarray.handle  # xs, ys
+        weights_tarray.handle, indices_float_tarray.handle  # twitters, ys
       )
       if err != 1000:
         raise ValueError("""twml.CLIB.twml_optim_nearest_interpolation
@@ -190,7 +190,7 @@ class PercentileDiscretizerCalibrator(Calibrator):
         the number of bins per feature to use for PercentileDiscretizer.
         Note that each feature actually maps to n_bin+1 output IDs.
       out_bits:
-        The maximum number of bits to use for the output IDs.
+        The matwitterimum number of bits to use for the output IDs.
         2**out_bits must be greater than bin_ids.size or an error is raised.
       bin_histogram:
         When True (the default), gathers information during calibration
@@ -289,37 +289,37 @@ class PercentileDiscretizerCalibrator(Calibrator):
         Each element of this array maps to the commensurate element in feature_keys.
     '''
     if feature_keys.ndim != 1:
-      raise ValueError('Expecting 1D feature_keys, got %dD' % feature_keys.ndim)
+      raise ValueError('Etwitterpecting 1D feature_keys, got %dD' % feature_keys.ndim)
     if feature_vals.ndim != 1:
-      raise ValueError('Expecting 1D feature_values, got %dD' % feature_vals.ndim)
+      raise ValueError('Etwitterpecting 1D feature_values, got %dD' % feature_vals.ndim)
     if feature_vals.size != feature_keys.size:
       raise ValueError(
-        'Expecting feature_keys.size == feature_values.size, got %d != %d' %
+        'Etwitterpecting feature_keys.size == feature_values.size, got %d != %d' %
         (feature_keys.size, feature_vals.size))
     if weights is not None:
       weights = np.squeeze(weights)
       if weights.ndim != 1:
-        raise ValueError('Expecting 1D weights, got %dD' % weights.ndim)
+        raise ValueError('Etwitterpecting 1D weights, got %dD' % weights.ndim)
       elif weights.size != feature_keys.size:
         raise ValueError(
-          'Expecting feature_keys.size == weights.size, got %d != %d' %
+          'Etwitterpecting feature_keys.size == weights.size, got %d != %d' %
           (feature_keys.size, weights.size))
     if weights is None:
       weights = np.full(feature_vals.size, fill_value=DEFAULT_SAMPLE_WEIGHT)
     unique_keys = np.unique(feature_keys)
     for feature_id in unique_keys:
-      idx = np.where(feature_keys == feature_id)
+      idtwitter = np.where(feature_keys == feature_id)
       if feature_id not in self._discretizer_feature_dict:
         self._hash_map[feature_id] = self._hash_map_counter
         # unlike v1, the hash_map_counter is incremented AFTER assignment.
-        # This makes the hash_map features zero-indexed: 0, 1, 2 instead of 1, 2, 3
+        # This makes the hash_map features zero-indetwittered: 0, 1, 2 instead of 1, 2, 3
         self._hash_map_counter += 1
         # creates a new cache if we never saw the feature before
         discretizer_feature = PercentileDiscretizerFeature(feature_id)
         self._discretizer_feature_dict[feature_id] = discretizer_feature
       else:
         discretizer_feature = self._discretizer_feature_dict[feature_id]
-      discretizer_feature.add_values({'values': feature_vals[idx], 'weights': weights[idx]})
+      discretizer_feature.add_values({'values': feature_vals[idtwitter], 'weights': weights[idtwitter]})
 
   def calibrate(self, debug=False):
     '''
@@ -332,7 +332,7 @@ class PercentileDiscretizerCalibrator(Calibrator):
 
     The calibration results are stored in two matrices:
       bin_ids:
-        2D array of size number of accumulate ``features x n_bin+1``.
+        2D array of size number of accumulate ``features twitter n_bin+1``.
         Contains the new IDs generated by PercentileDiscretizer. Each row maps to a feature.
         Each row maps to different value bins. The IDs
         are in the range ``1 -> bin_ids.size+1``
@@ -395,7 +395,7 @@ class PercentileDiscretizerCalibrator(Calibrator):
       )
 
       # update progress bar 20 times
-      if (i % max(1.0, round(n_feature / 20)) == 0) or (i == n_feature - 1):
+      if (i % matwitter(1.0, round(n_feature / 20)) == 0) or (i == n_feature - 1):
         progress_bar.update(i + 1)
 
     super(PercentileDiscretizerCalibrator, self).calibrate()
@@ -439,28 +439,28 @@ class PercentileDiscretizerCalibrator(Calibrator):
         name-scope of the PercentileDiscretizer layer
     """
     n_feature = len(self._discretizer_feature_dict)
-    max_discretizer_feature = n_feature * (self._n_bin + 1)
+    matwitter_discretizer_feature = n_feature * (self._n_bin + 1)
 
     if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate()")
+      raise RuntimeError("Etwitterpecting prior call to calibrate()")
 
     if self._bin_ids.shape[0] != n_feature:
-      raise RuntimeError("Expecting self._bin_ids.shape[0] \
+      raise RuntimeError("Etwitterpecting self._bin_ids.shape[0] \
         != len(self._discretizer_feature_dict)")
     if self._bin_vals.shape[0] != n_feature:
-      raise RuntimeError("Expecting self._bin_vals.shape[0] \
+      raise RuntimeError("Etwitterpecting self._bin_vals.shape[0] \
         != len(self._discretizer_feature_dict)")
 
     # can add at most #features * (n_bin+1) new feature ids
-    if 2**self._out_bits <= max_discretizer_feature:
-      raise ValueError("""Maximum number of features created by discretizer is
+    if 2**self._out_bits <= matwitter_discretizer_feature:
+      raise ValueError("""Matwitterimum number of features created by discretizer is
         %d but requested that the output be limited to %d values (%d bits),
         which is smaller than that. Please ensure the output has enough bits
         to represent at least the new features"""
-                       % (max_discretizer_feature, 2**self._out_bits, self._out_bits))
+                       % (matwitter_discretizer_feature, 2**self._out_bits, self._out_bits))
 
     # build feature_offsets, hash_map_keys, hash_map_values
-    feature_offsets = np.arange(0, max_discretizer_feature,
+    feature_offsets = np.arange(0, matwitter_discretizer_feature,
                                 self._n_bin + 1, dtype='int64')
     hash_map_keys = np.array(list(self._hash_map.keys()), dtype=np.int64)
     hash_map_values = np.array(list(self._hash_map.values()), dtype=np.float32)
@@ -522,22 +522,22 @@ class PercentileDiscretizerCalibrator(Calibrator):
 
   def write_summary_json(self, save_dir, name="default"):
     """
-    Export bin information to HDFS.
+    Etwitterport bin information to HDFS.
     
     Arguments:
       save_dir:
         name of the saving directory.
       name:
-        prefix of the saved hub signature. Default (string): "default".
+        prefitwitter of the saved hub signature. Default (string): "default".
     """
     # Since the size is small: (# of bins) * (# of features), we always dump the file.
-    discretizer_export_bin_filename = os.path.join(save_dir, name + '_bin.json')
-    discretizer_export_bin_dict = {
+    discretizer_etwitterport_bin_filename = os.path.join(save_dir, name + '_bin.json')
+    discretizer_etwitterport_bin_dict = {
       'feature_ids': self._bin_histogram_dict['feature_ids'].tolist(),
       'bin_boundaries': self._bin_histogram_dict['bin_vals'].tolist(),
       'output_bits': self._bin_histogram_dict['out_bits']
     }
-    twml.write_file(discretizer_export_bin_filename, discretizer_export_bin_dict, encode='json')
+    twml.write_file(discretizer_etwitterport_bin_filename, discretizer_etwitterport_bin_dict, encode='json')
 
   def save(self, save_dir, name="default", verbose=False):
     '''Save the calibrator into the given save_directory using TF Hub.
@@ -545,15 +545,15 @@ class PercentileDiscretizerCalibrator(Calibrator):
       save_dir:
         name of the saving directory.
       name:
-        prefix of the saved hub signature. Default (string): "default".
+        prefitwitter of the saved hub signature. Default (string): "default".
     '''
     if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate().Cannot save() prior to calibrate()")
+      raise RuntimeError("Etwitterpecting prior call to calibrate().Cannot save() prior to calibrate()")
 
     # This module allows for the calibrator to save be saved as part of
     # Tensorflow Hub (this will allow it to be used in further steps)
     def calibrator_module():
-      # Note that this is usually expecting a sparse_placeholder
+      # Note that this is usually etwitterpecting a sparse_placeholder
       inputs = tf.sparse_placeholder(tf.float32)
       calibrator_layer = self.to_layer()
       # creates the signature to the calibrator module
@@ -567,11 +567,11 @@ class PercentileDiscretizerCalibrator(Calibrator):
         outputs=calibrator_layer(inputs, keep_inputs=True),
         name=name + '_keep_inputs')
 
-    # exports the module to the save_dir
+    # etwitterports the module to the save_dir
     spec = hub.create_module_spec(calibrator_module)
     with tf.Graph().as_default():
       module = hub.Module(spec)
       with tf.Session() as session:
-        module.export(save_dir, session)
+        module.etwitterport(save_dir, session)
 
     self.write_summary_json(save_dir, name)

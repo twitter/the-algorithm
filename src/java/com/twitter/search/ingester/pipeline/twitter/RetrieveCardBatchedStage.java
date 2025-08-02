@@ -1,33 +1,33 @@
 package com.twitter.search.ingester.pipeline.twitter;
 
-import java.net.MalformedURLException;
+import java.net.MalformedURLEtwitterception;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.naming.NamingException;
+import javatwitter.naming.NamingEtwitterception;
 
 import com.google.common.collect.Maps;
 
-import org.apache.commons.pipeline.StageException;
+import org.apache.commons.pipeline.StageEtwitterception;
 import org.apache.commons.pipeline.stage.StageTimer;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducesConsumed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.expandodo.thriftjava.Card2;
+import com.twitter.common.tetwittert.language.LocaleUtil;
+import com.twitter.etwitterpandodo.thriftjava.Card2;
 import com.twitter.mediaservices.commons.tweetmedia.thrift_java.MediaInfo;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftEtwitterpandedUrl;
 import com.twitter.search.common.metrics.SearchRateCounter;
 import com.twitter.search.ingester.model.IngesterTwitterMessage;
 import com.twitter.search.ingester.pipeline.util.BatchingClient;
 import com.twitter.search.ingester.pipeline.util.CardFieldUtil;
 import com.twitter.search.ingester.pipeline.util.IngesterStageTimer;
-import com.twitter.search.ingester.pipeline.util.ResponseNotReturnedException;
+import com.twitter.search.ingester.pipeline.util.ResponseNotReturnedEtwitterception;
 import com.twitter.spiderduck.common.URLUtils;
 import com.twitter.tweetypie.thriftjava.GetTweetOptions;
 import com.twitter.tweetypie.thriftjava.GetTweetResult;
@@ -41,7 +41,7 @@ import com.twitter.util.Future;
 
 @ConsumedTypes(IngesterTwitterMessage.class)
 @ProducesConsumed
-public class RetrieveCardBatchedStage extends TwitterBaseStage
+public class RetrieveCardBatchedStage etwittertends TwitterBaseStage
     <IngesterTwitterMessage, IngesterTwitterMessage> {
   private static final Logger LOG = LoggerFactory.getLogger(RetrieveCardBatchedStage.class);
 
@@ -60,12 +60,12 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
   private SearchRateCounter tweetsNotFound;
   private SearchRateCounter malformedUrls;
   private SearchRateCounter urlMismatches;
-  private SearchRateCounter cardExceptions;
-  private SearchRateCounter cardExceptionTweets;
+  private SearchRateCounter cardEtwitterceptions;
+  private SearchRateCounter cardEtwitterceptionTweets;
   private StageTimer retrieveCardsTimer;
 
-  private String cardNamePrefix;
-  // Since there is only one thread executing this stage (although that could potentially be
+  private String cardNamePrefitwitter;
+  // Since there is only one thread etwitterecuting this stage (although that could potentially be
   // changed in the pipeline config), no need to be thread safe.
   private static final Map<String, SearchRateCounter> CARD_NAME_STATS = new HashMap<>();
 
@@ -74,7 +74,7 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
 
   private String tweetypieClientId = null;
 
-  // Can be overridden in the corresponding pipeline-ingester.*.xml config.
+  // Can be overridden in the corresponding pipeline-ingester.*.twitterml config.
   // By default protected tweets are filtered out.
   // Only in the protected ingester pipeline is this set to false.
   private boolean filterProtected = true;
@@ -82,39 +82,39 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
   @Override
   public void initStats() {
     super.initStats();
-    cardNamePrefix = getStageNamePrefix() + "_card_name_";
-    totalTweets = SearchRateCounter.export(getStageNamePrefix() + "_total_tweets");
-    tweetsWithCards = SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_cards");
-    tweetsWithoutCards = SearchRateCounter.export(getStageNamePrefix() + "_tweets_without_cards");
+    cardNamePrefitwitter = getStageNamePrefitwitter() + "_card_name_";
+    totalTweets = SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_total_tweets");
+    tweetsWithCards = SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_tweets_with_cards");
+    tweetsWithoutCards = SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_tweets_without_cards");
     tweetsWithAnimatedGifMediaInfo =
-        SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_animated_gif_media_info");
-    cardsWithName = SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_card_name");
-    cardsWithDomain = SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_card_domain");
-    cardsWithTitles = SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_card_titles");
+        SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_tweets_with_animated_gif_media_info");
+    cardsWithName = SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_tweets_with_card_name");
+    cardsWithDomain = SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_tweets_with_card_domain");
+    cardsWithTitles = SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_tweets_with_card_titles");
     cardsWithDescriptions =
-        SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_card_descriptions");
+        SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_tweets_with_card_descriptions");
     cardsWithUnknownLanguage =
-        SearchRateCounter.export(getStageNamePrefix() + "_tweets_with_unknown_card_lanuage");
-    tweetsNotFound = SearchRateCounter.export(getStageNamePrefix() + "_tweets_not_found");
-    malformedUrls = SearchRateCounter.export(getStageNamePrefix() + "_malformed_urls");
-    urlMismatches = SearchRateCounter.export(getStageNamePrefix() + "_url_mismatches");
-    cardExceptions = SearchRateCounter.export(getStageNamePrefix() + "_card_exceptions");
-    cardExceptionTweets =
-        SearchRateCounter.export(getStageNamePrefix() + "_card_exception_tweets");
-    retrieveCardsTimer = new IngesterStageTimer(getStageNamePrefix() + "_request_timer");
+        SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_tweets_with_unknown_card_lanuage");
+    tweetsNotFound = SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_tweets_not_found");
+    malformedUrls = SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_malformed_urls");
+    urlMismatches = SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_url_mismatches");
+    cardEtwitterceptions = SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_card_etwitterceptions");
+    cardEtwitterceptionTweets =
+        SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_card_etwitterception_tweets");
+    retrieveCardsTimer = new IngesterStageTimer(getStageNamePrefitwitter() + "_request_timer");
   }
 
   @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
+  protected void doInnerPreprocess() throws StageEtwitterception, NamingEtwitterception {
     super.doInnerPreprocess();
     tweetyPieService = wireModule.getTweetyPieClient(tweetypieClientId);
     cardsClient = new BatchingClient<>(this::batchRetrieveURLs, batchSize);
   }
 
   @Override
-  public void innerProcess(Object obj) throws StageException {
+  public void innerProcess(Object obj) throws StageEtwitterception {
     if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this,
+      throw new StageEtwitterception(this,
           "Received object of incorrect type: " + obj.getClass().getName());
     }
 
@@ -125,9 +125,9 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
           updateMessage(message, card);
           emitAndCount(message);
         }))
-        .onFailure(Function.cons(exception -> {
-          if (!(exception instanceof ResponseNotReturnedException)) {
-            cardExceptionTweets.increment();
+        .onFailure(Function.cons(etwitterception -> {
+          if (!(etwitterception instanceof ResponseNotReturnedEtwitterception)) {
+            cardEtwitterceptionTweets.increment();
           }
 
           emitAndCount(message);
@@ -149,8 +149,8 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
 
     return tweetyPieService.get_tweets(request)
         .onFailure(throwable -> {
-          cardExceptions.increment();
-          LOG.error("TweetyPie server threw an exception while requesting tweetIds: "
+          cardEtwitterceptions.increment();
+          LOG.error("TweetyPie server threw an etwitterception while requesting tweetIds: "
               + request.getTweet_ids(), throwable);
           return null;
         })
@@ -172,7 +172,7 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
         String domain = URLUtils.getDomainFromURL(url);
         message.setCardDomain(domain.toLowerCase());
         cardsWithDomain.increment();
-      } catch (MalformedURLException e) {
+      } catch (MalformedURLEtwitterception e) {
         malformedUrls.increment();
         if (LOG.isDebugEnabled()) {
           LOG.debug("Tweet ID {} has a malformed card last hop URL: {}", message.getId(), url);
@@ -187,12 +187,12 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
     }
 
     message.setCardTitle(
-        CardFieldUtil.extractBindingValue(CardFieldUtil.TITLE_BINDING_KEY, card));
+        CardFieldUtil.etwittertractBindingValue(CardFieldUtil.TITLE_BINDING_KEY, card));
     if (message.getCardTitle() != null) {
       cardsWithTitles.increment();
     }
     message.setCardDescription(
-        CardFieldUtil.extractBindingValue(CardFieldUtil.DESCRIPTION_BINDING_KEY, card));
+        CardFieldUtil.etwittertractBindingValue(CardFieldUtil.DESCRIPTION_BINDING_KEY, card));
     if (message.getCardDescription() != null) {
       cardsWithDescriptions.increment();
     }
@@ -212,7 +212,7 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
         if (entry.getTweet().isSetCard2()) {
           responseMap.put(id, entry.getTweet().getCard2());
         } else {
-          // Short-term fix for removal of animated GIF cards --
+          // Short-term fitwitter for removal of animated GIF cards --
           // if the tweet contains an animated GIF, create a card based on media entity data
           Card2 card = createCardForAnimatedGif(entry.getTweet());
           if (card != null) {
@@ -236,7 +236,7 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
         if (mediaInfo != null && mediaInfo.getSetField() == MediaInfo._Fields.ANIMATED_GIF_INFO) {
           Card2 card = new Card2();
           card.setName("animated_gif");
-          // Use the original compressed URL for the media entity to match existing card URLs
+          // Use the original compressed URL for the media entity to match etwitteristing card URLs
           card.setUrl(mediaEntity.getUrl());
           card.setBinding_values(Collections.emptyList());
 
@@ -249,16 +249,16 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
 
   // Unfortunately the url returned in the card data is not the last hop
   private String getLastHop(IngesterTwitterMessage message, String url) {
-    if (message.getExpandedUrlMap() != null) {
-      ThriftExpandedUrl expanded = message.getExpandedUrlMap().get(url);
-      if ((expanded != null) && expanded.isSetCanonicalLastHopUrl()) {
-        return expanded.getCanonicalLastHopUrl();
+    if (message.getEtwitterpandedUrlMap() != null) {
+      ThriftEtwitterpandedUrl etwitterpanded = message.getEtwitterpandedUrlMap().get(url);
+      if ((etwitterpanded != null) && etwitterpanded.isSetCanonicalLastHopUrl()) {
+        return etwitterpanded.getCanonicalLastHopUrl();
       }
     }
     return null;
   }
 
-  // Used by commons-pipeline and set via the xml config
+  // Used by commons-pipeline and set via the twitterml config
   public void setFilterProtected(boolean filterProtected) {
     LOG.info("Filtering protected tweets: {}", filterProtected);
     this.filterProtected = filterProtected;
@@ -275,12 +275,12 @@ public class RetrieveCardBatchedStage extends TwitterBaseStage
 
   /**
    * For each card name, we add a rate counter to observe what kinds of card we're actually
-   * indexing, and with what rate.
+   * indetwittering, and with what rate.
    */
   private void addCardNameToStats(String cardName) {
     SearchRateCounter cardNameCounter = CARD_NAME_STATS.get(cardName);
     if (cardNameCounter == null) {
-      cardNameCounter = SearchRateCounter.export(cardNamePrefix + cardName);
+      cardNameCounter = SearchRateCounter.etwitterport(cardNamePrefitwitter + cardName);
       CARD_NAME_STATS.put(cardName, cardNameCounter);
     }
     cardNameCounter.increment();

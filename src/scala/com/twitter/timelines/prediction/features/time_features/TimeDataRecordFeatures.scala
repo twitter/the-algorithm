@@ -75,7 +75,7 @@ object TimeDataRecordFeatures {
     new Discrete("time_features.account_age_interval", Set(AgeOfAccount).asJava)
 }
 
-object AccountAgeInterval extends Enumeration {
+object AccountAgeInterval etwittertends Enumeration {
   val LTE_1_DAY, GT_1_DAY_LTE_5_DAY, GT_5_DAY_LTE_14_DAY, GT_14_DAY_LTE_30_DAY = Value
 
   def fromDuration(accountAge: Duration): Option[AccountAgeInterval.Value] = {

@@ -13,7 +13,7 @@ import com.twitter.search.earlybird.thrift.ThriftFacetCount;
 import com.twitter.search.earlybird.thrift.ThriftFacetCountMetadata;
 import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
 
-public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
+public class HashingAndPruningFacetAccumulator etwittertends FacetAccumulator {
   private static final int DEFAULT_HASH_SIZE = 4096;
   /**
    * 4 longs per entry accommodates long termIDs.
@@ -22,8 +22,8 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
    */
   protected static final int LONGS_PER_ENTRY = 4;
   private static final double LOAD_FACTOR = 0.5;
-  private static final long BITSHIFT_MAX_TWEEPCRED = 32;
-  private static final long PENALTY_COUNT_MASK = (1L << BITSHIFT_MAX_TWEEPCRED) - 1;
+  private static final long BITSHIFT_MAtwitter_TWEEPCRED = 32;
+  private static final long PENALTY_COUNT_MASK = (1L << BITSHIFT_MAtwitter_TWEEPCRED) - 1;
 
   protected static final long UNASSIGNED = -1;
 
@@ -32,7 +32,7 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
   protected static final class HashTable {
     protected final long[] hash;
     protected final int size;
-    protected final int maxLoad;
+    protected final int matwitterLoad;
     protected final int mask;
 
     public HashTable(int size) {
@@ -41,7 +41,7 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
       this.size = size;
       // Ensure alignment to LONGS_PER_ENTRY-byte boundaries
       this.mask = LONGS_PER_ENTRY * (size - 1);
-      this.maxLoad = (int) (size * LOAD_FACTOR);
+      this.matwitterLoad = (int) (size * LOAD_FACTOR);
     }
 
     protected void reset() {
@@ -74,16 +74,16 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
       private int simpleCount;
       private int weightedCount;
       private int penaltyCount;
-      private int maxTweepcred;
+      private int matwitterTweepcred;
       private long termID;
 
       public void writeToHash(int position) {
-        long payload = (((long) maxTweepcred) << BITSHIFT_MAX_TWEEPCRED)
+        long payload = (((long) matwitterTweepcred) << BITSHIFT_MAtwitter_TWEEPCRED)
                        | ((long) penaltyCount);
 
         assert itemPenaltyCount(payload) == penaltyCount : payload + ", "
                       + itemPenaltyCount(payload) + " != " + penaltyCount;
-        assert itemMaxTweepCred(payload) == maxTweepcred;
+        assert itemMatwitterTweepCred(payload) == matwitterTweepcred;
 
         hash[position] = termID;
         hash[position + 1] = simpleCount;
@@ -106,7 +106,7 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
         long payload = hash[position + 3];
 
         penaltyCount = itemPenaltyCount(payload);
-        maxTweepcred = itemMaxTweepCred(payload);
+        matwitterTweepcred = itemMatwitterTweepCred(payload);
 
         return true;
       }
@@ -117,8 +117,8 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
     return (int) (payload & PENALTY_COUNT_MASK);
   }
 
-  protected static int itemMaxTweepCred(long payload) {
-    return (int) (payload >>> BITSHIFT_MAX_TWEEPCRED);
+  protected static int itemMatwitterTweepCred(long payload) {
+    return (int) (payload >>> BITSHIFT_MAtwitter_TWEEPCRED);
   }
 
   protected int numItems;
@@ -148,7 +148,7 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
 
   /**
    * Creates a new, empty HashingAndPruningFacetAccumulator with the given initial size.
-   * HashSize will be rounded up to the next power-of-2 value.
+   * HashSize will be rounded up to the netwittert power-of-2 value.
    */
   public HashingAndPruningFacetAccumulator(int hashSize, FacetLabelProvider facetLabelProvider,
           double queryIndependentPenaltyWeight, FacetComparator comparator) {
@@ -189,11 +189,11 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
       hashTable.cursor.simpleCount = 1;
       hashTable.cursor.weightedCount = weightedCounterIncrement;
       hashTable.cursor.penaltyCount = penaltyIncrement;
-      hashTable.cursor.maxTweepcred = tweepCred;
+      hashTable.cursor.matwitterTweepcred = tweepCred;
       hashTable.cursor.writeToHash(hashPos);
 
       numItems++;
-      if (numItems >= hashTable.maxLoad) {
+      if (numItems >= hashTable.matwitterLoad) {
         prune();
       }
       return 1;
@@ -202,8 +202,8 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
       hashTable.cursor.simpleCount++;
       hashTable.cursor.weightedCount += weightedCounterIncrement;
 
-      if (tweepCred > hashTable.cursor.maxTweepcred) {
-        hashTable.cursor.maxTweepcred = tweepCred;
+      if (tweepCred > hashTable.cursor.matwitterTweepcred) {
+        hashTable.cursor.matwitterTweepcred = tweepCred;
       }
 
       hashTable.cursor.penaltyCount += penaltyIncrement;
@@ -226,10 +226,10 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
     copyToSortBuffer();
     hashTable.reset();
 
-    int targetNumItems = (int) (hashTable.maxLoad >> 1);
+    int targetNumItems = (int) (hashTable.matwitterLoad >> 1);
 
     int minCount = 2;
-    int nextMinCount = Integer.MAX_VALUE;
+    int netwittertMinCount = Integer.MAtwitter_VALUE;
 
     final int n = LONGS_PER_ENTRY * numItems;
 
@@ -240,17 +240,17 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
           int count = (int) sortBuffer[i + 1];
           if (count < minCount) {
             evict(i);
-          } else if (count < nextMinCount) {
-            nextMinCount = count;
+          } else if (count < netwittertMinCount) {
+            netwittertMinCount = count;
           }
         }
       }
-      if (minCount == nextMinCount) {
+      if (minCount == netwittertMinCount) {
         minCount++;
       } else {
-        minCount = nextMinCount;
+        minCount = netwittertMinCount;
       }
-      nextMinCount = Integer.MAX_VALUE;
+      netwittertMinCount = Integer.MAtwitter_VALUE;
     }
 
     // rehash
@@ -267,8 +267,8 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
   }
 
   // overridable for unit test
-  protected void evict(int index) {
-    sortBuffer[index] = UNASSIGNED;
+  protected void evict(int indetwitter) {
+    sortBuffer[indetwitter] = UNASSIGNED;
     numItems--;
   }
 
@@ -307,11 +307,11 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
 
       int penalty = item.getPenaltyCount() + (int) (queryIndependentPenaltyWeight
               * accessor.getOffensiveCount(id));
-      ThriftFacetCount result = new ThriftFacetCount().setFacetLabel(accessor.getTermText(id));
+      ThriftFacetCount result = new ThriftFacetCount().setFacetLabel(accessor.getTermTetwittert(id));
       result.setPenaltyCount(penalty);
       result.setSimpleCount(item.getSimpleCount());
       result.setWeightedCount(item.getWeightedCount());
-      result.setMetadata(new ThriftFacetCountMetadata().setMaxTweepCred(item.getMaxTweetCred()));
+      result.setMetadata(new ThriftFacetCountMetadata().setMatwitterTweepCred(item.getMatwitterTweetCred()));
 
       result.setFacetCount(result.getWeightedCount());
       facetResults.addToTopFacets(result);
@@ -476,8 +476,8 @@ public class HashingAndPruningFacetAccumulator extends FacetAccumulator {
       return itemPenaltyCount(data[offset + 3]);
     }
 
-    public int getMaxTweetCred() {
-      return itemMaxTweepCred(data[offset + 3]);
+    public int getMatwitterTweetCred() {
+      return itemMatwitterTweepCred(data[offset + 3]);
     }
 
     @Override public int hashCode() {

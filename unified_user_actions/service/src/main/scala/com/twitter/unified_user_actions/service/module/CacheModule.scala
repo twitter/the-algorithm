@@ -10,11 +10,11 @@ import com.twitter.unified_user_actions.enricher.hcache.LocalCache
 import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
 import com.twitter.util.Future
 import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
-object CacheModule extends TwitterModule {
+object CacheModule etwittertends TwitterModule {
   private final val localCacheTtlFlagName = "local.cache.ttl.seconds"
-  private final val localCacheMaxSizeFlagName = "local.cache.max.size"
+  private final val localCacheMatwitterSizeFlagName = "local.cache.matwitter.size"
 
   flag[Long](
     name = localCacheTtlFlagName,
@@ -23,22 +23,22 @@ object CacheModule extends TwitterModule {
   )
 
   flag[Long](
-    name = localCacheMaxSizeFlagName,
+    name = localCacheMatwitterSizeFlagName,
     default = 1000L,
-    help = "Local Cache's max size"
+    help = "Local Cache's matwitter size"
   )
 
   @Provides
   @Singleton
   def providesLocalCache(
     @Flag(localCacheTtlFlagName) localCacheTtlFlag: Long,
-    @Flag(localCacheMaxSizeFlagName) localCacheMaxSizeFlag: Long,
+    @Flag(localCacheMatwitterSizeFlagName) localCacheMatwitterSizeFlag: Long,
     statsReceiver: StatsReceiver
   ): LocalCache[EnrichmentKey, DynMap] = {
     val underlying = CacheBuilder
       .newBuilder()
-      .expireAfterWrite(localCacheTtlFlag, TimeUnit.SECONDS)
-      .maximumSize(localCacheMaxSizeFlag)
+      .etwitterpireAfterWrite(localCacheTtlFlag, TimeUnit.SECONDS)
+      .matwitterimumSize(localCacheMatwitterSizeFlag)
       .build[EnrichmentKey, Future[DynMap]]()
 
     new LocalCache[EnrichmentKey, DynMap](

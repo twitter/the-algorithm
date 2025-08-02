@@ -8,23 +8,23 @@ import java.util.function.Function;
 
 import com.twitter.search.common.schema.base.Schema;
 import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twitter.search.queryparser.query.QueryParserEtwitterception;
 import com.twitter.search.queryparser.visitors.MultiTermDisjunctionRankVisitor;
 import com.twitter.search.queryparser.visitors.NodeRankAnnotator;
-import com.twitter.search.queryparser.visitors.QueryTreeIndex;
+import com.twitter.search.queryparser.visitors.QueryTreeIndetwitter;
 
 /**
  * A helper class to collect field and query node hit attributions.
  */
-public class QueryHitAttributeHelper extends HitAttributeHelper {
+public class QueryHitAttributeHelper etwittertends HitAttributeHelper {
   private final Query annotatedQuery;
 
   protected QueryHitAttributeHelper(HitAttributeCollector collector,
                                     Function<Integer, String> fieldIdsToFieldNames,
                                     IdentityHashMap<Query, Integer> nodeToRankMap,
                                     Query annotatedQuery,
-                                    Map<Query, List<Integer>> expandedRanksMap) {
-    super(collector, fieldIdsToFieldNames, nodeToRankMap, expandedRanksMap);
+                                    Map<Query, List<Integer>> etwitterpandedRanksMap) {
+    super(collector, fieldIdsToFieldNames, nodeToRankMap, etwitterpandedRanksMap);
     this.annotatedQuery = annotatedQuery;
   }
 
@@ -36,10 +36,10 @@ public class QueryHitAttributeHelper extends HitAttributeHelper {
    * A collector is then created.
    *
    * @param query the query for which we will collect hit attribution.
-   * @param schema the indexing schema.
+   * @param schema the indetwittering schema.
    */
   public static QueryHitAttributeHelper from(Query query, final Schema schema)
-      throws QueryParserException {
+      throws QueryParserEtwitterception {
     IdentityHashMap<Query, Integer> nodeToRankMap;
     Query annotatedQuery;
 
@@ -54,25 +54,25 @@ public class QueryHitAttributeHelper extends HitAttributeHelper {
     } else {
       // Otherwise, we will assign all nodes in-order ranks, and use those to track per-node hit
       // attribution
-      QueryTreeIndex queryTreeIndex = QueryTreeIndex.buildFor(query);
-      NodeRankAnnotator annotator = new NodeRankAnnotator(queryTreeIndex.getNodeToIndexMap());
+      QueryTreeIndetwitter queryTreeIndetwitter = QueryTreeIndetwitter.buildFor(query);
+      NodeRankAnnotator annotator = new NodeRankAnnotator(queryTreeIndetwitter.getNodeToIndetwitterMap());
       annotatedQuery = query.accept(annotator);
       nodeToRankMap = annotator.getUpdatedNodeToRankMap();
     }
 
-    // Extract ranks for multi_term_disjunction operators
+    // Etwittertract ranks for multi_term_disjunction operators
     MultiTermDisjunctionRankVisitor multiTermDisjunctionRankVisitor =
-        new MultiTermDisjunctionRankVisitor(Collections.max(nodeToRankMap.values()));
+        new MultiTermDisjunctionRankVisitor(Collections.matwitter(nodeToRankMap.values()));
     annotatedQuery.accept(multiTermDisjunctionRankVisitor);
-    Map<Query, List<Integer>> expandedRanksMap =
-        multiTermDisjunctionRankVisitor.getMultiTermDisjunctionRankExpansionsMap();
+    Map<Query, List<Integer>> etwitterpandedRanksMap =
+        multiTermDisjunctionRankVisitor.getMultiTermDisjunctionRankEtwitterpansionsMap();
 
     return new QueryHitAttributeHelper(
         new HitAttributeCollector(),
         (fieldId) -> schema.getFieldName(fieldId),
         nodeToRankMap,
         annotatedQuery,
-        expandedRanksMap);
+        etwitterpandedRanksMap);
   }
 
   public Query getAnnotatedQuery() {

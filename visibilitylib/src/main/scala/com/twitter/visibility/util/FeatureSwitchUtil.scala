@@ -18,5 +18,5 @@ object FeatureSwitchUtil {
 
   def mkLimitedActionsFeatureSwitches(statsReceiver: StatsReceiver): FeatureSwitches =
     FeatureSwitchesBuilder
-      .createWithNoExperiments(LimitedActionsFeaturesConfigPath, Some(statsReceiver)).build()
+      .createWithNoEtwitterperiments(LimitedActionsFeaturesConfigPath, Some(statsReceiver)).build()
 }

@@ -45,7 +45,7 @@ object Store {
   ) = new DeciderableStore(primary, backup, primaryIsAvailable)
 }
 
-trait StoreWrapper[K, V] extends Store[K, V] {
+trait StoreWrapper[K, V] etwittertends Store[K, V] {
   def underlyingStore: Store[K, V]
 
   override def create(value: V) = underlyingStore.create(value)
@@ -53,7 +53,7 @@ trait StoreWrapper[K, V] extends Store[K, V] {
   override def destroy(key: K) = underlyingStore.destroy(key)
 }
 
-class NullStore[K, V] extends Store[K, V] {
+class NullStore[K, V] etwittertends Store[K, V] {
   override def create(value: V) = Future.value(value)
   override def update(value: V) = Future.Done
   override def destroy(key: K) = Future.Done
@@ -68,7 +68,7 @@ private[servo] class GatedStore[K, V](
   secondary: Store[K, V],
   usePrimaryKey: Gate[K],
   usePrimaryValue: Gate[V])
-    extends Store[K, V] {
+    etwittertends Store[K, V] {
   private[this] def pick[T](item: T, gate: Gate[T]) = if (gate(item)) primary else secondary
 
   override def create(value: V) = pick(value, usePrimaryValue).create(value)
@@ -84,7 +84,7 @@ class DeciderableStore[K, V](
   primary: Store[K, V],
   backup: Store[K, V],
   primaryIsAvailable: => Boolean)
-    extends Store[K, V] {
+    etwittertends Store[K, V] {
   private[this] def pick = if (primaryIsAvailable) primary else backup
 
   override def create(value: V) = pick.create(value)

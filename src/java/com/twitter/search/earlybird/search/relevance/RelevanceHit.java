@@ -2,7 +2,7 @@ package com.twitter.search.earlybird.search.relevance;
 
 import java.util.Comparator;
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 
@@ -12,13 +12,13 @@ import com.twitter.search.earlybird.search.Hit;
 import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
 
-public class RelevanceHit extends Hit
+public class RelevanceHit etwittertends Hit
     implements RandomAccessPriorityQueue.SignatureProvider<TweetIntegerShingleSignature> {
   @Nullable
   private TweetIntegerShingleSignature signature;
 
   public RelevanceHit() {
-    super(Long.MAX_VALUE, Long.MAX_VALUE);
+    super(Long.MAtwitter_VALUE, Long.MAtwitter_VALUE);
   }
 
   public RelevanceHit(long timeSliceID, long statusID,
@@ -96,8 +96,8 @@ public class RelevanceHit extends Hit
 
   @Override
   public void clear() {
-    timeSliceID = Long.MAX_VALUE;
-    statusID = Long.MAX_VALUE;
+    timeSliceID = Long.MAtwitter_VALUE;
+    statusID = Long.MAtwitter_VALUE;
     metadata = null;
     signature = null;
   }

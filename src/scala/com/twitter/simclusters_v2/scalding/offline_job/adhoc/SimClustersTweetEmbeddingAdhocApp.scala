@@ -4,31 +4,31 @@ import com.twitter.bijection.{Bufferable, Injection}
 import com.twitter.scalding._
 import com.twitter.scalding.commons.source.VersionedKeyValSource
 import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
+import com.twitter.scalding_internal.dalv2.remote_access.{EtwitterplicitLocation, ProcAtla}
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common.{ClusterId, TweetId, UserId}
 import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedIn20M145KUpdatedScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
+import com.twitter.simclusters_v2.scalding.common.matritwitter.{SparseMatritwitter, SparseRowMatritwitter}
 import com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobUtil
 import com.twitter.simclusters_v2.summingbird.common.{Configs, SimClustersInterestedInUtil}
 import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
+import com.twitter.wtf.scalding.jobs.common.AdhocEtwitterecutionApp
 import java.util.TimeZone
 
 /**
  * Adhoc job for computing Tweet SimClusters embeddings.
  * The output of this job includes two data sets: tweet -> top clusters (or Tweet Embedding), and cluster -> top tweets.
- * These data sets are supposed to be the snapshot of the two index at the end of the dataRange you run.
+ * These data sets are supposed to be the snapshot of the two indetwitter at the end of the dataRange you run.
  *
  * Note that you can also use the output from SimClustersOfflineJobScheduledApp for analysis purpose.
  * The outputs from that job might be more close to the data we use in production.
- * The benefit of having this job is to keep the flexibility of experiment different ideas.
+ * The benefit of having this job is to keep the fletwitteribility of etwitterperiment different ideas.
  *
  * It is recommended to put at least 2 days in the --date (dataRange in the code) in order to make sure
  * we have enough engagement data for tweets have more engagements in the last 1+ days.
  *
  *
- * There are several parameters to tune in the job. They are explained in the inline comments.
+ * There are several parameters to tune in the job. They are etwitterplained in the inline comments.
  *
  *
  * To run the job:
@@ -41,7 +41,7 @@ import java.util.TimeZone
     --score_type logFav \
     --output_dir /user/recos-platform/adhoc/tweet_embedding_01_27_28_unnormalized_t9
  */
-object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
+object SimClustersTweetEmbeddingAdhocApp etwittertends AdhocEtwitterecutionApp {
 
   import SimClustersOfflineJobUtil._
 
@@ -51,7 +51,7 @@ object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     val outputDir = args("output_dir")
 
@@ -64,7 +64,7 @@ object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
     // even you use "--run_normalized false", it will still be true.
     val usingNormalizedScoringFunction = args.boolean("run_normalized")
 
-    // filter out tweets that has less than X favs in the dateRange.
+    // filter out tweets that has less than twitter favs in the dateRange.
     val tweetFavThreshold = args.long("tweet_fav_threshold", 0L)
 
     // tweet -> top clusters will be saved in this subfolder
@@ -79,15 +79,15 @@ object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
           SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
           dateRange.embiggen(Days(14))
         )
-        .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+        .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
         .toTypedPipe
         .map {
           case KeyVal(key, value) => (key, value)
         }
 
     // read user-tweet fav data. set the weight to be a decayed value. they will be decayed to the dateRang.end
-    val userTweetFavData: SparseMatrix[UserId, TweetId, Double] =
-      SparseMatrix(readTimelineFavoriteData(dateRange)).tripleApply {
+    val userTweetFavData: SparseMatritwitter[UserId, TweetId, Double] =
+      SparseMatritwitter(readTimelineFavoriteData(dateRange)).tripleApply {
         case (userId, tweetId, timestamp) =>
           (
             userId,
@@ -100,17 +100,17 @@ object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
               .value)
       }
 
-    // filter out tweets without x favs
+    // filter out tweets without twitter favs
     val tweetSubset =
       userTweetFavData.colNnz.filter(
         _._2 > tweetFavThreshold.toDouble
-      ) // keep tweets with at least x favs
+      ) // keep tweets with at least twitter favs
 
     val userTweetFavDataSubset = userTweetFavData.filterCols(tweetSubset.keys)
 
-    // construct user-simclusters matrix
-    val userSimClustersInterestedInData: SparseRowMatrix[UserId, ClusterId, Double] =
-      SparseRowMatrix(
+    // construct user-simclusters matritwitter
+    val userSimClustersInterestedInData: SparseRowMatritwitter[UserId, ClusterId, Double] =
+      SparseRowMatritwitter(
         interestedInData.map {
           case (userId, clusters) =>
             val topClustersWithScores =
@@ -130,7 +130,7 @@ object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
                       case "logFav" =>
                         clusterId -> scores.clusterNormalizedLogFavScore
                       case _ =>
-                        throw new IllegalArgumentException(
+                        throw new IllegalArgumentEtwitterception(
                           "score_type can only be fav, follow or logFav")
                     }
                 }
@@ -138,25 +138,25 @@ object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
                 .toMap
             userId -> topClustersWithScores
         },
-        isSkinnyMatrix = true
+        isSkinnyMatritwitter = true
       )
 
-    // multiply tweet -> user matrix with user -> cluster matrix to get tweet -> cluster matrix
-    val tweetClusterScoreMatrix = if (usingNormalizedScoringFunction) {
+    // multiply tweet -> user matritwitter with user -> cluster matritwitter to get tweet -> cluster matritwitter
+    val tweetClusterScoreMatritwitter = if (usingNormalizedScoringFunction) {
       userTweetFavDataSubset.transpose.rowL2Normalize
-        .multiplySkinnySparseRowMatrix(userSimClustersInterestedInData)
+        .multiplySkinnySparseRowMatritwitter(userSimClustersInterestedInData)
     } else {
-      userTweetFavDataSubset.transpose.multiplySkinnySparseRowMatrix(
+      userTweetFavDataSubset.transpose.multiplySkinnySparseRowMatritwitter(
         userSimClustersInterestedInData)
     }
 
     // get the tweet -> top clusters by taking top K in each row
-    val tweetTopClusters = tweetClusterScoreMatrix
+    val tweetTopClusters = tweetClusterScoreMatritwitter
       .sortWithTakePerRow(Configs.topKClustersPerTweet)(Ordering.by(-_._2))
       .fork
 
     // get the cluster -> top tweets by taking top K in each colum
-    val clusterTopTweets = tweetClusterScoreMatrix
+    val clusterTopTweets = tweetClusterScoreMatritwitter
       .sortWithTakePerCol(Configs.topKTweetsPerCluster)(Ordering.by(-_._2))
       .fork
 
@@ -167,11 +167,11 @@ object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
       Bufferable.injectionOf[List[(Long, Double)]]
 
     // save the data sets and also output to some tsv files for eyeballing the results
-    Execution
+    Etwitterecution
       .zip(
         tweetTopClusters
           .mapValues(_.toList)
-          .writeExecution(
+          .writeEtwitterecution(
             VersionedKeyValSource[TweetId, List[(ClusterId, Double)]](tweetTopKClustersOutputPath)
           ),
         tweetTopClusters
@@ -184,13 +184,13 @@ object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
                 }
                 .mkString(",")
           }
-          .writeExecution(
+          .writeEtwitterecution(
             TypedTsv(tweetTopKClustersOutputPath + "_tsv")
           ),
-        tweetSubset.writeExecution(TypedTsv(tweetTopKClustersOutputPath + "_tweet_favs")),
+        tweetSubset.writeEtwitterecution(TypedTsv(tweetTopKClustersOutputPath + "_tweet_favs")),
         clusterTopTweets
           .mapValues(_.toList)
-          .writeExecution(
+          .writeEtwitterecution(
             VersionedKeyValSource[ClusterId, List[(TweetId, Double)]](clusterTopKTweetsOutputPath)
           ),
         clusterTopTweets
@@ -202,7 +202,7 @@ object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
                 }
                 .mkString(",")
           }
-          .writeExecution(
+          .writeEtwitterecution(
             TypedTsv(clusterTopKTweetsOutputPath + "_tsv")
           )
       )

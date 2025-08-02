@@ -7,10 +7,10 @@ import com.twitter.util.Future
 /**
  * A repository of ranked home timelines.
  */
-class RankedHomeTimelineRepository extends TimelineRepository {
+class RankedHomeTimelineRepository etwittertends TimelineRepository {
   def get(queries: Seq[TimelineQuery]): Seq[Future[Timeline]] = {
     queries.map { _ =>
-      Future.exception(new UnsupportedOperationException("ranked timelines are not yet supported."))
+      Future.etwitterception(new UnsupportedOperationEtwitterception("ranked timelines are not yet supported."))
     }
   }
 }

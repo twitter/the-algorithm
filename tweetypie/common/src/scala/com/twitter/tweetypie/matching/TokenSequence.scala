@@ -3,18 +3,18 @@ package com.twitter.tweetypie.matching
 object TokenSequence {
 
   /**
-   * Is `suffix` a suffix of `s`, starting at `offset` in `s`?
+   * Is `suffitwitter` a suffitwitter of `s`, starting at `offset` in `s`?
    */
-  def hasSuffixAt(s: CharSequence, suffix: CharSequence, offset: Int): Boolean =
-    if (offset == 0 && (s.eq(suffix) || s == suffix)) {
+  def hasSuffitwitterAt(s: CharSequence, suffitwitter: CharSequence, offset: Int): Boolean =
+    if (offset == 0 && (s.eq(suffitwitter) || s == suffitwitter)) {
       true
-    } else if (suffix.length != (s.length - offset)) {
+    } else if (suffitwitter.length != (s.length - offset)) {
       false
     } else {
       @annotation.tailrec
       def go(i: Int): Boolean =
-        if (i == suffix.length) true
-        else if (suffix.charAt(i) == s.charAt(offset + i)) go(i + 1)
+        if (i == suffitwitter.length) true
+        else if (suffitwitter.charAt(i) == s.charAt(offset + i)) go(i + 1)
         else false
 
       go(0)
@@ -28,7 +28,7 @@ object TokenSequence {
    * [[CharSequence]]s containing the same characters equivalent.
    */
   def sameCharacters(s1: CharSequence, s2: CharSequence): Boolean =
-    hasSuffixAt(s1, s2, 0)
+    hasSuffitwitterAt(s1, s2, 0)
 
   /**
    * This method implements the product definition of a token matching a
@@ -51,39 +51,39 @@ object TokenSequence {
     else if (token.length == 0) false
     else {
       val tokenStart = token.charAt(0)
-      (tokenStart == '#' || tokenStart == '@') && hasSuffixAt(token, keyword, 1)
+      (tokenStart == '#' || tokenStart == '@') && hasSuffitwitterAt(token, keyword, 1)
     }
 }
 
 /**
  * A sequence of normalized tokens. The sequence depends on the locale
- * in which the text was parsed and the version of the penguin library
+ * in which the tetwittert was parsed and the version of the penguin library
  * that was used at tokenization time.
  */
-case class TokenSequence private[matching] (toIndexedSeq: IndexedSeq[CharSequence]) {
+case class TokenSequence private[matching] (toIndetwitteredSeq: IndetwitteredSeq[CharSequence]) {
   import TokenSequence.tokenMatches
 
-  private def apply(i: Int): CharSequence = toIndexedSeq(i)
+  private def apply(i: Int): CharSequence = toIndetwitteredSeq(i)
 
-  def isEmpty: Boolean = toIndexedSeq.isEmpty
-  def nonEmpty: Boolean = toIndexedSeq.nonEmpty
+  def isEmpty: Boolean = toIndetwitteredSeq.isEmpty
+  def nonEmpty: Boolean = toIndetwitteredSeq.nonEmpty
 
   /**
    * Does the supplied sequence of keywords match a consecutive sequence
    * of tokens within this sequence?
    */
   def containsKeywordSequence(keywords: TokenSequence): Boolean = {
-    val finalIndex = toIndexedSeq.length - keywords.toIndexedSeq.length
+    val finalIndetwitter = toIndetwitteredSeq.length - keywords.toIndetwitteredSeq.length
 
     @annotation.tailrec
     def matchesAt(offset: Int, i: Int): Boolean =
-      if (i >= keywords.toIndexedSeq.length) true
+      if (i >= keywords.toIndetwitteredSeq.length) true
       else if (tokenMatches(this(i + offset), keywords(i))) matchesAt(offset, i + 1)
       else false
 
     @annotation.tailrec
     def search(offset: Int): Boolean =
-      if (offset > finalIndex) false
+      if (offset > finalIndetwitter) false
       else if (matchesAt(offset, 0)) true
       else search(offset + 1)
 

@@ -22,7 +22,7 @@ package com.twitter.tweetypie.storage
  *                 /9
  *                 ..
  *                 /99
- *             /external
+ *             /etwitterternal
  *                 /100
  *                 ..
  *
@@ -32,8 +32,8 @@ package com.twitter.tweetypie.storage
  *    This is why we do not see keys from [DatasetName]/[TweetId]/fields/internal/2 to [DatasetName]/
  *    [TweetId]/fields/internal/8)
  *
- * 2) Also, the tweet id (which is the field id 1 in Tweet thrift structure) is not explicitly stored
- *    in Manhattan. There is no need to explicitly store it since it is a part of the Pkey
+ * 2) Also, the tweet id (which is the field id 1 in Tweet thrift structure) is not etwitterplicitly stored
+ *    in Manhattan. There is no need to etwitterplicitly store it since it is a part of the Pkey
  */
 case class TweetKey(tweetId: TweetId, lKey: TweetKey.LKey) {
   override def toString: String =
@@ -41,12 +41,12 @@ case class TweetKey(tweetId: TweetId, lKey: TweetKey.LKey) {
 }
 
 object TweetKey {
-  // Manhattan uses lexicographical order for keys. To make sure lexicographical order matches the
+  // Manhattan uses letwittericographical order for keys. To make sure letwittericographical order matches the
   // numerical order, we should pad both tweet id and field ids with leading zeros.
-  // Since tweet id is long and field id is a short, the max width of each can be obtained by doing
-  // Long.MaxValue.toString.length and Short.MaxValue.toString.length respectively
-  private val TweetIdFormatStr = s"%0${Long.MaxValue.toString.length}d"
-  private val FieldIdFormatStr = s"%0${Short.MaxValue.toString.length}d"
+  // Since tweet id is long and field id is a short, the matwitter width of each can be obtained by doing
+  // Long.MatwitterValue.toString.length and Short.MatwitterValue.toString.length respectively
+  private val TweetIdFormatStr = s"%0${Long.MatwitterValue.toString.length}d"
+  private val FieldIdFormatStr = s"%0${Short.MatwitterValue.toString.length}d"
   private[storage] def padTweetIdStr(tweetId: Long): String = TweetIdFormatStr.format(tweetId)
   private[storage] def padFieldIdStr(fieldId: Short): String = FieldIdFormatStr.format(fieldId)
 
@@ -69,7 +69,7 @@ object TweetKey {
   def scrubbedFieldKey(tweetId: TweetId, fieldId: FieldId): TweetKey =
     TweetKey(tweetId, LKey.ScrubbedFieldKey(fieldId))
 
-  // AllFieldsKeyPrefix:       fields
+  // AllFieldsKeyPrefitwitter:       fields
   // CoreFieldsKey:            fields/internal/1  (Stores subset of StoredTweet fields which are
   //                             "packed" into a single CoreFields record)
   // HardDeletionStateKey:     metadata/delete_state
@@ -78,12 +78,12 @@ object TweetKey {
   // UnDeletionStateKey:       metadata/undelete_state
   // ForceAddedStateKey:       metadata/force_added_state
   // FieldKey:                 fields/<group_name>/<padded_field_id> (where <group_name>
-  //                             is 'internal' for field ids < 100 and 'external' for all other
+  //                             is 'internal' for field ids < 100 and 'etwitterternal' for all other
   //                             fields ids)
-  // InternalFieldsKeyPrefix:  fields/internal
+  // InternalFieldsKeyPrefitwitter:  fields/internal
   // PKey:                     <empty string>
   // ScrubbedFieldKey:         metadata/scrubbed_fields/<padded_field_id>
-  // ScrubbedFieldKeyPrefix:   metadata/scrubbed_fields
+  // ScrubbedFieldKeyPrefitwitter:   metadata/scrubbed_fields
   sealed abstract class LKey(override val toString: String)
   object LKey {
     private val HardDeletionRecordLiteral = "delete_state"
@@ -93,33 +93,33 @@ object TweetKey {
     private val ForceAddRecordLiteral = "force_added_state"
     private val ScrubbedFieldsGroup = "scrubbed_fields"
     private val InternalFieldsGroup = "internal"
-    private val ExternalFieldsGroup = "external"
+    private val EtwitterternalFieldsGroup = "etwitterternal"
     private val MetadataCategory = "metadata"
     private val FieldsCategory = "fields"
-    private val InternalFieldsKeyPrefix = s"$FieldsCategory/$InternalFieldsGroup/"
-    private val ExternalFieldsKeyPrefix = s"$FieldsCategory/$ExternalFieldsGroup/"
-    private val ScrubbedFieldsKeyPrefix = s"$MetadataCategory/$ScrubbedFieldsGroup/"
+    private val InternalFieldsKeyPrefitwitter = s"$FieldsCategory/$InternalFieldsGroup/"
+    private val EtwitterternalFieldsKeyPrefitwitter = s"$FieldsCategory/$EtwitterternalFieldsGroup/"
+    private val ScrubbedFieldsKeyPrefitwitter = s"$MetadataCategory/$ScrubbedFieldsGroup/"
 
     sealed abstract class MetadataKey(metadataType: String)
-        extends LKey(s"$MetadataCategory/$metadataType")
-    sealed abstract class StateKey(stateType: String) extends MetadataKey(stateType)
-    case object HardDeletionStateKey extends StateKey(s"$HardDeletionRecordLiteral")
-    case object SoftDeletionStateKey extends StateKey(s"$SoftDeletionRecordLiteral")
-    case object BounceDeletionStateKey extends StateKey(s"$BounceDeletionRecordLiteral")
-    case object UnDeletionStateKey extends StateKey(s"$UnDeletionRecordLiteral")
-    case object ForceAddedStateKey extends StateKey(s"$ForceAddRecordLiteral")
+        etwittertends LKey(s"$MetadataCategory/$metadataType")
+    sealed abstract class StateKey(stateType: String) etwittertends MetadataKey(stateType)
+    case object HardDeletionStateKey etwittertends StateKey(s"$HardDeletionRecordLiteral")
+    case object SoftDeletionStateKey etwittertends StateKey(s"$SoftDeletionRecordLiteral")
+    case object BounceDeletionStateKey etwittertends StateKey(s"$BounceDeletionRecordLiteral")
+    case object UnDeletionStateKey etwittertends StateKey(s"$UnDeletionRecordLiteral")
+    case object ForceAddedStateKey etwittertends StateKey(s"$ForceAddRecordLiteral")
 
     case class ScrubbedFieldKey(fieldId: FieldId)
-        extends MetadataKey(s"$ScrubbedFieldsGroup/${padFieldIdStr(fieldId)}")
+        etwittertends MetadataKey(s"$ScrubbedFieldsGroup/${padFieldIdStr(fieldId)}")
     val ScrubbedGeoFieldKey: LKey.ScrubbedFieldKey = ScrubbedFieldKey(TweetFields.geoFieldId)
 
     /**
      * LKey that has one of many possible fields id. This generalize over
      * internal and additional fields key.
      */
-    sealed abstract class FieldKey(prefix: String) extends LKey(toString) {
+    sealed abstract class FieldKey(prefitwitter: String) etwittertends LKey(toString) {
       def fieldId: FieldId
-      override val toString: String = prefix + padFieldIdStr(fieldId)
+      override val toString: String = prefitwitter + padFieldIdStr(fieldId)
     }
     object FieldKey {
       def apply(fieldId: FieldId): FieldKey =
@@ -129,19 +129,19 @@ object TweetKey {
         }
     }
 
-    case class InternalFieldsKey(fieldId: FieldId) extends FieldKey(InternalFieldsKeyPrefix) {
+    case class InternalFieldsKey(fieldId: FieldId) etwittertends FieldKey(InternalFieldsKeyPrefitwitter) {
       assert(fieldId < TweetFields.firstAdditionalFieldId)
     }
-    case class AdditionalFieldsKey(fieldId: FieldId) extends FieldKey(ExternalFieldsKeyPrefix) {
+    case class AdditionalFieldsKey(fieldId: FieldId) etwittertends FieldKey(EtwitterternalFieldsKeyPrefitwitter) {
       assert(fieldId >= TweetFields.firstAdditionalFieldId)
     }
     val CoreFieldsKey: LKey.InternalFieldsKey = InternalFieldsKey(TweetFields.rootCoreFieldId)
 
-    case class Unknown private (str: String) extends LKey(str)
+    case class Unknown private (str: String) etwittertends LKey(str)
 
     def fromString(str: String): LKey = {
-      def extractFieldId(prefix: String): FieldId =
-        str.slice(prefix.length, str.length).toShort
+      def etwittertractFieldId(prefitwitter: String): FieldId =
+        str.slice(prefitwitter.length, str.length).toShort
 
       str match {
         case CoreFieldsKey.toString => CoreFieldsKey
@@ -151,12 +151,12 @@ object TweetKey {
         case UnDeletionStateKey.toString => UnDeletionStateKey
         case ForceAddedStateKey.toString => ForceAddedStateKey
         case ScrubbedGeoFieldKey.toString => ScrubbedGeoFieldKey
-        case _ if str.startsWith(InternalFieldsKeyPrefix) =>
-          InternalFieldsKey(extractFieldId(InternalFieldsKeyPrefix))
-        case _ if str.startsWith(ExternalFieldsKeyPrefix) =>
-          AdditionalFieldsKey(extractFieldId(ExternalFieldsKeyPrefix))
-        case _ if str.startsWith(ScrubbedFieldsKeyPrefix) =>
-          ScrubbedFieldKey(extractFieldId(ScrubbedFieldsKeyPrefix))
+        case _ if str.startsWith(InternalFieldsKeyPrefitwitter) =>
+          InternalFieldsKey(etwittertractFieldId(InternalFieldsKeyPrefitwitter))
+        case _ if str.startsWith(EtwitterternalFieldsKeyPrefitwitter) =>
+          AdditionalFieldsKey(etwittertractFieldId(EtwitterternalFieldsKeyPrefitwitter))
+        case _ if str.startsWith(ScrubbedFieldsKeyPrefitwitter) =>
+          ScrubbedFieldKey(etwittertractFieldId(ScrubbedFieldsKeyPrefitwitter))
         case _ => Unknown(str)
       }
     }

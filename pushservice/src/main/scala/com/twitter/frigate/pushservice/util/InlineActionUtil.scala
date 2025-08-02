@@ -24,8 +24,8 @@ object InlineActionUtil {
   /**
    * Util function to build web inline actions for Ibis
    * @param actions list of inline actions to be hydrated depending on the CRT
-   * @param enableForDesktopWeb if web inline actions should be shown on desktop RWeb, for experimentation purpose
-   * @param enableForMobileWeb if web inline actions should be shwon on mobile RWeb, for experimentation purpose
+   * @param enableForDesktopWeb if web inline actions should be shown on desktop RWeb, for etwitterperimentation purpose
+   * @param enableForMobileWeb if web inline actions should be shwon on mobile RWeb, for etwitterperimentation purpose
    * @return Params for web inline actions to be consumed by `smart.inline.actions.web.mustache` in Ibis
    */
   def getGeneratedTweetInlineActionsForWeb(
@@ -61,7 +61,7 @@ object InlineActionUtil {
     Map(
       "actions" -> actions
         .map(_.toString.toLowerCase)
-        .zipWithIndex
+        .zipWithIndetwitter
         .map {
           case (a: String, i: Int) =>
             Map("action" -> a) ++ Map(
@@ -132,23 +132,23 @@ object InlineActionUtil {
   }
 
   /**
-   * Given a serialized inline action v2, update the action at index to the given new action.
-   * If given index is bigger than current action length, append the given inline action at the end.
+   * Given a serialized inline action v2, update the action at indetwitter to the given new action.
+   * If given indetwitter is bigger than current action length, append the given inline action at the end.
    * @param serialized_inline_actions_v2 the original action in serialized version
    * @param actionOption an Option of the new action to replace the old one
-   * @param index the position where the old action will be replaced
+   * @param indetwitter the position where the old action will be replaced
    * @return a new serialized inline action v2
    */
   def patchInlineActionAtPosition(
     serialized_inline_actions_v2: String,
     actionOption: Option[NotificationCustomAction],
-    index: Int
+    indetwitter: Int
   ): String = {
     val originalActions: Seq[NotificationCustomAction] = deserializeActionsFromString(
       serialized_inline_actions_v2).actions
     val newActions = actionOption match {
-      case Some(action) if index >= originalActions.size => originalActions ++ Seq(action)
-      case Some(action) => originalActions.updated(index, action)
+      case Some(action) if indetwitter >= originalActions.size => originalActions ++ Seq(action)
+      case Some(action) => originalActions.updated(indetwitter, action)
       case _ => originalActions
     }
     serializeActionsToBase64(NotificationCustomActions(newActions))
@@ -181,7 +181,7 @@ object InlineActionUtil {
   }
 
   /**
-   * Return Tweet inline action ibis2 model values after applying experiment logic
+   * Return Tweet inline action ibis2 model values after applying etwitterperiment logic
    */
   def getTweetInlineActionValue(target: Target): Future[Map[String, String]] = {
     if (target.isLoggedOutUser) {

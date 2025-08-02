@@ -5,6 +5,6 @@ import com.twitter.util.Duration
 
 object UserActivityPredicateParams {
   case object HeavyTweeterEnabled
-      extends FSParam[Boolean]("user_activity_predicate_heavy_tweeter_enabled", false)
+      etwittertends FSParam[Boolean]("user_activity_predicate_heavy_tweeter_enabled", false)
   val CacheTTL: Duration = Duration.fromHours(6)
 }

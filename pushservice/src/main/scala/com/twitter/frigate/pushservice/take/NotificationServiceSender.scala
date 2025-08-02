@@ -2,7 +2,7 @@ package com.twitter.frigate.pushservice.take
 
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.logger.MRLogger
-import com.twitter.frigate.common.ntab.InvalidNTABWriteRequestException
+import com.twitter.frigate.common.ntab.InvalidNTABWriteRequestEtwitterception
 import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
 import com.twitter.frigate.pushservice.model.PushTypes.Target
 import com.twitter.frigate.pushservice.params.PushParams
@@ -14,39 +14,39 @@ import com.twitter.timelines.configapi.Param
 import com.twitter.util.Future
 import scala.util.control.NoStackTrace
 
-class NtabCopyIdNotFoundException(private val message: String)
-    extends Exception(message)
+class NtabCopyIdNotFoundEtwitterception(private val message: String)
+    etwittertends Etwitterception(message)
     with NoStackTrace
 
-class InvalidNtabCopyIdException(private val message: String)
-    extends Exception(message)
+class InvalidNtabCopyIdEtwitterception(private val message: String)
+    etwittertends Etwitterception(message)
     with NoStackTrace
 
 object NotificationServiceSender {
 
-  def generateSocialContextTextEntities(
+  def generateSocialContetwittertTetwittertEntities(
     ntabDisplayNamesAndIdsFut: Future[Seq[(String, Long)]],
     otherCountFut: Future[Int]
-  ): Future[Seq[DisplayTextEntity]] = {
+  ): Future[Seq[DisplayTetwittertEntity]] = {
     Future.join(ntabDisplayNamesAndIdsFut, otherCountFut).map {
       case (namesWithIdInOrder, otherCount) =>
-        val displays = namesWithIdInOrder.zipWithIndex.map {
-          case ((name, id), index) =>
-            DisplayTextEntity(
-              name = "user" + s"${index + 1}",
-              value = TextValue.Text(name),
+        val displays = namesWithIdInOrder.zipWithIndetwitter.map {
+          case ((name, id), indetwitter) =>
+            DisplayTetwittertEntity(
+              name = "user" + s"${indetwitter + 1}",
+              value = TetwittertValue.Tetwittert(name),
               emphasis = true,
               userId = Some(id)
             )
         } ++ Seq(
-          DisplayTextEntity(name = "nameCount", value = TextValue.Number(namesWithIdInOrder.size))
+          DisplayTetwittertEntity(name = "nameCount", value = TetwittertValue.Number(namesWithIdInOrder.size))
         )
 
         val otherDisplay = if (otherCount > 0) {
           Some(
-            DisplayTextEntity(
+            DisplayTetwittertEntity(
               name = "otherCount",
-              value = TextValue.Number(otherCount)
+              value = TetwittertValue.Number(otherCount)
             )
           )
         } else None
@@ -54,30 +54,30 @@ object NotificationServiceSender {
     }
   }
 
-  def getDisplayTextEntityFromUser(
+  def getDisplayTetwittertEntityFromUser(
     userOpt: Option[User],
     fieldName: String,
     isBold: Boolean
-  ): Option[DisplayTextEntity] = {
+  ): Option[DisplayTetwittertEntity] = {
     for {
       user <- userOpt
       profile <- user.profile
     } yield {
-      DisplayTextEntity(
+      DisplayTetwittertEntity(
         name = fieldName,
-        value = TextValue.Text(profile.name),
+        value = TetwittertValue.Tetwittert(profile.name),
         emphasis = isBold,
         userId = Some(user.id)
       )
     }
   }
 
-  def getDisplayTextEntityFromUser(
+  def getDisplayTetwittertEntityFromUser(
     user: Future[Option[User]],
     fieldName: String,
     isBold: Boolean
-  ): Future[Option[DisplayTextEntity]] = {
-    user.map { getDisplayTextEntityFromUser(_, fieldName, isBold) }
+  ): Future[Option[DisplayTetwittertEntity]] = {
+    user.map { getDisplayTetwittertEntityFromUser(_, fieldName, isBold) }
   }
 }
 
@@ -94,7 +94,7 @@ class NotificationServiceSender(
   enableForEveryoneParam: Param[Boolean]
 )(
   implicit globalStats: StatsReceiver)
-    extends ReadableStore[NotificationServiceRequest, CreateGenericNotificationResponse] {
+    etwittertends ReadableStore[NotificationServiceRequest, CreateGenericNotificationResponse] {
 
   val log = MRLogger(this.getClass.getName)
 
@@ -149,7 +149,7 @@ class NotificationServiceSender(
             notifRequest.candidate.ntabRequest,
             ntabWritesEnabledForCandidate(notifRequest.candidate)).flatMap {
             case (Some(ntabRequest), ntabWritesEnabled) if ntabWritesEnabled =>
-              if (ntabRequest.expiryTimeMillis.nonEmpty) { ntabTTLForCandidate.incr() }
+              if (ntabRequest.etwitterpiryTimeMillis.nonEmpty) { ntabTTLForCandidate.incr() }
               sendNTabRequest(
                 ntabRequest,
                 notifRequest.candidate.target,
@@ -190,17 +190,17 @@ class NotificationServiceSender(
         if (response.responseType.equals(CreateGenericNotificationResponseType.DecideredOff)) {
           deciderTurnedOffResponse.counter(s"$crt").incr()
           deciderTurnedOffResponse.counter(s"${genericNotificationRequest.genericType}").incr()
-          throw InvalidNTABWriteRequestException("Decider is turned off")
+          throw InvalidNTABWriteRequestEtwitterception("Decider is turned off")
         } else {
           Some(response)
         }
       }
-      .onFailure { ex =>
-        stats.counter(s"error_${ex.getClass.getCanonicalName}").incr()
+      .onFailure { etwitter =>
+        stats.counter(s"error_${etwitter.getClass.getCanonicalName}").incr()
         failedWriteScope.counter(s"${crt}").incr()
         log
           .error(
-            ex,
+            etwitter,
             s"NTAB failure $notifSvcReq"
           )
       }

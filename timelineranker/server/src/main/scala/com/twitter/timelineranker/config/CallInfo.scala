@@ -7,16 +7,16 @@ import java.util.concurrent.TimeUnit
 /**
  * Information about a single method call.
  *
- * The purpose of this class is to allow one to express a call graph and latency associated with each (sub)call.
+ * The purpose of this class is to allow one to etwitterpress a call graph and latency associated with each (sub)call.
  * Once a call graph is defined, calling getOverAllLatency() off the top level call returns total time taken by that call.
  * That value can then be compared with the timeout budget allocated to that call to see if the
  * value fits within the overall timeout budget of that call.
  *
- * This is useful in case of a complex call graph where it is hard to mentally estimate the effect on
+ * This is useful in case of a completwitter call graph where it is hard to mentally estimate the effect on
  * overall latency when updating timeout value of one or more sub-calls.
  *
  * @param methodName name of the called method.
- * @param latency P999 Latency incurred in calling a service if the method calls an external service. Otherwise 0.
+ * @param latency P999 Latency incurred in calling a service if the method calls an etwitterternal service. Otherwise 0.
  * @param dependsOn Other calls that this call depends on.
  */
 case class Call(
@@ -31,7 +31,7 @@ case class Call(
     val dependencyLatency = if (dependsOn.isEmpty) {
       0.milliseconds
     } else {
-      dependsOn.map(_.getOverAllLatency).max
+      dependsOn.map(_.getOverAllLatency).matwitter
     }
     latency + dependencyLatency
   }
@@ -47,9 +47,9 @@ case class Call(
   }
 
   def getLatencyPaths(sb: StringBuilder, level: Int): Unit = {
-    sb.append(s"${getPrefix(level)} ${getLatencyString(getOverAllLatency)} $methodName\n")
+    sb.append(s"${getPrefitwitter(level)} ${getLatencyString(getOverAllLatency)} $methodName\n")
     if ((latency > 0.milliseconds) && !dependsOn.isEmpty) {
-      sb.append(s"${getPrefix(level + 1)} ${getLatencyString(latency)} self\n")
+      sb.append(s"${getPrefitwitter(level + 1)} ${getLatencyString(latency)} self\n")
     }
     dependsOn.foreach(_.getLatencyPaths(sb, level + 1))
   }
@@ -59,7 +59,7 @@ case class Call(
     f"[$latencyMs%3d]"
   }
 
-  private def getPrefix(level: Int): String = {
+  private def getPrefitwitter(level: Int): String = {
     " " * (level * 4) + "--"
   }
 }

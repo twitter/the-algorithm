@@ -2,27 +2,27 @@ package com.twitter.tsp.stores
 
 import com.twitter.conversions.DurationOps._
 import com.twitter.finagle.FailureFlags.flagsOf
-import com.twitter.finagle.mux.ClientDiscardedRequestException
+import com.twitter.finagle.mutwitter.ClientDiscardedRequestEtwitterception
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.store.interests
 import com.twitter.simclusters_v2.common.UserId
 import com.twitter.storehaus.ReadableStore
 import com.twitter.topiclisting.ProductId
 import com.twitter.topiclisting.TopicListing
-import com.twitter.topiclisting.TopicListingViewerContext
+import com.twitter.topiclisting.TopicListingViewerContetwittert
 import com.twitter.topiclisting.{SemanticCoreEntityId => ScEntityId}
 import com.twitter.tsp.thriftscala.TopicFollowType
 import com.twitter.tsp.thriftscala.TopicListingSetting
 import com.twitter.tsp.thriftscala.TopicSocialProofFilteringBypassMode
 import com.twitter.util.Duration
 import com.twitter.util.Future
-import com.twitter.util.TimeoutException
+import com.twitter.util.TimeoutEtwitterception
 import com.twitter.util.Timer
 
 class UttTopicFilterStore(
   topicListing: TopicListing,
   userOptOutTopicsStore: ReadableStore[interests.UserId, TopicResponses],
-  explicitFollowingTopicsStore: ReadableStore[interests.UserId, TopicResponses],
+  etwitterplicitFollowingTopicsStore: ReadableStore[interests.UserId, TopicResponses],
   notInterestedTopicsStore: ReadableStore[interests.UserId, TopicResponses],
   localizedUttRecommendableTopicsStore: ReadableStore[LocalizedUttTopicNameRequest, Set[Long]],
   timer: Timer,
@@ -30,8 +30,8 @@ class UttTopicFilterStore(
   import UttTopicFilterStore._
 
   // Set of blacklisted SemanticCore IDs that are paused.
-  private[this] def getPausedTopics(topicCtx: TopicListingViewerContext): Set[ScEntityId] = {
-    topicListing.getPausedTopics(topicCtx)
+  private[this] def getPausedTopics(topicCttwitter: TopicListingViewerContetwittert): Set[ScEntityId] = {
+    topicListing.getPausedTopics(topicCttwitter)
   }
 
   private[this] def getOptOutTopics(userId: Long): Future[Set[ScEntityId]] = {
@@ -41,17 +41,17 @@ class UttTopicFilterStore(
         responseOpt
           .map { responses => responses.responses.map(_.entityId) }.getOrElse(Seq.empty).toSet
       }.raiseWithin(DefaultOptOutTimeout)(timer).rescue {
-        case err: TimeoutException =>
+        case err: TimeoutEtwitterception =>
           stats.counter("getOptOutTopicsTimeout").incr()
-          Future.exception(err)
-        case err: ClientDiscardedRequestException
+          Future.etwitterception(err)
+        case err: ClientDiscardedRequestEtwitterception
             if flagsOf(err).contains("interrupted") && flagsOf(err)
               .contains("ignorable") =>
           stats.counter("getOptOutTopicsDiscardedBackupRequest").incr()
-          Future.exception(err)
+          Future.etwitterception(err)
         case err =>
           stats.counter("getOptOutTopicsFailure").incr()
-          Future.exception(err)
+          Future.etwitterception(err)
       }
   }
 
@@ -62,28 +62,28 @@ class UttTopicFilterStore(
         responseOpt
           .map { responses => responses.responses.map(_.entityId) }.getOrElse(Seq.empty).toSet
       }.raiseWithin(DefaultNotInterestedInTimeout)(timer).rescue {
-        case err: TimeoutException =>
+        case err: TimeoutEtwitterception =>
           stats.counter("getNotInterestedInTimeout").incr()
-          Future.exception(err)
-        case err: ClientDiscardedRequestException
+          Future.etwitterception(err)
+        case err: ClientDiscardedRequestEtwitterception
             if flagsOf(err).contains("interrupted") && flagsOf(err)
               .contains("ignorable") =>
           stats.counter("getNotInterestedInDiscardedBackupRequest").incr()
-          Future.exception(err)
+          Future.etwitterception(err)
         case err =>
           stats.counter("getNotInterestedInFailure").incr()
-          Future.exception(err)
+          Future.etwitterception(err)
       }
   }
 
   private[this] def getFollowedTopics(userId: Long): Future[Set[TopicResponse]] = {
     stats.counter("getFollowedTopicsCount").incr()
 
-    explicitFollowingTopicsStore
+    etwitterplicitFollowingTopicsStore
       .get(userId).map { responseOpt =>
         responseOpt.map(_.responses.toSet).getOrElse(Set.empty)
       }.raiseWithin(DefaultInterestedInTimeout)(timer).rescue {
-        case _: TimeoutException =>
+        case _: TimeoutEtwitterception =>
           stats.counter("getFollowedTopicsTimeout").incr()
           Future(Set.empty)
         case _ =>
@@ -97,14 +97,14 @@ class UttTopicFilterStore(
   }
 
   private[this] def getWhitelistTopicIds(
-    normalizedContext: TopicListingViewerContext,
+    normalizedContetwittert: TopicListingViewerContetwittert,
     enableInternationalTopics: Boolean
   ): Future[Set[ScEntityId]] = {
     stats.counter("getWhitelistTopicIdsCount").incr()
 
     val uttRequest = LocalizedUttTopicNameRequest(
       productId = ProductId.Followable,
-      viewerContext = normalizedContext,
+      viewerContetwittert = normalizedContetwittert,
       enableInternationalTopics = enableInternationalTopics
     )
     localizedUttRecommendableTopicsStore
@@ -120,7 +120,7 @@ class UttTopicFilterStore(
   private[this] def getDenyListTopicIdsForUser(
     userId: UserId,
     topicListingSetting: TopicListingSetting,
-    context: TopicListingViewerContext,
+    contetwittert: TopicListingViewerContetwittert,
     bypassModes: Option[Set[TopicSocialProofFilteringBypassMode]]
   ): Future[Set[ScEntityId]] = {
 
@@ -138,12 +138,12 @@ class UttTopicFilterStore(
     }
 
     val notInterestedTopicIdsFuture =
-      if (bypassModes.exists(_.contains(TopicSocialProofFilteringBypassMode.NotInterested))) {
+      if (bypassModes.etwitterists(_.contains(TopicSocialProofFilteringBypassMode.NotInterested))) {
         Future(Set.empty[ScEntityId])
       } else {
         getNotInterestedIn(userId)
       }
-    val pausedTopicIdsFuture = Future.value(getPausedTopics(context))
+    val pausedTopicIdsFuture = Future.value(getPausedTopics(contetwittert))
 
     Future
       .collect(
@@ -170,12 +170,12 @@ class UttTopicFilterStore(
   def getAllowListTopicsForUser(
     userId: UserId,
     topicListingSetting: TopicListingSetting,
-    context: TopicListingViewerContext,
+    contetwittert: TopicListingViewerContetwittert,
     bypassModes: Option[Set[TopicSocialProofFilteringBypassMode]]
   ): Future[Map[ScEntityId, Option[TopicFollowType]]] = {
 
     /**
-     * Title: an illustrative table to explain how allow list is composed
+     * Title: an illustrative table to etwitterplain how allow list is composed
      * AllowList = WhiteList - DenyList - OptOutTopics - PausedTopics - NotInterestedInTopics
      *
      * TopicListingSetting: Following                 ImplicitFollow                       All                       Followable
@@ -191,13 +191,13 @@ class UttTopicFilterStore(
       // "All" means all the UTT entity is qualified. So don't need to fetch the Whitelist anymore.
       case TopicListingSetting.All => Future.value(Map.empty)
       case TopicListingSetting.Following =>
-        getFollowingTopicsForUserWithTimestamp(userId, context, bypassModes).map {
+        getFollowingTopicsForUserWithTimestamp(userId, contetwittert, bypassModes).map {
           _.mapValues(_ => Some(TopicFollowType.Following))
         }
       case TopicListingSetting.ImplicitFollow =>
         getDiff(
-          getWhitelistTopicIds(context, enableInternationalTopics = true),
-          getDenyListTopicIdsForUser(userId, topicListingSetting, context, bypassModes)).map {
+          getWhitelistTopicIds(contetwittert, enableInternationalTopics = true),
+          getDenyListTopicIdsForUser(userId, topicListingSetting, contetwittert, bypassModes)).map {
           _.map { scEntityId =>
             scEntityId -> Some(TopicFollowType.ImplicitFollow)
           }.toMap
@@ -205,8 +205,8 @@ class UttTopicFilterStore(
       case _ =>
         val followedTopicIdsFut = getFollowedTopicIds(userId)
         val allowListTopicIdsFut = getDiff(
-          getWhitelistTopicIds(context, enableInternationalTopics = true),
-          getDenyListTopicIdsForUser(userId, topicListingSetting, context, bypassModes))
+          getWhitelistTopicIds(contetwittert, enableInternationalTopics = true),
+          getDenyListTopicIdsForUser(userId, topicListingSetting, contetwittert, bypassModes))
         Future.join(allowListTopicIdsFut, followedTopicIdsFut).map {
           case (allowListTopicId, followedTopicIds) =>
             allowListTopicId.map { scEntityId =>
@@ -220,7 +220,7 @@ class UttTopicFilterStore(
 
   private[this] def getFollowingTopicsForUserWithTimestamp(
     userId: UserId,
-    context: TopicListingViewerContext,
+    contetwittert: TopicListingViewerContetwittert,
     bypassModes: Option[Set[TopicSocialProofFilteringBypassMode]]
   ): Future[Map[ScEntityId, Option[Long]]] = {
 
@@ -231,7 +231,7 @@ class UttTopicFilterStore(
     followedTopicIdToTimestampFut.flatMap { followedTopicIdToTimestamp =>
       getDiff(
         Future(followedTopicIdToTimestamp.keySet),
-        getDenyListTopicIdsForUser(userId, TopicListingSetting.Following, context, bypassModes)
+        getDenyListTopicIdsForUser(userId, TopicListingSetting.Following, contetwittert, bypassModes)
       ).map {
         _.map { scEntityId =>
           scEntityId -> followedTopicIdToTimestamp.get(scEntityId).flatten

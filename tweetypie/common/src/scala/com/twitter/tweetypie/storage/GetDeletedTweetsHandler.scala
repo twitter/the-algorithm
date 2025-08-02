@@ -2,7 +2,7 @@ package com.twitter.tweetypie.storage
 
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.kv.DeniedManhattanException
+import com.twitter.storage.client.manhattan.kv.DeniedManhattanEtwitterception
 import com.twitter.tweetypie.storage.Response.TweetResponseCode
 import com.twitter.tweetypie.storage.TweetUtils._
 import com.twitter.tweetypie.storage_internal.thriftscala.StoredTweet
@@ -16,28 +16,28 @@ object DeleteState {
    * This tweet is deleted but has not been permanently deleted from Manhattan. Tweets in this state
    * may be undeleted.
    */
-  case object SoftDeleted extends DeleteState
+  case object SoftDeleted etwittertends DeleteState
 
   /**
    * This tweet is deleted after being bounced for violating the Twitter Rules but has not been
    * permanently deleted from Manhattan. Tweets in this state may NOT be undeleted.
    */
-  case object BounceDeleted extends DeleteState
+  case object BounceDeleted etwittertends DeleteState
 
   /**
    * This tweet has been permanently deleted from Manhattan.
    */
-  case object HardDeleted extends DeleteState
+  case object HardDeleted etwittertends DeleteState
 
   /**
-   * There is no data in Manhattan to distinguish this tweet id from one that never existed.
+   * There is no data in Manhattan to distinguish this tweet id from one that never etwitteristed.
    */
-  case object NotFound extends DeleteState
+  case object NotFound etwittertends DeleteState
 
   /**
-   * This tweet exists and is not in a deleted state.
+   * This tweet etwitterists and is not in a deleted state.
    */
-  case object NotDeleted extends DeleteState
+  case object NotDeleted etwittertends DeleteState
 }
 
 case class DeletedTweetResponse(
@@ -65,12 +65,12 @@ object GetDeletedTweetsHandler {
               case Some(m: TweetStateRecord.SoftDeleted) => softDeleted(m, storedTweet)
               case Some(m: TweetStateRecord.BounceDeleted) => bounceDeleted(m, storedTweet)
               case Some(m: TweetStateRecord.HardDeleted) => hardDeleted(m, storedTweet)
-              case _ if storedTweet.getFieldBlobs(expectedFields).isEmpty => notFound(tweetId)
+              case _ if storedTweet.getFieldBlobs(etwitterpectedFields).isEmpty => notFound(tweetId)
               case _ => notDeleted(tweetId, storedTweet)
             }
           }
           .handle {
-            case _: DeniedManhattanException =>
+            case _: DeniedManhattanEtwitterception =>
               DeletedTweetResponse(
                 tweetId,
                 TweetResponseCode.OverCapacity,
@@ -78,10 +78,10 @@ object GetDeletedTweetsHandler {
                 None
               )
 
-            case NonFatal(ex) =>
+            case NonFatal(etwitter) =>
               TweetUtils.log.warning(
-                ex,
-                s"Unhandled exception in GetDeletedTweetsHandler for tweetId: $tweetId"
+                etwitter,
+                s"Unhandled etwitterception in GetDeletedTweetsHandler for tweetId: $tweetId"
               )
               DeletedTweetResponse(tweetId, TweetResponseCode.Failure, DeleteState.NotFound, None)
           }

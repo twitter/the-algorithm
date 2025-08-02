@@ -10,8 +10,8 @@ import com.twitter.timelines.configapi._
 import com.twitter.timelines.configapi.decider.DeciderSwitchOverrideValue
 import com.twitter.timelines.configapi.decider.GuestRecipient
 import com.twitter.timelines.configapi.decider.RecipientBuilder
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class DeciderConfigs @Inject() (deciderGateBuilder: DeciderGateBuilder) {
@@ -36,9 +36,9 @@ object DeciderConfigs {
     HomeTimelineTweetRecsParams.EnableProduct -> DeciderKey.EnableHomeTimelineTweetRecsProduct,
   )
 
-  object UserOrGuestOrRequest extends RecipientBuilder {
+  object UserOrGuestOrRequest etwittertends RecipientBuilder {
 
-    def apply(requestContext: BaseRequestContext): Option[Recipient] = requestContext match {
+    def apply(requestContetwittert: BaseRequestContetwittert): Option[Recipient] = requestContetwittert match {
       case c: WithUserId if c.userId.isDefined =>
         c.userId.map(SimpleRecipient)
       case c: WithGuestId if c.guestId.isDefined =>
@@ -46,7 +46,7 @@ object DeciderConfigs {
       case c: WithGuestId =>
         RecipientBuilder.Request(c)
       case _ =>
-        throw new UndefinedUserIdNorGuestIDException(requestContext)
+        throw new UndefinedUserIdNorGuestIDEtwitterception(requestContetwittert)
     }
   }
 }

@@ -44,20 +44,20 @@ Outputs
 template<typename InputType>
 class DecodeDataRecord : public OpKernel {
  public:
-  explicit DecodeDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {
+  etwitterplicit DecodeDataRecord(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {
     std::vector<int64> keep_features;
     std::vector<int64> keep_codes;
 
     std::vector<int64> label_features;
     std::vector<int64> weight_features;
 
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
-    OP_REQUIRES_OK(context, context->GetAttr("label_features", &label_features));
-    OP_REQUIRES_OK(context, context->GetAttr("weight_features", &weight_features));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("keep_features", &keep_features));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("keep_codes", &keep_codes));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("label_features", &label_features));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("weight_features", &weight_features));
 
-    OP_REQUIRES(context, keep_features.size() == keep_codes.size(),
+    OP_REQUIRES(contetwittert, keep_features.size() == keep_codes.size(),
                 errors::InvalidArgument("keep keys and values must have same size."));
 
 #ifdef USE_DENSE_HASH
@@ -84,14 +84,14 @@ class DecodeDataRecord : public OpKernel {
   twml::Map<int64_t, int64_t> m_labels_map;
   twml::Map<int64_t, int64_t> m_weights_map;
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
       DataRecordResource *resource = nullptr;
-      OP_REQUIRES_OK(context, makeResourceHandle<DataRecordResource>(context, 0, &resource));
+      OP_REQUIRES_OK(contetwittert, makeResourceHandle<DataRecordResource>(contetwittert, 0, &resource));
 
       // Store the input bytes in the resource so it isnt freed before the resource.
       // This is necessary because we are not copying the contents for tensors.
-      resource->input = context->input(0);
+      resource->input = contetwittert->input(0);
       int batch_size = getBatchSize<InputType>(resource->input);
       int num_labels = static_cast<int>(m_labels_map.size());
       int num_weights = static_cast<int>(m_weights_map.size());
@@ -121,13 +121,13 @@ class DecodeDataRecord : public OpKernel {
       resource->keep_map = &m_keep_map;
       resource->num_weights = num_weights;
       resource->num_labels = num_labels;
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
 
-int64_t count_if_exists(const twml::DataRecord::BinaryFeatures &set,
+int64_t count_if_etwitterists(const twml::DataRecord::BinaryFeatures &set,
                         const twml::Map<int64_t, int64_t> *const keep_map) {
   int64_t count = 0;
   for (const auto &key : set) {
@@ -139,7 +139,7 @@ int64_t count_if_exists(const twml::DataRecord::BinaryFeatures &set,
 
 // This works for continuous, discrete, and string features
 template<typename V>
-int64_t count_if_exists(const twml::Map<int64_t, V> &map,
+int64_t count_if_etwitterists(const twml::Map<int64_t, V> &map,
                         const twml::Map<int64_t, int64_t> *const keep_map) {
   int64_t count = 0;
   for (const auto &elem : map) {
@@ -149,7 +149,7 @@ int64_t count_if_exists(const twml::Map<int64_t, V> &map,
   return count;
 }
 
-int64_t count_if_exists(const twml::DataRecord::SparseBinaryFeatures &map,
+int64_t count_if_etwitterists(const twml::DataRecord::SparseBinaryFeatures &map,
                         const twml::Map<int64_t, int64_t> *const keep_map) {
   int64_t count = 0;
   for (const auto &elem : map) {
@@ -159,7 +159,7 @@ int64_t count_if_exists(const twml::DataRecord::SparseBinaryFeatures &map,
   return count;
 }
 
-int64_t count_if_exists(const twml::DataRecord::SparseContinuousFeatures &map,
+int64_t count_if_etwitterists(const twml::DataRecord::SparseContinuousFeatures &map,
                         const twml::Map<int64_t, int64_t> *const keep_map) {
   int64_t count = 0;
   for (const auto &elem : map) {
@@ -174,7 +174,7 @@ REGISTER_OP("GetBinaryFeatures")
 .Output("ids: int64")
 .Output("keys: int64")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that reads binary features
@@ -182,26 +182,26 @@ Input
   data_record_handle: Resource handle to DataRecord
 
 Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
+  ids: ids specifies the indetwitter of the records[id] in the batch (int64)
   keys: DataRecord keys (int64)
   values: always set to 1 (float)
 )doc");
 
 class GetBinaryFeatures : public OpKernel {
  public:
-  explicit GetBinaryFeatures(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  etwitterplicit GetBinaryFeatures(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordResource>(contetwittert, 0);
       const auto &records = handle->records;
       const auto &common = handle->common;
 
-      int64 common_binary_size = count_if_exists(common.getBinary(), handle->keep_map);
+      int64 common_binary_size = count_if_etwitterists(common.getBinary(), handle->keep_map);
       int64 total_binary_size = records.size() * common_binary_size;
       for (int id = 0; id < records.size(); id++) {
-        total_binary_size += count_if_exists(handle->records[id].getBinary(), handle->keep_map);
+        total_binary_size += count_if_etwitterists(handle->records[id].getBinary(), handle->keep_map);
       }
       const int total_size = static_cast<int>(total_binary_size);
 
@@ -209,9 +209,9 @@ class GetBinaryFeatures : public OpKernel {
       Tensor* keys = nullptr;
       Tensor* ids = nullptr;
       Tensor* values = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &values));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, shape, &ids));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(1, shape, &keys));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(2, shape, &values));
 
       uint64_t offset = 0;
       auto keys_flat = keys->flat<int64>();
@@ -234,8 +234,8 @@ class GetBinaryFeatures : public OpKernel {
       }
       // All the values for binary features are 1.
       std::fill(values_flat.data(), values_flat.data() + total_size, 1);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -245,7 +245,7 @@ REGISTER_OP("GetContinuousFeatures")
 .Output("ids: int64")
 .Output("keys: int64")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that reads continuous features
@@ -253,26 +253,26 @@ Input
   data_record_handle: Resource handle to DataRecord
 
 Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
+  ids: ids specifies the indetwitter of the records[id] in the batch (int64)
   keys: Datarecord keys (int64)
   values: Datarecord values(float)
 )doc");
 
 class GetContinuousFeatures : public OpKernel {
  public:
-  explicit GetContinuousFeatures(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  etwitterplicit GetContinuousFeatures(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordResource>(contetwittert, 0);
       const auto &records = handle->records;
       const auto &common = handle->common;
 
-      int64 common_continuous_size = count_if_exists(common.getContinuous(), handle->keep_map);
+      int64 common_continuous_size = count_if_etwitterists(common.getContinuous(), handle->keep_map);
       int64 total_continuous_size = records.size() * common_continuous_size;
       for (int id = 0; id < records.size(); id++) {
-        total_continuous_size += count_if_exists(handle->records[id].getContinuous(),
+        total_continuous_size += count_if_etwitterists(handle->records[id].getContinuous(),
                                                  handle->keep_map);
       }
       const int total_size = static_cast<int>(total_continuous_size);
@@ -281,9 +281,9 @@ class GetContinuousFeatures : public OpKernel {
       Tensor* keys = nullptr;
       Tensor* values = nullptr;
       Tensor* ids = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &values));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, shape, &ids));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(1, shape, &keys));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(2, shape, &values));
 
       uint64_t offset = 0;
       auto keys_flat = keys->flat<int64>();
@@ -306,8 +306,8 @@ class GetContinuousFeatures : public OpKernel {
           offset++;
         }
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -317,7 +317,7 @@ REGISTER_OP("GetDiscreteFeatures")
 .Output("ids: int64")
 .Output("keys: int64")
 .Output("values: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that reads discrete features
@@ -325,26 +325,26 @@ Input
   data_record_handle: Resource handle to DataRecord
 
 Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
+  ids: ids specifies the indetwitter of the records[id] in the batch (int64)
   keys: DataRecord keys (int64)
   values: DataRecord values(int64)
 )doc");
 
 class GetDiscreteFeatures : public OpKernel {
  public:
-  explicit GetDiscreteFeatures(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  etwitterplicit GetDiscreteFeatures(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordResource>(contetwittert, 0);
       const auto &records = handle->records;
       const auto &common = handle->common;
 
-      int64 common_discrete_size = count_if_exists(common.getDiscrete(), handle->keep_map);
+      int64 common_discrete_size = count_if_etwitterists(common.getDiscrete(), handle->keep_map);
       int64 total_discrete_size = records.size() * common_discrete_size;
       for (int id = 0; id < records.size(); id++) {
-        total_discrete_size += count_if_exists(handle->records[id].getDiscrete(),
+        total_discrete_size += count_if_etwitterists(handle->records[id].getDiscrete(),
                                                handle->keep_map);
       }
       const int total_size = static_cast<int>(total_discrete_size);
@@ -353,9 +353,9 @@ class GetDiscreteFeatures : public OpKernel {
       Tensor* keys = nullptr;
       Tensor* values = nullptr;
       Tensor* ids = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &values));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, shape, &ids));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(1, shape, &keys));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(2, shape, &values));
 
       uint64_t offset = 0;
       auto keys_flat = keys->flat<int64>();
@@ -378,8 +378,8 @@ class GetDiscreteFeatures : public OpKernel {
           offset++;
         }
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -390,7 +390,7 @@ REGISTER_OP("GetStringFeatures")
 .Output("keys: int64")
 .Output("names: string")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that reads string features
@@ -398,7 +398,7 @@ Input
   data_record_handle: Resource handle to DataRecord
 
 Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
+  ids: ids specifies the indetwitter of the records[id] in the batch (int64)
   keys: DataRecord keys (int64)
   names: DataRecord values(string)
   values: always set to 1 (float)
@@ -406,19 +406,19 @@ Outputs
 
 class GetStringFeatures : public OpKernel {
  public:
-  explicit GetStringFeatures(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  etwitterplicit GetStringFeatures(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordResource>(contetwittert, 0);
       const auto &records = handle->records;
       const auto &common = handle->common;
 
-      int64 common_string_size = count_if_exists(common.getString(), handle->keep_map);
+      int64 common_string_size = count_if_etwitterists(common.getString(), handle->keep_map);
       int64 total_string_size = records.size() * common_string_size;
       for (int id = 0; id < records.size(); id++) {
-        total_string_size += count_if_exists(handle->records[id].getString(),
+        total_string_size += count_if_etwitterists(handle->records[id].getString(),
                                              handle->keep_map);
       }
       const int total_size = static_cast<int>(total_string_size);
@@ -428,10 +428,10 @@ class GetStringFeatures : public OpKernel {
       Tensor* names = nullptr;
       Tensor* ids = nullptr;
       Tensor*values = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &names));
-      OP_REQUIRES_OK(context, context->allocate_output(3, shape, &values));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, shape, &ids));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(1, shape, &keys));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(2, shape, &names));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(3, shape, &values));
 
       uint64_t offset = 0;
       auto keys_flat = keys->flat<int64>();
@@ -456,8 +456,8 @@ class GetStringFeatures : public OpKernel {
           offset++;
         }
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -468,7 +468,7 @@ REGISTER_OP("GetSparseBinaryFeatures")
 .Output("keys: int64")
 .Output("names: string")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that reads sparse binary features
@@ -476,7 +476,7 @@ Input
   data_record_handle: Resource handle to DataRecord
 
 Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
+  ids: ids specifies the indetwitter of the records[id] in the batch (int64)
   keys: DataRecord keys (int64)
   names: DataRecord values(string)
   values: always set to 1 (float)
@@ -484,19 +484,19 @@ Outputs
 
 class GetSparseBinaryFeatures : public OpKernel {
  public:
-  explicit GetSparseBinaryFeatures(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  etwitterplicit GetSparseBinaryFeatures(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordResource>(contetwittert, 0);
       const auto &records = handle->records;
       const auto &common = handle->common;
 
-      int64 common_sparse_binary_size = count_if_exists(common.getSparseBinary(), handle->keep_map);
+      int64 common_sparse_binary_size = count_if_etwitterists(common.getSparseBinary(), handle->keep_map);
       int64 total_sparse_binary_size = records.size() * common_sparse_binary_size;
       for (int id = 0; id < records.size(); id++) {
-        total_sparse_binary_size += count_if_exists(handle->records[id].getSparseBinary(),
+        total_sparse_binary_size += count_if_etwitterists(handle->records[id].getSparseBinary(),
                                                     handle->keep_map);
       }
       const int total_size = static_cast<int>(total_sparse_binary_size);
@@ -506,10 +506,10 @@ class GetSparseBinaryFeatures : public OpKernel {
       Tensor* names = nullptr;
       Tensor* ids = nullptr;
       Tensor* values = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &names));
-      OP_REQUIRES_OK(context, context->allocate_output(3, shape, &values));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, shape, &ids));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(1, shape, &keys));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(2, shape, &names));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(3, shape, &values));
 
       uint64_t offset = 0;
       auto keys_flat = keys->flat<int64>();
@@ -539,8 +539,8 @@ class GetSparseBinaryFeatures : public OpKernel {
           }
         }
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -551,7 +551,7 @@ REGISTER_OP("GetSparseContinuousFeatures")
 .Output("keys: int64")
 .Output("values: float")
 .Output("names: string")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that reads sparse continuous features
@@ -559,7 +559,7 @@ Input
   data_record_handle: Resource handle to DataRecord
 
 Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
+  ids: ids specifies the indetwitter of the records[id] in the batch (int64)
   keys: DataRecord keys (int64)
   values: DataRecord values(float)
   names: DataRecord values(string)
@@ -567,20 +567,20 @@ Outputs
 
 class GetSparseContinuousFeatures : public OpKernel {
  public:
-  explicit GetSparseContinuousFeatures(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  etwitterplicit GetSparseContinuousFeatures(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordResource>(contetwittert, 0);
       const auto &records = handle->records;
       const auto &common = handle->common;
 
-      int64 common_sparse_continuous_size = count_if_exists(common.getSparseContinuous(),
+      int64 common_sparse_continuous_size = count_if_etwitterists(common.getSparseContinuous(),
                                                             handle->keep_map);
       int64 total_sparse_continuous_size = records.size() * common_sparse_continuous_size;
       for (int id = 0; id < records.size(); id++) {
-        total_sparse_continuous_size += count_if_exists(handle->records[id].getSparseContinuous(),
+        total_sparse_continuous_size += count_if_etwitterists(handle->records[id].getSparseContinuous(),
                                                         handle->keep_map);
       }
       const int total_size = static_cast<int>(total_sparse_continuous_size);
@@ -590,10 +590,10 @@ class GetSparseContinuousFeatures : public OpKernel {
       Tensor* values = nullptr;
       Tensor* names = nullptr;
       Tensor* ids = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &values));
-      OP_REQUIRES_OK(context, context->allocate_output(3, shape, &names));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, shape, &ids));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(1, shape, &keys));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(2, shape, &values));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(3, shape, &names));
 
       uint64_t offset = 0;
       auto keys_flat = keys->flat<int64>();
@@ -627,8 +627,8 @@ class GetSparseContinuousFeatures : public OpKernel {
           }
         }
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -648,17 +648,17 @@ Outputs
 
 class GetBatchSizeFromDataRecord : public OpKernel {
  public:
-  explicit GetBatchSizeFromDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  etwitterplicit GetBatchSizeFromDataRecord(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordResource>(contetwittert, 0);
       Tensor *output;
-      OP_REQUIRES_OK(context, context->allocate_output(0, TensorShape({}), &output));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, TensorShape({}), &output));
       output->scalar<int64>()() = handle->records.size();
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -667,7 +667,7 @@ REGISTER_OP("GetLabelsFromDataRecord")
 .Input("data_record_handle: resource")
 .Output("labels: float")
 .Attr("default_label: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns labels from the data record.
@@ -687,20 +687,20 @@ class GetLabelsFromDataRecord : public OpKernel {
   float default_label;
 
  public:
-  explicit GetLabelsFromDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("default_label", &default_label));
+  etwitterplicit GetLabelsFromDataRecord(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("default_label", &default_label));
   }
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordResource>(contetwittert, 0);
       const auto &records = handle->records;
       const int num_labels = static_cast<int>(handle->num_labels);
       TensorShape shape = {static_cast<int64>(handle->records.size()), num_labels};
 
       Tensor *labels;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &labels));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, shape, &labels));
 
       // The default value of label is not present in data record is std::nanf
       // For continuous labels, change that to a default_label or label.
@@ -713,8 +713,8 @@ class GetLabelsFromDataRecord : public OpKernel {
         const auto& rec_labels = record.labels();
         labels_data = std::transform(rec_labels.begin(), rec_labels.end(), labels_data, func);
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -722,7 +722,7 @@ class GetLabelsFromDataRecord : public OpKernel {
 REGISTER_OP("GetWeightsFromDataRecord")
 .Input("data_record_handle: resource")
 .Output("weights: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns weights from the data record.
@@ -735,26 +735,26 @@ Outputs
 
 class GetWeightsFromDataRecord : public OpKernel {
  public:
-  explicit GetWeightsFromDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  etwitterplicit GetWeightsFromDataRecord(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordResource>(contetwittert, 0);
       const auto &records = handle->records;
       const int num_weights = static_cast<int>(handle->num_weights);
       TensorShape shape = {static_cast<int64>(handle->records.size()), num_weights};
 
       Tensor *weights;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &weights));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, shape, &weights));
 
       auto weights_data = weights->flat<float>().data();
       for (const auto &record : records) {
         const auto& rec_weights = record.weights();
         weights_data = std::copy(rec_weights.begin(), rec_weights.end(), weights_data);
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -782,14 +782,14 @@ TensorType values_flat) {
   values_flat(id) = (it == type.end()) ? default_value : 1;
 }
 
-// Helper for Group Extraction of Dense Features
+// Helper for Group Etwittertraction of Dense Features
 template<typename ValueType, typename FeatureType>
 void ComputeHelperGroupFeaturesAsTensors(
-OpKernelContext* context,
+OpKernelContetwittert* contetwittert,
 const std::vector<int64>& feature_ids,
 ValueType& default_value,
 std::function<const FeatureType&(const twml::DataRecord&)> f) {
-  auto handle = getHandle<DataRecordResource>(context, 0);
+  auto handle = getHandle<DataRecordResource>(contetwittert, 0);
   const auto &records = handle->records;
   // Output shape is 2D; where the first dimension corresponds to the batch_size
   // and the second corresponds to the number of features passed to the TF Op.
@@ -799,7 +799,7 @@ std::function<const FeatureType&(const twml::DataRecord&)> f) {
 
   // Define the output
   Tensor* values = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(0, shape, &values));
+  OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, shape, &values));
   auto values_flat = values->flat<ValueType>();
 
   for (int64 id = 0; id < records.size(); id++) {
@@ -807,20 +807,20 @@ std::function<const FeatureType&(const twml::DataRecord&)> f) {
     const auto id_offset = id * feature_ids.size();
     for (int64 fid = 0; fid < feature_ids.size(); fid++) {
       auto feature_id = feature_ids[fid];
-      // The value is set to default if it does not exist in the current DataRecord
+      // The value is set to default if it does not etwitterist in the current DataRecord
       SetValueGroup(type, feature_id, id_offset + fid, default_value, values_flat);
     }
   }
 }
 
-// Helper for Single Extraction of Dense Features
+// Helper for Single Etwittertraction of Dense Features
 template<typename ValueType, typename FeatureType>
 void ComputeHelperFeaturesAsTensors(
-OpKernelContext* context,
+OpKernelContetwittert* contetwittert,
 ValueType& default_value,
 int64 feature_id,
 std::function<const FeatureType&(const twml::DataRecord&)> f) {
-  auto handle = getHandle<DataRecordResource>(context, 0);
+  auto handle = getHandle<DataRecordResource>(contetwittert, 0);
   const auto &records = handle->records;
   // Output shape is 2D; where the first dimension corresponds to the batch_size
   // and the second corresponds to the number of features passed to the TF Op.
@@ -829,7 +829,7 @@ std::function<const FeatureType&(const twml::DataRecord&)> f) {
 
   // Define the output
   Tensor* values = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(0, shape, &values));
+  OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, shape, &values));
   auto values_flat = values->flat<ValueType>();
   for (int64 id = 0; id < records.size(); id++) {
     const auto &type = f(records[id]);
@@ -842,14 +842,14 @@ REGISTER_OP("GetBinaryAsTensor")
 .Attr("feature_id: int")
 .Attr("default_value: float")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
 Input
   data_record_handle: Resource handle to DataRecord
 Attr
-  feature_id: Id representing the feature whose values will be extracted.
+  feature_id: Id representing the feature whose values will be etwittertracted.
   default_value: default_value to be inputted if the values are missing from the current DataRecord.
 Outputs
   values: A Tensor corresponding to the value of the feature_id across multiple DataRecords
@@ -861,18 +861,18 @@ class GetBinaryAsTensor : public OpKernel {
   float default_value;
 
  public:
-  explicit GetBinaryAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+  etwitterplicit GetBinaryAsTensor(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("feature_id", &feature_id));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("default_value", &default_value));
   }
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
       std::function<const twml::DataRecord::BinaryFeatures &(const twml::DataRecord &)> f =
        [](const twml::DataRecord& record) ->const twml::DataRecord::BinaryFeatures& { return record.getBinary(); };
-      ComputeHelperFeaturesAsTensors(context, default_value, feature_id, f);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      ComputeHelperFeaturesAsTensors(contetwittert, default_value, feature_id, f);
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -882,14 +882,14 @@ REGISTER_OP("GetContinuousAsTensor")
 .Attr("feature_id: int")
 .Attr("default_value: float")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
 Input
   data_record_handle: Resource handle to DataRecord
 Attr
-  feature_id: Id representing the feature whose values will be extracted.
+  feature_id: Id representing the feature whose values will be etwittertracted.
   default_value: default_value to be inputted if the values are missing from the current DataRecord.
 Outputs
   values: A Tensor corresponding to the value of the feature_id across multiple DataRecords
@@ -901,18 +901,18 @@ class GetContinuousAsTensor : public OpKernel {
   float default_value;
 
  public:
-  explicit GetContinuousAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+  etwitterplicit GetContinuousAsTensor(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("feature_id", &feature_id));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("default_value", &default_value));
   }
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
       std::function<const twml::DataRecord::ContinuousFeatures &(const twml::DataRecord &)> f =
        [](const twml::DataRecord& record) ->const twml::DataRecord::ContinuousFeatures& { return record.getContinuous(); };
-      ComputeHelperFeaturesAsTensors(context, default_value, feature_id, f);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      ComputeHelperFeaturesAsTensors(contetwittert, default_value, feature_id, f);
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -922,14 +922,14 @@ REGISTER_OP("GetDiscreteAsTensor")
 .Attr("feature_id: int")
 .Attr("default_value: int")
 .Output("values: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
 Input
   data_record_handle: Resource handle to DataRecord
 Attr
-  feature_id: Id representing the feature whose values will be extracted.
+  feature_id: Id representing the feature whose values will be etwittertracted.
   default_value: default_value to be inputted if the values are missing from the current DataRecord.
 Outputs
   values: A Tensor corresponding to the value of the feature_id across multiple DataRecords
@@ -941,18 +941,18 @@ class GetDiscreteAsTensor : public OpKernel {
   int64 default_value;
 
  public:
-  explicit GetDiscreteAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+  etwitterplicit GetDiscreteAsTensor(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("feature_id", &feature_id));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("default_value", &default_value));
   }
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
       std::function<const twml::DataRecord::DiscreteFeatures &(const twml::DataRecord &)> f =
        [](const twml::DataRecord& record) ->const twml::DataRecord::DiscreteFeatures& { return record.getDiscrete(); };
-      ComputeHelperFeaturesAsTensors(context, default_value, feature_id, f);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      ComputeHelperFeaturesAsTensors(contetwittert, default_value, feature_id, f);
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -962,14 +962,14 @@ REGISTER_OP("GetStringAsTensor")
 .Attr("feature_id: int")
 .Attr("default_value: string")
 .Output("names: string")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
 Input
   data_record_handle: Resource handle to DataRecord
 Attr
-  feature_id: Id representing the feature whose values will be extracted.
+  feature_id: Id representing the feature whose values will be etwittertracted.
   default_value: default_value to be inputted if the values are missing from the current DataRecord.
 Outputs
   names: A Tensor corresponding to the value of the feature_id across multiple DataRecords
@@ -981,18 +981,18 @@ class GetStringAsTensor : public OpKernel {
   string default_value;
 
  public:
-  explicit GetStringAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+  etwitterplicit GetStringAsTensor(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("feature_id", &feature_id));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("default_value", &default_value));
   }
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
       std::function<const twml::DataRecord::StringFeatures &(const twml::DataRecord &)> f =
        [](const twml::DataRecord& record) ->const twml::DataRecord::StringFeatures& { return record.getString(); };
-      ComputeHelperFeaturesAsTensors(context, default_value, feature_id, f);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      ComputeHelperFeaturesAsTensors(contetwittert, default_value, feature_id, f);
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -1003,14 +1003,14 @@ REGISTER_OP("GetBinaryGroupAsTensor")
 .Attr("feature_ids: list(int)")
 .Attr("default_value: float")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
 Input
   data_record_handle: Resource handle to DataRecord
 Attr
-  feature_ids: List of ids representing the features whose values will be extracted.
+  feature_ids: List of ids representing the features whose values will be etwittertracted.
   default_value: default_value to be inputted if the values are missing from the current DataRecord.
 Outputs
   values: A Tensor corresponding to the values of the feature_ids across multiple DataRecords
@@ -1023,18 +1023,18 @@ class GetBinaryGroupAsTensor : public OpKernel {
   std::vector<int64> feature_ids;
 
  public:
-  explicit GetBinaryGroupAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_ids", &feature_ids));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+  etwitterplicit GetBinaryGroupAsTensor(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("feature_ids", &feature_ids));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("default_value", &default_value));
   }
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
        std::function<const twml::DataRecord::BinaryFeatures &(const twml::DataRecord &)> f =
         [](const twml::DataRecord& record) ->const twml::DataRecord::BinaryFeatures& { return record.getBinary(); };
-       ComputeHelperGroupFeaturesAsTensors(context, feature_ids, default_value, f);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+       ComputeHelperGroupFeaturesAsTensors(contetwittert, feature_ids, default_value, f);
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -1045,14 +1045,14 @@ REGISTER_OP("GetContinuousGroupAsTensor")
 .Attr("feature_ids: list(int)")
 .Attr("default_value: float")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
 Input
   data_record_handle: Resource handle to DataRecord
 Attr
-  feature_ids: List of ids representing the features whose values will be extracted.
+  feature_ids: List of ids representing the features whose values will be etwittertracted.
   default_value: default_value to be inputted if the values are missing from the current DataRecord.
 Outputs
   values: A Tensor corresponding to the values of the feature_ids across multiple DataRecords
@@ -1064,18 +1064,18 @@ class GetContinuousGroupAsTensor : public OpKernel {
   std::vector<int64> feature_ids;
 
  public:
-  explicit GetContinuousGroupAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_ids", &feature_ids));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+  etwitterplicit GetContinuousGroupAsTensor(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("feature_ids", &feature_ids));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("default_value", &default_value));
   }
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
       std::function<const twml::DataRecord::ContinuousFeatures &(const twml::DataRecord &)> f =
        [](const twml::DataRecord& record) ->const twml::DataRecord::ContinuousFeatures& { return record.getContinuous(); };
-      ComputeHelperGroupFeaturesAsTensors(context, feature_ids, default_value, f);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      ComputeHelperGroupFeaturesAsTensors(contetwittert, feature_ids, default_value, f);
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -1085,14 +1085,14 @@ REGISTER_OP("GetDiscreteGroupAsTensor")
 .Attr("feature_ids: list(int)")
 .Attr("default_value: int")
 .Output("values: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
 Input
   data_record_handle: Resource handle to DataRecord
 Attr
-  feature_ids: List of ids representing the features whose values will be extracted.
+  feature_ids: List of ids representing the features whose values will be etwittertracted.
   default_value: default_value to be inputted if the values are missing from the current DataRecord.
 Outputs
   values: A Tensor corresponding to the values of the feature_ids across multiple DataRecords
@@ -1104,18 +1104,18 @@ class GetDiscreteGroupAsTensor : public OpKernel {
   int64 default_value;
 
  public:
-  explicit GetDiscreteGroupAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_ids", &feature_ids));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+  etwitterplicit GetDiscreteGroupAsTensor(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("feature_ids", &feature_ids));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("default_value", &default_value));
   }
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
       std::function<const twml::DataRecord::DiscreteFeatures &(const twml::DataRecord &)> f =
        [](const twml::DataRecord& record) ->const twml::DataRecord::DiscreteFeatures& { return record.getDiscrete(); };
-      ComputeHelperGroupFeaturesAsTensors(context, feature_ids, default_value, f);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      ComputeHelperGroupFeaturesAsTensors(contetwittert, feature_ids, default_value, f);
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -1125,14 +1125,14 @@ REGISTER_OP("GetStringGroupAsTensor")
 .Attr("feature_ids: list(int)")
 .Attr("default_value: string")
 .Output("names: string")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns a Dense Tensor with the values of a particular feature_id.
 Input
   data_record_handle: Resource handle to DataRecord
 Attr
-  feature_ids: List of ids representing the features whose values will be extracted.
+  feature_ids: List of ids representing the features whose values will be etwittertracted.
   default_value: default_value to be inputted if the values are missing from the current DataRecord.
 Outputs
   names: A Tensor corresponding to the values of the feature_ids across multiple DataRecords
@@ -1144,18 +1144,18 @@ class GetStringGroupAsTensor : public OpKernel {
   string default_value;
 
  public:
-  explicit GetStringGroupAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_ids", &feature_ids));
-    OP_REQUIRES_OK(context, context->GetAttr("default_value", &default_value));
+  etwitterplicit GetStringGroupAsTensor(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("feature_ids", &feature_ids));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("default_value", &default_value));
   }
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
       std::function<const twml::DataRecord::StringFeatures &(const twml::DataRecord &)> f =
        [](const twml::DataRecord& record) ->const twml::DataRecord::StringFeatures& { return record.getString(); };
-    ComputeHelperGroupFeaturesAsTensors(context, feature_ids, default_value, f);
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    ComputeHelperGroupFeaturesAsTensors(contetwittert, feature_ids, default_value, f);
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -1166,7 +1166,7 @@ REGISTER_OP("GetSparseBinaryAsTensor")
 .Output("ids: int64")
 .Output("keys: int64")
 .Output("names: string")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns tensors corresponding to the ids, keys and names of a particular
@@ -1174,9 +1174,9 @@ feature_id.
 Input
   data_record_handle: Resource handle to DataRecord
 Attr
-  feature_id: Id representing the feature whose values will be extracted.
+  feature_id: Id representing the feature whose values will be etwittertracted.
 Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
+  ids: ids specifies the indetwitter of the records[id] in the batch (int64)
   keys: DataRecord keys (int64)
   names: DataRecord values(string)
 )doc");
@@ -1185,16 +1185,16 @@ class GetSparseBinaryAsTensor : public OpKernel {
   int64 feature_id;
 
  public:
-  explicit GetSparseBinaryAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
+  etwitterplicit GetSparseBinaryAsTensor(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("feature_id", &feature_id));
   }
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
       // We need two passes to the data:
       // 1 to compute the output size of the tensor
       // 2 to copy the values to the tensor
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordResource>(contetwittert, 0);
       const auto &records = handle->records;
 
       // Creating a vector we increment every time a key is found
@@ -1219,9 +1219,9 @@ class GetSparseBinaryAsTensor : public OpKernel {
       Tensor* keys = nullptr;
       Tensor* names = nullptr;
 
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &names));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, shape, &ids));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(1, shape, &keys));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(2, shape, &names));
 
       auto keys_flat = keys->flat<int64>();
       auto names_flat = names->flat<string>();
@@ -1231,8 +1231,8 @@ class GetSparseBinaryAsTensor : public OpKernel {
       std::fill(keys_flat.data(), keys_flat.data() + total_size, feature_id);
       std::copy(temp_names.begin(), temp_names.end(), names_flat.data());
       std::copy(temp_ids.begin(), temp_ids.end(), ids_flat.data());
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -1244,7 +1244,7 @@ REGISTER_OP("GetSparseContinuousAsTensor")
 .Output("keys: int64")
 .Output("names: string")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns tensors corresponding to the ids, keys, names and values of a particular
@@ -1252,9 +1252,9 @@ feature_id.
 Input
   data_record_handle: Resource handle to DataRecord
 Attr
-  feature_id: Id representing the feature whose values will be extracted.
+  feature_id: Id representing the feature whose values will be etwittertracted.
 Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
+  ids: ids specifies the indetwitter of the records[id] in the batch (int64)
   keys: DataRecord keys (int64)
   names: DataRecord values(string)
   values: DataRecord values(float)
@@ -1264,16 +1264,16 @@ class GetSparseContinuousAsTensor : public OpKernel {
   int64 feature_id;
 
  public:
-  explicit GetSparseContinuousAsTensor(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
+  etwitterplicit GetSparseContinuousAsTensor(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("feature_id", &feature_id));
   }
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
       // We need two passes to the data:
       // 1 to compute the output size of the tensor
       // 2 to copy the values to the tensor
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordResource>(contetwittert, 0);
       const auto &records = handle->records;
 
       // Creating a vector we increment every time a key is found
@@ -1304,10 +1304,10 @@ class GetSparseContinuousAsTensor : public OpKernel {
       Tensor* names = nullptr;
       Tensor* values = nullptr;
 
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-      OP_REQUIRES_OK(context, context->allocate_output(2, shape, &names));
-      OP_REQUIRES_OK(context, context->allocate_output(3, shape, &values));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, shape, &ids));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(1, shape, &keys));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(2, shape, &names));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(3, shape, &values));
 
       auto keys_flat = keys->flat<int64>();
       auto names_flat = names->flat<string>();
@@ -1319,8 +1319,8 @@ class GetSparseContinuousAsTensor : public OpKernel {
       std::copy(temp_names.begin(), temp_names.end(), names_flat.data());
       std::copy(temp_ids.begin(), temp_ids.end(), ids_flat.data());
       std::copy(temp_values.begin(), temp_values.end(), values_flat.data());
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -1350,7 +1350,7 @@ struct KeepFeatures {
 #else
     set.reserve(keep_features.size());
 #endif  // USE_DENSE_HASH
-    set.max_load_factor(0.5);
+    set.matwitter_load_factor(0.5);
     for (const auto &elem : keep_features) {
       if (container->find(elem) == container->end()) continue;
       vec.push_back(elem);
@@ -1420,13 +1420,13 @@ void filterAndHashFeature(
     for (const auto &f : keep_features.vec) {
       const auto &iter = features.find(f);
       if (iter == features.end()) continue;
-      int64_t key = twml::mixDiscreteIdAndValue(iter->first, iter->second);
+      int64_t key = twml::mitwitterDiscreteIdAndValue(iter->first, iter->second);
       addIdsKeysValuesToVectors(current_id, key, 1, ids, keys, values);
     }
   } else {
     for (const auto &elem : features) {
       if (keep_features.set.find(elem.first) == keep_features.set.end()) continue;
-      int64_t key = twml::mixDiscreteIdAndValue(elem.first, elem.second);
+      int64_t key = twml::mitwitterDiscreteIdAndValue(elem.first, elem.second);
       addIdsKeysValuesToVectors(current_id, key, 1, ids, keys, values);
     }
   }
@@ -1444,7 +1444,7 @@ void filterAndHashFeature(
     for (const auto &f : keep_features.vec) {
       const auto &iter = features.find(f);
       if (iter == features.end()) continue;
-      int64_t key = twml::mixStringIdAndValue(
+      int64_t key = twml::mitwitterStringIdAndValue(
         iter->first,
         iter->second.size(),
         reinterpret_cast<const uint8_t*>(iter->second.c_str()));
@@ -1453,7 +1453,7 @@ void filterAndHashFeature(
   } else {
     for (const auto &elem : features) {
       if (keep_features.set.find(elem.first) == keep_features.set.end()) continue;
-      int64_t key = twml::mixStringIdAndValue(
+      int64_t key = twml::mitwitterStringIdAndValue(
         elem.first,
         elem.second.size(),
         reinterpret_cast<const uint8_t*>(elem.second.c_str()));
@@ -1475,7 +1475,7 @@ void filterAndHashFeature(
       const auto &iter = features.find(f);
       if (iter == features.end()) continue;
       for (const auto &name : iter->second) {
-        int64_t key = twml::mixStringIdAndValue(iter->first, name.size(),
+        int64_t key = twml::mitwitterStringIdAndValue(iter->first, name.size(),
                                                 reinterpret_cast<const uint8_t*>(name.c_str()));
         addIdsKeysValuesToVectors(current_id, key, 1, ids, keys, values);
       }
@@ -1484,7 +1484,7 @@ void filterAndHashFeature(
     for (const auto &elem : features) {
       if (keep_features.set.find(elem.first) == keep_features.set.end()) continue;
       for (const auto &name : elem.second) {
-        int64_t key = twml::mixStringIdAndValue(elem.first, name.size(),
+        int64_t key = twml::mitwitterStringIdAndValue(elem.first, name.size(),
                                                 reinterpret_cast<const uint8_t*>(name.c_str()));
         addIdsKeysValuesToVectors(current_id, key, 1, ids, keys, values);
       }
@@ -1505,7 +1505,7 @@ void filterAndHashFeature(
       const auto &iter = features.find(f);
       if (iter == features.end()) continue;
       for (const auto &map : iter->second) {
-        int64_t key = twml::mixStringIdAndValue(
+        int64_t key = twml::mitwitterStringIdAndValue(
           iter->first,
           map.first.size(),
           reinterpret_cast<const uint8_t*>(map.first.c_str()));
@@ -1516,7 +1516,7 @@ void filterAndHashFeature(
     for (const auto &elem : features) {
       if (keep_features.set.find(elem.first) == keep_features.set.end()) continue;
       for (const auto &map : elem.second) {
-        int64_t key = twml::mixStringIdAndValue(
+        int64_t key = twml::mitwitterStringIdAndValue(
           elem.first,
           map.first.size(),
           reinterpret_cast<const uint8_t*>(map.first.c_str()));
@@ -1554,7 +1554,7 @@ void filterAndHashFeatureCompat(
   }
 }
 
-void copy_if_exists(std::vector<int64>& out,
+void copy_if_etwitterists(std::vector<int64>& out,
                     const std::vector<int64>& in,
                     const twml::Map<int64_t, int64_t> *const map) {
   out.reserve(in.size());
@@ -1564,7 +1564,7 @@ void copy_if_exists(std::vector<int64>& out,
   }
 }
 
-void ComputeHashedFeaturesAsTensor(OpKernelContext* context,
+void ComputeHashedFeaturesAsTensor(OpKernelContetwittert* contetwittert,
                                    const DataRecordResource *const handle,
                                    const KeepFeatures &binary_keep_features,
                                    const KeepFeatures &continuous_keep_features,
@@ -1652,9 +1652,9 @@ void ComputeHashedFeaturesAsTensor(OpKernelContext* context,
   Tensor* ids = nullptr;
   Tensor* keys = nullptr;
   Tensor* values = nullptr;
-  OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
-  OP_REQUIRES_OK(context, context->allocate_output(1, shape, &keys));
-  OP_REQUIRES_OK(context, context->allocate_output(2, shape, &values));
+  OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, shape, &ids));
+  OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(1, shape, &keys));
+  OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(2, shape, &values));
   auto ids_flat = ids->flat<int64>();
   auto keys_flat = keys->flat<int64>();
   auto values_flat = values->flat<float>();
@@ -1674,7 +1674,7 @@ REGISTER_OP("GetHashedFeaturesAsSparseTensor")
 .Output("ids: int64")
 .Output("keys: int64")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
   return Status::OK();
 }).Doc(R"doc(
 A tensorflow OP for returning required features of different type as
@@ -1684,32 +1684,32 @@ Input
   data_record_handle: Resource handle to DataRecord
 
 Outputs
-  ids: ids specifies the index of the records in the batch (int64)
+  ids: ids specifies the indetwitter of the records in the batch (int64)
   keys: DataRecord keys (int64)
   values: DataRecord values (float)
 )doc");
 
 class GetHashedFeaturesAsSparseTensor: public OpKernel {
  public:
-  explicit GetHashedFeaturesAsSparseTensor(OpKernelConstruction* context): OpKernel(context) {
+  etwitterplicit GetHashedFeaturesAsSparseTensor(OpKernelConstruction* contetwittert): OpKernel(contetwittert) {
     // Get the list of features to keep for each feature type
-    OP_REQUIRES_OK(context, context->GetAttr("binary_keep_features", &binary_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("continuous_keep_features", &continuous_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("discrete_keep_features", &discrete_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("string_keep_features", &string_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("sparse_binary_keep_features", &sparse_binary_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("sparse_continuous_keep_features", &sparse_continuous_keep_features_));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("binary_keep_features", &binary_keep_features_));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("continuous_keep_features", &continuous_keep_features_));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("discrete_keep_features", &discrete_keep_features_));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("string_keep_features", &string_keep_features_));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("sparse_binary_keep_features", &sparse_binary_keep_features_));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("sparse_continuous_keep_features", &sparse_continuous_keep_features_));
   }
 
  private:
   std::vector<int64> binary_keep_features_, continuous_keep_features_, discrete_keep_features_;
   std::vector<int64> string_keep_features_, sparse_binary_keep_features_, sparse_continuous_keep_features_;
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordResource>(contetwittert, 0);
       // Create a new list of keep features based on the original keep_set.
-      // This is to ensure compatibility with existing behavior such as:
+      // This is to ensure compatibility with etwitteristing behavior such as:
       //  - Ensure no new features are decoded in this op.
       //  - Ensure labels or weights dont get included here.
       // TODO: Should we return features requested by user here even if they are labels / weights?
@@ -1719,7 +1719,7 @@ class GetHashedFeaturesAsSparseTensor: public OpKernel {
       KeepFeatures string_keep_features(string_keep_features_, handle->keep_map);
       KeepFeatures sparse_binary_keep_features(sparse_binary_keep_features_, handle->keep_map);
       KeepFeatures sparse_continuous_keep_features(sparse_continuous_keep_features_, handle->keep_map);
-      ComputeHashedFeaturesAsTensor(context, handle.get(),
+      ComputeHashedFeaturesAsTensor(contetwittert, handle.get(),
                                     binary_keep_features,
                                     continuous_keep_features,
                                     discrete_keep_features,
@@ -1727,8 +1727,8 @@ class GetHashedFeaturesAsSparseTensor: public OpKernel {
                                     sparse_binary_keep_features,
                                     sparse_continuous_keep_features,
                                     false);
-    } catch(const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch(const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -1747,7 +1747,7 @@ REGISTER_OP("GetHashedFeaturesAsSparseTensorV2")
 .Output("ids: int64")
 .Output("keys: int64")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
   return Status::OK();
 }).Doc(R"doc(
 A tensorflow OP for returning required features of different type as
@@ -1757,29 +1757,29 @@ Input
   data_record_handle: Resource handle to DataRecord
 
 Outputs
-  ids: ids specifies the index of the records in the batch (int64)
+  ids: ids specifies the indetwitter of the records in the batch (int64)
   keys: DataRecord keys (int64)
   values: DataRecord values (float)
 )doc");
 
 class GetHashedFeaturesAsSparseTensorV2: public OpKernel {
  public:
-  explicit GetHashedFeaturesAsSparseTensorV2(OpKernelConstruction* context): OpKernel(context) {
+  etwitterplicit GetHashedFeaturesAsSparseTensorV2(OpKernelConstruction* contetwittert): OpKernel(contetwittert) {
     std::vector<int64> keep_features;
     std::vector<int64> keep_codes;
     std::vector<int64> binary_keep_features_, continuous_keep_features_, discrete_keep_features_;
     std::vector<int64> string_keep_features_, sparse_binary_keep_features_, sparse_continuous_keep_features_;
 
     // Get the list of features to keep for each feature type
-    OP_REQUIRES_OK(context, context->GetAttr("binary_keep_features", &binary_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("continuous_keep_features", &continuous_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("discrete_keep_features", &discrete_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("string_keep_features", &string_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("sparse_binary_keep_features", &sparse_binary_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("sparse_continuous_keep_features", &sparse_continuous_keep_features_));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
-    OP_REQUIRES_OK(context, context->GetAttr("decode_mode", &m_decode_mode));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("binary_keep_features", &binary_keep_features_));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("continuous_keep_features", &continuous_keep_features_));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("discrete_keep_features", &discrete_keep_features_));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("string_keep_features", &string_keep_features_));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("sparse_binary_keep_features", &sparse_binary_keep_features_));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("sparse_continuous_keep_features", &sparse_continuous_keep_features_));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("keep_features", &keep_features));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("keep_codes", &keep_codes));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("decode_mode", &m_decode_mode));
 
     twml::Map<int64_t, int64_t> keep_map;
 #ifdef USE_DENSE_HASH
@@ -1804,15 +1804,15 @@ class GetHashedFeaturesAsSparseTensorV2: public OpKernel {
   KeepFeatures string_keep_features, sparse_binary_keep_features, sparse_continuous_keep_features;
   int64 m_decode_mode;
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
-      auto handle = getHandle<DataRecordResource>(context, 0);
+      auto handle = getHandle<DataRecordResource>(contetwittert, 0);
       // Create a new list of keep features based on the original keep_set.
-      // This is to ensure compatibility with existing behavior such as:
+      // This is to ensure compatibility with etwitteristing behavior such as:
       //  - Ensure no new features are decoded in this op.
       //  - Ensure labels or weights dont get included here.
       // TODO: Should we return features requested by user here even if they are labels / weights?
-      ComputeHashedFeaturesAsTensor(context, handle.get(),
+      ComputeHashedFeaturesAsTensor(contetwittert, handle.get(),
                                     binary_keep_features,
                                     continuous_keep_features,
                                     discrete_keep_features,
@@ -1820,8 +1820,8 @@ class GetHashedFeaturesAsSparseTensorV2: public OpKernel {
                                     sparse_binary_keep_features,
                                     sparse_continuous_keep_features,
                                     m_decode_mode == 0);
-    } catch(const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch(const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };

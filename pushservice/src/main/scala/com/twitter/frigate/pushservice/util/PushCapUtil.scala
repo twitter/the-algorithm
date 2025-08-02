@@ -22,7 +22,7 @@ case class PushCapFatigueInfo(
 object PushCapUtil {
 
   def getDefaultPushCap(target: Target): Future[Int] = {
-    Future.value(target.params(PushFeatureSwitchParams.MaxMrPushSends24HoursParam))
+    Future.value(target.params(PushFeatureSwitchParams.MatwitterMrPushSends24HoursParam))
   }
 
   def getMinimumRestrictedPushcapInfo(
@@ -52,7 +52,7 @@ object PushCapUtil {
       .map { dynamicPushcapOpt =>
         val pushCap: Int = dynamicPushcapOpt match {
           case Some(pushcapInfo) => pushcapInfo.pushcap
-          case _ => target.params(PushFeatureSwitchParams.MaxMrPushSends24HoursParam)
+          case _ => target.params(PushFeatureSwitchParams.MatwitterMrPushSends24HoursParam)
         }
 
         pushCapStats.stat("pushCapValueStats").add(pushCap)
@@ -85,13 +85,13 @@ object PushCapUtil {
             target.timeElapsedAfterSignup.inDays.toDouble
           }
         val phaseInterval =
-          Math.max(
+          Math.matwitter(
             1,
             Math.ceil(daysSinceActivation / daysInterval).toInt
           )
         val minDuration = 24 / phaseInterval
         val finalMinDuration =
-          Math.max(4, minDuration).hours
+          Math.matwitter(4, minDuration).hours
         statsReceiver
           .scope("GraduallyRampUpFinalMinDuration").counter(s"$finalMinDuration.hours").incr()
         finalMinDuration
@@ -127,7 +127,7 @@ object PushCapUtil {
             val isGraduallyRampingUpResurrected = target.isResurrectedUser && target.params(
               PushFeatureSwitchParams.EnableGraduallyRampUpNotification)
             if (isGraduallyRampingUpResurrected || target.params(
-                PushFeatureSwitchParams.EnableExplicitPushCap)) {
+                PushFeatureSwitchParams.EnableEtwitterplicitPushCap)) {
               getMinDurationsSincePushWithoutUsingPushCap(target)(minDurationStats)
             } else {
               dynamicPushcapOpt match {

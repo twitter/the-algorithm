@@ -13,7 +13,7 @@ import com.twitter.search.feature_update_service.whitelist.ClientIdWhitelist;
  * Provides a ClientIdWhitelist, which periodically loads the
  * Feature Update Service client whitelist from ConfigBus
  */
-public class ClientIdWhitelistModule extends TwitterModule {
+public class ClientIdWhitelistModule etwittertends TwitterModule {
   public ClientIdWhitelistModule() {
     flag("client.whitelist.path", "",
         "Path to client id white list.", Flaggable.ofString());
@@ -24,7 +24,7 @@ public class ClientIdWhitelistModule extends TwitterModule {
     @Provides
     @Singleton
     public ClientIdWhitelist provideClientWhitelist(
-        @Flag("client.whitelist.path") String clientIdWhiteListPath) throws Exception {
+        @Flag("client.whitelist.path") String clientIdWhiteListPath) throws Etwitterception {
         return ClientIdWhitelist.initWhitelist(clientIdWhiteListPath);
     }
   }

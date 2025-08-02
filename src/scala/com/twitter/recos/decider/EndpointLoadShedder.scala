@@ -9,7 +9,7 @@ import scala.util.control.NoStackTrace
   Provides deciders-controlled load shedding for a given endpoint.
   The format of the decider keys is:
 
-    enable_loadshedding_<graphNamePrefix>_<endpoint name>
+    enable_loadshedding_<graphNamePrefitwitter>_<endpoint name>
   E.g.:
     enable_loadshedding_user-tweet-graph_relatedTweets
 
@@ -24,16 +24,16 @@ class EndpointLoadShedder(
   decider: GraphDecider) {
   import EndpointLoadShedder._
 
-  private val keyPrefix = "enable_loadshedding"
+  private val keyPrefitwitter = "enable_loadshedding"
 
   def apply[T](endpointName: String)(serve: => Future[T]): Future[T] = {
-    val key = s"${keyPrefix}_${decider.graphNamePrefix}_${endpointName}"
+    val key = s"${keyPrefitwitter}_${decider.graphNamePrefitwitter}_${endpointName}"
     if (decider.isAvailable(key, recipient = Some(RandomRecipient)))
-      Future.exception(LoadSheddingException)
+      Future.etwitterception(LoadSheddingEtwitterception)
     else serve
   }
 }
 
 object EndpointLoadShedder {
-  object LoadSheddingException extends Exception with NoStackTrace
+  object LoadSheddingEtwitterception etwittertends Etwitterception with NoStackTrace
 }

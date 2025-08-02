@@ -128,7 +128,7 @@ object MultiTypeGraphStore {
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("video_view_based_cluster_to_tweet_index"),
+          DatasetName("video_view_based_cluster_to_tweet_indetwitter"),
           Apollo
         ),
         mhMtlsParams
@@ -143,7 +143,7 @@ object MultiTypeGraphStore {
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("retweet_based_simclusters_cluster_to_tweet_index"),
+          DatasetName("retweet_based_simclusters_cluster_to_tweet_indetwitter"),
           Apollo
         ),
         mhMtlsParams
@@ -158,7 +158,7 @@ object MultiTypeGraphStore {
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("reply_based_simclusters_cluster_to_tweet_index"),
+          DatasetName("reply_based_simclusters_cluster_to_tweet_indetwitter"),
           Apollo
         ),
         mhMtlsParams
@@ -173,7 +173,7 @@ object MultiTypeGraphStore {
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("push_open_based_simclusters_cluster_to_tweet_index"),
+          DatasetName("push_open_based_simclusters_cluster_to_tweet_indetwitter"),
           Apollo
         ),
         mhMtlsParams
@@ -188,7 +188,7 @@ object MultiTypeGraphStore {
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("ads_fav_based_simclusters_cluster_to_tweet_index"),
+          DatasetName("ads_fav_based_simclusters_cluster_to_tweet_indetwitter"),
           Apollo
         ),
         mhMtlsParams
@@ -203,7 +203,7 @@ object MultiTypeGraphStore {
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("ads_fav_click_based_simclusters_cluster_to_tweet_index"),
+          DatasetName("ads_fav_click_based_simclusters_cluster_to_tweet_indetwitter"),
           Apollo
         ),
         mhMtlsParams
@@ -218,7 +218,7 @@ object MultiTypeGraphStore {
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("ftr_pop1000_rank_decay_1_1_cluster_to_tweet_index"),
+          DatasetName("ftr_pop1000_rank_decay_1_1_cluster_to_tweet_indetwitter"),
           Apollo
         ),
         mhMtlsParams
@@ -233,7 +233,7 @@ object MultiTypeGraphStore {
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("ftr_pop10000_rank_decay_1_1_cluster_to_tweet_index"),
+          DatasetName("ftr_pop10000_rank_decay_1_1_cluster_to_tweet_indetwitter"),
           Apollo
         ),
         mhMtlsParams
@@ -248,7 +248,7 @@ object MultiTypeGraphStore {
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("oon_ftr_pop1000_rnkdecay_cluster_to_tweet_index"),
+          DatasetName("oon_ftr_pop1000_rnkdecay_cluster_to_tweet_indetwitter"),
           Apollo
         ),
         mhMtlsParams
@@ -263,7 +263,7 @@ object MultiTypeGraphStore {
         ManhattanROConfig(
           HDFSPath(""),
           ApplicationID(appId),
-          DatasetName("decayed_sum_cluster_to_tweet_index"),
+          DatasetName("decayed_sum_cluster_to_tweet_indetwitter"),
           Apollo
         ),
         mhMtlsParams

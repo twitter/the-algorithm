@@ -24,7 +24,7 @@ class ListRecommendationPushCandidate(
 )(
   implicit stats: StatsReceiver,
   pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
+    etwittertends PushCandidate
     with ListPushCandidate
     with ListIbis2Hydrator
     with ListCandidateNTabRequestHydrator {
@@ -58,13 +58,13 @@ class ListRecommendationPushCandidate(
 }
 
 case class ListRecommendationPredicates(config: Config)
-    extends BasicRFPHPredicates[ListRecommendationPushCandidate] {
+    etwittertends BasicRFPHPredicates[ListRecommendationPushCandidate] {
 
   implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
 
   override val predicates: List[NamedPredicate[ListRecommendationPushCandidate]] = List(
-    ListPredicates.listNameExistsPredicate(),
-    ListPredicates.listAuthorExistsPredicate(),
+    ListPredicates.listNameEtwitteristsPredicate(),
+    ListPredicates.listAuthorEtwitteristsPredicate(),
     ListPredicates.listAuthorAcceptableToTargetUser(config.edgeStore),
     ListPredicates.listAcceptablePredicate(),
     ListPredicates.listSubscriberCountPredicate()

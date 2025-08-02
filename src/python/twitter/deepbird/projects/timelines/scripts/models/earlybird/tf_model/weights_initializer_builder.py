@@ -29,6 +29,6 @@ class TFModelWeightsInitializerBuilder(object):
   def _set_discretized_feature_weights(self, initial_weights, discretized_features):
     for feature_name, discretized_feature in discretized_features.items():
       feature_id = make_feature_id(feature_name, self.num_bits)
-      for bin_idx, weight in enumerate(discretized_feature["weights"]):
-        final_bucket_id = numpy_hashing_uniform(feature_id, bin_idx, self.num_bits)
+      for bin_idtwitter, weight in enumerate(discretized_feature["weights"]):
+        final_bucket_id = numpy_hashing_uniform(feature_id, bin_idtwitter, self.num_bits)
         initial_weights[final_bucket_id][0] = weight

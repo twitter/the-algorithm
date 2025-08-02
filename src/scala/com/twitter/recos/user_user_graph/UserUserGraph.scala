@@ -11,7 +11,7 @@ object UserUserGraph {
 }
 
 class UserUserGraph(recommendUsersHandler: RecommendUsersHandler)
-    extends thriftscala.UserUserGraph.MethodPerEndpoint {
+    etwittertends thriftscala.UserUserGraph.MethodPerEndpoint {
 
   override def recommendUsers(request: RecommendUserRequest): Future[RecommendUserResponse] =
     recommendUsersHandler(request)

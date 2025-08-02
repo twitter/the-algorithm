@@ -7,7 +7,7 @@ import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
 import com.twitter.search.earlybird.thrift.TierResponse;
 
-public final class TierResponseAccumulator extends ResponseAccumulator {
+public final class TierResponseAccumulator etwittertends ResponseAccumulator {
   private static final String TARGET_TYPE_TIER = "tier";
 
   private final List<TierResponse> tierResponses = new ArrayList<>();
@@ -17,13 +17,13 @@ public final class TierResponseAccumulator extends ResponseAccumulator {
   private int totalSuccessfulPartitionsInAllTiers = 0;
 
   @Override
-  public String getNameForLogging(int responseIndex, int numTotalResponses) {
-    return TARGET_TYPE_TIER + (numTotalResponses - responseIndex);
+  public String getNameForLogging(int responseIndetwitter, int numTotalResponses) {
+    return TARGET_TYPE_TIER + (numTotalResponses - responseIndetwitter);
   }
 
   @Override
-  public String getNameForEarlybirdResponseCodeStats(int responseIndex, int numTotalResponses) {
-    return TARGET_TYPE_TIER + (numTotalResponses - responseIndex);
+  public String getNameForEarlybirdResponseCodeStats(int responseIndetwitter, int numTotalResponses) {
+    return TARGET_TYPE_TIER + (numTotalResponses - responseIndetwitter);
   }
 
   @Override
@@ -84,7 +84,7 @@ public final class TierResponseAccumulator extends ResponseAccumulator {
   }
 
   @Override
-  public void extraSuccessfulResponseHandler(EarlybirdResponse response) {
+  public void etwittertraSuccessfulResponseHandler(EarlybirdResponse response) {
     // Record tier stats.
     totalPartitionsQueriedInAllTiers += response.getNumPartitions();
     totalSuccessfulPartitionsInAllTiers += response.getNumSuccessfulPartitions();

@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.search.relevance.collectors;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import com.google.common.base.Preconditions;
 
@@ -24,7 +24,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
  * which include more detailed information than a normal Hit.
  */
 public abstract class AbstractRelevanceCollector
-    extends AbstractResultsCollector<RelevanceSearchRequestInfo, RelevanceSearchResults> {
+    etwittertends AbstractResultsCollector<RelevanceSearchRequestInfo, RelevanceSearchResults> {
   protected final ScoringFunction scoringFunction;
   private final ThriftSearchResultsRelevanceStats relevanceStats;
   private final EarlybirdCluster cluster;
@@ -55,11 +55,11 @@ public abstract class AbstractRelevanceCollector
   /**
    * Subclasses must implement this method to actually collect a scored relevance hit.
    */
-  protected abstract void doCollectWithScore(long tweetID, float score) throws IOException;
+  protected abstract void doCollectWithScore(long tweetID, float score) throws IOEtwitterception;
 
   @Override
-  public final void startSegment() throws IOException {
-    scoringFunction.setNextReader(currTwitterReader);
+  public final void startSegment() throws IOEtwitterception {
+    scoringFunction.setNetwittertReader(currTwitterReader);
 
     ThriftSearchResultMetadataOptions options =
         searchRequestInfo.getSearchQuery().getResultMetadataOptions();
@@ -67,7 +67,7 @@ public abstract class AbstractRelevanceCollector
   }
 
   @Override
-  protected final void doCollect(long tweetID) throws IOException {
+  protected final void doCollect(long tweetID) throws IOEtwitterception {
     final long scoringStartNanos = getClock().nowNanos();
     float luceneSore = scorer.score();
     final float score = scoringFunction.score(curDocId, luceneSore);
@@ -85,7 +85,7 @@ public abstract class AbstractRelevanceCollector
     scoringTimeNanos += scoringEndNanos - scoringStartNanos;
   }
 
-  protected final ThriftSearchResultMetadata collectMetadata() throws IOException {
+  protected final ThriftSearchResultMetadata collectMetadata() throws IOEtwitterception {
     ThriftSearchResultMetadataOptions options =
         searchRequestInfo.getSearchQuery().getResultMetadataOptions();
     Preconditions.checkNotNull(options);
@@ -103,8 +103,8 @@ public abstract class AbstractRelevanceCollector
         long conversationId =
             documentFeatures.getFeatureValue(EarlybirdFieldConstant.CONVERSATION_ID_CSF);
         if (conversationId != 0) {
-          ensureExtraMetadataIsSet(metadata);
-          metadata.getExtraMetadata().setConversationId(conversationId);
+          ensureEtwittertraMetadataIsSet(metadata);
+          metadata.getEtwittertraMetadata().setConversationId(conversationId);
         }
       }
     }
@@ -117,7 +117,7 @@ public abstract class AbstractRelevanceCollector
       metadata.setFromUserId(fromUserId);
     }
 
-    collectExclusiveConversationAuthorId(metadata);
+    collectEtwitterclusiveConversationAuthorId(metadata);
     collectFacets(metadata);
     collectFeatures(metadata);
     collectIsProtected(metadata, cluster, userTable);
@@ -134,7 +134,7 @@ public abstract class AbstractRelevanceCollector
   }
 
   @Override
-  protected final RelevanceSearchResults doGetResults() throws IOException {
+  protected final RelevanceSearchResults doGetResults() throws IOEtwitterception {
     final RelevanceSearchResults results = doGetRelevanceResults();
     results.setScoringTimeNanos(scoringTimeNanos);
     return results;
@@ -143,5 +143,5 @@ public abstract class AbstractRelevanceCollector
   /**
    * For subclasses to process and aggregate collected hits.
    */
-  protected abstract RelevanceSearchResults doGetRelevanceResults() throws IOException;
+  protected abstract RelevanceSearchResults doGetRelevanceResults() throws IOEtwitterception;
 }

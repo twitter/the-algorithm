@@ -14,7 +14,7 @@ REGISTER_OP("PartitionSparseTensorMod")
 .Output("result: output_types")
 .Attr("num_partitions: int")
 .Attr("output_types: list({int64, float, double})")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
   return Status::OK();
 }).Doc(R"doc(
 
@@ -36,7 +36,7 @@ Outputs
   List of dense tensors containing for each partition:
     - partitioned indices tensor ([ids, keys] from partitioned batch)
     - partitioned values tensor
-  The list lenth is 2 * num_partitions. Example:
+  The list lenth is 2 * num_partitions. Etwitterample:
   [ [ids_1, keys_1], values_1, [ids_2, keys_2], values_2, ... ]
 )doc");
 
@@ -46,24 +46,24 @@ class PartitionSparseTensorMod : public OpKernel {
   int64 num_partitions;
 
  public:
-  explicit PartitionSparseTensorMod(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("num_partitions", &num_partitions));
-    OP_REQUIRES(context, num_partitions > 0,
+  etwitterplicit PartitionSparseTensorMod(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("num_partitions", &num_partitions));
+    OP_REQUIRES(contetwittert, num_partitions > 0,
                 errors::InvalidArgument("Number of partitions must be positive"));
   }
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     // grab input tensors
-    const Tensor& indices_tensor = context->input(0);  // (ids, keys)
-    const Tensor& values_tensor = context->input(1);
+    const Tensor& indices_tensor = contetwittert->input(0);  // (ids, keys)
+    const Tensor& values_tensor = contetwittert->input(1);
 
     // check sizes
     int64 num_keys = indices_tensor.shape().dim_size(0);
-    OP_REQUIRES(context, indices_tensor.dims() == 2,
+    OP_REQUIRES(contetwittert, indices_tensor.dims() == 2,
                 errors::InvalidArgument("Indices tensor must be 2D [ids, keys]"));
-    OP_REQUIRES(context, indices_tensor.shape().dim_size(1) == 2,
+    OP_REQUIRES(contetwittert, indices_tensor.shape().dim_size(1) == 2,
                 errors::InvalidArgument("Indices tensor must have 2 cols [ids, keys]"));
-    OP_REQUIRES(context, values_tensor.shape().dim_size(0) == num_keys,
+    OP_REQUIRES(contetwittert, values_tensor.shape().dim_size(0) == num_keys,
                 errors::InvalidArgument("Number of values must match number of keys"));
 
     // grab input vectors
@@ -90,8 +90,8 @@ class PartitionSparseTensorMod : public OpKernel {
       TensorShape shape_indices = TensorShape({partition_counts[i], 2});
       TensorShape shape_values = TensorShape({partition_counts[i]});
 
-      OP_REQUIRES_OK(context, context->allocate_output(2 * i, shape_indices, &output_indices));
-      OP_REQUIRES_OK(context, context->allocate_output(2 * i + 1, shape_values, &output_values));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(2 * i, shape_indices, &output_indices));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(2 * i + 1, shape_values, &output_values));
 
       output_indices_partitions.push_back(output_indices->flat<int64>().data());
       output_values_partitions.push_back(output_values->flat<T>().data());
@@ -104,11 +104,11 @@ class PartitionSparseTensorMod : public OpKernel {
     for (int i = 0; i < num_keys; i++) {
       int64 key = indices(2 * i + 1);
       int64 pid = key % num_partitions;  // partition id
-      int64 idx = partition_indices[pid]++;
+      int64 idtwitter = partition_indices[pid]++;
 
-      output_indices_partitions[pid][2 * idx] = indices(2 * i);
-      output_indices_partitions[pid][2 * idx + 1] = key / num_partitions;
-      output_values_partitions[pid][idx] = values(i);
+      output_indices_partitions[pid][2 * idtwitter] = indices(2 * i);
+      output_indices_partitions[pid][2 * idtwitter + 1] = key / num_partitions;
+      output_values_partitions[pid][idtwitter] = values(i);
     }
   }
 };

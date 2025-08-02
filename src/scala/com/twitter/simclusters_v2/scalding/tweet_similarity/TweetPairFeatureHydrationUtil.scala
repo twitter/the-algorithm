@@ -1,7 +1,7 @@
 package com.twitter.simclusters_v2.scalding.tweet_similarity
 
 import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.{DataRecord, DataRecordMerger, DataSetPipe, FeatureContext}
+import com.twitter.ml.api.{DataRecord, DataRecordMerger, DataSetPipe, FeatureContetwittert}
 import com.twitter.ml.featurestore.lib.data.EntityIds.Entry
 import com.twitter.ml.featurestore.lib.data.{EntityIds, FeatureValuesById, PredictionRecord}
 import com.twitter.scalding.typed.TypedPipe
@@ -27,13 +27,13 @@ object TweetPairFeatureHydrationUtil {
   val DataRecordMerger = new DataRecordMerger()
 
   /**
-   * Given persistentEmbeddings TypedPipe, extract tweetId, timestamp, and the embedding
+   * Given persistentEmbeddings TypedPipe, etwittertract tweetId, timestamp, and the embedding
    *
-   * @param persistentEmbeddings TypedPipe of ((TweetId, Timestamp), PersistentSimClustersEmbedding), read from PersistentTweetEmbeddingMhExportSource
+   * @param persistentEmbeddings TypedPipe of ((TweetId, Timestamp), PersistentSimClustersEmbedding), read from PersistentTweetEmbeddingMhEtwitterportSource
    *
-   * @return Extracted TypedPipe of (TweetId, (Timestamp, SimClustersEmbedding))
+   * @return Etwittertracted TypedPipe of (TweetId, (Timestamp, SimClustersEmbedding))
    */
-  def extractEmbeddings(
+  def etwittertractEmbeddings(
     persistentEmbeddings: TypedPipe[((TweetId, Timestamp), PersistentSimClustersEmbedding)]
   ): TypedPipe[(TweetId, (Timestamp, ThriftSimClustersEmbedding))] = {
     persistentEmbeddings
@@ -47,7 +47,7 @@ object TweetPairFeatureHydrationUtil {
    * Hydrate the tweet pairs with the latest persistent embeddings before engagement/impression.
    *
    * @param tweetPairs           TypedPipe of the (userId, queryFeaturedTweet, candidateFeaturedTweet, label)
-   * @param persistentEmbeddings TypedPipe of persistentEmbeddings from PersistentTweetEmbeddingMhExportSource
+   * @param persistentEmbeddings TypedPipe of persistentEmbeddings from PersistentTweetEmbeddingMhEtwitterportSource
    *
    * @return TypedPipe of the (userId, queryFeaturedTweet, candidateFeaturedTweet, label) with persistent embeddings set
    */
@@ -55,12 +55,12 @@ object TweetPairFeatureHydrationUtil {
     tweetPairs: TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)],
     persistentEmbeddings: TypedPipe[((TweetId, Timestamp), PersistentSimClustersEmbedding)]
   ): TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)] = {
-    val extractedEmbeddings = extractEmbeddings(persistentEmbeddings)
+    val etwittertractedEmbeddings = etwittertractEmbeddings(persistentEmbeddings)
     tweetPairs
       .groupBy {
         case (queryFeaturedTweet, _, _) => queryFeaturedTweet.tweet
       }
-      .join(extractedEmbeddings)
+      .join(etwittertractedEmbeddings)
       .collect {
         case (
               _,
@@ -71,7 +71,7 @@ object TweetPairFeatureHydrationUtil {
           ((queryFeaturedTweet, candidateFeaturedTweet), (embeddingTimestamp, embedding, label))
       }
       .group
-      .maxBy(_._1)
+      .matwitterBy(_._1)
       .map {
         case ((queryFeaturedTweet, candidateFeaturedTweet), (_, embedding, label)) =>
           (
@@ -79,7 +79,7 @@ object TweetPairFeatureHydrationUtil {
             (queryFeaturedTweet.copy(embedding = Some(embedding)), candidateFeaturedTweet, label)
           )
       }
-      .join(extractedEmbeddings)
+      .join(etwittertractedEmbeddings)
       .collect {
         case (
               _,
@@ -90,7 +90,7 @@ object TweetPairFeatureHydrationUtil {
           ((queryFeaturedTweet, candidateFeaturedTweet), (embeddingTimestamp, embedding, label))
       }
       .group
-      .maxBy(_._1)
+      .matwitterBy(_._1)
       .map {
         case ((queryFeaturedTweet, candidateFeaturedTweet), (_, embedding, label)) =>
           (queryFeaturedTweet, candidateFeaturedTweet.copy(embedding = Some(embedding)), label)
@@ -175,7 +175,7 @@ object TweetPairFeatureHydrationUtil {
    * Get training data records
    *
    * @param tweetPairs           TypedPipe of the (userId, queryFeaturedTweet, candidateFeaturedTweet, label)
-   * @param persistentEmbeddings TypedPipe of persistentEmbeddings from PersistentTweetEmbeddingMhExportSource
+   * @param persistentEmbeddings TypedPipe of persistentEmbeddings from PersistentTweetEmbeddingMhEtwitterportSource
    * @param tweetAuthorPairs     TypedPipe of (tweetId, author userId)
    * @param useAuthorFeatures    whether to use author features or not
    *
@@ -207,10 +207,10 @@ object TweetPairFeatureHydrationUtil {
             queryTweetCount,
             label)
       },
-      FeatureContext.merge(
-        TweetSimilarityFeatures.FeatureContext,
-        QueryTweetConfig.predictionRecordAdapter.getFeatureContext,
-        CandidateTweetConfig.predictionRecordAdapter.getFeatureContext
+      FeatureContetwittert.merge(
+        TweetSimilarityFeatures.FeatureContetwittert,
+        QueryTweetConfig.predictionRecordAdapter.getFeatureContetwittert,
+        CandidateTweetConfig.predictionRecordAdapter.getFeatureContetwittert
       )
     )
   }

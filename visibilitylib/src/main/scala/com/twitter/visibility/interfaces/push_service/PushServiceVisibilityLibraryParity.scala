@@ -69,6 +69,6 @@ class PushServiceVisibilityLibraryParity(
       case _ => magicRecsV2tweetyPieStore
     }
     Stitch.callFuture(
-      tweetypieStore.get(request.tweet.id).onFailure(_ => failures.incr()).map(x => x.isDefined))
+      tweetypieStore.get(request.tweet.id).onFailure(_ => failures.incr()).map(twitter => twitter.isDefined))
   }
 }

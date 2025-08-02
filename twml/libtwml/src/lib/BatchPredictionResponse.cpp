@@ -16,7 +16,7 @@
 #include <algorithm>
 
 // When the number of predictions is very high, as some cases that Ads wants, the generic thrift
-// encoder becomes super expensive because we have to deal with lua tables.
+// encoder becomes super etwitterpensive because we have to deal with lua tables.
 // This function is a special operation to efficiently write a batch prediction responses based on
 // tensors.
 namespace twml {
@@ -33,7 +33,7 @@ BatchPredictionResponse::BatchPredictionResponse(
   } else if (dense_keys_.getNumElements() != dense_values_.size()) {
     throw twml::Error(TWML_ERR_TYPE, "Number of tensors not equal to number of keys");
   } else {
-    // dim 0 for each tensor indexes batch elements
+    // dim 0 for each tensor indetwitteres batch elements
     std::vector<uint64_t> batch_sizes;
     batch_sizes.reserve(dense_values_.size());
 
@@ -102,7 +102,7 @@ void BatchPredictionResponse::serializePredictions(twml::ThriftWriter &thrift_wr
   thrift_writer.writeStructStop();
 }
 
-// calculate expected binary Thrift size (no memory is copied)
+// calculate etwitterpected binary Thrift size (no memory is copied)
 uint64_t BatchPredictionResponse::encodedSize() {
   bool dry_mode = true;
   twml::ThriftWriter dry_writer = twml::ThriftWriter(nullptr, 0, dry_mode);

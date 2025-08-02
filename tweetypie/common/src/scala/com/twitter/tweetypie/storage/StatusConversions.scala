@@ -13,7 +13,7 @@ object StatusConversions {
     tbird.Status(
       id = tweet.id,
       userId = tweet.userId.get,
-      text = tweet.text.get,
+      tetwittert = tweet.tetwittert.get,
       createdVia = tweet.createdVia.get,
       createdAtSec = tweet.createdAtSec.get,
       reply = tweet.reply.map(toTBirdReply),
@@ -31,13 +31,13 @@ object StatusConversions {
 
   /**
    * This is only used in a test, to verify that the above method `toTBirdStatus`
-   * works, so we can't remove it as long as the above method exists.
+   * works, so we can't remove it as long as the above method etwitterists.
    */
   def fromTBirdStatus(status: tbird.Status): StoredTweet = {
     StoredTweet(
       id = status.id,
       userId = Some(status.userId),
-      text = Some(status.text),
+      tetwittert = Some(status.tetwittert),
       createdVia = Some(status.createdVia),
       createdAtSec = Some(status.createdAtSec),
       reply = status.reply.map(fromTBirdReply),

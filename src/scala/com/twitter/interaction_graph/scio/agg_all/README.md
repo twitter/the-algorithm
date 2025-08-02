@@ -1,8 +1,8 @@
 ## InteractionGraphAggregationJob Dataflow Job
 
 This job aggregates the previous day's history with today's activities, and outputs an updated
-history. This history is joined with the explicit scores from real graph's BQML pipeline, and
-exported as features for timelines (which is why we're using their thrift).
+history. This history is joined with the etwitterplicit scores from real graph's BQML pipeline, and
+etwitterported as features for timelines (which is why we're using their thrift).
 
 #### IntelliJ
 ```
@@ -21,9 +21,9 @@ bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_all:interaction_gr
 
 #### Run Scheduled Job
 ```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-aggregation-dataflow
+etwitterport PROJECTID=twttr-recos-ml-prod
+etwitterport REGION=us-central1
+etwitterport JOB_NAME=interaction-graph-aggregation-dataflow
 
 bin/d6w schedule \
   ${PROJECTID}/${REGION}/${JOB_NAME} \

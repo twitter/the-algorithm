@@ -11,7 +11,7 @@ import com.twitter.follow_recommendations.common.models.HasWtfImpressions
 import com.twitter.follow_recommendations.common.models.WtfImpression
 import com.twitter.follow_recommendations.common.rankers.common.RankerId.RankerId
 import com.twitter.follow_recommendations.common.rankers.utils.Utils
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.servo.util.MemoizingStatsReceiver
 import com.twitter.stitch.Stitch
 import com.twitter.timelines.configapi.HasParams
@@ -21,18 +21,18 @@ import com.twitter.util.Time
  * Ranks candidates based on the given weights for each algorithm while preserving the ranks inside each algorithm.
  * Reorders the ranked list based on recent impressions from recentImpressionRepo
  *
- * Note that the penalty is added to the rank of each candidate. To make producer-side experiments
+ * Note that the penalty is added to the rank of each candidate. To make producer-side etwitterperiments
  * with multiple rankers possible, we modify the scores for each candidate and ranker as:
- *     NewScore(C, R) = -(Rank(C, R) + Impression(C, U) x FatigueFactor),
+ *     NewScore(C, R) = -(Rank(C, R) + Impression(C, U) twitter FatigueFactor),
  * where C is a candidate, R a ranker and U the target user.
  * Note also that fatigue penalty is independent of any of the rankers.
  */
 class ImpressionBasedFatigueRanker[
-  Target <: HasClientContext with HasDisplayLocation with HasParams with HasWtfImpressions
+  Target <: HasClientContetwittert with HasDisplayLocation with HasParams with HasWtfImpressions
 ](
   fatigueFactor: Int,
   statsReceiver: StatsReceiver)
-    extends Ranker[Target, CandidateUser] {
+    etwittertends Ranker[Target, CandidateUser] {
 
   val name: String = this.getClass.getSimpleName
   val stats = statsReceiver.scope("impression_based_fatigue_ranker")
@@ -75,11 +75,11 @@ class ImpressionBasedFatigueRanker[
             .flatMap { rankerId =>
               // Candidates with no scores from this Ranker is first removed to calculate ranks.
               val relatedCandidates =
-                candidates.filter(_.scores.exists(_.scores.exists(_.rankerId.contains(rankerId))))
+                candidates.filter(_.scores.etwitterists(_.scores.etwitterists(_.rankerId.contains(rankerId))))
               relatedCandidates
                 .sortBy(-_.scores
                   .flatMap(_.scores.find(_.rankerId.contains(rankerId)).map(_.value)).getOrElse(
-                    0.0)).zipWithIndex.map {
+                    0.0)).zipWithIndetwitter.map {
                   case (candidate, rank) => (candidate.id, rankerId, rank)
                 }
             }.groupBy(_._1).map {
@@ -101,18 +101,18 @@ class ImpressionBasedFatigueRanker[
                     // We set the new score as -rank after fatigue penalty is applied.
                     case Some(rankerId) =>
                       // If the candidate's ID is not in the candidate->ranks map, or there is no
-                      // rank for this specific ranker and this candidate, we use maximum possible
+                      // rank for this specific ranker and this candidate, we use matwitterimum possible
                       // rank instead. Note that this indicates that there is a problem.
                       s.copy(value = -(candidateRanks
                         .getOrElse(candidate.id, Map()).getOrElse(rankerId, candidates.length) +
                         candidateImpressions * fatigueFactor))
-                    // In case a score exists without a RankerId, we pass on the score as is.
+                    // In case a score etwitterists without a RankerId, we pass on the score as is.
                     case None => s
                   }
                 })
               }
               candidate.copy(scores = fatiguedScores)
-            }.zipWithIndex.map {
+            }.zipWithIndetwitter.map {
               // We re-rank candidates with their input ordering (which is done by the request-level
               // ranker) and fatigue penalty.
               case (candidate, inputRank) =>
@@ -132,7 +132,7 @@ object ImpressionBasedFatigueRanker {
   val DefaultFatigueFactor = 5
 
   def build[
-    Target <: HasClientContext with HasDisplayLocation with HasParams with HasWtfImpressions
+    Target <: HasClientContetwittert with HasDisplayLocation with HasParams with HasWtfImpressions
   ](
     baseStatsReceiver: StatsReceiver,
     fatigueFactor: Int = DefaultFatigueFactor

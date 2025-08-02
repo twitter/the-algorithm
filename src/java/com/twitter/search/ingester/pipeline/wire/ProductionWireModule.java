@@ -2,12 +2,12 @@ package com.twitter.search.ingester.pipeline.wire;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import javax.annotation.Nullable;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import java.util.concurrent.EtwitterecutorService;
+import java.util.concurrent.Etwitterecutors;
+import javatwitter.annotation.Nullable;
+import javatwitter.naming.Contetwittert;
+import javatwitter.naming.InitialContetwittert;
+import javatwitter.naming.NamingEtwitterception;
 
 import scala.Option;
 import scala.collection.JavaConversions$;
@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
-import com.twitter.common_internal.text.version.PenguinVersion;
+import com.twitter.common_internal.tetwittert.version.PenguinVersion;
 import com.twitter.decider.Decider;
 import com.twitter.decider.DeciderFactory;
 import com.twitter.decider.DeciderFactory$;
@@ -34,12 +34,12 @@ import com.twitter.decider.decisionmaker.MutableDecisionMaker;
 import com.twitter.eventbus.client.EventBusSubscriber;
 import com.twitter.eventbus.client.EventBusSubscriberBuilder;
 import com.twitter.finagle.Service;
-import com.twitter.finagle.ThriftMux;
+import com.twitter.finagle.ThriftMutwitter;
 import com.twitter.finagle.builder.ClientBuilder;
 import com.twitter.finagle.builder.ClientConfig;
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
-import com.twitter.finagle.mtls.client.MtlsThriftMuxClient;
-import com.twitter.finagle.mux.transport.OpportunisticTls;
+import com.twitter.finagle.mtls.client.MtlsThriftMutwitterClient;
+import com.twitter.finagle.mutwitter.transport.OpportunisticTls;
 import com.twitter.finagle.service.RetryPolicy;
 import com.twitter.finagle.stats.DefaultStatsReceiver;
 import com.twitter.finagle.thrift.ClientId;
@@ -56,7 +56,7 @@ import com.twitter.search.ingester.pipeline.strato_fetchers.AudioSpaceCoreFetche
 import com.twitter.search.ingester.pipeline.strato_fetchers.AudioSpaceParticipantsFetcher;
 import com.twitter.search.ingester.pipeline.strato_fetchers.NamedEntityFetcher;
 import com.twitter.search.ingester.pipeline.util.PenguinVersionsUtil;
-import com.twitter.search.ingester.pipeline.util.PipelineExceptionHandler;
+import com.twitter.search.ingester.pipeline.util.PipelineEtwitterceptionHandler;
 import com.twitter.storage.client.manhattan.kv.JavaManhattanKVEndpoint;
 import com.twitter.storage.client.manhattan.kv.ManhattanKVClient;
 import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams;
@@ -71,10 +71,10 @@ import com.twitter.util.Future;
 /**
  * The injection module that provides all production bindings.
  */
-public class ProductionWireModule extends WireModule {
+public class ProductionWireModule etwittertends WireModule {
   private static final Logger LOG = LoggerFactory.getLogger(ProductionWireModule.class);
 
-  private static final String DECIDER_BASE = "config/ingester-indexer-decider.yml";
+  private static final String DECIDER_BASE = "config/ingester-indetwitterer-decider.yml";
   private static final String GEOCODE_APP_ID = "search_ingester_readonly";
   private static final String CLUSTER_DEST_NAME = "";
 
@@ -91,10 +91,10 @@ public class ProductionWireModule extends WireModule {
   private static final String CLUSTER_JNDI_NAME = JNDI_PIPELINE_ROOT + "cluster";
 
   private static final String TIME_SLICE_MANAGER_ROOT_PATH = "";
-  private static final String MAX_TIMESLICES_JNDI_NAME =
-      TIME_SLICE_MANAGER_ROOT_PATH + "hashPartition/maxTimeSlices";
-  private static final String MAX_SEGMENT_SIZE_JNDI_NAME =
-      TIME_SLICE_MANAGER_ROOT_PATH + "hashPartition/maxSegmentSize";
+  private static final String MAtwitter_TIMESLICES_JNDI_NAME =
+      TIME_SLICE_MANAGER_ROOT_PATH + "hashPartition/matwitterTimeSlices";
+  private static final String MAtwitter_SEGMENT_SIZE_JNDI_NAME =
+      TIME_SLICE_MANAGER_ROOT_PATH + "hashPartition/matwitterSegmentSize";
   private static final String NUM_PARTITIONS_JNDI_NAME =
       TIME_SLICE_MANAGER_ROOT_PATH + "hashPartition/numPartitions";
 
@@ -103,7 +103,7 @@ public class ProductionWireModule extends WireModule {
   private final Decider decider;
   private final MutableDecisionMaker mutableDecisionMaker;
   private final int partition;
-  private PipelineExceptionHandler pipelineExceptionHandler;
+  private PipelineEtwitterceptionHandler pipelineEtwitterceptionHandler;
   private final StratoMetaStoreWireModule stratoMetaStoreWireModule;
 
   private final Client stratoClient;
@@ -141,14 +141,14 @@ public class ProductionWireModule extends WireModule {
 
   public ProductionWireModule(String deciderOverlay,
                               int partition,
-                              PipelineExceptionHandler pipelineExceptionHandler,
+                              PipelineEtwitterceptionHandler pipelineEtwitterceptionHandler,
                               Option<String> serviceIdentifierFlag) {
     this(deciderOverlay, partition, serviceIdentifierFlag);
-    this.pipelineExceptionHandler = pipelineExceptionHandler;
+    this.pipelineEtwitterceptionHandler = pipelineEtwitterceptionHandler;
   }
 
-  public void setPipelineExceptionHandler(PipelineExceptionHandler pipelineExceptionHandler) {
-    this.pipelineExceptionHandler = pipelineExceptionHandler;
+  public void setPipelineEtwitterceptionHandler(PipelineEtwitterceptionHandler pipelineEtwitterceptionHandler) {
+    this.pipelineEtwitterceptionHandler = pipelineEtwitterceptionHandler;
   }
 
   @Override
@@ -193,17 +193,17 @@ public class ProductionWireModule extends WireModule {
   }
 
   @Override
-  public PipelineExceptionHandler getPipelineExceptionHandler() {
-    return pipelineExceptionHandler;
+  public PipelineEtwitterceptionHandler getPipelineEtwitterceptionHandler() {
+    return pipelineEtwitterceptionHandler;
   }
 
   @Override
   public Storer.ServiceIface getStorer(Duration requestTimeout, int retries) {
     TBinaryProtocol.Factory factory = new TBinaryProtocol.Factory();
 
-    MtlsThriftMuxClient mtlsThriftMuxClient = new MtlsThriftMuxClient(
-        ThriftMux.client().withClientId(new ClientId(PINK_CLIENT_ID)));
-    ThriftMux.Client tmuxClient = mtlsThriftMuxClient
+    MtlsThriftMutwitterClient mtlsThriftMutwitterClient = new MtlsThriftMutwitterClient(
+        ThriftMutwitter.client().withClientId(new ClientId(PINK_CLIENT_ID)));
+    ThriftMutwitter.Client tmutwitterClient = mtlsThriftMutwitterClient
         .withMutualTls(serviceIdentifier)
         .withOpportunisticTls(OpportunisticTls.Required());
 
@@ -217,36 +217,36 @@ public class ProductionWireModule extends WireModule {
           .requestTimeout(requestTimeout)
           .retries(retries)
           .timeout(requestTimeout.mul(retries))
-          .stack(tmuxClient)
+          .stack(tmutwitterClient)
           .name("pinkclient")
           .reportTo(DefaultStatsReceiver.get());
     return new Storer.ServiceToClient(ClientBuilder.safeBuild(builder), factory);
   }
 
   @Override
-  public MetastoreClient getMetastoreClient() throws NamingException {
+  public MetastoreClient getMetastoreClient() throws NamingEtwitterception {
     return stratoMetaStoreWireModule.getMetastoreClient(this.serviceIdentifier);
   }
 
   @Override
-  public ExecutorService getThreadPool(int numThreads) {
-    return Executors.newFixedThreadPool(numThreads);
+  public EtwitterecutorService getThreadPool(int numThreads) {
+    return Etwitterecutors.newFitwitteredThreadPool(numThreads);
   }
 
   @Override
   public TweetService.ServiceToClient getTweetyPieClient(String tweetypieClientId)
-      throws NamingException {
+      throws NamingEtwitterception {
     return TweetyPieWireModule.getTweetyPieClient(tweetypieClientId, serviceIdentifier);
   }
 
   @Override
   public UserService.ServiceToClient getGizmoduckClient(String clientId)
-      throws NamingException {
-    Context context = new InitialContext();
-    String dest = (String) context.lookup(JNDI_GIZMODUCK_DEST);
+      throws NamingEtwitterception {
+    Contetwittert contetwittert = new InitialContetwittert();
+    String dest = (String) contetwittert.lookup(JNDI_GIZMODUCK_DEST);
 
-    MtlsThriftMuxClient mtlsThriftMuxClient = new MtlsThriftMuxClient(
-        ThriftMux.client().withClientId(new ClientId(clientId)));
+    MtlsThriftMutwitterClient mtlsThriftMutwitterClient = new MtlsThriftMutwitterClient(
+        ThriftMutwitter.client().withClientId(new ClientId(clientId)));
 
     Service<ThriftClientRequest, byte[]> clientBuilder =
         ClientBuilder.safeBuild(
@@ -258,23 +258,23 @@ public class ProductionWireModule extends WireModule {
                 .reportTo(DefaultStatsReceiver.get())
                 .daemon(true)
                 .dest(dest)
-                .stack(mtlsThriftMuxClient.withMutualTls(serviceIdentifier)
+                .stack(mtlsThriftMutwitterClient.withMutualTls(serviceIdentifier)
                         .withOpportunisticTls(OpportunisticTls.Required())));
     return new UserService.ServiceToClient(clientBuilder, new TBinaryProtocol.Factory());
   }
 
   @Override
-  public <T extends TBase<?, ?>> EventBusSubscriber<T> createEventBusSubscriber(
+  public <T etwittertends TBase<?, ?>> EventBusSubscriber<T> createEventBusSubscriber(
       Function<T, Future<?>> process,
       Class<T> thriftStructClass,
       String eventBusSubscriberId,
-      int maxConcurrentEvents) {
+      int matwitterConcurrentEvents) {
     Preconditions.checkNotNull(serviceIdentifier,
         "Can't create EventBusSubscriber with S2S auth because Service Identifier is null");
     LOG.info(String.format("Service identifier for EventBusSubscriber Manhattan client: %s",
         ServiceIdentifier.asString(serviceIdentifier)));
     // We set the processTimeoutMs parameter here to be Duration.Top because we do not want to read
-    // more events from EventBus if we are experiencing back pressure and cannot write them to the
+    // more events from EventBus if we are etwitterperiencing back pressure and cannot write them to the
     // downstream queue.
     return EventBusSubscriberBuilder.apply()
         .subscriberId(eventBusSubscriberId)
@@ -283,7 +283,7 @@ public class ProductionWireModule extends WireModule {
         .statsReceiver(DefaultStatsReceiver.get().scope("eventbus"))
         .thriftStruct(thriftStructClass)
         .serviceIdentifier(serviceIdentifier)
-        .maxConcurrentEvents(maxConcurrentEvents)
+        .matwitterConcurrentEvents(matwitterConcurrentEvents)
         .processTimeout(Duration.Top())
         .build(process);
   }
@@ -299,16 +299,16 @@ public class ProductionWireModule extends WireModule {
   }
 
   @Override
-  public EarlybirdCluster getEarlybirdCluster() throws NamingException {
-    Context jndiContext = new InitialContext();
-    String clusterName = (String) jndiContext.lookup(CLUSTER_JNDI_NAME);
+  public EarlybirdCluster getEarlybirdCluster() throws NamingEtwitterception {
+    Contetwittert jndiContetwittert = new InitialContetwittert();
+    String clusterName = (String) jndiContetwittert.lookup(CLUSTER_JNDI_NAME);
     return EarlybirdCluster.valueOf(clusterName.toUpperCase());
   }
 
   @Override
-  public List<PenguinVersion> getPenguinVersions() throws NamingException {
-    Context context = new InitialContext();
-    String penguinVersionsStr = (String) context.lookup(PENGUIN_VERSIONS_JNDI_NAME);
+  public List<PenguinVersion> getPenguinVersions() throws NamingEtwitterception {
+    Contetwittert contetwittert = new InitialContetwittert();
+    String penguinVersionsStr = (String) contetwittert.lookup(PENGUIN_VERSIONS_JNDI_NAME);
     penguinVersions = new ArrayList<>();
 
     for (String penguinVersion : penguinVersionsStr.split(",")) {
@@ -348,15 +348,15 @@ public class ProductionWireModule extends WireModule {
   @Override
   public <T> KafkaConsumer<Long, T> newKafkaConsumer(
       String kafkaClusterPath, Deserializer<T> deserializer, String clientId, String groupId,
-      int maxPollRecords) {
+      int matwitterPollRecords) {
     return FinagleKafkaClientUtils.newKafkaConsumer(
-        kafkaClusterPath, deserializer, clientId, groupId, maxPollRecords);
+        kafkaClusterPath, deserializer, clientId, groupId, matwitterPollRecords);
   }
 
   @Override
   public <T> BlockingFinagleKafkaProducer<Long, T> newFinagleKafkaProducer(
       String kafkaClusterPath, Serializer<T> serializer, String clientId,
-      @Nullable Class<? extends Partitioner> partitionerClass) {
+      @Nullable Class<? etwittertends Partitioner> partitionerClass) {
     return FinagleKafkaClientUtils.newFinagleKafkaProducer(
         kafkaClusterPath, true, serializer, clientId, partitionerClass);
   }

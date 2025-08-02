@@ -4,7 +4,7 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import scala.runtime.BoxedUnit;
+import scala.runtime.BotwitteredUnit;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -17,9 +17,9 @@ import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchTimer;
 import com.twitter.search.common.metrics.SearchTimerStats;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twitter.search.queryparser.query.QueryParserEtwitterception;
 import com.twitter.search.queryparser.query.annotation.Annotation;
 import com.twitter.search.queryparser.query.search.SearchOperator;
 import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
@@ -32,32 +32,32 @@ import com.twitter.util.Future;
  * annotations applied to it. Used to detect unusual traffic patterns.
  */
 public class QueryOperatorStatFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+    etwittertends SimpleFilter<EarlybirdRequestContetwittert, EarlybirdResponse> {
   private static final Logger LOG = LoggerFactory.getLogger(QueryOperatorStatFilter.class);
 
   private final SearchCounter numQueryOperatorDetectionErrors =
-      SearchCounter.export("query_operator_detection_errors");
+      SearchCounter.etwitterport("query_operator_detection_errors");
 
   private final SearchCounter numQueryOperatorConsideredRequests =
-      SearchCounter.export("query_operator_requests_considered");
+      SearchCounter.etwitterport("query_operator_requests_considered");
 
   private final ImmutableMap<String, SearchTimerStats> filterOperatorStats;
 
   // Keeps track of the number of queries with a filter applied, whose type we don't care about.
   private final SearchCounter numUnknownFilterOperatorRequests =
-      SearchCounter.export("query_operator_filter_unknown_requests");
+      SearchCounter.etwitterport("query_operator_filter_unknown_requests");
 
   private final ImmutableMap<String, SearchTimerStats> includeOperatorStats;
 
   // Keeps track of the number of queries with an include operator applied, whose type we don't
   // know about.
   private final SearchCounter numUnknownIncludeOperatorRequests =
-      SearchCounter.export("query_operator_include_unknown_requests");
+      SearchCounter.etwitterport("query_operator_include_unknown_requests");
 
   private final ImmutableMap<SearchOperator.Type, SearchTimerStats> operatorTypeStats;
 
   private final SearchCounter numVariantRequests =
-      SearchCounter.export("query_operator_variant_requests");
+      SearchCounter.etwitterport("query_operator_variant_requests");
 
   /**
    * Construct this QueryOperatorStatFilter by getting the complete set of possible filters a query
@@ -69,7 +69,7 @@ public class QueryOperatorStatFilter
     for (String operand : SearchOperatorConstants.VALID_FILTER_OPERANDS) {
       filterBuilder.put(
           operand,
-          SearchTimerStats.export(
+          SearchTimerStats.etwitterport(
               "query_operator_filter_" + operand + "_requests",
               TimeUnit.MILLISECONDS,
               false,
@@ -81,7 +81,7 @@ public class QueryOperatorStatFilter
     for (String operand : SearchOperatorConstants.VALID_INCLUDE_OPERANDS) {
       includeBuilder.put(
           operand,
-          SearchTimerStats.export(
+          SearchTimerStats.etwitterport(
               "query_operator_include_" + operand + "_requests",
               TimeUnit.MILLISECONDS,
               false,
@@ -94,7 +94,7 @@ public class QueryOperatorStatFilter
     for (SearchOperator.Type operatorType : SearchOperator.Type.values()) {
       operatorBuilder.put(
           operatorType,
-          SearchTimerStats.export(
+          SearchTimerStats.etwitterport(
               "query_operator_" + operatorType.name().toLowerCase() + "_requests",
               TimeUnit.MILLISECONDS,
               false,
@@ -106,29 +106,29 @@ public class QueryOperatorStatFilter
 
   @Override
   public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+      EarlybirdRequestContetwittert requestContetwittert,
+      Service<EarlybirdRequestContetwittert, EarlybirdResponse> service) {
     numQueryOperatorConsideredRequests.increment();
-    Query parsedQuery = requestContext.getParsedQuery();
+    Query parsedQuery = requestContetwittert.getParsedQuery();
 
     if (parsedQuery == null) {
-      return service.apply(requestContext);
+      return service.apply(requestContetwittert);
     }
 
     SearchTimer timer = new SearchTimer();
     timer.start();
 
-    return service.apply(requestContext).ensure(() -> {
+    return service.apply(requestContetwittert).ensure(() -> {
       timer.stop();
 
       try {
         updateTimersForOperatorsAndOperands(parsedQuery, timer);
         updateCountersIfVariantAnnotation(parsedQuery);
-      } catch (QueryParserException e) {
+      } catch (QueryParserEtwitterception e) {
         LOG.warn("Unable to test if query has operators defined", e);
         numQueryOperatorDetectionErrors.increment();
       }
-      return BoxedUnit.UNIT;
+      return BotwitteredUnit.UNIT;
     });
   }
 
@@ -138,7 +138,7 @@ public class QueryOperatorStatFilter
    * @param parsedQuery the query to check.
    */
   private void updateTimersForOperatorsAndOperands(Query parsedQuery, SearchTimer timer)
-      throws QueryParserException {
+      throws QueryParserEtwitterception {
     final DetectVisitor detectVisitor = new DetectVisitor(false, SearchOperator.Type.values());
     parsedQuery.accept(detectVisitor);
 
@@ -185,7 +185,7 @@ public class QueryOperatorStatFilter
     }
   }
 
-  private void updateCountersIfVariantAnnotation(Query parsedQuery) throws QueryParserException {
+  private void updateCountersIfVariantAnnotation(Query parsedQuery) throws QueryParserEtwitterception {
     DetectAnnotationVisitor visitor = new DetectAnnotationVisitor(Annotation.Type.VARIANT);
     if (parsedQuery.accept(visitor)) {
       numVariantRequests.increment();

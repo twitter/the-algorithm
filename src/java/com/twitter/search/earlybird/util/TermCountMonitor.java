@@ -13,37 +13,37 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 
 import org.apache.commons.lang.mutable.MutableLong;
-import org.apache.lucene.index.IndexOptions;
-import org.apache.lucene.index.Terms;
+import org.apache.lucene.indetwitter.IndetwitterOptions;
+import org.apache.lucene.indetwitter.Terms;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
+import com.twitter.search.common.concurrent.ScheduledEtwitterecutorServiceFactory;
 import com.twitter.search.common.metrics.SearchLongGauge;
 import com.twitter.search.common.metrics.SearchStatsReceiver;
 import com.twitter.search.common.metrics.SearchTimer;
 import com.twitter.search.common.metrics.SearchTimerStats;
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
 import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
+import com.twitter.search.earlybird.etwitterception.CriticalEtwitterceptionHandler;
+import com.twitter.search.earlybird.indetwitter.EarlybirdSingleSegmentSearcher;
 import com.twitter.search.earlybird.partition.SegmentInfo;
 import com.twitter.search.earlybird.partition.SegmentManager;
 
 /**
- * A background task that periodically gets and exports the number of terms per field that are
- * indexed on this earlybird, averaged over all segments.
+ * A background task that periodically gets and etwitterports the number of terms per field that are
+ * indetwittered on this earlybird, averaged over all segments.
  * Specifically used for making sure that we are not missing terms for any fields in the search
  * archives.
- * The task loops though all the segments that are indexed by this earlybird, and for each segment
+ * The task loops though all the segments that are indetwittered by this earlybird, and for each segment
  * looks at the term counts for all fields in that segment.
  *
  * Also keeps track of the number of fields that do not have any term counts (or below the specified
- * threshold) in the data that is indexed on this earlybird.
+ * threshold) in the data that is indetwittered on this earlybird.
  */
-public class TermCountMonitor extends OneTaskScheduledExecutorManager {
+public class TermCountMonitor etwittertends OneTaskScheduledEtwitterecutorManager {
   private static final Logger LOG = LoggerFactory.getLogger(TermCountMonitor.class);
 
   private static final String THREAD_NAME_FORMAT = "TermCountMonitor-%d";
@@ -65,16 +65,16 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
   }
 
   @VisibleForTesting
-  static class ExportedFieldCounter {
+  static class EtwitterportedFieldCounter {
     private final AtomicLong numTerms;
     private final AtomicLong numTokens;
 
-    ExportedFieldCounter(RawFieldCounter rawCounter) {
+    EtwitterportedFieldCounter(RawFieldCounter rawCounter) {
       this.numTerms = new AtomicLong(rawCounter.numTerms.longValue());
       this.numTokens = new AtomicLong(rawCounter.numTokens.longValue());
     }
 
-    ExportedFieldCounter(long numInitialTerms, long numInitialTokens) {
+    EtwitterportedFieldCounter(long numInitialTerms, long numInitialTokens) {
       this.numTerms = new AtomicLong(numInitialTerms);
       this.numTokens = new AtomicLong(numInitialTokens);
     }
@@ -97,7 +97,7 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
   private final Map<String, SearchLongGauge> missingFields;
   private final Map<String, SearchLongGauge> termStats;
   private final Map<String, SearchLongGauge> tokenStats;
-  private final Map<String, ExportedFieldCounter> exportedCounts;
+  private final Map<String, EtwitterportedFieldCounter> etwitterportedCounts;
   private final SearchLongGauge termCountOnAllFields;
   private final SearchLongGauge tokenCountOnAllFields;
   private final SearchLongGauge fieldsWithNoTermCountStat;
@@ -111,8 +111,8 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
     final SearchTimer timer = checkTimeStat.startNewTimer();
     try {
       updateFieldTermCounts();
-    } catch (Exception ex) {
-      LOG.error("Unexpected exception while getting per-field term counts", ex);
+    } catch (Etwitterception etwitter) {
+      LOG.error("Unetwitterpected etwitterception while getting per-field term counts", etwitter);
     } finally {
       LOG.info(
           "Done getting per-field term counts. Fields with low term counts: {}",
@@ -128,16 +128,16 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
    */
   public TermCountMonitor(
       SegmentManager segmentManager,
-      ScheduledExecutorServiceFactory executorServiceFactory,
+      ScheduledEtwitterecutorServiceFactory etwitterecutorServiceFactory,
       long shutdownWaitDuration,
       TimeUnit shutdownWaitUnit,
       SearchStatsReceiver searchStatsReceiver,
-      CriticalExceptionHandler criticalExceptionHandler) {
+      CriticalEtwitterceptionHandler criticalEtwitterceptionHandler) {
     super(
-      executorServiceFactory,
+      etwitterecutorServiceFactory,
       THREAD_NAME_FORMAT,
       THREAD_IS_DAEMON,
-      PeriodicActionParams.atFixedRate(
+      PeriodicActionParams.atFitwitteredRate(
         EarlybirdConfig.getInt(RUN_INTERVAL_MINUTES_CONFIG_NAME, -1),
         TimeUnit.MINUTES),
       new ShutdownWaitTimeParams(
@@ -145,12 +145,12 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
         shutdownWaitUnit
       ),
       searchStatsReceiver,
-        criticalExceptionHandler);
+        criticalEtwitterceptionHandler);
     this.segmentManager = segmentManager;
     this.missingFields = new HashMap<>();
     this.termStats = new HashMap<>();
     this.tokenStats = new HashMap<>();
-    this.exportedCounts = new HashMap<>();
+    this.etwitterportedCounts = new HashMap<>();
     this.termCountOnAllFields = getSearchStatsReceiver().getLongGauge("term_count_on_all_fields");
     this.tokenCountOnAllFields = getSearchStatsReceiver().getLongGauge("token_count_on_all_fields");
     this.fieldsWithNoTermCountStat =
@@ -179,52 +179,52 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
     Map<String, RawFieldCounter> newCounts = getFieldStats();
     LOG.info("Computed field stats for all segments");
 
-    // 1. Update all existing keys
-    for (Map.Entry<String, ExportedFieldCounter> exportedCount : exportedCounts.entrySet()) {
-      String field = exportedCount.getKey();
-      ExportedFieldCounter exportedCountValue = exportedCount.getValue();
+    // 1. Update all etwitteristing keys
+    for (Map.Entry<String, EtwitterportedFieldCounter> etwitterportedCount : etwitterportedCounts.entrySet()) {
+      String field = etwitterportedCount.getKey();
+      EtwitterportedFieldCounter etwitterportedCountValue = etwitterportedCount.getValue();
 
       RawFieldCounter newCount = newCounts.get(field);
       if (newCount == null) {
-        exportedCountValue.numTerms.set(0L);
-        exportedCountValue.numTokens.set(0L);
+        etwitterportedCountValue.numTerms.set(0L);
+        etwitterportedCountValue.numTokens.set(0L);
       } else {
-        exportedCountValue.numTerms.set(newCount.numTerms.longValue());
-        exportedCountValue.numTokens.set(newCount.numTokens.longValue());
+        etwitterportedCountValue.numTerms.set(newCount.numTerms.longValue());
+        etwitterportedCountValue.numTokens.set(newCount.numTokens.longValue());
 
         // clean up so that we don't check this field again when we look for new field
         newCounts.remove(field);
       }
     }
 
-    // 2. Add and export all new fields' term counts
+    // 2. Add and etwitterport all new fields' term counts
     for (Map.Entry<String, RawFieldCounter> newCount: newCounts.entrySet()) {
       String field = newCount.getKey();
-      Preconditions.checkState(!exportedCounts.containsKey(field),
-          "Should have already processed and removed existing fields: " + field);
+      Preconditions.checkState(!etwitterportedCounts.containsKey(field),
+          "Should have already processed and removed etwitteristing fields: " + field);
 
-      ExportedFieldCounter newStat = new ExportedFieldCounter(newCount.getValue());
-      exportedCounts.put(field, newStat);
+      EtwitterportedFieldCounter newStat = new EtwitterportedFieldCounter(newCount.getValue());
+      etwitterportedCounts.put(field, newStat);
     }
 
-    // 3. Export as a stat the term counts for all the known fields.
-    for (Map.Entry<String, ExportedFieldCounter> exportedCount : exportedCounts.entrySet()) {
-      String field = exportedCount.getKey();
-      ExportedFieldCounter counter = exportedCount.getValue();
+    // 3. Etwitterport as a stat the term counts for all the known fields.
+    for (Map.Entry<String, EtwitterportedFieldCounter> etwitterportedCount : etwitterportedCounts.entrySet()) {
+      String field = etwitterportedCount.getKey();
+      EtwitterportedFieldCounter counter = etwitterportedCount.getValue();
 
       getOrCreateLongGauge(termStats, field, termStatNameFunc).set(counter.numTerms.get());
       getOrCreateLongGauge(tokenStats, field, tokenStatNameFunc).set(counter.numTokens.get());
     }
 
-    // 4. Export as a stat, number of fields not having enough term counts (i.e. <= 0)
+    // 4. Etwitterport as a stat, number of fields not having enough term counts (i.e. <= 0)
     int fieldsWithNoTermCounts = 0;
-    for (Map.Entry<String, ExportedFieldCounter> fieldTermCount : exportedCounts.entrySet()) {
+    for (Map.Entry<String, EtwitterportedFieldCounter> fieldTermCount : etwitterportedCounts.entrySet()) {
       String field = fieldTermCount.getKey();
-      AtomicLong exportedCountValue = fieldTermCount.getValue().numTerms;
-      if (exportedCountValue.get() <= fieldMinTermCount) {
+      AtomicLong etwitterportedCountValue = fieldTermCount.getValue().numTerms;
+      if (etwitterportedCountValue.get() <= fieldMinTermCount) {
         LOG.warn(
             "Found a field with too few term counts. Field: {} count: {}",
-            field, exportedCountValue);
+            field, etwitterportedCountValue);
         fieldsWithNoTermCounts++;
       }
     }
@@ -241,11 +241,11 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
     Map<String, RawFieldCounter> rawCounts = new HashMap<>();
 
     ImmutableSchemaInterface schemaSnapshot =
-        segmentManager.getEarlybirdIndexConfig().getSchema().getSchemaSnapshot();
+        segmentManager.getEarlybirdIndetwitterConfig().getSchema().getSchemaSnapshot();
     Set<String> missingFieldsCandidates = schemaSnapshot
         .getFieldInfos()
         .stream()
-        .filter(fieldInfo -> fieldInfo.getFieldType().indexOptions() != IndexOptions.NONE)
+        .filter(fieldInfo -> fieldInfo.getFieldType().indetwitterOptions() != IndetwitterOptions.NONE)
         .map(Schema.FieldInfo::getName)
         .collect(Collectors.toSet());
     int segmentCount = 0;
@@ -255,9 +255,9 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
         EarlybirdSingleSegmentSearcher searcher = segmentManager.getSearcher(
             segmentInfo.getTimeSliceID(), schemaSnapshot);
         if (searcher != null) {
-          EarlybirdIndexSegmentAtomicReader reader = searcher.getTwitterIndexReader();
+          EarlybirdIndetwitterSegmentAtomicReader reader = searcher.getTwitterIndetwitterReader();
           for (Schema.FieldInfo fieldInfo : schemaSnapshot.getFieldInfos()) {
-            if (fieldInfo.getFieldType().indexOptions() == IndexOptions.NONE) {
+            if (fieldInfo.getFieldType().indetwitterOptions() == IndetwitterOptions.NONE) {
               continue;
             }
 
@@ -278,8 +278,8 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
             }
           }
         }
-      } catch (Exception e) {
-        LOG.error("Exception getting average term count per field: " + segmentInfo, e);
+      } catch (Etwitterception e) {
+        LOG.error("Etwitterception getting average term count per field: " + segmentInfo, e);
       }
     }
 
@@ -322,8 +322,8 @@ public class TermCountMonitor extends OneTaskScheduledExecutorManager {
   }
 
   @VisibleForTesting
-  Map<String, ExportedFieldCounter> getExportedCounts() {
-    return Collections.unmodifiableMap(this.exportedCounts);
+  Map<String, EtwitterportedFieldCounter> getEtwitterportedCounts() {
+    return Collections.unmodifiableMap(this.etwitterportedCounts);
   }
 
   @VisibleForTesting

@@ -1,12 +1,12 @@
 # Notification Heavy Ranker Model
 
-## Model Context
+## Model Contetwittert
 There are 4 major components of Twitter notifications recommendation system: 1) candidate generation 2) light ranking 3) heavy ranking & 4) quality control. This notification heavy ranker model is the core ranking model for the personalised notifications recommendation. It's a multi-task learning model to predict the probabilities that the target users will open and engage with the sent notifications. 
 
 
 ## Directory Structure
 - BUILD: this file defines python library dependencies
-- deep_norm.py: this file contains how to set up continuous training, model evaluation and model exporting for the notification heavy ranker model
+- deep_norm.py: this file contains how to set up continuous training, model evaluation and model etwitterporting for the notification heavy ranker model
 - eval.py: the main python entry file to set up the overall model evaluation pipeline
 - features.py: this file contains importing feature list and support functions for feature engineering
 - graph.py: this file defines how to build the tensorflow graph with specified model architecture, loss function and training configuration

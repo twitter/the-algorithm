@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird_root;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import javatwitter.inject.Inject;
+import javatwitter.inject.Singleton;
 
 import com.twitter.finagle.Service;
 import com.twitter.finagle.mtls.authorization.server.MtlsServerSessionTrackerFilter;
@@ -19,7 +19,7 @@ import com.twitter.search.earlybird_root.filters.ClientRequestTimeFilter;
 import com.twitter.search.earlybird_root.filters.DeadlineTimeoutStatsFilter;
 import com.twitter.search.earlybird_root.filters.DisableClientByTierFilter;
 import com.twitter.search.earlybird_root.filters.EarlybirdFeatureSchemaAnnotateFilter;
-import com.twitter.search.earlybird_root.filters.InitializeRequestContextFilter;
+import com.twitter.search.earlybird_root.filters.InitializeRequestContetwittertFilter;
 import com.twitter.search.earlybird_root.filters.MetadataTrackingFilter;
 import com.twitter.search.earlybird_root.filters.NamedMultiTermDisjunctionStatsFilter;
 import com.twitter.search.earlybird_root.filters.NullcastTrackingFilter;
@@ -30,10 +30,10 @@ import com.twitter.search.earlybird_root.filters.QueryTokenizerFilter;
 import com.twitter.search.earlybird_root.filters.RequestResultStatsFilter;
 import com.twitter.search.earlybird_root.filters.RequestSuccessStatsFilter;
 import com.twitter.search.earlybird_root.filters.ResponseCodeStatFilter;
-import com.twitter.search.earlybird_root.filters.SearchPayloadSizeLocalContextFilter;
+import com.twitter.search.earlybird_root.filters.SearchPayloadSizeLocalContetwittertFilter;
 import com.twitter.search.earlybird_root.filters.RejectRequestsByQuerySourceFilter;
 import com.twitter.search.earlybird_root.filters.StratoAttributionClientIdFilter;
-import com.twitter.search.earlybird_root.filters.TopLevelExceptionHandlingFilter;
+import com.twitter.search.earlybird_root.filters.TopLevelEtwitterceptionHandlingFilter;
 import com.twitter.search.earlybird_root.filters.VeryRecentTweetsFilter;
 import com.twitter.util.Future;
 
@@ -43,7 +43,7 @@ class SuperRootService implements EarlybirdService.ServiceIface {
 
   @Inject
   public SuperRootService(
-      TopLevelExceptionHandlingFilter topLevelExceptionHandlingFilter,
+      TopLevelEtwitterceptionHandlingFilter topLevelEtwitterceptionHandlingFilter,
       ResponseCodeStatFilter responseCodeStatFilter,
       LoggingFilter<EarlybirdRequest, EarlybirdResponse> loggingFilter,
       NamedMultiTermDisjunctionStatsFilter namedMultiTermDisjunctionStatsFilter,
@@ -51,7 +51,7 @@ class SuperRootService implements EarlybirdService.ServiceIface {
       MtlsServerSessionTrackerFilter<EarlybirdRequest, EarlybirdResponse> mtlsFilter,
       FinagleClientStatsFilter<EarlybirdRequest, EarlybirdResponse> finagleStatsFilter,
       InitializeFilter initializeFilter,
-      InitializeRequestContextFilter initializeRequestContextFilter,
+      InitializeRequestContetwittertFilter initializeRequestContetwittertFilter,
       QueryLangStatFilter queryLangStatFilter,
       QueryOperatorStatFilter queryOperatorStatFilter,
       RequestResultStatsFilter requestResultStatsFilter,
@@ -70,14 +70,14 @@ class SuperRootService implements EarlybirdService.ServiceIface {
       DeadlineTimeoutStatsFilter deadlineTimeoutStatsFilter,
       SuperRootRequestTypeRouter superRootSearchService,
       EarlybirdFeatureSchemaAnnotateFilter featureSchemaAnnotateFilter,
-      SearchPayloadSizeLocalContextFilter searchPayloadSizeLocalContextFilter,
+      SearchPayloadSizeLocalContetwittertFilter searchPayloadSizeLocalContetwittertFilter,
       StratoAttributionClientIdFilter stratoAttributionClientIdFilter) {
     this.fullSearchMethod =
         loggingFilter
-            .andThen(topLevelExceptionHandlingFilter)
+            .andThen(topLevelEtwitterceptionHandlingFilter)
             .andThen(stratoAttributionClientIdFilter)
             .andThen(clientRequestTimeFilter)
-            .andThen(searchPayloadSizeLocalContextFilter)
+            .andThen(searchPayloadSizeLocalContetwittertFilter)
             .andThen(requestSuccessStatsFilter)
             .andThen(requestResultStatsFilter)
             .andThen(responseCodeStatFilter)
@@ -93,7 +93,7 @@ class SuperRootService implements EarlybirdService.ServiceIface {
             .andThen(metadataTrackingFilter)
             .andThen(veryRecentTweetsFilter)
             .andThen(initializeFilter)
-            .andThen(initializeRequestContextFilter)
+            .andThen(initializeRequestContetwittertFilter)
             .andThen(deadlineTimeoutStatsFilter)
             .andThen(queryLangStatFilter)
             .andThen(nullcastTrackingFilter)
@@ -111,7 +111,7 @@ class SuperRootService implements EarlybirdService.ServiceIface {
 
   @Override
   public Future<EarlybirdStatusResponse> getStatus() {
-    throw new UnsupportedOperationException("not supported");
+    throw new UnsupportedOperationEtwitterception("not supported");
   }
 
   @Override

@@ -10,14 +10,14 @@ import com.twitter.stitch.Group
 /**
  * Workaround for a infelicity in the implementation of [[Stitch.async]].
  *
- * This has the same semantics to [[Stitch.async]], with the exception
+ * This has the same semantics to [[Stitch.async]], with the etwitterception
  * that interrupts to the main computation will not interrupt the
  * async call.
  *
  * The problem that this implementation solves is that we do not want
  * async calls grouped together with synchronous calls. See the
  * mailing list thread [1] for discussion. This may eventually be
- * fixed in Stitch.
+ * fitwittered in Stitch.
  */
 private[caching] object StitchAsync {
   // Contains a deferred Stitch that we want to run asynchronously
@@ -25,11 +25,11 @@ private[caching] object StitchAsync {
     def call(): Stitch[_] = deferred
   }
 
-  private object AsyncGroup extends Group[AsyncCall, Unit] {
+  private object AsyncGroup etwittertends Group[AsyncCall, Unit] {
     override def runner(): Runner[AsyncCall, Unit] =
       new FutureRunner[AsyncCall, Unit] {
         // All of the deferred calls of any type. When they are
-        // executed in `run`, the normal Stitch batching and deduping
+        // etwitterecuted in `run`, the normal Stitch batching and deduping
         // will occur.
         private[this] val calls = new mutable.ArrayBuffer[AsyncCall]
 
@@ -51,7 +51,7 @@ private[caching] object StitchAsync {
             Stitch.traverse(calls) { asyncCall: AsyncCall =>
               asyncCall
                 .call()
-                .liftToTry // So that an exception will not interrupt the other calls
+                .liftToTry // So that an etwitterception will not interrupt the other calls
             }
           }
           Future.Unit

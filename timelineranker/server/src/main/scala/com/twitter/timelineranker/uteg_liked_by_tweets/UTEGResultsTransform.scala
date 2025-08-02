@@ -16,8 +16,8 @@ import com.twitter.timelines.clients.user_tweet_entity_graph.UserTweetEntityGrap
 import com.twitter.util.Future
 
 object UTEGResultsTransform {
-  val MaxUserSocialProofSize = 10
-  val MaxTweetSocialProofSize = 10
+  val MatwitterUserSocialProofSize = 10
+  val MatwitterTweetSocialProofSize = 10
   val MinUserSocialProofSize = 1
 
   def requiredTweetAuthors(query: RecapQuery): Option[Set[Long]] = {
@@ -36,16 +36,16 @@ object UTEGResultsTransform {
       userId = query.userId,
       displayLocation = TweetEntityDisplayLocation.HomeTimeline,
       seedUserIdsWithWeights = utegLikedByTweetsOpt.map(_.weightedFollowings).getOrElse(Map.empty),
-      maxTweetResults = utegCountProvider(query),
-      maxTweetAgeInMillis = // the "to" in the Range field is not supported by this new endpoint
+      matwitterTweetResults = utegCountProvider(query),
+      matwitterTweetAgeInMillis = // the "to" in the Range field is not supported by this new endpoint
         query.range match {
           case Some(TimeRange(from, _)) => from.map(_.untilNow.inMillis)
           case Some(TweetIdRange(from, _)) => from.map(SnowflakeId.timeFromId(_).untilNow.inMillis)
           case _ => None
         },
-      excludedTweetIds = query.excludedTweetIds,
-      maxUserSocialProofSize = Some(MaxUserSocialProofSize),
-      maxTweetSocialProofSize = Some(MaxTweetSocialProofSize),
+      etwittercludedTweetIds = query.etwittercludedTweetIds,
+      matwitterUserSocialProofSize = Some(MatwitterUserSocialProofSize),
+      matwitterTweetSocialProofSize = Some(MatwitterTweetSocialProofSize),
       minUserSocialProofSize = Some(MinUserSocialProofSize),
       socialProofTypes = socialProofTypes,
       tweetAuthors = requiredTweetAuthors(query)
@@ -58,7 +58,7 @@ class UTEGResultsTransform(
   utegCountProvider: DependencyProvider[Int],
   recommendationsFilter: DependencyTransformer[Seq[TweetRecommendation], Seq[TweetRecommendation]],
   socialProofTypes: Seq[SocialProofType])
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+    etwittertends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
 
   override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
     val utegQuery =

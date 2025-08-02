@@ -7,8 +7,8 @@ import com.twitter.unified_user_actions.thriftscala._
 import com.twitter.util.Time
 import org.scalatest.prop.TableDrivenPropertyChecks
 
-class RetweetArchivalEventsAdapterSpec extends Test with TableDrivenPropertyChecks {
-  trait Fixture {
+class RetweetArchivalEventsAdapterSpec etwittertends Test with TableDrivenPropertyChecks {
+  trait Fitwitterture {
 
     val frozenTime = Time.fromMilliseconds(1658949273000L)
 
@@ -34,7 +34,7 @@ class RetweetArchivalEventsAdapterSpec extends Test with TableDrivenPropertyChec
       isArchivingAction = Some(false),
     )
 
-    val expectedUua1 = UnifiedUserAction(
+    val etwitterpectedUua1 = UnifiedUserAction(
       userIdentifier = UserIdentifier(userId = Some(retweetAuthorId)),
       item = Item.TweetInfo(
         TweetInfo(
@@ -50,7 +50,7 @@ class RetweetArchivalEventsAdapterSpec extends Test with TableDrivenPropertyChec
         sourceLineage = SourceLineage.ServerRetweetArchivalEvents,
       )
     )
-    val expectedUua2 = UnifiedUserAction(
+    val etwitterpectedUua2 = UnifiedUserAction(
       userIdentifier = UserIdentifier(userId = Some(retweetAuthorId)),
       item = Item.TweetInfo(
         TweetInfo(
@@ -69,16 +69,16 @@ class RetweetArchivalEventsAdapterSpec extends Test with TableDrivenPropertyChec
   }
 
   test("all tests") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val table = Table(
-          ("event", "expected"),
-          (retweetArchivalEvent, expectedUua1),
-          (retweetUnarchivalEvent, expectedUua2),
+          ("event", "etwitterpected"),
+          (retweetArchivalEvent, etwitterpectedUua1),
+          (retweetUnarchivalEvent, etwitterpectedUua2),
         )
-        forEvery(table) { (event: RetweetArchivalEvent, expected: UnifiedUserAction) =>
+        forEvery(table) { (event: RetweetArchivalEvent, etwitterpected: UnifiedUserAction) =>
           val actual = RetweetArchivalEventsAdapter.adaptEvent(event)
-          assert(Seq(expected) === actual)
+          assert(Seq(etwitterpected) === actual)
         }
       }
     }

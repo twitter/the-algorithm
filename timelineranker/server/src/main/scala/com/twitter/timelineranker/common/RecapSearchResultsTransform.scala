@@ -16,39 +16,39 @@ import com.twitter.util.Future
  */
 class RecapSearchResultsTransform(
   searchClient: SearchClient,
-  maxCountProvider: DependencyProvider[Int],
+  matwitterCountProvider: DependencyProvider[Int],
   returnAllResultsProvider: DependencyProvider[Boolean],
-  relevanceOptionsMaxHitsToProcessProvider: DependencyProvider[Int],
-  enableExcludeSourceTweetIdsProvider: DependencyProvider[Boolean],
+  relevanceOptionsMatwitterHitsToProcessProvider: DependencyProvider[Int],
+  enableEtwittercludeSourceTweetIdsProvider: DependencyProvider[Boolean],
   enableSettingTweetTypesWithTweetKindOptionProvider: DependencyProvider[Boolean],
   perRequestSearchClientIdProvider: DependencyProvider[Option[String]],
   relevanceSearchProvider: DependencyProvider[Boolean] =
     DependencyProvider.from(RecapParams.EnableRelevanceSearchParam),
   statsReceiver: StatsReceiver,
   logSearchDebugInfo: Boolean = true)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  private[this] val maxCountStat = statsReceiver.stat("maxCount")
+    etwittertends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+  private[this] val matwitterCountStat = statsReceiver.stat("matwitterCount")
   private[this] val numResultsFromSearchStat = statsReceiver.stat("numResultsFromSearch")
-  private[this] val excludedTweetIdsStat = statsReceiver.stat("excludedTweetIds")
+  private[this] val etwittercludedTweetIdsStat = statsReceiver.stat("etwittercludedTweetIds")
 
   override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val maxCount = maxCountProvider(envelope.query)
-    maxCountStat.add(maxCount)
+    val matwitterCount = matwitterCountProvider(envelope.query)
+    matwitterCountStat.add(matwitterCount)
 
-    val excludedTweetIdsOpt = envelope.query.excludedTweetIds
-    excludedTweetIdsOpt.foreach { excludedTweetIds =>
-      excludedTweetIdsStat.add(excludedTweetIds.size)
+    val etwittercludedTweetIdsOpt = envelope.query.etwittercludedTweetIds
+    etwittercludedTweetIdsOpt.foreach { etwittercludedTweetIds =>
+      etwittercludedTweetIdsStat.add(etwittercludedTweetIds.size)
     }
 
     val tweetIdRange = envelope.query.range
       .map(TweetIdRange.fromTimelineRange)
       .getOrElse(TweetIdRange.default)
 
-    val beforeTweetIdExclusive = tweetIdRange.toId
-    val afterTweetIdExclusive = tweetIdRange.fromId
+    val beforeTweetIdEtwitterclusive = tweetIdRange.toId
+    val afterTweetIdEtwitterclusive = tweetIdRange.fromId
 
     val returnAllResults = returnAllResultsProvider(envelope.query)
-    val relevanceOptionsMaxHitsToProcess = relevanceOptionsMaxHitsToProcessProvider(envelope.query)
+    val relevanceOptionsMatwitterHitsToProcess = relevanceOptionsMatwitterHitsToProcessProvider(envelope.query)
 
     Future
       .join(
@@ -63,23 +63,23 @@ class RecapSearchResultsTransform(
               userId = envelope.query.userId,
               followedUserIds = followedIdsIncludingSelf,
               retweetsMutedUserIds = retweetsMutedIds,
-              maxCount = maxCount,
+              matwitterCount = matwitterCount,
               tweetTypes = TweetTypes.fromTweetKindOption(envelope.query.options),
               searchOperator = envelope.query.searchOperator,
-              beforeTweetIdExclusive = beforeTweetIdExclusive,
-              afterTweetIdExclusive = afterTweetIdExclusive,
+              beforeTweetIdEtwitterclusive = beforeTweetIdEtwitterclusive,
+              afterTweetIdEtwitterclusive = afterTweetIdEtwitterclusive,
               enableSettingTweetTypesWithTweetKindOption =
                 enableSettingTweetTypesWithTweetKindOptionProvider(envelope.query),
-              excludedTweetIds = excludedTweetIdsOpt,
+              etwittercludedTweetIds = etwittercludedTweetIdsOpt,
               earlybirdOptions = envelope.query.earlybirdOptions,
               getOnlyProtectedTweets = false,
               logSearchDebugInfo = logSearchDebugInfo,
               returnAllResults = returnAllResults,
-              enableExcludeSourceTweetIdsQuery =
-                enableExcludeSourceTweetIdsProvider(envelope.query),
+              enableEtwittercludeSourceTweetIdsQuery =
+                enableEtwittercludeSourceTweetIdsProvider(envelope.query),
               relevanceSearch = relevanceSearchProvider(envelope.query),
               searchClientId = perRequestSearchClientIdProvider(envelope.query),
-              relevanceOptionsMaxHitsToProcess = relevanceOptionsMaxHitsToProcess
+              relevanceOptionsMatwitterHitsToProcess = relevanceOptionsMatwitterHitsToProcess
             ).map { results =>
               numResultsFromSearchStat.add(results.size)
               envelope.copy(searchResults = results)

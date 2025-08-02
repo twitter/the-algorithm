@@ -3,7 +3,7 @@ package com.twitter.recos.user_tweet_entity_graph
 import java.util.Random
 import com.twitter.concurrent.AsyncQueue
 import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph
+import com.twitter.graphjet.bipartite.NodeMetadataLeftIndetwitteredPowerLawMultiSegmentBipartiteGraph
 import com.twitter.graphjet.algorithms.{
   RecommendationInfo,
   RecommendationType => JavaRecommendationType
@@ -31,7 +31,7 @@ import scala.collection.JavaConverters._
  * and each one reads from the graph and computes social proofs.
  */
 class EntitySocialProofRunner(
-  graph: NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph,
+  graph: NodeMetadataLeftIndetwitteredPowerLawMultiSegmentBipartiteGraph,
   salsaRunnerConfig: SalsaRunnerConfig,
   statsReceiver: StatsReceiver) {
   private val log: Logger = Logger()
@@ -97,7 +97,7 @@ class EntitySocialProofRunner(
 
   /**
    * Attempt to retrieve a NodeMetadataSocialProof thread from the runner pool
-   * to execute a socialProofRequest
+   * to etwitterecute a socialProofRequest
    */
   private def handleSocialProofRequest(socialProofRequest: SocialProofJavaRequest) = {
     pollCounter.incr()
@@ -116,7 +116,7 @@ class EntitySocialProofRunner(
           // if we did not get a social proof in time, then fail fast here and immediately put it back
           log.warning("socialProof polling timeout")
           pollTimeoutCounter.incr()
-          throw new RuntimeException("socialProof poll timeout")
+          throw new RuntimeEtwitterception("socialProof poll timeout")
           Nil
         }
       } ensure {
@@ -136,14 +136,14 @@ class EntitySocialProofRunner(
     val nodeMetadataTypeToIdsMap: Byte2ObjectMap[IntSet] = new Byte2ObjectArrayMap[IntSet]()
     request.recommendationIdsForSocialProof.collect {
       case (ThriftRecommendationType.Url, urlIds) =>
-        // We must convert the Long url ids into type Int since the underlying library expects Int type metadata ids.
+        // We must convert the Long url ids into type Int since the underlying library etwitterpects Int type metadata ids.
         val urlIntIds = urlIds.map(_.toInt)
         nodeMetadataTypeToIdsMap.put(
           JavaRecommendationType.URL.getValue.toByte,
           new IntOpenHashSet(urlIntIds.toArray)
         )
       case (ThriftRecommendationType.Hashtag, hashtagIds) =>
-        // We must convert the Long hashtag ids into type Int since the underlying library expects Int type metadata ids.
+        // We must convert the Long hashtag ids into type Int since the underlying library etwitterpects Int type metadata ids.
         val hashtagIntIds = hashtagIds.map(_.toInt)
         nodeMetadataTypeToIdsMap.put(
           JavaRecommendationType.HASHTAG.getValue.toByte,

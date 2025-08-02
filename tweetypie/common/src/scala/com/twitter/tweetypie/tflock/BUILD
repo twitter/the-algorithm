@@ -10,7 +10,7 @@ scala_library(
         "tweetypie/servo/util/src/main/scala",
         "snowflake:id",
         "src/thrift/com/twitter/gizmoduck:thrift-scala",
-        "src/thrift/com/twitter/servo:servo-exception-java",
+        "src/thrift/com/twitter/servo:servo-etwitterception-java",
         "tweetypie/common/src/thrift/com/twitter/tweetypie:tweet-scala",
         "tweetypie/server/src/main/scala/com/twitter/tweetypie",
         "tweetypie/server/src/main/scala/com/twitter/tweetypie/serverutil",

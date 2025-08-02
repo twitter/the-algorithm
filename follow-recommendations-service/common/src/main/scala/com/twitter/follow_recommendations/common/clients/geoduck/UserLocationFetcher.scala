@@ -4,8 +4,8 @@ import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.follow_recommendations.common.models.GeohashAndCountryCode
 import com.twitter.stitch.Stitch
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class UserLocationFetcher @Inject() (
@@ -16,8 +16,8 @@ class UserLocationFetcher @Inject() (
   private val stats: StatsReceiver = statsReceiver.scope("user_location_fetcher")
   private val totalRequestsCounter = stats.counter("requests")
   private val emptyResponsesCounter = stats.counter("empty")
-  private val locationServiceExceptionCounter = stats.counter("location_service_exception")
-  private val reverseGeocodeExceptionCounter = stats.counter("reverse_geocode_exception")
+  private val locationServiceEtwitterceptionCounter = stats.counter("location_service_etwitterception")
+  private val reverseGeocodeEtwitterceptionCounter = stats.counter("reverse_geocode_etwitterception")
 
   def getGeohashAndCountryCode(
     userId: Option[Long],
@@ -28,8 +28,8 @@ class UserLocationFetcher @Inject() (
       .collect {
         userId.map(locationServiceClient.getGeohashAndCountryCode)
       }.rescue {
-        case _: Exception =>
-          locationServiceExceptionCounter.incr()
+        case _: Etwitterception =>
+          locationServiceEtwitterceptionCounter.incr()
           Stitch.None
       }
 
@@ -37,8 +37,8 @@ class UserLocationFetcher @Inject() (
       .collect {
         ipAddress.map(reverseGeocodeClient.getGeohashAndCountryCode)
       }.rescue {
-        case _: Exception =>
-          reverseGeocodeExceptionCounter.incr()
+        case _: Etwitterception =>
+          reverseGeocodeEtwitterceptionCounter.incr()
           Stitch.None
       }
 

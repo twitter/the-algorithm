@@ -6,12 +6,12 @@
 #include <cinttypes>
 #include <cstdint>
 
-#ifndef PATH_MAX
-#define PATH_MAX (8096)
+#ifndef PATH_MAtwitter
+#define PATH_MAtwitter (8096)
 #endif
 
 #ifdef __cplusplus
-extern "C" {
+etwittertern "C" {
 #endif
 
   struct block_format_writer__;
@@ -28,8 +28,8 @@ namespace twml {
     private:
         const char *file_name_;
         FILE *outputfile_;
-        char temp_file_name_[PATH_MAX];
-        int record_index_;
+        char temp_file_name_[PATH_MAtwitter];
+        int record_indetwitter_;
         int records_per_block_;
 
         int pack_tag_and_wiretype(FILE *file, uint32_t tag, uint32_t wiretype);
@@ -50,7 +50,7 @@ namespace twml {
 #endif
 
 #ifdef __cplusplus
-extern "C" {
+etwittertern "C" {
 #endif
 twml_err block_format_writer_create(block_format_writer *w, const char *file_name, int records_per_block);
 twml_err block_format_write(block_format_writer w, const char *class_name, const char *record, int record_len);

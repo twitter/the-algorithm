@@ -21,7 +21,7 @@ include "com/twitter/mediaservices/commons/TweetMedia.thrift"
  * structured types cannot be annotated, so we have to put the annotation
  * on the structure itself's fields even though it's more confusing to do so
  * and could introduce issues if someone else reuses ColorValue outside of
- * the context of a media file.
+ * the contetwittert of a media file.
  */
 struct ColorValue {
   1: i8 red  (personalDataType = 'MediaFile')
@@ -30,16 +30,16 @@ struct ColorValue {
 }(persisted = 'true', hasPersonalData = 'true')
 
 struct MediaEntity {
-  1: i16 from_index (personalDataType = 'MediaFile')
-  2: i16 to_index (personalDataType = 'MediaFile')
+  1: i16 from_indetwitter (personalDataType = 'MediaFile')
+  2: i16 to_indetwitter (personalDataType = 'MediaFile')
 
   /**
-   * The shortened t.co url found in the tweet text.
+   * The shortened t.co url found in the tweet tetwittert.
    */
   3: string url (personalDataType = 'ShortUrl')
 
   /**
-   * The text to display in place of the shortened url.
+   * The tetwittert to display in place of the shortened url.
    */
   4: string display_url (personalDataType = 'LongUrl')
 
@@ -54,9 +54,9 @@ struct MediaEntity {
   6: string media_url_https (personalDataType = 'LongUrl')
 
   /**
-   * The expanded media permalink.
+   * The etwitterpanded media permalink.
    */
-  7: string expanded_url (personalDataType = 'LongUrl')
+  7: string etwitterpanded_url (personalDataType = 'LongUrl')
 
   8: MediaCommon.MediaId media_id (strato.space = "Media", strato.name = "media", personalDataType = 'MediaId')
   9: bool nsfw
@@ -107,12 +107,12 @@ struct MediaEntity {
    */
   17: optional list<ColorValue> dominant_color_grid
 
-  // obsolete 18: optional map<string, binary> extensions
+  // obsolete 18: optional map<string, binary> etwittertensions
 
   /**
-   * Stratostore extension points data encoded as a Strato record.
+   * Stratostore etwittertension points data encoded as a Strato record.
    */
-  19: optional binary extensions_reply
+  19: optional binary etwittertensions_reply
 
   /**
    * Holds metadata defined by the user for the tweet-asset relationship.
@@ -125,7 +125,7 @@ struct MediaEntity {
   21: optional MediaCommon.MediaKey media_key
 
   /**
-   * Flexible structure for additional media metadata.  This field is only
+   * Fletwitterible structure for additional media metadata.  This field is only
    * included in a read-path request if specifically requested.  It will
    * always be included, when applicable, in write-path responses.
    */

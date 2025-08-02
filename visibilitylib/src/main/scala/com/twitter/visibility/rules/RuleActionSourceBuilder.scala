@@ -26,7 +26,7 @@ sealed trait RuleActionSourceBuilder {
 object RuleActionSourceBuilder {
 
   case class TweetSafetyLabelSourceBuilder(tweetSafetyLabelType: TweetSafetyLabelType)
-      extends RuleActionSourceBuilder {
+      etwittertends RuleActionSourceBuilder {
     override def build(
       resolvedFeatureMap: Map[Feature[_], Any],
       verdict: Action
@@ -41,7 +41,7 @@ object RuleActionSourceBuilder {
   }
 
   case class UserSafetyLabelSourceBuilder(userLabel: UserLabelValue)
-      extends RuleActionSourceBuilder {
+      etwittertends RuleActionSourceBuilder {
     override def build(
       resolvedFeatureMap: Map[Feature[_], Any],
       verdict: Action
@@ -59,7 +59,7 @@ object RuleActionSourceBuilder {
     }
   }
 
-  case class SemanticCoreActionSourceBuilder() extends RuleActionSourceBuilder {
+  case class SemanticCoreActionSourceBuilder() etwittertends RuleActionSourceBuilder {
     override def build(
       resolvedFeatureMap: Map[Feature[_], Any],
       verdict: Action
@@ -92,6 +92,6 @@ object RuleActionSourceBuilder {
 
 trait DoesLogVerdict {}
 
-trait DoesLogVerdictDecidered extends DoesLogVerdict {
+trait DoesLogVerdictDecidered etwittertends DoesLogVerdict {
   def verdictLogDeciderKey: DeciderKey.Value
 }

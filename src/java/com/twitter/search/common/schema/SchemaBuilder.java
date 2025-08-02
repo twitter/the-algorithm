@@ -2,16 +2,16 @@ package com.twitter.search.common.schema;
 
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
-import com.twitter.common.text.util.CharSequenceTermAttributeSerializer;
-import com.twitter.common.text.util.PositionIncrementAttributeSerializer;
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.common.text.util.TokenTypeAttributeSerializer;
+import com.twitter.common.tetwittert.util.CharSequenceTermAttributeSerializer;
+import com.twitter.common.tetwittert.util.PositionIncrementAttributeSerializer;
+import com.twitter.common.tetwittert.util.TokenStreamSerializer;
+import com.twitter.common.tetwittert.util.TokenTypeAttributeSerializer;
 import com.twitter.search.common.schema.base.FeatureConfiguration;
 import com.twitter.search.common.schema.base.FieldNameToIdMapping;
 import com.twitter.search.common.schema.thriftjava.ThriftCSFFieldSettings;
@@ -22,10 +22,10 @@ import com.twitter.search.common.schema.thriftjava.ThriftFeatureNormalizationTyp
 import com.twitter.search.common.schema.thriftjava.ThriftFeatureUpdateConstraint;
 import com.twitter.search.common.schema.thriftjava.ThriftFieldConfiguration;
 import com.twitter.search.common.schema.thriftjava.ThriftFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftFixedLengthCSFSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexOptions;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexedFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexedNumericFieldSettings;
+import com.twitter.search.common.schema.thriftjava.ThriftFitwitteredLengthCSFSettings;
+import com.twitter.search.common.schema.thriftjava.ThriftIndetwitterOptions;
+import com.twitter.search.common.schema.thriftjava.ThriftIndetwitteredFieldSettings;
+import com.twitter.search.common.schema.thriftjava.ThriftIndetwitteredNumericFieldSettings;
 import com.twitter.search.common.schema.thriftjava.ThriftNumericType;
 import com.twitter.search.common.schema.thriftjava.ThriftSchema;
 import com.twitter.search.common.schema.thriftjava.ThriftSearchFieldSettings;
@@ -101,8 +101,8 @@ public class SchemaBuilder {
     int fieldId = idMapping.getFieldID(fieldName);
     ThriftFieldConfiguration fieldConfiguration = schema.getFieldConfigs().get(fieldId);
     Preconditions.checkNotNull(fieldConfiguration,
-        "In Earlybird, a facet field must be indexed. "
-            + "No ThriftIndexedFieldSettings found for field " + fieldName);
+        "In Earlybird, a facet field must be indetwittered. "
+            + "No ThriftIndetwitteredFieldSettings found for field " + fieldName);
     fieldConfiguration.getSettings().setFacetFieldSettings(facetSettings);
     return this;
   }
@@ -162,8 +162,8 @@ public class SchemaBuilder {
     ThriftCSFFieldSettings csfFieldSettings = new ThriftCSFFieldSettings();
     csfFieldSettings.setCsfType(type)
         .setVariableLength(false)
-        .setFixedLengthSettings(
-            new ThriftFixedLengthCSFSettings()
+        .setFitwitteredLengthSettings(
+            new ThriftFitwitteredLengthCSFSettings()
                 .setNumValuesPerDoc(numValuesPerDoc)
                 .setUpdateable(updatable))
         .setLoadIntoRAM(loadIntoRam);
@@ -188,7 +188,7 @@ public class SchemaBuilder {
       ThriftCSFType csfType,
       ThriftCSFType outputCSFType,
       String baseFieldName,
-      int valueIndex,
+      int valueIndetwitter,
       int bitStartPosition,
       int bitLength,
       ThriftFeatureNormalizationType featureNormalizationType,
@@ -202,7 +202,7 @@ public class SchemaBuilder {
     ThriftCSFViewSettings csfViewSettings = new ThriftCSFViewSettings()
             .setBaseFieldConfigId(baseFieldConfigID)
             .setCsfType(csfType)
-            .setValueIndex(valueIndex)
+            .setValueIndetwitter(valueIndetwitter)
             .setBitStartPosition(bitStartPosition)
             .setBitLength(bitLength);
     if (outputCSFType != null) {
@@ -240,14 +240,14 @@ public class SchemaBuilder {
               csfViewSettings.getBaseFieldConfigId());
       if (baseFieldConfig != null) {
         String baseFieldName = baseFieldConfig.getFieldName();
-        String expectedViewNamePrefix = baseFieldName + CSF_VIEW_NAME_SEPARATOR;
-        if (fieldConf.getFieldName().startsWith(expectedViewNamePrefix)) {
+        String etwitterpectedViewNamePrefitwitter = baseFieldName + CSF_VIEW_NAME_SEPARATOR;
+        if (fieldConf.getFieldName().startsWith(etwitterpectedViewNamePrefitwitter)) {
           ThriftFieldSettings baseFieldSettings = baseFieldConfig.getSettings();
           ThriftCSFFieldSettings baseFieldCSFSettings = baseFieldSettings.getCsfFieldSettings();
 
           if (baseFieldCSFSettings != null) {
              if (!baseFieldCSFSettings.isVariableLength()
-                 && baseFieldCSFSettings.getFixedLengthSettings() != null) {
+                 && baseFieldCSFSettings.getFitwitteredLengthSettings() != null) {
 
                ThriftCSFType baseCSFType = baseFieldCSFSettings.getCsfType();
                switch (baseCSFType) {
@@ -258,42 +258,42 @@ public class SchemaBuilder {
                    checkCSFViewPositions(baseFieldCSFSettings, 32, csfViewSettings);
                    break;
                  default:
-                   throw new IllegalStateException("Base field: " + baseFieldName
+                   throw new IllegalStateEtwitterception("Base field: " + baseFieldName
                            + " is of a non-supported CSFType: " + baseCSFType);
                }
              } else {
-               throw new IllegalStateException("Base field: " + baseFieldName
-                       + " must be a fixed-length CSF field");
+               throw new IllegalStateEtwitterception("Base field: " + baseFieldName
+                       + " must be a fitwittered-length CSF field");
              }
           } else {
-            throw new IllegalStateException("Base field: " + baseFieldName + " is not a CSF field");
+            throw new IllegalStateEtwitterception("Base field: " + baseFieldName + " is not a CSF field");
           }
         } else {
-          throw new IllegalStateException("View field name for baseFieldConfigID: "
+          throw new IllegalStateEtwitterception("View field name for baseFieldConfigID: "
                   + csfViewSettings.getBaseFieldConfigId() + " must start with: '"
-                  + expectedViewNamePrefix + "'");
+                  + etwitterpectedViewNamePrefitwitter + "'");
         }
       } else {
-        throw new IllegalStateException("Can't add a view, no field defined for base fieldID: "
+        throw new IllegalStateEtwitterception("Can't add a view, no field defined for base fieldID: "
                 + csfViewSettings.getBaseFieldConfigId());
       }
     } else {
-      throw new IllegalStateException("Can't add a view, no field configs defined.");
+      throw new IllegalStateEtwitterception("Can't add a view, no field configs defined.");
     }
   }
 
   private static void checkCSFViewPositions(ThriftCSFFieldSettings baseFieldCSFSettings,
       int bitsPerValue,
       ThriftCSFViewSettings csfViewSettings) {
-    ThriftFixedLengthCSFSettings fixedLengthCSFSettings =
-            baseFieldCSFSettings.getFixedLengthSettings();
-    Preconditions.checkNotNull(fixedLengthCSFSettings);
+    ThriftFitwitteredLengthCSFSettings fitwitteredLengthCSFSettings =
+            baseFieldCSFSettings.getFitwitteredLengthSettings();
+    Preconditions.checkNotNull(fitwitteredLengthCSFSettings);
 
-    int numValues = fixedLengthCSFSettings.getNumValuesPerDoc();
-    Preconditions.checkState(csfViewSettings.getValueIndex() >= 0,
-        "value index must be positive: " + csfViewSettings.getValueIndex());
-    Preconditions.checkState(csfViewSettings.getValueIndex() < numValues, "value index "
-        + csfViewSettings.getValueIndex() + " must be less than numValues: " + numValues);
+    int numValues = fitwitteredLengthCSFSettings.getNumValuesPerDoc();
+    Preconditions.checkState(csfViewSettings.getValueIndetwitter() >= 0,
+        "value indetwitter must be positive: " + csfViewSettings.getValueIndetwitter());
+    Preconditions.checkState(csfViewSettings.getValueIndetwitter() < numValues, "value indetwitter "
+        + csfViewSettings.getValueIndetwitter() + " must be less than numValues: " + numValues);
 
     Preconditions.checkState(csfViewSettings.getBitStartPosition() >= 0,
         "bitStartPosition must be positive: " + csfViewSettings.getBitStartPosition());
@@ -314,26 +314,26 @@ public class SchemaBuilder {
   /**
    * Norm is disabled as default. Like Lucene string field, or int/long fields.
    */
-  public final SchemaBuilder withIndexedNotTokenizedField(String fieldName) {
-    return withIndexedNotTokenizedField(fieldName, false);
+  public final SchemaBuilder withIndetwitteredNotTokenizedField(String fieldName) {
+    return withIndetwitteredNotTokenizedField(fieldName, false);
   }
 
   /**
-   * Add an indexed but not tokenized field. This is similar to Lucene's StringField.
+   * Add an indetwittered but not tokenized field. This is similar to Lucene's StringField.
    */
-  public final SchemaBuilder withIndexedNotTokenizedField(String fieldName,
+  public final SchemaBuilder withIndetwitteredNotTokenizedField(String fieldName,
                                                           boolean supportOutOfOrderAppends) {
-    return withIndexedNotTokenizedField(fieldName, supportOutOfOrderAppends, true);
+    return withIndetwitteredNotTokenizedField(fieldName, supportOutOfOrderAppends, true);
   }
 
-  private final SchemaBuilder withIndexedNotTokenizedField(String fieldName,
+  private final SchemaBuilder withIndetwitteredNotTokenizedField(String fieldName,
                                                           boolean supportOutOfOrderAppends,
                                                           boolean omitNorms) {
     if (!shouldIncludeField(fieldName)) {
       return this;
     }
     ThriftFieldSettings settings = getNoPositionNoFreqSettings(supportOutOfOrderAppends);
-    settings.getIndexedFieldSettings().setOmitNorms(omitNorms);
+    settings.getIndetwitteredFieldSettings().setOmitNorms(omitNorms);
     ThriftFieldConfiguration config = new ThriftFieldConfiguration(fieldName)
         .setSettings(settings);
     putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
@@ -343,7 +343,7 @@ public class SchemaBuilder {
 
   /** Makes the given field searchable by default, with the given weight. */
   public final SchemaBuilder withSearchFieldByDefault(
-      String fieldName, float textSearchableFieldWeight) {
+      String fieldName, float tetwittertSearchableFieldWeight) {
     if (!shouldIncludeField(fieldName)) {
       return this;
     }
@@ -352,35 +352,35 @@ public class SchemaBuilder {
         schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
     settings.setSearchFieldSettings(
         new ThriftSearchFieldSettings()
-            .setTextSearchableFieldWeight(textSearchableFieldWeight)
-            .setTextDefaultSearchable(true));
+            .setTetwittertSearchableFieldWeight(tetwittertSearchableFieldWeight)
+            .setTetwittertDefaultSearchable(true));
 
     return this;
   }
 
   /**
-   * Similar to Lucene's TextField. The string is analyzed using the default/override analyzer.
+   * Similar to Lucene's TetwittertField. The string is analyzed using the default/override analyzer.
    * @param fieldName
-   * @param addHfPairIfHfFieldsArePresent Add hfPair fields if they exists in the schema.
-   *            For certain text fields, adding hfPair fields are usually preferred, but they may
-   *            not exist in the schema, in which case the hfPair fields will not be added.
+   * @param addHfPairIfHfFieldsArePresent Add hfPair fields if they etwitterists in the schema.
+   *            For certain tetwittert fields, adding hfPair fields are usually preferred, but they may
+   *            not etwitterist in the schema, in which case the hfPair fields will not be added.
    */
-  public final SchemaBuilder withTextField(String fieldName,
+  public final SchemaBuilder withTetwittertField(String fieldName,
                                            boolean addHfPairIfHfFieldsArePresent) {
     if (!shouldIncludeField(fieldName)) {
       return this;
     }
     ThriftFieldConfiguration config = new ThriftFieldConfiguration(fieldName).setSettings(
-        getDefaultSettings(ThriftIndexOptions.DOCS_AND_FREQS_AND_POSITIONS));
+        getDefaultSettings(ThriftIndetwitterOptions.DOCS_AND_FREQS_AND_POSITIONS));
 
     if (addHfPairIfHfFieldsArePresent) {
-      // Add hfPair fields only if they exist in the schema for the cluster
+      // Add hfPair fields only if they etwitterist in the schema for the cluster
       boolean hfPair = shouldIncludeField(ImmutableSchema.HF_TERM_PAIRS_FIELD)
                        && shouldIncludeField(ImmutableSchema.HF_PHRASE_PAIRS_FIELD);
-      config.getSettings().getIndexedFieldSettings().setIndexHighFreqTermPairs(hfPair);
+      config.getSettings().getIndetwitteredFieldSettings().setIndetwitterHighFreqTermPairs(hfPair);
     }
 
-    config.getSettings().getIndexedFieldSettings().setTokenized(true);
+    config.getSettings().getIndetwitteredFieldSettings().setTokenized(true);
     putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
     return this;
   }
@@ -395,8 +395,8 @@ public class SchemaBuilder {
     ThriftFieldSettings settings =
             schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
 
-    settings.getIndexedFieldSettings().setStorePerPositionPayloads(true);
-    settings.getIndexedFieldSettings().setDefaultPerPositionPayloadLength(defaultPayloadLength);
+    settings.getIndetwitteredFieldSettings().setStorePerPositionPayloads(true);
+    settings.getIndetwitteredFieldSettings().setDefaultPerPositionPayloadLength(defaultPayloadLength);
     return this;
   }
 
@@ -410,10 +410,10 @@ public class SchemaBuilder {
     }
     ThriftFieldConfiguration config = new ThriftFieldConfiguration(fieldName)
         .setSettings(getPretokenizedNoPositionFieldSetting());
-    // Add hfPair fields only if they exist in the schema for the cluster
+    // Add hfPair fields only if they etwitterist in the schema for the cluster
     boolean hfPair = shouldIncludeField(ImmutableSchema.HF_TERM_PAIRS_FIELD)
                          && shouldIncludeField(ImmutableSchema.HF_PHRASE_PAIRS_FIELD);
-    config.getSettings().getIndexedFieldSettings().setIndexHighFreqTermPairs(hfPair);
+    config.getSettings().getIndetwitteredFieldSettings().setIndetwitterHighFreqTermPairs(hfPair);
     putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
     return this;
   }
@@ -430,31 +430,31 @@ public class SchemaBuilder {
     ThriftFieldSettings settings =
         schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
 
-    settings.getIndexedFieldSettings().setSupportOrderedTerms(true);
+    settings.getIndetwitteredFieldSettings().setSupportOrderedTerms(true);
     return this;
   }
 
   /**
-   * Support lookup of term text by term id in the term dictionary.
+   * Support lookup of term tetwittert by term id in the term dictionary.
    */
-  public final SchemaBuilder withTermTextLookup(String fieldName) {
+  public final SchemaBuilder withTermTetwittertLookup(String fieldName) {
     if (!shouldIncludeField(fieldName)) {
       return this;
     }
     ThriftFieldSettings settings =
         schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
 
-    settings.getIndexedFieldSettings().setSupportTermTextLookup(true);
+    settings.getIndetwitteredFieldSettings().setSupportTermTetwittertLookup(true);
     return this;
   }
 
   /**
-   * Add a text field that is pre-tokenized, so not analyzed again in the index (e.g. Earlybird).
+   * Add a tetwittert field that is pre-tokenized, so not analyzed again in the indetwitter (e.g. Earlybird).
    *
    * Note that the token streams MUST be created using the attributes defined in
-   * {@link com.twitter.search.common.util.text.TweetTokenStreamSerializer}.
+   * {@link com.twitter.search.common.util.tetwittert.TweetTokenStreamSerializer}.
    */
-  public final SchemaBuilder withPretokenizedTextField(
+  public final SchemaBuilder withPretokenizedTetwittertField(
       String fieldName,
       boolean addHfPairIfHfFieldsArePresent) {
     if (!shouldIncludeField(fieldName)) {
@@ -462,14 +462,14 @@ public class SchemaBuilder {
     }
     ThriftFieldConfiguration config = new ThriftFieldConfiguration(fieldName)
         .setSettings(getDefaultPretokenizedSettings(
-            ThriftIndexOptions.DOCS_AND_FREQS_AND_POSITIONS));
+            ThriftIndetwitterOptions.DOCS_AND_FREQS_AND_POSITIONS));
     putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
-    // Add hfPair fields only if they exist in the schema for the cluster
+    // Add hfPair fields only if they etwitterist in the schema for the cluster
     if (addHfPairIfHfFieldsArePresent) {
-      // Add hfPair fields only if they exist in the schema for the cluster
+      // Add hfPair fields only if they etwitterist in the schema for the cluster
       boolean hfPair = shouldIncludeField(ImmutableSchema.HF_TERM_PAIRS_FIELD)
                        && shouldIncludeField(ImmutableSchema.HF_PHRASE_PAIRS_FIELD);
-      config.getSettings().getIndexedFieldSettings().setIndexHighFreqTermPairs(hfPair);
+      config.getSettings().getIndetwitteredFieldSettings().setIndetwitterHighFreqTermPairs(hfPair);
     }
     return this;
   }
@@ -486,7 +486,7 @@ public class SchemaBuilder {
         ThriftCSFType.INT,
         featureConfiguration.getOutputType(),
         baseFieldName,
-        featureConfiguration.getValueIndex(),
+        featureConfiguration.getValueIndetwitter(),
         featureConfiguration.getBitStartPosition(),
         featureConfiguration.getBitLength(),
         featureConfiguration.getFeatureNormalizationType(),
@@ -506,13 +506,13 @@ public class SchemaBuilder {
         new ThriftTokenStreamSerializer(tokenStreamSerializerVersion);
     tokenStreamSerializer.setAttributeSerializerClassNames(
         ImmutableList.<String>of(LongTermAttributeSerializer.class.getName()));
-    longTermSettings.getIndexedFieldSettings().setTokenStreamSerializer(tokenStreamSerializer);
+    longTermSettings.getIndetwitteredFieldSettings().setTokenStreamSerializer(tokenStreamSerializer);
 
-    ThriftIndexedNumericFieldSettings numericFieldSettings =
-        new ThriftIndexedNumericFieldSettings(true);
+    ThriftIndetwitteredNumericFieldSettings numericFieldSettings =
+        new ThriftIndetwitteredNumericFieldSettings(true);
     numericFieldSettings.setNumericType(ThriftNumericType.LONG);
     numericFieldSettings.setUseSortableEncoding(useSortableEncoding);
-    longTermSettings.getIndexedFieldSettings().setNumericFieldSettings(numericFieldSettings);
+    longTermSettings.getIndetwitteredFieldSettings().setNumericFieldSettings(numericFieldSettings);
 
     putIntoFieldConfigs(idMapping.getFieldID(fieldName),
         new ThriftFieldConfiguration(fieldName).setSettings(longTermSettings));
@@ -539,12 +539,12 @@ public class SchemaBuilder {
         new ThriftTokenStreamSerializer(tokenStreamSerializerVersion);
     attributeSerializer.setAttributeSerializerClassNames(
         ImmutableList.<String>of(IntTermAttributeSerializer.class.getName()));
-    intTermSettings.getIndexedFieldSettings().setTokenStreamSerializer(attributeSerializer);
+    intTermSettings.getIndetwitteredFieldSettings().setTokenStreamSerializer(attributeSerializer);
 
-    ThriftIndexedNumericFieldSettings numericFieldSettings =
-        new ThriftIndexedNumericFieldSettings(true);
+    ThriftIndetwitteredNumericFieldSettings numericFieldSettings =
+        new ThriftIndetwitteredNumericFieldSettings(true);
     numericFieldSettings.setNumericType(ThriftNumericType.INT);
-    intTermSettings.getIndexedFieldSettings().setNumericFieldSettings(numericFieldSettings);
+    intTermSettings.getIndetwitteredFieldSettings().setNumericFieldSettings(numericFieldSettings);
 
     putIntoFieldConfigs(idMapping.getFieldID(fieldName),
         new ThriftFieldConfiguration(fieldName).setSettings(intTermSettings));
@@ -552,19 +552,19 @@ public class SchemaBuilder {
   }
 
   /**
-   * Timeline and ExpertSearch uses
+   * Timeline and EtwitterpertSearch uses
    * {@link com.twitter.search.common.util.analysis.PayloadWeightedTokenizer} to store weighted
    * values.
    *
    * E.g. for the PRODUCED_LANGUAGES and CONSUMED_LANGUAGES fields, they contain not a single,
    * value, but instead a list of values with a weight associated with each value.
    *
-   * This method adds an indexed field that uses
+   * This method adds an indetwittered field that uses
    * {@link com.twitter.search.common.util.analysis.PayloadWeightedTokenizer}.
    */
   public final SchemaBuilder withCharTermPayloadWeightedField(String fieldName) {
     ThriftFieldConfiguration config = new ThriftFieldConfiguration(fieldName)
-        .setSettings(getPayloadWeightedSettings(ThriftIndexOptions.DOCS_AND_FREQS_AND_POSITIONS));
+        .setSettings(getPayloadWeightedSettings(ThriftIndetwitterOptions.DOCS_AND_FREQS_AND_POSITIONS));
     putIntoFieldConfigs(idMapping.getFieldID(fieldName), config);
     return this;
   }
@@ -595,11 +595,11 @@ public class SchemaBuilder {
 
   protected void putIntoFieldConfigs(int id, ThriftFieldConfiguration config) {
     if (schema.getFieldConfigs() != null && schema.getFieldConfigs().containsKey(id)) {
-      throw new IllegalStateException("Already have a ThriftFieldConfiguration for field id " + id);
+      throw new IllegalStateEtwitterception("Already have a ThriftFieldConfiguration for field id " + id);
     }
 
     if (fieldNameSet.contains(config.getFieldName())) {
-      throw new IllegalStateException("Already have a ThriftFieldConfiguration for field "
+      throw new IllegalStateEtwitterception("Already have a ThriftFieldConfiguration for field "
           + config.getFieldName());
     }
     fieldNameSet.add(config.getFieldName());
@@ -607,16 +607,16 @@ public class SchemaBuilder {
   }
 
   // Default field settings. Most field settings are similar to this.
-  protected ThriftFieldSettings getDefaultSettings(ThriftIndexOptions indexOption) {
-    return getDefaultSettings(indexOption, false);
+  protected ThriftFieldSettings getDefaultSettings(ThriftIndetwitterOptions indetwitterOption) {
+    return getDefaultSettings(indetwitterOption, false);
   }
 
-  protected ThriftFieldSettings getDefaultSettings(ThriftIndexOptions indexOption,
+  protected ThriftFieldSettings getDefaultSettings(ThriftIndetwitterOptions indetwitterOption,
                                                    boolean supportOutOfOrderAppends) {
     ThriftFieldSettings fieldSettings = new ThriftFieldSettings();
-    ThriftIndexedFieldSettings indexedFieldSettings = new ThriftIndexedFieldSettings();
-    indexedFieldSettings
-        .setIndexed(true)
+    ThriftIndetwitteredFieldSettings indetwitteredFieldSettings = new ThriftIndetwitteredFieldSettings();
+    indetwitteredFieldSettings
+        .setIndetwittered(true)
         .setStored(false)
         .setTokenized(false)
         .setStoreTermVectors(false)
@@ -624,9 +624,9 @@ public class SchemaBuilder {
         .setStoreTermVectorPayloads(false)
         .setStoreTermVectorPositions(false)
         .setSupportOutOfOrderAppends(supportOutOfOrderAppends)
-        .setIndexOptions(indexOption)
+        .setIndetwitterOptions(indetwitterOption)
         .setOmitNorms(true); // All Earlybird fields omit norms.
-    fieldSettings.setIndexedFieldSettings(indexedFieldSettings);
+    fieldSettings.setIndetwitteredFieldSettings(indetwitteredFieldSettings);
     return fieldSettings;
   }
 
@@ -634,12 +634,12 @@ public class SchemaBuilder {
    * Default field settings for fields that are pretokenized
    *
    * The fields that use these settings will need to be tokenized using a serializer with the
-   * attributes defined in {@link com.twitter.search.common.util.text.TweetTokenStreamSerializer}.
+   * attributes defined in {@link com.twitter.search.common.util.tetwittert.TweetTokenStreamSerializer}.
    */
   protected final ThriftFieldSettings getDefaultPretokenizedSettings(
-      ThriftIndexOptions indexOption) {
-    ThriftFieldSettings fieldSettings = getDefaultSettings(indexOption);
-    fieldSettings.getIndexedFieldSettings().setTokenized(true);
+      ThriftIndetwitterOptions indetwitterOption) {
+    ThriftFieldSettings fieldSettings = getDefaultSettings(indetwitterOption);
+    fieldSettings.getIndetwitteredFieldSettings().setTokenized(true);
     ThriftTokenStreamSerializer attributeSerializer =
         new ThriftTokenStreamSerializer(tokenStreamSerializerVersion);
     attributeSerializer.setAttributeSerializerClassNames(
@@ -648,12 +648,12 @@ public class SchemaBuilder {
             PositionIncrementAttributeSerializer.class.getName(),
             TokenTypeAttributeSerializer.class.getName()));
 
-    fieldSettings.getIndexedFieldSettings().setTokenStreamSerializer(attributeSerializer);
+    fieldSettings.getIndetwitteredFieldSettings().setTokenStreamSerializer(attributeSerializer);
     return fieldSettings;
   }
 
   protected final ThriftFieldSettings getPretokenizedNoPositionFieldSetting() {
-    return getDefaultPretokenizedSettings(ThriftIndexOptions.DOCS_AND_FREQS);
+    return getDefaultPretokenizedSettings(ThriftIndetwitterOptions.DOCS_AND_FREQS);
   }
 
   protected final ThriftFieldSettings getNoPositionNoFreqSettings() {
@@ -662,28 +662,28 @@ public class SchemaBuilder {
 
   protected final ThriftFieldSettings getNoPositionNoFreqSettings(
       boolean supportOutOfOrderAppends) {
-    return getDefaultSettings(ThriftIndexOptions.DOCS_ONLY, supportOutOfOrderAppends);
+    return getDefaultSettings(ThriftIndetwitterOptions.DOCS_ONLY, supportOutOfOrderAppends);
   }
 
   protected final ThriftFieldSettings getEarlybirdNumericFieldSettings() {
     // Supposedly numeric fields are not tokenized.
     // However, Earlybird uses SingleTokenTokenStream to handle int/long fields.
-    // So we need to set indexed to true for these fields.
+    // So we need to set indetwittered to true for these fields.
     ThriftFieldSettings settings = getNoPositionNoFreqSettings();
-    settings.getIndexedFieldSettings().setTokenized(true);
+    settings.getIndetwitteredFieldSettings().setTokenized(true);
     return settings;
   }
 
-  private ThriftFieldSettings getPayloadWeightedSettings(ThriftIndexOptions indexOption) {
-    ThriftFieldSettings fieldSettings = getDefaultSettings(indexOption);
-    fieldSettings.getIndexedFieldSettings().setTokenized(true);
+  private ThriftFieldSettings getPayloadWeightedSettings(ThriftIndetwitterOptions indetwitterOption) {
+    ThriftFieldSettings fieldSettings = getDefaultSettings(indetwitterOption);
+    fieldSettings.getIndetwitteredFieldSettings().setTokenized(true);
     ThriftTokenStreamSerializer attributeSerializer =
         new ThriftTokenStreamSerializer(tokenStreamSerializerVersion);
     attributeSerializer.setAttributeSerializerClassNames(
         ImmutableList.<String>of(CharTermAttributeSerializer.class.getName(),
             PositionIncrementAttributeSerializer.class.getName(),
             PayloadAttributeSerializer.class.getName()));
-    fieldSettings.getIndexedFieldSettings().setTokenStreamSerializer(attributeSerializer);
+    fieldSettings.getIndetwitteredFieldSettings().setTokenStreamSerializer(attributeSerializer);
     return fieldSettings;
   }
 

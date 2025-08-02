@@ -32,13 +32,13 @@ object ClientConfigs {
   final val trustStoreLocationDefault = "/etc/tw_truststore/messaging/kafka/client.truststore.jks"
   final val trustStoreLocationHelp = "trust store location"
 
-  final val kafkaMaxPendingRequestsConfig = "kafka.max.pending.requests"
-  final val kafkaMaxPendingRequestsHelp = "the maximum number of concurrent pending requests."
+  final val kafkaMatwitterPendingRequestsConfig = "kafka.matwitter.pending.requests"
+  final val kafkaMatwitterPendingRequestsHelp = "the matwitterimum number of concurrent pending requests."
 
   final val kafkaWorkerThreadsConfig = "kafka.worker.threads"
   final val kafkaWorkerThreadsHelp =
     """This has meaning that is dependent on the value of {@link usePerPartitionThreadPool} -
-      | if that is false, this is the number of parallel worker threads that will execute the processor function.
+      | if that is false, this is the number of parallel worker threads that will etwitterecute the processor function.
       | if that is true, this is the number of parallel worker threads for each partition. So the total number of
       | threads will be {@link workerThreads} * number_of_partitions.
       |""".stripMargin
@@ -69,10 +69,10 @@ object ClientConfigs {
   final val producerIdempotenceHelp: String =
     """"retries due to broker failures, etc., may write duplicates of the retried message in the
        stream. Note that enabling idempotence requires
-       <code> MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION </code> to be less than or equal to 5,
+       <code> MAtwitter_IN_FLIGHT_REQUESTS_PER_CONNECTION </code> to be less than or equal to 5,
        <code> RETRIES_CONFIG </code> to be greater than 0 and <code> ACKS_CONFIG </code>
-       must be 'all'. If these values are not explicitly set by the user, suitable values will be
-       chosen. If incompatible values are set, a <code>ConfigException</code> will be thrown.
+       must be 'all'. If these values are not etwitterplicitly set by the user, suitable values will be
+       chosen. If incompatible values are set, a <code>ConfigEtwitterception</code> will be thrown.
     """.stripMargin
 
   final val producerBatchSizeConfig = "kafka.producer.batch.size"
@@ -94,7 +94,7 @@ object ClientConfigs {
   final val producerBufferMemHelp: String =
     """The total bytes of memory the producer can use to buffer records waiting to be sent to the
       |server. If records are sent faster than they can be delivered to the server the producer
-      |will block for MAX_BLOCK_MS_CONFIG after which it will throw an exception.
+      |will block for MAtwitter_BLOCK_MS_CONFIG after which it will throw an etwitterception.
       |This setting should correspond roughly to the total memory the producer will use, but is not
       |a hard bound since not all memory the producer uses is used for buffering.
       |Some additional memory will be used for compression (if compression is enabled) as well as
@@ -115,7 +115,7 @@ object ClientConfigs {
       |BATCH_SIZE_CONFIG worth of records for a partition it will be sent immediately regardless
       |of this setting, however if we have fewer than this many bytes accumulated for this
       |partition we will 'linger' for the specified time waiting for more records to show up.
-      |This setting defaults to 0 (i.e. no delay). Setting LINGER_MS_CONFIG=5, for example,
+      |This setting defaults to 0 (i.e. no delay). Setting LINGER_MS_CONFIG=5, for etwitterample,
       |would have the effect of reducing the number of requests sent but would add up to 5ms of
       |latency to records sent in the absence of load.
     """.stripMargin
@@ -123,10 +123,10 @@ object ClientConfigs {
   final val producerRequestTimeoutConfig = "kafka.producer.request.timeout"
   final val producerRequestTimeoutDefault: Duration = 30.seconds
   final val producerRequestTimeoutHelp: String =
-    """"The configuration controls the maximum amount of time the client will wait
+    """"The configuration controls the matwitterimum amount of time the client will wait
       |for the response of a request. If the response is not received before the timeout
       |elapses the client will resend the request if necessary or fail the request if
-      |retries are exhausted.
+      |retries are etwitterhausted.
     """.stripMargin
 
   final val compressionConfig = "kafka.producer.compression.type"
@@ -145,18 +145,18 @@ object ClientConfigs {
     """The frequency with which to save the position of the processor.
     """.stripMargin
 
-  final val consumerMaxPollRecordsConfig = "kafka.max.poll.records"
-  final val consumerMaxPollRecordsDefault: Int = 1000
-  final val consumerMaxPollRecordsHelp: String =
-    """The maximum number of records returned in a single call to poll()
+  final val consumerMatwitterPollRecordsConfig = "kafka.matwitter.poll.records"
+  final val consumerMatwitterPollRecordsDefault: Int = 1000
+  final val consumerMatwitterPollRecordsHelp: String =
+    """The matwitterimum number of records returned in a single call to poll()
     """.stripMargin
 
-  final val consumerMaxPollIntervalConfig = "kafka.max.poll.interval"
-  final val consumerMaxPollIntervalDefault: Duration = 5.minutes
-  final val consumerMaxPollIntervalHelp: String =
-    """The maximum delay between invocations of poll() when using consumer group management.
+  final val consumerMatwitterPollIntervalConfig = "kafka.matwitter.poll.interval"
+  final val consumerMatwitterPollIntervalDefault: Duration = 5.minutes
+  final val consumerMatwitterPollIntervalHelp: String =
+    """The matwitterimum delay between invocations of poll() when using consumer group management.
        This places an upper bound on the amount of time that the consumer can be idle before fetching more records.
-       If poll() is not called before expiration of this timeout, then the consumer is considered failed and the group
+       If poll() is not called before etwitterpiration of this timeout, then the consumer is considered failed and the group
        will rebalance in order to reassign the partitions to another member.
     """.stripMargin
 
@@ -165,9 +165,9 @@ object ClientConfigs {
   final val consumerSessionTimeoutHelp: String =
     """The timeout used to detect client failures when using Kafka's group management facility.
        The client sends periodic heartbeats to indicate its liveness to the broker.
-       If no heartbeats are received by the broker before the expiration of this session timeout, then the broker
+       If no heartbeats are received by the broker before the etwitterpiration of this session timeout, then the broker
        will remove this client from the group and initiate a rebalance. Note that the value must be in the allowable
-       range as configured in the broker configuration by group.min.session.timeout.ms and group.max.session.timeout.ms.
+       range as configured in the broker configuration by group.min.session.timeout.ms and group.matwitter.session.timeout.ms.
     """.stripMargin
 
   final val consumerFetchMinConfig = "kafka.consumer.fetch.min"
@@ -182,15 +182,15 @@ object ClientConfigs {
       |some additional latency.
     """.stripMargin
 
-  final val consumerFetchMaxConfig = "kafka.consumer.fetch.max"
-  final val consumerFetchMaxDefault: StorageUnit = 1.megabytes
-  final val consumerFetchMaxHelp: String =
-    """The maximum amount of data the server should return for a fetch request. Records are
+  final val consumerFetchMatwitterConfig = "kafka.consumer.fetch.matwitter"
+  final val consumerFetchMatwitterDefault: StorageUnit = 1.megabytes
+  final val consumerFetchMatwitterHelp: String =
+    """The matwitterimum amount of data the server should return for a fetch request. Records are
       |fetched in batches by the consumer, and if the first record batch in the first non-empty
       |partition of the fetch is larger than this value, the record batch will still be returned
-      |to ensure that the consumer can make progress. As such, this is not a absolute maximum.
-      |The maximum record batch size accepted by the broker is defined via message.max.bytes
-      |(broker config) or max.message.bytes (topic config).
+      |to ensure that the consumer can make progress. As such, this is not a absolute matwitterimum.
+      |The matwitterimum record batch size accepted by the broker is defined via message.matwitter.bytes
+      |(broker config) or matwitter.message.bytes (topic config).
       |Note that the consumer performs multiple fetches in parallel.
     """.stripMargin
 
@@ -206,6 +206,6 @@ object ClientConfigs {
   final val consumerApiTimeoutHelp: String =
     """Specifies the timeout (in milliseconds) for consumer APIs that could block.
       |This configuration is used as the default timeout for all consumer operations that do
-      |not explicitly accept a <code>timeout</code> parameter.";
+      |not etwitterplicitly accept a <code>timeout</code> parameter.";
     """.stripMargin
 }

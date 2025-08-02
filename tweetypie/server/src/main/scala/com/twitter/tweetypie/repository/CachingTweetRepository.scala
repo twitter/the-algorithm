@@ -1,8 +1,8 @@
 package com.twitter.tweetypie
 package repository
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
+import com.fastertwitterml.jackson.databind.ObjectMapper
+import com.fastertwitterml.jackson.module.scala.DefaultScalaModule
 import com.twitter.finagle.tracing.Trace
 import com.twitter.servo.cache._
 import com.twitter.servo.repository._
@@ -19,7 +19,7 @@ import com.twitter.tweetypie.thriftscala.CachedTweet
 import com.twitter.util.Base64Long
 
 case class TweetKey(cacheVersion: Int, id: TweetId)
-    extends ScopedCacheKey("t", "t", cacheVersion, Base64Long.toBase64(id))
+    etwittertends ScopedCacheKey("t", "t", cacheVersion, Base64Long.toBase64(id))
 
 case class TweetKeyFactory(cacheVersion: Int) {
   val fromId: TweetId => TweetKey = (id: TweetId) => TweetKey(cacheVersion, id)
@@ -101,38 +101,38 @@ object TweetDataCache {
 object TombstoneTtl {
   import CachedResult._
 
-  def fixed(ttl: Duration): CachedNotFound[TweetId] => Duration =
+  def fitwittered(ttl: Duration): CachedNotFound[TweetId] => Duration =
     _ => ttl
 
   /**
    * A simple ttl calculator that is set to `min` if the age is less than `from`,
-   * then linearly interpolated  between `min` and `max` when the age is between `from` and `to`,
-   * and then equal to `max` if the age is greater than `to`.
+   * then linearly interpolated  between `min` and `matwitter` when the age is between `from` and `to`,
+   * and then equal to `matwitter` if the age is greater than `to`.
    */
   def linear(
     min: Duration,
-    max: Duration,
+    matwitter: Duration,
     from: Duration,
     to: Duration
   ): CachedNotFound[TweetId] => Duration = {
-    val rate = (max - min).inMilliseconds / (to - from).inMilliseconds.toDouble
+    val rate = (matwitter - min).inMilliseconds / (to - from).inMilliseconds.toDouble
     cached => {
       if (SnowflakeId.isSnowflakeId(cached.key)) {
         val age = cached.cachedAt - SnowflakeId(cached.key).time
         if (age <= from) min
-        else if (age >= to) max
+        else if (age >= to) matwitter
         else min + (age - from) * rate
       } else {
-        // When it's not a snowflake id, cache it for the maximum time.
-        max
+        // When it's not a snowflake id, cache it for the matwitterimum time.
+        matwitter
       }
     }
   }
 
   /**
-   * Checks if the given `cached` value is an expired tombstone
+   * Checks if the given `cached` value is an etwitterpired tombstone
    */
-  def isExpired(
+  def isEtwitterpired(
     tombstoneTtl: CachedNotFound[TweetId] => Duration,
     cached: CachedNotFound[TweetId]
   ): Boolean =
@@ -150,7 +150,7 @@ object CachingTweetRepository {
     tombstoneTtl: CachedNotFound[TweetId] => Duration,
     stats: StatsReceiver,
     clientIdHelper: ClientIdHelper,
-    logCacheExceptions: Gate[Unit] = Gate.False,
+    logCacheEtwitterceptions: Gate[Unit] = Gate.False,
   )(
     underlying: TweetResultRepository.Type
   ): TweetResultRepository.Type = {
@@ -161,8 +161,8 @@ object CachingTweetRepository {
           underlying = cache,
           picker = new TweetRepoCachePicker[TweetResult](_.value.cachedAt)
         ),
-        queryToKey = _._1, // extract tweet id from (TweetId, TweetQuery.Options)
-        handler = mkHandler(tombstoneTtl, stats, logCacheExceptions, clientIdHelper),
+        queryToKey = _._1, // etwittertract tweet id from (TweetId, TweetQuery.Options)
+        handler = mkHandler(tombstoneTtl, stats, logCacheEtwitterceptions, clientIdHelper),
         cacheable = cacheable
       )
 
@@ -198,7 +198,7 @@ object CachingTweetRepository {
           // written to cache via TweetHydration.cacheChanges
           case Return(_: TweetResult) => None
 
-          // Don't write other exceptions back to cache
+          // Don't write other etwitterceptions back to cache
           case _ => None
         }
       }
@@ -214,7 +214,7 @@ object CachingTweetRepository {
     }
 
     private def defaultData(clientIdHelper: ClientIdHelper): Seq[(String, Any)] = {
-      val viewer = TwitterContext()
+      val viewer = TwitterContetwittert()
       Seq(
         "client_id" -> clientIdHelper.effectiveClientId,
         "trace_id" -> Trace.id.traceId.toString,
@@ -229,7 +229,7 @@ object CachingTweetRepository {
   def mkHandler(
     tombstoneTtl: CachedNotFound[TweetId] => Duration,
     stats: StatsReceiver,
-    logCacheExceptions: Gate[Unit],
+    logCacheEtwitterceptions: Gate[Unit],
     clientIdHelper: ClientIdHelper,
   ): Handler[TweetId, TweetResult] = {
     val baseHandler = defaultHandler[TweetId, TweetResult]
@@ -257,9 +257,9 @@ object CachingTweetRepository {
         notFoundCounter.incr()
         baseHandler(res)
 
-      // expires NotFound tombstones if old enough
+      // etwitterpires NotFound tombstones if old enough
       case cached @ CachedNotFound(_, _, _) =>
-        if (TombstoneTtl.isExpired(tombstoneTtl, cached)) {
+        if (TombstoneTtl.isEtwitterpired(tombstoneTtl, cached)) {
           cachedNotFoundAsMissCounter.incr()
           HandleAsMiss
         } else {
@@ -276,7 +276,7 @@ object CachingTweetRepository {
         // After result is found, mark it with cacheErrorEncountered
         failedCounter.incr()
 
-        if (logCacheExceptions()) {
+        if (logCacheEtwitterceptions()) {
           LogLens.logMessage(
             failuresLog,
             clientIdHelper,
@@ -300,7 +300,7 @@ object CachingTweetRepository {
  * A LockingCache.Picker for use with CachingTweetRepository which prevents overwriting values in
  * cache that are newer than the value previously read from cache.
  */
-class TweetRepoCachePicker[T](cachedAt: T => Option[Time]) extends LockingCache.Picker[Cached[T]] {
+class TweetRepoCachePicker[T](cachedAt: T => Option[Time]) etwittertends LockingCache.Picker[Cached[T]] {
   private val newestPicker = new PreferNewestCached[T]
 
   override def apply(newValue: Cached[T], oldValue: Cached[T]): Option[Cached[T]] = {
@@ -317,7 +317,7 @@ class TweetRepoCachePicker[T](cachedAt: T => Option[Time]) extends LockingCache.
           case _ => None
         }
 
-      // we may hit an expired/older tombstone, which should be safe to overwrite with a fresh
+      // we may hit an etwitterpired/older tombstone, which should be safe to overwrite with a fresh
       // tombstone of a new value returned from Manhattan.
       case CachedValueStatus.NotFound => newestPicker(newValue, oldValue)
 

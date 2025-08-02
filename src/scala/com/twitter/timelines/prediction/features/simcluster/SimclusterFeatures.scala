@@ -42,17 +42,17 @@ object SimclusterFeatures {
   // Check http://go/simclustersv2runbook for production versions
   // Our models are trained for this specific model version only.
   val SIMCLUSTER_MODEL_VERSION = "20M_145K_dec11"
-  val prefix = s"simcluster.v2.$SIMCLUSTER_MODEL_VERSION"
+  val prefitwitter = s"simcluster.v2.$SIMCLUSTER_MODEL_VERSION"
 
   val SIMCLUSTER_USER_INTEREST_CLUSTER_SCORES = new SparseContinuous(
-    s"$prefix.user_interest_cluster_scores",
+    s"$prefitwitter.user_interest_cluster_scores",
     Set(EngagementScore, InferredInterests).asJava
   )
   val SIMCLUSTER_USER_INTEREST_CLUSTER_IDS = new SparseBinary(
-    s"$prefix.user_interest_cluster_ids",
+    s"$prefitwitter.user_interest_cluster_ids",
     Set(InferredInterests).asJava
   )
-  val SIMCLUSTER_MODEL_VERSION_METADATA = new Text("meta.simcluster_version")
+  val SIMCLUSTER_MODEL_VERSION_METADATA = new Tetwittert("meta.simcluster_version")
 }
 
 case class SimclusterFeatures(

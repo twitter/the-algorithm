@@ -1,8 +1,8 @@
 package com.twitter.tweetypie
 
-import com.twitter.context.TwitterContext
+import com.twitter.contetwittert.TwitterContetwittert
 package object repository {
-  // Bring Tweetypie permitted TwitterContext into scope
-  val TwitterContext: TwitterContext =
-    com.twitter.context.TwitterContext(com.twitter.tweetypie.TwitterContextPermit)
+  // Bring Tweetypie permitted TwitterContetwittert into scope
+  val TwitterContetwittert: TwitterContetwittert =
+    com.twitter.contetwittert.TwitterContetwittert(com.twitter.tweetypie.TwitterContetwittertPermit)
 }

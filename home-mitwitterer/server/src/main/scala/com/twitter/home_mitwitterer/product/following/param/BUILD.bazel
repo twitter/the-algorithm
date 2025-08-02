@@ -1,0 +1,14 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/javatwitter/inject:javatwitter.inject",
+        "configapi/configapi-core/src/main/scala/com/twitter/timelines/configapi",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/param/decider",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/decorator/urt",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/product",
+        "util/util-core/src/main/scala/com/twitter/conversions",
+    ],
+)

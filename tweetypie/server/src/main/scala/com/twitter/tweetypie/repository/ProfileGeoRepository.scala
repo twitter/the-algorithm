@@ -21,7 +21,7 @@ case class ProfileGeoKey(tweetId: TweetId, userId: Option[UserId], coords: Optio
 object ProfileGeoRepository {
   type Type = ProfileGeoKey => Stitch[ProfileGeoEnrichment]
 
-  case class UnexpectedState(state: EnrichmentHydrationState) extends Exception(state.name)
+  case class UnetwitterpectedState(state: EnrichmentHydrationState) etwittertends Etwitterception(state.name)
 
   def convertGeo(coords: GeoCoordinates): TweetyPieGeoCoordinates =
     TweetyPieGeoCoordinates(
@@ -60,7 +60,7 @@ object ProfileGeoRepository {
               ) =>
             emptyEnrichmentStitch
           case r =>
-            Stitch.exception(UnexpectedState(r.state))
+            Stitch.etwitterception(UnetwitterpectedState(r.state))
         }
   }
 }

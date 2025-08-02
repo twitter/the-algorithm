@@ -3,7 +3,7 @@ package com.twitter.ann.serialization
 import com.twitter.scrooge.{ThriftStruct, ThriftStructCodec}
 import java.io.{InputStream, OutputStream}
 import org.apache.thrift.protocol.TBinaryProtocol
-import org.apache.thrift.transport.{TIOStreamTransport, TTransportException}
+import org.apache.thrift.transport.{TIOStreamTransport, TTransportEtwitterception}
 
 /**
  * Class that can serialize and deserialize an iterator of thrift objects.
@@ -39,17 +39,17 @@ object ThriftIteratorIO {
   ): Iterator[T] = {
     val protocol = (new TBinaryProtocol.Factory).getProtocol(new TIOStreamTransport(inputStream))
 
-    def getNext: Option[T] =
+    def getNetwittert: Option[T] =
       try {
         Some(codec.decode(protocol))
       } catch {
-        case e: TTransportException if e.getType == TTransportException.END_OF_FILE =>
+        case e: TTransportEtwitterception if e.getType == TTransportEtwitterception.END_OF_FILE =>
           inputStream.close()
           None
       }
 
     Iterator
-      .continually[Option[T]](getNext)
+      .continually[Option[T]](getNetwittert)
       .takeWhile(_.isDefined)
       // It should be safe to call get on here since we are only take the defined ones.
       .map(_.get)

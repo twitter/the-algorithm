@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.querycache;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -19,39 +19,39 @@ import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchLongGauge;
 import com.twitter.search.common.metrics.Timer;
 import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.core.earlybird.index.QueryCacheResultForSegment;
+import com.twitter.search.core.earlybird.indetwitter.QueryCacheResultForSegment;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
 import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.EarlybirdException;
-import com.twitter.search.earlybird.index.EarlybirdSegment;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
+import com.twitter.search.earlybird.etwitterception.CriticalEtwitterceptionHandler;
+import com.twitter.search.earlybird.etwitterception.EarlybirdEtwitterception;
+import com.twitter.search.earlybird.indetwitter.EarlybirdSegment;
+import com.twitter.search.earlybird.indetwitter.EarlybirdSingleSegmentSearcher;
 import com.twitter.search.earlybird.partition.SegmentInfo;
 import com.twitter.search.earlybird.search.SearchResultsInfo;
 import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.util.ScheduledExecutorTask;
+import com.twitter.search.earlybird.util.ScheduledEtwitterecutorTask;
 
 /**
  * Each task is responsible for one filter on one segment. We should have a total
  * of num_of_filter * num_of_segments tasks
  */
 @VisibleForTesting
-class QueryCacheUpdateTask extends ScheduledExecutorTask {
+class QueryCacheUpdateTask etwittertends ScheduledEtwitterecutorTask {
   private static final Logger LOG =  LoggerFactory.getLogger(QueryCacheUpdateTask.class);
 
   // See OBSERVE-10347
-  private static final boolean EXPORT_STATS =
-      EarlybirdConfig.getBool("export_query_cache_update_task_stats", false);
+  private static final boolean EtwitterPORT_STATS =
+      EarlybirdConfig.getBool("etwitterport_query_cache_update_task_stats", false);
 
   private static final LoadingCache<String, TaskStats> TASK_STATS =
       CacheBuilder.newBuilder().build(new CacheLoader<String, TaskStats>() {
         @Override
-        public TaskStats load(String statNamePrefix) {
-          return new TaskStats(statNamePrefix, EXPORT_STATS);
+        public TaskStats load(String statNamePrefitwitter) {
+          return new TaskStats(statNamePrefitwitter, EtwitterPORT_STATS);
         }
       });
 
-  private static final SearchCounter FINISHED_TASKS = SearchCounter.export(
+  private static final SearchCounter FINISHED_TASKS = SearchCounter.etwitterport(
       "querycache_finished_tasks");
 
   private final QueryCacheFilter filter;
@@ -76,19 +76,19 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
     private final SearchCounter updateSuccessCountStat;
     private final SearchCounter updateFailureCountStat;
 
-    private TaskStats(String statNamePrefix, boolean exportStats) {
+    private TaskStats(String statNamePrefitwitter, boolean etwitterportStats) {
       // See SEARCH-3698
-      numHitsStat = exportStats ? SearchLongGauge.export(statNamePrefix + "numhit")
-          : new SearchLongGauge(statNamePrefix + "numhit");
-      updateLatencyStat = exportStats
-          ? SearchLongGauge.export(statNamePrefix + "update_latency_ms")
-          : new SearchLongGauge(statNamePrefix + "update_latency_ms");
-      updateSuccessCountStat = exportStats
-          ? SearchCounter.export(statNamePrefix + "update_success_count")
-          : SearchCounter.create(statNamePrefix + "update_success_count");
-      updateFailureCountStat = exportStats
-          ? SearchCounter.export(statNamePrefix + "update_failure_count")
-          : SearchCounter.create(statNamePrefix + "update_failure_count");
+      numHitsStat = etwitterportStats ? SearchLongGauge.etwitterport(statNamePrefitwitter + "numhit")
+          : new SearchLongGauge(statNamePrefitwitter + "numhit");
+      updateLatencyStat = etwitterportStats
+          ? SearchLongGauge.etwitterport(statNamePrefitwitter + "update_latency_ms")
+          : new SearchLongGauge(statNamePrefitwitter + "update_latency_ms");
+      updateSuccessCountStat = etwitterportStats
+          ? SearchCounter.etwitterport(statNamePrefitwitter + "update_success_count")
+          : SearchCounter.create(statNamePrefitwitter + "update_success_count");
+      updateFailureCountStat = etwitterportStats
+          ? SearchCounter.etwitterport(statNamePrefitwitter + "update_failure_count")
+          : SearchCounter.create(statNamePrefitwitter + "update_failure_count");
     }
   }
 
@@ -96,7 +96,7 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
   private final Amount<Long, Time> initialDelay;
 
   private final EarlybirdSearcherStats searcherStats;
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  private final CriticalEtwitterceptionHandler criticalEtwitterceptionHandler;
 
   /**
    * Constructor
@@ -115,7 +115,7 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
                               SearchCounter updateIterationCounter,
                               EarlybirdSearcherStats searcherStats,
                               Decider decider,
-                              CriticalExceptionHandler criticalExceptionHandler,
+                              CriticalEtwitterceptionHandler criticalEtwitterceptionHandler,
                               Clock clock) {
     super(updateIterationCounter, clock);
     this.filter = filter;
@@ -129,7 +129,7 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
         "QueryCacheFilter: %s | Segment: %d",
         filter.getFilterName(), segmentInfo.getTimeSliceID());
     this.searcherStats = searcherStats;
-    this.criticalExceptionHandler = criticalExceptionHandler;
+    this.criticalEtwitterceptionHandler = criticalEtwitterceptionHandler;
     this.decider = decider;
   }
 
@@ -159,7 +159,7 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
       SearchResultsInfo result = null;
       try {
         result = update();
-      } catch (Exception e) {
+      } catch (Etwitterception e) {
         String msg = "Failed to update query cache entry [" + filter.getFilterName()
             + "] on segment [" + segmentInfo.getTimeSliceID() + "]";
         LOG.warn(msg, e);
@@ -172,16 +172,16 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
         LOG.debug("[{}] Updated in {} ms, hit {} docs.",
             filterAndSegment, endTime, stats.numHitsStat.read());
       }
-      // Need to catch throwable here instead of exception so we handle errors like OutOfMemory
+      // Need to catch throwable here instead of etwitterception so we handle errors like OutOfMemory
       // See RB=528695 and SEARCH-4402
     } catch (Throwable t) {
-      String message = String.format("Got unexpected throwable in %s", getClass().getName());
+      String message = String.format("Got unetwitterpected throwable in %s", getClass().getName());
       LOG.error(message, t);
 
-      // Wrap the Throwable in a FatalEarlybirdException to categorize it and ensure it's
-      // handled as a fatal exception
-      criticalExceptionHandler.handle(this,
-          new EarlybirdException(message, t));
+      // Wrap the Throwable in a FatalEarlybirdEtwitterception to categorize it and ensure it's
+      // handled as a fatal etwitterception
+      criticalEtwitterceptionHandler.handle(this,
+          new EarlybirdEtwitterception(message, t));
     } finally {
       // Earlybird won't become CURRENT until all tasks are run at least once. We don't want
       // failed "run" (update) to prevent Earlybird from becoming CURRENT. As long as all tasks
@@ -197,19 +197,19 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
   }
 
   private TaskStats setupStats() {
-    return TASK_STATS.getUnchecked(statNamePrefix());
+    return TASK_STATS.getUnchecked(statNamePrefitwitter());
   }
 
-  private SearchResultsInfo update() throws IOException {
+  private SearchResultsInfo update() throws IOEtwitterception {
     // There's a chance that the EarlybirdSegment of a SegmentInfo to change at any
     // time. Therefore, it's not safe to operate segments on the SegmentInfo level.
     // On the archive clusters we create a new EarlybirdSegment and then swap it in when there's
-    // new data instead of appending to an existing EarlybirdSegment.
-    EarlybirdSegment earlybirdSegment = segmentInfo.getIndexSegment();
+    // new data instead of appending to an etwitteristing EarlybirdSegment.
+    EarlybirdSegment earlybirdSegment = segmentInfo.getIndetwitterSegment();
 
     EarlybirdSingleSegmentSearcher searcher = earlybirdSegment.getSearcher(userTable);
     if (searcher == null) {
-      LOG.warn("Unable to get searcher from TwitterIndexManager for segment ["
+      LOG.warn("Unable to get searcher from TwitterIndetwitterManager for segment ["
           + segmentInfo.getTimeSliceID() + "]. Has it been dropped?");
       return null;
     }
@@ -219,7 +219,7 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
     searcher.search(filter.getLuceneQuery(), collector);
 
     QueryCacheResultForSegment cacheResult = collector.getCachedResult();
-    searcher.getTwitterIndexReader().getSegmentData().updateQueryCacheResult(
+    searcher.getTwitterIndetwitterReader().getSegmentData().updateQueryCacheResult(
         filter.getFilterName(), cacheResult);
 
     FINISHED_TASKS.increment();
@@ -247,9 +247,9 @@ class QueryCacheUpdateTask extends ScheduledExecutorTask {
   }
 
   @VisibleForTesting
-  String statNamePrefix() {
+  String statNamePrefitwitter() {
     // If we use this and try to display in monviz "ts(partition, single_instance, querycache*)",
-    // the UI shows "Really expensive query" message. We can keep this around for times when we
+    // the UI shows "Really etwitterpensive query" message. We can keep this around for times when we
     // want to start things manually and debug.
     return "querycache_" + filter.getFilterName() + "_" + segmentInfo.getTimeSliceID() + "_";
   }

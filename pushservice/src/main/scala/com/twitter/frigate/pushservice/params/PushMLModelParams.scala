@@ -3,7 +3,7 @@ package com.twitter.frigate.pushservice.params
 /**
  * This enum defines ML models for push
  */
-object PushMLModel extends Enumeration {
+object PushMLModel etwittertends Enumeration {
   type PushMLModel = Value
 
   val WeightedOpenOrNtabClickProbability = Value

@@ -24,14 +24,14 @@ pub fn parse(json_str: &str) -> Result<seg_dense::Root, SegDenseError> {
  * Given a json string containing a seg dense schema create a feature mapper
  * which is essentially:
  *
- *   {feature-id -> (Tensor Index, Index of feature within the tensor)}
+ *   {feature-id -> (Tensor Indetwitter, Indetwitter of feature within the tensor)}
  *
  *   Feature id : 64 bit hash of the feature name used in DataRecords.
  *
- *   Tensor Index : A vector of tensors is passed to the model. Tensor
- *     index refers to the tensor this feature is part of.
+ *   Tensor Indetwitter : A vector of tensors is passed to the model. Tensor
+ *     indetwitter refers to the tensor this feature is part of.
  *
- *   Index of feature in tensor : The tensors are vectors, the index of
+ *   Indetwitter of feature in tensor : The tensors are vectors, the indetwitter of
  *     feature is the position to put the feature value.
  *
  * There are many assumptions made in this function that is very model specific.
@@ -106,17 +106,17 @@ fn add_feature_info_to_mapper(
 }
 
 pub fn to_feature_info(input_feature: &seg_dense::InputFeature) -> Option<FeatureInfo> {
-    if input_feature.maybe_exclude {
+    if input_feature.maybe_etwitterclude {
         return None;
     }
 
     // This part needs to be schema driven
     //
-    //   tensor index : Which of these tensors this feature is part of
+    //   tensor indetwitter : Which of these tensors this feature is part of
     //      [Continious, Binary, Discrete, User_embedding, user_eng_embedding, author_embedding]
-    //      Note that this order is fixed/hardcoded here, and need to be schematized
+    //      Note that this order is fitwittered/hardcoded here, and need to be schematized
     //
-    let tensor_idx: i8 = match input_feature.feature_id {
+    let tensor_idtwitter: i8 = match input_feature.feature_id {
         // user.timelines.twhin_user_follow_embeddings.twhin_user_follow_embeddings
         // Feature name is mapped to a feature-id value. The hardcoded values below correspond to a specific feature name.
         -2550691008059411095 => 3,
@@ -138,17 +138,17 @@ pub fn to_feature_info(input_feature: &seg_dense::InputFeature) -> Option<Featur
         },
     };
 
-    if input_feature.index < 0 {
+    if input_feature.indetwitter < 0 {
         return None;
     }
 
     // Handle this case later
-    if tensor_idx == -1 {
+    if tensor_idtwitter == -1 {
         return None;
     }
 
     Some(FeatureInfo {
-        tensor_index: tensor_idx,
-        index_within_tensor: input_feature.index,
+        tensor_indetwitter: tensor_idtwitter,
+        indetwitter_within_tensor: input_feature.indetwitter,
     })
 }

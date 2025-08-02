@@ -4,7 +4,7 @@ import com.twitter.logging.Logger
 import com.twitter.recos.user_user_graph.thriftscala._
 import com.twitter.util.Future
 
-trait LoggingUserUserGraph extends thriftscala.UserUserGraph.MethodPerEndpoint {
+trait LoggingUserUserGraph etwittertends thriftscala.UserUserGraph.MethodPerEndpoint {
   private[this] val accessLog = Logger("access")
 
   abstract override def recommendUsers(
@@ -13,13 +13,13 @@ trait LoggingUserUserGraph extends thriftscala.UserUserGraph.MethodPerEndpoint {
     val time = System.currentTimeMillis
     super.recommendUsers(request) onSuccess { resp =>
       val timeTaken = System.currentTimeMillis - time
-      val logText =
+      val logTetwittert =
         s"In ${timeTaken}ms, recommendUsers(${requestToString(request)}), response ${responseToString(resp)}"
-      accessLog.info(logText)
-    } onFailure { exc =>
+      accessLog.info(logTetwittert)
+    } onFailure { etwitterc =>
       val timeTaken = System.currentTimeMillis - time
-      val logText = s"In ${timeTaken}ms, recommendUsers(${requestToString(request)} returned error"
-      accessLog.error(exc, logText)
+      val logTetwittert = s"In ${timeTaken}ms, recommendUsers(${requestToString(request)} returned error"
+      accessLog.error(etwitterc, logTetwittert)
     }
   }
 
@@ -29,13 +29,13 @@ trait LoggingUserUserGraph extends thriftscala.UserUserGraph.MethodPerEndpoint {
       request.displayLocation,
       request.seedsWithWeights.size,
       request.seedsWithWeights.take(5),
-      request.excludedUserIds.map(_.size).getOrElse(0),
-      request.excludedUserIds.map(_.take(5)),
-      request.maxNumResults,
-      request.maxNumSocialProofs,
+      request.etwittercludedUserIds.map(_.size).getOrElse(0),
+      request.etwittercludedUserIds.map(_.take(5)),
+      request.matwitterNumResults,
+      request.matwitterNumSocialProofs,
       request.minUserPerSocialProof,
       request.socialProofTypes,
-      request.maxEdgeEngagementAgeInMillis
+      request.matwitterEdgeEngagementAgeInMillis
     ).mkString(",")
   }
 

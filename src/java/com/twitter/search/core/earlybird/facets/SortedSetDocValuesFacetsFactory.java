@@ -1,6 +1,6 @@
 package com.twitter.search.core.earlybird.facets;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
@@ -27,7 +27,7 @@ public class SortedSetDocValuesFacetsFactory implements FacetsFactory {
   @Override
   public Facets create(
       List<FacetSearchParam> facetSearchParams,
-      FacetsCollector facetsCollector) throws IOException {
+      FacetsCollector facetsCollector) throws IOEtwitterception {
 
     Preconditions.checkNotNull(facetsCollector);
 

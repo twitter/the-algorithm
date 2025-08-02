@@ -1,6 +1,6 @@
 package com.twitter.search.core.earlybird.facets;
 
-import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
+import com.twitter.search.core.earlybird.indetwitter.inverted.IntBlockPool;
 
 public class FacetCountingArrayWriter {
   private final AbstractFacetCountingArray facetCountingArray;
@@ -15,10 +15,10 @@ public class FacetCountingArrayWriter {
    *
    * The layout of the packedValues in the term pool is:
    *
-   * index |0 |1 |2 |3 |4 |5 |6 |7 |8 |9 |
+   * indetwitter |0 |1 |2 |3 |4 |5 |6 |7 |8 |9 |
    * value |U |1a|1b|1c|U |2b|2c|P3|1d|1f|
    *
-   * Where U is UNASSIGNED, P+X is a pointer to index X (e.g. P3 means pointer to index 3),
+   * Where U is UNASSIGNED, P+twitter is a pointer to indetwitter twitter (e.g. P3 means pointer to indetwitter 3),
    * or a doc ID and facet (e.g. doc ID 1 and facet a would be 1a).
    */
   public void addFacet(int docID, int fieldID, int termID) {
@@ -33,8 +33,8 @@ public class FacetCountingArrayWriter {
     }
 
     if (!FacetCountingArray.isPointer(packedValue)) {
-      // If the packedValue is not a pointer, we know that we have exactly one facet in the index
-      // for this document, so copy the existing facet into the pool.
+      // If the packedValue is not a pointer, we know that we have etwitteractly one facet in the indetwitter
+      // for this document, so copy the etwitteristing facet into the pool.
       facetsPool.add(AbstractFacetCountingArray.UNASSIGNED);
       facetsPool.add(packedValue);
     } else if (previousDocID != docID) {

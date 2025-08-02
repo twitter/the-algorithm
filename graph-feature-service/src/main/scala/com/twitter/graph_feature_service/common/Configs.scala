@@ -59,7 +59,7 @@ object Configs {
   }
 
   private def hash(kArr: Array[Byte], seed: Int): Int = {
-    MurmurHash3.bytesHash(kArr, seed) & 0x7fffffff // keep positive
+    MurmurHash3.bytesHash(kArr, seed) & 0twitter7fffffff // keep positive
   }
 
   private def hashLong(l: Long, seed: Int): Int = {

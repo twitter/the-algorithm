@@ -8,10 +8,10 @@ import com.twitter.follow_recommendations.common.candidate_sources.geo.PopGeohas
 import com.twitter.follow_recommendations.common.candidate_sources.ppmi_locale_follow.PPMILocaleFollowSource
 import com.twitter.follow_recommendations.common.candidate_sources.recent_engagement.RecentEngagementNonDirectFollowSource
 import com.twitter.follow_recommendations.common.candidate_sources.sims.SwitchingSimsSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentEngagementSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentFollowingSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims_expansion.RecentStrongEngagementDirectFollowSimilarUsersSource
-import com.twitter.follow_recommendations.common.candidate_sources.socialgraph.RecentFollowingRecentFollowingExpansionSource
+import com.twitter.follow_recommendations.common.candidate_sources.sims_etwitterpansion.RecentEngagementSimilarUsersSource
+import com.twitter.follow_recommendations.common.candidate_sources.sims_etwitterpansion.RecentFollowingSimilarUsersSource
+import com.twitter.follow_recommendations.common.candidate_sources.sims_etwitterpansion.RecentStrongEngagementDirectFollowSimilarUsersSource
+import com.twitter.follow_recommendations.common.candidate_sources.socialgraph.RecentFollowingRecentFollowingEtwitterpansionSource
 import com.twitter.follow_recommendations.common.candidate_sources.stp.MutualFollowStrongTiePredictionSource
 import com.twitter.follow_recommendations.common.candidate_sources.stp.OfflineStrongTiePredictionSource
 import com.twitter.follow_recommendations.common.candidate_sources.stp.BaseOnlineSTPSource
@@ -21,8 +21,8 @@ import com.twitter.follow_recommendations.common.candidate_sources.two_hop_rando
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.configapi.params.GlobalParams
 import com.twitter.follow_recommendations.models.CandidateSourceType
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
 import com.twitter.timelines.configapi.HasParams
 
 trait CandidateSourceHoldbackUtil {
@@ -38,7 +38,7 @@ trait CandidateSourceHoldbackUtil {
 }
 
 object CandidateSourceHoldbackUtil {
-  final val ContextualActivityCandidateSourceIds: Set[CandidateSourceIdentifier] =
+  final val ContetwittertualActivityCandidateSourceIds: Set[CandidateSourceIdentifier] =
     Set(
       RecentFollowingSimilarUsersSource.Identifier,
       RecentEngagementNonDirectFollowSource.Identifier,
@@ -53,7 +53,7 @@ object CandidateSourceHoldbackUtil {
       ForwardPhoneBookSource.Identifier,
       ReverseEmailBookSource.Identifier,
       ReversePhoneBookSource.Identifier,
-      RecentFollowingRecentFollowingExpansionSource.Identifier,
+      RecentFollowingRecentFollowingEtwitterpansionSource.Identifier,
       BaseOnlineSTPSource.Identifier,
       MutualFollowStrongTiePredictionSource.Identifier,
       OfflineStrongTiePredictionSource.Identifier,
@@ -76,7 +76,7 @@ object CandidateSourceHoldbackUtil {
   ]] =
     Map(
       CandidateSourceType.Social -> SocialCandidateSourceIds,
-      CandidateSourceType.ActivityContextual -> ContextualActivityCandidateSourceIds,
+      CandidateSourceType.ActivityContetwittertual -> ContetwittertualActivityCandidateSourceIds,
       CandidateSourceType.GeoAndInterests -> GeoCandidateSourceIds
     )
 }

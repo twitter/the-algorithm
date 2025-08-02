@@ -9,20 +9,20 @@ import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.models.HasProfileId
 import com.twitter.follow_recommendations.common.models.FilterReason.FailOpen
 import com.twitter.follow_recommendations.common.models.FilterReason.InvalidRelationshipTypes
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.socialgraph.thriftscala.ExistsRequest
-import com.twitter.socialgraph.thriftscala.ExistsResult
-import com.twitter.socialgraph.thriftscala.LookupContext
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
+import com.twitter.socialgraph.thriftscala.EtwitteristsRequest
+import com.twitter.socialgraph.thriftscala.EtwitteristsResult
+import com.twitter.socialgraph.thriftscala.LookupContetwittert
 import com.twitter.socialgraph.thriftscala.Relationship
 import com.twitter.socialgraph.thriftscala.RelationshipType
 import com.twitter.stitch.Stitch
 import com.twitter.stitch.socialgraph.SocialGraph
 import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.TimeoutException
+import com.twitter.util.TimeoutEtwitterception
 import com.twitter.util.logging.Logging
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 case class RelationshipMapping(
   relationshipType: RelationshipType,
@@ -32,33 +32,33 @@ class SgsRelationshipsPredicate(
   socialGraph: SocialGraph,
   relationshipMappings: Seq[RelationshipMapping],
   statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends Predicate[(HasClientContext with HasParams, CandidateUser)]
+    etwittertends Predicate[(HasClientContetwittert with HasParams, CandidateUser)]
     with Logging {
 
   private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getSimpleName)
 
   override def apply(
-    pair: (HasClientContext with HasParams, CandidateUser)
+    pair: (HasClientContetwittert with HasParams, CandidateUser)
   ): Stitch[PredicateResult] = {
     val (target, candidate) = pair
     val timeout = target.params(SgsPredicateParams.SgsRelationshipsPredicateTimeout)
     SgsRelationshipsPredicate
-      .extractUserId(target)
+      .etwittertractUserId(target)
       .map { id =>
         val relationships = relationshipMappings.map { relationshipMapping: RelationshipMapping =>
           Relationship(
             relationshipMapping.relationshipType,
             relationshipMapping.includeBasedOnRelationship)
         }
-        val existsRequest = ExistsRequest(
+        val etwitteristsRequest = EtwitteristsRequest(
           id,
           candidate.id,
           relationships = relationships,
-          context = SgsRelationshipsPredicate.UnionLookupContext
+          contetwittert = SgsRelationshipsPredicate.UnionLookupContetwittert
         )
         socialGraph
-          .exists(existsRequest).map { existsResult: ExistsResult =>
-            if (existsResult.exists) {
+          .etwitterists(etwitteristsRequest).map { etwitteristsResult: EtwitteristsResult =>
+            if (etwitteristsResult.etwitterists) {
               PredicateResult.Invalid(Set(InvalidRelationshipTypes(relationshipMappings
                 .map { relationshipMapping: RelationshipMapping =>
                   relationshipMapping.relationshipType
@@ -72,10 +72,10 @@ class SgsRelationshipsPredicate(
       // if no user id is present, return true by default
       .getOrElse(Stitch.value(PredicateResult.Valid))
       .rescue {
-        case e: TimeoutException =>
+        case e: TimeoutEtwitterception =>
           stats.counter("timeout").incr()
           Stitch(PredicateResult.Invalid(Set(FailOpen)))
-        case e: Exception =>
+        case e: Etwitterception =>
           stats.counter(e.getClass.getSimpleName).incr()
           Stitch(PredicateResult.Invalid(Set(FailOpen)))
       }
@@ -86,12 +86,12 @@ class SgsRelationshipsPredicate(
 object SgsRelationshipsPredicate {
   // OR Operation
   @VisibleForTesting
-  private[follow_recommendations] val UnionLookupContext = Some(
-    LookupContext(performUnion = Some(true)))
+  private[follow_recommendations] val UnionLookupContetwittert = Some(
+    LookupContetwittert(performUnion = Some(true)))
 
-  private def extractUserId(target: HasClientContext with HasParams): Option[Long] = target match {
+  private def etwittertractUserId(target: HasClientContetwittert with HasParams): Option[Long] = target match {
     case profRequest: HasProfileId => Some(profRequest.profileId)
-    case userRequest: HasClientContext with HasParams => userRequest.getOptionalUserId
+    case userRequest: HasClientContetwittert with HasParams => userRequest.getOptionalUserId
     case _ => None
   }
 }
@@ -99,20 +99,20 @@ object SgsRelationshipsPredicate {
 @Singleton
 class InvalidTargetCandidateRelationshipTypesPredicate @Inject() (
   socialGraph: SocialGraph)
-    extends SgsRelationshipsPredicate(
+    etwittertends SgsRelationshipsPredicate(
       socialGraph,
       InvalidRelationshipTypesPredicate.InvalidRelationshipTypes) {}
 
 @Singleton
 class NoteworthyAccountsSgsPredicate @Inject() (
   socialGraph: SocialGraph)
-    extends SgsRelationshipsPredicate(
+    etwittertends SgsRelationshipsPredicate(
       socialGraph,
       InvalidRelationshipTypesPredicate.NoteworthyAccountsInvalidRelationshipTypes)
 
 object InvalidRelationshipTypesPredicate {
 
-  val InvalidRelationshipTypesExcludeFollowing: Seq[RelationshipMapping] = Seq(
+  val InvalidRelationshipTypesEtwittercludeFollowing: Seq[RelationshipMapping] = Seq(
     RelationshipMapping(RelationshipType.HideRecommendations, true),
     RelationshipMapping(RelationshipType.Blocking, true),
     RelationshipMapping(RelationshipType.BlockedBy, true),
@@ -131,7 +131,7 @@ object InvalidRelationshipTypesPredicate {
       RelationshipType.UsedToFollow,
       true
     ) // this data is accessible for 90 days.
-  ) ++ InvalidRelationshipTypesExcludeFollowing
+  ) ++ InvalidRelationshipTypesEtwittercludeFollowing
 
   val NoteworthyAccountsInvalidRelationshipTypes: Seq[RelationshipMapping] = Seq(
     RelationshipMapping(RelationshipType.Blocking, true),

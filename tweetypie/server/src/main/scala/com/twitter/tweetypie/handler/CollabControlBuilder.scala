@@ -10,7 +10,7 @@ import com.twitter.tweetypie.thriftscala.CollabInvitationStatus
 import com.twitter.tweetypie.thriftscala.CollabTweet
 import com.twitter.tweetypie.thriftscala.CollabTweetOptions
 import com.twitter.tweetypie.thriftscala.Communities
-import com.twitter.tweetypie.thriftscala.ExclusiveTweetControl
+import com.twitter.tweetypie.thriftscala.EtwitterclusiveTweetControl
 import com.twitter.tweetypie.thriftscala.InvitedCollaborator
 import com.twitter.tweetypie.thriftscala.TrustedFriendsControl
 import com.twitter.tweetypie.thriftscala.TweetCreateConversationControl
@@ -26,7 +26,7 @@ object CollabControlBuilder {
     communities: Option[Communities],
     trustedFriendsControl: Option[TrustedFriendsControl],
     conversationControl: Option[TweetCreateConversationControl],
-    exclusiveTweetControl: Option[ExclusiveTweetControl],
+    etwitterclusiveTweetControl: Option[EtwitterclusiveTweetControl],
     userId: UserId)
 
   def apply(): Type = { request =>
@@ -38,7 +38,7 @@ object CollabControlBuilder {
       request.communities,
       request.trustedFriendsControl,
       request.conversationControl,
-      request.exclusiveTweetControl,
+      request.etwitterclusiveTweetControl,
       request.userId
     ) map { _ => collabControl }
   }
@@ -83,25 +83,25 @@ object CollabControlBuilder {
     communities: Option[Communities],
     trustedFriendsControl: Option[TrustedFriendsControl],
     conversationControl: Option[TweetCreateConversationControl],
-    exclusiveTweetControl: Option[ExclusiveTweetControl],
+    etwitterclusiveTweetControl: Option[EtwitterclusiveTweetControl],
     userId: UserId
   ): Future[Unit] = {
-    val isInReplyToTweet = replyResult.exists(_.reply.inReplyToStatusId.isDefined)
+    val isInReplyToTweet = replyResult.etwitterists(_.reply.inReplyToStatusId.isDefined)
 
     collabControl match {
       case Some(_: CollabControl)
           if (isInReplyToTweet ||
             CommunityUtil.hasCommunity(communities) ||
-            exclusiveTweetControl.isDefined ||
+            etwitterclusiveTweetControl.isDefined ||
             trustedFriendsControl.isDefined ||
             conversationControl.isDefined) =>
-        Future.exception(TweetCreateFailure.State(CollabTweetInvalidParams))
+        Future.etwitterception(TweetCreateFailure.State(CollabTweetInvalidParams))
       case Some(CollabControl.CollabInvitation(collab_invitation))
           if collab_invitation.invitedCollaborators.head.collaboratorUserId != userId =>
-        Future.exception(TweetCreateFailure.State(CollabTweetInvalidParams))
+        Future.etwitterception(TweetCreateFailure.State(CollabTweetInvalidParams))
       case Some(CollabControl.CollabTweet(collab_tweet))
           if collab_tweet.collaboratorUserIds.head != userId =>
-        Future.exception(TweetCreateFailure.State(CollabTweetInvalidParams))
+        Future.etwitterception(TweetCreateFailure.State(CollabTweetInvalidParams))
       case _ =>
         Future.Unit
     }

@@ -40,12 +40,12 @@ public class doubleArray {
     this(swigfaissJNI.new_doubleArray(nelements), true);
   }
 
-  public double getitem(int index) {
-    return swigfaissJNI.doubleArray_getitem(swigCPtr, this, index);
+  public double getitem(int indetwitter) {
+    return swigfaissJNI.doubleArray_getitem(swigCPtr, this, indetwitter);
   }
 
-  public void setitem(int index, double value) {
-    swigfaissJNI.doubleArray_setitem(swigCPtr, this, index, value);
+  public void setitem(int indetwitter, double value) {
+    swigfaissJNI.doubleArray_setitem(swigCPtr, this, indetwitter, value);
   }
 
   public SWIGTYPE_p_double cast() {

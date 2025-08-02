@@ -3,11 +3,11 @@ package com.twitter.visibility.generators
 import com.twitter.visibility.common.actions.LocalizedMessage
 import com.twitter.visibility.common.actions.MessageLink
 import com.twitter.visibility.results.translation.Translator
-import com.twitter.visibility.results.richtext.EpitaphToRichText
+import com.twitter.visibility.results.richtetwittert.EpitaphToRichTetwittert
 import com.twitter.visibility.results.translation.Resource
 import com.twitter.visibility.results.translation.LearnMoreLink
 import com.twitter.visibility.rules.Epitaph
-import com.twitter.visibility.results.richtext.EpitaphToRichText.Copy
+import com.twitter.visibility.results.richtetwittert.EpitaphToRichTetwittert.Copy
 
 object EpitaphToLocalizedMessage {
   def apply(
@@ -15,12 +15,12 @@ object EpitaphToLocalizedMessage {
     languageTag: String,
   ): LocalizedMessage = {
     val copy =
-      EpitaphToRichText.EpitaphToPolicyMap.getOrElse(epitaph, EpitaphToRichText.FallbackPolicy)
-    val text = Translator.translate(
+      EpitaphToRichTetwittert.EpitaphToPolicyMap.getOrElse(epitaph, EpitaphToRichTetwittert.FallbackPolicy)
+    val tetwittert = Translator.translate(
       copy.resource,
       languageTag
     )
-    localizeWithCopyAndText(copy, languageTag, text)
+    localizeWithCopyAndTetwittert(copy, languageTag, tetwittert)
   }
 
   def apply(
@@ -29,19 +29,19 @@ object EpitaphToLocalizedMessage {
     applicableCountries: Seq[String],
   ): LocalizedMessage = {
     val copy =
-      EpitaphToRichText.EpitaphToPolicyMap.getOrElse(epitaph, EpitaphToRichText.FallbackPolicy)
-    val text = Translator.translateWithSimplePlaceholderReplacement(
+      EpitaphToRichTetwittert.EpitaphToPolicyMap.getOrElse(epitaph, EpitaphToRichTetwittert.FallbackPolicy)
+    val tetwittert = Translator.translateWithSimplePlaceholderReplacement(
       copy.resource,
       languageTag,
       Map((Resource.ApplicableCountriesPlaceholder -> applicableCountries.mkString(", ")))
     )
-    localizeWithCopyAndText(copy, languageTag, text)
+    localizeWithCopyAndTetwittert(copy, languageTag, tetwittert)
   }
 
-  private def localizeWithCopyAndText(
+  private def localizeWithCopyAndTetwittert(
     copy: Copy,
     languageTag: String,
-    text: String
+    tetwittert: String
   ): LocalizedMessage = {
     val learnMore = Translator.translate(LearnMoreLink, languageTag)
 
@@ -49,18 +49,18 @@ object EpitaphToLocalizedMessage {
       case links if links.nonEmpty =>
         MessageLink(Resource.LearnMorePlaceholder, learnMore, copy.link) +:
           links.map {
-            case EpitaphToRichText.Link(placeholder, copyResource, link) =>
-              val copyText = Translator.translate(copyResource, languageTag)
-              MessageLink(placeholder, copyText, link)
+            case EpitaphToRichTetwittert.Link(placeholder, copyResource, link) =>
+              val copyTetwittert = Translator.translate(copyResource, languageTag)
+              MessageLink(placeholder, copyTetwittert, link)
           }
       case _ =>
         Seq(
           MessageLink(
             key = Resource.LearnMorePlaceholder,
-            displayText = learnMore,
+            displayTetwittert = learnMore,
             uri = copy.link))
     }
 
-    LocalizedMessage(message = text, language = languageTag, links = links)
+    LocalizedMessage(message = tetwittert, language = languageTag, links = links)
   }
 }

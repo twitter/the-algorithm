@@ -1,18 +1,18 @@
 package com.twitter.follow_recommendations.models
 
 import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.ClientContextConverter
+import com.twitter.follow_recommendations.common.models.ClientContetwittertConverter
 import com.twitter.follow_recommendations.common.models.HasUserState
 import com.twitter.follow_recommendations.common.utils.UserSignupUtil
 import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.common.identifier.RecommendationPipelineIdentifier
+import com.twitter.product_mitwitterer.core.model.marshalling.HasMarshalling
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.util.Time
 
-case class RecommendationFlowData[Target <: HasClientContext](
+case class RecommendationFlowData[Target <: HasClientContetwittert](
   request: Target,
   recommendationFlowIdentifier: RecommendationPipelineIdentifier,
   candidateSources: Seq[CandidateSource[Target, CandidateUser]],
@@ -23,7 +23,7 @@ case class RecommendationFlowData[Target <: HasClientContext](
   transformedCandidates: Seq[CandidateUser],
   truncatedCandidates: Seq[CandidateUser],
   results: Seq[CandidateUser])
-    extends HasMarshalling {
+    etwittertends HasMarshalling {
 
   import RecommendationFlowData._
 
@@ -47,7 +47,7 @@ case class RecommendationFlowData[Target <: HasClientContext](
       )
 
     offline.RecommendationFlowLog(
-      ClientContextConverter.toFRSOfflineClientContextThrift(request.clientContext),
+      ClientContetwittertConverter.toFRSOfflineClientContetwittertThrift(request.clientContetwittert),
       userMetadata,
       signals,
       Time.now.inMillis,
@@ -60,7 +60,7 @@ case class RecommendationFlowData[Target <: HasClientContext](
 }
 
 object RecommendationFlowData {
-  def userToOfflineRecommendationFlowUserMetadata[Target <: HasClientContext](
+  def userToOfflineRecommendationFlowUserMetadata[Target <: HasClientContetwittert](
     request: Target
   ): Option[offline.OfflineRecommendationFlowUserMetadata] = {
     val userSignupAge = UserSignupUtil.userSignupAge(request).map(_.inDays)
@@ -71,14 +71,14 @@ object RecommendationFlowData {
     Some(offline.OfflineRecommendationFlowUserMetadata(userSignupAge, userState))
   }
 
-  def userToOfflineRecommendationFlowSignals[Target <: HasClientContext](
+  def userToOfflineRecommendationFlowSignals[Target <: HasClientContetwittert](
     request: Target
   ): Option[offline.OfflineRecommendationFlowSignals] = {
     val countryCode = request.getCountryCode
     Some(offline.OfflineRecommendationFlowSignals(countryCode))
   }
 
-  def candidatesToOfflineRecommendationFlowCandidateSourceCandidates[Target <: HasClientContext](
+  def candidatesToOfflineRecommendationFlowCandidateSourceCandidates[Target <: HasClientContetwittert](
     candidateSources: Seq[CandidateSource[Target, CandidateUser]],
     candidates: Seq[CandidateUser],
   ): Seq[offline.OfflineRecommendationFlowCandidateSourceCandidates] = {
@@ -90,7 +90,7 @@ object RecommendationFlowData {
       val candidates =
         candidatesGroupedByCandidateSources.get(candidateSource.identifier).toSeq.flatten
       val candidateUserIds = candidates.map(_.id)
-      val candidateUserScores = candidates.map(_.score).exists(_.nonEmpty) match {
+      val candidateUserScores = candidates.map(_.score).etwitterists(_.nonEmpty) match {
         case true => Some(candidates.map(_.score.getOrElse(-1.0)))
         case false => None
       }

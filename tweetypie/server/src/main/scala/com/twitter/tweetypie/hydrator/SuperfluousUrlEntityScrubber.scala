@@ -8,12 +8,12 @@ import com.twitter.tweetypie.thriftscala._
  * url.
  */
 object SuperfluousUrlEntityScrubber {
-  case class RawEntity(fromIndex: Short, toIndex: Short, url: String)
+  case class RawEntity(fromIndetwitter: Short, toIndetwitter: Short, url: String)
 
   object RawEntity {
-    def from(e: UrlEntity): RawEntity = RawEntity(e.fromIndex, e.toIndex, e.url)
+    def from(e: UrlEntity): RawEntity = RawEntity(e.fromIndetwitter, e.toIndetwitter, e.url)
     def fromUrls(es: Seq[UrlEntity]): Set[RawEntity] = es.map(from(_)).toSet
-    def from(e: MediaEntity): RawEntity = RawEntity(e.fromIndex, e.toIndex, e.url)
+    def from(e: MediaEntity): RawEntity = RawEntity(e.fromIndetwitter, e.toIndetwitter, e.url)
     def fromMedia(es: Seq[MediaEntity]): Set[RawEntity] = es.map(from(_)).toSet
   }
 

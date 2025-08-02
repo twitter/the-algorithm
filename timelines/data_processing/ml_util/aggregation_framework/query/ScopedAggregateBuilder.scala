@@ -4,7 +4,7 @@ import com.twitter.dal.personal_data.thriftjava.PersonalDataType
 import com.twitter.ml.api.DataRecord
 import com.twitter.ml.api.Feature
 import com.twitter.ml.api.FeatureBuilder
-import com.twitter.ml.api.FeatureContext
+import com.twitter.ml.api.FeatureContetwittert
 import com.twitter.ml.api.thriftscala.{DataRecord => ScalaDataRecord}
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon
 import java.lang.{Double => JDouble}
@@ -64,17 +64,17 @@ class ScopedAggregateBuilder[K](
     val newName = (components.head :: "scoped" :: components.tail).mkString(".")
 
     new FeatureBuilder.Continuous()
-      .addExtensionDimensions("scope_name", "scope")
+      .addEtwittertensionDimensions("scope_name", "scope")
       .setBaseName(newName)
       .setPersonalDataTypes(personalDataTypes)
-      .extensionBuilder()
-      .addExtension("scope_name", scopeName)
-      .addExtension("scope", scopeValue)
+      .etwittertensionBuilder()
+      .addEtwittertension("scope_name", scopeName)
+      .addEtwittertension("scope", scopeValue)
       .build()
   }
 
   /**
-   * Index of (base aggregate feature name, key) -> key scoped count feature.
+   * Indetwitter of (base aggregate feature name, key) -> key scoped count feature.
    */
   private[this] val keyScopedAggregateMap: Map[(String, K), Feature[JDouble]] = {
     featuresToScope.flatMap { feat =>
@@ -112,9 +112,9 @@ class ScopedAggregateBuilder[K](
   /**
    * Create key-scoped features for Java [[DataRecord]] aggregate records partitioned by key.
    *
-   * As an example, if the provided Map includes the key `SuggestType.Recap`, and [[scopeKeys]]
-   * includes this key, then for a feature "xyz.pair.any_label.any_feature.5.days.count", the method
-   * will generate the scoped feature "xyz.scoped.pair.any_label.any_feature.5.days.count/scope_name=InjectionType/scope=Recap",
+   * As an etwitterample, if the provided Map includes the key `SuggestType.Recap`, and [[scopeKeys]]
+   * includes this key, then for a feature "twitteryz.pair.any_label.any_feature.5.days.count", the method
+   * will generate the scoped feature "twitteryz.scoped.pair.any_label.any_feature.5.days.count/scope_name=InjectionType/scope=Recap",
    * with the value being the value of the original feature from the Map.
    *
    * @param aggregatesByKey a map from key to a continuous feature map (ie. feature ID -> Double)
@@ -128,9 +128,9 @@ class ScopedAggregateBuilder[K](
   /**
    * Create key-scoped features for Scala [[DataRecord]] aggregate records partitioned by key.
    *
-   * As an example, if the provided Map includes the key `SuggestType.Recap`, and [[scopeKeys]]
-   * includes this key, then for a feature "xyz.pair.any_label.any_feature.5.days.count", the method
-   * will generate the scoped feature "xyz.scoped.pair.any_label.any_feature.5.days.count/scope_name=InjectionType/scope=Recap",
+   * As an etwitterample, if the provided Map includes the key `SuggestType.Recap`, and [[scopeKeys]]
+   * includes this key, then for a feature "twitteryz.pair.any_label.any_feature.5.days.count", the method
+   * will generate the scoped feature "twitteryz.scoped.pair.any_label.any_feature.5.days.count/scope_name=InjectionType/scope=Recap",
    * with the value being the value of the original feature from the Map.
    *
    * This is a convenience method for some use cases where aggregates are read from Scala
@@ -151,9 +151,9 @@ class ScopedAggregateBuilder[K](
   }
 
   /**
-   * Returns a [[FeatureContext]] including all possible scoped features generated using this builder.
+   * Returns a [[FeatureContetwittert]] including all possible scoped features generated using this builder.
    *
-   * @return a [[FeatureContext]] containing all scoped features.
+   * @return a [[FeatureContetwittert]] containing all scoped features.
    */
-  def scopedFeatureContext: FeatureContext = new FeatureContext(keyScopedAggregateMap.values.asJava)
+  def scopedFeatureContetwittert: FeatureContetwittert = new FeatureContetwittert(keyScopedAggregateMap.values.asJava)
 }

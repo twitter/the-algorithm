@@ -22,7 +22,7 @@ public class UserTable {
   private static final Logger LOG = LoggerFactory.getLogger(UserTable.class);
 
   @VisibleForTesting // Not final for testing.
-  protected static long userUpdateTableMaxCapacity = 1L << 30;
+  protected static long userUpdateTableMatwitterCapacity = 1L << 30;
 
   private static final int DEFAULT_INITIAL_CAPACITY = 1024;
   private static final int BYTE_WIDTH = 8;
@@ -56,7 +56,7 @@ public class UserTable {
   private static final class HashTable {
     private int numUsersInTable;
     private int numUsersWithNoBitsSet;
-    // size 8 array contains the number of users who have the bit set at the index (0-7) position
+    // size 8 array contains the number of users who have the bit set at the indetwitter (0-7) position
     // e.g. setBitCounts[0] stores the number of users who have the 0 bit set in their bytes
     private long[] setBitCounts;
 
@@ -94,7 +94,7 @@ public class UserTable {
       long[] counts = new long[BYTE_WIDTH];
       for (int i = 0; i < hash.length; i++) {
         if (hash[i] > 0) {
-          int tempBits = bits[i] & 0xff;
+          int tempBits = bits[i] & 0twitterff;
           int curBitPos = 0;
           while (tempBits != 0) {
             if ((tempBits & 1) != 0) {
@@ -141,7 +141,7 @@ public class UserTable {
   /**
    * Adds the given user update to this table.
    */
-  public boolean indexUserUpdate(UserUpdatesChecker checker, UserUpdate userUpdate) {
+  public boolean indetwitterUserUpdate(UserUpdatesChecker checker, UserUpdate userUpdate) {
     if (checker.skipUserUpdate(userUpdate)) {
       return false;
     }
@@ -181,34 +181,34 @@ public class UserTable {
     final long[] currUserIdTable = table.hash;
     final byte[] currBitsTable = table.bits;
     return new Iterator<Long>() {
-      private int index = findNext(0);
+      private int indetwitter = findNetwittert(0);
 
-      private int findNext(int index) {
-        int startingIndex = index;
-        while (startingIndex < currUserIdTable.length) {
-          if (currUserIdTable[startingIndex] != 0 && currBitsTable[startingIndex] != 0) {
+      private int findNetwittert(int indetwitter) {
+        int startingIndetwitter = indetwitter;
+        while (startingIndetwitter < currUserIdTable.length) {
+          if (currUserIdTable[startingIndetwitter] != 0 && currBitsTable[startingIndetwitter] != 0) {
             break;
           }
-          ++startingIndex;
+          ++startingIndetwitter;
         }
-        return startingIndex;
+        return startingIndetwitter;
       }
 
       @Override
-      public boolean hasNext() {
-        return index < currUserIdTable.length;
+      public boolean hasNetwittert() {
+        return indetwitter < currUserIdTable.length;
       }
 
       @Override
-      public Long next() {
-        Long r = currUserIdTable[index];
-        index = findNext(index + 1);
+      public Long netwittert() {
+        Long r = currUserIdTable[indetwitter];
+        indetwitter = findNetwittert(indetwitter + 1);
         return r;
       }
 
       @Override
       public void remove() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationEtwitterception();
       }
     };
   }
@@ -227,7 +227,7 @@ public class UserTable {
     this.hashTable.set(hashTable);
     this.userIdFilter = userIdFilter;
 
-    exportUserUpdatesTableStats();
+    etwitterportUserUpdatesTableStats();
 
     LOG.info("User table num users: {}. Users with no bits set: {}. "
             + "Antisocial users: {}. Offensive users: {}. Nsfw users: {}. IsProtected users: {}.",
@@ -240,7 +240,7 @@ public class UserTable {
 
     if (shouldRehash) {
       int filteredTableSize = filterTableAndCountValidItems();
-      // Having exactly 100% usage can impact lookup. Maintain the table at under 50% usage.
+      // Having etwitteractly 100% usage can impact lookup. Maintain the table at under 50% usage.
       int newTableCapacity = computeDesiredHashTableCapacity(filteredTableSize * 2);
 
       rehash(newTableCapacity);
@@ -275,19 +275,19 @@ public class UserTable {
     return newTableWithDefaultCapacityAndPredicate(userId -> true);
   }
 
-  private void exportUserUpdatesTableStats() {
-    userTableSize = SearchLongGauge.export(USER_TABLE_SIZE);
-    userTableCapacity = SearchLongGauge.export(USER_TABLE_CAPACITY);
-    userTableNumUsersWithNoBitsSet = SearchLongGauge.export(
+  private void etwitterportUserUpdatesTableStats() {
+    userTableSize = SearchLongGauge.etwitterport(USER_TABLE_SIZE);
+    userTableCapacity = SearchLongGauge.etwitterport(USER_TABLE_CAPACITY);
+    userTableNumUsersWithNoBitsSet = SearchLongGauge.etwitterport(
         USER_NUM_USERS_WITH_NO_BITS_SET
     );
-    userTableAntisocialUsers = SearchLongGauge.export(USER_TABLE_ANTISOCIAL_USERS);
-    userTableOffensiveUsers = SearchLongGauge.export(USER_TABLE_OFFENSIVE_USERS);
-    userTableNsfwUsers = SearchLongGauge.export(USER_TABLE_NSFW_USERS);
-    userTableIsProtectedUsers = SearchLongGauge.export(USER_TABLE_IS_PROTECTED_USERS);
+    userTableAntisocialUsers = SearchLongGauge.etwitterport(USER_TABLE_ANTISOCIAL_USERS);
+    userTableOffensiveUsers = SearchLongGauge.etwitterport(USER_TABLE_OFFENSIVE_USERS);
+    userTableNsfwUsers = SearchLongGauge.etwitterport(USER_TABLE_NSFW_USERS);
+    userTableIsProtectedUsers = SearchLongGauge.etwitterport(USER_TABLE_IS_PROTECTED_USERS);
 
     LOG.info(
-        "Exporting stats for user table. Starting with numUsersInTable={}, usersWithZeroBits={}, "
+        "Etwitterporting stats for user table. Starting with numUsersInTable={}, usersWithZeroBits={}, "
             + "antisocialUsers={}, offensiveUsers={}, nsfwUsers={}, isProtectedUsers={}.",
         getNumUsersInTable(),
         getNumUsersWithNoBitsSet(),
@@ -317,9 +317,9 @@ public class UserTable {
     while (initialSize > powerOfTwoSize) {
       powerOfTwoSize *= 2;
     }
-    if (powerOfTwoSize > Integer.MAX_VALUE) {
-      LOG.error("Error: powerOfTwoSize overflowed Integer.MAX_VALUE! Initial size: " + initialSize);
-      powerOfTwoSize = 1 << 30;  // max power of 2
+    if (powerOfTwoSize > Integer.MAtwitter_VALUE) {
+      LOG.error("Error: powerOfTwoSize overflowed Integer.MAtwitter_VALUE! Initial size: " + initialSize);
+      powerOfTwoSize = 1 << 30;  // matwitter power of 2
     }
 
     return (int) powerOfTwoSize;
@@ -377,9 +377,9 @@ public class UserTable {
       // the input 'bit' is already set/unset in the table.
       // Since bitwise operators cannot be directly applied on Byte, Byte is promoted into int to
       // apply the operators. When that happens, if the most significant bit of the Byte is set,
-      // the promoted int has all significant bits set to 1. 0xff bitmask is applied here to make
+      // the promoted int has all significant bits set to 1. 0twitterff bitmask is applied here to make
       // sure only the last 8 bits are considered.
-      bitsDiff = (bitsOriginally & 0xff) ^ (bits & 0xff);
+      bitsDiff = (bitsOriginally & 0twitterff) ^ (bits & 0twitterff);
 
       if (bitsOriginally > 0 && bits == 0) {
         table.numUsersWithNoBitsSet++;
@@ -394,15 +394,15 @@ public class UserTable {
 
       // New user string.
       if (table.numUsersInTable + 1 >= (table.hashSize() >> 1)
-          && table.hashSize() != userUpdateTableMaxCapacity) {
-        if (2L * (long) table.hashSize() < userUpdateTableMaxCapacity) {
+          && table.hashSize() != userUpdateTableMatwitterCapacity) {
+        if (2L * (long) table.hashSize() < userUpdateTableMatwitterCapacity) {
           rehash(2 * table.hashSize());
           table = this.hashTable.get();
         } else {
-          if (table.hashSize() < (int) userUpdateTableMaxCapacity) {
-            rehash((int) userUpdateTableMaxCapacity);
+          if (table.hashSize() < (int) userUpdateTableMatwitterCapacity) {
+            rehash((int) userUpdateTableMatwitterCapacity);
             table = this.hashTable.get();
-            LOG.warn("User update table size reached Integer.MAX_VALUE, performance will degrade.");
+            LOG.warn("User update table size reached Integer.MAtwitter_VALUE, performance will degrade.");
           }
         }
 
@@ -412,7 +412,7 @@ public class UserTable {
 
       item = userID;
       bits |= bit;
-      bitsDiff = bit & 0xff;
+      bitsDiff = bit & 0twitterff;
 
       table.numUsersInTable++;
     }

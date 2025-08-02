@@ -23,28 +23,28 @@ import com.twitter.util.FutureEventListener;
 /**
  * Filter that is tracking the engagement stats returned from Earlybirds.
  */
-public class MetadataTrackingFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+public class MetadataTrackingFilter etwittertends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
 
-  private static final String SCORING_SIGNAL_STAT_PREFIX = "scoring_signal_";
-  private static final String SCORE_STAT_PATTERN = "client_id_score_tracker_for_%s_x100";
+  private static final String SCORING_SIGNAL_STAT_PREFItwitter = "scoring_signal_";
+  private static final String SCORE_STAT_PATTERN = "client_id_score_tracker_for_%s_twitter100";
 
   @VisibleForTesting
   static final SearchMovingAverage SCORING_SIGNAL_FAV_COUNT =
-      SearchMovingAverage.export(SCORING_SIGNAL_STAT_PREFIX + "fav_count");
+      SearchMovingAverage.etwitterport(SCORING_SIGNAL_STAT_PREFItwitter + "fav_count");
 
   @VisibleForTesting
   static final SearchMovingAverage SCORING_SIGNAL_REPLY_COUNT =
-      SearchMovingAverage.export(SCORING_SIGNAL_STAT_PREFIX + "reply_count");
+      SearchMovingAverage.etwitterport(SCORING_SIGNAL_STAT_PREFItwitter + "reply_count");
 
   @VisibleForTesting
   static final SearchMovingAverage SCORING_SIGNAL_RETWEET_COUNT =
-      SearchMovingAverage.export(SCORING_SIGNAL_STAT_PREFIX + "retweet_count");
+      SearchMovingAverage.etwitterport(SCORING_SIGNAL_STAT_PREFItwitter + "retweet_count");
 
   @VisibleForTesting
   static final LoadingCache<String, SearchMovingAverage> CLIENT_SCORE_METRICS_LOADING_CACHE =
       CacheBuilder.newBuilder().build(new CacheLoader<String, SearchMovingAverage>() {
         public SearchMovingAverage load(String clientId) {
-          return SearchMovingAverage.export(String.format(SCORE_STAT_PATTERN, clientId));
+          return SearchMovingAverage.etwitterport(String.format(SCORE_STAT_PATTERN, clientId));
         }
       });
 
@@ -70,7 +70,7 @@ public class MetadataTrackingFilter extends SimpleFilter<EarlybirdRequest, Early
           long totalFavoriteAmount = 0;
           long totalReplyAmount = 0;
           long totalRetweetAmount = 0;
-          double totalScoreX100 = 0;
+          double totalScoretwitter100 = 0;
 
           for (ThriftSearchResult result : searchResults) {
             if (!result.isSetMetadata()) {
@@ -93,7 +93,7 @@ public class MetadataTrackingFilter extends SimpleFilter<EarlybirdRequest, Early
 
             if (metadata.isSetScore()) {
               // Scale up the score by 100 so that scores are at least 1 and visible on viz graph
-              totalScoreX100 += metadata.getScore() * 100;
+              totalScoretwitter100 += metadata.getScore() * 100;
             }
           }
 
@@ -102,11 +102,11 @@ public class MetadataTrackingFilter extends SimpleFilter<EarlybirdRequest, Early
           SCORING_SIGNAL_FAV_COUNT.addSamples(totalFavoriteAmount, searchResults.size());
           SCORING_SIGNAL_REPLY_COUNT.addSamples(totalReplyAmount, searchResults.size());
           SCORING_SIGNAL_RETWEET_COUNT.addSamples(totalRetweetAmount, searchResults.size());
-          // Export per client id average scores.
+          // Etwitterport per client id average scores.
           String requestClientId = ClientIdUtil.getClientIdFromRequest(request);
           String quotaClientId = ClientIdUtil.getQuotaClientId(requestClientId);
           CLIENT_SCORE_METRICS_LOADING_CACHE.getUnchecked(quotaClientId)
-              .addSamples((long) totalScoreX100, searchResults.size());
+              .addSamples((long) totalScoretwitter100, searchResults.size());
         }
       }
 

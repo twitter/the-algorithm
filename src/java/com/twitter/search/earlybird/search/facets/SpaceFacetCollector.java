@@ -14,7 +14,7 @@ import com.twitter.search.earlybird.thrift.AudioSpaceState;
 import com.twitter.search.earlybird.thrift.ThriftSearchResult;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultAudioSpace;
 
-public class SpaceFacetCollector extends AbstractFacetTermCollector {
+public class SpaceFacetCollector etwittertends AbstractFacetTermCollector {
   private final List<ThriftSearchResultAudioSpace> spaces = new ArrayList<>();
 
   private final AudioSpaceTable audioSpaceTable;
@@ -41,7 +41,7 @@ public class SpaceFacetCollector extends AbstractFacetTermCollector {
 
   @Override
   public void fillResultAndClear(ThriftSearchResult result) {
-    getExtraMetadata(result).setSpaces(ImmutableList.copyOf(spaces));
+    getEtwittertraMetadata(result).setSpaces(ImmutableList.copyOf(spaces));
     spaces.clear();
   }
 }

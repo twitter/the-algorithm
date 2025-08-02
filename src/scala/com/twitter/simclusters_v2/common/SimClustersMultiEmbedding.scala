@@ -20,7 +20,7 @@ object SimClustersMultiEmbedding {
   ): Seq[(SimClustersEmbeddingId, Double)] = {
     simClustersMultiEmbedding match {
       case Values(values) =>
-        values.embeddings.zipWithIndex.map {
+        values.embeddings.zipWithIndetwitter.map {
           case (embeddingWithScore, i) =>
             (toEmbeddingId(simClustersMultiEmbeddingId, i), embeddingWithScore.score)
         }

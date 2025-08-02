@@ -15,7 +15,7 @@ import com.twitter.search.common.file.AbstractFile
 import com.twitter.util.Duration
 import com.twitter.util.Future
 import java.util.concurrent.atomic.AtomicReference
-import java.util.concurrent.Executors
+import java.util.concurrent.Etwitterecutors
 import java.util.concurrent.TimeUnit
 import scala.util.Random
 import scala.util.control.NonFatal
@@ -24,38 +24,38 @@ class RefreshableQueryable[T, P <: RuntimeParams, D <: Distance[D]](
   grouped: Boolean,
   rootDir: AbstractFile,
   queryableProvider: QueryableProvider[T, P, D],
-  indexPathProvider: IndexPathProvider,
+  indetwitterPathProvider: IndetwitterPathProvider,
   statsReceiver: StatsReceiver,
   updateInterval: Duration = 10.minutes)
-    extends QueryableGrouped[T, P, D] {
+    etwittertends QueryableGrouped[T, P, D] {
 
   private val log = Logger.get("RefreshableQueryable")
 
   private val loadCounter = statsReceiver.counter("load")
   private val loadFailCounter = statsReceiver.counter("load_error")
-  private val newIndexCounter = statsReceiver.counter("new_index")
+  private val newIndetwitterCounter = statsReceiver.counter("new_indetwitter")
   protected val random = new Random(System.currentTimeMillis())
 
   private val threadFactory = new ThreadFactoryBuilder()
     .setNameFormat("refreshable-queryable-update-%d")
     .build()
-  // single thread to check and load index
-  private val executor = Executors.newScheduledThreadPool(1, threadFactory)
+  // single thread to check and load indetwitter
+  private val etwitterecutor = Etwitterecutors.newScheduledThreadPool(1, threadFactory)
 
-  private[common] val indexPathRef: AtomicReference[AbstractFile] =
-    new AtomicReference(indexPathProvider.provideIndexPath(rootDir, grouped).get())
+  private[common] val indetwitterPathRef: AtomicReference[AbstractFile] =
+    new AtomicReference(indetwitterPathProvider.provideIndetwitterPath(rootDir, grouped).get())
   private[common] val queryableRef: AtomicReference[Map[Option[String], Queryable[T, P, D]]] = {
     if (grouped) {
       val mapping = getGroupMapping
 
       new AtomicReference(mapping)
     } else {
-      new AtomicReference(Map(None -> buildIndex(indexPathRef.get())))
+      new AtomicReference(Map(None -> buildIndetwitter(indetwitterPathRef.get())))
     }
   }
 
-  private val servingIndexGauge = statsReceiver.addGauge("serving_index_timestamp") {
-    indexPathRef.get().getName.toFloat
+  private val servingIndetwitterGauge = statsReceiver.addGauge("serving_indetwitter_timestamp") {
+    indetwitterPathRef.get().getName.toFloat
   }
 
   log.info("System.gc() before start")
@@ -68,7 +68,7 @@ class RefreshableQueryable[T, P <: RuntimeParams, D <: Distance[D]](
   }
 
   def start(): Unit = {
-    executor.scheduleWithFixedDelay(
+    etwitterecutor.scheduleWithFitwitteredDelay(
       reloadTask,
       // init reloading with random delay
       computeRandomInitDelay().inSeconds,
@@ -77,56 +77,56 @@ class RefreshableQueryable[T, P <: RuntimeParams, D <: Distance[D]](
     )
   }
 
-  private def buildIndex(indexPath: AbstractFile): Queryable[T, P, D] = {
-    log.info(s"build index from ${indexPath.getPath}")
-    queryableProvider.provideQueryable(indexPath)
+  private def buildIndetwitter(indetwitterPath: AbstractFile): Queryable[T, P, D] = {
+    log.info(s"build indetwitter from ${indetwitterPath.getPath}")
+    queryableProvider.provideQueryable(indetwitterPath)
   }
 
   @VisibleForTesting
   private[common] def innerLoad(): Unit = {
-    log.info("Check and load for new index")
+    log.info("Check and load for new indetwitter")
     loadCounter.incr()
     try {
       // Find the latest directory
-      val latestPath = indexPathProvider.provideIndexPath(rootDir, grouped).get()
-      if (indexPathRef.get() != latestPath) {
-        log.info(s"loading index from: ${latestPath.getName}")
-        newIndexCounter.incr()
+      val latestPath = indetwitterPathProvider.provideIndetwitterPath(rootDir, grouped).get()
+      if (indetwitterPathRef.get() != latestPath) {
+        log.info(s"loading indetwitter from: ${latestPath.getName}")
+        newIndetwitterCounter.incr()
         if (grouped) {
           val mapping = getGroupMapping
           queryableRef.set(mapping)
         } else {
-          val queryable = buildIndex(latestPath)
+          val queryable = buildIndetwitter(latestPath)
           queryableRef.set(Map(None -> queryable))
         }
-        indexPathRef.set(latestPath)
+        indetwitterPathRef.set(latestPath)
       } else {
-        log.info(s"Current index already up to date: ${indexPathRef.get.getName}")
+        log.info(s"Current indetwitter already up to date: ${indetwitterPathRef.get.getName}")
       }
     } catch {
       case NonFatal(err) =>
         loadFailCounter.incr()
-        log.error(s"Failed to load index: $err")
+        log.error(s"Failed to load indetwitter: $err")
     }
-    log.info(s"Current index loaded from ${indexPathRef.get().getPath}")
+    log.info(s"Current indetwitter loaded from ${indetwitterPathRef.get().getPath}")
   }
 
   @VisibleForTesting
   private[common] def computeRandomInitDelay(): Duration = {
     val bound = 5.minutes
-    val nextUpdateSec = updateInterval + Duration.fromSeconds(
-      random.nextInt(bound.inSeconds)
+    val netwittertUpdateSec = updateInterval + Duration.fromSeconds(
+      random.netwittertInt(bound.inSeconds)
     )
-    nextUpdateSec
+    netwittertUpdateSec
   }
 
   /**
    * ANN query for ids with key as group id
    * @param embedding: Embedding/Vector to be queried with.
    * @param numOfNeighbors: Number of neighbours to be queried for.
-   * @param runtimeParams: Runtime params associated with index to control accuracy/latency etc.
-   * @param key: Optional key to lookup specific ANN index and perform query there
-   *  @return List of approximate nearest neighbour ids.
+   * @param runtimeParams: Runtime params associated with indetwitter to control accuracy/latency etc.
+   * @param key: Optional key to lookup specific ANN indetwitter and perform query there
+   *  @return List of approtwitterimate nearest neighbour ids.
    */
   override def query(
     embedding: EmbeddingVector,
@@ -147,9 +147,9 @@ class RefreshableQueryable[T, P <: RuntimeParams, D <: Distance[D]](
    * ANN query for ids with key as group id with distance
    * @param embedding: Embedding/Vector to be queried with.
    * @param numOfNeighbors: Number of neighbours to be queried for.
-   * @param runtimeParams: Runtime params associated with index to control accuracy/latency etc.
-   * @param key: Optional key to lookup specific ANN index and perform query there
-   *  @return List of approximate nearest neighbour ids with distance from the query embedding.
+   * @param runtimeParams: Runtime params associated with indetwitter to control accuracy/latency etc.
+   * @param key: Optional key to lookup specific ANN indetwitter and perform query there
+   *  @return List of approtwitterimate nearest neighbour ids with distance from the query embedding.
    */
   override def queryWithDistance(
     embedding: EmbeddingVector,
@@ -167,9 +167,9 @@ class RefreshableQueryable[T, P <: RuntimeParams, D <: Distance[D]](
   }
 
   private def getGroupMapping(): Map[Option[String], Queryable[T, P, D]] = {
-    val groupDirs = indexPathProvider.provideIndexPathWithGroups(rootDir).get()
+    val groupDirs = indetwitterPathProvider.provideIndetwitterPathWithGroups(rootDir).get()
     val mapping = groupDirs.map { groupDir =>
-      val queryable = buildIndex(groupDir)
+      val queryable = buildIndetwitter(groupDir)
       Option(groupDir.getName) -> queryable
     }.toMap
 
@@ -181,9 +181,9 @@ class RefreshableQueryable[T, P <: RuntimeParams, D <: Distance[D]](
    *
    * @param embedding       : Embedding/Vector to be queried with.
    * @param numOfNeighbors  : Number of neighbours to be queried for.
-   * @param runtimeParams   : Runtime params associated with index to control accuracy/latency etc.
+   * @param runtimeParams   : Runtime params associated with indetwitter to control accuracy/latency etc.
    *
-   * @return List of approximate nearest neighbour ids.
+   * @return List of approtwitterimate nearest neighbour ids.
    */
   override def query(
     embedding: EmbeddingVector,
@@ -198,9 +198,9 @@ class RefreshableQueryable[T, P <: RuntimeParams, D <: Distance[D]](
    *
    * @param embedding      : Embedding/Vector to be queried with.
    * @param numOfNeighbors : Number of neighbours to be queried for.
-   * @param runtimeParams  : Runtime params associated with index to control accuracy/latency etc.
+   * @param runtimeParams  : Runtime params associated with indetwitter to control accuracy/latency etc.
    *
-   * @return List of approximate nearest neighbour ids with distance from the query embedding.
+   * @return List of approtwitterimate nearest neighbour ids with distance from the query embedding.
    */
   override def queryWithDistance(
     embedding: EmbeddingVector,

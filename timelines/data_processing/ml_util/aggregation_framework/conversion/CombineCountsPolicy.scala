@@ -2,7 +2,7 @@ package com.twitter.timelines.data_processing.ml_util.aggregation_framework.conv
 
 import com.google.common.annotations.VisibleForTesting
 import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.api.FeatureContext
+import com.twitter.ml.api.FeatureContetwittert
 import com.twitter.ml.api._
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.AggregationMetricCommon
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.metrics.TypedCountMetric
@@ -68,7 +68,7 @@ trait CombineCountsBase {
   private def computeSortedFeatureValues(featureValues: List[Double]): List[Double] =
     featureValues.sortBy(-_)
 
-  private def extractKth(sortedFeatureValues: Seq[Double], k: Int): Double =
+  private def etwittertractKth(sortedFeatureValues: Seq[Double], k: Int): Double =
     sortedFeatureValues
       .lift(k - 1)
       .getOrElse(0.0)
@@ -105,7 +105,7 @@ trait CombineCountsBase {
   ): Unit = {
     // In majority of calls to this method from timeline scorer
     // the featureValues list is empty.
-    // While with empty list each operation will be not that expensive, these
+    // While with empty list each operation will be not that etwitterpensive, these
     // small things do add up. By adding early stop here we can avoid sorting
     // empty list, allocating several options and making multiple function
     // calls. In addition to that, we won't iterate over [1, topK].
@@ -113,7 +113,7 @@ trait CombineCountsBase {
       val sortedFeatureValues = hardLimit
         .map { limit =>
           computeSortedFeatureValues(featureValues).take(limit)
-        }.getOrElse(computeSortedFeatureValues(featureValues)).toIndexedSeq
+        }.getOrElse(computeSortedFeatureValues(featureValues)).toIndetwitteredSeq
       val computed = preComputeStats(sortedFeatureValues)
 
       val combinedFeatures = precomputedFeaturesMap(countFeature)
@@ -136,7 +136,7 @@ trait CombineCountsBase {
         setContinuousFeatureIfNonZero(
           richInputRecord,
           combinedFeatures.topK(k - 1),
-          extractKth(sortedFeatureValues, k)
+          etwittertractKth(sortedFeatureValues, k)
         )
       }
     }
@@ -144,8 +144,8 @@ trait CombineCountsBase {
 }
 
 object CombineCountsPolicy {
-  def getCountFeatures(aggregateContext: FeatureContext): Seq[Feature[_]] =
-    aggregateContext.getAllFeatures.asScala.toSeq
+  def getCountFeatures(aggregateContetwittert: FeatureContetwittert): Seq[Feature[_]] =
+    aggregateContetwittert.getAllFeatures.asScala.toSeq
       .filter { feature =>
         feature.getFeatureType == FeatureType.CONTINUOUS &&
         feature.getDenseFeatureName.endsWith(TypedCountMetric[JDouble]().operatorName)
@@ -179,20 +179,20 @@ object CombineCountsPolicy {
  */
 case class CombineCountsPolicy(
   override val topK: Int,
-  aggregateContextToPrecompute: FeatureContext,
+  aggregateContetwittertToPrecompute: FeatureContetwittert,
   override val hardLimit: Option[Int] = None)
-    extends SparseBinaryMergePolicy
+    etwittertends SparseBinaryMergePolicy
     with CombineCountsBase {
   import CombineCountsPolicy._
   override val precomputedCountFeatures: Seq[Feature[_]] = getCountFeatures(
-    aggregateContextToPrecompute)
+    aggregateContetwittertToPrecompute)
 
   override def mergeRecord(
     mutableInputRecord: DataRecord,
     aggregateRecords: List[DataRecord],
-    aggregateContext: FeatureContext
+    aggregateContetwittert: FeatureContetwittert
   ): Unit = {
-    // Assumes aggregateContext === aggregateContextToPrecompute
+    // Assumes aggregateContetwittert === aggregateContetwittertToPrecompute
     mergeRecordFromCountFeatures(mutableInputRecord, aggregateRecords, precomputedCountFeatures)
   }
 
@@ -218,6 +218,6 @@ case class CombineCountsPolicy(
     }
   }
 
-  override def aggregateFeaturesPostMerge(aggregateContext: FeatureContext): Set[Feature[_]] =
+  override def aggregateFeaturesPostMerge(aggregateContetwittert: FeatureContetwittert): Set[Feature[_]] =
     outputFeaturesPostMerge.map(_.asInstanceOf[Feature[_]])
 }

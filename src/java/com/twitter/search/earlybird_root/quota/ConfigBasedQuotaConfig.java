@@ -1,12 +1,12 @@
 package com.twitter.search.earlybird_root.quota;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledEtwitterecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -14,7 +14,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import org.apache.commons.io.IOUtils;
-import org.json.JSONException;
+import org.json.JSONEtwitterception;
 import org.json.JSONObject;
 
 import com.twitter.common.util.Clock;
@@ -23,7 +23,7 @@ import com.twitter.search.common.util.io.periodic.PeriodicFileLoader;
 import com.twitter.search.common.util.json.JSONParsingUtil;
 
 /**
- * Periodically loads a json serialized map that contains the quota information indexed by
+ * Periodically loads a json serialized map that contains the quota information indetwittered by
  * client id.
  *
  * Each json object from the map is required to have an int property that represents a client's quota.
@@ -31,9 +31,9 @@ import com.twitter.search.common.util.json.JSONParsingUtil;
  *
  * Optionally it can have a <b>should_enforce</b> property of type boolean
  *
- * If this two properties are not present an exception will be thrown.
+ * If this two properties are not present an etwitterception will be thrown.
  */
-public class ConfigBasedQuotaConfig extends PeriodicFileLoader {
+public class ConfigBasedQuotaConfig etwittertends PeriodicFileLoader {
   private static final String UNSET_EMAIL = "unset";
 
   private static final String PER_CLIENT_QUOTA_GAUGE_NAME_PATTERN =
@@ -43,11 +43,11 @@ public class ConfigBasedQuotaConfig extends PeriodicFileLoader {
 
   @VisibleForTesting
   static final SearchLongGauge TOTAL_QUOTA =
-     SearchLongGauge.export("total_config_based_quota");
+     SearchLongGauge.etwitterport("total_config_based_quota");
 
   @VisibleForTesting
   static final SearchLongGauge ENTRIES_COUNT =
-      SearchLongGauge.export("config_repo_quota_config_entries_count");
+      SearchLongGauge.etwitterport("config_repo_quota_config_entries_count");
 
   private final AtomicReference<ImmutableMap<String, QuotaInfo>> clientQuotas =
     new AtomicReference<>();
@@ -57,11 +57,11 @@ public class ConfigBasedQuotaConfig extends PeriodicFileLoader {
 
   /**
    * Creates the object that manages loads the config from: quotaConfigPath. It periodically
-   * reloads the config file using the given executor service.
+   * reloads the config file using the given etwitterecutor service.
    *
    * @param quotaConfigPath Path to configuration file.
-   * @param executorService ScheduledExecutorService to be used for periodically reloading the file.
-   * @param clientQuotaKey The key that will be used to extract client quotas.
+   * @param etwitterecutorService ScheduledEtwitterecutorService to be used for periodically reloading the file.
+   * @param clientQuotaKey The key that will be used to etwittertract client quotas.
    * @param requireQuotaConfigForClients Determines whether a client can be skipped
    * if the associated object is missing the quota key
    * (ie a client that is a SuperRoot client but the current service is Archive)
@@ -70,14 +70,14 @@ public class ConfigBasedQuotaConfig extends PeriodicFileLoader {
       String quotaConfigPath,
       String clientQuotaKey,
       boolean requireQuotaConfigForClients,
-      ScheduledExecutorService executorService,
+      ScheduledEtwitterecutorService etwitterecutorService,
       Clock clock
-  ) throws Exception {
+  ) throws Etwitterception {
     ConfigBasedQuotaConfig configLoader = new ConfigBasedQuotaConfig(
         quotaConfigPath,
         clientQuotaKey,
         requireQuotaConfigForClients,
-        executorService,
+        etwitterecutorService,
         clock
     );
     configLoader.init();
@@ -88,10 +88,10 @@ public class ConfigBasedQuotaConfig extends PeriodicFileLoader {
       String quotaConfigPath,
       String clientQuotaKey,
       boolean requireQuotaConfigForClients,
-      ScheduledExecutorService executorService,
+      ScheduledEtwitterecutorService etwitterecutorService,
       Clock clock
-  ) throws Exception {
-    super("quotaConfig", quotaConfigPath, executorService, clock);
+  ) throws Etwitterception {
+    super("quotaConfig", quotaConfigPath, etwitterecutorService, clock);
     this.clientQuotaKey = clientQuotaKey;
     this.requireQuotaConfigForClients = requireQuotaConfigForClients;
   }
@@ -107,7 +107,7 @@ public class ConfigBasedQuotaConfig extends PeriodicFileLoader {
    * Load the json format and store it in a map.
    */
   @Override
-  protected void accept(InputStream fileStream) throws JSONException, IOException {
+  protected void accept(InputStream fileStream) throws JSONEtwitterception, IOEtwitterception {
     String fileContents = IOUtils.toString(fileStream, StandardCharsets.UTF_8);
     JSONObject quotaConfig = new JSONObject(JSONParsingUtil.stripComments(fileContents));
 
@@ -116,8 +116,8 @@ public class ConfigBasedQuotaConfig extends PeriodicFileLoader {
     Iterator<String> clientIds = quotaConfig.keys();
 
     long totalQuota = 0;
-    while (clientIds.hasNext()) {
-      String clientId = clientIds.next();
+    while (clientIds.hasNetwittert()) {
+      String clientId = clientIds.netwittert();
       JSONObject clientQuota = quotaConfig.getJSONObject(clientId);
 
       // Skip clients that don't send requests to this service.
@@ -137,7 +137,7 @@ public class ConfigBasedQuotaConfig extends PeriodicFileLoader {
           clientId,
           new QuotaInfo(clientId, email, quotaValue, shouldEnforce, tierValue, archiveAccess));
 
-      SearchLongGauge perClientQuota = SearchLongGauge.export(
+      SearchLongGauge perClientQuota = SearchLongGauge.etwitterport(
           String.format(PER_CLIENT_QUOTA_GAUGE_NAME_PATTERN, clientId));
       perClientQuota.set(quotaValue);
       totalQuota += quotaValue;
@@ -154,7 +154,7 @@ public class ConfigBasedQuotaConfig extends PeriodicFileLoader {
     ENTRIES_COUNT.set(clientQuotas.get().size());
 
     for (String email : perEmailQuotas.keySet()) {
-      SearchLongGauge.export(String.format(PER_EMAIL_QUOTA_GAUGE_NAME_PATTERN, email)).set(
+      SearchLongGauge.etwitterport(String.format(PER_EMAIL_QUOTA_GAUGE_NAME_PATTERN, email)).set(
           perEmailQuotas.get(email));
     }
   }

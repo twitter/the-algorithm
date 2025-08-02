@@ -15,13 +15,13 @@ import com.twitter.strato.client.Fetcher
 import com.twitter.timelines.configapi.HasParams
 import com.twitter.util.Duration
 import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 import com.twitter.conversions.DurationOps._
 import com.twitter.escherbird.util.stitchcache.StitchCache
 import com.twitter.follow_recommendations.common.models.HasUserState
 import com.twitter.follow_recommendations.common.predicates.InactivePredicateParams.DefaultInactivityThreshold
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 
 import java.lang.{Long => JLong}
 
@@ -32,7 +32,7 @@ case class InactivePredicate @Inject() (
     Long,
     Unit,
     UserRecommendabilityFeatures
-  ]) extends Predicate[(HasParams with HasClientContext with HasUserState, CandidateUser)] {
+  ]) etwittertends Predicate[(HasParams with HasClientContetwittert with HasUserState, CandidateUser)] {
 
   private val stats: StatsReceiver = statsReceiver.scope("InactivePredicate")
   private val cacheStats = stats.scope("cache")
@@ -42,14 +42,14 @@ case class InactivePredicate @Inject() (
 
   private val userRecommendableCache =
     StitchCache[JLong, Option[UserRecommendabilityFeatures]](
-      maxCacheSize = 100000,
+      matwitterCacheSize = 100000,
       ttl = 12.hours,
       statsReceiver = cacheStats.scope("UserRecommendable"),
       underlyingCall = (userId: JLong) => queryUserRecommendable(userId)
     )
 
   override def apply(
-    targetAndCandidate: (HasParams with HasClientContext with HasUserState, CandidateUser)
+    targetAndCandidate: (HasParams with HasClientContetwittert with HasUserState, CandidateUser)
   ): Stitch[PredicateResult] = {
     val (target, candidate) = targetAndCandidate
 
@@ -83,7 +83,7 @@ case class InactivePredicate @Inject() (
               }
           }
       }.rescue {
-        case e: Exception =>
+        case e: Etwitterception =>
           stats.counter(e.getClass.getSimpleName).incr()
           Stitch(PredicateResult.Invalid(Set(FilterReason.FailOpen)))
       }
@@ -95,10 +95,10 @@ case class InactivePredicate @Inject() (
     candidateState: Option[UserState]
   ): Boolean = {
     target.params(MightBeDisabled) &&
-    consumerState.exists(InactivePredicate.ValidConsumerStates.contains) &&
+    consumerState.etwitterists(InactivePredicate.ValidConsumerStates.contains) &&
     (
       (
-        candidateState.exists(InactivePredicate.ValidCandidateStates.contains) &&
+        candidateState.etwitterists(InactivePredicate.ValidCandidateStates.contains) &&
         !target.params(OnlyDisableForNewUserStateCandidates)
       ) ||
       (

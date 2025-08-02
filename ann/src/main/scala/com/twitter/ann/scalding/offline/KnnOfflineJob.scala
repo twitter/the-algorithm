@@ -4,12 +4,12 @@ import com.twitter.ann.common.Metric
 import com.twitter.bijection.scrooge.BinaryScalaCodec
 import com.twitter.ml.featurestore.lib.UserId
 import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
-import com.twitter.cortex.ml.embeddings.common.EntityKind
+import com.twitter.cortetwitter.ml.embeddings.common.EntityKind
 import com.twitter.entityembeddings.neighbors.thriftscala.{EntityKey, NearestNeighbors}
 import com.twitter.scalding.commons.source.VersionedKeyValSource
 import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.{Args, DateOps, DateParser, DateRange, Execution, TypedTsv, UniqueID}
-import com.twitter.scalding_internal.job.TwitterExecutionApp
+import com.twitter.scalding.{Args, DateOps, DateParser, DateRange, Etwitterecution, TypedTsv, UniqueID}
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
 import com.twitter.search.common.file.{AbstractFile, LocalFile}
 import java.util.TimeZone
 
@@ -17,32 +17,32 @@ import java.util.TimeZone
  * Generates the nearest neighbour for users and store them in Manhattan format i.e sequence files.
  * See README for oscar usage.
  */
-object KnnOfflineJob extends TwitterExecutionApp {
-  override def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    Execution.getArgs.flatMap { args: Args =>
+object KnnOfflineJob etwittertends TwitterEtwitterecutionApp {
+  override def job: Etwitterecution[Unit] = Etwitterecution.withId { implicit uniqueId =>
+    Etwitterecution.getArgs.flatMap { args: Args =>
       val knnDirectoryOpt: Option[String] = args.optional("knn_directory")
       knnDirectoryOpt match {
         case Some(knnDirectory) =>
-          Execution.withCachedFile(knnDirectory) { directory =>
-            execute(args, Some(new LocalFile(directory.file)))
+          Etwitterecution.withCachedFile(knnDirectory) { directory =>
+            etwitterecute(args, Some(new LocalFile(directory.file)))
           }
         case None =>
-          execute(args, None)
+          etwitterecute(args, None)
       }
     }
   }
 
   /**
-   * Execute KnnOfflineJob
+   * Etwitterecute KnnOfflineJob
    * @param args: The args object for this job
    * @param abstractFile: An optional of producer embedding path
    */
-  def execute(
+  def etwitterecute(
     args: Args,
     abstractFile: Option[AbstractFile]
   )(
     implicit uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     implicit val tz: TimeZone = TimeZone.getDefault()
     implicit val dp: DateParser = DateParser.default
     implicit val dateRange = DateRange.parse(args.list("date"))(DateOps.UTC, DateParser.default)
@@ -64,7 +64,7 @@ object KnnOfflineJob extends TwitterExecutionApp {
       path = outputPath,
       sourceVersion = None,
       sinkVersion = None,
-      maxFailures = 0,
+      matwitterFailures = 0,
       versionsToKeep = 1
     )
 
@@ -88,21 +88,21 @@ object KnnOfflineJob extends TwitterExecutionApp {
       knnDimension
     )
 
-    val neighborsExecution: Execution[Unit] = neighborsPipe
-      .writeExecution(mhOutput)
+    val neighborsEtwitterecution: Etwitterecution[Unit] = neighborsPipe
+      .writeEtwitterecution(mhOutput)
 
     // Write manual Inspection
     debugOutputPath match {
       case Some(path: String) =>
-        val debugExecution: Execution[Unit] = KnnDebug
+        val debugEtwitterecution: Etwitterecution[Unit] = KnnDebug
           .getDebugTable(
             neighborsPipe = neighborsPipe,
             shards = shards,
             reducers = reducers
           )
-          .writeExecution(TypedTsv(path))
-        Execution.zip(debugExecution, neighborsExecution).unit
-      case None => neighborsExecution
+          .writeEtwitterecution(TypedTsv(path))
+        Etwitterecution.zip(debugEtwitterecution, neighborsEtwitterecution).unit
+      case None => neighborsEtwitterecution
     }
   }
 }

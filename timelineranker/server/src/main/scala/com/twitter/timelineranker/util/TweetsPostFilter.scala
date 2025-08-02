@@ -10,7 +10,7 @@ import com.twitter.timelines.util.stats.BooleanObserver
 import com.twitter.timelines.util.stats.RequestStats
 import scala.collection.mutable
 
-object TweetFilters extends Enumeration {
+object TweetFilters etwittertends Enumeration {
   // Filters independent of users or their follow graph.
   val DuplicateRetweets: Value = Value
   val DuplicateTweets: Value = Value
@@ -22,10 +22,10 @@ object TweetFilters extends Enumeration {
   val DirectedAtNotFollowedUsers: Value = Value
   val NonReplyDirectedAtNotFollowedUsers: Value = Value
   val TweetsFromNotFollowedUsers: Value = Value
-  val ExtendedReplies: Value = Value
-  val NotQualifiedExtendedReplies: Value = Value
-  val NotValidExpandedExtendedReplies: Value = Value
-  val NotQualifiedReverseExtendedReplies: Value = Value
+  val EtwittertendedReplies: Value = Value
+  val NotQualifiedEtwittertendedReplies: Value = Value
+  val NotValidEtwitterpandedEtwittertendedReplies: Value = Value
+  val NotQualifiedReverseEtwittertendedReplies: Value = Value
   val RecommendedRepliesToNotFollowedUsers: Value = Value
 
   val None: TweetFilters.ValueSet = ValueSet.empty
@@ -34,10 +34,10 @@ object TweetFilters extends Enumeration {
     NonReplyDirectedAtNotFollowedUsers,
     DirectedAtNotFollowedUsers,
     TweetsFromNotFollowedUsers,
-    ExtendedReplies,
-    NotQualifiedExtendedReplies,
-    NotValidExpandedExtendedReplies,
-    NotQualifiedReverseExtendedReplies,
+    EtwittertendedReplies,
+    NotQualifiedEtwittertendedReplies,
+    NotValidEtwitterpandedEtwittertendedReplies,
+    NotQualifiedReverseEtwittertendedReplies,
     RecommendedRepliesToNotFollowedUsers
   )
 
@@ -83,7 +83,7 @@ case class TweetsPostFilterParams(
   inNetworkUserIds: Seq[UserId],
   mutedUserIds: Set[UserId],
   numRetweetsAllowed: Int,
-  loggingPrefix: String = "",
+  loggingPrefitwitter: String = "",
   sourceTweets: Seq[HydratedTweet] = Nil) {
   lazy val sourceTweetsById: Map[TweetId, HydratedTweet] =
     sourceTweets.map(tweet => tweet.tweetId -> tweet).toMap
@@ -99,7 +99,7 @@ abstract class TweetsPostFilterBase(
   filters: TweetFilters.ValueSet,
   logger: Logger,
   statsReceiver: StatsReceiver)
-    extends RequestStats {
+    etwittertends RequestStats {
   import TweetFilters.FilterMethod
   import TweetFilters.MutableState
 
@@ -113,13 +113,13 @@ abstract class TweetsPostFilterBase(
   private[this] val nullcastCounter = baseScope.counter("nullcast")
   private[this] val repliesCounter = baseScope.counter("replies")
   private[this] val retweetsCounter = baseScope.counter("retweets")
-  private[this] val extendedRepliesCounter = baseScope.counter("extendedReplies")
-  private[this] val notQualifiedExtendedRepliesObserver =
-    BooleanObserver(baseScope.scope("notQualifiedExtendedReplies"))
-  private[this] val notValidExpandedExtendedRepliesObserver =
-    BooleanObserver(baseScope.scope("notValidExpandedExtendedReplies"))
-  private[this] val notQualifiedReverseExtendedRepliesCounter =
-    baseScope.counter("notQualifiedReverseExtendedReplies")
+  private[this] val etwittertendedRepliesCounter = baseScope.counter("etwittertendedReplies")
+  private[this] val notQualifiedEtwittertendedRepliesObserver =
+    BooleanObserver(baseScope.scope("notQualifiedEtwittertendedReplies"))
+  private[this] val notValidEtwitterpandedEtwittertendedRepliesObserver =
+    BooleanObserver(baseScope.scope("notValidEtwitterpandedEtwittertendedReplies"))
+  private[this] val notQualifiedReverseEtwittertendedRepliesCounter =
+    baseScope.counter("notQualifiedReverseEtwittertendedReplies")
   private[this] val recommendedRepliesToNotFollowedUsersObserver =
     BooleanObserver(baseScope.scope("recommendedRepliesToNotFollowedUsers"))
 
@@ -137,7 +137,7 @@ abstract class TweetsPostFilterBase(
   ): Seq[HydratedTweet] = {
     val invocationState = MutableState()
     val result = tweets.reverseIterator
-      .filterNot { tweet => applicableFilters.exists(_(tweet, params, invocationState)) }
+      .filterNot { tweet => applicableFilters.etwitterists(_(tweet, params, invocationState)) }
       .toSeq
       .reverse
     totalCounter.incr(tweets.size)
@@ -159,12 +159,12 @@ abstract class TweetsPostFilterBase(
       FilterData(TweetFilters.Replies, isReply),
       FilterData(TweetFilters.Retweets, isRetweet),
       FilterData(TweetFilters.TweetsFromNotFollowedUsers, isFromNonFollowedUser),
-      FilterData(TweetFilters.ExtendedReplies, isExtendedReply),
-      FilterData(TweetFilters.NotQualifiedExtendedReplies, isNotQualifiedExtendedReply),
-      FilterData(TweetFilters.NotValidExpandedExtendedReplies, isNotValidExpandedExtendedReply),
+      FilterData(TweetFilters.EtwittertendedReplies, isEtwittertendedReply),
+      FilterData(TweetFilters.NotQualifiedEtwittertendedReplies, isNotQualifiedEtwittertendedReply),
+      FilterData(TweetFilters.NotValidEtwitterpandedEtwittertendedReplies, isNotValidEtwitterpandedEtwittertendedReply),
       FilterData(
-        TweetFilters.NotQualifiedReverseExtendedReplies,
-        isNotQualifiedReverseExtendedReply),
+        TweetFilters.NotQualifiedReverseEtwittertendedReplies,
+        isNotQualifiedReverseEtwittertendedReply),
       FilterData(
         TweetFilters.RecommendedRepliesToNotFollowedUsers,
         isRecommendedRepliesToNotFollowedUsers)
@@ -184,7 +184,7 @@ abstract class TweetsPostFilterBase(
         nullcastCounter.incr()
         log(
           Level.ERROR,
-          () => s"${params.loggingPrefix}:: Found nullcast tweet: tweet-id: ${tweet.tweetId}"
+          () => s"${params.loggingPrefitwitter}:: Found nullcast tweet: tweet-id: ${tweet.tweetId}"
         )
         true
       } else {
@@ -199,7 +199,7 @@ abstract class TweetsPostFilterBase(
     ): Boolean = {
       if (tweet.hasReply) {
         repliesCounter.incr()
-        log(Level.OFF, () => s"${params.loggingPrefix}:: Removed reply: tweet-id: ${tweet.tweetId}")
+        log(Level.OFF, () => s"${params.loggingPrefitwitter}:: Removed reply: tweet-id: ${tweet.tweetId}")
         true
       } else {
         false
@@ -215,7 +215,7 @@ abstract class TweetsPostFilterBase(
         retweetsCounter.incr()
         log(
           Level.OFF,
-          () => s"${params.loggingPrefix}:: Removed retweet: tweet-id: ${tweet.tweetId}"
+          () => s"${params.loggingPrefitwitter}:: Removed retweet: tweet-id: ${tweet.tweetId}"
         )
         true
       } else {
@@ -233,7 +233,7 @@ abstract class TweetsPostFilterBase(
         log(
           Level.ERROR,
           () =>
-            s"${params.loggingPrefix}:: Found tweet from not-followed user: ${tweet.tweetId} from ${tweet.userId}"
+            s"${params.loggingPrefitwitter}:: Found tweet from not-followed user: ${tweet.tweetId} from ${tweet.userId}"
         )
         true
       } else {
@@ -246,7 +246,7 @@ abstract class TweetsPostFilterBase(
       params: TweetsPostFilterParams,
       invocationState: MutableState
     ): Boolean = {
-      tweet.directedAtUser.exists { directedAtUserId =>
+      tweet.directedAtUser.etwitterists { directedAtUserId =>
         val shouldFilterOut = (tweet.userId != params.userId) && !params.inNetworkUserIds
           .contains(directedAtUserId)
         // We do not log here because search is known to not handle this case.
@@ -254,7 +254,7 @@ abstract class TweetsPostFilterBase(
           log(
             Level.OFF,
             () =>
-              s"${params.loggingPrefix}:: Found tweet: ${tweet.tweetId} directed-at not-followed user: $directedAtUserId"
+              s"${params.loggingPrefitwitter}:: Found tweet: ${tweet.tweetId} directed-at not-followed user: $directedAtUserId"
           )
           directedAtNotFollowedCounter.incr()
         }
@@ -267,7 +267,7 @@ abstract class TweetsPostFilterBase(
       params: TweetsPostFilterParams,
       invocationState: MutableState
     ): Boolean = {
-      tweet.directedAtUser.exists { directedAtUserId =>
+      tweet.directedAtUser.etwitterists { directedAtUserId =>
         val shouldFilterOut = !tweet.hasReply &&
           (tweet.userId != params.userId) &&
           !params.inNetworkUserIds.contains(directedAtUserId)
@@ -276,7 +276,7 @@ abstract class TweetsPostFilterBase(
           log(
             Level.OFF,
             () =>
-              s"${params.loggingPrefix}:: Found non-reply tweet: ${tweet.tweetId} directed-at not-followed user: $directedAtUserId"
+              s"${params.loggingPrefitwitter}:: Found non-reply tweet: ${tweet.tweetId} directed-at not-followed user: $directedAtUserId"
           )
         }
         shouldFilterOut
@@ -294,7 +294,7 @@ abstract class TweetsPostFilterBase(
       val shouldFilterOut = invocationState.isSeen(tweet.tweetId)
       if (shouldFilterOut) {
         dupTweetCounter.incr()
-        log(Level.ERROR, () => s"${params.loggingPrefix}:: Duplicate tweet found: ${tweet.tweetId}")
+        log(Level.ERROR, () => s"${params.loggingPrefitwitter}:: Duplicate tweet found: ${tweet.tweetId}")
       }
       shouldFilterOut
     }
@@ -309,7 +309,7 @@ abstract class TweetsPostFilterBase(
       invocationState: MutableState
     ): Boolean = {
       invocationState.incrementIf0(tweet.tweetId)
-      tweet.sourceTweetId.exists { sourceTweetId =>
+      tweet.sourceTweetId.etwitterists { sourceTweetId =>
         val seenCount = invocationState.incrementThenGetCount(sourceTweetId)
         val shouldFilterOut = seenCount > params.numRetweetsAllowed
         if (shouldFilterOut) {
@@ -318,71 +318,71 @@ abstract class TweetsPostFilterBase(
           log(
             Level.OFF,
             () =>
-              s"${params.loggingPrefix}:: Found dup retweet: ${tweet.tweetId} (source tweet: $sourceTweetId), count: $seenCount"
+              s"${params.loggingPrefitwitter}:: Found dup retweet: ${tweet.tweetId} (source tweet: $sourceTweetId), count: $seenCount"
           )
         }
         shouldFilterOut
       }
     }
 
-    private def isExtendedReply(
+    private def isEtwittertendedReply(
       tweet: HydratedTweet,
       params: TweetsPostFilterParams,
       invocationState: MutableState
     ): Boolean = {
-      val shouldFilterOut = ExtendedRepliesFilter.isExtendedReply(
+      val shouldFilterOut = EtwittertendedRepliesFilter.isEtwittertendedReply(
         tweet,
         params.followedUserIds
       )
       if (shouldFilterOut) {
-        extendedRepliesCounter.incr()
+        etwittertendedRepliesCounter.incr()
         log(
           Level.DEBUG,
-          () => s"${params.loggingPrefix}:: extended reply to be filtered: ${tweet.tweetId}"
+          () => s"${params.loggingPrefitwitter}:: etwittertended reply to be filtered: ${tweet.tweetId}"
         )
       }
       shouldFilterOut
     }
 
-    private def isNotQualifiedExtendedReply(
+    private def isNotQualifiedEtwittertendedReply(
       tweet: HydratedTweet,
       params: TweetsPostFilterParams,
       invocationState: MutableState
     ): Boolean = {
-      val shouldFilterOut = ExtendedRepliesFilter.isNotQualifiedExtendedReply(
+      val shouldFilterOut = EtwittertendedRepliesFilter.isNotQualifiedEtwittertendedReply(
         tweet,
         params.userId,
         params.followedUserIds,
         params.mutedUserIds,
         params.sourceTweetsById
       )
-      if (notQualifiedExtendedRepliesObserver(shouldFilterOut)) {
+      if (notQualifiedEtwittertendedRepliesObserver(shouldFilterOut)) {
         log(
           Level.DEBUG,
           () =>
-            s"${params.loggingPrefix}:: non qualified extended reply to be filtered: ${tweet.tweetId}"
+            s"${params.loggingPrefitwitter}:: non qualified etwittertended reply to be filtered: ${tweet.tweetId}"
         )
       }
       shouldFilterOut
     }
 
-    private def isNotValidExpandedExtendedReply(
+    private def isNotValidEtwitterpandedEtwittertendedReply(
       tweet: HydratedTweet,
       params: TweetsPostFilterParams,
       invocationState: MutableState
     ): Boolean = {
-      val shouldFilterOut = ExtendedRepliesFilter.isNotValidExpandedExtendedReply(
+      val shouldFilterOut = EtwittertendedRepliesFilter.isNotValidEtwitterpandedEtwittertendedReply(
         tweet,
         params.userId,
         params.followedUserIds,
         params.mutedUserIds,
         params.sourceTweetsById
       )
-      if (notValidExpandedExtendedRepliesObserver(shouldFilterOut)) {
+      if (notValidEtwitterpandedEtwittertendedRepliesObserver(shouldFilterOut)) {
         log(
           Level.DEBUG,
           () =>
-            s"${params.loggingPrefix}:: non qualified extended reply to be filtered: ${tweet.tweetId}"
+            s"${params.loggingPrefitwitter}:: non qualified etwittertended reply to be filtered: ${tweet.tweetId}"
         )
       }
       shouldFilterOut
@@ -403,19 +403,19 @@ abstract class TweetsPostFilterBase(
         log(
           Level.DEBUG,
           () =>
-            s"${params.loggingPrefix}:: non qualified recommended reply to be filtered: ${tweet.tweetId}"
+            s"${params.loggingPrefitwitter}:: non qualified recommended reply to be filtered: ${tweet.tweetId}"
         )
       }
       shouldFilterOut
     }
 
     //For now this filter is meant to be used only with reply tweets from the inReplyToUserId query
-    private def isNotQualifiedReverseExtendedReply(
+    private def isNotQualifiedReverseEtwittertendedReply(
       tweet: HydratedTweet,
       params: TweetsPostFilterParams,
       invocationState: MutableState
     ): Boolean = {
-      val shouldFilterOut = !ReverseExtendedRepliesFilter.isQualifiedReverseExtendedReply(
+      val shouldFilterOut = !ReverseEtwittertendedRepliesFilter.isQualifiedReverseEtwittertendedReply(
         tweet,
         params.userId,
         params.followedUserIds,
@@ -424,11 +424,11 @@ abstract class TweetsPostFilterBase(
       )
 
       if (shouldFilterOut) {
-        notQualifiedReverseExtendedRepliesCounter.incr()
+        notQualifiedReverseEtwittertendedRepliesCounter.incr()
         log(
           Level.DEBUG,
           () =>
-            s"${params.loggingPrefix}:: non qualified reverse extended reply to be filtered: ${tweet.tweetId}"
+            s"${params.loggingPrefitwitter}:: non qualified reverse etwittertended reply to be filtered: ${tweet.tweetId}"
         )
       }
       shouldFilterOut
@@ -444,7 +444,7 @@ abstract class TweetsPostFilterBase(
 }
 
 class TweetsPostFilter(filters: TweetFilters.ValueSet, logger: Logger, statsReceiver: StatsReceiver)
-    extends TweetsPostFilterBase(filters, logger, statsReceiver) {
+    etwittertends TweetsPostFilterBase(filters, logger, statsReceiver) {
 
   def apply(
     userId: UserId,
@@ -455,14 +455,14 @@ class TweetsPostFilter(filters: TweetFilters.ValueSet, logger: Logger, statsRece
     numRetweetsAllowed: Int = 1,
     sourceTweets: Seq[HydratedTweet] = Nil
   ): Seq[HydratedTweet] = {
-    val loggingPrefix = s"userId: $userId"
+    val loggingPrefitwitter = s"userId: $userId"
     val params = TweetsPostFilterParams(
       userId = userId,
       followedUserIds = followedUserIds,
       inNetworkUserIds = inNetworkUserIds,
       mutedUserIds = mutedUserIds,
       numRetweetsAllowed = numRetweetsAllowed,
-      loggingPrefix = loggingPrefix,
+      loggingPrefitwitter = loggingPrefitwitter,
       sourceTweets = sourceTweets
     )
     super.filter(tweets, params)
@@ -473,7 +473,7 @@ class TweetsPostFilterUserIndependent(
   filters: TweetFilters.ValueSet,
   logger: Logger,
   statsReceiver: StatsReceiver)
-    extends TweetsPostFilterBase(filters, logger, statsReceiver) {
+    etwittertends TweetsPostFilterBase(filters, logger, statsReceiver) {
 
   require(
     (filters -- TweetFilters.UserIndependent).isEmpty,

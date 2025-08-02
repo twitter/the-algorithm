@@ -5,12 +5,12 @@ import com.twitter.decider.SimpleRecipient
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.follow_recommendations.common.base.StatsUtil
 import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.gizmoduck.thriftscala.LookupContext
+import com.twitter.gizmoduck.thriftscala.LookupContetwittert
 import com.twitter.gizmoduck.thriftscala.User
 import com.twitter.stitch.Stitch
 import com.twitter.stitch.gizmoduck.Gizmoduck
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class RequestBuilderUserFetcher @Inject() (
@@ -25,7 +25,7 @@ class RequestBuilderUserFetcher @Inject() (
         val stitch = gizmoduck
           .getUserById(
             userId = userId,
-            context = LookupContext(
+            contetwittert = LookupContetwittert(
               forUserId = Some(userId),
               includeProtected = true,
               includeSoftUsers = true

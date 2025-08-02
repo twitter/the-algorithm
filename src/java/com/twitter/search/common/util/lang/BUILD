@@ -12,7 +12,7 @@ java_library(
         "3rdparty/jvm/com/google/guava",
         "3rdparty/jvm/org/apache/thrift:libthrift",
         "3rdparty/jvm/org/slf4j:slf4j-api",
-        "src/java/com/twitter/common/text/language:locale-util",
+        "src/java/com/twitter/common/tetwittert/language:locale-util",
         "src/thrift/com/twitter/search/common:constants-java",
     ],
 )

@@ -13,10 +13,10 @@ scala_library(
         "socialgraph/hadoop/src/main/scala/com/twitter/socialgraph/hadoop:socialgraph-follow-events-scala",
         "src/scala/com/twitter/interaction_graph/scio/agg_client_event_logs:interaction_graph_agg_client_event_logs_edge_daily-scala",
         "src/scala/com/twitter/interaction_graph/scio/agg_direct_interactions:interaction_graph_agg_direct_interactions_edge_daily-scala",
-        "src/scala/com/twitter/interaction_graph/scio/agg_email:interaction_graph_extended_email_edge_daily-scala",
+        "src/scala/com/twitter/interaction_graph/scio/agg_email:interaction_graph_etwittertended_email_edge_daily-scala",
         "src/scala/com/twitter/interaction_graph/scio/agg_notifications:interaction_graph_agg_notifications_edge_daily-scala",
-        "src/scala/com/twitter/interaction_graph/scio/agg_retweets:interaction_graph_extended_retweet_edge_daily-scala",
-        "src/scala/com/twitter/interaction_graph/scio/agg_shares:interaction_graph_extended_share_edge_daily-scala",
+        "src/scala/com/twitter/interaction_graph/scio/agg_retweets:interaction_graph_etwittertended_retweet_edge_daily-scala",
+        "src/scala/com/twitter/interaction_graph/scio/agg_shares:interaction_graph_etwittertended_share_edge_daily-scala",
         "tcdc/bq_blaster/src/main/scala/com/twitter/tcdc/bqblaster/beam",
     ],
 )

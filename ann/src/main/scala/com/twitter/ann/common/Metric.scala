@@ -14,28 +14,28 @@ import scala.util.Success
 import scala.util.Try
 
 // Ann distance metrics
-trait Distance[D] extends Any with Ordered[D] {
+trait Distance[D] etwittertends Any with Ordered[D] {
   def distance: Float
 }
 
-case class L2Distance(distance: Float) extends AnyVal with Distance[L2Distance] {
+case class L2Distance(distance: Float) etwittertends AnyVal with Distance[L2Distance] {
   override def compare(that: L2Distance): Int =
     Ordering.Float.compare(this.distance, that.distance)
 }
 
-case class CosineDistance(distance: Float) extends AnyVal with Distance[CosineDistance] {
+case class CosineDistance(distance: Float) etwittertends AnyVal with Distance[CosineDistance] {
   override def compare(that: CosineDistance): Int =
     Ordering.Float.compare(this.distance, that.distance)
 }
 
 case class InnerProductDistance(distance: Float)
-    extends AnyVal
+    etwittertends AnyVal
     with Distance[InnerProductDistance] {
   override def compare(that: InnerProductDistance): Int =
     Ordering.Float.compare(this.distance, that.distance)
 }
 
-case class EditDistance(distance: Float) extends AnyVal with Distance[EditDistance] {
+case class EditDistance(distance: Float) etwittertends AnyVal with Distance[EditDistance] {
   override def compare(that: EditDistance): Int =
     Ordering.Float.compare(this.distance, that.distance)
 }
@@ -68,7 +68,7 @@ object Metric {
       case "InnerProduct" => InnerProduct
       case "EditDistance" => Edit
       case _ =>
-        throw new IllegalArgumentException(s"No Metric with the name $metricName")
+        throw new IllegalArgumentEtwitterception(s"No Metric with the name $metricName")
     }
   }
 }
@@ -85,7 +85,7 @@ sealed trait Metric[D <: Distance[D]] {
   def fromAbsoluteDistance(distance: Float): D
 }
 
-case object L2 extends Metric[L2Distance] with Injection[L2Distance, ServiceDistance] {
+case object L2 etwittertends Metric[L2Distance] with Injection[L2Distance, ServiceDistance] {
   override def distance(
     embedding1: EmbeddingVector,
     embedding2: EmbeddingVector
@@ -111,12 +111,12 @@ case object L2 extends Metric[L2Distance] with Injection[L2Distance, ServiceDist
       case ServiceDistance.L2Distance(l2Distance) =>
         Success(L2Distance(l2Distance.distance.toFloat))
       case distance =>
-        Failure(new IllegalArgumentException(s"Expected an l2 distance but got $distance"))
+        Failure(new IllegalArgumentEtwitterception(s"Etwitterpected an l2 distance but got $distance"))
     }
   }
 }
 
-case object Cosine extends Metric[CosineDistance] with Injection[CosineDistance, ServiceDistance] {
+case object Cosine etwittertends Metric[CosineDistance] with Injection[CosineDistance, ServiceDistance] {
   override def distance(
     embedding1: EmbeddingVector,
     embedding2: EmbeddingVector
@@ -142,13 +142,13 @@ case object Cosine extends Metric[CosineDistance] with Injection[CosineDistance,
       case ServiceDistance.CosineDistance(cosineDistance) =>
         Success(CosineDistance(cosineDistance.distance.toFloat))
       case distance =>
-        Failure(new IllegalArgumentException(s"Expected a cosine distance but got $distance"))
+        Failure(new IllegalArgumentEtwitterception(s"Etwitterpected a cosine distance but got $distance"))
     }
   }
 }
 
 case object InnerProduct
-    extends Metric[InnerProductDistance]
+    etwittertends Metric[InnerProductDistance]
     with Injection[InnerProductDistance, ServiceDistance] {
   override def distance(
     embedding1: EmbeddingVector,
@@ -178,13 +178,13 @@ case object InnerProduct
         Success(InnerProductDistance(cosineDistance.distance.toFloat))
       case distance =>
         Failure(
-          new IllegalArgumentException(s"Expected a inner product distance but got $distance")
+          new IllegalArgumentEtwitterception(s"Etwitterpected a inner product distance but got $distance")
         )
     }
   }
 }
 
-case object Edit extends Metric[EditDistance] with Injection[EditDistance, ServiceDistance] {
+case object Edit etwittertends Metric[EditDistance] with Injection[EditDistance, ServiceDistance] {
 
   private def intDistance(
     embedding1: EmbeddingVector,
@@ -198,7 +198,7 @@ case object Edit extends Metric[EditDistance] with Injection[EditDistance, Servi
     if (pos2 == 0) return pos1
 
     // To check if the recursive tree
-    // for given n & m has already been executed
+    // for given n & m has already been etwitterecuted
     precomputedDistances.getOrElse(
       (pos1, pos2), {
         // We might want to change this so that capitals are considered the same.
@@ -254,7 +254,7 @@ case object Edit extends Metric[EditDistance] with Injection[EditDistance, Servi
         Success(EditDistance(cosineDistance.distance.toFloat))
       case distance =>
         Failure(
-          new IllegalArgumentException(s"Expected a inner product distance but got $distance")
+          new IllegalArgumentEtwitterception(s"Etwitterpected a inner product distance but got $distance")
         )
     }
   }

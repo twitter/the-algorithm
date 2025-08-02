@@ -4,8 +4,8 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         ":candidate-algorithm-adapter",
-        ":client-context-adapter",
-        ":post-nux-algorithm-adapter",
+        ":client-contetwittert-adapter",
+        ":post-nutwitter-algorithm-adapter",
         ":pre-fetched-feature-adapter",
     ],
 )
@@ -43,9 +43,9 @@ scala_library(
 )
 
 scala_library(
-    name = "client-context-adapter",
+    name = "client-contetwittert-adapter",
     sources = [
-        "ClientContextAdapter.scala",
+        "ClientContetwittertAdapter.scala",
     ],
     compiler_option_sets = ["fatal_warnings"],
     platform = "java8",
@@ -57,15 +57,15 @@ scala_library(
 )
 
 scala_library(
-    name = "post-nux-algorithm-adapter",
+    name = "post-nutwitter-algorithm-adapter",
     sources = [
-        "PostNuxAlgorithmAdapter.scala",
+        "PostNutwitterAlgorithmAdapter.scala",
     ],
     platform = "java8",
     tags = ["bazel-compatible"],
     dependencies = [
         ":common",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/customer_journey:post-nux-algorithm-aggregate",
+        "src/scala/com/twitter/ml/featurestore/catalog/features/customer_journey:post-nutwitter-algorithm-aggregate",
     ],
 )
 

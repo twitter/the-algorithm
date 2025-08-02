@@ -22,7 +22,7 @@ class SubscribedSearchTweetPushCandidate(
 )(
   implicit stats: StatsReceiver,
   pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
+    etwittertends PushCandidate
     with SubscribedSearchTweetCandidate
     with TweetAuthorDetails
     with SubscribedSearchTweetIbis2Hydrator
@@ -51,6 +51,6 @@ class SubscribedSearchTweetPushCandidate(
 }
 
 case class SubscribedSearchTweetCandidatePredicates(override val config: Config)
-    extends BasicTweetPredicatesForRFPH[SubscribedSearchTweetPushCandidate] {
+    etwittertends BasicTweetPredicatesForRFPH[SubscribedSearchTweetPushCandidate] {
   implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
 }

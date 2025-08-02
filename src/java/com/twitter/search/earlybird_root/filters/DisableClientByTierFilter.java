@@ -2,7 +2,7 @@ package com.twitter.search.earlybird_root.filters;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
+import javatwitter.inject.Inject;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -20,7 +20,7 @@ import com.twitter.search.earlybird_root.quota.ClientIdQuotaManager;
 import com.twitter.search.earlybird_root.quota.QuotaInfo;
 import com.twitter.util.Future;
 
-public class DisableClientByTierFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+public class DisableClientByTierFilter etwittertends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
   private static final String CLIENT_BLOCKED_RESPONSE_PATTERN =
       "Requests of client %s are blocked due to %s disable";
 
@@ -42,7 +42,7 @@ public class DisableClientByTierFilter extends SimpleFilter<EarlybirdRequest, Ea
     String clientId = ClientIdUtil.getClientIdFromRequest(request);
     Optional<QuotaInfo> quotaInfoOptional = quotaManager.getQuotaForClient(clientId);
     QuotaInfo quotaInfo = quotaInfoOptional.orElseGet(quotaManager::getCommonPoolQuota);
-    // Tier value should exist: if client's tier value not in config file, it will be
+    // Tier value should etwitterist: if client's tier value not in config file, it will be
     // set to "no_tier" by default in ConfigBasedQuotaConfig
     String tier = quotaInfo.getClientTier();
 

@@ -12,7 +12,7 @@ REGISTER_OP("DataRecordTensorWriter")
 .Input("keys: int64")
 .Input("values: T")
 .Output("result: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
   return Status::OK();
   }).Doc(R"doc(
 
@@ -27,11 +27,11 @@ Outputs
 
 class DataRecordTensorWriter : public OpKernel {
  public:
-  explicit DataRecordTensorWriter(OpKernelConstruction* context)
-  : OpKernel(context) {}
+  etwitterplicit DataRecordTensorWriter(OpKernelConstruction* contetwittert)
+  : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
-    const Tensor& keys = context->input(0);
+  void Compute(OpKernelContetwittert* contetwittert) override {
+    const Tensor& keys = contetwittert->input(0);
 
     try {
       // set keys as twml::Tensor
@@ -39,17 +39,17 @@ class DataRecordTensorWriter : public OpKernel {
 
       // check sizes
       uint64_t num_keys = in_keys_.getNumElements();
-      uint64_t num_values = context->num_inputs() - 1;
+      uint64_t num_values = contetwittert->num_inputs() - 1;
 
-      OP_REQUIRES(context, num_keys == num_values,
+      OP_REQUIRES(contetwittert, num_keys == num_values,
         errors::InvalidArgument("Number of dense keys and dense tensors do not match"));
 
       // populate DataRecord object
       const int64_t *keys = in_keys_.getData<int64_t>();
       twml::DataRecord record = twml::DataRecord();
 
-      for (int i = 1; i < context->num_inputs(); i++) {
-        const twml::RawTensor& value = TFTensor_to_twml_raw_tensor(context->input(i));
+      for (int i = 1; i < contetwittert->num_inputs(); i++) {
+        const twml::RawTensor& value = TFTensor_to_twml_raw_tensor(contetwittert->input(i));
         record.addRawTensor(keys[i-1], value);
       }
 
@@ -62,7 +62,7 @@ class DataRecordTensorWriter : public OpKernel {
 
       // allocate output tensor
       Tensor* result = NULL;
-      OP_REQUIRES_OK(context, context->allocate_output(0, result_shape, &result));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, result_shape, &result));
       twml::Tensor out_result = TFTensor_to_twml_tensor(*result);
 
       // write to output tensor
@@ -70,8 +70,8 @@ class DataRecordTensorWriter : public OpKernel {
       twml::ThriftWriter thrift_writer = twml::ThriftWriter(buffer, len, false);
       twml::DataRecordWriter record_writer = twml::DataRecordWriter(thrift_writer);
       record_writer.write(record);
-    } catch(const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch(const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };

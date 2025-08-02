@@ -3,7 +3,7 @@ package com.twitter.search.earlybird.search.relevance.scoring;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-// Ideally, this part should live somewhere in the Cortex common
+// Ideally, this part should live somewhere in the Cortetwitter common
 // code. Today, it is not possible to create
 // a `SparseTensor` that relies only on ByteBuffer.
 public class SparseTensor {

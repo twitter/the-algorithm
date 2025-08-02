@@ -3,11 +3,11 @@ scala_library(
     platform = "java8",
     tags = ["bazel-compatible"],
     dependencies = [
-        "3rdparty/jvm/com/fasterxml/jackson:jackson-module-scala",
-        "3rdparty/jvm/com/fasterxml/jackson/core:jackson-core",
-        "3rdparty/jvm/com/fasterxml/jackson/core:jackson-databind",
-        "3rdparty/jvm/com/fasterxml/jackson/module:jackson-module-scala",
-        "3rdparty/jvm/com/googlecode/matrix-toolkits-java",
+        "3rdparty/jvm/com/fastertwitterml/jackson:jackson-module-scala",
+        "3rdparty/jvm/com/fastertwitterml/jackson/core:jackson-core",
+        "3rdparty/jvm/com/fastertwitterml/jackson/core:jackson-databind",
+        "3rdparty/jvm/com/fastertwitterml/jackson/module:jackson-module-scala",
+        "3rdparty/jvm/com/googlecode/matritwitter-toolkits-java",
         "3rdparty/jvm/com/twitter/storehaus:algebra",
         "3rdparty/jvm/com/twitter/storehaus:core",
         "escherbird/src/scala/com/twitter/escherbird/scalding/source",
@@ -498,7 +498,7 @@ hadoop_binary(
 scalding_job(
     name = "interested_in_for_20M_145k_2020",
     main = "com.twitter.simclusters_v2.scalding.InterestedInFromKnownFor20M145K2020",
-    args = ["--socialProofThreshold 2 --maxClustersPerUser 50"],
+    args = ["--socialProofThreshold 2 --matwitterClustersPerUser 50"],
     config = [
         ("hadoop.combine-input", "true"),
         ("hadoop.map.jvm.total-memory", "3072m"),

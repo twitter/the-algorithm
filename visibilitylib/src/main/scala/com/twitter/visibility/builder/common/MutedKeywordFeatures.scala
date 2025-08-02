@@ -31,8 +31,8 @@ class MutedKeywordFeatures(
     scopedStatsReceiver.scope(ViewerMutesKeywordInTweetForTweetReplies.name).counter("requests")
   private[this] val viewerMutesKeywordInTweetForNotifications =
     scopedStatsReceiver.scope(ViewerMutesKeywordInTweetForNotifications.name).counter("requests")
-  private[this] val excludeFollowingForMutedKeywordsRequests =
-    scopedStatsReceiver.scope("exclude_following").counter("requests")
+  private[this] val etwittercludeFollowingForMutedKeywordsRequests =
+    scopedStatsReceiver.scope("etwitterclude_following").counter("requests")
   private[this] val viewerMutesKeywordInTweetForAllSurfaces =
     scopedStatsReceiver.scope(ViewerMutesKeywordInTweetForAllSurfaces.name).counter("requests")
 
@@ -102,7 +102,7 @@ class MutedKeywordFeatures(
       .map { id => userSource.getAllMutedKeywordsWithoutDefinedSurface(id) }.getOrElse(
         Stitch.value(Seq.empty))
 
-  private def mutingKeywordsText(
+  private def mutingKeywordsTetwittert(
     mutedKeywords: Seq[GdMutedKeyword],
     muteSurface: MuteSurface,
     viewerIdOpt: Option[Long],
@@ -112,17 +112,17 @@ class MutedKeywordFeatures(
       Stitch.value(Some(mutedKeywords.map(_.keyword).mkString(",")))
     } else {
       mutedKeywords.partition(kw =>
-        kw.muteOptions.contains(MuteOption.ExcludeFollowingAccounts)) match {
+        kw.muteOptions.contains(MuteOption.EtwittercludeFollowingAccounts)) match {
         case (_, mutedKeywordsFromAnyone) if mutedKeywordsFromAnyone.nonEmpty =>
           Stitch.value(Some(mutedKeywordsFromAnyone.map(_.keyword).mkString(",")))
-        case (mutedKeywordsExcludeFollowing, _)
-            if mutedKeywordsExcludeFollowing.nonEmpty && enableFollowCheckInMutedKeyword() =>
-          excludeFollowingForMutedKeywordsRequests.incr()
+        case (mutedKeywordsEtwittercludeFollowing, _)
+            if mutedKeywordsEtwittercludeFollowing.nonEmpty && enableFollowCheckInMutedKeyword() =>
+          etwittercludeFollowingForMutedKeywordsRequests.incr()
           viewerIdOpt match {
             case Some(viewerId) =>
               userRelationshipSource.follows(viewerId, authorId).map {
                 case true =>
-                case false => Some(mutedKeywordsExcludeFollowing.map(_.keyword).mkString(","))
+                case false => Some(mutedKeywordsEtwittercludeFollowing.map(_.keyword).mkString(","))
               }
             case _ => Stitch.None
           }
@@ -131,23 +131,23 @@ class MutedKeywordFeatures(
     }
   }
 
-  private def mutingKeywordsTextWithoutDefinedSurface(
+  private def mutingKeywordsTetwittertWithoutDefinedSurface(
     mutedKeywords: Seq[GdMutedKeyword],
     viewerIdOpt: Option[Long],
     authorId: Long
   ): Stitch[Option[String]] = {
     mutedKeywords.partition(kw =>
-      kw.muteOptions.contains(MuteOption.ExcludeFollowingAccounts)) match {
+      kw.muteOptions.contains(MuteOption.EtwittercludeFollowingAccounts)) match {
       case (_, mutedKeywordsFromAnyone) if mutedKeywordsFromAnyone.nonEmpty =>
         Stitch.value(Some(mutedKeywordsFromAnyone.map(_.keyword).mkString(",")))
-      case (mutedKeywordsExcludeFollowing, _)
-          if mutedKeywordsExcludeFollowing.nonEmpty && enableFollowCheckInMutedKeyword() =>
-        excludeFollowingForMutedKeywordsRequests.incr()
+      case (mutedKeywordsEtwittercludeFollowing, _)
+          if mutedKeywordsEtwittercludeFollowing.nonEmpty && enableFollowCheckInMutedKeyword() =>
+        etwittercludeFollowingForMutedKeywordsRequests.incr()
         viewerIdOpt match {
           case Some(viewerId) =>
             userRelationshipSource.follows(viewerId, authorId).map {
               case true =>
-              case false => Some(mutedKeywordsExcludeFollowing.map(_.keyword).mkString(","))
+              case false => Some(mutedKeywordsEtwittercludeFollowing.map(_.keyword).mkString(","))
             }
           case _ => Stitch.None
         }
@@ -169,10 +169,10 @@ class MutedKeywordFeatures(
         val mutedKeywords = keywordMap.getOrElse(muteSurface, Nil)
         val matchTweetFn: KeywordMatcher.MatchTweet = keywordMatcher(mutedKeywords)
         val locale = tweet.language.map(l => Locale.forLanguageTag(l.language))
-        val text = tweet.coreData.get.text
+        val tetwittert = tweet.coreData.get.tetwittert
 
-        matchTweetFn(locale, text).flatMap { results =>
-          mutingKeywordsText(results, muteSurface, viewerIdOpt, authorId).map(VfMutedKeyword)
+        matchTweetFn(locale, tetwittert).flatMap { results =>
+          mutingKeywordsTetwittert(results, muteSurface, viewerIdOpt, authorId).map(VfMutedKeyword)
         }
       }
     }
@@ -190,10 +190,10 @@ class MutedKeywordFeatures(
       } else {
         val matchTweetFn: KeywordMatcher.MatchTweet = keywordMatcher(mutedKeyword)
         val locale = tweet.language.map(l => Locale.forLanguageTag(l.language))
-        val text = tweet.coreData.get.text
+        val tetwittert = tweet.coreData.get.tetwittert
 
-        matchTweetFn(locale, text).flatMap { results =>
-          mutingKeywordsTextWithoutDefinedSurface(results, viewerIdOpt, authorId).map(
+        matchTweetFn(locale, tetwittert).flatMap { results =>
+          mutingKeywordsTetwittertWithoutDefinedSurface(results, viewerIdOpt, authorId).map(
             VfMutedKeyword
           )
         }

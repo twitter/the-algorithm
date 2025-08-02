@@ -6,7 +6,7 @@ create_thrift_libraries(
     dependency_roots = [
         "finatra-internal/thrift/src/main/thrift",
         "follow-recommendations-service/thrift/src/main/thrift/logging:thrift",
-        "product-mixer/core/src/main/thrift/com/twitter/product_mixer/core:thrift",
+        "product-mitwitterer/core/src/main/thrift/com/twitter/product_mitwitterer/core:thrift",
         "src/thrift/com/twitter/ads/adserver:adserver_common",
         "src/thrift/com/twitter/ml/api:data",
         "src/thrift/com/twitter/suggests/controller_data",

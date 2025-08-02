@@ -19,8 +19,8 @@ namespace {
         return "using invalid method";
       case IOError::USING_RESERVED:
         return "using reserved flag";
-      case IOError::ERROR_HEADER_EXTRA_FIELD_CHECKSUM:
-        return "extra header field checksum doesn't match";
+      case IOError::ERROR_HEADER_EtwitterTRA_FIELD_CHECKSUM:
+        return "etwittertra header field checksum doesn't match";
       case IOError::CANT_FIT_OUTPUT:
         return "can't fit output in the given space";
       case IOError::SPLIT_FILE:

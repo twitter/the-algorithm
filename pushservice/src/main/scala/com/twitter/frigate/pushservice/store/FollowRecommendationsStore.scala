@@ -13,7 +13,7 @@ import com.twitter.util.Future
 case class FollowRecommendationsStore(
   frsClient: FollowRecommendationsThriftService.MethodPerEndpoint,
   statsReceiver: StatsReceiver)
-    extends ReadableStore[RecommendationRequest, RecommendationResponse]
+    etwittertends ReadableStore[RecommendationRequest, RecommendationResponse]
     with Logging {
 
   private val scopedStats = statsReceiver.scope(getClass.getSimpleName)

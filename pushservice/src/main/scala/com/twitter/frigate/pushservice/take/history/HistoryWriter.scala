@@ -1,7 +1,7 @@
 package com.twitter.frigate.pushservice.take.history
 
 import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.history.HistoryStoreKeyContext
+import com.twitter.frigate.common.history.HistoryStoreKeyContetwittert
 import com.twitter.frigate.common.history.PushServiceHistoryStore
 import com.twitter.frigate.common.rec_types.RecTypes
 import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
@@ -29,9 +29,9 @@ class HistoryWriter(historyStore: PushServiceHistoryStore, stats: StatsReceiver)
     candidate: PushCandidate,
     frigateNotificationForPersistence: FrigateNotification
   ): Future[Unit] = {
-    val historyStoreKeyContext = HistoryStoreKeyContext(
+    val historyStoreKeyContetwittert = HistoryStoreKeyContetwittert(
       candidate.target.targetId,
-      candidate.target.pushContext.flatMap(_.useMemcacheForHistory).getOrElse(false)
+      candidate.target.pushContetwittert.flatMap(_.useMemcacheForHistory).getOrElse(false)
     )
     if (candidate.target.isLoggedOutUser) {
       loggedOutHistoryWriteCounter.incr()
@@ -40,7 +40,7 @@ class HistoryWriter(historyStore: PushServiceHistoryStore, stats: StatsReceiver)
     }
     historyStore
       .put(
-        historyStoreKeyContext,
+        historyStoreKeyContetwittert,
         candidate.createdAt,
         frigateNotificationForPersistence,
         Some(writeTtlForHistory(candidate))

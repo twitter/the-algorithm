@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 option cc_enable_arenas = true;
 
@@ -17,12 +17,12 @@ message Class {
   float score = 2;
 }
 
-// List of classes for a single item (tensorflow.Example).
+// List of classes for a single item (tensorflow.Etwitterample).
 message Classifications {
   repeated Class classes = 1;
 }
 
-// Contains one result per input example, in the same order as the input in
+// Contains one result per input etwitterample, in the same order as the input in
 // ClassificationRequest.
 message ClassificationResult {
   repeated Classifications classifications = 1;

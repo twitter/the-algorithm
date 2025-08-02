@@ -10,7 +10,7 @@ import com.twitter.unified_user_actions.adapter.AbstractAdapter
 import com.twitter.unified_user_actions.adapter.social_graph_event.SocialGraphEngagement._
 import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
 
-class SocialGraphAdapter extends AbstractAdapter[WriteEvent, UnKeyed, UnifiedUserAction] {
+class SocialGraphAdapter etwittertends AbstractAdapter[WriteEvent, UnKeyed, UnifiedUserAction] {
 
   import SocialGraphAdapter._
 

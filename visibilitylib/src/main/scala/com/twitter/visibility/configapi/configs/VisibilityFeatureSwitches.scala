@@ -11,7 +11,7 @@ private[visibility] object VisibilityFeatureSwitches {
 
   val booleanFsOverrides: Seq[OptionalOverride[Boolean]] =
     FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      AgeGatingAdultContentExperimentRuleEnabledParam,
+      AgeGatingAdultContentEtwitterperimentRuleEnabledParam,
       CommunityTweetCommunityUnavailableLimitedActionsRulesEnabledParam,
       CommunityTweetDropProtectedRuleEnabledParam,
       CommunityTweetDropRuleEnabledParam,
@@ -33,8 +33,8 @@ private[visibility] object VisibilityFeatureSwitches {
       HighSpammyTweetContentScoreTrendTopTweetLabelDropRuleThresholdParam,
       HighSpammyTweetContentScoreTrendLatestTweetLabelDropRuleThresholdParam,
       HighSpammyTweetContentScoreConvoDownrankAbusiveQualityThresholdParam,
-      HighToxicityModelScoreSpaceThresholdParam,
-      AdAvoidanceHighToxicityModelScoreThresholdParam,
+      HighTotwittericityModelScoreSpaceThresholdParam,
+      AdAvoidanceHighTotwittericityModelScoreThresholdParam,
       AdAvoidanceReportedTweetModelScoreThresholdParam,
     )
 
@@ -44,7 +44,7 @@ private[visibility] object VisibilityFeatureSwitches {
   val stringSeqFeatureSwitchOverrides: Seq[OptionalOverride[Seq[String]]] =
     FeatureSwitchOverrideUtil.getStringSeqFSOverrides(
       CountrySpecificNsfwContentGatingCountriesParam,
-      AgeGatingAdultContentExperimentCountriesParam,
+      AgeGatingAdultContentEtwitterperimentCountriesParam,
       CardUriRootDomainDenyListParam
     )
 

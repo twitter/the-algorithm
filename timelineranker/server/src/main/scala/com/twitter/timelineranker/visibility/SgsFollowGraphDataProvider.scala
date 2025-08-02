@@ -21,7 +21,7 @@ object SgsFollowGraphDataProvider {
     Future.value(EmptyVisibilityProfiles)
 }
 
-object SgsFollowGraphDataFields extends Enumeration {
+object SgsFollowGraphDataFields etwittertends Enumeration {
   val FollowedUserIds: Value = Value
   val MutuallyFollowingUserIds: Value = Value
   val MutedUserIds: Value = Value
@@ -31,7 +31,7 @@ object SgsFollowGraphDataFields extends Enumeration {
 
   def throwIfInvalid(fields: SgsFollowGraphDataFields.ValueSet): Unit = {
     if (fields.contains(MutuallyFollowingUserIds) && !fields.contains(FollowedUserIds)) {
-      throw new IllegalArgumentException(
+      throw new IllegalArgumentEtwitterception(
         "MutuallyFollowingUserIds field requires FollowedUserIds field to be defined."
       )
     }
@@ -47,7 +47,7 @@ class SgsFollowGraphDataProvider(
   fieldsToFetch: SgsFollowGraphDataFields.ValueSet,
   scope: RequestScope,
   statsReceiver: StatsReceiver)
-    extends FollowGraphDataProvider
+    etwittertends FollowGraphDataProvider
     with RequestStats {
 
   SgsFollowGraphDataFields.throwIfInvalid(fieldsToFetch)
@@ -85,29 +85,29 @@ class SgsFollowGraphDataProvider(
    * Gets follow graph data for the given user.
    *
    * @param userId user whose follow graph details are to be obtained.
-   * @param maxFollowingCount Maximum number of followed user IDs to fetch.
+   * @param matwitterFollowingCount Matwitterimum number of followed user IDs to fetch.
    *          If the given user follows more than these many users,
-   *          then the most recent maxFollowingCount users are returned.
+   *          then the most recent matwitterFollowingCount users are returned.
    */
   def get(
     userId: UserId,
-    maxFollowingCount: Int
+    matwitterFollowingCount: Int
   ): Future[FollowGraphData] = {
     getAsync(
       userId,
-      maxFollowingCount
+      matwitterFollowingCount
     ).get()
   }
 
   def getAsync(
     userId: UserId,
-    maxFollowingCount: Int
+    matwitterFollowingCount: Int
   ): FollowGraphDataFuture = {
 
     stats.statRequest()
     val followedUserIdsFuture =
       if (fieldsToFetch.contains(SgsFollowGraphDataFields.FollowedUserIds)) {
-        getFollowing(userId, maxFollowingCount)
+        getFollowing(userId, matwitterFollowingCount)
       } else {
         SgsFollowGraphDataProvider.EmptyUserIdsSeqFuture
       }
@@ -166,16 +166,16 @@ class SgsFollowGraphDataProvider(
     }
   }
 
-  def getFollowing(userId: UserId, maxFollowingCount: Int): Future[Seq[UserId]] = {
+  def getFollowing(userId: UserId, matwitterFollowingCount: Int): Future[Seq[UserId]] = {
     Stat.timeFuture(followingLatencyStat) {
       // We fetch 1 more than the limit so that we can decide if we ended up
       // truncating the followings.
-      val followingIdsFuture = socialGraphClient.getFollowing(userId, Some(maxFollowingCount + 1))
+      val followingIdsFuture = socialGraphClient.getFollowing(userId, Some(matwitterFollowingCount + 1))
       followingIdsFuture.map { followingIds =>
         followingSizeStat.add(followingIds.length)
-        if (followingIds.length > maxFollowingCount) {
+        if (followingIds.length > matwitterFollowingCount) {
           followingTruncatedCounter.incr()
-          followingIds.take(maxFollowingCount)
+          followingIds.take(matwitterFollowingCount)
         } else {
           followingIds
         }
@@ -252,7 +252,7 @@ class ScopedSgsFollowGraphDataProviderFactory(
   visibilityProfileHydratorFactory: VisibilityProfileHydratorFactory,
   fieldsToFetch: SgsFollowGraphDataFields.ValueSet,
   statsReceiver: StatsReceiver)
-    extends ScopedFactory[SgsFollowGraphDataProvider] {
+    etwittertends ScopedFactory[SgsFollowGraphDataProvider] {
 
   override def scope(scope: RequestScope): SgsFollowGraphDataProvider = {
     new SgsFollowGraphDataProvider(

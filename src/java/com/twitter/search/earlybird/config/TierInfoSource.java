@@ -4,31 +4,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
+import javatwitter.inject.Inject;
 
-import com.twitter.search.common.util.zookeeper.ZooKeeperProxy;
+import com.twitter.search.common.util.zookeeper.ZooKeeperProtwittery;
 
 public class TierInfoSource {
-  private final ZooKeeperProxy zkClient;
+  private final ZooKeeperProtwittery zkClient;
 
   @Inject
-  public TierInfoSource(ZooKeeperProxy sZooKeeperClient) {
+  public TierInfoSource(ZooKeeperProtwittery sZooKeeperClient) {
     this.zkClient = sZooKeeperClient;
   }
 
   public List<TierInfo> getTierInformation() {
-    return getTierInfoWithPrefix("tier");
+    return getTierInfoWithPrefitwitter("tier");
   }
 
   public String getConfigFileType() {
     return TierConfig.getConfigFileName();
   }
 
-  private List<TierInfo> getTierInfoWithPrefix(String tierPrefix) {
+  private List<TierInfo> getTierInfoWithPrefitwitter(String tierPrefitwitter) {
     Set<String> tierNames = TierConfig.getTierNames();
     List<TierInfo> tierInfos = new ArrayList<>();
     for (String name : tierNames) {
-      if (name.startsWith(tierPrefix)) {
+      if (name.startsWith(tierPrefitwitter)) {
         TierInfo tierInfo = TierConfig.getTierInfo(name);
         tierInfos.add(tierInfo);
       }

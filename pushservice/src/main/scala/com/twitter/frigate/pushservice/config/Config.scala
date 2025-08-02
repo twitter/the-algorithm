@@ -20,7 +20,7 @@ import com.twitter.frigate.common.ml.base._
 import com.twitter.frigate.common.ml.feature._
 import com.twitter.frigate.common.store._
 import com.twitter.frigate.common.store.deviceinfo.DeviceInfo
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
+import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContetwittert
 import com.twitter.frigate.common.store.interests.UserId
 import com.twitter.frigate.common.util._
 import com.twitter.frigate.data_pipeline.features_common._
@@ -77,7 +77,7 @@ import com.twitter.recos.user_tweet_entity_graph.thriftscala.RecommendTweetEntit
 import com.twitter.recos.user_tweet_entity_graph.thriftscala.RecommendTweetEntityResponse
 import com.twitter.recos.user_user_graph.thriftscala.RecommendUserRequest
 import com.twitter.recos.user_user_graph.thriftscala.RecommendUserResponse
-import com.twitter.rux.common.strato.thriftscala.UserTargetingProperty
+import com.twitter.rutwitter.common.strato.thriftscala.UserTargetingProperty
 import com.twitter.scio.nsfw_user_segmentation.thriftscala.NSFWProducer
 import com.twitter.scio.nsfw_user_segmentation.thriftscala.NSFWUserSegmentation
 import com.twitter.search.common.features.thriftscala.ThriftSearchResultFeatures
@@ -289,13 +289,13 @@ trait Config {
 
   def tweetAuthorLocationFeatureBuilderById: FeatureBuilder[Long]
 
-  def socialContextActionsFeatureBuilder: FeatureBuilder[SocialContextActions]
+  def socialContetwittertActionsFeatureBuilder: FeatureBuilder[SocialContetwittertActions]
 
   def tweetContentFeatureBuilder: FeatureBuilder[Long]
 
   def tweetAuthorRecentRealGraphFeatureBuilder: FeatureBuilder[RealGraphEdge]
 
-  def socialContextRecentRealGraphFeatureBuilder: FeatureBuilder[Set[RealGraphEdge]]
+  def socialContetwittertRecentRealGraphFeatureBuilder: FeatureBuilder[Set[RealGraphEdge]]
 
   def tweetSocialProofFeatureBuilder: FeatureBuilder[TweetSocialProofKey]
 
@@ -315,9 +315,9 @@ trait Config {
 
   def targetUserMediaRepresentationFeatureBuilder: FeatureBuilder[Long]
 
-  def targetLevelFeatureBuilder: FeatureBuilder[MrRequestContextForFeatureStore]
+  def targetLevelFeatureBuilder: FeatureBuilder[MrRequestContetwittertForFeatureStore]
 
-  def candidateLevelFeatureBuilder: FeatureBuilder[EntityRequestContextForFeatureStore]
+  def candidateLevelFeatureBuilder: FeatureBuilder[EntityRequestContetwittertForFeatureStore]
 
   def targetFeatureHydrator: RelevanceTargetFeatureHydrator
 
@@ -327,7 +327,7 @@ trait Config {
   def verifyHydratedLabeledSendsForFeaturesDeciderKey: String =
     DeciderKey.verifyHydratedLabeledSendsForFeaturesDeciderKey.toString
 
-  def lexServiceStore: ReadableStore[EventRequest, LiveEvent]
+  def letwitterServiceStore: ReadableStore[EventRequest, LiveEvent]
 
   def userMediaRepresentationStore: ReadableStore[Long, UserMediaRepresentation]
 
@@ -352,12 +352,12 @@ trait Config {
   /**
    * PostRanking Feature Store Client
    */
-  def postRankingFeatureStoreClient: DynamicFeatureStoreClient[MrRequestContextForFeatureStore]
+  def postRankingFeatureStoreClient: DynamicFeatureStoreClient[MrRequestContetwittertForFeatureStore]
 
   /**
    * ReadableStore to fetch [[UserInterests]] from INTS service
    */
-  def interestsWithLookupContextStore: ReadableStore[InterestsLookupRequestWithContext, Interests]
+  def interestsWithLookupContetwittertStore: ReadableStore[InterestsLookupRequestWithContetwittert, Interests]
 
   /**
    *
@@ -378,10 +378,10 @@ trait Config {
       cachedTweetyPieStoreV2,
       tweetEntityGraphStore,
       PushParams.UTEGTweetCandidateSourceParam,
-      PushFeatureSwitchParams.NumberOfMaxUTEGCandidatesQueriedParam,
+      PushFeatureSwitchParams.NumberOfMatwitterUTEGCandidatesQueriedParam,
       PushParams.AllowOneSocialProofForTweetInUTEGParam,
       PushParams.OutNetworkTweetsOnlyForUTEGParam,
-      PushFeatureSwitchParams.MaxTweetAgeParam
+      PushFeatureSwitchParams.MatwitterTweetAgeParam
     )(statsReceiver)
 
   def pushSendEventBusPublisher: EventBusPublisher[NotificationScribe]

@@ -14,7 +14,7 @@ import com.twitter.util.Future
 class TrimToMatchSearchResultsTransform(
   hydrateReplyRootTweetProvider: DependencyProvider[Boolean],
   statsReceiver: StatsReceiver)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+    etwittertends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
 
   private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
 

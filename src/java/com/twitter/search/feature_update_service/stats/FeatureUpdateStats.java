@@ -8,10 +8,10 @@ import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateRespons
 
 /** Stat tracking for the feature update ingester service. */
 public class FeatureUpdateStats {
-  public static final String PREFIX = "feature_update_service_";
+  public static final String PREFItwitter = "feature_update_service_";
 
-  private final SearchRateCounter requestRate = SearchRateCounter.export(
-      PREFIX + "requests");
+  private final SearchRateCounter requestRate = SearchRateCounter.etwitterport(
+      PREFItwitter + "requests");
 
   private ConcurrentMap<String, SearchRateCounter> perClientRequestRate =
       new ConcurrentHashMap<>();
@@ -90,22 +90,22 @@ public class FeatureUpdateStats {
   }
 
   private static String clientRequestRateKey(String clientID) {
-    return String.format(PREFIX + "requests_for_client_id_%s", clientID);
+    return String.format(PREFItwitter + "requests_for_client_id_%s", clientID);
   }
 
   private static String responseCodeKey(String responseCode) {
-    return String.format(PREFIX + "response_code_%s", responseCode);
+    return String.format(PREFItwitter + "response_code_%s", responseCode);
   }
 
   private static String clientResponseCodeKey(String clientID, String responseCode) {
-    return String.format(PREFIX + "response_for_client_id_%s_code_%s", clientID, responseCode);
+    return String.format(PREFItwitter + "response_for_client_id_%s_code_%s", clientID, responseCode);
   }
 
   private void incrementPerClientCounter(
       ConcurrentMap<String, SearchRateCounter> rates,
       String key
   ) {
-    rates.putIfAbsent(key, SearchRateCounter.export(key));
+    rates.putIfAbsent(key, SearchRateCounter.etwitterport(key));
     rates.get(key).increment();
   }
 }

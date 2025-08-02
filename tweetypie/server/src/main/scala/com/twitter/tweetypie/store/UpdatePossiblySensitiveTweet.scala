@@ -3,7 +3,7 @@ package store
 
 import com.twitter.tweetypie.thriftscala._
 
-object UpdatePossiblySensitiveTweet extends TweetStore.SyncModule {
+object UpdatePossiblySensitiveTweet etwittertends TweetStore.SyncModule {
 
   case class Event(
     tweet: Tweet,
@@ -14,7 +14,7 @@ object UpdatePossiblySensitiveTweet extends TweetStore.SyncModule {
     nsfwUserChange: Option[Boolean],
     note: Option[String],
     host: Option[String])
-      extends SyncTweetStoreEvent("update_possibly_sensitive_tweet") {
+      etwittertends SyncTweetStoreEvent("update_possibly_sensitive_tweet") {
     def toAsyncRequest: AsyncUpdatePossiblySensitiveTweetRequest =
       AsyncUpdatePossiblySensitiveTweetRequest(
         tweet = tweet,
@@ -32,7 +32,7 @@ object UpdatePossiblySensitiveTweet extends TweetStore.SyncModule {
     val updatePossiblySensitiveTweet: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val updatePossiblySensitiveTweet: FutureEffect[Event] = wrap(
       underlying.updatePossiblySensitiveTweet
     )
@@ -57,7 +57,7 @@ object UpdatePossiblySensitiveTweet extends TweetStore.SyncModule {
   }
 }
 
-object AsyncUpdatePossiblySensitiveTweet extends TweetStore.AsyncModule {
+object AsyncUpdatePossiblySensitiveTweet etwittertends TweetStore.AsyncModule {
 
   object Event {
     def fromAsyncRequest(
@@ -90,7 +90,7 @@ object AsyncUpdatePossiblySensitiveTweet extends TweetStore.AsyncModule {
     nsfwUserChange: Option[Boolean],
     note: Option[String],
     host: Option[String])
-      extends AsyncTweetStoreEvent("async_update_possibly_sensitive_tweet")
+      etwittertends AsyncTweetStoreEvent("async_update_possibly_sensitive_tweet")
       with TweetStoreTweetEvent {
 
     def toAsyncRequest(
@@ -125,7 +125,7 @@ object AsyncUpdatePossiblySensitiveTweet extends TweetStore.AsyncModule {
   }
 
   case class RetryEvent(action: AsyncWriteAction, event: Event)
-      extends TweetStoreRetryEvent[Event] {
+      etwittertends TweetStoreRetryEvent[Event] {
 
     override val eventType: AsyncWriteEventType.UpdatePossiblySensitiveTweet.type =
       AsyncWriteEventType.UpdatePossiblySensitiveTweet
@@ -137,7 +137,7 @@ object AsyncUpdatePossiblySensitiveTweet extends TweetStore.AsyncModule {
     val retryAsyncUpdatePossiblySensitiveTweet: FutureEffect[TweetStoreRetryEvent[Event]]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val asyncUpdatePossiblySensitiveTweet: FutureEffect[Event] = wrap(
       underlying.asyncUpdatePossiblySensitiveTweet
     )
@@ -164,8 +164,8 @@ object AsyncUpdatePossiblySensitiveTweet extends TweetStore.AsyncModule {
           eventBusStore
         )
 
-      def build[E <: TweetStoreEvent](extract: Store => FutureEffect[E]): FutureEffect[E] =
-        FutureEffect.inParallel[E](stores.map(extract): _*)
+      def build[E <: TweetStoreEvent](etwittertract: Store => FutureEffect[E]): FutureEffect[E] =
+        FutureEffect.inParallel[E](stores.map(etwittertract): _*)
 
       new Store {
         override val asyncUpdatePossiblySensitiveTweet: FutureEffect[Event] = build(
@@ -180,16 +180,16 @@ object AsyncUpdatePossiblySensitiveTweet extends TweetStore.AsyncModule {
   }
 }
 
-object ReplicatedUpdatePossiblySensitiveTweet extends TweetStore.ReplicatedModule {
+object ReplicatedUpdatePossiblySensitiveTweet etwittertends TweetStore.ReplicatedModule {
 
   case class Event(tweet: Tweet)
-      extends ReplicatedTweetStoreEvent("replicated_update_possibly_sensitive_tweet")
+      etwittertends ReplicatedTweetStoreEvent("replicated_update_possibly_sensitive_tweet")
 
   trait Store {
     val replicatedUpdatePossiblySensitiveTweet: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val replicatedUpdatePossiblySensitiveTweet: FutureEffect[Event] = wrap(
       underlying.replicatedUpdatePossiblySensitiveTweet
     )

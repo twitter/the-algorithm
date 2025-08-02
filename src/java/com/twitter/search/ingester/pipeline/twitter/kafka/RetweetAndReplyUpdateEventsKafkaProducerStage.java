@@ -2,11 +2,11 @@ package com.twitter.search.ingester.pipeline.twitter.kafka;
 
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
 
 @ConsumedTypes(ThriftVersionedEvents.class)
-public class RetweetAndReplyUpdateEventsKafkaProducerStage extends KafkaProducerStage
+public class RetweetAndReplyUpdateEventsKafkaProducerStage etwittertends KafkaProducerStage
     <IngesterThriftVersionedEvents> {
   public RetweetAndReplyUpdateEventsKafkaProducerStage(String kafkaTopic, String clientId,
                                             String clusterPath) {

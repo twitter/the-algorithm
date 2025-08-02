@@ -4,7 +4,7 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.TimeoutException
+import com.twitter.finagle.TimeoutEtwitterception
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.follow_recommendations.common.feature_hydration.adapters.CandidateAlgorithmAdapter.remapCandidateSource
@@ -15,10 +15,10 @@ import com.twitter.follow_recommendations.common.feature_hydration.sources.Utils
 import com.twitter.follow_recommendations.common.feature_hydration.sources.Utils.randomizedTTL
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
+import com.twitter.follow_recommendations.common.models.HasSimilarToContetwittert
 import com.twitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
 import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
+import com.twitter.ml.api.FeatureContetwittert
 import com.twitter.ml.api.IRecordOneToOneAdapter
 import com.twitter.ml.featurestore.catalog.datasets.core.UsersourceEntityDataset
 import com.twitter.ml.featurestore.catalog.datasets.magicrecs.NotificationSummariesEntityDataset
@@ -51,7 +51,7 @@ import com.twitter.onboarding.relevance.adapters.features.featurestore.Candidate
 import com.twitter.onboarding.relevance.adapters.features.featurestore.CandidateTopicEngagementUserStateRealTimeAggregatesAdapter
 import com.twitter.onboarding.relevance.adapters.features.featurestore.CandidateTopicNegativeEngagementUserStateRealTimeAggregatesAdapter
 import com.twitter.onboarding.relevance.adapters.features.featurestore.FeatureStoreAdapter
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.timelines.configapi.HasParams
 
@@ -61,11 +61,11 @@ import java.util.concurrent.TimeUnit
 class FeatureStoreSource @Inject() (
   serviceIdentifier: ServiceIdentifier,
   stats: StatsReceiver)
-    extends FeatureSource {
+    etwittertends FeatureSource {
   import FeatureStoreSource._
 
   override val id: FeatureSourceId = FeatureSourceId.FeatureStoreSourceId
-  override val featureContext: FeatureContext = FeatureStoreSource.getFeatureContext
+  override val featureContetwittert: FeatureContetwittert = FeatureStoreSource.getFeatureContetwittert
   val hydrateFeaturesStats = stats.scope("hydrate_features")
   val adapterStats = stats.scope("adapters")
   val featureSet: BoundFeatureSet = BoundFeatureSet(FeatureStoreSource.allFeatures)
@@ -92,8 +92,8 @@ class FeatureStoreSource @Inject() (
     DatasetValuesCache(
       Caffeine
         .newBuilder()
-        .expireAfterWrite(randomizedTTL(12.hours.inSeconds), TimeUnit.SECONDS)
-        .maximumSize(DefaultCacheMaxKeys)
+        .etwitterpireAfterWrite(randomizedTTL(12.hours.inSeconds), TimeUnit.SECONDS)
+        .matwitterimumSize(DefaultCacheMatwitterKeys)
         .build[(_ <: EntityId, DatasetId), Stitch[HydrationResponse[_]]]
         .asMap,
       datasetsToCache,
@@ -113,10 +113,10 @@ class FeatureStoreSource @Inject() (
     )
 
   override def hydrateFeatures(
-    target: HasClientContext
+    target: HasClientContetwittert
       with HasPreFetchedFeature
       with HasParams
-      with HasSimilarToContext
+      with HasSimilarToContetwittert
       with HasDisplayLocation,
     candidates: Seq[CandidateUser]
   ): Stitch[Map[CandidateUser, DataRecord]] = {
@@ -171,7 +171,7 @@ class FeatureStoreSource @Inject() (
           .within(target.params(FeatureStoreSourceParams.GlobalFetchTimeout))(
             com.twitter.finagle.util.DefaultTimer)
           .rescue {
-            case _: TimeoutException =>
+            case _: TimeoutEtwitterception =>
               Stitch.value(Map.empty[CandidateUser, DataRecord])
           }
       }.getOrElse(Stitch.value(Map.empty[CandidateUser, DataRecord]))
@@ -182,7 +182,7 @@ class FeatureStoreSource @Inject() (
 object FeatureStoreSource {
 
   private val DatasetCacheScope = "feature_store_local_cache"
-  private val DefaultCacheMaxKeys = 70000
+  private val DefaultCacheMatwitterKeys = 70000
 
   import FeatureStoreFeatures._
 
@@ -354,15 +354,15 @@ object FeatureStoreSource {
     CandidateTopicEngagementUserStateRealTimeAggregatesAdapter,
     CandidateAuthorTopicAggregatesAdapter
   )
-  val additionalFeatureContext: FeatureContext = FeatureContext.merge(
+  val additionalFeatureContetwittert: FeatureContetwittert = FeatureContetwittert.merge(
     featureAdapters
-      .foldRight(new FeatureContext())((adapter, context) =>
-        context
-          .addFeatures(adapter.getFeatureContext))
+      .foldRight(new FeatureContetwittert())((adapter, contetwittert) =>
+        contetwittert
+          .addFeatures(adapter.getFeatureContetwittert))
   )
-  val getFeatureContext: FeatureContext =
-    BoundFeatureSet(allFeatures).toFeatureContext
-      .addFeatures(additionalFeatureContext)
+  val getFeatureContetwittert: FeatureContetwittert =
+    BoundFeatureSet(allFeatures).toFeatureContetwittert
+      .addFeatures(additionalFeatureContetwittert)
       // The below are aggregated features that are aggregated for a second time over multiple keys.
-      .addFeatures(maxSumAvgAggregatedFeatureContext)
+      .addFeatures(matwitterSumAvgAggregatedFeatureContetwittert)
 }

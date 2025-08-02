@@ -160,7 +160,7 @@ def prediction_std_dev(labels, predictions,
     else:
       weights = tf.cast(weights, tf.float64)
 
-    # State kept during streaming of examples
+    # State kept during streaming of etwitteramples
     total_weighted_preds = _metric_variable(
         name='total_weighted_preds', shape=[], dtype=tf.float64)
     total_weighted_preds_sq = _metric_variable(
@@ -233,7 +233,7 @@ def _get_arce_predictions(predictions, weights, label_weighted, labels,
         total_prediction, tf.reduce_sum(predictions_weighted), name="total_prediction_update")
 
       # this used to be tf.reduce_sum(label_weighted) / tf.reduce_sum(predictions_weighted)
-      # but it measure normalizer over batch was too flawed an approximation.
+      # but it measure normalizer over batch was too flawed an approtwitterimation.
       normalizer = update_total_positive / update_total_prediction
 
   pred_comp = tf.subtract(tf.ones(shape=tf.shape(labels), dtype=tf.float32), predictions)
@@ -343,7 +343,7 @@ def rce(labels, predictions,
           total_prediction, tf.reduce_sum(predictions_weighted), name="total_prediction_update")
 
         # this used to be tf.reduce_sum(label_weighted) / tf.reduce_sum(predictions_weighted)
-        # but it measure normalizer over batch was too flawed an approximation.
+        # but it measure normalizer over batch was too flawed an approtwitterimation.
         normalizer = update_total_positive / update_total_prediction
 
       # NRCE
@@ -492,7 +492,7 @@ def metric_std_err(labels, predictions,
     weights = tf.reshape(weights, [-1])
 
     # first apply the supplied transform function to the output, label, weight data
-    # returns an OrderedDict of 1xN tensors for N input samples
+    # returns an OrderedDict of 1twitterN tensors for N input samples
     # for each sample, compute f = transform(pred, l, w)
     transformed = transform(predictions, labels, weights)
 
@@ -509,13 +509,13 @@ def metric_std_err(labels, predictions,
     # compose the ordered dict into a single vector
     # so f can be treated as a single column vector rather than a collection of scalars
     N = len(transformed)
-    transformed_vec = tf.stack(list(transformed.values()), axis=1)
+    transformed_vec = tf.stack(list(transformed.values()), atwitteris=1)
 
     # compute and update transformed samples (1st order statistics)
     # i.e. accumulate f into F as F += sum(f)
     aggregates_1 = _metric_variable(
         name='aggregates_1', shape=[N], dtype=tf.float64)
-    update_aggregates_1 = tf.assign_add(aggregates_1, tf.reduce_sum(transformed_vec, axis=0))
+    update_aggregates_1 = tf.assign_add(aggregates_1, tf.reduce_sum(transformed_vec, atwitteris=0))
 
     # compute and update crossed transformed samples (2nd order statistics)
     # i.e. accumulate f*f^T into F2 as F2 += sum(f*transpose(f))
@@ -525,7 +525,7 @@ def metric_std_err(labels, predictions,
       tf.reshape(transformed_vec, shape=[-1, N, 1])
       * tf.reshape(transformed_vec, shape=[-1, 1, N])
     )
-    update_aggregates_2 = tf.assign_add(aggregates_2, tf.reduce_sum(moment_2_temp, axis=0))
+    update_aggregates_2 = tf.assign_add(aggregates_2, tf.reduce_sum(moment_2_temp, atwitteris=0))
 
     def compute_output(agg_1, agg_2, samp_cnt):
       # decompose the aggregates back into a dict to pass to the user-supplied metric fn
@@ -580,7 +580,7 @@ def lolly_nrce(labels, predictions,
   """
   Compute the Lolly NRCE.
 
-  Note: As this NRCE calculation uses Taylor expansion, it becomes inaccurate when the ctr is large,
+  Note: As this NRCE calculation uses Taylor etwitterpansion, it becomes inaccurate when the ctr is large,
   especially when the adjusted ctr goes above 1.0.
 
   Calculation:
@@ -591,8 +591,8 @@ def lolly_nrce(labels, predictions,
     BCE: baseline cross entropy
     NCE: normalized cross entropy
     CE: cross entropy
-    y_i: label of example i
-    p_i: prediction of example i
+    y_i: label of etwitterample i
+    p_i: prediction of etwitterample i
     y: ctr
     p: average prediction
     a: normalizer
@@ -611,8 +611,8 @@ def lolly_nrce(labels, predictions,
         ~= CE - sum_i(y_i) * log(a)
           + sum_i((1 - y_i) * (- sum_{j=1~5}(p_i^j / j)))
           - sum_i((1 - y_i) * (- sum_{j=1~5}(a^j * p_i^j / j)))
-          # Takes 5 items from the Taylor expansion, can be increased if needed
-          # Error for each example is O(p_i^6)
+          # Takes 5 items from the Taylor etwitterpansion, can be increased if needed
+          # Error for each etwitterample is O(p_i^6)
         = CE - sum_i(y_i) * log(a)
           - sum_{j=1~5}(sum_i((1 - y_i) * p_i^j) / j)
           + sum_{j=1~5}(sum_i((1 - y_i) * p_i^j) * a^j / j)
@@ -792,9 +792,9 @@ def lolly_nrce(labels, predictions,
     # normalizing ratio for nrce
     # calculated using total ctr and pctr so the last batch has the dataset ctr and pctr
     normalizer = tf.truediv(total_positive, total_prediction, name="normalizer")
-    # Taylor expansion to calculate nl = - sum(y * log(p * a) + (1 - y) * log (1 - p * a))
-    # log(1 - p * a) = -sum_{i=1~+inf}(a^i * x^i / i)
-    # log(1 - p) = -sum_{i=1~+inf}(a^i * x^i / i)
+    # Taylor etwitterpansion to calculate nl = - sum(y * log(p * a) + (1 - y) * log (1 - p * a))
+    # log(1 - p * a) = -sum_{i=1~+inf}(a^i * twitter^i / i)
+    # log(1 - p) = -sum_{i=1~+inf}(a^i * twitter^i / i)
     normalized_loss = (
       total_loss -
       total_positive * tf.log(normalizer) +
@@ -982,17 +982,17 @@ def get_binary_class_metric_fn(metrics=None):
       - nrce (normalized rce, do not use this one if you do not understand what it is)
       - `arce <http://go/arce>`_ (a more recent proposed improvment over NRCE)
       - arce_original
-      - lolly_nrce (NRCE as it is computed in Lolly, with Taylor expansion)
+      - lolly_nrce (NRCE as it is computed in Lolly, with Taylor etwitterpansion)
       - pr_auc
       - roc_auc
       - accuracy (percentage of predictions that are correct)
       - precision (true positives) / (true positives + false positives)
       - recall (true positives) / (true positives + false negatives)
       - pr_curve (precision-recall curve)
-      - deprecated_arce (ARCE as it was calculated before a stability fix)
-      - deprecated_nrce (NRCE as it was calculated before a stability fix)
+      - deprecated_arce (ARCE as it was calculated before a stability fitwitter)
+      - deprecated_nrce (NRCE as it was calculated before a stability fitwitter)
 
-      Example of metrics list with mixture of string and tuple:
+      Etwitterample of metrics list with mitwitterture of string and tuple:
       metrics = [
         'rce','nrce',
         'roc_auc',  # default roc_auc metric
@@ -1016,7 +1016,7 @@ def get_binary_class_metric_fn(metrics=None):
   """
   # pylint: disable=dict-keys-not-iterating
   if metrics is None:
-    # remove expensive metrics by default for faster eval
+    # remove etwitterpensive metrics by default for faster eval
     metrics = list(DEFAULT_BINARY_CLASS_METRICS)
 
   def get_eval_metric_ops(graph_output, labels, weights):
@@ -1086,12 +1086,12 @@ def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
 
   In multiple binary classification problems, the
   ``predictions`` (that is, ``graph_output['output']``)
-  are expected to have shape ``batch_size x n_classes``,
+  are etwitterpected to have shape ``batch_size twitter n_classes``,
   where ``n_classes`` is the number of binary classification.
-  Binary classification at output[i] is expected to discriminate between ``classes[i]`` (1)
+  Binary classification at output[i] is etwitterpected to discriminate between ``classes[i]`` (1)
   and NOT ``classes[i]`` (0). The labels should be of the same shape as ``graph_output``
   with binary values (0 or 1). The weights can be of size ``batch_size`` or
-  ``batch_size x n_classes``. The ``class_dim`` contain separate probabilities,
+  ``batch_size twitter n_classes``. The ``class_dim`` contain separate probabilities,
   and need to have separate metrics.
 
   The following graph_output keys are recognized:
@@ -1123,7 +1123,7 @@ def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
       - recall (true positives) / (true positives + false negatives)
       - pr_curve (precision-recall curve)
 
-      Example of metrics list with mixture of string and tuple:
+      Etwitterample of metrics list with mitwitterture of string and tuple:
       metrics = [
         'rce','nrce',
         'roc_auc',  # default roc_auc metric
@@ -1148,15 +1148,15 @@ def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
     classes (list of strings):
       In case of multiple binary class models, the names for each class or label.
       These are used to display metrics on tensorboard.
-      If these are not specified, the index in the class or label dimension is used, and you'll
+      If these are not specified, the indetwitter in the class or label dimension is used, and you'll
       get metrics on tensorboard named like: accuracy_0, accuracy_1, etc.
 
     class_dim (number):
-      Dimension of the classes in predictions. Defaults to 1, that is, batch_size x n_classes.
+      Dimension of the classes in predictions. Defaults to 1, that is, batch_size twitter n_classes.
   """
   # pylint: disable=invalid-name,dict-keys-not-iterating
   if metrics is None:
-    # remove expensive metrics by default for faster eval
+    # remove etwitterpensive metrics by default for faster eval
     metrics = list(DEFAULT_BINARY_CLASS_METRICS)
 
   def get_eval_metric_ops(graph_output, labels, weights):
@@ -1180,8 +1180,8 @@ def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
       hard_preds = tf.greater_equal(preds, threshold)
 
     shape = labels.get_shape()
-    # basic sanity check: multi_metric dimension must exist
-    assert len(shape) > class_dim, "Dimension specified by class_dim does not exist."
+    # basic sanity check: multi_metric dimension must etwitterist
+    assert len(shape) > class_dim, "Dimension specified by class_dim does not etwitterist."
 
     num_labels = shape[class_dim]
     # If we are doing multi-class / multi-label metric, the number of classes / labels must
@@ -1217,14 +1217,14 @@ def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
           # avoid adding duplicate metrics.
           continue
 
-        class_labels = tf.gather(labels, indices=[i], axis=class_dim)
-        class_preds = tf.gather(preds, indices=[i], axis=class_dim)
-        class_hard_preds = tf.gather(hard_preds, indices=[i], axis=class_dim)
+        class_labels = tf.gather(labels, indices=[i], atwitteris=class_dim)
+        class_preds = tf.gather(preds, indices=[i], atwitteris=class_dim)
+        class_hard_preds = tf.gather(hard_preds, indices=[i], atwitteris=class_dim)
 
         if num_weights is None:
           class_weights = None
         elif num_weights == num_labels:
-          class_weights = tf.gather(weights, indices=[i], axis=class_dim)
+          class_weights = tf.gather(weights, indices=[i], atwitteris=class_dim)
         elif num_weights == 1:
           class_weights = weights
         else:
@@ -1287,7 +1287,7 @@ def _get_uncalibrated_metric_fn(calibrated_metric_fn, keep_weight=True):
     """
     with tf.variable_scope(metric_scope):
       if 'uncalibrated_output' not in graph_output:
-        raise Exception("Missing uncalibrated_output in graph_output!")
+        raise Etwitterception("Missing uncalibrated_output in graph_output!")
       un_calibrated_weights = weights if keep_weight else tf.ones_like(weights)
       uncalibrated_output = {
         'output': graph_output['uncalibrated_output'],
@@ -1345,11 +1345,11 @@ def get_multi_binary_class_uncalibrated_metric_fn(
     classes (list of strings):
       In case of multiple binary class models, the names for each class or label.
       These are used to display metrics on tensorboard.
-      If these are not specified, the index in the class or label dimension is used, and you'll
+      If these are not specified, the indetwitter in the class or label dimension is used, and you'll
       get metrics on tensorboard named like: accuracy_0, accuracy_1, etc.
 
     class_dim (number):
-      Dimension of the classes in predictions. Defaults to 1, that is, batch_size x n_classes.
+      Dimension of the classes in predictions. Defaults to 1, that is, batch_size twitter n_classes.
 
     keep_weight (bool):
       Whether to keep weights for the metric.
@@ -1363,7 +1363,7 @@ def get_multi_binary_class_uncalibrated_metric_fn(
 def combine_metric_fns(*fn_list):
   """
   Combine multiple metric functions.
-  For example, we can combine metrics function generated by
+  For etwitterample, we can combine metrics function generated by
   get_multi_binary_class_metric_fn and get_multi_binary_class_uncalibrated_metric_fn.
 
   Args:

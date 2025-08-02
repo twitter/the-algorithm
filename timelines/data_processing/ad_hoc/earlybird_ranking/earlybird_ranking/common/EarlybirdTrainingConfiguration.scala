@@ -2,17 +2,17 @@ package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common
 
 import com.twitter.ml.api.DataRecord
 import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
+import com.twitter.ml.api.FeatureContetwittert
 import com.twitter.ml.api.ITransform
 import com.twitter.ml.api.transform.CascadeTransform
 import com.twitter.ml.api.transform.TransformFactory
 import com.twitter.ml.api.util.SRichDataRecord
 import com.twitter.ml.api.constant.SharedFeatures
 import com.twitter.search.common.features.SearchResultFeature
-import com.twitter.search.common.features.ExternalTweetFeature
+import com.twitter.search.common.features.EtwitterternalTweetFeature
 import com.twitter.search.common.features.TweetFeature
 import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import com.twitter.timelines.prediction.features.request_context.RequestContextFeatures
+import com.twitter.timelines.prediction.features.request_contetwittert.RequestContetwittertFeatures
 import com.twitter.timelines.prediction.features.time_features.TimeDataRecordFeatures
 import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
 import com.twitter.timelines.prediction.features.real_graph.RealGraphDataRecordFeatures
@@ -28,10 +28,10 @@ trait EarlybirdTrainingConfiguration {
   protected def labels: Map[String, Feature.Binary]
 
   protected def weights: Map[String, Double] = Map(
-    "detail_expanded" -> 0.3,
+    "detail_etwitterpanded" -> 0.3,
     "favorited" -> 1.0,
     "open_linked" -> 0.1,
-    "photo_expanded" -> 0.03,
+    "photo_etwitterpanded" -> 0.03,
     "profile_clicked" -> 1.0,
     "replied" -> 9.0,
     "retweeted" -> 1.0,
@@ -58,9 +58,9 @@ trait EarlybirdTrainingConfiguration {
 
   final lazy val NegativeInfo: LabelInfo = LabelInfo("negative", NegativeSamplingRate, 1.0)
 
-  // example of features available in schema based namespace:
+  // etwitterample of features available in schema based namespace:
   protected def featureToSearchResultFeatureMap: Map[Feature[_], SearchResultFeature] = Map(
-    RecapFeatures.TEXT_SCORE -> TweetFeature.TEXT_SCORE,
+    RecapFeatures.TEtwitterT_SCORE -> TweetFeature.TEtwitterT_SCORE,
     RecapFeatures.REPLY_COUNT -> TweetFeature.REPLY_COUNT,
     RecapFeatures.RETWEET_COUNT -> TweetFeature.RETWEET_COUNT,
     RecapFeatures.FAV_COUNT -> TweetFeature.FAVORITE_COUNT,
@@ -128,30 +128,30 @@ trait EarlybirdTrainingConfiguration {
   protected def derivedFeaturesAdder: ITransform =
     new ITransform {
       private val hasEnglishTweetDiffUiLangFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.HAS_ENGLISH_TWEET_DIFF_UI_LANG)
+        featureInstanceFromSearchResultFeature(EtwitterternalTweetFeature.HAS_ENGLISH_TWEET_DIFF_UI_LANG)
           .asInstanceOf[Feature.Binary]
       private val hasEnglishUiDiffTweetLangFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.HAS_ENGLISH_UI_DIFF_TWEET_LANG)
+        featureInstanceFromSearchResultFeature(EtwitterternalTweetFeature.HAS_ENGLISH_UI_DIFF_TWEET_LANG)
           .asInstanceOf[Feature.Binary]
       private val hasDiffLangFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.HAS_DIFF_LANG)
+        featureInstanceFromSearchResultFeature(EtwitterternalTweetFeature.HAS_DIFF_LANG)
           .asInstanceOf[Feature.Binary]
       private val isSelfTweetFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.IS_SELF_TWEET)
+        featureInstanceFromSearchResultFeature(EtwitterternalTweetFeature.IS_SELF_TWEET)
           .asInstanceOf[Feature.Binary]
       private val tweetAgeInSecsFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.TWEET_AGE_IN_SECS)
+        featureInstanceFromSearchResultFeature(EtwitterternalTweetFeature.TWEET_AGE_IN_SECS)
           .asInstanceOf[Feature.Continuous]
       private val authorSpecificScoreFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.AUTHOR_SPECIFIC_SCORE)
+        featureInstanceFromSearchResultFeature(EtwitterternalTweetFeature.AUTHOR_SPECIFIC_SCORE)
           .asInstanceOf[Feature.Continuous]
 
       // see comments above
       private val linkLanguageFeature = new Feature.Continuous(TweetFeature.LINK_LANGUAGE.getName)
       private val languageFeature = new Feature.Continuous(TweetFeature.LANGUAGE.getName)
 
-      override def transformContext(featureContext: FeatureContext): FeatureContext =
-        featureContext.addFeatures(
+      override def transformContetwittert(featureContetwittert: FeatureContetwittert): FeatureContetwittert =
+        featureContetwittert.addFeatures(
           authorSpecificScoreFeature,
           // used when training against the full scoreEarlybirdModelEvaluationJob.scala
           // TimelinesSharedFeatures.PREDICTED_SCORE_LOG,
@@ -178,10 +178,10 @@ trait EarlybirdTrainingConfiguration {
         //   }
         // }
 
-        if (srecord.hasFeature(RequestContextFeatures.LANGUAGE_CODE) && srecord.hasFeature(
+        if (srecord.hasFeature(RequestContetwittertFeatures.LANGUAGE_CODE) && srecord.hasFeature(
             RecapFeatures.LANGUAGE)) {
           val uilangIsEnglish = srecord
-            .getFeatureValue(RequestContextFeatures.LANGUAGE_CODE).toString == "en"
+            .getFeatureValue(RequestContetwittertFeatures.LANGUAGE_CODE).toString == "en"
           val tweetIsEnglish = srecord.getFeatureValue(RecapFeatures.LANGUAGE) == 5
           srecord.setFeatureValue(
             hasEnglishTweetDiffUiLangFeature,

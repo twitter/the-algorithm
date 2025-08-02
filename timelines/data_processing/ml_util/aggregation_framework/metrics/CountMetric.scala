@@ -6,7 +6,7 @@ import com.twitter.util.Time
 import java.lang.{Long => JLong}
 
 case class TypedCountMetric[T](
-) extends TypedSumLikeMetric[T] {
+) etwittertends TypedSumLikeMetric[T] {
   import AggregationMetricCommon._
   import ConversionUtils._
   override val operatorName = "count"
@@ -16,13 +16,13 @@ case class TypedCountMetric[T](
     feature: Option[Feature[T]],
     timestampFeature: Feature[JLong]
   ): TimedValue[Double] = {
-    val featureExists: Boolean = feature match {
+    val featureEtwitterists: Boolean = feature match {
       case Some(f) => SRichDataRecord(record).hasFeature(f)
       case None => true
     }
 
     TimedValue[Double](
-      value = booleanToDouble(featureExists),
+      value = booleanToDouble(featureEtwitterists),
       timestamp = Time.fromMilliseconds(getTimestamp(record, timestampFeature))
     )
   }
@@ -33,7 +33,7 @@ case class TypedCountMetric[T](
  * any feature type as opposed to being tied to a specific type.
  * See EasyMetric.scala for more details on why this is useful.
  */
-object CountMetric extends EasyMetric {
+object CountMetric etwittertends EasyMetric {
   override def forFeatureType[T](
     featureType: FeatureType,
   ): Option[AggregationMetric[T, _]] =

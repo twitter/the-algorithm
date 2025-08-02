@@ -7,7 +7,7 @@ class CachingCounterKeyValueRepository[K](
   underlying: CounterKeyValueRepository[K],
   cache: CounterCache[K],
   observer: CacheObserver = NullCacheObserver)
-    extends CounterKeyValueRepository[K] {
+    etwittertends CounterKeyValueRepository[K] {
 
   def apply(keys: Seq[K]): Future[KeyValueResult[K, Long]] = {
     val uniqueKeys = keys.distinct

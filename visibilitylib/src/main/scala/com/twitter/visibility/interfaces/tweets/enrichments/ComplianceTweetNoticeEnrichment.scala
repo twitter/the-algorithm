@@ -2,7 +2,7 @@ package com.twitter.visibility.interfaces.tweets.enrichments
 
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.results.richtext.PublicInterestReasonToPlainText
+import com.twitter.visibility.results.richtetwittert.PublicInterestReasonToPlainTetwittert
 import com.twitter.visibility.rules.Action
 import com.twitter.visibility.rules.ComplianceTweetNoticePreEnrichment
 import com.twitter.visibility.rules.PublicInterest
@@ -42,10 +42,10 @@ object ComplianceTweetNoticeEnrichment {
             preEnrichmentActionScope.counter("reason_specified").incr()
             val safetyResultReason = PublicInterest.ReasonToSafetyResultReason(reason)
             val (details, url) =
-              PublicInterestReasonToPlainText(safetyResultReason, englishLanguageTag)
+              PublicInterestReasonToPlainTetwittert(safetyResultReason, englishLanguageTag)
             complianceTweetNoticePreEnrichmentVerdict.copy(
               details = Some(details),
-              extendedDetailsUrl = Some(url))
+              etwittertendedDetailsUrl = Some(url))
         }
         verdictWithDetailsAndUrl.toComplianceTweetNotice()
 

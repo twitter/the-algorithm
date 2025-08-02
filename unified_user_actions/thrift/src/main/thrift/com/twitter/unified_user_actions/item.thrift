@@ -9,9 +9,9 @@ include "com/twitter/clientapp/gen/client_app.thrift"
  * Tweet item information. Some development notes:
  * 1. Please keep this top-level struct as minimal as possible to reduce overhead.
  * 2. We intentionally avoid nesting action tweet in a separate structure
- * to underscore its importance and faciliate extraction of most commonly
+ * to underscore its importance and faciliate etwittertraction of most commonly
  * needed fields such as actionTweetId. New fields related to the action tweet
- * should generally be prefixed with "actionTweet". 
+ * should generally be prefitwittered with "actionTweet". 
  * 3. For the related Tweets, e.g. retweetingTweetId, inReplyToTweetId, etc, we
  * mostly only keep their ids for consistency and simplicity.
  */
@@ -72,12 +72,12 @@ struct ProfileInfo {
   1: required i64 actionProfileId(personalDataType = 'UserId')
 
   // Fields 1-99 reserved for `actionFooBar` fields
-  /* the full name of the user. max length is 50. */
+  /* the full name of the user. matwitter length is 50. */
   2: optional string name(personalDataType = 'DisplayName')
   /* The handle/screenName of the user. This can't be changed.
    */
   3: optional string handle(personalDataType = 'UserName')
-  /* the "bio" of the user. max length is 160. May contain one or more t.co
+  /* the "bio" of the user. matwitter length is 160. May contain one or more t.co
    * links, which will be hydrated in the UrlEntities substruct if the
    * QueryFields.URL_ENTITIES is specified.
    */
@@ -116,7 +116,7 @@ struct NotificationInfo {
    * Additional information contained in a Notification. This is a `union` arm to differentiate
    * among different types of Notifications and store relevant metadata for each type.
    *
-   * For example, a Notification with a single Tweet will hold the Tweet id in `TweetNotification`.
+   * For etwitterample, a Notification with a single Tweet will hold the Tweet id in `TweetNotification`.
    * Similarly, `MultiTweetNotification` is defined for Notiifcations with multiple Tweet ids.
    *
    * Refer to the definition of `union NotificationContent` below for more details.
@@ -131,7 +131,7 @@ union NotificationContent {
   1: TweetNotification tweetNotification
   2: MultiTweetNotification multiTweetNotification
 
-  // 3 - 100 reserved for other specific Notification types (for example, profile, event, etc.).
+  // 3 - 100 reserved for other specific Notification types (for etwitterample, profile, event, etc.).
 
   /*
    * If a Notification cannot be categorized into any of the types at indices 1 - 100,
@@ -141,7 +141,7 @@ union NotificationContent {
 }(persisted='true', hasPersonalData='true')
 
 /*
- * Notification contains exactly one `tweetId`.
+ * Notification contains etwitteractly one `tweetId`.
  */
 struct TweetNotification {
   1: required i64 tweetId(personalDataType = 'TweetId')
@@ -149,7 +149,7 @@ struct TweetNotification {
 
 /*
  * Notification contains multiple `tweetIds`.
- * For example, user A receives a Notification when user B likes multiple Tweets authored by user A.
+ * For etwitterample, user A receives a Notification when user B likes multiple Tweets authored by user A.
  */
 struct MultiTweetNotification {
   1: required list<i64> tweetIds(personalDataType = 'TweetId')
@@ -204,7 +204,7 @@ struct TopicQueryResult {
 
 /*
  * Item that captures feedback related information submitted by the user across modules / item (Eg: Search Results / Tweets)
- * Design discussion doc: https://docs.google.com/document/d/1UHiCrGzfiXOSymRAUM565KchVLZBAByMwvP4ARxeixY/edit#
+ * Design discussion doc: https://docs.google.com/document/d/1UHiCrGzfitwitterOSymRAUM565KchVLZBAByMwvP4ARtwittereitwitterY/edit#
  */
 struct FeedbackPromptInfo {
   1: required FeedbackPromptActionInfo feedbackPromptActionInfo
@@ -258,7 +258,7 @@ struct CardInfo {
 }(persisted='true', hasPersonalData='false')
 
 /*
- * When the user exits the app, the time (in millis) spent by them on the platform is recorded as User Active Seconds (UAS). 
+ * When the user etwitterits the app, the time (in millis) spent by them on the platform is recorded as User Active Seconds (UAS). 
  */
 struct UASInfo {
   1: required i64 timeSpentMs
@@ -268,15 +268,15 @@ struct UASInfo {
  * Corresponding item for a user action.
  * An item should be treated independently if it has different affordances
  * (https://www.interaction-design.org/literature/topics/affordances) for the user.
- * For example, a Notification has different affordances than a Tweet in the Notification Tab;
+ * For etwitterample, a Notification has different affordances than a Tweet in the Notification Tab;
  * in the former, you can either "click" or "see less often" and in the latter,
  * you can perform inline engagements such as "like" or "reply".
- * Note that an item may be rendered differently in different contexts, but as long as the
+ * Note that an item may be rendered differently in different contetwitterts, but as long as the
  * affordances remain the same or nearly similar, it can be treated as the same item
  * (e.g. Tweets can be rendered in slightly different ways in embeds vs in the app).
  * Item types (e.g. Tweets, Notifications) and ActionTypes should be 1:1, and when an action can be
  * performed on multiple types of items, consider granular action types.
- * For example, a user can take the Click action on Tweets and Notifications, and we have
+ * For etwitterample, a user can take the Click action on Tweets and Notifications, and we have
  * separate ActionTypes for Tweet Click and Notification Click. This makes it easier to identify all the
  * actions associated with a particular item.
  */

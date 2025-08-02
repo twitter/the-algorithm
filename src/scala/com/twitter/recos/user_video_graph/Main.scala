@@ -4,13 +4,13 @@ import com.twitter.abdecider.ABDeciderFactory
 import com.twitter.abdecider.LoggingABDecider
 import com.twitter.app.Flag
 import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.http.HttpMuxer
+import com.twitter.finagle.ThriftMutwitter
+import com.twitter.finagle.http.HttpMutwitterer
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMuxClientSyntax
+import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMutwitterClientSyntatwitter
 import com.twitter.finagle.mtls.server.MtlsStackServer._
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.mux.transport.OpportunisticTls
+import com.twitter.finagle.mutwitter.ClientDiscardedRequestEtwitterception
+import com.twitter.finagle.mutwitter.transport.OpportunisticTls
 import com.twitter.finagle.service.ReqRep
 import com.twitter.finagle.service.ResponseClass
 import com.twitter.finagle.thrift.ClientId
@@ -36,7 +36,7 @@ import com.twitter.server.Deciderable
 import com.twitter.server.TwitterServer
 import com.twitter.server.logging.{Logging => JDK14Logging}
 import com.twitter.servo.request._
-import com.twitter.servo.util.ExceptionCounter
+import com.twitter.servo.util.EtwitterceptionCounter
 import com.twitter.simclusters_v2.common.UserId
 import com.twitter.socialgraph.thriftscala.SocialGraphService
 import com.twitter.storehaus.ReadableStore
@@ -54,7 +54,7 @@ import org.apache.kafka.common.security.auth.SecurityProtocol
 import org.apache.kafka.common.serialization.StringDeserializer
 import scala.reflect.ClassTag
 
-object Main extends TwitterServer with JDK14Logging with Deciderable {
+object Main etwittertends TwitterServer with JDK14Logging with Deciderable {
   profile =>
 
   val shardId: Flag[Int] = flag("shardId", 0, "Shard ID")
@@ -72,8 +72,8 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
   val serviceEnv: Flag[String] = flag("service.env", "Service Env")
   val serviceName: Flag[String] = flag("service.name", "Service Name")
 
-  private val maxNumSegments =
-    flag("maxNumSegments", graphBuilderConfig.maxNumSegments, "the number of segments in the graph")
+  private val matwitterNumSegments =
+    flag("matwitterNumSegments", graphBuilderConfig.matwitterNumSegments, "the number of segments in the graph")
 
   private val statsReceiverWrapper = FinagleStatsReceiverWrapper(statsReceiver)
 
@@ -94,34 +94,34 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
     serviceIdentifier: ServiceIdentifier,
     requestTimeout: Duration = 100.milliseconds
   ): ThriftServiceType = {
-    ThriftMux.client
+    ThriftMutwitter.client
       .withClientId(ClientId("usertweetgraph.prod"))
       .withOpportunisticTls(OpportunisticTls.Required)
       .withMutualTls(serviceIdentifier)
       .withRequestTimeout(requestTimeout)
       .withStatsReceiver(statsReceiver.scope("clnt"))
       .withResponseClassifier {
-        case ReqRep(_, Throw(_: ClientDiscardedRequestException)) => ResponseClass.Ignorable
+        case ReqRep(_, Throw(_: ClientDiscardedRequestEtwitterception)) => ResponseClass.Ignorable
       }.build[ThriftServiceType](dest, label)
   }
 
   private val shutdownTimeout = flag(
     "service.shutdownTimeout",
     5.seconds,
-    "Maximum amount of time to wait for pending requests to complete on shutdown"
+    "Matwitterimum amount of time to wait for pending requests to complete on shutdown"
   )
 
   /**
-   * ExceptionCounter for tracking failures from RequestHandler(s).
+   * EtwitterceptionCounter for tracking failures from RequestHandler(s).
    */
-  lazy val exceptionCounter = new ExceptionCounter(statsReceiver)
+  lazy val etwitterceptionCounter = new EtwitterceptionCounter(statsReceiver)
 
   /**
-   * Function for translating exceptions returned by a RequestHandler. Useful
-   * for cases where underlying exception types should be wrapped in those
+   * Function for translating etwitterceptions returned by a RequestHandler. Useful
+   * for cases where underlying etwitterception types should be wrapped in those
    * defined in the project's Thrift IDL.
    */
-  lazy val translateExceptions: PartialFunction[Throwable, Throwable] = {
+  lazy val translateEtwitterceptions: PartialFunction[Throwable, Throwable] = {
     case t => t
   }
 
@@ -181,7 +181,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
         level = Some(loggingLevel),
         useParents = false,
         handlers = QueueingHandler(
-          maxQueueSize = 10000,
+          matwitterQueueSize = 10000,
           handler = ScribeHandler(
             category = "client_event",
             formatter = BareFormatter
@@ -207,12 +207,12 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
   // ********* Recos service **********
 
   def main(): Unit = {
-    log.info("building graph with maxNumSegments = " + profile.maxNumSegments())
+    log.info("building graph with matwitterNumSegments = " + profile.matwitterNumSegments())
 
     implicit val timer: Timer = new JavaTimer(true)
 
     val graph = MultiSegmentPowerLawBipartiteGraphBuilder(
-      graphBuilderConfig.copy(maxNumSegments = profile.maxNumSegments()),
+      graphBuilderConfig.copy(matwitterNumSegments = profile.matwitterNumSegments()),
       statsReceiverWrapper
     )
 
@@ -273,7 +273,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
         consumersBasedRelatedTweetsHandler,
         endpointLoadShedder)(timer) with LoggingUserVideoGraph
 
-    val thriftServer = ThriftMux.server
+    val thriftServer = ThriftMutwitter.server
       .withOpportunisticTls(OpportunisticTls.Required)
       .withMutualTls(serviceIdentifier)
       .serveIface(servicePort(), userVideoGraph)
@@ -282,7 +282,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable {
     log.info("servicePort: " + servicePort().toString)
 
     log.info("adding shutdown hook")
-    onExit {
+    onEtwitterit {
       graphWriter.shutdown()
       thriftServer.close(shutdownTimeout().fromNow)
     }

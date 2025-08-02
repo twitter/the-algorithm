@@ -14,9 +14,9 @@ import com.twitter.graph_feature_service.worker.util.MutualFollowPartialValueGra
 import com.twitter.inject.TwitterModule
 import com.twitter.inject.annotations.Flag
 import com.twitter.util.Timer
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
-object GraphContainerProviderModule extends TwitterModule {
+object GraphContainerProviderModule etwittertends TwitterModule {
 
   @Provides
   @Singleton

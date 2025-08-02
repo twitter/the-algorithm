@@ -16,7 +16,7 @@ import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
 import com.twitter.unified_user_actions.thriftscala.UserIdentifier
 
 class EmailNotificationEventAdapter
-    extends AbstractAdapter[NotificationScribe, UnKeyed, UnifiedUserAction] {
+    etwittertends AbstractAdapter[NotificationScribe, UnKeyed, UnifiedUserAction] {
   import EmailNotificationEventAdapter._
   override def adaptOneToKeyedMany(
     input: NotificationScribe,
@@ -31,7 +31,7 @@ object EmailNotificationEventAdapter {
     Option(scribe).flatMap { e =>
       e.`type` match {
         case NotificationScribeType.Click =>
-          val tweetIdOpt = e.logBase.flatMap(EmailNotificationEventUtils.extractTweetId)
+          val tweetIdOpt = e.logBase.flatMap(EmailNotificationEventUtils.etwittertractTweetId)
           (tweetIdOpt, e.impressionId) match {
             case (Some(tweetId), Some(impressionId)) =>
               Some(
@@ -39,7 +39,7 @@ object EmailNotificationEventAdapter {
                   userIdentifier = UserIdentifier(userId = e.userId),
                   item = Item.TweetInfo(TweetInfo(actionTweetId = tweetId)),
                   actionType = ActionType.ClientTweetEmailClick,
-                  eventMetadata = EmailNotificationEventUtils.extractEventMetaData(e),
+                  eventMetadata = EmailNotificationEventUtils.etwittertractEventMetaData(e),
                   productSurface = Some(ProductSurface.EmailNotification),
                   productSurfaceInfo = Some(
                     ProductSurfaceInfo.EmailNotificationInfo(

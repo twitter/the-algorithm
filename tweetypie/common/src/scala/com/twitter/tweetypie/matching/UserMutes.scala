@@ -1,7 +1,7 @@
 package com.twitter.tweetypie.matching
 
-import com.twitter.common.text.pipeline.TwitterLanguageIdentifier
-import com.twitter.common_internal.text.version.PenguinVersion
+import com.twitter.common.tetwittert.pipeline.TwitterLanguageIdentifier
+import com.twitter.common_internal.tetwittert.version.PenguinVersion
 import java.util.Locale
 import scala.collection.JavaConversions.asScalaBuffer
 
@@ -34,7 +34,7 @@ class UserMutesBuilder private (penguinVersion: PenguinVersion, localeOpt: Optio
 
   /**
    * When tokenizing a user mute list, detect the language of the
-   * text. This is significantly more expensive than using a predefined
+   * tetwittert. This is significantly more etwitterpensive than using a predefined
    * locale, but is appropriate when the locale is not yet known.
    */
   def detectLocale(): UserMutesBuilder =
@@ -47,9 +47,9 @@ class UserMutesBuilder private (penguinVersion: PenguinVersion, localeOpt: Optio
         // No locale was specified, so use a Tokenizer that performs
         // language detection before tokenizing.
         new Tokenizer {
-          override def tokenize(text: String): TokenSequence = {
-            val locale = UserMutesBuilder.queryLangIdentifier.identify(text).getLocale
-            Tokenizer.get(locale, penguinVersion).tokenize(text)
+          override def tokenize(tetwittert: String): TokenSequence = {
+            val locale = UserMutesBuilder.queryLangIdentifier.identify(tetwittert).getLocale
+            Tokenizer.get(locale, penguinVersion).tokenize(tetwittert)
           }
         }
 
@@ -59,7 +59,7 @@ class UserMutesBuilder private (penguinVersion: PenguinVersion, localeOpt: Optio
 
   /**
    * Given a list of the user's raw keyword mutes, return a preprocessed
-   * set of mutes suitable for matching against tweet text. If the input
+   * set of mutes suitable for matching against tweet tetwittert. If the input
    * contains any phrases that fail validation, then they will be
    * dropped.
    */
@@ -68,7 +68,7 @@ class UserMutesBuilder private (penguinVersion: PenguinVersion, localeOpt: Optio
 
   /**
    * Java-friendly API for processing a user's list of raw keyword mutes
-   * into a preprocessed form suitable for matching against text.
+   * into a preprocessed form suitable for matching against tetwittert.
    */
   def fromJavaList(rawInput: java.util.List[String]): UserMutes =
     build(asScalaBuffer(rawInput).toSeq)
@@ -91,7 +91,7 @@ object UserMutes {
   /**
    * The phrase's tokenization did not produce any tokens
    */
-  case object EmptyPhrase extends ValidationError
+  case object EmptyPhrase etwittertends ValidationError
 
   private[matching] val EmptyPhraseError = Left(EmptyPhrase)
 
@@ -109,18 +109,18 @@ case class UserMutes private[matching] (toSeq: Seq[TokenSequence]) {
 
   /**
    * Do any of the users' muted keyword sequences occur within the
-   * supplied text?
+   * supplied tetwittert?
    */
-  def matches(text: TokenSequence): Boolean =
-    toSeq.exists(text.containsKeywordSequence)
+  def matches(tetwittert: TokenSequence): Boolean =
+    toSeq.etwitterists(tetwittert.containsKeywordSequence)
 
   /**
    * Find all positions of matching muted keyword from the user's
    * muted keyword list
    */
-  def find(text: TokenSequence): Seq[Int] =
-    toSeq.zipWithIndex.collect {
-      case (token, index) if text.containsKeywordSequence(token) => index
+  def find(tetwittert: TokenSequence): Seq[Int] =
+    toSeq.zipWithIndetwitter.collect {
+      case (token, indetwitter) if tetwittert.containsKeywordSequence(token) => indetwitter
     }
 
   def isEmpty: Boolean = toSeq.isEmpty

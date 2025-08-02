@@ -13,14 +13,14 @@ import com.twitter.ann.common.Queryable
 import com.twitter.ann.common.RuntimeParams
 import com.twitter.ann.common.ServiceClientQueryable
 import com.twitter.bijection.Injection
-import com.twitter.cortex.ml.embeddings.common.EntityKind
+import com.twitter.cortetwitter.ml.embeddings.common.EntityKind
 import com.twitter.finagle.builder.ClientBuilder
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMuxClientSyntax
+import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMutwitterClientSyntatwitter
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.finagle.thrift.ClientId
 import com.twitter.finagle.Service
-import com.twitter.finagle.ThriftMux
+import com.twitter.finagle.ThriftMutwitter
 import com.twitter.ml.api.embedding.Embedding
 import com.twitter.search.common.file.AbstractFile.Filter
 import com.twitter.search.common.file.AbstractFile
@@ -42,15 +42,15 @@ object LoadTestUtils {
   private[loadtest] def getTruthSetMap[Q, I](
     directory: String,
     queryIdType: String,
-    indexIdType: String
+    indetwitterIdType: String
   ): Map[Q, Seq[I]] = {
     Log.info(s"Loading truth set from ${directory}")
     val queryConverter = getKeyConverter[Q](queryIdType)
-    val indexConverter = getKeyConverter[I](indexIdType)
+    val indetwitterConverter = getKeyConverter[I](indetwitterIdType)
     val res = loadKnnDirFileToMap(
       getLocalFileHandle(directory),
       // Knn truth file tsv format: [id neighbor:distance neighbor:distance ...]
-      arr => { arr.map(str => indexConverter(str.substring(0, str.lastIndexOf(":")))).toSeq },
+      arr => { arr.map(str => indetwitterConverter(str.substring(0, str.lastIndetwitterOf(":")))).toSeq },
       queryConverter
     )
     assert(res.nonEmpty, s"Must have some something in the truth set ${directory}")
@@ -103,21 +103,21 @@ object LoadTestUtils {
     map.toMap
   }
 
-  // Generating random float with value range bounded between minValue and maxValue
+  // Generating random float with value range bounded between minValue and matwitterValue
   private[loadtest] def getRandomQuerySet(
     dimension: Int,
     totalQueries: Int,
     minValue: Float,
-    maxValue: Float
+    matwitterValue: Float
   ): Seq[EmbeddingVector] = {
     Log.info(
-      s"Generating $totalQueries random queries for dimension $dimension with value between $minValue and $maxValue...")
+      s"Generating $totalQueries random queries for dimension $dimension with value between $minValue and $matwitterValue...")
     assert(totalQueries > 0, s"Total random queries $totalQueries should be greater than 0")
     assert(
-      maxValue > minValue,
-      s"Random embedding max value should be greater than min value. min: $minValue max: $maxValue")
+      matwitterValue > minValue,
+      s"Random embedding matwitter value should be greater than min value. min: $minValue matwitter: $matwitterValue")
     (1 to totalQueries).map { _ =>
-      val embedding = Array.fill(dimension)(minValue + (maxValue - minValue) * RNG.nextFloat())
+      val embedding = Array.fill(dimension)(minValue + (matwitterValue - minValue) * RNG.netwittertFloat())
       Embedding(embedding)
     }
   }
@@ -143,13 +143,13 @@ object LoadTestUtils {
     serviceIdentifier: ServiceIdentifier,
     runtimeParamInjection: Injection[P, ServiceRuntimeParams],
     distanceInjection: Injection[D, ServiceDistance],
-    indexIdInjection: Injection[T, Array[Byte]]
+    indetwitterIdInjection: Injection[T, Array[Byte]]
   ): Future[Queryable[T, P, D]] = {
     val client: AnnQueryService.MethodPerEndpoint = new AnnQueryService.FinagledClient(
       service = ClientBuilder()
         .reportTo(statsReceiver)
         .dest(destination)
-        .stack(ThriftMux.client.withMutualTls(serviceIdentifier).withClientId(ClientId(clientId)))
+        .stack(ThriftMutwitter.client.withMutualTls(serviceIdentifier).withClientId(ClientId(clientId)))
         .build(),
       stats = statsReceiver
     )
@@ -164,7 +164,7 @@ object LoadTestUtils {
         service,
         runtimeParamInjection,
         distanceInjection,
-        indexIdInjection
+        indetwitterIdInjection
       )
     )
   }
@@ -191,8 +191,8 @@ object LoadTestUtils {
 
     Seq(
       "Build results",
-      "indexingTimeSecs\ttoQueryableTimeMs\tindexSize",
-      s"${inMemoryBuildRecorder.indexLatency.inSeconds}\t${inMemoryBuildRecorder.toQueryableLatency.inMilliseconds}\t${inMemoryBuildRecorder.indexSize}",
+      "indetwitteringTimeSecs\ttoQueryableTimeMs\tindetwitterSize",
+      s"${inMemoryBuildRecorder.indetwitterLatency.inSeconds}\t${inMemoryBuildRecorder.toQueryableLatency.inMilliseconds}\t${inMemoryBuildRecorder.indetwitterSize}",
       "Query results",
       QueryTimeConfiguration.ResultHeader
     ) ++ queryTimeConfigStrings

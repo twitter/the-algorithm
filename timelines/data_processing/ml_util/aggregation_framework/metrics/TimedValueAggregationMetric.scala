@@ -18,7 +18,7 @@ import java.util.{Map => JMap}
  * operatorName is a string used for naming the resultant aggregate feature
  * (e.g. "count" if its a count feature, or "sum" if a sum feature).
  */
-trait TimedValueAggregationMetric[T] extends AggregationMetric[T, Double] {
+trait TimedValueAggregationMetric[T] etwittertends AggregationMetric[T, Double] {
   import AggregationMetricCommon._
 
   val operatorName: String
@@ -31,7 +31,7 @@ trait TimedValueAggregationMetric[T] extends AggregationMetric[T, Double] {
     /*
      * We know aggregateOutputs(0) will have the continuous feature,
      * since we put it there in getOutputFeatureIds() - see code below.
-     * This helps us get a 4x speedup. Using any structure more complex
+     * This helps us get a 4twitter speedup. Using any structure more completwitter
      * than a list was also a performance bottleneck.
      */
     val featureHash: JLong = aggregateOutputs
@@ -64,7 +64,7 @@ trait TimedValueAggregationMetric[T] extends AggregationMetric[T, Double] {
     /*
      * We know aggregateOutputs(0) will have the continuous feature,
      * since we put it there in getOutputFeatureIds() - see code below.
-     * This helps us get a 4x speedup. Using any structure more complex
+     * This helps us get a 4twitter speedup. Using any structure more completwitter
      * than a list was also a performance bottleneck.
      */
     val featureHash: JLong = aggregateOutputs

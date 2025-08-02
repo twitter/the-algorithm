@@ -1,7 +1,7 @@
 package com.twitter.simclusters_v2.scalding.evaluation
 
 import com.twitter.algebird.AveragedValue
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding.typed.TypedPipe
 import com.twitter.simclusters_v2.scalding.common.Util
 
@@ -19,10 +19,10 @@ object LabelCorrelationsHelper {
    * Given a pipe of labeled tweets, calculate the cosine similarity between the algorithm scores
    * and users' favorite engagements.
    */
-  def cosineSimilarityForLike(labeledTweets: TypedPipe[LabeledTweet]): Execution[Double] = {
+  def cosineSimilarityForLike(labeledTweets: TypedPipe[LabeledTweet]): Etwitterecution[Double] = {
     labeledTweets
       .map { tweet => (toDouble(tweet.labels.isLiked), tweet.algorithmScore.getOrElse(0.0)) }
-      .toIterableExecution.map { iter => Util.cosineSimilarity(iter.iterator) }
+      .toIterableEtwitterecution.map { iter => Util.cosineSimilarity(iter.iterator) }
   }
 
   /**
@@ -30,7 +30,7 @@ object LabelCorrelationsHelper {
    * favorites engagements, on a per user basis, and return the average of all cosine
    * similarities across all users.
    */
-  def cosineSimilarityForLikePerUser(labeledTweets: TypedPipe[LabeledTweet]): Execution[Double] = {
+  def cosineSimilarityForLikePerUser(labeledTweets: TypedPipe[LabeledTweet]): Etwitterecution[Double] = {
     val avg = AveragedValue.aggregator.composePrepare[(Unit, Double)](_._2)
 
     labeledTweets
@@ -46,16 +46,16 @@ object LabelCorrelationsHelper {
           ((), Util.cosineSimilarity(seq.iterator))
       }
       .aggregate(avg)
-      .getOrElseExecution(0.0)
+      .getOrElseEtwitterecution(0.0)
   }
 
   /**
    * Calculates the Pearson correlation coefficient for the algorithm scores and user's favorite
-   * engagement. Note this function call triggers a writeToDisk execution.
+   * engagement. Note this function call triggers a writeToDisk etwitterecution.
    */
-  def pearsonCoefficientForLike(labeledTweets: TypedPipe[LabeledTweet]): Execution[Double] = {
+  def pearsonCoefficientForLike(labeledTweets: TypedPipe[LabeledTweet]): Etwitterecution[Double] = {
     labeledTweets
       .map { tweet => (toDouble(tweet.labels.isLiked), tweet.algorithmScore.getOrElse(0.0)) }
-      .toIterableExecution.map { iter => Util.computeCorrelation(iter.iterator) }
+      .toIterableEtwitterecution.map { iter => Util.computeCorrelation(iter.iterator) }
   }
 }

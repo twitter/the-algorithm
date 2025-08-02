@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nonnull;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
@@ -19,13 +19,13 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.indetwitter.Term;
+import org.apache.lucene.queryparser.classic.ParseEtwitterception;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
-import org.apache.thrift.TException;
+import org.apache.thrift.TEtwitterception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,9 +62,9 @@ import com.twitter.search.common.util.thrift.ThriftUtils;
 import com.twitter.search.core.earlybird.facets.FacetCountState;
 import com.twitter.search.earlybird.common.ClientIdUtil;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.ClientException;
-import com.twitter.search.earlybird.exception.TransientException;
-import com.twitter.search.earlybird.index.facets.FacetSkipList;
+import com.twitter.search.earlybird.etwitterception.ClientEtwitterception;
+import com.twitter.search.earlybird.etwitterception.TransientEtwitterception;
+import com.twitter.search.earlybird.indetwitter.facets.FacetSkipList;
 import com.twitter.search.earlybird.ml.ScoringModelsManager;
 import com.twitter.search.earlybird.partition.AudioSpaceTable;
 import com.twitter.search.earlybird.partition.MultiSegmentTermDictionaryManager;
@@ -91,11 +91,11 @@ import com.twitter.search.earlybird.search.SearchResultsInfo;
 import com.twitter.search.earlybird.search.SimpleSearchResults;
 import com.twitter.search.earlybird.search.SocialFilter;
 import com.twitter.search.earlybird.search.SocialSearchResultsCollector;
-import com.twitter.search.earlybird.search.queries.UserFlagsExcludeFilter;
+import com.twitter.search.earlybird.search.queries.UserFlagsEtwittercludeFilter;
 import com.twitter.search.earlybird.search.queries.UserIdMultiSegmentQuery;
 import com.twitter.search.earlybird.search.facets.EntityAnnotationCollector;
-import com.twitter.search.earlybird.search.facets.ExpandedUrlCollector;
-import com.twitter.search.earlybird.search.facets.ExplainFacetResultsCollector;
+import com.twitter.search.earlybird.search.facets.EtwitterpandedUrlCollector;
+import com.twitter.search.earlybird.search.facets.EtwitterplainFacetResultsCollector;
 import com.twitter.search.earlybird.search.facets.FacetRankingModule;
 import com.twitter.search.earlybird.search.facets.FacetResultsCollector;
 import com.twitter.search.earlybird.search.facets.FacetSearchRequestInfo;
@@ -129,7 +129,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
 import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
 import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
 import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
+import com.twitter.search.earlybird.thrift.ThriftSearchResultEtwittertraMetadata;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
 import com.twitter.search.earlybird.thrift.ThriftSearchResults;
 import com.twitter.search.earlybird.thrift.ThriftTermRequest;
@@ -140,7 +140,7 @@ import com.twitter.search.queryparser.parser.SerializedQueryParser;
 import com.twitter.search.queryparser.query.Conjunction;
 import com.twitter.search.queryparser.query.Disjunction;
 import com.twitter.search.queryparser.query.QueryNodeUtils;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twitter.search.queryparser.query.QueryParserEtwitterception;
 import com.twitter.search.queryparser.query.annotation.Annotation;
 import com.twitter.search.queryparser.query.search.SearchOperator;
 import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
@@ -148,14 +148,14 @@ import com.twitter.search.queryparser.util.IdTimeRanges;
 import com.twitter.search.queryparser.visitors.ConversionVisitor;
 import com.twitter.search.queryparser.visitors.DetectPositiveOperatorVisitor;
 import com.twitter.search.queryparser.visitors.NamedDisjunctionVisitor;
-import com.twitter.search.queryparser.visitors.ProximityGroupRewriteVisitor;
+import com.twitter.search.queryparser.visitors.ProtwitterimityGroupRewriteVisitor;
 import com.twitter.search.queryparser.visitors.StripAnnotationsVisitor;
 
 import static com.twitter.search.queryparser.query.search.SearchOperator.Type.UNTIL_TIME;
 
 /**
  * This class provides the basic search() method:
- * - converts the thrift request object into what lucene expects.
+ * - converts the thrift request object into what lucene etwitterpects.
  * - gets the segment.
  * - handles all errors, and prepares the response in case of error.
  *
@@ -184,13 +184,13 @@ public class EarlybirdSearcher {
   private static final Logger LOG = LoggerFactory.getLogger(EarlybirdSearcher.class);
   private static final String MATCH_ALL_SERIALIZED_QUERY = "(* )";
   /**
-   * generic field annotations can be mapped to a concrete field in the index using this mapping
+   * generic field annotations can be mapped to a concrete field in the indetwitter using this mapping
    * via {@link com.twitter.search.queryparser.query.annotation.Annotation.Type#MAPPABLE_FIELD}
    */
   private static final Map<MappableField, String> MAPPABLE_FIELD_MAP =
       ImmutableMap.of(
           MappableField.URL,
-          EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName());
+          EarlybirdFieldConstant.RESOLVED_LINKS_TEtwitterT_FIELD.getFieldName());
 
   private static final String ALLOW_QUERY_SPECIFIC_SIGNAL_DECIDER_KEY
       = "allow_query_specific_score_adjustments";
@@ -202,10 +202,10 @@ public class EarlybirdSearcher {
   private static final String USE_MULTI_TERM_DISJUNCTION_FOR_LIKED_BY_USER_IDS_DECIDER_KEY
       = "use_multi_term_disjunction_for_liked_by_user_ids";
 
-  private static final String ALLOW_CAMELCASE_USERNAME_FIELD_WEIGHT_OVERRIDE_DECIDER_KEY_PREFIX
+  private static final String ALLOW_CAMELCASE_USERNAME_FIELD_WEIGHT_OVERRIDE_DECIDER_KEY_PREFItwitter
       = "allow_camelcase_username_field_weight_override_in_";
 
-  private static final String ALLOW_TOKENIZED_DISPLAY_NAME_FIELD_WEIGHT_OVERRIDE_DECIDER_KEY_PREFIX
+  private static final String ALLOW_TOKENIZED_DISPLAY_NAME_FIELD_WEIGHT_OVERRIDE_DECIDER_KEY_PREFItwitter
       = "allow_tokenized_display_name_field_weight_override_in_";
 
   private static final boolean ALLOW_QUERY_SPECIFIC_SIGNAL_CONFIG
@@ -236,7 +236,7 @@ public class EarlybirdSearcher {
   private boolean parsedQueryAllowNullcast;
   private IdTimeRanges idTimeRanges;
 
-  // Lucene version of the above.  This is what we will actually be executing.
+  // Lucene version of the above.  This is what we will actually be etwitterecuting.
   private org.apache.lucene.search.Query luceneQuery;
 
   // Used for queries where we want to collect per-field hit attribution
@@ -276,31 +276,31 @@ public class EarlybirdSearcher {
 
   private QueryTimeoutFactory queryTimeoutFactory;
 
-  // Exported stats
+  // Etwitterported stats
   private final EarlybirdSearcherStats searcherStats;
 
   @VisibleForTesting
   public static final SearchCounter FIELD_WEIGHT_OVERRIDE_MAP_NON_NULL_COUNT =
-      SearchCounter.export("field_weight_override_map_non_null_count");
+      SearchCounter.etwitterport("field_weight_override_map_non_null_count");
   @VisibleForTesting
   public static final SearchCounter DROPPED_CAMELCASE_USERNAME_FIELD_WEIGHT_OVERRIDE =
-      SearchCounter.export("dropped_camelcase_username_field_weight_override");
+      SearchCounter.etwitterport("dropped_camelcase_username_field_weight_override");
   @VisibleForTesting
   public static final SearchCounter DROPPED_TOKENIZED_DISPLAY_NAME_FIELD_WEIGHT_OVERRIDE =
-      SearchCounter.export("dropped_tokenized_display_name_field_weight_override");
+      SearchCounter.etwitterport("dropped_tokenized_display_name_field_weight_override");
 
   private static final SearchCounter RESPONSE_HAS_NO_THRIFT_SEARCH_RESULTS =
-      SearchCounter.export("tweets_earlybird_searcher_response_has_no_thrift_search_results");
+      SearchCounter.etwitterport("tweets_earlybird_searcher_response_has_no_thrift_search_results");
   private static final SearchCounter CLIENT_HAS_FEATURE_SCHEMA_COUNTER =
-      SearchCounter.export("tweets_earlybird_searcher_client_has_feature_schema");
+      SearchCounter.etwitterport("tweets_earlybird_searcher_client_has_feature_schema");
   private static final SearchCounter CLIENT_DOESNT_HAVE_FEATURE_SCHEMA_COUNTER =
-      SearchCounter.export("tweet_earlybird_searcher_client_doesnt_have_feature_schema");
-  private static final SearchCounter COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS_NOT_SET_COUNTER =
-      SearchCounter.export("collector_params_max_hits_to_process_not_set");
+      SearchCounter.etwitterport("tweet_earlybird_searcher_client_doesnt_have_feature_schema");
+  private static final SearchCounter COLLECTOR_PARAMS_MAtwitter_HITS_TO_PROCESS_NOT_SET_COUNTER =
+      SearchCounter.etwitterport("collector_params_matwitter_hits_to_process_not_set");
   private static final SearchCounter POSITIVE_PROTECTED_OPERATOR_DETECTED_COUNTER =
-      SearchCounter.export("positive_protected_operator_detected_counter");
+      SearchCounter.etwitterport("positive_protected_operator_detected_counter");
 
-  // Query mode we are executing.
+  // Query mode we are etwitterecuting.
   private final QueryMode queryMode;
 
   // facetRequest from inside the request (or null).
@@ -364,7 +364,7 @@ public class EarlybirdSearcher {
     this.tensorflowModelsManager = tensorflowModelsManager;
     this.audioSpaceTable = audioSpaceTable;
     // Note: we're deferring the validation/nullchecks until validateRequest()
-    // for more contained exception handling
+    // for more contained etwitterception handling
     this.searchQuery = request.getSearchQuery();
     this.collectorParams = this.searchQuery == null ? null : this.searchQuery.getCollectorParams();
     // Search all segments if searchSegmentId is unset.
@@ -406,10 +406,10 @@ public class EarlybirdSearcher {
     try {
       debugInfo.setHost(DatabaseConfig.getLocalHostname());
 
-      // Throws transient exception for invalid requests.
+      // Throws transient etwitterception for invalid requests.
       validateRequest();
 
-      // Throws client exception for bad queries,
+      // Throws client etwitterception for bad queries,
       parseEarlybirdRequest();
 
       // Modify the Lucene query if necessary.
@@ -423,18 +423,18 @@ public class EarlybirdSearcher {
 
       return searchInternal();
 
-    } catch (TransientException e) {
-      LOG.error(String.format("Transient exception in search() for EarlybirdRequest:\n%s", request),
+    } catch (TransientEtwitterception e) {
+      LOG.error(String.format("Transient etwitterception in search() for EarlybirdRequest:\n%s", request),
                 e);
       appendMessage(e.getMessage());
       return respondError(EarlybirdResponseCode.TRANSIENT_ERROR);
-    } catch (ClientException e) {
-      LOG.warn(String.format("Client exception in search() %s for EarlybirdRequest:\n %s",
+    } catch (ClientEtwitterception e) {
+      LOG.warn(String.format("Client etwitterception in search() %s for EarlybirdRequest:\n %s",
           e, request));
       appendMessage(e.getMessage());
       return respondError(EarlybirdResponseCode.CLIENT_ERROR);
-    } catch (Exception e) {
-      LOG.warn(String.format("Uncaught exception in search() for EarlybirdRequest:\n%s", request),
+    } catch (Etwitterception e) {
+      LOG.warn(String.format("Uncaught etwitterception in search() for EarlybirdRequest:\n%s", request),
                e);
       appendMessage(e.getMessage());
       return respondError(EarlybirdResponseCode.TRANSIENT_ERROR);
@@ -443,7 +443,7 @@ public class EarlybirdSearcher {
       appendMessage(e.getMessage());
       return respondError(EarlybirdResponseCode.TRANSIENT_ERROR);
     } catch (Error e) {
-      // SEARCH-33166: If we got here, it means what was thrown was not an Exception, or anything
+      // SEARCH-33166: If we got here, it means what was thrown was not an Etwitterception, or anything
       // we know how to handle. Log the Error for diagnostic purposes and propagate it.
       LOG.error("Re-throwing uncaught error", e);
       throw e;
@@ -494,21 +494,21 @@ public class EarlybirdSearcher {
     return bqBuilder.build();
   }
 
-  // Examine all fields in the request for sanity.
-  private void validateRequest() throws TransientException, ClientException {
+  // Etwitteramine all fields in the request for sanity.
+  private void validateRequest() throws TransientEtwitterception, ClientEtwitterception {
     // First try thrift's internal validate.  Should always succeed.
     try {
       request.validate();
-    } catch (TException e) {
-      throw new TransientException(e.getMessage(), e);
+    } catch (TEtwitterception e) {
+      throw new TransientEtwitterception(e.getMessage(), e);
     }
 
     if (searchQuery == null) {
-      throw new TransientException("No ThriftSearchQuery specified");
+      throw new TransientEtwitterception("No ThriftSearchQuery specified");
     }
 
     if (collectorParams == null) {
-      throw new TransientException("No CollectorParams specified");
+      throw new TransientEtwitterception("No CollectorParams specified");
     }
 
     validateTermStatsRequest();
@@ -516,7 +516,7 @@ public class EarlybirdSearcher {
     if (!searchAllSegments) {
       if (request.getSearchSegmentId() <= 0) {
         String msg = "Bad time slice ID: " + request.getSearchSegmentId();
-        throw new TransientException(msg);
+        throw new TransientEtwitterception(msg);
       }
 
       // Initialize the segment.
@@ -526,20 +526,20 @@ public class EarlybirdSearcher {
 
     if (collectorParams.getNumResultsToReturn() < 0) {
       String msg = "Invalid numResults: " + collectorParams.getNumResultsToReturn();
-      throw new TransientException(msg);
+      throw new TransientEtwitterception(msg);
     }
 
     if (searchQuery.getNamedDisjunctionMapSize() > 0 && searchQuery.isSetLuceneQuery()) {
-      throw new ClientException("namedMultiTermDisjunctionMap does not support with luceneQuery");
+      throw new ClientEtwitterception("namedMultiTermDisjunctionMap does not support with luceneQuery");
     }
   }
 
-  private void validateTermStatsRequest() throws ClientException {
+  private void validateTermStatsRequest() throws ClientEtwitterception {
     // Validate the field names and values for all ThriftTermRequests.
     if (request.isSetTermStatisticsRequest()
         && request.getTermStatisticsRequest().isSetTermRequests()) {
       for (ThriftTermRequest termRequest : request.getTermStatisticsRequest().getTermRequests()) {
-        // If termRequest.fieldName is not set, it defaults to 'text', which is a string field,
+        // If termRequest.fieldName is not set, it defaults to 'tetwittert', which is a string field,
         // so we don't need to check the term.
         if (termRequest.isSetFieldName()) {
           String fieldName = termRequest.getFieldName();
@@ -551,13 +551,13 @@ public class EarlybirdSearcher {
 
           Schema.FieldInfo fieldInfo = schemaSnapshot.getFieldInfo(fieldName);
           if (fieldInfo == null) {
-            throw new ClientException("Field " + fieldName + " is not present in the schema.");
+            throw new ClientEtwitterception("Field " + fieldName + " is not present in the schema.");
           }
 
           try {
             SchemaUtil.toBytesRef(fieldInfo, termRequest.getTerm());
-          } catch (UnsupportedOperationException e) {
-            throw new ClientException("Term " + termRequest.getTerm() + " is not compatible with "
+          } catch (UnsupportedOperationEtwitterception e) {
+            throw new ClientEtwitterception("Term " + termRequest.getTerm() + " is not compatible with "
                                       + "the type of field " + fieldName);
           }
         }
@@ -576,14 +576,14 @@ public class EarlybirdSearcher {
    * Takes the EarlybirdRequest that came into the service and after various parsing and processing
    * steps ultimately produces a Lucene query.
    */
-  private void parseEarlybirdRequest() throws ClientException {
+  private void parseEarlybirdRequest() throws ClientEtwitterception {
     SerializedQueryParser parser = new SerializedQueryParser(EarlybirdConfig.getPenguinVersion());
 
     try {
       // if the deprecated iterativeQueries field is set, return an error to the client
       // indicating that support for it has been removed.
       if (searchQuery.isSetDeprecated_iterativeQueries()) {
-        throw new ClientException("Invalid request: iterativeQueries feature has been removed");
+        throw new ClientEtwitterception("Invalid request: iterativeQueries feature has been removed");
       }
 
       // we parse the actual query from the user, if any
@@ -592,7 +592,7 @@ public class EarlybirdSearcher {
 
       if (searchQuery.getLikedByUserIDFilter64Size() > 0
           && searchQuery.isSetLuceneQuery()) {
-        throw new ClientException("likedByUserIDFilter64 does not support with luceneQuery");
+        throw new ClientEtwitterception("likedByUserIDFilter64 does not support with luceneQuery");
       }
 
       if (!StringUtils.isBlank(request.getSearchQuery().getSerializedQuery())) {
@@ -606,28 +606,28 @@ public class EarlybirdSearcher {
           LOG.info("Using lucene query directly from the request: " + luceneQuery.toString());
         }
       } else {
-        searcherStats.thriftQueryWithoutTextQuery.increment();
+        searcherStats.thriftQueryWithoutTetwittertQuery.increment();
         luceneQuery = parseSerializedQuery(
             MATCH_ALL_SERIALIZED_QUERY,
             parser,
             queryMode != QueryMode.TERM_STATS);
       }
-    } catch (QueryParserException | BooleanQuery.TooManyClauses e) {
-      LOG.info("Exception parsing query during search", e);
+    } catch (QueryParserEtwitterception | BooleanQuery.TooManyClauses e) {
+      LOG.info("Etwitterception parsing query during search", e);
       appendMessage(e.getMessage());
-      throw new ClientException(e);
+      throw new ClientEtwitterception(e);
     }
   }
 
   /**
    * Parses a serialized query and creates a Lucene query out of it.
    *
-   * To see how serialized queries look like, go to go/searchsyntax.
+   * To see how serialized queries look like, go to go/searchsyntatwitter.
    */
   private Query parseSerializedQuery(
       String serializedQuery,
       SerializedQueryParser parser,
-      boolean shouldAdjustQueryBasedOnRequestParameters) throws QueryParserException {
+      boolean shouldAdjustQueryBasedOnRequestParameters) throws QueryParserEtwitterception {
     // Parse the serialized query.
     parsedQuery = parser.parse(serializedQuery);
     if (parsedQuery == null) {
@@ -670,15 +670,15 @@ public class EarlybirdSearcher {
         parsedQuery = hitAttributeHelper.getAnnotatedQuery();
       }
 
-      // Currently antisocial/nullcast tweets are dropped when we build index, but some tweets may
+      // Currently antisocial/nullcast tweets are dropped when we build indetwitter, but some tweets may
       // become antisocial with realtime updates. For consistency, we should always filter out
-      // antisocial/nullcast tweets if the user is not explicitly including it.
+      // antisocial/nullcast tweets if the user is not etwitterplicitly including it.
       final boolean allowAntisocial =
           parsedQuery.accept(new DetectPositiveOperatorVisitor(SearchOperatorConstants.ANTISOCIAL));
       if (!allowAntisocial) {
         parsedQuery = QueryNodeUtils.appendAsConjunction(
             parsedQuery,
-            QueryCacheConversionRules.CACHED_EXCLUDE_ANTISOCIAL);
+            QueryCacheConversionRules.CACHED_EtwitterCLUDE_ANTISOCIAL);
       }
       parsedQueryAllowNullcast =
           parsedQuery.accept(new DetectPositiveOperatorVisitor(SearchOperatorConstants.NULLCAST));
@@ -696,22 +696,22 @@ public class EarlybirdSearcher {
       parsedQuery = parsedQuery.accept(
           new ConversionVisitor(QueryCacheConversionRules.DEFAULT_RULES));
 
-      // add proximity if needed
+      // add protwitterimity if needed
       if (options != null
-          && options.isProximityScoring()
+          && options.isProtwitterimityScoring()
           && searchQuery.getRankingMode() != ThriftSearchRankingMode.RECENCY) {
-        parsedQuery = parsedQuery.accept(new ProximityGroupRewriteVisitor()).simplify();
+        parsedQuery = parsedQuery.accept(new ProtwitterimityGroupRewriteVisitor()).simplify();
       }
     }
 
     if (request.isSkipVeryRecentTweets()) {
-      parsedQuery = restrictQueryToFullyIndexedTweets(parsedQuery);
+      parsedQuery = restrictQueryToFullyIndetwitteredTweets(parsedQuery);
     }
 
     parsedQuery = parsedQuery.simplify();
     debugInfo.setParsedQuery(parsedQuery.serialize());
 
-    // Extract top-level since-id for pagination optimizations.
+    // Etwittertract top-level since-id for pagination optimizations.
     idTimeRanges = IdTimeRanges.fromQuery(parsedQuery);
 
     // Does any final processing specific to EarlybirdSearch class.
@@ -723,8 +723,8 @@ public class EarlybirdSearcher {
 
     if (options != null) {
       luceneVisitor
-          .setProximityPhraseWeight((float) options.getProximityPhraseWeight())
-          .setProximityPhraseSlop(options.getProximityPhraseSlop());
+          .setProtwitterimityPhraseWeight((float) options.getProtwitterimityPhraseWeight())
+          .setProtwitterimityPhraseSlop(options.getProtwitterimityPhraseSlop());
     }
 
     // Propagate hit attribute helper to the lucene visitor if it has been setup.
@@ -742,15 +742,15 @@ public class EarlybirdSearcher {
 
   private Query parseLuceneQuery(String query) {
     QueryParser parser = new QueryParser(
-        EarlybirdFieldConstant.TEXT_FIELD.getFieldName(),
+        EarlybirdFieldConstant.TEtwitterT_FIELD.getFieldName(),
         new SearchWhitespaceAnalyzer());
     parser.setSplitOnWhitespace(true);
     try {
       return parser.parse(query);
-    } catch (ParseException e) {
+    } catch (ParseEtwitterception e) {
       LOG.error("Cannot parse raw lucene query: " + query, e);
-    } catch (NullPointerException e) {
-      LOG.error("NullPointerException while parsing raw lucene query: " + query
+    } catch (NullPointerEtwitterception e) {
+      LOG.error("NullPointerEtwitterception while parsing raw lucene query: " + query
           + ", probably your grammar is wrong.\n", e);
     }
     return null;
@@ -758,7 +758,7 @@ public class EarlybirdSearcher {
 
   private com.twitter.search.queryparser.query.Query combineWithLikedByUserIdFilter64(
       com.twitter.search.queryparser.query.Query query,
-      List<Long> ids) throws QueryParserException {
+      List<Long> ids) throws QueryParserEtwitterception {
     return QueryNodeUtils.appendAsConjunction(query, getLikedByUserIdQuery(ids));
   }
 
@@ -766,7 +766,7 @@ public class EarlybirdSearcher {
    * initSearcher initializes the segmentSearcher, and returns SUCCESS if OK
    * or some other response code it not OK.
    */
-  private EarlybirdResponseCode initSearcher() throws IOException {
+  private EarlybirdResponseCode initSearcher() throws IOEtwitterception {
     searcher = null;
     if (searchAllSegments) {
       return initMultiSegmentSearcher();
@@ -775,7 +775,7 @@ public class EarlybirdSearcher {
     }
   }
 
-  private EarlybirdResponseCode initSingleSegmentSearcher() throws IOException {
+  private EarlybirdResponseCode initSingleSegmentSearcher() throws IOEtwitterception {
     if (segment == null) {
       String message = "Segment not found for time slice: " + request.getSearchSegmentId();
       LOG.warn(message);
@@ -803,7 +803,7 @@ public class EarlybirdSearcher {
     }
   }
 
-  private EarlybirdResponseCode initMultiSegmentSearcher() throws IOException {
+  private EarlybirdResponseCode initMultiSegmentSearcher() throws IOEtwitterception {
     EarlybirdMultiSegmentSearcher multiSearcher =
         segmentManager.getMultiSearcher(schemaSnapshot);
     searcher = multiSearcher;
@@ -815,7 +815,7 @@ public class EarlybirdSearcher {
   }
 
   private com.twitter.search.queryparser.query.Query
-  restrictQueryToFullyIndexedTweets(com.twitter.search.queryparser.query.Query query) {
+  restrictQueryToFullyIndetwitteredTweets(com.twitter.search.queryparser.query.Query query) {
     long untilTimeSeconds =
         RecentTweetRestriction.recentTweetsUntilTime(decider, (int) (clock.nowMillis() / 1000));
     if (untilTimeSeconds == 0) {
@@ -860,7 +860,7 @@ public class EarlybirdSearcher {
     debugInfo.setTermStatisticsDebugInfo(termStatisticsDebugInfo);
   }
 
-  private EarlybirdResponse searchInternal() throws TransientException, ClientException {
+  private EarlybirdResponse searchInternal() throws TransientEtwitterception, ClientEtwitterception {
     searchResults = new ThriftSearchResults();
 
     SearchResultsInfo searchResultsInfo;
@@ -887,20 +887,20 @@ public class EarlybirdSearcher {
           searchResultsInfo = processTopTweetsQuery();
           break;
         default:
-          throw new TransientException("Unknown query mode " + queryMode);
+          throw new TransientEtwitterception("Unknown query mode " + queryMode);
       }
 
       return respondSuccess(searchResults, facetResults, termStatisticsResults,
           earlyTerminationInfo, searchResultsInfo);
-    } catch (IOException e) {
-      throw new TransientException(e.getMessage(), e);
+    } catch (IOEtwitterception e) {
+      throw new TransientEtwitterception(e.getMessage(), e);
     }
   }
 
   /**
    * Helper method to process facets query.
    */
-  private SearchResultsInfo processFacetsQuery() throws ClientException, IOException {
+  private SearchResultsInfo processFacetsQuery() throws ClientEtwitterception, IOEtwitterception {
     // figure out which fields we need to count
     FacetCountState facetCountState = newFacetCountState();
 
@@ -911,7 +911,7 @@ public class EarlybirdSearcher {
       boolean cannotAddRequiredClause = facetCountState.hasFieldToCountWithoutSkipList();
       final Query facetSkipListFilter =
           cannotAddRequiredClause ? null : FacetSkipList.getSkipListQuery(facetCountState);
-      final Query antisocialFilter = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(
+      final Query antisocialFilter = UserFlagsEtwittercludeFilter.getUserFlagsEtwittercludeFilter(
           segmentManager.getUserTable(), true, true, false);
       luceneQuery = wrapFilters(luceneQuery,
           facetSkipListFilter,
@@ -924,17 +924,17 @@ public class EarlybirdSearcher {
         new FacetSearchRequestInfo(searchQuery, facetRequest.getFacetRankingOptions(),
             luceneQuery, facetCountState, terminationTracker);
     searchRequestInfo.setIdTimeRanges(idTimeRanges);
-    if (searchQuery.getMaxHitsPerUser() > 0) {
+    if (searchQuery.getMatwitterHitsPerUser() > 0) {
       antiGamingFilter = new AntiGamingFilter(
-          searchQuery.getMaxHitsPerUser(),
-          searchQuery.getMaxTweepcredForAntiGaming(),
+          searchQuery.getMatwitterHitsPerUser(),
+          searchQuery.getMatwitterTweepcredForAntiGaming(),
           luceneQuery);
     }
 
     AbstractResultsCollector<
         FacetSearchRequestInfo, EarlybirdLuceneSearcher.FacetSearchResults> collector;
     if (request.getDebugMode() > 2) {
-      collector = new ExplainFacetResultsCollector(schemaSnapshot,
+      collector = new EtwitterplainFacetResultsCollector(schemaSnapshot,
           searchRequestInfo, antiGamingFilter, searcherStats, clock, request.debugMode);
     } else {
       collector = new FacetResultsCollector(schemaSnapshot,
@@ -955,8 +955,8 @@ public class EarlybirdSearcher {
 
     maybeSetCollectorDebugInfo(collector);
 
-    if (collector instanceof ExplainFacetResultsCollector) {
-      ((ExplainFacetResultsCollector) collector).setExplanations(facetResults);
+    if (collector instanceof EtwitterplainFacetResultsCollector) {
+      ((EtwitterplainFacetResultsCollector) collector).setEtwitterplanations(facetResults);
     }
 
     return hits;
@@ -965,8 +965,8 @@ public class EarlybirdSearcher {
   /**
    * Helper method to process term-stats query.
    */
-  private SearchResultsInfo processTermStatsQuery() throws IOException {
-    // first extract the terms that we need to count
+  private SearchResultsInfo processTermStatsQuery() throws IOEtwitterception {
+    // first etwittertract the terms that we need to count
     TermStatisticsRequestInfo searchRequestInfo =
         new TermStatisticsRequestInfo(searchQuery, luceneQuery, termStatisticsRequest,
             terminationTracker);
@@ -987,12 +987,12 @@ public class EarlybirdSearcher {
   /**
    * Helper method to process realtime query.
    */
-  private SearchResultsInfo processRealtimeQuery() throws IOException, ClientException {
-    // Disable maxHitsToProcess.
+  private SearchResultsInfo processRealtimeQuery() throws IOEtwitterception, ClientEtwitterception {
+    // Disable matwitterHitsToProcess.
     if (!collectorParams.isSetTerminationParams()) {
       collectorParams.setTerminationParams(new CollectorTerminationParams());
-      collectorParams.getTerminationParams().setMaxHitsToProcess(-1);
-      COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS_NOT_SET_COUNTER.increment();
+      collectorParams.getTerminationParams().setMatwitterHitsToProcess(-1);
+      COLLECTOR_PARAMS_MAtwitter_HITS_TO_PROCESS_NOT_SET_COUNTER.increment();
     }
 
     SearchRequestInfo searchRequestInfo = new SearchRequestInfo(
@@ -1006,7 +1006,7 @@ public class EarlybirdSearcher {
       if (!searchRequestInfo.getSearchQuery().isSetDirectFollowFilter()
           || !searchRequestInfo.getSearchQuery().isSetTrustedFilter()) {
         searcherStats.unsetFiltersForSocialFilterTypeQuery.increment();
-        throw new ClientException(
+        throw new ClientEtwitterception(
             "SocialFilterType specified without a TrustedFilter or DirectFollowFilter");
       }
       SocialFilter socialFilter = new SocialFilter(
@@ -1054,7 +1054,7 @@ public class EarlybirdSearcher {
   /**
    * Helper method to process relevance query.
    */
-  private SearchResultsInfo processRelevanceQuery() throws IOException, ClientException {
+  private SearchResultsInfo processRelevanceQuery() throws IOEtwitterception, ClientEtwitterception {
     if (!searchQuery.isSetRelevanceOptions()) {
       LOG.warn("Relevance query with no relevance options!");
       searchQuery.setRelevanceOptions(new ThriftSearchRelevanceOptions());
@@ -1066,7 +1066,7 @@ public class EarlybirdSearcher {
     if (hasSpecifiedTweets) {
       collectorParams.setNumResultsToReturn(searchQuery.getSearchStatusIdsSize());
     }
-    // If we have explicit user ids, we will want to look at all results from those users, and will
+    // If we have etwitterplicit user ids, we will want to look at all results from those users, and will
     // not need to use the AntiGamingFilter.
     final boolean hasSpecifiedFromUserIds = searchQuery.getFromUserIDFilter64Size() > 0;
 
@@ -1128,7 +1128,7 @@ public class EarlybirdSearcher {
 
     if (shouldUseTensorFlowCollector()
         && searchQuery.getRelevanceOptions().isUseRelevanceAllCollector()) {
-      throw new ClientException("Tensorflow scoring does not work with the RelevanceAllCollector");
+      throw new ClientEtwitterception("Tensorflow scoring does not work with the RelevanceAllCollector");
     }
 
     final AbstractRelevanceCollector collector;
@@ -1195,8 +1195,8 @@ public class EarlybirdSearcher {
 
     maybeSetCollectorDebugInfo(collector);
 
-    if (explanationsEnabled(request.getDebugMode())) {
-      searcher.explainSearchResults(searchRequestInfo, hits, searchResults);
+    if (etwitterplanationsEnabled(request.getDebugMode())) {
+      searcher.etwitterplainSearchResults(searchRequestInfo, hits, searchResults);
     }
 
     addResultPayloads();
@@ -1204,7 +1204,7 @@ public class EarlybirdSearcher {
     return hits;
   }
 
-  public static boolean explanationsEnabled(int debugLevel) {
+  public static boolean etwitterplanationsEnabled(int debugLevel) {
     return debugLevel > 1;
   }
 
@@ -1224,15 +1224,15 @@ public class EarlybirdSearcher {
   private void createRelevanceAntiGamingFilter(
       boolean hasSpecifiedTweets, boolean hasSpecifiedFromUserIds) {
 
-    // Anti-gaming filter (turned off for specified tweets mode, or when you're explicitly asking
+    // Anti-gaming filter (turned off for specified tweets mode, or when you're etwitterplicitly asking
     // for specific users' tweets).
-    if (searchQuery.getMaxHitsPerUser() > 0 && !hasSpecifiedTweets && !hasSpecifiedFromUserIds) {
+    if (searchQuery.getMatwitterHitsPerUser() > 0 && !hasSpecifiedTweets && !hasSpecifiedFromUserIds) {
       searcherStats.relevanceAntiGamingFilterUsed.increment();
       antiGamingFilter = new AntiGamingFilter(
-          searchQuery.getMaxHitsPerUser(),
-          searchQuery.getMaxTweepcredForAntiGaming(),
+          searchQuery.getMatwitterHitsPerUser(),
+          searchQuery.getMatwitterTweepcredForAntiGaming(),
           luceneQuery);
-    } else if (searchQuery.getMaxHitsPerUser() <= 0) {
+    } else if (searchQuery.getMatwitterHitsPerUser() <= 0) {
       searcherStats.relevanceAntiGamingFilterNotRequested.increment();
     } else if (hasSpecifiedTweets && hasSpecifiedFromUserIds) {
       searcherStats.relevanceAntiGamingFilterSpecifiedTweetsAndFromUserIds.increment();
@@ -1244,7 +1244,7 @@ public class EarlybirdSearcher {
   }
 
   /**
-   * Check to make sure that there are no nullcast documents in results.  If there exists nullcasts
+   * Check to make sure that there are no nullcast documents in results.  If there etwitterists nullcasts
    * in results, we should log error and increment counters correspondingly.
    */
   @VisibleForTesting
@@ -1253,23 +1253,23 @@ public class EarlybirdSearcher {
       return;
     }
 
-    Set<Long> unexpectedNullcastStatusIds =
-        EarlybirdResponseUtil.findUnexpectedNullcastStatusIds(thriftSearchResults, request);
+    Set<Long> unetwitterpectedNullcastStatusIds =
+        EarlybirdResponseUtil.findUnetwitterpectedNullcastStatusIds(thriftSearchResults, request);
 
-    if (!unexpectedNullcastStatusIds.isEmpty()) {
-      searcherStats.nullcastUnexpectedQueries.increment();
-      searcherStats.nullcastUnexpectedResults.add(unexpectedNullcastStatusIds.size());
+    if (!unetwitterpectedNullcastStatusIds.isEmpty()) {
+      searcherStats.nullcastUnetwitterpectedQueries.increment();
+      searcherStats.nullcastUnetwitterpectedResults.add(unetwitterpectedNullcastStatusIds.size());
 
       String base64Request;
       try {
         base64Request = ThriftUtils.toBase64EncodedString(request);
-      } catch (TException e) {
+      } catch (TEtwitterception e) {
         base64Request = "Failed to parse base 64 request";
       }
       LOG.error(
-          "Found unexpected nullcast tweets: {} | parsedQuery: {} | request: {} | response: {} | "
+          "Found unetwitterpected nullcast tweets: {} | parsedQuery: {} | request: {} | response: {} | "
               + "request base 64: {}",
-          Joiner.on(",").join(unexpectedNullcastStatusIds),
+          Joiner.on(",").join(unetwitterpectedNullcastStatusIds),
           parsedQuery.serialize(),
           request,
           thriftSearchResults,
@@ -1277,10 +1277,10 @@ public class EarlybirdSearcher {
     }
   }
 
-  private void addResultPayloads() throws IOException {
+  private void addResultPayloads() throws IOEtwitterception {
     if (searchQuery.getResultMetadataOptions() != null) {
       if (searchQuery.getResultMetadataOptions().isGetTweetUrls()) {
-        searcher.fillFacetResults(new ExpandedUrlCollector(), searchResults);
+        searcher.fillFacetResults(new EtwitterpandedUrlCollector(), searchResults);
       }
 
       if (searchQuery.getResultMetadataOptions().isGetNamedEntities()) {
@@ -1300,7 +1300,7 @@ public class EarlybirdSearcher {
   /**
    * Helper method to process top tweets query.
    */
-  private SearchResultsInfo processTopTweetsQuery() throws IOException, ClientException {
+  private SearchResultsInfo processTopTweetsQuery() throws IOEtwitterception, ClientEtwitterception {
     // set dummy relevance options if it's not available, but this shouldn't happen in prod
     if (!searchQuery.isSetRelevanceOptions()) {
       searchQuery.setRelevanceOptions(new ThriftSearchRelevanceOptions());
@@ -1357,10 +1357,10 @@ public class EarlybirdSearcher {
 
     maybeSetCollectorDebugInfo(collector);
 
-    if (explanationsEnabled(request.getDebugMode())
+    if (etwitterplanationsEnabled(request.getDebugMode())
         && searchQuery.isSetRelevanceOptions()
         && searchQuery.getRelevanceOptions().isSetRankingParams()) {
-      searcher.explainSearchResults(searchRequestInfo, hits, searchResults);
+      searcher.etwitterplainSearchResults(searchRequestInfo, hits, searchResults);
     }
 
     addResultPayloads();
@@ -1368,7 +1368,7 @@ public class EarlybirdSearcher {
     return hits;
   }
 
-  private FacetCountState newFacetCountState() throws ClientException {
+  private FacetCountState newFacetCountState() throws ClientEtwitterception {
     int minNumFacetResults = DEFAULT_NUM_FACET_RESULTS;
     if (facetRequest.isSetFacetRankingOptions()
         && facetRequest.getFacetRankingOptions().isSetNumCandidatesFromEarlybird()) {
@@ -1386,15 +1386,15 @@ public class EarlybirdSearcher {
       }
     } else {
       Iterator<ThriftFacetFieldRequest> it = facetRequest.getFacetFieldsIterator();
-      while (it.hasNext()) {
-        ThriftFacetFieldRequest facetFieldRequest = it.next();
+      while (it.hasNetwittert()) {
+        ThriftFacetFieldRequest facetFieldRequest = it.netwittert();
         Schema.FieldInfo facet = schemaSnapshot.getFacetFieldByFacetName(
             facetFieldRequest.getFieldName());
         if (facet != null) {
           facetCountState.addFacet(
               facet.getFieldType().getFacetName(), facetFieldRequest.getNumResults());
         } else {
-          throw new ClientException("Unknown facet field: " + facetFieldRequest.getFieldName());
+          throw new ClientEtwitterception("Unknown facet field: " + facetFieldRequest.getFieldName());
         }
       }
     }
@@ -1402,7 +1402,7 @@ public class EarlybirdSearcher {
   }
 
   private com.twitter.search.queryparser.query.Query preLuceneQueryProcess(
-      com.twitter.search.queryparser.query.Query twitterQuery) throws QueryParserException {
+      com.twitter.search.queryparser.query.Query twitterQuery) throws QueryParserEtwitterception {
 
     com.twitter.search.queryparser.query.Query query = twitterQuery;
     if (searchHighFrequencyTermPairs && !includesCardField(searchQuery, query)) {
@@ -1415,7 +1415,7 @@ public class EarlybirdSearcher {
     return query.simplify();
   }
 
-  private Query postLuceneQueryProcess(final Query query) throws ClientException {
+  private Query postLuceneQueryProcess(final Query query) throws ClientEtwitterception {
     if (StringUtils.isBlank(request.getSearchQuery().getSerializedQuery())
         && StringUtils.isBlank(request.getSearchQuery().getLuceneQuery())) {
       searcherStats.numRequestsWithBlankQuery.get(queryMode).increment();
@@ -1426,7 +1426,7 @@ public class EarlybirdSearcher {
         if (queryMode == QueryMode.RECENCY
             || queryMode == QueryMode.RELEVANCE
             || queryMode == QueryMode.TOP_TWEETS) {
-          throw new ClientException(
+          throw new ClientEtwitterception(
               "No query or status ids for " + queryMode.toString().toLowerCase() + " query");
         }
       }
@@ -1456,15 +1456,15 @@ public class EarlybirdSearcher {
             Lists.newArrayList(),
             null,
             queryTimeoutFactory.createQueryTimeout(request, terminationTracker, clock)));
-      } catch (QueryParserException e) {
-        throw new ClientException(e);
+      } catch (QueryParserEtwitterception e) {
+        throw new ClientEtwitterception(e);
       }
     }
 
     // Wrap the lucene query with these filters.
     Query wrappedQuery = wrapFilters(query, filters.toArray(new Query[filters.size()]));
 
-    // If searchStatusIds is set, additionally modify the query to search exactly these
+    // If searchStatusIds is set, additionally modify the query to search etwitteractly these
     // ids, using the luceneQuery only for scoring.
     if (searchQuery.getSearchStatusIdsSize() > 0) {
       this.searcherStats.addedFilterTweetIds.increment();
@@ -1483,7 +1483,7 @@ public class EarlybirdSearcher {
   }
 
   private com.twitter.search.queryparser.query.Query getLikedByUserIdQuery(
-      List<Long> ids) throws QueryParserException {
+      List<Long> ids) throws QueryParserEtwitterception {
     if (DeciderUtil.isAvailableForRandomRecipient(
         decider, USE_MULTI_TERM_DISJUNCTION_FOR_LIKED_BY_USER_IDS_DECIDER_KEY)) {
       // rewrite LikedByUserIdFilter64 to a multi_term_disjuntion query
@@ -1550,7 +1550,7 @@ public class EarlybirdSearcher {
                                      EarlybirdLuceneSearcher.FacetSearchResults hits,
                                      FacetCountState<ThriftFacetFieldResults> facetCountState,
                                      Set<Long> userIDWhitelist,
-                                     byte debugMode) throws IOException {
+                                     byte debugMode) throws IOEtwitterception {
     for (FacetRankingModule rankingModule : FacetRankingModule.REGISTERED_RANKING_MODULES) {
       rankingModule.prepareResults(hits, facetCountState);
     }
@@ -1559,10 +1559,10 @@ public class EarlybirdSearcher {
 
     Iterator<FacetCountState.FacetFieldResults<ThriftFacetFieldResults>> fieldResultsIterator =
         facetCountState.getFacetFieldResultsIterator();
-    while (fieldResultsIterator.hasNext()) {
+    while (fieldResultsIterator.hasNetwittert()) {
 
       FacetCountState.FacetFieldResults<ThriftFacetFieldResults> facetFieldResults =
-          fieldResultsIterator.next();
+          fieldResultsIterator.netwittert();
 
       if (facetFieldResults.results == null) {
         // return empty resultset for this facet
@@ -1599,7 +1599,7 @@ public class EarlybirdSearcher {
   private void prepareTermStatisticsResults(
       ThriftTermStatisticsResults termStatistics,
       TermStatisticsCollector.TermStatisticsSearchResults hits,
-      byte debugMode) throws IOException {
+      byte debugMode) throws IOEtwitterception {
 
     termStatistics.setBinIds(hits.binIds);
     termStatistics.setHistogramSettings(termStatisticsRequest.getHistogramSettings());
@@ -1609,14 +1609,14 @@ public class EarlybirdSearcher {
     if (hits.lastCompleteBinId != -1) {
       termStatistics.setMinCompleteBinId(hits.lastCompleteBinId);
     } else {
-      SearchRateCounter.export(String.format(
+      SearchRateCounter.etwitterport(String.format(
           "term_stats_%s_unset_min_complete_bin_id", request.getClientId())).increment();
     }
 
     if (idTimeRanges != null
-        && idTimeRanges.getUntilTimeExclusive().isPresent()
-        && hits.getMinSearchedTime() > idTimeRanges.getUntilTimeExclusive().get()) {
-      SearchRateCounter.export(String.format(
+        && idTimeRanges.getUntilTimeEtwitterclusive().isPresent()
+        && hits.getMinSearchedTime() > idTimeRanges.getUntilTimeEtwitterclusive().get()) {
+      SearchRateCounter.etwitterport(String.format(
           "term_stats_%s_min_searched_time_after_until_time", request.getClientId())).increment();
     }
 
@@ -1633,7 +1633,7 @@ public class EarlybirdSearcher {
     Preconditions.checkNotNull(earlyTerminationState);
     Preconditions.checkNotNull(searchResultsInfo);
 
-    exportEarlyTerminationStats(earlyTerminationState);
+    etwitterportEarlyTerminationStats(earlyTerminationState);
 
     EarlybirdResponse response =
         newResponse(EarlybirdResponseCode.SUCCESS, request.getDebugMode() > 0);
@@ -1642,7 +1642,7 @@ public class EarlybirdSearcher {
 
     if (thriftSearchResults != null) {
       // Nullcast check is only used when parsed query is available: if there is no parsed query,
-      // we would not add possible exclude nullcast filter.
+      // we would not add possible etwitterclude nullcast filter.
       if (parsedQuery != null && !parsedQueryAllowNullcast) {
         logAndIncrementStatsIfNullcastInResults(thriftSearchResults);
       }
@@ -1664,12 +1664,12 @@ public class EarlybirdSearcher {
     return response;
   }
 
-  private void exportEarlyTerminationStats(@Nonnull EarlyTerminationInfo earlyTerminationState) {
+  private void etwitterportEarlyTerminationStats(@Nonnull EarlyTerminationInfo earlyTerminationState) {
     if (earlyTerminationState.isSetEarlyTerminationReason()) {
-      SearchRateCounter.export(String.format("early_termination_%s_%s",
+      SearchRateCounter.etwitterport(String.format("early_termination_%s_%s",
           ClientIdUtil.formatClientId(request.getClientId()),
           earlyTerminationState.getEarlyTerminationReason())).increment();
-      SearchRateCounter.export(String.format("early_termination_%s_%s",
+      SearchRateCounter.etwitterport(String.format("early_termination_%s_%s",
           ClientIdUtil.formatClientIdAndRequestType(
               request.getClientId(), queryMode.name().toLowerCase()),
           earlyTerminationState.getEarlyTerminationReason())).increment();
@@ -1698,17 +1698,17 @@ public class EarlybirdSearcher {
     Map<com.twitter.search.queryparser.query.Query, Integer> nodeToRankMap =
         Preconditions.checkNotNull(hitAttributeHelper.getNodeToRankMap());
 
-    Map<com.twitter.search.queryparser.query.Query, List<Integer>> expandedNodeToRankMap =
-        Preconditions.checkNotNull(hitAttributeHelper.getExpandedNodeToRankMap());
+    Map<com.twitter.search.queryparser.query.Query, List<Integer>> etwitterpandedNodeToRankMap =
+        Preconditions.checkNotNull(hitAttributeHelper.getEtwitterpandedNodeToRankMap());
 
     // Build a rank to id map
     ImmutableMap.Builder<Integer, Long> builder = ImmutableMap.builder();
     for (com.twitter.search.queryparser.query.Query query : nodeToRankMap.keySet()) {
       if (query instanceof SearchOperator) {
         SearchOperator op = (SearchOperator) query;
-        if (expandedNodeToRankMap.containsKey(query)) {
+        if (etwitterpandedNodeToRankMap.containsKey(query)) {
           // for multi_term_disjunction case
-          List<Integer> ranks = expandedNodeToRankMap.get(op);
+          List<Integer> ranks = etwitterpandedNodeToRankMap.get(op);
           Preconditions.checkArgument(op.getNumOperands() == ranks.size() + 1);
           for (int i = 0; i < ranks.size(); ++i) {
             builder.put(ranks.get(i), Long.valueOf(op.getOperands().get(i + 1)));
@@ -1740,10 +1740,10 @@ public class EarlybirdSearcher {
             likedByUserIdList.add(rankToIdMap.get(rank));
           }
         }
-        if (!result.getMetadata().isSetExtraMetadata()) {
-          result.getMetadata().setExtraMetadata(new ThriftSearchResultExtraMetadata());
+        if (!result.getMetadata().isSetEtwittertraMetadata()) {
+          result.getMetadata().setEtwittertraMetadata(new ThriftSearchResultEtwittertraMetadata());
         }
-        result.getMetadata().getExtraMetadata().setLikedByUserIds(likedByUserIdList);
+        result.getMetadata().getEtwittertraMetadata().setLikedByUserIds(likedByUserIdList);
       }
     }
   }
@@ -1788,7 +1788,7 @@ public class EarlybirdSearcher {
 
   private static boolean includesCardField(ThriftSearchQuery searchQuery,
                                            com.twitter.search.queryparser.query.Query query)
-      throws QueryParserException {
+      throws QueryParserEtwitterception {
 
     if (searchQuery.isSetRelevanceOptions()) {
       ThriftSearchRelevanceOptions options = searchQuery.getRelevanceOptions();
@@ -1871,17 +1871,17 @@ public class EarlybirdSearcher {
   private static boolean isAllowedCamelcaseUsernameFieldWeightOverride(
       Decider decider, String clusterName) {
     return DeciderUtil.isAvailableForRandomRecipient(decider,
-        ALLOW_CAMELCASE_USERNAME_FIELD_WEIGHT_OVERRIDE_DECIDER_KEY_PREFIX + clusterName);
+        ALLOW_CAMELCASE_USERNAME_FIELD_WEIGHT_OVERRIDE_DECIDER_KEY_PREFItwitter + clusterName);
   }
 
   private static boolean isAllowedTokenizedScreenNameFieldWeightOverride(
       Decider decider, String clusterName) {
     return DeciderUtil.isAvailableForRandomRecipient(decider,
-        ALLOW_TOKENIZED_DISPLAY_NAME_FIELD_WEIGHT_OVERRIDE_DECIDER_KEY_PREFIX + clusterName);
+        ALLOW_TOKENIZED_DISPLAY_NAME_FIELD_WEIGHT_OVERRIDE_DECIDER_KEY_PREFItwitter + clusterName);
   }
 
   private static com.twitter.search.queryparser.query.Query
-  createMultiTermDisjunctionQueryForLikedByUserIds(List<Long> ids) throws QueryParserException {
+  createMultiTermDisjunctionQueryForLikedByUserIds(List<Long> ids) throws QueryParserEtwitterception {
     List<String> operands = new ArrayList<>(ids.size() + 1);
     operands.add(EarlybirdFieldConstant.LIKED_BY_USER_ID_FIELD.getFieldName());
     for (long id : ids) {
@@ -1892,7 +1892,7 @@ public class EarlybirdSearcher {
   }
 
   private static com.twitter.search.queryparser.query.Query createDisjunctionQueryForLikedByUserIds(
-      List<Long> ids) throws QueryParserException {
+      List<Long> ids) throws QueryParserEtwitterception {
     return new Disjunction(
         ids.stream()
             .map(id -> new SearchOperator(SearchOperator.Type.LIKED_BY_USER_ID, id))
@@ -1905,7 +1905,7 @@ public class EarlybirdSearcher {
   }
 
   /**
-   * Get the index fields that were queried after this searcher completed its job.
+   * Get the indetwitter fields that were queried after this searcher completed its job.
    * @return
    */
   public Set<String> getQueriedFields() {

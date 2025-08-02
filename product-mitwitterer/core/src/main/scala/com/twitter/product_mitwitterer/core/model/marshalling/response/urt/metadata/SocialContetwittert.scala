@@ -1,0 +1,49 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.metadata
+
+sealed trait SocialContetwittert
+
+trait HasSocialContetwittert {
+  def socialContetwittert: Option[SocialContetwittert]
+}
+
+sealed trait GeneralContetwittertType
+case object LikeGeneralContetwittertType etwittertends GeneralContetwittertType
+case object FollowGeneralContetwittertType etwittertends GeneralContetwittertType
+case object MomentGeneralContetwittertType etwittertends GeneralContetwittertType
+case object ReplyGeneralContetwittertType etwittertends GeneralContetwittertType
+case object ConversationGeneralContetwittertType etwittertends GeneralContetwittertType
+case object PinGeneralContetwittertType etwittertends GeneralContetwittertType
+case object TetwittertOnlyGeneralContetwittertType etwittertends GeneralContetwittertType
+case object FacePileGeneralContetwittertType etwittertends GeneralContetwittertType
+case object MegaPhoneGeneralContetwittertType etwittertends GeneralContetwittertType
+case object BirdGeneralContetwittertType etwittertends GeneralContetwittertType
+case object FeedbackGeneralContetwittertType etwittertends GeneralContetwittertType
+case object TopicGeneralContetwittertType etwittertends GeneralContetwittertType
+case object ListGeneralContetwittertType etwittertends GeneralContetwittertType
+case object RetweetGeneralContetwittertType etwittertends GeneralContetwittertType
+case object LocationGeneralContetwittertType etwittertends GeneralContetwittertType
+case object CommunityGeneralContetwittertType etwittertends GeneralContetwittertType
+case object NewUserGeneralContetwittertType etwittertends GeneralContetwittertType
+case object SmartblockEtwitterpirationGeneralContetwittertType etwittertends GeneralContetwittertType
+case object TrendingGeneralContetwittertType etwittertends GeneralContetwittertType
+case object SparkleGeneralContetwittertType etwittertends GeneralContetwittertType
+case object SpacesGeneralContetwittertType etwittertends GeneralContetwittertType
+case object ReplyPinGeneralContetwittertType etwittertends GeneralContetwittertType
+
+case class GeneralContetwittert(
+  contetwittertType: GeneralContetwittertType,
+  tetwittert: String,
+  url: Option[String],
+  contetwittertImageUrls: Option[List[String]],
+  landingUrl: Option[Url])
+    etwittertends SocialContetwittert
+
+sealed trait TopicContetwittertFunctionalityType
+case object BasicTopicContetwittertFunctionalityType etwittertends TopicContetwittertFunctionalityType
+case object RecommendationTopicContetwittertFunctionalityType etwittertends TopicContetwittertFunctionalityType
+case object RecWithEducationTopicContetwittertFunctionalityType etwittertends TopicContetwittertFunctionalityType
+
+case class TopicContetwittert(
+  topicId: String,
+  functionalityType: Option[TopicContetwittertFunctionalityType])
+    etwittertends SocialContetwittert

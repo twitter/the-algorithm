@@ -14,11 +14,11 @@ object UpdateKnownFor {
    * @param sumOfMembershipWeightedEdgeWeights sum of { edge weight * membership weight } for each node
    *                                           in the neighborhood. Membership weight to what is not
    *                                           specified in this case class and is instead part of the
-   *                                           context.
+   *                                           contetwittert.
    * @param sumOfMembershipWeights             sum of membership weight for each node in the
    *                                           neighborhood. Membership weight to what is not
    *                                           specified in this case class and is instead part of
-   *                                           the context.
+   *                                           the contetwittert.
    */
   case class NeighborhoodInformation(
     nodeCount: Int,
@@ -26,7 +26,7 @@ object UpdateKnownFor {
     sumOfMembershipWeightedEdgeWeights: Float,
     sumOfMembershipWeights: Float)
 
-  object NeighborhoodInformationMonoid extends Monoid[NeighborhoodInformation] {
+  object NeighborhoodInformationMonoid etwittertends Monoid[NeighborhoodInformation] {
     override val zero: NeighborhoodInformation = NeighborhoodInformation(0, 0f, 0f, 0f)
     override def plus(l: NeighborhoodInformation, r: NeighborhoodInformation) =
       NeighborhoodInformation(
@@ -42,7 +42,7 @@ object UpdateKnownFor {
     overallStats: NeighborhoodInformation,
     statsOfClustersInNeighborhood: Map[Int, NeighborhoodInformation])
 
-  object NodeInformationSemigroup extends Semigroup[NodeInformation] {
+  object NodeInformationSemigroup etwittertends Semigroup[NodeInformation] {
     implicit val ctsMonoid: Monoid[NeighborhoodInformation] = NeighborhoodInformationMonoid
 
     override def plus(l: NodeInformation, r: NodeInformation) =
@@ -144,7 +144,7 @@ object UpdateKnownFor {
         }
     }
     if (clusterToScores.nonEmpty) {
-      Some(clusterToScores.maxBy(_._2))
+      Some(clusterToScores.matwitterBy(_._2))
     } else None
   }
 

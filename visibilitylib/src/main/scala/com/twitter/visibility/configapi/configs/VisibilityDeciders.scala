@@ -6,7 +6,7 @@ import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.logging.Logger
 import com.twitter.servo.decider.DeciderGateBuilder
 import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.BaseRequestContext
+import com.twitter.timelines.configapi.BaseRequestContetwittert
 import com.twitter.timelines.configapi.Config
 import com.twitter.timelines.configapi.Param
 import com.twitter.timelines.configapi.WithGuestId
@@ -64,7 +64,7 @@ private[visibility] object VisibilityDeciders {
     DirectMessages -> DeciderKey.EnableDirectMessagesSafetyLevel,
     DirectMessagesConversationList -> DeciderKey.EnableDirectMessagesConversationListSafetyLevel,
     DirectMessagesConversationTimeline -> DeciderKey.EnableDirectMessagesConversationTimelineSafetyLevel,
-    DirectMessagesInbox -> DeciderKey.EnableDirectMessagesInboxSafetyLevel,
+    DirectMessagesInbotwitter -> DeciderKey.EnableDirectMessagesInbotwitterSafetyLevel,
     DirectMessagesMutedUsers -> DeciderKey.EnableDirectMessagesMutedUsersSafetyLevel,
     DirectMessagesPinned -> DeciderKey.EnableDirectMessagesPinnedSafetyLevel,
     DirectMessagesSearch -> DeciderKey.EnableDirectMessagesSearchSafetyLevel,
@@ -102,7 +102,7 @@ private[visibility] object VisibilityDeciders {
     ModeratedTweetsTimeline -> DeciderKey.EnableModeratedTweetsTimelineSafetyLevel,
     Moments -> DeciderKey.EnableMomentsSafetyLevel,
     NearbyTimeline -> DeciderKey.EnableNearbyTimelineSafetyLevel,
-    NewUserExperience -> DeciderKey.EnableNewUserExperienceSafetyLevel,
+    NewUserEtwitterperience -> DeciderKey.EnableNewUserEtwitterperienceSafetyLevel,
     NotificationsIbis -> DeciderKey.EnableNotificationsIbisSafetyLevel,
     NotificationsPlatform -> DeciderKey.EnableNotificationsPlatformSafetyLevel,
     NotificationsPlatformPush -> DeciderKey.EnableNotificationsPlatformPushSafetyLevel,
@@ -112,8 +112,8 @@ private[visibility] object VisibilityDeciders {
     NotificationsWrite -> DeciderKey.EnableNotificationsWriteSafetyLevel,
     NotificationsWriterV2 -> DeciderKey.EnableNotificationsWriterV2SafetyLevel,
     NotificationsWriterTweetHydrator -> DeciderKey.EnableNotificationsWriterTweetHydratorSafetyLevel,
-    ProfileMixerMedia -> DeciderKey.EnableProfileMixeMediaSafetyLevel,
-    ProfileMixerFavorites -> DeciderKey.EnableProfileMixerFavoritesSafetyLevel,
+    ProfileMitwittererMedia -> DeciderKey.EnableProfileMitwittereMediaSafetyLevel,
+    ProfileMitwittererFavorites -> DeciderKey.EnableProfileMitwittererFavoritesSafetyLevel,
     QuickPromoteTweetEligibility -> DeciderKey.EnableQuickPromoteTweetEligibilitySafetyLevel,
     QuoteTweetTimeline -> DeciderKey.EnableQuoteTweetTimelineSafetyLevel,
     QuotedTweetRules -> DeciderKey.EnableQuotedTweetRulesSafetyLevel,
@@ -122,14 +122,14 @@ private[visibility] object VisibilityDeciders {
     RecosWritePath -> DeciderKey.EnableRecosWritePathSafetyLevel,
     RepliesGrouping -> DeciderKey.EnableRepliesGroupingSafetyLevel,
     ReportCenter -> DeciderKey.EnableReportCenterSafetyLevel,
-    ReturningUserExperience -> DeciderKey.EnableReturningUserExperienceSafetyLevel,
-    ReturningUserExperienceFocalTweet -> DeciderKey.EnableReturningUserExperienceFocalTweetSafetyLevel,
+    ReturningUserEtwitterperience -> DeciderKey.EnableReturningUserEtwitterperienceSafetyLevel,
+    ReturningUserEtwitterperienceFocalTweet -> DeciderKey.EnableReturningUserEtwitterperienceFocalTweetSafetyLevel,
     Revenue -> DeciderKey.EnableRevenueSafetyLevel,
     RitoActionedTweetTimeline -> DeciderKey.EnableRitoActionedTweetTimelineSafetyLevel,
     SafeSearchMinimal -> DeciderKey.EnableSafeSearchMinimalSafetyLevel,
     SafeSearchStrict -> DeciderKey.EnableSafeSearchStrictSafetyLevel,
-    SearchMixerSrpMinimal -> DeciderKey.EnableSearchMixerSrpMinimalSafetyLevel,
-    SearchMixerSrpStrict -> DeciderKey.EnableSearchMixerSrpStrictSafetyLevel,
+    SearchMitwittererSrpMinimal -> DeciderKey.EnableSearchMitwittererSrpMinimalSafetyLevel,
+    SearchMitwittererSrpStrict -> DeciderKey.EnableSearchMitwittererSrpStrictSafetyLevel,
     SearchHydration -> DeciderKey.EnableSearchHydration,
     SearchLatest -> DeciderKey.EnableSearchLatest,
     SearchPeopleSrp -> DeciderKey.EnableSearchPeopleSrp,
@@ -156,7 +156,7 @@ private[visibility] object VisibilityDeciders {
     SpacesSharing -> DeciderKey.EnableSpacesSharingSafetyLevel,
     SpaceTweetAvatarHomeTimeline -> DeciderKey.EnableSpaceTweetAvatarHomeTimelineSafetyLevel,
     StickersTimeline -> DeciderKey.EnableStickersTimelineSafetyLevel,
-    StratoExtLimitedEngagements -> DeciderKey.EnableStratoExtLimitedEngagementsSafetyLevel,
+    StratoEtwittertLimitedEngagements -> DeciderKey.EnableStratoEtwittertLimitedEngagementsSafetyLevel,
     StreamServices -> DeciderKey.EnableStreamServicesSafetyLevel,
     SuperFollowerConnections -> DeciderKey.EnableSuperFollowerConnectionsSafetyLevel,
     SuperLike -> DeciderKey.EnableSuperLikeSafetyLevel,
@@ -174,7 +174,7 @@ private[visibility] object VisibilityDeciders {
     TimelineHomeTopicFollowRecommendations -> DeciderKey.EnableTimelineHomeTopicFollowRecommendationsSafetyLevel,
     TimelineScorer -> DeciderKey.EnableTimelineScorerSafetyLevel,
     TopicsLandingPageTopicRecommendations -> DeciderKey.EnableTopicsLandingPageTopicRecommendationsSafetyLevel,
-    ExploreRecommendations -> DeciderKey.EnableExploreRecommendationsSafetyLevel,
+    EtwitterploreRecommendations -> DeciderKey.EnableEtwitterploreRecommendationsSafetyLevel,
     TimelineInjection -> DeciderKey.EnableTimelineInjectionSafetyLevel,
     TimelineMentions -> DeciderKey.EnableTimelineMentionsSafetyLevel,
     TimelineModeratedTweetsHydration -> DeciderKey.EnableTimelineModeratedTweetsHydrationSafetyLevel,
@@ -269,18 +269,18 @@ private[visibility] object VisibilityDeciders {
       DeciderKey.EnableReportedTweetInterstitialRule,
     RuleParams.EnableReportedTweetInterstitialSearchRule ->
       DeciderKey.EnableReportedTweetInterstitialSearchRule,
-    RuleParams.EnableDropExclusiveTweetContentRule ->
-      DeciderKey.EnableDropExclusiveTweetContentRule,
-    RuleParams.EnableDropExclusiveTweetContentRuleFailClosed ->
-      DeciderKey.EnableDropExclusiveTweetContentRuleFailClosed,
-    RuleParams.EnableTombstoneExclusiveQtProfileTimelineParam ->
-      DeciderKey.EnableTombstoneExclusiveQtProfileTimelineParam,
-    RuleParams.EnableDropAllExclusiveTweetsRuleParam -> DeciderKey.EnableDropAllExclusiveTweetsRule,
-    RuleParams.EnableDropAllExclusiveTweetsRuleFailClosedParam -> DeciderKey.EnableDropAllExclusiveTweetsRuleFailClosed,
+    RuleParams.EnableDropEtwitterclusiveTweetContentRule ->
+      DeciderKey.EnableDropEtwitterclusiveTweetContentRule,
+    RuleParams.EnableDropEtwitterclusiveTweetContentRuleFailClosed ->
+      DeciderKey.EnableDropEtwitterclusiveTweetContentRuleFailClosed,
+    RuleParams.EnableTombstoneEtwitterclusiveQtProfileTimelineParam ->
+      DeciderKey.EnableTombstoneEtwitterclusiveQtProfileTimelineParam,
+    RuleParams.EnableDropAllEtwitterclusiveTweetsRuleParam -> DeciderKey.EnableDropAllEtwitterclusiveTweetsRule,
+    RuleParams.EnableDropAllEtwitterclusiveTweetsRuleFailClosedParam -> DeciderKey.EnableDropAllEtwitterclusiveTweetsRuleFailClosed,
     RuleParams.EnableDownrankSpamReplySectioningRuleParam ->
       DeciderKey.EnableDownrankSpamReplySectioningRule,
-    RuleParams.EnableNsfwTextSectioningRuleParam ->
-      DeciderKey.EnableNsfwTextSectioningRule,
+    RuleParams.EnableNsfwTetwittertSectioningRuleParam ->
+      DeciderKey.EnableNsfwTetwittertSectioningRule,
     RuleParams.EnableSearchIpiSafeSearchWithoutUserInQueryDropRule -> DeciderKey.EnableSearchIpiSafeSearchWithoutUserInQueryDropRule,
     RuleParams.EnableTimelineHomePromotedTweetHealthEnforcementRules -> DeciderKey.EnableTimelineHomePromotedTweetHealthEnforcementRules,
     RuleParams.EnableMutedKeywordFilteringSpaceTitleNotificationsRuleParam -> DeciderKey.EnableMutedKeywordFilteringSpaceTitleNotificationsRule,
@@ -288,12 +288,12 @@ private[visibility] object VisibilityDeciders {
     RuleParams.EnableDropAllTrustedFriendsTweetsRuleParam -> DeciderKey.EnableDropAllTrustedFriendsTweetsRule,
     RuleParams.EnableDropTrustedFriendsTweetContentRuleParam -> DeciderKey.EnableDropTrustedFriendsTweetContentRule,
     RuleParams.EnableDropAllCollabInvitationTweetsRuleParam -> DeciderKey.EnableDropCollabInvitationTweetsRule,
-    RuleParams.EnableNsfwTextHighPrecisionDropRuleParam -> DeciderKey.EnableNsfwTextHighPrecisionDropRule,
+    RuleParams.EnableNsfwTetwittertHighPrecisionDropRuleParam -> DeciderKey.EnableNsfwTetwittertHighPrecisionDropRule,
     RuleParams.EnableLikelyIvsUserLabelDropRule -> DeciderKey.EnableLikelyIvsUserLabelDropRule,
     RuleParams.EnableCardUriRootDomainCardDenylistRule -> DeciderKey.EnableCardUriRootDomainDenylistRule,
     RuleParams.EnableCommunityNonMemberPollCardRule -> DeciderKey.EnableCommunityNonMemberPollCardRule,
     RuleParams.EnableCommunityNonMemberPollCardRuleFailClosed -> DeciderKey.EnableCommunityNonMemberPollCardRuleFailClosed,
-    RuleParams.EnableExperimentalNudgeEnabledParam -> DeciderKey.EnableExperimentalNudgeLabelRule,
+    RuleParams.EnableEtwitterperimentalNudgeEnabledParam -> DeciderKey.EnableEtwitterperimentalNudgeLabelRule,
     RuleParams.NsfwHighPrecisionUserLabelAvoidTweetRuleEnabledParam -> DeciderKey.NsfwHighPrecisionUserLabelAvoidTweetRuleEnabledParam,
     RuleParams.EnableNewAdAvoidanceRulesParam -> DeciderKey.EnableNewAdAvoidanceRules,
     RuleParams.EnableNsfaHighRecallAdAvoidanceParam -> DeciderKey.EnableNsfaHighRecallAdAvoidanceParam,
@@ -309,8 +309,8 @@ private[visibility] object VisibilityDeciders {
     RuleParams.EnableNsfwHpQuotedTweetTombstoneRuleParam -> DeciderKey.EnableNsfwHpQuotedTweetTombstoneRule,
     RuleParams.EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRuleParam -> DeciderKey.EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRule,
     RuleParams.EnableInnerQuotedTweetViewerMutesAuthorInterstitialRuleParam -> DeciderKey.EnableInnerQuotedTweetViewerMutesAuthorInterstitialRule,
-    RuleParams.EnableToxicReplyFilteringConversationRulesParam -> DeciderKey.VisibilityLibraryEnableToxicReplyFilterConversation,
-    RuleParams.EnableToxicReplyFilteringNotificationsRulesParam -> DeciderKey.VisibilityLibraryEnableToxicReplyFilterNotifications,
+    RuleParams.EnableTotwittericReplyFilteringConversationRulesParam -> DeciderKey.VisibilityLibraryEnableTotwittericReplyFilterConversation,
+    RuleParams.EnableTotwittericReplyFilteringNotificationsRulesParam -> DeciderKey.VisibilityLibraryEnableTotwittericReplyFilterNotifications,
     RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam -> DeciderKey.EnableLegacySensitiveMediaRulesHomeTimeline,
     RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam -> DeciderKey.EnableNewSensitiveMediaSettingsInterstitialRulesHomeTimeline,
     RuleParams.EnableLegacySensitiveMediaConversationRulesParam -> DeciderKey.EnableLegacySensitiveMediaRulesConversation,
@@ -337,7 +337,7 @@ private[visibility] object VisibilityDeciders {
     SafetyLevel: SafetyLevel
   ): Config = {
 
-    object UserOrGuestOrRequest extends RecipientBuilder {
+    object UserOrGuestOrRequest etwittertends RecipientBuilder {
       private val scopedStats = statsReceiver.scope("decider_recipient")
       private val userIdDefinedCounter = scopedStats.counter("user_id_defined")
       private val userIdNotDefinedCounter = scopedStats.counter("user_id_undefined")
@@ -345,7 +345,7 @@ private[visibility] object VisibilityDeciders {
       private val guestIdNotDefinedCounter = scopedStats.counter("guest_id_undefined")
       private val noIdCounter = scopedStats.counter("no_id_defined")
 
-      def apply(requestContext: BaseRequestContext): Option[Recipient] = requestContext match {
+      def apply(requestContetwittert: BaseRequestContetwittert): Option[Recipient] = requestContetwittert match {
         case c: WithUserId if c.userId.isDefined =>
           userIdDefinedCounter.incr()
           c.userId.map(SimpleRecipient)
@@ -359,7 +359,7 @@ private[visibility] object VisibilityDeciders {
           userIdNotDefinedCounter.incr()
           None
         case _ =>
-          logger.warning("Request Context with no user or guest id trait found: " + requestContext)
+          logger.warning("Request Contetwittert with no user or guest id trait found: " + requestContetwittert)
           noIdCounter.incr()
           None
       }

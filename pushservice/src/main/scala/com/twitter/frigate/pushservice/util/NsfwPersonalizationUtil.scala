@@ -119,8 +119,8 @@ case class NsfwInfo(nsfwUserSegmentation: NSFWUserSegmentation) {
       else 0
     }.getOrElse(0d).toInt
   val hasReported: Boolean =
-    nsfwUserSegmentation.notifFeedbackMetrics.exists(_.notifReportMetrics.exists(_.countTotal != 0))
+    nsfwUserSegmentation.notifFeedbackMetrics.etwitterists(_.notifReportMetrics.etwitterists(_.countTotal != 0))
   val hasDisliked: Boolean =
     nsfwUserSegmentation.notifFeedbackMetrics
-      .exists(_.notifDislikeMetrics.exists(_.countTotal != 0))
+      .etwitterists(_.notifDislikeMetrics.etwitterists(_.countTotal != 0))
 }

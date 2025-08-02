@@ -12,7 +12,7 @@ import com.twitter.frigate.pushservice.predicate.magic_fanout.MagicFanoutSportsU
 import com.twitter.frigate.pushservice.util.PushIbisUtil._
 import com.twitter.util.Future
 
-trait MagicFanoutSportsEventIbis2Hydrator extends Ibis2HydratorForCandidate {
+trait MagicFanoutSportsEventIbis2Hydrator etwittertends Ibis2HydratorForCandidate {
   self: PushCandidate
     with MagicFanoutEventHydratedCandidate
     with MagicFanoutSportsEventCandidate

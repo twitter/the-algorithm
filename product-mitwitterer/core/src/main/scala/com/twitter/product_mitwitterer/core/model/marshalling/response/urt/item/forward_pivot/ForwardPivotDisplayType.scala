@@ -1,0 +1,7 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.item.forward_pivot
+
+sealed trait ForwardPivotDisplayType
+
+case object LiveEvent etwittertends ForwardPivotDisplayType
+case object SoftIntervention etwittertends ForwardPivotDisplayType
+case object CommunityNotes etwittertends ForwardPivotDisplayType

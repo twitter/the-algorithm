@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.twitter.periscope.api.thriftjava.AudioSpacesLookupContext;
+import com.twitter.periscope.api.thriftjava.AudioSpacesLookupContetwittert;
 import com.twitter.stitch.Stitch;
 import com.twitter.strato.catalog.Fetch;
 import com.twitter.strato.client.Client;
@@ -21,22 +21,22 @@ import com.twitter.util.Try;
 public class AudioSpaceCoreFetcher {
   private static final String CORE_STRATO_COLUMN = "";
 
-  private static final AudioSpacesLookupContext
-      EMPTY_AUDIO_LOOKUP_CONTEXT = new AudioSpacesLookupContext();
+  private static final AudioSpacesLookupContetwittert
+      EMPTY_AUDIO_LOOKUP_CONTEtwitterT = new AudioSpacesLookupContetwittert();
 
-  private final Fetcher<String, AudioSpacesLookupContext, AudioSpace> fetcher;
+  private final Fetcher<String, AudioSpacesLookupContetwittert, AudioSpace> fetcher;
 
   public AudioSpaceCoreFetcher(Client stratoClient) {
     fetcher = stratoClient.fetcher(
         CORE_STRATO_COLUMN,
         true, // enables checking types against catalog
         Conv.stringConv(),
-        TBaseConv.forClass(AudioSpacesLookupContext.class),
+        TBaseConv.forClass(AudioSpacesLookupContetwittert.class),
         TBaseConv.forClass(AudioSpace.class));
   }
 
   public Future<Fetch.Result<AudioSpace>> fetch(String spaceId) {
-    return Stitch.run(fetcher.fetch(spaceId, EMPTY_AUDIO_LOOKUP_CONTEXT));
+    return Stitch.run(fetcher.fetch(spaceId, EMPTY_AUDIO_LOOKUP_CONTEtwitterT));
   }
 
   /**
@@ -47,7 +47,7 @@ public class AudioSpaceCoreFetcher {
         Stitch.collectToTry(
             spaceIds
                 .stream()
-                .map(spaceId -> fetcher.fetch(spaceId, EMPTY_AUDIO_LOOKUP_CONTEXT))
+                .map(spaceId -> fetcher.fetch(spaceId, EMPTY_AUDIO_LOOKUP_CONTEtwitterT))
                 .collect(Collectors.toList())
         )
     );

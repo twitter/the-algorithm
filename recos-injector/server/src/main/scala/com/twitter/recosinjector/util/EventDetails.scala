@@ -63,9 +63,9 @@ case class TweetDetails(tweet: Tweet) {
 
   val urls: Option[Seq[String]] = tweet.urls.map(_.map(_.url))
 
-  val mediaUrls: Option[Seq[String]] = tweet.media.map(_.map(_.expandedUrl))
+  val mediaUrls: Option[Seq[String]] = tweet.media.map(_.map(_.etwitterpandedUrl))
 
-  val hashtags: Option[Seq[String]] = tweet.hashtags.map(_.map(_.text))
+  val hashtags: Option[Seq[String]] = tweet.hashtags.map(_.map(_.tetwittert))
 
   // mentionUserIds include reply user ids at the beginning of a tweet
   val mentionUserIds: Option[Seq[Long]] = tweet.mentions.map(_.flatMap(_.userId))
@@ -107,12 +107,12 @@ case class TweetDetails(tweet: Tweet) {
 
   // TweetyPie does not populate url fields in a quote tweet create event, even though we
   // consider quote tweets as url tweets. This boolean helps make up for it.
-  // Details: https://groups.google.com/a/twitter.com/d/msg/eng/BhK1XAcSSWE/F8Gc4_5uDwAJ
-  val hasQuoteTweetUrl: Boolean = tweet.quotedTweet.exists(_.permalink.isDefined)
+  // Details: https://groups.google.com/a/twitter.com/d/msg/eng/BhK1twitterAcSSWE/F8Gc4_5uDwAJ
+  val hasQuoteTweetUrl: Boolean = tweet.quotedTweet.etwitterists(_.permalink.isDefined)
 
-  val hasUrl: Boolean = this.urls.exists(_.nonEmpty) || hasQuoteTweetUrl
+  val hasUrl: Boolean = this.urls.etwitterists(_.nonEmpty) || hasQuoteTweetUrl
 
-  val hasHashtag: Boolean = this.hashtags.exists(_.nonEmpty)
+  val hasHashtag: Boolean = this.hashtags.etwitterists(_.nonEmpty)
 
   val isCard: Boolean = hasUrl | hasPhoto | hasVideo
 
@@ -121,6 +121,6 @@ case class TweetDetails(tweet: Tweet) {
   // Return a hashed long that contains card type information of the tweet
   val cardInfo: Long = isCard | (hasUrl << 1) | (hasPhoto << 2) | (hasVideo << 3)
 
-  // nullcast tweet is one that is purposefully not broadcast to followers, ex. an ad tweet.
-  val isNullCastTweet: Boolean = tweet.coreData.exists(_.nullcast)
+  // nullcast tweet is one that is purposefully not broadcast to followers, etwitter. an ad tweet.
+  val isNullCastTweet: Boolean = tweet.coreData.etwitterists(_.nullcast)
 }

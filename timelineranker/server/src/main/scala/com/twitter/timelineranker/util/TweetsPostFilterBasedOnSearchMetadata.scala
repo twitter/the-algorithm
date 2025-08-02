@@ -9,7 +9,7 @@ import com.twitter.timelines.model.UserId
 import com.twitter.timelines.util.stats.RequestStats
 import scala.collection.mutable
 
-object TweetFiltersBasedOnSearchMetadata extends Enumeration {
+object TweetFiltersBasedOnSearchMetadata etwittertends Enumeration {
   val DuplicateRetweets: Value = Value
   val DuplicateTweets: Value = Value
 
@@ -43,7 +43,7 @@ case class TweetsPostFilterBasedOnSearchMetadataParams(
   userId: UserId,
   inNetworkUserIds: Seq[UserId],
   numRetweetsAllowed: Int,
-  loggingPrefix: String = "")
+  loggingPrefitwitter: String = "")
 
 /**
  * Performs post-filtering on tweets obtained from search using metadata returned from search.
@@ -55,7 +55,7 @@ class TweetsPostFilterBasedOnSearchMetadata(
   filters: TweetFiltersBasedOnSearchMetadata.ValueSet,
   logger: Logger,
   statsReceiver: StatsReceiver)
-    extends RequestStats {
+    etwittertends RequestStats {
   import TweetFiltersBasedOnSearchMetadata.FilterBasedOnSearchMetadataMethod
   import TweetFiltersBasedOnSearchMetadata.MutableState
 
@@ -78,12 +78,12 @@ class TweetsPostFilterBasedOnSearchMetadata(
     tweets: Seq[ThriftSearchResult],
     numRetweetsAllowed: Int = 1
   ): Seq[ThriftSearchResult] = {
-    val loggingPrefix = s"userId: $userId"
+    val loggingPrefitwitter = s"userId: $userId"
     val params = TweetsPostFilterBasedOnSearchMetadataParams(
       userId = userId,
       inNetworkUserIds = inNetworkUserIds,
       numRetweetsAllowed = numRetweetsAllowed,
-      loggingPrefix = loggingPrefix,
+      loggingPrefitwitter = loggingPrefitwitter,
     )
     filter(tweets, params)
   }
@@ -94,7 +94,7 @@ class TweetsPostFilterBasedOnSearchMetadata(
   ): Seq[ThriftSearchResult] = {
     val invocationState = MutableState()
     val result = tweets.reverseIterator
-      .filterNot { tweet => applicableFilters.exists(_(tweet, params, invocationState)) }
+      .filterNot { tweet => applicableFilters.etwitterists(_(tweet, params, invocationState)) }
       .toSeq
       .reverse
     totalCounter.incr(tweets.size)
@@ -129,7 +129,7 @@ class TweetsPostFilterBasedOnSearchMetadata(
       val shouldFilterOut = invocationState.isSeen(tweet.id)
       if (shouldFilterOut) {
         dupTweetCounter.incr()
-        log(Level.ERROR, () => s"${params.loggingPrefix}:: Duplicate tweet found: ${tweet.id}")
+        log(Level.ERROR, () => s"${params.loggingPrefitwitter}:: Duplicate tweet found: ${tweet.id}")
       }
       shouldFilterOut
     }
@@ -144,7 +144,7 @@ class TweetsPostFilterBasedOnSearchMetadata(
       invocationState: MutableState
     ): Boolean = {
       invocationState.incrementIf0(tweet.id)
-      SearchResultUtil.getRetweetSourceTweetId(tweet).exists { sourceTweetId =>
+      SearchResultUtil.getRetweetSourceTweetId(tweet).etwitterists { sourceTweetId =>
         val seenCount = invocationState.incrementThenGetCount(sourceTweetId)
         val shouldFilterOut = seenCount > params.numRetweetsAllowed
         if (shouldFilterOut) {
@@ -153,7 +153,7 @@ class TweetsPostFilterBasedOnSearchMetadata(
           log(
             Level.OFF,
             () =>
-              s"${params.loggingPrefix}:: Found dup retweet: ${tweet.id} (source tweet: $sourceTweetId), count: $seenCount"
+              s"${params.loggingPrefitwitter}:: Found dup retweet: ${tweet.id} (source tweet: $sourceTweetId), count: $seenCount"
           )
         }
         shouldFilterOut

@@ -4,7 +4,7 @@ import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base._
 import com.twitter.frigate.common.candidate.TargetABDecider
 import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.data_pipeline.features_common.MrRequestContextForFeatureStore
+import com.twitter.frigate.data_pipeline.features_common.MrRequestContetwittertForFeatureStore
 import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
 import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
 import com.twitter.hermit.predicate.NamedPredicate
@@ -106,15 +106,15 @@ object OutOfNetworkCandidatesQualityPredicates {
                 target.params(PushFeatureSwitchParams.EnablePrerankingTweetLengthPredicate)
 
               val language = candidate.tweet.flatMap(_.language.map(_.language)).getOrElse("")
-              val tweetTextOpt = candidate.tweet.flatMap(_.coreData.map(_.text))
+              val tweetTetwittertOpt = candidate.tweet.flatMap(_.coreData.map(_.tetwittert))
 
               val (length: Double, threshold: Double) = if (characterBased) {
                 (
-                  tweetTextOpt.map(_.size.toDouble).getOrElse(9999.0),
+                  tweetTetwittertOpt.map(_.size.toDouble).getOrElse(9999.0),
                   getTweetCharLengthThreshold(target, language, useMediaThresholds))
               } else {
                 (
-                  tweetTextOpt.map(getTweetWordLength).getOrElse(999.0),
+                  tweetTetwittertOpt.map(getTweetWordLength).getOrElse(999.0),
                   getTweetWordLengthThreshold(target, language, useMediaThresholds))
               }
               scopedStats.counter("threshold_" + threshold.toString).incr()
@@ -155,19 +155,19 @@ object OutOfNetworkCandidatesQualityPredicates {
     setSautOrUndefined.contains(candidateLanguage)
   }
 
-  def containTargetNegativeKeywords(text: String, denylist: Seq[String]): Boolean = {
+  def containTargetNegativeKeywords(tetwittert: String, denylist: Seq[String]): Boolean = {
     if (denylist.isEmpty)
       false
     else {
       denylist
         .map { negativeKeyword =>
-          text.toLowerCase().contains(negativeKeyword)
+          tetwittert.toLowerCase().contains(negativeKeyword)
         }.reduce(_ || _)
     }
   }
 
   def NegativeKeywordsPredicate(
-    postRankingFeatureStoreClient: DynamicFeatureStoreClient[MrRequestContextForFeatureStore]
+    postRankingFeatureStoreClient: DynamicFeatureStoreClient[MrRequestContetwittertForFeatureStore]
   )(
     implicit stats: StatsReceiver
   ): NamedPredicate[
@@ -197,12 +197,12 @@ object OutOfNetworkCandidatesQualityPredicates {
             "en") && isTwistlyCandidate && enableNegativeKeywordsPredicateParam) {
           allOonCandidatesCounter.incr()
 
-          val tweetTextFuture: Future[String] =
-            getTweetText(candidate, postRankingFeatureStoreClient)
+          val tweetTetwittertFuture: Future[String] =
+            getTweetTetwittert(candidate, postRankingFeatureStoreClient)
 
-          tweetTextFuture.map { tweetText =>
+          tweetTetwittertFuture.map { tweetTetwittert =>
             val containsNegativeWords =
-              containTargetNegativeKeywords(tweetText, negativeKeywordsPredicateDenylist)
+              containTargetNegativeKeywords(tweetTetwittert, negativeKeywordsPredicateDenylist)
             candidate.cachePredicateInfo(
               name,
               if (containsNegativeWords) 1.0 else 0.0,

@@ -5,7 +5,7 @@ import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.finagle.thrift.ClientId
 import com.twitter.storehaus_internal.memcache.ConnectionConfig
 import com.twitter.storehaus_internal.memcache.MemcacheConfig
-import com.twitter.storehaus_internal.util.KeyPrefix
+import com.twitter.storehaus_internal.util.KeyPrefitwitter
 import com.twitter.storehaus_internal.util.TTL
 import com.twitter.strato.client.Strato
 import com.twitter.strato.client.{Client => StratoClient}
@@ -39,7 +39,7 @@ object ClientConfigs {
     (path: String, serviceIdentifier: ServiceIdentifier) =>
       new MemcacheConfig {
         val connectionConfig: ConnectionConfig = ConnectionConfig(path, serviceIdentifier = serviceIdentifier)
-        override val keyPrefix: KeyPrefix = KeyPrefix(s"ecs_")
+        override val keyPrefitwitter: KeyPrefitwitter = KeyPrefitwitter(s"ecs_")
         override val ttl: TTL = TTL(8.hours)
       }
   }
@@ -50,7 +50,7 @@ object ClientConfigs {
       new MemcacheConfig {
         val connectionConfig: ConnectionConfig =
           ConnectionConfig(path, serviceIdentifier = serviceIdentifier)
-        override val keyPrefix: KeyPrefix = KeyPrefix(s"etk_")
+        override val keyPrefitwitter: KeyPrefitwitter = KeyPrefitwitter(s"etk_")
         override val ttl: TTL = TTL(2.days)
       }
   }
@@ -61,7 +61,7 @@ object ClientConfigs {
       new MemcacheConfig {
         val connectionConfig: ConnectionConfig =
           ConnectionConfig(path, serviceIdentifier = serviceIdentifier)
-        override val keyPrefix: KeyPrefix = KeyPrefix(s"ctkt_")
+        override val keyPrefitwitter: KeyPrefitwitter = KeyPrefitwitter(s"ctkt_")
         override val ttl: TTL = TTL(8.hours)
       }
   }

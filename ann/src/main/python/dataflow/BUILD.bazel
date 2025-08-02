@@ -4,7 +4,7 @@ resources(
 )
 
 python3_library(
-    name = "faiss_indexing",
+    name = "faiss_indetwittering",
     sources = ["**/*.py"],
     tags = ["bazel-compatible"],
     dependencies = [
@@ -23,16 +23,16 @@ python3_library(
 )
 
 python37_binary(
-    name = "faiss_indexing_bin",
-    sources = ["faiss_index_bq_dataset.py"],
+    name = "faiss_indetwittering_bin",
+    sources = ["faiss_indetwitter_bq_dataset.py"],
     platforms = [
         "current",
-        "linux_x86_64",
+        "linutwitter_twitter86_64",
     ],
     tags = ["no-mypy"],
     zip_safe = False,
     dependencies = [
-        ":faiss_indexing",
-        "3rdparty/python/_closures/ann/src/main/python/dataflow:faiss_indexing_bin",
+        ":faiss_indetwittering",
+        "3rdparty/python/_closures/ann/src/main/python/dataflow:faiss_indetwittering_bin",
     ],
 )

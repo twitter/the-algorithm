@@ -9,8 +9,8 @@ import com.twitter.interaction_graph.thriftscala.Edge
 import com.twitter.interaction_graph.thriftscala.EdgeFeature
 import com.twitter.interaction_graph.thriftscala.FeatureName
 import com.twitter.interaction_graph.thriftscala.TimeSeriesStatistics
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.interaction_graph.thriftscala.VertexFeature
+import com.twitter.interaction_graph.thriftscala.Vertetwitter
+import com.twitter.interaction_graph.thriftscala.VertetwitterFeature
 
 object FeatureGeneratorUtil {
 
@@ -26,15 +26,15 @@ object FeatureGeneratorUtil {
     )
 
   /**
-   * Create vertex feature from InteractionGraphRawInput graph (src, dst, feature name, age, featureValue)
+   * Create vertetwitter feature from InteractionGraphRawInput graph (src, dst, feature name, age, featureValue)
    * We will represent non-directional features (eg num_create_tweets) as "outgoing" values.
    * @return
    */
-  def getVertexFeature(
+  def getVertetwitterFeature(
     input: SCollection[InteractionGraphRawInput]
-  ): SCollection[Vertex] = {
-    // For vertex features we need to calculate both in and out featureValue
-    val vertexAggregatedFeatureValues = input
+  ): SCollection[Vertetwitter] = {
+    // For vertetwitter features we need to calculate both in and out featureValue
+    val vertetwitterAggregatedFeatureValues = input
       .flatMap { input =>
         if (input.dst != DUMMY_USER_ID) {
           Seq(
@@ -52,27 +52,27 @@ object FeatureGeneratorUtil {
           (userId, (FeatureName(nameId), outEdges, inEdges))
       }.groupByKey
 
-    vertexAggregatedFeatureValues.map {
+    vertetwitterAggregatedFeatureValues.map {
       case (userId, records) =>
         // sort features by FeatureName for deterministic order (esp during testing)
         val features = records.toSeq.sortBy(_._1.value).flatMap {
           case (name, outEdges, inEdges) =>
-            // create out vertex features
+            // create out vertetwitter features
             val outFeatures = if (outEdges > 0) {
               val outTss = initializeTSS(outEdges)
               List(
-                VertexFeature(
+                VertetwitterFeature(
                   name = name,
                   outgoing = true,
                   tss = outTss
                 ))
             } else Nil
 
-            // create in vertex features
+            // create in vertetwitter features
             val inFeatures = if (inEdges > 0) {
               val inTss = initializeTSS(inEdges)
               List(
-                VertexFeature(
+                VertetwitterFeature(
                   name = name,
                   outgoing = false,
                   tss = inTss
@@ -81,13 +81,13 @@ object FeatureGeneratorUtil {
 
             outFeatures ++ inFeatures
         }
-        Vertex(userId = userId, features = features)
+        Vertetwitter(userId = userId, features = features)
     }
   }
 
   /**
    * Create edge feature from InteractionGraphRawInput graph (src, dst, feature name, age, featureValue)
-   * We will exclude all non-directional features (eg num_create_tweets) from all edge aggregates
+   * We will etwitterclude all non-directional features (eg num_create_tweets) from all edge aggregates
    */
   def getEdgeFeature(
     input: SCollection[InteractionGraphRawInput]
@@ -125,22 +125,22 @@ object FeatureGeneratorUtil {
       }
   }
 
-  // For same user id, combine different vertex feature records into one record
+  // For same user id, combine different vertetwitter feature records into one record
   // The input will assume for each (userId, featureName, direction), there will be only one record
-  def combineVertexFeatures(
-    vertex: SCollection[Vertex],
-  ): SCollection[Vertex] = {
-    vertex
-      .groupBy { v: Vertex =>
+  def combineVertetwitterFeatures(
+    vertetwitter: SCollection[Vertetwitter],
+  ): SCollection[Vertetwitter] = {
+    vertetwitter
+      .groupBy { v: Vertetwitter =>
         v.userId
       }
       .map {
-        case (userId, vertexes) =>
-          val combiner = vertexes.foldLeft(VertexFeatureCombiner(userId)) {
-            case (combiner, vertex) =>
-              combiner.addFeature(vertex)
+        case (userId, vertetwitteres) =>
+          val combiner = vertetwitteres.foldLeft(VertetwitterFeatureCombiner(userId)) {
+            case (combiner, vertetwitter) =>
+              combiner.addFeature(vertetwitter)
           }
-          combiner.getCombinedVertex(0)
+          combiner.getCombinedVertetwitter(0)
       }
 
   }
@@ -163,29 +163,29 @@ object FeatureGeneratorUtil {
       }
   }
 
-  def combineVertexFeaturesWithDecay(
-    history: SCollection[Vertex],
-    daily: SCollection[Vertex],
+  def combineVertetwitterFeaturesWithDecay(
+    history: SCollection[Vertetwitter],
+    daily: SCollection[Vertetwitter],
     historyWeight: Double,
     dailyWeight: Double
-  ): SCollection[Vertex] = {
+  ): SCollection[Vertetwitter] = {
 
     history
       .keyBy(_.userId)
       .cogroup(daily.keyBy(_.userId)).map {
         case (userId, (h, d)) =>
           // Adding history iterators
-          val historyCombiner = h.toList.foldLeft(VertexFeatureCombiner(userId)) {
-            case (combiner, vertex) =>
-              combiner.addFeature(vertex, historyWeight, 0)
+          val historyCombiner = h.toList.foldLeft(VertetwitterFeatureCombiner(userId)) {
+            case (combiner, vertetwitter) =>
+              combiner.addFeature(vertetwitter, historyWeight, 0)
           }
           // Adding daily iterators
           val finalCombiner = d.toList.foldLeft(historyCombiner) {
-            case (combiner, vertex) =>
-              combiner.addFeature(vertex, dailyWeight, 1)
+            case (combiner, vertetwitter) =>
+              combiner.addFeature(vertetwitter, dailyWeight, 1)
           }
 
-          finalCombiner.getCombinedVertex(
+          finalCombiner.getCombinedVertetwitter(
             2
           ) // 2 means totally we have 2 days(yesterday and today) data to combine together
       }
@@ -229,12 +229,12 @@ object FeatureGeneratorUtil {
 
   /**
    * Create features from following graph (src, dst, age, featureValue)
-   * Note that we will filter out vertex features represented as edges from the edge output.
+   * Note that we will filter out vertetwitter features represented as edges from the edge output.
    */
   def getFeatures(
     input: SCollection[InteractionGraphRawInput]
-  ): (SCollection[Vertex], SCollection[Edge]) = {
-    (getVertexFeature(input), getEdgeFeature(input))
+  ): (SCollection[Vertetwitter], SCollection[Edge]) = {
+    (getVertetwitterFeature(input), getEdgeFeature(input))
   }
 
   // remove the edge features that from flock, address book or sms as we will refresh them on a daily basis
@@ -256,7 +256,7 @@ object FeatureGeneratorUtil {
 
   // check if the edge feature has features other than dwell time feature
   def edgeWithFeatureOtherThanDwellTime(e: Edge): Boolean = {
-    e.features.exists { f =>
+    e.features.etwitterists { f =>
       !DWELL_TIME_FEATURE_LIST.contains(f.name)
     }
   }

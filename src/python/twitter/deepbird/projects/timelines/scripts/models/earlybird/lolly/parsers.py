@@ -26,7 +26,7 @@ class BiasParser(Parser):
     '''
     Matches lines like:
       unified_engagement	bias	-0.935945
-    :return: a RegEx that extracts feature weight.
+    :return: a RegEtwitter that etwittertracts feature weight.
     '''
     return r"\t(bias)\t([^\s]+)"
 
@@ -43,7 +43,7 @@ class BinaryFeatureParser(Parser):
     '''
     Matches lines like:
       unified_engagement	encoded_tweet_features.is_user_spam_flag	-0.181130
-    :return: a RegEx that extracts feature name and weight.
+    :return: a RegEtwitter that etwittertracts feature name and weight.
     '''
     return r"\t([\w\.]+)\t([^\s]+)"
 
@@ -60,7 +60,7 @@ class DiscretizedFeatureParser(Parser):
     '''
     Matches lines like:
       unified_engagement	encoded_tweet_features.user_reputation.dz/dz_model=mdl/dz_range=1.000000e+00_2.000000e+00	0.031004
-    :return: a RegEx that extracts feature name, bin boundaries and weight.
+    :return: a RegEtwitter that etwittertracts feature name, bin boundaries and weight.
     '''
     return r"([\w\.]+)\.dz\/dz_model=mdl\/dz_range=([^\s]+)\t([^\s]+)"
 
@@ -111,7 +111,7 @@ class LollyModelFeaturesParser(Parser):
     return parsed_features
 
 
-class DBv2DataExampleParser(Parser):
+class DBv2DataEtwitterampleParser(Parser):
   '''
   Parses data records printed by the DBv2 train.py build_graph function.
   Format: [[dbv2 logit]][[logged lolly logit]][[space separated feature ids]][[space separated feature values]]
@@ -126,7 +126,7 @@ class DBv2DataExampleParser(Parser):
 
   def pattern(self):
     '''
-    :return: a RegEx that extracts dbv2 logit, logged lolly logit, feature ids and feature values.
+    :return: a RegEtwitter that etwittertracts dbv2 logit, logged lolly logit, feature ids and feature values.
     '''
     return r"\[\[([\w\.\-]+)\]\]\[\[([\w\.\-]+)\]\]\[\[([\w\.\- ]+)\]\]\[\[([\w\. ]+)\]\]"
 
@@ -135,11 +135,11 @@ class DBv2DataExampleParser(Parser):
     feature_values = match.group(4).split(" ")
 
     value_by_feature_name = {}
-    for index in range(len(feature_ids)):
-      feature_id = feature_ids[index]
+    for indetwitter in range(len(feature_ids)):
+      feature_id = feature_ids[indetwitter]
       if feature_id not in self.feature_name_by_dbv2_id:
         print("Missing feature with id: " + str(feature_id))
         continue
-      value_by_feature_name[self.feature_name_by_dbv2_id[feature_id]] = float(feature_values[index])
+      value_by_feature_name[self.feature_name_by_dbv2_id[feature_id]] = float(feature_values[indetwitter])
 
     return value_by_feature_name

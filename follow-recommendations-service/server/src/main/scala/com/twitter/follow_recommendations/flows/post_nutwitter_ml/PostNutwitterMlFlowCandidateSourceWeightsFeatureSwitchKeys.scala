@@ -1,0 +1,46 @@
+package com.twitter.follow_recommendations.flows.post_nutwitter_ml
+
+object PostNutwitterMlFlowCandidateSourceWeightsFeatureSwitchKeys {
+  val CandidateWeightCrowdSearch = "post_nutwitter_ml_flow_candidate_source_weights_user_crowd_search"
+  val CandidateWeightTopOrganicFollow =
+    "post_nutwitter_ml_flow_candidate_source_weights_top_organic_follow"
+  val CandidateWeightPPMILocaleFollow =
+    "post_nutwitter_ml_flow_candidate_source_weights_user_ppmi_locale_follow"
+  val CandidateWeightForwardEmailBook =
+    "post_nutwitter_ml_flow_candidate_source_weights_user_forward_email_book"
+  val CandidateWeightForwardPhoneBook =
+    "post_nutwitter_ml_flow_candidate_source_weights_user_forward_phone_book"
+  val CandidateWeightOfflineStrongTiePrediction =
+    "post_nutwitter_ml_flow_candidate_source_weights_user_offline_strong_tie_prediction"
+  val CandidateWeightOnlineStp = "post_nutwitter_ml_flow_candidate_source_weights_user_online_stp"
+  val CandidateWeightPopCountry = "post_nutwitter_ml_flow_candidate_source_weights_user_pop_country"
+  val CandidateWeightPopGeohash = "post_nutwitter_ml_flow_candidate_source_weights_user_pop_geohash"
+  val CandidateWeightPopGeohashQualityFollow =
+    "post_nutwitter_ml_flow_candidate_source_weights_user_pop_geohash_quality_follow"
+  val CandidateWeightPopGeoBackfill =
+    "post_nutwitter_ml_flow_candidate_source_weights_user_pop_geo_backfill"
+  val CandidateWeightRecentFollowingSimilarUsers =
+    "post_nutwitter_ml_flow_candidate_source_weights_user_recent_following_similar_users"
+  val CandidateWeightRecentEngagementDirectFollowSalsaEtwitterpansion =
+    "post_nutwitter_ml_flow_candidate_source_weights_user_recent_engagement_direct_follow_salsa_etwitterpansion"
+  val CandidateWeightRecentEngagementNonDirectFollow =
+    "post_nutwitter_ml_flow_candidate_source_weights_user_recent_engagement_non_direct_follow"
+  val CandidateWeightRecentEngagementSimilarUsers =
+    "post_nutwitter_ml_flow_candidate_source_weights_user_recent_engagement_similar_users"
+  val CandidateWeightRepeatedProfileVisits =
+    "post_nutwitter_ml_flow_candidate_source_weights_user_repeated_profile_visits"
+  val CandidateWeightFollow2vecNearestNeighbors =
+    "post_nutwitter_ml_flow_candidate_source_weights_user_follow2vec_nearest_neighbors"
+  val CandidateWeightReverseEmailBook =
+    "post_nutwitter_ml_flow_candidate_source_weights_user_reverse_email_book"
+  val CandidateWeightReversePhoneBook =
+    "post_nutwitter_ml_flow_candidate_source_weights_user_reverse_phone_book"
+  val CandidateWeightTriangularLoops =
+    "post_nutwitter_ml_flow_candidate_source_weights_user_triangular_loops"
+  val CandidateWeightTwoHopRandomWalk =
+    "post_nutwitter_ml_flow_candidate_source_weights_user_two_hop_random_walk"
+  val CandidateWeightUserUserGraph =
+    "post_nutwitter_ml_flow_candidate_source_weights_user_user_user_graph"
+  val CandidateWeightRealGraphOonV2 =
+    "post_nutwitter_ml_flow_candidate_source_weights_user_real_graph_oon_v2"
+}

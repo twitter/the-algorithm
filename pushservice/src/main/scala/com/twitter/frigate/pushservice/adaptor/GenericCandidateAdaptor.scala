@@ -19,7 +19,7 @@ object GenericCandidates {
       with TargetABDecider
       with TweetImpressionHistory
       with HTLVisitHistory
-      with MaxTweetAge
+      with MatwitterTweetAge
       with NewUserDetails
       with FrigateHistory
       with TargetWithSeedUsers
@@ -30,7 +30,7 @@ case class GenericCandidateAdaptor(
   tweetyPieStore: ReadableStore[Long, TweetyPieResult],
   tweetyPieStoreNoVF: ReadableStore[Long, TweetyPieResult],
   stats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
+    etwittertends CandidateSource[Target, RawCandidate]
     with CandidateSourceEligible[Target, RawCandidate] {
 
   override val name: String = genericCandidates.name
@@ -38,14 +38,14 @@ case class GenericCandidateAdaptor(
   private def generateTweetFavCandidate(
     _target: Target,
     _tweetId: Long,
-    _socialContextActions: Seq[SocialContextAction],
-    socialContextActionsAllTypes: Seq[SocialContextAction],
+    _socialContetwittertActions: Seq[SocialContetwittertAction],
+    socialContetwittertActionsAllTypes: Seq[SocialContetwittertAction],
     _tweetyPieResult: Option[TweetyPieResult]
   ): RawCandidate = {
     new RawCandidate with TweetFavoriteCandidate {
-      override val socialContextActions = _socialContextActions
-      override val socialContextAllTypeActions =
-        socialContextActionsAllTypes
+      override val socialContetwittertActions = _socialContetwittertActions
+      override val socialContetwittertAllTypeActions =
+        socialContetwittertActionsAllTypes
       val tweetId = _tweetId
       val target = _target
       val tweetyPieResult = _tweetyPieResult
@@ -55,13 +55,13 @@ case class GenericCandidateAdaptor(
   private def generateTweetRetweetCandidate(
     _target: Target,
     _tweetId: Long,
-    _socialContextActions: Seq[SocialContextAction],
-    socialContextActionsAllTypes: Seq[SocialContextAction],
+    _socialContetwittertActions: Seq[SocialContetwittertAction],
+    socialContetwittertActionsAllTypes: Seq[SocialContetwittertAction],
     _tweetyPieResult: Option[TweetyPieResult]
   ): RawCandidate = {
     new RawCandidate with TweetRetweetCandidate {
-      override val socialContextActions = _socialContextActions
-      override val socialContextAllTypeActions = socialContextActionsAllTypes
+      override val socialContetwittertActions = _socialContetwittertActions
+      override val socialContetwittertAllTypeActions = socialContetwittertActionsAllTypes
       val tweetId = _tweetId
       val target = _target
       val tweetyPieResult = _tweetyPieResult
@@ -79,16 +79,16 @@ case class GenericCandidateAdaptor(
                 generateTweetRetweetCandidate(
                   inputTarget,
                   tweetRetweet.tweetId,
-                  tweetRetweet.socialContextActions,
-                  tweetRetweet.socialContextAllTypeActions,
+                  tweetRetweet.socialContetwittertActions,
+                  tweetRetweet.socialContetwittertAllTypeActions,
                   tweetRetweet.tweetyPieResult)
               case tweetFavorite: TweetFavoriteCandidate
                   if inputTarget.params(PushParams.MRTweetFavRecsParam) =>
                 generateTweetFavCandidate(
                   inputTarget,
                   tweetFavorite.tweetId,
-                  tweetFavorite.socialContextActions,
-                  tweetFavorite.socialContextAllTypeActions,
+                  tweetFavorite.socialContetwittertActions,
+                  tweetFavorite.socialContetwittertAllTypeActions,
                   tweetFavorite.tweetyPieResult)
             }
           candidatesSeq.foreach { candidate =>

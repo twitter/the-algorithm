@@ -16,8 +16,8 @@ import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
 public class ProtectedOperatorQueryRewriter {
   private static final String ERROR_MESSAGE = "Positive 'protected' operator must be in the root"
       + " query node and the root query node must be a Conjunction.";
-  private static final Query EXCLUDE_PROTECTED_OPERATOR =
-      new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.PROTECTED);
+  private static final Query EtwitterCLUDE_PROTECTED_OPERATOR =
+      new SearchOperator(SearchOperator.Type.EtwitterCLUDE, SearchOperatorConstants.PROTECTED);
 
   /**
    * Rewrite a query with positive 'protected' operator into an equivalent query without the positive
@@ -30,19 +30,19 @@ public class ProtectedOperatorQueryRewriter {
    *
    *  Query with '[include protected]' operator is rewritten into a Disjunction of a query with
    *  protected Tweets only and a query with public Tweets only.
-   *  For example,
+   *  For etwitterample,
    *    Original query:
    *      (* "cat" [include protected])
    *        with followedUserIds=[1, 7, 12] where 1 and 7 are protected users
    *    Rewritten query:
    *      (+
    *        (* "cat" [multi_term_disjunction from_user_id 1 7])
-   *        (* "cat" [exclude protected])
+   *        (* "cat" [etwitterclude protected])
    *      )
    *
    *  Query with '[filter protected]' operator is rewritten with multi_term_disjunction from_user_id
    *  operator.
-   *  For example,
+   *  For etwitterample,
    *    Original query:
    *      (* "cat" [filter protected])
    *        with followedUserIds=[1, 7, 12] where 1 and 7 are protected users
@@ -51,20 +51,20 @@ public class ProtectedOperatorQueryRewriter {
    */
   public Query rewrite(Query parsedQuery, List<Long> followedUserIds, UserTable userTable) {
     Preconditions.checkState(followedUserIds != null && !followedUserIds.isEmpty(),
-        "'followedUserIds' should not be empty when positive 'protected' operator exists.");
+        "'followedUserIds' should not be empty when positive 'protected' operator etwitterists.");
     Preconditions.checkState(
         parsedQuery.isTypeOf(com.twitter.search.queryparser.query.Query.QueryType.CONJUNCTION),
         ERROR_MESSAGE);
     Conjunction parsedConjQuery = (Conjunction) parsedQuery;
     List<Query> children = parsedConjQuery.getChildren();
-    int opIndex = findPositiveProtectedOperatorIndex(children);
-    Preconditions.checkState(opIndex >= 0, ERROR_MESSAGE);
-    SearchOperator protectedOp = (SearchOperator) children.get(opIndex);
+    int opIndetwitter = findPositiveProtectedOperatorIndetwitter(children);
+    Preconditions.checkState(opIndetwitter >= 0, ERROR_MESSAGE);
+    SearchOperator protectedOp = (SearchOperator) children.get(opIndetwitter);
 
     ImmutableList.Builder<Query> otherChildrenBuilder = ImmutableList.builder();
-    otherChildrenBuilder.addAll(children.subList(0, opIndex));
-    if (opIndex + 1 < children.size()) {
-      otherChildrenBuilder.addAll(children.subList(opIndex + 1, children.size()));
+    otherChildrenBuilder.addAll(children.subList(0, opIndetwitter));
+    if (opIndetwitter + 1 < children.size()) {
+      otherChildrenBuilder.addAll(children.subList(opIndetwitter + 1, children.size()));
     }
     List<Query> otherChildren = otherChildrenBuilder.build();
 
@@ -80,14 +80,14 @@ public class ProtectedOperatorQueryRewriter {
             .build();
       }
     } else {
-      // 'include' or negated 'exclude' operator
-      // negated 'exclude' is considered the same as 'include' to be consistent with the logic in
+      // 'include' or negated 'etwitterclude' operator
+      // negated 'etwitterclude' is considered the same as 'include' to be consistent with the logic in
       // EarlybirdLuceneQueryVisitor
       if (protectedUserIds.isEmpty()) {
         // return public only query
         return parsedConjQuery.newBuilder()
             .setChildren(otherChildren)
-            .addChild(EXCLUDE_PROTECTED_OPERATOR)
+            .addChild(EtwitterCLUDE_PROTECTED_OPERATOR)
             .build();
       } else {
         // build a disjunction of protected only query and public only query
@@ -97,7 +97,7 @@ public class ProtectedOperatorQueryRewriter {
             .build();
         Query publicOnlyQuery = parsedConjQuery.newBuilder()
             .setChildren(otherChildren)
-            .addChild(EXCLUDE_PROTECTED_OPERATOR)
+            .addChild(EtwitterCLUDE_PROTECTED_OPERATOR)
             .build();
         return new Disjunction(protectedOnlyQuery, publicOnlyQuery);
       }
@@ -125,13 +125,13 @@ public class ProtectedOperatorQueryRewriter {
     return protectedUserIds.build();
   }
 
-  private int findPositiveProtectedOperatorIndex(List<Query> children) {
+  private int findPositiveProtectedOperatorIndetwitter(List<Query> children) {
     for (int i = 0; i < children.size(); i++) {
       Query child = children.get(i);
       if (child instanceof SearchOperator) {
         SearchOperator searchOp = (SearchOperator) child;
         if (SearchOperatorConstants.PROTECTED.equals(searchOp.getOperand())
-            && (isNegateExclude(searchOp) || isPositive(searchOp))) {
+            && (isNegateEtwitterclude(searchOp) || isPositive(searchOp))) {
           return i;
         }
       }
@@ -140,9 +140,9 @@ public class ProtectedOperatorQueryRewriter {
     return -1;
   }
 
-  private boolean isNegateExclude(SearchOperator searchOp) {
+  private boolean isNegateEtwitterclude(SearchOperator searchOp) {
     return searchOp.mustNotOccur()
-        && searchOp.getOperatorType() == SearchOperator.Type.EXCLUDE;
+        && searchOp.getOperatorType() == SearchOperator.Type.EtwitterCLUDE;
   }
 
   private boolean isPositive(SearchOperator searchOp) {

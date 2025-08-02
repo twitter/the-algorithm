@@ -18,10 +18,10 @@ object InteractionGraphAggregationTransform {
   // converts our Edge thrift into timelines' thrift
   def getTopKTimelineFeatures(
     scoredAggregatedEdge: SCollection[Edge],
-    maxDestinationIds: Int
+    matwitterDestinationIds: Int
   ): SCollection[KeyVal[Long, UserSession]] = {
     scoredAggregatedEdge
-      .filter(_.weight.exists(_ > 0))
+      .filter(_.weight.etwitterists(_ > 0))
       .keyBy(_.sourceId)
       .groupByKey
       .map {
@@ -31,7 +31,7 @@ object InteractionGraphAggregationTransform {
             if (inEdges.isEmpty) Nil
             else {
               val inTopKQueue =
-                new PriorityQueueMonoid[Edge](maxDestinationIds)(ordering)
+                new PriorityQueueMonoid[Edge](matwitterDestinationIds)(ordering)
               inTopKQueue
                 .build(inEdges).iterator().asScala.toList.flatMap(
                   toRealGraphEdgeFeatures(hasTimelinesRequiredFeatures))
@@ -40,7 +40,7 @@ object InteractionGraphAggregationTransform {
             if (outEdges.isEmpty) Nil
             else {
               val outTopKQueue =
-                new PriorityQueueMonoid[Edge](maxDestinationIds)(ordering)
+                new PriorityQueueMonoid[Edge](matwitterDestinationIds)(ordering)
               outTopKQueue
                 .build(outEdges).iterator().asScala.toList.flatMap(
                   toRealGraphEdgeFeatures(hasTimelinesRequiredFeatures))

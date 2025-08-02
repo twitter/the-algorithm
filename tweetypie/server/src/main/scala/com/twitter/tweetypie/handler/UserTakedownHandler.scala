@@ -30,8 +30,8 @@ object UserTakedownHandler {
   def takedownEvent(userHasTakedown: Boolean): Tweet => Option[Takedown.Event] =
     tweet => {
       val tweetHasTakedown =
-        TweetLenses.tweetypieOnlyTakedownCountryCodes(tweet).exists(_.nonEmpty) ||
-          TweetLenses.tweetypieOnlyTakedownReasons(tweet).exists(_.nonEmpty)
+        TweetLenses.tweetypieOnlyTakedownCountryCodes(tweet).etwitterists(_.nonEmpty) ||
+          TweetLenses.tweetypieOnlyTakedownReasons(tweet).etwitterists(_.nonEmpty)
       val updatedHasTakedown = userHasTakedown || tweetHasTakedown
       if (updatedHasTakedown == TweetLenses.hasTakedown(tweet))
         None
@@ -53,10 +53,10 @@ object UserTakedownHandler {
   ): FutureEffect[Seq[Tweet]] =
     tweetTakedown.contramapOption(takedownEvent(userHasTakedown)).liftSeq
 
-  def verifyTweetUserId(expectedUserId: Option[UserId], tweet: Tweet): Unit = {
+  def verifyTweetUserId(etwitterpectedUserId: Option[UserId], tweet: Tweet): Unit = {
     val tweetUserId: UserId = getUserId(tweet)
     val tweetId: Long = tweet.id
-    expectedUserId.filter(_ != tweetUserId).foreach { u =>
+    etwitterpectedUserId.filter(_ != tweetUserId).foreach { u =>
       throw DataError(
         message =
           s"SetTweetUserTakedownRequest userId $u does not match userId $tweetUserId for Tweet: $tweetId",

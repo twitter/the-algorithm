@@ -8,7 +8,7 @@
 
 package com.twitter.ann.faiss;
 
-public class LinearTransform extends VectorTransform {
+public class LinearTransform etwittertends VectorTransform {
   private transient long swigCPtr;
 
   protected LinearTransform(long cPtr, boolean cMemoryOwn) {
@@ -86,16 +86,16 @@ public class LinearTransform extends VectorTransform {
     this(swigfaissJNI.new_LinearTransform__SWIG_3(), true);
   }
 
-  public void apply_noalloc(long n, SWIGTYPE_p_float x, SWIGTYPE_p_float xt) {
-    swigfaissJNI.LinearTransform_apply_noalloc(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x), SWIGTYPE_p_float.getCPtr(xt));
+  public void apply_noalloc(long n, SWIGTYPE_p_float twitter, SWIGTYPE_p_float twittert) {
+    swigfaissJNI.LinearTransform_apply_noalloc(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(twitter), SWIGTYPE_p_float.getCPtr(twittert));
   }
 
-  public void transform_transpose(long n, SWIGTYPE_p_float y, SWIGTYPE_p_float x) {
-    swigfaissJNI.LinearTransform_transform_transpose(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(y), SWIGTYPE_p_float.getCPtr(x));
+  public void transform_transpose(long n, SWIGTYPE_p_float y, SWIGTYPE_p_float twitter) {
+    swigfaissJNI.LinearTransform_transform_transpose(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(y), SWIGTYPE_p_float.getCPtr(twitter));
   }
 
-  public void reverse_transform(long n, SWIGTYPE_p_float xt, SWIGTYPE_p_float x) {
-    swigfaissJNI.LinearTransform_reverse_transform(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(xt), SWIGTYPE_p_float.getCPtr(x));
+  public void reverse_transform(long n, SWIGTYPE_p_float twittert, SWIGTYPE_p_float twitter) {
+    swigfaissJNI.LinearTransform_reverse_transform(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(twittert), SWIGTYPE_p_float.getCPtr(twitter));
   }
 
   public void set_is_orthonormal() {

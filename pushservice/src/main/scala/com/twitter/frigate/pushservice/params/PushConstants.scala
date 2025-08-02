@@ -66,8 +66,8 @@ object PushConstants {
   final val MediaUnderstanding_SinglePerson_Id = "MediaUnderstanding_SinglePerson_Id"
   final val PornList_Id = "PornList_Id"
   final val PornographyAndNsfwContent_Id = "PornographyAndNsfwContent_Id"
-  final val SexLife_Id = "SexLife_Id"
-  final val SexLifeOrSexualOrientation_Id = "SexLifeOrSexualOrientation_Id"
+  final val SetwitterLife_Id = "SetwitterLife_Id"
+  final val SetwitterLifeOrSetwitterualOrientation_Id = "SetwitterLifeOrSetwitterualOrientation_Id"
   final val ProfanityFilter_Id = "ProfanityFilter_Id"
   final val TweetSemanticCoreIdFeature = "tweet.core.tweet.semantic_core_annotations"
   final val targetUserGenderFeatureName = "Target.User.Gender"
@@ -93,7 +93,7 @@ object PushConstants {
 
   final val TargetFeatureNameForIbis2ModelValues = "target"
 
-  final val CopyBodyExpIbisModelValues = "enable_body_exp"
+  final val CopyBodyEtwitterpIbisModelValues = "enable_body_etwitterp"
 
   final val TweetMediaEmbeddingBQKeyIds = Seq(
     230, 110, 231, 111, 232, 233, 112, 113, 234, 235, 114, 236, 115, 237, 116, 117, 238, 118, 239,

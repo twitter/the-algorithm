@@ -1,7 +1,7 @@
 package com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion
 
 import com.twitter.ml.api._
-import com.twitter.ml.api.FeatureContext
+import com.twitter.ml.api.FeatureContetwittert
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
 import scala.collection.JavaConverters._
 
@@ -17,7 +17,7 @@ import scala.collection.JavaConverters._
  * Some simple policies might be: pick the first feature set (randomly),
  * pick the top sorted by some attribute, or take some average.
  *
- * Example: suppose we group by (ADVERTISER_ID, INTEREST_ID) where INTEREST_ID
+ * Etwitterample: suppose we group by (ADVERTISER_ID, INTEREST_ID) where INTEREST_ID
  * is the sparse key, and compute a "CTR" aggregate feature for each such
  * pair measuring the click through rate on ads with (ADVERTISER_ID, INTEREST_ID).
  * Say we have the following aggregate records:
@@ -48,34 +48,34 @@ trait SparseBinaryMergePolicy {
   /**
    * @param mutableInputRecord Input record to add aggregates to
    * @param aggregateRecords Aggregate feature records
-   * @param aggregateContext Context for aggregate records
+   * @param aggregateContetwittert Contetwittert for aggregate records
    */
   def mergeRecord(
     mutableInputRecord: DataRecord,
     aggregateRecords: List[DataRecord],
-    aggregateContext: FeatureContext
+    aggregateContetwittert: FeatureContetwittert
   ): Unit
 
-  def aggregateFeaturesPostMerge(aggregateContext: FeatureContext): Set[Feature[_]]
+  def aggregateFeaturesPostMerge(aggregateContetwittert: FeatureContetwittert): Set[Feature[_]]
 
   /**
-   * @param inputContext Context for input record
-   * @param aggregateContext Context for aggregate records
-   * @return Context for record returned by mergeRecord()
+   * @param inputContetwittert Contetwittert for input record
+   * @param aggregateContetwittert Contetwittert for aggregate records
+   * @return Contetwittert for record returned by mergeRecord()
    */
-  def mergeContext(
-    inputContext: FeatureContext,
-    aggregateContext: FeatureContext
-  ): FeatureContext = new FeatureContext(
-    (inputContext.getAllFeatures.asScala.toSet ++ aggregateFeaturesPostMerge(
-      aggregateContext)).toSeq.asJava
+  def mergeContetwittert(
+    inputContetwittert: FeatureContetwittert,
+    aggregateContetwittert: FeatureContetwittert
+  ): FeatureContetwittert = new FeatureContetwittert(
+    (inputContetwittert.getAllFeatures.asScala.toSet ++ aggregateFeaturesPostMerge(
+      aggregateContetwittert)).toSeq.asJava
   )
 
   def allOutputFeaturesPostMergePolicy[T](config: TypedAggregateGroup[T]): Set[Feature[_]] = {
     val containsSparseBinary = config.keysToAggregate
-      .exists(_.getFeatureType == FeatureType.SPARSE_BINARY)
+      .etwitterists(_.getFeatureType == FeatureType.SPARSE_BINARY)
 
     if (!containsSparseBinary) config.allOutputFeatures
-    else aggregateFeaturesPostMerge(new FeatureContext(config.allOutputFeatures.toSeq.asJava))
+    else aggregateFeaturesPostMerge(new FeatureContetwittert(config.allOutputFeatures.toSeq.asJava))
   }
 }

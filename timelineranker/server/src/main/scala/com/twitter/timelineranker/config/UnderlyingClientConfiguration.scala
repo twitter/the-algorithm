@@ -1,6 +1,6 @@
 package com.twitter.timelineranker.config
 
-import com.twitter.cortex_tweet_annotate.thriftscala.CortexTweetQueryService
+import com.twitter.cortetwitter_tweet_annotate.thriftscala.CortetwitterTweetQueryService
 import com.twitter.finagle.Service
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.finagle.service.RetryPolicy
@@ -29,7 +29,7 @@ import org.apache.thrift.protocol.TCompactProtocol
 abstract class UnderlyingClientConfiguration(
   flags: TimelineRankerFlags,
   val statsReceiver: StatsReceiver)
-    extends TimelinesUnderlyingClientConfiguration
+    etwittertends TimelinesUnderlyingClientConfiguration
     with ConfigUtils {
 
   lazy val thriftClientId: ClientId = timelineRankerClientId()
@@ -50,7 +50,7 @@ abstract class UnderlyingClientConfiguration(
     methodPerEndpointClient[
       EarlybirdService.ServicePerEndpoint,
       EarlybirdService.MethodPerEndpoint](
-      thriftMuxClientBuilder(
+      thriftMutwitterClientBuilder(
         scopedName,
         protocolFactoryOption = Some(new TCompactProtocol.Factory),
         requireMutualTls = true)
@@ -72,7 +72,7 @@ abstract class UnderlyingClientConfiguration(
     methodPerEndpointClient[
       EarlybirdService.ServicePerEndpoint,
       EarlybirdService.MethodPerEndpoint](
-      thriftMuxClientBuilder(
+      thriftMutwitterClientBuilder(
         scopedName,
         protocolFactoryOption = Some(new TCompactProtocol.Factory),
         requireMutualTls = true)
@@ -83,7 +83,7 @@ abstract class UnderlyingClientConfiguration(
     )
   }
 
-  def cortexTweetQueryServiceClient: CortexTweetQueryService.MethodPerEndpoint
+  def cortetwitterTweetQueryServiceClient: CortetwitterTweetQueryService.MethodPerEndpoint
   def gizmoduckClient: Gizmoduck.MethodPerEndpoint
   def manhattanStarbuckClient: ManhattanV1.MethodPerEndpoint
   def sgsClient: SocialGraphService.MethodPerEndpoint
@@ -96,7 +96,7 @@ abstract class UnderlyingClientConfiguration(
   def userTweetEntityGraphClient: UserTweetEntityGraph.FinagledClient
   def stratoClient: StratoClient
 
-  def darkTrafficProxy: Option[Service[ThriftClientRequest, Array[Byte]]] = {
+  def darkTrafficProtwittery: Option[Service[ThriftClientRequest, Array[Byte]]] = {
     if (flags.darkTrafficDestination.trim.nonEmpty) {
       Some(darkTrafficClient(flags.darkTrafficDestination))
     } else {

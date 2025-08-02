@@ -33,7 +33,7 @@ object GraphUtil {
           edge.sourceId,
           edge.destinationId,
           featureName,
-          age.max(0).toInt,
+          age.matwitter(0).toInt,
           1.0)
       }
   }
@@ -58,29 +58,29 @@ object GraphUtil {
           edge.sourceId,
           edge.destinationId,
           featureName,
-          age.max(0).toInt,
+          age.matwitter(0).toInt,
           1.0)
       }
   }
   def isFollow(edge: Edge): Boolean = {
     val result = edge.features
       .find(_.name == FeatureName.NumFollows)
-      .exists(_.tss.mean == 1.0)
+      .etwitterists(_.tss.mean == 1.0)
     result
   }
 
-  def filterExtremes(edge: Edge): Boolean = {
-    if (edge.weight.exists(_.isNaN)) {
-      ScioMetrics.counter("filter extremes", "nan").inc()
+  def filterEtwittertremes(edge: Edge): Boolean = {
+    if (edge.weight.etwitterists(_.isNaN)) {
+      ScioMetrics.counter("filter etwittertremes", "nan").inc()
       false
-    } else if (edge.weight.contains(Double.MaxValue)) {
-      ScioMetrics.counter("filter extremes", "max value").inc()
+    } else if (edge.weight.contains(Double.MatwitterValue)) {
+      ScioMetrics.counter("filter etwittertremes", "matwitter value").inc()
       false
     } else if (edge.weight.contains(Double.PositiveInfinity)) {
-      ScioMetrics.counter("filter extremes", "+ve inf").inc()
+      ScioMetrics.counter("filter etwittertremes", "+ve inf").inc()
       false
-    } else if (edge.weight.exists(_ < 0.0)) {
-      ScioMetrics.counter("filter extremes", "negative").inc()
+    } else if (edge.weight.etwitterists(_ < 0.0)) {
+      ScioMetrics.counter("filter etwittertremes", "negative").inc()
       false
     } else {
       true
@@ -88,6 +88,6 @@ object GraphUtil {
   }
 
   def filterNegative(edge: Edge): Boolean = {
-    !edge.features.find(ef => HEALTH_FEATURE_LIST.contains(ef.name)).exists(_.tss.mean > 0.0)
+    !edge.features.find(ef => HEALTH_FEATURE_LIST.contains(ef.name)).etwitterists(_.tss.mean > 0.0)
   }
 }

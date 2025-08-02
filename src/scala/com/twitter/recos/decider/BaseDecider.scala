@@ -7,7 +7,7 @@ import com.twitter.decider.Recipient
 import com.twitter.decider.SimpleRecipient
 import com.twitter.recos.util.TeamUsers
 
-case class GuestRecipient(id: Long) extends Recipient {
+case class GuestRecipient(id: Long) etwittertends Recipient {
   override def isGuest: Boolean = true
 }
 
@@ -23,39 +23,39 @@ sealed trait BaseDecider {
 
   def isAvailable(feature: String): Boolean = isAvailable(feature, None)
 
-  def isAvailableExceptTeam(feature: String, id: Long, isUser: Boolean = true): Boolean = {
+  def isAvailableEtwitterceptTeam(feature: String, id: Long, isUser: Boolean = true): Boolean = {
     if (isUser) TeamUsers.team.contains(id) || isAvailable(feature, Some(SimpleRecipient(id)))
     else isAvailable(feature, Some(GuestRecipient(id)))
   }
 }
 
-case class RecosDecider(env: String, cluster: String = "atla") extends BaseDecider {
+case class RecosDecider(env: String, cluster: String = "atla") etwittertends BaseDecider {
   override val baseConfig = Some("/com/twitter/recos/config/decider.yml")
   override val overlayConfig = Some(
     s"/usr/local/config/overlays/recos/service/prod/$cluster/decider_overlay.yml"
   )
 
   def shouldCompute(id: Long, displayLocation: String, isUser: Boolean = true): Boolean = {
-    isAvailableExceptTeam(RecosDecider.recosIncomingTraffic + "_" + displayLocation, id, isUser)
+    isAvailableEtwitterceptTeam(RecosDecider.recosIncomingTraffic + "_" + displayLocation, id, isUser)
   }
 
   def shouldReturn(id: Long, displayLocation: String, isUser: Boolean = true): Boolean = {
-    isAvailableExceptTeam(RecosDecider.recosShouldReturn + "_" + displayLocation, id, isUser)
+    isAvailableEtwitterceptTeam(RecosDecider.recosShouldReturn + "_" + displayLocation, id, isUser)
   }
 
-  def shouldDarkmode(experiment: String): Boolean = {
-    isAvailable(RecosDecider.recosShouldDark + "_exp_" + experiment, None)
+  def shouldDarkmode(etwitterperiment: String): Boolean = {
+    isAvailable(RecosDecider.recosShouldDark + "_etwitterp_" + etwitterperiment, None)
   }
 
   def shouldScribe(id: Long, isUser: Boolean = true): Boolean = {
-    if (isUser) (id > 0) && isAvailableExceptTeam(RecosDecider.recosShouldScribe, id, isUser)
+    if (isUser) (id > 0) && isAvailableEtwitterceptTeam(RecosDecider.recosShouldScribe, id, isUser)
     else false // TODO: define the behavior for guests
   }
 
   def shouldWriteMomentCapsuleOpenEdge(): Boolean = {
     val capsuleOpenDecider = env match {
       case "prod" => RecosDecider.recosShouldWriteMomentCapsuleOpenEdge
-      case _ => RecosDecider.recosShouldWriteMomentCapsuleOpenEdge + RecosDecider.testSuffix
+      case _ => RecosDecider.recosShouldWriteMomentCapsuleOpenEdge + RecosDecider.testSuffitwitter
     }
 
     isAvailable(capsuleOpenDecider, Some(RandomRecipient))
@@ -63,7 +63,7 @@ case class RecosDecider(env: String, cluster: String = "atla") extends BaseDecid
 }
 
 object RecosDecider {
-  val testSuffix = "_test"
+  val testSuffitwitter = "_test"
 
   val recosIncomingTraffic: String = "recos_incoming_traffic"
   val recosShouldReturn: String = "recos_should_return"
@@ -74,8 +74,8 @@ object RecosDecider {
   val recosShouldWriteMomentCapsuleOpenEdge: String = "recos_should_write_moment_capsule_open_edge"
 }
 
-trait GraphDecider extends BaseDecider {
-  val graphNamePrefix: String
+trait GraphDecider etwittertends BaseDecider {
+  val graphNamePrefitwitter: String
 
   override val baseConfig = Some("/com/twitter/recos/config/decider.yml")
   override val overlayConfig = Some(
@@ -83,8 +83,8 @@ trait GraphDecider extends BaseDecider {
   )
 }
 
-case class UserTweetEntityGraphDecider() extends GraphDecider {
-  override val graphNamePrefix: String = "user_tweet_entity_graph"
+case class UserTweetEntityGraphDecider() etwittertends GraphDecider {
+  override val graphNamePrefitwitter: String = "user_tweet_entity_graph"
 
   def tweetSocialProof: Boolean = {
     isAvailable("user_tweet_entity_graph_tweet_social_proof")
@@ -96,12 +96,12 @@ case class UserTweetEntityGraphDecider() extends GraphDecider {
 
 }
 
-case class UserUserGraphDecider() extends GraphDecider {
-  override val graphNamePrefix: String = "user_user_graph"
+case class UserUserGraphDecider() etwittertends GraphDecider {
+  override val graphNamePrefitwitter: String = "user_user_graph"
 }
 
-case class UserTweetGraphDecider(env: String, dc: String) extends GraphDecider {
-  override val graphNamePrefix: String = "user-tweet-graph"
+case class UserTweetGraphDecider(env: String, dc: String) etwittertends GraphDecider {
+  override val graphNamePrefitwitter: String = "user-tweet-graph"
 
   override val baseConfig = Some("/com/twitter/recos/config/user-tweet-graph_decider.yml")
   override val overlayConfig = Some(

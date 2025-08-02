@@ -14,7 +14,7 @@ setup(
   name='twml',
   version='2.0',
   description="Tensorflow wrapper for twml",
-  packages=find_packages(exclude=["build"]),
+  packages=find_packages(etwitterclude=["build"]),
   install_requires=[
     'thriftpy2',
     'numpy',

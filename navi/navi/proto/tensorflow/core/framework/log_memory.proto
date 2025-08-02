@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -47,8 +47,8 @@ message MemoryLogTensorOutput {
   // "affine2/weights/Assign".
   string kernel_name = 2;
 
-  // Index of the output being set.
-  int32 index = 3;
+  // Indetwitter of the output being set.
+  int32 indetwitter = 3;
 
   // Output tensor details.
   TensorDescription tensor = 4;

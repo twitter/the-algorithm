@@ -9,7 +9,7 @@ package service
  * The difference is ClientRequestAuthorizer only operates
  * on two pieces of information, clientId and a method name.
  *
- * This class can be used to create a more complex authorizer that
+ * This class can be used to create a more completwitter authorizer that
  * operates on the specifics of a request. e.g, an
  * authorizer that disallows certain clients from passing
  * certain optional flags.
@@ -24,7 +24,7 @@ abstract class MethodAuthorizer[T]() {
 
   /**
    * Created decidered MethodAuthorizer
-   * if the decider is off it will execute
+   * if the decider is off it will etwitterecute
    * MethodAuthorizer.unit, which always succeeds.
    */
   def enabledBy(decider: Gate[Unit]): MethodAuthorizer[T] =
@@ -42,7 +42,7 @@ object MethodAuthorizer {
 
   /**
    * @param f an authorization function that returns
-   * Future.Unit if the request is authorized, and Future.exception()
+   * Future.Unit if the request is authorized, and Future.etwitterception()
    * if the request is not authorized.
    *
    * @return An instance of MethodAuthorizer with an apply method
@@ -56,7 +56,7 @@ object MethodAuthorizer {
   /**
    * @param authorizers A seq of MethodAuthorizers to be
    * composed into one.
-   * @return A MethodAuthorizer that sequentially executes
+   * @return A MethodAuthorizer that sequentially etwitterecutes
    * all of the authorizers
    */
   def all[T](authorizers: Seq[MethodAuthorizer[T]]): MethodAuthorizer[T] =

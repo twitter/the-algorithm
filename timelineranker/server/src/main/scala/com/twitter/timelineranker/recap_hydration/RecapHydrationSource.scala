@@ -39,10 +39,10 @@ class RecapHydrationSource(
   private[this] val userProfileHandler = new FailOpenHandler(failOpenScope, "userProfileInfo")
   private[this] val userLanguagesHandler = new FailOpenHandler(failOpenScope, "userLanguages")
 
-  private[this] val maxFollowedUsersProvider =
-    DependencyProvider.value(RecapParams.MaxFollowedUsers.default)
+  private[this] val matwitterFollowedUsersProvider =
+    DependencyProvider.value(RecapParams.MatwitterFollowedUsers.default)
   private[this] val followGraphDataTransform =
-    new FollowGraphDataTransform(followGraphDataProvider, maxFollowedUsersProvider)
+    new FollowGraphDataTransform(followGraphDataProvider, matwitterFollowedUsersProvider)
 
   private[this] val searchResultsTransform =
     new RecapHydrationSearchResultsTransform(searchClient, baseScope)
@@ -75,8 +75,8 @@ class RecapHydrationSource(
         RecapQuery.paramGate(RecapHydrationParams.EnableContentFeaturesHydrationParam),
       enableTokensInContentFeaturesGate =
         RecapQuery.paramGate(RecapHydrationParams.EnableTokensInContentFeaturesHydrationParam),
-      enableTweetTextInContentFeaturesGate =
-        RecapQuery.paramGate(RecapHydrationParams.EnableTweetTextInContentFeaturesHydrationParam),
+      enableTweetTetwittertInContentFeaturesGate =
+        RecapQuery.paramGate(RecapHydrationParams.EnableTweetTetwittertInContentFeaturesHydrationParam),
       enableConversationControlContentFeaturesGate = RecapQuery.paramGate(
         RecapHydrationParams.EnableConversationControlInContentFeaturesHydrationParam),
       enableTweetMediaHydrationGate = RecapQuery.paramGate(

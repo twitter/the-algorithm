@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
 import com.twitter.search.earlybird_root.common.EarlybirdServiceResponse;
 import com.twitter.util.Await;
@@ -26,23 +26,23 @@ public final class RequestRouterUtil {
 
   /**
    * Returns the function that checks if the minSearchedStatusID on the merged response is higher
-   * than the max ID in the request.
+   * than the matwitter ID in the request.
    *
-   * @param requestContext The request context that stores the request.
-   * @param operator The operator that we're checking against (max_id or until_time).
-   * @param requestMaxId The maxId specified in the request (in the given operator).
+   * @param requestContetwittert The request contetwittert that stores the request.
+   * @param operator The operator that we're checking against (matwitter_id or until_time).
+   * @param requestMatwitterId The matwitterId specified in the request (in the given operator).
    * @param realtimeResponseFuture The response from the realtime cluster.
    * @param protectedResponseFuture The response from the protected cluster.
    * @param fullArchiveResponseFuture The response from the full archive cluster.
    * @param stat The stat to increment if minSearchedStatusID on the merged response is higher than
-   *             the max ID in the request.
+   *             the matwitter ID in the request.
    * @return A function that checks if the minSearchedStatusID on the merged response is higher than
-   *         the max ID in the request.
+   *         the matwitter ID in the request.
    */
   public static Function<EarlybirdResponse, EarlybirdResponse> checkMinSearchedStatusId(
-      final EarlybirdRequestContext requestContext,
+      final EarlybirdRequestContetwittert requestContetwittert,
       final String operator,
-      final Optional<Long> requestMaxId,
+      final Optional<Long> requestMatwitterId,
       final Future<EarlybirdServiceResponse> realtimeResponseFuture,
       final Future<EarlybirdServiceResponse> protectedResponseFuture,
       final Future<EarlybirdServiceResponse> fullArchiveResponseFuture,
@@ -50,17 +50,17 @@ public final class RequestRouterUtil {
     return new Function<EarlybirdResponse, EarlybirdResponse>() {
       @Override
       public EarlybirdResponse apply(EarlybirdResponse mergedResponse) {
-        if (requestMaxId.isPresent()
+        if (requestMatwitterId.isPresent()
             && (mergedResponse.getResponseCode() == EarlybirdResponseCode.SUCCESS)
             && mergedResponse.isSetSearchResults()
             && mergedResponse.getSearchResults().isSetMinSearchedStatusID()) {
           long minSearchedStatusId = mergedResponse.getSearchResults().getMinSearchedStatusID();
-          if (minSearchedStatusId > requestMaxId.get()) {
+          if (minSearchedStatusId > requestMatwitterId.get()) {
             stat.increment();
             // We're logging this only for STRICT RECENCY as it was very spammy for all types of
-            // request. We don't expect this to happen for STRICT RECENCY but we're tracking
+            // request. We don't etwitterpect this to happen for STRICT RECENCY but we're tracking
             // with the stat when it happens for RELEVANCE and RECENCY
-            if (requestContext.getEarlybirdRequestType() == EarlybirdRequestType.STRICT_RECENCY) {
+            if (requestContetwittert.getEarlybirdRequestType() == EarlybirdRequestType.STRICT_RECENCY) {
               String logMessage = "Response has a minSearchedStatusID ({}) larger than request "
                   + operator + " ({})."
                   + "\nrequest type: {}"
@@ -71,9 +71,9 @@ public final class RequestRouterUtil {
                   + "\nfull archive response: {}";
               List<Object> logMessageParams = Lists.newArrayList();
               logMessageParams.add(minSearchedStatusId);
-              logMessageParams.add(requestMaxId.get());
-              logMessageParams.add(requestContext.getEarlybirdRequestType());
-              logMessageParams.add(requestContext.getRequest());
+              logMessageParams.add(requestMatwitterId.get());
+              logMessageParams.add(requestContetwittert.getEarlybirdRequestType());
+              logMessageParams.add(requestContetwittert.getRequest());
               logMessageParams.add(mergedResponse);
 
               // The realtime, protected and full archive response futures are "done" at this point:
@@ -81,17 +81,17 @@ public final class RequestRouterUtil {
               // Await.result() here to get the responses: it's a no-op.
               try {
                 logMessageParams.add(Await.result(realtimeResponseFuture).getResponse());
-              } catch (Exception e) {
+              } catch (Etwitterception e) {
                 logMessageParams.add(e);
               }
               try {
                 logMessageParams.add(Await.result(protectedResponseFuture).getResponse());
-              } catch (Exception e) {
+              } catch (Etwitterception e) {
                 logMessageParams.add(e);
               }
               try {
                 logMessageParams.add(Await.result(fullArchiveResponseFuture).getResponse());
-              } catch (Exception e) {
+              } catch (Etwitterception e) {
                 logMessageParams.add(e);
               }
 

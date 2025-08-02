@@ -13,8 +13,8 @@ import com.twitter.frigate.pushservice.predicate.TopTweetImpressionsPredicates
 import com.twitter.frigate.pushservice.take.predicates.BasicTweetPredicatesForRFPH
 import com.twitter.frigate.thriftscala.CommonRecommendationType
 import com.twitter.hermit.predicate.NamedPredicate
-import com.twitter.notificationservice.thriftscala.StoryContext
-import com.twitter.notificationservice.thriftscala.StoryContextValue
+import com.twitter.notificationservice.thriftscala.StoryContetwittert
+import com.twitter.notificationservice.thriftscala.StoryContetwittertValue
 import com.twitter.stitch.tweetypie.TweetyPie
 
 /**
@@ -31,7 +31,7 @@ class TopTweetImpressionsPushCandidate(
 )(
   implicit stats: StatsReceiver,
   pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
+    etwittertends PushCandidate
     with TopTweetImpressionsCandidate
     with TopTweetImpressionsNTabRequestHydrator
     with TopTweetImpressionsCandidateIbis2Hydrator {
@@ -47,12 +47,12 @@ class TopTweetImpressionsPushCandidate(
   override val ntabCopyId: Option[Int] = copyIds.ntabCopyId
   override val copyAggregationId: Option[String] = copyIds.aggregationId
   override val weightedOpenOrNtabClickModelScorer: PushMLModelScorer = pushModelScorer
-  override val storyContext: Option[StoryContext] =
-    Some(StoryContext(altText = "", value = Some(StoryContextValue.Tweets(Seq(tweetId)))))
+  override val storyContetwittert: Option[StoryContetwittert] =
+    Some(StoryContetwittert(altTetwittert = "", value = Some(StoryContetwittertValue.Tweets(Seq(tweetId)))))
 }
 
 case class TopTweetImpressionsPushCandidatePredicates(config: Config)
-    extends BasicTweetPredicatesForRFPH[TopTweetImpressionsPushCandidate] {
+    etwittertends BasicTweetPredicatesForRFPH[TopTweetImpressionsPushCandidate] {
 
   implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
 

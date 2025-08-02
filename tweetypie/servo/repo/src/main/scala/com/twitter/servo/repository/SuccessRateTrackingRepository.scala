@@ -1,11 +1,11 @@
 package com.twitter.servo.repository
 
-import com.twitter.finagle.mux.ClientDiscardedRequestException
+import com.twitter.finagle.mutwitter.ClientDiscardedRequestEtwitterception
 import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.{CancelledConnectionException, CancelledRequestException}
+import com.twitter.finagle.{CancelledConnectionEtwitterception, CancelledRequestEtwitterception}
 import com.twitter.servo.util.{Gate, SuccessRateTracker}
 import com.twitter.util.Throwables.RootCause
-import java.util.concurrent.CancellationException
+import java.util.concurrent.CancellationEtwitterception
 
 object SuccessRateTrackingRepository {
 
@@ -22,15 +22,15 @@ object SuccessRateTrackingRepository {
    */
   def isCancellation(t: Throwable): Boolean =
     t match {
-      // We don't consider CancelledRequestExceptions or CancelledConnectionExceptions to be
+      // We don't consider CancelledRequestEtwitterceptions or CancelledConnectionEtwitterceptions to be
       // failures in order not to tarnish our success rate on upstream request cancellations.
-      case _: CancelledRequestException => true
-      case _: CancelledConnectionException => true
-      // non-finagle backends can throw CancellationExceptions when their futures are cancelled.
-      case _: CancellationException => true
-      // Mux servers can return ClientDiscardedRequestException.
-      case _: ClientDiscardedRequestException => true
-      // Most of these exceptions can be wrapped in com.twitter.finagle.Failure
+      case _: CancelledRequestEtwitterception => true
+      case _: CancelledConnectionEtwitterception => true
+      // non-finagle backends can throw CancellationEtwitterceptions when their futures are cancelled.
+      case _: CancellationEtwitterception => true
+      // Mutwitter servers can return ClientDiscardedRequestEtwitterception.
+      case _: ClientDiscardedRequestEtwitterception => true
+      // Most of these etwitterceptions can be wrapped in com.twitter.finagle.Failure
       case RootCause(t) => isCancellation(t)
       case _ => false
     }
@@ -41,7 +41,7 @@ object SuccessRateTrackingRepository {
    * @param stats Provides availability gauge
    * @param availabilityFromSuccessRate function to calculate availability given SR
    * @param tracker strategy for tracking (usually recent) SR
-   * @param shouldIgnore don't count certain exceptions as failures, e.g. cancellations
+   * @param shouldIgnore don't count certain etwitterceptions as failures, e.g. cancellations
    * @return tuple of (SR tracking repo, gate closing if SR drops too far)
    */
   def withGate[Q <: Seq[K], K, V](
@@ -65,7 +65,7 @@ class SuccessRateTrackingRepository[Q <: Seq[K], K, V](
   underlying: KeyValueRepository[Q, K, V],
   observer: SuccessRateTrackingRepository.SuccessRateObserver,
   shouldIgnore: Throwable => Boolean = SuccessRateTrackingRepository.isCancellation)
-    extends KeyValueRepository[Q, K, V] {
+    etwittertends KeyValueRepository[Q, K, V] {
   def apply(query: Q) =
     underlying(query) onSuccess { kvr =>
       val nonIgnoredFailures = kvr.failed.values.foldLeft(0) {

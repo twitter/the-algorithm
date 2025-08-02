@@ -2,7 +2,7 @@ package com.twitter.simclusters_v2.scalding.common
 
 import com.twitter.algebird._
 import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.{Execution, Stat, UniqueID}
+import com.twitter.scalding.{Etwitterecution, Stat, UniqueID}
 
 /**
  * A richer version of TypedPipe.
@@ -20,7 +20,7 @@ class TypedRichPipe[V](pipe: TypedPipe[V]) {
   /**
    * Print a summary of the TypedPipe with total size and some randomly selected records
    */
-  def getSummary(numRecords: Int = 100): Execution[Option[(Long, String)]] = {
+  def getSummary(numRecords: Int = 100): Etwitterecution[Option[(Long, String)]] = {
     val randomSample = Aggregator.reservoirSample[V](numRecords)
 
     // more aggregator can be added here
@@ -38,10 +38,10 @@ class TypedRichPipe[V](pipe: TypedPipe[V]) {
 
           (size, samplesStr)
       }
-      .toOptionExecution
+      .toOptionEtwitterecution
   }
 
-  def getSummaryString(name: String, numRecords: Int = 100): Execution[String] = {
+  def getSummaryString(name: String, numRecords: Int = 100): Etwitterecution[String] = {
     getSummary(numRecords)
       .map {
         case Some((size, string)) =>
@@ -54,12 +54,12 @@ class TypedRichPipe[V](pipe: TypedPipe[V]) {
   /**
    * Print a summary of the TypedPipe with total size and some randomly selected records
    */
-  def printSummary(name: String, numRecords: Int = 100): Execution[Unit] = {
+  def printSummary(name: String, numRecords: Int = 100): Etwitterecution[Unit] = {
     getSummaryString(name, numRecords).map { s => println(s) }
   }
 }
 
-object TypedRichPipe extends java.io.Serializable {
+object TypedRichPipe etwittertends java.io.Serializable {
   import scala.language.implicitConversions
 
   implicit def typedPipeToRichPipe[V](

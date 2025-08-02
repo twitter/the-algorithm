@@ -1,7 +1,7 @@
 package com.twitter.follow_recommendations.common.feature_hydration.sources
 
 import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
+import com.twitter.ml.api.FeatureContetwittert
 import com.twitter.ml.featurestore.catalog.entities.core.{Author => AuthorEntity}
 import com.twitter.ml.featurestore.catalog.entities.core.{AuthorTopic => AuthorTopicEntity}
 import com.twitter.ml.featurestore.catalog.entities.core.{CandidateUser => CandidateUserEntity}
@@ -26,8 +26,8 @@ import com.twitter.ml.featurestore.catalog.features.core.UserCounts.Favorites
 import com.twitter.ml.featurestore.catalog.features.core.UserCounts.Followers
 import com.twitter.ml.featurestore.catalog.features.core.UserCounts.Following
 import com.twitter.ml.featurestore.catalog.features.core.UserCounts.Tweets
-import com.twitter.ml.featurestore.catalog.features.customer_journey.PostNuxAlgorithmIdAggregateFeatureGroup
-import com.twitter.ml.featurestore.catalog.features.customer_journey.PostNuxAlgorithmTypeAggregateFeatureGroup
+import com.twitter.ml.featurestore.catalog.features.customer_journey.PostNutwitterAlgorithmIdAggregateFeatureGroup
+import com.twitter.ml.featurestore.catalog.features.customer_journey.PostNutwitterAlgorithmTypeAggregateFeatureGroup
 import com.twitter.ml.featurestore.catalog.features.customer_journey.{Utils => FeatureGroupUtils}
 import com.twitter.ml.featurestore.catalog.features.interests_discovery.UserTopicRelationships.FollowedTopics
 import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumFavorites
@@ -57,23 +57,23 @@ import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserC
 import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumWasMutualFollowed
 import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumWasMutualUnfollowed
 import com.twitter.ml.featurestore.catalog.features.onboarding.MetricCenterUserCounts.NumWasUnfollowed
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.Country
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.FollowersOverFollowingRatio
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.Language
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.MutualFollowsOverFollowersRatio
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.MutualFollowsOverFollowingRatio
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.NumFollowers
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.NumFollowings
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.NumMutualFollows
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.TweepCred
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOffline.UserState
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.HaveSameCountry
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.HaveSameLanguage
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.HaveSameUserState
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.NumFollowersGap
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.NumFollowingsGap
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.NumMutualFollowsGap
-import com.twitter.ml.featurestore.catalog.features.onboarding.PostNuxOfflineEdge.TweepCredGap
+import com.twitter.ml.featurestore.catalog.features.onboarding.PostNutwitterOffline.Country
+import com.twitter.ml.featurestore.catalog.features.onboarding.PostNutwitterOffline.FollowersOverFollowingRatio
+import com.twitter.ml.featurestore.catalog.features.onboarding.PostNutwitterOffline.Language
+import com.twitter.ml.featurestore.catalog.features.onboarding.PostNutwitterOffline.MutualFollowsOverFollowersRatio
+import com.twitter.ml.featurestore.catalog.features.onboarding.PostNutwitterOffline.MutualFollowsOverFollowingRatio
+import com.twitter.ml.featurestore.catalog.features.onboarding.PostNutwitterOffline.NumFollowers
+import com.twitter.ml.featurestore.catalog.features.onboarding.PostNutwitterOffline.NumFollowings
+import com.twitter.ml.featurestore.catalog.features.onboarding.PostNutwitterOffline.NumMutualFollows
+import com.twitter.ml.featurestore.catalog.features.onboarding.PostNutwitterOffline.TweepCred
+import com.twitter.ml.featurestore.catalog.features.onboarding.PostNutwitterOffline.UserState
+import com.twitter.ml.featurestore.catalog.features.onboarding.PostNutwitterOfflineEdge.HaveSameCountry
+import com.twitter.ml.featurestore.catalog.features.onboarding.PostNutwitterOfflineEdge.HaveSameLanguage
+import com.twitter.ml.featurestore.catalog.features.onboarding.PostNutwitterOfflineEdge.HaveSameUserState
+import com.twitter.ml.featurestore.catalog.features.onboarding.PostNutwitterOfflineEdge.NumFollowersGap
+import com.twitter.ml.featurestore.catalog.features.onboarding.PostNutwitterOfflineEdge.NumFollowingsGap
+import com.twitter.ml.featurestore.catalog.features.onboarding.PostNutwitterOfflineEdge.NumMutualFollowsGap
+import com.twitter.ml.featurestore.catalog.features.onboarding.PostNutwitterOfflineEdge.TweepCredGap
 import com.twitter.ml.featurestore.catalog.features.onboarding.Ratio.FollowersFollowings
 import com.twitter.ml.featurestore.catalog.features.onboarding.Ratio.MutualFollowsFollowing
 import com.twitter.ml.featurestore.catalog.features.onboarding.SimclusterUserInterestedInCandidateKnownFor.HasIntersection
@@ -101,7 +101,7 @@ import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmA
 import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.HasForwardEngagements
 import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.HasReverseEngagements
 import com.twitter.ml.featurestore.catalog.features.onboarding.WtfUserAlgorithmAggregate.Impressions
-import com.twitter.ml.featurestore.catalog.features.rux.UserResurrection.DaysSinceRecentResurrection
+import com.twitter.ml.featurestore.catalog.features.rutwitter.UserResurrection.DaysSinceRecentResurrection
 import com.twitter.ml.featurestore.catalog.features.timelines.AuthorTopicAggregates
 import com.twitter.ml.featurestore.catalog.features.timelines.EngagementsReceivedByAuthorRealTimeAggregates
 import com.twitter.ml.featurestore.catalog.features.timelines.NegativeEngagementsReceivedByAuthorRealTimeAggregates
@@ -166,7 +166,7 @@ object FeatureStoreFeatures {
     mcFeatures.map(_.bind(AuthorEntity).logarithm1p)
 
   val userCandidateEdgeFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    (simclusterUVIntersectionFeatures ++ userCandidatePostNuxEdgeFeatures).map(
+    (simclusterUVIntersectionFeatures ++ userCandidatePostNutwitterEdgeFeatures).map(
       _.bind(UserCandidateEntity))
   val userCandidateWtfImpressionCandidateFeatures: Set[BoundFeature[_ <: EntityId, _]] =
     wtfImpressionCandidateFeatures.map(_.bind(UserCandidateEntity))
@@ -174,16 +174,16 @@ object FeatureStoreFeatures {
   /**
    * Aggregate features based on candidate source algorithms.
    */
-  val postNuxAlgorithmIdAggregateFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    Set(PostNuxAlgorithmIdAggregateFeatureGroup.FeaturesAsDataRecord)
+  val postNutwitterAlgorithmIdAggregateFeatures: Set[BoundFeature[_ <: EntityId, _]] =
+    Set(PostNutwitterAlgorithmIdAggregateFeatureGroup.FeaturesAsDataRecord)
       .map(_.bind(WtfAlgorithmIdEntity))
 
   /**
    * Aggregate features based on candidate source algorithm types. There are 4 at the moment:
    * Geo, Social, Activity and Interest.
    */
-  val postNuxAlgorithmTypeAggregateFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    Set(PostNuxAlgorithmTypeAggregateFeatureGroup.FeaturesAsDataRecord)
+  val postNutwitterAlgorithmTypeAggregateFeatures: Set[BoundFeature[_ <: EntityId, _]] =
+    Set(PostNutwitterAlgorithmTypeAggregateFeatureGroup.FeaturesAsDataRecord)
       .map(_.bind(WtfAlgorithmTypeEntity))
 
   // user wtf-Algorithm features
@@ -191,19 +191,19 @@ object FeatureStoreFeatures {
     FeatureGroupUtils.getTimelinesAggregationFrameworkCombinedFeatures(
       UserWtfAlgorithmAggregate,
       UserWtfAlgorithmEntity,
-      FeatureGroupUtils.getMaxSumAvgAggregate(UserWtfAlgorithmAggregate)
+      FeatureGroupUtils.getMatwitterSumAvgAggregate(UserWtfAlgorithmAggregate)
     )
 
   /**
-   * We have to add the max/sum/avg-aggregated features to the set of all features so that we can
-   * register them using FRS's [[FrsFeatureJsonExporter]].
+   * We have to add the matwitter/sum/avg-aggregated features to the set of all features so that we can
+   * register them using FRS's [[FrsFeatureJsonEtwitterporter]].
    *
    * Any additional such aggregated features that are included in [[FeatureStoreSource]] client
    * should be registered here as well.
    */
-  val maxSumAvgAggregatedFeatureContext: FeatureContext = new FeatureContext()
+  val matwitterSumAvgAggregatedFeatureContetwittert: FeatureContetwittert = new FeatureContetwittert()
     .addFeatures(
-      UserWtfAlgorithmAggregate.getSecondaryAggregatedFeatureContext
+      UserWtfAlgorithmAggregate.getSecondaryAggregatedFeatureContetwittert
     )
 
   // topic features
@@ -275,7 +275,7 @@ object FeatureStoreRawFeatures {
     UserEngagementAuthorUserStateRealTimeAggregates.FeaturesAsDataRecord,
     UserNegativeEngagementAuthorUserStateRealTimeAggregates.FeaturesAsDataRecord
   )
-  // post nux per-user offline features
+  // post nutwitter per-user offline features
   val userOfflineFeatures = Set(
     NumFollowings,
     NumFollowers,
@@ -288,8 +288,8 @@ object FeatureStoreRawFeatures {
     MutualFollowsOverFollowersRatio,
     FollowersOverFollowingRatio,
   )
-  // matched post nux offline features between user and candidate
-  val userCandidatePostNuxEdgeFeatures = Set(
+  // matched post nutwitter offline features between user and candidate
+  val userCandidatePostNutwitterEdgeFeatures = Set(
     HaveSameUserState,
     HaveSameLanguage,
     HaveSameCountry,

@@ -1,8 +1,8 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
-import "tensorflow/compiler/xla/pjrt/distributed/protocol.proto";
+import "tensorflow/compiler/twitterla/pjrt/distributed/protocol.proto";
 import "tensorflow/core/framework/device_attributes.proto";
 
 option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
@@ -31,13 +31,13 @@ message CoordinationServiceError {
 message TfDeviceList {
   repeated DeviceAttributes devices = 1;
 }
-message XlaDeviceList {
-  xla.GlobalTopologyProto devices = 1;
+message twitterlaDeviceList {
+  twitterla.GlobalTopologyProto devices = 1;
 }
 message CoordinationServiceDeviceInfo {
   oneof type {
     TfDeviceList tf = 1;
-    XlaDeviceList xla = 2;
+    twitterlaDeviceList twitterla = 2;
   }
 }
 
@@ -48,7 +48,7 @@ message CoordinationServiceDeviceInfo {
 message RegisterWorkerRequest {
   // Removed fields which used to specify the task.
   reserved 1, 2;
-  fixed64 incarnation = 3;
+  fitwittered64 incarnation = 3;
   // Moved the field `local_device_attributes` from this request message to
   // WaitForAllTasksRequest defined below.
   reserved 4;
@@ -56,19 +56,19 @@ message RegisterWorkerRequest {
 }
 
 message RegisterWorkerResponse {
-  fixed64 leader_incarnation = 1;
+  fitwittered64 leader_incarnation = 1;
 }
 
 // Request and response messages for sending heartbeats.
 message HeartbeatRequest {
   // Removed fields which used to specify the remote task.
   reserved 1, 2;
-  fixed64 incarnation = 3;
+  fitwittered64 incarnation = 3;
   CoordinatedTask source_task = 4;
 }
 
 message HeartbeatResponse {
-  fixed64 leader_incarnation = 1;
+  fitwittered64 leader_incarnation = 1;
   // If there are failures in cluster, use additional metadata in response to
   // broadcast error code and message to other workers.
 }
@@ -85,7 +85,7 @@ message WaitForAllTasksRequest {
 }
 
 message WaitForAllTasksResponse {
-  fixed64 leader_incarnation = 1;
+  fitwittered64 leader_incarnation = 1;
   // Removed field that specifically used TF device info.
   reserved 2;
   // All devices in the cluster.
@@ -115,7 +115,7 @@ message ReportErrorToServiceRequest {
 message ReportErrorToServiceResponse {}
 
 // Message for configuration key value.
-// Key is structured like Unix file system, with multiple levels of directory
+// Key is structured like Unitwitter file system, with multiple levels of directory
 // names separated by the slash ('/') characters.
 message KeyValueEntry {
   string key = 1;
@@ -170,7 +170,7 @@ message CancelBarrierRequest {
 message CancelBarrierResponse {}
 
 // Coordination Service defines a TensorFlow service that controls and
-// coordinates distributed execution in a cluster of multiple workers.
+// coordinates distributed etwitterecution in a cluster of multiple workers.
 //
 // The service keeps track of the cluster configuration and the state of cluster
 // members or the leader depending on the role of the current worker. The
@@ -204,7 +204,7 @@ service CoordinationService {
       returns (ReportErrorToServiceResponse);
 
   // Insert configuration key-value that will be accessible to all cluster
-  // workers. The key can be formatted as Unix file path with hierarchy. The
+  // workers. The key can be formatted as Unitwitter file path with hierarchy. The
   // coordination service key-value store should only be used for cluster
   // configuration data.
   rpc InsertKeyValue(InsertKeyValueRequest) returns (InsertKeyValueResponse);
@@ -234,7 +234,7 @@ service CoordinationService {
   // connected tasks.
   //
   // Possible service errors:
-  //   - DeadlineExceeded: Timed out waiting for specified tasks at the barrier.
+  //   - DeadlineEtwitterceeded: Timed out waiting for specified tasks at the barrier.
   //      Deadline is determined by the server timestamp when it receives the
   //      first WaitAtBarrier() + timeout duration.
   //   - Cancelled: One of the tasks called CancelBarrier().

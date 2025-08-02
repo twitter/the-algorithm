@@ -33,11 +33,11 @@ class TweetypieContentFeaturesProvider(
   tweetHydrator: TweetHydrator,
   enableContentFeaturesGate: Gate[RecapQuery],
   enableTokensInContentFeaturesGate: Gate[RecapQuery],
-  enableTweetTextInContentFeaturesGate: Gate[RecapQuery],
+  enableTweetTetwittertInContentFeaturesGate: Gate[RecapQuery],
   enableConversationControlContentFeaturesGate: Gate[RecapQuery],
   enableTweetMediaHydrationGate: Gate[RecapQuery],
   statsReceiver: StatsReceiver)
-    extends ContentFeaturesProvider {
+    etwittertends ContentFeaturesProvider {
   val scopedStatsReceiver: StatsReceiver = statsReceiver.scope("TweetypieContentFeaturesProvider")
 
   override def apply(
@@ -47,10 +47,10 @@ class TweetypieContentFeaturesProvider(
     import TweetypieContentFeaturesProvider._
 
     val tweetypieHydrationHandler = new FailOpenHandler(scopedStatsReceiver)
-    val hydratePenguinTextFeatures = enableContentFeaturesGate(query)
+    val hydratePenguinTetwittertFeatures = enableContentFeaturesGate(query)
     val hydrateSemanticCoreFeatures = enableContentFeaturesGate(query)
     val hydrateTokens = enableTokensInContentFeaturesGate(query)
-    val hydrateTweetText = enableTweetTextInContentFeaturesGate(query)
+    val hydrateTweetTetwittert = enableTweetTetwittertInContentFeaturesGate(query)
     val hydrateConversationControl = enableConversationControlContentFeaturesGate(query)
 
     val userId = query.userId
@@ -80,19 +80,19 @@ class TweetypieContentFeaturesProvider(
           selfThreadMetadata = hydratedTweet.tweet.selfThreadMetadata
         )
 
-        val contentFeaturesWithText = TweetTextFeaturesExtractor.addTextFeaturesFromTweet(
+        val contentFeaturesWithTetwittert = TweetTetwittertFeaturesEtwittertractor.addTetwittertFeaturesFromTweet(
           contentFeaturesFromTweet,
           hydratedTweet.tweet,
-          hydratePenguinTextFeatures,
+          hydratePenguinTetwittertFeatures,
           hydrateTokens,
-          hydrateTweetText
+          hydrateTweetTetwittert
         )
-        val contentFeaturesWithMedia = TweetMediaFeaturesExtractor.addMediaFeaturesFromTweet(
-          contentFeaturesWithText,
+        val contentFeaturesWithMedia = TweetMediaFeaturesEtwittertractor.addMediaFeaturesFromTweet(
+          contentFeaturesWithTetwittert,
           hydratedTweet.tweet,
           enableTweetMediaHydrationGate(query)
         )
-        val contentFeaturesWithAnnotations = TweetAnnotationFeaturesExtractor
+        val contentFeaturesWithAnnotations = TweetAnnotationFeaturesEtwittertractor
           .addAnnotationFeaturesFromTweet(
             contentFeaturesWithMedia,
             hydratedTweet.tweet,

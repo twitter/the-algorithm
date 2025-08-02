@@ -29,21 +29,21 @@ class Block2(tf.keras.layers.Layer):
     ), f"Tensor shape must be of length 3. Passed tensor of shape {input_shape}."
 
   def call(self, inputs: tf.Tensor, training: bool) -> tf.Tensor:
-    x = inputs
+    twitter = inputs
     if self.params.dense:
-      x = ChannelWiseDense(**self.params.dense.dict())(inputs=x, training=training)
-      x = tf1.layers.batch_normalization(x, momentum=0.9999, training=training, axis=1)
-      x = tf.keras.layers.Activation(self.params.activation)(x)
+      twitter = ChannelWiseDense(**self.params.dense.dict())(inputs=twitter, training=training)
+      twitter = tf1.layers.batch_normalization(twitter, momentum=0.9999, training=training, atwitteris=1)
+      twitter = tf.keras.layers.Activation(self.params.activation)(twitter)
 
     if self.params.conv:
-      x = KerasConv1D(**self.params.conv.dict())(inputs=x, training=training)
-      x = tf1.layers.batch_normalization(x, momentum=0.9999, training=training, axis=1)
-      x = tf.keras.layers.Activation(self.params.activation)(x)
+      twitter = KerasConv1D(**self.params.conv.dict())(inputs=twitter, training=training)
+      twitter = tf1.layers.batch_normalization(twitter, momentum=0.9999, training=training, atwitteris=1)
+      twitter = tf.keras.layers.Activation(self.params.activation)(twitter)
 
     if self.params.residual:
-      x = ResidualLayer()(inputs=inputs, residual=x)
+      twitter = ResidualLayer()(inputs=inputs, residual=twitter)
 
-    return x
+    return twitter
 
 
 class ClemNet(tf.keras.layers.Layer):
@@ -63,14 +63,14 @@ class ClemNet(tf.keras.layers.Layer):
 
   def call(self, inputs: tf.Tensor, training: bool) -> tf.Tensor:
     if len(inputs.shape) < 3:
-      inputs = tf.expand_dims(inputs, axis=-1)
+      inputs = tf.etwitterpand_dims(inputs, atwitteris=-1)
 
-    x = inputs
+    twitter = inputs
     for block_params in self.params.blocks:
-      x = Block2(block_params)(inputs=x, training=training)
+      twitter = Block2(block_params)(inputs=twitter, training=training)
 
-    x = tf.keras.layers.Flatten(name="flattened")(x)
+    twitter = tf.keras.layers.Flatten(name="flattened")(twitter)
     if self.params.top:
-      x = tf.keras.layers.Dense(units=self.params.top.n_labels, name="logits")(x)
+      twitter = tf.keras.layers.Dense(units=self.params.top.n_labels, name="logits")(twitter)
 
-    return x
+    return twitter

@@ -1,6 +1,6 @@
 package com.twitter.frigate.pushservice.ml
 
-import com.twitter.cortex.deepbird.thriftjava.ModelSelector
+import com.twitter.cortetwitter.deepbird.thriftjava.ModelSelector
 import com.twitter.finagle.stats.Counter
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base.CandidateDetails
@@ -10,7 +10,7 @@ import com.twitter.frigate.pushservice.model.PushTypes.Target
 import com.twitter.frigate.pushservice.params.PushMLModel
 import com.twitter.frigate.pushservice.params.PushModelName
 import com.twitter.frigate.pushservice.params.WeightedOpenOrNtabClickModel
-import com.twitter.nrel.heavyranker.PushCandidateHydrationContextWithModel
+import com.twitter.nrel.heavyranker.PushCandidateHydrationContetwittertWithModel
 import com.twitter.nrel.heavyranker.PushPredictionServiceStore
 import com.twitter.nrel.heavyranker.TargetFeatureMapWithModel
 import com.twitter.timelines.configapi.FSParam
@@ -52,12 +52,12 @@ class PushMLModelScorer(
 
     val candidateHydrationWithFeaturesMap = candidatesDetails.map { candidatesDetail =>
       (
-        candidatesDetail.candidate.candidateHydrationContext,
+        candidatesDetail.candidate.candidateHydrationContetwittert,
         candidatesDetail.candidate.candidateFeatureMap())
     }
     if (candidatesDetails.nonEmpty) {
       val candidatesWithScore = predictionServiceStore.getBatchPredictionsForModel(
-        candidatesDetails.head.candidate.target.targetHydrationContext,
+        candidatesDetails.head.candidate.target.targetHydrationContetwittert,
         candidatesDetails.head.candidate.target.featureMap,
         candidateHydrationWithFeaturesMap,
         Some(modelSelector),
@@ -129,10 +129,10 @@ class PushMLModelScorer(
     )
     if (modelToPredictionServiceStoreMap.contains(modelVersion)) {
       modelToPredictionServiceStoreMap(modelVersion).get(
-        PushCandidateHydrationContextWithModel(
-          candidate.target.targetHydrationContext,
+        PushCandidateHydrationContetwittertWithModel(
+          candidate.target.targetHydrationContetwittert,
           candidate.target.featureMap,
-          candidate.candidateHydrationContext,
+          candidate.candidateHydrationContetwittert,
           candidate.candidateFeatureMap(),
           Some(modelSelector)
         )
@@ -141,10 +141,10 @@ class PushMLModelScorer(
       totalQueriesOutsideTheModelMaps.incr()
       queriesOutsideTheModelMaps.counter(modelVersion).incr()
       defaultDBv2PredictionServiceStore.get(
-        PushCandidateHydrationContextWithModel(
-          candidate.target.targetHydrationContext,
+        PushCandidateHydrationContetwittertWithModel(
+          candidate.target.targetHydrationContetwittert,
           candidate.target.featureMap,
-          candidate.candidateHydrationContext,
+          candidate.candidateHydrationContetwittert,
           candidate.candidateFeatureMap(),
           Some(modelSelector)
         )
@@ -170,7 +170,7 @@ class PushMLModelScorer(
     stats: StatsReceiver,
     scopeName: String,
     histogramBinSize: Double
-  ): IndexedSeq[Counter] = {
+  ): IndetwitteredSeq[Counter] = {
     val histogramScopedStatsReceiver = stats.scope(scopeName)
     val numBins = math.ceil(1.0 / histogramBinSize).toInt
 

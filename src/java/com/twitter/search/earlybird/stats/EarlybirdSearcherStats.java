@@ -29,7 +29,7 @@ public class EarlybirdSearcherStats {
 
   public final SearchCounter thriftQueryWithSerializedQuery;
   public final SearchCounter thriftQueryWithLuceneQuery;
-  public final SearchCounter thriftQueryWithoutTextQuery;
+  public final SearchCounter thriftQueryWithoutTetwittertQuery;
   public final SearchCounter addedFilterBadUserRep;
   public final SearchCounter addedFilterFromUserIds;
   public final SearchCounter addedFilterTweetIds;
@@ -40,9 +40,9 @@ public class EarlybirdSearcherStats {
   public final SearchCounter authorSpecificSignalMapTotalSize;
   public final SearchCounter authorSpecificSignalQueriesUsed;
   public final SearchCounter authorSpecificSignalQueriesErased;
-  public final SearchCounter nullcastTweetsForceExcluded;
-  public final SearchCounter nullcastUnexpectedResults;
-  public final SearchCounter nullcastUnexpectedQueries;
+  public final SearchCounter nullcastTweetsForceEtwittercluded;
+  public final SearchCounter nullcastUnetwitterpectedResults;
+  public final SearchCounter nullcastUnetwitterpectedQueries;
   public final SearchCounter relevanceAntiGamingFilterUsed;
   public final SearchCounter relevanceAntiGamingFilterNotRequested;
   public final SearchCounter relevanceAntiGamingFilterSpecifiedTweetsAndFromUserIds;
@@ -63,8 +63,8 @@ public class EarlybirdSearcherStats {
         earlybirdServerStatsReceiver.getCounter("thrift_query_with_lucene_query");
     this.thriftQueryWithSerializedQuery =
         earlybirdServerStatsReceiver.getCounter("thrift_query_with_serialized_query");
-    this.thriftQueryWithoutTextQuery =
-        earlybirdServerStatsReceiver.getCounter("thrift_query_without_text_query");
+    this.thriftQueryWithoutTetwittertQuery =
+        earlybirdServerStatsReceiver.getCounter("thrift_query_without_tetwittert_query");
 
     this.addedFilterBadUserRep =
         earlybirdServerStatsReceiver.getCounter("added_filter_bad_user_rep");
@@ -87,12 +87,12 @@ public class EarlybirdSearcherStats {
         earlybirdServerStatsReceiver.getCounter("author_specific_signal_queries_used");
     this.authorSpecificSignalQueriesErased =
         earlybirdServerStatsReceiver.getCounter("author_specific_signal_queries_erased");
-    this.nullcastTweetsForceExcluded =
-        earlybirdServerStatsReceiver.getCounter("force_excluded_nullcast_result_count");
-    this.nullcastUnexpectedResults =
-        earlybirdServerStatsReceiver.getCounter("unexpected_nullcast_result_count");
-    this.nullcastUnexpectedQueries =
-        earlybirdServerStatsReceiver.getCounter("queries_with_unexpected_nullcast_results");
+    this.nullcastTweetsForceEtwittercluded =
+        earlybirdServerStatsReceiver.getCounter("force_etwittercluded_nullcast_result_count");
+    this.nullcastUnetwitterpectedResults =
+        earlybirdServerStatsReceiver.getCounter("unetwitterpected_nullcast_result_count");
+    this.nullcastUnetwitterpectedQueries =
+        earlybirdServerStatsReceiver.getCounter("queries_with_unetwitterpected_nullcast_results");
     this.numCollectorAdjustedMinSearchedStatusID =
         earlybirdServerStatsReceiver.getCounter("collector_adjusted_min_searched_status_id");
 

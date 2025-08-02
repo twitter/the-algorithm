@@ -4,7 +4,7 @@ import com.twitter.scalding.DateRange
 import com.twitter.scalding.TypedPipe
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv2.remote_access.EtwitterplicitLocation
 import com.twitter.scalding_internal.dalv2.remote_access.Proc3Atla
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.thriftscala.EmbeddingType
@@ -38,7 +38,7 @@ object ProducerEmbeddingSources {
       case (EmbeddingType.ProducerFavBasedSemanticCoreEntity, ModelVersion.Model20m145kUpdated) =>
         ProducerTopKSimclusterEmbeddingsByFavScoreUpdatedScalaDataset
       case (_, _) =>
-        throw new ClassNotFoundException(
+        throw new ClassNotFoundEtwitterception(
           "Unsupported embedding type: " + embeddingType + " and model version: " + modelVersion)
     }
 
@@ -62,10 +62,10 @@ object ProducerEmbeddingSources {
         AggregatableProducerSimclustersEmbeddingsByLogFavScore2020ScalaDataset
       case (EmbeddingType.AggregatableFollowBasedProducer, ModelVersion.Model20m145k2020) =>
         AggregatableProducerSimclustersEmbeddingsByFollowScore2020ScalaDataset
-      case (EmbeddingType.RelaxedAggregatableLogFavBasedProducer, ModelVersion.Model20m145k2020) =>
-        AggregatableProducerSimclustersEmbeddingsByLogFavScoreRelaxedFavEngagementThreshold2020ScalaDataset
+      case (EmbeddingType.RelatwitteredAggregatableLogFavBasedProducer, ModelVersion.Model20m145k2020) =>
+        AggregatableProducerSimclustersEmbeddingsByLogFavScoreRelatwitteredFavEngagementThreshold2020ScalaDataset
       case (_, _) =>
-        throw new ClassNotFoundException(
+        throw new ClassNotFoundEtwitterception(
           "Unsupported embedding type: " + embeddingType + " and model version: " + modelVersion)
     }
 
@@ -73,7 +73,7 @@ object ProducerEmbeddingSources {
       .readMostRecentSnapshot(
         producerEmbeddingDataset
       )
-      .withRemoteReadPolicy(ExplicitLocation(Proc3Atla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(Proc3Atla))
       .toTypedPipe
       .map {
         case KeyVal(

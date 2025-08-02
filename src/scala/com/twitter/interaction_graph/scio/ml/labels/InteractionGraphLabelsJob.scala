@@ -1,7 +1,7 @@
 package com.twitter.interaction_graph.scio.ml.labels
 
 import com.google.api.services.bigquery.model.TimePartitioning
-import com.spotify.scio.ScioContext
+import com.spotify.scio.ScioContetwittert
 import com.spotify.scio.values.SCollection
 import com.twitter.beam.io.dal.DAL
 import com.twitter.beam.io.fs.multiformat.DiskFormat
@@ -20,20 +20,20 @@ import com.twitter.scio_internal.job.ScioBeamJob
 import com.twitter.socialgraph.event.thriftscala.FollowEvent
 import com.twitter.socialgraph.hadoop.SocialgraphFollowEventsScalaDataset
 import com.twitter.statebird.v2.thriftscala.Environment
-import com.twitter.tcdc.bqblaster.beam.syntax._
+import com.twitter.tcdc.bqblaster.beam.syntatwitter._
 import com.twitter.tcdc.bqblaster.core.avro.TypedProjection
 import com.twitter.tcdc.bqblaster.core.transform.RootTransform
 import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
 import org.joda.time.Interval
 
-object InteractionGraphLabelsJob extends ScioBeamJob[InteractionGraphLabelsOption] {
+object InteractionGraphLabelsJob etwittertends ScioBeamJob[InteractionGraphLabelsOption] {
 
   override protected def configurePipeline(
-    scioContext: ScioContext,
+    scioContetwittert: ScioContetwittert,
     pipelineOptions: InteractionGraphLabelsOption
   ): Unit = {
     @transient
-    implicit lazy val sc: ScioContext = scioContext
+    implicit lazy val sc: ScioContetwittert = scioContetwittert
     implicit lazy val dateInterval: Interval = pipelineOptions.interval
 
     val bqTableName: String = pipelineOptions.getBqTableName
@@ -95,11 +95,11 @@ object InteractionGraphLabelsJob extends ScioBeamJob[InteractionGraphLabelsOptio
         .Builder()
         .withPrependedFields("dateHour" -> TypedProjection.fromConstant(ingestionTime))
       val timePartitioning = new TimePartitioning()
-        .setType("DAY").setField("dateHour").setExpirationMs(90.days.inMilliseconds)
+        .setType("DAY").setField("dateHour").setEtwitterpirationMs(90.days.inMilliseconds)
       val bqWriter = BigQueryIO
         .write[EdgeLabel]
         .to(bqTableName)
-        .withExtendedErrorInfo()
+        .withEtwittertendedErrorInfo()
         .withTimePartitioning(timePartitioning)
         .withLoadJobProjectId("twttr-recos-ml-prod")
         .withThriftSupport(bqFieldsTransform.build(), AvroConverter.Legacy)

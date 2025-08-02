@@ -1,6 +1,6 @@
 package com.twitter.search.common.schema;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.io.StringReader;
 import java.util.Collections;
 import java.util.List;
@@ -22,9 +22,9 @@ import org.apache.lucene.util.BytesRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.twitter.common.text.token.TwitterTokenStream;
+import com.twitter.common.tetwittert.token.TwitterTokenStream;
 import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
+import com.twitter.search.common.schema.base.IndetwitteredNumericFieldSettings;
 import com.twitter.search.common.schema.base.Schema;
 import com.twitter.search.common.schema.thriftjava.ThriftDocument;
 import com.twitter.search.common.schema.thriftjava.ThriftField;
@@ -34,9 +34,9 @@ import com.twitter.search.common.util.analysis.IntTermAttribute;
 import com.twitter.search.common.util.analysis.LongTermAttribute;
 import com.twitter.search.common.util.analysis.SortableLongTermAttribute;
 import com.twitter.search.common.util.spatial.GeoUtil;
-import com.twitter.search.common.util.text.HighFrequencyTermPairs;
-import com.twitter.search.common.util.text.OmitNormTextField;
-import com.twitter.search.common.util.text.SingleTokenStream;
+import com.twitter.search.common.util.tetwittert.HighFrequencyTermPairs;
+import com.twitter.search.common.util.tetwittert.OmitNormTetwittertField;
+import com.twitter.search.common.util.tetwittert.SingleTokenStream;
 
 /**
  * A document factory that converts {@link ThriftDocument} into Lucene {@link Document}s
@@ -67,7 +67,7 @@ public class SchemaDocumentFactory {
     this(schema, Collections.EMPTY_LIST);
   }
 
-  public final Document newDocument(ThriftDocument document) throws IOException {
+  public final Document newDocument(ThriftDocument document) throws IOEtwitterception {
     return innerNewDocument(document);
   }
 
@@ -75,7 +75,7 @@ public class SchemaDocumentFactory {
    * Create a Lucene document from the ThriftDocument.
    */
   @VisibleForTesting
-  public Document innerNewDocument(ThriftDocument document) throws IOException {
+  public Document innerNewDocument(ThriftDocument document) throws IOEtwitterception {
     Document luceneDocument = new Document();
     Set<String> hfTerms = Sets.newHashSet();
     Set<String> hfPhrases = Sets.newHashSet();
@@ -89,7 +89,7 @@ public class SchemaDocumentFactory {
         successful = true;
       } finally {
         if (!successful) {
-          LOG.warn("Unexpected exception while trying to add field. Field ID: "
+          LOG.warn("Unetwitterpected etwitterception while trying to add field. Field ID: "
               + field.getFieldConfigId() + " Field Name: "
               + schema.getFieldName(field.getFieldConfigId()));
         }
@@ -101,7 +101,7 @@ public class SchemaDocumentFactory {
         if (token.compareTo(token2) < 0) {
           luceneDocument.add(new Field(ImmutableSchema.HF_TERM_PAIRS_FIELD,
                                           HighFrequencyTermPairs.createPair(token, token2),
-                                          OmitNormTextField.TYPE_NOT_STORED));
+                                          OmitNormTetwittertField.TYPE_NOT_STORED));
         }
       }
     }
@@ -110,14 +110,14 @@ public class SchemaDocumentFactory {
       // Tokens in the phrase set are not terms and have already been processed with
       // HighFrequencyTermPairs.createPhrasePair.
       luceneDocument.add(new Field(ImmutableSchema.HF_PHRASE_PAIRS_FIELD, phrase,
-                                      OmitNormTextField.TYPE_NOT_STORED));
+                                      OmitNormTetwittertField.TYPE_NOT_STORED));
     }
 
     return schema.getFacetsConfig().build(luceneDocument);
   }
 
   private void addLuceneFields(ThriftField field, Analyzer analyzer, Document doc,
-                               Set<String> hfTerms, Set<String> hfPhrases) throws IOException {
+                               Set<String> hfTerms, Set<String> hfPhrases) throws IOEtwitterception {
     Schema.FieldInfo fieldInfo =
         schema.getFieldInfo(field.getFieldConfigId(), field.getFieldConfigOverride());
 
@@ -136,7 +136,7 @@ public class SchemaDocumentFactory {
     // see what the type the field is configured to be. See SEARCH-5173 for more details.
     // The problem is that Pig, while converting Tuples to Thrift, sets all primitive type
     // fields to 0. (i.e. the isSet calls will return true).
-    IndexedNumericFieldSettings numericSettings =
+    IndetwitteredNumericFieldSettings numericSettings =
         fieldInfo.getFieldType().getNumericFieldSettings();
     if (fieldData.isSetTokenStreamValue()) {
       addTokenField(doc, hfTerms, hfPhrases, fieldInfo, fieldData);
@@ -170,21 +170,21 @@ public class SchemaDocumentFactory {
           addDoubleFIeld();
           break;
         default:
-          throw new UnsupportedOperationException("Earlybird does not know how to handle field "
+          throw new UnsupportedOperationEtwitterception("Earlybird does not know how to handle field "
               + field.getFieldConfigId() + " " + field);
       }
     } else {
-      throw new UnsupportedOperationException("Earlybird does not know how to handle field "
+      throw new UnsupportedOperationEtwitterception("Earlybird does not know how to handle field "
           + field.getFieldConfigId() + " " + field);
     }
   }
 
   private void addCSFField(Document doc, Schema.FieldInfo fieldInfo, ThriftFieldData fieldData) {
-    if (fieldInfo.getFieldType().getCsfFixedLengthNumValuesPerDoc() > 1) {
+    if (fieldInfo.getFieldType().getCsfFitwitteredLengthNumValuesPerDoc() > 1) {
 
       // As an optimization, TBinaryProtocol stores a byte array field as a part of a larger byte
       // array field.  Must call fieldData.getBytesValue().  fieldData.bytesValue.array() will
-      // return extraneous data. See: SEARCH-3996
+      // return etwittertraneous data. See: SEARCH-3996
       doc.add(new Field(fieldInfo.getName(), fieldData.getBytesValue(), fieldInfo.getFieldType()));
     } else {
       doc.add(new CSFField(fieldInfo.getName(), fieldInfo.getFieldType(), fieldData));
@@ -196,7 +196,7 @@ public class SchemaDocumentFactory {
       Set<String> hfTerms,
       Set<String> hfPhrases,
       Schema.FieldInfo fieldInfo,
-      ThriftFieldData fieldData) throws IOException {
+      ThriftFieldData fieldData) throws IOEtwitterception {
     TwitterTokenStream twitterTokenStream
         = fieldInfo.getFieldType().getTokenStreamSerializer().deserialize(
         fieldData.getTokenStreamValue(), fieldData.getStringValue());
@@ -206,7 +206,7 @@ public class SchemaDocumentFactory {
         twitterTokenStream = rewriter.rewrite(fieldInfo, twitterTokenStream);
       }
 
-      expandStream(doc, fieldInfo, twitterTokenStream, hfTerms, hfPhrases);
+      etwitterpandStream(doc, fieldInfo, twitterTokenStream, hfTerms, hfPhrases);
       doc.add(new Field(fieldInfo.getName(), twitterTokenStream, fieldInfo.getFieldType()));
     } finally {
       twitterTokenStream.close();
@@ -222,7 +222,7 @@ public class SchemaDocumentFactory {
         TokenStream tokenStream = analyzer.tokenStream(fieldInfo.getName(),
                 new StringReader(fieldData.getStringValue()));
         try {
-          expandStream(
+          etwitterpandStream(
               doc,
               fieldInfo,
               tokenStream,
@@ -231,8 +231,8 @@ public class SchemaDocumentFactory {
         } finally {
           tokenStream.close();
         }
-      } catch (IOException e) {
-        LOG.error("IOException expanding token stream", e);
+      } catch (IOEtwitterception e) {
+        LOG.error("IOEtwitterception etwitterpanding token stream", e);
       }
     } else {
       addFacetField(doc, fieldInfo, fieldData.getStringValue());
@@ -305,11 +305,11 @@ public class SchemaDocumentFactory {
   }
 
   private void addFloatField() {
-    throw new UnsupportedOperationException("Earlybird does not support float values yet.");
+    throw new UnsupportedOperationEtwitterception("Earlybird does not support float values yet.");
   }
 
   private void addDoubleFIeld() {
-    throw new UnsupportedOperationException("Earlybird does not support double values yet.");
+    throw new UnsupportedOperationEtwitterception("Earlybird does not support double values yet.");
   }
 
   private void addGeoField(Document doc, Schema.FieldInfo fieldInfo, ThriftFieldData fieldData) {
@@ -343,20 +343,20 @@ public class SchemaDocumentFactory {
   }
 
   /**
-   * Expand the TwitterTokenStream and populate high-frequency terms, phrases and/or facet category paths.
+   * Etwitterpand the TwitterTokenStream and populate high-frequency terms, phrases and/or facet category paths.
    */
-  private void expandStream(
+  private void etwitterpandStream(
       Document doc,
       Schema.FieldInfo fieldInfo,
       TokenStream stream,
       Set<String> hfTerms,
-      Set<String> hfPhrases) throws IOException {
+      Set<String> hfPhrases) throws IOEtwitterception {
     // Checkstyle does not allow assignment to parameters.
     Set<String> facetHfTerms = hfTerms;
     Set<String> facetHfPhrases = hfPhrases;
 
-    if (!(HighFrequencyTermPairs.INDEX_HF_TERM_PAIRS
-        && fieldInfo.getFieldType().isIndexHFTermPairs())) {
+    if (!(HighFrequencyTermPairs.INDEtwitter_HF_TERM_PAIRS
+        && fieldInfo.getFieldType().isIndetwitterHFTermPairs())) {
       // high-frequency terms and phrases are not needed
       if (fieldInfo.getFieldType().getFacetName() == null) {
         // Facets are not needed either, simply return, would do nothing otherwise
@@ -391,7 +391,7 @@ public class SchemaDocumentFactory {
     }
   }
 
-  public static final class CSFField extends Field {
+  public static final class CSFField etwittertends Field {
     /**
      * Create a CSFField with the given fieldType, containing the given field data.
      */
@@ -418,7 +418,7 @@ public class SchemaDocumentFactory {
             fieldsData = Long.valueOf(Double.doubleToRawLongBits(data.getDoubleValue()));
             break;
           default:
-            throw new IllegalArgumentException("Unknown csf type: " + fieldType.getCsfType());
+            throw new IllegalArgumentEtwitterception("Unknown csf type: " + fieldType.getCsfType());
         }
       }
     }

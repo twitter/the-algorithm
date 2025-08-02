@@ -4,8 +4,8 @@ scala_library(
     strict_deps = True,
     tags = ["bazel-compatible"],
     dependencies = [
-        "cortex-core/thrift/src/main/thrift:thrift-scala",
-        "cortex-tweet-annotate/service/src/main/thrift:thrift-scala",
+        "cortetwitter-core/thrift/src/main/thrift:thrift-scala",
+        "cortetwitter-tweet-annotate/service/src/main/thrift:thrift-scala",
         "finagle/finagle-memcached/src/main/scala",
         "mediaservices/commons/src/main/thrift:thrift-scala",
         "servo/repo",

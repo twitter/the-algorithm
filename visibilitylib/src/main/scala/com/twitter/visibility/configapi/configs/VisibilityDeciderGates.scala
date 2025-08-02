@@ -17,8 +17,8 @@ case class VisibilityDeciderGates(decider: Decider) {
     DeciderGate.linear(feature(DeciderKey.VisibilityLibraryEnableFollowCheckInMutedKeyword))
   val enableMediaInterstitialComposition: Gate[Unit] =
     DeciderGate.linear(feature(DeciderKey.VisibilityLibraryEnableMediaInterstitialComposition))
-  val enableExperimentalRuleEngine: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.EnableExperimentalRuleEngine))
+  val enableEtwitterperimentalRuleEngine: Gate[Unit] =
+    DeciderGate.linear(feature(DeciderKey.EnableEtwitterperimentalRuleEngine))
 
   val enableLocalizedInterstitialGenerator: Gate[Unit] =
     DeciderGate.linear(feature(DeciderKey.EnableLocalizedInterstitialGenerator))

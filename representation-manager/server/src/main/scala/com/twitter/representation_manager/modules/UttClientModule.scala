@@ -8,9 +8,9 @@ import com.twitter.escherbird.utt.strato.thriftscala.Environment
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.inject.TwitterModule
 import com.twitter.strato.client.{Client => StratoClient}
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
-object UttClientModule extends TwitterModule {
+object UttClientModule etwittertends TwitterModule {
 
   @Singleton
   @Provides
@@ -22,8 +22,8 @@ object UttClientModule extends TwitterModule {
     val defaultCacheConfigV2: CacheConfigV2 = CacheConfigV2(262143)
 
     val uttClientCacheConfigsV2: UttClientCacheConfigsV2 = UttClientCacheConfigsV2(
-      getTaxonomyConfig = defaultCacheConfigV2,
-      getUttTaxonomyConfig = defaultCacheConfigV2,
+      getTatwitteronomyConfig = defaultCacheConfigV2,
+      getUttTatwitteronomyConfig = defaultCacheConfigV2,
       getLeafIds = defaultCacheConfigV2,
       getLeafUttEntities = defaultCacheConfigV2
     )

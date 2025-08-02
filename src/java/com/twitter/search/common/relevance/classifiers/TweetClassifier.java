@@ -8,28 +8,28 @@ import com.twitter.search.common.relevance.entities.TwitterMessage;
  * Interface to perform feature classification for a single
  * @TwitterMessage object, or a group of them.
  *
- * Classification includes two steps: feature extraction, and
- * quality evaluation. During feature extraction, any interesting
+ * Classification includes two steps: feature etwittertraction, and
+ * quality evaluation. During feature etwittertraction, any interesting
  * feature that is deemed useful for subsequent quality analysis
- * is extracted from the @TwitterMessage object. Quality evaluation
+ * is etwittertracted from the @TwitterMessage object. Quality evaluation
  * is then done by a group of @TweetEvaluator objects associated
- * with the classifier, by using the various features extracted in the
+ * with the classifier, by using the various features etwittertracted in the
  * previous step.
  *
- * Feature extraction and quality evaluation results are stored in
+ * Feature etwittertraction and quality evaluation results are stored in
  * @TweetFeatures field of the @TwitterMessage object, which is defined
  * in src/main/thrift/classifier.thrift.
  */
 public abstract class TweetClassifier {
   /**
    * A list of TweetQualityEvaluators which are invoked after
-   * feature extraction is done. If null, no quality evaluation
+   * feature etwittertraction is done. If null, no quality evaluation
    * is done.
    */
   protected Iterable<TweetEvaluator> qualityEvaluators = null;
 
   /**
-   * Passed in TwitterMessage is examined and any extractable
+   * Passed in TwitterMessage is etwitteramined and any etwittertractable
    * features are saved in TweetFeatures field of TwitterMessage.
    * Then TweetQualityEvaluators are applied to compute various
    * quality values.
@@ -39,8 +39,8 @@ public abstract class TweetClassifier {
   public void classifyTweet(final TwitterMessage tweet) {
     Preconditions.checkNotNull(tweet);
 
-    // extract features
-    extractFeatures(tweet);
+    // etwittertract features
+    etwittertractFeatures(tweet);
 
     // compute quality
     evaluate(tweet);
@@ -57,7 +57,7 @@ public abstract class TweetClassifier {
    * @param tweets TwitterMessages to perform classification on.
    */
   public void classifyTweets(final Iterable<TwitterMessage> tweets) {
-    extractFeatures(tweets);
+    etwittertractFeatures(tweets);
     evaluate(tweets);
   }
 
@@ -73,24 +73,24 @@ public abstract class TweetClassifier {
 
 
   /**
-   * Extract interesting features from a single TwitterMessage for classification.
+   * Etwittertract interesting features from a single TwitterMessage for classification.
    *
-   * @param tweet TwitterMessage to extract interesting features for
+   * @param tweet TwitterMessage to etwittertract interesting features for
    */
-  protected abstract void extractFeatures(final TwitterMessage tweet);
+  protected abstract void etwittertractFeatures(final TwitterMessage tweet);
 
   /**
-   * Extract interesting features from a list of TwitterMessages for classification.
-   * @param tweets list of TwitterMessages to extract interesting features for
+   * Etwittertract interesting features from a list of TwitterMessages for classification.
+   * @param tweets list of TwitterMessages to etwittertract interesting features for
    */
-  protected void extractFeatures(final Iterable<TwitterMessage> tweets) {
+  protected void etwittertractFeatures(final Iterable<TwitterMessage> tweets) {
     for (TwitterMessage tweet: tweets) {
-      extractFeatures(tweet);
+      etwittertractFeatures(tweet);
     }
   }
 
   /**
-   * Given a TwitterMessage which already has its features extracted,
+   * Given a TwitterMessage which already has its features etwittertracted,
    * perform quality evaluation.
    *
    * @param tweet TwitterMessage to perform quality evaluation for
@@ -105,7 +105,7 @@ public abstract class TweetClassifier {
   }
 
   /**
-   * Given a list of TwitterMessages which already have their features extracted,
+   * Given a list of TwitterMessages which already have their features etwittertracted,
    * perform quality evaluation.
    *
    * @param tweets list of TwitterMessages to perform quality evaluation for

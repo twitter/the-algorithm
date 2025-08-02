@@ -14,7 +14,7 @@ import com.twitter.search.queryparser.query.Conjunction;
 import com.twitter.search.queryparser.query.Disjunction;
 import com.twitter.search.queryparser.query.Query;
 import com.twitter.search.queryparser.query.Query.Occur;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twitter.search.queryparser.query.QueryParserEtwitterception;
 import com.twitter.search.queryparser.query.search.SearchOperator;
 import com.twitter.search.queryparser.query.search.SearchQueryTransformer;
 
@@ -22,7 +22,7 @@ import com.twitter.search.queryparser.query.search.SearchQueryTransformer;
  * Truncate user id or id lists in [multi_term_disjunction from_user_id/id] queries.
  * Return null if query has incorrect operators or looked at wrong field.
  */
-public class MultiTermDisjunctionPerPartitionVisitor extends SearchQueryTransformer {
+public class MultiTermDisjunctionPerPartitionVisitor etwittertends SearchQueryTransformer {
   private final PartitionMappingManager partitionMappingManager;
   private final int partitionId;
   private final String targetFieldName;
@@ -52,7 +52,7 @@ public class MultiTermDisjunctionPerPartitionVisitor extends SearchQueryTransfor
   }
 
   @Override
-  public Query visit(Conjunction query) throws QueryParserException {
+  public Query visit(Conjunction query) throws QueryParserEtwitterception {
     boolean modified = false;
     ImmutableList.Builder<Query> children = ImmutableList.builder();
     for (Query child : query.getChildren()) {
@@ -77,7 +77,7 @@ public class MultiTermDisjunctionPerPartitionVisitor extends SearchQueryTransfor
   }
 
   @Override
-  public Query visit(Disjunction disjunction) throws QueryParserException {
+  public Query visit(Disjunction disjunction) throws QueryParserEtwitterception {
     boolean modified = false;
     ImmutableList.Builder<Query> children = ImmutableList.builder();
     for (Query child : disjunction.getChildren()) {
@@ -96,9 +96,9 @@ public class MultiTermDisjunctionPerPartitionVisitor extends SearchQueryTransfor
   }
 
   @Override
-  public Query visit(SearchOperator operator) throws QueryParserException {
+  public Query visit(SearchOperator operator) throws QueryParserEtwitterception {
     if (isTargetedQuery(operator)) {
-      List<Long> ids = extractIds(operator);
+      List<Long> ids = etwittertractIds(operator);
       if (ids.size() > 0) {
         List<String> operands = Lists.newArrayList(targetFieldName);
         for (long id : ids) {
@@ -119,7 +119,7 @@ public class MultiTermDisjunctionPerPartitionVisitor extends SearchQueryTransfor
     return operator;
   }
 
-  private List<Long> extractIds(SearchOperator operator) throws QueryParserException {
+  private List<Long> etwittertractIds(SearchOperator operator) throws QueryParserEtwitterception {
     if (EarlybirdFieldConstants.EarlybirdFieldConstant.ID_FIELD
         .getFieldName().equals(targetFieldName)) {
       return operator.getOperands().subList(1, operator.getNumOperands()).stream()

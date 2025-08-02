@@ -8,7 +8,7 @@ public final class EarlybirdRequestPreLogger {
 
   public static EarlybirdRequestPreLogger buildForRoot(Decider decider) {
     EarlybirdRequestLogger requestLogger = EarlybirdRequestLogger.buildForRoot(
-        EarlybirdRequestPreLogger.class.getName(), Integer.MAX_VALUE, decider);
+        EarlybirdRequestPreLogger.class.getName(), Integer.MAtwitter_VALUE, decider);
 
     return new EarlybirdRequestPreLogger(requestLogger);
   }

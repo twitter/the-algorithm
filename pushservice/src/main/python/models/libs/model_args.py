@@ -34,10 +34,10 @@ def get_arg_parser():
   )
 
   parser.add_argument(
-    "--directly_export_best",
+    "--directly_etwitterport_best",
     default=False,
     action="store_true",
-    help="whether to directly_export best_checkpoint",
+    help="whether to directly_etwitterport best_checkpoint",
   )
 
   parser.add_argument(
@@ -106,13 +106,13 @@ def get_arg_parser():
     help="whether to use engagement weight for base model.",
   )
   parser.add_argument(
-    "--mtl_num_extra_layers",
+    "--mtl_num_etwittertra_layers",
     type=int,
     default=1,
     help="Number of Hidden Layers for each TaskBranch.",
   )
   parser.add_argument(
-    "--mtl_neuron_scale", type=int, default=4, help="Scaling Factor of Neurons in MTL Extra Layers."
+    "--mtl_neuron_scale", type=int, default=4, help="Scaling Factor of Neurons in MTL Etwittertra Layers."
   )
   parser.add_argument(
     "--use_oonc_score",
@@ -136,13 +136,13 @@ def get_arg_parser():
     "--use_full_scope",
     default=False,
     action="store_true",
-    help="Will add extra scope and naming to graph.",
+    help="Will add etwittertra scope and naming to graph.",
   )
   parser.add_argument(
-    "--trainable_regexes",
+    "--trainable_regetwitteres",
     default=None,
     nargs="*",
-    help="The union of variables specified by the list of regexes will be considered trainable.",
+    help="The union of variables specified by the list of regetwitteres will be considered trainable.",
   )
   parser.add_argument(
     "--fine_tuning.ckpt_to_initialize_from",
@@ -152,8 +152,8 @@ def get_arg_parser():
     help="Checkpoint path from which to warm start. Indicates the pre-trained model.",
   )
   parser.add_argument(
-    "--fine_tuning.warm_start_scope_regex",
-    dest="fine_tuning_warm_start_scope_regex",
+    "--fine_tuning.warm_start_scope_regetwitter",
+    dest="fine_tuning_warm_start_scope_regetwitter",
     type=str,
     default=None,
     help="All variables matching this will be restored.",

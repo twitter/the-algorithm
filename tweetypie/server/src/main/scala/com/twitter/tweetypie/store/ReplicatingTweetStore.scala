@@ -29,7 +29,7 @@ import com.twitter.tweetypie.thriftscala._
  * (Failure to apply them is both less severe and self-correcting.)
  *
  * Delete and GeoScrub events are critical, because the cached data
- * has a long expiration and failure to apply them can result in
+ * has a long etwitterpiration and failure to apply them can result in
  * violations of user privacy.
  *
  * Update events are also important from a legal perspective, since
@@ -40,7 +40,7 @@ import com.twitter.tweetypie.thriftscala._
  *    deferredrpc service.
  */
 trait ReplicatingTweetStore
-    extends TweetStoreBase[ReplicatingTweetStore]
+    etwittertends TweetStoreBase[ReplicatingTweetStore]
     with AsyncInsertTweet.Store
     with AsyncDeleteTweet.Store
     with AsyncUndeleteTweet.Store

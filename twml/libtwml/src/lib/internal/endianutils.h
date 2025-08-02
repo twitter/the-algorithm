@@ -1,5 +1,5 @@
 //
-//  endian_fix.h
+//  endian_fitwitter.h
 //  ImageCore
 //
 //  For OSes that use glibc < 2.9 (like RHEL5)
@@ -8,18 +8,18 @@
 
 #ifdef __APPLE__
 #include <libkern/OSByteOrder.h>
-#define htobe16(x) OSSwapHostToBigInt16(x)
-#define htole16(x) OSSwapHostToLittleInt16(x)
-#define betoh16(x) OSSwapBigToHostInt16(x)
-#define letoh16(x) OSSwapLittleToHostInt16(x)
-#define htobe32(x) OSSwapHostToBigInt32(x)
-#define htole32(x) OSSwapHostToLittleInt32(x)
-#define betoh32(x) OSSwapBigToHostInt32(x)
-#define letoh32(x) OSSwapLittleToHostInt32(x)
-#define htobe64(x) OSSwapHostToBigInt64(x)
-#define htole64(x) OSSwapHostToLittleInt64(x)
-#define betoh64(x) OSSwapBigToHostInt64(x)
-#define letoh64(x) OSSwapLittleToHostInt64(x)
+#define htobe16(twitter) OSSwapHostToBigInt16(twitter)
+#define htole16(twitter) OSSwapHostToLittleInt16(twitter)
+#define betoh16(twitter) OSSwapBigToHostInt16(twitter)
+#define letoh16(twitter) OSSwapLittleToHostInt16(twitter)
+#define htobe32(twitter) OSSwapHostToBigInt32(twitter)
+#define htole32(twitter) OSSwapHostToLittleInt32(twitter)
+#define betoh32(twitter) OSSwapBigToHostInt32(twitter)
+#define letoh32(twitter) OSSwapLittleToHostInt32(twitter)
+#define htobe64(twitter) OSSwapHostToBigInt64(twitter)
+#define htole64(twitter) OSSwapHostToLittleInt64(twitter)
+#define betoh64(twitter) OSSwapBigToHostInt64(twitter)
+#define letoh64(twitter) OSSwapLittleToHostInt64(twitter)
 #else
 #include <endian.h>
 #ifdef __USE_BSD
@@ -28,82 +28,82 @@
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #ifndef htobe16
-#define htobe16(x) __bswap_16(x)
+#define htobe16(twitter) __bswap_16(twitter)
 #endif
 #ifndef htole16
-#define htole16(x) (x)
+#define htole16(twitter) (twitter)
 #endif
 #ifndef betoh16
-#define betoh16(x) __bswap_16(x)
+#define betoh16(twitter) __bswap_16(twitter)
 #endif
 #ifndef letoh16
-#define letoh16(x) (x)
+#define letoh16(twitter) (twitter)
 #endif
 
 #ifndef htobe32
-#define htobe32(x) __bswap_32(x)
+#define htobe32(twitter) __bswap_32(twitter)
 #endif
 #ifndef htole32
-#define htole32(x) (x)
+#define htole32(twitter) (twitter)
 #endif
 #ifndef betoh32
-#define betoh32(x) __bswap_32(x)
+#define betoh32(twitter) __bswap_32(twitter)
 #endif
 #ifndef letoh32
-#define letoh32(x) (x)
+#define letoh32(twitter) (twitter)
 #endif
 
 #ifndef htobe64
-#define htobe64(x) __bswap_64(x)
+#define htobe64(twitter) __bswap_64(twitter)
 #endif
 #ifndef htole64
-#define htole64(x) (x)
+#define htole64(twitter) (twitter)
 #endif
 #ifndef betoh64
-#define betoh64(x) __bswap_64(x)
+#define betoh64(twitter) __bswap_64(twitter)
 #endif
 #ifndef letoh64
-#define letoh64(x) (x)
+#define letoh64(twitter) (twitter)
 #endif
 
 #else /* __BYTE_ORDER == __LITTLE_ENDIAN */
 #ifndef htobe16
-#define htobe16(x) (x)
+#define htobe16(twitter) (twitter)
 #endif
 #ifndef htole16
-#define htole16(x) __bswap_16(x)
+#define htole16(twitter) __bswap_16(twitter)
 #endif
 #ifndef be16toh
-#define be16toh(x) (x)
+#define be16toh(twitter) (twitter)
 #endif
 #ifndef le16toh
-#define le16toh(x) __bswap_16(x)
+#define le16toh(twitter) __bswap_16(twitter)
 #endif
 
 #ifndef htobe32
-#define htobe32(x) (x)
+#define htobe32(twitter) (twitter)
 #endif
 #ifndef htole32
-#define htole32(x) __bswap_32(x)
+#define htole32(twitter) __bswap_32(twitter)
 #endif
 #ifndef betoh32
-#define betoh32(x) (x)
+#define betoh32(twitter) (twitter)
 #endif
 #ifndef letoh32
-#define letoh32(x) __bswap_32(x)
+#define letoh32(twitter) __bswap_32(twitter)
 #endif
 
 #ifndef htobe64
-#define htobe64(x) (x)
+#define htobe64(twitter) (twitter)
 #endif
 #ifndef htole64
-#define htole64(x) __bswap_64(x)
+#define htole64(twitter) __bswap_64(twitter)
 #endif
 #ifndef betoh64
-#define betoh64(x) (x)
+#define betoh64(twitter) (twitter)
 #endif
 #ifndef letoh64
-#define letoh64(x) __bswap_64(x)
+#define letoh64(twitter) __bswap_64(twitter)
 #endif
 
 #endif /* __BYTE_ORDER == __LITTLE_ENDIAN */

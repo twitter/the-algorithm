@@ -9,7 +9,7 @@ import com.twitter.tweetypie.thriftscala.DeviceSource
 import com.twitter.tweetypie.thriftscala.FieldByPath
 
 object DeviceSourceHydrator {
-  type Type = ValueHydrator[Option[DeviceSource], TweetCtx]
+  type Type = ValueHydrator[Option[DeviceSource], TweetCttwitter]
 
   // WebOauthId is the created_via value for Macaw-Swift through Woodstar.
   // We need to special-case it to return the same device_source as "web",
@@ -22,12 +22,12 @@ object DeviceSourceHydrator {
     if (createdVia == DeviceSourceHydrator.WebOauthId) "web" else createdVia
 
   def apply(repo: DeviceSourceRepository.Type): Type =
-    ValueHydrator[Option[DeviceSource], TweetCtx] { (_, ctx) =>
-      val req = convertForWeb(ctx.createdVia)
+    ValueHydrator[Option[DeviceSource], TweetCttwitter] { (_, cttwitter) =>
+      val req = convertForWeb(cttwitter.createdVia)
       repo(req).liftToTry.map {
         case Return(deviceSource) => ValueState.modified(Some(deviceSource))
         case Throw(NotFound) => ValueState.UnmodifiedNone
         case Throw(_) => ValueState.partial(None, hydratedField)
       }
-    }.onlyIf((curr, ctx) => curr.isEmpty && ctx.tweetFieldRequested(Tweet.DeviceSourceField))
+    }.onlyIf((curr, cttwitter) => curr.isEmpty && cttwitter.tweetFieldRequested(Tweet.DeviceSourceField))
 }

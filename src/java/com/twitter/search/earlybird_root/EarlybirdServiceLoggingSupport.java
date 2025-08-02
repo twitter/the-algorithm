@@ -12,7 +12,7 @@ import com.twitter.search.earlybird.common.EarlybirdRequestPreLogger;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 
-public class EarlybirdServiceLoggingSupport extends
+public class EarlybirdServiceLoggingSupport etwittertends
     LoggingSupport.DefaultLoggingSupport<EarlybirdRequest, EarlybirdResponse> {
   private static final int LATENCY_WARN_THRESHOLD_MS = 100;
 
@@ -54,7 +54,7 @@ public class EarlybirdServiceLoggingSupport extends
   }
 
   @Override
-  public void logExceptions(EarlybirdRequest req, Throwable t) {
-    ExceptionHandler.logException(req, t);
+  public void logEtwitterceptions(EarlybirdRequest req, Throwable t) {
+    EtwitterceptionHandler.logEtwitterception(req, t);
   }
 }

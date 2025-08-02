@@ -12,7 +12,7 @@ public interface ServingRange {
   /**
    * Returns the serving range's highest tweet ID.
    */
-  long getServingRangeMaxId();
+  long getServingRangeMatwitterId();
 
   /**
    * Returns the serving range's earliest time, in seconds since epoch.

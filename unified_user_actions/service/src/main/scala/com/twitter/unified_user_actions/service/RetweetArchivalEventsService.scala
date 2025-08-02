@@ -7,9 +7,9 @@ import com.twitter.kafka.client.processor.AtLeastOnceProcessor
 import com.twitter.tweetypie.thriftscala.RetweetArchivalEvent
 import com.twitter.unified_user_actions.service.module.KafkaProcessorRetweetArchivalEventsModule
 
-object RetweetArchivalEventsServiceMain extends RetweetArchivalEventsService
+object RetweetArchivalEventsServiceMain etwittertends RetweetArchivalEventsService
 
-class RetweetArchivalEventsService extends TwitterServer {
+class RetweetArchivalEventsService etwittertends TwitterServer {
 
   override val modules = Seq(
     KafkaProcessorRetweetArchivalEventsModule,
@@ -20,7 +20,7 @@ class RetweetArchivalEventsService extends TwitterServer {
 
   override protected def start(): Unit = {
     val processor = injector.instance[AtLeastOnceProcessor[UnKeyed, RetweetArchivalEvent]]
-    closeOnExit(processor)
+    closeOnEtwitterit(processor)
     processor.start()
   }
 }

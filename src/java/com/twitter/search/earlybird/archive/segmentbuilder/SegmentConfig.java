@@ -3,36 +3,36 @@ package com.twitter.search.earlybird.archive.segmentbuilder;
 import com.twitter.common.quantity.Amount;
 import com.twitter.common.quantity.Time;
 import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.archive.ArchiveOnDiskEarlybirdIndexConfig;
+import com.twitter.search.earlybird.archive.ArchiveOnDiskEarlybirdIndetwitterConfig;
 
 public class SegmentConfig {
-  private final ArchiveOnDiskEarlybirdIndexConfig earlybirdIndexConfig;
-  private final Amount<Long, Time> segmentZKLockExpirationTime;
-  private final int maxRetriesOnFailure;
+  private final ArchiveOnDiskEarlybirdIndetwitterConfig earlybirdIndetwitterConfig;
+  private final Amount<Long, Time> segmentZKLockEtwitterpirationTime;
+  private final int matwitterRetriesOnFailure;
   private final ZooKeeperTryLockFactory tryLockFactory;
 
   public SegmentConfig(
-      ArchiveOnDiskEarlybirdIndexConfig earlybirdIndexConfig,
-      Amount<Long, Time> segmentZKLockExpirationTime,
-      int maxRetriesOnFailure,
+      ArchiveOnDiskEarlybirdIndetwitterConfig earlybirdIndetwitterConfig,
+      Amount<Long, Time> segmentZKLockEtwitterpirationTime,
+      int matwitterRetriesOnFailure,
       ZooKeeperTryLockFactory tryLockFactory) {
 
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
-    this.segmentZKLockExpirationTime = segmentZKLockExpirationTime;
-    this.maxRetriesOnFailure = maxRetriesOnFailure;
+    this.earlybirdIndetwitterConfig = earlybirdIndetwitterConfig;
+    this.segmentZKLockEtwitterpirationTime = segmentZKLockEtwitterpirationTime;
+    this.matwitterRetriesOnFailure = matwitterRetriesOnFailure;
     this.tryLockFactory = tryLockFactory;
   }
 
-  public ArchiveOnDiskEarlybirdIndexConfig getEarlybirdIndexConfig() {
-    return earlybirdIndexConfig;
+  public ArchiveOnDiskEarlybirdIndetwitterConfig getEarlybirdIndetwitterConfig() {
+    return earlybirdIndetwitterConfig;
   }
 
-  public Amount<Long, Time> getSegmentZKLockExpirationTime() {
-    return segmentZKLockExpirationTime;
+  public Amount<Long, Time> getSegmentZKLockEtwitterpirationTime() {
+    return segmentZKLockEtwitterpirationTime;
   }
 
-  public int getMaxRetriesOnFailure() {
-    return maxRetriesOnFailure;
+  public int getMatwitterRetriesOnFailure() {
+    return matwitterRetriesOnFailure;
   }
 
   public ZooKeeperTryLockFactory getTryLockFactory() {

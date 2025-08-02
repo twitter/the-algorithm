@@ -42,17 +42,17 @@ trait BasicTweetPredicates {
       HealthPredicates.tweetHealthSignalScorePredicate(config.tweetHealthScoreStore),
       HealthPredicates
         .tweetHealthSignalScorePredicate(config.tweetHealthScoreStore, applyToQuoteTweet = true),
-      PredicatesForCandidate.nullCastF1ProtectedExperientPredicate(
+      PredicatesForCandidate.nullCastF1ProtectedEtwitterperientPredicate(
         config.cachedTweetyPieStoreV2
       ),
       OONTweetNegativeFeedbackBasedPredicate.ntabDislikeBasedPredicate(),
       OONSpreadControlPredicate.oonTweetSpreadControlPredicate(),
       OONSpreadControlPredicate.oonAuthorSpreadControlPredicate(),
-      HealthPredicates.healthSignalScoreMultilingualPnsfwTweetTextPredicate(
+      HealthPredicates.healthSignalScoreMultilingualPnsfwTweetTetwittertPredicate(
         config.tweetHealthScoreStore),
       PredicatesForCandidate
         .recommendedTweetAuthorAcceptableToTargetUser(config.edgeStore),
-      HealthPredicates.healthSignalScorePnsfwTweetTextPredicate(config.tweetHealthScoreStore),
+      HealthPredicates.healthSignalScorePnsfwTweetTetwittertPredicate(config.tweetHealthScoreStore),
       HealthPredicates.healthSignalScoreSpammyTweetPredicate(config.tweetHealthScoreStore),
       OutOfNetworkCandidatesQualityPredicates.NegativeKeywordsPredicate(
         config.postRankingFeatureStoreClient),
@@ -82,7 +82,7 @@ trait BasicTweetPredicatesWithoutSGSPredicates {
   final lazy val basicTweetPredicates = {
     List(
       HealthPredicates.healthSignalScoreSpammyTweetPredicate(config.tweetHealthScoreStore),
-      PredicatesForCandidate.nullCastF1ProtectedExperientPredicate(
+      PredicatesForCandidate.nullCastF1ProtectedEtwitterperientPredicate(
         config.cachedTweetyPieStoreV2
       ),
       TweetWithheldContentPredicate(),

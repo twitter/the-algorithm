@@ -1,13 +1,13 @@
 package com.twitter.search.earlybird.archive;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.FileNotFoundEtwitterception;
+import java.io.IOEtwitterception;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regetwitter.Matcher;
+import java.util.regetwitter.Pattern;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -27,7 +27,7 @@ import com.twitter.search.common.config.Config;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
 import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentUtil;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
+import com.twitter.search.common.schema.thriftjava.ThriftIndetwitteringEvent;
 import com.twitter.search.common.util.date.DateUtil;
 import com.twitter.search.common.util.io.EmptyRecordReader;
 import com.twitter.search.common.util.io.LzoThriftBlockFileReader;
@@ -45,16 +45,16 @@ import com.twitter.search.earlybird.partition.HdfsUtil;
 public class PartitionedBatch {
   private static final Logger LOG = LoggerFactory.getLogger(PartitionedBatch.class);
   private static final Date START_DATE_INCLUSIVE = DateUtil.toDate(2006, 03, 21);
-  private static final String STATUS_COUNT_FILE_PREFIX = "_status_count_";
+  private static final String STATUS_COUNT_FILE_PREFItwitter = "_status_count_";
   private static final Pattern STATUS_COUNT_FILE_PATTERN =
-      Pattern.compile(STATUS_COUNT_FILE_PREFIX + "(\\d+)_minid_(\\d+)_maxid_(\\d+)");
-  private static final int MAXIMUM_OUT_OF_ORDER_TOLERANCE_HOURS =
-      EarlybirdConfig.getInt("archive_max_out_of_order_tolerance_hours", 12);
-  private static final int READER_INIT_IOEXCEPTION_RETRIES = 20;
+      Pattern.compile(STATUS_COUNT_FILE_PREFItwitter + "(\\d+)_minid_(\\d+)_matwitterid_(\\d+)");
+  private static final int MAtwitterIMUM_OUT_OF_ORDER_TOLERANCE_HOURS =
+      EarlybirdConfig.getInt("archive_matwitter_out_of_order_tolerance_hours", 12);
+  private static final int READER_INIT_IOEtwitterCEPTION_RETRIES = 20;
   private static final PathFilter LZO_DATA_FILES_FILTER = file -> file.getName().endsWith(".lzo");
-  private static final PathFilter TXT_DATA_FILES_FILTER = file -> file.getName().endsWith(".txt");
+  private static final PathFilter TtwitterT_DATA_FILES_FILTER = file -> file.getName().endsWith(".ttwittert");
 
-  private static final Comparator<ThriftIndexingEvent> DESC_THRIFT_INDEXING_EVENT_COMPARATOR =
+  private static final Comparator<ThriftIndetwitteringEvent> DESC_THRIFT_INDEtwitterING_EVENT_COMPARATOR =
       (o1, o2) -> ComparisonChain.start()
           .compare(o2.getSortId(), o1.getSortId())
           .compare(o2.getUid(), o1.getUid())
@@ -62,17 +62,17 @@ public class PartitionedBatch {
 
   // Number archive tweets skipped because they are too out-of-order.
   private static final SearchCounter OUT_OF_ORDER_STATUSES_SKIPPED =
-      SearchCounter.export("out_of_order_archive_statuses_skipped");
+      SearchCounter.etwitterport("out_of_order_archive_statuses_skipped");
 
   @VisibleForTesting
-  protected static final long MAXIMUM_OUT_OF_ORDER_TOLERANCE_MILLIS =
-      TimeUnit.HOURS.toMillis(MAXIMUM_OUT_OF_ORDER_TOLERANCE_HOURS);
+  protected static final long MAtwitterIMUM_OUT_OF_ORDER_TOLERANCE_MILLIS =
+      TimeUnit.HOURS.toMillis(MAtwitterIMUM_OUT_OF_ORDER_TOLERANCE_HOURS);
 
   private final Date date;
   private final Path path;
   private int statusCount;
   private long minStatusID;
-  private long maxStatusID;
+  private long matwitterStatusID;
   private final int hashPartitionID;
   private boolean hasStatusCountFile;
   private final int numHashPartitions;
@@ -92,21 +92,21 @@ public class PartitionedBatch {
   /**
    * Loads all the information (tweet count, etc.) for this partition and day from HDFS.
    */
-  public void load(FileSystem hdfs) throws IOException {
+  public void load(FileSystem hdfs) throws IOEtwitterception {
     FileStatus[] dailyBatchFiles = null;
     try {
-      // listStatus() javadoc says it throws FileNotFoundException when path does not exist.
+      // listStatus() javadoc says it throws FileNotFoundEtwitterception when path does not etwitterist.
       // However, the actual implementations return null or an empty array instead.
-      // We handle all 3 cases: null, empty array, or FileNotFoundException.
+      // We handle all 3 cases: null, empty array, or FileNotFoundEtwitterception.
       dailyBatchFiles = hdfs.listStatus(path);
-    } catch (FileNotFoundException e) {
+    } catch (FileNotFoundEtwitterception e) {
       // don't do anything here and the day will be handled as empty.
     }
 
     if (dailyBatchFiles != null && dailyBatchFiles.length > 0) {
       for (FileStatus file : dailyBatchFiles) {
         String fileName = file.getPath().getName();
-        if (fileName.equals(STATUS_COUNT_FILE_PREFIX)) {
+        if (fileName.equals(STATUS_COUNT_FILE_PREFItwitter)) {
           // zero tweets in this partition - this can happen for early days in 2006
           handleEmptyPartition();
         } else {
@@ -118,9 +118,9 @@ public class PartitionedBatch {
               // understand.
               minStatusID = Config.environmentIsTest() ? Long.parseLong(matcher.group(2))
                   : adjustMinStatusId(Long.parseLong(matcher.group(2)), date);
-              maxStatusID = Long.parseLong(matcher.group(3));
+              matwitterStatusID = Long.parseLong(matcher.group(3));
               hasStatusCountFile = true;
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatEtwitterception e) {
               // invalid file - ignore
               LOG.warn("Could not parse status count file name.", e);
             }
@@ -128,14 +128,14 @@ public class PartitionedBatch {
         }
       }
     } else {
-      // Partition folder does not exist. This case can happen for early days of twitter
+      // Partition folder does not etwitterist. This case can happen for early days of twitter
       // where some partitions are empty. Set us to having a status count file, the validity of
       // the parent DailyStatusBatch will still be determined by whether there was a _SUCCESS file
       // in the day root.
       handleEmptyPartition();
 
       if (date.after(getEarliestDenseDay())) {
-        LOG.error("Unexpected empty directory {} for {}", path, date);
+        LOG.error("Unetwitterpected empty directory {} for {}", path, date);
       }
     }
   }
@@ -143,7 +143,7 @@ public class PartitionedBatch {
   private void handleEmptyPartition() {
     statusCount = 0;
     minStatusID = DailyStatusBatch.EMPTY_BATCH_STATUS_ID;
-    maxStatusID = DailyStatusBatch.EMPTY_BATCH_STATUS_ID;
+    matwitterStatusID = DailyStatusBatch.EMPTY_BATCH_STATUS_ID;
     hasStatusCountFile = true;
   }
 
@@ -160,7 +160,7 @@ public class PartitionedBatch {
       return minStatusID;
     }
 
-    long earliestStartTime = dateTime - MAXIMUM_OUT_OF_ORDER_TOLERANCE_MILLIS;
+    long earliestStartTime = dateTime - MAtwitterIMUM_OUT_OF_ORDER_TOLERANCE_MILLIS;
     long minStatusTime = SnowflakeIdParser.getTimestampFromTweetId(minStatusID);
     if (minStatusTime < earliestStartTime) {
       long newMinId =  SnowflakeIdParser.generateValidStatusId(earliestStartTime, 0);
@@ -177,17 +177,17 @@ public class PartitionedBatch {
    *
    * @param archiveSegment Determines the timeslice ID of all read tweets.
    * @param tweetsPath The path to the directory where the tweets for this day are stored.
-   * @param documentFactory The ThriftIndexingEvent to TweetDocument converter.
+   * @param documentFactory The ThriftIndetwitteringEvent to TweetDocument converter.
    */
   public RecordReader<TweetDocument> getTweetReaders(
       ArchiveSegment archiveSegment,
       Path tweetsPath,
-      DocumentFactory<ThriftIndexingEvent> documentFactory) throws IOException {
+      DocumentFactory<ThriftIndetwitteringEvent> documentFactory) throws IOEtwitterception {
     RecordReader<TweetDocument> tweetDocumentReader =
         new TransformingRecordReader<>(
-            createTweetReader(tweetsPath), new Function<ThriftIndexingEvent, TweetDocument>() {
+            createTweetReader(tweetsPath), new Function<ThriftIndetwitteringEvent, TweetDocument>() {
           @Override
-          public TweetDocument apply(ThriftIndexingEvent event) {
+          public TweetDocument apply(ThriftIndetwitteringEvent event) {
             return new TweetDocument(
                 event.getSortId(),
                 archiveSegment.getTimeSliceID(),
@@ -197,27 +197,27 @@ public class PartitionedBatch {
           }
         });
 
-    tweetDocumentReader.setExhaustStream(true);
+    tweetDocumentReader.setEtwitterhaustStream(true);
     return tweetDocumentReader;
   }
 
-  private RecordReader<ThriftIndexingEvent> createTweetReader(Path tweetsPath) throws IOException {
+  private RecordReader<ThriftIndetwitteringEvent> createTweetReader(Path tweetsPath) throws IOEtwitterception {
     if (date.before(START_DATE_INCLUSIVE)) {
       return new EmptyRecordReader<>();
     }
 
-    List<RecordReader<ThriftIndexingEvent>> readers = Lists.newArrayList();
+    List<RecordReader<ThriftIndetwitteringEvent>> readers = Lists.newArrayList();
     FileSystem hdfs = HdfsUtil.getHdfsFileSystem();
     try {
       Path dayPath = new Path(tweetsPath, ArchiveHDFSUtils.dateToPath(date, "/"));
       Path partitionPath =
           new Path(dayPath, String.format("p_%d_of_%d", hashPartitionID, numHashPartitions));
       PathFilter pathFilter =
-          Config.environmentIsTest() ? TXT_DATA_FILES_FILTER : LZO_DATA_FILES_FILTER;
+          Config.environmentIsTest() ? TtwitterT_DATA_FILES_FILTER : LZO_DATA_FILES_FILTER;
       FileStatus[] files = hdfs.listStatus(partitionPath, pathFilter);
       for (FileStatus fileStatus : files) {
         String fileStatusPath = fileStatus.getPath().toString().replaceAll("file:/", "/");
-        RecordReader<ThriftIndexingEvent> reader = createRecordReaderWithRetries(fileStatusPath);
+        RecordReader<ThriftIndetwitteringEvent> reader = createRecordReaderWithRetries(fileStatusPath);
         readers.add(reader);
       }
     } finally {
@@ -228,19 +228,19 @@ public class PartitionedBatch {
       return new EmptyRecordReader<>();
     }
 
-    return new MergingSortedRecordReader<>(DESC_THRIFT_INDEXING_EVENT_COMPARATOR, readers);
+    return new MergingSortedRecordReader<>(DESC_THRIFT_INDEtwitterING_EVENT_COMPARATOR, readers);
   }
 
-  private RecordReader<ThriftIndexingEvent> createRecordReaderWithRetries(String filePath)
-      throws IOException {
-    Predicate<ThriftIndexingEvent> recordFilter = getRecordFilter();
+  private RecordReader<ThriftIndetwitteringEvent> createRecordReaderWithRetries(String filePath)
+      throws IOEtwitterception {
+    Predicate<ThriftIndetwitteringEvent> recordFilter = getRecordFilter();
     int numTries = 0;
     while (true) {
       try {
         ++numTries;
-        return new LzoThriftBlockFileReader<>(filePath, ThriftIndexingEvent.class, recordFilter);
-      } catch (IOException e) {
-        if (numTries < READER_INIT_IOEXCEPTION_RETRIES) {
+        return new LzoThriftBlockFileReader<>(filePath, ThriftIndetwitteringEvent.class, recordFilter);
+      } catch (IOEtwitterception e) {
+        if (numTries < READER_INIT_IOEtwitterCEPTION_RETRIES) {
           LOG.warn("Failed to open LzoThriftBlockFileReader for " + filePath + ". Will retry.", e);
         } else {
           LOG.error("Failed to open LzoThriftBlockFileReader for " + filePath
@@ -251,7 +251,7 @@ public class PartitionedBatch {
     }
   }
 
-  private Predicate<ThriftIndexingEvent> getRecordFilter() {
+  private Predicate<ThriftIndetwitteringEvent> getRecordFilter() {
     return Config.environmentIsTest() ? null : input -> {
       if (input == null) {
         return false;
@@ -289,8 +289,8 @@ public class PartitionedBatch {
     return minStatusID;
   }
 
-  public long getMaxStatusID() {
-    return maxStatusID;
+  public long getMatwitterStatusID() {
+    return matwitterStatusID;
   }
 
   public Date getDate() {
@@ -313,7 +313,7 @@ public class PartitionedBatch {
     return hasStatusCountFile
         && statusCount == 0
         && minStatusID == DailyStatusBatch.EMPTY_BATCH_STATUS_ID
-        && maxStatusID == DailyStatusBatch.EMPTY_BATCH_STATUS_ID
+        && matwitterStatusID == DailyStatusBatch.EMPTY_BATCH_STATUS_ID
         && date.after(getEarliestDenseDay());
   }
 

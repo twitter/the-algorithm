@@ -23,7 +23,7 @@ trait Predicate[-Q] {
   }
 
   /**
-   * Syntax sugar for functions which take in 2 inputs as a tuple.
+   * Syntatwitter sugar for functions which take in 2 inputs as a tuple.
    */
   def apply[Q1, Q2](item1: Q1, item2: Q2)(implicit ev: ((Q1, Q2)) => Q): Stitch[PredicateResult] = {
     apply((item1, item2))
@@ -93,7 +93,7 @@ trait Predicate[-Q] {
   def convertToFailOpenWithResultType(resultType: PredicateResult): Predicate[Q] = {
     Predicate { query: Q =>
       apply(query).handle {
-        case _: Exception =>
+        case _: Etwitterception =>
           resultType
       }
 
@@ -102,11 +102,11 @@ trait Predicate[-Q] {
 
 }
 
-class TruePredicate[Q] extends Predicate[Q] {
+class TruePredicate[Q] etwittertends Predicate[Q] {
   override def apply(item: Q): Stitch[PredicateResult] = Predicate.AlwaysTrueStitch
 }
 
-class FalsePredicate[Q](reason: FilterReason) extends Predicate[Q] {
+class FalsePredicate[Q](reason: FilterReason) etwittertends Predicate[Q] {
   val InvalidResult = Stitch.value(PredicateResult.Invalid(Set(reason)))
   override def apply(item: Q): Stitch[PredicateResult] = InvalidResult
 }
@@ -142,7 +142,7 @@ object Predicate {
    * @param items     items of type Q
    * @param predicate predicate that determines whether an item is acceptable
    * @param batchSize batch size to call the predicate with
-   * @param numToTake max number of items to return
+   * @param numToTake matwitter number of items to return
    * @param stats stats receiver
    * @tparam Q type of item
    *
@@ -162,8 +162,8 @@ object Predicate {
       takeSize: Int,
       numOfBatch: Int
     ): Stitch[(Seq[Q], Int)] = {
-      if (input.hasNext) {
-        val currFut = input.next()
+      if (input.hasNetwittert) {
+        val currFut = input.netwittert()
         currFut.flatMap { curr =>
           val taken = curr.take(takeSize)
           val combined = prev ++ taken
@@ -259,7 +259,7 @@ object Predicate {
 abstract class GatedPredicateBase[Q](
   underlyingPredicate: Predicate[Q],
   stats: StatsReceiver = NullStatsReceiver)
-    extends Predicate[Q] {
+    etwittertends Predicate[Q] {
   def gate(item: Q): Boolean
 
   val underlyingPredicateTotal = stats.counter("underlying_total")

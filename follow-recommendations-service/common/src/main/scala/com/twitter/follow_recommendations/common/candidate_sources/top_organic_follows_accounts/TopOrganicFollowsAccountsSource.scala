@@ -8,18 +8,18 @@ import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.models.HasGeohashAndCountryCode
 import com.twitter.hermit.model.Algorithm
 import com.twitter.onboarding.relevance.organic_follows_accounts.thriftscala.OrganicFollowsAccounts
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.strato.generated.client.onboarding.userrecs.OrganicFollowsAccountsClientColumn
 import com.twitter.timelines.configapi.HasParams
 import com.twitter.util.Duration
 import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
-object AccountsFilteringAndRankingLogicId extends Enumeration {
+object AccountsFilteringAndRankingLogicId etwittertends Enumeration {
   type AccountsFilteringAndRankingLogicId = Value
 
   val NewOrganicFollows: AccountsFilteringAndRankingLogicId = Value("new_organic_follows")
@@ -28,10 +28,10 @@ object AccountsFilteringAndRankingLogicId extends Enumeration {
 }
 
 object TopOrganicFollowsAccountsSource {
-  val MaxCacheSize = 500
+  val MatwitterCacheSize = 500
   val CacheTTL: Duration = Duration.fromHours(24)
 
-  type Target = HasParams with HasClientContext with HasGeohashAndCountryCode
+  type Target = HasParams with HasClientContetwittert with HasGeohashAndCountryCode
 
   val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
     Algorithm.OrganicFollowAccounts.toString)
@@ -41,7 +41,7 @@ object TopOrganicFollowsAccountsSource {
 class TopOrganicFollowsAccountsSource @Inject() (
   organicFollowsAccountsClientColumn: OrganicFollowsAccountsClientColumn,
   statsReceiver: StatsReceiver,
-) extends CandidateSource[TopOrganicFollowsAccountsSource.Target, CandidateUser]
+) etwittertends CandidateSource[TopOrganicFollowsAccountsSource.Target, CandidateUser]
     with Logging {
 
   /** @see [[CandidateSourceIdentifier]] */
@@ -55,7 +55,7 @@ class TopOrganicFollowsAccountsSource @Inject() (
   private val errorStats = stats.counter("error")
 
   private val cache = StitchCache[String, Option[OrganicFollowsAccounts]](
-    maxCacheSize = TopOrganicFollowsAccountsSource.MaxCacheSize,
+    matwitterCacheSize = TopOrganicFollowsAccountsSource.MatwitterCacheSize,
     ttl = TopOrganicFollowsAccountsSource.CacheTTL,
     statsReceiver = statsReceiver.scope(identifier.name, "cache"),
     underlyingCall = (k: String) => {

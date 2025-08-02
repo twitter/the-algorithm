@@ -1,0 +1,7 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.item.topic
+
+sealed trait TopicFunctionalityType
+
+case object BasicTopicFunctionalityType etwittertends TopicFunctionalityType
+case object PivotTopicFunctionalityType etwittertends TopicFunctionalityType
+case object RecommendationTopicFunctionalityType etwittertends TopicFunctionalityType

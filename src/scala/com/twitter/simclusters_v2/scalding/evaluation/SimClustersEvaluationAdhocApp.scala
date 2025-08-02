@@ -2,13 +2,13 @@ package com.twitter.simclusters_v2.scalding.evaluation
 
 import com.twitter.scalding._
 import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv2.remote_access.EtwitterplicitLocation
 import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.job.TwitterExecutionApp
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.candidate_source.ClusterRanker
 import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.ClusterTopKTweetsHourlySuffixSource
+import com.twitter.simclusters_v2.hdfs_sources.ClusterTopKTweetsHourlySuffitwitterSource
 import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedInScalaDataset
 import com.twitter.simclusters_v2.hdfs_sources.TweetEvaluationTimelinesReferenceSetScalaDataset
 import com.twitter.simclusters_v2.scalding.common.Util
@@ -40,7 +40,7 @@ oscar hdfs --user cassowary --screen --screen-detached --tee your_ldap/prod_perc
  --ref_tweet_date 2019-03-05T00 2019-03-05T01 \
  --timeline_tweet rectweet \
  --sample_rate 0.05 \
- --max_cand_tweets 16000000 \
+ --matwitter_cand_tweets 16000000 \
  --min_tweet_score 0.0 \
  --user_interested_in_dir /user/frigate/your_ldap/interested_in_copiedFromAtlaProc_20190228 \
  --cluster_top_k_dir /user/cassowary/your_ldap/offline_simcluster_20190304/cluster_top_k_tweets \
@@ -48,14 +48,14 @@ oscar hdfs --user cassowary --screen --screen-detached --tee your_ldap/prod_perc
  --toEmailAddress your_ldap@twitter.com \
  --testRunName TestingProdOn0305Data
  */
-object SimClustersEvaluationAdhocApp extends TwitterExecutionApp {
-  private val maxTweetResults = 40
-  private val maxClustersToQuery = 20
+object SimClustersEvaluationAdhocApp etwittertends TwitterEtwitterecutionApp {
+  private val matwitterTweetResults = 40
+  private val matwitterClustersToQuery = 20
 
   @Override
-  def job: Execution[Unit] = {
-    Execution.withArgs { args =>
-      Execution.withId { implicit uniqueId =>
+  def job: Etwitterecution[Unit] = {
+    Etwitterecution.withArgs { args =>
+      Etwitterecution.withId { implicit uniqueId =>
         implicit val tz: TimeZone = DateOps.UTC
         implicit val dateParser: DateParser = DateParser.default
 
@@ -73,18 +73,18 @@ object SimClustersEvaluationAdhocApp extends TwitterExecutionApp {
           case "rectweet" => DisplayLocation.TimelinesRectweet
           case "recap" => DisplayLocation.TimelinesRecap
           case e =>
-            throw new IllegalArgumentException(s"$e isn't a valid timeline display location")
+            throw new IllegalArgumentEtwitterception(s"$e isn't a valid timeline display location")
         }
 
         val sampleRate = args.double("sample_rate", 1.0)
         val validRefPipe = getProdTimelineReference(tweetType, refTweetDateRange, sampleRate)
         val targetUserPipe = validRefPipe.map { _.targetUserId }
 
-        // Read a fixed-path in atla if provided, otherwise read prod data from atla for date range
+        // Read a fitwittered-path in atla if provided, otherwise read prod data from atla for date range
         val userInterestInPipe = args.optional("user_interested_in_dir") match {
-          case Some(fixedPath) =>
-            println(s"user_interested_in_dir is provided at: $fixedPath. Reading fixed path data.")
-            TypedPipe.from(AdhocKeyValSources.interestedInSource(fixedPath))
+          case Some(fitwitteredPath) =>
+            println(s"user_interested_in_dir is provided at: $fitwitteredPath. Reading fitwittered path data.")
+            TypedPipe.from(AdhocKeyValSources.interestedInSource(fitwitteredPath))
           case _ =>
             println(s"user_interested_in_dir isn't provided. Reading prod data.")
             interestedInProdSource(candTweetDateRange)
@@ -94,17 +94,17 @@ object SimClustersEvaluationAdhocApp extends TwitterExecutionApp {
         val clusterTopKDir = args("cluster_top_k_dir")
         println(s"cluster_top_k_dir is defined at: $clusterTopKDir")
         val clusterTopKPipe = TypedPipe.from(
-          ClusterTopKTweetsHourlySuffixSource(clusterTopKDir, candTweetDateRange)
+          ClusterTopKTweetsHourlySuffitwitterSource(clusterTopKDir, candTweetDateRange)
         )
 
         // Configs for offline simcluster tweet recommendation
-        val maxTweetRecs = args.int("max_cand_tweets", 30000000)
+        val matwitterTweetRecs = args.int("matwitter_cand_tweets", 30000000)
         val minTweetScoreThreshold = args.double("min_tweet_score", 0.0)
 
         val offlineRecConfig = OfflineRecConfig(
-          maxTweetRecs,
-          maxTweetResults,
-          maxClustersToQuery,
+          matwitterTweetRecs,
+          matwitterTweetResults,
+          matwitterClustersToQuery,
           minTweetScoreThreshold,
           ClusterRanker.RankByNormalizedFavScore
         )
@@ -125,7 +125,7 @@ object SimClustersEvaluationAdhocApp extends TwitterExecutionApp {
                 "Results from tweet evaluation test bed " + testRunName.getOrElse(""),
                 address)
             }
-            TypedPipe.from(Seq((results, ""))).writeExecution(TypedTsv[(String, String)](outputDir))
+            TypedPipe.from(Seq((results, ""))).writeEtwitterecution(TypedTsv[(String, String)](outputDir))
           }
         }
       }
@@ -147,7 +147,7 @@ object SimClustersEvaluationAdhocApp extends TwitterExecutionApp {
     val snapshotRange = DateRange(batchDateRange.start, batchDateRange.start + Days(1))
     val timelinesRefPipe = DAL
       .readMostRecentSnapshot(TweetEvaluationTimelinesReferenceSetScalaDataset, snapshotRange)
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
       .toTypedPipe
 
     timelinesRefPipe
@@ -179,7 +179,7 @@ object SimClustersEvaluationAdhocApp extends TwitterExecutionApp {
     batchDateRange: DateRange
   )(
     implicit uniqueID: UniqueID
-  ): Execution[TypedPipe[CandidateTweets]] = {
+  ): Etwitterecution[TypedPipe[CandidateTweets]] = {
     OfflineTweetRecommendation
       .getTopTweets(offlineConfig, targetUserPipe, userIsInterestedInPipe, clusterTopKTweetsPipe)
       .map(_.map {
@@ -201,7 +201,7 @@ object SimClustersEvaluationAdhocApp extends TwitterExecutionApp {
 
     DAL
       .readMostRecentSnapshot(SimclustersV2InterestedInScalaDataset, dateRange.embiggen(Weeks(1)))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
       .toTypedPipe
       .map {
         case KeyVal(key, value) => (key, value)

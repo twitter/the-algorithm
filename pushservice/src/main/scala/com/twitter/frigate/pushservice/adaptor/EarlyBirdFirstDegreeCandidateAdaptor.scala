@@ -28,9 +28,9 @@ case class EarlyBirdFirstDegreeCandidateAdaptor(
   tweetyPieStore: ReadableStore[Long, TweetyPieResult],
   tweetyPieStoreNoVF: ReadableStore[Long, TweetyPieResult],
   userTweetTweetyPieStore: ReadableStore[UserTweet, TweetyPieResult],
-  maxResultsParam: Param[Int],
+  matwitterResultsParam: Param[Int],
   globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
+    etwittertends CandidateSource[Target, RawCandidate]
     with CandidateSourceEligible[Target, RawCandidate] {
 
   type EBCandidate = EarlybirdCandidate with TweetDetails
@@ -42,45 +42,45 @@ case class EarlyBirdFirstDegreeCandidateAdaptor(
   private val emptyTweetyPieResult = stats.stat("empty_tweetypie_result")
   private val nonReplyTweetsCounter = stats.counter("non_reply_tweets")
   private val enableRetweets = stats.counter("enable_retweets")
-  private val f1withoutSocialContexts = stats.counter("f1_without_social_context")
+  private val f1withoutSocialContetwitterts = stats.counter("f1_without_social_contetwittert")
   private val userTweetTweetyPieStoreCounter = stats.counter("user_tweet_tweetypie_store")
 
   override val name: String = earlyBirdFirstDegreeCandidates.name
 
-  private def getAllSocialContextActions(
+  private def getAllSocialContetwittertActions(
     socialProofTypes: Seq[(SocialProofType, Seq[Long])]
-  ): Seq[SocialContextAction] = {
+  ): Seq[SocialContetwittertAction] = {
     socialProofTypes.flatMap {
       case (SocialProofType.Favorite, scIds) =>
         scIds.map { scId =>
-          SocialContextAction(
+          SocialContetwittertAction(
             scId,
             Time.now.inMilliseconds,
-            socialContextActionType = Some(SocialContextActionType.Favorite)
+            socialContetwittertActionType = Some(SocialContetwittertActionType.Favorite)
           )
         }
       case (SocialProofType.Retweet, scIds) =>
         scIds.map { scId =>
-          SocialContextAction(
+          SocialContetwittertAction(
             scId,
             Time.now.inMilliseconds,
-            socialContextActionType = Some(SocialContextActionType.Retweet)
+            socialContetwittertActionType = Some(SocialContetwittertActionType.Retweet)
           )
         }
       case (SocialProofType.Reply, scIds) =>
         scIds.map { scId =>
-          SocialContextAction(
+          SocialContetwittertAction(
             scId,
             Time.now.inMilliseconds,
-            socialContextActionType = Some(SocialContextActionType.Reply)
+            socialContetwittertActionType = Some(SocialContetwittertActionType.Reply)
           )
         }
       case (SocialProofType.Tweet, scIds) =>
         scIds.map { scId =>
-          SocialContextAction(
+          SocialContetwittertAction(
             scId,
             Time.now.inMilliseconds,
-            socialContextActionType = Some(SocialContextActionType.Tweet)
+            socialContetwittertActionType = Some(SocialContetwittertActionType.Tweet)
           )
         }
       case _ => Nil
@@ -93,10 +93,10 @@ case class EarlyBirdFirstDegreeCandidateAdaptor(
     scIds: Seq[Long],
     socialProofTypes: Seq[(SocialProofType, Seq[Long])]
   ): RawCandidate = {
-    val scActions = scIds.map { scId => SocialContextAction(scId, Time.now.inMilliseconds) }
+    val scActions = scIds.map { scId => SocialContetwittertAction(scId, Time.now.inMilliseconds) }
     new RawCandidate with TweetRetweetCandidate with EarlybirdTweetFeatures {
-      override val socialContextActions = scActions
-      override val socialContextAllTypeActions = getAllSocialContextActions(socialProofTypes)
+      override val socialContetwittertActions = scActions
+      override val socialContetwittertAllTypeActions = getAllSocialContetwittertActions(socialProofTypes)
       override val tweetId = candidate.tweetId
       override val target = inputTarget
       override val tweetyPieResult = candidate.tweetyPieResult
@@ -104,11 +104,11 @@ case class EarlyBirdFirstDegreeCandidateAdaptor(
     }
   }
 
-  private def generateF1CandidateWithoutSocialContext(
+  private def generateF1CandidateWithoutSocialContetwittert(
     inputTarget: Target,
     candidate: EBCandidate
   ): RawCandidate = {
-    f1withoutSocialContexts.incr()
+    f1withoutSocialContetwitterts.incr()
     new RawCandidate with F1FirstDegree with EarlybirdTweetFeatures {
       override val tweetId = candidate.tweetId
       override val target = inputTarget
@@ -215,7 +215,7 @@ case class EarlyBirdFirstDegreeCandidateAdaptor(
     retweetCandidates: Seq[RawCandidate]
   ): Seq[RawCandidate] = {
     val hydratedF1Recs =
-      firstDegreeCandidates.map(generateF1CandidateWithoutSocialContext(inputTarget, _))
+      firstDegreeCandidates.map(generateF1CandidateWithoutSocialContetwittert(inputTarget, _))
     hydratedF1Recs ++ retweetCandidates
   }
 
@@ -227,13 +227,13 @@ case class EarlyBirdFirstDegreeCandidateAdaptor(
         seedSetEmpty.incr()
         Future.None
       } else {
-        val maxResultsToReturn = inputTarget.params(maxResultsParam)
-        val maxTweetAge = inputTarget.params(PushFeatureSwitchParams.F1CandidateMaxTweetAgeParam)
+        val matwitterResultsToReturn = inputTarget.params(matwitterResultsParam)
+        val matwitterTweetAge = inputTarget.params(PushFeatureSwitchParams.F1CandidateMatwitterTweetAgeParam)
         val earlybirdQuery = EarlybirdCandidateSource.Query(
-          maxNumResultsToReturn = maxResultsToReturn,
+          matwitterNumResultsToReturn = matwitterResultsToReturn,
           seedset = seedsetMap,
-          maxConsecutiveResultsByTheSameUser = Some(1),
-          maxTweetAge = maxTweetAge,
+          matwitterConsecutiveResultsByTheSameUser = Some(1),
+          matwitterTweetAge = matwitterTweetAge,
           disableTimelinesMLModel = false,
           searcherId = Some(inputTarget.targetId),
           isProtectTweetsEnabled =

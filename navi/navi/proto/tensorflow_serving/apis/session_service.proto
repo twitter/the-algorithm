@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow.serving;
 
@@ -16,9 +16,9 @@ message SessionRunRequest {
   // Tensors to be fed in the step. Each feed is a named tensor.
   repeated NamedTensorProto feed = 2;
 
-  // Fetches. A list of tensor names. The caller expects a tensor to
+  // Fetches. A list of tensor names. The caller etwitterpects a tensor to
   // be returned for each fetch[i] (see RunResponse.tensor). The
-  // order of specified fetches does not change the execution order.
+  // order of specified fetches does not change the etwitterecution order.
   repeated string fetch = 3;
 
   // Target Nodes. A list of node names. The named nodes will be run
@@ -46,9 +46,9 @@ message SessionRunResponse {
   RunMetadata metadata = 2;
 }
 
-// SessionService defines a service with which a client can interact to execute
+// SessionService defines a service with which a client can interact to etwitterecute
 // Tensorflow model inference. The SessionService::SessionRun method is similar
-// to MasterService::RunStep of Tensorflow, except that all sessions are ready
+// to MasterService::RunStep of Tensorflow, etwittercept that all sessions are ready
 // to run, and you request a specific model/session with ModelSpec.
 service SessionService {
   // Runs inference of a given model.

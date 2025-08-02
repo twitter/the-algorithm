@@ -5,15 +5,15 @@ import com.twitter.bijection.Injection
 import com.twitter.dal.client.dataset.KeyValDALDataset
 import com.twitter.scalding._
 import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, WriteExtension}
-import com.twitter.scalding_internal.job.TwitterExecutionApp
+import com.twitter.scalding_internal.dalv2.DALWrite.{D, WriteEtwittertension}
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
 import com.twitter.scalding_internal.job.analytics_batch.{
-  AnalyticsBatchExecution,
-  AnalyticsBatchExecutionArgs,
+  AnalyticsBatchEtwitterecution,
+  AnalyticsBatchEtwitterecutionArgs,
   BatchDescription,
   BatchFirstTime,
   BatchIncrement,
-  TwitterScheduledExecutionApp
+  TwitterScheduledEtwitterecutionApp
 }
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common.{ClusterId, ModelVersions, UserId}
@@ -23,7 +23,7 @@ import com.twitter.simclusters_v2.hdfs_sources.{
   SimclustersV2KnownFor20M145K2020ScalaDataset,
   SimclustersV2RawInterestedInLite20M145K2020ScalaDataset,
   SimclustersV2RawInterestedIn20M145KUpdatedScalaDataset,
-  UserAndNeighborsFixedPathSource,
+  UserAndNeighborsFitwitteredPathSource,
   UserUserGraphScalaDataset
 }
 import com.twitter.simclusters_v2.scalding.common.Util
@@ -33,7 +33,7 @@ import com.twitter.simclusters_v2.thriftscala.{
   UserAndNeighbors,
   UserToInterestedInClusterScores
 }
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
+import com.twitter.wtf.scalding.jobs.common.AdhocEtwitterecutionApp
 import java.util.TimeZone
 
 /**
@@ -61,7 +61,7 @@ import java.util.TimeZone
  * capesospy-v2 update --build_locally --start_cron interested_in_lite_for_20M_145k_2020 \
  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
  */
-object InterestedInFromKnownForLite20M145K2020 extends InterestedInFromKnownForLite {
+object InterestedInFromKnownForLite20M145K2020 etwittertends InterestedInFromKnownForLite {
   override val firstTime: String = "2021-04-24"
   override val outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]] =
     SimclustersV2RawInterestedInLite20M145K2020ScalaDataset
@@ -70,7 +70,7 @@ object InterestedInFromKnownForLite20M145K2020 extends InterestedInFromKnownForL
   override val knownForDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]] =
     SimclustersV2KnownFor20M145K2020ScalaDataset
 }
-trait InterestedInFromKnownForLite extends TwitterScheduledExecutionApp {
+trait InterestedInFromKnownForLite etwittertends TwitterScheduledEtwitterecutionApp {
   implicit val tz = DateOps.UTC
   implicit val parser = DateParser.default
 
@@ -83,44 +83,44 @@ trait InterestedInFromKnownForLite extends TwitterScheduledExecutionApp {
   def knownForModelVersion: String
   def knownForDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]]
 
-  private lazy val execArgs = AnalyticsBatchExecutionArgs(
+  private lazy val etwitterecArgs = AnalyticsBatchEtwitterecutionArgs(
     batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
     firstTime = BatchFirstTime(RichDate(firstTime)),
     lastTime = None,
     batchIncrement = BatchIncrement(batchIncrement)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) {
+  override def scheduledJob: Etwitterecution[Unit] = AnalyticsBatchEtwitterecution(etwitterecArgs) {
     implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
+      Etwitterecution.withId { implicit uniqueId =>
+        Etwitterecution.withArgs { args =>
           val userUserGraph =
             DAL.readMostRecentSnapshot(UserUserGraphScalaDataset).toTypedPipe
           val knownFor = KnownForSources.fromKeyVal(
-            DAL.readMostRecentSnapshot(knownForDALDataset, dateRange.extend(Days(30))).toTypedPipe,
+            DAL.readMostRecentSnapshot(knownForDALDataset, dateRange.etwittertend(Days(30))).toTypedPipe,
             knownForModelVersion
           )
 
           val socialProofThreshold = args.int("socialProofThreshold", 2)
-          val maxClustersPerUser = args.int("maxClustersPerUser", 200)
+          val matwitterClustersPerUser = args.int("matwitterClustersPerUser", 200)
 
           val result = InterestedInFromKnownForLite
             .run(
               userUserGraph,
               knownFor,
               socialProofThreshold,
-              maxClustersPerUser,
+              matwitterClustersPerUser,
               knownForModelVersion
             )
 
-          val writeKeyValResultExec = result
+          val writeKeyValResultEtwitterec = result
             .map {
               case (userId, clusters) => KeyVal(userId, clusters)
-            }.writeDALVersionedKeyValExecution(
+            }.writeDALVersionedKeyValEtwitterecution(
               outputKVDataset,
-              D.Suffix(outputPath)
+              D.Suffitwitter(outputPath)
             )
-          Util.printCounters(writeKeyValResultExec)
+          Util.printCounters(writeKeyValResultEtwitterec)
         }
       }
   }
@@ -139,17 +139,17 @@ trait InterestedInFromKnownForLite extends TwitterScheduledExecutionApp {
  * --outputDir /gcs/user/cassowary/adhoc/interested_in_from_knownfor_lite/ \
  * --date 2020-08-25
  */
-object InterestedInFromKnownForLite20M145K2020Adhoc extends AdhocExecutionApp {
+object InterestedInFromKnownForLite20M145K2020Adhoc etwittertends AdhocEtwitterecutionApp {
   override def runOnDateRange(
     args: Args
   )(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val userUserGraph = DAL.readMostRecentSnapshot(UserUserGraphScalaDataset).toTypedPipe
     val socialProofThreshold = args.int("socialProofThreshold", 2)
-    val maxClustersPerUser = args.int("maxClustersPerUser", 200)
+    val matwitterClustersPerUser = args.int("matwitterClustersPerUser", 200)
     val knownForModelVersion = ModelVersions.Model20M145K2020
     val knownFor = KnownForSources.fromKeyVal(
       DAL
@@ -166,16 +166,16 @@ object InterestedInFromKnownForLite20M145K2020Adhoc extends AdhocExecutionApp {
           userUserGraph,
           knownFor,
           socialProofThreshold,
-          maxClustersPerUser,
+          matwitterClustersPerUser,
           knownForModelVersion
-        ).writeExecution(outputSink)
+        ).writeEtwitterecution(outputSink)
     )
   }
 
 }
 
 object InterestedInFromKnownForLite {
-  private def ifNanMake0(x: Double): Double = if (x.isNaN) 0.0 else x
+  private def ifNanMake0(twitter: Double): Double = if (twitter.isNaN) 0.0 else twitter
 
   case class SrcClusterIntermediateInfo(
     followScore: Double,
@@ -199,7 +199,7 @@ object InterestedInFromKnownForLite {
   }
 
   implicit object SrcClusterIntermediateInfoSemigroup
-      extends Semigroup[SrcClusterIntermediateInfo] {
+      etwittertends Semigroup[SrcClusterIntermediateInfo] {
     override def plus(
       left: SrcClusterIntermediateInfo,
       right: SrcClusterIntermediateInfo
@@ -218,7 +218,7 @@ object InterestedInFromKnownForLite {
     adjacencyLists: TypedPipe[UserAndNeighbors],
     knownFor: TypedPipe[(UserId, Array[(ClusterId, Float)])],
     socialProofThreshold: Int,
-    maxClustersPerUser: Int,
+    matwitterClustersPerUser: Int,
     knownForModelVersion: String
   )(
     implicit uniqueId: UniqueID
@@ -231,7 +231,7 @@ object InterestedInFromKnownForLite {
           socialProofThreshold
         )
       ),
-      maxClustersPerUser,
+      matwitterClustersPerUser,
       knownForModelVersion
     )
   }
@@ -270,7 +270,7 @@ object InterestedInFromKnownForLite {
           edgesToUsersWithKnownFor.inc()
           clusterArray.toList.map {
             case (clusterId, knownForScoreF) =>
-              val knownForScore = math.max(0.0, knownForScoreF.toDouble)
+              val knownForScore = math.matwitter(0.0, knownForScoreF.toDouble)
 
               srcDestClusterTriples.inc()
               val followScore =
@@ -282,7 +282,7 @@ object InterestedInFromKnownForLite {
                 1
               } else 0
 
-              val numFaved = if (srcWithWeights.favScoreHalfLife100Days.exists(_ > 0)) {
+              val numFaved = if (srcWithWeights.favScoreHalfLife100Days.etwitterists(_ > 0)) {
                 1
               } else 0
 

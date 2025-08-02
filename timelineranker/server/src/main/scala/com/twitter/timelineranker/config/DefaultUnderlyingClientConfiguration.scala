@@ -2,7 +2,7 @@ package com.twitter.timelineranker.config
 
 import com.twitter.conversions.DurationOps._
 import com.twitter.conversions.PercentOps._
-import com.twitter.cortex_tweet_annotate.thriftscala.CortexTweetQueryService
+import com.twitter.cortetwitter_tweet_annotate.thriftscala.CortetwitterTweetQueryService
 import com.twitter.finagle.ssl.OpportunisticTls
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.finagle.thrift.ClientId
@@ -26,17 +26,17 @@ import com.twitter.util.Timer
 import org.apache.thrift.protocol.TCompactProtocol
 
 class DefaultUnderlyingClientConfiguration(flags: TimelineRankerFlags, statsReceiver: StatsReceiver)
-    extends UnderlyingClientConfiguration(flags, statsReceiver) { top =>
+    etwittertends UnderlyingClientConfiguration(flags, statsReceiver) { top =>
 
   val timer: Timer = DefaultTimer
-  val twCachePrefix = "/srv#/prod/local/cache"
+  val twCachePrefitwitter = "/srv#/prod/local/cache"
 
-  override val cortexTweetQueryServiceClient: CortexTweetQueryService.MethodPerEndpoint = {
+  override val cortetwitterTweetQueryServiceClient: CortetwitterTweetQueryService.MethodPerEndpoint = {
     methodPerEndpointClient[
-      CortexTweetQueryService.ServicePerEndpoint,
-      CortexTweetQueryService.MethodPerEndpoint](
-      thriftMuxClientBuilder("cortex-tweet-query", requireMutualTls = true)
-        .dest("/s/cortex-tweet-annotate/cortex-tweet-query")
+      CortetwitterTweetQueryService.ServicePerEndpoint,
+      CortetwitterTweetQueryService.MethodPerEndpoint](
+      thriftMutwitterClientBuilder("cortetwitter-tweet-query", requireMutualTls = true)
+        .dest("/s/cortetwitter-tweet-annotate/cortetwitter-tweet-query")
         .requestTimeout(200.milliseconds)
         .timeout(500.milliseconds)
     )
@@ -44,7 +44,7 @@ class DefaultUnderlyingClientConfiguration(flags: TimelineRankerFlags, statsRece
 
   override val gizmoduckClient: Gizmoduck.MethodPerEndpoint = {
     methodPerEndpointClient[Gizmoduck.ServicePerEndpoint, Gizmoduck.MethodPerEndpoint](
-      thriftMuxClientBuilder("gizmoduck", requireMutualTls = true)
+      thriftMutwitterClientBuilder("gizmoduck", requireMutualTls = true)
         .dest("/s/gizmoduck/gizmoduck")
         .requestTimeout(400.milliseconds)
         .timeout(900.milliseconds)
@@ -53,7 +53,7 @@ class DefaultUnderlyingClientConfiguration(flags: TimelineRankerFlags, statsRece
 
   override lazy val manhattanStarbuckClient: ManhattanV1.MethodPerEndpoint = {
     methodPerEndpointClient[ManhattanV1.ServicePerEndpoint, ManhattanV1.MethodPerEndpoint](
-      thriftMuxClientBuilder("manhattan.starbuck", requireMutualTls = true)
+      thriftMutwitterClientBuilder("manhattan.starbuck", requireMutualTls = true)
         .dest("/s/manhattan/starbuck.native-thrift")
         .requestTimeout(600.millis)
     )
@@ -63,7 +63,7 @@ class DefaultUnderlyingClientConfiguration(flags: TimelineRankerFlags, statsRece
     methodPerEndpointClient[
       SocialGraphService.ServicePerEndpoint,
       SocialGraphService.MethodPerEndpoint](
-      thriftMuxClientBuilder("socialgraph", requireMutualTls = true)
+      thriftMutwitterClientBuilder("socialgraph", requireMutualTls = true)
         .dest("/s/socialgraph/socialgraph")
         .requestTimeout(350.milliseconds)
         .timeout(700.milliseconds)
@@ -72,7 +72,7 @@ class DefaultUnderlyingClientConfiguration(flags: TimelineRankerFlags, statsRece
 
   override lazy val timelineRankerForwardingClient: TimelineRanker.FinagledClient =
     new TimelineRanker.FinagledClient(
-      thriftMuxClientBuilder(
+      thriftMutwitterClientBuilder(
         TimelineRankerConstants.ForwardedClientName,
         ClientId(TimelineRankerConstants.ForwardedClientName),
         protocolFactoryOption = Some(new TCompactProtocol.Factory()),
@@ -83,7 +83,7 @@ class DefaultUnderlyingClientConfiguration(flags: TimelineRankerFlags, statsRece
 
   override val timelineServiceClient: TimelineService.MethodPerEndpoint = {
     methodPerEndpointClient[TimelineService.ServicePerEndpoint, TimelineService.MethodPerEndpoint](
-      thriftMuxClientBuilder("timelineservice", requireMutualTls = true)
+      thriftMutwitterClientBuilder("timelineservice", requireMutualTls = true)
         .dest("/s/timelineservice/timelineservice")
         .requestTimeout(600.milliseconds)
         .timeout(800.milliseconds)
@@ -92,11 +92,11 @@ class DefaultUnderlyingClientConfiguration(flags: TimelineRankerFlags, statsRece
 
   override val tweetyPieHighQoSClient: TweetyPie.MethodPerEndpoint = {
     methodPerEndpointClient[TweetyPie.ServicePerEndpoint, TweetyPie.MethodPerEndpoint](
-      thriftMuxClientBuilder("tweetypieHighQoS", requireMutualTls = true)
+      thriftMutwitterClientBuilder("tweetypieHighQoS", requireMutualTls = true)
         .dest("/s/tweetypie/tweetypie")
         .requestTimeout(450.milliseconds)
         .timeout(800.milliseconds),
-      maxExtraLoadPercent = Some(1.percent)
+      matwitterEtwittertraLoadPercent = Some(1.percent)
     )
   }
 
@@ -107,12 +107,12 @@ class DefaultUnderlyingClientConfiguration(flags: TimelineRankerFlags, statsRece
    */
   override val tweetyPieLowQoSClient: TweetyPie.MethodPerEndpoint = {
     methodPerEndpointClient[TweetyPie.ServicePerEndpoint, TweetyPie.MethodPerEndpoint](
-      thriftMuxClientBuilder("tweetypieLowQoS", requireMutualTls = true)
+      thriftMutwitterClientBuilder("tweetypieLowQoS", requireMutualTls = true)
         .dest("/s/tweetypie/tweetypie")
         .retryPolicy(mkRetryPolicy(1)) // override default value
         .requestTimeout(450.milliseconds)
         .timeout(800.milliseconds),
-      maxExtraLoadPercent = Some(1.percent)
+      matwitterEtwittertraLoadPercent = Some(1.percent)
     )
   }
 
@@ -120,7 +120,7 @@ class DefaultUnderlyingClientConfiguration(flags: TimelineRankerFlags, statsRece
     methodPerEndpointClient[
       UserRolesService.ServicePerEndpoint,
       UserRolesService.MethodPerEndpoint](
-      thriftMuxClientBuilder("merlin", requireMutualTls = true)
+      thriftMutwitterClientBuilder("merlin", requireMutualTls = true)
         .dest("/s/merlin/merlin")
         .requestTimeout(1.second)
     )
@@ -129,8 +129,8 @@ class DefaultUnderlyingClientConfiguration(flags: TimelineRankerFlags, statsRece
   lazy val contentFeaturesCache: Store[TweetId, ContentFeatures] =
     new ContentFeaturesMemcacheBuilder(
       config = new StorehausMemcacheConfig(
-        destName = s"$twCachePrefix/timelines_content_features:twemcaches",
-        keyPrefix = "",
+        destName = s"$twCachePrefitwitter/timelines_content_features:twemcaches",
+        keyPrefitwitter = "",
         requestTimeout = 50.milliseconds,
         numTries = 1,
         globalTimeout = 60.milliseconds,
@@ -146,7 +146,7 @@ class DefaultUnderlyingClientConfiguration(flags: TimelineRankerFlags, statsRece
 
   override val userTweetEntityGraphClient: UserTweetEntityGraph.FinagledClient =
     new UserTweetEntityGraph.FinagledClient(
-      thriftMuxClientBuilder("user_tweet_entity_graph", requireMutualTls = true)
+      thriftMutwitterClientBuilder("user_tweet_entity_graph", requireMutualTls = true)
         .dest("/s/cassowary/user_tweet_entity_graph")
         .retryPolicy(mkRetryPolicy(2))
         .requestTimeout(300.milliseconds)

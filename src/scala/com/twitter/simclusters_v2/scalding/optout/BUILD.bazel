@@ -13,7 +13,7 @@ scala_library(
         "src/scala/com/twitter/simclusters_v2/scalding/common",
         "src/scala/com/twitter/simclusters_v2/scalding/inferred_entities",
         "src/scala/com/twitter/wtf/scalding/jobs/common:cassowary_job",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:execution_app",
+        "src/scala/com/twitter/wtf/scalding/jobs/common:etwitterecution_app",
         "src/scala/com/twitter/wtf/scalding/jobs/common:sources",
         "src/scala/com/twitter/wtf/scalding/jobs/common:stats_util",
     ],

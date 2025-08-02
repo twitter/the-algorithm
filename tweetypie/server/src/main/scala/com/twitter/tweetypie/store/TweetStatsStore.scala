@@ -13,7 +13,7 @@ import com.twitter.servo.util.MemoizingStatsReceiver
  *
  * A counter is incremented for a tweet using those three criteria in order.  Counters are
  * created with a RollupStatsReceiver, so counts are aggregated at each level.  Some
- * example counters are:
+ * etwitterample counters are:
  *
  *    ./insert
  *    ./insert/tweet
@@ -22,7 +22,7 @@ import com.twitter.servo.util.MemoizingStatsReceiver
  *    ./insert/retweet/stresstest
  *    ./insert/retweet/public/nullcast
  */
-trait TweetStatsStore extends TweetStoreBase[TweetStatsStore] with InsertTweet.Store {
+trait TweetStatsStore etwittertends TweetStoreBase[TweetStatsStore] with InsertTweet.Store {
   def wrap(w: TweetStore.Wrap): TweetStatsStore =
     new TweetStoreWrapper(w, this) with TweetStatsStore with InsertTweet.StoreWrapper
 }
@@ -36,9 +36,9 @@ object TweetStatsStore {
       if (getShare(tweet).isDefined) "retweet" else "tweet"
 
     def userType(user: User) =
-      if (user.roles.exists(_.roles.contains("stresstest"))) "stresstest"
-      else if (user.safety.exists(_.isProtected)) "protected"
-      else if (user.safety.exists(_.suspended)) "restricted"
+      if (user.roles.etwitterists(_.roles.contains("stresstest"))) "stresstest"
+      else if (user.safety.etwitterists(_.isProtected)) "protected"
+      else if (user.safety.etwitterists(_.suspended)) "restricted"
       else "public"
 
     def fanoutType(tweet: Tweet) =

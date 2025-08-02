@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.partition.freshstartup;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,11 +19,11 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.ApiException;
+import org.apache.kafka.common.errors.ApiEtwitterception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftVersionedEvents;
 import static com.twitter.search.common.util.LogFormatUtil.formatInt;
 
 import com.twitter.search.common.util.GCUtil;
@@ -31,26 +31,26 @@ import com.twitter.common.util.Clock;
 import com.twitter.search.common.util.LogFormatUtil;
 import com.twitter.search.earlybird.common.NonPagingAssert;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
-import com.twitter.search.earlybird.exception.WrappedKafkaApiException;
+import com.twitter.search.earlybird.etwitterception.CriticalEtwitterceptionHandler;
+import com.twitter.search.earlybird.etwitterception.EarlybirdStartupEtwitterception;
+import com.twitter.search.earlybird.etwitterception.WrappedKafkaApiEtwitterception;
 import com.twitter.search.earlybird.factory.EarlybirdKafkaConsumersFactory;
-import com.twitter.search.earlybird.partition.EarlybirdIndex;
+import com.twitter.search.earlybird.partition.EarlybirdIndetwitter;
 import com.twitter.search.earlybird.partition.SegmentInfo;
 import com.twitter.search.earlybird.partition.SegmentManager;
 import com.twitter.search.earlybird.util.ParallelUtil;
 
 /**
- * Bootstraps an index by indexing tweets and updates in parallel.
+ * Bootstraps an indetwitter by indetwittering tweets and updates in parallel.
  *
  * DEVELOPMENT
  * ===========
  *
  * 1. In earlybird-search.yml, set the following values in the "production" section:
- *   - max_segment_size to 200000
+ *   - matwitter_segment_size to 200000
  *   - late_tweet_buffer to 10000
  *
- * 2. In KafkaStartup, don't load the index, replace the .loadIndex call as instructed
+ * 2. In KafkaStartup, don't load the indetwitter, replace the .loadIndetwitter call as instructed
  *  in the file.
  *
  * 3. In the aurora configs, set serving_timeslices to a low number (like 5) for staging.
@@ -64,10 +64,10 @@ public class FreshStartupHandler {
   private final TopicPartition tweetTopic;
   private final TopicPartition updateTopic;
   private final SegmentManager segmentManager;
-  private final int maxSegmentSize;
+  private final int matwitterSegmentSize;
   private final int lateTweetBuffer;
   private final EarlybirdKafkaConsumersFactory earlybirdKafkaConsumersFactory;
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  private final CriticalEtwitterceptionHandler criticalEtwitterceptionHandler;
 
   public FreshStartupHandler(
     Clock clock,
@@ -75,52 +75,52 @@ public class FreshStartupHandler {
     TopicPartition tweetTopic,
     TopicPartition updateTopic,
     SegmentManager segmentManager,
-    int maxSegmentSize,
+    int matwitterSegmentSize,
     int lateTweetBuffer,
-    CriticalExceptionHandler criticalExceptionHandler
+    CriticalEtwitterceptionHandler criticalEtwitterceptionHandler
   ) {
     this.clock = clock;
     this.earlybirdKafkaConsumersFactory = earlybirdKafkaConsumersFactory;
     this.tweetTopic = tweetTopic;
     this.updateTopic = updateTopic;
     this.segmentManager = segmentManager;
-    this.maxSegmentSize = maxSegmentSize;
-    this.criticalExceptionHandler = criticalExceptionHandler;
+    this.matwitterSegmentSize = matwitterSegmentSize;
+    this.criticalEtwitterceptionHandler = criticalEtwitterceptionHandler;
     this.lateTweetBuffer = lateTweetBuffer;
   }
 
   /**
-   * Don't index in parallel, just pass some time back that the EarlybirdKafkaConsumer
-   * can start indexing from.
+   * Don't indetwitter in parallel, just pass some time back that the EarlybirdKafkaConsumer
+   * can start indetwittering from.
    */
-  public EarlybirdIndex indexFromScratch() {
-    long indexTimePeriod = Duration.ofHours(
-        EarlybirdConfig.getInt("index_from_scratch_hours", 12)
+  public EarlybirdIndetwitter indetwitterFromScratch() {
+    long indetwitterTimePeriod = Duration.ofHours(
+        EarlybirdConfig.getInt("indetwitter_from_scratch_hours", 12)
     ).toMillis();
 
-    return runIndexFromScratch(indexTimePeriod);
+    return runIndetwitterFromScratch(indetwitterTimePeriod);
   }
 
-  public EarlybirdIndex fastIndexFromScratchForDevelopment() {
-    LOG.info("Running fast index from scratch...");
-    return runIndexFromScratch(Duration.ofMinutes(10).toMillis());
+  public EarlybirdIndetwitter fastIndetwitterFromScratchForDevelopment() {
+    LOG.info("Running fast indetwitter from scratch...");
+    return runIndetwitterFromScratch(Duration.ofMinutes(10).toMillis());
   }
 
-  private EarlybirdIndex runIndexFromScratch(long indexTimePeriodMs) {
+  private EarlybirdIndetwitter runIndetwitterFromScratch(long indetwitterTimePeriodMs) {
     KafkaConsumer<Long, ThriftVersionedEvents> consumerForFindingOffsets =
         earlybirdKafkaConsumersFactory.createKafkaConsumer("consumer_for_offsets");
 
-    long timestamp = clock.nowMillis() - indexTimePeriodMs;
+    long timestamp = clock.nowMillis() - indetwitterTimePeriodMs;
 
     Map<TopicPartition, OffsetAndTimestamp> offsets;
     try {
       offsets = consumerForFindingOffsets
           .offsetsForTimes(ImmutableMap.of(tweetTopic, timestamp, updateTopic, timestamp));
-    } catch (ApiException kafkaApiException) {
-      throw new WrappedKafkaApiException(kafkaApiException);
+    } catch (ApiEtwitterception kafkaApiEtwitterception) {
+      throw new WrappedKafkaApiEtwitterception(kafkaApiEtwitterception);
     }
 
-    return new EarlybirdIndex(
+    return new EarlybirdIndetwitter(
         Lists.newArrayList(),
         offsets.get(tweetTopic).offset(),
         offsets.get(updateTopic).offset());
@@ -128,28 +128,28 @@ public class FreshStartupHandler {
 
 
   /**
-   * Index Tweets and updates from scratch, without relying on a serialized index in HDFS.
+   * Indetwitter Tweets and updates from scratch, without relying on a serialized indetwitter in HDFS.
    *
-   * This function indexes the segments in parallel, limiting the number of segments that
-   * are currently indexed, due to memory limitations. That's followed by another pass to index
+   * This function indetwitteres the segments in parallel, limiting the number of segments that
+   * are currently indetwittered, due to memory limitations. That's followed by another pass to indetwitter
    * some updates - see the implementation for more details.
    *
-   * The index this function outputs contains N segments, where the first N-1 are optimized and
+   * The indetwitter this function outputs contains N segments, where the first N-1 are optimized and
    * the last one is not.
    */
-  public EarlybirdIndex parallelIndexFromScratch() throws Exception {
-    Stopwatch parallelIndexStopwatch = Stopwatch.createStarted();
+  public EarlybirdIndetwitter parallelIndetwitterFromScratch() throws Etwitterception {
+    Stopwatch parallelIndetwitterStopwatch = Stopwatch.createStarted();
 
     LOG.info("Starting parallel fresh startup.");
-    LOG.info("Max segment size: {}", maxSegmentSize);
+    LOG.info("Matwitter segment size: {}", matwitterSegmentSize);
     LOG.info("Late tweet buffer size: {}", lateTweetBuffer);
 
-    // Once we finish fresh startup and proceed to indexing from the streams, we'll immediately
+    // Once we finish fresh startup and proceed to indetwittering from the streams, we'll immediately
     // start a new segment, since the output of the fresh startup is full segments.
     //
-    // That's why we index max_segments-1 segments here instead of indexing max_segments segments
+    // That's why we indetwitter matwitter_segments-1 segments here instead of indetwittering matwitter_segments segments
     // and discarding the first one later.
-    int numSegments = segmentManager.getMaxEnabledSegments() - 1;
+    int numSegments = segmentManager.getMatwitterEnabledSegments() - 1;
     LOG.info("Number of segments to build: {}", numSegments);
 
     // Find end offsets.
@@ -160,34 +160,34 @@ public class FreshStartupHandler {
 
     segmentManager.logState("Before starting fresh startup");
 
-    // Index tweets and events.
-    Stopwatch initialIndexStopwatch = Stopwatch.createStarted();
+    // Indetwitter tweets and events.
+    Stopwatch initialIndetwitterStopwatch = Stopwatch.createStarted();
 
-    // We index at most `MAX_PARALLEL_INDEXED` (MPI) segments at the same time. If we need to
+    // We indetwitter at most `MAtwitter_PARALLEL_INDEtwitterED` (MPI) segments at the same time. If we need to
     // produce 20 segments here, we'd need memory for MPI unoptimized and 20-MPI optimized segments.
     //
     // For back of envelope calculations you can assume optimized segments take ~6GB and unoptimized
     // ones ~12GB.
-    final int MAX_PARALLEL_INDEXED = 8;
+    final int MAtwitter_PARALLEL_INDEtwitterED = 8;
 
     List<SegmentInfo> segmentInfos = ParallelUtil.parmap(
         "fresh-startup",
-        MAX_PARALLEL_INDEXED,
-        segmentBuildInfo -> indexTweetsAndUpdatesForSegment(segmentBuildInfo, segmentBuildInfos),
+        MAtwitter_PARALLEL_INDEtwitterED,
+        segmentBuildInfo -> indetwitterTweetsAndUpdatesForSegment(segmentBuildInfo, segmentBuildInfos),
         segmentBuildInfos
     );
 
-    LOG.info("Finished indexing tweets and updates in {}", initialIndexStopwatch);
+    LOG.info("Finished indetwittering tweets and updates in {}", initialIndetwitterStopwatch);
 
-    PostOptimizationUpdatesIndexer postOptimizationUpdatesIndexer =
-        new PostOptimizationUpdatesIndexer(
+    PostOptimizationUpdatesIndetwitterer postOptimizationUpdatesIndetwitterer =
+        new PostOptimizationUpdatesIndetwitterer(
             segmentBuildInfos,
             earlybirdKafkaConsumersFactory,
             updateTopic);
 
-    postOptimizationUpdatesIndexer.indexRestOfUpdates();
+    postOptimizationUpdatesIndetwitterer.indetwitterRestOfUpdates();
 
-    // Finished indexing tweets and updates.
+    // Finished indetwittering tweets and updates.
     LOG.info("Segment build infos after we're done:");
     for (SegmentBuildInfo segmentBuildInfo : segmentBuildInfos) {
       segmentBuildInfo.logState();
@@ -203,21 +203,21 @@ public class FreshStartupHandler {
 
     SegmentBuildInfo lastSegmentBuildInfo = segmentBuildInfos.get(segmentBuildInfos.size() - 1);
     long finishedUpdatesAtOffset = lastSegmentBuildInfo.getUpdateKafkaOffsetPair().getEndOffset();
-    long maxIndexedTweetId = lastSegmentBuildInfo.getMaxIndexedTweetId();
+    long matwitterIndetwitteredTweetId = lastSegmentBuildInfo.getMatwitterIndetwitteredTweetId();
 
-    LOG.info("Max indexed tweet id: {}", maxIndexedTweetId);
-    LOG.info("Parallel startup finished in {}", parallelIndexStopwatch);
+    LOG.info("Matwitter indetwittered tweet id: {}", matwitterIndetwitteredTweetId);
+    LOG.info("Parallel startup finished in {}", parallelIndetwitterStopwatch);
 
-    // verifyConstructedIndex(segmentBuildInfos);
+    // verifyConstructedIndetwitter(segmentBuildInfos);
     // Run a GC to free up some memory after the fresh startup.
     GCUtil.runGC();
     logMemoryStats();
 
-    return new EarlybirdIndex(
+    return new EarlybirdIndetwitter(
         segmentInfos,
         tweetsOffsetRange.getEndOffset() + 1,
         finishedUpdatesAtOffset + 1,
-        maxIndexedTweetId
+        matwitterIndetwitteredTweetId
     );
   }
 
@@ -230,22 +230,22 @@ public class FreshStartupHandler {
   }
 
   /**
-   * Prints statistics about the constructed index compared to all tweets in the
+   * Prints statistics about the constructed indetwitter compared to all tweets in the
    * tweets stream.
    *
    * Only run this for testing and debugging purposes, never in prod environment.
    */
-  private void verifyConstructedIndex(List<SegmentBuildInfo> segmentBuildInfos)
-      throws IOException {
-    LOG.info("Verifying constructed index...");
-    // Read every tweet from the offset range that we're constructing an index for.
+  private void verifyConstructedIndetwitter(List<SegmentBuildInfo> segmentBuildInfos)
+      throws IOEtwitterception {
+    LOG.info("Verifying constructed indetwitter...");
+    // Read every tweet from the offset range that we're constructing an indetwitter for.
     KafkaConsumer<Long, ThriftVersionedEvents> tweetsKafkaConsumer =
         earlybirdKafkaConsumersFactory.createKafkaConsumer("tweets_verify");
     try {
       tweetsKafkaConsumer.assign(ImmutableList.of(tweetTopic));
       tweetsKafkaConsumer.seek(tweetTopic, segmentBuildInfos.get(0).getTweetStartOffset());
-    } catch (ApiException apiException) {
-      throw new WrappedKafkaApiException(apiException);
+    } catch (ApiEtwitterception apiEtwitterception) {
+      throw new WrappedKafkaApiEtwitterception(apiEtwitterception);
     }
     long finalTweetOffset = segmentBuildInfos.get(segmentBuildInfos.size() - 1).getTweetEndOffset();
     boolean done = false;
@@ -267,7 +267,7 @@ public class FreshStartupHandler {
     // Might be less, due to duplicates.
     LOG.info("Unique tweet ids : {}", LogFormatUtil.formatInt(uniqueTweetIds.size()));
 
-    int notFoundInIndex = 0;
+    int notFoundInIndetwitter = 0;
     for (Long tweetId : uniqueTweetIds) {
       boolean found = false;
       for (SegmentBuildInfo segmentBuildInfo : segmentBuildInfos) {
@@ -277,19 +277,19 @@ public class FreshStartupHandler {
         }
       }
       if (!found) {
-        notFoundInIndex++;
+        notFoundInIndetwitter++;
       }
     }
 
-    LOG.info("Tweets not found in the index: {}", LogFormatUtil.formatInt(notFoundInIndex));
+    LOG.info("Tweets not found in the indetwitter: {}", LogFormatUtil.formatInt(notFoundInIndetwitter));
 
-    long totalIndexedTweets = 0;
+    long totalIndetwitteredTweets = 0;
     for (SegmentBuildInfo segmentBuildInfo : segmentBuildInfos) {
       SegmentInfo si = segmentBuildInfo.getSegmentWriter().getSegmentInfo();
-      totalIndexedTweets += si.getIndexStats().getStatusCount();
+      totalIndetwitteredTweets += si.getIndetwitterStats().getStatusCount();
     }
 
-    LOG.info("Total indexed tweets: {}", formatInt(totalIndexedTweets));
+    LOG.info("Total indetwittered tweets: {}", formatInt(totalIndetwitteredTweets));
   }
 
   /**
@@ -306,8 +306,8 @@ public class FreshStartupHandler {
     try {
       endOffsets = consumerForFindingOffsets.endOffsets(ImmutableList.of(tweetTopic));
       beginningOffsets = consumerForFindingOffsets.beginningOffsets(ImmutableList.of(tweetTopic));
-    } catch (ApiException kafkaApiException) {
-      throw new WrappedKafkaApiException(kafkaApiException);
+    } catch (ApiEtwitterception kafkaApiEtwitterception) {
+      throw new WrappedKafkaApiEtwitterception(kafkaApiEtwitterception);
     } finally {
       consumerForFindingOffsets.close();
     }
@@ -327,7 +327,7 @@ public class FreshStartupHandler {
    * for these offsets.
    */
   private void fillTweetIdsForSegmentStarts(List<SegmentBuildInfo> segmentBuildInfos)
-      throws EarlybirdStartupException {
+      throws EarlybirdStartupEtwitterception {
     KafkaConsumer<Long, ThriftVersionedEvents> consumerForTweetIds =
         earlybirdKafkaConsumersFactory.createKafkaConsumer("consumer_for_tweet_ids", 1);
     consumerForTweetIds.assign(ImmutableList.of(tweetTopic));
@@ -339,12 +339,12 @@ public class FreshStartupHandler {
       try {
         consumerForTweetIds.seek(tweetTopic, tweetOffset);
         records = consumerForTweetIds.poll(Duration.ofSeconds(1));
-      } catch (ApiException kafkaApiException) {
-        throw new WrappedKafkaApiException(kafkaApiException);
+      } catch (ApiEtwitterception kafkaApiEtwitterception) {
+        throw new WrappedKafkaApiEtwitterception(kafkaApiEtwitterception);
       }
 
       if (records.count() > 0) {
-        ConsumerRecord<Long, ThriftVersionedEvents> recordAtOffset = records.iterator().next();
+        ConsumerRecord<Long, ThriftVersionedEvents> recordAtOffset = records.iterator().netwittert();
         if (recordAtOffset.offset() != tweetOffset) {
           LOG.error(String.format("We were looking for offset %,d. Found a record at offset %,d",
               tweetOffset, recordAtOffset.offset()));
@@ -352,7 +352,7 @@ public class FreshStartupHandler {
 
         buildInfo.setStartTweetId(recordAtOffset.value().getId());
       } else {
-        throw new EarlybirdStartupException("Didn't get any tweets back for an offset");
+        throw new EarlybirdStartupEtwitterception("Didn't get any tweets back for an offset");
       }
     }
 
@@ -371,12 +371,12 @@ public class FreshStartupHandler {
    * to create.
    */
   private ArrayList<SegmentBuildInfo> makeSegmentBuildInfos(
-      int numSegments, KafkaOffsetPair tweetsOffsets) throws EarlybirdStartupException {
+      int numSegments, KafkaOffsetPair tweetsOffsets) throws EarlybirdStartupEtwitterception {
     ArrayList<SegmentBuildInfo> segmentBuildInfos = new ArrayList<>();
 
     // If we have 3 segments, the starting tweet offsets are:
     // end-3N, end-2N, end-N
-    int segmentSize = maxSegmentSize - lateTweetBuffer;
+    int segmentSize = matwitterSegmentSize - lateTweetBuffer;
     LOG.info("Segment size: {}", segmentSize);
 
     long tweetsInStream = tweetsOffsets.getEndOffset() - tweetsOffsets.getBeginOffset() + 1;
@@ -400,12 +400,12 @@ public class FreshStartupHandler {
       long tweetStartOffset = (tweetsOffsets.getEndOffset() + 1) - (rewind * segmentSize);
       long tweetEndOffset = tweetStartOffset + segmentSize - 1;
 
-      int index = segmentBuildInfos.size();
+      int indetwitter = segmentBuildInfos.size();
 
       segmentBuildInfos.add(new SegmentBuildInfo(
           tweetStartOffset,
           tweetEndOffset,
-          index,
+          indetwitter,
           rewind == 1
       ));
     }
@@ -419,12 +419,12 @@ public class FreshStartupHandler {
     return segmentBuildInfos;
   }
 
-  private SegmentInfo indexTweetsAndUpdatesForSegment(
+  private SegmentInfo indetwitterTweetsAndUpdatesForSegment(
       SegmentBuildInfo segmentBuildInfo,
-      ArrayList<SegmentBuildInfo> segmentBuildInfos) throws Exception {
+      ArrayList<SegmentBuildInfo> segmentBuildInfos) throws Etwitterception {
 
-    PreOptimizationSegmentIndexer preOptimizationSegmentIndexer =
-        new PreOptimizationSegmentIndexer(
+    PreOptimizationSegmentIndetwitterer preOptimizationSegmentIndetwitterer =
+        new PreOptimizationSegmentIndetwitterer(
             segmentBuildInfo,
             segmentBuildInfos,
             this.segmentManager,
@@ -434,6 +434,6 @@ public class FreshStartupHandler {
             this.lateTweetBuffer
         );
 
-    return preOptimizationSegmentIndexer.runIndexing();
+    return preOptimizationSegmentIndetwitterer.runIndetwittering();
   }
 }

@@ -22,7 +22,7 @@ object EraseUserTweetsHandler {
   /**
    * Build a FutureEffect which, when called, deletes one page worth of tweets at the
    * specified flock cursor. When the page of tweets has been deleted another asyncEraseUserTweets
-   * request is made with the updated cursor location so that the next page of tweets can be processed.
+   * request is made with the updated cursor location so that the netwittert page of tweets can be processed.
    */
   def apply(
     selectPage: FutureArrow[Select[StatusGraph], PageResult[Long]],
@@ -43,29 +43,29 @@ object EraseUserTweetsHandler {
 
       // For a provided list of tweetIds, delete each one sequentially, sleeping between each call
       // This is a rate limiting mechanism to slow down deletions.
-      def deletePage(page: PageResult[Long], expectedUserId: UserId): Future[Unit] =
-        page.entries.foldLeft(Future.Unit) { (previousFuture, nextId) =>
+      def deletePage(page: PageResult[Long], etwitterpectedUserId: UserId): Future[Unit] =
+        page.entries.foldLeft(Future.Unit) { (previousFuture, netwittertId) =>
           for {
             _ <- previousFuture
             _ <- sleep()
-            _ <- deleteTweet((nextId, expectedUserId))
+            _ <- deleteTweet((netwittertId, etwitterpectedUserId))
           } yield ()
         }
 
       /**
        * If we aren't on the last page, make another EraseUserTweets request to delete
-       * the next page of tweets
+       * the netwittert page of tweets
        */
-      val nextRequestOrEnd: (AsyncEraseUserTweetsRequest, PageResult[Long]) => Future[Unit] =
+      val netwittertRequestOrEnd: (AsyncEraseUserTweetsRequest, PageResult[Long]) => Future[Unit] =
         (request: AsyncEraseUserTweetsRequest, page: PageResult[Long]) =>
-          if (page.nextCursor.isEnd) {
+          if (page.netwittertCursor.isEnd) {
             latencyStat.add(Time.fromMilliseconds(request.startTimestamp).untilNow.inMillis)
             deletedTweetsStat.add(request.tweetCount + page.entries.size)
             Future.Unit
           } else {
             asyncEraseUserTweets(
               request.copy(
-                flockCursor = page.nextCursor.value,
+                flockCursor = page.netwittertCursor.value,
                 tweetCount = request.tweetCount + page.entries.size
               )
             )
@@ -94,8 +94,8 @@ object EraseUserTweetsHandler {
             // delete tweets
             _ <- deletePage(page, request.userId)
 
-            // make call to delete the next page of tweets
-            _ <- nextRequestOrEnd(request, page)
+            // make call to delete the netwittert page of tweets
+            _ <- netwittertRequestOrEnd(request, page)
           } yield ()
         }
     }

@@ -12,7 +12,7 @@ class WindowedThrottlingInstrument(
   stepFrequency: Duration,
   windowLengthInFrequencySteps: Int,
   reader: AuroraCPUStatsReader)
-    extends ThrottlingInstrument {
+    etwittertends ThrottlingInstrument {
   private[this] val throttlingChangeHistory: WindowedStats = new WindowedStats(
     windowLengthInFrequencySteps)
 

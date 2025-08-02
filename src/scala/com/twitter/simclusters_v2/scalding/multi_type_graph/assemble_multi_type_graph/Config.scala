@@ -8,7 +8,7 @@ object Config {
   val User = System.getenv("USER")
   val RootPath: String = s"/user/$User/manhattan_sequence_files/multi_type_simclusters/"
   val RootThriftPath: String = s"/user/$User/processed/multi_type_simclusters/"
-  val AdhocRootPrefix = s"/gcs/user/$User/adhoc/multi_type_simclusters/"
+  val AdhocRootPrefitwitter = s"/gcs/user/$User/adhoc/multi_type_simclusters/"
   val HalfLifeInDaysForFavScore = 100
   val NumTopNounsForUnknownRightNodeType = 20
   val GlobalDefaultMinFrequencyOfRightNodeType = 100

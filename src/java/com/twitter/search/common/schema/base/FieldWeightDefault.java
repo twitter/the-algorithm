@@ -55,7 +55,7 @@ public class FieldWeightDefault {
 
   /**
    * Overlays the base field-weight map with the given one. Since it is an overlay, a
-   * field that does not exist in the base map will never be added. Also, negative value means
+   * field that does not etwitterist in the base map will never be added. Also, negative value means
    * the field is not enabled for search by default, but if it is, the absolute value would serve as
    * the default.
    */
@@ -71,8 +71,8 @@ public class FieldWeightDefault {
     LinkedHashMap<String, FieldWeightDefault> map = Maps.newLinkedHashMap(base);
     for (Map.Entry<String, Double> entry : fieldWeightMapOverride.entrySet()) {
       if (base.containsKey(entry.getKey())
-          && entry.getValue() >= -Float.MAX_VALUE
-          && entry.getValue() <= Float.MAX_VALUE) {
+          && entry.getValue() >= -Float.MAtwitter_VALUE
+          && entry.getValue() <= Float.MAtwitter_VALUE) {
 
         map.put(
             entry.getKey(),
@@ -89,10 +89,10 @@ public class FieldWeightDefault {
    * by annotation), the absolute value of the weight shall be used.
    */
   public static <T> ImmutableMap<T, FieldWeightDefault> fromSignedWeightMap(
-      Map<T, ? extends Number> signedWeightMap) {
+      Map<T, ? etwittertends Number> signedWeightMap) {
 
     ImmutableMap.Builder<T, FieldWeightDefault> builder = ImmutableMap.builder();
-    for (Map.Entry<T, ? extends Number> entry : signedWeightMap.entrySet()) {
+    for (Map.Entry<T, ? etwittertends Number> entry : signedWeightMap.entrySet()) {
       // If double to float conversion failed, we will get a float infinity.
       // See http://stackoverflow.com/a/10075093/716468
       float floatValue = entry.getValue().floatValue();

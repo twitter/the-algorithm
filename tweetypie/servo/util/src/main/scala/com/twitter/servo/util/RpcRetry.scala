@@ -64,7 +64,7 @@ object RpcRetry {
     rpcs: Stream[Seq[Req] => Future[Map[Req, Resp]]]
   ): Future[Map[Req, Resp]] = {
     if (rpcs.isEmpty) {
-      Future.exception(new IllegalArgumentException("rpcs is empty."))
+      Future.etwitterception(new IllegalArgumentEtwitterception("rpcs is empty."))
     } else {
       val rpc = rpcs.head
       rpc(requests) flatMap { responses =>

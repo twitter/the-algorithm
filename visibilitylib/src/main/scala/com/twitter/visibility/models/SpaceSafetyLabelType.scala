@@ -3,11 +3,11 @@ package com.twitter.visibility.models
 import com.twitter.visibility.safety_label_store.{thriftscala => s}
 import com.twitter.visibility.util.NamingUtils
 
-sealed trait SpaceSafetyLabelType extends SafetyLabelType {
+sealed trait SpaceSafetyLabelType etwittertends SafetyLabelType {
   lazy val name: String = NamingUtils.getFriendlyName(this)
 }
 
-object SpaceSafetyLabelType extends SafetyLabelType {
+object SpaceSafetyLabelType etwittertends SafetyLabelType {
 
   val List: List[SpaceSafetyLabelType] = s.SpaceSafetyLabelType.list.map(fromThrift)
 
@@ -35,7 +35,7 @@ object SpaceSafetyLabelType extends SafetyLabelType {
     s.SpaceSafetyLabelType.DmcaWithheld -> DmcaWithheld,
     s.SpaceSafetyLabelType.HatefulHighRecall -> HatefulHighRecall,
     s.SpaceSafetyLabelType.ViolenceHighRecall -> ViolenceHighRecall,
-    s.SpaceSafetyLabelType.HighToxicityModelScore -> HighToxicityModelScore,
+    s.SpaceSafetyLabelType.HighTotwittericityModelScore -> HighTotwittericityModelScore,
     s.SpaceSafetyLabelType.DeprecatedSpaceSafetyLabel14 -> Deprecated,
     s.SpaceSafetyLabelType.DeprecatedSpaceSafetyLabel15 -> Deprecated,
     s.SpaceSafetyLabelType.Reserved16 -> Deprecated,
@@ -55,22 +55,22 @@ object SpaceSafetyLabelType extends SafetyLabelType {
       Deprecated -> s.SpaceSafetyLabelType.EnumUnknownSpaceSafetyLabelType(DeprecatedEnumValue),
     )
 
-  case object DoNotAmplify extends SpaceSafetyLabelType
-  case object CoordinatedHarmfulActivityHighRecall extends SpaceSafetyLabelType
-  case object UntrustedUrl extends SpaceSafetyLabelType
-  case object MisleadingHighRecall extends SpaceSafetyLabelType
-  case object NsfwHighPrecision extends SpaceSafetyLabelType
-  case object NsfwHighRecall extends SpaceSafetyLabelType
-  case object CivicIntegrityMisinfo extends SpaceSafetyLabelType
-  case object MedicalMisinfo extends SpaceSafetyLabelType
-  case object GenericMisinfo extends SpaceSafetyLabelType
-  case object DmcaWithheld extends SpaceSafetyLabelType
-  case object HatefulHighRecall extends SpaceSafetyLabelType
-  case object ViolenceHighRecall extends SpaceSafetyLabelType
-  case object HighToxicityModelScore extends SpaceSafetyLabelType
+  case object DoNotAmplify etwittertends SpaceSafetyLabelType
+  case object CoordinatedHarmfulActivityHighRecall etwittertends SpaceSafetyLabelType
+  case object UntrustedUrl etwittertends SpaceSafetyLabelType
+  case object MisleadingHighRecall etwittertends SpaceSafetyLabelType
+  case object NsfwHighPrecision etwittertends SpaceSafetyLabelType
+  case object NsfwHighRecall etwittertends SpaceSafetyLabelType
+  case object CivicIntegrityMisinfo etwittertends SpaceSafetyLabelType
+  case object MedicalMisinfo etwittertends SpaceSafetyLabelType
+  case object GenericMisinfo etwittertends SpaceSafetyLabelType
+  case object DmcaWithheld etwittertends SpaceSafetyLabelType
+  case object HatefulHighRecall etwittertends SpaceSafetyLabelType
+  case object ViolenceHighRecall etwittertends SpaceSafetyLabelType
+  case object HighTotwittericityModelScore etwittertends SpaceSafetyLabelType
 
-  case object Deprecated extends SpaceSafetyLabelType
-  case object Unknown extends SpaceSafetyLabelType
+  case object Deprecated etwittertends SpaceSafetyLabelType
+  case object Unknown etwittertends SpaceSafetyLabelType
 
   def fromThrift(safetyLabelType: s.SpaceSafetyLabelType): SpaceSafetyLabelType =
     thriftToModelMap.get(safetyLabelType) match {

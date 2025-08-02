@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird_root.routers;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javatwitter.inject.Named;
+import javatwitter.inject.Singleton;
 
 import com.google.inject.Provides;
 
@@ -12,7 +12,7 @@ import com.twitter.search.earlybird_root.filters.FullArchiveServingRangeProvider
 import com.twitter.search.earlybird_root.filters.RealtimeServingRangeProvider;
 import com.twitter.search.earlybird_root.filters.ServingRangeProvider;
 
-public class TermStatsRequestRouterModule extends TwitterModule {
+public class TermStatsRequestRouterModule etwittertends TwitterModule {
   public static final String FULL_ARCHIVE_TIME_RANGE_FILTER =
       "term_stats_full_archive_time_range_filter";
   public static final String REALTIME_TIME_RANGE_FILTER =
@@ -22,13 +22,13 @@ public class TermStatsRequestRouterModule extends TwitterModule {
       "superroot_term_stats_serving_range_boundary_hours_ago";
 
   private ServingRangeProvider getFullArchiveTimeRangeProvider(final SearchDecider decider)
-      throws Exception {
+      throws Etwitterception {
     return new FullArchiveServingRangeProvider(
         decider, SUPERROOT_TERM_STATS_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY);
   }
 
   private ServingRangeProvider getRealtimeTimeRangeProvider(final SearchDecider decider)
-      throws Exception {
+      throws Etwitterception {
     return new RealtimeServingRangeProvider(
         decider, SUPERROOT_TERM_STATS_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY);
   }
@@ -40,7 +40,7 @@ public class TermStatsRequestRouterModule extends TwitterModule {
   @Singleton
   @Named(FULL_ARCHIVE_TIME_RANGE_FILTER)
   private EarlybirdTimeRangeFilter providesFullArchiveTimeRangeFilter(final SearchDecider decider)
-      throws Exception {
+      throws Etwitterception {
     return EarlybirdTimeRangeFilter.newTimeRangeFilterWithQueryRewriter(
         getFullArchiveTimeRangeProvider(decider), decider);
   }
@@ -53,7 +53,7 @@ public class TermStatsRequestRouterModule extends TwitterModule {
   @Singleton
   @Named(REALTIME_TIME_RANGE_FILTER)
   private EarlybirdTimeRangeFilter providesRealtimeTimeRangeFilter(final SearchDecider decider)
-      throws Exception {
+      throws Etwitterception {
     return EarlybirdTimeRangeFilter.newTimeRangeFilterWithQueryRewriter(
         getRealtimeTimeRangeProvider(decider), decider);
   }

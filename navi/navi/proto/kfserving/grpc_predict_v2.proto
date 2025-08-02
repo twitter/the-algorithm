@@ -1,18 +1,18 @@
 // Copyright 2020 kubeflow.org.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
+// you may not use this file etwittercept in compliance with the License.
 // You may obtain a copy of the License at
 //
 //    http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either etwitterpress or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-syntax = "proto3";
+syntatwitter = "proto3";
 package inference;
 
 // Inference Server GRPC endpoints.
@@ -86,8 +86,8 @@ message ServerMetadataResponse
   // The server version.
   string version = 2;
 
-  // The extensions supported by the server.
-  repeated string extensions = 3;
+  // The etwittertensions supported by the server.
+  repeated string etwittertensions = 3;
 }
 
 message ModelMetadataRequest
@@ -191,7 +191,7 @@ message ModelInferRequest
   // type. To use the raw representation 'raw_input_contents' must be
   // initialized with data for each tensor in the same order as
   // 'inputs'. For each tensor, the size of this content must match
-  // what is expected by the tensor's shape and data type. The raw
+  // what is etwitterpected by the tensor's shape and data type. The raw
   // data must be the flattened, one-dimensional, row-major order of
   // the tensor elements without any stride or padding between the
   // elements. Note that the FP16 and BF16 data types must be represented as
@@ -245,7 +245,7 @@ message ModelInferResponse
   // tensor's data type. To use the raw representation 'raw_output_contents'
   // must be initialized with data for each tensor in the same order as
   // 'outputs'. For each tensor, the size of this content must match
-  // what is expected by the tensor's shape and data type. The raw
+  // what is etwitterpected by the tensor's shape and data type. The raw
   // data must be the flattened, one-dimensional, row-major order of
   // the tensor elements without any stride or padding between the
   // elements. Note that the FP16 and BF16 data types must be represented as
@@ -283,44 +283,44 @@ message InferParameter
 message InferTensorContents
 {
   // Representation for BOOL data type. The size must match what is
-  // expected by the tensor's shape. The contents must be the flattened,
+  // etwitterpected by the tensor's shape. The contents must be the flattened,
   // one-dimensional, row-major order of the tensor elements.
   repeated bool bool_contents = 1;
 
   // Representation for INT8, INT16, and INT32 data types. The size
-  // must match what is expected by the tensor's shape. The contents
+  // must match what is etwitterpected by the tensor's shape. The contents
   // must be the flattened, one-dimensional, row-major order of the
   // tensor elements.
   repeated int32 int_contents = 2;
 
   // Representation for INT64 data types. The size must match what
-  // is expected by the tensor's shape. The contents must be the
+  // is etwitterpected by the tensor's shape. The contents must be the
   // flattened, one-dimensional, row-major order of the tensor elements.
   repeated int64 int64_contents = 3;
 
   // Representation for UINT8, UINT16, and UINT32 data types. The size
-  // must match what is expected by the tensor's shape. The contents
+  // must match what is etwitterpected by the tensor's shape. The contents
   // must be the flattened, one-dimensional, row-major order of the
   // tensor elements.
   repeated uint32 uint_contents = 4;
 
   // Representation for UINT64 data types. The size must match what
-  // is expected by the tensor's shape. The contents must be the
+  // is etwitterpected by the tensor's shape. The contents must be the
   // flattened, one-dimensional, row-major order of the tensor elements.
   repeated uint64 uint64_contents = 5;
 
   // Representation for FP32 data type. The size must match what is
-  // expected by the tensor's shape. The contents must be the flattened,
+  // etwitterpected by the tensor's shape. The contents must be the flattened,
   // one-dimensional, row-major order of the tensor elements.
   repeated float fp32_contents = 6;
 
   // Representation for FP64 data type. The size must match what is
-  // expected by the tensor's shape. The contents must be the flattened,
+  // etwitterpected by the tensor's shape. The contents must be the flattened,
   // one-dimensional, row-major order of the tensor elements.
   repeated double fp64_contents = 7;
 
   // Representation for BYTES data type. The size must match what is
-  // expected by the tensor's shape. The contents must be the flattened,
+  // etwitterpected by the tensor's shape. The contents must be the flattened,
   // one-dimensional, row-major order of the tensor elements.
   repeated bytes bytes_contents = 8;
 }

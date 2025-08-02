@@ -10,15 +10,15 @@ import com.twitter.graph_feature_service.thriftscala
 import com.twitter.graph_feature_service.thriftscala.Server.GetIntersection
 import com.twitter.graph_feature_service.thriftscala.Server.GetPresetIntersection
 import com.twitter.graph_feature_service.thriftscala._
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class ServerController @Inject() (
   serverGetIntersectionHandler: ServerGetIntersectionHandler
 )(
   implicit statsReceiver: StatsReceiver)
-    extends Controller(thriftscala.Server) {
+    etwittertends Controller(thriftscala.Server) {
 
   private val getIntersectionService: Service[GetIntersectionRequest, GfsIntersectionResponse] =
     new DiscoveryStatsFilter(statsReceiver.scope("srv").scope("get_intersection"))

@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.concurrent.TimeUnit;
-import javax.inject.Inject;
+import javatwitter.inject.Inject;
 
 import com.twitter.finagle.Service;
 import com.twitter.finagle.SimpleFilter;
@@ -21,7 +21,7 @@ import static com.twitter.search.common.util.earlybird.EarlybirdResponseUtil.res
  * ScatterGatherService (which also updates these stats, but for different requests).
  */
 public class RequestSuccessStatsFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+    etwittertends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
 
   private final RequestSuccessStats stats;
 
@@ -66,9 +66,9 @@ public class RequestSuccessStatsFilter
             stats.getRequestLatencyStats().requestComplete(
                 TimeUnit.NANOSECONDS.toMillis(latencyNanos), 0, false);
 
-            if (FinagleUtil.isCancelException(cause)) {
+            if (FinagleUtil.isCancelEtwitterception(cause)) {
               stats.getCancelledRequestCount().increment();
-            } else if (FinagleUtil.isTimeoutException(cause)) {
+            } else if (FinagleUtil.isTimeoutEtwitterception(cause)) {
               stats.getTimedoutRequestCount().increment();
             } else {
               stats.getErroredRequestCount().increment();

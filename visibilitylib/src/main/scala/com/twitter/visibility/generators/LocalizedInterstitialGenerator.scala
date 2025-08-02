@@ -6,7 +6,7 @@ import com.twitter.visibility.builder.VisibilityResult
 import com.twitter.visibility.common.actions.LocalizedMessage
 import com.twitter.visibility.common.actions.MessageLink
 import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.results.richtext.PublicInterestReasonToRichText
+import com.twitter.visibility.results.richtetwittert.PublicInterestReasonToRichTetwittert
 import com.twitter.visibility.results.translation.LearnMoreLink
 import com.twitter.visibility.results.translation.Resource
 import com.twitter.visibility.results.translation.SafetyResultReasonToResource
@@ -100,18 +100,18 @@ class LocalizedInterstitialGenerator private (
     edi: EmergencyDynamicInterstitial,
     languageTag: String
   ): LocalizedMessage = {
-    val text = edi.linkOpt
+    val tetwittert = edi.linkOpt
       .map(_ => s"${edi.copy} {${Resource.LearnMorePlaceholder}}")
       .getOrElse(edi.copy)
 
     val messageLinks = edi.linkOpt
       .map { link =>
-        val learnMoreText = Translator.translate(LearnMoreLink, languageTag)
-        Seq(MessageLink(Resource.LearnMorePlaceholder, learnMoreText, link))
+        val learnMoreTetwittert = Translator.translate(LearnMoreLink, languageTag)
+        Seq(MessageLink(Resource.LearnMorePlaceholder, learnMoreTetwittert, link))
       }.getOrElse(Seq.empty)
 
     emergencyDynamicInterstitialStats.counter("localized").incr()
-    LocalizedMessage(text, languageTag, messageLinks)
+    LocalizedMessage(tetwittert, languageTag, messageLinks)
   }
 
   private def localizePublicInterestCopyInResult(
@@ -119,17 +119,17 @@ class LocalizedInterstitialGenerator private (
     languageTag: String
   ): LocalizedMessage = {
     val safetyResultReason = PublicInterest.ReasonToSafetyResultReason(ipi.reason)
-    val text = Translator.translate(
+    val tetwittert = Translator.translate(
       SafetyResultReasonToResource.resource(safetyResultReason),
       languageTag,
     )
 
-    val learnMoreLink = PublicInterestReasonToRichText.toLearnMoreLink(safetyResultReason)
-    val learnMoreText = Translator.translate(LearnMoreLink, languageTag)
-    val messageLinks = Seq(MessageLink(Resource.LearnMorePlaceholder, learnMoreText, learnMoreLink))
+    val learnMoreLink = PublicInterestReasonToRichTetwittert.toLearnMoreLink(safetyResultReason)
+    val learnMoreTetwittert = Translator.translate(LearnMoreLink, languageTag)
+    val messageLinks = Seq(MessageLink(Resource.LearnMorePlaceholder, learnMoreTetwittert, learnMoreLink))
 
     publicInterestInterstitialStats.counter("localized").incr()
-    LocalizedMessage(text, languageTag, messageLinks)
+    LocalizedMessage(tetwittert, languageTag, messageLinks)
   }
 
   private def localizeInterstitialCopyInResult(

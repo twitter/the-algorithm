@@ -7,10 +7,10 @@ case class UserListLayout(
   userListOptions: UserListOptions,
   socialProofs: Option[Seq[SocialProof]],
   footer: Option[FooterConfig])
-    extends Layout
+    etwittertends Layout
 
 case class CarouselLayout(
   header: Option[HeaderConfig],
   carouselOptions: CarouselOptions,
   socialProofs: Option[Seq[SocialProof]])
-    extends Layout
+    etwittertends Layout

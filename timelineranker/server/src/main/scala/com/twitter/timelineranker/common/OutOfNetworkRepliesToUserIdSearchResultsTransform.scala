@@ -7,7 +7,7 @@ import com.twitter.timelines.clients.relevance_search.SearchClient
 import com.twitter.util.Future
 
 object OutOfNetworkRepliesToUserIdSearchResultsTransform {
-  val DefaultMaxTweetCount = 100
+  val DefaultMatwitterTweetCount = 100
 }
 
 // Requests search results for out-of-network replies to a user Id
@@ -15,15 +15,15 @@ class OutOfNetworkRepliesToUserIdSearchResultsTransform(
   searchClient: SearchClient,
   statsReceiver: StatsReceiver,
   logSearchDebugInfo: Boolean = true)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  private[this] val maxCountStat = statsReceiver.stat("maxCount")
+    etwittertends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+  private[this] val matwitterCountStat = statsReceiver.stat("matwitterCount")
   private[this] val numResultsFromSearchStat = statsReceiver.stat("numResultsFromSearch")
-  private[this] val earlybirdScoreX100Stat = statsReceiver.stat("earlybirdScoreX100")
+  private[this] val earlybirdScoretwitter100Stat = statsReceiver.stat("earlybirdScoretwitter100")
 
   override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val maxCount = envelope.query.maxCount
-      .getOrElse(OutOfNetworkRepliesToUserIdSearchResultsTransform.DefaultMaxTweetCount)
-    maxCountStat.add(maxCount)
+    val matwitterCount = envelope.query.matwitterCount
+      .getOrElse(OutOfNetworkRepliesToUserIdSearchResultsTransform.DefaultMatwitterTweetCount)
+    matwitterCountStat.add(matwitterCount)
 
     envelope.followGraphData.followedUserIdsFuture
       .flatMap {
@@ -32,15 +32,15 @@ class OutOfNetworkRepliesToUserIdSearchResultsTransform(
             .getOutOfNetworkRepliesToUserId(
               userId = envelope.query.userId,
               followedUserIds = followedIds.toSet,
-              maxCount = maxCount,
+              matwitterCount = matwitterCount,
               earlybirdOptions = envelope.query.earlybirdOptions,
               logSearchDebugInfo
             ).map { results =>
               numResultsFromSearchStat.add(results.size)
               results.foreach { result =>
-                val earlybirdScoreX100 =
+                val earlybirdScoretwitter100 =
                   result.metadata.flatMap(_.score).getOrElse(0.0).toFloat * 100
-                earlybirdScoreX100Stat.add(earlybirdScoreX100)
+                earlybirdScoretwitter100Stat.add(earlybirdScoretwitter100)
               }
               envelope.copy(searchResults = results)
             }

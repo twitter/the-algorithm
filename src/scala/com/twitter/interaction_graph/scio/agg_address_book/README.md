@@ -17,9 +17,9 @@
 
 #### Run Scheduled Job
 ```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-address-book-dataflow
+etwitterport PROJECTID=twttr-recos-ml-prod
+etwitterport REGION=us-central1
+etwitterport JOB_NAME=interaction-graph-address-book-dataflow
 
 bin/d6w schedule \
   ${PROJECTID}/${REGION}/${JOB_NAME} \

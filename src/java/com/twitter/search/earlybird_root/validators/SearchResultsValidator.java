@@ -17,17 +17,17 @@ public class SearchResultsValidator
   public Future<EarlybirdResponse> validate(EarlybirdResponse response) {
     if (!response.isSetSearchResults()
         || !response.getSearchResults().isSetResults()) {
-      return Future.exception(
-          new IllegalStateException(cluster + " didn't set search results"));
-    } else if (!response.getSearchResults().isSetMaxSearchedStatusID()) {
-      return Future.exception(
-          new IllegalStateException(cluster + " didn't set max searched status id"));
+      return Future.etwitterception(
+          new IllegalStateEtwitterception(cluster + " didn't set search results"));
+    } else if (!response.getSearchResults().isSetMatwitterSearchedStatusID()) {
+      return Future.etwitterception(
+          new IllegalStateEtwitterception(cluster + " didn't set matwitter searched status id"));
     } else {
       boolean isEarlyTerminated = response.isSetEarlyTerminationInfo()
           && response.getEarlyTerminationInfo().isEarlyTerminated();
       if (!isEarlyTerminated && !response.getSearchResults().isSetMinSearchedStatusID()) {
-        return Future.exception(
-            new IllegalStateException(
+        return Future.etwitterception(
+            new IllegalStateEtwitterception(
                 cluster + " neither early terminated nor set min searched status id"));
       } else {
         return Future.value(response);

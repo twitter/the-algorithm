@@ -1,28 +1,28 @@
 package com.twitter.visibility.models
 
-sealed trait ViolationLevel extends Product with Serializable {
+sealed trait ViolationLevel etwittertends Product with Serializable {
   val level: Int
 }
 
 object ViolationLevel {
 
-  case object DefaultLevel extends ViolationLevel {
+  case object DefaultLevel etwittertends ViolationLevel {
     override val level: Int = 0
   }
 
-  case object Level1 extends ViolationLevel {
+  case object Level1 etwittertends ViolationLevel {
     override val level: Int = 1
   }
 
-  case object Level2 extends ViolationLevel {
+  case object Level2 etwittertends ViolationLevel {
     override val level: Int = 2
   }
 
-  case object Level3 extends ViolationLevel {
+  case object Level3 etwittertends ViolationLevel {
     override val level: Int = 3
   }
 
-  case object Level4 extends ViolationLevel {
+  case object Level4 etwittertends ViolationLevel {
     override val level: Int = 4
   }
 

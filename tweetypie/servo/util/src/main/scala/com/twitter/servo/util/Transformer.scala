@@ -13,7 +13,7 @@ import java.nio.charset.{Charset, CharsetEncoder, CharsetDecoder}
  * serializing values for storage and reading them back out (see
  * com.twitter.servo.cache.Serializer).
  *
- * In some implementations, the conversion may lose data (for example
+ * In some implementations, the conversion may lose data (for etwitterample
  * when used for storage in a cache). In general, any data that passes
  * through a conversion should be preserved if the data is converted
  * back. There is code to make it easy to check that your Transformer
@@ -31,10 +31,10 @@ trait Transformer[A, B] { self =>
 
   def from(b: B): Try[A]
 
-  @deprecated("Use Future.const(transformer.to(x))", "2.0.1")
+  @deprecated("Use Future.const(transformer.to(twitter))", "2.0.1")
   def asyncTo(a: A): Future[B] = Future.const(to(a))
 
-  @deprecated("Use Future.const(transformer.from(x))", "2.0.1")
+  @deprecated("Use Future.const(transformer.from(twitter))", "2.0.1")
   def asyncFrom(b: B): Future[A] = Future.const(from(b))
 
   /**
@@ -65,7 +65,7 @@ object Transformer {
 
   /**
    * Create a new Transformer from the supplied functions, catching
-   * exceptions and converting them to failures.
+   * etwitterceptions and converting them to failures.
    */
   def apply[A, B](tTo: A => B, tFrom: B => A): Transformer[A, B] =
     new Transformer[A, B] {
@@ -109,12 +109,12 @@ object Transformer {
   // Transformers for accessing/generating fields of a Map.
   //
   // These transformers are useful for serializing/deserializing to
-  // storage that stores Maps, for example Hamsa.
+  // storage that stores Maps, for etwitterample Hamsa.
 
   /**
    * Thrown by `requiredField` when the field is not present.
    */
-  case class MissingRequiredField[K](k: K) extends RuntimeException
+  case class MissingRequiredField[K](k: K) etwittertends RuntimeEtwitterception
 
   /**
    * Get a value from the map, yielding MissingRequiredField when the
@@ -192,7 +192,7 @@ object Transformer {
       override def to(str: String): Try[Array[Byte]] = Try {
         // We can't just use `String.getBytes("UTF-8")` here because it will
         // silently replace UTF-16 surrogate characters, which will cause
-        // CharsetEncoder to throw exceptions.
+        // CharsetEncoder to throw etwitterceptions.
         val bytes = charsetEncoder.get.encode(CharBuffer.wrap(str))
         bytes.array.slice(bytes.position, bytes.limit)
       }
@@ -217,7 +217,7 @@ object Transformer {
  * transforms an Option[T] to a T, using a default value for None
  */
 @deprecated("Use Transformer.default", "2.0.1")
-class OptionToTypeTransformer[T](default: T) extends Transformer[Option[T], T] {
+class OptionToTypeTransformer[T](default: T) etwittertends Transformer[Option[T], T] {
   override def to(b: Option[T]): Try[T] = Return(b.getOrElse(default))
 
   override def from(a: T): Try[Option[T]] = a match {

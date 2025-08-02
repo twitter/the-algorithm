@@ -8,14 +8,14 @@ import com.twitter.recosinjector.decider.RecosInjectorDecider
 
 case class ProdConfig(
   override val serviceIdentifier: ServiceIdentifier
-)(implicit val statsReceiver: StatsReceiver) extends {
+)(implicit val statsReceiver: StatsReceiver) etwittertends {
   // Due to trait initialization logic in Scala, any abstract members declared in Config or
   // DeployConfig should be declared in this block. Otherwise the abstract member might initialize
   // to null if invoked before before object creation finishing.
 
   val recosInjectorThriftClientId = ClientId("recos-injector.prod")
 
-  val outputKafkaTopicPrefix = "recos_injector"
+  val outputKafkaTopicPrefitwitter = "recos_injector"
 
   val log = Logger("ProdConfig")
 

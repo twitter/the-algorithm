@@ -5,18 +5,18 @@ import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.models.FollowProof
 import com.twitter.follow_recommendations.common.models.Reason
 import com.twitter.hermit.stp.thriftscala.STPResult
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.strato.client.Fetcher
 import com.twitter.timelines.configapi.HasParams
 
-/** Base class that all variants of our offline stp dataset can extend. Assumes the same STPResult
+/** Base class that all variants of our offline stp dataset can etwittertend. Assumes the same STPResult
  *  value in the key and converts the result into the necessary internal model.
  */
 abstract class OfflineStrongTiePredictionBaseSource(
   fetcher: Fetcher[Long, Unit, STPResult])
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser] {
+    etwittertends CandidateSource[HasParams with HasClientContetwittert, CandidateUser] {
 
   def fetch(
     target: Long,
@@ -31,7 +31,7 @@ abstract class OfflineStrongTiePredictionBaseSource(
       }
   }
 
-  override def apply(request: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
+  override def apply(request: HasParams with HasClientContetwittert): Stitch[Seq[CandidateUser]] = {
     request.getOptionalUserId.map(fetch).getOrElse(Stitch.Nil)
   }
 }

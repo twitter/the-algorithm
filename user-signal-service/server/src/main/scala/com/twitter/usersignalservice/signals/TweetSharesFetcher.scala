@@ -18,15 +18,15 @@ import com.twitter.usersignalservice.thriftscala.Signal
 import com.twitter.usersignalservice.thriftscala.SignalType
 import com.twitter.util.Future
 import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 case class TweetSharesFetcher @Inject() (
   manhattanKVClientMtlsParams: ManhattanKVClientMtlsParams,
   timer: Timer,
   stats: StatsReceiver)
-    extends ManhattanSignalFetcher[Long, TweetEngagements] {
+    etwittertends ManhattanSignalFetcher[Long, TweetEngagements] {
 
   import TweetSharesFetcher._
 
@@ -65,7 +65,7 @@ case class TweetSharesFetcher @Inject() (
               SignalType.TweetShareV1,
               tweetEngagement.timestampMs,
               Some(InternalId.TweetId(tweetEngagement.tweetId)))
-        }.sortBy(-_.timestamp).take(query.maxResults.getOrElse(Int.MaxValue))
+        }.sortBy(-_.timestamp).take(query.matwitterResults.getOrElse(Int.MatwitterValue))
       }
     }
   }

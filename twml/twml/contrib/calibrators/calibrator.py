@@ -31,7 +31,7 @@ class CalibrationFeature(object):
 
   def add_values(self, new_features):
     '''
-    Extends lists to contain the values in this batch
+    Etwittertends lists to contain the values in this batch
     '''
     for key in new_features:
       self._features_dict[key].append(new_features[key])
@@ -120,29 +120,29 @@ class Calibrator(object):
         name for the calibrator.
     '''
     if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate().Cannot save() prior to calibrate()")
+      raise RuntimeError("Etwitterpecting prior call to calibrate().Cannot save() prior to calibrate()")
 
     # This module allows for the calibrator to save be saved as part of
     # Tensorflow Hub (this will allow it to be used in further steps)
     def calibrator_module():
-      # Note that this is usually expecting a sparse_placeholder
+      # Note that this is usually etwitterpecting a sparse_placeholder
       inputs = tf.sparse_placeholder(tf.float32)
       calibrator_layer = self.to_layer()
       output = calibrator_layer(inputs)
       # creates the signature to the calibrator module
       hub.add_signature(inputs=inputs, outputs=output, name=name)
 
-    # exports the module to the save_dir
+    # etwitterports the module to the save_dir
     spec = hub.create_module_spec(calibrator_module)
     with tf.Graph().as_default():
       module = hub.Module(spec)
       with tf.Session() as session:
-        module.export(save_dir, session)
+        module.etwitterport(save_dir, session)
 
   def write_summary(self, writer, sess=None):
     """
     This method is called by save() to write tensorboard summaries to disk.
-    See MDLCalibrator.write_summary for an example.
+    See MDLCalibrator.write_summary for an etwitterample.
     By default, the method does nothing. It can be overloaded by child-classes.
 
     Arguments:

@@ -26,7 +26,7 @@ scala_library(
         "src/scala/com/twitter/timelines/prediction/features/common",
         "src/scala/com/twitter/timelines/prediction/features/itl",
         "src/scala/com/twitter/timelines/prediction/features/recap",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:execution_app",
+        "src/scala/com/twitter/wtf/scalding/jobs/common:etwitterecution_app",
         "src/thrift/com/twitter/hermit/candidate:hermit-candidate-scala",
         "src/thrift/com/twitter/wtf/scalding/sims:sims-thrift-scala",
         "twadoop_config/configuration/log_categories/group/timeline:timeline_service_favorites-scala",

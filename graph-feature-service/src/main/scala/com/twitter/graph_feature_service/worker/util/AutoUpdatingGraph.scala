@@ -20,7 +20,7 @@ import java.nio.ByteBuffer
  * @param shard                       The shard of the graph to download
  * @param minimumSizeForCompleteGraph minimumSize for complete graph - otherwise we don't load it
  * @param updateIntervalMin           The interval after which the first update is tried and the interval between such updates
- * @param updateIntervalMax           the maximum time before an update is triggered
+ * @param updateIntervalMatwitter           the matwitterimum time before an update is triggered
  * @param deleteInterval              The interval after which older data is deleted from disk
  * @param sharedSemaphore             The semaphore controls the number of graph loads at same time on the instance.
  */
@@ -31,19 +31,19 @@ case class AutoUpdatingGraph(
   shard: Int,
   minimumSizeForCompleteGraph: Long,
   updateIntervalMin: Duration = 1.hour,
-  updateIntervalMax: Duration = 12.hours,
+  updateIntervalMatwitter: Duration = 12.hours,
   deleteInterval: Duration = 2.seconds,
   sharedSemaphore: Option[AsyncSemaphore] = None
 )(
   implicit statsReceiver: StatsReceiver,
   timer: Timer)
-    extends AutoUpdatingReadOnlyGraph[Long, ByteBuffer](
+    etwittertends AutoUpdatingReadOnlyGraph[Long, ByteBuffer](
       hdfsCluster,
       hdfsClusterUrl,
       shard,
       minimumSizeForCompleteGraph,
       updateIntervalMin,
-      updateIntervalMax,
+      updateIntervalMatwitter,
       deleteInterval,
       sharedSemaphore
     )

@@ -37,7 +37,7 @@ class MemcacheFactory(memcacheClient: FinagleMemcacheClient, statsReceiver: Stat
 }
 
 class ScopedMemcacheFactory(memcacheClient: FinagleMemcacheClient, statsReceiver: StatsReceiver)
-    extends ScopedFactory[MemcacheFactory] {
+    etwittertends ScopedFactory[MemcacheFactory] {
 
   override def scope(scope: RequestScope): MemcacheFactory = {
     new MemcacheFactory(

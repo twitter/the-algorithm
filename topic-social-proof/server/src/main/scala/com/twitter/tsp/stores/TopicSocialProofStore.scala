@@ -20,7 +20,7 @@ case class TopicSocialProofStore(
   semanticCoreAnnotationStore: ReadableStore[TweetId, Seq[TopicAnnotation]]
 )(
   statsReceiver: StatsReceiver)
-    extends ReadableStore[TopicSocialProofStore.Query, Seq[TopicSocialProof]] {
+    etwittertends ReadableStore[TopicSocialProofStore.Query, Seq[TopicSocialProof]] {
   import TopicSocialProofStore._
 
   // Fetches the tweet's topic annotations from SemanticCore's Annotation API
@@ -71,18 +71,18 @@ case class TopicSocialProofStore(
 
   /***
    * When the allowList is not empty (e.g., TSP handler call, CrTopic handler call),
-   * the filter will be enabled and we will only keep annotations that have versionIds existing
+   * the filter will be enabled and we will only keep annotations that have versionIds etwitteristing
    * in the input allowedSemanticCoreVersionIds set.
    * But when the allowList is empty (e.g., some debugger calls),
    * we will not filter anything and pass.
-   * We limit the number of versionIds to be K = MaxNumberVersionIds
+   * We limit the number of versionIds to be K = MatwitterNumberVersionIds
    */
   private def filterAnnotationsByAllowList(
     annotations: Seq[TopicAnnotation],
     query: TopicSocialProofStore.Query
   ): Seq[TopicAnnotation] = {
 
-    val trimmedVersionIds = query.allowedSemanticCoreVersionIds.take(MaxNumberVersionIds)
+    val trimmedVersionIds = query.allowedSemanticCoreVersionIds.take(MatwitterNumberVersionIds)
     annotations.filter { annotation =>
       trimmedVersionIds.isEmpty || trimmedVersionIds.contains(annotation.modelVersionId)
     }
@@ -108,7 +108,7 @@ case class TopicSocialProofStore(
 
 object TopicSocialProofStore {
 
-  private val MaxNumberVersionIds = 9
+  private val MatwitterNumberVersionIds = 9
 
   case class Query(
     cacheableQuery: CacheableQuery,

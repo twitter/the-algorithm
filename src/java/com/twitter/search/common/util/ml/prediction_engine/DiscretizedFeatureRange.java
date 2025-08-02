@@ -9,7 +9,7 @@ import com.google.common.base.Preconditions;
  */
 public class DiscretizedFeatureRange {
   protected final double minValue;
-  protected final double maxValue;
+  protected final double matwitterValue;
   protected final double weight;
 
   DiscretizedFeatureRange(double weight, String range) {
@@ -17,7 +17,7 @@ public class DiscretizedFeatureRange {
     Preconditions.checkArgument(limits.length == 2);
 
     this.minValue = parseRangeValue(limits[0]);
-    this.maxValue = parseRangeValue(limits[1]);
+    this.matwitterValue = parseRangeValue(limits[1]);
     this.weight = weight;
   }
 

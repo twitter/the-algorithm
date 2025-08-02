@@ -1,10 +1,10 @@
 package com.twitter.tweetypie
 
-import com.twitter.context.thriftscala.Viewer
+import com.twitter.contetwittert.thriftscala.Viewer
 import com.twitter.tweetypie.thriftscala._
 
-import scala.util.matching.Regex
-import com.twitter.context.TwitterContext
+import scala.util.matching.Regetwitter
+import com.twitter.contetwittert.TwitterContetwittert
 import com.twitter.finagle.stats.Stat
 import com.twitter.snowflake.id.SnowflakeId
 
@@ -18,14 +18,14 @@ package object handler {
   // A narrowcast location can be a PlaceId or a US metro code.
   type NarrowcastLocation = String
 
-  val PlaceIdRegex: Regex = """(?i)\A[0-9a-fA-F]{16}\Z""".r
+  val PlaceIdRegetwitter: Regetwitter = """(?i)\A[0-9a-fA-F]{16}\Z""".r
 
-  // Bring Tweetypie permitted TwitterContext into scope
-  val TwitterContext: TwitterContext =
-    com.twitter.context.TwitterContext(com.twitter.tweetypie.TwitterContextPermit)
+  // Bring Tweetypie permitted TwitterContetwittert into scope
+  val TwitterContetwittert: TwitterContetwittert =
+    com.twitter.contetwittert.TwitterContetwittert(com.twitter.tweetypie.TwitterContetwittertPermit)
 
   def getContributor(userId: UserId): Option[Contributor] = {
-    val viewer = TwitterContext().getOrElse(Viewer())
+    val viewer = TwitterContetwittert().getOrElse(Viewer())
     viewer.authenticatedUserId.filterNot(_ == userId).map(id => Contributor(id))
   }
 

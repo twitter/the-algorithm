@@ -11,15 +11,15 @@ import com.twitter.usersignalservice.thriftscala.Signal
 import com.twitter.usersignalservice.thriftscala.SignalType
 import com.twitter.util.Future
 import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 case class AccountFollowsFetcher @Inject() (
   sgsClient: SocialGraphService.MethodPerEndpoint,
   timer: Timer,
   stats: StatsReceiver)
-    extends BaseSignalFetcher {
+    etwittertends BaseSignalFetcher {
 
   override type RawSignalType = Signal
   override val name: String = this.getClass.getCanonicalName
@@ -39,6 +39,6 @@ case class AccountFollowsFetcher @Inject() (
     query: Query,
     rawSignals: Future[Option[Seq[RawSignalType]]]
   ): Future[Option[Seq[Signal]]] = {
-    rawSignals.map(_.map(_.take(query.maxResults.getOrElse(Int.MaxValue))))
+    rawSignals.map(_.map(_.take(query.matwitterResults.getOrElse(Int.MatwitterValue))))
   }
 }

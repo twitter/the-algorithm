@@ -9,7 +9,7 @@ import com.twitter.frigate.thriftscala.FrigateNotification
 import com.twitter.frigate.thriftscala.MagicFanoutEventNotificationDetails
 import com.twitter.util.Future
 
-object MagicFanoutNewsEventCandidateGenerator extends CandidateGenerator {
+object MagicFanoutNewsEventCandidateGenerator etwittertends CandidateGenerator {
 
   override def getCandidate(
     targetUser: Target,
@@ -22,11 +22,11 @@ object MagicFanoutNewsEventCandidateGenerator extends CandidateGenerator {
      **/
     require(
       notification.commonRecommendationType == CommonRecommendationType.MagicFanoutNewsEvent,
-      "MagicFanoutNewsEvent: unexpected CRT " + notification.commonRecommendationType
+      "MagicFanoutNewsEvent: unetwitterpected CRT " + notification.commonRecommendationType
     )
 
     require(
-      notification.magicFanoutEventNotification.exists(_.pushId.isDefined),
+      notification.magicFanoutEventNotification.etwitterists(_.pushId.isDefined),
       "MagicFanoutNewsEvent: pushId is not defined")
 
     val magicFanoutEventNotification = notification.magicFanoutEventNotification.get

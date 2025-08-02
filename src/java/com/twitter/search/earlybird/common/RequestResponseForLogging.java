@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird.common;
 
 
-import org.apache.thrift.TException;
+import org.apache.thrift.TEtwitterception;
 import org.apache.thrift.TSerializer;
 import org.apache.thrift.protocol.TSimpleJSONProtocol;
 import org.slf4j.Logger;
@@ -32,7 +32,7 @@ public class RequestResponseForLogging {
       String requestJson = serializer.toString(clearedRequest);
       String responseJson = serializer.toString(theResponse);
       return "{\"request\":" + requestJson + ", \"response\":" + responseJson + "}";
-    } catch (TException e) {
+    } catch (TEtwitterception e) {
       LOG.error("Failed to serialize request/response for logging.", e);
       return "";
     }

@@ -89,7 +89,7 @@ sealed trait TweetLabels {
   def forTweetId(tweetId: TweetId): Stitch[Seq[TweetSafetyLabel]]
 }
 
-class StratoTweetLabelMaps(safetyLabelSource: SafetyLabelMapSource) extends TweetLabels {
+class StratoTweetLabelMaps(safetyLabelSource: SafetyLabelMapSource) etwittertends TweetLabels {
 
   override def forTweet(tweet: Tweet): Stitch[Seq[TweetSafetyLabel]] = {
     forTweetId(tweet.id)
@@ -107,7 +107,7 @@ class StratoTweetLabelMaps(safetyLabelSource: SafetyLabelMapSource) extends Twee
   }
 }
 
-object NilTweetLabelMaps extends TweetLabels {
+object NilTweetLabelMaps etwittertends TweetLabels {
   override def forTweet(tweet: Tweet): Stitch[Seq[TweetSafetyLabel]] = Stitch.Nil
   override def forTweetId(tweetId: TweetId): Stitch[Seq[TweetSafetyLabel]] = Stitch.Nil
 }
@@ -189,20 +189,20 @@ class TweetFeatures(tweetLabels: TweetLabels, statsReceiver: StatsReceiver) {
   }
 
   def tweetHasNsfwUser(tweet: Tweet): Boolean =
-    tweet.coreData.exists(_.nsfwUser)
+    tweet.coreData.etwitterists(_.nsfwUser)
 
   def tweetHasNsfwAdmin(tweet: Tweet): Boolean =
-    tweet.coreData.exists(_.nsfwAdmin)
+    tweet.coreData.etwitterists(_.nsfwAdmin)
 
   def tweetHasMedia(tweet: Tweet): Boolean =
-    tweet.coreData.exists(_.hasMedia.getOrElse(false))
+    tweet.coreData.etwitterists(_.hasMedia.getOrElse(false))
 
   def tweetHasCommunity(tweet: Tweet): Boolean = {
-    tweet.communities.exists(_.communityIds.nonEmpty)
+    tweet.communities.etwitterists(_.communityIds.nonEmpty)
   }
 
   def tweetIsCollabInvitation(tweet: Tweet): Boolean = {
-    tweet.collabControl.exists(_ match {
+    tweet.collabControl.etwitterists(_ match {
       case CollabControl.CollabInvitation(_) => true
       case _ => false
     })

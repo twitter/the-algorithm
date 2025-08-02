@@ -2,7 +2,7 @@ package com.twitter.simclusters_v2.scalding
 
 import com.twitter.algebird.{Monoid, OptionMonoid, Semigroup}
 import com.twitter.algebird.mutable.PriorityQueueMonoid
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding.typed.TypedPipe
 import com.twitter.simclusters_v2.scalding.common.Util
 import com.twitter.simclusters_v2.scalding.common.Util.Distribution
@@ -17,7 +17,7 @@ object BipartiteClusterEvaluationClasses {
     favWtIfFollowEdge: Double,
     favWtIfFavEdge: Double)
 
-  object WeightsMonoid extends Monoid[Weights] {
+  object WeightsMonoid etwittertends Monoid[Weights] {
     override def zero = Weights(0.0, 0.0, 0.0, 0.0)
 
     override def plus(l: Weights, r: Weights): Weights = {
@@ -62,7 +62,7 @@ object BipartiteClusterEvaluationClasses {
     }
   }
 
-  object BIRMonoid extends Monoid[BipartiteIntermediateResults] {
+  object BIRMonoid etwittertends Monoid[BipartiteIntermediateResults] {
     override def zero =
       BipartiteIntermediateResults(WeightsMonoid.zero, WeightsMonoid.zero, 0, samplerMonoid.zero)
 
@@ -93,7 +93,7 @@ object BipartiteClusterEvaluationClasses {
     )
   }
 
-  object ClusterQualitySemigroup extends Semigroup[BipartiteClusterQuality] {
+  object ClusterQualitySemigroup etwittertends Semigroup[BipartiteClusterQuality] {
     val doubleOM: Monoid[Option[Double]] = new OptionMonoid[Double]
     val intOM: Monoid[Option[Int]] = new OptionMonoid[Int]
     val longOM: Monoid[Option[Long]] = new OptionMonoid[Long]
@@ -165,13 +165,13 @@ object BipartiteClusterEvaluationClasses {
 
   def printableBipartiteQuality(in: BipartiteClusterQuality): PrintableBipartiteQuality = {
     def getRatio(numOpt: Option[Double], denOpt: Option[Double]): String = {
-      val r = if (denOpt.exists(_ > 0)) {
+      val r = if (denOpt.etwitterists(_ > 0)) {
         numOpt.getOrElse(0.0) / denOpt.get
       } else 0.0
       "%.3f".format(r)
     }
 
-    val formatter = new java.text.DecimalFormat("###,###.#")
+    val formatter = new java.tetwittert.DecimalFormat("###,###.#")
 
     def denString(denOpt: Option[Double]): String =
       formatter.format(denOpt.getOrElse(0.0))
@@ -185,7 +185,7 @@ object BipartiteClusterEvaluationClasses {
             }
             Util.computeCorrelation(pairs.iterator)
           }
-        case x @ _ => x
+        case twitter @ _ => twitter
       }
 
     val correlationOfFavWtIfFav =
@@ -197,7 +197,7 @@ object BipartiteClusterEvaluationClasses {
             }
             Util.computeCorrelation(pairs.iterator)
           }
-        case x @ _ => x
+        case twitter @ _ => twitter
       }
 
     PrintableBipartiteQuality(
@@ -250,19 +250,19 @@ object BipartiteClusterEvaluationClasses {
 
   def getClusterResultsSummary(
     perClusterResults: TypedPipe[BipartiteClusterQuality]
-  ): Execution[Option[ClusterResultsSummary]] = {
+  ): Etwitterecution[Option[ClusterResultsSummary]] = {
     perClusterResults
       .map { clusterQuality =>
         val printableQuality = printableBipartiteQuality(clusterQuality)
         val isFollowRecallZero =
           if (!clusterQuality.favWtSumOfInClusterFollowEdges
-              .exists(_ > 0)) 1
+              .etwitterists(_ > 0)) 1
           else 0
         val isFavRecallZero =
-          if (!clusterQuality.favWtSumOfInClusterFavEdges.exists(_ > 0)) 1
+          if (!clusterQuality.favWtSumOfInClusterFavEdges.etwitterists(_ > 0)) 1
           else 0
         (
-          if (!clusterQuality.interestedInSize.exists(_ > 0)) 1 else 0,
+          if (!clusterQuality.interestedInSize.etwitterists(_ > 0)) 1 else 0,
           isFollowRecallZero,
           isFavRecallZero,
           isFavRecallZero * isFollowRecallZero,
@@ -277,7 +277,7 @@ object BipartiteClusterEvaluationClasses {
         )
       }
       .sum
-      .toOptionExecution
+      .toOptionEtwitterecution
       .map { opt =>
         opt.map {
           case (

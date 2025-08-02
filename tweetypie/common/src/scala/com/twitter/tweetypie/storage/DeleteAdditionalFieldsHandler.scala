@@ -2,7 +2,7 @@ package com.twitter.tweetypie.storage
 
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.kv.DeniedManhattanException
+import com.twitter.storage.client.manhattan.kv.DeniedManhattanEtwitterception
 import com.twitter.tweetypie.storage.TweetUtils._
 import com.twitter.util.Throw
 import com.twitter.util.Time
@@ -47,8 +47,8 @@ object DeleteAdditionalFieldsHandler {
         }
 
         Stitch.collect(deletionStitches).map { responsesTries =>
-          val wasRateLimited = responsesTries.exists {
-            case Throw(e: DeniedManhattanException) => true
+          val wasRateLimited = responsesTries.etwitterists {
+            case Throw(e: DeniedManhattanEtwitterception) => true
             case _ => false
           }
 

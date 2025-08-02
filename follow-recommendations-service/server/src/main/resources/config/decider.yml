@@ -10,17 +10,17 @@ enable_profile_sidebar_product:
 enable_magic_recs_product:
   comment: Proportion of requests where we return an actual response for magic recs product
   default_availability: 10000
-enable_rux_landing_page_product:
-  comment: Proportion of requests where we return an actual response for rux landing page product
+enable_rutwitter_landing_page_product:
+  comment: Proportion of requests where we return an actual response for rutwitter landing page product
   default_availability: 10000
-enable_rux_pymk_product:
-  comment: Proportion of requests where we return an actual response for rux pymk product
+enable_rutwitter_pymk_product:
+  comment: Proportion of requests where we return an actual response for rutwitter pymk product
   default_availability: 10000
 enable_profile_bonus_follow_product:
   comment: Proportion of requests where we return an actual response for profile bonus follow product
   default_availability: 10000
-enable_election_explore_wtf_product:
-  comment: Proportion of requests where we return an actual response for election explore wtf product
+enable_election_etwitterplore_wtf_product:
+  comment: Proportion of requests where we return an actual response for election etwitterplore wtf product
   default_availability: 10000
 enable_cluster_follow_product:
   comment: Proportion of requests where we return an actual response for cluster follow product
@@ -31,8 +31,8 @@ enable_home_timeline_product:
 enable_htl_bonus_follow_product:
   comment: Proportion of requests where we return an actual response for htl bonus follow product
   default_availability: 10000
-enable_explore_tab_product:
-  comment: Proportion of requests where we return an actual response for explore tab product
+enable_etwitterplore_tab_product:
+  comment: Proportion of requests where we return an actual response for etwitterplore tab product
   default_availability: 10000
 enable_sidebar_product:
   comment: Proportion of requests where we return an actual response for sidebar product
@@ -43,14 +43,14 @@ enable_campaign_form_product:
 enable_reactive_follow_product:
   comment: Proportion of requests where we return an actual response for reactive follow product
   default_availability: 10000
-enable_nux_pymk_product:
-  comment: Proportion of requests where we return an actual response for nux pymk product
+enable_nutwitter_pymk_product:
+  comment: Proportion of requests where we return an actual response for nutwitter pymk product
   default_availability: 10000
-enable_nux_interests_product:
-  comment: Proportion of requests where we return an actual response for nux interests product
+enable_nutwitter_interests_product:
+  comment: Proportion of requests where we return an actual response for nutwitter interests product
   default_availability: 10000
-enable_nux_topic_bonus_follow_product:
-  comment: Proportion of requests where we return an actual response for nux topic-based bonus follow product
+enable_nutwitter_topic_bonus_follow_product:
+  comment: Proportion of requests where we return an actual response for nutwitter topic-based bonus follow product
   default_availability: 10000
 enable_india_covid19_curated_accounts_wtf_product:
   comment: Proportion of requests where we return an actual response for india covid19 curated accounts wtf product
@@ -73,20 +73,20 @@ enable_diffy_module_dark_reading:
 enable_recos_backfill_product:
   comment: Proportion of requests where we return an actual response for the RecosBackfill product
   default_availability: 10000
-enable_post_nux_follow_task_product:
-  comment: Proportion of requests where we return an actual response for post NUX follow task product
+enable_post_nutwitter_follow_task_product:
+  comment: Proportion of requests where we return an actual response for post NUtwitter follow task product
   default_availability: 10000
 enable_curated_space_hosts_product:
   comment: Proportion of requests where we return an actual response for curated space hosts product
   default_availability: 10000
-enable_nux_geo_category_product:
-  comment: Proportion of requests where we return an actual response for nux geo category product
+enable_nutwitter_geo_category_product:
+  comment: Proportion of requests where we return an actual response for nutwitter geo category product
   default_availability: 10000
-enable_nux_interests_category_product:
-  comment: Proportion of requests where we return an actual response for nux interests category product
+enable_nutwitter_interests_category_product:
+  comment: Proportion of requests where we return an actual response for nutwitter interests category product
   default_availability: 10000
-enable_nux_pymk_category_product:
-  comment: Proportion of requests where we return an actual response for nux pymk category product
+enable_nutwitter_pymk_category_product:
+  comment: Proportion of requests where we return an actual response for nutwitter pymk category product
   default_availability: 10000
 enable_home_timeline_tweet_recs_product:
   comment: Proportion of requests where we return an actual response for the Home Timeline Tweet Recs product
@@ -94,8 +94,8 @@ enable_home_timeline_tweet_recs_product:
 enable_htl_bulk_friend_follows_product:
   comment: Proportion of requests where we return an actual response for the HTL bulk friend follows product
   default_availability: 10000
-enable_nux_auto_follow_product:
-  comment: Proportion of requests where we return an actual response for the NUX auto follow product
+enable_nutwitter_auto_follow_product:
+  comment: Proportion of requests where we return an actual response for the NUtwitter auto follow product
   default_availability: 10000
 enable_search_bonus_follow_product:
   comment: Proportion of requests where we return an actual response for search bonus follow product
@@ -103,17 +103,17 @@ enable_search_bonus_follow_product:
 enable_fetch_user_in_request_builder:
   comment: Proportion of requests where we fetch user object from gizmoduck in request builder
   default_availability: 0
-enable_product_mixer_magic_recs_product:
-  comment: Proportion of requests where we enable the product mixer magic recs product
+enable_product_mitwitterer_magic_recs_product:
+  comment: Proportion of requests where we enable the product mitwitterer magic recs product
   default_availability: 10000
 enable_home_timeline_reverse_chron_product:
   comment: Proportion of requests where we return an actual response for Home timeline reverse chron product
   default_availability: 10000
-enable_product_mixer_pipeline_magic_recs_dark_read:
-  comment: Compare product mixer pipeline responses to current FRS pipeline responses for Magic Recs
+enable_product_mitwitterer_pipeline_magic_recs_dark_read:
+  comment: Compare product mitwitterer pipeline responses to current FRS pipeline responses for Magic Recs
   default_availability: 0
-enable_experimental_caching:
-  comment: Proportion of requests we use experimental caching for data caching
+enable_etwitterperimental_caching:
+  comment: Proportion of requests we use etwitterperimental caching for data caching
   default_availability: 0
 enable_distributed_caching:
   comment: Proportion of requests we use a distributed cache cluster for data caching

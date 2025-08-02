@@ -7,12 +7,12 @@ import com.twitter.ml.api.FeatureType
 /**
  * Convenience class to describe the stores that make up a particular type of aggregate.
  *
- * For example, as of 2018/07, user aggregates are generate by merging the individual
+ * For etwitterample, as of 2018/07, user aggregates are generate by merging the individual
  * "user_aggregates", "rectweet_user_aggregates", and, "twitter_wide_user_aggregates".
  *
  * @param storeNames Name of the stores.
  * @param aggregateType Type of aggregate, usually differentiated by the aggregation key.
- * @param shouldHash Used at TimelineRankingAggregatesUtil.extractSecondary when extracting the
+ * @param shouldHash Used at TimelineRankingAggregatesUtil.etwittertractSecondary when etwittertracting the
  *                   secondary key value.
  */
 case class StoreConfig[T](
@@ -62,7 +62,7 @@ trait StoreMerger {
    * Stores may only be merged if they have the same aggregation key.
    */
   def isValidToMerge(storeNames: Set[String]): Boolean = {
-    val expectedKeyOpt = storeNames.headOption.map(getAggregateKeys)
-    storeNames.forall(v => getAggregateKeys(v) == expectedKeyOpt.get)
+    val etwitterpectedKeyOpt = storeNames.headOption.map(getAggregateKeys)
+    storeNames.forall(v => getAggregateKeys(v) == etwitterpectedKeyOpt.get)
   }
 }

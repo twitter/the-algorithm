@@ -121,11 +121,11 @@ object TopicIdUtils {
     namespace: EventNamespace
   ): Option[Long] =
     if (namespace.page.contains("onboarding") &&
-      (namespace.section.exists(_.contains("topic")) ||
-      namespace.component.exists(_.contains("topic")) ||
-      namespace.element.exists(_.contains("topic")))) {
+      (namespace.section.etwitterists(_.contains("topic")) ||
+      namespace.component.etwitterists(_.contains("topic")) ||
+      namespace.element.etwitterists(_.contains("topic")))) {
       item.description.flatMap { description =>
-        // description: "id=123,main=xyz,row=1"
+        // description: "id=123,main=twitteryz,row=1"
         val tokens = description.split(",").headOption.map(_.split("="))
         tokens match {
           case Some(Array("id", token, _*)) => Try(token.toLong).toOption

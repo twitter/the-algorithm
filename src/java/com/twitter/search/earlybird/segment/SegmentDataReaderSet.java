@@ -1,28 +1,28 @@
 package com.twitter.search.earlybird.segment;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Optional;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.util.io.recordreader.RecordReader;
 import com.twitter.search.earlybird.document.TweetDocument;
 import com.twitter.search.earlybird.partition.SegmentInfo;
 
 /**
  * SegmentDataReaderSet provides an interface to create and manage the various
- * RecordReaders used to index Earlybird segments.
+ * RecordReaders used to indetwitter Earlybird segments.
  */
 public interface SegmentDataReaderSet {
   /**
    * Instruct the document RecordReaders (i.e. document, geo, ... as appropriate) to read from this
    * segment.
    */
-  void attachDocumentReaders(SegmentInfo segmentInfo) throws IOException;
+  void attachDocumentReaders(SegmentInfo segmentInfo) throws IOEtwitterception;
 
   /**
    * Instruct the reader set to add segment to non-document RecordReaders (deletes, features, etc.)
    */
-  void attachUpdateReaders(SegmentInfo segmentInfo) throws IOException;
+  void attachUpdateReaders(SegmentInfo segmentInfo) throws IOEtwitterception;
 
   /**
    * Mark a segment as "complete", denoting that we are done reading document records from it.
@@ -54,7 +54,7 @@ public interface SegmentDataReaderSet {
   /**
    * Create a new DocumentReader for the given segment that is not managed by this set.
    */
-  RecordReader<TweetDocument> newDocumentReader(SegmentInfo segmentInfo) throws Exception;
+  RecordReader<TweetDocument> newDocumentReader(SegmentInfo segmentInfo) throws Etwitterception;
 
   /**
    * Returns the document reader for the current segment.
@@ -73,7 +73,7 @@ public interface SegmentDataReaderSet {
 
   /**
    * Returns the offset in the update events stream for the given segment that this earlybird should
-   * start indexing from.
+   * start indetwittering from.
    */
   Optional<Long> getUpdateEventsStreamOffsetForSegment(SegmentInfo segmentInfo);
 }

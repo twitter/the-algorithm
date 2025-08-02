@@ -1,13 +1,13 @@
 package com.twitter.search.common.query;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Set;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
+import org.apache.lucene.indetwitter.LeafReaderContetwittert;
+import org.apache.lucene.indetwitter.Term;
 import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Etwitterplanation;
+import org.apache.lucene.search.IndetwitterSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.ScoreMode;
@@ -17,7 +17,7 @@ import org.apache.lucene.search.Weight;
  * Lucene filter on top of a known docid
  *
  */
-public class DocIdFilter extends Query {
+public class DocIdFilter etwittertends Query {
   private final int docid;
 
   public DocIdFilter(int docid) {
@@ -26,28 +26,28 @@ public class DocIdFilter extends Query {
 
   @Override
   public Weight createWeight(
-      IndexSearcher searcher, ScoreMode scoreMode, float boost) throws IOException {
+      IndetwitterSearcher searcher, ScoreMode scoreMode, float boost) throws IOEtwitterception {
     return new Weight(this) {
       @Override
-      public void extractTerms(Set<Term> terms) {
+      public void etwittertractTerms(Set<Term> terms) {
       }
 
       @Override
-      public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-        Scorer scorer = scorer(context);
+      public Etwitterplanation etwitterplain(LeafReaderContetwittert contetwittert, int doc) throws IOEtwitterception {
+        Scorer scorer = scorer(contetwittert);
         if ((scorer != null) && (scorer.iterator().advance(doc) == doc)) {
-          return Explanation.match(0f, "Match on id " + doc);
+          return Etwitterplanation.match(0f, "Match on id " + doc);
         }
-        return Explanation.match(0f, "No match on id " + doc);
+        return Etwitterplanation.match(0f, "No match on id " + doc);
       }
 
       @Override
-      public Scorer scorer(LeafReaderContext context) throws IOException {
+      public Scorer scorer(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
         return new ConstantScoreScorer(this, 0.0f, scoreMode, new SingleDocDocIdSetIterator(docid));
       }
 
       @Override
-      public boolean isCacheable(LeafReaderContext ctx) {
+      public boolean isCacheable(LeafReaderContetwittert cttwitter) {
         return true;
       }
     };

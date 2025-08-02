@@ -33,17 +33,17 @@ object SearchResultUtil {
   }
 
   /**
-   * Extended replies are replies, that are not retweets (see below), from a followed userId
+   * Etwittertended replies are replies, that are not retweets (see below), from a followed userId
    * towards a non-followed userId.
    *
    * In Thrift SearchResult it is possible to have both isRetweet and isReply set to true,
    * in the case of the retweeted reply. This is confusing edge case as the retweet object
    * is not itself a reply, but the original tweet is reply.
    */
-  def isExtendedReply(followedUserIds: Seq[UserId])(result: ThriftSearchResult): Boolean = {
+  def isEtwittertendedReply(followedUserIds: Seq[UserId])(result: ThriftSearchResult): Boolean = {
     isEligibleReply(result) &&
-    authorId(result).exists(followedUserIds.contains(_)) && // author is followed
-    referencedTweetAuthorId(result).exists(!followedUserIds.contains(_)) // referenced author is not
+    authorId(result).etwitterists(followedUserIds.contains(_)) && // author is followed
+    referencedTweetAuthorId(result).etwitterists(!followedUserIds.contains(_)) // referenced author is not
   }
 
   /**
@@ -52,8 +52,8 @@ object SearchResultUtil {
    */
   def isInNetworkReply(followedUserIds: Seq[UserId])(result: ThriftSearchResult): Boolean = {
     isEligibleReply(result) &&
-    authorId(result).exists(followedUserIds.contains(_)) && // author is followed
-    referencedTweetAuthorId(result).exists(followedUserIds.contains(_)) // referenced author is
+    authorId(result).etwitterists(followedUserIds.contains(_)) && // author is followed
+    referencedTweetAuthorId(result).etwitterists(followedUserIds.contains(_)) // referenced author is
   }
 
   /**
@@ -62,8 +62,8 @@ object SearchResultUtil {
    */
   def isOutOfNetworkRetweet(followedUserIds: Seq[UserId])(result: ThriftSearchResult): Boolean = {
     isRetweet(result) &&
-    authorId(result).exists(followedUserIds.contains(_)) && // author is followed
-    referencedTweetAuthorId(result).exists(!followedUserIds.contains(_)) // referenced author is not
+    authorId(result).etwitterists(followedUserIds.contains(_)) && // author is followed
+    referencedTweetAuthorId(result).etwitterists(!followedUserIds.contains(_)) // referenced author is not
   }
 
   /**
@@ -99,8 +99,8 @@ object SearchResultUtil {
     if (isEligibleReply(result)) {
       for {
         meta <- result.metadata
-        extraMeta <- meta.extraMetadata
-        conversationId <- extraMeta.conversationId
+        etwittertraMeta <- meta.etwittertraMetadata
+        conversationId <- etwittertraMeta.conversationId
       } yield {
         conversationId
       }

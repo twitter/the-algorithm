@@ -1,8 +1,8 @@
 package com.twitter.frigate.pushservice.predicate
 
 import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.SocialContextActions
-import com.twitter.frigate.common.base.SocialContextUserDetails
+import com.twitter.frigate.common.base.SocialContetwittertActions
+import com.twitter.frigate.common.base.SocialContetwittertUserDetails
 import com.twitter.frigate.common.base.TargetInfo
 import com.twitter.frigate.common.base.TargetUser
 import com.twitter.frigate.common.base.TweetAuthor
@@ -12,7 +12,7 @@ import com.twitter.frigate.common.base.TweetDetails
 import com.twitter.frigate.common.candidate.FrigateHistory
 import com.twitter.frigate.common.candidate.TargetABDecider
 import com.twitter.frigate.common.candidate.TweetImpressionHistory
-import com.twitter.frigate.common.predicate.socialcontext.{Predicates => SocialContextPredicates, _}
+import com.twitter.frigate.common.predicate.socialcontetwittert.{Predicates => SocialContetwittertPredicates, _}
 import com.twitter.frigate.common.predicate.tweet._
 import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
 import com.twitter.frigate.pushservice.predicate.ntab_caret_fatigue.NtabCaretClickContFnFatiguePredicate
@@ -23,42 +23,42 @@ class PreRankingPredicatesBuilder(
   implicit statsReceiver: StatsReceiver) {
 
   private val SocialProofPredicates = List[NamedPredicate[PushCandidate]](
-    SocialContextPredicates
-      .authorInSocialContext()
-      .applyOnlyToTweetAuthorWithSocialContextActions
-      .withName("author_social_context"),
-    SocialContextPredicates
-      .selfInSocialContext[TargetUser, SocialContextActions with TargetInfo[TargetUser]]()
-      .applyOnlyToSocialContextActionsWithTargetUser
-      .withName("self_social_context"),
-    SocialContextPredicates
-      .duplicateSocialContext[SocialContextActions]()
-      .applyOnlyToSocialContextActions
-      .withName("duplicate_social_context"),
-    SocialContextPredicates
-      .socialContextProtected[SocialContextUserDetails]()
-      .applyOnlyToSocialContextUserDetails
-      .withName("social_context_protected"),
-    SocialContextPredicates
-      .socialContextUnsuitable[SocialContextUserDetails]()
-      .applyOnlyToSocialContextUserDetails
-      .withName("social_context_unsuitable"),
-    SocialContextPredicates
-      .socialContextBlink[SocialContextUserDetails]()
-      .applyOnlyToSocialContextUserDetails
-      .withName("social_context_blink")
+    SocialContetwittertPredicates
+      .authorInSocialContetwittert()
+      .applyOnlyToTweetAuthorWithSocialContetwittertActions
+      .withName("author_social_contetwittert"),
+    SocialContetwittertPredicates
+      .selfInSocialContetwittert[TargetUser, SocialContetwittertActions with TargetInfo[TargetUser]]()
+      .applyOnlyToSocialContetwittertActionsWithTargetUser
+      .withName("self_social_contetwittert"),
+    SocialContetwittertPredicates
+      .duplicateSocialContetwittert[SocialContetwittertActions]()
+      .applyOnlyToSocialContetwittertActions
+      .withName("duplicate_social_contetwittert"),
+    SocialContetwittertPredicates
+      .socialContetwittertProtected[SocialContetwittertUserDetails]()
+      .applyOnlyToSocialContetwittertUserDetails
+      .withName("social_contetwittert_protected"),
+    SocialContetwittertPredicates
+      .socialContetwittertUnsuitable[SocialContetwittertUserDetails]()
+      .applyOnlyToSocialContetwittertUserDetails
+      .withName("social_contetwittert_unsuitable"),
+    SocialContetwittertPredicates
+      .socialContetwittertBlink[SocialContetwittertUserDetails]()
+      .applyOnlyToSocialContetwittertUserDetails
+      .withName("social_contetwittert_blink")
   )
 
   private val CommonPredicates = List[NamedPredicate[PushCandidate]](
     PredicatesForCandidate.candidateEnabledForEmailPredicate(),
-    PredicatesForCandidate.openAppExperimentUserCandidateAllowList(statsReceiver)
+    PredicatesForCandidate.openAppEtwitterperimentUserCandidateAllowList(statsReceiver)
   )
 
   private val TweetPredicates = List[NamedPredicate[PushCandidate]](
-    PredicatesForCandidate.tweetCandidateWithLessThan2SocialContextsIsAReply.applyOnlyToTweetCandidatesWithSocialContextActions
-      .withName("tweet_candidate_with_less_than_2_social_contexts_is_not_a_reply"),
+    PredicatesForCandidate.tweetCandidateWithLessThan2SocialContetwittertsIsAReply.applyOnlyToTweetCandidatesWithSocialContetwittertActions
+      .withName("tweet_candidate_with_less_than_2_social_contetwitterts_is_not_a_reply"),
     PredicatesForCandidate.filterOONCandidatePredicate(),
-    PredicatesForCandidate.oldTweetRecsPredicate.applyOnlyToTweetCandidateWithTargetAndABDeciderAndMaxTweetAge
+    PredicatesForCandidate.oldTweetRecsPredicate.applyOnlyToTweetCandidateWithTargetAndABDeciderAndMatwitterTweetAge
       .withName("old_tweet"),
     DuplicatePushTweetPredicate
       .apply[
@@ -78,10 +78,10 @@ class PreRankingPredicatesBuilder(
       .recTweetAuthorUnsuitable[TweetCandidate with TweetAuthorDetails]
       .applyOnlyToTweetCandidateWithTweetAuthorDetails
       .withName("tweet_author_unsuitable"),
-    TweetObjectExistsPredicate[
+    TweetObjectEtwitteristsPredicate[
       TweetCandidate with TweetDetails
     ].applyOnlyToTweetCandidatesWithTweetDetails
-      .withName("tweet_object_exists"),
+      .withName("tweet_object_etwitterists"),
     TweetImpressionPredicate[
       TargetUser with TweetImpressionHistory,
       TweetCandidate with TargetInfo[TargetUser with TweetImpressionHistory]
@@ -92,7 +92,7 @@ class PreRankingPredicatesBuilder(
       TargetUser,
       TweetAuthor with TargetInfo[TargetUser]]().applyOnlyToTweetAuthorWithTargetInfo
       .withName("self_author"),
-    PredicatesForCandidate.tweetIsNotAreply.applyOnlyToTweetCandidateWithoutSocialContextWithTweetDetails
+    PredicatesForCandidate.tweetIsNotAreply.applyOnlyToTweetCandidateWithoutSocialContetwittertWithTweetDetails
       .withName("tweet_candidate_not_a_reply"),
     PredicatesForCandidate.f1CandidateIsNotAReply.applyOnlyToF1CandidateWithTargetAndABDecider
       .withName("f1_candidate_is_not_a_reply"),
@@ -111,14 +111,14 @@ class PreRankingPredicatesBuilder(
       .applyOnlyToOutOfNetworkTweetCandidateWithTargetAndABDecider
       .withName("oon_tweet_word_length_too_short"),
     PredicatesForCandidate
-      .protectedTweetF1ExemptPredicate[
+      .protectedTweetF1EtwitteremptPredicate[
         TargetUser with TargetABDecider,
         TweetCandidate with TweetAuthorDetails with TargetInfo[
           TargetUser with TargetABDecider
         ]
       ]
       .applyOnlyToTweetCandidateWithAuthorDetailsWithTargetABDecider
-      .withName("f1_exempt_tweet_author_protected"),
+      .withName("f1_etwitterempt_tweet_author_protected"),
   )
 
   private val SgsPreRankingPredicates = List[NamedPredicate[PushCandidate]](

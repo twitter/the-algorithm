@@ -33,7 +33,7 @@ class UserTweetEntityEdgeBuilder(
   ): Future[Unit] = {
     val urlCacheEntries = urlHashIds.zip(urlEntities).map {
       case (hashId, url) =>
-        CacheEntityEntry(RecosHoseEntitiesCache.UrlPrefix, hashId, url)
+        CacheEntityEntry(RecosHoseEntitiesCache.UrlPrefitwitter, hashId, url)
     }
     cache.updateEntitiesCache(
       newCacheEntries = urlCacheEntries,

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledEtwitterecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -19,16 +19,16 @@ import com.twitter.common.quantity.Amount;
 import com.twitter.common.quantity.Time;
 import com.twitter.common.util.Clock;
 import com.twitter.decider.Decider;
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
+import com.twitter.search.common.concurrent.ScheduledEtwitterecutorServiceFactory;
 import com.twitter.search.common.metrics.SearchCustomGauge;
 import com.twitter.search.common.metrics.SearchStatsReceiver;
 import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.factory.QueryCacheUpdaterScheduledExecutorService;
+import com.twitter.search.earlybird.etwitterception.CriticalEtwitterceptionHandler;
+import com.twitter.search.earlybird.factory.QueryCacheUpdaterScheduledEtwitterecutorService;
 import com.twitter.search.earlybird.partition.SegmentInfo;
 import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
 import com.twitter.search.earlybird.util.PeriodicActionParams;
-import com.twitter.search.earlybird.util.ScheduledExecutorManager;
+import com.twitter.search.earlybird.util.ScheduledEtwitterecutorManager;
 import com.twitter.search.earlybird.util.ShutdownWaitTimeParams;
 
 /**
@@ -38,7 +38,7 @@ import com.twitter.search.earlybird.util.ShutdownWaitTimeParams;
  * This class is not thread-safe.
  */
 @VisibleForTesting
-final class QueryCacheUpdater extends ScheduledExecutorManager {
+final class QueryCacheUpdater etwittertends ScheduledEtwitterecutorManager {
   private static final Logger LOG = LoggerFactory.getLogger(QueryCacheUpdater.class);
 
   private final List<Task> tasks;
@@ -59,19 +59,19 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
   }
 
   public QueryCacheUpdater(Collection<QueryCacheFilter> cacheFilters,
-                           ScheduledExecutorServiceFactory updaterScheduledExecutorServiceFactory,
+                           ScheduledEtwitterecutorServiceFactory updaterScheduledEtwitterecutorServiceFactory,
                            UserTable userTable,
                            SearchStatsReceiver searchStatsReceiver,
                            EarlybirdSearcherStats searcherStats,
                            Decider decider,
-                           CriticalExceptionHandler criticalExceptionHandler,
+                           CriticalEtwitterceptionHandler criticalEtwitterceptionHandler,
                            Clock clock) {
-    super(updaterScheduledExecutorServiceFactory.build("QueryCacheUpdateThread-%d", true),
+    super(updaterScheduledEtwitterecutorServiceFactory.build("QueryCacheUpdateThread-%d", true),
         ShutdownWaitTimeParams.immediately(), searchStatsReceiver,
-        criticalExceptionHandler, clock);
+        criticalEtwitterceptionHandler, clock);
     Preconditions.checkNotNull(cacheFilters);
-    Preconditions.checkArgument(getExecutor() instanceof QueryCacheUpdaterScheduledExecutorService,
-        getExecutor().getClass());
+    Preconditions.checkArgument(getEtwitterecutor() instanceof QueryCacheUpdaterScheduledEtwitterecutorService,
+        getEtwitterecutor().getClass());
 
     this.searcherStats = searcherStats;
     this.decider = decider;
@@ -82,19 +82,19 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
     // One update task per <query, segment>
     tasks = Lists.newArrayListWithCapacity(cacheFilters.size() * 20);
 
-    SearchCustomGauge.export(
+    SearchCustomGauge.etwitterport(
         "querycache_num_tasks",
         tasks::size
     );
   }
 
   /**
-   * Create an update task and add it to the executor
+   * Create an update task and add it to the etwitterecutor
    *
-   * @param filter The filter the task should execute
+   * @param filter The filter the task should etwitterecute
    * @param segmentInfo The segment that this task would be responsible for
    * @param updateInterval time in milliseconds between successive updates
-   * @param initialDelay Introduce a delay when adding the task to the executor
+   * @param initialDelay Introduce a delay when adding the task to the etwitterecutor
    */
   void addTask(QueryCacheFilter filter, SegmentInfo segmentInfo,
                Amount<Long, Time> updateInterval, Amount<Long, Time> initialDelay) {
@@ -111,7 +111,7 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
         getIterationCounter(),
         searcherStats,
         decider,
-        criticalExceptionHandler,
+        criticalEtwitterceptionHandler,
         clock);
 
     long initialDelayAsMS = initialDelay.as(Time.MILLISECONDS);
@@ -124,7 +124,7 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
 
     // Schedule the task.
     ScheduledFuture future = scheduleNewTask(qcTask,
-        PeriodicActionParams.withIntialWaitAndFixedDelay(
+        PeriodicActionParams.withIntialWaitAndFitwitteredDelay(
             initialDelayAsMS, updateIntervalAsMS, TimeUnit.MILLISECONDS
         )
     );
@@ -142,8 +142,8 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
 
   void removeAllTasksForSegment(SegmentInfo segmentInfo) {
     int removedTasksCount = 0;
-    for (Iterator<Task> it = tasks.iterator(); it.hasNext();) {
-      Task task = it.next();
+    for (Iterator<Task> it = tasks.iterator(); it.hasNetwittert();) {
+      Task task = it.netwittert();
       if (task.updateTask.getTimeSliceID() == segmentInfo.getTimeSliceID()) {
         task.future.cancel(true);
         it.remove();
@@ -196,10 +196,10 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
    * After startup, we want only one thread to update the query cache.
    */
   void setWorkerPoolSizeAfterStartup() {
-    QueryCacheUpdaterScheduledExecutorService executor =
-        (QueryCacheUpdaterScheduledExecutorService) getExecutor();
-    executor.setWorkerPoolSizeAfterStartup();
-    LOG.info("Done setting executor core pool size to one");
+    QueryCacheUpdaterScheduledEtwitterecutorService etwitterecutor =
+        (QueryCacheUpdaterScheduledEtwitterecutorService) getEtwitterecutor();
+    etwitterecutor.setWorkerPoolSizeAfterStartup();
+    LOG.info("Done setting etwitterecutor core pool size to one");
   }
 
   @Override
@@ -236,7 +236,7 @@ final class QueryCacheUpdater extends ScheduledExecutorManager {
   }
 
   @VisibleForTesting
-  public ScheduledExecutorService getExecutorForTest() {
-    return getExecutor();
+  public ScheduledEtwitterecutorService getEtwitterecutorForTest() {
+    return getEtwitterecutor();
   }
 }

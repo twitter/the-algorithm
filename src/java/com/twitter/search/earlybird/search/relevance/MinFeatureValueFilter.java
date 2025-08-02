@@ -1,17 +1,17 @@
 package com.twitter.search.earlybird.search.relevance;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Objects;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
+import org.apache.lucene.indetwitter.LeafReader;
+import org.apache.lucene.indetwitter.LeafReaderContetwittert;
+import org.apache.lucene.indetwitter.NumericDocValues;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.IndetwitterSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Weight;
@@ -22,9 +22,9 @@ import com.twitter.search.common.encoding.features.SingleBytePositiveFloatNormal
 import com.twitter.search.common.query.DefaultFilterWeight;
 import com.twitter.search.common.query.FilteredQuery;
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
+import com.twitter.search.core.earlybird.indetwitter.util.RangeFilterDISI;
 
-public final class MinFeatureValueFilter extends Query implements FilteredQuery.DocIdFilterFactory {
+public final class MinFeatureValueFilter etwittertends Query implements FilteredQuery.DocIdFilterFactory {
   private final String featureName;
   private final ByteNormalizer normalizer;
   private final double minValue;
@@ -68,7 +68,7 @@ public final class MinFeatureValueFilter extends Query implements FilteredQuery.
       return new SingleBytePositiveFloatNormalizer();
     }
 
-    throw new IllegalArgumentException("Unknown normalization method for field " + featureName);
+    throw new IllegalArgumentEtwitterception("Unknown normalization method for field " + featureName);
   }
 
   @Override
@@ -100,38 +100,38 @@ public final class MinFeatureValueFilter extends Query implements FilteredQuery.
   }
 
   @Override
-  public FilteredQuery.DocIdFilter getDocIdFilter(LeafReaderContext context) throws IOException {
-    final NumericDocValues featureDocValues = context.reader().getNumericDocValues(featureName);
-    return (docId) -> featureDocValues.advanceExact(docId)
+  public FilteredQuery.DocIdFilter getDocIdFilter(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
+    final NumericDocValues featureDocValues = contetwittert.reader().getNumericDocValues(featureName);
+    return (docId) -> featureDocValues.advanceEtwitteract(docId)
         && ((byte) featureDocValues.longValue() >= minValue);
   }
 
   @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
+  public Weight createWeight(IndetwitterSearcher searcher, ScoreMode scoreMode, float boost) {
     return new DefaultFilterWeight(this) {
       @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
+      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
         return new MinFeatureValueDocIdSetIterator(
-            context.reader(), featureName, minValue);
+            contetwittert.reader(), featureName, minValue);
       }
     };
   }
 
-  private static final class MinFeatureValueDocIdSetIterator extends RangeFilterDISI {
+  private static final class MinFeatureValueDocIdSetIterator etwittertends RangeFilterDISI {
     private final NumericDocValues featureDocValues;
     private final double minValue;
 
-    MinFeatureValueDocIdSetIterator(LeafReader indexReader,
+    MinFeatureValueDocIdSetIterator(LeafReader indetwitterReader,
                                     String featureName,
-                                    double minValue) throws IOException {
-      super(indexReader);
-      this.featureDocValues = indexReader.getNumericDocValues(featureName);
+                                    double minValue) throws IOEtwitterception {
+      super(indetwitterReader);
+      this.featureDocValues = indetwitterReader.getNumericDocValues(featureName);
       this.minValue = minValue;
     }
 
     @Override
-    public boolean shouldReturnDoc() throws IOException {
-      // We need this explicit casting to byte, because of how we encode and decode features in our
+    public boolean shouldReturnDoc() throws IOEtwitterception {
+      // We need this etwitterplicit casting to byte, because of how we encode and decode features in our
       // encoded_tweet_features field. If a feature is an int (uses all 32 bits of the int), then
       // encoding the feature and then decoding it preserves its original value. However, if the
       // feature does not use the entire int (and especially if it uses bits somewhere in the middle
@@ -148,7 +148,7 @@ public final class MinFeatureValueFilter extends Query implements FilteredQuery.
       // produced by those normalizers, as well as all code that depends on those values.
       //
       // So for now, just cast this value to a byte, to get the proper negative value.
-      return featureDocValues.advanceExact(docID())
+      return featureDocValues.advanceEtwitteract(docID())
           && ((byte) featureDocValues.longValue() >= minValue);
     }
   }

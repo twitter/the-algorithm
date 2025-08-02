@@ -6,7 +6,7 @@ import com.twitter.visibility.VisibilityLibrary
 import com.twitter.visibility.builder.VisibilityResult
 import com.twitter.visibility.builder.dms.DmConversationFeatures
 import com.twitter.visibility.builder.dms.DmEventFeatures
-import com.twitter.visibility.builder.dms.InvalidDmEventFeatureException
+import com.twitter.visibility.builder.dms.InvalidDmEventFeatureEtwitterception
 import com.twitter.visibility.builder.users.AuthorFeatures
 import com.twitter.visibility.common.UserSource
 import com.twitter.visibility.common.dm_sources.DmConversationSource
@@ -55,8 +55,8 @@ object DmEventVisibilityLibrary {
       } else {
         vfEngineCounter.incr()
 
-        val viewerContext = req.viewerContext
-        val viewerIdOpt = viewerContext.userId
+        val viewerContetwittert = req.viewerContetwittert
+        val viewerIdOpt = viewerContetwittert.userId
 
         viewerIdOpt match {
           case Some(viewerId) =>
@@ -67,12 +67,12 @@ object DmEventVisibilityLibrary {
               .runRuleEngine(
                 contentId,
                 featureMap,
-                viewerContext,
+                viewerContetwittert,
                 safetyLevel
               )
             StitchHelpers.profileStitch(resp, Seq(vfLatencyStatsReceiver))
 
-          case None => Stitch.exception(InvalidDmEventFeatureException("Viewer id is missing"))
+          case None => Stitch.etwitterception(InvalidDmEventFeatureEtwitterception("Viewer id is missing"))
         }
       }
     }

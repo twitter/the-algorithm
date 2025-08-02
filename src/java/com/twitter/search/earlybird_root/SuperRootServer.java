@@ -1,16 +1,16 @@
 package com.twitter.search.earlybird_root;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import javatwitter.inject.Inject;
+import javatwitter.inject.Singleton;
 
 import com.twitter.finagle.Service;
 import com.twitter.search.common.root.SearchRootServer;
 import com.twitter.search.earlybird.thrift.EarlybirdService;
 import com.twitter.search.earlybird_root.filters.QueryTokenizerFilter;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twitter.search.queryparser.query.QueryParserEtwitterception;
 
 @Singleton
-public class SuperRootServer extends SearchRootServer<EarlybirdService.ServiceIface> {
+public class SuperRootServer etwittertends SearchRootServer<EarlybirdService.ServiceIface> {
   private final QueryTokenizerFilter queryTokenizerFilter;
 
   @Inject
@@ -28,9 +28,9 @@ public class SuperRootServer extends SearchRootServer<EarlybirdService.ServiceIf
     super.warmup();
 
     try {
-      queryTokenizerFilter.performExpensiveInitialization();
-    } catch (QueryParserException e) {
-      throw new RuntimeException(e);
+      queryTokenizerFilter.performEtwitterpensiveInitialization();
+    } catch (QueryParserEtwitterception e) {
+      throw new RuntimeEtwitterception(e);
     }
   }
 }

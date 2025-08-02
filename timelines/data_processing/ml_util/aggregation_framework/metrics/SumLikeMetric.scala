@@ -9,22 +9,22 @@ import java.util.{Map => JMap}
 
 /*
  * TypedSumLikeMetric aggregates a sum over any feature transform.
- * TypedCountMetric, TypedSumMetric, TypedSumSqMetric are examples
+ * TypedCountMetric, TypedSumMetric, TypedSumSqMetric are etwitteramples
  * of metrics that are inherited from this trait. To implement a new
  * "sum like" metric, override the getIncrementValue() and operatorName
  * members of this trait.
  *
  * getIncrementValue() is inherited from the
  * parent trait AggregationMetric, but not overriden in this trait, so
- * it needs to be overloaded by any metric that extends TypedSumLikeMetric.
+ * it needs to be overloaded by any metric that etwittertends TypedSumLikeMetric.
  *
  * operatorName is a string used for naming the resultant aggregate feature
  * (e.g. "count" if its a count feature, or "sum" if a sum feature).
  */
-trait TypedSumLikeMetric[T] extends TimedValueAggregationMetric[T] {
+trait TypedSumLikeMetric[T] etwittertends TimedValueAggregationMetric[T] {
   import AggregationMetricCommon._
 
-  def useFixedDecay = true
+  def useFitwitteredDecay = true
 
   override def plus(
     left: TimedValue[Double],
@@ -43,16 +43,16 @@ trait TypedSumLikeMetric[T] extends TimedValueAggregationMetric[T] {
 
     TimedValue[Double](
       resultValue,
-      left.timestamp.max(right.timestamp)
+      left.timestamp.matwitter(right.timestamp)
     )
   }
 
   override def zero(timeOpt: Option[Long]): TimedValue[Double] = {
     val timestamp =
       /*
-       * Please see TQ-11279 for documentation for this fix to the decay logic.
+       * Please see TQ-11279 for documentation for this fitwitter to the decay logic.
        */
-      if (useFixedDecay) {
+      if (useFitwitteredDecay) {
         Time.fromMilliseconds(timeOpt.getOrElse(0L))
       } else {
         Time.fromMilliseconds(0L)

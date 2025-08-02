@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird;
 
-import java.text.SimpleDateFormat;
+import java.tetwittert.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.twitter.common.util.BuildInfo;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
+import com.twitter.search.earlybird.partition.SearchIndetwitteringMetricSet;
 import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
 import com.twitter.util.Duration;
 
@@ -137,7 +137,7 @@ public final class EarlybirdStatus {
    * @param startupMetric The metric that will be used to keep track of the time for this event.
    */
   public static synchronized void beginEvent(String eventName,
-                                             SearchIndexingMetricSet.StartupMetric startupMetric) {
+                                             SearchIndetwitteringMetricSet.StartupMetric startupMetric) {
     long timeMillis = System.currentTimeMillis();
     String eventMessage = getBeginEventMessage(eventName);
     LOG.info(eventMessage);
@@ -153,7 +153,7 @@ public final class EarlybirdStatus {
    * @param startupMetric The metric used to keep track of the time for this event.
    */
   public static synchronized void endEvent(String eventName,
-                                           SearchIndexingMetricSet.StartupMetric startupMetric) {
+                                           SearchIndetwitteringMetricSet.StartupMetric startupMetric) {
     long timeMillis = System.currentTimeMillis();
 
     String beginEventMessage = getBeginEventMessage(eventName);

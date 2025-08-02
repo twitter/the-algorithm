@@ -9,16 +9,16 @@ import com.twitter.tweetypie.repository._
  * Loads the tweet referenced by `Tweet.quotedTweet`.
  */
 object QuotedTweetHydrator {
-  type Type = ValueHydrator[Option[QuotedTweetResult], Ctx]
+  type Type = ValueHydrator[Option[QuotedTweetResult], Cttwitter]
 
-  case class Ctx(
+  case class Cttwitter(
     quotedTweetFilteredState: Option[FilteredState.Unavailable],
-    underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+    underlyingTweetCttwitter: TweetCttwitter)
+      etwittertends TweetCttwitter.Protwittery
 
   def apply(repo: TweetResultRepository.Type): Type = {
-    ValueHydrator[Option[QuotedTweetResult], Ctx] { (_, ctx) =>
-      (ctx.quotedTweetFilteredState, ctx.quotedTweet) match {
+    ValueHydrator[Option[QuotedTweetResult], Cttwitter] { (_, cttwitter) =>
+      (cttwitter.quotedTweetFilteredState, cttwitter.quotedTweet) match {
 
         case (_, None) =>
           // If there is no quoted tweet ref, leave the value as None,
@@ -30,9 +30,9 @@ object QuotedTweetHydrator {
 
         case (None, Some(qtRef)) =>
           val qtQueryOptions =
-            ctx.opts.copy(
+            cttwitter.opts.copy(
               // we don't want to recursively load quoted tweets
-              include = ctx.opts.include.copy(quotedTweet = false),
+              include = cttwitter.opts.include.copy(quotedTweet = false),
               // be sure to get a clean version of the tweet
               scrubUnrequestedFields = true,
               // TweetVisibilityLibrary filters quoted tweets slightly differently from other tweets.
@@ -46,6 +46,6 @@ object QuotedTweetHydrator {
             }
           }
       }
-    }.onlyIf((curr, ctx) => curr.isEmpty && ctx.opts.include.quotedTweet)
+    }.onlyIf((curr, cttwitter) => curr.isEmpty && cttwitter.opts.include.quotedTweet)
   }
 }

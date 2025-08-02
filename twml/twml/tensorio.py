@@ -1,4 +1,4 @@
-# pylint: disable=missing-docstring, bare-except, pointless-statement,
+# pylint: disable=missing-docstring, bare-etwittercept, pointless-statement,
 # pointless-string-statement, redundant-unittest-assert, no-else-return,
 # no-member, old-style-class, dangerous-default-value, protected-access,
 # too-few-public-methods
@@ -25,21 +25,21 @@ class _KeyRecorder(object):
 
   def __getitem__(self, k):
     new_keys = self.keys + [str(k)]
-    prefix = ".".join(new_keys)
+    prefitwitter = ".".join(new_keys)
 
     key_list = self.tensorio.list_tensors()
 
     # if we have a complete key, load the tensor.
-    if prefix in key_list:
-      return self.tensorio._load(prefix)
+    if prefitwitter in key_list:
+      return self.tensorio._load(prefitwitter)
 
-    # we don't have a complete key yet, but at least one tensor should start with this prefix.
+    # we don't have a complete key yet, but at least one tensor should start with this prefitwitter.
     for k_value in key_list:
-      if k_value.startswith(prefix):
+      if k_value.startswith(prefitwitter):
         return _KeyRecorder(self.tensorio, new_keys)
 
-    # if no key starts with the prefix, this _key_recorder is not valid.
-    raise ValueError("Key not found: " + prefix)
+    # if no key starts with the prefitwitter, this _key_recorder is not valid.
+    raise ValueError("Key not found: " + prefitwitter)
 
 
 # convert tensorio tensor type to numpy data type.
@@ -60,7 +60,7 @@ def _get_data_type(data_type):
   if data_type == 'Byte':
     return (np.int8, 1)
 
-  raise ValueError('Unexpected tensorio data type: ' + data_type)
+  raise ValueError('Unetwitterpected tensorio data type: ' + data_type)
 
 
 class TensorIO(object):
@@ -78,7 +78,7 @@ class TensorIO(object):
 
     # Make sure we can locate spec.yaml.
     yaml_file = os.path.join(tensorio_path, 'spec.yaml')
-    if not os.path.exists(yaml_file):
+    if not os.path.etwitterists(yaml_file):
       raise ValueError('Invalid tensorio path: no spec.yaml found.')
 
     # load spec.yaml.

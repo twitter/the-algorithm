@@ -14,26 +14,26 @@ import com.twitter.unified_user_actions.thriftscala.TweetInfo
 import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
 import com.twitter.unified_user_actions.thriftscala.UserIdentifier
 
-trait BaseTweetypieTweetEventDelete extends BaseTweetypieTweetEvent[TweetDeleteEvent] {
-  type ExtractedEvent
+trait BaseTweetypieTweetEventDelete etwittertends BaseTweetypieTweetEvent[TweetDeleteEvent] {
+  type EtwittertractedEvent
   protected def actionType: ActionType
 
   def getUnifiedUserAction(
     tweetDeleteEvent: TweetDeleteEvent,
     tweetEventFlags: TweetEventFlags
   ): Option[UnifiedUserAction] =
-    extract(tweetDeleteEvent).map { extractedEvent =>
+    etwittertract(tweetDeleteEvent).map { etwittertractedEvent =>
       UnifiedUserAction(
         userIdentifier = getUserIdentifier(tweetDeleteEvent),
-        item = getItem(extractedEvent, tweetDeleteEvent),
+        item = getItem(etwittertractedEvent, tweetDeleteEvent),
         actionType = actionType,
         eventMetadata = getEventMetadata(tweetDeleteEvent, tweetEventFlags)
       )
     }
 
-  protected def extract(tweetDeleteEvent: TweetDeleteEvent): Option[ExtractedEvent]
+  protected def etwittertract(tweetDeleteEvent: TweetDeleteEvent): Option[EtwittertractedEvent]
 
-  protected def getItem(extractedEvent: ExtractedEvent, tweetDeleteEvent: TweetDeleteEvent): Item
+  protected def getItem(etwittertractedEvent: EtwittertractedEvent, tweetDeleteEvent: TweetDeleteEvent): Item
 
   protected def getUserIdentifier(tweetDeleteEvent: TweetDeleteEvent): UserIdentifier =
     UserIdentifier(userId = tweetDeleteEvent.user.map(_.id))
@@ -61,11 +61,11 @@ trait BaseTweetypieTweetEventDelete extends BaseTweetypieTweetEvent[TweetDeleteE
     )
 }
 
-object TweetypieDeleteEvent extends BaseTweetypieTweetEventDelete {
-  type ExtractedEvent = Long
+object TweetypieDeleteEvent etwittertends BaseTweetypieTweetEventDelete {
+  type EtwittertractedEvent = Long
   override protected val actionType: ActionType = ActionType.ServerTweetDelete
 
-  override protected def extract(tweetDeleteEvent: TweetDeleteEvent): Option[Long] = Some(
+  override protected def etwittertract(tweetDeleteEvent: TweetDeleteEvent): Option[Long] = Some(
     tweetDeleteEvent.tweet.id)
 
   protected def getItem(
@@ -80,12 +80,12 @@ object TweetypieDeleteEvent extends BaseTweetypieTweetEventDelete {
       ))
 }
 
-object TweetypieUnretweetEvent extends BaseTweetypieTweetEventDelete {
+object TweetypieUnretweetEvent etwittertends BaseTweetypieTweetEventDelete {
   override protected val actionType: ActionType = ActionType.ServerTweetUnretweet
 
-  override type ExtractedEvent = Share
+  override type EtwittertractedEvent = Share
 
-  override protected def extract(tweetDeleteEvent: TweetDeleteEvent): Option[Share] =
+  override protected def etwittertract(tweetDeleteEvent: TweetDeleteEvent): Option[Share] =
     tweetDeleteEvent.tweet.coreData.flatMap(_.share)
 
   override protected def getItem(share: Share, tweetDeleteEvent: TweetDeleteEvent): Item =
@@ -98,14 +98,14 @@ object TweetypieUnretweetEvent extends BaseTweetypieTweetEventDelete {
     )
 }
 
-object TweetypieUnreplyEvent extends BaseTweetypieTweetEventDelete {
+object TweetypieUnreplyEvent etwittertends BaseTweetypieTweetEventDelete {
   case class PredicateOutput(tweetId: Long, userId: Long)
 
-  override type ExtractedEvent = PredicateOutput
+  override type EtwittertractedEvent = PredicateOutput
 
   override protected val actionType: ActionType = ActionType.ServerTweetUnreply
 
-  override protected def extract(tweetDeleteEvent: TweetDeleteEvent): Option[PredicateOutput] =
+  override protected def etwittertract(tweetDeleteEvent: TweetDeleteEvent): Option[PredicateOutput] =
     tweetDeleteEvent.tweet.coreData
       .flatMap(_.reply).flatMap(r =>
         r.inReplyToStatusId.map(tweetId => PredicateOutput(tweetId, r.inReplyToUserId)))
@@ -124,12 +124,12 @@ object TweetypieUnreplyEvent extends BaseTweetypieTweetEventDelete {
   }
 }
 
-object TweetypieUnquoteEvent extends BaseTweetypieTweetEventDelete {
+object TweetypieUnquoteEvent etwittertends BaseTweetypieTweetEventDelete {
   override protected val actionType: ActionType = ActionType.ServerTweetUnquote
 
-  type ExtractedEvent = QuotedTweet
+  type EtwittertractedEvent = QuotedTweet
 
-  override protected def extract(tweetDeleteEvent: TweetDeleteEvent): Option[QuotedTweet] =
+  override protected def etwittertract(tweetDeleteEvent: TweetDeleteEvent): Option[QuotedTweet] =
     tweetDeleteEvent.tweet.quotedTweet
 
   override protected def getItem(

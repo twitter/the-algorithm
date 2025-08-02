@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -24,7 +24,7 @@ message QueueRunnerDef {
   // The operation to run to cancel the queue.
   string cancel_op_name = 4;
 
-  // A list of exception types considered to signal a safely closed queue
+  // A list of etwitterception types considered to signal a safely closed queue
   // if raised during enqueue operations.
-  repeated error.Code queue_closed_exception_types = 5;
+  repeated error.Code queue_closed_etwitterception_types = 5;
 }

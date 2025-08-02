@@ -3,18 +3,18 @@ package com.twitter.search.earlybird.common.config;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
+import com.twitter.common_internal.tetwittert.version.PenguinVersion;
 import com.twitter.search.common.aurora.AuroraInstanceKey;
 import com.twitter.search.common.config.Config;
 import com.twitter.search.common.config.ConfigFile;
-import com.twitter.search.common.config.ConfigurationException;
+import com.twitter.search.common.config.ConfigurationEtwitterception;
 import com.twitter.search.common.config.SearchPenguinVersionsConfig;
 
 public final class EarlybirdConfig {
@@ -100,7 +100,7 @@ public final class EarlybirdConfig {
 
   /**
    * Returns the value of the given property as a string. If the property is not set, a runtime
-   * exception is thrown.
+   * etwitterception is thrown.
    */
   public static String getString(String property) {
     Object overrideValue = overrideValueMap.get(property);
@@ -110,9 +110,9 @@ public final class EarlybirdConfig {
 
     try {
       return earlybirdConfig.getString(property);
-    } catch (ConfigurationException e) {
+    } catch (ConfigurationEtwitterception e) {
       LOG.error("Fatal error: could not get config string " + property, e);
-      throw new RuntimeException(e);
+      throw new RuntimeEtwitterception(e);
     }
   }
 
@@ -130,7 +130,7 @@ public final class EarlybirdConfig {
 
   /**
    * Returns the value of the given property as an integer. If the property is not set, a runtime
-   * exception is thrown.
+   * etwitterception is thrown.
    */
   public static int getInt(String property) {
     Object overrideValue = overrideValueMap.get(property);
@@ -140,9 +140,9 @@ public final class EarlybirdConfig {
 
     try {
       return earlybirdConfig.getInt(property);
-    } catch (ConfigurationException e) {
+    } catch (ConfigurationEtwitterception e) {
       LOG.error("Fatal error: could not get config int " + property, e);
-      throw new RuntimeException(e);
+      throw new RuntimeEtwitterception(e);
     }
   }
 
@@ -172,7 +172,7 @@ public final class EarlybirdConfig {
 
   /**
    * Returns the value of the given property as a long. If the property is not set, a runtime
-   * exception is thrown.
+   * etwitterception is thrown.
    */
   public static long getLong(String property) {
     Object overrideValue = overrideValueMap.get(property);
@@ -182,9 +182,9 @@ public final class EarlybirdConfig {
 
     try {
       return earlybirdConfig.getLong(property);
-    } catch (ConfigurationException e) {
+    } catch (ConfigurationEtwitterception e) {
       LOG.error("Fatal error: could not get config long " + property, e);
-      throw new RuntimeException(e);
+      throw new RuntimeEtwitterception(e);
     }
   }
 
@@ -202,7 +202,7 @@ public final class EarlybirdConfig {
 
   /**
    * Returns the value of the given property as a boolean. If the property is not set, a runtime
-   * exception is thrown.
+   * etwitterception is thrown.
    */
   public static boolean getBool(String property) {
     Object overrideValue = overrideValueMap.get(property);
@@ -212,9 +212,9 @@ public final class EarlybirdConfig {
 
     try {
       return earlybirdConfig.getBool(property);
-    } catch (ConfigurationException e) {
+    } catch (ConfigurationEtwitterception e) {
       LOG.error("Fatal error: could not get config boolean " + property, e);
-      throw new RuntimeException(e);
+      throw new RuntimeEtwitterception(e);
     }
   }
 
@@ -241,7 +241,7 @@ public final class EarlybirdConfig {
 
     Date date = (Date) earlybirdConfig.getObject(property, null);
     if (date == null) {
-      throw new RuntimeException("Could not get config date: " + property);
+      throw new RuntimeEtwitterception("Could not get config date: " + property);
     }
     return date;
   }
@@ -257,7 +257,7 @@ public final class EarlybirdConfig {
 
     List<String> list = (List<String>) earlybirdConfig.getObject(property, null);
     if (list == null) {
-      throw new RuntimeException("Could not get list of strings: " + property);
+      throw new RuntimeEtwitterception("Could not get list of strings: " + property);
     }
     return list;
   }
@@ -269,13 +269,13 @@ public final class EarlybirdConfig {
   public static Map<String, Object> getMap(String property) {
     Map<String, Object> map = (Map<String, Object>) earlybirdConfig.getObject(property, null);
     if (map == null) {
-      throw new RuntimeException("Could not find config property: " + property);
+      throw new RuntimeEtwitterception("Could not find config property: " + property);
     }
     return map;
   }
 
-  public static int getMaxSegmentSize() {
-    return EarlybirdConfig.getInt("max_segment_size", 1 << 16);
+  public static int getMatwitterSegmentSize() {
+    return EarlybirdConfig.getInt("matwitter_segment_size", 1 << 16);
   }
 
   /**
@@ -285,10 +285,10 @@ public final class EarlybirdConfig {
     try {
       String filename = earlybirdConfig.getString("log_properties_filename");
       return earlybirdConfig.getConfigFilePath(filename);
-    } catch (ConfigurationException e) {
+    } catch (ConfigurationEtwitterception e) {
       // Print here rather than use LOG - log was probably not initialized yet.
       LOG.error("Fatal error: could not get log properties file", e);
-      throw new RuntimeException(e);
+      throw new RuntimeEtwitterception(e);
     }
   }
 

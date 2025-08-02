@@ -12,9 +12,9 @@ import com.twitter.servo.request.RequestHandler
 import com.twitter.storehaus.ReadableStore
 import com.twitter.util.Future
 import com.twitter.util.Memoize
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Named
+import javatwitter.inject.Singleton
 
 @Singleton
 class ServerGetIntersectionHandler @Inject() (
@@ -24,7 +24,7 @@ class ServerGetIntersectionHandler @Inject() (
   readOnlyStore: ReadableStore[GetIntersectionQuery, CachedIntersectionResult]
 )(
   implicit statsReceiver: StatsReceiver)
-    extends RequestHandler[GetIntersectionRequest, GfsIntersectionResponse] {
+    etwittertends RequestHandler[GetIntersectionRequest, GfsIntersectionResponse] {
 
   import ServerGetIntersectionHandler._
 
@@ -99,11 +99,11 @@ class ServerGetIntersectionHandler @Inject() (
 
           val candidateEmptyNum =
             processedResults.count(
-              _.intersectionValues.exists(value => isZero(value.rightNodeDegree)))
+              _.intersectionValues.etwitterists(value => isZero(value.rightNodeDegree)))
 
           val numMissed = processedResults.count(_.intersectionValues.size != numFeatures)
 
-          if (processedResults.exists(
+          if (processedResults.etwitterists(
               _.intersectionValues.forall(value => isZero(value.leftNodeDegree)))) {
             userEmptyCount.incr()
           }
@@ -117,15 +117,15 @@ class ServerGetIntersectionHandler @Inject() (
             result.intersectionValues.zip(featureTypes).foreach {
               case (value, featureType) =>
                 featureStatMap.get(featureType).foreach { statsArray =>
-                  statsArray(TotalIndex).incr()
+                  statsArray(TotalIndetwitter).incr()
                   if (isZero(value.count)) {
-                    statsArray(CountIndex).incr()
+                    statsArray(CountIndetwitter).incr()
                   }
                   if (isZero(value.leftNodeDegree)) {
-                    statsArray(LeftIndex).incr()
+                    statsArray(LeftIndetwitter).incr()
                   }
                   if (isZero(value.rightNodeDegree)) {
-                    statsArray(RightIndex).incr()
+                    statsArray(RightIndetwitter).incr()
                   }
                 }
             }
@@ -187,12 +187,12 @@ private[graph_feature_service] object ServerGetIntersectionHandler {
 
   private val DefaultGfsIntersectionResponse = GfsIntersectionResponse()
 
-  private val TotalIndex = 0
-  private val CountIndex = 1
-  private val LeftIndex = 2
-  private val RightIndex = 3
+  private val TotalIndetwitter = 0
+  private val CountIndetwitter = 1
+  private val LeftIndetwitter = 2
+  private val RightIndetwitter = 3
 
   def isZero(opt: Option[Int]): Boolean = {
-    !opt.exists(_ != 0)
+    !opt.etwitterists(_ != 0)
   }
 }

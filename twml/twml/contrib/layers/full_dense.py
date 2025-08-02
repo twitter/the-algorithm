@@ -18,7 +18,7 @@ class FullDense(Layer):
     outputs = activation(inputs.weight + bias)
 
   Where ``activation`` is the activation function passed as the ``activation``
-  argument (if not ``None``), ``weight`` is a weights matrix created by the layer,
+  argument (if not ``None``), ``weight`` is a weights matritwitter created by the layer,
   and ``bias`` is a bias vector created by the layer.
 
   However, this layer breaks up ``weight`` into ``num_partitions`` parts,
@@ -33,9 +33,9 @@ class FullDense(Layer):
     output_size:
       Integer or Long, dimensionality of the output space.
     weight_initializer:
-      Initializer function for the weight matrix.
+      Initializer function for the weight matritwitter.
     weight_regularizer:
-      Regularizer function for the weight matrix.
+      Regularizer function for the weight matritwitter.
       Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
     weight_constraint:
       An optional projection function to be applied to the
@@ -77,19 +77,19 @@ class FullDense(Layer):
     activation:
       Activation function (callable).
     weight_initializer:
-      Initializer instance (or name) for the weight matrix.
+      Initializer instance (or name) for the weight matritwitter.
     bias_initializer:
       Initializer instance (or name) for the bias.
     weights:
-      list of underlying weight and bias matrix components. no guarantee on order of elements
+      list of underlying weight and bias matritwitter components. no guarantee on order of elements
     weight_regularizer:
-      Regularizer instance for the weight matrix (callable)
+      Regularizer instance for the weight matritwitter (callable)
     bias_regularizer:
       Regularizer instance for the bias (callable).
     activity_regularizer:
       Regularizer instance for the output (callable)
     weight_constraint:
-      Constraint function for the weight matrix.
+      Constraint function for the weight matritwitter.
     bias_constraint:
       Constraint function for the bias.
   """
@@ -272,7 +272,7 @@ class FullDense(Layer):
     outputs = []
     for inp in inputs:
       part_outputs = [part(inp) for part in self._parts]
-      outputs.append(tf.concat(part_outputs, axis=-1))
+      outputs.append(tf.concat(part_outputs, atwitteris=-1))
 
     return tf.accumulate_n(outputs)
 
@@ -296,7 +296,7 @@ def full_dense(inputs, output_size,
   This layer implements the operation:
   `outputs = activation(inputs.weight + bias)`
   Where `activation` is the activation function passed as the `activation`
-  argument (if not `None`), `weight` is a weights matrix created by the layer,
+  argument (if not `None`), `weight` is a weights matritwitter created by the layer,
   and `bias` is a bias vector created by the layer
   (only if `use_bias` is `True`).
 
@@ -311,11 +311,11 @@ def full_dense(inputs, output_size,
   Arguments:
     inputs: Tensor input.
     output_size: Integer or Long, dimensionality of the output space.
-    weight_initializer: Initializer function for the weight matrix.
+    weight_initializer: Initializer function for the weight matritwitter.
       If `None` (default), weights are initialized using the default
       initializer used by `tf.get_variable`.
     weight_regularizer:
-      Regularizer function for the weight matrix.
+      Regularizer function for the weight matritwitter.
       Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
     weight_constraint:
       An optional projection function to be applied to the

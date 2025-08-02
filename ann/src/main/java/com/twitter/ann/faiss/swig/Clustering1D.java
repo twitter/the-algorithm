@@ -8,7 +8,7 @@
 
 package com.twitter.ann.faiss;
 
-public class Clustering1D extends Clustering {
+public class Clustering1D etwittertends Clustering {
   private transient long swigCPtr;
 
   protected Clustering1D(long cPtr, boolean cMemoryOwn) {
@@ -44,8 +44,8 @@ public class Clustering1D extends Clustering {
     this(swigfaissJNI.new_Clustering1D__SWIG_1(k, ClusteringParameters.getCPtr(cp), cp), true);
   }
 
-  public void train_exact(long n, SWIGTYPE_p_float x) {
-    swigfaissJNI.Clustering1D_train_exact(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x));
+  public void train_etwitteract(long n, SWIGTYPE_p_float twitter) {
+    swigfaissJNI.Clustering1D_train_etwitteract(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(twitter));
   }
 
 }

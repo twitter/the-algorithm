@@ -33,8 +33,8 @@ class RFPHPrerankFilter(
     lazy val preRankingPredicateChain =
       new SequentialPredicate[PushCandidate](preRankingPredicates)
 
-    val predicateChain = if (target.pushContext.exists(_.predicatesToEnable.exists(_.nonEmpty))) {
-      val predicatesToEnable = target.pushContext.flatMap(_.predicatesToEnable).getOrElse(Nil)
+    val predicateChain = if (target.pushContetwittert.etwitterists(_.predicatesToEnable.etwitterists(_.nonEmpty))) {
+      val predicatesToEnable = target.pushContetwittert.flatMap(_.predicatesToEnable).getOrElse(Nil)
       new SequentialPredicate[PushCandidate](preRankingPredicates.filter { pred =>
         predicatesToEnable.contains(pred.name)
       })

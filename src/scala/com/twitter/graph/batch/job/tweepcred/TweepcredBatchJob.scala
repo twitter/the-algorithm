@@ -12,16 +12,16 @@ import com.twitter.scalding_internal.job.analytics_batch._
  * --hadoop_config: /etc/hadoop/hadoop-conf-proc-atla
  *
  */
-class TweepcredBatchJob(args: Args) extends AnalyticsIterativeBatchJob(args) {
+class TweepcredBatchJob(args: Args) etwittertends AnalyticsIterativeBatchJob(args) {
 
   def WEIGHTED = args("weighted").toBoolean
 
   override def timeout = Hours(36)
   override def hasFlow = false
-  def descriptionSuffix = " weighted=" + args("weighted")
+  def descriptionSuffitwitter = " weighted=" + args("weighted")
   override def batchIncrement = Hours(24)
   override def firstTime = RichDate("2015-10-02")
-  override def batchDescription = classOf[TweepcredBatchJob].getCanonicalName + descriptionSuffix
+  override def batchDescription = classOf[TweepcredBatchJob].getCanonicalName + descriptionSuffitwitter
 
   override def run = {
     val success = super.run

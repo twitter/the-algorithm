@@ -6,10 +6,10 @@ python3_library(
         "no-mypy",
     ],
     dependencies = [
-        "cortex/recsys/src/python/twitter/cortex/recsys/utils",
+        "cortetwitter/recsys/src/python/twitter/cortetwitter/recsys/utils",
         "magicpony/common/file_access/src/python/twitter/magicpony/common/file_access",
-        "src/python/twitter/cortex/ml/embeddings/deepbird",
-        "src/python/twitter/cortex/ml/embeddings/deepbird/grouped_metrics",
+        "src/python/twitter/cortetwitter/ml/embeddings/deepbird",
+        "src/python/twitter/cortetwitter/ml/embeddings/deepbird/grouped_metrics",
         "src/python/twitter/deepbird/util/data",
         "twml:twml-nodeps",
     ],

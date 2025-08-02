@@ -17,10 +17,10 @@ object CreatedAtRepairer {
 }
 
 /**
- * Detects tweets with bad createdAt timestamps and attempts to fix, if possible
+ * Detects tweets with bad createdAt timestamps and attempts to fitwitter, if possible
  * using the snowflake id.  pre-snowflake tweets are left unmodified.
  */
-class CreatedAtRepairer(scribe: FutureEffect[String]) extends Mutation[Tweet] {
+class CreatedAtRepairer(scribe: FutureEffect[String]) etwittertends Mutation[Tweet] {
   import CreatedAtRepairer._
 
   def apply(tweet: Tweet): Option[Tweet] = {
@@ -28,7 +28,7 @@ class CreatedAtRepairer(scribe: FutureEffect[String]) extends Mutation[Tweet] {
     val createdAtMillis = getCreatedAt(tweet) * 1000
 
     if (SnowflakeId.isSnowflakeId(tweet.id)) {
-      val snowflakeMillis = SnowflakeId(tweet.id).unixTimeMillis.asLong
+      val snowflakeMillis = SnowflakeId(tweet.id).unitwitterTimeMillis.asLong
       val diff = (snowflakeMillis - createdAtMillis).abs
 
       if (diff >= varianceThreshold) {

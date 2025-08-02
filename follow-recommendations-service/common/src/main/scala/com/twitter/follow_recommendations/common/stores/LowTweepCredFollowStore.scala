@@ -4,8 +4,8 @@ import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
 import com.twitter.stitch.Stitch
 import com.twitter.strato.generated.client.onboarding.userrecs.TweepCredOnUserClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 // Not a candidate source since it's a intermediary.
 @Singleton

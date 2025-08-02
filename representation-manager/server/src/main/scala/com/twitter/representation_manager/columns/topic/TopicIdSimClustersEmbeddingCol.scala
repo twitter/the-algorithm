@@ -15,25 +15,25 @@ import com.twitter.strato.config.AnyOf
 import com.twitter.strato.config.ContactInfo
 import com.twitter.strato.config.FromColumns
 import com.twitter.strato.config.Policy
-import com.twitter.strato.config.Prefix
+import com.twitter.strato.config.Prefitwitter
 import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
+import com.twitter.strato.data.Description.PlainTetwittert
 import com.twitter.strato.data.Lifecycle
 import com.twitter.strato.fed._
 import com.twitter.strato.thrift.ScroogeConv
-import javax.inject.Inject
+import javatwitter.inject.Inject
 
 class TopicIdSimClustersEmbeddingCol @Inject() (embeddingStore: TopicSimClustersEmbeddingStore)
-    extends StratoFed.Column("recommendations/representation_manager/simClustersEmbedding.TopicId")
+    etwittertends StratoFed.Column("recommendations/representation_manager/simClustersEmbedding.TopicId")
     with StratoFed.Fetch.Stitch {
 
   private val storeStitch: SimClustersEmbeddingId => Stitch[SimClustersEmbedding] =
     StitchOfReadableStore(embeddingStore.topicSimClustersEmbeddingStore.mapValues(_.toThrift))
 
   val colPermissions: Seq[com.twitter.strato.config.Policy] =
-    ColumnConfigBase.recosPermissions ++ ColumnConfigBase.externalPermissions :+ FromColumns(
+    ColumnConfigBase.recosPermissions ++ ColumnConfigBase.etwitterternalPermissions :+ FromColumns(
       Set(
-        Prefix("ml/featureStore/simClusters"),
+        Prefitwitter("ml/featureStore/simClusters"),
       ))
 
   override val policy: Policy = AnyOf({
@@ -52,7 +52,7 @@ class TopicIdSimClustersEmbeddingCol @Inject() (embeddingStore: TopicSimClusters
 
   override val metadata: OpMetadata = OpMetadata(
     lifecycle = Some(Lifecycle.Production),
-    description = Some(PlainText(
+    description = Some(PlainTetwittert(
       "The Topic SimClusters Embedding Endpoint in Representation Management Service with TopicId." +
         " TDD: http://go/rms-tdd"))
   )

@@ -23,15 +23,15 @@ public class QueryTimeoutImpl implements QueryTimeout {
     this.tracker = Preconditions.checkNotNull(tracker);
     this.clock = Preconditions.checkNotNull(clock);
     shouldTerminateCounter =
-        SearchRateCounter.export("query_timeout_should_terminate_" + clientId);
+        SearchRateCounter.etwitterport("query_timeout_should_terminate_" + clientId);
   }
 
   /**
-   * Returns true when the clock's time has met or exceeded the tracker's timeout end.
+   * Returns true when the clock's time has met or etwitterceeded the tracker's timeout end.
    */
-  public boolean shouldExit() {
+  public boolean shouldEtwitterit() {
     if (clock.nowMillis() >= tracker.getTimeoutEndTimeWithReservation()) {
-      tracker.setEarlyTerminationState(EarlyTerminationState.TERMINATED_TIME_OUT_EXCEEDED);
+      tracker.setEarlyTerminationState(EarlyTerminationState.TERMINATED_TIME_OUT_EtwitterCEEDED);
       shouldTerminateCounter.increment();
       return true;
     }

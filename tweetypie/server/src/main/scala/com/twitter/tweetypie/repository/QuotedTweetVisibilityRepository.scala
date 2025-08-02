@@ -10,7 +10,7 @@ import com.twitter.visibility.interfaces.tweets.QuotedTweetVisibilityLibrary
 import com.twitter.visibility.interfaces.tweets.QuotedTweetVisibilityRequest
 import com.twitter.visibility.interfaces.tweets.TweetAndAuthor
 import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 
 /**
  * This repository handles visibility filtering of inner quoted tweets
@@ -36,7 +36,7 @@ object QuotedTweetVisibilityRepository {
       QuotedTweetVisibilityRequest(
         quotedTweet = TweetAndAuthor(request.innerTweetId, request.innerAuthorId),
         outerTweet = TweetAndAuthor(request.outerTweetId, request.outerAuthorId),
-        ViewerContext.fromContextWithViewerIdFallback(request.viewerId),
+        ViewerContetwittert.fromContetwittertWithViewerIdFallback(request.viewerId),
         safetyLevel = SafetyLevel.fromThrift(request.safetyLevel)
       )
     ).map(visibilityResult =>

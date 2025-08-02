@@ -8,7 +8,7 @@
 
 package com.twitter.ann.faiss;
 
-public class ProgressiveDimClustering extends ProgressiveDimClusteringParameters {
+public class ProgressiveDimClustering etwittertends ProgressiveDimClusteringParameters {
   private transient long swigCPtr;
 
   protected ProgressiveDimClustering(long cPtr, boolean cMemoryOwn) {
@@ -78,8 +78,8 @@ public class ProgressiveDimClustering extends ProgressiveDimClusteringParameters
     this(swigfaissJNI.new_ProgressiveDimClustering__SWIG_1(d, k, ProgressiveDimClusteringParameters.getCPtr(cp), cp), true);
   }
 
-  public void train(long n, SWIGTYPE_p_float x, ProgressiveDimIndexFactory factory) {
-    swigfaissJNI.ProgressiveDimClustering_train(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(x), ProgressiveDimIndexFactory.getCPtr(factory), factory);
+  public void train(long n, SWIGTYPE_p_float twitter, ProgressiveDimIndetwitterFactory factory) {
+    swigfaissJNI.ProgressiveDimClustering_train(swigCPtr, this, n, SWIGTYPE_p_float.getCPtr(twitter), ProgressiveDimIndetwitterFactory.getCPtr(factory), factory);
   }
 
 }

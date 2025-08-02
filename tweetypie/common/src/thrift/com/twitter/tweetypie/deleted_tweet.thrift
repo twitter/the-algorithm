@@ -38,7 +38,7 @@ struct DeletedTweet {
   /**
    * Content of the tweet. Only available for soft-deleted tweets.
    */
-  3: optional string text
+  3: optional string tetwittert
 
   /**
    * When the tweet was created. Only available for soft-deleted tweets.
@@ -73,14 +73,14 @@ struct DeletedTweet {
   19: optional i64 hardDeletedAtMsec
 
   /**
-  * The ID of the NoteTweet associated with this Tweet if one exists. This is used by safety tools
+  * The ID of the NoteTweet associated with this Tweet if one etwitterists. This is used by safety tools
   * to fetch the NoteTweet content when viewing soft deleted Tweets.
   */
   20: optional i64 noteTweetId
 
   /**
-  * Specifies if the Tweet can be expanded into the NoteTweet, or if they have the same text. Can
-  * be used to distinguish between Longer Tweets and RichText Tweets.
+  * Specifies if the Tweet can be etwitterpanded into the NoteTweet, or if they have the same tetwittert. Can
+  * be used to distinguish between Longer Tweets and RichTetwittert Tweets.
   */
-  21: optional bool isExpandable
+  21: optional bool isEtwitterpandable
 } (persisted = 'true')

@@ -10,9 +10,9 @@ import com.twitter.usersignalservice.module.MHMtlsParamsModule
 import com.twitter.usersignalservice.module.SocialGraphServiceClientModule
 import com.twitter.usersignalservice.module.TimerModule
 
-object UserSignalServiceStratoFedServerMain extends UserSignalServiceStratoFedServer
+object UserSignalServiceStratoFedServerMain etwittertends UserSignalServiceStratoFedServer
 
-trait UserSignalServiceStratoFedServer extends StratoFedServer {
+trait UserSignalServiceStratoFedServer etwittertends StratoFedServer {
   override def dest: String = "/s/user-signal-service/user-signal-service"
 
   override def columns: Seq[Class[_ <: StratoFed.Column]] =

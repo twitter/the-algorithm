@@ -22,7 +22,7 @@ scala_library(
         "src/scala/com/twitter/storehaus_internal/util",
         "src/scala/com/twitter/summingbird_internal/bijection:bijection-implicits",
         "src/scala/com/twitter/summingbird_internal/runner/store_config",
-        "src/scala/com/twitter/taxi/util/text",
+        "src/scala/com/twitter/tatwitteri/util/tetwittert",
         "src/scala/com/twitter/wtf/summingbird/sources/common",
         "src/thrift/com/twitter/recos/entities:entities-thrift-scala",
         "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
@@ -34,7 +34,7 @@ scala_library(
     ],
 )
 
-## smaller build target for external usage
+## smaller build target for etwitterternal usage
 scala_library(
     name = "util",
     sources = [

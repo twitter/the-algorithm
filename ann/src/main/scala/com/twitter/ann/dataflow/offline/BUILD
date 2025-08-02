@@ -1,5 +1,5 @@
 scala_library(
-    name = "index_builder_lib",
+    name = "indetwitter_builder_lib",
     sources = [
         "*.scala",
     ],
@@ -20,8 +20,8 @@ scala_library(
         "beam-internal/src/main/scala/com/twitter/beam/io/dal",
         "beam-internal/src/main/scala/com/twitter/beam/job",
         "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
-        "src/scala/com/twitter/cortex/ml/embeddings/common:Helpers",
+        "src/scala/com/twitter/cortetwitter/ml/embeddings/common:Helpers",
         "src/scala/com/twitter/ml/featurestore/lib",
-        "src/scala/com/twitter/wtf/beam/bq_embedding_export:bq_embedding_export_lib",
+        "src/scala/com/twitter/wtf/beam/bq_embedding_etwitterport:bq_embedding_etwitterport_lib",
     ],
 )

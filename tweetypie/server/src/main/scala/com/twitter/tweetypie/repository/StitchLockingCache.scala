@@ -31,16 +31,16 @@ object StitchLockingCache {
    */
   sealed trait Val[+V]
   object Val {
-    case class Found[V](value: V) extends Val[V]
-    case object NotFound extends Val[Nothing]
-    case object Deleted extends Val[Nothing]
+    case class Found[V](value: V) etwittertends Val[V]
+    case object NotFound etwittertends Val[Nothing]
+    case object Deleted etwittertends Val[Nothing]
   }
 
   /**
    * A Group for batching get requests to a [[KVLockingCache]].
    */
-  private case class GetGroup[K, V](cache: KVLockingCache[K, Cached[V]], override val maxSize: Int)
-      extends MapGroup[K, Result[K, V]] {
+  private case class GetGroup[K, V](cache: KVLockingCache[K, Cached[V]], override val matwitterSize: Int)
+      etwittertends MapGroup[K, Result[K, V]] {
 
     private[this] def cachedToResult(key: K, cached: Cached[V]): Try[Result[K, V]] =
       cached.status match {
@@ -55,7 +55,7 @@ object StitchLockingCache {
             case None => Return(Result.NotFound(key))
             case Some(value) => Return(Result.CachedFound(key, value, cached.cachedAt))
           }
-        case _ => Throw(new UnsupportedOperationException)
+        case _ => Throw(new UnsupportedOperationEtwitterception)
       }
 
     override protected def run(keys: Seq[K]): Future[K => Try[Result[K, V]]] =
@@ -97,7 +97,7 @@ object StitchLockingCache {
    * chosen by the cache anyway, and this avoids conflicting
    * lockAndSet calls.
    *
-   * For example, consider a tweet that mentions @jack twice
+   * For etwitterample, consider a tweet that mentions @jack twice
    * when @jack is not in cache. That will result in two queries to
    * load @jack, which will be deduped by the Group when the repo is
    * called. Despite the fact that it is loaded only once, each of the
@@ -108,7 +108,7 @@ object StitchLockingCache {
   private case class LockAndSetGroup[K, V](
     cache: KVLockingCache[K, V],
     picker: KVLockingCache.Picker[V])
-      extends MapGroup[LockAndSetCall[K, V], Option[V]] {
+      etwittertends MapGroup[LockAndSetCall[K, V], Option[V]] {
 
     override def run(
       calls: Seq[LockAndSetCall[K, V]]
@@ -130,11 +130,11 @@ object StitchLockingCache {
   def apply[K, V](
     underlying: KVLockingCache[K, Cached[V]],
     picker: KVLockingCache.Picker[Cached[V]],
-    maxRequestSize: Int = Int.MaxValue
+    matwitterRequestSize: Int = Int.MatwitterValue
   ): StitchLockingCache[K, V] =
     new StitchLockingCache[K, V] {
       override val get: K => Stitch[Result[K, V]] = {
-        val group: Group[K, Result[K, V]] = GetGroup(underlying, maxRequestSize)
+        val group: Group[K, Result[K, V]] = GetGroup(underlying, matwitterRequestSize)
 
         (key: K) => Stitch.call(key, group)
       }

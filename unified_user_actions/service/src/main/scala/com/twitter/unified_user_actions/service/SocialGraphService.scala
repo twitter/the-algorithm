@@ -7,9 +7,9 @@ import com.twitter.kafka.client.processor.AtLeastOnceProcessor
 import com.twitter.socialgraph.thriftscala.WriteEvent
 import com.twitter.unified_user_actions.service.module.KafkaProcessorSocialGraphModule
 
-object SocialGraphServiceMain extends SocialGraphService
+object SocialGraphServiceMain etwittertends SocialGraphService
 
-class SocialGraphService extends TwitterServer {
+class SocialGraphService etwittertends TwitterServer {
   override val modules = Seq(
     KafkaProcessorSocialGraphModule,
     DeciderModule
@@ -19,7 +19,7 @@ class SocialGraphService extends TwitterServer {
 
   override protected def start(): Unit = {
     val processor = injector.instance[AtLeastOnceProcessor[UnKeyed, WriteEvent]]
-    closeOnExit(processor)
+    closeOnEtwitterit(processor)
     processor.start()
   }
 }

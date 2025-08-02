@@ -8,38 +8,38 @@
 from os.path import abspath, dirname, isfile, join
 
 
-extensions = [
-  "sphinx.ext.autodoc",
-  "sphinx.ext.intersphinx",
-  "sphinx.ext.ifconfig",
-  "sphinx.ext.graphviz",
-  "twitter.docbird.ext.thriftlexer",
-  "twitter.docbird.ext.toctree_default_caption",
-  "sphinxcontrib.httpdomain",
+etwittertensions = [
+  "sphintwitter.etwittert.autodoc",
+  "sphintwitter.etwittert.intersphintwitter",
+  "sphintwitter.etwittert.ifconfig",
+  "sphintwitter.etwittert.graphviz",
+  "twitter.docbird.etwittert.thriftletwitterer",
+  "twitter.docbird.etwittert.toctree_default_caption",
+  "sphintwittercontrib.httpdomain",
 ]
 
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
-# The suffix of source filenames.
-source_suffix = ".rst"
+# The suffitwitter of source filenames.
+source_suffitwitter = ".rst"
 
 # The master toctree document.
-master_doc = "index"
+master_doc = "indetwitter"
 
 # General information about the project.
 project = u"""Aggregation Framework"""
 description = u""""""
 
-# The short X.Y version.
+# The short twitter.Y version.
 version = u"""1.0"""
 # The full version, including alpha/beta/rc tags.
 release = u"""1.0"""
 
-exclude_patterns = ["_build"]
+etwitterclude_patterns = ["_build"]
 
-pygments_style = "sphinx"
+pygments_style = "sphintwitter"
 
 html_theme = "default"
 
@@ -47,7 +47,7 @@ html_static_path = ["_static"]
 
 html_logo = u""""""
 
-# Automagically add project logo, if it exists
+# Automagically add project logo, if it etwitterists
 # (checks on any build, not just init)
 # Scan for some common defaults (png or svg format,
 # called "logo" or project name, in docs folder)

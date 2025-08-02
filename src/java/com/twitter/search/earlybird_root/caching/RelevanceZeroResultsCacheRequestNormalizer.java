@@ -6,12 +6,12 @@ import com.twitter.search.common.caching.CacheUtil;
 import com.twitter.search.common.caching.SearchQueryNormalizer;
 import com.twitter.search.common.caching.filter.CacheRequestNormalizer;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 
 public class RelevanceZeroResultsCacheRequestNormalizer
-    extends CacheRequestNormalizer<EarlybirdRequestContext, EarlybirdRequest> {
+    etwittertends CacheRequestNormalizer<EarlybirdRequestContetwittert, EarlybirdRequest> {
   @Override
-  public Optional<EarlybirdRequest> normalizeRequest(EarlybirdRequestContext requestContext) {
+  public Optional<EarlybirdRequest> normalizeRequest(EarlybirdRequestContetwittert requestContetwittert) {
     // If the query is not personalized, it means that:
     //   - RelevanceCacheRequestNormalizer has already normalized it into a cacheable query.
     //   - RelevanceCacheFilter could not find a response for this query in the cache.
@@ -22,10 +22,10 @@ public class RelevanceZeroResultsCacheRequestNormalizer
     // personalized, return Optional.absent().
     //
     // If the query is personalized, strip all personalization fields and normalize the request.
-    if (!SearchQueryNormalizer.queryIsPersonalized(requestContext.getRequest().getSearchQuery())) {
+    if (!SearchQueryNormalizer.queryIsPersonalized(requestContetwittert.getRequest().getSearchQuery())) {
       return Optional.absent();
     }
     return Optional.fromNullable(
-        CacheUtil.normalizeRequestForCache(requestContext.getRequest(), true));
+        CacheUtil.normalizeRequestForCache(requestContetwittert.getRequest(), true));
   }
 }

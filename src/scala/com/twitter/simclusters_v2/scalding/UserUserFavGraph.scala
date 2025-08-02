@@ -10,9 +10,9 @@ import com.twitter.scalding._
 import com.twitter.scalding.typed.UnsortedGrouped
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv2.remote_access.EtwitterplicitLocation
 import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.job.TwitterExecutionApp
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
 import com.twitter.scalding_internal.job.analytics_batch._
 import com.twitter.simclusters_v2.common.TweetId
 import com.twitter.simclusters_v2.common.UserId
@@ -20,7 +20,7 @@ import com.twitter.simclusters_v2.hdfs_sources._
 import com.twitter.simclusters_v2.scalding.common.Util
 import com.twitter.simclusters_v2.thriftscala.DecayedSums
 import com.twitter.simclusters_v2.thriftscala.EdgeWithDecayedWeights
-import com.twitter.timelineservice.thriftscala.ContextualizedFavoriteEvent
+import com.twitter.timelineservice.thriftscala.ContetwittertualizedFavoriteEvent
 import com.twitter.timelineservice.thriftscala.FavoriteEventUnion
 import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
 import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
@@ -29,15 +29,15 @@ import twadoop_config.configuration.log_categories.group.timeline.TimelineServic
 
 sealed trait FavState
 
-object Fav extends FavState
+object Fav etwittertends FavState
 
-object UnFavWithoutPriorFav extends FavState
+object UnFavWithoutPriorFav etwittertends FavState
 
-object UnFavWithPriorFav extends FavState
+object UnFavWithPriorFav etwittertends FavState
 
 case class TimestampedFavState(favOrUnfav: FavState, timestampMillis: Long)
 
-object TimestampedFavStateSemigroup extends Semigroup[TimestampedFavState] {
+object TimestampedFavStateSemigroup etwittertends Semigroup[TimestampedFavState] {
   override def plus(left: TimestampedFavState, right: TimestampedFavState): TimestampedFavState = {
 
     /**
@@ -91,7 +91,7 @@ object UserUserFavGraph {
 
   def getSummedFavGraphWithValidUsers(
     previousGraphOpt: Option[TypedPipe[EdgeWithDecayedWeights]],
-    newFavs: TypedPipe[ContextualizedFavoriteEvent],
+    newFavs: TypedPipe[ContetwittertualizedFavoriteEvent],
     halfLivesInDays: List[Int],
     endTime: Time,
     minScoreToKeep: Double,
@@ -110,7 +110,7 @@ object UserUserFavGraph {
   }
 
   def processRawFavEvents(
-    favsOrUnfavs: TypedPipe[ContextualizedFavoriteEvent]
+    favsOrUnfavs: TypedPipe[ContetwittertualizedFavoriteEvent]
   )(
     implicit uniqueID: UniqueID
   ): TypedPipe[((UserId, TweetId, UserId), TimestampedFavState)] = {
@@ -121,7 +121,7 @@ object UserUserFavGraph {
     val numUnFavsWithoutPriorFavs = Stat("num_unfavs_without_prior_favs")
 
     favsOrUnfavs
-      .flatMap { cfe: ContextualizedFavoriteEvent =>
+      .flatMap { cfe: ContetwittertualizedFavoriteEvent =>
         cfe.event match {
           case FavoriteEventUnion.Favorite(fav) =>
             numFavsBeforeUniq.inc()
@@ -154,7 +154,7 @@ object UserUserFavGraph {
   }
 
   private def getGraphFromNewFavsOnly(
-    newFavs: TypedPipe[ContextualizedFavoriteEvent],
+    newFavs: TypedPipe[ContetwittertualizedFavoriteEvent],
     halfLivesInDays: List[Int],
     endTime: Time
   )(
@@ -188,7 +188,7 @@ object UserUserFavGraph {
 
   def getSummedFavGraph(
     previousGraphOpt: Option[TypedPipe[EdgeWithDecayedWeights]],
-    newFavs: TypedPipe[ContextualizedFavoriteEvent],
+    newFavs: TypedPipe[ContetwittertualizedFavoriteEvent],
     halfLivesInDays: List[Int],
     endTime: Time,
     minScoreToKeep: Double
@@ -326,18 +326,18 @@ object UserUserFavGraph {
  * --halfLivesInDays 14 50 100 \
  * --outputDir /user/frigate/your_ldap/userUserFavGraphAdhoc_20170102_addPrevious20170101_hl14_50_100
  */
-object UserUserFavGraphAdhoc extends TwitterExecutionApp {
+object UserUserFavGraphAdhoc etwittertends TwitterEtwitterecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
   implicit val dp = DateParser.default
   val log = Logger()
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
+  def job: Etwitterecution[Unit] =
+    Etwitterecution.getConfigMode.flatMap {
       case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
+        Etwitterecution.withId { implicit uniqueId =>
           val args = config.getArgs
           val previousGraphOpt = args.optional("previousGraphDir").map { dir =>
-            TypedPipe.from(EdgeWithDecayedWtsFixedPathSource(dir))
+            TypedPipe.from(EdgeWithDecayedWtsFitwitteredPathSource(dir))
           }
           val favsDateRange = DateRange.parse(args.list("date"))
           val halfLives = args.list("halfLivesInDays").map(_.toInt)
@@ -346,7 +346,7 @@ object UserUserFavGraphAdhoc extends TwitterExecutionApp {
           Util.printCounters(
             UserUserFavGraph
               .getSummedFavGraph(previousGraphOpt, favsDateRange, halfLives, minScoreToKeep)
-              .writeExecution(EdgeWithDecayedWtsFixedPathSource(outputDir))
+              .writeEtwitterecution(EdgeWithDecayedWtsFitwitteredPathSource(outputDir))
           )
         }
     }
@@ -355,7 +355,7 @@ object UserUserFavGraphAdhoc extends TwitterExecutionApp {
 /**
  * $ capesospy-v2 update --start_cron fav_graph src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
  */
-object UserUserFavGraphBatch extends TwitterScheduledExecutionApp {
+object UserUserFavGraphBatch etwittertends TwitterScheduledEtwitterecutionApp {
   private val firstTime: String = "2017-01-01"
   implicit val tz = DateOps.UTC
   implicit val parser = DateParser.default
@@ -365,16 +365,16 @@ object UserUserFavGraphBatch extends TwitterScheduledExecutionApp {
   val outputPath: String = "/user/cassowary/processed/user_user_fav_graph"
   val log = Logger()
 
-  private val execArgs = AnalyticsBatchExecutionArgs(
+  private val etwitterecArgs = AnalyticsBatchEtwitterecutionArgs(
     batchDesc = BatchDescription(this.getClass.getName),
     firstTime = BatchFirstTime(RichDate(firstTime)),
     lastTime = None,
     batchIncrement = BatchIncrement(batchIncrement)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) { dateRange =>
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args =>
+  override def scheduledJob: Etwitterecution[Unit] = AnalyticsBatchEtwitterecution(etwitterecArgs) { dateRange =>
+    Etwitterecution.withId { implicit uniqueId =>
+      Etwitterecution.withArgs { args =>
         val previousGraph = if (dateRange.start.timestamp == firstStartDate.timestamp) {
           log.info("Looks like this is the first time, setting previousGraph to None")
           None
@@ -390,10 +390,10 @@ object UserUserFavGraphBatch extends TwitterScheduledExecutionApp {
         Util.printCounters(
           UserUserFavGraph
             .getSummedFavGraph(previousGraph, dateRange, halfLives, minScoreToKeep)
-            .writeDALSnapshotExecution(
+            .writeDALSnapshotEtwitterecution(
               UserUserFavGraphScalaDataset,
               D.Daily,
-              D.Suffix(outputPath),
+              D.Suffitwitter(outputPath),
               D.EBLzo(),
               dateRange.end)
         )
@@ -402,23 +402,23 @@ object UserUserFavGraphBatch extends TwitterScheduledExecutionApp {
   }
 }
 
-object DumpFavGraphAdhoc extends TwitterExecutionApp {
+object DumpFavGraphAdhoc etwittertends TwitterEtwitterecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
+  def job: Etwitterecution[Unit] =
+    Etwitterecution.getConfigMode.flatMap {
       case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
+        Etwitterecution.withId { implicit uniqueId =>
           val favGraph = DAL
             .readMostRecentSnapshotNoOlderThan(UserUserFavGraphScalaDataset, Days(10))
-            .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+            .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
             .toTypedPipe
             .collect {
               case edge if edge.weights.halfLifeInDaysToDecayedSums.contains(100) =>
                 (edge.sourceId, edge.destinationId, edge.weights.halfLifeInDaysToDecayedSums(100))
             }
 
-          Execution
+          Etwitterecution
             .sequence(
               Seq(
                 Util.printSummaryOfNumericColumn(
@@ -438,7 +438,7 @@ object DumpFavGraphAdhoc extends TwitterExecutionApp {
               )
             ).flatMap { summarySeq =>
               println(summarySeq.mkString("\n"))
-              Execution.unit
+              Etwitterecution.unit
             }
         }
     }

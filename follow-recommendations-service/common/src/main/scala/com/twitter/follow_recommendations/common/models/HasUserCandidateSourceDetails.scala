@@ -3,7 +3,7 @@ package com.twitter.follow_recommendations.common.models
 import com.twitter.hermit.ml.models.Feature
 import com.twitter.hermit.model.Algorithm
 import com.twitter.hermit.model.Algorithm.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
 
 /**
  * Used to keep track of a candidate's source not so much as a feature but for filtering candidate
@@ -19,7 +19,7 @@ trait HasUserCandidateSourceDetails { candidateUser: CandidateUser =>
       algorithm <- Algorithm.withNameOpt(identifier.name)
     } yield algorithm
 
-    algorithm.getOrElse(throw new Exception("Algorithm missing on candidate user!"))
+    algorithm.getOrElse(throw new Etwitterception("Algorithm missing on candidate user!"))
   }
 
   def getAllAlgorithms: Seq[Algorithm] = {

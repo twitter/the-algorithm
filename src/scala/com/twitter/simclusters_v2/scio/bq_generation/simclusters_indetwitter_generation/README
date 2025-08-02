@@ -1,0 +1,146 @@
+# Adhoc SimClusters Cluster-to-tweet Indetwitter Generation Jobs
+## Build and bundle the binaries
+
+```
+ bazel bundle src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation/...
+```
+
+## Run the adhoc jobs
+### To run fav based cluster-to-tweet indetwitter generation job (adhoc):
+bin/d6w create \
+  twttr-recos-ml-prod/us-central1/fav-based-indetwitter-generation-adhoc-job \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation/engagement-event-based-simclusters-indetwitter-generation-job.d6w \
+  --jar dist/fav-based-cluster-to-tweet-indetwitter-generation-adhoc-job-bundle/fav-based-cluster-to-tweet-indetwitter-generation-adhoc-job.jar \
+  --bind=profile.user_name=your_ldap \
+  --bind=profile.date="2022-07-15" \
+  --bind=profile.frequency="PT1H" \
+  --bind=profile.environment=dev \
+  --bind=profile.job_name="fav-based-indetwitter-generation-adhoc-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation:fav-based-cluster-to-tweet-indetwitter-generation-adhoc-job"
+
+### To run VideoView based cluster-to-tweet indetwitter generation job (adhoc):
+bin/d6w create \
+  twttr-recos-ml-prod/us-central1/video-view-based-indetwitter-generation-adhoc-job \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation/engagement-event-based-simclusters-indetwitter-generation-job.d6w \
+  --jar dist/video-view-based-cluster-to-tweet-indetwitter-generation-adhoc-job-bundle/video-view-based-cluster-to-tweet-indetwitter-generation-adhoc-job.jar \
+  --bind=profile.user_name=your_ldap \
+  --bind=profile.date="2022-07-15" \
+  --bind=profile.frequency="PT1H" \
+  --bind=profile.environment=dev \
+  --bind=profile.job_name="video-view-based-indetwitter-generation-adhoc-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation:video-view-based-cluster-to-tweet-indetwitter-generation-adhoc-job"
+
+### To run retweet based cluster-to-tweet indetwitter generation job (adhoc):
+bin/d6w create \
+  twttr-recos-ml-prod/us-central1/retweet-based-indetwitter-generation-adhoc-job \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation/engagement-event-based-simclusters-indetwitter-generation-job.d6w \
+  --jar dist/retweet-based-cluster-to-tweet-indetwitter-generation-adhoc-job-bundle/retweet-based-cluster-to-tweet-indetwitter-generation-adhoc-job.jar \
+  --bind=profile.user_name=your_ldap \
+  --bind=profile.date="2022-07-15" \
+  --bind=profile.frequency="PT1H" \
+  --bind=profile.environment=dev \
+  --bind=profile.job_name="retweet-based-indetwitter-generation-adhoc-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation:retweet-based-cluster-to-tweet-indetwitter-generation-adhoc-job"
+
+### To run reply based cluster-to-tweet indetwitter generation job (adhoc):
+bin/d6w create \
+  twttr-recos-ml-prod/us-central1/reply-based-indetwitter-generation-adhoc-job \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation/engagement-event-based-simclusters-indetwitter-generation-job.d6w \
+  --jar dist/reply-based-cluster-to-tweet-indetwitter-generation-adhoc-job-bundle/reply-based-cluster-to-tweet-indetwitter-generation-adhoc-job.jar \
+  --bind=profile.user_name=your_ldap \
+  --bind=profile.date="2022-07-15" \
+  --bind=profile.frequency="PT1H" \
+  --bind=profile.environment=dev \
+  --bind=profile.job_name="reply-based-indetwitter-generation-adhoc-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation:reply-based-cluster-to-tweet-indetwitter-generation-adhoc-job"
+
+### To run push open based cluster-to-tweet indetwitter generation job (adhoc):
+bin/d6w create \
+  twttr-recos-ml-prod/us-central1/push-open-based-indetwitter-generation-adhoc-job \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation/engagement-event-based-simclusters-indetwitter-generation-job.d6w \
+  --jar dist/push-open-based-cluster-to-tweet-indetwitter-generation-adhoc-job-bundle/push-open-based-cluster-to-tweet-indetwitter-generation-adhoc-job.jar \
+  --bind=profile.user_name=your_ldap \
+  --bind=profile.date="2022-10-06" \
+  --bind=profile.frequency="PT1H" \
+  --bind=profile.environment=dev \
+  --bind=profile.job_name="push-open-based-indetwitter-generation-adhoc-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation:push-open-based-cluster-to-tweet-indetwitter-generation-adhoc-job"
+
+# For prod scheduled Cluster-to-tweet Indetwitter Generation Jobs
+### To run Fav based cluster-to-tweet indetwitter generation job (batch):
+ bin/d6w schedule \
+  twttr-recos-ml-prod/us-central1/fav-based-indetwitter-generation-batch-job  \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation/engagement-event-based-simclusters-indetwitter-generation-job.d6w \
+  --bind=profile.user_name=cassowary \
+  --bind=profile.environment=prod \
+  --bind=profile.date="2022-07-19" \
+  --bind=profile.frequency="PT1H" \
+  --bind=profile.job_name="fav-based-indetwitter-generation-batch-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation:fav-based-cluster-to-tweet-indetwitter-generation-batch-job"
+
+### To run VideoView based cluster-to-tweet indetwitter generation job (batch):
+ bin/d6w schedule \
+  twttr-recos-ml-prod/us-central1/video-view-based-indetwitter-generation-batch-job  \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation/engagement-event-based-simclusters-indetwitter-generation-job.d6w \
+  --bind=profile.user_name=cassowary \
+  --bind=profile.environment=prod \
+  --bind=profile.date="2022-07-19" \
+  --bind=profile.frequency="PT1H" \
+  --bind=profile.job_name="video-view-based-indetwitter-generation-batch-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation:video-view-based-cluster-to-tweet-indetwitter-generation-batch-job"
+
+### To run Retweet based cluster-to-tweet indetwitter generation job (batch):
+ bin/d6w schedule \
+  twttr-recos-ml-prod/us-central1/retweet-based-indetwitter-generation-batch-job  \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation/engagement-event-based-simclusters-indetwitter-generation-job.d6w \
+  --bind=profile.user_name=cassowary \
+  --bind=profile.environment=prod \
+  --bind=profile.date="2022-07-19" \
+  --bind=profile.frequency="PT1H" \
+  --bind=profile.job_name="retweet-based-indetwitter-generation-batch-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation:retweet-based-cluster-to-tweet-indetwitter-generation-batch-job"
+
+### To run Reply based cluster-to-tweet indetwitter generation job (batch):
+ bin/d6w schedule \
+  twttr-recos-ml-prod/us-central1/reply-based-indetwitter-generation-batch-job  \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation/engagement-event-based-simclusters-indetwitter-generation-job.d6w \
+  --bind=profile.user_name=cassowary \
+  --bind=profile.environment=prod \
+  --bind=profile.date="2022-07-19" \
+  --bind=profile.frequency="PT1H" \
+  --bind=profile.job_name="reply-based-indetwitter-generation-batch-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation:reply-based-cluster-to-tweet-indetwitter-generation-batch-job"
+
+### To run Push open based cluster-to-tweet indetwitter generation job (batch):
+ bin/d6w schedule \
+  twttr-recos-ml-prod/us-central1/push-open-based-indetwitter-generation-batch-job  \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation/engagement-event-based-simclusters-indetwitter-generation-job.d6w \
+  --bind=profile.user_name=cassowary \
+  --bind=profile.environment=prod \
+  --bind=profile.date="2022-10-06" \
+  --bind=profile.frequency="PT1H" \
+  --bind=profile.job_name="push-open-based-indetwitter-generation-batch-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation:push-open-based-cluster-to-tweet-indetwitter-generation-batch-job"
+
+### To run Ads Fav based cluster-to-tweet indetwitter generation job (batch):
+ bin/d6w schedule \
+  twttr-recos-ml-prod/us-central1/ads-fav-based-indetwitter-generation-batch-job  \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation/engagement-event-based-simclusters-indetwitter-generation-job.d6w \
+  --bind=profile.user_name=cassowary \
+  --bind=profile.environment=prod \
+  --bind=profile.date="2022-10-06" \
+  --bind=profile.frequency="PT3H" \
+  --bind=profile.job_name="ads-fav-based-indetwitter-generation-batch-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation:ads-fav-based-cluster-to-tweet-indetwitter-generation-batch-job"
+
+### To run Ads Fav Click based cluster-to-tweet indetwitter generation job (batch):
+ bin/d6w schedule \
+  twttr-recos-ml-prod/us-central1/ads-fav-click-based-indetwitter-generation-batch-job  \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation/engagement-event-based-simclusters-indetwitter-generation-job.d6w \
+  --bind=profile.user_name=cassowary \
+  --bind=profile.environment=prod \
+  --bind=profile.date="2022-12-09" \
+  --bind=profile.frequency="PT3H" \
+  --bind=profile.job_name="ads-fav-click-based-indetwitter-generation-batch-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_indetwitter_generation:ads-fav-click-based-cluster-to-tweet-indetwitter-generation-batch-job"
+

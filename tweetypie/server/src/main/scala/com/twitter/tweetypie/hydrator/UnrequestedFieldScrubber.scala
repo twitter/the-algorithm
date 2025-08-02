@@ -21,13 +21,13 @@ object UnrequestedFieldScrubber {
     if (!options.scrubUnrequestedFields) NullScrubber
     else new ScrubberImpl(options.include)
 
-  private object NullScrubber extends UnrequestedFieldScrubber {
+  private object NullScrubber etwittertends UnrequestedFieldScrubber {
     def scrub(tweetResult: TweetResult): TweetResult = tweetResult
     def scrub(tweetData: TweetData): TweetData = tweetData
     def scrub(tweet: Tweet): Tweet = tweet
   }
 
-  class ScrubberImpl(i: TweetQuery.Include) extends UnrequestedFieldScrubber {
+  class ScrubberImpl(i: TweetQuery.Include) etwittertends UnrequestedFieldScrubber {
     def scrub(tweetResult: TweetResult): TweetResult =
       tweetResult.map(scrub(_))
 
@@ -105,17 +105,17 @@ object UnrequestedFieldScrubber {
           Tweet.RecommendationsLowQualityLabelField.id,
           tweet.recommendationsLowQualityLabel
         ),
-        experimentationLabel =
-          filter(Tweet.ExperimentationLabelField.id, tweet.experimentationLabel),
+        etwitterperimentationLabel =
+          filter(Tweet.EtwitterperimentationLabelField.id, tweet.etwitterperimentationLabel),
         tweetLocationInfo = filter(Tweet.TweetLocationInfoField.id, tweet.tweetLocationInfo),
         cardReference = filter(Tweet.CardReferenceField.id, tweet.cardReference),
         supplementalLanguage =
           filter(Tweet.SupplementalLanguageField.id, tweet.supplementalLanguage),
         selfPermalink = filter(Tweet.SelfPermalinkField.id, tweet.selfPermalink),
-        extendedTweetMetadata =
-          filter(Tweet.ExtendedTweetMetadataField.id, tweet.extendedTweetMetadata),
+        etwittertendedTweetMetadata =
+          filter(Tweet.EtwittertendedTweetMetadataField.id, tweet.etwittertendedTweetMetadata),
         communities = filter(Tweet.CommunitiesField.id, tweet.communities),
-        visibleTextRange = filter(Tweet.VisibleTextRangeField.id, tweet.visibleTextRange),
+        visibleTetwittertRange = filter(Tweet.VisibleTetwittertRangeField.id, tweet.visibleTetwittertRange),
         spamHighRecallLabel = filter(Tweet.SpamHighRecallLabelField.id, tweet.spamHighRecallLabel),
         duplicateContentLabel =
           filter(Tweet.DuplicateContentLabelField.id, tweet.duplicateContentLabel),

@@ -1,8 +1,8 @@
 package com.twitter.search.earlybird.partition;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftVersionedEvents;
 
 public interface ISegmentWriter {
   enum Result {
@@ -12,10 +12,10 @@ public interface ISegmentWriter {
   }
 
   /**
-   * Indexes the given ThriftVersionedEvents instance (adds it to the segment associated with this
+   * Indetwitteres the given ThriftVersionedEvents instance (adds it to the segment associated with this
    * SegmentWriter instance).
    */
-  Result indexThriftVersionedEvents(ThriftVersionedEvents tve) throws IOException;
+  Result indetwitterThriftVersionedEvents(ThriftVersionedEvents tve) throws IOEtwitterception;
 
   /**
    * Returns the segment info for this segment writer.

@@ -2,7 +2,7 @@ from datetime import datetime
 from functools import partial
 import os
 
-from twitter.cortex.ml.embeddings.common.helpers import decode_str_or_unicode
+from twitter.cortetwitter.ml.embeddings.common.helpers import decode_str_or_unicode
 import twml
 from twml.trainers import DataRecordTrainer
 
@@ -79,7 +79,7 @@ def build_graph(
     optimizer = tf.train.GradientDescentOptimizer(learning_rate=params.learning_rate)
     update_ops = set(tf.get_collection(tf.GraphKeys.UPDATE_OPS))
     variables = get_trainable_variables(
-      all_trainable_variables=tf.trainable_variables(), trainable_regexes=params.trainable_regexes
+      all_trainable_variables=tf.trainable_variables(), trainable_regetwitteres=params.trainable_regetwitteres
     )
     with tf.control_dependencies(update_ops):
       train_op = twml.optimizers.optimize_loss(
@@ -132,8 +132,8 @@ def _main():
     feature_config=feature_config,
     metric_fn=get_metric_fn(opt.task_name, use_stratify_metrics=False),
   )
-  if opt.directly_export_best:
-    logging.info("Directly exporting the model without training")
+  if opt.directly_etwitterport_best:
+    logging.info("Directly etwitterporting the model without training")
   else:
     # ----------------------------------------------------
     #        Model Training & Evaluation
@@ -161,25 +161,25 @@ def _main():
     end = datetime.now()
     logging.info("Training time: " + str(end - start))
 
-    logging.info("Exporting the models...")
+    logging.info("Etwitterporting the models...")
 
   # --------------------------------------------------------
-  #      Do the model exporting
+  #      Do the model etwitterporting
   # --------------------------------------------------------
   start = datetime.now()
-  if not opt.export_dir:
-    opt.export_dir = os.path.join(opt.save_dir, "exported_models")
+  if not opt.etwitterport_dir:
+    opt.etwitterport_dir = os.path.join(opt.save_dir, "etwitterported_models")
 
-  raw_model_path = twml.contrib.export.export_fn.export_all_models(
+  raw_model_path = twml.contrib.etwitterport.etwitterport_fn.etwitterport_all_models(
     trainer=trainer,
-    export_dir=opt.export_dir,
+    etwitterport_dir=opt.etwitterport_dir,
     parse_fn=feature_config.get_parse_fn(),
     serving_input_receiver_fn=feature_config.get_serving_input_receiver_fn(),
-    export_output_fn=twml.export_output_fns.batch_prediction_continuous_output_fn,
+    etwitterport_output_fn=twml.etwitterport_output_fns.batch_prediction_continuous_output_fn,
   )
-  export_model_dir = decode_str_or_unicode(raw_model_path)
+  etwitterport_model_dir = decode_str_or_unicode(raw_model_path)
 
-  logging.info("Model export time: " + str(datetime.now() - start))
+  logging.info("Model etwitterport time: " + str(datetime.now() - start))
   logging.info("The saved model directory is: " + opt.save_dir)
 
   tf.logging.info("getting default continuous_feature_list")
@@ -195,7 +195,7 @@ def _main():
     run_group_metrics_light_ranking(
       trainer=trainer,
       data_dir=os.path.join(opt.eval_data_dir, opt.eval_start_datetime),
-      model_path=export_model_dir,
+      model_path=etwitterport_model_dir,
       parse_fn=feature_config.get_parse_fn(),
     )
 

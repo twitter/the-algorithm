@@ -1,0 +1,7 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.metadata
+
+sealed trait ReplyPinState
+
+object PinnedReplyPinState etwittertends ReplyPinState
+object PinnableReplyPinState etwittertends ReplyPinState
+object NotPinnableReplyPinState etwittertends ReplyPinState

@@ -23,8 +23,8 @@ object RealGraphFollowGraphDataProvider {
  * underlying provider with additional followings fetched from RealGraph if it looks like the
  * underlying provider did not get the full list of the user's followings.
  *
- * First checks whether the size of the underlying following list is >= the max requested following
- * count, which implies that there were additional followings beyond the max requested count. If so,
+ * First checks whether the size of the underlying following list is >= the matwitter requested following
+ * count, which implies that there were additional followings beyond the matwitter requested count. If so,
  * fetches the full set of followings from RealGraph (go/realgraph), which will be at most 2000.
  *
  * Because the RealGraph dataset is not realtime and thus can potentially include stale followings,
@@ -32,8 +32,8 @@ object RealGraphFollowGraphDataProvider {
  * getFollowOverlap method, and then merges the valid RealGraph followings with the underlying
  * followings.
  *
- * Note that this supplementing is expected to be very rare as most users do not have more than
- * the max followings we fetch from SGS. Also note that this class is mainly intended for use
+ * Note that this supplementing is etwitterpected to be very rare as most users do not have more than
+ * the matwitter followings we fetch from SGS. Also note that this class is mainly intended for use
  * in the home timeline materialization path, with the goal of preventing a case where users
  * who follow a very large number of accounts may not see Tweets from their earlier follows if we
  * used SGS-based follow fetching alone.
@@ -44,12 +44,12 @@ class RealGraphFollowGraphDataProvider(
   socialGraphClient: SocialGraphClient,
   supplementFollowsWithRealGraphGate: Gate[UserId],
   statsReceiver: StatsReceiver)
-    extends FollowGraphDataProvider {
+    etwittertends FollowGraphDataProvider {
   import RealGraphFollowGraphDataProvider._
 
   private[this] val scopedStatsReceiver = statsReceiver.scope("realGraphFollowGraphDataProvider")
   private[this] val requestCounter = scopedStatsReceiver.counter("requests")
-  private[this] val atMaxCounter = scopedStatsReceiver.counter("followsAtMax")
+  private[this] val atMatwitterCounter = scopedStatsReceiver.counter("followsAtMatwitter")
   private[this] val totalLatencyStat = scopedStatsReceiver.stat("totalLatencyWhenSupplementing")
   private[this] val supplementLatencyStat = scopedStatsReceiver.stat("supplementFollowsLatency")
   private[this] val realGraphResponseSizeStat = scopedStatsReceiver.stat("realGraphFollows")
@@ -58,16 +58,16 @@ class RealGraphFollowGraphDataProvider(
 
   private[this] val failOpenHandler = new FailOpenHandler(scopedStatsReceiver)
 
-  override def get(userId: UserId, maxFollowingCount: Int): Future[FollowGraphData] = {
-    getAsync(userId, maxFollowingCount).get()
+  override def get(userId: UserId, matwitterFollowingCount: Int): Future[FollowGraphData] = {
+    getAsync(userId, matwitterFollowingCount).get()
   }
 
-  override def getAsync(userId: UserId, maxFollowingCount: Int): FollowGraphDataFuture = {
+  override def getAsync(userId: UserId, matwitterFollowingCount: Int): FollowGraphDataFuture = {
     val startTime = Stopwatch.timeMillis()
-    val underlyingResult = underlying.getAsync(userId, maxFollowingCount)
+    val underlyingResult = underlying.getAsync(userId, matwitterFollowingCount)
     if (supplementFollowsWithRealGraphGate(userId)) {
       val supplementedFollows = underlyingResult.followedUserIdsFuture.flatMap { sgsFollows =>
-        supplementFollowsWithRealGraph(userId, maxFollowingCount, sgsFollows, startTime)
+        supplementFollowsWithRealGraph(userId, matwitterFollowingCount, sgsFollows, startTime)
       }
       underlyingResult.copy(followedUserIdsFuture = supplementedFollows)
     } else {
@@ -75,12 +75,12 @@ class RealGraphFollowGraphDataProvider(
     }
   }
 
-  override def getFollowing(userId: UserId, maxFollowingCount: Int): Future[Seq[UserId]] = {
+  override def getFollowing(userId: UserId, matwitterFollowingCount: Int): Future[Seq[UserId]] = {
     val startTime = Stopwatch.timeMillis()
-    val underlyingFollows = underlying.getFollowing(userId, maxFollowingCount)
+    val underlyingFollows = underlying.getFollowing(userId, matwitterFollowingCount)
     if (supplementFollowsWithRealGraphGate(userId)) {
-      underlying.getFollowing(userId, maxFollowingCount).flatMap { sgsFollows =>
-        supplementFollowsWithRealGraph(userId, maxFollowingCount, sgsFollows, startTime)
+      underlying.getFollowing(userId, matwitterFollowingCount).flatMap { sgsFollows =>
+        supplementFollowsWithRealGraph(userId, matwitterFollowingCount, sgsFollows, startTime)
       }
     } else {
       underlyingFollows
@@ -89,13 +89,13 @@ class RealGraphFollowGraphDataProvider(
 
   private[this] def supplementFollowsWithRealGraph(
     userId: UserId,
-    maxFollowingCount: Int,
+    matwitterFollowingCount: Int,
     sgsFollows: Seq[Long],
     startTime: Long
   ): Future[Seq[UserId]] = {
     requestCounter.incr()
-    if (sgsFollows.size >= maxFollowingCount) {
-      atMaxCounter.incr()
+    if (sgsFollows.size >= matwitterFollowingCount) {
+      atMatwitterCounter.incr()
       val supplementedFollowsFuture = realGraphClient(Seq(userId))
         .map(_.getOrElse(userId, EmptyRealGraphResponse))
         .map(_.candidates.map(_.userId))

@@ -20,12 +20,12 @@ class RFPHTargetPredicateGenerator(implicit statsReceiver: StatsReceiver) {
     TargetUserPredicates.secondaryDormantAccountPredicate(),
     TargetPredicates.targetValidMobileSDKPredicate,
     TargetPredicates.targetPushBitEnabledPredicate,
-    TargetUserPredicates.targetUserExists(),
+    TargetUserPredicates.targetUserEtwitterists(),
     TargetPredicates.paramPredicate(PushFeatureSwitchParams.EnablePushRecommendationsParam),
     TargetPromptFeedbackFatiguePredicate.responseNoPredicate(
       PushParams.EnablePromptFeedbackFatigueResponseNoPredicate,
       PushConstants.AcceptableTimeSinceLastNegativeResponse),
-    TargetPredicates.teamExceptedPredicate(TargetNtabCaretClickFatiguePredicate.apply()),
+    TargetPredicates.teamEtwitterceptedPredicate(TargetNtabCaretClickFatiguePredicate.apply()),
     TargetPredicates.optoutProbPredicate(),
     TargetPredicates.webNotifsHoldback()
   )

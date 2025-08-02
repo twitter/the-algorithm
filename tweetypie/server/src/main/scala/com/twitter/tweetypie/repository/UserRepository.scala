@@ -1,11 +1,11 @@
 package com.twitter.tweetypie
 package repository
 
-import com.twitter.gizmoduck.thriftscala.LookupContext
+import com.twitter.gizmoduck.thriftscala.LookupContetwittert
 import com.twitter.gizmoduck.thriftscala.UserResponseState
 import com.twitter.gizmoduck.thriftscala.UserResult
 import com.twitter.servo.cache.ScopedCacheKey
-import com.twitter.servo.json.syntax._
+import com.twitter.servo.json.syntatwitter._
 import com.twitter.spam.rtf.thriftscala.SafetyLevel
 import com.twitter.stitch.NotFound
 import com.twitter.stitch.SeqGroup
@@ -28,7 +28,7 @@ object UserKey {
 }
 
 case class UserIdKey(userId: UserId)
-    extends ScopedCacheKey("t", "usr", 1, "id", toBase64(userId))
+    etwittertends ScopedCacheKey("t", "usr", 1, "id", toBase64(userId))
     with UserKey
 
 object ScreenNameKey {
@@ -40,7 +40,7 @@ object ScreenNameKey {
  * as it will down-case the screen-name to better utilize the user cache.
  */
 case class ScreenNameKey private (screenName: String)
-    extends ScopedCacheKey("t", "usr", 1, "sn", screenName)
+    etwittertends ScopedCacheKey("t", "usr", 1, "sn", screenName)
     with UserKey
 
 /**
@@ -125,8 +125,8 @@ case class UserQueryOptions(
   forUserId: Option[UserId] = None,
   filteredAsFailure: Boolean = false,
   safetyLevel: Option[SafetyLevel] = None) {
-  def toLookupContext: LookupContext =
-    LookupContext(
+  def toLookupContetwittert: LookupContetwittert =
+    LookupContetwittert(
       includeFailed = true,
       forUserId = forUserId,
       includeProtected = !visibility.filterProtected,
@@ -141,7 +141,7 @@ case class UserQueryOptions(
     )
 }
 
-case class UserLookupFailure(message: String, state: UserResponseState) extends RuntimeException {
+case class UserLookupFailure(message: String, state: UserResponseState) etwittertends RuntimeEtwitterception {
   override def getMessage(): String =
     s"$message: responseState = $state"
 }
@@ -152,7 +152,7 @@ case class UserLookupFailure(message: String, state: UserResponseState) extends 
  * @see [[GizmoduckUserRepository.FilteredStates]]
  */
 case class UserFilteredFailure(state: UserResponseState, reason: Option[UserVisibilityResult])
-    extends Exception
+    etwittertends Etwitterception
     with NoStackTrace
 
 object UserRepository {
@@ -175,15 +175,15 @@ object GizmoduckUserRepository {
   def apply(
     getById: Gizmoduck.GetById,
     getByScreenName: Gizmoduck.GetByScreenName,
-    maxRequestSize: Int = Int.MaxValue
+    matwitterRequestSize: Int = Int.MatwitterValue
   ): UserRepository.Type = {
     case class GetBy[K](
       opts: UserQueryOptions,
-      get: ((LookupContext, Seq[K], Set[UserField])) => Future[Seq[UserResult]])
-        extends SeqGroup[K, UserResult] {
+      get: ((LookupContetwittert, Seq[K], Set[UserField])) => Future[Seq[UserResult]])
+        etwittertends SeqGroup[K, UserResult] {
       override def run(keys: Seq[K]): Future[Seq[Try[UserResult]]] =
-        LegacySeqGroup.liftToSeqTry(get((opts.toLookupContext, keys, opts.queryFields)))
-      override def maxSize: Int = maxRequestSize
+        LegacySeqGroup.liftToSeqTry(get((opts.toLookupContetwittert, keys, opts.queryFields)))
+      override def matwitterSize: Int = matwitterRequestSize
     }
 
     (key, opts) => {
@@ -209,7 +209,7 @@ object GizmoduckUserRepository {
 
           case None =>
             log.warn(
-              s"User expected to be present, but not found in:\n${userResult.prettyPrint}"
+              s"User etwitterpected to be present, but not found in:\n${userResult.prettyPrint}"
             )
             // This should never happen, but if it does, treat it as the
             // user being returned as NotFound.
@@ -233,23 +233,23 @@ object GizmoduckUserRepository {
                 .orElse {
                   reason.overCapacity.map { e =>
                     // Convert Gizmoduck OverCapacity to Tweetypie
-                    // OverCapacity exception, explaining that it was
+                    // OverCapacity etwitterception, etwitterplaining that it was
                     // propagated from Gizmoduck.
                     OverCapacity(s"gizmoduck over capacity: ${e.message}")
                   }
                 }
-                .orElse(reason.unexpectedException.map(lookupFailure))
+                .orElse(reason.unetwitterpectedEtwitterception.map(lookupFailure))
                 .getOrElse(lookupFailure("failureReason empty"))
             }
             .getOrElse(lookupFailure("failureReason missing"))
         }
 
-      case Some(unexpected) =>
-        Throw(UserLookupFailure("Unexpected response state", unexpected))
+      case Some(unetwitterpected) =>
+        Throw(UserLookupFailure("Unetwitterpected response state", unetwitterpected))
     }
 
   /**
-   * States that we expect to correspond to a user being returned.
+   * States that we etwitterpect to correspond to a user being returned.
    */
   val SuccessStates: Set[UserResponseState] =
     Set[UserResponseState](

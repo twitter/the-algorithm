@@ -4,7 +4,7 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/org/slf4j:slf4j-api",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/common",
         "util/util-slf4j-api/src/main/scala",
     ],
 )

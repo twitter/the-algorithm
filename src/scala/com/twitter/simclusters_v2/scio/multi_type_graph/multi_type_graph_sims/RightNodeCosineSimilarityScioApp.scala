@@ -6,7 +6,7 @@ import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.hdfs_sources.RightNodeCosineSimilarityScioScalaDataset
 import com.twitter.simclusters_v2.thriftscala.RightNode
 import com.twitter.simclusters_v2.thriftscala.SimilarRightNodes
-import com.twitter.wtf.scalding.jobs.cosine_similarity.common.ApproximateMatrixSelfTransposeMultiplicationJob
+import com.twitter.wtf.scalding.jobs.cosine_similarity.common.ApprotwitterimateMatritwitterSelfTransposeMultiplicationJob
 
 /**
 Build:
@@ -20,17 +20,17 @@ bin/d6w create \
   --bind=profile.project=${GCP_PROJECT_NAME} \
   --bind=profile.user_name=${USER} \
   --bind=profile.date="2022-01-16" \
-  --bind=profile.machine="n2d-highmem-16" --ignore-existing
+  --bind=profile.machine="n2d-highmem-16" --ignore-etwitteristing
  */
 
-object RightNodeCosineSimilarityScioAdhocApp extends RightNodeCosineSimilarityScioBaseApp {
+object RightNodeCosineSimilarityScioAdhocApp etwittertends RightNodeCosineSimilarityScioBaseApp {
   override val isAdhoc = true
   override val cosineSimKeyValSnapshotDataset: KeyValDALDataset[
     KeyVal[RightNode, SimilarRightNodes]
   ] =
     RightNodeCosineSimilarityScioAdhocScalaDataset
   override val filterCandidateSimilarityPair: (Double, Double, Double) => Boolean =
-    ApproximateMatrixSelfTransposeMultiplicationJob.filterCandidateSimilarityPair
+    ApprotwitterimateMatritwitterSelfTransposeMultiplicationJob.filterCandidateSimilarityPair
 }
 
 /**
@@ -44,12 +44,12 @@ bin/d6w schedule \
   --bind=profile.date="2021-12-01" \
   --bind=profile.machine="n2d-highmem-16"
  */
-object RightNodeCosineSimilarityScioBatchApp extends RightNodeCosineSimilarityScioBaseApp {
+object RightNodeCosineSimilarityScioBatchApp etwittertends RightNodeCosineSimilarityScioBaseApp {
   override val isAdhoc = false
   override val cosineSimKeyValSnapshotDataset: KeyValDALDataset[
     KeyVal[RightNode, SimilarRightNodes]
   ] =
     RightNodeCosineSimilarityScioScalaDataset
   override val filterCandidateSimilarityPair: (Double, Double, Double) => Boolean =
-    ApproximateMatrixSelfTransposeMultiplicationJob.filterCandidateSimilarityPair
+    ApprotwitterimateMatritwitterSelfTransposeMultiplicationJob.filterCandidateSimilarityPair
 }

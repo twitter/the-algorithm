@@ -1,19 +1,19 @@
 /* Copyright 2016 The TensorFlow Authors. All Rights Reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
+you may not use this file etwittercept in compliance with the License.
 You may obtain a copy of the License at
 
     http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either etwitterpress or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
 
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -54,50 +54,50 @@ message CreateSessionResponse {
   // session handle to close the session.
   string session_handle = 1;
 
-  // The initial version number for the graph, to be used in the next call
-  // to ExtendSession.
+  // The initial version number for the graph, to be used in the netwittert call
+  // to EtwittertendSession.
   int64 graph_version = 2;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-// ExtendSession method request/response protos.
+// EtwittertendSession method request/response protos.
 //
 // The "graph_def" specifies a set of nodes to be added to the session's graph.
 //
 // A typical "graph_def" will contain:
 //
-// * Zero or more new nodes with names that do not exist in the server-side
+// * Zero or more new nodes with names that do not etwitterist in the server-side
 //   graph. These will be added to the graph.
 //
 // PRECONDITION: The server-side current version is req.current_version.
 //   None of the names in req.graph_def appeared in previous successful calls to
-//   CreateSession or ExtendSession with the same session_handle.
+//   CreateSession or EtwittertendSession with the same session_handle.
 // POSTCONDITION: The server-side current version is resp.new_version.
 //
 ////////////////////////////////////////////////////////////////////////////////
 
-message ExtendSessionRequest {
+message EtwittertendSessionRequest {
   // REQUIRED: session_handle must be returned by a CreateSession call
   // to the same master service.
   string session_handle = 1;
 
   // REQUIRED: The nodes to be added to the session's graph. If any node has
-  // the same name as an existing node, the operation will fail with
+  // the same name as an etwitteristing node, the operation will fail with
   // ILLEGAL_ARGUMENT.
   GraphDef graph_def = 2;
 
-  // REQUIRED: The version number of the graph to be extended. This will be
+  // REQUIRED: The version number of the graph to be etwittertended. This will be
   // tested against the current server-side version number, and the operation
   // will fail with FAILED_PRECONDITION if they do not match.
   int64 current_graph_version = 3;
 }
 
-message ExtendSessionResponse {
+message EtwittertendSessionResponse {
   // TODO(mrry): Return something about the operation?
 
-  // The new version number for the extended graph, to be used in the next call
-  // to ExtendSession.
+  // The new version number for the etwittertended graph, to be used in the netwittert call
+  // to EtwittertendSession.
   int64 new_graph_version = 4;
 }
 
@@ -118,9 +118,9 @@ message RunStepRequest {
   // Tensors to be fed in the step. Each feed is a named tensor.
   repeated NamedTensorProto feed = 2;
 
-  // Fetches. A list of tensor names. The caller expects a tensor to
+  // Fetches. A list of tensor names. The caller etwitterpects a tensor to
   // be returned for each fetch[i] (see RunStepResponse.tensor). The
-  // order of specified fetches does not change the execution order.
+  // order of specified fetches does not change the etwitterecution order.
   repeated string fetch = 3;
 
   // Target Nodes. A list of node names. The named nodes will be run
@@ -131,10 +131,10 @@ message RunStepRequest {
   RunOptions options = 5;
 
   // Partial run handle (optional). If specified, this will be a partial run
-  // execution, run up to the specified fetches.
+  // etwitterecution, run up to the specified fetches.
   string partial_run_handle = 6;
 
-  // If true then some errors, e.g., execution errors that have long
+  // If true then some errors, e.g., etwitterecution errors that have long
   // error messages, may return an OK RunStepResponse with the actual
   // error saved in the status_code/status_error_message fields of the
   // response body. This is a workaround since the RPC subsystem may
@@ -181,10 +181,10 @@ message PartialRunSetupRequest {
   // Tensors to be fed in future steps.
   repeated string feed = 2;
 
-  // Fetches. A list of tensor names. The caller expects a tensor to be returned
+  // Fetches. A list of tensor names. The caller etwitterpects a tensor to be returned
   // for each fetch[i] (see RunStepResponse.tensor), for corresponding partial
   // RunStepRequests. The order of specified fetches does not change the
-  // execution order.
+  // etwitterecution order.
   repeated string fetch = 3;
 
   // Target Nodes. A list of node names. The named nodes will be run in future

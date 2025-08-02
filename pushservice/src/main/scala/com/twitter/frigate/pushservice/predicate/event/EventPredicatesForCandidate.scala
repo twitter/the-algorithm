@@ -38,24 +38,24 @@ object EventPredicatesForCandidate {
     val name = "duplicate_event_id"
     Predicate
       .fromAsync { candidate: MagicFanoutEventHydratedCandidate =>
-        val useRelaxedFatigueLengthFut: Future[Boolean] =
+        val useRelatwitteredFatigueLengthFut: Future[Boolean] =
           candidate match {
             case mfNewsEvent: MagicFanoutNewsEventPushCandidate =>
               mfNewsEvent.isHighPriorityEvent
             case _ => Future.value(false)
           }
-        Future.join(candidate.target.history, useRelaxedFatigueLengthFut).map {
-          case (history, useRelaxedFatigueLength) =>
-            val filteredNotifications = if (useRelaxedFatigueLength) {
-              val relaxedFatigueInterval =
+        Future.join(candidate.target.history, useRelatwitteredFatigueLengthFut).map {
+          case (history, useRelatwitteredFatigueLength) =>
+            val filteredNotifications = if (useRelatwitteredFatigueLength) {
+              val relatwitteredFatigueInterval =
                 candidate.target
                   .params(
-                    PushFeatureSwitchParams.MagicFanoutRelaxedEventIdFatigueIntervalInHours).hours
+                    PushFeatureSwitchParams.MagicFanoutRelatwitteredEventIdFatigueIntervalInHours).hours
               history.notificationMap.filterKeys { time =>
-                time.untilNow <= relaxedFatigueInterval
+                time.untilNow <= relatwitteredFatigueInterval
               }.values
             } else history.notificationMap.values
-            !RecItems(filteredNotifications.toSeq).events.exists(_.eventId == candidate.eventId)
+            !RecItems(filteredNotifications.toSeq).events.etwitterists(_.eventId == candidate.eventId)
         }
       }
       .withStats(statsReceiver.scope(s"predicate_$name"))
@@ -92,19 +92,19 @@ object EventPredicatesForCandidate {
       .withStats(stats.scope("skip_account_country_predicate_mf"))
       .withName("skip_account_country_predicate_mf")
 
-    val excludeEventFromAccountCountryPredicateFiltering = Predicate
+    val etwittercludeEventFromAccountCountryPredicateFiltering = Predicate
       .from { candidate: MagicFanoutEventPushCandidate =>
         val eventId = candidate.eventId
         val target = candidate.target
         target
           .params(PushFeatureSwitchParams.MagicFanoutEventAllowlistToSkipAccountCountryPredicate)
-          .exists(eventId.equals)
+          .etwitterists(eventId.equals)
       }
-      .withStats(stats.scope("exclude_event_from_account_country_predicate_filtering"))
-      .withName("exclude_event_from_account_country_predicate_filtering")
+      .withStats(stats.scope("etwitterclude_event_from_account_country_predicate_filtering"))
+      .withName("etwitterclude_event_from_account_country_predicate_filtering")
 
     skipPredicate
-      .or(excludeEventFromAccountCountryPredicateFiltering)
+      .or(etwittercludeEventFromAccountCountryPredicateFiltering)
       .or(accountCountryPredicate)
       .withStats(scopedStats)
       .withName(name)

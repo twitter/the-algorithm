@@ -18,7 +18,7 @@ object RecapHydrationProduction {
 
   val booleanFeatureSwitchParams: Seq[FSParam[Boolean]] = Seq(
     EnableTokensInContentFeaturesHydrationParam,
-    EnableTweetTextInContentFeaturesHydrationParam,
+    EnableTweetTetwittertInContentFeaturesHydrationParam,
     EnableConversationControlInContentFeaturesHydrationParam,
     EnableTweetMediaHydrationParam
   )

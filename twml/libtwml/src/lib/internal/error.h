@@ -2,7 +2,7 @@
 #include <twml/Error.h>
 #include <iostream>
 
-#define HANDLE_EXCEPTIONS(fn) do {              \
+#define HANDLE_EtwitterCEPTIONS(fn) do {              \
         try {                                   \
             fn                                  \
         } catch(const twml::Error &e) {         \
@@ -21,9 +21,9 @@
     } while(0)
 
 
-#define CHECK_THRIFT_TYPE(real_type, expected_type, type) do {      \
+#define CHECK_THRIFT_TYPE(real_type, etwitterpected_type, type) do {      \
     int real_type_val = real_type;                                  \
-    if (real_type_val != expected_type) {                           \
+    if (real_type_val != etwitterpected_type) {                           \
       throw twml::ThriftInvalidType(real_type_val, __func__, type); \
     }                                                               \
   } while(0)

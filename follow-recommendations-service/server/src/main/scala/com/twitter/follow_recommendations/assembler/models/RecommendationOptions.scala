@@ -5,7 +5,7 @@ sealed trait RecommendationOptions
 case class UserListOptions(
   userBioEnabled: Boolean,
   userBioTruncated: Boolean,
-  userBioMaxLines: Option[Long],
-) extends RecommendationOptions
+  userBioMatwitterLines: Option[Long],
+) etwittertends RecommendationOptions
 
-case class CarouselOptions() extends RecommendationOptions
+case class CarouselOptions() etwittertends RecommendationOptions

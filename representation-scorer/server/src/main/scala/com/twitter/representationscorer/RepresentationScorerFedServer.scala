@@ -14,9 +14,9 @@ import com.twitter.representationscorer.twistlyfeatures.UserSignalServiceRecentE
 import com.twitter.strato.fed._
 import com.twitter.strato.fed.server._
 
-object RepresentationScorerFedServerMain extends RepresentationScorerFedServer
+object RepresentationScorerFedServerMain etwittertends RepresentationScorerFedServer
 
-trait RepresentationScorerFedServer extends StratoFedServer {
+trait RepresentationScorerFedServer etwittertends StratoFedServer {
   override def dest: String = "/s/representation-scorer/representation-scorer"
   override val modules: Seq[Module] =
     Seq(

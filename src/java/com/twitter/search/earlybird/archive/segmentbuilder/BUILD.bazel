@@ -21,7 +21,7 @@ java_library(
         "src/java/com/twitter/common/base",
         "src/java/com/twitter/common/quantity",
         "src/java/com/twitter/common/util:system-mocks",
-        "src/java/com/twitter/common_internal/text/version",
+        "src/java/com/twitter/common_internal/tetwittert/version",
         "src/java/com/twitter/search/common/config",
         "src/java/com/twitter/search/common/database",
         "src/java/com/twitter/search/common/metrics",
@@ -44,7 +44,7 @@ java_library(
     ],
 )
 
-# Using hadoop_binary target can automatically exclude hadoop related jars in the built jar
+# Using hadoop_binary target can automatically etwitterclude hadoop related jars in the built jar
 # and load in the right jars based on hadoop config.
 hadoop_binary(
     name = "segment_builder_binary",

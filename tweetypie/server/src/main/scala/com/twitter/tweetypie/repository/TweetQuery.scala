@@ -41,12 +41,12 @@ object TweetQuery {
   }
 
   object Cause {
-    case object Read extends Cause
-    trait Write extends Cause {
+    case object Read etwittertends Cause
+    trait Write etwittertends Cause {
       val tweetId: TweetId
     }
-    case class Insert(tweetId: TweetId) extends Write
-    case class Undelete(tweetId: TweetId) extends Write
+    case class Insert(tweetId: TweetId) etwittertends Write
+    case class Undelete(tweetId: TweetId) etwittertends Write
   }
 
   /**
@@ -58,13 +58,13 @@ object TweetQuery {
    *   filter protected tweets, blocked quote tweets, contributor data, etc. This does not affect
    *   Visibility Library (http://go/vf) based filtering.
    * @param cause indicates what triggered the read: a normal read, or a write operation.
-   * @param forExternalConsumption when true, the tweet is being read for rendering to an external
+   * @param forEtwitterternalConsumption when true, the tweet is being read for rendering to an etwitterternal
    *   client such as the iPhone Twitter app and is subject to being Dropped to prevent serving
-   *   "bad" text to clients that might crash their OS. When false, the tweet is being read for internal
+   *   "bad" tetwittert to clients that might crash their OS. When false, the tweet is being read for internal
    *   non-client purposes and should never be Dropped.
    * @param isInnerQuotedTweet Set by [[com.twitter.tweetypie.hydrator.QuotedTweetHydrator]],
    *   to be used by [[com.twitter.visibility.interfaces.tweets.TweetVisibilityLibrary]]
-   *   so VisibilityFiltering library can execute Interstitial logic on inner quoted tweets.
+   *   so VisibilityFiltering library can etwitterecute Interstitial logic on inner quoted tweets.
    * @param fetchStoredTweets Set by GetStoredTweetsHandler. If set to true, the Manhattan storage
    *   layer will fetch and construct Tweets regardless of what state they're in.
    */
@@ -72,16 +72,16 @@ object TweetQuery {
     include: TweetQuery.Include,
     cacheControl: CacheControl = CacheControl.ReadWriteCache,
     cardsPlatformKey: Option[String] = None,
-    excludeReported: Boolean = false,
+    etwittercludeReported: Boolean = false,
     enforceVisibilityFiltering: Boolean = false,
     safetyLevel: SafetyLevel = SafetyLevel.FilterNone,
     forUserId: Option[UserId] = None,
     languageTag: String = "en",
-    extensionsArgs: Option[ByteBuffer] = None,
+    etwittertensionsArgs: Option[ByteBuffer] = None,
     cause: Cause = Cause.Read,
     scrubUnrequestedFields: Boolean = true,
     requireSourceTweet: Boolean = true,
-    forExternalConsumption: Boolean = false,
+    forEtwitterternalConsumption: Boolean = false,
     simpleQuotedTweet: Boolean = false,
     isInnerQuotedTweet: Boolean = false,
     fetchStoredTweets: Boolean = false,
@@ -116,7 +116,7 @@ object TweetQuery {
     /**
      * Removes field ids.
      */
-    def exclude(
+    def etwitterclude(
       tweetFields: Traversable[FieldId] = Nil,
       countsFields: Traversable[FieldId] = Nil,
       mediaFields: Traversable[FieldId] = Nil

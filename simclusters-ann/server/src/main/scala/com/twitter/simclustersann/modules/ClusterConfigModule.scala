@@ -5,10 +5,10 @@ import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.inject.TwitterModule
 import com.twitter.relevance_platform.simclustersann.multicluster.ClusterConfig
 import com.twitter.relevance_platform.simclustersann.multicluster.ClusterConfigMapper
-import com.twitter.simclustersann.exceptions.MissingClusterConfigForSimClustersAnnVariantException
-import javax.inject.Singleton
+import com.twitter.simclustersann.etwitterceptions.MissingClusterConfigForSimClustersAnnVariantEtwitterception
+import javatwitter.inject.Singleton
 
-object ClusterConfigModule extends TwitterModule {
+object ClusterConfigModule etwittertends TwitterModule {
   @Singleton
   @Provides
   def providesClusterConfig(
@@ -19,7 +19,7 @@ object ClusterConfigModule extends TwitterModule {
 
     clusterConfigMapper.getClusterConfig(serviceName) match {
       case Some(config) => config
-      case None => throw MissingClusterConfigForSimClustersAnnVariantException(serviceName)
+      case None => throw MissingClusterConfigForSimClustersAnnVariantEtwitterception(serviceName)
     }
   }
 }

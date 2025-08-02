@@ -26,8 +26,8 @@ object CombinedFeatures {
   val IS_OPEN_LINKED = new Binary(
     "timelines.engagement.is_open_linked",
     Set(EngagementsPrivate, LinksClickedOn).asJava)
-  val IS_PHOTO_EXPANDED = new Binary(
-    "timelines.engagement.is_photo_expanded",
+  val IS_PHOTO_EtwitterPANDED = new Binary(
+    "timelines.engagement.is_photo_etwitterpanded",
     Set(MediaEngagementActivities, EngagementsPrivate).asJava)
   val IS_PROFILE_CLICKED = new Binary(
     "timelines.engagement.is_profile_clicked",
@@ -242,9 +242,9 @@ object CombinedFeatures {
     new Binary(
       "timelines.engagement.is_implicit_positive_feedback_union",
       Set(EngagementsPrivate).asJava)
-  val IS_EXPLICIT_POSITIVE_FEEDBACK_UNION =
+  val IS_EtwitterPLICIT_POSITIVE_FEEDBACK_UNION =
     new Binary(
-      "timelines.engagement.is_explicit_positive_feedback_union",
+      "timelines.engagement.is_etwitterplicit_positive_feedback_union",
       Set(EngagementsPrivate).asJava)
   val IS_ALL_NEGATIVE_FEEDBACK_UNION =
     new Binary(
@@ -342,7 +342,7 @@ object CombinedFeatures {
   val IS_PROFILE_CLICKED_AND_PROFILE_BLOCK = new Binary(
     "timelines.engagement.is_profile_clicked_and_profile_block",
     Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  // This derived label is the union of bad profile click engagements and existing negative feedback
+  // This derived label is the union of bad profile click engagements and etwitteristing negative feedback
   val IS_NEGATIVE_FEEDBACK_V2 = new Binary(
     "timelines.engagement.is_negative_feedback_v2",
     Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
@@ -374,7 +374,7 @@ object CombinedFeatures {
   /**
    * Contains all engagements that are used/consumed by real-time
    * aggregates summingbird jobs. These engagements need to be
-   * extractable from [[ClientEvent]].
+   * etwittertractable from [[ClientEvent]].
    */
   val EngagementsRealTime: Set[Feature[JBoolean]] = Set(
     IS_CLICKED,
@@ -382,7 +382,7 @@ object CombinedFeatures {
     IS_FAVORITED,
     IS_FOLLOWED,
     IS_OPEN_LINKED,
-    IS_PHOTO_EXPANDED,
+    IS_PHOTO_EtwitterPANDED,
     IS_PROFILE_CLICKED,
     IS_QUOTED,
     IS_REPLIED,
@@ -418,7 +418,7 @@ object CombinedFeatures {
     IS_CLICKED,
     IS_DWELLED,
     IS_OPEN_LINKED,
-    IS_PHOTO_EXPANDED,
+    IS_PHOTO_EtwitterPANDED,
     IS_PROFILE_CLICKED,
     IS_QUOTED,
     IS_VIDEO_PLAYBACK_50,
@@ -432,7 +432,7 @@ object CombinedFeatures {
   val PrivateEngagementsV2: Set[Feature[JBoolean]] = Set(
     IS_CLICKED,
     IS_OPEN_LINKED,
-    IS_PHOTO_EXPANDED,
+    IS_PHOTO_EtwitterPANDED,
     IS_PROFILE_CLICKED,
     IS_VIDEO_PLAYBACK_50,
     IS_VIDEO_QUALITY_VIEWED
@@ -451,7 +451,7 @@ object CombinedFeatures {
   val PrivateCoreEngagements: Set[Feature[JBoolean]] = Set(
     IS_CLICKED,
     IS_OPEN_LINKED,
-    IS_PHOTO_EXPANDED,
+    IS_PHOTO_EtwitterPANDED,
     IS_VIDEO_PLAYBACK_50,
     IS_VIDEO_QUALITY_VIEWED
   )
@@ -500,7 +500,7 @@ object CombinedFeatures {
   val UserAuthorEngagements: Set[Feature[JBoolean]] = CoreEngagements ++ DwellEngagements ++ Set(
     IS_CLICKED,
     IS_PROFILE_CLICKED,
-    IS_PHOTO_EXPANDED,
+    IS_PHOTO_EtwitterPANDED,
     IS_VIDEO_PLAYBACK_50,
     IS_NEGATIVE_FEEDBACK_UNION
   )
@@ -522,7 +522,7 @@ object CombinedFeatures {
     IS_SHARE_DM_CLICKED
   )
 
-  val ExplicitPositiveEngagements: Set[Feature[JBoolean]] = CoreEngagements ++ Set(
+  val EtwitterplicitPositiveEngagements: Set[Feature[JBoolean]] = CoreEngagements ++ Set(
     IS_FOLLOWED,
     IS_QUOTED
   )

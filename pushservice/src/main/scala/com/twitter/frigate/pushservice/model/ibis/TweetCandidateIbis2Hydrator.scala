@@ -6,17 +6,17 @@ import com.twitter.frigate.common.base.TweetCandidate
 import com.twitter.frigate.common.base.TweetDetails
 import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
 import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
-import com.twitter.frigate.pushservice.params.SubtextForAndroidPushHeader
+import com.twitter.frigate.pushservice.params.SubtetwittertForAndroidPushHeader
 import com.twitter.frigate.pushservice.params.{PushFeatureSwitchParams => FS}
 import com.twitter.frigate.pushservice.util.CopyUtil
-import com.twitter.frigate.pushservice.util.EmailLandingPageExperimentUtil
+import com.twitter.frigate.pushservice.util.EmailLandingPageEtwitterperimentUtil
 import com.twitter.frigate.pushservice.util.InlineActionUtil
 import com.twitter.frigate.pushservice.util.PushToHomeUtil
 import com.twitter.frigate.pushservice.util.PushIbisUtil.mergeFutModelValues
 import com.twitter.util.Future
 
 trait TweetCandidateIbis2Hydrator
-    extends Ibis2HydratorForCandidate
+    etwittertends Ibis2HydratorForCandidate
     with InlineActionIbis2Hydrator
     with CustomConfigurationMapForIbis {
   self: PushCandidate with TweetCandidate with TweetDetails with TweetAuthorDetails =>
@@ -37,7 +37,7 @@ trait TweetCandidateIbis2Hydrator
 
   lazy val otherModelValues: Map[String, String] =
     Map(
-      "show_explanatory_text" -> "true",
+      "show_etwitterplanatory_tetwittert" -> "true",
       "show_negative_feedback" -> "true"
     )
 
@@ -64,7 +64,7 @@ trait TweetCandidateIbis2Hydrator
       PushToHomeUtil.getIbis2ModelValue(deviceInfoOpt, target, scopedStats) match {
         case Some(pushToHomeModelValues) => pushToHomeModelValues
         case _ =>
-          EmailLandingPageExperimentUtil.getIbis2ModelValue(
+          EmailLandingPageEtwitterperimentUtil.getIbis2ModelValue(
             deviceInfoOpt,
             target,
             tweetId
@@ -100,7 +100,7 @@ trait TweetCandidateIbis2Hydrator
   private def getVerifiedSymbolModelValue: Future[Map[String, String]] = {
     self.tweetAuthor.map {
       case Some(author) =>
-        if (author.safety.exists(_.verified)) {
+        if (author.safety.etwitterists(_.verified)) {
           scopedStats.counter("is_verified").incr()
           if (target.params(FS.EnablePushPresentationVerifiedSymbol)) {
             scopedStats.counter("is_verified_and_add").incr()
@@ -119,20 +119,20 @@ trait TweetCandidateIbis2Hydrator
     }
   }
 
-  private def subtextAndroidPushHeader: Map[String, String] = {
-    self.target.params(PushFeatureSwitchParams.SubtextInAndroidPushHeaderParam) match {
-      case SubtextForAndroidPushHeader.None =>
+  private def subtetwittertAndroidPushHeader: Map[String, String] = {
+    self.target.params(PushFeatureSwitchParams.SubtetwittertInAndroidPushHeaderParam) match {
+      case SubtetwittertForAndroidPushHeader.None =>
         Map.empty
-      case SubtextForAndroidPushHeader.TargetHandler =>
-        Map("subtext_target_handler" -> "true")
-      case SubtextForAndroidPushHeader.TargetTagHandler =>
-        Map("subtext_target_tag_handler" -> "true")
-      case SubtextForAndroidPushHeader.TargetName =>
-        Map("subtext_target_name" -> "true")
-      case SubtextForAndroidPushHeader.AuthorTagHandler =>
-        Map("subtext_author_tag_handler" -> "true")
-      case SubtextForAndroidPushHeader.AuthorName =>
-        Map("subtext_author_name" -> "true")
+      case SubtetwittertForAndroidPushHeader.TargetHandler =>
+        Map("subtetwittert_target_handler" -> "true")
+      case SubtetwittertForAndroidPushHeader.TargetTagHandler =>
+        Map("subtetwittert_target_tag_handler" -> "true")
+      case SubtetwittertForAndroidPushHeader.TargetName =>
+        Map("subtetwittert_target_name" -> "true")
+      case SubtetwittertForAndroidPushHeader.AuthorTagHandler =>
+        Map("subtetwittert_author_tag_handler" -> "true")
+      case SubtetwittertForAndroidPushHeader.AuthorName =>
+        Map("subtetwittert_author_name" -> "true")
       case _ =>
         Map.empty
     }
@@ -151,7 +151,7 @@ trait TweetCandidateIbis2Hydrator
       verifiedSymbolModelValue <- getVerifiedSymbolModelValue
     } yield {
       superModelValues ++ copyFeaturesModelValues ++
-        verifiedSymbolModelValue ++ subtextAndroidPushHeader ++ bodyPushMap
+        verifiedSymbolModelValue ++ subtetwittertAndroidPushHeader ++ bodyPushMap
     }
 
   override lazy val senderId: Option[Long] = authorId

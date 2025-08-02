@@ -4,22 +4,22 @@ package handler
 import com.twitter.servo.util.FutureArrow
 import com.twitter.tweetypie.backends.LimiterService
 import com.twitter.tweetypie.core.TweetCreateFailure
-import com.twitter.tweetypie.thriftscala.TweetCreateState.RateLimitExceeded
+import com.twitter.tweetypie.thriftscala.TweetCreateState.RateLimitEtwitterceeded
 
 object RateLimitChecker {
   type Dark = Boolean
   type GetRemaining = FutureArrow[(UserId, Dark), Int]
   type Validate = FutureArrow[(UserId, Dark), Unit]
 
-  def getMaxMediaTags(minRemaining: LimiterService.MinRemaining, maxMediaTags: Int): GetRemaining =
+  def getMatwitterMediaTags(minRemaining: LimiterService.MinRemaining, matwitterMediaTags: Int): GetRemaining =
     FutureArrow {
       case (userId, dark) =>
-        if (dark) Future.value(maxMediaTags)
+        if (dark) Future.value(matwitterMediaTags)
         else {
           val contributorUserId = getContributor(userId).map(_.userId)
           minRemaining(userId, contributorUserId)
-            .map(_.min(maxMediaTags))
-            .handle { case _ => maxMediaTags }
+            .map(_.min(matwitterMediaTags))
+            .handle { case _ => matwitterMediaTags }
         }
     }
 
@@ -28,7 +28,7 @@ object RateLimitChecker {
     featureStats: StatsReceiver,
     rateLimitEnabled: () => Boolean
   ): Validate = {
-    val exceededCounter = featureStats.counter("exceeded")
+    val etwitterceededCounter = featureStats.counter("etwitterceeded")
     val checkedCounter = featureStats.counter("checked")
     FutureArrow {
       case (userId, dark) =>
@@ -39,8 +39,8 @@ object RateLimitChecker {
           val contributorUserId = getContributor(userId).map(_.userId)
           hasRemaining(userId, contributorUserId).map {
             case false =>
-              exceededCounter.incr()
-              throw TweetCreateFailure.State(RateLimitExceeded)
+              etwitterceededCounter.incr()
+              throw TweetCreateFailure.State(RateLimitEtwitterceeded)
             case _ => ()
           }
         }

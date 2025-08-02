@@ -16,15 +16,15 @@ import com.twitter.usersignalservice.thriftscala.Signal
 import com.twitter.usersignalservice.thriftscala.SignalType
 import com.twitter.util.Future
 import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 case class NotificationOpenAndClickFetcher @Inject() (
   stratoClient: Client,
   timer: Timer,
   stats: StatsReceiver)
-    extends BaseSignalFetcher {
+    etwittertends BaseSignalFetcher {
   import NotificationOpenAndClickFetcher._
 
   override type RawSignalType = ClientEngagementEvent
@@ -71,7 +71,7 @@ case class NotificationOpenAndClickFetcher @Inject() (
   ): Future[Option[Seq[Signal]]] = {
     rawSignals.map {
       _.map {
-        _.take(query.maxResults.getOrElse(Int.MaxValue)).map { clientEngagementEvent =>
+        _.take(query.matwitterResults.getOrElse(Int.MatwitterValue)).map { clientEngagementEvent =>
           Signal(
             SignalType.NotificationOpenAndClickV1,
             timestamp = clientEngagementEvent.timestampMillis,

@@ -1,0 +1,27 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    scalac_plugins = ["no-roomba"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/decorator/urt",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/model/candidate",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/premarshaller/urt/builder",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/premarshaller",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/selector",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/common/presentation/urt",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/marshalling/response/urt",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/marshalling/response/urt/item",
+    ],
+    etwitterports = [
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/decorator/urt",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/model/candidate",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/premarshaller/urt/builder",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/premarshaller",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/selector",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/marshalling/response/urt",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/marshalling/response/urt/item",
+    ],
+)

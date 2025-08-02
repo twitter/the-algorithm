@@ -14,11 +14,11 @@ object CacheStitch {
    * None signifies that this value should not be written to cache.
    *
    * Val can be one of Found[V], NotFound, and Deleted. The function will determine what kinds
-   * of values and exceptions (captured in the Try) correspond to which kind of cached values.
+   * of values and etwitterceptions (captured in the Try) correspond to which kind of cached values.
    */
   type Cacheable[Q, V] = (Q, Try[V]) => Option[StitchLockingCache.Val[V]]
 
-  // Cache successful values as Found, stitch.NotFound as NotFound, and don't cache other exceptions
+  // Cache successful values as Found, stitch.NotFound as NotFound, and don't cache other etwitterceptions
   def cacheFoundAndNotFound[K, V]: CacheStitch.Cacheable[K, V] =
     (_, t: Try[V]) =>
       t match {
@@ -28,7 +28,7 @@ object CacheStitch {
         // Write stitch.NotFound as NotFound
         case Throw(com.twitter.stitch.NotFound) => Some(StitchLockingCache.Val.NotFound)
 
-        // Don't write other exceptions back to cache
+        // Don't write other etwitterceptions back to cache
         case _ => None
       }
 }
@@ -39,7 +39,7 @@ case class CacheStitch[Q, K, V](
   queryToKey: Q => K,
   handler: CachedResult.Handler[K, V],
   cacheable: CacheStitch.Cacheable[Q, V])
-    extends (Q => Stitch[V]) {
+    etwittertends (Q => Stitch[V]) {
   import com.twitter.servo.repository.CachedResultAction._
 
   private[this] def getFromCache(key: K): Stitch[CachedResult[K, V]] = {
@@ -50,7 +50,7 @@ case class CacheStitch[Q, K, V](
       }
   }
 
-  // Exposed for testing
+  // Etwitterposed for testing
   private[repository] def readThrough(query: Q): Stitch[V] =
     repo(query).liftToTry.applyEffect { value: Try[V] =>
       cacheable(query, value) match {
@@ -59,7 +59,7 @@ case class CacheStitch[Q, K, V](
           //
           // This is async to ensure that we don't wait for the cache
           // update to complete before returning. This also ignores
-          // any exceptions from setting the value.
+          // any etwitterceptions from setting the value.
           Stitch.async(cache.lockAndSet(queryToKey(query), v))
         case None =>
           // cacheable returned None so don't cache
@@ -72,10 +72,10 @@ case class CacheStitch[Q, K, V](
       case HandleAsFound(value) => Stitch(value)
       case HandleAsMiss => readThrough(query)
       case HandleAsDoNotCache => repo(query)
-      case HandleAsFailed(t) => Stitch.exception(t)
+      case HandleAsFailed(t) => Stitch.etwitterception(t)
       case HandleAsNotFound => Stitch.NotFound
       case t: TransformSubAction[V] => handle(query, t.action).map(t.f)
-      case SoftExpiration(subAction) =>
+      case SoftEtwitterpiration(subAction) =>
         Stitch
           .async(readThrough(query))
           .flatMap { _ => handle(query, subAction) }

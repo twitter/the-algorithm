@@ -7,7 +7,7 @@ import com.twitter.follow_recommendations.services.UserScoringService
 import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
 import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService._
 import com.twitter.stitch.Stitch
-import javax.inject.Inject
+import javatwitter.inject.Inject
 
 class ThriftController @Inject() (
   userScoringService: UserScoringService,
@@ -15,12 +15,12 @@ class ThriftController @Inject() (
   scoringUserRequestBuilder: ScoringUserRequestBuilder,
   productPipelineSelector: ProductPipelineSelector,
   paramsFactory: ParamsFactory)
-    extends Controller(FollowRecommendationsThriftService) {
+    etwittertends Controller(FollowRecommendationsThriftService) {
 
   handle(GetRecommendations) { args: GetRecommendations.Args =>
     val stitch = recommendationRequestBuilder.fromThrift(args.request).flatMap { request =>
       val params = paramsFactory(
-        request.clientContext,
+        request.clientContetwittert,
         request.displayLocation,
         request.debugParams.flatMap(_.featureOverrides).getOrElse(Map.empty))
       productPipelineSelector.selectPipeline(request, params).map(_.toThrift)
@@ -31,7 +31,7 @@ class ThriftController @Inject() (
   handle(ScoreUserCandidates) { args: ScoreUserCandidates.Args =>
     val stitch = scoringUserRequestBuilder.fromThrift(args.request).flatMap { request =>
       val params = paramsFactory(
-        request.clientContext,
+        request.clientContetwittert,
         request.displayLocation,
         request.debugParams.flatMap(_.featureOverrides).getOrElse(Map.empty))
       userScoringService.get(request.copy(params = params)).map(_.toThrift)

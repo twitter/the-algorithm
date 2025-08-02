@@ -37,7 +37,7 @@ abstract class ActionBuilder[T <: Action] {
   def actionType: Class[_]
 
   val actionSeverity: Int
-  def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult
+  def build(evaluationContetwittert: EvaluationContetwittert, featureMap: Map[Feature[_], _]): RuleResult
 }
 
 object ActionBuilder {
@@ -47,13 +47,13 @@ object ActionBuilder {
   }
 }
 
-class ConstantActionBuilder[T <: Action](action: T) extends ActionBuilder[T] {
+class ConstantActionBuilder[T <: Action](action: T) etwittertends ActionBuilder[T] {
   private val result = RuleResult(action, Evaluated)
 
   def actionType: Class[_] = action.getClass
 
   override val actionSeverity = action.severity
-  def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult =
+  def build(evaluationContetwittert: EvaluationContetwittert, featureMap: Map[Feature[_], _]): RuleResult =
     result
 }
 
@@ -63,10 +63,10 @@ object ConstantActionBuilder {
 }
 
 abstract class Rule(val actionBuilder: ActionBuilder[_ <: Action], val condition: Condition)
-    extends WithGate {
+    etwittertends WithGate {
 
   import Rule._
-  def isExperimental: Boolean = false
+  def isEtwitterperimental: Boolean = false
 
   def actionSourceBuilder: Option[RuleActionSourceBuilder] = None
 
@@ -77,19 +77,19 @@ abstract class Rule(val actionBuilder: ActionBuilder[_ <: Action], val condition
   val optionalFeatureDependencies: Set[Feature[_]] = condition.optionalFeatures
 
   def preFilter(
-    evaluationContext: EvaluationContext,
+    evaluationContetwittert: EvaluationContetwittert,
     featureMap: Map[Feature[_], Any],
     abDecider: LoggingABDecider
   ): PreFilterResult =
-    condition.preFilter(evaluationContext, featureMap)
+    condition.preFilter(evaluationContetwittert, featureMap)
 
-  def actWhen(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): Boolean =
-    condition(evaluationContext, featureMap).asBoolean
+  def actWhen(evaluationContetwittert: EvaluationContetwittert, featureMap: Map[Feature[_], _]): Boolean =
+    condition(evaluationContetwittert, featureMap).asBoolean
 
   val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = None
 
   final def evaluate(
-    evaluationContext: EvaluationContext,
+    evaluationContetwittert: EvaluationContetwittert,
     featureMap: Map[Feature[_], _]
   ): RuleResult = {
     val missingFeatures = featureDependencies.filterNot(featureMap.contains)
@@ -97,20 +97,20 @@ abstract class Rule(val actionBuilder: ActionBuilder[_ <: Action], val condition
     if (missingFeatures.nonEmpty) {
       fallbackActionBuilder match {
         case Some(fallbackAction) =>
-          fallbackAction.build(evaluationContext, featureMap)
+          fallbackAction.build(evaluationContetwittert, featureMap)
         case None =>
           RuleResult(NotEvaluated, MissingFeature(missingFeatures))
       }
     } else {
       try {
-        val act = actWhen(evaluationContext, featureMap)
+        val act = actWhen(evaluationContetwittert, featureMap)
         if (!act) {
           EvaluatedRuleResult
-        } else if (shouldHoldback(evaluationContext)) {
+        } else if (shouldHoldback(evaluationContetwittert)) {
 
           HeldbackRuleResult
         } else {
-          actionBuilder.build(evaluationContext, featureMap)
+          actionBuilder.build(evaluationContetwittert, featureMap)
         }
       } catch {
         case t: Throwable =>
@@ -120,8 +120,8 @@ abstract class Rule(val actionBuilder: ActionBuilder[_ <: Action], val condition
   }
 }
 
-trait ExperimentalRule extends Rule {
-  override def isExperimental: Boolean = true
+trait EtwitterperimentalRule etwittertends Rule {
+  override def isEtwitterperimental: Boolean = true
 }
 
 object Rule {
@@ -135,10 +135,10 @@ object Rule {
 }
 
 abstract class RuleWithConstantAction(val action: Action, override val condition: Condition)
-    extends Rule(ActionBuilder(action), condition)
+    etwittertends Rule(ActionBuilder(action), condition)
 
 abstract class UserHasLabelRule(action: Action, userLabelValue: UserLabelValue)
-    extends RuleWithConstantAction(action, AuthorHasLabel(userLabelValue)) {
+    etwittertends RuleWithConstantAction(action, AuthorHasLabel(userLabelValue)) {
   override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
     UserSafetyLabelSourceBuilder(userLabelValue))
 }
@@ -147,7 +147,7 @@ abstract class ConditionWithUserLabelRule(
   action: Action,
   condition: Condition,
   userLabelValue: UserLabelValue)
-    extends Rule(
+    etwittertends Rule(
       ActionBuilder(action),
       And(NonAuthorViewer, AuthorHasLabel(userLabelValue), condition)) {
   override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
@@ -155,19 +155,19 @@ abstract class ConditionWithUserLabelRule(
 }
 
 abstract class WhenAuthorUserLabelPresentRule(action: Action, userLabelValue: UserLabelValue)
-    extends ConditionWithUserLabelRule(action, Condition.True, userLabelValue)
+    etwittertends ConditionWithUserLabelRule(action, Condition.True, userLabelValue)
 
 abstract class ConditionWithNotInnerCircleOfFriendsRule(
   action: Action,
   condition: Condition)
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       action,
       And(Not(DoesHaveInnerCircleOfFriendsRelationship), condition))
 
 abstract class AuthorLabelWithNotInnerCircleOfFriendsRule(
   action: Action,
   userLabelValue: UserLabelValue)
-    extends ConditionWithNotInnerCircleOfFriendsRule(
+    etwittertends ConditionWithNotInnerCircleOfFriendsRule(
       action,
       AuthorHasLabel(userLabelValue)
     ) {
@@ -176,21 +176,21 @@ abstract class AuthorLabelWithNotInnerCircleOfFriendsRule(
 }
 
 abstract class OnlyWhenNotAuthorViewerRule(action: Action, condition: Condition)
-    extends RuleWithConstantAction(action, And(NonAuthorViewer, condition))
+    etwittertends RuleWithConstantAction(action, And(NonAuthorViewer, condition))
 
 abstract class AuthorLabelAndNonFollowerViewerRule(action: Action, userLabelValue: UserLabelValue)
-    extends ConditionWithUserLabelRule(action, LoggedOutOrViewerNotFollowingAuthor, userLabelValue)
+    etwittertends ConditionWithUserLabelRule(action, LoggedOutOrViewerNotFollowingAuthor, userLabelValue)
 
-abstract class AlwaysActRule(action: Action) extends Rule(ActionBuilder(action), Condition.True)
+abstract class AlwaysActRule(action: Action) etwittertends Rule(ActionBuilder(action), Condition.True)
 
 abstract class ViewerOptInBlockingOnSearchRule(action: Action, condition: Condition)
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       action,
       And(condition, ViewerOptInBlockingOnSearch)
     )
 
 abstract class ViewerOptInFilteringOnSearchRule(action: Action, condition: Condition)
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       action,
       And(condition, ViewerOptInFilteringOnSearch)
     )
@@ -199,14 +199,14 @@ abstract class ViewerOptInFilteringOnSearchUserLabelRule(
   action: Action,
   userLabelValue: UserLabelValue,
   prerequisiteCondition: Condition = True)
-    extends ConditionWithUserLabelRule(
+    etwittertends ConditionWithUserLabelRule(
       action,
       And(prerequisiteCondition, LoggedOutOrViewerOptInFiltering),
       userLabelValue
     )
 
 abstract class LikelyIvsLabelNonFollowerDropRule
-    extends AuthorLabelAndNonFollowerViewerRule(
+    etwittertends AuthorLabelAndNonFollowerViewerRule(
       Drop(Unspecified),
       LikelyIvs
     ) {

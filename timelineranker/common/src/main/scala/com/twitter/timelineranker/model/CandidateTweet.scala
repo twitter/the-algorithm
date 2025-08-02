@@ -10,10 +10,10 @@ object CandidateTweet {
 
   def fromThrift(candidate: thrift.CandidateTweet): CandidateTweet = {
     val tweet: thriftscala.Tweet = candidate.tweet.getOrElse(
-      throw new IllegalArgumentException(s"CandidateTweet.tweet must have a value")
+      throw new IllegalArgumentEtwitterception(s"CandidateTweet.tweet must have a value")
     )
     val features = candidate.features.getOrElse(
-      throw new IllegalArgumentException(s"CandidateTweet.features must have a value")
+      throw new IllegalArgumentEtwitterception(s"CandidateTweet.features must have a value")
     )
 
     CandidateTweet(HydratedTweet(tweet), features)

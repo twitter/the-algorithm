@@ -3,7 +3,7 @@ package com.twitter.search.common.util.earlybird;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.EtwitterecutionEtwitterception;
 
 import com.google.common.base.Preconditions;
 import com.google.common.cache.LoadingCache;
@@ -29,33 +29,33 @@ import com.twitter.search.earlybird.thrift.ThriftTweetSource;
 public final class EarlybirdResponseMergeUtil {
   private static final Logger LOG = LoggerFactory.getLogger(EarlybirdResponseMergeUtil.class);
 
-  private static final String INVALID_RESPONSE_STATS_PREFIX = "invalid_response_stats_";
+  private static final String INVALID_RESPONSE_STATS_PREFItwitter = "invalid_response_stats_";
 
   // Stats for invalid earlybird response
-  private static final ImmutableMap<EarlybirdResponseCode, SearchCounter> ERROR_EXCEPTIONS;
+  private static final ImmutableMap<EarlybirdResponseCode, SearchCounter> ERROR_EtwitterCEPTIONS;
 
   public static final SearchCounter NULL_RESPONSE_COUNTER =
-      SearchCounter.export(INVALID_RESPONSE_STATS_PREFIX + "null_response");
+      SearchCounter.etwitterport(INVALID_RESPONSE_STATS_PREFItwitter + "null_response");
   public static final SearchCounter SEARCH_RESULTS_NOT_SET_COUNTER =
-      SearchCounter.export(INVALID_RESPONSE_STATS_PREFIX + "search_results_not_set");
+      SearchCounter.etwitterport(INVALID_RESPONSE_STATS_PREFItwitter + "search_results_not_set");
   public static final SearchCounter SEARCH_RESULTS_WITH_RESULTS_NOT_SET_COUNTER =
-      SearchCounter.export(INVALID_RESPONSE_STATS_PREFIX + "search_results_with_results_not_set");
-  public static final SearchCounter MAX_SEARCHED_STATUS_ID_NOT_SET_COUNTER =
-      SearchCounter.export(INVALID_RESPONSE_STATS_PREFIX + "max_searched_status_id_not_set");
+      SearchCounter.etwitterport(INVALID_RESPONSE_STATS_PREFItwitter + "search_results_with_results_not_set");
+  public static final SearchCounter MAtwitter_SEARCHED_STATUS_ID_NOT_SET_COUNTER =
+      SearchCounter.etwitterport(INVALID_RESPONSE_STATS_PREFItwitter + "matwitter_searched_status_id_not_set");
   public static final SearchCounter MIN_SEARCHED_STATUS_ID_NOT_SET_COUNTER =
-      SearchCounter.export(INVALID_RESPONSE_STATS_PREFIX + "min_searched_status_id_not_set");
+      SearchCounter.etwitterport(INVALID_RESPONSE_STATS_PREFItwitter + "min_searched_status_id_not_set");
 
   static {
     ImmutableMap.Builder<EarlybirdResponseCode, SearchCounter> builder = ImmutableMap.builder();
 
     for (EarlybirdResponseCode responseCode : EarlybirdResponseCode.values()) {
       if (responseCode != EarlybirdResponseCode.SUCCESS) {
-        builder.put(responseCode, SearchCounter.export(
-            INVALID_RESPONSE_STATS_PREFIX + responseCode.name().toLowerCase()));
+        builder.put(responseCode, SearchCounter.etwitterport(
+            INVALID_RESPONSE_STATS_PREFItwitter + responseCode.name().toLowerCase()));
       }
     }
 
-    ERROR_EXCEPTIONS = builder.build();
+    ERROR_EtwitterCEPTIONS = builder.build();
   }
 
   private EarlybirdResponseMergeUtil() {
@@ -128,7 +128,7 @@ public final class EarlybirdResponseMergeUtil {
         if (source1 != null && source2 != null) {
           try {
             dupsStats.get(Pair.of(source1, source2)).increment();
-          } catch (ExecutionException e) {
+          } catch (EtwitterecutionEtwitterception e) {
             LOG.warn("Could not increment stat for duplicate results from clusters " + source1
                 + " and " + source2, e);
           }
@@ -178,8 +178,8 @@ public final class EarlybirdResponseMergeUtil {
       SEARCH_RESULTS_WITH_RESULTS_NOT_SET_COUNTER.increment();
     }
 
-    // In earlybird, when earlybird terminated, e.g., time out, complex queries - we don't set the
-    // min/max  searched status id.
+    // In earlybird, when earlybird terminated, e.g., time out, completwitter queries - we don't set the
+    // min/matwitter  searched status id.
     boolean isEarlyTerminated = response.isSetEarlyTerminationInfo()
         && response.getEarlyTerminationInfo().isEarlyTerminated();
 
@@ -187,8 +187,8 @@ public final class EarlybirdResponseMergeUtil {
       MIN_SEARCHED_STATUS_ID_NOT_SET_COUNTER.increment();
     }
 
-    if (!isEarlyTerminated && !response.getSearchResults().isSetMaxSearchedStatusID()) {
-      MAX_SEARCHED_STATUS_ID_NOT_SET_COUNTER.increment();
+    if (!isEarlyTerminated && !response.getSearchResults().isSetMatwitterSearchedStatusID()) {
+      MAtwitter_SEARCHED_STATUS_ID_NOT_SET_COUNTER.increment();
     }
 
     return true;
@@ -209,19 +209,19 @@ public final class EarlybirdResponseMergeUtil {
     EarlybirdResponseCode responseCode = response.getResponseCode();
     switch (responseCode) {
       case TIER_SKIPPED:
-        ERROR_EXCEPTIONS.get(responseCode).increment();
+        ERROR_EtwitterCEPTIONS.get(responseCode).increment();
         return response;
       case REQUEST_BLOCKED_ERROR:
       case CLIENT_ERROR:
       case SERVER_TIMEOUT_ERROR:
-      case QUOTA_EXCEEDED_ERROR:
+      case QUOTA_EtwitterCEEDED_ERROR:
       case CLIENT_CANCEL_ERROR:
       case TOO_MANY_PARTITIONS_FAILED_ERROR:
-        ERROR_EXCEPTIONS.get(responseCode).increment();
+        ERROR_EtwitterCEPTIONS.get(responseCode).increment();
         newResponseCode = responseCode;
         break;
       default:
-        ERROR_EXCEPTIONS.get(responseCode).increment();
+        ERROR_EtwitterCEPTIONS.get(responseCode).increment();
         newResponseCode = EarlybirdResponseCode.PERSISTENT_ERROR;
     }
 
@@ -253,7 +253,7 @@ public final class EarlybirdResponseMergeUtil {
     if (searchQuery.getRankingMode() != ThriftSearchRankingMode.RECENCY
         && searchQuery.isSetRelevanceOptions()
         && searchQuery.getRelevanceOptions().isReturnAllResults()) {
-      return Integer.MAX_VALUE;
+      return Integer.MAtwitter_VALUE;
     }
 
     if (request.isSetNumResultsToReturnAtRoot()) {

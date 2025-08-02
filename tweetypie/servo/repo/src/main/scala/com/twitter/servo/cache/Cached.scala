@@ -22,7 +22,7 @@ object Cached {
    * at 0, we will apply the serializer directly to the backing array for performance reasons.
    *
    * As such, the `Serializer[V]` the caller provides MUST NOT mutate the buffer it is given.
-   * This exhortation is also given in com.twitter.servo.util.Transformer, but repeated here.
+   * This etwitterhortation is also given in com.twitter.servo.util.Transformer, but repeated here.
    */
   def apply[V](cachedValue: CachedValue, serializer: Serializer[V]): Cached[V] = {
     val value: Option[V] = cachedValue.value match {
@@ -102,7 +102,7 @@ case class Cached[V](
    * Resolves conflicts between a value being inserted into cache and a value already in cache by
    * using the time a cached value was last updated.
    * If the cached value has a writtenThroughAt, returns it. Otherwise returns readThroughAt, but
-   * if that doesn't exist, returns cachedAt.
+   * if that doesn't etwitterist, returns cachedAt.
    * This makes it favor writes to reads in the event of a race condition.
    */
   def effectiveUpdateTime[V](writtenThroughBuffer: Duration = 0.second): Time = {
@@ -125,7 +125,7 @@ class DeciderablePicker[V](
   secondaryPicker: LockingCache.Picker[Cached[V]],
   usePrimary: Gate[Unit],
   statsReceiver: StatsReceiver)
-    extends LockingCache.Picker[Cached[V]] {
+    etwittertends LockingCache.Picker[Cached[V]] {
   private[this] val stats = statsReceiver.scope("deciderable_picker")
   private[this] val pickerScope = stats.scope("picker")
   private[this] val primaryPickerCount = pickerScope.counter("primary")
@@ -158,7 +158,7 @@ class DeciderablePicker[V](
 
 /**
  * It's similar to the PreferNewestCached picker, but it prefers written-through value
- * over read-through as long as written-through value + writtenThroughExtra is
+ * over read-through as long as written-through value + writtenThroughEtwittertra is
  * newer than read-through value. Same as in PreferNewestCached, if values cached
  * have the same cached method and time picker picks the new value.
  *
@@ -171,7 +171,7 @@ class DeciderablePicker[V](
  */
 class PreferWrittenThroughCached[V](
   writtenThroughBuffer: Duration = 1.second)
-    extends PreferNewestCached[V] {
+    etwittertends PreferNewestCached[V] {
   override def apply(newValue: Cached[V], oldValue: Cached[V]): Option[Cached[V]] = {
     // the tie goes to newValue
     if (oldValue.effectiveUpdateTime(writtenThroughBuffer) > newValue.effectiveUpdateTime(
@@ -186,7 +186,7 @@ class PreferWrittenThroughCached[V](
 /**
  * prefer one value over another based on Cached metadata
  */
-class PreferNewestCached[V] extends LockingCache.Picker[Cached[V]] {
+class PreferNewestCached[V] etwittertends LockingCache.Picker[Cached[V]] {
 
   override def apply(newValue: Cached[V], oldValue: Cached[V]): Option[Cached[V]] = {
     if (oldValue.effectiveUpdateTime() > newValue.effectiveUpdateTime())
@@ -203,7 +203,7 @@ class PreferNewestCached[V] extends LockingCache.Picker[Cached[V]] {
  * value to store is empty, return the non-empty value with a fresh cachedAt
  * instead.
  */
-class PreferNewestNonEmptyCached[V] extends PreferNewestCached[V] {
+class PreferNewestNonEmptyCached[V] etwittertends PreferNewestCached[V] {
   override def apply(newValue: Cached[V], oldValue: Cached[V]) = {
     (newValue.value, oldValue.value) match {
       // Some/Some and None/None cases are handled by the super class
@@ -216,14 +216,14 @@ class PreferNewestNonEmptyCached[V] extends PreferNewestCached[V] {
 }
 
 /**
- * Prefer do not cache entries if they're not expired. Otherwise uses fallbackPicker
- * @param fallBackPicker the picker to use when the oldvalue isn't do not cache or is expired.
+ * Prefer do not cache entries if they're not etwitterpired. Otherwise uses fallbackPicker
+ * @param fallBackPicker the picker to use when the oldvalue isn't do not cache or is etwitterpired.
  *                       Defaults to PreferNewestCache.
  */
 class PreferDoNotCache[V](
   fallBackPicker: LockingCache.Picker[Cached[V]] = new PreferNewestCached[V]: PreferNewestCached[V],
   statsReceiver: StatsReceiver)
-    extends LockingCache.Picker[Cached[V]] {
+    etwittertends LockingCache.Picker[Cached[V]] {
   private[this] val pickDoNotCacheEntryCounter = statsReceiver.counter("pick_do_not_cache_entry")
   private[this] val useFallbackCounter = statsReceiver.counter("use_fallback")
   override def apply(newValue: Cached[V], oldValue: Cached[V]): Option[Cached[V]] = {
@@ -242,7 +242,7 @@ class PreferDoNotCache[V](
  * A Transformer of Cached values composed of a Transformer of the underlying values.
  */
 class CachedTransformer[A, B](underlying: Transformer[A, B])
-    extends Transformer[Cached[A], Cached[B]] {
+    etwittertends Transformer[Cached[A], Cached[B]] {
   def to(cachedA: Cached[A]) = cachedA.value match {
     case None => Return(cachedA.copy(value = None))
     case Some(a) =>

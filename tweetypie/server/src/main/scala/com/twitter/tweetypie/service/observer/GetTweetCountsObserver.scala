@@ -2,15 +2,15 @@ package com.twitter.tweetypie
 package service
 package observer
 
-import com.twitter.servo.exception.thriftscala.ClientError
+import com.twitter.servo.etwitterception.thriftscala.ClientError
 import com.twitter.snowflake.id.SnowflakeId
 import com.twitter.tweetypie.thriftscala.GetTweetCountsRequest
 import com.twitter.tweetypie.thriftscala.GetTweetCountsResult
 
 private[service] object GetTweetCountsObserver {
-  type Type = ObserveExchange[GetTweetCountsRequest, Seq[GetTweetCountsResult]]
+  type Type = ObserveEtwitterchange[GetTweetCountsRequest, Seq[GetTweetCountsResult]]
 
-  def observeExchange(stats: StatsReceiver): Effect[Type] = {
+  def observeEtwitterchange(stats: StatsReceiver): Effect[Type] = {
     val resultStateStats = ResultStateStats(stats)
 
     Effect {

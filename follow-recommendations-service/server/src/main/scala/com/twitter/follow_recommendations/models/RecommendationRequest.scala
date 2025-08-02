@@ -1,28 +1,28 @@
 package com.twitter.follow_recommendations.models
 
-import com.twitter.follow_recommendations.common.models.ClientContextConverter
+import com.twitter.follow_recommendations.common.models.ClientContetwittertConverter
 import com.twitter.follow_recommendations.common.models.DisplayLocation
 import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
+import com.twitter.product_mitwitterer.core.model.marshalling.request.ClientContetwittert
 
 case class RecommendationRequest(
-  clientContext: ClientContext,
+  clientContetwittert: ClientContetwittert,
   displayLocation: DisplayLocation,
-  displayContext: Option[DisplayContext],
-  maxResults: Option[Int],
+  displayContetwittert: Option[DisplayContetwittert],
+  matwitterResults: Option[Int],
   cursor: Option[String],
-  excludedIds: Option[Seq[Long]],
+  etwittercludedIds: Option[Seq[Long]],
   fetchPromotedContent: Option[Boolean],
   debugParams: Option[DebugParams] = None,
   userLocationState: Option[String] = None,
   isSoftUser: Boolean = false) {
   def toOfflineThrift: offline.OfflineRecommendationRequest = offline.OfflineRecommendationRequest(
-    ClientContextConverter.toFRSOfflineClientContextThrift(clientContext),
+    ClientContetwittertConverter.toFRSOfflineClientContetwittertThrift(clientContetwittert),
     displayLocation.toOfflineThrift,
-    displayContext.map(_.toOfflineThrift),
-    maxResults,
+    displayContetwittert.map(_.toOfflineThrift),
+    matwitterResults,
     cursor,
-    excludedIds,
+    etwittercludedIds,
     fetchPromotedContent,
     debugParams.map(DebugParams.toOfflineThrift)
   )

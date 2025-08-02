@@ -8,7 +8,7 @@ import com.twitter.unified_user_actions.thriftscala.CardInfo
 import com.twitter.unified_user_actions.thriftscala.Item
 
 abstract class BaseCardClientEvent(actionType: ActionType)
-    extends BaseClientEvent(actionType = actionType) {
+    etwittertends BaseClientEvent(actionType = actionType) {
 
   override def isItemTypeValid(itemTypeOpt: Option[ItemType]): Boolean =
     ItemTypeFilterPredicates.ignoreItemType(itemTypeOpt)

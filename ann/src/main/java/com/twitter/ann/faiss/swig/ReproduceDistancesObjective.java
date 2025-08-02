@@ -8,7 +8,7 @@
 
 package com.twitter.ann.faiss;
 
-public class ReproduceDistancesObjective extends PermutationObjective {
+public class ReproduceDistancesObjective etwittertends PermutationObjective {
   private transient long swigCPtr;
 
   protected ReproduceDistancesObjective(long cPtr, boolean cMemoryOwn) {
@@ -44,12 +44,12 @@ public class ReproduceDistancesObjective extends PermutationObjective {
     return swigfaissJNI.ReproduceDistancesObjective_dis_weight_factor_get(swigCPtr, this);
   }
 
-  public static double sqr(double x) {
-    return swigfaissJNI.ReproduceDistancesObjective_sqr(x);
+  public static double sqr(double twitter) {
+    return swigfaissJNI.ReproduceDistancesObjective_sqr(twitter);
   }
 
-  public double dis_weight(double x) {
-    return swigfaissJNI.ReproduceDistancesObjective_dis_weight(swigCPtr, this, x);
+  public double dis_weight(double twitter) {
+    return swigfaissJNI.ReproduceDistancesObjective_dis_weight(swigCPtr, this, twitter);
   }
 
   public void setSource_dis(DoubleVector value) {

@@ -13,7 +13,7 @@ import com.twitter.tweetypie.storage._
 import scala.util.control.NoStackTrace
 
 case class StorageGetTweetFailure(tweetId: TweetId, underlying: Throwable)
-    extends Exception(s"tweetId=$tweetId", underlying)
+    etwittertends Etwitterception(s"tweetId=$tweetId", underlying)
     with NoStackTrace
 
 object ManhattanTweetRepository {
@@ -42,7 +42,7 @@ object ManhattanTweetRepository {
         val currentClient =
           clientIdHelper.effectiveClientId.getOrElse(ClientIdHelper.UnknownClientId)
         logger.debug(s"likely_partial_tweet_read $tweetId $currentClient")
-        Stitch.exception(NotFound)
+        Stitch.etwitterception(NotFound)
       } else if (options.fetchStoredTweets) {
         getStoredTweet(tweetId).liftToTry.flatMap(handleGetStoredTweetResponse(tweetId, _))
       } else {
@@ -58,15 +58,15 @@ object ManhattanTweetRepository {
       case Return(GetTweet.Response.Found(tweet)) =>
         Stitch.value(TweetResult(TweetData(tweet = tweet), HydrationState.modified))
       case Return(GetTweet.Response.NotFound) =>
-        Stitch.exception(NotFound)
+        Stitch.etwitterception(NotFound)
       case Return(GetTweet.Response.Deleted) =>
-        Stitch.exception(FilteredState.Unavailable.TweetDeleted)
+        Stitch.etwitterception(FilteredState.Unavailable.TweetDeleted)
       case Return(_: GetTweet.Response.BounceDeleted) =>
-        Stitch.exception(FilteredState.Unavailable.BounceDeleted)
+        Stitch.etwitterception(FilteredState.Unavailable.BounceDeleted)
       case Throw(_: storage.RateLimited) =>
-        Stitch.exception(OverCapacity(s"Storage overcapacity, tweetId=$tweetId"))
+        Stitch.etwitterception(OverCapacity(s"Storage overcapacity, tweetId=$tweetId"))
       case Throw(e) =>
-        Stitch.exception(StorageGetTweetFailure(tweetId, e))
+        Stitch.etwitterception(StorageGetTweetFailure(tweetId, e))
     }
   }
 

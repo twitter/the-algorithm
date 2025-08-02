@@ -8,8 +8,8 @@ import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
 object UserUtil {
 
   /**
-   * placeholder for the destId when representing vertex features with no dest (eg create tweet)
-   * this will only be aggregated and saved in the vertex datasets but not the edge datasets
+   * placeholder for the destId when representing vertetwitter features with no dest (eg create tweet)
+   * this will only be aggregated and saved in the vertetwitter datasets but not the edge datasets
    */
   val DUMMY_USER_ID = -1L
   def getValidUsers(users: SCollection[CombinedUser]): SCollection[Long] = {
@@ -58,7 +58,7 @@ object UserUtil {
     input
       .withName("filter users by id")
       .keyBy(userIdMapping(_))
-      .leftOuterJoin[Long](usersToBeFiltered.map(x => (x, x)))
+      .leftOuterJoin[Long](usersToBeFiltered.map(twitter => (twitter, twitter)))
       .collect {
         // only return data if the key is not in the list of usersToBeFiltered
         case (_, (data, None)) => data

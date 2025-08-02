@@ -3,12 +3,12 @@ package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.follow_recommendations.common.rankers.common.RankerId
 import com.twitter.follow_recommendations.common.rankers.common.RankerId.RankerId
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class ScorerFactory @Inject() (
-  postnuxProdScorer: PostnuxDeepbirdProdScorer,
+  postnutwitterProdScorer: PostnutwitterDeepbirdProdScorer,
   randomScorer: RandomScorer,
   stats: StatsReceiver) {
 
@@ -27,12 +27,12 @@ class ScorerFactory @Inject() (
   }
 
   def getScorerById(scorerId: RankerId): Scorer = scorerId match {
-    case RankerId.PostNuxProdRanker =>
-      postnuxProdScorer
+    case RankerId.PostNutwitterProdRanker =>
+      postnutwitterProdScorer
     case RankerId.RandomRanker =>
       randomScorer
     case _ =>
       scorerStat.counter("invalid_scorer_type").incr()
-      throw new IllegalArgumentException("unknown_scorer_type")
+      throw new IllegalArgumentEtwitterception("unknown_scorer_type")
   }
 }

@@ -18,7 +18,7 @@ import com.twitter.notificationservice.thriftscala.GenericNotificationOverrideKe
 import com.twitter.storehaus.ReadableStore
 import com.twitter.util.Future
 
-object OverrideCandidate extends Enumeration {
+object OverrideCandidate etwittertends Enumeration {
   val One: String = "overrideEntry1"
 }
 
@@ -151,9 +151,9 @@ class NtabSender(
               nonEligibleOverrideTypes.contains(notification.commonRecommendationType)
           }
 
-        val maxNumUnreadEntries =
-          candidate.target.params(FSParams.OverrideNotificationsMaxCountForNTab)
-        if (overrideNotifs.nonEmpty && overrideNotifs.size >= maxNumUnreadEntries) {
+        val matwitterNumUnreadEntries =
+          candidate.target.params(FSParams.OverrideNotificationsMatwitterCountForNTab)
+        if (overrideNotifs.nonEmpty && overrideNotifs.size >= matwitterNumUnreadEntries) {
           val eligibleOverrideCandidateOpt = candidateEligibleForOverride(
             targetHistory,
             overrideNotifs

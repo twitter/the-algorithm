@@ -1,9 +1,9 @@
 package com.twitter.frigate.pushservice.store
 
-import com.twitter.context.TwitterContext
-import com.twitter.context.thriftscala.Viewer
+import com.twitter.contetwittert.TwitterContetwittert
+import com.twitter.contetwittert.thriftscala.Viewer
 import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.TwitterContextPermit
+import com.twitter.frigate.TwitterContetwittertPermit
 import com.twitter.frigate.pushservice.model.PushTypes.Target
 import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
 import com.twitter.frigate.pushservice.params.PushParams
@@ -27,7 +27,7 @@ object TweetTranslationStore {
     crt: CommonRecommendationType)
 
   case class Value(
-    translatedTweetText: String,
+    translatedTweetTetwittert: String,
     localizedSourceLanguage: String)
 
   val allowedCRTs = Set[CommonRecommendationType](
@@ -42,7 +42,7 @@ case class TweetTranslationStore(
   ],
   isTweetTranslatableStore: ReadableStore[IsTweetTranslatableClientColumn.Key, Boolean],
   statsReceiver: StatsReceiver)
-    extends ReadableStore[TweetTranslationStore.Key, TweetTranslationStore.Value]
+    etwittertends ReadableStore[TweetTranslationStore.Key, TweetTranslationStore.Value]
     with Logging {
 
   private val stats = statsReceiver.scope("tweetTranslationStore")
@@ -57,12 +57,12 @@ case class TweetTranslationStore(
   private val paramEnabledCounter = stats.counter("paramEnabled")
   private val paramDisabledCounter = stats.counter("paramDisabled")
 
-  private val twitterContext = TwitterContext(TwitterContextPermit)
+  private val twitterContetwittert = TwitterContetwittert(TwitterContetwittertPermit)
 
   override def get(k: TweetTranslationStore.Key): Future[Option[TweetTranslationStore.Value]] = {
     k.target.inferredUserDeviceLanguage.flatMap {
       case Some(deviceLanguage) =>
-        setTwitterContext(k.target, deviceLanguage) {
+        setTwitterContetwittert(k.target, deviceLanguage) {
           translateTweet(
             target = k.target,
             tweetId = k.tweetId,
@@ -73,7 +73,7 @@ case class TweetTranslationStore(
               response.translatorLocalizedSourceLanguage
                 .map { localizedSourceLanguage =>
                   TweetTranslationStore.Value(
-                    translatedTweetText = response.translation,
+                    translatedTweetTetwittert = response.translation,
                     localizedSourceLanguage = localizedSourceLanguage
                   )
                 }.filter { _ =>
@@ -87,7 +87,7 @@ case class TweetTranslationStore(
 
   }
 
-  // Don't sent protected tweets to external API for translation
+  // Don't sent protected tweets to etwitterternal API for translation
   private def checkProtectedUser(target: Target): Future[Boolean] = {
     target.targetUser.map(_.flatMap(_.safety).forall(_.isProtected)).onSuccess {
       case true => protectedUserCounter.incr()
@@ -103,7 +103,7 @@ case class TweetTranslationStore(
     deviceLanguage: String
   ): Future[Boolean] = {
     val tweetLangOpt = tweet.flatMap(_.language)
-    val isValidLanguage = tweetLangOpt.exists { tweetLang =>
+    val isValidLanguage = tweetLangOpt.etwitterists { tweetLang =>
       tweetLang.confidence > 0.5 &&
       tweetLang.language != deviceLanguage
     }
@@ -128,7 +128,7 @@ case class TweetTranslationStore(
             tweetId = tweetId,
             destinationLanguage = Some(deviceLanguage),
             translationSource = Some(TranslationSource.Google.name),
-            excludePreferredLanguages = Some(true)
+            etwittercludePreferredLanguages = Some(true)
           )
           isTweetTranslatableStore
             .get(isTweetTranslatableKey).map { resultOpt =>
@@ -186,19 +186,19 @@ case class TweetTranslationStore(
     }
   }
 
-  private def setTwitterContext[Rep](
+  private def setTwitterContetwittert[Rep](
     target: Target,
     deviceLanguage: String
   )(
     f: => Future[Rep]
   ): Future[Rep] = {
-    twitterContext() match {
+    twitterContetwittert() match {
       case Some(viewer) if viewer.userId.nonEmpty && viewer.authenticatedUserId.nonEmpty =>
-        // If the context is already setup with a user ID just use it
+        // If the contetwittert is already setup with a user ID just use it
         f
       case _ =>
-        // If not, create a new context containing the viewer user id
-        twitterContext.let(
+        // If not, create a new contetwittert containing the viewer user id
+        twitterContetwittert.let(
           Viewer(
             userId = Some(target.targetId),
             requestLanguageCode = Some(deviceLanguage),

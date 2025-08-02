@@ -16,7 +16,7 @@ case class Tweet(
   userId: Option[UserId] = None,
   sourceTweetId: Option[TweetId] = None,
   sourceUserId: Option[UserId] = None)
-    extends TimelineEntry {
+    etwittertends TimelineEntry {
 
   throwIfInvalid()
 

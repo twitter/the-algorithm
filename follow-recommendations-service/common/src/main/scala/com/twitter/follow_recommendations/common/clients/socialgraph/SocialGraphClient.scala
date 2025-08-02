@@ -10,7 +10,7 @@ import com.twitter.inject.Logging
 import com.twitter.socialgraph.thriftscala.EdgesRequest
 import com.twitter.socialgraph.thriftscala.IdsRequest
 import com.twitter.socialgraph.thriftscala.IdsResult
-import com.twitter.socialgraph.thriftscala.LookupContext
+import com.twitter.socialgraph.thriftscala.LookupContetwittert
 import com.twitter.socialgraph.thriftscala.OverCapacity
 import com.twitter.socialgraph.thriftscala.PageRequest
 import com.twitter.socialgraph.thriftscala.RelationshipType
@@ -23,14 +23,14 @@ import com.twitter.strato.generated.client.onboarding.socialGraphService.IdsClie
 import com.twitter.util.Duration
 import com.twitter.util.Time
 import java.nio.ByteBuffer
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 case class RecentEdgesQuery(
   userId: Long,
   relations: Seq[RelationshipType],
   // prefer to default value to better utilize the caching function of stitch
-  count: Option[Int] = Some(SocialGraphClient.MaxQuerySize),
+  count: Option[Int] = Some(SocialGraphClient.MatwitterQuerySize),
   performUnion: Boolean = true,
   recentEdgesWindowOpt: Option[Duration] = None,
   targets: Option[Seq[Long]] = None)
@@ -38,7 +38,7 @@ case class RecentEdgesQuery(
 case class EdgeRequestQuery(
   userId: Long,
   relation: RelationshipType,
-  count: Option[Int] = Some(SocialGraphClient.MaxQuerySize),
+  count: Option[Int] = Some(SocialGraphClient.MatwitterQuerySize),
   performUnion: Boolean = true,
   recentEdgesWindowOpt: Option[Duration] = None,
   targets: Option[Seq[Long]] = None)
@@ -48,7 +48,7 @@ class SocialGraphClient @Inject() (
   socialGraph: SocialGraph,
   idsClientColumn: IdsClientColumn,
   statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends Logging {
+    etwittertends Logging {
 
   private val stats = statsReceiver.scope(this.getClass.getSimpleName)
   private val cacheStats = stats.scope("cache")
@@ -64,7 +64,7 @@ class SocialGraphClient @Inject() (
   val sgsIdsFetcher: Fetcher[IdsRequest, Unit, IdsResult] = idsClientColumn.fetcher
 
   private val recentEdgesCache = StitchCache[RecentEdgesQuery, Seq[Long]](
-    maxCacheSize = SocialGraphClient.MaxCacheSize,
+    matwitterCacheSize = SocialGraphClient.MatwitterCacheSize,
     ttl = SocialGraphClient.CacheTTL,
     statsReceiver = cacheStats,
     underlyingCall = getRecentEdges
@@ -108,7 +108,7 @@ class SocialGraphClient @Inject() (
         )
       },
       pageRequest = Some(pageRequest),
-      context = Some(LookupContext(performUnion = Some(rq.performUnion)))
+      contetwittert = Some(LookupContetwittert(performUnion = Some(rq.performUnion)))
     )
 
     val socialGraphStitch = sgsIdsFetcher
@@ -123,7 +123,7 @@ class SocialGraphClient @Inject() (
           }.getOrElse(Seq.empty)
       }
       .rescue {
-        case e: Exception =>
+        case e: Etwitterception =>
           stats.counter(e.getClass.getSimpleName).incr()
           Stitch.Nil
       }
@@ -155,7 +155,7 @@ class SocialGraphClient @Inject() (
             )
           },
           pageRequest = Some(pageRequest),
-          context = Some(LookupContext(performUnion = Some(rq.performUnion)))
+          contetwittert = Some(LookupContetwittert(performUnion = Some(rq.performUnion)))
         )
       )
       .map { idsResult =>
@@ -196,7 +196,7 @@ class SocialGraphClient @Inject() (
             targets = rq.targets
           ),
           pageRequest = Some(pageRequest),
-          context = Some(LookupContext(performUnion = Some(rq.performUnion)))
+          contetwittert = Some(LookupContetwittert(performUnion = Some(rq.performUnion)))
         )
       )
       .map { edgesResult =>
@@ -225,7 +225,7 @@ class SocialGraphClient @Inject() (
     ByteBufferUtil.fromLong(cursorInLong)
   }
 
-  // notice that this is more expensive but more realtime than the GFS one
+  // notice that this is more etwitterpensive but more realtime than the GFS one
   def getIntersections(
     userId: Long,
     candidateIds: Seq[Long],
@@ -285,7 +285,7 @@ class SocialGraphClient @Inject() (
           }
       }).map(_.flatten.toMap)
       .rescue {
-        case e: Exception =>
+        case e: Etwitterception =>
           stats.counter(e.getClass.getSimpleName).incr()
           Stitch.value(Map.empty)
       }
@@ -297,26 +297,26 @@ class SocialGraphClient @Inject() (
 
   def getInvalidRelationshipUserIds(
     userId: Long,
-    maxNumRelationship: Int = SocialGraphClient.MaxNumInvalidRelationship
+    matwitterNumRelationship: Int = SocialGraphClient.MatwitterNumInvalidRelationship
   ): Stitch[Seq[Long]] = {
     getRecentEdges(
       RecentEdgesQuery(
         userId,
         SocialGraphClient.InvalidRelationshipTypes,
-        Some(maxNumRelationship)
+        Some(matwitterNumRelationship)
       )
     )
   }
 
   def getInvalidRelationshipUserIdsFromCachedColumn(
     userId: Long,
-    maxNumRelationship: Int = SocialGraphClient.MaxNumInvalidRelationship
+    matwitterNumRelationship: Int = SocialGraphClient.MatwitterNumInvalidRelationship
   ): Stitch[Seq[Long]] = {
     getRecentEdgesFromCachedColumn(
       RecentEdgesQuery(
         userId,
         SocialGraphClient.InvalidRelationshipTypes,
-        Some(maxNumRelationship)
+        Some(matwitterNumRelationship)
       )
     )
   }
@@ -382,10 +382,10 @@ class SocialGraphClient @Inject() (
 
 object SocialGraphClient {
 
-  val MaxQuerySize: Int = 500
-  val MaxCacheSize: Int = 5000000
+  val MatwitterQuerySize: Int = 500
+  val MatwitterCacheSize: Int = 5000000
   // Ref: src/thrift/com/twitter/socialgraph/social_graph_service.thrift
-  val MaxNumInvalidRelationship: Int = 5000
+  val MatwitterNumInvalidRelationship: Int = 5000
   val CacheTTL: Duration = Duration.fromHours(24)
 
   val InvalidRelationshipTypes: Seq[RelationshipType] = Seq(
@@ -416,6 +416,6 @@ object SocialGraphClient {
    * @return whether to enable post-ranker SGS predicate
    */
   def enablePostRankerSgsPredicate(numInvalidRelationshipUsers: Int): Boolean = {
-    numInvalidRelationshipUsers == 0 || numInvalidRelationshipUsers >= MaxNumInvalidRelationship
+    numInvalidRelationshipUsers == 0 || numInvalidRelationshipUsers >= MatwitterNumInvalidRelationship
   }
 }

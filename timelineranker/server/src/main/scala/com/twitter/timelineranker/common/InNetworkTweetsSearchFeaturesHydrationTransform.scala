@@ -6,7 +6,7 @@ import com.twitter.timelines.earlybird.common.utils.EarlybirdFeaturesHydrator
 import com.twitter.util.Future
 
 object InNetworkTweetsSearchFeaturesHydrationTransform
-    extends FutureArrow[
+    etwittertends FutureArrow[
       HydratedCandidatesAndFeaturesEnvelope,
       HydratedCandidatesAndFeaturesEnvelope
     ] {
@@ -25,7 +25,7 @@ object InNetworkTweetsSearchFeaturesHydrationTransform
             followedUserIds = followedIds,
             mutuallyFollowingUserIds = mutuallyFollowingIds,
             userLanguages = request.userLanguages,
-            uiLanguageCode = request.candidateEnvelope.query.deviceContext.flatMap(_.languageCode),
+            uiLanguageCode = request.candidateEnvelope.query.deviceContetwittert.flatMap(_.languageCode),
             searchResults = request.candidateEnvelope.searchResults,
             sourceTweetSearchResults = request.candidateEnvelope.sourceSearchResults,
             tweets = request.candidateEnvelope.hydratedTweets.outerTweets,

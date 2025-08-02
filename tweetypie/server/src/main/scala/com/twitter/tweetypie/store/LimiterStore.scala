@@ -4,7 +4,7 @@ package store
 import com.twitter.tweetypie.backends.LimiterService
 import com.twitter.tweetypie.thriftscala._
 
-trait LimiterStore extends TweetStoreBase[LimiterStore] with InsertTweet.Store {
+trait LimiterStore etwittertends TweetStoreBase[LimiterStore] with InsertTweet.Store {
   def wrap(w: TweetStore.Wrap): LimiterStore =
     new TweetStoreWrapper(w, this) with LimiterStore with InsertTweet.StoreWrapper
 }

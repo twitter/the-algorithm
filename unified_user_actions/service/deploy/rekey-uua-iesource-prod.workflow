@@ -12,7 +12,7 @@
     "dependencies": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
+        "name": "packer-client-no-petwitter",
         "version": "latest"
       }
     ],
@@ -39,8 +39,8 @@
           "key": "atla/discode/prod/rekey-uua-iesource"
         },
         {
-          "name": "rekey-uua-iesource-prod-pdxa",
-          "key": "pdxa/discode/prod/rekey-uua-iesource"
+          "name": "rekey-uua-iesource-prod-pdtwittera",
+          "key": "pdtwittera/discode/prod/rekey-uua-iesource"
         }
       ]
     }

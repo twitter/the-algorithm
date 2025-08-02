@@ -11,18 +11,18 @@ import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
 public class LinearScoringData {
   public static final float NO_BOOST_VALUE = 1.0f;
 
-  // A signal value so we can tell if something is unset, also used in explanation.
+  // A signal value so we can tell if something is unset, also used in etwitterplanation.
   public static final int UNSET_SIGNAL_VALUE = -999;
 
   //This is somewhat arbitrary, and is here so that we have some limit on
-  //how many offline experimental features we support per query
-  public static final int MAX_OFFLINE_EXPERIMENTAL_FIELDS = 5;
+  //how many offline etwitterperimental features we support per query
+  public static final int MAtwitter_OFFLINE_EtwitterPERIMENTAL_FIELDS = 5;
 
   public enum SkipReason {
     NOT_SKIPPED,
     ANTIGAMING,
     LOW_REPUTATION,
-    LOW_TEXT_SCORE,
+    LOW_TEtwitterT_SCORE,
     LOW_RETWEET_COUNT,
     LOW_FAV_COUNT,
     SOCIAL_FILTER,
@@ -31,12 +31,12 @@ public class LinearScoringData {
 
   // When you add fields here, make sure you also update the clear() function.
   public double luceneScore;
-  public double textScore;
+  public double tetwittertScore;
   //I am not sure why this has to be double...
   public double tokenAt140DividedByNumTokensBucket;
   public double userRep;
   public double parusScore;
-  public final double[] offlineExpFeatureValues = new double[MAX_OFFLINE_EXPERIMENTAL_FIELDS];
+  public final double[] offlineEtwitterpFeatureValues = new double[MAtwitter_OFFLINE_EtwitterPERIMENTAL_FIELDS];
 
   // v1 engagement counters
   public double retweetCountPostLog2;
@@ -79,14 +79,14 @@ public class LinearScoringData {
 
   public double luceneContrib;
   public double reputationContrib;
-  public double textScoreContrib;
+  public double tetwittertScoreContrib;
   public double favContrib;
   public double replyContrib;
   public double multipleReplyContrib;
   public double retweetContrib;
   public double parusContrib;
-  public final double[] offlineExpFeatureContributions =
-      new double[MAX_OFFLINE_EXPERIMENTAL_FIELDS];
+  public final double[] offlineEtwitterpFeatureContributions =
+      new double[MAtwitter_OFFLINE_EtwitterPERIMENTAL_FIELDS];
   public double embedsImpressionContrib;
   public double embedsUrlContrib;
   public double videoViewContrib;
@@ -143,11 +143,11 @@ public class LinearScoringData {
   public boolean cardDescriptionMatchBoostApplied;
 
   public List<String> hitFields;
-  public boolean hasNoTextHitDemotionApplied;
+  public boolean hasNoTetwittertHitDemotionApplied;
   public boolean hasUrlOnlyHitDemotionApplied;
   public boolean hasNameOnlyHitDemotionApplied;
-  public boolean hasSeparateTextAndNameHitDemotionApplied;
-  public boolean hasSeparateTextAndUrlHitDemotionApplied;
+  public boolean hasSeparateTetwittertAndNameHitDemotionApplied;
+  public boolean hasSeparateTetwittertAndUrlHitDemotionApplied;
 
   public long fromUserId;
   // This is actually retweet status ID, or the ID of the original tweet being (natively) retweeted
@@ -185,15 +185,15 @@ public class LinearScoringData {
   public boolean isComposerSourceCamera;
 
   // health model scores by HML
-  public double toxicityScore; // go/toxicity
+  public double totwittericityScore; // go/totwittericity
   public double pBlockScore; // go/pblock
   public double pSpammyTweetScore; // go/pspammytweet
   public double pReportedTweetScore; // go/preportedtweet
   public double spammyTweetContentScore; // go/spammy-tweet-content
-  public double experimentalHealthModelScore1;
-  public double experimentalHealthModelScore2;
-  public double experimentalHealthModelScore3;
-  public double experimentalHealthModelScore4;
+  public double etwitterperimentalHealthModelScore1;
+  public double etwitterperimentalHealthModelScore2;
+  public double etwitterperimentalHealthModelScore3;
+  public double etwitterperimentalHealthModelScore4;
 
   public LinearScoringData() {
     hitFields = Lists.newArrayList();
@@ -219,7 +219,7 @@ public class LinearScoringData {
   /**
    * Returns a string description of all data stored in this instance.
    */
-  public String getPropertyExplanation() {
+  public String getPropertyEtwitterplanation() {
     StringBuilder sb = new StringBuilder();
     sb.append(hasCard ? "CARD " + SearchCardType.cardTypeFromByteValue(cardType) : "");
     sb.append(hasUrl ? "URL " : "");
@@ -268,14 +268,14 @@ public class LinearScoringData {
    */
   public void clear() {
     luceneScore = UNSET_SIGNAL_VALUE;
-    textScore = UNSET_SIGNAL_VALUE;
+    tetwittertScore = UNSET_SIGNAL_VALUE;
     tokenAt140DividedByNumTokensBucket = UNSET_SIGNAL_VALUE;
     userRep = UNSET_SIGNAL_VALUE;
     retweetCountPostLog2 = UNSET_SIGNAL_VALUE;
     favCountPostLog2 = UNSET_SIGNAL_VALUE;
     replyCountPostLog2 = UNSET_SIGNAL_VALUE;
     parusScore = UNSET_SIGNAL_VALUE;
-    Arrays.fill(offlineExpFeatureValues, 0);
+    Arrays.fill(offlineEtwitterpFeatureValues, 0);
     embedsImpressionCount = UNSET_SIGNAL_VALUE;
     embedsUrlCount = UNSET_SIGNAL_VALUE;
     videoViewCount = UNSET_SIGNAL_VALUE;
@@ -309,13 +309,13 @@ public class LinearScoringData {
 
     luceneContrib = UNSET_SIGNAL_VALUE;
     reputationContrib = UNSET_SIGNAL_VALUE;
-    textScoreContrib = UNSET_SIGNAL_VALUE;
+    tetwittertScoreContrib = UNSET_SIGNAL_VALUE;
     replyContrib = UNSET_SIGNAL_VALUE;
     multipleReplyContrib = UNSET_SIGNAL_VALUE;
     retweetContrib = UNSET_SIGNAL_VALUE;
     favContrib = UNSET_SIGNAL_VALUE;
     parusContrib = UNSET_SIGNAL_VALUE;
-    Arrays.fill(offlineExpFeatureContributions, 0);
+    Arrays.fill(offlineEtwitterpFeatureContributions, 0);
     embedsImpressionContrib = UNSET_SIGNAL_VALUE;
     embedsUrlContrib = UNSET_SIGNAL_VALUE;
     videoViewContrib = UNSET_SIGNAL_VALUE;
@@ -385,11 +385,11 @@ public class LinearScoringData {
     cardDescriptionMatchBoostApplied = false;
 
     hitFields.clear();
-    hasNoTextHitDemotionApplied = false;
+    hasNoTetwittertHitDemotionApplied = false;
     hasUrlOnlyHitDemotionApplied = false;
     hasNameOnlyHitDemotionApplied = false;
-    hasSeparateTextAndNameHitDemotionApplied = false;
-    hasSeparateTextAndUrlHitDemotionApplied = false;
+    hasSeparateTetwittertAndNameHitDemotionApplied = false;
+    hasSeparateTetwittertAndUrlHitDemotionApplied = false;
 
     hasConsumerVideo = false;
     hasProVideo = false;
@@ -409,14 +409,14 @@ public class LinearScoringData {
     isComposerSourceCamera = false;
 
     // health model scores by HML
-    toxicityScore = UNSET_SIGNAL_VALUE;
+    totwittericityScore = UNSET_SIGNAL_VALUE;
     pBlockScore = UNSET_SIGNAL_VALUE;
     pSpammyTweetScore = UNSET_SIGNAL_VALUE;
     pReportedTweetScore = UNSET_SIGNAL_VALUE;
     spammyTweetContentScore = UNSET_SIGNAL_VALUE;
-    experimentalHealthModelScore1 = UNSET_SIGNAL_VALUE;
-    experimentalHealthModelScore2 = UNSET_SIGNAL_VALUE;
-    experimentalHealthModelScore3 = UNSET_SIGNAL_VALUE;
-    experimentalHealthModelScore4 = UNSET_SIGNAL_VALUE;
+    etwitterperimentalHealthModelScore1 = UNSET_SIGNAL_VALUE;
+    etwitterperimentalHealthModelScore2 = UNSET_SIGNAL_VALUE;
+    etwitterperimentalHealthModelScore3 = UNSET_SIGNAL_VALUE;
+    etwitterperimentalHealthModelScore4 = UNSET_SIGNAL_VALUE;
   }
 }

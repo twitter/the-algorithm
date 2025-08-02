@@ -72,7 +72,7 @@ class TombstoneGenerator(
       case Epitaph.Protected => TombstoneReason.ProtectedAuthor
       case Epitaph.Suspended => TombstoneReason.SuspendedAuthor
       case Epitaph.BlockedBy => TombstoneReason.AuthorBlocksViewer
-      case Epitaph.SuperFollowsContent => TombstoneReason.ExclusiveTweet
+      case Epitaph.SuperFollowsContent => TombstoneReason.EtwitterclusiveTweet
       case Epitaph.Underage => TombstoneReason.NsfwViewerIsUnderage
       case Epitaph.NoStatedAge => TombstoneReason.NsfwViewerHasNoStatedAge
       case Epitaph.LoggedOutAge => TombstoneReason.NsfwLoggedOut
@@ -87,7 +87,7 @@ class TombstoneGenerator(
       case Epitaph.DmcaWithheldMedia => TombstoneReason.DmcaWithheldMedia
       case Epitaph.LegalDemandsWithheldMedia => TombstoneReason.LegalDemandsWithheldMedia
       case Epitaph.LocalLawsWithheldMedia => TombstoneReason.LocalLawsWithheldMedia
-      case Epitaph.ToxicReplyFiltered => TombstoneReason.ReplyFiltered
+      case Epitaph.TotwittericReplyFiltered => TombstoneReason.ReplyFiltered
       case _ => TombstoneReason.Unspecified
     }
   }

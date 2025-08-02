@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow.error;
 
@@ -16,13 +16,13 @@ option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobu
 // -   Changes to this list should only be made if there is a compelling
 //     need that can't be satisfied in another way.  Such changes
 //     must be approved by at least two OWNERS.
-// -   These error codes must match gRPC and protobuf error codes (except for
-//     DO_NOT_USE_RESERVED_FOR_FUTURE_EXPANSION_USE_DEFAULT_IN_SWITCH_INSTEAD_).
+// -   These error codes must match gRPC and protobuf error codes (etwittercept for
+//     DO_NOT_USE_RESERVED_FOR_FUTURE_EtwitterPANSION_USE_DEFAULT_IN_SWITCH_INSTEAD_).
 //
 // Sometimes multiple error codes may apply.  Services should return
-// the most specific error code that applies.  For example, prefer
+// the most specific error code that applies.  For etwitterample, prefer
 // OUT_OF_RANGE over FAILED_PRECONDITION if both codes apply.
-// Similarly prefer NOT_FOUND or ALREADY_EXISTS over FAILED_PRECONDITION.
+// Similarly prefer NOT_FOUND or ALREADY_EtwitterISTS over FAILED_PRECONDITION.
 enum Code {
   // Not an error; returned on success
   OK = 0;
@@ -30,7 +30,7 @@ enum Code {
   // The operation was cancelled (typically by the caller).
   CANCELLED = 1;
 
-  // Unknown error.  An example of where this error may be returned is
+  // Unknown error.  An etwitterample of where this error may be returned is
   // if a Status value received from another address space belongs to
   // an error-space that is not known in this address space.  Also
   // errors raised by APIs that do not return enough error information
@@ -43,12 +43,12 @@ enum Code {
   // (e.g., a malformed file name).
   INVALID_ARGUMENT = 3;
 
-  // Deadline expired before operation could complete.  For operations
+  // Deadline etwitterpired before operation could complete.  For operations
   // that change the state of the system, this error may be returned
-  // even if the operation has completed successfully.  For example, a
+  // even if the operation has completed successfully.  For etwitterample, a
   // successful response from a server could have been delayed long
-  // enough for the deadline to expire.
-  DEADLINE_EXCEEDED = 4;
+  // enough for the deadline to etwitterpire.
+  DEADLINE_EtwitterCEEDED = 4;
 
   // Some requested entity (e.g., file or directory) was not found.
   // For privacy reasons, this code *may* be returned when the client
@@ -56,12 +56,12 @@ enum Code {
   NOT_FOUND = 5;
 
   // Some entity that we attempted to create (e.g., file or directory)
-  // already exists.
-  ALREADY_EXISTS = 6;
+  // already etwitterists.
+  ALREADY_EtwitterISTS = 6;
 
-  // The caller does not have permission to execute the specified
+  // The caller does not have permission to etwitterecute the specified
   // operation.  PERMISSION_DENIED must not be used for rejections
-  // caused by exhausting some resource (use RESOURCE_EXHAUSTED
+  // caused by etwitterhausting some resource (use RESOURCE_EtwitterHAUSTED
   // instead for those errors).  PERMISSION_DENIED must not be
   // used if the caller can not be identified (use UNAUTHENTICATED
   // instead for those errors).
@@ -71,12 +71,12 @@ enum Code {
   // operation.
   UNAUTHENTICATED = 16;
 
-  // Some resource has been exhausted, perhaps a per-user quota, or
+  // Some resource has been etwitterhausted, perhaps a per-user quota, or
   // perhaps the entire file system is out of space.
-  RESOURCE_EXHAUSTED = 8;
+  RESOURCE_EtwitterHAUSTED = 8;
 
   // Operation was rejected because the system is not in a state
-  // required for the operation's execution.  For example, directory
+  // required for the operation's etwitterecution.  For etwitterample, directory
   // to be deleted may be non-empty, an rmdir operation is applied to
   // a non-directory, etc.
   //
@@ -86,10 +86,10 @@ enum Code {
   //  (b) Use ABORTED if the client should retry at a higher-level
   //      (e.g., restarting a read-modify-write sequence).
   //  (c) Use FAILED_PRECONDITION if the client should not retry until
-  //      the system state has been explicitly fixed.  E.g., if an "rmdir"
+  //      the system state has been etwitterplicitly fitwittered.  E.g., if an "rmdir"
   //      fails because the directory is non-empty, FAILED_PRECONDITION
   //      should be returned since the client should not retry unless
-  //      they have first fixed up the directory by deleting files from it.
+  //      they have first fitwittered up the directory by deleting files from it.
   //  (d) Use FAILED_PRECONDITION if the client performs conditional
   //      REST Get/Update/Delete on a resource and the resource on the
   //      server does not match the condition. E.g., conflicting
@@ -107,7 +107,7 @@ enum Code {
   // reading past end of file.
   //
   // Unlike INVALID_ARGUMENT, this error indicates a problem that may
-  // be fixed if the system state changes. For example, a 32-bit file
+  // be fitwittered if the system state changes. For etwitterample, a 32-bit file
   // system will generate INVALID_ARGUMENT if asked to read at an
   // offset that is not in the range [0,2^32-1], but it will generate
   // OUT_OF_RANGE if asked to read from an offset past the current
@@ -123,7 +123,7 @@ enum Code {
   // Operation is not implemented or not supported/enabled in this service.
   UNIMPLEMENTED = 12;
 
-  // Internal errors.  Means some invariant expected by the underlying
+  // Internal errors.  Means some invariant etwitterpected by the underlying
   // system has been broken.  If you see one of these errors,
   // something is very broken.
   INTERNAL = 13;
@@ -139,7 +139,7 @@ enum Code {
   // Unrecoverable data loss or corruption.
   DATA_LOSS = 15;
 
-  // An extra enum entry to prevent people from writing code that
+  // An etwittertra enum entry to prevent people from writing code that
   // fails to compile when a new code is added.
   //
   // Nobody should ever reference this enumeration entry. In particular,
@@ -148,5 +148,5 @@ enum Code {
   //
   // Nobody should rely on the value (currently 20) listed here.  It
   // may change in the future.
-  DO_NOT_USE_RESERVED_FOR_FUTURE_EXPANSION_USE_DEFAULT_IN_SWITCH_INSTEAD_ = 20;
+  DO_NOT_USE_RESERVED_FOR_FUTURE_EtwitterPANSION_USE_DEFAULT_IN_SWITCH_INSTEAD_ = 20;
 }

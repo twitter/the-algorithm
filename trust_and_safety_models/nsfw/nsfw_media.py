@@ -20,25 +20,25 @@ physical_devices
 tf.config.set_visible_devices([tf.config.PhysicalDevice(name='/physical_device:GPU:1', device_type='GPU')], 'GPU')
 tf.config.get_visible_devices('GPU')
 
-def decode_fn_embedding(example_proto):
+def decode_fn_embedding(etwitterample_proto):
   
   feature_description = {
-    "embedding": tf.io.FixedLenFeature([256], dtype=tf.float32),
-    "labels": tf.io.FixedLenFeature([], dtype=tf.int64),
+    "embedding": tf.io.FitwitteredLenFeature([256], dtype=tf.float32),
+    "labels": tf.io.FitwitteredLenFeature([], dtype=tf.int64),
   }
   
-  example = tf.io.parse_single_example(
-      example_proto,
+  etwitterample = tf.io.parse_single_etwitterample(
+      etwitterample_proto,
       feature_description
   )
 
-  return example
+  return etwitterample
 
-def preprocess_embedding_example(example_dict, positive_label=1, features_as_dict=False):
-  labels = example_dict["labels"]
+def preprocess_embedding_etwitterample(etwitterample_dict, positive_label=1, features_as_dict=False):
+  labels = etwitterample_dict["labels"]
   label = tf.math.reduce_any(labels == positive_label)
   label = tf.cast(label, tf.int32)
-  embedding = example_dict["embedding"]
+  embedding = etwitterample_dict["embedding"]
   
   if features_as_dict:
     features = {"embedding": embedding}
@@ -61,7 +61,7 @@ do_resample = False
 def class_func(features, label):
   return label
 
-resample_fn = tf.data.experimental.rejection_resample(
+resample_fn = tf.data.etwitterperimental.rejection_resample(
     class_func, target_dist = [0.5, 0.5], seed=0
 )
 train_glob = f"{input_root}/train/tfrecord/*.tfrecord"
@@ -85,7 +85,7 @@ if not len(test_files):
   raise ValueError(f"Did not find any eval files matching {test_glob}")
   
 test_ds = tf.data.TFRecordDataset(test_files).map(decode_fn_embedding)
-test_ds = test_ds.map(lambda x: preprocess_embedding_example(x, positive_label=positive_label)).batch(batch_size=test_batch_size)
+test_ds = test_ds.map(lambda twitter: preprocess_embedding_etwitterample(twitter, positive_label=positive_label)).batch(batch_size=test_batch_size)
   
 if use_sens_prev_data:
   test_sens_prev_glob = f"{sens_prev_input_root}/test/tfrecord/*.tfrecord"
@@ -95,10 +95,10 @@ if use_sens_prev_data:
     raise ValueError(f"Did not find any eval files matching {test_sens_prev_glob}")
   
   test_sens_prev_ds = tf.data.TFRecordDataset(test_sens_prev_files).map(decode_fn_embedding)
-  test_sens_prev_ds = test_sens_prev_ds.map(lambda x: preprocess_embedding_example(x, positive_label=positive_label)).batch(batch_size=test_batch_size)
+  test_sens_prev_ds = test_sens_prev_ds.map(lambda twitter: preprocess_embedding_etwitterample(twitter, positive_label=positive_label)).batch(batch_size=test_batch_size)
 
 train_ds = tf.data.TFRecordDataset(train_files).map(decode_fn_embedding)
-train_ds = train_ds.map(lambda x: preprocess_embedding_example(x, positive_label=positive_label))
+train_ds = train_ds.map(lambda twitter: preprocess_embedding_etwitterample(twitter, positive_label=positive_label))
 
 if do_resample:
   train_ds = train_ds.apply(resample_fn).map(lambda _,b:(b))
@@ -121,17 +121,17 @@ if has_validation_data:
     raise ValueError(f"Did not find any eval files matching {eval_glob}")
   
   eval_ds = tf.data.TFRecordDataset(eval_files).map(decode_fn_embedding)
-  eval_ds = eval_ds.map(lambda x: preprocess_embedding_example(x, positive_label=positive_label)).batch(batch_size=validation_batch_size)
+  eval_ds = eval_ds.map(lambda twitter: preprocess_embedding_etwitterample(twitter, positive_label=positive_label)).batch(batch_size=validation_batch_size)
 
 else:
   
   eval_ds = tf.data.TFRecordDataset(test_files).map(decode_fn_embedding)
-  eval_ds = eval_ds.map(lambda x: preprocess_embedding_example(x, positive_label=positive_label)).batch(batch_size=validation_batch_size)
+  eval_ds = eval_ds.map(lambda twitter: preprocess_embedding_etwitterample(twitter, positive_label=positive_label)).batch(batch_size=validation_batch_size)
 check_ds = tf.data.TFRecordDataset(train_files).map(decode_fn_embedding)
 cnt = 0
 pos_cnt = 0
-for example in tqdm(check_ds):
-  label = example['labels']
+for etwitterample in tqdm(check_ds):
+  label = etwitterample['labels']
   if label == 1:
     pos_cnt += 1
   cnt += 1
@@ -168,7 +168,7 @@ def build_model(hp):
   for i in range(hp.Int("num_layers", 1, 2)):
     model.add(tf.keras.layers.BatchNormalization())
 
-    units=hp.Int("units", min_value=128, max_value=256, step=128)
+    units=hp.Int("units", min_value=128, matwitter_value=256, step=128)
     
     if i == 0:
       model.add(
@@ -196,7 +196,7 @@ def build_model(hp):
 tuner = kt.tuners.BayesianOptimization(
   build_model,
   objective=kt.Objective('val_loss', direction="min"),
-  max_trials=30,
+  matwitter_trials=30,
   directory='tuner_dir',
   project_name='with_twitter_clip')
 
@@ -273,7 +273,7 @@ plt.plot(history.history['auc'])
 plt.plot(history.history['val_auc'])
 plt.title('model auc')
 plt.ylabel('auc')
-plt.xlabel('epoch')
+plt.twitterlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
 
 plt.subplot(1, 3, 2)
@@ -281,7 +281,7 @@ plt.plot(history.history['loss'])
 plt.plot(history.history['val_loss'])
 plt.title('model loss')
 plt.ylabel('loss')
-plt.xlabel('epoch')
+plt.twitterlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
 
 plt.subplot(1, 3, 3)
@@ -289,7 +289,7 @@ plt.plot(history.history['precision_at_recall'])
 plt.plot(history.history['val_precision_at_recall'])
 plt.title('model precision at 0.9 recall')
 plt.ylabel('precision_at_recall')
-plt.xlabel('epoch')
+plt.twitterlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
 
 plt.savefig('history_with_twitter_clip.pdf')
@@ -298,15 +298,15 @@ test_labels = []
 test_preds = []
 
 for batch_features, batch_labels in tqdm(test_ds):
-  test_preds.extend(loaded_model.predict_proba(batch_features))
-  test_labels.extend(batch_labels.numpy())
+  test_preds.etwittertend(loaded_model.predict_proba(batch_features))
+  test_labels.etwittertend(batch_labels.numpy())
   
 test_sens_prev_labels = []
 test_sens_prev_preds = []
 
 for batch_features, batch_labels in tqdm(test_sens_prev_ds):
-  test_sens_prev_preds.extend(loaded_model.predict_proba(batch_features))
-  test_sens_prev_labels.extend(batch_labels.numpy())
+  test_sens_prev_preds.etwittertend(loaded_model.predict_proba(batch_features))
+  test_sens_prev_labels.etwittertend(batch_labels.numpy())
   
 n_test_pos = 0
 n_test_neg = 0
@@ -370,38 +370,38 @@ df = pd.DataFrame(
 plt.figure(figsize=(15, 10))
 df["preds_keras"].hist()
 plt.title("Keras predictions", size=20)
-plt.xlabel('score')
+plt.twitterlabel('score')
 plt.ylabel("freq")
 
 plt.figure(figsize = (20, 5))
 plt.subplot(1, 3, 1)
 
 plt.plot(pr[2], pr[0][0:-1])
-plt.xlabel("threshold")
+plt.twitterlabel("threshold")
 plt.ylabel("precision")
 
 plt.subplot(1, 3, 2)
 
 plt.plot(pr[2], pr[1][0:-1])
-plt.xlabel("threshold")
+plt.twitterlabel("threshold")
 plt.ylabel("recall")
 plt.title("Keras", size=20)
 
 plt.subplot(1, 3, 3)
 
 plt.plot(pr[1], pr[0])
-plt.xlabel("recall")
+plt.twitterlabel("recall")
 plt.ylabel("precision")
 
 plt.savefig('with_twitter_clip.pdf')
 
 def get_point_for_recall(recall_value, recall, precision):
-  idx = np.argmin(np.abs(recall - recall_value))
-  return (recall[idx], precision[idx])
+  idtwitter = np.argmin(np.abs(recall - recall_value))
+  return (recall[idtwitter], precision[idtwitter])
 
 def get_point_for_precision(precision_value, recall, precision):
-  idx = np.argmin(np.abs(precision - precision_value))
-  return (recall[idx], precision[idx])
+  idtwitter = np.argmin(np.abs(precision - precision_value))
+  return (recall[idtwitter], precision[idtwitter])
 precision, recall, thresholds = pr
 
 auc_precision_recall = sklearn.metrics.auc(recall, precision)
@@ -411,7 +411,7 @@ print(auc_precision_recall)
 plt.figure(figsize=(15, 10))
 plt.plot(recall, precision)
 
-plt.xlabel("recall")
+plt.twitterlabel("recall")
 plt.ylabel("precision")
 
 ptAt50 = get_point_for_recall(0.5, recall, precision)
@@ -442,7 +442,7 @@ plt.figure(figsize=(15, 10))
 
 plt.plot(recall, precision)
 
-plt.xlabel("recall")
+plt.twitterlabel("recall")
 plt.ylabel("precision")
 
 ptAt50 = get_point_for_recall(0.5, recall, precision)

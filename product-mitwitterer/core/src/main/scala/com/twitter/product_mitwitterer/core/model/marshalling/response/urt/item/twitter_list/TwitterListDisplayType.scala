@@ -1,0 +1,8 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.item.twitter_list
+
+sealed trait TwitterListDisplayType
+
+case object List etwittertends TwitterListDisplayType
+case object ListTile etwittertends TwitterListDisplayType
+case object ListWithPin etwittertends TwitterListDisplayType
+case object ListWithSubscribe etwittertends TwitterListDisplayType

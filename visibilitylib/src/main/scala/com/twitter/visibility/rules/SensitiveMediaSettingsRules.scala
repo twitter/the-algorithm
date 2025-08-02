@@ -18,21 +18,21 @@ import com.twitter.contenthealth.sensitivemediasettings.thriftscala.SensitiveMed
 
 
 abstract class AdultMediaTweetLabelDropRule(tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       Drop(Nsfw),
       And(LoggedInViewer, ViewerHasAdultMediaSettingLevel(SensitiveMediaSettingsLevel.Drop)),
       tweetSafetyLabelType
     )
 
 abstract class ViolentMediaTweetLabelDropRule(tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       Drop(Nsfw),
       And(LoggedInViewer, ViewerHasViolentMediaSettingLevel(SensitiveMediaSettingsLevel.Drop)),
       tweetSafetyLabelType
     )
 
 abstract class OtherSensitiveMediaTweetLabelDropRule(condition: Condition)
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Nsfw),
       And(
         condition,
@@ -43,7 +43,7 @@ abstract class OtherSensitiveMediaTweetLabelDropRule(condition: Condition)
     )
 
 abstract class AdultMediaTweetLabelInterstitialRule(tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       Interstitial(Nsfw),
       Or(
         LoggedOutViewer,
@@ -54,7 +54,7 @@ abstract class AdultMediaTweetLabelInterstitialRule(tweetSafetyLabelType: TweetS
     )
 
 abstract class ViolentMediaTweetLabelInterstitialRule(tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       Interstitial(Nsfw),
       Or(
         LoggedOutViewer,
@@ -65,7 +65,7 @@ abstract class ViolentMediaTweetLabelInterstitialRule(tweetSafetyLabelType: Twee
     )
 
 abstract class OtherSensitiveMediaTweetLabelInterstitialRule(condition: Condition)
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Interstitial(Nsfw),
       And(
         condition,
@@ -79,7 +79,7 @@ abstract class OtherSensitiveMediaTweetLabelInterstitialRule(condition: Conditio
 
 abstract class AdultMediaTweetLabelDropSettingLevelTombstoneRule(
   tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       Tombstone(Epitaph.AdultMedia),
       And(
         LoggedInViewer,
@@ -90,7 +90,7 @@ abstract class AdultMediaTweetLabelDropSettingLevelTombstoneRule(
 
 abstract class ViolentMediaTweetLabelDropSettingLevelTombstoneRule(
   tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       Tombstone(Epitaph.ViolentMedia),
       And(
         LoggedInViewer,
@@ -100,7 +100,7 @@ abstract class ViolentMediaTweetLabelDropSettingLevelTombstoneRule(
     )
 
 abstract class OtherSensitiveMediaTweetLabelDropSettingLevelTombstoneRule(condition: Condition)
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Tombstone(Epitaph.OtherSensitiveMedia),
       And(
         condition,
@@ -116,52 +116,52 @@ case object SensitiveMediaTweetDropRules {
 
 
   object AdultMediaNsfwHighPrecisionTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
+      etwittertends AdultMediaTweetLabelDropRule(
         TweetSafetyLabelType.NsfwHighPrecision
       )
 
   object AdultMediaNsfwCardImageTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
+      etwittertends AdultMediaTweetLabelDropRule(
         TweetSafetyLabelType.NsfwCardImage
       )
 
   object AdultMediaNsfwReportedHeuristicsTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
+      etwittertends AdultMediaTweetLabelDropRule(
         TweetSafetyLabelType.NsfwReportedHeuristics
       )
 
   object AdultMediaNsfwVideoTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
+      etwittertends AdultMediaTweetLabelDropRule(
         TweetSafetyLabelType.NsfwVideo
       )
 
   object AdultMediaNsfwHighRecallTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
+      etwittertends AdultMediaTweetLabelDropRule(
         TweetSafetyLabelType.NsfwHighRecall
       )
 
-  object AdultMediaNsfwTextTweetLabelDropRule
-      extends AdultMediaTweetLabelDropRule(
-        TweetSafetyLabelType.NsfwText
+  object AdultMediaNsfwTetwittertTweetLabelDropRule
+      etwittertends AdultMediaTweetLabelDropRule(
+        TweetSafetyLabelType.NsfwTetwittert
       )
 
   object ViolentMediaGoreAndViolenceHighPrecisionDropRule
-      extends ViolentMediaTweetLabelDropRule(
+      etwittertends ViolentMediaTweetLabelDropRule(
         TweetSafetyLabelType.GoreAndViolenceHighPrecision
       )
 
   object ViolentMediaGoreAndViolenceReportedHeuristicsDropRule
-      extends ViolentMediaTweetLabelDropRule(
+      etwittertends ViolentMediaTweetLabelDropRule(
         TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
       )
 
   object OtherSensitiveMediaNsfwUserTweetFlagDropRule
-      extends OtherSensitiveMediaTweetLabelDropRule(
+      etwittertends OtherSensitiveMediaTweetLabelDropRule(
         TweetHasNsfwUserAuthor
       )
 
   object OtherSensitiveMediaNsfwAdminTweetFlagDropRule
-      extends OtherSensitiveMediaTweetLabelDropRule(
+      etwittertends OtherSensitiveMediaTweetLabelDropRule(
         TweetHasNsfwAdminAuthor
       )
 }
@@ -169,54 +169,54 @@ case object SensitiveMediaTweetDropRules {
 case object SensitiveMediaTweetInterstitialRules {
 
   object AdultMediaNsfwHighPrecisionTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
+      etwittertends AdultMediaTweetLabelInterstitialRule(
         TweetSafetyLabelType.NsfwHighPrecision
       )
       with DoesLogVerdict
 
   object AdultMediaNsfwCardImageTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
+      etwittertends AdultMediaTweetLabelInterstitialRule(
         TweetSafetyLabelType.NsfwCardImage
       )
 
   object AdultMediaNsfwReportedHeuristicsTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
+      etwittertends AdultMediaTweetLabelInterstitialRule(
         TweetSafetyLabelType.NsfwReportedHeuristics
       )
 
   object AdultMediaNsfwVideoTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
+      etwittertends AdultMediaTweetLabelInterstitialRule(
         TweetSafetyLabelType.NsfwVideo
       )
 
   object AdultMediaNsfwHighRecallTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
+      etwittertends AdultMediaTweetLabelInterstitialRule(
         TweetSafetyLabelType.NsfwHighRecall
       )
 
-  object AdultMediaNsfwTextTweetLabelInterstitialRule
-      extends AdultMediaTweetLabelInterstitialRule(
-        TweetSafetyLabelType.NsfwText
+  object AdultMediaNsfwTetwittertTweetLabelInterstitialRule
+      etwittertends AdultMediaTweetLabelInterstitialRule(
+        TweetSafetyLabelType.NsfwTetwittert
       )
 
   object ViolentMediaGoreAndViolenceHighPrecisionInterstitialRule
-      extends ViolentMediaTweetLabelInterstitialRule(
+      etwittertends ViolentMediaTweetLabelInterstitialRule(
         TweetSafetyLabelType.GoreAndViolenceHighPrecision
       )
       with DoesLogVerdict
 
   object ViolentMediaGoreAndViolenceReportedHeuristicsInterstitialRule
-      extends ViolentMediaTweetLabelInterstitialRule(
+      etwittertends ViolentMediaTweetLabelInterstitialRule(
         TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
       )
 
   object OtherSensitiveMediaNsfwUserTweetFlagInterstitialRule
-      extends OtherSensitiveMediaTweetLabelInterstitialRule(
+      etwittertends OtherSensitiveMediaTweetLabelInterstitialRule(
         TweetHasNsfwUserAuthor
       )
 
   object OtherSensitiveMediaNsfwAdminTweetFlagInterstitialRule
-      extends OtherSensitiveMediaTweetLabelInterstitialRule(
+      etwittertends OtherSensitiveMediaTweetLabelInterstitialRule(
         TweetHasNsfwAdminAuthor
       )
 
@@ -226,52 +226,52 @@ case object SensitiveMediaTweetDropSettingLevelTombstoneRules {
 
 
   object AdultMediaNsfwHighPrecisionTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
+      etwittertends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
         TweetSafetyLabelType.NsfwHighPrecision
       )
 
   object AdultMediaNsfwCardImageTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
+      etwittertends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
         TweetSafetyLabelType.NsfwCardImage
       )
 
   object AdultMediaNsfwReportedHeuristicsTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
+      etwittertends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
         TweetSafetyLabelType.NsfwReportedHeuristics
       )
 
   object AdultMediaNsfwVideoTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
+      etwittertends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
         TweetSafetyLabelType.NsfwVideo
       )
 
   object AdultMediaNsfwHighRecallTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
+      etwittertends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
         TweetSafetyLabelType.NsfwHighRecall
       )
 
-  object AdultMediaNsfwTextTweetLabelDropSettingLevelTombstoneRule
-      extends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
-        TweetSafetyLabelType.NsfwText
+  object AdultMediaNsfwTetwittertTweetLabelDropSettingLevelTombstoneRule
+      etwittertends AdultMediaTweetLabelDropSettingLevelTombstoneRule(
+        TweetSafetyLabelType.NsfwTetwittert
       )
 
   object ViolentMediaGoreAndViolenceHighPrecisionDropSettingLeveTombstoneRule
-      extends ViolentMediaTweetLabelDropSettingLevelTombstoneRule(
+      etwittertends ViolentMediaTweetLabelDropSettingLevelTombstoneRule(
         TweetSafetyLabelType.GoreAndViolenceHighPrecision
       )
 
   object ViolentMediaGoreAndViolenceReportedHeuristicsDropSettingLevelTombstoneRule
-      extends ViolentMediaTweetLabelDropSettingLevelTombstoneRule(
+      etwittertends ViolentMediaTweetLabelDropSettingLevelTombstoneRule(
         TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
       )
 
   object OtherSensitiveMediaNsfwUserTweetFlagDropSettingLevelTombstoneRule
-      extends OtherSensitiveMediaTweetLabelDropSettingLevelTombstoneRule(
+      etwittertends OtherSensitiveMediaTweetLabelDropSettingLevelTombstoneRule(
         TweetHasNsfwUserAuthor
       )
 
   object OtherSensitiveMediaNsfwAdminTweetFlagDropSettingLevelTombstoneRule
-      extends OtherSensitiveMediaTweetLabelDropSettingLevelTombstoneRule(
+      etwittertends OtherSensitiveMediaTweetLabelDropSettingLevelTombstoneRule(
         TweetHasNsfwAdminAuthor
       )
 }

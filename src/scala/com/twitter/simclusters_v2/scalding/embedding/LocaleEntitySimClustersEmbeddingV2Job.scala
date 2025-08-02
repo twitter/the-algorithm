@@ -2,16 +2,16 @@ package com.twitter.simclusters_v2.scalding.embedding
 
 import com.twitter.bijection.{Bufferable, Injection}
 import com.twitter.recos.entities.thriftscala.{Entity, SemanticCoreEntity}
-import com.twitter.scalding.{DateRange, Days, Duration, Execution, RichDate, TypedPipe, UniqueID}
+import com.twitter.scalding.{DateRange, Days, Duration, Etwitterecution, RichDate, TypedPipe, UniqueID}
 import com.twitter.scalding_internal.dalv2.DALWrite._
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common._
 import com.twitter.simclusters_v2.hdfs_sources.{AdhocKeyValSources, EntityEmbeddingsSources}
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
+import com.twitter.simclusters_v2.scalding.common.matritwitter.{SparseMatritwitter, SparseRowMatritwitter}
 import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.ClusterId
 import com.twitter.simclusters_v2.scalding.embedding.common.{
   EmbeddingUtil,
-  ExternalDataSources,
+  EtwitterternalDataSources,
   SimClustersEmbeddingBaseJob
 }
 import com.twitter.simclusters_v2.thriftscala.{
@@ -24,7 +24,7 @@ import com.twitter.simclusters_v2.thriftscala.{
   SimClustersEmbeddingId
 }
 import com.twitter.wtf.entity_real_graph.thriftscala.{Edge, FeatureName}
-import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, DataSources, ScheduledExecutionApp}
+import com.twitter.wtf.scalding.jobs.common.{AdhocEtwitterecutionApp, DataSources, ScheduledEtwitterecutionApp}
 import java.util.TimeZone
 
 /**
@@ -38,20 +38,20 @@ import java.util.TimeZone
   --start_cron locale_entity_simclusters_embedding_v2 src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
 object LocaleEntitySimClustersEmbeddingV2ScheduledApp
-    extends LocaleEntitySimClustersEmbeddingV2Job
-    with ScheduledExecutionApp {
+    etwittertends LocaleEntitySimClustersEmbeddingV2Job
+    with ScheduledEtwitterecutionApp {
 
   override val firstTime: RichDate = RichDate("2020-04-08")
 
   override val batchIncrement: Duration = Days(1)
 
-  override def writeNounToClustersIndex(
+  override def writeNounToClustersIndetwitter(
     output: TypedPipe[(LocaleEntity, Seq[(ClusterId, Double)])]
   )(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     output
       .map {
@@ -65,24 +65,24 @@ object LocaleEntitySimClustersEmbeddingV2ScheduledApp
             SimClustersEmbedding(clustersWithScores).toThrift
           )
       }
-      .writeDALVersionedKeyValExecution(
+      .writeDALVersionedKeyValEtwitterecution(
         EntityEmbeddingsSources.LogFavSemanticCorePerLanguageSimClustersEmbeddingsDataset,
-        D.Suffix(
+        D.Suffitwitter(
           EmbeddingUtil.getHdfsPath(
             isAdhoc = false,
             isManhattanKeyVal = true,
             ModelVersion.Model20m145kUpdated,
-            pathSuffix = "log_fav_erg_based_embeddings"))
+            pathSuffitwitter = "log_fav_erg_based_embeddings"))
       )
   }
 
-  override def writeClusterToNounsIndex(
+  override def writeClusterToNounsIndetwitter(
     output: TypedPipe[(ClusterId, Seq[(LocaleEntity, Double)])]
   )(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     output
       .map {
         case (clusterId, nounsWithScore) =>
@@ -100,14 +100,14 @@ object LocaleEntitySimClustersEmbeddingV2ScheduledApp
             })
           )
       }
-      .writeDALVersionedKeyValExecution(
-        EntityEmbeddingsSources.LogFavReverseIndexSemanticCorePerLanguageSimClustersEmbeddingsDataset,
-        D.Suffix(
+      .writeDALVersionedKeyValEtwitterecution(
+        EntityEmbeddingsSources.LogFavReverseIndetwitterSemanticCorePerLanguageSimClustersEmbeddingsDataset,
+        D.Suffitwitter(
           EmbeddingUtil.getHdfsPath(
             isAdhoc = false,
             isManhattanKeyVal = true,
             ModelVersion.Model20m145kUpdated,
-            pathSuffix = "reverse_index_log_fav_erg_based_embeddings"))
+            pathSuffitwitter = "reverse_indetwitter_log_fav_erg_based_embeddings"))
       )
   }
 }
@@ -122,16 +122,16 @@ object LocaleEntitySimClustersEmbeddingV2ScheduledApp
   -- --date 2020-04-06
  */
 object LocaleEntitySimClustersEmbeddingV2AdhocApp
-    extends LocaleEntitySimClustersEmbeddingV2Job
-    with AdhocExecutionApp {
+    etwittertends LocaleEntitySimClustersEmbeddingV2Job
+    with AdhocEtwitterecutionApp {
 
-  override def writeNounToClustersIndex(
+  override def writeNounToClustersIndetwitter(
     output: TypedPipe[(LocaleEntity, Seq[(ClusterId, Double)])]
   )(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     output
       .map {
@@ -142,22 +142,22 @@ object LocaleEntitySimClustersEmbeddingV2AdhocApp
             InternalId.LocaleEntityId(LocaleEntityId(entityId, lang))
           ) -> SimClustersEmbedding(clustersWithScores).toThrift
 
-      }.writeExecution(
+      }.writeEtwitterecution(
         AdhocKeyValSources.entityToClustersSource(
           EmbeddingUtil.getHdfsPath(
             isAdhoc = true,
             isManhattanKeyVal = true,
             ModelVersion.Model20m145kUpdated,
-            pathSuffix = "log_fav_erg_based_embeddings")))
+            pathSuffitwitter = "log_fav_erg_based_embeddings")))
   }
 
-  override def writeClusterToNounsIndex(
+  override def writeClusterToNounsIndetwitter(
     output: TypedPipe[(ClusterId, Seq[(LocaleEntity, Double)])]
   )(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     output
       .map {
@@ -174,17 +174,17 @@ object LocaleEntitySimClustersEmbeddingV2AdhocApp
                   score)
             })
       }
-      .writeExecution(
+      .writeEtwitterecution(
         AdhocKeyValSources.clusterToEntitiesSource(
           EmbeddingUtil.getHdfsPath(
             isAdhoc = true,
             isManhattanKeyVal = true,
             ModelVersion.Model20m145kUpdated,
-            pathSuffix = "reverse_index_log_fav_erg_based_embeddings")))
+            pathSuffitwitter = "reverse_indetwitter_log_fav_erg_based_embeddings")))
   }
 }
 
-trait LocaleEntitySimClustersEmbeddingV2Job extends SimClustersEmbeddingBaseJob[LocaleEntity] {
+trait LocaleEntitySimClustersEmbeddingV2Job etwittertends SimClustersEmbeddingBaseJob[LocaleEntity] {
 
   override val numClustersPerNoun = 100
 
@@ -200,11 +200,11 @@ trait LocaleEntitySimClustersEmbeddingV2Job extends SimClustersEmbeddingBaseJob[
 
   implicit val inj: Injection[LocaleEntity, Array[Byte]] = Bufferable.injectionOf[LocaleEntity]
 
-  override def prepareNounToUserMatrix(
+  override def prepareNounToUserMatritwitter(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): SparseMatrix[LocaleEntity, UserId, Double] = {
+  ): SparseMatritwitter[LocaleEntity, UserId, Double] = {
 
     val erg: TypedPipe[(SemanticCoreEntityId, (UserId, Double))] =
       DataSources.entityRealGraphAggregationDataSetSource(dateRange.embiggen(Days(7))).flatMap {
@@ -213,7 +213,7 @@ trait LocaleEntitySimClustersEmbeddingV2Job extends SimClustersEmbeddingBaseJob[
               Entity.SemanticCore(SemanticCoreEntity(entityId, _)),
               consumerFeatures,
               _,
-              _) if consumerFeatures.exists(_.exists(_.featureName == FeatureName.Favorites)) =>
+              _) if consumerFeatures.etwitterists(_.etwitterists(_.featureName == FeatureName.Favorites)) =>
           for {
             features <- consumerFeatures
             favFeatures <- features.find(_.featureName == FeatureName.Favorites)
@@ -224,25 +224,25 @@ trait LocaleEntitySimClustersEmbeddingV2Job extends SimClustersEmbeddingBaseJob[
         case _ => None
       }
 
-    SparseMatrix[LocaleEntity, UserId, Double](
+    SparseMatritwitter[LocaleEntity, UserId, Double](
       erg
-        .hashJoin(ExternalDataSources.uttEntitiesSource().asKeys).map {
+        .hashJoin(EtwitterternalDataSources.uttEntitiesSource().asKeys).map {
           case (entityId, ((userId, score), _)) => (userId, (entityId, score))
-        }.join(ExternalDataSources.userSource).map {
+        }.join(EtwitterternalDataSources.userSource).map {
           case (userId, ((entityId, score), (_, language))) =>
             ((entityId, language), userId, score)
         }
     )
   }
 
-  override def prepareUserToClusterMatrix(
+  override def prepareUserToClusterMatritwitter(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): SparseRowMatrix[UserId, ClusterId, Double] = {
-    SparseRowMatrix(
-      ExternalDataSources.simClustersInterestInLogFavSource(MinInterestedInLogFavScore),
-      isSkinnyMatrix = true
+  ): SparseRowMatritwitter[UserId, ClusterId, Double] = {
+    SparseRowMatritwitter(
+      EtwitterternalDataSources.simClustersInterestInLogFavSource(MinInterestedInLogFavScore),
+      isSkinnyMatritwitter = true
     )
   }
 }

@@ -19,7 +19,7 @@ import com.twitter.util.Future
  * inReplyToTweet with content features populated when scoring replies.
  */
 object CopyContentFeaturesIntoThriftTweetFeaturesTransform
-    extends FutureArrow[
+    etwittertends FutureArrow[
       HydratedCandidatesAndFeaturesEnvelope,
       HydratedCandidatesAndFeaturesEnvelope
     ] {
@@ -77,7 +77,7 @@ object CopyContentFeaturesIntoThriftTweetFeaturesTransform
       emojiTokens = contentFeatures.emojiTokens,
       emoticonTokens = contentFeatures.emoticonTokens,
       phrases = contentFeatures.phrases,
-      textTokens = contentFeatures.tokens,
+      tetwittertTokens = contentFeatures.tokens,
       faceAreas = contentFeatures.faceAreas,
       dominantColorRed = contentFeatures.dominantColorRed,
       dominantColorBlue = contentFeatures.dominantColorBlue,

@@ -12,7 +12,7 @@ java_library(
         "3rdparty/jvm/org/yaml:snakeyaml",
         "finagle-internal/mtls/src/main/scala/com/twitter/finagle/mtls/authentication",
         "src/java/com/twitter/common/base",
-        "src/java/com/twitter/common_internal/text/version",
+        "src/java/com/twitter/common_internal/tetwittert/version",
         "src/java/com/twitter/search/common/aurora",
         "src/java/com/twitter/search/common/config",
         "src/java/com/twitter/search/common/metrics",

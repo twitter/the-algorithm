@@ -1,6 +1,6 @@
 package com.twitter.servo.util
 
-import com.twitter.finagle.stats.{Counter, MetricBuilder, StatsReceiver, StatsReceiverProxy}
+import com.twitter.finagle.stats.{Counter, MetricBuilder, StatsReceiver, StatsReceiverProtwittery}
 
 /**
  * A StatsReceiver that initializes counters to zero.
@@ -14,7 +14,7 @@ import com.twitter.finagle.stats.{Counter, MetricBuilder, StatsReceiver, StatsRe
  * @param self - underlying StatsReceiver
  */
 class CounterInitializingStatsReceiver(protected val self: StatsReceiver)
-    extends StatsReceiverProxy {
+    etwittertends StatsReceiverProtwittery {
 
   override def counter(metricBuilder: MetricBuilder): Counter = {
     val counter = self.counter(metricBuilder)

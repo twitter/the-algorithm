@@ -15,9 +15,9 @@ import java.lang.{Double => JDouble}
 import java.lang.{Long => JLong}
 import java.util.{Set => JSet}
 import scala.annotation.tailrec
-import scala.language.existentials
+import scala.language.etwitteristentials
 import scala.collection.JavaConverters._
-import scala.util.matching.Regex
+import scala.util.matching.Regetwitter
 
 /**
  * A case class contained precomputed data useful to quickly
@@ -48,33 +48,33 @@ object TypedAggregateGroup {
   ): Set[Map[Long, String]] = sparseBinaryIdValues match {
     case (id, values) +: rest =>
       tailRecSparseBinaryPermutations(
-        existingPermutations = values.map(value => Map(id -> value)),
+        etwitteristingPermutations = values.map(value => Map(id -> value)),
         remainingIdValues = rest
       )
     case Nil => Set.empty
   }
 
   @tailrec private[this] def tailRecSparseBinaryPermutations(
-    existingPermutations: Set[Map[Long, String]],
+    etwitteristingPermutations: Set[Map[Long, String]],
     remainingIdValues: List[(Long, Set[String])]
   ): Set[Map[Long, String]] = remainingIdValues match {
-    case Nil => existingPermutations
+    case Nil => etwitteristingPermutations
     case (id, values) +: rest =>
       tailRecSparseBinaryPermutations(
-        existingPermutations.flatMap { existingIdValueMap =>
-          values.map(value => existingIdValueMap ++ Map(id -> value))
+        etwitteristingPermutations.flatMap { etwitteristingIdValueMap =>
+          values.map(value => etwitteristingIdValueMap ++ Map(id -> value))
         },
         rest
       )
   }
 
-  val SparseFeatureSuffix = ".member"
+  val SparseFeatureSuffitwitter = ".member"
   def sparseFeature(sparseBinaryFeature: Feature[_]): Feature[String] =
-    new Feature.Text(
-      sparseBinaryFeature.getDenseFeatureName + SparseFeatureSuffix,
+    new Feature.Tetwittert(
+      sparseBinaryFeature.getDenseFeatureName + SparseFeatureSuffitwitter,
       AggregationMetricCommon.derivePersonalDataTypes(Some(sparseBinaryFeature)))
 
-  /* Throws exception if obj not an instance of U */
+  /* Throws etwitterception if obj not an instance of U */
   private[this] def validate[U](obj: Any): U = {
     require(obj.isInstanceOf[U])
     obj.asInstanceOf[U]
@@ -127,7 +127,7 @@ object TypedAggregateGroup {
   def getKeyFeatureIds(keysToAggregate: Set[Feature[_]]): Set[Long] =
     keysToAggregate.map(getDenseFeatureId)
 
-  def checkIfAllKeysExist[U](featureIdValueMap: Map[Long, Option[U]]): Boolean =
+  def checkIfAllKeysEtwitterist[U](featureIdValueMap: Map[Long, Option[U]]): Boolean =
     featureIdValueMap.forall { case (_, valueOpt) => valueOpt.isDefined }
 
   def liftOptions[U](featureIdValueMap: Map[Long, Option[U]]): Map[Long, U] =
@@ -159,7 +159,7 @@ object TypedAggregateGroup {
       FeatureType.DISCRETE
     ).toMap
 
-    val textAggregationKeys = getKeyFeatureIdValues[String](
+    val tetwittertAggregationKeys = getKeyFeatureIdValues[String](
       dataRecord,
       keysToAggregate,
       FeatureType.STRING
@@ -179,20 +179,20 @@ object TypedAggregateGroup {
         )
     }.toList
 
-    if (checkIfAllKeysExist(discreteAggregationKeys) &&
-      checkIfAllKeysExist(textAggregationKeys)) {
+    if (checkIfAllKeysEtwitterist(discreteAggregationKeys) &&
+      checkIfAllKeysEtwitterist(tetwittertAggregationKeys)) {
       if (sparseBinaryIdValues.nonEmpty) {
-        sparseBinaryPermutations(sparseBinaryIdValues).map { sparseBinaryTextKeys =>
+        sparseBinaryPermutations(sparseBinaryIdValues).map { sparseBinaryTetwittertKeys =>
           AggregationKey(
             discreteFeaturesById = liftOptions(discreteAggregationKeys),
-            textFeaturesById = liftOptions(textAggregationKeys) ++ sparseBinaryTextKeys
+            tetwittertFeaturesById = liftOptions(tetwittertAggregationKeys) ++ sparseBinaryTetwittertKeys
           )
         }
       } else {
         Set(
           AggregationKey(
             discreteFeaturesById = liftOptions(discreteAggregationKeys),
-            textFeaturesById = liftOptions(textAggregationKeys)
+            tetwittertFeaturesById = liftOptions(tetwittertAggregationKeys)
           )
         )
       }
@@ -209,7 +209,7 @@ object TypedAggregateGroup {
  * data records pre-aggregation (e.g. discretization, renaming)
  * @param samplingTransformOpt Optional [[OneToSomeTransform]] that transform data
  * record to optional data record (e.g. for sampling) before aggregation
- * @param aggregatePrefix Prefix to use for naming resultant aggregate features
+ * @param aggregatePrefitwitter Prefitwitter to use for naming resultant aggregate features
  * @param keysToAggregate Features to group by when computing the aggregates
  * (e.g. USER_ID, AUTHOR_ID)
  * @param featuresToAggregate Features to aggregate (e.g. blender_score or is_photo)
@@ -228,19 +228,19 @@ object TypedAggregateGroup {
  * ''inputSource'' by a single set of aggregation keys (''featuresToAggregate'').
  * Within these groups, we perform a comprehensive cross of:
  *
- * ''featuresToAggregate'' x ''labels'' x ''metrics'' x ''halfLives''
+ * ''featuresToAggregate'' twitter ''labels'' twitter ''metrics'' twitter ''halfLives''
  *
  * All the resultant aggregate features are assigned a human-readable feature name
- * beginning with ''aggregatePrefix'', and are written to DataRecords that get
+ * beginning with ''aggregatePrefitwitter'', and are written to DataRecords that get
  * aggregated and written to the store specified by ''outputStore''.
  *
- * Illustrative example. Suppose we define our spec as follows:
+ * Illustrative etwitterample. Suppose we define our spec as follows:
  *
  * TypedAggregateGroup(
  *   inputSource         = "timelines_recap_daily",
- *   aggregatePrefix     = "user_author_aggregate",
+ *   aggregatePrefitwitter     = "user_author_aggregate",
  *   keysToAggregate     = Set(USER_ID, AUTHOR_ID),
- *   featuresToAggregate = Set(RecapFeatures.TEXT_SCORE, RecapFeatures.BLENDER_SCORE),
+ *   featuresToAggregate = Set(RecapFeatures.TEtwitterT_SCORE, RecapFeatures.BLENDER_SCORE),
  *   labels              = Set(RecapFeatures.IS_FAVORITED, RecapFeatures.IS_REPLIED),
  *   metrics             = Set(CountMetric, MeanMetric),
  *   halfLives           = Set(7.Days, 30.Days),
@@ -249,7 +249,7 @@ object TypedAggregateGroup {
  *
  * This will process data records from the source named "timelines_recap_daily"
  * (see AggregateSource.scala for more details on how to add your own source)
- * It will produce a total of 2x2x2x2 = 16 aggregation features, named like:
+ * It will produce a total of 2twitter2twitter2twitter2 = 16 aggregation features, named like:
  *
  * user_author_aggregate.pair.recap.engagement.is_favorited.recap.searchfeature.blender_score.count.7days
  * user_author_aggregate.pair.recap.engagement.is_favorited.recap.searchfeature.blender_score.count.30days
@@ -273,7 +273,7 @@ object TypedAggregateGroup {
  */
 case class TypedAggregateGroup[T](
   inputSource: AggregateSource,
-  aggregatePrefix: String,
+  aggregatePrefitwitter: String,
   keysToAggregate: Set[Feature[_]],
   featuresToAggregate: Set[Feature[T]],
   labels: Set[_ <: Feature[JBoolean]],
@@ -283,19 +283,19 @@ case class TypedAggregateGroup[T](
   preTransforms: Seq[OneToSomeTransform] = Seq.empty,
   includeAnyFeature: Boolean = true,
   includeAnyLabel: Boolean = true,
-  aggExclusionRegex: Seq[String] = Seq.empty) {
+  aggEtwitterclusionRegetwitter: Seq[String] = Seq.empty) {
   import TypedAggregateGroup._
 
-  val compiledRegexes = aggExclusionRegex.map(new Regex(_))
+  val compiledRegetwitteres = aggEtwitterclusionRegetwitter.map(new Regetwitter(_))
 
   // true if should drop, false if should keep
   def filterOutAggregateFeature(
     feature: PrecomputedAggregateDescriptor[_],
-    regexes: Seq[Regex]
+    regetwitteres: Seq[Regetwitter]
   ): Boolean = {
-    if (regexes.nonEmpty)
-      feature.outputFeatures.exists { feature =>
-        regexes.exists { re => re.findFirstMatchIn(feature.getDenseFeatureName).nonEmpty }
+    if (regetwitteres.nonEmpty)
+      feature.outputFeatures.etwitterists { feature =>
+        regetwitteres.etwitterists { re => re.findFirstMatchIn(feature.getDenseFeatureName).nonEmpty }
       }
     else false
   }
@@ -311,7 +311,7 @@ case class TypedAggregateGroup[T](
    * (of type ''AggregateFeature''). Also precompute hashes of all aggregation
    * "output" features generated by these operators for faster
    * run-time performance (this turns out to be a primary CPU bottleneck).
-   * Ex: for the mean operator, "sum" and "count" are output features
+   * Etwitter: for the mean operator, "sum" and "count" are output features
    */
   val individualAggregateDescriptors: Set[PrecomputedAggregateDescriptor[T]] = {
     /*
@@ -328,7 +328,7 @@ case class TypedAggregateGroup[T](
       metric <- metrics
       halfLife <- halfLives
     } yield {
-      val query = AggregateFeature[T](aggregatePrefix, feature, label, halfLife)
+      val query = AggregateFeature[T](aggregatePrefitwitter, feature, label, halfLife)
 
       val aggregateOutputFeatures = metric.getOutputFeatures(query)
       val aggregateOutputFeatureIds = metric.getOutputFeatureIds(query)
@@ -339,7 +339,7 @@ case class TypedAggregateGroup[T](
         aggregateOutputFeatureIds
       )
     }
-  }.filterNot(filterOutAggregateFeature(_, compiledRegexes))
+  }.filterNot(filterOutAggregateFeature(_, compiledRegetwitteres))
 
   /* Precomputes a map from all generated aggregate feature ids to their half lives. */
   val continuousFeatureIdsToHalfLives: Map[Long, Duration] =
@@ -372,12 +372,12 @@ case class TypedAggregateGroup[T](
       outputFeatures
   }
 
-  val aggregateContext: FeatureContext = new FeatureContext(allOutputFeatures.toList.asJava)
+  val aggregateContetwittert: FeatureContetwittert = new FeatureContetwittert(allOutputFeatures.toList.asJava)
 
   /**
    * Adds all aggregates in this group found in the two input data records
    * into a result, mutating the result. Uses a while loop for an
-   * approximately 10% gain in speed over a for comprehension.
+   * approtwitterimately 10% gain in speed over a for comprehension.
    *
    * WARNING: mutates ''result''
    *
@@ -387,8 +387,8 @@ case class TypedAggregateGroup[T](
    */
   def mutatePlus(result: DataRecord, left: DataRecord, right: DataRecord): Unit = {
     val featureIterator = individualAggregateDescriptors.iterator
-    while (featureIterator.hasNext) {
-      val descriptor = featureIterator.next
+    while (featureIterator.hasNetwittert) {
+      val descriptor = featureIterator.netwittert
       descriptor.metric.mutatePlus(
         result,
         left,
@@ -438,7 +438,7 @@ case class TypedAggregateGroup[T](
               aggregateOutputs = Some(descriptor.outputFeatureIds)
             )
           }
-          .exists(identity)
+          .etwitterists(identity)
 
         if (isNonEmptyIncrement) {
           SRichDataRecord(increment).setFeatureValue(
@@ -453,12 +453,12 @@ case class TypedAggregateGroup[T](
       .getOrElse(Set.empty[(AggregationKey, DataRecord)])
   }
 
-  def outputFeaturesToRenamedOutputFeatures(prefix: String): Map[Feature[_], Feature[_]] = {
-    require(prefix.nonEmpty)
+  def outputFeaturesToRenamedOutputFeatures(prefitwitter: String): Map[Feature[_], Feature[_]] = {
+    require(prefitwitter.nonEmpty)
 
     allOutputFeatures.map { feature =>
       if (feature.isSetFeatureName) {
-        val renamedFeatureName = prefix + feature.getDenseFeatureName
+        val renamedFeatureName = prefitwitter + feature.getDenseFeatureName
         val personalDataTypes =
           if (feature.getPersonalDataTypes.isPresent) feature.getPersonalDataTypes.get()
           else null
@@ -469,7 +469,7 @@ case class TypedAggregateGroup[T](
           case FeatureType.DISCRETE =>
             new Feature.Discrete(renamedFeatureName, personalDataTypes)
           case FeatureType.STRING =>
-            new Feature.Text(renamedFeatureName, personalDataTypes)
+            new Feature.Tetwittert(renamedFeatureName, personalDataTypes)
           case FeatureType.CONTINUOUS =>
             new Feature.Continuous(renamedFeatureName, personalDataTypes)
           case FeatureType.SPARSE_BINARY =>

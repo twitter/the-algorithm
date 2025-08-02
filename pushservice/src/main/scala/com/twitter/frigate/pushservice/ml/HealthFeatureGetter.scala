@@ -19,7 +19,7 @@ import com.twitter.frigate.thriftscala.UserMediaRepresentation
 import com.twitter.hss.api.thriftscala.SignalValue
 import com.twitter.hss.api.thriftscala.UserHealthSignal
 import com.twitter.hss.api.thriftscala.UserHealthSignal.AgathaCalibratedNsfwDouble
-import com.twitter.hss.api.thriftscala.UserHealthSignal.NsfwTextUserScoreDouble
+import com.twitter.hss.api.thriftscala.UserHealthSignal.NsfwTetwittertUserScoreDouble
 import com.twitter.hss.api.thriftscala.UserHealthSignalResponse
 import com.twitter.storehaus.ReadableStore
 import com.twitter.util.Future
@@ -38,9 +38,9 @@ object HealthFeatureGetter {
     pushCandidate match {
       case cand: PushCandidate with TweetCandidate with TweetAuthor with TweetAuthorDetails =>
         val pMediaNsfwRequest =
-          TweetScoringRequest(cand.tweetId, TweetHealthModel.ExperimentalHealthModelScore4)
-        val pTweetTextNsfwRequest =
-          TweetScoringRequest(cand.tweetId, TweetHealthModel.ExperimentalHealthModelScore1)
+          TweetScoringRequest(cand.tweetId, TweetHealthModel.EtwitterperimentalHealthModelScore4)
+        val pTweetTetwittertNsfwRequest =
+          TweetScoringRequest(cand.tweetId, TweetHealthModel.EtwitterperimentalHealthModelScore1)
 
         cand.authorId match {
           case Some(authorId) =>
@@ -49,25 +49,25 @@ object HealthFeatureGetter {
                 userHealthScoreStore.get(authorId),
                 producerMediaRepresentationStore.get(authorId),
                 tweetHealthScoreStoreOpt.map(_.get(pMediaNsfwRequest)).getOrElse(Future.None),
-                tweetHealthScoreStoreOpt.map(_.get(pTweetTextNsfwRequest)).getOrElse(Future.None),
+                tweetHealthScoreStoreOpt.map(_.get(pTweetTetwittertNsfwRequest)).getOrElse(Future.None),
                 cand.tweetAuthor
               ).map {
                 case (
                       healthSignalsResponseOpt,
                       producerMuOpt,
                       pMediaNsfwOpt,
-                      pTweetTextNsfwOpt,
+                      pTweetTetwittertNsfwOpt,
                       tweetAuthorOpt) =>
                   val healthSignalScoreMap = healthSignalsResponseOpt
                     .map(_.signalValues).getOrElse(Map.empty[UserHealthSignal, SignalValue])
                   val agathaNSFWScore = userHealthSignalValueToDouble(
                     healthSignalScoreMap
                       .getOrElse(AgathaCalibratedNsfwDouble, SignalValue.DoubleValue(0.5)))
-                  val userTextNSFWScore = userHealthSignalValueToDouble(
+                  val userTetwittertNSFWScore = userHealthSignalValueToDouble(
                     healthSignalScoreMap
-                      .getOrElse(NsfwTextUserScoreDouble, SignalValue.DoubleValue(0.15)))
+                      .getOrElse(NsfwTetwittertUserScoreDouble, SignalValue.DoubleValue(0.15)))
                   val pMediaNsfwScore = pMediaNsfwOpt.map(_.score).getOrElse(0.0)
-                  val pTweetTextNsfwScore = pTweetTextNsfwOpt.map(_.score).getOrElse(0.0)
+                  val pTweetTetwittertNsfwScore = pTweetTetwittertNsfwOpt.map(_.score).getOrElse(0.0)
 
                   val mediaRepresentationMap =
                     producerMuOpt.map(_.mediaRepresentation).getOrElse(Map.empty[String, Double])
@@ -129,9 +129,9 @@ object HealthFeatureGetter {
 
                   val continuousFeatures = Map[String, Double](
                     "agathaNsfwScore" -> agathaNSFWScore,
-                    "textNsfwScore" -> userTextNSFWScore,
+                    "tetwittertNsfwScore" -> userTetwittertNSFWScore,
                     "pMediaNsfwScore" -> pMediaNsfwScore,
-                    "pTweetTextNsfwScore" -> pTweetTextNsfwScore,
+                    "pTweetTetwittertNsfwScore" -> pTweetTetwittertNsfwScore,
                     "nudityRate" -> nudityRate,
                     "beautyRate" -> beautyRate,
                     "singlePersonRate" -> singlePersonRate,
@@ -193,9 +193,9 @@ object HealthFeatureGetter {
                     "pornList" -> tweetSemanticCoreIds.contains(PushConstants.PornList_Id),
                     "pornographyAndNsfwContent" -> tweetSemanticCoreIds.contains(
                       PushConstants.PornographyAndNsfwContent_Id),
-                    "sexLife" -> tweetSemanticCoreIds.contains(PushConstants.SexLife_Id),
-                    "sexLifeOrSexualOrientation" -> tweetSemanticCoreIds.contains(
-                      PushConstants.SexLifeOrSexualOrientation_Id),
+                    "setwitterLife" -> tweetSemanticCoreIds.contains(PushConstants.SetwitterLife_Id),
+                    "setwitterLifeOrSetwitterualOrientation" -> tweetSemanticCoreIds.contains(
+                      PushConstants.SetwitterLifeOrSetwitterualOrientation_Id),
                     "profanity" -> tweetSemanticCoreIds.contains(PushConstants.ProfanityFilter_Id),
                     "isVerified" -> cand.booleanFeatures
                       .getOrElse("RecTweetAuthor.User.IsVerified", false),
@@ -204,7 +204,7 @@ object HealthFeatureGetter {
 
                   val stringFeatures = Map[String, String](
                     "tweetLanguage" -> cand.categoricalFeatures
-                      .getOrElse("tweet.core.tweet_text.language", "")
+                      .getOrElse("tweet.core.tweet_tetwittert.language", "")
                   )
 
                   FeatureMap(

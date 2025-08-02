@@ -8,7 +8,7 @@ import com.twitter.tweetypie.repository._
 import com.twitter.tweetypie.thriftscala._
 
 object MediaTagsHydrator {
-  type Type = ValueHydrator[Option[TweetMediaTags], TweetCtx]
+  type Type = ValueHydrator[Option[TweetMediaTags], TweetCttwitter]
 
   /**
    * TweetMediaTags contains a map of MediaId to Seq[MediaTag].
@@ -31,13 +31,13 @@ object MediaTagsHydrator {
    * we drop the tag.
    */
   def apply(repo: UserViewRepository.Type): Type =
-    ValueHydrator[TweetMediaTags, TweetCtx] { (tags, ctx) =>
+    ValueHydrator[TweetMediaTags, TweetCttwitter] { (tags, cttwitter) =>
       val mediaTagsByMediaId: Seq[(MediaId, Seq[MediaTag])] = tags.tagMap.toSeq
 
       Stitch
         .traverse(mediaTagsByMediaId) {
           case (mediaId, mediaTags) =>
-            Stitch.traverse(mediaTags)(tag => hydrateMediaTag(repo, tag, ctx.userId)).map {
+            Stitch.traverse(mediaTags)(tag => hydrateMediaTag(repo, tag, cttwitter.userId)).map {
               ValueState.sequence(_).map(tags => (mediaId, tags.flatten))
             }
         }
@@ -45,14 +45,14 @@ object MediaTagsHydrator {
           // Reconstruct TweetMediaTags(tagMap: Map[MediaId, SeqMediaTag])
           ValueState.sequence(_).map(s => TweetMediaTags(s.toMap))
         }
-    }.onlyIf { (_, ctx) =>
-      !ctx.isRetweet && ctx.tweetFieldRequested(Tweet.MediaTagsField)
+    }.onlyIf { (_, cttwitter) =>
+      !cttwitter.isRetweet && cttwitter.tweetFieldRequested(Tweet.MediaTagsField)
     }.liftOption
 
   /**
    * A function to hydrate a single `MediaTag`. The return type is `Option[MediaTag]`
    * because we may return `None` to filter out a `MediaTag` if the tagged user doesn't
-   * exist or isn't taggable.
+   * etwitterist or isn't taggable.
    */
   private[this] def hydrateMediaTag(
     repo: UserViewRepository.Type,
@@ -64,7 +64,7 @@ object MediaTagsHydrator {
       case Some(key) =>
         repo(toRepoQuery(key, authorId))
           .map {
-            case user if user.mediaView.exists(_.canMediaTag) =>
+            case user if user.mediaView.etwitterists(_.canMediaTag) =>
               ValueState.modified(
                 Some(
                   mediaTag.copy(

@@ -3,8 +3,8 @@ package com.twitter.search.ingester.pipeline.twitter.thriftparse;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nonnull;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -14,12 +14,12 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
+import com.twitter.common_internal.tetwittert.version.PenguinVersion;
 import com.twitter.dataproducts.enrichments.thriftjava.GeoEntity;
 import com.twitter.dataproducts.enrichments.thriftjava.PotentialLocation;
 import com.twitter.dataproducts.enrichments.thriftjava.ProfileGeoEnrichment;
 import com.twitter.escherbird.thriftjava.TweetEntityAnnotation;
-import com.twitter.expandodo.thriftjava.Card2;
+import com.twitter.etwitterpandodo.thriftjava.Card2;
 import com.twitter.gizmoduck.thriftjava.User;
 import com.twitter.mediaservices.commons.tweetmedia.thrift_java.MediaInfo;
 import com.twitter.search.common.debug.thriftjava.DebugEvents;
@@ -41,7 +41,7 @@ import com.twitter.service.spiderduck.gen.MediaTypes;
 import com.twitter.tweetypie.thriftjava.DeviceSource;
 import com.twitter.tweetypie.thriftjava.DirectedAtUser;
 import com.twitter.tweetypie.thriftjava.EscherbirdEntityAnnotations;
-import com.twitter.tweetypie.thriftjava.ExclusiveTweetControl;
+import com.twitter.tweetypie.thriftjava.EtwitterclusiveTweetControl;
 import com.twitter.tweetypie.thriftjava.GeoCoordinates;
 import com.twitter.tweetypie.thriftjava.HashtagEntity;
 import com.twitter.tweetypie.thriftjava.MediaEntity;
@@ -54,7 +54,7 @@ import com.twitter.tweetypie.thriftjava.TweetCoreData;
 import com.twitter.tweetypie.thriftjava.TweetCreateEvent;
 import com.twitter.tweetypie.thriftjava.TweetDeleteEvent;
 import com.twitter.tweetypie.thriftjava.UrlEntity;
-import com.twitter.tweetypie.tweettext.PartialHtmlEncoding;
+import com.twitter.tweetypie.tweettetwittert.PartialHtmlEncoding;
 
 /**
  * This is an utility class for converting Thrift TweetEvent messages sent by TweetyPie
@@ -64,11 +64,11 @@ public final class TweetEventParseHelper {
   private static final Logger LOG = LoggerFactory.getLogger(TweetEventParseHelper.class);
 
   @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_NULL_TEXT =
-      SearchCounter.export("tweets_with_null_text_from_thrift_cnt");
+  static final SearchCounter NUM_TWEETS_WITH_NULL_TEtwitterT =
+      SearchCounter.etwitterport("tweets_with_null_tetwittert_from_thrift_cnt");
 
   @VisibleForTesting
-  static final SearchCounter TWEET_SIZE = SearchCounter.export("tweet_size_from_thrift");
+  static final SearchCounter TWEET_SIZE = SearchCounter.etwitterport("tweet_size_from_thrift");
 
   @VisibleForTesting
   static final Percentile<Long> TWEET_SIZE_PERCENTILES =
@@ -76,91 +76,91 @@ public final class TweetEventParseHelper {
 
   @VisibleForTesting
   static final SearchCounter NUM_TWEETS_WITH_CONVERSATION_ID =
-      SearchCounter.export("tweets_with_conversation_id_from_thrift_cnt");
+      SearchCounter.etwitterport("tweets_with_conversation_id_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_TWEETS_WITH_QUOTE =
-      SearchCounter.export("tweets_with_quote_from_thrift_cnt");
+      SearchCounter.etwitterport("tweets_with_quote_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_TWEETS_WITH_ANNOTATIONS =
-      SearchCounter.export("tweets_with_annotation_from_thrift_cnt");
+      SearchCounter.etwitterport("tweets_with_annotation_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_ANNOTATIONS_ADDED =
-      SearchCounter.export("num_annotations_from_thrift_cnt");
+      SearchCounter.etwitterport("num_annotations_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_TWEETS_WITH_COORDINATE_FIELD =
-      SearchCounter.export("tweets_with_coordinate_field_from_thrift_cnt");
+      SearchCounter.etwitterport("tweets_with_coordinate_field_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_PLACE_ADDED =
-      SearchCounter.export("num_places_from_thrift_cnt");
+      SearchCounter.etwitterport("num_places_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_TWEETS_WITH_PLACE_FIELD =
-      SearchCounter.export("tweets_with_place_field_from_thrift_cnt");
+      SearchCounter.etwitterport("tweets_with_place_field_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_TWEETS_WITH_PLACE_COUNTRY_CODE =
-      SearchCounter.export("tweets_with_place_country_code_from_thrift_cnt");
+      SearchCounter.etwitterport("tweets_with_place_country_code_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_TWEETS_USE_PLACE_FIELD =
-      SearchCounter.export("tweets_use_place_field_from_thrift_cnt");
+      SearchCounter.etwitterport("tweets_use_place_field_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_TWEETS_CANNOT_PARSE_PLACE_FIELD =
-      SearchCounter.export("tweets_cannot_parse_place_field_from_thrift_cnt");
+      SearchCounter.etwitterport("tweets_cannot_parse_place_field_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_TWEETS_WITH_PROFILE_GEO_ENRICHMENT =
-      SearchCounter.export("tweets_with_profile_geo_enrichment_from_thrift_cnt");
+      SearchCounter.etwitterport("tweets_with_profile_geo_enrichment_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_TWEETS_WITH_MENTIONS =
-      SearchCounter.export("tweets_with_mentions_from_thrift_cnt");
+      SearchCounter.etwitterport("tweets_with_mentions_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_MENTIONS_ADDED =
-      SearchCounter.export("num_mentions_from_thrift_cnt");
+      SearchCounter.etwitterport("num_mentions_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_TWEETS_WITH_HASHTAGS =
-      SearchCounter.export("tweets_with_hashtags_from_thrift_cnt");
+      SearchCounter.etwitterport("tweets_with_hashtags_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_HASHTAGS_ADDED =
-      SearchCounter.export("num_hashtags_from_thrift_cnt");
+      SearchCounter.etwitterport("num_hashtags_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_TWEETS_WITH_MEDIA_URL =
-      SearchCounter.export("tweets_with_media_url_from_thrift_cnt");
+      SearchCounter.etwitterport("tweets_with_media_url_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_MEDIA_URLS_ADDED =
-      SearchCounter.export("num_media_urls_from_thrift_cnt");
+      SearchCounter.etwitterport("num_media_urls_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_TWEETS_WITH_PHOTO_MEDIA_URL =
-      SearchCounter.export("tweets_with_photo_media_url_from_thrift_cnt");
+      SearchCounter.etwitterport("tweets_with_photo_media_url_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_TWEETS_WITH_VIDEO_MEDIA_URL =
-      SearchCounter.export("tweets_with_video_media_url_from_thrift_cnt");
+      SearchCounter.etwitterport("tweets_with_video_media_url_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_TWEETS_WITH_NON_MEDIA_URL =
-      SearchCounter.export("tweets_with_non_media_url_from_thrift_cnt");
+      SearchCounter.etwitterport("tweets_with_non_media_url_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_NON_MEDIA_URLS_ADDED =
-      SearchCounter.export("num_non_media_urls_from_thrift_cnt");
+      SearchCounter.etwitterport("num_non_media_urls_from_thrift_cnt");
 
   @VisibleForTesting
   static final SearchCounter NUM_TWEETS_MISSING_QUOTE_URLS =
-      SearchCounter.export("num_tweets_missing_quote_urls_cnt");
+      SearchCounter.etwitterport("num_tweets_missing_quote_urls_cnt");
 
   // Utility class, disallow instantiation.
   private TweetEventParseHelper() {
@@ -171,27 +171,27 @@ public final class TweetEventParseHelper {
   public static IngesterTwitterMessage getTwitterMessageFromCreationEvent(
       @Nonnull TweetCreateEvent createEvent,
       @Nonnull List<PenguinVersion> supportedPenguinVersions,
-      @Nullable DebugEvents debugEvents) throws ThriftTweetParsingException {
+      @Nullable DebugEvents debugEvents) throws ThriftTweetParsingEtwitterception {
 
     Tweet tweet = createEvent.getTweet();
     if (tweet == null) {
-      throw new ThriftTweetParsingException("No tweet field in TweetCreateEvent");
+      throw new ThriftTweetParsingEtwitterception("No tweet field in TweetCreateEvent");
     }
 
     TweetCoreData coreData = tweet.getCore_data();
     if (coreData == null) {
-      throw new ThriftTweetParsingException("No core_data field in Tweet in TweetCreateEvent");
+      throw new ThriftTweetParsingEtwitterception("No core_data field in Tweet in TweetCreateEvent");
     }
 
     User user = createEvent.getUser();
     if (user == null) {
-      throw new ThriftTweetParsingException("No user field in TweetCreateEvent");
+      throw new ThriftTweetParsingEtwitterception("No user field in TweetCreateEvent");
     }
     if (!user.isSetProfile()) {
-      throw new ThriftTweetParsingException("No profile field in User in TweetCreateEvent");
+      throw new ThriftTweetParsingEtwitterception("No profile field in User in TweetCreateEvent");
     }
     if (!user.isSetSafety()) {
-      throw new ThriftTweetParsingException("No safety field in User in TweetCreateEvent");
+      throw new ThriftTweetParsingEtwitterception("No safety field in User in TweetCreateEvent");
     }
 
     long twitterId = tweet.getId();
@@ -229,11 +229,11 @@ public final class TweetEventParseHelper {
       message.setSelfThread(true);
     }
 
-    ExclusiveTweetControl exclusiveTweetControl = tweet.getExclusive_tweet_control();
-    if (exclusiveTweetControl != null) {
-      if (exclusiveTweetControl.isSetConversation_author_id()) {
-        message.setExclusiveConversationAuthorId(
-            exclusiveTweetControl.getConversation_author_id());
+    EtwitterclusiveTweetControl etwitterclusiveTweetControl = tweet.getEtwitterclusive_tweet_control();
+    if (etwitterclusiveTweetControl != null) {
+      if (etwitterclusiveTweetControl.isSetConversation_author_id()) {
+        message.setEtwitterclusiveConversationAuthorId(
+            etwitterclusiveTweetControl.getConversation_author_id());
       }
     }
 
@@ -257,9 +257,9 @@ public final class TweetEventParseHelper {
         if (quotedTweet.isSetPermalink()) {
           String quotedURL = quotedTweet.getPermalink().getLong_url();
           UrlEntity quotedURLEntity = new UrlEntity();
-          quotedURLEntity.setExpanded(quotedURL);
+          quotedURLEntity.setEtwitterpanded(quotedURL);
           quotedURLEntity.setUrl(quotedTweet.getPermalink().getShort_url());
-          quotedURLEntity.setDisplay(quotedTweet.getPermalink().getDisplay_text());
+          quotedURLEntity.setDisplay(quotedTweet.getPermalink().getDisplay_tetwittert());
           addUrlsToMessage(message, Lists.newArrayList(quotedURLEntity));
         } else {
           LOG.warn("Tweet {} has quoted tweet, but is missing quoted tweet URL: {}",
@@ -280,15 +280,15 @@ public final class TweetEventParseHelper {
       Card2 card = createEvent.getTweet().getCard2();
       message.setCardName(card.getName());
       message.setCardTitle(
-          CardFieldUtil.extractBindingValue(CardFieldUtil.TITLE_BINDING_KEY, card));
+          CardFieldUtil.etwittertractBindingValue(CardFieldUtil.TITLE_BINDING_KEY, card));
       message.setCardDescription(
-          CardFieldUtil.extractBindingValue(CardFieldUtil.DESCRIPTION_BINDING_KEY, card));
+          CardFieldUtil.etwittertractBindingValue(CardFieldUtil.DESCRIPTION_BINDING_KEY, card));
       CardFieldUtil.deriveCardLang(message);
       message.setCardUrl(card.getUrl());
     }
 
     // Some fields should be set based on the "original" tweet. So if this tweet is a retweet,
-    // we want to extract those fields from the retweeted tweet.
+    // we want to etwittertract those fields from the retweeted tweet.
     Tweet retweetOrTweet = tweet;
     TweetCoreData retweetOrTweetCoreData = coreData;
     User retweetOrTweetUser = user;
@@ -316,7 +316,7 @@ public final class TweetEventParseHelper {
       addMediaEntitiesToMessage(message, retweetOrTweet.getId(), retweetOrTweet.getMedia());
       addUrlsToMessage(message, retweetOrTweet.getUrls());
 
-      // If a tweet's text is longer than 140 characters, the text for any retweet of that tweet
+      // If a tweet's tetwittert is longer than 140 characters, the tetwittert for any retweet of that tweet
       // will be truncated. And if the original tweet has hashtags or mentions after character 140,
       // the Tweetypie event for the retweet will not include those hashtags/mentions, which will
       // make the retweet unsearchable by those hashtags/mentions. So in order to avoid this
@@ -333,7 +333,7 @@ public final class TweetEventParseHelper {
       setGeoFields(message, retweetOrTweetCoreData, retweetOrTweetUser);
       setPlacesFields(message, retweetOrTweet);
     }
-    setText(message, retweetOrTweetCoreData);
+    setTetwittert(message, retweetOrTweetCoreData);
     setInReplyTo(message, retweetOrTweetCoreData, isRetweet);
     setDeviceSourceField(message, retweetOrTweet);
 
@@ -403,25 +403,25 @@ public final class TweetEventParseHelper {
     }
   }
 
-  private static void setText(TwitterMessage message, TweetCoreData coreData) {
+  private static void setTetwittert(TwitterMessage message, TweetCoreData coreData) {
     /**
-     * TweetyPie doesn't do a full HTML escaping of the text, only a partial escaping
+     * TweetyPie doesn't do a full HTML escaping of the tetwittert, only a partial escaping
      * so we use their code to unescape it first, then we do
-     * a second unescaping because when the tweet text itself has HTML escape
-     * sequences, we want to index the unescaped version, not the escape sequence itself.
+     * a second unescaping because when the tweet tetwittert itself has HTML escape
+     * sequences, we want to indetwitter the unescaped version, not the escape sequence itself.
      * --
      * Yes, we *double* unescape html. About 1-2 tweets per second are double escaped,
-     * and we probably want to index the real text and not things like '&#9733;'.
-     * Unescaping already unescaped text seems safe in practice.
+     * and we probably want to indetwitter the real tetwittert and not things like '&#9733;'.
+     * Unescaping already unescaped tetwittert seems safe in practice.
      * --
      *
-     * This may seem wrong, because one thinks we should index whatever the user posts,
+     * This may seem wrong, because one thinks we should indetwitter whatever the user posts,
      * but given punctuation stripping this creates odd behavior:
      *
      * If someone tweets &amp; they won't be able to find it by searching for '&amp;' because
-     * the tweet will be indexed as 'amp'
+     * the tweet will be indetwittered as 'amp'
      *
-     * It would also prevent some tweets from surfacing for certain searches, for example:
+     * It would also prevent some tweets from surfacing for certain searches, for etwitterample:
      *
      * User Tweets: John Mayer &amp; Dave Chappelle
      * We Unescape To: John Mayer & Dave Chappelle
@@ -436,7 +436,7 @@ public final class TweetEventParseHelper {
      *
      * A user searching for 'John Mayer Dave Chappelle' would miss the above tweet.
      *
-     * Second example
+     * Second etwitterample
      *
      * User Tweets: L'Humanit&eacute;
      * We Unescape To: L'Humanité
@@ -449,16 +449,16 @@ public final class TweetEventParseHelper {
      *
      */
 
-    String text = coreData.isSetText()
-        ? StringEscapeUtils.unescapeHtml(PartialHtmlEncoding.decode(coreData.getText()))
-        : coreData.getText();
-    message.setText(text);
-    if (text != null) {
-      long tweetLength = text.length();
+    String tetwittert = coreData.isSetTetwittert()
+        ? StringEscapeUtils.unescapeHtml(PartialHtmlEncoding.decode(coreData.getTetwittert()))
+        : coreData.getTetwittert();
+    message.setTetwittert(tetwittert);
+    if (tetwittert != null) {
+      long tweetLength = tetwittert.length();
       TWEET_SIZE.add(tweetLength);
       TWEET_SIZE_PERCENTILES.record(tweetLength);
     } else {
-      NUM_TWEETS_WITH_NULL_TEXT.increment();
+      NUM_TWEETS_WITH_NULL_TEtwitterT.increment();
     }
   }
 
@@ -508,17 +508,17 @@ public final class TweetEventParseHelper {
   public static IngesterTwitterMessage getTwitterMessageFromDeletionEvent(
       @Nonnull TweetDeleteEvent deleteEvent,
       @Nonnull List<PenguinVersion> supportedPenguinVersions,
-      @Nullable DebugEvents debugEvents) throws ThriftTweetParsingException {
+      @Nullable DebugEvents debugEvents) throws ThriftTweetParsingEtwitterception {
 
     Tweet tweet = deleteEvent.getTweet();
     if (tweet == null) {
-      throw new ThriftTweetParsingException("No tweet field in TweetDeleteEvent");
+      throw new ThriftTweetParsingEtwitterception("No tweet field in TweetDeleteEvent");
     }
     long tweetId = tweet.getId();
 
     TweetCoreData coreData = tweet.getCore_data();
     if (coreData == null) {
-      throw new ThriftTweetParsingException("No TweetCoreData in TweetDeleteEvent");
+      throw new ThriftTweetParsingEtwitterception("No TweetCoreData in TweetDeleteEvent");
     }
     long userId = coreData.getUser_id();
 
@@ -527,7 +527,7 @@ public final class TweetEventParseHelper {
         supportedPenguinVersions,
         debugEvents);
     message.setDeleted(true);
-    message.setText("delete");
+    message.setTetwittert("delete");
     message.setFromUser(TwitterMessageUser.createWithNamesAndId("delete", "delete", userId));
 
     return message;
@@ -580,7 +580,7 @@ public final class TweetEventParseHelper {
 
   private static boolean isToUser(
       MentionEntity mention, Optional<TwitterMessageUser> optionalToUser) {
-    if (mention.getFrom_index() == 0) {
+    if (mention.getFrom_indetwitter() == 0) {
       return true;
     }
     if (optionalToUser.isPresent()) {
@@ -605,7 +605,7 @@ public final class TweetEventParseHelper {
   }
 
   private static void addHashtag(IngesterTwitterMessage message, HashtagEntity hashtag) {
-    String hashtagString = hashtag.getText();
+    String hashtagString = hashtag.getTetwittert();
     message.addHashtag(hashtagString);
   }
 
@@ -632,7 +632,7 @@ public final class TweetEventParseHelper {
               if (mediaUrl != null) {
                 hasPhotoMediaUrl = true;
                 message.addPhotoUrl(photoStatusId, mediaUrl);
-                // Add this link to the expanded URLs too, so that the HAS_NATIVE_IMAGE_FLAG is set
+                // Add this link to the etwitterpanded URLs too, so that the HAS_NATIVE_IMAGE_FLAG is set
                 // correctly too. See EncodedFeatureBuilder.updateLinkEncodedFeatures().
               }
             } else if (mediaInfo.isSet(MediaInfo._Fields.VIDEO_INFO)) {
@@ -642,8 +642,8 @@ public final class TweetEventParseHelper {
           }
         }
         String originalUrl = media.getUrl();
-        String expandedUrl = media.getExpanded_url();
-        message.addExpandedMediaUrl(originalUrl, expandedUrl, mediaType);
+        String etwitterpandedUrl = media.getEtwitterpanded_url();
+        message.addEtwitterpandedMediaUrl(originalUrl, etwitterpandedUrl, mediaType);
       }
 
       if (hasPhotoMediaUrl) {
@@ -665,8 +665,8 @@ public final class TweetEventParseHelper {
       NUM_NON_MEDIA_URLS_ADDED.add(urls.size());
       for (UrlEntity url : urls) {
         String originalUrl = url.getUrl();
-        String expandedUrl = url.getExpanded();
-        message.addExpandedNonMediaUrl(originalUrl, expandedUrl);
+        String etwitterpandedUrl = url.getEtwitterpanded();
+        message.addEtwitterpandedNonMediaUrl(originalUrl, etwitterpandedUrl);
       }
     }
   }
@@ -698,7 +698,7 @@ public final class TweetEventParseHelper {
   private static String modifyDeviceSourceWithNofollow(@Nullable DeviceSource deviceSource) {
     if (deviceSource != null) {
       String source = deviceSource.getDisplay();
-      int i = source.indexOf("\">");
+      int i = source.indetwitterOf("\">");
       if (i == -1) {
         return source;
       } else {

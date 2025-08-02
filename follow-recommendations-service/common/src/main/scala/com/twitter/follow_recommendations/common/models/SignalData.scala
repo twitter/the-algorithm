@@ -14,13 +14,13 @@ case class RecentFollowsSignal(
   override val signalType: SignalType,
   followedUserId: Long,
   timestamp: Long)
-    extends SignalData
+    etwittertends SignalData
 
 object RecentFollowsSignal {
 
   def fromUssSignal(targetUserId: Long, signal: Signal): RecentFollowsSignal = {
     val InternalId.UserId(followedUserId) = signal.targetInternalId.getOrElse(
-      throw new IllegalArgumentException("RecentFollow Signal does not have internalId"))
+      throw new IllegalArgumentEtwitterception("RecentFollow Signal does not have internalId"))
 
     RecentFollowsSignal(
       userId = targetUserId,

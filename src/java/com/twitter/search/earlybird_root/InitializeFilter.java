@@ -12,7 +12,7 @@ import com.twitter.util.FutureEventListener;
 /**
  * Initialize request-scope state and clean them at the end.
  */
-public class InitializeFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+public class InitializeFilter etwittertends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
   @Override
   public Future<EarlybirdResponse> apply(EarlybirdRequest request,
                                          Service<EarlybirdRequest, EarlybirdResponse> service) {

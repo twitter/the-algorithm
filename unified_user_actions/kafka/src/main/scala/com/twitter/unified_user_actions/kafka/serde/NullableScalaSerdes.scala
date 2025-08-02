@@ -11,7 +11,7 @@
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EtwitterPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
  * FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
  * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
@@ -31,7 +31,7 @@ import com.twitter.scrooge.ThriftStruct
 
 /**
  * NullableScalaSerdes is pretty much the same as com.twitter.finatra.kafka.serde.ScalaSerdes
- * The only difference is that for the deserializer it returns null instead of throwing exceptions.
+ * The only difference is that for the deserializer it returns null instead of throwing etwitterceptions.
  * The caller can also provide a counter so that the number of corrupt/bad records can be counted.
  */
 object NullableScalaSerdes {

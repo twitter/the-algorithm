@@ -1,7 +1,7 @@
-// Defines the text format for including per-op API definition and
+// Defines the tetwittert format for including per-op API definition and
 // overrides for client language op code generators.
 
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -22,11 +22,11 @@ option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framewo
 //
 // We separate the API definition from the OpDef so we can evolve the
 // API while remaining backwards compatible when interpreting old
-// graphs.  Overrides go in an "api_def.pbtxt" file with a text-format
+// graphs.  Overrides go in an "api_def.pbttwittert" file with a tetwittert-format
 // ApiDefs message.
 //
-// WARNING: Be *very* careful changing the API for any existing op --
-// you can change the semantics of existing code.  These changes may
+// WARNING: Be *very* careful changing the API for any etwitteristing op --
+// you can change the semantics of etwitteristing code.  These changes may
 // need to wait until a major release of TensorFlow to avoid breaking
 // our compatibility promises.
 message ApiDef {
@@ -127,10 +127,10 @@ message ApiDef {
   // Additional, longer human-readable description of what the Op does.
   string description = 8;
 
-  // Modify an existing/inherited description by adding text to the beginning
+  // Modify an etwitteristing/inherited description by adding tetwittert to the beginning
   // or end.
-  string description_prefix = 9;
-  string description_suffix = 10;
+  string description_prefitwitter = 9;
+  string description_suffitwitter = 10;
 }
 
 message ApiDefs {

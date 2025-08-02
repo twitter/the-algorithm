@@ -1,6 +1,6 @@
 package com.twitter.timelineranker.client
 
-import com.twitter.finagle.SourcedException
+import com.twitter.finagle.SourcedEtwitterception
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.timelineranker.{thriftscala => thrift}
 import com.twitter.timelineranker.model._
@@ -11,9 +11,9 @@ import com.twitter.util.Return
 import com.twitter.util.Throw
 import com.twitter.util.Try
 
-case class TimelineRankerException(message: String)
-    extends Exception(message)
-    with SourcedException {
+case class TimelineRankerEtwitterception(message: String)
+    etwittertends Etwitterception(message)
+    with SourcedEtwitterception {
   serviceName = "timelineranker"
 }
 
@@ -24,7 +24,7 @@ case class TimelineRankerException(message: String)
 class TimelineRankerClient(
   private val client: thrift.TimelineRanker.MethodPerEndpoint,
   statsReceiver: StatsReceiver)
-    extends RequestStats {
+    etwittertends RequestStats {
 
   private[this] val baseScope = statsReceiver.scope("timelineRankerClient")
   private[this] val timelinesRequestStats = RequestStatsReceiver(baseScope.scope("timelines"))
@@ -55,13 +55,13 @@ class TimelineRankerClient(
   ): Seq[Try[Rep]] = {
     reqs.map { req =>
       findError(req) match {
-        case Some(error) if error.reason.exists { _ == thrift.ErrorReason.OverCapacity } =>
+        case Some(error) if error.reason.etwitterists { _ == thrift.ErrorReason.OverCapacity } =>
           // bubble up over capacity error, server shall handle it
           stats.onFailure(error)
           Throw(error)
         case Some(error) =>
           stats.onFailure(error)
-          Throw(TimelineRankerException(error.message))
+          Throw(TimelineRankerEtwitterception(error.message))
         case None =>
           getRep(req, stats)
       }
@@ -110,10 +110,10 @@ class TimelineRankerClient(
               Return(Timeline.fromThrift(timeline))
             // Should not really happen.
             case None =>
-              val tlrException =
-                TimelineRankerException("No timeline returned even when no error occurred.")
-              stats.onFailure(tlrException)
-              Throw(tlrException)
+              val tlrEtwitterception =
+                TimelineRankerEtwitterception("No timeline returned even when no error occurred.")
+              stats.onFailure(tlrEtwitterception)
+              Throw(tlrEtwitterception)
           }
         }
       }

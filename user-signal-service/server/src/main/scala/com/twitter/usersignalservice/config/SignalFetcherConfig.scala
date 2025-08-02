@@ -30,8 +30,8 @@ import com.twitter.usersignalservice.signals.NegativeEngagedTweetFetcher
 import com.twitter.usersignalservice.thriftscala.Signal
 import com.twitter.usersignalservice.thriftscala.SignalType
 import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class SignalFetcherConfig @Inject() (
@@ -62,7 +62,7 @@ class SignalFetcherConfig @Inject() (
       profileVisitsFetcher,
       ttl = 8.hours,
       statsReceiver,
-      keyPrefix = "uss:pv",
+      keyPrefitwitter = "uss:pv",
       timer)
 
   val MemcachedAccountFollowsFetcher: BaseSignalFetcher = MemcachedSignalFetcherWrapper(
@@ -70,7 +70,7 @@ class SignalFetcherConfig @Inject() (
     accountFollowsFetcher,
     ttl = 5.minute,
     statsReceiver,
-    keyPrefix = "uss:af",
+    keyPrefitwitter = "uss:af",
     timer)
 
   val GoodTweetClickDdgFetcher: SignalType => FilteredSignalFetcherController = signalType =>
@@ -155,7 +155,7 @@ class SignalFetcherConfig @Inject() (
     accountBlocksFetcher,
     ttl = 5.minutes,
     statsReceiver,
-    keyPrefix = "uss:ab",
+    keyPrefitwitter = "uss:ab",
     timer)
 
   val memcachedAccountMutesFetcher: MemcachedSignalFetcherWrapper = MemcachedSignalFetcherWrapper(
@@ -163,7 +163,7 @@ class SignalFetcherConfig @Inject() (
     accountMutesFetcher,
     ttl = 5.minutes,
     statsReceiver,
-    keyPrefix = "uss:am",
+    keyPrefitwitter = "uss:am",
     timer)
 
   val SignalFetcherMapper: Map[SignalType, ReadableStore[Query, Seq[Signal]]] = Map(

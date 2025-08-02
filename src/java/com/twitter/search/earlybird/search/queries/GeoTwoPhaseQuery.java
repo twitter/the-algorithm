@@ -1,16 +1,16 @@
 package com.twitter.search.earlybird.search.queries;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Set;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
+import org.apache.lucene.indetwitter.IndetwitterReader;
+import org.apache.lucene.indetwitter.LeafReaderContetwittert;
+import org.apache.lucene.indetwitter.Term;
 import org.apache.lucene.search.ConstantScoreQuery;
 import org.apache.lucene.search.ConstantScoreScorer;
 import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Etwitterplanation;
+import org.apache.lucene.search.IndetwitterSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.ScoreMode;
@@ -22,7 +22,7 @@ import com.twitter.search.common.search.TerminationTracker;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
 
 
-public class GeoTwoPhaseQuery extends Query {
+public class GeoTwoPhaseQuery etwittertends Query {
   private static final boolean ENABLE_GEO_EARLY_TERMINATION =
           EarlybirdConfig.getBool("early_terminate_geo_searches", true);
 
@@ -31,7 +31,7 @@ public class GeoTwoPhaseQuery extends Query {
 
   // How many geo searches are early terminated due to timeout.
   private static final SearchCounter GEO_SEARCH_TIMEOUT_COUNT =
-      SearchCounter.export("geo_search_timeout_count");
+      SearchCounter.etwitterport("geo_search_timeout_count");
 
   private final SecondPhaseDocAccepter accepter;
   private final TerminationTracker terminationTracker;
@@ -46,7 +46,7 @@ public class GeoTwoPhaseQuery extends Query {
   }
 
   @Override
-  public Query rewrite(IndexReader reader) throws IOException {
+  public Query rewrite(IndetwitterReader reader) throws IOEtwitterception {
     Query rewritten = query.getQuery().rewrite(reader);
     if (rewritten != query.getQuery()) {
       return new GeoTwoPhaseQuery(rewritten, accepter, terminationTracker);
@@ -83,13 +83,13 @@ public class GeoTwoPhaseQuery extends Query {
   }
 
   @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
+  public Weight createWeight(IndetwitterSearcher searcher, ScoreMode scoreMode, float boost)
+      throws IOEtwitterception {
     Weight innerWeight = query.createWeight(searcher, scoreMode, boost);
     return new GeoTwoPhaseWeight(this, innerWeight, accepter, terminationTracker);
   }
 
-  private static final class GeoTwoPhaseWeight extends Weight {
+  private static final class GeoTwoPhaseWeight etwittertends Weight {
     private final Weight innerWeight;
     private final SecondPhaseDocAccepter accepter;
     private final TerminationTracker terminationTracker;
@@ -106,18 +106,18 @@ public class GeoTwoPhaseQuery extends Query {
     }
 
     @Override
-    public void extractTerms(Set<Term> terms) {
-      innerWeight.extractTerms(terms);
+    public void etwittertractTerms(Set<Term> terms) {
+      innerWeight.etwittertractTerms(terms);
     }
 
     @Override
-    public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-      return innerWeight.explain(context, doc);
+    public Etwitterplanation etwitterplain(LeafReaderContetwittert contetwittert, int doc) throws IOEtwitterception {
+      return innerWeight.etwitterplain(contetwittert, doc);
     }
 
     @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      Scorer innerScorer = innerWeight.scorer(context);
+    public Scorer scorer(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
+      Scorer innerScorer = innerWeight.scorer(contetwittert);
       if (innerScorer == null) {
         return null;
       }
@@ -133,17 +133,17 @@ public class GeoTwoPhaseQuery extends Query {
                                       GEO_SEARCH_TIMEOUT_COUNT));
       }
 
-      accepter.initialize(context);
+      accepter.initialize(contetwittert);
       return new GeoTwoPhaseScorer(this, innerScorer, accepter);
     }
 
     @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
-      return innerWeight.isCacheable(ctx);
+    public boolean isCacheable(LeafReaderContetwittert cttwitter) {
+      return innerWeight.isCacheable(cttwitter);
     }
   }
 
-  private static final class GeoTwoPhaseScorer extends Scorer {
+  private static final class GeoTwoPhaseScorer etwittertends Scorer {
     private final Scorer innerScorer;
     private final SecondPhaseDocAccepter accepter;
 
@@ -157,8 +157,8 @@ public class GeoTwoPhaseQuery extends Query {
     public TwoPhaseIterator twoPhaseIterator() {
       return new TwoPhaseIterator(innerScorer.iterator()) {
         @Override
-        public boolean matches() throws IOException {
-          return checkDocExpensive(innerScorer.docID());
+        public boolean matches() throws IOEtwitterception {
+          return checkDocEtwitterpensive(innerScorer.docID());
         }
 
         @Override
@@ -174,17 +174,17 @@ public class GeoTwoPhaseQuery extends Query {
     }
 
     @Override
-    public float score() throws IOException {
+    public float score() throws IOEtwitterception {
       return innerScorer.score();
     }
 
     @Override
     public DocIdSetIterator iterator() {
       return new DocIdSetIterator() {
-        private int doNext(int startingDocId) throws IOException {
+        private int doNetwittert(int startingDocId) throws IOEtwitterception {
           int docId = startingDocId;
-          while ((docId != NO_MORE_DOCS) && !checkDocExpensive(docId)) {
-            docId = innerScorer.iterator().nextDoc();
+          while ((docId != NO_MORE_DOCS) && !checkDocEtwitterpensive(docId)) {
+            docId = innerScorer.iterator().netwittertDoc();
           }
           return docId;
         }
@@ -195,13 +195,13 @@ public class GeoTwoPhaseQuery extends Query {
         }
 
         @Override
-        public int nextDoc() throws IOException {
-          return doNext(innerScorer.iterator().nextDoc());
+        public int netwittertDoc() throws IOEtwitterception {
+          return doNetwittert(innerScorer.iterator().netwittertDoc());
         }
 
         @Override
-        public int advance(int target) throws IOException {
-          return doNext(innerScorer.iterator().advance(target));
+        public int advance(int target) throws IOEtwitterception {
+          return doNetwittert(innerScorer.iterator().advance(target));
         }
 
         @Override
@@ -212,25 +212,25 @@ public class GeoTwoPhaseQuery extends Query {
     }
 
     @Override
-    public float getMaxScore(int upTo) throws IOException {
-      return innerScorer.getMaxScore(upTo);
+    public float getMatwitterScore(int upTo) throws IOEtwitterception {
+      return innerScorer.getMatwitterScore(upTo);
     }
 
-    private boolean checkDocExpensive(int doc) throws IOException {
+    private boolean checkDocEtwitterpensive(int doc) throws IOEtwitterception {
       return accepter.accept(doc);
     }
   }
 
   public abstract static class SecondPhaseDocAccepter {
     /**
-     * Initializes this accepter with the given reader context.
+     * Initializes this accepter with the given reader contetwittert.
      */
-    public abstract void initialize(LeafReaderContext context) throws IOException;
+    public abstract void initialize(LeafReaderContetwittert contetwittert) throws IOEtwitterception;
 
     /**
      * Determines if the given doc ID is accepted by this accepter.
      */
-    public abstract boolean accept(int doc) throws IOException;
+    public abstract boolean accept(int doc) throws IOEtwitterception;
 
     /**
      * Returns a string description for this SecondPhaseDocAccepter instance.
@@ -240,7 +240,7 @@ public class GeoTwoPhaseQuery extends Query {
 
   public static final SecondPhaseDocAccepter ALL_DOCS_ACCEPTER = new SecondPhaseDocAccepter() {
     @Override
-    public void initialize(LeafReaderContext context) { }
+    public void initialize(LeafReaderContetwittert contetwittert) { }
 
     @Override
     public boolean accept(int doc) {

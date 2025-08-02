@@ -24,8 +24,8 @@ import com.twitter.stitch.storehaus.StitchOfReadableStore
 import com.twitter.storehaus.ReadableStore
 import com.twitter.strato.client.{Client => StratoClient}
 import com.twitter.topic_recos.stores.CertoTweetTopicScoresStore
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton()
 class ScoreStore @Inject() (
@@ -80,12 +80,12 @@ class ScoreStore @Inject() (
         .toThriftStore
     )(statsReceiver.scope("simClusters_embedding_log_cosine_similarity_score_store"))
 
-  private val simClustersEmbeddingExpScaledCosineSimilarityScoreStore =
+  private val simClustersEmbeddingEtwitterpScaledCosineSimilarityScoreStore =
     ObservedReadableStore(
       SimClustersEmbeddingPairScoreStore
-        .buildExpScaledCosineSimilarityStore(simClustersEmbeddingStore)
+        .buildEtwitterpScaledCosineSimilarityStore(simClustersEmbeddingStore)
         .toThriftStore
-    )(statsReceiver.scope("simClusters_embedding_exp_scaled_cosine_similarity_score_store"))
+    )(statsReceiver.scope("simClusters_embedding_etwitterp_scaled_cosine_similarity_score_store"))
 
   // Use the default setting
   private val topicTweetRankingScoreStore =
@@ -98,9 +98,9 @@ class ScoreStore @Inject() (
       producerEmbeddingMultiplier = 1.0
     )
 
-  private val topicTweetsCortexThresholdStore = TopicTweetsCosineSimilarityAggregateStore(
+  private val topicTweetsCortetwitterThresholdStore = TopicTweetsCosineSimilarityAggregateStore(
     TopicTweetsCosineSimilarityAggregateStore.DefaultScoreKeys,
-    statsReceiver.scope("topic_tweets_cortex_threshold_store")
+    statsReceiver.scope("topic_tweets_cortetwitter_threshold_store")
   )
 
   val topicTweetCertoScoreStore: ObservedCachedReadableStore[ScoreId, Score] = {
@@ -124,7 +124,7 @@ class ScoreStore @Inject() (
     ObservedCachedReadableStore.from[ScoreId, Score](
       memcachedStore,
       ttl = 5.minutes,
-      maxKeys = 1000000,
+      matwitterKeys = 1000000,
       cacheName = "topic_tweet_certo_store_cache",
       windowSize = 10000L
     )(statsReceiver.scope("topic_tweet_certo_store_cache"))
@@ -145,8 +145,8 @@ class ScoreStore @Inject() (
           simClustersEmbeddingManhattanDistanceScoreStore,
         ScoringAlgorithm.PairEmbeddingLogCosineSimilarity ->
           simClustersEmbeddingLogCosineSimilarityScoreStore,
-        ScoringAlgorithm.PairEmbeddingExpScaledCosineSimilarity ->
-          simClustersEmbeddingExpScaledCosineSimilarityScoreStore,
+        ScoringAlgorithm.PairEmbeddingEtwitterpScaledCosineSimilarity ->
+          simClustersEmbeddingEtwitterpScaledCosineSimilarityScoreStore,
         // Certo normalized cosine score between topic-tweet pairs
         ScoringAlgorithm.CertoNormalizedCosineScore
           -> topicTweetCertoScoreStore,
@@ -157,8 +157,8 @@ class ScoreStore @Inject() (
       aggregatedStores = Map(
         ScoringAlgorithm.WeightedSumTopicTweetRanking ->
           topicTweetRankingScoreStore,
-        ScoringAlgorithm.CortexTopicTweetLabel ->
-          topicTweetsCortexThresholdStore,
+        ScoringAlgorithm.CortetwitterTopicTweetLabel ->
+          topicTweetsCortetwitterThresholdStore,
       ),
       statsReceiver = stats
     )

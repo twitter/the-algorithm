@@ -4,7 +4,7 @@
 
 #include <twml.h>
 
-#include <mutex>
+#include <mutetwitter>
 
 using namespace tensorflow;
 
@@ -14,7 +14,7 @@ REGISTER_OP("Hashmap")
 .Input("hash_values: int64")
 .Output("values: int64")
 .Output("mask: int8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     // TODO: check if the sizes are different in the input
     c->set_output(0, c->input(0));
     c->set_output(1, c->input(0));
@@ -28,16 +28,16 @@ class Hashmap : public OpKernel {
   std::once_flag flag;
 
  public:
-  explicit Hashmap(OpKernelConstruction* context) : OpKernel(context) {}
+  etwitterplicit Hashmap(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
       // Quick hack
-      const Tensor& keys = context->input(0);
+      const Tensor& keys = contetwittert->input(0);
 
-      std::call_once(this->flag, [this, context](){
-          const Tensor& hash_keys = context->input(1);
-          const Tensor& hash_values = context->input(2);
+      std::call_once(this->flag, [this, contetwittert](){
+          const Tensor& hash_keys = contetwittert->input(1);
+          const Tensor& hash_values = contetwittert->input(2);
           const auto hash_keys_flat = hash_keys.flat<int64>();
           const auto hash_values_flat = hash_values.flat<int64>();
           const int64 N = hash_keys_flat.size();
@@ -48,11 +48,11 @@ class Hashmap : public OpKernel {
         });
 
       Tensor* values = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, keys.shape(),
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, keys.shape(),
                                                        &values));
 
       Tensor* mask = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(1, keys.shape(),
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(1, keys.shape(),
                                                        &mask));
 
       // copy the values without sharing a storage
@@ -72,8 +72,8 @@ class Hashmap : public OpKernel {
         mask_flat(i) = hmap.get(val, key);
         values_flat(i) = val;
       }
-    }  catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    }  catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };

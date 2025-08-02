@@ -34,7 +34,7 @@ trait MediaClient {
 
   /**
    * On the read path, when hydrating a MediaEntity, we call this operation to get metadata
-   * about existing media.
+   * about etwitteristing media.
    */
   def getMediaMetadata: GetMediaMetadata
 
@@ -90,7 +90,7 @@ case class MediaMetadataRequest(
   mediaKey: MediaKey,
   tweetId: TweetId,
   isProtected: Boolean,
-  extensionsArgs: Option[ByteBuffer]) {
+  etwittertensionsArgs: Option[ByteBuffer]) {
   private[media] def privacyType = MediaClient.toPrivacyType(isProtected)
 
   /**
@@ -100,8 +100,8 @@ case class MediaMetadataRequest(
    *
    * Once we have found the problem, this method should be removed.
    */
-  val savedExtensionArgs: Option[ByteBuffer] =
-    extensionsArgs.map { buf =>
+  val savedEtwittertensionArgs: Option[ByteBuffer] =
+    etwittertensionsArgs.map { buf =>
       val b = buf.asReadOnlyBuffer()
       val ary = new Array[Byte](b.remaining)
       b.get(ary)
@@ -113,12 +113,12 @@ case class MediaMetadataRequest(
       mediaKey = mediaKey,
       tweetId = Some(tweetId),
       privacyType = privacyType,
-      stratoExtensionsArgs = extensionsArgs
+      stratoEtwittertensionsArgs = etwittertensionsArgs
     )
 }
 
 object MediaClient {
-  import MediaExceptions._
+  import MediaEtwitterceptions._
 
   /**
    * Operation type for processing uploaded media during tweet creation.
@@ -135,7 +135,7 @@ object MediaClient {
   type DeleteMedia = FutureArrow[DeleteMediaRequest, Unit]
 
   /**
-   * Operation type for getting media metadata for existing media during tweet reads.
+   * Operation type for getting media metadata for etwitteristing media during tweet reads.
    */
   type GetMediaMetadata = FutureArrow[MediaMetadataRequest, MediaMetadata]
 
@@ -146,7 +146,7 @@ object MediaClient {
     def apply(updateTweetMedia: UserImageService.UpdateTweetMedia): UpdateMedia =
       FutureArrow[UpdateMediaRequest, Unit] { r =>
         updateTweetMedia(uis.UpdateTweetMediaRequest(r.mediaKey, r.action, Some(r.tweetId))).unit
-      }.translateExceptions(handleMediaExceptions)
+      }.translateEtwitterceptions(handleMediaEtwitterceptions)
   }
 
   /**
@@ -168,7 +168,7 @@ object MediaClient {
         } yield {
           sortKeysByIds(req.mediaIds, mediaKeys)
         }
-      }.translateExceptions(handleMediaExceptions)
+      }.translateEtwitterceptions(handleMediaEtwitterceptions)
     }
 
     /**
@@ -197,11 +197,11 @@ object MediaClient {
             res.sizes.toSet,
             res.mediaInfo,
             res.additionalMetadata.flatMap(_.productMetadata),
-            res.stratoExtensionsReply,
+            res.stratoEtwittertensionsReply,
             res.additionalMetadata
           )
         }
-      }.translateExceptions(handleMediaExceptions)
+      }.translateEtwitterceptions(handleMediaEtwitterceptions)
   }
 
   private[media] def toPrivacyType(isProtected: Boolean): PrivacyType =
@@ -241,31 +241,31 @@ object MediaClient {
 }
 
 /**
- * Exceptions from the various media services backends that indicate bad requests (validation
- * failures) are converted to a MediaClientException.  Exceptions that indicate a server
+ * Etwitterceptions from the various media services backends that indicate bad requests (validation
+ * failures) are converted to a MediaClientEtwitterception.  Etwitterceptions that indicate a server
  * error are converted to a UpstreamFailure.MediaServiceServerError.
  *
- * MediaNotFound: Given media id does not exist. It could have been expired
+ * MediaNotFound: Given media id does not etwitterist. It could have been etwitterpired
  * BadMedia:      Given media is corrupted and can not be processed.
  * InvalidMedia:  Given media has failed to pass one or more validations (size, dimensions, type etc.)
  * BadRequest     Request is bad, but reason not available
  */
-object MediaExceptions {
+object MediaEtwitterceptions {
   import UpstreamFailure.MediaServiceServerError
 
-  // Extends NoStackTrace because the circumstances in which the
-  // exceptions are generated don't yield useful stack traces
+  // Etwittertends NoStackTrace because the circumstances in which the
+  // etwitterceptions are generated don't yield useful stack traces
   // (e.g. you can't tell from the stack trace anything about what
   // backend call was being made.)
-  abstract class MediaClientException(message: String) extends Exception(message) with NoStackTrace
+  abstract class MediaClientEtwitterception(message: String) etwittertends Etwitterception(message) with NoStackTrace
 
-  class MediaNotFound(message: String) extends MediaClientException(message)
-  class BadMedia(message: String) extends MediaClientException(message)
-  class InvalidMedia(message: String) extends MediaClientException(message)
-  class BadRequest(message: String) extends MediaClientException(message)
+  class MediaNotFound(message: String) etwittertends MediaClientEtwitterception(message)
+  class BadMedia(message: String) etwittertends MediaClientEtwitterception(message)
+  class InvalidMedia(message: String) etwittertends MediaClientEtwitterception(message)
+  class BadRequest(message: String) etwittertends MediaClientEtwitterception(message)
 
-  // translations from various media service errors into MediaExceptions
-  val handleMediaExceptions: PartialFunction[Any, Exception] = {
+  // translations from various media service errors into MediaEtwitterceptions
+  val handleMediaEtwitterceptions: PartialFunction[Any, Etwitterception] = {
     case uis.BadRequest(msg, reason) =>
       reason match {
         case Some(uis.BadRequestReason.MediaNotFound) => new MediaNotFound(msg)
@@ -283,6 +283,6 @@ object MediaExceptions {
         case Some(mis.BadRequestReason.MediaNotFound) => new MediaNotFound(msg)
         case _ => new BadRequest(msg)
       }
-    case ex: CommonServerError => MediaServiceServerError(ex)
+    case etwitter: CommonServerError => MediaServiceServerError(etwitter)
   }
 }

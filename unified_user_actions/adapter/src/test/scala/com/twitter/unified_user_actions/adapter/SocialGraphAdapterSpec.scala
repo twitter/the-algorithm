@@ -6,7 +6,7 @@ import com.twitter.socialgraph.thriftscala.BlockGraphEvent
 import com.twitter.socialgraph.thriftscala.FollowGraphEvent
 import com.twitter.socialgraph.thriftscala.FollowRequestGraphEvent
 import com.twitter.socialgraph.thriftscala.FollowRetweetsGraphEvent
-import com.twitter.socialgraph.thriftscala.LogEventContext
+import com.twitter.socialgraph.thriftscala.LogEventContetwittert
 import com.twitter.socialgraph.thriftscala.MuteGraphEvent
 import com.twitter.socialgraph.thriftscala.ReportAsAbuseGraphEvent
 import com.twitter.socialgraph.thriftscala.ReportAsSpamGraphEvent
@@ -20,12 +20,12 @@ import org.scalatest.prop.TableDrivenPropertyChecks
 import org.scalatest.prop.TableFor1
 import org.scalatest.prop.TableFor3
 
-class SocialGraphAdapterSpec extends Test with TableDrivenPropertyChecks {
-  trait Fixture {
+class SocialGraphAdapterSpec etwittertends Test with TableDrivenPropertyChecks {
+  trait Fitwitterture {
 
     val frozenTime: Time = Time.fromMilliseconds(1658949273000L)
 
-    val testLogEventContext: LogEventContext = LogEventContext(
+    val testLogEventContetwittert: LogEventContetwittert = LogEventContetwittert(
       timestamp = 1001L,
       hostname = "",
       transactionId = "",
@@ -49,7 +49,7 @@ class SocialGraphAdapterSpec extends Test with TableDrivenPropertyChecks {
     )
 
     val baseEvent: WriteEvent = WriteEvent(
-      context = testLogEventContext,
+      contetwittert = testLogEventContetwittert,
       action = Action.AcceptFollowRequest
     )
 
@@ -178,7 +178,7 @@ class SocialGraphAdapterSpec extends Test with TableDrivenPropertyChecks {
             result = testWriteRequestResult
           ))))
 
-    def getExpectedUUA(
+    def getEtwitterpectedUUA(
       userId: Long,
       actionProfileId: Long,
       sourceTimestampMs: Long,
@@ -216,49 +216,49 @@ class SocialGraphAdapterSpec extends Test with TableDrivenPropertyChecks {
       )
     }
 
-    val expectedUuaFollow: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUuaFollow: UnifiedUserAction = getEtwitterpectedUUA(
       userId = 1111L,
       actionProfileId = 2222L,
       sourceTimestampMs = 1001L,
       actionType = ActionType.ServerProfileFollow
     )
 
-    val expectedUuaUnfollow: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUuaUnfollow: UnifiedUserAction = getEtwitterpectedUUA(
       userId = 1111L,
       actionProfileId = 2222L,
       sourceTimestampMs = 1001L,
       actionType = ActionType.ServerProfileUnfollow
     )
 
-    val expectedUuaMute: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUuaMute: UnifiedUserAction = getEtwitterpectedUUA(
       userId = 1111L,
       actionProfileId = 2222L,
       sourceTimestampMs = 1001L,
       actionType = ActionType.ServerProfileMute
     )
 
-    val expectedUuaUnmute: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUuaUnmute: UnifiedUserAction = getEtwitterpectedUUA(
       userId = 1111L,
       actionProfileId = 2222L,
       sourceTimestampMs = 1001L,
       actionType = ActionType.ServerProfileUnmute
     )
 
-    val expectedUuaBlock: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUuaBlock: UnifiedUserAction = getEtwitterpectedUUA(
       userId = 1111L,
       actionProfileId = 2222L,
       sourceTimestampMs = 1001L,
       actionType = ActionType.ServerProfileBlock
     )
 
-    val expectedUuaUnblock: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUuaUnblock: UnifiedUserAction = getEtwitterpectedUUA(
       userId = 1111L,
       actionProfileId = 2222L,
       sourceTimestampMs = 1001L,
       actionType = ActionType.ServerProfileUnblock
     )
 
-    val expectedUuaReportAsSpam: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUuaReportAsSpam: UnifiedUserAction = getEtwitterpectedUUA(
       userId = 1111L,
       actionProfileId = 2222L,
       sourceTimestampMs = 1001L,
@@ -266,7 +266,7 @@ class SocialGraphAdapterSpec extends Test with TableDrivenPropertyChecks {
       socialGraphAction = Some(Action.ReportAsSpam)
     )
 
-    val expectedUuaReportAsAbuse: UnifiedUserAction = getExpectedUUA(
+    val etwitterpectedUuaReportAsAbuse: UnifiedUserAction = getEtwitterpectedUUA(
       userId = 1111L,
       actionProfileId = 2222L,
       sourceTimestampMs = 1001L,
@@ -276,7 +276,7 @@ class SocialGraphAdapterSpec extends Test with TableDrivenPropertyChecks {
   }
 
   test("SocialGraphAdapter ignore events not in the list") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val ignoredSocialGraphEvents: TableFor1[WriteEvent] = Table(
           "ignoredSocialGraphEvents",
@@ -295,49 +295,49 @@ class SocialGraphAdapterSpec extends Test with TableDrivenPropertyChecks {
   }
 
   test("Test SocialGraphAdapter consuming Write events") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val socialProfileActions: TableFor3[String, WriteEvent, UnifiedUserAction] = Table(
-          ("actionType", "event", "expectedUnifiedUserAction"),
-          ("ProfileFollow", sgFollowEvent, expectedUuaFollow),
-          ("ProfileUnfollow", sgUnfollowEvent, expectedUuaUnfollow),
-          ("ProfileBlock", sgBlockEvent, expectedUuaBlock),
-          ("ProfileUnBlock", sgUnblockEvent, expectedUuaUnblock),
-          ("ProfileMute", sgMuteEvent, expectedUuaMute),
-          ("ProfileUnmute", sgUnmuteEvent, expectedUuaUnmute),
-          ("ProfileReportAsSpam", sgReportAsSpamEvent, expectedUuaReportAsSpam),
-          ("ProfileReportAsAbuse", sgReportAsAbuseEvent, expectedUuaReportAsAbuse),
+          ("actionType", "event", "etwitterpectedUnifiedUserAction"),
+          ("ProfileFollow", sgFollowEvent, etwitterpectedUuaFollow),
+          ("ProfileUnfollow", sgUnfollowEvent, etwitterpectedUuaUnfollow),
+          ("ProfileBlock", sgBlockEvent, etwitterpectedUuaBlock),
+          ("ProfileUnBlock", sgUnblockEvent, etwitterpectedUuaUnblock),
+          ("ProfileMute", sgMuteEvent, etwitterpectedUuaMute),
+          ("ProfileUnmute", sgUnmuteEvent, etwitterpectedUuaUnmute),
+          ("ProfileReportAsSpam", sgReportAsSpamEvent, etwitterpectedUuaReportAsSpam),
+          ("ProfileReportAsAbuse", sgReportAsAbuseEvent, etwitterpectedUuaReportAsAbuse),
         )
         forEvery(socialProfileActions) {
-          (_: String, event: WriteEvent, expected: UnifiedUserAction) =>
+          (_: String, event: WriteEvent, etwitterpected: UnifiedUserAction) =>
             val actual = SocialGraphAdapter.adaptEvent(event)
-            assert(Seq(expected) === actual)
+            assert(Seq(etwitterpected) === actual)
         }
       }
     }
   }
 
   test("SocialGraphAdapter ignore redundant follow/unfollow events") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val socialGraphActions: TableFor3[String, WriteEvent, Seq[UnifiedUserAction]] = Table(
-          ("actionType", "ignoredRedundantFollowUnfollowEvents", "expectedUnifiedUserAction"),
+          ("actionType", "ignoredRedundantFollowUnfollowEvents", "etwitterpectedUnifiedUserAction"),
           ("ProfileFollow", sgFollowRedundantEvent, Nil),
-          ("ProfileFollow", sgFollowRedundantIsFalseEvent, Seq(expectedUuaFollow)),
+          ("ProfileFollow", sgFollowRedundantIsFalseEvent, Seq(etwitterpectedUuaFollow)),
           ("ProfileUnfollow", sgUnfollowRedundantEvent, Nil),
-          ("ProfileUnfollow", sgUnfollowRedundantIsFalseEvent, Seq(expectedUuaUnfollow))
+          ("ProfileUnfollow", sgUnfollowRedundantIsFalseEvent, Seq(etwitterpectedUuaUnfollow))
         )
         forEvery(socialGraphActions) {
-          (_: String, event: WriteEvent, expected: Seq[UnifiedUserAction]) =>
+          (_: String, event: WriteEvent, etwitterpected: Seq[UnifiedUserAction]) =>
             val actual = SocialGraphAdapter.adaptEvent(event)
-            assert(expected === actual)
+            assert(etwitterpected === actual)
         }
       }
     }
   }
 
   test("SocialGraphAdapter ignore Unsuccessful SocialGraph events") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val unsuccessfulSocialGraphEvents: TableFor1[WriteEvent] = Table(
           "ignoredSocialGraphEvents",

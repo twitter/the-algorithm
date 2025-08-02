@@ -7,9 +7,9 @@ import com.twitter.kafka.client.processor.AtLeastOnceProcessor
 import com.twitter.tweetypie.thriftscala.TweetEvent
 import com.twitter.unified_user_actions.service.module.KafkaProcessorTweetypieEventModule
 
-object TweetypieEventServiceMain extends TweetypieEventService
+object TweetypieEventServiceMain etwittertends TweetypieEventService
 
-class TweetypieEventService extends TwitterServer {
+class TweetypieEventService etwittertends TwitterServer {
 
   override val modules = Seq(
     KafkaProcessorTweetypieEventModule,
@@ -20,7 +20,7 @@ class TweetypieEventService extends TwitterServer {
 
   override protected def start(): Unit = {
     val processor = injector.instance[AtLeastOnceProcessor[UnKeyed, TweetEvent]]
-    closeOnExit(processor)
+    closeOnEtwitterit(processor)
     processor.start()
   }
 

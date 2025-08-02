@@ -35,7 +35,7 @@ import scala.collection.JavaConverters._
  * modulo the loss in precision on converting the Double to Float.
  */
 class AggregatesStoreComparisonJob(args: Args)
-    extends AnalyticsBatchJob(args)
+    etwittertends AnalyticsBatchJob(args)
     with BatchPairImplicits
     with HasDateRange {
 
@@ -123,7 +123,7 @@ object AggregatesStoreComparisonJob {
         }
       case (Some(_), None) => mapMonoid.add(stats, (missingRecordFromRight, 1L))
       case (None, Some(_)) => mapMonoid.add(stats, (missingRecordFromLeft, 1L))
-      case (None, None) => throw new IllegalArgumentException("Should never be possible")
+      case (None, None) => throw new IllegalArgumentEtwitterception("Should never be possible")
     }
   }
 
@@ -150,7 +150,7 @@ object AggregatesStoreComparisonJob {
       val numUnmatchedValues = leftFeatures.map {
         case (id, lValue) =>
           val rValue = rightFeatures(id)
-          // The approximate match is to account for the precision loss due to
+          // The approtwitterimate match is to account for the precision loss due to
           // the Double -> Float -> Double conversion.
           if (math.abs(lValue - rValue) <= Epsilon) 0L else 1L
       }.sum
@@ -165,7 +165,7 @@ object AggregatesStoreComparisonJob {
           (featureValuesThatDidNotMatch, numUnmatchedValues),
           (
             featureValuesMatched,
-            math.max(leftFeatures.size, rightFeatures.size) - numUnmatchedValues)
+            math.matwitter(leftFeatures.size, rightFeatures.size) - numUnmatchedValues)
         )
       }
     } else {
@@ -178,7 +178,7 @@ object AggregatesStoreComparisonJob {
   }
 
   /**
-   * For feature types that are not Feature.Continuous. We expect these to match exactly in the two stores.
+   * For feature types that are not Feature.Continuous. We etwitterpect these to match etwitteractly in the two stores.
    * Mutable change
    */
   private def isIdenticalNonContinuousFeatureSet(left: DataRecord, right: DataRecord): Boolean = {

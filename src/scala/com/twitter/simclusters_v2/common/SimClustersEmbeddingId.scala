@@ -51,7 +51,7 @@ object SimClustersEmbeddingId {
       FollowBasedProducer,
       AggregatableFavBasedProducer,
       AggregatableLogFavBasedProducer,
-      RelaxedAggregatableLogFavBasedProducer,
+      RelatwitteredAggregatableLogFavBasedProducer,
       KnownFor
     )
   val DefaultProducerEmbeddingType: EmbeddingType = FavBasedProducer
@@ -146,7 +146,7 @@ object SimClustersEmbeddingId {
     )
   }
 
-  // Extractor object for InternalIds that wrap Long
+  // Etwittertractor object for InternalIds that wrap Long
   object LongInternalId {
     def unapply(iid: InternalId): Option[Long] = iid match {
       case InternalId.TweetId(id) => Some(id)
@@ -156,7 +156,7 @@ object SimClustersEmbeddingId {
     }
   }
 
-  // Extractor object for SimClusterEmbeddingIds with InternalIds that wrap Long
+  // Etwittertractor object for SimClusterEmbeddingIds with InternalIds that wrap Long
   object LongSimClustersEmbeddingId {
     def unapply(id: ThriftSimClustersEmbeddingId): Option[Long] =
       LongInternalId.unapply(id.internalId)
@@ -183,7 +183,7 @@ object SimClustersEmbeddingId {
         embeddingType = embeddingType,
         modelVersion = modelVersion)
     } else {
-      throw new IllegalArgumentException(s"Invalid embedding type: $embeddingType")
+      throw new IllegalArgumentEtwitterception(s"Invalid embedding type: $embeddingType")
     }
   }
 
@@ -195,8 +195,8 @@ object SimClustersEmbeddingId {
       (embeddingId.embeddingType.value, embeddingId.modelVersion.value, embeddingId.internalId))
 
   // Use Enum for feature switch
-  object TopicEnum extends Enumeration {
-    protected case class EmbeddingType(embeddingType: SimClustersEmbeddingType) extends super.Val
+  object TopicEnum etwittertends Enumeration {
+    protected case class EmbeddingType(embeddingType: SimClustersEmbeddingType) etwittertends super.Val
     import scala.language.implicitConversions
     implicit def valueToEmbeddingType(value: Value): EmbeddingType =
       value.asInstanceOf[EmbeddingType]

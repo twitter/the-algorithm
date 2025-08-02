@@ -3,7 +3,7 @@ package com.twitter.frigate.pushservice.send_handler
 import com.twitter.escherbird.metadata.thriftscala.EntityMegadata
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
+import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContetwittert
 import com.twitter.frigate.common.util.MrNtabCopyObjects
 import com.twitter.frigate.common.util.MrPushCopyObjects
 import com.twitter.frigate.magic_events.thriftscala.FanoutEvent
@@ -26,13 +26,13 @@ import com.twitter.ubs.thriftscala.AudioSpace
 import com.twitter.util.Future
 
 case class SendHandlerPushCandidateHydrator(
-  lexServiceStore: ReadableStore[EventRequest, LiveEvent],
+  letwitterServiceStore: ReadableStore[EventRequest, LiveEvent],
   fanoutMetadataStore: ReadableStore[(Long, Long), FanoutEvent],
   semanticCoreMegadataStore: ReadableStore[SemanticEntityForQuery, EntityMegadata],
   safeUserStore: ReadableStore[Long, User],
   simClusterToEntityStore: ReadableStore[Int, SimClustersInferredEntities],
   audioSpaceStore: ReadableStore[String, AudioSpace],
-  interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests],
+  interestsLookupStore: ReadableStore[InterestsLookupRequestWithContetwittert, UserInterests],
   uttEntityHydrationStore: UttEntityHydrationStore,
   superFollowCreatorTweetCountStore: ReadableStore[UserId, Int]
 )(
@@ -57,7 +57,7 @@ case class SendHandlerPushCandidateHydrator(
             getHydratedCandidateForMagicFanoutNewsEvent(
               magicFanoutNewsEventCandidate,
               copyIds,
-              lexServiceStore,
+              letwitterServiceStore,
               fanoutMetadataStore,
               semanticCoreMegadataStore,
               simClusterToEntityStore,
@@ -83,7 +83,7 @@ case class SendHandlerPushCandidateHydrator(
             getHydratedCandidateForMagicFanoutSportsEvent(
               magicFanoutSportsEventCandidate,
               copyIds,
-              lexServiceStore,
+              letwitterServiceStore,
               fanoutMetadataStore,
               semanticCoreMegadataStore,
               interestsLookupStore,
@@ -100,7 +100,7 @@ case class SendHandlerPushCandidateHydrator(
               copyIds,
               superFollowCreatorTweetCountStore)
           case _ =>
-            throw new IllegalArgumentException("Incorrect candidate type when update candidates")
+            throw new IllegalArgumentEtwitterception("Incorrect candidate type when update candidates")
         }
 
         hydratedCandidateFut.map { hydratedCandidate =>
@@ -172,7 +172,7 @@ case class SendHandlerPushCandidateHydrator(
           aggregationId = None
         )
       case _ =>
-        throw new IllegalArgumentException("Incorrect candidate type when fetch copy ids")
+        throw new IllegalArgumentEtwitterception("Incorrect candidate type when fetch copy ids")
     }
   }
 

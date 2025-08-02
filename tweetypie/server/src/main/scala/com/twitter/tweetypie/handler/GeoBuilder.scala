@@ -5,12 +5,12 @@ import com.twitter.finagle.stats.Counter
 import com.twitter.stitch.Stitch
 import com.twitter.tweetypie.repository.PlaceKey
 import com.twitter.tweetypie.repository.PlaceRepository
-import com.twitter.tweetypie.serverutil.ExceptionCounter
+import com.twitter.tweetypie.serverutil.EtwitterceptionCounter
 import com.twitter.tweetypie.thriftscala._
 
 object GeoStats {
   val topTenCountryCodes: Set[PlaceLanguage] =
-    Set("US", "JP", "GB", "ID", "BR", "SA", "TR", "MX", "ES", "CA")
+    Set("US", "JP", "GB", "ID", "BR", "SA", "TR", "Mtwitter", "ES", "CA")
 
   def apply(stats: StatsReceiver): Effect[Option[Place]] = {
     val totalCount = stats.counter("total")
@@ -47,12 +47,12 @@ object GeoBuilder {
   type Type = FutureArrow[Request, Result]
 
   def apply(placeRepo: PlaceRepository.Type, rgc: ReverseGeocoder, stats: StatsReceiver): Type = {
-    val exceptionCounters = ExceptionCounter(stats)
+    val etwitterceptionCounters = EtwitterceptionCounter(stats)
 
     def ignoreFailures[A](future: Future[Option[A]]): Future[Option[A]] =
-      exceptionCounters(future).handle { case _ => None }
+      etwitterceptionCounters(future).handle { case _ => None }
 
-    def isValidPlaceId(placeId: String) = PlaceIdRegex.pattern.matcher(placeId).matches
+    def isValidPlaceId(placeId: String) = PlaceIdRegetwitter.pattern.matcher(placeId).matches
 
     def isValidLatLon(latitude: Double, longitude: Double): Boolean =
       latitude >= -90.0 && latitude <= 90.0 &&

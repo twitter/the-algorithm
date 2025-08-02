@@ -9,47 +9,47 @@ import com.twitter.util.Duration
 
 object SocialProofEnforcedCandidateSourceParams {
   case object MustCallSgs
-      extends FSParam[Boolean]("social_proof_enforced_candidate_source_must_call_sgs", true)
+      etwittertends FSParam[Boolean]("social_proof_enforced_candidate_source_must_call_sgs", true)
 
   case object CallSgsCachedColumn
-      extends FSParam[Boolean](
+      etwittertends FSParam[Boolean](
         "social_proof_enforced_candidate_source_call_sgs_cached_column",
         false)
 
   case object QueryIntersectionIdsNum
-      extends FSBoundedParam[Int](
+      etwittertends FSBoundedParam[Int](
         name = "social_proof_enforced_candidate_source_query_intersection_ids_num",
         default = 3,
         min = 0,
-        max = Integer.MAX_VALUE)
+        matwitter = Integer.MAtwitter_VALUE)
 
-  case object MaxNumCandidatesToAnnotate
-      extends FSBoundedParam[Int](
-        name = "social_proof_enforced_candidate_source_max_num_candidates_to_annotate",
+  case object MatwitterNumCandidatesToAnnotate
+      etwittertends FSBoundedParam[Int](
+        name = "social_proof_enforced_candidate_source_matwitter_num_candidates_to_annotate",
         default = 50,
         min = 0,
-        max = Integer.MAX_VALUE)
+        matwitter = Integer.MAtwitter_VALUE)
 
   case object GfsIntersectionIdsNum
-      extends FSBoundedParam[Int](
+      etwittertends FSBoundedParam[Int](
         name = "social_proof_enforced_candidate_source_gfs_intersection_ids_num",
         default = 3,
         min = 0,
-        max = Integer.MAX_VALUE)
+        matwitter = Integer.MAtwitter_VALUE)
 
   case object SgsIntersectionIdsNum
-      extends FSBoundedParam[Int](
+      etwittertends FSBoundedParam[Int](
         name = "social_proof_enforced_candidate_source_sgs_intersection_ids_num",
         default = 10,
         min = 0,
-        max = Integer.MAX_VALUE)
+        matwitter = Integer.MAtwitter_VALUE)
 
   case object GfsLagDurationInDays
-      extends FSBoundedParam[Duration](
+      etwittertends FSBoundedParam[Duration](
         name = "social_proof_enforced_candidate_source_gfs_lag_duration_in_days",
         default = 14.days,
         min = 1.days,
-        max = 60.days)
+        matwitter = 60.days)
       with HasDurationConversion {
     override val durationConversion: DurationConversion = DurationConversion.FromDays
   }

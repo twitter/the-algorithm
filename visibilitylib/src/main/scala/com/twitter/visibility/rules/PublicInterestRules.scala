@@ -24,7 +24,7 @@ import com.twitter.visibility.rules.State.Evaluated
 
 object PublicInterest {
   object PolicyConfig {
-    val LowQualityProxyLabelStart: Time = Time.fromMilliseconds(1554076800000L)
+    val LowQualityProtwitteryLabelStart: Time = Time.fromMilliseconds(1554076800000L)
     val DefaultReason: (Reason, Option[LimitedEngagementReason]) =
       (OneOff, Some(LimitedEngagementReason.NonCompliant))
     val DefaultPolicyInViolation: PolicyInViolation = PolicyInViolation.OneOff
@@ -40,8 +40,8 @@ object PublicInterest {
     PolicyInViolation.AbusePolicyMomentofDeathDeceasedUser -> AbuseMomentOfDeathOrDeceasedUser,
     PolicyInViolation.AbusePolicyPrivateInformation -> AbusePrivateInformation,
     PolicyInViolation.AbusePolicyRighttoPrivacy -> AbuseRightToPrivacy,
-    PolicyInViolation.AbusePolicyThreattoExpose -> AbuseThreatToExpose,
-    PolicyInViolation.AbusePolicyViolentSexualConduct -> AbuseViolentSexualConduct,
+    PolicyInViolation.AbusePolicyThreattoEtwitterpose -> AbuseThreatToEtwitterpose,
+    PolicyInViolation.AbusePolicyViolentSetwitterualConduct -> AbuseViolentSetwitterualConduct,
     PolicyInViolation.AbusePolicyViolentThreatsHatefulConduct -> AbuseViolentThreatHatefulConduct,
     PolicyInViolation.AbusePolicyViolentThreatorBounty -> AbuseViolentThreatOrBounty,
     PolicyInViolation.OneOff -> OneOff,
@@ -66,8 +66,8 @@ object PublicInterest {
     AbuseMomentOfDeathOrDeceasedUser -> PolicyInViolation.AbusePolicyMomentofDeathDeceasedUser,
     AbusePrivateInformation -> PolicyInViolation.AbusePolicyPrivateInformation,
     AbuseRightToPrivacy -> PolicyInViolation.AbusePolicyRighttoPrivacy,
-    AbuseThreatToExpose -> PolicyInViolation.AbusePolicyThreattoExpose,
-    AbuseViolentSexualConduct -> PolicyInViolation.AbusePolicyViolentSexualConduct,
+    AbuseThreatToEtwitterpose -> PolicyInViolation.AbusePolicyThreattoEtwitterpose,
+    AbuseViolentSetwitterualConduct -> PolicyInViolation.AbusePolicyViolentSetwitterualConduct,
     AbuseViolentThreatHatefulConduct -> PolicyInViolation.AbusePolicyViolentThreatsHatefulConduct,
     AbuseViolentThreatOrBounty -> PolicyInViolation.AbusePolicyViolentThreatorBounty,
     OneOff -> PolicyInViolation.OneOff,
@@ -91,8 +91,8 @@ object PublicInterest {
     AbuseMomentOfDeathOrDeceasedUser -> SafetyResultReason.AbuseMomentOfDeathOrDeceasedUser,
     AbusePrivateInformation -> SafetyResultReason.AbusePrivateInformation,
     AbuseRightToPrivacy -> SafetyResultReason.AbuseRightToPrivacy,
-    AbuseThreatToExpose -> SafetyResultReason.AbuseThreatToExpose,
-    AbuseViolentSexualConduct -> SafetyResultReason.AbuseViolentSexualConduct,
+    AbuseThreatToEtwitterpose -> SafetyResultReason.AbuseThreatToEtwitterpose,
+    AbuseViolentSetwitterualConduct -> SafetyResultReason.AbuseViolentSetwitterualConduct,
     AbuseViolentThreatHatefulConduct -> SafetyResultReason.AbuseViolentThreatHatefulConduct,
     AbuseViolentThreatOrBounty -> SafetyResultReason.AbuseViolentThreatOrBounty,
     OneOff -> SafetyResultReason.OneOff,
@@ -124,7 +124,7 @@ object PublicInterest {
 
   private val EligibleTweetSafetyLabelTypesSet = EligibleTweetSafetyLabelTypes.toSet
 
-  def extractTweetSafetyLabel(featureMap: Map[Feature[_], _]): Option[TweetSafetyLabel] = {
+  def etwittertractTweetSafetyLabel(featureMap: Map[Feature[_], _]): Option[TweetSafetyLabel] = {
     val tweetSafetyLabels = featureMap(TweetSafetyLabels)
       .asInstanceOf[Seq[TweetSafetyLabel]]
       .flatMap { tsl =>
@@ -146,13 +146,13 @@ object PublicInterest {
     reasonToPolicyInViolation.get(reason).getOrElse(PolicyConfig.DefaultPolicyInViolation)
 }
 
-class PublicInterestActionBuilder[T <: Action]() extends ActionBuilder[T] {
+class PublicInterestActionBuilder[T <: Action]() etwittertends ActionBuilder[T] {
   def actionType: Class[_] = classOf[InterstitialLimitedEngagements]
 
   override val actionSeverity = 11
-  def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+  def build(evaluationContetwittert: EvaluationContetwittert, featureMap: Map[Feature[_], _]): RuleResult = {
     val (reason, limitedEngagementReason) =
-      PublicInterest.extractTweetSafetyLabel(featureMap).map { tweetSafetyLabel =>
+      PublicInterest.etwittertractTweetSafetyLabel(featureMap).map { tweetSafetyLabel =>
         (tweetSafetyLabel.labelType, tweetSafetyLabel.source)
       } match {
         case Some((TweetSafetyLabelType.LowQuality, source)) =>
@@ -194,14 +194,14 @@ class PublicInterestActionBuilder[T <: Action]() extends ActionBuilder[T] {
 }
 
 class PublicInterestComplianceTweetNoticeActionBuilder
-    extends ActionBuilder[ComplianceTweetNoticePreEnrichment] {
+    etwittertends ActionBuilder[ComplianceTweetNoticePreEnrichment] {
 
   override def actionType: Class[_] = classOf[ComplianceTweetNoticePreEnrichment]
 
   override val actionSeverity = 2
-  def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
+  def build(evaluationContetwittert: EvaluationContetwittert, featureMap: Map[Feature[_], _]): RuleResult = {
     val reason =
-      PublicInterest.extractTweetSafetyLabel(featureMap).map { tweetSafetyLabel =>
+      PublicInterest.etwittertractTweetSafetyLabel(featureMap).map { tweetSafetyLabel =>
         (tweetSafetyLabel.labelType, tweetSafetyLabel.source)
       } match {
         case Some((TweetSafetyLabelType.LowQuality, source)) =>
@@ -242,15 +242,15 @@ class PublicInterestComplianceTweetNoticeActionBuilder
   }
 }
 
-class PublicInterestDropActionBuilder extends ActionBuilder[Drop] {
+class PublicInterestDropActionBuilder etwittertends ActionBuilder[Drop] {
 
   override def actionType: Class[_] = classOf[Drop]
 
   override val actionSeverity = 16
   private def toRuleResult: Reason => RuleResult = Memoize { r => RuleResult(Drop(r), Evaluated) }
 
-  def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-    val reason = PublicInterest.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
+  def build(evaluationContetwittert: EvaluationContetwittert, featureMap: Map[Feature[_], _]): RuleResult = {
+    val reason = PublicInterest.etwittertractTweetSafetyLabel(featureMap).map(_.labelType) match {
       case Some(TweetSafetyLabelType.LowQuality) =>
         Reason.OneOff
 
@@ -277,10 +277,10 @@ class PublicInterestDropActionBuilder extends ActionBuilder[Drop] {
 object PublicInterestRules {
 
   object AbusePolicyEpisodicTweetLabelInterstitialRule
-      extends Rule(
+      etwittertends Rule(
         new PublicInterestActionBuilder(),
         And(
-          TweetComposedAfter(PublicInterest.PolicyConfig.LowQualityProxyLabelStart),
+          TweetComposedAfter(PublicInterest.PolicyConfig.LowQualityProtwitteryLabelStart),
           Or(
             PublicInterest.EligibleTweetSafetyLabelTypes.map(TweetHasLabel(_)): _*
           )
@@ -288,10 +288,10 @@ object PublicInterestRules {
       )
 
   object AbusePolicyEpisodicTweetLabelComplianceTweetNoticeRule
-      extends Rule(
+      etwittertends Rule(
         new PublicInterestComplianceTweetNoticeActionBuilder(),
         And(
-          TweetComposedAfter(PublicInterest.PolicyConfig.LowQualityProxyLabelStart),
+          TweetComposedAfter(PublicInterest.PolicyConfig.LowQualityProtwitteryLabelStart),
           Or(
             PublicInterest.EligibleTweetSafetyLabelTypes.map(TweetHasLabel(_)): _*
           )
@@ -299,10 +299,10 @@ object PublicInterestRules {
       )
 
   object AbusePolicyEpisodicTweetLabelDropRule
-      extends Rule(
+      etwittertends Rule(
         new PublicInterestDropActionBuilder(),
         And(
-          TweetComposedAfter(PublicInterest.PolicyConfig.LowQualityProxyLabelStart),
+          TweetComposedAfter(PublicInterest.PolicyConfig.LowQualityProtwitteryLabelStart),
           Or(
             PublicInterest.EligibleTweetSafetyLabelTypes.map(TweetHasLabel(_)): _*
           )
@@ -310,10 +310,10 @@ object PublicInterestRules {
       )
 
   object SearchIpiSafeSearchWithoutUserInQueryDropRule
-      extends Rule(
+      etwittertends Rule(
         new PublicInterestDropActionBuilder(),
         And(
-          TweetComposedAfter(PublicInterest.PolicyConfig.LowQualityProxyLabelStart),
+          TweetComposedAfter(PublicInterest.PolicyConfig.LowQualityProtwitteryLabelStart),
           Or(
             PublicInterest.EligibleTweetSafetyLabelTypes.map(TweetHasLabel(_)): _*
           ),

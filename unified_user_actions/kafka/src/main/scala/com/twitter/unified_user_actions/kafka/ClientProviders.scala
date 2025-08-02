@@ -22,7 +22,7 @@ import org.apache.kafka.common.serialization.Serializer
 /**
  * A Utility class mainly provides raw Kafka producer/consumer supports
  */
-object ClientProviders extends Logging {
+object ClientProviders etwittertends Logging {
 
   /**
    * Provide a Finagle-thread-safe-and-compatible Kafka consumer.
@@ -34,11 +34,11 @@ object ClientProviders extends Logging {
     valueSerde: Deserializer[CV],
     groupId: String,
     autoCommit: Boolean = false,
-    maxPollRecords: Int = ClientConfigs.consumerMaxPollRecordsDefault,
-    maxPollInterval: Duration = ClientConfigs.consumerMaxPollIntervalDefault,
+    matwitterPollRecords: Int = ClientConfigs.consumerMatwitterPollRecordsDefault,
+    matwitterPollInterval: Duration = ClientConfigs.consumerMatwitterPollIntervalDefault,
     autoCommitInterval: Duration = ClientConfigs.kafkaCommitIntervalDefault,
     sessionTimeout: Duration = ClientConfigs.consumerSessionTimeoutDefault,
-    fetchMax: StorageUnit = ClientConfigs.consumerFetchMaxDefault,
+    fetchMatwitter: StorageUnit = ClientConfigs.consumerFetchMatwitterDefault,
     fetchMin: StorageUnit = ClientConfigs.consumerFetchMinDefault,
     receiveBuffer: StorageUnit = ClientConfigs.consumerReceiveBufferSizeDefault,
     trustStoreLocationOpt: Option[String] = Some(ClientConfigs.trustStoreLocationDefault)
@@ -50,16 +50,16 @@ object ClientProviders extends Logging {
         .dest(bootstrapServer)
         .groupId(KafkaGroupId(groupId))
         .enableAutoCommit(autoCommit)
-        .maxPollRecords(maxPollRecords)
-        .maxPollInterval(maxPollInterval)
+        .matwitterPollRecords(matwitterPollRecords)
+        .matwitterPollInterval(matwitterPollInterval)
         .autoCommitInterval(autoCommitInterval)
         .receiveBuffer(receiveBuffer)
         .sessionTimeout(sessionTimeout)
-        .fetchMax(fetchMax)
+        .fetchMatwitter(fetchMatwitter)
         .fetchMin(fetchMin)
         .withConfig(
           CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,
-          SecurityProtocol.PLAINTEXT.toString)
+          SecurityProtocol.PLAINTEtwitterT.toString)
 
     trustStoreLocationOpt
       .map { trustStoreLocation =>
@@ -78,7 +78,7 @@ object ClientProviders extends Logging {
           baseBuilder
             .withConfig(
               CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,
-              SecurityProtocol.PLAINTEXT.toString)
+              SecurityProtocol.PLAINTEtwitterT.toString)
             .config)
       }
   }
@@ -110,11 +110,11 @@ object ClientProviders extends Logging {
       .batchSize(batchSize)
       .linger(linger)
       .bufferMemorySize(bufferMem)
-      .maxRequestSize(4.megabytes)
+      .matwitterRequestSize(4.megabytes)
       .compressionType(compressionType)
       .enableIdempotence(idempotence)
       .ackMode(AckMode.ALL)
-      .maxInFlightRequestsPerConnection(5)
+      .matwitterInFlightRequestsPerConnection(5)
       .retries(retries)
       .retryBackoff(retryBackoff)
       .requestTimeout(requestTimeout)
@@ -134,7 +134,7 @@ object ClientProviders extends Logging {
         baseBuilder
           .withConfig(
             CommonClientConfigs.SECURITY_PROTOCOL_CONFIG,
-            SecurityProtocol.PLAINTEXT.toString)
+            SecurityProtocol.PLAINTEtwitterT.toString)
           .build()
       }
   }

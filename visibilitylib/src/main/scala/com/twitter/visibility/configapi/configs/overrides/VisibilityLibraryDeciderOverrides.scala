@@ -3,7 +3,7 @@ package com.twitter.visibility.configapi.configs.overrides
 import com.twitter.decider.LocalOverrides
 
 object VisibilityLibraryDeciderOverrides
-    extends LocalOverrides.Namespace("visibility-library", "") {
+    etwittertends LocalOverrides.Namespace("visibility-library", "") {
 
   val EnableLocalizedTombstoneOnVisibilityResults = feature(
     "visibility_library_enable_localized_tombstones_on_visibility_results")

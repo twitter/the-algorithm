@@ -17,7 +17,7 @@ class BatchPredictionRequestTrainer(DataRecordTrainer):  # pylint: disable=abstr
 
   For use-cases that differ from this common Twitter use-case,
   further Trainer methods can be overridden.
-  If that still doesn't provide enough flexibility, the user can always
+  If that still doesn't provide enough fletwitteribility, the user can always
   use the tf.estimator.Esimator or tf.session.run directly.
   """
 
@@ -66,7 +66,7 @@ class BatchPredictionRequestTrainer(DataRecordTrainer):  # pylint: disable=abstr
     # such as being an integer
     if 'train_batch_size' in param_values:
       if not isinstance(updated_params.train_batch_size, int):
-        raise ValueError("Expecting params.train_batch_size to be an integer.")
+        raise ValueError("Etwitterpecting params.train_batch_size to be an integer.")
       if param_values['train_batch_size'] != 1:
         # This can be a bit annoying to force users to pass the batch sizes,
         # but it is good to let them know what they actually use in the models
@@ -85,7 +85,7 @@ class BatchPredictionRequestTrainer(DataRecordTrainer):  # pylint: disable=abstr
 
     if 'eval_batch_size' in param_values:
       if not isinstance(updated_params.train_batch_size, int):
-        raise ValueError('Expecting params.eval_batch_size to be an integer.')
+        raise ValueError('Etwitterpecting params.eval_batch_size to be an integer.')
       if param_values['eval_batch_size'] != 1:
         # This can be a bit annoying to force users to pass the batch sizes,
         # but it is good to let them know what they actually use in the models
@@ -129,8 +129,8 @@ class BatchPredictionRequestTrainer(DataRecordTrainer):  # pylint: disable=abstr
 
     # mlp arguments
     parser.add_argument(
-      '--model.use_existing_discretizer', action='store_true',
-      dest="model_use_existing_discretizer",
+      '--model.use_etwitteristing_discretizer', action='store_true',
+      dest="model_use_etwitteristing_discretizer",
       help='Load a pre-trained calibration or train a new one')
     parser.add_argument(
       '--model.use_binary_values', action='store_true',
@@ -162,14 +162,14 @@ class BatchPredictionRequestTrainer(DataRecordTrainer):  # pylint: disable=abstr
       'dense tensor and dense normalization are in use.')
 
     parser.add_argument(
-      '--dense_normalization', type=str, default='mean_max_normalizaiton',
+      '--dense_normalization', type=str, default='mean_matwitter_normalizaiton',
       dest='dense_normalization',
-      help='Options are mean_max_normalizaiton (default), standard_normalizaiton')
+      help='Options are mean_matwitter_normalizaiton (default), standard_normalizaiton')
 
     parser.add_argument(
-      '--sparse_normalization', type=str, default='SparseMaxNorm',
+      '--sparse_normalization', type=str, default='SparseMatwitterNorm',
       dest='sparse_normalization',
-      help='Options are SparseMaxNorm (default), SparseBatchNorm')
+      help='Options are SparseMatwitterNorm (default), SparseBatchNorm')
 
     # so far only used in pairwise learning-to-rank
     parser.add_argument(

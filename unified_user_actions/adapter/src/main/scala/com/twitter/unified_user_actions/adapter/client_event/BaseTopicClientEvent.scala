@@ -8,7 +8,7 @@ import com.twitter.unified_user_actions.thriftscala.Item
 import com.twitter.unified_user_actions.thriftscala.TopicInfo
 
 abstract class BaseTopicClientEvent(actionType: ActionType)
-    extends BaseClientEvent(actionType = actionType) {
+    etwittertends BaseClientEvent(actionType = actionType) {
   override def isItemTypeValid(itemTypeOpt: Option[ItemType]): Boolean =
     ItemTypeFilterPredicates.isItemTypeTopic(itemTypeOpt)
 

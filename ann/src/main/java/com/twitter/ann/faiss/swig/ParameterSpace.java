@@ -53,12 +53,12 @@ public class ParameterSpace {
     return swigfaissJNI.ParameterSpace_verbose_get(swigCPtr, this);
   }
 
-  public void setN_experiments(int value) {
-    swigfaissJNI.ParameterSpace_n_experiments_set(swigCPtr, this, value);
+  public void setN_etwitterperiments(int value) {
+    swigfaissJNI.ParameterSpace_n_etwitterperiments_set(swigCPtr, this, value);
   }
 
-  public int getN_experiments() {
-    return swigfaissJNI.ParameterSpace_n_experiments_get(swigCPtr, this);
+  public int getN_etwitterperiments() {
+    return swigfaissJNI.ParameterSpace_n_etwitterperiments_get(swigCPtr, this);
   }
 
   public void setBatchsize(long value) {
@@ -109,28 +109,28 @@ public class ParameterSpace {
     return new ParameterRange(swigfaissJNI.ParameterSpace_add_range(swigCPtr, this, name), false);
   }
 
-  public void initialize(Index index) {
-    swigfaissJNI.ParameterSpace_initialize(swigCPtr, this, Index.getCPtr(index), index);
+  public void initialize(Indetwitter indetwitter) {
+    swigfaissJNI.ParameterSpace_initialize(swigCPtr, this, Indetwitter.getCPtr(indetwitter), indetwitter);
   }
 
-  public void set_index_parameters(Index index, long cno) {
-    swigfaissJNI.ParameterSpace_set_index_parameters__SWIG_0(swigCPtr, this, Index.getCPtr(index), index, cno);
+  public void set_indetwitter_parameters(Indetwitter indetwitter, long cno) {
+    swigfaissJNI.ParameterSpace_set_indetwitter_parameters__SWIG_0(swigCPtr, this, Indetwitter.getCPtr(indetwitter), indetwitter, cno);
   }
 
-  public void set_index_parameters(Index index, String param_string) {
-    swigfaissJNI.ParameterSpace_set_index_parameters__SWIG_1(swigCPtr, this, Index.getCPtr(index), index, param_string);
+  public void set_indetwitter_parameters(Indetwitter indetwitter, String param_string) {
+    swigfaissJNI.ParameterSpace_set_indetwitter_parameters__SWIG_1(swigCPtr, this, Indetwitter.getCPtr(indetwitter), indetwitter, param_string);
   }
 
-  public void set_index_parameter(Index index, String name, double val) {
-    swigfaissJNI.ParameterSpace_set_index_parameter(swigCPtr, this, Index.getCPtr(index), index, name, val);
+  public void set_indetwitter_parameter(Indetwitter indetwitter, String name, double val) {
+    swigfaissJNI.ParameterSpace_set_indetwitter_parameter(swigCPtr, this, Indetwitter.getCPtr(indetwitter), indetwitter, name, val);
   }
 
   public void update_bounds(long cno, OperatingPoint op, SWIGTYPE_p_double upper_bound_perf, SWIGTYPE_p_double lower_bound_t) {
     swigfaissJNI.ParameterSpace_update_bounds(swigCPtr, this, cno, OperatingPoint.getCPtr(op), op, SWIGTYPE_p_double.getCPtr(upper_bound_perf), SWIGTYPE_p_double.getCPtr(lower_bound_t));
   }
 
-  public void explore(Index index, long nq, SWIGTYPE_p_float xq, AutoTuneCriterion crit, OperatingPoints ops) {
-    swigfaissJNI.ParameterSpace_explore(swigCPtr, this, Index.getCPtr(index), index, nq, SWIGTYPE_p_float.getCPtr(xq), AutoTuneCriterion.getCPtr(crit), crit, OperatingPoints.getCPtr(ops), ops);
+  public void etwitterplore(Indetwitter indetwitter, long nq, SWIGTYPE_p_float twitterq, AutoTuneCriterion crit, OperatingPoints ops) {
+    swigfaissJNI.ParameterSpace_etwitterplore(swigCPtr, this, Indetwitter.getCPtr(indetwitter), indetwitter, nq, SWIGTYPE_p_float.getCPtr(twitterq), AutoTuneCriterion.getCPtr(crit), crit, OperatingPoints.getCPtr(ops), ops);
   }
 
 }

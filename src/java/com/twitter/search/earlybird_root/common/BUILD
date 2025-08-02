@@ -13,10 +13,10 @@ java_library(
         "src/java/com/twitter/search/common/partitioning/snowflakeparser",
         "src/java/com/twitter/search/queryparser",
         "src/java/com/twitter/search/queryparser/query:core-query-nodes",
-        "src/thrift/com/twitter/context:twitter-context-scala",
+        "src/thrift/com/twitter/contetwittert:twitter-contetwittert-scala",
         "src/thrift/com/twitter/search:earlybird-java",
         "src/thrift/com/twitter/search/common:constants-java",
         "src/thrift/com/twitter/search/common:features-java",
-        "twitter-context/src/main/scala",
+        "twitter-contetwittert/src/main/scala",
     ],
 )

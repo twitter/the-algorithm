@@ -1,6 +1,6 @@
 package com.twitter.interaction_graph.scio.agg_client_event_logs
 
-import com.spotify.scio.ScioContext
+import com.spotify.scio.ScioContetwittert
 import com.spotify.scio.values.SCollection
 import com.twitter.beam.job.ServiceIdentifierOptions
 import com.twitter.twadoop.user.gen.thriftscala.CombinedUser
@@ -14,7 +14,7 @@ import org.joda.time.Interval
 case class InteractionGraphClientEventLogsSource(
   pipelineOptions: InteractionGraphClientEventLogsOption
 )(
-  implicit sc: ScioContext) {
+  implicit sc: ScioContetwittert) {
 
   val dalEnvironment: String = pipelineOptions
     .as(classOf[ServiceIdentifierOptions])

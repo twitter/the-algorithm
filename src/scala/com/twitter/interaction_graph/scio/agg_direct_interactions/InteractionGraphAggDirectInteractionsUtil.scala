@@ -8,8 +8,8 @@ import com.twitter.interaction_graph.scio.common.InteractionGraphRawInput
 import com.twitter.interaction_graph.scio.common.UserUtil.DUMMY_USER_ID
 import com.twitter.interaction_graph.thriftscala.Edge
 import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.timelineservice.thriftscala.ContextualizedFavoriteEvent
+import com.twitter.interaction_graph.thriftscala.Vertetwitter
+import com.twitter.timelineservice.thriftscala.ContetwittertualizedFavoriteEvent
 import com.twitter.timelineservice.thriftscala.FavoriteEventUnion.Favorite
 import com.twitter.tweetsource.common.thriftscala.UnhydratedFlatTweet
 import com.twitter.tweetypie.thriftscala.TweetMediaTagEvent
@@ -19,7 +19,7 @@ object InteractionGraphAggDirectInteractionsUtil {
   val DefaultFeatureValue = 1L
 
   def favouriteFeatures(
-    rawFavorites: SCollection[ContextualizedFavoriteEvent]
+    rawFavorites: SCollection[ContetwittertualizedFavoriteEvent]
   ): SCollection[(FeatureKey, Long)] = {
     rawFavorites
       .withName("fav features")
@@ -76,7 +76,7 @@ object InteractionGraphAggDirectInteractionsUtil {
     tweetSource
       .withName("retweet features")
       .collect {
-        case s if s.shareSourceUserId.exists(_ != s.userId) =>
+        case s if s.shareSourceUserId.etwitterists(_ != s.userId) =>
           ScioMetrics.counter("process", "share tweet").inc()
           FeatureKey(
             s.userId,
@@ -123,11 +123,11 @@ object InteractionGraphAggDirectInteractionsUtil {
   }
 
   def process(
-    rawFavorites: SCollection[ContextualizedFavoriteEvent],
+    rawFavorites: SCollection[ContetwittertualizedFavoriteEvent],
     tweetSource: SCollection[UnhydratedFlatTweet],
     rawPhotoTags: SCollection[TweetMediaTagEvent],
     safeUsers: SCollection[Long]
-  ): (SCollection[Vertex], SCollection[Edge]) = {
+  ): (SCollection[Vertetwitter], SCollection[Edge]) = {
     val favouriteInput = favouriteFeatures(rawFavorites)
     val mentionInput = mentionFeatures(tweetSource)
     val photoTagInput = photoTagFeatures(rawPhotoTags)

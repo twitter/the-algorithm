@@ -8,7 +8,7 @@ object DeciderConstants {
   val enableUserAgathaScoreDeciderKey = "enable_user_agatha_score"
 }
 
-object DeciderKey extends DeciderKeyEnum {
+object DeciderKey etwittertends DeciderKeyEnum {
 
   val enableHealthSignalsScoreDeciderKey: Value = Value(
     DeciderConstants.enableHealthSignalsScoreDeciderKey

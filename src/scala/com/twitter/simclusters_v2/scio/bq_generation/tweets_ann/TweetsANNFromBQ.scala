@@ -1,10 +1,10 @@
 package com.twitter.simclusters_v2.scio.bq_generation
 package tweets_ann
 
-import com.spotify.scio.ScioContext
+import com.spotify.scio.ScioContetwittert
 import com.spotify.scio.values.SCollection
 import com.twitter.simclusters_v2.thriftscala.CandidateTweet
-import com.twitter.wtf.beam.bq_embedding_export.BQQueryUtils
+import com.twitter.wtf.beam.bq_embedding_etwitterport.BQQueryUtils
 import org.apache.avro.generic.GenericData
 import org.apache.avro.generic.GenericRecord
 import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
@@ -77,7 +77,7 @@ object TweetsANNFromBQ {
   }
 
   def getTweetRecommendationsBQ(
-    sc: ScioContext,
+    sc: ScioContetwittert,
     queryTimestamp: DateTime,
     consumerEmbeddingsSQL: String,
     tweetEmbeddingsHalfLife: Int,

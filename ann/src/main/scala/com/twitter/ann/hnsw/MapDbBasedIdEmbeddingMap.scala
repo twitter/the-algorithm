@@ -12,7 +12,7 @@ import scala.collection.JavaConverters._
 
 /**
  * This class currently only support querying and creates map db on fly from thrift serialized embedding mapping
- * Implement index creation with this or altogether replace mapdb with some better performing solution as it takes a lot of time to create/query or precreate while serializing thrift embeddings
+ * Implement indetwitter creation with this or altogether replace mapdb with some better performing solution as it takes a lot of time to create/query or precreate while serializing thrift embeddings
  */
 private[hnsw] object MapDbBasedIdEmbeddingMap {
 
@@ -50,7 +50,7 @@ private[hnsw] object MapDbBasedIdEmbeddingMap {
 private[this] class MapDbBasedIdEmbeddingMap[T](
   mapDb: HTreeMap[Array[Byte], Array[Float]],
   injection: Injection[T, Array[Byte]])
-    extends IdEmbeddingMap[T] {
+    etwittertends IdEmbeddingMap[T] {
   override def putIfAbsent(id: T, embedding: EmbeddingVector): EmbeddingVector = {
     val value = mapDb.putIfAbsent(injection.apply(id), embedding.toArray)
     if (value == null) null else Embedding(value)

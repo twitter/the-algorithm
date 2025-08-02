@@ -11,20 +11,20 @@ import com.twitter.tweetypie.thriftscala._
  * It uses that other tweet's conversationId.
  */
 object ConversationIdHydrator {
-  type Type = ValueHydrator[Option[ConversationId], TweetCtx]
+  type Type = ValueHydrator[Option[ConversationId], TweetCttwitter]
 
   val hydratedField: FieldByPath =
     fieldByPath(Tweet.CoreDataField, TweetCoreData.ConversationIdField)
 
   def apply(repo: ConversationIdRepository.Type): Type =
-    ValueHydrator[Option[ConversationId], TweetCtx] { (_, ctx) =>
-      ctx.inReplyToTweetId match {
+    ValueHydrator[Option[ConversationId], TweetCttwitter] { (_, cttwitter) =>
+      cttwitter.inReplyToTweetId match {
         case None =>
           // Not a reply to another tweet, use tweet id as conversation root
-          Stitch.value(ValueState.modified(Some(ctx.tweetId)))
+          Stitch.value(ValueState.modified(Some(cttwitter.tweetId)))
         case Some(parentId) =>
           // Lookup conversation id from in-reply-to tweet
-          repo(ConversationIdKey(ctx.tweetId, parentId)).liftToTry.map {
+          repo(ConversationIdKey(cttwitter.tweetId, parentId)).liftToTry.map {
             case Return(rootId) => ValueState.modified(Some(rootId))
             case Throw(_) => ValueState.partial(None, hydratedField)
           }

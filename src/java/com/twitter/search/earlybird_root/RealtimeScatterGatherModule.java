@@ -3,9 +3,9 @@ package com.twitter.search.earlybird_root;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javatwitter.annotation.Nullable;
+import javatwitter.inject.Named;
+import javatwitter.inject.Singleton;
 
 import com.google.inject.Provides;
 
@@ -23,39 +23,39 @@ import com.twitter.search.common.root.ScatterGatherService;
 import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird.thrift.ExperimentCluster;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.filters.RequestContextToEarlybirdRequestFilter;
-import com.twitter.search.earlybird_root.filters.ScatterGatherWithExperimentRedirectsService;
+import com.twitter.search.earlybird.thrift.EtwitterperimentCluster;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
+import com.twitter.search.earlybird_root.filters.RequestContetwittertToEarlybirdRequestFilter;
+import com.twitter.search.earlybird_root.filters.ScatterGatherWithEtwitterperimentRedirectsService;
 
-public class RealtimeScatterGatherModule extends ScatterGatherModule {
+public class RealtimeScatterGatherModule etwittertends ScatterGatherModule {
   private static final Logger LOG =
       LoggerFactory.getLogger(RealtimeScatterGatherModule.class);
 
   /**
-   * Provides a scatter gather service for the realtime cluster that redirects to experimental
-   * clusters when the experiment cluster parameter is set on the EarlybirdRequest.
+   * Provides a scatter gather service for the realtime cluster that redirects to etwitterperimental
+   * clusters when the etwitterperiment cluster parameter is set on the EarlybirdRequest.
    *
    * Note: if an alternate client is specified via altPartitionConfig or
    * altRootClientServiceBuilder, it will be built and used for the "control" cluster, but the
-   * experiment cluster takes precedence (if the experiment cluster is set on the request, the
+   * etwitterperiment cluster takes precedence (if the etwitterperiment cluster is set on the request, the
    * alternate client will never be used.
    */
   @Provides
   @Singleton
   @Named(NAMED_SCATTER_GATHER_SERVICE)
   @Override
-  public Service<EarlybirdRequestContext, EarlybirdResponse> provideScatterGatherService(
+  public Service<EarlybirdRequestContetwittert, EarlybirdResponse> provideScatterGatherService(
       EarlybirdServiceScatterGatherSupport scatterGatherSupport,
       RequestSuccessStats requestSuccessStats,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
+      PartitionLoggingSupport<EarlybirdRequestContetwittert> partitionLoggingSupport,
+      RequestContetwittertToEarlybirdRequestFilter requestContetwittertToEarlybirdRequestFilter,
       PartitionAccessController partitionAccessController,
       PartitionConfig partitionConfig,
       RootClientServiceBuilder<EarlybirdService.ServiceIface> rootClientServiceBuilder,
-      @Named(EarlybirdCommonModule.NAMED_EXP_CLUSTER_CLIENT)
+      @Named(EarlybirdCommonModule.NAMED_EtwitterP_CLUSTER_CLIENT)
           RootClientServiceBuilder<EarlybirdService.ServiceIface>
-          expClusterRootClientServiceBuilder,
+          etwitterpClusterRootClientServiceBuilder,
       @Named(EarlybirdCommonModule.NAMED_ALT_CLIENT) @Nullable PartitionConfig altPartitionConfig,
       @Named(EarlybirdCommonModule.NAMED_ALT_CLIENT) @Nullable
           RootClientServiceBuilder<EarlybirdService.ServiceIface> altRootClientServiceBuilder,
@@ -64,12 +64,12 @@ public class RealtimeScatterGatherModule extends ScatterGatherModule {
       SearchDecider decider) {
 
 
-    Service<EarlybirdRequestContext, EarlybirdResponse> controlService =
+    Service<EarlybirdRequestContetwittert, EarlybirdResponse> controlService =
         buildScatterOrSplitterService(
           scatterGatherSupport,
           requestSuccessStats,
           partitionLoggingSupport,
-          requestContextToEarlybirdRequestFilter,
+          requestContetwittertToEarlybirdRequestFilter,
           partitionAccessController,
           partitionConfig,
           rootClientServiceBuilder,
@@ -80,39 +80,39 @@ public class RealtimeScatterGatherModule extends ScatterGatherModule {
           decider
     );
 
-    Map<ExperimentCluster, ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse>>
-        experimentScatterGatherServices = new HashMap<>();
+    Map<EtwitterperimentCluster, ScatterGatherService<EarlybirdRequestContetwittert, EarlybirdResponse>>
+        etwitterperimentScatterGatherServices = new HashMap<>();
 
-    LOG.info("Using ScatterGatherWithExperimentRedirectsService");
+    LOG.info("Using ScatterGatherWithEtwitterperimentRedirectsService");
     LOG.info("Control Partition Path: {}", partitionConfig.getPartitionPath());
 
-    Arrays.stream(ExperimentCluster.values())
-        .filter(v -> v.name().toLowerCase().startsWith("exp"))
-        .forEach(experimentCluster -> {
-          String expPartitionPath = partitionConfig.getPartitionPath()
-              + "-" + experimentCluster.name().toLowerCase();
+    Arrays.stream(EtwitterperimentCluster.values())
+        .filter(v -> v.name().toLowerCase().startsWith("etwitterp"))
+        .forEach(etwitterperimentCluster -> {
+          String etwitterpPartitionPath = partitionConfig.getPartitionPath()
+              + "-" + etwitterperimentCluster.name().toLowerCase();
 
-          LOG.info("Experiment Partition Path: {}", expPartitionPath);
+          LOG.info("Etwitterperiment Partition Path: {}", etwitterpPartitionPath);
 
-          experimentScatterGatherServices.put(experimentCluster,
+          etwitterperimentScatterGatherServices.put(etwitterperimentCluster,
               createScatterGatherService(
                   "",
                   scatterGatherSupport,
                   requestSuccessStats,
                   partitionLoggingSupport,
-                  requestContextToEarlybirdRequestFilter,
+                  requestContetwittertToEarlybirdRequestFilter,
                   partitionAccessController,
                   partitionConfig.getNumPartitions(),
-                  expPartitionPath,
-                  expClusterRootClientServiceBuilder,
+                  etwitterpPartitionPath,
+                  etwitterpClusterRootClientServiceBuilder,
                   statsReceiver,
                   cluster,
                   decider,
-                  experimentCluster.name().toLowerCase()));
+                  etwitterperimentCluster.name().toLowerCase()));
         });
 
-    return new ScatterGatherWithExperimentRedirectsService(
+    return new ScatterGatherWithEtwitterperimentRedirectsService(
         controlService,
-        experimentScatterGatherServices);
+        etwitterperimentScatterGatherServices);
   }
 }

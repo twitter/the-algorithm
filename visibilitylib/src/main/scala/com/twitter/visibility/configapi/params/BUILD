@@ -9,7 +9,7 @@ scala_library(
         "finagle/finagle-stats",
         "visibility/common/src/main/scala/com/twitter/visibility/common:model_thresholds",
     ],
-    exports = [
+    etwitterports = [
         "visibility/common/src/main/scala/com/twitter/visibility/common:model_thresholds",
     ],
 )

@@ -1,0 +1,25 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/com/fastertwitterml/jackson/core:jackson-annotations",
+        "3rdparty/jvm/com/fastertwitterml/jackson/core:jackson-core",
+        "3rdparty/jvm/com/fastertwitterml/jackson/core:jackson-databind",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/feature",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/feature/featuremap",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/common/alert",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/common/identifier",
+    ],
+    etwitterports = [
+        "3rdparty/jvm/com/fastertwitterml/jackson/core:jackson-annotations",
+        "3rdparty/jvm/com/fastertwitterml/jackson/core:jackson-core",
+        "3rdparty/jvm/com/fastertwitterml/jackson/core:jackson-databind",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/feature",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/feature/featuremap",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/common/alert",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/common/identifier",
+    ],
+)

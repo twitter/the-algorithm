@@ -11,7 +11,7 @@ import scala.util.Try
 /**
  * @tparam T must be a serializable class
  */
-case class SeqObjectInjection[T <: Serializable]() extends Injection[Seq[T], Array[Byte]] {
+case class SeqObjectInjection[T <: Serializable]() etwittertends Injection[Seq[T], Array[Byte]] {
 
   override def apply(seq: Seq[T]): Array[Byte] = {
     val byteStream = new ByteArrayOutputStream()

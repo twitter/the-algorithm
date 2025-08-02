@@ -5,12 +5,12 @@ import com.twitter.gizmoduck.thriftscala.LabelValue
 import com.twitter.servo.repository.KeyValueResult
 import com.twitter.spam.rtf.thriftscala.SafetyLabel
 import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 
 case class TimelineConversationsVisibilityRequest(
   conversationId: Long,
   tweetIds: Seq[Long],
-  viewerContext: ViewerContext,
+  viewerContetwittert: ViewerContetwittert,
   minimalSectioningOnly: Boolean = false,
   prefetchedSafetyLabels: Option[KeyValueResult[Long, Map[SafetyLabelType, SafetyLabel]]] = None,
   prefetchedTweetAuthorUserLabels: Option[KeyValueResult[Long, Map[LabelValue, Label]]] = None,

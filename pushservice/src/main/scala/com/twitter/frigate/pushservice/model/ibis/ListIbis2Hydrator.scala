@@ -3,7 +3,7 @@ package com.twitter.frigate.pushservice.model.ibis
 import com.twitter.frigate.pushservice.model.ListRecommendationPushCandidate
 import com.twitter.util.Future
 
-trait ListIbis2Hydrator extends Ibis2HydratorForCandidate {
+trait ListIbis2Hydrator etwittertends Ibis2HydratorForCandidate {
   self: ListRecommendationPushCandidate =>
 
   override lazy val senderId: Option[Long] = Some(0L)

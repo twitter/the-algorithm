@@ -15,7 +15,7 @@ import com.twitter.tweetypie.thriftscala._
  * visibility filtering.
  *
  * The condition for running this filtering hydrator (onlyIf) has been a
- * source of confusion. Keep in mind that the condition expresses when to
+ * source of confusion. Keep in mind that the condition etwitterpresses when to
  * *remove* data, not when to return it.
  *
  * In short, keep data when:
@@ -26,17 +26,17 @@ import com.twitter.tweetypie.thriftscala._
  *
  */
 object ContributorVisibilityFilter {
-  type Type = ValueHydrator[Option[Contributor], TweetCtx]
+  type Type = ValueHydrator[Option[Contributor], TweetCttwitter]
 
   def apply(): Type =
     ValueHydrator
-      .map[Option[Contributor], TweetCtx] {
+      .map[Option[Contributor], TweetCttwitter] {
         case (Some(_), _) => ValueState.modified(None)
         case (None, _) => ValueState.unmodified(None)
       }
-      .onlyIf { (_, ctx) =>
-        ctx.opts.cause.reading(ctx.tweetId) &&
-        !ctx.opts.forUserId.contains(ctx.userId) &&
-        ctx.opts.enforceVisibilityFiltering
+      .onlyIf { (_, cttwitter) =>
+        cttwitter.opts.cause.reading(cttwitter.tweetId) &&
+        !cttwitter.opts.forUserId.contains(cttwitter.userId) &&
+        cttwitter.opts.enforceVisibilityFiltering
       }
 }

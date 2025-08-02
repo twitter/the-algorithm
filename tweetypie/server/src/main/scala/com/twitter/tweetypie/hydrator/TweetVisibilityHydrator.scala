@@ -7,9 +7,9 @@ import com.twitter.tweetypie.repository._
 import com.twitter.tweetypie.util.CommunityUtil
 
 object TweetVisibilityHydrator {
-  type Type = ValueHydrator[Option[FilteredState.Suppress], Ctx]
+  type Type = ValueHydrator[Option[FilteredState.Suppress], Cttwitter]
 
-  case class Ctx(tweet: Tweet, underlyingTweetCtx: TweetCtx) extends TweetCtx.Proxy
+  case class Cttwitter(tweet: Tweet, underlyingTweetCttwitter: TweetCttwitter) etwittertends TweetCttwitter.Protwittery
 
   def apply(
     repo: TweetVisibilityRepository.Type,
@@ -24,22 +24,22 @@ object TweetVisibilityHydrator {
     val communityFailClosed = outcomeScope.counter("community_fail_closed")
     val failOpen = outcomeScope.counter("fail_open")
 
-    ValueHydrator[Option[FilteredState.Suppress], Ctx] { (curr, ctx) =>
+    ValueHydrator[Option[FilteredState.Suppress], Cttwitter] { (curr, cttwitter) =>
       val request = TweetVisibilityRepository.Request(
-        tweet = ctx.tweet,
-        viewerId = ctx.opts.forUserId,
-        safetyLevel = ctx.opts.safetyLevel,
-        isInnerQuotedTweet = ctx.opts.isInnerQuotedTweet,
-        isRetweet = ctx.isRetweet,
-        hydrateConversationControl = ctx.tweetFieldRequested(Tweet.ConversationControlField),
-        isSourceTweet = ctx.opts.isSourceTweet
+        tweet = cttwitter.tweet,
+        viewerId = cttwitter.opts.forUserId,
+        safetyLevel = cttwitter.opts.safetyLevel,
+        isInnerQuotedTweet = cttwitter.opts.isInnerQuotedTweet,
+        isRetweet = cttwitter.isRetweet,
+        hydrateConversationControl = cttwitter.tweetFieldRequested(Tweet.ConversationControlField),
+        isSourceTweet = cttwitter.opts.isSourceTweet
       )
 
       repo(request).liftToTry.flatMap {
         // If FilteredState.Unavailable is returned from repo then throw it
         case Return(Some(fs: FilteredState.Unavailable)) =>
           unavailable.incr()
-          Stitch.exception(fs)
+          Stitch.etwitterception(fs)
         // If FilteredState.Suppress is returned from repo then return it
         case Return(Some(fs: FilteredState.Suppress)) =>
           suppress.incr()
@@ -48,15 +48,15 @@ object TweetVisibilityHydrator {
         case Return(None) =>
           allow.incr()
           ValueState.StitchUnmodifiedNone
-        // Propagate thrown exceptions if fail closed
+        // Propagate thrown etwitterceptions if fail closed
         case Throw(e) if failClosedInVF() =>
           failClosed.incr()
-          Stitch.exception(e)
+          Stitch.etwitterception(e)
         // Community tweets are special cased to fail closed to avoid
-        // leaking tweets expected to be private to a community.
+        // leaking tweets etwitterpected to be private to a community.
         case Throw(e) if CommunityUtil.hasCommunity(request.tweet.communities) =>
           communityFailClosed.incr()
-          Stitch.exception(e)
+          Stitch.etwitterception(e)
         case Throw(_) =>
           failOpen.incr()
           Stitch.value(ValueState.unmodified(curr))

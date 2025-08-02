@@ -14,7 +14,7 @@ import com.twitter.logging.NullHandler
 import com.twitter.logging.QueueingHandler
 import com.twitter.logging.ScribeHandler
 
-object ScribeModule extends TwitterModule {
+object ScribeModule etwittertends TwitterModule {
   val useProdLogger = flag(
     name = "scribe.use_prod_loggers",
     default = false,
@@ -28,7 +28,7 @@ object ScribeModule extends TwitterModule {
     val loggerCategory = "client_event"
     val clientEventsHandler: HandlerFactory = if (useProdLogger()) {
       QueueingHandler(
-        maxQueueSize = 10000,
+        matwitterQueueSize = 10000,
         handler = ScribeHandler(
           category = loggerCategory,
           formatter = BareFormatter,
@@ -52,7 +52,7 @@ object ScribeModule extends TwitterModule {
     val loggerCategory = "follow_recommendations_logs"
     val handlerFactory: HandlerFactory = if (useProdLogger()) {
       QueueingHandler(
-        maxQueueSize = 10000,
+        matwitterQueueSize = 10000,
         handler = ScribeHandler(
           category = loggerCategory,
           formatter = BareFormatter,
@@ -76,7 +76,7 @@ object ScribeModule extends TwitterModule {
     val loggerCategory = "frs_recommendation_flow_logs"
     val handlerFactory: HandlerFactory = if (useProdLogger()) {
       QueueingHandler(
-        maxQueueSize = 10000,
+        matwitterQueueSize = 10000,
         handler = ScribeHandler(
           category = loggerCategory,
           formatter = BareFormatter,

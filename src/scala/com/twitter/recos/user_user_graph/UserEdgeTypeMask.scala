@@ -8,10 +8,10 @@ import com.twitter.recos.recos_common.thriftscala.UserSocialProofType
  * e.g. Follow, Mention, and Mediatag. Under current segment configuration, each segment
  * stores up to 128M edges. Assuming that each node on one side is unique, each segment
  * stores up to 128M unique nodes on one side, which occupies the lower 27 bits of an integer.
- * This leaves five bits to encode the edge types, which at max can store 32 edge types.
+ * This leaves five bits to encode the edge types, which at matwitter can store 32 edge types.
  * The following implementation utilizes the top four bits and leaves one free bit out.
  */
-class UserEdgeTypeMask extends EdgeTypeMask {
+class UserEdgeTypeMask etwittertends EdgeTypeMask {
   import UserEdgeTypeMask._
   override def encode(node: Int, edgeType: Byte): Int = {
     require(

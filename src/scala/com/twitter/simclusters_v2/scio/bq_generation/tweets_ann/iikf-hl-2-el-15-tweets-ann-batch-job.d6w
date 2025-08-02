@@ -16,7 +16,7 @@ job = Job(
        worker_machine_type='{{profile.machine}}',
        worker_disk_type=WorkerDiskType('HDD'),
    ),
-   extra_args={
+   etwittertra_args={
      "date": '{{profile.date}}'
    },
    service_identifier='twtr:svc:{{profile.user_name}}:{{profile.job_name}}:{{profile.environment}}:{{profile.cluster}}',

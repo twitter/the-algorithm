@@ -11,15 +11,15 @@ import com.twitter.follow_recommendations.common.models.FilterReason.FailOpen
 import com.twitter.hss.api.thriftscala.SignalValue
 import com.twitter.hss.api.thriftscala.UserHealthSignal.AgathaCseDouble
 import com.twitter.hss.api.thriftscala.UserHealthSignal.NsfwAgathaUserScoreDouble
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.strato.generated.client.hss.user_signals.api.HealthSignalsOnUserClientColumn
 import com.twitter.timelines.configapi.HasParams
 import com.twitter.util.logging.Logging
 import com.twitter.util.Duration
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 /**
  * Filter out candidates based on Health Signal Store (HSS) health signals
@@ -28,13 +28,13 @@ import javax.inject.Singleton
 case class HssPredicate @Inject() (
   healthSignalsOnUserClientColumn: HealthSignalsOnUserClientColumn,
   statsReceiver: StatsReceiver)
-    extends Predicate[(HasClientContext with HasParams, CandidateUser)]
+    etwittertends Predicate[(HasClientContetwittert with HasParams, CandidateUser)]
     with Logging {
 
   private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getName)
 
   override def apply(
-    pair: (HasClientContext with HasParams, CandidateUser)
+    pair: (HasClientContetwittert with HasParams, CandidateUser)
   ): Stitch[PredicateResult] = {
     val (request, candidate) = pair
     StatsUtil.profileStitch(
@@ -44,7 +44,7 @@ case class HssPredicate @Inject() (
   }
 
   private def getHssPredicateResult(
-    request: HasClientContext with HasParams,
+    request: HasClientContetwittert with HasParams,
     candidate: CandidateUser
   ): Stitch[PredicateResult] = {
 
@@ -80,7 +80,7 @@ case class HssPredicate @Inject() (
       }
       .within(timeout)(DefaultTimer)
       .rescue {
-        case e: Exception =>
+        case e: Etwitterception =>
           stats.scope("rescued").counter(e.getClass.getSimpleName).incr()
           Stitch(PredicateResult.Invalid(Set(FailOpen)))
       }

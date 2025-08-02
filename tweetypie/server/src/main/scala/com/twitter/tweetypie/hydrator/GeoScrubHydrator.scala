@@ -13,15 +13,15 @@ import com.twitter.tweetypie.thriftscala._
  */
 object GeoScrubHydrator {
   type Data = (Option[GeoCoordinates], Option[PlaceId])
-  type Type = ValueHydrator[Data, TweetCtx]
+  type Type = ValueHydrator[Data, TweetCttwitter]
 
   private[this] val modifiedNoneNoneResult = ValueState.modified((None, None))
 
   def apply(repo: GeoScrubTimestampRepository.Type, scribeTweetId: FutureEffect[TweetId]): Type =
-    ValueHydrator[Data, TweetCtx] { (curr, ctx) =>
-      repo(ctx.userId).liftToTry.map {
-        case Return(geoScrubTime) if ctx.createdAt <= geoScrubTime =>
-          scribeTweetId(ctx.tweetId)
+    ValueHydrator[Data, TweetCttwitter] { (curr, cttwitter) =>
+      repo(cttwitter.userId).liftToTry.map {
+        case Return(geoScrubTime) if cttwitter.createdAt <= geoScrubTime =>
+          scribeTweetId(cttwitter.tweetId)
           modifiedNoneNoneResult
 
         // no-op on failure and no result

@@ -5,14 +5,14 @@ import java.util.Map;
 import com.google.common.primitives.Longs;
 
 import com.twitter.search.common.debug.DebugEventAccumulator;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.partitioning.base.Partitionable;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
+import com.twitter.search.common.schema.thriftjava.ThriftIndetwitteringEvent;
 
 /**
  * Wrap of ThriftVersionedEvents, make it partitionable for the queue writer.
  */
-public class IngesterThriftVersionedEvents extends ThriftVersionedEvents
+public class IngesterThriftVersionedEvents etwittertends ThriftVersionedEvents
     implements Comparable<ThriftVersionedEvents>, Partitionable, DebugEventAccumulator {
 
   // Make userId field easier to be accessed to calculate partition number
@@ -23,7 +23,7 @@ public class IngesterThriftVersionedEvents extends ThriftVersionedEvents
   }
 
   public IngesterThriftVersionedEvents(long userId,
-                                       Map<Byte, ThriftIndexingEvent> versionedEvents) {
+                                       Map<Byte, ThriftIndetwitteringEvent> versionedEvents) {
     super(versionedEvents);
     this.userId = userId;
   }

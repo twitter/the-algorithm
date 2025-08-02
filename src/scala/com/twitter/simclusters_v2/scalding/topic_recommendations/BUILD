@@ -3,7 +3,7 @@ scala_library(
     platform = "java8",
     tags = ["bazel-compatible"],
     dependencies = [
-        "escherbird/src/scala/com/twitter/escherbird/scalding/jobs/exportentities:entities-scala",
+        "escherbird/src/scala/com/twitter/escherbird/scalding/jobs/etwitterportentities:entities-scala",
         "escherbird/src/scala/com/twitter/escherbird/scalding/source/utt:utt_source-scala",
         "interests-ds/src/main/scala/com/twitter/interests_ds/jobs/interests_service",
         "interests-ds/src/main/scala/com/twitter/interests_ds/jobs/interests_service:user_topic_relation_snapshot-scala",
@@ -144,7 +144,7 @@ hadoop_binary(
 scalding_job(
     name = "popular_topics_per_country",
     main = "com.twitter.simclusters_v2.scalding.topic_recommendations.GeoPopularTopicsBatchApp",
-    args = ["--maxTopics 100"],
+    args = ["--matwitterTopics 100"],
     config = [
         ("hadoop.combine-input", "true"),
         ("hadoop.map.jvm.total-memory", "3072m"),

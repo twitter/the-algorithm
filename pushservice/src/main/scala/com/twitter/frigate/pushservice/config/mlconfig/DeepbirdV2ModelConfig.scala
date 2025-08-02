@@ -1,6 +1,6 @@
 package com.twitter.frigate.pushservice.config.mlconfig
 
-import com.twitter.cortex.deepbird.thriftjava.DeepbirdPredictionService
+import com.twitter.cortetwitter.deepbird.thriftjava.DeepbirdPredictionService
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.ml.prediction.DeepbirdPredictionEngineServiceStore
 import com.twitter.nrel.heavyranker.PushDBv2PredictionServiceStore

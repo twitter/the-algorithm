@@ -13,8 +13,8 @@ scala_library(
         "src/scala/com/twitter/timelines/prediction/features/recap",
         "timelines/data_processing/ad_hoc/earlybird_ranking/common",
         "timelines/data_processing/util:rich-request",
-        "timelines/data_processing/util/example",
-        "timelines/data_processing/util/execution",
+        "timelines/data_processing/util/etwitterample",
+        "timelines/data_processing/util/etwitterecution",
         "twadoop_config/configuration/log_categories/group/timelines:timelineservice_injection_request_log-scala",
     ],
 )

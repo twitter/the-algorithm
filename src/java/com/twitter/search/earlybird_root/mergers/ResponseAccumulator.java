@@ -23,51 +23,51 @@ import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
 public abstract class ResponseAccumulator {
 
   @VisibleForTesting
-  static class MinMaxSearchedIdStats {
+  static class MinMatwitterSearchedIdStats {
     /** How many results did we actually check */
-    private final SearchCounter checkedMaxMinSearchedStatusId;
-    private final SearchCounter unsetMaxSearchedStatusId;
+    private final SearchCounter checkedMatwitterMinSearchedStatusId;
+    private final SearchCounter unsetMatwitterSearchedStatusId;
     private final SearchCounter unsetMinSearchedStatusId;
-    private final SearchCounter unsetMaxAndMinSearchedStatusId;
-    private final SearchCounter sameMinMaxSearchedIdWithoutResults;
-    private final SearchCounter sameMinMaxSearchedIdWithOneResult;
-    private final SearchCounter sameMinMaxSearchedIdWithResults;
-    private final SearchCounter flippedMinMaxSearchedId;
+    private final SearchCounter unsetMatwitterAndMinSearchedStatusId;
+    private final SearchCounter sameMinMatwitterSearchedIdWithoutResults;
+    private final SearchCounter sameMinMatwitterSearchedIdWithOneResult;
+    private final SearchCounter sameMinMatwitterSearchedIdWithResults;
+    private final SearchCounter flippedMinMatwitterSearchedId;
 
-    MinMaxSearchedIdStats(EarlybirdRequestType requestType) {
-      String statPrefix = "merge_helper_" + requestType.getNormalizedName();
+    MinMatwitterSearchedIdStats(EarlybirdRequestType requestType) {
+      String statPrefitwitter = "merge_helper_" + requestType.getNormalizedName();
 
-      checkedMaxMinSearchedStatusId = SearchCounter.export(statPrefix
-          + "_max_min_searched_id_checks");
-      unsetMaxSearchedStatusId = SearchCounter.export(statPrefix
-          + "_unset_max_searched_status_id");
-      unsetMinSearchedStatusId = SearchCounter.export(statPrefix
+      checkedMatwitterMinSearchedStatusId = SearchCounter.etwitterport(statPrefitwitter
+          + "_matwitter_min_searched_id_checks");
+      unsetMatwitterSearchedStatusId = SearchCounter.etwitterport(statPrefitwitter
+          + "_unset_matwitter_searched_status_id");
+      unsetMinSearchedStatusId = SearchCounter.etwitterport(statPrefitwitter
           + "_unset_min_searched_status_id");
-      unsetMaxAndMinSearchedStatusId = SearchCounter.export(statPrefix
-          + "_unset_max_and_min_searched_status_id");
-      sameMinMaxSearchedIdWithoutResults = SearchCounter.export(statPrefix
-          + "_same_min_max_searched_id_without_results");
-      sameMinMaxSearchedIdWithOneResult = SearchCounter.export(statPrefix
-          + "_same_min_max_searched_id_with_one_results");
-      sameMinMaxSearchedIdWithResults = SearchCounter.export(statPrefix
-          + "_same_min_max_searched_id_with_results");
-      flippedMinMaxSearchedId = SearchCounter.export(statPrefix
-          + "_flipped_min_max_searched_id");
+      unsetMatwitterAndMinSearchedStatusId = SearchCounter.etwitterport(statPrefitwitter
+          + "_unset_matwitter_and_min_searched_status_id");
+      sameMinMatwitterSearchedIdWithoutResults = SearchCounter.etwitterport(statPrefitwitter
+          + "_same_min_matwitter_searched_id_without_results");
+      sameMinMatwitterSearchedIdWithOneResult = SearchCounter.etwitterport(statPrefitwitter
+          + "_same_min_matwitter_searched_id_with_one_results");
+      sameMinMatwitterSearchedIdWithResults = SearchCounter.etwitterport(statPrefitwitter
+          + "_same_min_matwitter_searched_id_with_results");
+      flippedMinMatwitterSearchedId = SearchCounter.etwitterport(statPrefitwitter
+          + "_flipped_min_matwitter_searched_id");
     }
 
     @VisibleForTesting
-    SearchCounter getCheckedMaxMinSearchedStatusId() {
-      return checkedMaxMinSearchedStatusId;
+    SearchCounter getCheckedMatwitterMinSearchedStatusId() {
+      return checkedMatwitterMinSearchedStatusId;
     }
 
     @VisibleForTesting
-    SearchCounter getFlippedMinMaxSearchedId() {
-      return flippedMinMaxSearchedId;
+    SearchCounter getFlippedMinMatwitterSearchedId() {
+      return flippedMinMatwitterSearchedId;
     }
 
     @VisibleForTesting
-    SearchCounter getUnsetMaxSearchedStatusId() {
-      return unsetMaxSearchedStatusId;
+    SearchCounter getUnsetMatwitterSearchedStatusId() {
+      return unsetMatwitterSearchedStatusId;
     }
 
     @VisibleForTesting
@@ -76,36 +76,36 @@ public abstract class ResponseAccumulator {
     }
 
     @VisibleForTesting
-    SearchCounter getUnsetMaxAndMinSearchedStatusId() {
-      return unsetMaxAndMinSearchedStatusId;
+    SearchCounter getUnsetMatwitterAndMinSearchedStatusId() {
+      return unsetMatwitterAndMinSearchedStatusId;
     }
 
     @VisibleForTesting
-    SearchCounter getSameMinMaxSearchedIdWithoutResults() {
-      return sameMinMaxSearchedIdWithoutResults;
+    SearchCounter getSameMinMatwitterSearchedIdWithoutResults() {
+      return sameMinMatwitterSearchedIdWithoutResults;
     }
 
     @VisibleForTesting
-    SearchCounter getSameMinMaxSearchedIdWithOneResult() {
-      return sameMinMaxSearchedIdWithOneResult;
+    SearchCounter getSameMinMatwitterSearchedIdWithOneResult() {
+      return sameMinMatwitterSearchedIdWithOneResult;
     }
 
     @VisibleForTesting
-    SearchCounter getSameMinMaxSearchedIdWithResults() {
-      return sameMinMaxSearchedIdWithResults;
+    SearchCounter getSameMinMatwitterSearchedIdWithResults() {
+      return sameMinMatwitterSearchedIdWithResults;
     }
   }
 
   @VisibleForTesting
-  static final Map<EarlybirdRequestType, MinMaxSearchedIdStats> MIN_MAX_SEARCHED_ID_STATS_MAP;
+  static final Map<EarlybirdRequestType, MinMatwitterSearchedIdStats> MIN_MAtwitter_SEARCHED_ID_STATS_MAP;
   static {
-    EnumMap<EarlybirdRequestType, MinMaxSearchedIdStats> statsMap
+    EnumMap<EarlybirdRequestType, MinMatwitterSearchedIdStats> statsMap
         = Maps.newEnumMap(EarlybirdRequestType.class);
     for (EarlybirdRequestType earlybirdRequestType : EarlybirdRequestType.values()) {
-      statsMap.put(earlybirdRequestType, new MinMaxSearchedIdStats(earlybirdRequestType));
+      statsMap.put(earlybirdRequestType, new MinMatwitterSearchedIdStats(earlybirdRequestType));
     }
 
-    MIN_MAX_SEARCHED_ID_STATS_MAP = Maps.immutableEnumMap(statsMap);
+    MIN_MAtwitter_SEARCHED_ID_STATS_MAP = Maps.immutableEnumMap(statsMap);
   }
 
   // Merge has encountered at least one early terminated response.
@@ -117,8 +117,8 @@ public abstract class ResponseAccumulator {
   private final List<EarlybirdResponse> successResponses = new ArrayList<>();
   // The list of the error responses from all earlybird futures.
   private final List<EarlybirdResponse> errorResponses = new ArrayList<>();
-  // the list of max statusIds seen in each earlybird.
-  private final List<Long> maxIds = new ArrayList<>();
+  // the list of matwitter statusIds seen in each earlybird.
+  private final List<Long> matwitterIds = new ArrayList<>();
   // the list of min statusIds seen in each earlybird.
   private final List<Long> minIds = new ArrayList<>();
 
@@ -131,21 +131,21 @@ public abstract class ResponseAccumulator {
    * Returns a string that can be used for logging to identify a single response out of all the
    * responses that are being merged.
    *
-   * @param responseIndex the index of a response's partition or tier, depending on the type of
+   * @param responseIndetwitter the indetwitter of a response's partition or tier, depending on the type of
    *                      responses being accumulated.
    * @param numTotalResponses the total number of partitions or tiers that are being merged.
    */
-  public abstract String getNameForLogging(int responseIndex, int numTotalResponses);
+  public abstract String getNameForLogging(int responseIndetwitter, int numTotalResponses);
 
   /**
-   * Returns a string that is used to export per-EarlybirdResponseCode stats for partitions and tiers.
+   * Returns a string that is used to etwitterport per-EarlybirdResponseCode stats for partitions and tiers.
    *
-   * @param responseIndex the index of of a response's partition or tier.
+   * @param responseIndetwitter the indetwitter of of a response's partition or tier.
    * @param numTotalResponses the total number of partitions or tiers that are being merged.
-   * @return a string that is used to export per-EarlybirdResponseCode stats for partitions and tiers.
+   * @return a string that is used to etwitterport per-EarlybirdResponseCode stats for partitions and tiers.
    */
   public abstract String getNameForEarlybirdResponseCodeStats(
-      int responseIndex, int numTotalResponses);
+      int responseIndetwitter, int numTotalResponses);
 
   abstract boolean shouldEarlyTerminateMerge(EarlyTerminateTierMergePredicate merger);
 
@@ -194,7 +194,7 @@ public abstract class ResponseAccumulator {
   /**
    * Subclasses can override this to perform more successful response handling.
    */
-  protected void extraSuccessfulResponseHandler(EarlybirdResponse response) { }
+  protected void etwittertraSuccessfulResponseHandler(EarlybirdResponse response) { }
 
  /**
   * Whether the helper is for merging results from partitions within a single tier.
@@ -221,86 +221,86 @@ public abstract class ResponseAccumulator {
       ThriftSearchResults searchResults = response.getSearchResults();
       numResultsAccumulated += searchResults.getResultsSize();
 
-      recordMinMaxSearchedIdsAndUpdateStats(responseMessageBuilder, request, response,
+      recordMinMatwitterSearchedIdsAndUpdateStats(responseMessageBuilder, request, response,
           searchResults);
     }
     if (response.isSetEarlyTerminationInfo()
         && response.getEarlyTerminationInfo().isEarlyTerminated()) {
       foundEarlyTermination = true;
     }
-    extraSuccessfulResponseHandler(response);
+    etwittertraSuccessfulResponseHandler(response);
   }
 
-  private void recordMinMaxSearchedIdsAndUpdateStats(
+  private void recordMinMatwitterSearchedIdsAndUpdateStats(
       EarlybirdResponseDebugMessageBuilder responseMessageBuidler,
       EarlybirdRequest request,
       EarlybirdResponse response,
       ThriftSearchResults searchResults) {
 
-    boolean isMaxIdSet = searchResults.isSetMaxSearchedStatusID();
+    boolean isMatwitterIdSet = searchResults.isSetMatwitterSearchedStatusID();
     boolean isMinIdSet = searchResults.isSetMinSearchedStatusID();
 
-    if (isMaxIdSet) {
-      maxIds.add(searchResults.getMaxSearchedStatusID());
+    if (isMatwitterIdSet) {
+      matwitterIds.add(searchResults.getMatwitterSearchedStatusID());
     }
     if (isMinIdSet) {
       minIds.add(searchResults.getMinSearchedStatusID());
     }
 
-    updateMinMaxIdStats(responseMessageBuidler, request, response, searchResults, isMaxIdSet,
+    updateMinMatwitterIdStats(responseMessageBuidler, request, response, searchResults, isMatwitterIdSet,
         isMinIdSet);
   }
 
-  private void updateMinMaxIdStats(
+  private void updateMinMatwitterIdStats(
       EarlybirdResponseDebugMessageBuilder responseMessageBuilder,
       EarlybirdRequest request,
       EarlybirdResponse response,
       ThriftSearchResults searchResults,
-      boolean isMaxIdSet,
+      boolean isMatwitterIdSet,
       boolean isMinIdSet) {
     // Now just track the stats.
     EarlybirdRequestType requestType = EarlybirdRequestType.of(request);
-    MinMaxSearchedIdStats minMaxSearchedIdStats = MIN_MAX_SEARCHED_ID_STATS_MAP.get(requestType);
+    MinMatwitterSearchedIdStats minMatwitterSearchedIdStats = MIN_MAtwitter_SEARCHED_ID_STATS_MAP.get(requestType);
 
-    minMaxSearchedIdStats.checkedMaxMinSearchedStatusId.increment();
-    if (isMaxIdSet && isMinIdSet) {
-      if (searchResults.getMinSearchedStatusID() > searchResults.getMaxSearchedStatusID()) {
-        // We do not expect this case to happen in production.
-        minMaxSearchedIdStats.flippedMinMaxSearchedId.increment();
+    minMatwitterSearchedIdStats.checkedMatwitterMinSearchedStatusId.increment();
+    if (isMatwitterIdSet && isMinIdSet) {
+      if (searchResults.getMinSearchedStatusID() > searchResults.getMatwitterSearchedStatusID()) {
+        // We do not etwitterpect this case to happen in production.
+        minMatwitterSearchedIdStats.flippedMinMatwitterSearchedId.increment();
       } else if (searchResults.getResultsSize() == 0
-          && searchResults.getMaxSearchedStatusID() == searchResults.getMinSearchedStatusID()) {
-        minMaxSearchedIdStats.sameMinMaxSearchedIdWithoutResults.increment();
+          && searchResults.getMatwitterSearchedStatusID() == searchResults.getMinSearchedStatusID()) {
+        minMatwitterSearchedIdStats.sameMinMatwitterSearchedIdWithoutResults.increment();
         responseMessageBuilder.debugVerbose(
-            "Got no results, and same min/max searched ids. Request: %s, Response: %s",
+            "Got no results, and same min/matwitter searched ids. Request: %s, Response: %s",
             request, response);
       } else if (searchResults.getResultsSize() == 1
-          && searchResults.getMaxSearchedStatusID() == searchResults.getMinSearchedStatusID()) {
-        minMaxSearchedIdStats.sameMinMaxSearchedIdWithOneResult.increment();
+          && searchResults.getMatwitterSearchedStatusID() == searchResults.getMinSearchedStatusID()) {
+        minMatwitterSearchedIdStats.sameMinMatwitterSearchedIdWithOneResult.increment();
         responseMessageBuilder.debugVerbose(
-            "Got one results, and same min/max searched ids. Request: %s, Response: %s",
+            "Got one results, and same min/matwitter searched ids. Request: %s, Response: %s",
             request, response);
-      } else if (searchResults.getMaxSearchedStatusID()
+      } else if (searchResults.getMatwitterSearchedStatusID()
           == searchResults.getMinSearchedStatusID()) {
-        minMaxSearchedIdStats.sameMinMaxSearchedIdWithResults.increment();
+        minMatwitterSearchedIdStats.sameMinMatwitterSearchedIdWithResults.increment();
         responseMessageBuilder.debugVerbose(
-            "Got multiple results, and same min/max searched ids. Request: %s, Response: %s",
+            "Got multiple results, and same min/matwitter searched ids. Request: %s, Response: %s",
             request, response);
       }
-    } else if (!isMaxIdSet && isMinIdSet) {
-      // We do not expect this case to happen in production.
-      minMaxSearchedIdStats.unsetMaxSearchedStatusId.increment();
+    } else if (!isMatwitterIdSet && isMinIdSet) {
+      // We do not etwitterpect this case to happen in production.
+      minMatwitterSearchedIdStats.unsetMatwitterSearchedStatusId.increment();
       responseMessageBuilder.debugVerbose(
-          "Got unset maxSearchedStatusID. Request: %s, Response: %s", request, response);
-    } else if (isMaxIdSet && !isMinIdSet) {
-      // We do not expect this case to happen in production.
-      minMaxSearchedIdStats.unsetMinSearchedStatusId.increment();
+          "Got unset matwitterSearchedStatusID. Request: %s, Response: %s", request, response);
+    } else if (isMatwitterIdSet && !isMinIdSet) {
+      // We do not etwitterpect this case to happen in production.
+      minMatwitterSearchedIdStats.unsetMinSearchedStatusId.increment();
       responseMessageBuilder.debugVerbose(
           "Got unset minSearchedStatusID. Request: %s, Response: %s", request, response);
     } else {
-      Preconditions.checkState(!isMaxIdSet && !isMinIdSet);
-      minMaxSearchedIdStats.unsetMaxAndMinSearchedStatusId.increment();
+      Preconditions.checkState(!isMatwitterIdSet && !isMinIdSet);
+      minMatwitterSearchedIdStats.unsetMatwitterAndMinSearchedStatusId.increment();
       responseMessageBuilder.debugVerbose(
-          "Got unset maxSearchedStatusID and minSearchedStatusID. Request: %s, Response: %s",
+          "Got unset matwitterSearchedStatusID and minSearchedStatusID. Request: %s, Response: %s",
           request, response);
     }
   }
@@ -315,7 +315,7 @@ public abstract class ResponseAccumulator {
   public final AccumulatedResponses getAccumulatedResults() {
     return new AccumulatedResponses(successResponses,
                                     errorResponses,
-                                    maxIds,
+                                    matwitterIds,
                                     minIds,
                                     ResponseMergerUtils.mergeEarlyTerminationInfo(successResponses),
                                     isMergingAcrossTiers(),

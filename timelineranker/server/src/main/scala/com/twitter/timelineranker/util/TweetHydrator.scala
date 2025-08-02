@@ -20,7 +20,7 @@ object TweetHydrator {
 }
 
 class TweetHydrator(tweetyPieClient: TweetyPieClient, statsReceiver: StatsReceiver)
-    extends RequestStats {
+    etwittertends RequestStats {
 
   private[this] val hydrateScope = statsReceiver.scope("tweetHydrator")
   private[this] val outerTweetsScope = hydrateScope.scope("outerTweets")
@@ -62,7 +62,7 @@ class TweetHydrator(tweetyPieClient: TweetyPieClient, statsReceiver: StatsReceiv
         val innerTweetIdSet = tweetStateMap.keySet -- tweetIds.toSet
 
         val hydratedTweets =
-          HydratedTweetUtils.extractAndOrder(tweetIds ++ innerTweetIdSet.toSeq, tweetStateMap)
+          HydratedTweetUtils.etwittertractAndOrder(tweetIds ++ innerTweetIdSet.toSeq, tweetStateMap)
         val (outer, inner) = hydratedTweets.partition { tweet =>
           !innerTweetIdSet.contains(tweet.tweetId)
         }

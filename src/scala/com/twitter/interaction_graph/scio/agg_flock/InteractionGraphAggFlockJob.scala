@@ -1,6 +1,6 @@
 package com.twitter.interaction_graph.scio.agg_flock
 
-import com.spotify.scio.ScioContext
+import com.spotify.scio.ScioContetwittert
 import com.spotify.scio.values.SCollection
 import com.twitter.beam.io.dal.DAL
 import com.twitter.beam.io.dal.DAL.DiskFormat
@@ -12,20 +12,20 @@ import com.twitter.interaction_graph.scio.common.DateUtil
 import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil
 import com.twitter.interaction_graph.thriftscala.Edge
 import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.Vertex
+import com.twitter.interaction_graph.thriftscala.Vertetwitter
 import com.twitter.scio_internal.job.ScioBeamJob
 import com.twitter.statebird.v2.thriftscala.Environment
 import com.twitter.util.Duration
 import java.time.Instant
 import org.joda.time.Interval
 
-object InteractionGraphAggFlockJob extends ScioBeamJob[InteractionGraphAggFlockOption] {
+object InteractionGraphAggFlockJob etwittertends ScioBeamJob[InteractionGraphAggFlockOption] {
   override protected def configurePipeline(
-    scioContext: ScioContext,
+    scioContetwittert: ScioContetwittert,
     pipelineOptions: InteractionGraphAggFlockOption
   ): Unit = {
     @transient
-    implicit lazy val sc: ScioContext = scioContext
+    implicit lazy val sc: ScioContetwittert = scioContetwittert
     implicit lazy val dateInterval: Interval = pipelineOptions.interval
 
     val source = InteractionGraphAggFlockSource(pipelineOptions)
@@ -44,7 +44,7 @@ object InteractionGraphAggFlockJob extends ScioBeamJob[InteractionGraphAggFlockO
 
     val allFeatures = SCollection.unionAll(allSCollections)
 
-    val (vertex, edges) = FeatureGeneratorUtil.getFeatures(allFeatures)
+    val (vertetwitter, edges) = FeatureGeneratorUtil.getFeatures(allFeatures)
 
     val dalEnvironment: String = pipelineOptions
       .as(classOf[ServiceIdentifierOptions])
@@ -55,11 +55,11 @@ object InteractionGraphAggFlockJob extends ScioBeamJob[InteractionGraphAggFlockO
       dalEnvironment
     }
 
-    vertex.saveAsCustomOutput(
-      "Write Vertex Records",
-      DAL.writeSnapshot[Vertex](
-        InteractionGraphAggFlockVertexSnapshotScalaDataset,
-        PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_flock_vertex_daily"),
+    vertetwitter.saveAsCustomOutput(
+      "Write Vertetwitter Records",
+      DAL.writeSnapshot[Vertetwitter](
+        InteractionGraphAggFlockVertetwitterSnapshotScalaDataset,
+        PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_flock_vertetwitter_daily"),
         Instant.ofEpochMilli(dateInterval.getEndMillis),
         DiskFormat.Parquet,
         Environment.valueOf(dalWriteEnvironment),

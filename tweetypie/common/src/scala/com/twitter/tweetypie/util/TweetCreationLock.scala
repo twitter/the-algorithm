@@ -16,7 +16,7 @@ import scala.collection.immutable.SortedMap
 
 object TweetCreationLock {
   case class Key private (userId: UserId, typeCode: String, idOrMd5: String)
-      extends ScopedCacheKey("t", "locker", 2, Base64Long.toBase64(userId), typeCode, idOrMd5) {
+      etwittertends ScopedCacheKey("t", "locker", 2, Base64Long.toBase64(userId), typeCode, idOrMd5) {
     def uniquenessId: Option[String] =
       if (typeCode == Key.TypeCode.UniquenessId) Some(idOrMd5) else None
   }
@@ -40,7 +40,7 @@ object TweetCreationLock {
      * Request deduplication depends on the hash of a serialized Thrift value.
      *
      * In order to guarantee that a Map has a reproducible serialized form,
-     * it's necessary to fix the ordering of its keys.
+     * it's necessary to fitwitter the ordering of its keys.
      */
     private[util] def sanitizeMediaMetadata(
       mediaMetadata: Option[scala.collection.Map[MediaId, UserDefinedProductMetadata]]
@@ -54,7 +54,7 @@ object TweetCreationLock {
     private[util] def sanitizeRequest(request: PostTweetRequest): PostTweetRequest =
       PostTweetRequest(
         userId = request.userId,
-        text = request.text,
+        tetwittert = request.tetwittert,
         createdVia = "",
         inReplyToTweetId = request.inReplyToTweetId,
         geo = request.geo,
@@ -90,7 +90,7 @@ object TweetCreationLock {
     /**
      * Key for tweets that have a uniqueness id set. There is only one
      * namespace of uniqueness ids, across all clients. They are
-     * expected to be Snowflake ids, in order to avoid cache
+     * etwitterpected to be Snowflake ids, in order to avoid cache
      * collisions.
      */
     def byUniquenessId(userId: UserId, uniquenessId: Long): Key =
@@ -110,21 +110,21 @@ object TweetCreationLock {
      * marker. This lets us use checkAndSet for deletion to avoid
      * accidentally overwriting other process' values.)
      */
-    case object Unlocked extends State
+    case object Unlocked etwittertends State
 
     /**
      * Some process is attempting to create the tweet.
      */
-    case class InProgress(token: Long, timestamp: Time) extends State
+    case class InProgress(token: Long, timestamp: Time) etwittertends State
 
     /**
      * The tweet has already been successfully created, and has the
      * specified id.
      */
-    case class AlreadyCreated(tweetId: TweetId, timestamp: Time) extends State
+    case class AlreadyCreated(tweetId: TweetId, timestamp: Time) etwittertends State
 
     /**
-     * When stored in cache, each state is prefixed by a byte
+     * When stored in cache, each state is prefitwittered by a byte
      * indicating the type of the entry.
      */
     object TypeCode {
@@ -176,7 +176,7 @@ object TweetCreationLock {
     /**
      * Convert this byte array into a LockState.
      *
-     * @throws RuntimeException if the buffer is not of the right size
+     * @throws RuntimeEtwitterception if the buffer is not of the right size
      *   and format
      */
     private[this] def fromBytes(bytes: Array[Byte]): State = {
@@ -186,10 +186,10 @@ object TweetCreationLock {
         case TypeCode.InProgress => InProgress(buf.getLong(), buf.getLong().nanoseconds.afterEpoch)
         case TypeCode.AlreadyCreated =>
           AlreadyCreated(buf.getLong(), buf.getLong().nanoseconds.afterEpoch)
-        case other => throw new RuntimeException("Invalid type code: " + other)
+        case other => throw new RuntimeEtwitterception("Invalid type code: " + other)
       }
       if (buf.remaining != 0) {
-        throw new RuntimeException("Extra data in buffer: " + bytes)
+        throw new RuntimeEtwitterception("Etwittertra data in buffer: " + bytes)
       }
       result
     }

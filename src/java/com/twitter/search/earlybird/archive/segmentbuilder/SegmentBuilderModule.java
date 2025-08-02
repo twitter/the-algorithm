@@ -13,7 +13,7 @@ import com.twitter.search.common.config.LoggerConfiguration;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
 import com.twitter.search.earlybird.util.EarlybirdDecider;
 
-public class SegmentBuilderModule extends TwitterModule {
+public class SegmentBuilderModule etwittertends TwitterModule {
 
   private static final String CONFIG_FILE_FLAG_NAME = "config_file";
   private static final String SEGMENT_LOG_DIR_FLAG_NAME = "segment_log_dir";

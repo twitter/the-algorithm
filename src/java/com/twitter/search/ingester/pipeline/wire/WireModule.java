@@ -1,11 +1,11 @@
 package com.twitter.search.ingester.pipeline.wire;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import javax.annotation.Nullable;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import java.util.concurrent.EtwitterecutorService;
+import javatwitter.annotation.Nullable;
+import javatwitter.naming.Contetwittert;
+import javatwitter.naming.InitialContetwittert;
+import javatwitter.naming.NamingEtwitterception;
 
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.Partitioner;
@@ -14,7 +14,7 @@ import org.apache.kafka.common.serialization.Serializer;
 import org.apache.thrift.TBase;
 
 import com.twitter.common.util.Clock;
-import com.twitter.common_internal.text.version.PenguinVersion;
+import com.twitter.common_internal.tetwittert.version.PenguinVersion;
 import com.twitter.decider.Decider;
 import com.twitter.eventbus.client.EventBusSubscriber;
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
@@ -28,7 +28,7 @@ import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
 import com.twitter.search.ingester.pipeline.strato_fetchers.AudioSpaceCoreFetcher;
 import com.twitter.search.ingester.pipeline.strato_fetchers.AudioSpaceParticipantsFetcher;
 import com.twitter.search.ingester.pipeline.strato_fetchers.NamedEntityFetcher;
-import com.twitter.search.ingester.pipeline.util.PipelineExceptionHandler;
+import com.twitter.search.ingester.pipeline.util.PipelineEtwitterceptionHandler;
 import com.twitter.storage.client.manhattan.kv.JavaManhattanKVEndpoint;
 import com.twitter.tweetypie.thriftjava.TweetService;
 import com.twitter.util.Duration;
@@ -43,29 +43,29 @@ public abstract class WireModule {
   /** The JNDI property to which this module will be bound. */
   private static final String WIRE_MODULE_NAME = "";
 
-  /** The root name of all properties specified in the twitter-naming-production.*.xml files. */
+  /** The root name of all properties specified in the twitter-naming-production.*.twitterml files. */
   public static final String JNDI_PIPELINE_ROOT = "";
 
   /**
    * (Re)binds the given wire module in JNDI.
    *
    * @param wireModule The wire module to bind in JNDI.
-   * @throws NamingException If the wire module cannot be bound in JNDI for some reason.
+   * @throws NamingEtwitterception If the wire module cannot be bound in JNDI for some reason.
    */
-  public static void bindWireModule(WireModule wireModule) throws NamingException {
-    Context jndiContext = new InitialContext();
-    jndiContext.rebind(WIRE_MODULE_NAME, wireModule);
+  public static void bindWireModule(WireModule wireModule) throws NamingEtwitterception {
+    Contetwittert jndiContetwittert = new InitialContetwittert();
+    jndiContetwittert.rebind(WIRE_MODULE_NAME, wireModule);
   }
 
   /**
    * Returns the wire module bound in JNDI.
    *
    * @return The wire module bound in JNDI.
-   * @throws NamingException If there's no wire module bound in JNDI.
+   * @throws NamingEtwitterception If there's no wire module bound in JNDI.
    */
-  public static WireModule getWireModule() throws NamingException {
-    Context jndiContext = new InitialContext();
-    return (WireModule) jndiContext.lookup(WIRE_MODULE_NAME);
+  public static WireModule getWireModule() throws NamingEtwitterception {
+    Contetwittert jndiContetwittert = new InitialContetwittert();
+    return (WireModule) jndiContetwittert.lookup(WIRE_MODULE_NAME);
   }
 
   /**
@@ -79,42 +79,42 @@ public abstract class WireModule {
    */
   public abstract <T> KafkaConsumer<Long, T> newKafkaConsumer(
       String kafkaClusterPath, Deserializer<T> deserializer, String clientId, String groupId,
-      int maxPollRecords);
+      int matwitterPollRecords);
 
   /**
    * Creates a new {@code FinagleKafkaConsumer} with a specified consumer group ID.
    */
   public abstract <T> BlockingFinagleKafkaProducer<Long, T> newFinagleKafkaProducer(
       String kafkaClusterPath, Serializer<T> serializer, String clientId,
-      @Nullable Class<? extends Partitioner> partitionerClass);
+      @Nullable Class<? etwittertends Partitioner> partitionerClass);
 
   /**
    * Gets a TweetyPie client.
    *
    * @param tweetypieClientId Use this string as the client id.
    * @return A TweetyPie client
-   * @throws NamingException
+   * @throws NamingEtwitterception
    */
   public abstract TweetService.ServiceToClient getTweetyPieClient(String tweetypieClientId)
-      throws NamingException;
+      throws NamingEtwitterception;
 
   /**
    * Gets a Gizmoduck client.
    *
    * @param clientId
-   * @throws NamingException
+   * @throws NamingEtwitterception
    */
   public abstract UserService.ServiceToClient getGizmoduckClient(String clientId)
-      throws NamingException;
+      throws NamingEtwitterception;
 
   /**
    * Gets the ManhattanKVEndpoint that should be used for the ManhattanCodedLocationProvider
    *
    * @return the JavaManhattanKVEndpoint that we need for the ManhattanCodedLocationProvider
-   * @throws NamingException
+   * @throws NamingEtwitterception
    */
   public abstract JavaManhattanKVEndpoint getJavaManhattanKVEndpoint()
-      throws NamingException;
+      throws NamingEtwitterception;
 
   /**
    * Returns the decider to be used by all stages.
@@ -132,13 +132,13 @@ public abstract class WireModule {
 
 
   /**
-   * Returns the PipelineExceptionHandler instance to be used by all stages.
+   * Returns the PipelineEtwitterceptionHandler instance to be used by all stages.
    *
-   * @return The PipelineExceptionHandler instance to be used by all stages.
-   * @throws NamingException If building the PipelineExceptionHandler instance requires some
+   * @return The PipelineEtwitterceptionHandler instance to be used by all stages.
+   * @throws NamingEtwitterception If building the PipelineEtwitterceptionHandler instance requires some
    *                         parameters, and those parameters were not bound in JNDI.
    */
-  public abstract PipelineExceptionHandler getPipelineExceptionHandler();
+  public abstract PipelineEtwitterceptionHandler getPipelineEtwitterceptionHandler();
 
   /**
    * Gets the PartitionMappingManager for the Kafka writer.
@@ -151,18 +151,18 @@ public abstract class WireModule {
    * Returns the Metastore client used by the UserPropertiesManager.
    *
    * @return A Metastore client.
-   * @throws NamingException
+   * @throws NamingEtwitterception
    */
-  public abstract MetastoreClient getMetastoreClient() throws NamingException;
+  public abstract MetastoreClient getMetastoreClient() throws NamingEtwitterception;
 
   /**
-   * Returns an ExecutorService potentially backed by the specified number of threads.
+   * Returns an EtwitterecutorService potentially backed by the specified number of threads.
    *
    * @param numThreads An advisory value with a suggestion for how large the threadpool should be.
-   * @return an ExecutorService that might be backed by some threads.
-   * @throws NamingException
+   * @return an EtwitterecutorService that might be backed by some threads.
+   * @throws NamingEtwitterception
    */
-  public abstract ExecutorService getThreadPool(int numThreads) throws NamingException;
+  public abstract EtwitterecutorService getThreadPool(int numThreads) throws NamingEtwitterception;
 
   /**
    * Returns the Storer interface to connect to Pink.
@@ -173,16 +173,16 @@ public abstract class WireModule {
    *
    */
   public abstract Storer.ServiceIface getStorer(Duration requestTimeout, int retries)
-      throws NamingException;
+      throws NamingEtwitterception;
 
   /**
    * Returns an EventBusSubscriber
    */
-  public abstract <T extends TBase<?, ?>> EventBusSubscriber<T> createEventBusSubscriber(
+  public abstract <T etwittertends TBase<?, ?>> EventBusSubscriber<T> createEventBusSubscriber(
       Function<T, Future<?>> process,
       Class<T> thriftStructClass,
       String eventBusSubscriberId,
-      int maxConcurrentEvents);
+      int matwitterConcurrentEvents);
 
   /**
    * Returns a Clock.
@@ -197,12 +197,12 @@ public abstract class WireModule {
   /**
    * Returns the cluster.
    */
-  public abstract EarlybirdCluster getEarlybirdCluster() throws NamingException;
+  public abstract EarlybirdCluster getEarlybirdCluster() throws NamingEtwitterception;
 
   /**
    * Returns the current penguin version(s).
    */
-  public abstract List<PenguinVersion> getPenguinVersions() throws NamingException;
+  public abstract List<PenguinVersion> getPenguinVersions() throws NamingEtwitterception;
 
   /**
    * Returns updated penguin version(s) depending on decider availability.

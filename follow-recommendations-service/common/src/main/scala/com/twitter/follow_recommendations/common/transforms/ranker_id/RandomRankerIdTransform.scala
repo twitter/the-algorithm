@@ -13,7 +13,7 @@ import com.twitter.timelines.configapi.HasParams
  * This is primarily for determining if a candidate was generated via random shuffling.
  */
 @Singleton
-class RandomRankerIdTransform @Inject() () extends GatedTransform[HasParams, CandidateUser] {
+class RandomRankerIdTransform @Inject() () etwittertends GatedTransform[HasParams, CandidateUser] {
 
   override def transform(
     target: HasParams,

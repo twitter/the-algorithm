@@ -20,8 +20,8 @@ public class AccumulatedResponses {
   private final List<EarlybirdResponse> successResponses;
   // The list of the unsuccessful responses from all earlybird futures.
   private final List<EarlybirdResponse> errorResponses;
-  // the list of max statusIds seen in each earlybird.
-  private final List<Long> maxIds;
+  // the list of matwitter statusIds seen in each earlybird.
+  private final List<Long> matwitterIds;
   // the list of min statusIds seen in each earlybird.
   private final List<Long> minIds;
 
@@ -60,7 +60,7 @@ public class AccumulatedResponses {
    */
   public AccumulatedResponses(List<EarlybirdResponse> successResponses,
                               List<EarlybirdResponse> errorResponses,
-                              List<Long> maxIds,
+                              List<Long> matwitterIds,
                               List<Long> minIds,
                               EarlyTerminationInfo mergedEarlyTerminationInfo,
                               boolean isMergingAcrossTiers,
@@ -68,7 +68,7 @@ public class AccumulatedResponses {
                               int numSearchedSegments) {
     this.successResponses = successResponses;
     this.errorResponses = errorResponses;
-    this.maxIds = maxIds;
+    this.matwitterIds = matwitterIds;
     this.minIds = minIds;
     this.mergedEarlyTerminationInfo = mergedEarlyTerminationInfo;
     this.isMergingAcrossTiers = isMergingAcrossTiers;
@@ -84,8 +84,8 @@ public class AccumulatedResponses {
     return errorResponses;
   }
 
-  public List<Long> getMaxIds() {
-    return maxIds;
+  public List<Long> getMatwitterIds() {
+    return matwitterIds;
   }
 
   public List<Long> getMinIds() {
@@ -116,7 +116,7 @@ public class AccumulatedResponses {
     Preconditions.checkState(!errorResponses.isEmpty());
 
     // Find a response that has the most common error response code.
-    int maxCount = 0;
+    int matwitterCount = 0;
     EarlybirdResponse errorResponseWithMostCommonErrorResponseCode = null;
     Map<EarlybirdResponseCode, Integer> responseCodeCounts = Maps.newHashMap();
     for (EarlybirdResponse errorResponse : errorResponses) {
@@ -127,7 +127,7 @@ public class AccumulatedResponses {
       }
       ++responseCodeCount;
       responseCodeCounts.put(responseCode, responseCodeCount);
-      if (responseCodeCount > maxCount) {
+      if (responseCodeCount > matwitterCount) {
         errorResponseWithMostCommonErrorResponseCode = errorResponse;
       }
     }
@@ -136,7 +136,7 @@ public class AccumulatedResponses {
     // Otherwise, set TRANSIENT_ERROR on the merged response.
     EarlybirdResponseCode mergedResponseCode = EarlybirdResponseCode.TRANSIENT_ERROR;
     if (responseCodeCounts.size() == 1) {
-      mergedResponseCode = responseCodeCounts.keySet().iterator().next();
+      mergedResponseCode = responseCodeCounts.keySet().iterator().netwittert();
     }
 
     EarlybirdResponse mergedResponse = new EarlybirdResponse()

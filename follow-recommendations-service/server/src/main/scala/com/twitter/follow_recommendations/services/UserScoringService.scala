@@ -13,8 +13,8 @@ import com.twitter.follow_recommendations.logging.FrsLogger
 import com.twitter.follow_recommendations.models.ScoringUserRequest
 import com.twitter.follow_recommendations.models.ScoringUserResponse
 import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class UserScoringService @Inject() (
@@ -51,7 +51,7 @@ class UserScoringService @Inject() (
   }
 
   private def hydrate(request: ScoringUserRequest): Stitch[ScoringUserRequest] = {
-    val allStitches = Stitch.collect(request.clientContext.userId.map { userId =>
+    val allStitches = Stitch.collect(request.clientContetwittert.userId.map { userId =>
       val recentFollowedUserIdsStitch =
         rescueWithStats(
           socialGraph.getRecentFollowedUserIds(userId),

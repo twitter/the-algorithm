@@ -62,9 +62,9 @@ class HashedPercentileDiscretizer(Layer):
         HashedPercentileDiscretizer calibration. Used to initialize bin_values, hash_keys,
         hash_values, bin_ids, bin_values and feature_offsets.
       out_bits:
-        Determines the maximum value for output feature IDs.
-        The dense_shape of the SparseTensor returned by lookup(x)
-        will be [x.shape[0], 1 << output_bits].
+        Determines the matwitterimum value for output feature IDs.
+        The dense_shape of the SparseTensor returned by lookup(twitter)
+        will be [twitter.shape[0], 1 << output_bits].
 
     Optional args:
       hash_keys:
@@ -74,24 +74,24 @@ class HashedPercentileDiscretizer(Layer):
           HashedPercentileDiscretizer vs non-HashedPercentileDiscretizer
           2. transate the HashedPercentileDiscretizer features into a hash_feature ID that
           HashedPercentileDiscretizer understands.
-        The hash_map is expected to contain n_feature items.
+        The hash_map is etwitterpected to contain n_feature items.
       hash_values:
         translates the feature IDs into hash_feature IDs for HashedPercentileDiscretizer.
       bin_ids:
         a 1D Tensor of size n_feature * n_bin + 1 which contains
         unique IDs to which the HashedPercentileDiscretizer features will be translated to.
-        For example, tf.Tensor(np.arange(n_feature * n_bin)) would produce
+        For etwitterample, tf.Tensor(np.arange(n_feature * n_bin)) would produce
         the most efficient output space.
       bin_values:
         a 1D Tensor aligned with bin_ids.
-        For a given hash_feature ID j, it's value bin's are indexed between
+        For a given hash_feature ID j, it's value bin's are indetwittered between
         `j*n_bin` and `j*n_bin + n_bin-1`.
         As such, bin_ids[j*n_bin+i] is translated from a hash_feature ID of j
         and a inputs value between
         `bin_values[j*n_bin + i]` and `bin_values[j*n_bin+i+1]`.
       feature_offsets:
         a 1D Tensor specifying the starting location of bins for a given feature id.
-        For example, tf.Tensor(np.arange(0, bin_values.size, n_bin, dtype='int64')).
+        For etwitterample, tf.Tensor(np.arange(0, bin_values.size, n_bin, dtype='int64')).
       hash_fn:
         a function that takes in `feature_ids`, `bucket_indices` and `output_size` and
         hashes the bucketed features into the `output_size` buckets. The default uses knuth's
@@ -99,7 +99,7 @@ class HashedPercentileDiscretizer(Layer):
     """
     super(HashedPercentileDiscretizer, self).__init__(**kwargs)
 
-    max_discretizer_feature = n_feature * (n_bin + 1)
+    matwitter_discretizer_feature = n_feature * (n_bin + 1)
     self._n_feature = n_feature
     self._n_bin = n_bin
 
@@ -122,11 +122,11 @@ class HashedPercentileDiscretizer(Layer):
     self.hash_map = tf.lookup.StaticHashTable(initializer, -1)
     self.bin_ids = bin_ids
     if bin_ids is None:
-      bin_ids = np.empty(max_discretizer_feature, dtype=np.int64)
+      bin_ids = np.empty(matwitter_discretizer_feature, dtype=np.int64)
 
     self.bin_values = bin_values
     if bin_values is None:
-      bin_values = np.empty(max_discretizer_feature, dtype=np.float32)
+      bin_values = np.empty(matwitter_discretizer_feature, dtype=np.float32)
 
     self.feature_offsets = feature_offsets
     if feature_offsets is None:
@@ -197,8 +197,8 @@ class HashedPercentileDiscretizer(Layer):
                                                 self.bin_ids,
                                                 self.bin_values,
                                                 self.feature_offsets)
-    discretizer_bucket_idxs, discretizer_vals = output
-    new_discretizer_keys = self.hash_fn(continuous_feature_ids, discretizer_bucket_idxs,
+    discretizer_bucket_idtwitters, discretizer_vals = output
+    new_discretizer_keys = self.hash_fn(continuous_feature_ids, discretizer_bucket_idtwitters,
                                         self.output_size)
     # Stitch the keys and values from discretizer and non discretizer indices back, with help
     # of the Stitch Layer

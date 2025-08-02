@@ -4,7 +4,7 @@ import com.twitter.search.common.constants.QueryCacheConstants;
 import com.twitter.search.queryparser.query.Conjunction;
 import com.twitter.search.queryparser.query.Disjunction;
 import com.twitter.search.queryparser.query.Phrase;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twitter.search.queryparser.query.QueryParserEtwitterception;
 import com.twitter.search.queryparser.query.SpecialTerm;
 import com.twitter.search.queryparser.query.Term;
 import com.twitter.search.queryparser.query.search.SearchOperator;
@@ -15,12 +15,12 @@ import com.twitter.search.queryparser.query.search.SearchQueryVisitor;
  * Visitor to detect presence of any antisocial / spam operator in a Query.
  * Visitor returns true if any operators it detects were found.
  */
-public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
+public class DetectAntisocialVisitor etwittertends SearchQueryVisitor<Boolean> {
   // True if the query contains any operator to include antisocial tweets.
   private boolean includeAntisocial = false;
 
-  // True if the query contains any operator to exclude antisocial/spam tweets.
-  private boolean excludeAntisocial = false;
+  // True if the query contains any operator to etwitterclude antisocial/spam tweets.
+  private boolean etwittercludeAntisocial = false;
 
   // True if the query contains an antisocial tweets filter.
   private boolean filterAntisocial = false;
@@ -29,8 +29,8 @@ public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
     return includeAntisocial;
   }
 
-  public boolean hasExcludeAntisocial() {
-    return excludeAntisocial;
+  public boolean hasEtwittercludeAntisocial() {
+    return etwittercludeAntisocial;
   }
 
   public boolean hasFilterAntisocial() {
@@ -38,12 +38,12 @@ public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
   }
 
   public boolean hasAnyAntisocialOperator() {
-    // Top tweets is considered an antisocial operator due to scoring also excluding
+    // Top tweets is considered an antisocial operator due to scoring also etwittercluding
     // spam tweets.
-    return hasIncludeAntisocial() || hasExcludeAntisocial() || hasFilterAntisocial();
+    return hasIncludeAntisocial() || hasEtwittercludeAntisocial() || hasFilterAntisocial();
   }
 
-  @Override public Boolean visit(Disjunction disjunction) throws QueryParserException {
+  @Override public Boolean visit(Disjunction disjunction) throws QueryParserEtwitterception {
     boolean found = false;
     for (com.twitter.search.queryparser.query.Query node : disjunction.getChildren()) {
       if (node.accept(this)) {
@@ -53,7 +53,7 @@ public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
     return found;
   }
 
-  @Override public Boolean visit(Conjunction conjunction) throws QueryParserException {
+  @Override public Boolean visit(Conjunction conjunction) throws QueryParserEtwitterception {
     boolean found = false;
     for (com.twitter.search.queryparser.query.Query node : conjunction.getChildren()) {
       if (node.accept(this)) {
@@ -63,25 +63,25 @@ public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
     return found;
   }
 
-  @Override public Boolean visit(SearchOperator operator) throws QueryParserException {
+  @Override public Boolean visit(SearchOperator operator) throws QueryParserEtwitterception {
     boolean found = false;
     switch (operator.getOperatorType()) {
       case INCLUDE:
         if (SearchOperatorConstants.ANTISOCIAL.equals(operator.getOperand())) {
           if (operator.mustNotOccur()) {
-            excludeAntisocial = true;
+            etwittercludeAntisocial = true;
           } else {
             includeAntisocial = true;
           }
           found = true;
         }
         break;
-      case EXCLUDE:
+      case EtwitterCLUDE:
         if (SearchOperatorConstants.ANTISOCIAL.equals(operator.getOperand())) {
           if (operator.mustNotOccur()) {
             includeAntisocial = true;
           } else {
-            excludeAntisocial = true;
+            etwittercludeAntisocial = true;
           }
           found = true;
         }
@@ -89,7 +89,7 @@ public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
       case FILTER:
         if (SearchOperatorConstants.ANTISOCIAL.equals(operator.getOperand())) {
           if (operator.mustNotOccur()) {
-            excludeAntisocial = true;
+            etwittercludeAntisocial = true;
           } else {
             filterAntisocial = true;
           }
@@ -97,13 +97,13 @@ public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
         }
         break;
       case CACHED_FILTER:
-        if (QueryCacheConstants.EXCLUDE_SPAM.equals(operator.getOperand())
-            || QueryCacheConstants.EXCLUDE_SPAM_AND_NATIVERETWEETS.equals(operator.getOperand())
-            || QueryCacheConstants.EXCLUDE_ANTISOCIAL.equals(operator.getOperand())
-            || QueryCacheConstants.EXCLUDE_ANTISOCIAL_AND_NATIVERETWEETS
+        if (QueryCacheConstants.EtwitterCLUDE_SPAM.equals(operator.getOperand())
+            || QueryCacheConstants.EtwitterCLUDE_SPAM_AND_NATIVERETWEETS.equals(operator.getOperand())
+            || QueryCacheConstants.EtwitterCLUDE_ANTISOCIAL.equals(operator.getOperand())
+            || QueryCacheConstants.EtwitterCLUDE_ANTISOCIAL_AND_NATIVERETWEETS
                 .equals(operator.getOperand())) {
 
-          excludeAntisocial = true;
+          etwittercludeAntisocial = true;
           found = true;
         }
         break;
@@ -115,17 +115,17 @@ public class DetectAntisocialVisitor extends SearchQueryVisitor<Boolean> {
   }
 
   @Override
-  public Boolean visit(SpecialTerm special) throws QueryParserException {
+  public Boolean visit(SpecialTerm special) throws QueryParserEtwitterception {
     return false;
   }
 
   @Override
-  public Boolean visit(Phrase phrase) throws QueryParserException {
+  public Boolean visit(Phrase phrase) throws QueryParserEtwitterception {
     return false;
   }
 
   @Override
-  public Boolean visit(Term term) throws QueryParserException {
+  public Boolean visit(Term term) throws QueryParserEtwitterception {
     return false;
   }
 }

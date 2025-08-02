@@ -1,7 +1,7 @@
 package com.twitter.tweetypie.store
 
 import com.twitter.tweetypie.Tweet
-import com.twitter.tweetypie.serverutil.ExtendedTweetMetadataBuilder
+import com.twitter.tweetypie.serverutil.EtwittertendedTweetMetadataBuilder
 import com.twitter.tweetypie.thriftscala.EditControl
 import com.twitter.tweetypie.thriftscala.InitialTweetUpdateRequest
 import com.twitter.tweetypie.util.EditControlUtil
@@ -18,14 +18,14 @@ object InitialTweetUpdate {
     val editControl: EditControl.Initial =
       EditControlUtil.editControlForInitialTweet(initialTweet, request.editTweetId).get()
 
-    // compute the correct extended metadata for a permalink
-    val extendedTweetMetadata =
-      request.selfPermalink.map(link => ExtendedTweetMetadataBuilder(initialTweet, link))
+    // compute the correct etwittertended metadata for a permalink
+    val etwittertendedTweetMetadata =
+      request.selfPermalink.map(link => EtwittertendedTweetMetadataBuilder(initialTweet, link))
 
     initialTweet.copy(
       selfPermalink = initialTweet.selfPermalink.orElse(request.selfPermalink),
       editControl = Some(editControl),
-      extendedTweetMetadata = initialTweet.extendedTweetMetadata.orElse(extendedTweetMetadata)
+      etwittertendedTweetMetadata = initialTweet.etwittertendedTweetMetadata.orElse(etwittertendedTweetMetadata)
     )
   }
 }

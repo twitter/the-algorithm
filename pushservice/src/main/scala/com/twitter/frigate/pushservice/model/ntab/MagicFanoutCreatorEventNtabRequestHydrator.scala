@@ -5,17 +5,17 @@ import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
 import com.twitter.frigate.pushservice.model.MagicFanoutCreatorEventPushCandidate
 import com.twitter.frigate.pushservice.take.NotificationServiceSender
 import com.twitter.notificationservice.thriftscala.CreateGenericNotificationRequest
-import com.twitter.notificationservice.thriftscala.DisplayText
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
+import com.twitter.notificationservice.thriftscala.DisplayTetwittert
+import com.twitter.notificationservice.thriftscala.DisplayTetwittertEntity
 import com.twitter.notificationservice.thriftscala.GenericType
 import com.twitter.notificationservice.thriftscala.InlineCard
-import com.twitter.notificationservice.thriftscala.StoryContext
-import com.twitter.notificationservice.thriftscala.TextValue
+import com.twitter.notificationservice.thriftscala.StoryContetwittert
+import com.twitter.notificationservice.thriftscala.TetwittertValue
 import com.twitter.notificationservice.thriftscala.TapThroughAction
 import com.twitter.util.Future
 import com.twitter.util.Time
 
-trait MagicFanoutCreatorEventNtabRequestHydrator extends NTabRequestHydrator {
+trait MagicFanoutCreatorEventNtabRequestHydrator etwittertends NTabRequestHydrator {
   self: PushCandidate with MagicFanoutCreatorEventPushCandidate =>
 
   override val senderIdFut: Future[Long] = Future.value(creatorId)
@@ -23,17 +23,17 @@ trait MagicFanoutCreatorEventNtabRequestHydrator extends NTabRequestHydrator {
   override lazy val tapThroughFut: Future[String] =
     Future.value(s"/${userProfile.screenName}/superfollows/subscribe")
 
-  lazy val optionalTweetCountEntityFut: Future[Option[DisplayTextEntity]] = {
+  lazy val optionalTweetCountEntityFut: Future[Option[DisplayTetwittertEntity]] = {
     creatorFanoutType match {
       case CreatorFanoutType.UserSubscription =>
         numberOfTweetsFut.map {
           _.flatMap {
             case numberOfTweets if numberOfTweets >= 10 =>
               Some(
-                DisplayTextEntity(
+                DisplayTetwittertEntity(
                   name = "tweet_count",
                   emphasis = true,
-                  value = TextValue.Text(numberOfTweets.toString)))
+                  value = TetwittertValue.Tetwittert(numberOfTweets.toString)))
             case _ => None
           }
         }
@@ -41,18 +41,18 @@ trait MagicFanoutCreatorEventNtabRequestHydrator extends NTabRequestHydrator {
     }
   }
 
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] =
+  override lazy val displayTetwittertEntitiesFut: Future[Seq[DisplayTetwittertEntity]] =
     optionalTweetCountEntityFut
       .map { tweetCountOpt =>
         Seq(
           NotificationServiceSender
-            .getDisplayTextEntityFromUser(hydratedCreator, "display_name", isBold = true),
+            .getDisplayTetwittertEntityFromUser(hydratedCreator, "display_name", isBold = true),
           tweetCountOpt).flatten
       }
 
   override lazy val facepileUsersFut: Future[Seq[Long]] = Future.value(Seq(creatorId))
 
-  override val storyContext: Option[StoryContext] = None
+  override val storyContetwittert: Option[StoryContetwittert] = None
 
   override val inlineCard: Option[InlineCard] = None
 
@@ -70,12 +70,12 @@ trait MagicFanoutCreatorEventNtabRequestHydrator extends NTabRequestHydrator {
     }
   }
 
-  override lazy val socialProofDisplayText: Option[DisplayText] = {
+  override lazy val socialProofDisplayTetwittert: Option[DisplayTetwittert] = {
     creatorFanoutType match {
       case CreatorFanoutType.UserSubscription =>
         Some(
-          DisplayText(values = Seq(
-            DisplayTextEntity(name = "handle", value = TextValue.Text(userProfile.screenName)))))
+          DisplayTetwittert(values = Seq(
+            DisplayTetwittertEntity(name = "handle", value = TetwittertValue.Tetwittert(userProfile.screenName)))))
       case CreatorFanoutType.NewCreator => None
       case _ => None
     }
@@ -85,23 +85,23 @@ trait MagicFanoutCreatorEventNtabRequestHydrator extends NTabRequestHydrator {
     Future
       .join(
         senderIdFut,
-        displayTextEntitiesFut,
+        displayTetwittertEntitiesFut,
         facepileUsersFut,
         tapThroughFut,
         refreshableTypeFut).map {
-        case (senderId, displayTextEntities, facepileUsers, tapThrough, refreshableTypeOpt) =>
+        case (senderId, displayTetwittertEntities, facepileUsers, tapThrough, refreshableTypeOpt) =>
           Some(
             CreateGenericNotificationRequest(
               userId = target.targetId,
               senderId = senderId,
               genericType = GenericType.RefreshableNotification,
-              displayText = DisplayText(values = displayTextEntities),
+              displayTetwittert = DisplayTetwittert(values = displayTetwittertEntities),
               facepileUsers = facepileUsers,
               timestampMillis = Time.now.inMillis,
               tapThroughAction = Some(TapThroughAction(Some(tapThrough))),
               impressionId = Some(impressionId),
-              socialProofText = socialProofDisplayText,
-              context = storyContext,
+              socialProofTetwittert = socialProofDisplayTetwittert,
+              contetwittert = storyContetwittert,
               inlineCard = inlineCard,
               refreshableType = refreshableTypeOpt
             ))

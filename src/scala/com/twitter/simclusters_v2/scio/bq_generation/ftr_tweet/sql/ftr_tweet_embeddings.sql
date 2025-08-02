@@ -2,17 +2,17 @@ WITH vars AS (
   SELECT
     TIMESTAMP('{START_TIME}') AS start_time,
     TIMESTAMP('{END_TIME}') AS end_time,
-    UNIX_MILLIS('{END_TIME}') AS currentTs,
+    UNItwitter_MILLIS('{END_TIME}') AS currentTs,
     {HALFLIFE} AS halfLife,
     {TWEET_SAMPLE_RATE} AS tweet_sample_rate,
     {ENG_SAMPLE_RATE} AS eng_user_sample_rate,
     {MIN_TWEET_FAVS} AS min_tweet_favs,
     {MIN_TWEET_IMPS} AS min_tweet_imps,
-    {MAX_USER_LOG_N_IMPS} AS max_user_log_n_imps,
-    {MAX_USER_LOG_N_FAVS} AS max_user_log_n_favs,
-    {MAX_USER_FTR} AS max_user_ftr,
-    {MAX_TWEET_FTR} AS max_tweet_ftr,
-    700 AS MAX_EXPONENT, -- this is the maximum exponent one can have in bigquery
+    {MAtwitter_USER_LOG_N_IMPS} AS matwitter_user_log_n_imps,
+    {MAtwitter_USER_LOG_N_FAVS} AS matwitter_user_log_n_favs,
+    {MAtwitter_USER_FTR} AS matwitter_user_ftr,
+    {MAtwitter_TWEET_FTR} AS matwitter_tweet_ftr,
+    700 AS MAtwitter_EtwitterPONENT, -- this is the matwitterimum etwitterponent one can have in bigquery
   ),
   -- step 1: get impressions and favs
   impressions AS (
@@ -70,28 +70,28 @@ WITH vars AS (
       COUNTIF(favorited) * 1.0 / COUNTIF(impressed) AS tweet_ftr,
       ANY_VALUE(vars.min_tweet_favs) min_tweet_favs,
       ANY_VALUE(vars.min_tweet_imps) min_tweet_imps,
-      ANY_VALUE(vars.max_tweet_ftr) max_tweet_ftr,
+      ANY_VALUE(vars.matwitter_tweet_ftr) matwitter_tweet_ftr,
     FROM eng_data, vars
     GROUP BY 1, 2
     HAVING num_favs >= min_tweet_favs -- this is an aggressive filter to make the workflow efficient
       AND num_imps >= min_tweet_imps
-      AND tweet_ftr <= max_tweet_ftr -- filter to combat spam
+      AND tweet_ftr <= matwitter_tweet_ftr -- filter to combat spam
   ),
   eligible_users AS (
     SELECT
       user_id,
       CAST(LOG10(COUNTIF(impressed) + 1) AS INT64) log_n_imps,
       CAST(LOG10(COUNTIF(favorited) + 1) AS INT64) log_n_favs,
-      ANY_VALUE(vars.max_user_log_n_imps) max_user_log_n_imps,
-      ANY_VALUE(vars.max_user_log_n_favs) max_user_log_n_favs,
-      ANY_VALUE(vars.max_user_ftr) max_user_ftr,
+      ANY_VALUE(vars.matwitter_user_log_n_imps) matwitter_user_log_n_imps,
+      ANY_VALUE(vars.matwitter_user_log_n_favs) matwitter_user_log_n_favs,
+      ANY_VALUE(vars.matwitter_user_ftr) matwitter_user_ftr,
       COUNTIF(favorited) * 1.0 / COUNTIF(impressed) user_ftr
     from eng_data, vars
     GROUP BY 1
     HAVING
-      log_n_imps < max_user_log_n_imps
-      AND log_n_favs < max_user_log_n_favs
-      AND user_ftr < max_user_ftr
+      log_n_imps < matwitter_user_log_n_imps
+      AND log_n_favs < matwitter_user_log_n_favs
+      AND user_ftr < matwitter_user_ftr
   ),
   eligible_eng_data AS (
     SELECT
@@ -110,7 +110,7 @@ WITH vars AS (
     FROM `twttr-bq-cassowary-prod.user.user_user_normalized_graph` user_user_graph, unnest(user_user_graph.neighbors) as neighbor
     WHERE DATE(_PARTITIONTIME) =
           (  -- Get latest partition time
-          SELECT MAX(DATE(_PARTITIONTIME)) latest_partition
+          SELECT MAtwitter(DATE(_PARTITIONTIME)) latest_partition
           FROM `twttr-bq-cassowary-prod.user.user_user_normalized_graph`, vars
           WHERE Date(_PARTITIONTIME) BETWEEN
             DATE_SUB(Date(vars.end_time),
@@ -118,7 +118,7 @@ WITH vars AS (
             )
     AND neighbor.isFollowed is True
   ),
-  extended_eligible_eng_data AS (
+  etwittertended_eligible_eng_data AS (
       SELECT
         user_id,
         tweet_id,
@@ -145,7 +145,7 @@ WITH vars AS (
   FROM `twttr-bq-cassowary-prod.user.simclusters_v2_user_to_interested_in_20M_145K_2020`, UNNEST(clusterIdToScores) clusterIdToScore, vars
   WHERE DATE(_PARTITIONTIME) =
             (-- Get latest partition time
-            SELECT MAX(DATE(_PARTITIONTIME)) latest_partition
+            SELECT MAtwitter(DATE(_PARTITIONTIME)) latest_partition
             FROM `twttr-bq-cassowary-prod.user.simclusters_v2_user_to_interested_in_20M_145K_2020`
             WHERE Date(_PARTITIONTIME) BETWEEN
             DATE_SUB(Date(vars.end_time),
@@ -168,7 +168,7 @@ WITH vars AS (
       IIKF.logfavScoreClusterNormalizedOnly,
       IIKF.uii_cluster_rank_logfavscore,
       IIKF.uii_cluster_rank_logfavscoreclusternormalized,
-    FROM extended_eligible_eng_data T_IMP_FAV, vars
+    FROM etwittertended_eligible_eng_data T_IMP_FAV, vars
     INNER JOIN iikf
       ON T_IMP_FAV.user_id = IIKF.user_id
     WHERE
@@ -240,21 +240,21 @@ WITH vars AS (
 
       ARRAY_AGG(STRUCT(
           clusterId,
-          -- the division by MAX_EXPONENT is to avoid overflow operation
-          ftr_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormalized_ranking-1))) AS ftrat5_decayed_pop_bias_1000_rank_decay_1_1
-      ) ORDER BY ftr_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormalized_ranking-1))) DESC LIMIT {TWEET_EMBEDDING_LENGTH}) ftrat5_decayed_pop_bias_1000_rank_decay_1_1_embedding,
+          -- the division by MAtwitter_EtwitterPONENT is to avoid overflow operation
+          ftr_at_5 * (2 / (1+EtwitterP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAtwitter_EtwitterPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormalized_ranking-1))) AS ftrat5_decayed_pop_bias_1000_rank_decay_1_1
+      ) ORDER BY ftr_at_5 * (2 / (1+EtwitterP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAtwitter_EtwitterPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormalized_ranking-1))) DESC LIMIT {TWEET_EMBEDDING_LENGTH}) ftrat5_decayed_pop_bias_1000_rank_decay_1_1_embedding,
 
       ARRAY_AGG(STRUCT(
           clusterId,
-          -- the division by MAX_EXPONENT is to avoid overflow operation
-          ftr_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/10000))) - 1) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormalized_ranking-1))) AS ftrat5_decayed_pop_bias_10000_rank_decay_1_1
-      ) ORDER BY ftr_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormalized_ranking-1))) DESC LIMIT {TWEET_EMBEDDING_LENGTH}) ftrat5_decayed_pop_bias_10000_rank_decay_1_1_embedding,
+          -- the division by MAtwitter_EtwitterPONENT is to avoid overflow operation
+          ftr_at_5 * (2 / (1+EtwitterP(-1* (decayed_n_favs_at_5/10000))) - 1) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAtwitter_EtwitterPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormalized_ranking-1))) AS ftrat5_decayed_pop_bias_10000_rank_decay_1_1
+      ) ORDER BY ftr_at_5 * (2 / (1+EtwitterP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_decSumLogFavClusterNormalized_ranking > MAtwitter_EtwitterPONENT, 0, 1.0/(POW(1.1, cluster_decSumLogFavClusterNormalized_ranking-1))) DESC LIMIT {TWEET_EMBEDDING_LENGTH}) ftrat5_decayed_pop_bias_10000_rank_decay_1_1_embedding,
 
       ARRAY_AGG(STRUCT(
           clusterId,
-          -- the division by MAX_EXPONENT is to avoid overflow operation
-          ftr_oon_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_nom_logFavScore_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_nom_logFavScore_ranking-1))) AS oon_ftrat5_decayed_pop_bias_1000_rank_decay
-      ) ORDER BY ftr_oon_at_5 * (2 / (1+EXP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_nom_logFavScore_ranking > MAX_EXPONENT, 0, 1.0/(POW(1.1, cluster_nom_logFavScore_ranking-1))) DESC LIMIT {TWEET_EMBEDDING_LENGTH}) oon_ftrat5_decayed_pop_bias_1000_rank_decay_embedding,
+          -- the division by MAtwitter_EtwitterPONENT is to avoid overflow operation
+          ftr_oon_at_5 * (2 / (1+EtwitterP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_nom_logFavScore_ranking > MAtwitter_EtwitterPONENT, 0, 1.0/(POW(1.1, cluster_nom_logFavScore_ranking-1))) AS oon_ftrat5_decayed_pop_bias_1000_rank_decay
+      ) ORDER BY ftr_oon_at_5 * (2 / (1+EtwitterP(-1* (decayed_n_favs_at_5/1000))) - 1) * IF(cluster_nom_logFavScore_ranking > MAtwitter_EtwitterPONENT, 0, 1.0/(POW(1.1, cluster_nom_logFavScore_ranking-1))) DESC LIMIT {TWEET_EMBEDDING_LENGTH}) oon_ftrat5_decayed_pop_bias_1000_rank_decay_embedding,
 
       ARRAY_AGG(STRUCT(
           clusterId,

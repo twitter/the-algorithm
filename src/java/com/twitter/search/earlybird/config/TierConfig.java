@@ -4,14 +4,14 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 
 import com.twitter.common.util.Clock;
 import com.twitter.search.common.config.Config;
 import com.twitter.search.common.config.ConfigFile;
-import com.twitter.search.common.config.ConfigurationException;
+import com.twitter.search.common.config.ConfigurationEtwitterception;
 import com.twitter.search.common.metrics.SearchLongGauge;
 import com.twitter.search.common.util.date.DateUtil;
 
@@ -48,7 +48,7 @@ public final class TierConfig {
     if (tierConfigFile == null) {
       tierConfigFile = new ConfigFile(DEFAULT_CONFIG_DIR, DEFAULT_TIER_FILE);
       tierConfigSource = ConfigSource.LOCAL;
-      SearchLongGauge.export("tier_config_source_" + tierConfigSource.name()).set(1);
+      SearchLongGauge.etwitterport("tier_config_source_" + tierConfigSource.name()).set(1);
       LOG.info("Tier config file " + DEFAULT_TIER_FILE + " is successfully loaded from bundle.");
     }
   }
@@ -92,38 +92,38 @@ public final class TierConfig {
     try {
       tierInfo = (Map<String, Object>) Config.getConfig()
           .getFromEnvironment(environment, tierConfigFileType, tierName);
-    } catch (ConfigurationException e) {
-      throw new RuntimeException(e);
+    } catch (ConfigurationEtwitterception e) {
+      throw new RuntimeEtwitterception(e);
     }
     if (tierInfo == null) {
       LOG.error("Cannot find tier config for "
           + tierName + "in config file: " + tierConfigFileType);
-      throw new RuntimeException("Configuration error: " + tierConfigFileType);
+      throw new RuntimeEtwitterception("Configuration error: " + tierConfigFileType);
     }
 
     Long partitions = (Long) tierInfo.get("number_of_partitions");
     if (partitions == null) {
       LOG.error("No number of partition is specified for tier "
           + tierName + " in tier config file " + tierConfigFileType);
-      throw new RuntimeException("Configuration error: " + tierConfigFileType);
+      throw new RuntimeEtwitterception("Configuration error: " + tierConfigFileType);
     }
 
     Long numTimeslices = (Long) tierInfo.get("serving_timeslices");
     if (numTimeslices == null) {
-      LOG.info("No max timeslices is specified for tier "
+      LOG.info("No matwitter timeslices is specified for tier "
           + tierName + " in tier config file " + tierConfigFileType
           + ", not setting a cap on number of serving timeslices");
-      // NOTE: we use max int32 here because it will ultimately be cast to an int, but the config
-      // map expects Longs for all integral types.  Using Long.MAX_VALUE leads to max serving
+      // NOTE: we use matwitter int32 here because it will ultimately be cast to an int, but the config
+      // map etwitterpects Longs for all integral types.  Using Long.MAtwitter_VALUE leads to matwitter serving
       // timeslices being set to -1 when it is truncated to an int.
-      numTimeslices = (long) Integer.MAX_VALUE;
+      numTimeslices = (long) Integer.MAtwitter_VALUE;
     }
 
     Date tierStartDate = (Date) tierInfo.get("data_range_start_date_inclusive");
     if (tierStartDate == null) {
       tierStartDate = DEFAULT_TIER_START_DATE;
     }
-    Date tierEndDate = (Date) tierInfo.get("data_range_end_date_exclusive");
+    Date tierEndDate = (Date) tierInfo.get("data_range_end_date_etwitterclusive");
     if (tierEndDate == null) {
       tierEndDate = DEFAULT_TIER_END_DATE;
     }
@@ -145,10 +145,10 @@ public final class TierConfig {
         partitions.intValue(),
         numTimeslices.intValue(),
         tierEnabled,
-        (String) tierInfo.get("serving_range_since_id_exclusive"),
-        (String) tierInfo.get("serving_range_max_id_inclusive"),
+        (String) tierInfo.get("serving_range_since_id_etwitterclusive"),
+        (String) tierInfo.get("serving_range_matwitter_id_inclusive"),
         (Date) tierInfo.get("serving_range_start_date_inclusive_override"),
-        (Date) tierInfo.get("serving_range_end_date_exclusive_override"),
+        (Date) tierInfo.get("serving_range_end_date_etwitterclusive_override"),
         readType,
         readTypeOverride,
         Clock.SYSTEM_CLOCK);

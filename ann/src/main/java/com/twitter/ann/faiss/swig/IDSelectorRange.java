@@ -8,7 +8,7 @@
 
 package com.twitter.ann.faiss;
 
-public class IDSelectorRange extends IDSelector {
+public class IDSelectorRange etwittertends IDSelector {
   private transient long swigCPtr;
 
   protected IDSelectorRange(long cPtr, boolean cMemoryOwn) {
@@ -44,16 +44,16 @@ public class IDSelectorRange extends IDSelector {
     return swigfaissJNI.IDSelectorRange_imin_get(swigCPtr, this);
 }
 
-  public void setImax(long value) {
-    swigfaissJNI.IDSelectorRange_imax_set(swigCPtr, this, value);
+  public void setImatwitter(long value) {
+    swigfaissJNI.IDSelectorRange_imatwitter_set(swigCPtr, this, value);
   }
 
-  public long getImax() {
-    return swigfaissJNI.IDSelectorRange_imax_get(swigCPtr, this);
+  public long getImatwitter() {
+    return swigfaissJNI.IDSelectorRange_imatwitter_get(swigCPtr, this);
 }
 
-  public IDSelectorRange(long imin, long imax) {
-    this(swigfaissJNI.new_IDSelectorRange(imin, imax), true);
+  public IDSelectorRange(long imin, long imatwitter) {
+    this(swigfaissJNI.new_IDSelectorRange(imin, imatwitter), true);
   }
 
   public boolean is_member(long id) {

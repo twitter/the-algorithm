@@ -8,15 +8,15 @@ import com.twitter.ml.api.DataRecord
 import com.twitter.ml.api.IRecordOneToManyAdapter
 import com.twitter.scalding.Args
 import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding.TypedJson
 import com.twitter.scalding.TypedPipe
 import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.job.TwitterExecutionApp
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
 import com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common.EarlybirdTrainingRecapConfiguration
 import com.twitter.timelines.data_processing.util.RequestImplicits.RichRequest
-import com.twitter.timelines.data_processing.util.example.RecapTweetExample
-import com.twitter.timelines.data_processing.util.execution.UTCDateRangeFromArgs
+import com.twitter.timelines.data_processing.util.etwitterample.RecapTweetEtwitterample
+import com.twitter.timelines.data_processing.util.etwitterecution.UTCDateRangeFromArgs
 import com.twitter.timelines.prediction.adapters.recap.RecapSuggestionRecordAdapter
 import com.twitter.timelines.prediction.features.recap.RecapFeatures
 import com.twitter.timelines.suggests.common.record.thriftscala.SuggestionRecord
@@ -39,7 +39,7 @@ import twadoop_config.configuration.log_categories.group.timelines.Timelineservi
  * --topn_fractions   (optional) list of values of `n` (doubles) for top-N-fraction metrics
  * --seed             (optional) seed for random number generator
  */
-object EarlybirdModelEvaluationJob extends TwitterExecutionApp with UTCDateRangeFromArgs {
+object EarlybirdModelEvaluationJob etwittertends TwitterEtwitterecutionApp with UTCDateRangeFromArgs {
 
   import FDsl._
   import PredictionEnginePlugin._
@@ -49,10 +49,10 @@ object EarlybirdModelEvaluationJob extends TwitterExecutionApp with UTCDateRange
   private[this] val recapAdapter: IRecordOneToManyAdapter[SuggestionRecord] =
     new RecapSuggestionRecordAdapter(checkDwellTime = false)
 
-  override def job: Execution[Unit] = {
+  override def job: Etwitterecution[Unit] = {
     for {
-      args <- Execution.getArgs
-      dateRange <- dateRangeEx
+      args <- Etwitterecution.getArgs
+      dateRange <- dateRangeEtwitter
       metrics = getMetrics(args)
       random = buildRandom(args)
       modelBasePath = args("model_base_path")
@@ -63,20 +63,20 @@ object EarlybirdModelEvaluationJob extends TwitterExecutionApp with UTCDateRange
         (model, scoreCandidatesUsingModel(logs, s"$modelBasePath/$model"))
       }
       functionScoredCandidates = List(
-        ("random", scoreCandidatesUsingFunction(logs, _ => Some(random.nextDouble()))),
-        ("original_earlybird", scoreCandidatesUsingFunction(logs, extractOriginalEarlybirdScore)),
-        ("blender", scoreCandidatesUsingFunction(logs, extractBlenderScore))
+        ("random", scoreCandidatesUsingFunction(logs, _ => Some(random.netwittertDouble()))),
+        ("original_earlybird", scoreCandidatesUsingFunction(logs, etwittertractOriginalEarlybirdScore)),
+        ("blender", scoreCandidatesUsingFunction(logs, etwittertractBlenderScore))
       )
       allCandidates = modelScoredCandidates ++ functionScoredCandidates
-      statsExecutions = allCandidates.map {
+      statsEtwitterecutions = allCandidates.map {
         case (name, pipe) =>
           for {
-            saved <- pipe.forceToDiskExecution
+            saved <- pipe.forceToDiskEtwitterecution
             stats <- computeMetrics(saved, metrics, parallelism)
           } yield (name, stats)
       }
-      stats <- Execution.withParallelism(statsExecutions, parallelism)
-      _ <- TypedPipe.from(stats).writeExecution(TypedJson(args("output")))
+      stats <- Etwitterecution.withParallelism(statsEtwitterecutions, parallelism)
+      _ <- TypedPipe.from(stats).writeEtwitterecution(TypedJson(args("output")))
     } yield ()
   }
 
@@ -84,12 +84,12 @@ object EarlybirdModelEvaluationJob extends TwitterExecutionApp with UTCDateRange
     requests: TypedPipe[Seq[CandidateRecord]],
     metricsToCompute: Seq[EarlybirdEvaluationMetric],
     parallelism: Int
-  ): Execution[Map[String, Double]] = {
-    val metricExecutions = metricsToCompute.map { metric =>
-      val metricEx = requests.flatMap(metric(_)).aggregate(averager).toOptionExecution
-      metricEx.map { value => value.map((metric.name, _)) }
+  ): Etwitterecution[Map[String, Double]] = {
+    val metricEtwitterecutions = metricsToCompute.map { metric =>
+      val metricEtwitter = requests.flatMap(metric(_)).aggregate(averager).toOptionEtwitterecution
+      metricEtwitter.map { value => value.map((metric.name, _)) }
     }
-    Execution.withParallelism(metricExecutions, parallelism).map(_.flatten.toMap)
+    Etwitterecution.withParallelism(metricEtwitterecutions, parallelism).map(_.flatten.toMap)
   }
 
   private[this] def getMetrics(args: Args): Seq[EarlybirdEvaluationMetric] = {
@@ -125,7 +125,7 @@ object EarlybirdModelEvaluationJob extends TwitterExecutionApp with UTCDateRange
     DAL
       .read(TimelineserviceInjectionRequestLogScalaDataset, dateRange)
       .toTypedPipe
-      .filter(_.recapCandidates.exists(_.nonEmpty))
+      .filter(_.recapCandidates.etwitterists(_.nonEmpty))
 
   /**
    * Uses a model defined at `earlybirdModelPath` to score candidates and
@@ -140,8 +140,8 @@ object EarlybirdModelEvaluationJob extends TwitterExecutionApp with UTCDateRange
       .map {
         case (scorer: PredictionEngineScorer, log: SuggestsRequestLog) =>
           val suggestionRecords =
-            RecapTweetExample
-              .extractCandidateTweetExamples(log)
+            RecapTweetEtwitterample
+              .etwittertractCandidateTweetEtwitteramples(log)
               .map(_.asSuggestionRecord)
           val servedTweetIds = log.servedHighlightTweets.flatMap(_.tweetId).toSet
           val renamer = (new EarlybirdTrainingRecapConfiguration).EarlybirdFeatureRenamer
@@ -168,7 +168,7 @@ object EarlybirdModelEvaluationJob extends TwitterExecutionApp with UTCDateRange
    */
   private[this] def scoreCandidatesUsingFunction(
     logs: TypedPipe[SuggestsRequestLog],
-    earlyScoreExtractor: HighlightTweet => Option[Double]
+    earlyScoreEtwittertractor: HighlightTweet => Option[Double]
   ): TypedPipe[Seq[CandidateRecord]] = {
     logs
       .map { log =>
@@ -178,7 +178,7 @@ object EarlybirdModelEvaluationJob extends TwitterExecutionApp with UTCDateRange
           candidate <- tweetCandidates
           tweetId <- candidate.tweetId
           fullScore <- candidate.recapFeatures.flatMap(_.combinedModelScore)
-          earlyScore <- earlyScoreExtractor(candidate)
+          earlyScore <- earlyScoreEtwittertractor(candidate)
         } yield CandidateRecord(
           tweetId = tweetId,
           fullScore = fullScore,
@@ -188,13 +188,13 @@ object EarlybirdModelEvaluationJob extends TwitterExecutionApp with UTCDateRange
       }
   }
 
-  private[this] def extractOriginalEarlybirdScore(candidate: HighlightTweet): Option[Double] =
+  private[this] def etwittertractOriginalEarlybirdScore(candidate: HighlightTweet): Option[Double] =
     for {
       recapFeatures <- candidate.recapFeatures
       tweetFeatures <- recapFeatures.tweetFeatures
     } yield tweetFeatures.earlybirdScore
 
-  private[this] def extractBlenderScore(candidate: HighlightTweet): Option[Double] =
+  private[this] def etwittertractBlenderScore(candidate: HighlightTweet): Option[Double] =
     for {
       recapFeatures <- candidate.recapFeatures
       tweetFeatures <- recapFeatures.tweetFeatures

@@ -1,6 +1,6 @@
 package com.twitter.search.core.earlybird.facets;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -8,18 +8,18 @@ import com.twitter.search.common.util.io.flushable.DataDeserializer;
 import com.twitter.search.common.util.io.flushable.DataSerializer;
 import com.twitter.search.common.util.io.flushable.FlushInfo;
 import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
+import com.twitter.search.core.earlybird.indetwitter.DocIDToTweetIDMapper;
+import com.twitter.search.core.earlybird.indetwitter.inverted.IntBlockPool;
 
-public class OptimizedFacetCountingArray extends AbstractFacetCountingArray {
+public class OptimizedFacetCountingArray etwittertends AbstractFacetCountingArray {
   private final int[] facetsMap;
 
   /**
    * Creates a new, empty FacetCountingArray with the given size.
    */
-  public OptimizedFacetCountingArray(int maxDocIdInclusive) {
+  public OptimizedFacetCountingArray(int matwitterDocIdInclusive) {
     super();
-    facetsMap = new int[maxDocIdInclusive];
+    facetsMap = new int[matwitterDocIdInclusive];
     Arrays.fill(facetsMap, UNASSIGNED);
   }
 
@@ -43,7 +43,7 @@ public class OptimizedFacetCountingArray extends AbstractFacetCountingArray {
       Map<Integer, int[]> termIDMapper,
       DocIDToTweetIDMapper originalTweetIdMapper,
       DocIDToTweetIDMapper optimizedTweetIdMapper) {
-    throw new UnsupportedOperationException(
+    throw new UnsupportedOperationEtwitterception(
         "OptimizedFacetCountingArray instances should never be rewritten.");
   }
 
@@ -52,7 +52,7 @@ public class OptimizedFacetCountingArray extends AbstractFacetCountingArray {
     return new FlushHandler(this);
   }
 
-  public static final class FlushHandler extends Flushable.Handler<OptimizedFacetCountingArray> {
+  public static final class FlushHandler etwittertends Flushable.Handler<OptimizedFacetCountingArray> {
     private static final String FACETS_POOL_PROP_NAME = "facetsPool";
 
     public FlushHandler() {
@@ -63,7 +63,7 @@ public class OptimizedFacetCountingArray extends AbstractFacetCountingArray {
     }
 
     @Override
-    public void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
+    public void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOEtwitterception {
       OptimizedFacetCountingArray objectToFlush = getObjectToFlush();
       out.writeIntArray(objectToFlush.facetsMap);
       objectToFlush.getFacetsPool().getFlushHandler().flush(
@@ -72,7 +72,7 @@ public class OptimizedFacetCountingArray extends AbstractFacetCountingArray {
 
     @Override
     public OptimizedFacetCountingArray doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
+        throws IOEtwitterception {
       int[] facetsMap = in.readIntArray();
       IntBlockPool facetsPool = new IntBlockPool.FlushHandler().load(
           flushInfo.getSubProperties(FACETS_POOL_PROP_NAME), in);

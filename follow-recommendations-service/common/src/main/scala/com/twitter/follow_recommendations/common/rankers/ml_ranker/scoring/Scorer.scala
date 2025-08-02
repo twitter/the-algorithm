@@ -7,7 +7,7 @@ import com.twitter.follow_recommendations.common.models.Score
 import com.twitter.follow_recommendations.common.models.ScoreType
 import com.twitter.follow_recommendations.common.rankers.common.RankerId
 import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.timelines.configapi.HasParams
 
@@ -28,7 +28,7 @@ trait Scorer {
    * are available for use.
    */
   def score(
-    target: HasClientContext with HasParams with HasDisplayLocation with HasDebugOptions,
+    target: HasClientContetwittert with HasParams with HasDisplayLocation with HasDebugOptions,
     candidates: Seq[CandidateUser]
   ): Seq[Option[Score]]
 }

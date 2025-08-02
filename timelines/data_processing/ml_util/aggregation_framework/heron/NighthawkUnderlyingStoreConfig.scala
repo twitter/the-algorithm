@@ -14,7 +14,7 @@ case class NighthawkUnderlyingStoreConfig(
   serversetPath: String = "",
   tableName: String = "",
   cacheTTL: Duration = 1.day)
-    extends OnlineStoreOnlyConfig[CacheClientNighthawkConfig] {
+    etwittertends OnlineStoreOnlyConfig[CacheClientNighthawkConfig] {
 
   def online: CacheClientNighthawkConfig = online(EmptyServiceIdentifier)
 

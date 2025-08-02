@@ -7,7 +7,7 @@ import org.apache.beam.sdk.io.fs.ResourceId
 import scala.collection.JavaConverters._
 
 object ShardConstants {
-  val ShardPrefix = "shard_"
+  val ShardPrefitwitter = "shard_"
 }
 
 /**
@@ -16,18 +16,18 @@ object ShardConstants {
  */
 class ShardedSerialization(
   shards: Seq[Serialization])
-    extends Serialization {
+    etwittertends Serialization {
   override def toDirectory(directory: AbstractFile): Unit = {
-    toDirectory(new IndexOutputFile(directory))
+    toDirectory(new IndetwitterOutputFile(directory))
   }
 
   override def toDirectory(directory: ResourceId): Unit = {
-    toDirectory(new IndexOutputFile(directory))
+    toDirectory(new IndetwitterOutputFile(directory))
   }
 
-  private def toDirectory(directory: IndexOutputFile): Unit = {
+  private def toDirectory(directory: IndetwitterOutputFile): Unit = {
     shards.indices.foreach { shardId =>
-      val shardDirectory = directory.createDirectory(ShardConstants.ShardPrefix + shardId)
+      val shardDirectory = directory.createDirectory(ShardConstants.ShardPrefitwitter + shardId)
       val serialization = shards(shardId)
       if (shardDirectory.isAbstractFile) {
         serialization.toDirectory(shardDirectory.abstractFile)
@@ -39,7 +39,7 @@ class ShardedSerialization(
 }
 
 /**
- * Deserialize directories containing index shards data to a composed queryable
+ * Deserialize directories containing indetwitter shards data to a composed queryable
  * @param deserializationFn function to deserialize a shard file to Queryable
  * @tparam T the id of the embeddings
  * @tparam P : Runtime params type
@@ -47,12 +47,12 @@ class ShardedSerialization(
  */
 class ComposedQueryableDeserialization[T, P <: RuntimeParams, D <: Distance[D]](
   deserializationFn: (AbstractFile) => Queryable[T, P, D])
-    extends QueryableDeserialization[T, P, D, Queryable[T, P, D]] {
+    etwittertends QueryableDeserialization[T, P, D, Queryable[T, P, D]] {
   override def fromDirectory(directory: AbstractFile): Queryable[T, P, D] = {
     val shardDirs = directory
       .listFiles(new Filter {
         override def accept(file: AbstractFile): Boolean =
-          file.getName.startsWith(ShardConstants.ShardPrefix)
+          file.getName.startsWith(ShardConstants.ShardPrefitwitter)
       })
       .asScala
       .toList
@@ -66,13 +66,13 @@ class ComposedQueryableDeserialization[T, P <: RuntimeParams, D <: Distance[D]](
   }
 }
 
-class ShardedIndexBuilderWithSerialization[T, P <: RuntimeParams, D <: Distance[D]](
-  shardedIndex: ShardedAppendable[T, P, D],
+class ShardedIndetwitterBuilderWithSerialization[T, P <: RuntimeParams, D <: Distance[D]](
+  shardedIndetwitter: ShardedAppendable[T, P, D],
   shardedSerialization: ShardedSerialization)
-    extends Appendable[T, P, D]
+    etwittertends Appendable[T, P, D]
     with Serialization {
   override def append(entity: EntityEmbedding[T]): Future[Unit] = {
-    shardedIndex.append(entity)
+    shardedIndetwitter.append(entity)
   }
 
   override def toDirectory(directory: AbstractFile): Unit = {
@@ -84,6 +84,6 @@ class ShardedIndexBuilderWithSerialization[T, P <: RuntimeParams, D <: Distance[
   }
 
   override def toQueryable: Queryable[T, P, D] = {
-    shardedIndex.toQueryable
+    shardedIndetwitter.toQueryable
   }
 }

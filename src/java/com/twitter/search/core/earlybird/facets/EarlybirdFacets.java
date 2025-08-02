@@ -1,6 +1,6 @@
 package com.twitter.search.core.earlybird.facets;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.List;
 import java.util.Map;
 
@@ -16,17 +16,17 @@ import org.apache.lucene.util.BitSet;
 
 import com.twitter.search.common.facets.FacetSearchParam;
 import com.twitter.search.common.facets.thriftjava.FacetFieldRequest;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
 
 /**
  * Lucene accumulator implementation that counts on our facet counting array data structure.
  *
  */
-public class EarlybirdFacets extends Facets {
+public class EarlybirdFacets etwittertends Facets {
 
   private final AbstractFacetCountingArray countingArray;
   private final FacetCountAggregator aggregator;
-  private final EarlybirdIndexSegmentAtomicReader reader;
+  private final EarlybirdIndetwitterSegmentAtomicReader reader;
   private final MatchingDocs matchingDocs;
   private final Map<FacetFieldRequest, FacetResult> resultMapping;
 
@@ -36,7 +36,7 @@ public class EarlybirdFacets extends Facets {
   public EarlybirdFacets(
       List<FacetSearchParam> facetSearchParams,
       FacetsCollector facetsCollector,
-      EarlybirdIndexSegmentAtomicReader reader) throws IOException {
+      EarlybirdIndetwitterSegmentAtomicReader reader) throws IOEtwitterception {
 
     Preconditions.checkArgument(facetSearchParams != null && !facetSearchParams.isEmpty());
     Preconditions.checkArgument(
@@ -56,14 +56,14 @@ public class EarlybirdFacets extends Facets {
     this.resultMapping = count();
   }
 
-  private Map<FacetFieldRequest, FacetResult> count() throws IOException {
+  private Map<FacetFieldRequest, FacetResult> count() throws IOEtwitterception {
     Preconditions.checkState(matchingDocs.bits instanceof BitDocIdSet,
             "Assuming BitDocIdSet");
     final BitSet bits = ((BitDocIdSet) matchingDocs.bits).bits();
     final int length = bits.length();
     int doc = reader.getSmallestDocID();
     if (doc != -1) {
-      while (doc < length && (doc = bits.nextSetBit(doc)) != -1) {
+      while (doc < length && (doc = bits.netwittertSetBit(doc)) != -1) {
         countingArray.collectForDocId(doc, aggregator);
         doc++;
       }
@@ -72,7 +72,7 @@ public class EarlybirdFacets extends Facets {
   }
 
   @Override
-  public FacetResult getTopChildren(int topN, String dim, String... path) throws IOException {
+  public FacetResult getTopChildren(int topN, String dim, String... path) throws IOEtwitterception {
     FacetFieldRequest facetFieldRequest = new FacetFieldRequest(dim, topN);
     if (path.length > 0) {
       facetFieldRequest.setPath(Lists.newArrayList(path));
@@ -91,12 +91,12 @@ public class EarlybirdFacets extends Facets {
 
   @Override
   public Number getSpecificValue(String dim, String... path) {
-    throw new UnsupportedOperationException("Not supported");
+    throw new UnsupportedOperationEtwitterception("Not supported");
   }
 
   @Override
-  public List<FacetResult> getAllDims(int topN) throws IOException {
-    throw new UnsupportedOperationException("Not supported");
+  public List<FacetResult> getAllDims(int topN) throws IOEtwitterception {
+    throw new UnsupportedOperationEtwitterception("Not supported");
   }
 
 }

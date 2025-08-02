@@ -8,9 +8,9 @@ import com.twitter.relevance.ep_model.scorer.EPScorer
 import com.twitter.relevance.ep_model.scorer.EPScorerBuilder
 import java.io.File
 import java.io.FileOutputStream
-import scala.language.postfixOps
+import scala.language.postfitwitterOps
 
-object ScorerModule extends TwitterModule {
+object ScorerModule etwittertends TwitterModule {
   private val STPScorerPath = "/quality/stp_models/20141223"
 
   private def fileFromResource(resource: String): File = {

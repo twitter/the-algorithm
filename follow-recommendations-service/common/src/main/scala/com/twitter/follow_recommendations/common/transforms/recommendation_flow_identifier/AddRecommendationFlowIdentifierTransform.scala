@@ -7,7 +7,7 @@ import com.twitter.follow_recommendations.common.models.HasRecommendationFlowIde
 import com.twitter.stitch.Stitch
 
 class AddRecommendationFlowIdentifierTransform @Inject()
-    extends Transform[HasRecommendationFlowIdentifier, CandidateUser] {
+    etwittertends Transform[HasRecommendationFlowIdentifier, CandidateUser] {
 
   override def transform(
     target: HasRecommendationFlowIdentifier,

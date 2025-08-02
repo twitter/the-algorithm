@@ -14,16 +14,16 @@ import com.twitter.util.Future
 /**
  * This store looks for tweets whose similarity is close to a Source SimClustersEmbeddingId.
  *
- * Approximate cosine similarity is the core algorithm to drive this store.
+ * Approtwitterimate cosine similarity is the core algorithm to drive this store.
  *
  * Step 1 - 4 are in "fetchCandidates" method.
  * 1. Retrieve the SimClusters Embedding by the SimClustersEmbeddingId
- * 2. Fetch top N clusters' top tweets from the clusterTweetCandidatesStore (TopTweetsPerCluster index).
- * 3. Calculate all the tweet candidates' dot-product or approximate cosine similarity to source tweets.
+ * 2. Fetch top N clusters' top tweets from the clusterTweetCandidatesStore (TopTweetsPerCluster indetwitter).
+ * 3. Calculate all the tweet candidates' dot-product or approtwitterimate cosine similarity to source tweets.
  * 4. Take top M tweet candidates by the step 3's score
  */
 case class SimClustersANNCandidateSource(
-  approximateCosineSimilarity: ApproximateCosineSimilarity,
+  approtwitterimateCosineSimilarity: ApprotwitterimateCosineSimilarity,
   clusterTweetCandidatesStore: ReadableStore[ClusterId, Seq[(TweetId, Double)]],
   simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding],
   statsReceiver: StatsReceiver) {
@@ -71,14 +71,14 @@ case class SimClustersANNCandidateSource(
 
     val clusterIds =
       sourceEmbedding
-        .truncate(config.maxScanClusters).getClusterIds()
+        .truncate(config.matwitterScanClusters).getClusterIds()
         .toSet
 
     Future
       .collect {
         clusterTweetCandidatesStore.multiGet(clusterIds)
       }.map { clusterTweetsMap =>
-        approximateCosineSimilarity(
+        approtwitterimateCosineSimilarity(
           sourceEmbedding = sourceEmbedding,
           sourceEmbeddingId = sourceEmbeddingId,
           config = config,

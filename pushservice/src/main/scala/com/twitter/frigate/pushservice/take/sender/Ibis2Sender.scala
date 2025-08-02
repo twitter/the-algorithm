@@ -78,7 +78,7 @@ class Ibis2Sender(
   ): Future[IbisResponse] = pushCandidate.target.isSilentPush.flatMap { isSilentPush: Boolean =>
     if (isSilentPush) silentPushCounter.incr()
     pushCandidate.target.deviceInfo.flatMap { deviceInfo =>
-      if (deviceInfo.exists(_.isSim40AndroidVersion)) buggyAndroidReleaseCounter.incr()
+      if (deviceInfo.etwitterists(_.isSim40AndroidVersion)) buggyAndroidReleaseCounter.incr()
       if (PushDeviceUtil.isPrimaryDeviceAndroid(deviceInfo)) androidPrimaryCounter.incr()
       Future
         .join(
@@ -127,7 +127,7 @@ class Ibis2Sender(
             case Some(value) =>
               Some(
                 Map(
-                  "translated_tweet_text" -> value.translatedTweetText,
+                  "translated_tweet_tetwittert" -> value.translatedTweetTetwittert,
                   "localized_source_language" -> value.localizedSourceLanguage
                 ))
             case None => None
@@ -141,9 +141,9 @@ class Ibis2Sender(
     translationModelValues: Option[Map[String, String]]
   ): Ibis2Request = {
     (translationModelValues, ibisRequest.modelValues) match {
-      case (Some(translationModelVal), Some(existingModelValues)) =>
+      case (Some(translationModelVal), Some(etwitteristingModelValues)) =>
         addTranslationModelValuesCounter.incr()
-        ibisRequest.copy(modelValues = Some(translationModelVal ++ existingModelValues))
+        ibisRequest.copy(modelValues = Some(translationModelVal ++ etwitteristingModelValues))
       case (Some(translationModelVal), None) =>
         addTranslationModelValuesCounter.incr()
         ibisRequest.copy(modelValues = Some(translationModelVal))
@@ -160,24 +160,24 @@ class Ibis2Sender(
       patchNtabResponseEnabled.counter().incr()
       val dislikePosition = candidate.target.params(FS.InlineFeedbackSubstitutePosition)
       val dislikeActionOption = ntabResponse
-        .map(FunctionalUtil.incr(patchNtabResponseEnabled.counter("ntab_response_exist")))
+        .map(FunctionalUtil.incr(patchNtabResponseEnabled.counter("ntab_response_etwitterist")))
         .flatMap(response => InlineActionUtil.getDislikeInlineAction(candidate, response))
         .map(FunctionalUtil.incr(patchNtabResponseEnabled.counter("dislike_action_generated")))
 
-      // Only generate patch serialized inline action when original request has existing serialized_inline_actions_v2
+      // Only generate patch serialized inline action when original request has etwitteristing serialized_inline_actions_v2
       val patchedSerializedActionOption = ibis2Req.modelValues
         .flatMap(model => model.get("serialized_inline_actions_v2"))
-        .map(FunctionalUtil.incr(patchNtabResponseEnabled.counter("inline_action_v2_exists")))
+        .map(FunctionalUtil.incr(patchNtabResponseEnabled.counter("inline_action_v2_etwitterists")))
         .map(serialized =>
           InlineActionUtil
             .patchInlineActionAtPosition(serialized, dislikeActionOption, dislikePosition))
         .map(FunctionalUtil.incr(patchNtabResponseEnabled.counter("patch_inline_action_generated")))
 
       (ibis2Req.modelValues, patchedSerializedActionOption) match {
-        case (Some(existingModelValue), Some(patchedActionV2)) =>
+        case (Some(etwitteristingModelValue), Some(patchedActionV2)) =>
           patchNtabResponseEnabled.scope("patch_applied").counter().incr()
           ibis2Req.copy(modelValues =
-            Some(existingModelValue ++ Map("serialized_inline_actions_v2" -> patchedActionV2)))
+            Some(etwitteristingModelValue ++ Map("serialized_inline_actions_v2" -> patchedActionV2)))
         case _ => ibis2Req
       }
     } else ibis2Req

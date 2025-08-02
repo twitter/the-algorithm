@@ -16,7 +16,7 @@ trait InteractionGraphAddressBookCountersTrait {
 /**
  * SCIO counters are used to gather run time statistics
  */
-case object InteractionGraphAddressBookCounters extends InteractionGraphAddressBookCountersTrait {
+case object InteractionGraphAddressBookCounters etwittertends InteractionGraphAddressBookCountersTrait {
   val emailFeatureCounter: Counter =
     ScioMetrics.counter(Namespace, "Email Feature")
 

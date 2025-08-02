@@ -7,8 +7,8 @@ import com.twitter.follow_recommendations.common.base.Ranker
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.models.HasQualityFactor
 import com.twitter.follow_recommendations.common.rankers.utils.Utils
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.timelines.configapi.HasParams
 
@@ -19,9 +19,9 @@ import com.twitter.timelines.configapi.HasParams
  * ranking builder, we abstract the truncation as a separate Ranker
  */
 @Singleton
-class FirstNRanker[Target <: HasClientContext with HasParams with HasQualityFactor] @Inject() (
+class FirstNRanker[Target <: HasClientContetwittert with HasParams with HasQualityFactor] @Inject() (
   stats: StatsReceiver)
-    extends Ranker[Target, CandidateUser] {
+    etwittertends Ranker[Target, CandidateUser] {
 
   val name: String = this.getClass.getSimpleName
   private val baseStats = stats.scope("first_n_ranker")
@@ -41,7 +41,7 @@ class FirstNRanker[Target <: HasClientContext with HasParams with HasQualityFact
   /**
    * Adds the rank of each candidate based on the primary candidate source's score.
    * In the event where the provided ordering of candidates do not align with the score,
-   * we will respect the score, since the ordering might have been mixed up due to other previous
+   * we will respect the score, since the ordering might have been mitwittered up due to other previous
    * steps like the shuffleFn in the `WeightedCandidateSourceRanker`.
    * @param candidates  ordered list of candidates
    * @return            same ordered list of candidates, but with the rank information appended
@@ -49,7 +49,7 @@ class FirstNRanker[Target <: HasClientContext with HasParams with HasQualityFact
   def addRank(candidates: Seq[CandidateUser]): Seq[CandidateUser] = {
     val candidateSourceRanks = for {
       (sourceIdOpt, sourceCandidates) <- candidates.groupBy(_.getPrimaryCandidateSource)
-      (candidate, rank) <- sourceCandidates.sortBy(-_.score.getOrElse(0.0)).zipWithIndex
+      (candidate, rank) <- sourceCandidates.sortBy(-_.score.getOrElse(0.0)).zipWithIndetwitter
     } yield {
       (candidate, sourceIdOpt) -> rank
     }
@@ -64,7 +64,7 @@ class FirstNRanker[Target <: HasClientContext with HasParams with HasQualityFact
 
   override def rank(target: Target, candidates: Seq[CandidateUser]): Stitch[Seq[CandidateUser]] = {
 
-    val scaleDownFactor = Math.max(
+    val scaleDownFactor = Math.matwitter(
       target.qualityFactor.getOrElse(1.0d),
       target.params(FirstNRankerParams.MinNumCandidatesScoredScaleDownFactor)
     )

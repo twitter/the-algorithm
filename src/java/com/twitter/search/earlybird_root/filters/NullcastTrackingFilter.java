@@ -13,27 +13,27 @@ import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.util.earlybird.EarlybirdResponseUtil;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
 import com.twitter.search.queryparser.visitors.DetectPositiveOperatorVisitor;
 
 /**
- * Filter that is tracking the unexpected nullcast results from Earlybirds.
+ * Filter that is tracking the unetwitterpected nullcast results from Earlybirds.
  */
-public class NullcastTrackingFilter extends SensitiveResultsTrackingFilter {
+public class NullcastTrackingFilter etwittertends SensitiveResultsTrackingFilter {
   public NullcastTrackingFilter() {
-    super("unexpected nullcast tweets", true);
+    super("unetwitterpected nullcast tweets", true);
   }
 
   private static final Logger LOG = LoggerFactory.getLogger(NullcastTrackingFilter.class);
 
   @VisibleForTesting
   static final SearchCounter BAD_NULLCAST_QUERY_COUNT =
-      SearchCounter.export("unexpected_nullcast_query_count");
+      SearchCounter.etwitterport("unetwitterpected_nullcast_query_count");
 
   @VisibleForTesting
   static final SearchCounter BAD_NULLCAST_RESULT_COUNT =
-      SearchCounter.export("unexpected_nullcast_result_count");
+      SearchCounter.etwitterport("unetwitterpected_nullcast_result_count");
 
   @Override
   protected Logger getLogger() {
@@ -51,12 +51,12 @@ public class NullcastTrackingFilter extends SensitiveResultsTrackingFilter {
   }
 
   @Override
-  protected Set<Long> getSensitiveResults(EarlybirdRequestContext requestContext,
-                                          EarlybirdResponse earlybirdResponse) throws Exception {
-    if (!requestContext.getParsedQuery().accept(
+  protected Set<Long> getSensitiveResults(EarlybirdRequestContetwittert requestContetwittert,
+                                          EarlybirdResponse earlybirdResponse) throws Etwitterception {
+    if (!requestContetwittert.getParsedQuery().accept(
         new DetectPositiveOperatorVisitor(SearchOperatorConstants.NULLCAST))) {
-      return EarlybirdResponseUtil.findUnexpectedNullcastStatusIds(
-          earlybirdResponse.getSearchResults(), requestContext.getRequest());
+      return EarlybirdResponseUtil.findUnetwitterpectedNullcastStatusIds(
+          earlybirdResponse.getSearchResults(), requestContetwittert.getRequest());
     } else {
       return new HashSet<>();
     }
@@ -66,11 +66,11 @@ public class NullcastTrackingFilter extends SensitiveResultsTrackingFilter {
    * Some Earlybird requests are not searches, instead, they are scoring requests.
    * These requests supply a list of IDs to be scored.
    * It is OK to return nullcast tweet result if the ID is supplied in the request.
-   * This extracts the scoring request tweet IDs.
+   * This etwittertracts the scoring request tweet IDs.
    */
   @Override
-  protected Set<Long> getExceptedResults(EarlybirdRequestContext requestContext) {
-    EarlybirdRequest request = requestContext.getRequest();
+  protected Set<Long> getEtwitterceptedResults(EarlybirdRequestContetwittert requestContetwittert) {
+    EarlybirdRequest request = requestContetwittert.getRequest();
     if (request == null
         || !request.isSetSearchQuery()
         || request.getSearchQuery().getSearchStatusIdsSize() == 0) {

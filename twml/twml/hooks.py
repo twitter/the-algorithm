@@ -14,19 +14,19 @@ import twml
 class StepProgressHook(tf.train.SessionRunHook):
   """Hook that displays a progress bar to monitor global step progress """
 
-  def __init__(self, max_step):
+  def __init__(self, matwitter_step):
     """
     Initializes a `StepProgressHook`.
-    This hook displays a progress bar for max_steps.
+    This hook displays a progress bar for matwitter_steps.
 
     Note that this hook only works for training and calibration.
 
     Args:
-      max_steps:
-        maximum steps to monitor in progress bar.
+      matwitter_steps:
+        matwitterimum steps to monitor in progress bar.
         When this many steps is reached, the progress bar will be full.
     """
-    self._max_step = max_step
+    self._matwitter_step = matwitter_step
     self._start_step = 0
     self._global_step_tensor = None
     self._progress_bar = None
@@ -41,15 +41,15 @@ class StepProgressHook(tf.train.SessionRunHook):
     """ creates the progress bar and keeps track of the first global step upon session creation """
     global_step = session.run(self._global_step_tensor)
     self._start_step = global_step
-    self._progress_bar = tf.keras.utils.Progbar(self._max_step)
+    self._progress_bar = tf.keras.utils.Progbar(self._matwitter_step)
 
-  def before_run(self, run_context):  # pylint: disable=unused-argument
+  def before_run(self, run_contetwittert):  # pylint: disable=unused-argument
     """ invoked before calling session.run """
     return tf.train.SessionRunArgs(self._global_step_tensor)
 
-  def after_run(self, run_context, run_values):
+  def after_run(self, run_contetwittert, run_values):
     """ invoked after run is called. Updates the progress bar. """
-    step = run_context.session.run(self._global_step_tensor)
+    step = run_contetwittert.session.run(self._global_step_tensor)
     self._progress_bar.update(step - self._start_step)
 
 
@@ -70,7 +70,7 @@ class GetMetricsHook(tf.train.SessionRunHook):
       get_metrics_fn:
         Function that returns a dict mapping metric keys to
         tensors as a tf.Tensor.
-        See Trainer.learn for an example use-case.
+        See Trainer.learn for an etwitterample use-case.
     """
 
     self._get_metrics_fn = get_metrics_fn
@@ -99,7 +99,7 @@ class EarlyStopHook(GetMetricsHook):
                get_estimator_spec_fn,
                checkpoint_dir,
                file_path=None,
-               exit_on_end=True,
+               etwitterit_on_end=True,
                start_epoch=0,
                tolerance=0):
     """
@@ -108,25 +108,25 @@ class EarlyStopHook(GetMetricsHook):
     Args:
       metric:
         String specifying the metric to early-stop on. Required with positive
-        ``early_stop_patience``. For example, 'accuracy', 'accuracy_0', 'loss', etc.
-        The string is used to extract the relevant tensor Op from the dict returned by
+        ``early_stop_patience``. For etwitterample, 'accuracy', 'accuracy_0', 'loss', etc.
+        The string is used to etwittertract the relevant tensor Op from the dict returned by
         the get_eval_metric_ops method. For ``metrics`` pass to the constructor,
         the string is one of those. For multi-class (that is, multi-metric)
         metrics, the string may be appended with a ``_0``, ``_1``, etc. or one
         of the ``multi_metric_names`` (one per class).
       patience:
-        Maximum number of epochs to wait for an improvement in the early_stop_metric
-        before breaking off training. For example, a patience of 10 means that
+        Matwitterimum number of epochs to wait for an improvement in the early_stop_metric
+        before breaking off training. For etwitterample, a patience of 10 means that
         training will have 10 epochs to improve the metric before it is killed.
         Whenever the metric is improved before running out of patience,
         patience is reset to ``early_stop_patience``.
       minimize:
         Set this to True for metrics that need to be minimized
-        (like ``loss``). Metrics like ``accuracy`` that need to be maximized
+        (like ``loss``). Metrics like ``accuracy`` that need to be matwitterimized
         should set this to False.
       tolerance:
         A non-negative tolerance for comparing early_stop_metric.
-        e.g. when maximizing the condition is current_metric > best_metric + tolerance."
+        e.g. when matwitterimizing the condition is current_metric > best_metric + tolerance."
         Defaults to 0.
       get_estimator_spec_fn:
         function that returns the current EstimatorSpec.
@@ -135,37 +135,37 @@ class EarlyStopHook(GetMetricsHook):
         path to directory containing the Estimator checkpoints.
       file_path:
         path to file that is used by this hook to communicate early-stopping
-        to StopIfExistsHook. This hook would be used for evaluation, while
-        the StopIfExistsHooks (the listeners) would be used for training.
-        When the file is created, the StopIfExistsHooks detect and terminate training.
+        to StopIfEtwitteristsHook. This hook would be used for evaluation, while
+        the StopIfEtwitteristsHooks (the listeners) would be used for training.
+        When the file is created, the StopIfEtwitteristsHooks detect and terminate training.
         This argument is used by ``Trainer.train_and_evaluate``.
-      exit_on_end:
+      etwitterit_on_end:
         when the end() method is called to indicate that the session is terminating,
-        and exit_on_end is True, twml.errors.EarlyStopError() is triggered to stop the evaluation job.
+        and etwitterit_on_end is True, twml.errors.EarlyStopError() is triggered to stop the evaluation job.
         This is set to False by the trainer for non distributed jobs.
       start_epoch:
         Specifies the starting epoch number. This is used for logging purposes only.
     """
     if not isinstance(metric, str):
-      raise ValueError("Expecting string for metric arg")
+      raise ValueError("Etwitterpecting string for metric arg")
     if not isinstance(patience, int):
-      raise ValueError("Expecting positive number for metric arg")
+      raise ValueError("Etwitterpecting positive number for metric arg")
 
     self.should_stop = False
     self._metric = metric
     self._patience = patience
     self._current_patience = patience
     self._checkpoint_dir = checkpoint_dir
-    self._exit_on_end = exit_on_end
+    self._etwitterit_on_end = etwitterit_on_end
     self._latest_checkpoint_path = None
     # used for distributed training (tf.estimator.train_and_evaluate)
     self._file_path = file_path
     self._epoch = start_epoch
     if self._file_path is not None:
       # TODO try to read epoch from a file that we create
-      if tf.io.gfile.exists(self._file_path):
-        # delete the file if it exists (not sure this makes sense)
-        logging.info("EarlyStopHook: Removing existing file: %s.", self._file_path)
+      if tf.io.gfile.etwitterists(self._file_path):
+        # delete the file if it etwitterists (not sure this makes sense)
+        logging.info("EarlyStopHook: Removing etwitteristing file: %s.", self._file_path)
         tf.io.gfile.remove(self._file_path)
 
     # best_checkpoint dir will contain the best checkpoint
@@ -173,7 +173,7 @@ class EarlyStopHook(GetMetricsHook):
     self._eval_checkpoint_path = os.path.join(checkpoint_dir, 'eval_checkpoint')
     self._best_metric_path = os.path.join(self._best_checkpoint_path, self._metric)
 
-    if tf.io.gfile.exists(self._best_metric_path):
+    if tf.io.gfile.etwitterists(self._best_metric_path):
       with tf.io.gfile.GFile(self._best_metric_path, mode="r") as f:
         best_metric_from_file = float(f.read())
     else:
@@ -198,7 +198,7 @@ class EarlyStopHook(GetMetricsHook):
       else:
         self._best_metric = best_metric_from_file + tolerance
       # used for printing
-      self._early_stop_name = "maximum"
+      self._early_stop_name = "matwitterimum"
 
     def get_metrics_fn():
       """ function to get metric tensors to early-stopping """
@@ -206,7 +206,7 @@ class EarlyStopHook(GetMetricsHook):
       eval_metric_ops = estimator_spec.eval_metric_ops
       if metric not in eval_metric_ops:
         raise ValueError(
-          "Expecting early_stop_metric '%s' key in eval_metric_ops dict"
+          "Etwitterpecting early_stop_metric '%s' key in eval_metric_ops dict"
           % (metric))
       # get the value_op from the (value_op, update_op) value
       return {k: v[0] for k, v in eval_metric_ops.items()}
@@ -241,17 +241,17 @@ class EarlyStopHook(GetMetricsHook):
         "Found new %s %s=%f @ epoch %d",
         self._early_stop_name, self._metric, self._best_metric, epoch)
       # backup the file to checkpoint_dir/best_checkpoint
-      assert self._latest_checkpoint_path, "expecting latest checkpoint"
+      assert self._latest_checkpoint_path, "etwitterpecting latest checkpoint"
       logging.info("Backing up " + self._latest_checkpoint_path)
 
       try:
         eval_checkpoint = tf.train.latest_checkpoint(self._eval_checkpoint_path)
         twml.util.backup_checkpoint(
-          checkpoint_path_prefix=eval_checkpoint,
+          checkpoint_path_prefitwitter=eval_checkpoint,
           backup_path=self._best_checkpoint_path)
-      except twml.errors.CheckpointNotFoundError as ex:
-        msg = "Consider increasing 'keep_checkpoint_max' or 'save_checkpoint_secs'"
-        raise twml.errors.CheckpointNotFoundError(str(ex) + "\n" + msg)
+      etwittercept twml.errors.CheckpointNotFoundError as etwitter:
+        msg = "Consider increasing 'keep_checkpoint_matwitter' or 'save_checkpoint_secs'"
+        raise twml.errors.CheckpointNotFoundError(str(etwitter) + "\n" + msg)
 
       tf.io.gfile.makedirs(os.path.dirname(self._best_metric_path))
       with tf.io.gfile.GFile(self._best_metric_path, mode="w") as f:
@@ -266,7 +266,7 @@ class EarlyStopHook(GetMetricsHook):
                    self._early_stop_name, self._patience - self._current_patience)
     elif self._current_patience == 0:
       logging.info(
-        "No new %s found after %d epochs. Early-stopping experiment.",
+        "No new %s found after %d epochs. Early-stopping etwitterperiment.",
         self._early_stop_name, self._patience)
       return True
 
@@ -285,7 +285,7 @@ class EarlyStopHook(GetMetricsHook):
     When file_path constructor argument is provided, this
     will call ``early_stop()``.
     When ``early_stop()`` returns True, it creates the file_path,
-    which will be detected by StopIfExistsHooks
+    which will be detected by StopIfEtwitteristsHooks
     and stop training for all workers and the chief. It will
     also call ``cleanup_checkpoints()``.
     """
@@ -302,7 +302,7 @@ class EarlyStopHook(GetMetricsHook):
         # makes the best checkpoint the only checkpoint in save_dir.
         msg = "early-stopping evaluation at epoch %d" % self._epoch
         logging.info(msg)
-        if self._exit_on_end:
+        if self._etwitterit_on_end:
           raise twml.errors.EarlyStopError(msg)
       else:
         self._latest_checkpoint_path = None
@@ -320,15 +320,15 @@ class EarlyStopHook(GetMetricsHook):
     super(EarlyStopHook, self).begin()
     self._latest_checkpoint_path = tf.train.latest_checkpoint(self._checkpoint_dir)
 
-    assert self._latest_checkpoint_path, "expecting latest checkpoint"
+    assert self._latest_checkpoint_path, "etwitterpecting latest checkpoint"
     # Backup to temporary directory
     try:
       twml.util.backup_checkpoint(
-        checkpoint_path_prefix=self._latest_checkpoint_path,
+        checkpoint_path_prefitwitter=self._latest_checkpoint_path,
         backup_path=self._eval_checkpoint_path)
-    except twml.errors.CheckpointNotFoundError as ex:
-      msg = "Consider increasing 'keep_checkpoint_max' or 'save_checkpoint_secs'"
-      raise twml.errors.CheckpointNotFoundError(str(ex) + "\n" + msg)
+    etwittercept twml.errors.CheckpointNotFoundError as etwitter:
+      msg = "Consider increasing 'keep_checkpoint_matwitter' or 'save_checkpoint_secs'"
+      raise twml.errors.CheckpointNotFoundError(str(etwitter) + "\n" + msg)
 
 
 class MetricsUpdateHook(GetMetricsHook):
@@ -353,17 +353,17 @@ class MetricsUpdateHook(GetMetricsHook):
       every_n_iter: `int`, log the metrics once every N local
         steps taken in the current epoch.
       every_n_secs: `int` or `float`, log the metrics once every N
-        seconds passed in the current epoch. Exactly one of `every_n_iter` and `every_n_secs`
+        seconds passed in the current epoch. Etwitteractly one of `every_n_iter` and `every_n_secs`
         should be provided.
     Raises:
-      ValueError: if `every_n_iter` is non-positive or if not exactly one of `every_n_iter` and
+      ValueError: if `every_n_iter` is non-positive or if not etwitteractly one of `every_n_iter` and
         `every_n_secs` is set when `add_progress_metrics_fn` is provided.
     """
     only_log_at_end = (every_n_iter is None) and (every_n_secs is None)
 
     if (not only_log_at_end and every_n_iter and every_n_secs):
       raise ValueError(
-        'exactly one of every_n_iter and every_n_secs must be provided'
+        'etwitteractly one of every_n_iter and every_n_secs must be provided'
       )
 
     # TODO: should have a minimum to avoid too many calls to ModelRepo?
@@ -407,21 +407,21 @@ class MetricsUpdateHook(GetMetricsHook):
     self._iter_count = 0
     return super(MetricsUpdateHook, self).begin()
 
-  def before_run(self, run_context):
+  def before_run(self, run_contetwittert):
     """
     Triggered before each step.
     """
     self._should_trigger = self._timer.should_trigger_for_step(self._iter_count)
-    return super(MetricsUpdateHook, self).before_run(run_context)
+    return super(MetricsUpdateHook, self).before_run(run_contetwittert)
 
-  def after_run(self, run_context, run_values):
+  def after_run(self, run_contetwittert, run_values):
     """
     Triggered after each step.
     """
     if self._should_trigger:
       self.report_metrics()
     self._iter_count += 1
-    return super(MetricsUpdateHook, self).after_run(run_context, run_values)
+    return super(MetricsUpdateHook, self).after_run(run_contetwittert, run_values)
 
   def end(self, session):
     """
@@ -438,15 +438,15 @@ class EarlyStopDuration(tf.train.SessionRunHook):
   then it will only run for 15 minutes once restarted.
 
   Args:
-    max_duration: 
+    matwitter_duration: 
       A float. When this argument is defined, the job will automatically terminate after
-      `max_duration` seconds if it has not already compeleted. 
+      `matwitter_duration` seconds if it has not already compeleted. 
     
     overwrite:
       A boolean. If set to True, this hook will overwrite the file containing the elapsed time
       since the beginning of the job. In a distributed setting, this will be used so only one 
       job writes to the file while all others will have read access. In a distributed setting,
-      if all executors have this parameter set to False, then it just means that the hook will 
+      if all etwitterecutors have this parameter set to False, then it just means that the hook will 
       not be fault tolerant. When restarted, the job will restart the clock from 0.
       
     save_dir:
@@ -454,16 +454,16 @@ class EarlyStopDuration(tf.train.SessionRunHook):
       we can store the file which contains the record of the elapsed time. This file is what makes 
       the hook faul tolerant.
 
-    exit_on_end:
-      when exit_on_end is True, twml.errors.EarlyStopError() is triggered to stop the job.
+    etwitterit_on_end:
+      when etwitterit_on_end is True, twml.errors.EarlyStopError() is triggered to stop the job.
       This is usually set to True to kill a validation job in a distributed setting.
    """
 
-  def __init__(self, max_duration: float, exit_on_end: bool, save_dir: str, overwrite: bool):
+  def __init__(self, matwitter_duration: float, etwitterit_on_end: bool, save_dir: str, overwrite: bool):
     self._overwrite = overwrite
     self._save_dir = save_dir
-    self._exit_on_end = exit_on_end
-    self._max_duration = max_duration
+    self._etwitterit_on_end = etwitterit_on_end
+    self._matwitter_duration = matwitter_duration
     self._last_time_check = datetime.now()
 
     # Initialize elapse time file
@@ -472,15 +472,15 @@ class EarlyStopDuration(tf.train.SessionRunHook):
 
   @property
   def elapsed_file_path(self):
-    return os.path.join(self._save_dir, "early_stop_duration.txt")
+    return os.path.join(self._save_dir, "early_stop_duration.ttwittert")
 
   def early_stop(self) -> bool:
-    return self.elapsed_time() > self._max_duration
+    return self.elapsed_time() > self._matwitter_duration
 
   def elapsed_time(self) -> float:
     # Recorded elapsed time is 0 unless it's been recorded in a file already
     recorded_elapsed_time = 0
-    if tf.io.gfile.exists(self.elapsed_file_path):
+    if tf.io.gfile.etwitterists(self.elapsed_file_path):
       with tf.io.gfile.GFile(self.elapsed_file_path, mode="r") as file:
         recorded_elapsed_time = json.loads(file.read())["elapsed_time"]
 
@@ -493,21 +493,21 @@ class EarlyStopDuration(tf.train.SessionRunHook):
       with tf.io.gfile.GFile(self.elapsed_file_path, mode="w") as file:
         record = {
           "elapsed_time": elapsed_time,
-          "max_duration": self._max_duration
+          "matwitter_duration": self._matwitter_duration
         }
         file.write(json.dumps(record, indent=2))
 
     return elapsed_time
 
-  def before_run(self, run_context: tf.estimator.SessionRunContext) -> None:
+  def before_run(self, run_contetwittert: tf.estimator.SessionRunContetwittert) -> None:
     if self.early_stop():
       message = f"""
-        Stopping job which now exceeded the maximum duration of {self._max_duration} seconds. 
+        Stopping job which now etwitterceeded the matwitterimum duration of {self._matwitter_duration} seconds. 
       """
       logging.info(message)
-      run_context.request_stop()
+      run_contetwittert.request_stop()
 
-      if self._exit_on_end:
+      if self._etwitterit_on_end:
         raise twml.errors.EarlyStopError(message)
 
 
@@ -527,15 +527,15 @@ class StopAtStepHook(tf.train.StopAtStepHook):
     """ true if this hook requested a stop """
     return self._stop_requested
 
-  def after_run(self, run_context, run_values):
+  def after_run(self, run_contetwittert, run_values):
     """ sets self.stop_requested to true when requesting a stop """
-    super(StopAtStepHook, self).after_run(run_context, run_values)
-    self._stop_requested = run_context.stop_requested
+    super(StopAtStepHook, self).after_run(run_contetwittert, run_values)
+    self._stop_requested = run_contetwittert.stop_requested
 
 
-class StopIfExistsHook(tf.train.SessionRunHook):
+class StopIfEtwitteristsHook(tf.train.SessionRunHook):
   """
-  Hook that requests stop if a file exists.
+  Hook that requests stop if a file etwitterists.
   This hook is used with the EarlyStopHook to implement
   early-stopping for distributed training (tf.estimator.train_and_evaluate).
   """
@@ -544,16 +544,16 @@ class StopIfExistsHook(tf.train.SessionRunHook):
     """
     Arguments:
       file_path:
-        path to file. When this hook detects that the file exists,
+        path to file. When this hook detects that the file etwitterists,
         it requests a stop, which effectively kills this worker.
     """
     self._file_path = file_path
     self._stop_requested = False
 
-  def after_run(self, run_context, run_values):
-    if tf.io.gfile.exists(self._file_path):
+  def after_run(self, run_contetwittert, run_values):
+    if tf.io.gfile.etwitterists(self._file_path):
       logging.info("Early-stopping file detected; requesting stop")
-      run_context.request_stop()
+      run_contetwittert.request_stop()
       self._stop_requested = True
 
   @property

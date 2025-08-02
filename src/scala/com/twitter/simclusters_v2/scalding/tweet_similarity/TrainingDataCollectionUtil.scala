@@ -33,8 +33,8 @@ object TrainingDataCollectionUtil {
           TweetSimilarityFeatures.CandidateTweetTimestamp) < testStartDate.timestamp)
     }
     (
-      DataSetPipe(leftRecords, dataset.featureContext),
-      DataSetPipe(rightRecords, dataset.featureContext))
+      DataSetPipe(leftRecords, dataset.featureContetwittert),
+      DataSetPipe(rightRecords, dataset.featureContetwittert))
   }
 
   /**
@@ -47,7 +47,7 @@ object TrainingDataCollectionUtil {
     val queryToRand = dataset.records
       .map { record => record.getFeatureValue(TweetSimilarityFeatures.QueryTweetId) }
       .distinct
-      .map { queryTweet => queryTweet -> new Random(Time.now.inMilliseconds).nextDouble() }
+      .map { queryTweet => queryTweet -> new Random(Time.now.inMilliseconds).netwittertDouble() }
       .forceToDisk
 
     val (trainRecords, testRecords) = dataset.records
@@ -59,18 +59,18 @@ object TrainingDataCollectionUtil {
       }
 
     (
-      DataSetPipe(trainRecords.map { case (record, _) => record }, dataset.featureContext),
-      DataSetPipe(testRecords.map { case (record, _) => record }, dataset.featureContext))
+      DataSetPipe(trainRecords.map { case (record, _) => record }, dataset.featureContetwittert),
+      DataSetPipe(testRecords.map { case (record, _) => record }, dataset.featureContetwittert))
   }
 
   /**
-   * Get the write exec for train and test datasets
+   * Get the write etwitterec for train and test datasets
    * @param dataset: input dataset
    * @param testStartDate: samples before/after testStartDate will be used for training/testing
    * @param outputPath: output path for the train/test datasets
-   * @return execution of the the writing exec
+   * @return etwitterecution of the the writing etwitterec
    */
-  def getTrainTestByTimeExec(
+  def getTrainTestByTimeEtwitterec(
     dataset: DataSetPipe,
     testStartDate: RichDate,
     trainDataset: TimePartitionedDALDataset[DataRecord],
@@ -78,26 +78,26 @@ object TrainingDataCollectionUtil {
     outputPath: String
   )(
     implicit dateRange: DateRange
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val (trainDataSet, testDataSet) = splitRecordsByTime(dataset, testStartDate)
-    val trainExecution: Execution[Unit] = trainDataSet
-      .writeDALExecution(trainDataset, D.Daily, D.Suffix(s"$outputPath/train"), D.EBLzo())
-    val trainStatsExecution: Execution[Unit] =
-      getStatsExec(trainDataSet, s"$outputPath/train_stats")
-    val testExecution: Execution[Unit] = testDataSet
-      .writeDALExecution(testDataset, D.Daily, D.Suffix(s"$outputPath/test"), D.EBLzo())
-    val testStatsExecution: Execution[Unit] = getStatsExec(testDataSet, s"$outputPath/test_stats")
-    Execution.zip(trainExecution, trainStatsExecution, testExecution, testStatsExecution).unit
+    val trainEtwitterecution: Etwitterecution[Unit] = trainDataSet
+      .writeDALEtwitterecution(trainDataset, D.Daily, D.Suffitwitter(s"$outputPath/train"), D.EBLzo())
+    val trainStatsEtwitterecution: Etwitterecution[Unit] =
+      getStatsEtwitterec(trainDataSet, s"$outputPath/train_stats")
+    val testEtwitterecution: Etwitterecution[Unit] = testDataSet
+      .writeDALEtwitterecution(testDataset, D.Daily, D.Suffitwitter(s"$outputPath/test"), D.EBLzo())
+    val testStatsEtwitterecution: Etwitterecution[Unit] = getStatsEtwitterec(testDataSet, s"$outputPath/test_stats")
+    Etwitterecution.zip(trainEtwitterecution, trainStatsEtwitterecution, testEtwitterecution, testStatsEtwitterecution).unit
   }
 
   /**
-   * Get the write exec for train and test datasets
+   * Get the write etwitterec for train and test datasets
    * @param dataset: input dataset
    * @param testRatio: samples before/after testStartDate will be used for training/testing
    * @param outputPath: output path for the train/test datasets
-   * @return execution of the the writing exec
+   * @return etwitterecution of the the writing etwitterec
    */
-  def getTrainTestByQueryExec(
+  def getTrainTestByQueryEtwitterec(
     dataset: DataSetPipe,
     testRatio: Double,
     trainDataset: TimePartitionedDALDataset[DataRecord],
@@ -105,25 +105,25 @@ object TrainingDataCollectionUtil {
     outputPath: String
   )(
     implicit dateRange: DateRange
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val (trainDataSet, testDataSet) = splitRecordsByQuery(dataset, testRatio)
-    val trainExecution: Execution[Unit] = trainDataSet
-      .writeDALExecution(trainDataset, D.Daily, D.Suffix(s"$outputPath/train"), D.EBLzo())
-    val trainStatsExecution: Execution[Unit] =
-      getStatsExec(trainDataSet, s"$outputPath/train_stats")
-    val testExecution: Execution[Unit] = testDataSet
-      .writeDALExecution(testDataset, D.Daily, D.Suffix(s"$outputPath/test"), D.EBLzo())
-    val testStatsExecution: Execution[Unit] = getStatsExec(testDataSet, s"$outputPath/test_stats")
-    Execution.zip(trainExecution, trainStatsExecution, testExecution, testStatsExecution).unit
+    val trainEtwitterecution: Etwitterecution[Unit] = trainDataSet
+      .writeDALEtwitterecution(trainDataset, D.Daily, D.Suffitwitter(s"$outputPath/train"), D.EBLzo())
+    val trainStatsEtwitterecution: Etwitterecution[Unit] =
+      getStatsEtwitterec(trainDataSet, s"$outputPath/train_stats")
+    val testEtwitterecution: Etwitterecution[Unit] = testDataSet
+      .writeDALEtwitterecution(testDataset, D.Daily, D.Suffitwitter(s"$outputPath/test"), D.EBLzo())
+    val testStatsEtwitterecution: Etwitterecution[Unit] = getStatsEtwitterec(testDataSet, s"$outputPath/test_stats")
+    Etwitterecution.zip(trainEtwitterecution, trainStatsEtwitterecution, testEtwitterecution, testStatsEtwitterecution).unit
   }
 
   /**
-   * Get the exec for reporting dataset stats
+   * Get the etwitterec for reporting dataset stats
    * @param dataset: dataset of interest
    * @param outputPath: path for outputting the stats
-   * @return exec
+   * @return etwitterec
    */
-  def getStatsExec(dataset: DataSetPipe, outputPath: String): Execution[Unit] = {
+  def getStatsEtwitterec(dataset: DataSetPipe, outputPath: String): Etwitterecution[Unit] = {
     dataset.records
       .map { rec =>
         if (TweetSimilarityFeatures.isCoengaged(rec))
@@ -133,6 +133,6 @@ object TrainingDataCollectionUtil {
       }
       .sumByKey
       .shard(1)
-      .writeExecution(TypedTsv(outputPath))
+      .writeEtwitterecution(TypedTsv(outputPath))
   }
 }

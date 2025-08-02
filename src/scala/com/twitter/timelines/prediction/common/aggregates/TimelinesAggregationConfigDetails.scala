@@ -13,7 +13,7 @@ import com.twitter.timelines.prediction.features.engagement_features.EngagementD
 import com.twitter.timelines.prediction.features.engagement_features.EngagementDataRecordFeatures.RichUnifyPublicEngagersTransform
 import com.twitter.timelines.prediction.features.list_features.ListFeatures
 import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import com.twitter.timelines.prediction.features.request_context.RequestContextFeatures
+import com.twitter.timelines.prediction.features.request_contetwittert.RequestContetwittertFeatures
 import com.twitter.timelines.prediction.features.semantic_core_features.SemanticCoreFeatures
 import com.twitter.timelines.prediction.transform.filter.FilterInNetworkTransform
 import com.twitter.timelines.prediction.transform.filter.FilterImageTweetTransform
@@ -21,7 +21,7 @@ import com.twitter.timelines.prediction.transform.filter.FilterVideoTweetTransfo
 import com.twitter.timelines.prediction.transform.filter.FilterOutImageVideoTweetTransform
 import com.twitter.util.Duration
 
-trait TimelinesAggregationConfigDetails extends Serializable {
+trait TimelinesAggregationConfigDetails etwittertends Serializable {
 
   import TimelinesAggregationSources._
 
@@ -36,13 +36,13 @@ trait TimelinesAggregationConfigDetails extends Serializable {
    */
   def mkPhysicalStore(store: AggregateStore): AggregateStore
 
-  def defaultMaxKvSourceFailures: Int = 100
+  def defaultMatwitterKvSourceFailures: Int = 100
 
   val timelinesOfflineAggregateSink = new OfflineStoreCommonConfig {
     override def apply(startDate: String) = OfflineAggregateStoreCommonConfig(
-      outputHdfsPathPrefix = outputHdfsPath,
+      outputHdfsPathPrefitwitter = outputHdfsPath,
       dummyAppId = "timelines_aggregates_v2_ro",
-      dummyDatasetPrefix = "timelines_aggregates_v2_ro",
+      dummyDatasetPrefitwitter = "timelines_aggregates_v2_ro",
       startDate = startDate
     )
   }
@@ -71,11 +71,11 @@ trait TimelinesAggregationConfigDetails extends Serializable {
    * Note that different subsets of aggregates in this list
    * can be launched by different summingbird job instances.
    * Any given job can be responsible for a set of AggregateGroup
-   * configs whose outputStores share the same exact startDate.
+   * configs whose outputStores share the same etwitteract startDate.
    * AggregateGroups that do not share the same inputSource,
    * outputStore or startDate MUST be launched using different
    * summingbird jobs and passed in a different --start-time argument
-   * See science/scalding/mesos/timelines/prod.yaml for an example
+   * See science/scalding/mesos/timelines/prod.yaml for an etwitterample
    * of how to configure your own job.
    */
   val negativeDownsampleTransform =
@@ -90,7 +90,7 @@ trait TimelinesAggregationConfigDetails extends Serializable {
   val userAggregatesV2: AggregateGroup =
     AggregateGroup(
       inputSource = timelinesDailyRecapMinimalSource,
-      aggregatePrefix = "user_aggregate_v2",
+      aggregatePrefitwitter = "user_aggregate_v2",
       preTransforms = Seq(RichRemoveUserIdZero), /* Eliminates reducer skew */
       keys = Set(USER_ID),
       features = RecapUserFeatureAggregation.UserFeaturesV2,
@@ -102,7 +102,7 @@ trait TimelinesAggregationConfigDetails extends Serializable {
           name = UserAggregateStore,
           startDate = "2016-07-15 00:00",
           commonConfig = timelinesOfflineAggregateSink,
-          maxKvSourceFailures = defaultMaxKvSourceFailures
+          matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
         ))
     )
 
@@ -117,7 +117,7 @@ trait TimelinesAggregationConfigDetails extends Serializable {
     val allFeatureAggregates = Set(
       AggregateGroup(
         inputSource = timelinesDailyRecapMinimalSource,
-        aggregatePrefix = "user_author_aggregate_v2",
+        aggregatePrefitwitter = "user_author_aggregate_v2",
         preTransforms = Seq(FilterInNetworkTransform, RichRemoveUserIdZero),
         keys = Set(USER_ID, AUTHOR_ID),
         features = RecapUserFeatureAggregation.UserAuthorFeaturesV2,
@@ -129,7 +129,7 @@ trait TimelinesAggregationConfigDetails extends Serializable {
             name = UserAuthorAggregateStore,
             startDate = "2016-07-15 00:00",
             commonConfig = timelinesOfflineAggregateSink,
-            maxKvSourceFailures = defaultMaxKvSourceFailures
+            matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
           ))
       )
     )
@@ -137,7 +137,7 @@ trait TimelinesAggregationConfigDetails extends Serializable {
     val countAggregates: Set[AggregateGroup] = Set(
       AggregateGroup(
         inputSource = timelinesDailyRecapMinimalSource,
-        aggregatePrefix = "user_author_aggregate_v2",
+        aggregatePrefitwitter = "user_author_aggregate_v2",
         preTransforms = Seq(FilterInNetworkTransform, RichRemoveUserIdZero),
         keys = Set(USER_ID, AUTHOR_ID),
         features = RecapUserFeatureAggregation.UserAuthorFeaturesV2Count,
@@ -149,7 +149,7 @@ trait TimelinesAggregationConfigDetails extends Serializable {
             name = UserAuthorAggregateStore,
             startDate = "2016-07-15 00:00",
             commonConfig = timelinesOfflineAggregateSink,
-            maxKvSourceFailures = defaultMaxKvSourceFailures
+            matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
           ))
       )
     )
@@ -160,7 +160,7 @@ trait TimelinesAggregationConfigDetails extends Serializable {
   val userAggregatesV5Continuous: AggregateGroup =
     AggregateGroup(
       inputSource = timelinesDailyRecapMinimalSource,
-      aggregatePrefix = "user_aggregate_v5.continuous",
+      aggregatePrefitwitter = "user_aggregate_v5.continuous",
       preTransforms = Seq(RichRemoveUserIdZero),
       keys = Set(USER_ID),
       features = RecapUserFeatureAggregation.UserFeaturesV5Continuous,
@@ -172,14 +172,14 @@ trait TimelinesAggregationConfigDetails extends Serializable {
           name = UserAggregateStore,
           startDate = "2016-07-15 00:00",
           commonConfig = timelinesOfflineAggregateSink,
-          maxKvSourceFailures = defaultMaxKvSourceFailures
+          matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
         ))
     )
 
   val userAuthorAggregatesV5: AggregateGroup =
     AggregateGroup(
       inputSource = timelinesDailyRecapMinimalSource,
-      aggregatePrefix = "user_author_aggregate_v5",
+      aggregatePrefitwitter = "user_author_aggregate_v5",
       preTransforms = Seq(FilterInNetworkTransform, RichRemoveUserIdZero),
       keys = Set(USER_ID, AUTHOR_ID),
       features = RecapUserFeatureAggregation.UserAuthorFeaturesV5,
@@ -191,14 +191,14 @@ trait TimelinesAggregationConfigDetails extends Serializable {
           name = UserAuthorAggregateStore,
           startDate = "2016-07-15 00:00",
           commonConfig = timelinesOfflineAggregateSink,
-          maxKvSourceFailures = defaultMaxKvSourceFailures
+          matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
         ))
     )
 
   val tweetSourceUserAuthorAggregatesV1: AggregateGroup =
     AggregateGroup(
       inputSource = timelinesDailyRecapMinimalSource,
-      aggregatePrefix = "user_author_aggregate_tweetsource_v1",
+      aggregatePrefitwitter = "user_author_aggregate_tweetsource_v1",
       preTransforms = Seq(FilterInNetworkTransform, RichRemoveUserIdZero),
       keys = Set(USER_ID, AUTHOR_ID),
       features = RecapUserFeatureAggregation.UserAuthorTweetSourceFeaturesV1,
@@ -210,13 +210,13 @@ trait TimelinesAggregationConfigDetails extends Serializable {
           name = UserAuthorAggregateStore,
           startDate = "2016-07-15 00:00",
           commonConfig = timelinesOfflineAggregateSink,
-          maxKvSourceFailures = defaultMaxKvSourceFailures
+          matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
         ))
     )
 
   val userEngagerAggregates = AggregateGroup(
     inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_engager_aggregate",
+    aggregatePrefitwitter = "user_engager_aggregate",
     keys = Set(USER_ID, EngagementDataRecordFeatures.PublicEngagementUserIds),
     features = Set.empty,
     labels = RecapUserFeatureAggregation.LabelsV2,
@@ -227,7 +227,7 @@ trait TimelinesAggregationConfigDetails extends Serializable {
         name = UserEngagerAggregateStore,
         startDate = "2016-09-02 00:00",
         commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
       )),
     preTransforms = Seq(
       RichRemoveUserIdZero,
@@ -238,7 +238,7 @@ trait TimelinesAggregationConfigDetails extends Serializable {
   val userMentionAggregates = AggregateGroup(
     inputSource = timelinesDailyRecapMinimalSource,
     preTransforms = Seq(RichRemoveUserIdZero), /* Eliminates reducer skew */
-    aggregatePrefix = "user_mention_aggregate",
+    aggregatePrefitwitter = "user_mention_aggregate",
     keys = Set(USER_ID, RecapFeatures.MENTIONED_SCREEN_NAMES),
     features = Set.empty,
     labels = RecapUserFeatureAggregation.LabelsV2,
@@ -249,7 +249,7 @@ trait TimelinesAggregationConfigDetails extends Serializable {
         name = UserMentionAggregateStore,
         startDate = "2017-03-01 00:00",
         commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
       )),
     includeAnyLabel = false
   )
@@ -257,7 +257,7 @@ trait TimelinesAggregationConfigDetails extends Serializable {
   val twitterWideUserAggregates = AggregateGroup(
     inputSource = timelinesDailyTwitterWideSource,
     preTransforms = Seq(RichRemoveUserIdZero), /* Eliminates reducer skew */
-    aggregatePrefix = "twitter_wide_user_aggregate",
+    aggregatePrefitwitter = "twitter_wide_user_aggregate",
     keys = Set(USER_ID),
     features = RecapUserFeatureAggregation.TwitterWideFeatures,
     labels = RecapUserFeatureAggregation.TwitterWideLabels,
@@ -268,14 +268,14 @@ trait TimelinesAggregationConfigDetails extends Serializable {
         name = TwitterWideUserAggregateStore,
         startDate = "2016-12-28 00:00",
         commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
       ))
   )
 
   val twitterWideUserAuthorAggregates = AggregateGroup(
     inputSource = timelinesDailyTwitterWideSource,
     preTransforms = Seq(RichRemoveUserIdZero), /* Eliminates reducer skew */
-    aggregatePrefix = "twitter_wide_user_author_aggregate",
+    aggregatePrefitwitter = "twitter_wide_user_author_aggregate",
     keys = Set(USER_ID, AUTHOR_ID),
     features = RecapUserFeatureAggregation.TwitterWideFeatures,
     labels = RecapUserFeatureAggregation.TwitterWideLabels,
@@ -286,7 +286,7 @@ trait TimelinesAggregationConfigDetails extends Serializable {
         name = TwitterWideUserAuthorAggregateStore,
         startDate = "2016-12-28 00:00",
         commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
       )),
     includeAnyLabel = false
   )
@@ -296,9 +296,9 @@ trait TimelinesAggregationConfigDetails extends Serializable {
    */
   val userRequestHourAggregates = AggregateGroup(
     inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_request_context_aggregate.hour",
+    aggregatePrefitwitter = "user_request_contetwittert_aggregate.hour",
     preTransforms = Seq(RichRemoveUserIdZero, negativeDownsampleTransform),
-    keys = Set(USER_ID, RequestContextFeatures.TIMESTAMP_GMT_HOUR),
+    keys = Set(USER_ID, RequestContetwittertFeatures.TIMESTAMP_GMT_HOUR),
     features = Set.empty,
     labels = RecapUserFeatureAggregation.LabelsV2,
     metrics = Set(CountMetric),
@@ -308,15 +308,15 @@ trait TimelinesAggregationConfigDetails extends Serializable {
         name = UserRequestHourAggregateStore,
         startDate = "2017-08-01 00:00",
         commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
       ))
   )
 
   val userRequestDowAggregates = AggregateGroup(
     inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_request_context_aggregate.dow",
+    aggregatePrefitwitter = "user_request_contetwittert_aggregate.dow",
     preTransforms = Seq(RichRemoveUserIdZero, negativeDownsampleTransform),
-    keys = Set(USER_ID, RequestContextFeatures.TIMESTAMP_GMT_DOW),
+    keys = Set(USER_ID, RequestContetwittertFeatures.TIMESTAMP_GMT_DOW),
     features = Set.empty,
     labels = RecapUserFeatureAggregation.LabelsV2,
     metrics = Set(CountMetric),
@@ -326,13 +326,13 @@ trait TimelinesAggregationConfigDetails extends Serializable {
         name = UserRequestDowAggregateStore,
         startDate = "2017-08-01 00:00",
         commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
       ))
   )
 
   val authorTopicAggregates = AggregateGroup(
     inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "author_topic_aggregate",
+    aggregatePrefitwitter = "author_topic_aggregate",
     preTransforms = Seq(RichRemoveUserIdZero),
     keys = Set(AUTHOR_ID, TimelinesSharedFeatures.TOPIC_ID),
     features = Set.empty,
@@ -344,13 +344,13 @@ trait TimelinesAggregationConfigDetails extends Serializable {
         name = AuthorTopicAggregateStore,
         startDate = "2020-05-19 00:00",
         commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
       ))
   )
 
   val userTopicAggregates = AggregateGroup(
     inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_topic_aggregate",
+    aggregatePrefitwitter = "user_topic_aggregate",
     preTransforms = Seq(RichRemoveUserIdZero),
     keys = Set(USER_ID, TimelinesSharedFeatures.TOPIC_ID),
     features = Set.empty,
@@ -362,13 +362,13 @@ trait TimelinesAggregationConfigDetails extends Serializable {
         name = UserTopicAggregateStore,
         startDate = "2020-05-23 00:00",
         commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
       ))
   )
 
   val userTopicAggregatesV2 = AggregateGroup(
     inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_topic_aggregate_v2",
+    aggregatePrefitwitter = "user_topic_aggregate_v2",
     preTransforms = Seq(RichRemoveUserIdZero),
     keys = Set(USER_ID, TimelinesSharedFeatures.TOPIC_ID),
     features = RecapUserFeatureAggregation.UserTopicFeaturesV2Count,
@@ -382,13 +382,13 @@ trait TimelinesAggregationConfigDetails extends Serializable {
         name = UserTopicAggregateStore,
         startDate = "2020-05-23 00:00",
         commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
       ))
   )
 
   val userInferredTopicAggregates = AggregateGroup(
     inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_inferred_topic_aggregate",
+    aggregatePrefitwitter = "user_inferred_topic_aggregate",
     preTransforms = Seq(RichRemoveUserIdZero),
     keys = Set(USER_ID, TimelinesSharedFeatures.INFERRED_TOPIC_IDS),
     features = Set.empty,
@@ -400,13 +400,13 @@ trait TimelinesAggregationConfigDetails extends Serializable {
         name = UserInferredTopicAggregateStore,
         startDate = "2020-09-09 00:00",
         commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
       ))
   )
 
   val userInferredTopicAggregatesV2 = AggregateGroup(
     inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_inferred_topic_aggregate_v2",
+    aggregatePrefitwitter = "user_inferred_topic_aggregate_v2",
     preTransforms = Seq(RichRemoveUserIdZero),
     keys = Set(USER_ID, TimelinesSharedFeatures.INFERRED_TOPIC_IDS),
     features = RecapUserFeatureAggregation.UserTopicFeaturesV2Count,
@@ -420,13 +420,13 @@ trait TimelinesAggregationConfigDetails extends Serializable {
         name = UserInferredTopicAggregateStore,
         startDate = "2020-09-09 00:00",
         commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
       ))
   )
 
   val userReciprocalEngagementAggregates = AggregateGroup(
     inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_aggregate_v6",
+    aggregatePrefitwitter = "user_aggregate_v6",
     preTransforms = Seq(RichRemoveUserIdZero),
     keys = Set(USER_ID),
     features = Set.empty,
@@ -438,14 +438,14 @@ trait TimelinesAggregationConfigDetails extends Serializable {
         name = UserAggregateStore,
         startDate = "2016-07-15 00:00",
         commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
       )),
     includeAnyLabel = false
   )
 
   val userOriginalAuthorReciprocalEngagementAggregates = AggregateGroup(
     inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_original_author_aggregate_v1",
+    aggregatePrefitwitter = "user_original_author_aggregate_v1",
     preTransforms = Seq(RichRemoveUserIdZero, RichRemoveAuthorIdZero),
     keys = Set(USER_ID, TimelinesSharedFeatures.ORIGINAL_AUTHOR_ID),
     features = Set.empty,
@@ -457,14 +457,14 @@ trait TimelinesAggregationConfigDetails extends Serializable {
         name = UserOriginalAuthorAggregateStore,
         startDate = "2018-12-26 00:00",
         commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
       )),
     includeAnyLabel = false
   )
 
   val originalAuthorReciprocalEngagementAggregates = AggregateGroup(
     inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "original_author_aggregate_v1",
+    aggregatePrefitwitter = "original_author_aggregate_v1",
     preTransforms = Seq(RichRemoveUserIdZero, RichRemoveAuthorIdZero),
     keys = Set(TimelinesSharedFeatures.ORIGINAL_AUTHOR_ID),
     features = Set.empty,
@@ -476,14 +476,14 @@ trait TimelinesAggregationConfigDetails extends Serializable {
         name = OriginalAuthorAggregateStore,
         startDate = "2023-02-25 00:00",
         commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
       )),
     includeAnyLabel = false
   )
 
   val originalAuthorNegativeEngagementAggregates = AggregateGroup(
     inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "original_author_aggregate_v2",
+    aggregatePrefitwitter = "original_author_aggregate_v2",
     preTransforms = Seq(RichRemoveUserIdZero, RichRemoveAuthorIdZero),
     keys = Set(TimelinesSharedFeatures.ORIGINAL_AUTHOR_ID),
     features = Set.empty,
@@ -495,7 +495,7 @@ trait TimelinesAggregationConfigDetails extends Serializable {
         name = OriginalAuthorAggregateStore,
         startDate = "2023-02-25 00:00",
         commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
       )),
     includeAnyLabel = false
   )
@@ -503,7 +503,7 @@ trait TimelinesAggregationConfigDetails extends Serializable {
   val userListAggregates: AggregateGroup =
     AggregateGroup(
       inputSource = timelinesDailyRecapMinimalSource,
-      aggregatePrefix = "user_list_aggregate",
+      aggregatePrefitwitter = "user_list_aggregate",
       keys = Set(USER_ID, ListFeatures.LIST_ID),
       features = Set.empty,
       labels = RecapUserFeatureAggregation.LabelsV2,
@@ -514,14 +514,14 @@ trait TimelinesAggregationConfigDetails extends Serializable {
           name = UserListAggregateStore,
           startDate = "2020-05-28 00:00",
           commonConfig = timelinesOfflineAggregateSink,
-          maxKvSourceFailures = defaultMaxKvSourceFailures
+          matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
         )),
       preTransforms = Seq(RichRemoveUserIdZero)
     )
 
   val userMediaUnderstandingAnnotationAggregates: AggregateGroup = AggregateGroup(
     inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_media_annotation_aggregate",
+    aggregatePrefitwitter = "user_media_annotation_aggregate",
     preTransforms = Seq(RichRemoveUserIdZero),
     keys =
       Set(USER_ID, SemanticCoreFeatures.mediaUnderstandingHighRecallNonSensitiveEntityIdsFeature),
@@ -539,7 +539,7 @@ trait TimelinesAggregationConfigDetails extends Serializable {
 
   val userAuthorGoodClickAggregates = AggregateGroup(
     inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_author_good_click_aggregate",
+    aggregatePrefitwitter = "user_author_good_click_aggregate",
     preTransforms = Seq(FilterInNetworkTransform, RichRemoveUserIdZero),
     keys = Set(USER_ID, AUTHOR_ID),
     features = RecapUserFeatureAggregation.UserAuthorFeaturesV2,
@@ -551,13 +551,13 @@ trait TimelinesAggregationConfigDetails extends Serializable {
         name = UserAuthorAggregateStore,
         startDate = "2016-07-15 00:00",
         commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
       ))
   )
 
   val userEngagerGoodClickAggregates = AggregateGroup(
     inputSource = timelinesDailyRecapMinimalSource,
-    aggregatePrefix = "user_engager_good_click_aggregate",
+    aggregatePrefitwitter = "user_engager_good_click_aggregate",
     keys = Set(USER_ID, EngagementDataRecordFeatures.PublicEngagementUserIds),
     features = Set.empty,
     labels = RecapUserFeatureAggregation.GoodClickLabels,
@@ -568,7 +568,7 @@ trait TimelinesAggregationConfigDetails extends Serializable {
         name = UserEngagerAggregateStore,
         startDate = "2016-09-02 00:00",
         commonConfig = timelinesOfflineAggregateSink,
-        maxKvSourceFailures = defaultMaxKvSourceFailures
+        matwitterKvSourceFailures = defaultMatwitterKvSourceFailures
       )),
     preTransforms = Seq(
       RichRemoveUserIdZero,

@@ -23,7 +23,7 @@ import com.twitter.util.Future;
  * Sends 60 rounds of requests with a 1 second timeout between each round.
  * The actual number of requests sent by each round can be configured.
  */
-public class EarlybirdWarmup extends
+public class EarlybirdWarmup etwittertends
     SearchRootWarmup<EarlybirdService.ServiceIface, EarlybirdRequest, EarlybirdResponse> {
 
   private static final int WARMUP_NUM_RESULTS = 20;

@@ -2,14 +2,14 @@ package com.twitter.timelines.prediction.features.simcluster
 
 import com.twitter.dal.personal_data.thriftjava.PersonalDataType._
 import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.ml.api.{Feature, FeatureContext}
+import com.twitter.ml.api.{Feature, FeatureContetwittert}
 import com.twitter.ml.api.Feature.{Continuous, SparseBinary, SparseContinuous}
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion._
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
 import com.twitter.timelines.suggests.common.record.thriftscala.SuggestionRecord
 import scala.collection.JavaConverters._
 
-class SimclusterTweetFeatures(statsReceiver: StatsReceiver) extends CombineCountsBase {
+class SimclusterTweetFeatures(statsReceiver: StatsReceiver) etwittertends CombineCountsBase {
   import SimclusterTweetFeatures._
 
   private[this] val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
@@ -93,16 +93,16 @@ class SimclusterTweetFeatures(statsReceiver: StatsReceiver) extends CombineCount
   val allFeatures: Seq[Feature[_]] = outputFeaturesPostMerge.toSeq ++ Seq(
     SIMCLUSTER_TWEET_TOPK_CLUSTER_IDS,
     SIMCLUSTER_TWEET_TOPK_CLUSTER_SCORES)
-  val featureContext = new FeatureContext(allFeatures: _*)
+  val featureContetwittert = new FeatureContetwittert(allFeatures: _*)
 }
 
 object SimclusterTweetFeatures {
   val SIMCLUSTER_TWEET_TOPK_CLUSTER_IDS = new SparseBinary(
-    s"${SimclusterFeatures.prefix}.tweet_topk_cluster_ids",
+    s"${SimclusterFeatures.prefitwitter}.tweet_topk_cluster_ids",
     Set(InferredInterests).asJava
   )
   val SIMCLUSTER_TWEET_TOPK_CLUSTER_SCORES = new SparseContinuous(
-    s"${SimclusterFeatures.prefix}.tweet_topk_cluster_scores",
+    s"${SimclusterFeatures.prefitwitter}.tweet_topk_cluster_scores",
     Set(EngagementScore, InferredInterests).asJava
   )
 
@@ -110,12 +110,12 @@ object SimclusterTweetFeatures {
     TypedAggregateGroup.sparseFeature(SIMCLUSTER_TWEET_TOPK_CLUSTER_IDS)
 
   val SIMCLUSTER_TWEET_TOPK_SORT_BY_TWEET_SCORE = new Continuous(
-    s"${SimclusterFeatures.prefix}.tweet_topk_sort_by_tweet_score",
+    s"${SimclusterFeatures.prefitwitter}.tweet_topk_sort_by_tweet_score",
     Set(EngagementScore, InferredInterests).asJava
   )
 
   val SIMCLUSTER_TWEET_TOPK_SORT_BY_COMBINED_SCORE = new Continuous(
-    s"${SimclusterFeatures.prefix}.tweet_topk_sort_by_combined_score",
+    s"${SimclusterFeatures.prefitwitter}.tweet_topk_sort_by_combined_score",
     Set(EngagementScore, InferredInterests).asJava
   )
 
@@ -139,8 +139,8 @@ object SimclusterTweetFeatures {
       case (clusterId, score) =>
         // The clusterId format is <ModelVersion.IntegerClusterId.ScoreType> as specified at
         // com.twitter.ml.featurestore.catalog.features.recommendations.SimClustersV2TweetTopClusters
-        // and we want to extract the IntegerClusterId.
-        // The split function takes a regex; therefore, we need to escape . and we also need to escape
+        // and we want to etwittertract the IntegerClusterId.
+        // The split function takes a regetwitter; therefore, we need to escape . and we also need to escape
         // \ since they are both special characters. Hence, the double \\.
         val clusterIdSplit = clusterId.split("\\.")
         val integerClusterId = clusterIdSplit(1) // The IntegerClusterId is at position 1.

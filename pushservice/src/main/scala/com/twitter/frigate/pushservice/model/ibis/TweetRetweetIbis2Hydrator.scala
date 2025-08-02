@@ -9,24 +9,24 @@ import com.twitter.frigate.pushservice.util.PushIbisUtil.mergeModelValues
 import com.twitter.util.Future
 
 trait TweetRetweetCandidateIbis2Hydrator
-    extends TweetCandidateIbis2Hydrator
-    with RankedSocialContextIbis2Hydrator {
+    etwittertends TweetCandidateIbis2Hydrator
+    with RankedSocialContetwittertIbis2Hydrator {
   self: PushCandidate with TweetRetweetCandidate with TweetAuthorDetails =>
 
   override lazy val tweetModelValues: Future[Map[String, String]] =
     for {
-      socialContextModelValues <- socialContextModelValues
+      socialContetwittertModelValues <- socialContetwittertModelValues
       superModelValues <- super.tweetModelValues
       tweetInlineModelValues <- tweetInlineActionModelValue
     } yield {
-      superModelValues ++ mediaModelValue ++ otherModelValues ++ socialContextModelValues ++ tweetInlineModelValues ++ inlineVideoMediaMap
+      superModelValues ++ mediaModelValue ++ otherModelValues ++ socialContetwittertModelValues ++ tweetInlineModelValues ++ inlineVideoMediaMap
     }
 
-  lazy val socialContextForRetweetMap: Map[String, String] =
-    if (self.target.params(PushFeatureSwitchParams.EnableSocialContextForRetweet)) {
-      Map("enable_social_context_retweet" -> "true")
+  lazy val socialContetwittertForRetweetMap: Map[String, String] =
+    if (self.target.params(PushFeatureSwitchParams.EnableSocialContetwittertForRetweet)) {
+      Map("enable_social_contetwittert_retweet" -> "true")
     } else Map.empty[String, String]
 
   override lazy val customFieldsMapFut: Future[Map[String, String]] =
-    mergeModelValues(super.customFieldsMapFut, socialContextForRetweetMap)
+    mergeModelValues(super.customFieldsMapFut, socialContetwittertForRetweetMap)
 }

@@ -1,0 +1,28 @@
+scala_library(
+    sources = ["**/*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/javatwitter/inject:javatwitter.inject",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/marshaller/response/graphql/contetwittertual_ref",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/marshaller/response/urt/button",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/marshaller/response/urt/media",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/marshaller/response/urt/promoted",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/marshaller/response/urt/reaction",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/marshaller/response/urt/richtetwittert",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/marshalling/response/urt/item",
+        "src/thrift/com/twitter/timelines/render:thrift-scala",
+    ],
+    etwitterports = [
+        "3rdparty/jvm/javatwitter/inject:javatwitter.inject",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/marshaller/response/urt/button",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/marshaller/response/urt/media",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/marshaller/response/urt/promoted",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/marshaller/response/urt/reaction",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/marshaller/response/urt/richtetwittert",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/marshalling/response/urt/item",
+        "src/thrift/com/twitter/timelines/render:thrift-scala",
+    ],
+)

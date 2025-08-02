@@ -1,6 +1,6 @@
 package com.twitter.search.core.earlybird.facets;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -12,14 +12,14 @@ import org.slf4j.LoggerFactory;
 
 import com.twitter.search.common.schema.base.Schema;
 import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
+import com.twitter.search.core.earlybird.indetwitter.DocIDToTweetIDMapper;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.inverted.IntBlockPool;
 
 /**
  * AbstractFacetCountingArray implements a lookup from a doc ID to an unordered list of facets.
  * A facet is a pair of (term ID, field ID), which could represent,
- * for example ("http://twitter.com", "links").
+ * for etwitterample ("http://twitter.com", "links").
  *
  * Internally, we have two data structures: A map from doc ID to an int and a pool of ints. We refer
  * to the values contained in these structures as packed values. A packed value can either be a
@@ -44,7 +44,7 @@ public abstract class AbstractFacetCountingArray implements Flushable {
 
   public static final AbstractFacetCountingArray EMPTY_ARRAY = new AbstractFacetCountingArray() {
     @Override
-    public final FacetCountIterator getIterator(EarlybirdIndexSegmentAtomicReader reader,
+    public final FacetCountIterator getIterator(EarlybirdIndetwitterSegmentAtomicReader reader,
                                                 FacetCountState<?> countState,
                                                 FacetCountIteratorFactory iteratorFactory) {
       return EMPTY_ITERATOR;
@@ -68,12 +68,12 @@ public abstract class AbstractFacetCountingArray implements Flushable {
     }
 
     @Override
-    public <T extends Flushable> Handler<T> getFlushHandler() {
+    public <T etwittertends Flushable> Handler<T> getFlushHandler() {
       return null;
     }
   };
 
-  protected class ArrayFacetCountIterator extends FacetCountIterator {
+  protected class ArrayFacetCountIterator etwittertends FacetCountIterator {
     @Override
     public void collect(int docID) {
       collectForDocId(docID, this);
@@ -89,7 +89,7 @@ public abstract class AbstractFacetCountingArray implements Flushable {
   private static final int HIGHEST_ORDER_BIT = Integer.MIN_VALUE;  // 1L << 31
   private static final int HIGHEST_ORDER_BIT_INVERSE_MASK = HIGHEST_ORDER_BIT - 1;
 
-  protected static final int UNASSIGNED = Integer.MAX_VALUE;
+  protected static final int UNASSIGNED = Integer.MAtwitter_VALUE;
 
   protected static final int decodeTermID(int facetID) {
     if (facetID != UNASSIGNED) {
@@ -97,7 +97,7 @@ public abstract class AbstractFacetCountingArray implements Flushable {
       return termID;
     }
 
-    return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+    return EarlybirdIndetwitterSegmentAtomicReader.TERM_NOT_FOUND;
   }
 
   protected static final int decodeFieldID(int facetID) {
@@ -134,7 +134,7 @@ public abstract class AbstractFacetCountingArray implements Flushable {
    * Returns an iterator to iterate all docs/facets stored in this FacetCountingArray.
    */
   public FacetCountIterator getIterator(
-      EarlybirdIndexSegmentAtomicReader reader,
+      EarlybirdIndetwitterSegmentAtomicReader reader,
       FacetCountState<?> countState,
       FacetCountIteratorFactory iteratorFactory) {
     Preconditions.checkNotNull(countState);
@@ -152,7 +152,7 @@ public abstract class AbstractFacetCountingArray implements Flushable {
         //     for other uses.
         try {
           iterators.add(iteratorFactory.getFacetCountIterator(reader, fieldInfo));
-        } catch (IOException e) {
+        } catch (IOEtwitterception e) {
           String facetName = fieldInfo.getFieldType().getFacetName();
           LOG.error("Failed to construct iterator for " + facetName + " facet", e);
         }
@@ -197,7 +197,7 @@ public abstract class AbstractFacetCountingArray implements Flushable {
         pointer = decodePointer(packedValue);
       } else {
         // If the packedValue is not a pointer, it is an encoded facet, and we can simply decrement
-        // the pointer to collect the next value.
+        // the pointer to collect the netwittert value.
         collector.collect(docID, decodeTermID(packedValue), decodeFieldID(packedValue));
         pointer--;
       }
@@ -223,7 +223,7 @@ public abstract class AbstractFacetCountingArray implements Flushable {
   public abstract AbstractFacetCountingArray rewriteAndMapIDs(
       Map<Integer, int[]> termIDMapper,
       DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException;
+      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOEtwitterception;
 
   IntBlockPool getFacetsPool() {
     return facetsPool;

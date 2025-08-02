@@ -1,9 +1,9 @@
 package com.twitter.search.core.earlybird.facets;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
 
 /**
  * A factory for {@link FacetCountIterator}s.
@@ -18,6 +18,6 @@ public abstract class FacetCountIteratorFactory {
    * @return An iterator for this field
    */
   public abstract FacetCountIterator getFacetCountIterator(
-      EarlybirdIndexSegmentAtomicReader reader,
-      Schema.FieldInfo fieldInfo) throws IOException;
+      EarlybirdIndetwitterSegmentAtomicReader reader,
+      Schema.FieldInfo fieldInfo) throws IOEtwitterception;
 }

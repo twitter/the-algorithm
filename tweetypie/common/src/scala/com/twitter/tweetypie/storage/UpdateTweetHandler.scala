@@ -2,7 +2,7 @@ package com.twitter.tweetypie.storage
 
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.kv.DeniedManhattanException
+import com.twitter.storage.client.manhattan.kv.DeniedManhattanEtwitterception
 import com.twitter.storage.client.manhattan.kv.ManhattanValue
 import com.twitter.tweetypie.storage.TweetUtils._
 import com.twitter.tweetypie.thriftscala.Tweet
@@ -42,9 +42,9 @@ object UpdateTweetHandler {
     Stitch.collect(stitchesPerTweet).map { seqOfTries =>
       val fieldkeyAndMhResults = fieldIds.zip(seqOfTries).toMap
       // If even a single field was rate limited, we will send an overall OverCapacity TweetResponse
-      val wasRateLimited = fieldkeyAndMhResults.exists { keyAndResult =>
+      val wasRateLimited = fieldkeyAndMhResults.etwitterists { keyAndResult =>
         keyAndResult._2 match {
-          case Throw(e: DeniedManhattanException) => true
+          case Throw(e: DeniedManhattanEtwitterception) => true
           case _ => false
         }
       }

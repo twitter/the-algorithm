@@ -7,11 +7,11 @@ import com.twitter.scalding_internal.dalv2.DALWrite.{D, _}
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common.{Country, Language, SimClustersEmbedding, TopicId}
 import com.twitter.simclusters_v2.hdfs_sources.InterestedInSources
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
+import com.twitter.simclusters_v2.scalding.common.matritwitter.{SparseMatritwitter, SparseRowMatritwitter}
 import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.{UserId, _}
 import com.twitter.simclusters_v2.scalding.embedding.common.{
   EmbeddingUtil,
-  ExternalDataSources,
+  EtwitterternalDataSources,
   SimClustersEmbeddingBaseJob
 }
 import com.twitter.simclusters_v2.thriftscala.{
@@ -23,7 +23,7 @@ import com.twitter.simclusters_v2.thriftscala.{
   SimClustersEmbedding => ThriftSimClustersEmbedding,
   TopicId => ThriftTopicId
 }
-import com.twitter.wtf.scalding.jobs.common.DateRangeExecutionApp
+import com.twitter.wtf.scalding.jobs.common.DateRangeEtwitterecutionApp
 import java.util.TimeZone
 
 /**
@@ -36,15 +36,15 @@ import java.util.TimeZone
  * It's up to the clients to decide which embeddings to use
  */
 trait InferredLanguageTfgBasedTopicEmbeddingsBaseApp
-    extends SimClustersEmbeddingBaseJob[(TopicId, Option[Language], Option[Country])]
-    with DateRangeExecutionApp {
+    etwittertends SimClustersEmbeddingBaseJob[(TopicId, Option[Language], Option[Country])]
+    with DateRangeEtwitterecutionApp {
 
   val isAdhoc: Boolean
   val embeddingType: EmbeddingType
   val embeddingSource: KeyValDALDataset[KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]]
-  val pathSuffix: String
+  val pathSuffitwitter: String
   val modelVersion: ModelVersion
-  def scoreExtractor: UserToInterestedInClusterScores => Double
+  def scoreEtwittertractor: UserToInterestedInClusterScores => Double
 
   override def numClustersPerNoun: Int = 50
   override def numNounsPerClusters: Int = 1 // not used for now. Set to an arbitrary number
@@ -91,38 +91,38 @@ trait InferredLanguageTfgBasedTopicEmbeddingsBaseApp
       case ((_, lang, country), _, _) => lang.isDefined && country.isDefined
     }
 
-    SparseMatrix(countryBased).rowL1Norms.collect {
+    SparseMatritwitter(countryBased).rowL1Norms.collect {
       case (key, l1Norm) if l1Norm >= minPerCountryFollowers =>
         countryBasedTopics.inc()
         key
     } ++
-      SparseMatrix(nonCountryBased).rowL1Norms.collect {
+      SparseMatritwitter(nonCountryBased).rowL1Norms.collect {
         case (key, l1Norm) if l1Norm >= minFollowers =>
           nonCountryBasedTopics.inc()
           key
       }
   }
 
-  override def prepareNounToUserMatrix(
+  override def prepareNounToUserMatritwitter(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): SparseMatrix[(TopicId, Option[Language], Option[Country]), UserId, Double] = {
+  ): SparseMatritwitter[(TopicId, Option[Language], Option[Country]), UserId, Double] = {
     val topicUsers = getTopicUsers(
-      ExternalDataSources.topicFollowGraphSource,
-      ExternalDataSources.userSource,
-      ExternalDataSources.inferredUserConsumedLanguageSource)
+      EtwitterternalDataSources.topicFollowGraphSource,
+      EtwitterternalDataSources.userSource,
+      EtwitterternalDataSources.inferredUserConsumedLanguageSource)
 
-    SparseMatrix[(TopicId, Option[Language], Option[Country]), UserId, Double](topicUsers)
+    SparseMatritwitter[(TopicId, Option[Language], Option[Country]), UserId, Double](topicUsers)
       .filterRows(getValidTopics(topicUsers))
   }
 
-  override def prepareUserToClusterMatrix(
+  override def prepareUserToClusterMatritwitter(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): SparseRowMatrix[UserId, ClusterId, Double] =
-    SparseRowMatrix(
+  ): SparseRowMatritwitter[UserId, ClusterId, Double] =
+    SparseRowMatritwitter(
       InterestedInSources
         .simClustersInterestedInSource(modelVersion, dateRange, timeZone)
         .map {
@@ -130,34 +130,34 @@ trait InferredLanguageTfgBasedTopicEmbeddingsBaseApp
             userId -> clustersUserIsInterestedIn.clusterIdToScores
               .map {
                 case (clusterId, scores) =>
-                  clusterId -> scoreExtractor(scores)
+                  clusterId -> scoreEtwittertractor(scores)
               }
               .filter(_._2 > 0.0)
               .toMap
         },
-      isSkinnyMatrix = true
+      isSkinnyMatritwitter = true
     )
 
-  override def writeNounToClustersIndex(
+  override def writeNounToClustersIndetwitter(
     output: TypedPipe[((TopicId, Option[Language], Option[Country]), Seq[(ClusterId, Double)])]
   )(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val topicEmbeddingCount = Stat(s"topic_embedding_count")
 
-    val tsvExec =
+    val tsvEtwitterec =
       output
         .map {
           case ((entityId, language, country), clustersWithScores) =>
             (entityId, language, country, clustersWithScores.take(5).mkString(","))
         }
         .shard(5)
-        .writeExecution(TypedTsv[(TopicId, Option[Language], Option[Country], String)](
-          s"/user/recos-platform/adhoc/topic_embedding/$pathSuffix/$ModelVersionPathMap($modelVersion)"))
+        .writeEtwitterecution(TypedTsv[(TopicId, Option[Language], Option[Country], String)](
+          s"/user/recos-platform/adhoc/topic_embedding/$pathSuffitwitter/$ModelVersionPathMap($modelVersion)"))
 
-    val keyValExec = output
+    val keyValEtwitterec = output
       .map {
         case ((entityId, lang, country), clustersWithScores) =>
           topicEmbeddingCount.inc()
@@ -170,25 +170,25 @@ trait InferredLanguageTfgBasedTopicEmbeddingsBaseApp
             SimClustersEmbedding(clustersWithScores).toThrift
           )
       }
-      .writeDALVersionedKeyValExecution(
+      .writeDALVersionedKeyValEtwitterecution(
         embeddingSource,
-        D.Suffix(
+        D.Suffitwitter(
           EmbeddingUtil
-            .getHdfsPath(isAdhoc = isAdhoc, isManhattanKeyVal = true, modelVersion, pathSuffix))
+            .getHdfsPath(isAdhoc = isAdhoc, isManhattanKeyVal = true, modelVersion, pathSuffitwitter))
       )
     if (isAdhoc)
-      Execution.zip(tsvExec, keyValExec).unit
+      Etwitterecution.zip(tsvEtwitterec, keyValEtwitterec).unit
     else
-      keyValExec
+      keyValEtwitterec
   }
 
-  override def writeClusterToNounsIndex(
+  override def writeClusterToNounsIndetwitter(
     output: TypedPipe[(ClusterId, Seq[((TopicId, Option[Language], Option[Country]), Double)])]
   )(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
-    Execution.unit // do not need this
+  ): Etwitterecution[Unit] = {
+    Etwitterecution.unit // do not need this
   }
 }

@@ -10,30 +10,30 @@ lazy_static! {
     pub static ref REGISTRY: Registry = Registry::new();
     pub static ref NUM_REQUESTS_RECEIVED: IntCounter =
         IntCounter::new(":navi:num_requests", "Number of Requests Received")
-            .expect("metric can be created");
+            .etwitterpect("metric can be created");
     pub static ref NUM_REQUESTS_FAILED: IntCounter = IntCounter::new(
         ":navi:num_requests_failed",
         "Number of Request Inference Failed"
     )
-    .expect("metric can be created");
+    .etwitterpect("metric can be created");
     pub static ref NUM_REQUESTS_DROPPED: IntCounter = IntCounter::new(
         ":navi:num_requests_dropped",
         "Number of Oneshot Receivers Dropped"
     )
-    .expect("metric can be created");
+    .etwitterpect("metric can be created");
     pub static ref NUM_BATCHES_DROPPED: IntCounter = IntCounter::new(
         ":navi:num_batches_dropped",
         "Number of Batches Proactively Dropped"
     )
-    .expect("metric can be created");
+    .etwitterpect("metric can be created");
     pub static ref NUM_BATCH_PREDICTION: IntCounter =
         IntCounter::new(":navi:num_batch_prediction", "Number of batch prediction")
-            .expect("metric can be created");
+            .etwitterpect("metric can be created");
     pub static ref BATCH_SIZE: IntGauge =
-        IntGauge::new(":navi:batch_size", "Size of current batch").expect("metric can be created");
+        IntGauge::new(":navi:batch_size", "Size of current batch").etwitterpect("metric can be created");
     pub static ref NAVI_VERSION: IntGauge =
         IntGauge::new(":navi:navi_version", "navi's current version")
-            .expect("metric can be created");
+            .etwitterpect("metric can be created");
     pub static ref RESPONSE_TIME_COLLECTOR: HistogramVec = HistogramVec::new(
         HistogramOpts::new(":navi:response_time", "Response Time in ms").buckets(Vec::from(&[
             0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0,
@@ -42,7 +42,7 @@ lazy_static! {
             as &'static [f64])),
         &["model_name"]
     )
-    .expect("metric can be created");
+    .etwitterpect("metric can be created");
     pub static ref NUM_PREDICTIONS: IntCounterVec = IntCounterVec::new(
         Opts::new(
             ":navi:num_predictions",
@@ -50,7 +50,7 @@ lazy_static! {
         ),
         &["model_name"]
     )
-    .expect("metric can be created");
+    .etwitterpect("metric can be created");
     pub static ref PREDICTION_SCORE_SUM: CounterVec = CounterVec::new(
         Opts::new(
             ":navi:prediction_score_sum",
@@ -58,7 +58,7 @@ lazy_static! {
         ),
         &["model_name"]
     )
-    .expect("metric can be created");
+    .etwitterpect("metric can be created");
     pub static ref NEW_MODEL_SNAPSHOT: IntCounterVec = IntCounterVec::new(
         Opts::new(
             ":navi:new_model_snapshot",
@@ -66,7 +66,7 @@ lazy_static! {
         ),
         &["model_name"]
     )
-    .expect("metric can be created");
+    .etwitterpect("metric can be created");
     pub static ref MODEL_SNAPSHOT_VERSION: IntGaugeVec = IntGaugeVec::new(
         Opts::new(
             ":navi:model_snapshot_version",
@@ -74,7 +74,7 @@ lazy_static! {
         ),
         &["model_name"]
     )
-    .expect("metric can be created");
+    .etwitterpect("metric can be created");
     pub static ref NUM_REQUESTS_RECEIVED_BY_MODEL: IntCounterVec = IntCounterVec::new(
         Opts::new(
             ":navi:num_requests_by_model",
@@ -82,7 +82,7 @@ lazy_static! {
         ),
         &["model_name"]
     )
-    .expect("metric can be created");
+    .etwitterpect("metric can be created");
     pub static ref NUM_REQUESTS_FAILED_BY_MODEL: IntCounterVec = IntCounterVec::new(
         Opts::new(
             ":navi:num_requests_failed_by_model",
@@ -90,7 +90,7 @@ lazy_static! {
         ),
         &["model_name"]
     )
-    .expect("metric can be created");
+    .etwitterpect("metric can be created");
     pub static ref NUM_REQUESTS_DROPPED_BY_MODEL: IntCounterVec = IntCounterVec::new(
         Opts::new(
             ":navi:num_requests_dropped_by_model",
@@ -98,7 +98,7 @@ lazy_static! {
         ),
         &["model_name"]
     )
-    .expect("metric can be created");
+    .etwitterpect("metric can be created");
     pub static ref NUM_BATCHES_DROPPED_BY_MODEL: IntCounterVec = IntCounterVec::new(
         Opts::new(
             ":navi:num_batches_dropped_by_model",
@@ -106,7 +106,7 @@ lazy_static! {
         ),
         &["model_name"]
     )
-    .expect("metric can be created");
+    .etwitterpect("metric can be created");
     pub static ref INFERENCE_FAILED_REQUESTS_BY_MODEL: IntCounterVec = IntCounterVec::new(
         Opts::new(
             ":navi:inference_failed_requests_by_model",
@@ -114,7 +114,7 @@ lazy_static! {
         ),
         &["model_name"]
     )
-    .expect("metric can be created");
+    .etwitterpect("metric can be created");
     pub static ref NUM_PREDICTION_BY_MODEL: IntCounterVec = IntCounterVec::new(
         Opts::new(
             ":navi:num_prediction_by_model",
@@ -122,7 +122,7 @@ lazy_static! {
         ),
         &["model_name"]
     )
-    .expect("metric can be created");
+    .etwitterpect("metric can be created");
     pub static ref NUM_BATCH_PREDICTION_BY_MODEL: IntCounterVec = IntCounterVec::new(
         Opts::new(
             ":navi:num_batch_prediction_by_model",
@@ -130,7 +130,7 @@ lazy_static! {
         ),
         &["model_name"]
     )
-    .expect("metric can be created");
+    .etwitterpect("metric can be created");
     pub static ref BATCH_SIZE_BY_MODEL: IntGaugeVec = IntGaugeVec::new(
         Opts::new(
             ":navi:batch_size_by_model",
@@ -138,18 +138,18 @@ lazy_static! {
         ),
         &["model_name"]
     )
-    .expect("metric can be created");
+    .etwitterpect("metric can be created");
     pub static ref CUSTOMOP_VERSION: IntGauge =
         IntGauge::new(":navi:customop_version", "The hashed Custom OP Version")
-            .expect("metric can be created");
+            .etwitterpect("metric can be created");
     pub static ref MPSC_CHANNEL_SIZE: IntGauge =
         IntGauge::new(":navi:mpsc_channel_size", "The mpsc channel's request size")
-            .expect("metric can be created");
+            .etwitterpect("metric can be created");
     pub static ref BLOCKING_REQUEST_NUM: IntGauge = IntGauge::new(
         ":navi:blocking_request_num",
-        "The (batch) request waiting or being executed"
+        "The (batch) request waiting or being etwitterecuted"
     )
-    .expect("metric can be created");
+    .etwitterpect("metric can be created");
     pub static ref MODEL_INFERENCE_TIME_COLLECTOR: HistogramVec = HistogramVec::new(
         HistogramOpts::new(":navi:model_inference_time", "Model inference time in ms").buckets(
             Vec::from(&[
@@ -160,7 +160,7 @@ lazy_static! {
         ),
         &["model_name"]
     )
-    .expect("metric can be created");
+    .etwitterpect("metric can be created");
     pub static ref CONVERTER_TIME_COLLECTOR: HistogramVec = HistogramVec::new(
         HistogramOpts::new(":navi:converter_time", "converter time in microseconds").buckets(
             Vec::from(&[
@@ -170,103 +170,103 @@ lazy_static! {
         ),
         &["model_name"]
     )
-    .expect("metric can be created");
-    pub static ref CERT_EXPIRY_EPOCH: IntGauge =
-        IntGauge::new(":navi:cert_expiry_epoch", "Timestamp when the current cert expires")
-            .expect("metric can be created");
+    .etwitterpect("metric can be created");
+    pub static ref CERT_EtwitterPIRY_EPOCH: IntGauge =
+        IntGauge::new(":navi:cert_etwitterpiry_epoch", "Timestamp when the current cert etwitterpires")
+            .etwitterpect("metric can be created");
 }
 
 pub fn register_custom_metrics() {
     REGISTRY
-        .register(Box::new(NUM_REQUESTS_RECEIVED.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(NUM_REQUESTS_RECEIVED.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(NUM_REQUESTS_FAILED.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(NUM_REQUESTS_FAILED.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(NUM_REQUESTS_DROPPED.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(NUM_REQUESTS_DROPPED.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(RESPONSE_TIME_COLLECTOR.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(RESPONSE_TIME_COLLECTOR.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(NAVI_VERSION.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(NAVI_VERSION.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(BATCH_SIZE.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(BATCH_SIZE.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(NUM_BATCH_PREDICTION.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(NUM_BATCH_PREDICTION.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(NUM_BATCHES_DROPPED.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(NUM_BATCHES_DROPPED.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(NUM_PREDICTIONS.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(NUM_PREDICTIONS.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(PREDICTION_SCORE_SUM.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(PREDICTION_SCORE_SUM.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(NEW_MODEL_SNAPSHOT.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(NEW_MODEL_SNAPSHOT.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(MODEL_SNAPSHOT_VERSION.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(MODEL_SNAPSHOT_VERSION.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(NUM_REQUESTS_RECEIVED_BY_MODEL.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(NUM_REQUESTS_RECEIVED_BY_MODEL.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(NUM_REQUESTS_FAILED_BY_MODEL.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(NUM_REQUESTS_FAILED_BY_MODEL.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(NUM_REQUESTS_DROPPED_BY_MODEL.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(NUM_REQUESTS_DROPPED_BY_MODEL.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(NUM_BATCHES_DROPPED_BY_MODEL.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(NUM_BATCHES_DROPPED_BY_MODEL.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(INFERENCE_FAILED_REQUESTS_BY_MODEL.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(INFERENCE_FAILED_REQUESTS_BY_MODEL.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(NUM_PREDICTION_BY_MODEL.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(NUM_PREDICTION_BY_MODEL.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(NUM_BATCH_PREDICTION_BY_MODEL.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(NUM_BATCH_PREDICTION_BY_MODEL.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(BATCH_SIZE_BY_MODEL.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(BATCH_SIZE_BY_MODEL.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(CUSTOMOP_VERSION.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(CUSTOMOP_VERSION.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(MPSC_CHANNEL_SIZE.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(MPSC_CHANNEL_SIZE.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(BLOCKING_REQUEST_NUM.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(BLOCKING_REQUEST_NUM.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(MODEL_INFERENCE_TIME_COLLECTOR.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(MODEL_INFERENCE_TIME_COLLECTOR.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-        .register(Box::new(CONVERTER_TIME_COLLECTOR.clone()))
-        .expect("collector can be registered");
+        .register(Botwitter::new(CONVERTER_TIME_COLLECTOR.clone()))
+        .etwitterpect("collector can be registered");
     REGISTRY
-    .register(Box::new(CERT_EXPIRY_EPOCH.clone()))
-    .expect("collector can be registered");
+    .register(Botwitter::new(CERT_EtwitterPIRY_EPOCH.clone()))
+    .etwitterpect("collector can be registered");
 
 }
 
 pub fn register_dynamic_metrics(c: &HistogramVec) {
     REGISTRY
-        .register(Box::new(c.clone()))
-        .expect("dynamic metric collector cannot be registered");
+        .register(Botwitter::new(c.clone()))
+        .etwitterpect("dynamic metric collector cannot be registered");
 }
 
 pub async fn metrics_handler() -> Result<impl Reply, Rejection> {
     use prometheus::Encoder;
-    let encoder = prometheus::TextEncoder::new();
+    let encoder = prometheus::TetwittertEncoder::new();
 
     let mut buffer = Vec::new();
     if let Err(e) = encoder.encode(&REGISTRY.gather(), &mut buffer) {

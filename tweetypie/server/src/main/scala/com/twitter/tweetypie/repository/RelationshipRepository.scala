@@ -25,8 +25,8 @@ case class RelationshipKey(
   sourceId: UserId,
   destinationId: UserId,
   relationship: RelationshipType) {
-  def asExistsRequest: ExistsRequest =
-    ExistsRequest(
+  def asEtwitteristsRequest: EtwitteristsRequest =
+    EtwitteristsRequest(
       source = sourceId,
       target = destinationId,
       relationships = Seq(Relationship(relationship))
@@ -37,15 +37,15 @@ object RelationshipRepository {
   type Type = RelationshipKey => Stitch[Boolean]
 
   def apply(
-    exists: FutureArrow[(Seq[ExistsRequest], Option[RequestContext]), Seq[ExistsResult]],
-    maxRequestSize: Int
+    etwitterists: FutureArrow[(Seq[EtwitteristsRequest], Option[RequestContetwittert]), Seq[EtwitteristsResult]],
+    matwitterRequestSize: Int
   ): Type = {
     val relationshipGroup: SeqGroup[RelationshipKey, Boolean] =
       new SeqGroup[RelationshipKey, Boolean] {
         override def run(keys: Seq[RelationshipKey]): Future[Seq[Try[Boolean]]] =
           LegacySeqGroup.liftToSeqTry(
-            exists((keys.map(_.asExistsRequest), None)).map(_.map(_.exists)))
-        override val maxSize: Int = maxRequestSize
+            etwitterists((keys.map(_.asEtwitteristsRequest), None)).map(_.map(_.etwitterists)))
+        override val matwitterSize: Int = matwitterRequestSize
       }
 
     relationshipKey => Stitch.call(relationshipKey, relationshipGroup)

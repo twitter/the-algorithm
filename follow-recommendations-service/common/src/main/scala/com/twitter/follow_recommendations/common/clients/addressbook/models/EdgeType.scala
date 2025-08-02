@@ -7,10 +7,10 @@ sealed trait EdgeType {
 }
 
 object EdgeType {
-  case object Forward extends EdgeType {
+  case object Forward etwittertends EdgeType {
     override val toThrift: t.EdgeType = t.EdgeType.Forward
   }
-  case object Reverse extends EdgeType {
+  case object Reverse etwittertends EdgeType {
     override val toThrift: t.EdgeType = t.EdgeType.Reverse
   }
 }

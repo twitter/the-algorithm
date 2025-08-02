@@ -33,8 +33,8 @@ public class TierInfoWrapper implements ServingRange {
     return tierInfo.getNumPartitions();
   }
 
-  public int getMaxTimeslices() {
-    return tierInfo.getMaxTimeslices();
+  public int getMatwitterTimeslices() {
+    return tierInfo.getMatwitterTimeslices();
   }
 
   public TierConfig.ConfigSource getSource() {
@@ -59,10 +59,10 @@ public class TierInfoWrapper implements ServingRange {
       : tierInfo.getServingRangeSinceId();
   }
 
-  public long getServingRangeMaxId() {
+  public long getServingRangeMatwitterId() {
     return useOverrideTierConfig
-      ? tierInfo.getServingRangeOverrideMaxId()
-      : tierInfo.getServingRangeMaxId();
+      ? tierInfo.getServingRangeOverrideMatwitterId()
+      : tierInfo.getServingRangeMatwitterId();
   }
 
   public long getServingRangeSinceTimeSecondsFromEpoch() {
@@ -78,12 +78,12 @@ public class TierInfoWrapper implements ServingRange {
   }
 
   public static boolean servingRangesOverlap(TierInfoWrapper tier1, TierInfoWrapper tier2) {
-    return (tier1.getServingRangeMaxId() > tier2.getServingRangeSinceId())
-      && (tier2.getServingRangeMaxId() > tier1.getServingRangeSinceId());
+    return (tier1.getServingRangeMatwitterId() > tier2.getServingRangeSinceId())
+      && (tier2.getServingRangeMatwitterId() > tier1.getServingRangeSinceId());
   }
 
   public static boolean servingRangesHaveGap(TierInfoWrapper tier1, TierInfoWrapper tier2) {
-    return (tier1.getServingRangeMaxId() < tier2.getServingRangeSinceId())
-      || (tier2.getServingRangeMaxId() < tier1.getServingRangeSinceId());
+    return (tier1.getServingRangeMatwitterId() < tier2.getServingRangeSinceId())
+      || (tier2.getServingRangeMatwitterId() < tier1.getServingRangeSinceId());
   }
 }

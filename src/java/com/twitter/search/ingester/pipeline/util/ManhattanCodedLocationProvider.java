@@ -8,9 +8,9 @@ import java.util.Optional;
 
 import com.google.common.base.Preconditions;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoLocationSource;
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoPoint;
-import com.twitter.search.common.indexing.thriftjava.ThriftGeocodeRecord;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftGeoLocationSource;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftGeoPoint;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftGeocodeRecord;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.relevance.entities.GeoObject;
 import com.twitter.search.common.util.geocoding.ManhattanGeocodeRecordStore;
@@ -30,13 +30,13 @@ public final class ManhattanCodedLocationProvider {
   private static final String LOCATIONS_POPULATED_STAT_NAME = "_locations_populated_count";
 
   public static ManhattanCodedLocationProvider createWithEndpoint(
-      JavaManhattanKVEndpoint endpoint, String metricsPrefix, String datasetName) {
+      JavaManhattanKVEndpoint endpoint, String metricsPrefitwitter, String datasetName) {
     return new ManhattanCodedLocationProvider(
-        ManhattanGeocodeRecordStore.create(endpoint, datasetName), metricsPrefix);
+        ManhattanGeocodeRecordStore.create(endpoint, datasetName), metricsPrefitwitter);
   }
 
-  private ManhattanCodedLocationProvider(ManhattanGeocodeRecordStore store, String metricPrefix) {
-    this.locationsCounter = SearchCounter.export(metricPrefix + LOCATIONS_POPULATED_STAT_NAME);
+  private ManhattanCodedLocationProvider(ManhattanGeocodeRecordStore store, String metricPrefitwitter) {
+    this.locationsCounter = SearchCounter.etwitterport(metricPrefitwitter + LOCATIONS_POPULATED_STAT_NAME);
     this.store = store;
   }
 
@@ -65,10 +65,10 @@ public final class ManhattanCodedLocationProvider {
       Iterator<IngesterTwitterMessage> messageIterator = messages.iterator();
       Iterator<Optional<ManhattanValue<ThriftGeocodeRecord>>> optGeoLocationIterator =
           optGeoLocations.iterator();
-      while (messageIterator.hasNext() && optGeoLocationIterator.hasNext()) {
-        IngesterTwitterMessage message = messageIterator.next();
+      while (messageIterator.hasNetwittert() && optGeoLocationIterator.hasNetwittert()) {
+        IngesterTwitterMessage message = messageIterator.netwittert();
         Optional<ManhattanValue<ThriftGeocodeRecord>> optGeoLocation =
-            optGeoLocationIterator.next();
+            optGeoLocationIterator.netwittert();
         if (setGeoLocationForMessage(message, optGeoLocation)) {
           locationsCounter.increment();
         }

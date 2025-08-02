@@ -4,16 +4,16 @@ import java.util.Objects;
 import java.util.Optional;
 
 class HnswMeta<T> {
-  private final int maxLevel;
+  private final int matwitterLevel;
   private final Optional<T> entryPoint;
 
-  HnswMeta(int maxLevel, Optional<T> entryPoint) {
-    this.maxLevel = maxLevel;
+  HnswMeta(int matwitterLevel, Optional<T> entryPoint) {
+    this.matwitterLevel = matwitterLevel;
     this.entryPoint = entryPoint;
   }
 
-  public int getMaxLevel() {
-    return maxLevel;
+  public int getMatwitterLevel() {
+    return matwitterLevel;
   }
 
   public Optional<T> getEntryPoint() {
@@ -29,17 +29,17 @@ class HnswMeta<T> {
       return false;
     }
     HnswMeta<?> hnswMeta = (HnswMeta<?>) o;
-    return maxLevel == hnswMeta.maxLevel
+    return matwitterLevel == hnswMeta.matwitterLevel
         && Objects.equals(entryPoint, hnswMeta.entryPoint);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(maxLevel, entryPoint);
+    return Objects.hash(matwitterLevel, entryPoint);
   }
 
   @Override
   public String toString() {
-    return "HnswMeta{maxLevel=" + maxLevel + ", entryPoint=" + entryPoint + '}';
+    return "HnswMeta{matwitterLevel=" + matwitterLevel + ", entryPoint=" + entryPoint + '}';
   }
 }

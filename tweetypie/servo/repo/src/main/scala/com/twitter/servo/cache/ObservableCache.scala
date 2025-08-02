@@ -2,7 +2,7 @@ package com.twitter.servo.cache
 
 import com.twitter.finagle.stats.{Stat, StatsReceiver}
 import com.twitter.logging.{Level, Logger}
-import com.twitter.servo.util.{ExceptionCounter, WindowedAverage}
+import com.twitter.servo.util.{EtwitterceptionCounter, WindowedAverage}
 import com.twitter.util._
 
 /**
@@ -46,9 +46,9 @@ trait CacheObserver {
   def scope(s: String*): CacheObserver
 
   /**
-   * increment a counter tracking the number of expirations.
+   * increment a counter tracking the number of etwitterpirations.
    */
-  def expired(delta: Int = 1): Unit
+  def etwitterpired(delta: Int = 1): Unit
 
   /**
    * Increment a counter tracking the number of failures.
@@ -66,14 +66,14 @@ trait CacheObserver {
   def noCache(delta: Int = 1): Unit
 }
 
-object NullCacheObserver extends CacheObserver {
+object NullCacheObserver etwittertends CacheObserver {
   override def hit(key: String) = ()
   override def miss(key: String) = ()
   override def read[K, T](name: String, keys: Seq[K])(f: => Future[KeyValueResult[K, T]]) = f
   override def write[K, T](name: String, key: K)(f: => Future[T]) = f
   override def incr[K](name: String, key: Seq[K])(f: => Future[Option[Long]]) = f
   override def scope(s: String*) = this
-  override def expired(delta: Int = 1) = ()
+  override def etwitterpired(delta: Int = 1) = ()
   override def failure(delta: Int = 1): Unit = {}
   override def tombstone(delta: Int = 1): Unit = {}
   override def noCache(delta: Int = 1): Unit = {}
@@ -87,7 +87,7 @@ class StatsReceiverCacheObserver(
   windowSize: Long,
   log: Logger,
   disableLogging: Boolean = false)
-    extends CacheObserver {
+    etwittertends CacheObserver {
 
   def this(
     statsReceiver: StatsReceiver,
@@ -113,7 +113,7 @@ class StatsReceiverCacheObserver(
       disableLogging
     )
 
-  protected[this] val expirationCounter = stats.counter("expirations")
+  protected[this] val etwitterpirationCounter = stats.counter("etwitterpirations")
 
   // needed to make sure we hand out the same observer for each scope,
   // so that the hit rates are properly calculated
@@ -121,7 +121,7 @@ class StatsReceiverCacheObserver(
     new StatsReceiverCacheObserver(stats, windowSize, _: String, disableLogging)
   }
 
-  protected[this] val exceptionCounter = new ExceptionCounter(stats)
+  protected[this] val etwitterceptionCounter = new EtwitterceptionCounter(stats)
   private[this] val hitCounter = stats.counter("hits")
   private[this] val missCounter = stats.counter("misses")
   private[this] val failuresCounter = stats.counter("failures")
@@ -141,14 +141,14 @@ class StatsReceiverCacheObserver(
 
   protected[this] def handleThrowable[K](name: String, t: Throwable, key: Option[K]): Unit = {
     stats.counter(name + "_failures").incr()
-    exceptionCounter(t)
+    etwitterceptionCounter(t)
     if (!disableLogging) {
-      lazy val suffix = key
+      lazy val suffitwitter = key
         .map { k =>
           "(" + k.toString + ")"
         }
         .getOrElse("")
-      log.warning("%s%s caught: %s", name, suffix, t.getClass.getName)
+      log.warning("%s%s caught: %s", name, suffitwitter, t.getClass.getName)
       log.trace(t, "stack trace was: ")
     }
   }
@@ -239,7 +239,7 @@ class StatsReceiverCacheObserver(
       case head :: tail => children(head).scope(tail: _*)
     }
 
-  override def expired(delta: Int = 1): Unit = { expirationCounter.incr(delta) }
+  override def etwitterpired(delta: Int = 1): Unit = { etwitterpirationCounter.incr(delta) }
   override def failure(delta: Int = 1): Unit = { failuresCounter.incr(delta) }
   override def tombstone(delta: Int = 1): Unit = { tombstonesCounter.incr(delta) }
   override def noCache(delta: Int = 1): Unit = { noCacheCounter.incr(delta) }
@@ -250,7 +250,7 @@ class StatsReceiverCacheObserver(
  * Wraps an underlying cache with calls to a CacheObserver
  */
 class ObservableReadCache[K, V](underlyingCache: ReadCache[K, V], observer: CacheObserver)
-    extends ReadCache[K, V] {
+    etwittertends ReadCache[K, V] {
   override def get(keys: Seq[K]): Future[KeyValueResult[K, V]] = {
     observer.read("get", keys) {
       underlyingCache.get(keys)
@@ -310,7 +310,7 @@ object ObservableCache {
  * Wraps an underlying Cache with calls to a CacheObserver
  */
 class ObservableCache[K, V](underlyingCache: Cache[K, V], observer: CacheObserver)
-    extends ObservableReadCache(underlyingCache, observer)
+    etwittertends ObservableReadCache(underlyingCache, observer)
     with Cache[K, V] {
   override def add(key: K, value: V): Future[Boolean] =
     observer.write("add", key) {
@@ -355,7 +355,7 @@ object ObservableTtlCache {
  * Wraps an underlying TtlCache with calls to a CacheObserver
  */
 class ObservableTtlCache[K, V](underlyingCache: TtlCache[K, V], observer: CacheObserver)
-    extends ObservableReadCache(underlyingCache, observer)
+    etwittertends ObservableReadCache(underlyingCache, observer)
     with TtlCache[K, V] {
   override def add(key: K, value: V, ttl: Duration): Future[Boolean] =
     observer.write("add", key) {
@@ -384,7 +384,7 @@ class ObservableTtlCache[K, V](underlyingCache: TtlCache[K, V], observer: CacheO
 }
 
 case class ObservableMemcacheFactory(memcacheFactory: MemcacheFactory, cacheObserver: CacheObserver)
-    extends MemcacheFactory {
+    etwittertends MemcacheFactory {
 
   override def apply() =
     new ObservableMemcache(memcacheFactory(), cacheObserver)
@@ -405,7 +405,7 @@ object ObservableMemcache {
 }
 
 class ObservableMemcache(underlyingCache: Memcache, observer: CacheObserver)
-    extends ObservableTtlCache[String, Array[Byte]](underlyingCache, observer)
+    etwittertends ObservableTtlCache[String, Array[Byte]](underlyingCache, observer)
     with Memcache {
   def incr(key: String, delta: Long = 1): Future[Option[Long]] =
     observer.incr("incr", key) {

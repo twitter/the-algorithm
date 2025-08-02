@@ -30,9 +30,9 @@ class PruningDataRecordTrainer(DataRecordTrainer):
       feature_config=feature_config,
       **kwargs)
 
-  def export_model(self, *args, **kwargs):
-    # TODO: modify graph before exporting to take into account masks
-    return super(PruningDataRecordTrainer, self).export_model(*args, **kwargs)
+  def etwitterport_model(self, *args, **kwargs):
+    # TODO: modify graph before etwitterporting to take into account masks
+    return super(PruningDataRecordTrainer, self).etwitterport_model(*args, **kwargs)
 
   @staticmethod
   def add_parser_arguments():
@@ -49,11 +49,11 @@ class PruningDataRecordTrainer(DataRecordTrainer):
       "--pruning.flops_target", "--pruning_flops_target", type=int, default=250000,
       dest="pruning_flops_target",
       help="Stop pruning when estimated number of floating point operations reached this target. \
-      For example, a small feed-forward network might require 250,000 FLOPs to run.")
+      For etwitterample, a small feed-forward network might require 250,000 FLOPs to run.")
     parser.add_argument(
       "--pruning.decay", "--pruning_decay", type=float, default=.9999,
       dest="pruning_decay",
-      help="A float value in [0.0, 1.0) controlling an exponential moving average of pruning \
+      help="A float value in [0.0, 1.0) controlling an etwitterponential moving average of pruning \
       signal statistics. A value of 0.9999 can be thought of as averaging statistics over 10,000 \
       steps.")
     return parser

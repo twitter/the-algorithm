@@ -1,18 +1,18 @@
 package com.twitter.search.core.earlybird.facets;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import com.google.common.base.Preconditions;
 
-import org.apache.lucene.index.NumericDocValues;
+import org.apache.lucene.indetwitter.NumericDocValues;
 
 import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
 
 /**
  * An iterator that looks up the termID from the appropriate CSF
  */
-public class CSFFacetCountIterator extends FacetCountIterator {
+public class CSFFacetCountIterator etwittertends FacetCountIterator {
   private final int fieldID;
   private final NumericDocValues numericDocValues;
 
@@ -20,8 +20,8 @@ public class CSFFacetCountIterator extends FacetCountIterator {
    * Creates a new iterator for the given facet csf field.
    */
   public CSFFacetCountIterator(
-      EarlybirdIndexSegmentAtomicReader reader,
-      Schema.FieldInfo facetFieldInfo) throws IOException {
+      EarlybirdIndetwitterSegmentAtomicReader reader,
+      Schema.FieldInfo facetFieldInfo) throws IOEtwitterception {
     FacetIDMap.FacetField facetField = reader.getFacetIDMap().getFacetField(facetFieldInfo);
     Preconditions.checkNotNull(facetField);
     this.fieldID = facetField.getFacetId();
@@ -30,8 +30,8 @@ public class CSFFacetCountIterator extends FacetCountIterator {
   }
 
   @Override
-  public void collect(int internalDocID) throws IOException {
-    if (numericDocValues.advanceExact(internalDocID)) {
+  public void collect(int internalDocID) throws IOEtwitterception {
+    if (numericDocValues.advanceEtwitteract(internalDocID)) {
       long termID = numericDocValues.longValue();
       if (shouldCollect(internalDocID, termID)) {
         collect(internalDocID, termID, fieldID);
@@ -41,7 +41,7 @@ public class CSFFacetCountIterator extends FacetCountIterator {
 
   /**
    * Subclasses should override if they need to restrict the docs or termIDs
-   * that they collect on. For example, these may need to override if
+   * that they collect on. For etwitterample, these may need to override if
    *  1) Not all docs set this field, so we should not collect on
    *     the default value of 0
    *  2) The same CSF field means different things (in particular, shared_status_id means
@@ -50,7 +50,7 @@ public class CSFFacetCountIterator extends FacetCountIterator {
    *
    * @return whether we should collect on this doc/termID
    */
-  protected boolean shouldCollect(int internalDocID, long termID) throws IOException {
+  protected boolean shouldCollect(int internalDocID, long termID) throws IOEtwitterception {
     return true;
   }
 }

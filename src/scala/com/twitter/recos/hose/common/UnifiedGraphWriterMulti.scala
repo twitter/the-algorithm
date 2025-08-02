@@ -2,8 +2,8 @@ package src.scala.com.twitter.recos.hose.common
 
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
-import com.twitter.graphjet.bipartite.LeftIndexedMultiSegmentBipartiteGraph
-import com.twitter.graphjet.bipartite.segment.LeftIndexedBipartiteGraphSegment
+import com.twitter.graphjet.bipartite.LeftIndetwitteredMultiSegmentBipartiteGraph
+import com.twitter.graphjet.bipartite.segment.LeftIndetwitteredBipartiteGraphSegment
 import com.twitter.kafka.client.processor.AtLeastOnceProcessor
 import com.twitter.kafka.client.processor.ThreadSafeKafkaConsumerClient
 import com.twitter.logging.Logger
@@ -15,16 +15,16 @@ import com.twitter.recos.internal.thriftscala.RecosHoseMessage
 import com.twitter.recos.util.Action
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+import java.util.concurrent.EtwitterecutorService
+import java.util.concurrent.Etwitterecutors
 import java.util.concurrent.Semaphore
 
 /**
  * The class is an variation of UnifiedGraphWriter which allow one instance to hold multiple graphs
  */
 trait UnifiedGraphWriterMulti[
-  TSegment <: LeftIndexedBipartiteGraphSegment,
-  TGraph <: LeftIndexedMultiSegmentBipartiteGraph[TSegment]] { writer =>
+  TSegment <: LeftIndetwitteredBipartiteGraphSegment,
+  TGraph <: LeftIndetwitteredMultiSegmentBipartiteGraph[TSegment]] { writer =>
 
   import UnifiedGraphWriterMulti._
 
@@ -61,7 +61,7 @@ trait UnifiedGraphWriterMulti[
   private val initialized: AtomicBoolean = new AtomicBoolean(false)
   private var processors: Seq[AtLeastOnceProcessor[String, RecosHoseMessage]] = Seq.empty
   private var consumers: Seq[ThreadSafeKafkaConsumerClient[String, RecosHoseMessage]] = Seq.empty
-  private val threadPool: ExecutorService = Executors.newCachedThreadPool()
+  private val threadPool: EtwitterecutorService = Etwitterecutors.newCachedThreadPool()
 
   def shutdown(): Unit = {
     processors.foreach { processor =>
@@ -87,7 +87,7 @@ trait UnifiedGraphWriterMulti[
       initRecosHoseKafka(queue, queuelimit)
       initGrpahWriters(liveGraphs, queue, queuelimit)
     } else {
-      throw new RuntimeException("attempt to re-init kafka hose")
+      throw new RuntimeEtwitterception("attempt to re-init kafka hose")
     }
   }
 
@@ -96,21 +96,21 @@ trait UnifiedGraphWriterMulti[
     queuelimit: Semaphore,
   ): Unit = {
     try {
-      consumers = (0 until consumerNum).map { index =>
+      consumers = (0 until consumerNum).map { indetwitter =>
         new ThreadSafeKafkaConsumerClient(
-          kafkaConsumerBuilder.clientId(s"clientId-$index").enableAutoCommit(false).config)
+          kafkaConsumerBuilder.clientId(s"clientId-$indetwitter").enableAutoCommit(false).config)
       }
-      processors = consumers.zipWithIndex.map {
-        case (consumer, index) =>
+      processors = consumers.zipWithIndetwitter.map {
+        case (consumer, indetwitter) =>
           val bufferedWriter = BufferedEdgeCollector(bufferSize, queue, queuelimit, statsReceiver)
           val processor = RecosEdgeProcessor(bufferedWriter)(statsReceiver)
 
           AtLeastOnceProcessor[String, RecosHoseMessage](
-            s"recos-injector-kafka-$index",
+            s"recos-injector-kafka-$indetwitter",
             hosename,
             consumer,
             processor.process,
-            maxPendingRequests = MaxPendingRequests * bufferSize,
+            matwitterPendingRequests = MatwitterPendingRequests * bufferSize,
             workerThreads = ProcessorThreads,
             commitIntervalMs = CommitIntervalMs,
             statsReceiver = statsReceiver
@@ -148,14 +148,14 @@ trait UnifiedGraphWriterMulti[
   ): Unit = {
     // define a number of (numBootstrapWriters - 1) catchup writer threads, each of which will write
     // to a separate graph segment.
-    val catchupWriters = (0 until (catchupWriterNum - 1)).map { index =>
+    val catchupWriters = (0 until (catchupWriterNum - 1)).map { indetwitter =>
       val segments = liveGraphs.map { case (graph, actions) => (graph.getLiveSegment, actions) }
       for (liveGraph <- liveGraphs) {
         liveGraph._1.rollForwardSegment()
       }
-      getCatchupWriter(segments, queue, queuelimit, index)
+      getCatchupWriter(segments, queue, queuelimit, indetwitter)
     }
-    val threadPool: ExecutorService = Executors.newCachedThreadPool()
+    val threadPool: EtwitterecutorService = Etwitterecutors.newCachedThreadPool()
 
     log.info("starting live graph writer that runs until service shutdown")
 
@@ -191,7 +191,7 @@ trait UnifiedGraphWriterMulti[
     segments: Seq[(TSegment, Set[Action.Value])],
     queue: java.util.Queue[Array[RecosHoseMessage]],
     queuelimit: Semaphore,
-    catchupWriterIndex: Int,
+    catchupWriterIndetwitter: Int,
   ): BufferedEdgeWriter = {
     val catchupEdgeCollector = new EdgeCollector {
       var currentNumEdges = 0
@@ -201,17 +201,17 @@ trait UnifiedGraphWriterMulti[
         addEdgeToSegment(segments, message)
       }
     }
-    val maxEdges = segments.map(_._1.getMaxNumEdges).sum
+    val matwitterEdges = segments.map(_._1.getMatwitterNumEdges).sum
 
     def runCondition(): Boolean = {
-      isRunning.get && ((maxEdges - catchupEdgeCollector.currentNumEdges) > bufferSize)
+      isRunning.get && ((matwitterEdges - catchupEdgeCollector.currentNumEdges) > bufferSize)
     }
 
     BufferedEdgeWriter(
       queue,
       queuelimit,
       catchupEdgeCollector,
-      statsReceiver.scope("catcher_" + catchupWriterIndex),
+      statsReceiver.scope("catcher_" + catchupWriterIndetwitter),
       runCondition
     )
   }
@@ -222,7 +222,7 @@ private object UnifiedGraphWriterMulti {
   // The RecosEdgeProcessor is not thread-safe. Only use one thread to process each instance.
   val ProcessorThreads = 1
   // Each one cache at most 1000 * bufferSize requests.
-  val MaxPendingRequests = 1000
+  val MatwitterPendingRequests = 1000
   // Short Commit MS to reduce duplicate messages.
   val CommitIntervalMs: Long = 5000 // 5 seconds, Default Kafka value.
 }

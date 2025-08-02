@@ -15,18 +15,18 @@ import com.twitter.util.Future
 
 object SoftUserFollowingStore {
   type ViewerFollowingCursor = EdgeBySourceClientColumn.Cursor
-  val MaxPagesToFetch = 2
+  val MatwitterPagesToFetch = 2
   val PageLimit = 50
 }
 
-class SoftUserFollowingStore(stratoClient: Client) extends ReadableStore[User, Seq[Long]] {
+class SoftUserFollowingStore(stratoClient: Client) etwittertends ReadableStore[User, Seq[Long]] {
   import SoftUserFollowingStore._
   private val softUserFollowingEdgesPaginator = new EdgeBySourceClientColumn(stratoClient).paginator
 
   private def accumulateIds(cursor: ViewerFollowingCursor, pagesToFetch: Int): Stitch[Seq[Long]] =
     softUserFollowingEdgesPaginator.paginate(cursor).flatMap {
-      case FlockPage(data, next, _) =>
-        next match {
+      case FlockPage(data, netwittert, _) =>
+        netwittert match {
           case cont: Continue if pagesToFetch > 1 =>
             Stitch
               .join(
@@ -37,7 +37,7 @@ class SoftUserFollowingStore(stratoClient: Client) extends ReadableStore[User, S
               }
 
           case _: End | _: Continue =>
-            // end pagination if last page has been fetched or [[MaxPagesToFetch]] have been fetched
+            // end pagination if last page has been fetched or [[MatwitterPagesToFetch]] have been fetched
             Stitch.value(data.map(_.to).map(_.value))
         }
     }
@@ -54,7 +54,7 @@ class SoftUserFollowingStore(stratoClient: Client) extends ReadableStore[User, S
   override def get(user: User): Future[Option[Seq[Long]]] = {
     user.userType match {
       case UserType.Soft =>
-        Stitch.run(softFollowingFromStrato(user.id, PageLimit, MaxPagesToFetch)).map(Option(_))
+        Stitch.run(softFollowingFromStrato(user.id, PageLimit, MatwitterPagesToFetch)).map(Option(_))
       case _ => Future.None
     }
   }

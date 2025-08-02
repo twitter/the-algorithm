@@ -1,9 +1,9 @@
 package com.twitter.visibility.interfaces.dms
 
 import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 
 case class DmEventVisibilityRequest(
   dmEventId: Long,
   safetyLevel: SafetyLevel,
-  viewerContext: ViewerContext)
+  viewerContetwittert: ViewerContetwittert)

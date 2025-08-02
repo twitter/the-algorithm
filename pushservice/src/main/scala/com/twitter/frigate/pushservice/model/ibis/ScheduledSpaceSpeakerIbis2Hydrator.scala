@@ -5,7 +5,7 @@ import com.twitter.frigate.pushservice.util.PushIbisUtil._
 import com.twitter.frigate.thriftscala.SpaceNotificationType
 import com.twitter.util.Future
 
-trait ScheduledSpaceSpeakerIbis2Hydrator extends Ibis2HydratorForCandidate {
+trait ScheduledSpaceSpeakerIbis2Hydrator etwittertends Ibis2HydratorForCandidate {
   self: ScheduledSpaceSpeakerPushCandidate =>
 
   override lazy val senderId: Option[Long] = None
@@ -14,7 +14,7 @@ trait ScheduledSpaceSpeakerIbis2Hydrator extends Ibis2HydratorForCandidate {
     hostId match {
       case Some(spaceHostId) =>
         audioSpaceFut.map { audioSpace =>
-          val isStartNow = frigateNotification.spaceNotification.exists(
+          val isStartNow = frigateNotification.spaceNotification.etwitterists(
             _.spaceNotificationType.contains(SpaceNotificationType.AtSpaceBroadcast))
 
           Map(
@@ -24,8 +24,8 @@ trait ScheduledSpaceSpeakerIbis2Hydrator extends Ibis2HydratorForCandidate {
           ) ++ audioSpace.flatMap(_.title.map("space_title" -> _))
         }
       case _ =>
-        Future.exception(
-          new IllegalStateException("Unable to get host id for ScheduledSpaceSpeakerIbis2Hydrator"))
+        Future.etwitterception(
+          new IllegalStateEtwitterception("Unable to get host id for ScheduledSpaceSpeakerIbis2Hydrator"))
     }
   }
 

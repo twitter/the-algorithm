@@ -8,7 +8,7 @@ import com.twitter.algebird._
  * percentiles from the same QTree.
  */
 case class QTreeMultiAggregator[T](percentiles: Seq[Double])(implicit val num: Numeric[T])
-    extends Aggregator[T, QTree[Unit], Map[String, Double]]
+    etwittertends Aggregator[T, QTree[Unit], Map[String, Double]]
     with QTreeAggregatorLike[T] {
 
   require(

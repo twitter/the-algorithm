@@ -8,7 +8,7 @@ REGISTER_OP("Add1")
 .Attr("T: {float, double, int32}")
 .Input("input1: T")
 .Output("output: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     c->set_output(0, c->input(0));
     return Status::OK();
   });
@@ -17,16 +17,16 @@ REGISTER_OP("Add1")
 template<typename T>
 class Add1 : public OpKernel {
  public:
-  explicit Add1(OpKernelConstruction* context) : OpKernel(context) {}
+  etwitterplicit Add1(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     // Grab the input tensor
-    const Tensor& input_tensor = context->input(0);
+    const Tensor& input_tensor = contetwittert->input(0);
     auto input = input_tensor.flat<T>();
 
     // Create an output tensor
     Tensor* output_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, input_tensor.shape(),
+    OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, input_tensor.shape(),
                              &output_tensor));
     auto output_flat = output_tensor->flat<T>();
 
@@ -43,7 +43,7 @@ REGISTER_OP("Add1Grad")
 .Attr("T: {float, double, int32}")
 .Input("grad_output: T")
 .Output("grad_input: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     c->set_output(0, c->input(0));
     return Status::OK();
   });
@@ -51,16 +51,16 @@ REGISTER_OP("Add1Grad")
 template<typename T>
 class Add1Grad : public OpKernel {
  public:
-  explicit Add1Grad(OpKernelConstruction* context) : OpKernel(context) {}
+  etwitterplicit Add1Grad(OpKernelConstruction* contetwittert) : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     // Grab the input tensor
-    const Tensor& grad_output_tensor = context->input(0);
+    const Tensor& grad_output_tensor = contetwittert->input(0);
     auto grad_output = grad_output_tensor.flat<T>();
 
     // Create an grad_input tensor
     Tensor* grad_input_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, grad_output_tensor.shape(),
+    OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, grad_output_tensor.shape(),
                              &grad_input_tensor));
 
     auto grad_input_flat = grad_input_tensor->flat<T>();

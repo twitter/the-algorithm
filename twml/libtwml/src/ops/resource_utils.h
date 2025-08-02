@@ -26,29 +26,29 @@ void unrefHandle(T *handle) {
 template <typename T>
 using unique_handle = std::unique_ptr<T, std::function<void(T *)> >;
 
-// as std::type_index is not abi compatible, we bypass the hash_code checks.
+// as std::type_indetwitter is not abi compatible, we bypass the hash_code checks.
 // https://github.com/tensorflow/tensorflow/commit/15275d3a14c77e2244ae1155f93243256f08e3ed
 #ifdef __APPLE__
 template <typename T>
-Status CreateTwmlResource(OpKernelContext* ctx, const ResourceHandle& p, T* value) {
-  return ctx->resource_manager()->Create(p.container(), p.name(), value);
+Status CreateTwmlResource(OpKernelContetwittert* cttwitter, const ResourceHandle& p, T* value) {
+  return cttwitter->resource_manager()->Create(p.container(), p.name(), value);
 }
 
 template <typename T>
-Status LookupTwmlResource(OpKernelContext* ctx, const ResourceHandle& p,
+Status LookupTwmlResource(OpKernelContetwittert* cttwitter, const ResourceHandle& p,
                       T** value) {
-  return ctx->resource_manager()->Lookup(p.container(), p.name(), value);
+  return cttwitter->resource_manager()->Lookup(p.container(), p.name(), value);
 }
 #endif  // __APPLE__
 
 template<typename T>
-unique_handle<T> getHandle(tensorflow::OpKernelContext* context, int input_idx) {
+unique_handle<T> getHandle(tensorflow::OpKernelContetwittert* contetwittert, int input_idtwitter) {
   using namespace tensorflow;
   T *ptr = nullptr;
 #ifdef __APPLE__
-  auto s = LookupTwmlResource(context, HandleFromInput(context, input_idx), &ptr);
+  auto s = LookupTwmlResource(contetwittert, HandleFromInput(contetwittert, input_idtwitter), &ptr);
 #else
-  auto s = LookupResource(context, HandleFromInput(context, input_idx), &ptr);
+  auto s = LookupResource(contetwittert, HandleFromInput(contetwittert, input_idtwitter), &ptr);
 #endif  // __APPLE__
 
   if (!s.ok()) {
@@ -106,18 +106,18 @@ class HashedDataRecordResource : public ResourceBase {
   } while (0)
 
 template<typename ResourceType>
-Status makeResourceHandle(OpKernelContext* context, int out_idx, ResourceType **resource_) {
+Status makeResourceHandle(OpKernelContetwittert* contetwittert, int out_idtwitter, ResourceType **resource_) {
   static std::atomic<int64> id;
   Tensor* handle_tensor;
-  TF_CHECK_STATUS(context->allocate_output(out_idx, TensorShape({}), &handle_tensor));
+  TF_CHECK_STATUS(contetwittert->allocate_output(out_idtwitter, TensorShape({}), &handle_tensor));
 
   ResourceType *resource = new ResourceType();
   const auto resource_name = typeid(ResourceType).name() + std::to_string(id++);
-  ResourceHandle handle = MakePerStepResourceHandle<ResourceType>(context, resource_name);
+  ResourceHandle handle = MakePerStepResourceHandle<ResourceType>(contetwittert, resource_name);
 #ifdef __APPLE__
-  TF_CHECK_STATUS(CreateTwmlResource(context, handle, resource));
+  TF_CHECK_STATUS(CreateTwmlResource(contetwittert, handle, resource));
 #else
-  TF_CHECK_STATUS(CreateResource(context, handle, resource));
+  TF_CHECK_STATUS(CreateResource(contetwittert, handle, resource));
 #endif  // __APPLE__
   handle_tensor->scalar<ResourceHandle>()() = handle;
 

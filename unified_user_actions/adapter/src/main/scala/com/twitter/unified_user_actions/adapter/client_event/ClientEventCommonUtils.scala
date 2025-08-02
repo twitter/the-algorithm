@@ -76,7 +76,7 @@ object ClientEventCommonUtils {
     // The format should be ISO 639-1.
     language = logEvent.logBase.flatMap(_.language).map(AdapterUtils.normalizeLanguageCode),
     // Country code could be IP address (geoduck) or User registration country (gizmoduck) and the former takes precedence.
-    // We don’t know exactly which one is applied, unfortunately,
+    // We don’t know etwitteractly which one is applied, unfortunately,
     // see https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/finatra-internal/international/src/main/scala/com/twitter/finatra/international/CountryIdentifier.scala
     // The format should be ISO_3166-1_alpha-2.
     countryCode = logEvent.logBase.flatMap(_.country).map(AdapterUtils.normalizeCountryCode),

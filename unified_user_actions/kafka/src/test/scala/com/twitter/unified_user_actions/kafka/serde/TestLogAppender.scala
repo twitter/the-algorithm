@@ -4,7 +4,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.AppenderBase
 import scala.collection.mutable.ArrayBuffer
 
-class TestLogAppender extends AppenderBase[ILoggingEvent] {
+class TestLogAppender etwittertends AppenderBase[ILoggingEvent] {
   import TestLogAppender._
 
   override def append(eventObject: ILoggingEvent): Unit =

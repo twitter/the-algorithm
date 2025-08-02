@@ -1,6 +1,6 @@
 package com.twitter.search.core.earlybird.facets;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Collection;
 import java.util.List;
 
@@ -10,7 +10,7 @@ import com.twitter.common.collections.Pair;
  * Calls multiple FacetCountIterators. Currently this is used for calling the
  * default FacetCountingArray iterator and the CSF and retweet iterators
  */
-public class CompositeFacetCountIterator extends FacetCountIterator {
+public class CompositeFacetCountIterator etwittertends FacetCountIterator {
   private final Collection<FacetCountIterator> iterators;
 
   /**
@@ -24,7 +24,7 @@ public class CompositeFacetCountIterator extends FacetCountIterator {
   }
 
   @Override
-  public void collect(int docID) throws IOException {
+  public void collect(int docID) throws IOEtwitterception {
     for (FacetCountIterator iterator : iterators) {
       iterator.collect(docID);
     }

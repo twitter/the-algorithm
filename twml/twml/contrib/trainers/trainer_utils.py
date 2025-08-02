@@ -1,16 +1,16 @@
 """
-This is a temporary close gap solution that allows TensorFlow users to do exploration and
-experimentation using Keras models, and production training using twml Trainer.
+This is a temporary close gap solution that allows TensorFlow users to do etwitterploration and
+etwitterperimentation using Keras models, and production training using twml Trainer.
 
 As of now (Q4 2019), Keras model training using `model.fit()` has various issues, making it unfit
 for production training:
-  1. `model.fit()` is slow in TF 1.14. This will be fixed with future TensorFlow updates.
+  1. `model.fit()` is slow in TF 1.14. This will be fitwittered with future TensorFlow updates.
   2. `model.fit()` crashes during model saving or in eager mode when the input has SparseTensor.
   3. Models saved using TF 2.0 API cannot be served by TensorFlow's Java API.
 
 Until MLCE team resolves the above issues, MLCE team recommends the following:
-  - Please feel free to use Keras models for experimentation and exploration.
-  - Please stick to twml Trainer for production training & exporting,
+  - Please feel free to use Keras models for etwitterperimentation and etwitterploration.
+  - Please stick to twml Trainer for production training & etwitterporting,
     especially if you want to serve your model using Twitter's prediction servers.
 
 This module provide tooling for easily training keras models using twml Trainer.
@@ -46,7 +46,7 @@ def build_keras_trainer(
     name: a string name for the returned twml Trainer.
 
     model_factory: a callable that returns a keras model when called.
-      This keras model is expected to solve a binary classification problem.
+      This keras model is etwitterpected to solve a binary classification problem.
       This keras model takes a dict of tensors as input, and outputs a logit or probability.
 
     save_dir: a directory where the trainer saves data. Can be an HDFS path.
@@ -61,7 +61,7 @@ def build_keras_trainer(
       See https://cgit.twitter.biz/source/tree/twml/twml/argument_parser.py#n43 for available args.
 
   Returns:
-    a twml.trainers.Trainer object which can be used for training and exporting models.
+    a twml.trainers.Trainer object which can be used for training and etwitterporting models.
   """
   build_graph = create_build_graph_fn(model_factory, loss_fn)
 

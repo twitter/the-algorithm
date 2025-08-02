@@ -15,7 +15,7 @@ object SimilarityFunctions {
   ) => Double = (e1, e2) => {
     val doesMatchLargestDimension: Boolean = e1
       .topClusterIds(1)
-      .exists { id1 =>
+      .etwitterists { id1 =>
         e2.topClusterIds(1).contains(id1)
       }
 

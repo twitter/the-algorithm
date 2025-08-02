@@ -11,7 +11,7 @@ import com.twitter.simclusters_v2.thriftscala.{
   UserToInterestedInClusterScores,
   SimClustersEmbedding => ThriftSimClustersEmbedding
 }
-import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, ScheduledExecutionApp}
+import com.twitter.wtf.scalding.jobs.common.{AdhocEtwitterecutionApp, ScheduledEtwitterecutionApp}
 
 /**
  * Apps to generate fav-based Topic-Follow-Graph (TFG) topic embeddings from inferred languages
@@ -27,20 +27,20 @@ import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, ScheduledExecuti
   --cluster bluebird-qus1 \
   --main-class com.twitter.simclusters_v2.scalding.embedding.tfg.FavInferredLanguageTfgBasedTopicEmbeddingsAdhocApp \
   --target src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_inferred_lang_tfg_topic_embeddings-adhoc \
-  --hadoop-properties "scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=4000" \
+  --hadoop-properties "scalding.with.reducers.set.etwitterplicitly=true mapreduce.job.reduces=4000" \
   -- --date 2020-06-28
  */
 object FavInferredLanguageTfgBasedTopicEmbeddingsAdhocApp
-    extends InferredLanguageTfgBasedTopicEmbeddingsBaseApp
-    with AdhocExecutionApp {
+    etwittertends InferredLanguageTfgBasedTopicEmbeddingsBaseApp
+    with AdhocEtwitterecutionApp {
   override val isAdhoc: Boolean = true
   override val embeddingType: EmbeddingType = EmbeddingType.FavInferredLanguageTfgTopic
   override val embeddingSource: KeyValDALDataset[
     KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
   ] = EntityEmbeddingsSources.FavInferredLanguageTfgTopicEmbeddingsDataset
-  override val pathSuffix: String = "fav_inferred_lang_tfg_topic_embeddings"
+  override val pathSuffitwitter: String = "fav_inferred_lang_tfg_topic_embeddings"
   override val modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
-  override def scoreExtractor: UserToInterestedInClusterScores => Double = scores =>
+  override def scoreEtwittertractor: UserToInterestedInClusterScores => Double = scores =>
     scores.favScore.getOrElse(0.0)
 }
 
@@ -49,16 +49,16 @@ object FavInferredLanguageTfgBasedTopicEmbeddingsAdhocApp
 capesospy-v2 update --build_locally --start_cron fav_inferred_lang_tfg_topic_embeddings src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
 object FavInferredLanguageTfgBasedTopicEmbeddingsScheduledApp
-    extends InferredLanguageTfgBasedTopicEmbeddingsBaseApp
-    with ScheduledExecutionApp {
+    etwittertends InferredLanguageTfgBasedTopicEmbeddingsBaseApp
+    with ScheduledEtwitterecutionApp {
   override val isAdhoc: Boolean = false
   override val embeddingType: EmbeddingType = EmbeddingType.FavInferredLanguageTfgTopic
   override val embeddingSource: KeyValDALDataset[
     KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
   ] = EntityEmbeddingsSources.FavInferredLanguageTfgTopicEmbeddingsDataset
-  override val pathSuffix: String = "fav_inferred_lang_tfg_topic_embeddings"
+  override val pathSuffitwitter: String = "fav_inferred_lang_tfg_topic_embeddings"
   override val modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
-  override def scoreExtractor: UserToInterestedInClusterScores => Double = scores =>
+  override def scoreEtwittertractor: UserToInterestedInClusterScores => Double = scores =>
     scores.favScore.getOrElse(0.0)
 
   override val firstTime: RichDate = RichDate("2020-07-04")

@@ -1,6 +1,6 @@
 package com.twitter.frigate.pushservice.model.candidate
 
-import com.twitter.frigate.data_pipeline.features_common.PushQualityModelFeatureContext.featureContext
+import com.twitter.frigate.data_pipeline.features_common.PushQualityModelFeatureContetwittert.featureContetwittert
 import com.twitter.frigate.data_pipeline.features_common.PushQualityModelUtil
 import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
 import com.twitter.frigate.pushservice.params.PushParams
@@ -11,7 +11,7 @@ import com.twitter.frigate.common.util.NotificationScribeUtil
 import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
 import com.twitter.frigate.pushservice.model.OutOfNetworkTweetPushCandidate
 import com.twitter.frigate.pushservice.model.TopicProofTweetPushCandidate
-import com.twitter.frigate.pushservice.ml.HydrationContextBuilder
+import com.twitter.frigate.pushservice.ml.HydrationContetwittertBuilder
 import com.twitter.frigate.pushservice.predicate.quality_model_predicate.PDauCohort
 import com.twitter.frigate.pushservice.predicate.quality_model_predicate.PDauCohortUtil
 import com.twitter.frigate.pushservice.util.Candidate2FrigateNotification
@@ -232,7 +232,7 @@ trait Scriber {
                   PushFeatureSwitchParams.EnableMrScribingMLFeaturesAsFeatureMapForStaging)) {
                 val scribedFeatureDataRecord =
                   ScalaToJavaDataRecordConversions.javaDataRecord2ScalaDataRecord(
-                    PushQualityModelUtil.adaptToDataRecord(scribedFeatureMap, featureContext))
+                    PushQualityModelUtil.adaptToDataRecord(scribedFeatureMap, featureContetwittert))
                 data.copy(
                   featureDataRecord = Some(scribedFeatureDataRecord)
                 )
@@ -258,14 +258,14 @@ trait Scriber {
           )
         }
 
-        val targetHydrationContext = HydrationContextBuilder.build(self.target)
-        val candidateHydrationContext = HydrationContextBuilder.build(self)
+        val targetHydrationContetwittert = HydrationContetwittertBuilder.build(self.target)
+        val candidateHydrationContetwittert = HydrationContetwittertBuilder.build(self)
 
-        val featureMapFut = targetHydrationContext.join(candidateHydrationContext).flatMap {
-          case (targetContext, candidateContext) =>
+        val featureMapFut = targetHydrationContetwittert.join(candidateHydrationContetwittert).flatMap {
+          case (targetContetwittert, candidateContetwittert) =>
             FeatureHydrator.getFeatures(
-              candidateHydrationContext = candidateContext,
-              targetHydrationContext = targetContext,
+              candidateHydrationContetwittert = candidateContetwittert,
+              targetHydrationContetwittert = targetContetwittert,
               onlineFeatures = filteredFeatureMap,
               statsReceiver = statsReceiver)
         }

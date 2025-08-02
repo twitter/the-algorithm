@@ -58,7 +58,7 @@ object WritePathHydration {
     FutureArrow { event =>
       val cause = TweetQuery.Cause.Insert(event.tweet.id)
       val hydrationOpts = event.hydrateOptions
-      val isEditControlEdit = event.tweet.editControl.exists(EditControlUtil.isEditControlEdit)
+      val isEditControlEdit = event.tweet.editControl.etwitterists(EditControlUtil.isEditControlEdit)
       val queryOpts: TweetQuery.Options =
         WritePathQueryOptions.insert(cause, event.user, hydrationOpts, isEditControlEdit)
 
@@ -75,7 +75,7 @@ object WritePathHydration {
           tweetData.cacheableTweetResult
             .map(_.value.toCachedTweet)
             .getOrElse(
-              throw new IllegalStateException(s"expected cacheableTweetResult, e=${event}"))
+              throw new IllegalStateEtwitterception(s"etwitterpected cacheableTweetResult, e=${event}"))
 
         optQt = getQuotedTweet(hydratedTweet)
           .orElse(event.sourceTweet.flatMap(getQuotedTweet))
@@ -90,7 +90,7 @@ object WritePathHydration {
           _internalTweet = Some(internalTweet),
           quotedTweet = hydratedQT.map { case QuoteTweetMetadata(t, _, _) => t },
           quotedUser = hydratedQT.map { case QuoteTweetMetadata(_, u, _) => u },
-          quoterHasAlreadyQuotedTweet = hydratedQT.exists { case QuoteTweetMetadata(_, _, b) => b }
+          quoterHasAlreadyQuotedTweet = hydratedQT.etwitterists { case QuoteTweetMetadata(_, _, b) => b }
         )
       }
     }
@@ -120,7 +120,7 @@ object WritePathHydration {
             .join(
               tweetRepo(qt.tweetId, tweetQueryOpts),
               userRepo(UserKey.byId(qt.userId), userQueryOpts),
-              // We're failing open here on tflock exceptions since this should not
+              // We're failing open here on tflock etwitterceptions since this should not
               // affect the ability to quote tweet if tflock goes down. (although if
               // this call doesn't succeed, quote counts may be inaccurate for a brief
               // period of time)
@@ -146,7 +146,7 @@ object WritePathHydration {
     FutureArrow { event =>
       val cause = TweetQuery.Cause.Undelete(event.tweet.id)
       val hydrationOpts = event.hydrateOptions
-      val isEditControlEdit = event.tweet.editControl.exists(EditControlUtil.isEditControlEdit)
+      val isEditControlEdit = event.tweet.editControl.etwitterists(EditControlUtil.isEditControlEdit)
       val queryOpts = WritePathQueryOptions.insert(cause, event.user, hydrationOpts, isEditControlEdit)
 
       // when undeleting a retweet, don't set sourceTweetResult to enable SourceTweetHydrator to
@@ -160,7 +160,7 @@ object WritePathHydration {
           tweetData.cacheableTweetResult
             .map(_.value.toCachedTweet)
             .getOrElse(
-              throw new IllegalStateException(s"expected cacheableTweetResult, e=${event}"))
+              throw new IllegalStateEtwitterception(s"etwitterpected cacheableTweetResult, e=${event}"))
 
         optQt = getQuotedTweet(hydratedTweet)
           .orElse(tweetData.sourceTweetResult.map(_.value.tweet).flatMap(getQuotedTweet))
@@ -176,7 +176,7 @@ object WritePathHydration {
           sourceTweet = tweetData.sourceTweetResult.map(_.value.tweet),
           quotedTweet = hydratedQt.map { case QuoteTweetMetadata(t, _, _) => t },
           quotedUser = hydratedQt.map { case QuoteTweetMetadata(_, u, _) => u },
-          quoterHasAlreadyQuotedTweet = hydratedQt.exists { case QuoteTweetMetadata(_, _, b) => b }
+          quoterHasAlreadyQuotedTweet = hydratedQt.etwitterists { case QuoteTweetMetadata(_, _, b) => b }
         )
       }
     }
@@ -197,10 +197,10 @@ object WritePathHydration {
         Stitch
           .run(hydrator(td, opts))
           .rescue {
-            case ex =>
-              log.warn("Hydration failed with exception", ex)
-              Future.exception(
-                TweetHydrationError("Hydration failed with exception: " + ex, Some(ex))
+            case etwitter =>
+              log.warn("Hydration failed with etwitterception", etwitter)
+              Future.etwitterception(
+                TweetHydrationError("Hydration failed with etwitterception: " + etwitter, Some(etwitter))
               )
           }
           .flatMap { r =>
@@ -209,7 +209,7 @@ object WritePathHydration {
               missingFieldsStats.counter(missingField.fieldIdPath.mkString(".")).incr()
 
             if ((r.state.failedFields -- allowedMissingFields).nonEmpty) {
-              Future.exception(
+              Future.etwitterception(
                 TweetHydrationError(
                   "Failed to hydrate. Missing Fields: " + r.state.failedFields.mkString(",")
                 )

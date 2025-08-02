@@ -1,8 +1,8 @@
 package com.twitter.search.common.util.ml.models_manager;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.UncheckedIOException;
+import java.io.IOEtwitterception;
+import java.io.UncheckedIOEtwitterception;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Etwitterecutors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -41,7 +41,7 @@ import com.twitter.search.common.metrics.SearchLongGauge;
  * - DirectorySupplier: Uses all the subdirectories of a base path
  * - ConfigSupplier: Gets the list from from a configuration file
  *
- * Models can be updated or added. Depending on the selected method, existing models can be removed
+ * Models can be updated or added. Depending on the selected method, etwitteristing models can be removed
  * if they are no longer active.
  */
 public abstract class BaseModelsManager<T> implements Runnable {
@@ -68,12 +68,12 @@ public abstract class BaseModelsManager<T> implements Runnable {
   public BaseModelsManager(
       Supplier<Map<String, AbstractFile>> activeModelsSupplier,
       boolean shouldUnloadInactiveModels,
-      String statsPrefix
+      String statsPrefitwitter
   ) {
     this(
       activeModelsSupplier,
       shouldUnloadInactiveModels,
-      statsPrefix,
+      statsPrefitwitter,
       () -> true,
       () -> true
     );
@@ -82,7 +82,7 @@ public abstract class BaseModelsManager<T> implements Runnable {
   public BaseModelsManager(
       Supplier<Map<String, AbstractFile>> activeModelsSupplier,
       boolean shouldUnloadInactiveModels,
-      String statsPrefix,
+      String statsPrefitwitter,
       Supplier<Boolean> shouldServeModels,
       Supplier<Boolean> shouldLoadModels
   ) {
@@ -92,12 +92,12 @@ public abstract class BaseModelsManager<T> implements Runnable {
     this.shouldServeModels = shouldServeModels;
     this.shouldLoadModels = shouldLoadModels;
 
-    numModels = SearchLongGauge.export(
-        String.format("model_loader_%s_num_models", statsPrefix));
-    numErrors = SearchCounter.export(
-        String.format("model_loader_%s_num_errors", statsPrefix));
-    lastLoadedMs = SearchLongGauge.export(
-        String.format("model_loader_%s_last_loaded_timestamp_ms", statsPrefix));
+    numModels = SearchLongGauge.etwitterport(
+        String.format("model_loader_%s_num_models", statsPrefitwitter));
+    numErrors = SearchCounter.etwitterport(
+        String.format("model_loader_%s_num_errors", statsPrefitwitter));
+    lastLoadedMs = SearchLongGauge.etwitterport(
+        String.format("model_loader_%s_last_loaded_timestamp_ms", statsPrefitwitter));
   }
 
   /**
@@ -117,7 +117,7 @@ public abstract class BaseModelsManager<T> implements Runnable {
    * @param modelBaseDir AbstractFile instance representing the directory.
    * @return Model instance parsed from the directory.
    */
-  public abstract T readModelFromDirectory(AbstractFile modelBaseDir) throws Exception;
+  public abstract T readModelFromDirectory(AbstractFile modelBaseDir) throws Etwitterception;
 
   /**
    * Cleans up any resources used by the model instance.
@@ -142,8 +142,8 @@ public abstract class BaseModelsManager<T> implements Runnable {
       String modelName = nameAndPath.getKey();
       try {
         AbstractFile modelDirectory = nameAndPath.getValue();
-        if (!modelDirectory.exists() && loadedModels.containsKey(modelName)) {
-          LOG.warn("Loaded model '{}' no longer exists at HDFS path {}, keeping loaded version; "
+        if (!modelDirectory.etwitterists() && loadedModels.containsKey(modelName)) {
+          LOG.warn("Loaded model '{}' no longer etwitterists at HDFS path {}, keeping loaded version; "
               + "replace directory in HDFS to update model.", modelName, modelDirectory);
           continue;
         }
@@ -164,7 +164,7 @@ public abstract class BaseModelsManager<T> implements Runnable {
         if (previousModel != null) {
           cleanUpUnloadedModel(previousModel);
         }
-      } catch (Exception e) {
+      } catch (Etwitterception e) {
         numErrors.increment();
         LOG.error("Error initializing model: {}", modelName, e);
       }
@@ -182,7 +182,7 @@ public abstract class BaseModelsManager<T> implements Runnable {
         if (modelToUnload != null) {
           // We could have an inactive model key without a model (value) if the
           // initial readModelFromDirectory failed for the model entry.
-          // Checking for null to avoid exception.
+          // Checking for null to avoid etwitterception.
           cleanUpUnloadedModel(modelToUnload);
         }
         LOG.info("Unloaded model that is no longer active: {}", modelName);
@@ -199,17 +199,17 @@ public abstract class BaseModelsManager<T> implements Runnable {
 
   /**
    * Schedules the loader to run periodically.
-   * @param period Period between executions
+   * @param period Period between etwitterecutions
    * @param timeUnit The time unit the period parameter.
    */
-  public final void scheduleAtFixedRate(
+  public final void scheduleAtFitwitteredRate(
       long period, TimeUnit timeUnit, String builderThreadName) {
-    Executors.newSingleThreadScheduledExecutor(
+    Etwitterecutors.newSingleThreadScheduledEtwitterecutor(
         new ThreadFactoryBuilder()
             .setDaemon(true)
             .setNameFormat(builderThreadName)
             .build())
-        .scheduleAtFixedRate(this, 0, period, timeUnit);
+        .scheduleAtFitwitteredRate(this, 0, period, timeUnit);
   }
 
   /**
@@ -238,8 +238,8 @@ public abstract class BaseModelsManager<T> implements Runnable {
                 AbstractFile::getName,
                 Function.identity()
             ));
-      } catch (IOException e) {
-        throw new UncheckedIOException(e);
+      } catch (IOEtwitterception e) {
+        throw new UncheckedIOEtwitterception(e);
       }
     }
   }
@@ -248,7 +248,7 @@ public abstract class BaseModelsManager<T> implements Runnable {
    * Gets the active list of models by reading a YAML config file.
    *
    * The keys are the model names, the values are dictionaries with a single entry for the path
-   * of the model in HDFS (without the HDFS name node prefix). For example:
+   * of the model in HDFS (without the HDFS name node prefitwitter). For etwitterample:
    *
    *    model_a:
    *        path: /path/to/model_a
@@ -285,8 +285,8 @@ public abstract class BaseModelsManager<T> implements Runnable {
           modelPaths.put(nameAndConfig.getKey(), FileUtils.getHdfsFileHandle(path));
         }
         return modelPaths;
-      } catch (IOException e) {
-        throw new UncheckedIOException(e);
+      } catch (IOEtwitterception e) {
+        throw new UncheckedIOEtwitterception(e);
       }
     }
   }

@@ -7,10 +7,10 @@ import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.util.analysis.IntTermAttributeImpl;
 import com.twitter.search.common.util.analysis.LongTermAttributeImpl;
 import com.twitter.search.common.util.analysis.SortableLongTermAttributeImpl;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
+import com.twitter.search.core.earlybird.indetwitter.inverted.InvertedIndetwitter;
 
 /**
- * Given a termID this accessor can be used to retrieve the term bytesref and text
+ * Given a termID this accessor can be used to retrieve the term bytesref and tetwittert
  * that corresponds to the termID.
  */
 public interface FacetLabelProvider {
@@ -49,7 +49,7 @@ public interface FacetLabelProvider {
       return maybeSeek(termID) ? termRef : null;
     }
 
-    public String getTermText(long termID) {
+    public String getTermTetwittert(long termID) {
       return maybeSeek(termID) ? termRef.utf8ToString() : null;
     }
 
@@ -67,10 +67,10 @@ public interface FacetLabelProvider {
    * the term bytesref to an integer string facet label.
    */
   class IntTermFacetLabelProvider implements FacetLabelProvider {
-      private final InvertedIndex invertedIndex;
+      private final InvertedIndetwitter invertedIndetwitter;
 
-    public IntTermFacetLabelProvider(InvertedIndex invertedIndex) {
-      this.invertedIndex = invertedIndex;
+    public IntTermFacetLabelProvider(InvertedIndetwitter invertedIndetwitter) {
+      this.invertedIndetwitter = invertedIndetwitter;
     }
 
     @Override
@@ -79,14 +79,14 @@ public interface FacetLabelProvider {
         @Override
         protected boolean seek(long termID) {
           if (termID != HashTable.EMPTY_SLOT) {
-            invertedIndex.getTerm((int) termID, termRef);
+            invertedIndetwitter.getTerm((int) termID, termRef);
             return true;
           }
           return false;
         }
 
         @Override
-        public String getTermText(long termID) {
+        public String getTermTetwittert(long termID) {
           return maybeSeek(termID)
                  ? Integer.toString(IntTermAttributeImpl.copyBytesRefToInt(termRef))
                  : null;
@@ -100,10 +100,10 @@ public interface FacetLabelProvider {
    * the term bytesref to an long string facet label.
    */
   class LongTermFacetLabelProvider implements FacetLabelProvider {
-    private final InvertedIndex invertedIndex;
+    private final InvertedIndetwitter invertedIndetwitter;
 
-    public LongTermFacetLabelProvider(InvertedIndex invertedIndex) {
-      this.invertedIndex = invertedIndex;
+    public LongTermFacetLabelProvider(InvertedIndetwitter invertedIndetwitter) {
+      this.invertedIndetwitter = invertedIndetwitter;
     }
 
     @Override
@@ -112,14 +112,14 @@ public interface FacetLabelProvider {
         @Override
         protected boolean seek(long termID) {
           if (termID != HashTable.EMPTY_SLOT) {
-            invertedIndex.getTerm((int) termID, termRef);
+            invertedIndetwitter.getTerm((int) termID, termRef);
             return true;
           }
           return false;
         }
 
         @Override
-        public String getTermText(long termID) {
+        public String getTermTetwittert(long termID) {
           return maybeSeek(termID)
                  ? Long.toString(LongTermAttributeImpl.copyBytesRefToLong(termRef))
                  : null;
@@ -129,10 +129,10 @@ public interface FacetLabelProvider {
   }
 
   class SortedLongTermFacetLabelProvider implements FacetLabelProvider {
-    private final InvertedIndex invertedIndex;
+    private final InvertedIndetwitter invertedIndetwitter;
 
-    public SortedLongTermFacetLabelProvider(InvertedIndex invertedIndex) {
-      this.invertedIndex = invertedIndex;
+    public SortedLongTermFacetLabelProvider(InvertedIndetwitter invertedIndetwitter) {
+      this.invertedIndetwitter = invertedIndetwitter;
     }
 
     @Override
@@ -141,14 +141,14 @@ public interface FacetLabelProvider {
         @Override
         protected boolean seek(long termID) {
           if (termID != HashTable.EMPTY_SLOT) {
-            invertedIndex.getTerm((int) termID, termRef);
+            invertedIndetwitter.getTerm((int) termID, termRef);
             return true;
           }
           return false;
         }
 
         @Override
-        public String getTermText(long termID) {
+        public String getTermTetwittert(long termID) {
           return maybeSeek(termID)
               ? Long.toString(SortableLongTermAttributeImpl.copyBytesRefToLong(termRef))
               : null;
@@ -167,7 +167,7 @@ public interface FacetLabelProvider {
         }
 
         @Override
-        public String getTermText(long termID) {
+        public String getTermTetwittert(long termID) {
           return Long.toString(termID);
         }
       };
@@ -177,19 +177,19 @@ public interface FacetLabelProvider {
   /**
    * The methods on this provider should NOT be called under normal circumstances!
    *
-   * When a facet misses inverted index and does not use CSF, this InaccessibleFacetLabelProvider
-   * will be used as a dummy provider. Then, unexptectedFacetLabelAccess counter will be
+   * When a facet misses inverted indetwitter and does not use CSF, this InaccessibleFacetLabelProvider
+   * will be used as a dummy provider. Then, unetwitterptectedFacetLabelAccess counter will be
    * incremented when this provider is used later.
    *
    * Also see:
    * {@link FacetUtil}
    */
   class InaccessibleFacetLabelProvider implements FacetLabelProvider {
-    private final SearchCounter unexptectedFacetLabelAccess;
+    private final SearchCounter unetwitterptectedFacetLabelAccess;
 
     public InaccessibleFacetLabelProvider(String fieldName) {
-      this.unexptectedFacetLabelAccess =
-          SearchCounter.export("unexpected_facet_label_access_for_field_" + fieldName);
+      this.unetwitterptectedFacetLabelAccess =
+          SearchCounter.etwitterport("unetwitterpected_facet_label_access_for_field_" + fieldName);
     }
 
     @Override
@@ -197,7 +197,7 @@ public interface FacetLabelProvider {
       return new FacetLabelAccessor() {
         @Override
         protected boolean seek(long termID) {
-          unexptectedFacetLabelAccess.increment();
+          unetwitterptectedFacetLabelAccess.increment();
           return false;
         }
       };

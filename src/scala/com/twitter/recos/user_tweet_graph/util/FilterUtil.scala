@@ -6,10 +6,10 @@ import com.twitter.util.Duration
 import com.twitter.util.Time
 
 object FilterUtil {
-  def tweetAgeFilter(tweetId: TweetId, maxAge: Duration): Boolean = {
+  def tweetAgeFilter(tweetId: TweetId, matwitterAge: Duration): Boolean = {
     SnowflakeId
       .timeFromIdOpt(tweetId)
-      .map { tweetTime => tweetTime > Time.now - maxAge }.getOrElse(false)
+      .map { tweetTime => tweetTime > Time.now - matwitterAge }.getOrElse(false)
     // If there's no snowflake timestamp, we have no idea when this tweet happened.
   }
 }

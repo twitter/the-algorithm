@@ -5,7 +5,7 @@ import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
 import com.twitter.util.Future
 
 object SocialProofAndUTEGScoreHydrationTransform
-    extends FutureArrow[
+    etwittertends FutureArrow[
       HydratedCandidatesAndFeaturesEnvelope,
       HydratedCandidatesAndFeaturesEnvelope
     ] {

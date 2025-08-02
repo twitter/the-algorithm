@@ -5,7 +5,7 @@
 #include <stddef.h>
 
 #ifdef __cplusplus
-extern "C" {
+etwittertern "C" {
 #endif
     typedef void * twml_hashmap;
     typedef int64_t tw_hash_key_t;
@@ -29,7 +29,7 @@ namespace twml {
         ~HashMap();
 
         // Disable copy constructor and assignment
-        // TODO: Fix this after retain and release are added to twml_hashmap
+        // TODO: Fitwitter this after retain and release are added to twml_hashmap
         HashMap(const HashMap &other) = delete;
         HashMap& operator=(const HashMap &other) = delete;
 
@@ -52,7 +52,7 @@ namespace twml {
 #endif
 
 #ifdef __cplusplus
-extern "C" {
+etwittertern "C" {
 #endif
 
 

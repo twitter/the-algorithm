@@ -26,7 +26,7 @@ class UserVideoGraph(
   endpointLoadShedder: EndpointLoadShedder
 )(
   implicit timer: Timer)
-    extends thriftscala.UserVideoGraph.MethodPerEndpoint {
+    etwittertends thriftscala.UserVideoGraph.MethodPerEndpoint {
 
   private val defaultTimeout: Duration = Duration(50, MILLISECONDS)
   private val EmptyResponse = Future.value(RelatedTweetResponse())
@@ -38,7 +38,7 @@ class UserVideoGraph(
     endpointLoadShedder("videoGraphTweetBasedRelatedTweets") {
       tweetBasedRelatedTweetsHandler(request).raiseWithin(defaultTimeout)
     }.rescue {
-      case EndpointLoadShedder.LoadSheddingException =>
+      case EndpointLoadShedder.LoadSheddingEtwitterception =>
         EmptyResponse
       case e =>
         log.info("user-video-graph_tweetBasedRelatedTweets" + e)
@@ -51,7 +51,7 @@ class UserVideoGraph(
     endpointLoadShedder("producerBasedRelatedTweets") {
       producerBasedRelatedTweetsHandler(request).raiseWithin(defaultTimeout)
     }.rescue {
-      case EndpointLoadShedder.LoadSheddingException =>
+      case EndpointLoadShedder.LoadSheddingEtwitterception =>
         EmptyResponse
       case e =>
         log.info("user-video-graph_producerBasedRelatedTweets" + e)
@@ -64,7 +64,7 @@ class UserVideoGraph(
     endpointLoadShedder("consumersBasedRelatedTweets") {
       consumersBasedRelatedTweetsHandler(request).raiseWithin(defaultTimeout)
     }.rescue {
-      case EndpointLoadShedder.LoadSheddingException =>
+      case EndpointLoadShedder.LoadSheddingEtwitterception =>
         EmptyResponse
       case e =>
         log.info("user-video-graph_consumersBasedRelatedTweets" + e)

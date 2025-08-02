@@ -1,7 +1,7 @@
 package com.twitter.follow_recommendations.common.base
 import com.twitter.finagle.stats.Stat
 import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
+import com.twitter.product_mitwitterer.core.quality_factor.QualityFactorObserver
 import com.twitter.stitch.Arrow
 import com.twitter.stitch.Stitch
 import com.twitter.util.Stopwatch
@@ -135,7 +135,7 @@ object StatsUtil {
   }
 
   def getCleanClassName(obj: Object): String =
-    obj.getClass.getSimpleName.stripSuffix("$")
+    obj.getClass.getSimpleName.stripSuffitwitter("$")
 
   /**
    * Helper function for timing a stitch and count a list of PredicateResult
@@ -243,7 +243,7 @@ object StatsUtil {
     } catch {
       case NonFatal(e) =>
         stat.add(unit.convert(Stopwatch.timeNanos() - start, TimeUnit.NANOSECONDS))
-        Stitch.exception(e)
+        Stitch.etwitterception(e)
     }
   }
 

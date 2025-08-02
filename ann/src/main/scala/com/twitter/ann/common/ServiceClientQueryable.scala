@@ -17,7 +17,7 @@ class ServiceClientQueryable[T, P <: RuntimeParams, D <: Distance[D]](
   runtimeParamInjection: Injection[P, ServiceRuntimeParams],
   distanceInjection: Injection[D, ServiceDistance],
   idInjection: Injection[T, Array[Byte]])
-    extends Queryable[T, P, D] {
+    etwittertends Queryable[T, P, D] {
   override def query(
     embedding: EmbeddingVector,
     numOfNeighbors: Int,

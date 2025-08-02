@@ -1,55 +1,55 @@
 package com.twitter.search.ingester.util.jndi;
 
 import java.util.Hashtable;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameNotFoundException;
+import javatwitter.naming.Contetwittert;
+import javatwitter.naming.InitialContetwittert;
+import javatwitter.naming.NameNotFoundEtwitterception;
 
-import org.apache.naming.config.XmlConfigurator;
+import org.apache.naming.config.twittermlConfigurator;
 
 public abstract class JndiUtil {
-  // This is different from the search repo---twitter-naming-devtest.xml is
+  // This is different from the search repo---twitter-naming-devtest.twitterml is
   // checked in as a resource in src/resources/com/twitter/search/ingester.
-  public static final String DEFAULT_JNDI_XML =
-      System.getProperty("jndiXml", "/com/twitter/search/ingester/twitter-naming-devtest.xml");
-  protected static String jndiXml = DEFAULT_JNDI_XML;
+  public static final String DEFAULT_JNDI_twitterML =
+      System.getProperty("jnditwitterml", "/com/twitter/search/ingester/twitter-naming-devtest.twitterml");
+  protected static String jnditwitterml = DEFAULT_JNDI_twitterML;
   protected static boolean testingMode = false;
 
   static {
-    System.setProperty("javax.xml.parsers.SAXParserFactory",
-        "org.apache.xerces.jaxp.SAXParserFactoryImpl");
-    System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
-        "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
+    System.setProperty("javatwitter.twitterml.parsers.SAtwitterParserFactory",
+        "org.apache.twittererces.jatwitterp.SAtwitterParserFactoryImpl");
+    System.setProperty("javatwitter.twitterml.parsers.DocumentBuilderFactory",
+        "com.sun.org.apache.twittererces.internal.jatwitterp.DocumentBuilderFactoryImpl");
   }
 
   public static void loadJNDI() {
-    loadJNDI(jndiXml);
+    loadJNDI(jnditwitterml);
   }
 
-  protected static void loadJNDI(String jndiXmlFile) {
+  protected static void loadJNDI(String jnditwittermlFile) {
     try {
       Hashtable<String, String> props = new Hashtable<>();
-      props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
-      Context jndiContext = new InitialContext(props);
+      props.put(Contetwittert.INITIAL_CONTEtwitterT_FACTORY, "org.apache.naming.java.javaURLContetwittertFactory");
+      Contetwittert jndiContetwittert = new InitialContetwittert(props);
       try {
-        jndiContext.lookup("java:comp");
-        setTestingModeFromJndiContext(jndiContext);
-      } catch (NameNotFoundException e) {
-        // No context.
-        XmlConfigurator.loadConfiguration(JndiUtil.class.getResourceAsStream(jndiXmlFile));
+        jndiContetwittert.lookup("java:comp");
+        setTestingModeFromJndiContetwittert(jndiContetwittert);
+      } catch (NameNotFoundEtwitterception e) {
+        // No contetwittert.
+        twittermlConfigurator.loadConfiguration(JndiUtil.class.getResourceAsStream(jnditwittermlFile));
       }
-    } catch (Exception e) {
-      throw new RuntimeException(String.format("Failed to load JNDI configuration file=%s %s",
-          jndiXmlFile, e.getMessage()), e);
+    } catch (Etwitterception e) {
+      throw new RuntimeEtwitterception(String.format("Failed to load JNDI configuration file=%s %s",
+          jnditwittermlFile, e.getMessage()), e);
     }
   }
 
-  public static void setJndiXml(String jndiXml) {
-    JndiUtil.jndiXml = jndiXml;
+  public static void setJnditwitterml(String jnditwitterml) {
+    JndiUtil.jnditwitterml = jnditwitterml;
   }
 
-  public static String getJndiXml() {
-    return jndiXml;
+  public static String getJnditwitterml() {
+    return jnditwitterml;
   }
 
   public static void setTestingMode(Boolean testingMode) {
@@ -60,10 +60,10 @@ public abstract class JndiUtil {
     return testingMode;
   }
 
-  private static void setTestingModeFromJndiContext(Context jndiContext) {
+  private static void setTestingModeFromJndiContetwittert(Contetwittert jndiContetwittert) {
     try {
-      setTestingMode((Boolean) jndiContext.lookup("java:comp/env/testingMode"));
-    } catch (Exception e) {
+      setTestingMode((Boolean) jndiContetwittert.lookup("java:comp/env/testingMode"));
+    } catch (Etwitterception e) {
       setTestingMode(false);
     }
   }

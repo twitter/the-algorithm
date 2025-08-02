@@ -7,7 +7,7 @@ import com.twitter.search.earlybird.thrift.EarlybirdRequest;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
 
-public class EarlybirdProtectedValidationBehavior extends EarlybirdServiceValidationBehavior {
+public class EarlybirdProtectedValidationBehavior etwittertends EarlybirdServiceValidationBehavior {
   private static final Logger LOG =
       LoggerFactory.getLogger(EarlybirdProtectedValidationBehavior.class);
 

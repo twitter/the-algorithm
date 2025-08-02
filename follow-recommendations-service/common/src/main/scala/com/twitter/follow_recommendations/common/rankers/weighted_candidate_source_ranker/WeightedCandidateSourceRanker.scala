@@ -3,12 +3,12 @@ import com.twitter.follow_recommendations.common.base.Ranker
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.rankers.common.DedupCandidates
 import com.twitter.follow_recommendations.common.rankers.utils.Utils
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
 import com.twitter.stitch.Stitch
 import com.twitter.timelines.configapi.HasParams
 
 /**
- * Candidate Ranker that mixes and ranks multiple candidate lists from different candidate sources with the
+ * Candidate Ranker that mitwitteres and ranks multiple candidate lists from different candidate sources with the
  * following steps:
  *  1) generate a ranked candidate list of each candidate source by sorting and shuffling the candidate list
  *     of the algorithm.
@@ -26,7 +26,7 @@ class WeightedCandidateSourceRanker[Target <: HasParams](
   ],
   shuffleFn: Seq[CandidateUser] => Seq[CandidateUser],
   dedup: Boolean)
-    extends Ranker[Target, CandidateUser] {
+    etwittertends Ranker[Target, CandidateUser] {
 
   val name: String = this.getClass.getSimpleName
 

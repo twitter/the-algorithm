@@ -15,42 +15,42 @@ sealed trait ScoreType {
 }
 
 /**
- * Existing Score Types
+ * Etwitteristing Score Types
  */
 object ScoreType {
 
   /**
    * the score is calculated based on heuristics and most likely not normalized
    */
-  case object HeuristicBasedScore extends ScoreType {
+  case object HeuristicBasedScore etwittertends ScoreType {
     override def getName: String = "HeuristicBasedScore"
   }
 
   /**
    * probability of follow after the candidate is recommended to the user
    */
-  case object PFollowGivenReco extends ScoreType {
+  case object PFollowGivenReco etwittertends ScoreType {
     override def getName: String = "PFollowGivenReco"
   }
 
   /**
    * probability of engage after the user follows the candidate
    */
-  case object PEngagementGivenFollow extends ScoreType {
+  case object PEngagementGivenFollow etwittertends ScoreType {
     override def getName: String = "PEngagementGivenFollow"
   }
 
   /**
    * probability of engage per tweet impression
    */
-  case object PEngagementPerImpression extends ScoreType {
+  case object PEngagementPerImpression etwittertends ScoreType {
     override def getName: String = "PEngagementPerImpression"
   }
 
   /**
    * probability of engage per tweet impression
    */
-  case object PEngagementGivenReco extends ScoreType {
+  case object PEngagementGivenReco etwittertends ScoreType {
     override def getName: String = "PEngagementGivenReco"
   }
 
@@ -115,20 +115,20 @@ object Score {
 final case class Scores(
   scores: Seq[Score],
   selectedRankerId: Option[RankerId] = None,
-  isInProducerScoringExperiment: Boolean = false) {
+  isInProducerScoringEtwitterperiment: Boolean = false) {
 
   def toThrift: t.Scores =
     t.Scores(
       scores = scores.map(_.toThrift),
       selectedRankerId = selectedRankerId.map(_.toString),
-      isInProducerScoringExperiment = isInProducerScoringExperiment
+      isInProducerScoringEtwitterperiment = isInProducerScoringEtwitterperiment
     )
 
   def toOfflineThrift: offline.Scores =
     offline.Scores(
       scores = scores.map(_.toOfflineThrift),
       selectedRankerId = selectedRankerId.map(_.toString),
-      isInProducerScoringExperiment = isInProducerScoringExperiment
+      isInProducerScoringEtwitterperiment = isInProducerScoringEtwitterperiment
     )
 }
 
@@ -139,6 +139,6 @@ object Scores {
     Scores(
       scores = thriftScores.scores.map(Score.fromThrift),
       selectedRankerId = thriftScores.selectedRankerId.flatMap(RankerId.getRankerByName),
-      isInProducerScoringExperiment = thriftScores.isInProducerScoringExperiment
+      isInProducerScoringEtwitterperiment = thriftScores.isInProducerScoringEtwitterperiment
     )
 }

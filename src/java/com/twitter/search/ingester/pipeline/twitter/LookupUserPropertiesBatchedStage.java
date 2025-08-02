@@ -1,21 +1,21 @@
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.Collection;
-import javax.naming.NamingException;
+import javatwitter.naming.NamingEtwitterception;
 
-import org.apache.commons.pipeline.StageException;
+import org.apache.commons.pipeline.StageEtwitterception;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducesConsumed;
 
 import com.twitter.search.ingester.model.IngesterTwitterMessage;
 import com.twitter.search.ingester.pipeline.util.BatchedElement;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
+import com.twitter.search.ingester.pipeline.util.PipelineStageEtwitterception;
 import com.twitter.search.ingester.pipeline.util.UserPropertiesManager;
 import com.twitter.util.Future;
 
 @ConsumedTypes(IngesterTwitterMessage.class)
 @ProducesConsumed
-public class LookupUserPropertiesBatchedStage extends TwitterBatchedBaseStage
+public class LookupUserPropertiesBatchedStage etwittertends TwitterBatchedBaseStage
     <IngesterTwitterMessage, IngesterTwitterMessage> {
 
   protected UserPropertiesManager userPropertiesManager;
@@ -28,7 +28,7 @@ public class LookupUserPropertiesBatchedStage extends TwitterBatchedBaseStage
   @Override
   protected Future<Collection<IngesterTwitterMessage>> innerProcessBatch(Collection<BatchedElement
       <IngesterTwitterMessage, IngesterTwitterMessage>> batch) {
-    Collection<IngesterTwitterMessage> batchedElements = extractOnlyElementsFromBatch(batch);
+    Collection<IngesterTwitterMessage> batchedElements = etwittertractOnlyElementsFromBatch(batch);
     return userPropertiesManager.populateUserProperties(batchedElements);
   }
 
@@ -43,18 +43,18 @@ public class LookupUserPropertiesBatchedStage extends TwitterBatchedBaseStage
   }
 
   @Override
-  public synchronized void doInnerPreprocess() throws StageException, NamingException {
+  public synchronized void doInnerPreprocess() throws StageEtwitterception, NamingEtwitterception {
     super.doInnerPreprocess();
     commonInnerSetup();
   }
 
   @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
+  protected void innerSetup() throws PipelineStageEtwitterception, NamingEtwitterception {
     super.innerSetup();
     commonInnerSetup();
   }
 
-  private void commonInnerSetup() throws NamingException {
+  private void commonInnerSetup() throws NamingEtwitterception {
     userPropertiesManager = new UserPropertiesManager(wireModule.getMetastoreClient());
   }
 }

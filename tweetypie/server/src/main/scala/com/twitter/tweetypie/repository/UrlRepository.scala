@@ -9,61 +9,61 @@ import com.twitter.tweetypie.backends.Talon
 import com.twitter.tweetypie.client_id.ClientIdHelper
 import com.twitter.tweetypie.core.OverCapacity
 
-case class UrlSlug(text: String) extends AnyVal
-case class ExpandedUrl(text: String) extends AnyVal
+case class UrlSlug(tetwittert: String) etwittertends AnyVal
+case class EtwitterpandedUrl(tetwittert: String) etwittertends AnyVal
 
 object UrlRepository {
-  type Type = UrlSlug => Stitch[ExpandedUrl]
+  type Type = UrlSlug => Stitch[EtwitterpandedUrl]
 
   /**
-   * Builds a UrlRepository from a Talon.Expand arrow.
+   * Builds a UrlRepository from a Talon.Etwitterpand arrow.
    */
   def apply(
-    talonExpand: Talon.Expand,
+    talonEtwitterpand: Talon.Etwitterpand,
     tweetypieClientId: String,
     statsReceiver: StatsReceiver,
     clientIdHelper: ClientIdHelper,
   ): Type = {
-    val observedTalonExpand: Talon.Expand =
-      talonExpand
+    val observedTalonEtwitterpand: Talon.Etwitterpand =
+      talonEtwitterpand
         .trackOutcome(statsReceiver, _ => clientIdHelper.effectiveClientId.getOrElse("unknown"))
 
-    val expandGroup = SeqGroup[ExpandRequest, Try[ExpandResponse]] { requests =>
+    val etwitterpandGroup = SeqGroup[EtwitterpandRequest, Try[EtwitterpandResponse]] { requests =>
       LegacySeqGroup.liftToSeqTry(
-        Future.collect(requests.map(r => observedTalonExpand(r).liftToTry)))
+        Future.collect(requests.map(r => observedTalonEtwitterpand(r).liftToTry)))
     }
 
     slug =>
-      val request = toExpandRequest(slug, auditMessage(tweetypieClientId, clientIdHelper))
+      val request = toEtwitterpandRequest(slug, auditMessage(tweetypieClientId, clientIdHelper))
 
       Stitch
-        .call(request, expandGroup)
+        .call(request, etwitterpandGroup)
         .lowerFromTry
-        .flatMap(toExpandedUrl(slug, _))
+        .flatMap(toEtwitterpandedUrl(slug, _))
   }
 
   def auditMessage(tweetypieClientId: String, clientIdHelper: ClientIdHelper): String = {
     tweetypieClientId + clientIdHelper.effectiveClientId.mkString(":", "", "")
   }
 
-  def toExpandRequest(slug: UrlSlug, auditMessage: String): ExpandRequest =
-    ExpandRequest(userId = 0, shortUrl = slug.text, fromUser = false, auditMsg = Some(auditMessage))
+  def toEtwitterpandRequest(slug: UrlSlug, auditMessage: String): EtwitterpandRequest =
+    EtwitterpandRequest(userId = 0, shortUrl = slug.tetwittert, fromUser = false, auditMsg = Some(auditMessage))
 
-  def toExpandedUrl(slug: UrlSlug, res: ExpandResponse): Stitch[ExpandedUrl] =
+  def toEtwitterpandedUrl(slug: UrlSlug, res: EtwitterpandResponse): Stitch[EtwitterpandedUrl] =
     res.responseCode match {
       case ResponseCode.Ok =>
         // use Option(res.longUrl) because res.longUrl can be null
         Option(res.longUrl) match {
           case None => Stitch.NotFound
-          case Some(longUrl) => Stitch.value(ExpandedUrl(longUrl))
+          case Some(longUrl) => Stitch.value(EtwitterpandedUrl(longUrl))
         }
 
       case ResponseCode.BadInput =>
         Stitch.NotFound
 
-      // we shouldn't see other ResponseCodes, because Talon.Expand translates them to
-      // exceptions, but we have this catch-all just in case.
+      // we shouldn't see other ResponseCodes, because Talon.Etwitterpand translates them to
+      // etwitterceptions, but we have this catch-all just in case.
       case _ =>
-        Stitch.exception(OverCapacity("talon"))
+        Stitch.etwitterception(OverCapacity("talon"))
     }
 }

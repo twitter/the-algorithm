@@ -1,15 +1,15 @@
 package com.twitter.search.earlybird.search;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import com.google.common.base.Preconditions;
 import com.google.common.primitives.Longs;
 
-import org.apache.lucene.index.NumericDocValues;
+import org.apache.lucene.indetwitter.NumericDocValues;
 
 import com.twitter.common_internal.bloomfilter.BloomFilter;
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
 import com.twitter.search.earlybird.thrift.ThriftSocialFilterType;
 
 /**
@@ -54,7 +54,7 @@ public class SocialFilter {
       ThriftSocialFilterType socialFilterType,
       final long searcherId,
       final byte[] trustedFilter,
-      final byte[] followFilter) throws IOException {
+      final byte[] followFilter) throws IOEtwitterception {
     Preconditions.checkNotNull(socialFilterType);
     Preconditions.checkNotNull(trustedFilter);
     Preconditions.checkNotNull(followFilter);
@@ -74,20 +74,20 @@ public class SocialFilter {
         this.acceptor = new AllAcceptor();
         break;
       default:
-        throw new UnsupportedOperationException("Invalid social filter type passed");
+        throw new UnsupportedOperationEtwitterception("Invalid social filter type passed");
     }
   }
 
-  public void startSegment(EarlybirdIndexSegmentAtomicReader indexReader) throws IOException {
+  public void startSegment(EarlybirdIndetwitterSegmentAtomicReader indetwitterReader) throws IOEtwitterception {
     fromUserID =
-        indexReader.getNumericDocValues(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName());
+        indetwitterReader.getNumericDocValues(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName());
   }
 
   /**
    * Determines if the given doc ID should be accepted.
    */
-  public boolean accept(int internalDocID) throws IOException {
-    if (!fromUserID.advanceExact(internalDocID)) {
+  public boolean accept(int internalDocID) throws IOEtwitterception {
+    if (!fromUserID.advanceEtwitteract(internalDocID)) {
       return false;
     }
 

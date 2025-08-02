@@ -13,7 +13,7 @@ class ScribeTweetCacheWrites(
   val underlyingCache: Cache[TweetKey, Cached[CachedTweet]],
   logYoungTweetCacheWrites: TweetId => Boolean,
   logTweetCacheWrites: TweetId => Boolean)
-    extends WriteLoggingCache[TweetKey, Cached[CachedTweet]] {
+    etwittertends WriteLoggingCache[TweetKey, Cached[CachedTweet]] {
   private[this] lazy val scribe = Scribe(TweetCacheWrite, "tweetypie_tweet_cache_writes")
 
   private[this] def mkTweetCacheWrite(
@@ -29,7 +29,7 @@ class ScribeTweetCacheWrites(
     */
     val timestampOffset =
       if (SnowflakeId.isSnowflakeId(id)) {
-        SnowflakeId(id).unixTimeMillis.asLong
+        SnowflakeId(id).unitwitterTimeMillis.asLong
       } else {
         0
       }
@@ -74,7 +74,7 @@ class ScribeTweetCacheWrites(
 
   private[this] def isYoungTweet(tweetId: TweetId): Boolean =
     (SnowflakeId.isSnowflakeId(tweetId) &&
-      ((Time.now.inMilliseconds - SnowflakeId(tweetId).unixTimeMillis.asLong) <=
+      ((Time.now.inMilliseconds - SnowflakeId(tweetId).unitwitterTimeMillis.asLong) <=
         YoungTweetThresholdMs))
 
   /**
@@ -98,5 +98,5 @@ class ScribeTweetCacheWrites(
    * this method.
    */
   override def select(k: TweetKey, v: Cached[CachedTweet]): Boolean =
-    v.value.exists(_.tweet.composerSource.contains(ComposerSource.Camera)) || selectKey(k)
+    v.value.etwitterists(_.tweet.composerSource.contains(ComposerSource.Camera)) || selectKey(k)
 }

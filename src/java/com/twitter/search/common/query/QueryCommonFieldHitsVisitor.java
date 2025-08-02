@@ -13,7 +13,7 @@ import com.twitter.search.queryparser.query.Conjunction;
 import com.twitter.search.queryparser.query.Disjunction;
 import com.twitter.search.queryparser.query.Phrase;
 import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twitter.search.queryparser.query.QueryParserEtwitterception;
 import com.twitter.search.queryparser.query.SpecialTerm;
 import com.twitter.search.queryparser.query.Term;
 import com.twitter.search.queryparser.query.search.Link;
@@ -24,7 +24,7 @@ import com.twitter.search.queryparser.query.search.SearchQueryVisitor;
  * Visitor to track the fields hits of each node
  * Returns the common fields among conjunctions and the union of the fields amongst disjunctions
  */
-public final class QueryCommonFieldHitsVisitor extends SearchQueryVisitor<Set<String>> {
+public final class QueryCommonFieldHitsVisitor etwittertends SearchQueryVisitor<Set<String>> {
 
   private static final Logger LOG = Logger.getLogger(QueryCommonFieldHitsVisitor.class.getName());
 
@@ -65,7 +65,7 @@ public final class QueryCommonFieldHitsVisitor extends SearchQueryVisitor<Set<St
     try {
       Set<String> returnSet = query.accept(visitor);
       return returnSet;
-    } catch (QueryParserException e) {
+    } catch (QueryParserEtwitterception e) {
       LOG.log(Level.SEVERE, "Could not find intersection for query [" + query + "]: ", e);
       return Collections.emptySet();
     }
@@ -78,7 +78,7 @@ public final class QueryCommonFieldHitsVisitor extends SearchQueryVisitor<Set<St
   }
 
   @Override
-  public Set<String> visit(Disjunction disjunction) throws QueryParserException {
+  public Set<String> visit(Disjunction disjunction) throws QueryParserEtwitterception {
     Set<String> fieldHitIntersections = Sets.newHashSet();
     for (Query child : disjunction.getChildren()) {
       fieldHitIntersections.addAll(child.accept(this));
@@ -87,7 +87,7 @@ public final class QueryCommonFieldHitsVisitor extends SearchQueryVisitor<Set<St
   }
 
   @Override
-  public Set<String> visit(Conjunction conjunction) throws QueryParserException {
+  public Set<String> visit(Conjunction conjunction) throws QueryParserEtwitterception {
     List<Query> children = conjunction.getChildren();
     if (!children.isEmpty()) {
       boolean initializedIntersections = false;
@@ -97,7 +97,7 @@ public final class QueryCommonFieldHitsVisitor extends SearchQueryVisitor<Set<St
         if (hits.isEmpty()) {
           // if it is empty, it means this query node is not of term type
           // and we do not include these in the field intersection
-          // eg. cache filters, proximity groups
+          // eg. cache filters, protwitterimity groups
           continue;
         }
         if (!initializedIntersections) {
@@ -113,7 +113,7 @@ public final class QueryCommonFieldHitsVisitor extends SearchQueryVisitor<Set<St
   }
 
   @Override
-  public Set<String> visit(Term term) throws QueryParserException {
+  public Set<String> visit(Term term) throws QueryParserEtwitterception {
     Set<String> fieldHitIntersections = Sets.newHashSet();
     Integer rank = nodeToRankMap.get(term);
     if (rank != null) {
@@ -127,9 +127,9 @@ public final class QueryCommonFieldHitsVisitor extends SearchQueryVisitor<Set<St
   }
 
   @Override
-  public Set<String> visit(SpecialTerm specialTerm) throws QueryParserException {
+  public Set<String> visit(SpecialTerm specialTerm) throws QueryParserEtwitterception {
     // This is way of splitting @mentions ensures consistency with way the lucene query is built in
-    // expertsearch
+    // etwitterpertsearch
     if (specialTerm.getType() == SpecialTerm.Type.MENTION && specialTerm.getValue().contains("_")) {
       Phrase phrase = new Phrase(specialTerm.getValue().split("_"));
       return phrase.accept(this);
@@ -138,17 +138,17 @@ public final class QueryCommonFieldHitsVisitor extends SearchQueryVisitor<Set<St
   }
 
   @Override
-  public Set<String> visit(SearchOperator operator) throws QueryParserException {
+  public Set<String> visit(SearchOperator operator) throws QueryParserEtwitterception {
     return Collections.emptySet();
   }
 
   @Override
-  public Set<String> visit(Link link) throws QueryParserException {
+  public Set<String> visit(Link link) throws QueryParserEtwitterception {
     return link.toPhrase().accept(this);
   }
 
   @Override
-  public Set<String> visit(Phrase phrase) throws QueryParserException {
+  public Set<String> visit(Phrase phrase) throws QueryParserEtwitterception {
     // All terms in the phrase should return the same hits fields, just check the first one
     List<String> terms = phrase.getTerms();
     if (!terms.isEmpty()) {

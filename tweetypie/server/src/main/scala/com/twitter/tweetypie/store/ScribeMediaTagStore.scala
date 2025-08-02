@@ -7,7 +7,7 @@ import com.twitter.tweetypie.thriftscala.TweetMediaTagEvent
 /**
  * Scribes thrift-encoded TweetMediaTagEvents (from tweet_events.thrift).
  */
-trait ScribeMediaTagStore extends TweetStoreBase[ScribeMediaTagStore] with AsyncInsertTweet.Store {
+trait ScribeMediaTagStore etwittertends TweetStoreBase[ScribeMediaTagStore] with AsyncInsertTweet.Store {
   def wrap(w: TweetStore.Wrap): ScribeMediaTagStore =
     new TweetStoreWrapper(w, this) with ScribeMediaTagStore with AsyncInsertTweet.StoreWrapper
 }

@@ -18,7 +18,7 @@ import com.twitter.util.Return
 import com.twitter.util.Throw
 import diffshow.Container
 import diffshow.DiffShow
-import diffshow.Expr
+import diffshow.Etwitterpr
 import org.apache.commons.codec.binary.Base64
 import scala.util.Try
 import shapeless.Cached
@@ -38,7 +38,7 @@ class InspectFields(svcIdentifier: ServiceIdentifier) {
         mhDestinationName,
         ManhattanKVClientMtlsParams(svcIdentifier)))
       .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-      .defaultMaxTimeout(mhTimeout)
+      .defaultMatwitterTimeout(mhTimeout)
       .build()
 
   val readOperation: Read = (new ManhattanOperations(mhDatasetName, localMhEndpoint)).read
@@ -73,8 +73,8 @@ class InspectFields(svcIdentifier: ServiceIdentifier) {
       "Not Found"
     } else {
       val formattedRecords = getFormattedManhattanRecords(tweetId, mhRecords)
-      val keyFieldWidth = formattedRecords.map(_.key.length).max + 2
-      val fieldNameFieldWidth = formattedRecords.map(_.fieldName.length).max + 2
+      val keyFieldWidth = formattedRecords.map(_.key.length).matwitter + 2
+      val fieldNameFieldWidth = formattedRecords.map(_.fieldName.length).matwitter + 2
 
       val formatString = s"    %-${keyFieldWidth}s %-${fieldNameFieldWidth}s %s"
 
@@ -118,7 +118,7 @@ class InspectFields(svcIdentifier: ServiceIdentifier) {
             )
           )
       }
-      .sortBy(_.key.replace("external", "xternal")) // sort by key, with internal first
+      .sortBy(_.key.replace("etwitterternal", "twitterternal")) // sort by key, with internal first
   }
 
   private[this] def getFieldNameFromThrift(
@@ -208,14 +208,14 @@ class InspectFields(svcIdentifier: ServiceIdentifier) {
     implicit ev: Cached[Strict[DiffShow[T]]]
   ): String = {
     val config = diffshow.Config(hideFieldWithEmptyVal = true)
-    val tree: Expr = config.transform(DiffShow.show(tweetWithOneField))
+    val tree: Etwitterpr = config.transform(DiffShow.show(tweetWithOneField))
 
     // matches a Tweet or StoredTweet with two values, the first being the id
     val value = tree.transform {
       case Container(_, List(diffshow.Field("id", _), diffshow.Field(_, value))) => value
     }
 
-    config.exprPrinter.apply(value, width = 80).render
+    config.etwitterprPrinter.apply(value, width = 80).render
   }
 
   private[this] def coreFields(storedTweet: StoredTweet): String =

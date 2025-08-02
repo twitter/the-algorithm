@@ -39,7 +39,7 @@ class SendHandlerNotifier(
   /**
    *
    * @param response: Candidate validation response
-   * @param responseWithScribedInfo: boolean indicating if scribe data is expected in push response
+   * @param responseWithScribedInfo: boolean indicating if scribe data is etwitterpected in push response
    * @return: [[PushResponse]] containing final result of send request for [[com.twitter.frigate.pushservice.thriftscala.PushRequest]]
    */
   final def checkResponseAndNotify(
@@ -80,7 +80,7 @@ class SendHandlerNotifier(
         }
 
       case Response(Invalid(reason), _) =>
-        throw new IllegalStateException(s"Unexpected target filtering in SendHandler: $reason")
+        throw new IllegalStateEtwitterception(s"Unetwitterpected target filtering in SendHandler: $reason")
     }
   }
 }

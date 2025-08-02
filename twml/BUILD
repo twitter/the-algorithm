@@ -10,7 +10,7 @@ twml_deps = [
     "3rdparty/python/kazoo:default",
     "3rdparty/python/python-dateutil:default",
     "3rdparty/python/pytz:default",
-    "cortex/ml-metastore/src/main/python/com/twitter/mlmetastore/modelrepo/client",
+    "cortetwitter/ml-metastore/src/main/python/com/twitter/mlmetastore/modelrepo/client",
     "src/python/twitter/common/app",
     "src/python/twitter/common/app/modules:vars",
     "src/python/twitter/common/metrics",
@@ -66,7 +66,7 @@ python3_library(
 python3_library(
     name = "twml_packer_deps_no_tf_py3",
     tags = [
-        "known-to-fail-jira:CX-20246",
+        "known-to-fail-jira:Ctwitter-20246",
         "no-mypy",
     ],
     dependencies = [
@@ -127,7 +127,7 @@ python3_library(
     ],
 )
 
-# Build a smaller .pex file that models can depend on.
+# Build a smaller .petwitter file that models can depend on.
 # Tensorflow and other dependencies are downloaded from Packer on Aurora.
 # Note: This gets the C++ ops through 3rdparty artifacts.
 python3_library(
@@ -174,12 +174,12 @@ python37_binary(
 )
 
 # This target is added so twml can be used regardless of the Tensorflow version:
-# This target does not pull in TensorFlow 1.x or the related libtwml compiled using TF 1.x.
+# This target does not pull in TensorFlow 1.twitter or the related libtwml compiled using TF 1.twitter.
 python3_library(
     name = "twml-py-source-only",
     sources = twml_sources,
     tags = [
-        "known-to-fail-jira:CX-23416",
+        "known-to-fail-jira:Ctwitter-23416",
         "no-mypy",
     ],
     dependencies = twml_deps,

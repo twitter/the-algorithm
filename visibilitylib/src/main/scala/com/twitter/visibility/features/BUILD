@@ -6,7 +6,7 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         "3rdparty/jvm/com/squareup/okhttp:okhttp3",
-        "finagle/finagle-mux/src/main/scala",
+        "finagle/finagle-mutwitter/src/main/scala",
         "src/thrift/com/twitter/gizmoduck:user-thrift-scala",
         "src/thrift/com/twitter/search/common:constants-scala",
         "src/thrift/com/twitter/tweetypie:tweet-scala",

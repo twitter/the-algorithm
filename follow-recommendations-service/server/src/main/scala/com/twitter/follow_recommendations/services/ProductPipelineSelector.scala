@@ -9,21 +9,21 @@ import com.twitter.follow_recommendations.models.RecommendationRequest
 import com.twitter.follow_recommendations.models.RecommendationResponse
 import com.twitter.stitch.Stitch
 import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 import scala.util.Random
 
 @Singleton
 class ProductPipelineSelector @Inject() (
   recommendationsService: RecommendationsService,
-  productMixerRecommendationService: ProductMixerRecommendationService,
+  productMitwittererRecommendationService: ProductMitwittererRecommendationService,
   productPipelineSelectorConfig: ProductPipelineSelectorConfig,
   baseStats: StatsReceiver) {
 
   private val frsStats = baseStats.scope("follow_recommendations_service")
   private val stats = frsStats.scope("product_pipeline_selector_parity")
 
-  private val readFromProductMixerCounter = stats.counter("select_product_mixer")
+  private val readFromProductMitwittererCounter = stats.counter("select_product_mitwitterer")
   private val readFromOldFRSCounter = stats.counter("select_old_frs")
 
   def selectPipeline(
@@ -31,10 +31,10 @@ class ProductPipelineSelector @Inject() (
     params: Params
   ): Stitch[RecommendationResponse] = {
     productPipelineSelectorConfig
-      .getDarkReadAndExpParams(request.displayLocation).map { darkReadAndExpParam =>
-        if (params(darkReadAndExpParam.expParam)) {
-          readFromProductMixerPipeline(request, params)
-        } else if (params(darkReadAndExpParam.darkReadParam)) {
+      .getDarkReadAndEtwitterpParams(request.displayLocation).map { darkReadAndEtwitterpParam =>
+        if (params(darkReadAndEtwitterpParam.etwitterpParam)) {
+          readFromProductMitwittererPipeline(request, params)
+        } else if (params(darkReadAndEtwitterpParam.darkReadParam)) {
           darkReadAndReturnResult(request, params)
         } else {
           readFromOldFrsPipeline(request, params)
@@ -42,12 +42,12 @@ class ProductPipelineSelector @Inject() (
       }.getOrElse(readFromOldFrsPipeline(request, params))
   }
 
-  private def readFromProductMixerPipeline(
+  private def readFromProductMitwittererPipeline(
     request: RecommendationRequest,
     params: Params
   ): Stitch[RecommendationResponse] = {
-    readFromProductMixerCounter.incr()
-    productMixerRecommendationService.get(request, params)
+    readFromProductMitwittererCounter.incr()
+    productMitwittererRecommendationService.get(request, params)
   }
 
   private def readFromOldFrsPipeline(
@@ -67,14 +67,14 @@ class ProductPipelineSelector @Inject() (
 
     // If no seed is set, create a random one that both requests will use to remove differences
     // in randomness for the WeightedCandidateSourceRanker
-    val randomizationSeed = new Random().nextLong()
+    val randomizationSeed = new Random().netwittertLong()
 
     val oldFRSPiplelineRequest = request.copy(
       debugParams = Some(
         request.debugParams.getOrElse(
           DebugParams(None, Some(DebugOptions(randomizationSeed = Some(randomizationSeed))))))
     )
-    val productMixerPipelineRequest = request.copy(
+    val productMitwittererPipelineRequest = request.copy(
       debugParams = Some(
         request.debugParams.getOrElse(
           DebugParams(
@@ -89,13 +89,13 @@ class ProductPipelineSelector @Inject() (
         Stitch.async(
           StatsUtil
             .profileStitch(
-              readFromProductMixerPipeline(productMixerPipelineRequest, params),
-              darkReadStats.scope("product_mixer_timing")).liftToOption().map {
-              case Some(frsProductMixerResponse) =>
-                darkReadStats.counter("product_mixer_pipeline_success").incr()
-                compare(request, frsOldPipelineResponse, frsProductMixerResponse)
+              readFromProductMitwittererPipeline(productMitwittererPipelineRequest, params),
+              darkReadStats.scope("product_mitwitterer_timing")).liftToOption().map {
+              case Some(frsProductMitwittererResponse) =>
+                darkReadStats.counter("product_mitwitterer_pipeline_success").incr()
+                compare(request, frsOldPipelineResponse, frsProductMitwittererResponse)
               case None =>
-                darkReadStats.counter("product_mixer_pipeline_failure").incr()
+                darkReadStats.counter("product_mitwitterer_pipeline_failure").incr()
             }
         )
       }
@@ -104,29 +104,29 @@ class ProductPipelineSelector @Inject() (
   def compare(
     request: RecommendationRequest,
     frsOldPipelineResponse: RecommendationResponse,
-    frsProductMixerResponse: RecommendationResponse
+    frsProductMitwittererResponse: RecommendationResponse
   ): Unit = {
     val compareStats = stats.scope("pipeline_comparison", request.displayLocation.toFsName)
     compareStats.counter("total-comparisons").incr()
 
     val oldFrsMap = frsOldPipelineResponse.recommendations.map { user => user.id -> user }.toMap
-    val productMixerMap = frsProductMixerResponse.recommendations.map { user =>
+    val productMitwittererMap = frsProductMitwittererResponse.recommendations.map { user =>
       user.id -> user
     }.toMap
 
-    compareTopNResults(3, frsOldPipelineResponse, frsProductMixerResponse, compareStats)
-    compareTopNResults(5, frsOldPipelineResponse, frsProductMixerResponse, compareStats)
-    compareTopNResults(25, frsOldPipelineResponse, frsProductMixerResponse, compareStats)
-    compareTopNResults(50, frsOldPipelineResponse, frsProductMixerResponse, compareStats)
-    compareTopNResults(75, frsOldPipelineResponse, frsProductMixerResponse, compareStats)
+    compareTopNResults(3, frsOldPipelineResponse, frsProductMitwittererResponse, compareStats)
+    compareTopNResults(5, frsOldPipelineResponse, frsProductMitwittererResponse, compareStats)
+    compareTopNResults(25, frsOldPipelineResponse, frsProductMitwittererResponse, compareStats)
+    compareTopNResults(50, frsOldPipelineResponse, frsProductMitwittererResponse, compareStats)
+    compareTopNResults(75, frsOldPipelineResponse, frsProductMitwittererResponse, compareStats)
 
     // Compare individual matching candidates
     oldFrsMap.keys.foreach(userId => {
-      if (productMixerMap.contains(userId)) {
-        (oldFrsMap(userId), productMixerMap(userId)) match {
-          case (oldFrsUser: CandidateUser, productMixerUser: CandidateUser) =>
+      if (productMitwittererMap.contains(userId)) {
+        (oldFrsMap(userId), productMitwittererMap(userId)) match {
+          case (oldFrsUser: CandidateUser, productMitwittererUser: CandidateUser) =>
             compareStats.counter("matching-user-count").incr()
-            compareUser(oldFrsUser, productMixerUser, compareStats)
+            compareUser(oldFrsUser, productMitwittererUser, compareStats)
           case _ =>
             compareStats.counter("unknown-user-type-count").incr()
         }
@@ -139,16 +139,16 @@ class ProductPipelineSelector @Inject() (
   private def compareTopNResults(
     n: Int,
     frsOldPipelineResponse: RecommendationResponse,
-    frsProductMixerResponse: RecommendationResponse,
+    frsProductMitwittererResponse: RecommendationResponse,
     compareStats: StatsReceiver
   ): Unit = {
-    if (frsOldPipelineResponse.recommendations.size >= n && frsProductMixerResponse.recommendations.size >= n) {
+    if (frsOldPipelineResponse.recommendations.size >= n && frsProductMitwittererResponse.recommendations.size >= n) {
       val oldFrsPipelineFirstN = frsOldPipelineResponse.recommendations.take(n).map(_.id)
-      val productMixerPipelineFirstN = frsProductMixerResponse.recommendations.take(n).map(_.id)
+      val productMitwittererPipelineFirstN = frsProductMitwittererResponse.recommendations.take(n).map(_.id)
 
-      if (oldFrsPipelineFirstN.sorted == productMixerPipelineFirstN.sorted)
+      if (oldFrsPipelineFirstN.sorted == productMitwittererPipelineFirstN.sorted)
         compareStats.counter(s"first-$n-sorted-equal-ids").incr()
-      if (oldFrsPipelineFirstN == productMixerPipelineFirstN)
+      if (oldFrsPipelineFirstN == productMitwittererPipelineFirstN)
         compareStats.counter(s"first-$n-unsorted-ids-equal").incr()
       else
         compareStats.counter(s"first-$n-unsorted-ids-unequal").incr()
@@ -157,32 +157,32 @@ class ProductPipelineSelector @Inject() (
 
   private def compareUser(
     oldFrsUser: CandidateUser,
-    productMixerUser: CandidateUser,
+    productMitwittererUser: CandidateUser,
     stats: StatsReceiver
   ): Unit = {
     val userStats = stats.scope("matching-user")
 
-    if (oldFrsUser.score != productMixerUser.score)
+    if (oldFrsUser.score != productMitwittererUser.score)
       userStats.counter("mismatch-score").incr()
-    if (oldFrsUser.reason != productMixerUser.reason)
+    if (oldFrsUser.reason != productMitwittererUser.reason)
       userStats.counter("mismatch-reason").incr()
-    if (oldFrsUser.userCandidateSourceDetails != productMixerUser.userCandidateSourceDetails)
+    if (oldFrsUser.userCandidateSourceDetails != productMitwittererUser.userCandidateSourceDetails)
       userStats.counter("mismatch-userCandidateSourceDetails").incr()
-    if (oldFrsUser.adMetadata != productMixerUser.adMetadata)
+    if (oldFrsUser.adMetadata != productMitwittererUser.adMetadata)
       userStats.counter("mismatch-adMetadata").incr()
-    if (oldFrsUser.trackingToken != productMixerUser.trackingToken)
+    if (oldFrsUser.trackingToken != productMitwittererUser.trackingToken)
       userStats.counter("mismatch-trackingToken").incr()
-    if (oldFrsUser.dataRecord != productMixerUser.dataRecord)
+    if (oldFrsUser.dataRecord != productMitwittererUser.dataRecord)
       userStats.counter("mismatch-dataRecord").incr()
-    if (oldFrsUser.scores != productMixerUser.scores)
+    if (oldFrsUser.scores != productMitwittererUser.scores)
       userStats.counter("mismatch-scores").incr()
-    if (oldFrsUser.infoPerRankingStage != productMixerUser.infoPerRankingStage)
+    if (oldFrsUser.infoPerRankingStage != productMitwittererUser.infoPerRankingStage)
       userStats.counter("mismatch-infoPerRankingStage").incr()
-    if (oldFrsUser.params != productMixerUser.params)
+    if (oldFrsUser.params != productMitwittererUser.params)
       userStats.counter("mismatch-params").incr()
-    if (oldFrsUser.engagements != productMixerUser.engagements)
+    if (oldFrsUser.engagements != productMitwittererUser.engagements)
       userStats.counter("mismatch-engagements").incr()
-    if (oldFrsUser.recommendationFlowIdentifier != productMixerUser.recommendationFlowIdentifier)
+    if (oldFrsUser.recommendationFlowIdentifier != productMitwittererUser.recommendationFlowIdentifier)
       userStats.counter("mismatch-recommendationFlowIdentifier").incr()
   }
 }

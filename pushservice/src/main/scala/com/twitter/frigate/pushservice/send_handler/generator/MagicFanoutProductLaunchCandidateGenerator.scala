@@ -10,7 +10,7 @@ import com.twitter.frigate.thriftscala.CommonRecommendationType
 import com.twitter.frigate.thriftscala.FrigateNotification
 import com.twitter.util.Future
 
-object MagicFanoutProductLaunchCandidateGenerator extends CandidateGenerator {
+object MagicFanoutProductLaunchCandidateGenerator etwittertends CandidateGenerator {
 
   override def getCandidate(
     targetUser: PushTypes.Target,
@@ -19,16 +19,16 @@ object MagicFanoutProductLaunchCandidateGenerator extends CandidateGenerator {
 
     require(
       notification.commonRecommendationType == CommonRecommendationType.MagicFanoutProductLaunch,
-      "MagicFanoutProductLaunch: unexpected CRT " + notification.commonRecommendationType
+      "MagicFanoutProductLaunch: unetwitterpected CRT " + notification.commonRecommendationType
     )
     require(
       notification.magicFanoutProductLaunchNotification.isDefined,
       "MagicFanoutProductLaunch: magicFanoutProductLaunchNotification is not defined")
     require(
-      notification.magicFanoutProductLaunchNotification.exists(_.magicFanoutPushId.isDefined),
+      notification.magicFanoutProductLaunchNotification.etwitterists(_.magicFanoutPushId.isDefined),
       "MagicFanoutProductLaunch: magicFanoutPushId is not defined")
     require(
-      notification.magicFanoutProductLaunchNotification.exists(_.fanoutReasons.isDefined),
+      notification.magicFanoutProductLaunchNotification.etwitterists(_.fanoutReasons.isDefined),
       "MagicFanoutProductLaunch: fanoutReasons is not defined")
 
     val magicFanoutProductLaunchNotification = notification.magicFanoutProductLaunchNotification.get

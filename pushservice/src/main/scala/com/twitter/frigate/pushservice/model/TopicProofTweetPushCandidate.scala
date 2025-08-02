@@ -35,7 +35,7 @@ class TopicProofTweetPushCandidate(
 )(
   implicit stats: StatsReceiver,
   pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
+    etwittertends PushCandidate
     with TopicProofTweetCandidate
     with TweetAuthorDetails
     with TopicProofTweetNtabRequestHydrator
@@ -59,7 +59,7 @@ class TopicProofTweetPushCandidate(
 }
 
 case class TopicProofTweetCandidatePredicates(override val config: Config)
-    extends BasicTweetPredicatesForRFPH[TopicProofTweetPushCandidate] {
+    etwittertends BasicTweetPredicatesForRFPH[TopicProofTweetPushCandidate] {
   implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
 
   override val preCandidateSpecificPredicates: List[NamedPredicate[TopicProofTweetPushCandidate]] =

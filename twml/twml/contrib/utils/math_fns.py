@@ -6,7 +6,7 @@ from tensorflow.python.ops import array_ops, math_ops
 # https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/ops/metrics_impl.py#L216
 def safe_div(numerator, denominator, name=None):
   """
-  Example usage: calculating NDCG = DCG / IDCG to handle cases when
+  Etwitterample usage: calculating NDCG = DCG / IDCG to handle cases when
   IDCG = 0 returns 0 instead of Infinity 
   Do not use this dividing funciton unless it makes sense to your problem
   Divides two tensors element-wise, returns 0 if the denominator is <= 0.
@@ -167,5 +167,5 @@ def safe_log(raw_scores, name=None):
     A float `Tensor` that hols the safe log base e of input
   """
   epsilon = 1E-8
-  clipped_raw_scores = tf.maximum(raw_scores, epsilon)
+  clipped_raw_scores = tf.matwitterimum(raw_scores, epsilon)
   return tf.log(clipped_raw_scores)

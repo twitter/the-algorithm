@@ -25,7 +25,7 @@ import com.twitter.util.Timer
  *     - one Twemcache pool
  *
  * Each memcached-backed cache specialization provides its own:
- *     - key prefix or "namespace"
+ *     - key prefitwitter or "namespace"
  *     - value serializer/deserializer
  *     - stats scope
  *     - log name
@@ -42,7 +42,7 @@ trait Caches {
 }
 
 object Caches {
-  object NoCache extends Caches {
+  object NoCache etwittertends Caches {
     override val memcachedClientWithInProcessCaching: memcached.Client = new NullMemcacheClient()
     private val toLockingCache: LockingCacheFactory = NonLockingCacheFactory
     val tweetCache: LockingCache[TweetKey, Cached[CachedTweet]] =
@@ -84,8 +84,8 @@ object Caches {
     val caffieneMemcachedClient = settings.inProcessCacheConfigOpt match {
       case Some(inProcessCacheConfig) =>
         new CaffeineMemcacheClient(
-          proxyClient = memcacheClient,
-          inProcessCacheConfig.maximumSize,
+          protwitteryClient = memcacheClient,
+          inProcessCacheConfig.matwitterimumSize,
           inProcessCacheConfig.ttl,
           cachesMemcacheStats.scope("caffeine")
         )
@@ -253,9 +253,9 @@ object Caches {
       val deviceSourceInProcessCache: LockingCache[String, Cached[DeviceSource]] =
         toLockingCache(
           observeCache(
-            new ExpiringLruCache(
+            new EtwitterpiringLruCache(
               ttl = settings.deviceSourceInProcessTtl,
-              maximumSize = settings.deviceSourceInProcessCacheMaxSize
+              matwitterimumSize = settings.deviceSourceInProcessCacheMatwitterSize
             ),
             stats = cachesInprocessDeviceSourceStats,
             logName = "InprocessDeviceSourceCache"

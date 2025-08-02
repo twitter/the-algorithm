@@ -5,20 +5,20 @@
 #include <algorithm>
 
 namespace twml {
-  template<typename Tx>
-  static int64_t lower_bound_search(const Tx *data, const Tx val, const int64_t buf_size) {
-    auto index_temp = std::lower_bound(data, data + buf_size, val);
-    return static_cast<int64_t>(index_temp - data);
+  template<typename Ttwitter>
+  static int64_t lower_bound_search(const Ttwitter *data, const Ttwitter val, const int64_t buf_size) {
+    auto indetwitter_temp = std::lower_bound(data, data + buf_size, val);
+    return static_cast<int64_t>(indetwitter_temp - data);
   }
 
-  template<typename Tx>
-  static int64_t upper_bound_search(const Tx *data, const Tx val, const int64_t buf_size) {
-    auto index_temp = std::upper_bound(data, data + buf_size, val);
-    return static_cast<int64_t>(index_temp - data);
+  template<typename Ttwitter>
+  static int64_t upper_bound_search(const Ttwitter *data, const Ttwitter val, const int64_t buf_size) {
+    auto indetwitter_temp = std::upper_bound(data, data + buf_size, val);
+    return static_cast<int64_t>(indetwitter_temp - data);
   }
 
-  template<typename Tx>
-  using search_method = int64_t (*)(const Tx *, const Tx, const int64_t);
+  template<typename Ttwitter>
+  using search_method = int64_t (*)(const Ttwitter *, const Ttwitter, const int64_t);
 
   typedef uint64_t (*hash_signature)(uint64_t, int64_t, uint64_t);
 
@@ -33,23 +33,23 @@ namespace twml {
   // Required args:
   //   feature_id:
   //     The feature id of the feature to be hashed.
-  //   bucket_index:
-  //     The bucket index of the discretized feature value
+  //   bucket_indetwitter:
+  //     The bucket indetwitter of the discretized feature value
   //   output_bits:
   //     The number of bits of output space for the features to be hashed into.
   //
   // Note - feature_ids may have arbitrary distribution within int32s
   // Note - 64 bit feature_ids can be processed with this, but the upper
   //          32 bits have no effect on the output
-  // e.g. all feature ids 0 through 255 exist in movie-lens.
+  // e.g. all feature ids 0 through 255 etwitterist in movie-lens.
   // this hashing constant is good for 32 LSBs. will use N=32. (can use N<32 also)
   // this hashing constant is co-prime with 2**32, therefore we have that
   //   a != b, a and b in [0,2**32)
   //    implies
-  //   f(a) != f(b) where f(x) = (hashing_constant * x) % (2**32)
+  //   f(a) != f(b) where f(twitter) = (hashing_constant * twitter) % (2**32)
   // note that we are mostly ignoring the upper 32 bits, using modulo 2**32 arithmetic
   uint64_t integer_multiplicative_hashing(uint64_t feature_id,
-                                          int64_t bucket_index,
+                                          int64_t bucket_indetwitter,
                                           uint64_t output_bits) {
     // possibly use 14695981039346656037 for 64 bit unsigned??
     //  = 20921 * 465383 * 1509404459
@@ -59,7 +59,7 @@ namespace twml {
     const uint64_t N = 32;
     // hash once to prevent problems from anomalous input id distributions
     feature_id *= hashing_constant;
-    feature_id += bucket_index;
+    feature_id += bucket_indetwitter;
     // this hash enables the following right shift operation
     //  without losing the bucket information (lower bits)
     feature_id *= hashing_constant;
@@ -70,13 +70,13 @@ namespace twml {
   }
 
   uint64_t integer64_multiplicative_hashing(uint64_t feature_id,
-                                            int64_t bucket_index,
+                                            int64_t bucket_indetwitter,
                                             uint64_t output_bits) {
     const uint64_t hashing_constant = 14695981039346656039UL;
     const uint64_t N = 64;
     // hash once to prevent problems from anomalous input id distributions
     feature_id *= hashing_constant;
-    feature_id += bucket_index;
+    feature_id += bucket_indetwitter;
     // this hash enables the following right shift operation
     //  without losing the bucket information (lower bits)
     feature_id *= hashing_constant;
@@ -100,7 +100,7 @@ namespace twml {
                             const Tensor &input_vals,
                             const Tensor &bin_vals,
                             int output_bits,
-                            const Map<int64_t, int64_t> &ID_to_index,
+                            const Map<int64_t, int64_t> &ID_to_indetwitter,
                             int64_t start_compute,
                             int64_t end_compute,
                             int64_t n_bin,
@@ -149,12 +149,12 @@ namespace twml {
       int64_t id = input_ids_data[i];
       T val = input_vals_data[i];
 
-      auto iter = ID_to_index.find(id);
-      if (iter != ID_to_index.end()) {
-        int64_t feature_idx = iter->second;
-        const T *bin_vals_start = bin_vals_data + feature_idx * n_bin;
-        int64_t out_bin_idx = search_fn(bin_vals_start, val, n_bin);
-        output_keys_data[i] = hash_fn(id, out_bin_idx, output_bits);
+      auto iter = ID_to_indetwitter.find(id);
+      if (iter != ID_to_indetwitter.end()) {
+        int64_t feature_idtwitter = iter->second;
+        const T *bin_vals_start = bin_vals_data + feature_idtwitter * n_bin;
+        int64_t out_bin_idtwitter = search_fn(bin_vals_start, val, n_bin);
+        output_keys_data[i] = hash_fn(id, out_bin_idtwitter, output_bits);
         output_vals_data[i] = 1;
       } else {
         // feature not calibrated
@@ -171,7 +171,7 @@ namespace twml {
                             int n_bin,
                             const Tensor &bin_vals,
                             int output_bits,
-                            const Map<int64_t, int64_t> &ID_to_index,
+                            const Map<int64_t, int64_t> &ID_to_indetwitter,
                             int start_compute,
                             int end_compute,
                             int64_t options) {
@@ -224,13 +224,13 @@ namespace twml {
     case TWML_TYPE_FLOAT:
       twml::hashDiscretizerInfer<float>(output_keys, output_vals,
                   input_ids, input_vals,
-                  bin_vals, output_bits, ID_to_index,
+                  bin_vals, output_bits, ID_to_indetwitter,
                   start_compute, end_compute, n_bin, options);
       break;
     case TWML_TYPE_DOUBLE:
       twml::hashDiscretizerInfer<double>(output_keys, output_vals,
                    input_ids, input_vals,
-                   bin_vals, output_bits, ID_to_index,
+                   bin_vals, output_bits, ID_to_indetwitter,
                    start_compute, end_compute, n_bin, options);
       break;
     default:

@@ -5,7 +5,7 @@ scala_library(
     dependencies = [
         ":topic_recommendations_test_datarecords-java",
         ":topic_recommendations_train_datarecords-java",
-        "escherbird/src/scala/com/twitter/escherbird/scalding/jobs/exportentities:entities-scala",
+        "escherbird/src/scala/com/twitter/escherbird/scalding/jobs/etwitterportentities:entities-scala",
         "interests-ds/src/main/scala/com/twitter/interests_ds/jobs/interests_service",
         "interests-ds/src/main/scala/com/twitter/interests_ds/jobs/interests_service:user_topic_relation_snapshot-scala",
         "src/java/com/twitter/ml/api/constant",

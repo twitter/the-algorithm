@@ -2,7 +2,7 @@ package com.twitter.tweetypie.caching
 
 import com.twitter.finagle.service.StatsFilter
 import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.stats.ExceptionStatsHandler
+import com.twitter.finagle.stats.EtwitterceptionStatsHandler
 import com.twitter.finagle.stats.Counter
 import com.twitter.util.Future
 import com.twitter.util.logging.Logger
@@ -36,7 +36,7 @@ class CacheOperations[K, V](
   memcachedClient: memcached.Client,
   statsReceiver: StatsReceiver,
   logger: Logger,
-  exceptionStatsHandler: ExceptionStatsHandler = StatsFilter.DefaultExceptions) {
+  etwitterceptionStatsHandler: EtwitterceptionStatsHandler = StatsFilter.DefaultEtwitterceptions) {
   // The memcached operations that are performed via this
   // [[CacheOperations]] instance will be tracked under this stats
   // receiver.
@@ -57,7 +57,7 @@ class CacheOperations[K, V](
 
   // Records the state of the cache load after serialization. The
   // policy may transform a value that was successfully loaded from
-  // cache into any result type, which is why we explicitly track
+  // cache into any result type, which is why we etwitterplicitly track
   // "found" and "not_found" above. If `stale` + `fresh` is not equal
   // to `found`, then it means that the policy has translated a found
   // value into a miss or failure. The policy may do this in order to
@@ -70,7 +70,7 @@ class CacheOperations[K, V](
   private[this] val resultMissCounter: Counter = resultStats.counter("miss")
   private[this] val resultFailureCounter: Counter = resultStats.counter("failure")
 
-  // Used for recording exceptions that occurred during
+  // Used for recording etwitterceptions that occurred during
   // deserialization. This will never be incremented if the
   // deserializer returns a result, even if the result is a
   // [[CacheResult.Failure]]. See the comment where this stat is
@@ -84,7 +84,7 @@ class CacheOperations[K, V](
    * converting the [[memcached.GetResult]] to a
    * [[Seq[CachedResult[V]]]]. The result is in the same order as the
    * keys, and there will always be an entry for each key. This method
-   * should never return a [[Future.exception]].
+   * should never return a [[Future.etwitterception]].
    */
   def get(keys: Seq[K]): Future[Seq[CacheResult[V]]] = {
     memcachedGetCounter.incr(keys.size)
@@ -110,10 +110,10 @@ class CacheOperations[K, V](
                     valueSerializer.deserialize(memcachedValue.value)
                   } catch {
                     case NonFatal(e) =>
-                      // If the serializer throws an exception, then
+                      // If the serializer throws an etwitterception, then
                       // the serialized value was malformed. In that
                       // case, we record the failure so that it can be
-                      // detected and fixed, but treat it as a cache
+                      // detected and fitwittered, but treat it as a cache
                       // miss. The reason that we treat it as a miss
                       // rather than a failure is that a miss will
                       // cause a write back to cache, and we want to
@@ -121,15 +121,15 @@ class CacheOperations[K, V](
                       // the bad entry that we just loaded.
                       //
                       // A serializer is free to return Miss itself to
-                      // obtain this behavior if it is expected or
+                      // obtain this behavior if it is etwitterpected or
                       // desired, to avoid the logging and stats (and
-                      // the minor overhead of catching an exception).
+                      // the minor overhead of catching an etwitterception).
                       //
-                      // The exceptions are tracked separately from
-                      // other exceptions so that it is easy to see
+                      // The etwitterceptions are tracked separately from
+                      // other etwitterceptions so that it is easy to see
                       // whether the deserializer itself ever throws an
-                      // exception.
-                      exceptionStatsHandler.record(deserializeFailureStats, e)
+                      // etwitterception.
+                      etwitterceptionStatsHandler.record(deserializeFailureStats, e)
                       logger.warn(s"Failed deserializing value for cache key $cacheKey", e)
                       CacheResult.Miss
                   }
@@ -138,11 +138,11 @@ class CacheOperations[K, V](
                   CacheResult.Miss
 
                 case None =>
-                  val exception =
+                  val etwitterception =
                     getResult.failures.get(cacheKey) match {
                       case None =>
                         // To get here, this was not a hit or a miss,
-                        // so we expect the key to be present in
+                        // so we etwitterpect the key to be present in
                         // failures. If it is not, then either the
                         // contract of getResult was violated, or this
                         // method is somehow attempting to access a
@@ -160,13 +160,13 @@ class CacheOperations[K, V](
                         // which is probably the safest thing to do
                         // (if we don't know what's going on, default
                         // to an uncached repo).
-                        new IllegalStateException
+                        new IllegalStateEtwitterception
 
                       case Some(e) =>
                         e
                     }
-                  exceptionStatsHandler.record(memcachedStats, exception)
-                  CacheResult.Failure(exception)
+                  etwitterceptionStatsHandler.record(memcachedStats, etwitterception)
+                  CacheResult.Failure(etwitterception)
               }
 
             // Count each kind of CacheResult, to make it possible to
@@ -201,12 +201,12 @@ class CacheOperations[K, V](
           // to handle failure of the batch differently than failure
           // of individual keys. This should be rare anyway, since the
           // memcached client already does this for common Finagle
-          // exceptions
+          // etwitterceptions
           resultFailureCounter.incr(keys.size)
           val theFailure: CacheResult[V] = CacheResult.Failure(e)
           keys.map { _ =>
             // Record this as many times as we would if it were in the GetResult
-            exceptionStatsHandler.record(memcachedStats, e)
+            etwitterceptionStatsHandler.record(memcachedStats, e)
             theFailure
           }
       }
@@ -222,14 +222,14 @@ class CacheOperations[K, V](
    */
   def set(key: K, value: V): Future[Unit] =
     valueSerializer.serialize(value) match {
-      case Some((expiry, serialized)) =>
+      case Some((etwitterpiry, serialized)) =>
         if (logger.isTraceEnabled) {
-          logger.trace(s"Writing back to cache $key -> $value (expiry = $expiry)")
+          logger.trace(s"Writing back to cache $key -> $value (etwitterpiry = $etwitterpiry)")
         }
         memcachedSetCounter.incr()
         memcachedClient
-          .set(key = keySerializer(key), flags = 0, expiry = expiry, value = serialized)
-          .onFailure(exceptionStatsHandler.record(memcachedStats, _))
+          .set(key = keySerializer(key), flags = 0, etwitterpiry = etwitterpiry, value = serialized)
+          .onFailure(etwitterceptionStatsHandler.record(memcachedStats, _))
 
       case None =>
         if (logger.isTraceEnabled) {

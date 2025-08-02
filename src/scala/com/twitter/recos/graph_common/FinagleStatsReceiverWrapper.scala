@@ -9,7 +9,7 @@ import com.twitter.graphjet.stats.{StatsReceiver => GraphStatsReceiver}
  * This is because GraphJet is an openly available library which does not
  * depend on Finagle, but tracks stats using a similar interface.
  */
-case class FinagleStatsReceiverWrapper(statsReceiver: StatsReceiver) extends GraphStatsReceiver {
+case class FinagleStatsReceiverWrapper(statsReceiver: StatsReceiver) etwittertends GraphStatsReceiver {
 
   def scope(namespace: String) = new FinagleStatsReceiverWrapper(statsReceiver.scope(namespace))
   def counter(name: String) = new FinagleCounterWrapper(statsReceiver.counter(name))

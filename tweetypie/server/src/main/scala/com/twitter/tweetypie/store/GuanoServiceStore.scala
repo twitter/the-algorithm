@@ -6,7 +6,7 @@ import com.twitter.tseng.withholding.thriftscala.TakedownReason
 import com.twitter.tweetypie.thriftscala._
 
 trait GuanoServiceStore
-    extends TweetStoreBase[GuanoServiceStore]
+    etwittertends TweetStoreBase[GuanoServiceStore]
     with AsyncDeleteTweet.Store
     with AsyncTakedown.Store
     with AsyncUpdatePossiblySensitiveTweet.Store {

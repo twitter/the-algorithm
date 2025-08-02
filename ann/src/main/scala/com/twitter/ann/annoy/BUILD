@@ -14,7 +14,7 @@ scala_library(
         "src/java/com/twitter/search/common/file",
         "src/scala/com/twitter/ml/api/embedding",
     ],
-    exports = [
+    etwitterports = [
         "ann/src/main/scala/com/twitter/ann/common",
         "src/java/com/twitter/common_internal/hadoop",
         "src/java/com/twitter/search/common/file",

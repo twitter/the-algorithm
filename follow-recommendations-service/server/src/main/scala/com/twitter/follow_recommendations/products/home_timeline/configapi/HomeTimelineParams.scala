@@ -9,29 +9,29 @@ import com.twitter.timelines.configapi.Param
 import com.twitter.util.Duration
 
 object HomeTimelineParams {
-  object EnableProduct extends Param[Boolean](false)
+  object EnableProduct etwittertends Param[Boolean](false)
 
-  object DefaultMaxResults extends Param[Int](20)
+  object DefaultMatwitterResults etwittertends Param[Int](20)
 
   object EnableWritingServingHistory
-      extends FSParam[Boolean]("home_timeline_enable_writing_serving_history", false)
+      etwittertends FSParam[Boolean]("home_timeline_enable_writing_serving_history", false)
 
   object DurationGuardrailToForceSuggest
-      extends FSBoundedParam[Duration](
+      etwittertends FSBoundedParam[Duration](
         name = "home_timeline_duration_guardrail_to_force_suggest_in_hours",
         default = 0.hours,
         min = 0.hours,
-        max = 1000.hours)
+        matwitter = 1000.hours)
       with HasDurationConversion {
     override val durationConversion: DurationConversion = DurationConversion.FromHours
   }
 
   object SuggestBasedFatigueDuration
-      extends FSBoundedParam[Duration](
+      etwittertends FSBoundedParam[Duration](
         name = "home_timeline_suggest_based_fatigue_duration_in_hours",
         default = 0.hours,
         min = 0.hours,
-        max = 1000.hours)
+        matwitter = 1000.hours)
       with HasDurationConversion {
     override val durationConversion: DurationConversion = DurationConversion.FromHours
   }

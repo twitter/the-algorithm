@@ -36,7 +36,7 @@ object FunctionArrow {
   }
 
   /**
-   * Produces an FunctionArrow that proxies to one of two others, depending on a
+   * Produces an FunctionArrow that protwitteries to one of two others, depending on a
    * predicate.
    */
   def choose[A, B](
@@ -63,13 +63,13 @@ object FunctionArrow {
  * Background on the Arrow abstraction:
  * http://en.wikipedia.org/wiki/Arrow_(computer_science)
  */
-trait FunctionArrow[-A, +B] extends (A => B) { self =>
+trait FunctionArrow[-A, +B] etwittertends (A => B) { self =>
 
   /**
    * Composes two FunctionArrows. Produces a new FunctionArrow that performs both in series.
    */
-  def andThen[C](next: FunctionArrow[B, C]): FunctionArrow[A, C] =
+  def andThen[C](netwittert: FunctionArrow[B, C]): FunctionArrow[A, C] =
     new FunctionArrow[A, C] {
-      override def apply(a: A) = next.apply(self(a))
+      override def apply(a: A) = netwittert.apply(self(a))
     }
 }

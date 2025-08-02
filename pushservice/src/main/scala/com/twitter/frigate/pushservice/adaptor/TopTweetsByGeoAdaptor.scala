@@ -44,7 +44,7 @@ case class TopTweetsByGeoAdaptor(
   tweetyPieStore: ReadableStore[Long, TweetyPieResult],
   tweetyPieStoreNoVF: ReadableStore[Long, TweetyPieResult],
   globalStats: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
+    etwittertends CandidateSource[Target, RawCandidate]
     with CandidateSourceEligible[Target, RawCandidate] {
 
   override def name: String = this.getClass.getSimpleName
@@ -76,7 +76,7 @@ case class TopTweetsByGeoAdaptor(
     stats.scope("popgeo_tweet_version_counter")
   private[this] val nonReplyTweetsCounter = stats.counter("non_reply_tweets")
 
-  val MaxGeoHashSize = 4
+  val MatwitterGeoHashSize = 4
 
   private def constructKeys(
     geohash: Option[String],
@@ -168,8 +168,8 @@ case class TopTweetsByGeoAdaptor(
     inputTarget: Target,
     geohash: Option[String]
   ): Future[Seq[(Long, Double)]] = {
-    val MaxTopTweetsByGeoCandidatesToTake =
-      inputTarget.params(FS.MaxTopTweetsByGeoCandidatesToTake)
+    val MatwitterTopTweetsByGeoCandidatesToTake =
+      inputTarget.params(FS.MatwitterTopTweetsByGeoCandidatesToTake)
     val scoringFn: String = inputTarget.params(FS.ScoringFuncForTopTweetsByGeo)
     val combinationMethod = inputTarget.params(FS.TopTweetsByGeoCombinationParam)
     val popGeoTweetVersion = inputTarget.params(FS.PopGeoTweetVersionParam)
@@ -182,7 +182,7 @@ case class TopTweetsByGeoAdaptor(
     combinationRequestsCounter.scope(combinationMethod.toString).counter().incr()
     popGeoTweetVersionCounter.scope(popGeoTweetVersion.toString).counter().incr()
     lazy val geoStoreResults = if (geohash.isDefined) {
-      val hash = geohash.get.take(MaxGeoHashSize)
+      val hash = geohash.get.take(MatwitterGeoHashSize)
       topTweetsByGeoStore
         .get(
           InterestDomain[String](hash)
@@ -197,7 +197,7 @@ case class TopTweetsByGeoAdaptor(
               },
               TopTweetsForGeoRankingFunction.Score
             ).map(_.toTweetScore).take(
-                MaxTopTweetsByGeoCandidatesToTake
+                MatwitterTopTweetsByGeoCandidatesToTake
               )
             sortedResults
           case _ => Seq.empty
@@ -208,7 +208,7 @@ case class TopTweetsByGeoAdaptor(
         inputTarget,
         geohash,
         topTweetsByGeoStoreV2,
-        MaxTopTweetsByGeoCandidatesToTake,
+        MatwitterTopTweetsByGeoCandidatesToTake,
         popGeoTweetVersion
       )
     combinationMethod match {
@@ -216,9 +216,9 @@ case class TopTweetsByGeoAdaptor(
       case TopTweetsForGeoCombination.AccountsTweetFavAsBackfill =>
         Future.join(geoStoreResults, versionPopGeoTweetResults).map {
           case (geoStoreTweets, versionPopGeoTweets) =>
-            (geoStoreTweets ++ versionPopGeoTweets).take(MaxTopTweetsByGeoCandidatesToTake)
+            (geoStoreTweets ++ versionPopGeoTweets).take(MatwitterTopTweetsByGeoCandidatesToTake)
         }
-      case TopTweetsForGeoCombination.AccountsTweetFavIntermixed =>
+      case TopTweetsForGeoCombination.AccountsTweetFavIntermitwittered =>
         Future.join(geoStoreResults, versionPopGeoTweetResults).map {
           case (geoStoreTweets, versionPopGeoTweets) =>
             CandidateSource.interleaveSeqs(Seq(geoStoreTweets, versionPopGeoTweets))
@@ -328,7 +328,7 @@ case class TopTweetsByGeoAdaptor(
       .pushRecTypeFatiguePredicate(
         CommonRecommendationType.GeoPopTweet,
         FS.TopTweetsByGeoPushInterval,
-        FS.MaxTopTweetsByGeoPushGivenInterval,
+        FS.MatwitterTopTweetsByGeoPushGivenInterval,
         stats
       )
   }

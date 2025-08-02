@@ -3,7 +3,7 @@ package com.twitter.ann.common
 import com.twitter.bijection.{Bijection, Injection}
 
 // Class providing commonly used injections that can be used directly with ANN apis.
-// Injection  prefixed with `J` can be used in java directly with ANN apis.
+// Injection  prefitwittered with `J` can be used in java directly with ANN apis.
 object AnnInjections {
   val LongInjection: Injection[Long, Array[Byte]] = Injection.long2BigEndian
 
@@ -12,7 +12,7 @@ object AnnInjections {
   def IntInjection: Injection[Int, Array[Byte]] = Injection.int2BigEndian
 
   val JLongInjection: Injection[java.lang.Long, Array[Byte]] =
-    Bijection.long2Boxed
+    Bijection.long2Botwittered
       .asInstanceOf[Bijection[Long, java.lang.Long]]
       .inverse
       .andThen(LongInjection)
@@ -21,7 +21,7 @@ object AnnInjections {
     StringInjection
 
   val JIntInjection: Injection[java.lang.Integer, Array[Byte]] =
-    Bijection.int2Boxed
+    Bijection.int2Botwittered
       .asInstanceOf[Bijection[Int, java.lang.Integer]]
       .inverse
       .andThen(IntInjection)

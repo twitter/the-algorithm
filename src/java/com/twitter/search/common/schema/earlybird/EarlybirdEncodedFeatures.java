@@ -3,8 +3,8 @@ package com.twitter.search.common.schema.earlybird;
 import com.google.common.base.Preconditions;
 
 import com.twitter.search.common.encoding.features.IntegerEncodedFeatures;
-import com.twitter.search.common.indexing.thriftjava.PackedFeatures;
-import com.twitter.search.common.indexing.thriftjava.VersionedTweetFeatures;
+import com.twitter.search.common.indetwittering.thriftjava.PackedFeatures;
+import com.twitter.search.common.indetwittering.thriftjava.VersionedTweetFeatures;
 import com.twitter.search.common.schema.SchemaUtil;
 import com.twitter.search.common.schema.base.FeatureConfiguration;
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
@@ -13,7 +13,7 @@ import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.Earlyb
 /**
  * A class for encoding earlybird features in integers
  */
-public abstract class EarlybirdEncodedFeatures extends IntegerEncodedFeatures {
+public abstract class EarlybirdEncodedFeatures etwittertends IntegerEncodedFeatures {
   private final ImmutableSchemaInterface schema;
   private final EarlybirdFieldConstant baseField;
 
@@ -35,14 +35,14 @@ public abstract class EarlybirdEncodedFeatures extends IntegerEncodedFeatures {
   }
 
   /**
-   * Write this object into extendedPackedFeatures of the given VersionedTweetFeatures.
+   * Write this object into etwittertendedPackedFeatures of the given VersionedTweetFeatures.
    */
-  public void writeExtendedFeaturesToVersionedTweetFeatures(
+  public void writeEtwittertendedFeaturesToVersionedTweetFeatures(
       VersionedTweetFeatures versionedTweetFeatures) {
-    if (!versionedTweetFeatures.isSetExtendedPackedFeatures()) {
-      versionedTweetFeatures.setExtendedPackedFeatures(new PackedFeatures());
+    if (!versionedTweetFeatures.isSetEtwittertendedPackedFeatures()) {
+      versionedTweetFeatures.setEtwittertendedPackedFeatures(new PackedFeatures());
     }
-    copyToPackedFeatures(versionedTweetFeatures.getExtendedPackedFeatures());
+    copyToPackedFeatures(versionedTweetFeatures.getEtwittertendedPackedFeatures());
   }
 
   @Override
@@ -92,18 +92,18 @@ public abstract class EarlybirdEncodedFeatures extends IntegerEncodedFeatures {
     return this;
   }
 
-  public boolean incrementIfNotMaximum(EarlybirdFieldConstant field) {
-    return incrementIfNotMaximum(schema.getFeatureConfigurationById(field.getFieldId()));
+  public boolean incrementIfNotMatwitterimum(EarlybirdFieldConstant field) {
+    return incrementIfNotMatwitterimum(schema.getFeatureConfigurationById(field.getFieldId()));
   }
 
-  private static final class ArrayEncodedTweetFeatures extends EarlybirdEncodedFeatures {
+  private static final class ArrayEncodedTweetFeatures etwittertends EarlybirdEncodedFeatures {
     private final int[] encodedInts;
 
     private ArrayEncodedTweetFeatures(ImmutableSchemaInterface schema,
                                       EarlybirdFieldConstant baseField) {
       super(schema, baseField);
 
-      final int numIntegers = SchemaUtil.getCSFFieldFixedLength(schema, baseField.getFieldId());
+      final int numIntegers = SchemaUtil.getCSFFieldFitwitteredLength(schema, baseField.getFieldId());
       Preconditions.checkState(numIntegers > 0);
       this.encodedInts = new int[numIntegers];
     }

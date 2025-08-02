@@ -19,7 +19,7 @@ import com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring.Score
 import com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring.ScorerFactory
 import com.twitter.follow_recommendations.common.utils.CollectionUtil
 import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.timelines.configapi.HasParams
 import com.twitter.timelines.configapi.Params
@@ -35,10 +35,10 @@ import com.twitter.util.logging.Logging
  */
 @Singleton
 class MlRanker[
-  Target <: HasClientContext with HasParams with HasDisplayLocation with HasDebugOptions] @Inject() (
+  Target <: HasClientContetwittert with HasParams with HasDisplayLocation with HasDebugOptions] @Inject() (
   scorerFactory: ScorerFactory,
   statsReceiver: StatsReceiver)
-    extends Ranker[Target, CandidateUser]
+    etwittertends Ranker[Target, CandidateUser]
     with Logging {
 
   private val stats: StatsReceiver = statsReceiver.scope("ml_ranker")
@@ -71,7 +71,7 @@ class MlRanker[
    * @param candidates A list of candidates considered for recommendation.
    * @return A map from each candidate to a tuple that includes:
    *          (1) The selected scorer that should be used to rank this candidate
-   *          (2) a flag determining whether the candidate is in a producer-side experiment.
+   *          (2) a flag determining whether the candidate is in a producer-side etwitterperiment.
    */
   private[ranking] def chooseRankerByCandidate(
     candidates: Seq[CandidateUser],
@@ -85,11 +85,11 @@ class MlRanker[
         } else {
           val candidateRankerId = candidate.params(MlRankerParams.CandidateScorerIdParam)
           if (candidateRankerId == RankerId.None) {
-            // This candidate is a not part of any producer-side experiment.
+            // This candidate is a not part of any producer-side etwitterperiment.
             selectScorerStat.counter("default_to_request_ranker").incr()
             requestRankerId
           } else {
-            // This candidate is in a treatment bucket of a producer-side experiment.
+            // This candidate is in a treatment bucket of a producer-side etwitterperiment.
             selectScorerStat.counter("use_candidate_ranker").incr()
             candidateRankerId
           }
@@ -136,7 +136,7 @@ class MlRanker[
                   scores.copy(
                     scores = scores.scores,
                     selectedRankerId = Some(selectedRankerId),
-                    isInProducerScoringExperiment = !useRequestRanker
+                    isInProducerScoringEtwitterperiment = !useRequestRanker
                   ))
               } else None
             )

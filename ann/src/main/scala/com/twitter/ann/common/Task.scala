@@ -1,6 +1,6 @@
 package com.twitter.ann.common
 
-import com.twitter.finagle.stats.CategorizingExceptionStatsHandler
+import com.twitter.finagle.stats.CategorizingEtwitterceptionStatsHandler
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.finagle.tracing.DefaultTracer
 import com.twitter.finagle.tracing.Trace
@@ -17,13 +17,13 @@ import java.util.concurrent.atomic.AtomicInteger
 import org.slf4j.MDC
 
 /**
- * A Task that will be scheduled to execute periodically on every interval. If a task takes
+ * A Task that will be scheduled to etwitterecute periodically on every interval. If a task takes
  * longer than an interval to complete, it will be immediately scheduled to run.
  */
-trait Task extends Closable { self: Logging =>
+trait Task etwittertends Closable { self: Logging =>
 
-  // Exposed if the implementation of `task` need to report failures
-  val exnStatsHandler = new CategorizingExceptionStatsHandler(categorizer = _ => Some("failures"))
+  // Etwitterposed if the implementation of `task` need to report failures
+  val etwitternStatsHandler = new CategorizingEtwitterceptionStatsHandler(categorizer = _ => Some("failures"))
 
   protected val statsReceiver: StatsReceiver
   private val totalTasks = statsReceiver.counter("total")
@@ -37,7 +37,7 @@ trait Task extends Closable { self: Logging =>
 
   @volatile private var taskLoop: Future[Unit] = null
 
-  /** Execute the task wih bookkeeping **/
+  /** Etwitterecute the task wih bookkeeping **/
   private def run(): Future[Unit] = {
     totalTasks.incr()
     activeTasks.getAndIncrement()
@@ -47,7 +47,7 @@ trait Task extends Closable { self: Logging =>
       // Setup a new trace root for this task. We also want logs to contain
       // the same trace information finatra populates for requests.
       // See com.twitter.finatra.thrift.filters.TraceIdMDCFilter
-      Trace.letTracerAndNextId(DefaultTracer) {
+      Trace.letTracerAndNetwittertId(DefaultTracer) {
         val trace = Trace()
         MDC.put(MDCKeys.TraceId, trace.id.traceId.toString)
         MDC.put(MDCKeys.TraceSampled, trace.id._sampled.getOrElse(false).toString)
@@ -61,7 +61,7 @@ trait Task extends Closable { self: Logging =>
           })
           .onFailure({ e =>
             warn(s"failed task. ", e)
-            exnStatsHandler.record(statsReceiver, e)
+            etwitternStatsHandler.record(statsReceiver, e)
           })
       }
 
@@ -87,9 +87,9 @@ trait Task extends Closable { self: Logging =>
    */
   final def jitteredStart(): Unit = synchronized {
     if (taskLoop != null) {
-      throw new RuntimeException(s"task already started")
+      throw new RuntimeEtwitterception(s"task already started")
     } else {
-      val jitterNs = rng.nextLong(taskInterval.inNanoseconds)
+      val jitterNs = rng.netwittertLong(taskInterval.inNanoseconds)
       val jitter = Duration.fromNanoseconds(jitterNs)
 
       taskLoop = Future
@@ -103,7 +103,7 @@ trait Task extends Closable { self: Logging =>
    */
   final def startImmediately(): Unit = synchronized {
     if (taskLoop != null) {
-      throw new RuntimeException(s"task already started")
+      throw new RuntimeEtwitterception(s"task already started")
     } else {
       taskLoop = run()
     }
@@ -114,7 +114,7 @@ trait Task extends Closable { self: Logging =>
    */
   override def close(deadline: Time): Future[Unit] = {
     if (taskLoop != null) {
-      taskLoop.raise(new InterruptedException("task closed"))
+      taskLoop.raise(new InterruptedEtwitterception("task closed"))
     }
     Future.Done
   }

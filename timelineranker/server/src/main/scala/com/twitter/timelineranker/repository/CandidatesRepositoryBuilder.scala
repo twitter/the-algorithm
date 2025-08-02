@@ -19,7 +19,7 @@ import com.twitter.timelines.clients.gizmoduck.GizmoduckClient
 import com.twitter.timelines.clients.manhattan.ManhattanUserMetadataClient
 import com.twitter.timelines.clients.tweetypie.TweetyPieClient
 
-abstract class CandidatesRepositoryBuilder(config: RuntimeConfiguration) extends RepositoryBuilder {
+abstract class CandidatesRepositoryBuilder(config: RuntimeConfiguration) etwittertends RepositoryBuilder {
 
   def earlybirdClient(scope: String): EarlybirdService.MethodPerEndpoint
   def searchProcessingTimeout: Duration

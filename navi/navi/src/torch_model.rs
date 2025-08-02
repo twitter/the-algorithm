@@ -22,37 +22,37 @@ pub mod torch {
 
     #[derive(Debug)]
     pub struct TorchModel {
-        pub model_idx: usize,
+        pub model_idtwitter: usize,
         pub version: i64,
         pub module: CModule,
-        pub export_dir: String,
-        // FIXME: make this Box<Option<..>> so input converter can be optional.
+        pub etwitterport_dir: String,
+        // FItwitterME: make this Botwitter<Option<..>> so input converter can be optional.
         // Also consider adding output_converter.
-        pub input_converter: Box<dyn Converter>,
+        pub input_converter: Botwitter<dyn Converter>,
     }
 
     impl Display for TorchModel {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             write!(
                 f,
-                "idx: {}, torch model_name:{}, version:{}",
-                self.model_idx, MODEL_SPECS[self.model_idx], self.version
+                "idtwitter: {}, torch model_name:{}, version:{}",
+                self.model_idtwitter, MODEL_SPECS[self.model_idtwitter], self.version
             )
         }
     }
 
     impl TorchModel {
-        pub fn new(idx: usize, version: String, _model_config: &Value) -> Result<TorchModel> {
-            let export_dir = format!("{}/{}/model.pt", ARGS.model_dir[idx], version);
-            let model = CModule::load(&export_dir).unwrap();
+        pub fn new(idtwitter: usize, version: String, _model_config: &Value) -> Result<TorchModel> {
+            let etwitterport_dir = format!("{}/{}/model.pt", ARGS.model_dir[idtwitter], version);
+            let model = CModule::load(&etwitterport_dir).unwrap();
             let torch_model = TorchModel {
-                model_idx: idx,
+                model_idtwitter: idtwitter,
                 version: Args::version_str_to_epoch(&version)?,
                 module: model,
-                export_dir,
+                etwitterport_dir,
                 //TODO: move converter lookup in a registry.
-                input_converter: Box::new(BatchPredictionRequestToTorchTensorConverter::new(
-                    &ARGS.model_dir[idx].as_str(),
+                input_converter: Botwitter::new(BatchPredictionRequestToTorchTensorConverter::new(
+                    &ARGS.model_dir[idtwitter].as_str(),
                     version.as_str(),
                     vec![],
                     Some(&metrics::register_dynamic_metrics),
@@ -64,7 +64,7 @@ pub mod torch {
         }
         #[inline(always)]
         pub fn decode_to_inputs(bytes: SerializedInput) -> Vec<Tensor> {
-            //FIXME: for now we generate 4 random tensors as inputs to unblock end to end testing
+            //FItwitterME: for now we generate 4 random tensors as inputs to unblock end to end testing
             //when Shajan's decoder is ready we will swap
             let row = bytes.len() as i64;
             let t1 = Tensor::randn(&[row, 5293], kind::FLOAT_CPU); //continuous
@@ -88,7 +88,7 @@ pub mod torch {
         }
         #[inline(always)]
         pub fn tensor_flatten_size(t: &Tensor) -> usize {
-            t.size().into_iter().fold(1, |acc, x| acc * x) as usize
+            t.size().into_iter().fold(1, |acc, twitter| acc * twitter) as usize
         }
         #[inline(always)]
         pub fn tensor_to_vec<T: kind::Element>(res: &Tensor) -> Vec<T> {
@@ -106,12 +106,12 @@ pub mod torch {
             let mut offset = dst.len();
             tensors.iter().for_each(|t| {
                 let size = TorchModel::tensor_flatten_size(t);
-                let next_size = offset + size;
+                let netwittert_size = offset + size;
                 unsafe {
-                    dst.set_len(next_size);
+                    dst.set_len(netwittert_size);
                 }
                 t.copy_data(&mut dst[offset..], size);
-                offset = next_size;
+                offset = netwittert_size;
             });
         }
         pub fn ivalues_to_tensors(ivalues: Vec<IValue>) -> Vec<Tensor> {
@@ -143,7 +143,7 @@ pub mod torch {
             let mut batch_ends = vec![0usize; input_tensors.len()];
             for (i, batch_bytes_in_request) in input_tensors.into_iter().enumerate() {
                 for _ in batch_bytes_in_request.into_iter() {
-                    //FIXME: for now use some hack
+                    //FItwitterME: for now use some hack
                     let model_input = TorchModel::decode_to_inputs(vec![0u8; 30]); //self.input_converter.convert(bytes);
                     let input_batch_tensors = model_input
                         .into_iter()
@@ -155,25 +155,25 @@ pub mod torch {
                         Err(e) => {
                             NUM_REQUESTS_FAILED.inc_by(total_len);
                             NUM_REQUESTS_FAILED_BY_MODEL
-                                .with_label_values(&[&MODEL_SPECS[self.model_idx]])
+                                .with_label_values(&[&MODEL_SPECS[self.model_idtwitter]])
                                 .inc_by(total_len);
                             INFERENCE_FAILED_REQUESTS_BY_MODEL
-                                .with_label_values(&[&MODEL_SPECS[self.model_idx]])
+                                .with_label_values(&[&MODEL_SPECS[self.model_idtwitter]])
                                 .inc_by(total_len);
-                            panic!("{model}: {e:?}", model = MODEL_SPECS[self.model_idx], e = e);
+                            panic!("{model}: {e:?}", model = MODEL_SPECS[self.model_idtwitter], e = e);
                         }
                     }
                 }
                 batch_ends[i] = buf.len();
             }
             (
-                vec![TensorReturnEnum::FloatTensorReturn(Box::new(buf))],
+                vec![TensorReturnEnum::FloatTensorReturn(Botwitter::new(buf))],
                 vec![batch_ends],
             )
         }
         #[inline(always)]
-        fn model_idx(&self) -> usize {
-            self.model_idx
+        fn model_idtwitter(&self) -> usize {
+            self.model_idtwitter
         }
         #[inline(always)]
         fn version(&self) -> i64 {

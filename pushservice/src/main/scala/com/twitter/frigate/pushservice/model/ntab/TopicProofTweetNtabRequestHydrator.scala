@@ -1,25 +1,25 @@
 package com.twitter.frigate.pushservice.model.ntab
 
 import com.twitter.frigate.pushservice.model.TopicProofTweetPushCandidate
-import com.twitter.frigate.pushservice.exception.TweetNTabRequestHydratorException
-import com.twitter.frigate.pushservice.exception.UttEntityNotFoundException
+import com.twitter.frigate.pushservice.etwitterception.TweetNTabRequestHydratorEtwitterception
+import com.twitter.frigate.pushservice.etwitterception.UttEntityNotFoundEtwitterception
 import com.twitter.frigate.pushservice.take.NotificationServiceSender
-import com.twitter.notificationservice.thriftscala.DisplayText
-import com.twitter.notificationservice.thriftscala.DisplayTextEntity
-import com.twitter.notificationservice.thriftscala.StoryContext
-import com.twitter.notificationservice.thriftscala.StoryContextValue
-import com.twitter.notificationservice.thriftscala.TextValue
+import com.twitter.notificationservice.thriftscala.DisplayTetwittert
+import com.twitter.notificationservice.thriftscala.DisplayTetwittertEntity
+import com.twitter.notificationservice.thriftscala.StoryContetwittert
+import com.twitter.notificationservice.thriftscala.StoryContetwittertValue
+import com.twitter.notificationservice.thriftscala.TetwittertValue
 import com.twitter.util.Future
 
-trait TopicProofTweetNtabRequestHydrator extends NTabRequestHydrator {
+trait TopicProofTweetNtabRequestHydrator etwittertends NTabRequestHydrator {
   self: TopicProofTweetPushCandidate =>
 
-  override def displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] = NotificationServiceSender
-    .getDisplayTextEntityFromUser(tweetAuthor, "tweetAuthorName", true)
+  override def displayTetwittertEntitiesFut: Future[Seq[DisplayTetwittertEntity]] = NotificationServiceSender
+    .getDisplayTetwittertEntityFromUser(tweetAuthor, "tweetAuthorName", true)
     .map(_.toSeq)
 
   private lazy val uttEntity = localizedUttEntity.getOrElse(
-    throw new UttEntityNotFoundException(
+    throw new UttEntityNotFoundEtwitterception(
       s"${getClass.getSimpleName} UttEntity missing for $tweetId")
   )
 
@@ -27,19 +27,19 @@ trait TopicProofTweetNtabRequestHydrator extends NTabRequestHydrator {
     tweetAuthor.map {
       case Some(author) =>
         val authorProfile = author.profile.getOrElse(
-          throw new TweetNTabRequestHydratorException(
+          throw new TweetNTabRequestHydratorEtwitterception(
             s"Unable to obtain author profile for: ${author.id}"))
         s"${authorProfile.screenName}/status/${tweetId.toString}"
       case _ =>
-        throw new TweetNTabRequestHydratorException(
+        throw new TweetNTabRequestHydratorEtwitterception(
           s"Unable to obtain author and target details to generate tap through for Tweet: $tweetId")
     }
   }
 
-  override lazy val socialProofDisplayText: Option[DisplayText] = {
+  override lazy val socialProofDisplayTetwittert: Option[DisplayTetwittert] = {
     Some(
-      DisplayText(values =
-        Seq(DisplayTextEntity("topic_name", TextValue.Text(uttEntity.localizedNameForDisplay))))
+      DisplayTetwittert(values =
+        Seq(DisplayTetwittertEntity("topic_name", TetwittertValue.Tetwittert(uttEntity.localizedNameForDisplay))))
     )
   }
 
@@ -47,14 +47,14 @@ trait TopicProofTweetNtabRequestHydrator extends NTabRequestHydrator {
 
   override val inlineCard = None
 
-  override def storyContext: Option[StoryContext] = Some(
-    StoryContext("", Some(StoryContextValue.Tweets(Seq(tweetId)))))
+  override def storyContetwittert: Option[StoryContetwittert] = Some(
+    StoryContetwittert("", Some(StoryContetwittertValue.Tweets(Seq(tweetId)))))
 
   override def senderIdFut: Future[Long] =
     tweetAuthor.map {
       case Some(author) => author.id
       case _ =>
-        throw new TweetNTabRequestHydratorException(
+        throw new TweetNTabRequestHydratorEtwitterception(
           s"Unable to obtain Author ID for: $commonRecType")
     }
 }

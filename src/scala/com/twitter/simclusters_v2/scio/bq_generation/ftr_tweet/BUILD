@@ -11,12 +11,12 @@ scala_library(
         "src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:offline_tweet_recommendations_ftr_adhoc-scala",
         "src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:offline_tweet_recommendations_ftrat5_pop_biased_1000-scala",
         "src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:offline_tweet_recommendations_ftrat5_pop_biased_10000-scala",
-        "src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:simclusters_decayed_sum_cluster_to_tweet_index-scala",
-        "src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:simclusters_ftr_adhoc_cluster_to_tweet_index-scala",
-        "src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:simclusters_ftr_pop10000_rnkdecay11_cluster_to_tweet_index-scala",
-        "src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:simclusters_ftr_pop1000_rnkdecay11_cluster_to_tweet_index-scala",
-        "src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:simclusters_oon_ftr_adhoc_cluster_to_tweet_index-scala",
-        "src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:simclusters_oon_ftr_pop1000_rnkdecay_cluster_to_tweet_index-scala",
+        "src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:simclusters_decayed_sum_cluster_to_tweet_indetwitter-scala",
+        "src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:simclusters_ftr_adhoc_cluster_to_tweet_indetwitter-scala",
+        "src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:simclusters_ftr_pop10000_rnkdecay11_cluster_to_tweet_indetwitter-scala",
+        "src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:simclusters_ftr_pop1000_rnkdecay11_cluster_to_tweet_indetwitter-scala",
+        "src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:simclusters_oon_ftr_adhoc_cluster_to_tweet_indetwitter-scala",
+        "src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet:simclusters_oon_ftr_pop1000_rnkdecay_cluster_to_tweet_indetwitter-scala",
         "src/scala/com/twitter/simclusters_v2/scio/bq_generation/ftr_tweet/sql",
         "src/scala/com/twitter/simclusters_v2/scio/bq_generation/sql",
         "src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann:bq_generation",
@@ -112,55 +112,55 @@ create_datasets(
 )
 
 jvm_binary(
-    name = "ftr-tweet-index-generation-adhoc-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.ftr_tweet.FTRClusterToTweetIndexGenerationAdhoc",
+    name = "ftr-tweet-indetwitter-generation-adhoc-job",
+    main = "com.twitter.simclusters_v2.scio.bq_generation.ftr_tweet.FTRClusterToTweetIndetwitterGenerationAdhoc",
     dependencies = [
         ":ftr_bq_generation",
     ],
 )
 
 jvm_binary(
-    name = "oon-ftr-tweet-index-generation-adhoc-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.ftr_tweet.OONFTRClusterToTweetIndexGenerationAdhoc",
+    name = "oon-ftr-tweet-indetwitter-generation-adhoc-job",
+    main = "com.twitter.simclusters_v2.scio.bq_generation.ftr_tweet.OONFTRClusterToTweetIndetwitterGenerationAdhoc",
     dependencies = [
         ":ftr_bq_generation",
     ],
 )
 
 jvm_binary(
-    name = "ftr-tweet-index-generation-pop1000-rnkdecay11-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.ftr_tweet.FTRPop1000RankDecay11ClusterToTweetIndexGenerationBatch",
+    name = "ftr-tweet-indetwitter-generation-pop1000-rnkdecay11-job",
+    main = "com.twitter.simclusters_v2.scio.bq_generation.ftr_tweet.FTRPop1000RankDecay11ClusterToTweetIndetwitterGenerationBatch",
     dependencies = [
         ":ftr_bq_generation",
     ],
 )
 
 jvm_binary(
-    name = "ftr-tweet-index-generation-pop10000-rnkdecay11-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.ftr_tweet.FTRPop10000RankDecay11ClusterToTweetIndexGenerationBatch",
+    name = "ftr-tweet-indetwitter-generation-pop10000-rnkdecay11-job",
+    main = "com.twitter.simclusters_v2.scio.bq_generation.ftr_tweet.FTRPop10000RankDecay11ClusterToTweetIndetwitterGenerationBatch",
     dependencies = [
         ":ftr_bq_generation",
     ],
 )
 
 jvm_binary(
-    name = "oon-ftr-tweet-index-generation-pop1000-rnkdecay-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.ftr_tweet.OONFTRPop1000RankDecayClusterToTweetIndexGenerationBatch",
+    name = "oon-ftr-tweet-indetwitter-generation-pop1000-rnkdecay-job",
+    main = "com.twitter.simclusters_v2.scio.bq_generation.ftr_tweet.OONFTRPop1000RankDecayClusterToTweetIndetwitterGenerationBatch",
     dependencies = [
         ":ftr_bq_generation",
     ],
 )
 
 jvm_binary(
-    name = "ftr-tweet-index-generation-decayed-sum-job",
-    main = "com.twitter.simclusters_v2.scio.bq_generation.ftr_tweet.DecayedSumClusterToTweetIndexGenerationBatch",
+    name = "ftr-tweet-indetwitter-generation-decayed-sum-job",
+    main = "com.twitter.simclusters_v2.scio.bq_generation.ftr_tweet.DecayedSumClusterToTweetIndetwitterGenerationBatch",
     dependencies = [
         ":ftr_bq_generation",
     ],
 )
 
 create_datasets(
-    base_name = "simclusters_ftr_adhoc_cluster_to_tweet_index",
+    base_name = "simclusters_ftr_adhoc_cluster_to_tweet_indetwitter",
     key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
     platform = "java8",
     role = "cassowary",
@@ -175,7 +175,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "simclusters_oon_ftr_adhoc_cluster_to_tweet_index",
+    base_name = "simclusters_oon_ftr_adhoc_cluster_to_tweet_indetwitter",
     key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
     platform = "java8",
     role = "cassowary",
@@ -190,7 +190,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "simclusters_ftr_pop1000_rnkdecay11_cluster_to_tweet_index",
+    base_name = "simclusters_ftr_pop1000_rnkdecay11_cluster_to_tweet_indetwitter",
     key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
     platform = "java8",
     role = "cassowary",
@@ -205,7 +205,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "simclusters_ftr_pop10000_rnkdecay11_cluster_to_tweet_index",
+    base_name = "simclusters_ftr_pop10000_rnkdecay11_cluster_to_tweet_indetwitter",
     key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
     platform = "java8",
     role = "cassowary",
@@ -220,7 +220,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "simclusters_oon_ftr_pop1000_rnkdecay_cluster_to_tweet_index",
+    base_name = "simclusters_oon_ftr_pop1000_rnkdecay_cluster_to_tweet_indetwitter",
     key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
     platform = "java8",
     role = "cassowary",
@@ -235,7 +235,7 @@ create_datasets(
 )
 
 create_datasets(
-    base_name = "simclusters_decayed_sum_cluster_to_tweet_index",
+    base_name = "simclusters_decayed_sum_cluster_to_tweet_indetwitter",
     key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
     platform = "java8",
     role = "cassowary",

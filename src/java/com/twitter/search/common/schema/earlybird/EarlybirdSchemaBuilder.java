@@ -3,7 +3,7 @@ package com.twitter.search.common.schema.earlybird;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
-import com.twitter.common.text.util.TokenStreamSerializer;
+import com.twitter.common.tetwittert.util.TokenStreamSerializer;
 import com.twitter.search.common.schema.SchemaBuilder;
 import com.twitter.search.common.schema.base.FieldNameToIdMapping;
 import com.twitter.search.common.schema.thriftjava.ThriftFieldConfiguration;
@@ -15,7 +15,7 @@ import com.twitter.search.common.util.analysis.TermPayloadAttributeSerializer;
 /**
  * Build class used to build a ThriftSchema
  */
-public class EarlybirdSchemaBuilder extends SchemaBuilder {
+public class EarlybirdSchemaBuilder etwittertends SchemaBuilder {
   private final EarlybirdCluster cluster;
 
   public EarlybirdSchemaBuilder(FieldNameToIdMapping idMapping,
@@ -35,16 +35,16 @@ public class EarlybirdSchemaBuilder extends SchemaBuilder {
     }
     ThriftFieldSettings settings =
         schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
-    Preconditions.checkState(settings.isSetIndexedFieldSettings(),
-                             "Out of order field must be indexed");
-    settings.getIndexedFieldSettings().setSupportOutOfOrderAppends(true);
+    Preconditions.checkState(settings.isSetIndetwitteredFieldSettings(),
+                             "Out of order field must be indetwittered");
+    settings.getIndetwitteredFieldSettings().setSupportOutOfOrderAppends(true);
     return this;
   }
 
   /**
    * This turns on tweet specific normalizations. This turns on the following two token processors:
-   * {@link com.twitter.search.common.util.text.splitter.HashtagMentionPunctuationSplitter}
-   * {@link com.twitter.search.common.util.text.filter.NormalizedTokenFilter}
+   * {@link com.twitter.search.common.util.tetwittert.splitter.HashtagMentionPunctuationSplitter}
+   * {@link com.twitter.search.common.util.tetwittert.filter.NormalizedTokenFilter}
    * <p/>
    * HashtagMentionPunctuationSplitter would break a mention or hashtag like @ab_cd or #ab_cd into
    * tokens {ab, cd}.
@@ -56,9 +56,9 @@ public class EarlybirdSchemaBuilder extends SchemaBuilder {
     }
     ThriftFieldSettings settings =
         schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
-    Preconditions.checkState(settings.isSetIndexedFieldSettings(),
-                             "Tweet text field must be indexed.");
-    settings.getIndexedFieldSettings().setDeprecated_performTweetSpecificNormalizations(true);
+    Preconditions.checkState(settings.isSetIndetwitteredFieldSettings(),
+                             "Tweet tetwittert field must be indetwittered.");
+    settings.getIndetwitteredFieldSettings().setDeprecated_performTweetSpecificNormalizations(true);
     return this;
   }
 
@@ -77,7 +77,7 @@ public class EarlybirdSchemaBuilder extends SchemaBuilder {
             CharTermAttributeSerializer.class.getName(),
             TermPayloadAttributeSerializer.class.getName()));
     photoFieldSettings
-        .getIndexedFieldSettings()
+        .getIndetwitteredFieldSettings()
         .setTokenStreamSerializer(tokenStreamSerializer)
         .setTokenized(true);
     putIntoFieldConfigs(idMapping.getFieldID(fieldName),

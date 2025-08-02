@@ -30,7 +30,7 @@ object ManhattanTweetStorageClient {
   object Config {
 
     /**
-     * The Manhattan dataset where tweets are stored is not externally
+     * The Manhattan dataset where tweets are stored is not etwitterternally
      * configurable because writing tweets to a non-production dataset
      * requires great care. Staging instances using a different dataset will
      * write tweets to a non-production store, but will publish events, log to
@@ -52,7 +52,7 @@ object ManhattanTweetStorageClient {
     /**
      * Default label used for underlying Manhattan Thrift client metrics
      *
-     * The finagle client metrics will be exported at clnt/:label.
+     * The finagle client metrics will be etwitterported at clnt/:label.
      */
     val ThriftClientLabel = "mh_cylon"
 
@@ -63,10 +63,10 @@ object ManhattanTweetStorageClient {
       s"/srv#/prod/${remoteZone(zone)}/manhattan/cylon.native-thrift"
 
     private def remoteZone(zone: String) = zone match {
-      case "pdxa" => "atla"
-      case "atla" | "localhost" => "pdxa"
+      case "pdtwittera" => "atla"
+      case "atla" | "localhost" => "pdtwittera"
       case _ =>
-        throw new IllegalArgumentException(s"Cannot configure remote DC for unknown zone '$zone'")
+        throw new IllegalArgumentEtwitterception(s"Cannot configure remote DC for unknown zone '$zone'")
     }
   }
 
@@ -78,7 +78,7 @@ object ManhattanTweetStorageClient {
    * @param remoteTimeout Overall timeout (including retries) for all reads/writes to remote cluster
    * @param undeleteWindowHours Amount of time during which a deleted tweet can be undeleted
    * @param thriftClientLabel Label used to scope stats for Manhattan Thrift client
-   * @param maxRequestsPerBatch Configure the Stitch RequestGroup.Generator batch size
+   * @param matwitterRequestsPerBatch Configure the Stitch RequestGroup.Generator batch size
    * @param serviceIdentifier The ServiceIdentifier to use when making connections to a Manhattan cluster
    * @param opportunisticTlsLevel The level to use for opportunistic TLS for connections to the Manhattan cluster
    */
@@ -90,7 +90,7 @@ object ManhattanTweetStorageClient {
     remoteTimeout: Duration,
     undeleteWindowHours: Int = Config.UndeleteWindowHours,
     thriftClientLabel: String = Config.ThriftClientLabel,
-    maxRequestsPerBatch: Int = Int.MaxValue,
+    matwitterRequestsPerBatch: Int = Int.MatwitterValue,
     serviceIdentifier: ServiceIdentifier,
     opportunisticTlsLevel: OpportunisticTls.Level)
 
@@ -118,7 +118,7 @@ object ManhattanTweetStorageClient {
   def scribeHandler(categoryName: String): HandlerFactory =
     ScribeHandler(
       formatter = BareFormatter,
-      maxMessagesPerTransaction = 100,
+      matwitterMessagesPerTransaction = 100,
       category = categoryName,
       level = Some(Level.TRACE)
     )
@@ -135,7 +135,7 @@ object ManhattanTweetStorageClient {
       remoteTimeout = 10.seconds,
       undeleteWindowHours = Config.UndeleteWindowHours,
       thriftClientLabel = Config.ThriftClientLabel,
-      maxRequestsPerBatch = Int.MaxValue,
+      matwitterRequestsPerBatch = Int.MatwitterValue,
       serviceIdentifier = ServiceIdentifier(System.getenv("USER"), "tweetypie", "devel", "local"),
       opportunisticTlsLevel = OpportunisticTls.Required
     )
@@ -156,7 +156,7 @@ class ManhattanTweetStorageClient(
   config: ManhattanTweetStorageClient.Config,
   statsReceiver: StatsReceiver,
   private val clientIdHelper: ClientIdHelper)
-    extends TweetStorageClient {
+    etwittertends TweetStorageClient {
   import ManhattanTweetStorageClient._
 
   lazy val scribeHandlerFactory: ScribeHandlerFactory = scribeHandler _
@@ -179,15 +179,15 @@ class ManhattanTweetStorageClient(
       dest,
       mhMtlsParams,
       label,
-      Seq(Experiments.ApertureLoadBalancer))
+      Seq(Etwitterperiments.ApertureLoadBalancer))
   }
 
   val localClient: ManhattanKVClient = mkClient(config.localDestination, config.thriftClientLabel)
 
   val localMhEndpoint: ManhattanKVEndpoint = ManhattanKVEndpointBuilder(localClient)
     .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-    .defaultMaxTimeout(config.localTimeout)
-    .maxRequestsPerBatch(config.maxRequestsPerBatch)
+    .defaultMatwitterTimeout(config.localTimeout)
+    .matwitterRequestsPerBatch(config.matwitterRequestsPerBatch)
     .build()
 
   val localManhattanOperations = new ManhattanOperations(Config.Dataset, localMhEndpoint)
@@ -197,22 +197,22 @@ class ManhattanTweetStorageClient(
 
   val remoteMhEndpoint: ManhattanKVEndpoint = ManhattanKVEndpointBuilder(remoteClient)
     .defaultGuarantee(Guarantee.SoftDcReadMyWrites)
-    .defaultMaxTimeout(config.remoteTimeout)
+    .defaultMatwitterTimeout(config.remoteTimeout)
     .build()
 
   val remoteManhattanOperations = new ManhattanOperations(Config.Dataset, remoteMhEndpoint)
 
   /**
    * Note: This translation is only useful for non-batch endpoints. Batch endpoints currently
-   * represent failure without propagating an exception
+   * represent failure without propagating an etwitterception
    * (e.g. [[com.twitter.tweetypie.storage.Response.TweetResponseCode.Failure]]).
    */
-  private[this] def translateExceptions(
+  private[this] def translateEtwitterceptions(
     apiName: String,
     statsReceiver: StatsReceiver
   ): PartialFunction[Throwable, Throwable] = {
-    case e: IllegalArgumentException => ClientError(e.getMessage, e)
-    case e: DeniedManhattanException => RateLimited(e.getMessage, e)
+    case e: IllegalArgumentEtwitterception => ClientError(e.getMessage, e)
+    case e: DeniedManhattanEtwitterception => RateLimited(e.getMessage, e)
     case e: VersionMismatchError =>
       statsReceiver.scope(apiName).counter("mh_version_mismatches").incr()
       e
@@ -275,25 +275,25 @@ class ManhattanTweetStorageClient(
    *
    * - Bookkeeping for overall requests
    * - Bookkeeping for per api requests
-   * - Translate exceptions
+   * - Translate etwitterceptions
    *
    * @param apiName the API being called
    * @param apiStitch the implementation of the API
    * @tparam A template for input type of API
    * @tparam B template for output type of API
-   * @return Function which executes the given API call
+   * @return Function which etwitterecutes the given API call
    */
   private[storage] def endpoint[A, B](
     apiName: String,
     apiStitch: A => Stitch[B]
   ): A => Stitch[B] = {
-    val translateException = translateExceptions(apiName, statsReceiver)
+    val translateEtwitterception = translateEtwitterceptions(apiName, statsReceiver)
     val observe = StitchUtils.observe[B](statsReceiver, apiName)
 
     a =>
-      StitchUtils.translateExceptions(
+      StitchUtils.translateEtwitterceptions(
         observe(apiStitch(a)),
-        translateException
+        translateEtwitterception
       )
   }
 
@@ -443,7 +443,7 @@ class ManhattanTweetStorageClient(
             .get(
               ManhattanOperations.KeyDescriptor
                 .withDataset(Config.Dataset)
-                .withPkey(Random.nextLong().abs)
+                .withPkey(Random.netwittertLong().abs)
                 .withLkey(TweetKey.LKey.CoreFieldsKey), // could be any lkey
               ValueDescriptor(BufInjection)
             ).unit

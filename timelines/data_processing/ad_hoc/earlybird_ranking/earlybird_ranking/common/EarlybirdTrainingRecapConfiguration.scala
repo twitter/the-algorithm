@@ -3,12 +3,12 @@ package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common
 import com.twitter.ml.api.Feature
 import com.twitter.timelines.prediction.features.recap.RecapFeatures
 
-class EarlybirdTrainingRecapConfiguration extends EarlybirdTrainingConfiguration {
+class EarlybirdTrainingRecapConfiguration etwittertends EarlybirdTrainingConfiguration {
   override val labels: Map[String, Feature.Binary] = Map(
-    "detail_expanded" -> RecapFeatures.IS_CLICKED,
+    "detail_etwitterpanded" -> RecapFeatures.IS_CLICKED,
     "favorited" -> RecapFeatures.IS_FAVORITED,
     "open_linked" -> RecapFeatures.IS_OPEN_LINKED,
-    "photo_expanded" -> RecapFeatures.IS_PHOTO_EXPANDED,
+    "photo_etwitterpanded" -> RecapFeatures.IS_PHOTO_EtwitterPANDED,
     "profile_clicked" -> RecapFeatures.IS_PROFILE_CLICKED,
     "replied" -> RecapFeatures.IS_REPLIED,
     "retweeted" -> RecapFeatures.IS_RETWEETED,

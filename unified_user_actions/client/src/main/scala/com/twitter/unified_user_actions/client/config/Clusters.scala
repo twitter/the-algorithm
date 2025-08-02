@@ -7,17 +7,17 @@ sealed trait ClusterConfig {
 
 object Clusters {
   /*
-   * Our production cluster for external consumption. Our SLAs are enforced.
+   * Our production cluster for etwitterternal consumption. Our SLAs are enforced.
    */
-  case object ProdCluster extends ClusterConfig {
+  case object ProdCluster etwittertends ClusterConfig {
     override val name: String = Constants.UuaKafkaProdClusterName
     override val environment: EnvironmentConfig = Environments.Prod
   }
 
   /*
-   * Our staging cluster for external development and pre-releases. No SLAs are enforced.
+   * Our staging cluster for etwitterternal development and pre-releases. No SLAs are enforced.
    */
-  case object StagingCluster extends ClusterConfig {
+  case object StagingCluster etwittertends ClusterConfig {
     override val name: String = Constants.UuaKafkaStagingClusterName
     override val environment: EnvironmentConfig = Environments.Staging
   }

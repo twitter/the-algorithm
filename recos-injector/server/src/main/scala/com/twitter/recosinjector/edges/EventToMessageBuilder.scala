@@ -5,7 +5,7 @@ import com.twitter.frigate.common.base.Stats.track
 import com.twitter.util.Future
 
 /**
- * This is the generic interface that converts incoming Events (ex. TweetEvent, FavEvent, etc)
+ * This is the generic interface that converts incoming Events (etwitter. TweetEvent, FavEvent, etc)
  * into Edge for a specific output graph. It applies the following flow:
  *
  * event -> update event stats -> build edges -> filter edges
@@ -66,7 +66,7 @@ trait EventToMessageBuilder[Event, E <: Edge] {
   def updateEventStatus(event: Event): Unit = {}
 
   /**
-   * Given an event, extract info and build a sequence of edges
+   * Given an event, etwittertract info and build a sequence of edges
    * @param event
    * @return
    */

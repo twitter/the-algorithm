@@ -15,9 +15,9 @@ import com.twitter.representation_manager.modules.UttClientModule
 import com.twitter.strato.fed._
 import com.twitter.strato.fed.server._
 
-object RepresentationManagerFedServerMain extends RepresentationManagerFedServer
+object RepresentationManagerFedServerMain etwittertends RepresentationManagerFedServer
 
-trait RepresentationManagerFedServer extends StratoFedServer {
+trait RepresentationManagerFedServer etwittertends StratoFedServer {
   override def dest: String = "/s/representation-manager/representation-manager"
   override val modules: Seq[Module] =
     Seq(

@@ -7,17 +7,17 @@ namespace go tweetypie
 
 include "com/twitter/bouncer/bounce.thrift"
 include "com/twitter/carousel/service/carousel_service.thrift"
-include "com/twitter/context/feature_context.thrift"
+include "com/twitter/contetwittert/feature_contetwittert.thrift"
 include "com/twitter/mediaservices/commons/MediaCommon.thrift"
 include "com/twitter/mediaservices/commons/MediaInformation.thrift"
-include "com/twitter/servo/exceptions.thrift"
+include "com/twitter/servo/etwitterceptions.thrift"
 include "com/twitter/spam/features/safety_meta_data.thrift"
 include "com/twitter/spam/rtf/safety_label.thrift"
 include "com/twitter/spam/rtf/safety_level.thrift"
 include "com/twitter/spam/rtf/safety_result.thrift"
 include "com/twitter/tseng/withholding/withholding.thrift"
 include "com/twitter/tweetypie/deleted_tweet.thrift"
-include "com/twitter/tweetypie/transient_context.thrift"
+include "com/twitter/tweetypie/transient_contetwittert.thrift"
 include "com/twitter/tweetypie/tweet.thrift"
 include "com/twitter/tweetypie/tweet_audit.thrift"
 include "com/twitter/incentives/jiminy/jiminy.thrift"
@@ -108,21 +108,21 @@ enum StatusState {
   UNSUPPORTED_CLIENT = 11
 
   /**
-   * The tweet exists, but was not returned because it should not be seen by the
+   * The tweet etwitterists, but was not returned because it should not be seen by the
    * viewer.  The reason for the tweet being filtered is indicated via
    * GetTweetResult.filtered_reason.
    */
   DROP               = 12
 
   /**
-   * The tweet exists and was returned, but should not be directly shown to the
+   * The tweet etwitterists and was returned, but should not be directly shown to the
    * user without additional user intent to see the tweet, as it may be offensive.
    * The reason for the suppression is indicated via GetTweetResult.filtered_reason.
    */
   SUPPRESS           = 13
 
   /**
-   * The tweet once existed and has been deleted.
+   * The tweet once etwitteristed and has been deleted.
    * When GetTweetOptions.enable_deleted_state is true, deleted tweets
    * will be returned as DELETED
    * When GetTweetOptions.enable_deleted_state is false, deleted tweets
@@ -131,7 +131,7 @@ enum StatusState {
   DELETED            = 14
 
   /**
-   * The tweet once existed, had violated Twitter Rules, and has been deleted.
+   * The tweet once etwitteristed, had violated Twitter Rules, and has been deleted.
    * When GetTweetOptions.enable_deleted_state is true, bounce-deleted tweets
    * will be returned as BOUNCE_DELETED
    * When GetTweetOptions.enable_deleted_state is false, bounce-deleted tweets
@@ -182,8 +182,8 @@ enum TweetCreateState {
   INVALID_URL = 13,
   USER_DEACTIVATED = 14,
   USER_SUSPENDED = 15,
-  TEXT_TOO_LONG = 16,
-  TEXT_CANNOT_BE_BLANK = 17,
+  TEtwitterT_TOO_LONG = 16,
+  TEtwitterT_CANNOT_BE_BLANK = 17,
   DUPLICATE = 18,
 
   /**
@@ -197,7 +197,7 @@ enum TweetCreateState {
 
   INVALID_IMAGE = 20,
   INVALID_ADDITIONAL_FIELD = 21,
-  RATE_LIMIT_EXCEEDED = 22,
+  RATE_LIMIT_EtwitterCEEDED = 22,
   INVALID_NARROWCAST = 23,
 
   /**
@@ -218,7 +218,7 @@ enum TweetCreateState {
   /**
    * Catch-all for when uploaded media violate some condition.
    *
-   * For example, too many photos in a multi-photo-set, or including an
+   * For etwitterample, too many photos in a multi-photo-set, or including an
    * animated gif or video in a multi-photo-set.
    */
   INVALID_MEDIA = 27,
@@ -229,7 +229,7 @@ enum TweetCreateState {
    * Non verified users (i.e., phone verified, email verified) have more
    * strict rate limit.
    */
-  SAFETY_RATE_LIMIT_EXCEEDED = 28,
+  SAFETY_RATE_LIMIT_EtwitterCEEDED = 28,
 
   /**
    * Scarecrow has rejected the creation request until the user completes the
@@ -249,29 +249,29 @@ enum TweetCreateState {
   USER_READONLY = 30,
 
   /**
-   * Maximum number of mentions allowed in a tweet was exceeded.
+   * Matwitterimum number of mentions allowed in a tweet was etwitterceeded.
    */
-  MENTION_LIMIT_EXCEEDED = 31,
+  MENTION_LIMIT_EtwitterCEEDED = 31,
 
   /**
-   * Maximum number of URLs allowed in a tweet was exceeded.
+   * Matwitterimum number of URLs allowed in a tweet was etwitterceeded.
    */
-  URL_LIMIT_EXCEEDED = 32,
+  URL_LIMIT_EtwitterCEEDED = 32,
 
   /**
-   * Maximum number of hashtags allowed in a tweet was exceeded.
+   * Matwitterimum number of hashtags allowed in a tweet was etwitterceeded.
    */
-  HASHTAG_LIMIT_EXCEEDED = 33,
+  HASHTAG_LIMIT_EtwitterCEEDED = 33,
 
   /**
-   * Maximum number of cashtags allowed in a tweet was exceeded.
+   * Matwitterimum number of cashtags allowed in a tweet was etwitterceeded.
    */
-  CASHTAG_LIMIT_EXCEEDED = 34,
+  CASHTAG_LIMIT_EtwitterCEEDED = 34,
 
   /**
-   * Maximum length of a hashtag was exceeded.
+   * Matwitterimum length of a hashtag was etwitterceeded.
    */
-  HASHTAG_LENGTH_LIMIT_EXCEEDED = 35,
+  HASHTAG_LENGTH_LIMIT_EtwitterCEEDED = 35,
 
   /**
    * Returned if a request contains more than one attachment type, which
@@ -296,7 +296,7 @@ enum TweetCreateState {
   DISABLED_BY_IPI_POLICY = 39,
 
   /**
-   * This state expands our transparency around which URLs are blacklisted or limited
+   * This state etwitterpands our transparency around which URLs are blacklisted or limited
    */
   URL_SPAM = 40,
 
@@ -318,9 +318,9 @@ enum TweetCreateState {
   // ApiError Forbidden (403) "User is not authorized to post to this community"
   // -- Triggered when a user tries posting to a public/closed community that they are not part of.
   COMMUNITY_USER_NOT_AUTHORIZED = 45,
-  // ApiError NotFound (404)  "Community does not exist" -- Triggered when:
+  // ApiError NotFound (404)  "Community does not etwitterist" -- Triggered when:
   //  a) A user tries posting to a private community they are not a part of.
-  //  b) A user tries posting to a non existent community
+  //  b) A user tries posting to a non etwitteristent community
   COMMUNITY_NOT_FOUND = 46,
   // ApiError BadRequest (400) "Cannot retweet a community tweet"
   // -- Triggered when a user tries to retweet a community tweet. Community tweets can not be retweeted.
@@ -340,10 +340,10 @@ enum TweetCreateState {
   // to a community tweet. They are not allowed to create community tweets.
   COMMUNITY_PROTECTED_USER_CANNOT_TWEET = 51,
 
-  // ApiError Forbidden (451) "User is not permitted to engage with this exclusive tweet."
-  // -- Triggered when a user tries to reply to an exclusive tweet without being
+  // ApiError Forbidden (451) "User is not permitted to engage with this etwitterclusive tweet."
+  // -- Triggered when a user tries to reply to an etwitterclusive tweet without being
   // a superfollower of the tweet author. Could be used for other engagements in the future (e.g. favorite)
-  EXCLUSIVE_TWEET_ENGAGEMENT_NOT_ALLOWED = 52
+  EtwitterCLUSIVE_TWEET_ENGAGEMENT_NOT_ALLOWED = 52
 
   /**
    * ApiError BadRequest (400) "Invalid parameters on Trusted Friends tweet creation"
@@ -353,7 +353,7 @@ enum TweetCreateState {
    *   b) A user tries setting Trusted Friends Control on a tweet with any of the following set:
    *     i) Conversation Control
    *     ii) Community
-   *     iii) Exclusive Tweet Control
+   *     iii) Etwitterclusive Tweet Control
    */
   TRUSTED_FRIENDS_INVALID_PARAMS = 53,
 
@@ -380,7 +380,7 @@ enum TweetCreateState {
    *   b) A user tries setting Collab Control on a tweet with any of the following set:
    *     i) Conversation Control
    *     ii) Community
-   *     iii) Exclusive Tweet Control
+   *     iii) Etwitterclusive Tweet Control
    *     iv) Trusted Friends Control
   **/
   COLLAB_TWEET_INVALID_PARAMS = 56,
@@ -418,12 +418,12 @@ enum TweetCreateState {
   TRUSTED_FRIENDS_QUOTE_TWEET_NOT_ALLOWED = 61,
 
   /**
-   * Returned when a user tries edit a tweet for which the editing time has already expired.
+   * Returned when a user tries edit a tweet for which the editing time has already etwitterpired.
    */
   EDIT_TIME_LIMIT_REACHED = 62,
 
   /**
-   * Returned when a user tries edit a tweet which has been already edited maximum number of times.
+   * Returned when a user tries edit a tweet which has been already edited matwitterimum number of times.
    */
   EDIT_COUNT_LIMIT_REACHED = 63,
 
@@ -473,10 +473,10 @@ enum UndeleteTweetState {
    * The Tweet was deleted and is still deleted. It cannot be undeleted
    * because the tweet is no longer in the soft delete archive.
    */
-  SOFT_DELETE_EXPIRED = 1,
+  SOFT_DELETE_EtwitterPIRED = 1,
 
   /**
-   * The Tweet likely has never existed, and therefore cannot be undeleted.
+   * The Tweet likely has never etwitteristed, and therefore cannot be undeleted.
    */
   TWEET_NOT_FOUND = 2,
 
@@ -484,7 +484,7 @@ enum UndeleteTweetState {
    * The Tweet could not be undeleted because it was not deleted in
    * the first place.
    */
-  TWEET_ALREADY_EXISTS = 3,
+  TWEET_ALREADY_EtwitterISTS = 3,
 
   /**
    * The user who created the Tweet being undeleted could not be found.
@@ -535,10 +535,10 @@ enum TweetDeleteState {
   PERMISSION_ERROR = 1,
 
   /**
-   * The expected_user_id provided in DeleteTweetsRequest does not match the
+   * The etwitterpected_user_id provided in DeleteTweetsRequest does not match the
    * user_id of the tweet owner.
    */
-  EXPECTED_USER_ID_MISMATCH = 2,
+  EtwitterPECTED_USER_ID_MISMATCH = 2,
 
   /**
    * @deprecated.
@@ -566,7 +566,7 @@ enum DeletedTweetState {
   SOFT_DELETED = 1
 
   /**
-   * The tweet has never existed.
+   * The tweet has never etwitteristed.
    */
   NOT_FOUND    = 2
 
@@ -576,7 +576,7 @@ enum DeletedTweetState {
   HARD_DELETED = 3
 
   /**
-   * The tweet exists and is not currently deleted.
+   * The tweet etwitterists and is not currently deleted.
    */
   NOT_DELETED  = 4
 
@@ -605,13 +605,13 @@ struct WritePathHydrationOptions {
   # 4: obsolete
 
   /**
-   * The argument passed to the Stratostore extension points mechanism.
+   * The argument passed to the Stratostore etwittertension points mechanism.
    */
-  5: optional binary extensions_args
+  5: optional binary etwittertensions_args
 
   /**
    * When returning a tweet that quotes another tweet, do not include
-   * the URL to the quoted tweet in the tweet text and url entities.
+   * the URL to the quoted tweet in the tweet tetwittert and url entities.
    * This is intended for clients that use the quoted_tweet field of
    * the tweet to display quoted tweets. Also see simple_quoted_tweet
    * field in GetTweetOptions and GetTweetFieldsOptions
@@ -666,7 +666,7 @@ struct RetweetRequest {
    */
   12: optional i64 uniqueness_id (personalDataType = 'PrivateTweetEntitiesAndMetadata, PublicTweetEntitiesAndMetadata')
 
-  13: optional feature_context.FeatureContext feature_context
+  13: optional feature_contetwittert.FeatureContetwittert feature_contetwittert
 
   14: bool return_success_on_duplicate = 0
 
@@ -680,7 +680,7 @@ struct RetweetRequest {
    * requests that will be used to correlate the GraphQL mutation requests to the REST requests
    * during a transition period when clients will be moving toward tweet creation via GraphQL.
    * See also, the "Comparison Testing" section at go/tweet-create-on-graphql-tdd for additional
-   * context.
+   * contetwittert.
    */
   16: optional string comparison_id (personalDataType = 'UniversallyUniqueIdentifierUuid')
 }(hasPersonalData = 'true')
@@ -733,9 +733,9 @@ struct UpdateTweetMediaRequest {
   1: required i64 tweet_id (personalDataType = 'TweetId')
 
   /**
-   * A mapping from old (existing) media ids on the tweet to new media ids.
+   * A mapping from old (etwitteristing) media ids on the tweet to new media ids.
    *
-   * Existing tweet media not in this map will remain unchanged.
+   * Etwitteristing tweet media not in this map will remain unchanged.
    */
   2: required map<i64, i64> old_to_new_media_ids (personalDataTypeKey = 'MediaId', personalDataTypeValue = 'MediaId')
 }(hasPersonalData = 'true')
@@ -813,7 +813,7 @@ struct DeleteLocationDataRequest {
   1: i64 user_id (personalDataType = 'UserId')
 }(hasPersonalData = 'true')
 
-// structs for API V2 (flexible schema)
+// structs for API V2 (fletwitterible schema)
 
 struct GetTweetOptions {
   /**
@@ -902,20 +902,20 @@ struct GetTweetOptions {
   /**
    * Do not enforce normal filtering for protected tweets, blocked quote tweets,
    * contributor data, etc. This does not affect Visibility Library (http://go/vf)
-   * based filtering which executes when safety_level is specified, see request
+   * based filtering which etwitterecutes when safety_level is specified, see request
    * field 24 safety_level below
    *
    * If `bypass_visibility_filtering` is true, Tweetypie will not enforce filtering
    * for protected tweets, blocked quote tweets, contributor data, etc. and your client
    * will receive all tweets regardless of follow relationship. You will also be able
    * to access tweets from deactivated and suspended users. This is only necessary
-   * for special cases, such as indexing or analyzing tweets, or administrator access.
+   * for special cases, such as indetwittering or analyzing tweets, or administrator access.
    * Since this elevated access is usually unnecessary, and is a security risk, you will
    * need to get your client id whitelisted to access this feature.
    *
    * If you are accessing tweets on behalf of a user, set
    * `bypass_visibility_filtering` to false and set `for_user_id`. This will
-   * allow access to exactly the set of tweets that that user is authorized to
+   * allow access to etwitteractly the set of tweets that that user is authorized to
    * access, and filter out tweets the user should not be authorized to access
    * (returned with a StatusState of PROTECTED_USER).
    */
@@ -932,23 +932,23 @@ struct GetTweetOptions {
   17: bool include_media_faces = 0
 
   /**
-   * The flexible schema fields of the tweet to return.
+   * The fletwitterible schema fields of the tweet to return.
    *
    * Fields of tweets in the 100+ range will only be returned if they are
-   * explicitly requested.
+   * etwitterplicitly requested.
    */
   18: list<FieldId> additional_field_ids = []
 
   // OBSOLETE 19: bool include_topic_labels = 0
 
   /**
-   * Exclude user-reported tweets from this request. Only applicable if
+   * Etwitterclude user-reported tweets from this request. Only applicable if
    * forUserId is set.
    *
    * Users can report individual tweets in the UI as uninteresting, spam,
    * sensitive, or abusive.
    */
-  20: bool exclude_reported = 0
+  20: bool etwitterclude_reported = 0
 
   // if set to true, disables suggested tweet visibility checks
   // OBSOLETE (TwitterSuggestInfo version of suggested tweets has been removed)
@@ -972,13 +972,13 @@ struct GetTweetOptions {
 
   // obsolete 25: bool include_animated_gif_media_entities = 0
   26: bool include_profile_geo_enrichment = 0
-  // obsolete 27: optional set<string> extensions
+  // obsolete 27: optional set<string> etwittertensions
   28: bool include_tweet_pivots = 0
 
   /**
-   * The argument passed to the Stratostore extension points mechanism.
+   * The argument passed to the Stratostore etwittertension points mechanism.
    */
-  29: optional binary extensions_args
+  29: optional binary etwittertensions_args
 
   /**
    * Return the number of times a tweet has been quoted in Tweet.counts.quote_count
@@ -1005,7 +1005,7 @@ struct GetTweetOptions {
 
   /**
    * When enable_deleted_state is true and we have evidence that the
-   * tweet once existed and was deleted, Tweetypie returns
+   * tweet once etwitteristed and was deleted, Tweetypie returns
    * StatusState.DELETED or StatusState.BOUNCE_DELETED. (See comments
    * on StatusState for details on these two states.)
    *
@@ -1017,7 +1017,7 @@ struct GetTweetOptions {
    * consistency.
    *
    * This option is false by default for compatibility with clients
-   * expecting StatusState.NOT_FOUND.
+   * etwitterpecting StatusState.NOT_FOUND.
    */
   34: bool enable_deleted_state = 0
 
@@ -1046,7 +1046,7 @@ struct GetTweetOptions {
 
   /**
    * When returning a tweet that quotes another tweet, do not include
-   * the URL to the quoted tweet in the tweet text and url entities.
+   * the URL to the quoted tweet in the tweet tetwittert and url entities.
    * This is intended for clients that use the quoted_tweet field of
    * the tweet to display quoted tweets.
    */
@@ -1098,7 +1098,7 @@ struct GetTweetResult {
   /**
    * The requested tweet when tweet_state is `FOUND`, `PARTIAL`, or `SUPPRESS`.
    *
-   * This field will be set if the tweet exists, access is authorized,
+   * This field will be set if the tweet etwitterists, access is authorized,
    * and enough data about the tweet is available to materialize a
    * tweet. When this field is set, you should look at the tweet_state
    * field to determine how to treat this tweet.
@@ -1109,12 +1109,12 @@ struct GetTweetResult {
    *
    * If tweet_state is PARTIAL, then enough data was available to return
    * a tweet, but there was an error when loading the tweet that prevented
-   * some data from being returned (for example, if a request to the cards
+   * some data from being returned (for etwitterample, if a request to the cards
    * service times out when cards were requested, then the tweet will be
    * marked PARTIAL). `missing_fields` indicates which parts of the tweet
    * failed to load. When you receive a PARTIAL tweet, it is up to you
    * whether to proceed with the degraded tweet data or to consider it a
-   * failure. For example, a mobile client might choose to display a
+   * failure. For etwitterample, a mobile client might choose to display a
    * PARTIAL tweet to the user, but not store it in an internal cache.
    *
    * If tweet_state is SUPPRESS, then the tweet is complete, but soft
@@ -1137,7 +1137,7 @@ struct GetTweetResult {
    * missing. For most non-core fields, the path will just be the field id
    * of the field that is missing.
    *
-   * For example, if card2 failed to load for a tweet, the `tweet_state`
+   * For etwitterample, if card2 failed to load for a tweet, the `tweet_state`
    * will be `PARTIAL`, the `tweet` field will be set, the Tweet's `card2`
    * field will be empty, and this field will be set to:
    *
@@ -1194,7 +1194,7 @@ struct GetTweetResult {
 union TweetInclude {
   /**
    * Field ID within the `Tweet` struct to include.  All fields may be optionally included
-   * except for the `id` field.
+   * etwittercept for the `id` field.
    */
   1: FieldId tweetFieldId
 
@@ -1295,9 +1295,9 @@ struct GetTweetFieldsOptions {
   12: optional string cardsPlatformKey (personalDataType = 'PrivateTweetEntitiesAndMetadata, PublicTweetEntitiesAndMetadata') 
 
   /**
-   * The argument passed to the Stratostore extension points mechanism.
+   * The argument passed to the Stratostore etwittertension points mechanism.
    */
-  13: optional binary extensionsArgs
+  13: optional binary etwittertensionsArgs
 
   /**
    * the policy to use when filtering tweets for basic visibility.
@@ -1323,7 +1323,7 @@ struct GetTweetFieldsOptions {
 
   /**
    * When returning a tweet that quotes another tweet, do not include
-   * the URL to the quoted tweet in the tweet text and url entities.
+   * the URL to the quoted tweet in the tweet tetwittert and url entities.
    * This is intended for clients that use the quoted_tweet field of
    * the tweet to display quoted tweets.
    *
@@ -1373,7 +1373,7 @@ struct TweetFieldsResultFound {
  * Used in `TweetFieldsResultState` when the requested tweet is not found.
  */
 struct TweetFieldsResultNotFound {
-  // If this field is true, then we know that the tweet once existed and
+  // If this field is true, then we know that the tweet once etwitteristed and
   // has since been deleted.
   1: bool deleted = 0
 
@@ -1394,7 +1394,7 @@ struct TweetFieldsPartial {
 
   /**
     * The tweet fields that could not be loaded when hydration fails
-    * and a backend fails with an exception. This field is populated
+    * and a backend fails with an etwitterception. This field is populated
     * when a tweet is "partially" hydrated, i.e. some fields were
     * successfully fetched while others were not.
     *
@@ -1403,7 +1403,7 @@ struct TweetFieldsPartial {
     * the field that is missing. For most non-core fields, the path will
     * just be the field id of the field that is missing.
     *
-    * For example, if card2 failed to load for a tweet, the tweet is marked "partial",
+    * For etwitterample, if card2 failed to load for a tweet, the tweet is marked "partial",
     * the `tweet` field will be set, the Tweet's `card2`
     * field will be empty, and this field will be set to:
     *
@@ -1520,12 +1520,12 @@ union TweetCreateConversationControl {
 }
 
 /*
- * Specifies the exclusivity of a tweet
+ * Specifies the etwitterclusivity of a tweet
  * This limits the audience of the tweet to the author
  * and the author's super followers
- * While empty now, we are expecting to add additional fields in v1+
+ * While empty now, we are etwitterpecting to add additional fields in v1+
  */
-struct ExclusiveTweetControlOptions {}
+struct EtwitterclusiveTweetControlOptions {}
 
 struct TrustedFriendsControlOptions {
   1: i64 trusted_friends_list_id = 0 (personalDataType = 'TrustedFriendsListMetadata')
@@ -1570,9 +1570,9 @@ struct NoteTweetOptions {
   **/
   3: optional list<i64> mentioned_user_ids (personalDataType = 'UserId')
   /**
-  * Specifies if the Tweet can be expanded into the NoteTweet, or if they have the same text
+  * Specifies if the Tweet can be etwitterpanded into the NoteTweet, or if they have the same tetwittert
   **/
-  4: optional bool is_expandable
+  4: optional bool is_etwitterpandable
 }
 
 struct PostTweetRequest {
@@ -1582,9 +1582,9 @@ struct PostTweetRequest {
   1: required i64 user_id (personalDataType = 'UserId')
 
   /**
-   * The user-supplied text of the tweet.
+   * The user-supplied tetwittert of the tweet.
    */
-  2: required string text (personalDataType = 'PrivateTweets, PublicTweets')
+  2: required string tetwittert (personalDataType = 'PrivateTweets, PublicTweets')
 
   /**
    * The OAuth client application from which the creation request originated.
@@ -1618,14 +1618,14 @@ struct PostTweetRequest {
    * The impression id of the ad from which this tweet was created.
    *
    * This is set when a user retweets or replies to a promoted tweet. It is
-   * used to attribute the "earned" exposure of an advertisement.
+   * used to attribute the "earned" etwitterposure of an advertisement.
    */
   9: optional i64 tracking_id (personalDataType = 'ImpressionId')
 
   /**
    * @deprecated.
    * TOO clients don't actively use this input param, and the v2 API does not plan
-   * to expose this parameter. The value associated with this field that's
+   * to etwitterpose this parameter. The value associated with this field that's
    * stored with a tweet is obtained from the user's account preferences stored in
    * `User.safety.nsfw_user`. (See go/user.thrift for more details on this field)
    *
@@ -1637,7 +1637,7 @@ struct PostTweetRequest {
   10: optional bool possibly_sensitive
 
   /**
-   * Do not save, index, fanout, or otherwise persist this tweet.
+   * Do not save, indetwitter, fanout, or otherwise persist this tweet.
    *
    * When true, the tweet is validated, created, and returned but is not
    * persisted. This can be used for dark testing or pre-validating a tweet
@@ -1667,10 +1667,10 @@ struct PostTweetRequest {
 
   15: optional WritePathHydrationOptions hydration_options
 
-  // OBSOLETE 16: optional bool bypass_rate_limit_for_xfactor
+  // OBSOLETE 16: optional bool bypass_rate_limit_for_twitterfactor
 
   /**
-   * ID to explicitly identify a creation request for the purpose of rejecting
+   * ID to etwitterplicitly identify a creation request for the purpose of rejecting
    * duplicates.
    *
    * If two requests are received with the same uniqueness_id, then they will
@@ -1680,7 +1680,7 @@ struct PostTweetRequest {
    */
   17: optional i64 uniqueness_id (personalDataType = 'PrivateTweetEntitiesAndMetadata, PublicTweetEntitiesAndMetadata')
 
-  18: optional feature_context.FeatureContext feature_context
+  18: optional feature_contetwittert.FeatureContetwittert feature_contetwittert
 
   /**
    * Passthrough data for Scarecrow that is used for safety checks.
@@ -1693,7 +1693,7 @@ struct PostTweetRequest {
    * Toggle narrowcasting behavior for leading @mentions.
    *
    * If in_reply_to_tweet_id is not set:
-   *   - When this flag is true and the tweet text starts with a leading mention then the tweet
+   *   - When this flag is true and the tweet tetwittert starts with a leading mention then the tweet
    *     will be narrowcasted.
    *
    * If in_reply_to_tweet_id is set:
@@ -1701,15 +1701,15 @@ struct PostTweetRequest {
    *       - Setting this flag to true will use the default narrowcast determination logic where
    *         most replies will be narrowcast but some special-cases of self-replies will not.
    *       - Setting this flag to false will disable narrowcasting and the tweet will be fanned out
-   *         to all the author's followers.  Previously users prefixed their reply text with "." to
+   *         to all the author's followers.  Previously users prefitwittered their reply tetwittert with "." to
    *         achieve this effect.
    *   - If auto_populate_reply_metadata is false, this flag will control whether a leading
-   *     mention in the tweet text will be narrowcast (true) or broadcast (false).
+   *     mention in the tweet tetwittert will be narrowcast (true) or broadcast (false).
    */
   21: bool enable_tweet_to_narrowcasting = 1
 
   /**
-   * Automatically populate replies with leading mentions from tweet text.
+   * Automatically populate replies with leading mentions from tweet tetwittert.
    */
   22: bool auto_populate_reply_metadata = 0
 
@@ -1722,8 +1722,8 @@ struct PostTweetRequest {
    * An optional URL that identifies a resource that is treated as an attachment of the
    * the tweet, such as a quote-tweet permalink.
    *
-   * When provided, it is appended to the end of the tweet text, but is not
-   * included in the visible_text_range.
+   * When provided, it is appended to the end of the tweet tetwittert, but is not
+   * included in the visible_tetwittert_range.
    */
   24: optional string attachment_url (personalDataType = 'CardId, ShortUrl')
 
@@ -1732,36 +1732,36 @@ struct PostTweetRequest {
    *
    * This data is not persisted by Tweetypie.
    *
-   * @deprecated prefer transient_context (see field 27) over this.
+   * @deprecated prefer transient_contetwittert (see field 27) over this.
    */
-  25: optional map<tweet.TweetCreateContextKey, string> additional_context
+  25: optional map<tweet.TweetCreateContetwittertKey, string> additional_contetwittert
 
   /**
-   * Users to exclude from the automatic reply population behavior.
+   * Users to etwitterclude from the automatic reply population behavior.
    *
    * When auto_populate_reply_metadata is true, screen names appearing in the
-   * mention prefix can be excluded by specifying a corresponding user id in
-   * exclude_reply_user_ids.  Because the mention prefix must always include
+   * mention prefitwitter can be etwittercluded by specifying a corresponding user id in
+   * etwitterclude_reply_user_ids.  Because the mention prefitwitter must always include
    * the leading mention to preserve directed-at addressing for the in-reply-
-   * to tweet author, attempting to exclude that user id will have no effect.
-   * Specifying a user id not in the prefix will be silently ignored.
+   * to tweet author, attempting to etwitterclude that user id will have no effect.
+   * Specifying a user id not in the prefitwitter will be silently ignored.
    */
-  26: optional list<i64> exclude_reply_user_ids (personalDataType = 'UserId')
+  26: optional list<i64> etwitterclude_reply_user_ids (personalDataType = 'UserId')
 
   /**
    * Used to pass structured data to Tweetypie and tweet_events eventbus
    * stream consumers. This data is not persisted by Tweetypie.
    *
-   * If adding a new passthrough field, prefer this over additional_context,
-   * as this is structured data, while additional_context is text data.
+   * If adding a new passthrough field, prefer this over additional_contetwittert,
+   * as this is structured data, while additional_contetwittert is tetwittert data.
    */
-  27: optional transient_context.TransientCreateContext transient_context
+  27: optional transient_contetwittert.TransientCreateContetwittert transient_contetwittert
 
   /**
    * Composer flow used to create this tweet. Unless using the News Camera (go/newscamera)
    * flow, this should be `STANDARD`.
    *
-   * When set to `CAMERA`, clients are expected to display the tweet with a different UI
+   * When set to `CAMERA`, clients are etwitterpected to display the tweet with a different UI
    * to emphasize attached media.
    */
   28: optional tweet.ComposerSource composer_source
@@ -1778,24 +1778,24 @@ struct PostTweetRequest {
 
   /**
   * Provided if the client wants to have the tweet create evaluated for a nudge (e.g. to notify
-  * the user that they are about to create a toxic tweet). Reference: go/docbird/jiminy
+  * the user that they are about to create a totwitteric tweet). Reference: go/docbird/jiminy
   */
   31: optional jiminy.CreateTweetNudgeOptions nudge_options
 
   /**
    * Provided for correlating requests originating from REST endpoints and GraphQL endpoints.
    * Its presence or absence does not affect Tweet mutation. It used for validation
-   * and debugging. The expected format is a 36 ASCII UUIDv4.
+   * and debugging. The etwitterpected format is a 36 ASCII UUIDv4.
    * Please see API specification at go/graphql-tweet-mutations for more information.
    */
   32: optional string comparison_id (personalDataType = 'UniversallyUniqueIdentifierUuid')
 
   /**
-   * Options that determine the shape of an exclusive tweet's restrictions.
-   * The existence of this object indicates that the tweet is intended to be an exclusive tweet
+   * Options that determine the shape of an etwitterclusive tweet's restrictions.
+   * The etwitteristence of this object indicates that the tweet is intended to be an etwitterclusive tweet
    * While this is an empty structure for now, it will have fields added to it later in later versions.
    */
-  33: optional ExclusiveTweetControlOptions exclusiveTweetControlOptions
+  33: optional EtwitterclusiveTweetControlOptions etwitterclusiveTweetControlOptions
 
   34: optional TrustedFriendsControlOptions trustedFriendsControlOptions
 
@@ -1847,7 +1847,7 @@ struct DeleteTweetsRequest {
    * The id of the user initiating this request.
    *
    * It could be either the owner of the tweet or an admin. If not specified
-   * we will use TwitterContext.userId.
+   * we will use TwitterContetwittert.userId.
    */
   4: optional i64 by_user_id (personalDataType = 'UserId')
 
@@ -1864,12 +1864,12 @@ struct DeleteTweetsRequest {
   /**
    * Id to compare with the user id of the tweets being deleted.
    *
-   * This provides extra protection against accidental deletion of tweets.
+   * This provides etwittertra protection against accidental deletion of tweets.
    * This is required when is_user_erasure is true. If any of the tweets
-   * specified in tweet_ids do not match expected_user_id a
-   * EXPECTED_USER_ID_MISMATCH state will be returned.
+   * specified in tweet_ids do not match etwitterpected_user_id a
+   * EtwitterPECTED_USER_ID_MISMATCH state will be returned.
    */
-  6: optional i64 expected_user_id (personalDataType = 'UserId')
+  6: optional i64 etwitterpected_user_id (personalDataType = 'UserId')
 
   /**
    * A bounced tweet is a tweet that has been found to violate Twitter Rules.
@@ -1897,7 +1897,7 @@ struct DeleteTweetsRequest {
     * requests that will be used to correlate the GraphQL mutation requests to the REST requests
     * during a transition period when clients will be moving toward tweet creation via GraphQL.
     * See also, the "Comparison Testing" section at go/tweet-create-on-graphql-tdd for additional
-    * context.
+    * contetwittert.
     */
   8: optional string comparison_id (personalDataType = 'UniversallyUniqueIdentifierUuid')
 
@@ -1980,7 +1980,7 @@ enum AccessDeniedCause {
  * AccessDenied error is returned by delete_tweets endpoint when
  * by_user_id is suspended or deactivated.
  */
-exception AccessDenied {
+etwitterception AccessDenied {
   1: required string message
   2: optional AccessDeniedCause errorCause
 }
@@ -2023,7 +2023,7 @@ struct UnretweetRequest {
     * requests that will be used to correlate the GraphQL mutation requests to the REST requests
     * during a transition period when clients will be moving toward tweet creation via GraphQL.
     * See also, the "Comparison Testing" section at go/tweet-create-on-graphql-tdd for additional
-    * context.
+    * contetwittert.
     */
   3: optional string comparison_id (personalDataType = 'UniversallyUniqueIdentifierUuid')
 }(hasPersonalData = 'true')
@@ -2042,7 +2042,7 @@ struct GetDeletedTweetResult {
  * Flushes tweets and/or their counts from cache.
  *
  * Typically will be used manually for testing or when a particular problem is
- * found that needs to be fixed by hand. Defaults to flushing both tweet
+ * found that needs to be fitwittered by hand. Defaults to flushing both tweet
  * struct and associated counts.
  */
 struct FlushRequest {
@@ -2129,8 +2129,8 @@ service TweetService {
    * The response list is ordered the same as the requested ids list.
    */
   list<GetTweetResult> get_tweets(1: GetTweetsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Performs a multi-get of tweets.  This endpoint is geared towards internal
@@ -2139,56 +2139,56 @@ service TweetService {
    * The response list is ordered the same as the requested ids list.
    */
   list<GetTweetFieldsResult> get_tweet_fields(1: GetTweetFieldsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
-   * Execute a {@link GetTweetCountsRequest} and return one or more {@link GetTweetCountsResult}
+   * Etwitterecute a {@link GetTweetCountsRequest} and return one or more {@link GetTweetCountsResult}
    */
   list<GetTweetCountsResult> get_tweet_counts(1: GetTweetCountsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
-   * Set/Update additional fields on an existing tweet
+   * Set/Update additional fields on an etwitteristing tweet
    */
   void set_additional_fields(1: SetAdditionalFieldsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Delete additional fields on a tweet
    */
   void delete_additional_fields(1: DeleteAdditionalFieldsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Creates and saves a tweet.
    *
-   * URLs contained in the text will be shortened via Talon. Validations that are
+   * URLs contained in the tetwittert will be shortened via Talon. Validations that are
    * handled by this endpoint include:
    *
    *   - tweet length not greater than 140 display characters, after URL shortening;
    *   - tweet is not a duplicate of a recently created tweet by the same user;
    *   - user is not suspended or deactivated;
-   *   - text does not contain malware urls, as determined by talon;
+   *   - tetwittert does not contain malware urls, as determined by talon;
    *
    * Checks that are not handled here that should be handled by the web API:
    *   - oauth authentication;
    *   - client application has narrowcasting/nullcasting privileges;
    */
   PostTweetResult post_tweet(1: PostTweetRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Creates and saves a retweet.
    *
    * Validations that are handled by this endpoint include:
    *
-   *   - source tweet exists;
-   *   - source-tweet user exists and is not suspended or deactivated;
+   *   - source tweet etwitterists;
+   *   - source-tweet user etwitterists and is not suspended or deactivated;
    *   - source-tweet user is not blocking retweeter;
    *   - user has not already retweeted the source tweet;
    *
@@ -2197,44 +2197,44 @@ service TweetService {
    *   - client application has narrowcasting/nullcasting privileges;
    */
   PostTweetResult post_retweet(1: RetweetRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Remove tweets. It removes all associated fields of the tweets in
    * cache and the persistent storage.
    */
   list<DeleteTweetResult> delete_tweets(1: DeleteTweetsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error,
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error,
     3: AccessDenied access_denied)
 
   /**
    * Restore a deleted Tweet.
    *
-   * Tweets exist in a soft-deleted state for N days during which they can be
+   * Tweets etwitterist in a soft-deleted state for N days during which they can be
    * restored by support agents following the internal restoration guidelines.
    * If the undelete succeeds, the Tweet is given similar treatment to a new
-   * tweet e.g inserted into cache, sent to the timeline service, reindexed by
+   * tweet e.g inserted into cache, sent to the timeline service, reindetwittered by
    * TFlock etc.
    */
   UndeleteTweetResponse undelete_tweet(1: UndeleteTweetRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Add or remove takedown countries associated with a Tweet.
    */
   void takedown(1: TakedownRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Set or unset the nsfw_admin and/or nsfw_user bit of tweet.core_data.
    **/
   void update_possibly_sensitive_tweet(1: UpdatePossiblySensitiveTweetRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error
   )
 
   /**
@@ -2244,8 +2244,8 @@ service TweetService {
    * Note: regular user erasure is handled by the EraseUserTweets daemon.
    */
   void erase_user_tweets(1: EraseUserTweetsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Unretweet a given tweet.
@@ -2258,8 +2258,8 @@ service TweetService {
    * keep track of a retweetId.
    */
   UnretweetResult unretweet(1: UnretweetRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Get tweet content and deletion times for soft-deleted tweets.
@@ -2267,29 +2267,29 @@ service TweetService {
    * The response list is ordered the same as the requested ids list.
    */
   list<GetDeletedTweetResult> get_deleted_tweets(1: GetDeletedTweetsRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
-   * Execute a {@link FlushRequest}
+   * Etwitterecute a {@link FlushRequest}
    */
   void flush(1: FlushRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
-   * Execute an {@link IncrTweetFavCountRequest}
+   * Etwitterecute an {@link IncrTweetFavCountRequest}
    */
   void incr_tweet_fav_count(1: IncrTweetFavCountRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
-   * Execute an {@link IncrTweetBookmarkCountRequest}
+   * Etwitterecute an {@link IncrTweetBookmarkCountRequest}
    */
   void incr_tweet_bookmark_count(1: IncrTweetBookmarkCountRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
    * Delete location data from all of a user's tweets.
@@ -2307,14 +2307,14 @@ service TweetService {
    *
    */
   void delete_location_data(1: DeleteLocationDataRequest request) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 
   /**
-   * Execute a {@link GeoScrub} request.
+   * Etwitterecute a {@link GeoScrub} request.
    *
    */
   void scrub_geo(1: GeoScrub geo_scrub) throws (
-    1: exceptions.ClientError client_error,
-    2: exceptions.ServerError server_error)
+    1: etwitterceptions.ClientError client_error,
+    2: etwitterceptions.ServerError server_error)
 }

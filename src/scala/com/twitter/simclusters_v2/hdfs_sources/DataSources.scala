@@ -5,7 +5,7 @@ import com.twitter.scalding.DateRange
 import com.twitter.scalding.Days
 import com.twitter.scalding.TypedPipe
 import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv2.remote_access.EtwitterplicitLocation
 import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
 import com.twitter.simclusters_v2.thriftscala.NormsAndCounts
 import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
@@ -19,7 +19,7 @@ object DataSources {
   def userUserNormalizedGraphSource(implicit dateRange: DateRange): TypedPipe[UserAndNeighbors] = {
     DAL
       .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(14)(DateOps.UTC))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
       .toTypedPipe
   }
 
@@ -32,7 +32,7 @@ object DataSources {
   ): TypedPipe[NormsAndCounts] = {
     DAL
       .readMostRecentSnapshot(ProducerNormsAndCountsScalaDataset, dateRange.prepend(Days(14)))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
       .toTypedPipe
   }
 

@@ -9,7 +9,7 @@ import com.twitter.timelineranker.{thriftscala => thrift}
 
 /**
  * Builds the DebugObserver that is attached to thrift requests.
- * This class exists to centralize the gates that determine whether or not
+ * This class etwitterists to centralize the gates that determine whether or not
  * to enable debug transcripts for a particular request.
  */
 class DebugObserverBuilder(whitelist: UserList) {

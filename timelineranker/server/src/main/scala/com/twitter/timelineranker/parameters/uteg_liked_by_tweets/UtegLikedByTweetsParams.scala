@@ -9,33 +9,33 @@ object UtegLikedByTweetsParams {
 
   val ProbabilityRandomTweet: BoundsWithDefault[Double] = BoundsWithDefault[Double](0.0, 1.0, 0.0)
 
-  object DefaultUTEGInNetworkCount extends Param(200)
+  object DefaultUTEGInNetworkCount etwittertends Param(200)
 
-  object DefaultUTEGOutOfNetworkCount extends Param(800)
+  object DefaultUTEGOutOfNetworkCount etwittertends Param(800)
 
-  object DefaultMaxTweetCount extends Param(200)
+  object DefaultMatwitterTweetCount etwittertends Param(200)
 
   /**
    * Enables semantic core, penguin, and tweetypie content features in uteg liked by tweets source.
    */
-  object EnableContentFeaturesHydrationParam extends Param(false)
+  object EnableContentFeaturesHydrationParam etwittertends Param(false)
 
   /**
    * additionally enables tokens when hydrating content features.
    */
   object EnableTokensInContentFeaturesHydrationParam
-      extends FSParam(
+      etwittertends FSParam(
         name = "uteg_liked_by_tweets_enable_tokens_in_content_features_hydration",
         default = false
       )
 
   /**
-   * additionally enables tweet text when hydrating content features.
+   * additionally enables tweet tetwittert when hydrating content features.
    * This only works if EnableContentFeaturesHydrationParam is set to true
    */
-  object EnableTweetTextInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "uteg_liked_by_tweets_enable_tweet_text_in_content_features_hydration",
+  object EnableTweetTetwittertInContentFeaturesHydrationParam
+      etwittertends FSParam(
+        name = "uteg_liked_by_tweets_enable_tweet_tetwittert_in_content_features_hydration",
         default = false
       )
 
@@ -44,7 +44,7 @@ object UtegLikedByTweetsParams {
    * Note multiplier for realgraph score := 1.0, and only change earlybird score multiplier.
    */
   object EarlybirdScoreMultiplierParam
-      extends FSBoundedParam(
+      etwittertends FSBoundedParam(
         "uteg_liked_by_tweets_earlybird_score_multiplier_param",
         1.0,
         0,
@@ -57,7 +57,7 @@ object UtegLikedByTweetsParams {
      * enable filtering of UTEG recommendations based on social proof type
      */
     object EnableParam
-        extends FSParam(
+        etwittertends FSParam(
           "uteg_liked_by_tweets_uteg_recommendations_filter_enable",
           false
         )
@@ -65,18 +65,18 @@ object UtegLikedByTweetsParams {
     /**
      * filters out UTEG recommendations that have been tweeted by someone the user follows
      */
-    object ExcludeTweetParam
-        extends FSParam(
-          "uteg_liked_by_tweets_uteg_recommendations_filter_exclude_tweet",
+    object EtwittercludeTweetParam
+        etwittertends FSParam(
+          "uteg_liked_by_tweets_uteg_recommendations_filter_etwitterclude_tweet",
           false
         )
 
     /**
      * filters out UTEG recommendations that have been retweeted by someone the user follows
      */
-    object ExcludeRetweetParam
-        extends FSParam(
-          "uteg_liked_by_tweets_uteg_recommendations_filter_exclude_retweet",
+    object EtwittercludeRetweetParam
+        etwittertends FSParam(
+          "uteg_liked_by_tweets_uteg_recommendations_filter_etwitterclude_retweet",
           false
         )
 
@@ -84,28 +84,28 @@ object UtegLikedByTweetsParams {
      * filters out UTEG recommendations that have been replied to by someone the user follows
      * not filtering out the replies
      */
-    object ExcludeReplyParam
-        extends FSParam(
-          "uteg_liked_by_tweets_uteg_recommendations_filter_exclude_reply",
+    object EtwittercludeReplyParam
+        etwittertends FSParam(
+          "uteg_liked_by_tweets_uteg_recommendations_filter_etwitterclude_reply",
           false
         )
 
     /**
      * filters out UTEG recommendations that have been quoted by someone the user follows
      */
-    object ExcludeQuoteTweetParam
-        extends FSParam(
-          "uteg_liked_by_tweets_uteg_recommendations_filter_exclude_quote",
+    object EtwittercludeQuoteTweetParam
+        etwittertends FSParam(
+          "uteg_liked_by_tweets_uteg_recommendations_filter_etwitterclude_quote",
           false
         )
 
     /**
      * filters out recommended replies that have been directed at out of network users.
      */
-    object ExcludeRecommendedRepliesToNonFollowedUsersParam
-        extends FSParam(
+    object EtwittercludeRecommendedRepliesToNonFollowedUsersParam
+        etwittertends FSParam(
           name =
-            "uteg_liked_by_tweets_uteg_recommendations_filter_exclude_recommended_replies_to_non_followed_users",
+            "uteg_liked_by_tweets_uteg_recommendations_filter_etwitterclude_recommended_replies_to_non_followed_users",
           default = false
         )
   }
@@ -113,29 +113,29 @@ object UtegLikedByTweetsParams {
   /**
    * Minimum number of favorited-by users required for recommended tweets.
    */
-  object MinNumFavoritedByUserIdsParam extends Param(1)
+  object MinNumFavoritedByUserIdsParam etwittertends Param(1)
 
   /**
    * Includes one or multiple random tweets in the response.
    */
   object IncludeRandomTweetParam
-      extends FSParam(name = "uteg_liked_by_tweets_include_random_tweet", default = false)
+      etwittertends FSParam(name = "uteg_liked_by_tweets_include_random_tweet", default = false)
 
   /**
    * One single random tweet (true) or tag tweet as random with given probability (false).
    */
   object IncludeSingleRandomTweetParam
-      extends FSParam(name = "uteg_liked_by_tweets_include_random_tweet_single", default = false)
+      etwittertends FSParam(name = "uteg_liked_by_tweets_include_random_tweet_single", default = false)
 
   /**
    * Probability to tag a tweet as random (will not be ranked).
    */
   object ProbabilityRandomTweetParam
-      extends FSBoundedParam(
+      etwittertends FSBoundedParam(
         name = "uteg_liked_by_tweets_include_random_tweet_probability",
         default = ProbabilityRandomTweet.default,
         min = ProbabilityRandomTweet.bounds.minInclusive,
-        max = ProbabilityRandomTweet.bounds.maxInclusive)
+        matwitter = ProbabilityRandomTweet.bounds.matwitterInclusive)
 
   /**
    * additionally enables conversationControl when hydrating content features.
@@ -143,30 +143,30 @@ object UtegLikedByTweetsParams {
    */
 
   object EnableConversationControlInContentFeaturesHydrationParam
-      extends FSParam(
+      etwittertends FSParam(
         name = "conversation_control_in_content_features_hydration_uteg_liked_by_tweets_enable",
         default = false
       )
 
   object EnableTweetMediaHydrationParam
-      extends FSParam(
+      etwittertends FSParam(
         name = "tweet_media_hydration_uteg_liked_by_tweets_enable",
         default = false
       )
 
   object NumAdditionalRepliesParam
-      extends FSBoundedParam(
+      etwittertends FSBoundedParam(
         name = "uteg_liked_by_tweets_num_additional_replies",
         default = 0,
         min = 0,
-        max = 1000
+        matwitter = 1000
       )
 
   /**
    * Enable relevance search, otherwise recency search from earlybird.
    */
   object EnableRelevanceSearchParam
-      extends FSParam(
+      etwittertends FSParam(
         name = "uteg_liked_by_tweets_enable_relevance_search",
         default = true
       )

@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -22,7 +22,7 @@ message KernelDef {
     string name = 1;
 
     // A list of values that this kernel supports for this attr.
-    // Like OpDef.AttrDef.allowed_values, except for kernels instead of Ops.
+    // Like OpDef.AttrDef.allowed_values, etwittercept for kernels instead of Ops.
     AttrValue allowed_values = 2;
   }
   repeated AttrConstraint constraint = 3;
@@ -31,7 +31,7 @@ message KernelDef {
   // instead of device memory.
   repeated string host_memory_arg = 4;
 
-  // This allows experimental kernels to be registered for an op that
+  // This allows etwitterperimental kernels to be registered for an op that
   // won't be used unless the user specifies a "_kernel" attr with
   // value matching this.
   string label = 5;

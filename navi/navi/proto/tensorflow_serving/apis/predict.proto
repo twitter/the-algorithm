@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow.serving;
 option cc_enable_arenas = true;
@@ -16,16 +16,16 @@ message PredictRequest {
 
   // Input tensors.
   // Names of input tensor are alias names. The mapping from aliases to real
-  // input tensor names is stored in the SavedModel export as a prediction
+  // input tensor names is stored in the SavedModel etwitterport as a prediction
   // SignatureDef under the 'inputs' field.
   map<string, TensorProto> inputs = 2;
 
   // Output filter.
   // Names specified are alias names. The mapping from aliases to real output
-  // tensor names is stored in the SavedModel export as a prediction
+  // tensor names is stored in the SavedModel etwitterport as a prediction
   // SignatureDef under the 'outputs' field.
   // Only tensors specified here will be run/fetched and returned, with the
-  // exception that when none is specified, all tensors specified in the
+  // etwitterception that when none is specified, all tensors specified in the
   // named signature will be run/fetched and returned.
   repeated string output_filter = 3;
 }

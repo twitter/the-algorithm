@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -20,7 +20,7 @@ message LocalLinks {
 
 message DeviceLocality {
   // Optional bus locality of device.  Default value of 0 means
-  // no specific locality.  Specific localities are indexed from 1.
+  // no specific locality.  Specific localities are indetwittered from 1.
   int32 bus_id = 1;
 
   // Optional NUMA locality of device.
@@ -46,13 +46,13 @@ message DeviceAttributes {
 
   // A device is assigned a global unique number each time it is
   // initialized. "incarnation" should never be 0.
-  fixed64 incarnation = 6;
+  fitwittered64 incarnation = 6;
 
   // String representation of the physical device that this device maps to.
   string physical_device_desc = 7;
 
-  // A physical device ID for use in XLA DeviceAssignments, unique across
+  // A physical device ID for use in twitterLA DeviceAssignments, unique across
   // clients in a multi-client setup. Set to -1 if unavailable, non-negative
   // otherwise.
-  int64 xla_global_id = 8;
+  int64 twitterla_global_id = 8;
 }

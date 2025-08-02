@@ -16,10 +16,10 @@ public class InstrumentedQueue<T> {
 
   private final ConcurrentLinkedDeque<T> queue;
 
-  public InstrumentedQueue(String statsPrefix) {
-    SearchLongGauge.export(statsPrefix + "_size", queueSize);
-    enqueueRate = SearchRateCounter.export(statsPrefix + "_enqueue");
-    dequeueRate = SearchRateCounter.export(statsPrefix + "_dequeue");
+  public InstrumentedQueue(String statsPrefitwitter) {
+    SearchLongGauge.etwitterport(statsPrefitwitter + "_size", queueSize);
+    enqueueRate = SearchRateCounter.etwitterport(statsPrefitwitter + "_enqueue");
+    dequeueRate = SearchRateCounter.etwitterport(statsPrefitwitter + "_dequeue");
 
     queue = new ConcurrentLinkedDeque<>();
   }

@@ -1,0 +1,32 @@
+scala_library(
+    sources = [
+        "*.scala",
+    ],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/javatwitter/inject:javatwitter.inject",
+        "finatra/inject/inject-core/src/main/scala",
+        "finatra/inject/inject-core/src/main/scala/com/twitter/inject",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/side_effect",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/common",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/pipeline:query",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/pipeline/step",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/service",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/service/domain_marshaller_etwitterecutor",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/service/pipeline_result_side_effect_etwitterecutor",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/service/selector_etwitterecutor",
+        "stitch/stitch-core",
+    ],
+    etwitterports = [
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/side_effect",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/common",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/pipeline:query",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/pipeline/step",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/service",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/service/pipeline_result_side_effect_etwitterecutor",
+        "stitch/stitch-core",
+    ],
+)

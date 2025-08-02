@@ -4,8 +4,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.lucene.search.Query;
-import org.apache.lucene.spatial.prefix.tree.Cell;
-import org.apache.lucene.spatial.prefix.tree.CellIterator;
+import org.apache.lucene.spatial.prefitwitter.tree.Cell;
+import org.apache.lucene.spatial.prefitwitter.tree.CellIterator;
 import org.apache.lucene.util.BytesRef;
 
 import com.twitter.search.common.util.spatial.GeohashChunkImpl;
@@ -20,7 +20,7 @@ public final class GeoQuadTreeQueryBuilderUtil {
   /**
    * Build a geo quad tree query based around the geo code based on the geo field.
    * @param geocode the geo location for the quad tree query
-   * @param field the field where the geohash tokens are indexed
+   * @param field the field where the geohash tokens are indetwittered
    * @return the corresponding for the geo quad tree query
    */
   public static Query buildGeoQuadTreeQuery(GeoCode geocode, String field) {
@@ -54,8 +54,8 @@ public final class GeoQuadTreeQueryBuilderUtil {
           treeLevel);
       // If there are other nodes intersecting query circle, also add them in.
       if (nodes != null) {
-        while (nodes.hasNext()) {
-          geoHashSet.add(nodes.next().getTokenBytesNoLeaf(new BytesRef()));
+        while (nodes.hasNetwittert()) {
+          geoHashSet.add(nodes.netwittert().getTokenBytesNoLeaf(new BytesRef()));
         }
       }
     }

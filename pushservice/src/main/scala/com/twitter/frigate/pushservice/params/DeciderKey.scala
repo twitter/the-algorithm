@@ -2,7 +2,7 @@ package com.twitter.frigate.pushservice.params
 
 import com.twitter.servo.decider.DeciderKeyEnum
 
-object DeciderKey extends DeciderKeyEnum {
+object DeciderKey etwittertends DeciderKeyEnum {
   val disableAllRelevance = Value("frigate_pushservice_disable_all_relevance")
   val disableHeavyRanking = Value("frigate_pushservice_disable_heavy_ranking")
   val restrictLightRanking = Value("frigate_pushservice_restrict_light_ranking")
@@ -39,8 +39,8 @@ object DeciderKey extends DeciderKeyEnum {
     "frigate_pushservice_enable_mr_user_semantic_core_feature_hydration")
   val enableMrUserSemanticCoreNoZeroFeaturesHydration = Value(
     "frigate_pushservice_enable_mr_user_semantic_core_no_zero_feature_hydration")
-  val enableHtlOfflineUserAggregateExtendedFeaturesHydration = Value(
-    "frigate_pushservice_enable_htl_offline_user_aggregate_extended_features_hydration")
+  val enableHtlOfflineUserAggregateEtwittertendedFeaturesHydration = Value(
+    "frigate_pushservice_enable_htl_offline_user_aggregate_etwittertended_features_hydration")
   val enableNerErgFeaturesHydration = Value("frigate_pushservice_enable_ner_erg_features_hydration")
   val enableDaysSinceRecentResurrectionFeatureHydration = Value(
     "frigate_pushservice_enable_days_since_recent_resurrection_features_hydration")
@@ -130,11 +130,11 @@ object DeciderKey extends DeciderKeyEnum {
   val enablePopGeoTweets = Value("frigate_pushservice_enable_pop_geo_tweets")
   val enableTrendsTweets = Value("frigate_pushservice_enable_trends_tweets")
   val enableTripGeoTweetCandidates = Value("frigate_pushservice_enable_trip_geo_tweets")
-  val enableContentRecommenderMixerAdaptor = Value(
-    "frigate_pushservice_enable_content_recommender_mixer_adaptor")
+  val enableContentRecommenderMitwittererAdaptor = Value(
+    "frigate_pushservice_enable_content_recommender_mitwitterer_adaptor")
   val enableGenericCandidateAdaptor = Value("frigate_pushservice_enable_generic_candidate_adaptor")
-  val enableTripGeoTweetContentMixerDarkTraffic = Value(
-    "frigate_pushservice_enable_trip_geo_tweets_content_mixer_dark_traffic")
+  val enableTripGeoTweetContentMitwittererDarkTraffic = Value(
+    "frigate_pushservice_enable_trip_geo_tweets_content_mitwitterer_dark_traffic")
 
   val enableInsTraffic = Value("frigate_pushservice_enable_ins_traffic")
   val enableIsTweetTranslatable = Value("frigate_pushservice_enable_is_tweet_translatable")

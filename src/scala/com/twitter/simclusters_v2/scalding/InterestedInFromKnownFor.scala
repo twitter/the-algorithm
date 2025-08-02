@@ -7,13 +7,13 @@ import com.twitter.scalding.TypedPipe
 import com.twitter.scalding._
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
+import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchEtwitterecution
+import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchEtwitterecutionArgs
 import com.twitter.scalding_internal.job.analytics_batch.BatchDescription
 import com.twitter.scalding_internal.job.analytics_batch.BatchFirstTime
 import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
-import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
+import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledEtwitterecutionApp
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common.ClusterId
 import com.twitter.simclusters_v2.common.ModelVersions
@@ -38,7 +38,7 @@ import com.twitter.simclusters_v2.thriftscala._
  * capesospy-v2 update --build_locally --start_cron interested_in_for_20M_145k_2020 \
  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
  */
-object InterestedInFromKnownFor20M145K2020 extends InterestedInFromKnownForBatchBase {
+object InterestedInFromKnownFor20M145K2020 etwittertends InterestedInFromKnownForBatchBase {
   override val firstTime: String = "2020-10-06"
   override val outputKVDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]] =
     SimclustersV2RawInterestedIn20M145K2020ScalaDataset
@@ -51,7 +51,7 @@ object InterestedInFromKnownFor20M145K2020 extends InterestedInFromKnownForBatch
 /**
  * base class for the main logic of computing interestedIn from KnownFor data set.
  */
-trait InterestedInFromKnownForBatchBase extends TwitterScheduledExecutionApp {
+trait InterestedInFromKnownForBatchBase etwittertends TwitterScheduledEtwitterecutionApp {
   implicit val tz = DateOps.UTC
   implicit val parser = DateParser.default
 
@@ -64,41 +64,41 @@ trait InterestedInFromKnownForBatchBase extends TwitterScheduledExecutionApp {
   def knownForModelVersion: String
   def knownForDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]]
 
-  private lazy val execArgs = AnalyticsBatchExecutionArgs(
+  private lazy val etwitterecArgs = AnalyticsBatchEtwitterecutionArgs(
     batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
     firstTime = BatchFirstTime(RichDate(firstTime)),
     lastTime = None,
     batchIncrement = BatchIncrement(batchIncrement)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) {
+  override def scheduledJob: Etwitterecution[Unit] = AnalyticsBatchEtwitterecution(etwitterecArgs) {
     implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
+      Etwitterecution.withId { implicit uniqueId =>
+        Etwitterecution.withArgs { args =>
           val normalizedGraph =
             DAL.readMostRecentSnapshot(UserUserNormalizedGraphScalaDataset).toTypedPipe
           val knownFor = KnownForSources.fromKeyVal(
-            DAL.readMostRecentSnapshot(knownForDALDataset, dateRange.extend(Days(30))).toTypedPipe,
+            DAL.readMostRecentSnapshot(knownForDALDataset, dateRange.etwittertend(Days(30))).toTypedPipe,
             knownForModelVersion
           )
 
           val socialProofThreshold = args.int("socialProofThreshold", 2)
-          val maxClustersPerUser = args.int("maxClustersPerUser", 50)
+          val matwitterClustersPerUser = args.int("matwitterClustersPerUser", 50)
 
           val result = InterestedInFromKnownFor
             .run(
               normalizedGraph,
               knownFor,
               socialProofThreshold,
-              maxClustersPerUser,
+              matwitterClustersPerUser,
               knownForModelVersion
             )
 
-          val writeKeyValResultExec = result
+          val writeKeyValResultEtwitterec = result
             .map { case (userId, clusters) => KeyVal(userId, clusters) }
-            .writeDALVersionedKeyValExecution(
+            .writeDALVersionedKeyValEtwitterecution(
               outputKVDataset,
-              D.Suffix(outputPath)
+              D.Suffitwitter(outputPath)
             )
 
           // read previous data set for validation purpose
@@ -114,9 +114,9 @@ trait InterestedInFromKnownForBatchBase extends TwitterScheduledExecutionApp {
           }
 
           Util.printCounters(
-            Execution
+            Etwitterecution
               .zip(
-                writeKeyValResultExec,
+                writeKeyValResultEtwitterec,
                 InterestedInFromKnownFor.dataSetStats(result, "NewResult"),
                 InterestedInFromKnownFor.dataSetStats(previousDataset, "OldResult")
               ).unit
@@ -135,17 +135,17 @@ trait InterestedInFromKnownForBatchBase extends TwitterScheduledExecutionApp {
  * --main-class com.twitter.simclusters_v2.scalding.InterestedInFromKnownForAdhoc -- \
  * --date 2019-08-26  --outputDir /user/recos-platform/adhoc/simclusters_interested_in_log_fav
  */
-object InterestedInFromKnownForAdhoc extends TwitterExecutionApp {
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
+object InterestedInFromKnownForAdhoc etwittertends TwitterEtwitterecutionApp {
+  def job: Etwitterecution[Unit] =
+    Etwitterecution.getConfigMode.flatMap {
       case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
+        Etwitterecution.withId { implicit uniqueId =>
           val args = config.getArgs
           val normalizedGraph = TypedPipe.from(
-            UserAndNeighborsFixedPathSource(args("graphInputDir"))
+            UserAndNeighborsFitwitteredPathSource(args("graphInputDir"))
           )
           val socialProofThreshold = args.int("socialProofThreshold", 2)
-          val maxClustersPerUser = args.int("maxClustersPerUser", 20)
+          val matwitterClustersPerUser = args.int("matwitterClustersPerUser", 20)
           val knownForModelVersion = args("knownForModelVersion")
           val knownFor = KnownForSources.readKnownFor(args("knownForInputDir"))
 
@@ -156,9 +156,9 @@ object InterestedInFromKnownForAdhoc extends TwitterExecutionApp {
                 normalizedGraph,
                 knownFor,
                 socialProofThreshold,
-                maxClustersPerUser,
+                matwitterClustersPerUser,
                 knownForModelVersion
-              ).writeExecution(outputSink)
+              ).writeEtwitterecution(outputSink)
           )
         }
     }
@@ -167,15 +167,15 @@ object InterestedInFromKnownForAdhoc extends TwitterExecutionApp {
 /**
  * Adhoc job to check the output of an adhoc interestedInSource.
  */
-object DumpInterestedInAdhoc extends TwitterExecutionApp {
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
+object DumpInterestedInAdhoc etwittertends TwitterEtwitterecutionApp {
+  def job: Etwitterecution[Unit] =
+    Etwitterecution.getConfigMode.flatMap {
       case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
+        Etwitterecution.withId { implicit uniqueId =>
           val args = config.getArgs
           val users = args.list("users").map(_.toLong).toSet
           val input = TypedPipe.from(AdhocKeyValSources.interestedInSource(args("inputDir")))
-          input.filter { case (userId, rec) => users.contains(userId) }.toIterableExecution.map {
+          input.filter { case (userId, rec) => users.contains(userId) }.toIterableEtwitterecution.map {
             s => println(s.map(Util.prettyJsonMapper.writeValueAsString).mkString("\n"))
           }
         }
@@ -186,7 +186,7 @@ object DumpInterestedInAdhoc extends TwitterExecutionApp {
  * Helper functions
  */
 object InterestedInFromKnownFor {
-  private def ifNanMake0(x: Double): Double = if (x.isNaN) 0.0 else x
+  private def ifNanMake0(twitter: Double): Double = if (twitter.isNaN) 0.0 else twitter
 
   case class SrcClusterIntermediateInfo(
     followScore: Double,
@@ -215,7 +215,7 @@ object InterestedInFromKnownFor {
   }
 
   implicit object SrcClusterIntermediateInfoSemigroup
-      extends Semigroup[SrcClusterIntermediateInfo] {
+      etwittertends Semigroup[SrcClusterIntermediateInfo] {
     override def plus(
       left: SrcClusterIntermediateInfo,
       right: SrcClusterIntermediateInfo
@@ -280,7 +280,7 @@ object InterestedInFromKnownFor {
           edgesToUsersWithKnownFor.inc()
           clusterArray.toList.map {
             case (clusterId, knownForScoreF) =>
-              val knownForScore = math.max(0.0, knownForScoreF.toDouble)
+              val knownForScore = math.matwitter(0.0, knownForScoreF.toDouble)
 
               srcDestClusterTriples.inc()
               val followScore =
@@ -303,7 +303,7 @@ object InterestedInFromKnownFor {
               val followSocialProof = if (srcWithWeights.isFollowed.contains(true)) {
                 List(destId)
               } else Nil
-              val favSocialProof = if (srcWithWeights.favScoreHalfLife100Days.exists(_ > 0)) {
+              val favSocialProof = if (srcWithWeights.favScoreHalfLife100Days.etwitterists(_ > 0)) {
                 List(destId)
               } else Nil
 
@@ -345,7 +345,7 @@ object InterestedInFromKnownFor {
     implicit uniqueId: UniqueID
   ): TypedPipe[(Long, List[(Int, UserToInterestedInClusterScores)])] = {
 
-    def square(x: Double): Double = x * x
+    def square(twitter: Double): Double = twitter * twitter
 
     val clusterCountsAndNorms =
       intermediate
@@ -522,14 +522,14 @@ object InterestedInFromKnownFor {
   /**
    * For each user, only keep up to a certain number of clusters.
    * @param allInterests user with a list of interestedIn clusters.
-   * @param maxClustersPerUser number of clusters to keep for each user
+   * @param matwitterClustersPerUser number of clusters to keep for each user
    * @param knownForModelVersion known for model version
    * @param uniqueId required for these Stat
    * @return
    */
   def keepOnlyTopClusters(
     allInterests: TypedPipe[(Long, List[(Int, UserToInterestedInClusterScores)])],
-    maxClustersPerUser: Int,
+    matwitterClustersPerUser: Int,
     knownForModelVersion: String
   )(
     implicit uniqueId: UniqueID
@@ -539,13 +539,13 @@ object InterestedInFromKnownFor {
     val userClusterPairsAfterUserTruncation =
       Stat("num_user_cluster_pairs_after_user_truncation")
     val usersWithALotOfClusters =
-      Stat(s"num_users_with_more_than_${maxClustersPerUser}_clusters")
+      Stat(s"num_users_with_more_than_${matwitterClustersPerUser}_clusters")
 
     allInterests
       .map {
         case (srcId, fullClusterList) =>
           userClusterPairsBeforeUserTruncation.incBy(fullClusterList.size)
-          val truncatedClusters = if (fullClusterList.size > maxClustersPerUser) {
+          val truncatedClusters = if (fullClusterList.size > matwitterClustersPerUser) {
             usersWithALotOfClusters.inc()
             fullClusterList
               .sortBy {
@@ -558,7 +558,7 @@ object InterestedInFromKnownFor {
                     -clusterScores.followScoreProducerNormalizedOnly.getOrElse(0.0)
                   )
               }
-              .take(maxClustersPerUser)
+              .take(matwitterClustersPerUser)
           } else {
             fullClusterList
           }
@@ -571,7 +571,7 @@ object InterestedInFromKnownFor {
     adjacencyLists: TypedPipe[UserAndNeighbors],
     knownFor: TypedPipe[(UserId, Array[(ClusterId, Float)])],
     socialProofThreshold: Int,
-    maxClustersPerUser: Int,
+    matwitterClustersPerUser: Int,
     knownForModelVersion: String
   )(
     implicit uniqueId: UniqueID
@@ -584,7 +584,7 @@ object InterestedInFromKnownFor {
           socialProofThreshold
         )
       ),
-      maxClustersPerUser,
+      matwitterClustersPerUser,
       knownForModelVersion
     )
   }
@@ -596,7 +596,7 @@ object InterestedInFromKnownFor {
     adjacencyLists: TypedPipe[UserAndNeighbors],
     knownFor: TypedPipe[(UserId, Array[(ClusterId, Float)])],
     socialProofThreshold: Int,
-    maxClustersPerUser: Int,
+    matwitterClustersPerUser: Int,
     knownForModelVersion: String
   )(
     implicit uniqueId: UniqueID
@@ -609,7 +609,7 @@ object InterestedInFromKnownFor {
           socialProofThreshold
         )
       ),
-      maxClustersPerUser,
+      matwitterClustersPerUser,
       knownForModelVersion
     )
   }
@@ -620,9 +620,9 @@ object InterestedInFromKnownFor {
   def dataSetStats(
     interestedInData: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
     dataSetName: String = ""
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
-    Execution
+    Etwitterecution
       .zip(
         Util.printSummaryOfNumericColumn(
           interestedInData.map {

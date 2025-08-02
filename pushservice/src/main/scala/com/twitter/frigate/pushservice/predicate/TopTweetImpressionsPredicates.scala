@@ -18,13 +18,13 @@ object TopTweetImpressionsPredicates {
     Predicate
       .fromAsync { candidate: TopTweetImpressionsPushCandidate =>
         val interval = candidate.target.params(FS.TopTweetImpressionsNotificationInterval)
-        val maxInInterval = candidate.target.params(FS.MaxTopTweetImpressionsNotifications)
+        val matwitterInInterval = candidate.target.params(FS.MatwitterTopTweetImpressionsNotifications)
         val minInterval = candidate.target.params(FS.TopTweetImpressionsFatigueMinIntervalDuration)
         bucketImpressionCounter.incr()
 
         val fatiguePredicate = FatiguePredicate.recTypeOnly(
           interval = interval,
-          maxInInterval = maxInInterval,
+          matwitterInInterval = matwitterInInterval,
           minInterval = minInterval,
           recommendationType = CommonRecommendationType.TweetImpressions
         )

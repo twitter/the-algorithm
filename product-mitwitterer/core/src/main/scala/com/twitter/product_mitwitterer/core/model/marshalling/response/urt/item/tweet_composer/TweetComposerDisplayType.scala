@@ -1,0 +1,6 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.item.tweet_composer
+
+sealed trait TweetComposerDisplayType
+
+case object TweetComposerSelfThread etwittertends TweetComposerDisplayType
+case object Reply etwittertends TweetComposerDisplayType

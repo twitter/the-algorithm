@@ -1,22 +1,22 @@
 package com.twitter.unified_user_actions.enricher.hydrator
 import com.google.common.util.concurrent.RateLimiter
 import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.unified_user_actions.enricher.FatalException
+import com.twitter.unified_user_actions.enricher.FatalEtwitterception
 import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
 import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction
 import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
 import com.twitter.util.Future
 import com.twitter.util.logging.Logging
 
-abstract class AbstractHydrator(scopedStatsReceiver: StatsReceiver) extends Hydrator with Logging {
+abstract class AbstractHydrator(scopedStatsReceiver: StatsReceiver) etwittertends Hydrator with Logging {
 
   object StatsNames {
-    val Exceptions = "exceptions"
+    val Etwitterceptions = "etwitterceptions"
     val EmptyKeys = "empty_keys"
     val Hydrations = "hydrations"
   }
 
-  private val exceptionsCounter = scopedStatsReceiver.counter(StatsNames.Exceptions)
+  private val etwitterceptionsCounter = scopedStatsReceiver.counter(StatsNames.Etwitterceptions)
   private val emptyKeysCounter = scopedStatsReceiver.counter(StatsNames.EmptyKeys)
   private val hydrationsCounter = scopedStatsReceiver.counter(StatsNames.Hydrations)
 
@@ -44,10 +44,10 @@ abstract class AbstractHydrator(scopedStatsReceiver: StatsReceiver) extends Hydr
         safelyHydrate(instruction, key, envelop)
           .onSuccess(_ => hydrationsCounter.incr())
           .rescue {
-            case e: FatalException => Future.exception(e)
+            case e: FatalEtwitterception => Future.etwitterception(e)
             case e =>
               rateLimitedLogError(e)
-              exceptionsCounter.incr()
+              etwitterceptionsCounter.incr()
               Future.value(envelop)
           }
       }).getOrElse({

@@ -9,10 +9,10 @@ import com.twitter.featureswitches.v2.builder.FeatureSwitchesBuilder
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants.PRODUCER_SIDE_FEATURE_SWITCHES
 import com.twitter.inject.TwitterModule
-import javax.inject.Named
-import javax.inject.Singleton
+import javatwitter.inject.Named
+import javatwitter.inject.Singleton
 
-object FeaturesSwitchesModule extends TwitterModule {
+object FeaturesSwitchesModule etwittertends TwitterModule {
   private val DefaultConfigRepoPath = "/usr/local/config"
   private val FeaturesPath = "/features/onboarding/follow-recommendations-service/main"
   val isLocal = flag("configrepo.local", false, "Is the server running locally or in a DC")
@@ -69,14 +69,14 @@ object FeaturesSwitchesModule extends TwitterModule {
   }
 }
 
-case object ProducerFeatureFilter extends FeatureFilter {
+case object ProducerFeatureFilter etwittertends FeatureFilter {
   private val AllowedKeys = Set(
-    "post_nux_ml_flow_candidate_user_scorer_id",
+    "post_nutwitter_ml_flow_candidate_user_scorer_id",
     "frs_receiver_holdback_keep_social_user_candidate",
     "frs_receiver_holdback_keep_user_candidate")
 
   override def filter(feature: Feature): Option[Feature] = {
-    if (AllowedKeys.exists(feature.parameters.contains)) {
+    if (AllowedKeys.etwitterists(feature.parameters.contains)) {
       Some(feature)
     } else {
       None

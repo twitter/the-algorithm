@@ -10,11 +10,11 @@ def data_record_input_fn(
         files, batch_size, parse_fn,
         num_threads=2, repeat=False, dataset_fn=None,
         keep_rate=None, parts_downsampling_rate=None,
-        shards=None, shard_index=None, shuffle=True, shuffle_files=True, interleave=True,
+        shards=None, shard_indetwitter=None, shuffle=True, shuffle_files=True, interleave=True,
         initializable=False, log_tf_data_summaries=False,
         **kwargs):
   """
-  Returns a nested structure of tf.Tensors containing the next element.
+  Returns a nested structure of tf.Tensors containing the netwittert element.
   Used by ``train_input_fn`` and ``eval_input_fn`` in DataRecordTrainer.
   By default, works with DataRecord dataset for compressed partition files.
 
@@ -49,15 +49,15 @@ def data_record_input_fn(
 
     parts_downsampling_rate (optional):
       A float value in (0.0, 1.0] that indicates the factor by which to downsample part files.
-      For example, a value of 0.2 means only 20 percent of part files become part of the dataset.
+      For etwitterample, a value of 0.2 means only 20 percent of part files become part of the dataset.
 
     shards (optional):
       Number of partitions to shard the dataset into. This is useful for codistillation
-      (https://arxiv.org/pdf/1804.03235.pdf) and other techniques that require each worker to
+      (https://artwitteriv.org/pdf/1804.03235.pdf) and other techniques that require each worker to
       train on disjoint partitions of the dataset.
       The dataset is not sharded by default.
 
-    shard_index (optional):
+    shard_indetwitter (optional):
       Which partition of the dataset to use if ``shards`` is set.
 
     shuffle (optional):
@@ -76,7 +76,7 @@ def data_record_input_fn(
       is used for most plain iterators.
 
       log_tf_data_summaries (optional):
-        A boolean indicator denoting whether to add a `tf.data.experimental.StatsAggregator` to the
+        A boolean indicator denoting whether to add a `tf.data.etwitterperimental.StatsAggregator` to the
         tf.data pipeline. This adds summaries of pipeline utilization and buffer sizes to the output
         events files. This requires that `initializable` is `True` above.
 
@@ -99,31 +99,31 @@ def data_record_input_fn(
     keep_rate=keep_rate,
     parts_downsampling_rate=parts_downsampling_rate,
     shards=shards,
-    shard_index=shard_index,
+    shard_indetwitter=shard_indetwitter,
     shuffle=shuffle,
     shuffle_files=shuffle_files,
     interleave=interleave,
     **kwargs
   )
 
-  # Add a tf.data.experimental.StatsAggregator
-  # https://www.tensorflow.org/versions/r1.15/api_docs/python/tf/data/experimental/StatsAggregator
+  # Add a tf.data.etwitterperimental.StatsAggregator
+  # https://www.tensorflow.org/versions/r1.15/api_docs/python/tf/data/etwitterperimental/StatsAggregator
   if log_tf_data_summaries:
-    aggregator = tf.data.experimental.StatsAggregator()
+    aggregator = tf.data.etwitterperimental.StatsAggregator()
     options = tf.data.Options()
-    options.experimental_stats.aggregator = aggregator
+    options.etwitterperimental_stats.aggregator = aggregator
     dataset = dataset.with_options(options)
     stats_summary = aggregator.get_summary()
     tf.add_to_collection(tf.GraphKeys.SUMMARIES, stats_summary)
 
   if initializable:
     # when the data parsing dpends on some HashTable or Tensor, the iterator is initalizable and
-    # therefore we need to be run explicitly
+    # therefore we need to be run etwitterplicitly
     iterator = dataset.make_initializable_iterator()
     tf.add_to_collection(tf.GraphKeys.TABLE_INITIALIZERS, iterator.initializer)
   else:
     iterator = dataset.make_one_shot_iterator()
-  return iterator.get_next()
+  return iterator.get_netwittert()
 
 
 default_input_fn = data_record_input_fn  # pylint: disable=invalid-name

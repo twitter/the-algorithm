@@ -12,11 +12,11 @@ object TweetypieDeciderGates {
     new TweetypieDeciderGates {
       override def decider: Decider = _decider
       override def overrides: Map[String, Boolean] = _overrides
-      override def prefix: String = "tweetypie"
+      override def prefitwitter: String = "tweetypie"
     }
 }
 
-trait TweetypieDeciderGates extends DeciderGates {
+trait TweetypieDeciderGates etwittertends DeciderGates {
   val checkSpamOnRetweet: Gate[Unit] = linear("check_spam_on_retweet")
   val checkSpamOnTweet: Gate[Unit] = linear("check_spam_on_tweet")
   val delayEraseUserTweets: Gate[Unit] = linear("delay_erase_user_tweets")
@@ -24,8 +24,8 @@ trait TweetypieDeciderGates extends DeciderGates {
   val enableCommunityTweetCreates: Gate[Unit] = linear("enable_community_tweet_creates")
   val useConversationControlFeatureSwitchResults: Gate[Unit] = linear(
     "conversation_control_use_feature_switch_results")
-  val enableExclusiveTweetControlValidation: Gate[Unit] = linear(
-    "enable_exclusive_tweet_control_validation")
+  val enableEtwitterclusiveTweetControlValidation: Gate[Unit] = linear(
+    "enable_etwitterclusive_tweet_control_validation")
   val enableTrustedFriendsControlValidation: Gate[Unit] = linear(
     "enable_trusted_friends_control_validation"
   )
@@ -56,18 +56,18 @@ trait TweetypieDeciderGates extends DeciderGates {
   val hydratePlaces: Gate[Unit] = linear("hydrate_places")
   val hydrateScrubEngagements: Gate[Unit] = linear("hydrate_scrub_engagements")
   val jiminyDarkRequests: Gate[Unit] = linear("jiminy_dark_requests")
-  val logCacheExceptions: Gate[Unit] = linear("log_cache_exceptions")
+  val logCacheEtwitterceptions: Gate[Unit] = linear("log_cache_etwitterceptions")
   val logReads: Gate[Unit] = linear("log_reads")
   val logTweetCacheWrites: Gate[TweetId] = byId("log_tweet_cache_writes")
   val logWrites: Gate[Unit] = linear("log_writes")
   val logYoungTweetCacheWrites: Gate[TweetId] = byId("log_young_tweet_cache_writes")
-  val maxRequestWidthEnabled: Gate[Unit] = linear("max_request_width_enabled")
+  val matwitterRequestWidthEnabled: Gate[Unit] = linear("matwitter_request_width_enabled")
   val mediaRefsHydratorIncludePastedMedia: Gate[Unit] = linear(
     "media_refs_hydrator_include_pasted_media")
   val rateLimitByLimiterService: Gate[Unit] = linear("rate_limit_by_limiter_service")
   val rateLimitTweetCreationFailure: Gate[Unit] = linear("rate_limit_tweet_creation_failure")
   val replicateReadsToATLA: Gate[Unit] = linear("replicate_reads_to_atla")
-  val replicateReadsToPDXA: Gate[Unit] = linear("replicate_reads_to_pdxa")
+  val replicateReadsToPDtwitterA: Gate[Unit] = linear("replicate_reads_to_pdtwittera")
   val disableInviteViaMention: Gate[Unit] = linear("disable_invite_via_mention")
   val shedReadTrafficVoluntarily: Gate[Unit] = linear("shed_read_traffic_voluntarily")
   val preferForwardedServiceIdentifierForClientId: Gate[Unit] =
@@ -87,5 +87,5 @@ trait TweetypieDeciderGates extends DeciderGates {
     "check_twitter_blue_subscription_for_edit")
   val hydrateBookmarksCount: Gate[Long] = byId("hydrate_bookmarks_count")
   val hydrateBookmarksPerspective: Gate[Long] = byId("hydrate_bookmarks_perspective")
-  val setEditTimeWindowToSixtyMinutes: Gate[Unit] = linear("set_edit_time_window_to_sixty_minutes")
+  val setEditTimeWindowToSitwittertyMinutes: Gate[Unit] = linear("set_edit_time_window_to_sitwitterty_minutes")
 }

@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.search;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -13,11 +13,11 @@ import java.util.stream.Collectors;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.MultiReader;
-import org.apache.lucene.index.Term;
+import org.apache.lucene.indetwitter.LeafReaderContetwittert;
+import org.apache.lucene.indetwitter.MultiReader;
+import org.apache.lucene.indetwitter.Term;
 import org.apache.lucene.search.Collector;
-import org.apache.lucene.search.Explanation;
+import org.apache.lucene.search.Etwitterplanation;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.ScoreMode;
@@ -27,15 +27,15 @@ import org.slf4j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentData;
 import com.twitter.search.earlybird.EarlybirdSearcher;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
-import com.twitter.search.earlybird.index.TweetIDMapper;
+import com.twitter.search.earlybird.indetwitter.EarlybirdSingleSegmentSearcher;
+import com.twitter.search.earlybird.indetwitter.TweetIDMapper;
 import com.twitter.search.earlybird.search.facets.AbstractFacetTermCollector;
 import com.twitter.search.earlybird.search.facets.TermStatisticsCollector;
 import com.twitter.search.earlybird.search.facets.TermStatisticsCollector.TermStatisticsSearchResults;
 import com.twitter.search.earlybird.search.facets.TermStatisticsRequestInfo;
-import com.twitter.search.earlybird.search.queries.SinceMaxIDFilter;
+import com.twitter.search.earlybird.search.queries.SinceMatwitterIDFilter;
 import com.twitter.search.earlybird.search.queries.SinceUntilFilter;
 import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
 import com.twitter.search.earlybird.thrift.ThriftFacetCount;
@@ -44,7 +44,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResults;
 import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
 import com.twitter.search.queryparser.util.IdTimeRanges;
 
-public class EarlybirdMultiSegmentSearcher extends EarlybirdLuceneSearcher {
+public class EarlybirdMultiSegmentSearcher etwittertends EarlybirdLuceneSearcher {
   private static final Logger LOG = LoggerFactory.getLogger(EarlybirdMultiSegmentSearcher.class);
 
   private final ImmutableSchemaInterface schema;
@@ -62,10 +62,10 @@ public class EarlybirdMultiSegmentSearcher extends EarlybirdLuceneSearcher {
       ImmutableSchemaInterface schema,
       List<EarlybirdSingleSegmentSearcher> searchers,
       EarlybirdSearcherStats searcherStats,
-      Clock clock) throws IOException {
+      Clock clock) throws IOEtwitterception {
     // NOTE: We pass in an empty MultiReader to super and retain the list of searchers in this
-    // class since MultiReader does not allow an aggregate of more than Integer.MAX_VALUE docs,
-    // which some of our larger archive indexes may have.
+    // class since MultiReader does not allow an aggregate of more than Integer.MAtwitter_VALUE docs,
+    // which some of our larger archive indetwitteres may have.
     super(new MultiReader());
     // segmentSearchers are mapped from time slice IDs to searchers so that we can quickly
     // find the correct searcher for a given time slice ID (see fillPayload).
@@ -92,8 +92,8 @@ public class EarlybirdMultiSegmentSearcher extends EarlybirdLuceneSearcher {
   }
 
   @Override
-  protected void search(List<LeafReaderContext> unusedLeaves, Weight weight, Collector coll)
-      throws IOException {
+  protected void search(List<LeafReaderContetwittert> unusedLeaves, Weight weight, Collector coll)
+      throws IOEtwitterception {
     Preconditions.checkState(coll instanceof AbstractResultsCollector);
     AbstractResultsCollector<?, ?> collector = (AbstractResultsCollector<?, ?>) coll;
 
@@ -111,17 +111,17 @@ public class EarlybirdMultiSegmentSearcher extends EarlybirdLuceneSearcher {
 
   @VisibleForTesting
   protected boolean shouldSkipSegment(EarlybirdSingleSegmentSearcher segmentSearcher) {
-    EarlybirdIndexSegmentData segmentData =
-        segmentSearcher.getTwitterIndexReader().getSegmentData();
+    EarlybirdIndetwitterSegmentData segmentData =
+        segmentSearcher.getTwitterIndetwitterReader().getSegmentData();
     if (idTimeRanges != null) {
-      if (!SinceMaxIDFilter.sinceMaxIDsInRange(
+      if (!SinceMatwitterIDFilter.sinceMatwitterIDsInRange(
               (TweetIDMapper) segmentData.getDocIDToTweetIDMapper(),
-              idTimeRanges.getSinceIDExclusive().or(SinceMaxIDFilter.NO_FILTER),
-              idTimeRanges.getMaxIDInclusive().or(SinceMaxIDFilter.NO_FILTER))
+              idTimeRanges.getSinceIDEtwitterclusive().or(SinceMatwitterIDFilter.NO_FILTER),
+              idTimeRanges.getMatwitterIDInclusive().or(SinceMatwitterIDFilter.NO_FILTER))
           || !SinceUntilFilter.sinceUntilTimesInRange(
               segmentData.getTimeMapper(),
               idTimeRanges.getSinceTimeInclusive().or(SinceUntilFilter.NO_FILTER),
-              idTimeRanges.getUntilTimeExclusive().or(SinceUntilFilter.NO_FILTER))) {
+              idTimeRanges.getUntilTimeEtwitterclusive().or(SinceUntilFilter.NO_FILTER))) {
         return true;
       }
     }
@@ -130,7 +130,7 @@ public class EarlybirdMultiSegmentSearcher extends EarlybirdLuceneSearcher {
 
   @Override
   public void fillFacetResults(
-      AbstractFacetTermCollector collector, ThriftSearchResults searchResults) throws IOException {
+      AbstractFacetTermCollector collector, ThriftSearchResults searchResults) throws IOEtwitterception {
     for (EarlybirdSingleSegmentSearcher segmentSearcher : segmentSearchers.values()) {
       segmentSearcher.fillFacetResults(collector, searchResults);
     }
@@ -140,7 +140,7 @@ public class EarlybirdMultiSegmentSearcher extends EarlybirdLuceneSearcher {
   public TermStatisticsSearchResults collectTermStatistics(
       TermStatisticsRequestInfo searchRequestInfo,
       EarlybirdSearcher searcher,
-      int requestDebugMode) throws IOException {
+      int requestDebugMode) throws IOEtwitterception {
     TermStatisticsCollector collector = new TermStatisticsCollector(
         schema, searchRequestInfo, searcherStats, clock, requestDebugMode);
     search(collector.getSearchRequestInfo().getLuceneQuery(), collector);
@@ -149,12 +149,12 @@ public class EarlybirdMultiSegmentSearcher extends EarlybirdLuceneSearcher {
   }
 
   @Override
-  public void explainSearchResults(SearchRequestInfo searchRequestInfo,
-      SimpleSearchResults hits, ThriftSearchResults searchResults) throws IOException {
+  public void etwitterplainSearchResults(SearchRequestInfo searchRequestInfo,
+      SimpleSearchResults hits, ThriftSearchResults searchResults) throws IOEtwitterception {
     for (EarlybirdSingleSegmentSearcher segmentSearcher : segmentSearchers.values()) {
       // the hits that are getting passed into this method are hits across
       // all searched segments. We need to get the per segment hits and
-      // generate explanations one segment at a time.
+      // generate etwitterplanations one segment at a time.
       List<Hit> hitsForCurrentSegment = new ArrayList<>();
       Set<Long> tweetIdsForCurrentSegment = new HashSet<>();
       List<ThriftSearchResult> hitResultsForCurrentSegment = new ArrayList<>();
@@ -174,11 +174,11 @@ public class EarlybirdMultiSegmentSearcher extends EarlybirdLuceneSearcher {
           .setResults(hitResultsForCurrentSegment);
 
       SimpleSearchResults finalHits = new SimpleSearchResults(hitsForCurrentSegment);
-      segmentSearcher.explainSearchResults(searchRequestInfo, finalHits, resultsForSegment);
+      segmentSearcher.etwitterplainSearchResults(searchRequestInfo, finalHits, resultsForSegment);
     }
     // We should not see hits that are not associated with an active segment
     List<Hit> hitsWithUnknownSegment =
-        Arrays.stream(hits.hits()).filter(hit -> !hit.isHasExplanation())
+        Arrays.stream(hits.hits()).filter(hit -> !hit.isHasEtwitterplanation())
             .collect(Collectors.toList());
     for (Hit hit : hitsWithUnknownSegment) {
       LOG.error("Unable to find segment associated with hit: " + hit.toString());
@@ -188,7 +188,7 @@ public class EarlybirdMultiSegmentSearcher extends EarlybirdLuceneSearcher {
   @Override
   public void fillFacetResultMetadata(Map<Term, ThriftFacetCount> facetResults,
                                       ImmutableSchemaInterface documentSchema, byte debugMode)
-      throws IOException {
+      throws IOEtwitterception {
     for (EarlybirdSingleSegmentSearcher segmentSearcher : segmentSearchers.values()) {
       segmentSearcher.fillFacetResultMetadata(facetResults, documentSchema, debugMode);
     }
@@ -197,7 +197,7 @@ public class EarlybirdMultiSegmentSearcher extends EarlybirdLuceneSearcher {
   @Override
   public void fillTermStatsMetadata(ThriftTermStatisticsResults termStatsResults,
                                     ImmutableSchemaInterface documentSchema, byte debugMode)
-      throws IOException {
+      throws IOEtwitterception {
     for (EarlybirdSingleSegmentSearcher segmentSearcher : segmentSearchers.values()) {
       segmentSearcher.fillTermStatsMetadata(termStatsResults, documentSchema, debugMode);
     }
@@ -226,28 +226,28 @@ public class EarlybirdMultiSegmentSearcher extends EarlybirdLuceneSearcher {
   /**
    * Dummy weight used solely to pass Lucene Query around.
    */
-  private static final class DummyWeight extends Weight {
+  private static final class DummyWeight etwittertends Weight {
     private DummyWeight(Query luceneQuery) {
       super(luceneQuery);
     }
 
     @Override
-    public Explanation explain(LeafReaderContext context, int doc) {
-      throw new UnsupportedOperationException();
+    public Etwitterplanation etwitterplain(LeafReaderContetwittert contetwittert, int doc) {
+      throw new UnsupportedOperationEtwitterception();
     }
 
     @Override
-    public Scorer scorer(LeafReaderContext context) {
-      throw new UnsupportedOperationException();
+    public Scorer scorer(LeafReaderContetwittert contetwittert) {
+      throw new UnsupportedOperationEtwitterception();
     }
 
     @Override
-    public void extractTerms(Set<Term> terms) {
-      throw new UnsupportedOperationException();
+    public void etwittertractTerms(Set<Term> terms) {
+      throw new UnsupportedOperationEtwitterception();
     }
 
     @Override
-    public boolean isCacheable(LeafReaderContext context) {
+    public boolean isCacheable(LeafReaderContetwittert contetwittert) {
       return true;
     }
   }

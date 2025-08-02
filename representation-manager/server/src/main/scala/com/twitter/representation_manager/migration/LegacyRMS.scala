@@ -12,11 +12,11 @@ import com.twitter.escherbird.util.uttclient.CacheConfigV2
 import com.twitter.escherbird.util.uttclient.CachedUttClientV2
 import com.twitter.escherbird.util.uttclient.UttClientCacheConfigsV2
 import com.twitter.escherbird.utt.strato.thriftscala.Environment
-import com.twitter.finagle.ThriftMux
+import com.twitter.finagle.ThriftMutwitter
 import com.twitter.finagle.memcached.Client
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMuxClientSyntax
-import com.twitter.finagle.mux.ClientDiscardedRequestException
+import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMutwitterClientSyntatwitter
+import com.twitter.finagle.mutwitter.ClientDiscardedRequestEtwitterception
 import com.twitter.finagle.service.ReqRep
 import com.twitter.finagle.service.ResponseClass
 import com.twitter.finagle.stats.StatsReceiver
@@ -68,8 +68,8 @@ import com.twitter.util.Duration
 import com.twitter.util.Future
 import com.twitter.util.Throw
 import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Named
+import javatwitter.inject.Inject
+import javatwitter.inject.Named
 import scala.reflect.ClassTag
 
 class LegacyRMS @Inject() (
@@ -79,7 +79,7 @@ class LegacyRMS @Inject() (
   decider: Decider,
   clientId: ClientId,
   timer: Timer,
-  @Named("cacheHashKeyPrefix") val cacheHashKeyPrefix: String = "RMS",
+  @Named("cacheHashKeyPrefitwitter") val cacheHashKeyPrefitwitter: String = "RMS",
   @Named("useContentRecommenderConfiguration") val useContentRecommenderConfiguration: Boolean =
     false) {
 
@@ -89,7 +89,7 @@ class LegacyRMS @Inject() (
   val keyHasher: KeyHasher = KeyHasher.FNV1A_64
 
   private val embeddingCacheKeyBuilder =
-    SimClustersEmbeddingIdCacheKeyBuilder(keyHasher.hashKey, cacheHashKeyPrefix)
+    SimClustersEmbeddingIdCacheKeyBuilder(keyHasher.hashKey, cacheHashKeyPrefitwitter)
   private val statsReceiver = stats.scope("representation_management")
 
   // Strato client, default timeout = 280ms
@@ -98,17 +98,17 @@ class LegacyRMS @Inject() (
       .withMutualTls(serviceIdentifier)
       .build()
 
-  // Builds ThriftMux client builder for Content-Recommender service
+  // Builds ThriftMutwitter client builder for Content-Recommender service
   private def makeThriftClientBuilder(
     requestTimeout: Duration
-  ): ThriftMux.Client = {
-    ThriftMux.client
+  ): ThriftMutwitter.Client = {
+    ThriftMutwitter.client
       .withClientId(clientId)
       .withMutualTls(serviceIdentifier)
       .withRequestTimeout(requestTimeout)
       .withStatsReceiver(statsReceiver.scope("clnt"))
       .withResponseClassifier {
-        case ReqRep(_, Throw(_: ClientDiscardedRequestException)) => ResponseClass.Ignorable
+        case ReqRep(_, Throw(_: ClientDiscardedRequestEtwitterception)) => ResponseClass.Ignorable
       }
   }
 
@@ -160,7 +160,7 @@ class LegacyRMS @Inject() (
           mhMtlsParams,
           PersistentTweetEmbeddingStore.LogFavBased20m145k2020Dataset,
           statsReceiver,
-          maxLength = 10,
+          matwitterLength = 10,
         ).mapValues(_.toThrift)
 
     val memcachedStore = ObservedMemcachedReadableStore.fromCacheClient(
@@ -190,7 +190,7 @@ class LegacyRMS @Inject() (
     ObservedCachedReadableStore.from[SimClustersEmbeddingId, SimClustersEmbedding](
       inMemoryCacheStore,
       ttl = 12.minute,
-      maxKeys = 1048575,
+      matwitterKeys = 1048575,
       cacheName = "log_fav_based_longest_l2_tweet_embedding_20m145k2020_cache",
       windowSize = 10000L
     )(statsReceiver.scope("log_fav_based_longest_l2_tweet_embedding_20m145k2020_store"))
@@ -236,7 +236,7 @@ class LegacyRMS @Inject() (
     ObservedCachedReadableStore.from[SimClustersEmbeddingId, SimClustersEmbedding](
       inMemoryCacheStore,
       ttl = 5.minute,
-      maxKeys = 1048575, // 200MB
+      matwitterKeys = 1048575, // 200MB
       cacheName = "log_fav_based_tweet_embedding_cache",
       windowSize = 10000L
     )(statsReceiver.scope("log_fav_based_tweet_embedding_store"))
@@ -252,7 +252,7 @@ class LegacyRMS @Inject() (
           mhMtlsParams,
           PersistentTweetEmbeddingStore.LogFavBased20m145k2020Dataset,
           statsReceiver,
-          maxLength = 10,
+          matwitterLength = 10,
         ).mapValues(_.toThrift)
 
     val memcachedStore = ObservedMemcachedReadableStore.fromCacheClient(
@@ -282,7 +282,7 @@ class LegacyRMS @Inject() (
     ObservedCachedReadableStore.from[SimClustersEmbeddingId, SimClustersEmbedding](
       inMemoryCacheStore,
       ttl = 12.minute,
-      maxKeys = 16777215,
+      matwitterKeys = 16777215,
       cacheName = "log_fav_based_tweet_embedding_20m145k2020_cache",
       windowSize = 10000L
     )(statsReceiver.scope("log_fav_based_tweet_embedding_20m145k2020_store"))
@@ -306,7 +306,7 @@ class LegacyRMS @Inject() (
       ObservedReadableStore(truncatedStore)(
         statsReceiver.scope("fav_tfg_topic_embedding_2020_cache_backing_store")),
       ttl = 12.hours,
-      maxKeys = 262143, // 200MB
+      matwitterKeys = 262143, // 200MB
       cacheName = "fav_tfg_topic_embedding_2020_cache",
       windowSize = 10000L
     )(statsReceiver.scope("fav_tfg_topic_embedding_2020_cache"))
@@ -343,8 +343,8 @@ class LegacyRMS @Inject() (
   // Save 2 ^ 18 UTTs. Promising 100% cache rate
   lazy val defaultCacheConfigV2: CacheConfigV2 = CacheConfigV2(262143)
   lazy val uttClientCacheConfigsV2: UttClientCacheConfigsV2 = UttClientCacheConfigsV2(
-    getTaxonomyConfig = defaultCacheConfigV2,
-    getUttTaxonomyConfig = defaultCacheConfigV2,
+    getTatwitteronomyConfig = defaultCacheConfigV2,
+    getUttTatwitteronomyConfig = defaultCacheConfigV2,
     getLeafIds = defaultCacheConfigV2,
     getLeafUttEntities = defaultCacheConfigV2
   )
@@ -381,7 +381,7 @@ class LegacyRMS @Inject() (
     ObservedCachedReadableStore.from[SemanticCoreTopicSeedStore.Key, Seq[UserId]](
       store = memcacheStore,
       ttl = 6.hours,
-      maxKeys = 20e3.toInt,
+      matwitterKeys = 20e3.toInt,
       cacheName = "topic_producer_seed_store_cache",
       windowSize = 5000
     )(statsReceiver.scope("topic_producer_seed_store_cache"))
@@ -423,7 +423,7 @@ class LegacyRMS @Inject() (
       ObservedCachedReadableStore.from[SimClustersEmbeddingId, SimClustersEmbedding](
         memcachedStore,
         ttl = 6.hours,
-        maxKeys = 262143,
+        matwitterKeys = 262143,
         cacheName = "log_fav_based_ape_entity_2020_embedding_cache",
         windowSize = 10000L
       )(statsReceiver.scope("log_fav_based_ape_entity_2020_embedding_cached_store"))
@@ -436,7 +436,7 @@ class LegacyRMS @Inject() (
     )
   }
 
-  lazy val relaxedLogFavBasedApe20M145K2020EmbeddingStore: ReadableStore[
+  lazy val relatwitteredLogFavBasedApe20M145K2020EmbeddingStore: ReadableStore[
     SimClustersEmbeddingId,
     SimClustersEmbedding
   ] = {
@@ -444,28 +444,28 @@ class LegacyRMS @Inject() (
       StratoFetchableStore
         .withUnitView[SimClustersEmbeddingId, ThriftSimClustersEmbedding](
           stratoClient,
-          "recommendations/simclusters_v2/embeddings/logFavBasedAPERelaxedFavEngagementThreshold20M145K2020")
+          "recommendations/simclusters_v2/embeddings/logFavBasedAPERelatwitteredFavEngagementThreshold20M145K2020")
         .composeKeyMapping[SimClustersEmbeddingId] {
           case SimClustersEmbeddingId(
-                RelaxedAggregatableLogFavBasedProducer,
+                RelatwitteredAggregatableLogFavBasedProducer,
                 Model20m145k2020,
                 internalId) =>
             SimClustersEmbeddingId(
-              RelaxedAggregatableLogFavBasedProducer,
+              RelatwitteredAggregatableLogFavBasedProducer,
               Model20m145k2020,
               internalId)
         }
         .mapValues(embedding => SimClustersEmbedding(embedding).truncate(50))
     )(statsReceiver.scope(
-      "aggregatable_producer_embeddings_by_logfav_score_relaxed_fav_engagement_threshold_2020"))
+      "aggregatable_producer_embeddings_by_logfav_score_relatwittered_fav_engagement_threshold_2020"))
   }
 
-  lazy val relaxedLogFavBasedApe20M145K2020EmbeddingCachedStore: ReadableStore[
+  lazy val relatwitteredLogFavBasedApe20M145K2020EmbeddingCachedStore: ReadableStore[
     SimClustersEmbeddingId,
     SimClustersEmbedding
   ] = {
     val truncatedStore =
-      relaxedLogFavBasedApe20M145K2020EmbeddingStore.mapValues(_.truncate(50).toThrift)
+      relatwitteredLogFavBasedApe20M145K2020EmbeddingStore.mapValues(_.truncate(50).toThrift)
 
     val memcachedStore = ObservedMemcachedReadableStore
       .fromCacheClient(
@@ -475,17 +475,17 @@ class LegacyRMS @Inject() (
       )(
         valueInjection = LZ4Injection.compose(BinaryScalaCodec(ThriftSimClustersEmbedding)),
         statsReceiver =
-          statsReceiver.scope("relaxed_log_fav_based_ape_entity_2020_embedding_mem_cache"),
+          statsReceiver.scope("relatwittered_log_fav_based_ape_entity_2020_embedding_mem_cache"),
         keyToString = { k: SimClustersEmbeddingId => embeddingCacheKeyBuilder.apply(k) }
       ).mapValues(SimClustersEmbedding(_))
 
     ObservedCachedReadableStore.from[SimClustersEmbeddingId, SimClustersEmbedding](
       memcachedStore,
       ttl = 6.hours,
-      maxKeys = 262143,
-      cacheName = "relaxed_log_fav_based_ape_entity_2020_embedding_cache",
+      matwitterKeys = 262143,
+      cacheName = "relatwittered_log_fav_based_ape_entity_2020_embedding_cache",
       windowSize = 10000L
-    )(statsReceiver.scope("relaxed_log_fav_based_ape_entity_2020_embedding_cache_store"))
+    )(statsReceiver.scope("relatwittered_log_fav_based_ape_entity_2020_embedding_cache_store"))
   }
 
   lazy val favBasedProducer20M145K2020EmbeddingStore: ReadableStore[
@@ -520,7 +520,7 @@ class LegacyRMS @Inject() (
     ObservedCachedReadableStore.from[SimClustersEmbeddingId, SimClustersEmbedding](
       memcachedStore,
       ttl = 12.hours,
-      maxKeys = 16777215,
+      matwitterKeys = 16777215,
       cacheName = "fav_based_producer_embedding_20M_145K_2020_embedding_cache",
       windowSize = 10000L
     )(statsReceiver.scope("fav_based_producer_embedding_20M_145K_2020_embedding_store"))
@@ -620,7 +620,7 @@ class LegacyRMS @Inject() (
     ObservedCachedReadableStore.from[SimClustersEmbeddingId, SimClustersEmbedding](
       memcachedStore,
       ttl = 6.hours,
-      maxKeys = 262143,
+      matwitterKeys = 262143,
       cacheName = "fav_based_user_interested_in_cache",
       windowSize = 10000L
     )(statsReceiver.scope("fav_based_user_interested_in_store"))
@@ -653,7 +653,7 @@ class LegacyRMS @Inject() (
     ObservedCachedReadableStore.from[SimClustersEmbeddingId, SimClustersEmbedding](
       memcachedStore,
       ttl = 6.hours,
-      maxKeys = 262143,
+      matwitterKeys = 262143,
       cacheName = "log_fav_based_user_interested_in_from_ape_cache",
       windowSize = 10000L
     )(statsReceiver.scope("log_fav_based_user_interested_in_from_ape_store"))
@@ -686,7 +686,7 @@ class LegacyRMS @Inject() (
     ObservedCachedReadableStore.from[SimClustersEmbeddingId, SimClustersEmbedding](
       memcachedStore,
       ttl = 6.hours,
-      maxKeys = 262143,
+      matwitterKeys = 262143,
       cacheName = "follow_based_user_interested_in_from_ape_cache",
       windowSize = 10000L
     )(statsReceiver.scope("follow_based_user_interested_in_from_ape_store"))
@@ -742,7 +742,7 @@ class LegacyRMS @Inject() (
     ObservedCachedReadableStore.from[SimClustersEmbeddingId, SimClustersEmbedding](
       memcachedStore,
       ttl = 6.hours,
-      maxKeys = 262143,
+      matwitterKeys = 262143,
       cacheName = "log_fav_based_user_interested_in_2020_cache",
       windowSize = 10000L
     )(statsReceiver.scope("log_fav_based_user_interested_in_2020_store"))
@@ -775,7 +775,7 @@ class LegacyRMS @Inject() (
     ObservedCachedReadableStore.from[SimClustersEmbeddingId, SimClustersEmbedding](
       memcachedStore,
       ttl = 6.hours,
-      maxKeys = 262143,
+      matwitterKeys = 262143,
       cacheName = "fav_based_user_interested_in_from_pe_cache",
       windowSize = 10000L
     )(statsReceiver.scope("fav_based_user_interested_in_from_pe_cache"))
@@ -799,8 +799,8 @@ class LegacyRMS @Inject() (
     // KnownFor Embeddings
     (FavBasedProducer, Model20m145k2020) -> favBasedProducer20M145K2020EmbeddingStore,
     (
-      RelaxedAggregatableLogFavBasedProducer,
-      Model20m145k2020) -> relaxedLogFavBasedApe20M145K2020EmbeddingCachedStore,
+      RelatwitteredAggregatableLogFavBasedProducer,
+      Model20m145k2020) -> relatwitteredLogFavBasedApe20M145K2020EmbeddingCachedStore,
     // InterestedIn Embeddings
     (
       LogFavBasedUserInterestedInFromAPE,

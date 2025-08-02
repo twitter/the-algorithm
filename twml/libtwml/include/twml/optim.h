@@ -7,13 +7,13 @@ namespace twml {
     TWMLAPI void linearInterpolation(
         Tensor output,
         const Tensor input,
-        const Tensor xs,
+        const Tensor twitters,
         const Tensor ys);
 
     TWMLAPI void nearestInterpolation(
         Tensor output,
         const Tensor input,
-        const Tensor xs,
+        const Tensor twitters,
         const Tensor ys);
 
     TWMLAPI void mdlInfer(
@@ -29,12 +29,12 @@ namespace twml {
 #endif
 
 #ifdef __cplusplus
-extern "C" {
+etwittertern "C" {
 #endif
     TWMLAPI twml_err twml_optim_nearest_interpolation(
         twml_tensor output,
         const twml_tensor input,
-        const twml_tensor xs,
+        const twml_tensor twitters,
         const twml_tensor ys);
 
     TWMLAPI twml_err twml_optim_mdl_infer(

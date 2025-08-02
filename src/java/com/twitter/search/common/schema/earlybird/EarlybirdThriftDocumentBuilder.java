@@ -1,11 +1,11 @@
 package com.twitter.search.common.schema.earlybird;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nonnull;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -19,15 +19,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.twitter.common.collections.Pair;
-import com.twitter.common.text.util.TokenStreamSerializer;
+import com.twitter.common.tetwittert.util.TokenStreamSerializer;
 import com.twitter.cuad.ner.plain.thriftjava.NamedEntity;
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntityContext;
+import com.twitter.cuad.ner.plain.thriftjava.NamedEntityContetwittert;
 import com.twitter.cuad.ner.plain.thriftjava.NamedEntityInputSourceType;
 import com.twitter.cuad.ner.thriftjava.WholeEntityType;
 import com.twitter.search.common.constants.SearchCardType;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoLocationSource;
-import com.twitter.search.common.indexing.thriftjava.TwitterPhotoUrl;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftEtwitterpandedUrl;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftGeoLocationSource;
+import com.twitter.search.common.indetwittering.thriftjava.TwitterPhotoUrl;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.schema.ThriftDocumentBuilder;
 import com.twitter.search.common.schema.base.FieldNameToIdMapping;
@@ -38,9 +38,9 @@ import com.twitter.search.common.util.analysis.IntTermAttributeSerializer;
 import com.twitter.search.common.util.analysis.TermPayloadAttributeSerializer;
 import com.twitter.search.common.util.analysis.TwitterPhotoTokenStream;
 import com.twitter.search.common.util.spatial.GeoUtil;
-import com.twitter.search.common.util.text.TokenizerHelper;
-import com.twitter.search.common.util.text.TweetTokenStreamSerializer;
-import com.twitter.search.common.util.text.regex.Regex;
+import com.twitter.search.common.util.tetwittert.TokenizerHelper;
+import com.twitter.search.common.util.tetwittert.TweetTokenStreamSerializer;
+import com.twitter.search.common.util.tetwittert.regetwitter.Regetwitter;
 import com.twitter.search.common.util.url.LinkVisibilityUtils;
 import com.twitter.search.common.util.url.URLUtils;
 
@@ -50,18 +50,18 @@ import com.twitter.search.common.schema.thriftjava.ThriftDocument;
 /**
  * Builder class for building a {@link ThriftDocument}.
  */
-public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder {
+public final class EarlybirdThriftDocumentBuilder etwittertends ThriftDocumentBuilder {
   private static final Logger LOG = LoggerFactory.getLogger(EarlybirdThriftDocumentBuilder.class);
 
   private static final SearchCounter SERIALIZE_FAILURE_COUNT_NONPENGUIN_DEPENDENT =
-      SearchCounter.export("tokenstream_serialization_failure_non_penguin_dependent");
+      SearchCounter.etwitterport("tokenstream_serialization_failure_non_penguin_dependent");
 
   private static final String HASHTAG_SYMBOL = "#";
   private static final String CASHTAG_SYMBOL = "$";
   private static final String MENTION_SYMBOL = "@";
 
   private static final SearchCounter BCP47_LANGUAGE_TAG_COUNTER =
-      SearchCounter.export("bcp47_language_tag");
+      SearchCounter.etwitterport("bcp47_language_tag");
 
   /**
    * Used to check if a card is video card.
@@ -71,7 +71,7 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
   private static final String AMPLIFY_CARD_NAME = "amplify";
   private static final String PLAYER_CARD_NAME = "player";
 
-  // Extra term indexed for native retweets, to ensure that the "-rt" query excludes them.
+  // Etwittertra term indetwittered for native retweets, to ensure that the "-rt" query etwittercludes them.
   public static final String RETWEET_TERM = "rt";
   public static final String QUESTION_MARK = "?";
 
@@ -95,21 +95,21 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
   @Nonnull
   private final EarlybirdEncodedFeatures encodedTweetFeatures;
   @Nullable
-  private final EarlybirdEncodedFeatures extendedEncodedTweetFeatures;
+  private final EarlybirdEncodedFeatures etwittertendedEncodedTweetFeatures;
 
   /**
    * Default constructor
    */
   public EarlybirdThriftDocumentBuilder(
       @Nonnull EarlybirdEncodedFeatures encodedTweetFeatures,
-      @Nullable EarlybirdEncodedFeatures extendedEncodedTweetFeatures,
+      @Nullable EarlybirdEncodedFeatures etwittertendedEncodedTweetFeatures,
       FieldNameToIdMapping idMapping,
       Schema schema) {
     super(idMapping);
     this.schema = schema;
     this.encodedTweetFeatures = Preconditions.checkNotNull(encodedTweetFeatures);
 
-    this.extendedEncodedTweetFeatures = extendedEncodedTweetFeatures;
+    this.etwittertendedEncodedTweetFeatures = etwittertendedEncodedTweetFeatures;
   }
 
   /**
@@ -157,17 +157,17 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
   }
 
   /**
-   * Add tweet text field.
+   * Add tweet tetwittert field.
    */
-  public EarlybirdThriftDocumentBuilder withTweetText(
-      String text, byte[] textTokenStream) throws IOException {
-    withTokenStreamField(EarlybirdFieldConstants.EarlybirdFieldConstant.TEXT_FIELD.getFieldName(),
-        text, textTokenStream);
+  public EarlybirdThriftDocumentBuilder withTweetTetwittert(
+      String tetwittert, byte[] tetwittertTokenStream) throws IOEtwitterception {
+    withTokenStreamField(EarlybirdFieldConstants.EarlybirdFieldConstant.TEtwitterT_FIELD.getFieldName(),
+        tetwittert, tetwittertTokenStream);
     return this;
   }
 
-  public EarlybirdThriftDocumentBuilder withTweetText(String text) throws IOException {
-    withTweetText(text, null);
+  public EarlybirdThriftDocumentBuilder withTweetTetwittert(String tetwittert) throws IOEtwitterception {
+    withTweetTetwittert(tetwittert, null);
     return this;
   }
 
@@ -193,7 +193,7 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
       int numHashtags = Math.min(
           hashtags.size(),
           schema.getFeatureConfigurationById(
-              EarlybirdFieldConstant.NUM_HASHTAGS.getFieldId()).getMaxValue());
+              EarlybirdFieldConstant.NUM_HASHTAGS.getFieldId()).getMatwitterValue());
       encodedTweetFeatures.setFeatureValue(EarlybirdFieldConstant.NUM_HASHTAGS, numHashtags);
       addFacetSkipList(EarlybirdFieldConstant.HASHTAGS_FIELD.getFieldName());
       for (String hashtag : hashtags) {
@@ -212,7 +212,7 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
       int numMentions = Math.min(
           mentions.size(),
           schema.getFeatureConfigurationById(
-              EarlybirdFieldConstant.NUM_HASHTAGS.getFieldId()).getMaxValue());
+              EarlybirdFieldConstant.NUM_HASHTAGS.getFieldId()).getMatwitterValue());
       encodedTweetFeatures.setFeatureValue(EarlybirdFieldConstant.NUM_MENTIONS, numMentions);
       addFacetSkipList(EarlybirdFieldConstant.MENTIONS_FIELD.getFieldName());
       for (String mention : mentions) {
@@ -225,10 +225,10 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
 
   /**
    * Add a list of Twitter Photo URLs (twimg URLs). These are different from regular URLs, because
-   * we use the TwitterPhotoTokenStream to index them, and we also include the status ID as payload.
+   * we use the TwitterPhotoTokenStream to indetwitter them, and we also include the status ID as payload.
    */
   public EarlybirdThriftDocumentBuilder withTwimgURLs(
-      List<TwitterPhotoUrl> urls) throws IOException {
+      List<TwitterPhotoUrl> urls) throws IOEtwitterception {
     if (isNotEmpty(urls)) {
       for (TwitterPhotoUrl photoUrl : urls) {
         TokenStream ts = new TwitterPhotoTokenStream(photoUrl.getPhotoStatusId(),
@@ -247,27 +247,27 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
   /**
    * Add a list of URLs. This also add facet skip list terms for news / images / videos if needed.
    */
-  public EarlybirdThriftDocumentBuilder withURLs(List<ThriftExpandedUrl> urls) {
+  public EarlybirdThriftDocumentBuilder withURLs(List<ThriftEtwitterpandedUrl> urls) {
     if (isNotEmpty(urls)) {
       Set<String> dedupedLinks = Sets.newHashSet();
 
-      for (ThriftExpandedUrl expandedUrl : urls) {
-        if (expandedUrl.isSetOriginalUrl()) {
-          String normalizedOriginalUrl = URLUtils.normalizePath(expandedUrl.getOriginalUrl());
+      for (ThriftEtwitterpandedUrl etwitterpandedUrl : urls) {
+        if (etwitterpandedUrl.isSetOriginalUrl()) {
+          String normalizedOriginalUrl = URLUtils.normalizePath(etwitterpandedUrl.getOriginalUrl());
           dedupedLinks.add(normalizedOriginalUrl);
         }
-        if (expandedUrl.isSetExpandedUrl()) {
-          dedupedLinks.add(URLUtils.normalizePath(expandedUrl.getExpandedUrl()));
+        if (etwitterpandedUrl.isSetEtwitterpandedUrl()) {
+          dedupedLinks.add(URLUtils.normalizePath(etwitterpandedUrl.getEtwitterpandedUrl()));
         }
 
-        if (expandedUrl.isSetCanonicalLastHopUrl()) {
-          String url = URLUtils.normalizePath(expandedUrl.getCanonicalLastHopUrl());
+        if (etwitterpandedUrl.isSetCanonicalLastHopUrl()) {
+          String url = URLUtils.normalizePath(etwitterpandedUrl.getCanonicalLastHopUrl());
           dedupedLinks.add(url);
 
           String facetUrl = URLUtils.normalizeFacetURL(url);
 
-          if (expandedUrl.isSetMediaType()) {
-            switch (expandedUrl.getMediaType()) {
+          if (etwitterpandedUrl.isSetMediaType()) {
+            switch (etwitterpandedUrl.getMediaType()) {
               case NEWS:
                 withStringField(EarlybirdFieldConstant.NEWS_LINKS_FIELD.getFieldName(), url);
                 addFacetSkipList(EarlybirdFieldConstant.NEWS_LINKS_FIELD.getFieldName());
@@ -285,18 +285,18 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
                 break;
               case NATIVE_IMAGE:
                 // Nothing done here. Native images are handled separately.
-                // They are in PhotoUrls instead of expandedUrls.
+                // They are in PhotoUrls instead of etwitterpandedUrls.
                 break;
               case UNKNOWN:
                 break;
               default:
-                throw new RuntimeException("Unknown Media Type: " + expandedUrl.getMediaType());
+                throw new RuntimeEtwitterception("Unknown Media Type: " + etwitterpandedUrl.getMediaType());
             }
           }
 
-          if (expandedUrl.isSetLinkCategory()) {
+          if (etwitterpandedUrl.isSetLinkCategory()) {
             withIntField(EarlybirdFieldConstant.LINK_CATEGORY_FIELD.getFieldName(),
-                expandedUrl.getLinkCategory().getValue());
+                etwitterpandedUrl.getLinkCategory().getValue());
           }
         }
       }
@@ -332,7 +332,7 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
   }
 
   /**
-   * Add tweet text signature field.
+   * Add tweet tetwittert signature field.
    */
   public EarlybirdThriftDocumentBuilder withTweetSignature(int signature) {
     encodedTweetFeatures.setFeatureValue(EarlybirdFieldConstant.TWEET_SIGNATURE, signature);
@@ -572,7 +572,7 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
 
     // Add native retweet label to the internal field.
     addFilterInternalFieldTerm(EarlybirdFieldConstant.NATIVE_RETWEETS_FILTER_TERM);
-    withStringField(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(), RETWEET_TERM);
+    withStringField(EarlybirdFieldConstant.TEtwitterT_FIELD.getFieldName(), RETWEET_TERM);
     return this;
   }
 
@@ -596,10 +596,10 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
   }
 
   /**
-   * Add resolved links text field.
+   * Add resolved links tetwittert field.
    */
-  public EarlybirdThriftDocumentBuilder withResolvedLinksText(String linksText) {
-    withStringField(EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName(), linksText);
+  public EarlybirdThriftDocumentBuilder withResolvedLinksTetwittert(String linksTetwittert) {
+    withStringField(EarlybirdFieldConstant.RESOLVED_LINKS_TEtwitterT_FIELD.getFieldName(), linksTetwittert);
     return this;
   }
 
@@ -641,10 +641,10 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
   }
 
   /**
-   * Add question mark label to a text field.
+   * Add question mark label to a tetwittert field.
    */
   public EarlybirdThriftDocumentBuilder withQuestionMark() {
-    withStringField(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(), QUESTION_MARK);
+    withStringField(EarlybirdFieldConstant.TEtwitterT_FIELD.getFieldName(), QUESTION_MARK);
     return this;
   }
 
@@ -697,7 +697,7 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
   }
 
   public EarlybirdThriftDocumentBuilder withNormalizedMinEngagementField(
-      String fieldName, int normalizedNumEngagements) throws IOException {
+      String fieldName, int normalizedNumEngagements) throws IOEtwitterception {
     EarlybirdThriftDocumentUtil.addNormalizedMinEngagementField(doc, fieldName,
         normalizedNumEngagements);
     return this;
@@ -707,18 +707,18 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
    * Add named entity with given canonical name and type to document.
    */
   public EarlybirdThriftDocumentBuilder withNamedEntity(NamedEntity namedEntity) {
-    if (namedEntity.getContexts() == null) {
-      // In this unlikely case, we don't have any context for named entity type or source,
-      // so we can't properly index it in any of our fields. We'll just skip it in this case.
+    if (namedEntity.getContetwitterts() == null) {
+      // In this unlikely case, we don't have any contetwittert for named entity type or source,
+      // so we can't properly indetwitter it in any of our fields. We'll just skip it in this case.
       return this;
     }
 
-    // Keep track of the fields we've applied in the builder already, to ensure we only index
+    // Keep track of the fields we've applied in the builder already, to ensure we only indetwitter
     // each term (field/value pair) once
     Set<Pair<EarlybirdFieldConstant, String>> fieldsApplied = new HashSet<>();
-    for (NamedEntityContext context : namedEntity.getContexts()) {
-      if (context.isSetInput_source()
-          && NAMED_ENTITY_URL_SOURCE_TYPES.contains(context.getInput_source().getSource_type())) {
+    for (NamedEntityContetwittert contetwittert : namedEntity.getContetwitterts()) {
+      if (contetwittert.isSetInput_source()
+          && NAMED_ENTITY_URL_SOURCE_TYPES.contains(contetwittert.getInput_source().getSource_type())) {
         // If the source is one of the URL* types, add the named entity to the "from_url" fields,
         // ensuring we add it only once
         addNamedEntityFields(
@@ -726,14 +726,14 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
             EarlybirdFieldConstant.NAMED_ENTITY_FROM_URL_FIELD,
             EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_URL_FIELD,
             namedEntity.getCanonical_name(),
-            context);
+            contetwittert);
       } else {
         addNamedEntityFields(
             fieldsApplied,
-            EarlybirdFieldConstant.NAMED_ENTITY_FROM_TEXT_FIELD,
-            EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_TEXT_FIELD,
+            EarlybirdFieldConstant.NAMED_ENTITY_FROM_TEtwitterT_FIELD,
+            EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_TEtwitterT_FIELD,
             namedEntity.getCanonical_name(),
-            context);
+            contetwittert);
       }
     }
 
@@ -769,7 +769,7 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
   /**
    * Add a white space tokenized screen name field.
    *
-   * Example:
+   * Etwitterample:
    *  screenName - "super_hero"
    *  tokenized version - "super hero"
    */
@@ -777,7 +777,7 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
       String fieldName,
       String normalizedScreenName) {
     String whiteSpaceTokenizableScreenName = StringUtils.join(
-        normalizedScreenName.split(Regex.HASHTAG_USERNAME_PUNCTUATION_REGEX), " ");
+        normalizedScreenName.split(Regetwitter.HASHTAG_USERNAME_PUNCTUATION_REGEtwitter), " ");
     withStringField(fieldName, whiteSpaceTokenizableScreenName);
     return this;
   }
@@ -791,10 +791,10 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
       String normalizedScreenName,
       TokenStream screenNameTokenStream) {
 
-    // this normalized text is consistent to how the tokenized stream is created from
+    // this normalized tetwittert is consistent to how the tokenized stream is created from
     // TokenizerHelper.getNormalizedCamelcaseTokenStream - ie. just lowercasing.
-    String camelCaseTokenizedScreenNameText =
-        TokenizerHelper.getNormalizedCamelcaseTokenStreamText(screenName);
+    String camelCaseTokenizedScreenNameTetwittert =
+        TokenizerHelper.getNormalizedCamelcaseTokenStreamTetwittert(screenName);
     try {
       // Reset the token stream in case it has been read before.
       screenNameTokenStream.reset();
@@ -804,10 +804,10 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
 
       withTokenStreamField(
           fieldName,
-          camelCaseTokenizedScreenNameText.isEmpty()
-              ? normalizedScreenName : camelCaseTokenizedScreenNameText,
+          camelCaseTokenizedScreenNameTetwittert.isEmpty()
+              ? normalizedScreenName : camelCaseTokenizedScreenNameTetwittert,
           camelCaseTokenizedScreenName);
-    } catch (IOException e) {
+    } catch (IOEtwitterception e) {
       LOG.error("TwitterTokenStream serialization error! Could not serialize: " + screenName);
       SERIALIZE_FAILURE_COUNT_NONPENGUIN_DEPENDENT.increment();
     }
@@ -819,11 +819,11 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
       EarlybirdFieldConstant nameOnlyField,
       EarlybirdFieldConstant nameWithTypeField,
       String name,
-      NamedEntityContext context) {
+      NamedEntityContetwittert contetwittert) {
     withOneTimeStringField(fieldsApplied, nameOnlyField, name, false);
-    if (context.isSetEntity_type()) {
+    if (contetwittert.isSetEntity_type()) {
       withOneTimeStringField(fieldsApplied, nameWithTypeField,
-          formatNamedEntityString(name, context.getEntity_type()), true);
+          formatNamedEntityString(name, contetwittert.getEntity_type()), true);
     }
   }
 
@@ -879,11 +879,11 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
           EarlybirdEncodedFeaturesUtil.toBytesForThriftDocument(encodedTweetFeatures));
     }
 
-    if (extendedEncodedTweetFeatures != null) {
-      // Add extended_encoded_tweet_features before building the document.
+    if (etwittertendedEncodedTweetFeatures != null) {
+      // Add etwittertended_encoded_tweet_features before building the document.
       withBytesField(
-          EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD.getFieldName(),
-          EarlybirdEncodedFeaturesUtil.toBytesForThriftDocument(extendedEncodedTweetFeatures));
+          EarlybirdFieldConstant.EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD.getFieldName(),
+          EarlybirdEncodedFeaturesUtil.toBytesForThriftDocument(etwittertendedEncodedTweetFeatures));
     }
   }
 

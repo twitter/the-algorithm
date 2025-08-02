@@ -1,0 +1,6 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.item.vertical_grid_item
+
+sealed trait VerticalGridItemTileStyle
+
+case object SingleStateDefaultVerticalGridItemTileStyle etwittertends VerticalGridItemTileStyle
+case object DoubleStateDefaultVerticalGridItemTileStyle etwittertends VerticalGridItemTileStyle

@@ -173,8 +173,8 @@ object ITLFeatures {
   val IS_IMPRESSED = new Binary("itl.engagement.is_impressed", Set(EngagementsPrivate).asJava)
   val IS_OPEN_LINKED =
     new Binary("itl.engagement.is_open_linked", Set(EngagementsPrivate, LinksClickedOn).asJava)
-  val IS_PHOTO_EXPANDED = new Binary(
-    "itl.engagement.is_photo_expanded",
+  val IS_PHOTO_EtwitterPANDED = new Binary(
+    "itl.engagement.is_photo_etwitterpanded",
     Set(EngagementsPrivate, EngagementsPublic).asJava)
   val IS_VIDEO_VIEWED =
     new Binary("itl.engagement.is_video_viewed", Set(EngagementsPrivate, EngagementsPublic).asJava)
@@ -333,7 +333,7 @@ object ITLFeatures {
   val IS_PROFILE_CLICKED_AND_PROFILE_BLOCK = new Binary(
     "itl.engagement.is_profile_clicked_and_profile_block",
     Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
-  // This derived label is the union of bad profile click engagements and existing negative feedback
+  // This derived label is the union of bad profile click engagements and etwitteristing negative feedback
   val IS_NEGATIVE_FEEDBACK_V2 = new Binary(
     "itl.engagement.is_negative_feedback_v2",
     Set(ProfilesViewed, ProfilesClicked, EngagementsPrivate).asJava)
@@ -372,8 +372,8 @@ object ITLFeatures {
     "itl.recommended_tweet_features.num_interacting_users",
     Set(EngagementScore).asJava
   )
-  val MAX_REALGRAPH_SCORE_OF_INTERACTING_USERS = new Continuous(
-    "itl.recommended_tweet_features.max_realgraph_score_of_interacting_users",
+  val MAtwitter_REALGRAPH_SCORE_OF_INTERACTING_USERS = new Continuous(
+    "itl.recommended_tweet_features.matwitter_realgraph_score_of_interacting_users",
     Set(UsersRealGraphScore, EngagementScore).asJava
   )
   val SUM_REALGRAPH_SCORE_OF_INTERACTING_USERS = new Continuous(
@@ -384,8 +384,8 @@ object ITLFeatures {
     "itl.recommended_tweet_features.avg_realgraph_score_of_interacting_users",
     Set(UsersRealGraphScore, EngagementScore).asJava
   )
-  val MAX_SARUS_SCORE_OF_INTERACTING_USERS = new Continuous(
-    "itl.recommended_tweet_features.max_sarus_score_of_interacting_users",
+  val MAtwitter_SARUS_SCORE_OF_INTERACTING_USERS = new Continuous(
+    "itl.recommended_tweet_features.matwitter_sarus_score_of_interacting_users",
     Set(EngagementScore, UsersSalsaScore).asJava
   )
   val SUM_SARUS_SCORE_OF_INTERACTING_USERS = new Continuous(
@@ -481,8 +481,8 @@ object ITLFeatures {
     new Continuous("itl.hydrated_tweet_features.blender_score", Set(EngagementScore).asJava)
   val PARUS_SCORE =
     new Continuous("itl.hydrated_tweet_features.parus_score", Set(EngagementScore).asJava)
-  val TEXT_SCORE =
-    new Continuous("itl.hydrated_tweet_features.text_score", Set(EngagementScore).asJava)
+  val TEtwitterT_SCORE =
+    new Continuous("itl.hydrated_tweet_features.tetwittert_score", Set(EngagementScore).asJava)
   val BIDIRECTIONAL_REPLY_COUNT = new Continuous(
     "itl.hydrated_tweet_features.bidirectional_reply_count",
     Set(CountOfPrivateReplies, CountOfPublicReplies).asJava

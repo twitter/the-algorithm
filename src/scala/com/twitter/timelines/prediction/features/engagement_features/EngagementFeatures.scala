@@ -22,13 +22,13 @@ object EngagementFeatures {
   private[this] val logger = Logger.get(getClass.getSimpleName)
 
   sealed trait EngagementFeature
-  case object Count extends EngagementFeature
-  case object RealGraphWeightAverage extends EngagementFeature
-  case object RealGraphWeightMax extends EngagementFeature
-  case object RealGraphWeightMin extends EngagementFeature
-  case object RealGraphWeightMissing extends EngagementFeature
-  case object RealGraphWeightVariance extends EngagementFeature
-  case object UserIds extends EngagementFeature
+  case object Count etwittertends EngagementFeature
+  case object RealGraphWeightAverage etwittertends EngagementFeature
+  case object RealGraphWeightMatwitter etwittertends EngagementFeature
+  case object RealGraphWeightMin etwittertends EngagementFeature
+  case object RealGraphWeightMissing etwittertends EngagementFeature
+  case object RealGraphWeightVariance etwittertends EngagementFeature
+  case object UserIds etwittertends EngagementFeature
 
   def fromThrift(thriftEngagementFeatures: ThriftEngagementFeatures): Option[EngagementFeatures] = {
     thriftEngagementFeatures match {
@@ -41,7 +41,7 @@ object EngagementFeatures {
           )
         )
       case _ => {
-        logger.error("Unexpected EngagementFeatures version found.")
+        logger.error("Unetwitterpected EngagementFeatures version found.")
         None
       }
     }
@@ -78,7 +78,7 @@ case class EngagementFeatures(
  * timeline, to the destination users (or user), who created engagements.
  *
  * @param count number of engagements present
- * @param max max score of the engaging users
+ * @param matwitter matwitter score of the engaging users
  * @param mean average score of the engaging users
  * @param min minimum score of the engaging users
  * @param missing for engagements present, how many Real Graph scores were missing
@@ -86,7 +86,7 @@ case class EngagementFeatures(
  */
 case class RealGraphDerivedEngagementFeatures(
   count: Int,
-  max: Double,
+  matwitter: Double,
   mean: Double,
   min: Double,
   missing: Int,
@@ -120,8 +120,8 @@ object EngagementDataRecordFeatures {
     "engagement_features.real_graph.favorites.avg_weight",
     Set(CountOfPrivateLikes, CountOfPublicLikes).asJava
   )
-  val InNetworkFavoritesMaxRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.favorites.max_weight",
+  val InNetworkFavoritesMatwitterRealGraphWeight = new Continuous(
+    "engagement_features.real_graph.favorites.matwitter_weight",
     Set(CountOfPrivateLikes, CountOfPublicLikes).asJava
   )
   val InNetworkFavoritesMinRealGraphWeight = new Continuous(
@@ -135,8 +135,8 @@ object EngagementDataRecordFeatures {
     "engagement_features.real_graph.favorites.weight_variance"
   )
 
-  val InNetworkRetweetsMaxRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.retweets.max_weight",
+  val InNetworkRetweetsMatwitterRealGraphWeight = new Continuous(
+    "engagement_features.real_graph.retweets.matwitter_weight",
     Set(CountOfPrivateRetweets, CountOfPublicRetweets).asJava
   )
   val InNetworkRetweetsMinRealGraphWeight = new Continuous(
@@ -154,8 +154,8 @@ object EngagementDataRecordFeatures {
     "engagement_features.real_graph.retweets.weight_variance"
   )
 
-  val InNetworkRepliesMaxRealGraphWeight = new Continuous(
-    "engagement_features.real_graph.replies.max_weight",
+  val InNetworkRepliesMatwitterRealGraphWeight = new Continuous(
+    "engagement_features.real_graph.replies.matwitter_weight",
     Set(CountOfPrivateReplies, CountOfPublicReplies).asJava
   )
   val InNetworkRepliesMinRealGraphWeight = new Continuous(
@@ -180,12 +180,12 @@ object EngagementDataRecordFeatures {
       (continuousFeatures.values ++ sparseBinaryFeatures.values).toSeq
   }
 
-  case object Favorites extends FeatureGroup {
+  case object Favorites etwittertends FeatureGroup {
     override val continuousFeatures: Map[EngagementFeature, Continuous] =
       Map(
         Count -> InNetworkFavoritesCount,
         RealGraphWeightAverage -> InNetworkFavoritesAvgRealGraphWeight,
-        RealGraphWeightMax -> InNetworkFavoritesMaxRealGraphWeight,
+        RealGraphWeightMatwitter -> InNetworkFavoritesMatwitterRealGraphWeight,
         RealGraphWeightMin -> InNetworkFavoritesMinRealGraphWeight,
         RealGraphWeightMissing -> InNetworkFavoritesRealGraphWeightMissing,
         RealGraphWeightVariance -> InNetworkFavoritesRealGraphWeightVariance
@@ -195,12 +195,12 @@ object EngagementDataRecordFeatures {
       Map(UserIds -> FavoritedByUserIds)
   }
 
-  case object Retweets extends FeatureGroup {
+  case object Retweets etwittertends FeatureGroup {
     override val continuousFeatures: Map[EngagementFeature, Continuous] =
       Map(
         Count -> InNetworkRetweetsCount,
         RealGraphWeightAverage -> InNetworkRetweetsAvgRealGraphWeight,
-        RealGraphWeightMax -> InNetworkRetweetsMaxRealGraphWeight,
+        RealGraphWeightMatwitter -> InNetworkRetweetsMatwitterRealGraphWeight,
         RealGraphWeightMin -> InNetworkRetweetsMinRealGraphWeight,
         RealGraphWeightMissing -> InNetworkRetweetsRealGraphWeightMissing,
         RealGraphWeightVariance -> InNetworkRetweetsRealGraphWeightVariance
@@ -210,12 +210,12 @@ object EngagementDataRecordFeatures {
       Map(UserIds -> RetweetedByUserIds)
   }
 
-  case object Replies extends FeatureGroup {
+  case object Replies etwittertends FeatureGroup {
     override val continuousFeatures: Map[EngagementFeature, Continuous] =
       Map(
         Count -> InNetworkRepliesCount,
         RealGraphWeightAverage -> InNetworkRepliesAvgRealGraphWeight,
-        RealGraphWeightMax -> InNetworkRepliesMaxRealGraphWeight,
+        RealGraphWeightMatwitter -> InNetworkRepliesMatwitterRealGraphWeight,
         RealGraphWeightMin -> InNetworkRepliesMinRealGraphWeight,
         RealGraphWeightMissing -> InNetworkRepliesRealGraphWeightMissing,
         RealGraphWeightVariance -> InNetworkRepliesRealGraphWeightVariance
@@ -237,7 +237,7 @@ object EngagementDataRecordFeatures {
     outputFeature = PublicEngagementUserIds
   )
 
-  object RichUnifyPublicEngagersTransform extends OneToSomeTransform {
+  object RichUnifyPublicEngagersTransform etwittertends OneToSomeTransform {
     override def apply(dataRecord: DataRecord): Option[DataRecord] =
       RichITransform(EngagementDataRecordFeatures.UnifyPublicEngagersTransform)(dataRecord)
     override def featuresToTransform: Set[Feature[_]] =

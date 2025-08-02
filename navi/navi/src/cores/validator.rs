@@ -15,7 +15,7 @@ pub mod validatior {
             assert!(ARGS.versions_per_model >= 1);
             assert_eq!(MODEL_SPECS.len(), ARGS.input.len());
             assert_eq!(MODEL_SPECS.len(), ARGS.model_dir.len());
-            assert_eq!(MODEL_SPECS.len(), ARGS.max_batch_size.len());
+            assert_eq!(MODEL_SPECS.len(), ARGS.matwitter_batch_size.len());
             assert_eq!(MODEL_SPECS.len(), ARGS.batch_time_out_millis.len());
         }
     }

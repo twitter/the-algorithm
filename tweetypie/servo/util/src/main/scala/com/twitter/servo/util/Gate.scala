@@ -27,10 +27,10 @@ object Gate {
    */
   def fromAvailability(
     availability: => Double,
-    randomDouble: => Double = ThreadLocalRandom.current().nextDouble(),
+    randomDouble: => Double = ThreadLocalRandom.current().netwittertDouble(),
     repr: String = "Gate.fromAvailability"
   ): Gate[Any] =
-    Gate(_ => randomDouble < math.max(math.min(availability, 1.0), 0.0), repr)
+    Gate(_ => randomDouble < math.matwitter(math.min(availability, 1.0), 0.0), repr)
 
   /**
    * Creates a Gate[Any] with a probability of returning true that
@@ -39,7 +39,7 @@ object Gate {
   def linearRampUp(
     startTime: Time,
     rampUpDuration: Duration,
-    randomDouble: => Double = ThreadLocalRandom.current().nextDouble()
+    randomDouble: => Double = ThreadLocalRandom.current().netwittertDouble()
   ): Gate[Any] = {
     val availability = availabilityFromLinearRampUp(startTime, rampUpDuration)
 
@@ -125,7 +125,7 @@ object Gate {
  * for dispatching based upon the value of this function over values of type T.
  * Note: Gate does not inherit from T => Boolean in order to enforce correct type checking
  * in the apply method of Gate[Unit]. (Scala is over eager to convert the return type of
- * expression to Unit.) Instead, an implicit conversion allows Gate to be used in methods that
+ * etwitterpression to Unit.) Instead, an implicit conversion allows Gate to be used in methods that
  * require a function T => Boolean.
  */
 trait Gate[-T] {
@@ -153,40 +153,40 @@ trait Gate[-T] {
   /**
    * Returns a new Gate which returns true when this Gate returns false
    */
-  def unary_! : Gate[T] = Gate(x => !this(x), "!%s".format(this))
+  def unary_! : Gate[T] = Gate(twitter => !this(twitter), "!%s".format(this))
 
   /**
    * Returns a new Gate which returns true when both this Gate and other Gate return true
    */
   def &[U <: T](other: Gate[U]): Gate[U] =
-    Gate(x => this(x) && other(x), "(%s & %s)".format(this, other))
+    Gate(twitter => this(twitter) && other(twitter), "(%s & %s)".format(this, other))
 
   /**
    * Returns a new Gate which returns true when either this Gate or other Gate return true
    */
   def |[U <: T](other: Gate[U]): Gate[U] =
-    Gate(x => this(x) || other(x), "(%s | %s)".format(this, other))
+    Gate(twitter => this(twitter) || other(twitter), "(%s | %s)".format(this, other))
 
   /**
    * Returns a new Gate which returns true when return values of this Gate and other Gate differ
    */
   def ^[U <: T](other: Gate[U]): Gate[U] =
-    Gate(x => this(x) ^ other(x), "(%s ^ %s)".format(this, other))
+    Gate(twitter => this(twitter) ^ other(twitter), "(%s ^ %s)".format(this, other))
 
   /**
    * Returns the first value when this Gate returns true, or the second value if it returns false.
    */
-  def pick[A](t: T, x: => A, y: => A): A = if (this(t)) x else y
+  def pick[A](t: T, twitter: => A, y: => A): A = if (this(t)) twitter else y
 
   /**
    * A varient of pick that doesn't require a value if T is a subtype of Unit
    */
-  def pick[A](x: => A, y: => A)(implicit isUnit: <:<[Unit, T]): A = pick(isUnit(()), x, y)
+  def pick[A](twitter: => A, y: => A)(implicit isUnit: <:<[Unit, T]): A = pick(isUnit(()), twitter, y)
 
   /**
-   * Returns a 1-arg function that dynamically picks x or y based upon the function arg.
+   * Returns a 1-arg function that dynamically picks twitter or y based upon the function arg.
    */
-  def select[A](x: => A, y: => A): T => A = pick(_, x, y)
+  def select[A](twitter: => A, y: => A): T => A = pick(_, twitter, y)
 
   /**
    * Returns a version of this gate that runs the effect if the gate returns true.

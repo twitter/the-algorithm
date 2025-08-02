@@ -10,14 +10,14 @@ import com.twitter.timelineranker.repository.CandidatesRepositoryBuilder
 import com.twitter.timelineranker.visibility.SgsFollowGraphDataFields
 import com.twitter.timelines.util.stats.RequestScope
 import com.twitter.timelines.visibility.model.CheckedUserActorType
-import com.twitter.timelines.visibility.model.ExclusionReason
+import com.twitter.timelines.visibility.model.EtwitterclusionReason
 import com.twitter.timelines.visibility.model.VisibilityCheckStatus
 import com.twitter.timelines.visibility.model.VisibilityCheckUser
 import com.twitter.util.Duration
 
 object InNetworkTweetRepositoryBuilder {
-  val VisibilityRuleExclusions: Set[ExclusionReason] = Set[ExclusionReason](
-    ExclusionReason(
+  val VisibilityRuleEtwitterclusions: Set[EtwitterclusionReason] = Set[EtwitterclusionReason](
+    EtwitterclusionReason(
       CheckedUserActorType(Some(false), VisibilityCheckUser.SourceUser),
       Set(VisibilityCheckStatus.Blocked)
     )
@@ -34,7 +34,7 @@ object InNetworkTweetRepositoryBuilder {
 }
 
 class InNetworkTweetRepositoryBuilder(config: RuntimeConfiguration, configBuilder: ConfigBuilder)
-    extends CandidatesRepositoryBuilder(config) {
+    etwittertends CandidatesRepositoryBuilder(config) {
   import InNetworkTweetRepositoryBuilder._
 
   override val clientSubId = "recycled_tweets"
@@ -83,7 +83,7 @@ class InNetworkTweetRepositoryBuilder(config: RuntimeConfiguration, configBuilde
       clientFactories.visibilityEnforcerFactory.apply(
         VisibilityRules,
         RequestScopes.InNetworkTweetSource,
-        reasonsToExclude = InNetworkTweetRepositoryBuilder.VisibilityRuleExclusions
+        reasonsToEtwitterclude = InNetworkTweetRepositoryBuilder.VisibilityRuleEtwitterclusions
       ),
       config.statsReceiver
     )
@@ -99,7 +99,7 @@ class InNetworkTweetRepositoryBuilder(config: RuntimeConfiguration, configBuilde
       clientFactories.visibilityEnforcerFactory.apply(
         VisibilityRules,
         RequestScopes.InNetworkTweetSource,
-        reasonsToExclude = InNetworkTweetRepositoryBuilder.VisibilityRuleExclusions
+        reasonsToEtwitterclude = InNetworkTweetRepositoryBuilder.VisibilityRuleEtwitterclusions
       ),
       config.statsReceiver.scope("replacementRealtimeCG")
     )

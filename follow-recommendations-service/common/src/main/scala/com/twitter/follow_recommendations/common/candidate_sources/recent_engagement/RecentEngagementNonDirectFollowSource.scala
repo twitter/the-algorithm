@@ -3,16 +3,16 @@ package com.twitter.follow_recommendations.common.candidate_sources.recent_engag
 import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
 import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class RecentEngagementNonDirectFollowSource @Inject() (
   realTimeRealGraphClient: RealTimeRealGraphClient)
-    extends CandidateSource[Long, CandidateUser] {
+    etwittertends CandidateSource[Long, CandidateUser] {
 
   val identifier: CandidateSourceIdentifier =
     RecentEngagementNonDirectFollowSource.Identifier

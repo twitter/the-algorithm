@@ -14,7 +14,7 @@ namespace twml {
         int n_bin,
         const Tensor &bin_vals,
         int output_bits,
-        const Map<int64_t, int64_t> &ID_to_index,
+        const Map<int64_t, int64_t> &ID_to_indetwitter,
         int start_compute,
         int end_compute,
         int64_t options);

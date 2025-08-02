@@ -6,9 +6,9 @@ import com.twitter.follow_recommendations.configapi.ConfigBuilder
 import com.twitter.inject.TwitterModule
 import com.twitter.servo.decider.DeciderGateBuilder
 import com.twitter.timelines.configapi.Config
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
-object ConfigApiModule extends TwitterModule {
+object ConfigApiModule etwittertends TwitterModule {
   @Provides
   @Singleton
   def providesDeciderGateBuilder(decider: Decider): DeciderGateBuilder =

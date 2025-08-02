@@ -86,7 +86,7 @@ case class MinDurationModifierCalculator() {
     countryCodeOpt match {
       case Some(countryCode) =>
         scopedStats
-          .counter("country_code_exists").incr()
+          .counter("country_code_etwitterists").incr()
         val calendarOpt = mapCountryCodeToTimeZone(countryCode, scopedStats)
         calendarOpt.flatMap(calendar => getMinDurationModifier(target, calendar, scopedStats))
       case _ => None
@@ -132,17 +132,17 @@ case class MinDurationModifierCalculator() {
           None
         } else {
           val currentUTCHour = TimeUtil.hourOfDay(Time.now)
-          val utcHourWithMaxOpened = if (target.params(FSParams.EnableRandomHourForQuickSend)) {
+          val utcHourWithMatwitterOpened = if (target.params(FSParams.EnableRandomHourForQuickSend)) {
             (target.targetId % 24).toInt
           } else {
-            openedPushByHourAggregated.maxBy(_._2)._1
+            openedPushByHourAggregated.matwitterBy(_._2)._1
           }
-          val numOfMaxOpened = openedPushByHourAggregated.maxBy(_._2)._2
-          if (numOfMaxOpened >= target.params(FSParams.SendTimeByUserHistoryMaxOpenedThreshold)) {
-            scopedStats.counter("pass_experiment_bucket_threshold").incr()
-            if (numOfMaxOpened >= target
-                .params(FSParams.SendTimeByUserHistoryMaxOpenedThreshold)) { // only update if number of opened pushes meet threshold
-              scopedStats.counter("pass_max_threshold").incr()
+          val numOfMatwitterOpened = openedPushByHourAggregated.matwitterBy(_._2)._2
+          if (numOfMatwitterOpened >= target.params(FSParams.SendTimeByUserHistoryMatwitterOpenedThreshold)) {
+            scopedStats.counter("pass_etwitterperiment_bucket_threshold").incr()
+            if (numOfMatwitterOpened >= target
+                .params(FSParams.SendTimeByUserHistoryMatwitterOpenedThreshold)) { // only update if number of opened pushes meet threshold
+              scopedStats.counter("pass_matwitter_threshold").incr()
               val quickSendBeforeHours =
                 target.params(FSParams.SendTimeByUserHistoryQuickSendBeforeHours)
               val quickSendAfterHours =
@@ -156,13 +156,13 @@ case class MinDurationModifierCalculator() {
                 target.params(FSParams.SendTimeByUserHistoryNoSendMinDuration)
 
               val startTimeForNoSend = transformToHour(
-                utcHourWithMaxOpened - quickSendBeforeHours - hoursToLessSend)
+                utcHourWithMatwitterOpened - quickSendBeforeHours - hoursToLessSend)
               val startTimeForQuickSend = transformToHour(
-                utcHourWithMaxOpened - quickSendBeforeHours)
+                utcHourWithMatwitterOpened - quickSendBeforeHours)
               val endTimeForNoSend =
-                transformToHour(utcHourWithMaxOpened - quickSendBeforeHours)
+                transformToHour(utcHourWithMatwitterOpened - quickSendBeforeHours)
               val endTimeForQuickSend =
-                transformToHour(utcHourWithMaxOpened + quickSendAfterHours) + 1
+                transformToHour(utcHourWithMatwitterOpened + quickSendAfterHours) + 1
 
               val startTimeList = Seq(startTimeForNoSend, startTimeForQuickSend)
               val endTimeList = Seq(endTimeForNoSend, endTimeForQuickSend)

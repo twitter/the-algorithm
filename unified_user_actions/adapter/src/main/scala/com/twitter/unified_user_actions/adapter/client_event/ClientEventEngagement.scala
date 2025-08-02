@@ -6,12 +6,12 @@ import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
 import com.twitter.unified_user_actions.thriftscala._
 
 object ClientEventEngagement {
-  object TweetFav extends BaseClientEvent(ActionType.ClientTweetFav)
+  object TweetFav etwittertends BaseClientEvent(ActionType.ClientTweetFav)
 
   /**
    * This is fired when a user unlikes a liked(favorited) tweet
    */
-  object TweetUnfav extends BaseClientEvent(ActionType.ClientTweetUnfav)
+  object TweetUnfav etwittertends BaseClientEvent(ActionType.ClientTweetUnfav)
 
   /**
    * This is "Send Reply" event to indicate publishing of a reply Tweet as opposed to clicking
@@ -20,7 +20,7 @@ object ClientEventEngagement {
    * 1) ServerTweetReply already has the new Tweet Id, 2) A sent reply may be lost during transfer
    * over the wire and thus may not end up with a follow-up ServerTweetReply.
    */
-  object TweetReply extends BaseClientEvent(ActionType.ClientTweetReply)
+  object TweetReply etwittertends BaseClientEvent(ActionType.ClientTweetReply)
 
   /**
    * This is the "send quote" event to indicate publishing of a quote tweet as opposed to clicking
@@ -29,18 +29,18 @@ object ClientEventEngagement {
    * 1) ServerTweetQuote already has the new Tweet Id, 2) A sent quote may be lost during transfer
    * over the wire and thus may not ended up with a follow-up ServerTweetQuote.
    */
-  object TweetQuote extends BaseClientEvent(ActionType.ClientTweetQuote)
+  object TweetQuote etwittertends BaseClientEvent(ActionType.ClientTweetQuote)
 
   /**
    * This is the "retweet" event to indicate publishing of a retweet.
    */
-  object TweetRetweet extends BaseClientEvent(ActionType.ClientTweetRetweet)
+  object TweetRetweet etwittertends BaseClientEvent(ActionType.ClientTweetRetweet)
 
   /**
-   * "action = reply" indicates that a user expressed the intention to reply to a Tweet by clicking
+   * "action = reply" indicates that a user etwitterpressed the intention to reply to a Tweet by clicking
    * the reply button. No new tweet is created in this event.
    */
-  object TweetClickReply extends BaseClientEvent(ActionType.ClientTweetClickReply)
+  object TweetClickReply etwittertends BaseClientEvent(ActionType.ClientTweetClickReply)
 
   /**
    * Please note that the "action == quote" is NOT the create quote Tweet event like what
@@ -52,7 +52,7 @@ object ClientEventEngagement {
    * `item.tweet_details.retweeting_tweet_id`, `item.tweet_details.in_reply_to_tweet_id`, `item.tweet_details.quoted_tweet_id`
    * could be NON-NULL and UUA would just include these NON-NULL fields as is. This is also checked in the unit test.
    */
-  object TweetClickQuote extends BaseClientEvent(ActionType.ClientTweetClickQuote)
+  object TweetClickQuote etwittertends BaseClientEvent(ActionType.ClientTweetClickQuote)
 
   /**
    * Refer to go/cme-scribing and go/interaction-event-spec for details.
@@ -60,7 +60,7 @@ object ClientEventEngagement {
    * For looping playback, this is only fired once and does not reset at loop boundaries.
    */
   object TweetVideoPlaybackStart
-      extends BaseVideoClientEvent(ActionType.ClientTweetVideoPlaybackStart)
+      etwittertends BaseVideoClientEvent(ActionType.ClientTweetVideoPlaybackStart)
 
   /**
    * Refer to go/cme-scribing and go/interaction-event-spec for details.
@@ -69,17 +69,17 @@ object ClientEventEngagement {
    * For looping playback, this is only fired once and does not reset at loop boundaries.
    */
   object TweetVideoPlaybackComplete
-      extends BaseVideoClientEvent(ActionType.ClientTweetVideoPlaybackComplete)
+      etwittertends BaseVideoClientEvent(ActionType.ClientTweetVideoPlaybackComplete)
 
   /**
    * Refer to go/cme-scribing and go/interaction-event-spec for details.
    * This is fired when playback reaches 25% of total track duration. Not valid for live videos.
    * For looping playback, this is only fired once and does not reset at loop boundaries.
    */
-  object TweetVideoPlayback25 extends BaseVideoClientEvent(ActionType.ClientTweetVideoPlayback25)
-  object TweetVideoPlayback50 extends BaseVideoClientEvent(ActionType.ClientTweetVideoPlayback50)
-  object TweetVideoPlayback75 extends BaseVideoClientEvent(ActionType.ClientTweetVideoPlayback75)
-  object TweetVideoPlayback95 extends BaseVideoClientEvent(ActionType.ClientTweetVideoPlayback95)
+  object TweetVideoPlayback25 etwittertends BaseVideoClientEvent(ActionType.ClientTweetVideoPlayback25)
+  object TweetVideoPlayback50 etwittertends BaseVideoClientEvent(ActionType.ClientTweetVideoPlayback50)
+  object TweetVideoPlayback75 etwittertends BaseVideoClientEvent(ActionType.ClientTweetVideoPlayback75)
+  object TweetVideoPlayback95 etwittertends BaseVideoClientEvent(ActionType.ClientTweetVideoPlayback95)
 
   /**
    * Refer to go/cme-scribing and go/interaction-event-spec for details.
@@ -87,7 +87,7 @@ object ClientEventEngagement {
    * (i.e. not autoplaying in the timeline) mode, and was not started via auto-advance.
    * For looping playback, this is only fired once and does not reset at loop boundaries.
    */
-  object TweetVideoPlayFromTap extends BaseVideoClientEvent(ActionType.ClientTweetVideoPlayFromTap)
+  object TweetVideoPlayFromTap etwittertends BaseVideoClientEvent(ActionType.ClientTweetVideoPlayFromTap)
 
   /**
    * Refer to go/cme-scribing and go/interaction-event-spec for details.
@@ -95,41 +95,41 @@ object ClientEventEngagement {
    * or 95% of the video duration, whichever comes first.
    * For looping playback, this is only fired once and does not reset at loop boundaries.
    */
-  object TweetVideoQualityView extends BaseVideoClientEvent(ActionType.ClientTweetVideoQualityView)
+  object TweetVideoQualityView etwittertends BaseVideoClientEvent(ActionType.ClientTweetVideoQualityView)
 
-  object TweetVideoView extends BaseVideoClientEvent(ActionType.ClientTweetVideoView)
-  object TweetVideoMrcView extends BaseVideoClientEvent(ActionType.ClientTweetVideoMrcView)
+  object TweetVideoView etwittertends BaseVideoClientEvent(ActionType.ClientTweetVideoView)
+  object TweetVideoMrcView etwittertends BaseVideoClientEvent(ActionType.ClientTweetVideoMrcView)
   object TweetVideoViewThreshold
-      extends BaseVideoClientEvent(ActionType.ClientTweetVideoViewThreshold)
-  object TweetVideoCtaUrlClick extends BaseVideoClientEvent(ActionType.ClientTweetVideoCtaUrlClick)
+      etwittertends BaseVideoClientEvent(ActionType.ClientTweetVideoViewThreshold)
+  object TweetVideoCtaUrlClick etwittertends BaseVideoClientEvent(ActionType.ClientTweetVideoCtaUrlClick)
   object TweetVideoCtaWatchClick
-      extends BaseVideoClientEvent(ActionType.ClientTweetVideoCtaWatchClick)
+      etwittertends BaseVideoClientEvent(ActionType.ClientTweetVideoCtaWatchClick)
 
   /**
    * This is fired when a user clicks on "Undo retweet" after re-tweeting a tweet
    *
    */
-  object TweetUnretweet extends BaseClientEvent(ActionType.ClientTweetUnretweet)
+  object TweetUnretweet etwittertends BaseClientEvent(ActionType.ClientTweetUnretweet)
 
   /**
-   * This is fired when a user clicks on a photo attached to a tweet and the photo expands to fit
+   * This is fired when a user clicks on a photo attached to a tweet and the photo etwitterpands to fit
    * the screen.
    */
-  object TweetPhotoExpand extends BaseClientEvent(ActionType.ClientTweetPhotoExpand)
+  object TweetPhotoEtwitterpand etwittertends BaseClientEvent(ActionType.ClientTweetPhotoEtwitterpand)
 
   /**
-   * This is fired when a user clicks on a card, a card could be a photo or video for example
+   * This is fired when a user clicks on a card, a card could be a photo or video for etwitterample
    */
-  object CardClick extends BaseCardClientEvent(ActionType.ClientCardClick)
-  object CardOpenApp extends BaseCardClientEvent(ActionType.ClientCardOpenApp)
-  object CardAppInstallAttempt extends BaseCardClientEvent(ActionType.ClientCardAppInstallAttempt)
-  object PollCardVote extends BaseCardClientEvent(ActionType.ClientPollCardVote)
+  object CardClick etwittertends BaseCardClientEvent(ActionType.ClientCardClick)
+  object CardOpenApp etwittertends BaseCardClientEvent(ActionType.ClientCardOpenApp)
+  object CardAppInstallAttempt etwittertends BaseCardClientEvent(ActionType.ClientCardAppInstallAttempt)
+  object PollCardVote etwittertends BaseCardClientEvent(ActionType.ClientPollCardVote)
 
   /**
    * This is fired when a user clicks on a profile mention inside a tweet.
    */
   object TweetClickMentionScreenName
-      extends BaseClientEvent(ActionType.ClientTweetClickMentionScreenName) {
+      etwittertends BaseClientEvent(ActionType.ClientTweetClickMentionScreenName) {
     override def getUuaItem(
       ceItem: LogEventItem,
       logEvent: LogEvent
@@ -161,36 +161,36 @@ object ClientEventEngagement {
    * These are fired when user follows/unfollows a Topic. Please see the comment in the
    * ClientEventAdapter namespace matching to see the subtle details.
    */
-  object TopicFollow extends BaseTopicClientEvent(ActionType.ClientTopicFollow)
-  object TopicUnfollow extends BaseTopicClientEvent(ActionType.ClientTopicUnfollow)
+  object TopicFollow etwittertends BaseTopicClientEvent(ActionType.ClientTopicFollow)
+  object TopicUnfollow etwittertends BaseTopicClientEvent(ActionType.ClientTopicUnfollow)
 
   /**
-   * This is fired when the user clicks the "x" icon next to the topic on their timeline,
+   * This is fired when the user clicks the "twitter" icon netwittert to the topic on their timeline,
    * and clicks "Not interested in {TOPIC}" in the pop-up prompt
    * Alternatively, they can also click "See more" button to visit the topic page, and click "Not interested" there.
    */
-  object TopicNotInterestedIn extends BaseTopicClientEvent(ActionType.ClientTopicNotInterestedIn)
+  object TopicNotInterestedIn etwittertends BaseTopicClientEvent(ActionType.ClientTopicNotInterestedIn)
 
   /**
-   * This is fired when the user clicks the "Undo" button after clicking "x" or "Not interested" on a Topic
+   * This is fired when the user clicks the "Undo" button after clicking "twitter" or "Not interested" on a Topic
    * which is captured in ClientTopicNotInterestedIn
    */
   object TopicUndoNotInterestedIn
-      extends BaseTopicClientEvent(ActionType.ClientTopicUndoNotInterestedIn)
+      etwittertends BaseTopicClientEvent(ActionType.ClientTopicUndoNotInterestedIn)
 
   /**
    * This is fired when a user clicks on  "This Tweet's not helpful" flow in the caret menu
    * of a Tweet result on the Search Results Page
    */
-  object TweetNotHelpful extends BaseClientEvent(ActionType.ClientTweetNotHelpful)
+  object TweetNotHelpful etwittertends BaseClientEvent(ActionType.ClientTweetNotHelpful)
 
   /**
    * This is fired when a user clicks Undo after clicking on
    * "This Tweet's not helpful" flow in the caret menu of a Tweet result on the Search Results Page
    */
-  object TweetUndoNotHelpful extends BaseClientEvent(ActionType.ClientTweetUndoNotHelpful)
+  object TweetUndoNotHelpful etwittertends BaseClientEvent(ActionType.ClientTweetUndoNotHelpful)
 
-  object TweetReport extends BaseClientEvent(ActionType.ClientTweetReport) {
+  object TweetReport etwittertends BaseClientEvent(ActionType.ClientTweetReport) {
     override def getUuaItem(
       ceItem: LogEventItem,
       logEvent: LogEvent
@@ -208,7 +208,7 @@ object ClientEventEngagement {
               TweetActionInfo.ClientTweetReport(
                 ClientTweetReport(
                   isReportTweetDone =
-                    logEvent.eventNamespace.flatMap(_.action).exists(_.contains("done")),
+                    logEvent.eventNamespace.flatMap(_.action).etwitterists(_.contains("done")),
                   reportFlowId = logEvent.reportDetails.flatMap(_.reportFlowId)
                 )
               ))))
@@ -219,47 +219,47 @@ object ClientEventEngagement {
   /**
    * Not Interested In (Do Not like) event
    */
-  object TweetNotInterestedIn extends BaseClientEvent(ActionType.ClientTweetNotInterestedIn)
-  object TweetUndoNotInterestedIn extends BaseClientEvent(ActionType.ClientTweetUndoNotInterestedIn)
+  object TweetNotInterestedIn etwittertends BaseClientEvent(ActionType.ClientTweetNotInterestedIn)
+  object TweetUndoNotInterestedIn etwittertends BaseClientEvent(ActionType.ClientTweetUndoNotInterestedIn)
 
   /**
    * This is fired when a user FIRST clicks the "Not interested in this Tweet" button in the caret menu of a Tweet
    * then clicks "This Tweet is not about {TOPIC}" in the subsequent prompt
    * Note: this button is hidden unless a user clicks "Not interested in this Tweet" first.
    */
-  object TweetNotAboutTopic extends BaseClientEvent(ActionType.ClientTweetNotAboutTopic)
+  object TweetNotAboutTopic etwittertends BaseClientEvent(ActionType.ClientTweetNotAboutTopic)
 
   /**
    * This is fired when a user clicks "Undo" immediately after clicking "This Tweet is not about {TOPIC}",
    * which is captured in TweetNotAboutTopic
    */
-  object TweetUndoNotAboutTopic extends BaseClientEvent(ActionType.ClientTweetUndoNotAboutTopic)
+  object TweetUndoNotAboutTopic etwittertends BaseClientEvent(ActionType.ClientTweetUndoNotAboutTopic)
 
   /**
    * This is fired when a user FIRST clicks the "Not interested in this Tweet" button in the caret menu of a Tweet
    * then clicks  "This Tweet isn't recent" in the subsequent prompt
    * Note: this button is hidden unless a user clicks "Not interested in this Tweet" first.
    */
-  object TweetNotRecent extends BaseClientEvent(ActionType.ClientTweetNotRecent)
+  object TweetNotRecent etwittertends BaseClientEvent(ActionType.ClientTweetNotRecent)
 
   /**
    * This is fired when a user clicks "Undo" immediately after clicking "his Tweet isn't recent",
    * which is captured in TweetNotRecent
    */
-  object TweetUndoNotRecent extends BaseClientEvent(ActionType.ClientTweetUndoNotRecent)
+  object TweetUndoNotRecent etwittertends BaseClientEvent(ActionType.ClientTweetUndoNotRecent)
 
   /**
    * This is fired when a user clicks "Not interested in this Tweet" button in the caret menu of a Tweet
    * then clicks  "Show fewer tweets from" in the subsequent prompt
    * Note: this button is hidden unless a user clicks "Not interested in this Tweet" first.
    */
-  object TweetSeeFewer extends BaseClientEvent(ActionType.ClientTweetSeeFewer)
+  object TweetSeeFewer etwittertends BaseClientEvent(ActionType.ClientTweetSeeFewer)
 
   /**
    * This is fired when a user clicks "Undo" immediately after clicking "Show fewer tweets from",
    * which is captured in TweetSeeFewer
    */
-  object TweetUndoSeeFewer extends BaseClientEvent(ActionType.ClientTweetUndoSeeFewer)
+  object TweetUndoSeeFewer etwittertends BaseClientEvent(ActionType.ClientTweetUndoSeeFewer)
 
   /**
    * This is fired when a user click "Submit" at the end of a "Report Tweet" flow
@@ -268,7 +268,7 @@ object ClientEventEngagement {
    * They can be joined on reportFlowId
    * See https://confluence.twitter.biz/pages/viewpage.action?spaceKey=HEALTH&title=Understanding+ReportDetails
    */
-  object TweetReportServer extends BaseClientEvent(ActionType.ServerTweetReport) {
+  object TweetReportServer etwittertends BaseClientEvent(ActionType.ServerTweetReport) {
     override def getUuaItem(
       ceItem: LogEventItem,
       logEvent: LogEvent
@@ -295,30 +295,30 @@ object ClientEventEngagement {
    * A Profile can also be blocked when a user clicks Block in the menu of a Tweet, which
    * is captured in ClientTweetBlockAuthor
    */
-  object ProfileBlock extends BaseProfileClientEvent(ActionType.ClientProfileBlock)
+  object ProfileBlock etwittertends BaseProfileClientEvent(ActionType.ClientProfileBlock)
 
   /**
    * This is fired when a user clicks unblock in a pop-up prompt right after blocking a profile
    * in the profile page or clicks unblock in a drop-down menu in the profile page.
    */
-  object ProfileUnblock extends BaseProfileClientEvent(ActionType.ClientProfileUnblock)
+  object ProfileUnblock etwittertends BaseProfileClientEvent(ActionType.ClientProfileUnblock)
 
   /**
    * This is fired when a user clicks Mute in a Profile page
    * A Profile can also be muted when a user clicks Mute in the menu of a Tweet, which
    * is captured in ClientTweetMuteAuthor
    */
-  object ProfileMute extends BaseProfileClientEvent(ActionType.ClientProfileMute)
+  object ProfileMute etwittertends BaseProfileClientEvent(ActionType.ClientProfileMute)
 
   /*
    * This is fired when a user clicks "Report User" action from user profile page
    * */
-  object ProfileReport extends BaseProfileClientEvent(ActionType.ClientProfileReport)
+  object ProfileReport etwittertends BaseProfileClientEvent(ActionType.ClientProfileReport)
 
   // This is fired when a user profile is open in a Profile page
-  object ProfileShow extends BaseProfileClientEvent(ActionType.ClientProfileShow)
+  object ProfileShow etwittertends BaseProfileClientEvent(ActionType.ClientProfileShow)
 
-  object ProfileClick extends BaseProfileClientEvent(ActionType.ClientProfileClick) {
+  object ProfileClick etwittertends BaseProfileClientEvent(ActionType.ClientProfileClick) {
 
     /**
      * ClientTweetClickProfile would emit 2 events, 1 with item type Tweet and 1 with item type User
@@ -332,7 +332,7 @@ object ClientEventEngagement {
       logEvent: LogEvent
     ): Option[Item] =
       if (logEvent.eventDetails
-          .flatMap(_.items).exists(items => items.exists(_.itemType.contains(ItemType.Tweet)))) {
+          .flatMap(_.items).etwitterists(items => items.etwitterists(_.itemType.contains(ItemType.Tweet)))) {
         None
       } else {
         super.getUuaItem(ceItem, logEvent)
@@ -346,7 +346,7 @@ object ClientEventEngagement {
    * caret menu of a Tweet / follow button on hovering on profile avatar,
    * which is captured in ClientTweetFollowAuthor
    */
-  object ProfileFollow extends BaseProfileClientEvent(ActionType.ClientProfileFollow) {
+  object ProfileFollow etwittertends BaseProfileClientEvent(ActionType.ClientProfileFollow) {
 
     /**
      * ClientTweetFollowAuthor would emit 2 events, 1 with item type Tweet and 1 with item type User
@@ -360,7 +360,7 @@ object ClientEventEngagement {
       logEvent: LogEvent
     ): Option[Item] =
       if (logEvent.eventDetails
-          .flatMap(_.items).exists(items => items.exists(_.itemType.contains(ItemType.Tweet)))) {
+          .flatMap(_.items).etwitterists(items => items.etwitterists(_.itemType.contains(ItemType.Tweet)))) {
         None
       } else {
         super.getUuaItem(ceItem, logEvent)
@@ -372,9 +372,9 @@ object ClientEventEngagement {
    * and clicks on the Follow button. A profile can also be followed by clicking the Follow button on the Profile
    * page and confirm, which is captured in ClientProfileFollow.
    * The event emits two items, one of user type and another of tweet type, since the default implementation of
-   * BaseClientEvent only looks for Tweet type, the other item is dropped which is the expected behaviour
+   * BaseClientEvent only looks for Tweet type, the other item is dropped which is the etwitterpected behaviour
    */
-  object TweetFollowAuthor extends BaseClientEvent(ActionType.ClientTweetFollowAuthor) {
+  object TweetFollowAuthor etwittertends BaseClientEvent(ActionType.ClientTweetFollowAuthor) {
     override def getUuaItem(
       ceItem: LogEventItem,
       logEvent: LogEvent
@@ -402,9 +402,9 @@ object ClientEventEngagement {
    * and clicks on the Unfollow button. A profile can also be unfollowed by clicking the Unfollow button on the Profile
    * page and confirm, which will be captured in ClientProfileUnfollow.
    * The event emits two items, one of user type and another of tweet type, since the default implementation of
-   * BaseClientEvent only looks for Tweet type, the other item is dropped which is the expected behaviour
+   * BaseClientEvent only looks for Tweet type, the other item is dropped which is the etwitterpected behaviour
    */
-  object TweetUnfollowAuthor extends BaseClientEvent(ActionType.ClientTweetUnfollowAuthor) {
+  object TweetUnfollowAuthor etwittertends BaseClientEvent(ActionType.ClientTweetUnfollowAuthor) {
     override def getUuaItem(
       ceItem: LogEventItem,
       logEvent: LogEvent
@@ -432,20 +432,20 @@ object ClientEventEngagement {
    * that authors this Tweet. A profile can also be blocked in the Profile page, which is captured
    * in ClientProfileBlock
    */
-  object TweetBlockAuthor extends BaseClientEvent(ActionType.ClientTweetBlockAuthor)
+  object TweetBlockAuthor etwittertends BaseClientEvent(ActionType.ClientTweetBlockAuthor)
 
   /**
    * This is fired when a user clicks unblock in a pop-up prompt right after blocking an author
    * in the drop-down menu of a tweet
    */
-  object TweetUnblockAuthor extends BaseClientEvent(ActionType.ClientTweetUnblockAuthor)
+  object TweetUnblockAuthor etwittertends BaseClientEvent(ActionType.ClientTweetUnblockAuthor)
 
   /**
    * This is fired when a user clicks Mute in the caret menu of a Tweet to mute the profile
    * that authors this Tweet. A profile can also be muted in the Profile page, which is captured
    * in ClientProfileMute
    */
-  object TweetMuteAuthor extends BaseClientEvent(ActionType.ClientTweetMuteAuthor)
+  object TweetMuteAuthor etwittertends BaseClientEvent(ActionType.ClientTweetMuteAuthor)
 
   /**
    * This is fired when a user clicks on a Tweet to open the Tweet details page. Note that for
@@ -453,25 +453,25 @@ object ClientEventEngagement {
    * depending on whether the Tweet is a rendered Tweet (a click results in ClientTweetClick)
    * or a wrapper Notification (a click results in ClientNotificationClick).
    */
-  object TweetClick extends BaseClientEvent(ActionType.ClientTweetClick)
+  object TweetClick etwittertends BaseClientEvent(ActionType.ClientTweetClick)
 
   /**
    * This is fired when a user clicks to view the profile page of another user from a Tweet
    */
-  object TweetClickProfile extends BaseClientEvent(ActionType.ClientTweetClickProfile)
+  object TweetClickProfile etwittertends BaseClientEvent(ActionType.ClientTweetClickProfile)
 
   /**
    * This is fired when a user clicks on the "share" icon on a Tweet to open the share menu.
    * The user may or may not proceed and finish sharing the Tweet.
    */
-  object TweetClickShare extends BaseClientEvent(ActionType.ClientTweetClickShare)
+  object TweetClickShare etwittertends BaseClientEvent(ActionType.ClientTweetClickShare)
 
   /**
    * This is fired when a user clicks "Copy link to Tweet" in a menu appeared after hitting
    * the "share" icon on a Tweet OR when a user selects share_via -> copy_link after long-click
    * a link inside a tweet on a mobile device
    */
-  object TweetShareViaCopyLink extends BaseClientEvent(ActionType.ClientTweetShareViaCopyLink)
+  object TweetShareViaCopyLink etwittertends BaseClientEvent(ActionType.ClientTweetShareViaCopyLink)
 
   /**
    * This is fired when a user clicks "Send via Direct Message" after
@@ -479,24 +479,24 @@ object ClientEventEngagement {
    * The user may or may not proceed and finish Sending the DM.
    */
   object TweetClickSendViaDirectMessage
-      extends BaseClientEvent(ActionType.ClientTweetClickSendViaDirectMessage)
+      etwittertends BaseClientEvent(ActionType.ClientTweetClickSendViaDirectMessage)
 
   /**
    * This is fired when a user clicks "Bookmark" after
    * clicking on the "share" icon on a Tweet to open the share menu.
    */
-  object TweetShareViaBookmark extends BaseClientEvent(ActionType.ClientTweetShareViaBookmark)
+  object TweetShareViaBookmark etwittertends BaseClientEvent(ActionType.ClientTweetShareViaBookmark)
 
   /**
    * This is fired when a user clicks "Remove Tweet from Bookmarks" after
    * clicking on the "share" icon on a Tweet to open the share menu.
    */
-  object TweetUnbookmark extends BaseClientEvent(ActionType.ClientTweetUnbookmark)
+  object TweetUnbookmark etwittertends BaseClientEvent(ActionType.ClientTweetUnbookmark)
 
   /**
    * This event is fired when the user clicks on a hashtag in a Tweet.
    */
-  object TweetClickHashtag extends BaseClientEvent(ActionType.ClientTweetClickHashtag) {
+  object TweetClickHashtag etwittertends BaseClientEvent(ActionType.ClientTweetClickHashtag) {
     override def getUuaItem(
       ceItem: LogEventItem,
       logEvent: LogEvent
@@ -525,14 +525,14 @@ object ClientEventEngagement {
    * is available to ios only as of March 2023).
    * TweetBookmark and TweetShareByBookmark log the same events but serve for individual use cases.
    */
-  object TweetBookmark extends BaseClientEvent(ActionType.ClientTweetBookmark)
+  object TweetBookmark etwittertends BaseClientEvent(ActionType.ClientTweetBookmark)
 
   /**
    * This is fired when a user clicks on a link in a tweet.
    * The link could be displayed as a URL or embedded
    * in a component such as an image or a card in a tweet.
    */
-  object TweetOpenLink extends BaseClientEvent(ActionType.ClientTweetOpenLink) {
+  object TweetOpenLink etwittertends BaseClientEvent(ActionType.ClientTweetOpenLink) {
     override def getUuaItem(
       ceItem: LogEventItem,
       logEvent: LogEvent
@@ -555,7 +555,7 @@ object ClientEventEngagement {
    * This is fired when a user takes a screenshot.
    * This is available for only mobile clients.
    */
-  object TweetTakeScreenshot extends BaseClientEvent(ActionType.ClientTweetTakeScreenshot) {
+  object TweetTakeScreenshot etwittertends BaseClientEvent(ActionType.ClientTweetTakeScreenshot) {
     override def getUuaItem(
       ceItem: LogEventItem,
       logEvent: LogEvent
@@ -581,78 +581,78 @@ object ClientEventEngagement {
    * Note: this button is hidden unless a user clicks "This Tweet isn't relevant" or
    * "This Tweet's not helpful" first
    */
-  object TweetNotRelevant extends BaseClientEvent(ActionType.ClientTweetNotRelevant)
+  object TweetNotRelevant etwittertends BaseClientEvent(ActionType.ClientTweetNotRelevant)
 
   /**
    * This is fired when a user clicks "Undo" immediately after clicking "this Tweet isn't relevant",
    * which is captured in TweetNotRelevant
    */
-  object TweetUndoNotRelevant extends BaseClientEvent(ActionType.ClientTweetUndoNotRelevant)
+  object TweetUndoNotRelevant etwittertends BaseClientEvent(ActionType.ClientTweetUndoNotRelevant)
 
   /**
    * This is fired when a user is logged out and follows a profile from the
    * profile page / people module from web.
    * One can only try to follow from web, iOS and Android do not support logged out browsing
    */
-  object ProfileFollowAttempt extends BaseProfileClientEvent(ActionType.ClientProfileFollowAttempt)
+  object ProfileFollowAttempt etwittertends BaseProfileClientEvent(ActionType.ClientProfileFollowAttempt)
 
   /**
    * This is fired when a user is logged out and favourite a tweet from web.
    * One can only try to favourite from web, iOS and Android do not support logged out browsing
    */
-  object TweetFavoriteAttempt extends BaseClientEvent(ActionType.ClientTweetFavoriteAttempt)
+  object TweetFavoriteAttempt etwittertends BaseClientEvent(ActionType.ClientTweetFavoriteAttempt)
 
   /**
    * This is fired when a user is logged out and Retweet a tweet from web.
    * One can only try to favourite from web, iOS and Android do not support logged out browsing
    */
-  object TweetRetweetAttempt extends BaseClientEvent(ActionType.ClientTweetRetweetAttempt)
+  object TweetRetweetAttempt etwittertends BaseClientEvent(ActionType.ClientTweetRetweetAttempt)
 
   /**
    * This is fired when a user is logged out and reply on tweet from web.
    * One can only try to favourite from web, iOS and Android do not support logged out browsing
    */
-  object TweetReplyAttempt extends BaseClientEvent(ActionType.ClientTweetReplyAttempt)
+  object TweetReplyAttempt etwittertends BaseClientEvent(ActionType.ClientTweetReplyAttempt)
 
   /**
    * This is fired when a user is logged out and clicks on login button.
    * Currently seem to be generated only on [m5, LiteNativeWrapper] as of Jan 2023.
    */
-  object CTALoginClick extends BaseCTAClientEvent(ActionType.ClientCTALoginClick)
+  object CTALoginClick etwittertends BaseCTAClientEvent(ActionType.ClientCTALoginClick)
 
   /**
    * This is fired when a user is logged out and login window is shown.
    */
-  object CTALoginStart extends BaseCTAClientEvent(ActionType.ClientCTALoginStart)
+  object CTALoginStart etwittertends BaseCTAClientEvent(ActionType.ClientCTALoginStart)
 
   /**
    * This is fired when a user is logged out and login is successful.
    */
-  object CTALoginSuccess extends BaseCTAClientEvent(ActionType.ClientCTALoginSuccess)
+  object CTALoginSuccess etwittertends BaseCTAClientEvent(ActionType.ClientCTALoginSuccess)
 
   /**
    * This is fired when a user is logged out and clicks on signup button.
    */
-  object CTASignupClick extends BaseCTAClientEvent(ActionType.ClientCTASignupClick)
+  object CTASignupClick etwittertends BaseCTAClientEvent(ActionType.ClientCTASignupClick)
 
   /**
    * This is fired when a user is logged out and signup is successful.
    */
-  object CTASignupSuccess extends BaseCTAClientEvent(ActionType.ClientCTASignupSuccess)
+  object CTASignupSuccess etwittertends BaseCTAClientEvent(ActionType.ClientCTASignupSuccess)
 
   /**
    * This is fired when a user opens a Push Notification.
    * Refer to https://confluence.twitter.biz/pages/viewpage.action?pageId=161811800
    * for Push Notification scribe details
    */
-  object NotificationOpen extends BasePushNotificationClientEvent(ActionType.ClientNotificationOpen)
+  object NotificationOpen etwittertends BasePushNotificationClientEvent(ActionType.ClientNotificationOpen)
 
   /**
    * This is fired when a user clicks on a notification in the Notification Tab.
    * Refer to go/ntab-urt-scribe for Notification Tab scribe details.
    */
   object NotificationClick
-      extends BaseNotificationTabClientEvent(ActionType.ClientNotificationClick)
+      etwittertends BaseNotificationTabClientEvent(ActionType.ClientNotificationClick)
 
   /**
    * This is fired when a user taps the "See Less Often" caret menu item of a notification in
@@ -660,7 +660,7 @@ object ClientEventEngagement {
    * Refer to go/ntab-urt-scribe for Notification Tab scribe details.
    */
   object NotificationSeeLessOften
-      extends BaseNotificationTabClientEvent(ActionType.ClientNotificationSeeLessOften)
+      etwittertends BaseNotificationTabClientEvent(ActionType.ClientNotificationSeeLessOften)
 
   /**
    * This is fired when a user closes or swipes away a Push Notification.
@@ -668,20 +668,20 @@ object ClientEventEngagement {
    * for Push Notification scribe details
    */
   object NotificationDismiss
-      extends BasePushNotificationClientEvent(ActionType.ClientNotificationDismiss)
+      etwittertends BasePushNotificationClientEvent(ActionType.ClientNotificationDismiss)
 
   /**
    *  This is fired when a user clicks on a typeahead suggestion(queries, events, topics, users)
-   *  in a drop-down menu of a search box or a tweet compose box.
+   *  in a drop-down menu of a search botwitter or a tweet compose botwitter.
    */
-  object TypeaheadClick extends BaseSearchTypeaheadEvent(ActionType.ClientTypeaheadClick)
+  object TypeaheadClick etwittertends BaseSearchTypeaheadEvent(ActionType.ClientTypeaheadClick)
 
   /**
    * This is a generic event fired when the user submits feedback on a prompt.
-   * Some examples include Did You Find It Prompt and Tweet Relevance on Search Results Page.
+   * Some etwitteramples include Did You Find It Prompt and Tweet Relevance on Search Results Page.
    */
   object FeedbackPromptSubmit
-      extends BaseFeedbackSubmitClientEvent(ActionType.ClientFeedbackPromptSubmit)
+      etwittertends BaseFeedbackSubmitClientEvent(ActionType.ClientFeedbackPromptSubmit)
 
-  object AppExit extends BaseUASClientEvent(ActionType.ClientAppExit)
+  object AppEtwitterit etwittertends BaseUASClientEvent(ActionType.ClientAppEtwitterit)
 }

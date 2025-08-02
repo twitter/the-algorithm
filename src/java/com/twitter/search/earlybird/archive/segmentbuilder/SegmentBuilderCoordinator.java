@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.archive.segmentbuilder;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Date;
 import java.util.Optional;
 
@@ -28,18 +28,18 @@ import com.twitter.util.Duration;
 /**
  * Coordinate between segment builders for scrubbing pipeline.
  * When segment builder is running, all of them will try to find a HDFS file indicating if data is
- * ready. If the file does not exist, only one of them will go through the files and see if
+ * ready. If the file does not etwitterist, only one of them will go through the files and see if
  * scrubbing pipeline has generated all data for this scrub gen.
  *
- * If the instance that got the lock found all data, it still exists, because otherwise we will
+ * If the instance that got the lock found all data, it still etwitterists, because otherwise we will
  * have one single segmentbuilder instance trying to build all segments, which is not what we want.
- * But if it exists, then the next time all segmentbuilder instances are scheduled, they will all
+ * But if it etwitterists, then the netwittert time all segmentbuilder instances are scheduled, they will all
  * find the file, and will start building segments.
  */
 class SegmentBuilderCoordinator {
   private static final Logger LOG = LoggerFactory.getLogger(SegmentBuilderCoordinator.class);
 
-  private static final Amount<Long, Time> ZK_LOCK_EXPIRATION_MIN = Amount.of(5L, Time.MINUTES);
+  private static final Amount<Long, Time> ZK_LOCK_EtwitterPIRATION_MIN = Amount.of(5L, Time.MINUTES);
   private static final String SEGMENT_BUILDER_SYNC_NODE = "scrub_gen_data_sync";
   private static final String SEGMENT_BUILDER_SYNC_ZK_PATH =
       EarlybirdProperty.ZK_APP_ROOT.get() + "/segment_builder_sync";
@@ -72,7 +72,7 @@ class SegmentBuilderCoordinator {
     final FileSystem hdfs;
     try {
       hdfs = HdfsUtil.getHdfsFileSystem();
-    } catch (IOException e) {
+    } catch (IOEtwitterception e) {
       LOG.error("Could not create HDFS file system.", e);
       return false;
     }
@@ -91,12 +91,12 @@ class SegmentBuilderCoordinator {
       Date scrubGenDay,
       long nonFirstInstanceSleepBeforeRetryDuration,
       FileSystem hdfs) {
-    // Check if the scrub gen has been fully built file exists.
+    // Check if the scrub gen has been fully built file etwitterists.
     if (checkHaveScrubGenDataFullyBuiltFileOnHdfs(hdfs)) {
       return true;
     }
 
-    // If it doesn't exist, let first instance see if scrub gen has been fully built and create the
+    // If it doesn't etwitterist, let first instance see if scrub gen has been fully built and create the
     // file.
     if (instanceNumber == FIRST_INSTANCE) {
       // We were missing some data on HDFS for this scrub gen in previous run,
@@ -111,7 +111,7 @@ class SegmentBuilderCoordinator {
       // data is fully build file to hdfs.
       try {
         checkIfScrubGenDataIsFullyBuilt(hdfs, scrubGenDay);
-      } catch (IOException e) {
+      } catch (IOEtwitterception e) {
         LOG.error("Failed to grab lock and check scrub gen data.", e);
       }
     } else {
@@ -119,29 +119,29 @@ class SegmentBuilderCoordinator {
       // gen has been fully built and create the file, then check again.
       try {
         LOG.info(
-            "Sleeping for {} ms before re-checking if scrub gen has been fully built file exists",
+            "Sleeping for {} ms before re-checking if scrub gen has been fully built file etwitterists",
             nonFirstInstanceSleepBeforeRetryDuration);
         clock.waitFor(nonFirstInstanceSleepBeforeRetryDuration);
         return checkHaveScrubGenDataFullyBuiltFileOnHdfs(hdfs);
-      } catch (InterruptedException e) {
+      } catch (InterruptedEtwitterception e) {
         LOG.warn("Interrupted when sleeping before re-checking if scrub gen has been fully built "
-            + "file exists", e);
+            + "file etwitterists", e);
       }
     }
 
     // if hasSuccessFileToHdfs returns false, then should always return false in the end.
-    // next run will find success file for this scrub gen and move forward.
+    // netwittert run will find success file for this scrub gen and move forward.
     return false;
   }
 
   private void checkIfScrubGenDataIsFullyBuilt(
-      FileSystem hdfs, Date scrubGenDay) throws IOException {
+      FileSystem hdfs, Date scrubGenDay) throws IOEtwitterception {
     // Build the lock, try to acquire it, and check the data on HDFS
     TryLock lock = zkTryLockFactory.createTryLock(
         DatabaseConfig.getLocalHostname(),
         SEGMENT_BUILDER_SYNC_ZK_PATH,
         SEGMENT_BUILDER_SYNC_NODE,
-        ZK_LOCK_EXPIRATION_MIN);
+        ZK_LOCK_EtwitterPIRATION_MIN);
     Preconditions.checkState(scrubGenOpt.isPresent());
     String scrubGen = scrubGenOpt.get();
 
@@ -169,7 +169,7 @@ class SegmentBuilderCoordinator {
       } else {
         LOG.warn("Failed to create file " + path + " on HDFS.");
       }
-    } catch (IOException e) {
+    } catch (IOEtwitterception e) {
       LOG.error("Failed to create file on HDFS " + path.toString(), e);
     }
     return false;
@@ -178,11 +178,11 @@ class SegmentBuilderCoordinator {
   private boolean checkHaveScrubGenDataFullyBuiltFileOnHdfs(FileSystem fs) {
     Path path = getScrubGenDataFullyBuiltFilePath();
     try {
-      boolean ret = fs.exists(path);
-      LOG.info("Checking if file exists showing scrubgen is fully built.");
-      LOG.info("Path checked: {}, Exist check: {}", path, ret);
+      boolean ret = fs.etwitterists(path);
+      LOG.info("Checking if file etwitterists showing scrubgen is fully built.");
+      LOG.info("Path checked: {}, Etwitterist check: {}", path, ret);
       return ret;
-    } catch (IOException e) {
+    } catch (IOEtwitterception e) {
       LOG.error("Failed to check file on HDFS " + path.toString(), e);
       return false;
     }

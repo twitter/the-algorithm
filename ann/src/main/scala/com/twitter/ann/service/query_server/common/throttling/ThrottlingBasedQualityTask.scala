@@ -20,7 +20,7 @@ class ThrottlingBasedQualityTask(
   // Parameters are taken from OverloadAdmissionController
   instrument: ThrottlingInstrument = new WindowedThrottlingInstrument(SAMPLING_INTERVAL, 5,
     new AuroraCPUStatsReader()))
-    extends Task
+    etwittertends Task
     with Logging {
   import ThrottlingBasedQualityTask._
 
@@ -54,9 +54,9 @@ class ThrottlingBasedQualityTask(
 
   def discountParams[T <: RuntimeParams](params: T): T = {
     // [0, 1] where 1 is best quality and lowest speed
-    // It's expected to run @1 majority of time
-    val qualityFactor = math.min(1, math.max(0, 1 - dampenedThrottlingPercentage))
-    def applyQualityFactor(param: Int) = math.max(1, math.ceil(param * qualityFactor).toInt)
+    // It's etwitterpected to run @1 majority of time
+    val qualityFactor = math.min(1, math.matwitter(0, 1 - dampenedThrottlingPercentage))
+    def applyQualityFactor(param: Int) = math.matwitter(1, math.ceil(param * qualityFactor).toInt)
 
     params match {
       case HnswParams(ef) => HnswParams(applyQualityFactor(ef)).asInstanceOf[T]

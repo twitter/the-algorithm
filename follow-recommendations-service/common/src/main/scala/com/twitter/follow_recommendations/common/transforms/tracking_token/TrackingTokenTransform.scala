@@ -8,13 +8,13 @@ import com.twitter.follow_recommendations.common.models.Session
 import com.twitter.follow_recommendations.common.models.TrackingToken
 import com.twitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
 import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.util.logging.Logging
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 /**
  * This transform adds the tracking token for all candidates
@@ -24,11 +24,11 @@ import javax.inject.Singleton
  */
 @Singleton
 class TrackingTokenTransform @Inject() (baseStatsReceiver: StatsReceiver)
-    extends Transform[HasDisplayLocation with HasClientContext, CandidateUser]
+    etwittertends Transform[HasDisplayLocation with HasClientContetwittert, CandidateUser]
     with Logging {
 
   def profileResults(
-    target: HasDisplayLocation with HasClientContext,
+    target: HasDisplayLocation with HasClientContetwittert,
     candidates: Seq[CandidateUser]
   ) = {
     // Metrics to track # results per candidate source
@@ -49,7 +49,7 @@ class TrackingTokenTransform @Inject() (baseStatsReceiver: StatsReceiver)
   }
 
   override def transform(
-    target: HasDisplayLocation with HasClientContext,
+    target: HasDisplayLocation with HasClientContetwittert,
     candidates: Seq[CandidateUser]
   ): Stitch[Seq[CandidateUser]] = {
     profileResults(target, candidates)

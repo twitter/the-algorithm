@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird.tools;
 
 import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.nio.charset.Charset;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -11,7 +11,7 @@ import com.google.common.base.Preconditions;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.thrift.TDeserializer;
-import org.apache.thrift.TException;
+import org.apache.thrift.TEtwitterception;
 
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
 
@@ -35,7 +35,7 @@ public final class EarlybirdThriftRequestDeserializerUtil {
   /**
    * Runs the EarlybirdThriftRequestDeserializerUtil tool with the given command-line arguments.
    */
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws IOEtwitterception {
     Path logFile = null;
     if (args.length == 1) {
       logFile = FileSystems.getDefault().getPath(args[0]);
@@ -44,11 +44,11 @@ public final class EarlybirdThriftRequestDeserializerUtil {
     } else {
       System.err.println("Usage: takes zero or one parameter (log file path). "
           + "If no log file is specified, " + DEFAULT_LOG_FILE_LOCATION + " is used.");
-      //CHECKSTYLE:OFF RegexpSinglelineJava
-      System.exit(-1);
-      //CHECKSTYLE:ON RegexpSinglelineJava
+      //CHECKSTYLE:OFF RegetwitterpSinglelineJava
+      System.etwitterit(-1);
+      //CHECKSTYLE:ON RegetwitterpSinglelineJava
     }
-    Preconditions.checkState(logFile.toFile().exists());
+    Preconditions.checkState(logFile.toFile().etwitterists());
 
     BufferedReader reader = Files.newBufferedReader(logFile, Charset.defaultCharset());
     try {
@@ -69,7 +69,7 @@ public final class EarlybirdThriftRequestDeserializerUtil {
     byte[] bytes = B64.decode(line);
     try {
       DESERIALIZER.deserialize(ebRequest, bytes);
-    } catch (TException e) {
+    } catch (TEtwitterception e) {
       System.err.println("Error deserializing thrift.");
     }
     return ebRequest;

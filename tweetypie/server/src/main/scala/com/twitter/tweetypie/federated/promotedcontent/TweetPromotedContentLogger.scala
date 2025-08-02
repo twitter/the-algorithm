@@ -11,14 +11,14 @@ import com.twitter.util.Future
 
 object TweetPromotedContentLogger {
   sealed abstract class TweetEngagementType(val engagementType: EngagementType)
-  case object TweetEngagement extends TweetEngagementType(EngagementType.Send)
-  case object ReplyEngagement extends TweetEngagementType(EngagementType.Reply)
-  case object RetweetEngagement extends TweetEngagementType(EngagementType.Retweet)
+  case object TweetEngagement etwittertends TweetEngagementType(EngagementType.Send)
+  case object ReplyEngagement etwittertends TweetEngagementType(EngagementType.Reply)
+  case object RetweetEngagement etwittertends TweetEngagementType(EngagementType.Retweet)
 
   type Type = (EngagementRequest, TweetEngagementType, Boolean) => Future[Unit]
 
-  private[this] val TwitterContext =
-    com.twitter.context.TwitterContext(com.twitter.tweetypie.TwitterContextPermit)
+  private[this] val TwitterContetwittert =
+    com.twitter.contetwittert.TwitterContetwittert(com.twitter.tweetypie.TwitterContetwittertPermit)
 
   def apply(callbackPromotedContentLogger: CallbackPromotedContentLogger): Type =
     (
@@ -27,7 +27,7 @@ object TweetPromotedContentLogger {
       isDark: Boolean
     ) => {
       val pci: PromotedContentInput =
-        PromotedContentInputProvider(TwitterContext, engagementRequest)
+        PromotedContentInputProvider(TwitterContetwittert, engagementRequest)
 
       // The real logging is fire-and-forget, so we can create the Future and ignore returning it.
       Future.when(!isDark) {

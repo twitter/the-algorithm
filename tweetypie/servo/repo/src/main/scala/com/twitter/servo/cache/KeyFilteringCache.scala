@@ -7,7 +7,7 @@ import com.twitter.util.Future
  * certain keys.
  */
 class KeyFilteringCache[K, V](val underlyingCache: Cache[K, V], keyPredicate: K => Boolean)
-    extends CacheWrapper[K, V] {
+    etwittertends CacheWrapper[K, V] {
   override def get(keys: Seq[K]): Future[KeyValueResult[K, V]] =
     underlyingCache.get(keys filter keyPredicate)
 

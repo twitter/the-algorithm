@@ -4,7 +4,7 @@ import java.util.Set;
 
 import com.google.common.base.Joiner;
 
-import org.apache.thrift.TException;
+import org.apache.thrift.TEtwitterception;
 import org.slf4j.Logger;
 
 import com.twitter.finagle.Service;
@@ -13,7 +13,7 @@ import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.util.thrift.ThriftUtils;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.util.Future;
 import com.twitter.util.FutureEventListener;
 
@@ -21,7 +21,7 @@ import com.twitter.util.FutureEventListener;
  * The general framework for earlybird root to track sensitive results.
  */
 public abstract class SensitiveResultsTrackingFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+    etwittertends SimpleFilter<EarlybirdRequestContetwittert, EarlybirdResponse> {
 
   /**
    * The type name is used to distinguish different kinds of sensitive results in log.
@@ -29,7 +29,7 @@ public abstract class SensitiveResultsTrackingFilter
   private final String typeName;
 
   /**
-   * The mark is to control whether to log expensive information.
+   * The mark is to control whether to log etwitterpensive information.
    */
   private final boolean logDetails;
 
@@ -63,19 +63,19 @@ public abstract class SensitiveResultsTrackingFilter
    * The method defines how the sensitive results are identified.
    */
   protected abstract Set<Long> getSensitiveResults(
-      EarlybirdRequestContext requestContext,
-      EarlybirdResponse earlybirdResponse) throws Exception;
+      EarlybirdRequestContetwittert requestContetwittert,
+      EarlybirdResponse earlybirdResponse) throws Etwitterception;
 
   /**
-   * Get a set of tweets which should be exclude from the sensitive results set.
+   * Get a set of tweets which should be etwitterclude from the sensitive results set.
    */
-  protected abstract Set<Long> getExceptedResults(EarlybirdRequestContext requestContext);
+  protected abstract Set<Long> getEtwitterceptedResults(EarlybirdRequestContetwittert requestContetwittert);
 
   @Override
   public final Future<EarlybirdResponse> apply(
-      final EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    Future<EarlybirdResponse> response = service.apply(requestContext);
+      final EarlybirdRequestContetwittert requestContetwittert,
+      Service<EarlybirdRequestContetwittert, EarlybirdResponse> service) {
+    Future<EarlybirdResponse> response = service.apply(requestContetwittert);
 
     response.addEventListener(new FutureEventListener<EarlybirdResponse>() {
       @Override
@@ -83,20 +83,20 @@ public abstract class SensitiveResultsTrackingFilter
         try {
           if (earlybirdResponse.responseCode == EarlybirdResponseCode.SUCCESS
               && earlybirdResponse.isSetSearchResults()
-              && requestContext.getParsedQuery() != null) {
-            Set<Long> statusIds = getSensitiveResults(requestContext, earlybirdResponse);
-            Set<Long> exceptedIds = getExceptedResults(requestContext);
-            statusIds.removeAll(exceptedIds);
+              && requestContetwittert.getParsedQuery() != null) {
+            Set<Long> statusIds = getSensitiveResults(requestContetwittert, earlybirdResponse);
+            Set<Long> etwitterceptedIds = getEtwitterceptedResults(requestContetwittert);
+            statusIds.removeAll(etwitterceptedIds);
 
             if (statusIds.size() > 0) {
               getSensitiveQueryCounter().increment();
               getSensitiveResultsCounter().add(statusIds.size());
-              logContent(requestContext, earlybirdResponse, statusIds);
+              logContent(requestContetwittert, earlybirdResponse, statusIds);
             }
           }
-        } catch (Exception e) {
-          getLogger().error("Caught exception while trying to log sensitive results for query: {}",
-                            requestContext.getParsedQuery().serialize(), e);
+        } catch (Etwitterception e) {
+          getLogger().error("Caught etwitterception while trying to log sensitive results for query: {}",
+                            requestContetwittert.getParsedQuery().serialize(), e);
         }
       }
 
@@ -109,15 +109,15 @@ public abstract class SensitiveResultsTrackingFilter
   }
 
   private void logContent(
-      final EarlybirdRequestContext requestContext,
+      final EarlybirdRequestContetwittert requestContetwittert,
       final EarlybirdResponse earlybirdResponse,
       final Set<Long> statusIds) {
 
     if (logDetails) {
       String base64Request;
       try {
-        base64Request = ThriftUtils.toBase64EncodedString(requestContext.getRequest());
-      } catch (TException e) {
+        base64Request = ThriftUtils.toBase64EncodedString(requestContetwittert.getRequest());
+      } catch (TEtwitterception e) {
         base64Request = "Failed to parse base 64 request";
       }
       getLogger().error("Found " + typeName
@@ -127,14 +127,14 @@ public abstract class SensitiveResultsTrackingFilter
               + "base 64 request: {} | "
               + "response: {}",
           Joiner.on(",").join(statusIds),
-          requestContext.getParsedQuery().serialize(),
-          requestContext.getRequest(),
+          requestContetwittert.getParsedQuery().serialize(),
+          requestContetwittert.getRequest(),
           base64Request,
           earlybirdResponse);
     } else {
       getLogger().error("Found " + typeName + ": {} for parsedQuery {}",
           Joiner.on(",").join(statusIds),
-          requestContext.getParsedQuery().serialize());
+          requestContetwittert.getParsedQuery().serialize());
     }
   }
 }

@@ -11,8 +11,8 @@ scala_library(
         "src/thrift/com/twitter/ads/callback:engagement_request-scala",
         "src/thrift/com/twitter/ads/internal/pcl:promoted_content_input-scala",
         "tweetypie/common/src/thrift/com/twitter/tweetypie:tweet_service_graphql-scala",
-        "strato/src/main/scala/com/twitter/strato/server/context",
-        "twitter-context/src/main/scala",
+        "strato/src/main/scala/com/twitter/strato/server/contetwittert",
+        "twitter-contetwittert/src/main/scala",
         "util/util-stats/src/main/scala/com/twitter/finagle/stats",
     ],
 )

@@ -7,11 +7,11 @@ import com.google.common.annotations.VisibleForTesting;
 import com.twitter.common.base.Command;
 import com.twitter.search.common.util.zktrylock.TryLock;
 import com.twitter.search.earlybird.archive.ArchiveHDFSUtils;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
+import com.twitter.search.earlybird.indetwitter.EarlybirdSegmentFactory;
 import com.twitter.search.earlybird.partition.SegmentInfo;
 import com.twitter.search.earlybird.partition.SegmentSyncConfig;
 
-public class SomeoneElseIsBuildingSegment extends SegmentBuilderSegment {
+public class SomeoneElseIsBuildingSegment etwittertends SegmentBuilderSegment {
   public SomeoneElseIsBuildingSegment(
       SegmentInfo segmentInfo,
       SegmentConfig segmentConfig,
@@ -30,14 +30,14 @@ public class SomeoneElseIsBuildingSegment extends SegmentBuilderSegment {
    */
   @Override
   public SegmentBuilderSegment handle()
-      throws SegmentInfoConstructionException, SegmentUpdaterException {
+      throws SegmentInfoConstructionEtwitterception, SegmentUpdaterEtwitterception {
 
     TryLock lock = getZooKeeperTryLock();
 
     final AtomicBoolean alreadyBuilt = new AtomicBoolean(false);
     boolean gotLock = lock.tryWithLock((Command) () -> {
       // The segment might have already finished built by others
-      if (segmentExistsOnHdfs()) {
+      if (segmentEtwitteristsOnHdfs()) {
         alreadyBuilt.set(true);
       }
     });
@@ -63,7 +63,7 @@ public class SomeoneElseIsBuildingSegment extends SegmentBuilderSegment {
   }
 
   @VisibleForTesting
-  boolean segmentExistsOnHdfs() {
+  boolean segmentEtwitteristsOnHdfs() {
     return ArchiveHDFSUtils.hasSegmentIndicesOnHDFS(sync, segmentInfo);
   }
 }

@@ -10,7 +10,7 @@ import com.twitter.tweetypie.core.FilteredState.Unavailable.TweetDeleted
 object ParentUserIdRepository {
   type Type = Tweet => Stitch[Option[UserId]]
 
-  case class ParentTweetNotFound(tweetId: TweetId) extends Exception
+  case class ParentTweetNotFound(tweetId: TweetId) etwittertends Etwitterception
 
   def apply(tweetRepo: TweetRepository.Type): Type = {
     val options = TweetQuery.Options(TweetQuery.Include(Set(Tweet.CoreDataField.id)))
@@ -24,7 +24,7 @@ object ParentUserIdRepository {
             .map(tweet => Some(getUserId(tweet)))
             .rescue {
               case NotFound | TweetDeleted | BounceDeleted | SourceTweetNotFound(_) =>
-                Stitch.exception(ParentTweetNotFound(share.parentStatusId))
+                Stitch.etwitterception(ParentTweetNotFound(share.parentStatusId))
             }
         case None =>
           Stitch.None

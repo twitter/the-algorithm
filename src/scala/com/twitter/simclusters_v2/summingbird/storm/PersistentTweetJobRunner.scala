@@ -105,7 +105,7 @@ object PersistentTweetStormJob {
         ObservedCachedReadableStore.from[TweetId, StatusCounts](
           TweetStatusCountsStore.tweetStatusCountsStore(stratoClient, "tweetypie/core.Tweet"),
           ttl = 1.minute,
-          maxKeys = 10000, // 10K is enough for Heron Job.
+          matwitterKeys = 10000, // 10K is enough for Heron Job.
           cacheName = "tweet_status_count",
           windowSize = 10000L
         )(NullStatsReceiver)
@@ -170,7 +170,7 @@ object PersistentTweetStormJob {
             + 4L * 1024 * 1024 * 1024)
 
         // These settings help prevent GC issues in the most memory intensive steps of the job by
-        // dedicating more memory to the new gen heap designated by the -Xmn flag.
+        // dedicating more memory to the new gen heap designated by the -twittermn flag.
         Map(
           "Tail" -> HighHeapSize
         ).foreach {
@@ -178,7 +178,7 @@ object PersistentTweetStormJob {
             HeronConfig.setComponentJvmOptions(
               heronJvmOptions,
               stage,
-              s"-Xmx$heap -Xms$heap -Xmn${heap / 2}"
+              s"-twittermtwitter$heap -twitterms$heap -twittermn${heap / 2}"
             )
         }
 
@@ -186,14 +186,14 @@ object PersistentTweetStormJob {
           BTConfig.TOPOLOGY_TEAM_NAME -> "cassowary",
           BTConfig.TOPOLOGY_TEAM_EMAIL -> "no-reply@twitter.com",
           BTConfig.TOPOLOGY_WORKERS -> jInt(TotalWorker),
-          BTConfig.TOPOLOGY_ACKER_EXECUTORS -> jInt(0),
+          BTConfig.TOPOLOGY_ACKER_EtwitterECUTORS -> jInt(0),
           BTConfig.TOPOLOGY_MESSAGE_TIMEOUT_SECS -> jInt(30),
           BTConfig.TOPOLOGY_WORKER_CHILDOPTS -> List(
             "-Djava.security.auth.login.config=config/jaas.conf",
             "-Dsun.security.krb5.debug=true",
             "-Dcom.twitter.eventbus.client.EnableKafkaSaslTls=true",
             "-Dcom.twitter.eventbus.client.zoneName=" + zone,
-            s"-XX:MaxMetaspaceSize=$MetaspaceSize"
+            s"-twittertwitter:MatwitterMetaspaceSize=$MetaspaceSize"
           ).mkString(" "),
           HeronConfig.TOPOLOGY_CONTAINER_CPU_REQUESTED -> TotalCPU,
           HeronConfig.TOPOLOGY_CONTAINER_RAM_REQUESTED -> TotalRam,

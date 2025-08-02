@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
@@ -15,7 +15,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoLocationSource;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftGeoLocationSource;
 import com.twitter.search.common.schema.ImmutableSchema;
 import com.twitter.search.common.schema.SchemaBuilder;
 import com.twitter.search.common.schema.base.FeatureConfiguration;
@@ -25,13 +25,13 @@ import com.twitter.search.common.schema.thriftjava.ThriftFeatureNormalizationTyp
 /**
  * Field names, field IDs etc.
  */
-public class EarlybirdFieldConstants extends FieldNameToIdMapping {
+public class EarlybirdFieldConstants etwittertends FieldNameToIdMapping {
   @VisibleForTesting
   public static final String ENCODED_TWEET_FEATURES_FIELD_NAME = "encoded_tweet_features";
 
   @VisibleForTesting
-  public static final String EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME =
-      "extended_encoded_tweet_features";
+  public static final String EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME =
+      "etwittertended_encoded_tweet_features";
 
   private enum FlagFeatureFieldType {
     NON_FLAG_FEATURE_FIELD,
@@ -76,19 +76,19 @@ public class EarlybirdFieldConstants extends FieldNameToIdMapping {
    */
   public enum EarlybirdFieldConstant {
     // These enums are grouped by category and sorted alphabetically.
-    // Next indexed field ID is 76
-    // Next CSF field ID is 115
-    // Next encoded_features CSF field ID is 185
-    // Next extended_encoded_features CSF field ID is 284
+    // Netwittert indetwittered field ID is 76
+    // Netwittert CSF field ID is 115
+    // Netwittert encoded_features CSF field ID is 185
+    // Netwittert etwittertended_encoded_features CSF field ID is 284
 
-    // Text searchable fields
-    // Provides slow ID Mapping from tweet ID to doc ID through TermsEnum.seekExact().
+    // Tetwittert searchable fields
+    // Provides slow ID Mapping from tweet ID to doc ID through TermsEnum.seekEtwitteract().
     ID_FIELD("id", 0, EarlybirdCluster.ALL_CLUSTERS),
-    RESOLVED_LINKS_TEXT_FIELD("resolved_links_text", 1),
-    TEXT_FIELD("text", 2),
+    RESOLVED_LINKS_TEtwitterT_FIELD("resolved_links_tetwittert", 1),
+    TEtwitterT_FIELD("tetwittert", 2),
     TOKENIZED_FROM_USER_FIELD("tokenized_from_user", 3),
 
-    // Other indexed fields
+    // Other indetwittered fields
     CARD_TITLE_FIELD("card_title", 4),
     CARD_DESCRIPTION_FIELD("card_description", 5),
     // We require the createdAt field to be set so we can properly filter tweets based on time.
@@ -164,24 +164,24 @@ public class EarlybirdFieldConstants extends FieldNameToIdMapping {
     // SEARCH-27823: Field ID 62 used to be named_entity, which was the combination of all
     // named_entity* fields below. We need to leave 62 unused for backwards compatibility.
     NAMED_ENTITY_FROM_URL_FIELD("named_entity_from_url", 63),
-    NAMED_ENTITY_FROM_TEXT_FIELD("named_entity_from_text", 64),
+    NAMED_ENTITY_FROM_TEtwitterT_FIELD("named_entity_from_tetwittert", 64),
     NAMED_ENTITY_WITH_TYPE_FROM_URL_FIELD("named_entity_with_type_from_url", 65),
-    NAMED_ENTITY_WITH_TYPE_FROM_TEXT_FIELD("named_entity_with_type_from_text", 66),
+    NAMED_ENTITY_WITH_TYPE_FROM_TEtwitterT_FIELD("named_entity_with_type_from_tetwittert", 66),
     DIRECTED_AT_USER_ID_FIELD("directed_at_user_id", 67),
     SPACE_ID_FIELD("space_id", 68,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_GENERAL_PURPOSE_CLUSTERS),
     SPACE_TITLE_FIELD("space_title", 69,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_GENERAL_PURPOSE_CLUSTERS),
 
     // Detailed description of the space admin fields can be found at go/earlybirdfields.
     SPACE_ADMIN_FIELD("space_admin", 70,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_GENERAL_PURPOSE_CLUSTERS),
     TOKENIZED_SPACE_ADMIN_FIELD("tokenized_space_admin", 71,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_GENERAL_PURPOSE_CLUSTERS),
     CAMELCASE_TOKENIZED_SPACE_ADMIN_FIELD("camelcase_tokenized_space_admin", 72,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_GENERAL_PURPOSE_CLUSTERS),
     TOKENIZED_SPACE_ADMIN_DISPLAY_NAME_FIELD("tokenized_space_admin_display_name", 73,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_GENERAL_PURPOSE_CLUSTERS),
     URL_DESCRIPTION_FIELD("url_description", 74),
     URL_TITLE_FIELD("url_title", 75),
 
@@ -203,7 +203,7 @@ public class EarlybirdFieldConstants extends FieldNameToIdMapping {
     CARD_LANG_CSF("card_lang_csf", 110),
     DIRECTED_AT_USER_ID_CSF("directed_at_user_id_csf", 111),
     REFERENCE_AUTHOR_ID_CSF("reference_author_id_csf", 112),
-    EXCLUSIVE_CONVERSATION_AUTHOR_ID_CSF("exclusive_conversation_author_id_csf", 113),
+    EtwitterCLUSIVE_CONVERSATION_AUTHOR_ID_CSF("etwitterclusive_conversation_author_id_csf", 113),
     CARD_URI_CSF("card_uri_csf", 114),
 
     // CSF Views on top of ENCODED_TWEET_FEATURES_FIELD
@@ -225,7 +225,7 @@ public class EarlybirdFieldConstants extends FieldNameToIdMapping {
     FROM_VERIFIED_ACCOUNT_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "FROM_VERIFIED_ACCOUNT_FLAG",
         157,
         FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    TEXT_SCORE(ENCODED_TWEET_FEATURES_FIELD_NAME, "TEXT_SCORE", 158,
+    TEtwitterT_SCORE(ENCODED_TWEET_FEATURES_FIELD_NAME, "TEtwitterT_SCORE", 158,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
     LANGUAGE(ENCODED_TWEET_FEATURES_FIELD_NAME, "LANGUAGE", 159,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
@@ -237,7 +237,7 @@ public class EarlybirdFieldConstants extends FieldNameToIdMapping {
         FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
     HAS_NEWS_URL_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "HAS_NEWS_URL_FLAG", 163,
         FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    HAS_EXPANDO_CARD_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "HAS_EXPANDO_CARD_FLAG", 164,
+    HAS_EtwitterPANDO_CARD_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "HAS_EtwitterPANDO_CARD_FLAG", 164,
         FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
     HAS_MULTIPLE_MEDIA_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "HAS_MULTIPLE_MEDIA_FLAG", 165,
         FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
@@ -328,481 +328,481 @@ public class EarlybirdFieldConstants extends FieldNameToIdMapping {
     IS_NULLCAST_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "IS_NULLCAST_FLAG", 197,
         FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
 
-    // EXTENDED ENCODED TWEET FEATURES that's not available on archive clusters
-    EXTENDED_ENCODED_TWEET_FEATURES_FIELD(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME, 200,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+    // EtwitterTENDED ENCODED TWEET FEATURES that's not available on archive clusters
+    EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME, 200,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
 
     EMBEDS_IMPRESSION_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "EMBEDS_IMPRESSION_COUNT",
         221,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.LEGACY_BYTE_NORMALIZER),
     EMBEDS_URL_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "EMBEDS_URL_COUNT",
         222,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.LEGACY_BYTE_NORMALIZER),
     VIDEO_VIEW_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "VIDEO_VIEW_COUNT",
         223,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.LEGACY_BYTE_NORMALIZER),
 
     // empty bits in integer 0 (starting bit 24, 8 bits)
-    EXTENDED_FEATURE_UNUSED_BITS_0_24_8(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    EtwitterTENDED_FEATURE_UNUSED_BITS_0_24_8(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "UNUSED_BITS_0_24_8", 244,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
         UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
 
     // SEARCH-8564 - Reference Tweet Author ID
-    REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT", 202,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
-    REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
+    REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT", 203,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
 
     // SEARCHQUAL-8130: engagement counters v2
     // Integer 3
-    RETWEET_COUNT_V2(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    RETWEET_COUNT_V2(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "RETWEET_COUNT_V2", 225,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
-    FAVORITE_COUNT_V2(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    FAVORITE_COUNT_V2(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "FAVORITE_COUNT_V2", 226,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
-    REPLY_COUNT_V2(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    REPLY_COUNT_V2(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "REPLY_COUNT_V2", 227,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
     EMBEDS_IMPRESSION_COUNT_V2(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "EMBEDS_IMPRESSION_COUNT_V2",
         228,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
 
     // Integer 4
     EMBEDS_URL_COUNT_V2(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "EMBEDS_URL_COUNT_V2",
         229,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
     VIDEO_VIEW_COUNT_V2(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "VIDEO_VIEW_COUNT_V2",
         230,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
     QUOTE_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "QUOTE_COUNT",
         231,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
 
     // Tweet Safety Labels
-    LABEL_ABUSIVE_FLAG(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    LABEL_ABUSIVE_FLAG(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "LABEL_ABUSIVE_FLAG", 232,
         FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
 
-    LABEL_ABUSIVE_HI_RCL_FLAG(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    LABEL_ABUSIVE_HI_RCL_FLAG(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "LABEL_ABUSIVE_HI_RCL_FLAG", 233,
         FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
 
-    LABEL_DUP_CONTENT_FLAG(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    LABEL_DUP_CONTENT_FLAG(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "LABEL_DUP_CONTENT_FLAG", 234,
         FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
 
-    LABEL_NSFW_HI_PRC_FLAG(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    LABEL_NSFW_HI_PRC_FLAG(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "LABEL_NSFW_HI_PRC_FLAG", 235,
         FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
 
-    LABEL_NSFW_HI_RCL_FLAG(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    LABEL_NSFW_HI_RCL_FLAG(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "LABEL_NSFW_HI_RCL_FLAG", 236,
         FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
 
-    LABEL_SPAM_FLAG(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    LABEL_SPAM_FLAG(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "LABEL_SPAM_FLAG", 237,
         FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
 
-    LABEL_SPAM_HI_RCL_FLAG(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    LABEL_SPAM_HI_RCL_FLAG(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "LABEL_SPAM_HI_RCL_FLAG", 238,
         FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
 
     // please save this bit for other safety labels
-    EXTENDED_TEST_FEATURE_UNUSED_BITS_4_31_1(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_4_31_1(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "UNUSED_BITS_4_31_1", 239,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
         UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
 
     // Integer 5
     WEIGHTED_RETWEET_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "WEIGHTED_RETWEET_COUNT",
         240,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
     WEIGHTED_REPLY_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "WEIGHTED_REPLY_COUNT",
         241,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
     WEIGHTED_FAVORITE_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "WEIGHTED_FAVORITE_COUNT",
         242,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
     WEIGHTED_QUOTE_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "WEIGHTED_QUOTE_COUNT",
         243,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
 
     // Integer 6
     // Periscope features
-    PERISCOPE_EXISTS(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "PERISCOPE_EXISTS", 245,
+    PERISCOPE_EtwitterISTS(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        "PERISCOPE_EtwitterISTS", 245,
         FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
-    PERISCOPE_HAS_BEEN_FEATURED(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
+    PERISCOPE_HAS_BEEN_FEATURED(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "PERISCOPE_HAS_BEEN_FEATURED", 246,
         FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
-    PERISCOPE_IS_CURRENTLY_FEATURED(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
+    PERISCOPE_IS_CURRENTLY_FEATURED(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "PERISCOPE_IS_CURRENTLY_FEATURED", 247,
         FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
-    PERISCOPE_IS_FROM_QUALITY_SOURCE(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
+    PERISCOPE_IS_FROM_QUALITY_SOURCE(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "PERISCOPE_IS_FROM_QUALITY_SOURCE", 248,
         FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
-    PERISCOPE_IS_LIVE(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
+    PERISCOPE_IS_LIVE(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "PERISCOPE_IS_LIVE", 249,
         FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
-    IS_TRENDING_NOW_FLAG(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
+    IS_TRENDING_NOW_FLAG(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "IS_TRENDING_NOW_FLAG", 292,
         FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
 
     // remaining bits for integer 6 (starting bit 6, 26 remaining bits)
-    EXTENDED_TEST_FEATURE_UNUSED_BITS_7_6_26(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_7_6_26(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "UNUSED_BITS_7_6_26", 250,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
         UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
 
     // Decaying engagement counters
     // Integer 7
     DECAYED_RETWEET_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "DECAYED_RETWEET_COUNT",
         251,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
     DECAYED_REPLY_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "DECAYED_REPLY_COUNT",
         252,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
     DECAYED_FAVORITE_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "DECAYED_FAVORITE_COUNT",
         253,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
     DECAYED_QUOTE_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "DECAYED_QUOTE_COUNT",
         254,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
 
     // Fake engagement counters. The fake here is in the sense of spam, not in the sense of testing.
     // Refer to [JIRA SEARCHQUAL-10736 Remove Fake Engagements in Search] for more details.
     // Integer 8
     FAKE_RETWEET_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "FAKE_RETWEET_COUNT", 269,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
     FAKE_REPLY_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "FAKE_REPLY_COUNT", 270,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
     FAKE_FAVORITE_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "FAKE_FAVORITE_COUNT", 271,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
     FAKE_QUOTE_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "FAKE_QUOTE_COUNT", 272,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
 
     // Last engagement timestamps. These features use the Tweet's creation time as base and
     // are incremented every 1 hour
     // Integer 9
     LAST_RETWEET_SINCE_CREATION_HRS(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "LAST_RETWEET_SINCE_CREATION_HRS",
         273,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.NONE),
     LAST_REPLY_SINCE_CREATION_HRS(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "LAST_REPLY_SINCE_CREATION_HRS",
         274,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.NONE),
     LAST_FAVORITE_SINCE_CREATION_HRS(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "LAST_FAVORITE_SINCE_CREATION_HRS",
         275,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.NONE),
     LAST_QUOTE_SINCE_CREATION_HRS(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "LAST_QUOTE_SINCE_CREATION_HRS",
         276,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.NONE),
 
     // 4 bits hashtag count, mention count and stock count (SEARCH-24336)
     // Integer 10
     NUM_HASHTAGS_V2(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "NUM_HASHTAGS_V2",
         277,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.NONE
     ),
     NUM_MENTIONS_V2(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "NUM_MENTIONS_V2",
         278,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.NONE
     ),
     NUM_STOCKS(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "NUM_STOCKS",
         279,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.NONE
     ),
 
     // Integer 11
     // Blink engagement counters
     BLINK_RETWEET_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "BLINK_RETWEET_COUNT",
         280,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
     BLINK_REPLY_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "BLINK_REPLY_COUNT",
         281,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
     BLINK_FAVORITE_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "BLINK_FAVORITE_COUNT",
         282,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
     BLINK_QUOTE_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "BLINK_QUOTE_COUNT",
         283,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
 
     // Integer 10 (remaining)
-    // Production Toxicity and PBlock score from HML (go/toxicity, go/pblock)
-    TOXICITY_SCORE(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "TOXICITY_SCORE", 284,
+    // Production Totwittericity and PBlock score from HML (go/totwittericity, go/pblock)
+    TOtwitterICITY_SCORE(
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        "TOtwitterICITY_SCORE", 284,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.PREDICTION_SCORE_NORMALIZER
     ),
     PBLOCK_SCORE(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "PBLOCK_SCORE", 285,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.PREDICTION_SCORE_NORMALIZER
     ),
 
     // Integer 12
-    // Experimental health model scores from HML
-    EXPERIMENTAL_HEALTH_MODEL_SCORE_1(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "EXPERIMENTAL_HEALTH_MODEL_SCORE_1", 286,
+    // Etwitterperimental health model scores from HML
+    EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_1(
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        "EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_1", 286,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.PREDICTION_SCORE_NORMALIZER
     ),
-    EXPERIMENTAL_HEALTH_MODEL_SCORE_2(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "EXPERIMENTAL_HEALTH_MODEL_SCORE_2", 287,
+    EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_2(
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        "EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_2", 287,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.PREDICTION_SCORE_NORMALIZER
     ),
-    EXPERIMENTAL_HEALTH_MODEL_SCORE_3(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "EXPERIMENTAL_HEALTH_MODEL_SCORE_3", 288,
+    EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_3(
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        "EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_3", 288,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.PREDICTION_SCORE_NORMALIZER
     ),
-    // remaining bits for index 12 (unused_bits_12)
-    EXTENDED_TEST_FEATURE_UNUSED_BITS_12_30_2(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    // remaining bits for indetwitter 12 (unused_bits_12)
+    EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_12_30_2(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "UNUSED_BITS_12_30_2", 289,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
         UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
 
     // Integer 13
-    // Experimental health model scores from HML (cont.)
-    EXPERIMENTAL_HEALTH_MODEL_SCORE_4(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "EXPERIMENTAL_HEALTH_MODEL_SCORE_4", 290,
+    // Etwitterperimental health model scores from HML (cont.)
+    EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_4(
+        EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        "EtwitterPERIMENTAL_HEALTH_MODEL_SCORE_4", 290,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.PREDICTION_SCORE_NORMALIZER
     ),
     // Production pSpammyTweet score from HML (go/pspammytweet)
-    P_SPAMMY_TWEET_SCORE(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    P_SPAMMY_TWEET_SCORE(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "P_SPAMMY_TWEET_SCORE", 291,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.PREDICTION_SCORE_NORMALIZER
     ),
     // Production pReportedTweet score from HML (go/preportedtweet)
-    P_REPORTED_TWEET_SCORE(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    P_REPORTED_TWEET_SCORE(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "P_REPORTED_TWEET_SCORE", 293,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.PREDICTION_SCORE_NORMALIZER
     ),
-    // remaining bits for index 13 (unused_bits_13)
-    EXTENDED_TEST_FEATURE_UNUSED_BITS_13_30_2(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    // remaining bits for indetwitter 13 (unused_bits_13)
+    EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_13_30_2(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "UNUSED_BITS_13_30_2", 294,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
         UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS
     ),
 
     // Integer 14
     // Health model scores from HML (cont.)
     // Prod Spammy Tweet Content model score from Platform Manipulation (go/spammy-tweet-content)
-    SPAMMY_TWEET_CONTENT_SCORE(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    SPAMMY_TWEET_CONTENT_SCORE(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "SPAMMY_TWEET_CONTENT_SCORE", 295,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS,
         ThriftFeatureNormalizationType.PREDICTION_SCORE_NORMALIZER
     ),
-    // remaining bits for index 14 (unused_bits_14)
-    EXTENDED_TEST_FEATURE_UNUSED_BITS_14_10_22(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    // remaining bits for indetwitter 14 (unused_bits_14)
+    EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_14_10_22(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "UNUSED_BITS_14_10_22", 296,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
         UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS
     ),
 
-    // Note that the integer block index i in the names UNUSED_BITS{i}" below is 1-based, but the
-    // index j in UNUSED_BITS_{j}_x_y above is 0-based.
-    EXTENDED_TEST_FEATURE_UNUSED_BITS_16(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    // Note that the integer block indetwitter i in the names UNUSED_BITS{i}" below is 1-based, but the
+    // indetwitter j in UNUSED_BITS_{j}_twitter_y above is 0-based.
+    EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_16(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "UNUSED_BITS16", 216,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
         UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
 
-    EXTENDED_TEST_FEATURE_UNUSED_BITS_17(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_17(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "UNUSED_BITS17", 217,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
         UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
 
-    EXTENDED_TEST_FEATURE_UNUSED_BITS_18(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_18(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "UNUSED_BITS18", 218,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
         UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
 
-    EXTENDED_TEST_FEATURE_UNUSED_BITS_19(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_19(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "UNUSED_BITS19", 219,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
         UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS),
 
-    EXTENDED_TEST_FEATURE_UNUSED_BITS_20(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+    EtwitterTENDED_TEST_FEATURE_UNUSED_BITS_20(EtwitterTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
         "UNUSED_BITS20", 220,
         FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
         UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS);
+        EarlybirdCluster.TWITTER_IN_MEMORY_INDEtwitter_FORMAT_ALL_CLUSTERS);
 
-    // Filter field terms. These end up as terms in the "internal" field (id=18). So for example
+    // Filter field terms. These end up as terms in the "internal" field (id=18). So for etwitterample
     // you can have a doc with field(internal) = "__filter_nullcast", "__filter_vine" and that will
     // be a nullcast tweet with a vine link in it.
     public static final String NULLCAST_FILTER_TERM = "nullcast";
@@ -818,7 +818,7 @@ public class EarlybirdFieldConstants extends FieldNameToIdMapping {
     public static final String PROFILE_GEO_FILTER_TERM = "profile_geo";
     public static final String SELF_THREAD_FILTER_TERM = "self_threads";
     public static final String DIRECTED_AT_FILTER_TERM = "directed_at";
-    public static final String EXCLUSIVE_FILTER_TERM = "exclusive";
+    public static final String EtwitterCLUSIVE_FILTER_TERM = "etwitterclusive";
 
     // Reserved terms for the internal field.
     public static final String HAS_POSITIVE_SMILEY = "__has_positive_smiley";
@@ -841,7 +841,7 @@ public class EarlybirdFieldConstants extends FieldNameToIdMapping {
     public static final String SPACES_FACET = "spaces";
 
     /**
-     * Used by the query parser to check that the operator of a [filter X] query is valid.
+     * Used by the query parser to check that the operator of a [filter twitter] query is valid.
      * Also used by blender, though it probably shouldn't be.
      */
     public static final ImmutableSet<String> FACETS = ImmutableSet.<String>builder()
@@ -911,7 +911,7 @@ public class EarlybirdFieldConstants extends FieldNameToIdMapping {
     /**
      * Base field name is needed here in order to construct the full
      * name of the feature. Our convention is that a feature should be named
-     * as: baseFieldName.featureName.  For example: encoded_tweet_features.retweet_count.
+     * as: baseFieldName.featureName.  For etwitterample: encoded_tweet_features.retweet_count.
      */
     EarlybirdFieldConstant(
         String baseName,
@@ -1050,10 +1050,10 @@ public class EarlybirdFieldConstants extends FieldNameToIdMapping {
     Set<Integer> fieldIdDupDetector = Sets.newHashSet();
     for (EarlybirdFieldConstant fc : EarlybirdFieldConstant.values()) {
       if (fieldNameDupDetector.contains(fc.getFieldName())) {
-        throw new IllegalStateException("detected fields sharing field name: " + fc.getFieldName());
+        throw new IllegalStateEtwitterception("detected fields sharing field name: " + fc.getFieldName());
       }
       if (fieldIdDupDetector.contains(fc.getFieldId())) {
-        throw new IllegalStateException("detected fields sharing field id: " + fc.getFieldId());
+        throw new IllegalStateEtwitterception("detected fields sharing field id: " + fc.getFieldId());
       }
 
       fieldNameDupDetector.add(fc.getFieldName());
@@ -1068,7 +1068,7 @@ public class EarlybirdFieldConstants extends FieldNameToIdMapping {
   // This define the list of boolean features, but the name does not have "flag" inside.  This
   // definition is only for double checking purpose to prevent code change mistakes.  The setting
   // of the flag feature is based on FlagFeatureFieldType.FLAG_FEATURE_FIELD.
-  public static final Set<EarlybirdFieldConstants.EarlybirdFieldConstant> EXTRA_FLAG_FIELDS =
+  public static final Set<EarlybirdFieldConstants.EarlybirdFieldConstant> EtwitterTRA_FLAG_FIELDS =
       Sets.newHashSet(EarlybirdFieldConstants.EarlybirdFieldConstant.IS_SENSITIVE_CONTENT);
   public static final String FLAG_STRING = "flag";
 
@@ -1098,7 +1098,7 @@ public class EarlybirdFieldConstants extends FieldNameToIdMapping {
   public static EarlybirdFieldConstant getFieldConstant(String fieldName) {
     EarlybirdFieldConstant field = NAME_TO_ID_MAP.get(fieldName);
     if (field == null) {
-      throw new IllegalArgumentException("Unknown field: " + fieldName);
+      throw new IllegalArgumentEtwitterception("Unknown field: " + fieldName);
     }
     return field;
   }
@@ -1109,7 +1109,7 @@ public class EarlybirdFieldConstants extends FieldNameToIdMapping {
   public static EarlybirdFieldConstant getFieldConstant(int fieldId) {
     EarlybirdFieldConstant field = ID_TO_FIELD_MAP.get(fieldId);
     if (field == null) {
-      throw new IllegalArgumentException("Unknown field: " + fieldId);
+      throw new IllegalArgumentEtwitterception("Unknown field: " + fieldId);
     }
     return field;
   }

@@ -18,9 +18,9 @@ public final class EarlybirdRPCStats {
   private final SearchRateCounter responseClientErrors;
 
   public EarlybirdRPCStats(String name) {
-    requestStats = SearchRequestStats.export(name, TimeUnit.MICROSECONDS, true, true);
-    earlyTerminatedRequests = SearchCounter.export(name + "_early_terminated");
-    responseClientErrors = SearchRateCounter.export(name + "_client_error");
+    requestStats = SearchRequestStats.etwitterport(name, TimeUnit.MICROSECONDS, true, true);
+    earlyTerminatedRequests = SearchCounter.etwitterport(name + "_early_terminated");
+    responseClientErrors = SearchRateCounter.etwitterport(name + "_client_error");
   }
 
   public long getRequestRate() {

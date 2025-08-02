@@ -56,8 +56,8 @@ object ClusterDetailsReadableStore {
           case Some(datasetName) =>
             clusterDetailsStores((mhMtlsParams, datasetName)).get(modelVersionAndClusterId)
           case None =>
-            Future.exception(
-              new IllegalArgumentException(
+            Future.etwitterception(
+              new IllegalArgumentEtwitterception(
                 "Unknown model version " + modelVersion + ". Known modelVersions: " + knownModelVersions)
             )
         }

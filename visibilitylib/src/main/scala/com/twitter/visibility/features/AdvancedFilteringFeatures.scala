@@ -3,22 +3,22 @@ package com.twitter.visibility.features
 import com.twitter.gizmoduck.thriftscala.MentionFilter
 import com.twitter.util.Duration
 
-case object ViewerFiltersNoConfirmedEmail extends Feature[Boolean]
+case object ViewerFiltersNoConfirmedEmail etwittertends Feature[Boolean]
 
-case object ViewerFiltersNoConfirmedPhone extends Feature[Boolean]
+case object ViewerFiltersNoConfirmedPhone etwittertends Feature[Boolean]
 
-case object ViewerFiltersDefaultProfileImage extends Feature[Boolean]
+case object ViewerFiltersDefaultProfileImage etwittertends Feature[Boolean]
 
-case object ViewerFiltersNewUsers extends Feature[Boolean]
+case object ViewerFiltersNewUsers etwittertends Feature[Boolean]
 
-case object ViewerFiltersNotFollowedBy extends Feature[Boolean]
+case object ViewerFiltersNotFollowedBy etwittertends Feature[Boolean]
 
-case object ViewerMentionFilter extends Feature[MentionFilter]
+case object ViewerMentionFilter etwittertends Feature[MentionFilter]
 
-case object AuthorHasConfirmedEmail extends Feature[Boolean]
+case object AuthorHasConfirmedEmail etwittertends Feature[Boolean]
 
-case object AuthorHasVerifiedPhone extends Feature[Boolean]
+case object AuthorHasVerifiedPhone etwittertends Feature[Boolean]
 
-case object AuthorHasDefaultProfileImage extends Feature[Boolean]
+case object AuthorHasDefaultProfileImage etwittertends Feature[Boolean]
 
-case object AuthorAccountAge extends Feature[Duration]
+case object AuthorAccountAge etwittertends Feature[Duration]

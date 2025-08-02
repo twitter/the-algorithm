@@ -1,15 +1,15 @@
 package com.twitter.frigate.pushservice.model.ibis
 
 import com.twitter.frigate.pushservice.model.TopicProofTweetPushCandidate
-import com.twitter.frigate.pushservice.exception.UttEntityNotFoundException
+import com.twitter.frigate.pushservice.etwitterception.UttEntityNotFoundEtwitterception
 import com.twitter.util.Future
 
-trait TopicProofTweetIbis2Hydrator extends TweetCandidateIbis2Hydrator {
+trait TopicProofTweetIbis2Hydrator etwittertends TweetCandidateIbis2Hydrator {
   self: TopicProofTweetPushCandidate =>
 
   private lazy val implicitTopicTweetModelValues: Map[String, String] = {
     val uttEntity = localizedUttEntity.getOrElse(
-      throw new UttEntityNotFoundException(
+      throw new UttEntityNotFoundEtwitterception(
         s"${getClass.getSimpleName} UttEntity missing for $tweetId"))
 
     Map(

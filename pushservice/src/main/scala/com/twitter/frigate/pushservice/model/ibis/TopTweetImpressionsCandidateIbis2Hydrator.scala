@@ -5,7 +5,7 @@ import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
 import com.twitter.frigate.pushservice.util.PushIbisUtil.mergeFutModelValues
 import com.twitter.util.Future
 
-trait TopTweetImpressionsCandidateIbis2Hydrator extends Ibis2HydratorForCandidate {
+trait TopTweetImpressionsCandidateIbis2Hydrator etwittertends Ibis2HydratorForCandidate {
   self: PushCandidate with TopTweetImpressionsCandidate =>
 
   private lazy val targetModelValues: Map[String, String] = {

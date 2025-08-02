@@ -7,8 +7,8 @@ import com.twitter.unified_user_actions.thriftscala._
 import com.twitter.util.Time
 import org.scalatest.prop.TableDrivenPropertyChecks
 
-class FavoriteArchivalEventsAdapterSpec extends Test with TableDrivenPropertyChecks {
-  trait Fixture {
+class FavoriteArchivalEventsAdapterSpec etwittertends Test with TableDrivenPropertyChecks {
+  trait Fitwitterture {
 
     val frozenTime = Time.fromMilliseconds(1658949273000L)
 
@@ -48,7 +48,7 @@ class FavoriteArchivalEventsAdapterSpec extends Test with TableDrivenPropertyChe
       sourceTweetId = Some(tweetId)
     )
 
-    val expectedUua1 = UnifiedUserAction(
+    val etwitterpectedUua1 = UnifiedUserAction(
       userIdentifier = UserIdentifier(userId = Some(userId)),
       item = Item.TweetInfo(
         TweetInfo(
@@ -63,7 +63,7 @@ class FavoriteArchivalEventsAdapterSpec extends Test with TableDrivenPropertyChe
         sourceLineage = SourceLineage.ServerFavoriteArchivalEvents,
       )
     )
-    val expectedUua2 = UnifiedUserAction(
+    val etwitterpectedUua2 = UnifiedUserAction(
       userIdentifier = UserIdentifier(userId = Some(userId)),
       item = Item.TweetInfo(
         TweetInfo(
@@ -79,7 +79,7 @@ class FavoriteArchivalEventsAdapterSpec extends Test with TableDrivenPropertyChe
         sourceLineage = SourceLineage.ServerFavoriteArchivalEvents,
       )
     )
-    val expectedUua3 = UnifiedUserAction(
+    val etwitterpectedUua3 = UnifiedUserAction(
       userIdentifier = UserIdentifier(userId = Some(userId)),
       item = Item.TweetInfo(
         TweetInfo(
@@ -94,7 +94,7 @@ class FavoriteArchivalEventsAdapterSpec extends Test with TableDrivenPropertyChe
         sourceLineage = SourceLineage.ServerFavoriteArchivalEvents,
       )
     )
-    val expectedUua4 = UnifiedUserAction(
+    val etwitterpectedUua4 = UnifiedUserAction(
       userIdentifier = UserIdentifier(userId = Some(userId)),
       item = Item.TweetInfo(
         TweetInfo(
@@ -113,18 +113,18 @@ class FavoriteArchivalEventsAdapterSpec extends Test with TableDrivenPropertyChe
   }
 
   test("all tests") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val table = Table(
-          ("event", "expected"),
-          (favArchivalEventNoRetweet, expectedUua1),
-          (favArchivalEventRetweet, expectedUua2),
-          (favUnarchivalEventNoRetweet, expectedUua3),
-          (favUnarchivalEventRetweet, expectedUua4)
+          ("event", "etwitterpected"),
+          (favArchivalEventNoRetweet, etwitterpectedUua1),
+          (favArchivalEventRetweet, etwitterpectedUua2),
+          (favUnarchivalEventNoRetweet, etwitterpectedUua3),
+          (favUnarchivalEventRetweet, etwitterpectedUua4)
         )
-        forEvery(table) { (event: FavoriteArchivalEvent, expected: UnifiedUserAction) =>
+        forEvery(table) { (event: FavoriteArchivalEvent, etwitterpected: UnifiedUserAction) =>
           val actual = FavoriteArchivalEventsAdapter.adaptEvent(event)
-          assert(Seq(expected) === actual)
+          assert(Seq(etwitterpected) === actual)
         }
       }
     }

@@ -13,15 +13,15 @@ import com.twitter.simclusters_v2.common.Country
 import com.twitter.simclusters_v2.common.Language
 import com.twitter.simclusters_v2.common.TopicId
 import com.twitter.simclusters_v2.common.UserId
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
+import com.twitter.wtf.scalding.jobs.common.AdhocEtwitterecutionApp
+import com.twitter.wtf.scalding.jobs.common.ScheduledEtwitterecutionApp
 import java.util.TimeZone
 import scala.util.Random
 import com.twitter.ml.api.util.FDsl._
-import com.twitter.scalding.source.DailySuffixCsv
-import com.twitter.scalding.source.DailySuffixTypedTsv
+import com.twitter.scalding.source.DailySuffitwitterCsv
+import com.twitter.scalding.source.DailySuffitwitterTypedTsv
 import com.twitter.simclusters_v2.hdfs_sources.FavTfgTopicEmbeddingsScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
+import com.twitter.simclusters_v2.scalding.embedding.common.EtwitterternalDataSources
 import com.twitter.simclusters_v2.thriftscala.EmbeddingType
 
 /**
@@ -39,13 +39,13 @@ scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/topic
 --user cassowary \
 --submitter atla-aor-08-sr1 \
 --main-class com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations.UserTopicFeatureHydrationAdhocApp \
---submitter-memory 128192.megabyte --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M'" \
+--submitter-memory 128192.megabyte --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-twittermtwitter7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-twittermtwitter7618M'" \
 -- \
 --date 2020-10-14 \
 --outputDir "/user/cassowary/adhoc/your_ldap/user_topic_features_popular_clusters_filtered_oct_16"
  */
 
-object UserTopicFeatureHydrationAdhocApp extends AdhocExecutionApp {
+object UserTopicFeatureHydrationAdhocApp etwittertends AdhocEtwitterecutionApp {
 
   import UserTopicModellingJobUtils._
 
@@ -55,7 +55,7 @@ object UserTopicFeatureHydrationAdhocApp extends AdhocExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     val outputDir = args("outputDir")
     val numDataRecordsTraining = Stat("num_data_records_training")
@@ -63,16 +63,16 @@ object UserTopicFeatureHydrationAdhocApp extends AdhocExecutionApp {
     val testingRatio = args.double("testingRatio", 0.2)
 
     val (trainingDataSamples, testDataSamples, sortedVocab) = UserTopicModellingJobUtils.run(
-      ExternalDataSources.topicFollowGraphSource,
-      ExternalDataSources.notInterestedTopicsSource,
-      ExternalDataSources.userSource,
+      EtwitterternalDataSources.topicFollowGraphSource,
+      EtwitterternalDataSources.notInterestedTopicsSource,
+      EtwitterternalDataSources.userSource,
       DataSources.getUserInterestedInData,
       DataSources.getPerLanguageTopicEmbeddings,
       testingRatio
     )
 
     val userTopicAdapter = new UserTopicDataRecordAdapter()
-    Execution
+    Etwitterecution
       .zip(
         convertTypedPipeToDataSetPipe(
           trainingDataSamples.map { train =>
@@ -80,8 +80,8 @@ object UserTopicFeatureHydrationAdhocApp extends AdhocExecutionApp {
             train
           },
           userTopicAdapter)
-          .writeExecution(
-            DailySuffixFeatureSink(outputDir + "/training")
+          .writeEtwitterecution(
+            DailySuffitwitterFeatureSink(outputDir + "/training")
           ),
         convertTypedPipeToDataSetPipe(
           testDataSamples.map { test =>
@@ -89,13 +89,13 @@ object UserTopicFeatureHydrationAdhocApp extends AdhocExecutionApp {
             test
           },
           userTopicAdapter)
-          .writeExecution(
-            DailySuffixFeatureSink(outputDir + "/testing")
+          .writeEtwitterecution(
+            DailySuffitwitterFeatureSink(outputDir + "/testing")
           ),
         sortedVocab
-          .map { topicsWithSortedIndexes =>
-            topicsWithSortedIndexes.map(_._1)
-          }.flatten.writeExecution(DailySuffixTypedTsv(outputDir + "/vocab"))
+          .map { topicsWithSortedIndetwitteres =>
+            topicsWithSortedIndetwitteres.map(_._1)
+          }.flatten.writeEtwitterecution(DailySuffitwitterTypedTsv(outputDir + "/vocab"))
       ).unit
   }
 }
@@ -106,7 +106,7 @@ capesospy-v2 update --build_locally \
  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
 
-object UserTopicFeatureHydrationScheduledApp extends ScheduledExecutionApp {
+object UserTopicFeatureHydrationScheduledApp etwittertends ScheduledEtwitterecutionApp {
 
   import UserTopicModellingJobUtils._
 
@@ -123,22 +123,22 @@ object UserTopicFeatureHydrationScheduledApp extends ScheduledExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val testingRatio = args.double("testingRatio", 0.2)
 
     val (trainingDataSamples, testDataSamples, sortedVocab) = UserTopicModellingJobUtils.run(
-      ExternalDataSources.topicFollowGraphSource,
-      ExternalDataSources.notInterestedTopicsSource,
-      ExternalDataSources.userSource,
+      EtwitterternalDataSources.topicFollowGraphSource,
+      EtwitterternalDataSources.notInterestedTopicsSource,
+      EtwitterternalDataSources.userSource,
       DataSources.getUserInterestedInData,
       DataSources.getPerLanguageTopicEmbeddings,
       testingRatio
     )
 
     val userTopicAdapter = new UserTopicDataRecordAdapter()
-    Execution
+    Etwitterecution
       .zip(
-        getTrainTestExec(
+        getTrainTestEtwitterec(
           trainingDataSamples,
           testDataSamples,
           TopicRecommendationsTrainDatarecordsJavaDataset,
@@ -147,9 +147,9 @@ object UserTopicFeatureHydrationScheduledApp extends ScheduledExecutionApp {
           userTopicAdapter
         ),
         sortedVocab
-          .map { topicsWithSortedIndexes =>
-            topicsWithSortedIndexes.map(_._1)
-          }.flatten.writeExecution(DailySuffixTypedTsv(outputPath + "/vocab"))
+          .map { topicsWithSortedIndetwitteres =>
+            topicsWithSortedIndetwitteres.map(_._1)
+          }.flatten.writeEtwitterecution(DailySuffitwitterTypedTsv(outputPath + "/vocab"))
       ).unit
 
   }
@@ -190,7 +190,7 @@ object UserTopicModellingJobUtils {
     val allFollowableTopicsWithMappedIds: TypedPipe[(TopicId, Int)] =
       allFollowableTopics.groupAll.mapGroup {
         case (_, topicIter) =>
-          topicIter.zipWithIndex.map {
+          topicIter.zipWithIndetwitter.map {
             case (topicId, mappedId) =>
               (topicId, mappedId)
           }
@@ -222,7 +222,7 @@ object UserTopicModellingJobUtils {
   ): (TypedPipe[UserTopicTrainingSample], TypedPipe[UserTopicTrainingSample]) = {
     val (trainSplit, testSplit) = dataTrainingSamples
       .map { currSmple => (currSmple.userId, currSmple) }.groupBy(_._1).partition(_ =>
-        Random.nextDouble() > testingRatio)
+        Random.netwittertDouble() > testingRatio)
     val trainingData = trainSplit.values.map(_._2)
     val testingData = testSplit.values.map(_._2)
     (trainingData, testingData)
@@ -232,7 +232,7 @@ object UserTopicModellingJobUtils {
    * To get the target topic for each training data sample for a user from the TopicFollowGraph
    *
    * @param topicFollowSource
-   * @return (UserId, Set(allFollowedTopicsExceptTargetTopic), targetTopic)
+   * @return (UserId, Set(allFollowedTopicsEtwitterceptTargetTopic), targetTopic)
    */
   def getTargetTopicsFromTFG(
     topicFollowSource: TypedPipe[(TopicId, UserId)]
@@ -303,8 +303,8 @@ object UserTopicModellingJobUtils {
         case (userId, followedTopics, targetFollowedTopic, notInterestedTopics) =>
           (targetFollowedTopic, (userId, followedTopics, notInterestedTopics))
       }.join(allFollowableTopicsWithMappedIds).map {
-        case (targetTopic, ((userId, followedTopics, notInterestedTopics), targetTopicIdx)) =>
-          (userId, followedTopics, notInterestedTopics, targetTopic, targetTopicIdx)
+        case (targetTopic, ((userId, followedTopics, notInterestedTopics), targetTopicIdtwitter)) =>
+          (userId, followedTopics, notInterestedTopics, targetTopic, targetTopicIdtwitter)
       }
       .groupBy(_._1).sketch(4000)
       .join(userCountryAndLanguage
@@ -312,7 +312,7 @@ object UserTopicModellingJobUtils {
       .values.map {
         case (
               (
-                (userId, followedTopics, notInterestedTopics, targetTopic, targetTopicIdx),
+                (userId, followedTopics, notInterestedTopics, targetTopic, targetTopicIdtwitter),
                 (_, (userCountry, userLanguage))
               ),
               userIntOpt) =>
@@ -321,7 +321,7 @@ object UserTopicModellingJobUtils {
             followedTopics,
             notInterestedTopics,
             targetTopic,
-            targetTopicIdx,
+            targetTopicIdtwitter,
             userCountry,
             userLanguage,
             userIntOpt.getOrElse(Map.empty))
@@ -366,7 +366,7 @@ object UserTopicModellingJobUtils {
               followedTopics,
               notInterestedTopics,
               targetTopic,
-              targetTopicIdx,
+              targetTopicIdtwitter,
               userCountry,
               userLanguage,
               userInt),
@@ -390,7 +390,7 @@ object UserTopicModellingJobUtils {
             notInterestedTopics,
             userCountry,
             userLanguage,
-            targetTopicIdx,
+            targetTopicIdtwitter,
             userInt,
             averageFollowedTopicsSimClusters,
             averageNotInterestedTopicsSimClusters
@@ -405,7 +405,7 @@ object UserTopicModellingJobUtils {
   /**
    * Write train and test data
    */
-  def getTrainTestExec(
+  def getTrainTestEtwitterec(
     trainingData: TypedPipe[UserTopicTrainingSample],
     testingData: TypedPipe[UserTopicTrainingSample],
     trainDataset: SnapshotDALDatasetBase[DataRecord],
@@ -414,24 +414,24 @@ object UserTopicModellingJobUtils {
     adapter: IRecordOneToOneAdapter[UserTopicTrainingSample]
   )(
     implicit dateRange: DateRange
-  ): Execution[Unit] = {
-    val trainExec =
+  ): Etwitterecution[Unit] = {
+    val trainEtwitterec =
       convertTypedPipeToDataSetPipe(trainingData, adapter)
-        .writeDALSnapshotExecution(
+        .writeDALSnapshotEtwitterecution(
           trainDataset,
           D.Daily,
-          D.Suffix(s"$outputPath/training"),
+          D.Suffitwitter(s"$outputPath/training"),
           D.EBLzo(),
           dateRange.end)
-    val testExec =
+    val testEtwitterec =
       convertTypedPipeToDataSetPipe(testingData, adapter)
-        .writeDALSnapshotExecution(
+        .writeDALSnapshotEtwitterecution(
           testDataset,
           D.Daily,
-          D.Suffix(s"$outputPath/testing"),
+          D.Suffitwitter(s"$outputPath/testing"),
           D.EBLzo(),
           dateRange.end)
-    Execution.zip(trainExec, testExec).unit
+    Etwitterecution.zip(trainEtwitterec, testEtwitterec).unit
   }
 
   /**

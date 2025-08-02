@@ -17,7 +17,7 @@ import com.twitter.search.earlybird.thrift.ThriftSocialFilterType;
 
 /*
  * The class for all query specific parameters, including the parameters from the relevanceOptions and
- * values that are extracted from the request itself.
+ * values that are etwittertracted from the request itself.
  */
 public class LinearScoringParams {
 
@@ -26,11 +26,11 @@ public class LinearScoringParams {
   public static final double DEFAULT_NO_BOOST = 1.0;
   @VisibleForTesting
   static final SearchCounter NULL_USER_LANGS_KEY =
-      SearchCounter.export("linear_scoring_params_null_user_langs_key");
+      SearchCounter.etwitterport("linear_scoring_params_null_user_langs_key");
 
   public final double luceneWeight;
-  public final double textScoreWeight;
-  public final double textScoreMinVal;
+  public final double tetwittertScoreWeight;
+  public final double tetwittertScoreMinVal;
   public final double retweetWeight;
   public final double retweetMinVal;
   public final double favWeight;
@@ -45,8 +45,8 @@ public class LinearScoringParams {
   public final double videoViewWeight;
   public final double quotedCountWeight;
 
-  public final double[] rankingOfflineExpWeights =
-      new double[LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS];
+  public final double[] rankingOfflineEtwitterpWeights =
+      new double[LinearScoringData.MAtwitter_OFFLINE_EtwitterPERIMENTAL_FIELDS];
 
   public final boolean applyBoosts;
 
@@ -80,7 +80,7 @@ public class LinearScoringParams {
   public final boolean applyFiltersAlways;
 
   public final boolean useLuceneScoreAsBoost;
-  public final double maxLuceneScoreBoost;
+  public final double matwitterLuceneScoreBoost;
 
   public final double langEnglishTweetDemote;
   public final double langEnglishUIDemote;
@@ -97,11 +97,11 @@ public class LinearScoringParams {
 
   // hit attribute demotions
   public final boolean enableHitDemotion;
-  public final double noTextHitDemotion;
+  public final double noTetwittertHitDemotion;
   public final double urlOnlyHitDemotion;
   public final double nameOnlyHitDemotion;
-  public final double separateTextAndNameHitDemotion;
-  public final double separateTextAndUrlHitDemotion;
+  public final double separateTetwittertAndNameHitDemotion;
+  public final double separateTetwittertAndUrlHitDemotion;
 
   // trends related params
   public final double tweetHasTrendBoost;
@@ -130,8 +130,8 @@ public class LinearScoringParams {
     // weights
     luceneWeight = params.isSetLuceneScoreParams()
         ? params.getLuceneScoreParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    textScoreWeight = params.isSetTextScoreParams()
-        ? params.getTextScoreParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
+    tetwittertScoreWeight = params.isSetTetwittertScoreParams()
+        ? params.getTetwittertScoreParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
     retweetWeight = params.isSetRetweetCountParams()
         ? params.getRetweetCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
     favWeight = params.isSetFavCountParams()
@@ -142,12 +142,12 @@ public class LinearScoringParams {
         ? params.getMultipleReplyCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
     parusWeight = params.isSetParusScoreParams()
         ? params.getParusScoreParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    for (int i = 0; i < LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS; i++) {
+    for (int i = 0; i < LinearScoringData.MAtwitter_OFFLINE_EtwitterPERIMENTAL_FIELDS; i++) {
       Byte featureTypeByte = (byte) i;
       // default weight is 0, thus contribution for unset feature value will be 0.
-      rankingOfflineExpWeights[i] = params.getOfflineExperimentalFeatureRankingParamsSize() > 0
-          && params.getOfflineExperimentalFeatureRankingParams().containsKey(featureTypeByte)
-              ? params.getOfflineExperimentalFeatureRankingParams().get(featureTypeByte).getWeight()
+      rankingOfflineEtwitterpWeights[i] = params.getOfflineEtwitterperimentalFeatureRankingParamsSize() > 0
+          && params.getOfflineEtwitterperimentalFeatureRankingParams().containsKey(featureTypeByte)
+              ? params.getOfflineEtwitterperimentalFeatureRankingParams().get(featureTypeByte).getWeight()
               : DEFAULT_FEATURE_WEIGHT;
     }
     embedsImpressionWeight = params.isSetEmbedsImpressionCountParams()
@@ -169,14 +169,14 @@ public class LinearScoringParams {
     Arrays.fill(cardDescriptionMatchBoosts, DEFAULT_NO_BOOST);
     if (params.isSetCardRankingParams()) {
       for (SearchCardType cardType : SearchCardType.values()) {
-        byte cardTypeIndex = cardType.getByteValue();
-        ThriftCardRankingParams rankingParams = params.getCardRankingParams().get(cardTypeIndex);
+        byte cardTypeIndetwitter = cardType.getByteValue();
+        ThriftCardRankingParams rankingParams = params.getCardRankingParams().get(cardTypeIndetwitter);
         if (rankingParams != null) {
-          hasCardBoosts[cardTypeIndex] = rankingParams.getHasCardBoost();
-          cardAuthorMatchBoosts[cardTypeIndex] = rankingParams.getAuthorMatchBoost();
-          cardDomainMatchBoosts[cardTypeIndex] = rankingParams.getDomainMatchBoost();
-          cardTitleMatchBoosts[cardTypeIndex] = rankingParams.getTitleMatchBoost();
-          cardDescriptionMatchBoosts[cardTypeIndex] = rankingParams.getDescriptionMatchBoost();
+          hasCardBoosts[cardTypeIndetwitter] = rankingParams.getHasCardBoost();
+          cardAuthorMatchBoosts[cardTypeIndetwitter] = rankingParams.getAuthorMatchBoost();
+          cardDomainMatchBoosts[cardTypeIndetwitter] = rankingParams.getDomainMatchBoost();
+          cardTitleMatchBoosts[cardTypeIndetwitter] = rankingParams.getTitleMatchBoost();
+          cardDescriptionMatchBoosts[cardTypeIndetwitter] = rankingParams.getDescriptionMatchBoost();
         }
       }
     }
@@ -195,9 +195,9 @@ public class LinearScoringParams {
     querySpecificScoreAdjustments = params.getQuerySpecificScoreAdjustments();
     authorSpecificScoreAdjustments = params.getAuthorSpecificScoreAdjustments();
 
-    // min/max filters
-    textScoreMinVal = params.isSetTextScoreParams()
-        ? params.getTextScoreParams().getMin() : DEFAULT_FEATURE_MIN_VAL;
+    // min/matwitter filters
+    tetwittertScoreMinVal = params.isSetTetwittertScoreParams()
+        ? params.getTetwittertScoreParams().getMin() : DEFAULT_FEATURE_MIN_VAL;
     reputationMinVal = params.isSetReputationParams()
         ? params.getReputationParams().getMin() : DEFAULT_FEATURE_MIN_VAL;
     multipleReplyMinVal = params.isSetMultipleReplyCountParams()
@@ -224,11 +224,11 @@ public class LinearScoringParams {
 
     // hit demotions
     enableHitDemotion = params.isEnableHitDemotion();
-    noTextHitDemotion = params.getNoTextHitDemotion();
+    noTetwittertHitDemotion = params.getNoTetwittertHitDemotion();
     urlOnlyHitDemotion = params.getUrlOnlyHitDemotion();
     nameOnlyHitDemotion = params.getNameOnlyHitDemotion();
-    separateTextAndNameHitDemotion = params.getSeparateTextAndNameHitDemotion();
-    separateTextAndUrlHitDemotion = params.getSeparateTextAndUrlHitDemotion();
+    separateTetwittertAndNameHitDemotion = params.getSeparateTetwittertAndNameHitDemotion();
+    separateTetwittertAndUrlHitDemotion = params.getSeparateTetwittertAndUrlHitDemotion();
 
     outOfNetworkReplyPenalty = params.getOutOfNetworkReplyPenalty();
 
@@ -267,7 +267,7 @@ public class LinearScoringParams {
     applyFiltersAlways = params.isApplyFiltersAlways();
 
     useLuceneScoreAsBoost = params.isUseLuceneScoreAsBoost();
-    maxLuceneScoreBoost = params.getMaxLuceneScoreBoost();
+    matwitterLuceneScoreBoost = params.getMatwitterLuceneScoreBoost();
 
     searcherId = searchQuery.isSetSearcherId() ? searchQuery.getSearcherId() : -1;
     selfTweetBoost = params.getSelfTweetBoost();

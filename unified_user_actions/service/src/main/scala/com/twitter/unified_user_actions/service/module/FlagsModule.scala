@@ -7,7 +7,7 @@ import com.twitter.util.Duration
 import com.twitter.util.StorageUnit
 import com.twitter.util.logging.Logging
 
-object FlagsModule extends TwitterModule with Logging {
+object FlagsModule etwittertends TwitterModule with Logging {
   // Twitter
   final val cluster = "cluster"
 
@@ -18,7 +18,7 @@ object FlagsModule extends TwitterModule with Logging {
   final val kafkaSinkTopics = "kafka.sink.topics"
   final val kafkaGroupId = ClientConfigs.kafkaGroupIdConfig
   final val kafkaProducerClientId = ClientConfigs.producerClientIdConfig
-  final val kafkaMaxPendingRequests = ClientConfigs.kafkaMaxPendingRequestsConfig
+  final val kafkaMatwitterPendingRequests = ClientConfigs.kafkaMatwitterPendingRequestsConfig
   final val kafkaWorkerThreads = ClientConfigs.kafkaWorkerThreadsConfig
 
   // Optional
@@ -28,10 +28,10 @@ object FlagsModule extends TwitterModule with Logging {
 
   /// Consumer
   final val commitInterval = ClientConfigs.kafkaCommitIntervalConfig
-  final val maxPollRecords = ClientConfigs.consumerMaxPollRecordsConfig
-  final val maxPollInterval = ClientConfigs.consumerMaxPollIntervalConfig
+  final val matwitterPollRecords = ClientConfigs.consumerMatwitterPollRecordsConfig
+  final val matwitterPollInterval = ClientConfigs.consumerMatwitterPollIntervalConfig
   final val sessionTimeout = ClientConfigs.consumerSessionTimeoutConfig
-  final val fetchMax = ClientConfigs.consumerFetchMaxConfig
+  final val fetchMatwitter = ClientConfigs.consumerFetchMatwitterConfig
   final val fetchMin = ClientConfigs.consumerFetchMinConfig
   final val receiveBuffer = ClientConfigs.consumerReceiveBufferSizeConfig
   /// Producer
@@ -75,8 +75,8 @@ object FlagsModule extends TwitterModule with Logging {
     help = ClientConfigs.producerClientIdHelp
   )
   flag[Int](
-    name = kafkaMaxPendingRequests,
-    help = ClientConfigs.kafkaMaxPendingRequestsHelp
+    name = kafkaMatwitterPendingRequests,
+    help = ClientConfigs.kafkaMatwitterPendingRequestsHelp
   )
   flag[Int](
     name = kafkaWorkerThreads,
@@ -103,14 +103,14 @@ object FlagsModule extends TwitterModule with Logging {
     help = ClientConfigs.kafkaCommitIntervalHelp
   )
   flag[Int](
-    name = maxPollRecords,
-    default = ClientConfigs.consumerMaxPollRecordsDefault,
-    help = ClientConfigs.consumerMaxPollRecordsHelp
+    name = matwitterPollRecords,
+    default = ClientConfigs.consumerMatwitterPollRecordsDefault,
+    help = ClientConfigs.consumerMatwitterPollRecordsHelp
   )
   flag[Duration](
-    name = maxPollInterval,
-    default = ClientConfigs.consumerMaxPollIntervalDefault,
-    help = ClientConfigs.consumerMaxPollIntervalHelp
+    name = matwitterPollInterval,
+    default = ClientConfigs.consumerMatwitterPollIntervalDefault,
+    help = ClientConfigs.consumerMatwitterPollIntervalHelp
   )
   flag[Duration](
     name = sessionTimeout,
@@ -118,9 +118,9 @@ object FlagsModule extends TwitterModule with Logging {
     help = ClientConfigs.consumerSessionTimeoutHelp
   )
   flag[StorageUnit](
-    name = fetchMax,
-    default = ClientConfigs.consumerFetchMaxDefault,
-    help = ClientConfigs.consumerFetchMaxHelp
+    name = fetchMatwitter,
+    default = ClientConfigs.consumerFetchMatwitterDefault,
+    help = ClientConfigs.consumerFetchMatwitterHelp
   )
   flag[StorageUnit](
     name = fetchMin,

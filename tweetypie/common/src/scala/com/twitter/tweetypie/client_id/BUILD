@@ -8,7 +8,7 @@ scala_library(
         "finagle-internal/mtls/src/main/scala/com/twitter/finagle/mtls/authentication",
         "finagle-internal/mtls/src/main/scala/com/twitter/finagle/mtls/transport",
         "finagle/finagle-thrift/src/main/scala",
-        "tweetypie/servo/util/src/main/scala:exception",
+        "tweetypie/servo/util/src/main/scala:etwitterception",
         "strato/src/main/scala/com/twitter/strato/access",
         "strato/src/main/scala/com/twitter/strato/data",
     ],

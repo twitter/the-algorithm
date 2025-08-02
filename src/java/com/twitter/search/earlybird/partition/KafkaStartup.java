@@ -14,41 +14,41 @@ import com.twitter.search.common.decider.SearchDecider;
 import com.twitter.search.common.metrics.SearchLongGauge;
 import com.twitter.search.earlybird.EarlybirdStatus;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
+import com.twitter.search.earlybird.etwitterception.CriticalEtwitterceptionHandler;
+import com.twitter.search.earlybird.etwitterception.EarlybirdStartupEtwitterception;
 import com.twitter.search.earlybird.partition.freshstartup.FreshStartupHandler;
 import com.twitter.search.earlybird.querycache.QueryCacheManager;
 import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twitter.search.queryparser.query.QueryParserEtwitterception;
 
 /**
  * Handles starting an Earlybird from Kafka topics.
  *
- * Currently very unoptimized -- future versions will implement parallel indexing and loading
+ * Currently very unoptimized -- future versions will implement parallel indetwittering and loading
  * serialized data from HDFS. See http://go/removing-dl-tdd.
  */
 public class KafkaStartup implements EarlybirdStartup {
   private static final Logger LOG = LoggerFactory.getLogger(KafkaStartup.class);
 
   private final EarlybirdKafkaConsumer earlybirdKafkaConsumer;
-  private final StartupUserEventIndexer startupUserEventIndexer;
+  private final StartupUserEventIndetwitterer startupUserEventIndetwitterer;
   private final QueryCacheManager queryCacheManager;
   private final SegmentManager segmentManager;
-  private final EarlybirdIndexLoader earlybirdIndexLoader;
+  private final EarlybirdIndetwitterLoader earlybirdIndetwitterLoader;
   private final FreshStartupHandler freshStartupHandler;
-  private final UserUpdatesStreamIndexer userUpdatesStreamIndexer;
-  private final UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final SearchLongGauge loadedIndex;
+  private final UserUpdatesStreamIndetwitterer userUpdatesStreamIndetwitterer;
+  private final UserScrubGeoEventStreamIndetwitterer userScrubGeoEventStreamIndetwitterer;
+  private final SearchIndetwitteringMetricSet searchIndetwitteringMetricSet;
+  private final SearchLongGauge loadedIndetwitter;
   private final SearchLongGauge freshStartup;
   private final MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager;
-  private final AudioSpaceEventsStreamIndexer audioSpaceEventsStreamIndexer;
-  private final CriticalExceptionHandler earlybirdExceptionHandler;
+  private final AudioSpaceEventsStreamIndetwitterer audioSpaceEventsStreamIndetwitterer;
+  private final CriticalEtwitterceptionHandler earlybirdEtwitterceptionHandler;
   private final SearchDecider decider;
 
   private static final String FRESH_STARTUP = "fresh startup";
   private static final String INGEST_UNTIL_CURRENT = "ingest until current";
-  private static final String LOAD_FLUSHED_INDEX = "load flushed index";
+  private static final String LOAD_FLUSHED_INDEtwitter = "load flushed indetwitter";
   private static final String SETUP_QUERY_CACHE = "setting up query cache";
   private static final String USER_UPDATES_STARTUP = "user updates startup";
   private static final String AUDIO_SPACES_STARTUP = "audio spaces startup";
@@ -58,183 +58,183 @@ public class KafkaStartup implements EarlybirdStartup {
   public KafkaStartup(
       SegmentManager segmentManager,
       EarlybirdKafkaConsumer earlybirdKafkaConsumer,
-      StartupUserEventIndexer startupUserEventIndexer,
-      UserUpdatesStreamIndexer userUpdatesStreamIndexer,
-      UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer,
-      AudioSpaceEventsStreamIndexer audioSpaceEventsStreamIndexer,
+      StartupUserEventIndetwitterer startupUserEventIndetwitterer,
+      UserUpdatesStreamIndetwitterer userUpdatesStreamIndetwitterer,
+      UserScrubGeoEventStreamIndetwitterer userScrubGeoEventStreamIndetwitterer,
+      AudioSpaceEventsStreamIndetwitterer audioSpaceEventsStreamIndetwitterer,
       QueryCacheManager queryCacheManager,
-      EarlybirdIndexLoader earlybirdIndexLoader,
+      EarlybirdIndetwitterLoader earlybirdIndetwitterLoader,
       FreshStartupHandler freshStartupHandler,
-      SearchIndexingMetricSet searchIndexingMetricSet,
+      SearchIndetwitteringMetricSet searchIndetwitteringMetricSet,
       MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-      CriticalExceptionHandler earlybirdExceptionHandler,
+      CriticalEtwitterceptionHandler earlybirdEtwitterceptionHandler,
       SearchDecider decider
   ) {
     this.segmentManager = segmentManager;
     this.earlybirdKafkaConsumer = earlybirdKafkaConsumer;
-    this.startupUserEventIndexer = startupUserEventIndexer;
+    this.startupUserEventIndetwitterer = startupUserEventIndetwitterer;
     this.queryCacheManager = queryCacheManager;
-    this.earlybirdIndexLoader = earlybirdIndexLoader;
+    this.earlybirdIndetwitterLoader = earlybirdIndetwitterLoader;
     this.freshStartupHandler = freshStartupHandler;
-    this.userUpdatesStreamIndexer = userUpdatesStreamIndexer;
-    this.userScrubGeoEventStreamIndexer = userScrubGeoEventStreamIndexer;
-    this.audioSpaceEventsStreamIndexer = audioSpaceEventsStreamIndexer;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.loadedIndex = SearchLongGauge.export("kafka_startup_loaded_index");
-    this.freshStartup = SearchLongGauge.export("fresh_startup");
+    this.userUpdatesStreamIndetwitterer = userUpdatesStreamIndetwitterer;
+    this.userScrubGeoEventStreamIndetwitterer = userScrubGeoEventStreamIndetwitterer;
+    this.audioSpaceEventsStreamIndetwitterer = audioSpaceEventsStreamIndetwitterer;
+    this.searchIndetwitteringMetricSet = searchIndetwitteringMetricSet;
+    this.loadedIndetwitter = SearchLongGauge.etwitterport("kafka_startup_loaded_indetwitter");
+    this.freshStartup = SearchLongGauge.etwitterport("fresh_startup");
     this.multiSegmentTermDictionaryManager = multiSegmentTermDictionaryManager;
-    this.earlybirdExceptionHandler = earlybirdExceptionHandler;
+    this.earlybirdEtwitterceptionHandler = earlybirdEtwitterceptionHandler;
     this.decider = decider;
     freshStartup.set(0);
   }
 
   private void userEventsStartup() {
-    LOG.info("Start indexing user events.");
+    LOG.info("Start indetwittering user events.");
 
-    startupUserEventIndexer.indexAllEvents();
+    startupUserEventIndetwitterer.indetwitterAllEvents();
 
-    LOG.info("Finished loading/indexing user events.");
+    LOG.info("Finished loading/indetwittering user events.");
 
-    // User updates are now current, keep them current by continuing to index from the stream.
-    LOG.info("Starting to run UserUpdatesStreamIndexer");
-    new Thread(userUpdatesStreamIndexer::run, "userupdates-stream-indexer").start();
+    // User updates are now current, keep them current by continuing to indetwitter from the stream.
+    LOG.info("Starting to run UserUpdatesStreamIndetwitterer");
+    new Thread(userUpdatesStreamIndetwitterer::run, "userupdates-stream-indetwitterer").start();
 
     if (EarlybirdConfig.consumeUserScrubGeoEvents()) {
       // User scrub geo events are now current,
-      // keep them current by continuing to index from the stream.
-      LOG.info("Starting to run UserScrubGeoEventsStreamIndexer");
-      new Thread(userScrubGeoEventStreamIndexer::run,
-          "userScrubGeoEvents-stream-indexer").start();
+      // keep them current by continuing to indetwitter from the stream.
+      LOG.info("Starting to run UserScrubGeoEventsStreamIndetwitterer");
+      new Thread(userScrubGeoEventStreamIndetwitterer::run,
+          "userScrubGeoEvents-stream-indetwitterer").start();
     }
   }
 
   private void loadAudioSpaceEvents() {
-    LOG.info("Index audio space events...");
+    LOG.info("Indetwitter audio space events...");
     EarlybirdStatus.beginEvent(AUDIO_SPACES_STARTUP,
-        searchIndexingMetricSet.startupInAudioSpaceEventIndexer);
+        searchIndetwitteringMetricSet.startupInAudioSpaceEventIndetwitterer);
 
-    if (audioSpaceEventsStreamIndexer == null) {
-      LOG.error("Null audioSpaceEventsStreamIndexer");
+    if (audioSpaceEventsStreamIndetwitterer == null) {
+      LOG.error("Null audioSpaceEventsStreamIndetwitterer");
       return;
     }
 
     if (decider.isAvailable("enable_reading_audio_space_events")) {
       Stopwatch stopwatch = Stopwatch.createStarted();
-      audioSpaceEventsStreamIndexer.seekToBeginning();
-      audioSpaceEventsStreamIndexer.readRecordsUntilCurrent();
+      audioSpaceEventsStreamIndetwitterer.seekToBeginning();
+      audioSpaceEventsStreamIndetwitterer.readRecordsUntilCurrent();
       LOG.info("Finished reading audio spaces in {}", stopwatch);
-      audioSpaceEventsStreamIndexer.printSummary();
+      audioSpaceEventsStreamIndetwitterer.printSummary();
 
-      new Thread(audioSpaceEventsStreamIndexer::run,
-          "audioSpaceEvents-stream-indexer").start();
+      new Thread(audioSpaceEventsStreamIndetwitterer::run,
+          "audioSpaceEvents-stream-indetwitterer").start();
     } else {
       LOG.info("Reading audio space events not enabled");
     }
 
     EarlybirdStatus.endEvent(AUDIO_SPACES_STARTUP,
-        searchIndexingMetricSet.startupInAudioSpaceEventIndexer);
+        searchIndetwitteringMetricSet.startupInAudioSpaceEventIndetwitterer);
   }
 
-  private void tweetsAndUpdatesStartup() throws EarlybirdStartupException {
-    LOG.info("Index tweets and updates...");
-    EarlybirdStatus.beginEvent(LOAD_FLUSHED_INDEX,
-        searchIndexingMetricSet.startupInLoadFlushedIndex);
-    EarlybirdIndex index;
+  private void tweetsAndUpdatesStartup() throws EarlybirdStartupEtwitterception {
+    LOG.info("Indetwitter tweets and updates...");
+    EarlybirdStatus.beginEvent(LOAD_FLUSHED_INDEtwitter,
+        searchIndetwitteringMetricSet.startupInLoadFlushedIndetwitter);
+    EarlybirdIndetwitter indetwitter;
 
     // Set when you want to get a server from starting to ready quickly for development
     // purposes.
     boolean fastDevStartup = EarlybirdConfig.getBool("fast_dev_startup");
 
-    Optional<EarlybirdIndex> optIndex = Optional.empty();
+    Optional<EarlybirdIndetwitter> optIndetwitter = Optional.empty();
     if (!fastDevStartup) {
-      optIndex = earlybirdIndexLoader.loadIndex();
+      optIndetwitter = earlybirdIndetwitterLoader.loadIndetwitter();
     }
 
-    if (optIndex.isPresent()) {
-      loadedIndex.set(1);
-      LOG.info("Loaded an index.");
-      index = optIndex.get();
-      EarlybirdStatus.endEvent(LOAD_FLUSHED_INDEX,
-          searchIndexingMetricSet.startupInLoadFlushedIndex);
+    if (optIndetwitter.isPresent()) {
+      loadedIndetwitter.set(1);
+      LOG.info("Loaded an indetwitter.");
+      indetwitter = optIndetwitter.get();
+      EarlybirdStatus.endEvent(LOAD_FLUSHED_INDEtwitter,
+          searchIndetwitteringMetricSet.startupInLoadFlushedIndetwitter);
     } else {
-      LOG.info("Didn't load an index, indexing from scratch.");
+      LOG.info("Didn't load an indetwitter, indetwittering from scratch.");
       freshStartup.set(1);
-      boolean parallelIndexFromScratch = EarlybirdConfig.getBool(
-          "parallel_index_from_scratch");
-      LOG.info("parallel_index_from_scratch: {}", parallelIndexFromScratch);
+      boolean parallelIndetwitterFromScratch = EarlybirdConfig.getBool(
+          "parallel_indetwitter_from_scratch");
+      LOG.info("parallel_indetwitter_from_scratch: {}", parallelIndetwitterFromScratch);
       EarlybirdStatus.beginEvent(FRESH_STARTUP,
-          searchIndexingMetricSet.startupInFreshStartup);
+          searchIndetwitteringMetricSet.startupInFreshStartup);
       try {
         if (fastDevStartup) {
-          index = freshStartupHandler.fastIndexFromScratchForDevelopment();
-        } else if (parallelIndexFromScratch) {
-          index = freshStartupHandler.parallelIndexFromScratch();
+          indetwitter = freshStartupHandler.fastIndetwitterFromScratchForDevelopment();
+        } else if (parallelIndetwitterFromScratch) {
+          indetwitter = freshStartupHandler.parallelIndetwitterFromScratch();
         } else {
-          index = freshStartupHandler.indexFromScratch();
+          indetwitter = freshStartupHandler.indetwitterFromScratch();
         }
-      } catch (Exception ex) {
-        throw new EarlybirdStartupException(ex);
+      } catch (Etwitterception etwitter) {
+        throw new EarlybirdStartupEtwitterception(etwitter);
       } finally {
         EarlybirdStatus.endEvent(FRESH_STARTUP,
-            searchIndexingMetricSet.startupInFreshStartup);
+            searchIndetwitteringMetricSet.startupInFreshStartup);
       }
     }
 
-    LOG.info("Index has {} segments.", index.getSegmentInfoList().size());
-    if (index.getSegmentInfoList().size() > 0) {
+    LOG.info("Indetwitter has {} segments.", indetwitter.getSegmentInfoList().size());
+    if (indetwitter.getSegmentInfoList().size() > 0) {
       LOG.info("Inserting segments into SegmentManager");
-      for (SegmentInfo segmentInfo : index.getSegmentInfoList()) {
+      for (SegmentInfo segmentInfo : indetwitter.getSegmentInfoList()) {
         segmentManager.putSegmentInfo(segmentInfo);
       }
 
-      earlybirdKafkaConsumer.prepareAfterStartingWithIndex(
-          index.getMaxIndexedTweetId()
+      earlybirdKafkaConsumer.prepareAfterStartingWithIndetwitter(
+          indetwitter.getMatwitterIndetwitteredTweetId()
       );
     }
 
-    // Build the Multi segment term dictionary before catching up on indexing to ensure that the
+    // Build the Multi segment term dictionary before catching up on indetwittering to ensure that the
     // segments won't roll and delete the oldest segment while a multi segment term dictionary that
     // includes that segment is being built.
     buildMultiSegmentTermDictionary();
 
     segmentManager.logState("Starting ingestUntilCurrent");
-    LOG.info("partial updates indexed: {}", segmentManager.getNumPartialUpdates());
+    LOG.info("partial updates indetwittered: {}", segmentManager.getNumPartialUpdates());
     EarlybirdStatus.beginEvent(INGEST_UNTIL_CURRENT,
-        searchIndexingMetricSet.startupInIngestUntilCurrent);
+        searchIndetwitteringMetricSet.startupInIngestUntilCurrent);
 
-    earlybirdKafkaConsumer.ingestUntilCurrent(index.getTweetOffset(), index.getUpdateOffset());
+    earlybirdKafkaConsumer.ingestUntilCurrent(indetwitter.getTweetOffset(), indetwitter.getUpdateOffset());
 
     validateSegments();
     segmentManager.logState("ingestUntilCurrent is done");
-    LOG.info("partial updates indexed: {}", segmentManager.getNumPartialUpdates());
+    LOG.info("partial updates indetwittered: {}", segmentManager.getNumPartialUpdates());
     EarlybirdStatus.endEvent(INGEST_UNTIL_CURRENT,
-        searchIndexingMetricSet.startupInIngestUntilCurrent);
+        searchIndetwitteringMetricSet.startupInIngestUntilCurrent);
     new Thread(earlybirdKafkaConsumer::run, "earlybird-kafka-consumer").start();
   }
 
-  protected void validateSegments() throws EarlybirdStartupException {
+  protected void validateSegments() throws EarlybirdStartupEtwitterception {
     if (!Config.environmentIsTest()) {
-      // Unfortunately, many tests start Earlybirds with 0 indexed documents, so we disable this
+      // Unfortunately, many tests start Earlybirds with 0 indetwittered documents, so we disable this
       // check in tests.
       validateSegmentsForNonTest();
     }
   }
 
-  protected void validateSegmentsForNonTest() throws EarlybirdStartupException {
-    // SEARCH-24123: Prevent Earlybird from starting if there are no indexed documents.
-    if (segmentManager.getNumIndexedDocuments() == 0) {
-      throw new EarlybirdStartupException("Earlybird has zero indexed documents.");
+  protected void validateSegmentsForNonTest() throws EarlybirdStartupEtwitterception {
+    // SEARCH-24123: Prevent Earlybird from starting if there are no indetwittered documents.
+    if (segmentManager.getNumIndetwitteredDocuments() == 0) {
+      throw new EarlybirdStartupEtwitterception("Earlybird has zero indetwittered documents.");
     }
   }
 
-  private void queryCacheStartup() throws EarlybirdStartupException {
+  private void queryCacheStartup() throws EarlybirdStartupEtwitterception {
     EarlybirdStatus.beginEvent(SETUP_QUERY_CACHE,
-        searchIndexingMetricSet.startupInQueryCacheUpdates);
+        searchIndetwitteringMetricSet.startupInQueryCacheUpdates);
     try {
       queryCacheManager.setupTasksIfNeeded(segmentManager);
-    } catch (QueryParserException e) {
-      LOG.error("Exception when setting up query cache tasks");
-      throw new EarlybirdStartupException(e);
+    } catch (QueryParserEtwitterception e) {
+      LOG.error("Etwitterception when setting up query cache tasks");
+      throw new EarlybirdStartupEtwitterception(e);
     }
 
     queryCacheManager.waitUntilAllQueryCachesAreBuilt();
@@ -245,7 +245,7 @@ public class KafkaStartup implements EarlybirdStartup {
     segmentManager.logState("After building query caches");
     for (SegmentInfo segmentInfo : segmentInfos) {
       LOG.info("Segment: {}, Total cardinality: {}", segmentInfo.getSegmentName(),
-          segmentInfo.getIndexSegment().getQueryCachesCardinality());
+          segmentInfo.getIndetwitterSegment().getQueryCachesCardinality());
     }
 
     // We're done building the query caches for all segments, and the earlybird is ready to become
@@ -253,76 +253,76 @@ public class KafkaStartup implements EarlybirdStartup {
     // searcher threads are not impacted.
     queryCacheManager.setWorkerPoolSizeAfterStartup();
     EarlybirdStatus.endEvent(SETUP_QUERY_CACHE,
-        searchIndexingMetricSet.startupInQueryCacheUpdates);
+        searchIndetwitteringMetricSet.startupInQueryCacheUpdates);
   }
 
   /**
-   * Closes all currently running Indexers.
+   * Closes all currently running Indetwitterers.
    */
   @VisibleForTesting
-  public void shutdownIndexing() {
+  public void shutdownIndetwittering() {
     LOG.info("Shutting down KafkaStartup.");
 
     earlybirdKafkaConsumer.close();
-    userUpdatesStreamIndexer.close();
-    userScrubGeoEventStreamIndexer.close();
+    userUpdatesStreamIndetwitterer.close();
+    userScrubGeoEventStreamIndetwitterer.close();
     // Note that the QueryCacheManager is shut down in EarlybirdServer::shutdown.
   }
 
   private void buildMultiSegmentTermDictionary() {
     EarlybirdStatus.beginEvent(BUILD_MULTI_SEGMENT_TERM_DICTIONARY,
-            searchIndexingMetricSet.startupInMultiSegmentTermDictionaryUpdates);
+            searchIndetwitteringMetricSet.startupInMultiSegmentTermDictionaryUpdates);
     Stopwatch stopwatch = Stopwatch.createStarted();
     LOG.info("Building multi segment term dictionary");
     multiSegmentTermDictionaryManager.buildDictionary();
     LOG.info("Done with building multi segment term dictionary in {}", stopwatch);
     EarlybirdStatus.endEvent(BUILD_MULTI_SEGMENT_TERM_DICTIONARY,
-            searchIndexingMetricSet.startupInMultiSegmentTermDictionaryUpdates);
+            searchIndetwitteringMetricSet.startupInMultiSegmentTermDictionaryUpdates);
   }
 
-  private void parallelIndexingStartup() throws EarlybirdStartupException {
-    Thread userEventsThread = new Thread(this::userEventsStartup, "index-user-events-startup");
+  private void parallelIndetwitteringStartup() throws EarlybirdStartupEtwitterception {
+    Thread userEventsThread = new Thread(this::userEventsStartup, "indetwitter-user-events-startup");
     Thread tweetsAndUpdatesThread = new Thread(() -> {
       try {
         tweetsAndUpdatesStartup();
-      } catch (EarlybirdStartupException e) {
-        earlybirdExceptionHandler.handle(this, e);
+      } catch (EarlybirdStartupEtwitterception e) {
+        earlybirdEtwitterceptionHandler.handle(this, e);
       }
-    }, "index-tweets-and-updates-startup");
+    }, "indetwitter-tweets-and-updates-startup");
     Thread audioSpaceEventsThread = new Thread(this::loadAudioSpaceEvents,
-        "index-audio-space-events-startup");
+        "indetwitter-audio-space-events-startup");
     userEventsThread.start();
     tweetsAndUpdatesThread.start();
     audioSpaceEventsThread.start();
 
     try {
       userEventsThread.join();
-    } catch (InterruptedException e) {
-      throw new EarlybirdStartupException("Interrupted while indexing user events");
+    } catch (InterruptedEtwitterception e) {
+      throw new EarlybirdStartupEtwitterception("Interrupted while indetwittering user events");
     }
     try {
       tweetsAndUpdatesThread.join();
-    } catch (InterruptedException e) {
-      throw new EarlybirdStartupException("Interrupted while indexing tweets and updates");
+    } catch (InterruptedEtwitterception e) {
+      throw new EarlybirdStartupEtwitterception("Interrupted while indetwittering tweets and updates");
     }
     try {
       audioSpaceEventsThread.join();
-    } catch (InterruptedException e) {
-      throw new EarlybirdStartupException("Interrupted while indexing audio space events");
+    } catch (InterruptedEtwitterception e) {
+      throw new EarlybirdStartupEtwitterception("Interrupted while indetwittering audio space events");
     }
   }
 
   /**
-   * Does startups and starts indexing. Returns when the earlybird
+   * Does startups and starts indetwittering. Returns when the earlybird
    * is current.
    */
   @Override
-  public Closeable start() throws EarlybirdStartupException {
-    parallelIndexingStartup();
+  public Closeable start() throws EarlybirdStartupEtwitterception {
+    parallelIndetwitteringStartup();
     queryCacheStartup();
 
     EarlybirdStatus.setStatus(EarlybirdStatusCode.CURRENT);
 
-    return this::shutdownIndexing;
+    return this::shutdownIndetwittering;
   }
 }

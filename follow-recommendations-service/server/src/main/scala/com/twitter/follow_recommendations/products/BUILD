@@ -7,10 +7,10 @@ scala_library(
         "finatra/inject/inject-app/src/main/scala",
         "finatra/inject/inject-core/src/main/scala",
         "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/common",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/explore_tab",
+        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/etwitterplore_tab",
         "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/home_timeline",
         "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/home_timeline_tweet_recs",
         "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/sidebar",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product/guice",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/product/guice",
     ],
 )

@@ -10,7 +10,7 @@ import com.twitter.common.zookeeper.ServerSet;
 import com.twitter.decider.Decider;
 import com.twitter.search.common.decider.DeciderUtil;
 import com.twitter.search.earlybird.partition.PartitionConfig;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
+import com.twitter.search.earlybird.partition.SearchIndetwitteringMetricSet;
 import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
 
 public class EarlybirdWarmUpManager {
@@ -20,18 +20,18 @@ public class EarlybirdWarmUpManager {
 
   private final EarlybirdServerSetManager earlybirdServerSetManager;
   private final String clusterName;
-  private final SearchIndexingMetricSet.StartupMetric startUpInWarmUpMetric;
+  private final SearchIndetwitteringMetricSet.StartupMetric startUpInWarmUpMetric;
   private final Decider decider;
   private final Clock clock;
 
   public EarlybirdWarmUpManager(EarlybirdServerSetManager earlybirdServerSetManager,
                                 PartitionConfig partitionConfig,
-                                SearchIndexingMetricSet searchIndexingMetricSet,
+                                SearchIndetwitteringMetricSet searchIndetwitteringMetricSet,
                                 Decider decider,
                                 Clock clock) {
     this.earlybirdServerSetManager = earlybirdServerSetManager;
     this.clusterName = partitionConfig.getClusterName();
-    this.startUpInWarmUpMetric = searchIndexingMetricSet.startupInWarmUp;
+    this.startUpInWarmUpMetric = searchIndetwitteringMetricSet.startupInWarmUp;
     this.decider = decider;
     this.clock = clock;
   }
@@ -44,7 +44,7 @@ public class EarlybirdWarmUpManager {
    * Warms up the earlybird. The earlybird joins a special server set that gets production dark
    * reads, and leaves this server set after a specified period of time.
    */
-  public void warmUp() throws InterruptedException, ServerSet.UpdateException {
+  public void warmUp() throws InterruptedEtwitterception, ServerSet.UpdateEtwitterception {
     int warmUpDurationSeconds = DeciderUtil.getAvailability(
         decider,
         String.format(WARM_UP_ON_DURATION_DECIDER_KEY_PATTERN, clusterName.replaceAll("-", "_")));
@@ -57,20 +57,20 @@ public class EarlybirdWarmUpManager {
     earlybirdServerSetManager.joinServerSet("internal warm up");
 
     // If doWarmUp() is interrupted, try to leave the server set, and propagate the
-    // InterruptedException. Otherwise, try to leave the server set, and propagate any exception
+    // InterruptedEtwitterception. Otherwise, try to leave the server set, and propagate any etwitterception
     // that it might throw.
-    InterruptedException warmUpInterruptedException = null;
+    InterruptedEtwitterception warmUpInterruptedEtwitterception = null;
     try {
       doWarmUp(warmUpDurationSeconds);
-    } catch (InterruptedException e) {
-      warmUpInterruptedException = e;
+    } catch (InterruptedEtwitterception e) {
+      warmUpInterruptedEtwitterception = e;
       throw e;
     } finally {
-      if (warmUpInterruptedException != null) {
+      if (warmUpInterruptedEtwitterception != null) {
         try {
           earlybirdServerSetManager.leaveServerSet("internal warm up");
-        } catch (Exception e) {
-          warmUpInterruptedException.addSuppressed(e);
+        } catch (Etwitterception e) {
+          warmUpInterruptedEtwitterception.addSuppressed(e);
         }
       } else {
         earlybirdServerSetManager.leaveServerSet("internal warm up");
@@ -79,7 +79,7 @@ public class EarlybirdWarmUpManager {
   }
 
   @VisibleForTesting
-  protected void doWarmUp(int warmUpDurationSeconds) throws InterruptedException {
+  protected void doWarmUp(int warmUpDurationSeconds) throws InterruptedEtwitterception {
     long warmUpStartTimeMillis = clock.nowMillis();
     LOG.info(String.format("Warming up for %d seconds.", warmUpDurationSeconds));
     EarlybirdStatus.beginEvent("warm_up", startUpInWarmUpMetric);

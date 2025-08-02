@@ -7,7 +7,7 @@ import com.twitter.search.common.decider.SearchDecider;
 import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
 import com.twitter.search.common.util.date.DateUtil;
 import com.twitter.search.earlybird.config.ServingRange;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 
 public class FullArchiveServingRangeProvider implements ServingRangeProvider {
 
@@ -25,7 +25,7 @@ public class FullArchiveServingRangeProvider implements ServingRangeProvider {
 
   @Override
   public ServingRange getServingRange(
-      final EarlybirdRequestContext requestContext, boolean useBoundaryOverride) {
+      final EarlybirdRequestContetwittert requestContetwittert, boolean useBoundaryOverride) {
     return new ServingRange() {
       @Override
       public long getServingRangeSinceId() {
@@ -34,13 +34,13 @@ public class FullArchiveServingRangeProvider implements ServingRangeProvider {
       }
 
       @Override
-      public long getServingRangeMaxId() {
+      public long getServingRangeMatwitterId() {
         long servingRangeEndMillis = TimeUnit.HOURS.toMillis(
-            (decider.featureExists(deciderKey))
+            (decider.featureEtwitterists(deciderKey))
                 ? decider.getAvailability(deciderKey)
                 : DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO);
 
-        long boundaryTime = requestContext.getCreatedTimeMillis() - servingRangeEndMillis;
+        long boundaryTime = requestContetwittert.getCreatedTimeMillis() - servingRangeEndMillis;
         return SnowflakeIdParser.generateValidStatusId(boundaryTime, 0);
       }
 
@@ -52,11 +52,11 @@ public class FullArchiveServingRangeProvider implements ServingRangeProvider {
       @Override
       public long getServingRangeUntilTimeSecondsFromEpoch() {
         long servingRangeEndMillis = TimeUnit.HOURS.toMillis(
-            (decider.featureExists(deciderKey))
+            (decider.featureEtwitterists(deciderKey))
                 ? decider.getAvailability(deciderKey)
                 : DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO);
 
-        long boundaryTime = requestContext.getCreatedTimeMillis() - servingRangeEndMillis;
+        long boundaryTime = requestContetwittert.getCreatedTimeMillis() - servingRangeEndMillis;
         return boundaryTime / 1000;
       }
     };

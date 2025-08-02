@@ -7,13 +7,13 @@ import com.twitter.pluck.source.cassowary.SimsCandidatesSource
 import com.twitter.scalding._
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
+import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchEtwitterecution
+import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchEtwitterecutionArgs
 import com.twitter.scalding_internal.job.analytics_batch.BatchDescription
 import com.twitter.scalding_internal.job.analytics_batch.BatchFirstTime
 import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
-import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
+import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledEtwitterecutionApp
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common.ModelVersions
 import com.twitter.simclusters_v2.hdfs_sources._
@@ -31,14 +31,14 @@ object UpdateKnownForApps {
    * Average edge weight of an input graph
    * @param graph a TypedPipe with nodeId as key and adjacency list as value. We don't care about
    *              the keys in this method.
-   * @return avg edge weight wrapped in an option in an execution
+   * @return avg edge weight wrapped in an option in an etwitterecution
    */
-  def getGlobalAvgWeight(graph: TypedPipe[(Long, Map[Long, Float])]): Execution[Option[Double]] = {
+  def getGlobalAvgWeight(graph: TypedPipe[(Long, Map[Long, Float])]): Etwitterecution[Option[Double]] = {
     graph.values
       .flatMap(_.values)
-      .map { x => (x.toDouble, 1L) }
+      .map { twitter => (twitter.toDouble, 1L) }
       .sum
-      .toOptionExecution
+      .toOptionEtwitterecution
       .map {
         case Some((sum, cnt)) =>
           val res = sum / cnt
@@ -56,15 +56,15 @@ object UpdateKnownForApps {
    *                 membership scores. We don't care about the keys in this method.
    * @return average membership score
    */
-  def getAvgMembershipScore(knownFor: TypedPipe[(Long, Array[(Int, Float)])]): Execution[Double] = {
+  def getAvgMembershipScore(knownFor: TypedPipe[(Long, Array[(Int, Float)])]): Etwitterecution[Double] = {
     knownFor.values
       .flatMap(_.map(_._2))
-      .map { x => (x, 1L) }
+      .map { twitter => (twitter, 1L) }
       .sum
       .map { case (num, den) => num / den.toDouble }
-      .getExecution
+      .getEtwitterecution
       .onComplete {
-        case Success(x) => println("Avg. membership score is " + x)
+        case Success(twitter) => println("Avg. membership score is " + twitter)
         case _ => println("Failed to calculate avg. membership score")
       }
   }
@@ -80,7 +80,7 @@ object UpdateKnownForApps {
    */
   def getClusterStats(
     knownFor: TypedPipe[(Long, Array[(Int, Float)])]
-  ): Execution[Map[Int, NeighborhoodInformation]] = {
+  ): Etwitterecution[Map[Int, NeighborhoodInformation]] = {
     knownFor
       .flatMap {
         case (_, clusterArray) =>
@@ -90,7 +90,7 @@ object UpdateKnownForApps {
           }
       }
       .sum
-      .getExecution
+      .getEtwitterecution
       .map { map =>
         map.mapValues {
           case (count, sum) =>
@@ -100,28 +100,28 @@ object UpdateKnownForApps {
   }
 
   /**
-   * Adds self-loops and also potentially raises all edge weights to an exponent
-   * (typically exponent > 1, and has the effect of increasing inequality in edge weights to
-   * "clarify" structure in the graph - currently we just set exponent to 1).
+   * Adds self-loops and also potentially raises all edge weights to an etwitterponent
+   * (typically etwitterponent > 1, and has the effect of increasing inequality in edge weights to
+   * "clarify" structure in the graph - currently we just set etwitterponent to 1).
    * @param symmetrizedSims input symmetrized similarity graph
-   * @param exponentForEdgeWeight exponent to raise all edge weights to.
+   * @param etwitterponentForEdgeWeight etwitterponent to raise all edge weights to.
    *                              Set to 1.0 to make this a no-op
-   * @param maxWtToSelfLoopWtMultFactor What to multiply the max wt among non-self-loop edges to
+   * @param matwitterWtToSelfLoopWtMultFactor What to multiply the matwitter wt among non-self-loop edges to
    *                                    derive the weight on the self-loop edge.
    * @return New graph
    */
   def simsGraphForUpdateFromSymmetrizedSims(
     symmetrizedSims: TypedPipe[(Long, Map[Long, Float])],
-    exponentForEdgeWeight: Float,
-    maxWtToSelfLoopWtMultFactor: Float
+    etwitterponentForEdgeWeight: Float,
+    matwitterWtToSelfLoopWtMultFactor: Float
   ): TypedPipe[(Long, Map[Long, Float])] = {
-    val expWeighted = symmetrizedSims.mapValues { y =>
-      y.mapValues { x => math.pow(x, exponentForEdgeWeight).toFloat }
+    val etwitterpWeighted = symmetrizedSims.mapValues { y =>
+      y.mapValues { twitter => math.pow(twitter, etwitterponentForEdgeWeight).toFloat }
     }
 
     TopUsersSimilarityGraph.addSelfLoop(
-      input = expWeighted,
-      maxToSelfLoopWeight = { x: Float => x * maxWtToSelfLoopWtMultFactor }
+      input = etwitterpWeighted,
+      matwitterToSelfLoopWeight = { twitter: Float => twitter * matwitterWtToSelfLoopWtMultFactor }
     )
   }
 
@@ -138,40 +138,40 @@ object UpdateKnownForApps {
    *                             writeKnownForFunction
    * @param dateRange dateRange, used for reading UserSource
    * @param uniqueID need for creating stats
-   * @return Execution[Unit] encapsulating the whole job
+   * @return Etwitterecution[Unit] encapsulating the whole job
    */
   def runUpdateKnownForGeneric(
     args: Args,
     inputKnownFor: TypedPipe[(Long, Array[(Int, Float)])],
     inputSimsGraph: TypedPipe[Candidates],
     defaultEmailAddress: String,
-    writeKnownForFunction: TypedPipe[(Long, Array[(Int, Float)])] => Execution[Unit],
+    writeKnownForFunction: TypedPipe[(Long, Array[(Int, Float)])] => Etwitterecution[Unit],
     readKnownForFunction: => TypedPipe[(Long, Array[(Int, Float)])],
     includeEvaluationResultsInEmail: Boolean
   )(
     implicit dateRange: DateRange,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val minActiveFollowers = args.int("minActiveFollowers", 400)
     val topK = args.int("topK")
-    val maxSimsNeighborsForUpdate =
-      args.int("maxSimsNeighborsForUpdate", 40)
+    val matwitterSimsNeighborsForUpdate =
+      args.int("matwitterSimsNeighborsForUpdate", 40)
     val minNeighborsInCluster = args.int("minNeighborsInCluster", 2)
-    val maxWtToSelfLoopWtMultFactor =
-      args.float("maxWtToSelfLoopWtMultFactor", 2)
-    val exponentForEdgeWeight = args.float("exponentForEdgeWeights", 1.0f)
+    val matwitterWtToSelfLoopWtMultFactor =
+      args.float("matwitterWtToSelfLoopWtMultFactor", 2)
+    val etwitterponentForEdgeWeight = args.float("etwitterponentForEdgeWeights", 1.0f)
     val updateMethod: ClusterScoresForNode => Double = args("updateMethod") match {
-      case "sumScoreIgnoringMembershipScores" => { x: ClusterScoresForNode =>
-        x.sumScoreIgnoringMembershipScores
+      case "sumScoreIgnoringMembershipScores" => { twitter: ClusterScoresForNode =>
+        twitter.sumScoreIgnoringMembershipScores
       }
-      case "ratioScoreIgnoringMembershipScores" => { x: ClusterScoresForNode =>
-        x.ratioScoreIgnoringMembershipScores
+      case "ratioScoreIgnoringMembershipScores" => { twitter: ClusterScoresForNode =>
+        twitter.ratioScoreIgnoringMembershipScores
       }
-      case "ratioScoreUsingMembershipScores" => { x: ClusterScoresForNode =>
-        x.ratioScoreUsingMembershipScores
+      case "ratioScoreUsingMembershipScores" => { twitter: ClusterScoresForNode =>
+        twitter.ratioScoreUsingMembershipScores
       }
-      case x @ _ =>
-        throw new Exception(s"value for --updateMethod $x is unknown. It must be one of " +
+      case twitter @ _ =>
+        throw new Etwitterception(s"value for --updateMethod $twitter is unknown. It must be one of " +
           s"[sumScoreIgnoringMembershipScores, ratioScoreIgnoringMembershipScores, ratioScoreUsingMembershipScores]")
     }
     val truePositiveWtFactor = args.float("truePositiveWtFactor", 10)
@@ -191,33 +191,33 @@ object UpdateKnownForApps {
       .getSubgraphFromUserGroupedInput(
         fullGraph = inputSimsGraph,
         usersToInclude = topUsers,
-        maxNeighborsPerNode = maxSimsNeighborsForUpdate,
+        matwitterNeighborsPerNode = matwitterSimsNeighborsForUpdate,
         degreeThresholdForStat = minNeighborsInCluster
       )
-      .forceToDiskExecution
+      .forceToDiskEtwitterecution
       .flatMap { symmetrizedSims =>
         val modifiedSims =
           UpdateKnownForApps.simsGraphForUpdateFromSymmetrizedSims(
             symmetrizedSims = symmetrizedSims,
-            exponentForEdgeWeight = exponentForEdgeWeight,
-            maxWtToSelfLoopWtMultFactor = maxWtToSelfLoopWtMultFactor
+            etwitterponentForEdgeWeight = etwitterponentForEdgeWeight,
+            matwitterWtToSelfLoopWtMultFactor = matwitterWtToSelfLoopWtMultFactor
           )
 
-        val previouslyFamousUsersExec = inputKnownFor
+        val previouslyFamousUsersEtwitterec = inputKnownFor
           .leftJoin(topUsers.asKeys)
           .collect { case (userId, (clusters, None)) => userId }
           .getSummaryString(
             "Users previously in known for but not in topUsers anymore",
             numRecords = 20)
 
-        val clusterStatsExec = UpdateKnownForApps.getClusterStats(inputKnownFor)
+        val clusterStatsEtwitterec = UpdateKnownForApps.getClusterStats(inputKnownFor)
 
-        val globalAvgWeightExec =
+        val globalAvgWeightEtwitterec =
           UpdateKnownForApps.getGlobalAvgWeight(modifiedSims)
 
-        val globalAvgMembershipScoreExec = UpdateKnownForApps.getAvgMembershipScore(inputKnownFor)
+        val globalAvgMembershipScoreEtwitterec = UpdateKnownForApps.getAvgMembershipScore(inputKnownFor)
 
-        Execution.zip(globalAvgWeightExec, clusterStatsExec, globalAvgMembershipScoreExec).flatMap {
+        Etwitterecution.zip(globalAvgWeightEtwitterec, clusterStatsEtwitterec, globalAvgMembershipScoreEtwitterec).flatMap {
           case (Some(globalAvgWeight), clusterStats, globalAvgMembershipScore) =>
             println("Size of clusterStats: " + clusterStats.size)
             println("First few entries from clusterStats: " + clusterStats.take(5))
@@ -232,7 +232,7 @@ object UpdateKnownForApps {
                 clusterStats,
                 globalAvgMembershipScore
               )
-            val writeNewKnownForExec = writeKnownForFunction(
+            val writeNewKnownForEtwitterec = writeKnownForFunction(
               UpdateKnownFor.updateGeneric(
                 modifiedSims,
                 knownForWithUnnormalizedScores,
@@ -245,8 +245,8 @@ object UpdateKnownForApps {
               )
             )
 
-            writeNewKnownForExec.flatMap { _ =>
-              Util.getCustomCountersString(writeNewKnownForExec).flatMap { customCountersString =>
+            writeNewKnownForEtwitterec.flatMap { _ =>
+              Util.getCustomCountersString(writeNewKnownForEtwitterec).flatMap { customCountersString =>
                 if (includeEvaluationResultsInEmail) {
                   // It's unfortunate that we're not using the newKnownFor directly, but are instead
                   // first writing it out and then reading it back in. The reason for doing it in this
@@ -255,25 +255,25 @@ object UpdateKnownForApps {
 
                   val newKnownFor = readKnownForFunction
 
-                  val newResultsExec =
+                  val newResultsEtwitterec =
                     ClusterEvaluation
                       .overallEvaluation(symmetrizedSims, newKnownFor, "newKnownForEval")
-                  val oldResultsExec =
+                  val oldResultsEtwitterec =
                     ClusterEvaluation
                       .overallEvaluation(symmetrizedSims, inputKnownFor, "oldKnownForEval")
                   val minSizeOfBiggerClusterForComparison = 10
-                  val compareExec = CompareClusters.summarize(
+                  val compareEtwitterec = CompareClusters.summarize(
                     CompareClusters.compare(
                       KnownForSources.transpose(inputKnownFor),
                       KnownForSources.transpose(newKnownFor),
                       minSizeOfBiggerCluster = minSizeOfBiggerClusterForComparison
                     ))
 
-                  Execution
-                    .zip(oldResultsExec, newResultsExec, compareExec, previouslyFamousUsersExec)
+                  Etwitterecution
+                    .zip(oldResultsEtwitterec, newResultsEtwitterec, compareEtwitterec, previouslyFamousUsersEtwitterec)
                     .map {
                       case (oldResults, newResults, compareResults, previouslyFamousUsersString) =>
-                        val emailText = "Evaluation Results for existing knownFor:\n" +
+                        val emailTetwittert = "Evaluation Results for etwitteristing knownFor:\n" +
                           Util.prettyJsonMapper.writeValueAsString(oldResults) +
                           "\n\n-------------------\n\n" +
                           "Evaluation Results for new knownFor:\n" +
@@ -290,7 +290,7 @@ object UpdateKnownForApps {
 
                         Util
                           .sendEmail(
-                            emailText,
+                            emailTetwittert,
                             s"Evaluation results of new knownFor $modelVersion",
                             emailAddress)
                     }
@@ -301,7 +301,7 @@ object UpdateKnownForApps {
                       s"Change in cluster assignments for update of knownFor $modelVersion",
                       emailAddress
                     )
-                  Execution.unit
+                  Etwitterecution.unit
                 }
 
               }
@@ -311,7 +311,7 @@ object UpdateKnownForApps {
   }
 }
 
-trait UpdateKnownForBatch extends TwitterScheduledExecutionApp {
+trait UpdateKnownForBatch etwittertends TwitterScheduledEtwitterecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
   implicit val dp = DateParser.default
 
@@ -321,7 +321,7 @@ trait UpdateKnownForBatch extends TwitterScheduledExecutionApp {
 
   def batchDescription: String
 
-  private lazy val execArgs = AnalyticsBatchExecutionArgs(
+  private lazy val etwitterecArgs = AnalyticsBatchEtwitterecutionArgs(
     batchDesc = BatchDescription(batchDescription),
     firstTime = BatchFirstTime(RichDate(firstTime)),
     lastTime = None,
@@ -340,10 +340,10 @@ trait UpdateKnownForBatch extends TwitterScheduledExecutionApp {
 
   def outputDALDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]]
 
-  override def scheduledJob: Execution[Unit] =
-    AnalyticsBatchExecution(execArgs) { implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
+  override def scheduledJob: Etwitterecution[Unit] =
+    AnalyticsBatchEtwitterecution(etwitterecArgs) { implicit dateRange =>
+      Etwitterecution.withId { implicit uniqueId =>
+        Etwitterecution.withArgs { args =>
           val inputKnownFor =
             KnownForSources.readDALDataset(inputDALDataset, Days(30), inputModelVersion)
 
@@ -351,12 +351,12 @@ trait UpdateKnownForBatch extends TwitterScheduledExecutionApp {
             .from(FollowingsCosineSimilaritiesManhattanSource())
             .map(_._2)
 
-          def writeKnownFor(knownFor: TypedPipe[(Long, Array[(Int, Float)])]): Execution[Unit] = {
+          def writeKnownFor(knownFor: TypedPipe[(Long, Array[(Int, Float)])]): Etwitterecution[Unit] = {
             KnownForSources
               .toKeyVal(knownFor, outputModelVersion)
-              .writeDALVersionedKeyValExecution(
+              .writeDALVersionedKeyValEtwitterecution(
                 outputDALDataset,
-                D.Suffix(outputPath)
+                D.Suffitwitter(outputPath)
               )
           }
 
@@ -381,7 +381,7 @@ trait UpdateKnownForBatch extends TwitterScheduledExecutionApp {
 capesospy-v2 update --build_locally --start_cron update_known_for_20M_145k \
  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
  */
-object UpdateKnownFor20M145K extends UpdateKnownForBatch {
+object UpdateKnownFor20M145K etwittertends UpdateKnownForBatch {
   override val firstTime: String = "2019-06-06"
 
   override val batchIncrement: Duration = Days(7)
@@ -403,14 +403,14 @@ object UpdateKnownFor20M145K extends UpdateKnownForBatch {
 }
 
 /** This one's end-to-end, doesn't save any intermediate data etc. **/
-object UpdateKnownForAdhoc extends TwitterExecutionApp {
+object UpdateKnownForAdhoc etwittertends TwitterEtwitterecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
   implicit val dp = DateParser.default
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
+  def job: Etwitterecution[Unit] =
+    Etwitterecution.getConfigMode.flatMap {
       case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
+        Etwitterecution.withId { implicit uniqueId =>
           val args = config.getArgs
           implicit val date: DateRange = DateRange.parse(args("date"))
           val defaultEmailAddress = "your_ldap@twitter.com"

@@ -5,5 +5,5 @@ import com.twitter.timelines.configapi.Param
 import com.twitter.util.Duration
 
 object DismissedCandidatePredicateParams {
-  case object LookBackDuration extends Param[Duration](180.days)
+  case object LookBackDuration etwittertends Param[Duration](180.days)
 }

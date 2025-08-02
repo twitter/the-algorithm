@@ -1,6 +1,6 @@
 package com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph
 
-import com.spotify.scio.ScioContext
+import com.spotify.scio.ScioContetwittert
 import com.spotify.scio.coders.Coder
 import com.spotify.scio.values.SCollection
 import com.twitter.beam.io.dal.DAL
@@ -25,7 +25,7 @@ import com.twitter.simclusters_v2.common.UserId
 import com.twitter.simclusters_v2.hdfs_sources.MultiTypeGraphForTopKRightNodesThriftScioScalaDataset
 import com.twitter.simclusters_v2.hdfs_sources.TopKRightNounsScioScalaDataset
 import com.twitter.simclusters_v2.hdfs_sources.TruncatedMultiTypeGraphScioScalaDataset
-import com.twitter.simclusters_v2.scio.common.ExternalDataSources
+import com.twitter.simclusters_v2.scio.common.EtwitterternalDataSources
 import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.GlobalDefaultMinFrequencyOfRightNodeType
 import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.HalfLifeInDaysForFavScore
 import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.NumTopNounsForUnknownRightNodeType
@@ -53,7 +53,7 @@ import org.joda.time.Interval
  * Scio version of
  * src/scala/com/twitter/simclusters_v2/scalding/multi_type_graph/assemble_multi_type_graph/AssembleMultiTypeGraph.scala
  */
-trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
+trait AssembleMultiTypeGraphScioBaseApp etwittertends ScioBeamJob[DateRangeOptions] {
   // Provides an implicit binary thrift scrooge coder by default.
   override implicit def scroogeCoder[T <: ThriftStruct: Manifest]: Coder[T] =
     ThriftStructLazyBinaryScroogeCoder.scroogeCoder
@@ -303,7 +303,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
     topKConfig: Map[RightNodeType, Int],
     minFrequency: Int,
   ): SCollection[(RightNodeType, Seq[(Noun, Double)])] = {
-    val maxAcrossRightNounType: Int = topKConfig.valuesIterator.max
+    val matwitterAcrossRightNounType: Int = topKConfig.valuesIterator.matwitter
 
     fullGraph
       .map {
@@ -316,7 +316,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
         case (rightNode, freq) =>
           (rightNode.rightNodeType, (rightNode.noun, freq))
       }
-      .topByKey(maxAcrossRightNounType)(Ordering.by(_._2))
+      .topByKey(matwitterAcrossRightNounType)(Ordering.by(_._2))
       .map {
         case (rightNodeType, nounsListWithFreq) =>
           val truncatedList = nounsListWithFreq.toSeq
@@ -363,11 +363,11 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
       }
   }
 
-  override def configurePipeline(sc: ScioContext, opts: DateRangeOptions): Unit = {
-    // Define the implicit ScioContext to read datasets from ExternalDataSources
-    implicit def scioContext: ScioContext = sc
+  override def configurePipeline(sc: ScioContetwittert, opts: DateRangeOptions): Unit = {
+    // Define the implicit ScioContetwittert to read datasets from EtwitterternalDataSources
+    implicit def scioContetwittert: ScioContetwittert = sc
 
-    // DAL.Environment variable for WriteExecs
+    // DAL.Environment variable for WriteEtwitterecs
     val dalEnv = if (isAdhoc) DAL.Environment.Dev else DAL.Environment.Prod
 
     // Define date intervals
@@ -380,21 +380,21 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
      * Dataset read operations
      */
     // Get list of valid UserIds - to filter out deactivated or suspended user accounts
-    val validUsers = getValidUsers(ExternalDataSources.userSource(Duration.fromDays(7)))
+    val validUsers = getValidUsers(EtwitterternalDataSources.userSource(Duration.fromDays(7)))
 
     // ieSource tweet engagements data for tweet favs, replies, retweets - from last 14 days
-    val tweetSource = ExternalDataSources.ieSourceTweetEngagementsSource(interval_14days)
+    val tweetSource = EtwitterternalDataSources.ieSourceTweetEngagementsSource(interval_14days)
 
     // Read TFlock datasets
-    val flockFollowSource = ExternalDataSources.flockFollowSource(Duration.fromDays(7))
-    val flockBlockSource = ExternalDataSources.flockBlockSource(Duration.fromDays(7))
+    val flockFollowSource = EtwitterternalDataSources.flockFollowSource(Duration.fromDays(7))
+    val flockBlockSource = EtwitterternalDataSources.flockBlockSource(Duration.fromDays(7))
     val flockReportAsAbuseSource =
-      ExternalDataSources.flockReportAsAbuseSource(Duration.fromDays(7))
+      EtwitterternalDataSources.flockReportAsAbuseSource(Duration.fromDays(7))
     val flockReportAsSpamSource =
-      ExternalDataSources.flockReportAsSpamSource(Duration.fromDays(7))
+      EtwitterternalDataSources.flockReportAsSpamSource(Duration.fromDays(7))
 
     // user-user fav edges
-    val userUserFavSource = ExternalDataSources.userUserFavSource(Duration.fromDays(14))
+    val userUserFavSource = EtwitterternalDataSources.userUserFavSource(Duration.fromDays(14))
     val userUserFavEdges = getFavEdges(userUserFavSource, HalfLifeInDaysForFavScore)
 
     // user-user follow edges
@@ -410,24 +410,24 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
     val userUserSpamReportEdges = filterInvalidUsers(flockReportAsSpamSource, validUsers)
 
     // user-signup country edges
-    val userSignUpCountryEdges = ExternalDataSources
+    val userSignUpCountryEdges = EtwitterternalDataSources
       .userCountrySource(Duration.fromDays(7))
 
     // user-consumed language edges
     val userConsumedLanguageEdges =
-      ExternalDataSources.inferredUserConsumedLanguageSource(Duration.fromDays(7))
+      EtwitterternalDataSources.inferredUserConsumedLanguageSource(Duration.fromDays(7))
 
     // user-topic follow edges
     val topicUserFollowedByEdges =
-      ExternalDataSources.topicFollowGraphSource(Duration.fromDays(7))
+      EtwitterternalDataSources.topicFollowGraphSource(Duration.fromDays(7))
 
     // user-MRNotifOpenOrClick events from last 7 days
     val userMRNotifOpenOrClickEvents =
-      ExternalDataSources.magicRecsNotficationOpenOrClickEventsSource(interval_7days)
+      EtwitterternalDataSources.magicRecsNotficationOpenOrClickEventsSource(interval_7days)
 
     // user-searchQuery strings from last 7 days
     val userSearchQueryEdges =
-      ExternalDataSources.adaptiveSearchScribeLogsSource(interval_7days)
+      EtwitterternalDataSources.adaptiveSearchScribeLogsSource(interval_7days)
 
     /*
      * Generate the full graph
@@ -484,7 +484,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
             (LeftNode.UserId(userId), RightNodeWithEdgeWeightList(rightNodeWithWeightList))
         }
 
-    // WriteExecs
+    // WriteEtwitterecs
     // Write TopK RightNodes to DAL - save all the top K nodes for the clustering step
     topKNounsKeyedByType
       .map {
@@ -495,7 +495,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
         name = "WriteTopKNouns",
         DAL.writeVersionedKeyVal(
           topKRightNounsKeyValDataset,
-          PathLayout.VersionedPath(prefix =
+          PathLayout.VersionedPath(prefitwitter =
             rootMHPath + topKRightNounsOutputDir),
           instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
           environmentOverride = dalEnv,
@@ -514,7 +514,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
         name = "WriteTopKNounsToMHForDebugger",
         DAL.writeVersionedKeyVal(
           topKRightNounsMHKeyValDataset,
-          PathLayout.VersionedPath(prefix =
+          PathLayout.VersionedPath(prefitwitter =
             rootMHPath + topKRightNounsMHOutputDir),
           instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
           environmentOverride = dalEnv,
@@ -530,7 +530,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
         name = "WriteTruncatedMultiTypeGraph",
         DAL.writeVersionedKeyVal(
           truncatedMultiTypeGraphKeyValDataset,
-          PathLayout.VersionedPath(prefix =
+          PathLayout.VersionedPath(prefitwitter =
             rootMHPath + truncatedMultiTypeGraphMHOutputDir),
           instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
           environmentOverride = dalEnv,
@@ -546,7 +546,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
         name = "WriteTruncatedMultiTypeGraphThrift",
         DAL.writeSnapshot(
           multiTypeGraphTopKForRightNodesSnapshotDataset,
-          PathLayout.FixedPath(rootThriftPath + truncatedMultiTypeGraphThriftOutputDir),
+          PathLayout.FitwitteredPath(rootThriftPath + truncatedMultiTypeGraphThriftOutputDir),
           Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
           DiskFormat.Thrift(),
           environmentOverride = dalEnv
@@ -563,7 +563,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
         name = "WriteFullMultiTypeGraph",
         DAL.writeSnapshot(
           fullMultiTypeGraphSnapshotDataset,
-          PathLayout.FixedPath(rootThriftPath + fullMultiTypeGraphThriftOutputDir),
+          PathLayout.FitwitteredPath(rootThriftPath + fullMultiTypeGraphThriftOutputDir),
           Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
           DiskFormat.Thrift(),
           environmentOverride = dalEnv

@@ -7,7 +7,7 @@ import com.twitter.scalding.{Hdfs => HdfsMode}
 import com.twitter.summingbird.batch.store.HDFSMetadata
 import com.twitter.summingbird.batch.BatchID
 import com.twitter.summingbird.batch.Batcher
-import com.twitter.summingbird.batch.OrderedFromOrderingExt
+import com.twitter.summingbird.batch.OrderedFromOrderingEtwittert
 import com.twitter.summingbird.batch.PrunedSpace
 import com.twitter.summingbird.scalding._
 import com.twitter.summingbird.scalding.store.VersionedBatchStore
@@ -30,7 +30,7 @@ object MostRecentLagCorrectingVersionedStore {
       rootPath,
       versionsToKeep,
       batcher
-    )(lagCorrector)({ case (batchID, (k, v)) => (k, (batchID.next, packer(v))) })({
+    )(lagCorrector)({ case (batchID, (k, v)) => (k, (batchID.netwittert, packer(v))) })({
       case (k, (_, v)) => (k, unpacker(v))
     }) {
       override def select(b: List[BatchID]) = List(b.last)
@@ -58,28 +58,28 @@ class MostRecentLagCorrectingVersionedBatchStore[KeyInMemory, ValInMemory, KeyIn
 )(
   implicit @transient injection: Injection[(KeyInStore, ValInStore), (Array[Byte], Array[Byte])],
   override val ordering: Ordering[KeyInMemory])
-    extends VersionedBatchStore[KeyInMemory, ValInMemory, KeyInStore, ValInStore](
+    etwittertends VersionedBatchStore[KeyInMemory, ValInMemory, KeyInStore, ValInStore](
       rootPath,
       versionsToKeep,
       batcher)(pack)(unpack)(injection, ordering) {
 
-  import OrderedFromOrderingExt._
+  import OrderedFromOrderingEtwittert._
 
   @transient private val logger =
     LoggerFactory.getLogger(classOf[MostRecentLagCorrectingVersionedBatchStore[_, _, _, _]])
 
   override protected def lastBatch(
-    exclusiveUB: BatchID,
+    etwitterclusiveUB: BatchID,
     mode: HdfsMode
   ): Option[(BatchID, FlowProducer[TypedPipe[(KeyInMemory, ValInMemory)]])] = {
-    val batchToPretendAs = exclusiveUB.prev
+    val batchToPretendAs = etwitterclusiveUB.prev
     val versionToPretendAs = batchIDToVersion(batchToPretendAs)
     logger.info(
       s"Most recent lag correcting versioned batched store at $rootPath entering lastBatch method versionToPretendAs = $versionToPretendAs")
     val meta = new HDFSMetadata(mode.conf, rootPath)
     meta.versions
       .map { ver => (versionToBatchID(ver), readVersion(ver)) }
-      .filter { _._1 < exclusiveUB }
+      .filter { _._1 < etwitterclusiveUB }
       .reduceOption { (a, b) => if (a._1 > b._1) a else b }
       .map {
         case (

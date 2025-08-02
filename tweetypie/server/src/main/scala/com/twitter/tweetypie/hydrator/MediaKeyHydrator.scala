@@ -6,16 +6,16 @@ import com.twitter.tweetypie.core.ValueState
 import com.twitter.tweetypie.thriftscala._
 
 object MediaKeyHydrator {
-  type Ctx = MediaEntityHydrator.Uncacheable.Ctx
+  type Cttwitter = MediaEntityHydrator.Uncacheable.Cttwitter
   type Type = MediaEntityHydrator.Uncacheable.Type
 
   def apply(): Type =
     ValueHydrator
-      .map[MediaEntity, Ctx] { (curr, ctx) =>
-        val mediaKey = infer(ctx.mediaKeys, curr)
+      .map[MediaEntity, Cttwitter] { (curr, cttwitter) =>
+        val mediaKey = infer(cttwitter.mediaKeys, curr)
         ValueState.modified(curr.copy(mediaKey = Some(mediaKey)))
       }
-      .onlyIf((curr, ctx) => curr.mediaKey.isEmpty)
+      .onlyIf((curr, cttwitter) => curr.mediaKey.isEmpty)
 
   def infer(mediaKeys: Option[Seq[MediaKey]], mediaEntity: MediaEntity): MediaKey = {
 
@@ -38,7 +38,7 @@ object MediaKeyHydrator {
       }
 
     def fail =
-      throw new IllegalStateException(
+      throw new IllegalStateEtwitterception(
         s"""
            |Can't infer media key.
            | mediaKeys:'$mediaKeys'

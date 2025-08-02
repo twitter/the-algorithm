@@ -1,6 +1,6 @@
 package com.twitter.frigate.pushservice.predicate.magic_fanout
 
-import com.twitter.eventdetection.event_context.util.SimClustersUtil
+import com.twitter.eventdetection.event_contetwittert.util.SimClustersUtil
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.magic_events.thriftscala._
 import com.twitter.frigate.pushservice.model.MagicFanoutEventPushCandidate
@@ -134,16 +134,16 @@ object MagicFanoutPredicatesUtil {
   /**
    * Check if MagicEventsReasons contains a reason that matches the thresholdw
    */
-  def checkIfValidErgScEntityReasonExists(
+  def checkIfValidErgScEntityReasonEtwitterists(
     magicEventsReasons: Option[Seq[MagicEventsReason]],
     rankThreshold: Int
   )(
     implicit stats: StatsReceiver
   ): Boolean = {
     magicEventsReasons match {
-      case Some(reasons) if reasons.exists(_.isNewUser.contains(true)) => true
+      case Some(reasons) if reasons.etwitterists(_.isNewUser.contains(true)) => true
       case Some(reasons) =>
-        reasons.exists { reason =>
+        reasons.etwitterists { reason =>
           reason.source.contains(ReasonSource.ErgShortTermInterestSemanticCore) &&
           checkIfErgScEntityReasonMeetsThreshold(
             rankThreshold,
@@ -156,7 +156,7 @@ object MagicFanoutPredicatesUtil {
   }
 
   /**
-   * Get event simcluster vector from event context
+   * Get event simcluster vector from event contetwittert
    */
   def getEventSimClusterVector(
     simClustersEmbeddingOption: Option[Map[SimClustersEmbeddingId, ThriftSimClustersEmbedding]],
@@ -172,7 +172,7 @@ object MagicFanoutPredicatesUtil {
       val emptySeq = Seq[(Int, Double)]()
       val simClusterScoreTuple: Map[(ModelVersion, EmbeddingType), Seq[(Int, Double)]] =
         SimClustersUtil
-          .getMaxTopKTweetSimClusters(simClustersEmbeddings, topKSimClustersCount)
+          .getMatwitterTopKTweetSimClusters(simClustersEmbeddings, topKSimClustersCount)
       SimClusterScores(simClusterScoreTuple.getOrElse(embeddingMapKey, emptySeq).toMap)
     }
   }
@@ -197,7 +197,7 @@ object MagicFanoutPredicatesUtil {
   }
 
   def reasonsContainGeoTarget(reasons: Seq[MagicEventsReason]): Boolean = {
-    reasons.exists { reason =>
+    reasons.etwitterists { reason =>
       val isGeoGraphSource = reason.source.contains(ReasonSource.GeoGraph)
       reason.reason match {
         case TargetID.PlaceID(_) if isGeoGraphSource => true

@@ -27,20 +27,20 @@ object LimiterBackend {
 
   case class Config(requestTimeout: Duration, timeoutBackoffs: Stream[Duration]) {
 
-    def apply(client: LimiterBackend, ctx: Backend.Context): LimiterBackend =
+    def apply(client: LimiterBackend, cttwitter: Backend.Contetwittert): LimiterBackend =
       new LimiterBackend {
         val incrementFeature: FutureArrow[(FeatureRequest, Int), Unit] =
-          policy("incrementFeature", requestTimeout, ctx)(client.incrementFeature)
+          policy("incrementFeature", requestTimeout, cttwitter)(client.incrementFeature)
         val getFeatureUsage: FutureArrow[FeatureRequest, Usage] =
-          policy("getFeatureUsage", requestTimeout, ctx)(client.getFeatureUsage)
+          policy("getFeatureUsage", requestTimeout, cttwitter)(client.getFeatureUsage)
       }
 
     private[this] def policy[A, B](
       name: String,
       requestTimeout: Duration,
-      ctx: Context
+      cttwitter: Contetwittert
     ): Builder[A, B] =
-      defaultPolicy(name, requestTimeout, retryPolicy, ctx)
+      defaultPolicy(name, requestTimeout, retryPolicy, cttwitter)
 
     private[this] def retryPolicy[B]: RetryPolicy[Try[B]] =
       RetryPolicyBuilder.timeouts[Any](timeoutBackoffs)

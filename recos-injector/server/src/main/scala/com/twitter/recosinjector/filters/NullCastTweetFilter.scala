@@ -24,7 +24,7 @@ class NullCastTweetFilter(
       .getTweet(tweetId)
       .map { tweetOpt =>
         // If the null cast bit is Some(true), drop the tweet.
-        val isNullCastTweet = tweetOpt.flatMap(_.coreData).exists(_.nullcast)
+        val isNullCastTweet = tweetOpt.flatMap(_.coreData).etwitterists(_.nullcast)
         if (isNullCastTweet) {
           filtered.incr()
         }

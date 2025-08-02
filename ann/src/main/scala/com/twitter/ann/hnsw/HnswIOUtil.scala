@@ -2,7 +2,7 @@ package com.twitter.ann.hnsw
 
 import com.google.common.annotations.VisibleForTesting
 import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.ann.common.thriftscala.HnswIndexMetadata
+import com.twitter.ann.common.thriftscala.HnswIndetwitterMetadata
 import com.twitter.ann.common.Distance
 import com.twitter.ann.common.EntityEmbedding
 import com.twitter.ann.common.Metric
@@ -79,13 +79,13 @@ private[hnsw] object HnswIOUtil {
   }
 
   @VisibleForTesting
-  private[hnsw] def saveIndexMetadata(
+  private[hnsw] def saveIndetwitterMetadata(
     dimension: Int,
     metric: Metric[_ <: Distance[_]],
     numElements: Int,
     metadataStream: OutputStream
   ): Unit = {
-    val metadata = HnswIndexMetadata(
+    val metadata = HnswIndetwitterMetadata(
       dimension,
       Metric.toThrift(metric),
       numElements
@@ -96,9 +96,9 @@ private[hnsw] object HnswIOUtil {
   }
 
   @VisibleForTesting
-  private[hnsw] def loadIndexMetadata(
+  private[hnsw] def loadIndetwitterMetadata(
     metadataFile: AbstractFile
-  ): HnswIndexMetadata = {
+  ): HnswIndetwitterMetadata = {
     MetadataCodec.decode(
       ArrayByteBufferCodec.encode(metadataFile.getByteSource.read())
     )

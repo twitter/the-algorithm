@@ -2,34 +2,34 @@ package com.twitter.timelineranker.decider
 
 import com.twitter.servo.decider.DeciderKeyEnum
 
-object DeciderKey extends DeciderKeyEnum {
+object DeciderKey etwittertends DeciderKeyEnum {
   // Deciders that can be used to control load on TLR or its backends.
-  val EnableMaxConcurrencyLimiting: Value = Value("enable_max_concurrency_limiting")
+  val EnableMatwitterConcurrencyLimiting: Value = Value("enable_matwitter_concurrency_limiting")
 
   // Deciders related to testing / debugging.
-  val EnableRoutingToRankerDevProxy: Value = Value("enable_routing_to_ranker_dev_proxy")
+  val EnableRoutingToRankerDevProtwittery: Value = Value("enable_routing_to_ranker_dev_protwittery")
 
   // Deciders related to authorization.
   val ClientRequestAuthorization: Value = Value("client_request_authorization")
   val ClientWriteWhitelist: Value = Value("client_write_whitelist")
-  val AllowTimelineMixerRecapProd: Value = Value("allow_timeline_mixer_recap_prod")
-  val AllowTimelineMixerRecycledProd: Value = Value("allow_timeline_mixer_recycled_prod")
-  val AllowTimelineMixerHydrateProd: Value = Value("allow_timeline_mixer_hydrate_prod")
-  val AllowTimelineMixerHydrateRecosProd: Value = Value("allow_timeline_mixer_hydrate_recos_prod")
-  val AllowTimelineMixerSeedAuthorsProd: Value = Value("allow_timeline_mixer_seed_authors_prod")
-  val AllowTimelineMixerSimclusterProd: Value = Value("allow_timeline_mixer_simcluster_prod")
-  val AllowTimelineMixerEntityTweetsProd: Value = Value("allow_timeline_mixer_entity_tweets_prod")
-  val AllowTimelineMixerListProd: Value = Value("allow_timeline_mixer_list_prod")
-  val AllowTimelineMixerListTweetProd: Value = Value("allow_timeline_mixer_list_tweet_prod")
-  val AllowTimelineMixerCommunityProd: Value = Value("allow_timeline_mixer_community_prod")
-  val AllowTimelineMixerCommunityTweetProd: Value = Value(
-    "allow_timeline_mixer_community_tweet_prod")
+  val AllowTimelineMitwittererRecapProd: Value = Value("allow_timeline_mitwitterer_recap_prod")
+  val AllowTimelineMitwittererRecycledProd: Value = Value("allow_timeline_mitwitterer_recycled_prod")
+  val AllowTimelineMitwittererHydrateProd: Value = Value("allow_timeline_mitwitterer_hydrate_prod")
+  val AllowTimelineMitwittererHydrateRecosProd: Value = Value("allow_timeline_mitwitterer_hydrate_recos_prod")
+  val AllowTimelineMitwittererSeedAuthorsProd: Value = Value("allow_timeline_mitwitterer_seed_authors_prod")
+  val AllowTimelineMitwittererSimclusterProd: Value = Value("allow_timeline_mitwitterer_simcluster_prod")
+  val AllowTimelineMitwittererEntityTweetsProd: Value = Value("allow_timeline_mitwitterer_entity_tweets_prod")
+  val AllowTimelineMitwittererListProd: Value = Value("allow_timeline_mitwitterer_list_prod")
+  val AllowTimelineMitwittererListTweetProd: Value = Value("allow_timeline_mitwitterer_list_tweet_prod")
+  val AllowTimelineMitwittererCommunityProd: Value = Value("allow_timeline_mitwitterer_community_prod")
+  val AllowTimelineMitwittererCommunityTweetProd: Value = Value(
+    "allow_timeline_mitwitterer_community_tweet_prod")
   val AllowTimelineScorerRecommendedTrendTweetProd: Value = Value(
     "allow_timeline_scorer_recommended_trend_tweet_prod")
-  val AllowTimelineMixerUtegLikedByTweetsProd: Value = Value(
-    "allow_timeline_mixer_uteg_liked_by_tweets_prod")
-  val AllowTimelineMixerStaging: Value = Value("allow_timeline_mixer_staging")
-  val AllowTimelineRankerProxy: Value = Value("allow_timeline_ranker_proxy")
+  val AllowTimelineMitwittererUtegLikedByTweetsProd: Value = Value(
+    "allow_timeline_mitwitterer_uteg_liked_by_tweets_prod")
+  val AllowTimelineMitwittererStaging: Value = Value("allow_timeline_mitwitterer_staging")
+  val AllowTimelineRankerProtwittery: Value = Value("allow_timeline_ranker_protwittery")
   val AllowTimelineRankerWarmup: Value = Value("allow_timeline_ranker_warmup")
   val AllowTimelineScorerRecTopicTweetsProd: Value =
     Value("allow_timeline_scorer_rec_topic_tweets_prod")
@@ -52,11 +52,11 @@ object DeciderKey extends DeciderKeyEnum {
 
   // Deciders related to recap.
   val RecapEnableContentFeaturesHydration: Value = Value("recap_enable_content_features_hydration")
-  val RecapMaxCountMultiplier: Value = Value("recap_max_count_multiplier")
-  val RecapEnableExtraSortingInResults: Value = Value("recap_enable_extra_sorting_in_results")
+  val RecapMatwitterCountMultiplier: Value = Value("recap_matwitter_count_multiplier")
+  val RecapEnableEtwittertraSortingInResults: Value = Value("recap_enable_etwittertra_sorting_in_results")
 
   // Deciders related to recycled tweets.
-  val RecycledMaxCountMultiplier: Value = Value("recycled_max_count_multiplier")
+  val RecycledMatwitterCountMultiplier: Value = Value("recycled_matwitter_count_multiplier")
   val RecycledEnableContentFeaturesHydration: Value = Value(
     "recycled_enable_content_features_hydration")
 
@@ -66,7 +66,7 @@ object DeciderKey extends DeciderKeyEnum {
 
   // Deciders related to both recap and recycled tweets
   val EnableRealGraphUsers: Value = Value("enable_real_graph_users")
-  val MaxRealGraphAndFollowedUsers: Value = Value("max_real_graph_and_followed_users")
+  val MatwitterRealGraphAndFollowedUsers: Value = Value("matwitter_real_graph_and_followed_users")
 
   // Deciders related to recap author
   val RecapAuthorEnableNewPipeline: Value = Value("recap_author_enable_new_pipeline")

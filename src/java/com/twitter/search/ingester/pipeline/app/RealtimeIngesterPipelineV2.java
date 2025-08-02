@@ -1,9 +1,9 @@
 package com.twitter.search.ingester.pipeline.app;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.EtwitterecutorService;
 import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolEtwitterecutor;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +14,8 @@ import com.twitter.search.ingester.model.KafkaRawRecord;
 import com.twitter.search.ingester.pipeline.twitter.TweetEventDeserializerStage;
 import com.twitter.search.ingester.pipeline.twitter.kafka.KafkaConsumerStage;
 import com.twitter.search.ingester.pipeline.twitter.kafka.KafkaRawRecordConsumerStage;
-import com.twitter.search.ingester.pipeline.util.PipelineV2CreationException;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
+import com.twitter.search.ingester.pipeline.util.PipelineV2CreationEtwitterception;
+import com.twitter.search.ingester.pipeline.util.PipelineStageEtwitterception;
 
 public class RealtimeIngesterPipelineV2 {
   private static final Logger LOG = LoggerFactory.getLogger(RealtimeIngesterPipelineV2.class);
@@ -30,37 +30,37 @@ public class RealtimeIngesterPipelineV2 {
   private static final String KAFKA_CONSUMER_GROUP_ID = "";
   private static final String KAFKA_CLUSTER_PATH = "";
   private static final String KAFKA_DECIDER_KEY = "ingester_tweets_consume_from_kafka";
-  private static final String STATS_PREFIX = "realtimeingesterpipelinev2";
-  private SearchCounter kafkaErrorCount = SearchCounter.create(STATS_PREFIX
+  private static final String STATS_PREFItwitter = "realtimeingesterpipelinev2";
+  private SearchCounter kafkaErrorCount = SearchCounter.create(STATS_PREFItwitter
       + "_kafka_error_count");
   private Boolean running;
   private String environment;
   private String cluster;
-  private ExecutorService threadPool;
+  private EtwitterecutorService threadPool;
   private KafkaConsumerStage<KafkaRawRecord> kafkaConsumer;
   private TweetEventDeserializerStage tweetEventDeserializerStage;
 
   public RealtimeIngesterPipelineV2(String environment, String cluster, int threadsToSpawn) throws
-      PipelineV2CreationException, PipelineStageException {
+      PipelineV2CreationEtwitterception, PipelineStageEtwitterception {
     if (!environment.equals(PROD_ENV) && !environment.equals(STAGING_ENV)
         && !environment.equals(STAGING1_ENV)) {
-      throw new PipelineV2CreationException("invalid value for environment");
+      throw new PipelineV2CreationEtwitterception("invalid value for environment");
     }
 
     if (!cluster.equals(REALTIME_CLUSTER)
         && !cluster.equals(PROTECTED_CLUSTER) && !cluster.equals(REALTIME_CG_CLUSTER)) {
-      throw new PipelineV2CreationException("invalid value for cluster.");
+      throw new PipelineV2CreationEtwitterception("invalid value for cluster.");
     }
 
-    int numberOfThreads = Math.max(1, threadsToSpawn);
+    int numberOfThreads = Math.matwitter(1, threadsToSpawn);
     this.environment = environment;
     this.cluster = cluster;
-    this.threadPool = new ThreadPoolExecutor(numberOfThreads, numberOfThreads, 0L,
-        TimeUnit.MILLISECONDS, new SynchronousQueue<>(), new ThreadPoolExecutor.CallerRunsPolicy());
+    this.threadPool = new ThreadPoolEtwitterecutor(numberOfThreads, numberOfThreads, 0L,
+        TimeUnit.MILLISECONDS, new SynchronousQueue<>(), new ThreadPoolEtwitterecutor.CallerRunsPolicy());
     initStages();
   }
 
-  private void initStages() throws PipelineStageException {
+  private void initStages() throws PipelineStageEtwitterception {
     kafkaConsumer = new KafkaRawRecordConsumerStage(KAFKA_CLIENT_ID, KAFKA_TOPIC_NAME,
         KAFKA_CONSUMER_GROUP_ID, KAFKA_CLUSTER_PATH, KAFKA_DECIDER_KEY);
     kafkaConsumer.setupStageV2();
@@ -85,7 +85,7 @@ public class RealtimeIngesterPipelineV2 {
       for (KafkaRawRecord record : records) {
         processKafkaRecord(record);
       }
-    } catch (PipelineStageException e) {
+    } catch (PipelineStageEtwitterception e) {
       kafkaErrorCount.increment();
       LOG.error("Error polling from Kafka", e);
     }

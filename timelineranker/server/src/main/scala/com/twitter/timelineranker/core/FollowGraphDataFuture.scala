@@ -38,8 +38,8 @@ case class FollowGraphDataFuture(
 
 object FollowGraphDataFuture {
   private def mkEmptyFuture(field: String) = {
-    Future.exception(
-      new IllegalStateException(s"FollowGraphDataFuture field $field accessed without being set")
+    Future.etwitterception(
+      new IllegalStateEtwitterception(s"FollowGraphDataFuture field $field accessed without being set")
     )
   }
 

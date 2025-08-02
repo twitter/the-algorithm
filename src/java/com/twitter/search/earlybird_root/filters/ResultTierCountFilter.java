@@ -6,8 +6,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.NavigableMap;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import javatwitter.inject.Inject;
+import javatwitter.inject.Singleton;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableSortedMap;
@@ -20,7 +20,7 @@ import com.twitter.search.earlybird.config.TierInfo;
 import com.twitter.search.earlybird.config.TierInfoSource;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.snowflake.id.SnowflakeId;
 import com.twitter.util.Future;
 import com.twitter.util.FutureEventListener;
@@ -30,14 +30,14 @@ import com.twitter.util.FutureEventListener;
  */
 @Singleton
 public class ResultTierCountFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+    etwittertends SimpleFilter<EarlybirdRequestContetwittert, EarlybirdResponse> {
 
-  private static final String COUNTER_PREFIX = "result_tier_count";
+  private static final String COUNTER_PREFItwitter = "result_tier_count";
   private final long firstTweetTimeSinceEpochSec;
   private final NavigableMap<Long, SearchCounter> tierBuckets;
-  private final SearchCounter allCounter = SearchCounter.export(COUNTER_PREFIX + "_all");
+  private final SearchCounter allCounter = SearchCounter.etwitterport(COUNTER_PREFItwitter + "_all");
   private final SearchCounter noResultsCounter =
-      SearchCounter.export(COUNTER_PREFIX + "_no_results");
+      SearchCounter.etwitterport(COUNTER_PREFItwitter + "_no_results");
 
   @Inject
   @SuppressWarnings("unused")
@@ -51,14 +51,14 @@ public class ResultTierCountFilter
     Collections.reverse(tierInfos);
 
     for (TierInfo tierInfo : tierInfos) {
-      SearchCounter searchCounter = SearchCounter.export(
-          String.format("%s_%s", COUNTER_PREFIX, tierInfo.getTierName()));
+      SearchCounter searchCounter = SearchCounter.etwitterport(
+          String.format("%s_%s", COUNTER_PREFItwitter, tierInfo.getTierName()));
       builder.put(tierInfo.getServingRangeSinceTimeSecondsFromEpoch(), searchCounter);
 
-      // export cumulative metrics to sum from the latest to a lower tier
+      // etwitterport cumulative metrics to sum from the latest to a lower tier
       Collection<SearchCounter> counters = builder.build().values();
-      SearchCustomGauge.export(
-          String.format("%s_down_to_%s", COUNTER_PREFIX, tierInfo.getTierName()),
+      SearchCustomGauge.etwitterport(
+          String.format("%s_down_to_%s", COUNTER_PREFItwitter, tierInfo.getTierName()),
           () -> counters.stream()
               .mapToLong(SearchCounter::get)
               .sum());
@@ -69,9 +69,9 @@ public class ResultTierCountFilter
 
   @Override
   public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext context,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    return service.apply(context).addEventListener(
+      EarlybirdRequestContetwittert contetwittert,
+      Service<EarlybirdRequestContetwittert, EarlybirdResponse> service) {
+    return service.apply(contetwittert).addEventListener(
         new FutureEventListener<EarlybirdResponse>() {
           @Override
           public void onFailure(Throwable cause) {

@@ -15,7 +15,7 @@ trait OnlineAggregationConfigTrait {
   def AggregatesToCompute: Set[TypedAggregateGroup[_]]
 
   /**
-   * ProdFeatures: This defines the subset of aggregates to be extracted
+   * ProdFeatures: This defines the subset of aggregates to be etwittertracted
    *    and hydrated (or adapted) by callers to the aggregates features cache.
    *    This should only contain production aggregates and aggregates on
    *    product specific engagements.

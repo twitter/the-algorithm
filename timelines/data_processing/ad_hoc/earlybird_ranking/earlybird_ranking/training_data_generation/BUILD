@@ -51,8 +51,8 @@ scala_library(
         "src/thrift/com/twitter/ml/api:dataset-analytics-java",
         "timelines/data_processing/ad_hoc/earlybird_ranking/common",
         "timelines/data_processing/ad_hoc/recap/dataset_utils",
-        "timelines/data_processing/ad_hoc/recap/offline_execution",
-        "timelines/data_processing/util/execution",
+        "timelines/data_processing/ad_hoc/recap/offline_etwitterecution",
+        "timelines/data_processing/util/etwitterecution",
     ],
 )
 

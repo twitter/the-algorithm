@@ -10,7 +10,7 @@ import com.twitter.visibility.rules.Reason.FirstPageSearchResult
 abstract class FirstPageSearchResultWithTweetLabelRule(
   action: Action,
   tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       action,
       IsFirstPageSearchResult,
       tweetSafetyLabelType
@@ -19,7 +19,7 @@ abstract class FirstPageSearchResultWithTweetLabelRule(
 abstract class FirstPageSearchResultSmartOutOfNetworkWithTweetLabelRule(
   action: Action,
   tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       action,
       And(
         IsFirstPageSearchResult,
@@ -32,6 +32,6 @@ abstract class FirstPageSearchResultSmartOutOfNetworkWithTweetLabelRule(
     )
 
 object FirstPageSearchResultAgathaSpamDropRule
-    extends FirstPageSearchResultWithTweetLabelRule(
+    etwittertends FirstPageSearchResultWithTweetLabelRule(
       Drop(FirstPageSearchResult),
       TweetSafetyLabelType.AgathaSpam)

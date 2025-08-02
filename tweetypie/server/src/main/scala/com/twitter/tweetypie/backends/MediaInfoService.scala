@@ -23,14 +23,14 @@ object MediaInfoService {
     totalTimeout: Duration,
     timeoutBackoffs: Stream[Duration]) {
 
-    def apply(svc: MediaInfoService, ctx: Backend.Context): MediaInfoService =
+    def apply(svc: MediaInfoService, cttwitter: Backend.Contetwittert): MediaInfoService =
       new MediaInfoService {
         val getTweetMediaInfo: FutureArrow[GetTweetMediaInfoRequest, GetTweetMediaInfoResponse] =
-          policy("getTweetMediaInfo", ctx)(svc.getTweetMediaInfo)
+          policy("getTweetMediaInfo", cttwitter)(svc.getTweetMediaInfo)
       }
 
-    private[this] def policy[A, B](name: String, ctx: Context): Builder[A, B] =
-      defaultPolicy(name, requestTimeout, retryPolicy, ctx, totalTimeout = totalTimeout)
+    private[this] def policy[A, B](name: String, cttwitter: Contetwittert): Builder[A, B] =
+      defaultPolicy(name, requestTimeout, retryPolicy, cttwitter, totalTimeout = totalTimeout)
 
     private[this] def retryPolicy[B]: RetryPolicy[Try[B]] =
       RetryPolicyBuilder.timeouts[Any](timeoutBackoffs)

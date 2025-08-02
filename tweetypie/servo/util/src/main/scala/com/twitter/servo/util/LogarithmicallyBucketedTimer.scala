@@ -12,20 +12,20 @@ object LogarithmicallyBucketedTimer {
  */
 class LogarithmicallyBucketedTimer(
   statsReceiver: StatsReceiver,
-  prefix: String = LogarithmicallyBucketedTimer.LatencyStatName) {
+  prefitwitter: String = LogarithmicallyBucketedTimer.LatencyStatName) {
 
   protected[this] def base10Key(count: Int) =
-    prefix + "_log_10_" + math.floor(math.log10(count)).toInt
+    prefitwitter + "_log_10_" + math.floor(math.log10(count)).toInt
 
   protected[this] def baseEKey(count: Int) =
-    prefix + "_log_E_" + math.floor(math.log(count)).toInt
+    prefitwitter + "_log_E_" + math.floor(math.log(count)).toInt
 
   /**
    * takes the base10 and baseE logs of the count, adds timings to the
    * appropriate buckets
    */
   def apply[T](count: Int = 0)(f: => Future[T]) = {
-    Stat.timeFuture(statsReceiver.stat(prefix)) {
+    Stat.timeFuture(statsReceiver.stat(prefitwitter)) {
       // only bucketize for positive, non-zero counts
       if (count > 0) {
         Stat.timeFuture(statsReceiver.stat(base10Key(count))) {

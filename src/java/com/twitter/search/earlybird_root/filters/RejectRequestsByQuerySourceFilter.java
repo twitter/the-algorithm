@@ -2,8 +2,8 @@ package com.twitter.search.earlybird_root.filters;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nullable;
-import javax.inject.Inject;
+import javatwitter.annotation.Nullable;
+import javatwitter.inject.Inject;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -27,7 +27,7 @@ import com.twitter.util.Future;
  * code of the response will depend on how super-root combines responses from the three downstream
  * roots.
  */
-public class RejectRequestsByQuerySourceFilter extends
+public class RejectRequestsByQuerySourceFilter etwittertends
     SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
 
   @VisibleForTesting
@@ -58,7 +58,7 @@ public class RejectRequestsByQuerySourceFilter extends
       String querySourceName = querySource.name().toLowerCase();
 
       rejectedRequestsCounterPerQuerySource.put(querySource,
-          SearchRateCounter.export(
+          SearchRateCounter.etwitterport(
               String.format(
                   NUM_REJECTED_REQUESTS_STAT_NAME_PATTERN, clusterName, querySourceName)));
 

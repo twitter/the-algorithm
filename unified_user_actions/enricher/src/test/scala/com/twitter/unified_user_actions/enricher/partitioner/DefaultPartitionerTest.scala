@@ -1,7 +1,7 @@
 package com.twitter.unified_user_actions.enricher.partitioner
 
 import com.twitter.inject.Test
-import com.twitter.unified_user_actions.enricher.EnricherFixture
+import com.twitter.unified_user_actions.enricher.EnricherFitwitterture
 import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
 import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentIdType
 import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentInstruction
@@ -11,13 +11,13 @@ import com.twitter.unified_user_actions.enricher.internal.thriftscala.Enrichment
 import com.twitter.unified_user_actions.enricher.partitioner.DefaultPartitioner.NullKey
 import org.scalatest.prop.TableDrivenPropertyChecks
 
-class DefaultPartitionerTest extends Test with TableDrivenPropertyChecks {
+class DefaultPartitionerTest etwittertends Test with TableDrivenPropertyChecks {
   test("default partitioner should work") {
-    new EnricherFixture {
+    new EnricherFitwitterture {
       val partitioner = new DefaultPartitioner
 
       val instructions = Table(
-        ("instruction", "envelop", "expected"),
+        ("instruction", "envelop", "etwitterpected"),
         // tweet info
         (
           TweetEnrichment,
@@ -43,20 +43,20 @@ class DefaultPartitionerTest extends Test with TableDrivenPropertyChecks {
         (
           instruction: EnrichmentInstruction,
           envelop: EnrichmentEnvelop,
-          expected: Some[EnrichmentKey]
+          etwitterpected: Some[EnrichmentKey]
         ) =>
           val actual = partitioner.repartition(instruction, envelop)
-          assert(expected === actual)
+          assert(etwitterpected === actual)
       }
     }
   }
 
   test("unsupported events shouldn't be partitioned") {
-    new EnricherFixture {
+    new EnricherFitwitterture {
       val partitioner = new DefaultPartitioner
 
       val instructions = Table(
-        ("instruction", "envelop", "expected"),
+        ("instruction", "envelop", "etwitterpected"),
         // profile uua event
         (
           TweetEnrichment,
@@ -73,10 +73,10 @@ class DefaultPartitionerTest extends Test with TableDrivenPropertyChecks {
         (
           instruction: EnrichmentInstruction,
           envelop: EnrichmentEnvelop,
-          expected: Option[EnrichmentKey]
+          etwitterpected: Option[EnrichmentKey]
         ) =>
           val actual = partitioner.repartition(instruction, envelop)
-          assert(expected === actual)
+          assert(etwitterpected === actual)
       }
     }
   }

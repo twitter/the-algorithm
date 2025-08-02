@@ -9,10 +9,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
+import com.twitter.search.common.schema.base.IndetwitteredNumericFieldSettings;
 import com.twitter.search.common.schema.base.Schema;
 import com.twitter.search.common.schema.thriftjava.ThriftNumericType;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
+import com.twitter.search.core.earlybird.indetwitter.inverted.InvertedIndetwitter;
 
 /**
  * A utility class for selecting iterators and label providers
@@ -28,22 +28,22 @@ public abstract class FacetUtil {
 
   /**
    * A utility method for choosing the right facet label provider based on the EarlybirdFieldType.
-   * Takes in a InvertedIndex since some facet label providers are or depend on the inverted
-   * index.
+   * Takes in a InvertedIndetwitter since some facet label providers are or depend on the inverted
+   * indetwitter.
    * Should never return null.
    *
    * @param fieldType A FieldType for the facet
-   * @param invertedField The inverted index associated with the facet. May be null.
+   * @param invertedField The inverted indetwitter associated with the facet. May be null.
    * @return A non-null FacetLabelProvider
    */
   public static FacetLabelProvider chooseFacetLabelProvider(
       EarlybirdFieldType fieldType,
-      InvertedIndex invertedField) {
+      InvertedIndetwitter invertedField) {
     Preconditions.checkNotNull(fieldType);
 
-    // In the case neither inverted index existing nor using CSF,
-    // return FacetLabelProvider.InaccessibleFacetLabelProvider to throw exception
-    // more meaningfully and explicitly.
+    // In the case neither inverted indetwitter etwitteristing nor using CSF,
+    // return FacetLabelProvider.InaccessibleFacetLabelProvider to throw etwitterception
+    // more meaningfully and etwitterplicitly.
     if (invertedField == null && !fieldType.isUseCSFForFacetCounting()) {
       return new FacetLabelProvider.InaccessibleFacetLabelProvider(fieldType.getFacetName());
     }
@@ -51,7 +51,7 @@ public abstract class FacetUtil {
     if (fieldType.isUseCSFForFacetCounting()) {
       return new FacetLabelProvider.IdentityFacetLabelProvider();
     }
-    IndexedNumericFieldSettings numericSettings = fieldType.getNumericFieldSettings();
+    IndetwitteredNumericFieldSettings numericSettings = fieldType.getNumericFieldSettings();
     if (numericSettings != null && numericSettings.isUseTwitterFormat()) {
       if (numericSettings.getNumericType() == ThriftNumericType.INT) {
         return new FacetLabelProvider.IntTermFacetLabelProvider(invertedField);
@@ -71,16 +71,16 @@ public abstract class FacetUtil {
 
   /**
    * Get segment-specific facet label providers based on the schema
-   * and on the fieldToInvertedIndexMapping for the segment.
-   * These will be used by facet accumulators to get the text of the termIDs
+   * and on the fieldToInvertedIndetwitterMapping for the segment.
+   * These will be used by facet accumulators to get the tetwittert of the termIDs
    *
    * @param schema the schema, for info on fields and facets
-   * @param fieldToInvertedIndexMapping map of fields to their inverted indices
+   * @param fieldToInvertedIndetwitterMapping map of fields to their inverted indices
    * @return facet label provider map
    */
   public static Map<String, FacetLabelProvider> getFacetLabelProviders(
       Schema schema,
-      Map<String, InvertedIndex> fieldToInvertedIndexMapping) {
+      Map<String, InvertedIndetwitter> fieldToInvertedIndetwitterMapping) {
 
     HashMap<String, FacetLabelProvider> facetLabelProviderBuilder
         = new HashMap<>();
@@ -90,15 +90,15 @@ public abstract class FacetUtil {
       Preconditions.checkNotNull(fieldType);
       String fieldName = fieldInfo.getName();
       String facetName = fieldType.getFacetName();
-      InvertedIndex invertedIndex = fieldToInvertedIndexMapping.get(fieldName);
-      if (invertedIndex == null && !fieldType.isUseCSFForFacetCounting()) {
+      InvertedIndetwitter invertedIndetwitter = fieldToInvertedIndetwitterMapping.get(fieldName);
+      if (invertedIndetwitter == null && !fieldType.isUseCSFForFacetCounting()) {
         LOG.warn("No docs in segment had field " + fieldName
-                + " indexed for facet " + facetName
+                + " indetwittered for facet " + facetName
                 + " so InaccessibleFacetLabelProvider will be provided."
         );
       }
       facetLabelProviderBuilder.put(facetName, Preconditions.checkNotNull(
-          chooseFacetLabelProvider(fieldType, invertedIndex)));
+          chooseFacetLabelProvider(fieldType, invertedIndetwitter)));
     }
 
     return facetLabelProviderBuilder;

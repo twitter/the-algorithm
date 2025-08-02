@@ -11,8 +11,8 @@ object Mutation {
    * value as new. Use checkEq if this value could be the same as the
    * input.
    */
-  def const[T](x: T) = Mutation[T] { _ =>
-    Some(x)
+  def const[T](twitter: T) = Mutation[T] { _ =>
+    Some(twitter)
   }
 
   private[this] val _unit = Mutation[Any] { _ =>
@@ -33,7 +33,7 @@ object Mutation {
    */
   def apply[A](f: A => Option[A]): Mutation[A] =
     new Mutation[A] {
-      override def apply(x: A) = f(x)
+      override def apply(twitter: A) = f(twitter)
     }
 
   /**
@@ -42,9 +42,9 @@ object Mutation {
    * not changed the value.
    */
   def fromEndo[A](f: A => A): Mutation[A] =
-    Mutation[A] { x =>
-      val y = f(x)
-      if (y == x) None else Some(y)
+    Mutation[A] { twitter =>
+      val y = f(twitter)
+      if (y == twitter) None else Some(y)
     }
 
   /**
@@ -73,7 +73,7 @@ object Mutation {
  * some action (such as updating a cache) should be performed if the
  * value has changed.
  */
-trait Mutation[A] extends (A => Option[A]) {
+trait Mutation[A] etwittertends (A => Option[A]) {
 
   /**
    * Convert this mutation to a function that always returns a
@@ -83,21 +83,21 @@ trait Mutation[A] extends (A => Option[A]) {
    * (convert to an endofunction on A)
    */
   lazy val endo: A => A =
-    x =>
-      apply(x) match {
+    twitter =>
+      apply(twitter) match {
         case Some(v) => v
-        case None => x
+        case None => twitter
       }
 
   /**
-   * Apply this mutation, and then apply the next mutation to the
-   * result. If this mutation leaves the value unchanged, the next
+   * Apply this mutation, and then apply the netwittert mutation to the
+   * result. If this mutation leaves the value unchanged, the netwittert
    * mutation is invoked with the original input.
    */
   def also(g: Mutation[A]): Mutation[A] =
-    Mutation[A] { x =>
-      apply(x) match {
-        case None => g(x)
+    Mutation[A] { twitter =>
+      apply(twitter) match {
+        case None => g(twitter)
         case someY @ Some(y) =>
           g(y) match {
             case some @ Some(_) => some
@@ -111,27 +111,27 @@ trait Mutation[A] extends (A => Option[A]) {
    * yields all of the effects of this mutation without affecting the
    * final result.
    */
-  def dark: Mutation[A] = Mutation[A] { x =>
-    apply(x); None
+  def dark: Mutation[A] = Mutation[A] { twitter =>
+    apply(twitter); None
   }
 
   /**
    * Convert a Mutation on A to a Mutation on B by way of a pair of functions for
    * converting from B to A and back.
    */
-  def xmap[B](f: B => A, g: A => B): Mutation[B] =
+  def twittermap[B](f: B => A, g: A => B): Mutation[B] =
     Mutation[B](f andThen this andThen { _ map g })
 
   /**
    * Converts a Mutation on A to a Mutation on Try[A], where the Mutation is only applied
-   * to Return values and any exceptions caught by the underying function are caught and
+   * to Return values and any etwitterceptions caught by the underying function are caught and
    * returned as Some(Throw(_))
    */
   def tryable: Mutation[Try[A]] =
     Mutation[Try[A]] {
-      case Throw(x) => Some(Throw(x))
-      case Return(x) =>
-        Try(apply(x)) match {
+      case Throw(twitter) => Some(Throw(twitter))
+      case Return(twitter) =>
+        Try(apply(twitter)) match {
           case Throw(y) => Some(Throw(y))
           case Return(None) => None
           case Return(Some(y)) => Some(Return(y))
@@ -143,8 +143,8 @@ trait Mutation[A] extends (A => Option[A]) {
    * for the input.
    */
   def onlyIf(predicate: A => Boolean): Mutation[A] =
-    Mutation[A] { x =>
-      if (predicate(x)) this(x) else None
+    Mutation[A] { twitter =>
+      if (predicate(twitter)) this(twitter) else None
     }
 
   /**
@@ -182,9 +182,9 @@ trait Mutation[A] extends (A => Option[A]) {
    *     larger structure, checking equality on the smaller structure
    *     can prevent unnecessary copies of the larger structure.
    */
-  def checkEq = Mutation[A] { x =>
-    this(x) match {
-      case someY @ Some(y) if y != x => someY
+  def checkEq = Mutation[A] { twitter =>
+    this(twitter) match {
+      case someY @ Some(y) if y != twitter => someY
       case _ => None
     }
   }
@@ -201,10 +201,10 @@ trait Mutation[A] extends (A => Option[A]) {
    * yield None if no values are changed, or a Seq of both the changed
    * and unchanged values if any value is mutated.
    */
-  def liftSeq = Mutation[Seq[A]] { xs =>
+  def liftSeq = Mutation[Seq[A]] { twitters =>
     var changed = false
     val detectChange = Effect.fromPartial[Option[A]] { case Some(_) => changed = true }
-    val mutated = xs map (this withEffect detectChange).endo
+    val mutated = twitters map (this withEffect detectChange).endo
     if (changed) Some(mutated) else None
   }
 
@@ -214,8 +214,8 @@ trait Mutation[A] extends (A => Option[A]) {
    */
   def liftOption = Mutation[Option[A]] {
     case None => None
-    case Some(x) =>
-      this(x) match {
+    case Some(twitter) =>
+      this(twitter) match {
         case None => None
         case Some(y) => Some(Some(y))
       }

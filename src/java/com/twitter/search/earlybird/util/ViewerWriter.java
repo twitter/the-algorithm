@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.util;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 /**
  * Interface class for writer.  Writer should be passed in
@@ -13,35 +13,35 @@ public interface ViewerWriter {
   /**
    * Writes a mark for the beginning of an array.
    */
-  ViewerWriter beginArray() throws IOException;
+  ViewerWriter beginArray() throws IOEtwitterception;
 
   /**
    * Writes a mark for the beginning of an object.
    */
-  ViewerWriter beginObject() throws IOException;
+  ViewerWriter beginObject() throws IOEtwitterception;
 
   /**
    * Writes a mark for the end of an array.
    */
-  ViewerWriter endArray() throws IOException;
+  ViewerWriter endArray() throws IOEtwitterception;
 
   /**
    * Writes a mark for the end of an object.
    */
-  ViewerWriter endObject() throws IOException;
+  ViewerWriter endObject() throws IOEtwitterception;
 
   /**
    * Writes the name (key) of a property.
    */
-  ViewerWriter name(String field) throws IOException;
+  ViewerWriter name(String field) throws IOEtwitterception;
 
   /**
    * Writes the value of a property.
    */
-  ViewerWriter value(String s) throws IOException;
+  ViewerWriter value(String s) throws IOEtwitterception;
 
   /**
    * Writes a new line.
    */
-  ViewerWriter newline() throws IOException;
+  ViewerWriter newline() throws IOEtwitterception;
 }

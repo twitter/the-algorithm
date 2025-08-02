@@ -17,11 +17,11 @@ public final class RecentTweetRestriction {
   }
 
   /**
-   * Returns the point in time (in seconds past the unix epoch) before which all tweets will be
-   * completely indexed. This is required by some clients, because they rely on Earlybird monotonically
-   * indexing tweets by ID and that tweets are completely indexed when they see them.
+   * Returns the point in time (in seconds past the unitwitter epoch) before which all tweets will be
+   * completely indetwittered. This is required by some clients, because they rely on Earlybird monotonically
+   * indetwittering tweets by ID and that tweets are completely indetwittered when they see them.
    *
-   * @param lastTime The time at which the most recent tweet was indexed, in seconds since the unix
+   * @param lastTime The time at which the most recent tweet was indetwittered, in seconds since the unitwitter
    * epoch.
    */
   public static int recentTweetsUntilTime(Decider decider, int lastTime) {
@@ -29,11 +29,11 @@ public final class RecentTweetRestriction {
   }
 
   /**
-   * Returns the point in time (in seconds past the unix epoch) before which all tweets will be
-   * completely indexed. This is required by some clients, because they rely on Earlybird monotonically
-   * indexing tweets by ID and that tweets are completely indexed when they see them.
+   * Returns the point in time (in seconds past the unitwitter epoch) before which all tweets will be
+   * completely indetwittered. This is required by some clients, because they rely on Earlybird monotonically
+   * indetwittering tweets by ID and that tweets are completely indetwittered when they see them.
    *
-   * @param lastTime The time at which the most recent tweet was indexed, in seconds since the unix
+   * @param lastTime The time at which the most recent tweet was indetwittered, in seconds since the unitwitter
    * epoch.
    */
   public static int queryCacheUntilTime(Decider decider, int lastTime) {

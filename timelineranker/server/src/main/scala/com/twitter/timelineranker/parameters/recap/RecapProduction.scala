@@ -12,19 +12,19 @@ import com.twitter.servo.decider.DeciderKeyEnum
 object RecapProduction {
   val deciderByParam: Map[Param[_], DeciderKeyEnum#Value] = Map[Param[_], DeciderKeyName](
     EnableRealGraphUsersParam -> DeciderKey.EnableRealGraphUsers,
-    MaxRealGraphAndFollowedUsersParam -> DeciderKey.MaxRealGraphAndFollowedUsers,
+    MatwitterRealGraphAndFollowedUsersParam -> DeciderKey.MatwitterRealGraphAndFollowedUsers,
     EnableContentFeaturesHydrationParam -> DeciderKey.RecapEnableContentFeaturesHydration,
-    MaxCountMultiplierParam -> DeciderKey.RecapMaxCountMultiplier,
+    MatwitterCountMultiplierParam -> DeciderKey.RecapMatwitterCountMultiplier,
     EnableNewRecapAuthorPipeline -> DeciderKey.RecapAuthorEnableNewPipeline,
-    RecapParams.EnableExtraSortingInSearchResultParam -> DeciderKey.RecapEnableExtraSortingInResults
+    RecapParams.EnableEtwittertraSortingInSearchResultParam -> DeciderKey.RecapEnableEtwittertraSortingInResults
   )
 
-  val intParams: Seq[MaxRealGraphAndFollowedUsersParam.type] = Seq(
-    MaxRealGraphAndFollowedUsersParam
+  val intParams: Seq[MatwitterRealGraphAndFollowedUsersParam.type] = Seq(
+    MatwitterRealGraphAndFollowedUsersParam
   )
 
-  val doubleParams: Seq[MaxCountMultiplierParam.type] = Seq(
-    MaxCountMultiplierParam
+  val doubleParams: Seq[MatwitterCountMultiplierParam.type] = Seq(
+    MatwitterCountMultiplierParam
   )
 
   val boundedDoubleFeatureSwitchParams: Seq[FSBoundedParam[Double]] = Seq(
@@ -35,7 +35,7 @@ object RecapProduction {
     EnableRealGraphUsersParam,
     EnableContentFeaturesHydrationParam,
     EnableNewRecapAuthorPipeline,
-    RecapParams.EnableExtraSortingInSearchResultParam
+    RecapParams.EnableEtwittertraSortingInSearchResultParam
   )
 
   val booleanFeatureSwitchParams: Seq[FSParam[Boolean]] = Seq(
@@ -47,18 +47,18 @@ object RecapProduction {
     RecapParams.EnableSettingTweetTypesWithTweetKindOption,
     RecapParams.EnableRelevanceSearchParam,
     EnableTokensInContentFeaturesHydrationParam,
-    EnableTweetTextInContentFeaturesHydrationParam,
-    EnableExpandedExtendedRepliesFilterParam,
+    EnableTweetTetwittertInContentFeaturesHydrationParam,
+    EnableEtwitterpandedEtwittertendedRepliesFilterParam,
     EnableConversationControlInContentFeaturesHydrationParam,
     EnableTweetMediaHydrationParam,
     ImputeRealGraphAuthorWeightsParam,
-    EnableExcludeSourceTweetIdsQueryParam
+    EnableEtwittercludeSourceTweetIdsQueryParam
   )
 
   val boundedIntFeatureSwitchParams: Seq[FSBoundedParam[Int]] = Seq(
-    RecapParams.MaxFollowedUsersParam,
+    RecapParams.MatwitterFollowedUsersParam,
     ImputeRealGraphAuthorWeightsPercentileParam,
-    RecapParams.RelevanceOptionsMaxHitsToProcessParam
+    RecapParams.RelevanceOptionsMatwitterHitsToProcessParam
   )
 }
 
@@ -71,9 +71,9 @@ class RecapProduction(deciderGateBuilder: DeciderGateBuilder, statsReceiver: Sta
   val optionalBoundedIntFeatureSwitchOverrides: Seq[OptionalOverride[Option[Int]]] =
     FeatureSwitchOverrideUtil.getBoundedOptionalIntOverrides(
       (
-        MaxRealGraphAndFollowedUsersFSOverrideParam,
-        "max_real_graph_and_followers_users_fs_override_defined",
-        "max_real_graph_and_followers_users_fs_override_value"
+        MatwitterRealGraphAndFollowedUsersFSOverrideParam,
+        "matwitter_real_graph_and_followers_users_fs_override_defined",
+        "matwitter_real_graph_and_followers_users_fs_override_value"
       )
     )
   val doubleOverrides: Seq[OptionalOverride[Double]] =

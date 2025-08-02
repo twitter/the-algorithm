@@ -6,7 +6,7 @@ import com.twitter.storehaus.ReadableStore
 import com.twitter.util.Future
 
 case class SocialGraphServiceProcessStore(edgeStore: ReadableStore[RelationEdge, Boolean])
-    extends ReadableStore[RelationEdge, Boolean] {
+    etwittertends ReadableStore[RelationEdge, Boolean] {
   override def multiGet[T <: RelationEdge](
     relationEdges: Set[T]
   ): Map[T, Future[Option[Boolean]]] = {

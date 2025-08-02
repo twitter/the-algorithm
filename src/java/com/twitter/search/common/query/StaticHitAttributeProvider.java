@@ -15,7 +15,7 @@ public class StaticHitAttributeProvider implements HitAttributeProvider {
   }
 
   /**
-   * Set a fake last doc id and hit attribution, this is only used to generate explanation.
+   * Set a fake last doc id and hit attribution, this is only used to generate etwitterplanation.
    */
   public void setCurrentHitAttr(int docId, Map<Integer, List<String>> hitAttr) {
     this.currentDocId = docId;

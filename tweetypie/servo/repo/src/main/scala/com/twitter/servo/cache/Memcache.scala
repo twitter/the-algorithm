@@ -6,7 +6,7 @@ import com.twitter.util.{Duration, Future}
  * [[Memcache]] is a Cache with types that reflect the memcached protocol. Keys are strings and
  * values are byte arrays.
  */
-trait Memcache extends TtlCache[String, Array[Byte]] {
+trait Memcache etwittertends TtlCache[String, Array[Byte]] {
   def incr(key: String, delta: Long = 1): Future[Option[Long]]
   def decr(key: String, delta: Long = 1): Future[Option[Long]]
 }
@@ -14,7 +14,7 @@ trait Memcache extends TtlCache[String, Array[Byte]] {
 /**
  * allows one Memcache to wrap another
  */
-trait MemcacheWrapper extends TtlCacheWrapper[String, Array[Byte]] with Memcache {
+trait MemcacheWrapper etwittertends TtlCacheWrapper[String, Array[Byte]] with Memcache {
   override def underlyingCache: Memcache
 
   override def incr(key: String, delta: Long = 1) = underlyingCache.incr(key, delta)
@@ -25,7 +25,7 @@ trait MemcacheWrapper extends TtlCacheWrapper[String, Array[Byte]] with Memcache
  * Switch between two caches with a decider value
  */
 class DeciderableMemcache(primary: Memcache, secondary: Memcache, isAvailable: => Boolean)
-    extends MemcacheWrapper {
+    etwittertends MemcacheWrapper {
   override def underlyingCache = if (isAvailable) primary else secondary
 }
 
@@ -41,7 +41,7 @@ class MemcacheCache[K, V](
   ttl: Duration,
   serializer: Serializer[V],
   transformKey: KeyTransformer[K] = new ToStringKeyTransformer[K]: ToStringKeyTransformer[K])
-    extends CacheWrapper[K, V] {
+    etwittertends CacheWrapper[K, V] {
   override val underlyingCache = new KeyValueTransformingCache(
     new SimpleTtlCacheToCache(memcache, ttl),
     serializer,

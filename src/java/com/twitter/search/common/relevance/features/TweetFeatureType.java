@@ -2,7 +2,7 @@ package com.twitter.search.common.relevance.features;
 
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -81,8 +81,8 @@ public enum TweetFeatureType {
   LABEL_SPAM_HI_RCL               (false, 30, BOOLEAN_NORMALIZER,
       EarlybirdFieldConstant.LABEL_SPAM_HI_RCL_FLAG),
 
-  PERISCOPE_EXISTS                (false, 32, BOOLEAN_NORMALIZER,
-      EarlybirdFieldConstant.PERISCOPE_EXISTS),
+  PERISCOPE_EtwitterISTS                (false, 32, BOOLEAN_NORMALIZER,
+      EarlybirdFieldConstant.PERISCOPE_EtwitterISTS),
   PERISCOPE_HAS_BEEN_FEATURED     (false, 33, BOOLEAN_NORMALIZER,
       EarlybirdFieldConstant.PERISCOPE_HAS_BEEN_FEATURED),
   PERISCOPE_IS_CURRENTLY_FEATURED (false, 34, BOOLEAN_NORMALIZER,
@@ -195,7 +195,7 @@ public enum TweetFeatureType {
   // Whether this feature is incremental or direct value.
   private final boolean incremental;
 
-  // This normalizer is used to (1) normalize the output value in DLIndexEventOutputBolt,
+  // This normalizer is used to (1) normalize the output value in DLIndetwitterEventOutputBolt,
   // (2) check value change.
   private final IntNormalizer normalizer;
 

@@ -3,17 +3,17 @@ package com.twitter.search.earlybird.util;
 import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
 
-import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.KeeperEtwitterception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.twitter.common.base.ExceptionalFunction;
+import com.twitter.common.base.EtwitterceptionalFunction;
 import com.twitter.common.quantity.Amount;
 import com.twitter.common.quantity.Time;
 import com.twitter.common.zookeeper.ServerSet;
@@ -27,16 +27,16 @@ import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
 import com.twitter.search.earlybird.ServerSetMember;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
 import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.exception.AlreadyInServerSetUpdateException;
-import com.twitter.search.earlybird.exception.EarlybirdException;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.NotInServerSetUpdateException;
+import com.twitter.search.earlybird.etwitterception.AlreadyInServerSetUpdateEtwitterception;
+import com.twitter.search.earlybird.etwitterception.EarlybirdEtwitterception;
+import com.twitter.search.earlybird.etwitterception.CriticalEtwitterceptionHandler;
+import com.twitter.search.earlybird.etwitterception.NotInServerSetUpdateEtwitterception;
 import com.twitter.search.earlybird.partition.DynamicPartitionConfig;
 import com.twitter.search.earlybird.partition.PartitionConfig;
 import com.twitter.search.earlybird.partition.SegmentSyncConfig;
 
 /**
- * Utility class for executing tasks on Earlybirds that need to be coordinated across replicas
+ * Utility class for etwitterecuting tasks on Earlybirds that need to be coordinated across replicas
  * on the same hash partition.
  * Can be used for things like coordinating optimization on the same timeslice.
  * When enabled, a try-lock will be taken out in zookeeper while the task is performed.
@@ -60,36 +60,36 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
   // coordinated action.
   private final AtomicBoolean shouldSynchronize;
   // Whether this action should ensure that there are enough replicas in the serverset (defined by
-  // maxAllowedReplicasNotInServerSet) before leaving the serverset.
+  // matwitterAllowedReplicasNotInServerSet) before leaving the serverset.
   private final boolean checkNumReplicasInServerSet;
   // If this many (or more) servers have left the partition, we cannot perform a coordinated action
-  private final int maxAllowedReplicasNotInServerSet;
+  private final int matwitterAllowedReplicasNotInServerSet;
   // How long to lock out all other replicas in this hash partition for.
-  // Should be some small multiple of how long the action is expected to take, to allow for longer
+  // Should be some small multiple of how long the action is etwitterpected to take, to allow for longer
   // running cases.
-  private final long zkLockExpirationTimeMinutes;
-  // Prefix for the zookeeper lock used when coordinating daily updates.
+  private final long zkLockEtwitterpirationTimeMinutes;
+  // Prefitwitter for the zookeeper lock used when coordinating daily updates.
   // Full name should include the hash partition number.
-  private final String zkLockNamePrefix;
+  private final String zkLockNamePrefitwitter;
   // If we're unable to re-join this earlybird's server set during coordinated updates,
   // how many times to retry.
   private final int joinServerSetRetries;
   // How long to sleep between retries if unable to job back into server set.
   private final int joinServerSetRetrySleepMillis;
-  // How long to sleep between leaving the serverset and executing the action
+  // How long to sleep between leaving the serverset and etwitterecuting the action
   private final int sleepAfterLeaveServerSetMillis;
 
   // How many times a this action was called within a lock block.
   private final SearchCounter numCoordinatedFunctionCalls;
   private final SearchCounter numCoordinatedLeaveServersetCalls;
 
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  private final CriticalEtwitterceptionHandler criticalEtwitterceptionHandler;
   private final SegmentSyncConfig segmentSyncConfig;
 
   /**
    * Create a CoordinatedEarlybirdAction.
    *
-   * @param actionName the name to be used for logging and the prefix for config options.
+   * @param actionName the name to be used for logging and the prefitwitter for config options.
    * @param dynamicPartitionConfig maintains the current partitioning configuration for this
    * earlybird. Used mainly to determine the hash partition of this earlybird.
    * @param serverSetMember the server that this action is running on. To be used to leaving and
@@ -100,12 +100,12 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
       String actionName,
       DynamicPartitionConfig dynamicPartitionConfig,
       @Nullable ServerSetMember serverSetMember,
-      CriticalExceptionHandler criticalExceptionHandler,
+      CriticalEtwitterceptionHandler criticalEtwitterceptionHandler,
       SegmentSyncConfig segmentSyncConfig) {
     this.actionName = actionName;
     this.dynamicPartitionConfig = dynamicPartitionConfig;
     this.serverSetMember = serverSetMember;
-    this.criticalExceptionHandler = criticalExceptionHandler;
+    this.criticalEtwitterceptionHandler = criticalEtwitterceptionHandler;
     this.segmentSyncConfig = segmentSyncConfig;
     this.zooKeeperTryLockFactory = zooKeeperTryLockFactory;
     if (serverSetMember == null) {
@@ -116,20 +116,20 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
     this.shouldSynchronize = new AtomicBoolean(
             EarlybirdConfig.getBool(actionName + "_should_synchronize", false));
 
-    // Export whether or not synchronization is enabled as a stat
-    SearchCustomGauge.export(
+    // Etwitterport whether or not synchronization is enabled as a stat
+    SearchCustomGauge.etwitterport(
         actionName + "_should_synchronize", () -> shouldSynchronize.get() ? 1 : 0);
 
     this.checkNumReplicasInServerSet = EarlybirdProperty.CHECK_NUM_REPLICAS_IN_SERVER_SET.get();
 
     int numReplicas =
         dynamicPartitionConfig.getCurrentPartitionConfig().getNumReplicasInHashPartition();
-    this.maxAllowedReplicasNotInServerSet =
-        EarlybirdProperty.MAX_ALLOWED_REPLICAS_NOT_IN_SERVER_SET.get(numReplicas);
+    this.matwitterAllowedReplicasNotInServerSet =
+        EarlybirdProperty.MAtwitter_ALLOWED_REPLICAS_NOT_IN_SERVER_SET.get(numReplicas);
 
-    this.zkLockExpirationTimeMinutes =
-        EarlybirdConfig.getLong(actionName + "_lock_expiration_time_minutes", 60L);
-    this.zkLockNamePrefix = actionName + "_for_hash_partition_";
+    this.zkLockEtwitterpirationTimeMinutes =
+        EarlybirdConfig.getLong(actionName + "_lock_etwitterpiration_time_minutes", 60L);
+    this.zkLockNamePrefitwitter = actionName + "_for_hash_partition_";
     this.joinServerSetRetries =
         EarlybirdConfig.getInt(actionName + "_join_server_set_retries", 20);
     this.joinServerSetRetrySleepMillis =
@@ -137,16 +137,16 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
     this.sleepAfterLeaveServerSetMillis =
         EarlybirdConfig.getInt("coordinated_action_sleep_after_leave_server_set_millis", 30000);
 
-    this.numCoordinatedFunctionCalls = SearchCounter.export(actionName + "_num_coordinated_calls");
+    this.numCoordinatedFunctionCalls = SearchCounter.etwitterport(actionName + "_num_coordinated_calls");
     this.numCoordinatedLeaveServersetCalls =
-        SearchCounter.export(actionName + "_num_coordinated_leave_serverset_calls");
+        SearchCounter.etwitterport(actionName + "_num_coordinated_leave_serverset_calls");
 
     if (this.checkNumReplicasInServerSet) {
       LOG.info(
           "Coordinate action config ({}): allowedNotIn: {}, current number of replicas: {}, "
               + "synchronization enabled: {}, checkNumReplicasInServerSet enabled: {}",
           actionName,
-          maxAllowedReplicasNotInServerSet,
+          matwitterAllowedReplicasNotInServerSet,
           dynamicPartitionConfig.getCurrentPartitionConfig().getNumReplicasInHashPartition(),
           shouldSynchronize,
           this.checkNumReplicasInServerSet);
@@ -162,12 +162,12 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
 
 
   @Override
-  public <E extends Exception> boolean execute(
+  public <E etwittertends Etwitterception> boolean etwitterecute(
       String description,
-      ExceptionalFunction<Boolean, Boolean, E> function)
+      EtwitterceptionalFunction<Boolean, Boolean, E> function)
           throws E, CoordinatedEarlybirdActionLockFailed {
     if (this.shouldSynchronize.get()) {
-      return executeWithCoordination(description, function);
+      return etwitterecuteWithCoordination(description, function);
     } else {
       return function.apply(NOT_COORDINATED_ACTION_FLAG);
     }
@@ -185,13 +185,13 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
     try {
       serverSetMember.leaveServerSet("CoordinatedAction: " + actionName);
       return LeaveServerSetResult.SUCCESS;
-    } catch (ServerSet.UpdateException ex) {
-      if (ex instanceof NotInServerSetUpdateException) {
+    } catch (ServerSet.UpdateEtwitterception etwitter) {
+      if (etwitter instanceof NotInServerSetUpdateEtwitterception) {
         LOG.info("No need to leave; already out of server set during: "
-            + actionName, ex);
+            + actionName, etwitter);
         return LeaveServerSetResult.NOT_IN_SERVER_SET;
       } else {
-        LOG.warn("Unable to leave server set during: " + actionName, ex);
+        LOG.warn("Unable to leave server set during: " + actionName, etwitter);
         return LeaveServerSetResult.FAILURE;
       }
     }
@@ -206,7 +206,7 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
         } else {
           PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
           final int minNumServers =
-              curPartitionConfig.getNumReplicasInHashPartition() - maxAllowedReplicasNotInServerSet;
+              curPartitionConfig.getNumReplicasInHashPartition() - matwitterAllowedReplicasNotInServerSet;
           Optional<Integer> numServerSetMembers = getNumberOfServerSetMembers();
           LOG.info("Checking number of replicas before leaving server set for " + actionName
               + ". Number of members is: " + numServerSetMembers + " minMembers: " + minNumServers);
@@ -226,17 +226,17 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
     return LeaveServerSetResult.NO_SERVER_SET_MEMBER;
   }
 
-  private <E extends Exception> boolean executeWithCoordination(
+  private <E etwittertends Etwitterception> boolean etwitterecuteWithCoordination(
       final String description,
-      final ExceptionalFunction<Boolean, Boolean, E> function)
+      final EtwitterceptionalFunction<Boolean, Boolean, E> function)
       throws E, CoordinatedEarlybirdActionLockFailed {
     PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
     TryLock lock = zooKeeperTryLockFactory.createTryLock(
         DatabaseConfig.getLocalHostname(),
         segmentSyncConfig.getZooKeeperSyncFullPath(),
-        zkLockNamePrefix
-        + curPartitionConfig.getIndexingHashPartitionID(),
-        Amount.of(zkLockExpirationTimeMinutes, Time.MINUTES)
+        zkLockNamePrefitwitter
+        + curPartitionConfig.getIndetwitteringHashPartitionID(),
+        Amount.of(zkLockEtwitterpirationTimeMinutes, Time.MINUTES)
     );
 
     final AtomicBoolean success = new AtomicBoolean(false);
@@ -246,19 +246,19 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
 
       LeaveServerSetResult leftServerSet = maybeLeaveServerSet();
       if (leftServerSet == LeaveServerSetResult.FAILURE) {
-        LOG.info("Failed to leave the server set, will not execute action.");
+        LOG.info("Failed to leave the server set, will not etwitterecute action.");
         return;
       }
 
       LOG.info("maybeLeaveServerSet returned: {}", leftServerSet);
 
       // Sleep for a short time to give the server some time to finish requests that it is currently
-      // executing and allow roots some time to register that this host has left the server set.
+      // etwitterecuting and allow roots some time to register that this host has left the server set.
       // If we didn't do this and the coordinated action included a full GC, then latency and error
       // rate at the root layer would spike higher at the time of the GC. SEARCH-35456
       try {
         Thread.sleep(sleepAfterLeaveServerSetMillis);
-      } catch (InterruptedException ex) {
+      } catch (InterruptedEtwitterception etwitter) {
         Thread.currentThread().interrupt();
       }
 
@@ -283,7 +283,7 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
     });
 
     if (!gotLock) {
-      String errorMsg = actionName + ": Failed to get zk indexing lock for " + description;
+      String errorMsg = actionName + ": Failed to get zk indetwittering lock for " + description;
       LOG.info(errorMsg);
       throw new CoordinatedEarlybirdActionLockFailed(errorMsg);
     }
@@ -294,51 +294,51 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
   public void retryActionUntilRan(String description, Runnable action) {
     Random random = new Random(System.currentTimeMillis());
 
-    boolean actionExecuted = false;
+    boolean actionEtwitterecuted = false;
     int attempts = 0;
-    while (!actionExecuted) {
+    while (!actionEtwitterecuted) {
       try {
         attempts++;
-        actionExecuted = this.execute(description, isCoordinated -> {
+        actionEtwitterecuted = this.etwitterecute(description, isCoordinated -> {
           action.run();
           return true;
         });
-      } catch (CoordinatedEarlybirdActionLockFailed ex) {
+      } catch (CoordinatedEarlybirdActionLockFailed etwitter) {
       }
 
-      if (!actionExecuted) {
+      if (!actionEtwitterecuted) {
         // Variable sleep amount. The reason for the random sleeps
         // is so that across multiple earlybirds this doesn't get
-        // executed in some sequence that depends on something else
+        // etwitterecuted in some sequence that depends on something else
         // like maybe deploy times. It might be easier to catch possible
         // problems if implicit orderings like this are not introduced.
-        long msToSleep = (10 + random.nextInt(5)) * 1000L;
+        long msToSleep = (10 + random.netwittertInt(5)) * 1000L;
         try {
           Thread.sleep(msToSleep);
-        } catch (InterruptedException ex) {
-          LOG.info("Interrupted while trying to execute");
+        } catch (InterruptedEtwitterception etwitter) {
+          LOG.info("Interrupted while trying to etwitterecute");
           Thread.currentThread().interrupt();
         }
       } else {
-        LOG.info("Executed {} after {} attempts", actionName, attempts);
+        LOG.info("Etwitterecuted {} after {} attempts", actionName, attempts);
       }
     }
   }
 
   /**
    * Gets the current number of servers in this server's server set.
-   * @return absent Optional if we encountered an exception getting the number of hosts.
+   * @return absent Optional if we encountered an etwitterception getting the number of hosts.
    */
   private Optional<Integer> getNumberOfServerSetMembers() {
     try {
       return serverSetMember != null ? Optional.of(serverSetMember.getNumberOfServerSetMembers())
           : Optional.empty();
-    } catch (InterruptedException ex) {
-      LOG.warn("Action " + actionName + " was interrupted.", ex);
+    } catch (InterruptedEtwitterception etwitter) {
+      LOG.warn("Action " + actionName + " was interrupted.", etwitter);
       Thread.currentThread().interrupt();
       return Optional.empty();
-    } catch (ZooKeeperClient.ZooKeeperConnectionException | KeeperException ex) {
-      LOG.warn("Exception during " + actionName, ex);
+    } catch (ZooKeeperClient.ZooKeeperConnectionEtwitterception | KeeperEtwitterception etwitter) {
+      LOG.warn("Etwitterception during " + actionName, etwitter);
       return Optional.empty();
     }
   }
@@ -356,17 +356,17 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
         serverSetMember.joinServerSet("CoordinatedAction: " + actionName);
         joined = true;
         break;
-      } catch (AlreadyInServerSetUpdateException ex) {
+      } catch (AlreadyInServerSetUpdateEtwitterception etwitter) {
         // Most likely leaving the server set failed
         joined = true;
         break;
-      } catch (ServerSet.UpdateException ex) {
+      } catch (ServerSet.UpdateEtwitterception etwitter) {
         LOG.warn("Unable to join server set after " + actionName + " on attempt "
-                + i, ex);
+                + i, etwitter);
         if (i < (joinServerSetRetries - 1)) {
           try {
             Thread.sleep(joinServerSetRetrySleepMillis);
-          } catch (InterruptedException e) {
+          } catch (InterruptedEtwitterception e) {
             LOG.warn("Interrupted while waiting to join back server set for: " + actionName);
             // Preserve interrupt status.
             Thread.currentThread().interrupt();
@@ -379,10 +379,10 @@ public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInt
       String message = String.format(
           "Unable to join server set after %s, setting fatal flag.",
           actionName);
-      EarlybirdException exception = new EarlybirdException(message);
+      EarlybirdEtwitterception etwitterception = new EarlybirdEtwitterception(message);
 
-      LOG.error(message, exception);
-      criticalExceptionHandler.handle(this, exception);
+      LOG.error(message, etwitterception);
+      criticalEtwitterceptionHandler.handle(this, etwitterception);
     }
   }
 

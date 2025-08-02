@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird_root.common;
 
-import javax.annotation.Nonnull;
+import javatwitter.annotation.Nonnull;
 
 import com.twitter.search.common.constants.thriftjava.ThriftQuerySource;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
@@ -40,10 +40,10 @@ public enum EarlybirdRequestType {
         case TOPTWEETS:
           return TOP_TWEETS;
         default:
-          throw new IllegalArgumentException();
+          throw new IllegalArgumentEtwitterception();
       }
     } else {
-      throw new UnsupportedOperationException();
+      throw new UnsupportedOperationEtwitterception();
     }
   }
 

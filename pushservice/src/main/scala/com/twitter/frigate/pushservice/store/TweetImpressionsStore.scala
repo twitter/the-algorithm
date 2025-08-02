@@ -8,9 +8,9 @@ import com.twitter.util.Future
 /**
  * Store to get inbound Tweet impressions count for a specific Tweet id.
  */
-class TweetImpressionsStore(stratoClient: StratoClient) extends ReadableStore[Long, String] {
+class TweetImpressionsStore(stratoClient: StratoClient) etwittertends ReadableStore[Long, String] {
 
-  private val column = "rux/impression.Tweet"
+  private val column = "rutwitter/impression.Tweet"
   private val store = StratoFetchableStore.withUnitView[Long, String](stratoClient, column)
 
   def getCounts(tweetId: Long): Future[Option[Long]] = {

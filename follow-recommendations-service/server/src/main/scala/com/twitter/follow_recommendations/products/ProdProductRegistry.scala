@@ -2,25 +2,25 @@ package com.twitter.follow_recommendations.products
 
 import com.twitter.follow_recommendations.common.models.DisplayLocation
 import com.twitter.follow_recommendations.products.common.ProductRegistry
-import com.twitter.follow_recommendations.products.explore_tab.ExploreTabProduct
+import com.twitter.follow_recommendations.products.etwitterplore_tab.EtwitterploreTabProduct
 import com.twitter.follow_recommendations.products.home_timeline.HomeTimelineProduct
 import com.twitter.follow_recommendations.products.home_timeline_tweet_recs.HomeTimelineTweetRecsProduct
 import com.twitter.follow_recommendations.products.sidebar.SidebarProduct
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class ProdProductRegistry @Inject() (
-  exploreTabProduct: ExploreTabProduct,
+  etwitterploreTabProduct: EtwitterploreTabProduct,
   homeTimelineProduct: HomeTimelineProduct,
   homeTimelineTweetRecsProduct: HomeTimelineTweetRecsProduct,
   sidebarProduct: SidebarProduct,
-) extends ProductRegistry {
+) etwittertends ProductRegistry {
 
   override val products: Seq[common.Product] =
     Seq(
-      exploreTabProduct,
+      etwitterploreTabProduct,
       homeTimelineProduct,
       homeTimelineTweetRecsProduct,
       sidebarProduct
@@ -36,9 +36,9 @@ class ProdProductRegistry @Inject() (
   override def getProductByDisplayLocation(displayLocation: DisplayLocation): common.Product = {
     displayLocationProductMap.getOrElse(
       displayLocation,
-      throw new MissingProductException(displayLocation))
+      throw new MissingProductEtwitterception(displayLocation))
   }
 }
 
-class MissingProductException(displayLocation: DisplayLocation)
-    extends Exception(s"No Product found for ${displayLocation}")
+class MissingProductEtwitterception(displayLocation: DisplayLocation)
+    etwittertends Etwitterception(s"No Product found for ${displayLocation}")

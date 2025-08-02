@@ -30,10 +30,10 @@ class SocialProofHydrator(statsReceiver: StatsReceiver) {
       socialProofsDup.incr()
       val unique = users
         .zip(metadata)
-        .foldLeft[Seq[(Long, Long)]](Nil) { (list, next) =>
+        .foldLeft[Seq[(Long, Long)]](Nil) { (list, netwittert) =>
           {
-            val test = list find { _._1 == next._1 }
-            if (test.isEmpty) next +: list else list
+            val test = list find { _._1 == netwittert._1 }
+            if (test.isEmpty) netwittert +: list else list
           }
         }
         .reverse
@@ -45,7 +45,7 @@ class SocialProofHydrator(statsReceiver: StatsReceiver) {
 
   }
 
-  // Extract and dedup social proofs from GraphJet. Only Favorite based social proof needs to dedup.
+  // Etwittertract and dedup social proofs from GraphJet. Only Favorite based social proof needs to dedup.
   // Return the social proofs (userId, metadata) pair in SocialProof thrift objects.
   def addTweetSocialProofs(
     tweet: TweetRecommendationInfo
@@ -81,7 +81,7 @@ class SocialProofHydrator(statsReceiver: StatsReceiver) {
     }
   }
 
-  // Extract and dedup social proofs from GraphJet. All social proof types need to dedup.
+  // Etwittertract and dedup social proofs from GraphJet. All social proof types need to dedup.
   // Return the userId social proofs without metadata.
   def addTweetSocialProofByType(tweet: TweetRecommendationInfo): Map[SocialProofType, Seq[Long]] = {
     tweet.getSocialProof.asScala.map {

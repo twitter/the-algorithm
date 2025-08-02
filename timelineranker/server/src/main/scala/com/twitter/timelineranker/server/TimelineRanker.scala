@@ -1,7 +1,7 @@
 package com.twitter.timelineranker.server
 
 import com.twitter.abdecider.LoggingABDecider
-import com.twitter.finagle.TimeoutException
+import com.twitter.finagle.TimeoutEtwitterception
 import com.twitter.finagle.stats.Stat
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.servo.util.FunctionArrow
@@ -26,38 +26,38 @@ import com.twitter.util.Try
 
 object TimelineRanker {
   def toTimelineErrorThriftResponse(
-    ex: Throwable,
+    etwitter: Throwable,
     reason: Option[thrift.ErrorReason] = None
   ): thrift.GetTimelineResponse = {
     thrift.GetTimelineResponse(
-      error = Some(thrift.TimelineError(message = ex.toString, reason))
+      error = Some(thrift.TimelineError(message = etwitter.toString, reason))
     )
   }
 
-  def getTimelinesExceptionHandler: PartialFunction[
+  def getTimelinesEtwitterceptionHandler: PartialFunction[
     Throwable,
     Future[thrift.GetTimelineResponse]
   ] = {
-    case e: TimeoutException =>
+    case e: TimeoutEtwitterception =>
       Future.value(toTimelineErrorThriftResponse(e, Some(thrift.ErrorReason.UpstreamTimeout)))
-    case e: Throwable if ObservedAndValidatedRequests.isOverCapacityException(e) =>
+    case e: Throwable if ObservedAndValidatedRequests.isOverCapacityEtwitterception(e) =>
       Future.value(toTimelineErrorThriftResponse(e, Some(thrift.ErrorReason.OverCapacity)))
     case e => Future.value(toTimelineErrorThriftResponse(e))
   }
 
   def toErrorThriftResponse(
-    ex: Throwable,
+    etwitter: Throwable,
     reason: Option[thrift.ErrorReason] = None
   ): thrift.GetCandidateTweetsResponse = {
     thrift.GetCandidateTweetsResponse(
-      error = Some(thrift.TimelineError(message = ex.toString, reason))
+      error = Some(thrift.TimelineError(message = etwitter.toString, reason))
     )
   }
 
-  def exceptionHandler: PartialFunction[Throwable, Future[thrift.GetCandidateTweetsResponse]] = {
-    case e: TimeoutException =>
+  def etwitterceptionHandler: PartialFunction[Throwable, Future[thrift.GetCandidateTweetsResponse]] = {
+    case e: TimeoutEtwitterception =>
       Future.value(toErrorThriftResponse(e, Some(thrift.ErrorReason.UpstreamTimeout)))
-    case e: Throwable if ObservedAndValidatedRequests.isOverCapacityException(e) =>
+    case e: Throwable if ObservedAndValidatedRequests.isOverCapacityEtwitterception(e) =>
       Future.value(toErrorThriftResponse(e, Some(thrift.ErrorReason.OverCapacity)))
     case e => Future.value(toErrorThriftResponse(e))
   }
@@ -76,7 +76,7 @@ class TimelineRanker(
   override val debugObserver: DebugObserver,
   queryParamInitializer: FunctionArrow[RecapQuery, Future[RecapQuery]],
   statsReceiver: StatsReceiver)
-    extends thrift.TimelineRanker.MethodPerEndpoint
+    etwittertends thrift.TimelineRanker.MethodPerEndpoint
     with ObservedRequests {
 
   override val requestWidthStats: Stat = statsReceiver.stat("TimelineRanker/requestWidth")
@@ -122,7 +122,7 @@ class TimelineRanker(
               query,
               Seq(query.userId),
               getTimelinesStats,
-              TimelineRanker.getTimelinesExceptionHandler) { validatedQuery =>
+              TimelineRanker.getTimelinesEtwitterceptionHandler) { validatedQuery =>
               routingRepository.get(validatedQuery).map { timeline =>
                 thrift.GetTimelineResponse(Some(timeline.toThrift))
               }
@@ -144,7 +144,7 @@ class TimelineRanker(
               query,
               Seq(query.userId),
               getInNetworkTweetCandidatesStats,
-              TimelineRanker.exceptionHandler
+              TimelineRanker.etwitterceptionHandler
             ) { validatedQuery =>
               Future(queryParamInitializer(validatedQuery)).flatten.liftToTry.flatMap {
                 case Return(q) => inNetworkTweetRepository.get(q).map(_.toThrift)
@@ -168,7 +168,7 @@ class TimelineRanker(
               query,
               Seq(query.userId),
               hydrateTweetCandidatesStats,
-              TimelineRanker.exceptionHandler
+              TimelineRanker.etwitterceptionHandler
             ) { validatedQuery =>
               Future(queryParamInitializer(validatedQuery)).flatten.liftToTry.flatMap {
                 case Return(q) => recapHydrationRepository.hydrate(q).map(_.toThrift)
@@ -192,7 +192,7 @@ class TimelineRanker(
               query,
               Seq(query.userId),
               getRecapCandidatesFromAuthorsStats,
-              TimelineRanker.exceptionHandler
+              TimelineRanker.etwitterceptionHandler
             ) { validatedQuery =>
               Future(queryParamInitializer(validatedQuery)).flatten.liftToTry.flatMap {
                 case Return(q) => recapAuthorRepository.get(q).map(_.toThrift)
@@ -216,7 +216,7 @@ class TimelineRanker(
               query,
               Seq(query.userId),
               getEntityTweetCandidatesStats,
-              TimelineRanker.exceptionHandler
+              TimelineRanker.etwitterceptionHandler
             ) { validatedQuery =>
               Future(queryParamInitializer(validatedQuery)).flatten.liftToTry.flatMap {
                 case Return(q) => entityTweetsRepository.get(q).map(_.toThrift)
@@ -240,7 +240,7 @@ class TimelineRanker(
               query,
               Seq(query.userId),
               getUtegLikedByTweetCandidatesStats,
-              TimelineRanker.exceptionHandler
+              TimelineRanker.etwitterceptionHandler
             ) { validatedQuery =>
               Future(queryParamInitializer(validatedQuery)).flatten.liftToTry.flatMap {
                 case Return(q) => utegLikedByTweetsRepository.get(q).map(_.toThrift)

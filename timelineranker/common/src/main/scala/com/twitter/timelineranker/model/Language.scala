@@ -1,6 +1,6 @@
 package com.twitter.timelineranker.model
 
-import com.twitter.common.text.language.LocaleUtil
+import com.twitter.common.tetwittert.language.LocaleUtil
 import com.twitter.timelineranker.{thriftscala => thrift}
 
 object Language {

@@ -11,7 +11,7 @@ import com.twitter.tweetypie.thriftscala.DeviceSource
 
 // converts the device source parameter value to lower-case, to make the cached
 // key case-insensitive
-case class DeviceSourceKey(param: String) extends ScopedCacheKey("t", "ds", 1, param.toLowerCase)
+case class DeviceSourceKey(param: String) etwittertends ScopedCacheKey("t", "ds", 1, param.toLowerCase)
 
 object DeviceSourceRepository {
   type Type = String => Stitch[DeviceSource]
@@ -69,7 +69,7 @@ object DeviceSourceRepository {
         case Some(appId) =>
           Stitch.call(appId, getClientApplicationsGroup)
         case None =>
-          Stitch.exception(NotFound)
+          Stitch.etwitterception(NotFound)
       }
   }
 }

@@ -2,13 +2,13 @@ use std::collections::HashMap;
 
 #[derive(Debug)]
 pub struct FeatureInfo {
-    pub tensor_index: i8,
-    pub index_within_tensor: i64,
+    pub tensor_indetwitter: i8,
+    pub indetwitter_within_tensor: i64,
 }
 
 pub static NULL_INFO: FeatureInfo = FeatureInfo {
-    tensor_index: -1,
-    index_within_tensor: -1,
+    tensor_indetwitter: -1,
+    indetwitter_within_tensor: -1,
 };
 
 #[derive(Debug, Default)]

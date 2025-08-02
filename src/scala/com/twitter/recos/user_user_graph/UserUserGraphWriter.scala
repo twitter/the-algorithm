@@ -2,8 +2,8 @@ package com.twitter.recos.user_user_graph
 
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph
-import com.twitter.graphjet.bipartite.segment.NodeMetadataLeftIndexedBipartiteGraphSegment
+import com.twitter.graphjet.bipartite.NodeMetadataLeftIndetwitteredPowerLawMultiSegmentBipartiteGraph
+import com.twitter.graphjet.bipartite.segment.NodeMetadataLeftIndetwitteredBipartiteGraphSegment
 import com.twitter.recos.hose.common.UnifiedGraphWriter
 import com.twitter.recos.internal.thriftscala.RecosHoseMessage
 import com.twitter.recos.util.Action
@@ -16,16 +16,16 @@ case class UserUserGraphWriter(
   kafkaConsumerBuilder: FinagleKafkaConsumerBuilder[String, RecosHoseMessage],
   clientId: String,
   statsReceiver: StatsReceiver)
-    extends UnifiedGraphWriter[
-      NodeMetadataLeftIndexedBipartiteGraphSegment,
-      NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph
+    etwittertends UnifiedGraphWriter[
+      NodeMetadataLeftIndetwitteredBipartiteGraphSegment,
+      NodeMetadataLeftIndetwitteredPowerLawMultiSegmentBipartiteGraph
     ] {
 
-  // The max throughput for each kafka consumer is around 25MB/s
+  // The matwitter throughput for each kafka consumer is around 25MB/s
   // Use 3 processors for 75MB/s catch-up speed.
   val consumerNum: Int = 3
   // Leave 2 Segments for live writer
-  val catchupWriterNum: Int = RecosConfig.maxNumSegments - 2
+  val catchupWriterNum: Int = RecosConfig.matwitterNumSegments - 2
 
   import UserUserGraphWriter._
 
@@ -37,7 +37,7 @@ case class UserUserGraphWriter(
     } else if (action == Action.MediaTag.id) {
       UserEdgeTypeMask.MEDIATAG
     } else {
-      throw new IllegalArgumentException("getEdgeType: Illegal edge type argument " + action)
+      throw new IllegalArgumentEtwitterception("getEdgeType: Illegal edge type argument " + action)
     }
   }
 
@@ -46,7 +46,7 @@ case class UserUserGraphWriter(
    * current segment
    */
   override def addEdgeToGraph(
-    graph: NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph,
+    graph: NodeMetadataLeftIndetwitteredPowerLawMultiSegmentBipartiteGraph,
     recosHoseMessage: RecosHoseMessage
   ): Unit = {
     graph.addEdge(
@@ -64,7 +64,7 @@ case class UserUserGraphWriter(
    * insert edges to non-current (old) segments
    */
   override def addEdgeToSegment(
-    segment: NodeMetadataLeftIndexedBipartiteGraphSegment,
+    segment: NodeMetadataLeftIndetwitteredBipartiteGraphSegment,
     recosHoseMessage: RecosHoseMessage
   ): Unit = {
     segment.addEdge(

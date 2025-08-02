@@ -2,14 +2,14 @@ package com.twitter.tweetypie
 package service
 package observer
 
-import com.twitter.servo.exception.thriftscala.ClientError
+import com.twitter.servo.etwitterception.thriftscala.ClientError
 import com.twitter.tweetypie.thriftscala.GetDeletedTweetResult
 import com.twitter.tweetypie.thriftscala.GetDeletedTweetsRequest
 
 private[service] object GetDeletedTweetsObserver {
-  type Type = ObserveExchange[GetDeletedTweetsRequest, Seq[GetDeletedTweetResult]]
+  type Type = ObserveEtwitterchange[GetDeletedTweetsRequest, Seq[GetDeletedTweetResult]]
 
-  def observeExchange(stats: StatsReceiver): Effect[Type] = {
+  def observeEtwitterchange(stats: StatsReceiver): Effect[Type] = {
     val resultStateStats = ResultStateStats(stats)
 
     Effect {

@@ -1,0 +1,21 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/functional_component/candidate_source",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/model/request",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/product/scored_tweets/candidate_source",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/product/scored_tweets/feature_hydrator",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/product/scored_tweets/gate",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/product/scored_tweets/model",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/product/scored_tweets/param",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/product/scored_tweets/query_transformer/earlybird",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/product/scored_tweets/response_transformer/earlybird",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/candidate_source/earlybird",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/filter",
+        "product-mitwitterer/component-library/src/main/scala/com/twitter/product_mitwitterer/component_library/gate",
+        "src/thrift/com/twitter/search:earlybird-scala",
+    ],
+)

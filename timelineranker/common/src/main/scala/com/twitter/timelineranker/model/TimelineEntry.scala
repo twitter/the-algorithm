@@ -7,7 +7,7 @@ object TimelineEntry {
     entry match {
       case thrift.TimelineEntry.Tweet(e) => Tweet.fromThrift(e)
       case thrift.TimelineEntry.TweetypieTweet(e) => new HydratedTweetEntry(e)
-      case _ => throw new IllegalArgumentException(s"Unsupported type: $entry")
+      case _ => throw new IllegalArgumentEtwitterception(s"Unsupported type: $entry")
     }
   }
 }

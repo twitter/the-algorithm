@@ -13,7 +13,7 @@ import com.twitter.visibility.features.FeatureMap
 import com.twitter.visibility.models.ContentId.{DmId => DmContentId}
 import com.twitter.visibility.models.SafetyLevel.DirectMessages
 import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 import com.twitter.visibility.rules.Drop
 import com.twitter.visibility.rules.Reason.DeactivatedAuthor
 import com.twitter.visibility.rules.Reason.ErasedAuthor
@@ -25,7 +25,7 @@ object DmVisibilityLibrary {
   case class DmVisibilityRequest(
     dmId: DmId,
     dmAuthorUserId: UserId,
-    viewerContext: ViewerContext)
+    viewerContetwittert: ViewerContetwittert)
 
   case class DmVisibilityResponse(isMessageNsfw: Boolean)
 
@@ -59,7 +59,7 @@ object DmVisibilityLibrary {
           visibilityLibrary.runRuleEngine(
             contentId,
             resolvedFeatureMap,
-            r.viewerContext,
+            r.viewerContetwittert,
             DefaultSafetyLevel
           )
         }
@@ -68,7 +68,7 @@ object DmVisibilityLibrary {
           .runRuleEngine(
             contentId,
             featureMap,
-            r.viewerContext,
+            r.viewerContetwittert,
             DefaultSafetyLevel
           )
       }

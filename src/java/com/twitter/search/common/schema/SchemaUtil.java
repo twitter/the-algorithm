@@ -2,13 +2,13 @@ package com.twitter.search.common.schema;
 
 import com.google.common.base.Preconditions;
 
-import org.apache.lucene.index.DocValuesType;
-import org.apache.lucene.index.IndexOptions;
+import org.apache.lucene.indetwitter.DocValuesType;
+import org.apache.lucene.indetwitter.IndetwitterOptions;
 import org.apache.lucene.util.BytesRef;
 
 import com.twitter.search.common.schema.base.EarlybirdFieldType;
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
+import com.twitter.search.common.schema.base.IndetwitteredNumericFieldSettings;
 import com.twitter.search.common.schema.base.Schema;
 import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
 import com.twitter.search.common.schema.thriftjava.ThriftNumericType;
@@ -21,50 +21,50 @@ public final class SchemaUtil {
   }
 
   /**
-   * Get the a fixed CSF field's number of values per doc.
-   * @param schema the Schema for the index
+   * Get the a fitwittered CSF field's number of values per doc.
+   * @param schema the Schema for the indetwitter
    * @param fieldId the field id the CSF field - the field must be of binary integer type and
-   *                in fixed size
+   *                in fitwittered size
    * @return the number of values per doc
    */
-  public static int getCSFFieldFixedLength(ImmutableSchemaInterface schema, int fieldId) {
+  public static int getCSFFieldFitwitteredLength(ImmutableSchemaInterface schema, int fieldId) {
     final Schema.FieldInfo fieldInfo = Preconditions.checkNotNull(schema.getFieldInfo(fieldId));
-    return getCSFFieldFixedLength(fieldInfo);
+    return getCSFFieldFitwitteredLength(fieldInfo);
   }
 
   /**
-   * Get the a fixed CSF field's number of values per doc.
-   * @param schema the Schema for the index
+   * Get the a fitwittered CSF field's number of values per doc.
+   * @param schema the Schema for the indetwitter
    * @param fieldName the field name of the CSF field - the field must be of binary integer type
-   *                  and in fixed size
+   *                  and in fitwittered size
    * @return the number of values per doc
    */
-  public static int getCSFFieldFixedLength(ImmutableSchemaInterface schema, String fieldName) {
+  public static int getCSFFieldFitwitteredLength(ImmutableSchemaInterface schema, String fieldName) {
     final Schema.FieldInfo fieldInfo = Preconditions.checkNotNull(schema.getFieldInfo(fieldName));
-    return getCSFFieldFixedLength(fieldInfo);
+    return getCSFFieldFitwitteredLength(fieldInfo);
   }
 
   /**
-   * Get the a fixed CSF field's number of values per doc.
+   * Get the a fitwittered CSF field's number of values per doc.
    * @param fieldInfo the field of the CSF field - the field must be of binary integer type
-   *                  and in fixed size
+   *                  and in fitwittered size
    * @return the number of values per doc
    */
-  public static int getCSFFieldFixedLength(Schema.FieldInfo fieldInfo) {
+  public static int getCSFFieldFitwitteredLength(Schema.FieldInfo fieldInfo) {
     final EarlybirdFieldType fieldType = fieldInfo.getFieldType();
     Preconditions.checkState(fieldType.docValuesType() == DocValuesType.BINARY
         && fieldType.getCsfType() == ThriftCSFType.INT);
-    return fieldType.getCsfFixedLengthNumValuesPerDoc();
+    return fieldType.getCsfFitwitteredLengthNumValuesPerDoc();
   }
 
   /** Converts the given value to a BytesRef instance, according to the type of the given field. */
   public static BytesRef toBytesRef(Schema.FieldInfo fieldInfo, String value) {
     EarlybirdFieldType fieldType = fieldInfo.getFieldType();
-    Preconditions.checkArgument(fieldType.indexOptions() != IndexOptions.NONE);
-    IndexedNumericFieldSettings numericSetting = fieldType.getNumericFieldSettings();
+    Preconditions.checkArgument(fieldType.indetwitterOptions() != IndetwitterOptions.NONE);
+    IndetwitteredNumericFieldSettings numericSetting = fieldType.getNumericFieldSettings();
     if (numericSetting != null) {
       if (!numericSetting.isUseTwitterFormat()) {
-        throw new UnsupportedOperationException(
+        throw new UnsupportedOperationEtwitterception(
             "Numeric field not using Twitter format: cannot drill down.");
       }
 
@@ -73,8 +73,8 @@ public final class SchemaUtil {
         case INT:
           try {
             return IntTermAttributeImpl.copyIntoNewBytesRef(Integer.parseInt(value));
-          } catch (NumberFormatException e) {
-            throw new UnsupportedOperationException(
+          } catch (NumberFormatEtwitterception e) {
+            throw new UnsupportedOperationEtwitterception(
                 String.format("Cannot parse value for int field %s: %s",
                               fieldInfo.getName(), value),
                 e);
@@ -84,14 +84,14 @@ public final class SchemaUtil {
             return numericSetting.isUseSortableEncoding()
                 ? SortableLongTermAttributeImpl.copyIntoNewBytesRef(Long.parseLong(value))
                 : LongTermAttributeImpl.copyIntoNewBytesRef(Long.parseLong(value));
-          } catch (NumberFormatException e) {
-            throw new UnsupportedOperationException(
+          } catch (NumberFormatEtwitterception e) {
+            throw new UnsupportedOperationEtwitterception(
                 String.format("Cannot parse value for long field %s: %s",
                               fieldInfo.getName(), value),
                 e);
           }
         default:
-          throw new UnsupportedOperationException(
+          throw new UnsupportedOperationEtwitterception(
               String.format("Unsupported numeric type for field %s: %s",
                             fieldInfo.getName(), numericType));
       }

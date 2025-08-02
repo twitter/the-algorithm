@@ -6,11 +6,11 @@ import com.google.common.base.Preconditions;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.indexing.thriftjava.PotentialLocation;
-import com.twitter.search.common.util.text.LanguageIdentifierHelper;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.search.common.util.text.TokenizerHelper;
+import com.twitter.common_internal.tetwittert.version.PenguinVersion;
+import com.twitter.search.common.indetwittering.thriftjava.PotentialLocation;
+import com.twitter.search.common.util.tetwittert.LanguageIdentifierHelper;
+import com.twitter.search.common.util.tetwittert.NormalizerHelper;
+import com.twitter.search.common.util.tetwittert.TokenizerHelper;
 
 /**
  * An immutable tuple to wrap a country code, region and locality. Based on the PotentialLocation

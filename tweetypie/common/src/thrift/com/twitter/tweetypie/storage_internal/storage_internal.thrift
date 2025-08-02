@@ -43,7 +43,7 @@ struct StoredQuotedTweet {
 struct StoredTweet {
   1: i64 id (personalDataType = 'TweetId')
   2: optional i64 user_id (personalDataType = 'UserId')
-  3: optional string text (personalDataType = 'PrivateTweets, PublicTweets')
+  3: optional string tetwittert (personalDataType = 'PrivateTweets, PublicTweets')
   4: optional string created_via (personalDataType = 'ClientType')
   5: optional i64 created_at_sec (personalDataType = 'PrivateTimestamp, PublicTimestamp')    // in seconds
 
@@ -64,7 +64,7 @@ struct StoredTweet {
 
 struct CoreFields {
   2: optional i64 user_id (personalDataType = 'UserId')
-  3: optional string text (personalDataType = 'PrivateTweets, PublicTweets')
+  3: optional string tetwittert (personalDataType = 'PrivateTweets, PublicTweets')
   4: optional string created_via (personalDataType = 'ClientType')
   5: optional i64 created_at_sec (personalDataType = 'PrivateTimestamp, PublicTimestamp')
 

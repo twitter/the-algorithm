@@ -24,7 +24,7 @@ def _get_config_version(config_dict):
 
 def _validate_config_dict_v1(config_dict):
   """
-  Validate spec exported by twml.FeatureConfig
+  Validate spec etwitterported by twml.FeatureConfig
   """
   doc = config_dict
 
@@ -36,8 +36,8 @@ def _validate_config_dict_v1(config_dict):
   if "format" not in doc:
     malformed_error("'format' key not found")
 
-  # validate spec exported by twml.FeatureConfig
-  if doc["format"] == "exported":
+  # validate spec etwitterported by twml.FeatureConfig
+  if doc["format"] == "etwitterported":
     dict_keys = ["features", "labels", "weight", "tensors", "sparse_tensors"]
     for key in dict_keys:
       if key not in doc:
@@ -53,12 +53,12 @@ def _validate_config_dict_v1(config_dict):
   elif doc["format"] == "manual":
     raise NotImplementedError("Manual config support not yet implemented")
   else:
-    malformed_error("'format' must be 'exported' or 'manual'")
+    malformed_error("'format' must be 'etwitterported' or 'manual'")
 
 
 def _validate_config_dict_v2(config_dict):
   """
-  Validate spec exported by twml.contrib.FeatureConfig
+  Validate spec etwitterported by twml.contrib.FeatureConfig
   """
   doc = config_dict
 
@@ -70,8 +70,8 @@ def _validate_config_dict_v2(config_dict):
   if "format" not in doc:
     malformed_error("'format key not found'")
 
-  # validate spec exported by twml.contrib.FeatureConfig (basic validation only)
-  if doc["format"] == "exported":
+  # validate spec etwitterported by twml.contrib.FeatureConfig (basic validation only)
+  if doc["format"] == "etwitterported":
     dict_keys = ["features", "labels", "weight", "tensors", "sparseTensors", "discretizeConfig"]
     for key in dict_keys:
       if key not in doc:
@@ -89,13 +89,13 @@ def _validate_config_dict_v2(config_dict):
   elif doc["format"] == "manual":
     raise NotImplementedError("Manual config support not yet implemented")
   else:
-    malformed_error("'format' must be 'exported' or 'manual'")
+    malformed_error("'format' must be 'etwitterported' or 'manual'")
 
 
 def _create_feature_config_v1(config_dict, data_spec_path):
   fc_builder = FeatureConfigBuilder(data_spec_path)
 
-  if config_dict["format"] == "exported":
+  if config_dict["format"] == "etwitterported":
     # add features
     for feature_info in config_dict["features"].values():
       feature_name = re.escape(feature_info["featureName"])
@@ -122,13 +122,13 @@ def _create_feature_config_v1(config_dict, data_spec_path):
 def _create_feature_config_v2(config_dict, data_spec_path):
   fc_builder = FeatureConfigBuilderV2(data_spec_path)
 
-  if config_dict["format"] == "exported":
-    # add sparse group extraction configs
+  if config_dict["format"] == "etwitterported":
+    # add sparse group etwittertraction configs
     for sparse_group in config_dict["sparseFeatureGroups"]:
       fids = sparse_group["features"].keys()
       fnames = [sparse_group["features"][fid]["featureName"] for fid in fids]
-      fc_builder.extract_features_as_hashed_sparse(
-        feature_regexes=[re.escape(fname) for fname in fnames],
+      fc_builder.etwittertract_features_as_hashed_sparse(
+        feature_regetwitteres=[re.escape(fname) for fname in fnames],
         output_tensor_name=sparse_group["outputName"],
         hash_space_size_bits=sparse_group["hashSpaceBits"],
         discretize_num_bins=sparse_group["discretize"]["numBins"],
@@ -136,12 +136,12 @@ def _create_feature_config_v2(config_dict, data_spec_path):
         discretize_type=sparse_group["discretize"]["type"],
         type_filter=sparse_group["filterType"])
 
-    # add dense group extraction configs
+    # add dense group etwittertraction configs
     for dense_group in config_dict["denseFeatureGroups"]:
       fids = dense_group["features"].keys()
       fnames = [dense_group["features"][fid]["featureName"] for fid in fids]
-      fc_builder.extract_feature_group(
-        feature_regexes=[re.escape(fname) for fname in fnames],
+      fc_builder.etwittertract_feature_group(
+        feature_regetwitteres=[re.escape(fname) for fname in fnames],
         group_name=dense_group["outputName"],
         type_filter=dense_group["filterType"],
         default_value=dense_group["defaultValue"])
@@ -152,18 +152,18 @@ def _create_feature_config_v2(config_dict, data_spec_path):
       fnames = [dense_features["features"][fid]["featureName"] for fid in fids]
       default_value = dense_features["defaultValue"]
       if len(fnames) == 1 and type(default_value) != dict:
-        fc_builder.extract_feature(
+        fc_builder.etwittertract_feature(
           feature_name=re.escape(fnames[0]),
-          expected_shape=dense_features["expectedShape"],
+          etwitterpected_shape=dense_features["etwitterpectedShape"],
           default_value=dense_features["defaultValue"])
       else:
-        fc_builder.extract_features(
-          feature_regexes=[re.escape(fname) for fname in fnames],
+        fc_builder.etwittertract_features(
+          feature_regetwitteres=[re.escape(fname) for fname in fnames],
           default_value_map=dense_features["defaultValue"])
 
     # add image feature configs
     for image in config_dict["images"]:
-      fc_builder.extract_image(
+      fc_builder.etwittertract_image(
         feature_name=image["featureName"],
         preprocess=image["preprocess"],
         out_type=tf.as_dtype(image["outType"].lower()),
@@ -179,7 +179,7 @@ def _create_feature_config_v2(config_dict, data_spec_path):
         tensor_fnames.append(tensor_fname)
     for sparse_tensor_fname in config_dict["sparseTensors"]:
       tensor_fnames.append(sparse_tensor_fname)
-    fc_builder.extract_tensors(tensor_fnames)
+    fc_builder.etwittertract_tensors(tensor_fnames)
 
     # add labels
     labels = []
@@ -214,8 +214,8 @@ def create_feature_config(config_path, data_spec_path):
   """
   Create a FeatureConfig object from a feature_spec.yaml file.
   """
-  _, ext = os.path.splitext(config_path)
-  if ext not in ['.yaml', '.yml']:
+  _, etwittert = os.path.splitetwittert(config_path)
+  if etwittert not in ['.yaml', '.yml']:
     raise ValueError("create_feature_config_from_yaml: Only .yaml/.yml supported")
 
   with tf.io.gfile.GFile(config_path, mode='r') as fs:

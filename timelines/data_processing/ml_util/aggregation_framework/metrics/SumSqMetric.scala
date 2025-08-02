@@ -6,7 +6,7 @@ import com.twitter.util.Time
 import java.lang.{Double => JDouble}
 import java.lang.{Long => JLong}
 
-case class TypedSumSqMetric() extends TypedSumLikeMetric[JDouble] {
+case class TypedSumSqMetric() etwittertends TypedSumLikeMetric[JDouble] {
   import AggregationMetricCommon._
 
   override val operatorName = "sumsq"
@@ -41,7 +41,7 @@ case class TypedSumSqMetric() extends TypedSumLikeMetric[JDouble] {
  * Syntactic sugar for the sum of squares metric that works with continuous features.
  * See EasyMetric.scala for more details on why this is useful.
  */
-object SumSqMetric extends EasyMetric {
+object SumSqMetric etwittertends EasyMetric {
   override def forFeatureType[T](
     featureType: FeatureType
   ): Option[AggregationMetric[T, _]] =

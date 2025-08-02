@@ -4,8 +4,8 @@ import com.twitter.decider.Decider
 import com.twitter.decider.RandomRecipient
 import com.twitter.decider.Recipient
 import com.twitter.simclusters_v2.common.DeciderGateBuilderWithIdHashing
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 case class RepresentationScorerDecider @Inject() (decider: Decider) {

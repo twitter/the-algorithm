@@ -1,11 +1,11 @@
 package com.twitter.follow_recommendations.common.rankers.common
 
-object RankerId extends Enumeration {
+object RankerId etwittertends Enumeration {
   type RankerId = Value
 
   val RandomRanker: RankerId = Value("random")
-  // The production PostNUX ML warm-start auto-retraining model ranker
-  val PostNuxProdRanker: RankerId = Value("postnux_prod")
+  // The production PostNUtwitter ML warm-start auto-retraining model ranker
+  val PostNutwitterProdRanker: RankerId = Value("postnutwitter_prod")
   val None: RankerId = Value("none")
 
   // Sampling from the Placket-Luce distribution. Applied after ranker step. Its ranker id is mainly used for logging.
@@ -22,6 +22,6 @@ object RankerId extends Enumeration {
 object ModelBasedHeavyRankerId {
   import RankerId._
   val HeavyRankerIds: Set[String] = Set(
-    PostNuxProdRanker.toString,
+    PostNutwitterProdRanker.toString,
   )
 }

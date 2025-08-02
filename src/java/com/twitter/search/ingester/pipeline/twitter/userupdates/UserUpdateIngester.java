@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
-import org.apache.commons.text.CaseUtils;
+import org.apache.commons.tetwittert.CaseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +22,7 @@ import com.twitter.common.collections.Pair;
 import com.twitter.decider.Decider;
 import com.twitter.finagle.util.DefaultTimer;
 import com.twitter.gizmoduck.thriftjava.LifecycleChangeReason;
-import com.twitter.gizmoduck.thriftjava.LookupContext;
+import com.twitter.gizmoduck.thriftjava.LookupContetwittert;
 import com.twitter.gizmoduck.thriftjava.QueryFields;
 import com.twitter.gizmoduck.thriftjava.Safety;
 import com.twitter.gizmoduck.thriftjava.UpdateDiffItem;
@@ -30,17 +30,17 @@ import com.twitter.gizmoduck.thriftjava.User;
 import com.twitter.gizmoduck.thriftjava.UserModification;
 import com.twitter.gizmoduck.thriftjava.UserService;
 import com.twitter.gizmoduck.thriftjava.UserType;
-import com.twitter.search.common.indexing.thriftjava.AntisocialUserUpdate;
-import com.twitter.search.common.indexing.thriftjava.UserUpdateType;
+import com.twitter.search.common.indetwittering.thriftjava.AntisocialUserUpdate;
+import com.twitter.search.common.indetwittering.thriftjava.UserUpdateType;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchLongGauge;
 import com.twitter.util.Duration;
 import com.twitter.util.Future;
-import com.twitter.util.TimeoutException;
+import com.twitter.util.TimeoutEtwitterception;
 
 /**
  * This class ingests {@link UserModification} events and transforms them into a possibly empty list
- * of {@link AntisocialUserUpdate}s to be indexed by Earlybirds.
+ * of {@link AntisocialUserUpdate}s to be indetwittered by Earlybirds.
  */
 public class UserUpdateIngester {
   private static final Logger LOG = LoggerFactory.getLogger(UserUpdateIngester.class);
@@ -48,7 +48,7 @@ public class UserUpdateIngester {
 
   private static final List<AntisocialUserUpdate> NO_UPDATE = Collections.emptyList();
 
-  // Map from UserUpdateType to a set of Safety fields to examine.
+  // Map from UserUpdateType to a set of Safety fields to etwitteramine.
   private static final Map<UserUpdateType, Set<Safety._Fields>> SAFETY_FIELDS_MAP =
       ImmutableMap.of(
           UserUpdateType.ANTISOCIAL,
@@ -79,7 +79,7 @@ public class UserUpdateIngester {
               FIELD_TO_FIELD_NAME_FUNCTION,
               Function.identity()));
 
-  private static final LookupContext LOOKUP_CONTEXT = new LookupContext()
+  private static final LookupContetwittert LOOKUP_CONTEtwitterT = new LookupContetwittert()
       .setInclude_deactivated(true)
       .setInclude_erased(true)
       .setInclude_suspended(true)
@@ -103,7 +103,7 @@ public class UserUpdateIngester {
   private final Map<Pair<UserUpdateType, Boolean>, SearchCounter> counterMap;
 
   public UserUpdateIngester(
-      String statPrefix,
+      String statPrefitwitter,
       UserService.ServiceToClient userService,
       Decider decider
   ) {
@@ -111,41 +111,41 @@ public class UserUpdateIngester {
     this.decider = decider;
 
     userModificationLatency =
-        SearchLongGauge.export(statPrefix + "_user_modification_latency_ms");
+        SearchLongGauge.etwitterport(statPrefitwitter + "_user_modification_latency_ms");
     unsuccessfulUserModificationCount =
-        SearchCounter.export(statPrefix + "_unsuccessful_user_modification_count");
+        SearchCounter.etwitterport(statPrefitwitter + "_unsuccessful_user_modification_count");
     byInactiveAccountDeactivationUserModificationCount =
-        SearchCounter.export(statPrefix
+        SearchCounter.etwitterport(statPrefitwitter
                 + "_by_inactive_account_deactivation_user_modification_count");
     irrelevantUserModificationCount =
-        SearchCounter.export(statPrefix + "_irrelevant_user_modification_count");
+        SearchCounter.etwitterport(statPrefitwitter + "_irrelevant_user_modification_count");
     notNormalUserCount =
-        SearchCounter.export(statPrefix + "_not_normal_user_count");
+        SearchCounter.etwitterport(statPrefitwitter + "_not_normal_user_count");
     missingSafetyCount =
-        SearchCounter.export(statPrefix + "_missing_safety_count");
+        SearchCounter.etwitterport(statPrefitwitter + "_missing_safety_count");
     userServiceRequests =
-        SearchCounter.export(statPrefix + "_user_service_requests");
+        SearchCounter.etwitterport(statPrefitwitter + "_user_service_requests");
     userServiceSuccesses =
-        SearchCounter.export(statPrefix + "_user_service_successes");
+        SearchCounter.etwitterport(statPrefitwitter + "_user_service_successes");
     userServiceNoResults =
-        SearchCounter.export(statPrefix + "_user_service_no_results");
+        SearchCounter.etwitterport(statPrefitwitter + "_user_service_no_results");
     userServiceFailures =
-        SearchCounter.export(statPrefix + "_user_service_failures");
+        SearchCounter.etwitterport(statPrefitwitter + "_user_service_failures");
     userServiceTimeouts =
-        SearchCounter.export(statPrefix + "_user_service_timeouts");
+        SearchCounter.etwitterport(statPrefitwitter + "_user_service_timeouts");
     counterMap = ImmutableMap.<Pair<UserUpdateType, Boolean>, SearchCounter>builder()
         .put(Pair.of(UserUpdateType.ANTISOCIAL, true),
-            SearchCounter.export(statPrefix + "_antisocial_set_count"))
+            SearchCounter.etwitterport(statPrefitwitter + "_antisocial_set_count"))
         .put(Pair.of(UserUpdateType.ANTISOCIAL, false),
-            SearchCounter.export(statPrefix + "_antisocial_unset_count"))
+            SearchCounter.etwitterport(statPrefitwitter + "_antisocial_unset_count"))
         .put(Pair.of(UserUpdateType.NSFW, true),
-            SearchCounter.export(statPrefix + "_nsfw_set_count"))
+            SearchCounter.etwitterport(statPrefitwitter + "_nsfw_set_count"))
         .put(Pair.of(UserUpdateType.NSFW, false),
-            SearchCounter.export(statPrefix + "_nsfw_unset_count"))
+            SearchCounter.etwitterport(statPrefitwitter + "_nsfw_unset_count"))
         .put(Pair.of(UserUpdateType.PROTECTED, true),
-            SearchCounter.export(statPrefix + "_protected_set_count"))
+            SearchCounter.etwitterport(statPrefitwitter + "_protected_set_count"))
         .put(Pair.of(UserUpdateType.PROTECTED, false),
-            SearchCounter.export(statPrefix + "_protected_unset_count"))
+            SearchCounter.etwitterport(statPrefitwitter + "_protected_unset_count"))
         .build();
   }
 
@@ -161,7 +161,7 @@ public class UserUpdateIngester {
       return Future.value(NO_UPDATE);
     }
 
-    // To avoid UserTable gets overflowed, we exclude traffic from ByInactiveAccountDeactivation
+    // To avoid UserTable gets overflowed, we etwitterclude traffic from ByInactiveAccountDeactivation
     if (userModification.getUser_audit_data() != null
         && userModification.getUser_audit_data().getReason() != null
         && userModification.getUser_audit_data().getReason()
@@ -209,15 +209,15 @@ public class UserUpdateIngester {
                   counterMap.get(Pair.of(update.getType(), update.isValue())).increment())
               .collect(Collectors.toList());
         })
-        .onFailure(com.twitter.util.Function.cons(exception -> {
-          if (exception instanceof UserNotFoundException) {
+        .onFailure(com.twitter.util.Function.cons(etwitterception -> {
+          if (etwitterception instanceof UserNotFoundEtwitterception) {
             userServiceNoResults.increment();
-          } else if (exception instanceof TimeoutException) {
+          } else if (etwitterception instanceof TimeoutEtwitterception) {
             userServiceTimeouts.increment();
-            LOG.error("UserService.get timed out for user id=" + userId, exception);
+            LOG.error("UserService.get timed out for user id=" + userId, etwitterception);
           } else {
             userServiceFailures.increment();
-            LOG.error("UserService.get failed for user id=" + userId, exception);
+            LOG.error("UserService.get failed for user id=" + userId, etwitterception);
           }
         }));
   }
@@ -250,13 +250,13 @@ public class UserUpdateIngester {
   private Future<User> getUser(long userId) {
     userServiceRequests.increment();
     return userService.get(
-        LOOKUP_CONTEXT,
+        LOOKUP_CONTEtwitterT,
         Collections.singletonList(userId),
         Collections.singleton(QueryFields.SAFETY))
         .within(DefaultTimer.getInstance(), RESULT_TIMEOUT)
         .flatMap(userResults -> {
           if (userResults.size() != 1 || !userResults.get(0).isSetUser()) {
-            return Future.exception(new UserNotFoundException(userId));
+            return Future.etwitterception(new UserNotFoundEtwitterception(userId));
           }
 
           userServiceSuccesses.increment();
@@ -284,8 +284,8 @@ public class UserUpdateIngester {
     return new AntisocialUserUpdate(user.getId(), userUpdateType, value, updatedAt);
   }
 
-  class UserNotFoundException extends Exception {
-    UserNotFoundException(long userId) {
+  class UserNotFoundEtwitterception etwittertends Etwitterception {
+    UserNotFoundEtwitterception(long userId) {
       super("User " + userId + " not found.");
     }
   }

@@ -15,7 +15,7 @@ public final class UserPartitionUtil {
   public static Predicate<Long> filterUsersByPartitionPredicate(final PartitionConfig config) {
     return new Predicate<Long>() {
 
-      private final int partitionID = config.getIndexingHashPartitionID();
+      private final int partitionID = config.getIndetwitteringHashPartitionID();
       private final int numPartitions = config.getNumPartitions();
       private final EarlybirdPartitioningFunction partitioner =
           new GeneralEarlybirdPartitioningFunction();

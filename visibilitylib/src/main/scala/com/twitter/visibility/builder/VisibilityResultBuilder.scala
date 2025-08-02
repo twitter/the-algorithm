@@ -5,12 +5,12 @@ import com.twitter.visibility.features.FeatureMap
 import com.twitter.visibility.models.ContentId
 import com.twitter.visibility.rules.Action
 import com.twitter.visibility.rules.Allow
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.FailClosedException
-import com.twitter.visibility.rules.FeaturesFailedException
-import com.twitter.visibility.rules.MissingFeaturesException
+import com.twitter.visibility.rules.EvaluationContetwittert
+import com.twitter.visibility.rules.FailClosedEtwitterception
+import com.twitter.visibility.rules.FeaturesFailedEtwitterception
+import com.twitter.visibility.rules.MissingFeaturesEtwitterception
 import com.twitter.visibility.rules.Rule
-import com.twitter.visibility.rules.RuleFailedException
+import com.twitter.visibility.rules.RuleFailedEtwitterception
 import com.twitter.visibility.rules.RuleResult
 import com.twitter.visibility.rules.State.FeatureFailed
 import com.twitter.visibility.rules.State.MissingFeature
@@ -75,24 +75,24 @@ class VisibilityResultBuilder(
 
   def isVerdictComposable(): Boolean = this.verdict.isComposable
 
-  def failClosedException(evaluationContext: EvaluationContext): Option[FailClosedException] = {
+  def failClosedEtwitterception(evaluationContetwittert: EvaluationContetwittert): Option[FailClosedEtwitterception] = {
     mapBuilder
       .result().collect {
         case (r: Rule, RuleResult(_, MissingFeature(mf)))
-            if r.shouldFailClosed(evaluationContext.params) =>
-          Some(MissingFeaturesException(r.name, mf))
+            if r.shouldFailClosed(evaluationContetwittert.params) =>
+          Some(MissingFeaturesEtwitterception(r.name, mf))
         case (r: Rule, RuleResult(_, FeatureFailed(ff)))
-            if r.shouldFailClosed(evaluationContext.params) =>
-          Some(FeaturesFailedException(r.name, ff))
+            if r.shouldFailClosed(evaluationContetwittert.params) =>
+          Some(FeaturesFailedEtwitterception(r.name, ff))
         case (r: Rule, RuleResult(_, RuleFailed(t)))
-            if r.shouldFailClosed(evaluationContext.params) =>
-          Some(RuleFailedException(r.name, t))
-      }.toList.foldLeft(None: Option[FailClosedException]) { (acc, arg) =>
+            if r.shouldFailClosed(evaluationContetwittert.params) =>
+          Some(RuleFailedEtwitterception(r.name, t))
+      }.toList.foldLeft(None: Option[FailClosedEtwitterception]) { (acc, arg) =>
         (acc, arg) match {
           case (None, Some(_)) => arg
-          case (Some(FeaturesFailedException(_, _)), Some(MissingFeaturesException(_, _))) => arg
-          case (Some(RuleFailedException(_, _)), Some(MissingFeaturesException(_, _))) => arg
-          case (Some(RuleFailedException(_, _)), Some(FeaturesFailedException(_, _))) => arg
+          case (Some(FeaturesFailedEtwitterception(_, _)), Some(MissingFeaturesEtwitterception(_, _))) => arg
+          case (Some(RuleFailedEtwitterception(_, _)), Some(MissingFeaturesEtwitterception(_, _))) => arg
+          case (Some(RuleFailedEtwitterception(_, _)), Some(FeaturesFailedEtwitterception(_, _))) => arg
           case _ => acc
         }
       }

@@ -8,7 +8,7 @@
 
 package com.twitter.ann.faiss;
 
-public class SliceInvertedLists extends ReadOnlyInvertedLists {
+public class SliceInvertedLists etwittertends ReadOnlyInvertedLists {
   private transient long swigCPtr;
 
   protected SliceInvertedLists(long cPtr, boolean cMemoryOwn) {

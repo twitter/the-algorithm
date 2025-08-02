@@ -16,7 +16,7 @@ scala_library(
         "src/scala/com/twitter/timelines/prediction/features/itl",
         "src/scala/com/twitter/timelines/prediction/features/real_graph",
         "src/scala/com/twitter/timelines/prediction/features/recap",
-        "src/scala/com/twitter/timelines/prediction/features/request_context",
+        "src/scala/com/twitter/timelines/prediction/features/request_contetwittert",
         "src/scala/com/twitter/timelines/prediction/features/time_features",
         "src/thrift/com/twitter/ml/api:data-java",
         "src/thrift/com/twitter/ml/api:transform-java",

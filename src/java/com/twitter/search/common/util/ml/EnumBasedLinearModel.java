@@ -1,6 +1,6 @@
 package com.twitter.search.common.util.ml;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.util.io.TextFileLoadingUtils;
+import com.twitter.search.common.util.io.TetwittertFileLoadingUtils;
 
 /**
  * Represents a linear model for scoring and classification.
@@ -21,7 +21,7 @@ import com.twitter.search.common.util.io.TextFileLoadingUtils;
  * represented as maps that must contain an entry for all the values of the enum.
  *
  */
-public class EnumBasedLinearModel<K extends Enum<K>> implements MapBasedLinearModel<K> {
+public class EnumBasedLinearModel<K etwittertends Enum<K>> implements MapBasedLinearModel<K> {
 
   private final EnumSet<K> features;
   private final EnumMap<K, Float> weights;
@@ -80,7 +80,7 @@ public class EnumBasedLinearModel<K extends Enum<K>> implements MapBasedLinearMo
    * Creates a model where all the features have the same weight.
    * This method is useful for generating the feature vectors for training a new model.
    */
-  public static <T extends Enum<T>> EnumBasedLinearModel<T> createWithEqualWeight(Class<T> enumType,
+  public static <T etwittertends Enum<T>> EnumBasedLinearModel<T> createWithEqualWeight(Class<T> enumType,
                                                                                   Float weight) {
     EnumSet<T> features = EnumSet.allOf(enumType);
     EnumMap<T, Float> weights = Maps.newEnumMap(enumType);
@@ -95,8 +95,8 @@ public class EnumBasedLinearModel<K extends Enum<K>> implements MapBasedLinearMo
    *
    *    feature_name  \t  weight
    */
-  public static <T extends Enum<T>> EnumBasedLinearModel<T> createFromFile(
-      Class<T> enumType, AbstractFile path) throws IOException {
+  public static <T etwittertends Enum<T>> EnumBasedLinearModel<T> createFromFile(
+      Class<T> enumType, AbstractFile path) throws IOEtwitterception {
     return new EnumBasedLinearModel<>(enumType, loadWeights(enumType, path, true));
   }
 
@@ -107,26 +107,26 @@ public class EnumBasedLinearModel<K extends Enum<K>> implements MapBasedLinearMo
    *
    *     feature_name  \t  weight
    */
-  public static <T extends Enum<T>> EnumBasedLinearModel<T> createFromFileSafe(
-      Class<T> enumType, AbstractFile path) throws IOException {
+  public static <T etwittertends Enum<T>> EnumBasedLinearModel<T> createFromFileSafe(
+      Class<T> enumType, AbstractFile path) throws IOEtwitterception {
     return new EnumBasedLinearModel<>(enumType, loadWeights(enumType, path, false));
   }
 
   /**
    * Creates a map of (feature_name, weight) from a TSV file.
    *
-   * If strictMode is true, it will throw an exception if the file doesn't contain all the
+   * If strictMode is true, it will throw an etwitterception if the file doesn't contain all the
    * features declared in the enum. Otherwise, it will use zero as default value.
    *
    */
-  private static <T extends Enum<T>> EnumMap<T, Float> loadWeights(
-      Class<T> enumType, AbstractFile fileHandle, boolean strictMode) throws IOException {
+  private static <T etwittertends Enum<T>> EnumMap<T, Float> loadWeights(
+      Class<T> enumType, AbstractFile fileHandle, boolean strictMode) throws IOEtwitterception {
     Map<String, Float> weightsFromFile =
-      TextFileLoadingUtils.loadMapFromFile(fileHandle, input -> Float.parseFloat(input));
+      TetwittertFileLoadingUtils.loadMapFromFile(fileHandle, input -> Float.parseFloat(input));
     EnumMap<T, Float> weights = Maps.newEnumMap(enumType);
-    Set<T> expectedFeatures = EnumSet.allOf(enumType);
+    Set<T> etwitterpectedFeatures = EnumSet.allOf(enumType);
     if (!strictMode) {
-      for (T feature : expectedFeatures) {
+      for (T feature : etwitterpectedFeatures) {
         weights.put(feature, 0f);
       }
     }
@@ -134,7 +134,7 @@ public class EnumBasedLinearModel<K extends Enum<K>> implements MapBasedLinearMo
       Float weight = weightsFromFile.get(featureName);
       weights.put(Enum.valueOf(enumType, featureName.toUpperCase()), weight);
     }
-    Preconditions.checkArgument(expectedFeatures.equals(weights.keySet()),
+    Preconditions.checkArgument(etwitterpectedFeatures.equals(weights.keySet()),
         "Model does not contain weights for all the features");
     return weights;
   }

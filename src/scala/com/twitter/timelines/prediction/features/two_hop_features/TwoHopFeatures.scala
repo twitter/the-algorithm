@@ -6,10 +6,10 @@ import scala.collection.JavaConverters._
 import TwoHopFeaturesConfig.personalDataTypesMap
 
 object TwoHopFeaturesDescriptor {
-  val prefix = "two_hop"
-  val normalizedPostfix = "normalized"
-  val leftNodeDegreePostfix = "left_degree"
-  val rightNodeDegreePostfix = "right_degree"
+  val prefitwitter = "two_hop"
+  val normalizedPostfitwitter = "normalized"
+  val leftNodeDegreePostfitwitter = "left_degree"
+  val rightNodeDegreePostfitwitter = "right_degree"
 
   type TwoHopFeatureMap = Map[(EdgeType, EdgeType), Continuous]
   type TwoHopFeatureNodeDegreeMap = Map[EdgeType, Continuous]
@@ -47,7 +47,7 @@ class TwoHopFeaturesDescriptor(edgeTypePairs: Seq[(EdgeType, EdgeType)]) {
       personalDataTypesMap.getOrElse(leftEdgeType, Set.empty) ++
         personalDataTypesMap.getOrElse(rightEdgeType, Set.empty)
     ).asJava
-    val rawFeature = new Continuous(s"$prefix.$leftEdgeName.$rightEdgeName", personalDataTypes)
+    val rawFeature = new Continuous(s"$prefitwitter.$leftEdgeName.$rightEdgeName", personalDataTypes)
     edgeTypePair -> rawFeature
   })(collection.breakOut)
 
@@ -56,7 +56,7 @@ class TwoHopFeaturesDescriptor(edgeTypePairs: Seq[(EdgeType, EdgeType)]) {
     val leftEdgeName = getLeftEdgeName(edgeTypePair)
     val personalDataTypes = personalDataTypesMap.getOrElse(leftEdgeType, Set.empty).asJava
     val leftNodeDegreeFeature =
-      new Continuous(s"$prefix.$leftEdgeName.$leftNodeDegreePostfix", personalDataTypes)
+      new Continuous(s"$prefitwitter.$leftEdgeName.$leftNodeDegreePostfitwitter", personalDataTypes)
     leftEdgeType -> leftNodeDegreeFeature
   })(collection.breakOut)
 
@@ -65,7 +65,7 @@ class TwoHopFeaturesDescriptor(edgeTypePairs: Seq[(EdgeType, EdgeType)]) {
     val rightEdgeName = getRightEdgeName(edgeTypePair)
     val personalDataTypes = personalDataTypesMap.getOrElse(rightEdgeType, Set.empty).asJava
     val rightNodeDegreeFeature =
-      new Continuous(s"$prefix.$rightEdgeName.$rightNodeDegreePostfix", personalDataTypes)
+      new Continuous(s"$prefitwitter.$rightEdgeName.$rightNodeDegreePostfitwitter", personalDataTypes)
     rightEdgeType -> rightNodeDegreeFeature
   })(collection.breakOut)
 
@@ -79,7 +79,7 @@ class TwoHopFeaturesDescriptor(edgeTypePairs: Seq[(EdgeType, EdgeType)]) {
         personalDataTypesMap.getOrElse(rightEdgeType, Set.empty)
     ).asJava
     val normalizedFeature =
-      new Continuous(s"$prefix.$leftEdgeName.$rightEdgeName.$normalizedPostfix", personalDataTypes)
+      new Continuous(s"$prefitwitter.$leftEdgeName.$rightEdgeName.$normalizedPostfitwitter", personalDataTypes)
     edgeTypePair -> normalizedFeature
   })(collection.breakOut)
 

@@ -8,24 +8,24 @@ import com.twitter.tweetypie.repository.ProfileGeoRepository
 import com.twitter.tweetypie.thriftscala.FieldByPath
 
 object ProfileGeoHydrator {
-  type Type = ValueHydrator[Option[ProfileGeoEnrichment], TweetCtx]
+  type Type = ValueHydrator[Option[ProfileGeoEnrichment], TweetCttwitter]
 
   val hydratedField: FieldByPath = fieldByPath(Tweet.ProfileGeoEnrichmentField)
 
   private[this] val partialResult = ValueState.partial(None, hydratedField)
 
   def apply(repo: ProfileGeoRepository.Type): Type =
-    ValueHydrator[Option[ProfileGeoEnrichment], TweetCtx] { (curr, ctx) =>
+    ValueHydrator[Option[ProfileGeoEnrichment], TweetCttwitter] { (curr, cttwitter) =>
       val key =
         ProfileGeoKey(
-          tweetId = ctx.tweetId,
-          userId = Some(ctx.userId),
-          coords = ctx.geoCoordinates
+          tweetId = cttwitter.tweetId,
+          userId = Some(cttwitter.userId),
+          coords = cttwitter.geoCoordinates
         )
       repo(key).liftToTry.map {
         case Return(enrichment) => ValueState.modified(Some(enrichment))
         case Throw(_) => partialResult
       }
-    }.onlyIf((curr, ctx) =>
-      curr.isEmpty && ctx.tweetFieldRequested(Tweet.ProfileGeoEnrichmentField))
+    }.onlyIf((curr, cttwitter) =>
+      curr.isEmpty && cttwitter.tweetFieldRequested(Tweet.ProfileGeoEnrichmentField))
 }

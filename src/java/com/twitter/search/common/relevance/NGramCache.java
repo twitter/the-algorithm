@@ -12,7 +12,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.ImmutableList;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
+import com.twitter.common_internal.tetwittert.version.PenguinVersion;
 import com.twitter.penguin.search.filter.StringMatchFilter;
 import com.twitter.util.Duration;
 
@@ -20,7 +20,7 @@ import com.twitter.util.Duration;
  * the Cache for Trends
  */
 public class NGramCache {
-  private static final int DEFAULT_MAX_CACHE_SIZE = 5000;
+  private static final int DEFAULT_MAtwitter_CACHE_SIZE = 5000;
   private static final long DEFAULT_CACHE_ITEM_TTL_SEC = 24 * 3600; // 1 day
 
   private final PenguinVersion penguinVersion;
@@ -31,15 +31,15 @@ public class NGramCache {
   private volatile StringMatchFilter trendsMatcher = null;
 
   /**
-   * Extract Trends from a list of normalized tokens
+   * Etwittertract Trends from a list of normalized tokens
    */
-  public List<String> extractTrendsFromNormalized(List<String> tokens) {
+  public List<String> etwittertractTrendsFromNormalized(List<String> tokens) {
     if (trendsMatcher == null) {
       return Collections.emptyList();
     }
 
     ImmutableList.Builder<String> trends = ImmutableList.builder();
-    for (String trend : trendsMatcher.extractNormalized(tokens)) {
+    for (String trend : trendsMatcher.etwittertractNormalized(tokens)) {
       if (trendsCache.containsKey(trend)) {
         trends.add(trend);
       }
@@ -49,25 +49,25 @@ public class NGramCache {
   }
 
   /**
-   * Extract Trends from a list of tokens
+   * Etwittertract Trends from a list of tokens
    */
-  public List<String> extractTrendsFrom(List<String> tokens, Locale language) {
+  public List<String> etwittertractTrendsFrom(List<String> tokens, Locale language) {
     if (trendsMatcher == null) {
       return Collections.emptyList();
     }
-    return trendsMatcher.extract(language, tokens);
+    return trendsMatcher.etwittertract(language, tokens);
   }
 
   /**
-   * Extract Trends from a given CharSequence
+   * Etwittertract Trends from a given CharSequence
    */
-  public List<String> extractTrendsFrom(CharSequence text, Locale language) {
+  public List<String> etwittertractTrendsFrom(CharSequence tetwittert, Locale language) {
     if (trendsMatcher == null) {
       return Collections.emptyList();
     }
 
     ImmutableList.Builder<String> trends = ImmutableList.builder();
-    for (String trend : trendsMatcher.extract(language, text)) {
+    for (String trend : trendsMatcher.etwittertract(language, tetwittert)) {
       if (trendsCache.containsKey(trend)) {
         trends.add(trend);
       }
@@ -103,12 +103,12 @@ public class NGramCache {
   }
 
   public static class Builder {
-    private int maxCacheSize = DEFAULT_MAX_CACHE_SIZE;
+    private int matwitterCacheSize = DEFAULT_MAtwitter_CACHE_SIZE;
     private long cacheItemTTLSecs = DEFAULT_CACHE_ITEM_TTL_SEC; // 1 day
     private PenguinVersion penguinVersion = PenguinVersion.PENGUIN_4;
 
-    public Builder maxCacheSize(int cacheSize) {
-      this.maxCacheSize = cacheSize;
+    public Builder matwitterCacheSize(int cacheSize) {
+      this.matwitterCacheSize = cacheSize;
       return this;
     }
 
@@ -125,7 +125,7 @@ public class NGramCache {
     /** Builds an NGramCache instance. */
     public NGramCache build() {
       return new NGramCache(
-          maxCacheSize,
+          matwitterCacheSize,
           Duration.apply(cacheItemTTLSecs, TimeUnit.SECONDS),
           penguinVersion);
     }
@@ -134,17 +134,17 @@ public class NGramCache {
   // Should be used only in tests that want to mock out this class.
   @VisibleForTesting
   public NGramCache() {
-    this(DEFAULT_MAX_CACHE_SIZE,
+    this(DEFAULT_MAtwitter_CACHE_SIZE,
          Duration.apply(DEFAULT_CACHE_ITEM_TTL_SEC, TimeUnit.SECONDS),
          PenguinVersion.PENGUIN_4);
   }
 
-  private NGramCache(int maxCacheSize, Duration cacheItemTTL, PenguinVersion penguinVersion) {
+  private NGramCache(int matwitterCacheSize, Duration cacheItemTTL, PenguinVersion penguinVersion) {
     // we only have 1 refresher thread that writes to the cache
     this.trendsCache = CacheBuilder.newBuilder()
         .concurrencyLevel(1)
-        .expireAfterWrite(cacheItemTTL.inSeconds(), TimeUnit.SECONDS)
-        .maximumSize(maxCacheSize)
+        .etwitterpireAfterWrite(cacheItemTTL.inSeconds(), TimeUnit.SECONDS)
+        .matwitterimumSize(matwitterCacheSize)
         .<String, String>build()
         .asMap();
     this.penguinVersion = penguinVersion;

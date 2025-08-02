@@ -1,8 +1,8 @@
 package com.twitter.search.earlybird.search.relevance.scoring;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
-import org.apache.lucene.search.Explanation;
+import org.apache.lucene.search.Etwitterplanation;
 
 import com.twitter.search.common.relevance.features.MutableFeatureNormalizers;
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
@@ -14,11 +14,11 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
 
 /**
- * A toptweets query cache index selection scoring function that is based purely on retweet counts.
+ * A toptweets query cache indetwitter selection scoring function that is based purely on retweet counts.
  * The goal of this scoring functon is to deprecate itweet score in entirety.
  *
- * Once all legacy itweet scores are drained from existing earlybird index, new parus score replaces
- * existing itweet score position, then this class will be deprecated, a new scoring function
+ * Once all legacy itweet scores are drained from etwitteristing earlybird indetwitter, new parus score replaces
+ * etwitteristing itweet score position, then this class will be deprecated, a new scoring function
  * using parus score shall replace this.
  *
  * this scoring function is only used in Query Cache for marking top tweets
@@ -26,7 +26,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
  * scoring function.
  *
  */
-public class RetweetBasedTopTweetsScoringFunction extends ScoringFunction {
+public class RetweetBasedTopTweetsScoringFunction etwittertends ScoringFunction {
   private static final double DEFAULT_RECENCY_SCORE_FRACTION = 0.1;
   private static final double DEFAULT_SIGMOID_APLHA = 0.008;
   private static final int DEFAULT_RECENCY_CENTER_MINUTES = 1080;
@@ -41,12 +41,12 @@ public class RetweetBasedTopTweetsScoringFunction extends ScoringFunction {
   // In this linear scoring function, we will rescale retweet count to [0, 1] range,
   // with an input range of [0, 20]. Given the realtime factor's weight of 0.1, that give our
   // minimal retweet score threshold to: 4/20 * 0.9 = 0.18.
-  // Testing on prod showed much higher volume due to the generous setting of max value of 20,
+  // Testing on prod showed much higher volume due to the generous setting of matwitter value of 20,
   // (highest we have seen is 14). Adjusted to 0.21 which gave us similar volume.
   private static final double DEFAULT_CUT_OFF_SCORE = 0.21;
 
   // Normalize retweet counts from [0, 20] range to [0, 1] range
-  private static final double MAX_RETWEET_COUNT = 20.0;
+  private static final double MAtwitter_RETWEET_COUNT = 20.0;
   private static final double MIN_USER_REPUTATION = 40.0;  // matches itweet system threshold
 
   /**
@@ -55,7 +55,7 @@ public class RetweetBasedTopTweetsScoringFunction extends ScoringFunction {
    *
    * It's OK to use different values for these constants, because they do not interfere with each
    * other. This constant is only used in RetweetBasedTopTweetsScoringFunction, which is only used
-   * to filter the hits for the [score_filter retweets minScore maxScore] operator. So the scores
+   * to filter the hits for the [score_filter retweets minScore matwitterScore] operator. So the scores
    * returned by RetweetBasedTopTweetsScoringFunction.score() do not have any impact on the final
    * hit score.
    *
@@ -67,7 +67,7 @@ public class RetweetBasedTopTweetsScoringFunction extends ScoringFunction {
   private final double sigmoidAlpha;
   private final double cutOffScore;
   private final int recencyCenterMinutes;
-  private final double maxRecency;
+  private final double matwitterRecency;
 
   private final int currentTimeSeconds;
 
@@ -102,12 +102,12 @@ public class RetweetBasedTopTweetsScoringFunction extends ScoringFunction {
     this.sigmoidAlpha = sigmoidAlpha;
     this.cutOffScore = cutOffScore;
     this.recencyCenterMinutes = recencyCenterMinutes;
-    this.maxRecency = computeSigmoid(0);
+    this.matwitterRecency = computeSigmoid(0);
     this.currentTimeSeconds = (int) (System.currentTimeMillis() / 1000);
   }
 
   @Override
-  protected float score(float luceneQueryScore) throws IOException {
+  protected float score(float luceneQueryScore) throws IOEtwitterception {
     // Reset the data for each tweet!!!
     metadata = null;
     if (documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG)
@@ -115,13 +115,13 @@ public class RetweetBasedTopTweetsScoringFunction extends ScoringFunction {
             < MIN_USER_REPUTATION)) {
       score = RETWEET_BASED_TOP_TWEETS_LOWEST_SCORE;
     } else {
-      // Note that here we want the post log2 value, as the MAX_RETWEET_COUNT was actually
+      // Note that here we want the post log2 value, as the MAtwitter_RETWEET_COUNT was actually
       // set up for that.
       retweetCount = MutableFeatureNormalizers.BYTE_NORMALIZER.unnormAndLog2(
           (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.RETWEET_COUNT));
       final double recencyScore = computeTopTweetRecencyScore();
 
-      score = (retweetCount / MAX_RETWEET_COUNT) * (1 - recencyScoreFraction)
+      score = (retweetCount / MAtwitter_RETWEET_COUNT) * (1 - recencyScoreFraction)
           + recencyScoreFraction * recencyScore;
 
       if (score < this.cutOffScore) {
@@ -132,18 +132,18 @@ public class RetweetBasedTopTweetsScoringFunction extends ScoringFunction {
     return (float) score;
   }
 
-  private double computeSigmoid(double x) {
-    return 1.0f / (1.0f + Math.exp(sigmoidAlpha * (x - recencyCenterMinutes)));
+  private double computeSigmoid(double twitter) {
+    return 1.0f / (1.0f + Math.etwitterp(sigmoidAlpha * (twitter - recencyCenterMinutes)));
   }
 
   private double computeTopTweetRecencyScore() {
     double diffMinutes =
-        Math.max(0, currentTimeSeconds - timeMapper.getTime(getCurrentDocID())) / 60.0;
-    return computeSigmoid(diffMinutes) / maxRecency;
+        Math.matwitter(0, currentTimeSeconds - timeMapper.getTime(getCurrentDocID())) / 60.0;
+    return computeSigmoid(diffMinutes) / matwitterRecency;
   }
 
   @Override
-  protected Explanation doExplain(float luceneScore) {
+  protected Etwitterplanation doEtwitterplain(float luceneScore) {
     return null;
   }
 

@@ -4,10 +4,10 @@ package store
 import com.twitter.tweetypie.store.TweetStoreEvent.NoRetry
 import com.twitter.tweetypie.thriftscala._
 
-object IncrFavCount extends TweetStore.SyncModule {
+object IncrFavCount etwittertends TweetStore.SyncModule {
 
   case class Event(tweetId: TweetId, delta: Int, timestamp: Time)
-      extends SyncTweetStoreEvent("incr_fav_count") {
+      etwittertends SyncTweetStoreEvent("incr_fav_count") {
     val toAsyncRequest: AsyncIncrFavCountRequest = AsyncIncrFavCountRequest(tweetId, delta)
   }
 
@@ -15,7 +15,7 @@ object IncrFavCount extends TweetStore.SyncModule {
     val incrFavCount: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val incrFavCount: FutureEffect[Event] = wrap(underlying.incrFavCount)
   }
 
@@ -34,10 +34,10 @@ object IncrFavCount extends TweetStore.SyncModule {
   }
 }
 
-object AsyncIncrFavCount extends TweetStore.AsyncModule {
+object AsyncIncrFavCount etwittertends TweetStore.AsyncModule {
 
   case class Event(tweetId: TweetId, delta: Int, timestamp: Time)
-      extends AsyncTweetStoreEvent("async_incr_fav_count") {
+      etwittertends AsyncTweetStoreEvent("async_incr_fav_count") {
 
     override def enqueueRetry(service: ThriftTweetService, action: AsyncWriteAction): Future[Unit] =
       Future.Unit // We need to define this method for TweetStoreEvent.Async but we don't use it
@@ -49,7 +49,7 @@ object AsyncIncrFavCount extends TweetStore.AsyncModule {
     val asyncIncrFavCount: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val asyncIncrFavCount: FutureEffect[Event] = wrap(underlying.asyncIncrFavCount)
   }
 
@@ -63,10 +63,10 @@ object AsyncIncrFavCount extends TweetStore.AsyncModule {
   }
 }
 
-object ReplicatedIncrFavCount extends TweetStore.ReplicatedModule {
+object ReplicatedIncrFavCount etwittertends TweetStore.ReplicatedModule {
 
   case class Event(tweetId: TweetId, delta: Int)
-      extends ReplicatedTweetStoreEvent("replicated_incr_fav_count") {
+      etwittertends ReplicatedTweetStoreEvent("replicated_incr_fav_count") {
     override def retryStrategy: TweetStoreEvent.NoRetry.type = NoRetry
   }
 
@@ -74,7 +74,7 @@ object ReplicatedIncrFavCount extends TweetStore.ReplicatedModule {
     val replicatedIncrFavCount: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val replicatedIncrFavCount: FutureEffect[Event] = wrap(
       underlying.replicatedIncrFavCount)
   }

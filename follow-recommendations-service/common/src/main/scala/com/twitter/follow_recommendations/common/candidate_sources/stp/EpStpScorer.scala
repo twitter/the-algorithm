@@ -11,8 +11,8 @@ import com.twitter.relevance.ep_model.thriftscala.EPScoringResponse
 import com.twitter.relevance.ep_model.thriftscala.Record
 import com.twitter.stitch.Stitch
 import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 import scala.collection.JavaConverters._
 import scala.util.Success
 
@@ -39,7 +39,7 @@ class EpStpScorer @Inject() (epScorer: EPScorer) {
       addFeaturesBreakDown = details,
       addTransformerIntermediateRecords = details
     )
-    val request = EPScoringRequest(auxFeatures = Some(Seq(record)), options = Some(scoringOptions))
+    val request = EPScoringRequest(autwitterFeatures = Some(Seq(record)), options = Some(scoringOptions))
 
     Stitch.callFuture(
       BinaryThriftCodec[thrift.EPScoringRequest]

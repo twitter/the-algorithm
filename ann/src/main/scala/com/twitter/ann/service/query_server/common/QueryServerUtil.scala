@@ -11,23 +11,23 @@ object QueryServerUtil {
   /**
    * Validate if the abstract file (directory) size is within the defined limits.
    * @param dir Hdfs/Local directory
-   * @param minIndexSizeBytes minimum size of file in bytes (Exclusive)
-   * @param maxIndexSizeBytes minimum size of file in bytes (Exclusive)
-   * @return true if file size within minIndexSizeBytes and maxIndexSizeBytes else false
+   * @param minIndetwitterSizeBytes minimum size of file in bytes (Etwitterclusive)
+   * @param matwitterIndetwitterSizeBytes minimum size of file in bytes (Etwitterclusive)
+   * @return true if file size within minIndetwitterSizeBytes and matwitterIndetwitterSizeBytes else false
    */
-  def isValidIndexDirSize(
+  def isValidIndetwitterDirSize(
     dir: AbstractFile,
-    minIndexSizeBytes: Long,
-    maxIndexSizeBytes: Long
+    minIndetwitterSizeBytes: Long,
+    matwitterIndetwitterSizeBytes: Long
   ): Boolean = {
     val recursive = true
     val dirSize = dir.listFiles(recursive).asScala.map(_.getSizeInBytes).sum
 
-    log.debug(s"Ann index directory ${dir.getPath} size in bytes $dirSize")
+    log.debug(s"Ann indetwitter directory ${dir.getPath} size in bytes $dirSize")
 
-    val isValid = (dirSize > minIndexSizeBytes) && (dirSize < maxIndexSizeBytes)
+    val isValid = (dirSize > minIndetwitterSizeBytes) && (dirSize < matwitterIndetwitterSizeBytes)
     if (!isValid) {
-      log.info(s"Ann index directory is invalid ${dir.getPath} size in bytes $dirSize")
+      log.info(s"Ann indetwitter directory is invalid ${dir.getPath} size in bytes $dirSize")
     }
     isValid
   }

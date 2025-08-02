@@ -1,11 +1,11 @@
 package com.twitter.frigate.pushservice.adaptor
 
-import com.twitter.content_mixer.thriftscala.ContentMixerProductResponse
-import com.twitter.content_mixer.thriftscala.ContentMixerRequest
-import com.twitter.content_mixer.thriftscala.ContentMixerResponse
-import com.twitter.content_mixer.thriftscala.NotificationsTripTweetsProductContext
-import com.twitter.content_mixer.thriftscala.Product
-import com.twitter.content_mixer.thriftscala.ProductContext
+import com.twitter.content_mitwitterer.thriftscala.ContentMitwittererProductResponse
+import com.twitter.content_mitwitterer.thriftscala.ContentMitwittererRequest
+import com.twitter.content_mitwitterer.thriftscala.ContentMitwittererResponse
+import com.twitter.content_mitwitterer.thriftscala.NotificationsTripTweetsProductContetwittert
+import com.twitter.content_mitwitterer.thriftscala.Product
+import com.twitter.content_mitwitterer.thriftscala.ProductContetwittert
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base.CandidateSource
 import com.twitter.frigate.common.base.CandidateSourceEligible
@@ -19,7 +19,7 @@ import com.twitter.frigate.pushservice.util.PushAdaptorUtil
 import com.twitter.frigate.pushservice.util.PushDeviceUtil
 import com.twitter.frigate.thriftscala.CommonRecommendationType
 import com.twitter.geoduck.util.country.CountryInfo
-import com.twitter.product_mixer.core.thriftscala.ClientContext
+import com.twitter.product_mitwitterer.core.thriftscala.ClientContetwittert
 import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
 import com.twitter.storehaus.ReadableStore
 import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
@@ -28,18 +28,18 @@ import com.twitter.util.Future
 
 case class TripGeoCandidatesAdaptor(
   tripTweetCandidateStore: ReadableStore[TripDomain, TripTweets],
-  contentMixerStore: ReadableStore[ContentMixerRequest, ContentMixerResponse],
+  contentMitwittererStore: ReadableStore[ContentMitwittererRequest, ContentMitwittererResponse],
   tweetyPieStore: ReadableStore[Long, TweetyPieResult],
   tweetyPieStoreNoVF: ReadableStore[Long, TweetyPieResult],
   statsReceiver: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
+    etwittertends CandidateSource[Target, RawCandidate]
     with CandidateSourceEligible[Target, RawCandidate] {
 
   override def name: String = this.getClass.getSimpleName
 
-  private val stats = statsReceiver.scope(name.stripSuffix("$"))
+  private val stats = statsReceiver.scope(name.stripSuffitwitter("$"))
 
-  private val contentMixerRequests = stats.counter("getTripCandidatesContentMixerRequests")
+  private val contentMitwittererRequests = stats.counter("getTripCandidatesContentMitwittererRequests")
   private val loggedOutTripTweetIds = stats.counter("logged_out_trip_tweet_ids_count")
   private val loggedOutRawCandidates = stats.counter("logged_out_raw_candidates_count")
   private val rawCandidates = stats.counter("raw_candidates_count")
@@ -91,7 +91,7 @@ case class TripGeoCandidatesAdaptor(
       }
     } else {
       for {
-        tripTweetIds <- getTripCandidatesContentMixer(target)
+        tripTweetIds <- getTripCandidatesContentMitwitterer(target)
         tweetyPieResults <-
           Future.collect((target.params(PushFeatureSwitchParams.EnableVFInTweetypie) match {
             case true => tweetyPieStore
@@ -109,10 +109,10 @@ case class TripGeoCandidatesAdaptor(
     }
   }
 
-  private def getTripCandidatesContentMixer(
+  private def getTripCandidatesContentMitwitterer(
     target: Target
   ): Future[Set[Long]] = {
-    contentMixerRequests.incr()
+    contentMitwittererRequests.incr()
     Future
       .join(
         target.inferredUserDeviceLanguage,
@@ -120,29 +120,29 @@ case class TripGeoCandidatesAdaptor(
       )
       .flatMap {
         case (languageOpt, deviceInfoOpt) =>
-          contentMixerStore
+          contentMitwittererStore
             .get(
-              ContentMixerRequest(
-                clientContext = ClientContext(
+              ContentMitwittererRequest(
+                clientContetwittert = ClientContetwittert(
                   userId = Some(target.targetId),
                   languageCode = languageOpt,
                   userAgent = deviceInfoOpt.flatMap(_.guessedPrimaryDeviceUserAgent.map(_.toString))
                 ),
                 product = Product.NotificationsTripTweets,
-                productContext = Some(
-                  ProductContext.NotificationsTripTweetsProductContext(
-                    NotificationsTripTweetsProductContext()
+                productContetwittert = Some(
+                  ProductContetwittert.NotificationsTripTweetsProductContetwittert(
+                    NotificationsTripTweetsProductContetwittert()
                   )),
                 cursor = None,
-                maxResults =
-                  Some(target.params(PushFeatureSwitchParams.TripTweetMaxTotalCandidates))
+                matwitterResults =
+                  Some(target.params(PushFeatureSwitchParams.TripTweetMatwitterTotalCandidates))
               )
             ).map {
               _.map { rawResponse =>
                 val tripResponse =
-                  rawResponse.contentMixerProductResponse
+                  rawResponse.contentMitwittererProductResponse
                     .asInstanceOf[
-                      ContentMixerProductResponse.NotificationsTripTweetsProductResponse]
+                      ContentMitwittererProductResponse.NotificationsTripTweetsProductResponse]
                     .notificationsTripTweetsProductResponse
 
                 tripResponse.results.map(_.tweetResult.tweetId).toSet

@@ -21,7 +21,7 @@ trait CopyInfo {
       case _ =>
         crt2PushCopy(
           commonRecType,
-          CandidateUtil.getSocialContextActionsFromCandidate(self).size
+          CandidateUtil.getSocialContetwittertActionsFromCandidate(self).size
         )
     }
 

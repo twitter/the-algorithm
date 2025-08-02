@@ -2,10 +2,10 @@ package com.twitter.follow_recommendations.common.clients.adserver
 
 import com.twitter.adserver.{thriftscala => t}
 import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
+import com.twitter.product_mitwitterer.core.model.marshalling.request.ClientContetwittert
 
 case class AdRequest(
-  clientContext: ClientContext,
+  clientContetwittert: ClientContetwittert,
   displayLocation: DisplayLocation,
   isTest: Option[Boolean],
   profileUserId: Option[Long]) {
@@ -21,15 +21,15 @@ case class AdRequest(
     )
 
     val clientInfo = t.ClientInfo(
-      clientId = clientContext.appId.map(_.toInt),
-      userIp = clientContext.ipAddress,
-      userId64 = clientContext.userId,
-      guestId = clientContext.guestId,
-      userAgent = clientContext.userAgent,
+      clientId = clientContetwittert.appId.map(_.toInt),
+      userIp = clientContetwittert.ipAddress,
+      userId64 = clientContetwittert.userId,
+      guestId = clientContetwittert.guestId,
+      userAgent = clientContetwittert.userAgent,
       referrer = None,
-      deviceId = clientContext.deviceId,
-      languageCode = clientContext.languageCode,
-      countryCode = clientContext.countryCode
+      deviceId = clientContetwittert.deviceId,
+      languageCode = clientContetwittert.languageCode,
+      countryCode = clientContetwittert.countryCode
     )
 
     t.AdRequestParams(request, clientInfo)
@@ -41,5 +41,5 @@ object AdRequest {
 }
 
 class MissingAdDisplayLocation(displayLocation: DisplayLocation)
-    extends Exception(
+    etwittertends Etwitterception(
       s"Display Location ${displayLocation.toString} has no mapped AdsDisplayLocation set.")

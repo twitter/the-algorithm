@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.search.relevance.collectors;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +20,7 @@ import com.twitter.search.earlybird.search.relevance.scoring.BatchHit;
 import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
 import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
 import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
+import com.twitter.search.earlybird.thrift.ThriftSearchResultEtwittertraMetadata;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
 
 /**
@@ -30,7 +30,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
  * The way that it achieves that is different though: it will score documents through the batch score
  * function instead of scoring documents one by one.
  */
-public class BatchRelevanceTopCollector extends RelevanceTopCollector {
+public class BatchRelevanceTopCollector etwittertends RelevanceTopCollector {
   protected final List<BatchHit> hits;
 
   public BatchRelevanceTopCollector(
@@ -44,11 +44,11 @@ public class BatchRelevanceTopCollector extends RelevanceTopCollector {
       int requestDebugMode) {
     super(schema, searchRequestInfo, scoringFunction, searcherStats, cluster, userTable, clock,
         requestDebugMode);
-    this.hits = new ArrayList<>((int) getMaxHitsToProcess());
+    this.hits = new ArrayList<>((int) getMatwitterHitsToProcess());
   }
 
   @Override
-  protected void doCollectWithScore(long tweetID, float score) throws IOException {
+  protected void doCollectWithScore(long tweetID, float score) throws IOEtwitterception {
     Pair<LinearScoringData, ThriftSearchResultFeatures> pair =
         scoringFunction.collectFeatures(score);
     ThriftSearchResultMetadata metadata = collectMetadata();
@@ -61,28 +61,28 @@ public class BatchRelevanceTopCollector extends RelevanceTopCollector {
 
   @Override
   public EarlyTerminationState innerShouldCollectMore() {
-    if (hits.size() >= getMaxHitsToProcess()) {
-      return setEarlyTerminationState(EarlyTerminationState.TERMINATED_MAX_HITS_EXCEEDED);
+    if (hits.size() >= getMatwitterHitsToProcess()) {
+      return setEarlyTerminationState(EarlyTerminationState.TERMINATED_MAtwitter_HITS_EtwitterCEEDED);
     }
     return EarlyTerminationState.COLLECTING;
   }
 
   @Override
-  protected RelevanceSearchResults doGetRelevanceResults() throws IOException {
+  protected RelevanceSearchResults doGetRelevanceResults() throws IOEtwitterception {
     final long scoringStartNanos = getClock().nowNanos();
     float[] scores = scoringFunction.batchScore(hits);
     final long scoringEndNanos = getClock().nowNanos();
     addToOverallScoringTimeNanos(scoringStartNanos, scoringEndNanos);
-    exportBatchScoringTime(scoringEndNanos - scoringStartNanos);
+    etwitterportBatchScoringTime(scoringEndNanos - scoringStartNanos);
 
     for (int i = 0; i < hits.size(); i++) {
       BatchHit hit = hits.get(i);
       ThriftSearchResultMetadata metadata = hit.getMetadata();
 
-      if (!metadata.isSetExtraMetadata()) {
-        metadata.setExtraMetadata(new ThriftSearchResultExtraMetadata());
+      if (!metadata.isSetEtwittertraMetadata()) {
+        metadata.setEtwittertraMetadata(new ThriftSearchResultEtwittertraMetadata());
       }
-      metadata.getExtraMetadata().setFeatures(hit.getFeatures());
+      metadata.getEtwittertraMetadata().setFeatures(hit.getFeatures());
 
 
       // Populate the ThriftSearchResultMetadata post batch scoring with information from the
@@ -102,12 +102,12 @@ public class BatchRelevanceTopCollector extends RelevanceTopCollector {
     return getRelevanceResultsInternal();
   }
 
-  private void exportBatchScoringTime(long scoringTimeNanos) {
+  private void etwitterportBatchScoringTime(long scoringTimeNanos) {
     ThriftSearchRelevanceOptions relevanceOptions = searchRequestInfo.getRelevanceOptions();
     if (relevanceOptions.isSetRankingParams()
         && relevanceOptions.getRankingParams().isSetSelectedTensorflowModel()) {
       String model = relevanceOptions.getRankingParams().getSelectedTensorflowModel();
-      SearchTimerStats batchScoringPerModelTimer = SearchTimerStats.export(
+      SearchTimerStats batchScoringPerModelTimer = SearchTimerStats.etwitterport(
           String.format("batch_scoring_time_for_model_%s", model),
           TimeUnit.NANOSECONDS,
           false,

@@ -40,12 +40,12 @@ public class floatArray {
     this(swigfaissJNI.new_floatArray(nelements), true);
   }
 
-  public float getitem(int index) {
-    return swigfaissJNI.floatArray_getitem(swigCPtr, this, index);
+  public float getitem(int indetwitter) {
+    return swigfaissJNI.floatArray_getitem(swigCPtr, this, indetwitter);
   }
 
-  public void setitem(int index, float value) {
-    swigfaissJNI.floatArray_setitem(swigCPtr, this, index, value);
+  public void setitem(int indetwitter, float value) {
+    swigfaissJNI.floatArray_setitem(swigCPtr, this, indetwitter, value);
   }
 
   public SWIGTYPE_p_float cast() {

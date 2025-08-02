@@ -11,25 +11,25 @@ private[hnsw] object JMapBasedIdEmbeddingMap {
 
   /**
    * Creates in-memory concurrent hashmap based container that for storing id embedding mapping.
-   * @param expectedElements: Expected num of elements for sizing hint, need not be exact.
+   * @param etwitterpectedElements: Etwitterpected num of elements for sizing hint, need not be etwitteract.
    */
-  def applyInMemory[T](expectedElements: Int): IdEmbeddingMap[T] =
+  def applyInMemory[T](etwitterpectedElements: Int): IdEmbeddingMap[T] =
     new JMapBasedIdEmbeddingMap[T](
-      new ConcurrentHashMap[T, EmbeddingVector](expectedElements),
+      new ConcurrentHashMap[T, EmbeddingVector](etwitterpectedElements),
       Option.empty
     )
 
   /**
    * Creates in-memory concurrent hashmap based container that can be serialized to disk for storing id embedding mapping.
-   * @param expectedElements: Expected num of elements for sizing hint, need not be exact.
+   * @param etwitterpectedElements: Etwitterpected num of elements for sizing hint, need not be etwitteract.
    * @param injection : Injection for typed Id T to Array[Byte]
    */
   def applyInMemoryWithSerialization[T](
-    expectedElements: Int,
+    etwitterpectedElements: Int,
     injection: Injection[T, Array[Byte]]
   ): IdEmbeddingMap[T] =
     new JMapBasedIdEmbeddingMap[T](
-      new ConcurrentHashMap[T, EmbeddingVector](expectedElements),
+      new ConcurrentHashMap[T, EmbeddingVector](etwitterpectedElements),
       Some(injection)
     )
 
@@ -37,7 +37,7 @@ private[hnsw] object JMapBasedIdEmbeddingMap {
    * Loads id embedding mapping in in-memory concurrent hashmap.
    * @param embeddingFile: Local/Hdfs file path for embeddings
    * @param injection : Injection for typed Id T to Array[Byte]
-   * @param numElements: Expected num of elements for sizing hint, need not be exact
+   * @param numElements: Etwitterpected num of elements for sizing hint, need not be etwitteract
    */
   def loadInMemory[T](
     embeddingFile: AbstractFile,
@@ -59,7 +59,7 @@ private[hnsw] object JMapBasedIdEmbeddingMap {
 private[this] class JMapBasedIdEmbeddingMap[T](
   map: java.util.concurrent.ConcurrentHashMap[T, EmbeddingVector],
   injection: Option[Injection[T, Array[Byte]]])
-    extends IdEmbeddingMap[T] {
+    etwittertends IdEmbeddingMap[T] {
   override def putIfAbsent(id: T, embedding: EmbeddingVector): EmbeddingVector = {
     map.putIfAbsent(id, embedding)
   }

@@ -5,12 +5,12 @@ import com.twitter.ml.api.DataSetPipe
 import com.twitter.ml.api.Feature.Continuous
 import com.twitter.ml.api.constant.SharedFeatures
 import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding._
 import com.twitter.scalding.typed.UnsortedGrouped
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite.WriteExtension
+import com.twitter.scalding_internal.dalv2.DALWrite.WriteEtwittertension
 import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common.Country
@@ -20,14 +20,14 @@ import com.twitter.simclusters_v2.hdfs_sources.FavTfgTopicEmbeddings2020ScalaDat
 import com.twitter.simclusters_v2.hdfs_sources.UserTopicWeightedEmbeddingScalaDataset
 import com.twitter.simclusters_v2.hdfs_sources.UserTopicWeightedEmbeddingParquetScalaDataset
 import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
+import com.twitter.simclusters_v2.scalding.embedding.common.EtwitterternalDataSources
 import com.twitter.simclusters_v2.thriftscala._
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.conversion._
 import com.twitter.timelines.prediction.common.aggregates.TimelinesAggregationConfig
 import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.DateRangeExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
+import com.twitter.wtf.scalding.jobs.common.AdhocEtwitterecutionApp
+import com.twitter.wtf.scalding.jobs.common.DateRangeEtwitterecutionApp
+import com.twitter.wtf.scalding.jobs.common.ScheduledEtwitterecutionApp
 import java.util.TimeZone
 
 /**
@@ -40,7 +40,7 @@ import java.util.TimeZone
  * scalding workflow upload --jobs src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_weighted_user_topic_tfg_embeddings_adhoc_job --autoplay
  */
 object EngagementWeightedTfgBasedTopicEmbeddingsAdhocJob
-    extends AdhocExecutionApp
+    etwittertends AdhocEtwitterecutionApp
     with EngagementWeightedTfgBasedTopicEmbeddingsBaseJob {
   override val outputByFav =
     "/user/cassowary/adhoc/manhattan_sequence_files/simclusters_v2_embedding/user_tfgembedding/by_fav"
@@ -53,7 +53,7 @@ object EngagementWeightedTfgBasedTopicEmbeddingsAdhocJob
  * scalding workflow upload --jobs src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_weighted_user_topic_tfg_embeddings_batch_job --autoplay
  */
 object EngagementWeightedTfgBasedTopicEmbeddingsScheduleJob
-    extends ScheduledExecutionApp
+    etwittertends ScheduledEtwitterecutionApp
     with EngagementWeightedTfgBasedTopicEmbeddingsBaseJob {
   override val firstTime: RichDate = RichDate("2021-10-03")
   override val batchIncrement: Duration = Days(1)
@@ -63,7 +63,7 @@ object EngagementWeightedTfgBasedTopicEmbeddingsScheduleJob
     "/user/cassowary/processed/simclusters_v2_embedding/user_tfgembedding/by_fav/snapshot"
 }
 
-trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutionApp {
+trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob etwittertends DateRangeEtwitterecutionApp {
 
   val outputByFav: String
   val parquetOutputByFav: String
@@ -174,7 +174,7 @@ trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutio
   )(
     implicit uniqueID: UniqueID,
     dateRange: DateRange
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val outputRecordStat = Stat("output record count")
     val output = newUserTfgEmbedding
       .map {
@@ -190,13 +190,13 @@ trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutio
           KeyVal(userId, ClustersUserIsInterestedIn(modelVersion, clusterScores))
       }
 
-    val keyValExec = output
+    val keyValEtwitterec = output
       .withDescription("write output keyval dataset")
-      .writeDALVersionedKeyValExecution(
+      .writeDALVersionedKeyValEtwitterecution(
         UserTopicWeightedEmbeddingScalaDataset,
-        D.Suffix(outputPath))
+        D.Suffitwitter(outputPath))
 
-    val parquetExec = newUserTfgEmbedding
+    val parquetEtwitterec = newUserTfgEmbedding
       .map {
         case ((userId, language), embeddingMap) =>
           val clusterScores = embeddingMap.map {
@@ -205,14 +205,14 @@ trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutio
           UserTopicWeightedEmbedding(userId, clusterScores.toSeq)
       }
       .withDescription("write output parquet dataset")
-      .writeDALSnapshotExecution(
+      .writeDALSnapshotEtwitterecution(
         parquetDataSource,
         D.Daily,
-        D.Suffix(parquetOutputPath),
+        D.Suffitwitter(parquetOutputPath),
         D.Parquet,
         dateRange.end
       )
-    Execution.zip(keyValExec, parquetExec).unit
+    Etwitterecution.zip(keyValEtwitterec, parquetEtwitterec).unit
   }
 
   override def runOnDateRange(
@@ -221,7 +221,7 @@ trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutio
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     val end = dateRange.start
     val start = end - Days(21)
@@ -263,7 +263,7 @@ trait EngagementWeightedTfgBasedTopicEmbeddingsBaseJob extends DateRangeExecutio
     `userSource` returns 1 language per user
     `inferredUserConsumedLanguageSource` returns multiple languages with confidence values
      */
-    val userLangSource = ExternalDataSources.userSource
+    val userLangSource = EtwitterternalDataSources.userSource
       .map {
         case (userId, (country, language)) =>
           userLangStat.inc()

@@ -20,8 +20,8 @@ public final class ThriftSearchResultsRelevanceStatsUtil {
             base.getNumSkippedForAntiGaming() + delta.getNumSkippedForAntiGaming());
     base.setNumSkippedForLowReputation(
             base.getNumSkippedForLowReputation() + delta.getNumSkippedForLowReputation());
-    base.setNumSkippedForLowTextScore(
-            base.getNumSkippedForLowTextScore() + delta.getNumSkippedForLowTextScore());
+    base.setNumSkippedForLowTetwittertScore(
+            base.getNumSkippedForLowTetwittertScore() + delta.getNumSkippedForLowTetwittertScore());
     base.setNumSkippedForSocialFilter(
             base.getNumSkippedForSocialFilter() + delta.getNumSkippedForSocialFilter());
     base.setNumSkippedForLowFinalScore(

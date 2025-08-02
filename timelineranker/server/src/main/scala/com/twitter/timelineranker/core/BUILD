@@ -18,7 +18,7 @@ scala_library(
         "timelines/src/main/scala/com/twitter/timelines/visibility/model",
         "util/util-core:util-core-util",
     ],
-    exports = [
+    etwitterports = [
         "src/thrift/com/twitter/recos/user_tweet_entity_graph:user_tweet_entity_graph-scala",
     ],
 )

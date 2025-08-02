@@ -1,49 +1,49 @@
 package com.twitter.tweetypie
 package hydrator
 
-import com.twitter.expandodo.thriftscala.Card2
-import com.twitter.expandodo.thriftscala.Card2RequestOptions
+import com.twitter.etwitterpandodo.thriftscala.Card2
+import com.twitter.etwitterpandodo.thriftscala.Card2RequestOptions
 import com.twitter.featureswitches.v2.FeatureSwitchResults
 import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.core.CardReferenceUriExtractor
+import com.twitter.tweetypie.core.CardReferenceUriEtwittertractor
 import com.twitter.tweetypie.core.NonTombstone
 import com.twitter.tweetypie.core.ValueState
 import com.twitter.tweetypie.repository._
 import com.twitter.tweetypie.thriftscala._
 
 object Card2Hydrator {
-  type Type = ValueHydrator[Option[Card2], Ctx]
+  type Type = ValueHydrator[Option[Card2], Cttwitter]
 
-  case class Ctx(
+  case class Cttwitter(
     urlEntities: Seq[UrlEntity],
     mediaEntities: Seq[MediaEntity],
     cardReference: Option[CardReference],
-    underlyingTweetCtx: TweetCtx,
+    underlyingTweetCttwitter: TweetCttwitter,
     featureSwitchResults: Option[FeatureSwitchResults])
-      extends TweetCtx.Proxy
+      etwittertends TweetCttwitter.Protwittery
 
   val hydratedField: FieldByPath = fieldByPath(Tweet.Card2Field)
   val hydrationUrlBlockListKey = "card_hydration_blocklist"
 
-  def apply(repo: Card2Repository.Type): ValueHydrator[Option[Card2], Ctx] =
-    ValueHydrator[Option[Card2], Ctx] { (_, ctx) =>
-      val repoCtx = requestOptions(ctx)
-      val filterURLs = ctx.featureSwitchResults
+  def apply(repo: Card2Repository.Type): ValueHydrator[Option[Card2], Cttwitter] =
+    ValueHydrator[Option[Card2], Cttwitter] { (_, cttwitter) =>
+      val repoCttwitter = requestOptions(cttwitter)
+      val filterURLs = cttwitter.featureSwitchResults
         .flatMap(_.getStringArray(hydrationUrlBlockListKey, false))
         .getOrElse(Seq())
 
       val requests =
-        ctx.cardReference match {
-          case Some(CardReferenceUriExtractor(cardUri)) =>
+        cttwitter.cardReference match {
+          case Some(CardReferenceUriEtwittertractor(cardUri)) =>
             cardUri match {
               case NonTombstone(uri) if !filterURLs.contains(uri) =>
-                Seq((UrlCard2Key(uri), repoCtx))
+                Seq((UrlCard2Key(uri), repoCttwitter))
               case _ => Nil
             }
           case _ =>
-            ctx.urlEntities
-              .filterNot(e => e.expanded.exists(filterURLs.contains))
-              .map(e => (UrlCard2Key(e.url), repoCtx))
+            cttwitter.urlEntities
+              .filterNot(e => e.etwitterpanded.etwitterists(filterURLs.contains))
+              .map(e => (UrlCard2Key(e.url), repoCttwitter))
         }
 
       Stitch
@@ -57,20 +57,20 @@ object Card2Hydrator {
             }
           case Throw(_) => ValueState.partial(None, hydratedField)
         }
-    }.onlyIf { (curr, ctx) =>
+    }.onlyIf { (curr, cttwitter) =>
       curr.isEmpty &&
-      ctx.tweetFieldRequested(Tweet.Card2Field) &&
-      ctx.opts.cardsPlatformKey.nonEmpty &&
-      !ctx.isRetweet &&
-      ctx.mediaEntities.isEmpty &&
-      (ctx.cardReference.nonEmpty || ctx.urlEntities.nonEmpty)
+      cttwitter.tweetFieldRequested(Tweet.Card2Field) &&
+      cttwitter.opts.cardsPlatformKey.nonEmpty &&
+      !cttwitter.isRetweet &&
+      cttwitter.mediaEntities.isEmpty &&
+      (cttwitter.cardReference.nonEmpty || cttwitter.urlEntities.nonEmpty)
     }
 
-  private[this] def requestOptions(ctx: Ctx) =
+  private[this] def requestOptions(cttwitter: Cttwitter) =
     Card2RequestOptions(
-      platformKey = ctx.opts.cardsPlatformKey.get,
-      perspectiveUserId = ctx.opts.forUserId,
-      allowNonTcoUrls = ctx.cardReference.nonEmpty,
-      languageTag = Some(ctx.opts.languageTag)
+      platformKey = cttwitter.opts.cardsPlatformKey.get,
+      perspectiveUserId = cttwitter.opts.forUserId,
+      allowNonTcoUrls = cttwitter.cardReference.nonEmpty,
+      languageTag = Some(cttwitter.opts.languageTag)
     )
 }

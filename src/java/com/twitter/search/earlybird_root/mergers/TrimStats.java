@@ -6,7 +6,7 @@ package com.twitter.search.earlybird_root.mergers;
 class TrimStats {
   protected static final TrimStats EMPTY_STATS = new TrimStats();
 
-  private int maxIdFilterCount = 0;
+  private int matwitterIdFilterCount = 0;
   private int minIdFilterCount = 0;
   private int removedDupsCount = 0;
   private int resultsTruncatedFromTailCount = 0;
@@ -23,24 +23,24 @@ class TrimStats {
     return resultsTruncatedFromTailCount;
   }
 
-  void decreaseMaxIdFilterCount() {
-    maxIdFilterCount--;
+  void decreaseMatwitterIdFilterCount() {
+    matwitterIdFilterCount--;
   }
 
   void decreaseMinIdFilterCount() {
     minIdFilterCount--;
   }
 
-  public void clearMaxIdFilterCount() {
-    this.maxIdFilterCount = 0;
+  public void clearMatwitterIdFilterCount() {
+    this.matwitterIdFilterCount = 0;
   }
 
   public void clearMinIdFilterCount() {
     this.minIdFilterCount = 0;
   }
 
-  void increaseMaxIdFilterCount() {
-    maxIdFilterCount++;
+  void increaseMatwitterIdFilterCount() {
+    matwitterIdFilterCount++;
   }
 
   void increaseMinIdFilterCount() {
@@ -60,7 +60,7 @@ class TrimStats {
     StringBuilder builder = new StringBuilder();
 
     builder.append("TrimStats{");
-    builder.append("maxIdFilterCount=").append(maxIdFilterCount);
+    builder.append("matwitterIdFilterCount=").append(matwitterIdFilterCount);
     builder.append(", minIdFilterCount=").append(minIdFilterCount);
     builder.append(", removedDupsCount=").append(removedDupsCount);
     builder.append(", resultsTruncatedFromTailCount=").append(resultsTruncatedFromTailCount);

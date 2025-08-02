@@ -1,7 +1,7 @@
 package com.twitter.visibility.rules
 
 import com.twitter.visibility.common.actions.LimitedEngagementReason
-import com.twitter.visibility.configapi.params.FSRuleParams.AdAvoidanceHighToxicityModelScoreThresholdParam
+import com.twitter.visibility.configapi.params.FSRuleParams.AdAvoidanceHighTotwittericityModelScoreThresholdParam
 import com.twitter.visibility.configapi.params.FSRuleParams.AdAvoidanceReportedTweetModelScoreThresholdParam
 import com.twitter.visibility.configapi.params.FSRuleParams.CommunityTweetCommunityUnavailableLimitedActionsRulesEnabledParam
 import com.twitter.visibility.configapi.params.FSRuleParams.CommunityTweetDropProtectedRuleEnabledParam
@@ -17,7 +17,7 @@ import com.twitter.visibility.configapi.params.RuleParams._
 import com.twitter.visibility.features.{TweetDeleteReason => FeatureTweetDeleteReason}
 import com.twitter.visibility.models.TweetDeleteReason
 import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.rules.Condition.ViewerIsExclusiveTweetAuthor
+import com.twitter.visibility.rules.Condition.ViewerIsEtwitterclusiveTweetAuthor
 import com.twitter.visibility.rules.Condition._
 import com.twitter.visibility.rules.Reason.CommunityTweetAuthorRemoved
 import com.twitter.visibility.rules.Reason.CommunityTweetHidden
@@ -27,7 +27,7 @@ import com.twitter.visibility.rules.Reason.Unspecified
 import com.twitter.visibility.rules.RuleActionSourceBuilder.TweetSafetyLabelSourceBuilder
 
 abstract class TweetHasLabelRule(action: Action, tweetSafetyLabelType: TweetSafetyLabelType)
-    extends RuleWithConstantAction(action, TweetHasLabel(tweetSafetyLabelType)) {
+    etwittertends RuleWithConstantAction(action, TweetHasLabel(tweetSafetyLabelType)) {
   override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
     TweetSafetyLabelSourceBuilder(tweetSafetyLabelType))
 }
@@ -36,7 +36,7 @@ abstract class ConditionWithTweetLabelRule(
   action: Action,
   condition: Condition,
   tweetSafetyLabelType: TweetSafetyLabelType)
-    extends RuleWithConstantAction(action, And(TweetHasLabel(tweetSafetyLabelType), condition)) {
+    etwittertends RuleWithConstantAction(action, And(TweetHasLabel(tweetSafetyLabelType), condition)) {
   override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
     TweetSafetyLabelSourceBuilder(tweetSafetyLabelType))
 }
@@ -44,7 +44,7 @@ abstract class ConditionWithTweetLabelRule(
 abstract class NonAuthorWithTweetLabelRule(
   action: Action,
   tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(action, NonAuthorViewer, tweetSafetyLabelType) {
+    etwittertends ConditionWithTweetLabelRule(action, NonAuthorViewer, tweetSafetyLabelType) {
   override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
     TweetSafetyLabelSourceBuilder(tweetSafetyLabelType))
 }
@@ -52,7 +52,7 @@ abstract class NonAuthorWithTweetLabelRule(
 abstract class NonFollowerWithTweetLabelRule(
   action: Action,
   tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       action,
       LoggedOutOrViewerNotFollowingAuthor,
       tweetSafetyLabelType
@@ -61,7 +61,7 @@ abstract class NonFollowerWithTweetLabelRule(
 abstract class NonAuthorAndNonFollowerWithTweetLabelRule(
   action: Action,
   tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       action,
       And(NonAuthorViewer, LoggedOutOrViewerNotFollowingAuthor),
       tweetSafetyLabelType
@@ -70,7 +70,7 @@ abstract class NonAuthorAndNonFollowerWithTweetLabelRule(
 abstract class NonFollowerWithUqfTweetLabelRule(
   action: Action,
   tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       action,
       Or(
         LoggedOutViewer,
@@ -84,19 +84,19 @@ abstract class NonFollowerWithUqfTweetLabelRule(
     )
 
 abstract class ViewerWithUqfTweetLabelRule(action: Action, labelValue: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(action, ViewerHasUqfEnabled, labelValue)
+    etwittertends ConditionWithTweetLabelRule(action, ViewerHasUqfEnabled, labelValue)
 
 case object ConversationControlRules {
 
   abstract class ConversationControlBaseRule(condition: Condition)
-      extends RuleWithConstantAction(
+      etwittertends RuleWithConstantAction(
         LimitedEngagements(LimitedEngagementReason.ConversationControl),
         condition) {
     override def enabled: Seq[RuleParam[Boolean]] = Seq(TweetConversationControlEnabledParam)
   }
 
   object LimitRepliesCommunityConversationRule
-      extends ConversationControlBaseRule(
+      etwittertends ConversationControlBaseRule(
         And(
           TweetIsCommunityConversation,
           Not(
@@ -111,7 +111,7 @@ case object ConversationControlRules {
       )
 
   object LimitRepliesFollowersConversationRule
-      extends ConversationControlBaseRule(
+      etwittertends ConversationControlBaseRule(
         And(
           TweetIsFollowersConversation,
           Not(
@@ -126,7 +126,7 @@ case object ConversationControlRules {
       )
 
   object LimitRepliesByInvitationConversationRule
-      extends ConversationControlBaseRule(
+      etwittertends ConversationControlBaseRule(
         And(
           TweetIsByInvitationConversation,
           Not(
@@ -144,7 +144,7 @@ case object ConversationControlRules {
 abstract class NonAuthorViewerOptInFilteringWithTweetLabelRule(
   action: Action,
   tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       action,
       And(NonAuthorViewer, LoggedOutOrViewerOptInFiltering),
       tweetSafetyLabelType)
@@ -152,35 +152,35 @@ abstract class NonAuthorViewerOptInFilteringWithTweetLabelRule(
 abstract class NonFollowerViewerOptInFilteringWithTweetLabelRule(
   action: Action,
   tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+    etwittertends ConditionWithTweetLabelRule(
       action,
       And(LoggedOutOrViewerNotFollowingAuthor, LoggedOutOrViewerOptInFiltering),
       tweetSafetyLabelType
     )
 
-object TweetNsfwUserDropRule extends RuleWithConstantAction(Drop(Nsfw), TweetHasNsfwUserAuthor)
-object TweetNsfwAdminDropRule extends RuleWithConstantAction(Drop(Nsfw), TweetHasNsfwAdminAuthor)
+object TweetNsfwUserDropRule etwittertends RuleWithConstantAction(Drop(Nsfw), TweetHasNsfwUserAuthor)
+object TweetNsfwAdminDropRule etwittertends RuleWithConstantAction(Drop(Nsfw), TweetHasNsfwAdminAuthor)
 
 object NullcastedTweetRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Unspecified),
       And(Nullcast, Not(Retweet), Not(IsQuotedInnerTweet), Not(TweetIsCommunityTweet)))
 
 object MutedRetweetsRule
-    extends RuleWithConstantAction(Drop(Unspecified), And(Retweet, ViewerMutesRetweetsFromAuthor))
+    etwittertends RuleWithConstantAction(Drop(Unspecified), And(Retweet, ViewerMutesRetweetsFromAuthor))
 
 abstract class FilterCommunityTweetsRule(override val action: Action)
-    extends RuleWithConstantAction(action, TweetIsCommunityTweet) {
+    etwittertends RuleWithConstantAction(action, TweetIsCommunityTweet) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(CommunityTweetDropRuleEnabledParam)
 }
 
-object DropCommunityTweetsRule extends FilterCommunityTweetsRule(Drop(CommunityTweetHidden))
+object DropCommunityTweetsRule etwittertends FilterCommunityTweetsRule(Drop(CommunityTweetHidden))
 
 object TombstoneCommunityTweetsRule
-    extends FilterCommunityTweetsRule(Tombstone(Epitaph.Unavailable))
+    etwittertends FilterCommunityTweetsRule(Tombstone(Epitaph.Unavailable))
 
 abstract class FilterCommunityTweetCommunityNotVisibleRule(override val action: Action)
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       action,
       And(
         NonAuthorViewer,
@@ -192,33 +192,33 @@ abstract class FilterCommunityTweetCommunityNotVisibleRule(override val action: 
 }
 
 object DropCommunityTweetCommunityNotVisibleRule
-    extends FilterCommunityTweetCommunityNotVisibleRule(Drop(CommunityTweetHidden))
+    etwittertends FilterCommunityTweetCommunityNotVisibleRule(Drop(CommunityTweetHidden))
 
 object TombstoneCommunityTweetCommunityNotVisibleRule
-    extends FilterCommunityTweetCommunityNotVisibleRule(Tombstone(Epitaph.Unavailable))
+    etwittertends FilterCommunityTweetCommunityNotVisibleRule(Tombstone(Epitaph.Unavailable))
 
 abstract class FilterAllCommunityTweetsRule(override val action: Action)
-    extends RuleWithConstantAction(action, TweetIsCommunityTweet) {
+    etwittertends RuleWithConstantAction(action, TweetIsCommunityTweet) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(CommunityTweetsEnabledParam)
 }
 
-object DropAllCommunityTweetsRule extends FilterAllCommunityTweetsRule(Drop(Unspecified))
+object DropAllCommunityTweetsRule etwittertends FilterAllCommunityTweetsRule(Drop(Unspecified))
 
 object TombstoneAllCommunityTweetsRule
-    extends FilterAllCommunityTweetsRule(Tombstone(Epitaph.Unavailable))
+    etwittertends FilterAllCommunityTweetsRule(Tombstone(Epitaph.Unavailable))
 
 object DropOuterCommunityTweetsRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Unspecified),
       And(TweetIsCommunityTweet, Not(IsQuotedInnerTweet)))
 
 object DropAllHiddenCommunityTweetsRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Unspecified),
       And(TweetIsCommunityTweet, CommunityTweetIsHidden))
 
 abstract class FilterHiddenCommunityTweetsRule(override val action: Action)
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       action,
       And(
         NonAuthorViewer,
@@ -228,18 +228,18 @@ abstract class FilterHiddenCommunityTweetsRule(override val action: Action)
       ))
 
 object DropHiddenCommunityTweetsRule
-    extends FilterHiddenCommunityTweetsRule(Drop(CommunityTweetHidden))
+    etwittertends FilterHiddenCommunityTweetsRule(Drop(CommunityTweetHidden))
 
 object TombstoneHiddenCommunityTweetsRule
-    extends FilterHiddenCommunityTweetsRule(Tombstone(Epitaph.CommunityTweetHidden))
+    etwittertends FilterHiddenCommunityTweetsRule(Tombstone(Epitaph.CommunityTweetHidden))
 
 object DropAllAuthorRemovedCommunityTweetsRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Unspecified),
       And(TweetIsCommunityTweet, CommunityTweetAuthorIsRemoved))
 
 abstract class FilterAuthorRemovedCommunityTweetsRule(override val action: Action)
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       action,
       And(
         NonAuthorViewer,
@@ -249,28 +249,28 @@ abstract class FilterAuthorRemovedCommunityTweetsRule(override val action: Actio
       ))
 
 object DropAuthorRemovedCommunityTweetsRule
-    extends FilterAuthorRemovedCommunityTweetsRule(Drop(CommunityTweetAuthorRemoved))
+    etwittertends FilterAuthorRemovedCommunityTweetsRule(Drop(CommunityTweetAuthorRemoved))
 
 object TombstoneAuthorRemovedCommunityTweetsRule
-    extends FilterAuthorRemovedCommunityTweetsRule(Tombstone(Epitaph.Unavailable))
+    etwittertends FilterAuthorRemovedCommunityTweetsRule(Tombstone(Epitaph.Unavailable))
 
 abstract class FilterProtectedCommunityTweetsRule(override val action: Action)
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       action,
       And(TweetIsCommunityTweet, ProtectedAuthor, NonAuthorViewer)) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(CommunityTweetDropProtectedRuleEnabledParam)
 }
 
 object DropProtectedCommunityTweetsRule
-    extends FilterProtectedCommunityTweetsRule(Drop(CommunityTweetHidden))
+    etwittertends FilterProtectedCommunityTweetsRule(Drop(CommunityTweetHidden))
 
 object TombstoneProtectedCommunityTweetsRule
-    extends FilterProtectedCommunityTweetsRule(Tombstone(Epitaph.Unavailable))
+    etwittertends FilterProtectedCommunityTweetsRule(Tombstone(Epitaph.Unavailable))
 
 abstract class CommunityTweetCommunityUnavailableLimitedActionsRule(
   reason: LimitedEngagementReason,
   condition: CommunityTweetCommunityUnavailable,
-) extends RuleWithConstantAction(
+) etwittertends RuleWithConstantAction(
       LimitedEngagements(reason),
       And(
         Not(NonAuthorViewer),
@@ -283,19 +283,19 @@ abstract class CommunityTweetCommunityUnavailableLimitedActionsRule(
 }
 
 object CommunityTweetCommunityNotFoundLimitedActionsRule
-    extends CommunityTweetCommunityUnavailableLimitedActionsRule(
+    etwittertends CommunityTweetCommunityUnavailableLimitedActionsRule(
       LimitedEngagementReason.CommunityTweetCommunityNotFound,
       CommunityTweetCommunityNotFound,
     )
 
 object CommunityTweetCommunityDeletedLimitedActionsRule
-    extends CommunityTweetCommunityUnavailableLimitedActionsRule(
+    etwittertends CommunityTweetCommunityUnavailableLimitedActionsRule(
       LimitedEngagementReason.CommunityTweetCommunityDeleted,
       CommunityTweetCommunityDeleted,
     )
 
 object CommunityTweetCommunitySuspendedLimitedActionsRule
-    extends CommunityTweetCommunityUnavailableLimitedActionsRule(
+    etwittertends CommunityTweetCommunityUnavailableLimitedActionsRule(
       LimitedEngagementReason.CommunityTweetCommunitySuspended,
       CommunityTweetCommunitySuspended,
     )
@@ -304,7 +304,7 @@ abstract class CommunityTweetModeratedLimitedActionsRule(
   reason: LimitedEngagementReason,
   condition: CommunityTweetIsModerated,
   enabledParam: RuleParam[Boolean],
-) extends RuleWithConstantAction(
+) etwittertends RuleWithConstantAction(
       LimitedEngagements(reason),
       And(
         TweetIsCommunityTweet,
@@ -318,14 +318,14 @@ abstract class CommunityTweetModeratedLimitedActionsRule(
 }
 
 object CommunityTweetMemberRemovedLimitedActionsRule
-    extends CommunityTweetModeratedLimitedActionsRule(
+    etwittertends CommunityTweetModeratedLimitedActionsRule(
       LimitedEngagementReason.CommunityTweetMemberRemoved,
       CommunityTweetAuthorIsRemoved,
       CommunityTweetMemberRemovedLimitedActionsRulesEnabledParam,
     )
 
 object CommunityTweetHiddenLimitedActionsRule
-    extends CommunityTweetModeratedLimitedActionsRule(
+    etwittertends CommunityTweetModeratedLimitedActionsRule(
       LimitedEngagementReason.CommunityTweetHidden,
       CommunityTweetIsHidden,
       CommunityTweetLimitedActionsRulesEnabledParam,
@@ -334,7 +334,7 @@ object CommunityTweetHiddenLimitedActionsRule
 abstract class CommunityTweetLimitedActionsRule(
   reason: LimitedEngagementReason,
   condition: Condition,
-) extends RuleWithConstantAction(
+) etwittertends RuleWithConstantAction(
       LimitedEngagements(reason),
       And(
         TweetIsCommunityTweet,
@@ -344,13 +344,13 @@ abstract class CommunityTweetLimitedActionsRule(
 }
 
 object CommunityTweetMemberLimitedActionsRule
-    extends CommunityTweetLimitedActionsRule(
+    etwittertends CommunityTweetLimitedActionsRule(
       LimitedEngagementReason.CommunityTweetMember,
       ViewerIsCommunityMember,
     )
 
 object CommunityTweetNonMemberLimitedActionsRule
-    extends CommunityTweetLimitedActionsRule(
+    etwittertends CommunityTweetLimitedActionsRule(
       LimitedEngagementReason.CommunityTweetNonMember,
       Not(ViewerIsCommunityMember),
     ) {
@@ -359,7 +359,7 @@ object CommunityTweetNonMemberLimitedActionsRule
 }
 
 object ReportedTweetInterstitialRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Interstitial(Reason.ViewerReportedTweet),
       And(
         NonAuthorViewer,
@@ -370,7 +370,7 @@ object ReportedTweetInterstitialRule
 }
 
 object ReportedTweetInterstitialSearchRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Interstitial(Reason.ViewerReportedTweet),
       And(
         NonAuthorViewer,
@@ -380,20 +380,20 @@ object ReportedTweetInterstitialSearchRule
   override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableReportedTweetInterstitialSearchRule)
 }
 
-abstract class FilterExclusiveTweetContentRule(
+abstract class FilterEtwitterclusiveTweetContentRule(
   action: Action,
   additionalCondition: Condition = Condition.True)
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       action,
       And(
         additionalCondition,
-        TweetIsExclusiveContent,
+        TweetIsEtwitterclusiveContent,
         Or(
           LoggedOutViewer,
           Not(
             Or(
-              ViewerIsExclusiveTweetAuthor,
-              ViewerSuperFollowsExclusiveTweetAuthor,
+              ViewerIsEtwitterclusiveTweetAuthor,
+              ViewerSuperFollowsEtwitterclusiveTweetAuthor,
               And(
                 Not(NonAuthorViewer),
                 Not(Retweet)
@@ -403,41 +403,41 @@ abstract class FilterExclusiveTweetContentRule(
         ),
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropExclusiveTweetContentRule)
+  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropEtwitterclusiveTweetContentRule)
   override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(
-    EnableDropExclusiveTweetContentRuleFailClosed)
+    EnableDropEtwitterclusiveTweetContentRuleFailClosed)
 }
 
-object DropExclusiveTweetContentRule
-    extends FilterExclusiveTweetContentRule(Drop(Reason.ExclusiveTweet))
+object DropEtwitterclusiveTweetContentRule
+    etwittertends FilterEtwitterclusiveTweetContentRule(Drop(Reason.EtwitterclusiveTweet))
 
-object TombstoneExclusiveTweetContentRule
-    extends FilterExclusiveTweetContentRule(Tombstone(Epitaph.SuperFollowsContent))
+object TombstoneEtwitterclusiveTweetContentRule
+    etwittertends FilterEtwitterclusiveTweetContentRule(Tombstone(Epitaph.SuperFollowsContent))
 
-object TombstoneExclusiveQuotedTweetContentRule
-    extends FilterExclusiveTweetContentRule(
+object TombstoneEtwitterclusiveQuotedTweetContentRule
+    etwittertends FilterEtwitterclusiveTweetContentRule(
       Tombstone(Epitaph.SuperFollowsContent),
       IsQuotedInnerTweet
     )
 
-object DropAllExclusiveTweetsRule
-    extends RuleWithConstantAction(
-      Drop(Reason.ExclusiveTweet),
-      TweetIsExclusiveContent
+object DropAllEtwitterclusiveTweetsRule
+    etwittertends RuleWithConstantAction(
+      Drop(Reason.EtwitterclusiveTweet),
+      TweetIsEtwitterclusiveContent
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropAllExclusiveTweetsRuleParam)
+  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropAllEtwitterclusiveTweetsRuleParam)
   override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(
-    EnableDropAllExclusiveTweetsRuleFailClosedParam)
+    EnableDropAllEtwitterclusiveTweetsRuleFailClosedParam)
 }
 
 object DropTweetsWithGeoRestrictedMediaRule
-    extends RuleWithConstantAction(Drop(Unspecified), MediaRestrictedInViewerCountry) {
+    etwittertends RuleWithConstantAction(Drop(Unspecified), MediaRestrictedInViewerCountry) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(
     EnableDropTweetsWithGeoRestrictedMediaRuleParam)
 }
 
 object TrustedFriendsTweetLimitedEngagementsRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       LimitedEngagements(LimitedEngagementReason.TrustedFriendsTweet),
       TweetIsTrustedFriendsContent
     ) {
@@ -447,7 +447,7 @@ object TrustedFriendsTweetLimitedEngagementsRule
 }
 
 object DropAllTrustedFriendsTweetsRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Reason.TrustedFriendsTweet),
       TweetIsTrustedFriendsContent
     ) {
@@ -456,7 +456,7 @@ object DropAllTrustedFriendsTweetsRule
 }
 
 object DropAllCollabInvitationTweetsRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Unspecified),
       TweetIsCollabInvitationContent
     ) {
@@ -465,7 +465,7 @@ object DropAllCollabInvitationTweetsRule
 }
 
 abstract class FilterTrustedFriendsTweetContentRule(action: Action)
-    extends OnlyWhenNotAuthorViewerRule(
+    etwittertends OnlyWhenNotAuthorViewerRule(
       action,
       And(
         TweetIsTrustedFriendsContent,
@@ -482,13 +482,13 @@ abstract class FilterTrustedFriendsTweetContentRule(action: Action)
 }
 
 object DropTrustedFriendsTweetContentRule
-    extends FilterTrustedFriendsTweetContentRule(Drop(Reason.TrustedFriendsTweet))
+    etwittertends FilterTrustedFriendsTweetContentRule(Drop(Reason.TrustedFriendsTweet))
 
 object TombstoneTrustedFriendsTweetContentRule
-    extends FilterTrustedFriendsTweetContentRule(Tombstone(Epitaph.Unavailable))
+    etwittertends FilterTrustedFriendsTweetContentRule(Tombstone(Epitaph.Unavailable))
 
 object TweetNsfwUserAdminAvoidRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Avoid(),
       Or(
         TweetHasNsfwUserAuthor,
@@ -498,16 +498,16 @@ object TweetNsfwUserAdminAvoidRule
       )
     )
 
-object AvoidHighToxicityModelScoreRule
-    extends RuleWithConstantAction(
+object AvoidHighTotwittericityModelScoreRule
+    etwittertends RuleWithConstantAction(
       Avoid(),
       TweetHasLabelWithScoreAboveThresholdWithParam(
-        TweetSafetyLabelType.HighToxicityScore,
-        AdAvoidanceHighToxicityModelScoreThresholdParam)
+        TweetSafetyLabelType.HighTotwittericityScore,
+        AdAvoidanceHighTotwittericityModelScoreThresholdParam)
     )
 
 object AvoidReportedTweetModelScoreRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Avoid(),
       TweetHasLabelWithScoreAboveThresholdWithParam(
         TweetSafetyLabelType.HighPReportedTweetScore,
@@ -515,7 +515,7 @@ object AvoidReportedTweetModelScoreRule
     )
 
 object TombstoneDeletedOuterTweetRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Tombstone(Epitaph.Deleted),
       And(
         Equals(FeatureTweetDeleteReason, TweetDeleteReason.Deleted),
@@ -526,7 +526,7 @@ object TombstoneDeletedOuterTweetRule
 }
 
 object TombstoneDeletedTweetRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Tombstone(Epitaph.Deleted),
       And(
         Equals(FeatureTweetDeleteReason, TweetDeleteReason.Deleted),
@@ -536,7 +536,7 @@ object TombstoneDeletedTweetRule
 }
 
 object TombstoneDeletedQuotedTweetRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Tombstone(Epitaph.Deleted),
       And(
         Equals(FeatureTweetDeleteReason, TweetDeleteReason.Deleted),
@@ -547,7 +547,7 @@ object TombstoneDeletedQuotedTweetRule
 }
 
 object TombstoneBounceDeletedTweetRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Tombstone(Epitaph.BounceDeleted),
       Equals(FeatureTweetDeleteReason, TweetDeleteReason.BounceDeleted),
     ) {
@@ -555,7 +555,7 @@ object TombstoneBounceDeletedTweetRule
 }
 
 object TombstoneBounceDeletedOuterTweetRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Tombstone(Epitaph.BounceDeleted),
       And(
         Equals(FeatureTweetDeleteReason, TweetDeleteReason.BounceDeleted),
@@ -566,7 +566,7 @@ object TombstoneBounceDeletedOuterTweetRule
 }
 
 object TombstoneBounceDeletedQuotedTweetRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Tombstone(Epitaph.BounceDeleted),
       And(
         Equals(FeatureTweetDeleteReason, TweetDeleteReason.BounceDeleted),
@@ -578,7 +578,7 @@ object TombstoneBounceDeletedQuotedTweetRule
 
 
 object DropStaleTweetsRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(StaleTweet),
       And(TweetIsStaleTweet, Not(IsQuotedInnerTweet), Not(Retweet), Not(IsSourceTweet))) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableStaleTweetDropRuleParam)
@@ -587,7 +587,7 @@ object DropStaleTweetsRule
 }
 
 object StaleTweetLimitedActionsRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       LimitedEngagements(LimitedEngagementReason.StaleTweet),
       TweetIsStaleTweet) {
   override def enabled: Seq[RuleParam[Boolean]] = Seq(StaleTweetLimitedActionsRulesEnabledParam)

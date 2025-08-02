@@ -18,24 +18,24 @@ import com.twitter.summingbird.batch.MillisecondBatcher
 /*
  * Configuration common to all offline aggregate stores
  *
- * @param outputHdfsPathPrefix HDFS prefix to store all output aggregate types offline
+ * @param outputHdfsPathPrefitwitter HDFS prefitwitter to store all output aggregate types offline
  * @param dummyAppId Dummy manhattan app id required by summingbird (unused)
- * @param dummyDatasetPrefix Dummy manhattan dataset prefix required by summingbird (unused)
+ * @param dummyDatasetPrefitwitter Dummy manhattan dataset prefitwitter required by summingbird (unused)
  * @param startDate Start date for summingbird job to begin computing aggregates
  */
 case class OfflineAggregateStoreCommonConfig(
-  outputHdfsPathPrefix: String,
+  outputHdfsPathPrefitwitter: String,
   dummyAppId: String,
-  dummyDatasetPrefix: String,
+  dummyDatasetPrefitwitter: String,
   startDate: String)
 
 /**
  * A trait inherited by any object that defines
- * a HDFS prefix to write output data to. E.g. timelines has its own
- * output prefix to write aggregates_v2 results, your team can create
+ * a HDFS prefitwitter to write output data to. E.g. timelines has its own
+ * output prefitwitter to write aggregates_v2 results, your team can create
  * its own.
  */
-trait OfflineStoreCommonConfig extends Serializable {
+trait OfflineStoreCommonConfig etwittertends Serializable {
   /*
    * @param startDate Date to create config for
    * @return OfflineAggregateStoreCommonConfig object with all config details for output populated
@@ -50,21 +50,21 @@ trait OfflineStoreCommonConfig extends Serializable {
  * @param batchesToKeep Retention policy on output (number of batches to keep)
  */
 abstract class OfflineAggregateStoreBase
-    extends OfflineStoreOnlyConfig[ManhattanROConfig]
+    etwittertends OfflineStoreOnlyConfig[ManhattanROConfig]
     with AggregateStore {
 
   override def name: String
   def startDate: String
   def commonConfig: OfflineStoreCommonConfig
   def batchesToKeep: Int
-  def maxKvSourceFailures: Int
+  def matwitterKvSourceFailures: Int
 
   val datedCommonConfig: OfflineAggregateStoreCommonConfig = commonConfig.apply(startDate)
   val manhattan: ManhattanROConfig = ManhattanROConfig(
     /* This is a sample config, will be replaced with production config later */
-    HDFSPath(s"${datedCommonConfig.outputHdfsPathPrefix}/${name}"),
+    HDFSPath(s"${datedCommonConfig.outputHdfsPathPrefitwitter}/${name}"),
     ApplicationID(datedCommonConfig.dummyAppId),
-    DatasetName(s"${datedCommonConfig.dummyDatasetPrefix}_${name}_1"),
+    DatasetName(s"${datedCommonConfig.dummyDatasetPrefitwitter}_${name}_1"),
     com.twitter.storehaus_internal.manhattan.Adama
   )
 
@@ -89,8 +89,8 @@ case class OfflineAggregateDataRecordStore(
   override val startDate: String,
   override val commonConfig: OfflineStoreCommonConfig,
   override val batchesToKeep: Int = 7,
-  override val maxKvSourceFailures: Int = 0)
-    extends OfflineAggregateStoreBase {
+  override val matwitterKvSourceFailures: Int = 0)
+    etwittertends OfflineAggregateStoreBase {
 
   def toOfflineAggregateDataRecordStoreWithDAL(
     dalDataset: KeyValDALDataset[KeyVal[AggregationKey, (BatchID, DataRecord)]]
@@ -100,7 +100,7 @@ case class OfflineAggregateDataRecordStore(
       startDate = startDate,
       commonConfig = commonConfig,
       dalDataset = dalDataset,
-      maxKvSourceFailures = maxKvSourceFailures
+      matwitterKvSourceFailures = matwitterKvSourceFailures
     )
 }
 
@@ -114,7 +114,7 @@ trait withDALDataset {
  * @param startDate Start date for this output store from which aggregates should be computed
  * @param commonConfig Provider of other common configuration details
  * @param dalDataset The KeyValDALDataset for this output store
- * @param batchesToKeep Unused, kept for interface compatibility. You must define a separate Oxpecker
+ * @param batchesToKeep Unused, kept for interface compatibility. You must define a separate Otwitterpecker
  *                      retention policy to maintain the desired number of versions.
  */
 case class OfflineAggregateDataRecordStoreWithDAL(
@@ -123,6 +123,6 @@ case class OfflineAggregateDataRecordStoreWithDAL(
   override val commonConfig: OfflineStoreCommonConfig,
   override val dalDataset: KeyValDALDataset[KeyVal[AggregationKey, (BatchID, DataRecord)]],
   override val batchesToKeep: Int = -1,
-  override val maxKvSourceFailures: Int = 0)
-    extends OfflineAggregateStoreBase
+  override val matwitterKvSourceFailures: Int = 0)
+    etwittertends OfflineAggregateStoreBase
     with withDALDataset

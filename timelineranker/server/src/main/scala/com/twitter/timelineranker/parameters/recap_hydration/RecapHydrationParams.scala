@@ -8,24 +8,24 @@ object RecapHydrationParams {
   /**
    * Enables semantic core, penguin, and tweetypie content features in recap hydration source.
    */
-  object EnableContentFeaturesHydrationParam extends Param(false)
+  object EnableContentFeaturesHydrationParam etwittertends Param(false)
 
   /**
    * additionally enables tokens when hydrating content features.
    */
   object EnableTokensInContentFeaturesHydrationParam
-      extends FSParam(
+      etwittertends FSParam(
         name = "recap_hydration_enable_tokens_in_content_features_hydration",
         default = false
       )
 
   /**
-   * additionally enables tweet text when hydrating content features.
+   * additionally enables tweet tetwittert when hydrating content features.
    * This only works if EnableContentFeaturesHydrationParam is set to true
    */
-  object EnableTweetTextInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "recap_hydration_enable_tweet_text_in_content_features_hydration",
+  object EnableTweetTetwittertInContentFeaturesHydrationParam
+      etwittertends FSParam(
+        name = "recap_hydration_enable_tweet_tetwittert_in_content_features_hydration",
         default = false
       )
 
@@ -34,13 +34,13 @@ object RecapHydrationParams {
    * This only works if EnableContentFeaturesHydrationParam is set to true
    */
   object EnableConversationControlInContentFeaturesHydrationParam
-      extends FSParam(
+      etwittertends FSParam(
         name = "conversation_control_in_content_features_hydration_recap_hydration_enable",
         default = false
       )
 
   object EnableTweetMediaHydrationParam
-      extends FSParam(
+      etwittertends FSParam(
         name = "tweet_media_hydration_recap_hydration_enable",
         default = false
       )

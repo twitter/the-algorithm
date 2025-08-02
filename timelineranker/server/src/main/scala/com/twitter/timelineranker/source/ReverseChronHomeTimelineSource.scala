@@ -6,7 +6,7 @@ import com.twitter.logging.Logger
 import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
 import com.twitter.timelineranker.core.FollowGraphData
 import com.twitter.timelineranker.model._
-import com.twitter.timelineranker.parameters.revchron.ReverseChronTimelineQueryContext
+import com.twitter.timelineranker.parameters.revchron.ReverseChronTimelineQueryContetwittert
 import com.twitter.timelineranker.util.TweetFiltersBasedOnSearchMetadata
 import com.twitter.timelineranker.util.TweetsPostFilterBasedOnSearchMetadata
 import com.twitter.timelineranker.util.SearchResultWithVisibilityActors
@@ -51,7 +51,7 @@ class ReverseChronHomeTimelineSource(
   followGraphDataProvider: FollowGraphDataProvider,
   visibilityEnforcer: VisibilityEnforcer,
   statsReceiver: StatsReceiver)
-    extends RequestStats {
+    etwittertends RequestStats {
 
   import ReverseChronHomeTimelineSource._
 
@@ -59,8 +59,8 @@ class ReverseChronHomeTimelineSource(
   private[this] val scope = statsReceiver.scope("reverseChronSource")
   private[this] val stats = RequestStatsReceiver(scope)
   private[this] val emptyTimelineReturnedCounter =
-    scope.counter("emptyTimelineReturnedDueToMaxFollows")
-  private[this] val maxCountStat = scope.stat("maxCount")
+    scope.counter("emptyTimelineReturnedDueToMatwitterFollows")
+  private[this] val matwitterCountStat = scope.stat("matwitterCount")
   private[this] val numTweetsStat = scope.stat("numTweets")
   private[this] val requestedAdditionalTweetsAfterFilter =
     scope.counter("requestedAdditionalTweetsAfterFilter")
@@ -71,13 +71,13 @@ class ReverseChronHomeTimelineSource(
   // Threshold to use to determine if a user has a significant followings list size
   private[this] val SignificantFollowingThreshold = 20
 
-  def get(contexts: Seq[ReverseChronTimelineQueryContext]): Seq[Future[Timeline]] = {
-    contexts.map(get)
+  def get(contetwitterts: Seq[ReverseChronTimelineQueryContetwittert]): Seq[Future[Timeline]] = {
+    contetwitterts.map(get)
   }
 
-  def get(context: ReverseChronTimelineQueryContext): Future[Timeline] = {
+  def get(contetwittert: ReverseChronTimelineQueryContetwittert): Future[Timeline] = {
     stats.addEventStats {
-      val query: ReverseChronTimelineQuery = context.query
+      val query: ReverseChronTimelineQuery = contetwittert.query
 
       // We only support Tweet ID range at present.
       val tweetIdRange =
@@ -85,12 +85,12 @@ class ReverseChronHomeTimelineSource(
 
       val userId = query.userId
       val timelineId = TimelineId(userId, TimelineKind.home)
-      val maxFollowingCount = context.maxFollowedUsers()
+      val matwitterFollowingCount = contetwittert.matwitterFollowedUsers()
 
       followGraphDataProvider
         .get(
           userId,
-          maxFollowingCount
+          matwitterFollowingCount
         )
         .flatMap { followGraphData =>
           // We return an empty timeline if a given user follows more than the limit
@@ -99,16 +99,16 @@ class ReverseChronHomeTimelineSource(
           // This behavior can be disabled via featureswitches to support non-materialization
           // use cases when we should always return a timeline.
           if (followGraphData.filteredFollowedUserIds.isEmpty ||
-            (followGraphData.followedUserIds.size >= maxFollowingCount && context
-              .returnEmptyWhenOverMaxFollows())) {
-            if (followGraphData.followedUserIds.size >= maxFollowingCount) {
+            (followGraphData.followedUserIds.size >= matwitterFollowingCount && contetwittert
+              .returnEmptyWhenOverMatwitterFollows())) {
+            if (followGraphData.followedUserIds.size >= matwitterFollowingCount) {
               emptyTimelineReturnedCounter.incr()
             }
             Future.value(Timeline.empty(timelineId))
           } else {
-            val maxCount = getMaxCount(context)
-            val numEntriesToRequest = (maxCount * context.maxCountMultiplier()).toInt
-            maxCountStat.add(numEntriesToRequest)
+            val matwitterCount = getMatwitterCount(contetwittert)
+            val numEntriesToRequest = (matwitterCount * contetwittert.matwitterCountMultiplier()).toInt
+            matwitterCountStat.add(numEntriesToRequest)
 
             val allUserIds = followGraphData.followedUserIds :+ userId
             getTweets(
@@ -117,7 +117,7 @@ class ReverseChronHomeTimelineSource(
               followGraphData,
               numEntriesToRequest,
               tweetIdRange,
-              context
+              contetwittert
             ).map { tweets =>
               if (tweets.isEmpty) {
                 emptyTimelines.incr()
@@ -130,9 +130,9 @@ class ReverseChronHomeTimelineSource(
                     query)
                 }
               }
-              // If we had requested more entries than maxCount (due to multiplier being > 1.0)
-              // then we need to trim it back to maxCount.
-              val truncatedTweets = tweets.take(maxCount)
+              // If we had requested more entries than matwitterCount (due to multiplier being > 1.0)
+              // then we need to trim it back to matwitterCount.
+              val truncatedTweets = tweets.take(matwitterCount)
               numTweetsStat.add(truncatedTweets.size)
               Timeline(
                 timelineId,
@@ -152,7 +152,7 @@ class ReverseChronHomeTimelineSource(
    * -- such behavior is enabled by setting backfillFilteredEntries to true.
    * -- the original call to search returned requested number of tweets.
    * -- after post-filtering, the percentage of filtered out tweets
-   *    exceeds the value of tweetsFilteringLossageThresholdPercent.
+   *    etwitterceeds the value of tweetsFilteringLossageThresholdPercent.
    */
   private def getTweets(
     userId: UserId,
@@ -160,7 +160,7 @@ class ReverseChronHomeTimelineSource(
     followGraphData: FollowGraphData,
     numEntriesToRequest: Int,
     tweetIdRange: TweetIdRange,
-    context: ReverseChronTimelineQueryContext
+    contetwittert: ReverseChronTimelineQueryContetwittert
   ): Future[Seq[Tweet]] = {
     getTweetsHelper(
       userId,
@@ -168,15 +168,15 @@ class ReverseChronHomeTimelineSource(
       followGraphData,
       numEntriesToRequest,
       tweetIdRange,
-      context.directedAtNarrowcastingViaSearch(),
-      context.postFilteringBasedOnSearchMetadataEnabled(),
-      context.getTweetsFromArchiveIndex()
+      contetwittert.directedAtNarrowcastingViaSearch(),
+      contetwittert.postFilteringBasedOnSearchMetadataEnabled(),
+      contetwittert.getTweetsFromArchiveIndetwitter()
     ).flatMap { result =>
       val numAdditionalTweetsToRequest = getNumAdditionalTweetsToRequest(
         numEntriesToRequest,
         result.numSearchResults,
         result.numSearchResults - result.tweets.size,
-        context
+        contetwittert
       )
 
       if (numAdditionalTweetsToRequest > 0) {
@@ -188,9 +188,9 @@ class ReverseChronHomeTimelineSource(
           followGraphData,
           numAdditionalTweetsToRequest,
           updatedRange,
-          context.directedAtNarrowcastingViaSearch(),
-          context.postFilteringBasedOnSearchMetadataEnabled(),
-          context.getTweetsFromArchiveIndex()
+          contetwittert.directedAtNarrowcastingViaSearch(),
+          contetwittert.postFilteringBasedOnSearchMetadataEnabled(),
+          contetwittert.getTweetsFromArchiveIndetwitter()
         ).map { result2 => result.tweets ++ result2.tweets }
       } else {
         Future.value(result.tweets)
@@ -202,37 +202,37 @@ class ReverseChronHomeTimelineSource(
     numTweetsRequested: Int,
     numTweetsFoundBySearch: Int,
     numTweetsFilteredOut: Int,
-    context: ReverseChronTimelineQueryContext
+    contetwittert: ReverseChronTimelineQueryContetwittert
   ): Int = {
     require(numTweetsFoundBySearch <= numTweetsRequested)
 
-    if (!context.backfillFilteredEntries() || (numTweetsFoundBySearch < numTweetsRequested)) {
+    if (!contetwittert.backfillFilteredEntries() || (numTweetsFoundBySearch < numTweetsRequested)) {
       // If multiple calls are not enabled or if search did not find enough tweets,
       // there is no point in making another call to get more.
       0
     } else {
       val numTweetsFilteredOutPercent = numTweetsFilteredOut * 100.0 / numTweetsFoundBySearch
-      if (numTweetsFilteredOutPercent > context.tweetsFilteringLossageThresholdPercent()) {
+      if (numTweetsFilteredOutPercent > contetwittert.tweetsFilteringLossageThresholdPercent()) {
 
-        // We assume that the next call will also have lossage percentage similar to the first call.
+        // We assume that the netwittert call will also have lossage percentage similar to the first call.
         // Therefore, we proactively request proportionately more tweets so that we do not
         // end up needing a third call.
         // In any case, regardless of what we get in the second call, we do not make any subsequent calls.
         val adjustedFilteredOutPercent =
-          math.min(numTweetsFilteredOutPercent, context.tweetsFilteringLossageLimitPercent())
+          math.min(numTweetsFilteredOutPercent, contetwittert.tweetsFilteringLossageLimitPercent())
         val numTweetsToRequestMultiplier = 100 / (100 - adjustedFilteredOutPercent)
         val numTweetsToRequest = (numTweetsFilteredOut * numTweetsToRequestMultiplier).toInt
 
         numTweetsToRequest
       } else {
-        // Did not have sufficient lossage to warrant an extra call.
+        // Did not have sufficient lossage to warrant an etwittertra call.
         0
       }
     }
   }
 
   private def getClientId(subClientId: String): String = {
-    // Hacky: Extract the environment from the existing clientId set by TimelineRepositoryBuilder
+    // Hacky: Etwittertract the environment from the etwitteristing clientId set by TimelineRepositoryBuilder
     val env = searchClient.clientId.split('.').last
 
     s"timelineranker.$subClientId.$env"
@@ -242,15 +242,15 @@ class ReverseChronHomeTimelineSource(
     userId: UserId,
     allUserIds: Seq[UserId],
     followGraphData: FollowGraphData,
-    maxCount: Int,
+    matwitterCount: Int,
     tweetIdRange: TweetIdRange,
     withDirectedAtNarrowcasting: Boolean,
     postFilteringBasedOnSearchMetadataEnabled: Boolean,
-    getTweetsFromArchiveIndex: Boolean
+    getTweetsFromArchiveIndetwitter: Boolean
   ): Future[GetTweetsResult] = {
-    val beforeTweetIdExclusive = tweetIdRange.toId
-    val afterTweetIdExclusive = tweetIdRange.fromId
-    val searchClientId: Option[String] = if (!getTweetsFromArchiveIndex) {
+    val beforeTweetIdEtwitterclusive = tweetIdRange.toId
+    val afterTweetIdEtwitterclusive = tweetIdRange.fromId
+    val searchClientId: Option[String] = if (!getTweetsFromArchiveIndetwitter) {
       // Set a custom clientId which has different QPS quota and access.
       // Used for notify we are fetching from realtime only.
       // see: SEARCH-42651
@@ -265,12 +265,12 @@ class ReverseChronHomeTimelineSource(
         userId = userId,
         followedUserIds = allUserIds.toSet,
         retweetsMutedUserIds = followGraphData.retweetsMutedUserIds,
-        maxCount = maxCount,
-        beforeTweetIdExclusive = beforeTweetIdExclusive,
-        afterTweetIdExclusive = afterTweetIdExclusive,
+        matwitterCount = matwitterCount,
+        beforeTweetIdEtwitterclusive = beforeTweetIdEtwitterclusive,
+        afterTweetIdEtwitterclusive = afterTweetIdEtwitterclusive,
         withDirectedAtNarrowcasting = withDirectedAtNarrowcasting,
         postFilteringBasedOnSearchMetadataEnabled = postFilteringBasedOnSearchMetadataEnabled,
-        getTweetsFromArchiveIndex = getTweetsFromArchiveIndex,
+        getTweetsFromArchiveIndetwitter = getTweetsFromArchiveIndetwitter,
         searchClientId = searchClientId
       )
       .flatMap { searchResults =>
@@ -319,9 +319,9 @@ class ReverseChronHomeTimelineSource(
   }
 
   @VisibleForTesting
-  private[source] def getMaxCount(context: ReverseChronTimelineQueryContext): Int = {
-    val maxCountFromQuery = ReverseChronTimelineQueryContext.MaxCount(context.query.maxCount)
-    val maxCountFromContext = context.maxCount()
-    math.min(maxCountFromQuery, maxCountFromContext)
+  private[source] def getMatwitterCount(contetwittert: ReverseChronTimelineQueryContetwittert): Int = {
+    val matwitterCountFromQuery = ReverseChronTimelineQueryContetwittert.MatwitterCount(contetwittert.query.matwitterCount)
+    val matwitterCountFromContetwittert = contetwittert.matwitterCount()
+    math.min(matwitterCountFromQuery, matwitterCountFromContetwittert)
   }
 }

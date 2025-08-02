@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird.partition;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
@@ -26,7 +26,7 @@ import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
  */
 public class SegmentHdfsFlusher {
   private static final Logger LOG = LoggerFactory.getLogger(SegmentHdfsFlusher.class);
-  private static final Amount<Long, Time> HDFS_UPLOADER_TRY_LOCK_NODE_EXPIRATION_TIME_MILLIS =
+  private static final Amount<Long, Time> HDFS_UPLOADER_TRY_LOCK_NODE_EtwitterPIRATION_TIME_MILLIS =
       Amount.of(1L, Time.HOURS);
 
   private final SegmentSyncConfig sync;
@@ -64,7 +64,7 @@ public class SegmentHdfsFlusher {
       return false;
     }
     try {
-      if (segmentInfo.isIndexing()) {
+      if (segmentInfo.isIndetwittering()) {
         LOG.error("Tried to flush current segment!");
         return false;
       }
@@ -84,8 +84,8 @@ public class SegmentHdfsFlusher {
         segmentInfo.setBeingUploaded(false);
       }
       return true;
-    } catch (Exception e) {
-      LOG.error("Exception while flushing IndexSegment to "
+    } catch (Etwitterception e) {
+      LOG.error("Etwitterception while flushing IndetwitterSegment to "
           + segmentInfo.getSyncInfo().getHdfsFlushDir(), e);
       return false;
     }
@@ -94,7 +94,7 @@ public class SegmentHdfsFlusher {
   /**
    * First try to acquire a lock in Zookeeper for this segment, so multiple Earlybirds in the same
    * partition don't flush or upload the segment at the same time. When the lock is acquired, check
-   * for the segment in HDFS. If the data already exists, don't flush to disk.
+   * for the segment in HDFS. If the data already etwitterists, don't flush to disk.
    */
   private void checkAndFlushSegmentToHdfs(final SegmentInfo segment) {
     LOG.info("Checking and flushing segment {}", segment);
@@ -105,7 +105,7 @@ public class SegmentHdfsFlusher {
       segment.flush(dir);
       LOG.info("Completed local flush of segment {}. Flush to HDFS enabled: {}",
                segment, sync.isFlushToHdfsEnabled());
-    } catch (IOException e) {
+    } catch (IOEtwitterception e) {
       LOG.error("Failed to flush segment " + segment + " locally", e);
       return;
     }
@@ -117,7 +117,7 @@ public class SegmentHdfsFlusher {
           DatabaseConfig.getLocalHostname(),
           sync.getZooKeeperSyncFullPath(),
           sync.getVersionedName(segment.getSegment()),
-          HDFS_UPLOADER_TRY_LOCK_NODE_EXPIRATION_TIME_MILLIS
+          HDFS_UPLOADER_TRY_LOCK_NODE_EtwitterPIRATION_TIME_MILLIS
       );
 
       boolean gotLock = lock.tryWithLock((Command) () -> flushToHdfsIfNecessary(segment));
@@ -131,7 +131,7 @@ public class SegmentHdfsFlusher {
    * Check whether the segment has already been flushed to HDFS. If not, flush the segment to disk
    * and upload the files to HDFS.
    *
-   * If the ZK lock isn't used, there is a race between the existence check and the upload (in
+   * If the ZK lock isn't used, there is a race between the etwitteristence check and the upload (in
    * which another Earlybird can sneak in and upload the segment), so we will potentially upload
    * the same segment from different hosts. Thus, the Earlybird hostname is part of the segment's
    * path on HDFS.
@@ -143,8 +143,8 @@ public class SegmentHdfsFlusher {
       // If we can't load segments from HDFS, don't bother checking HDFS for the segment
       if (sync.isSegmentLoadFromHdfsEnabled()
           && (segmentInfo.getSyncInfo().isFlushed()
-              || HdfsUtil.segmentExistsOnHdfs(fs, segmentInfo))) {
-        status = "existing";
+              || HdfsUtil.segmentEtwitteristsOnHdfs(fs, segmentInfo))) {
+        status = "etwitteristing";
       } else if (sync.isFlushToHdfsEnabled()) {
         copyLocalFilesToHdfs(fs, segmentInfo);
         status = "uploaded";
@@ -153,9 +153,9 @@ public class SegmentHdfsFlusher {
       // whether we uploaded, or someone else did, this segment should now be on HDFS. If
       // uploading to HDFS is disabled, we still consider it complete.
       segmentInfo.getSyncInfo().setFlushed(true);
-    } catch (IOException e) {
+    } catch (IOEtwitterception e) {
       LOG.error("Failed copying segment {} to HDFS after {} ms", segmentInfo, timer.stop(), e);
-      status = "exception";
+      status = "etwitterception";
     } finally {
       if (timer.running()) {
         timer.stop();
@@ -170,10 +170,10 @@ public class SegmentHdfsFlusher {
    * in the form <hostname>_<segmentname> and when all the files are written out to HDFS,
    * the dir is renamed to <segmentname>_<hostname>, where it is accessible to other Earlybirds.
    */
-  private void copyLocalFilesToHdfs(FileSystem fs, SegmentInfo segment) throws IOException {
+  private void copyLocalFilesToHdfs(FileSystem fs, SegmentInfo segment) throws IOEtwitterception {
     String hdfsTempBaseDir = segment.getSyncInfo().getHdfsTempFlushDir();
 
-    // If the temp dir already exists on HDFS, a prior flush must have been interrupted.
+    // If the temp dir already etwitterists on HDFS, a prior flush must have been interrupted.
     // Delete it and start fresh.
     removeHdfsTempDir(fs, hdfsTempBaseDir);
 
@@ -201,15 +201,15 @@ public class SegmentHdfsFlusher {
 
       removeHdfsTempDir(fs, hdfsTempBaseDir);
 
-      // Throw an IOException so the calling code knows that the copy failed
-      throw new IOException(errorMessage);
+      // Throw an IOEtwitterception so the calling code knows that the copy failed
+      throw new IOEtwitterception(errorMessage);
     }
   }
 
-  private void removeHdfsTempDir(FileSystem fs, String tempDir) throws IOException {
+  private void removeHdfsTempDir(FileSystem fs, String tempDir) throws IOEtwitterception {
     Path tempDirPath = new Path(tempDir);
-    if (fs.exists(tempDirPath)) {
-      LOG.info("Found existing temporary flush dir {} on HDFS, removing", tempDir);
+    if (fs.etwitterists(tempDirPath)) {
+      LOG.info("Found etwitteristing temporary flush dir {} on HDFS, removing", tempDir);
       if (!fs.delete(tempDirPath, true /* recursive */)) {
         LOG.error("Failed to delete temp dir {}", tempDir);
       }
@@ -217,18 +217,18 @@ public class SegmentHdfsFlusher {
   }
 
   // Create or replace the local flush directory
-  private File createFlushDir(SegmentInfo segmentInfo) throws IOException {
+  private File createFlushDir(SegmentInfo segmentInfo) throws IOEtwitterception {
     final String flushDirStr = segmentInfo.getSyncInfo().getLocalSyncDir();
 
     File flushDir = new File(flushDirStr);
-    if (flushDir.exists()) {
+    if (flushDir.etwitterists()) {
       // Delete just the flushed persistent files if they are there.
-      // We may also have the lucene on-disk indexed in the same dir here,
+      // We may also have the lucene on-disk indetwittered in the same dir here,
       // that we do not want to delete.
       for (String persistentFile : sync.getPersistentFileNames(segmentInfo)) {
         for (String fileName : PersistentFile.getAllFileNames(persistentFile)) {
           File file = new File(flushDir, fileName);
-          if (file.exists()) {
+          if (file.etwitterists()) {
             LOG.info("Deleting incomplete flush file {}", file.getAbsolutePath());
             FileUtils.forceDelete(file);
           }
@@ -239,7 +239,7 @@ public class SegmentHdfsFlusher {
 
     // Try to create the flush directory
     if (!flushDir.mkdirs()) {
-      throw new IOException("Not able to create segment flush directory \"" + flushDirStr + "\"");
+      throw new IOEtwitterception("Not able to create segment flush directory \"" + flushDirStr + "\"");
     }
 
     return flushDir;

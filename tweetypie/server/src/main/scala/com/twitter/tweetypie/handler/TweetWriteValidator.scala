@@ -4,8 +4,8 @@ import com.twitter.stitch.Stitch
 import com.twitter.tweetypie.core.TweetCreateFailure
 import com.twitter.tweetypie.repository.ConversationControlRepository
 import com.twitter.tweetypie.repository.TweetQuery
-import com.twitter.tweetypie.thriftscala.ExclusiveTweetControl
-import com.twitter.tweetypie.thriftscala.ExclusiveTweetControlOptions
+import com.twitter.tweetypie.thriftscala.EtwitterclusiveTweetControl
+import com.twitter.tweetypie.thriftscala.EtwitterclusiveTweetControlOptions
 import com.twitter.tweetypie.thriftscala.QuotedTweet
 import com.twitter.tweetypie.thriftscala.TrustedFriendsControl
 import com.twitter.tweetypie.thriftscala.TrustedFriendsControlOptions
@@ -18,10 +18,10 @@ import com.twitter.tweetypie.thriftscala.EditControl
 import com.twitter.tweetypie.thriftscala.EditOptions
 import com.twitter.visibility.writer.interfaces.tweets.TweetWriteEnforcementLibrary
 import com.twitter.visibility.writer.interfaces.tweets.TweetWriteEnforcementRequest
-import com.twitter.visibility.writer.models.ActorContext
+import com.twitter.visibility.writer.models.ActorContetwittert
 import com.twitter.visibility.writer.Allow
 import com.twitter.visibility.writer.Deny
-import com.twitter.visibility.writer.DenyExclusiveTweetReply
+import com.twitter.visibility.writer.DenyEtwitterclusiveTweetReply
 import com.twitter.visibility.writer.DenyStaleTweetQuoteTweet
 import com.twitter.visibility.writer.DenyStaleTweetReply
 import com.twitter.visibility.writer.DenySuperFollowsCreate
@@ -33,8 +33,8 @@ object TweetWriteValidator {
   case class Request(
     conversationId: Option[TweetId],
     userId: UserId,
-    exclusiveTweetControlOptions: Option[ExclusiveTweetControlOptions],
-    replyToExclusiveTweetControl: Option[ExclusiveTweetControl],
+    etwitterclusiveTweetControlOptions: Option[EtwitterclusiveTweetControlOptions],
+    replyToEtwitterclusiveTweetControl: Option[EtwitterclusiveTweetControl],
     trustedFriendsControlOptions: Option[TrustedFriendsControlOptions],
     inReplyToTrustedFriendsControl: Option[TrustedFriendsControl],
     quotedTweetOpt: Option[QuotedTweet],
@@ -47,7 +47,7 @@ object TweetWriteValidator {
   def apply(
     convoCtlRepo: ConversationControlRepository.Type,
     tweetWriteEnforcementLibrary: TweetWriteEnforcementLibrary,
-    enableExclusiveTweetControlValidation: Gate[Unit],
+    enableEtwitterclusiveTweetControlValidation: Gate[Unit],
     enableTrustedFriendsControlValidation: Gate[Unit],
     enableStaleTweetValidation: Gate[Unit]
   ): FutureEffect[Request] =
@@ -71,17 +71,17 @@ object TweetWriteValidator {
             TweetWriteEnforcementRequest(
               rootConversationControl = convoCtl,
               convoId = request.conversationId,
-              exclusiveTweetControlOptions = request.exclusiveTweetControlOptions,
-              replyToExclusiveTweetControl = request.replyToExclusiveTweetControl,
+              etwitterclusiveTweetControlOptions = request.etwitterclusiveTweetControlOptions,
+              replyToEtwitterclusiveTweetControl = request.replyToEtwitterclusiveTweetControl,
               trustedFriendsControlOptions = request.trustedFriendsControlOptions,
               inReplyToTrustedFriendsControl = request.inReplyToTrustedFriendsControl,
               quotedTweetOpt = request.quotedTweetOpt,
-              actorContext = ActorContext(request.userId),
+              actorContetwittert = ActorContetwittert(request.userId),
               inReplyToTweetId = request.inReplyToTweetId,
               inReplyToEditControl = request.inReplyToEditControl,
               editOptions = request.editOptions
             ),
-            enableExclusiveTweetControlValidation = enableExclusiveTweetControlValidation,
+            enableEtwitterclusiveTweetControlValidation = enableEtwitterclusiveTweetControlValidation,
             enableTrustedFriendsControlValidation = enableTrustedFriendsControlValidation,
             enableStaleTweetValidation = enableStaleTweetValidation
           )
@@ -89,27 +89,27 @@ object TweetWriteValidator {
             case Allow =>
               Stitch.Done
             case Deny =>
-              Stitch.exception(TweetCreateFailure.State(TweetCreateState.ReplyTweetNotAllowed))
-            case DenyExclusiveTweetReply =>
-              Stitch.exception(
-                TweetCreateFailure.State(TweetCreateState.ExclusiveTweetEngagementNotAllowed))
+              Stitch.etwitterception(TweetCreateFailure.State(TweetCreateState.ReplyTweetNotAllowed))
+            case DenyEtwitterclusiveTweetReply =>
+              Stitch.etwitterception(
+                TweetCreateFailure.State(TweetCreateState.EtwitterclusiveTweetEngagementNotAllowed))
             case DenySuperFollowsCreate =>
-              Stitch.exception(
+              Stitch.etwitterception(
                 TweetCreateFailure.State(TweetCreateState.SuperFollowsCreateNotAuthorized))
             case DenyTrustedFriendsReply =>
-              Stitch.exception(
+              Stitch.etwitterception(
                 TweetCreateFailure.State(TweetCreateState.TrustedFriendsEngagementNotAllowed))
             case DenyTrustedFriendsCreate =>
-              Stitch.exception(
+              Stitch.etwitterception(
                 TweetCreateFailure.State(TweetCreateState.TrustedFriendsCreateNotAllowed))
             case DenyTrustedFriendsQuoteTweet =>
-              Stitch.exception(
+              Stitch.etwitterception(
                 TweetCreateFailure.State(TweetCreateState.TrustedFriendsQuoteTweetNotAllowed))
             case DenyStaleTweetReply =>
-              Stitch.exception(
+              Stitch.etwitterception(
                 TweetCreateFailure.State(TweetCreateState.StaleTweetEngagementNotAllowed))
             case DenyStaleTweetQuoteTweet =>
-              Stitch.exception(
+              Stitch.etwitterception(
                 TweetCreateFailure.State(TweetCreateState.StaleTweetQuoteTweetNotAllowed))
           }
         } yield ()

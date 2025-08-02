@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.partition;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import com.google.common.base.Preconditions;
 
@@ -25,7 +25,7 @@ public final class PartitionConfigLoader {
    * @return The new PartitionConfig object for this host
    */
   public static PartitionConfig getPartitionInfoForMesosConfig(
-      AuroraSchedulerClient schedulerClient) throws PartitionConfigLoadingException {
+      AuroraSchedulerClient schedulerClient) throws PartitionConfigLoadingEtwitterception {
     AuroraInstanceKey instanceKey =
         Preconditions.checkNotNull(EarlybirdConfig.getAuroraInstanceKey());
     int numTasks;
@@ -34,10 +34,10 @@ public final class PartitionConfigLoader {
       numTasks = schedulerClient.getActiveTasks(
           instanceKey.getRole(), instanceKey.getEnv(), instanceKey.getJobName()).size();
       LOG.info("Found {} active tasks", numTasks);
-    } catch (IOException e) {
+    } catch (IOEtwitterception e) {
       // This can happen when Aurora Scheduler is holding a conclave to elect a new reader.
       LOG.warn("Failed to get tasks from Aurora scheduler.", e);
-      throw new PartitionConfigLoadingException("Failed to get tasks from Aurora scheduler.");
+      throw new PartitionConfigLoadingEtwitterception("Failed to get tasks from Aurora scheduler.");
     }
 
     return PartitionConfigUtil.initPartitionConfigForAurora(numTasks);

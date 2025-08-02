@@ -9,10 +9,10 @@ import com.twitter.unified_user_actions.thriftscala.SourceLineage
 object EmailNotificationEventUtils {
 
   /*
-   * Extract TweetId from Logbase.page, here is a sample page below
-   * https://twitter.com/i/events/1580827044245544962?cn=ZmxleGlibGVfcmVjcw%3D%3D&refsrc=email
+   * Etwittertract TweetId from Logbase.page, here is a sample page below
+   * https://twitter.com/i/events/1580827044245544962?cn=ZmtwitterleGlibGVfcmVjcw%3D%3D&refsrc=email
    * */
-  def extractTweetId(path: String): Option[Long] = {
+  def etwittertractTweetId(path: String): Option[Long] = {
     val ptn = raw".*/([0-9]+)\\??.*".r
     path match {
       case ptn(tweetId) =>
@@ -22,12 +22,12 @@ object EmailNotificationEventUtils {
     }
   }
 
-  def extractTweetId(logBase: LogBase): Option[Long] = logBase.page match {
-    case Some(path) => extractTweetId(path)
+  def etwittertractTweetId(logBase: LogBase): Option[Long] = logBase.page match {
+    case Some(path) => etwittertractTweetId(path)
     case None => None
   }
 
-  def extractEventMetaData(scribe: NotificationScribe): EventMetadata =
+  def etwittertractEventMetaData(scribe: NotificationScribe): EventMetadata =
     EventMetadata(
       sourceTimestampMs = scribe.timestamp,
       receivedTimestampMs = AdapterUtils.currentTimestampMs,

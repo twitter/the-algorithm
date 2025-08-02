@@ -15,16 +15,16 @@ With over 700 million users to consider, there are multiple ways to define simil
 **Follow2Vec** (essentially Word2Vec on user-user follow graph): We first train the Word2Vec model on follow sequence data to obtain users' embeddings and then find the most similar users based on the similarity of the embeddings. However, we need enough data for each user to learn a meaningful embedding for them, so we can only obtain embeddings for the top 10 million users (currently in production, testing 30 million users). Furthermore, Word2Vec model training is limited by memory and computation as it is trained on a single machine.
 
 ##### Cosine Similarity
-A crucial component in Sims is calculating cosine similarities between users based on a user-X (X can be a user, list, or other entities) bipartite graph. This problem is technically challenging and took several years of effort to solve.
+A crucial component in Sims is calculating cosine similarities between users based on a user-twitter (twitter can be a user, list, or other entities) bipartite graph. This problem is technically challenging and took several years of effort to solve.
 
-The current implementation uses the algorithm proposed in [When hashes met wedges: A distributed algorithm for finding high similarity vectors. WWW 2017](https://arxiv.org/pdf/1703.01054.pdf)
+The current implementation uses the algorithm proposed in [When hashes met wedges: A distributed algorithm for finding high similarity vectors. WWW 2017](https://artwitteriv.org/pdf/1703.01054.pdf)
 
 ### Sims Ranking
 After the candidate generation step, we can obtain dozens to hundreds of similar user candidates for each user. However, since these candidates come from different algorithms, we need a way to rank them. To do this, we collect user feedback.
 
 We use the "Profile Sidebar Impressions & Follow" (a module with follow suggestions displayed when a user visits a profile page and scrolls down) to collect training data. To alleviate any system bias, we use 4% of traffic to show randomly shuffled candidates to users and collect positive (followed impression) and negative (impression only) data from this traffic. This data is used as an evaluation set. We use a portion of the remaining 96% of traffic for training data, filtering only for sets of impressions that had at least one follow, ensuring that the user taking action was paying attention to the impressions.
 
-The examples are in the format of (profile_user, candidate_user, label). We add features for profile_users and candidate_users based on some high-level aggregated statistics in a feature dataset provided by the Customer Journey team, as well as features that represent the similarity between the profile_user and candidate_user.
+The etwitteramples are in the format of (profile_user, candidate_user, label). We add features for profile_users and candidate_users based on some high-level aggregated statistics in a feature dataset provided by the Customer Journey team, as well as features that represent the similarity between the profile_user and candidate_user.
 
 We employ a multi-tower MLP model and optimize the logistic loss. The model is refreshed weekly using an ML workflow.
 

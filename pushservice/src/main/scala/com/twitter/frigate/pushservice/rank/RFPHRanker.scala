@@ -27,7 +27,7 @@ class RFPHRanker(
   userHealthSignalStore: ReadableStore[Long, UserHealthSignalResponse],
   producerMediaRepresentationStore: ReadableStore[Long, UserMediaRepresentation],
   stats: StatsReceiver)
-    extends PushserviceRanker[Target, PushCandidate] {
+    etwittertends PushserviceRanker[Target, PushCandidate] {
 
   private val statsReceiver = stats.scope(this.getClass.getSimpleName)
 
@@ -199,7 +199,7 @@ class RFPHRanker(
           .getFeatures(pushCandidate, producerMediaRepresentationStore, userHealthSignalStore).map {
             featureMap =>
               val agathaNsfwScore = featureMap.numericFeatures.getOrElse("agathaNsfwScore", 0.5)
-              val textNsfwScore = featureMap.numericFeatures.getOrElse("textNsfwScore", 0.15)
+              val tetwittertNsfwScore = featureMap.numericFeatures.getOrElse("tetwittertNsfwScore", 0.15)
               val nudityRate = featureMap.numericFeatures.getOrElse("nudityRate", 0.0)
               val activeFollowers = featureMap.numericFeatures.getOrElse("activeFollowers", 0.0)
               val favorsRcvd28Days = featureMap.numericFeatures.getOrElse("favorsRcvd28Days", 0.0)
@@ -221,7 +221,7 @@ class RFPHRanker(
                 producerBoostedCounter.incr()
                 pushCandidate.setProducerQualityUprankingBoost(boostRatio)
               } else if (activeFollowers < 5 || agathaNsfwScore > 0.9 || nudityRate > 0.03 || hasNsfwToken || abuseStrikeTop1Percent ||
-                textNsfwScore > 0.4 || (authorDislikeRate > 0.005 && authorDislikeCount > 5) ||
+                tetwittertNsfwScore > 0.4 || (authorDislikeRate > 0.005 && authorDislikeCount > 5) ||
                 (tweets28Days > 56 && favorsRcvd28Days / tweets28Days < 100)) {
                 producerDownboostedCounter.incr()
                 pushCandidate.setProducerQualityUprankingBoost(downboostRatio)

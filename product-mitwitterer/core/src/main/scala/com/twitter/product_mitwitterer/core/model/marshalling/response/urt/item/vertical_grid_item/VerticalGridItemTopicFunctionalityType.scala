@@ -1,0 +1,8 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.item.vertical_grid_item
+
+sealed trait VerticalGridItemTopicFunctionalityType
+
+case object PivotVerticalGridItemTopicFunctionalityType
+    etwittertends VerticalGridItemTopicFunctionalityType
+case object RecommendationVerticalGridItemTopicFunctionalityType
+    etwittertends VerticalGridItemTopicFunctionalityType

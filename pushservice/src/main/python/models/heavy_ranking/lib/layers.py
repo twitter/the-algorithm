@@ -97,11 +97,11 @@ class ChannelWiseDense(tf.keras.layers.Layer):
     )
 
   def call(self, inputs: tf.Tensor, **kwargs: Any) -> tf.Tensor:
-    x = inputs
+    twitter = inputs
 
-    transposed_x = tf.transpose(x, perm=[2, 0, 1])
+    transposed_twitter = tf.transpose(twitter, perm=[2, 0, 1])
     transposed_residual = (
-      tf.transpose(tf.matmul(transposed_x, self.kernel), perm=[1, 0, 2]) + self.bias
+      tf.transpose(tf.matmul(transposed_twitter, self.kernel), perm=[1, 0, 2]) + self.bias
     )
     output = tf.transpose(transposed_residual, perm=[0, 2, 1])
 

@@ -27,7 +27,7 @@ scala_library(
         "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/common/tweets",
         "visibility/lib/src/main/thrift/com/twitter/visibility/logging:vf-logging-scala",
     ],
-    exports = [
+    etwitterports = [
         "visibility/common/src/main/scala/com/twitter/visibility/common",
         "visibility/lib/src/main/scala/com/twitter/visibility",
     ],

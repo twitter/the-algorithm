@@ -2,8 +2,8 @@ namespace java com.twitter.interaction_graph.thriftjava
 #@namespace scala com.twitter.interaction_graph.thriftscala
 #@namespace strato com.twitter.interaction_graph
 
-// These could be either a Vertex or an edge feature name
-// when you add a new feature, update VertexFeatureCombiner.java and EdgeFeatureCombiner.java.
+// These could be either a Vertetwitter or an edge feature name
+// when you add a new feature, update VertetwitterFeatureCombiner.java and EdgeFeatureCombiner.java.
 enum FeatureName {
   num_retweets = 1
   num_favorites = 2
@@ -46,7 +46,7 @@ enum FeatureName {
   num_push_report_tweet_click = 39,
   num_push_report_user_click = 40,
   num_replies = 41,
-  // vertex features after 128
+  // vertetwitter features after 128
   num_create_tweets = 129,
 }
 // do remember to update the tests in InteractionGraphAggregationJobTest when adding new features but not updating agg_all
@@ -55,26 +55,26 @@ struct TimeSeriesStatistics {
   1: required double mean;
   // For computing variance online: http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#On-line_algorithm
   2: required double m2_for_variance;
-  3: required double ewma; // Exponentially weighted moving average: ewma_t = \alpha x_t + (1-\alpha) ewma_{t-1}
+  3: required double ewma; // Etwitterponentially weighted moving average: ewma_t = \alpha twitter_t + (1-\alpha) ewma_{t-1}
   4: required i32 num_elapsed_days; // Total number of days since we started counting this feature
   5: required i32 num_non_zero_days; // Number of days when the interaction was non-zero (used to compute mean/variance)
   6: optional i32 num_days_since_last; // Number of days since the latest interaction happen
 }(persisted="true", hasPersonalData = 'false') 
 
-struct VertexFeature {
+struct VertetwitterFeature {
   1: required FeatureName name;
   2: required bool outgoing; // direction e.g. true is num_retweets_by_user, and false is num_retweets_for_user
   3: required TimeSeriesStatistics tss;
 }(persisted="true", hasPersonalData = 'false')
 
-struct Vertex {
+struct Vertetwitter {
   1: required i64 user_id(personalDataType = 'UserId');
   2: optional double weight;
-  3: list<VertexFeature> features;
+  3: list<VertetwitterFeature> features;
 }(persisted="true", hasPersonalData = 'true')
 
 /*
- * These features are for an edge (a->b). Examples:
+ * These features are for an edge (a->b). Etwitteramples:
  * (i) follow is whether a follows b
  * (ii) num_retweets is number of b's tweets retweet by a
  */

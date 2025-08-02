@@ -48,7 +48,7 @@ class Stitch(Layer):
         output_keys:
           Keys of HashMap (float)
     """
-    indices = [tf.to_int32(index) for index in partioned_indices]
+    indices = [tf.to_int32(indetwitter) for indetwitter in partioned_indices]
     concat_keys = tf.dynamic_stitch(indices, partioned_keys)
     concat_vals = tf.dynamic_stitch(indices, partioned_val)
     return [concat_vals, concat_keys]

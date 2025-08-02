@@ -17,19 +17,19 @@ case class BufferedEdgeCollector(
   queue: java.util.Queue[Array[RecosHoseMessage]],
   queuelimit: Semaphore,
   statsReceiver: StatsReceiver)
-    extends EdgeCollector {
+    etwittertends EdgeCollector {
 
   private var buffer = new Array[RecosHoseMessage](bufferSize)
-  private var index = 0
+  private var indetwitter = 0
   private val queueAddCounter = statsReceiver.counter("queueAdd")
 
   override def addEdge(message: RecosHoseMessage): Unit = {
-    buffer(index) = message
-    index = index + 1
-    if (index >= bufferSize) {
+    buffer(indetwitter) = message
+    indetwitter = indetwitter + 1
+    if (indetwitter >= bufferSize) {
       val oldBuffer = buffer
       buffer = new Array[RecosHoseMessage](bufferSize)
-      index = 0
+      indetwitter = 0
 
       Stat.time(statsReceiver.stat("waitEnqueue")) {
         queuelimit.acquireUninterruptibly()

@@ -19,9 +19,9 @@ import com.twitter.simclusters_v2.thriftscala.ModelVersion._
 import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
 import com.twitter.storehaus.ReadableStore
 import com.twitter.strato.client.{Client => StratoClient}
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
-object EmbeddingStoreModule extends TwitterModule {
+object EmbeddingStoreModule etwittertends TwitterModule {
 
   val TweetEmbeddings: Set[SimClustersEmbeddingView] = Set(
     SimClustersEmbeddingView(LogFavLongestL2EmbeddingTweet, Model20m145kUpdated),
@@ -37,24 +37,24 @@ object EmbeddingStoreModule extends TwitterModule {
     // InterestedIn
     SimClustersEmbeddingView(UnfilteredUserInterestedIn, Model20m145k2020),
     SimClustersEmbeddingView(
-      LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE,
+      LogFavBasedUserInterestedMatwitterpoolingAddressBookFromIIAPE,
       Model20m145k2020),
     SimClustersEmbeddingView(
       LogFavBasedUserInterestedAverageAddressBookFromIIAPE,
       Model20m145k2020),
     SimClustersEmbeddingView(
-      LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE,
+      LogFavBasedUserInterestedBooktypeMatwitterpoolingAddressBookFromIIAPE,
       Model20m145k2020),
     SimClustersEmbeddingView(
-      LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE,
+      LogFavBasedUserInterestedLargestDimMatwitterpoolingAddressBookFromIIAPE,
       Model20m145k2020),
     SimClustersEmbeddingView(
-      LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE,
+      LogFavBasedUserInterestedLouvainMatwitterpoolingAddressBookFromIIAPE,
       Model20m145k2020),
     SimClustersEmbeddingView(
-      LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE,
+      LogFavBasedUserInterestedConnectedMatwitterpoolingAddressBookFromIIAPE,
       Model20m145k2020),
-    SimClustersEmbeddingView(UserNextInterestedIn, Model20m145k2020),
+    SimClustersEmbeddingView(UserNetwittertInterestedIn, Model20m145k2020),
     SimClustersEmbeddingView(LogFavBasedUserInterestedInFromAPE, Model20m145k2020)
   )
 

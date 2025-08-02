@@ -19,7 +19,7 @@ public class RateLimitingSegmentHandler {
   }
 
   SegmentBuilderSegment processSegment(SegmentBuilderSegment segment)
-      throws SegmentUpdaterException, SegmentInfoConstructionException {
+      throws SegmentUpdaterEtwitterception, SegmentInfoConstructionEtwitterception {
 
     String segmentName = segment.getSegmentName();
 

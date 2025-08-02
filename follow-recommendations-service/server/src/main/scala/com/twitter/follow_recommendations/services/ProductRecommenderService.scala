@@ -9,8 +9,8 @@ import com.twitter.follow_recommendations.products.common.ProductRequest
 import com.twitter.stitch.Stitch
 import com.twitter.follow_recommendations.configapi.params.GlobalParams.EnableWhoToFollowProducts
 import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class ProductRecommenderService @Inject() (
@@ -26,7 +26,7 @@ class ProductRecommenderService @Inject() (
     val displayLocation = request.displayLocation
     val displayLocationStatName = displayLocation.toString
     val locationStats = stats.scope(displayLocationStatName)
-    val loggedInOrOutStats = if (request.clientContext.userId.isDefined) {
+    val loggedInOrOutStats = if (request.clientContetwittert.userId.isDefined) {
       stats.scope("logged_in").scope(displayLocationStatName)
     } else {
       stats.scope("logged_out").scope(displayLocationStatName)
@@ -47,7 +47,7 @@ class ProductRecommenderService @Inject() (
           workflowRecos <- StatsUtil.profileStitch(
             Stitch.collect(
               workflows.map(_.process(productRequest).map(_.result.getOrElse(Seq.empty)))),
-            locationStats.scope("execute_workflows")
+            locationStats.scope("etwitterecute_workflows")
           )
           blendedCandidates <- StatsUtil.profileStitch(
             product.blender.transform(productRequest, workflowRecos.flatten),
@@ -57,7 +57,7 @@ class ProductRecommenderService @Inject() (
             locationStats.scope("results_transformer"))
           transformedCandidates <- StatsUtil.profileStitch(
             resultsTransformer.transform(productRequest, blendedCandidates),
-            locationStats.scope("execute_results_transformer"))
+            locationStats.scope("etwitterecute_results_transformer"))
         } yield {
           transformedCandidates
         }

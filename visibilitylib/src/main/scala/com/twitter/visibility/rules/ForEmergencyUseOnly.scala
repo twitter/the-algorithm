@@ -17,13 +17,13 @@ import com.twitter.visibility.rules.Condition.TweetHasLabel
 import com.twitter.visibility.rules.Reason.Unspecified
 
 object EmergencyDynamicInterstitialActionBuilder
-    extends ActionBuilder[EmergencyDynamicInterstitial] {
+    etwittertends ActionBuilder[EmergencyDynamicInterstitial] {
 
   def actionType: Class[_] = classOf[EmergencyDynamicInterstitial]
 
   override val actionSeverity = 11
   override def build(
-    evaluationContext: EvaluationContext,
+    evaluationContetwittert: EvaluationContetwittert,
     featureMap: Map[Feature[_], _]
   ): RuleResult = {
     val label = featureMap(TweetSafetyLabels)
@@ -42,13 +42,13 @@ object EmergencyDynamicInterstitialActionBuilder
 }
 
 object EmergencyDynamicComplianceTweetNoticeActionBuilder
-    extends ActionBuilder[ComplianceTweetNoticePreEnrichment] {
+    etwittertends ActionBuilder[ComplianceTweetNoticePreEnrichment] {
 
   def actionType: Class[_] = classOf[ComplianceTweetNoticePreEnrichment]
 
   override val actionSeverity = 2
   override def build(
-    evaluationContext: EvaluationContext,
+    evaluationContetwittert: EvaluationContetwittert,
     featureMap: Map[Feature[_], _]
   ): RuleResult = {
     val label = featureMap(TweetSafetyLabels)
@@ -63,7 +63,7 @@ object EmergencyDynamicComplianceTweetNoticeActionBuilder
             reason = Unspecified,
             complianceTweetNoticeEventType = ComplianceTweetNoticeEventType.PublicInterest,
             details = Some(copy),
-            extendedDetailsUrl = linkOpt
+            etwittertendedDetailsUrl = linkOpt
           ),
           State.Evaluated
         )
@@ -75,19 +75,19 @@ object EmergencyDynamicComplianceTweetNoticeActionBuilder
 }
 
 object EmergencyDynamicInterstitialRule
-    extends Rule(
+    etwittertends Rule(
       EmergencyDynamicInterstitialActionBuilder,
       TweetHasLabel(TweetSafetyLabelType.ForEmergencyUseOnly)
     )
 
 object EmergencyDropRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Unspecified),
       TweetHasLabel(TweetSafetyLabelType.ForEmergencyUseOnly)
     )
 
 object SearchEdiSafeSearchWithoutUserInQueryDropRule
-    extends RuleWithConstantAction(
+    etwittertends RuleWithConstantAction(
       Drop(Unspecified),
       And(
         TweetHasLabel(TweetSafetyLabelType.ForEmergencyUseOnly),

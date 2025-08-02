@@ -17,15 +17,15 @@ using std::string;
 
 class BlockFormatReader : twml::BlockFormatReader {
  public:
-  explicit BlockFormatReader(tensorflow::io::InputStreamInterface *stream)
+  etwitterplicit BlockFormatReader(tensorflow::io::InputStreamInterface *stream)
       : twml::BlockFormatReader() , stream_(stream) {
   }
 
-  // Read the next record.
+  // Read the netwittert record.
   // Returns OK on success,
   // Returns OUT_OF_RANGE for end of file, or something else for an error.
-  Status ReadNext(string* record) {
-    if (this->next()) {
+  Status ReadNetwittert(string* record) {
+    if (this->netwittert()) {
       return stream_->ReadNBytes(this->current_size(), record);
     }
     return tensorflow::errors::OutOfRange("eof");

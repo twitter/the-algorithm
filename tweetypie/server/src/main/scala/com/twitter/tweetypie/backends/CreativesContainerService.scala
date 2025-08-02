@@ -35,25 +35,25 @@ object CreativesContainerService {
     requestTimeout: Duration,
     timeoutBackoffs: Stream[Duration],
     serverErrorBackoffs: Stream[Duration]) {
-    def apply(svc: CreativesContainerService, ctx: Backend.Context): CreativesContainerService =
+    def apply(svc: CreativesContainerService, cttwitter: Backend.Contetwittert): CreativesContainerService =
       new CreativesContainerService {
         override val materializeAsTweet: MaterializeAsTweet =
-          policy("materializeAsTweets", ctx)(svc.materializeAsTweet)
+          policy("materializeAsTweets", cttwitter)(svc.materializeAsTweet)
 
         override val materializeAsTweetFields: MaterializeAsTweetFields =
-          policy("materializeAsTweetFields", ctx)(svc.materializeAsTweetFields)
+          policy("materializeAsTweetFields", cttwitter)(svc.materializeAsTweetFields)
 
         override def ping(): Future[Unit] = svc.ping()
       }
 
-    private[this] def policy[A, B](name: String, ctx: Context): Builder[A, B] =
-      defaultPolicy(name, requestTimeout, retryPolicy, ctx)
+    private[this] def policy[A, B](name: String, cttwitter: Contetwittert): Builder[A, B] =
+      defaultPolicy(name, requestTimeout, retryPolicy, cttwitter)
 
     private[this] def retryPolicy[B]: RetryPolicy[Try[B]] =
       RetryPolicy.combine[Try[B]](
         RetryPolicyBuilder.timeouts[B](timeoutBackoffs),
         RetryPolicy.backoff(Backoff.fromStream(serverErrorBackoffs)) {
-          case Throw(ex: ServerError) if ex.errorCause != ServerErrorCause.NotImplemented => true
+          case Throw(etwitter: ServerError) if etwitter.errorCause != ServerErrorCause.NotImplemented => true
         }
       )
 

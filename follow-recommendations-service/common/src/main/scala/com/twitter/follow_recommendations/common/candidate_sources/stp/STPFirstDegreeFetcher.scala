@@ -13,7 +13,7 @@ import com.twitter.follow_recommendations.common.stores.LowTweepCredFollowStore
 import com.twitter.hermit.model.Algorithm
 import com.twitter.hermit.model.Algorithm.Algorithm
 import com.twitter.inject.Logging
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.timelines.configapi.HasParams
 import com.twitter.util.Duration
@@ -21,8 +21,8 @@ import com.twitter.util.Timer
 import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdge
 import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdgeInfo
 import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdgeInfoMonoid
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 // Grabs FirstDegreeNodes from Candidate Sources
 @Singleton
@@ -36,7 +36,7 @@ class STPFirstDegreeFetcher @Inject() (
   lowTweepCredFollowStore: LowTweepCredFollowStore,
   timer: Timer,
   statsReceiver: StatsReceiver)
-    extends Logging {
+    etwittertends Logging {
 
   private val stats = statsReceiver.scope("STPFirstDegreeFetcher")
   private val stitchRequests = stats.scope("stitchRequests")
@@ -53,7 +53,7 @@ class STPFirstDegreeFetcher @Inject() (
    * */
   private def getPotentialFirstEdgesFromFetcher(
     userId: Long,
-    target: HasClientContext with HasParams with HasRecentFollowedUserIds,
+    target: HasClientContetwittert with HasParams with HasRecentFollowedUserIds,
     algorithm: Algorithm,
     weight: Double
   ): Stitch[Seq[PotentialFirstDegreeEdge]] = {
@@ -90,7 +90,7 @@ class STPFirstDegreeFetcher @Inject() (
    * we attach the realGraphWeight score to those candidates.
    * */
   def getFirstDegreeEdges(
-    target: HasClientContext with HasParams with HasRecentFollowedUserIds
+    target: HasClientContetwittert with HasParams with HasRecentFollowedUserIds
   ): Stitch[Seq[FirstDegreeEdge]] = {
     target.getOptionalUserId
       .map { userId =>
@@ -116,7 +116,7 @@ class STPFirstDegreeFetcher @Inject() (
 
         val topDestinationEdges = destinationIdsToEdges.map(_.sortBy {
           case (_, _, combinedDestScore) => -combinedDestScore
-        }.take(STPFirstDegreeFetcher.MaxNumFirstDegreeEdges))
+        }.take(STPFirstDegreeFetcher.MatwitterNumFirstDegreeEdges))
 
         Stitch
           .join(realTimeGraphClient.getRealGraphWeights(userId), topDestinationEdges).map {
@@ -132,9 +132,9 @@ class STPFirstDegreeFetcher @Inject() (
                   FirstDegreeEdge(userId, destinationId, updatedEdgeInfo)
               }
           }.within(STPFirstDegreeFetcher.LongTimeoutFetcher)(timer).rescue {
-            case ex =>
+            case etwitter =>
               timeoutStitchRequests.incr()
-              logger.error("Exception while loading direct edges in OnlineSTP: ", ex)
+              logger.error("Etwitterception while loading direct edges in OnlineSTP: ", etwitter)
               Stitch.Nil
           }
       }.getOrElse(Stitch.Nil)
@@ -142,7 +142,7 @@ class STPFirstDegreeFetcher @Inject() (
 }
 
 object STPFirstDegreeFetcher {
-  val MaxNumFirstDegreeEdges = 200
+  val MatwitterNumFirstDegreeEdges = 200
   val DefaultGraphBuilderAlgorithmToScore = Map(
     Algorithm.MutualFollowSTP -> 10.0,
     Algorithm.LowTweepcredFollow -> 6.0,

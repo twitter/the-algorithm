@@ -1,13 +1,13 @@
 package com.twitter.search.earlybird.partition;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.annotation.Nonnull;
+import javatwitter.annotation.Nonnull;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -23,7 +23,7 @@ import com.twitter.search.earlybird.archive.ArchiveSearchPartitionManager;
 import com.twitter.search.earlybird.archive.ArchiveTimeSlicer;
 import com.twitter.search.earlybird.archive.ArchiveTimeSlicer.ArchiveTimeSlice;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.factory.EarlybirdIndexConfigUtil;
+import com.twitter.search.earlybird.factory.EarlybirdIndetwitterConfigUtil;
 
 /**
  * This class removes older flush version segments.
@@ -33,7 +33,7 @@ import com.twitter.search.earlybird.factory.EarlybirdIndexConfigUtil;
 public final class SegmentVulture {
   private static final Logger LOG = LoggerFactory.getLogger(SegmentVulture.class);
   @VisibleForTesting // Not final for testing.
-  protected static int numIndexFlushVersionsToKeep =
+  protected static int numIndetwitterFlushVersionsToKeep =
       EarlybirdConfig.getInt("number_of_flush_versions_to_keep", 2);
 
   private SegmentVulture() {
@@ -47,7 +47,7 @@ public final class SegmentVulture {
   static void removeOldBuildGenerations(String rootDirPath, String currentGeneration) {
     File rootDir = new File(rootDirPath);
 
-    if (!rootDir.exists() || !rootDir.isDirectory()) {
+    if (!rootDir.etwitterists() || !rootDir.isDirectory()) {
       LOG.error("Root directory is invalid: " + rootDirPath);
       return;
     }
@@ -63,7 +63,7 @@ public final class SegmentVulture {
       try {
         FileUtils.deleteDirectory(generation);
         LOG.info("Deleted old build generation: " + generation.getAbsolutePath());
-      } catch (IOException e) {
+      } catch (IOEtwitterception e) {
         LOG.error("Failed to delete old build generation at: " + generation.getAbsolutePath(), e);
       }
     }
@@ -77,16 +77,16 @@ public final class SegmentVulture {
   static void removeArchiveTimesliceOutsideServingRange(PartitionConfig partitionConfig,
       ArchiveTimeSlicer timeSlicer, SegmentSyncConfig segmentSyncConfig) {
     try {
-      long servingStartTimesliceId = Long.MAX_VALUE;
+      long servingStartTimesliceId = Long.MAtwitter_VALUE;
       long servingEndTimesliceId = 0;
-      int partitionID = partitionConfig.getIndexingHashPartitionID();
+      int partitionID = partitionConfig.getIndetwitteringHashPartitionID();
       List<ArchiveTimeSlice> timeSliceList = timeSlicer.getTimeSlicesInTierRange();
       for (ArchiveTimeSlice timeSlice : timeSliceList) {
         if (timeSlice.getMinStatusID(partitionID) < servingStartTimesliceId) {
           servingStartTimesliceId = timeSlice.getMinStatusID(partitionID);
         }
-        if (timeSlice.getMaxStatusID(partitionID) > servingEndTimesliceId) {
-          servingEndTimesliceId = timeSlice.getMaxStatusID(partitionID);
+        if (timeSlice.getMatwitterStatusID(partitionID) > servingEndTimesliceId) {
+          servingEndTimesliceId = timeSlice.getMatwitterStatusID(partitionID);
         }
       }
       LOG.info("Got the serving range: [" + servingStartTimesliceId + ", "
@@ -123,19 +123,19 @@ public final class SegmentVulture {
         }
       }
       LOG.info("Deleted " + numDeleted + " segments out of " + segments.length + " segments");
-    } catch (IOException e) {
+    } catch (IOEtwitterception e) {
       LOG.error("Can not timeslice based on the document data: ", e);
-      throw new RuntimeException(e);
+      throw new RuntimeEtwitterception(e);
     }
   }
 
   /**
-   * Deleted segments from other partitions. When boxes are moved between
+   * Deleted segments from other partitions. When botwitteres are moved between
    * partitions, segments from other partitions may stay, we will have to
    * delete them.
    */
   @VisibleForTesting
-  static void removeIndexesFromOtherPartitions(int myPartition, int numPartitions,
+  static void removeIndetwitteresFromOtherPartitions(int myPartition, int numPartitions,
         SegmentSyncConfig segmentSyncConfig) {
     File[] segments = getSegmentsOnRootDir(segmentSyncConfig);
     int numDeleted = 0;
@@ -161,29 +161,29 @@ public final class SegmentVulture {
    * Delete flushed segments of older flush versions.
    */
   @VisibleForTesting
-  static void removeOldFlushVersionIndexes(int currentFlushVersion,
+  static void removeOldFlushVersionIndetwitteres(int currentFlushVersion,
                                            SegmentSyncConfig segmentSyncConfig) {
-    SortedSet<Integer> indexFlushVersions =
+    SortedSet<Integer> indetwitterFlushVersions =
         listFlushVersions(segmentSyncConfig, currentFlushVersion);
 
-    if (indexFlushVersions == null
-        || indexFlushVersions.size() <= numIndexFlushVersionsToKeep) {
+    if (indetwitterFlushVersions == null
+        || indetwitterFlushVersions.size() <= numIndetwitterFlushVersionsToKeep) {
       return;
     }
 
-    Set<String> suffixesToKeep = Sets.newHashSetWithExpectedSize(numIndexFlushVersionsToKeep);
-    int flushVersionsToKeep = numIndexFlushVersionsToKeep;
-    while (flushVersionsToKeep > 0 && !indexFlushVersions.isEmpty()) {
-      Integer oldestFlushVersion = indexFlushVersions.last();
-      String flushFileExtension = FlushVersion.getVersionFileExtension(oldestFlushVersion);
-      if (flushFileExtension != null) {
-        suffixesToKeep.add(flushFileExtension);
+    Set<String> suffitwitteresToKeep = Sets.newHashSetWithEtwitterpectedSize(numIndetwitterFlushVersionsToKeep);
+    int flushVersionsToKeep = numIndetwitterFlushVersionsToKeep;
+    while (flushVersionsToKeep > 0 && !indetwitterFlushVersions.isEmpty()) {
+      Integer oldestFlushVersion = indetwitterFlushVersions.last();
+      String flushFileEtwittertension = FlushVersion.getVersionFileEtwittertension(oldestFlushVersion);
+      if (flushFileEtwittertension != null) {
+        suffitwitteresToKeep.add(flushFileEtwittertension);
         flushVersionsToKeep--;
       } else {
         LOG.warn("Found unknown flush versions: " + oldestFlushVersion
             + " Segments with this flush version will be deleted to recover disk space.");
       }
-      indexFlushVersions.remove(oldestFlushVersion);
+      indetwitterFlushVersions.remove(oldestFlushVersion);
     }
 
     String segmentSyncRootDir = segmentSyncConfig.getLocalSegmentSyncRootDir();
@@ -192,8 +192,8 @@ public final class SegmentVulture {
 
     for (File segment : segments) {
       boolean keepSegment = false;
-      for (String suffix : suffixesToKeep) {
-        if (segment.getName().endsWith(suffix)) {
+      for (String suffitwitter : suffitwitteresToKeep) {
+        if (segment.getName().endsWith(suffitwitter)) {
           keepSegment = true;
           break;
         }
@@ -202,7 +202,7 @@ public final class SegmentVulture {
         try {
           FileUtils.deleteDirectory(segment);
           LOG.info("Deleted old flushed segment: " + segment.getAbsolutePath());
-        } catch (IOException e) {
+        } catch (IOEtwitterception e) {
           LOG.error("Failed to delete old flushed segment.", e);
         }
       }
@@ -225,7 +225,7 @@ public final class SegmentVulture {
       FileUtils.deleteDirectory(segment);
       LOG.info("Deleted segment from other partition: " + segment.getAbsolutePath());
       return true;
-    } catch (IOException e) {
+    } catch (IOEtwitterception e) {
       LOG.error("Failed to delete segment from other partition.", e);
       return false;
     }
@@ -246,9 +246,9 @@ public final class SegmentVulture {
 
     String segmentSyncRootDir = sync.getLocalSegmentSyncRootDir();
     File dir = new File(segmentSyncRootDir);
-    if (!dir.exists()) {
+    if (!dir.etwitterists()) {
       LOG.info("segmentSyncRootDir [" + segmentSyncRootDir
-          + "] does not exist");
+          + "] does not etwitterist");
       return flushVersions;
     }
     if (!dir.isDirectory()) {
@@ -285,7 +285,7 @@ public final class SegmentVulture {
       try {
         int flushVersion = Integer.parseInt(nameSplits[1]);
         flushVersions.add(flushVersion);
-      } catch (NumberFormatException e) {
+      } catch (NumberFormatEtwitterception e) {
         LOG.warn("Bad flush version number in segment name: " + segment.getAbsolutePath());
       }
     }
@@ -306,15 +306,15 @@ public final class SegmentVulture {
     // The unscrubbed segment root directory, used for rebuilds and for segments created before
     // we introduced scrub gens. The getLocalSegmentSyncRootDir should be something like:
     // $unscrubbedSegmentDir/scrubbed/$scrub_gen/,
-    // get unscrubbedSegmentDir from string name here in case scrubbed dir does not exist yet
+    // get unscrubbedSegmentDir from string name here in case scrubbed dir does not etwitterist yet
     File unscrubbedSegmentDir = new File(sync.getLocalSegmentSyncRootDir().split("scrubbed")[0]);
-    if (!unscrubbedSegmentDir.exists()) {
+    if (!unscrubbedSegmentDir.etwitterists()) {
       // For a new host that swapped in, it might not have flushed_segment dir yet.
       // return directly in that case.
-      LOG.info(unscrubbedSegmentDir.getAbsoluteFile() + "does not exist, nothing to remove.");
+      LOG.info(unscrubbedSegmentDir.getAbsoluteFile() + "does not etwitterist, nothing to remove.");
       return;
     }
-    Preconditions.checkArgument(unscrubbedSegmentDir.exists());
+    Preconditions.checkArgument(unscrubbedSegmentDir.etwitterists());
     for (File file : unscrubbedSegmentDir.listFiles()) {
       if (file.getName().matches("scrubbed")) {
         continue;
@@ -322,14 +322,14 @@ public final class SegmentVulture {
       try {
         LOG.info("Deleting old unscrubbed segment: " + file.getAbsolutePath());
         FileUtils.deleteDirectory(file);
-      } catch (IOException e) {
+      } catch (IOEtwitterception e) {
         LOG.error("Failed to delete directory: " + file.getPath(), e);
       }
     }
 
     // Delete all segments from previous scrub generations.
     File allScrubbedSegmentsDir = currentScrubGenSegmentDir.getParentFile();
-    if (allScrubbedSegmentsDir.exists()) {
+    if (allScrubbedSegmentsDir.etwitterists()) {
       for (File file : allScrubbedSegmentsDir.listFiles()) {
         if (file.getPath().equals(currentScrubGenSegmentDir.getPath())) {
           continue;
@@ -337,7 +337,7 @@ public final class SegmentVulture {
         try {
           LOG.info("Deleting old scrubbed segment: " + file.getAbsolutePath());
           FileUtils.deleteDirectory(file);
-        } catch (IOException e) {
+        } catch (IOEtwitterception e) {
           LOG.error("Failed to delete directory: " + file.getPath(), e);
         }
       }
@@ -356,7 +356,7 @@ public final class SegmentVulture {
       int schemaMajorVersion,
       SegmentSyncConfig segmentSyncConfig) {
 
-    if (EarlybirdIndexConfigUtil.isArchiveSearch()) {
+    if (EarlybirdIndetwitterConfigUtil.isArchiveSearch()) {
       removeOldBuildGenerations(
           EarlybirdConfig.getString("root_dir"),
           EarlybirdConfig.getString("offline_segment_build_gen")
@@ -370,11 +370,11 @@ public final class SegmentVulture {
     }
 
     // Remove segments from other partitions
-    removeIndexesFromOtherPartitions(
-        partitionConfig.getIndexingHashPartitionID(),
+    removeIndetwitteresFromOtherPartitions(
+        partitionConfig.getIndetwitteringHashPartitionID(),
         partitionConfig.getNumPartitions(), segmentSyncConfig);
 
     // Remove old flushed segments
-    removeOldFlushVersionIndexes(schemaMajorVersion, segmentSyncConfig);
+    removeOldFlushVersionIndetwitteres(schemaMajorVersion, segmentSyncConfig);
   }
 }

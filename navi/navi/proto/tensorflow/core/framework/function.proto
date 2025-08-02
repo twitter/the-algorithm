@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -42,7 +42,7 @@ message FunctionDef {
 
   // Unique IDs for each resource argument, used to track aliasing resources. If
   // Argument A and Argument B alias each other, then
-  // resource_arg_unique_ids[A.index] == resource_arg_unique_ids[B.index].
+  // resource_arg_unique_ids[A.indetwitter] == resource_arg_unique_ids[B.indetwitter].
   //
   // If this field is empty, none of the arguments could alias; otherwise, every
   // resource argument should have an entry in this field.
@@ -60,7 +60,7 @@ message FunctionDef {
   // Unlike the NodeDefs in GraphDef, we need to be able to specify a
   // list in some cases (instead of just single outputs).  Also, we
   // need to be able to deal with lists of unknown length (so the
-  // output index may not be known at function definition time).  So
+  // output indetwitter may not be known at function definition time).  So
   // we use the following format instead:
   // * "fun_in" where "fun_in" is the name of a function input arg in
   //   the `signature` field above.  This represents that input, whether
@@ -114,13 +114,13 @@ message FunctionDef {
 // function taking N + M inputs and produces N outputs.
 //
 // I.e. if we have
-//    (y1, y2, ..., y_M) = f(x1, x2, ..., x_N),
+//    (y1, y2, ..., y_M) = f(twitter1, twitter2, ..., twitter_N),
 // then, g is
-//    (dL/dx1, dL/dx2, ..., dL/dx_N) = g(x1, x2, ..., x_N,
+//    (dL/dtwitter1, dL/dtwitter2, ..., dL/dtwitter_N) = g(twitter1, twitter2, ..., twitter_N,
 //                                      dL/dy1, dL/dy2, ..., dL/dy_M),
-// where L is a scalar-value function of (x1, x2, ..., xN) (e.g., the
-// loss function). dL/dx_i is the partial derivative of L with respect
-// to x_i.
+// where L is a scalar-value function of (twitter1, twitter2, ..., twitterN) (e.g., the
+// loss function). dL/dtwitter_i is the partial derivative of L with respect
+// to twitter_i.
 message GradientDef {
   string function_name = 1;  // The function name.
   string gradient_func = 2;  // The gradient function's name.

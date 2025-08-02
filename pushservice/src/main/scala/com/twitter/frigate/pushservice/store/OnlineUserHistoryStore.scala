@@ -21,7 +21,7 @@ case class OnlineUserHistoryKey(
 case class OnlineUserHistoryStore(
   realTimeClientEventStore: RealTimeClientEventStore,
   duration: Duration = 3.days)
-    extends ReadableStore[OnlineUserHistoryKey, UserHistoryValue] {
+    etwittertends ReadableStore[OnlineUserHistoryKey, UserHistoryValue] {
 
   override def get(key: OnlineUserHistoryKey): Future[Option[UserHistoryValue]] = {
     val now = Time.now

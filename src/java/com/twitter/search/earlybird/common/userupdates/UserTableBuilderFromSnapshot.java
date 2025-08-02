@@ -1,12 +1,12 @@
 package com.twitter.search.earlybird.common.userupdates;
 
 import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.NoSuchElementEtwitterception;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -15,7 +15,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -29,7 +29,7 @@ import com.twitter.scalding.DateRange;
 import com.twitter.scalding.Hours;
 import com.twitter.scalding.RichDate;
 import com.twitter.search.user_table.sources.MostRecentGoodSafetyUserStateSource;
-import com.twitter.search.common.indexing.thriftjava.SafetyUserState;
+import com.twitter.search.common.indetwittering.thriftjava.SafetyUserState;
 import com.twitter.search.common.util.io.LzoThriftBlockFileReader;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
 import com.twitter.util.Duration;
@@ -41,7 +41,7 @@ import com.twitter.util.Time;
 public class UserTableBuilderFromSnapshot {
   private static final Logger LOG = LoggerFactory.getLogger(UserTableBuilderFromSnapshot.class);
 
-  private static final int MAX_DAYS_TO_CHECK = 7;
+  private static final int MAtwitter_DAYS_TO_CHECK = 7;
   public static final String DATA_DIR = "user_states";
   public static final String METADATA_DIR = "last_updated_ms";
 
@@ -122,8 +122,8 @@ public class UserTableBuilderFromSnapshot {
 
       stream = getUserUpdates();
       stream.forEach(this::insertUser);
-    } catch (IOException e) {
-      LOG.error("IOException while building table: {}", e.getMessage(), e);
+    } catch (IOEtwitterception e) {
+      LOG.error("IOEtwitterception while building table: {}", e.getMessage(), e);
 
       return Optional.empty();
     } finally {
@@ -140,8 +140,8 @@ public class UserTableBuilderFromSnapshot {
 
     try {
       userTable.setLastRecordTimestamp(readTimestampOfLastSeenUpdateFromSnapshot());
-    } catch (IOException e) {
-      LOG.error("IOException reading timestamp of last update: {}", e.getMessage(), e);
+    } catch (IOEtwitterception e) {
+      LOG.error("IOEtwitterception reading timestamp of last update: {}", e.getMessage(), e);
       return Optional.empty();
     }
 
@@ -157,7 +157,7 @@ public class UserTableBuilderFromSnapshot {
             DATA_DIR,
             METADATA_DIR,
             DateRange.apply(
-                RichDate.now().$minus(Hours.apply(MAX_DAYS_TO_CHECK * 24)),
+                RichDate.now().$minus(Hours.apply(MAtwitter_DAYS_TO_CHECK * 24)),
                 RichDate.now())
         ).partitionHdfsPaths(new HdfsConfiguration())
          ._1()
@@ -169,7 +169,7 @@ public class UserTableBuilderFromSnapshot {
     LOG.info("Snapshot metadata path: {}", snapshotMetaDataPath);
   }
 
-  private Stream<UserUpdate> getUserUpdates() throws IOException {
+  private Stream<UserUpdate> getUserUpdates() throws IOEtwitterception {
     FileSystem fs = FileSystem.get(new Configuration());
     List<String> lzoFiles =
         Arrays.stream(fs.listStatus(new Path(snapshotDataPath),
@@ -182,32 +182,32 @@ public class UserTableBuilderFromSnapshot {
         new LzoThriftBlockFileReader<>(lzoFiles, SafetyUserState.class, null);
 
     Iterator<UserUpdate> iter = new Iterator<UserUpdate>() {
-      private SafetyUserState next;
+      private SafetyUserState netwittert;
 
       @Override
-      public boolean hasNext() {
-        if (next != null) {
+      public boolean hasNetwittert() {
+        if (netwittert != null) {
           return true;
         }
 
         do {
           try {
-            next = thriftReader.readNext();
-          } catch (IOException e) {
-            throw new RuntimeException(e);
+            netwittert = thriftReader.readNetwittert();
+          } catch (IOEtwitterception e) {
+            throw new RuntimeEtwitterception(e);
           }
-        } while (next == null && !thriftReader.isExhausted());
-        return next != null;
+        } while (netwittert == null && !thriftReader.isEtwitterhausted());
+        return netwittert != null;
       }
 
       @Override
-      public UserUpdate next() {
-        if (next != null || hasNext()) {
-          UserUpdate userUpdate = UserUpdate.fromUserState(next);
-          next = null;
+      public UserUpdate netwittert() {
+        if (netwittert != null || hasNetwittert()) {
+          UserUpdate userUpdate = UserUpdate.fromUserState(netwittert);
+          netwittert = null;
           return userUpdate;
         }
-        throw new NoSuchElementException();
+        throw new NoSuchElementEtwitterception();
       }
     };
 
@@ -218,7 +218,7 @@ public class UserTableBuilderFromSnapshot {
         .onClose(thriftReader::stop);
   }
 
-  private long readTimestampOfLastSeenUpdateFromSnapshot() throws IOException {
+  private long readTimestampOfLastSeenUpdateFromSnapshot() throws IOEtwitterception {
     String timestampFile = snapshotMetaDataPath + "part-00000";
     BufferedReader buffer = new BufferedReader(new InputStreamReader(
         HdfsUtils.getInputStreamSupplier(timestampFile).openStream()));

@@ -10,7 +10,7 @@ import com.twitter.tweetypie.client_id.ClientIdHelper
 import com.twitter.tweetypie.handler.TweetBuilder
 import com.twitter.tweetypie.repository.TweetKeyFactory
 import com.twitter.tweetypie.store._
-import com.twitter.tweetypie.tflock.TFlockIndexer
+import com.twitter.tweetypie.tflock.TFlockIndetwitterer
 import com.twitter.tweetypie.thriftscala._
 import com.twitter.tweetypie.util.RetryPolicyBuilder
 import com.twitter.util.Timer
@@ -30,13 +30,13 @@ object TweetStores {
   ): TotalTweetStore = {
 
     val deferredrpcRetryPolicy =
-      // retry all application exceptions for now.  however, in the future, deferredrpc
-      // may throw a backpressure exception that should not be retried.
+      // retry all application etwitterceptions for now.  however, in the future, deferredrpc
+      // may throw a backpressure etwitterception that should not be retried.
       RetryPolicyBuilder.anyFailure(settings.deferredrpcBackoffs)
 
     val asyncWriteRetryPolicy =
       // currently retries all failures with the same back-off times.  might need
-      // to update to handle backpressure exceptions differently.
+      // to update to handle backpressure etwitterceptions differently.
       RetryPolicyBuilder.anyFailure(settings.asyncWriteRetryBackoffs)
 
     val replicatedEventRetryPolicy =
@@ -82,17 +82,17 @@ object TweetStores {
         .replicatedRetry(RetryHandler.failuresOnly(replicatedEventRetryPolicy, timer, cacheStats))
     }
 
-    val indexingStore = {
-      val indexingStats = tweetStoreStats.scope("indexing")
-      TweetIndexingStore(
-        new TFlockIndexer(
+    val indetwitteringStore = {
+      val indetwitteringStats = tweetStoreStats.scope("indetwittering")
+      TweetIndetwitteringStore(
+        new TFlockIndetwitterer(
           tflock = clients.tflockWriteClient,
           hasMedia = hasMedia,
-          backgroundIndexingPriority = settings.backgroundIndexingPriority,
-          stats = indexingStats
+          backgroundIndetwitteringPriority = settings.backgroundIndetwitteringPriority,
+          stats = indetwitteringStats
         )
-      ).tracked(indexingStats)
-        .asyncRetry(asyncRetryConfig(indexingStats, TweetIndexingStore.Action))
+      ).tracked(indetwitteringStats)
+        .asyncRetry(asyncRetryConfig(indetwitteringStats, TweetIndetwitteringStore.Action))
     }
 
     val timelineUpdatingStore = {
@@ -138,7 +138,7 @@ object TweetStores {
           lockingCacheCountsStore,
           timer,
           settings.aggregatedTweetCountsFlushInterval,
-          settings.maxAggregatedCountsSize,
+          settings.matwitterAggregatedCountsSize,
           cacheScope
         )
       }
@@ -240,7 +240,7 @@ object TweetStores {
     val asyncInsertStore =
       AsyncInsertTweet.Store(
         replicatingStore = replicatingStore,
-        indexingStore = indexingStore,
+        indetwitteringStore = indetwitteringStore,
         tweetCountsUpdatingStore = tweetCountsUpdatingStore,
         timelineUpdatingStore = timelineUpdatingStore,
         eventBusEnqueueStore = eventBusEnqueueStore,
@@ -270,7 +270,7 @@ object TweetStores {
         manhattanStore = manhattanStore,
         cachingTweetStore = cachingTweetStore,
         replicatingStore = replicatingStore,
-        indexingStore = indexingStore,
+        indetwitteringStore = indetwitteringStore,
         eventBusEnqueueStore = eventBusEnqueueStore,
         timelineUpdatingStore = timelineUpdatingStore,
         tweetCountsUpdatingStore = tweetCountsUpdatingStore,
@@ -396,7 +396,7 @@ object TweetStores {
 
     val asyncSetRetweetVisibilityStore =
       AsyncSetRetweetVisibility.Store(
-        tweetIndexingStore = indexingStore,
+        tweetIndetwitteringStore = indetwitteringStore,
         tweetCountsCacheUpdatingStore = tweetCountsUpdatingStore,
         replicatingTweetStore = replicatingStore,
         retweetArchivalEnqueueStore = retweetArchivalEnqueueStore
@@ -429,9 +429,9 @@ object TweetStores {
 
     /*
      * This composed store handles all synchronous side effects of an undelete
-     * but does not execute the undeletion.
+     * but does not etwitterecute the undeletion.
      *
-     * This store is executed after the actual undelete request succeeds.
+     * This store is etwitterecuted after the actual undelete request succeeds.
      * The undeletion request is initiated by Undelete.apply()
      */
     val undeleteTweetStore =
@@ -446,7 +446,7 @@ object TweetStores {
       AsyncUndeleteTweet.Store(
         cachingTweetStore = cachingTweetStore,
         eventBusEnqueueStore = eventBusEnqueueStore,
-        indexingStore = indexingStore,
+        indetwitteringStore = indetwitteringStore,
         replicatingStore = replicatingStore,
         mediaServiceStore = mediaServiceStore,
         timelineUpdatingStore = timelineUpdatingStore

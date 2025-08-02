@@ -27,15 +27,15 @@ object ConversationControls {
   object Scenario {
     case class CommonScenario(
       createConversationControl: TweetCreateConversationControl,
-      descriptionSuffix: String,
-      expectedConversationControl: (UserId, Seq[UserId]) => ConversationControl,
+      descriptionSuffitwitter: String,
+      etwitterpectedConversationControl: (UserId, Seq[UserId]) => ConversationControl,
       inviteViaMention: Option[Boolean])
 
     def mkCommunityScenario(inviteViaMention: Option[Boolean]): CommonScenario =
       CommonScenario(
         Create.community(inviteViaMention = inviteViaMention),
         "community",
-        expectedConversationControl = (authorId, userIds) => {
+        etwitterpectedConversationControl = (authorId, userIds) => {
           community(userIds, authorId, inviteViaMention)
         },
         inviteViaMention
@@ -45,7 +45,7 @@ object ConversationControls {
       CommonScenario(
         Create.byInvitation(inviteViaMention = inviteViaMention),
         "invited users",
-        expectedConversationControl = (authorId, userIds) => {
+        etwitterpectedConversationControl = (authorId, userIds) => {
           byInvitation(userIds, authorId, inviteViaMention)
         },
         inviteViaMention
@@ -55,7 +55,7 @@ object ConversationControls {
       CommonScenario(
         Create.followers(inviteViaMention = inviteViaMention),
         "followers",
-        expectedConversationControl = (authorId, userIds) => {
+        etwitterpectedConversationControl = (authorId, userIds) => {
           followers(userIds, authorId, inviteViaMention)
         },
         inviteViaMention

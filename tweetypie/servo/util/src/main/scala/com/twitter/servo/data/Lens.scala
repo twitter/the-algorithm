@@ -1,9 +1,9 @@
 package com.twitter.servo.data
 
-import scala.language.existentials
+import scala.language.etwitteristentials
 
 object Lens {
-  private[this] val _identity = iso[Any, Any](x => x, x => x)
+  private[this] val _identity = iso[Any, Any](twitter => twitter, twitter => twitter)
 
   /**
    * The identity lens.
@@ -19,7 +19,7 @@ object Lens {
   /**
    * Create a lens from an isomorphism.
    */
-  def iso[A, B](to: A => B, from: B => A) = Lens[A, B](to, (_, x) => from(x))
+  def iso[A, B](to: A => B, from: B => A) = Lens[A, B](to, (_, twitter) => from(twitter))
 
   /**
    * Using multiple lenses, copy multiple fields from one object to another, returning
@@ -32,15 +32,15 @@ object Lens {
 
   /**
    * setAll can be used to set multiple values using multiple lenses on the same input
-   * value in one call, which is more readable than nested calls.  For example, say
-   * that we have lenses (lensX: Lens[A, X]), (lensY: Lens[A, Y]), and (lensZ: Lens[A, Z]),
+   * value in one call, which is more readable than nested calls.  For etwitterample, say
+   * that we have lenses (lenstwitter: Lens[A, twitter]), (lensY: Lens[A, Y]), and (lensZ: Lens[A, Z]),
    * then instead of writing:
    *
-   *    lensX.set(lensY.set(lensZ.set(a, z), y), x)
+   *    lenstwitter.set(lensY.set(lensZ.set(a, z), y), twitter)
    *
    * you can write:
    *
-   *    Lens.setAll(a, lensX -> x, lensY -> y, lensZ -> z)
+   *    Lens.setAll(a, lenstwitter -> twitter, lensY -> y, lensZ -> z)
    */
   def setAll[A](a: A, lensAndValues: ((Lens[A, B], B) forSome { type B })*): A =
     lensAndValues.foldLeft(a) { case (a, (l, b)) => l.set(a, b) }
@@ -84,7 +84,7 @@ object Lens {
  *
  * See e.g.
  * http://stackoverflow.com/questions/5767129/lenses-fclabels-data-accessor-which-library-for-structure-access-and-mutatio#answer-5769285
- * for a more in-depth explanation of lenses.
+ * for a more in-depth etwitterplanation of lenses.
  */
 case class Lens[A, B](get: A => B, set: (A, B) => A) {
 
@@ -97,13 +97,13 @@ case class Lens[A, B](get: A => B, set: (A, B) => A) {
    * Compose with another lens, such that the setter updates the
    * outermost structure, and the getter gets the innermost structure.
    */
-  def andThen[C](next: Lens[B, C]) =
-    Lens(get andThen next.get, (a: A, c: C) => set(a, next.set(get(a), c)))
+  def andThen[C](netwittert: Lens[B, C]) =
+    Lens(get andThen netwittert.get, (a: A, c: C) => set(a, netwittert.set(get(a), c)))
 
   /**
    * An operator alias for `andThen`.
    */
-  def >>[C](next: Lens[B, C]) = andThen(next)
+  def >>[C](netwittert: Lens[B, C]) = andThen(netwittert)
 
   /**
    * Lift the function on the viewed value to a function on the outer

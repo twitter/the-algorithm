@@ -4,10 +4,10 @@ import com.twitter.eventdetection.common.louvain.LouvainDriver
 import com.twitter.eventdetection.common.louvain.NetworkFactory
 import com.twitter.eventdetection.common.model.Entity
 import com.twitter.eventdetection.common.model.NetworkInput
-import com.twitter.eventdetection.common.model.TextEntityValue
+import com.twitter.eventdetection.common.model.TetwittertEntityValue
 import com.twitter.util.Stopwatch
 import scala.collection.JavaConverters._
-import scala.math.max
+import scala.math.matwitter
 
 /**
  * Groups entities by the Louvain clustering method.
@@ -15,12 +15,12 @@ import scala.math.max
  * less than or equal to this threshold will be filtered out.
  * @param appliedResolutionFactor: If present, will be used to multiply the applied resolution
  * parameter of the Louvain method by this factor.
- * Note that the DEFAULT_MAX_RESOLUTION will not be applied.
+ * Note that the DEFAULT_MAtwitter_RESOLUTION will not be applied.
  */
 class LouvainClusteringMethod(
   similarityThreshold: Double,
   appliedResolutionFactor: Option[Double])
-    extends ClusteringMethod {
+    etwittertends ClusteringMethod {
 
   import ClusteringStatistics._
 
@@ -63,7 +63,7 @@ class LouvainClusteringMethod(
     // - Long (entity id) -> Entity
     // - Entity -> Long (entity id)
     val embeddingIdToEntity: Map[Long, Entity] = embeddings.map {
-      case (id, _) => id -> Entity(TextEntityValue(id.toString, Some(id.toString)), None)
+      case (id, _) => id -> Entity(TetwittertEntityValue(id.toString, Some(id.toString)), None)
     }
     val entityToEmbeddingId: Map[Entity, Long] = embeddingIdToEntity.map {
       case (id, e) => e -> id
@@ -151,7 +151,7 @@ class LouvainClusteringMethod(
     // - Long (entity id) -> Entity
     // - Entity -> Long (entity id)
     val embeddingIdToEntity: Map[Long, Entity] = embeddings.map {
-      case (id, _) => id -> Entity(TextEntityValue(id.toString, Some(id.toString)), None)
+      case (id, _) => id -> Entity(TetwittertEntityValue(id.toString, Some(id.toString)), None)
     }
     val entityToEmbeddingId: Map[Entity, Long] = embeddingIdToEntity.map {
       case (id, e) => e -> id
@@ -221,10 +221,10 @@ class LouvainClusteringMethod(
                       case otherClusterContact =>
                         edgesSimilarityMap((contactId, otherClusterContact))
                     }.sum / otherCluster.size
-                }.max
+                }.matwitter
 
                 // silhouette (value) of one userId i
-                val s_i = (a_i - b_i) / max(a_i, b_i)
+                val s_i = (a_i - b_i) / matwitter(a_i, b_i)
                 (contactId, s_i)
               }
             }

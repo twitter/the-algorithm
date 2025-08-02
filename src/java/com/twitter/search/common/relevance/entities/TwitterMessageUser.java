@@ -1,7 +1,7 @@
 package com.twitter.search.common.relevance.entities;
 
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import javatwitter.annotation.Nonnull;
 
 import com.google.common.base.Preconditions;
 
@@ -9,7 +9,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.lucene.analysis.TokenStream;
 
-import com.twitter.search.common.util.text.TokenizerHelper;
+import com.twitter.search.common.util.tetwittert.TokenizerHelper;
 
 // Represents from-user, to-user, mentions and audioSpace admins in TwitterMessage.
 public final class TwitterMessageUser {
@@ -31,7 +31,7 @@ public final class TwitterMessageUser {
     }
 
     /**
-     * Initialized Builder based on an existing TwitterMessageUser
+     * Initialized Builder based on an etwitteristing TwitterMessageUser
      */
     public Builder(TwitterMessageUser user) {
       this.screenName = user.screenName;

@@ -7,9 +7,9 @@ import com.twitter.ml.api.util.FDsl._
 import com.twitter.simclusters_v2.common.SimClustersEmbedding
 
 class SimClustersEmbeddingAdapter(embeddingFeature: SparseContinuous)
-    extends IRecordOneToOneAdapter[SimClustersEmbedding] {
+    etwittertends IRecordOneToOneAdapter[SimClustersEmbedding] {
 
-  override def getFeatureContext: FeatureContext = new FeatureContext(embeddingFeature)
+  override def getFeatureContetwittert: FeatureContetwittert = new FeatureContetwittert(embeddingFeature)
 
   override def adaptToDataRecord(embedding: SimClustersEmbedding): DataRecord = {
     val embeddingMap = embedding.embedding.map {
@@ -24,9 +24,9 @@ class SimClustersEmbeddingAdapter(embeddingFeature: SparseContinuous)
 class NormalizedSimClustersEmbeddingAdapter(
   embeddingFeature: SparseContinuous,
   normFeature: Continuous)
-    extends IRecordOneToOneAdapter[SimClustersEmbedding] {
+    etwittertends IRecordOneToOneAdapter[SimClustersEmbedding] {
 
-  override def getFeatureContext: FeatureContext = new FeatureContext(embeddingFeature, normFeature)
+  override def getFeatureContetwittert: FeatureContetwittert = new FeatureContetwittert(embeddingFeature, normFeature)
 
   override def adaptToDataRecord(embedding: SimClustersEmbedding): DataRecord = {
 

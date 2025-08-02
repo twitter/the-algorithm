@@ -9,7 +9,7 @@ create_thrift_libraries(
         "src/thrift/com/twitter/recos:recos-common",
         "src/thrift/com/twitter/recos/features:tweet",
     ],
-    export_roots = [
+    etwitterport_roots = [
         "src/thrift/com/twitter/recos/features:tweet",
     ],
     generate_languages = [

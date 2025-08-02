@@ -40,12 +40,12 @@ public class longArray {
     this(swigfaissJNI.new_longArray(nelements), true);
   }
 
-  public long getitem(int index) {
-    return swigfaissJNI.longArray_getitem(swigCPtr, this, index);
+  public long getitem(int indetwitter) {
+    return swigfaissJNI.longArray_getitem(swigCPtr, this, indetwitter);
   }
 
-  public void setitem(int index, long value) {
-    swigfaissJNI.longArray_setitem(swigCPtr, this, index, value);
+  public void setitem(int indetwitter, long value) {
+    swigfaissJNI.longArray_setitem(swigCPtr, this, indetwitter, value);
   }
 
   public SWIGTYPE_p_long_long cast() {

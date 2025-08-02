@@ -15,7 +15,7 @@ import com.twitter.timelines.configapi.HasParams
 @Singleton
 class InterleaveRanker[Target <: HasParams] @Inject() (
   statsReceiver: StatsReceiver)
-    extends Ranker[Target, CandidateUser] {
+    etwittertends Ranker[Target, CandidateUser] {
 
   val name: String = this.getClass.getSimpleName
   private val stats = statsReceiver.scope("interleave_ranker")
@@ -48,7 +48,7 @@ class InterleaveRanker[Target <: HasParams] @Inject() (
     val validCandidates =
       candidates.filter { c =>
         c.scores.isDefined &&
-        c.scores.exists(_.selectedRankerId.isDefined) &&
+        c.scores.etwitterists(_.selectedRankerId.isDefined) &&
         getCandidateScoreByRankerId(c, c.scores.flatMap(_.selectedRankerId)).isDefined
       }
 
@@ -56,18 +56,18 @@ class InterleaveRanker[Target <: HasParams] @Inject() (
     inputStats.counter("candidates_with_no_scores").incr(candidates.count(_.scores.isEmpty))
     inputStats
       .counter("candidates_with_no_selected_ranker").incr(candidates.count { c =>
-        c.scores.isEmpty || c.scores.exists(_.selectedRankerId.isEmpty)
+        c.scores.isEmpty || c.scores.etwitterists(_.selectedRankerId.isEmpty)
       })
     inputStats
       .counter("candidates_with_no_score_for_selected_ranker").incr(candidates.count { c =>
         c.scores.isEmpty ||
-        c.scores.exists(_.selectedRankerId.isEmpty) ||
+        c.scores.etwitterists(_.selectedRankerId.isEmpty) ||
         getCandidateScoreByRankerId(c, c.scores.flatMap(_.selectedRankerId)).isEmpty
       })
     inputStats.counter("total_num_candidates").incr(candidates.length)
     inputStats.counter("total_valid_candidates").incr(validCandidates.length)
 
-    // We only count rankerIds from those candidates who are valid to exclude those candidates with
+    // We only count rankerIds from those candidates who are valid to etwitterclude those candidates with
     // a valid selectedRankerId that don't have an associated score for it.
     val rankerIds = validCandidates.flatMap(_.scores.flatMap(_.selectedRankerId)).sorted.distinct
     rankerIds.foreach { rankerId =>
@@ -99,35 +99,35 @@ class InterleaveRanker[Target <: HasParams] @Inject() (
         candidates
         // We first sort all candidates using this ranker.
           .sortBy(-getCandidateScoreByRankerId(_, Some(ranker)).getOrElse(Double.MinValue))
-          .zipWithIndex.filter(
+          .zipWithIndetwitter.filter(
             // but only hold those candidates whose selected ranker is this ranker.
             // These ranks will be forced in the final ordering.
             _._1.scores.flatMap(_.selectedRankerId).contains(ranker))
       }
 
-    // Only candidates who have isInProducerScoringExperiment set to true will have their position enforced. We
-    // separate candidates into two groups: (1) Production and (2) Experiment.
-    val (expCandidates, prodCandidates) =
-      candidatesWithRank.partition(_._1.scores.exists(_.isInProducerScoringExperiment))
+    // Only candidates who have isInProducerScoringEtwitterperiment set to true will have their position enforced. We
+    // separate candidates into two groups: (1) Production and (2) Etwitterperiment.
+    val (etwitterpCandidates, prodCandidates) =
+      candidatesWithRank.partition(_._1.scores.etwitterists(_.isInProducerScoringEtwitterperiment))
 
-    // We resolve (potential) conflicts between the enforced ranks of experimental models.
-    val expCandidatesFinalPos = resolveConflicts(expCandidates)
+    // We resolve (potential) conflicts between the enforced ranks of etwitterperimental models.
+    val etwitterpCandidatesFinalPos = resolveConflicts(etwitterpCandidates)
 
     // Retrieve non-occupied positions and assign them to candidates who use production ranker.
-    val occupiedPos = expCandidatesFinalPos.map(_._2).toSet
+    val occupiedPos = etwitterpCandidatesFinalPos.map(_._2).toSet
     val prodCandidatesFinalPos =
       prodCandidates
         .map(_._1).zip(
           candidates.indices.filterNot(occupiedPos.contains).sorted.take(prodCandidates.length))
 
     // Merge the two groups and sort them by their corresponding positions.
-    val finalCandidates = (prodCandidatesFinalPos ++ expCandidatesFinalPos).sortBy(_._2).map(_._1)
+    val finalCandidates = (prodCandidatesFinalPos ++ etwitterpCandidatesFinalPos).sortBy(_._2).map(_._1)
 
     // We count the presence of each ranker in the top-3 final positions.
     finalCandidates.zip(0 until 3).foreach {
       case (c, r) =>
-        // We only do so for candidates that are in a producer-side experiment.
-        if (c.scores.exists(_.isInProducerScoringExperiment))
+        // We only do so for candidates that are in a producer-side etwitterperiment.
+        if (c.scores.etwitterists(_.isInProducerScoringEtwitterperiment))
           c.scores.flatMap(_.selectedRankerId).map(_.toString).foreach { rankerName =>
             interleavingStats
               .counter(s"num_final_position_${r}_$rankerName")
@@ -143,7 +143,7 @@ class InterleaveRanker[Target <: HasParams] @Inject() (
     candidatesWithRank: Seq[(CandidateUser, Int)]
   ): Seq[(CandidateUser, Int)] = {
     // The following two metrics will allow us to calculate the rate of conflicts occurring.
-    // Example: If overall there are 10 producers in different bucketing experiments, and 3 of them
+    // Etwitterample: If overall there are 10 producers in different bucketing etwitterperiments, and 3 of them
     // are assigned to the same position. The rate would be 3/10, 30%.
     val numCandidatesWithConflicts = interleavingStats.counter("candidates_with_conflict")
     val numCandidatesNoConflicts = interleavingStats.counter("candidates_without_conflict")
@@ -151,8 +151,8 @@ class InterleaveRanker[Target <: HasParams] @Inject() (
       case (rank, candidatesWithRank) => (rank, candidatesWithRank.map(_._1))
     }
 
-    candidatesGroupedByRank.foldLeft(Seq[(CandidateUser, Int)]()) { (upToHere, nextGroup) =>
-      val (rank, candidates) = nextGroup
+    candidatesGroupedByRank.foldLeft(Seq[(CandidateUser, Int)]()) { (upToHere, netwittertGroup) =>
+      val (rank, candidates) = netwittertGroup
       if (candidates.length > 1)
         numCandidatesWithConflicts.incr(candidates.length)
       else
@@ -160,13 +160,13 @@ class InterleaveRanker[Target <: HasParams] @Inject() (
 
       // We use the position after the last-assigned candidate as a starting point, or 0 otherwise.
       // If candidates' position is after this "starting point", we enforce that position instead.
-      val minAvailableIndex = scala.math.max(upToHere.lastOption.map(_._2).getOrElse(-1) + 1, rank)
+      val minAvailableIndetwitter = scala.math.matwitter(upToHere.lastOption.map(_._2).getOrElse(-1) + 1, rank)
       val enforcedPos =
-        (minAvailableIndex until minAvailableIndex + candidates.length).toList
+        (minAvailableIndetwitter until minAvailableIndetwitter + candidates.length).toList
       val shuffledEnforcedPos =
         if (candidates.length > 1) scala.util.Random.shuffle(enforcedPos) else enforcedPos
       if (shuffledEnforcedPos.length > 1) {
-        candidates.zip(shuffledEnforcedPos).sortBy(_._2).map(_._1).zipWithIndex.foreach {
+        candidates.zip(shuffledEnforcedPos).sortBy(_._2).map(_._1).zipWithIndetwitter.foreach {
           case (c, r) =>
             c.scores.flatMap(_.selectedRankerId).map(_.toString).foreach { rankerName =>
               // For each ranker, we count the total number of times it has been in a conflict.
@@ -174,7 +174,7 @@ class InterleaveRanker[Target <: HasParams] @Inject() (
                 .counter(s"num_${shuffledEnforcedPos.length}-way_conflicts_$rankerName")
                 .incr()
               // We also count the positions each of the rankers have fallen randomly into. In any
-              // experiment this should converge to uniform distribution given enough occurrences.
+              // etwitterperiment this should converge to uniform distribution given enough occurrences.
               // Note that the position here is relative to the other candidates in the conflict and
               // not the overall position of each candidate.
               interleavingStats

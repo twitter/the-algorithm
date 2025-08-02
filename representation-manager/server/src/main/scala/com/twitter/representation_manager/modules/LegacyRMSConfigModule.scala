@@ -2,14 +2,14 @@ package com.twitter.representation_manager.modules
 
 import com.google.inject.Provides
 import com.twitter.inject.TwitterModule
-import javax.inject.Named
-import javax.inject.Singleton
+import javatwitter.inject.Named
+import javatwitter.inject.Singleton
 
-object LegacyRMSConfigModule extends TwitterModule {
+object LegacyRMSConfigModule etwittertends TwitterModule {
   @Singleton
   @Provides
-  @Named("cacheHashKeyPrefix")
-  def providesCacheHashKeyPrefix: String = "RMS"
+  @Named("cacheHashKeyPrefitwitter")
+  def providesCacheHashKeyPrefitwitter: String = "RMS"
 
   @Singleton
   @Provides

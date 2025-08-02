@@ -1,6 +1,6 @@
 package com.twitter.search.common.relevance.entities;
 
-import java.text.DateFormat;
+import java.tetwittert.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,8 +13,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nonnull;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
@@ -31,17 +31,17 @@ import org.apache.lucene.analysis.TokenStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.common.text.pipeline.TwitterLanguageIdentifier;
-import com.twitter.common.text.token.TokenizedCharSequence;
-import com.twitter.common_internal.text.version.PenguinVersion;
+import com.twitter.common.tetwittert.language.LocaleUtil;
+import com.twitter.common.tetwittert.pipeline.TwitterLanguageIdentifier;
+import com.twitter.common.tetwittert.token.TokenizedCharSequence;
+import com.twitter.common_internal.tetwittert.version.PenguinVersion;
 import com.twitter.cuad.ner.plain.thriftjava.NamedEntity;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftEtwitterpandedUrl;
 import com.twitter.search.common.relevance.features.TweetFeatures;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.relevance.features.TweetTextQuality;
+import com.twitter.search.common.relevance.features.TweetTetwittertFeatures;
+import com.twitter.search.common.relevance.features.TweetTetwittertQuality;
 import com.twitter.search.common.relevance.features.TweetUserFeatures;
-import com.twitter.search.common.util.text.NormalizerHelper;
+import com.twitter.search.common.util.tetwittert.NormalizerHelper;
 import com.twitter.service.spiderduck.gen.MediaTypes;
 import com.twitter.tweetypie.thriftjava.ComposerSource;
 import com.twitter.util.TwitterDateFormat;
@@ -111,12 +111,12 @@ public class TwitterMessage {
       this.tweetFeatures = tweetFeatures;
     }
 
-    public TweetTextQuality getTweetTextQuality() {
-      return this.tweetFeatures.getTweetTextQuality();
+    public TweetTetwittertQuality getTweetTetwittertQuality() {
+      return this.tweetFeatures.getTweetTetwittertQuality();
     }
 
-    public TweetTextFeatures getTweetTextFeatures() {
-      return this.tweetFeatures.getTweetTextFeatures();
+    public TweetTetwittertFeatures getTweetTetwittertFeatures() {
+      return this.tweetFeatures.getTweetTetwittertFeatures();
     }
 
     public TweetUserFeatures getTweetUserFeatures() {
@@ -143,11 +143,11 @@ public class TwitterMessage {
   public static final int INT_FIELD_NOT_PRESENT = -1;
   public static final long LONG_FIELD_NOT_PRESENT = -1;
   public static final double DOUBLE_FIELD_NOT_PRESENT = -1;
-  public static final int MAX_USER_REPUTATION = 100;
+  public static final int MAtwitter_USER_REPUTATION = 100;
 
   private final long tweetId;
 
-  private String text;
+  private String tetwittert;
 
   private Date date;
   @Nonnull
@@ -157,12 +157,12 @@ public class TwitterMessage {
   private Locale locale = null;
   private Locale linkLocale = null;
 
-  // Original source text.
+  // Original source tetwittert.
   private String origSource;
   // Source with HTML tags removed and truncated.
   private String strippedSource;
 
-  // Original location text.
+  // Original location tetwittert.
   private String origLocation;
 
   // Location truncated for mysql field-width reasons (see TwitterMessageUtil.java).
@@ -174,10 +174,10 @@ public class TwitterMessage {
   private Integer followersCount = INT_FIELD_NOT_PRESENT;
   private boolean deleted = false;
 
-  // Fields extracted from entities (in the JSON object)
+  // Fields etwittertracted from entities (in the JSON object)
   private List<TwitterMessageUser> mentions = new ArrayList<>();
   private Set<String> hashtags = Sets.newHashSet();
-  // Lat/lon and region accuracy tuples extracted from tweet text, or null.
+  // Lat/lon and region accuracy tuples etwittertracted from tweet tetwittert, or null.
   private GeoObject geoLocation = null;
   private boolean uncodeableLocation = false;
   // This is set if the tweet is geotagged. (i.e. "geo" or "coordinate" section is present
@@ -194,9 +194,9 @@ public class TwitterMessage {
   private TwitterRetweetMessage retweetMessage;
   private TwitterQuotedMessage quotedMessage;
   private List<String> places;
-  // maps from original url (the t.co url) to ThriftExpandedUrl, which contains the
-  // expanded url and the spiderduck response (canoicalLastHopUrl and mediatype)
-  private final Map<String, ThriftExpandedUrl> expandedUrls;
+  // maps from original url (the t.co url) to ThriftEtwitterpandedUrl, which contains the
+  // etwitterpanded url and the spiderduck response (canoicalLastHopUrl and mediatype)
+  private final Map<String, ThriftEtwitterpandedUrl> etwitterpandedUrls;
   // maps the photo status id to the media url
   private Map<Long, String> photoUrls;
   private Optional<Long> inReplyToStatusId = Optional.empty();
@@ -210,9 +210,9 @@ public class TwitterMessage {
   // True if tweet is a self-threaded tweet
   private boolean selfThread = false;
 
-  // If the tweet is a part of an exclusive conversation, the author who started
+  // If the tweet is a part of an etwitterclusive conversation, the author who started
   // that conversation.
-  private Optional<Long> exclusiveConversationAuthorId = Optional.empty();
+  private Optional<Long> etwitterclusiveConversationAuthorId = Optional.empty();
 
   // tweet features map for multiple versions of penguin
   private Map<PenguinVersion, VersionedTweetFeatures> versionedTweetFeaturesMap;
@@ -251,7 +251,7 @@ public class TwitterMessage {
   public TwitterMessage(Long tweetId, List<PenguinVersion> supportedPenguinVersions) {
     this.tweetId = tweetId;
     this.places = new ArrayList<>();
-    this.expandedUrls = new LinkedHashMap<>();
+    this.etwitterpandedUrls = new LinkedHashMap<>();
     // make sure we support at least one, but no more than two versions of penguin
     this.supportedPenguinVersions = supportedPenguinVersions;
     this.versionedTweetFeaturesMap = getVersionedTweetFeaturesMap();
@@ -272,7 +272,7 @@ public class TwitterMessage {
   }
 
   // To-user could have been inferred from the mention at the position 0.
-  // But if there is an explicit in-reply-to user, we might need to use it as to-user instead.
+  // But if there is an etwitterplicit in-reply-to user, we might need to use it as to-user instead.
   private static boolean shouldUseReplyUserAsToUser(
       Optional<TwitterMessageUser> currentToUser,
       long inReplyToUserId) {
@@ -306,17 +306,17 @@ public class TwitterMessage {
    * Sets the user reputation.
    */
   public TwitterMessage setUserReputation(double newUserReputation) {
-    if (newUserReputation > MAX_USER_REPUTATION) {
+    if (newUserReputation > MAtwitter_USER_REPUTATION) {
       LOG.warn("Out of bounds user reputation {} for status id {}", newUserReputation, tweetId);
-      this.userReputation = (float) MAX_USER_REPUTATION;
+      this.userReputation = (float) MAtwitter_USER_REPUTATION;
     } else {
       this.userReputation = newUserReputation;
     }
     return this;
   }
 
-  public String getText() {
-    return text;
+  public String getTetwittert() {
+    return tetwittert;
   }
 
   public Optional<TwitterMessageUser> getOptionalToUser() {
@@ -327,8 +327,8 @@ public class TwitterMessage {
     this.optionalToUser = optionalToUser;
   }
 
-  public void setText(String text) {
-    this.text = text;
+  public void setTetwittert(String tetwittert) {
+    this.tetwittert = tetwittert;
   }
 
   public Date getDate() {
@@ -576,7 +576,7 @@ public class TwitterMessage {
   /**
    * Returns the locale.
    * <p>
-   * Note the getLocale() will never return null, this is for the convenience of text related
+   * Note the getLocale() will never return null, this is for the convenience of tetwittert related
    * processing in the ingester. If you want the real locale, you need to check isSetLocale()
    * first to see if we really have any information about the locale of this tweet.
    */
@@ -731,7 +731,7 @@ public class TwitterMessage {
     DateFormat parser = TwitterDateFormat.apply("EEE MMM d HH:mm:ss Z yyyy");
     try {
       return parser.parse(date);
-    } catch (Exception e) {
+    } catch (Etwitterception e) {
       return null;
     }
   }
@@ -822,44 +822,44 @@ public class TwitterMessage {
     photoUrls.putIfAbsent(photoStatusId, mediaUrl);
   }
 
-  public Map<String, ThriftExpandedUrl> getExpandedUrlMap() {
-    return expandedUrls;
+  public Map<String, ThriftEtwitterpandedUrl> getEtwitterpandedUrlMap() {
+    return etwitterpandedUrls;
   }
 
-  public int getExpandedUrlMapSize() {
-    return expandedUrls.size();
+  public int getEtwitterpandedUrlMapSize() {
+    return etwitterpandedUrls.size();
   }
 
   /**
-   * Associates the given originalUrl with the given expanderUrl.
+   * Associates the given originalUrl with the given etwitterpanderUrl.
    */
-  public void addExpandedUrl(String originalUrl, ThriftExpandedUrl expandedUrl) {
-    this.expandedUrls.put(originalUrl, expandedUrl);
+  public void addEtwitterpandedUrl(String originalUrl, ThriftEtwitterpandedUrl etwitterpandedUrl) {
+    this.etwitterpandedUrls.put(originalUrl, etwitterpandedUrl);
   }
 
   /**
    * Replaces urls with resolved ones.
    */
-  public String getTextReplacedWithResolvedURLs() {
-    String retText = text;
-    for (Map.Entry<String, ThriftExpandedUrl> entry : expandedUrls.entrySet()) {
-      ThriftExpandedUrl urlInfo = entry.getValue();
+  public String getTetwittertReplacedWithResolvedURLs() {
+    String retTetwittert = tetwittert;
+    for (Map.Entry<String, ThriftEtwitterpandedUrl> entry : etwitterpandedUrls.entrySet()) {
+      ThriftEtwitterpandedUrl urlInfo = entry.getValue();
       String resolvedUrl;
       String canonicalLastHopUrl = urlInfo.getCanonicalLastHopUrl();
-      String expandedUrl = urlInfo.getExpandedUrl();
+      String etwitterpandedUrl = urlInfo.getEtwitterpandedUrl();
       if (canonicalLastHopUrl != null) {
         resolvedUrl = canonicalLastHopUrl;
         LOG.debug("{} has canonical last hop url set", urlInfo);
-      } else if (expandedUrl != null) {
-        LOG.debug("{} has no canonical last hop url set, using expanded url instead", urlInfo);
-        resolvedUrl = expandedUrl;
+      } else if (etwitterpandedUrl != null) {
+        LOG.debug("{} has no canonical last hop url set, using etwitterpanded url instead", urlInfo);
+        resolvedUrl = etwitterpandedUrl;
       } else {
-        LOG.debug("{} has no canonical last hop url or expanded url set, skipping", urlInfo);
+        LOG.debug("{} has no canonical last hop url or etwitterpanded url set, skipping", urlInfo);
         continue;
       }
-      retText = retText.replace(entry.getKey(), resolvedUrl);
+      retTetwittert = retTetwittert.replace(entry.getKey(), resolvedUrl);
     }
-    return retText;
+    return retTetwittert;
   }
 
   public long getId() {
@@ -946,15 +946,15 @@ public class TwitterMessage {
   }
 
   public int getTweetSignature(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTweetTextFeatures().getSignature();
+    return getVersionedTweetFeatures(penguinVersion).getTweetTetwittertFeatures().getSignature();
   }
 
-  public TweetTextQuality getTweetTextQuality(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTweetTextQuality();
+  public TweetTetwittertQuality getTweetTetwittertQuality(PenguinVersion penguinVersion) {
+    return getVersionedTweetFeatures(penguinVersion).getTweetTetwittertQuality();
   }
 
-  public TweetTextFeatures getTweetTextFeatures(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTweetTextFeatures();
+  public TweetTetwittertFeatures getTweetTetwittertFeatures(PenguinVersion penguinVersion) {
+    return getVersionedTweetFeatures(penguinVersion).getTweetTetwittertFeatures();
   }
 
   public TweetUserFeatures getTweetUserFeatures(PenguinVersion penguinVersion) {
@@ -972,24 +972,24 @@ public class TwitterMessage {
 
   // True if the features contain multiple hash tags or multiple trends.
   // This is intended as an anti-trend-spam measure.
-  public static boolean hasMultipleHashtagsOrTrends(TweetTextFeatures textFeatures) {
+  public static boolean hasMultipleHashtagsOrTrends(TweetTetwittertFeatures tetwittertFeatures) {
     // Allow at most 1 trend and 2 hashtags.
-    return textFeatures.getTrendingTermsSize() > 1 || textFeatures.getHashtagsSize() > 2;
+    return tetwittertFeatures.getTrendingTermsSize() > 1 || tetwittertFeatures.getHashtagsSize() > 2;
   }
 
   /**
-   * Returns the expanded URLs.
+   * Returns the etwitterpanded URLs.
    */
-  public Collection<ThriftExpandedUrl> getExpandedUrls() {
-    return expandedUrls.values();
+  public Collection<ThriftEtwitterpandedUrl> getEtwitterpandedUrls() {
+    return etwitterpandedUrls.values();
   }
 
   /**
    * Returns the canonical last hop URLs.
    */
   public Set<String> getCanonicalLastHopUrls() {
-    Set<String> result = new HashSet<>(expandedUrls.size());
-    for (ThriftExpandedUrl url : expandedUrls.values()) {
+    Set<String> result = new HashSet<>(etwitterpandedUrls.size());
+    for (ThriftEtwitterpandedUrl url : etwitterpandedUrls.values()) {
       result.add(url.getCanonicalLastHopUrl());
     }
     return result;
@@ -1088,50 +1088,50 @@ public class TwitterMessage {
     this.selfThread = selfThread;
   }
 
-  public boolean isExclusive() {
-    return exclusiveConversationAuthorId.isPresent();
+  public boolean isEtwitterclusive() {
+    return etwitterclusiveConversationAuthorId.isPresent();
   }
 
-  public long getExclusiveConversationAuthorId() {
-    return exclusiveConversationAuthorId.get();
+  public long getEtwitterclusiveConversationAuthorId() {
+    return etwitterclusiveConversationAuthorId.get();
   }
 
-  public void setExclusiveConversationAuthorId(long exclusiveConversationAuthorId) {
-    this.exclusiveConversationAuthorId = Optional.of(exclusiveConversationAuthorId);
+  public void setEtwitterclusiveConversationAuthorId(long etwitterclusiveConversationAuthorId) {
+    this.etwitterclusiveConversationAuthorId = Optional.of(etwitterclusiveConversationAuthorId);
   }
 
   /**
-   * Adds an expanded media url based on the given parameters.
+   * Adds an etwitterpanded media url based on the given parameters.
    */
-  public void addExpandedMediaUrl(String originalUrl,
-                                  String expandedUrl,
+  public void addEtwitterpandedMediaUrl(String originalUrl,
+                                  String etwitterpandedUrl,
                                   @Nullable MediaTypes mediaType) {
-    if (!StringUtils.isBlank(originalUrl) && !StringUtils.isBlank(expandedUrl)) {
-      ThriftExpandedUrl thriftExpandedUrl = new ThriftExpandedUrl();
+    if (!StringUtils.isBlank(originalUrl) && !StringUtils.isBlank(etwitterpandedUrl)) {
+      ThriftEtwitterpandedUrl thriftEtwitterpandedUrl = new ThriftEtwitterpandedUrl();
       if (mediaType != null) {
-        thriftExpandedUrl.setMediaType(mediaType);
+        thriftEtwitterpandedUrl.setMediaType(mediaType);
       }
-      thriftExpandedUrl.setOriginalUrl(originalUrl);
-      thriftExpandedUrl.setExpandedUrl(expandedUrl);  // This will be tokenized and indexed
-      // Note that the mediaURL is not indexed. We could also index it, but it is not indexed
+      thriftEtwitterpandedUrl.setOriginalUrl(originalUrl);
+      thriftEtwitterpandedUrl.setEtwitterpandedUrl(etwitterpandedUrl);  // This will be tokenized and indetwittered
+      // Note that the mediaURL is not indetwittered. We could also indetwitter it, but it is not indetwittered
       // to reduce RAM usage.
-      thriftExpandedUrl.setCanonicalLastHopUrl(expandedUrl); // This will be tokenized and indexed
-      addExpandedUrl(originalUrl, thriftExpandedUrl);
-      thriftExpandedUrl.setConsumerMedia(true);
+      thriftEtwitterpandedUrl.setCanonicalLastHopUrl(etwitterpandedUrl); // This will be tokenized and indetwittered
+      addEtwitterpandedUrl(originalUrl, thriftEtwitterpandedUrl);
+      thriftEtwitterpandedUrl.setConsumerMedia(true);
     }
   }
 
   /**
-   * Adds an expanded non-media url based on the given parameters.
+   * Adds an etwitterpanded non-media url based on the given parameters.
    */
-  public void addExpandedNonMediaUrl(String originalUrl, String expandedUrl) {
+  public void addEtwitterpandedNonMediaUrl(String originalUrl, String etwitterpandedUrl) {
     if (!StringUtils.isBlank(originalUrl)) {
-      ThriftExpandedUrl thriftExpandedUrl = new ThriftExpandedUrl(originalUrl);
-      if (!StringUtils.isBlank(expandedUrl)) {
-        thriftExpandedUrl.setExpandedUrl(expandedUrl);
+      ThriftEtwitterpandedUrl thriftEtwitterpandedUrl = new ThriftEtwitterpandedUrl(originalUrl);
+      if (!StringUtils.isBlank(etwitterpandedUrl)) {
+        thriftEtwitterpandedUrl.setEtwitterpandedUrl(etwitterpandedUrl);
       }
-      addExpandedUrl(originalUrl, thriftExpandedUrl);
-      thriftExpandedUrl.setConsumerMedia(false);
+      addEtwitterpandedUrl(originalUrl, thriftEtwitterpandedUrl);
+      thriftEtwitterpandedUrl.setConsumerMedia(false);
     }
   }
 
@@ -1142,11 +1142,11 @@ public class TwitterMessage {
    */
   @VisibleForTesting
   public void replaceUrlsWithResolvedUrls(Map<String, String> resolvedUrls) {
-    for (Map.Entry<String, ThriftExpandedUrl> urlEntry : expandedUrls.entrySet()) {
+    for (Map.Entry<String, ThriftEtwitterpandedUrl> urlEntry : etwitterpandedUrls.entrySet()) {
       String tcoUrl = urlEntry.getKey();
       if (resolvedUrls.containsKey(tcoUrl)) {
-        ThriftExpandedUrl expandedUrl = urlEntry.getValue();
-        expandedUrl.setCanonicalLastHopUrl(resolvedUrls.get(tcoUrl));
+        ThriftEtwitterpandedUrl etwitterpandedUrl = urlEntry.getValue();
+        etwitterpandedUrl.setCanonicalLastHopUrl(resolvedUrls.get(tcoUrl));
       }
     }
   }
@@ -1241,27 +1241,27 @@ public class TwitterMessage {
   }
 
   /**
-   * Compares the given messages using reflection and determines if they're approximately equal.
+   * Compares the given messages using reflection and determines if they're approtwitterimately equal.
    */
-  public static boolean reflectionApproxEquals(
+  public static boolean reflectionApprotwitterEquals(
       TwitterMessage a,
       TwitterMessage b,
-      List<String> additionalExcludeFields) {
-    List<String> excludeFields = Lists.newArrayList(
+      List<String> additionalEtwittercludeFields) {
+    List<String> etwittercludeFields = Lists.newArrayList(
         "versionedTweetFeaturesMap",
         "geoLocation",
         "geoTaggedLocation",
         "escherbirdAnnotations"
     );
-    excludeFields.addAll(additionalExcludeFields);
+    etwittercludeFields.addAll(additionalEtwittercludeFields);
 
-    return EqualsBuilder.reflectionEquals(a, b, excludeFields)
-        && GeoObject.approxEquals(a.getGeoLocation(), b.getGeoLocation())
-        && GeoObject.approxEquals(a.getGeoTaggedLocation(), b.getGeoTaggedLocation())
+    return EqualsBuilder.reflectionEquals(a, b, etwittercludeFields)
+        && GeoObject.approtwitterEquals(a.getGeoLocation(), b.getGeoLocation())
+        && GeoObject.approtwitterEquals(a.getGeoTaggedLocation(), b.getGeoTaggedLocation())
         && equals(a.getEscherbirdAnnotations(), b.getEscherbirdAnnotations());
   }
 
-  public static boolean reflectionApproxEquals(TwitterMessage a, TwitterMessage b) {
-    return reflectionApproxEquals(a, b, Collections.emptyList());
+  public static boolean reflectionApprotwitterEquals(TwitterMessage a, TwitterMessage b) {
+    return reflectionApprotwitterEquals(a, b, Collections.emptyList());
   }
 }

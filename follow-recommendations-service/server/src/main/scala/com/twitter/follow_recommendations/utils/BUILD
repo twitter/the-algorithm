@@ -13,7 +13,7 @@ scala_library(
         "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/candidate_sources/ppmi_locale_follow",
         "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/candidate_sources/recent_engagement",
         "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/candidate_sources/sims",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/candidate_sources/sims_expansion",
+        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/candidate_sources/sims_etwitterpansion",
         "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/candidate_sources/socialgraph",
         "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/candidate_sources/stp",
         "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/candidate_sources/triangular_loops",

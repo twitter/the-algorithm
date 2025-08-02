@@ -7,12 +7,12 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 
 /**
- * Used to store information relevant to processing query groups for HighFrequencyTermPairExtractor
+ * Used to store information relevant to processing query groups for HighFrequencyTermPairEtwittertractor
  * and HighFrequencyTermPairRewriter
  */
 public class HighFrequencyTermQueryGroup {
-  protected final int groupIdx;
-  protected final int parentGroupIdx;
+  protected final int groupIdtwitter;
+  protected final int parentGroupIdtwitter;
   // The number of nodes in this group.
   protected int numMembers = 0;
   // For the rewrite visitor: Incremented once at the end of each of this group's nodes' visits.
@@ -41,13 +41,13 @@ public class HighFrequencyTermQueryGroup {
   // Otherwise, isPositive is false iff the root of the group is a disjunction.
   protected final boolean isPositive;
 
-  public HighFrequencyTermQueryGroup(int groupIdx, boolean positive) {
-    this(groupIdx, -1, positive);
+  public HighFrequencyTermQueryGroup(int groupIdtwitter, boolean positive) {
+    this(groupIdtwitter, -1, positive);
   }
 
-  public HighFrequencyTermQueryGroup(int groupIdx, int parentGroupIdx, boolean positive) {
-    this.groupIdx = groupIdx;
-    this.parentGroupIdx = parentGroupIdx;
+  public HighFrequencyTermQueryGroup(int groupIdtwitter, int parentGroupIdtwitter, boolean positive) {
+    this.groupIdtwitter = groupIdtwitter;
+    this.parentGroupIdtwitter = parentGroupIdtwitter;
     isPositive = positive;
   }
 

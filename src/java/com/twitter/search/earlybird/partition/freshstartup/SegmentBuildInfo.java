@@ -12,26 +12,26 @@ class SegmentBuildInfo {
   // Inclusive boundaries. [start, end].
   private final long tweetStartOffset;
   private final long tweetEndOffset;
-  private final int index;
+  private final int indetwitter;
   private final boolean lastSegment;
 
   private long startTweetId;
-  private long maxIndexedTweetId;
+  private long matwitterIndetwitteredTweetId;
   private KafkaOffsetPair updateKafkaOffsetPair;
   private SegmentWriter segmentWriter;
 
   public SegmentBuildInfo(long tweetStartOffset,
                           long tweetEndOffset,
-                          int index,
+                          int indetwitter,
                           boolean lastSegment) {
     this.tweetStartOffset = tweetStartOffset;
     this.tweetEndOffset = tweetEndOffset;
-    this.index = index;
+    this.indetwitter = indetwitter;
     this.lastSegment = lastSegment;
 
     this.startTweetId = -1;
     this.updateKafkaOffsetPair = null;
-    this.maxIndexedTweetId = -1;
+    this.matwitterIndetwitteredTweetId = -1;
     this.segmentWriter = null;
   }
 
@@ -63,16 +63,16 @@ class SegmentBuildInfo {
     return startTweetId;
   }
 
-  public int getIndex() {
-    return index;
+  public int getIndetwitter() {
+    return indetwitter;
   }
 
-  public void setMaxIndexedTweetId(long maxIndexedTweetId) {
-    this.maxIndexedTweetId = maxIndexedTweetId;
+  public void setMatwitterIndetwitteredTweetId(long matwitterIndetwitteredTweetId) {
+    this.matwitterIndetwitteredTweetId = matwitterIndetwitteredTweetId;
   }
 
-  public long getMaxIndexedTweetId() {
-    return maxIndexedTweetId;
+  public long getMatwitterIndetwitteredTweetId() {
+    return matwitterIndetwitteredTweetId;
   }
 
   public SegmentWriter getSegmentWriter() {
@@ -84,7 +84,7 @@ class SegmentBuildInfo {
   }
 
   public void logState() {
-    LOG.info("SegmentBuildInfo (index:{})", index);
+    LOG.info("SegmentBuildInfo (indetwitter:{})", indetwitter);
     LOG.info(String.format("  Start offset: %,d", tweetStartOffset));
     LOG.info(String.format("  End offset: %,d", tweetEndOffset));
     LOG.info(String.format("  Start tweet id: %d", startTweetId));

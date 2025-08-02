@@ -6,12 +6,12 @@ import com.twitter.unified_user_actions.adapter.AbstractAdapter
 import com.twitter.unified_user_actions.thriftscala._
 
 /**
- * The main purpose of the rekey adapter and the rekey service is to not break the existing
- * customers with the existing Unkeyed and also making the value as a super light-weight schema.
+ * The main purpose of the rekey adapter and the rekey service is to not break the etwitteristing
+ * customers with the etwitteristing Unkeyed and also making the value as a super light-weight schema.
  * After we rekey from Unkeyed to Long (tweetId), downstream KafkaStreams can directly consume
  * without repartitioning.
  */
-class RekeyUuaAdapter extends AbstractAdapter[UnifiedUserAction, Long, KeyedUuaTweet] {
+class RekeyUuaAdapter etwittertends AbstractAdapter[UnifiedUserAction, Long, KeyedUuaTweet] {
 
   import RekeyUuaAdapter._
   override def adaptOneToKeyedMany(

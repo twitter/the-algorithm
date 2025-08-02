@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.search.relevance.scoring;
 
-import org.apache.lucene.search.Explanation;
+import org.apache.lucene.search.Etwitterplanation;
 
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
@@ -8,7 +8,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
 /*
  * A sample scorer, doesn't really do anything, returns the same score for every document.
  */
-public class DefaultScoringFunction extends ScoringFunction {
+public class DefaultScoringFunction etwittertends ScoringFunction {
   private float score;
 
   public DefaultScoringFunction(ImmutableSchemaInterface schema) {
@@ -22,9 +22,9 @@ public class DefaultScoringFunction extends ScoringFunction {
   }
 
   @Override
-  protected Explanation doExplain(float luceneScore) {
-    // just an example - this scoring function will go away soon
-    return Explanation.match(luceneScore, "luceneScore=" + luceneScore);
+  protected Etwitterplanation doEtwitterplain(float luceneScore) {
+    // just an etwitterample - this scoring function will go away soon
+    return Etwitterplanation.match(luceneScore, "luceneScore=" + luceneScore);
   }
 
   @Override

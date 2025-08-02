@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -18,12 +18,12 @@ option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framewo
 // LINT.IfChange
 message OpDef {
   // Op names starting with an underscore are reserved for internal use.
-  // Names should be CamelCase and match the regexp "[A-Z][a-zA-Z0-9>_]*".
+  // Names should be CamelCase and match the regetwitterp "[A-Z][a-zA-Z0-9>_]*".
   string name = 1;
 
   // For describing inputs and outputs.
   message ArgDef {
-    // Name for the input/output.  Should match the regexp "[a-z][a-z0-9_]*".
+    // Name for the input/output.  Should match the regetwitterp "[a-z][a-z0-9_]*".
     string name = 1;
 
     // Human readable description.
@@ -54,16 +54,16 @@ message OpDef {
     // For outputs: if true, outputs are refs, otherwise they are not.
     bool is_ref = 16;
 
-    // Experimental. Full type declaration for this argument.
+    // Etwitterperimental. Full type declaration for this argument.
     // The full type specification combines type, type_attr, type_list_attr,
     // etc. into a unified representation.
-    // This declaration may contain non-concrete types (for example,
+    // This declaration may contain non-concrete types (for etwitterample,
     // Tensor<TypeVar<'T'>> is a valid type declaration.
     //
     // Note: this is a transient field. The long-term aim is to represent the
-    // entire OpDef as a single type: a callable. In that context, this field is
+    // entire OpDef as a single type: a callable. In that contetwittert, this field is
     // just the type of a single argument.
-    FullTypeDef experimental_full_type = 17;
+    FullTypeDef etwitterperimental_full_type = 17;
   }
 
   // Description of the input(s).
@@ -82,7 +82,7 @@ message OpDef {
   message AttrDef {
     // A descriptive name for the argument.  May be used, e.g. by the
     // Python client, as a keyword argument name, and so should match
-    // the regexp "[a-z][a-z0-9_]+".
+    // the regetwitterp "[a-z][a-z0-9_]+".
     string name = 1;
 
     // One of the type names from attr_value.proto ("string", "list(string)",
@@ -158,7 +158,7 @@ message OpDef {
   // either not be moved, or should only be moved if that state can also
   // be moved (e.g. via some sort of save / restore).
   // Stateful ops are guaranteed to never be optimized away by Common
-  // Subexpression Elimination (CSE).
+  // Subetwitterpression Elimination (CSE).
   bool is_stateful = 17;  // for things like variables, queue
 
   // -------------------------------------------------------------------------
@@ -183,8 +183,8 @@ message OpDeprecation {
   // First GraphDef version at which the op is disallowed.
   int32 version = 1;
 
-  // Explanation of why it was deprecated and what to use instead.
-  string explanation = 2;
+  // Etwitterplanation of why it was deprecated and what to use instead.
+  string etwitterplanation = 2;
 }
 
 // A collection of OpDefs

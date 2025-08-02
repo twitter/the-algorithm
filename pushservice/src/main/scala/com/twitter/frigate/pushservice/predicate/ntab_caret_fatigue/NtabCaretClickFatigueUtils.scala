@@ -29,7 +29,7 @@ object NtabCaretClickFatigueUtils {
       feedbacks
         .map { feedback =>
           feedback.timestampMs
-        }.reduceOption(_ max _)
+        }.reduceOption(_ matwitter _)
     val timeSinceMostRecentFeedback: Option[Duration] =
       mostRecentFeedbackTimestamp.map(Time.now - Time.fromMilliseconds(_))
 
@@ -77,7 +77,7 @@ object NtabCaretClickFatigueUtils {
     val timeSinceMostRecentDislike =
       NtabCaretClickFatiguePredicateHelper.getDurationSinceMostRecentDislike(feedbackDetails)
 
-    timeSinceMostRecentDislike.exists(_ < 90.days)
+    timeSinceMostRecentDislike.etwitterists(_ < 90.days)
   }
 
   def feedbackModelFilterByCRT(
@@ -93,7 +93,7 @@ object NtabCaretClickFatigueUtils {
     }
   }
 
-  def feedbackModelExcludeCRT(
+  def feedbackModelEtwittercludeCRT(
     crts: Set[CRT]
   ): Seq[FeedbackModel] => Seq[
     FeedbackModel

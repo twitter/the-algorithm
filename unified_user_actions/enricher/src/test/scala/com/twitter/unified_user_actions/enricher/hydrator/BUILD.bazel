@@ -13,7 +13,7 @@ junit_tests(
         "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher/graphql",
         "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher/hydrator:default",
         "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher/hydrator:noop",
-        "unified_user_actions/enricher/src/test/scala/com/twitter/unified_user_actions/enricher:fixture",
+        "unified_user_actions/enricher/src/test/scala/com/twitter/unified_user_actions/enricher:fitwitterture",
         "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
     ],
 )

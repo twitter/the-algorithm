@@ -6,31 +6,31 @@ namespace py gen.twitter.simclusters_v2.entity
 include "com/twitter/algebird_internal/algebird.thrift"
 
 /**
- * Penguin text entity. All fields are required as this is used as a part of a memcache key.
+ * Penguin tetwittert entity. All fields are required as this is used as a part of a memcache key.
  **/
 struct PenguinKey {
-  1: required string textEntity
+  1: required string tetwittertEntity
 }(hasPersonalData = 'false')
 
 /**
- * NER text entity. All fields are required as this is used as a part of a memcache key.
+ * NER tetwittert entity. All fields are required as this is used as a part of a memcache key.
  **/
 struct NerKey {
-  1: required string textEntity
+  1: required string tetwittertEntity
   2: required i32 wholeEntityType
 }(hasPersonalData = 'false')
 
 /**
- * Semantic Core text entity. All fields are required as this is used as a part of a memcache key.
+ * Semantic Core tetwittert entity. All fields are required as this is used as a part of a memcache key.
  **/
 struct SemanticCoreKey {
   1: required i64 entityId(personalDataType = 'SemanticcoreClassification')
 }(hasPersonalData = 'true')
 
 /**
- * Represents an entity extracted from a tweet.
+ * Represents an entity etwittertracted from a tweet.
  **/
-union TweetTextEntity {
+union TweetTetwittertEntity {
   1: string hashtag
   2: PenguinKey penguin
   3: NerKey ner
@@ -46,6 +46,6 @@ struct SpaceId {
  **/
 union SimClusterEntity {
   1: i64 tweetId(personalDataType = 'TweetId')
-  2: TweetTextEntity tweetEntity
+  2: TweetTetwittertEntity tweetEntity
   3: SpaceId spaceId
 }(hasPersonalData = 'true')

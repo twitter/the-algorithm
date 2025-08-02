@@ -11,7 +11,7 @@ import com.twitter.util.Future;
  * A filter that unsets some request fields that make sense only on the SuperRoot, before sending
  * them to the individual roots.
  */
-public class UnsetSuperRootFieldsFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+public class UnsetSuperRootFieldsFilter etwittertends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
   private final boolean unsetFollowedUserIds;
 
   public UnsetSuperRootFieldsFilter() {

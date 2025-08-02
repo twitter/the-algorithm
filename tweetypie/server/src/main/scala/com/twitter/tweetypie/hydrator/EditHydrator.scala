@@ -5,8 +5,8 @@ import com.twitter.stitch.Stitch
 import com.twitter.tweetypie.core.EditState
 
 /**
- * An EditHydrator hydrates a value of type `A`, with a hydration context of type `C`,
- * and produces a function that takes a value and context and returns an EditState[A, C]
+ * An EditHydrator hydrates a value of type `A`, with a hydration contetwittert of type `C`,
+ * and produces a function that takes a value and contetwittert and returns an EditState[A, C]
  * (an EditState encapsulates a function that takes a value and returns a new ValueState).
  *
  * A series of EditHydrators of the same type may be run in parallel via
@@ -17,20 +17,20 @@ class EditHydrator[A, C] private (val run: (A, C) => Stitch[EditState[A]]) {
   /**
    * Apply this hydrator to a value, producing an EditState.
    */
-  def apply(a: A, ctx: C): Stitch[EditState[A]] = run(a, ctx)
+  def apply(a: A, cttwitter: C): Stitch[EditState[A]] = run(a, cttwitter)
 
   /**
    * Convert this EditHydrator to the equivalent ValueHydrator.
    */
   def toValueHydrator: ValueHydrator[A, C] =
-    ValueHydrator[A, C] { (a, ctx) => this.run(a, ctx).map(editState => editState.run(a)) }
+    ValueHydrator[A, C] { (a, cttwitter) => this.run(a, cttwitter).map(editState => editState.run(a)) }
 
   /**
    * Runs two EditHydrators in parallel.
    */
-  def inParallelWith(next: EditHydrator[A, C]): EditHydrator[A, C] =
-    EditHydrator[A, C] { (x0, ctx) =>
-      Stitch.joinMap(run(x0, ctx), next.run(x0, ctx)) {
+  def inParallelWith(netwittert: EditHydrator[A, C]): EditHydrator[A, C] =
+    EditHydrator[A, C] { (twitter0, cttwitter) =>
+      Stitch.joinMap(run(twitter0, cttwitter), netwittert.run(twitter0, cttwitter)) {
         case (r1, r2) => r1.andThen(r2)
       }
     }

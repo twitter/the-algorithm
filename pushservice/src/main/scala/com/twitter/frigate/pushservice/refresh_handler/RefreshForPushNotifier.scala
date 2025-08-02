@@ -82,7 +82,7 @@ class RefreshForPushNotifier(
 
   def checkResponseAndNotify(
     response: Response[PushCandidate, Result],
-    targetUserContext: Target
+    targetUserContetwittert: Target
   ): Future[RefreshResponse] = {
     val receivers = Seq(statsReceiver)
     val refreshResponse = response match {
@@ -95,12 +95,12 @@ class RefreshForPushNotifier(
           case Some(candidatesResult) =>
             candidatesResult.result match {
               case OK =>
-                notify(candidatesResult, targetUserContext, receivers)
+                notify(candidatesResult, targetUserContetwittert, receivers)
                   .onSuccess { nr =>
                     pushStats.scope("result").counter(nr.status.name).incr()
                   }
               case _ =>
-                targetUserContext.isTeamMember.flatMap { isTeamMember =>
+                targetUserContetwittert.isTeamMember.flatMap { isTeamMember =>
                   FilteredRefreshResponseFut
                 }
             }
@@ -119,10 +119,10 @@ class RefreshForPushNotifier(
     Stat
       .timeFuture(bStats.stat("latency"))(
         refreshResponse
-          .raiseWithin(CommonConstants.maxPushRequestDuration)
+          .raiseWithin(CommonConstants.matwitterPushRequestDuration)
       )
-      .onFailure { exception =>
-        rfphStatsRecorder.refreshRequestExceptionStats(exception, bStats)
+      .onFailure { etwitterception =>
+        rfphStatsRecorder.refreshRequestEtwitterceptionStats(etwitterception, bStats)
       }
   }
 }

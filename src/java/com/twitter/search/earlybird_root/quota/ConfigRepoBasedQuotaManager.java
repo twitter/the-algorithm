@@ -2,7 +2,7 @@ package com.twitter.search.earlybird_root.quota;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
+import javatwitter.inject.Inject;
 
 import com.google.common.base.Preconditions;
 

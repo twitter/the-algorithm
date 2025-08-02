@@ -8,7 +8,7 @@ import com.twitter.scalding.typed.TypedPipe
 import com.twitter.scalding.DateOps
 import com.twitter.scalding.DateParser
 import com.twitter.scalding.Days
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding.RichDate
 import com.twitter.scalding.TypedTsv
 import com.twitter.scalding.UniqueID
@@ -17,7 +17,7 @@ import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.DALWrite.D
 import com.twitter.scalding_internal.dalv2.DALWrite._
 import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.job.TwitterExecutionApp
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
 import com.twitter.simclusters_v2.common.ClusterId
 import com.twitter.simclusters_v2.common.ModelVersions
 import com.twitter.simclusters_v2.common.UserId
@@ -29,7 +29,7 @@ import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2RawKnownFor20M145K20
 import com.twitter.simclusters_v2.scalding.KnownForSources
 import com.twitter.simclusters_v2.scalding.KnownForSources.fromKeyVal
 import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
+import com.twitter.wtf.scalding.jobs.common.ScheduledEtwitterecutionApp
 import java.util.TimeZone
 
 /**
@@ -39,7 +39,7 @@ import java.util.TimeZone
  * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
  */
 
-object UpdateKnownFor20M145K2020 extends ScheduledExecutionApp {
+object UpdateKnownFor20M145K2020 etwittertends ScheduledEtwitterecutionApp {
 
   override val firstTime: RichDate = RichDate("2020-10-04")
 
@@ -48,7 +48,7 @@ object UpdateKnownFor20M145K2020 extends ScheduledExecutionApp {
   private val tempLocationPath = "/user/cassowary/temp/simclusters_v2/known_for_20m_145k_2020"
 
   private val simsGraphPath =
-    "/atla/proc/user/cassowary/manhattan_sequence_files/approximate_cosine_similarity_follow"
+    "/atla/proc/user/cassowary/manhattan_sequence_files/approtwitterimate_cosine_similarity_follow"
 
   override def runOnDateRange(
     args: Args
@@ -56,9 +56,9 @@ object UpdateKnownFor20M145K2020 extends ScheduledExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
-    Execution.getConfigMode.flatMap {
+    Etwitterecution.getConfigMode.flatMap {
       case (_, mode) =>
         implicit def valueCodec: BinaryScalaCodec[Candidates] = BinaryScalaCodec(Candidates)
         // Step - 1 (DataProcessing): Parameters for getting mapped indices for user-ids
@@ -66,7 +66,7 @@ object UpdateKnownFor20M145K2020 extends ScheduledExecutionApp {
         val topK = args.int("topK", 20000000)
 
         // Step - 2 (DataProcessing): Parameters to remove users not in the topK most followed users from simsGraph
-        val maxNeighbors = args.int("maxNeighbors", 400)
+        val matwitterNeighbors = args.int("matwitterNeighbors", 400)
 
         // Step - 3 (Final Clustering): Parameters to run the clustering algorithm
         /* squareWeightEnable is a boolean flag that changes the edge weights obtained from the
@@ -74,13 +74,13 @@ object UpdateKnownFor20M145K2020 extends ScheduledExecutionApp {
            a) If false -  edge weight between two neighbors is just their cosine similarity.
            b) If true - edge weight = cosine_sim * cosine_sim * 10. The squaring makes the higher
            weight edges relatively more important; this is based on the intuition that a neighbor
-           with cosine similarity of 0.1 is more than 2x important compared to a neighbor with
+           with cosine similarity of 0.1 is more than 2twitter important compared to a neighbor with
            cosine similarity of 0.05. The multiplication with 10 brings the weights back into a
            'nicer' range since squaring will reduce their absolute value.
          */
         val squareWeightsEnable = args.boolean("squareWeightsEnable")
 
-        val maxEpochsForClustering = args.int("maxEpochs", 3)
+        val matwitterEpochsForClustering = args.int("matwitterEpochs", 3)
         val wtCoeff = args.double("wtCoeff", 10.0)
 
         val previousKnownFor: TypedPipe[(UserId, Array[(ClusterId, Float)])] =
@@ -101,32 +101,32 @@ object UpdateKnownFor20M145K2020 extends ScheduledExecutionApp {
               .map(_._2),
             minActiveFollowers,
             topK,
-            maxNeighbors,
+            matwitterNeighbors,
             tempLocationPath,
             previousKnownFor,
-            maxEpochsForClustering,
+            matwitterEpochsForClustering,
             squareWeightsEnable,
             wtCoeff,
             mode
           )
           .flatMap { updateKnownFor =>
-            Execution
+            Etwitterecution
               .zip(
                 KnownForSources
                   .toKeyVal(updateKnownFor, ModelVersions.Model20M145K2020)
-                  .writeDALVersionedKeyValExecution(
+                  .writeDALVersionedKeyValEtwitterecution(
                     SimclustersV2RawKnownFor20M145K2020ScalaDataset,
-                    D.Suffix(InternalDataPaths.RawKnownFor2020Path)
+                    D.Suffitwitter(InternalDataPaths.RawKnownFor2020Path)
                   ),
                 UpdateKnownForSBFRunner
                   .evaluateUpdatedKnownFor(updateKnownFor, previousKnownFor)
-                  .flatMap { emailText =>
+                  .flatMap { emailTetwittert =>
                     Util
                       .sendEmail(
-                        emailText,
+                        emailTetwittert,
                         s"Change in cluster assignments for new KnownFor ModelVersion: 20M145K2020",
                         "no-reply@twitter.com")
-                    Execution.unit
+                    Etwitterecution.unit
                   }
               ).unit
           }
@@ -139,10 +139,10 @@ scalding remote run \
 --target src/scala/com/twitter/simclusters_v2/scalding/update_known_for:update_known_for_20m_145k_2020-adhoc \
 --main-class com.twitter.simclusters_v2.scalding.update_known_for.UpdateKnownFor20M145K2020Adhoc \
 --submitter  atla-aor-08-sr1 --user cassowary \
---submitter-memory 128192.megabyte --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M'" \
+--submitter-memory 128192.megabyte --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-twittermtwitter7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-twittermtwitter7618M'" \
 -- \
---date 2020-08-30  --maxNeighbors 100 --minActiveFollowers 400 --topK 20000000 --numNodesPerCommunity 200  --maxEpochs 4 --squareWeightsEnable --wtCoeff 10.0 \
---inputSimsDir /atla/proc/user/cassowary/manhattan_sequence_files/approximate_cosine_similarity_follow  \
+--date 2020-08-30  --matwitterNeighbors 100 --minActiveFollowers 400 --topK 20000000 --numNodesPerCommunity 200  --matwitterEpochs 4 --squareWeightsEnable --wtCoeff 10.0 \
+--inputSimsDir /atla/proc/user/cassowary/manhattan_sequence_files/approtwitterimate_cosine_similarity_follow  \
 --outputClusterDir /user/cassowary/adhoc/your_ldap/simclusters/clustering_outputs/output_clustering_assignments_2020_readAgain_v4_week_1
 
 knownFor Week-2:
@@ -150,23 +150,23 @@ scalding remote run \
 --target src/scala/com/twitter/simclusters_v2/scalding/update_known_for:update_known_for_20m_145k_2020-adhoc \
 --main-class com.twitter.simclusters_v2.scalding.update_known_for.UpdateKnownFor20M145K2020Adhoc \
 --submitter  atla-aor-08-sr1 --user cassowary \
---submitter-memory 128192.megabyte --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M'" \
+--submitter-memory 128192.megabyte --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-twittermtwitter7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-twittermtwitter7618M'" \
 -- \
---date 2020-08-30  --maxNeighbors 100 --minActiveFollowers 400 --topK 20000000 --numNodesPerCommunity 200  --maxEpochs 4 --squareWeightsEnable --wtCoeff 10.0 \
---inputSimsDir /atla/proc/user/cassowary/manhattan_sequence_files/approximate_cosine_similarity_follow  \
+--date 2020-08-30  --matwitterNeighbors 100 --minActiveFollowers 400 --topK 20000000 --numNodesPerCommunity 200  --matwitterEpochs 4 --squareWeightsEnable --wtCoeff 10.0 \
+--inputSimsDir /atla/proc/user/cassowary/manhattan_sequence_files/approtwitterimate_cosine_similarity_follow  \
 --inputPreviousKnownForDataSet /user/cassowary/adhoc/your_ldap/simclusters/clustering_outputs/output_clustering_assignments_2020_readAgain_v4_week_1_KeyVal \
 --outputClusterDir /user/cassowary/adhoc/your_ldap/simclusters/clustering_outputs/output_clustering_assignments_2020_readAgain_v4_week_2
  */
 
-object UpdateKnownFor20M145K2020Adhoc extends TwitterExecutionApp {
+object UpdateKnownFor20M145K2020Adhoc etwittertends TwitterEtwitterecutionApp {
   implicit val tz: java.util.TimeZone = DateOps.UTC
   implicit val dp = DateParser.default
   val log = Logger()
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
+  def job: Etwitterecution[Unit] =
+    Etwitterecution.getConfigMode.flatMap {
       case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
+        Etwitterecution.withId { implicit uniqueId =>
           val args = config.getArgs
 
           implicit def valueCodec: BinaryScalaCodec[Candidates] = BinaryScalaCodec(Candidates)
@@ -176,16 +176,16 @@ object UpdateKnownFor20M145K2020Adhoc extends TwitterExecutionApp {
 
           // Step - 2 (DataProcessing): Parameters to remove users not in the topK most followed users from simsGraph
           val clusterAssignmentOutput = args("outputClusterDir")
-          val maxNeighbors = args.int("maxNeighbors", 400)
+          val matwitterNeighbors = args.int("matwitterNeighbors", 400)
 
           // Step - 3 (Final Clustering): Parameters to run the clustering algorithm
           val squareWeightsEnable = args.boolean("squareWeightsEnable")
 
-          val maxEpochsForClustering = args.int("maxEpochs", 3)
+          val matwitterEpochsForClustering = args.int("matwitterEpochs", 3)
           val wtCoeff = args.double("wtCoeff", 10.0)
 
           val simsGraphPath =
-            "/atla/proc/user/cassowary/manhattan_sequence_files/approximate_cosine_similarity_follow"
+            "/atla/proc/user/cassowary/manhattan_sequence_files/approtwitterimate_cosine_similarity_follow"
           // Read in the knownFor dataset, that can be used to initialize the clusters for this week.
           val inputPreviousKnownFor: TypedPipe[(Long, Array[(Int, Float)])] =
             args.optional("inputPreviousKnownForDataSet") match {
@@ -224,30 +224,30 @@ object UpdateKnownFor20M145K2020Adhoc extends TwitterExecutionApp {
                 .map(_._2),
               minActiveFollowers,
               topK,
-              maxNeighbors,
+              matwitterNeighbors,
               clusterAssignmentOutput,
               inputPreviousKnownFor,
-              maxEpochsForClustering,
+              matwitterEpochsForClustering,
               squareWeightsEnable,
               wtCoeff,
               mode
             )
             .flatMap { updateKnownFor =>
-              Execution
+              Etwitterecution
                 .zip(
                   updateKnownFor
-                    .mapValues(_.toList).writeExecution(TypedTsv(clusterAssignmentOutput)),
-                  updateKnownFor.writeExecution(AdhocKeyValSources.knownForSBFResultsDevelSource(
+                    .mapValues(_.toList).writeEtwitterecution(TypedTsv(clusterAssignmentOutput)),
+                  updateKnownFor.writeEtwitterecution(AdhocKeyValSources.knownForSBFResultsDevelSource(
                     clusterAssignmentOutput + "_KeyVal")),
                   UpdateKnownForSBFRunner
                     .evaluateUpdatedKnownFor(updateKnownFor, inputPreviousKnownFor)
-                    .flatMap { emailText =>
+                    .flatMap { emailTetwittert =>
                       Util
                         .sendEmail(
-                          emailText,
+                          emailTetwittert,
                           s"Change in cluster assignments for new KnownFor ModelVersion: 20M145K2020" + clusterAssignmentOutput,
                           "no-reply@twitter.com")
-                      Execution.unit
+                      Etwitterecution.unit
                     }
                 ).unit
             }

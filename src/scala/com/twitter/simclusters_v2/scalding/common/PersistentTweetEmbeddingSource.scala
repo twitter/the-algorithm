@@ -5,19 +5,19 @@ import com.twitter.scalding.DateRange
 import com.twitter.simclusters_v2.common.Timestamp
 import com.twitter.simclusters_v2.common.TweetId
 import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
-import com.twitter.strato.scalding.StratoManhattanExportSource
+import com.twitter.strato.scalding.StratoManhattanEtwitterportSource
 import com.twitter.strato.thrift.ScroogeConvImplicits._
 
 object PersistentTweetEmbeddingSource {
   // hdfs paths
   val FavBasedUpdatedHdfsPath: String =
-    "/atla/proc/user/cassowary/manhattan-exporter/fav_based_tweet_20m_145k_updated_embeddings"
+    "/atla/proc/user/cassowary/manhattan-etwitterporter/fav_based_tweet_20m_145k_updated_embeddings"
 
   val LogFavBasedUpdatedHdfsPath: String =
-    "/atla/proc/user/cassowary/manhattan-exporter/log_fav_based_tweet_20m_145k_updated_embeddings"
+    "/atla/proc/user/cassowary/manhattan-etwitterporter/log_fav_based_tweet_20m_145k_updated_embeddings"
 
   val LogFavBased2020HdfsPath: String =
-    "/atla/proc/user/cassowary/manhattan-exporter/log_fav_based_tweet_20m_145k_2020_embeddings"
+    "/atla/proc/user/cassowary/manhattan-etwitterporter/log_fav_based_tweet_20m_145k_2020_embeddings"
 
   // Strato columns
   val FavBasedUpdatedStratoColumn: String =
@@ -32,27 +32,27 @@ object PersistentTweetEmbeddingSource {
 }
 
 /**
- * The source that read the Manhattan export persistent embeddings
+ * The source that read the Manhattan etwitterport persistent embeddings
  */
 // Defaults to Updated version.
-class FavBasedPersistentTweetEmbeddingMhExportSource(
+class FavBasedPersistentTweetEmbeddingMhEtwitterportSource(
   hdfsPath: String = PersistentTweetEmbeddingSource.FavBasedUpdatedHdfsPath,
   stratoColumnPath: String = PersistentTweetEmbeddingSource.FavBasedUpdatedStratoColumn,
   range: DateRange,
   serviceIdentifier: ServiceIdentifier = ServiceIdentifier.empty)
-    extends StratoManhattanExportSource[(TweetId, Timestamp), PersistentSimClustersEmbedding](
+    etwittertends StratoManhattanEtwitterportSource[(TweetId, Timestamp), PersistentSimClustersEmbedding](
       hdfsPath,
       range,
       stratoColumnPath,
       serviceIdentifier = serviceIdentifier
     )
 // Defaults to 2020 version.
-class LogFavBasedPersistentTweetEmbeddingMhExportSource(
+class LogFavBasedPersistentTweetEmbeddingMhEtwitterportSource(
   hdfsPath: String = PersistentTweetEmbeddingSource.LogFavBased2020HdfsPath,
   stratoColumnPath: String = PersistentTweetEmbeddingSource.LogFavBased2020StratoColumn,
   range: DateRange,
   serviceIdentifier: ServiceIdentifier = ServiceIdentifier.empty)
-    extends StratoManhattanExportSource[(TweetId, Timestamp), PersistentSimClustersEmbedding](
+    etwittertends StratoManhattanEtwitterportSource[(TweetId, Timestamp), PersistentSimClustersEmbedding](
       hdfsPath,
       range,
       stratoColumnPath,

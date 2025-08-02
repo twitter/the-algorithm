@@ -164,7 +164,7 @@ object TweetStormJob {
         val RamPerSummerFlatMap = 8
         val RamDefaultPerComponent = 4
 
-        // The extra 4GB is not explicitly assigned to the StreamMgr, so it gets 2GB by default, and
+        // The etwittertra 4GB is not etwitterplicitly assigned to the StreamMgr, so it gets 2GB by default, and
         // the remaining 2GB is shared among components. Keeping this configuration for now, since
         // it seems stable
         val TotalRamRB =
@@ -185,10 +185,10 @@ object TweetStormJob {
           BTConfig.TOPOLOGY_TEAM_NAME -> "cassowary",
           BTConfig.TOPOLOGY_TEAM_EMAIL -> "no-reply@twitter.com",
           BTConfig.TOPOLOGY_WORKERS -> jInt(TotalWorker),
-          BTConfig.TOPOLOGY_ACKER_EXECUTORS -> jInt(0),
+          BTConfig.TOPOLOGY_ACKER_EtwitterECUTORS -> jInt(0),
           BTConfig.TOPOLOGY_MESSAGE_TIMEOUT_SECS -> jInt(30),
           BTConfig.TOPOLOGY_WORKER_CHILDOPTS -> List(
-            "-XX:MaxMetaspaceSize=256M",
+            "-twittertwitter:MatwitterMetaspaceSize=256M",
             "-Djava.security.auth.login.config=config/jaas.conf",
             "-Dsun.security.krb5.debug=true",
             "-Dcom.twitter.eventbus.client.EnableKafkaSaslTls=true",
@@ -213,7 +213,7 @@ object TweetStormJob {
         TweetJob.NodeName.TweetClusterUpdatedScoresFlatMapNodeName -> Options()
           .set(FlatMapParallelism(TotalWorker * FlatMapPerWorker)),
         TweetJob.NodeName.TweetClusterScoreSummerNodeName -> Options()
-        // Most expensive step. Double the capacity.
+        // Most etwitterpensive step. Double the capacity.
           .set(SummerParallelism(TotalWorker * SummerPerWorker * 4))
           .set(FlushFrequency(30.seconds)),
         TweetJob.NodeName.ClusterTopKTweetsNodeName -> Options()

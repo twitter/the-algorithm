@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -14,7 +14,7 @@ option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framewo
 message NodeDef {
   // The name given to this operator. Used for naming inputs,
   // logging, visualization, etc.  Unique within a single GraphDef.
-  // Must match the regexp "[A-Za-z0-9.][A-Za-z0-9_>./]*".
+  // Must match the regetwitterp "[A-Za-z0-9.][A-Za-z0-9_>./]*".
   string name = 1;
 
   // The operation name.  There may be custom parameters in attrs.
@@ -23,14 +23,14 @@ message NodeDef {
 
   // Each input is "node:src_output" with "node" being a string name and
   // "src_output" indicating which output tensor to use from "node". If
-  // "src_output" is 0 the ":0" suffix can be omitted.  Regular inputs
+  // "src_output" is 0 the ":0" suffitwitter can be omitted.  Regular inputs
   // may optionally be followed by control inputs that have the format
   // "^node".
   repeated string input = 3;
 
   // A (possibly partial) specification for the device on which this
   // node should be placed.
-  // The expected syntax for this string is as follows:
+  // The etwitterpected syntatwitter for this string is as follows:
   //
   // DEVICE_SPEC ::= PARTIAL_SPEC
   //
@@ -57,25 +57,25 @@ message NodeDef {
   // NodeDefs easier to interpret on their own.  However, if
   // an attr with a default is not specified in this list, the
   // default will be used.
-  // The "names" (keys) must match the regexp "[a-z][a-z0-9_]+" (and
+  // The "names" (keys) must match the regetwitterp "[a-z][a-z0-9_]+" (and
   // one of the names from the corresponding OpDef's attr field).
   // The values must have a type matching the corresponding OpDef
   // attr's type field.
-  // TODO(josh11b): Add some examples here showing best practices.
+  // TODO(josh11b): Add some etwitteramples here showing best practices.
   map<string, AttrValue> attr = 5;
 
-  message ExperimentalDebugInfo {
+  message EtwitterperimentalDebugInfo {
     // Opaque string inserted into error messages created by the runtime.
     //
     // This is intended to store the list of names of the nodes from the
-    // original graph that this node was derived. For example if this node, say
+    // original graph that this node was derived. For etwitterample if this node, say
     // C, was result of a fusion of 2 nodes A and B, then 'original_node' would
     // be {A, B}. This information can be used to map errors originating at the
     // current node to some top level source code.
     repeated string original_node_names = 1;
 
     // This is intended to store the list of names of the functions from the
-    // original graph that this node was derived. For example if this node, say
+    // original graph that this node was derived. For etwitterample if this node, say
     // C, was result of a fusion of node A in function FA and node B in function
     // FB, then `original_funcs` would be {FA, FB}. If the node is in the top
     // level graph, the `original_func` is empty. This information, with the
@@ -85,11 +85,11 @@ message NodeDef {
   }
 
   // This stores debug information associated with the node.
-  ExperimentalDebugInfo experimental_debug_info = 6;
+  EtwitterperimentalDebugInfo etwitterperimental_debug_info = 6;
 
-  // The complete type of this node. Experimental and subject to change.
+  // The complete type of this node. Etwitterperimental and subject to change.
   // Currently, the field only contains the return types of the node. That will
-  // extend in the future to contain the entire signature of the node, as a
+  // etwittertend in the future to contain the entire signature of the node, as a
   // function type.
-  FullTypeDef experimental_type = 7;
+  FullTypeDef etwitterperimental_type = 7;
 }

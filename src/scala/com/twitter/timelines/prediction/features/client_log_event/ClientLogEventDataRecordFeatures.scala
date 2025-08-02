@@ -44,11 +44,11 @@ object ClientLogEventDataRecordFeatures {
   val FromList = new Binary("client_log_event.tweet.from_list")
   val FromRecTopic = new Binary("client_log_event.tweet.from_rec_topic")
   val InjectedPosition = new Discrete("client_log_event.tweet.injectedPosition")
-  val TextOnly = new Binary("client_log_event.tweet.text_only")
-  val HasLikedBySocialContext = new Binary("client_log_event.tweet.has_liked_by_social_context")
-  val HasFollowedBySocialContext = new Binary(
-    "client_log_event.tweet.has_followed_by_social_context")
-  val HasTopicSocialContext = new Binary("client_log_event.tweet.has_topic_social_context")
+  val TetwittertOnly = new Binary("client_log_event.tweet.tetwittert_only")
+  val HasLikedBySocialContetwittert = new Binary("client_log_event.tweet.has_liked_by_social_contetwittert")
+  val HasFollowedBySocialContetwittert = new Binary(
+    "client_log_event.tweet.has_followed_by_social_contetwittert")
+  val HasTopicSocialContetwittert = new Binary("client_log_event.tweet.has_topic_social_contetwittert")
   val IsFollowedTopicTweet = new Binary("client_log_event.tweet.is_followed_topic_tweet")
   val IsRecommendedTopicTweet = new Binary("client_log_event.tweet.is_recommended_topic_tweet")
   val IsTweetAgeLessThan15Seconds = new Binary(
@@ -74,10 +74,10 @@ object ClientLogEventDataRecordFeatures {
     "hashtag" -> HasHashtag,
     "mutual_follow" -> FromMutualFollow,
     "in_network" -> IsInNetwork,
-    "text_only" -> TextOnly,
-    "has_liked_by_social_context" -> HasLikedBySocialContext,
-    "has_followed_by_social_context" -> HasFollowedBySocialContext,
-    "has_topic_social_context" -> HasTopicSocialContext,
+    "tetwittert_only" -> TetwittertOnly,
+    "has_liked_by_social_contetwittert" -> HasLikedBySocialContetwittert,
+    "has_followed_by_social_contetwittert" -> HasFollowedBySocialContetwittert,
+    "has_topic_social_contetwittert" -> HasTopicSocialContetwittert,
     "is_followed_topic_tweet" -> IsFollowedTopicTweet,
     "is_recommended_topic_tweet" -> IsRecommendedTopicTweet,
     "tweet_age_less_than_15_seconds" -> IsTweetAgeLessThan15Seconds,
@@ -121,7 +121,7 @@ object ClientLogEventDataRecordFeatures {
     HasImage,
     HasVisibleLink,
     HasHashtag,
-    TextOnly,
+    TetwittertOnly,
     HasVisibleLink
   )
 
@@ -135,9 +135,9 @@ object ClientLogEventDataRecordFeatures {
   )
 
   val SocialProofTweetTypeFeatures: Set[Feature[_]] = Set(
-    HasLikedBySocialContext,
-    HasFollowedBySocialContext,
-    HasTopicSocialContext
+    HasLikedBySocialContetwittert,
+    HasFollowedBySocialContetwittert,
+    HasTopicSocialContetwittert
   )
 
   val TopicTweetPreferenceTweetTypeFeatures: Set[Feature[_]] = Set(

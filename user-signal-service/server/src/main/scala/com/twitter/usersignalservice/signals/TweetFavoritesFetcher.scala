@@ -16,15 +16,15 @@ import com.twitter.usersignalservice.thriftscala.Signal
 import com.twitter.usersignalservice.thriftscala.SignalType
 import com.twitter.util.Future
 import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 case class TweetFavoritesFetcher @Inject() (
   stratoClient: Client,
   timer: Timer,
   stats: StatsReceiver)
-    extends StratoSignalFetcher[(UserId, Long), Unit, UserRecentEngagedTweets] {
+    etwittertends StratoSignalFetcher[(UserId, Long), Unit, UserRecentEngagedTweets] {
   import TweetFavoritesFetcher._
   override type RawSignalType = RecentEngagedTweet
   override val name: String = this.getClass.getCanonicalName
@@ -57,13 +57,13 @@ case class TweetFavoritesFetcher @Inject() (
         lookBackWindowFilteredSignals
           .filter { recentEngagedTweet =>
             recentEngagedTweet.features.statusCounts
-              .flatMap(_.favoriteCount).exists(_ >= MinFavCount)
+              .flatMap(_.favoriteCount).etwitterists(_ >= MinFavCount)
           }.filter { recentEngagedTweet =>
             applySignalTweetTypeFilter(query.signalType, recentEngagedTweet)
           }.collect {
             case RecentEngagedTweet(tweetId, engagedAt, _: FavoriteMetadata, _) =>
               Signal(query.signalType, engagedAt, Some(InternalId.TweetId(tweetId)))
-          }.take(query.maxResults.getOrElse(Int.MaxValue))
+          }.take(query.matwitterResults.getOrElse(Int.MatwitterValue))
       }
     }
   }

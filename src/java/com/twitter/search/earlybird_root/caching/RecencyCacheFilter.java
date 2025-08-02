@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird_root.caching;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import javatwitter.inject.Inject;
+import javatwitter.inject.Named;
 
 import com.twitter.search.common.caching.Cache;
 import com.twitter.search.common.caching.filter.CacheFilter;
@@ -9,11 +9,11 @@ import com.twitter.search.common.decider.SearchDecider;
 import com.twitter.search.common.root.SearchRootModule;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
 
-public class RecencyCacheFilter extends
-    CacheFilter<EarlybirdRequestContext, EarlybirdRequest, EarlybirdResponse> {
+public class RecencyCacheFilter etwittertends
+    CacheFilter<EarlybirdRequestContetwittert, EarlybirdRequest, EarlybirdResponse> {
   /**
    * Creates a cache filter for earlybird recency requests.
    */
@@ -22,12 +22,12 @@ public class RecencyCacheFilter extends
       @RecencyCache Cache<EarlybirdRequest, EarlybirdResponse> cache,
       SearchDecider decider,
       @Named(SearchRootModule.NAMED_NORMALIZED_SEARCH_ROOT_NAME) String normalizedSearchRootName,
-      @Named(CacheCommonUtil.NAMED_MAX_CACHE_RESULTS) int maxCacheResults) {
+      @Named(CacheCommonUtil.NAMED_MAtwitter_CACHE_RESULTS) int matwitterCacheResults) {
     super(cache,
           new RecencyQueryCachePredicate(decider, normalizedSearchRootName),
           new RecencyCacheRequestNormalizer(),
           new RecencyAndRelevanceCachePostProcessor(),
-          new RecencyServicePostProcessor(cache, maxCacheResults),
+          new RecencyServicePostProcessor(cache, matwitterCacheResults),
           new EarlybirdRequestPerClientCacheStats(
               EarlybirdRequestType.RECENCY.getNormalizedName()));
   }

@@ -9,7 +9,7 @@ import com.twitter.unified_user_actions.thriftscala.UserIdentifier
 
 /**
  * Base class for Tweetypie Tweet Event.
- * Extends this class if you need to implement the parser for a new Tweetypie Tweet Event Type.
+ * Etwittertends this class if you need to implement the parser for a new Tweetypie Tweet Event Type.
  * @see https://sourcegraph.twitter.biz/git.twitter.biz/source/-/blob/src/thrift/com/twitter/tweetypie/tweet_events.thrift?L225
  */
 trait BaseTweetypieTweetEvent[T] {
@@ -27,17 +27,17 @@ trait BaseTweetypieTweetEvent[T] {
   /**
    * Output type of the predicate. Could be an input of getItem.
    */
-  type ExtractedEvent
+  type EtwittertractedEvent
 
   /**
-   * Returns Some(ExtractedEvent) if the event is valid and None otherwise.
+   * Returns Some(EtwittertractedEvent) if the event is valid and None otherwise.
    */
-  protected def extract(event: T): Option[ExtractedEvent]
+  protected def etwittertract(event: T): Option[EtwittertractedEvent]
 
   /**
    * Get the UnifiedUserAction.Item from the event.
    */
-  protected def getItem(extractedEvent: ExtractedEvent, event: T): Item
+  protected def getItem(etwittertractedEvent: EtwittertractedEvent, event: T): Item
 
   /**
    * Get the UnifiedUserAction.UserIdentifier from the event.

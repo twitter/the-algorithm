@@ -4,7 +4,7 @@ import com.twitter.bijection.Injection
 import com.twitter.bijection.scrooge.CompactScalaCodec
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.frigate.common.store.strato.StratoStore
-import com.twitter.relevance_platform.simclustersann.multicluster.ClusterTweetIndexStoreConfig
+import com.twitter.relevance_platform.simclustersann.multicluster.ClusterTweetIndetwitterStoreConfig
 import com.twitter.simclusters_v2.common.ClusterId
 import com.twitter.simclusters_v2.common.ModelVersions
 import com.twitter.simclusters_v2.common.TweetId
@@ -46,7 +46,7 @@ import com.twitter.util.Time
  */
 case class TopKTweetsForClusterReadableStore(
   underlyingStore: ReadableStore[FullClusterId, TopKTweetsWithScores])
-    extends ReadableStore[FullClusterId, TopKTweetsWithScores] {
+    etwittertends ReadableStore[FullClusterId, TopKTweetsWithScores] {
 
   override def multiGet[K1 <: FullClusterId](
     ks: Set[K1]
@@ -120,15 +120,15 @@ case class ClusterKey(
 }
 
 case class TopKTweetsForClusterKeyReadableStore(
-  proxyMap: Map[(EmbeddingType, String), ReadableStore[FullClusterId, TopKTweetsWithScores]],
+  protwitteryMap: Map[(EmbeddingType, String), ReadableStore[FullClusterId, TopKTweetsWithScores]],
   halfLife: Duration,
   topKTweetsWithScoresToSeq: TopKTweetsWithScores => Seq[(Long, Double)],
-  maxResult: Option[Int] = None)
-    extends ReadableStore[ClusterKey, Seq[(Long, Double)]] {
+  matwitterResult: Option[Int] = None)
+    etwittertends ReadableStore[ClusterKey, Seq[(Long, Double)]] {
 
-  private val modifiedProxyMap = proxyMap.map {
-    case (typeModelTuple, proxy) =>
-      typeModelTuple -> proxy.composeKeyMapping { key: ClusterKey =>
+  private val modifiedProtwitteryMap = protwitteryMap.map {
+    case (typeModelTuple, protwittery) =>
+      typeModelTuple -> protwittery.composeKeyMapping { key: ClusterKey =>
         FullClusterId(ModelVersions.toModelVersion(typeModelTuple._2), key.clusterId)
       }
   }
@@ -137,13 +137,13 @@ case class TopKTweetsForClusterKeyReadableStore(
     keys: Set[K1]
   ): Map[K1, Future[Option[Seq[(Long, Double)]]]] = {
     val (validKeys, invalidKeys) = keys.partition { clusterKey =>
-      proxyMap.contains(
+      protwitteryMap.contains(
         (clusterKey.embeddingType, clusterKey.modelVersion)) && clusterKey.halfLife == halfLife
     }
 
     val resultsFuture = validKeys.groupBy(key => (key.embeddingType, key.modelVersion)).flatMap {
       case (typeModelTuple, subKeys) =>
-        modifiedProxyMap(typeModelTuple).multiGet(subKeys)
+        modifiedProtwitteryMap(typeModelTuple).multiGet(subKeys)
     }
 
     resultsFuture.mapValues { topKTweetsWithScoresFut =>
@@ -152,9 +152,9 @@ case class TopKTweetsForClusterKeyReadableStore(
           topKTweetsWithScores <- topKTweetsWithScoresOpt
         } yield {
           val results = topKTweetsWithScoresToSeq(topKTweetsWithScores)
-          maxResult match {
-            case Some(max) =>
-              results.take(max)
+          matwitterResult match {
+            case Some(matwitter) =>
+              results.take(matwitter)
             case None =>
               results
           }
@@ -169,7 +169,7 @@ object TopKTweetsForClusterKeyReadableStore {
     CompactScalaCodec(FullClusterId)
 
   // Use Prod cache by default
-  def defaultProxyMap(
+  def defaultProtwitteryMap(
     serviceIdentifier: ServiceIdentifier,
   ): Map[(EmbeddingType, String), ReadableStore[FullClusterId, TopKTweetsWithScores]] =
     SimClustersProfile.tweetJobProfileMap(Environment.Prod).mapValues { profile =>
@@ -182,7 +182,7 @@ object TopKTweetsForClusterKeyReadableStore {
     serviceIdentifier: ServiceIdentifier
   ): ReadableStore[ClusterKey, Seq[(Long, Double)]] =
     TopKTweetsForClusterKeyReadableStore(
-      defaultProxyMap(serviceIdentifier),
+      defaultProtwitteryMap(serviceIdentifier),
       defaultHalfLife,
       getTopTweetsWithScoresByFavClusterNormalizedScore
     )
@@ -191,20 +191,20 @@ object TopKTweetsForClusterKeyReadableStore {
     serviceIdentifier: ServiceIdentifier
   ): ReadableStore[ClusterKey, Seq[(Long, Double)]] =
     TopKTweetsForClusterKeyReadableStore(
-      defaultProxyMap(serviceIdentifier),
+      defaultProtwitteryMap(serviceIdentifier),
       defaultHalfLife,
       getTopTweetsWithScoresByFollowClusterNormalizedScore
     )
 
   def overrideLimitDefaultStore(
-    maxResult: Int,
+    matwitterResult: Int,
     serviceIdentifier: ServiceIdentifier,
   ): ReadableStore[ClusterKey, Seq[(Long, Double)]] = {
     TopKTweetsForClusterKeyReadableStore(
-      defaultProxyMap(serviceIdentifier),
+      defaultProtwitteryMap(serviceIdentifier),
       defaultHalfLife,
       getTopTweetsWithScoresByFavClusterNormalizedScore,
-      Some(maxResult)
+      Some(matwitterResult)
     )
   }
 
@@ -250,8 +250,8 @@ object TopKTweetsForClusterKeyReadableStore {
   }
 
   def getClusterToTopKTweetsStoreFromManhattanRO(
-    maxResults: Int,
-    manhattanConfig: ClusterTweetIndexStoreConfig.Manhattan,
+    matwitterResults: Int,
+    manhattanConfig: ClusterTweetIndetwitterStoreConfig.Manhattan,
     serviceIdentifier: ServiceIdentifier,
   ): ReadableStore[ClusterKey, Seq[(TweetId, Double)]] = {
     ManhattanRO
@@ -269,14 +269,14 @@ object TopKTweetsForClusterKeyReadableStore {
           clusterId = clusterKey.clusterId
         )
       }.mapValues { topKTweetsWithScores =>
-        // Only return maxResults tweets for each cluster Id
-        getTopTweetsWithScoresByFavClusterNormalizedScore(topKTweetsWithScores).take(maxResults)
+        // Only return matwitterResults tweets for each cluster Id
+        getTopTweetsWithScoresByFavClusterNormalizedScore(topKTweetsWithScores).take(matwitterResults)
       }
   }
 
   def getClusterToTopKTweetsStoreFromMemCache(
-    maxResults: Int,
-    memCacheConfig: ClusterTweetIndexStoreConfig.Memcached,
+    matwitterResults: Int,
+    memCacheConfig: ClusterTweetIndetwitterStoreConfig.Memcached,
     serviceIdentifier: ServiceIdentifier,
   ): ReadableStore[ClusterKey, Seq[(TweetId, Double)]] = {
     TopKTweetsForClusterReadableStore(
@@ -291,8 +291,8 @@ object TopKTweetsForClusterKeyReadableStore {
           clusterId = clusterKey.clusterId
         )
       }.mapValues { topKTweetsWithScores =>
-        // Only return maxResults tweets for each cluster Id
-        getTopTweetsWithScoresByFavClusterNormalizedScore(topKTweetsWithScores).take(maxResults)
+        // Only return matwitterResults tweets for each cluster Id
+        getTopTweetsWithScoresByFavClusterNormalizedScore(topKTweetsWithScores).take(matwitterResults)
       }
   }
 }

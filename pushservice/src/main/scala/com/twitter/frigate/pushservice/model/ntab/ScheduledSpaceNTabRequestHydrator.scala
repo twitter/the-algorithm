@@ -13,7 +13,7 @@ import com.twitter.notificationservice.thriftscala._
 import com.twitter.util.Future
 import com.twitter.util.Time
 
-trait ScheduledSpaceSpeakerNTabRequestHydrator extends ScheduledSpaceNTabRequestHydrator {
+trait ScheduledSpaceSpeakerNTabRequestHydrator etwittertends ScheduledSpaceNTabRequestHydrator {
   self: PushCandidate with ScheduledSpaceSpeakerPushCandidate =>
 
   override def refreshableType: Option[String] = {
@@ -24,33 +24,33 @@ trait ScheduledSpaceSpeakerNTabRequestHydrator extends ScheduledSpaceNTabRequest
         case SpaceNotificationType.AtSpaceBroadcast =>
           MrNtabCopyObjects.ScheduledSpaceSpeakerNow.refreshableType
         case _ =>
-          throw new IllegalStateException(s"Unexpected SpaceNotificationType")
+          throw new IllegalStateEtwitterception(s"Unetwitterpected SpaceNotificationType")
       }
     }
   }
 
   override lazy val facepileUsersFut: Future[Seq[Long]] = Future.Nil
 
-  override val socialProofDisplayText: Option[DisplayText] = Some(DisplayText())
+  override val socialProofDisplayTetwittert: Option[DisplayTetwittert] = Some(DisplayTetwittert())
 }
 
-trait ScheduledSpaceSubscriberNTabRequestHydrator extends ScheduledSpaceNTabRequestHydrator {
+trait ScheduledSpaceSubscriberNTabRequestHydrator etwittertends ScheduledSpaceNTabRequestHydrator {
   self: PushCandidate with ScheduledSpaceSubscriberPushCandidate =>
 
   override lazy val facepileUsersFut: Future[Seq[Long]] = {
     hostId match {
       case Some(spaceHostId) => Future.value(Seq(spaceHostId))
       case _ =>
-        Future.exception(
-          new IllegalStateException(
+        Future.etwitterception(
+          new IllegalStateEtwitterception(
             "Unable to get host id for ScheduledSpaceSubscriberNTabRequestHydrator"))
     }
   }
 
-  override val socialProofDisplayText: Option[DisplayText] = None
+  override val socialProofDisplayTetwittert: Option[DisplayTetwittert] = None
 }
 
-trait ScheduledSpaceNTabRequestHydrator extends NTabRequestHydrator {
+trait ScheduledSpaceNTabRequestHydrator etwittertends NTabRequestHydrator {
   self: PushCandidate with SpaceCandidate =>
 
   def hydratedHost: Option[User]
@@ -58,28 +58,28 @@ trait ScheduledSpaceNTabRequestHydrator extends NTabRequestHydrator {
   override lazy val senderIdFut: Future[Long] = {
     hostId match {
       case Some(spaceHostId) => Future.value(spaceHostId)
-      case _ => throw new IllegalStateException(s"No Space Host Id")
+      case _ => throw new IllegalStateEtwitterception(s"No Space Host Id")
     }
   }
 
   override lazy val tapThroughFut: Future[String] = Future.value(s"i/spaces/$spaceId")
 
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] =
+  override lazy val displayTetwittertEntitiesFut: Future[Seq[DisplayTetwittertEntity]] =
     NotificationServiceSender
-      .getDisplayTextEntityFromUser(
+      .getDisplayTetwittertEntityFromUser(
         Future.value(hydratedHost),
         fieldName = "space_host_name",
         isBold = true
       ).map(_.toSeq)
 
-  override val storyContext: Option[StoryContext] = None
+  override val storyContetwittert: Option[StoryContetwittert] = None
 
   override val inlineCard: Option[InlineCard] = None
 
   override lazy val ntabRequest: Future[Option[CreateGenericNotificationRequest]] = {
-    Future.join(senderIdFut, displayTextEntitiesFut, facepileUsersFut, tapThroughFut).map {
-      case (senderId, displayTextEntities, facepileUsers, tapThrough) =>
-        val expiryTimeMillis = if (target.params(PushFeatureSwitchParams.EnableSpacesTtlForNtab)) {
+    Future.join(senderIdFut, displayTetwittertEntitiesFut, facepileUsersFut, tapThroughFut).map {
+      case (senderId, displayTetwittertEntities, facepileUsers, tapThrough) =>
+        val etwitterpiryTimeMillis = if (target.params(PushFeatureSwitchParams.EnableSpacesTtlForNtab)) {
           Some(
             (Time.now + target.params(
               PushFeatureSwitchParams.SpaceNotificationsTTLDurationForNTab)).inMillis)
@@ -90,16 +90,16 @@ trait ScheduledSpaceNTabRequestHydrator extends NTabRequestHydrator {
             userId = target.targetId,
             senderId = senderId,
             genericType = GenericType.RefreshableNotification,
-            displayText = DisplayText(values = displayTextEntities),
+            displayTetwittert = DisplayTetwittert(values = displayTetwittertEntities),
             facepileUsers = facepileUsers,
             timestampMillis = Time.now.inMillis,
             tapThroughAction = Some(TapThroughAction(Some(tapThrough))),
             impressionId = Some(impressionId),
-            socialProofText = socialProofDisplayText,
-            context = storyContext,
+            socialProofTetwittert = socialProofDisplayTetwittert,
+            contetwittert = storyContetwittert,
             inlineCard = inlineCard,
             refreshableType = refreshableType,
-            expiryTimeMillis = expiryTimeMillis
+            etwitterpiryTimeMillis = etwitterpiryTimeMillis
           ))
     }
   }

@@ -13,7 +13,7 @@ import com.twitter.search.modeling.tweet_ranking.TweetScoringFeatures;
  * @deprecated This class is retired and we suggest to switch to SchemaBasedScoreAccumulator.
  */
 @Deprecated
-public class LegacyScoreAccumulator extends BaseLegacyScoreAccumulator<LinearScoringData> {
+public class LegacyScoreAccumulator etwittertends BaseLegacyScoreAccumulator<LinearScoringData> {
   /**
    * Constructs with a model and LinearScoringData
    */
@@ -32,7 +32,7 @@ public class LegacyScoreAccumulator extends BaseLegacyScoreAccumulator<LinearSco
   @Deprecated
   protected void updateScoreWithFeatures(LinearScoringData data) {
     addContinuousFeature(TweetScoringFeatures.LUCENE_SCORE, data.luceneScore);
-    addContinuousFeature(TweetScoringFeatures.TEXT_SCORE, data.textScore);
+    addContinuousFeature(TweetScoringFeatures.TEtwitterT_SCORE, data.tetwittertScore);
     addContinuousFeature(TweetScoringFeatures.TWEET_AGE_IN_SECONDS, data.tweetAgeInSeconds);
     addContinuousFeature(TweetScoringFeatures.REPLY_COUNT, data.replyCountPostLog2);
     addContinuousFeature(TweetScoringFeatures.RETWEET_COUNT, data.retweetCountPostLog2);

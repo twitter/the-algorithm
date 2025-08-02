@@ -8,7 +8,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 
 /**
- * Utilities for feature transformation and extraction.
+ * Utilities for feature transformation and etwittertraction.
  */
 public final class FeatureUtils {
 
@@ -23,26 +23,26 @@ public final class FeatureUtils {
    * 2. if (a < b) return  - b / a
    * 3. if (a == b == 0) return 0
    *
-   * The upper/lower limit is (-) maxRatio. For cases 1 and 2, if the denominator is 0,
-   * it returns maxRatio.
+   * The upper/lower limit is (-) matwitterRatio. For cases 1 and 2, if the denominator is 0,
+   * it returns matwitterRatio.
    *
    * This method is used to define a feature that tells how much larger or smaller is the
    * first value with respect to the second one..
    */
-  public static float diffRatio(float a, float b, float maxRatio) {
+  public static float diffRatio(float a, float b, float matwitterRatio) {
     float diff = a - b;
     if (diff == 0) {
       return 0;
     }
     float denominator = Math.min(a, b);
-    float ratio = denominator != 0 ? Math.abs(diff / denominator) : maxRatio;
-    return Math.copySign(Math.min(ratio, maxRatio), diff);
+    float ratio = denominator != 0 ? Math.abs(diff / denominator) : matwitterRatio;
+    return Math.copySign(Math.min(ratio, matwitterRatio), diff);
   }
 
   /**
    * Computes the cosine similarity between two maps that represent sparse vectors.
    */
-  public static <K, V extends Number> double cosineSimilarity(
+  public static <K, V etwittertends Number> double cosineSimilarity(
       Map<K, V> vector1, Map<K, V> vector2) {
     if (vector1 == null || vector1.isEmpty() || vector2 == null || vector2.isEmpty()) {
       return 0;
@@ -79,7 +79,7 @@ public final class FeatureUtils {
   /**
    * Computes the cosine similarity between two (dense) vectors.
    */
-  public static <V extends Number> double cosineSimilarity(
+  public static <V etwittertends Number> double cosineSimilarity(
       List<V> vector1, List<V> vector2) {
     if (vector1 == null || vector1.isEmpty() || vector2 == null || vector2.isEmpty()) {
       return 0;
@@ -108,13 +108,13 @@ public final class FeatureUtils {
    * Finds the key of the map with the highest value (compared in natural order)
    */
   @SuppressWarnings("unchecked")
-  public static <K, V extends Comparable> Optional<K> findMaxKey(Map<K, V> map) {
+  public static <K, V etwittertends Comparable> Optional<K> findMatwitterKey(Map<K, V> map) {
     if (map == null || map.isEmpty()) {
       return Optional.empty();
     }
 
-    Optional<Map.Entry<K, V>> maxEntry = map.entrySet().stream().max(Map.Entry.comparingByValue());
-    return maxEntry.map(Map.Entry::getKey);
+    Optional<Map.Entry<K, V>> matwitterEntry = map.entrySet().stream().matwitter(Map.Entry.comparingByValue());
+    return matwitterEntry.map(Map.Entry::getKey);
   }
 
 }

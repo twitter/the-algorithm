@@ -6,20 +6,20 @@ import com.twitter.tweetypie.core._
 import com.twitter.tweetypie.thriftscala._
 
 object ReportedTweetFilter {
-  type Type = ValueHydrator[Unit, Ctx]
+  type Type = ValueHydrator[Unit, Cttwitter]
 
   object MissingPerspectiveError
-      extends TweetHydrationError("Cannot determine reported state because perspective is missing")
+      etwittertends TweetHydrationError("Cannot determine reported state because perspective is missing")
 
-  case class Ctx(perspective: Option[StatusPerspective], underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+  case class Cttwitter(perspective: Option[StatusPerspective], underlyingTweetCttwitter: TweetCttwitter)
+      etwittertends TweetCttwitter.Protwittery
 
   def apply(): Type =
-    ValueHydrator[Unit, Ctx] { (_, ctx) =>
-      ctx.perspective match {
+    ValueHydrator[Unit, Cttwitter] { (_, cttwitter) =>
+      cttwitter.perspective match {
         case Some(p) if !p.reported => ValueState.StitchUnmodifiedUnit
-        case Some(_) => Stitch.exception(FilteredState.Unavailable.Reported)
-        case None => Stitch.exception(MissingPerspectiveError)
+        case Some(_) => Stitch.etwitterception(FilteredState.Unavailable.Reported)
+        case None => Stitch.etwitterception(MissingPerspectiveError)
       }
-    }.onlyIf { (_, ctx) => ctx.opts.excludeReported && ctx.opts.forUserId.isDefined }
+    }.onlyIf { (_, cttwitter) => cttwitter.opts.etwittercludeReported && cttwitter.opts.forUserId.isDefined }
 }

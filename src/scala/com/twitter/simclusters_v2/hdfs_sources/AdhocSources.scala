@@ -7,52 +7,52 @@ import com.twitter.bijection.Injection
 import com.twitter.hermit.candidate.thriftscala.Candidates
 import com.twitter.scalding.DateRange
 import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding_internal.source.lzo_scrooge.DailySuffixMostRecentLzoScrooge
-import com.twitter.scalding_internal.source.lzo_scrooge.FixedPathLzoScrooge
-import com.twitter.scalding_internal.source.lzo_scrooge.HourlySuffixMostRecentLzoScrooge
+import com.twitter.scalding_internal.source.lzo_scrooge.DailySuffitwitterMostRecentLzoScrooge
+import com.twitter.scalding_internal.source.lzo_scrooge.FitwitteredPathLzoScrooge
+import com.twitter.scalding_internal.source.lzo_scrooge.HourlySuffitwitterMostRecentLzoScrooge
 import com.twitter.simclusters_v2.thriftscala._
 
-case class EdgeWithDecayedWtsFixedPathSource(path: String)
-    extends FixedPathLzoScrooge[EdgeWithDecayedWeights](path, EdgeWithDecayedWeights)
+case class EdgeWithDecayedWtsFitwitteredPathSource(path: String)
+    etwittertends FitwitteredPathLzoScrooge[EdgeWithDecayedWeights](path, EdgeWithDecayedWeights)
 
-case class UserAndNeighborsFixedPathSource(path: String)
-    extends FixedPathLzoScrooge[UserAndNeighbors](path, UserAndNeighbors)
+case class UserAndNeighborsFitwitteredPathSource(path: String)
+    etwittertends FitwitteredPathLzoScrooge[UserAndNeighbors](path, UserAndNeighbors)
 
-case class NormsAndCountsFixedPathSource(path: String)
-    extends FixedPathLzoScrooge[NormsAndCounts](path, NormsAndCounts)
+case class NormsAndCountsFitwitteredPathSource(path: String)
+    etwittertends FitwitteredPathLzoScrooge[NormsAndCounts](path, NormsAndCounts)
 
-case class UserToInterestedInClustersFixedPathSource(path: String)
-    extends FixedPathLzoScrooge[UserToInterestedInClusters](path, UserToInterestedInClusters)
+case class UserToInterestedInClustersFitwitteredPathSource(path: String)
+    etwittertends FitwitteredPathLzoScrooge[UserToInterestedInClusters](path, UserToInterestedInClusters)
 
-case class TimelineDataExtractorFixedPathSource(path: String)
-    extends FixedPathLzoScrooge[ReferenceTweets](path, ReferenceTweets)
+case class TimelineDataEtwittertractorFitwitteredPathSource(path: String)
+    etwittertends FitwitteredPathLzoScrooge[ReferenceTweets](path, ReferenceTweets)
 
-case class TweetClusterScoresHourlySuffixSource(path: String, override val dateRange: DateRange)
-    extends HourlySuffixMostRecentLzoScrooge[TweetAndClusterScores](path, dateRange)
+case class TweetClusterScoresHourlySuffitwitterSource(path: String, override val dateRange: DateRange)
+    etwittertends HourlySuffitwitterMostRecentLzoScrooge[TweetAndClusterScores](path, dateRange)
 
-case class TweetTopKClustersHourlySuffixSource(path: String, override val dateRange: DateRange)
-    extends HourlySuffixMostRecentLzoScrooge[TweetTopKClustersWithScores](
+case class TweetTopKClustersHourlySuffitwitterSource(path: String, override val dateRange: DateRange)
+    etwittertends HourlySuffitwitterMostRecentLzoScrooge[TweetTopKClustersWithScores](
       path,
       dateRange
     )
 
-case class ClusterTopKTweetsHourlySuffixSource(path: String, override val dateRange: DateRange)
-    extends HourlySuffixMostRecentLzoScrooge[ClusterTopKTweetsWithScores](
+case class ClusterTopKTweetsHourlySuffitwitterSource(path: String, override val dateRange: DateRange)
+    etwittertends HourlySuffitwitterMostRecentLzoScrooge[ClusterTopKTweetsWithScores](
       path,
       dateRange
     )
 
 case class TweetSimilarityUnhydratedPairsSource(path: String, override val dateRange: DateRange)
-    extends DailySuffixMostRecentLzoScrooge[LabelledTweetPairs](
+    etwittertends DailySuffitwitterMostRecentLzoScrooge[LabelledTweetPairs](
       path,
       dateRange
     )
 
 case class WTFCandidatesSource(path: String)
-    extends FixedPathLzoScrooge[Candidates](path, Candidates)
+    etwittertends FitwitteredPathLzoScrooge[Candidates](path, Candidates)
 
 case class EmbeddingsLiteSource(path: String)
-    extends FixedPathLzoScrooge[EmbeddingsLite](path, EmbeddingsLite)
+    etwittertends FitwitteredPathLzoScrooge[EmbeddingsLite](path, EmbeddingsLite)
 
 object AdhocKeyValSources {
   def interestedInSource(path: String): VersionedKeyValSource[Long, ClustersUserIsInterestedIn] = {

@@ -3,45 +3,45 @@ package com.twitter.tsp.common
 import com.twitter.abdecider.LoggingABDecider
 import com.twitter.abdecider.UserRecipient
 import com.twitter.contentrecommender.thriftscala.DisplayLocation
-import com.twitter.discovery.common.configapi.FeatureContextBuilder
+import com.twitter.discovery.common.configapi.FeatureContetwittertBuilder
 import com.twitter.featureswitches.FSRecipient
 import com.twitter.featureswitches.Recipient
 import com.twitter.featureswitches.UserAgent
 import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.interests.thriftscala.TopicListingViewerContext
+import com.twitter.interests.thriftscala.TopicListingViewerContetwittert
 import com.twitter.timelines.configapi
 import com.twitter.timelines.configapi.Params
-import com.twitter.timelines.configapi.RequestContext
-import com.twitter.timelines.configapi.abdecider.LoggingABDeciderExperimentContext
+import com.twitter.timelines.configapi.RequestContetwittert
+import com.twitter.timelines.configapi.abdecider.LoggingABDeciderEtwitterperimentContetwittert
 
 case class ParamsBuilder(
-  featureContextBuilder: FeatureContextBuilder,
+  featureContetwittertBuilder: FeatureContetwittertBuilder,
   abDecider: LoggingABDecider,
   overridesConfig: configapi.Config,
   statsReceiver: StatsReceiver) {
 
-  def buildFromTopicListingViewerContext(
-    topicListingViewerContext: Option[TopicListingViewerContext],
+  def buildFromTopicListingViewerContetwittert(
+    topicListingViewerContetwittert: Option[TopicListingViewerContetwittert],
     displayLocation: DisplayLocation,
     userRoleOverride: Option[Set[String]] = None
   ): Params = {
 
-    topicListingViewerContext.flatMap(_.userId) match {
+    topicListingViewerContetwittert.flatMap(_.userId) match {
       case Some(userId) =>
-        val userRecipient = ParamsBuilder.toFeatureSwitchRecipientWithTopicContext(
+        val userRecipient = ParamsBuilder.toFeatureSwitchRecipientWithTopicContetwittert(
           userId,
           userRoleOverride,
-          topicListingViewerContext,
+          topicListingViewerContetwittert,
           Some(displayLocation)
         )
 
         overridesConfig(
-          requestContext = RequestContext(
+          requestContetwittert = RequestContetwittert(
             userId = Some(userId),
-            experimentContext = LoggingABDeciderExperimentContext(
+            etwitterperimentContetwittert = LoggingABDeciderEtwitterperimentContetwittert(
               abDecider,
               Some(UserRecipient(userId, Some(userId)))),
-            featureContext = featureContextBuilder(
+            featureContetwittert = featureContetwittertBuilder(
               Some(userId),
               Some(userRecipient)
             )
@@ -49,7 +49,7 @@ case class ParamsBuilder(
           statsReceiver
         )
       case _ =>
-        throw new IllegalArgumentException(
+        throw new IllegalArgumentEtwitterception(
           s"${this.getClass.getSimpleName} tried to build Param for a request without a userId"
         )
     }
@@ -58,25 +58,25 @@ case class ParamsBuilder(
 
 object ParamsBuilder {
 
-  def toFeatureSwitchRecipientWithTopicContext(
+  def toFeatureSwitchRecipientWithTopicContetwittert(
     userId: Long,
     userRolesOverride: Option[Set[String]],
-    context: Option[TopicListingViewerContext],
+    contetwittert: Option[TopicListingViewerContetwittert],
     displayLocationOpt: Option[DisplayLocation]
   ): Recipient = {
     val userRoles = userRolesOverride match {
       case Some(overrides) => Some(overrides)
-      case _ => context.flatMap(_.userRoles.map(_.toSet))
+      case _ => contetwittert.flatMap(_.userRoles.map(_.toSet))
     }
 
     val recipient = FSRecipient(
       userId = Some(userId),
       userRoles = userRoles,
-      deviceId = context.flatMap(_.deviceId),
-      guestId = context.flatMap(_.guestId),
-      languageCode = context.flatMap(_.languageCode),
-      countryCode = context.flatMap(_.countryCode),
-      userAgent = context.flatMap(_.userAgent).flatMap(UserAgent(_)),
+      deviceId = contetwittert.flatMap(_.deviceId),
+      guestId = contetwittert.flatMap(_.guestId),
+      languageCode = contetwittert.flatMap(_.languageCode),
+      countryCode = contetwittert.flatMap(_.countryCode),
+      userAgent = contetwittert.flatMap(_.userAgent).flatMap(UserAgent(_)),
       isVerified = None,
       isTwoffice = None,
       tooClient = None,

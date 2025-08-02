@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.function.Supplier;
 
-import scala.runtime.BoxedUnit;
+import scala.runtime.BotwitteredUnit;
 
 import com.google.common.base.Preconditions;
 
@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import com.twitter.common.util.Clock;
 import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer;
 import com.twitter.gizmoduck.thriftjava.UserModification;
-import com.twitter.search.common.indexing.thriftjava.AntisocialUserUpdate;
+import com.twitter.search.common.indetwittering.thriftjava.AntisocialUserUpdate;
 import com.twitter.search.common.metrics.SearchCustomGauge;
 import com.twitter.search.common.metrics.SearchRateCounter;
 import com.twitter.search.common.util.io.kafka.CompactThriftSerializer;
@@ -36,17 +36,17 @@ import com.twitter.util.Futures;
 public final class UserUpdatesPipeline {
   private static final Logger LOG = LoggerFactory.getLogger(UserUpdatesPipeline.class);
   private static final Duration POLL_TIMEOUT = Duration.ofSeconds(1);
-  private static final int MAX_PENDING_EVENTS = 100;
+  private static final int MAtwitter_PENDING_EVENTS = 100;
   private static final String KAFKA_CLIENT_ID = "";
-  private static final int MAX_POLL_RECORDS = 1;
+  private static final int MAtwitter_POLL_RECORDS = 1;
   private static final String USER_MODIFICATIONS_KAFKA_TOPIC = "";
-  private static final String USER_UPDATES_KAFKA_TOPIC_PREFIX = "";
+  private static final String USER_UPDATES_KAFKA_TOPIC_PREFItwitter = "";
   private static final String KAFKA_PRODUCER_DEST = "";
   private static final String KAFKA_CONSUMER_DEST = "";
 
-  // This semaphore stops us from having more than MAX_PENDING_EVENTS in the pipeline at any point
+  // This semaphore stops us from having more than MAtwitter_PENDING_EVENTS in the pipeline at any point
   // in time.
-  private final Semaphore pendingEvents = new Semaphore(MAX_PENDING_EVENTS);
+  private final Semaphore pendingEvents = new Semaphore(MAtwitter_PENDING_EVENTS);
   private final Supplier<Boolean> isRunning;
   private final KafkaConsumer<Long, UserModification> userModificationConsumer;
   private final UserUpdateIngester userUpdateIngester;
@@ -64,9 +64,9 @@ public final class UserUpdatesPipeline {
   public static UserUpdatesPipeline buildPipeline(
       String environment,
       WireModule wireModule,
-      String statsPrefix,
+      String statsPrefitwitter,
       Supplier<Boolean> isRunning,
-      Clock clock) throws Exception {
+      Clock clock) throws Etwitterception {
 
     // We only have Gizmoduck clients for staging and prod.
     String gizmoduckClient;
@@ -84,19 +84,19 @@ public final class UserUpdatesPipeline {
         new ThriftDeserializer<>(UserModification.class),
         KAFKA_CLIENT_ID,
         kafkaConsumerGroup,
-        MAX_POLL_RECORDS);
+        MAtwitter_POLL_RECORDS);
     userModificationConsumer.subscribe(Collections.singleton(USER_MODIFICATIONS_KAFKA_TOPIC));
     LOG.info("User modifications topic: {}", USER_MODIFICATIONS_KAFKA_TOPIC);
-    LOG.info("User updates Kafka topic prefix: {}", USER_UPDATES_KAFKA_TOPIC_PREFIX);
+    LOG.info("User updates Kafka topic prefitwitter: {}", USER_UPDATES_KAFKA_TOPIC_PREFItwitter);
     LOG.info("Kafka consumer group: {}", kafkaConsumerGroup);
     LOG.info("Kafka client id: {}", KAFKA_CLIENT_ID);
 
     UserUpdateIngester userUpdateIngester = new UserUpdateIngester(
-        statsPrefix,
+        statsPrefitwitter,
         wireModule.getGizmoduckClient(gizmoduckClient),
         wireModule.getDecider());
 
-    String userUpdatesKafkaTopic = USER_UPDATES_KAFKA_TOPIC_PREFIX + environment;
+    String userUpdatesKafkaTopic = USER_UPDATES_KAFKA_TOPIC_PREFItwitter + environment;
     BlockingFinagleKafkaProducer<Long, AntisocialUserUpdate> userUpdatesProducer =
         wireModule.newFinagleKafkaProducer(
             KAFKA_PRODUCER_DEST,
@@ -127,12 +127,12 @@ public final class UserUpdatesPipeline {
     this.userUpdatesKafkaTopic = userUpdatesKafkaTopic;
     this.clock = clock;
 
-    String statPrefix = "user_updates_pipeline_";
-    SearchCustomGauge.export(statPrefix + "semaphore_permits", pendingEvents::availablePermits);
+    String statPrefitwitter = "user_updates_pipeline_";
+    SearchCustomGauge.etwitterport(statPrefitwitter + "semaphore_permits", pendingEvents::availablePermits);
 
-    records = SearchRateCounter.export(statPrefix + "records_processed_total");
-    success = SearchRateCounter.export(statPrefix + "records_processed_success");
-    failure = SearchRateCounter.export(statPrefix + "records_processed_failure");
+    records = SearchRateCounter.etwitterport(statPrefitwitter + "records_processed_total");
+    success = SearchRateCounter.etwitterport(statPrefitwitter + "records_processed_success");
+    failure = SearchRateCounter.etwitterport(statPrefitwitter + "records_processed_failure");
   }
 
   /**
@@ -143,7 +143,7 @@ public final class UserUpdatesPipeline {
       try {
         pollFromKafka();
       } catch (Throwable e) {
-        LOG.error("Exception processing event.", e);
+        LOG.error("Etwitterception processing event.", e);
       }
     }
     close();
@@ -152,7 +152,7 @@ public final class UserUpdatesPipeline {
    * Polls records from Kafka and handles timeouts, back-pressure, and error handling.
    * All consumed messages are passed to the messageHandler.
    */
-  private void pollFromKafka() throws Exception {
+  private void pollFromKafka() throws Etwitterception {
     for (ConsumerRecord<Long, UserModification> record
         : userModificationConsumer.poll(POLL_TIMEOUT)) {
       pendingEvents.acquire();
@@ -179,24 +179,24 @@ public final class UserUpdatesPipeline {
    * 1. Converts incoming event into possibly empty set of AntisocialUserUpdates
    * 2. Writes the result to Kafka so that Earlybird can consume it.
    */
-  private Future<BoxedUnit> handleUserModification(UserModification event) {
+  private Future<BotwitteredUnit> handleUserModification(UserModification event) {
     return userUpdateIngester
         .transform(event)
         .flatMap(this::writeListToKafka);
   }
 
-  private Future<BoxedUnit> writeListToKafka(List<AntisocialUserUpdate> updates) {
-    List<Future<BoxedUnit>> futures = new ArrayList<>();
+  private Future<BotwitteredUnit> writeListToKafka(List<AntisocialUserUpdate> updates) {
+    List<Future<BotwitteredUnit>> futures = new ArrayList<>();
     for (AntisocialUserUpdate update : updates) {
       futures.add(writeToKafka(update));
     }
     return Futures.join(futures).onFailure(e -> {
-      LOG.info("Exception while writing to kafka", e);
+      LOG.info("Etwitterception while writing to kafka", e);
       return null;
     });
   }
 
-  private Future<BoxedUnit> writeToKafka(AntisocialUserUpdate update) {
+  private Future<BotwitteredUnit> writeToKafka(AntisocialUserUpdate update) {
       ProducerRecord<Long, AntisocialUserUpdate> record = new ProducerRecord<>(
           userUpdatesKafkaTopic,
           null,
@@ -205,8 +205,8 @@ public final class UserUpdatesPipeline {
           update);
       try {
         return userUpdatesProducer.send(record).unit();
-      } catch (Exception e) {
-        return Future.exception(e);
+      } catch (Etwitterception e) {
+        return Future.etwitterception(e);
       }
   }
 
@@ -214,8 +214,8 @@ public final class UserUpdatesPipeline {
     userModificationConsumer.close();
     try {
       // Acquire all of the permits, so we know all pending events have been written.
-      pendingEvents.acquire(MAX_PENDING_EVENTS);
-    } catch (Exception e) {
+      pendingEvents.acquire(MAtwitter_PENDING_EVENTS);
+    } catch (Etwitterception e) {
       LOG.error("Error shutting down stage", e);
     }
   }

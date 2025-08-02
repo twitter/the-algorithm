@@ -7,13 +7,13 @@ import com.twitter.follow_recommendations.common.rankers.weighted_candidate_sour
 import scala.util.Random
 
 /**
- * This ranker selects the next candidate source to select a candidate from. It supports
+ * This ranker selects the netwittert candidate source to select a candidate from. It supports
  * two kinds of algorithm, WeightedRandomSampling or WeightedRoundRobin. WeightedRandomSampling
- * pick the next candidate source randomly, WeightedRoundRobin picked the next candidate source
+ * pick the netwittert candidate source randomly, WeightedRoundRobin picked the netwittert candidate source
  * sequentially based on the weight of the candidate source. It is default to WeightedRandomSampling
  * if no weight method is provided.
  *
- * Example usage of this class:
+ * Etwitterample usage of this class:
  *
  * When use WeightedRandomSampling:
  * Input candidate sources and their weights are: {{CS1: 3}, {CS2: 2}, {CS3: 5}}
@@ -40,17 +40,17 @@ class WeightedCandidateSourceBaseRanker[A, Rec](
   randomSeed: Option[Long]) {
 
   /**
-   * Creates a iterator over algorithms and calls next to return a Stream of candidates
+   * Creates a iterator over algorithms and calls netwittert to return a Stream of candidates
    *
    *
    * @param candidateSources the set of candidate sources that are being sampled
    * @param candidateSourceWeights map of candidate source to weight
    * @param candidates the map of candidate source to the iterator of its results
    * @param weightMethod a enum to indict which weight method to use. Two values are supported
-   * currently. When WeightedRandomSampling is set, the next candidate is picked from a candidate
-   * source that is randomly chosen. When WeightedRoundRobin is set, the next candidate is picked
+   * currently. When WeightedRandomSampling is set, the netwittert candidate is picked from a candidate
+   * source that is randomly chosen. When WeightedRoundRobin is set, the netwittert candidate is picked
    * from current candidate source until the number of candidates reaches to the assigned weight of
-   * the candidate source. The next call of this function will return a candidate from the next
+   * the candidate source. The netwittert call of this function will return a candidate from the netwittert
    * candidate source which is after previous candidate source based on the order input
    * candidate source sequence.
 
@@ -73,12 +73,12 @@ class WeightedCandidateSourceBaseRanker[A, Rec](
      * @param candidateSourceIter an iterator over candidate sources returned by the sampling procedure
      * @return stream of candidates
      */
-    def next(candidateSourceIter: Iterator[A]): Stream[Rec] = {
-      val source = candidateSourceIter.next()
+    def netwittert(candidateSourceIter: Iterator[A]): Stream[Rec] = {
+      val source = candidateSourceIter.netwittert()
       val it = candidates(source)
-      if (it.hasNext) {
-        val currCand = it.next()
-        currCand #:: next(candidateSourceIter)
+      if (it.hasNetwittert) {
+        val currCand = it.netwittert()
+        currCand #:: netwittert(candidateSourceIter)
       } else {
         assert(candidateSources.contains(source), "Selected source is not in candidate sources")
         // Remove the depleted candidate source and re-sample
@@ -100,7 +100,7 @@ class WeightedCandidateSourceBaseRanker[A, Rec](
               random
             )(weightedCandidateSource).iterator
         }
-      next(candidateSourceIter)
+      netwittert(candidateSourceIter)
     }
   }
 

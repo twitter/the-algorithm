@@ -14,13 +14,13 @@ import com.twitter.frigate.common.base.Stats.track
 import com.twitter.frigate.common.config.CommonConstants
 import com.twitter.frigate.common.logger.MRLogger
 import com.twitter.frigate.common.rec_types.RecTypes
-import com.twitter.frigate.common.util.InvalidRequestException
+import com.twitter.frigate.common.util.InvalidRequestEtwitterception
 import com.twitter.frigate.common.util.MrNtabCopyObjects
 import com.twitter.frigate.pushservice.model.PushTypes.PushCandidate
 import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
 import com.twitter.frigate.pushservice.model.PushTypes.Target
 import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.ml.HydrationContextBuilder
+import com.twitter.frigate.pushservice.ml.HydrationContetwittertBuilder
 import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams.EnableMagicFanoutNewsForYouNtabCopy
 import com.twitter.frigate.pushservice.scriber.MrRequestScribeHandler
 import com.twitter.frigate.pushservice.send_handler.generator.PushRequestToCandidate
@@ -52,7 +52,7 @@ class SendHandler(
 )(
   implicit val statsReceiver: StatsReceiver,
   implicit val config: Config)
-    extends CandidateFilteringOnlyFlow[Target, RawCandidate, PushCandidate] {
+    etwittertends CandidateFilteringOnlyFlow[Target, RawCandidate, PushCandidate] {
 
   implicit private val timer: Timer = new JavaTimer(true)
   val stats = statsReceiver.scope("SendHandler")
@@ -84,7 +84,7 @@ class SendHandler(
     bStats.counter("requests").incr()
     Stat
       .timeFuture(bStats.stat("latency"))(
-        process(request).raiseWithin(CommonConstants.maxPushRequestDuration))
+        process(request).raiseWithin(CommonConstants.matwitterPushRequestDuration))
       .onSuccess {
         case (pushResp, rawCandidate) =>
           trackStatsForResponseToRequest(
@@ -92,13 +92,13 @@ class SendHandler(
             rawCandidate.target,
             pushResp,
             receivers)(statsReceiver)
-          if (!request.context.exists(_.darkWrite.contains(true))) {
+          if (!request.contetwittert.etwitterists(_.darkWrite.contains(true))) {
             config.requestScribe(PushRequestScribe(request, pushResp))
           }
       }
-      .onFailure { ex =>
+      .onFailure { etwitter =>
         bStats.counter("failures").incr()
-        bStats.scope("failures").counter(ex.getClass.getCanonicalName).incr()
+        bStats.scope("failures").counter(etwitter.getClass.getCanonicalName).incr()
       }
       .map {
         case (pushResp, _) => pushResp
@@ -112,11 +112,11 @@ class SendHandler(
       pushTargetUserBuilder
         .buildTarget(
           request.userId,
-          request.context
+          request.contetwittert
         )
     ).flatMap { targetUser =>
-      val responseWithScribedInfo = request.context.exists { context =>
-        context.responseWithScribedInfo.contains(true)
+      val responseWithScribedInfo = request.contetwittert.etwitterists { contetwittert =>
+        contetwittert.responseWithScribedInfo.contains(true)
       }
       val newRequest =
         if (request.notification.commonRecommendationType == CommonRecommendationType.MagicFanoutNewsEvent &&
@@ -126,7 +126,7 @@ class SendHandler(
           request.copy(notification = newNotification)
         } else request
 
-      if (RecTypes.isSendHandlerType(recType) || newRequest.context.exists(
+      if (RecTypes.isSendHandlerType(recType) || newRequest.contetwittert.etwitterists(
           _.allowCRT.contains(true))) {
 
         val rawCandidateFut = PushRequestToCandidate.generatePushCandidate(
@@ -144,7 +144,7 @@ class SendHandler(
           }
         }
       } else {
-        Future.exception(InvalidRequestException(s"${recType.name} not supported in SendHandler"))
+        Future.etwitterception(InvalidRequestEtwitterception(s"${recType.name} not supported in SendHandler"))
       }
     }
   }
@@ -160,10 +160,10 @@ class SendHandler(
         Future.value(candidateDetails)
 
       case Some(candidateDetail) =>
-        val hydrationContextFut = HydrationContextBuilder.build(candidateDetail.candidate)
-        hydrationContextFut.flatMap { hc =>
+        val hydrationContetwittertFut = HydrationContetwittertBuilder.build(candidateDetail.candidate)
+        hydrationContetwittertFut.flatMap { hc =>
           featureHydrator
-            .hydrateCandidate(Seq(hc), target.mrRequestContextForFeatureStore)
+            .hydrateCandidate(Seq(hc), target.mrRequestContetwittertForFeatureStore)
             .map { hydrationResult =>
               val features = hydrationResult.getOrElse(hc, FeatureMap())
               candidateDetail.candidate.mergeFeatures(features)
@@ -176,9 +176,9 @@ class SendHandler(
 
   override def process(
     target: Target,
-    externalCandidates: Seq[RawCandidate]
+    etwitterternalCandidates: Seq[RawCandidate]
   ): Future[Response[PushCandidate, Result]] = {
-    val candidate = externalCandidates.map(CandidateDetails(_, "realtime"))
+    val candidate = etwitterternalCandidates.map(CandidateDetails(_, "realtime"))
 
     for {
       hydratedCandidatesWithCopy <- hydrateCandidates(candidate)
@@ -206,7 +206,7 @@ class SendHandler(
     } yield {
 
       /**
-       * We combine the results for all filtering steps and pass on in sequence to next step
+       * We combine the results for all filtering steps and pass on in sequence to netwittert step
        *
        * This is done to ensure the filtering reason for the candidate from multiple levels of
        * filtering is carried all the way until [[PushResponse]] is built and returned from

@@ -11,7 +11,7 @@ import com.twitter.search.common.relevance.entities.TwitterMessageUtil;
 public class IngesterValidMessageFilter {
   public static final String KEEP_NULLCAST_DECIDER_KEY =
       "ingester_all_keep_nullcasts";
-  public static final String STRIP_SUPPLEMENTARY_EMOJIS_DECIDER_KEY_PREFIX =
+  public static final String STRIP_SUPPLEMENTARY_EMOJIS_DECIDER_KEY_PREFItwitter =
       "valid_message_filter_strip_supplementary_emojis_";
 
   protected final Decider decider;
@@ -37,7 +37,7 @@ public class IngesterValidMessageFilter {
     for (TwitterMessageUtil.Field field : TwitterMessageUtil.Field.values()) {
       if (DeciderUtil.isAvailableForRandomRecipient(
           decider,
-          STRIP_SUPPLEMENTARY_EMOJIS_DECIDER_KEY_PREFIX + field.getNameForStats())) {
+          STRIP_SUPPLEMENTARY_EMOJIS_DECIDER_KEY_PREFItwitter + field.getNameForStats())) {
         stripEmojisFields.add(field);
       }
     }

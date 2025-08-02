@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -22,11 +22,11 @@ message ScopedAllocatorOptions {
 }
 
 message RewriterConfig {
-  // Graph rewriting is experimental and subject to change, not covered by any
+  // Graph rewriting is etwitterperimental and subject to change, not covered by any
   // API stability guarantees.
 
   // Configuration options for the meta-optimizer. Unless otherwise noted, these
-  // configuration options do not apply to explicitly triggered optimization
+  // configuration options do not apply to etwitterplicitly triggered optimization
   // passes in the optimizers field.
 
   enum Toggle {
@@ -34,7 +34,7 @@ message RewriterConfig {
     ON = 1;
     OFF = 2;
     // Enable some aggressive optimizations that use assumptions that TF graphs
-    // may break. For example, assume the shape of a placeholder matches its
+    // may break. For etwitterample, assume the shape of a placeholder matches its
     // actual feed.
     AGGRESSIVE = 3;
   }
@@ -99,17 +99,17 @@ message RewriterConfig {
   // This will try to use float16 on GPU which is faster.
   // Note that this can change the numerical stability of the graph and may
   // require the use of loss scaling to maintain model convergence.
-  Toggle auto_mixed_precision = 23;
+  Toggle auto_mitwittered_precision = 23;
   // Optimize data types for MKL (default is OFF).
   // This will try to use bfloat16 on CPUs, which is faster.
   // Note that this can change the numerical stability of the graph.
-  Toggle auto_mixed_precision_mkl = 25;
+  Toggle auto_mitwittered_precision_mkl = 25;
   // Emulate a model using data type float16 on CPU (default is OFF).
   // This will try to emulate the float16 inputs and outputs of an operator
   // on CPU to have better correlation with float16 on GPU; however the
   // computation in the operator is based on float32.
   // Note that this can change the numerical stability of the graph.
-  Toggle auto_mixed_precision_cpu = 29;
+  Toggle auto_mitwittered_precision_cpu = 29;
   // Disable the entire meta optimizer (off by default).
   bool disable_meta_optimizer = 19;
   // Optimizers registered by plugin (default is ON)
@@ -126,16 +126,16 @@ message RewriterConfig {
   int32 min_graph_nodes = 17;
 
   // Disable optimizations that assume compressed tensors. Note that this flag
-  // is experimental and may be removed in the future.
-  bool experimental_disable_compressed_tensor_optimization = 26;
+  // is etwitterperimental and may be removed in the future.
+  bool etwitterperimental_disable_compressed_tensor_optimization = 26;
 
-  // Disable folding quantization emulation ops such as FakeQuantWithMinMax* and
+  // Disable folding quantization emulation ops such as FakeQuantWithMinMatwitter* and
   // QuantizeAndDequantize*. Some compilers (e.g. the TF-to-tflite converter)
-  // have to extract quantization configs (e.g. min/max range, number of bits,
+  // have to etwittertract quantization configs (e.g. min/matwitter range, number of bits,
   // and per-channel) from the quantization emulation ops. Note that this flag
-  // is experimental and may be removed in the future. See b/174138564 for more
+  // is etwitterperimental and may be removed in the future. See b/174138564 for more
   // details.
-  bool experimental_disable_folding_quantization_emulation = 27;
+  bool etwitterperimental_disable_folding_quantization_emulation = 27;
 
   enum MemOptType {
     // The default setting (SCHEDULING and SWAPPING HEURISTICS only)
@@ -146,7 +146,7 @@ message RewriterConfig {
     MANUAL = 2;
 
     // Driven by heuristics. The behavior of these heuristics is subject to
-    // change. Currently includes an experimental recomputation and swapping
+    // change. Currently includes an etwitterperimental recomputation and swapping
     // heuristics. Manual annotations are respected, but additional nodes are
     // selected automatically.
 
@@ -171,11 +171,11 @@ message RewriterConfig {
   // manual annotation of those input nodes or to manual annotation and
   // heuristics depending on memory_optimization), but the nodes themselves will
   // not be recomputed. This matches any sub-scopes as well, meaning the scope
-  // can appear not just as a top-level scope. For example, if the value is
+  // can appear not just as a top-level scope. For etwitterample, if the value is
   // "gradients/", the default, it will match node name "gradients/foo",
   // "foo/gradients/bar", but not "foo_gradients/"
   string memory_optimizer_target_node_name_scope = 6;
-  // Maximum number of milliseconds to spend optimizing a single graph before
+  // Matwitterimum number of milliseconds to spend optimizing a single graph before
   // timing out. If less than or equal to 0 (default value) the optimizer will
   // never time out.
   int64 meta_optimizer_timeout_ms = 20;

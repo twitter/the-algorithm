@@ -2,8 +2,8 @@ package com.twitter.search.earlybird_root.routers;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import javatwitter.inject.Inject;
+import javatwitter.inject.Named;
 
 import com.google.common.base.Preconditions;
 
@@ -17,21 +17,21 @@ import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
 import com.twitter.search.earlybird.thrift.ThriftSearchResult;
 import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.earlybird_root.common.InjectionNames;
 import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
 
-public class RelevanceRequestRouter extends AbstractRecencyAndRelevanceRequestRouter {
+public class RelevanceRequestRouter etwittertends AbstractRecencyAndRelevanceRequestRouter {
   private static final long MILLIS_IN_ONE_DAY = TimeUnit.DAYS.toMillis(1);
 
   @Inject
   public RelevanceRequestRouter(
       @Named(InjectionNames.REALTIME)
-      Service<EarlybirdRequestContext, EarlybirdResponse> realtime,
+      Service<EarlybirdRequestContetwittert, EarlybirdResponse> realtime,
       @Named(InjectionNames.PROTECTED)
-      Service<EarlybirdRequestContext, EarlybirdResponse> protectedRealtime,
+      Service<EarlybirdRequestContetwittert, EarlybirdResponse> protectedRealtime,
       @Named(InjectionNames.FULL_ARCHIVE)
-      Service<EarlybirdRequestContext, EarlybirdResponse> fullArchive,
+      Service<EarlybirdRequestContetwittert, EarlybirdResponse> fullArchive,
       @Named(RelevanceRequestRouterModule.REALTIME_TIME_RANGE_FILTER)
       EarlybirdTimeRangeFilter realtimeTimeRangeFilter,
       @Named(RelevanceRequestRouterModule.PROTECTED_TIME_RANGE_FILTER)
@@ -71,10 +71,10 @@ public class RelevanceRequestRouter extends AbstractRecencyAndRelevanceRequestRo
     CollectorTerminationParams terminationParams =
         request.getSearchQuery().getCollectorParams().getTerminationParams();
 
-    Preconditions.checkArgument(terminationParams.isSetMaxHitsToProcess());
-    int maxHits = terminationParams.getMaxHitsToProcess() * numSuccessfulPartitions;
+    Preconditions.checkArgument(terminationParams.isSetMatwitterHitsToProcess());
+    int matwitterHits = terminationParams.getMatwitterHitsToProcess() * numSuccessfulPartitions;
 
-    if (numHitsProcessed >= maxHits) {
+    if (numHitsProcessed >= matwitterHits) {
       return false;
     }
 

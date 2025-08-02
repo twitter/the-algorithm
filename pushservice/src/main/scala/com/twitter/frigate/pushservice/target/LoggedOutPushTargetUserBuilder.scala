@@ -6,25 +6,25 @@ import com.twitter.decider.Decider
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base.FeatureMap
 import com.twitter.frigate.common.history.History
-import com.twitter.frigate.common.history.HistoryStoreKeyContext
+import com.twitter.frigate.common.history.HistoryStoreKeyContetwittert
 import com.twitter.frigate.common.history.MagicFanoutReasonHistory
 import com.twitter.frigate.common.history.PushServiceHistoryStore
 import com.twitter.frigate.common.history.RecItems
 import com.twitter.frigate.common.store.deviceinfo.DeviceInfo
 import com.twitter.frigate.common.util.ABDeciderWithOverride
 import com.twitter.frigate.common.util.LanguageLocaleUtil
-import com.twitter.frigate.data_pipeline.features_common.MrRequestContextForFeatureStore
+import com.twitter.frigate.data_pipeline.features_common.MrRequestContetwittertForFeatureStore
 import com.twitter.frigate.data_pipeline.thriftscala.UserHistoryValue
 import com.twitter.frigate.dau_model.thriftscala.DauProbability
 import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.thriftscala.PushContext
+import com.twitter.frigate.pushservice.thriftscala.PushContetwittert
 import com.twitter.frigate.thriftscala.UserForPushTargeting
 import com.twitter.gizmoduck.thriftscala.User
 import com.twitter.hermit.stp.thriftscala.STPResult
 import com.twitter.interests.thriftscala.InterestId
 import com.twitter.notificationservice.genericfeedbackstore.FeedbackPromptValue
 import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
-import com.twitter.nrel.hydration.push.HydrationContext
+import com.twitter.nrel.hydration.push.HydrationContetwittert
 import com.twitter.permissions_storage.thriftscala.AppPermission
 import com.twitter.service.metastore.gen.thriftscala.Location
 import com.twitter.service.metastore.gen.thriftscala.UserLanguages
@@ -55,14 +55,14 @@ case class LoggedOutPushTargetUserBuilder(
 
   def buildTarget(
     guestId: Long,
-    inputPushContext: Option[PushContext]
+    inputPushContetwittert: Option[PushContetwittert]
   ): Future[Target] = {
 
-    val historyStoreKeyContext = HistoryStoreKeyContext(
+    val historyStoreKeyContetwittert = HistoryStoreKeyContetwittert(
       guestId,
-      inputPushContext.flatMap(_.useMemcacheForHistory).getOrElse(false)
+      inputPushContetwittert.flatMap(_.useMemcacheForHistory).getOrElse(false)
     )
-    if (historyStore.get(historyStoreKeyContext, Some(30.days)) == Future.None) {
+    if (historyStore.get(historyStoreKeyContetwittert, Some(30.days)) == Future.None) {
       noHistoryCounter.incr()
     } else {
       historyFoundCounter.incr()
@@ -73,7 +73,7 @@ case class LoggedOutPushTargetUserBuilder(
     }
     Future
       .join(
-        historyStore.get(historyStoreKeyContext, Some(30.days)),
+        historyStore.get(historyStoreKeyContetwittert, Some(30.days)),
         loggedOutPushInfoStore.get(guestId)
       ).map {
         case (loNotifHistory, loggedOutUserPushInfo) =>
@@ -127,7 +127,7 @@ case class LoggedOutPushTargetUserBuilder(
               case _ => None
             }
 
-            override lazy val pushContext: Option[PushContext] = inputPushContext
+            override lazy val pushContetwittert: Option[PushContetwittert] = inputPushContetwittert
             override lazy val history: Future[History] = Future.value(loNotifHistory)
             override lazy val magicFanoutReasonHistory30Days: Future[MagicFanoutReasonHistory] =
               Future.value(null)
@@ -140,7 +140,7 @@ case class LoggedOutPushTargetUserBuilder(
             override lazy val isNewSignup: Boolean = false
             override lazy val metastoreLanguages: Future[Option[UserLanguages]] = Future.None
             override lazy val optOutUserInterests: Future[Option[Seq[InterestId]]] = Future.None
-            override lazy val mrRequestContextForFeatureStore: MrRequestContextForFeatureStore =
+            override lazy val mrRequestContetwittertForFeatureStore: MrRequestContetwittertForFeatureStore =
               null
             override lazy val targetUser: Future[Option[User]] = Future.None
             override lazy val notificationFeedbacks: Future[Option[Seq[FeedbackPromptValue]]] =
@@ -151,7 +151,7 @@ case class LoggedOutPushTargetUserBuilder(
             override lazy val params: configapi.Params = Params.Empty
             override lazy val deviceInfo: Future[Option[DeviceInfo]] = Future.None
             override lazy val userFeatures: Future[Option[UserFeatures]] = Future.None
-            override lazy val isOpenAppExperimentUser: Future[Boolean] = Future.False
+            override lazy val isOpenAppEtwitterperimentUser: Future[Boolean] = Future.False
             override lazy val featureMap: Future[FeatureMap] = Future.value(null)
             override lazy val dauProbability: Future[Option[DauProbability]] = Future.None
             override lazy val labeledPushRecsHydrated: Future[Option[UserHistoryValue]] =
@@ -171,7 +171,7 @@ case class LoggedOutPushTargetUserBuilder(
             override lazy val caretFeedbacks: Future[Option[Seq[CaretFeedbackDetails]]] =
               Future.None
 
-            override def targetHydrationContext: Future[HydrationContext] = Future.value(null)
+            override def targetHydrationContetwittert: Future[HydrationContetwittert] = Future.value(null)
             override def isBlueVerified: Future[Option[Boolean]] = Future.None
             override def isVerified: Future[Option[Boolean]] = Future.None
             override def isSuperFollowCreator: Future[Option[Boolean]] = Future.None

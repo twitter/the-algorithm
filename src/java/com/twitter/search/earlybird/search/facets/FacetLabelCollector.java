@@ -8,7 +8,7 @@ import java.util.Set;
 import com.twitter.search.core.earlybird.facets.FacetIDMap;
 import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
 import com.twitter.search.core.earlybird.facets.FacetTermCollector;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
 import com.twitter.search.earlybird.thrift.ThriftFacetLabel;
 
 /**
@@ -39,11 +39,11 @@ public class FacetLabelCollector implements FacetTermCollector {
     if (facetName == null || !requiredFields.contains(facetName)) {
       return false;
     }
-    if (termID != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND && fieldID >= 0) {
+    if (termID != EarlybirdIndetwitterSegmentAtomicReader.TERM_NOT_FOUND && fieldID >= 0) {
       final FacetLabelProvider provider = facetLabelProviders.get(facetName);
       if (provider != null) {
         FacetLabelProvider.FacetLabelAccessor labelAccessor = provider.getLabelAccessor();
-        String label = labelAccessor.getTermText(termID);
+        String label = labelAccessor.getTermTetwittert(termID);
         int offensiveCount = labelAccessor.getOffensiveCount(termID);
         labels.add(new ThriftFacetLabel()
             .setFieldName(facetName)

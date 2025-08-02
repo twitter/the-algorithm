@@ -18,7 +18,7 @@ import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
 import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
 import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
 import com.twitter.storehaus.ReadableStore
-import javax.inject.Inject
+import javatwitter.inject.Inject
 
 class TweetSimClustersEmbeddingStore @Inject() (
   cacheClient: Client,

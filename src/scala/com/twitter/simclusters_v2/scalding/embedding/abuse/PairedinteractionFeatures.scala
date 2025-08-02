@@ -70,13 +70,13 @@ case class PairedInteractionFeatures(
    * Get the pair of clusters with the most total interactions.
    */
   val highestScoreClusterPair: Option[ClusterPair] =
-    Try(scorePairs.maxBy(_.totalScores)).toOption
+    Try(scorePairs.matwitterBy(_.totalScores)).toOption
 
   /**
    * Get the pair of clusters with the highest unhealthy to healthy ratio.
    */
   val highestHealthRatioClusterPair: Option[ClusterPair] =
-    Try(scorePairs.maxBy(_.healthRatio)).toOption
+    Try(scorePairs.matwitterBy(_.healthRatio)).toOption
 
   /**
    * Get the pair of clusters with the lowest unhealthy to healthy ratio.

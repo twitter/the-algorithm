@@ -4,5 +4,5 @@ import com.twitter.timelines.configapi.FSParam
 
 object InterleaveRankerParams {
   case object ScribeRankingInfoInInterleaveRanker
-      extends FSParam[Boolean]("interleave_ranker_scribe_ranking_info", true)
+      etwittertends FSParam[Boolean]("interleave_ranker_scribe_ranking_info", true)
 }

@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird.partition;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
@@ -19,8 +19,8 @@ import com.twitter.search.common.metrics.SearchRateCounter;
 import com.twitter.search.common.metrics.Timer;
 import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
 import com.twitter.search.common.util.io.flushable.PersistentFile;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.FlushVersionMismatchException;
+import com.twitter.search.earlybird.etwitterception.CriticalEtwitterceptionHandler;
+import com.twitter.search.earlybird.etwitterception.FlushVersionMismatchEtwitterception;
 import com.twitter.search.earlybird.stats.SegmentSyncStats;
 
 public class SegmentLoader {
@@ -28,20 +28,20 @@ public class SegmentLoader {
   private static final SegmentSyncStats SEGMENT_LOAD_FROM_HDFS_STATS =
       new SegmentSyncStats("load_from_hdfs");
 
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  private final CriticalEtwitterceptionHandler criticalEtwitterceptionHandler;
   private final SegmentSyncConfig segmentSyncConfig;
 
   private final Clock clock;
 
   public SegmentLoader(SegmentSyncConfig sync,
-                       CriticalExceptionHandler criticalExceptionHandler) {
-    this(sync, criticalExceptionHandler, Clock.SYSTEM_CLOCK);
+                       CriticalEtwitterceptionHandler criticalEtwitterceptionHandler) {
+    this(sync, criticalEtwitterceptionHandler, Clock.SYSTEM_CLOCK);
   }
 
   public SegmentLoader(SegmentSyncConfig sync,
-                       CriticalExceptionHandler criticalExceptionHandler,
+                       CriticalEtwitterceptionHandler criticalEtwitterceptionHandler,
                        Clock clock) {
-    this.criticalExceptionHandler = criticalExceptionHandler;
+    this.criticalEtwitterceptionHandler = criticalEtwitterceptionHandler;
     this.segmentSyncConfig = sync;
     this.clock = clock;
   }
@@ -52,7 +52,7 @@ public class SegmentLoader {
 
   /**
    * Determines if the Earlybird should attempt to download the given segment from HDFS. This
-   * returns true if the segment is not already present on local disk, and the segment does exist
+   * returns true if the segment is not already present on local disk, and the segment does etwitterist
    * on HDFS.
    */
   public boolean shouldDownloadSegmentWhileInServerSet(SegmentInfo segmentInfo) {
@@ -60,8 +60,8 @@ public class SegmentLoader {
       return false;
     }
     try (FileSystem fs = HdfsUtil.getHdfsFileSystem()) {
-      return HdfsUtil.segmentExistsOnHdfs(fs, segmentInfo);
-    } catch (IOException e) {
+      return HdfsUtil.segmentEtwitteristsOnHdfs(fs, segmentInfo);
+    } catch (IOEtwitterception e) {
       LOG.error("Failed to check HDFS for segment " + segmentInfo, e);
       return false;
     }
@@ -77,8 +77,8 @@ public class SegmentLoader {
       return false;
     }
 
-    if (segmentInfo.isIndexing() || segmentInfo.getSyncInfo().isLoaded()) {
-      LOG.debug("Cannot load indexing or loaded segment: " + segmentInfo);
+    if (segmentInfo.isIndetwittering() || segmentInfo.getSyncInfo().isLoaded()) {
+      LOG.debug("Cannot load indetwittering or loaded segment: " + segmentInfo);
       return false;
     }
 
@@ -90,12 +90,12 @@ public class SegmentLoader {
    * Loads the data for the given segment from the local disk.
    */
   public boolean loadSegmentFromDisk(SegmentInfo segmentInfo) {
-    if (segmentInfo.isIndexing()) {
+    if (segmentInfo.isIndetwittering()) {
       LOG.error("Tried to load current segment!");
       return false;
     }
 
-    segmentInfo.setIndexing(true);
+    segmentInfo.setIndetwittering(true);
     try {
       File flushDir = new File(segmentInfo.getSyncInfo().getLocalSyncDir());
       Directory loadDir = FSDirectory.open(flushDir.toPath());
@@ -103,34 +103,34 @@ public class SegmentLoader {
       segmentInfo.load(loadDir);
 
       if (!verifySegmentStatusCountLargeEnough(segmentInfo)) {
-        SearchRateCounter.export(
+        SearchRateCounter.etwitterport(
             "segment_loader_failed_too_few_tweets_in_segment_" + segmentInfo.getSegmentName())
             .increment();
         return false;
       }
 
-      segmentInfo.setIndexing(false);
+      segmentInfo.setIndetwittering(false);
       segmentInfo.setComplete(true);
       segmentInfo.getSyncInfo().setLoaded(true);
       return true;
-    } catch (FlushVersionMismatchException e) {
-      handleException(segmentInfo, e);
+    } catch (FlushVersionMismatchEtwitterception e) {
+      handleEtwitterception(segmentInfo, e);
       // If earlybird is in starting state, handler will terminate it
-      criticalExceptionHandler.handle(this, e);
-    } catch (Exception e) {
-      handleException(segmentInfo, e);
+      criticalEtwitterceptionHandler.handle(this, e);
+    } catch (Etwitterception e) {
+      handleEtwitterception(segmentInfo, e);
     }
 
-    SearchRateCounter.export("segment_loader_failed_" + segmentInfo.getSegmentName()).increment();
+    SearchRateCounter.etwitterport("segment_loader_failed_" + segmentInfo.getSegmentName()).increment();
     return false;
   }
 
-  // Check to see if the segment exists on disk, and its checksum passes.
+  // Check to see if the segment etwitterists on disk, and its checksum passes.
   private boolean isValidSegmentOnDisk(SegmentInfo segment) {
     String loadDirStr = segment.getSyncInfo().getLocalSyncDir();
     File loadDir = new File(loadDirStr);
 
-    if (!loadDir.exists()) {
+    if (!loadDir.etwitterists()) {
       return false;
     }
 
@@ -144,7 +144,7 @@ public class SegmentLoader {
   }
 
   private static boolean verifyInfoChecksum(File loadDir, String databaseName) {
-    if (checksumFileExists(loadDir, databaseName)) {
+    if (checksumFileEtwitterists(loadDir, databaseName)) {
       try {
         Directory dir = FSDirectory.open(loadDir.toPath());
         PersistentFile.Reader reader = PersistentFile.getReader(dir, databaseName);
@@ -155,9 +155,9 @@ public class SegmentLoader {
           IOUtils.closeQuietly(reader);
           IOUtils.closeQuietly(dir);
         }
-      } catch (PersistentFile.CorruptFileException e) {
+      } catch (PersistentFile.CorruptFileEtwitterception e) {
         LOG.error("Failed checksum verification.", e);
-      } catch (IOException e) {
+      } catch (IOEtwitterception e) {
         LOG.error("Error while trying to read checksum file", e);
       }
     }
@@ -166,26 +166,26 @@ public class SegmentLoader {
 
   // Check that the loaded segment's status count is higher than the configured threshold
   private boolean verifySegmentStatusCountLargeEnough(SegmentInfo segmentInfo) {
-    long segmentStatusCount = segmentInfo.getIndexStats().getStatusCount();
+    long segmentStatusCount = segmentInfo.getIndetwitterStats().getStatusCount();
     if (segmentStatusCount > segmentSyncConfig.getMinSegmentStatusCountThreshold()) {
       return true;
-    } else if (segmentInfo.getEarlybirdIndexConfig().isIndexStoredOnDisk()
+    } else if (segmentInfo.getEarlybirdIndetwitterConfig().isIndetwitterStoredOnDisk()
         && couldBeMostRecentArchiveSegment(segmentInfo)) {
-      // The most recent archive earlybird segment is expected to be incomplete
+      // The most recent archive earlybird segment is etwitterpected to be incomplete
       LOG.info("Segment status count (" + segmentStatusCount + ") is below the threshold of "
           + segmentSyncConfig.getMinSegmentStatusCountThreshold()
-          + ", but this is expected because the most recent segment is expected to be incomplete: "
+          + ", but this is etwitterpected because the most recent segment is etwitterpected to be incomplete: "
           + segmentInfo);
       return true;
     } else {
       // The segment status count is small so the segment is likely incomplete.
       LOG.error("Segment status count (" + segmentStatusCount + ") is below the threshold of "
           + segmentSyncConfig.getMinSegmentStatusCountThreshold() + ": " + segmentInfo);
-      segmentInfo.setIndexing(false);
+      segmentInfo.setIndetwittering(false);
       segmentInfo.getSyncInfo().setLoaded(false);
 
       // Remove segment from local disk
-      if (!segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately()) {
+      if (!segmentInfo.deleteLocalIndetwitteredSegmentDirectoryImmediately()) {
         LOG.error("Failed to cleanup unloadable segment directory.");
       }
 
@@ -203,9 +203,9 @@ public class SegmentLoader {
   }
 
   /**
-   * Check to see if the segment exists on hdfs. Will look for the correct segment version
+   * Check to see if the segment etwitterists on hdfs. Will look for the correct segment version
    * uploaded by any of the hosts.
-   * If the segment exists on hdfs, the segment will be copied from hdfs to the local file
+   * If the segment etwitterists on hdfs, the segment will be copied from hdfs to the local file
    * system, and we will verify the checksum against the copied version.
    * @return true iff the segment was copied to local disk, and the checksum is verified.
    */
@@ -222,25 +222,25 @@ public class SegmentLoader {
     try {
       fs = HdfsUtil.getHdfsFileSystem();
 
-      String hdfsBaseDirPrefix = segment.getSyncInfo().getHdfsSyncDirPrefix();
-      FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefix));
+      String hdfsBaseDirPrefitwitter = segment.getSyncInfo().getHdfsSyncDirPrefitwitter();
+      FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefitwitter));
       if (statuses != null && statuses.length > 0) {
         Path hdfsSyncPath = statuses[0].getPath();
         copySegmentFilesFromHdfs(segment, segmentSyncConfig, fs, hdfsSyncPath);
         status = "loaded";
       } else {
-        LOG.info("No segments found in hdfs under: " + hdfsBaseDirPrefix);
+        LOG.info("No segments found in hdfs under: " + hdfsBaseDirPrefitwitter);
         status = "notloaded";
       }
       fs.close();
-    } catch (IOException ex) {
+    } catch (IOEtwitterception etwitter) {
       LOG.error("Failed copying segment from hdfs: " + segment + " after: "
-                + timer.stop() + " ms", ex);
-      status = "exception";
+                + timer.stop() + " ms", etwitter);
+      status = "etwitterception";
       SEGMENT_LOAD_FROM_HDFS_STATS.recordError();
       try {
         FileUtils.deleteDirectory(new File(localBaseDir));
-      } catch (IOException e) {
+      } catch (IOEtwitterception e) {
         LOG.error("Error cleaning up local segment directory: " + segment, e);
       }
     } finally {
@@ -258,12 +258,12 @@ public class SegmentLoader {
   private static void copySegmentFilesFromHdfs(SegmentInfo segment,
                                                SegmentSyncConfig syncConfig,
                                                FileSystem fs,
-                                               Path hdfsSyncPath) throws IOException {
+                                               Path hdfsSyncPath) throws IOEtwitterception {
     String localBaseDir = segment.getSyncInfo().getLocalSyncDir();
     File localBaseDirFile = new File(localBaseDir);
     FileUtils.deleteQuietly(localBaseDirFile);
-    if (localBaseDirFile.exists()) {
-      LOG.warn("Cannot delete the existing path: " + localBaseDir);
+    if (localBaseDirFile.etwitterists()) {
+      LOG.warn("Cannot delete the etwitteristing path: " + localBaseDir);
     }
     for (String fileName : syncConfig.getAllSyncFileNames(segment)) {
       Path hdfsFilePath = new Path(hdfsSyncPath, fileName);
@@ -280,20 +280,20 @@ public class SegmentLoader {
     LOG.info("Finished downloading segments from " + hdfsSyncPath);
   }
 
-  private static boolean checksumFileExists(File loadDir, String databaseName) {
+  private static boolean checksumFileEtwitterists(File loadDir, String databaseName) {
     String checksumFileName = PersistentFile.genChecksumFileName(databaseName);
     File checksumFile = new File(loadDir, checksumFileName);
 
-    return checksumFile.exists();
+    return checksumFile.etwitterists();
   }
 
-  private void handleException(SegmentInfo segmentInfo, Exception e) {
-    LOG.error("Exception while loading IndexSegment from "
+  private void handleEtwitterception(SegmentInfo segmentInfo, Etwitterception e) {
+    LOG.error("Etwitterception while loading IndetwitterSegment from "
         + segmentInfo.getSyncInfo().getLocalSyncDir(), e);
 
-    segmentInfo.setIndexing(false);
+    segmentInfo.setIndetwittering(false);
     segmentInfo.getSyncInfo().setLoaded(false);
-    if (!segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately()) {
+    if (!segmentInfo.deleteLocalIndetwitteredSegmentDirectoryImmediately()) {
       LOG.error("Failed to cleanup unloadable segment directory.");
     }
   }

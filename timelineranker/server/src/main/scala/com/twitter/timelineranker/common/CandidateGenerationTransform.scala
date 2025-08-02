@@ -8,7 +8,7 @@ import com.twitter.timelineranker.model.CandidateTweetsResult
 import com.twitter.util.Future
 
 class CandidateGenerationTransform(statsReceiver: StatsReceiver)
-    extends FutureArrow[HydratedCandidatesAndFeaturesEnvelope, CandidateTweetsResult] {
+    etwittertends FutureArrow[HydratedCandidatesAndFeaturesEnvelope, CandidateTweetsResult] {
   private[this] val numCandidateTweetsStat = statsReceiver.stat("numCandidateTweets")
   private[this] val numSourceTweetsStat = statsReceiver.stat("numSourceTweets")
 

@@ -20,7 +20,7 @@ import com.twitter.frigate.pushservice.target.PushTargetUserBuilder
 import com.twitter.frigate.pushservice.target.RFPHTargetPredicates
 import com.twitter.frigate.pushservice.util.RFPHTakeStepUtil
 import com.twitter.frigate.pushservice.util.AdhocStatsUtil
-import com.twitter.frigate.pushservice.thriftscala.PushContext
+import com.twitter.frigate.pushservice.thriftscala.PushContetwittert
 import com.twitter.frigate.pushservice.thriftscala.RefreshRequest
 import com.twitter.frigate.pushservice.thriftscala.RefreshResponse
 import com.twitter.frigate.thriftscala.CommonRecommendationType
@@ -46,14 +46,14 @@ class RefreshForPushHandler(
   rfphLightRanker: RFPHLightRanker
 )(
   globalStats: StatsReceiver)
-    extends FetchRankFlowWithHydratedCandidates[Target, RawCandidate, PushCandidate] {
+    etwittertends FetchRankFlowWithHydratedCandidates[Target, RawCandidate, PushCandidate] {
 
   val log = MRLogger("RefreshForPushHandler")
 
   implicit val statsReceiver: StatsReceiver =
     globalStats.scope("RefreshForPushHandler")
-  private val maxCandidatesToBatchInTakeStat: Stat =
-    statsReceiver.stat("max_cands_to_batch_in_take")
+  private val matwitterCandidatesToBatchInTakeStat: Stat =
+    statsReceiver.stat("matwitter_cands_to_batch_in_take")
 
   private val rfphRequestCounter = statsReceiver.counter("requests")
 
@@ -97,10 +97,10 @@ class RefreshForPushHandler(
 
   def buildTarget(
     userId: Long,
-    inputPushContext: Option[PushContext],
+    inputPushContetwittert: Option[PushContetwittert],
     forcedFeatureValues: Option[Map[String, FeatureValue]] = None
   ): Future[Target] =
-    pushTargetUserBuilder.buildTarget(userId, inputPushContext, forcedFeatureValues)
+    pushTargetUserBuilder.buildTarget(userId, inputPushContetwittert, forcedFeatureValues)
 
   override def targetPredicates(target: Target): List[Predicate[Target]] = targetPredicates
 
@@ -168,7 +168,7 @@ class RefreshForPushHandler(
   ): Future[Seq[CandidateDetails[PushCandidate]]] = {
     val featureHydratedCandidatesFut = trackSeq(featureHydrationLatency)(
       rfphFeatureHydrator
-        .candidateFeatureHydration(candidatesDetails, target.mrRequestContextForFeatureStore)
+        .candidateFeatureHydration(candidatesDetails, target.mrRequestContetwittertForFeatureStore)
     )
     featureHydratedCandidatesFut.flatMap { featureHydratedCandidates =>
       rfphStatsRecorder.rankDistributionStats(featureHydratedCandidates, numRecsPerTypeStat)
@@ -195,23 +195,23 @@ class RefreshForPushHandler(
   override def desiredCandidateCount(target: Target): Int = target.desiredCandidateCount
 
   override def batchForCandidatesCheck(target: Target): Int = {
-    val fsParam = PushFeatureSwitchParams.NumberOfMaxCandidatesToBatchInRFPHTakeStep
-    val maxToBatch = target.params(fsParam)
-    maxCandidatesToBatchInTakeStat.add(maxToBatch)
-    maxToBatch
+    val fsParam = PushFeatureSwitchParams.NumberOfMatwitterCandidatesToBatchInRFPHTakeStep
+    val matwitterToBatch = target.params(fsParam)
+    matwitterCandidatesToBatchInTakeStat.add(matwitterToBatch)
+    matwitterToBatch
   }
 
   override def process(
     target: Target,
-    externalCandidates: Seq[RawCandidate] = Nil
+    etwitterternalCandidates: Seq[RawCandidate] = Nil
   ): Future[Response[PushCandidate, Result]] = {
     isTargetValid(target).flatMap {
       case OK =>
         for {
           candidatesFromSources <- trackSeq(fetchStats)(fetchCandidates(target))
-          externalCandidateDetails = externalCandidates.map(
-            CandidateDetails(_, "refresh_for_push_handler_external_candidate"))
-          allCandidates = candidatesFromSources ++ externalCandidateDetails
+          etwitterternalCandidateDetails = etwitterternalCandidates.map(
+            CandidateDetails(_, "refresh_for_push_handler_etwitterternal_candidate"))
+          allCandidates = candidatesFromSources ++ etwitterternalCandidateDetails
           hydratedCandidatesWithCopy <-
             trackSeq(candidateHydrationStats)(hydrateCandidates(allCandidates))
           _ = adhocStatsUtil.getCandidateSourceStats(hydratedCandidatesWithCopy)
@@ -282,8 +282,8 @@ class RefreshForPushHandler(
     for {
       target <- track(buildTargetStats)(
         pushTargetUserBuilder
-          .buildTarget(request.userId, request.context))
-      response <- track(processStats)(process(target, externalCandidates = Seq.empty))
+          .buildTarget(request.userId, request.contetwittert))
+      response <- track(processStats)(process(target, etwitterternalCandidates = Seq.empty))
       refreshResponse <- track(notifyStats)(rfphNotifier.checkResponseAndNotify(response, target))
     } yield {
       refreshResponse

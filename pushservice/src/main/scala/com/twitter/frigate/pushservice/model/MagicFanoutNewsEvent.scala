@@ -3,7 +3,7 @@ package com.twitter.frigate.pushservice.model
 import com.twitter.escherbird.metadata.thriftscala.EntityMegadata
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base.MagicFanoutNewsEventCandidate
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
+import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContetwittert
 import com.twitter.frigate.magic_events.thriftscala.FanoutEvent
 import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
 import com.twitter.frigate.pushservice.config.Config
@@ -32,19 +32,19 @@ class MagicFanoutNewsEventPushCandidate(
   override val fanoutEvent: Option[FanoutEvent],
   override val semanticEntityResults: Map[SemanticEntityForQuery, Option[EntityMegadata]],
   simClusterToEntities: Map[Int, Option[SimClustersInferredEntities]],
-  lexServiceStore: ReadableStore[EventRequest, Event],
-  interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests],
+  letwitterServiceStore: ReadableStore[EventRequest, Event],
+  interestsLookupStore: ReadableStore[InterestsLookupRequestWithContetwittert, UserInterests],
   uttEntityHydrationStore: UttEntityHydrationStore
 )(
   implicit statsScoped: StatsReceiver,
   pushModelScorer: PushMLModelScorer)
-    extends MagicFanoutEventPushCandidate(
+    etwittertends MagicFanoutEventPushCandidate(
       candidate,
       copyIds,
       fanoutEvent,
       semanticEntityResults,
       simClusterToEntities,
-      lexServiceStore,
+      letwitterServiceStore,
       interestsLookupStore,
       uttEntityHydrationStore
     )(statsScoped, pushModelScorer)
@@ -57,7 +57,7 @@ class MagicFanoutNewsEventPushCandidate(
 }
 
 case class MagicFanoutNewsEventCandidatePredicates(config: Config)
-    extends BasicSendHandlerPredicates[MagicFanoutNewsEventPushCandidate] {
+    etwittertends BasicSendHandlerPredicates[MagicFanoutNewsEventPushCandidate] {
 
   implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
 
@@ -69,16 +69,16 @@ case class MagicFanoutNewsEventCandidatePredicates(config: Config)
       PredicatesForCandidate.isDeviceEligibleForNewsOrSports,
       MagicFanoutPredicatesForCandidate.inferredUserDeviceLanguagePredicate,
       PredicatesForCandidate.secondaryDormantAccountPredicate(statsReceiver),
-      MagicFanoutPredicatesForCandidate.highPriorityNewsEventExceptedPredicate(
+      MagicFanoutPredicatesForCandidate.highPriorityNewsEventEtwitterceptedPredicate(
         MagicFanoutTargetingPredicateWrappersForCandidate
           .magicFanoutTargetingPredicate(statsReceiver, config)
       )(config),
       MagicFanoutPredicatesForCandidate.geoOptOutPredicate(config.safeUserStore),
       EventPredicatesForCandidate.isNotDuplicateWithEventId,
-      MagicFanoutPredicatesForCandidate.highPriorityNewsEventExceptedPredicate(
+      MagicFanoutPredicatesForCandidate.highPriorityNewsEventEtwitterceptedPredicate(
         MagicFanoutPredicatesForCandidate.newsNotificationFatigue()
       )(config),
-      MagicFanoutPredicatesForCandidate.highPriorityNewsEventExceptedPredicate(
+      MagicFanoutPredicatesForCandidate.highPriorityNewsEventEtwitterceptedPredicate(
         MagicFanoutNtabCaretFatiguePredicate()
       )(config),
       MagicFanoutPredicatesForCandidate.escherbirdMagicfanoutEventParam()(statsReceiver),

@@ -34,12 +34,12 @@ public class SegmentSyncStats {
    * @param action the name to be used for the sync stats.
    */
   public SegmentSyncStats(String action) {
-    this(SearchCounter.export("segment_" + action + "_latency_ms"),
-         SearchCounter.export("segment_" + action + "_latency" + CPU_TOTAL + "ms"),
-         SearchCounter.export("segment_" + action + "_latency" + CPU_USER + "ms"),
-         SearchCounter.export("segment_" + action + "_latency" + CPU_SYS + "ms"),
-         SearchCounter.export("segment_" + action + "_count"),
-         SearchCounter.export("segment_" + action + "_error_count"));
+    this(SearchCounter.etwitterport("segment_" + action + "_latency_ms"),
+         SearchCounter.etwitterport("segment_" + action + "_latency" + CPU_TOTAL + "ms"),
+         SearchCounter.etwitterport("segment_" + action + "_latency" + CPU_USER + "ms"),
+         SearchCounter.etwitterport("segment_" + action + "_latency" + CPU_SYS + "ms"),
+         SearchCounter.etwitterport("segment_" + action + "_count"),
+         SearchCounter.etwitterport("segment_" + action + "_error_count"));
   }
 
   /**

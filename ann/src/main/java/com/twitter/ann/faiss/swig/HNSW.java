@@ -36,16 +36,16 @@ public class HNSW {
     }
   }
 
-  static public class MinimaxHeap {
+  static public class MinimatwitterHeap {
     private transient long swigCPtr;
     protected transient boolean swigCMemOwn;
   
-    protected MinimaxHeap(long cPtr, boolean cMemoryOwn) {
+    protected MinimatwitterHeap(long cPtr, boolean cMemoryOwn) {
       swigCMemOwn = cMemoryOwn;
       swigCPtr = cPtr;
     }
   
-    protected static long getCPtr(MinimaxHeap obj) {
+    protected static long getCPtr(MinimatwitterHeap obj) {
       return (obj == null) ? 0 : obj.swigCPtr;
     }
   
@@ -58,84 +58,84 @@ public class HNSW {
       if (swigCPtr != 0) {
         if (swigCMemOwn) {
           swigCMemOwn = false;
-          swigfaissJNI.delete_HNSW_MinimaxHeap(swigCPtr);
+          swigfaissJNI.delete_HNSW_MinimatwitterHeap(swigCPtr);
         }
         swigCPtr = 0;
       }
     }
   
     public void setN(int value) {
-      swigfaissJNI.HNSW_MinimaxHeap_n_set(swigCPtr, this, value);
+      swigfaissJNI.HNSW_MinimatwitterHeap_n_set(swigCPtr, this, value);
     }
   
     public int getN() {
-      return swigfaissJNI.HNSW_MinimaxHeap_n_get(swigCPtr, this);
+      return swigfaissJNI.HNSW_MinimatwitterHeap_n_get(swigCPtr, this);
     }
   
     public void setK(int value) {
-      swigfaissJNI.HNSW_MinimaxHeap_k_set(swigCPtr, this, value);
+      swigfaissJNI.HNSW_MinimatwitterHeap_k_set(swigCPtr, this, value);
     }
   
     public int getK() {
-      return swigfaissJNI.HNSW_MinimaxHeap_k_get(swigCPtr, this);
+      return swigfaissJNI.HNSW_MinimatwitterHeap_k_get(swigCPtr, this);
     }
   
     public void setNvalid(int value) {
-      swigfaissJNI.HNSW_MinimaxHeap_nvalid_set(swigCPtr, this, value);
+      swigfaissJNI.HNSW_MinimatwitterHeap_nvalid_set(swigCPtr, this, value);
     }
   
     public int getNvalid() {
-      return swigfaissJNI.HNSW_MinimaxHeap_nvalid_get(swigCPtr, this);
+      return swigfaissJNI.HNSW_MinimatwitterHeap_nvalid_get(swigCPtr, this);
     }
   
     public void setIds(IntVector value) {
-      swigfaissJNI.HNSW_MinimaxHeap_ids_set(swigCPtr, this, IntVector.getCPtr(value), value);
+      swigfaissJNI.HNSW_MinimatwitterHeap_ids_set(swigCPtr, this, IntVector.getCPtr(value), value);
     }
   
     public IntVector getIds() {
-      long cPtr = swigfaissJNI.HNSW_MinimaxHeap_ids_get(swigCPtr, this);
+      long cPtr = swigfaissJNI.HNSW_MinimatwitterHeap_ids_get(swigCPtr, this);
       return (cPtr == 0) ? null : new IntVector(cPtr, false);
     }
   
     public void setDis(FloatVector value) {
-      swigfaissJNI.HNSW_MinimaxHeap_dis_set(swigCPtr, this, FloatVector.getCPtr(value), value);
+      swigfaissJNI.HNSW_MinimatwitterHeap_dis_set(swigCPtr, this, FloatVector.getCPtr(value), value);
     }
   
     public FloatVector getDis() {
-      long cPtr = swigfaissJNI.HNSW_MinimaxHeap_dis_get(swigCPtr, this);
+      long cPtr = swigfaissJNI.HNSW_MinimatwitterHeap_dis_get(swigCPtr, this);
       return (cPtr == 0) ? null : new FloatVector(cPtr, false);
     }
   
-    public MinimaxHeap(int n) {
-      this(swigfaissJNI.new_HNSW_MinimaxHeap(n), true);
+    public MinimatwitterHeap(int n) {
+      this(swigfaissJNI.new_HNSW_MinimatwitterHeap(n), true);
     }
   
     public void push(int i, float v) {
-      swigfaissJNI.HNSW_MinimaxHeap_push(swigCPtr, this, i, v);
+      swigfaissJNI.HNSW_MinimatwitterHeap_push(swigCPtr, this, i, v);
     }
   
-    public float max() {
-      return swigfaissJNI.HNSW_MinimaxHeap_max(swigCPtr, this);
+    public float matwitter() {
+      return swigfaissJNI.HNSW_MinimatwitterHeap_matwitter(swigCPtr, this);
     }
   
     public int size() {
-      return swigfaissJNI.HNSW_MinimaxHeap_size(swigCPtr, this);
+      return swigfaissJNI.HNSW_MinimatwitterHeap_size(swigCPtr, this);
     }
   
     public void clear() {
-      swigfaissJNI.HNSW_MinimaxHeap_clear(swigCPtr, this);
+      swigfaissJNI.HNSW_MinimatwitterHeap_clear(swigCPtr, this);
     }
   
     public int pop_min(SWIGTYPE_p_float vmin_out) {
-      return swigfaissJNI.HNSW_MinimaxHeap_pop_min__SWIG_0(swigCPtr, this, SWIGTYPE_p_float.getCPtr(vmin_out));
+      return swigfaissJNI.HNSW_MinimatwitterHeap_pop_min__SWIG_0(swigCPtr, this, SWIGTYPE_p_float.getCPtr(vmin_out));
     }
   
     public int pop_min() {
-      return swigfaissJNI.HNSW_MinimaxHeap_pop_min__SWIG_1(swigCPtr, this);
+      return swigfaissJNI.HNSW_MinimatwitterHeap_pop_min__SWIG_1(swigCPtr, this);
     }
   
     public int count_below(float thresh) {
-      return swigfaissJNI.HNSW_MinimaxHeap_count_below(swigCPtr, this, thresh);
+      return swigfaissJNI.HNSW_MinimatwitterHeap_count_below(swigCPtr, this, thresh);
     }
   
   }
@@ -302,12 +302,12 @@ public class HNSW {
     return (cPtr == 0) ? null : new SWIGTYPE_p_faiss__RandomGenerator(cPtr, false);
   }
 
-  public void setMax_level(int value) {
-    swigfaissJNI.HNSW_max_level_set(swigCPtr, this, value);
+  public void setMatwitter_level(int value) {
+    swigfaissJNI.HNSW_matwitter_level_set(swigCPtr, this, value);
   }
 
-  public int getMax_level() {
-    return swigfaissJNI.HNSW_max_level_get(swigCPtr, this);
+  public int getMatwitter_level() {
+    return swigfaissJNI.HNSW_matwitter_level_get(swigCPtr, this);
   }
 
   public void setEfConstruction(int value) {
@@ -394,12 +394,12 @@ public class HNSW {
     swigfaissJNI.HNSW_add_with_locks(swigCPtr, this, DistanceComputer.getCPtr(ptdis), ptdis, pt_level, pt_id, SWIGTYPE_p_std__vectorT_omp_lock_t_t.getCPtr(locks), VisitedTable.getCPtr(vt), vt);
   }
 
-  public int search_from_candidates(DistanceComputer qdis, int k, LongVector I, SWIGTYPE_p_float D, HNSW.MinimaxHeap candidates, VisitedTable vt, HNSWStats stats, int level, int nres_in) {
-    return swigfaissJNI.HNSW_search_from_candidates__SWIG_0(swigCPtr, this, DistanceComputer.getCPtr(qdis), qdis, k, SWIGTYPE_p_long_long.getCPtr(I.data()), I, SWIGTYPE_p_float.getCPtr(D), HNSW.MinimaxHeap.getCPtr(candidates), candidates, VisitedTable.getCPtr(vt), vt, HNSWStats.getCPtr(stats), stats, level, nres_in);
+  public int search_from_candidates(DistanceComputer qdis, int k, LongVector I, SWIGTYPE_p_float D, HNSW.MinimatwitterHeap candidates, VisitedTable vt, HNSWStats stats, int level, int nres_in) {
+    return swigfaissJNI.HNSW_search_from_candidates__SWIG_0(swigCPtr, this, DistanceComputer.getCPtr(qdis), qdis, k, SWIGTYPE_p_long_long.getCPtr(I.data()), I, SWIGTYPE_p_float.getCPtr(D), HNSW.MinimatwitterHeap.getCPtr(candidates), candidates, VisitedTable.getCPtr(vt), vt, HNSWStats.getCPtr(stats), stats, level, nres_in);
   }
 
-  public int search_from_candidates(DistanceComputer qdis, int k, LongVector I, SWIGTYPE_p_float D, HNSW.MinimaxHeap candidates, VisitedTable vt, HNSWStats stats, int level) {
-    return swigfaissJNI.HNSW_search_from_candidates__SWIG_1(swigCPtr, this, DistanceComputer.getCPtr(qdis), qdis, k, SWIGTYPE_p_long_long.getCPtr(I.data()), I, SWIGTYPE_p_float.getCPtr(D), HNSW.MinimaxHeap.getCPtr(candidates), candidates, VisitedTable.getCPtr(vt), vt, HNSWStats.getCPtr(stats), stats, level);
+  public int search_from_candidates(DistanceComputer qdis, int k, LongVector I, SWIGTYPE_p_float D, HNSW.MinimatwitterHeap candidates, VisitedTable vt, HNSWStats stats, int level) {
+    return swigfaissJNI.HNSW_search_from_candidates__SWIG_1(swigCPtr, this, DistanceComputer.getCPtr(qdis), qdis, k, SWIGTYPE_p_long_long.getCPtr(I.data()), I, SWIGTYPE_p_float.getCPtr(D), HNSW.MinimatwitterHeap.getCPtr(candidates), candidates, VisitedTable.getCPtr(vt), vt, HNSWStats.getCPtr(stats), stats, level);
   }
 
   public SWIGTYPE_p_std__priority_queueT_std__pairT_float_int_t_t search_from_candidate_unbounded(SWIGTYPE_p_std__pairT_float_int_t node, DistanceComputer qdis, int ef, VisitedTable vt, HNSWStats stats) {
@@ -430,8 +430,8 @@ public class HNSW {
     return swigfaissJNI.HNSW_prepare_level_tab__SWIG_1(swigCPtr, this, n);
   }
 
-  public static void shrink_neighbor_list(DistanceComputer qdis, SWIGTYPE_p_std__priority_queueT_faiss__HNSW__NodeDistFarther_t input, SWIGTYPE_p_std__vectorT_faiss__HNSW__NodeDistFarther_t output, int max_size) {
-    swigfaissJNI.HNSW_shrink_neighbor_list(DistanceComputer.getCPtr(qdis), qdis, SWIGTYPE_p_std__priority_queueT_faiss__HNSW__NodeDistFarther_t.getCPtr(input), SWIGTYPE_p_std__vectorT_faiss__HNSW__NodeDistFarther_t.getCPtr(output), max_size);
+  public static void shrink_neighbor_list(DistanceComputer qdis, SWIGTYPE_p_std__priority_queueT_faiss__HNSW__NodeDistFarther_t input, SWIGTYPE_p_std__vectorT_faiss__HNSW__NodeDistFarther_t output, int matwitter_size) {
+    swigfaissJNI.HNSW_shrink_neighbor_list(DistanceComputer.getCPtr(qdis), qdis, SWIGTYPE_p_std__priority_queueT_faiss__HNSW__NodeDistFarther_t.getCPtr(input), SWIGTYPE_p_std__vectorT_faiss__HNSW__NodeDistFarther_t.getCPtr(output), matwitter_size);
   }
 
 }

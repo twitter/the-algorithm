@@ -7,7 +7,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import com.twitter.ml.api.Feature;
-import com.twitter.ml.api.FeatureContext;
+import com.twitter.ml.api.FeatureContetwittert;
 import com.twitter.ml.api.FeatureParser;
 import com.twitter.ml.api.transform.DiscretizerTransform;
 
@@ -15,7 +15,7 @@ import com.twitter.ml.api.transform.DiscretizerTransform;
  * The builder for a model based on the legacy (non-schema-based) features.
  * See also SchemaBasedModelBuilder.
  */
-public final class LegacyModelBuilder extends BaseModelBuilder {
+public final class LegacyModelBuilder etwittertends BaseModelBuilder {
 
   private final Map<String, Feature> featuresByName;
   // for legacy features
@@ -23,17 +23,17 @@ public final class LegacyModelBuilder extends BaseModelBuilder {
   private final Map<Feature<Double>, Double> continuousFeatures;
   private final Multimap<Feature<Double>, DiscretizedFeatureRange> discretizedFeatureRanges;
 
-  LegacyModelBuilder(String modelName, FeatureContext context) {
+  LegacyModelBuilder(String modelName, FeatureContetwittert contetwittert) {
     super(modelName);
-    featuresByName = getFeaturesByName(context);
+    featuresByName = getFeaturesByName(contetwittert);
     binaryFeatures = Maps.newHashMap();
     continuousFeatures = Maps.newHashMap();
     discretizedFeatureRanges = HashMultimap.create();
   }
 
-  private static Map<String, Feature> getFeaturesByName(FeatureContext featureContext) {
+  private static Map<String, Feature> getFeaturesByName(FeatureContetwittert featureContetwittert) {
     Map<String, Feature> featuresByName = Maps.newHashMap();
-    for (Feature<?> feature : featureContext.getAllFeatures()) {
+    for (Feature<?> feature : featureContetwittert.getAllFeatures()) {
       featuresByName.put(feature.getFeatureName(), feature);
     }
     return featuresByName;
@@ -51,21 +51,21 @@ public final class LegacyModelBuilder extends BaseModelBuilder {
           continuousFeatures.put(feature, weight);
           break;
         default:
-          throw new IllegalArgumentException(
+          throw new IllegalArgumentEtwitterception(
               String.format("Unsupported feature type: %s", feature));
       }
-    } else if (baseName.endsWith(DISCRETIZER_NAME_SUFFIX)
-        && parser.getExtension().containsKey(DiscretizerTransform.DEFAULT_RANGE_EXT)) {
+    } else if (baseName.endsWith(DISCRETIZER_NAME_SUFFItwitter)
+        && parser.getEtwittertension().containsKey(DiscretizerTransform.DEFAULT_RANGE_EtwitterT)) {
 
       String featureName =
-          baseName.substring(0, baseName.length() - DISCRETIZER_NAME_SUFFIX.length());
+          baseName.substring(0, baseName.length() - DISCRETIZER_NAME_SUFFItwitter.length());
 
       feature = featuresByName.get(featureName);
       if (feature == null) {
         return;
       }
 
-      String rangeSpec = parser.getExtension().get(DiscretizerTransform.DEFAULT_RANGE_EXT);
+      String rangeSpec = parser.getEtwittertension().get(DiscretizerTransform.DEFAULT_RANGE_EtwitterT);
       discretizedFeatureRanges.put(feature, new DiscretizedFeatureRange(weight, rangeSpec));
     }
   }

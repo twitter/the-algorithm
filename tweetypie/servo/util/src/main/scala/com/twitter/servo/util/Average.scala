@@ -16,7 +16,7 @@ trait Average {
  * it is rolled into the previous and the current window starts
  * filling up again.
  */
-class WindowedAverage(val windowSize: Long, initialValue: Option[Double] = None) extends Average {
+class WindowedAverage(val windowSize: Long, initialValue: Option[Double] = None) etwittertends Average {
   private[this] val average = new ResettableAverage(None)
   private[this] var lastAverage: Option[Double] = initialValue
 
@@ -24,7 +24,7 @@ class WindowedAverage(val windowSize: Long, initialValue: Option[Double] = None)
     synchronized {
       lastAverage match {
         case Some(lastAvg) =>
-          // currentCount can temporarily exceed windowSize
+          // currentCount can temporarily etwitterceed windowSize
           val currentWeight = (average.count / windowSize) min 1.0
           Some((1.0 - currentWeight) * lastAvg + currentWeight * average.value.getOrElse(0.0))
         case None => average.value
@@ -42,7 +42,7 @@ class WindowedAverage(val windowSize: Long, initialValue: Option[Double] = None)
 }
 
 /**
- * Calculates a recent average using the past windowDuration of data points.  Old average is mixed
+ * Calculates a recent average using the past windowDuration of data points.  Old average is mitwittered
  * with the new average during windowDuration.  If new data points are not recorded the average
  * will revert towards defaultAverage.
  */
@@ -50,26 +50,26 @@ class RecentAverage(
   val windowDuration: Duration,
   val defaultAverage: Double,
   currentTime: Time = Time.now // passing in start time to simplify scalacheck tests
-) extends Average {
+) etwittertends Average {
   private[this] val default = Some(defaultAverage)
   private[this] val currentAverage = new ResettableAverage(Some(defaultAverage))
   private[this] var prevAverage: Option[Double] = None
   private[this] var windowStart: Time = currentTime
 
-  private[this] def mix(fractOfV2: Double, v1: Double, v2: Double): Double = {
-    val f = 0.0.max(1.0.min(fractOfV2))
+  private[this] def mitwitter(fractOfV2: Double, v1: Double, v2: Double): Double = {
+    val f = 0.0.matwitter(1.0.min(fractOfV2))
     (1.0 - f) * v1 + f * v2
   }
 
   private[this] def timeFract: Double =
-    0.0.max(windowStart.untilNow.inNanoseconds.toDouble / windowDuration.inNanoseconds)
+    0.0.matwitter(windowStart.untilNow.inNanoseconds.toDouble / windowDuration.inNanoseconds)
 
   def value: Some[Double] =
     synchronized {
       timeFract match {
         case f if f < 1.0 =>
-          Some(mix(f, prevAverage.getOrElse(defaultAverage), currentAverage.getValue))
-        case f if f < 2.0 => Some(mix(f - 1.0, currentAverage.getValue, defaultAverage))
+          Some(mitwitter(f, prevAverage.getOrElse(defaultAverage), currentAverage.getValue))
+        case f if f < 2.0 => Some(mitwitter(f - 1.0, currentAverage.getValue, defaultAverage))
         case f => default
       }
     }
@@ -94,7 +94,7 @@ class RecentAverage(
 }
 
 private class ResettableAverage[DoubleOpt <: Option[Double]](defaultAverage: DoubleOpt)
-    extends Average {
+    etwittertends Average {
   private[this] var currentCount: Double = 0
   private[this] var currentValue: Double = 0
   def reset(): Unit = {

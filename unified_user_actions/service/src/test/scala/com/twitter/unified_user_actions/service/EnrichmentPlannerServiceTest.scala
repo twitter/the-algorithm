@@ -6,7 +6,7 @@ import com.twitter.finatra.kafka.serde.UnKeyedSerde
 import com.twitter.finatra.kafka.test.EmbeddedKafka
 import com.twitter.finatra.kafkastreams.test.FinatraTopologyTester
 import com.twitter.finatra.kafkastreams.test.TopologyFeatureTest
-import com.twitter.unified_user_actions.enricher.EnricherFixture
+import com.twitter.unified_user_actions.enricher.EnricherFitwitterture
 import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentEnvelop
 import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentIdType
 import com.twitter.unified_user_actions.enricher.internal.thriftscala.EnrichmentKey
@@ -17,7 +17,7 @@ import org.joda.time.DateTime
 /**
  * This is to test the logic where the service reads and outputs to the same Kafka cluster
  */
-class EnrichmentPlannerServiceTest extends TopologyFeatureTest {
+class EnrichmentPlannerServiceTest etwittertends TopologyFeatureTest {
   val startTime = new DateTime("2022-10-01T00:00:00Z")
 
   override protected lazy val topologyTester: FinatraTopologyTester = FinatraTopologyTester(
@@ -43,7 +43,7 @@ class EnrichmentPlannerServiceTest extends TopologyFeatureTest {
   )
 
   test("can filter unsupported events") {
-    new EnricherFixture {
+    new EnricherFitwitterture {
       (1L to 10L).foreach(id => {
         inputTopic.pipeInput(UnKeyed, mkUUAProfileEvent(id))
       })
@@ -57,15 +57,15 @@ class EnrichmentPlannerServiceTest extends TopologyFeatureTest {
     val serializer = ScalaSerdes.Thrift[EnrichmentKey].serializer
 
     val actual = serializer.serialize("test", key)
-    val expected = Array[Byte](8, 0, 1, 0, 0, 0, 0, 10, 0, 2, 0, 0, 0, 0, 0, 0, 39, 15, 0)
+    val etwitterpected = Array[Byte](8, 0, 1, 0, 0, 0, 0, 10, 0, 2, 0, 0, 0, 0, 0, 0, 39, 15, 0)
 
-    assert(actual.deep === expected.deep)
+    assert(actual.deep === etwitterpected.deep)
   }
 
   test("partitioned enrichment tweet event is constructed correctly") {
-    new EnricherFixture {
-      val expected = mkUUATweetEvent(888L)
-      inputTopic.pipeInput(UnKeyed, expected)
+    new EnricherFitwitterture {
+      val etwitterpected = mkUUATweetEvent(888L)
+      inputTopic.pipeInput(UnKeyed, etwitterpected)
 
       val actual = outputTopic.readAllOutput().head
 
@@ -73,17 +73,17 @@ class EnrichmentPlannerServiceTest extends TopologyFeatureTest {
       assert(
         actual
           .value() === EnrichmentEnvelop(
-          expected.hashCode,
-          expected,
+          etwitterpected.hashCode,
+          etwitterpected,
           plan = tweetInfoEnrichmentPlan
         ))
     }
   }
 
   test("partitioned enrichment tweet notification event is constructed correctly") {
-    new EnricherFixture {
-      val expected = mkUUATweetNotificationEvent(8989L)
-      inputTopic.pipeInput(UnKeyed, expected)
+    new EnricherFitwitterture {
+      val etwitterpected = mkUUATweetNotificationEvent(8989L)
+      inputTopic.pipeInput(UnKeyed, etwitterpected)
 
       val actual = outputTopic.readAllOutput().head
 
@@ -91,8 +91,8 @@ class EnrichmentPlannerServiceTest extends TopologyFeatureTest {
       assert(
         actual
           .value() === EnrichmentEnvelop(
-          expected.hashCode,
-          expected,
+          etwitterpected.hashCode,
+          etwitterpected,
           plan = tweetNotificationEnrichmentPlan
         ))
     }
@@ -101,9 +101,9 @@ class EnrichmentPlannerServiceTest extends TopologyFeatureTest {
 
 /**
  * This is tests the bootstrap server logic in prod. Don't add any new tests here since it is slow.
- * Use the tests above which is much quicker to be executed and and test the majority of prod logic.
+ * Use the tests above which is much quicker to be etwitterecuted and and test the majority of prod logic.
  */
-class EnrichmentPlannerServiceEmbeddedKafkaTest extends TopologyFeatureTest with EmbeddedKafka {
+class EnrichmentPlannerServiceEmbeddedKafkaTest etwittertends TopologyFeatureTest with EmbeddedKafka {
   val startTime = new DateTime("2022-10-01T00:00:00Z")
 
   override protected lazy val topologyTester: FinatraTopologyTester = FinatraTopologyTester(
@@ -129,8 +129,8 @@ class EnrichmentPlannerServiceEmbeddedKafkaTest extends TopologyFeatureTest with
     valSerde = ScalaSerdes.Thrift[EnrichmentEnvelop]
   )
 
-  test("toCluster should output to expected topic & embeded cluster") {
-    new EnricherFixture {
+  test("toCluster should output to etwitterpected topic & embeded cluster") {
+    new EnricherFitwitterture {
       inputTopic.pipeInput(UnKeyed, mkUUATweetEvent(tweetId = 1))
       val records: Seq[ConsumerRecord[Array[Byte], Array[Byte]]] = outputTopic.consumeRecords(1)
 

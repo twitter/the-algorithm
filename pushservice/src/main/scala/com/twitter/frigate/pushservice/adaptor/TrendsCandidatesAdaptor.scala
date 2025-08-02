@@ -1,7 +1,7 @@
 package com.twitter.frigate.pushservice.adaptor
 
 import com.twitter.events.recos.thriftscala.DisplayLocation
-import com.twitter.events.recos.thriftscala.TrendsContext
+import com.twitter.events.recos.thriftscala.TrendsContetwittert
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base.CandidateSource
 import com.twitter.frigate.common.base.CandidateSourceEligible
@@ -38,7 +38,7 @@ case class TrendsCandidatesAdaptor(
   tweetyPieStoreNoVF: ReadableStore[Long, TweetyPieResult],
   safeUserTweetTweetyPieStore: ReadableStore[UserTweet, TweetyPieResult],
   statsReceiver: StatsReceiver)
-    extends CandidateSource[Target, RawCandidate]
+    etwittertends CandidateSource[Target, RawCandidate]
     with CandidateSourceEligible[Target, RawCandidate] {
   override val name = this.getClass.getSimpleName
 
@@ -67,19 +67,19 @@ case class TrendsCandidatesAdaptor(
         displayLocation = DisplayLocation.MagicRecs,
         languageCode = inferredLanguage,
         countryCode = countryCode,
-        maxResults = target.params(PushFeatureSwitchParams.MaxRecommendedTrendsToQuery)
+        matwitterResults = target.params(PushFeatureSwitchParams.MatwitterRecommendedTrendsToQuery)
       )
     }
   }
 
   /**
-   * Query candidates only if sent at most [[PushFeatureSwitchParams.MaxTrendTweetNotificationsInDuration]]
+   * Query candidates only if sent at most [[PushFeatureSwitchParams.MatwitterTrendTweetNotificationsInDuration]]
    * trend tweet notifications in [[PushFeatureSwitchParams.TrendTweetNotificationsFatigueDuration]]
    */
   val trendTweetFatiguePredicate = TargetPredicates.pushRecTypeFatiguePredicate(
     CommonRecommendationType.TrendTweet,
     PushFeatureSwitchParams.TrendTweetNotificationsFatigueDuration,
-    PushFeatureSwitchParams.MaxTrendTweetNotificationsInDuration,
+    PushFeatureSwitchParams.MatwitterTrendTweetNotificationsInDuration,
     trendAdaptorStats
   )
 
@@ -124,7 +124,7 @@ case class TrendsCandidatesAdaptor(
    *
    * @param _target: [[Target]] object representing notificaion recipient user
    * @param trendsCandidates: Sequence of [[TrendsCandidate]] returned from ERS
-   * @return: Seq of trends candidates expanded to associated tweets.
+   * @return: Seq of trends candidates etwitterpanded to associated tweets.
    */
   private def trendsCandidatesToTweetCandidates(
     _target: Target,
@@ -136,8 +136,8 @@ case class TrendsCandidatesAdaptor(
       trendCandidate: TrendsCandidate,
       tweetyPieResults: Map[TweetId, TweetyPieResult]
     ) = {
-      val tweetIds = trendCandidate.context.curatedRepresentativeTweets.getOrElse(Seq.empty) ++
-        trendCandidate.context.algoRepresentativeTweets.getOrElse(Seq.empty)
+      val tweetIds = trendCandidate.contetwittert.curatedRepresentativeTweets.getOrElse(Seq.empty) ++
+        trendCandidate.contetwittert.algoRepresentativeTweets.getOrElse(Seq.empty)
 
       tweetIds.flatMap { tweetId =>
         tweetyPieResults.get(tweetId).map { _tweetyPieResult =>
@@ -147,7 +147,7 @@ case class TrendsCandidatesAdaptor(
             override val landingUrl: String = trendCandidate.landingUrl
             override val timeBoundedLandingUrl: Option[String] =
               trendCandidate.timeBoundedLandingUrl
-            override val context: TrendsContext = trendCandidate.context
+            override val contetwittert: TrendsContetwittert = trendCandidate.contetwittert
             override val tweetyPieResult: Option[TweetyPieResult] = Some(_tweetyPieResult)
             override val tweetId: TweetId = _tweetyPieResult.tweet.id
             override val target: Target = _target
@@ -158,9 +158,9 @@ case class TrendsCandidatesAdaptor(
 
     // collect all tweet ids associated with all trends
     val allTweetIds = trendsCandidates.flatMap { trendsCandidate =>
-      val context = trendsCandidate.context
-      context.curatedRepresentativeTweets.getOrElse(Seq.empty) ++
-        context.algoRepresentativeTweets.getOrElse(Seq.empty)
+      val contetwittert = trendsCandidate.contetwittert
+      contetwittert.curatedRepresentativeTweets.getOrElse(Seq.empty) ++
+        contetwittert.algoRepresentativeTweets.getOrElse(Seq.empty)
     }
 
     getTweetyPieResults(allTweetIds, _target)

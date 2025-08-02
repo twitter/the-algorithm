@@ -7,7 +7,7 @@ enableLogFavBasedApeEntity20M145K2020EmbeddingCachedStore:
   default_availability: 0
 
 representation-scorer_forward_dark_traffic:
-  comment: "Defines the percentage of traffic to forward to diffy-proxy. Set to 0 to disable dark traffic forwarding"
+  comment: "Defines the percentage of traffic to forward to diffy-protwittery. Set to 0 to disable dark traffic forwarding"
   default_availability: 0
 
 "representation-scorer_load_shed_non_prod_callers":
@@ -30,12 +30,12 @@ log_fav_based_tweet_embedding_20m145kUpdated_timeout_value_millis:
   comment: "The value of this decider defines the timeout (in milliseconds) to use on calls to the logFavBased20M145KUpdatedTweetEmbeddingStore, i.e. 1.50% is 150ms. Only applied if enable_log_fav_based_tweet_embedding_20m145kUpdated_timeouts is true"
   default_availability: 2000
 
-enable_cluster_tweet_index_store_timeouts:
-  comment: "If enabled, set a timeout on calls to the ClusterTweetIndexStore"
+enable_cluster_tweet_indetwitter_store_timeouts:
+  comment: "If enabled, set a timeout on calls to the ClusterTweetIndetwitterStore"
   default_availability: 0
 
-cluster_tweet_index_store_timeout_value_millis:
-  comment: "The value of this decider defines the timeout (in milliseconds) to use on calls to the ClusterTweetIndexStore, i.e. 1.50% is 150ms. Only applied if enable_cluster_tweet_index_store_timeouts is true"
+cluster_tweet_indetwitter_store_timeout_value_millis:
+  comment: "The value of this decider defines the timeout (in milliseconds) to use on calls to the ClusterTweetIndetwitterStore, i.e. 1.50% is 150ms. Only applied if enable_cluster_tweet_indetwitter_store_timeouts is true"
   default_availability: 2000
 
 representation_scorer_fetch_signal_share:
@@ -86,8 +86,8 @@ representation_scorer_fetch_signal_see_fewer:
   comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice-canary:prod:atla"
   default_availability: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice-canary:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice-canary:prod:pdxa"
+"representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice-canary:prod:pdtwittera":
+  comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice-canary:prod:pdtwittera"
   default_availability: 0
 
 "representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice-send:prod:atla":
@@ -98,24 +98,24 @@ representation_scorer_fetch_signal_see_fewer:
   comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice:prod:atla"
   default_availability: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice:prod:pdxa"
+"representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice:prod:pdtwittera":
+  comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice:prod:pdtwittera"
   default_availability: 0
 
 "representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice:staging:atla":
   comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice:staging:atla"
   default_availability: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice:staging:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice:staging:pdxa"
+"representation-scorer_load_shed_by_caller_id_twtr:svc:frigate:frigate-pushservice:staging:pdtwittera":
+  comment: "Reject all traffic from caller id: twtr:svc:frigate:frigate-pushservice:staging:pdtwittera"
   default_availability: 0
 
 "representation-scorer_load_shed_by_caller_id_twtr:svc:home-scorer:home-scorer:prod:atla":
   comment: "Reject all traffic from caller id: twtr:svc:home-scorer:home-scorer:prod:atla"
   default_availability: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:home-scorer:home-scorer:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:home-scorer:home-scorer:prod:pdxa"
+"representation-scorer_load_shed_by_caller_id_twtr:svc:home-scorer:home-scorer:prod:pdtwittera":
+  comment: "Reject all traffic from caller id: twtr:svc:home-scorer:home-scorer:prod:pdtwittera"
   default_availability: 0
 
 "representation-scorer_load_shed_by_caller_id_twtr:svc:stratostore:stratoapi:prod:atla":
@@ -126,24 +126,24 @@ representation_scorer_fetch_signal_see_fewer:
   comment: "Reject all traffic from caller id: twtr:svc:stratostore:stratoserver:prod:atla"
   default_availability: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:stratostore:stratoserver:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:stratostore:stratoserver:prod:pdxa"
+"representation-scorer_load_shed_by_caller_id_twtr:svc:stratostore:stratoserver:prod:pdtwittera":
+  comment: "Reject all traffic from caller id: twtr:svc:stratostore:stratoserver:prod:pdtwittera"
   default_availability: 0
 
 "representation-scorer_load_shed_by_caller_id_twtr:svc:timelinescorer:timelinescorer:prod:atla":
   comment: "Reject all traffic from caller id: twtr:svc:timelinescorer:timelinescorer:prod:atla"
   default_availability: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:timelinescorer:timelinescorer:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:timelinescorer:timelinescorer:prod:pdxa"
+"representation-scorer_load_shed_by_caller_id_twtr:svc:timelinescorer:timelinescorer:prod:pdtwittera":
+  comment: "Reject all traffic from caller id: twtr:svc:timelinescorer:timelinescorer:prod:pdtwittera"
   default_availability: 0
 
 "representation-scorer_load_shed_by_caller_id_twtr:svc:topic-social-proof:topic-social-proof:prod:atla":
   comment: "Reject all traffic from caller id: twtr:svc:topic-social-proof:topic-social-proof:prod:atla"
   default_availability: 0
 
-"representation-scorer_load_shed_by_caller_id_twtr:svc:topic-social-proof:topic-social-proof:prod:pdxa":
-  comment: "Reject all traffic from caller id: twtr:svc:topic-social-proof:topic-social-proof:prod:pdxa"
+"representation-scorer_load_shed_by_caller_id_twtr:svc:topic-social-proof:topic-social-proof:prod:pdtwittera":
+  comment: "Reject all traffic from caller id: twtr:svc:topic-social-proof:topic-social-proof:prod:pdtwittera"
   default_availability: 0
 
 "enable_sim_clusters_embedding_store_timeouts":

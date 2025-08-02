@@ -4,7 +4,7 @@ package handler
 import com.twitter.snowflake.id.SnowflakeId
 import com.twitter.tweetutil.DmDeepLink
 import com.twitter.tweetutil.TweetPermalink
-import com.twitter.tweetypie.core.CardReferenceUriExtractor
+import com.twitter.tweetypie.core.CardReferenceUriEtwittertractor
 import com.twitter.tweetypie.core.NonTombstone
 import com.twitter.tweetypie.core.TweetCreateFailure
 import com.twitter.tweetypie.repository.TweetQuery
@@ -25,16 +25,16 @@ case class AttachmentBuilderRequest(
   remoteHost: Option[String],
   darkTraffic: Boolean,
   deviceSource: DeviceSource) {
-  val ctx: ValidationContext = ValidationContext(
+  val cttwitter: ValidationContetwittert = ValidationContetwittert(
     user = user,
     mediaUploadIds = mediaUploadIds,
     cardReference = cardReference
   )
   val passThroughResponse: AttachmentBuilderResult =
-    AttachmentBuilderResult(attachmentUrl = attachmentUrl, validationContext = ctx)
+    AttachmentBuilderResult(attachmentUrl = attachmentUrl, validationContetwittert = cttwitter)
 }
 
-case class ValidationContext(
+case class ValidationContetwittert(
   user: User,
   mediaUploadIds: Option[Seq[Long]],
   cardReference: Option[CardReference])
@@ -42,8 +42,8 @@ case class ValidationContext(
 case class AttachmentBuilderResult(
   attachmentUrl: Option[String] = None,
   quotedTweet: Option[QuotedTweet] = None,
-  extraChars: Int = 0,
-  validationContext: ValidationContext)
+  etwittertraChars: Int = 0,
+  validationContetwittert: ValidationContetwittert)
 
 object AttachmentBuilder {
 
@@ -70,10 +70,10 @@ object AttachmentBuilder {
     FutureEffect { result: AttachmentBuilderResult =>
       validateAttachmentUrl(result.attachmentUrl)
 
-      val ctx = result.validationContext
+      val cttwitter = result.validationContetwittert
 
-      val cardRef = ctx.cardReference.filter {
-        case CardReferenceUriExtractor(NonTombstone(_)) => true
+      val cardRef = cttwitter.cardReference.filter {
+        case CardReferenceUriEtwittertractor(NonTombstone(_)) => true
         case _ => false
       }
 
@@ -82,22 +82,22 @@ object AttachmentBuilder {
       } else {
         val attachmentCount =
           Seq(
-            ctx.mediaUploadIds,
+            cttwitter.mediaUploadIds,
             result.attachmentUrl,
             result.quotedTweet
           ).count(_.nonEmpty)
 
-        val userAgent = TwitterContext().flatMap(_.userAgent)
+        val userAgent = TwitterContetwittert().flatMap(_.userAgent)
         if (attachmentCount + cardRef.count(_ => true) > 1) {
           attachmentCountLogger.warn(
-            s"Too many attachment types on tweet create from user: ${ctx.user.id}, " +
-              s"agent: '${userAgent}', media: ${ctx.mediaUploadIds}, " +
+            s"Too many attachment types on tweet create from user: ${cttwitter.user.id}, " +
+              s"agent: '${userAgent}', media: ${cttwitter.mediaUploadIds}, " +
               s"attachmentUrl: ${result.attachmentUrl}, cardRef: $cardRef"
           )
           stats.counter("too_many_attachment_types_with_cardref").incr()
         }
         Future.when(attachmentCount + cardRef.count(_ => validateCardRef(userAgent)) > 1) {
-          Future.exception(TweetCreateFailure.State(TweetCreateState.TooManyAttachmentTypes))
+          Future.etwitterception(TweetCreateFailure.State(TweetCreateState.TooManyAttachmentTypes))
         }
       }
     }
@@ -106,8 +106,8 @@ object AttachmentBuilder {
 
   private val queryOptions = TweetQuery.Options(include = queryInclude)
 
-  def buildUrlShortenerCtx(request: AttachmentBuilderRequest): UrlShortener.Context =
-    UrlShortener.Context(
+  def buildUrlShortenerCttwitter(request: AttachmentBuilderRequest): UrlShortener.Contetwittert =
+    UrlShortener.Contetwittert(
       tweetId = request.tweetId,
       userId = request.user.id,
       createdAt = SnowflakeId(request.tweetId).time,
@@ -148,18 +148,18 @@ object AttachmentBuilder {
           tweetGetter(qtPermalink.tweetId).flatMap {
             case Some(tweet) =>
               quotedTweetFoundCounter.incr()
-              val ctx = buildUrlShortenerCtx(request)
-              urlShortener((qtPermalink.url, ctx)).map { shortenedUrl =>
+              val cttwitter = buildUrlShortenerCttwitter(request)
+              urlShortener((qtPermalink.url, cttwitter)).map { shortenedUrl =>
                 AttachmentBuilderResult(
                   quotedTweet = Some(asQuotedTweet(tweet, shortenedUrl)),
-                  extraChars = shortenedUrl.shortUrl.length + 1,
-                  validationContext = request.ctx
+                  etwittertraChars = shortenedUrl.shortUrl.length + 1,
+                  validationContetwittert = request.cttwitter
                 )
               }
             case None =>
               quotedTweetNotFoundCounter.incr()
               log.warn(
-                s"unable to extract quote tweet from attachment builder request: $request"
+                s"unable to etwittertract quote tweet from attachment builder request: $request"
               )
               if (denyNonTweetPermalinks()) {
                 throw TweetCreateFailure.State(

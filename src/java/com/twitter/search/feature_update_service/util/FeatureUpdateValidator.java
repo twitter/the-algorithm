@@ -1,7 +1,7 @@
 package com.twitter.search.feature_update_service.util;
 
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.twitter.search.common.schema.base.ThriftDocumentUtil;
 import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateRequest;
@@ -14,7 +14,7 @@ public final class FeatureUpdateValidator {
 
   /**
    * Validates FeatureUpdateRequest
-   * @param featureUpdate instance of FeatureUpdateRequest with ThriftIndexingEvent
+   * @param featureUpdate instance of FeatureUpdateRequest with ThriftIndetwitteringEvent
    * @return null if valid, instance of FeatureUpdateResponse if not.
    * Response will have appropriate error code and message set.
    */

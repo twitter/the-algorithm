@@ -8,7 +8,7 @@
 
 package com.twitter.ann.faiss;
 
-public class IntersectionCriterion extends AutoTuneCriterion {
+public class IntersectionCriterion etwittertends AutoTuneCriterion {
   private transient long swigCPtr;
 
   protected IntersectionCriterion(long cPtr, boolean cMemoryOwn) {

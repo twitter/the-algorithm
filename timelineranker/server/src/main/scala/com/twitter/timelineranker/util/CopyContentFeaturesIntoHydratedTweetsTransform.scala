@@ -7,7 +7,7 @@ import com.twitter.timelines.model.tweet.HydratedTweet
 import com.twitter.util.Future
 
 object CopyContentFeaturesIntoHydratedTweetsTransform
-    extends FutureArrow[
+    etwittertends FutureArrow[
       HydratedCandidatesAndFeaturesEnvelope,
       HydratedCandidatesAndFeaturesEnvelope
     ] {

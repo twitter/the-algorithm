@@ -24,40 +24,40 @@ include "com/twitter/gizmoduck/user_service.thrift"
  *
  * Below are guidelines around naming of action types:
  * a) When an action is coupled to a product surface, be concise in naming such that the
- * combination of item type and action name captures the user behavior for the action in the UI. For example,
+ * combination of item type and action name captures the user behavior for the action in the UI. For etwitterample,
  * for an open on a Notification in the PushNotification product surface that is parsed from client events,
  * consider ClientNotificationOpen because the item Notification and the action name Open concisely represent
  * the action, and the product surface PushNotification can be identified independently.
  *
  * b) It is OK to use generic names like Click if needed to distinguish from another action OR
  * it is the best way to characterize an action concisely without confusion.
- * For example, for ClientTweetClickReply, this refers to actually clicking on the Reply button but not
- * Replying, and it is OK to include Click. Another example is Click on a Tweet anywhere (other than the fav,
+ * For etwitterample, for ClientTweetClickReply, this refers to actually clicking on the Reply button but not
+ * Replying, and it is OK to include Click. Another etwitterample is Click on a Tweet anywhere (other than the fav,
  * reply, etc. buttons), which leads to the TweetDetails page. Avoid generic action names like Click if
  * there is a more specific UI aspect to reference and Click is implied, e.g. ClientTweetReport is
  * preferred over ClientTweetClickReport and ClientTweetReportClick.
  *
- * c) Rely on versioning found in the origin when it is present for action names. For example,
+ * c) Rely on versioning found in the origin when it is present for action names. For etwitterample,
  * a "V2Impression" is named as such because in behavioral client events, there is
  * a "v2Impress" field. See go/bce-v2impress for more details.
  *
  * d) There is a distinction between "UndoAction" and "Un{Action}" action types.
- * An "UndoAction" is fired when a user clicks on the explicit "Undo" button, after they perform an action
+ * An "UndoAction" is fired when a user clicks on the etwitterplicit "Undo" button, after they perform an action
  * This "Undo" button is a UI element that may be temporary, e.g.,
  *  - the user waited too long to click the button, the button disappears from the UI (e.g., Undo for Mute, Block)
  *  - the button does not disappear due to timeout, but becomes unavailable after the user closes a tab
  *    (e.g, Undo for NotInterestedIn, NotAboutTopic)
- * Examples:
+ * Etwitteramples:
     - ClientProfileUndoMute: a user clicks the "Undo" button after muting a Profile
     - ClientTweetUndoNotInterestedIn: a users clicks the "Undo" button
       after clicking "Not interested in this Tweet" button in the caret menu of a Tweet
- * An "Un{Action}" is fired when a user reverses a previous action, not by explicitly clicking an "Undo" button,
+ * An "Un{Action}" is fired when a user reverses a previous action, not by etwitterplicitly clicking an "Undo" button,
  * but through some other action that allows them to revert.
- * Examples:
+ * Etwitteramples:
  *  - ClientProfileUnmute: a user clicks the "Unmute" button from the caret menu of the Profile they previously muted
  *  - ClientTweetUnfav: a user unlikes a tweet by clicking on like button again
  *
- * Examples: ServerTweetFav, ClientTweetRenderImpression, ClientNotificationSeeLessOften
+ * Etwitteramples: ServerTweetFav, ClientTweetRenderImpression, ClientNotificationSeeLessOften
  *
  * See go/uua-action-type for more details.
  */
@@ -78,7 +78,7 @@ enum ActionType {
   ServerTweetDelete = 17      // User deletes a default tweet
   ServerTweetUnreply = 18     // User deletes a reply tweet
   ServerTweetUnquote = 19     // User deletes a quote tweet
-  ServerTweetUnretweet = 20   // User removes an existing retweet
+  ServerTweetUnretweet = 20   // User removes an etwitteristing retweet
   // User edits a tweet. Edit will create a new tweet with editedTweetId = id of the original tweet
   // The original tweet or the new tweet from edit can only be a default or quote tweet.
   // A user can edit a default tweet to become a quote tweet (by adding the link to another Tweet),
@@ -94,7 +94,7 @@ enum ActionType {
   // reserve 30-40 for server topic actions
 
   // 41-70 reserved for all negative engagements and the related positive engagements
-  // For example, Follow and Unfollow, Mute and Unmute
+  // For etwitterample, Follow and Unfollow, Mute and Unmute
   // This is fired when a user click "Submit" at the end of a "Report Tweet" flow
   // ClientTweetReport = 1041 is scribed by HealthClient team, on the client side
   // This is scribed by spamacaw, on the server side
@@ -199,9 +199,9 @@ enum ActionType {
   ClientTweetUnretweet = 1020
   // 1021 reserved for ClientTweetEdit
   // 1022 reserved for Client delete an edit if we want to add it in the future
-  // This is fired when a user clicks on a photo within a tweet and the photo expands to fit
+  // This is fired when a user clicks on a photo within a tweet and the photo etwitterpands to fit
   // the screen.
-  ClientTweetPhotoExpand = 1023
+  ClientTweetPhotoEtwitterpand = 1023
 
   // This is fired when a user clicks on a profile mention inside a tweet.
   ClientTweetClickMentionScreenName = 1024
@@ -218,16 +218,16 @@ enum ActionType {
   // 2. Click on Tweet's caret menu of "Unfollow (the topic)" if the user has already followed
   //    the topic.
   ClientTopicUnfollow = 1031
-  // This is fired when the user clicks the "x" icon next to the topic on their timeline,
+  // This is fired when the user clicks the "twitter" icon netwittert to the topic on their timeline,
   // and clicks "Not interested in {TOPIC}" in the pop-up prompt
   // Alternatively, they can also click "See more" button to visit the topic page, and click "Not interested" there.
   ClientTopicNotInterestedIn = 1032
-  // This is fired when the user clicks the "Undo" button after clicking "x" or "Not interested" on a Topic
+  // This is fired when the user clicks the "Undo" button after clicking "twitter" or "Not interested" on a Topic
   // which is captured in ClientTopicNotInterestedIn
   ClientTopicUndoNotInterestedIn = 1033
 
   // 1036-1070 reserved for all negative engagements and the related positive engagements
-  // For example, Follow and Unfollow, Mute and Unmute
+  // For etwitterample, Follow and Unfollow, Mute and Unmute
 
   // This is fired when a user clicks on  "This Tweet's not helpful" flow in the caret menu
   // of a Tweet result on the Search Results Page
@@ -248,7 +248,7 @@ enum ActionType {
    * in ClientTweetUndoNotInterestedIn being fired.
    * If a user chooses to not undo and proceed, they are given multiple choices
    * in a prompt to better document why they are not interested in a Tweet.
-   * For example, if a Tweet is not about a Topic, a user can click
+   * For etwitterample, if a Tweet is not about a Topic, a user can click
    * "This Tweet is not about {TOPIC}" in the provided prompt, resulting in
    * in ClientTweetNotAboutTopic being fired.
    * A user can undo the ClientTweetNotAboutTopic action by clicking the "Undo"
@@ -291,7 +291,7 @@ enum ActionType {
 
   // reserve 1057 for ClientProfileUnreport
 
-  // This is fired when a user clicks on a profile from all modules except tweets
+  // This is fired when a user clicks on a profile from all modules etwittercept tweets
   // (eg: People Search / people module in Top tab in Search Result Page
   // For tweets, the click is captured in ClientTweetClickProfile
   ClientProfileClick = 1058
@@ -301,14 +301,14 @@ enum ActionType {
   // author and clicks on the Follow button. A profile can also be followed by clicking the Follow button on the
   // Profile page and confirm, which is captured in ClientProfileFollow. The event emits two items, one of user type
   // and another of tweet type, since the default implementation of BaseClientEvent only looks for Tweet type,
-  // the other item is dropped which is the expected behaviour
+  // the other item is dropped which is the etwitterpected behaviour
   ClientTweetFollowAuthor = 1060
 
   // This is fired when a user clicks Unfollow in the caret menu of a Tweet or hovers on the avatar of the tweet
   // author and clicks on the Unfollow button. A profile can also be unfollowed by clicking the Unfollow button on the
   // Profile page and confirm, which will be captured in ClientProfileUnfollow. The event emits two items, one of user type
   // and another of tweet type, since the default implementation of BaseClientEvent only looks for Tweet type,
-  // the other item is dropped which is the expected behaviour
+  // the other item is dropped which is the etwitterpected behaviour
   ClientTweetUnfollowAuthor = 1061
 
   // This is fired when a user clicks Block in the menu of a Tweet to block the Profile that
@@ -395,10 +395,10 @@ enum ActionType {
   ClientProfileShow = 1105
 
   /*
-   * This is triggered when a user exits the Twitter platform. The amount of the time spent on the
+   * This is triggered when a user etwitterits the Twitter platform. The amount of the time spent on the
    * platform is recorded in ms that can be used to compute the User Active Seconds (UAS).
    */
-  ClientAppExit = 1106
+  ClientAppEtwitterit = 1106
 
   /*
    * For "card" related actions
@@ -479,7 +479,7 @@ enum ActionType {
   // 1440 - 1449 is reserved for Typeahead related actions
 
   // This is fired when a user clicks on a typeahead suggestion(queries, events, topics, users)
-  // in a drop-down menu of a search box or a tweet compose box.
+  // in a drop-down menu of a search botwitter or a tweet compose botwitter.
   ClientTypeaheadClick = 1440
 
   // 1500 - 1999 used for behavioral client events
@@ -491,11 +491,11 @@ enum ActionType {
    * i.e. video, image, MM will all be logged as fullscreen_video
    *
    * iOS clients will log fullscreen_video or fullscreen_image depending on the media type
-   * on display when the user exits fullscreen. i.e.
+   * on display when the user etwitterits fullscreen. i.e.
    * - image tweet => fullscreen_image
    * - video tweet => fullscreen_video
-   * - MM tweet => fullscreen_video  if user exits fullscreen from the video
-   *            => fullscreen_image  if user exits fullscreen from the image
+   * - MM tweet => fullscreen_video  if user etwitterits fullscreen from the video
+   *            => fullscreen_image  if user etwitterits fullscreen from the image
    *
    * Web clients will always log fullscreen_image impressions, regardless of the media type
    *
@@ -594,16 +594,16 @@ enum ActionType {
    */
   ServerPromotedTweetOpenLink = 7079
   /*
-   * This is fired when a user swipes to the next element of the carousel in the Promoted Tweet.
+   * This is fired when a user swipes to the netwittert element of the carousel in the Promoted Tweet.
    */
-  ServerPromotedTweetCarouselSwipeNext = 7091
+  ServerPromotedTweetCarouselSwipeNetwittert = 7091
   /*
    * This is fired when a user swipes to the previous element of the carousel in the Promoted Tweet.
    */
   ServerPromotedTweetCarouselSwipePrevious = 7092
   /*
    * This event is only for the Promoted Tweets with a web URL.
-   * It is fired after exiting a WebView from a Promoted Tweet if the user was on the WebView for
+   * It is fired after etwitteriting a WebView from a Promoted Tweet if the user was on the WebView for
    * at least 1 second.
    *
    * See https://confluence.twitter.biz/display/REVENUE/dwell_short for more details.
@@ -611,7 +611,7 @@ enum ActionType {
   ServerPromotedTweetLingerImpressionShort = 7093
   /*
    * This event is only for the Promoted Tweets with a web URL.
-   * It is fired after exiting a WebView from a Promoted Tweet if the user was on the WebView for
+   * It is fired after etwitteriting a WebView from a Promoted Tweet if the user was on the WebView for
    * at least 2 seconds.
    *
    * See https://confluence.twitter.biz/display/REVENUE/dwell_medium for more details.
@@ -619,26 +619,26 @@ enum ActionType {
   ServerPromotedTweetLingerImpressionMedium = 7094
   /*
    * This event is only for the Promoted Tweets with a web URL.
-   * It is fired after exiting a WebView from a Promoted Tweet if the user was on the WebView for
+   * It is fired after etwitteriting a WebView from a Promoted Tweet if the user was on the WebView for
    * at least 10 seconds.
    *
    * See https://confluence.twitter.biz/display/REVENUE/dwell_long for more details.
    */
   ServerPromotedTweetLingerImpressionLong = 7095
   /*
-   * This is fired when a user navigates to explorer page (taps search magnifying glass on Home page)
+   * This is fired when a user navigates to etwitterplorer page (taps search magnifying glass on Home page)
    * and a Promoted Trend is present and taps ON the promoted spotlight - a video/gif/image in the
-   * "hero" position (top of the explorer page).
+   * "hero" position (top of the etwitterplorer page).
    */
   ServerPromotedTweetClickSpotlight = 7096
   /*
-   * This is fired when a user navigates to explorer page (taps search magnifying glass on Home page)
+   * This is fired when a user navigates to etwitterplorer page (taps search magnifying glass on Home page)
    * and a Promoted Trend is present.
    */
   ServerPromotedTweetViewSpotlight = 7097
   /*
    * 7098-7099: Promoted Trends appear in the first or second slots of the “Trends for you” section
-   * in the Explore tab and “What’s Happening” module on Twitter.com. For more information, check go/ads-takeover.
+   * in the Etwitterplore tab and “What’s Happening” module on Twitter.com. For more information, check go/ads-takeover.
    * 7099: This is fired when a user views a promoted Trend. It should be considered as an impression.
    */
   ServerPromotedTrendView = 7098
@@ -689,17 +689,17 @@ enum ActionType {
  * (e.g. linger impressions have start/end times) and not common
  * to all tweet actions.
  * Naming convention for TweetActionInfo should be consistent with
- * ActionType. For example, `ClientTweetLingerImpression` ActionType enum
+ * ActionType. For etwitterample, `ClientTweetLingerImpression` ActionType enum
  * should correspond to `ClientTweetLingerImpression` TweetActionInfo union arm.
  * We typically preserve 1:1 mapping between ActionType and TweetActionInfo. However, we make
- * exceptions when optimizing for customer requirements. For example, multiple 'ClientTweetVideo*'
+ * etwitterceptions when optimizing for customer requirements. For etwitterample, multiple 'ClientTweetVideo*'
  * ActionType enums correspond to a single `TweetVideoWatch` TweetActionInfo union arm because
  * customers want individual action labels but common information across those labels.
  */
 union TweetActionInfo {
-  // 41 matches enum index ServerTweetReport in ActionType
+  // 41 matches enum indetwitter ServerTweetReport in ActionType
   41: ServerTweetReport serverTweetReport
-  // 1002 matches enum index ClientTweetLingerImpression in ActionType
+  // 1002 matches enum indetwitter ClientTweetLingerImpression in ActionType
   1002: ClientTweetLingerImpression clientTweetLingerImpression
   // Common metadata for
   // 1. "ClientTweetVideo*" ActionTypes with enum indices 1011-1016 and 1100-1101
@@ -716,23 +716,23 @@ union TweetActionInfo {
   // 1014: skip
   // 1015: skip
   // 1016: skip
-  // 1024 matches enum index ClientTweetClickMentionScreenName in ActionType
+  // 1024 matches enum indetwitter ClientTweetClickMentionScreenName in ActionType
   1024: ClientTweetClickMentionScreenName clientTweetClickMentionScreenName
-  // 1041 matches enum index ClientTweetReport in ActionType
+  // 1041 matches enum indetwitter ClientTweetReport in ActionType
   1041: ClientTweetReport clientTweetReport
-  // 1060 matches enum index ClientTweetFollowAuthor in ActionType
+  // 1060 matches enum indetwitter ClientTweetFollowAuthor in ActionType
   1060: ClientTweetFollowAuthor clientTweetFollowAuthor
-  // 1061 matches enum index ClientTweetUnfollowAuthor in ActionType
+  // 1061 matches enum indetwitter ClientTweetUnfollowAuthor in ActionType
   1061: ClientTweetUnfollowAuthor clientTweetUnfollowAuthor
-  // 1078 matches enum index ClientTweetClickHashtag in ActionType
+  // 1078 matches enum indetwitter ClientTweetClickHashtag in ActionType
   1078: ClientTweetClickHashtag clientTweetClickHashtag
-  // 1090 matches enum index ClientTweetOpenLink in ActionType
+  // 1090 matches enum indetwitter ClientTweetOpenLink in ActionType
   1090: ClientTweetOpenLink clientTweetOpenLink
-  // 1091 matches enum index ClientTweetTakeScreenshot in ActionType
+  // 1091 matches enum indetwitter ClientTweetTakeScreenshot in ActionType
   1091: ClientTweetTakeScreenshot clientTweetTakeScreenshot
-  // 1500 matches enum index ClientTweetV2Impression in ActionType
+  // 1500 matches enum indetwitter ClientTweetV2Impression in ActionType
   1500: ClientTweetV2Impression clientTweetV2Impression
-  // 7079 matches enum index ServerPromotedTweetOpenLink in ActionType
+  // 7079 matches enum indetwitter ServerPromotedTweetOpenLink in ActionType
   7079: ServerPromotedTweetOpenLink serverPromotedTweetOpenLink
 }(persisted='true', hasPersonalData='true')
 
@@ -786,7 +786,7 @@ struct ClientTweetV2Impression {
   /*
    * The UI component that hosted this tweet where the impress event happened.
    *
-   * For example, sourceComponent = "tweet" if the impress event happened on a tweet displayed amongst
+   * For etwitterample, sourceComponent = "tweet" if the impress event happened on a tweet displayed amongst
    * a collection of tweets, or sourceComponent = "tweet_details" if the impress event happened on
    * a tweet detail UI component.
    */
@@ -875,7 +875,7 @@ struct ClientTweetFollowAuthor {
   /*
    * Where did the user click the Follow button on the tweet - from the caret menu("CARET_MENU")
    * or via hovering over the profile and clicking on Follow ("PROFILE_IMAGE") - only applicable for web clients
-   * "UNKNOWN" if the scribe do not match the expected namespace for the above
+   * "UNKNOWN" if the scribe do not match the etwitterpected namespace for the above
    */
   1: required TweetAuthorFollowClickSource followClickSource
 }(persisted='true', hasPersonalData='false')
@@ -890,7 +890,7 @@ struct ClientTweetUnfollowAuthor {
   /*
    * Where did the user click the Unfollow button on the tweet - from the caret menu("CARET_MENU")
    * or via hovering over the profile and clicking on Unfollow ("PROFILE_IMAGE") - only applicable for web clients
-   * "UNKNOWN" if the scribe do not match the expected namespace for the above
+   * "UNKNOWN" if the scribe do not match the etwitterpected namespace for the above
    */
   1: required TweetAuthorUnfollowClickSource unfollowClickSource
 }(persisted='true', hasPersonalData='false')
@@ -913,21 +913,21 @@ struct ServerTweetReport {
  * to other profile actions.
  *
  * Naming convention for ProfileActionInfo should be consistent with
- * ActionType. For example, `ClientProfileV2Impression` ActionType enum
+ * ActionType. For etwitterample, `ClientProfileV2Impression` ActionType enum
  * should correspond to `ClientProfileV2Impression` ProfileActionInfo union arm.
  */
 union ProfileActionInfo {
-  // 56 matches enum index ServerProfileReport in ActionType
+  // 56 matches enum indetwitter ServerProfileReport in ActionType
   56: ServerProfileReport serverProfileReport
-  // 1600 matches enum index ClientProfileV2Impression in ActionType
+  // 1600 matches enum indetwitter ClientProfileV2Impression in ActionType
   1600: ClientProfileV2Impression clientProfileV2Impression
-  // 6001 matches enum index ServerUserUpdate in ActionType
+  // 6001 matches enum indetwitter ServerUserUpdate in ActionType
   6001: ServerUserUpdate serverUserUpdate
 }(persisted='true', hasPersonalData='true')
 
 /*
  * See go/behavioral-client-events for general behavioral client event (BCE) information
- * and https://docs.google.com/document/d/16CdSRpsmUUd17yoFH9min3nLBqDVawx4DaZoiqSfCHI/edit#heading=h.3tu05p92xgxc
+ * and https://docs.google.com/document/d/16CdSRpsmUUd17yoFH9min3nLBqDVawtwitter4DaZoiqSfCHI/edit#heading=h.3tu05p92twittergtwitterc
  * for detailed information about BCE impression event.
  *
  * Unlike ClientTweetLingerImpression, there is no lower bound on the amount of time
@@ -942,7 +942,7 @@ struct ClientProfileV2Impression {
   /*
    * The UI component that hosted this profile where the impress event happened.
    *
-   * For example, sourceComponent = "profile" if the impress event happened on a profile page
+   * For etwitterample, sourceComponent = "profile" if the impress event happened on a profile page
    */
   3: required string sourceComponent(personalDataType = 'WebsitePage')
 }(persisted='true', hasPersonalData='true')

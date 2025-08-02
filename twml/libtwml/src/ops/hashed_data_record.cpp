@@ -42,21 +42,21 @@ Outputs
 template<typename InputType>
 class DecodeAndHashDataRecord : public OpKernel {
  public:
-  explicit DecodeAndHashDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {
+  etwitterplicit DecodeAndHashDataRecord(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {
     std::vector<int64> keep_features;
     std::vector<int64> keep_codes;
 
     std::vector<int64> label_features;
     std::vector<int64> weight_features;
 
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
-    OP_REQUIRES_OK(context, context->GetAttr("label_features", &label_features));
-    OP_REQUIRES_OK(context, context->GetAttr("weight_features", &weight_features));
-    OP_REQUIRES_OK(context, context->GetAttr("decode_mode", &m_decode_mode));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("keep_features", &keep_features));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("keep_codes", &keep_codes));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("label_features", &label_features));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("weight_features", &weight_features));
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("decode_mode", &m_decode_mode));
 
-    OP_REQUIRES(context, keep_features.size() == keep_codes.size(),
+    OP_REQUIRES(contetwittert, keep_features.size() == keep_codes.size(),
                 errors::InvalidArgument("keep keys and values must have same size."));
 
 #ifdef USE_DENSE_HASH
@@ -84,14 +84,14 @@ class DecodeAndHashDataRecord : public OpKernel {
   twml::Map<int64_t, int64_t> m_weights_map;
   int64 m_decode_mode;
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
       HashedDataRecordResource *resource = nullptr;
-      OP_REQUIRES_OK(context, makeResourceHandle<HashedDataRecordResource>(context, 0, &resource));
+      OP_REQUIRES_OK(contetwittert, makeResourceHandle<HashedDataRecordResource>(contetwittert, 0, &resource));
 
       // Store the input bytes in the resource so it isnt freed before the resource.
       // This is necessary because we are not copying the contents for tensors.
-      resource->input = context->input(0);
+      resource->input = contetwittert->input(0);
       int batch_size = getBatchSize<InputType>(resource->input);
       int num_labels = static_cast<int>(m_labels_map.size());
       int num_weights = static_cast<int>(m_weights_map.size());
@@ -122,8 +122,8 @@ class DecodeAndHashDataRecord : public OpKernel {
       resource->total_size = total_size;
       resource->num_labels = num_labels;
       resource->num_weights = num_weights;
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -131,7 +131,7 @@ class DecodeAndHashDataRecord : public OpKernel {
 REGISTER_OP("GetIdsFromHashedDataRecord")
 .Input("hashed_data_record_handle: resource")
 .Output("ids: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns unhashed ids from the hashed data record.
@@ -139,18 +139,18 @@ Input
   hashed_data_record_handle: Resource handle to DataRecord
 
 Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
+  ids: ids specifies the indetwitter of the records[id] in the batch (int64)
 )doc");
 
 // This Kernel is used for both training and serving once the resource is created.
 class GetIdsFromHashedDataRecord : public OpKernel {
  public:
-  explicit GetIdsFromHashedDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  etwitterplicit GetIdsFromHashedDataRecord(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
+      auto handle = getHandle<HashedDataRecordResource>(contetwittert, 0);
       const auto &records = handle->records;
       const auto &common = handle->common;
       const int64 common_size = static_cast<int64>(common.totalSize());
@@ -158,7 +158,7 @@ class GetIdsFromHashedDataRecord : public OpKernel {
       TensorShape shape = {total_size};
 
       Tensor *ids;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, shape, &ids));
 
       int id = 0;
       int64 offset = 0;
@@ -171,8 +171,8 @@ class GetIdsFromHashedDataRecord : public OpKernel {
         offset += curr_size;
         id++;
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -186,19 +186,19 @@ class GetOutputFromHashedDataRecord : public OpKernel {
   Getter getter;
 
  public:
-  explicit GetOutputFromHashedDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  etwitterplicit GetOutputFromHashedDataRecord(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
+      auto handle = getHandle<HashedDataRecordResource>(contetwittert, 0);
       const auto &records = handle->records;
       const auto &common = handle->common;
       const int64 total_size = handle->total_size;
       TensorShape shape = {total_size};
 
       Tensor *output;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &output));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, shape, &output));
 
       const auto &common_output = getter(common);
 
@@ -212,8 +212,8 @@ class GetOutputFromHashedDataRecord : public OpKernel {
         const auto& rec_output = getter(record);
         output_data = std::copy(rec_output.begin(), rec_output.end(), output_data);
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -221,7 +221,7 @@ class GetOutputFromHashedDataRecord : public OpKernel {
 REGISTER_OP("GetUKeysFromHashedDataRecord")
 .Input("hashed_data_record_handle: resource")
 .Output("ukeys: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns unhashed keys from the hashed data record.
@@ -234,8 +234,8 @@ Outputs
 
 class GetUKeysFromHashedDataRecord : public GetOutputFromHashedDataRecord<int64, int64_t> {
  public:
-  explicit GetUKeysFromHashedDataRecord(OpKernelConstruction* context)
-      : GetOutputFromHashedDataRecord<int64, int64_t>(context){
+  etwitterplicit GetUKeysFromHashedDataRecord(OpKernelConstruction* contetwittert)
+      : GetOutputFromHashedDataRecord<int64, int64_t>(contetwittert){
     getter = [](const twml::HashedDataRecord &record) -> const std::vector<int64_t> & {
       return record.keys();
     };
@@ -245,7 +245,7 @@ class GetUKeysFromHashedDataRecord : public GetOutputFromHashedDataRecord<int64,
 REGISTER_OP("GetKeysFromHashedDataRecord")
 .Input("hashed_data_record_handle: resource")
 .Output("keys: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns keys from the hashed data record.
@@ -258,8 +258,8 @@ Outputs
 
 class GetKeysFromHashedDataRecord : public GetOutputFromHashedDataRecord<int64, int64_t> {
  public:
-  explicit GetKeysFromHashedDataRecord(OpKernelConstruction* context)
-      : GetOutputFromHashedDataRecord<int64, int64_t>(context){
+  etwitterplicit GetKeysFromHashedDataRecord(OpKernelConstruction* contetwittert)
+      : GetOutputFromHashedDataRecord<int64, int64_t>(contetwittert){
     getter = [](const twml::HashedDataRecord &record) -> const std::vector<int64_t> & {
       return record.transformed_keys();
     };
@@ -269,7 +269,7 @@ class GetKeysFromHashedDataRecord : public GetOutputFromHashedDataRecord<int64, 
 REGISTER_OP("GetValuesFromHashedDataRecord")
 .Input("hashed_data_record_handle: resource")
 .Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns values from the hashed data record.
@@ -282,8 +282,8 @@ Outputs
 
 class GetValuesFromHashedDataRecord : public GetOutputFromHashedDataRecord<float, double> {
  public:
-  explicit GetValuesFromHashedDataRecord(OpKernelConstruction* context)
-      : GetOutputFromHashedDataRecord<float, double>(context){
+  etwitterplicit GetValuesFromHashedDataRecord(OpKernelConstruction* contetwittert)
+      : GetOutputFromHashedDataRecord<float, double>(contetwittert){
     getter = [](const twml::HashedDataRecord &record) -> const std::vector<double> & {
       return record.values();
     };
@@ -293,7 +293,7 @@ class GetValuesFromHashedDataRecord : public GetOutputFromHashedDataRecord<float
 REGISTER_OP("GetCodesFromHashedDataRecord")
 .Input("hashed_data_record_handle: resource")
 .Output("codes: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns codes from the hashed data record.
@@ -306,8 +306,8 @@ Outputs
 
 class GetCodesFromHashedDataRecord : public GetOutputFromHashedDataRecord<int64, int64_t> {
  public:
-  explicit GetCodesFromHashedDataRecord(OpKernelConstruction* context)
-      : GetOutputFromHashedDataRecord<int64, int64_t>(context){
+  etwitterplicit GetCodesFromHashedDataRecord(OpKernelConstruction* contetwittert)
+      : GetOutputFromHashedDataRecord<int64, int64_t>(contetwittert){
     getter = [](const twml::HashedDataRecord &record) -> const std::vector<int64_t> & {
       return record.codes();
     };
@@ -317,7 +317,7 @@ class GetCodesFromHashedDataRecord : public GetOutputFromHashedDataRecord<int64,
 REGISTER_OP("GetTypesFromHashedDataRecord")
 .Input("hashed_data_record_handle: resource")
 .Output("types: int8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns types from the hashed data record.
@@ -330,8 +330,8 @@ Outputs
 
 class GetTypesFromHashedDataRecord : public GetOutputFromHashedDataRecord<int8, uint8_t> {
  public:
-  explicit GetTypesFromHashedDataRecord(OpKernelConstruction* context)
-      : GetOutputFromHashedDataRecord<int8, uint8_t>(context){
+  etwitterplicit GetTypesFromHashedDataRecord(OpKernelConstruction* contetwittert)
+      : GetOutputFromHashedDataRecord<int8, uint8_t>(contetwittert){
     getter = [](const twml::HashedDataRecord &record) -> const std::vector<uint8_t> & {
       return record.types();
     };
@@ -353,17 +353,17 @@ Outputs
 
 class GetBatchSizeFromHashedDataRecord : public OpKernel {
  public:
-  explicit GetBatchSizeFromHashedDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  etwitterplicit GetBatchSizeFromHashedDataRecord(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
+      auto handle = getHandle<HashedDataRecordResource>(contetwittert, 0);
       Tensor *output;
-      OP_REQUIRES_OK(context, context->allocate_output(0, TensorShape({}), &output));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, TensorShape({}), &output));
       output->scalar<int64>()() = handle->records.size();
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -383,18 +383,18 @@ Outputs
 
 class GetTotalSizeFromHashedDataRecord : public OpKernel {
  public:
-  explicit GetTotalSizeFromHashedDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  etwitterplicit GetTotalSizeFromHashedDataRecord(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
+      auto handle = getHandle<HashedDataRecordResource>(contetwittert, 0);
 
       Tensor *output;
-      OP_REQUIRES_OK(context, context->allocate_output(0, TensorShape({}), &output));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, TensorShape({}), &output));
       output->scalar<int64>()() = handle->total_size;
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -403,7 +403,7 @@ REGISTER_OP("GetLabelsFromHashedDataRecord")
 .Input("hashed_data_record_handle: resource")
 .Output("labels: float")
 .Attr("default_label: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns labels from the hashed data record.
@@ -419,20 +419,20 @@ class GetLabelsFromHashedDataRecord : public OpKernel {
   float default_label;
 
  public:
-  explicit GetLabelsFromHashedDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("default_label", &default_label));
+  etwitterplicit GetLabelsFromHashedDataRecord(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {
+    OP_REQUIRES_OK(contetwittert, contetwittert->GetAttr("default_label", &default_label));
   }
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
+      auto handle = getHandle<HashedDataRecordResource>(contetwittert, 0);
       const auto &records = handle->records;
       const int num_labels = static_cast<int>(handle->num_labels);
       TensorShape shape = {static_cast<int64>(handle->records.size()), num_labels};
 
       Tensor *labels;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &labels));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, shape, &labels));
 
       // The default value of label is not present in data record is std::nanf
       // For continuous labels, change that to a default_label or label.
@@ -445,8 +445,8 @@ class GetLabelsFromHashedDataRecord : public OpKernel {
         const auto& rec_labels = record.labels();
         labels_data = std::transform(rec_labels.begin(), rec_labels.end(), labels_data, func);
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };
@@ -454,7 +454,7 @@ class GetLabelsFromHashedDataRecord : public OpKernel {
 REGISTER_OP("GetWeightsFromHashedDataRecord")
 .Input("hashed_data_record_handle: resource")
 .Output("weights: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
     return Status::OK();
   }).Doc(R"doc(
 A tensorflow OP that returns weights from the hashed data record.
@@ -467,26 +467,26 @@ Outputs
 
 class GetWeightsFromHashedDataRecord : public OpKernel {
  public:
-  explicit GetWeightsFromHashedDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  etwitterplicit GetWeightsFromHashedDataRecord(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Compute(OpKernelContetwittert* contetwittert) override {
     try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
+      auto handle = getHandle<HashedDataRecordResource>(contetwittert, 0);
       const auto &records = handle->records;
       const int num_weights = static_cast<int>(handle->num_weights);
       TensorShape shape = {static_cast<int64>(handle->records.size()), num_weights};
 
       Tensor *weights;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &weights));
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, shape, &weights));
 
       auto weights_data = weights->flat<float>().data();
       for (const auto &record : records) {
         const auto& rec_weights = record.weights();
         weights_data = std::copy(rec_weights.begin(), rec_weights.end(), weights_data);
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };

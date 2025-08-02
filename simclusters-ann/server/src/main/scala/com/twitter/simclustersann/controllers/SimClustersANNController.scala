@@ -8,7 +8,7 @@ import com.twitter.simclustersann.thriftscala.Query
 import com.twitter.simclustersann.thriftscala.SimClustersANNTweetCandidate
 import com.twitter.scrooge.Request
 import com.twitter.scrooge.Response
-import javax.inject.Inject
+import javatwitter.inject.Inject
 import com.twitter.finagle.Service
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.inject.annotations.Flag
@@ -28,7 +28,7 @@ class SimClustersANNController @Inject() (
   getTweetCandidatesResponseStatsFilter: GetTweetCandidatesResponseStatsFilter,
   sannCandidateSource: SANNSimClustersANNCandidateSource,
   globalStats: StatsReceiver)
-    extends Controller(SimClustersANNService) {
+    etwittertends Controller(SimClustersANNService) {
 
   import SimClustersANNController._
 

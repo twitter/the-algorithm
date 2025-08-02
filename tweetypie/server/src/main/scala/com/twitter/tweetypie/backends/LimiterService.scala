@@ -8,16 +8,16 @@ import com.twitter.tweetypie.backends.LimiterBackend.IncrementFeature
 import com.twitter.tweetypie.backends.LimiterService.Feature
 
 /**
- * Why does LimiterService exist?
+ * Why does LimiterService etwitterist?
  *
  * The underlying Limiter thrift service doesn't support batching. This trait and implementation
- * basically exist to allow a batch like interface to the Limiter. This keeps us from having to
+ * basically etwitterist to allow a batch like interface to the Limiter. This keeps us from having to
  * spread batching throughout our code base.
  *
  * Why is LimiterService in the backends package?
  *
  * In some ways it is like a backend if the backend supports batching. There is a modest amount of
- * business logic LimiterService, but that logic exists here to allow easier consumption throughout
+ * business logic LimiterService, but that logic etwitterists here to allow easier consumption throughout
  * the tweetypie code base. We did look at moving LimiterService to another package, but all likely
  * candidates (service, serverutil) caused circular dependencies.
  *
@@ -49,9 +49,9 @@ object LimiterService {
       }
   }
   object Feature {
-    case object Updates extends Feature("updates", hasPerApp = true)
-    case object MediaTagCreate extends Feature("media_tag_create")
-    case object TweetCreateFailure extends Feature("tweet_creation_failure")
+    case object Updates etwittertends Feature("updates", hasPerApp = true)
+    case object MediaTagCreate etwittertends Feature("media_tag_create")
+    case object TweetCreateFailure etwittertends Feature("tweet_creation_failure")
   }
 
   def fromBackend(
@@ -123,11 +123,11 @@ trait LimiterService {
 
   /**
    * Increment the feature count for both the user and the contributor. If either increment fails,
-   * the resulting future will be the first exception encountered.
+   * the resulting future will be the first etwitterception encountered.
    *
    * @param feature The feature that is incremented
    * @param userId The current user tied to the current request
-   * @param contributorUserId The contributor, if one exists, tied to the current request
+   * @param contributorUserId The contributor, if one etwitterists, tied to the current request
    * @param amount The amount that each feature should be incremented.
    */
   def increment(
@@ -140,11 +140,11 @@ trait LimiterService {
 
   /**
    * Increment the feature count, by one, for both the user and the contributor. If either
-   * increment fails, the resulting future will be the first exception encountered.
+   * increment fails, the resulting future will be the first etwitterception encountered.
    *
    * @param feature The feature that is incremented
    * @param userId The current user tied to the current request
-   * @param contributorUserId The contributor, if one exists, tied to the current request
+   * @param contributorUserId The contributor, if one etwitterists, tied to the current request
    *
    * @see [[increment]] if you want to increment a feature by a specified amount
    */
@@ -157,12 +157,12 @@ trait LimiterService {
     increment(feature)(userId, contributorUserId, 1)
 
   /**
-   * The minimum remaining limit between the user and contributor. If an exception occurs, then the
-   * resulting Future will be the first exception encountered.
+   * The minimum remaining limit between the user and contributor. If an etwitterception occurs, then the
+   * resulting Future will be the first etwitterception encountered.
    *
    * @param feature The feature that is queried
    * @param userId The current user tied to the current request
-   * @param contributorUserId The contributor, if one exists, tied to the current request
+   * @param contributorUserId The contributor, if one etwitterists, tied to the current request
    *
    * @return a `Future[Int]` with the minimum limit left between the user and contributor
    */
@@ -170,16 +170,16 @@ trait LimiterService {
 
   /**
    * Can the user and contributor increment the given feature. If the result cannot be determined
-   * because of an exception, then we assume they can increment. This will allow us to continue
+   * because of an etwitterception, then we assume they can increment. This will allow us to continue
    * servicing requests even if the limiter service isn't responding.
    *
    * @param feature The feature that is queried
    * @param userId The current user tied to the current request
-   * @param contributorUserId The contributor, if one exists, tied to the current request
+   * @param contributorUserId The contributor, if one etwitterists, tied to the current request
    * @return a `Future[Boolean]` with true if both the user and contributor have remaining limit
    * cap.
    *
-   * @see [[minRemaining]] if you would like to handle any exceptions that occur on your own
+   * @see [[minRemaining]] if you would like to handle any etwitterceptions that occur on your own
    */
   def hasRemaining(
     feature: Feature

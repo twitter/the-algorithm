@@ -15,7 +15,7 @@ import com.twitter.spam.rtf.thriftscala.SafetyLevel
 import com.twitter.stitch.Stitch
 import com.twitter.stitch.storehaus.ReadableStoreOfStitch
 import com.twitter.stitch.tweetypie.TweetyPie
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieException
+import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieEtwitterception
 import com.twitter.storehaus.ReadableStore
 import com.twitter.topiclisting.AnnotationRuleProvider
 import com.twitter.tsp.utils.HealthSignalsUtils
@@ -24,7 +24,7 @@ import com.twitter.tweetypie.thriftscala.{Tweet => TTweet}
 import com.twitter.tweetypie.thriftscala._
 import com.twitter.util.Duration
 import com.twitter.util.Future
-import com.twitter.util.TimeoutException
+import com.twitter.util.TimeoutEtwitterception
 import com.twitter.util.Timer
 
 object TweetyPieFieldsStore {
@@ -50,7 +50,7 @@ object TweetyPieFieldsStore {
 
   def getStoreFromTweetyPie(
     tweetyPie: TweetyPie,
-    convertExceptionsToNotFound: Boolean = true
+    convertEtwitterceptionsToNotFound: Boolean = true
   ): ReadableStore[Long, GetTweetFieldsResult] = {
     val log = Logger("TweetyPieFieldsStore")
 
@@ -58,8 +58,8 @@ object TweetyPieFieldsStore {
       tweetyPie
         .getTweetFields(tweetId, options = gtfo)
         .rescue {
-          case ex: TweetyPieException if convertExceptionsToNotFound =>
-            log.error(ex, s"Error while hitting tweetypie ${ex.result}")
+          case etwitter: TweetyPieEtwitterception if convertEtwitterceptionsToNotFound =>
+            log.error(etwitter, s"Error while hitting tweetypie ${etwitter.result}")
             Stitch.NotFound
         }
     }
@@ -84,7 +84,7 @@ case class TweetInfoStore(
   timer: Timer
 )(
   statsReceiver: StatsReceiver)
-    extends ReadableStore[TweetId, TspTweetInfo] {
+    etwittertends ReadableStore[TweetId, TspTweetInfo] {
 
   import TweetInfoStore._
 
@@ -100,18 +100,18 @@ case class TweetInfoStore(
 
         val languageOpt = tweet.language.map(_.language)
         val hasImageOpt =
-          tweet.mediaKeys.map(_.map(_.mediaCategory).exists(_ == MediaCategory.TweetImage))
+          tweet.mediaKeys.map(_.map(_.mediaCategory).etwitterists(_ == MediaCategory.TweetImage))
         val hasGifOpt =
-          tweet.mediaKeys.map(_.map(_.mediaCategory).exists(_ == MediaCategory.TweetGif))
+          tweet.mediaKeys.map(_.map(_.mediaCategory).etwitterists(_ == MediaCategory.TweetGif))
         val isNsfwAuthorOpt = Some(
-          tweet.coreData.exists(_.nsfwUser) || tweet.coreData.exists(_.nsfwAdmin))
+          tweet.coreData.etwitterists(_.nsfwUser) || tweet.coreData.etwitterists(_.nsfwAdmin))
         val isTweetReplyOpt = tweet.coreData.map(_.reply.isDefined)
         val hasMultipleMediaOpt =
           tweet.mediaKeys.map(_.map(_.mediaCategory).size > 1)
 
         val isKGODenylist = Some(
           tweet.escherbirdEntityAnnotations
-            .exists(_.entityAnnotations.exists(AnnotationRuleProvider.isSuppressedTopicsDenylist)))
+            .etwitterists(_.entityAnnotations.etwitterists(AnnotationRuleProvider.isSuppressedTopicsDenylist)))
 
         val isNullcastOpt = tweet.coreData.map(_.nullcast) // These are Ads. go/nullcast
 
@@ -133,7 +133,7 @@ case class TweetInfoStore(
 
         val mediaWidth = mediaDimensionsOpt.map(_._1).getOrElse(1)
         val mediaHeight = mediaDimensionsOpt.map(_._2).getOrElse(1)
-        // high resolution media's width is always greater than 480px and height is always greater than 480px
+        // high resolution media's width is always greater than 480ptwitter and height is always greater than 480ptwitter
         val isHighMediaResolution = mediaHeight > 480 && mediaWidth > 480
         val isVerticalAspectRatio = mediaHeight >= mediaWidth && mediaWidth > 1
         val hasUrlOpt = tweet.urls.map(_.nonEmpty)
@@ -165,7 +165,7 @@ case class TweetInfoStore(
             }
           case _ =>
             statsReceiver.counter("missingFields").incr()
-            Future.None // These values should always exist.
+            Future.None // These values should always etwitterist.
         }
       case _: TweetFieldsResultState.NotFound =>
         statsReceiver.counter("notFound").incr()
@@ -194,12 +194,12 @@ case class TweetInfoStore(
           .multiGet(Set(authorId))(authorId)
       ).map {
         case (tweetHealthScoresOpt, userAgathaScoresOpt) =>
-          // This stats help us understand empty rate for AgathaCalibratedNsfw / NsfwTextUserScore
+          // This stats help us understand empty rate for AgathaCalibratedNsfw / NsfwTetwittertUserScore
           statsReceiver.counter("totalCountAgathaScore").incr()
           if (userAgathaScoresOpt.getOrElse(UserAgathaScores()).agathaCalibratedNsfw.isEmpty)
             statsReceiver.counter("emptyCountAgathaCalibratedNsfw").incr()
-          if (userAgathaScoresOpt.getOrElse(UserAgathaScores()).nsfwTextUserScore.isEmpty)
-            statsReceiver.counter("emptyCountNsfwTextUserScore").incr()
+          if (userAgathaScoresOpt.getOrElse(UserAgathaScores()).nsfwTetwittertUserScore.isEmpty)
+            statsReceiver.counter("emptyCountNsfwTetwittertUserScore").incr()
 
           val isPassAgathaHealthFilters = IsPassAgathaHealthFilters(
             agathaStrictest =
@@ -213,7 +213,7 @@ case class TweetInfoStore(
 
           (isPassAgathaHealthFilters, isPassTweetHealthFilters)
       }.raiseWithin(HealthStoreTimeout)(timer).rescue {
-        case _: TimeoutException =>
+        case _: TimeoutEtwitterception =>
           statsReceiver.counter("hydrateHealthScoreTimeout").incr()
           Future.value((isPassAgathaHealthFilters, isPassTweetHealthFilters))
         case _ =>

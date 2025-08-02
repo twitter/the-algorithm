@@ -1,7 +1,7 @@
 package com.twitter.tweetypie.config
 
 import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.ExceptionCounter
+import com.twitter.servo.util.EtwitterceptionCounter
 import com.twitter.tweetypie.serverutil.ActivityUtil
 import com.twitter.util.{Activity, Return, Try}
 import com.twitter.util.logging.Logger
@@ -35,7 +35,7 @@ object DynamicConfigLoader {
       }
 
       def apply[T](path: String, stats: StatsReceiver, parse: String => T): Activity[Option[T]] = {
-        val exceptionCounter = new ExceptionCounter(stats)
+        val etwitterceptionCounter = new EtwitterceptionCounter(stats)
 
         val rawActivity: Activity[T] =
           snoopState(stats.scope("raw"))(
@@ -44,7 +44,7 @@ object DynamicConfigLoader {
               .map(parse)
               .handle {
                 case e =>
-                  exceptionCounter(e)
+                  etwitterceptionCounter(e)
                   logger.error(s"Invalid config in $path", e)
                   throw e
               }

@@ -1,20 +1,20 @@
 package com.twitter.unified_user_actions.service.module
 
 import com.google.inject.Provides
-import com.twitter.finagle.ThriftMux
+import com.twitter.finagle.ThriftMutwitter
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMuxClientSyntax
+import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMutwitterClientSyntatwitter
 import com.twitter.finagle.ssl.OpportunisticTls
 import com.twitter.finagle.thrift.ClientId
 import com.twitter.finagle.thrift.RichClientParam
-import com.twitter.graphql.thriftscala.GraphqlExecutionService
+import com.twitter.graphql.thriftscala.GraphqlEtwitterecutionService
 import com.twitter.inject.TwitterModule
 import com.twitter.util.Duration
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
-object GraphqlClientProviderModule extends TwitterModule {
+object GraphqlClientProviderModule etwittertends TwitterModule {
   private def buildClient(serviceIdentifier: ServiceIdentifier, clientId: ClientId) =
-    ThriftMux.client
+    ThriftMutwitter.client
       .withRequestTimeout(Duration.fromSeconds(5))
       .withMutualTls(serviceIdentifier)
       .withOpportunisticTls(OpportunisticTls.Required)
@@ -24,9 +24,9 @@ object GraphqlClientProviderModule extends TwitterModule {
   def buildGraphQlClient(
     serviceIdentifer: ServiceIdentifier,
     clientId: ClientId
-  ): GraphqlExecutionService.FinagledClient = {
+  ): GraphqlEtwitterecutionService.FinagledClient = {
     val client = buildClient(serviceIdentifer, clientId)
-    new GraphqlExecutionService.FinagledClient(client, RichClientParam())
+    new GraphqlEtwitterecutionService.FinagledClient(client, RichClientParam())
   }
 
   @Provides
@@ -34,7 +34,7 @@ object GraphqlClientProviderModule extends TwitterModule {
   def providesGraphQlClient(
     serviceIdentifier: ServiceIdentifier,
     clientId: ClientId
-  ): GraphqlExecutionService.FinagledClient =
+  ): GraphqlEtwitterecutionService.FinagledClient =
     buildGraphQlClient(
       serviceIdentifier,
       clientId

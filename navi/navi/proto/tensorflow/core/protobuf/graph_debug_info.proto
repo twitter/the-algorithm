@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -11,9 +11,9 @@ option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobu
 message GraphDebugInfo {
   // This represents a file/line location in the source code.
   message FileLineCol {
-    // File name index, which can be used to retrieve the file name string from
+    // File name indetwitter, which can be used to retrieve the file name string from
     // `files`. The value should be between 0 and (len(files)-1)
-    int32 file_index = 1;
+    int32 file_indetwitter = 1;
 
     // Line number in the file.
     int32 line = 2;
@@ -34,17 +34,17 @@ message GraphDebugInfo {
     repeated FileLineCol file_line_cols = 1;
   }
 
-  // This stores all the source code file names and can be indexed by the
-  // `file_index`.
+  // This stores all the source code file names and can be indetwittered by the
+  // `file_indetwitter`.
   repeated string files = 1;
 
   // This maps a node name to a stack trace in the source code.
   // The map key is a mangling of the containing function and op name with
-  // syntax:
+  // syntatwitter:
   //   op.name '@' func_name
   // For ops in the top-level graph, the func_name is the empty string.
   // Note that op names are restricted to a small number of characters which
-  // exclude '@', making it impossible to collide keys of this form. Function
+  // etwitterclude '@', making it impossible to collide keys of this form. Function
   // names accept a much wider set of characters.
   // It would be preferable to avoid mangling and use a tuple key of (op.name,
   // func_name), but this is not supported with protocol buffers.

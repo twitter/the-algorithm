@@ -24,7 +24,7 @@ scala_library(
         "src/scala/com/twitter/simclusters_v2/hdfs_sources:user_user_normalized_graph-scala",
         "src/scala/com/twitter/simclusters_v2/scalding/common",
         "src/scala/com/twitter/simclusters_v2/scalding/embedding",
-        "src/scala/com/twitter/wtf/scalding/jobs/common:execution_app",
+        "src/scala/com/twitter/wtf/scalding/jobs/common:etwitterecution_app",
         "src/scala/com/twitter/wtf/scalding/jobs/common:sources",
         "src/scala/com/twitter/wtf/scalding/jobs/common:stats_util",
     ],
@@ -51,7 +51,7 @@ scalding_job(
     hadoop_cluster = "qus1-bluebird",
     hadoop_properties = [
         ("mapreduce.job.reduce.slowstart.completedmaps", "1.0"),
-        ("scalding.with.reducers.set.explicitly", "true"),
+        ("scalding.with.reducers.set.etwitterplicitly", "true"),
         ("mapreduce.job.reduces", "4000"),
         ("mapreduce.task.timeout", "0"),
     ],
@@ -67,7 +67,7 @@ scalding_job(
 
 scalding_job(
     name = "interested_in_twice_largest_dim_fav_score-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.embedding.twice.InterestedInTwiceLargestDimMaxFavScoreAdhocApp",
+    main = "com.twitter.simclusters_v2.scalding.embedding.twice.InterestedInTwiceLargestDimMatwitterFavScoreAdhocApp",
     args = [
         "--date 2022-07-01",
         "--num-reducers 4000",
@@ -82,7 +82,7 @@ scalding_job(
     hadoop_cluster = "qus1-bluebird",
     hadoop_properties = [
         ("mapreduce.job.reduce.slowstart.completedmaps", "1.0"),
-        ("scalding.with.reducers.set.explicitly", "true"),
+        ("scalding.with.reducers.set.etwitterplicitly", "true"),
         ("mapreduce.job.reduces", "4000"),
         ("mapreduce.task.timeout", "0"),
     ],
@@ -114,7 +114,7 @@ scalding_job(
     hadoop_cluster = "qus1-bluebird",
     hadoop_properties = [
         ("mapreduce.job.reduce.slowstart.completedmaps", "1.0"),
-        ("scalding.with.reducers.set.explicitly", "true"),
+        ("scalding.with.reducers.set.etwitterplicitly", "true"),
         ("mapreduce.job.reduces", "4000"),
         ("mapreduce.task.timeout", "0"),
     ],
@@ -146,7 +146,7 @@ scalding_job(
     hadoop_cluster = "qus1-bluebird",
     hadoop_properties = [
         ("mapreduce.job.reduce.slowstart.completedmaps", "1.0"),
-        ("scalding.with.reducers.set.explicitly", "true"),
+        ("scalding.with.reducers.set.etwitterplicitly", "true"),
         ("mapreduce.job.reduces", "4000"),
         ("mapreduce.task.timeout", "0"),
     ],

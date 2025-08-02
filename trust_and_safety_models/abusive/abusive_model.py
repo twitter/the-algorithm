@@ -2,11 +2,11 @@ import tensorflow as tf
 
 physical_devices = tf.config.list_physical_devices('GPU') 
 for device in physical_devices:
-    tf.config.experimental.set_memory_growth(device, True)
+    tf.config.etwitterperimental.set_memory_growth(device, True)
 
 from twitter.hmli.nimbus.modeling.model_config import FeatureType, EncodingType, Feature, Model, LogType
 from twitter.hmli.nimbus.modeling.feature_loader import BigQueryFeatureLoader
-from twitter.cuad.representation.models.text_encoder import TextEncoder
+from twitter.cuad.representation.models.tetwittert_encoder import TetwittertEncoder
 from twitter.cuad.representation.models.optimization import create_optimizer
 from twitter.hmli.nimbus.modeling.feature_encoder import FeatureEncoder
 
@@ -20,7 +20,7 @@ cat_names = [
 
 category_features = [Feature(name=cat_name, ftype=FeatureType.CONTINUOUS) for cat_name in cat_names]
 features = [
-  Feature(name="tweet_text_with_media_annotations", ftype=FeatureType.STRING, encoding=EncodingType.BERT),
+  Feature(name="tweet_tetwittert_with_media_annotations", ftype=FeatureType.STRING, encoding=EncodingType.BERT),
   Feature(name="precision_nsfw", ftype=FeatureType.CONTINUOUS),
   Feature(name="has_media", ftype=FeatureType.BINARY),
   Feature(name="num_media", ftype=FeatureType.DISCRETE)
@@ -28,7 +28,7 @@ features = [
 
 ptos_prototype = Model(
   name='ptos_prototype',
-  export_path="...",
+  etwitterport_path="...",
   features=features,
 )
 print(ptos_prototype)
@@ -64,7 +64,7 @@ val = cq_loader.load_features(ptos_prototype, "", "", custom_query=val_query)
 print(train.describe(model=ptos_prototype))
 
 params = {
-  'max_seq_lengths': 128,
+  'matwitter_seq_lengths': 128,
   'batch_size': 196,
   'lr': 1e-5,
   'optimizer_type': 'adamw',
@@ -73,7 +73,7 @@ params = {
   'epochs': 30,
   'steps_per_epoch': 5000,
   'model_type': 'twitter_multilingual_bert_base_cased_mlm', 
-  'mixed_precision': True,
+  'mitwittered_precision': True,
 }
 params
 
@@ -107,22 +107,22 @@ def get_positive_weights():
 pos_weight_tensor = get_positive_weights()
 print(pos_weight_tensor)
 
-class TextEncoderPooledOutput(TextEncoder):
-  def call(self, x):
-    return super().call([x])["pooled_output"]  
+class TetwittertEncoderPooledOutput(TetwittertEncoder):
+  def call(self, twitter):
+    return super().call([twitter])["pooled_output"]  
 
   def get_config(self):
     return super().get_config()
 
 with mirrored_strategy.scope():
-  text_encoder_pooled_output = TextEncoderPooledOutput(
-                                params['max_seq_lengths'], 
+  tetwittert_encoder_pooled_output = TetwittertEncoderPooledOutput(
+                                params['matwitter_seq_lengths'], 
                                 model_type=params['model_type'],
                                 trainable=True
                               )
 
   fe = FeatureEncoder(train)
-  inputs, preprocessing_head = fe.build_model_head(model=ptos_prototype, text_encoder=text_encoder_pooled_output)
+  inputs, preprocessing_head = fe.build_model_head(model=ptos_prototype, tetwittert_encoder=tetwittert_encoder_pooled_output)
 
   cls_dropout = tf.keras.layers.Dropout(params['cls_dropout_rate'], name="cls_dropout")
   outputs = cls_dropout(preprocessing_head)
@@ -141,8 +141,8 @@ with mirrored_strategy.scope():
     num_warmup_steps=params["warmup_steps"],
     optimizer_type=params["optimizer_type"],
   )
-  if params.get("mixed_precision"):
-      optimizer = tf.train.experimental.enable_mixed_precision_graph_rewrite(optimizer)
+  if params.get("mitwittered_precision"):
+      optimizer = tf.train.etwitterperimental.enable_mitwittered_precision_graph_rewrite(optimizer)
       
   model.compile(
     optimizer=optimizer,
@@ -162,12 +162,12 @@ try:
   wandb.login(...)
   run = wandb.init(project='ptos_with_media',
              group='new-split-trains',
-             notes='tweet text with only (num_media, precision_nsfw). on full train set, new split.',
+             notes='tweet tetwittert with only (num_media, precision_nsfw). on full train set, new split.',
              entity='absv',
              config=params,
-             name='tweet-text-w-nsfw-1.1',
+             name='tweet-tetwittert-w-nsfw-1.1',
              sync_tensorboard=True)
-except FileNotFoundError:
+etwittercept FileNotFoundError:
   print('Wandb key not found')
   run = wandb.init(mode='disabled')
 import datetime
@@ -182,14 +182,14 @@ cp_callback = tf.keras.callbacks.ModelCheckpoint(
   filepath=os.path.join(checkpoint_path, "model.{epoch:04d}.tf"),
   verbose=1,
   monitor=f'val_{pr_auc.name}',
-  mode='max',
+  mode='matwitter',
   save_freq='epoch',
   save_best_only=True
 )
 
 early_stopping_callback = tf.keras.callbacks.EarlyStopping(patience=7,
                                                            monitor=f"val_{pr_auc.name}",
-                                                           mode="max")
+                                                           mode="matwitter")
 
 model.fit(train_ds, epochs=params["epochs"], validation_data=val_ds, callbacks=[cp_callback, early_stopping_callback],
         steps_per_epoch=params["steps_per_epoch"], 
@@ -199,7 +199,7 @@ import tensorflow_hub as hub
 
 gs_model_path = ...
 reloaded_keras_layer = hub.KerasLayer(gs_model_path)
-inputs = tf.keras.layers.Input(name="tweet__core__tweet__text", shape=(1,), dtype=tf.string)
+inputs = tf.keras.layers.Input(name="tweet__core__tweet__tetwittert", shape=(1,), dtype=tf.string)
 output = reloaded_keras_layer(inputs)
 v7_model = tf.keras.models.Model(inputs=inputs, outputs=output)
 pr_auc = tf.keras.metrics.AUC(curve="PR", name="pr_auc")
@@ -226,12 +226,12 @@ test = test.to_tf_dataset().map(parse_labeled_data)
 
 print(test)
 
-test_only_media = test.filter(lambda x, y: tf.equal(x["has_media"], True))
-test_only_nsfw = test.filter(lambda x, y: tf.greater_equal(x["precision_nsfw"], 0.95))
-test_no_media = test.filter(lambda x, y: tf.equal(x["has_media"], False))
-test_media_not_nsfw = test.filter(lambda x, y: tf.logical_and(tf.equal(x["has_media"], True), tf.less(x["precision_nsfw"], 0.95)))
+test_only_media = test.filter(lambda twitter, y: tf.equal(twitter["has_media"], True))
+test_only_nsfw = test.filter(lambda twitter, y: tf.greater_equal(twitter["precision_nsfw"], 0.95))
+test_no_media = test.filter(lambda twitter, y: tf.equal(twitter["has_media"], False))
+test_media_not_nsfw = test.filter(lambda twitter, y: tf.logical_and(tf.equal(twitter["has_media"], True), tf.less(twitter["precision_nsfw"], 0.95)))
 for d in [test, test_only_media, test_only_nsfw, test_no_media, test_media_not_nsfw]:
-  print(d.reduce(0, lambda x, _: x + 1).numpy())
+  print(d.reduce(0, lambda twitter, _: twitter + 1).numpy())
 
 from notebook_eval_utils import SparseMultilabelEvaluator, EvalConfig
 from dataclasses import asdict
@@ -252,7 +252,7 @@ def display_metrics(probs, targets, labels=labels):
 
 def eval_model(model, df):
   with mirrored_strategy.scope():
-    targets = np.stack(list(df.map(lambda x, y: y).as_numpy_iterator()), axis=0)
+    targets = np.stack(list(df.map(lambda twitter, y: y).as_numpy_iterator()), atwitteris=0)
     df = df.padded_batch(BATCH_SIZE)
     preds = model.predict(df)
     return display_metrics(preds, targets)
@@ -267,10 +267,10 @@ metrics = {}
 for name, df in subsets.items():
   metrics[name] = eval_model(candidate_model, df)
 [(name, m.pr_auc) for name, m in metrics.items()]
-for name, x in [(name, m.pr_auc.to_string(index=False).strip().split("\n")) for name, m in metrics.items()]:
+for name, twitter in [(name, m.pr_auc.to_string(indetwitter=False).strip().split("\n")) for name, m in metrics.items()]:
   print(name)
-  for y in x:
+  for y in twitter:
     print(y.strip(), end="\t")
   print(".")
 for d in [test, test_only_media, test_only_nsfw, test_no_media, test_media_not_nsfw]:
-  print(d.reduce(0, lambda x, _: x + 1).numpy())
+  print(d.reduce(0, lambda twitter, _: twitter + 1).numpy())

@@ -15,7 +15,7 @@ class UsersSearchResultMonitoringTransform(
   underlyingTransformer: FutureArrow[CandidateEnvelope, CandidateEnvelope],
   statsReceiver: StatsReceiver,
   debugAuthorListDependencyProvider: DependencyProvider[Seq[Long]])
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+    etwittertends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
 
   private val scopedStatsReceiver = statsReceiver.scope(name)
   private val preTransformCounter = (userId: Long) =>
@@ -47,6 +47,6 @@ class UsersSearchResultMonitoringTransform(
     searchResult: ThriftSearchResult,
     debugAuthorList: Seq[Long]
   ): Boolean =
-    searchResult.metadata.exists(metadata => debugAuthorList.contains(metadata.fromUserId))
+    searchResult.metadata.etwitterists(metadata => debugAuthorList.contains(metadata.fromUserId))
 
 }

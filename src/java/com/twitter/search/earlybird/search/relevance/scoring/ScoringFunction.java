@@ -1,12 +1,12 @@
 package com.twitter.search.earlybird.search.relevance.scoring;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.Explanation;
+import org.apache.lucene.indetwitter.IndetwitterReader;
+import org.apache.lucene.search.Etwitterplanation;
 
 import com.twitter.common.collections.Pair;
 import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
@@ -16,9 +16,9 @@ import com.twitter.search.common.relevance.features.EarlybirdDocumentFeatures;
 import com.twitter.search.common.results.thriftjava.FieldHitAttribution;
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.TimeMapper;
+import com.twitter.search.core.earlybird.indetwitter.DocIDToTweetIDMapper;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.TimeMapper;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
 import com.twitter.search.earlybird.search.relevance.LinearScoringData;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
@@ -44,13 +44,13 @@ public abstract class ScoringFunction {
    * If possible, we should choose a constant that is not in the valid score range. Then we can
    * turn the float equality tests into Math.abs(...) < EPSILON tests.
    */
-  public static final float SKIP_HIT = -Float.MAX_VALUE;
+  public static final float SKIP_HIT = -Float.MAtwitter_VALUE;
 
   private final ImmutableSchemaInterface schema;
 
   // The current doc ID and the reader for the current segment should be private, because we don't
   // want sub-classes to incorrectly update them. The doc ID should only be updated by the score()
-  // and explain() methods, and the reader should only be updated by the setNextReader() method.
+  // and etwitterplain() methods, and the reader should only be updated by the setNetwittertReader() method.
   private int currentDocID = -1;
 
   protected DocIDToTweetIDMapper tweetIDMapper = null;
@@ -76,11 +76,11 @@ public abstract class ScoringFunction {
    * with scored doc IDs, as well as the values for various CSFs. Should be called every time the
    * searcher starts searching in a new segment.
    */
-  public void setNextReader(EarlybirdIndexSegmentAtomicReader reader) throws IOException {
+  public void setNetwittertReader(EarlybirdIndetwitterSegmentAtomicReader reader) throws IOEtwitterception {
     tweetIDMapper = reader.getSegmentData().getDocIDToTweetIDMapper();
     timeMapper = reader.getSegmentData().getTimeMapper();
     documentFeatures = new EarlybirdDocumentFeatures(reader);
-    initializeNextSegment(reader);
+    initializeNetwittertSegment(reader);
   }
 
   public void setHitAttributeHelperAndQuery(HitAttributeHelper newHitAttributeHelper,
@@ -100,13 +100,13 @@ public abstract class ScoringFunction {
   /**
    * Allow scoring functions to perform more per-segment-specific setup.
    */
-  protected void initializeNextSegment(EarlybirdIndexSegmentAtomicReader reader)
-      throws IOException {
+  protected void initializeNetwittertSegment(EarlybirdIndetwitterSegmentAtomicReader reader)
+      throws IOEtwitterception {
     // Noop by default
   }
 
   // Updates the current document ID and advances all NumericDocValues to this doc ID.
-  private void setCurrentDocID(int currentDocID) throws IOException {
+  private void setCurrentDocID(int currentDocID) throws IOEtwitterception {
     this.currentDocID = currentDocID;
     documentFeatures.advance(currentDocID);
   }
@@ -119,39 +119,39 @@ public abstract class ScoringFunction {
   }
 
   /**
-   * Compute the score for the current hit.  This is not expected to be thread safe.
+   * Compute the score for the current hit.  This is not etwitterpected to be thread safe.
    *
    * @param internalDocID    internal id of the matching hit
-   * @param luceneQueryScore the score that lucene's text query computed for this hit
+   * @param luceneQueryScore the score that lucene's tetwittert query computed for this hit
    */
-  public float score(int internalDocID, float luceneQueryScore) throws IOException {
+  public float score(int internalDocID, float luceneQueryScore) throws IOEtwitterception {
     setCurrentDocID(internalDocID);
     return score(luceneQueryScore);
   }
 
   /**
-   * Compute the score for the current hit.  This is not expected to be thread safe.
+   * Compute the score for the current hit.  This is not etwitterpected to be thread safe.
    *
-   * @param luceneQueryScore the score that lucene's text query computed for this hit
+   * @param luceneQueryScore the score that lucene's tetwittert query computed for this hit
    */
-  protected abstract float score(float luceneQueryScore) throws IOException;
+  protected abstract float score(float luceneQueryScore) throws IOEtwitterception;
 
-  /** Returns an explanation for the given hit. */
-  public final Explanation explain(IndexReader reader, int internalDocID, float luceneScore)
-      throws IOException {
-    setNextReader((EarlybirdIndexSegmentAtomicReader) reader);
+  /** Returns an etwitterplanation for the given hit. */
+  public final Etwitterplanation etwitterplain(IndetwitterReader reader, int internalDocID, float luceneScore)
+      throws IOEtwitterception {
+    setNetwittertReader((EarlybirdIndetwitterSegmentAtomicReader) reader);
     setCurrentDocID(internalDocID);
-    return doExplain(luceneScore);
+    return doEtwitterplain(luceneScore);
   }
 
-  /** Returns an explanation for the current document. */
-  protected abstract Explanation doExplain(float luceneScore) throws IOException;
+  /** Returns an etwitterplanation for the current document. */
+  protected abstract Etwitterplanation doEtwitterplain(float luceneScore) throws IOEtwitterception;
 
   /**
    * Returns the scoring metadata for the current doc ID.
    */
   public ThriftSearchResultMetadata getResultMetadata(ThriftSearchResultMetadataOptions options)
-      throws IOException {
+      throws IOEtwitterception {
     ThriftSearchResultMetadata metadata = new ThriftSearchResultMetadata();
     metadata.setResultType(ThriftSearchResultType.RELEVANCE);
     metadata.setPenguinVersion(EarlybirdConfig.getPenguinVersionByte());
@@ -172,8 +172,8 @@ public abstract class ScoringFunction {
   /**
    * Score a list of hits. Not thread safe.
    */
-  public float[] batchScore(List<BatchHit> hits) throws IOException {
-    throw new UnsupportedOperationException("This operation (batchScore) is not implemented!");
+  public float[] batchScore(List<BatchHit> hits) throws IOEtwitterception {
+    throw new UnsupportedOperationEtwitterception("This operation (batchScore) is not implemented!");
   }
 
   /**
@@ -181,8 +181,8 @@ public abstract class ScoringFunction {
    * returned metadata.
    */
   public Pair<LinearScoringData, ThriftSearchResultFeatures> collectFeatures(
-      float luceneQueryScore) throws IOException {
-    throw new UnsupportedOperationException("This operation (collectFeatures) is not implemented!");
+      float luceneQueryScore) throws IOEtwitterception {
+    throw new UnsupportedOperationEtwitterception("This operation (collectFeatures) is not implemented!");
   }
 
   /**
@@ -194,7 +194,7 @@ public abstract class ScoringFunction {
   public void populateResultMetadataBasedOnScoringData(
       ThriftSearchResultMetadataOptions options,
       ThriftSearchResultMetadata metadata,
-      LinearScoringData data) throws IOException {
+      LinearScoringData data) throws IOEtwitterception {
     // Make sure that the scoring data passed in is null because getScoringDataForCurrentDocument()
     // returns null by default and if a subclass overrides one of these two methods, it should
     // override both.

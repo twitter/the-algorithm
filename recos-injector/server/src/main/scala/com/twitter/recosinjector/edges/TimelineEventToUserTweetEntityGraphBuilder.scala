@@ -9,7 +9,7 @@ class TimelineEventToUserTweetEntityGraphBuilder(
   userTweetEntityEdgeBuilder: UserTweetEntityEdgeBuilder
 )(
   override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[TweetFavoriteEventDetails, UserTweetEntityEdge] {
+    etwittertends EventToMessageBuilder[TweetFavoriteEventDetails, UserTweetEntityEdge] {
 
   private val numFavEdgeCounter = statsReceiver.counter("num_favorite_edge")
   private val numUnfavEdgeCounter = statsReceiver.counter("num_unfavorite_edge")

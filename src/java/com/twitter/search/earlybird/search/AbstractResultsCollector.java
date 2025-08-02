@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.search;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +13,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
+import org.apache.lucene.indetwitter.LeafReader;
+import org.apache.lucene.indetwitter.LeafReaderContetwittert;
 import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.search.ScoreMode;
 
@@ -31,19 +31,19 @@ import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.Earlyb
 import com.twitter.search.common.search.TwitterEarlyTerminationCollector;
 import com.twitter.search.common.util.spatial.GeoUtil;
 import com.twitter.search.core.earlybird.facets.AbstractFacetCountingArray;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.core.earlybird.index.inverted.QueryCostTracker;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentData;
+import com.twitter.search.core.earlybird.indetwitter.TimeMapper;
+import com.twitter.search.core.earlybird.indetwitter.inverted.QueryCostTracker;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
 import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
-import com.twitter.search.earlybird.index.TweetIDMapper;
+import com.twitter.search.earlybird.indetwitter.EarlybirdSingleSegmentSearcher;
+import com.twitter.search.earlybird.indetwitter.TweetIDMapper;
 import com.twitter.search.earlybird.search.facets.FacetLabelCollector;
 import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
 import com.twitter.search.earlybird.thrift.ThriftFacetLabel;
 import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
+import com.twitter.search.earlybird.thrift.ThriftSearchResultEtwittertraMetadata;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultGeoLocation;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
 import com.twitter.search.queryparser.util.IdTimeRanges;
@@ -55,9 +55,9 @@ import geo.google.datamodel.GeoCoordinate;
  * This collector should be able to handle both single-segment and
  * multi-segment collection.
  */
-public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
-    S extends SearchResultsInfo>
-    extends TwitterEarlyTerminationCollector {
+public abstract class AbstractResultsCollector<R etwittertends SearchRequestInfo,
+    S etwittertends SearchResultsInfo>
+    etwittertends TwitterEarlyTerminationCollector {
   enum IdAndRangeUpdateType {
     BEGIN_SEGMENT,
     END_SEGMENT,
@@ -65,34 +65,34 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
   }
 
   // Earlybird used to have a special early termination logic: at segment boundaries
-  // the collector estimates how much time it'll take to search the next segment.
+  // the collector estimates how much time it'll take to search the netwittert segment.
   // If this estimate * 1.5 will cause the request to timeout, the search early terminates.
   // That logic is removed in favor of more fine grained checks---now we check timeout
   // within a segment, every 2,000,000 docs processed.
-  private static final int EXPENSIVE_TERMINATION_CHECK_INTERVAL =
-      EarlybirdConfig.getInt("expensive_termination_check_interval", 2000000);
+  private static final int EtwitterPENSIVE_TERMINATION_CHECK_INTERVAL =
+      EarlybirdConfig.getInt("etwitterpensive_termination_check_interval", 2000000);
 
   private static final long NO_TIME_SLICE_ID = -1;
 
   protected final R searchRequestInfo;
 
-  // Sometimes maxHitsToProcess can also come from places other than collector params.
+  // Sometimes matwitterHitsToProcess can also come from places other than collector params.
   // E.g. from searchQuery.getRelevanceOptions(). This provides a way to allow
-  // subclasses to override the maxHitsToProcess on collector params.
-  private final long maxHitsToProcessOverride;
+  // subclasses to override the matwitterHitsToProcess on collector params.
+  private final long matwitterHitsToProcessOverride;
 
-  // min and max status id actually considered in the search (may not be a hit)
-  private long minSearchedStatusID = Long.MAX_VALUE;
-  private long maxSearchedStatusID = Long.MIN_VALUE;
+  // min and matwitter status id actually considered in the search (may not be a hit)
+  private long minSearchedStatusID = Long.MAtwitter_VALUE;
+  private long matwitterSearchedStatusID = Long.MIN_VALUE;
 
-  private int minSearchedTime = Integer.MAX_VALUE;
-  private int maxSearchedTime = Integer.MIN_VALUE;
+  private int minSearchedTime = Integer.MAtwitter_VALUE;
+  private int matwitterSearchedTime = Integer.MIN_VALUE;
 
-  // per-segment start time. Will be re-started in setNextReader().
+  // per-segment start time. Will be re-started in setNetwittertReader().
   private long segmentStartTime;
 
   // Current segment being searched.
-  protected EarlybirdIndexSegmentAtomicReader currTwitterReader;
+  protected EarlybirdIndetwitterSegmentAtomicReader currTwitterReader;
   protected TweetIDMapper tweetIdMapper;
   protected TimeMapper timeMapper;
   protected long currTimeSliceID = NO_TIME_SLICE_ID;
@@ -135,13 +135,13 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
     super(searchRequestInfo.getSearchQuery().getCollectorParams(),
         searchRequestInfo.getTerminationTracker(),
         QueryCostTracker.getTracker(),
-        EXPENSIVE_TERMINATION_CHECK_INTERVAL,
+        EtwitterPENSIVE_TERMINATION_CHECK_INTERVAL,
         clock);
 
     this.schema = schema;
     this.searchRequestInfo = searchRequestInfo;
     ThriftSearchQuery thriftSearchQuery = searchRequestInfo.getSearchQuery();
-    this.maxHitsToProcessOverride = searchRequestInfo.getMaxHitsToProcess();
+    this.matwitterHitsToProcessOverride = searchRequestInfo.getMatwitterHitsToProcess();
     this.facetCollector = buildFacetCollector(searchRequestInfo, schema);
 
     if (searchRequestInfo.getTimestamp() > 0) {
@@ -162,7 +162,7 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
             : null;
     boolean loadLatLonMapperIntoRam = true;
     if (latLonCSFField != null) {
-      // If the latlon_csf field is explicitly defined, then take the config from the schema.
+      // If the latlon_csf field is etwitterplicitly defined, then take the config from the schema.
       // If it's not defined, we assume that the latlon mapper is stored in memory.
       loadLatLonMapperIntoRam = latLonCSFField.getFieldType().isCsfLoadIntoRam();
     }
@@ -206,10 +206,10 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
 
   // Subclasses should process collected hits and construct a final
   // AbstractSearchResults object.
-  protected abstract S doGetResults() throws IOException;
+  protected abstract S doGetResults() throws IOEtwitterception;
 
   // Subclasses can override this method to add more collection logic.
-  protected abstract void doCollect(long tweetID) throws IOException;
+  protected abstract void doCollect(long tweetID) throws IOEtwitterception;
 
   public final ImmutableSchemaInterface getSchema() {
     return schema;
@@ -233,12 +233,12 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
   }
 
   private boolean searchedStatusIDsAndTimesInitialized() {
-    return maxSearchedStatusID != Long.MIN_VALUE;
+    return matwitterSearchedStatusID != Long.MIN_VALUE;
   }
 
   // Updates the first searched status ID when starting to search a new segment.
   private void updateFirstSearchedStatusID() {
-    // Only try to update the min/max searched ids, if this segment/reader actually has documents
+    // Only try to update the min/matwitter searched ids, if this segment/reader actually has documents
     // See SEARCH-4535
     int minDocID = currTwitterReader.getSmallestDocID();
     if (currTwitterReader.hasDocs() && minDocID >= 0 && !searchedStatusIDsAndTimesInitialized()) {
@@ -261,8 +261,8 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
     return minSearchedStatusID;
   }
 
-  public final long getMaxSearchedStatusID() {
-    return maxSearchedStatusID;
+  public final long getMatwitterSearchedStatusID() {
+    return matwitterSearchedStatusID;
   }
 
   public final int getMinSearchedTime() {
@@ -270,38 +270,38 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
   }
 
   public boolean isSetMinSearchedTime() {
-    return minSearchedTime != Integer.MAX_VALUE;
+    return minSearchedTime != Integer.MAtwitter_VALUE;
   }
 
-  public final int getMaxSearchedTime() {
-    return maxSearchedTime;
+  public final int getMatwitterSearchedTime() {
+    return matwitterSearchedTime;
   }
 
   @Override
-  public final long getMaxHitsToProcess() {
-    return maxHitsToProcessOverride;
+  public final long getMatwitterHitsToProcess() {
+    return matwitterHitsToProcessOverride;
   }
 
-  // Notifies classes that a new index segment is about to be searched.
+  // Notifies classes that a new indetwitter segment is about to be searched.
   @Override
-  public final void setNextReader(LeafReaderContext context) throws IOException {
-    super.setNextReader(context);
-    setNextReader(context.reader());
+  public final void setNetwittertReader(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
+    super.setNetwittertReader(contetwittert);
+    setNetwittertReader(contetwittert.reader());
   }
 
   /**
    * Notifies the collector that a new segment is about to be searched.
    *
    * It's easier to use this method from tests, because LeafReader is not a final class, so it can
-   * be mocked (unlike LeafReaderContext).
+   * be mocked (unlike LeafReaderContetwittert).
    */
   @VisibleForTesting
-  public final void setNextReader(LeafReader reader) throws IOException {
-    if (!(reader instanceof EarlybirdIndexSegmentAtomicReader)) {
-      throw new RuntimeException("IndexReader type not supported: " + reader.getClass());
+  public final void setNetwittertReader(LeafReader reader) throws IOEtwitterception {
+    if (!(reader instanceof EarlybirdIndetwitterSegmentAtomicReader)) {
+      throw new RuntimeEtwitterception("IndetwitterReader type not supported: " + reader.getClass());
     }
 
-    currTwitterReader = (EarlybirdIndexSegmentAtomicReader) reader;
+    currTwitterReader = (EarlybirdIndetwitterSegmentAtomicReader) reader;
     documentFeatures = new EarlybirdDocumentFeatures(currTwitterReader);
     tweetIdMapper = (TweetIDMapper) currTwitterReader.getSegmentData().getDocIDToTweetIDMapper();
     timeMapper = currTwitterReader.getSegmentData().getTimeMapper();
@@ -315,10 +315,10 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
     startSegment();
   }
 
-  protected abstract void startSegment() throws IOException;
+  protected abstract void startSegment() throws IOEtwitterception;
 
   @Override
-  protected final void doCollect() throws IOException {
+  protected final void doCollect() throws IOEtwitterception {
     documentFeatures.advance(curDocId);
     long tweetID = tweetIdMapper.getTweetID(curDocId);
     updateIDandTimeRanges(tweetID, timeMapper.getTime(curDocId), IdAndRangeUpdateType.HIT);
@@ -326,54 +326,54 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
     numHitsCollectedPerSegment++;
   }
 
-  protected void collectFeatures(ThriftSearchResultMetadata metadata) throws IOException {
+  protected void collectFeatures(ThriftSearchResultMetadata metadata) throws IOEtwitterception {
     if (featuresRequested) {
-      ensureExtraMetadataIsSet(metadata);
+      ensureEtwittertraMetadataIsSet(metadata);
 
-      metadata.getExtraMetadata().setDirectedAtUserId(
+      metadata.getEtwittertraMetadata().setDirectedAtUserId(
           documentFeatures.getFeatureValue(EarlybirdFieldConstant.DIRECTED_AT_USER_ID_CSF));
-      metadata.getExtraMetadata().setQuotedTweetId(
+      metadata.getEtwittertraMetadata().setQuotedTweetId(
           documentFeatures.getFeatureValue(EarlybirdFieldConstant.QUOTED_TWEET_ID_CSF));
-      metadata.getExtraMetadata().setQuotedUserId(
+      metadata.getEtwittertraMetadata().setQuotedUserId(
           documentFeatures.getFeatureValue(EarlybirdFieldConstant.QUOTED_USER_ID_CSF));
 
       int cardLangValue =
           (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.CARD_LANG_CSF);
       ThriftLanguage thriftLanguage = ThriftLanguage.findByValue(cardLangValue);
-      metadata.getExtraMetadata().setCardLang(thriftLanguage);
+      metadata.getEtwittertraMetadata().setCardLang(thriftLanguage);
 
       long cardNumericUri =
           (long) documentFeatures.getFeatureValue(EarlybirdFieldConstant.CARD_URI_CSF);
       if (cardNumericUri > 0) {
-        metadata.getExtraMetadata().setCardUri(String.format("card://%s", cardNumericUri));
+        metadata.getEtwittertraMetadata().setCardUri(String.format("card://%s", cardNumericUri));
       }
     }
   }
 
   protected void collectIsProtected(
       ThriftSearchResultMetadata metadata, EarlybirdCluster cluster, UserTable userTable)
-      throws IOException {
+      throws IOEtwitterception {
     // 'isUserProtected' field is only set for archive cluster because only archive cluster user
     // table has IS_PROTECTED_BIT populated.
-    // Since this bit is checked after UserFlagsExcludeFilter checked this bit, there is a slight
+    // Since this bit is checked after UserFlagsEtwittercludeFilter checked this bit, there is a slight
     // chance that this bit is updated in-between. When that happens, it is possible that we will
-    // see a small number of protected Tweets in the response when we meant to exclude them.
+    // see a small number of protected Tweets in the response when we meant to etwitterclude them.
     if (cluster == EarlybirdCluster.FULL_ARCHIVE) {
-      ensureExtraMetadataIsSet(metadata);
+      ensureEtwittertraMetadataIsSet(metadata);
       long userId = documentFeatures.getFeatureValue(EarlybirdFieldConstant.FROM_USER_ID_CSF);
       boolean isProtected = userTable.isSet(userId, UserTable.IS_PROTECTED_BIT);
-      metadata.getExtraMetadata().setIsUserProtected(isProtected);
+      metadata.getEtwittertraMetadata().setIsUserProtected(isProtected);
     }
   }
 
-  protected void collectExclusiveConversationAuthorId(ThriftSearchResultMetadata metadata)
-      throws IOException {
-    if (searchRequestInfo.isCollectExclusiveConversationAuthorId()) {
-      long exclusiveConversationAuthorId = documentFeatures.getFeatureValue(
-          EarlybirdFieldConstant.EXCLUSIVE_CONVERSATION_AUTHOR_ID_CSF);
-      if (exclusiveConversationAuthorId != 0L) {
-        ensureExtraMetadataIsSet(metadata);
-        metadata.getExtraMetadata().setExclusiveConversationAuthorId(exclusiveConversationAuthorId);
+  protected void collectEtwitterclusiveConversationAuthorId(ThriftSearchResultMetadata metadata)
+      throws IOEtwitterception {
+    if (searchRequestInfo.isCollectEtwitterclusiveConversationAuthorId()) {
+      long etwitterclusiveConversationAuthorId = documentFeatures.getFeatureValue(
+          EarlybirdFieldConstant.EtwitterCLUSIVE_CONVERSATION_AUTHOR_ID_CSF);
+      if (etwitterclusiveConversationAuthorId != 0L) {
+        ensureEtwittertraMetadataIsSet(metadata);
+        metadata.getEtwittertraMetadata().setEtwitterclusiveConversationAuthorId(etwitterclusiveConversationAuthorId);
       }
     }
   }
@@ -387,7 +387,7 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
     }
 
     AbstractFacetCountingArray facetCountingArray = currTwitterReader.getFacetCountingArray();
-    EarlybirdIndexSegmentData segmentData = currTwitterReader.getSegmentData();
+    EarlybirdIndetwitterSegmentData segmentData = currTwitterReader.getSegmentData();
 
     if (facetCountingArray == null || facetCollector == null) {
       return;
@@ -405,9 +405,9 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
     }
   }
 
-  protected void ensureExtraMetadataIsSet(ThriftSearchResultMetadata metadata) {
-    if (!metadata.isSetExtraMetadata()) {
-      metadata.setExtraMetadata(new ThriftSearchResultExtraMetadata());
+  protected void ensureEtwittertraMetadataIsSet(ThriftSearchResultMetadata metadata) {
+    if (!metadata.isSetEtwittertraMetadata()) {
+      metadata.setEtwittertraMetadata(new ThriftSearchResultEtwittertraMetadata());
     }
   }
 
@@ -423,16 +423,16 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
     }
 
     if (!currTwitterReader.hasDocs()) {
-      // Due to race between the reader and the indexing thread, a seemingly empty segment that
+      // Due to race between the reader and the indetwittering thread, a seemingly empty segment that
       // does not have document committed in the posting lists, might already have a document
       // inserted into the id/time mappers, which we do not want to take into account.
-      // If there are no documents in the segment, we don't update searched min/max ids to
+      // If there are no documents in the segment, we don't update searched min/matwitter ids to
       // anything.
       return;
     } else if (lastSearchedDocID == DocIdSetIterator.NO_MORE_DOCS) {
-      // Segment exhausted.
+      // Segment etwitterhausted.
       if (shouldCollectDetailedDebugInfo()) {
-        debugInfo.add("Segment exhausted");
+        debugInfo.add("Segment etwitterhausted");
       }
       updateIDandTimeRanges(tweetIdMapper.getMinTweetID(), timeMapper.getFirstTime(),
           IdAndRangeUpdateType.END_SEGMENT);
@@ -450,22 +450,22 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
   }
 
   private void updateIDandTimeRanges(long tweetID, int time, IdAndRangeUpdateType updateType) {
-    // We need to update minSearchedStatusID/maxSearchedStatusID and
-    // minSearchedTime/maxSearchedTime independently: SEARCH-6139
+    // We need to update minSearchedStatusID/matwitterSearchedStatusID and
+    // minSearchedTime/matwitterSearchedTime independently: SEARCH-6139
     minSearchedStatusID = Math.min(minSearchedStatusID, tweetID);
-    maxSearchedStatusID = Math.max(maxSearchedStatusID, tweetID);
+    matwitterSearchedStatusID = Math.matwitter(matwitterSearchedStatusID, tweetID);
     if (time > 0) {
       minSearchedTime = Math.min(minSearchedTime, time);
-      maxSearchedTime = Math.max(maxSearchedTime, time);
+      matwitterSearchedTime = Math.matwitter(matwitterSearchedTime, time);
     }
     if (shouldCollectVerboseDebugInfo()) {
       debugInfo.add(
           String.format("call to updateIDandTimeRanges(%d, %d, %s)"
-                  + " set minSearchStatusID=%d, maxSearchedStatusID=%d,"
-                  + " minSearchedTime=%d, maxSearchedTime=%d)",
+                  + " set minSearchStatusID=%d, matwitterSearchedStatusID=%d,"
+                  + " minSearchedTime=%d, matwitterSearchedTime=%d)",
               tweetID, time, updateType.toString(),
-              minSearchedStatusID, maxSearchedStatusID,
-              minSearchedTime, maxSearchedTime));
+              minSearchedStatusID, matwitterSearchedStatusID,
+              minSearchedTime, matwitterSearchedTime));
     }
   }
 
@@ -473,8 +473,8 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
    * This is called when a segment is skipped but we would want to do accounting
    * for minSearchDocId as well as numDocsProcessed.
    */
-  public void skipSegment(EarlybirdSingleSegmentSearcher searcher) throws IOException {
-    setNextReader(searcher.getTwitterIndexReader().getContext());
+  public void skipSegment(EarlybirdSingleSegmentSearcher searcher) throws IOEtwitterception {
+    setNetwittertReader(searcher.getTwitterIndetwitterReader().getContetwittert());
     trackCompleteSegment(DocIdSetIterator.NO_MORE_DOCS);
     if (shouldCollectDetailedDebugInfo()) {
       debugInfo.add("Skipping segment: " + currTimeSliceID);
@@ -484,15 +484,15 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
   /**
    * Returns the results collected by this collector.
    */
-  public final S getResults() throws IOException {
-    // In order to make pagination work, if minSearchedStatusID is greater than the asked max_id.
-    // We force the minSearchedStatusID to be max_id + 1.
+  public final S getResults() throws IOEtwitterception {
+    // In order to make pagination work, if minSearchedStatusID is greater than the asked matwitter_id.
+    // We force the minSearchedStatusID to be matwitter_id + 1.
     IdTimeRanges idTimeRanges = searchRequestInfo.getIdTimeRanges();
     if (idTimeRanges != null) {
-      Optional<Long> maxIDInclusive = idTimeRanges.getMaxIDInclusive();
-      if (maxIDInclusive.isPresent() && minSearchedStatusID > maxIDInclusive.get()) {
+      Optional<Long> matwitterIDInclusive = idTimeRanges.getMatwitterIDInclusive();
+      if (matwitterIDInclusive.isPresent() && minSearchedStatusID > matwitterIDInclusive.get()) {
         searcherStats.numCollectorAdjustedMinSearchedStatusID.increment();
-        minSearchedStatusID = maxIDInclusive.get() + 1;
+        minSearchedStatusID = matwitterIDInclusive.get() + 1;
       }
     }
 
@@ -500,9 +500,9 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
     results.setNumHitsProcessed((int) getNumHitsProcessed());
     results.setNumSearchedSegments(getNumSearchedSegments());
     if (searchedStatusIDsAndTimesInitialized()) {
-      results.setMaxSearchedStatusID(maxSearchedStatusID);
+      results.setMatwitterSearchedStatusID(matwitterSearchedStatusID);
       results.setMinSearchedStatusID(minSearchedStatusID);
-      results.setMaxSearchedTime(maxSearchedTime);
+      results.setMatwitterSearchedTime(matwitterSearchedTime);
       results.setMinSearchedTime(minSearchedTime);
     }
     results.setEarlyTerminated(getEarlyTerminationState().isTerminated());
@@ -563,7 +563,7 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
    * the location specified in the query, and the location of this document.
    */
   protected final void fillResultGeoLocation(ThriftSearchResultMetadata metadata)
-      throws IOException {
+      throws IOEtwitterception {
     Preconditions.checkNotNull(metadata);
     if (currTwitterReader != null && fillInLatLonForHits) {
       // See if we can have a lat/lon for this doc.
@@ -591,7 +591,7 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
   private int terminationDocID = -1;
 
   @Override
-  protected void collectedEnoughResults() throws IOException {
+  protected void collectedEnoughResults() throws IOEtwitterception {
     // We find 'terminationDocID' once we collect enough results, so that we know the point at which
     // we can stop searching. We must do this because with the unordered doc ID mapper, tweets
     // are not ordered within a millisecond, so we must search the entire millisecond bucket before
@@ -600,9 +600,9 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
     if (curDocId != -1 && terminationDocID == -1) {
       long tweetId = tweetIdMapper.getTweetID(curDocId);
       // We want to find the highest possible doc ID for this tweetId, so pass true.
-      boolean findMaxDocID = true;
+      boolean findMatwitterDocID = true;
       terminationDocID = tweetIdMapper.findDocIdBound(tweetId,
-          findMaxDocID,
+          findMatwitterDocID,
           curDocId,
           curDocId);
     }

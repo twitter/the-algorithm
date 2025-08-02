@@ -25,7 +25,7 @@ public class TerminationTracker {
   private final long localStartTimeMillis;
 
   /** Tracking query cost */
-  private final double maxQueryCost;
+  private final double matwitterQueryCost;
 
   // Sometimes, we want to early terminate before timeoutEndTimeMillis, to reserve time for
   // work that needs to be done after early termination (E.g. merging results).
@@ -33,9 +33,9 @@ public class TerminationTracker {
 
   // We don't check for early termination often enough. Some times requests timeout in between
   // early termination checks. This buffer time is also substracted from deadline.
-  // To illustrate how this is used, let's use a simple example:
+  // To illustrate how this is used, let's use a simple etwitterample:
   // If we spent 750ms searching 5 segments, a rough estimate is that we need 150ms to search
-  // one segment. If the timeout is set to 800ms, we should not starting searching the next segment.
+  // one segment. If the timeout is set to 800ms, we should not starting searching the netwittert segment.
   // In this case, on can set preTerminationSafeBufferTimeMillis to 150ms, so that when early
   // termination check computes the deadline, this buffer is also subtracted. See SEARCH-29723.
   private int preTerminationSafeBufferTimeMillis = 0;
@@ -49,15 +49,15 @@ public class TerminationTracker {
   private final Set<DocIdTracker> lastSearchedDocIdTrackers = new HashSet<>();
 
   /**
-   * Creates a new termination tracker that will not specify a timeout or max query cost.
-   * Can be used for queries that explicitly do not want to use a timeout. Meant to be used for
+   * Creates a new termination tracker that will not specify a timeout or matwitter query cost.
+   * Can be used for queries that etwitterplicitly do not want to use a timeout. Meant to be used for
    * tests, and background queries running for the query cache.
    */
   public TerminationTracker(Clock clock) {
     this.clientStartTimeMillis = clock.nowMillis();
     this.localStartTimeMillis = clientStartTimeMillis;
-    this.timeoutEndTimeMillis = Long.MAX_VALUE;
-    this.maxQueryCost = Double.MAX_VALUE;
+    this.timeoutEndTimeMillis = Long.MAtwitter_VALUE;
+    this.matwitterQueryCost = Double.MAtwitter_VALUE;
     this.postTerminationOverheadMillis = 0;
     this.useLastSearchedDocIdOnTimeout = false;
   }
@@ -114,15 +114,15 @@ public class TerminationTracker {
       this.timeoutEndTimeMillis = this.clientStartTimeMillis + terminationParams.getTimeoutMs();
     } else {
       // Effectively no timeout.
-      this.timeoutEndTimeMillis = Long.MAX_VALUE;
+      this.timeoutEndTimeMillis = Long.MAtwitter_VALUE;
     }
 
     // Tracking query cost
-    if (terminationParams.isSetMaxQueryCost()
-        && terminationParams.getMaxQueryCost() > 0) {
-      maxQueryCost = terminationParams.getMaxQueryCost();
+    if (terminationParams.isSetMatwitterQueryCost()
+        && terminationParams.getMatwitterQueryCost() > 0) {
+      matwitterQueryCost = terminationParams.getMatwitterQueryCost();
     } else {
-      maxQueryCost = Double.MAX_VALUE;
+      matwitterQueryCost = Double.MAtwitter_VALUE;
     }
 
     this.useLastSearchedDocIdOnTimeout = terminationParams.isEnforceQueryTimeout();
@@ -135,7 +135,7 @@ public class TerminationTracker {
    */
   public long getTimeoutEndTimeWithReservation() {
     // Return huge value if time out is disabled.
-    if (timeoutEndTimeMillis == Long.MAX_VALUE) {
+    if (timeoutEndTimeMillis == Long.MAtwitter_VALUE) {
       return timeoutEndTimeMillis;
     } else {
       return timeoutEndTimeMillis
@@ -158,8 +158,8 @@ public class TerminationTracker {
     return clientStartTimeMillis;
   }
 
-  public double getMaxQueryCost() {
-    return maxQueryCost;
+  public double getMatwitterQueryCost() {
+    return matwitterQueryCost;
   }
 
   public boolean isEarlyTerminated() {

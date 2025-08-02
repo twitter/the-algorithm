@@ -3,7 +3,7 @@ package com.twitter.frigate.pushservice.send_handler.generator
 import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
 import com.twitter.frigate.pushservice.model.PushTypes.Target
 import com.twitter.frigate.pushservice.config.Config
-import com.twitter.frigate.pushservice.exception.UnsupportedCrtException
+import com.twitter.frigate.pushservice.etwitterception.UnsupportedCrtEtwitterception
 import com.twitter.frigate.thriftscala.FrigateNotification
 import com.twitter.frigate.thriftscala.{CommonRecommendationType => CRT}
 import com.twitter.util.Future
@@ -39,8 +39,8 @@ object PushRequestToCandidate {
         case CRT.CreatorSubscriber =>
           MagicFanoutCreatorEventCandidateGenerator.getCandidate
         case _ =>
-          throw new UnsupportedCrtException(
-            "UnsupportedCrtException for SendHandler: " + frigateNotification.commonRecommendationType)
+          throw new UnsupportedCrtEtwitterception(
+            "UnsupportedCrtEtwitterception for SendHandler: " + frigateNotification.commonRecommendationType)
       }
     }
 

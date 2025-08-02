@@ -9,7 +9,7 @@ import com.twitter.simclusters_v2.hdfs_sources._
 import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil._
 import com.twitter.simclusters_v2.scalding.embedding.common.SimClustersEmbeddingJob
 import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, ScheduledExecutionApp}
+import com.twitter.wtf.scalding.jobs.common.{AdhocEtwitterecutionApp, ScheduledEtwitterecutionApp}
 import java.util.TimeZone
 
 object ProducerEmbeddingsFromInterestedInBatchAppUtil {
@@ -20,10 +20,10 @@ object ProducerEmbeddingsFromInterestedInBatchAppUtil {
   val rootPath: String = s"/user/$user/manhattan_sequence_files"
 
   // Helps speed up the multiplication step which can get very big
-  val numReducersForMatrixMultiplication: Int = 12000
+  val numReducersForMatritwitterMultiplication: Int = 12000
 
   /**
-   * Given the producer x cluster matrix, key by producer / cluster individually, and write output
+   * Given the producer twitter cluster matritwitter, key by producer / cluster individually, and write output
    * to individual DAL datasets
    */
   def writeOutput(
@@ -35,13 +35,13 @@ object ProducerEmbeddingsFromInterestedInBatchAppUtil {
     producerTopKEmbeddingsPath: String,
     clusterTopKProducersPath: String,
     modelVersion: ModelVersion
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val keyedByProducer =
       toSimClusterEmbedding(producerClusterEmbedding, topKClustersToKeep, modelVersion)
         .map { case (userId, clusters) => KeyVal(userId, clusters) }
-        .writeDALVersionedKeyValExecution(
+        .writeDALVersionedKeyValEtwitterecution(
           producerTopKEmbeddingsDataset,
-          D.Suffix(producerTopKEmbeddingsPath)
+          D.Suffitwitter(producerTopKEmbeddingsPath)
         )
 
     val keyedBySimCluster = fromSimClusterEmbedding(
@@ -51,28 +51,28 @@ object ProducerEmbeddingsFromInterestedInBatchAppUtil {
     ).map {
         case (clusterId, topProducers) => KeyVal(clusterId, topProducersToThrift(topProducers))
       }
-      .writeDALVersionedKeyValExecution(
+      .writeDALVersionedKeyValEtwitterecution(
         clusterTopKProducersDataset,
-        D.Suffix(clusterTopKProducersPath)
+        D.Suffitwitter(clusterTopKProducersPath)
       )
 
-    Execution.zip(keyedByProducer, keyedBySimCluster).unit
+    Etwitterecution.zip(keyedByProducer, keyedBySimCluster).unit
   }
 }
 
 /**
  * Base class for Fav based producer embeddings. Helps reuse the code for different model versions
  */
-trait ProducerEmbeddingsFromInterestedInByFavScoreBase extends ScheduledExecutionApp {
+trait ProducerEmbeddingsFromInterestedInByFavScoreBase etwittertends ScheduledEtwitterecutionApp {
   import ProducerEmbeddingsFromInterestedIn._
   import ProducerEmbeddingsFromInterestedInBatchAppUtil._
 
   def modelVersion: ModelVersion
 
-  val producerTopKEmbeddingsByFavScorePathPrefix: String =
+  val producerTopKEmbeddingsByFavScorePathPrefitwitter: String =
     "/producer_top_k_simcluster_embeddings_by_fav_score_"
 
-  val clusterTopKProducersByFavScorePathPrefix: String =
+  val clusterTopKProducersByFavScorePathPrefitwitter: String =
     "/simcluster_embedding_top_k_producers_by_fav_score_"
 
   val minNumFavers: Int = minNumFaversForProducer
@@ -93,14 +93,14 @@ trait ProducerEmbeddingsFromInterestedInByFavScoreBase extends ScheduledExecutio
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     val producerTopKEmbeddingsByFavScorePathUpdated: String =
-      rootPath + producerTopKEmbeddingsByFavScorePathPrefix + ModelVersions
+      rootPath + producerTopKEmbeddingsByFavScorePathPrefitwitter + ModelVersions
         .toKnownForModelVersion(modelVersion)
 
     val clusterTopKProducersByFavScorePathUpdated: String =
-      rootPath + clusterTopKProducersByFavScorePathPrefix + ModelVersions
+      rootPath + clusterTopKProducersByFavScorePathPrefitwitter + ModelVersions
         .toKnownForModelVersion(modelVersion)
 
     val producerClusterEmbeddingByFavScore = getProducerClusterEmbedding(
@@ -109,8 +109,8 @@ trait ProducerEmbeddingsFromInterestedInByFavScoreBase extends ScheduledExecutio
       DataSources.userNormsAndCounts,
       userToProducerFavScore,
       userToClusterFavScore, // Fav score
-      _.faverCount.exists(_ > minNumFavers),
-      numReducersForMatrixMultiplication,
+      _.faverCount.etwitterists(_ > minNumFavers),
+      numReducersForMatritwitterMultiplication,
       modelVersion,
       cosineSimilarityThreshold
     ).forceToDisk
@@ -129,16 +129,16 @@ trait ProducerEmbeddingsFromInterestedInByFavScoreBase extends ScheduledExecutio
 /**
  * Base class for Follow based producer embeddings. Helps reuse the code for different model versions
  */
-trait ProducerEmbeddingsFromInterestedInByFollowScoreBase extends ScheduledExecutionApp {
+trait ProducerEmbeddingsFromInterestedInByFollowScoreBase etwittertends ScheduledEtwitterecutionApp {
   import ProducerEmbeddingsFromInterestedIn._
   import ProducerEmbeddingsFromInterestedInBatchAppUtil._
 
   def modelVersion: ModelVersion
 
-  val producerTopKEmbeddingsByFollowScorePathPrefix: String =
+  val producerTopKEmbeddingsByFollowScorePathPrefitwitter: String =
     "/producer_top_k_simcluster_embeddings_by_follow_score_"
 
-  val clusterTopKProducersByFollowScorePathPrefix: String =
+  val clusterTopKProducersByFollowScorePathPrefitwitter: String =
     "/simcluster_embedding_top_k_producers_by_follow_score_"
 
   def producerTopKSimclusterEmbeddingsByFollowScoreDataset: KeyValDALDataset[
@@ -159,14 +159,14 @@ trait ProducerEmbeddingsFromInterestedInByFollowScoreBase extends ScheduledExecu
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     val producerTopKEmbeddingsByFollowScorePath: String =
-      rootPath + producerTopKEmbeddingsByFollowScorePathPrefix + ModelVersions
+      rootPath + producerTopKEmbeddingsByFollowScorePathPrefitwitter + ModelVersions
         .toKnownForModelVersion(modelVersion)
 
     val clusterTopKProducersByFollowScorePath: String =
-      rootPath + clusterTopKProducersByFollowScorePathPrefix + ModelVersions
+      rootPath + clusterTopKProducersByFollowScorePathPrefitwitter + ModelVersions
         .toKnownForModelVersion(modelVersion)
 
     val producerClusterEmbeddingByFollowScore = getProducerClusterEmbedding(
@@ -175,8 +175,8 @@ trait ProducerEmbeddingsFromInterestedInByFollowScoreBase extends ScheduledExecu
       DataSources.userNormsAndCounts,
       userToProducerFollowScore,
       userToClusterFollowScore, // Follow score
-      _.followerCount.exists(_ > minNumFollowers),
-      numReducersForMatrixMultiplication,
+      _.followerCount.etwitterists(_ > minNumFollowers),
+      numReducersForMatritwitterMultiplication,
       modelVersion,
       cosineSimilarityThreshold
     ).forceToDisk
@@ -198,7 +198,7 @@ trait ProducerEmbeddingsFromInterestedInByFollowScoreBase extends ScheduledExecu
  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
 object ProducerEmbeddingsFromInterestedInByFavScoreBatchApp
-    extends ProducerEmbeddingsFromInterestedInByFavScoreBase {
+    etwittertends ProducerEmbeddingsFromInterestedInByFavScoreBase {
   override def modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
 
   override def getInterestedInFn: (
@@ -228,7 +228,7 @@ capesospy-v2 update --build_locally --start_cron \
  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
 object ProducerEmbeddingsFromInterestedInByFavScore2020BatchApp
-    extends ProducerEmbeddingsFromInterestedInByFavScoreBase {
+    etwittertends ProducerEmbeddingsFromInterestedInByFavScoreBase {
   override def modelVersion: ModelVersion = ModelVersion.Model20m145k2020
 
   override def getInterestedInFn: (
@@ -258,7 +258,7 @@ capesospy-v2 update --build_locally --start_cron \
  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
 object ProducerEmbeddingsFromInterestedInByFavScoreDec11BatchApp
-    extends ProducerEmbeddingsFromInterestedInByFavScoreBase {
+    etwittertends ProducerEmbeddingsFromInterestedInByFavScoreBase {
   override def modelVersion: ModelVersion = ModelVersion.Model20m145kDec11
 
   override def getInterestedInFn: (
@@ -288,7 +288,7 @@ capesospy-v2 update --build_locally --start_cron \
  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
 object ProducerEmbeddingsFromInterestedInByFollowScoreBatchApp
-    extends ProducerEmbeddingsFromInterestedInByFollowScoreBase {
+    etwittertends ProducerEmbeddingsFromInterestedInByFollowScoreBase {
   override def modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
 
   override def getInterestedInFn: (
@@ -318,7 +318,7 @@ capesospy-v2 update --build_locally --start_cron \
  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
 object ProducerEmbeddingsFromInterestedInByFollowScore2020BatchApp
-    extends ProducerEmbeddingsFromInterestedInByFollowScoreBase {
+    etwittertends ProducerEmbeddingsFromInterestedInByFollowScoreBase {
   override def modelVersion: ModelVersion = ModelVersion.Model20m145k2020
 
   override def getInterestedInFn: (
@@ -348,7 +348,7 @@ capesospy-v2 update --build_locally --start_cron \
  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
 object ProducerEmbeddingsFromInterestedInByFollowScoreDec11BatchApp
-    extends ProducerEmbeddingsFromInterestedInByFollowScoreBase {
+    etwittertends ProducerEmbeddingsFromInterestedInByFollowScoreBase {
   override def modelVersion: ModelVersion = ModelVersion.Model20m145kDec11
 
   override def getInterestedInFn: (
@@ -388,11 +388,11 @@ $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:produce
  --outputDir /gcs/user/cassowary/adhoc/producerEmbeddings/
 
  */
-object ProducerEmbeddingsFromInterestedInAdhocApp extends AdhocExecutionApp {
+object ProducerEmbeddingsFromInterestedInAdhocApp etwittertends AdhocEtwitterecutionApp {
 
   import ProducerEmbeddingsFromInterestedIn._
 
-  private val numReducersForMatrixMultiplication = 12000
+  private val numReducersForMatritwitterMultiplication = 12000
 
   /**
    * Calculate the embedding and writes the results keyed by producers and clusters separately into
@@ -410,7 +410,7 @@ object ProducerEmbeddingsFromInterestedInAdhocApp extends AdhocExecutionApp {
     modelVersion: ModelVersion
   )(
     implicit uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     val producerClusterEmbedding = getProducerClusterEmbedding(
       interestedInClusters,
@@ -419,23 +419,23 @@ object ProducerEmbeddingsFromInterestedInAdhocApp extends AdhocExecutionApp {
       userToProducerScoringFn,
       userToClusterScoringFn,
       userFilter,
-      numReducersForMatrixMultiplication,
+      numReducersForMatritwitterMultiplication,
       modelVersion,
       cosineSimilarityThreshold
     ).forceToDisk
 
-    val keyByProducerExec =
+    val keyByProducerEtwitterec =
       toSimClusterEmbedding(producerClusterEmbedding, topKClustersToKeep, modelVersion)
-        .writeExecution(
+        .writeEtwitterecution(
           AdhocKeyValSources.topProducerToClusterEmbeddingsSource(keyedByProducerSinkPath))
 
-    val keyByClusterExec =
+    val keyByClusterEtwitterec =
       fromSimClusterEmbedding(producerClusterEmbedding, topKUsersToKeep, modelVersion)
         .map { case (clusterId, topProducers) => (clusterId, topProducersToThrift(topProducers)) }
-        .writeExecution(
+        .writeEtwitterecution(
           AdhocKeyValSources.topClusterEmbeddingsToProducerSource(keyedByClusterSinkPath))
 
-    Execution.zip(keyByProducerExec, keyByClusterExec).unit
+    Etwitterecution.zip(keyByProducerEtwitterec, keyByClusterEtwitterec).unit
   }
 
   // Calculate the embeddings using follow scores
@@ -447,7 +447,7 @@ object ProducerEmbeddingsFromInterestedInAdhocApp extends AdhocExecutionApp {
     outputDir: String
   )(
     implicit uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val keyByClusterSinkPath = outputDir + "keyedByCluster/byFollowScore_" + modelVersion
     val keyByProducerSinkPath = outputDir + "keyedByProducer/byFollowScore_" + modelVersion
 
@@ -459,7 +459,7 @@ object ProducerEmbeddingsFromInterestedInAdhocApp extends AdhocExecutionApp {
       keyedByClusterSinkPath = keyByClusterSinkPath,
       userToProducerScoringFn = userToProducerFollowScore,
       userToClusterScoringFn = userToClusterFollowScore,
-      _.followerCount.exists(_ > minNumFollowersForProducer),
+      _.followerCount.etwitterists(_ > minNumFollowersForProducer),
       modelVersion
     )
   }
@@ -473,7 +473,7 @@ object ProducerEmbeddingsFromInterestedInAdhocApp extends AdhocExecutionApp {
     outputDir: String
   )(
     implicit uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val keyByClusterSinkPath = outputDir + "keyedByCluster/byFavScore_" + modelVersion
     val keyByProducerSinkPath = outputDir + "keyedByProducer/byFavScore_" + modelVersion
 
@@ -485,7 +485,7 @@ object ProducerEmbeddingsFromInterestedInAdhocApp extends AdhocExecutionApp {
       keyedByClusterSinkPath = keyByClusterSinkPath,
       userToProducerScoringFn = userToProducerFavScore,
       userToClusterScoringFn = userToClusterFavScore,
-      _.faverCount.exists(_ > minNumFaversForProducer),
+      _.faverCount.etwitterists(_ > minNumFaversForProducer),
       modelVersion
     )
   }
@@ -496,7 +496,7 @@ object ProducerEmbeddingsFromInterestedInAdhocApp extends AdhocExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val outputDir = args("outputDir")
 
     val modelVersion =
@@ -511,7 +511,7 @@ object ProducerEmbeddingsFromInterestedInAdhocApp extends AdhocExecutionApp {
         InterestedInSources.simClustersInterestedInDec11Source(dateRange, timeZone).forceToDisk
     }
 
-    Execution
+    Etwitterecution
       .zip(
         runFavScore(
           interestedInClusters,
@@ -534,7 +534,7 @@ object ProducerEmbeddingsFromInterestedInAdhocApp extends AdhocExecutionApp {
 /**
  * Computes the producer's interestedIn cluster embedding. i.e. If a tweet author (producer) is not
  * associated with a KnownFor cluster, do a cross-product between
- * [user, interestedIn] and [user, producer] to find the similarity matrix [interestedIn, producer].
+ * [user, interestedIn] and [user, producer] to find the similarity matritwitter [interestedIn, producer].
  */
 object ProducerEmbeddingsFromInterestedIn {
   val minNumFollowersForProducer: Int = 100
@@ -568,9 +568,9 @@ object ProducerEmbeddingsFromInterestedIn {
     clusterScore.followScoreClusterNormalizedOnly.getOrElse(0.0)
   }
 
-  def getUserSimClustersMatrix(
+  def getUserSimClustersMatritwitter(
     simClustersSource: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    extractScore: UserToInterestedInClusterScores => Double,
+    etwittertractScore: UserToInterestedInClusterScores => Double,
     modelVersion: ModelVersion
   ): TypedPipe[(UserId, Seq[(Int, Double)])] = {
     simClustersSource.collect {
@@ -579,15 +579,15 @@ object ProducerEmbeddingsFromInterestedIn {
         userId -> clusters.clusterIdToScores
           .map {
             case (clusterId, clusterScores) =>
-              (clusterId, extractScore(clusterScores))
+              (clusterId, etwittertractScore(clusterScores))
           }.toSeq.filter(_._2 > 0)
     }
   }
 
   /**
-   * Given a weighted user-producer engagement history matrix, as well as a
-   * weighted user-interestedInCluster matrix, do the matrix multiplication to yield a weighted
-   * producer-cluster embedding matrix
+   * Given a weighted user-producer engagement history matritwitter, as well as a
+   * weighted user-interestedInCluster matritwitter, do the matritwitter multiplication to yield a weighted
+   * producer-cluster embedding matritwitter
    */
   def getProducerClusterEmbedding(
     interestedInClusters: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
@@ -596,13 +596,13 @@ object ProducerEmbeddingsFromInterestedIn {
     userToProducerScoringFn: NeighborWithWeights => Double,
     userToClusterScoringFn: UserToInterestedInClusterScores => Double,
     userFilter: NormsAndCounts => Boolean, // function to decide whether to compute embeddings for the user or not
-    numReducersForMatrixMultiplication: Int,
+    numReducersForMatritwitterMultiplication: Int,
     modelVersion: ModelVersion,
     threshold: Double
   )(
     implicit uid: UniqueID
   ): TypedPipe[((ClusterId, UserId), Double)] = {
-    val userSimClustersMatrix = getUserSimClustersMatrix(
+    val userSimClustersMatritwitter = getUserSimClustersMatritwitter(
       interestedInClusters,
       userToClusterScoringFn,
       modelVersion
@@ -618,8 +618,8 @@ object ProducerEmbeddingsFromInterestedIn {
     SimClustersEmbeddingJob
       .legacyMultiplyMatrices(
         userUserNormalizedGraph,
-        userSimClustersMatrix,
-        numReducersForMatrixMultiplication
+        userSimClustersMatritwitter,
+        numReducersForMatritwitterMultiplication
       )
       .filter(_._2 >= threshold)
   }
@@ -660,11 +660,11 @@ object ProducerEmbeddingsFromInterestedIn {
   }
 
   def fromSimClusterEmbedding[T, E](
-    resultMatrix: TypedPipe[((ClusterId, T), Double)],
+    resultMatritwitter: TypedPipe[((ClusterId, T), Double)],
     topK: Int,
     modelVersion: ModelVersion
   ): TypedPipe[(PersistedFullClusterId, Seq[(T, Double)])] = {
-    resultMatrix
+    resultMatritwitter
       .map {
         case ((clusterId, inputId), score) => (clusterId, (inputId, score))
       }
@@ -677,13 +677,13 @@ object ProducerEmbeddingsFromInterestedIn {
   }
 
   def toSimClusterEmbedding[T](
-    resultMatrix: TypedPipe[((ClusterId, T), Double)],
+    resultMatritwitter: TypedPipe[((ClusterId, T), Double)],
     topK: Int,
     modelVersion: ModelVersion
   )(
     implicit ordering: Ordering[T]
   ): TypedPipe[(T, TopSimClustersWithScore)] = {
-    resultMatrix
+    resultMatritwitter
       .map {
         case ((clusterId, inputId), score) => (inputId, (clusterId, score))
       }

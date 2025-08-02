@@ -2,8 +2,8 @@
 // DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
 
 #![allow(unused_imports)]
-#![allow(unused_extern_crates)]
-#![allow(clippy::too_many_arguments, clippy::type_complexity, clippy::vec_box)]
+#![allow(unused_etwittertern_crates)]
+#![allow(clippy::too_many_arguments, clippy::type_completwitterity, clippy::vec_botwitter)]
 #![cfg_attr(rustfmt, rustfmt_skip)]
 
 use std::cell::RefCell;
@@ -19,10 +19,10 @@ use thrift::OrderedFloat;
 use thrift::{ApplicationError, ApplicationErrorKind, ProtocolError, ProtocolErrorKind, TThriftClient};
 use thrift::protocol::{TFieldIdentifier, TListIdentifier, TMapIdentifier, TMessageIdentifier, TMessageType, TInputProtocol, TOutputProtocol, TSerializable, TSetIdentifier, TStructIdentifier, TType};
 use thrift::protocol::field_id;
-use thrift::protocol::verify_expected_message_type;
-use thrift::protocol::verify_expected_sequence_number;
-use thrift::protocol::verify_expected_service_call;
-use thrift::protocol::verify_required_field_exists;
+use thrift::protocol::verify_etwitterpected_message_type;
+use thrift::protocol::verify_etwitterpected_sequence_number;
+use thrift::protocol::verify_etwitterpected_service_call;
+use thrift::protocol::verify_required_field_etwitterists;
 use thrift::server::TProcessor;
 
 use crate::tensor;

@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.sun.management.OperatingSystemMXBean;
+import com.sun.management.OperatingSystemMtwitterBean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,11 +20,11 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
   @VisibleForTesting
   protected static final double CPU_USAGE_THRESHOLD = 0.8;
   @VisibleForTesting
-  protected static final double MAX_QF_INCREMENT = 0.5;
+  protected static final double MAtwitter_QF_INCREMENT = 0.5;
   @VisibleForTesting
-  protected static final double MAX_QF_DECREMENT = 0.1;
+  protected static final double MAtwitter_QF_DECREMENT = 0.1;
   @VisibleForTesting
-  protected static final double MAX_CPU_USAGE = 1.0;
+  protected static final double MAtwitter_CPU_USAGE = 1.0;
 
   private static final Logger QUALITY_FACTOR_LOG =
       LoggerFactory.getLogger(EarlybirdCPUQualityFactor.class);
@@ -50,14 +50,14 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
   private double previousQualityFactor = 1;
 
   private final SearchDecider decider;
-  private final OperatingSystemMXBean operatingSystemMXBean;
+  private final OperatingSystemMtwitterBean operatingSystemMtwitterBean;
 
   public EarlybirdCPUQualityFactor(
       Decider decider,
-      OperatingSystemMXBean operatingSystemMXBean,
+      OperatingSystemMtwitterBean operatingSystemMtwitterBean,
       SearchStatsReceiver searchStatsReceiver) {
     this.decider = new SearchDecider(decider);
-    this.operatingSystemMXBean = operatingSystemMXBean;
+    this.operatingSystemMtwitterBean = operatingSystemMtwitterBean;
 
     searchStatsReceiver.getCustomGauge(UNDERLYING_CPU_QF_GUAGE, () -> qualityFactor);
     searchStatsReceiver.getCustomGauge(CPU_QF_GUAGE, this::get);
@@ -70,17 +70,17 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
   protected void update() {
     previousQualityFactor = qualityFactor;
 
-    double cpuUsage = operatingSystemMXBean.getSystemCpuLoad();
+    double cpuUsage = operatingSystemMtwitterBean.getSystemCpuLoad();
 
     if (cpuUsage < CPU_USAGE_THRESHOLD) {
       double increment =
-          ((CPU_USAGE_THRESHOLD - cpuUsage) / CPU_USAGE_THRESHOLD) * MAX_QF_INCREMENT;
+          ((CPU_USAGE_THRESHOLD - cpuUsage) / CPU_USAGE_THRESHOLD) * MAtwitter_QF_INCREMENT;
       qualityFactor = Math.min(1, qualityFactor + increment);
     } else {
       double decrement =
-          ((cpuUsage - CPU_USAGE_THRESHOLD) / (MAX_CPU_USAGE - CPU_USAGE_THRESHOLD))
-              * MAX_QF_DECREMENT;
-      qualityFactor = Math.max(0, qualityFactor - decrement);
+          ((cpuUsage - CPU_USAGE_THRESHOLD) / (MAtwitter_CPU_USAGE - CPU_USAGE_THRESHOLD))
+              * MAtwitter_QF_DECREMENT;
+      qualityFactor = Math.matwitter(0, qualityFactor - decrement);
     }
 
     if (!qualityFactorChanged()) {
@@ -123,7 +123,7 @@ public class EarlybirdCPUQualityFactor implements QualityFactor {
         update();
         try {
           Thread.sleep(SAMPLING_WINDOW_MILLIS);
-        } catch (InterruptedException e) {
+        } catch (InterruptedEtwitterception e) {
           QUALITY_FACTOR_LOG.warn(
               "Quality factoring thread interrupted during sleep between updates", e);
         }

@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.search.facets;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +14,12 @@ import com.twitter.search.common.util.lang.ThriftLanguageUtil;
 import com.twitter.search.core.earlybird.facets.FacetAccumulator;
 import com.twitter.search.core.earlybird.facets.FacetCountIterator;
 import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
 import com.twitter.search.earlybird.search.AntiGamingFilter;
 import com.twitter.search.earlybird.search.facets.FacetResultsCollector.Accumulator;
 import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
 
-public class DefaultFacetScorer extends FacetScorer {
+public class DefaultFacetScorer etwittertends FacetScorer {
   private static final Logger LOG = LoggerFactory.getLogger(FacetScorer.class.getName());
   private static final double DEFAULT_FEATURE_WEIGHT = 0.0;
   private static final byte DEFAULT_PENALTY = 1;
@@ -50,10 +50,10 @@ public class DefaultFacetScorer extends FacetScorer {
   private final int offensiveTweetPenalty;
   private final int multipleHashtagsOrTrendsPenalty;
 
-  private final int maxScorePerTweet;
+  private final int matwitterScorePerTweet;
   private final ThriftFacetEarlybirdSortingMode sortingMode;
 
-  private EarlybirdIndexSegmentAtomicReader reader;
+  private EarlybirdIndetwitterSegmentAtomicReader reader;
   private EarlybirdDocumentFeatures features;
 
   /**
@@ -66,21 +66,21 @@ public class DefaultFacetScorer extends FacetScorer {
     this.sortingMode = sortingMode;
     this.antiGamingFilter = antiGamingFilter;
 
-    maxScorePerTweet =
-        rankingOptions.isSetMaxScorePerTweet()
-        ? rankingOptions.getMaxScorePerTweet()
-        : Integer.MAX_VALUE;
+    matwitterScorePerTweet =
+        rankingOptions.isSetMatwitterScorePerTweet()
+        ? rankingOptions.getMatwitterScorePerTweet()
+        : Integer.MAtwitter_VALUE;
 
     // filters
     reputationMinFilterThresholdVal =
         rankingOptions.isSetMinTweepcredFilterThreshold()
-        ? (byte) (rankingOptions.getMinTweepcredFilterThreshold() & 0xFF)
+        ? (byte) (rankingOptions.getMinTweepcredFilterThreshold() & 0twitterFF)
         : DEFAULT_REPUTATION_MIN;
 
     // weights
     // reputationMinScoreVal must be >= reputationMinFilterThresholdVal
     reputationMinScoreVal =
-        (byte) Math.max(rankingOptions.isSetReputationParams()
+        (byte) Math.matwitter(rankingOptions.isSetReputationParams()
         ? (byte) rankingOptions.getReputationParams().getMin()
         : DEFAULT_REPUTATION_MIN, reputationMinFilterThresholdVal);
 
@@ -134,7 +134,7 @@ public class DefaultFacetScorer extends FacetScorer {
   }
 
   @Override
-  protected void startSegment(EarlybirdIndexSegmentAtomicReader segmentReader) throws IOException {
+  protected void startSegment(EarlybirdIndetwitterSegmentAtomicReader segmentReader) throws IOEtwitterception {
     reader = segmentReader;
     features = new EarlybirdDocumentFeatures(reader);
     if (antiGamingFilter != null) {
@@ -143,7 +143,7 @@ public class DefaultFacetScorer extends FacetScorer {
   }
 
   @Override
-  public void incrementCounts(Accumulator accumulator, int internalDocID) throws IOException {
+  public void incrementCounts(Accumulator accumulator, int internalDocID) throws IOEtwitterception {
     FacetCountIterator.IncrementData data = accumulator.accessor.incrementData;
     data.accumulators = accumulator.accumulators;
     features.advance(internalDocID);
@@ -187,9 +187,9 @@ public class DefaultFacetScorer extends FacetScorer {
       penalty += multipleHashtagsOrTrendsPenalty;
     }
 
-    double parus = 0xFF & (byte) features.getFeatureValue(EarlybirdFieldConstant.PARUS_SCORE);
+    double parus = 0twitterFF & (byte) features.getFeatureValue(EarlybirdFieldConstant.PARUS_SCORE);
 
-    double score = Math.pow(1 + userRepWeight, Math.max(0, userRep - reputationMinScoreVal));
+    double score = Math.pow(1 + userRepWeight, Math.matwitter(0, userRep - reputationMinScoreVal));
 
     if (parus > 0) {
       score += Math.pow(parusBase, parus);
@@ -218,13 +218,13 @@ public class DefaultFacetScorer extends FacetScorer {
     }
 
     // make sure a single tweet can't contribute too high a score
-    if (score > maxScorePerTweet) {
-      score = maxScorePerTweet;
+    if (score > matwitterScorePerTweet) {
+      score = matwitterScorePerTweet;
     }
 
     data.weightedCountIncrement = (int) score;
     data.penaltyIncrement = penalty;
-    data.tweepCred = userRep & 0xFF;
+    data.tweepCred = userRep & 0twitterFF;
     accumulator.accessor.collect(internalDocID);
   }
 

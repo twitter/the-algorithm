@@ -9,7 +9,7 @@ import com.twitter.unified_user_actions.thriftscala.TweetActionInfo
 import com.twitter.unified_user_actions.thriftscala.TweetInfo
 
 abstract class BaseVideoAdsCallbackEngagement(actionType: ActionType)
-    extends BaseAdsCallbackEngagement(actionType = actionType) {
+    etwittertends BaseAdsCallbackEngagement(actionType = actionType) {
 
   override def getItem(input: SpendServerEvent): Option[Item] = {
     input.engagementEvent.flatMap { e =>

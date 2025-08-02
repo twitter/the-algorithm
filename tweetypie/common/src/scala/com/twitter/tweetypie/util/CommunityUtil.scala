@@ -14,6 +14,6 @@ object CommunityUtil {
   }
 
   def hasCommunity(maybeCommunities: Option[Communities]): Boolean = {
-    maybeCommunities.exists(_.communityIds.nonEmpty)
+    maybeCommunities.etwitterists(_.communityIds.nonEmpty)
   }
 }

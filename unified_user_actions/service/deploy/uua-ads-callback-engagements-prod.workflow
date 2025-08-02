@@ -12,7 +12,7 @@
     "dependencies": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
+        "name": "packer-client-no-petwitter",
         "version": "latest"
       }
     ],
@@ -39,8 +39,8 @@
           "key": "atla/discode/prod/uua-ads-callback-engagements"
         },
         {
-          "name": "uua-ads-callback-engagements-prod-pdxa",
-          "key": "pdxa/discode/prod/uua-ads-callback-engagements"
+          "name": "uua-ads-callback-engagements-prod-pdtwittera",
+          "key": "pdtwittera/discode/prod/uua-ads-callback-engagements"
         }
       ]
     }

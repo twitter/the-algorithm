@@ -10,7 +10,7 @@ import com.google.common.collect.ImmutableMap;
 public abstract class FieldNameToIdMapping {
   /**
    * Returns field ID for the given fieldName.
-   * Can throw unchecked exceptions is the fieldName is not known to Earlybird.
+   * Can throw unchecked etwitterceptions is the fieldName is not known to Earlybird.
    */
   public abstract int getFieldID(String fieldName);
 

@@ -1,0 +1,13 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    dependencies = [
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/model",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/util/earlybird",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/util/tweetypie/content",
+        "home-mitwitterer/thrift/src/main/thrift:thrift-scala",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/transformer",
+        "src/thrift/com/twitter/search:earlybird-scala",
+    ],
+)

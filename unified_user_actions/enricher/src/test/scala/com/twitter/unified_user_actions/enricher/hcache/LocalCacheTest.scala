@@ -10,17 +10,17 @@ import com.twitter.util.Time
 import java.util.concurrent.TimeUnit
 import java.lang.{Integer => JInt}
 
-class LocalCacheTest extends Test {
+class LocalCacheTest etwittertends Test {
 
-  trait Fixture {
+  trait Fitwitterture {
     val time = Time.fromMilliseconds(123456L)
     val ttl = 5
-    val maxSize = 10
+    val matwitterSize = 10
 
     val underlying: Cache[JInt, Future[JInt]] = CacheBuilder
       .newBuilder()
-      .expireAfterWrite(ttl, TimeUnit.SECONDS)
-      .maximumSize(maxSize)
+      .etwitterpireAfterWrite(ttl, TimeUnit.SECONDS)
+      .matwitterimumSize(matwitterSize)
       .build[JInt, Future[JInt]]()
 
     val stats = new InMemoryStatsReceiver
@@ -34,21 +34,21 @@ class LocalCacheTest extends Test {
   }
 
   test("simple local cache works") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(time) { _ =>
         assert(cache.size === 0)
 
-        (1 to maxSize + 1).foreach { id =>
+        (1 to matwitterSize + 1).foreach { id =>
           cache.getOrElseUpdate(id)(Future.value(id))
 
           val actual = Await.result(cache.get(id).get)
           assert(actual === id)
         }
-        assert(cache.size === maxSize)
+        assert(cache.size === matwitterSize)
 
-        assert(getCounts("gets") === 2 * (maxSize + 1))
-        assert(getCounts("hits") === maxSize + 1)
-        assert(getCounts("misses") === maxSize + 1)
+        assert(getCounts("gets") === 2 * (matwitterSize + 1))
+        assert(getCounts("hits") === matwitterSize + 1)
+        assert(getCounts("misses") === matwitterSize + 1)
         assert(getCounts("sets", "evictions", "failed_futures") === 0)
 
         cache.reset()
@@ -58,19 +58,19 @@ class LocalCacheTest extends Test {
   }
 
   test("getOrElseUpdate successful futures") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(time) { _ =>
         assert(cache.size === 0)
 
-        (1 to maxSize + 1).foreach { _ =>
+        (1 to matwitterSize + 1).foreach { _ =>
           cache.getOrElseUpdate(1) {
             Future.value(1)
           }
         }
         assert(cache.size === 1)
 
-        assert(getCounts("gets") === maxSize + 1)
-        assert(getCounts("hits") === maxSize)
+        assert(getCounts("gets") === matwitterSize + 1)
+        assert(getCounts("hits") === matwitterSize)
         assert(getCounts("misses") === 1)
         assert(getCounts("sets", "evictions", "failed_futures") === 0)
 
@@ -81,28 +81,28 @@ class LocalCacheTest extends Test {
   }
 
   test("getOrElseUpdate Failed Futures") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(time) { _ =>
         assert(cache.size === 0)
 
-        (1 to maxSize + 1).foreach { id =>
-          cache.getOrElseUpdate(id)(Future.exception(new IllegalArgumentException("")))
+        (1 to matwitterSize + 1).foreach { id =>
+          cache.getOrElseUpdate(id)(Future.etwitterception(new IllegalArgumentEtwitterception("")))
           assert(cache.get(id).map {
             Await.result(_)
           } === None)
         }
         assert(cache.size === 0)
 
-        assert(getCounts("gets") === 2 * (maxSize + 1))
+        assert(getCounts("gets") === 2 * (matwitterSize + 1))
         assert(getCounts("hits", "misses", "sets") === 0)
-        assert(getCounts("evictions") === maxSize + 1)
-        assert(getCounts("failed_futures") === maxSize + 1)
+        assert(getCounts("evictions") === matwitterSize + 1)
+        assert(getCounts("failed_futures") === matwitterSize + 1)
       }
     }
   }
 
   test("Set successful Future") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(time) { _ =>
         assert(cache.size === 0)
 
@@ -118,7 +118,7 @@ class LocalCacheTest extends Test {
   }
 
   test("Evict") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(time) { _ =>
         assert(cache.size === 0)
 
@@ -137,11 +137,11 @@ class LocalCacheTest extends Test {
   }
 
   test("Set Failed Futures") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(time) { _ =>
         assert(cache.size === 0)
 
-        cache.set(1, Future.exception(new IllegalArgumentException("")))
+        cache.set(1, Future.etwitterception(new IllegalArgumentEtwitterception("")))
         assert(cache.size === 0)
 
         assert(getCounts("gets", "hits", "misses", "sets") === 0)

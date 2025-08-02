@@ -1,0 +1,47 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.color
+
+sealed trait RosettaColor
+
+case object WhiteRosettaColor etwittertends RosettaColor
+case object BlackRosettaColor etwittertends RosettaColor
+case object ClearRosettaColor etwittertends RosettaColor
+
+case object TetwittertBlackRosettaColor etwittertends RosettaColor
+case object TetwittertBlueRosettaColor etwittertends RosettaColor
+
+case object DeepGrayRosettaColor etwittertends RosettaColor
+case object MediumGrayRosettaColor etwittertends RosettaColor
+case object LightGrayRosettaColor etwittertends RosettaColor
+case object FadedGrayRosettaColor etwittertends RosettaColor
+case object FaintGrayRosettaColor etwittertends RosettaColor
+
+case object DeepOrangeRosettaColor etwittertends RosettaColor
+case object MediumOrangeRosettaColor etwittertends RosettaColor
+case object LightOrangeRosettaColor etwittertends RosettaColor
+case object FadedOrangeRosettaColor etwittertends RosettaColor
+
+case object DeepYellowRosettaColor etwittertends RosettaColor
+case object MediumYellowRosettaColor etwittertends RosettaColor
+case object LightYellowRosettaColor etwittertends RosettaColor
+case object FadedYellowRosettaColor etwittertends RosettaColor
+
+case object DeepGreenRosettaColor etwittertends RosettaColor
+case object MediumGreenRosettaColor etwittertends RosettaColor
+case object LightGreenRosettaColor etwittertends RosettaColor
+case object FadedGreenRosettaColor etwittertends RosettaColor
+
+case object DeepBlueRosettaColor etwittertends RosettaColor
+case object TwitterBlueRosettaColor etwittertends RosettaColor
+case object LightBlueRosettaColor etwittertends RosettaColor
+case object FadedBlueRosettaColor etwittertends RosettaColor
+case object FaintBlueRosettaColor etwittertends RosettaColor
+
+case object DeepPurpleRosettaColor etwittertends RosettaColor
+case object MediumPurpleRosettaColor etwittertends RosettaColor
+case object LightPurpleRosettaColor etwittertends RosettaColor
+case object FadedPurpleRosettaColor etwittertends RosettaColor
+
+case object DeepRedRosettaColor etwittertends RosettaColor
+case object MediumRedRosettaColor etwittertends RosettaColor
+case object LightRedRosettaColor etwittertends RosettaColor
+case object FadedRedRosettaColor etwittertends RosettaColor

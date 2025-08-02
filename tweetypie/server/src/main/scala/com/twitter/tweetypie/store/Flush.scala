@@ -1,20 +1,20 @@
 package com.twitter.tweetypie
 package store
 
-object Flush extends TweetStore.SyncModule {
+object Flush etwittertends TweetStore.SyncModule {
 
   case class Event(
     tweetIds: Seq[TweetId],
     flushTweets: Boolean = true,
     flushCounts: Boolean = true,
-    logExisting: Boolean = true)
-      extends SyncTweetStoreEvent("flush")
+    logEtwitteristing: Boolean = true)
+      etwittertends SyncTweetStoreEvent("flush")
 
   trait Store {
     val flush: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val flush: FutureEffect[Event] = wrap(underlying.flush)
   }
 

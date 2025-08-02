@@ -3,14 +3,14 @@ package com.twitter.follow_recommendations.common.candidate_sources.geo
 import com.google.inject.Singleton
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import javax.inject.Inject
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
+import javatwitter.inject.Inject
 
 @Singleton
 class PopGeohashSource @Inject() (
   popGeoSource: PopGeoSource,
   statsReceiver: StatsReceiver)
-    extends BasePopGeohashSource(
+    etwittertends BasePopGeohashSource(
       popGeoSource = popGeoSource,
       statsReceiver = statsReceiver.scope("PopGeohashSource"),
     ) {
@@ -19,11 +19,11 @@ class PopGeohashSource @Inject() (
   override def minGeohashLength(target: Target): Int = {
     target.params(PopGeoSourceParams.PopGeoSourceGeoHashMinPrecision)
   }
-  override def maxResults(target: Target): Int = {
-    target.params(PopGeoSourceParams.PopGeoSourceMaxResultsPerPrecision)
+  override def matwitterResults(target: Target): Int = {
+    target.params(PopGeoSourceParams.PopGeoSourceMatwitterResultsPerPrecision)
   }
-  override def maxGeohashLength(target: Target): Int = {
-    target.params(PopGeoSourceParams.PopGeoSourceGeoHashMaxPrecision)
+  override def matwitterGeohashLength(target: Target): Int = {
+    target.params(PopGeoSourceParams.PopGeoSourceGeoHashMatwitterPrecision)
   }
   override def returnResultFromAllPrecision(target: Target): Boolean = {
     target.params(PopGeoSourceParams.PopGeoSourceReturnFromAllPrecisions)

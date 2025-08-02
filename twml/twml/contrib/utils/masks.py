@@ -8,7 +8,7 @@ def diag_mask(n_data, pairwise_label_scores):
     n_data: a int `Tensor`.
     pairwise_label_scores: a dense `Tensor` of shape [n_data, n_data].
   Returns:
-    values in pairwise_label_scores except the diagonal
+    values in pairwise_label_scores etwittercept the diagonal
     each cell contains a paiwise score difference
     only selfs/diags are 0s
   """
@@ -26,7 +26,7 @@ def full_mask(n_data, pairwise_label_scores):
     n_data: a int `Tensor`.
     pairwise_label_scores: a dense `Tensor` of shape [n_data, n_data].
   Returns:
-    values in pairwise_label_scores except pairs that have the same labels
+    values in pairwise_label_scores etwittercept pairs that have the same labels
     each cell contains a paiwise score difference
     all pairwise_label_scores = 0.5: selfs and same labels are 0s
   """

@@ -7,21 +7,21 @@ import com.twitter.notificationservice.thriftscala._
 import com.twitter.util.Future
 import com.twitter.util.Time
 
-trait MagicFanoutProductLaunchNtabRequestHydrator extends NTabRequestHydrator {
+trait MagicFanoutProductLaunchNtabRequestHydrator etwittertends NTabRequestHydrator {
   self: PushCandidate with MagicFanoutProductLaunchCandidate =>
 
   override val senderIdFut: Future[Long] = Future.value(0L)
 
   override lazy val tapThroughFut: Future[String] = Future.value(getProductLaunchTapThrough())
 
-  override lazy val displayTextEntitiesFut: Future[Seq[DisplayTextEntity]] = {
+  override lazy val displayTetwittertEntitiesFut: Future[Seq[DisplayTetwittertEntity]] = {
     Future.value(
       frigateNotification.magicFanoutProductLaunchNotification
         .flatMap {
           _.productInfo.flatMap {
             _.body.map { body =>
               Seq(
-                DisplayTextEntity(name = "body", value = TextValue.Text(body)),
+                DisplayTetwittertEntity(name = "body", value = TetwittertValue.Tetwittert(body)),
               )
             }
           }
@@ -38,16 +38,16 @@ trait MagicFanoutProductLaunchNtabRequestHydrator extends NTabRequestHydrator {
         }.getOrElse(Nil))
   }
 
-  override val storyContext: Option[StoryContext] = None
+  override val storyContetwittert: Option[StoryContetwittert] = None
 
   override val inlineCard: Option[InlineCard] = None
 
-  override lazy val socialProofDisplayText: Option[DisplayText] = {
+  override lazy val socialProofDisplayTetwittert: Option[DisplayTetwittert] = {
     frigateNotification.magicFanoutProductLaunchNotification.flatMap {
       _.productInfo.flatMap {
         _.title.map { title =>
-          DisplayText(values =
-            Seq(DisplayTextEntity(name = "social_context", value = TextValue.Text(title))))
+          DisplayTetwittert(values =
+            Seq(DisplayTetwittertEntity(name = "social_contetwittert", value = TetwittertValue.Tetwittert(title))))
         }
       }
     }
@@ -68,21 +68,21 @@ trait MagicFanoutProductLaunchNtabRequestHydrator extends NTabRequestHydrator {
 
   private lazy val productLaunchNtabRequest: Future[Option[CreateGenericNotificationRequest]] = {
     Future
-      .join(senderIdFut, displayTextEntitiesFut, facepileUsersFut, tapThroughFut)
+      .join(senderIdFut, displayTetwittertEntitiesFut, facepileUsersFut, tapThroughFut)
       .map {
-        case (senderId, displayTextEntities, facepileUsers, tapThrough) =>
+        case (senderId, displayTetwittertEntities, facepileUsers, tapThrough) =>
           Some(
             CreateGenericNotificationRequest(
               userId = target.targetId,
               senderId = senderId,
               genericType = GenericType.RefreshableNotification,
-              displayText = DisplayText(values = displayTextEntities),
+              displayTetwittert = DisplayTetwittert(values = displayTetwittertEntities),
               facepileUsers = facepileUsers,
               timestampMillis = Time.now.inMillis,
               tapThroughAction = Some(TapThroughAction(Some(tapThrough))),
               impressionId = Some(impressionId),
-              socialProofText = socialProofDisplayText,
-              context = storyContext,
+              socialProofTetwittert = socialProofDisplayTetwittert,
+              contetwittert = storyContetwittert,
               inlineCard = inlineCard,
               refreshableType = refreshableType
             ))

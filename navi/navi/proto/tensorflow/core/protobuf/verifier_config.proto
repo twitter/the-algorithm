@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -17,11 +17,11 @@ message VerifierConfig {
   }
 
   // Deadline for completion of all verification i.e. all the Toggle ON
-  // verifiers must complete execution within this time.
+  // verifiers must complete etwitterecution within this time.
   int64 verification_timeout_in_ms = 1;
 
   // Perform structural validation on a tensorflow graph. Default is OFF.
   Toggle structure_verifier = 2;
 
-  // Next tag: 3
+  // Netwittert tag: 3
 }

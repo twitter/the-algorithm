@@ -1,7 +1,7 @@
 package com.twitter.tweetypie
 package service
 
-import com.twitter.servo.exception.thriftscala.ClientError
+import com.twitter.servo.etwitterception.thriftscala.ClientError
 import com.twitter.servo.util.SynchronizedHashMap
 import com.twitter.tweetypie.client_id.ClientIdHelper
 import com.twitter.tweetypie.service.observer._
@@ -15,7 +15,7 @@ class ObservedTweetService(
   protected val underlying: ThriftTweetService,
   stats: StatsReceiver,
   clientIdHelper: ClientIdHelper)
-    extends TweetServiceProxy {
+    etwittertends TweetServiceProtwittery {
 
   private[this] val asyncEventOrRetryScope = stats.scope("async_event_or_retry")
   private[this] val deleteFieldsScope = stats.scope("delete_additional_fields")
@@ -144,22 +144,22 @@ class ObservedTweetService(
 
   private[this] val observeGetTweetFieldsResultState: Effect[GetTweetFieldsObserver.Type] =
     withAndWithoutClientId(getTweetFieldsScope) { (statsReceiver, _) =>
-      GetTweetFieldsObserver.observeExchange(statsReceiver)
+      GetTweetFieldsObserver.observeEtwitterchange(statsReceiver)
     }
 
   private[this] val observeGetTweetsResultState: Effect[GetTweetsObserver.Type] =
     withAndWithoutClientId(getTweetsScope) { (statsReceiver, _) =>
-      GetTweetsObserver.observeExchange(statsReceiver)
+      GetTweetsObserver.observeEtwitterchange(statsReceiver)
     }
 
   private[this] val observeGetTweetCountsResultState: Effect[GetTweetCountsObserver.Type] =
     withAndWithoutClientId(getTweetCountsScope) { (statsReceiver, _) =>
-      GetTweetCountsObserver.observeExchange(statsReceiver)
+      GetTweetCountsObserver.observeEtwitterchange(statsReceiver)
     }
 
   private[this] val observeGetDeletedTweetsResultState: Effect[GetDeletedTweetsObserver.Type] =
     withAndWithoutClientId(getDeletedTweetsScope) { (statsReceiver, _) =>
-      GetDeletedTweetsObserver.observeExchange(statsReceiver)
+      GetDeletedTweetsObserver.observeEtwitterchange(statsReceiver)
     }
 
   private[this] val observeGetStoredTweetsRequest: Effect[GetStoredTweetsRequest] =
@@ -169,7 +169,7 @@ class ObservedTweetService(
     GetStoredTweetsObserver.observeResult(getStoredTweetsScope)
 
   private[this] val observeGetStoredTweetsResultState: Effect[GetStoredTweetsObserver.Type] =
-    GetStoredTweetsObserver.observeExchange(getStoredTweetsScope)
+    GetStoredTweetsObserver.observeEtwitterchange(getStoredTweetsScope)
 
   private[this] val observeGetStoredTweetsByUserRequest: Effect[GetStoredTweetsByUserRequest] =
     GetStoredTweetsByUserObserver.observeRequest(getStoredTweetsByUserScope)
@@ -180,7 +180,7 @@ class ObservedTweetService(
   private[this] val observeGetStoredTweetsByUserResultState: Effect[
     GetStoredTweetsByUserObserver.Type
   ] =
-    GetStoredTweetsByUserObserver.observeExchange(getStoredTweetsByUserScope)
+    GetStoredTweetsByUserObserver.observeEtwitterchange(getStoredTweetsByUserScope)
 
   override def getTweets(request: GetTweetsRequest): Future[Seq[GetTweetResult]] = {
     val actualRequest =

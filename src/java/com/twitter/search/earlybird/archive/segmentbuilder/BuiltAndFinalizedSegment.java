@@ -1,10 +1,10 @@
 package com.twitter.search.earlybird.archive.segmentbuilder;
 
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
+import com.twitter.search.earlybird.indetwitter.EarlybirdSegmentFactory;
 import com.twitter.search.earlybird.partition.SegmentInfo;
 import com.twitter.search.earlybird.partition.SegmentSyncConfig;
 
-public class BuiltAndFinalizedSegment extends SegmentBuilderSegment {
+public class BuiltAndFinalizedSegment etwittertends SegmentBuilderSegment {
   public BuiltAndFinalizedSegment(
       SegmentInfo segmentInfo,
       SegmentConfig segmentConfig,
@@ -16,10 +16,10 @@ public class BuiltAndFinalizedSegment extends SegmentBuilderSegment {
   }
 
   @Override
-  public SegmentBuilderSegment handle() throws SegmentInfoConstructionException,
-      SegmentUpdaterException {
+  public SegmentBuilderSegment handle() throws SegmentInfoConstructionEtwitterception,
+      SegmentUpdaterEtwitterception {
 
-    throw new IllegalStateException("Should not handle a BuildAndFinalizedSegment.");
+    throw new IllegalStateEtwitterception("Should not handle a BuildAndFinalizedSegment.");
   }
 
   @Override

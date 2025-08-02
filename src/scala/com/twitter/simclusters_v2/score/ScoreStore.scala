@@ -9,7 +9,7 @@ import com.twitter.util.Future
  * It also needs to include the algorithm type.
  * A algorithm type should only be used by one Score Store in the application.
  */
-trait ScoreStore[K <: ScoreId] extends ReadableStore[K, Score] {
+trait ScoreStore[K <: ScoreId] etwittertends ReadableStore[K, Score] {
 
   def fromThriftScoreId: ThriftScoreId => K
 
@@ -25,7 +25,7 @@ trait ScoreStore[K <: ScoreId] extends ReadableStore[K, Score] {
  * A generic Pairwise Score store.
  * Requires provide both left and right side feature hydration.
  */
-trait PairScoreStore[K <: PairScoreId, K1, K2, V1, V2] extends ScoreStore[K] {
+trait PairScoreStore[K <: PairScoreId, K1, K2, V1, V2] etwittertends ScoreStore[K] {
 
   def compositeKey1: K => K1
   def compositeKey2: K => K2

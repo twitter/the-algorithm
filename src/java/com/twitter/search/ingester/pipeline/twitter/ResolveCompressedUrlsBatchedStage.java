@@ -1,34 +1,34 @@
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.URISyntatwitterEtwitterception;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import javax.naming.NamingException;
+import javatwitter.naming.NamingEtwitterception;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.pipeline.StageException;
+import org.apache.commons.pipeline.StageEtwitterception;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducesConsumed;
 
-import com.twitter.common.text.language.LocaleUtil;
+import com.twitter.common.tetwittert.language.LocaleUtil;
 import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftEtwitterpandedUrl;
 import com.twitter.search.common.metrics.Percentile;
 import com.twitter.search.common.metrics.PercentileUtil;
 import com.twitter.search.common.metrics.RelevanceStats;
 import com.twitter.search.common.metrics.SearchRateCounter;
 import com.twitter.search.ingester.model.IngesterTwitterMessage;
 import com.twitter.search.ingester.pipeline.util.BatchedElement;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
+import com.twitter.search.ingester.pipeline.util.PipelineStageEtwitterception;
 import com.twitter.search.ingester.pipeline.wire.WireModule;
 import com.twitter.service.spiderduck.gen.MediaTypes;
 import com.twitter.util.Duration;
@@ -37,7 +37,7 @@ import com.twitter.util.Future;
 
 @ConsumedTypes(IngesterTwitterMessage.class)
 @ProducesConsumed
-public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
+public class ResolveCompressedUrlsBatchedStage etwittertends TwitterBatchedBaseStage
     <IngesterTwitterMessage, IngesterTwitterMessage> {
 
   private static final int PINK_REQUEST_TIMEOUT_MILLIS = 500;
@@ -71,8 +71,8 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
   // How long it takes to fully resolve all URLs in a tweet.
   private Percentile<Long> millisToResolveAllTweetURLs;
 
-  // max age that a tweet can be before passed down the pipeline
-  private long tweetMaxAgeToResolve;
+  // matwitter age that a tweet can be before passed down the pipeline
+  private long tweetMatwitterAgeToResolve;
 
   // number of times an element is within quota.
   private SearchRateCounter numberOfElementsWithinQuota;
@@ -90,8 +90,8 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
   private SearchRateCounter numberOfCallsToNeedsToBeBatched;
 
 
-  public void setTweetMaxAgeToResolve(long tweetMaxAgeToResolve) {
-    this.tweetMaxAgeToResolve = tweetMaxAgeToResolve;
+  public void setTweetMatwitterAgeToResolve(long tweetMatwitterAgeToResolve) {
+    this.tweetMatwitterAgeToResolve = tweetMatwitterAgeToResolve;
   }
 
   @Override
@@ -110,7 +110,7 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
       this.numberOfElementsNotWithinQuota.increment();
     }
 
-    boolean hasUrls = !element.getExpandedUrlMap().isEmpty();
+    boolean hasUrls = !element.getEtwitterpandedUrlMap().isEmpty();
 
     if (hasUrls) {
       this.numberOfElementsWithUrls.increment();
@@ -140,47 +140,47 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
   }
 
   private void commonInnerSetupStats() {
-    linksAttempted = RelevanceStats.exportRate(getStageNamePrefix() + "_num_links_attempted");
-    linksSucceeded = RelevanceStats.exportRate(getStageNamePrefix() + "_num_links_succeeded");
-    linksTooLong = RelevanceStats.exportRate(getStageNamePrefix() + "_num_links_toolong");
-    linksTruncated = RelevanceStats.exportRate(getStageNamePrefix() + "_num_links_truncated");
+    linksAttempted = RelevanceStats.etwitterportRate(getStageNamePrefitwitter() + "_num_links_attempted");
+    linksSucceeded = RelevanceStats.etwitterportRate(getStageNamePrefitwitter() + "_num_links_succeeded");
+    linksTooLong = RelevanceStats.etwitterportRate(getStageNamePrefitwitter() + "_num_links_toolong");
+    linksTruncated = RelevanceStats.etwitterportRate(getStageNamePrefitwitter() + "_num_links_truncated");
 
-    urlsWithoutMediaType = RelevanceStats.exportRate(
-        getStageNamePrefix() + "_urls_without_media_type");
+    urlsWithoutMediaType = RelevanceStats.etwitterportRate(
+        getStageNamePrefitwitter() + "_urls_without_media_type");
 
     for (MediaTypes mediaType : MediaTypes.values()) {
       urlsWithMediaTypeMap.put(
           mediaType,
-          RelevanceStats.exportRate(
-              getStageNamePrefix() + "_urls_with_media_type_" + mediaType.name().toLowerCase()));
+          RelevanceStats.etwitterportRate(
+              getStageNamePrefitwitter() + "_urls_with_media_type_" + mediaType.name().toLowerCase()));
     }
 
-    tweetsWithResolvedURLs = RelevanceStats.exportRate(
-        getStageNamePrefix() + "_num_tweets_with_resolved_urls");
-    tweetsWithUnresolvedURLs = RelevanceStats.exportRate(
-        getStageNamePrefix() + "_num_tweets_with_unresolved_urls");
+    tweetsWithResolvedURLs = RelevanceStats.etwitterportRate(
+        getStageNamePrefitwitter() + "_num_tweets_with_resolved_urls");
+    tweetsWithUnresolvedURLs = RelevanceStats.etwitterportRate(
+        getStageNamePrefitwitter() + "_num_tweets_with_unresolved_urls");
 
     millisToResolveAllTweetURLs = PercentileUtil.createPercentile(
-        getStageNamePrefix() + "_millis_to_resolve_all_tweet_urls");
+        getStageNamePrefitwitter() + "_millis_to_resolve_all_tweet_urls");
 
-    numberOfCallsToNeedsToBeBatched = SearchRateCounter.export(getStageNamePrefix()
+    numberOfCallsToNeedsToBeBatched = SearchRateCounter.etwitterport(getStageNamePrefitwitter()
         + "_calls_to_needsToBeBatched");
 
-    numberOfElementsWithinQuota = SearchRateCounter.export(getStageNamePrefix()
+    numberOfElementsWithinQuota = SearchRateCounter.etwitterport(getStageNamePrefitwitter()
         + "_is_within_quota");
 
-    numberOfElementsNotWithinQuota = SearchRateCounter.export(getStageNamePrefix()
+    numberOfElementsNotWithinQuota = SearchRateCounter.etwitterport(getStageNamePrefitwitter()
         + "_is_not_within_quota");
 
-    numberOfElementsWithUrls = SearchRateCounter.export(getStageNamePrefix()
+    numberOfElementsWithUrls = SearchRateCounter.etwitterport(getStageNamePrefitwitter()
         + "_has_urls");
 
-    numberOfElementsWithoutUrls = SearchRateCounter.export(getStageNamePrefix()
+    numberOfElementsWithoutUrls = SearchRateCounter.etwitterport(getStageNamePrefitwitter()
         + "_does_not_have_urls");
   }
 
   @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
+  protected void doInnerPreprocess() throws StageEtwitterception, NamingEtwitterception {
     searchDecider = new SearchDecider(decider);
     // We need to call this after assigning searchDecider because our updateBatchSize function
     // depends on the searchDecider.
@@ -189,7 +189,7 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
   }
 
   @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
+  protected void innerSetup() throws PipelineStageEtwitterception, NamingEtwitterception {
     searchDecider = new SearchDecider(decider);
     // We need to call this after assigning searchDecider because our updateBatchSize function
     // depends on the searchDecider.
@@ -197,7 +197,7 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
     commonInnerSetup();
   }
 
-  private void commonInnerSetup() throws NamingException {
+  private void commonInnerSetup() throws NamingEtwitterception {
     Preconditions.checkNotNull(pinkClientId);
     urlResolver = new AsyncPinkUrlsResolver(
         WireModule
@@ -225,14 +225,14 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
   @Override
   protected void updateBatchSize() {
     // update batch based on decider
-    int decidedBatchSize = searchDecider.featureExists(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
+    int decidedBatchSize = searchDecider.featureEtwitterists(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
         ? searchDecider.getAvailability(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
         : batchSize;
 
     setBatchedStageBatchSize(decidedBatchSize);
   }
 
-  //if not all urls for a message where resolved re-enqueue until maxAge is reached
+  //if not all urls for a message where resolved re-enqueue until matwitterAge is reached
   private Function<Map<String, ResolveCompressedUrlsUtils.UrlInfo>,
       Collection<IngesterTwitterMessage>>
   processResolvedUrlsFunction(Collection<BatchedElement<IngesterTwitterMessage,
@@ -252,16 +252,16 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
 
       for (BatchedElement<IngesterTwitterMessage, IngesterTwitterMessage> batchedElement : batch) {
         IngesterTwitterMessage message = batchedElement.getItem();
-        Set<String> tweetUrls = message.getExpandedUrlMap().keySet();
+        Set<String> tweetUrls = message.getEtwitterpandedUrlMap().keySet();
 
         int resolvedUrlCounter = 0;
 
         for (String url : tweetUrls) {
           ResolveCompressedUrlsUtils.UrlInfo urlInfo = resolvedUrls.get(url);
 
-          // if the url didn't resolve move on to the next one, this might trigger a re-enqueue
+          // if the url didn't resolve move on to the netwittert one, this might trigger a re-enqueue
           // if the tweet is still kind of new. But we want to process the rest for when that
-          // is not the case and we are going to end up passing it to the next stage
+          // is not the case and we are going to end up passing it to the netwittert stage
           if (urlInfo == null) {
             continue;
           }
@@ -271,9 +271,9 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
               : LocaleUtil.getLocaleOf(urlInfo.language);
 
           if (StringUtils.isNotBlank(resolvedUrl)) {
-            ThriftExpandedUrl expandedUrl = message.getExpandedUrlMap().get(url);
+            ThriftEtwitterpandedUrl etwitterpandedUrl = message.getEtwitterpandedUrlMap().get(url);
             resolvedUrlCounter += 1;
-            enrichTweetWithUrlInfo(message, expandedUrl, urlInfo, locale);
+            enrichTweetWithUrlInfo(message, etwitterpandedUrl, urlInfo, locale);
           }
         }
         long tweetMessageAge = clock.nowMillis() - message.getDate().getTime();
@@ -282,11 +282,11 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
           millisToResolveAllTweetURLs.record(tweetMessageAge);
           tweetsWithResolvedURLs.increment();
           successfulTweets.add(message);
-        } else if (tweetMessageAge > tweetMaxAgeToResolve) {
+        } else if (tweetMessageAge > tweetMatwitterAgeToResolve) {
           tweetsWithUnresolvedURLs.increment();
           successfulTweets.add(message);
         } else {
-          //re-enqueue if all urls weren't resolved and the tweet is younger than maxAge
+          //re-enqueue if all urls weren't resolved and the tweet is younger than matwitterAge
           reEnqueueAndRetry(batchedElement);
         }
       }
@@ -299,7 +299,7 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
     Map<String, Set<IngesterTwitterMessage>> urlToTweetsMap = Maps.newHashMap();
     for (BatchedElement<IngesterTwitterMessage, IngesterTwitterMessage> batchedElement : batch) {
       IngesterTwitterMessage message = batchedElement.getItem();
-      for (String originalUrl : message.getExpandedUrlMap().keySet()) {
+      for (String originalUrl : message.getEtwitterpandedUrlMap().keySet()) {
         Set<IngesterTwitterMessage> messages = urlToTweetsMap.get(originalUrl);
         if (messages == null) {
           messages = new HashSet<>();
@@ -313,7 +313,7 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
 
   // enrich the twitterMessage with the resolvedCounter Urls.
   private void enrichTweetWithUrlInfo(IngesterTwitterMessage message,
-                                      ThriftExpandedUrl expandedUrl,
+                                      ThriftEtwitterpandedUrl etwitterpandedUrl,
                                       ResolveCompressedUrlsUtils.UrlInfo urlInfo,
                                       Locale locale) {
     String truncatedUrl = maybeTruncate(urlInfo.resolvedUrl);
@@ -321,19 +321,19 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
       return;
     }
 
-    expandedUrl.setCanonicalLastHopUrl(truncatedUrl);
+    etwitterpandedUrl.setCanonicalLastHopUrl(truncatedUrl);
     if (urlInfo.mediaType != null) {
       // Overwrite url media type with media type from resolved url only if the media type from
       // resolved url is not Unknown
-      if (!expandedUrl.isSetMediaType() || urlInfo.mediaType != MediaTypes.UNKNOWN) {
-        expandedUrl.setMediaType(urlInfo.mediaType);
+      if (!etwitterpandedUrl.isSetMediaType() || urlInfo.mediaType != MediaTypes.UNKNOWN) {
+        etwitterpandedUrl.setMediaType(urlInfo.mediaType);
       }
     }
     if (urlInfo.linkCategory != null) {
-      expandedUrl.setLinkCategory(urlInfo.linkCategory);
+      etwitterpandedUrl.setLinkCategory(urlInfo.linkCategory);
     }
     // Note that if there are multiple links in one tweet message, the language of the
-    // link that got examined later in this for loop will overwrite the values that were
+    // link that got etwitteramined later in this for loop will overwrite the values that were
     // written before. This is not an optimal design but considering most tweets have
     // only one link, or same-language links, this shouldn't be a big issue.
     if (locale != null) {
@@ -341,11 +341,11 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
     }
 
     if (urlInfo.description != null) {
-      expandedUrl.setDescription(urlInfo.description);
+      etwitterpandedUrl.setDescription(urlInfo.description);
     }
 
     if (urlInfo.title != null) {
-      expandedUrl.setTitle(urlInfo.title);
+      etwitterpandedUrl.setTitle(urlInfo.title);
     }
   }
 
@@ -358,10 +358,10 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
     this.pinkClientId = pinkClientId;
   }
 
-  public static final int MAX_URL_LENGTH = 1000;
+  public static final int MAtwitter_URL_LENGTH = 1000;
 
   private String maybeTruncate(String fullUrl) {
-    if (fullUrl.length() <= MAX_URL_LENGTH) {
+    if (fullUrl.length() <= MAtwitter_URL_LENGTH) {
       return fullUrl;
     }
 
@@ -374,11 +374,11 @@ public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
           parsed.getPath(),
           null,
           null).toString();
-      if (simplified.length() < MAX_URL_LENGTH) {
+      if (simplified.length() < MAtwitter_URL_LENGTH) {
         linksTruncated.increment();
         return simplified;
       }
-    } catch (URISyntaxException e) {
+    } catch (URISyntatwitterEtwitterception e) {
     }
 
     linksTooLong.increment();

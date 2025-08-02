@@ -44,7 +44,7 @@ class TweetEventProcessor(
   tweetypie: Tweetypie
 )(
   override implicit val statsReceiver: StatsReceiver)
-    extends EventBusProcessor[TweetEvent] {
+    etwittertends EventBusProcessor[TweetEvent] {
 
   private val tweetCreateEventCounter = statsReceiver.counter("num_tweet_create_events")
   private val nonTweetCreateEventCounter = statsReceiver.counter("num_non_tweet_create_events")
@@ -89,7 +89,7 @@ class TweetEventProcessor(
   /**
    * Given a created tweet, return what type of tweet it is, i.e. Tweet, Retweet, Quote, or Reply。
    * Retweet, Quote, or Reply are responsive actions to a source tweet, so for these tweets,
-   * we also return the tweet id and author of the source tweet (ex. the tweet being retweeted).
+   * we also return the tweet id and author of the source tweet (etwitter. the tweet being retweeted).
    */
   private def getTweetAction(tweetDetails: TweetDetails): Action = {
     (tweetDetails.replySourceId, tweetDetails.retweetSourceId, tweetDetails.quoteSourceId) match {
@@ -132,7 +132,7 @@ class TweetEventProcessor(
   }
 
   /**
-   * Extract and return the details when the source user created a new tweet.
+   * Etwittertract and return the details when the source user created a new tweet.
    */
   private def getTweetDetails(
     tweet: Tweet,
@@ -170,11 +170,11 @@ class TweetEventProcessor(
   }
 
   /**
-   * Exclude any Retweets of one's own tweets
+   * Etwitterclude any Retweets of one's own tweets
    */
   private def isEventSelfRetweet(tweetEvent: TweetCreateEventDetails): Boolean = {
     (tweetEvent.userTweetEngagement.action == Action.Retweet) &&
-    tweetEvent.userTweetEngagement.tweetDetails.exists(
+    tweetEvent.userTweetEngagement.tweetDetails.etwitterists(
       _.sourceTweetUserId.contains(
         tweetEvent.userTweetEngagement.engageUserId
       ))
@@ -197,7 +197,7 @@ class TweetEventProcessor(
     val engageUserId = engagement.engageUserId
 
     val isNullCastTweet = engagement.tweetDetails.forall(_.isNullCastTweet)
-    val isNullCastSourceTweet = event.sourceTweetDetails.exists(_.isNullCastTweet)
+    val isNullCastSourceTweet = event.sourceTweetDetails.etwitterists(_.isNullCastTweet)
     val isSelfRetweet = isEventSelfRetweet(event)
     val isEngageUserSafeFut = engageUserFilter.filterByUserId(engageUserId)
     val isTweetPassSafetyFut = isTweetPassSafetyFilter(event)

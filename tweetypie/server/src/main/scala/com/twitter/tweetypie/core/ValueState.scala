@@ -71,8 +71,8 @@ object ValueState {
   def success[A](value: A, modified: Boolean): ValueState[A] =
     ValueState(value, HydrationState(modified))
 
-  def delta[A](prev: A, next: A): ValueState[A] =
-    ValueState(next, HydrationState.delta(prev, next))
+  def delta[A](prev: A, netwittert: A): ValueState[A] =
+    ValueState(netwittert, HydrationState.delta(prev, netwittert))
 
   def partial[A](value: A, field: FieldByPath): ValueState[A] =
     ValueState(value, HydrationState.partial(field))

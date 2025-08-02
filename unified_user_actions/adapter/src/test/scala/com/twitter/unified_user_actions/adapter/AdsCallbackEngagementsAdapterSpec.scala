@@ -4,7 +4,7 @@ import com.twitter.ads.spendserver.thriftscala.SpendServerEvent
 import com.twitter.adserver.thriftscala.EngagementType
 import com.twitter.clientapp.thriftscala.AmplifyDetails
 import com.twitter.inject.Test
-import com.twitter.unified_user_actions.adapter.TestFixtures.AdsCallbackEngagementsFixture
+import com.twitter.unified_user_actions.adapter.TestFitwittertures.AdsCallbackEngagementsFitwitterture
 import com.twitter.unified_user_actions.adapter.ads_callback_engagements.AdsCallbackEngagementsAdapter
 import com.twitter.unified_user_actions.thriftscala.ActionType
 import com.twitter.unified_user_actions.thriftscala.TweetActionInfo
@@ -12,31 +12,31 @@ import com.twitter.unified_user_actions.thriftscala.UnifiedUserAction
 import com.twitter.util.Time
 import org.scalatest.prop.TableDrivenPropertyChecks
 
-class AdsCallbackEngagementsAdapterSpec extends Test with TableDrivenPropertyChecks {
+class AdsCallbackEngagementsAdapterSpec etwittertends Test with TableDrivenPropertyChecks {
 
   test("Test basic conversion for ads callback engagement type fav") {
 
-    new AdsCallbackEngagementsFixture {
+    new AdsCallbackEngagementsFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val events = Table(
-          ("inputEvent", "expectedUuaOutput"),
+          ("inputEvent", "etwitterpectedUuaOutput"),
           ( // Test with authorId
             createSpendServerEvent(EngagementType.Fav),
             Seq(
-              createExpectedUua(
+              createEtwitterpectedUua(
                 ActionType.ServerPromotedTweetFav,
                 createTweetInfoItem(authorInfo = Some(authorInfo)))))
         )
-        forEvery(events) { (event: SpendServerEvent, expected: Seq[UnifiedUserAction]) =>
+        forEvery(events) { (event: SpendServerEvent, etwitterpected: Seq[UnifiedUserAction]) =>
           val actual = AdsCallbackEngagementsAdapter.adaptEvent(event)
-          assert(expected === actual)
+          assert(etwitterpected === actual)
         }
       }
     }
   }
 
   test("Test basic conversion for different engagement types") {
-    new AdsCallbackEngagementsFixture {
+    new AdsCallbackEngagementsFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val mappings = Table(
           ("engagementType", "actionType"),
@@ -53,7 +53,7 @@ class AdsCallbackEngagementsAdapterSpec extends Test with TableDrivenPropertyChe
           (EngagementType.ScreenName, ActionType.ServerPromotedTweetClickProfile),
           (EngagementType.UserName, ActionType.ServerPromotedTweetClickProfile),
           (EngagementType.Hashtag, ActionType.ServerPromotedTweetClickHashtag),
-          (EngagementType.CarouselSwipeNext, ActionType.ServerPromotedTweetCarouselSwipeNext),
+          (EngagementType.CarouselSwipeNetwittert, ActionType.ServerPromotedTweetCarouselSwipeNetwittert),
           (
             EngagementType.CarouselSwipePrevious,
             ActionType.ServerPromotedTweetCarouselSwipePrevious),
@@ -69,16 +69,16 @@ class AdsCallbackEngagementsAdapterSpec extends Test with TableDrivenPropertyChe
         forEvery(mappings) { (engagementType: EngagementType, actionType: ActionType) =>
           val event = createSpendServerEvent(engagementType)
           val actual = AdsCallbackEngagementsAdapter.adaptEvent(event)
-          val expected =
-            Seq(createExpectedUua(actionType, createTweetInfoItem(authorInfo = Some(authorInfo))))
-          assert(expected === actual)
+          val etwitterpected =
+            Seq(createEtwitterpectedUua(actionType, createTweetInfoItem(authorInfo = Some(authorInfo))))
+          assert(etwitterpected === actual)
         }
       }
     }
   }
 
   test("Test conversion for ads callback engagement type spotlight view and click") {
-    new AdsCallbackEngagementsFixture {
+    new AdsCallbackEngagementsFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val input = Table(
           ("adsEngagement", "uuaAction"),
@@ -89,16 +89,16 @@ class AdsCallbackEngagementsAdapterSpec extends Test with TableDrivenPropertyChe
         )
         forEvery(input) { (engagementType: EngagementType, actionType: ActionType) =>
           val adsEvent = createSpendServerEvent(engagementType)
-          val expected = Seq(createExpectedUua(actionType, trendInfoItem))
+          val etwitterpected = Seq(createEtwitterpectedUua(actionType, trendInfoItem))
           val actual = AdsCallbackEngagementsAdapter.adaptEvent(adsEvent)
-          assert(expected === actual)
+          assert(etwitterpected === actual)
         }
       }
     }
   }
 
   test("Test basic conversion for ads callback engagement open link with or without url") {
-    new AdsCallbackEngagementsFixture {
+    new AdsCallbackEngagementsFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val input = Table(
           ("url", "tweetActionInfo"),
@@ -109,17 +109,17 @@ class AdsCallbackEngagementsAdapterSpec extends Test with TableDrivenPropertyChe
         forEvery(input) { (url: Option[String], tweetActionInfo: TweetActionInfo) =>
           val event = createSpendServerEvent(engagementType = EngagementType.Url, url = url)
           val actual = AdsCallbackEngagementsAdapter.adaptEvent(event)
-          val expected = Seq(createExpectedUua(
+          val etwitterpected = Seq(createEtwitterpectedUua(
             ActionType.ServerPromotedTweetOpenLink,
             createTweetInfoItem(authorInfo = Some(authorInfo), actionInfo = Some(tweetActionInfo))))
-          assert(expected === actual)
+          assert(etwitterpected === actual)
         }
       }
     }
   }
 
   test("Test basic conversion for different engagement types with profile info") {
-    new AdsCallbackEngagementsFixture {
+    new AdsCallbackEngagementsFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val mappings = Table(
           ("engagementType", "actionType"),
@@ -129,15 +129,15 @@ class AdsCallbackEngagementsAdapterSpec extends Test with TableDrivenPropertyChe
         forEvery(mappings) { (engagementType: EngagementType, actionType: ActionType) =>
           val event = createSpendServerEvent(engagementType)
           val actual = AdsCallbackEngagementsAdapter.adaptEvent(event)
-          val expected = Seq(createExpectedUuaWithProfileInfo(actionType))
-          assert(expected === actual)
+          val etwitterpected = Seq(createEtwitterpectedUuaWithProfileInfo(actionType))
+          assert(etwitterpected === actual)
         }
       }
     }
   }
 
   test("Test basic conversion for ads callback engagement type video_content_*") {
-    new AdsCallbackEngagementsFixture {
+    new AdsCallbackEngagementsFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val events = Table(
           ("engagementType", "amplifyDetails", "actionType", "tweetActionInfo"),
@@ -183,10 +183,10 @@ class AdsCallbackEngagementsAdapterSpec extends Test with TableDrivenPropertyChe
           ) =>
             val spendEvent =
               createVideoSpendServerEvent(engagementType, amplifyDetails, promotedTweetId, None)
-            val expected = Seq(createExpectedVideoUua(actionType, actionInfo, promotedTweetId))
+            val etwitterpected = Seq(createEtwitterpectedVideoUua(actionType, actionInfo, promotedTweetId))
 
             val actual = AdsCallbackEngagementsAdapter.adaptEvent(spendEvent)
-            assert(expected === actual)
+            assert(etwitterpected === actual)
         }
       }
     }
@@ -194,7 +194,7 @@ class AdsCallbackEngagementsAdapterSpec extends Test with TableDrivenPropertyChe
 
   test("Test basic conversion for ads callback engagement type video_ad_*") {
 
-    new AdsCallbackEngagementsFixture {
+    new AdsCallbackEngagementsFitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val events = Table(
           (
@@ -271,10 +271,10 @@ class AdsCallbackEngagementsAdapterSpec extends Test with TableDrivenPropertyChe
                 promotedTweetId,
                 organicTweetId)
             val actionTweetId = if (organicTweetId.isDefined) organicTweetId else promotedTweetId
-            val expected = Seq(createExpectedVideoUua(actionType, actionInfo, actionTweetId))
+            val etwitterpected = Seq(createEtwitterpectedVideoUua(actionType, actionInfo, actionTweetId))
 
             val actual = AdsCallbackEngagementsAdapter.adaptEvent(spendEvent)
-            assert(expected === actual)
+            assert(etwitterpected === actual)
         }
       }
     }

@@ -4,7 +4,7 @@ scala_library(
         "bazel-compatible",
     ],
     dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
+        "3rdparty/jvm/javatwitter/inject:javatwitter.inject",
         "abdecider/src/main/scala",
         "content-recommender/thrift/src/main/thrift:thrift-scala",
         "hermit/hermit-core/src/main/scala/com/twitter/hermit/store/common",

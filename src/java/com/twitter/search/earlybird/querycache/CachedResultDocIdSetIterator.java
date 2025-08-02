@@ -1,15 +1,15 @@
 package com.twitter.search.earlybird.querycache;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import org.apache.lucene.search.DocIdSetIterator;
 
-public class CachedResultDocIdSetIterator extends DocIdSetIterator {
-  // With the realtime index, we grow the doc id negatively.
+public class CachedResultDocIdSetIterator etwittertends DocIdSetIterator {
+  // With the realtime indetwitter, we grow the doc id negatively.
   // Hence the smallest doc id is the ID the latest/newest document in the cache.
   private final int cachedSmallestDocID;
 
-  // Documents that were indexed after the last cache update
+  // Documents that were indetwittered after the last cache update
   private final DocIdSetIterator freshDocIdIterator;
   // Documents that were cached
   private final DocIdSetIterator cachedDocIdIterator;
@@ -33,9 +33,9 @@ public class CachedResultDocIdSetIterator extends DocIdSetIterator {
   }
 
   @Override
-  public int nextDoc() throws IOException {
+  public int netwittertDoc() throws IOEtwitterception {
     if (currentDocId < cachedSmallestDocID) {
-      currentDocId = freshDocIdIterator.nextDoc();
+      currentDocId = freshDocIdIterator.netwittertDoc();
     } else if (currentDocId != NO_MORE_DOCS) {
       if (!initialized) {
         // the first time we come in here, currentDocId should be pointing to
@@ -43,14 +43,14 @@ public class CachedResultDocIdSetIterator extends DocIdSetIterator {
         currentDocId = cachedDocIdIterator.advance(currentDocId + 1);
         initialized = true;
       } else {
-        currentDocId = cachedDocIdIterator.nextDoc();
+        currentDocId = cachedDocIdIterator.netwittertDoc();
       }
     }
     return currentDocId;
   }
 
   @Override
-  public int advance(int target) throws IOException {
+  public int advance(int target) throws IOEtwitterception {
     if (target < cachedSmallestDocID) {
       currentDocId = freshDocIdIterator.advance(target);
     } else if (currentDocId != NO_MORE_DOCS) {

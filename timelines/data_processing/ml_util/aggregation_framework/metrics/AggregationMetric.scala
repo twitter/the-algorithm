@@ -13,7 +13,7 @@ import java.lang.{Long => JLong}
  * of feature it aggregates, and a TimedValue[A] which is
  * the result type of aggregation for this metric.
  */
-trait AggregationMetric[T, A] extends FeatureCache[T] {
+trait AggregationMetric[T, A] etwittertends FeatureCache[T] {
   /*
    * Combines two timed aggregate values ''left'' and ''right''
    * with the specified half life ''halfLife'' to produce a result
@@ -36,7 +36,7 @@ trait AggregationMetric[T, A] extends FeatureCache[T] {
      for decayed value aggregation.
    * @return The incremental contribution to the aggregate of ''feature'' from ''dataRecord''.
    *
-   * For example, if the aggregation metric is count, the incremental
+   * For etwitterample, if the aggregation metric is count, the incremental
    * contribution is always a TimedValue (1.0, time). If the aggregation metric
    * is mean, and the feature is a continuous feature (double), the incremental
    * contribution looks like a tuple (value, 1.0, time)
@@ -49,7 +49,7 @@ trait AggregationMetric[T, A] extends FeatureCache[T] {
 
   /*
    * The "zero" value for aggregation.
-   * For example, the zero is 0 for the count operator.
+   * For etwitterample, the zero is 0 for the count operator.
    */
   def zero(timeOpt: Option[Long] = None): TimedValue[A]
 
@@ -64,7 +64,7 @@ trait AggregationMetric[T, A] extends FeatureCache[T] {
    * @param query AggregateFeature (see above) specifying details of aggregate
    * @param aggregateOutputs An optional precomputed set of aggregation "output"
    * feature hashes for this (query, metric) pair. This can be derived from ''query'',
-   * but we precompute and pass this in for significantly (approximately 4x = 400%)
+   * but we precompute and pass this in for significantly (approtwitterimately 4twitter = 400%)
    * faster performance. If not passed in, the operator should reconstruct these features
    * from scratch.
    *
@@ -79,13 +79,13 @@ trait AggregationMetric[T, A] extends FeatureCache[T] {
 
   /*
    * Sets the value of aggregate feature(s) in a datarecord. Different operators
-   * will have different representations (see example above).
+   * will have different representations (see etwitterample above).
    *
    * @param record Record to set value in
    * @param query AggregateFeature (see above) specifying details of aggregate
    * @param aggregateOutputs An optional precomputed set of aggregation "output"
    * features for this (query, metric) pair. This can be derived from ''query'',
-   * but we precompute and pass this in for significantly (approximately 4x = 400%)
+   * but we precompute and pass this in for significantly (approtwitterimately 4twitter = 400%)
    * faster performance. If not passed in, the operator should reconstruct these features
    * from scratch.
    *
@@ -104,7 +104,7 @@ trait AggregationMetric[T, A] extends FeatureCache[T] {
    *
    * @query AggregateFeature (see above) specifying details of aggregate
    * @return A list of "output" features used by this metric to store
-   * output representation. For example, for the "count" operator, we
+   * output representation. For etwitterample, for the "count" operator, we
    * have only one element in this list, which is the result "count" feature.
    * For the "mean" operator, we have three elements in this list: the "count"
    * feature, the "sum" feature and the "mean" feature.
@@ -117,7 +117,7 @@ trait AggregationMetric[T, A] extends FeatureCache[T] {
    *
    * @query AggregateFeature (see above) specifying details of aggregate
    * @return A list of "output" feature hashes used by this metric to store
-   * output representation. For example, for the "count" operator, we
+   * output representation. For etwitterample, for the "count" operator, we
    * have only one element in this list, which is the result "count" feature.
    * For the "mean" operator, we have three elements in this list: the "count"
    * feature, the "sum" feature and the "mean" feature.
@@ -136,7 +136,7 @@ trait AggregationMetric[T, A] extends FeatureCache[T] {
    * @param query Details of aggregate to add
    * @param aggregateOutputs An optional precomputed set of aggregation "output"
    * feature hashes for this (query, metric) pair. This can be derived from ''query'',
-   * but we precompute and pass this in for significantly (approximately 4x = 400%)
+   * but we precompute and pass this in for significantly (approtwitterimately 4twitter = 400%)
    * faster performance. If not passed in, the operator should reconstruct these features
    * from scratch.
    */
@@ -162,7 +162,7 @@ trait AggregationMetric[T, A] extends FeatureCache[T] {
    * @param query Details of aggregation
    * @param aggregateOutputs An optional precomputed set of aggregation "output"
    * feature hashes for this (query, metric) pair. This can be derived from ''query'',
-   * but we precompute and pass this in for significantly (approximately 4x = 400%)
+   * but we precompute and pass this in for significantly (approtwitterimately 4twitter = 400%)
    * faster performance. If not passed in, the operator should reconstruct these features
    * from scratch.
    * @return True if an increment was set in the output record, else false

@@ -1,9 +1,9 @@
 package com.twitter.search.ingester.pipeline.wire;
 
 import java.util.concurrent.TimeUnit;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
+import javatwitter.naming.Contetwittert;
+import javatwitter.naming.InitialContetwittert;
+import javatwitter.naming.NamingEtwitterception;
 
 import com.google.common.base.Preconditions;
 
@@ -16,12 +16,12 @@ import com.twitter.common.quantity.Time;
 import com.twitter.common_internal.manhattan.ManhattanClient;
 import com.twitter.common_internal.manhattan.ManhattanClientImpl;
 import com.twitter.finagle.Service;
-import com.twitter.finagle.ThriftMux;
+import com.twitter.finagle.ThriftMutwitter;
 import com.twitter.finagle.builder.ClientBuilder;
 import com.twitter.finagle.builder.ClientConfig.Yes;
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
-import com.twitter.finagle.mtls.client.MtlsThriftMuxClient;
-import com.twitter.finagle.mux.transport.OpportunisticTls;
+import com.twitter.finagle.mtls.client.MtlsThriftMutwitterClient;
+import com.twitter.finagle.mutwitter.transport.OpportunisticTls;
 import com.twitter.finagle.stats.DefaultStatsReceiver;
 import com.twitter.finagle.thrift.ClientId;
 import com.twitter.finagle.thrift.ThriftClientRequest;
@@ -60,7 +60,7 @@ public class StratoMetaStoreWireModule {
     // Total timeout per call (including retries)
     private final long totalTimeout = 500;
 
-    // The maximum number of retries per call
+    // The matwitterimum number of retries per call
     private final int retries = 2;
   }
 
@@ -87,7 +87,7 @@ public class StratoMetaStoreWireModule {
         .timeout(new Duration(TimeUnit.MILLISECONDS.toNanos(options.totalTimeout)))
         .retries(options.retries)
         .reportTo(DefaultStatsReceiver.get())
-        .stack(new MtlsThriftMuxClient(ThriftMux.client())
+        .stack(new MtlsThriftMutwitterClient(ThriftMutwitter.client())
             .withMutualTls(serviceIdentifier)
             .withClientId(clientId)
             .withOpportunisticTls(OpportunisticTls.Required()));
@@ -97,12 +97,12 @@ public class StratoMetaStoreWireModule {
    * Returns the Metastore client.
    */
   public MetastoreClient getMetastoreClient(ServiceIdentifier serviceIdentifier)
-      throws NamingException {
-    Context jndiContext = new InitialContext();
+      throws NamingEtwitterception {
+    Contetwittert jndiContetwittert = new InitialContetwittert();
     String destString = String.format("/cluster/local/%s/%s/%s",
-        jndiContext.lookup(MANHATTAN_SD_ZK_ROLE),
-        jndiContext.lookup(MANHATTAN_SD_ZK_ENV),
-        jndiContext.lookup(MANHATTAN_SD_ZK_NAME));
+        jndiContetwittert.lookup(MANHATTAN_SD_ZK_ROLE),
+        jndiContetwittert.lookup(MANHATTAN_SD_ZK_ENV),
+        jndiContetwittert.lookup(MANHATTAN_SD_ZK_NAME));
     LOG.info("Manhattan serverset Name: {}", destString);
 
     Service<ThriftClientRequest, byte[]> service =

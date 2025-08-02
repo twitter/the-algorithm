@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -34,7 +34,7 @@ message AllocatorMemoryUsed {
   int64 allocator_bytes_in_use = 5;
 }
 
-// Output sizes recorded for a single execution of a graph node.
+// Output sizes recorded for a single etwitterecution of a graph node.
 message NodeOutput {
   int32 slot = 1;
   TensorDescription tensor_description = 3;
@@ -51,8 +51,8 @@ message MemoryStats {
   repeated int64 device_persistent_tensor_alloc_ids = 6 [deprecated = true];
 }
 
-// Time/size stats recorded for a single execution of a graph node.
-message NodeExecStats {
+// Time/size stats recorded for a single etwitterecution of a graph node.
+message NodeEtwitterecStats {
   // TODO(tucker): Use some more compact form of node identity than
   // the full string name.  Either all processes should agree on a
   // global id (cost_id?) for each node, or we should use a hash of
@@ -78,7 +78,7 @@ message NodeExecStats {
 
 message DeviceStepStats {
   string device = 1;
-  repeated NodeExecStats node_stats = 2;
+  repeated NodeEtwitterecStats node_stats = 2;
   // Its key is thread id.
   map<uint32, string> thread_names = 3;
 }

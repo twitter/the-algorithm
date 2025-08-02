@@ -8,10 +8,10 @@ import com.twitter.visibility.builder.VisibilityResultBuilder
 import com.twitter.visibility.features._
 import com.twitter.visibility.models.SafetyLevel
 import com.twitter.visibility.models.SafetyLevel.DeprecatedSafetyLevel
-import com.twitter.visibility.rules.EvaluationContext
+import com.twitter.visibility.rules.EvaluationContetwittert
 import com.twitter.visibility.rules.State._
 import com.twitter.visibility.rules._
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
+import com.twitter.visibility.rules.providers.ProvidedEvaluationContetwittert
 import com.twitter.visibility.rules.providers.PolicyProvider
 
 class VisibilityRuleEngine private[VisibilityRuleEngine] (
@@ -20,10 +20,10 @@ class VisibilityRuleEngine private[VisibilityRuleEngine] (
   enableComposableActions: Gate[Unit],
   enableFailClosed: Gate[Unit],
   policyProviderOpt: Option[PolicyProvider] = None)
-    extends DeciderableVisibilityRuleEngine {
+    etwittertends DeciderableVisibilityRuleEngine {
 
   private[visibility] def apply(
-    evaluationContext: ProvidedEvaluationContext,
+    evaluationContetwittert: ProvidedEvaluationContetwittert,
     visibilityPolicy: VisibilityPolicy,
     visibilityResultBuilder: VisibilityResultBuilder,
     enableShortCircuiting: Gate[Unit],
@@ -33,13 +33,13 @@ class VisibilityRuleEngine private[VisibilityRuleEngine] (
       case Some(r) =>
         (visibilityResultBuilder, r)
       case None =>
-        rulePreprocessor.evaluate(evaluationContext, visibilityPolicy, visibilityResultBuilder)
+        rulePreprocessor.evaluate(evaluationContetwittert, visibilityPolicy, visibilityResultBuilder)
     }
-    evaluate(evaluationContext, resultBuilder, rules, enableShortCircuiting)
+    evaluate(evaluationContetwittert, resultBuilder, rules, enableShortCircuiting)
   }
 
   def apply(
-    evaluationContext: EvaluationContext,
+    evaluationContetwittert: EvaluationContetwittert,
     safetyLevel: SafetyLevel,
     visibilityResultBuilder: VisibilityResultBuilder,
     enableShortCircuiting: Gate[Unit] = Gate.True,
@@ -50,10 +50,10 @@ class VisibilityRuleEngine private[VisibilityRuleEngine] (
         policyProvider.policyForSurface(safetyLevel)
       case None => RuleBase.RuleMap(safetyLevel)
     }
-    if (evaluationContext.params(safetyLevel.enabledParam)) {
+    if (evaluationContetwittert.params(safetyLevel.enabledParam)) {
       apply(
-        ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-          evaluationContext = evaluationContext,
+        ProvidedEvaluationContetwittert.injectRuntimeRulesIntoEvaluationContetwittert(
+          evaluationContetwittert = evaluationContetwittert,
           safetyLevel = Some(safetyLevel),
           policyProviderOpt = policyProviderOpt
         ),
@@ -81,7 +81,7 @@ class VisibilityRuleEngine private[VisibilityRuleEngine] (
   }
 
   def apply(
-    evaluationContext: EvaluationContext,
+    evaluationContetwittert: EvaluationContetwittert,
     thriftSafetyLevel: ThriftSafetyLevel,
     visibilityResultBuilder: VisibilityResultBuilder
   ): Stitch[VisibilityResult] = {
@@ -98,8 +98,8 @@ class VisibilityRuleEngine private[VisibilityRuleEngine] (
 
       case thriftSafetyLevel: SafetyLevel =>
         this(
-          ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-            evaluationContext = evaluationContext,
+          ProvidedEvaluationContetwittert.injectRuntimeRulesIntoEvaluationContetwittert(
+            evaluationContetwittert = evaluationContetwittert,
             safetyLevel = Some(safetyLevel),
             policyProviderOpt = policyProviderOpt
           ),
@@ -110,7 +110,7 @@ class VisibilityRuleEngine private[VisibilityRuleEngine] (
   }
 
   private[visibility] def evaluateRules(
-    evaluationContext: ProvidedEvaluationContext,
+    evaluationContetwittert: ProvidedEvaluationContetwittert,
     resolvedFeatureMap: Map[Feature[_], Any],
     failedFeatures: Map[Feature[_], Throwable],
     resultBuilderWithoutFailedFeatures: VisibilityResultBuilder,
@@ -149,10 +149,10 @@ class VisibilityRuleEngine private[VisibilityRuleEngine] (
 
 
               val ruleResult =
-                rule.evaluate(evaluationContext, resolvedFeatureMap)
+                rule.evaluate(evaluationContetwittert, resolvedFeatureMap)
               metricsRecorder
                 .recordRuleEvaluation(rule.name, ruleResult.action, ruleResult.state)
-              val nextBuilder = (ruleResult.action, builder.finished) match {
+              val netwittertBuilder = (ruleResult.action, builder.finished) match {
                 case (NotEvaluated | Allow, _) =>
                   ruleResult.state match {
                     case Heldback =>
@@ -175,19 +175,19 @@ class VisibilityRuleEngine private[VisibilityRuleEngine] (
                     .withFinished(true)
               }
 
-              nextBuilder
+              netwittertBuilder
             }
         }
       }.withResolvedFeatureMap(resolvedFeatureMap)
   }
 
   private[visibility] def evaluateFailClosed(
-    evaluationContext: ProvidedEvaluationContext
+    evaluationContetwittert: ProvidedEvaluationContetwittert
   ): VisibilityResultBuilder => Stitch[VisibilityResultBuilder] = { builder =>
-    builder.failClosedException(evaluationContext) match {
-      case Some(e: FailClosedException) if enableFailClosed() =>
+    builder.failClosedEtwitterception(evaluationContetwittert) match {
+      case Some(e: FailClosedEtwitterception) if enableFailClosed() =>
         metricsRecorder.recordFailClosed(e.getRuleName, e.getState);
-        Stitch.exception(e)
+        Stitch.etwitterception(e)
       case _ => Stitch.value(builder)
     }
   }
@@ -210,14 +210,14 @@ class VisibilityRuleEngine private[VisibilityRuleEngine] (
   }
 
   private[visibility] def evaluate(
-    evaluationContext: ProvidedEvaluationContext,
+    evaluationContetwittert: ProvidedEvaluationContetwittert,
     visibilityResultBuilder: VisibilityResultBuilder,
     preprocessedRules: Seq[Rule],
     enableShortCircuiting: Gate[Unit] = Gate.True
   ): Stitch[VisibilityResult] = {
 
     val finalBuilder =
-      FeatureMap.resolve(visibilityResultBuilder.features, evaluationContext.statsReceiver).map {
+      FeatureMap.resolve(visibilityResultBuilder.features, evaluationContetwittert.statsReceiver).map {
         resolvedFeatureMap =>
           val (failedFeatureMap, successfulFeatureMap) = resolvedFeatureMap.constantMap.partition({
             case (_, _: FeatureFailedPlaceholderObject) => true
@@ -234,7 +234,7 @@ class VisibilityRuleEngine private[VisibilityRuleEngine] (
             visibilityResultBuilder.withFeatureMap(ResolvedFeatureMap(successfulFeatureMap))
 
           evaluateRules(
-            evaluationContext,
+            evaluationContetwittert,
             successfulFeatureMap,
             failedFeatures,
             resultBuilderWithoutFailedFeatures,
@@ -243,7 +243,7 @@ class VisibilityRuleEngine private[VisibilityRuleEngine] (
           )
       }
 
-    finalBuilder.flatMap(evaluateFailClosed(evaluationContext)).map(checkMarkFinished)
+    finalBuilder.flatMap(evaluateFailClosed(evaluationContetwittert)).map(checkMarkFinished)
   }
 }
 

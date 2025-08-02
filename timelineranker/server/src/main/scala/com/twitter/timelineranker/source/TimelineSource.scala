@@ -9,7 +9,7 @@ trait TimelineSource {
   def get(query: TimelineQuery): Future[Timeline] = get(Seq(query)).head
 }
 
-class EmptyTimelineSource extends TimelineSource {
+class EmptyTimelineSource etwittertends TimelineSource {
   def get(queries: Seq[TimelineQuery]): Seq[Future[Timeline]] = {
     queries.map(q => Future.value(Timeline.empty(q.id)))
   }

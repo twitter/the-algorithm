@@ -6,7 +6,7 @@ import com.twitter.scalding.{
   DateRange,
   Days,
   Duration,
-  Execution,
+  Etwitterecution,
   RichDate,
   TypedPipe,
   TypedTsv,
@@ -24,7 +24,7 @@ import com.twitter.simclusters_v2.thriftscala.{
   SemanticCoreEntityWithScore,
   UserToInterestedInClusters
 }
-import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, ScheduledExecutionApp}
+import com.twitter.wtf.scalding.jobs.common.{AdhocEtwitterecutionApp, ScheduledEtwitterecutionApp}
 import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
 import com.twitter.simclusters_v2.scalding.common.Util
 import java.util.TimeZone
@@ -59,38 +59,38 @@ object InterestedInOptOut {
   /**
    * Writes InterestedIn data to HDFS
    */
-  def writeInterestedInOutputExecution(
+  def writeInterestedInOutputEtwitterecution(
     interestedIn: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
     interestedInDataset: KeyValDALDataset[KeyVal[Long, ClustersUserIsInterestedIn]],
     outputPath: String
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     interestedIn
       .map { case (k, v) => KeyVal(k, v) }
-      .writeDALVersionedKeyValExecution(
+      .writeDALVersionedKeyValEtwitterecution(
         interestedInDataset,
-        D.Suffix(outputPath)
+        D.Suffitwitter(outputPath)
       )
   }
 
   /**
    * Convert InterestedIn to thrift structs, then write to HDFS
    */
-  def writeInterestedInThriftOutputExecution(
+  def writeInterestedInThriftOutputEtwitterecution(
     interestedIn: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
     modelVersion: String,
     interestedInThriftDatset: SnapshotDALDataset[UserToInterestedInClusters],
     thriftOutputPath: String,
     dateRange: DateRange
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     interestedIn
       .map {
         case (userId, clusters) =>
           UserToInterestedInClusters(userId, modelVersion, clusters.clusterIdToScores)
       }
-      .writeDALSnapshotExecution(
+      .writeDALSnapshotEtwitterecution(
         interestedInThriftDatset,
         D.Daily,
-        D.Suffix(thriftOutputPath),
+        D.Suffitwitter(thriftOutputPath),
         D.EBLzo(),
         dateRange.end
       )
@@ -102,7 +102,7 @@ capesospy-v2 update --build_locally --start_cron \
   --start_cron interested_in_optout_daily \
   src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
  */
-object InterestedInOptOutDailyBatchJob extends ScheduledExecutionApp {
+object InterestedInOptOutDailyBatchJob etwittertends ScheduledEtwitterecutionApp {
 
   override def firstTime: RichDate = RichDate("2019-11-24")
 
@@ -114,7 +114,7 @@ object InterestedInOptOutDailyBatchJob extends ScheduledExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     val userOptoutEntities =
       SimClustersOptOutUtil
@@ -138,13 +138,13 @@ object InterestedInOptOutDailyBatchJob extends ScheduledExecutionApp {
       .filterOptedOutInterestedIn(interestedIn2020Pipe, userOptoutEntities, clusterToEntities)
       .count("num_users_with_compliant_2020_interestedin")
 
-    val write2020Exec = InterestedInOptOut.writeInterestedInOutputExecution(
+    val write2020Etwitterec = InterestedInOptOut.writeInterestedInOutputEtwitterecution(
       filtered2020InterestedIn,
       SimclustersV2InterestedIn20M145K2020ScalaDataset,
       DataPaths.InterestedIn2020Path
     )
 
-    val write2020ThriftExec = InterestedInOptOut.writeInterestedInThriftOutputExecution(
+    val write2020ThriftEtwitterec = InterestedInOptOut.writeInterestedInThriftOutputEtwitterecution(
       filtered2020InterestedIn,
       ModelVersions.Model20M145K2020,
       SimclustersV2UserToInterestedIn20M145K2020ScalaDataset,
@@ -152,7 +152,7 @@ object InterestedInOptOutDailyBatchJob extends ScheduledExecutionApp {
       dateRange
     )
 
-    val sanityCheck2020Exec = SimClustersOptOutUtil.sanityCheckAndSendEmail(
+    val sanityCheck2020Etwitterec = SimClustersOptOutUtil.sanityCheckAndSendEmail(
       oldNumClustersPerUser = interestedIn2020Pipe.map(_._2.clusterIdToScores.size),
       newNumClustersPerUser = filtered2020InterestedIn.map(_._2.clusterIdToScores.size),
       modelVersion = ModelVersions.Model20M145K2020,
@@ -163,13 +163,13 @@ object InterestedInOptOutDailyBatchJob extends ScheduledExecutionApp {
       .filterOptedOutInterestedIn(interestedInLite2020Pipe, userOptoutEntities, clusterToEntities)
       .count("num_users_with_compliant_2020_interestedin_lite")
 
-    val write2020LiteExec = InterestedInOptOut.writeInterestedInOutputExecution(
+    val write2020LiteEtwitterec = InterestedInOptOut.writeInterestedInOutputEtwitterecution(
       filtered2020InterestedInLite,
       SimclustersV2InterestedInLite20M145K2020ScalaDataset,
       DataPaths.InterestedInLite2020Path
     )
 
-    val write2020LiteThriftExec = InterestedInOptOut.writeInterestedInThriftOutputExecution(
+    val write2020LiteThriftEtwitterec = InterestedInOptOut.writeInterestedInThriftOutputEtwitterecution(
       filtered2020InterestedInLite,
       ModelVersions.Model20M145K2020,
       SimclustersV2UserToInterestedInLite20M145K2020ScalaDataset,
@@ -177,7 +177,7 @@ object InterestedInOptOutDailyBatchJob extends ScheduledExecutionApp {
       dateRange
     )
 
-    val sanityCheck2020LiteExec = SimClustersOptOutUtil.sanityCheckAndSendEmail(
+    val sanityCheck2020LiteEtwitterec = SimClustersOptOutUtil.sanityCheckAndSendEmail(
       oldNumClustersPerUser = interestedInLite2020Pipe.map(_._2.clusterIdToScores.size),
       newNumClustersPerUser = filtered2020InterestedInLite.map(_._2.clusterIdToScores.size),
       modelVersion = ModelVersions.Model20M145K2020,
@@ -185,15 +185,15 @@ object InterestedInOptOutDailyBatchJob extends ScheduledExecutionApp {
     )
 
     Util.printCounters(
-      Execution.zip(
-        Execution.zip(
-          write2020Exec,
-          write2020ThriftExec,
-          sanityCheck2020Exec),
-        Execution.zip(
-          write2020LiteExec,
-          write2020LiteThriftExec,
-          sanityCheck2020LiteExec
+      Etwitterecution.zip(
+        Etwitterecution.zip(
+          write2020Etwitterec,
+          write2020ThriftEtwitterec,
+          sanityCheck2020Etwitterec),
+        Etwitterecution.zip(
+          write2020LiteEtwitterec,
+          write2020LiteThriftEtwitterec,
+          sanityCheck2020LiteEtwitterec
         )
       )
     )
@@ -212,14 +212,14 @@ object InterestedInOptOutDailyBatchJob extends ScheduledExecutionApp {
  --outputDir /user/cassowary/adhoc/interestedin_optout \
  --date 2020-09-03
  */
-object InterestedInOptOutAdhocJob extends AdhocExecutionApp {
+object InterestedInOptOutAdhocJob etwittertends AdhocEtwitterecutionApp {
   override def runOnDateRange(
     args: Args
   )(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val outputDir = args("outputDir")
 
     val interestedInPipe = InterestedInSources
@@ -263,7 +263,7 @@ object InterestedInOptOutAdhocJob extends AdhocExecutionApp {
       }
 
     Util.printCounters(
-      output.writeExecution(TypedTsv(outputDir))
+      output.writeEtwitterecution(TypedTsv(outputDir))
     )
   }
 }

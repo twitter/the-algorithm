@@ -9,7 +9,7 @@ import com.twitter.graphjet.algorithms.filters._
 import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountResponse
 import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountForTweet
 import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountRequestForTweet
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph
+import com.twitter.graphjet.bipartite.NodeMetadataLeftIndetwitteredMultiSegmentBipartiteGraph
 import com.twitter.logging.Logger
 import com.twitter.recos.graph_common.FinagleStatsReceiverWrapper
 import com.twitter.recos.model.SalsaQueryRunner.SalsaRunnerConfig
@@ -35,7 +35,7 @@ import scala.collection.Set
 object TweetRecommendationsRunner {
   private val DefaultTweetTypes: Seq[TweetType] =
     Seq(TweetType.Regular, TweetType.Summary, TweetType.Photo, TweetType.Player)
-  private val DefaultF1ExactSocialProofSize = 1
+  private val DefaultF1EtwitteractSocialProofSize = 1
   private val DefaultRareTweetRecencyMillis: Long = 7.days.inMillis
 
   /**
@@ -65,15 +65,15 @@ object TweetRecommendationsRunner {
         case ThriftRecommendationType.Hashtag => Some(RecommendationType.HASHTAG)
         case ThriftRecommendationType.Url => Some(RecommendationType.URL)
         case _ =>
-          throw new Exception("Unmatched Recommendation Type in getRecommendationTypes")
+          throw new Etwitterception("Unmatched Recommendation Type in getRecommendationTypes")
       }
     }.toSet
   }
 
   private def convertThriftEnumsToJavaEnums(
-    maxResults: Option[Map[ThriftRecommendationType, Int]]
+    matwitterResults: Option[Map[ThriftRecommendationType, Int]]
   ): Map[RecommendationType, Integer] = {
-    maxResults
+    matwitterResults
       .map {
         _.flatMap {
           _ match {
@@ -82,7 +82,7 @@ object TweetRecommendationsRunner {
               Some((RecommendationType.HASHTAG, v: Integer))
             case (ThriftRecommendationType.Url, v) => Some((RecommendationType.URL, v: Integer))
             case _ =>
-              throw new Exception("Unmatched Recommendation Type in convertThriftEnumsToJavaEnums")
+              throw new Etwitterception("Unmatched Recommendation Type in convertThriftEnumsToJavaEnums")
           }
         }
       }
@@ -96,7 +96,7 @@ object TweetRecommendationsRunner {
  * graph and computes recommendations.
  */
 class TweetRecommendationsRunner(
-  bipartiteGraph: NodeMetadataLeftIndexedMultiSegmentBipartiteGraph,
+  bipartiteGraph: NodeMetadataLeftIndetwitteredMultiSegmentBipartiteGraph,
   salsaRunnerConfig: SalsaRunnerConfig,
   statsReceiverWrapper: FinagleStatsReceiverWrapper) {
 
@@ -116,7 +116,7 @@ class TweetRecommendationsRunner(
     magicRecsQueue.offer(
       new TopSecondDegreeByCountForTweet(
         bipartiteGraph,
-        salsaRunnerConfig.expectedNodesToHitInSalsa,
+        salsaRunnerConfig.etwitterpectedNodesToHitInSalsa,
         statsReceiverWrapper.scope(this.getClass.getSimpleName)
       )
     )
@@ -181,8 +181,8 @@ class TweetRecommendationsRunner(
                 whitelistAuthors,
                 new LongOpenHashSet(),
                 statsReceiverWrapper),
-              new ExactUserSocialProofSizeFilter(
-                DefaultF1ExactSocialProofSize,
+              new EtwitteractUserSocialProofSizeFilter(
+                DefaultF1EtwitteractSocialProofSize,
                 validSocialProofs,
                 statsReceiverWrapper
               )
@@ -234,7 +234,7 @@ class TweetRecommendationsRunner(
   ): Option[TopSecondDegreeByCountResponse] = {
     trackBlockStats(stats) {
       val random = new Random()
-      // compute recs -- need to catch and print exceptions here otherwise they are swallowed
+      // compute recs -- need to catch and print etwitterceptions here otherwise they are swallowed
       val magicRecsAttempt =
         Try(magicRecs.computeRecommendations(magicRecsRequest, random)).onFailure { e =>
           magicRecsFailureCounter.incr()
@@ -252,14 +252,14 @@ class TweetRecommendationsRunner(
       request.seedsWithWeights.keys.toArray,
       request.seedsWithWeights.values.toArray
     )
-    val tweetsToExcludeArray = new LongOpenHashSet(request.excludedTweetIds.getOrElse(Nil).toArray)
-    val staleTweetDuration = request.maxTweetAgeInMillis.getOrElse(RecosConfig.maxTweetAgeInMillis)
+    val tweetsToEtwittercludeArray = new LongOpenHashSet(request.etwittercludedTweetIds.getOrElse(Nil).toArray)
+    val staleTweetDuration = request.matwitterTweetAgeInMillis.getOrElse(RecosConfig.matwitterTweetAgeInMillis)
     val staleEngagementDuration =
-      request.maxEngagementAgeInMillis.getOrElse(RecosConfig.maxEngagementAgeInMillis)
+      request.matwitterEngagementAgeInMillis.getOrElse(RecosConfig.matwitterEngagementAgeInMillis)
     val tweetTypes = request.tweetTypes.getOrElse(DefaultTweetTypes)
     val tweetAuthors = new LongOpenHashSet(request.tweetAuthors.getOrElse(Nil).toArray)
-    val excludedTweetAuthors = new LongOpenHashSet(
-      request.excludedTweetAuthors.getOrElse(Nil).toArray)
+    val etwittercludedTweetAuthors = new LongOpenHashSet(
+      request.etwittercludedTweetAuthors.getOrElse(Nil).toArray)
     val validSocialProofs =
       UserTweetEdgeTypeMask.getUserTweetGraphSocialProofTypes(request.socialProofTypes)
 
@@ -269,7 +269,7 @@ class TweetRecommendationsRunner(
           getFiltersByDisplayLocations(
             displayLocation = request.displayLocation,
             whitelistAuthors = tweetAuthors,
-            blacklistAuthors = excludedTweetAuthors,
+            blacklistAuthors = etwittercludedTweetAuthors,
             validSocialProofs = validSocialProofs
           )
       ).asJava
@@ -278,12 +278,12 @@ class TweetRecommendationsRunner(
     new TopSecondDegreeByCountRequestForTweet(
       requesterId,
       leftSeedNodes,
-      tweetsToExcludeArray,
+      tweetsToEtwittercludeArray,
       getRecommendationTypes(request.recommendationTypes).asJava,
-      convertThriftEnumsToJavaEnums(request.maxResultsByType).asJava,
+      convertThriftEnumsToJavaEnums(request.matwitterResultsByType).asJava,
       UserTweetEdgeTypeMask.SIZE,
-      request.maxUserSocialProofSize.getOrElse(RecosConfig.maxUserSocialProofSize),
-      request.maxTweetSocialProofSize.getOrElse(RecosConfig.maxTweetSocialProofSize),
+      request.matwitterUserSocialProofSize.getOrElse(RecosConfig.matwitterUserSocialProofSize),
+      request.matwitterTweetSocialProofSize.getOrElse(RecosConfig.matwitterTweetSocialProofSize),
       convertThriftEnumsToJavaEnums(request.minUserSocialProofSizes).asJava,
       validSocialProofs,
       staleTweetDuration,
@@ -309,7 +309,7 @@ class TweetRecommendationsRunner(
           // if we did not get a magicRecs in time, then fail fast here and immediately put it back
           log.warning("magicRecsQueue polling timeout")
           pollTimeoutCounter.incr()
-          throw new RuntimeException("magicRecs poll timeout")
+          throw new RuntimeEtwitterception("magicRecs poll timeout")
           Nil
         }
       } ensure {

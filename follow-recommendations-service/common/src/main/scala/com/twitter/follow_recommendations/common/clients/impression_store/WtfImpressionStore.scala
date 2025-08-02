@@ -8,8 +8,8 @@ import com.twitter.strato.catalog.Scan.Slice
 import com.twitter.strato.client.Scanner
 import com.twitter.util.Time
 import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class WtfImpressionStore @Inject() (
@@ -18,7 +18,7 @@ class WtfImpressionStore @Inject() (
     Unit,
     ((Long, TDisplayLocation), Long),
     (Long, Int)
-  ]) extends Logging {
+  ]) etwittertends Logging {
   def get(userId: Long, dl: DisplayLocation): Stitch[Seq[WtfImpression]] = {
     val thriftDl = dl.toThrift
     scanner.scan(((userId, thriftDl), Slice.all[Long])).map { impressionsPerDl =>
@@ -34,8 +34,8 @@ class WtfImpressionStore @Inject() (
       wtfImpressions
     } rescue {
       // fail open so that the request can still go through
-      case ex: Throwable =>
-        logger.warn(s"$dl WtfImpressionsStore warn: " + ex.getMessage)
+      case etwitter: Throwable =>
+        logger.warn(s"$dl WtfImpressionsStore warn: " + etwitter.getMessage)
         Stitch.Nil
     }
   }

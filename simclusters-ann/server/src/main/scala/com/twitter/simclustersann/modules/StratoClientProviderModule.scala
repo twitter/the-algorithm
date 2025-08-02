@@ -1,13 +1,13 @@
 package com.twitter.simclustersann.modules
 
 import com.google.inject.Provides
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 import com.twitter.inject.TwitterModule
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.strato.client.Client
 import com.twitter.strato.client.Strato
 
-object StratoClientProviderModule extends TwitterModule {
+object StratoClientProviderModule etwittertends TwitterModule {
 
   @Singleton
   @Provides

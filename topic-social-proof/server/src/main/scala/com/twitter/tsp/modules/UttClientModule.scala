@@ -9,9 +9,9 @@ import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.inject.TwitterModule
 import com.twitter.strato.client.Client
 import com.twitter.topiclisting.clients.utt.UttClient
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
-object UttClientModule extends TwitterModule {
+object UttClientModule etwittertends TwitterModule {
 
   @Provides
   @Singleton
@@ -23,8 +23,8 @@ object UttClientModule extends TwitterModule {
     // Save 2 ^ 18 UTTs. Promising 100% cache rate
     lazy val defaultCacheConfigV2: CacheConfigV2 = CacheConfigV2(262143)
     lazy val uttClientCacheConfigsV2: UttClientCacheConfigsV2 = UttClientCacheConfigsV2(
-      getTaxonomyConfig = defaultCacheConfigV2,
-      getUttTaxonomyConfig = defaultCacheConfigV2,
+      getTatwitteronomyConfig = defaultCacheConfigV2,
+      getUttTatwitteronomyConfig = defaultCacheConfigV2,
       getLeafIds = defaultCacheConfigV2,
       getLeafUttEntities = defaultCacheConfigV2
     )

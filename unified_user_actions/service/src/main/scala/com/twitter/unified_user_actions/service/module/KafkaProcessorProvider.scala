@@ -24,7 +24,7 @@ import org.apache.kafka.common.header.Headers
 import org.apache.kafka.common.record.CompressionType
 import org.apache.kafka.common.serialization.Deserializer
 
-object KafkaProcessorProvider extends Logging {
+object KafkaProcessorProvider etwittertends Logging {
   lazy val actionTypeStatsCounterMap: collection.mutable.Map[String, Counter] =
     collection.mutable.Map.empty
   lazy val productSurfaceTypeStatsCounterMap: collection.mutable.Map[String, Counter] =
@@ -81,7 +81,7 @@ object KafkaProcessorProvider extends Logging {
       updateActionTypeCounters(statsReceiver, v, sinkTopic)
       updateProcessingTimeStats(statsReceiver, v)
 
-      // If we were to enable xDC replicator, then we can safely remove the Zone header since xDC
+      // If we were to enable twitterDC replicator, then we can safely remove the Zone header since twitterDC
       // replicator works in the following way:
       //  - If the message does not have a header, the replicator will assume it is local and
       //    set the header, copy the message
@@ -117,13 +117,13 @@ object KafkaProcessorProvider extends Logging {
     sourceKeyDeserializer: Deserializer[K],
     sourceValueDeserializer: Deserializer[V],
     commitInterval: Duration = ClientConfigs.kafkaCommitIntervalDefault,
-    maxPollRecords: Int = ClientConfigs.consumerMaxPollRecordsDefault,
-    maxPollInterval: Duration = ClientConfigs.consumerMaxPollIntervalDefault,
+    matwitterPollRecords: Int = ClientConfigs.consumerMatwitterPollRecordsDefault,
+    matwitterPollInterval: Duration = ClientConfigs.consumerMatwitterPollIntervalDefault,
     sessionTimeout: Duration = ClientConfigs.consumerSessionTimeoutDefault,
-    fetchMax: StorageUnit = ClientConfigs.consumerFetchMaxDefault,
+    fetchMatwitter: StorageUnit = ClientConfigs.consumerFetchMatwitterDefault,
     fetchMin: StorageUnit = ClientConfigs.consumerFetchMinDefault,
     receiveBuffer: StorageUnit = ClientConfigs.consumerReceiveBufferSizeDefault,
-    processorMaxPendingRequests: Int,
+    processorMatwitterPendingRequests: Int,
     processorWorkerThreads: Int,
     adapter: AbstractAdapter[V, UnKeyed, UnifiedUserAction],
     kafkaSinkTopics: Seq[String],
@@ -171,13 +171,13 @@ object KafkaProcessorProvider extends Logging {
       sourceKeyDeserializer = sourceKeyDeserializer,
       sourceValueDeserializer = sourceValueDeserializer,
       commitInterval = commitInterval,
-      maxPollRecords = maxPollRecords,
-      maxPollInterval = maxPollInterval,
+      matwitterPollRecords = matwitterPollRecords,
+      matwitterPollInterval = matwitterPollInterval,
       sessionTimeout = sessionTimeout,
-      fetchMax = fetchMax,
+      fetchMatwitter = fetchMatwitter,
       fetchMin = fetchMin,
       receiveBuffer = receiveBuffer,
-      processorMaxPendingRequests = processorMaxPendingRequests,
+      processorMatwitterPendingRequests = processorMatwitterPendingRequests,
       processorWorkerThreads = processorWorkerThreads,
       adapter = adapter,
       kafkaProducersAndSinkTopics =
@@ -202,13 +202,13 @@ object KafkaProcessorProvider extends Logging {
     sourceKeyDeserializer: Deserializer[K],
     sourceValueDeserializer: Deserializer[V],
     commitInterval: Duration = ClientConfigs.kafkaCommitIntervalDefault,
-    maxPollRecords: Int = ClientConfigs.consumerMaxPollRecordsDefault,
-    maxPollInterval: Duration = ClientConfigs.consumerMaxPollIntervalDefault,
+    matwitterPollRecords: Int = ClientConfigs.consumerMatwitterPollRecordsDefault,
+    matwitterPollInterval: Duration = ClientConfigs.consumerMatwitterPollIntervalDefault,
     sessionTimeout: Duration = ClientConfigs.consumerSessionTimeoutDefault,
-    fetchMax: StorageUnit = ClientConfigs.consumerFetchMaxDefault,
+    fetchMatwitter: StorageUnit = ClientConfigs.consumerFetchMatwitterDefault,
     fetchMin: StorageUnit = ClientConfigs.consumerFetchMinDefault,
     receiveBuffer: StorageUnit = ClientConfigs.consumerReceiveBufferSizeDefault,
-    processorMaxPendingRequests: Int,
+    processorMatwitterPendingRequests: Int,
     processorWorkerThreads: Int,
     adapter: AbstractAdapter[V, OUTK, OUTV],
     kafkaProducersAndSinkTopics: Seq[(BlockingFinagleKafkaProducer[OUTK, OUTV], String)],
@@ -227,10 +227,10 @@ object KafkaProcessorProvider extends Logging {
         valueSerde = sourceValueDeserializer,
         groupId = kafkaGroupId,
         autoCommit = false,
-        maxPollRecords = maxPollRecords,
-        maxPollInterval = maxPollInterval,
+        matwitterPollRecords = matwitterPollRecords,
+        matwitterPollInterval = matwitterPollInterval,
         sessionTimeout = sessionTimeout,
-        fetchMax = fetchMax,
+        fetchMatwitter = fetchMatwitter,
         fetchMin = fetchMin,
         receiveBuffer = receiveBuffer,
         trustStoreLocationOpt = trustStoreLocationOpt
@@ -262,7 +262,7 @@ object KafkaProcessorProvider extends Logging {
       topic = kafkaSourceTopic,
       consumer = threadSafeKafkaClient,
       processor = publish,
-      maxPendingRequests = processorMaxPendingRequests,
+      matwitterPendingRequests = processorMatwitterPendingRequests,
       workerThreads = processorWorkerThreads,
       commitIntervalMs = commitInterval.inMilliseconds,
       statsReceiver = statsReceiver

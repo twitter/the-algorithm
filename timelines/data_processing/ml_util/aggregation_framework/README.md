@@ -2,7 +2,7 @@ Overview
 ========
 
 
-The **aggregation framework** is a set of libraries and utilities that allows teams to flexibly
+The **aggregation framework** is a set of libraries and utilities that allows teams to fletwitteribly
 compute aggregate (counting) features in both batch and in real-time. Aggregate features can capture
 historical interactions between on arbitrary entities (and sets thereof), conditional on provided features
 and labels.
@@ -15,7 +15,7 @@ What are some features we can compute?
 
 The framework supports computing aggregate features on provided grouping keys. The only constraint is that these keys are sparse binary features (or are sets thereof).
 
-For example, a common use case is to calculate a user's past engagement history with various types of tweets (photo, video, retweets, etc.), specific authors, specific in-network engagers or any other entity the user has interacted with and that could provide signal. In this case, the underlying aggregation keys are `userId`, `(userId, authorId)` or `(userId, engagerId)`.
+For etwitterample, a common use case is to calculate a user's past engagement history with various types of tweets (photo, video, retweets, etc.), specific authors, specific in-network engagers or any other entity the user has interacted with and that could provide signal. In this case, the underlying aggregation keys are `userId`, `(userId, authorId)` or `(userId, engagerId)`.
 
 In Timelines and MagicRecs, we also compute custom aggregate engagement counts on every `tweetId`. Similary, other aggregations are possible, perhaps on `advertiserId` or `mediaId` as long as the grouping key is sparse binary.
 
@@ -29,7 +29,7 @@ aggregate features. These are then uploaded to Manhattan for online hydration.
 Online, we support the real-time aggregation of DataRecords through Storm with a backing memcache that can be queried
 for the real-time aggregate features.
 
-Additional documentation exists in the [docs folder](docs)
+Additional documentation etwitterists in the [docs folder](docs)
 
 
 Where is this used?

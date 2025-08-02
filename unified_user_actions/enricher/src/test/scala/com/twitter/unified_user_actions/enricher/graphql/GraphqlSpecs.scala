@@ -7,8 +7,8 @@ import com.twitter.util.Throw
 import com.twitter.util.Try
 import org.scalatest.matchers.should.Matchers
 
-class GraphqlSpecs extends Test with Matchers {
-  trait Fixtures {
+class GraphqlSpecs etwittertends Test with Matchers {
+  trait Fitwittertures {
     val sampleError = """
       |{
       |  "errors": [
@@ -44,9 +44,9 @@ class GraphqlSpecs extends Test with Matchers {
         |}
         |""".stripMargin
 
-    val sampleValidRspExpected = Return(
+    val sampleValidRspEtwitterpected = Return(
       Set(("data.tweet_result_by_rest_id.result.core.user.legacy.id_str", "12")))
-    val sampleErrorExpected = Throw(
+    val sampleErrorEtwitterpected = Throw(
       GraphqlRspErrors(
         DynMap.from(
           "errors" -> List(
@@ -63,9 +63,9 @@ class GraphqlSpecs extends Test with Matchers {
   }
 
   test("Graphql Response Parser") {
-    new Fixtures {
-      toFlattened(sampleValidRsp) shouldBe sampleValidRspExpected
-      toFlattened(sampleError) shouldBe sampleErrorExpected
+    new Fitwittertures {
+      toFlattened(sampleValidRsp) shouldBe sampleValidRspEtwitterpected
+      toFlattened(sampleError) shouldBe sampleErrorEtwitterpected
     }
   }
 }

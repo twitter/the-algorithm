@@ -8,19 +8,19 @@ import com.twitter.follow_recommendations.common.models.Reason
 import com.twitter.onboarding.relevance.features.strongtie.{
   StrongTieFeatures => StrongTieFeaturesWrapper
 }
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.stitch.Stitch
 import com.twitter.timelines.configapi.HasParams
 import com.twitter.wtf.scalding.jobs.strong_tie_prediction.STPRecord
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class OnlineSTPSourceWithDeepbirdV2Scorer @Inject() (
   dbv2StpScorer: Dbv2StpScorer,
   stpGraphBuilder: STPGraphBuilder,
   baseStatReceiver: StatsReceiver)
-    extends BaseOnlineSTPSource(stpGraphBuilder, baseStatReceiver) {
+    etwittertends BaseOnlineSTPSource(stpGraphBuilder, baseStatReceiver) {
 
   private val dbv2ScorerUsedCounter = statsReceiver.counter("dbv2_scorer_used")
   private val dbv2ScorerFailureCounter = statsReceiver.counter("dbv2_scorer_failure")
@@ -28,7 +28,7 @@ class OnlineSTPSourceWithDeepbirdV2Scorer @Inject() (
 
   override def getCandidates(
     records: Seq[STPRecord],
-    request: HasClientContext with HasParams with HasRecentFollowedUserIds,
+    request: HasClientContetwittert with HasParams with HasRecentFollowedUserIds,
   ): Stitch[Seq[CandidateUser]] = {
     val possibleCandidates: Seq[Stitch[Option[CandidateUser]]] = records.map { trainingRecord =>
       dbv2ScorerUsedCounter.incr()
@@ -67,10 +67,10 @@ object OnlineSTPSourceWithDeepbirdV2Scorer {
 
   // In below are the necessary functions to calibrate the scores such that the means are aligned.
   private val EPS: Double = 1e-8
-  private val e: Double = math.exp(1)
-  private def sigmoid(x: Double): Double = math.pow(e, x) / (math.pow(e, x) + 1)
+  private val e: Double = math.etwitterp(1)
+  private def sigmoid(twitter: Double): Double = math.pow(e, twitter) / (math.pow(e, twitter) + 1)
   // We add an EPS to the denominator to avoid division by 0.
-  private def logit(x: Double): Double = math.log(x / (1 - x + EPS))
-  def logitSubtraction(x: Double): Double = sigmoid(
-    logit(x) - (logit(dbv2MeanScore) - logit(legacyMeanScore)))
+  private def logit(twitter: Double): Double = math.log(twitter / (1 - twitter + EPS))
+  def logitSubtraction(twitter: Double): Double = sigmoid(
+    logit(twitter) - (logit(dbv2MeanScore) - logit(legacyMeanScore)))
 }

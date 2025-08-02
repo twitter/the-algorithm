@@ -2,8 +2,8 @@
 // DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
 
 #![allow(unused_imports)]
-#![allow(unused_extern_crates)]
-#![allow(clippy::too_many_arguments, clippy::type_complexity, clippy::vec_box)]
+#![allow(unused_etwittertern_crates)]
+#![allow(clippy::too_many_arguments, clippy::type_completwitterity, clippy::vec_botwitter)]
 #![cfg_attr(rustfmt, rustfmt_skip)]
 
 use std::cell::RefCell;
@@ -19,33 +19,33 @@ use thrift::OrderedFloat;
 use thrift::{ApplicationError, ApplicationErrorKind, ProtocolError, ProtocolErrorKind, TThriftClient};
 use thrift::protocol::{TFieldIdentifier, TListIdentifier, TMapIdentifier, TMessageIdentifier, TMessageType, TInputProtocol, TOutputProtocol, TSerializable, TSetIdentifier, TStructIdentifier, TType};
 use thrift::protocol::field_id;
-use thrift::protocol::verify_expected_message_type;
-use thrift::protocol::verify_expected_sequence_number;
-use thrift::protocol::verify_expected_service_call;
-use thrift::protocol::verify_required_field_exists;
+use thrift::protocol::verify_etwitterpected_message_type;
+use thrift::protocol::verify_etwitterpected_sequence_number;
+use thrift::protocol::verify_etwitterpected_service_call;
+use thrift::protocol::verify_required_field_etwitterists;
 use thrift::server::TProcessor;
 
 use crate::data;
 
 //
-// PredictionServiceException
+// PredictionServiceEtwitterception
 //
 
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-pub struct PredictionServiceException {
+pub struct PredictionServiceEtwitterception {
   pub description: Option<String>,
 }
 
-impl PredictionServiceException {
-  pub fn new<F1>(description: F1) -> PredictionServiceException where F1: Into<Option<String>> {
-    PredictionServiceException {
+impl PredictionServiceEtwitterception {
+  pub fn new<F1>(description: F1) -> PredictionServiceEtwitterception where F1: Into<Option<String>> {
+    PredictionServiceEtwitterception {
       description: description.into(),
     }
   }
 }
 
-impl TSerializable for PredictionServiceException {
-  fn read_from_in_protocol(i_prot: &mut dyn TInputProtocol) -> thrift::Result<PredictionServiceException> {
+impl TSerializable for PredictionServiceEtwitterception {
+  fn read_from_in_protocol(i_prot: &mut dyn TInputProtocol) -> thrift::Result<PredictionServiceEtwitterception> {
     i_prot.read_struct_begin()?;
     let mut f_1: Option<String> = Some("".to_owned());
     loop {
@@ -66,13 +66,13 @@ impl TSerializable for PredictionServiceException {
       i_prot.read_field_end()?;
     }
     i_prot.read_struct_end()?;
-    let ret = PredictionServiceException {
+    let ret = PredictionServiceEtwitterception {
       description: f_1,
     };
     Ok(ret)
   }
   fn write_to_out_protocol(&self, o_prot: &mut dyn TOutputProtocol) -> thrift::Result<()> {
-    let struct_ident = TStructIdentifier::new("PredictionServiceException");
+    let struct_ident = TStructIdentifier::new("PredictionServiceEtwitterception");
     o_prot.write_struct_begin(&struct_ident)?;
     if let Some(ref fld_var) = self.description {
       o_prot.write_field_begin(&TFieldIdentifier::new("description", TType::String, 1))?;
@@ -84,25 +84,25 @@ impl TSerializable for PredictionServiceException {
   }
 }
 
-impl Default for PredictionServiceException {
+impl Default for PredictionServiceEtwitterception {
   fn default() -> Self {
-    PredictionServiceException{
+    PredictionServiceEtwitterception{
       description: Some("".to_owned()),
     }
   }
 }
 
-impl Error for PredictionServiceException {}
+impl Error for PredictionServiceEtwitterception {}
 
-impl From<PredictionServiceException> for thrift::Error {
-  fn from(e: PredictionServiceException) -> Self {
-    thrift::Error::User(Box::new(e))
+impl From<PredictionServiceEtwitterception> for thrift::Error {
+  fn from(e: PredictionServiceEtwitterception) -> Self {
+    thrift::Error::User(Botwitter::new(e))
   }
 }
 
-impl Display for PredictionServiceException {
+impl Display for PredictionServiceEtwitterception {
   fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-    write!(f, "remote service threw PredictionServiceException")
+    write!(f, "remote service threw PredictionServiceEtwitterception")
   }
 }
 
@@ -145,9 +145,9 @@ impl TSerializable for PredictionRequest {
       i_prot.read_field_end()?;
     }
     i_prot.read_struct_end()?;
-    verify_required_field_exists("PredictionRequest.features", &f_1)?;
+    verify_required_field_etwitterists("PredictionRequest.features", &f_1)?;
     let ret = PredictionRequest {
-      features: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      features: f_1.etwitterpect("auto-generated code should have checked for presence of required fields"),
     };
     Ok(ret)
   }
@@ -201,9 +201,9 @@ impl TSerializable for PredictionResponse {
       i_prot.read_field_end()?;
     }
     i_prot.read_struct_end()?;
-    verify_required_field_exists("PredictionResponse.prediction", &f_1)?;
+    verify_required_field_etwitterists("PredictionResponse.prediction", &f_1)?;
     let ret = PredictionResponse {
-      prediction: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      prediction: f_1.etwitterpect("auto-generated code should have checked for presence of required fields"),
     };
     Ok(ret)
   }
@@ -270,9 +270,9 @@ impl TSerializable for BatchPredictionRequest {
       i_prot.read_field_end()?;
     }
     i_prot.read_struct_end()?;
-    verify_required_field_exists("BatchPredictionRequest.individual_features_list", &f_1)?;
+    verify_required_field_etwitterists("BatchPredictionRequest.individual_features_list", &f_1)?;
     let ret = BatchPredictionRequest {
-      individual_features_list: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      individual_features_list: f_1.etwitterpect("auto-generated code should have checked for presence of required fields"),
       common_features: f_2,
     };
     Ok(ret)
@@ -342,9 +342,9 @@ impl TSerializable for BatchPredictionResponse {
       i_prot.read_field_end()?;
     }
     i_prot.read_struct_end()?;
-    verify_required_field_exists("BatchPredictionResponse.predictions", &f_1)?;
+    verify_required_field_etwitterists("BatchPredictionResponse.predictions", &f_1)?;
     let ret = BatchPredictionResponse {
-      predictions: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      predictions: f_1.etwitterpect("auto-generated code should have checked for presence of required fields"),
     };
     Ok(ret)
   }
@@ -443,20 +443,20 @@ impl Default for DataRecordPair {
 }
 
 //
-// PredictionTrainingExample
+// PredictionTrainingEtwitterample
 //
 
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
-pub struct PredictionTrainingExample {
+pub struct PredictionTrainingEtwitterample {
   pub features: Option<data::DataRecord>,
   pub features_for_pairwise_learning: Option<DataRecordPair>,
   pub compact_features: Option<data::CompactDataRecord>,
   pub compressed_data_record: Option<Vec<u8>>,
 }
 
-impl PredictionTrainingExample {
-  pub fn new<F1, F2, F3, F4>(features: F1, features_for_pairwise_learning: F2, compact_features: F3, compressed_data_record: F4) -> PredictionTrainingExample where F1: Into<Option<data::DataRecord>>, F2: Into<Option<DataRecordPair>>, F3: Into<Option<data::CompactDataRecord>>, F4: Into<Option<Vec<u8>>> {
-    PredictionTrainingExample {
+impl PredictionTrainingEtwitterample {
+  pub fn new<F1, F2, F3, F4>(features: F1, features_for_pairwise_learning: F2, compact_features: F3, compressed_data_record: F4) -> PredictionTrainingEtwitterample where F1: Into<Option<data::DataRecord>>, F2: Into<Option<DataRecordPair>>, F3: Into<Option<data::CompactDataRecord>>, F4: Into<Option<Vec<u8>>> {
+    PredictionTrainingEtwitterample {
       features: features.into(),
       features_for_pairwise_learning: features_for_pairwise_learning.into(),
       compact_features: compact_features.into(),
@@ -465,8 +465,8 @@ impl PredictionTrainingExample {
   }
 }
 
-impl TSerializable for PredictionTrainingExample {
-  fn read_from_in_protocol(i_prot: &mut dyn TInputProtocol) -> thrift::Result<PredictionTrainingExample> {
+impl TSerializable for PredictionTrainingEtwitterample {
+  fn read_from_in_protocol(i_prot: &mut dyn TInputProtocol) -> thrift::Result<PredictionTrainingEtwitterample> {
     i_prot.read_struct_begin()?;
     let mut f_1: Option<data::DataRecord> = None;
     let mut f_2: Option<DataRecordPair> = None;
@@ -502,7 +502,7 @@ impl TSerializable for PredictionTrainingExample {
       i_prot.read_field_end()?;
     }
     i_prot.read_struct_end()?;
-    let ret = PredictionTrainingExample {
+    let ret = PredictionTrainingEtwitterample {
       features: f_1,
       features_for_pairwise_learning: f_2,
       compact_features: f_3,
@@ -511,7 +511,7 @@ impl TSerializable for PredictionTrainingExample {
     Ok(ret)
   }
   fn write_to_out_protocol(&self, o_prot: &mut dyn TOutputProtocol) -> thrift::Result<()> {
-    let struct_ident = TStructIdentifier::new("PredictionTrainingExample");
+    let struct_ident = TStructIdentifier::new("PredictionTrainingEtwitterample");
     o_prot.write_struct_begin(&struct_ident)?;
     if let Some(ref fld_var) = self.features {
       o_prot.write_field_begin(&TFieldIdentifier::new("features", TType::Struct, 1))?;
@@ -538,9 +538,9 @@ impl TSerializable for PredictionTrainingExample {
   }
 }
 
-impl Default for PredictionTrainingExample {
+impl Default for PredictionTrainingEtwitterample {
   fn default() -> Self {
-    PredictionTrainingExample{
+    PredictionTrainingEtwitterample{
       features: None,
       features_for_pairwise_learning: None,
       compact_features: None,
@@ -596,14 +596,14 @@ impl <C: TThriftClient + TPredictionServiceSyncClientMarker> TPredictionServiceS
     )?;
     {
       let message_ident = self.i_prot_mut().read_message_begin()?;
-      verify_expected_sequence_number(self.sequence_number(), message_ident.sequence_number)?;
-      verify_expected_service_call("getPrediction", &message_ident.name)?;
-      if message_ident.message_type == TMessageType::Exception {
+      verify_etwitterpected_sequence_number(self.sequence_number(), message_ident.sequence_number)?;
+      verify_etwitterpected_service_call("getPrediction", &message_ident.name)?;
+      if message_ident.message_type == TMessageType::Etwitterception {
         let remote_error = thrift::Error::read_application_error_from_in_protocol(self.i_prot_mut())?;
         self.i_prot_mut().read_message_end()?;
         return Err(thrift::Error::Application(remote_error))
       }
-      verify_expected_message_type(TMessageType::Reply, message_ident.message_type)?;
+      verify_etwitterpected_message_type(TMessageType::Reply, message_ident.message_type)?;
       let result = PredictionServiceGetPredictionResult::read_from_in_protocol(self.i_prot_mut())?;
       self.i_prot_mut().read_message_end()?;
       result.ok_or()
@@ -623,14 +623,14 @@ impl <C: TThriftClient + TPredictionServiceSyncClientMarker> TPredictionServiceS
     )?;
     {
       let message_ident = self.i_prot_mut().read_message_begin()?;
-      verify_expected_sequence_number(self.sequence_number(), message_ident.sequence_number)?;
-      verify_expected_service_call("getBatchPrediction", &message_ident.name)?;
-      if message_ident.message_type == TMessageType::Exception {
+      verify_etwitterpected_sequence_number(self.sequence_number(), message_ident.sequence_number)?;
+      verify_etwitterpected_service_call("getBatchPrediction", &message_ident.name)?;
+      if message_ident.message_type == TMessageType::Etwitterception {
         let remote_error = thrift::Error::read_application_error_from_in_protocol(self.i_prot_mut())?;
         self.i_prot_mut().read_message_end()?;
         return Err(thrift::Error::Application(remote_error))
       }
-      verify_expected_message_type(TMessageType::Reply, message_ident.message_type)?;
+      verify_etwitterpected_message_type(TMessageType::Reply, message_ident.message_type)?;
       let result = PredictionServiceGetBatchPredictionResult::read_from_in_protocol(self.i_prot_mut())?;
       self.i_prot_mut().read_message_end()?;
       result.ok_or()
@@ -674,7 +674,7 @@ impl TPredictionServiceProcessFunctions {
       Ok(handler_return) => {
         let message_ident = TMessageIdentifier::new("getPrediction", TMessageType::Reply, incoming_sequence_number);
         o_prot.write_message_begin(&message_ident)?;
-        let ret = PredictionServiceGetPredictionResult { result_value: Some(handler_return), prediction_service_exception: None };
+        let ret = PredictionServiceGetPredictionResult { result_value: Some(handler_return), prediction_service_etwitterception: None };
         ret.write_to_out_protocol(o_prot)?;
         o_prot.write_message_end()?;
         o_prot.flush()
@@ -682,9 +682,9 @@ impl TPredictionServiceProcessFunctions {
       Err(e) => {
         match e {
           thrift::Error::User(usr_err) => {
-            if usr_err.downcast_ref::<PredictionServiceException>().is_some() {
-              let err = usr_err.downcast::<PredictionServiceException>().expect("downcast already checked");
-              let ret_err = PredictionServiceGetPredictionResult{ result_value: None, prediction_service_exception: Some(*err) };
+            if usr_err.downcast_ref::<PredictionServiceEtwitterception>().is_some() {
+              let err = usr_err.downcast::<PredictionServiceEtwitterception>().etwitterpect("downcast already checked");
+              let ret_err = PredictionServiceGetPredictionResult{ result_value: None, prediction_service_etwitterception: Some(*err) };
               let message_ident = TMessageIdentifier::new("getPrediction", TMessageType::Reply, incoming_sequence_number);
               o_prot.write_message_begin(&message_ident)?;
               ret_err.write_to_out_protocol(o_prot)?;
@@ -697,7 +697,7 @@ impl TPredictionServiceProcessFunctions {
                   usr_err.to_string()
                 )
               };
-              let message_ident = TMessageIdentifier::new("getPrediction", TMessageType::Exception, incoming_sequence_number);
+              let message_ident = TMessageIdentifier::new("getPrediction", TMessageType::Etwitterception, incoming_sequence_number);
               o_prot.write_message_begin(&message_ident)?;
               thrift::Error::write_application_error_to_out_protocol(&ret_err, o_prot)?;
               o_prot.write_message_end()?;
@@ -705,7 +705,7 @@ impl TPredictionServiceProcessFunctions {
             }
           },
           thrift::Error::Application(app_err) => {
-            let message_ident = TMessageIdentifier::new("getPrediction", TMessageType::Exception, incoming_sequence_number);
+            let message_ident = TMessageIdentifier::new("getPrediction", TMessageType::Etwitterception, incoming_sequence_number);
             o_prot.write_message_begin(&message_ident)?;
             thrift::Error::write_application_error_to_out_protocol(&app_err, o_prot)?;
             o_prot.write_message_end()?;
@@ -718,7 +718,7 @@ impl TPredictionServiceProcessFunctions {
                 e.to_string()
               )
             };
-            let message_ident = TMessageIdentifier::new("getPrediction", TMessageType::Exception, incoming_sequence_number);
+            let message_ident = TMessageIdentifier::new("getPrediction", TMessageType::Etwitterception, incoming_sequence_number);
             o_prot.write_message_begin(&message_ident)?;
             thrift::Error::write_application_error_to_out_protocol(&ret_err, o_prot)?;
             o_prot.write_message_end()?;
@@ -734,7 +734,7 @@ impl TPredictionServiceProcessFunctions {
       Ok(handler_return) => {
         let message_ident = TMessageIdentifier::new("getBatchPrediction", TMessageType::Reply, incoming_sequence_number);
         o_prot.write_message_begin(&message_ident)?;
-        let ret = PredictionServiceGetBatchPredictionResult { result_value: Some(handler_return), prediction_service_exception: None };
+        let ret = PredictionServiceGetBatchPredictionResult { result_value: Some(handler_return), prediction_service_etwitterception: None };
         ret.write_to_out_protocol(o_prot)?;
         o_prot.write_message_end()?;
         o_prot.flush()
@@ -742,9 +742,9 @@ impl TPredictionServiceProcessFunctions {
       Err(e) => {
         match e {
           thrift::Error::User(usr_err) => {
-            if usr_err.downcast_ref::<PredictionServiceException>().is_some() {
-              let err = usr_err.downcast::<PredictionServiceException>().expect("downcast already checked");
-              let ret_err = PredictionServiceGetBatchPredictionResult{ result_value: None, prediction_service_exception: Some(*err) };
+            if usr_err.downcast_ref::<PredictionServiceEtwitterception>().is_some() {
+              let err = usr_err.downcast::<PredictionServiceEtwitterception>().etwitterpect("downcast already checked");
+              let ret_err = PredictionServiceGetBatchPredictionResult{ result_value: None, prediction_service_etwitterception: Some(*err) };
               let message_ident = TMessageIdentifier::new("getBatchPrediction", TMessageType::Reply, incoming_sequence_number);
               o_prot.write_message_begin(&message_ident)?;
               ret_err.write_to_out_protocol(o_prot)?;
@@ -757,7 +757,7 @@ impl TPredictionServiceProcessFunctions {
                   usr_err.to_string()
                 )
               };
-              let message_ident = TMessageIdentifier::new("getBatchPrediction", TMessageType::Exception, incoming_sequence_number);
+              let message_ident = TMessageIdentifier::new("getBatchPrediction", TMessageType::Etwitterception, incoming_sequence_number);
               o_prot.write_message_begin(&message_ident)?;
               thrift::Error::write_application_error_to_out_protocol(&ret_err, o_prot)?;
               o_prot.write_message_end()?;
@@ -765,7 +765,7 @@ impl TPredictionServiceProcessFunctions {
             }
           },
           thrift::Error::Application(app_err) => {
-            let message_ident = TMessageIdentifier::new("getBatchPrediction", TMessageType::Exception, incoming_sequence_number);
+            let message_ident = TMessageIdentifier::new("getBatchPrediction", TMessageType::Etwitterception, incoming_sequence_number);
             o_prot.write_message_begin(&message_ident)?;
             thrift::Error::write_application_error_to_out_protocol(&app_err, o_prot)?;
             o_prot.write_message_end()?;
@@ -778,7 +778,7 @@ impl TPredictionServiceProcessFunctions {
                 e.to_string()
               )
             };
-            let message_ident = TMessageIdentifier::new("getBatchPrediction", TMessageType::Exception, incoming_sequence_number);
+            let message_ident = TMessageIdentifier::new("getBatchPrediction", TMessageType::Etwitterception, incoming_sequence_number);
             o_prot.write_message_begin(&message_ident)?;
             thrift::Error::write_application_error_to_out_protocol(&ret_err, o_prot)?;
             o_prot.write_message_end()?;
@@ -846,9 +846,9 @@ impl PredictionServiceGetPredictionArgs {
       i_prot.read_field_end()?;
     }
     i_prot.read_struct_end()?;
-    verify_required_field_exists("PredictionServiceGetPredictionArgs.request", &f_1)?;
+    verify_required_field_etwitterists("PredictionServiceGetPredictionArgs.request", &f_1)?;
     let ret = PredictionServiceGetPredictionArgs {
-      request: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      request: f_1.etwitterpect("auto-generated code should have checked for presence of required fields"),
     };
     Ok(ret)
   }
@@ -870,13 +870,13 @@ impl PredictionServiceGetPredictionArgs {
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 struct PredictionServiceGetPredictionResult {
   result_value: Option<PredictionResponse>,
-  prediction_service_exception: Option<PredictionServiceException>,
+  prediction_service_etwitterception: Option<PredictionServiceEtwitterception>,
 }
 
 impl PredictionServiceGetPredictionResult {
   fn ok_or(self) -> thrift::Result<PredictionResponse> {
-    if self.prediction_service_exception.is_some() {
-      Err(thrift::Error::User(Box::new(self.prediction_service_exception.unwrap())))
+    if self.prediction_service_etwitterception.is_some() {
+      Err(thrift::Error::User(Botwitter::new(self.prediction_service_etwitterception.unwrap())))
     } else if self.result_value.is_some() {
       Ok(self.result_value.unwrap())
     } else {
@@ -893,7 +893,7 @@ impl PredictionServiceGetPredictionResult {
   fn read_from_in_protocol(i_prot: &mut dyn TInputProtocol) -> thrift::Result<PredictionServiceGetPredictionResult> {
     i_prot.read_struct_begin()?;
     let mut f_0: Option<PredictionResponse> = None;
-    let mut f_1: Option<PredictionServiceException> = None;
+    let mut f_1: Option<PredictionServiceEtwitterception> = None;
     loop {
       let field_ident = i_prot.read_field_begin()?;
       if field_ident.field_type == TType::Stop {
@@ -906,7 +906,7 @@ impl PredictionServiceGetPredictionResult {
           f_0 = Some(val);
         },
         1 => {
-          let val = PredictionServiceException::read_from_in_protocol(i_prot)?;
+          let val = PredictionServiceEtwitterception::read_from_in_protocol(i_prot)?;
           f_1 = Some(val);
         },
         _ => {
@@ -918,7 +918,7 @@ impl PredictionServiceGetPredictionResult {
     i_prot.read_struct_end()?;
     let ret = PredictionServiceGetPredictionResult {
       result_value: f_0,
-      prediction_service_exception: f_1,
+      prediction_service_etwitterception: f_1,
     };
     Ok(ret)
   }
@@ -930,8 +930,8 @@ impl PredictionServiceGetPredictionResult {
       fld_var.write_to_out_protocol(o_prot)?;
       o_prot.write_field_end()?
     }
-    if let Some(ref fld_var) = self.prediction_service_exception {
-      o_prot.write_field_begin(&TFieldIdentifier::new("predictionServiceException", TType::Struct, 1))?;
+    if let Some(ref fld_var) = self.prediction_service_etwitterception {
+      o_prot.write_field_begin(&TFieldIdentifier::new("predictionServiceEtwitterception", TType::Struct, 1))?;
       fld_var.write_to_out_protocol(o_prot)?;
       o_prot.write_field_end()?
     }
@@ -971,9 +971,9 @@ impl PredictionServiceGetBatchPredictionArgs {
       i_prot.read_field_end()?;
     }
     i_prot.read_struct_end()?;
-    verify_required_field_exists("PredictionServiceGetBatchPredictionArgs.batch_request", &f_1)?;
+    verify_required_field_etwitterists("PredictionServiceGetBatchPredictionArgs.batch_request", &f_1)?;
     let ret = PredictionServiceGetBatchPredictionArgs {
-      batch_request: f_1.expect("auto-generated code should have checked for presence of required fields"),
+      batch_request: f_1.etwitterpect("auto-generated code should have checked for presence of required fields"),
     };
     Ok(ret)
   }
@@ -995,13 +995,13 @@ impl PredictionServiceGetBatchPredictionArgs {
 #[derive(Clone, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 struct PredictionServiceGetBatchPredictionResult {
   result_value: Option<BatchPredictionResponse>,
-  prediction_service_exception: Option<PredictionServiceException>,
+  prediction_service_etwitterception: Option<PredictionServiceEtwitterception>,
 }
 
 impl PredictionServiceGetBatchPredictionResult {
   fn ok_or(self) -> thrift::Result<BatchPredictionResponse> {
-    if self.prediction_service_exception.is_some() {
-      Err(thrift::Error::User(Box::new(self.prediction_service_exception.unwrap())))
+    if self.prediction_service_etwitterception.is_some() {
+      Err(thrift::Error::User(Botwitter::new(self.prediction_service_etwitterception.unwrap())))
     } else if self.result_value.is_some() {
       Ok(self.result_value.unwrap())
     } else {
@@ -1018,7 +1018,7 @@ impl PredictionServiceGetBatchPredictionResult {
   fn read_from_in_protocol(i_prot: &mut dyn TInputProtocol) -> thrift::Result<PredictionServiceGetBatchPredictionResult> {
     i_prot.read_struct_begin()?;
     let mut f_0: Option<BatchPredictionResponse> = None;
-    let mut f_1: Option<PredictionServiceException> = None;
+    let mut f_1: Option<PredictionServiceEtwitterception> = None;
     loop {
       let field_ident = i_prot.read_field_begin()?;
       if field_ident.field_type == TType::Stop {
@@ -1031,7 +1031,7 @@ impl PredictionServiceGetBatchPredictionResult {
           f_0 = Some(val);
         },
         1 => {
-          let val = PredictionServiceException::read_from_in_protocol(i_prot)?;
+          let val = PredictionServiceEtwitterception::read_from_in_protocol(i_prot)?;
           f_1 = Some(val);
         },
         _ => {
@@ -1043,7 +1043,7 @@ impl PredictionServiceGetBatchPredictionResult {
     i_prot.read_struct_end()?;
     let ret = PredictionServiceGetBatchPredictionResult {
       result_value: f_0,
-      prediction_service_exception: f_1,
+      prediction_service_etwitterception: f_1,
     };
     Ok(ret)
   }
@@ -1055,8 +1055,8 @@ impl PredictionServiceGetBatchPredictionResult {
       fld_var.write_to_out_protocol(o_prot)?;
       o_prot.write_field_end()?
     }
-    if let Some(ref fld_var) = self.prediction_service_exception {
-      o_prot.write_field_begin(&TFieldIdentifier::new("predictionServiceException", TType::Struct, 1))?;
+    if let Some(ref fld_var) = self.prediction_service_etwitterception {
+      o_prot.write_field_begin(&TFieldIdentifier::new("predictionServiceEtwitterception", TType::Struct, 1))?;
       fld_var.write_to_out_protocol(o_prot)?;
       o_prot.write_field_end()?
     }

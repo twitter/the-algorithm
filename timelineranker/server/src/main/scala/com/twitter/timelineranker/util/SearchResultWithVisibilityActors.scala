@@ -11,7 +11,7 @@ import com.twitter.timelines.visibility.model.VisibilityCheckUser
 case class SearchResultWithVisibilityActors(
   searchResult: ThriftSearchResult,
   statsReceiver: StatsReceiver)
-    extends HasVisibilityActors {
+    etwittertends HasVisibilityActors {
 
   private[this] val searchResultWithoutMetadata =
     statsReceiver.counter("searchResultWithoutMetadata")
@@ -40,7 +40,7 @@ case class SearchResultWithVisibilityActors(
     }
     case None => {
       searchResultWithoutMetadata.incr()
-      throw new IllegalArgumentException(
+      throw new IllegalArgumentEtwitterception(
         "searchResult is missing metadata: " + searchResult.toString)
     }
   }

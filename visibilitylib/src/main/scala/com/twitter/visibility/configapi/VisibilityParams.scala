@@ -9,7 +9,7 @@ import com.twitter.servo.util.MemoizingStatsReceiver
 import com.twitter.timelines.configapi.Params
 import com.twitter.visibility.models.SafetyLevel
 import com.twitter.visibility.models.UnitOfDiversion
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 
 object VisibilityParams {
   def apply(
@@ -29,7 +29,7 @@ class VisibilityParams(
   abDecider: LoggingABDecider,
   featureSwitches: FeatureSwitches) {
 
-  private[this] val contextFactory = new VisibilityRequestContextFactory(
+  private[this] val contetwittertFactory = new VisibilityRequestContetwittertFactory(
     abDecider,
     featureSwitches
   )
@@ -40,22 +40,22 @@ class VisibilityParams(
     statsReceiver.scope("configapi_params"))
 
   def apply(
-    viewerContext: ViewerContext,
+    viewerContetwittert: ViewerContetwittert,
     safetyLevel: SafetyLevel,
     unitsOfDiversion: Seq[UnitOfDiversion] = Seq.empty
   ): Params = {
     val config = configBuilder.build(safetyLevel)
-    val requestContext = contextFactory(viewerContext, safetyLevel, unitsOfDiversion)
-    config.apply(requestContext, paramStats)
+    val requestContetwittert = contetwittertFactory(viewerContetwittert, safetyLevel, unitsOfDiversion)
+    config.apply(requestContetwittert, paramStats)
   }
 
   def memoized(
-    viewerContext: ViewerContext,
+    viewerContetwittert: ViewerContetwittert,
     safetyLevel: SafetyLevel,
     unitsOfDiversion: Seq[UnitOfDiversion] = Seq.empty
   ): Params = {
     val config = configBuilder.buildMemoized(safetyLevel)
-    val requestContext = contextFactory(viewerContext, safetyLevel, unitsOfDiversion)
-    config.apply(requestContext, paramStats)
+    val requestContetwittert = contetwittertFactory(viewerContetwittert, safetyLevel, unitsOfDiversion)
+    config.apply(requestContetwittert, paramStats)
   }
 }

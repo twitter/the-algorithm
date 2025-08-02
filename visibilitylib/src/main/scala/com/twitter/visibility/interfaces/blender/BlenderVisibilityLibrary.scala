@@ -41,7 +41,7 @@ import com.twitter.visibility.rules.Drop
 import com.twitter.visibility.rules.Interstitial
 import com.twitter.visibility.rules.TweetInterstitial
 
-object TweetType extends Enumeration {
+object TweetType etwittertends Enumeration {
   type TweetType = Value
   val ORIGINAL, SOURCE, QUOTED = Value
 }
@@ -146,7 +146,7 @@ class BlenderVisibilityLibrary(
     MediaSafetyLabelMapSource.fromStrato(stratoClient, stratoClientStatsReceiver))
 
   val tweetFeatures = new TweetFeatures(tweetLabels, libraryStatsReceiver)
-  val blenderContextFeatures = new BlenderContextFeatures(libraryStatsReceiver)
+  val blenderContetwittertFeatures = new BlenderContetwittertFeatures(libraryStatsReceiver)
   val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
   val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
   val relationshipFeatures =
@@ -160,8 +160,8 @@ class BlenderVisibilityLibrary(
     MisinformationPolicySource.fromStrato(stratoClient, stratoClientStatsReceiver)
   val misinfoPolicyFeatures =
     new MisinformationPolicyFeatures(misinfoPolicySource, stratoClientStatsReceiver)
-  val exclusiveTweetFeatures =
-    new ExclusiveTweetFeatures(userRelationshipSource, libraryStatsReceiver)
+  val etwitterclusiveTweetFeatures =
+    new EtwitterclusiveTweetFeatures(userRelationshipSource, libraryStatsReceiver)
   val mediaFeatures = new MediaFeatures(mediaLabelMaps, libraryStatsReceiver)
   val trustedFriendsTweetFeatures = new TrustedFriendsFeatures(
     trustedFriendsSource = TrustedFriendsSource.fromStrato(stratoClient, stratoClientStatsReceiver))
@@ -254,7 +254,7 @@ class BlenderVisibilityLibrary(
           _,
           visibilityDeciderGates.enableVerdictScribingBVL,
           verdictLogger,
-          bvRequest.viewerContext.userId,
+          bvRequest.viewerContetwittert.userId,
           bvRequest.safetyLevel))
   }
 
@@ -270,7 +270,7 @@ class BlenderVisibilityLibrary(
     Option[Stitch[VisibilityResult]]
   ) = {
     val tweetContentId = getContentId(
-      viewerId = bvRequest.viewerContext.userId,
+      viewerId = bvRequest.viewerContetwittert.userId,
       authorId = bvRequest.tweet.coreData.get.userId,
       tweet = bvRequest.tweet)
 
@@ -281,13 +281,13 @@ class BlenderVisibilityLibrary(
       .runRuleEngine(
         tweetContentId,
         tweetFeatureMap,
-        bvRequest.viewerContext,
+        bvRequest.viewerContetwittert,
         bvRequest.safetyLevel
       ).map(handleComposableVisibilityResult)
 
     val quotedTweetVisibilityResultOption = bvRequest.quotedTweet.map(quotedTweet => {
       val quotedTweetContentId = getContentId(
-        viewerId = bvRequest.viewerContext.userId,
+        viewerId = bvRequest.viewerContetwittert.userId,
         authorId = quotedTweet.coreData.get.userId,
         tweet = quotedTweet)
 
@@ -298,7 +298,7 @@ class BlenderVisibilityLibrary(
         .runRuleEngine(
           quotedTweetContentId,
           quotedInnerTweetFeatureMap,
-          bvRequest.viewerContext,
+          bvRequest.viewerContetwittert,
           bvRequest.safetyLevel
         )
         .map(handleComposableVisibilityResult)
@@ -307,7 +307,7 @@ class BlenderVisibilityLibrary(
 
     val sourceTweetVisibilityResultOption = bvRequest.retweetSourceTweet.map(sourceTweet => {
       val sourceTweetContentId = getContentId(
-        viewerId = bvRequest.viewerContext.userId,
+        viewerId = bvRequest.viewerContetwittert.userId,
         authorId = sourceTweet.coreData.get.userId,
         tweet = sourceTweet)
 
@@ -318,7 +318,7 @@ class BlenderVisibilityLibrary(
         .runRuleEngine(
           sourceTweetContentId,
           sourceTweetFeatureMap,
-          bvRequest.viewerContext,
+          bvRequest.viewerContetwittert,
           bvRequest.safetyLevel
         )
         .map(handleComposableVisibilityResult)
@@ -336,7 +336,7 @@ class BlenderVisibilityLibrary(
     tweetType: TweetType
   ): FeatureMap = {
     val authorId = tweet.coreData.get.userId
-    val viewerId = bvRequest.viewerContext.userId
+    val viewerId = bvRequest.viewerContetwittert.userId
     val isRetweet = if (tweetType.equals(ORIGINAL)) bvRequest.isRetweet else false
     val isSourceTweet = tweetType.equals(SOURCE)
     val isQuotedTweet = tweetType.equals(QUOTED)
@@ -347,17 +347,17 @@ class BlenderVisibilityLibrary(
     visibilityLibrary.featureMapBuilder(
       Seq(
         viewerFeatures
-          .forViewerBlenderContext(bvRequest.blenderVFRequestContext, bvRequest.viewerContext),
+          .forViewerBlenderContetwittert(bvRequest.blenderVFRequestContetwittert, bvRequest.viewerContetwittert),
         relationshipFeatures.forAuthorId(authorId, viewerId),
         fonsrRelationshipFeatures
           .forTweetAndAuthorId(tweet = tweet, authorId = authorId, viewerId = viewerId),
         tweetFeatures.forTweet(tweet),
         mediaFeatures.forMediaKeys(tweetMediaKeys),
         authorFeatures.forAuthorId(authorId),
-        blenderContextFeatures.forBlenderContext(bvRequest.blenderVFRequestContext),
+        blenderContetwittertFeatures.forBlenderContetwittert(bvRequest.blenderVFRequestContetwittert),
         _.withConstantFeature(TweetIsRetweet, isRetweet),
-        misinfoPolicyFeatures.forTweet(tweet, bvRequest.viewerContext),
-        exclusiveTweetFeatures.forTweet(tweet, bvRequest.viewerContext),
+        misinfoPolicyFeatures.forTweet(tweet, bvRequest.viewerContetwittert),
+        etwitterclusiveTweetFeatures.forTweet(tweet, bvRequest.viewerContetwittert),
         trustedFriendsTweetFeatures.forTweet(tweet, viewerId),
         editTweetFeatures.forTweet(tweet),
         _.withConstantFeature(TweetIsInnerQuotedTweet, isQuotedTweet),

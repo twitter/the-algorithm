@@ -17,7 +17,7 @@ object CacheResult {
    * instance or it may be returned from the Serializer when the value
    * should not be reused, but should also not be overwritten.
    */
-  final case class Failure(e: Throwable) extends CacheResult[Nothing]
+  final case class Failure(e: Throwable) etwittertends CacheResult[Nothing]
 
   /**
    * Signals that the cache load attempt was successful, but there was
@@ -26,14 +26,14 @@ object CacheResult {
    * When processing a `Miss`, the value should be written back to
    * cache if it loads successfully.
    */
-  case object Miss extends CacheResult[Nothing]
+  case object Miss etwittertends CacheResult[Nothing]
 
   /**
    * Signals that the value was found in cache.
    *
    * It is not necessary to load the value from the original source.
    */
-  case class Fresh[V](value: V) extends CacheResult[V]
+  case class Fresh[V](value: V) etwittertends CacheResult[V]
 
   /**
    * Signals that the value was found in cache.
@@ -41,5 +41,5 @@ object CacheResult {
    * This value should be used, but it should be refreshed
    * out-of-band.
    */
-  case class Stale[V](value: V) extends CacheResult[V]
+  case class Stale[V](value: V) etwittertends CacheResult[V]
 }

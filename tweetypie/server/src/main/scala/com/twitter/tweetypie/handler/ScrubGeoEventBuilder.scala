@@ -62,7 +62,7 @@ object ScrubGeoEventBuilder {
           ScrubGeo.Event(
             tweetIdSet = geoScrub.statusIds.toSet,
             userId = geoScrub.userId,
-            enqueueMax = geoScrub.hosebirdEnqueue,
+            enqueueMatwitter = geoScrub.hosebirdEnqueue,
             optUser = userOpt,
             timestamp = Time.now
           )

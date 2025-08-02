@@ -8,7 +8,7 @@ import org.apache.lucene.search.DocIdSetIterator;
  * DocIdSetIterator implementation from a sorted list of non-negative integers. If the given list of
  * doc IDs is not sorted or contains negative doc IDs, the results are undefined.
  */
-public class IntArrayDocIdSetIterator extends DocIdSetIterator {
+public class IntArrayDocIdSetIterator etwittertends DocIdSetIterator {
   private final int[] docIds;
   private int docId;
   private int cursor;
@@ -30,7 +30,7 @@ public class IntArrayDocIdSetIterator extends DocIdSetIterator {
   }
 
   @Override
-  public int nextDoc() {
+  public int netwittertDoc() {
     return advance(docId);
   }
 
@@ -54,16 +54,16 @@ public class IntArrayDocIdSetIterator extends DocIdSetIterator {
       return docId;
     }
 
-    int toIndex = Math.min(cursor + (target - docId) + 1, docIds.length);
-    int targetIndex = Arrays.binarySearch(docIds, cursor + 1, toIndex, target);
-    if (targetIndex < 0) {
-      targetIndex = -targetIndex - 1;
+    int toIndetwitter = Math.min(cursor + (target - docId) + 1, docIds.length);
+    int targetIndetwitter = Arrays.binarySearch(docIds, cursor + 1, toIndetwitter, target);
+    if (targetIndetwitter < 0) {
+      targetIndetwitter = -targetIndetwitter - 1;
     }
 
-    if (targetIndex == docIds.length) {
+    if (targetIndetwitter == docIds.length) {
       docId = NO_MORE_DOCS;
     } else {
-      cursor = targetIndex;
+      cursor = targetIndetwitter;
       docId = docIds[cursor];
     }
     return docId;

@@ -7,13 +7,13 @@ import com.twitter.timelines.observe.ServiceObserver
 import com.twitter.timelines.observe.ServiceTracer
 import com.twitter.util.Future
 
-trait ObservedRequests extends ObservedAndValidatedRequests {
+trait ObservedRequests etwittertends ObservedAndValidatedRequests {
 
   def observeAndValidate[R, Q](
     request: Q,
     viewerIds: Seq[UserId],
     stats: ServiceObserver.Stats[Q],
-    exceptionHandler: PartialFunction[Throwable, Future[R]]
+    etwitterceptionHandler: PartialFunction[Throwable, Future[R]]
   )(
     f: Q => Future[R]
   ): Future[R] = {
@@ -22,7 +22,7 @@ trait ObservedRequests extends ObservedAndValidatedRequests {
       viewerIds,
       ReadRequest,
       validateRequest,
-      exceptionHandler,
+      etwitterceptionHandler,
       stats,
       ServiceTracer.identity[Q]
     )(f)

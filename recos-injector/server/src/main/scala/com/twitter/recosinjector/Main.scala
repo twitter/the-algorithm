@@ -1,7 +1,7 @@
 package com.twitter.recosinjector
 
 import com.twitter.app.Flag
-import com.twitter.finagle.http.HttpMuxer
+import com.twitter.finagle.http.HttpMutwitterer
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.util.ElfOwlFilter
@@ -35,7 +35,7 @@ import com.twitter.util.Await
 import com.twitter.util.Duration
 import java.util.concurrent.TimeUnit
 
-object Main extends TwitterServer with JDK14Logging with Deciderable { self =>
+object Main etwittertends TwitterServer with JDK14Logging with Deciderable { self =>
 
   implicit val stats: StatsReceiver = statsReceiver
 
@@ -66,7 +66,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable { self =>
       environment match {
         case "prod" => ProdConfig(serviceIdentifier)(stats)
         case "staging" | "devel" => StagingConfig(serviceIdentifier)
-        case env => throw new Exception(s"Unknown environment $env")
+        case env => throw new Etwitterception(s"Unknown environment $env")
       }
     }
 
@@ -93,7 +93,7 @@ object Main extends TwitterServer with JDK14Logging with Deciderable { self =>
     // Publishers
     val kafkaEventPublisher = KafkaEventPublisher(
       "/s/kafka/recommendations:kafka-tls",
-      config.outputKafkaTopicPrefix,
+      config.outputKafkaTopicPrefitwitter,
       config.recosInjectorThriftClientId,
       truststoreLocation())
 
@@ -199,12 +199,12 @@ object Main extends TwitterServer with JDK14Logging with Deciderable { self =>
 
     this.addAdminRoute(ElfOwlFilter.getPostbackRoute())
 
-    onExit {
+    onEtwitterit {
       log.info("Shutting down the event processors")
       eventBusProcessors.foreach(_.stop())
       log.info("Shutting down the uua processors")
       uuaConsumer.atLeastOnceProcessor.close()
-      log.info("done exit")
+      log.info("done etwitterit")
     }
 
     // Wait on the thriftServer so that shutdownTimeout is respected.

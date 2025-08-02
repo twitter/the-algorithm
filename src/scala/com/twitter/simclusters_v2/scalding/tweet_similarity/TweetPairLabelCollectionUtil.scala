@@ -3,18 +3,18 @@ package com.twitter.simclusters_v2.scalding.tweet_similarity
 import com.twitter.ads.entities.db.thriftscala.PromotedTweet
 import com.twitter.dataproducts.estimation.ReservoirSampler
 import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.{DateRange, Execution, TypedTsv}
+import com.twitter.scalding.{DateRange, Etwitterecution, TypedTsv}
 import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, Proc3Atla, ProcAtla}
+import com.twitter.scalding_internal.dalv2.remote_access.{EtwitterplicitLocation, Proc3Atla, ProcAtla}
 import com.twitter.simclusters_v2.common.{SimClustersEmbedding, Timestamp, TweetId, UserId}
 import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
+import com.twitter.simclusters_v2.scalding.embedding.common.EtwitterternalDataSources
 import com.twitter.simclusters_v2.thriftscala.{
   TweetTopKTweetsWithScore,
   TweetWithScore,
   TweetsWithScore
 }
-import com.twitter.timelineservice.thriftscala.{ContextualizedFavoriteEvent, FavoriteEventUnion}
+import com.twitter.timelineservice.thriftscala.{ContetwittertualizedFavoriteEvent, FavoriteEventUnion}
 import com.twitter.wtf.scalding.client_event_processing.thriftscala.{
   InteractionDetails,
   InteractionType,
@@ -33,7 +33,7 @@ object TweetPairLabelCollectionUtil {
     timestamp: Timestamp, //engagement or impression time
     author: Option[UserId],
     embedding: Option[SimClustersEmbedding])
-      extends Ordered[FeaturedTweet] {
+      etwittertends Ordered[FeaturedTweet] {
 
     import scala.math.Ordered.orderingToOrdered
 
@@ -41,29 +41,29 @@ object TweetPairLabelCollectionUtil {
       (this.tweet, this.timestamp, this.author) compare (that.tweet, that.timestamp, that.author)
   }
 
-  val MaxFavPerUser: Int = 100
+  val MatwitterFavPerUser: Int = 100
 
   /**
-   * Get all fav events within the given dateRange and where all users' out-degree <= maxOutDegree
+   * Get all fav events within the given dateRange and where all users' out-degree <= matwitterOutDegree
    * from TimelineServiceFavoritesScalaDataset
    *
    * @param dateRange         date of interest
-   * @param maxOutgoingDegree max #degrees for the users of interests
+   * @param matwitterOutgoingDegree matwitter #degrees for the users of interests
    *
    * @return Filtered fav events, TypedPipe of (userid, tweetid, timestamp) tuples
    */
   def getFavEvents(
     dateRange: DateRange,
-    maxOutgoingDegree: Int
+    matwitterOutgoingDegree: Int
   ): TypedPipe[(UserId, TweetId, Timestamp)] = {
-    val fullTimelineFavData: TypedPipe[ContextualizedFavoriteEvent] =
+    val fullTimelineFavData: TypedPipe[ContetwittertualizedFavoriteEvent] =
       DAL
         .read(TimelineServiceFavoritesScalaDataset, dateRange)
-        .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
+        .withRemoteReadPolicy(EtwitterplicitLocation(ProcAtla))
         .toTypedPipe
 
     val userTweetTuples = fullTimelineFavData
-      .flatMap { cfe: ContextualizedFavoriteEvent =>
+      .flatMap { cfe: ContetwittertualizedFavoriteEvent =>
         cfe.event match {
           case FavoriteEventUnion.Favorite(fav) =>
             Some((fav.userId, (fav.tweetId, fav.eventTimeMs)))
@@ -71,12 +71,12 @@ object TweetPairLabelCollectionUtil {
             None
         }
       }
-    //Get users with the out-degree <= maxOutDegree first
+    //Get users with the out-degree <= matwitterOutDegree first
     val usersWithValidOutDegree = userTweetTuples
       .groupBy(_._1)
       .withReducers(1000)
       .size
-      .filter(_._2 <= maxOutgoingDegree)
+      .filter(_._2 <= matwitterOutgoingDegree)
 
     // Keep only usersWithValidOutDegree in the graph
     userTweetTuples
@@ -95,7 +95,7 @@ object TweetPairLabelCollectionUtil {
   def getImpressionEvents(dateRange: DateRange): TypedPipe[(UserId, TweetId, Timestamp)] = {
     DAL
       .read(UserInteractionScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(Proc3Atla))
+      .withRemoteReadPolicy(EtwitterplicitLocation(Proc3Atla))
       .toTypedPipe
       .flatMap {
         case userInteraction
@@ -103,7 +103,7 @@ object TweetPairLabelCollectionUtil {
           userInteraction.interactionDetails match {
             case InteractionDetails.TweetImpressionDetails(
                   TweetImpressionDetails(tweetId, _, dwellTimeInSecOpt))
-                if dwellTimeInSecOpt.exists(_ >= 1) =>
+                if dwellTimeInSecOpt.etwitterists(_ >= 1) =>
               Some(userInteraction.userId, tweetId, userInteraction.timeStamp)
             case _ =>
               None
@@ -143,10 +143,10 @@ object TweetPairLabelCollectionUtil {
    * @return TypedPipe of (tweetId, userId)
    */
   def getTweetAuthorPairs(dateRange: DateRange): TypedPipe[(TweetId, UserId)] = {
-    ExternalDataSources
+    EtwitterternalDataSources
       .flatTweetsSource(dateRange)
       .collect {
-        // Exclude retweets and quoted tweets
+        // Etwitterclude retweets and quoted tweets
         case record if record.shareSourceTweetId.isEmpty && record.quotedTweetTweetId.isEmpty =>
           (record.tweetId, record.userId)
       }
@@ -283,9 +283,9 @@ object TweetPairLabelCollectionUtil {
         case (userId, queryFeaturedTweet, candidateFeaturedTweet, _) =>
           (userId, queryFeaturedTweet.tweet, candidateFeaturedTweet.tweet)
       }
-      // consolidate all the labelled pairs into one with the max label
+      // consolidate all the labelled pairs into one with the matwitter label
       // (label order: co-engagement = true > co-impression = false)
-      .maxBy {
+      .matwitterBy {
         case (_, _, _, label) => label
       }
       .values
@@ -297,13 +297,13 @@ object TweetPairLabelCollectionUtil {
    * For each query tweet, we make sure the numbers of positives and negatives are equal.
    *
    * @param labelledPairs      labelled tweet pairs, TypedPipe of (queryFeaturedTweet, candidateFeaturedTweet, label) tuples
-   * @param maxSamplesPerClass max number of samples per class
+   * @param matwitterSamplesPerClass matwitter number of samples per class
    *
    * @return sampled labelled pairs after balanced-class sampling
    */
   def getQueryTweetBalancedClassPairs(
     labelledPairs: TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)],
-    maxSamplesPerClass: Int
+    matwitterSamplesPerClass: Int
   ): TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)] = {
     val queryTweetToSampleCount = labelledPairs
       .map {
@@ -313,7 +313,7 @@ object TweetPairLabelCollectionUtil {
       .sumByKey
       .map {
         case (queryTweet, (posCount, negCount)) =>
-          (queryTweet, Math.min(Math.min(posCount, negCount), maxSamplesPerClass))
+          (queryTweet, Math.min(Math.min(posCount, negCount), matwitterSamplesPerClass))
       }
 
     labelledPairs
@@ -402,19 +402,19 @@ object TweetPairLabelCollectionUtil {
   }
 
   /**
-   * Get the write exec for per-query stats
+   * Get the write etwitterec for per-query stats
    *
    * @param tweetPairs input dataset
    * @param outputPath output path for the per-query stats
    * @param identifier identifier for the tweetPairs dataset
    *
-   * @return execution of the the writing exec
+   * @return etwitterecution of the the writing etwitterec
    */
-  def getPerQueryStatsExec(
+  def getPerQueryStatsEtwitterec(
     tweetPairs: TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)],
     outputPath: String,
     identifier: String
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     val queryTweetsToCounts = tweetPairs
       .map {
         case (queryTweet, _, label) =>
@@ -423,9 +423,9 @@ object TweetPairLabelCollectionUtil {
       .sumByKey
       .map { case (queryTweet, (posCount, negCount)) => (queryTweet, posCount, negCount) }
 
-    Execution
+    Etwitterecution
       .zip(
-        queryTweetsToCounts.writeExecution(
+        queryTweetsToCounts.writeEtwitterecution(
           TypedTsv[(TweetId, Int, Int)](s"${outputPath}_$identifier")),
         Util.printSummaryOfNumericColumn(
           queryTweetsToCounts
@@ -442,7 +442,7 @@ object TweetPairLabelCollectionUtil {
    * Get the top K similar tweets key-val dataset
    *
    * @param allTweetPairs all tweet pairs with their similarity scores
-   * @param k             the maximum number of top results for each user
+   * @param k             the matwitterimum number of top results for each user
    *
    * @return key-val top K results for each tweet
    */
@@ -460,7 +460,7 @@ object TweetPairLabelCollectionUtil {
    * Get the top K similar tweets dataset.
    *
    * @param allTweetPairs all tweet pairs with their similarity scores
-   * @param k             the maximum number of top results for each user
+   * @param k             the matwitterimum number of top results for each user
    *
    * @return top K results for each tweet
    */

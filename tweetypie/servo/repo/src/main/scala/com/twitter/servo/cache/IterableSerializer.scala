@@ -27,11 +27,11 @@ class IterableSerializer[T, C <: Iterable[T]](
   newBuilder: () => mutable.Builder[T, C],
   itemSerializer: Serializer[T],
   itemSizeEstimate: Int = 8)
-    extends Serializer[C] {
+    etwittertends Serializer[C] {
   import IterableSerializer.FormatVersion
 
   if (itemSizeEstimate <= 0) {
-    throw new IllegalArgumentException(
+    throw new IllegalArgumentEtwitterception(
       "Item size estimate must be positive. Invalid estimate provided: " + itemSizeEstimate
     )
   }
@@ -61,7 +61,7 @@ class IterableSerializer[T, C <: Iterable[T]](
       val buf = ByteBuffer.wrap(bytes)
       val formatVersion = buf.get()
       if (formatVersion < 0 || formatVersion > FormatVersion) {
-        Throw(new IllegalArgumentException("Invalid serialization format: " + formatVersion))
+        Throw(new IllegalArgumentEtwitterception("Invalid serialization format: " + formatVersion))
       } else {
         val numItems = buf.getInt()
         val builder = newBuilder()

@@ -3,7 +3,7 @@ package com.twitter.search.earlybird_root.caching;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 
 public final class CacheCommonUtil {
-  public static final String NAMED_MAX_CACHE_RESULTS = "maxCacheResults";
+  public static final String NAMED_MAtwitter_CACHE_RESULTS = "matwitterCacheResults";
 
   private CacheCommonUtil() {
   }

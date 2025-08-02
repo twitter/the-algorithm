@@ -3,8 +3,8 @@ package backends
 
 import com.twitter.finagle.Backoff
 import com.twitter.finagle.service.RetryPolicy
-import com.twitter.service.talon.thriftscala.ExpandRequest
-import com.twitter.service.talon.thriftscala.ExpandResponse
+import com.twitter.service.talon.thriftscala.EtwitterpandRequest
+import com.twitter.service.talon.thriftscala.EtwitterpandResponse
 import com.twitter.service.talon.thriftscala.ResponseCode
 import com.twitter.service.talon.thriftscala.ShortenRequest
 import com.twitter.service.talon.thriftscala.ShortenResponse
@@ -16,30 +16,30 @@ import com.twitter.tweetypie.util.RetryPolicyBuilder
 object Talon {
   import Backend._
 
-  type Expand = FutureArrow[talon.ExpandRequest, talon.ExpandResponse]
+  type Etwitterpand = FutureArrow[talon.EtwitterpandRequest, talon.EtwitterpandResponse]
   type Shorten = FutureArrow[talon.ShortenRequest, talon.ShortenResponse]
 
-  case object TransientError extends Exception()
-  case object PermanentError extends Exception()
+  case object TransientError etwittertends Etwitterception()
+  case object PermanentError etwittertends Etwitterception()
 
   def fromClient(client: talon.Talon.MethodPerEndpoint): Talon =
     new Talon {
       val shorten = FutureArrow(client.shorten _)
-      val expand = FutureArrow(client.expand _)
+      val etwitterpand = FutureArrow(client.etwitterpand _)
       def ping(): Future[Unit] = client.serviceInfo().unit
     }
 
   case class Config(
     shortenTimeout: Duration,
-    expandTimeout: Duration,
+    etwitterpandTimeout: Duration,
     timeoutBackoffs: Stream[Duration],
     transientErrorBackoffs: Stream[Duration]) {
-    def apply(svc: Talon, ctx: Backend.Context): Talon =
+    def apply(svc: Talon, cttwitter: Backend.Contetwittert): Talon =
       new Talon {
         val shorten: FutureArrow[ShortenRequest, ShortenResponse] =
-          policy("shorten", shortenTimeout, shortenResponseCode, ctx)(svc.shorten)
-        val expand: FutureArrow[ExpandRequest, ExpandResponse] =
-          policy("expand", expandTimeout, expandResponseCode, ctx)(svc.expand)
+          policy("shorten", shortenTimeout, shortenResponseCode, cttwitter)(svc.shorten)
+        val etwitterpand: FutureArrow[EtwitterpandRequest, EtwitterpandResponse] =
+          policy("etwitterpand", etwitterpandTimeout, etwitterpandResponseCode, cttwitter)(svc.etwitterpand)
         def ping(): Future[Unit] = svc.ping()
       }
 
@@ -47,10 +47,10 @@ object Talon {
       name: String,
       requestTimeout: Duration,
       getResponseCode: B => talon.ResponseCode,
-      ctx: Context
+      cttwitter: Contetwittert
     ): Builder[A, B] =
-      handleResponseCodes(name, getResponseCode, ctx) andThen
-        defaultPolicy(name, requestTimeout, retryPolicy, ctx)
+      handleResponseCodes(name, getResponseCode, cttwitter) andThen
+        defaultPolicy(name, requestTimeout, retryPolicy, cttwitter)
 
     private[this] def retryPolicy[B]: RetryPolicy[Try[B]] =
       RetryPolicy.combine[Try[B]](
@@ -62,18 +62,18 @@ object Talon {
 
     private[this] def handleResponseCodes[A, B](
       name: String,
-      extract: B => talon.ResponseCode,
-      ctx: Context
+      etwittertract: B => talon.ResponseCode,
+      cttwitter: Contetwittert
     ): Builder[A, B] = {
-      val scopedStats = ctx.stats.scope(name)
+      val scopedStats = cttwitter.stats.scope(name)
       val responseCodeStats = scopedStats.scope("response_code")
       _ andThen FutureArrow[B, B] { res =>
-        val responseCode = extract(res)
+        val responseCode = etwittertract(res)
         responseCodeStats.counter(responseCode.toString).incr()
         responseCode match {
-          case talon.ResponseCode.TransientError => Future.exception(TransientError)
-          case talon.ResponseCode.PermanentError => Future.exception(PermanentError)
-          case talon.ResponseCode.ServerOverloaded => Future.exception(OverCapacity("talon"))
+          case talon.ResponseCode.TransientError => Future.etwitterception(TransientError)
+          case talon.ResponseCode.PermanentError => Future.etwitterception(PermanentError)
+          case talon.ResponseCode.ServerOverloaded => Future.etwitterception(OverCapacity("talon"))
           case _ => Future.value(res)
         }
       }
@@ -81,7 +81,7 @@ object Talon {
   }
 
   def shortenResponseCode(res: talon.ShortenResponse): ResponseCode = res.responseCode
-  def expandResponseCode(res: talon.ExpandResponse): ResponseCode = res.responseCode
+  def etwitterpandResponseCode(res: talon.EtwitterpandResponse): ResponseCode = res.responseCode
 
   implicit val warmup: Warmup[Talon] = Warmup[Talon]("talon")(_.ping())
 }
@@ -89,6 +89,6 @@ object Talon {
 trait Talon {
   import Talon._
   val shorten: Shorten
-  val expand: Expand
+  val etwitterpand: Etwitterpand
   def ping(): Future[Unit]
 }

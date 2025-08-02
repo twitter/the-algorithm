@@ -22,8 +22,8 @@ object FeatureSelectorConfig {
     ("user_author_aggregate_tweetsource_v1.pair", "*"),
     ("user_engager_aggregate.pair", "*"),
     ("user_mention_aggregate.pair", "*"),
-    ("user_request_context_aggregate.dow.pair", "*"),
-    ("user_request_context_aggregate.hour.pair", "*"),
+    ("user_request_contetwittert_aggregate.dow.pair", "*"),
+    ("user_request_contetwittert_aggregate.hour.pair", "*"),
     ("user_aggregate_v6.pair", "*"),
     ("user_original_author_aggregate_v1.pair", "*"),
     ("user_original_author_aggregate_v2.pair", "*"),
@@ -55,7 +55,7 @@ object FeatureSelectorConfig {
     "recap.engagement.is_open_linked",
     "recap.engagement.is_profile_clicked",
     "recap.engagement.is_clicked",
-    "recap.engagement.is_photo_expanded",
+    "recap.engagement.is_photo_etwitterpanded",
     "recap.engagement.is_video_playback_50",
     "recap.engagement.is_video_quality_viewed",
     "recap.engagement.is_replied_reply_impressed_by_author",
@@ -73,14 +73,14 @@ object FeatureSelectorConfig {
     "itl.engagement.is_open_linked",
     "itl.engagement.is_profile_clicked",
     "itl.engagement.is_clicked",
-    "itl.engagement.is_photo_expanded",
+    "itl.engagement.is_photo_etwitterpanded",
     "itl.engagement.is_video_playback_50"
   )
 
   val PairGlobsToStore = for {
-    (prefix, suffix) <- PairsToStore
+    (prefitwitter, suffitwitter) <- PairsToStore
     label <- LabelsToStore
-  } yield FeatureMatcher.glob(prefix + "." + label + "." + suffix)
+  } yield FeatureMatcher.glob(prefitwitter + "." + label + "." + suffitwitter)
 
   val BaseAggregateV2FeatureSelector = FeatureMatcher
     .none()
@@ -90,32 +90,32 @@ object FeatureSelectorConfig {
       FeatureMatcher.glob("entities.original_author_id"),
       FeatureMatcher.glob("entities.topic_id"),
       FeatureMatcher
-        .glob("entities.inferred_topic_ids" + TypedAggregateGroup.SparseFeatureSuffix),
+        .glob("entities.inferred_topic_ids" + TypedAggregateGroup.SparseFeatureSuffitwitter),
       FeatureMatcher.glob("timelines.meta.list_id"),
       FeatureMatcher.glob("list.id"),
       FeatureMatcher
-        .glob("engagement_features.user_ids.public" + TypedAggregateGroup.SparseFeatureSuffix),
+        .glob("engagement_features.user_ids.public" + TypedAggregateGroup.SparseFeatureSuffitwitter),
       FeatureMatcher
-        .glob("entities.users.mentioned_screen_names" + TypedAggregateGroup.SparseFeatureSuffix),
+        .glob("entities.users.mentioned_screen_names" + TypedAggregateGroup.SparseFeatureSuffitwitter),
       FeatureMatcher.glob("user_aggregate_v2.pair.recap.engagement.is_dont_like.*"),
       FeatureMatcher.glob("user_author_aggregate_v2.pair.any_label.recap.tweetfeature.has_*"),
-      FeatureMatcher.glob("request_context.country_code"),
-      FeatureMatcher.glob("request_context.timestamp_gmt_dow"),
-      FeatureMatcher.glob("request_context.timestamp_gmt_hour"),
+      FeatureMatcher.glob("request_contetwittert.country_code"),
+      FeatureMatcher.glob("request_contetwittert.timestamp_gmt_dow"),
+      FeatureMatcher.glob("request_contetwittert.timestamp_gmt_hour"),
       FeatureMatcher.glob(
-        "semantic_core.media_understanding.high_recall.non_sensitive.entity_ids" + TypedAggregateGroup.SparseFeatureSuffix)
+        "semantic_core.media_understanding.high_recall.non_sensitive.entity_ids" + TypedAggregateGroup.SparseFeatureSuffitwitter)
     )
 
   val AggregatesV2ProdFeatureSelector = BaseAggregateV2FeatureSelector
     .orList(PairGlobsToStore.asJava)
 
   val ReducedPairGlobsToStore = (for {
-    (prefix, suffix) <- BasePairsToStore
+    (prefitwitter, suffitwitter) <- BasePairsToStore
     label <- LabelsToStore
-  } yield FeatureMatcher.glob(prefix + "." + label + "." + suffix)) ++ Seq(
+  } yield FeatureMatcher.glob(prefitwitter + "." + label + "." + suffitwitter)) ++ Seq(
     FeatureMatcher.glob("user_aggregate_v2.pair.any_label.*"),
     FeatureMatcher.glob("user_aggregate_v2.pair.recap.engagement.is_favorited.*"),
-    FeatureMatcher.glob("user_aggregate_v2.pair.recap.engagement.is_photo_expanded.*"),
+    FeatureMatcher.glob("user_aggregate_v2.pair.recap.engagement.is_photo_etwitterpanded.*"),
     FeatureMatcher.glob("user_aggregate_v2.pair.recap.engagement.is_profile_clicked.*")
   )
 }

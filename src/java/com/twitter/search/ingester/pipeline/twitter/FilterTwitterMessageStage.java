@@ -1,20 +1,20 @@
 package com.twitter.search.ingester.pipeline.twitter;
 
-import org.apache.commons.pipeline.StageException;
+import org.apache.commons.pipeline.StageEtwitterception;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducesConsumed;
 
 import com.twitter.search.common.metrics.SearchRateCounter;
 import com.twitter.search.common.relevance.entities.TwitterMessage;
 import com.twitter.search.ingester.pipeline.twitter.filters.IngesterValidMessageFilter;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeEtwitterception;
 
 /**
  * Filter out Twitter messages meeting some filtering rule.
  */
 @ConsumedTypes(TwitterMessage.class)
 @ProducesConsumed
-public class FilterTwitterMessageStage extends TwitterBaseStage
+public class FilterTwitterMessageStage etwittertends TwitterBaseStage
     <TwitterMessage, TwitterMessage> {
   private IngesterValidMessageFilter filter = null;
   private SearchRateCounter validMessages;
@@ -28,8 +28,8 @@ public class FilterTwitterMessageStage extends TwitterBaseStage
 
   @Override
   protected void innerSetupStats() {
-    validMessages = SearchRateCounter.export(getStageNamePrefix() + "_valid_messages");
-    invalidMessages = SearchRateCounter.export(getStageNamePrefix() + "_filtered_messages");
+    validMessages = SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_valid_messages");
+    invalidMessages = SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_filtered_messages");
   }
 
   @Override
@@ -43,9 +43,9 @@ public class FilterTwitterMessageStage extends TwitterBaseStage
   }
 
   @Override
-  public void innerProcess(Object obj) throws StageException {
+  public void innerProcess(Object obj) throws StageEtwitterception {
     if (!(obj instanceof TwitterMessage)) {
-      throw new StageException(this, "Object is not a IngesterTwitterMessage: "
+      throw new StageEtwitterception(this, "Object is not a IngesterTwitterMessage: "
       + obj);
     }
 
@@ -58,8 +58,8 @@ public class FilterTwitterMessageStage extends TwitterBaseStage
   @Override
   protected TwitterMessage innerRunStageV2(TwitterMessage message) {
     if (!tryToFilter(message)) {
-      throw new PipelineStageRuntimeException("Failed to filter, does not have to "
-      + "pass to the next stage");
+      throw new PipelineStageRuntimeEtwitterception("Failed to filter, does not have to "
+      + "pass to the netwittert stage");
     }
     return message;
   }

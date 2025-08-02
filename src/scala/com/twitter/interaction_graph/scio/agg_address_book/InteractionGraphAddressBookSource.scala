@@ -1,6 +1,6 @@
 package com.twitter.interaction_graph.scio.agg_address_book
 
-import com.spotify.scio.ScioContext
+import com.spotify.scio.ScioContetwittert
 import com.spotify.scio.values.SCollection
 import com.twitter.addressbook.jobs.simplematches.SimpleUserMatchesScalaDataset
 import com.twitter.addressbook.matches.thriftscala.UserMatchesRecord
@@ -11,7 +11,7 @@ import org.joda.time.Interval
 case class InteractionGraphAddressBookSource(
   pipelineOptions: InteractionGraphAddressBookOption
 )(
-  implicit sc: ScioContext,
+  implicit sc: ScioContetwittert,
 ) {
   val dalEnvironment: String = pipelineOptions
     .as(classOf[ServiceIdentifierOptions])

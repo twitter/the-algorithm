@@ -1,14 +1,14 @@
 package com.twitter.search.common.relevance.features;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Map;
 import java.util.function.Function;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.NumericDocValues;
+import org.apache.lucene.indetwitter.LeafReader;
+import org.apache.lucene.indetwitter.NumericDocValues;
 
 import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
 import com.twitter.search.common.metrics.SearchCounter;
@@ -32,7 +32,7 @@ public class EarlybirdDocumentFeatures {
   private static final String NO_SCHEMA_FIELD_FOR_FEATURE_COUNTER_PATTERN =
       "no_schema_field_for_feature_id_%d";
   private static final SearchCounter UNKNOWN_FEATURE_OUTPUT_TYPE_COUNTER =
-      SearchCounter.export("unknown_feature_output_type");
+      SearchCounter.etwitterport("unknown_feature_output_type");
 
   private final Map<String, NumericDocValues> numericDocValues = Maps.newHashMap();
   private final LeafReader leafReader;
@@ -61,19 +61,19 @@ public class EarlybirdDocumentFeatures {
         target,
         docId);
     Preconditions.checkArgument(
-        target < leafReader.maxDoc(),
-        "Target (%s) cannot be greater than or equal to the max doc ID (%s).",
+        target < leafReader.matwitterDoc(),
+        "Target (%s) cannot be greater than or equal to the matwitter doc ID (%s).",
         target,
-        leafReader.maxDoc());
+        leafReader.matwitterDoc());
     docId = target;
   }
 
   /**
    * Returns the feature value for the given field.
    */
-  public long getFeatureValue(EarlybirdFieldConstant field) throws IOException {
-    // The index might not have a NumericDocValues instance for this feature.
-    // This might happen if we dynamically update the feature schema, for example.
+  public long getFeatureValue(EarlybirdFieldConstant field) throws IOEtwitterception {
+    // The indetwitter might not have a NumericDocValues instance for this feature.
+    // This might happen if we dynamically update the feature schema, for etwitterample.
     //
     // Cache the NumericDocValues instances for all accessed features, even if they're null.
     String fieldName = field.getFieldName();
@@ -84,20 +84,20 @@ public class EarlybirdDocumentFeatures {
       docValues = leafReader.getNumericDocValues(fieldName);
       numericDocValues.put(fieldName, docValues);
     }
-    return docValues != null && docValues.advanceExact(docId) ? docValues.longValue() : 0L;
+    return docValues != null && docValues.advanceEtwitteract(docId) ? docValues.longValue() : 0L;
   }
 
   /**
    * Determines if the given flag is set.
    */
-  public boolean isFlagSet(EarlybirdFieldConstant field) throws IOException {
+  public boolean isFlagSet(EarlybirdFieldConstant field) throws IOEtwitterception {
     return getFeatureValue(field) != 0;
   }
 
   /**
    * Returns the unnormalized value for the given field.
    */
-  public double getUnnormalizedFeatureValue(EarlybirdFieldConstant field) throws IOException {
+  public double getUnnormalizedFeatureValue(EarlybirdFieldConstant field) throws IOEtwitterception {
     long featureValue = getFeatureValue(field);
     ThriftFeatureNormalizationType normalizationType = field.getFeatureNormalizationType();
     if (normalizationType == null) {
@@ -116,7 +116,7 @@ public class EarlybirdDocumentFeatures {
       case PREDICTION_SCORE_NORMALIZER:
         return IntNormalizers.PREDICTION_SCORE_NORMALIZER.denormalize((int) featureValue);
       default:
-        throw new IllegalArgumentException(
+        throw new IllegalArgumentEtwitterception(
             "Unsupported normalization type " + normalizationType + " for feature "
                 + field.getFieldName());
     }
@@ -127,7 +127,7 @@ public class EarlybirdDocumentFeatures {
    * that have a non-zero value set.
    */
   public ThriftSearchResultFeatures getSearchResultFeatures(ImmutableSchemaInterface schema)
-      throws IOException {
+      throws IOEtwitterception {
     return getSearchResultFeatures(schema, (featureId) -> true);
   }
 
@@ -140,7 +140,7 @@ public class EarlybirdDocumentFeatures {
    */
   public ThriftSearchResultFeatures getSearchResultFeatures(
       ImmutableSchemaInterface schema,
-      Function<Integer, Boolean> shouldCollectFeatureId) throws IOException {
+      Function<Integer, Boolean> shouldCollectFeatureId) throws IOEtwitterception {
     Map<Integer, Boolean> boolValues = Maps.newHashMap();
     Map<Integer, Double> doubleValues = Maps.newHashMap();
     Map<Integer, Integer> intValues = Maps.newHashMap();
@@ -156,7 +156,7 @@ public class EarlybirdDocumentFeatures {
       if (featureConfig == null) {
         FEATURE_CONFIG_IS_NULL_MAP.computeIfAbsent(
             featureId,
-            (fId) -> SearchCounter.export(
+            (fId) -> SearchCounter.etwitterport(
                 String.format(FEATURE_CONFIG_IS_NULL_COUNTER_PATTERN, fId))).increment();
         continue;
       }
@@ -165,7 +165,7 @@ public class EarlybirdDocumentFeatures {
       if (outputType == null) {
         FEATURE_OUTPUT_TYPE_IS_NULL_MAP.computeIfAbsent(
             featureId,
-            (fId) -> SearchCounter.export(
+            (fId) -> SearchCounter.etwitterport(
                 String.format(FEATURE_OUTPUT_TYPE_IS_NULL_COUNTER_PATTERN, fId))).increment();
         continue;
       }
@@ -174,7 +174,7 @@ public class EarlybirdDocumentFeatures {
         // Should only happen for features that were dynamically added to the schema.
         NO_SCHEMA_FIELD_FOR_FEATURE_MAP.computeIfAbsent(
             featureId,
-            (fId) -> SearchCounter.export(
+            (fId) -> SearchCounter.etwitterport(
                 String.format(NO_SCHEMA_FIELD_FOR_FEATURE_COUNTER_PATTERN, fId))).increment();
         continue;
       }

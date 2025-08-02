@@ -6,7 +6,7 @@ def create_sparse_tensor(batch_size, input_size, num_values, dtype=tf.float32):
   random_indices = np.sort(np.random.randint(batch_size * input_size, size=num_values))
   test_indices_i = random_indices // input_size
   test_indices_j = random_indices % input_size
-  test_indices = np.stack([test_indices_i, test_indices_j], axis=1)
+  test_indices = np.stack([test_indices_i, test_indices_j], atwitteris=1)
   test_values = np.random.random(num_values).astype(dtype.as_numpy_dtype)
 
   return tf.SparseTensor(indices=tf.constant(test_indices),

@@ -17,7 +17,7 @@ scala_library(
         "src/scala/com/twitter/simclusters_v2/hdfs_sources:offline_tweet_recommendations_from_mts_consumer_embeddings-scala",
         "src/scala/com/twitter/simclusters_v2/scio/bq_generation/common",
         "src/scala/com/twitter/simclusters_v2/scio/bq_generation/sql",
-        "src/scala/com/twitter/wtf/beam/bq_embedding_export:bq_embedding_export_lib",
+        "src/scala/com/twitter/wtf/beam/bq_embedding_etwitterport:bq_embedding_etwitterport_lib",
         "tcdc/bq_blaster/src/main/scala/com/twitter/tcdc/bqblaster/beam",
     ],
 )

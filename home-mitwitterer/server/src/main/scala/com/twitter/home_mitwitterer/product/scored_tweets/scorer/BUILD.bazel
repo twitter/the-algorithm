@@ -1,0 +1,20 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    dependencies = [
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/functional_component/scorer",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/model",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/model/request",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/module",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/product/scored_tweets/model",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/product/scored_tweets/param",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/util",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/feature/featuremap/datarecord",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/pipeline",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/product",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/util",
+        "src/scala/com/twitter/timelines/prediction/features/recap",
+        "timelineservice/common:model",
+    ],
+)

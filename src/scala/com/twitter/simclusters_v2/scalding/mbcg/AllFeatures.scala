@@ -6,7 +6,7 @@ import com.twitter.ml.api.DataType
 import com.twitter.ml.api.Feature
 import com.twitter.ml.api.Feature.SparseContinuous
 import com.twitter.ml.api.Feature.Tensor
-import com.twitter.ml.api.FeatureContext
+import com.twitter.ml.api.FeatureContetwittert
 import com.twitter.ml.api.constant.SharedFeatures
 import java.util.{Map => JMap}
 
@@ -32,7 +32,7 @@ object TweetAllFeatures {
     authorF2vProducerEmbedding
   )
 
-  val featureContext = new FeatureContext(allFeatures: _*)
+  val featureContetwittert = new FeatureContetwittert(allFeatures: _*)
 }
 
 object UserAllFeatures {
@@ -54,5 +54,5 @@ object UserAllFeatures {
     userF2vConsumerEmbedding
   )
 
-  val featureContext = new FeatureContext(allFeatures: _*)
+  val featureContetwittert = new FeatureContetwittert(allFeatures: _*)
 }

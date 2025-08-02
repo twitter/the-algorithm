@@ -9,7 +9,7 @@ import com.twitter.frigate.pushservice.model.PushTypes.RawCandidate
 import com.twitter.frigate.pushservice.model.TrendTweetPushCandidate
 import com.twitter.frigate.pushservice.ml.PushMLModelScorer
 import com.twitter.frigate.pushservice.model.candidate.CopyIds
-import com.twitter.frigate.pushservice.refresh_handler.cross.CandidateCopyExpansion
+import com.twitter.frigate.pushservice.refresh_handler.cross.CandidateCopyEtwitterpansion
 import com.twitter.frigate.pushservice.util.CandidateHydrationUtil._
 import com.twitter.frigate.pushservice.util.MrUserStateUtil
 import com.twitter.frigate.pushservice.util.RelationshipUtil
@@ -22,7 +22,7 @@ case class PushCandidateHydrator(
   socialGraphServiceProcessStore: ReadableStore[RelationEdge, Boolean],
   safeUserStore: ReadableStore[Long, User],
   apiListStore: ReadableStore[Long, ApiList],
-  candidateCopyCross: CandidateCopyExpansion
+  candidateCopyCross: CandidateCopyEtwitterpansion
 )(
   implicit statsReceiver: StatsReceiver,
   implicit val weightedOpenOrNtabClickModelScorer: PushMLModelScorer) {
@@ -72,10 +72,10 @@ case class PushCandidateHydrator(
         val pushCandidate = candidateDetails.candidate
 
         val userEntities = pushCandidate match {
-          case tweetWithSocialContext: RawCandidate with TweetWithSocialContextTraits =>
-            val authorIdOpt = getAuthorIdFromTweetCandidate(tweetWithSocialContext)
-            val scUserIds = tweetWithSocialContext.socialContextUserIds.toSet
-            updateCandidateAndCrtStats(pushCandidate, "tweetWithSocialContext", scUserIds.size + 1)
+          case tweetWithSocialContetwittert: RawCandidate with TweetWithSocialContetwittertTraits =>
+            val authorIdOpt = getAuthorIdFromTweetCandidate(tweetWithSocialContetwittert)
+            val scUserIds = tweetWithSocialContetwittert.socialContetwittertUserIds.toSet
+            updateCandidateAndCrtStats(pushCandidate, "tweetWithSocialContetwittert", scUserIds.size + 1)
             Entities(users = scUserIds ++ authorIdOpt.toSet)
 
           case _ => Entities()
@@ -135,10 +135,10 @@ case class PushCandidateHydrator(
    * @param candidateDetails: recommendation candidates for a user
    * @return sequence of candidates tagged with push and ntab copy id
    */
-  private def expandCandidatesWithCopy(
+  private def etwitterpandCandidatesWithCopy(
     candidateDetails: Seq[CandidateDetails[RawCandidate]]
   ): Future[Seq[(CandidateDetails[RawCandidate], CopyIds)]] = {
-    candidateCopyCross.expandCandidatesWithCopyId(candidateDetails)
+    candidateCopyCross.etwitterpandCandidatesWithCopyId(candidateDetails)
   }
 
   def updateCandidates(
@@ -202,7 +202,7 @@ case class PushCandidateHydrator(
               copyIds)
 
           case unknownCandidate =>
-            throw new IllegalArgumentException(
+            throw new IllegalArgumentEtwitterception(
               s"Incorrect candidate for hydration: ${unknownCandidate.commonRecType}")
         }
 
@@ -217,14 +217,14 @@ case class PushCandidateHydrator(
     candidateDetails: Seq[CandidateDetails[RawCandidate]]
   ): Future[Seq[CandidateDetails[PushCandidate]]] = {
     val isLoggedOutRequest =
-      candidateDetails.headOption.exists(_.candidate.target.isLoggedOutUser)
+      candidateDetails.headOption.etwitterists(_.candidate.target.isLoggedOutUser)
     if (!isLoggedOutRequest) {
       candidateDetails.headOption.map { cd =>
         MrUserStateUtil.updateMrUserStateStats(cd.candidate.target)(mrUserStateStat)
       }
     }
 
-    expandCandidatesWithCopy(candidateDetails).flatMap { candidateDetailsWithCopy =>
+    etwitterpandCandidatesWithCopy(candidateDetails).flatMap { candidateDetailsWithCopy =>
       candidateWithCopyNumStat.add(candidateDetailsWithCopy.size)
       val entities = collectEntities(candidateDetailsWithCopy.map(_._1))
       queryEntities(entities).flatMap { entitiesMap =>

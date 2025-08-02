@@ -38,7 +38,7 @@ object SGSPredicatesForCandidate {
 
     val sgsAuthorBeingFollowedPredicate = Predicate
       .from { relationshipMapEdge: RelationshipMapEdge =>
-        anyRelationExist(relationshipMapEdge, Set(RelationshipType.Following))
+        anyRelationEtwitterist(relationshipMapEdge, Set(RelationshipType.Following))
       }
 
     Predicate
@@ -75,7 +75,7 @@ object SGSPredicatesForCandidate {
     Predicate
       .from { relationshipMapEdge: RelationshipMapEdge =>
         {
-          anyRelationExist(relationshipMapEdge, Set(RelationshipType.DeviceFollowing))
+          anyRelationEtwitterist(relationshipMapEdge, Set(RelationshipType.DeviceFollowing))
         }
       }
       .optionalOn(relationshipMapEdgeFromCandidate, missingResult = false)
@@ -91,7 +91,7 @@ object SGSPredicatesForCandidate {
     Predicate
       .from { relationshipMapEdge: RelationshipMapEdge =>
         {
-          anyRelationExist(
+          anyRelationEtwitterist(
             relationshipMapEdge,
             Set(
               RelationshipType.Blocking,
@@ -113,7 +113,7 @@ object SGSPredicatesForCandidate {
     Predicate
       .from { relationshipMapEdge: RelationshipMapEdge =>
         {
-          anyRelationExist(relationshipMapEdge, Set(RelationshipType.Following))
+          anyRelationEtwitterist(relationshipMapEdge, Set(RelationshipType.Following))
         }
       }
       .optionalOn(relationshipMapEdgeFromCandidate, missingResult = false)
@@ -155,12 +155,12 @@ object SGSPredicatesForCandidate {
   }
 
   /**
-   * Returns true if the provided relationshipEdge exists among
+   * Returns true if the provided relationshipEdge etwitterists among
    * @param candidate candidate
    * @param relationships relaionships
    * @return Boolean result
    */
-  private def anyRelationExist(
+  private def anyRelationEtwitterist(
     relationshipMapEdge: RelationshipMapEdge,
     relationships: Set[RelationshipType]
   ): Boolean = {

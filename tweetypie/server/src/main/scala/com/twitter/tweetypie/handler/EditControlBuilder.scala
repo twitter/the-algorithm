@@ -1,7 +1,7 @@
 package com.twitter.tweetypie
 package handler
 
-import com.twitter.expandodo.thriftscala.Card2RequestOptions
+import com.twitter.etwitterpandodo.thriftscala.Card2RequestOptions
 import com.twitter.featureswitches.v2.FeatureSwitchResults
 import com.twitter.gizmoduck.util.UserUtil
 import com.twitter.stitch.Stitch
@@ -34,9 +34,9 @@ object EditControlBuilder {
   val TweetEditCreationEnabledForTwitterBlueKey = "tweet_edit_creation_enabled_for_twitter_blue"
 
   val pollCardNames: Set[String] = Set(
-    "poll2choice_text_only",
-    "poll3choice_text_only",
-    "poll4choice_text_only",
+    "poll2choice_tetwittert_only",
+    "poll3choice_tetwittert_only",
+    "poll4choice_tetwittert_only",
     "poll2choice_image",
     "poll3choice_image",
     "poll4choice_image",
@@ -84,11 +84,11 @@ object EditControlBuilder {
     subscriptionVerificationRepo: StratoSubscriptionVerificationRepository.Type,
     disablePromotedTweetEdit: Gate[Unit],
     checkTwitterBlueSubscription: Gate[Unit],
-    setEditWindowToSixtyMinutes: Gate[Unit],
+    setEditWindowToSitwittertyMinutes: Gate[Unit],
     stats: StatsReceiver
   ): Type = {
 
-    // Nullcast tweets not allowed, except if the tweet has a community annotation
+    // Nullcast tweets not allowed, etwittercept if the tweet has a community annotation
     def isNullcastedButNotCommunityTweet(request: Request): Boolean = {
 
       val isNullcasted: Boolean = request.tweet.coreData.get.nullcast
@@ -97,10 +97,10 @@ object EditControlBuilder {
         request.postTweetRequest.additionalFields
           .flatMap(CommunityAnnotation.additionalFieldsToCommunityIDs)
 
-      isNullcasted && !(communityIds.exists(_.nonEmpty))
+      isNullcasted && !(communityIds.etwitterists(_.nonEmpty))
     }
 
-    def isSuperFollow(tweet: Tweet): Boolean = tweet.exclusiveTweetControl.isDefined
+    def isSuperFollow(tweet: Tweet): Boolean = tweet.etwitterclusiveTweetControl.isDefined
 
     def isCollabTweet(tweet: Tweet): Boolean = tweet.collabControl.isDefined
 
@@ -177,7 +177,7 @@ object EditControlBuilder {
           if (!authorized) {
             log.error(s"User ${authorId} unauthorized to edit")
             editRequestOutsideOfAllowlist.incr()
-            Stitch.exception(TweetCreateFailure.State(TweetCreateState.EditTweetUserNotAuthorized))
+            Stitch.etwitterception(TweetCreateFailure.State(TweetCreateState.EditTweetUserNotAuthorized))
           } else Stitch.Done
         }
       }
@@ -215,19 +215,19 @@ object EditControlBuilder {
       }
     }
 
-    val editTweetExpired = stats.counter("edit_control_builder_rejected", "expired")
-    val editTweetExpiredNoEditControl =
-      stats.counter("edit_control_builder_rejected", "expired", "no_edit_control")
+    val editTweetEtwitterpired = stats.counter("edit_control_builder_rejected", "etwitterpired")
+    val editTweetEtwitterpiredNoEditControl =
+      stats.counter("edit_control_builder_rejected", "etwitterpired", "no_edit_control")
     def checkEditTimeWindow(initial: EditControlInitial): Unit = {
       initial.editableUntilMsecs match {
         case Some(millis) if Time.now < Time.fromMilliseconds(millis) => // OK
         case Some(_) =>
-          editTweetExpired.incr()
+          editTweetEtwitterpired.incr()
           throw TweetCreateFailure.State(TweetCreateState.EditTimeLimitReached)
         case editable =>
-          editTweetExpired.incr()
+          editTweetEtwitterpired.incr()
           if (editable.isEmpty) {
-            editTweetExpiredNoEditControl.incr()
+            editTweetEtwitterpiredNoEditControl.incr()
           }
           throw TweetCreateFailure.State(TweetCreateState.EditTimeLimitReached)
       }
@@ -251,7 +251,7 @@ object EditControlBuilder {
         case Some(EditControl.Edit(edit)) =>
           edit.editControlInitial.getOrElse {
             editControlInitialMissing.incr()
-            throw new IllegalStateException(
+            throw new IllegalStateEtwitterception(
               "Encountered edit tweet with missing editControlInitial.")
           }
         case _ =>
@@ -271,7 +271,7 @@ object EditControlBuilder {
             Stitch.Done
           case true =>
             editPromotedTweet.incr()
-            Stitch.exception(TweetCreateFailure.State(TweetCreateState.EditTweetUserNotAuthorized))
+            Stitch.etwitterception(TweetCreateFailure.State(TweetCreateState.EditTweetUserNotAuthorized))
         }
       } else {
         Stitch.Done
@@ -281,7 +281,7 @@ object EditControlBuilder {
     // Each time edit is made, count how many versions a tweet already has.
     // Value should be always between 1 and 4.
     val editTweetCount = 0
-      .to(EditControlUtil.maxTweetEditsAllowed)
+      .to(EditControlUtil.matwitterTweetEditsAllowed)
       .map(i => i -> stats.counter("edit_control_builder_edits_count", i.toString))
       .toMap
     // Overall counter and failures of card resolution for poll lookups. Needed because polls are not editable.
@@ -298,7 +298,7 @@ object EditControlBuilder {
               makeEditControlInitial(
                 tweetId = request.tweetId,
                 createdAt = request.createdAt,
-                setEditWindowToSixtyMinutes = setEditWindowToSixtyMinutes
+                setEditWindowToSitwittertyMinutes = setEditWindowToSitwittertyMinutes
               ).initial.copy(
                 isEditEligible = Some(
                   !isNullcastedButNotCommunityTweet(request)
@@ -344,7 +344,7 @@ object EditControlBuilder {
                 previousTweetAuthorId = getUserId(previousTweet))
               editTweetCount
                 .get(initial.editTweetIds.size)
-                .orElse(editTweetCount.get(EditControlUtil.maxTweetEditsAllowed))
+                .orElse(editTweetCount.get(EditControlUtil.matwitterTweetEditsAllowed))
                 .foreach(counter => counter.incr())
               checkLatestEdit(previousTweet.id, initial)
               checkEditsRemaining(initial)

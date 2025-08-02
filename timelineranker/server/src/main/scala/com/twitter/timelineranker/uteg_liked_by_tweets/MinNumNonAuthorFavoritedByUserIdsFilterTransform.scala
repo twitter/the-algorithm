@@ -11,14 +11,14 @@ import com.twitter.util.Future
 
 class MinNumNonAuthorFavoritedByUserIdsFilterTransform(
   minNumFavoritedByUserIdsProvider: DependencyProvider[Int])
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+    etwittertends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
 
   override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
     val filteredSearchResults = envelope.searchResults.filter { searchResult =>
       numNonAuthorFavs(
         searchResult = searchResult,
         utegResultsMap = envelope.utegResults
-      ).exists(_ >= minNumFavoritedByUserIdsProvider(envelope.query))
+      ).etwitterists(_ >= minNumFavoritedByUserIdsProvider(envelope.query))
     }
     Future.value(envelope.copy(searchResults = filteredSearchResults))
   }

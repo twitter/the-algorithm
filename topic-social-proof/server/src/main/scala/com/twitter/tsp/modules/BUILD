@@ -9,7 +9,7 @@ scala_library(
         "escherbird/src/scala/com/twitter/escherbird/util/uttclient",
         "escherbird/src/thrift/com/twitter/escherbird/utt:strato-columns-scala",
         "finagle-internal/mtls/src/main/scala/com/twitter/finagle/mtls/authentication",
-        "finatra-internal/mtls-thriftmux/src/main/scala",
+        "finatra-internal/mtls-thriftmutwitter/src/main/scala",
         "finatra/inject/inject-core/src/main/scala",
         "finatra/inject/inject-thrift-client",
         "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/store/strato",

@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.twitter.common.util.Clock;
 import com.twitter.decider.Decider;
-import com.twitter.search.common.indexing.thriftjava.UserUpdateType;
+import com.twitter.search.common.indetwittering.thriftjava.UserUpdateType;
 import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
 
@@ -53,7 +53,7 @@ public class UserUpdatesChecker {
     return false;
   }
 
-  // Antisocial/suspended users can't tweet after they are suspended. Thus if our index stores
+  // Antisocial/suspended users can't tweet after they are suspended. Thus if our indetwitter stores
   // tweets from the last 10 days, and they were suspended 60 days ago, we don't need them since
   // there will be no tweets from them. We can save space by not storing info about those users.
 

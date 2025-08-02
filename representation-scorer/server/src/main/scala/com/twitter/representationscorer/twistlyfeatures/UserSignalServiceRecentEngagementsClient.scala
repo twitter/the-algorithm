@@ -73,15 +73,15 @@ class UserSignalServiceRecentEngagementsClient(
   private def buildRequest(userId: Long) = {
     val recipient = Some(SimpleRecipient(userId))
 
-    // Signals RSX always fetches
+    // Signals RStwitter always fetches
     val requestSignals = ArrayBuffer(
       SignalRequestFav,
       SignalRequestRetweet,
       SignalRequestFollow
     )
 
-    // Signals under experimentation. We use individual deciders to disable them if necessary.
-    // If experiments are successful, they will become permanent.
+    // Signals under etwitterperimentation. We use individual deciders to disable them if necessary.
+    // If etwitterperiments are successful, they will become permanent.
     if (decider.isAvailable(FetchSignalShareDeciderKey, recipient))
       requestSignals.append(SignalRequestShare)
 
@@ -132,7 +132,7 @@ object UserSignalServiceRecentEngagementsClient {
   val SignalRequestRetweet: SignalRequest = SignalRequest(engagementsToScoreOpt, SignalType.Retweet)
   val SignalRequestFollow: SignalRequest =
     SignalRequest(engagementsToScoreOpt, SignalType.AccountFollowWithDelay)
-  // New experimental signals
+  // New etwitterperimental signals
   val SignalRequestShare: SignalRequest =
     SignalRequest(engagementsToScoreOpt, SignalType.TweetShareV1)
   val SignalRequestReply: SignalRequest = SignalRequest(engagementsToScoreOpt, SignalType.Reply)

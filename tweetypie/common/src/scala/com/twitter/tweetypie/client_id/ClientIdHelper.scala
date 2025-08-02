@@ -18,18 +18,18 @@ object ClientIdHelper {
    * Trims off the last .element, which is usually .prod or .staging
    */
   def getClientIdRoot(clientId: String): String =
-    clientId.lastIndexOf('.') match {
+    clientId.lastIndetwitterOf('.') match {
       case -1 => clientId
-      case idx => clientId.substring(0, idx)
+      case idtwitter => clientId.substring(0, idtwitter)
     }
 
   /**
    * Returns the last .element without the '.'
    */
   def getClientIdEnv(clientId: String): String =
-    clientId.lastIndexOf('.') match {
+    clientId.lastIndetwitterOf('.') match {
       case -1 => clientId
-      case idx => clientId.substring(idx + 1)
+      case idtwitter => clientId.substring(idtwitter + 1)
     }
 
   private[client_id] def asClientId(s: ServiceIdentifier): String = s"${s.service}.${s.environment}"
@@ -37,12 +37,12 @@ object ClientIdHelper {
 
 class ClientIdHelper(serviceIdentifierStrategy: ServiceIdentifierStrategy) {
 
-  private[client_id] val ProcessPathPrefix = "/p/"
+  private[client_id] val ProcessPathPrefitwitter = "/p/"
 
   /**
    * The effective client id is used for request authorization and metrics
    * attribution. For calls to Tweetypie's thrift API, the thrift ClientId
-   * is used and is expected in the form of "service-name.env". Federated
+   * is used and is etwitterpected in the form of "service-name.env". Federated
    * Strato clients don't support configured ClientIds and instead provide
    * a "process path" containing instance-specific information. So for
    * calls to the federated API, we compute an effective client id from
@@ -53,14 +53,14 @@ class ClientIdHelper(serviceIdentifierStrategy: ServiceIdentifierStrategy) {
   def effectiveClientId: Option[String] = {
     val clientId: Option[String] = ClientId.current.map(_.name)
     clientId
-    // Exclude process paths because they are instance-specific and aren't
+    // Etwitterclude process paths because they are instance-specific and aren't
     // supported by tweetypie for authorization or metrics purposes.
-      .filterNot(_.startsWith(ProcessPathPrefix))
+      .filterNot(_.startsWith(ProcessPathPrefitwitter))
       // Try computing a value from the ServiceId if the thrift
       // ClientId is undefined or unsupported.
       .orElse(serviceIdentifierStrategy.serviceIdentifier.map(ClientIdHelper.asClientId))
       // Ultimately fall back to the ClientId value, even when given an
-      // unsupported format, so that error text and debug logs include
+      // unsupported format, so that error tetwittert and debug logs include
       // the value passed by the caller.
       .orElse(clientId)
   }
@@ -93,7 +93,7 @@ trait ServiceIdentifierStrategy {
 }
 
 /**
- * Picks [[ServiceIdentifier]] from Finagle SSL Transport, if one exists.
+ * Picks [[ServiceIdentifier]] from Finagle SSL Transport, if one etwitterists.
  *
  * This works for both Thrift API calls as well as StratoFed API calls. Strato's
  * [[Access#getPrincipals]] collection, which would typically be consulted by StratoFed
@@ -106,7 +106,7 @@ trait ServiceIdentifierStrategy {
 private[client_id] class UseTransportServiceIdentifier(
   // overridable for testing
   getPeerServiceIdentifier: => ServiceIdentifier,
-) extends ServiceIdentifierStrategy {
+) etwittertends ServiceIdentifierStrategy {
   override def serviceIdentifier: Option[ServiceIdentifier] =
     getPeerServiceIdentifier match {
       case EmptyServiceIdentifier => None
@@ -115,7 +115,7 @@ private[client_id] class UseTransportServiceIdentifier(
 }
 
 object UseTransportServiceIdentifier
-    extends UseTransportServiceIdentifier(S2STransport.peerServiceIdentifier)
+    etwittertends UseTransportServiceIdentifier(S2STransport.peerServiceIdentifier)
 
 /**
  * Picks [[ForwardedServiceIdentifier]] from Strato principals for client ID
@@ -133,7 +133,7 @@ object UseTransportServiceIdentifier
 private[client_id] class PreferForwardedServiceIdentifierForStrato(
   // overridable for testing
   getPeerServiceIdentifier: => ServiceIdentifier,
-) extends ServiceIdentifierStrategy {
+) etwittertends ServiceIdentifierStrategy {
   val useTransportServiceIdentifier =
     new UseTransportServiceIdentifier(getPeerServiceIdentifier)
 
@@ -153,7 +153,7 @@ private[client_id] class PreferForwardedServiceIdentifierForStrato(
   /**
    * Strato uses various service names like "stratoserver" and "stratoserver-patient".
    * They all do start with "stratoserver" though, so at the point of implementing,
-   * the safest bet to recognize strato is to look for this prefix.
+   * the safest bet to recognize strato is to look for this prefitwitter.
    *
    * This also works for staged strato instances (which it should), despite allowing
    * for technically any caller to force this strategy, by creating service certificate
@@ -164,7 +164,7 @@ private[client_id] class PreferForwardedServiceIdentifierForStrato(
 }
 
 object PreferForwardedServiceIdentifierForStrato
-    extends PreferForwardedServiceIdentifierForStrato(S2STransport.peerServiceIdentifier)
+    etwittertends PreferForwardedServiceIdentifierForStrato(S2STransport.peerServiceIdentifier)
 
 /**
  * [[ServiceIdentifierStrategy]] which dispatches between two delegates based on the value
@@ -174,7 +174,7 @@ class ConditionalServiceIdentifierStrategy(
   private val condition: Gate[Unit],
   private val ifTrue: ServiceIdentifierStrategy,
   private val ifFalse: ServiceIdentifierStrategy)
-    extends ServiceIdentifierStrategy {
+    etwittertends ServiceIdentifierStrategy {
 
   override def serviceIdentifier: Option[ServiceIdentifier] =
     if (condition()) {

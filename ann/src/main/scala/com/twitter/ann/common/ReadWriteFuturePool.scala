@@ -19,7 +19,7 @@ object ReadWriteFuturePool {
 
 @VisibleForTesting
 private[ann] class ReadWriteFuturePoolANN(readPool: FuturePool, writePool: FuturePool)
-    extends ReadWriteFuturePool {
+    etwittertends ReadWriteFuturePool {
   def read[T](f: => T): Future[T] = {
     readPool.apply(f)
   }

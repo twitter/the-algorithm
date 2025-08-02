@@ -3,9 +3,9 @@ package com.twitter.visibility.generators
 import com.twitter.visibility.common.actions.InterstitialReason
 import com.twitter.visibility.common.actions.LocalizedMessage
 import com.twitter.visibility.common.actions.MessageLink
-import com.twitter.visibility.results.richtext.InterstitialReasonToRichText
-import com.twitter.visibility.results.richtext.InterstitialReasonToRichText.InterstitialCopy
-import com.twitter.visibility.results.richtext.InterstitialReasonToRichText.InterstitialLink
+import com.twitter.visibility.results.richtetwittert.InterstitialReasonToRichTetwittert
+import com.twitter.visibility.results.richtetwittert.InterstitialReasonToRichTetwittert.InterstitialCopy
+import com.twitter.visibility.results.richtetwittert.InterstitialReasonToRichTetwittert.InterstitialLink
 import com.twitter.visibility.results.translation.LearnMoreLink
 import com.twitter.visibility.results.translation.Resource
 import com.twitter.visibility.results.translation.Translator
@@ -15,33 +15,33 @@ object InterstitialReasonToLocalizedMessage {
     reason: InterstitialReason,
     languageTag: String,
   ): Option[LocalizedMessage] = {
-    InterstitialReasonToRichText.reasonToCopy(reason).map { copy =>
-      val text = Translator.translate(
+    InterstitialReasonToRichTetwittert.reasonToCopy(reason).map { copy =>
+      val tetwittert = Translator.translate(
         copy.resource,
         languageTag
       )
-      localizeWithCopyAndText(copy, languageTag, text)
+      localizeWithCopyAndTetwittert(copy, languageTag, tetwittert)
     }
   }
 
-  private def localizeWithCopyAndText(
+  private def localizeWithCopyAndTetwittert(
     copy: InterstitialCopy,
     languageTag: String,
-    text: String
+    tetwittert: String
   ): LocalizedMessage = {
     val learnMore = Translator.translate(LearnMoreLink, languageTag)
 
     val learnMoreLinkOpt =
       copy.link.map { link =>
-        MessageLink(key = Resource.LearnMorePlaceholder, displayText = learnMore, uri = link)
+        MessageLink(key = Resource.LearnMorePlaceholder, displayTetwittert = learnMore, uri = link)
       }
     val additionalLinks = copy.additionalLinks.map {
       case InterstitialLink(placeholder, copyResource, link) =>
-        val copyText = Translator.translate(copyResource, languageTag)
-        MessageLink(key = placeholder, displayText = copyText, uri = link)
+        val copyTetwittert = Translator.translate(copyResource, languageTag)
+        MessageLink(key = placeholder, displayTetwittert = copyTetwittert, uri = link)
     }
 
     val links = learnMoreLinkOpt.toSeq ++ additionalLinks
-    LocalizedMessage(message = text, language = languageTag, links = links)
+    LocalizedMessage(message = tetwittert, language = languageTag, links = links)
   }
 }

@@ -13,9 +13,9 @@ import com.twitter.strato.client.Client
 import com.twitter.strato.generated.client.recommendations.user_signal_service.SignalsClientColumn
 import java.util.concurrent.ConcurrentMap
 import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
-object UserSignalServiceRecentEngagementsClientModule extends TwitterModule {
+object UserSignalServiceRecentEngagementsClientModule etwittertends TwitterModule {
 
   @Singleton
   @Provides
@@ -31,16 +31,16 @@ object UserSignalServiceRecentEngagementsClientModule extends TwitterModule {
     for multiple (userid, tweetid) pairs don't all need to fetch them.
 
     [1] Caffeine cache keys/values must be objects, so we cannot use the `Long` primitive directly.
-    The boxed java.lang.Long works as a key, since it is an object. In most situations the compiler
-    can see where auto(un)boxing can occur. However, here we seem to need some wrapper functions
-    with explicit types to allow the boxing to happen.
+    The botwittered java.lang.Long works as a key, since it is an object. In most situations the compiler
+    can see where auto(un)botwittering can occur. However, here we seem to need some wrapper functions
+    with etwitterplicit types to allow the botwittering to happen.
      */
     val mapCache: ConcurrentMap[java.lang.Long, Stitch[Engagements]] =
       Caffeine
         .newBuilder()
-        .expireAfterWrite(5, TimeUnit.SECONDS)
-        .maximumSize(
-          1000 // We estimate 5M unique users in a 5m period - with 2k RSX instances, assume that one will see < 1k in a 5s period
+        .etwitterpireAfterWrite(5, TimeUnit.SECONDS)
+        .matwitterimumSize(
+          1000 // We estimate 5M unique users in a 5m period - with 2k RStwitter instances, assume that one will see < 1k in a 5s period
         )
         .build[java.lang.Long, Stitch[Engagements]]
         .asMap

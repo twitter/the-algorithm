@@ -19,7 +19,7 @@
           1047106191829028865
         )
       OR (
-        ea.groupId IN (34, 35) # Cortex media understanding
+        ea.groupId IN (34, 35) # Cortetwitter media understanding
         AND ea.entityId IN (
           1072916828484038657,
           1133752108212035585,

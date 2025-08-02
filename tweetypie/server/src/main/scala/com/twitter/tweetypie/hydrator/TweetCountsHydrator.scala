@@ -9,10 +9,10 @@ import com.twitter.tweetypie.thriftscala._
 import scala.collection.mutable
 
 object TweetCountsHydrator {
-  type Type = ValueHydrator[Option[StatusCounts], Ctx]
+  type Type = ValueHydrator[Option[StatusCounts], Cttwitter]
 
-  case class Ctx(featureSwitchResults: Option[FeatureSwitchResults], underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+  case class Cttwitter(featureSwitchResults: Option[FeatureSwitchResults], underlyingTweetCttwitter: TweetCttwitter)
+      etwittertends TweetCttwitter.Protwittery
 
   val retweetCountField: FieldByPath =
     fieldByPath(Tweet.CountsField, StatusCounts.RetweetCountField)
@@ -154,20 +154,20 @@ object TweetCountsHydrator {
       }
     }.toMap
 
-    ValueHydrator[Option[StatusCounts], Ctx] { (curr, ctx) =>
+    ValueHydrator[Option[StatusCounts], Cttwitter] { (curr, cttwitter) =>
       val countsFields: Set[FieldId] = filterRequestedCounts(
-        ctx.opts.forUserId.getOrElse(ctx.userId),
-        ctx.opts.include.countsFields,
+        cttwitter.opts.forUserId.getOrElse(cttwitter.userId),
+        cttwitter.opts.include.countsFields,
         shouldHydrateBookmarksCount,
-        ctx.featureSwitchResults
+        cttwitter.featureSwitchResults
       )
-      if (ctx.isRetweet) {
+      if (cttwitter.isRetweet) {
         // To avoid a reflection-induced key error where the countsFields can contain a fieldId
         // that is not in the thrift schema loaded at start, we strip unknown field_ids using
         // `intersect`
         Stitch.value(modifiedZero(countsFields.intersect(all)))
       } else {
-        val keys = toKeys(ctx.tweetId, countsFields, curr)
+        val keys = toKeys(cttwitter.tweetId, countsFields, curr)
 
         Stitch.traverse(keys)(key => statusCountsRepo(key, repo)).map { results =>
           // always flag modified if starting from None
@@ -177,12 +177,12 @@ object TweetCountsHydrator {
           ValueState.sequence(vs).map(reduceStatusCounts).map(Some(_))
         }
       }
-    }.onlyIf { (_, ctx) =>
+    }.onlyIf { (_, cttwitter) =>
       filterRequestedCounts(
-        ctx.opts.forUserId.getOrElse(ctx.userId),
-        ctx.opts.include.countsFields,
+        cttwitter.opts.forUserId.getOrElse(cttwitter.userId),
+        cttwitter.opts.include.countsFields,
         shouldHydrateBookmarksCount,
-        ctx.featureSwitchResults
+        cttwitter.featureSwitchResults
       ).nonEmpty
     }
   }

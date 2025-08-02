@@ -1,6 +1,6 @@
 package com.twitter.interaction_graph.scio.agg_all
 
-import com.spotify.scio.ScioContext
+import com.spotify.scio.ScioContetwittert
 import com.spotify.scio.values.SCollection
 import com.twitter.beam.io.dal.DAL
 import com.twitter.beam.io.dal.DAL.ReadOptions
@@ -8,15 +8,15 @@ import com.twitter.beam.job.ServiceIdentifierOptions
 import com.twitter.dal.client.dataset.SnapshotDALDatasetBase
 import com.twitter.dal.client.dataset.TimePartitionedDALDataset
 import com.twitter.interaction_graph.scio.agg_address_book.InteractionGraphAggAddressBookEdgeSnapshotScalaDataset
-import com.twitter.interaction_graph.scio.agg_address_book.InteractionGraphAggAddressBookVertexSnapshotScalaDataset
+import com.twitter.interaction_graph.scio.agg_address_book.InteractionGraphAggAddressBookVertetwitterSnapshotScalaDataset
 import com.twitter.interaction_graph.scio.agg_client_event_logs.InteractionGraphAggClientEventLogsEdgeDailyScalaDataset
-import com.twitter.interaction_graph.scio.agg_client_event_logs.InteractionGraphAggClientEventLogsVertexDailyScalaDataset
+import com.twitter.interaction_graph.scio.agg_client_event_logs.InteractionGraphAggClientEventLogsVertetwitterDailyScalaDataset
 import com.twitter.interaction_graph.scio.agg_direct_interactions.InteractionGraphAggDirectInteractionsEdgeDailyScalaDataset
-import com.twitter.interaction_graph.scio.agg_direct_interactions.InteractionGraphAggDirectInteractionsVertexDailyScalaDataset
+import com.twitter.interaction_graph.scio.agg_direct_interactions.InteractionGraphAggDirectInteractionsVertetwitterDailyScalaDataset
 import com.twitter.interaction_graph.scio.agg_flock.InteractionGraphAggFlockEdgeSnapshotScalaDataset
-import com.twitter.interaction_graph.scio.agg_flock.InteractionGraphAggFlockVertexSnapshotScalaDataset
+import com.twitter.interaction_graph.scio.agg_flock.InteractionGraphAggFlockVertetwitterSnapshotScalaDataset
 import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.Vertex
+import com.twitter.interaction_graph.thriftscala.Vertetwitter
 import com.twitter.statebird.v2.thriftscala.Environment
 import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
 import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
@@ -26,7 +26,7 @@ import org.joda.time.Interval
 case class InteractionGraphAggregationSource(
   pipelineOptions: InteractionGraphAggregationOption
 )(
-  implicit sc: ScioContext) {
+  implicit sc: ScioContetwittert) {
   val dalEnvironment: String = pipelineOptions
     .as(classOf[ServiceIdentifierOptions])
     .getEnvironment()
@@ -37,7 +37,7 @@ case class InteractionGraphAggregationSource(
     dalEnvironment: String,
     projections: Option[Seq[String]] = None
   )(
-    implicit sc: ScioContext,
+    implicit sc: ScioContetwittert,
   ): SCollection[T] = {
     sc.customInput(
       s"Reading ${dataset.role.name}.${dataset.logicalName}",
@@ -56,7 +56,7 @@ case class InteractionGraphAggregationSource(
     dalEnvironment: String,
     projections: Option[Seq[String]] = None
   )(
-    implicit sc: ScioContext,
+    implicit sc: ScioContetwittert,
   ): SCollection[T] = {
     sc.customInput(
       s"Reading most recent snapshot ${dataset.role.name}.${dataset.logicalName}",
@@ -75,7 +75,7 @@ case class InteractionGraphAggregationSource(
     dalEnvironment: String,
     projections: Option[Seq[String]] = None
   )(
-    implicit sc: ScioContext,
+    implicit sc: ScioContetwittert,
   ): SCollection[T] = {
     sc.customInput(
       s"Reading most recent snapshot ${dataset.role.name}.${dataset.logicalName}",
@@ -88,88 +88,88 @@ case class InteractionGraphAggregationSource(
     )
   }
 
-  def readAddressBookFeatures(): (SCollection[Edge], SCollection[Vertex]) = {
+  def readAddressBookFeatures(): (SCollection[Edge], SCollection[Vertetwitter]) = {
     val edges = readMostRecentSnapshotNoOlderThanDALDataset[Edge](
       dataset = InteractionGraphAggAddressBookEdgeSnapshotScalaDataset,
       noOlderThan = Duration.fromDays(5),
       dalEnvironment = dalEnvironment,
     )
 
-    val vertex = readMostRecentSnapshotNoOlderThanDALDataset[Vertex](
-      dataset = InteractionGraphAggAddressBookVertexSnapshotScalaDataset,
+    val vertetwitter = readMostRecentSnapshotNoOlderThanDALDataset[Vertetwitter](
+      dataset = InteractionGraphAggAddressBookVertetwitterSnapshotScalaDataset,
       noOlderThan = Duration.fromDays(5),
       dalEnvironment = dalEnvironment,
     )
 
-    (edges, vertex)
+    (edges, vertetwitter)
   }
 
   def readClientEventLogsFeatures(
     dateInterval: Interval
-  ): (SCollection[Edge], SCollection[Vertex]) = {
+  ): (SCollection[Edge], SCollection[Vertetwitter]) = {
     val edges = readDALDataset[Edge](
       dataset = InteractionGraphAggClientEventLogsEdgeDailyScalaDataset,
       dalEnvironment = dalEnvironment,
       interval = dateInterval
     )
 
-    val vertex = readDALDataset[Vertex](
-      dataset = InteractionGraphAggClientEventLogsVertexDailyScalaDataset,
+    val vertetwitter = readDALDataset[Vertetwitter](
+      dataset = InteractionGraphAggClientEventLogsVertetwitterDailyScalaDataset,
       dalEnvironment = dalEnvironment,
       interval = dateInterval
     )
 
-    (edges, vertex)
+    (edges, vertetwitter)
   }
 
   def readDirectInteractionsFeatures(
     dateInterval: Interval
-  ): (SCollection[Edge], SCollection[Vertex]) = {
+  ): (SCollection[Edge], SCollection[Vertetwitter]) = {
     val edges = readDALDataset[Edge](
       dataset = InteractionGraphAggDirectInteractionsEdgeDailyScalaDataset,
       dalEnvironment = dalEnvironment,
       interval = dateInterval
     )
 
-    val vertex = readDALDataset[Vertex](
-      dataset = InteractionGraphAggDirectInteractionsVertexDailyScalaDataset,
+    val vertetwitter = readDALDataset[Vertetwitter](
+      dataset = InteractionGraphAggDirectInteractionsVertetwitterDailyScalaDataset,
       dalEnvironment = dalEnvironment,
       interval = dateInterval
     )
 
-    (edges, vertex)
+    (edges, vertetwitter)
   }
 
-  def readFlockFeatures(): (SCollection[Edge], SCollection[Vertex]) = {
+  def readFlockFeatures(): (SCollection[Edge], SCollection[Vertetwitter]) = {
     val edges = readMostRecentSnapshotNoOlderThanDALDataset[Edge](
       dataset = InteractionGraphAggFlockEdgeSnapshotScalaDataset,
       noOlderThan = Duration.fromDays(5),
       dalEnvironment = dalEnvironment,
     )
 
-    val vertex = readMostRecentSnapshotNoOlderThanDALDataset[Vertex](
-      dataset = InteractionGraphAggFlockVertexSnapshotScalaDataset,
+    val vertetwitter = readMostRecentSnapshotNoOlderThanDALDataset[Vertetwitter](
+      dataset = InteractionGraphAggFlockVertetwitterSnapshotScalaDataset,
       noOlderThan = Duration.fromDays(5),
       dalEnvironment = dalEnvironment,
     )
 
-    (edges, vertex)
+    (edges, vertetwitter)
   }
 
-  def readAggregatedFeatures(dateInterval: Interval): (SCollection[Edge], SCollection[Vertex]) = {
+  def readAggregatedFeatures(dateInterval: Interval): (SCollection[Edge], SCollection[Vertetwitter]) = {
     val edges = readMostRecentSnapshotDALDataset[Edge](
       dataset = InteractionGraphHistoryAggregatedEdgeSnapshotScalaDataset,
       dalEnvironment = dalEnvironment,
       dateInterval = dateInterval
     )
 
-    val vertex = readMostRecentSnapshotDALDataset[Vertex](
-      dataset = InteractionGraphHistoryAggregatedVertexSnapshotScalaDataset,
+    val vertetwitter = readMostRecentSnapshotDALDataset[Vertetwitter](
+      dataset = InteractionGraphHistoryAggregatedVertetwitterSnapshotScalaDataset,
       dalEnvironment = dalEnvironment,
       dateInterval = dateInterval
     )
 
-    (edges, vertex)
+    (edges, vertetwitter)
   }
 
   def readFlatUsers(): SCollection[FlatUser] =

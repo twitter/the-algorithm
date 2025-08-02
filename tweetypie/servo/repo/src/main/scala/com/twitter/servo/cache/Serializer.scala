@@ -92,7 +92,7 @@ object Serializers { self =>
     Transformer(ByteBuffer.wrap(_: Array[Byte]), byteBufferToArray)
 
   val ArrayByteBuf: Transformer[Array[Byte], Buf] =
-    Transformer(Buf.ByteArray.Shared.apply, Buf.ByteArray.Shared.extract)
+    Transformer(Buf.ByteArray.Shared.apply, Buf.ByteArray.Shared.etwittertract)
 
   /**
    * Isomorphism between Time and Long. The Long represents the number
@@ -103,7 +103,7 @@ object Serializers { self =>
 
   /**
    * Transformer from Time to Array[Byte] always succeeds. The inverse
-   * transform throws BufferUnderflowException if the buffer is less
+   * transform throws BufferUnderflowEtwitterception if the buffer is less
    * than eight bytes in length. If it is greater than eight bytes,
    * the later bytes are discarded.
    */
@@ -124,7 +124,7 @@ object Serializers { self =>
 class ThriftSerializer[T <: ThriftStruct](
   val codec: ThriftStructCodec[T],
   val protocolFactory: TProtocolFactory)
-    extends Serializer[T]
+    etwittertends Serializer[T]
     with ThriftStructSerializer[T] {
   override def to(obj: T): Try[Array[Byte]] = Try(toBytes(obj))
   override def from(bytes: Array[Byte]): Try[T] = Try(fromBytes(bytes))
@@ -140,7 +140,7 @@ class ThriftSerializer[T <: ThriftStruct](
  * @param protocolFactory defines the serialization protocol to be used
  */
 class TBaseSerializer[T <: TBase[_, _]](tFactory: () => T, protocolFactory: TProtocolFactory)
-    extends Serializer[T] {
+    etwittertends Serializer[T] {
   override def to(obj: T): Try[Array[Byte]] = Try {
     val baos = new ByteArrayOutputStream
     obj.write(protocolFactory.getProtocol(new TIOStreamTransport(baos)))
@@ -170,7 +170,7 @@ object CachedSerializer {
  * @param protocolFactory defines the serialization protocol to be used
  */
 class CachedSerializer[T](valueSerializer: Serializer[T], protocolFactory: TProtocolFactory)
-    extends Serializer[Cached[T]] {
+    etwittertends Serializer[Cached[T]] {
   private[this] val underlying = new ThriftSerializer(CachedValue, protocolFactory)
 
   override def to(cached: Cached[T]): Try[Array[Byte]] =

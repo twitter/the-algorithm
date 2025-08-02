@@ -1,7 +1,7 @@
 package com.twitter.tweetypie
 package hydrator
 
-import com.twitter.expandodo.thriftscala.Card
+import com.twitter.etwitterpandodo.thriftscala.Card
 import com.twitter.stitch.NotFound
 import com.twitter.stitch.Stitch
 import com.twitter.tweetypie.core._
@@ -9,13 +9,13 @@ import com.twitter.tweetypie.repository._
 import com.twitter.tweetypie.thriftscala._
 
 object CardHydrator {
-  type Type = ValueHydrator[Option[Seq[Card]], Ctx]
+  type Type = ValueHydrator[Option[Seq[Card]], Cttwitter]
 
-  case class Ctx(
+  case class Cttwitter(
     urlEntities: Seq[UrlEntity],
     mediaEntities: Seq[MediaEntity],
-    underlyingTweetCtx: TweetCtx)
-      extends TweetCtx.Proxy
+    underlyingTweetCttwitter: TweetCttwitter)
+      etwittertends TweetCttwitter.Protwittery
 
   val hydratedField: FieldByPath = fieldByPath(Tweet.CardsField)
 
@@ -25,8 +25,8 @@ object CardHydrator {
     def getCards(url: String): Stitch[Seq[Card]] =
       repo(url).handle { case NotFound => Nil }
 
-    ValueHydrator[Option[Seq[Card]], Ctx] { (_, ctx) =>
-      val urls = ctx.urlEntities.map(_.url)
+    ValueHydrator[Option[Seq[Card]], Cttwitter] { (_, cttwitter) =>
+      val urls = cttwitter.urlEntities.map(_.url)
 
       Stitch.traverse(urls)(getCards _).liftToTry.map {
         case Return(cards) =>
@@ -37,11 +37,11 @@ object CardHydrator {
           else ValueState.modified(Some(res))
         case _ => partialResult
       }
-    }.onlyIf { (curr, ctx) =>
+    }.onlyIf { (curr, cttwitter) =>
       curr.isEmpty &&
-      ctx.tweetFieldRequested(Tweet.CardsField) &&
-      !ctx.isRetweet &&
-      ctx.mediaEntities.isEmpty
+      cttwitter.tweetFieldRequested(Tweet.CardsField) &&
+      !cttwitter.isRetweet &&
+      cttwitter.mediaEntities.isEmpty
     }
   }
 }

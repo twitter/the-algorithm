@@ -8,7 +8,7 @@ import com.twitter.frigate.pushservice.util.PushIbisUtil.mergeModelValues
 import com.twitter.util.Future
 
 trait MagicFanoutProductLaunchIbis2Hydrator
-    extends CustomConfigurationMapForIbis
+    etwittertends CustomConfigurationMapForIbis
     with Ibis2HydratorForCandidate {
   self: PushCandidate with MagicFanoutProductLaunchCandidate =>
 

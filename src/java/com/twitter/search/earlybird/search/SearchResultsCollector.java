@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.search;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -26,7 +26,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
  * This class collects results for Recency queries for delegation to collectors based on query mode
  */
 public class SearchResultsCollector
-    extends AbstractResultsCollector<SearchRequestInfo, SimpleSearchResults> {
+    etwittertends AbstractResultsCollector<SearchRequestInfo, SimpleSearchResults> {
   private static final EarlyTerminationState TERMINATED_COLLECTED_ENOUGH_RESULTS =
       new EarlyTerminationState("terminated_collected_enough_results", true);
 
@@ -60,12 +60,12 @@ public class SearchResultsCollector
   }
 
   @Override
-  public void startSegment() throws IOException {
+  public void startSegment() throws IOEtwitterception {
     featuresRequested = requestedFeatureIds != null;
   }
 
   @Override
-  public void doCollect(long tweetID) throws IOException {
+  public void doCollect(long tweetID) throws IOEtwitterception {
     Hit hit = new Hit(currTimeSliceID, tweetID);
     ThriftSearchResultMetadata metadata =
         new ThriftSearchResultMetadata(ThriftSearchResultType.RECENCY)
@@ -86,8 +86,8 @@ public class SearchResultsCollector
       long conversationId =
           documentFeatures.getFeatureValue(EarlybirdFieldConstant.CONVERSATION_ID_CSF);
       if (conversationId != 0) {
-        ensureExtraMetadataIsSet(metadata);
-        metadata.getExtraMetadata().setConversationId(conversationId);
+        ensureEtwittertraMetadataIsSet(metadata);
+        metadata.getEtwittertraMetadata().setConversationId(conversationId);
       }
     }
 
@@ -98,8 +98,8 @@ public class SearchResultsCollector
     if (requestedFeatureIds != null) {
       ThriftSearchResultFeatures features = documentFeatures.getSearchResultFeatures(
           getSchema(), requestedFeatureIds::contains);
-      ensureExtraMetadataIsSet(metadata);
-      metadata.getExtraMetadata().setFeatures(features);
+      ensureEtwittertraMetadataIsSet(metadata);
+      metadata.getEtwittertraMetadata().setFeatures(features);
       metadata.setFromUserId(fromUserId);
       if (documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_CARD_FLAG)) {
         metadata.setCardType(
@@ -110,7 +110,7 @@ public class SearchResultsCollector
       metadata.setFromUserId(fromUserId);
     }
 
-    collectExclusiveConversationAuthorId(metadata);
+    collectEtwitterclusiveConversationAuthorId(metadata);
     collectFacets(metadata);
     collectFeatures(metadata);
     collectIsProtected(metadata, cluster, userTable);
@@ -120,7 +120,7 @@ public class SearchResultsCollector
   }
 
   private final void collectRetweetAndReplyMetadata(ThriftSearchResultMetadata metadata)
-      throws IOException {
+      throws IOEtwitterception {
     if (searchRequestInfo.isGetInReplyToStatusId() || searchRequestInfo.isGetReferenceAuthorId()) {
       boolean isRetweet = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_RETWEET_FLAG);
       boolean isReply = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_REPLY_FLAG);
@@ -169,7 +169,7 @@ public class SearchResultsCollector
    * num hits collected.
    */
   @Override
-  public EarlyTerminationState innerShouldCollectMore() throws IOException {
+  public EarlyTerminationState innerShouldCollectMore() throws IOEtwitterception {
     if (results.size() >= searchRequestInfo.getNumResultsRequested()) {
       collectedEnoughResults();
       if (shouldTerminate()) {

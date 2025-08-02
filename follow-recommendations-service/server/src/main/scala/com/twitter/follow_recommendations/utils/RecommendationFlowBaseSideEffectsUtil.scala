@@ -3,14 +3,14 @@ package com.twitter.follow_recommendations.utils
 import com.twitter.follow_recommendations.common.base.RecommendationFlow
 import com.twitter.follow_recommendations.common.base.SideEffectsUtil
 import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.twitter.product_mitwitterer.core.functional_component.candidate_source.CandidateSource
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.marshalling.request.HasClientContetwittert
 import com.twitter.snowflake.id.SnowflakeId
 import com.twitter.stitch.Stitch
 
-trait RecommendationFlowBaseSideEffectsUtil[Target <: HasClientContext, Candidate <: CandidateUser]
-    extends SideEffectsUtil[Target, Candidate] {
+trait RecommendationFlowBaseSideEffectsUtil[Target <: HasClientContetwittert, Candidate <: CandidateUser]
+    etwittertends SideEffectsUtil[Target, Candidate] {
   recommendationFlow: RecommendationFlow[Target, Candidate] =>
 
   override def applySideEffects(
@@ -43,7 +43,7 @@ trait RecommendationFlowBaseSideEffectsUtil[Target <: HasClientContext, Candidat
 
   /*
   In subclasses, override functions below to apply custom side effects at each step in pipeline.
-  Call super.applySideEffectsXYZ to scribe basic scribes implemented in this parent class
+  Call super.applySideEffectstwitterYZ to scribe basic scribes implemented in this parent class
    */
   def applySideEffectsCandidateSourceCandidates(
     target: Target,

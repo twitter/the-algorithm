@@ -17,7 +17,7 @@ import com.twitter.frigate.pushservice.util.CandidateUtil._
 
 object BqmlQualityModelPredicates {
 
-  def ingestExtraFeatures(cand: PushCandidate): Unit = {
+  def ingestEtwittertraFeatures(cand: PushCandidate): Unit = {
     val tagsCRCountFeature = "tagsCR_count"
     val hasPushOpenOrNtabClickFeature = "has_PushOpenOrNtabClick"
     val onlyPushOpenOrNtabClickFeature = "only_PushOpenOrNtabClick"
@@ -81,7 +81,7 @@ object BqmlQualityModelPredicates {
         if (CandidateUtil.shouldApplyHealthQualityFilters(candidate) && (isOonCandidate || target
             .params(PushParams.EnableBqmlReportModelPredictionForF1Tweets))
           && target.params(PushFeatureSwitchParams.EnableBqmlQualityModelPredicateParam)) {
-          ingestExtraFeatures(candidate)
+          ingestEtwittertraFeatures(candidate)
 
           lazy val shouldFilterFutSeq =
             target

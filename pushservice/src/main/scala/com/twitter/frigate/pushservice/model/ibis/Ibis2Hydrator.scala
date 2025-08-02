@@ -13,16 +13,16 @@ import com.twitter.util.Future
 import scala.util.control.NoStackTrace
 import com.twitter.ni.lib.logged_out_transform.Ibis2RequestTransform
 
-class PushCopyIdNotFoundException(private val message: String)
-    extends Exception(message)
+class PushCopyIdNotFoundEtwitterception(private val message: String)
+    etwittertends Etwitterception(message)
     with NoStackTrace
 
-class InvalidPushCopyIdException(private val message: String)
-    extends Exception(message)
+class InvalidPushCopyIdEtwitterception(private val message: String)
+    etwittertends Etwitterception(message)
     with NoStackTrace
 
 trait Ibis2HydratorForCandidate
-    extends CandidatePushCopy
+    etwittertends CandidatePushCopy
     with OverrideForIbis2Request
     with CustomConfigurationMapForIbis {
   self: PushCandidate =>
@@ -84,7 +84,7 @@ trait Ibis2HydratorForCandidate
               senderId = senderId,
               flags = Some(Flags(
                 darkWrite = Some(target.isDarkWrite),
-                skipDupcheck = target.pushContext.flatMap(_.useDebugHandler),
+                skipDupcheck = target.pushContetwittert.flatMap(_.useDebugHandler),
                 responseFlags = Some(ResponseFlags(stringTelemetry = Some(true)))
               ))
             ))
@@ -98,7 +98,7 @@ trait Ibis2HydratorForCandidate
             flags = Some(
               Flags(
                 darkWrite = Some(target.isDarkWrite),
-                skipDupcheck = target.pushContext.flatMap(_.useDebugHandler),
+                skipDupcheck = target.pushContetwittert.flatMap(_.useDebugHandler),
                 responseFlags = Some(ResponseFlags(stringTelemetry = Some(true)))
               )
             )
@@ -116,11 +116,11 @@ trait CandidatePushCopy {
         MrPushCopyObjects
           .getCopyFromId(pushCopyId)
           .getOrElse(
-            throw new InvalidPushCopyIdException(
+            throw new InvalidPushCopyIdEtwitterception(
               s"Invalid push copy id: $pushCopyId for ${self.commonRecType}"))
 
       case None =>
-        throw new PushCopyIdNotFoundException(
+        throw new PushCopyIdNotFoundEtwitterception(
           s"PushCopy not found in frigateNotification for ${self.commonRecType}"
         )
     }

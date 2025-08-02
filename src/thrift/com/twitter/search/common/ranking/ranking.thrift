@@ -7,7 +7,7 @@ struct ThriftLinearFeatureRankingParams {
   // values below this will set the score to the minimal one
   1: optional double min = -1e+100
   // values above this will set the score to the minimal one
-  2: optional double max = 1e+100
+  2: optional double matwitter = 1e+100
   3: optional double weight = 0
 }(persisted='true')
 
@@ -27,17 +27,17 @@ enum ThriftScoringFunctionType {
 
   // deprecated
   TOPTWEETS = 2,
-  EXPERIMENTAL = 3,
+  EtwitterPERIMENTAL = 3,
 }
 
 // The struct to define a class that is to be dynamically loaded in earlybird for
-// experimentation.
-struct ThriftExperimentClass {
+// etwitterperimentation.
+struct ThriftEtwitterperimentClass {
   // the fully qualified class name.
   1: required string name
   // data source location (class/jar file) for this dynamic class on HDFS
   2: optional string location
-  // parameters in key-value pairs for this experimental class
+  // parameters in key-value pairs for this etwitterperimental class
   3: optional map<string, double> params
 }(persisted='true')
 
@@ -58,7 +58,7 @@ struct ThriftHostQualityParams {
 
   // Do not apply the multiplier to hosts with score above this level.
   // If 0, the multiplier will be applied to any host.
-  2: optional double maxScoreToModify = 0.0
+  2: optional double matwitterScoreToModify = 0.0
 
   // Do not apply the multiplier to hosts with score below this level.
   // If 0, the multiplier will be applied to any host.
@@ -78,13 +78,13 @@ struct ThriftCardRankingParams {
 }(persisted='true')
 
 # The ids are assigned in 'blocks'. For adding a new field, find an unused id in the appropriate
-# block. Be sure to mention explicitly which ids have been removed so that they are not used again.
+# block. Be sure to mention etwitterplicitly which ids have been removed so that they are not used again.
 struct ThriftRankingParams {
   1: optional ThriftScoringFunctionType type
 
-  // Dynamically loaded scorer and collector for quick experimentation.
-  40: optional ThriftExperimentClass expScorer
-  41: optional ThriftExperimentClass expCollector
+  // Dynamically loaded scorer and collector for quick etwitterperimentation.
+  40: optional ThriftEtwitterperimentClass etwitterpScorer
+  41: optional ThriftEtwitterperimentClass etwitterpCollector
 
   // we must set it to a value that fits into a float: otherwise
   // some earlybird classes that convert it to float will interpret
@@ -96,7 +96,7 @@ struct ThriftRankingParams {
   12: optional ThriftLinearFeatureRankingParams replyCountParams
   15: optional ThriftLinearFeatureRankingParams reputationParams
   16: optional ThriftLinearFeatureRankingParams luceneScoreParams
-  18: optional ThriftLinearFeatureRankingParams textScoreParams
+  18: optional ThriftLinearFeatureRankingParams tetwittertScoreParams
   19: optional ThriftLinearFeatureRankingParams urlParams
   20: optional ThriftLinearFeatureRankingParams isReplyParams
   21: optional ThriftLinearFeatureRankingParams directFollowRetweetCountParams
@@ -109,9 +109,9 @@ struct ThriftRankingParams {
   66: optional ThriftLinearFeatureRankingParams quotedCountParams
 
   // A map from MutableFeatureType to linear ranking params
-  25: optional map<byte, ThriftLinearFeatureRankingParams> offlineExperimentalFeatureRankingParams
+  25: optional map<byte, ThriftLinearFeatureRankingParams> offlineEtwitterperimentalFeatureRankingParams
 
-  // if min/max for score or ThriftLinearFeatureRankingParams should always be
+  // if min/matwitter for score or ThriftLinearFeatureRankingParams should always be
   // applied or only to non-follows, non-self, non-verified
   26: optional bool applyFiltersAlways = 0
 
@@ -133,7 +133,7 @@ struct ThriftRankingParams {
 
   // An alternative way of using lucene score in the ranking function.
   38: optional bool useLuceneScoreAsBoost = 0
-  39: optional double maxLuceneScoreBoost = 1.2
+  39: optional double matwitterLuceneScoreBoost = 1.2
 
   // Use user's consumed and produced languages for scoring
   42: optional bool useUserLanguageInfo = 0
@@ -146,17 +146,17 @@ struct ThriftRankingParams {
   // Deprecated in SEARCH-8616.
   44: optional bool deprecated_useTopicIDsBoost = 0
   // Parameters for topic id scoring.  See TopicIDsBoostScorer (and its test) for details.
-  46: optional double deprecated_maxTopicIDsBoost = 3.0
-  47: optional double deprecated_topicIDsBoostExponent = 2.0;
+  46: optional double deprecated_matwitterTopicIDsBoost = 3.0
+  47: optional double deprecated_topicIDsBoostEtwitterponent = 2.0;
   48: optional double deprecated_topicIDsBoostSlope = 2.0;
 
   // Hit Attribute Demotion
   60: optional bool enableHitDemotion = 0
-  61: optional double noTextHitDemotion = 1.0
+  61: optional double noTetwittertHitDemotion = 1.0
   62: optional double urlOnlyHitDemotion = 1.0
   63: optional double nameOnlyHitDemotion = 1.0
-  64: optional double separateTextAndNameHitDemotion = 1.0
-  65: optional double separateTextAndUrlHitDemotion = 1.0
+  64: optional double separateTetwittertAndNameHitDemotion = 1.0
+  65: optional double separateTetwittertAndUrlHitDemotion = 1.0
 
   // multiplicative score boost for results deemed offensive
   100: optional double offensiveBoost = 1
@@ -197,7 +197,7 @@ struct ThriftRankingParams {
 
   // A map from tweet IDs to the score adjustment for that tweet. These are score
   // adjustments that include one or more features that can depend on the query
-  // string. These features aren't indexed by Earlybird, and so their total contribution
+  // string. These features aren't indetwittered by Earlybird, and so their total contribution
   // to the scoring function is passed in directly as part of the request. If present,
   // the score adjustment for a tweet is directly added to the linear component of the
   // scoring function. Since this signal can be made up of multiple features, any
@@ -210,7 +210,7 @@ struct ThriftRankingParams {
   // This field provides a way for adjusting the tweets of a specific set of users with a score
   // that is not present in the Earlybird features but has to be passed from the clients, such as
   // real graph weights or a combination of multiple features.
-  // This field should be used mainly for experimentation since it increases the size of the thrift
+  // This field should be used mainly for etwitterperimentation since it increases the size of the thrift
   // requests.
   154: optional map<i64, double> authorSpecificScoreAdjustments
 
@@ -255,7 +255,7 @@ enum ThriftFacetFinalSortOrder {
 }
 
 struct ThriftFacetRankingOptions {
-  // next available field ID = 38
+  // netwittert available field ID = 38
 
   // ======================================================================
   // EARLYBIRD SETTINGS
@@ -263,39 +263,39 @@ struct ThriftFacetRankingOptions {
   // These parameters primarily affect how earlybird creates the top-k
   // candidate list to be re-ranked by blender
   // ======================================================================
-  // Dynamically loaded scorer and collector for quick experimentation.
-  26: optional ThriftExperimentClass expScorer
-  27: optional ThriftExperimentClass expCollector
+  // Dynamically loaded scorer and collector for quick etwitterperimentation.
+  26: optional ThriftEtwitterperimentClass etwitterpScorer
+  27: optional ThriftEtwitterperimentClass etwitterpCollector
 
   // It should be less than or equal to reputationParams.min, and all
   // tweepcreds between the two get a score of 1.0.
   21: optional i32 minTweepcredFilterThreshold
 
-  // the maximum score a single tweet can contribute to the weightedCount
-  22: optional i32 maxScorePerTweet
+  // the matwitterimum score a single tweet can contribute to the weightedCount
+  22: optional i32 matwitterScorePerTweet
 
   15: optional ThriftFacetEarlybirdSortingMode sortingMode
   // The number of top candidates earlybird returns to blender
   16: optional i32 numCandidatesFromEarlybird = 100
 
   // when to early terminate for facet search, overrides the setting in ThriftSearchQuery
-  34: optional i32 maxHitsToProcess = 1000
+  34: optional i32 matwitterHitsToProcess = 1000
 
-  // for anti-gaming we want to limit the maximum amount of hits the same user can
+  // for anti-gaming we want to limit the matwitterimum amount of hits the same user can
   // contribute.  Set to -1 to disable the anti-gaming filter. Overrides the setting in
   // ThriftSearchQuery
-  35: optional i32 maxHitsPerUser = 3
+  35: optional i32 matwitterHitsPerUser = 3
 
-  // if the tweepcred of the user is bigger than this value it will not be excluded
+  // if the tweepcred of the user is bigger than this value it will not be etwittercluded
   // by the anti-gaming filter. Overrides the setting in ThriftSearchQuery
-  36: optional i32 maxTweepcredForAntiGaming = 65
+  36: optional i32 matwitterTweepcredForAntiGaming = 65
 
   // these settings affect how earlybird computes the weightedCount
    2: optional ThriftLinearFeatureRankingParams parusScoreParams
    3: optional ThriftLinearFeatureRankingParams reputationParams
   17: optional ThriftLinearFeatureRankingParams favoritesParams
   33: optional ThriftLinearFeatureRankingParams repliesParams
-  37: optional map<byte, ThriftLinearFeatureRankingParams> rankingExpScoreParams
+  37: optional map<byte, ThriftLinearFeatureRankingParams> rankingEtwitterpScoreParams
 
   // penalty counter settings
   6: optional i32 offensiveTweetPenalty  // set to -1 to disable the offensive filter
@@ -324,22 +324,22 @@ struct ThriftFacetRankingOptions {
   // This block of parameters are only used in the FacetsFutureManager.
   // limits to discard facets
   // if a facet has a higher penalty count, it will not be returned
-  5: optional i32 maxPenaltyCount
+  5: optional i32 matwitterPenaltyCount
   // if a facet has a lower simple count, it will not be returned
   28: optional i32 minSimpleCount
   // if a facet has a lower weighted count, it will not be returned
   8: optional i32 minCount
-  // the maximum allowed value for offensiveCount/facetCount a facet can have in order to be returned
-  10: optional double maxPenaltyCountRatio
-  // if set to true, then facets with offensive display tweets are excluded from the resultset
-  29: optional bool excludePossiblySensitiveFacets
+  // the matwitterimum allowed value for offensiveCount/facetCount a facet can have in order to be returned
+  10: optional double matwitterPenaltyCountRatio
+  // if set to true, then facets with offensive display tweets are etwittercluded from the resultset
+  29: optional bool etwittercludePossiblySensitiveFacets
   // if set to true, then only facets that have a display tweet in their ThriftFacetCountMetadata object
   // will be returned to the caller
   30: optional bool onlyReturnFacetsWithDisplayTweet
 
   // parameters for scoring force-inserted media items
   // Please check FacetReRanker.java computeScoreForInserted() for their usage.
-  38: optional double forceInsertedBackgroundExp = 0.3
+  38: optional double forceInsertedBackgroundEtwitterp = 0.3
   39: optional double forceInsertedMinBackgroundCount = 2
   40: optional double forceInsertedMultiplier = 0.01
 
@@ -355,9 +355,9 @@ struct ThriftFacetRankingOptions {
   14: optional ThriftAgeDecayRankingParams ageDecayParams
 
   // used in the facets reranker
-  23: optional double maxNormBoost = 5.0
-  24: optional double globalCountExponent = 3.0
-  25: optional double simpleCountExponent = 3.0
+  23: optional double matwitterNormBoost = 5.0
+  24: optional double globalCountEtwitterponent = 3.0
+  25: optional double simpleCountEtwitterponent = 3.0
 
   31: optional ThriftFacetFinalSortOrder finalSortOrder
 

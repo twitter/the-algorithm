@@ -10,7 +10,7 @@ import libtwml
 class BatchPredictionTensorWriter(Layer):
   """
   A layer that packages keys and dense tensors into a BatchPredictionResponse.
-  Typically used at the out of an exported model for use in a the PredictionEngine
+  Typically used at the out of an etwitterported model for use in a the PredictionEngine
   (that is, in production) when model predictions are dense tensors.
 
   Arguments:

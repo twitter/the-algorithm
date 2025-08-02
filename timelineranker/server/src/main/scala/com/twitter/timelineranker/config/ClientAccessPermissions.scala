@@ -16,120 +16,120 @@ object ClientAccessPermissions {
 
   val All: Seq[ClientDetails] = Seq(
     /**
-     * Production clients for timelinemixer.
+     * Production clients for timelinemitwitterer.
      */
     new ClientDetails(
-      "timelinemixer.recap.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerRecapProd),
+      "timelinemitwitterer.recap.prod",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererRecapProd),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.recycled.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerRecycledProd),
+      "timelinemitwitterer.recycled.prod",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererRecycledProd),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.hydrate.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerHydrateProd),
+      "timelinemitwitterer.hydrate.prod",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererHydrateProd),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.hydrate_recos.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerHydrateRecosProd),
+      "timelinemitwitterer.hydrate_recos.prod",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererHydrateRecosProd),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.seed_author_ids.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerSeedAuthorsProd),
+      "timelinemitwitterer.seed_author_ids.prod",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererSeedAuthorsProd),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.simcluster.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerSimclusterProd),
+      "timelinemitwitterer.simcluster.prod",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererSimclusterProd),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.entity_tweets.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerEntityTweetsProd),
+      "timelinemitwitterer.entity_tweets.prod",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererEntityTweetsProd),
       protectedWriteAccess = TrustedPermission
     ),
     /**
-     * This client is whitelisted for timelinemixer only as it used by
+     * This client is whitelisted for timelinemitwitterer only as it used by
      * List injection service which will not be migrated to timelinescorer.
      */
     new ClientDetails(
-      "timelinemixer.list.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerListProd),
+      "timelinemitwitterer.list.prod",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererListProd),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.list_tweet.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerListTweetProd),
+      "timelinemitwitterer.list_tweet.prod",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererListTweetProd),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.community.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerCommunityProd),
+      "timelinemitwitterer.community.prod",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererCommunityProd),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.community_tweet.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerCommunityTweetProd),
+      "timelinemitwitterer.community_tweet.prod",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererCommunityTweetProd),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.uteg_liked_by_tweets.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerUtegLikedByTweetsProd),
+      "timelinemitwitterer.uteg_liked_by_tweets.prod",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererUtegLikedByTweetsProd),
       protectedWriteAccess = TrustedPermission
     ),
     /**
      * Production clients for timelinescorer. Most of these clients have their
-     * equivalents under the timelinemixer scope (with exception of list injection
+     * equivalents under the timelinemitwitterer scope (with etwitterception of list injection
      * client).
      */
     new ClientDetails(
       "timelinescorer.recap.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerRecapProd),
+      RateLimitingTrustedPermission(AllowTimelineMitwittererRecapProd),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
       "timelinescorer.recycled.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerRecycledProd),
+      RateLimitingTrustedPermission(AllowTimelineMitwittererRecycledProd),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
       "timelinescorer.hydrate.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerHydrateProd),
+      RateLimitingTrustedPermission(AllowTimelineMitwittererHydrateProd),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
       "timelinescorer.hydrate_recos.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerHydrateRecosProd),
+      RateLimitingTrustedPermission(AllowTimelineMitwittererHydrateRecosProd),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
       "timelinescorer.seed_author_ids.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerSeedAuthorsProd),
+      RateLimitingTrustedPermission(AllowTimelineMitwittererSeedAuthorsProd),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
       "timelinescorer.simcluster.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerSimclusterProd),
+      RateLimitingTrustedPermission(AllowTimelineMitwittererSimclusterProd),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
       "timelinescorer.entity_tweets.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerEntityTweetsProd),
+      RateLimitingTrustedPermission(AllowTimelineMitwittererEntityTweetsProd),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
       "timelinescorer.list_tweet.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerListTweetProd),
+      RateLimitingTrustedPermission(AllowTimelineMitwittererListTweetProd),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
       "timelinescorer.uteg_liked_by_tweets.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerUtegLikedByTweetsProd),
+      RateLimitingTrustedPermission(AllowTimelineMitwittererUtegLikedByTweetsProd),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
@@ -144,7 +144,7 @@ object ClientAccessPermissions {
     ),
     new ClientDetails(
       "timelinescorer.community_tweet.prod",
-      RateLimitingTrustedPermission(AllowTimelineMixerCommunityTweetProd),
+      RateLimitingTrustedPermission(AllowTimelineMitwittererCommunityTweetProd),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
@@ -163,11 +163,11 @@ object ClientAccessPermissions {
       protectedWriteAccess = TrustedPermission
     ),
     /**
-     * TimelineRanker utilities. Traffic proxy, warmups, and console.
+     * TimelineRanker utilities. Traffic protwittery, warmups, and console.
      */
     new ClientDetails(
-      "timelineranker.proxy",
-      RateLimitingTrustedPermission(AllowTimelineRankerProxy),
+      "timelineranker.protwittery",
+      RateLimitingTrustedPermission(AllowTimelineRankerProtwittery),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
@@ -189,93 +189,93 @@ object ClientAccessPermissions {
      * Staging clients.
      */
     new ClientDetails(
-      "timelinemixer.recap.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
+      "timelinemitwitterer.recap.staging",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererStaging),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.recycled.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
+      "timelinemitwitterer.recycled.staging",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererStaging),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.hydrate.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
+      "timelinemitwitterer.hydrate.staging",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererStaging),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.hydrate_recos.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
+      "timelinemitwitterer.hydrate_recos.staging",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererStaging),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.seed_author_ids.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
+      "timelinemitwitterer.seed_author_ids.staging",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererStaging),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.simcluster.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
+      "timelinemitwitterer.simcluster.staging",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererStaging),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.entity_tweets.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
+      "timelinemitwitterer.entity_tweets.staging",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererStaging),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.list.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
+      "timelinemitwitterer.list.staging",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererStaging),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.list_tweet.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
+      "timelinemitwitterer.list_tweet.staging",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererStaging),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.community.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
+      "timelinemitwitterer.community.staging",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererStaging),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.community_tweet.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
+      "timelinemitwitterer.community_tweet.staging",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererStaging),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
       "timelinescorer.community_tweet.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
+      RateLimitingTrustedPermission(AllowTimelineMitwittererStaging),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
       "timelinescorer.recommended_trend_tweet.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
+      RateLimitingTrustedPermission(AllowTimelineMitwittererStaging),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.uteg_liked_by_tweets.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
+      "timelinemitwitterer.uteg_liked_by_tweets.staging",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererStaging),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
-      "timelinemixer.entity_tweets.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
+      "timelinemitwitterer.entity_tweets.staging",
+      RateLimitingTrustedPermission(AllowTimelineMitwittererStaging),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
       "timelinescorer.hydrate_tweet_scoring.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
+      RateLimitingTrustedPermission(AllowTimelineMitwittererStaging),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
       "timelinescorer.rec_topic_tweets.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
+      RateLimitingTrustedPermission(AllowTimelineMitwittererStaging),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(
       "timelinescorer.popular_topic_tweets.staging",
-      RateLimitingTrustedPermission(AllowTimelineMixerStaging),
+      RateLimitingTrustedPermission(AllowTimelineMitwittererStaging),
       protectedWriteAccess = TrustedPermission
     ),
     new ClientDetails(

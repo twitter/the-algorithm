@@ -24,9 +24,9 @@ import com.twitter.visibility.features.TweetIsRetweet
 import com.twitter.visibility.features.TweetIsSourceTweet
 import com.twitter.visibility.interfaces.push_service.PushServiceVisibilityLibraryUtil._
 import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 
-object TweetType extends Enumeration {
+object TweetType etwittertends Enumeration {
   type TweetType = Value
   val ORIGINAL, SOURCE, QUOTED = Value
 }
@@ -80,7 +80,7 @@ object PushServiceVisibilityLibrary {
         case Some(authorVisibilityFeatures) =>
           visibilityLibrary.featureMapBuilder(
             Seq(
-              viewerFeatures.forViewerContext(ViewerContext.fromContextWithViewerIdFallback(None)),
+              viewerFeatures.forViewerContetwittert(ViewerContetwittert.fromContetwittertWithViewerIdFallback(None)),
               tweetFeatures.forTweet(tweet),
               authorVisibilityFeatures,
               relationshipFeatures.forAuthorId(authorId.get, None),
@@ -92,7 +92,7 @@ object PushServiceVisibilityLibrary {
         case _ =>
           visibilityLibrary.featureMapBuilder(
             Seq(
-              viewerFeatures.forViewerContext(ViewerContext.fromContextWithViewerIdFallback(None)),
+              viewerFeatures.forViewerContetwittert(ViewerContetwittert.fromContetwittertWithViewerIdFallback(None)),
               tweetFeatures.forTweet(tweet),
               _.withConstantFeature(TweetIsInnerQuotedTweet, tweetType == QUOTED),
               _.withConstantFeature(TweetIsRetweet, request.isRetweet),
@@ -113,7 +113,7 @@ object PushServiceVisibilityLibrary {
       visibilityLibrary.runRuleEngine(
         contentId,
         featureMap,
-        request.viewerContext,
+        request.viewerContetwittert,
         request.safetyLevel)
     }
 
@@ -129,7 +129,7 @@ object PushServiceVisibilityLibrary {
       visibilityLibrary.runRuleEngine(
         contentId,
         featureMap,
-        request.viewerContext,
+        request.viewerContetwittert,
         request.safetyLevel)
     }
 

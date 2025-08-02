@@ -1,7 +1,7 @@
 package com.twitter.search.earlybird_root.filters;
 
 import java.util.concurrent.TimeUnit;
-import javax.inject.Inject;
+import javatwitter.inject.Inject;
 
 import scala.Option;
 
@@ -13,27 +13,27 @@ import com.google.common.cache.LoadingCache;
 import com.twitter.common.util.Clock;
 import com.twitter.finagle.Service;
 import com.twitter.finagle.SimpleFilter;
-import com.twitter.finagle.context.Contexts$;
-import com.twitter.finagle.context.Deadline;
-import com.twitter.finagle.context.Deadline$;
+import com.twitter.finagle.contetwittert.Contetwitterts$;
+import com.twitter.finagle.contetwittert.Deadline;
+import com.twitter.finagle.contetwittert.Deadline$;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchTimerStats;
 import com.twitter.search.earlybird.common.ClientIdUtil;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.util.Future;
 
 /**
- * A filter for comparing the request deadline (set in the finagle request context) with the request
+ * A filter for comparing the request deadline (set in the finagle request contetwittert) with the request
  * timeout, as set in the EarlybirdRequest.
  *
- * Tracks stats per client, for (1) requests where the request deadline is set to expire before the
+ * Tracks stats per client, for (1) requests where the request deadline is set to etwitterpire before the
  * EarlybirdRequest timeout, and also (2) requests where the deadline allows enough time for the
  * EarlybirdRequest timeout to kick in.
  */
 public class DeadlineTimeoutStatsFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+    etwittertends SimpleFilter<EarlybirdRequestContetwittert, EarlybirdResponse> {
 
   // All stats maps below are per client id, keyed by the client id.
   private final LoadingCache<String, SearchCounter> requestTimeoutNotSetStats;
@@ -49,21 +49,21 @@ public class DeadlineTimeoutStatsFilter
     this.requestTimeoutNotSetStats = CacheBuilder.newBuilder().build(
         new CacheLoader<String, SearchCounter>() {
           public SearchCounter load(String clientId) {
-            return SearchCounter.export(
+            return SearchCounter.etwitterport(
                 "deadline_for_client_id_" + clientId + "_request_timeout_not_set");
           }
         });
     this.finagleDeadlineNotSetStats = CacheBuilder.newBuilder().build(
         new CacheLoader<String, SearchCounter>() {
           public SearchCounter load(String clientId) {
-            return SearchCounter.export(
+            return SearchCounter.etwitterport(
                 "deadline_for_client_id_" + clientId + "_finagle_deadline_not_set");
           }
         });
     this.finagleDeadlineAndRequestTimeoutNotSetStats = CacheBuilder.newBuilder().build(
         new CacheLoader<String, SearchCounter>() {
           public SearchCounter load(String clientId) {
-            return SearchCounter.export(
+            return SearchCounter.etwitterport(
                 "deadline_for_client_id_" + clientId
                     + "_finagle_deadline_and_request_timeout_not_set");
           }
@@ -71,7 +71,7 @@ public class DeadlineTimeoutStatsFilter
     this.requestTimeoutStats = CacheBuilder.newBuilder().build(
         new CacheLoader<String, SearchTimerStats>() {
           public SearchTimerStats load(String clientId) {
-            return SearchTimerStats.export(
+            return SearchTimerStats.etwitterport(
                 "deadline_for_client_id_" + clientId + "_request_timeout",
                 TimeUnit.MILLISECONDS,
                 false,
@@ -82,7 +82,7 @@ public class DeadlineTimeoutStatsFilter
     this.finagleDeadlineStats = CacheBuilder.newBuilder().build(
         new CacheLoader<String, SearchTimerStats>() {
           public SearchTimerStats load(String clientId) {
-            return SearchTimerStats.export(
+            return SearchTimerStats.etwitterport(
                 "deadline_for_client_id_" + clientId + "_finagle_deadline",
                 TimeUnit.MILLISECONDS,
                 false,
@@ -93,7 +93,7 @@ public class DeadlineTimeoutStatsFilter
     this.deadlineLargerStats = CacheBuilder.newBuilder().build(
         new CacheLoader<String, SearchTimerStats>() {
           public SearchTimerStats load(String clientId) {
-            return SearchTimerStats.export(
+            return SearchTimerStats.etwitterport(
                 "deadline_for_client_id_" + clientId
                     + "_finagle_deadline_larger_than_request_timeout",
                 TimeUnit.MILLISECONDS,
@@ -106,7 +106,7 @@ public class DeadlineTimeoutStatsFilter
     this.deadlineSmallerStats = CacheBuilder.newBuilder().build(
         new CacheLoader<String, SearchTimerStats>() {
           public SearchTimerStats load(String clientId) {
-            return SearchTimerStats.export(
+            return SearchTimerStats.etwitterport(
                 "deadline_for_client_id_" + clientId
                     + "_finagle_deadline_smaller_than_request_timeout",
                 TimeUnit.MILLISECONDS,
@@ -120,13 +120,13 @@ public class DeadlineTimeoutStatsFilter
 
   @Override
   public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+      EarlybirdRequestContetwittert requestContetwittert,
+      Service<EarlybirdRequestContetwittert, EarlybirdResponse> service) {
 
-    EarlybirdRequest request = requestContext.getRequest();
+    EarlybirdRequest request = requestContetwittert.getRequest();
     String clientId = ClientIdUtil.getClientIdFromRequest(request);
     long requestTimeoutMillis = getRequestTimeout(request);
-    Option<Deadline> deadline = Contexts$.MODULE$.broadcast().get(Deadline$.MODULE$);
+    Option<Deadline> deadline = Contetwitterts$.MODULE$.broadcast().get(Deadline$.MODULE$);
 
     // Tracking per-client timeouts specified in the EarlybirdRequest.
     if (requestTimeoutMillis > 0) {
@@ -145,7 +145,7 @@ public class DeadlineTimeoutStatsFilter
       finagleDeadlineNotSetStats.getUnchecked(clientId).increment();
     }
 
-    // Explicitly track when both are not set.
+    // Etwitterplicitly track when both are not set.
     if (requestTimeoutMillis <= 0 && deadline.isEmpty()) {
       finagleDeadlineAndRequestTimeoutNotSetStats.getUnchecked(clientId).increment();
     }
@@ -155,7 +155,7 @@ public class DeadlineTimeoutStatsFilter
     if (requestTimeoutMillis > 0 && deadline.isDefined()) {
       long deadlineEndTimeMillis = deadline.get().deadline().inMillis();
       Preconditions.checkState(request.isSetClientRequestTimeMs(),
-          "Expect ClientRequestTimeFilter to always set the clientRequestTimeMs field. Request: %s",
+          "Etwitterpect ClientRequestTimeFilter to always set the clientRequestTimeMs field. Request: %s",
           request);
       long requestStartTimeMillis = request.getClientRequestTimeMs();
       long requestEndTimeMillis = requestStartTimeMillis + requestTimeoutMillis;
@@ -169,7 +169,7 @@ public class DeadlineTimeoutStatsFilter
       }
     }
 
-    return service.apply(requestContext);
+    return service.apply(requestContetwittert);
   }
 
   private long getRequestTimeout(EarlybirdRequest request) {

@@ -41,8 +41,8 @@ object Repository {
     qmapper andThen repo andThen { _ map rmapper }
 
   /**
-   * Wraps a Repository with another Repository that explodes the query into multiple
-   * queries, executes those queries in parallel, then combines (reduces) results.
+   * Wraps a Repository with another Repository that etwitterplodes the query into multiple
+   * queries, etwitterecutes those queries in parallel, then combines (reduces) results.
    */
   def mapReduced[Q, Q2, R, R2](
     repo: Repository[Q, R],
@@ -52,7 +52,7 @@ object Repository {
     mapReducedWithQuery(repo, mapper, (rs: Seq[(Q, R)]) => reducer(rs map { case (_, r) => r }))
 
   /**
-   * An extension of mapReduced that passes query and result to the reducer.
+   * An etwittertension of mapReduced that passes query and result to the reducer.
    */
   def mapReducedWithQuery[Q, Q2, R, R2](
     repo: Repository[Q, R],
@@ -93,7 +93,7 @@ object Repository {
 
   /**
    * Produces a new Repository where the returned Future must complete within the specified
-   * timeout, otherwise the Future fails with a com.twitter.util.TimeoutException.
+   * timeout, otherwise the Future fails with a com.twitter.util.TimeoutEtwitterception.
    *
    * ''Note'': On timeout, the underlying future is not interrupted.
    */
@@ -113,10 +113,10 @@ object Repository {
   def withTimeout[Q, R](
     timer: Timer,
     timeout: Duration,
-    exc: => Throwable,
+    etwitterc: => Throwable,
     repo: Repository[Q, R]
   ): Repository[Q, R] =
-    repo andThen { _.within(timer, timeout, exc) }
+    repo andThen { _.within(timer, timeout, etwitterc) }
 
   /**
    * Wraps a Repository with stats recording functionality.

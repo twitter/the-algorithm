@@ -7,16 +7,16 @@ sealed trait UserUnavailableStateEnum {
   lazy val name: String = NamingUtils.getFriendlyName(this)
 }
 object UserUnavailableStateEnum {
-  case object Deleted extends UserUnavailableStateEnum
-  case object BounceDeleted extends UserUnavailableStateEnum
-  case object Deactivated extends UserUnavailableStateEnum
-  case object Offboarded extends UserUnavailableStateEnum
-  case object Erased extends UserUnavailableStateEnum
-  case object Suspended extends UserUnavailableStateEnum
-  case object Protected extends UserUnavailableStateEnum
-  case object AuthorBlocksViewer extends UserUnavailableStateEnum
-  case object ViewerBlocksAuthor extends UserUnavailableStateEnum
-  case object ViewerMutesAuthor extends UserUnavailableStateEnum
-  case class Filtered(result: UserVisibilityResult) extends UserUnavailableStateEnum
-  case object Unavailable extends UserUnavailableStateEnum
+  case object Deleted etwittertends UserUnavailableStateEnum
+  case object BounceDeleted etwittertends UserUnavailableStateEnum
+  case object Deactivated etwittertends UserUnavailableStateEnum
+  case object Offboarded etwittertends UserUnavailableStateEnum
+  case object Erased etwittertends UserUnavailableStateEnum
+  case object Suspended etwittertends UserUnavailableStateEnum
+  case object Protected etwittertends UserUnavailableStateEnum
+  case object AuthorBlocksViewer etwittertends UserUnavailableStateEnum
+  case object ViewerBlocksAuthor etwittertends UserUnavailableStateEnum
+  case object ViewerMutesAuthor etwittertends UserUnavailableStateEnum
+  case class Filtered(result: UserVisibilityResult) etwittertends UserUnavailableStateEnum
+  case object Unavailable etwittertends UserUnavailableStateEnum
 }

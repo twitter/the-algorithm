@@ -6,7 +6,7 @@ import com.twitter.clientapp.thriftscala.{Item => LogEventItem}
 import com.twitter.unified_user_actions.thriftscala._
 
 abstract class BaseNotificationTabClientEvent(actionType: ActionType)
-    extends BaseClientEvent(actionType = actionType) {
+    etwittertends BaseClientEvent(actionType = actionType) {
 
   // itemType is `None` for Notification Tab events
   override def isItemTypeValid(itemTypeOpt: Option[ItemType]): Boolean =
@@ -29,7 +29,7 @@ abstract class BaseNotificationTabClientEvent(actionType: ActionType)
             content = NotificationContent.MultiTweetNotification(
               MultiTweetNotification(tweetIds = tweetIds))
           ))
-      // if `tweetIds` contain exactly one Tweet id, create `TweetNotification`
+      // if `tweetIds` contain etwitteractly one Tweet id, create `TweetNotification`
       case Some(tweetIds) if tweetIds.size == 1 =>
         Item.NotificationInfo(
           NotificationInfo(

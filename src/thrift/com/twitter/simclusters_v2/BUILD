@@ -6,7 +6,7 @@ create_thrift_libraries(
     dependency_roots = [
         "src/thrift/com/twitter/algebird_internal",
     ],
-    export_roots = [
+    etwitterport_roots = [
         "src/thrift/com/twitter/algebird_internal:algebird_internal",
     ],
     generate_languages = [

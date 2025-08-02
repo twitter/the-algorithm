@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -13,7 +13,7 @@ import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.twitter.common.text.language.LocaleUtil;
+import com.twitter.common.tetwittert.language.LocaleUtil;
 import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
 
 /**
@@ -50,10 +50,10 @@ public final class ThriftLanguageUtil {
 
           LOCALES[thriftLang.getValue()] = localeLang;
           thriftLanguageMap.put(localeLang, thriftLang);
-        } catch (NoSuchFieldException e) {
+        } catch (NoSuchFieldEtwitterception e) {
           LOG.warn("{} is defined in ThriftLanguage, but not in LocaleUtil.", thriftLanguageName);
         }
-      } catch (IllegalAccessException e) {
+      } catch (IllegalAccessEtwitterception e) {
         // shouldn't happen.
         LOG.warn("Could not get a declared field.", e);
       }

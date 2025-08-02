@@ -1,10 +1,10 @@
 package com.twitter.search.common.query;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import org.apache.lucene.search.DocIdSetIterator;
 
-public class SingleDocDocIdSetIterator extends DocIdSetIterator {
+public class SingleDocDocIdSetIterator etwittertends DocIdSetIterator {
 
   // the only docid in the list
   private final int doc;
@@ -21,7 +21,7 @@ public class SingleDocDocIdSetIterator extends DocIdSetIterator {
   }
 
   @Override
-  public int nextDoc() throws IOException {
+  public int netwittertDoc() throws IOEtwitterception {
     if (docid == -1) {
       docid = doc;
     } else {
@@ -31,7 +31,7 @@ public class SingleDocDocIdSetIterator extends DocIdSetIterator {
   }
 
   @Override
-  public int advance(int target) throws IOException {
+  public int advance(int target) throws IOEtwitterception {
     if (docid == NO_MORE_DOCS) {
       return docid;
     } else if (doc < target) {

@@ -12,6 +12,6 @@ java_library(
         "3rdparty/jvm/com/google/guava",
         "3rdparty/jvm/org/apache/thrift:libthrift",
         "src/java/com/twitter/search/common/schema/base",
-        "src/thrift/com/twitter/search/common:indexing-java",
+        "src/thrift/com/twitter/search/common:indetwittering-java",
     ],
 )

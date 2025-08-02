@@ -14,8 +14,8 @@ public class TopTweetsResultsValidator implements ServiceResponseValidator<Early
   @Override
   public Future<EarlybirdResponse> validate(EarlybirdResponse response) {
     if (!response.isSetSearchResults() || !response.getSearchResults().isSetResults()) {
-      return Future.exception(
-          new IllegalStateException(cluster + " didn't set search results."));
+      return Future.etwitterception(
+          new IllegalStateEtwitterception(cluster + " didn't set search results."));
     }
     return Future.value(response);
   }

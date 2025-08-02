@@ -73,14 +73,14 @@ struct UserToInterestedInClusterScores {
   11: optional i32 numUsersInterestedInThisClusterUpperBound
 
   // dot product of user's logFavScore vector with knownFor vector for this cluster 
-  // TIP: this score is under experimentations
+  // TIP: this score is under etwitterperimentations
   12: optional double logFavScore(personalDataType = 'EngagementsPublic')
 
   // first compute logFavScore as defined above
   // then compute L2 norm of the vector of these scores for this cluster
   // divide by that.
   // essentially the more people are interested in this cluster, the lower this score gets
-  // TIP: this score is under experimentations
+  // TIP: this score is under etwitterperimentations
   13: optional double logFavScoreClusterNormalizedOnly(personalDataType = 'EngagementsPublic')
 
   // actual count of number of users who're known for this cluster as well as are being followed by the user.
@@ -137,7 +137,7 @@ struct DistributionDetails {
   5: optional QuantileBounds p50
   6: optional QuantileBounds p75
   7: optional QuantileBounds p95
-  8: optional double max
+  8: optional double matwitter
 }(persisted = 'true', hasPersonalData = 'false')
 
 /** Note that the modelVersion here is specified somewhere outside, specifically, as part of the key */

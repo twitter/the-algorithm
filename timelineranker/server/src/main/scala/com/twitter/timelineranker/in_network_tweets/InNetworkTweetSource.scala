@@ -111,8 +111,8 @@ class InNetworkTweetSource(
         RecapQuery.paramGate(InNetworkTweetParams.EnableContentFeaturesHydrationParam),
       enableTokensInContentFeaturesGate =
         RecapQuery.paramGate(InNetworkTweetParams.EnableTokensInContentFeaturesHydrationParam),
-      enableTweetTextInContentFeaturesGate =
-        RecapQuery.paramGate(InNetworkTweetParams.EnableTweetTextInContentFeaturesHydrationParam),
+      enableTweetTetwittertInContentFeaturesGate =
+        RecapQuery.paramGate(InNetworkTweetParams.EnableTweetTetwittertInContentFeaturesHydrationParam),
       enableConversationControlContentFeaturesGate = RecapQuery.paramGate(
         InNetworkTweetParams.EnableConversationControlInContentFeaturesHydrationParam),
       enableTweetMediaHydrationGate = RecapQuery.paramGate(
@@ -124,48 +124,48 @@ class InNetworkTweetSource(
 
   private[this] val candidateGenerationTransform = new CandidateGenerationTransform(baseScope)
 
-  private[this] val maxFollowedUsersProvider =
-    DependencyProvider.from(InNetworkTweetParams.MaxFollowedUsersParam)
+  private[this] val matwitterFollowedUsersProvider =
+    DependencyProvider.from(InNetworkTweetParams.MatwitterFollowedUsersParam)
   private[this] val earlybirdReturnAllResultsProvider =
     DependencyProvider.from(InNetworkTweetParams.EnableEarlybirdReturnAllResultsParam)
-  private[this] val relevanceOptionsMaxHitsToProcessProvider =
-    DependencyProvider.from(InNetworkTweetParams.RelevanceOptionsMaxHitsToProcessParam)
+  private[this] val relevanceOptionsMatwitterHitsToProcessProvider =
+    DependencyProvider.from(InNetworkTweetParams.RelevanceOptionsMatwitterHitsToProcessParam)
 
   private[this] val followGraphDataTransform =
-    new FollowGraphDataTransform(followGraphDataProvider, maxFollowedUsersProvider)
+    new FollowGraphDataTransform(followGraphDataProvider, matwitterFollowedUsersProvider)
 
   private[this] val enableRealGraphUsersProvider =
     DependencyProvider.from(RecapParams.EnableRealGraphUsersParam)
-  private[this] val maxRealGraphAndFollowedUsersProvider =
-    DependencyProvider.from(RecapParams.MaxRealGraphAndFollowedUsersParam)
-  private[this] val maxRealGraphAndFollowedUsersFSOverrideProvider =
-    DependencyProvider.from(RecapParams.MaxRealGraphAndFollowedUsersFSOverrideParam)
+  private[this] val matwitterRealGraphAndFollowedUsersProvider =
+    DependencyProvider.from(RecapParams.MatwitterRealGraphAndFollowedUsersParam)
+  private[this] val matwitterRealGraphAndFollowedUsersFSOverrideProvider =
+    DependencyProvider.from(RecapParams.MatwitterRealGraphAndFollowedUsersFSOverrideParam)
   private[this] val imputeRealGraphAuthorWeightsProvider =
     DependencyProvider.from(RecapParams.ImputeRealGraphAuthorWeightsParam)
   private[this] val imputeRealGraphAuthorWeightsPercentileProvider =
     DependencyProvider.from(RecapParams.ImputeRealGraphAuthorWeightsPercentileParam)
-  private[this] val maxRealGraphAndFollowedUsersFromDeciderAndFS = DependencyProvider { envelope =>
-    maxRealGraphAndFollowedUsersFSOverrideProvider(envelope).getOrElse(
-      maxRealGraphAndFollowedUsersProvider(envelope))
+  private[this] val matwitterRealGraphAndFollowedUsersFromDeciderAndFS = DependencyProvider { envelope =>
+    matwitterRealGraphAndFollowedUsersFSOverrideProvider(envelope).getOrElse(
+      matwitterRealGraphAndFollowedUsersProvider(envelope))
   }
   private[this] val followAndRealGraphCombiningTransform = new FollowAndRealGraphCombiningTransform(
     followGraphDataProvider = followGraphDataProvider,
-    maxFollowedUsersProvider = maxFollowedUsersProvider,
+    matwitterFollowedUsersProvider = matwitterFollowedUsersProvider,
     enableRealGraphUsersProvider = enableRealGraphUsersProvider,
-    maxRealGraphAndFollowedUsersProvider = maxRealGraphAndFollowedUsersFromDeciderAndFS,
+    matwitterRealGraphAndFollowedUsersProvider = matwitterRealGraphAndFollowedUsersFromDeciderAndFS,
     imputeRealGraphAuthorWeightsProvider = imputeRealGraphAuthorWeightsProvider,
     imputeRealGraphAuthorWeightsPercentileProvider = imputeRealGraphAuthorWeightsPercentileProvider,
     statsReceiver = baseScope
   )
 
-  private[this] val maxCountProvider = DependencyProvider { query =>
-    query.maxCount.getOrElse(query.params(InNetworkTweetParams.DefaultMaxTweetCount))
+  private[this] val matwitterCountProvider = DependencyProvider { query =>
+    query.matwitterCount.getOrElse(query.params(InNetworkTweetParams.DefaultMatwitterTweetCount))
   }
 
-  private[this] val maxCountWithMarginProvider = DependencyProvider { query =>
-    val maxCount = query.maxCount.getOrElse(query.params(InNetworkTweetParams.DefaultMaxTweetCount))
-    val multiplier = query.params(InNetworkTweetParams.MaxCountMultiplierParam)
-    (maxCount * multiplier).toInt
+  private[this] val matwitterCountWithMarginProvider = DependencyProvider { query =>
+    val matwitterCount = query.matwitterCount.getOrElse(query.params(InNetworkTweetParams.DefaultMatwitterTweetCount))
+    val multiplier = query.params(InNetworkTweetParams.MatwitterCountMultiplierParam)
+    (matwitterCount * multiplier).toInt
   }
 
   private[this] val debugAuthorsMonitoringProvider =
@@ -173,10 +173,10 @@ class InNetworkTweetSource(
 
   private[this] val retrieveSearchResultsTransform = new RecapSearchResultsTransform(
     searchClient = searchClient,
-    maxCountProvider = maxCountWithMarginProvider,
+    matwitterCountProvider = matwitterCountWithMarginProvider,
     returnAllResultsProvider = earlybirdReturnAllResultsProvider,
-    relevanceOptionsMaxHitsToProcessProvider = relevanceOptionsMaxHitsToProcessProvider,
-    enableExcludeSourceTweetIdsProvider = DependencyProvider.True,
+    relevanceOptionsMatwitterHitsToProcessProvider = relevanceOptionsMatwitterHitsToProcessProvider,
+    enableEtwittercludeSourceTweetIdsProvider = DependencyProvider.True,
     enableSettingTweetTypesWithTweetKindOptionProvider =
       DependencyProvider.from(RecapParams.EnableSettingTweetTypesWithTweetKindOption),
     perRequestSearchClientIdProvider = DependencyProvider.None,
@@ -188,8 +188,8 @@ class InNetworkTweetSource(
     new UsersSearchResultMonitoringTransform(
       name = "RecapSearchResultsTruncationTransform",
       new RecapSearchResultsTruncationTransform(
-        extraSortBeforeTruncationGate = DependencyProvider.True,
-        maxCountProvider = maxCountWithMarginProvider,
+        etwittertraSortBeforeTruncationGate = DependencyProvider.True,
+        matwitterCountProvider = matwitterCountWithMarginProvider,
         statsReceiver = baseScope.scope("afterSearchResultsTransform")
       ),
       baseScope.scope("afterSearchResultsTransform"),
@@ -199,8 +199,8 @@ class InNetworkTweetSource(
   private[this] val finalTruncationTransform = new UsersSearchResultMonitoringTransform(
     name = "RecapSearchResultsTruncationTransform",
     new RecapSearchResultsTruncationTransform(
-      extraSortBeforeTruncationGate = DependencyProvider.True,
-      maxCountProvider = maxCountProvider,
+      etwittertraSortBeforeTruncationGate = DependencyProvider.True,
+      matwitterCountProvider = matwitterCountProvider,
       statsReceiver = baseScope.scope("finalTruncation")
     ),
     baseScope.scope("finalTruncation"),
@@ -228,11 +228,11 @@ class InNetworkTweetSource(
   private[this] val hydrationAndFilteringPipeline =
     CreateCandidateEnvelopeTransform // Create empty CandidateEnvelope
       .andThen(followGraphDataTransform) // Fetch follow graph data
-      .andThen(followAndRealGraphCombiningTransform) // Experiment: expand seed author set
+      .andThen(followAndRealGraphCombiningTransform) // Etwitterperiment: etwitterpand seed author set
       .andThen(retrieveSearchResultsTransform) // Fetch search results
       .andThen(
         preTruncateSearchResultsTransform
-      ) // truncate the search result up to maxCount + some margin, preserving the random tweet
+      ) // truncate the search result up to matwitterCount + some margin, preserving the random tweet
       .andThen(SearchResultDedupAndSortingTransform) // dedups, and sorts reverse-chron
       .andThen(hydrateTweetsAndSourceTweetsInParallel) // candidates + source tweets in parallel
       .andThen(visibilityEnforcingTransform) // filter hydrated tweets to visible ones
@@ -241,7 +241,7 @@ class InNetworkTweetSource(
       .andThen(TrimToMatchHydratedTweetsTransform) // trim searchResult to match with hydratedTweets
       .andThen(
         finalTruncationTransform
-      ) // truncate the searchResult to exactly up to maxCount, preserving the random tweet
+      ) // truncate the searchResult to etwitteractly up to matwitterCount, preserving the random tweet
       .andThen(
         trimToMatchSearchResultsTransform
       ) // trim other fields to match with the final searchResult

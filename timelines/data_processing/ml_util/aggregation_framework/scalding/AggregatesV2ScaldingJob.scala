@@ -33,7 +33,7 @@ import org.apache.hadoop.conf.Configuration
 /*
  * Offline scalding version of summingbird job to compute aggregates v2.
  * This is loosely based on the template created by sb-gen.
- * Extend this trait in your own scalding job, and override the val
+ * Etwittertend this trait in your own scalding job, and override the val
  * "aggregatesToCompute" with your own desired set of aggregates.
  */
 trait AggregatesV2ScaldingJob {
@@ -140,10 +140,10 @@ trait AggregatesV2ScaldingJob {
         Some(
           DAL.versionedKeyValStore[AggregationKey, DataRecord](
             dataset = offlineStore.dalDataset,
-            pathLayout = D.Suffix(offlineStore.offline.hdfsPath.toString),
+            pathLayout = D.Suffitwitter(offlineStore.offline.hdfsPath.toString),
             batcher = offlineStore.batcher,
             maybeStartTime = Some(offlineStore.startTime),
-            maxErrors = offlineStore.maxKvSourceFailures
+            matwitterErrors = offlineStore.matwitterKvSourceFailures
           ))
       case _ => None
     }

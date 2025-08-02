@@ -2,13 +2,13 @@
 // such as regression and classification.
 //
 // In many applications more than one type of inference is desired for a single
-// input.  For example, given meteorologic data an application may want to
-// perform a classification to determine if we should expect rain, snow or sun
+// input.  For etwitterample, given meteorologic data an application may want to
+// perform a classification to determine if we should etwitterpect rain, snow or sun
 // and also perform a regression to predict the temperature.
 // Sharing the single input data between two inference tasks can be accomplished
 // using MultiInferenceRequest and MultiInferenceResponse.
 
-syntax = "proto3";
+syntatwitter = "proto3";
 
 option cc_enable_arenas = true;
 

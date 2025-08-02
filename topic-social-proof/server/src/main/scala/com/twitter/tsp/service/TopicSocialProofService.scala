@@ -3,10 +3,10 @@ package com.twitter.tsp.service
 import com.twitter.abdecider.ABDeciderFactory
 import com.twitter.abdecider.LoggingABDecider
 import com.twitter.tsp.thriftscala.TspTweetInfo
-import com.twitter.discovery.common.configapi.FeatureContextBuilder
+import com.twitter.discovery.common.configapi.FeatureContetwittertBuilder
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.LookupContext
+import com.twitter.gizmoduck.thriftscala.LookupContetwittert
 import com.twitter.gizmoduck.thriftscala.QueryFields
 import com.twitter.gizmoduck.thriftscala.User
 import com.twitter.gizmoduck.thriftscala.UserService
@@ -39,8 +39,8 @@ import com.twitter.tsp.thriftscala.TopicSocialProofRequest
 import com.twitter.tsp.thriftscala.TopicSocialProofResponse
 import com.twitter.util.JavaTimer
 import com.twitter.util.Timer
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 import com.twitter.topiclisting.TopicListing
 import com.twitter.topiclisting.utt.UttLocalization
 
@@ -73,9 +73,9 @@ class TopicSocialProofService @Inject() (
   private val userOptOutTopicsStore: ReadableStore[UserId, TopicResponses] =
     TopicStore.userOptOutTopicStore(stratoClient, optOutStratoStorePath)(
       statsReceiver.scope("ints_interests_opt_out_store"))
-  private val explicitFollowingTopicsStore: ReadableStore[UserId, TopicResponses] =
-    TopicStore.explicitFollowingTopicStore(stratoClient)(
-      statsReceiver.scope("ints_explicit_following_interests_store"))
+  private val etwitterplicitFollowingTopicsStore: ReadableStore[UserId, TopicResponses] =
+    TopicStore.etwitterplicitFollowingTopicStore(stratoClient)(
+      statsReceiver.scope("ints_etwitterplicit_following_interests_store"))
   private val userNotInterestedInTopicsStore: ReadableStore[UserId, TopicResponses] =
     TopicStore.notInterestedInTopicsStore(stratoClient, notInterestedInStorePath)(
       statsReceiver.scope("ints_not_interested_in_store"))
@@ -92,7 +92,7 @@ class TopicSocialProofService @Inject() (
   private lazy val uttTopicFilterStore = new UttTopicFilterStore(
     topicListing = topicListing,
     userOptOutTopicsStore = userOptOutTopicsStore,
-    explicitFollowingTopicsStore = explicitFollowingTopicsStore,
+    etwitterplicitFollowingTopicsStore = etwitterplicitFollowingTopicsStore,
     notInterestedTopicsStore = userNotInterestedInTopicsStore,
     localizedUttRecommendableTopicsStore = localizedUttRecommendableTopicsStore,
     timer = timer,
@@ -126,10 +126,10 @@ class TopicSocialProofService @Inject() (
     )
   }
 
-  private val featureContextBuilder: FeatureContextBuilder = FeatureContextBuilder(builder.build())
+  private val featureContetwittertBuilder: FeatureContetwittertBuilder = FeatureContetwittertBuilder(builder.build())
 
   private val paramsBuilder: ParamsBuilder = ParamsBuilder(
-    featureContextBuilder,
+    featureContetwittertBuilder,
     abDecider,
     overridesConfig,
     statsReceiver.scope("params")
@@ -144,12 +144,12 @@ class TopicSocialProofService @Inject() (
       QueryFields.Safety,
       QueryFields.Takedowns
     )
-    val context: LookupContext = LookupContext(safetyLevel = Some(SafetyLevel.Recommendations))
+    val contetwittert: LookupContetwittert = LookupContetwittert(safetyLevel = Some(SafetyLevel.Recommendations))
 
     GizmoduckUserStore(
       client = gizmoduck,
       queryFields = queryFields,
-      context = context,
+      contetwittert = contetwittert,
       statsReceiver = statsReceiver.scope("gizmoduck")
     )
   }

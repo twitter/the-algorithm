@@ -7,8 +7,8 @@ import com.twitter.tweetypie.thriftscala._
 
 object MediaEntitiesHydrator {
   object Cacheable {
-    type Ctx = MediaEntityHydrator.Cacheable.Ctx
-    type Type = ValueHydrator[Seq[MediaEntity], Ctx]
+    type Cttwitter = MediaEntityHydrator.Cacheable.Cttwitter
+    type Type = ValueHydrator[Seq[MediaEntity], Cttwitter]
 
     def once(h: MediaEntityHydrator.Cacheable.Type): Type =
       TweetHydration.completeOnlyOnce(
@@ -20,8 +20,8 @@ object MediaEntitiesHydrator {
   }
 
   object Uncacheable {
-    type Ctx = MediaEntityHydrator.Uncacheable.Ctx
-    type Type = ValueHydrator[Seq[MediaEntity], Ctx]
+    type Cttwitter = MediaEntityHydrator.Uncacheable.Cttwitter
+    type Type = ValueHydrator[Seq[MediaEntity], Cttwitter]
   }
 }
 
@@ -29,9 +29,9 @@ object MediaEntityHydrator {
   val hydratedField: FieldByPath = fieldByPath(Tweet.MediaField)
 
   object Cacheable {
-    type Type = ValueHydrator[MediaEntity, Ctx]
+    type Type = ValueHydrator[MediaEntity, Cttwitter]
 
-    case class Ctx(urlEntities: Seq[UrlEntity], underlyingTweetCtx: TweetCtx) extends TweetCtx.Proxy
+    case class Cttwitter(urlEntities: Seq[UrlEntity], underlyingTweetCttwitter: TweetCttwitter) etwittertends TweetCttwitter.Protwittery
 
     /**
      * Builds a single media-hydrator out of finer-grained hydrators
@@ -42,10 +42,10 @@ object MediaEntityHydrator {
   }
 
   object Uncacheable {
-    type Type = ValueHydrator[MediaEntity, Ctx]
+    type Type = ValueHydrator[MediaEntity, Cttwitter]
 
-    case class Ctx(mediaKeys: Option[Seq[MediaKey]], underlyingTweetCtx: TweetCtx)
-        extends TweetCtx.Proxy {
+    case class Cttwitter(mediaKeys: Option[Seq[MediaKey]], underlyingTweetCttwitter: TweetCttwitter)
+        etwittertends TweetCttwitter.Protwittery {
 
       def includeMediaEntities: Boolean = tweetFieldRequested(Tweet.MediaField)
       def includeAdditionalMetadata: Boolean =
@@ -59,7 +59,7 @@ object MediaEntityHydrator {
     def apply(hydrateMediaKey: Type, hydrateMediaInfo: Type): Type =
       (hydrateMediaKey
         .andThen(hydrateMediaInfo))
-        .onlyIf((_, ctx) => ctx.includeMediaEntities)
+        .onlyIf((_, cttwitter) => cttwitter.includeMediaEntities)
   }
 
   def queryFilter(opts: TweetQuery.Options): Boolean =

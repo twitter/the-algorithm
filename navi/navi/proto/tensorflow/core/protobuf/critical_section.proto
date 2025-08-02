@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -14,11 +14,11 @@ message CriticalSectionDef {
   string critical_section_name = 1;
 }
 
-// Protocol buffer representing a CriticalSection execution.
-message CriticalSectionExecutionDef {
+// Protocol buffer representing a CriticalSection etwitterecution.
+message CriticalSectionEtwitterecutionDef {
   // Name of the critical section handle.
-  string execute_in_critical_section_name = 1;
-  // Whether this operation requires exclusive access to its resources,
+  string etwitterecute_in_critical_section_name = 1;
+  // Whether this operation requires etwitterclusive access to its resources,
   // (i.e., no other CriticalSections may request the same resources).
-  bool exclusive_resource_access = 2;
+  bool etwitterclusive_resource_access = 2;
 }

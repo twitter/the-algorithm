@@ -8,7 +8,7 @@ object MediaKeyUtil {
 
   def get(mediaEntity: MediaEntity): MediaKey =
     mediaEntity.mediaKey.getOrElse {
-      throw new IllegalStateException("""Media key undefined. This state is unexpected, the media
+      throw new IllegalStateEtwitterception("""Media key undefined. This state is unetwitterpected, the media
           |key should be set by the tweet creation for new tweets
           |and by `MediaKeyHydrator` for legacy tweets.""".stripMargin)
     }

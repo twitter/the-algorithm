@@ -10,7 +10,7 @@ import scala.util.Random
  */
 object Utils {
 
-  private val EarlyExpiration = 0.2
+  private val EarlyEtwitterpiration = 0.2
 
   private[common] def adaptAdditionalFeaturesToDataRecord(
     record: DataRecord,
@@ -25,6 +25,6 @@ object Utils {
 
   // To avoid a cache stampede. See https://en.wikipedia.org/wiki/Cache_stampede
   private[common] def randomizedTTL(ttl: Long): Long = {
-    (ttl - ttl * EarlyExpiration * Random.nextDouble()).toLong
+    (ttl - ttl * EarlyEtwitterpiration * Random.netwittertDouble()).toLong
   }
 }

@@ -17,7 +17,7 @@ object UserProfileInfoTransform {
  * It should be run in parallel with the main pipeline which fetches and hydrates CandidateTweets
  */
 class UserProfileInfoTransform(handler: FailOpenHandler, gizmoduckClient: GizmoduckClient)
-    extends FutureArrow[RecapQuery, UserProfileInfo] {
+    etwittertends FutureArrow[RecapQuery, UserProfileInfo] {
   import UserProfileInfoTransform._
   override def apply(request: RecapQuery): Future[UserProfileInfo] = {
     handler {

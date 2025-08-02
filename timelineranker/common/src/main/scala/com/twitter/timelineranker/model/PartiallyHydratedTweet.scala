@@ -4,7 +4,7 @@ import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
 import com.twitter.timelines.model.tweet.HydratedTweet
 import com.twitter.timelines.model.TweetId
 import com.twitter.timelines.model.UserId
-import com.twitter.timelines.util.SnowflakeSortIndexHelper
+import com.twitter.timelines.util.SnowflakeSortIndetwitterHelper
 import com.twitter.tweetypie.{thriftscala => tweetypie}
 
 object PartiallyHydratedTweet {
@@ -16,12 +16,12 @@ object PartiallyHydratedTweet {
   def fromSearchResult(result: ThriftSearchResult): PartiallyHydratedTweet = {
     val tweetId = result.id
     val metadata = result.metadata.getOrElse(
-      throw new IllegalArgumentException(
+      throw new IllegalArgumentEtwitterception(
         s"cannot initialize PartiallyHydratedTweet $tweetId without ThriftSearchResult metadata."
       )
     )
 
-    val extraMetadataOpt = metadata.extraMetadata
+    val etwittertraMetadataOpt = metadata.etwittertraMetadata
 
     val userId = metadata.fromUserId
 
@@ -44,18 +44,18 @@ object PartiallyHydratedTweet {
     val inReplyToUserId = if (!isRetweet) referencedTweetAuthorId else None
     val isReply = metadata.isReply.contains(true)
 
-    val quotedTweetId = extraMetadataOpt.flatMap(_.quotedTweetId)
-    val quotedUserId = extraMetadataOpt.flatMap(_.quotedUserId)
+    val quotedTweetId = etwittertraMetadataOpt.flatMap(_.quotedTweetId)
+    val quotedUserId = etwittertraMetadataOpt.flatMap(_.quotedUserId)
 
     val isNullcast = metadata.isNullcast.contains(true)
 
-    val conversationId = extraMetadataOpt.flatMap(_.conversationId)
+    val conversationId = etwittertraMetadataOpt.flatMap(_.conversationId)
 
-    // Root author id for the user who posts an exclusive tweet
-    val exclusiveConversationAuthorId = extraMetadataOpt.flatMap(_.exclusiveConversationAuthorId)
+    // Root author id for the user who posts an etwitterclusive tweet
+    val etwitterclusiveConversationAuthorId = etwittertraMetadataOpt.flatMap(_.etwitterclusiveConversationAuthorId)
 
     // Card URI associated with an attached card to this tweet, if it contains one
-    val cardUri = extraMetadataOpt.flatMap(_.cardUri)
+    val cardUri = etwittertraMetadataOpt.flatMap(_.cardUri)
 
     val tweet = makeTweetyPieTweet(
       tweetId,
@@ -69,7 +69,7 @@ object PartiallyHydratedTweet {
       isNullcast,
       isReply,
       conversationId,
-      exclusiveConversationAuthorId,
+      etwitterclusiveConversationAuthorId,
       cardUri
     )
     new PartiallyHydratedTweet(tweet)
@@ -87,7 +87,7 @@ object PartiallyHydratedTweet {
     isNullcast: Boolean,
     isReply: Boolean,
     conversationId: Option[Long],
-    exclusiveConversationAuthorId: Option[Long] = None,
+    etwitterclusiveConversationAuthorId: Option[Long] = None,
     cardUri: Option[String] = None
   ): tweetypie.Tweet = {
     val isDirectedAt = inReplyToUserId.isDefined
@@ -130,9 +130,9 @@ object PartiallyHydratedTweet {
 
     val coreData = tweetypie.TweetCoreData(
       userId = userId,
-      text = InvalidValue,
+      tetwittert = InvalidValue,
       createdVia = InvalidValue,
-      createdAtSecs = SnowflakeSortIndexHelper.idToTimestamp(tweetId).inSeconds,
+      createdAtSecs = SnowflakeSortIndetwitterHelper.idToTimestamp(tweetId).inSeconds,
       directedAtUser = directedAt,
       reply = reply,
       share = share,
@@ -140,9 +140,9 @@ object PartiallyHydratedTweet {
       conversationId = conversationId
     )
 
-    // Hydrate exclusiveTweetControl which determines whether the user is able to view an exclusive / SuperFollow tweet.
-    val exclusiveTweetControl = exclusiveConversationAuthorId.map { authorId =>
-      tweetypie.ExclusiveTweetControl(conversationAuthorId = authorId)
+    // Hydrate etwitterclusiveTweetControl which determines whether the user is able to view an etwitterclusive / SuperFollow tweet.
+    val etwitterclusiveTweetControl = etwitterclusiveConversationAuthorId.map { authorId =>
+      tweetypie.EtwitterclusiveTweetControl(conversationAuthorId = authorId)
     }
 
     val cardReference = cardUri.map { cardUriFromEB =>
@@ -153,7 +153,7 @@ object PartiallyHydratedTweet {
       id = tweetId,
       quotedTweet = quotedTweet,
       coreData = Some(coreData),
-      exclusiveTweetControl = exclusiveTweetControl,
+      etwitterclusiveTweetControl = etwitterclusiveTweetControl,
       cardReference = cardReference
     )
   }
@@ -164,10 +164,10 @@ object PartiallyHydratedTweet {
  * (instead of being hydrated using TweetyPie service).
  *
  * Not all fields are available using search therefore such fields if accessed
- * throw UnsupportedOperationException to ensure that they are not inadvertently
+ * throw UnsupportedOperationEtwitterception to ensure that they are not inadvertently
  * accessed and relied upon.
  */
-class PartiallyHydratedTweet(tweet: tweetypie.Tweet) extends HydratedTweet(tweet) {
+class PartiallyHydratedTweet(tweet: tweetypie.Tweet) etwittertends HydratedTweet(tweet) {
   override def parentTweetId: Option[TweetId] = throw notSupported("parentTweetId")
   override def mentionedUserIds: Seq[UserId] = throw notSupported("mentionedUserIds")
   override def takedownCountryCodes: Set[String] = throw notSupported("takedownCountryCodes")
@@ -178,7 +178,7 @@ class PartiallyHydratedTweet(tweet: tweetypie.Tweet) extends HydratedTweet(tweet
   override def isNsfwUser: Boolean = throw notSupported("isNsfwUser")
   override def isNsfwAdmin: Boolean = throw notSupported("isNsfwAdmin")
 
-  private def notSupported(name: String): UnsupportedOperationException = {
-    new UnsupportedOperationException(s"Not supported: $name")
+  private def notSupported(name: String): UnsupportedOperationEtwitterception = {
+    new UnsupportedOperationEtwitterception(s"Not supported: $name")
   }
 }

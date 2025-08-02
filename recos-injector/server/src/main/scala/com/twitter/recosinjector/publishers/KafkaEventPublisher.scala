@@ -14,7 +14,7 @@ import org.apache.kafka.common.serialization.StringSerializer
 
 case class KafkaEventPublisher(
   kafkaDest: String,
-  outputKafkaTopicPrefix: String,
+  outputKafkaTopicPrefitwitter: String,
   clientId: ClientId,
   truststoreLocation: String) {
 
@@ -37,8 +37,8 @@ case class KafkaEventPublisher(
   )(
     implicit statsReceiver: StatsReceiver
   ): Unit = {
-    val topicName = s"${outputKafkaTopicPrefix}_$topic"
-    // Kafka Producer is thread-safe. No extra Future-pool protect.
+    val topicName = s"${outputKafkaTopicPrefitwitter}_$topic"
+    // Kafka Producer is thread-safe. No etwittertra Future-pool protect.
     producer.send(new ProducerRecord(topicName, message))
     statsReceiver.counter(topicName + "_written_msg_success").incr()
   }

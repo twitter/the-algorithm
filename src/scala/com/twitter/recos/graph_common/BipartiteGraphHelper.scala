@@ -17,8 +17,8 @@ class BipartiteGraphHelper(graph: BipartiteGraph) {
 
     val edges: ListBuffer[(Long, Byte)] = ListBuffer()
     if (iterator != null) {
-      while (iterator.hasNext) {
-        val node = iterator.nextLong()
+      while (iterator.hasNetwittert) {
+        val node = iterator.netwittertLong()
         val engagementType = iterator.currentEdgeType()
         edges += ((tweetIDMask.restore(node), engagementType))
       }
@@ -30,8 +30,8 @@ class BipartiteGraphHelper(graph: BipartiteGraph) {
     val iterator = graph.getRightNodeEdges(rightNode)
     val leftNodes: ListBuffer[Long] = ListBuffer()
     if (iterator != null) {
-      while (iterator.hasNext) {
-        leftNodes += iterator.nextLong()
+      while (iterator.hasNetwittert) {
+        leftNodes += iterator.netwittertLong()
       }
     }
 

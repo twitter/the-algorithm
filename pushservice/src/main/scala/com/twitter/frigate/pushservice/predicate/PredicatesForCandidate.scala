@@ -2,7 +2,7 @@ package com.twitter.frigate.pushservice.predicate
 
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base._
-import com.twitter.frigate.common.candidate.MaxTweetAge
+import com.twitter.frigate.common.candidate.MatwitterTweetAge
 import com.twitter.frigate.common.candidate.TargetABDecider
 import com.twitter.frigate.common.predicate.tweet.TweetAuthorPredicates
 import com.twitter.frigate.common.predicate._
@@ -35,31 +35,31 @@ object PredicatesForCandidate {
 
   def oldTweetRecsPredicate(implicit stats: StatsReceiver): Predicate[
     TweetCandidate with RecommendationType with TargetInfo[
-      TargetUser with TargetABDecider with MaxTweetAge
+      TargetUser with TargetABDecider with MatwitterTweetAge
     ]
   ] = {
     val name = "old_tweet"
     Predicate
       .from[TweetCandidate with RecommendationType with TargetInfo[
-        TargetUser with TargetABDecider with MaxTweetAge
+        TargetUser with TargetABDecider with MatwitterTweetAge
       ]] { candidate =>
         {
           val crt = candidate.commonRecType
           val defaultAge = if (RecTypes.mrModelingBasedTypes.contains(crt)) {
-            candidate.target.params(PushFeatureSwitchParams.ModelingBasedCandidateMaxTweetAgeParam)
+            candidate.target.params(PushFeatureSwitchParams.ModelingBasedCandidateMatwitterTweetAgeParam)
           } else if (RecTypes.GeoPopTweetTypes.contains(crt)) {
-            candidate.target.params(PushFeatureSwitchParams.GeoPopTweetMaxAgeInHours)
+            candidate.target.params(PushFeatureSwitchParams.GeoPopTweetMatwitterAgeInHours)
           } else if (RecTypes.simclusterBasedTweets.contains(crt)) {
             candidate.target.params(
-              PushFeatureSwitchParams.SimclusterBasedCandidateMaxTweetAgeParam)
+              PushFeatureSwitchParams.SimclusterBasedCandidateMatwitterTweetAgeParam)
           } else if (RecTypes.detopicTypes.contains(crt)) {
-            candidate.target.params(PushFeatureSwitchParams.DetopicBasedCandidateMaxTweetAgeParam)
+            candidate.target.params(PushFeatureSwitchParams.DetopicBasedCandidateMatwitterTweetAgeParam)
           } else if (RecTypes.f1FirstDegreeTypes.contains(crt)) {
-            candidate.target.params(PushFeatureSwitchParams.F1CandidateMaxTweetAgeParam)
-          } else if (crt == CommonRecommendationType.ExploreVideoTweet) {
-            candidate.target.params(PushFeatureSwitchParams.ExploreVideoTweetAgeParam)
+            candidate.target.params(PushFeatureSwitchParams.F1CandidateMatwitterTweetAgeParam)
+          } else if (crt == CommonRecommendationType.EtwitterploreVideoTweet) {
+            candidate.target.params(PushFeatureSwitchParams.EtwitterploreVideoTweetAgeParam)
           } else
-            candidate.target.params(PushFeatureSwitchParams.MaxTweetAgeParam)
+            candidate.target.params(PushFeatureSwitchParams.MatwitterTweetAgeParam)
           SnowflakeUtils.isRecent(candidate.tweetId, defaultAge)
         }
       }
@@ -134,14 +134,14 @@ object PredicatesForCandidate {
       .withName(name)
   }
 
-  def tweetCandidateWithLessThan2SocialContextsIsAReply(
+  def tweetCandidateWithLessThan2SocialContetwittertsIsAReply(
     implicit stats: StatsReceiver
-  ): NamedPredicate[TweetCandidate with TweetDetails with SocialContextActions] = {
-    val name = "tweet_candidate_with_less_than_2_social_contexts_is_not_a_reply"
+  ): NamedPredicate[TweetCandidate with TweetDetails with SocialContetwittertActions] = {
+    val name = "tweet_candidate_with_less_than_2_social_contetwitterts_is_not_a_reply"
     Predicate
-      .from[TweetCandidate with TweetDetails with SocialContextActions] { cand =>
+      .from[TweetCandidate with TweetDetails with SocialContetwittertActions] { cand =>
         cand.isReply match {
-          case Some(true) if cand.socialContextTweetIds.size < 2 => false
+          case Some(true) if cand.socialContetwittertTweetIds.size < 2 => false
           case _ => true
         }
       }
@@ -171,7 +171,7 @@ object PredicatesForCandidate {
       .from[OutOfNetworkTweetCandidate with TargetInfo[TargetUser with TargetABDecider]] { cand =>
         val disabledCrTag = cand.target
           .params(PushFeatureSwitchParams.OONCandidatesDisabledCrTagParam)
-        val candGeneratedByDisabledSignal = cand.tagsCR.exists { tagsCR =>
+        val candGeneratedByDisabledSignal = cand.tagsCR.etwitterists { tagsCR =>
           val tagsCRSet = tagsCR.map(_.toString).toSet
           tagsCRSet.nonEmpty && tagsCRSet.subsetOf(disabledCrTag.toSet)
         }
@@ -235,26 +235,26 @@ object PredicatesForCandidate {
       .withStats(statsReceiver.scope("predicate_self_author"))
       .withName("self_author")
 
-  def authorInSocialContext(implicit statsReceiver: StatsReceiver): NamedPredicate[PushCandidate] =
+  def authorInSocialContetwittert(implicit statsReceiver: StatsReceiver): NamedPredicate[PushCandidate] =
     Predicate
       .from[PushCandidate] {
-        case tweetCandidate: PushCandidate with TweetDetails with SocialContextActions =>
+        case tweetCandidate: PushCandidate with TweetDetails with SocialContetwittertActions =>
           tweetCandidate.authorId match {
             case Some(authorId) =>
-              !tweetCandidate.socialContextUserIds.contains(authorId)
+              !tweetCandidate.socialContetwittertUserIds.contains(authorId)
             case None => true
           }
         case _ => true
       }
-      .withStats(statsReceiver.scope("predicate_author_social_context"))
-      .withName("author_social_context")
+      .withStats(statsReceiver.scope("predicate_author_social_contetwittert"))
+      .withName("author_social_contetwittert")
 
-  def selfInSocialContext(implicit statsReceiver: StatsReceiver): NamedPredicate[PushCandidate] = {
-    val name = "self_social_context"
+  def selfInSocialContetwittert(implicit statsReceiver: StatsReceiver): NamedPredicate[PushCandidate] = {
+    val name = "self_social_contetwittert"
     Predicate
       .from[PushCandidate] {
-        case candidate: PushCandidate with SocialContextActions =>
-          !candidate.socialContextUserIds.contains(candidate.target.targetId)
+        case candidate: PushCandidate with SocialContetwittertActions =>
+          !candidate.socialContetwittertUserIds.contains(candidate.target.targetId)
         case _ =>
           true
       }
@@ -262,17 +262,17 @@ object PredicatesForCandidate {
       .withName(name)
   }
 
-  def minSocialContext(
+  def minSocialContetwittert(
     threshold: Int
   )(
     implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with SocialContextActions] = {
+  ): NamedPredicate[PushCandidate with SocialContetwittertActions] = {
     Predicate
-      .from { candidate: PushCandidate with SocialContextActions =>
-        candidate.socialContextUserIds.size >= threshold
+      .from { candidate: PushCandidate with SocialContetwittertActions =>
+        candidate.socialContetwittertUserIds.size >= threshold
       }
-      .withStats(statsReceiver.scope("predicate_min_social_context"))
-      .withName("min_social_context")
+      .withStats(statsReceiver.scope("predicate_min_social_contetwittert"))
+      .withName("min_social_contetwittert")
   }
 
   private def anyWithheldContent(
@@ -288,11 +288,11 @@ object PredicatesForCandidate {
       checkAllCountries = true
     )
 
-  def targetUserExists(implicit statsReceiver: StatsReceiver): NamedPredicate[PushCandidate] = {
+  def targetUserEtwitterists(implicit statsReceiver: StatsReceiver): NamedPredicate[PushCandidate] = {
     TargetUserPredicates
-      .targetUserExists()(statsReceiver)
+      .targetUserEtwitterists()(statsReceiver)
       .flatContraMap { candidate: PushCandidate => Future.value(candidate.target) }
-      .withName("target_user_exists")
+      .withName("target_user_etwitterists")
   }
 
   def secondaryDormantAccountPredicate(
@@ -306,18 +306,18 @@ object PredicatesForCandidate {
       .withName(name)
   }
 
-  def socialContextBeingFollowed(
+  def socialContetwittertBeingFollowed(
     edgeStore: ReadableStore[RelationEdge, Boolean]
   )(
     implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with SocialContextActions] =
+  ): NamedPredicate[PushCandidate with SocialContetwittertActions] =
     SocialGraphPredicate
-      .allRelationEdgesExist(edgeStore, RelationshipType.Following)
-      .on { candidate: PushCandidate with SocialContextActions =>
-        candidate.socialContextUserIds.map { u => Edge(candidate.target.targetId, u) }
+      .allRelationEdgesEtwitterist(edgeStore, RelationshipType.Following)
+      .on { candidate: PushCandidate with SocialContetwittertActions =>
+        candidate.socialContetwittertUserIds.map { u => Edge(candidate.target.targetId, u) }
       }
-      .withStats(statsReceiver.scope("predicate_social_context_being_followed"))
-      .withName("social_context_being_followed")
+      .withStats(statsReceiver.scope("predicate_social_contetwittert_being_followed"))
+      .withName("social_contetwittert_being_followed")
 
   private def edgeFromCandidate(candidate: PushCandidate with TweetAuthor): Option[Edge] = {
     candidate.authorId map { authorId => Edge(candidate.target.targetId, authorId) }
@@ -329,7 +329,7 @@ object PredicatesForCandidate {
     implicit statsReceiver: StatsReceiver
   ): NamedPredicate[PushCandidate with TweetAuthor] = {
     SocialGraphPredicate
-      .relationExists(edgeStore, RelationshipType.DeviceFollowing)
+      .relationEtwitterists(edgeStore, RelationshipType.DeviceFollowing)
       .optionalOn(
         edgeFromCandidate,
         missingResult = false
@@ -345,7 +345,7 @@ object PredicatesForCandidate {
     implicit statsReceiver: StatsReceiver
   ): NamedPredicate[PushCandidate with TweetAuthor] = {
     SocialGraphPredicate
-      .relationExists(edgeStore, RelationshipType.Following)
+      .relationEtwitterists(edgeStore, RelationshipType.Following)
       .optionalOn(
         edgeFromCandidate,
         missingResult = false
@@ -360,7 +360,7 @@ object PredicatesForCandidate {
     implicit statsReceiver: StatsReceiver
   ): NamedPredicate[PushCandidate with TweetAuthor] = {
     SocialGraphPredicate
-      .relationExists(edgeStore, RelationshipType.Following)
+      .relationEtwitterists(edgeStore, RelationshipType.Following)
       .optionalOn(
         edgeFromCandidate,
         missingResult = false
@@ -377,7 +377,7 @@ object PredicatesForCandidate {
   ): NamedPredicate[PushCandidate with TweetAuthor] = {
     val name = "recommended_tweet_author_acceptable_to_target_user"
     SocialGraphPredicate
-      .anyRelationExists(
+      .anyRelationEtwitterists(
         edgeStore,
         Set(
           RelationshipType.Blocking,
@@ -395,12 +395,12 @@ object PredicatesForCandidate {
       .withName(name)
   }
 
-  def relationNotExistsPredicate(
+  def relationNotEtwitteristsPredicate(
     edgeStore: ReadableStore[RelationEdge, Boolean],
     relations: Set[RelationshipType]
   ): Predicate[(Long, Iterable[Long])] =
     SocialGraphPredicate
-      .anyRelationExistsForMultiEdge(
+      .anyRelationEtwitteristsForMultiEdge(
         edgeStore,
         relations
       )
@@ -411,7 +411,7 @@ object PredicatesForCandidate {
       }
 
   def blocking(edgeStore: ReadableStore[RelationEdge, Boolean]): Predicate[(Long, Iterable[Long])] =
-    relationNotExistsPredicate(
+    relationNotEtwitteristsPredicate(
       edgeStore,
       Set(RelationshipType.BlockedBy, RelationshipType.Blocking)
     )
@@ -419,23 +419,23 @@ object PredicatesForCandidate {
   def blockingOrMuting(
     edgeStore: ReadableStore[RelationEdge, Boolean]
   ): Predicate[(Long, Iterable[Long])] =
-    relationNotExistsPredicate(
+    relationNotEtwitteristsPredicate(
       edgeStore,
       Set(RelationshipType.BlockedBy, RelationshipType.Blocking, RelationshipType.Muting)
     )
 
-  def socialContextNotRetweetFollowing(
+  def socialContetwittertNotRetweetFollowing(
     edgeStore: ReadableStore[RelationEdge, Boolean]
   )(
     implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with SocialContextActions] = {
-    val name = "social_context_not_retweet_following"
-    relationNotExistsPredicate(edgeStore, Set(RelationshipType.NotRetweetFollowing))
-      .optionalOn[PushCandidate with SocialContextActions](
+  ): NamedPredicate[PushCandidate with SocialContetwittertActions] = {
+    val name = "social_contetwittert_not_retweet_following"
+    relationNotEtwitteristsPredicate(edgeStore, Set(RelationshipType.NotRetweetFollowing))
+      .optionalOn[PushCandidate with SocialContetwittertActions](
         {
-          case candidate: PushCandidate with SocialContextActions
+          case candidate: PushCandidate with SocialContetwittertActions
               if RecTypes.isTweetRetweetType(candidate.commonRecType) =>
-            Some((candidate.target.targetId, candidate.socialContextUserIds))
+            Some((candidate.target.targetId, candidate.socialContetwittertUserIds))
           case _ =>
             None
         },
@@ -445,30 +445,30 @@ object PredicatesForCandidate {
       .withName(name)
   }
 
-  def socialContextBlockingOrMuting(
+  def socialContetwittertBlockingOrMuting(
     edgeStore: ReadableStore[RelationEdge, Boolean]
   )(
     implicit statsReceiver: StatsReceiver
-  ): NamedPredicate[PushCandidate with SocialContextActions] =
+  ): NamedPredicate[PushCandidate with SocialContetwittertActions] =
     blockingOrMuting(edgeStore)
-      .on { candidate: PushCandidate with SocialContextActions =>
-        (candidate.target.targetId, candidate.socialContextUserIds)
+      .on { candidate: PushCandidate with SocialContetwittertActions =>
+        (candidate.target.targetId, candidate.socialContetwittertUserIds)
       }
-      .withStats(statsReceiver.scope("predicate_social_context_blocking_or_muting"))
-      .withName("social_context_blocking_or_muting")
+      .withStats(statsReceiver.scope("predicate_social_contetwittert_blocking_or_muting"))
+      .withName("social_contetwittert_blocking_or_muting")
 
   /**
-   * Use hyrated Tweet object for F1 Protected experiment for checking null cast as Tweetypie hydration
+   * Use hyrated Tweet object for F1 Protected etwitterperiment for checking null cast as Tweetypie hydration
    * fails for protected Authors without passing in Target id. We do this specifically for
-   * F1 Protected Tweet Experiment in Earlybird Adaptor.
-   * For rest of the traffic refer to existing Nullcast Predicate
+   * F1 Protected Tweet Etwitterperiment in Earlybird Adaptor.
+   * For rest of the traffic refer to etwitteristing Nullcast Predicate
    */
-  def nullCastF1ProtectedExperientPredicate(
+  def nullCastF1ProtectedEtwitterperientPredicate(
     tweetypieStore: ReadableStore[Long, TweetyPieResult]
   )(
     implicit statsReceiver: StatsReceiver
   ): NamedPredicate[PushCandidate with TweetCandidate with TweetDetails] = {
-    val name = "f1_exempted_null_cast_tweet"
+    val name = "f1_etwitterempted_null_cast_tweet"
     val f1NullCastCheckCounter = statsReceiver.scope(name).counter("f1_null_cast_check")
     Predicate
       .fromAsync { tweetCandidate: PushCandidate with TweetCandidate with TweetDetails =>
@@ -489,7 +489,7 @@ object PredicatesForCandidate {
   }
 
   private def baseNullCastTweet(): Predicate[TweetyPieResult] =
-    Predicate.from { t: TweetyPieResult => !t.tweet.coreData.exists { cd => cd.nullcast } }
+    Predicate.from { t: TweetyPieResult => !t.tweet.coreData.etwitterists { cd => cd.nullcast } }
 
   def nullCastTweet(
     tweetyPieStore: ReadableStore[Long, TweetyPieResult]
@@ -508,9 +508,9 @@ object PredicatesForCandidate {
   }
 
   /**
-   * Use the predicate except fn is true.
+   * Use the predicate etwittercept fn is true.
    */
-  def exceptedPredicate[T <: PushCandidate](
+  def etwitterceptedPredicate[T <: PushCandidate](
     name: String,
     fn: T => Future[Boolean],
     predicate: Predicate[T]
@@ -607,7 +607,7 @@ object PredicatesForCandidate {
   )(
     implicit statsReceiver: StatsReceiver
   ): NamedPredicate[T] = {
-    val name = param.getClass.getSimpleName.stripSuffix("$")
+    val name = param.getClass.getSimpleName.stripSuffitwitter("$")
     TargetPredicates
       .paramPredicate(param)
       .on { candidate: PushCandidate => candidate.target }
@@ -622,7 +622,7 @@ object PredicatesForCandidate {
     val scopedStatsReceiver = stats.scope(s"predicate_$name")
     Predicate
       .fromAsync { candidate: PushCandidate =>
-        candidate.target.deviceInfo.map(_.exists(_.isNewsEligible))
+        candidate.target.deviceInfo.map(_.etwitterists(_.isNewsEligible))
       }
       .withStats(scopedStatsReceiver)
       .withName(name)
@@ -635,7 +635,7 @@ object PredicatesForCandidate {
     val scopedStatsReceiver = stats.scope(s"predicate_$name")
     Predicate
       .fromAsync { candidate: PushCandidate =>
-        candidate.target.deviceInfo.map(_.exists(settings =>
+        candidate.target.deviceInfo.map(_.etwitterists(settings =>
           settings.isNewsEligible || settings.isRecommendationsEligible))
       }
       .withStats(scopedStatsReceiver)
@@ -668,7 +668,7 @@ object PredicatesForCandidate {
   ): NamedPredicate[PushCandidate] = {
     val name = "mr_web_holdback_for_candidate"
     val scopedStats = stats.scope(name)
-    PredicatesForCandidate.exludeCrtFromPushHoldback
+    PredicatesForCandidate.etwitterludeCrtFromPushHoldback
       .or(
         TargetPredicates
           .webNotifsHoldback()
@@ -693,7 +693,7 @@ object PredicatesForCandidate {
       .withName(name)
   }
 
-  def protectedTweetF1ExemptPredicate[
+  def protectedTweetF1EtwitteremptPredicate[
     T <: TargetUser with TargetABDecider,
     Cand <: TweetCandidate with TweetAuthorDetails with TargetInfo[T]
   ](
@@ -703,7 +703,7 @@ object PredicatesForCandidate {
       TargetUser with TargetABDecider
     ]
   ] = {
-    val name = "f1_exempt_tweet_author_protected"
+    val name = "f1_etwitterempt_tweet_author_protected"
     val skipForProtectedAuthorScope = stats.scope(name).scope("skip_protected_author_for_f1")
     val authorIsProtectedCounter = skipForProtectedAuthorScope.counter("author_protected_true")
     val authorIsNotProtectedCounter = skipForProtectedAuthorScope.counter("author_protected_false")
@@ -777,7 +777,7 @@ object PredicatesForCandidate {
       .withName(name)
   }
 
-  def exludeCrtFromPushHoldback(
+  def etwitterludeCrtFromPushHoldback(
     implicit stats: StatsReceiver
   ): NamedPredicate[PushCandidate] = Predicate
     .from { candidate: PushCandidate =>
@@ -785,30 +785,30 @@ object PredicatesForCandidate {
       val target = candidate.target
       target
         .params(PushFeatureSwitchParams.CommonRecommendationTypeDenyListPushHoldbacks)
-        .exists(crtName.equalsIgnoreCase)
+        .etwitterists(crtName.equalsIgnoreCase)
     }
-    .withStats(stats.scope("exclude_crt_from_push_holdbacks"))
+    .withStats(stats.scope("etwitterclude_crt_from_push_holdbacks"))
 
   def enableSendHandlerCandidates(implicit stats: StatsReceiver): NamedPredicate[PushCandidate] = {
     val name = "sendhandler_enable_push_recommendations"
-    PredicatesForCandidate.exludeCrtFromPushHoldback
+    PredicatesForCandidate.etwitterludeCrtFromPushHoldback
       .or(PredicatesForCandidate.paramPredicate(
         PushFeatureSwitchParams.EnablePushRecommendationsParam))
       .withStats(stats.scope(name))
       .withName(name)
   }
 
-  def openAppExperimentUserCandidateAllowList(
+  def openAppEtwitterperimentUserCandidateAllowList(
     implicit stats: StatsReceiver
   ): NamedPredicate[PushCandidate] = {
-    val name = "open_app_experiment_user_candidate_allow_list"
+    val name = "open_app_etwitterperiment_user_candidate_allow_list"
     Predicate
       .fromAsync { candidate: PushCandidate =>
         val target = candidate.target
-        Future.join(target.isOpenAppExperimentUser, target.targetUser).map {
+        Future.join(target.isOpenAppEtwitterperimentUser, target.targetUser).map {
           case (isOpenAppUser, targetUser) =>
             val shouldLimitOpenAppCrts =
-              isOpenAppUser || targetUser.exists(_.userType == UserType.Soft)
+              isOpenAppUser || targetUser.etwitterists(_.userType == UserType.Soft)
 
             if (shouldLimitOpenAppCrts) {
               val listOfAllowedCrt = target

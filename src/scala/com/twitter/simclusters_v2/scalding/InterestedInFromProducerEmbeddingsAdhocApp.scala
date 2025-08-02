@@ -1,12 +1,12 @@
 package com.twitter.simclusters_v2.scalding
 
 import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding.TypedTsv
 import com.twitter.scalding._
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
+import com.twitter.scalding_internal.dalv2.remote_access.EtwitterplicitLocation
 import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.common.ModelVersions
@@ -15,7 +15,7 @@ import com.twitter.simclusters_v2.hdfs_sources.ProducerEmbeddingSources
 import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
 import com.twitter.simclusters_v2.hdfs_sources.DataSources
 import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedInFromProducerEmbeddings20M145KUpdatedScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserAndNeighborsFixedPathSource
+import com.twitter.simclusters_v2.hdfs_sources.UserAndNeighborsFitwitteredPathSource
 import com.twitter.simclusters_v2.hdfs_sources.UserUserNormalizedGraphScalaDataset
 import com.twitter.simclusters_v2.scalding.common.Util
 import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
@@ -23,8 +23,8 @@ import com.twitter.simclusters_v2.thriftscala.EmbeddingType
 import com.twitter.simclusters_v2.thriftscala.SimClusterWithScore
 import com.twitter.simclusters_v2.thriftscala.TopSimClustersWithScore
 import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
+import com.twitter.wtf.scalding.jobs.common.AdhocEtwitterecutionApp
+import com.twitter.wtf.scalding.jobs.common.ScheduledEtwitterecutionApp
 import java.util.TimeZone
 import scala.util.Random
 
@@ -52,26 +52,26 @@ import scala.util.Random
   --outputDir /gcs/user/cassowary/adhoc/interested_in_from_prod_embeddings/ \
   --date 2020-08-25 --typedTsv true
  */
-object InterestedInFromProducerEmbeddingsAdhocApp extends AdhocExecutionApp {
+object InterestedInFromProducerEmbeddingsAdhocApp etwittertends AdhocEtwitterecutionApp {
   override def runOnDateRange(
     args: Args
   )(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     val outputDir = args("outputDir")
     val inputGraph = args.optional("graphInputDir") match {
-      case Some(inputDir) => TypedPipe.from(UserAndNeighborsFixedPathSource(inputDir))
+      case Some(inputDir) => TypedPipe.from(UserAndNeighborsFitwitteredPathSource(inputDir))
       case None =>
         DAL
           .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(30))
           .toTypedPipe
     }
     val socialProofThreshold = args.int("socialProofThreshold", 2)
-    val maxClustersPerUserFinalResult = args.int("maxInterestedInClustersPerUser", 50)
-    val maxClustersFromProducer = args.int("maxClustersPerProducer", 25)
+    val matwitterClustersPerUserFinalResult = args.int("matwitterInterestedInClustersPerUser", 50)
+    val matwitterClustersFromProducer = args.int("matwitterClustersPerProducer", 25)
     val typedTsvTag = args.boolean("typedTsv")
 
     val embeddingType =
@@ -106,12 +106,12 @@ object InterestedInFromProducerEmbeddingsAdhocApp extends AdhocExecutionApp {
         numProducerMappings.inc()
         val clusterSize = clusterArray.size
         totalClustersCoverageProducerEmbeddings.incBy(clusterSize)
-        val prunedList = if (clusterSize > maxClustersFromProducer) {
+        val prunedList = if (clusterSize > matwitterClustersFromProducer) {
           numProducersWithLargeClusterMappings.inc()
           clusterArray
             .sortBy {
               case (_, knownForScore) => -knownForScore
-            }.take(maxClustersFromProducer)
+            }.take(matwitterClustersFromProducer)
         } else {
           numProducersWithSmallClusterMappings.inc()
           clusterArray
@@ -124,7 +124,7 @@ object InterestedInFromProducerEmbeddingsAdhocApp extends AdhocExecutionApp {
         inputGraph,
         producerEmbeddingsPruned,
         socialProofThreshold,
-        maxClustersPerUserFinalResult,
+        matwitterClustersPerUserFinalResult,
         modelVersion
       )
 
@@ -140,14 +140,14 @@ object InterestedInFromProducerEmbeddingsAdhocApp extends AdhocExecutionApp {
                 clusters.clusterIdToScores.keys.toString()
               )
           }
-          .writeExecution(
+          .writeEtwitterecution(
             TypedTsv(outputDir)
           )
       )
     } else {
       Util.printCounters(
         resultWithoutSocial
-          .writeExecution(
+          .writeEtwitterecution(
             AdhocKeyValSources.interestedInSource(outputDir)
           )
       )
@@ -165,14 +165,14 @@ object InterestedInFromProducerEmbeddingsAdhocApp extends AdhocExecutionApp {
  * --start_cron interested_in_from_producer_embeddings
  * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
-object InterestedInFromProducerEmbeddingsBatchApp extends ScheduledExecutionApp {
+object InterestedInFromProducerEmbeddingsBatchApp etwittertends ScheduledEtwitterecutionApp {
   override val firstTime: RichDate = RichDate("2019-11-01")
 
   override val batchIncrement: Duration = Days(7)
 
   def getPrunedEmbeddings(
     producerEmbeddings: TypedPipe[(Long, TopSimClustersWithScore)],
-    maxClustersFromProducer: Int
+    matwitterClustersFromProducer: Int
   ): TypedPipe[(Long, TopSimClustersWithScore)] = {
     producerEmbeddings.map {
       case (producerId, producerClusters) =>
@@ -180,7 +180,7 @@ object InterestedInFromProducerEmbeddingsBatchApp extends ScheduledExecutionApp 
           producerClusters.topClusters
             .sortBy {
               case simCluster => -simCluster.score.toFloat
-            }.take(maxClustersFromProducer)
+            }.take(matwitterClustersFromProducer)
         (producerId, TopSimClustersWithScore(prunedProducerClusters, producerClusters.modelVersion))
     }
   }
@@ -230,12 +230,12 @@ object InterestedInFromProducerEmbeddingsBatchApp extends ScheduledExecutionApp 
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
     //Input args for the run
     val socialProofThreshold = args.int("socialProofThreshold", 2)
-    val maxClustersFromProducer = args.int("maxClustersPerProducer", 25)
-    val maxClustersPerUserFinalResult = args.int("maxInterestedInClustersPerUser", 50)
+    val matwitterClustersFromProducer = args.int("matwitterClustersPerProducer", 25)
+    val matwitterClustersPerUserFinalResult = args.int("matwitterInterestedInClustersPerUser", 50)
 
     //Path variables
     val modelVersionUpdated = ModelVersions.toModelVersion(ModelVersions.Model20M145KUpdated)
@@ -253,7 +253,7 @@ object InterestedInFromProducerEmbeddingsBatchApp extends ScheduledExecutionApp 
         EmbeddingType.ProducerFavBasedSemanticCoreEntity,
         modelVersionUpdated)(dateRange.embiggen(Days(7)))
 
-    val producerEmbeddingsPruned = getPrunedEmbeddings(producerEmbeddings, maxClustersFromProducer)
+    val producerEmbeddingsPruned = getPrunedEmbeddings(producerEmbeddings, matwitterClustersFromProducer)
     val producerEmbeddingsWithScore = producerEmbeddingsPruned.map {
       case (userId: Long, topSimClusters: TopSimClustersWithScore) =>
         (
@@ -271,20 +271,20 @@ object InterestedInFromProducerEmbeddingsBatchApp extends ScheduledExecutionApp 
         userUserNormalGraph,
         producerEmbeddingsWithScore,
         socialProofThreshold,
-        maxClustersPerUserFinalResult,
+        matwitterClustersPerUserFinalResult,
         modelVersionUpdated.toString
       )
 
     val interestedInFromProducersWithoutSocial =
       getInterestedInDiscardSocial(interestedInFromProducersResult)
 
-    val writeKeyValResultExec = interestedInFromProducersWithoutSocial
+    val writeKeyValResultEtwitterec = interestedInFromProducersWithoutSocial
       .map { case (userId, clusters) => KeyVal(userId, clusters) }
-      .writeDALVersionedKeyValExecution(
+      .writeDALVersionedKeyValEtwitterecution(
         outputKVDataset,
-        D.Suffix(interestedInFromProducersPath)
+        D.Suffitwitter(interestedInFromProducersPath)
       )
-    writeKeyValResultExec
+    writeKeyValResultEtwitterec
   }
 
 }

@@ -9,7 +9,7 @@ import com.twitter.strato.config.AllowAll
 import com.twitter.strato.config.ContactInfo
 import com.twitter.strato.config.Policy
 import com.twitter.strato.data.Conv
-import com.twitter.strato.data.Description.PlainText
+import com.twitter.strato.data.Description.PlainTetwittert
 import com.twitter.strato.data.Lifecycle.Production
 import com.twitter.strato.fed.StratoFed
 import com.twitter.strato.thrift.ScroogeConv
@@ -19,11 +19,11 @@ import com.twitter.tsp.service.TopicSocialProofService
 import com.twitter.tsp.thriftscala.TopicWithScore
 import com.twitter.util.Future
 import com.twitter.util.Try
-import javax.inject.Inject
+import javatwitter.inject.Inject
 
 class TopicSocialProofBatchColumn @Inject() (
   topicSocialProofService: TopicSocialProofService)
-    extends StratoFed.Column(TopicSocialProofBatchColumn.Path)
+    etwittertends StratoFed.Column(TopicSocialProofBatchColumn.Path)
     with StratoFed.Fetch.Stitch {
 
   override val policy: Policy =
@@ -42,16 +42,16 @@ class TopicSocialProofBatchColumn @Inject() (
   override val metadata: OpMetadata =
     OpMetadata(
       lifecycle = Some(Production),
-      Some(PlainText("Topic Social Proof Batched Federated Column")))
+      Some(PlainTetwittert("Topic Social Proof Batched Federated Column")))
 
-  case class TspsGroup(view: View) extends SeqGroup[Long, Fetch.Result[Value]] {
+  case class TspsGroup(view: View) etwittertends SeqGroup[Long, Fetch.Result[Value]] {
     override protected def run(keys: Seq[Long]): Future[Seq[Try[Result[Seq[TopicWithScore]]]]] = {
       val request = TopicSocialProofRequest(
         userId = view.userId,
         tweetIds = keys.toSet,
         displayLocation = view.displayLocation,
         topicListingSetting = view.topicListingSetting,
-        context = view.context,
+        contetwittert = view.contetwittert,
         bypassModes = view.bypassModes,
         tags = view.tags
       )

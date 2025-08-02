@@ -17,7 +17,7 @@ object SourceTweetsSearchResultsTransform {
 
 /**
  * Fetch source tweets for a given set of search results
- * Collects ids of source tweets, including extended reply and reply source tweets if needed,
+ * Collects ids of source tweets, including etwittertended reply and reply source tweets if needed,
  * fetches those tweets from search and populates them into the envelope
  */
 class SourceTweetsSearchResultsTransform(
@@ -26,7 +26,7 @@ class SourceTweetsSearchResultsTransform(
   hydrateReplyRootTweetProvider: DependencyProvider[Boolean],
   perRequestSourceSearchClientIdProvider: DependencyProvider[Option[String]],
   statsReceiver: StatsReceiver)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+    etwittertends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
   import SourceTweetsSearchResultsTransform._
 
   private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)

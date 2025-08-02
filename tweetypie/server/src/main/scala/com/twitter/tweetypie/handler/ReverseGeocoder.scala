@@ -1,7 +1,7 @@
 package com.twitter.tweetypie
 package handler
 
-import com.twitter.geoduck.backend.hydration.thriftscala.HydrationContext
+import com.twitter.geoduck.backend.hydration.thriftscala.HydrationContetwittert
 import com.twitter.geoduck.common.thriftscala.Constants
 import com.twitter.geoduck.common.thriftscala.PlaceQuery
 import com.twitter.geoduck.common.thriftscala.PlaceQueryFields
@@ -37,8 +37,8 @@ object ReverseGeocoder {
             log.debug("RGC'ing " + geo.toString() + " with geoduck")
           }
 
-          val hydrationContext =
-            HydrationContext(
+          val hydrationContetwittert =
+            HydrationContetwittert(
               placeFields = Set[PlaceQueryFields](
                 PlaceQueryFields.PlaceNames
               )
@@ -48,19 +48,19 @@ object ReverseGeocoder {
           val placeQuery = PlaceQuery(placeTypes = Some(Constants.ConsumerPlaceTypes))
 
           geohashLocate
-            .locateGeohashes(Seq(gh.toThrift), placeQuery, hydrationContext)
-            .onFailure { case ex => log.warn("failed to rgc " + geo.toString(), ex) }
+            .locateGeohashes(Seq(gh.toThrift), placeQuery, hydrationContetwittert)
+            .onFailure { case etwitter => log.warn("failed to rgc " + geo.toString(), etwitter) }
             .map {
               (resp: Seq[Try[LocationResponse]]) =>
                 resp.headOption.flatMap {
-                  case Throw(ex) =>
-                    log.warn("rgc failed for coords: " + geo.toString(), ex)
+                  case Throw(etwitter) =>
+                    log.warn("rgc failed for coords: " + geo.toString(), etwitter)
                     None
                   case Return(locationResponse) =>
                     GDPlace.tryLocationResponse(locationResponse) match {
-                      case Throw(ex) =>
+                      case Throw(etwitter) =>
                         log
-                          .warn("rgc failed in response handling for coords: " + geo.toString(), ex)
+                          .warn("rgc failed in response handling for coords: " + geo.toString(), etwitter)
                         None
                       case Return(tplaces) =>
                         GDPlace.pickConsumerLocation(tplaces).map { place: GDPlace =>

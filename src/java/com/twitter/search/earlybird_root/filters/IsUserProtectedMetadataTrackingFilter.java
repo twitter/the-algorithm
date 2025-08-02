@@ -11,8 +11,8 @@ import com.twitter.finagle.SimpleFilter;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird.thrift.ThriftSearchResultEtwittertraMetadata;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
 import com.twitter.util.Future;
 import com.twitter.util.FutureEventListener;
@@ -21,8 +21,8 @@ import com.twitter.util.FutureEventListener;
  * Filter tracks the isUserProtected metadata stats returned from Earlybirds.
  */
 public class IsUserProtectedMetadataTrackingFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private static final String COUNTER_PREFIX = "is_user_protected_metadata_count_filter_";
+    etwittertends SimpleFilter<EarlybirdRequestContetwittert, EarlybirdResponse> {
+  private static final String COUNTER_PREFItwitter = "is_user_protected_metadata_count_filter_";
   @VisibleForTesting
   final Map<EarlybirdRequestType, SearchCounter> totalCounterByRequestTypeMap;
   @VisibleForTesting
@@ -33,16 +33,16 @@ public class IsUserProtectedMetadataTrackingFilter
     this.isProtectedCounterByRequestTypeMap = new EnumMap<>(EarlybirdRequestType.class);
     for (EarlybirdRequestType requestType : EarlybirdRequestType.values()) {
       this.totalCounterByRequestTypeMap.put(requestType,
-          SearchCounter.export(COUNTER_PREFIX + requestType.getNormalizedName() + "_total"));
+          SearchCounter.etwitterport(COUNTER_PREFItwitter + requestType.getNormalizedName() + "_total"));
       this.isProtectedCounterByRequestTypeMap.put(requestType,
-          SearchCounter.export(COUNTER_PREFIX + requestType.getNormalizedName() + "_is_protected"));
+          SearchCounter.etwitterport(COUNTER_PREFItwitter + requestType.getNormalizedName() + "_is_protected"));
     }
   }
 
   @Override
   public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext request,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+      EarlybirdRequestContetwittert request,
+      Service<EarlybirdRequestContetwittert, EarlybirdResponse> service) {
     Future<EarlybirdResponse> response = service.apply(request);
 
     EarlybirdRequestType requestType = request.getEarlybirdRequestType();
@@ -56,10 +56,10 @@ public class IsUserProtectedMetadataTrackingFilter
         int totalCount = searchResults.size();
         int isUserProtectedCount = 0;
         for (ThriftSearchResult searchResult : searchResults) {
-          if (searchResult.isSetMetadata() && searchResult.getMetadata().isSetExtraMetadata()) {
-            ThriftSearchResultExtraMetadata extraMetadata =
-                searchResult.getMetadata().getExtraMetadata();
-            if (extraMetadata.isIsUserProtected()) {
+          if (searchResult.isSetMetadata() && searchResult.getMetadata().isSetEtwittertraMetadata()) {
+            ThriftSearchResultEtwittertraMetadata etwittertraMetadata =
+                searchResult.getMetadata().getEtwittertraMetadata();
+            if (etwittertraMetadata.isIsUserProtected()) {
               isUserProtectedCount++;
             }
           }

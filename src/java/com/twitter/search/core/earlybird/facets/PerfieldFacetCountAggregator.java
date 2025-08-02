@@ -87,7 +87,7 @@ public class PerfieldFacetCountAggregator {
     for (int i = labelValues.length - 1; i >= 0; i--) {
       Entry entry = pq.pop();
       labelValues[i] = new LabelAndValue(
-          facetLabelAccessor.getTermText(entry.getIntKey()),
+          facetLabelAccessor.getTermTetwittert(entry.getIntKey()),
           entry.getValue());
     }
 

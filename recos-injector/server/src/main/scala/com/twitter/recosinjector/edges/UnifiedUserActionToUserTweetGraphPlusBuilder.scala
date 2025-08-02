@@ -9,7 +9,7 @@ class UnifiedUserActionToUserTweetGraphPlusBuilder(
   userTweetEntityEdgeBuilder: UserTweetEntityEdgeBuilder
 )(
   override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[UuaEngagementEventDetails, UserTweetEntityEdge] {
+    etwittertends EventToMessageBuilder[UuaEngagementEventDetails, UserTweetEntityEdge] {
 
   override def shouldProcessEvent(event: UuaEngagementEventDetails): Future[Boolean] = {
     event.userTweetEngagement.action match {

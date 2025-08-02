@@ -5,7 +5,7 @@ import com.twitter.dal.client.dataset.SnapshotDALDatasetBase
 import com.twitter.scalding._
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite.WriteExtension
+import com.twitter.scalding_internal.dalv2.DALWrite.WriteEtwittertension
 import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.hdfs_sources.EntityEmbeddingsSources
@@ -16,8 +16,8 @@ import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
 import com.twitter.simclusters_v2.thriftscala.TfgTopicEmbeddings
 import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
 import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
+import com.twitter.wtf.scalding.jobs.common.AdhocEtwitterecutionApp
+import com.twitter.wtf.scalding.jobs.common.ScheduledEtwitterecutionApp
 import java.util.TimeZone
 
 /**
@@ -34,20 +34,20 @@ import java.util.TimeZone
   --cluster bluebird-qus1 \
   --main-class com.twitter.simclusters_v2.scalding.embedding.tfg.FavTfgTopicEmbeddingsAdhocApp \
   --target src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_tfg_topic_embeddings-adhoc \
-  --hadoop-properties "scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=4000" \
+  --hadoop-properties "scalding.with.reducers.set.etwitterplicitly=true mapreduce.job.reduces=4000" \
   -- --date 2020-12-08
  */
-object FavTfgTopicEmbeddingsAdhocApp extends TfgBasedTopicEmbeddingsBaseApp with AdhocExecutionApp {
+object FavTfgTopicEmbeddingsAdhocApp etwittertends TfgBasedTopicEmbeddingsBaseApp with AdhocEtwitterecutionApp {
   override val isAdhoc: Boolean = true
   override val embeddingType: EmbeddingType = EmbeddingType.FavTfgTopic
   override val embeddingSource: KeyValDALDataset[
     KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
   ] = EntityEmbeddingsSources.FavTfgTopicEmbeddingsDataset
-  override val pathSuffix: String = "fav_tfg_topic_embedding"
+  override val pathSuffitwitter: String = "fav_tfg_topic_embedding"
   override val modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
   override val parquetDataSource: SnapshotDALDatasetBase[TfgTopicEmbeddings] =
     EntityEmbeddingsSources.FavTfgTopicEmbeddingsParquetDataset
-  override def scoreExtractor: UserToInterestedInClusterScores => Double = scores =>
+  override def scoreEtwittertractor: UserToInterestedInClusterScores => Double = scores =>
     scores.favScore.getOrElse(0.0)
 }
 
@@ -56,18 +56,18 @@ object FavTfgTopicEmbeddingsAdhocApp extends TfgBasedTopicEmbeddingsBaseApp with
 capesospy-v2 update --build_locally --start_cron fav_tfg_topic_embeddings src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
 object FavTfgTopicEmbeddingsScheduledApp
-    extends TfgBasedTopicEmbeddingsBaseApp
-    with ScheduledExecutionApp {
+    etwittertends TfgBasedTopicEmbeddingsBaseApp
+    with ScheduledEtwitterecutionApp {
   override val isAdhoc: Boolean = false
   override val embeddingType: EmbeddingType = EmbeddingType.FavTfgTopic
   override val embeddingSource: KeyValDALDataset[
     KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
   ] = EntityEmbeddingsSources.FavTfgTopicEmbeddingsDataset
-  override val pathSuffix: String = "fav_tfg_topic_embedding"
+  override val pathSuffitwitter: String = "fav_tfg_topic_embedding"
   override val modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
   override val parquetDataSource: SnapshotDALDatasetBase[TfgTopicEmbeddings] =
     EntityEmbeddingsSources.FavTfgTopicEmbeddingsParquetDataset
-  override def scoreExtractor: UserToInterestedInClusterScores => Double = scores =>
+  override def scoreEtwittertractor: UserToInterestedInClusterScores => Double = scores =>
     scores.favScore.getOrElse(0.0)
 
   override val firstTime: RichDate = RichDate("2020-05-25")
@@ -83,22 +83,22 @@ object FavTfgTopicEmbeddingsScheduledApp
   --cluster bluebird-qus1 \
   --main-class com.twitter.simclusters_v2.scalding.embedding.tfg.FavTfgTopicEmbeddings2020AdhocApp \
   --target src/scala/com/twitter/simclusters_v2/scalding/embedding/tfg:fav_tfg_topic_embeddings_2020-adhoc \
-  --hadoop-properties "scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=4000" \
+  --hadoop-properties "scalding.with.reducers.set.etwitterplicitly=true mapreduce.job.reduces=4000" \
   -- --date 2020-12-08
  */
 object FavTfgTopicEmbeddings2020AdhocApp
-    extends TfgBasedTopicEmbeddingsBaseApp
-    with AdhocExecutionApp {
+    etwittertends TfgBasedTopicEmbeddingsBaseApp
+    with AdhocEtwitterecutionApp {
   override val isAdhoc: Boolean = true
   override val embeddingType: EmbeddingType = EmbeddingType.FavTfgTopic
   override val embeddingSource: KeyValDALDataset[
     KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
   ] = EntityEmbeddingsSources.FavTfgTopicEmbeddings2020Dataset
-  override val pathSuffix: String = "fav_tfg_topic_embedding"
+  override val pathSuffitwitter: String = "fav_tfg_topic_embedding"
   override val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
   override val parquetDataSource: SnapshotDALDatasetBase[TfgTopicEmbeddings] =
     EntityEmbeddingsSources.FavTfgTopicEmbeddings2020ParquetDataset
-  override def scoreExtractor: UserToInterestedInClusterScores => Double = scores =>
+  override def scoreEtwittertractor: UserToInterestedInClusterScores => Double = scores =>
     scores.favScore.getOrElse(0.0)
 }
 
@@ -107,18 +107,18 @@ object FavTfgTopicEmbeddings2020AdhocApp
 capesospy-v2 update --build_locally --start_cron fav_tfg_topic_embeddings_2020 src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
  */
 object FavTfgTopicEmbeddings2020ScheduledApp
-    extends TfgBasedTopicEmbeddingsBaseApp
-    with ScheduledExecutionApp {
+    etwittertends TfgBasedTopicEmbeddingsBaseApp
+    with ScheduledEtwitterecutionApp {
   override val isAdhoc: Boolean = false
   override val embeddingType: EmbeddingType = EmbeddingType.FavTfgTopic
   override val embeddingSource: KeyValDALDataset[
     KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
   ] = EntityEmbeddingsSources.FavTfgTopicEmbeddings2020Dataset
-  override val pathSuffix: String = "fav_tfg_topic_embedding"
+  override val pathSuffitwitter: String = "fav_tfg_topic_embedding"
   override val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
   override val parquetDataSource: SnapshotDALDatasetBase[TfgTopicEmbeddings] =
     EntityEmbeddingsSources.FavTfgTopicEmbeddings2020ParquetDataset
-  override def scoreExtractor: UserToInterestedInClusterScores => Double = scores =>
+  override def scoreEtwittertractor: UserToInterestedInClusterScores => Double = scores =>
     scores.favScore.getOrElse(0.0)
 
   override val firstTime: RichDate = RichDate("2021-03-10")
@@ -137,13 +137,13 @@ scalding scalding remote run --target src/scala/com/twitter/simclusters_v2/scald
  * Having a table TFG doesn't lead to a big quality concern b/c TFG is built from topic follows, which is relative stable
  * and we don't have new topics anymore.
  */
-object FavTfgTopicEmbeddings2020CopyScheduledApp extends ScheduledExecutionApp {
+object FavTfgTopicEmbeddings2020CopyScheduledApp etwittertends ScheduledEtwitterecutionApp {
   val isAdhoc: Boolean = false
   val embeddingType: EmbeddingType = EmbeddingType.FavTfgTopic
   val embeddingSource: KeyValDALDataset[
     KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
   ] = EntityEmbeddingsSources.FavTfgTopicEmbeddings2020Dataset
-  val pathSuffix: String = "fav_tfg_topic_embedding"
+  val pathSuffitwitter: String = "fav_tfg_topic_embedding"
   val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
 
   override val firstTime: RichDate = RichDate("2023-01-20")
@@ -155,18 +155,18 @@ object FavTfgTopicEmbeddings2020CopyScheduledApp extends ScheduledExecutionApp {
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueID: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
     DAL
       .readMostRecentSnapshotNoOlderThan(
         EntityEmbeddingsSources.FavTfgTopicEmbeddings2020Dataset,
         Days(21))
       .withRemoteReadPolicy(AllowCrossClusterSameDC)
       .toTypedPipe
-      .writeDALVersionedKeyValExecution(
+      .writeDALVersionedKeyValEtwitterecution(
         EntityEmbeddingsSources.FavTfgTopicEmbeddings2020Dataset,
-        D.Suffix(
+        D.Suffitwitter(
           EmbeddingUtil
-            .getHdfsPath(isAdhoc = isAdhoc, isManhattanKeyVal = true, modelVersion, pathSuffix))
+            .getHdfsPath(isAdhoc = isAdhoc, isManhattanKeyVal = true, modelVersion, pathSuffitwitter))
       )
   }
 }

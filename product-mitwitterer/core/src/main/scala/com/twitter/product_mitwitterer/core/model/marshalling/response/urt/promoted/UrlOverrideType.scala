@@ -1,0 +1,6 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.promoted
+
+sealed trait UrlOverrideType
+
+object UnknownUrlOverrideType etwittertends UrlOverrideType
+object DcmUrlOverrideType etwittertends UrlOverrideType

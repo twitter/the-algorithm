@@ -2,28 +2,28 @@ package com.twitter.servo.cache
 
 import com.twitter.finagle.memcached.{CasResult, Client}
 import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.{Backoff, Memcached, TimeoutException, WriteException}
+import com.twitter.finagle.{Backoff, Memcached, TimeoutEtwitterception, WriteEtwitterception}
 import com.twitter.hashing.KeyHasher
 import com.twitter.io.Buf
 import com.twitter.logging.Logger
 import com.twitter.util._
 
 case class MemcacheRetryPolicy(
-  writeExceptionBackoffs: Backoff,
+  writeEtwitterceptionBackoffs: Backoff,
   timeoutBackoffs: Backoff)
-    extends RetryPolicy[Try[Nothing]] {
+    etwittertends RetryPolicy[Try[Nothing]] {
   override def apply(r: Try[Nothing]) = r match {
-    case Throw(_: WriteException) => onWriteException
-    case Throw(_: TimeoutException) => onTimeoutException
+    case Throw(_: WriteEtwitterception) => onWriteEtwitterception
+    case Throw(_: TimeoutEtwitterception) => onTimeoutEtwitterception
     case _ => None
   }
 
-  private[this] def onTimeoutException = consume(timeoutBackoffs.toStream) { tail =>
+  private[this] def onTimeoutEtwitterception = consume(timeoutBackoffs.toStream) { tail =>
     copy(timeoutBackoffs = Backoff.fromStream(tail))
   }
 
-  private[this] def onWriteException = consume(writeExceptionBackoffs.toStream) { tail =>
-    copy(writeExceptionBackoffs = Backoff.fromStream(tail))
+  private[this] def onWriteEtwitterception = consume(writeEtwitterceptionBackoffs.toStream) { tail =>
+    copy(writeEtwitterceptionBackoffs = Backoff.fromStream(tail))
   }
 
   private[this] def consume(s: Stream[Duration])(f: Stream[Duration] => MemcacheRetryPolicy) = {
@@ -44,7 +44,7 @@ class FinagleMemcacheFactory private[cache] (
   client: Memcached.Client,
   dest: String,
   hashName: String)
-    extends MemcacheFactory {
+    etwittertends MemcacheFactory {
 
   def apply(): Memcache = {
     val keyHasher = KeyHasher.byName(hashName)
@@ -62,11 +62,11 @@ object FinagleMemcache {
  * [[Client]].
  */
 class FinagleMemcache(client: Client, hashName: String = FinagleMemcacheFactory.DefaultHashName)
-    extends Memcache {
+    etwittertends Memcache {
 
   import FinagleMemcache.NoFlags
 
-  private[this] case class BufferChecksum(buffer: Buf) extends Checksum
+  private[this] case class BufferChecksum(buffer: Buf) etwittertends Checksum
 
   def release(): Unit = {
     client.close()
@@ -77,7 +77,7 @@ class FinagleMemcache(client: Client, hashName: String = FinagleMemcacheFactory.
       case Return(gr) =>
         val found = gr.hits.map {
           case (key, v) =>
-            val bytes = Buf.ByteArray.Owned.extract(v.value)
+            val bytes = Buf.ByteArray.Owned.etwittertract(v.value)
             key -> bytes
         }
         Future.value(KeyValueResult(found, gr.misses, gr.failures))
@@ -92,7 +92,7 @@ class FinagleMemcache(client: Client, hashName: String = FinagleMemcacheFactory.
         try {
           val hits = gr.hits map {
             case (key, v) =>
-              val bytes = Buf.ByteArray.Owned.extract(v.value)
+              val bytes = Buf.ByteArray.Owned.etwittertract(v.value)
               key -> (Return(bytes), BufferChecksum(
                 v.casUnique.get
               )) // TODO. what to do if missing?
@@ -125,7 +125,7 @@ class FinagleMemcache(client: Client, hashName: String = FinagleMemcacheFactory.
             res.replaced
         }
       case _ =>
-        Future.exception(new IllegalArgumentException("unrecognized checksum: " + checksum))
+        Future.etwitterception(new IllegalArgumentEtwitterception("unrecognized checksum: " + checksum))
     }
   }
 

@@ -16,7 +16,7 @@ import com.twitter.util.Future
  * Implementation of the Thrift-defined service interface.
  */
 class LeftNodeEdgesHandler(graphHelper: BipartiteGraphHelper, statsReceiver: StatsReceiver)
-    extends RequestHandler[GetRecentEdgesRequest, GetRecentEdgesResponse] {
+    etwittertends RequestHandler[GetRecentEdgesRequest, GetRecentEdgesResponse] {
   private val stats = statsReceiver.scope(this.getClass.getSimpleName)
 
   private val CLICK = 0
@@ -47,7 +47,7 @@ class LeftNodeEdgesHandler(graphHelper: BipartiteGraphHelper, statsReceiver: Sta
 }
 
 class RightNodeInfoHandler(graphHelper: BipartiteGraphHelper, statsReceiver: StatsReceiver)
-    extends RequestHandler[Long, NodeInfo] {
+    etwittertends RequestHandler[Long, NodeInfo] {
   private[this] val stats = statsReceiver.scope(this.getClass.getSimpleName)
 
   override def apply(rightNode: Long): Future[NodeInfo] = {

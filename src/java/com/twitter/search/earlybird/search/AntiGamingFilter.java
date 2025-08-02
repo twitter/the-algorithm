@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.search;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,21 +10,21 @@ import java.util.TreeSet;
 import com.google.common.annotations.VisibleForTesting;
 
 import org.apache.commons.lang.mutable.MutableInt;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.Term;
+import org.apache.lucene.indetwitter.IndetwitterReader;
+import org.apache.lucene.indetwitter.NumericDocValues;
+import org.apache.lucene.indetwitter.Term;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreMode;
 
 import com.twitter.common_internal.collections.RandomAccessPriorityQueue;
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.search.TwitterIndexSearcher;
+import com.twitter.search.common.search.TwitterIndetwitterSearcher;
 import com.twitter.search.common.util.analysis.LongTermAttributeImpl;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
 
 public class AntiGamingFilter {
   private interface Acceptor {
-    boolean accept(int internalDocID) throws IOException;
+    boolean accept(int internalDocID) throws IOEtwitterception;
   }
 
   private NumericDocValues userReputation;
@@ -32,10 +32,10 @@ public class AntiGamingFilter {
 
   private final Query luceneQuery;
 
-  private boolean termsExtracted = false;
+  private boolean termsEtwittertracted = false;
   private final Set<Term> queryTerms;
 
-  // we ignore these user ids for anti-gaming filtering, because they were explicitly queried for
+  // we ignore these user ids for anti-gaming filtering, because they were etwitterplicitly queried for
   private Set<Long> segmentUserIDWhitelist = null;
   // we gather the whitelisted userIDs from all segments here
   private Set<Long> globalUserIDWhitelist = null;
@@ -72,7 +72,7 @@ public class AntiGamingFilter {
   };
 
   private final Acceptor acceptor;
-  private final int maxHitsPerUser;
+  private final int matwitterHitsPerUser;
 
   /**
    * Creates an AntiGamingFilter that either accepts or rejects tweets from all users.
@@ -85,28 +85,28 @@ public class AntiGamingFilter {
   public static AntiGamingFilter newMock(boolean alwaysValue) {
     return new AntiGamingFilter(alwaysValue) {
       @Override
-      public void startSegment(EarlybirdIndexSegmentAtomicReader reader) {
+      public void startSegment(EarlybirdIndetwitterSegmentAtomicReader reader) {
       }
     };
   }
 
   private AntiGamingFilter(boolean alwaysValue) {
     acceptor = internalDocID -> alwaysValue;
-    maxHitsPerUser = Integer.MAX_VALUE;
-    termsExtracted = true;
+    matwitterHitsPerUser = Integer.MAtwitter_VALUE;
+    termsEtwittertracted = true;
     luceneQuery = null;
     queryTerms = null;
   }
 
-  public AntiGamingFilter(int maxHitsPerUser, int maxTweepCred, Query luceneQuery) {
-    this.maxHitsPerUser = maxHitsPerUser;
+  public AntiGamingFilter(int matwitterHitsPerUser, int matwitterTweepCred, Query luceneQuery) {
+    this.matwitterHitsPerUser = matwitterHitsPerUser;
     this.luceneQuery = luceneQuery;
 
-    if (maxTweepCred != -1) {
+    if (matwitterTweepCred != -1) {
       this.acceptor = internalDocID -> {
         long userReputationVal =
-            userReputation.advanceExact(internalDocID) ? userReputation.longValue() : 0L;
-        return ((byte) userReputationVal > maxTweepCred) || acceptUser(internalDocID);
+            userReputation.advanceEtwitteract(internalDocID) ? userReputation.longValue() : 0L;
+        return ((byte) userReputationVal > matwitterTweepCred) || acceptUser(internalDocID);
       };
     } else {
       this.acceptor = this::acceptUser;
@@ -119,14 +119,14 @@ public class AntiGamingFilter {
     return globalUserIDWhitelist;
   }
 
-  private boolean acceptUser(int internalDocID) throws IOException {
+  private boolean acceptUser(int internalDocID) throws IOEtwitterception {
     final long fromUserID = getUserId(internalDocID);
     final MutableInt freq = new MutableInt();
-    // try to increment UserCount for an user already exist in the priority queue.
+    // try to increment UserCount for an user already etwitterist in the priority queue.
     boolean incremented = priorityQueue.incrementElement(
         fromUserID, element -> freq.setValue(++element.count));
 
-    // If not incremented, it means the user node does not exist in the priority queue yet.
+    // If not incremented, it means the user node does not etwitterist in the priority queue yet.
     if (!incremented) {
       priorityQueue.updateTop(element -> {
         element.userID = fromUserID;
@@ -135,7 +135,7 @@ public class AntiGamingFilter {
       });
     }
 
-    if (freq.intValue() <= maxHitsPerUser) {
+    if (freq.intValue() <= matwitterHitsPerUser) {
       return true;
     } else if (segmentUserIDWhitelist == null) {
       return false;
@@ -149,9 +149,9 @@ public class AntiGamingFilter {
    *
    * @param reader The reader for the new segment.
    */
-  public void startSegment(EarlybirdIndexSegmentAtomicReader reader) throws IOException {
-    if (!termsExtracted) {
-      extractTerms(reader);
+  public void startSegment(EarlybirdIndetwitterSegmentAtomicReader reader) throws IOEtwitterception {
+    if (!termsEtwittertracted) {
+      etwittertractTerms(reader);
     }
 
     fromUserIDs =
@@ -167,14 +167,14 @@ public class AntiGamingFilter {
         long fromUserID = LongTermAttributeImpl.copyBytesRefToLong(t.bytes());
         addUserToWhitelists(fromUserID);
       } else if (t.field().equals(EarlybirdFieldConstant.FROM_USER_FIELD.getFieldName())) {
-        // For a [from X] filter, we need to find a document that has the from_user field set to X,
+        // For a [from twitter] filter, we need to find a document that has the from_user field set to twitter,
         // and then we need to get the value of the from_user_id field for that document and add it
         // to the whitelist. We can get the from_user_id value from the fromUserIDs NumericDocValues
         // instance, but we need to traverse it in increasing order of doc IDs. So we add a doc ID
         // for each term to a sorted set for now, and then we traverse it in increasing doc ID order
         // and add the from_user_id values for those docs to the whitelist.
         int firstInternalDocID = reader.getNewestDocID(t);
-        if (firstInternalDocID != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
+        if (firstInternalDocID != EarlybirdIndetwitterSegmentAtomicReader.TERM_NOT_FOUND) {
           sortedFromUserDocIds.add(firstInternalDocID);
         }
       }
@@ -192,21 +192,21 @@ public class AntiGamingFilter {
         reader.getNumericDocValues(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName());
   }
 
-  private void extractTerms(IndexReader reader) throws IOException {
+  private void etwittertractTerms(IndetwitterReader reader) throws IOEtwitterception {
     Query query = luceneQuery;
     for (Query rewrittenQuery = query.rewrite(reader); rewrittenQuery != query;
          rewrittenQuery = query.rewrite(reader)) {
       query = rewrittenQuery;
     }
 
-    // Create a new TwitterIndexSearcher instance here instead of an IndexSearcher instance, to use
-    // the TwitterIndexSearcher.collectionStatistics() implementation.
-    query.createWeight(new TwitterIndexSearcher(reader), ScoreMode.COMPLETE, 1.0f)
-        .extractTerms(queryTerms);
-    termsExtracted = true;
+    // Create a new TwitterIndetwitterSearcher instance here instead of an IndetwitterSearcher instance, to use
+    // the TwitterIndetwitterSearcher.collectionStatistics() implementation.
+    query.createWeight(new TwitterIndetwitterSearcher(reader), ScoreMode.COMPLETE, 1.0f)
+        .etwittertractTerms(queryTerms);
+    termsEtwittertracted = true;
   }
 
-  public boolean accept(int internalDocID) throws IOException {
+  public boolean accept(int internalDocID) throws IOEtwitterception {
     return acceptor.accept(internalDocID);
   }
 
@@ -222,7 +222,7 @@ public class AntiGamingFilter {
   }
 
   @VisibleForTesting
-  protected long getUserId(int internalDocId) throws IOException {
-    return fromUserIDs.advanceExact(internalDocId) ? fromUserIDs.longValue() : 0L;
+  protected long getUserId(int internalDocId) throws IOEtwitterception {
+    return fromUserIDs.advanceEtwitteract(internalDocId) ? fromUserIDs.longValue() : 0L;
   }
 }

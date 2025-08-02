@@ -1,7 +1,7 @@
 package com.twitter.simclusters_v2.scio
 package bq_generation.common
 
-import com.twitter.wtf.beam.bq_embedding_export.BQQueryUtils
+import com.twitter.wtf.beam.bq_embedding_etwitterport.BQQueryUtils
 import org.joda.time.DateTime
 
 object BQGenerationUtil {
@@ -24,8 +24,8 @@ object BQGenerationUtil {
   val NSFWTweetIdDenylistSQLPath =
     s"/com/twitter/simclusters_v2/scio/bq_generation/sql/nsfw_tweet_denylist.sql"
 
-  val ClusterTopTweetsIntersectionWithFavBasedIndexSQLPath =
-    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/cluster_top_tweets_intersection_with_fav_based_index.sql"
+  val ClusterTopTweetsIntersectionWithFavBasedIndetwitterSQLPath =
+    s"/com/twitter/simclusters_v2/scio/bq_generation/sql/cluster_top_tweets_intersection_with_fav_based_indetwitter.sql"
 
   // Read InterestedIn 2020
   def getInterestedIn2020SQL(
@@ -40,7 +40,7 @@ object BQGenerationUtil {
        |FROM `$interestedInEmbeddings20M145K2020Table`, UNNEST(clusterIdToScores) AS clusterIdToScores
        |WHERE DATE(_PARTITIONTIME) = 
        |  (  -- Get latest partition time
-       |  SELECT MAX(DATE(_PARTITIONTIME)) latest_partition
+       |  SELECT MAtwitter(DATE(_PARTITIONTIME)) latest_partition
        |  FROM `$interestedInEmbeddings20M145K2020Table`
        |  WHERE Date(_PARTITIONTIME) BETWEEN 
        |      DATE_SUB(Date("${queryDate}"), 
@@ -64,7 +64,7 @@ object BQGenerationUtil {
        |    FROM `$mtsConsumerEmbeddingsFav90P20MTable`, UNNEST(embedding.clusterIdToScores) AS clusterIdToScores
        |WHERE DATE(ingestionTime) = (  
        |    -- Get latest partition time
-       |    SELECT MAX(DATE(ingestionTime)) latest_partition
+       |    SELECT MAtwitter(DATE(ingestionTime)) latest_partition
        |    FROM `$mtsConsumerEmbeddingsFav90P20MTable`
        |    WHERE Date(ingestionTime) BETWEEN 
        |        DATE_SUB(Date("${queryDate}"), 
@@ -204,7 +204,7 @@ object BQGenerationUtil {
    *                  - tweetId: Long
    *                  - tweetScore: Long
    */
-  def generateClusterTopTweetIntersectionWithFavBasedIndexSQL(
+  def generateClusterTopTweetIntersectionWithFavBasedIndetwitterSQL(
     startTime: DateTime,
     endTime: DateTime,
     clusterTopKTweets: Int,
@@ -218,7 +218,7 @@ object BQGenerationUtil {
         "CLUSTER_TOP_TWEETS_SQL" -> topKTweetsForClusterKeySQL
       )
     BQQueryUtils.getBQQueryFromSqlFile(
-      ClusterTopTweetsIntersectionWithFavBasedIndexSQLPath,
+      ClusterTopTweetsIntersectionWithFavBasedIndetwitterSQLPath,
       templateVariables)
   }
 
@@ -226,7 +226,7 @@ object BQGenerationUtil {
    * Given a list of action types, build a string that indicates the user
    * engaged with the tweet
    *
-   * Example use case: We want to build a SQL query that specifies this user engaged
+   * Etwitterample use case: We want to build a SQL query that specifies this user engaged
    *  with tweet with either fav or retweet actions.
    *
    * Input:
@@ -234,7 +234,7 @@ object BQGenerationUtil {
    *  - booleanOperator: "OR"
    * Output: "ServerTweetFav.engaged = 1 OR ServerTweetRetweet.engaged = 1"
    *
-   * Example SQL:
+   * Etwitterample SQL:
    *  SELECT ServerTweetFav, ServerTweetRetweet
    *  FROM table
    *  WHERE ServerTweetFav.engaged = 1 OR ServerTweetRetweet.engaged = 1

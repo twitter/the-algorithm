@@ -1,29 +1,29 @@
 package com.twitter.search.ingester.pipeline.twitter;
 
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.regetwitter.Matcher;
+import java.util.regetwitter.Pattern;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.pipeline.StageException;
+import org.apache.commons.pipeline.StageEtwitterception;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducesConsumed;
 
 import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftEtwitterpandedUrl;
 import com.twitter.search.common.metrics.SearchRateCounter;
 import com.twitter.search.common.relevance.entities.TwitterMessage;
 
 @ConsumedTypes(TwitterMessage.class)
 @ProducesConsumed
-public class RetrieveSpaceIdsStage extends TwitterBaseStage
+public class RetrieveSpaceIdsStage etwittertends TwitterBaseStage
     <TwitterMessage, TwitterMessage> {
 
   @VisibleForTesting
-  protected static final Pattern SPACES_URL_REGEX =
+  protected static final Pattern SPACES_URL_REGEtwitter =
       Pattern.compile("^https://twitter\\.com/i/spaces/([a-zA-Z0-9]+)\\S*$");
 
   @VisibleForTesting
@@ -40,14 +40,14 @@ public class RetrieveSpaceIdsStage extends TwitterBaseStage
 
   @Override
   protected void innerSetupStats() {
-    numTweetsWithSpaceIds = SearchRateCounter.export(
-        getStageNamePrefix() + "_tweets_with_space_ids");
-    numTweetsWithMultipleSpaceIds = SearchRateCounter.export(
-        getStageNamePrefix() + "_tweets_with_multiple_space_ids");
+    numTweetsWithSpaceIds = SearchRateCounter.etwitterport(
+        getStageNamePrefitwitter() + "_tweets_with_space_ids");
+    numTweetsWithMultipleSpaceIds = SearchRateCounter.etwitterport(
+        getStageNamePrefitwitter() + "_tweets_with_multiple_space_ids");
   }
 
   @Override
-  public void innerProcess(Object obj) throws StageException {
+  public void innerProcess(Object obj) throws StageEtwitterception {
     TwitterMessage message = (TwitterMessage) obj;
     tryToRetrieveSpaceId(message);
     emitAndCount(message);
@@ -77,7 +77,7 @@ public class RetrieveSpaceIdsStage extends TwitterBaseStage
     String spaceId = null;
 
     if (StringUtils.isNotEmpty(url)) {
-      Matcher matcher = SPACES_URL_REGEX.matcher(url);
+      Matcher matcher = SPACES_URL_REGEtwitter.matcher(url);
       if (matcher.matches()) {
         spaceId = matcher.group(1);
       }
@@ -88,8 +88,8 @@ public class RetrieveSpaceIdsStage extends TwitterBaseStage
   private Set<String> parseSpaceIdsFromMessage(TwitterMessage message) {
     Set<String> spaceIds = Sets.newHashSet();
 
-    for (ThriftExpandedUrl expandedUrl : message.getExpandedUrls()) {
-      String spaceId = parseSpaceIdsFromUrl(expandedUrl.getExpandedUrl());
+    for (ThriftEtwitterpandedUrl etwitterpandedUrl : message.getEtwitterpandedUrls()) {
+      String spaceId = parseSpaceIdsFromUrl(etwitterpandedUrl.getEtwitterpandedUrl());
       if (StringUtils.isNotEmpty(spaceId)) {
         spaceIds.add(spaceId);
       }

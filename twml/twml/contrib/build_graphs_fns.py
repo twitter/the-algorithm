@@ -7,8 +7,8 @@ import tensorflow.compat.v1 as tf
 
 def get_saved_modules_graph(input_graph_fn):
   """
-  Get common graph for stitching different saved modules for export.
-  This graph is used to save checkpoints; and then export the modules
+  Get common graph for stitching different saved modules for etwitterport.
+  This graph is used to save checkpoints; and then etwitterport the modules
   as a unity.
   Args:
         features:

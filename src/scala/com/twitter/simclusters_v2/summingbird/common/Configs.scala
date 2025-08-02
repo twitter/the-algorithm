@@ -27,7 +27,7 @@ object Configs {
     case ModelVersion20M145KDec11 => 0.15
     case ModelVersion20M145KUpdated => 1.0
     case ModelVersion20M145K2020 => 0.3
-    case modelVersionStr => throw new Exception(s"$modelVersionStr is not a valid model")
+    case modelVersionStr => throw new Etwitterception(s"$modelVersionStr is not a valid model")
   }
 
   @deprecated("Use 'common/ModelVersions'", "2019-09-04")
@@ -60,7 +60,7 @@ object Configs {
 
   final val MinFavoriteCount = 8
 
-  final val OldestTweetInLightIndexInMillis = 1.hours.inMillis
+  final val OldestTweetInLightIndetwitterInMillis = 1.hours.inMillis
 
   final val OldestTweetFavEventTimeInMillis = 3.days.inMillis
 

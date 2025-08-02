@@ -27,9 +27,9 @@ object TakedownHandler {
       for {
         tweet <- getTweet(request.tweetId)
         user <- getUser(getUserId(tweet))
-        userHasTakedowns = user.takedowns.map(userTakedownsToReasons).exists(_.nonEmpty)
+        userHasTakedowns = user.takedowns.map(userTakedownsToReasons).etwitterists(_.nonEmpty)
 
-        existingTweetReasons = Takedowns.fromTweet(tweet).reasons
+        etwitteristingTweetReasons = Takedowns.fromTweet(tweet).reasons
 
         reasonsToRemove = (request.countriesToRemove.map(countryCodeToReason) ++
             request.reasonsToRemove.map(normalizeReason)).distinct.sortBy(_.toString)
@@ -38,7 +38,7 @@ object TakedownHandler {
             request.reasonsToAdd.map(normalizeReason)).distinct.sortBy(_.toString)
 
         updatedTweetTakedowns =
-          (existingTweetReasons ++ reasonsToAdd)
+          (etwitteristingTweetReasons ++ reasonsToAdd)
             .filterNot(reasonsToRemove.contains)
             .toSeq
             .sortBy(_.toString)

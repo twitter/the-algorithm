@@ -9,7 +9,7 @@ include "scoring.thrift"
 
 struct UserRecommendation {
     1: required i64 userId(personalDataType='UserId')
-    // reason for this suggestions, eg: social context
+    // reason for this suggestions, eg: social contetwittert
     2: optional reasons.Reason reason
     // present if it is a promoted account
     3: optional adserver_common.AdImpression adImpression

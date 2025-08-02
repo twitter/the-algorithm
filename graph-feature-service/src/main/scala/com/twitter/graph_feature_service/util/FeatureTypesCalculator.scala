@@ -31,14 +31,14 @@ object FeatureTypesCalculator {
 
   final val SqTwoHop = DefaultTwoHop
 
-  final val RuxTwoHop = DefaultTwoHop
+  final val RutwitterTwoHop = DefaultTwoHop
 
   final val MRTwoHop = DefaultTwoHop
 
   final val UserTypeaheadTwoHop = SocialProofTwoHop
 
   final val presetFeatureTypes =
-    (HtlTwoHop ++ WtfTwoHop ++ SqTwoHop ++ RuxTwoHop ++ MRTwoHop ++ UserTypeaheadTwoHop).toSet
+    (HtlTwoHop ++ WtfTwoHop ++ SqTwoHop ++ RutwitterTwoHop ++ MRTwoHop ++ UserTypeaheadTwoHop).toSet
 
   def getFeatureTypes(
     presetFeatureTypes: PresetFeatureTypes,
@@ -48,7 +48,7 @@ object FeatureTypesCalculator {
       case PresetFeatureTypes.HtlTwoHop => HtlTwoHop
       case PresetFeatureTypes.WtfTwoHop => WtfTwoHop
       case PresetFeatureTypes.SqTwoHop => SqTwoHop
-      case PresetFeatureTypes.RuxTwoHop => RuxTwoHop
+      case PresetFeatureTypes.RutwitterTwoHop => RutwitterTwoHop
       case PresetFeatureTypes.MrTwoHop => MRTwoHop
       case PresetFeatureTypes.UserTypeaheadTwoHop => UserTypeaheadTwoHop
       case _ => featureTypes

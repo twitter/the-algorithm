@@ -2,7 +2,7 @@ package com.twitter.simclusters_v2.scalding.offline_job
 
 import com.twitter.algebird.Aggregator.size
 import com.twitter.algebird.{Aggregator, QTreeAggregatorLowerBound}
-import com.twitter.scalding.{Execution, Stat, TypedPipe, UniqueID}
+import com.twitter.scalding.{Etwitterecution, Stat, TypedPipe, UniqueID}
 import com.twitter.simclusters_v2.candidate_source._
 import com.twitter.simclusters_v2.common.TweetId
 import com.twitter.simclusters_v2.thriftscala.{
@@ -12,9 +12,9 @@ import com.twitter.simclusters_v2.thriftscala.{
 import java.nio.ByteBuffer
 
 case class OfflineRecConfig(
-  maxTweetRecs: Int, // total number of tweet recs.
-  maxTweetsPerUser: Int,
-  maxClustersToQuery: Int,
+  matwitterTweetRecs: Int, // total number of tweet recs.
+  matwitterTweetsPerUser: Int,
+  matwitterClustersToQuery: Int,
   minTweetScoreThreshold: Double,
   rankClustersBy: ClusterRanker.Value)
 
@@ -35,8 +35,8 @@ object OfflineTweetRecommendation {
 
   object ScoredTweet {
     def apply(tuple: (TweetId, Double)): ScoredTweet = new ScoredTweet(tuple._1, tuple._2)
-    implicit val scoredOrdering: Ordering[ScoredTweet] = (x: ScoredTweet, y: ScoredTweet) => {
-      Ordering.Double.compare(x.score, y.score)
+    implicit val scoredOrdering: Ordering[ScoredTweet] = (twitter: ScoredTweet, y: ScoredTweet) => {
+      Ordering.Double.compare(twitter.score, y.score)
     }
   }
 
@@ -47,7 +47,7 @@ object OfflineTweetRecommendation {
     clusterTopKTweetsPipe: TypedPipe[ClusterTopKTweetsWithScores]
   )(
     implicit uniqueID: UniqueID
-  ): Execution[TypedPipe[(Long, Seq[ScoredTweet])]] = {
+  ): Etwitterecution[TypedPipe[(Long, Seq[ScoredTweet])]] = {
     val tweetRecommendedCount = Stat("NumTweetsRecomended")
     val targetUserCount = Stat("NumTargetUsers")
     val userWithRecsCount = Stat("NumUsersWithAtLeastTweetRec")
@@ -63,7 +63,7 @@ object OfflineTweetRecommendation {
               .getTopKClustersByScore(
                 clustersWithScores.clusterIdToScores.toMap,
                 ClusterRanker.RankByNormalizedFavScore,
-                config.maxClustersToQuery
+                config.matwitterClustersToQuery
               ).toList
             topClusters.map {
               case (clusterId, clusterWeightForUser) =>
@@ -117,7 +117,7 @@ object OfflineTweetRecommendation {
 
     // Rank top tweets for each user
     val topTweetsPerUserPipe = scoreFilteredTweetsPipe.group
-      .sortedReverseTake(config.maxTweetsPerUser)(ScoredTweet.scoredOrdering)
+      .sortedReverseTake(config.matwitterTweetsPerUser)(ScoredTweet.scoredOrdering)
       .flatMap {
         case (userId, tweets) =>
           userWithRecsCount.inc()
@@ -125,11 +125,11 @@ object OfflineTweetRecommendation {
 
           tweets.map { t => (userId, t) }
       }
-      .forceToDiskExecution
+      .forceToDiskEtwitterecution
 
     val topTweetsPipe = topTweetsPerUserPipe
       .flatMap { tweets =>
-        approximateScoreAtTopK(tweets.map(_._2.score), config.maxTweetRecs).map { threshold =>
+        approtwitterimateScoreAtTopK(tweets.map(_._2.score), config.matwitterTweetRecs).map { threshold =>
           tweets
             .collect {
               case (userId, tweet) if tweet.score >= threshold =>
@@ -143,33 +143,33 @@ object OfflineTweetRecommendation {
   }
 
   /**
-   * Returns the approximate score at the k'th top ranked record using sampling.
+   * Returns the approtwitterimate score at the k'th top ranked record using sampling.
    * This score can then be used to filter for the top K elements in a big pipe where
    * K is too big to fit in memory.
    *
    */
-  def approximateScoreAtTopK(pipe: TypedPipe[Double], topK: Int): Execution[Double] = {
+  def approtwitterimateScoreAtTopK(pipe: TypedPipe[Double], topK: Int): Etwitterecution[Double] = {
     val defaultScore = 0.0
-    println("approximateScoreAtTopK: topK=" + topK)
+    println("approtwitterimateScoreAtTopK: topK=" + topK)
     pipe
       .aggregate(size)
-      .getOrElseExecution(0L)
+      .getOrElseEtwitterecution(0L)
       .flatMap { len =>
-        println("approximateScoreAtTopK: len=" + len)
+        println("approtwitterimateScoreAtTopK: len=" + len)
         val topKPercentile = if (len == 0 || topK > len) 0 else 1 - topK.toDouble / len.toDouble
-        val randomSample = Aggregator.reservoirSample[Double](Math.max(100000, topK / 100))
+        val randomSample = Aggregator.reservoirSample[Double](Math.matwitter(100000, topK / 100))
         pipe
           .aggregate(randomSample)
-          .getOrElseExecution(List.empty)
+          .getOrElseEtwitterecution(List.empty)
           .flatMap { sample =>
             TypedPipe
               .from(sample)
               .aggregate(QTreeAggregatorLowerBound[Double](topKPercentile))
-              .getOrElseExecution(defaultScore)
+              .getOrElseEtwitterecution(defaultScore)
           }
       }
       .map { score =>
-        println("approximateScoreAtTopK: topK percentile score=" + score)
+        println("approtwitterimateScoreAtTopK: topK percentile score=" + score)
         score
       }
   }

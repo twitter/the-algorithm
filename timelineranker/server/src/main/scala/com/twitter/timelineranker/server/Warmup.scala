@@ -20,20 +20,20 @@ class Warmup(
   localInstance: TimelineRanker,
   forwardingClient: ThriftTimelineRanker.MethodPerEndpoint,
   override val logger: Logger)
-    extends TwitterServerWarmup {
+    etwittertends TwitterServerWarmup {
   override val WarmupClientId: ClientId = ClientId(TimelineRankerConstants.WarmupClientName)
   override val NumWarmupRequests = 20
   override val MinSuccessfulRequests = 10
 
-  private[this] val warmupUserId = Math.abs(scala.util.Random.nextLong())
+  private[this] val warmupUserId = Math.abs(scala.util.Random.netwittertLong())
   private[server] val reverseChronQuery = ReverseChronTimelineQuery(
     id = new TimelineId(warmupUserId, TimelineKind.home),
-    maxCount = Some(20),
+    matwitterCount = Some(20),
     range = Some(TweetIdRange.default)
   ).toThrift
   private[server] val recapQuery = RecapQuery(
     userId = warmupUserId,
-    maxCount = Some(20),
+    matwitterCount = Some(20),
     range = Some(TweetIdRange.default)
   ).toThriftRecapQuery
 

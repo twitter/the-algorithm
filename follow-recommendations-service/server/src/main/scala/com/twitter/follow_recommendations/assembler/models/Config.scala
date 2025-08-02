@@ -1,8 +1,8 @@
 package com.twitter.follow_recommendations.assembler.models
 
-import com.twitter.stringcenter.client.core.ExternalString
+import com.twitter.stringcenter.client.core.EtwitterternalString
 
 case class HeaderConfig(title: TitleConfig)
-case class TitleConfig(text: ExternalString)
+case class TitleConfig(tetwittert: EtwitterternalString)
 case class FooterConfig(actionConfig: Option[ActionConfig])
-case class ActionConfig(footerText: ExternalString, actionURL: String)
+case class ActionConfig(footerTetwittert: EtwitterternalString, actionURL: String)

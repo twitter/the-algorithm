@@ -12,7 +12,7 @@ import com.twitter.escherbird.thriftjava.TweetEntityAnnotation;
 import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
 import com.twitter.search.earlybird.thrift.ThriftSearchResult;
 
-public class EntityAnnotationCollector extends AbstractFacetTermCollector {
+public class EntityAnnotationCollector etwittertends AbstractFacetTermCollector {
   private List<TweetEntityAnnotation> annotations = Lists.newArrayList();
 
   @Override
@@ -27,7 +27,7 @@ public class EntityAnnotationCollector extends AbstractFacetTermCollector {
     String[] idParts = term.split("\\.");
 
     // Only include the full three-part form of the entity ID: "groupId.domainId.entityId"
-    // Exclude the less-specific forms we index: "domainId.entityId" and "entityId"
+    // Etwitterclude the less-specific forms we indetwitter: "domainId.entityId" and "entityId"
     if (idParts.length < 3) {
       return false;
     }
@@ -42,7 +42,7 @@ public class EntityAnnotationCollector extends AbstractFacetTermCollector {
 
   @Override
   public void fillResultAndClear(ThriftSearchResult result) {
-    getExtraMetadata(result).setEntityAnnotations(ImmutableList.copyOf(annotations));
+    getEtwittertraMetadata(result).setEntityAnnotations(ImmutableList.copyOf(annotations));
     annotations.clear();
   }
 }

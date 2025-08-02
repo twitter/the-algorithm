@@ -10,8 +10,8 @@ include "com/twitter/search/common/constants/result.thrift"
 /*
  * Represents the product surface on which an action took place.
  * See reference that delineates various product surfaces:
- * https://docs.google.com/document/d/1PS2ZOyNUoUdO45zxhE7dH3L8KUcqJwo6Vx-XUGGFo6U
- * Note: the implementation here may not reflect the above doc exactly.
+ * https://docs.google.com/document/d/1PS2ZOyNUoUdO45ztwitterhE7dH3L8KUcqJwo6Vtwitter-twitterUGGFo6U
+ * Note: the implementation here may not reflect the above doc etwitteractly.
  */
 enum ProductSurface {
   // 1 - 19 for Home
@@ -34,21 +34,21 @@ enum ProductSurface {
 }(persisted='true', hasPersonalData='false')
 
 union ProductSurfaceInfo {
-  // 1 matches the enum index HomeTimeline in ProductSurface
+  // 1 matches the enum indetwitter HomeTimeline in ProductSurface
   1: HomeTimelineInfo homeTimelineInfo
-  // 20 matches the enum index NotificationTab in ProductSurface
+  // 20 matches the enum indetwitter NotificationTab in ProductSurface
   20: NotificationTabInfo notificationTabInfo
-  // 21 matches the enum index PushNotification in ProductSurface
+  // 21 matches the enum indetwitter PushNotification in ProductSurface
   21: PushNotificationInfo pushNotificationInfo
-  // 22 matches the enum index EmailNotification in ProductSurface
+  // 22 matches the enum indetwitter EmailNotification in ProductSurface
   22: EmailNotificationInfo emailNotificationInfo
-  // 40 matches the enum index SearchResultPage in ProductSurface
+  // 40 matches the enum indetwitter SearchResultPage in ProductSurface
   40: SearchResultsPageInfo searchResultsPageInfo
-  // 41 matches the enum index SearchTypeahead in ProductSurface
+  // 41 matches the enum indetwitter SearchTypeahead in ProductSurface
   41: SearchTypeaheadInfo searchTypeaheadInfo
-  // 60 matches the enum index TweetDetailsPage in ProductSurface
+  // 60 matches the enum indetwitter TweetDetailsPage in ProductSurface
   60: TweetDetailsPageInfo tweetDetailsPageInfo
-  // 80 matches the enum index ProfilePage in ProductSurface
+  // 80 matches the enum indetwitter ProfilePage in ProductSurface
   80: ProfilePageInfo profilePageInfo
 }(persisted='true', hasPersonalData='false')
 
@@ -115,12 +115,12 @@ struct SearchResultsPageInfo {
   // Attribution of the search (e.g. Typed Query, Hashtag Click, etc.)
   // see http://go/sgb/src/thrift/com/twitter/search/common/constants/query.thrift for details
   2: optional query.ThriftQuerySource querySource
-  // 0-indexed position of item in list of search results
+  // 0-indetwittered position of item in list of search results
   3: optional i32 itemPosition
   // Attribution of the tweet result (e.g. QIG, Earlybird, etc)
   // see http://go/sgb/src/thrift/com/twitter/search/common/constants/result.thrift for details
   4: optional set<result.TweetResultSource> tweetResultSources
-  // Attribution of the user result (e.g. ExpertSearch, QIG, etc)
+  // Attribution of the user result (e.g. EtwitterpertSearch, QIG, etc)
   // see http://go/sgb/src/thrift/com/twitter/search/common/constants/result.thrift for details
   5: optional set<result.UserResultSource> userResultSources
   // The query filter type on the Search Results Page (SRP) when the action took place.
@@ -131,7 +131,7 @@ struct SearchResultsPageInfo {
 struct SearchTypeaheadInfo {
   // search query string
   1: required string query(personalDataType = 'SearchQuery')
-  // 0-indexed position of item in list of typeahead drop-down
+  // 0-indetwittered position of item in list of typeahead drop-down
   2: optional i32 itemPosition
 }(persisted='true', hasPersonalData='true')
 

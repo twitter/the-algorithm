@@ -104,7 +104,7 @@ RawTensor TensorRecordReader::readTypedTensor() {
 
   // TODO: Try avoiding stride calculation
   std::vector<uint64_t> strides = calcStrides(shape);
-  // FIXME: Try to use const void * in Tensors.
+  // FItwitterME: Try to use const void * in Tensors.
   return RawTensor(const_cast<void *>(static_cast<const void *>(data)),
                    shape, strides, (twml_type)TensorTraits<T>::TwmlType, true, raw_length);
 }
@@ -157,7 +157,7 @@ RawTensor TensorRecordReader::readRawTypedTensor() {
 
   // TODO: Try avoiding stride calculation
   std::vector<uint64_t> strides = calcStrides(shape);
-  // FIXME: Try to use const void * data inside Tensors.
+  // FItwitterME: Try to use const void * data inside Tensors.
   return RawTensor(const_cast<void *>(static_cast<const void *>(data)),
                    shape, strides, type, false, raw_length);
 }
@@ -208,7 +208,7 @@ RawTensor TensorRecordReader::readStringTensor() {
 
   // TODO: Try avoiding stride calculation
   std::vector<uint64_t> strides = calcStrides(shape);
-  // FIXME: Try to use const void * in Tensors.
+  // FItwitterME: Try to use const void * in Tensors.
   return RawTensor(const_cast<void *>(static_cast<const void *>(data)),
                    shape, strides, TWML_TYPE_UINT8, false, raw_length);
 }

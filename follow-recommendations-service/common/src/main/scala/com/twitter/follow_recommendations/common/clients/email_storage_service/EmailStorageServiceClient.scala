@@ -4,8 +4,8 @@ import com.twitter.cds.contact_consent_state.thriftscala.PurposeOfProcessing
 import com.twitter.emailstorage.api.thriftscala.EmailStorageService
 import com.twitter.emailstorage.api.thriftscala.GetUsersEmailsRequest
 import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class EmailStorageServiceClient @Inject() (

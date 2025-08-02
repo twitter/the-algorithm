@@ -2,11 +2,11 @@ package com.twitter.tweetypie
 package repository
 
 import com.twitter.geoduck.common.{thriftscala => Geoduck}
-import com.twitter.geoduck.service.thriftscala.GeoContext
+import com.twitter.geoduck.service.thriftscala.GeoContetwittert
 import com.twitter.geoduck.service.thriftscala.Key
 import com.twitter.geoduck.service.thriftscala.LocationResponse
 import com.twitter.geoduck.util.service.GeoduckLocate
-import com.twitter.geoduck.util.service.LocationResponseExtractors
+import com.twitter.geoduck.util.service.LocationResponseEtwittertractors
 import com.twitter.geoduck.util.{primitives => GDPrimitive}
 import com.twitter.stitch.NotFound
 import com.twitter.stitch.Stitch
@@ -33,7 +33,7 @@ object GeoduckPlaceConverter {
     case Geoduck.PlaceType.Admin0 => TP.PlaceType.Admin
     case Geoduck.PlaceType.Admin1 => TP.PlaceType.Admin
     case _ =>
-      throw new IllegalStateException(s"Invalid place type: $pt")
+      throw new IllegalStateEtwitterception(s"Invalid place type: $pt")
   }
 
   def convertPlaceName(gd: Geoduck.PlaceName): TP.PlaceName =
@@ -49,13 +49,13 @@ object GeoduckPlaceConverter {
     case Geoduck.PlaceNameType.Abbreviation => TP.PlaceNameType.Abbreviation
     case Geoduck.PlaceNameType.Synonym => TP.PlaceNameType.Synonym
     case _ =>
-      throw new IllegalStateException(s"Invalid place name type: $pt")
+      throw new IllegalStateEtwitterception(s"Invalid place name type: $pt")
   }
 
   def convertAttributes(attrs: collection.Set[Geoduck.PlaceAttribute]): Map[String, String] =
     attrs.map(attr => attr.key -> attr.value.getOrElse("")).toMap
 
-  def convertBoundingBox(geom: GDPrimitive.Geometry): Seq[TP.GeoCoordinates] =
+  def convertBoundingBotwitter(geom: GDPrimitive.Geometry): Seq[TP.GeoCoordinates] =
     geom.coordinates.map { coord =>
       TP.GeoCoordinates(
         latitude = coord.lat,
@@ -64,32 +64,32 @@ object GeoduckPlaceConverter {
     }
 
   def apply(queryLang: String, geoplace: GDPrimitive.Place): TP.Place = {
-    val bestname = geoplace.bestName(queryLang).getOrElse(geoplace.hexId)
+    val bestname = geoplace.bestName(queryLang).getOrElse(geoplace.hetwitterId)
     TP.Place(
-      id = geoplace.hexId,
+      id = geoplace.hetwitterId,
       `type` = convertPlaceType(geoplace.placeType),
       name = bestname,
       fullName = geoplace.fullName(queryLang).getOrElse(bestname),
       attributes = convertAttributes(geoplace.attributes),
-      boundingBox = geoplace.boundingBox.map(convertBoundingBox),
+      boundingBotwitter = geoplace.boundingBotwitter.map(convertBoundingBotwitter),
       countryCode = geoplace.countryCode,
-      containers = Some(geoplace.cone.map(_.hexId).toSet + geoplace.hexId),
+      containers = Some(geoplace.cone.map(_.hetwitterId).toSet + geoplace.hetwitterId),
       countryName = geoplace.countryName(queryLang)
     )
   }
 
   def convertGDKey(key: Key, lang: String): PlaceKey = {
     val Key.PlaceId(pid) = key
-    PlaceKey("%016x".format(pid), lang)
+    PlaceKey("%016twitter".format(pid), lang)
   }
 }
 
 object GeoduckPlaceRepository {
-  val context: GeoContext =
-    GeoContext(
+  val contetwittert: GeoContetwittert =
+    GeoContetwittert(
       placeFields = Set(
         Geoduck.PlaceQueryFields.Attributes,
-        Geoduck.PlaceQueryFields.BoundingBox,
+        Geoduck.PlaceQueryFields.BoundingBotwitter,
         Geoduck.PlaceQueryFields.PlaceNames,
         Geoduck.PlaceQueryFields.Cone
       ),
@@ -105,7 +105,7 @@ object GeoduckPlaceRepository {
     )
 
   def apply(geoduck: GeoduckLocate): PlaceRepository.Type = {
-    val geoduckGroup = LegacySeqGroup((ids: Seq[Key.PlaceId]) => geoduck(context, ids))
+    val geoduckGroup = LegacySeqGroup((ids: Seq[Key.PlaceId]) => geoduck(contetwittert, ids))
 
     placeKey =>
       val placeId =
@@ -114,12 +114,12 @@ object GeoduckPlaceRepository {
             Key.PlaceId(java.lang.Long.parseUnsignedLong(placeKey.placeId, 16))
           )
         } catch {
-          case _: NumberFormatException => Stitch.exception(NotFound)
+          case _: NumberFormatEtwitterception => Stitch.etwitterception(NotFound)
         }
 
       placeId
         .flatMap(id => Stitch.call(id, geoduckGroup))
-        .rescue { case LocationResponseExtractors.Failure(ex) => Stitch.exception(ex) }
+        .rescue { case LocationResponseEtwittertractors.Failure(etwitter) => Stitch.etwitterception(etwitter) }
         .map { resp =>
           GDPrimitive.Place
             .fromLocationResponse(resp)

@@ -10,19 +10,19 @@ object EntityTweetsParams {
   /**
    * Controls limit on the number of followed users fetched from SGS.
    */
-  object MaxFollowedUsersParam
-      extends FSBoundedParam[Int](
-        name = "entity_tweets_max_followed_users",
+  object MatwitterFollowedUsersParam
+      etwittertends FSBoundedParam[Int](
+        name = "entity_tweets_matwitter_followed_users",
         default = 1000,
         min = 0,
-        max = 5000
+        matwitter = 5000
       )
 
   /**
    * Enables semantic core, penguin, and tweetypie content features in entity tweets source.
    */
   object EnableContentFeaturesHydrationParam
-      extends DeciderParam[Boolean](
+      etwittertends DeciderParam[Boolean](
         decider = DeciderKey.EntityTweetsEnableContentFeaturesHydration,
         default = false
       )
@@ -31,18 +31,18 @@ object EntityTweetsParams {
    * additionally enables tokens when hydrating content features.
    */
   object EnableTokensInContentFeaturesHydrationParam
-      extends FSParam(
+      etwittertends FSParam(
         name = "entity_tweets_enable_tokens_in_content_features_hydration",
         default = false
       )
 
   /**
-   * additionally enables tweet text when hydrating content features.
+   * additionally enables tweet tetwittert when hydrating content features.
    * This only works if EnableContentFeaturesHydrationParam is set to true
    */
-  object EnableTweetTextInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "entity_tweets_enable_tweet_text_in_content_features_hydration",
+  object EnableTweetTetwittertInContentFeaturesHydrationParam
+      etwittertends FSParam(
+        name = "entity_tweets_enable_tweet_tetwittert_in_content_features_hydration",
         default = false
       )
 
@@ -51,13 +51,13 @@ object EntityTweetsParams {
    * This only works if EnableContentFeaturesHydrationParam is set to true
    */
   object EnableConversationControlInContentFeaturesHydrationParam
-      extends FSParam(
+      etwittertends FSParam(
         name = "conversation_control_in_content_features_hydration_entity_enable",
         default = false
       )
 
   object EnableTweetMediaHydrationParam
-      extends FSParam(
+      etwittertends FSParam(
         name = "tweet_media_hydration_entity_tweets_enable",
         default = false
       )

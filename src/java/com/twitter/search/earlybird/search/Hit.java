@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.search;
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
 
@@ -10,7 +10,7 @@ import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
 public class Hit implements Comparable<Hit> {
   protected long timeSliceID;
   protected long statusID;
-  private boolean hasExplanation;
+  private boolean hasEtwitterplanation;
 
   @Nullable
   protected ThriftSearchResultMetadata metadata;
@@ -49,11 +49,11 @@ public class Hit implements Comparable<Hit> {
         + ",score=" + (metadata == null ? "null" : metadata.getScore()) + "]";
   }
 
-  public boolean isHasExplanation() {
-    return hasExplanation;
+  public boolean isHasEtwitterplanation() {
+    return hasEtwitterplanation;
   }
 
-  public void setHasExplanation(boolean hasExplanation) {
-    this.hasExplanation = hasExplanation;
+  public void setHasEtwitterplanation(boolean hasEtwitterplanation) {
+    this.hasEtwitterplanation = hasEtwitterplanation;
   }
 }

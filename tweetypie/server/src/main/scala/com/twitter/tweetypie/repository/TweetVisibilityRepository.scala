@@ -12,7 +12,7 @@ import com.twitter.visibility.interfaces.tweets.TweetVisibilityLibrary
 import com.twitter.visibility.interfaces.tweets.TweetVisibilityRequest
 import com.twitter.visibility.models.SafetyLevel.DeprecatedSafetyLevel
 import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 
 /**
  * This repository handles visibility filtering of tweets
@@ -22,8 +22,8 @@ import com.twitter.visibility.models.ViewerContext
  *
  * (SafetyLevel)(Viewer, Content, Features) => Action
  *
- * SafetyLevel represents the product context in which the Viewer is
- * requesting to view the Content. Example: TimelineHome, TweetDetail,
+ * SafetyLevel represents the product contetwittert in which the Viewer is
+ * requesting to view the Content. Etwitterample: TimelineHome, TweetDetail,
  * Recommendations, Notifications
  *
  * Content here is mainly tweets (can be users, notifications, cards etc)
@@ -92,7 +92,7 @@ object TweetVisibilityRepository {
               TweetVisibilityRequest(
                 tweet = request.tweet,
                 safetyLevel = safetyLevel,
-                viewerContext = ViewerContext.fromContextWithViewerIdFallback(request.viewerId),
+                viewerContetwittert = ViewerContetwittert.fromContetwittertWithViewerIdFallback(request.viewerId),
                 isInnerQuotedTweet = request.isInnerQuotedTweet,
                 isRetweet = request.isRetweet,
                 hydrateConversationControl = request.hydrateConversationControl,

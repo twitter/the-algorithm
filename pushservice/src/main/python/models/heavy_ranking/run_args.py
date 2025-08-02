@@ -21,10 +21,10 @@ def get_training_arg_parser():
   )
 
   parser.add_argument(
-    "--directly_export_best",
+    "--directly_etwitterport_best",
     default=False,
     action="store_true",
-    help="whether to directly_export best_checkpoint",
+    help="whether to directly_etwitterport best_checkpoint",
   )
 
   parser.add_argument(

@@ -1,6 +1,6 @@
 package com.twitter.servo.util
 
-class ThreadLocalStringBuilder(initialSize: Int) extends ThreadLocal[StringBuilder] {
+class ThreadLocalStringBuilder(initialSize: Int) etwittertends ThreadLocal[StringBuilder] {
   override def initialValue = new StringBuilder(initialSize)
 
   def apply() = {

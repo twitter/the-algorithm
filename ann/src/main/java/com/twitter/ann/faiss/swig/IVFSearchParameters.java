@@ -44,12 +44,12 @@ public class IVFSearchParameters {
     return swigfaissJNI.IVFSearchParameters_nprobe_get(swigCPtr, this);
   }
 
-  public void setMax_codes(long value) {
-    swigfaissJNI.IVFSearchParameters_max_codes_set(swigCPtr, this, value);
+  public void setMatwitter_codes(long value) {
+    swigfaissJNI.IVFSearchParameters_matwitter_codes_set(swigCPtr, this, value);
   }
 
-  public long getMax_codes() {
-    return swigfaissJNI.IVFSearchParameters_max_codes_get(swigCPtr, this);
+  public long getMatwitter_codes() {
+    return swigfaissJNI.IVFSearchParameters_matwitter_codes_get(swigCPtr, this);
   }
 
   public IVFSearchParameters() {

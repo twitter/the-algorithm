@@ -9,7 +9,7 @@ scala_library(
         "src/thrift/com/twitter/tweetypie:media-entity-scala",
         "src/thrift/com/twitter/tweetypie:tweet-scala",
     ],
-    exports = [
+    etwitterports = [
         "src/thrift/com/twitter/timelines/content_features:thrift-scala",
     ],
 )

@@ -18,7 +18,7 @@ import com.twitter.util.Future
 class RecommendationHandler(
   tweetRecsRunner: TweetRecommendationsRunner,
   statsReceiver: StatsReceiver)
-    extends RequestHandler[RecommendTweetEntityRequest, RecommendTweetEntityResponse] {
+    etwittertends RequestHandler[RecommendTweetEntityRequest, RecommendTweetEntityResponse] {
   private val stats = statsReceiver.scope(this.getClass.getSimpleName)
   private val socialProofHydrator = new SocialProofHydrator(stats)
 

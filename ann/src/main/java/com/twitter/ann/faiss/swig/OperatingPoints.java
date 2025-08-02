@@ -58,8 +58,8 @@ public class OperatingPoints {
     this(swigfaissJNI.new_OperatingPoints(), true);
   }
 
-  public int merge_with(OperatingPoints other, String prefix) {
-    return swigfaissJNI.OperatingPoints_merge_with__SWIG_0(swigCPtr, this, OperatingPoints.getCPtr(other), other, prefix);
+  public int merge_with(OperatingPoints other, String prefitwitter) {
+    return swigfaissJNI.OperatingPoints_merge_with__SWIG_0(swigCPtr, this, OperatingPoints.getCPtr(other), other, prefitwitter);
   }
 
   public int merge_with(OperatingPoints other) {

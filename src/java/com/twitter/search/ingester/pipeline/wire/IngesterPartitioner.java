@@ -1,6 +1,6 @@
 package com.twitter.search.ingester.pipeline.wire;
 
-import javax.naming.NamingException;
+import javatwitter.naming.NamingEtwitterception;
 
 import com.twitter.search.common.partitioning.base.PartitionMappingManager;
 import com.twitter.search.common.util.io.kafka.SearchPartitioner;
@@ -11,7 +11,7 @@ import com.twitter.search.common.util.io.kafka.SearchPartitioner;
  *
  * Note that the value object has to implement {@code Partitionable}.
  */
-public class IngesterPartitioner extends SearchPartitioner {
+public class IngesterPartitioner etwittertends SearchPartitioner {
 
   public IngesterPartitioner() {
     super(getPartitionMappingManager());
@@ -20,8 +20,8 @@ public class IngesterPartitioner extends SearchPartitioner {
   private static PartitionMappingManager getPartitionMappingManager() {
     try {
       return WireModule.getWireModule().getPartitionMappingManager();
-    } catch (NamingException e) {
-      throw new RuntimeException(e);
+    } catch (NamingEtwitterception e) {
+      throw new RuntimeEtwitterception(e);
     }
   }
 }

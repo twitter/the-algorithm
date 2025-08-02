@@ -35,9 +35,9 @@ trait UtilityProvider {
   def whitelist: UserList
 }
 
-trait RuntimeConfiguration extends ClientProvider with UtilityProvider with ConfigUtils {
+trait RuntimeConfiguration etwittertends ClientProvider with UtilityProvider with ConfigUtils {
   def isProd: Boolean
-  def maxConcurrency: Int
+  def matwitterConcurrency: Int
   def clientEventScribe: Effect[String]
   def clientWrapperFactories: ClientWrapperFactories
 }
@@ -48,7 +48,7 @@ class RuntimeConfigurationImpl(
   val decider: Decider,
   val forcedFeatureValues: Map[String, Value] = Map.empty[String, Value],
   val statsReceiver: StatsReceiver)
-    extends RuntimeConfiguration {
+    etwittertends RuntimeConfiguration {
 
   // Creates and initialize config store as early as possible so other parts could have a dependency on it for settings.
   override val configStore: DynamicConfigStore =
@@ -66,7 +66,7 @@ class RuntimeConfigurationImpl(
   override val isProd: Boolean = isProdEnv(environment)
   val datacenter: Datacenter.Value = flags.getDatacenter
   val abDeciderPath = "/usr/local/config/abdecider/abdecider.yml"
-  override val maxConcurrency: Int = flags.maxConcurrency()
+  override val matwitterConcurrency: Int = flags.matwitterConcurrency()
 
   val deciderGateBuilder: DeciderGateBuilder = new DeciderGateBuilder(decider)
 

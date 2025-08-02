@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.annotation.Nullable;
+import javatwitter.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -13,7 +13,7 @@ import com.google.common.collect.ImmutableMap;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.facet.FacetsConfig;
-import org.apache.lucene.index.FieldInfos;
+import org.apache.lucene.indetwitter.FieldInfos;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,13 +45,13 @@ public class DynamicSchema implements Schema {
   /**
    * Update the schema reference inside this DynamicSchema.
    */
-  public synchronized void updateSchema(ImmutableSchema newSchema) throws SchemaUpdateException {
+  public synchronized void updateSchema(ImmutableSchema newSchema) throws SchemaUpdateEtwitterception {
     ImmutableSchema oldSchema = schema.get();
     if (newSchema.getMajorVersionNumber() != oldSchema.getMajorVersionNumber()) {
-      throw new SchemaUpdateException("Dynamic major version update is not supported.");
+      throw new SchemaUpdateEtwitterception("Dynamic major version update is not supported.");
     } else {
       if (newSchema.getMinorVersionNumber() <= oldSchema.getMinorVersionNumber()) {
-        throw new SchemaUpdateException("Dynamic backward minor version update is not supported.");
+        throw new SchemaUpdateEtwitterception("Dynamic backward minor version update is not supported.");
       } else {
         LOG.info("DynamicSchema accepted update. Old version is {}.{}; new version is {}.{}",
             oldSchema.getMajorVersionNumber(),
@@ -63,8 +63,8 @@ public class DynamicSchema implements Schema {
     }
   }
 
-  public static class SchemaUpdateException extends Exception {
-    public SchemaUpdateException(String message) {
+  public static class SchemaUpdateEtwitterception etwittertends Etwitterception {
+    public SchemaUpdateEtwitterception(String message) {
       super(message);
     }
   }

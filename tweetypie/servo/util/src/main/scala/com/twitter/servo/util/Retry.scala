@@ -1,14 +1,14 @@
 package com.twitter.servo.util
 
-import com.twitter.finagle.{Backoff, Service, TimeoutException, WriteException}
-import com.twitter.finagle.service.{RetryExceptionsFilter, RetryPolicy}
+import com.twitter.finagle.{Backoff, Service, TimeoutEtwitterception, WriteEtwitterception}
+import com.twitter.finagle.service.{RetryEtwitterceptionsFilter, RetryPolicy}
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.finagle.util.DefaultTimer
 import com.twitter.util.{Duration, Future, Throw, Timer, Try}
 
 /**
  * Allows an action to be retried according to a backoff strategy.
- * This is an adaption of the Finagle RetryExceptionsFilter, but with an
+ * This is an adaption of the Finagle RetryEtwitterceptionsFilter, but with an
  * arbitrary asynchronous computation.
  */
 class Retry(
@@ -17,7 +17,7 @@ class Retry(
   private[this] val timer: Timer = DefaultTimer) {
 
   /**
-   * retry on specific exceptions
+   * retry on specific etwitterceptions
    */
   def apply[T](
     f: () => Future[T]
@@ -32,7 +32,7 @@ class Retry(
       override def apply(u: Unit): Future[T] = f()
     }
 
-    val retrying = new RetryExceptionsFilter(policy, timer, statsReceiver) andThen service
+    val retrying = new RetryEtwitterceptionsFilter(policy, timer, statsReceiver) andThen service
 
     retrying()
   }
@@ -42,58 +42,58 @@ class Retry(
 }
 
 /**
- * Use to configure separate backoffs for WriteExceptions, TimeoutExceptions,
- * and service-specific exceptions
+ * Use to configure separate backoffs for WriteEtwitterceptions, TimeoutEtwitterceptions,
+ * and service-specific etwitterceptions
  */
 class ServiceRetryPolicy(
-  writeExceptionBackoffs: Backoff,
+  writeEtwitterceptionBackoffs: Backoff,
   timeoutBackoffs: Backoff,
   serviceBackoffs: Backoff,
   shouldRetryService: PartialFunction[Throwable, Boolean])
-    extends RetryPolicy[Try[Nothing]] {
+    etwittertends RetryPolicy[Try[Nothing]] {
   override def apply(r: Try[Nothing]) = r match {
     case Throw(t) if shouldRetryService.isDefinedAt(t) =>
       if (shouldRetryService(t))
-        onServiceException
+        onServiceEtwitterception
       else
         None
-    case Throw(_: WriteException) => onWriteException
-    case Throw(_: TimeoutException) => onTimeoutException
+    case Throw(_: WriteEtwitterception) => onWriteEtwitterception
+    case Throw(_: TimeoutEtwitterception) => onTimeoutEtwitterception
     case _ => None
   }
 
   def copy(
-    writeExceptionBackoffs: Backoff = writeExceptionBackoffs,
+    writeEtwitterceptionBackoffs: Backoff = writeEtwitterceptionBackoffs,
     timeoutBackoffs: Backoff = timeoutBackoffs,
     serviceBackoffs: Backoff = serviceBackoffs,
     shouldRetryService: PartialFunction[Throwable, Boolean] = shouldRetryService
   ) =
     new ServiceRetryPolicy(
-      writeExceptionBackoffs,
+      writeEtwitterceptionBackoffs,
       timeoutBackoffs,
       serviceBackoffs,
       shouldRetryService
     )
 
-  private[this] def onWriteException = consume(writeExceptionBackoffs) { tail =>
-    copy(writeExceptionBackoffs = tail)
+  private[this] def onWriteEtwitterception = consume(writeEtwitterceptionBackoffs) { tail =>
+    copy(writeEtwitterceptionBackoffs = tail)
   }
 
-  private[this] def onTimeoutException = consume(timeoutBackoffs) { tail =>
+  private[this] def onTimeoutEtwitterception = consume(timeoutBackoffs) { tail =>
     copy(timeoutBackoffs = tail)
   }
 
-  private[this] def onServiceException = consume(serviceBackoffs) { tail =>
+  private[this] def onServiceEtwitterception = consume(serviceBackoffs) { tail =>
     copy(serviceBackoffs = tail)
   }
 
   private[this] def consume(b: Backoff)(f: Backoff => ServiceRetryPolicy) = {
-    if (b.isExhausted) None
-    else Some((b.duration, f(b.next)))
+    if (b.isEtwitterhausted) None
+    else Some((b.duration, f(b.netwittert)))
   }
 
   override val toString = "ServiceRetryPolicy(%s, %s, %s)".format(
-    writeExceptionBackoffs,
+    writeEtwitterceptionBackoffs,
     timeoutBackoffs,
     serviceBackoffs
   )

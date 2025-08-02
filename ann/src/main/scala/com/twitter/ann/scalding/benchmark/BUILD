@@ -43,7 +43,7 @@ create_datasets(
     description = "List of the top recommendations per search entity (user)",
     java_schema = "com.twitter.ann.knn.thriftjava.Knn",
     platform = "java8",
-    role = "cortex-mlx",
+    role = "cortetwitter-mltwitter",
     scala_schema = "com.twitter.ann.knn.thriftscala.Knn",
     segment_type = "partitioned",
     tags = ["bazel-compatible"],

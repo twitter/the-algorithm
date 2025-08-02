@@ -37,7 +37,7 @@ object ConversationControlRepository {
         .handle {
           // We don't know of any case where tweets would return NotFound, but for
           // for pragmatic reasons, we're opening the conversation for replies
-          // in case a bug causing tweets to be NotFound exists.
+          // in case a bug causing tweets to be NotFound etwitterists.
           case NotFound =>
             stats.counter("tweet_not_found")
             None

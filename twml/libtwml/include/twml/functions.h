@@ -13,7 +13,7 @@ namespace twml {
 #endif
 
 #ifdef __cplusplus
-extern "C" {
+etwittertern "C" {
 #endif
 
     // Adding these as an easy way to test the wrappers

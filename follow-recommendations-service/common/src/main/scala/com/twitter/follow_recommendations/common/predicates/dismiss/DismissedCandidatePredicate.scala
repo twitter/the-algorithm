@@ -6,10 +6,10 @@ import com.twitter.follow_recommendations.common.models.FilterReason.DismissedId
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.follow_recommendations.common.models.HasDismissedUserIds
 import com.twitter.stitch.Stitch
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
 @Singleton
-class DismissedCandidatePredicate extends Predicate[(HasDismissedUserIds, CandidateUser)] {
+class DismissedCandidatePredicate etwittertends Predicate[(HasDismissedUserIds, CandidateUser)] {
 
   override def apply(pair: (HasDismissedUserIds, CandidateUser)): Stitch[PredicateResult] = {
 

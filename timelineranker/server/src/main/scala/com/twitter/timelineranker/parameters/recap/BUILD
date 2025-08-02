@@ -11,7 +11,7 @@ scala_library(
         "timelineranker/common/src/main/scala/com/twitter/timelineranker/model",
         "timelineranker/server/src/main/scala/com/twitter/timelineranker/decider",
         "timelineranker/server/src/main/scala/com/twitter/timelineranker/parameters/util",
-        "timelines/src/main/scala/com/twitter/timelines/experiment",
+        "timelines/src/main/scala/com/twitter/timelines/etwitterperiment",
         "util/util-logging",
         "util/util-stats",
     ],

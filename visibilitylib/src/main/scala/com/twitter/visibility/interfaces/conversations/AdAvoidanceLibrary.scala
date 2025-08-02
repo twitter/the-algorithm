@@ -12,7 +12,7 @@ import com.twitter.tweetypie.thriftscala.TweetFieldsResultState
 import com.twitter.util.Stopwatch
 import com.twitter.visibility.VisibilityLibrary
 import com.twitter.visibility.common.filtered_reason.FilteredReasonHelper
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 import com.twitter.visibility.rules.Interstitial
 import com.twitter.visibility.rules.Tombstone
 
@@ -25,8 +25,8 @@ case class AdAvoidanceRequest(
     User
   ],
   moderatedTweetIds: Seq[Long],
-  viewerContext: ViewerContext,
-  useRichText: Boolean = true)
+  viewerContetwittert: ViewerContetwittert,
+  useRichTetwittert: Boolean = true)
 
 case class AdAvoidanceResponse(dropAd: Map[Long, Boolean])
 
@@ -81,8 +81,8 @@ object AdAvoidanceLibrary {
       tweets = request.tweets,
       authorMap = request.authorMap,
       moderatedTweetIds = request.moderatedTweetIds,
-      viewerContext = request.viewerContext,
-      useRichText = request.useRichText
+      viewerContetwittert = request.viewerContetwittert,
+      useRichTetwittert = request.useRichTetwittert
     )
 
     tombstoneVisibilityLibrary(tombstoneRequest)

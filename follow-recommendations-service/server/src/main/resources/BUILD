@@ -1,7 +1,7 @@
 resources(
     sources = [
         "*.tsv",
-        "*.xml",
+        "*.twitterml",
         "**/*",
         "config/*.yml",
     ],
@@ -13,7 +13,7 @@ files(
     name = "frs_resources",
     sources = [
         "*.tsv",
-        "*.xml",
+        "*.twitterml",
         "*.yml",
         "**/*",
     ],

@@ -217,15 +217,15 @@ object TweetJob {
   // Boolean check to see if the tweet is too old
   private def isTweetTooOld(favEvent: FavoriteAlias): Boolean = {
     favEvent.tweet.forall { tweet =>
-      SnowflakeId.unixTimeMillisOptFromId(tweet.id).exists { millis =>
+      SnowflakeId.unitwitterTimeMillisOptFromId(tweet.id).etwitterists { millis =>
         System.currentTimeMillis() - millis >= Configs.OldestTweetFavEventTimeInMillis
       }
     }
   }
 
   private def isTweetTooOldForLight(tweetId: Long): Boolean = {
-    SnowflakeId.unixTimeMillisOptFromId(tweetId).exists { millis =>
-      System.currentTimeMillis() - millis >= Configs.OldestTweetInLightIndexInMillis
+    SnowflakeId.unitwitterTimeMillisOptFromId(tweetId).etwitterists { millis =>
+      System.currentTimeMillis() - millis >= Configs.OldestTweetInLightIndetwitterInMillis
     }
   }
 

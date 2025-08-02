@@ -8,24 +8,24 @@ import com.twitter.util.Timer
 import scala.util.Random
 
 // Inject an artificial delay into an underlying repository's response to match the provided p50
-// and max latencies.
+// and matwitter latencies.
 class LatentRepository[Q, R](
   underlying: Repository[Q, R],
   p50: Duration,
-  max: Duration,
+  matwitter: Duration,
   random: Random = new Random,
   timer: Timer = DefaultTimer)
-    extends Repository[Q, R] {
+    etwittertends Repository[Q, R] {
   import scala.math.ceil
   import scala.math.pow
 
   val p50Millis: Long = p50.inMilliseconds
-  val maxMillis: Long = max.inMilliseconds
-  require(p50Millis > 0 && maxMillis > 0 && maxMillis > p50Millis)
+  val matwitterMillis: Long = matwitter.inMilliseconds
+  require(p50Millis > 0 && matwitterMillis > 0 && matwitterMillis > p50Millis)
 
   override def apply(query: Q): Future[R] = {
-    val x = random.nextDouble()
-    val sleepTime = ceil(pow(p50Millis, 2 * (1 - x)) / pow(maxMillis, 1 - 2 * x)).toInt
+    val twitter = random.netwittertDouble()
+    val sleepTime = ceil(pow(p50Millis, 2 * (1 - twitter)) / pow(matwitterMillis, 1 - 2 * twitter)).toInt
     Future.sleep(Duration.fromMilliseconds(sleepTime))(timer).flatMap { _ => underlying(query) }
   }
 }

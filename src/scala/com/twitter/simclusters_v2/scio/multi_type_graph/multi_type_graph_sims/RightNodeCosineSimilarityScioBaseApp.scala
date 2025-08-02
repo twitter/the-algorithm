@@ -1,7 +1,7 @@
 package com.twitter.simclusters_v2.scio
 package multi_type_graph.multi_type_graph_sims
 
-import com.spotify.scio.ScioContext
+import com.spotify.scio.ScioContetwittert
 import com.spotify.scio.coders.Coder
 import com.spotify.scio.values.SCollection
 import com.twitter.beam.io.dal.DAL
@@ -18,12 +18,12 @@ import com.twitter.simclusters_v2.hdfs_sources.RightNodeSimHashScioScalaDataset
 import com.twitter.simclusters_v2.scio.multi_type_graph.common.MultiTypeGraphUtil
 import com.twitter.simclusters_v2.thriftscala._
 import com.twitter.util.Duration
-import com.twitter.wtf.dataflow.cosine_similarity.ApproximateMatrixSelfTransposeMultiplicationJob
+import com.twitter.wtf.dataflow.cosine_similarity.ApprotwitterimateMatritwitterSelfTransposeMultiplicationJob
 import java.time.Instant
 
 trait RightNodeCosineSimilarityScioBaseApp
-    extends ScioBeamJob[DateRangeOptions]
-    with ApproximateMatrixSelfTransposeMultiplicationJob[RightNode] {
+    etwittertends ScioBeamJob[DateRangeOptions]
+    with ApprotwitterimateMatritwitterSelfTransposeMultiplicationJob[RightNode] {
   override implicit def scroogeCoder[T <: ThriftStruct: Manifest]: Coder[T] =
     ThriftStructLazyBinaryScroogeCoder.scroogeCoder
   override val ordering: Ordering[RightNode] = MultiTypeGraphUtil.rightNodeOrdering
@@ -35,13 +35,13 @@ trait RightNodeCosineSimilarityScioBaseApp
   val cosineSimJobOutputDirectory: String = Config.cosineSimJobOutputDirectory
 
   override def graph(
-    implicit sc: ScioContext,
+    implicit sc: ScioContetwittert,
     coder: Coder[RightNode]
   ): SCollection[(Long, RightNode, Double)] =
     MultiTypeGraphUtil.getTruncatedMultiTypeGraph(noOlderThan = Duration.fromDays(14))
 
   override def simHashSketches(
-    implicit sc: ScioContext,
+    implicit sc: ScioContetwittert,
     coder: Coder[RightNode]
   ): SCollection[(RightNode, Array[Byte])] = {
     sc.customInput(
@@ -59,11 +59,11 @@ trait RightNodeCosineSimilarityScioBaseApp
   }
 
   override def configurePipeline(
-    sc: ScioContext,
+    sc: ScioContetwittert,
     opts: DateRangeOptions
   ): Unit = {
-    implicit def scioContext: ScioContext = sc
-    // DAL.Environment variable for WriteExecs
+    implicit def scioContetwittert: ScioContetwittert = sc
+    // DAL.Environment variable for WriteEtwitterecs
     val dalEnv = if (isAdhoc) DAL.Environment.Dev else DAL.Environment.Prod
 
     val topKRightNodes: SCollection[(RightNode, SimilarRightNodes)] = topK
@@ -82,7 +82,7 @@ trait RightNodeCosineSimilarityScioBaseApp
         name = "WriteRightNodeCosineSimilarityDataset",
         DAL.writeVersionedKeyVal(
           cosineSimKeyValSnapshotDataset,
-          PathLayout.VersionedPath(prefix =
+          PathLayout.VersionedPath(prefitwitter =
             ((if (!isAdhoc)
                 MultiTypeGraphUtil.RootMHPath
               else

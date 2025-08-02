@@ -15,7 +15,7 @@ object Bitfield {
 }
 
 /**
- * A mixin for unpacking bitfields.
+ * A mitwitterin for unpacking bitfields.
  */
 trait Bitfield {
   val bitfield: Int
@@ -31,7 +31,7 @@ trait Bitfield {
    * takes a sequence of booleans, from most to least significant
    * and converts them to an integer.
    *
-   * example: multiValue(true, false, true) yields 0b101 = 5
+   * etwitterample: multiValue(true, false, true) yields 0b101 = 5
    */
   def multiValue(bits: Boolean*): Int = Bitfield.multiValue(bits: _*)
 }
@@ -50,7 +50,7 @@ trait LongBitfield {
    * takes a sequence of booleans, from most to least significant
    * and converts them to a long.
    *
-   * example: multiValue(true, false, true) yields 0b101 = 5L
+   * etwitterample: multiValue(true, false, true) yields 0b101 = 5L
    */
   def multiValue(bits: Boolean*): Long = Bitfield.multiValueLong(bits: _*)
 }

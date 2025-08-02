@@ -65,7 +65,7 @@ case class TweetData(
   storedTweetResult: Option[StoredTweetResult] = None,
   featureSwitchResults: Option[FeatureSwitchResults] = None,
   // The isBounceDeleted flag is only used when reading from an underlying
-  // tweet repo and caching records for not-found tweets. It only exists
+  // tweet repo and caching records for not-found tweets. It only etwitterists
   // as a flag on TweetData to marshal bounce-deleted through the layered
   // transforming caches injected into CachingTweetRepository, ultimately
   // storing this flag in thrift on CachedTweet.

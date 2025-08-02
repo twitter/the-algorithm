@@ -10,9 +10,9 @@ object StratoCommunityAccessRepository {
 
   sealed trait CommunityAccess
   object CommunityAccess {
-    case object Public extends CommunityAccess
-    case object Closed extends CommunityAccess
-    case object Private extends CommunityAccess
+    case object Public etwittertends CommunityAccess
+    case object Closed etwittertends CommunityAccess
+    case object Private etwittertends CommunityAccess
   }
 
   val column = "communities/access.Community"

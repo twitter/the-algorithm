@@ -7,7 +7,7 @@ import java.sql.{ResultSet, Timestamp}
  * A base trait for transforming JDBC ResultSets.
  * Designed to be used with the Accessors trait.
  */
-trait ImplicitBuilder[T] extends Accessors {
+trait ImplicitBuilder[T] etwittertends Accessors {
   def apply(implicit row: ResultSet): T
 }
 
@@ -15,7 +15,7 @@ object Accessors {
 
   /**
    * helper to make it compile time error when trying to call getOption on types not supported
-   * instead of a runtime exception
+   * instead of a runtime etwitterception
    */
   object SafeManifest {
     implicit val booleanSafeManifest = new SafeManifest(implicitly[Manifest[Boolean]])
@@ -32,7 +32,7 @@ object Accessors {
 }
 
 /**
- * mixin to get ResultSet accessors for standard types
+ * mitwitterin to get ResultSet accessors for standard types
  */
 trait Accessors {
   import Accessors._
@@ -40,7 +40,7 @@ trait Accessors {
   /**
    * @return None when the column is null for the current row of the result set passed in
    *         Some[T] otherwise
-   * @throws UnsupportedOperationException if the return type expected is not supported, currently
+   * @throws UnsupportedOperationEtwitterception if the return type etwitterpected is not supported, currently
    *        only Boolean, Int, Long, String and Timestamp are supported
    */
   @deprecated("use type-specific accessors instead", "1.1.1")
@@ -59,7 +59,7 @@ trait Accessors {
       } else if (classOf[Timestamp] == sf.mf.erasure) {
         row.getTimestamp(column)
       } else {
-        throw new UnsupportedOperationException("type not supported: " + sf.mf.erasure)
+        throw new UnsupportedOperationEtwitterception("type not supported: " + sf.mf.erasure)
       }
     }
     if (row.wasNull()) {

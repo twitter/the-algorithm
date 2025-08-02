@@ -12,7 +12,7 @@ import com.twitter.timelines.util.stats.RequestScope
 import com.twitter.util.Duration
 
 class RecapHydrationRepositoryBuilder(config: RuntimeConfiguration, configBuilder: ConfigBuilder)
-    extends CandidatesRepositoryBuilder(config) {
+    etwittertends CandidatesRepositoryBuilder(config) {
 
   override val clientSubId = "feature_hydration"
   override val requestScope: RequestScope = RequestScopes.RecapHydrationSource

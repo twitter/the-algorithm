@@ -13,12 +13,12 @@ import com.twitter.util.Future
 import scala.collection.mutable
 
 object TweetKindOptionHydratedTweetsFilterTransform {
-  private[common] val enableExpandedExtendedRepliesGate: Gate[RecapQuery] =
-    RecapQuery.paramGate(RecapParams.EnableExpandedExtendedRepliesFilterParam)
+  private[common] val enableEtwitterpandedEtwittertendedRepliesGate: Gate[RecapQuery] =
+    RecapQuery.paramGate(RecapParams.EnableEtwitterpandedEtwittertendedRepliesFilterParam)
 
-  private[common] val excludeRecommendedRepliesToNonFollowedUsersGate: Gate[RecapQuery] =
+  private[common] val etwittercludeRecommendedRepliesToNonFollowedUsersGate: Gate[RecapQuery] =
     RecapQuery.paramGate(
-      UtegLikedByTweetsParams.UTEGRecommendationsFilter.ExcludeRecommendedRepliesToNonFollowedUsersParam)
+      UtegLikedByTweetsParams.UTEGRecommendationsFilter.EtwittercludeRecommendedRepliesToNonFollowedUsersParam)
 }
 
 /**
@@ -28,7 +28,7 @@ class TweetKindOptionHydratedTweetsFilterTransform(
   useFollowGraphData: Boolean,
   useSourceTweets: Boolean,
   statsReceiver: StatsReceiver)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+    etwittertends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
   import TweetKindOptionHydratedTweetsFilterTransform._
   override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
     val filters = convertToFilters(envelope)
@@ -54,25 +54,25 @@ class TweetKindOptionHydratedTweetsFilterTransform(
    *
    * Note:
    * -- The semantic of TweetKindOption is opposite of that of TweetFilters.
-   *    TweetKindOption values are of the form IncludeX. That is, they result in X being added.
-   *    TweetFilters values specify what to exclude.
-   * -- IncludeExtendedReplies requires IncludeReplies to be also specified to be effective.
+   *    TweetKindOption values are of the form Includetwitter. That is, they result in twitter being added.
+   *    TweetFilters values specify what to etwitterclude.
+   * -- IncludeEtwittertendedReplies requires IncludeReplies to be also specified to be effective.
    */
   private[common] def convertToFilters(envelope: CandidateEnvelope): TweetFilters.ValueSet = {
     val queryOptions = envelope.query.options
     val filters = mutable.Set.empty[TweetFilters.Value]
     if (queryOptions.contains(TweetKindOption.IncludeReplies)) {
-      if (excludeRecommendedRepliesToNonFollowedUsersGate(
+      if (etwittercludeRecommendedRepliesToNonFollowedUsersGate(
           envelope.query) && envelope.query.utegLikedByTweetsOptions.isDefined) {
         filters += TweetFilters.RecommendedRepliesToNotFollowedUsers
-      } else if (queryOptions.contains(TweetKindOption.IncludeExtendedReplies)) {
-        if (enableExpandedExtendedRepliesGate(envelope.query)) {
-          filters += TweetFilters.NotValidExpandedExtendedReplies
+      } else if (queryOptions.contains(TweetKindOption.IncludeEtwittertendedReplies)) {
+        if (enableEtwitterpandedEtwittertendedRepliesGate(envelope.query)) {
+          filters += TweetFilters.NotValidEtwitterpandedEtwittertendedReplies
         } else {
-          filters += TweetFilters.NotQualifiedExtendedReplies
+          filters += TweetFilters.NotQualifiedEtwittertendedReplies
         }
       } else {
-        filters += TweetFilters.ExtendedReplies
+        filters += TweetFilters.EtwittertendedReplies
       }
     } else {
       filters += TweetFilters.Replies

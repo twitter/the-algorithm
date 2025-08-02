@@ -8,12 +8,12 @@ object HydrationOptions {
     cardsPlatformKey: Option[String]
   ) =
     thrift.WritePathHydrationOptions(
-      // The GraphQL API extracts or "lifts" the ApiTweet.card reference field from the
+      // The GraphQL API etwittertracts or "lifts" the ApiTweet.card reference field from the
       // ApiTweet.card.url returned by Tweetypie. Tweetypie's card hydration business logic
-      // selects the single correct Card URL by first making Expandodo.getCards2 requests for
+      // selects the single correct Card URL by first making Etwitterpandodo.getCards2 requests for
       // the Tweet's cardReference, or all of the Tweet's URL entities in cases where Tweet
       // does not have a stored cardReference, and then selecting the last of the hydrated
-      // cards returned by Expandodo.
+      // cards returned by Etwitterpandodo.
       includeCards = true,
       cardsPlatformKey = cardsPlatformKey,
       // The GraphQL API only supports quoted tweet results formatted per go/simplequotedtweet.

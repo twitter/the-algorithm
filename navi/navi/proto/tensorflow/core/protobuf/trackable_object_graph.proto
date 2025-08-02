@@ -1,4 +1,4 @@
-syntax = "proto3";
+syntatwitter = "proto3";
 
 package tensorflow;
 
@@ -7,14 +7,14 @@ import "google/protobuf/wrappers.proto";
 option cc_enable_arenas = true;
 option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
 
-// A TensorBundle addition which saves extra information about the objects which
+// A TensorBundle addition which saves etwittertra information about the objects which
 // own variables, allowing for more robust checkpoint loading into modified
 // programs.
 
 message TrackableObjectGraph {
   message TrackableObject {
     message ObjectReference {
-      // An index into `TrackableObjectGraph.nodes`, indicating the object
+      // An indetwitter into `TrackableObjectGraph.nodes`, indicating the object
       // being referenced.
       int32 node_id = 1;
       // A user-provided name for the edge.
@@ -40,12 +40,12 @@ message TrackableObjectGraph {
     }
 
     message SlotVariableReference {
-      // An index into `TrackableObjectGraph.nodes`, indicating the
+      // An indetwitter into `TrackableObjectGraph.nodes`, indicating the
       // variable object this slot was created for.
       int32 original_variable_node_id = 1;
       // The name of the slot (e.g. "m"/"v").
       string slot_name = 2;
-      // An index into `TrackableObjectGraph.nodes`, indicating the
+      // An indetwitter into `TrackableObjectGraph.nodes`, indicating the
       // `Object` with the value of the slot variable.
       int32 slot_variable_node_id = 3;
     }

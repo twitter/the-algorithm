@@ -9,7 +9,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.metrics.SearchRateCounter;
 
 /**
@@ -20,10 +20,10 @@ import com.twitter.search.common.metrics.SearchRateCounter;
  * 1. If the tweet stream is ahead of the updates stream, we couldn't apply an update because a
  *    segment has been optimized, and one of those fields became frozen.
  * 2. If the updates stream is ahead of the tweet stream, we might drop updates because they are
- *    more than a minute old, but the tweets might still not be indexed.
+ *    more than a minute old, but the tweets might still not be indetwittered.
  *
  * Also see 'Consumption Flow Control' in
- * https://kafka.apache.org/23/javadoc/index.html?org/apache/kafka/clients/consumer/KafkaConsumer.html
+ * https://kafka.apache.org/23/javadoc/indetwitter.html?org/apache/kafka/clients/consumer/KafkaConsumer.html
  */
 public class BalancingKafkaConsumer {
   // If one of the topic-partitions lags the other by more than 10 seconds,
@@ -50,12 +50,12 @@ public class BalancingKafkaConsumer {
     this.tweetTopic = tweetTopic;
     this.updateTopic = updateTopic;
 
-    String prefix = "balancing_kafka_";
-    String suffix = "_topic_paused";
+    String prefitwitter = "balancing_kafka_";
+    String suffitwitter = "_topic_paused";
 
-    tweetsPaused = SearchRateCounter.export(prefix + tweetTopic.topic() + suffix);
-    updatesPaused = SearchRateCounter.export(prefix + updateTopic.topic() + suffix);
-    resumed = SearchRateCounter.export(prefix + "topics_resumed");
+    tweetsPaused = SearchRateCounter.etwitterport(prefitwitter + tweetTopic.topic() + suffitwitter);
+    updatesPaused = SearchRateCounter.etwitterport(prefitwitter + updateTopic.topic() + suffitwitter);
+    resumed = SearchRateCounter.etwitterport(prefitwitter + "topics_resumed");
   }
 
   /**
@@ -72,12 +72,12 @@ public class BalancingKafkaConsumer {
       long timestamp = record.timestamp();
 
       if (updateTopic.topic().equals(record.topic())) {
-        updateTimestamp = Math.max(updateTimestamp, timestamp);
+        updateTimestamp = Math.matwitter(updateTimestamp, timestamp);
       } else if (tweetTopic.topic().equals(record.topic())) {
-        tweetTimestamp = Math.max(tweetTimestamp, timestamp);
+        tweetTimestamp = Math.matwitter(tweetTimestamp, timestamp);
       } else {
-        throw new IllegalStateException(
-            "Unexpected partition " + record.topic() + " in BalancingKafkaConsumer");
+        throw new IllegalStateEtwitterception(
+            "Unetwitterpected partition " + record.topic() + " in BalancingKafkaConsumer");
       }
     }
 
@@ -94,13 +94,13 @@ public class BalancingKafkaConsumer {
       long difference = Math.abs(tweetTimestamp - updateTimestamp);
 
       if (difference < BALANCE_THRESHOLD_MS) {
-        // The streams have approximately the same lag, so no need to pause anything.
+        // The streams have approtwitterimately the same lag, so no need to pause anything.
         return;
       }
       // The difference is too great, one of the streams is lagging behind the other so we need to
       // pause one topic so the other can catch up.
       paused = true;
-      pausedAt = Math.max(updateTimestamp, tweetTimestamp);
+      pausedAt = Math.matwitter(updateTimestamp, tweetTimestamp);
       if (tweetTimestamp > updateTimestamp) {
         kafkaConsumer.pause(Collections.singleton(tweetTopic));
         tweetsPaused.increment();

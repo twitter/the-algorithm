@@ -4,7 +4,7 @@ import com.twitter.ads.spendserver.thriftscala.SpendServerEvent
 import com.twitter.unified_user_actions.thriftscala._
 
 abstract class BaseTrendAdsCallbackEngagement(actionType: ActionType)
-    extends BaseAdsCallbackEngagement(actionType = actionType) {
+    etwittertends BaseAdsCallbackEngagement(actionType = actionType) {
 
   override protected def getItem(input: SpendServerEvent): Option[Item] = {
     input.engagementEvent.flatMap { e =>

@@ -9,7 +9,7 @@ import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
 trait ClusterRepresentativeSelectionMethod[T] {
 
   /**
-   * The main external-facing method. Sub-classes should implement this method.
+   * The main etwitterternal-facing method. Sub-classes should implement this method.
    *
    * @param cluster A set of NeighborWithWeights.
    * @param embeddings A map of producer ID -> embedding.

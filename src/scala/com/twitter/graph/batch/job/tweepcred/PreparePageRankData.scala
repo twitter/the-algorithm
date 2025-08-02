@@ -29,16 +29,16 @@ import java.util.TimeZone
  * --flock_edges_only: restrict graph to flock edges, default true
  * --input_pagerank: continue pagerank from this
  *
- * Plus the following options for WeightedPageRank and ExtractTweepcred:
+ * Plus the following options for WeightedPageRank and EtwittertractTweepcred:
  * --output_pagerank: where to put pagerank file
  * --output_tweepcred: where to put tweepcred file
  * Optional:
- * --maxiterations: how many iterations to run.  Default is 20
+ * --matwitteriterations: how many iterations to run.  Default is 20
  * --jumpprob: probability of a random jump, default is 0.1
  * --threshold: total difference before finishing early, default 0.001
  * --post_adjust: whether to do post adjust, default true
  */
-class PreparePageRankData(args: Args) extends Job(args) {
+class PreparePageRankData(args: Args) etwittertends Job(args) {
   implicit val timeZone: TimeZone = DateOps.UTC
   val PWD = args("pwd")
   val WEIGHTED = args.getOrElse("weighted", "false").toBoolean
@@ -58,7 +58,7 @@ class PreparePageRankData(args: Args) extends Job(args) {
   generateInitialPagerank(nodesWithPrior)
 
   // continue with the calculation
-  override def next = {
+  override def netwittert = {
     Some(new WeightedPageRank(args))
   }
 
@@ -117,7 +117,7 @@ class PreparePageRankData(args: Args) extends Job(args) {
       val combined = (flockWithWeight ++ realGraph)
         .groupBy('src_id, 'dst_id) {
           _.min('rowtype)
-            .max('weight) // take whichever is bigger
+            .matwitter('weight) // take whichever is bigger
         }
 
       if (FLOCK_EDGES_ONLY) {
@@ -164,7 +164,7 @@ class PreparePageRankData(args: Args) extends Job(args) {
    *
    * make sure src_id is the same set as in user_mass, and dst_ids
    * are subset of user_mass. eg flock has edges like 1->2,
-   * where both users 1 and 2 do not exist anymore
+   * where both users 1 and 2 do not etwitterist anymore
    */
   def getGraphData(userMass: RichPipe) = {
     val edges: RichPipe = args.optional("input") match {
@@ -261,7 +261,7 @@ class PreparePageRankData(args: Args) extends Job(args) {
               .last('mass_prior)
               .head('rowtype)
           }
-          // throw away extra nodes from input file
+          // throw away etwittertra nodes from input file
           .filter('rowtype) { (rowtype: Int) =>
             rowtype == ROW_TYPE_1
           }

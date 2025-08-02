@@ -6,7 +6,7 @@
 using namespace tensorflow;
 
 REGISTER_OP("NumIntraOpThreads")
-.Input("x: float32")
+.Input("twitter: float32")
 .Output("num_intra_op_threads: int32")
 .SetShapeFn(tensorflow::shape_inference::ScalarShape)
 .Doc(R"doc(
@@ -14,7 +14,7 @@ A tensorflow OP that returns the number of threads in the intra_op_parallelism p
 This is not part of the Tensorflow API as of the date of writing this doc. Hence,
 a tensorflow operation is the best resort.
 Input
-  x: Dummy placeholder so that constant folding is not done by TF GraphOptimizer.
+  twitter: Dummy placeholder so that constant folding is not done by TF GraphOptimizer.
   Please refer https://github.com/tensorflow/tensorflow/issues/22546 for more
   details.
 Output
@@ -24,13 +24,13 @@ Output
 
 class NumIntraOpThreads : public OpKernel {
  public:
-  explicit NumIntraOpThreads(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  etwitterplicit NumIntraOpThreads(OpKernelConstruction* contetwittert)
+      : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
-    int num_intra_op_threads = context->device()->tensorflow_cpu_worker_threads()->num_threads;
+  void Compute(OpKernelContetwittert* contetwittert) override {
+    int num_intra_op_threads = contetwittert->device()->tensorflow_cpu_worker_threads()->num_threads;
     Tensor* output_tensor = NULL;
-    OP_REQUIRES_OK(context, context->allocate_output(0, TensorShape({}), &output_tensor));
+    OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, TensorShape({}), &output_tensor));
     auto output_flat = output_tensor->flat<int32>();
     output_flat(0) = num_intra_op_threads;
     }

@@ -20,7 +20,7 @@ object Timeline {
   def throwIfIdInvalid(id: TimelineId): Unit = {
     // Note: if we support timelines other than TimelineKind.home, we need to update
     //       the implementation of userId method here and in TimelineQuery class.
-    require(id.kind == TimelineKind.home, s"Expected TimelineKind.home, found: ${id.kind}")
+    require(id.kind == TimelineKind.home, s"Etwitterpected TimelineKind.home, found: ${id.kind}")
   }
 }
 

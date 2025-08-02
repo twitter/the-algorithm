@@ -2,7 +2,7 @@ package com.twitter.graph_feature_service.server
 
 import com.google.inject.Module
 import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.mtls.thriftmux.Mtls
+import com.twitter.finatra.mtls.thriftmutwitter.Mtls
 import com.twitter.finatra.thrift.ThriftServer
 import com.twitter.finatra.thrift.filters.{
   AccessLoggingFilter,
@@ -11,7 +11,7 @@ import com.twitter.finatra.thrift.filters.{
   ThriftMDCFilter,
   TraceIdMDCFilter
 }
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
+import com.twitter.finatra.mtls.thriftmutwitter.modules.MtlsThriftWebFormsModule
 import com.twitter.finatra.thrift.routing.ThriftRouter
 import com.twitter.graph_feature_service.server.controllers.ServerController
 import com.twitter.graph_feature_service.server.handlers.ServerWarmupHandler
@@ -23,9 +23,9 @@ import com.twitter.graph_feature_service.server.modules.{
 import com.twitter.graph_feature_service.thriftscala
 import com.twitter.inject.thrift.modules.ThriftClientIdModule
 
-object Main extends ServerMain
+object Main etwittertends ServerMain
 
-class ServerMain extends ThriftServer with Mtls {
+class ServerMain etwittertends ThriftServer with Mtls {
 
   override val name = "graph_feature_service-server"
 

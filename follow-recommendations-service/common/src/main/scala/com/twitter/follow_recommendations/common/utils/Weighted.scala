@@ -9,7 +9,7 @@ trait Weighted[-Rec] {
 }
 
 object Weighted {
-  implicit object WeightedTuple extends Weighted[(_, Double)] {
+  implicit object WeightedTuple etwittertends Weighted[(_, Double)] {
     override def apply(rec: (_, Double)): Double = rec._2
   }
 

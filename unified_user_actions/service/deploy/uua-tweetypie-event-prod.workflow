@@ -12,7 +12,7 @@
     "dependencies": [
       {
         "role": "packer",
-        "name": "packer-client-no-pex",
+        "name": "packer-client-no-petwitter",
         "version": "latest"
       }
     ],
@@ -39,8 +39,8 @@
           "key": "atla/discode/prod/uua-tweetypie-event"
         },
         {
-          "name": "uua-tweetypie-event-prod-pdxa",
-          "key": "pdxa/discode/prod/uua-tweetypie-event"
+          "name": "uua-tweetypie-event-prod-pdtwittera",
+          "key": "pdtwittera/discode/prod/uua-tweetypie-event"
         }
       ]
     }

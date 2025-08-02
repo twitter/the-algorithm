@@ -36,7 +36,7 @@ object SimpleReplicatingCache {
  * in the replication case.  Specifically: add and checkAndSet.
  */
 class SimpleReplicatingCache[K, V](underlyingCaches: Seq[LockingCache[K, Cached[V]]])
-    extends LockingCache[K, Cached[V]] {
+    etwittertends LockingCache[K, Cached[V]] {
   private type CsValue = (Try[Cached[V]], Checksum)
 
   private val cachedOrdering = new Ordering[Cached[V]] {
@@ -114,21 +114,21 @@ class SimpleReplicatingCache[K, V](underlyingCaches: Seq[LockingCache[K, Cached[
     key: K,
     keyResults: Seq[Try[Option[CsValue]]]
   ): Try[Option[CsValue]] = {
-    val max = keyResults.max(tryOptionCsValueOrdering)
+    val matwitter = keyResults.matwitter(tryOptionCsValueOrdering)
 
-    max match {
+    matwitter match {
       // if one of the replication keys returned a cached value, then make sure all replication
       // keys contain that cached value.
       case Return(Some((Return(cached), cs))) =>
         for ((underlying, keyResult) <- underlyingCaches zip keyResults) {
-          if (keyResult != max) {
+          if (keyResult != matwitter) {
             replicate(key, cached, keyResult, underlying)
           }
         }
       case _ =>
     }
 
-    max
+    matwitter
   }
 
   private def replicate(
@@ -154,19 +154,19 @@ class SimpleReplicatingCache[K, V](underlyingCaches: Seq[LockingCache[K, Cached[
    * Currently not supported.  Use set or lockAndSet.
    */
   def add(key: K, value: Cached[V]): Future[Boolean] = {
-    Future.exception(new UnsupportedOperationException("use set or lockAndSet"))
+    Future.etwitterception(new UnsupportedOperationEtwitterception("use set or lockAndSet"))
   }
 
   /**
    * Currently not supported.
    */
   def checkAndSet(key: K, value: Cached[V], checksum: Checksum): Future[Boolean] = {
-    Future.exception(new UnsupportedOperationException("use set or lockAndSet"))
+    Future.etwitterception(new UnsupportedOperationEtwitterception("use set or lockAndSet"))
   }
 
   /**
    * Calls set on all underlying caches.  If at least one set succeeds, Future.Unit is
-   * returned.  If all fail, a Future.exception will be returned.
+   * returned.  If all fail, a Future.etwitterception will be returned.
    */
   def set(key: K, value: Cached[V]): Future[Unit] = {
     liftAndCollect {
@@ -174,7 +174,7 @@ class SimpleReplicatingCache[K, V](underlyingCaches: Seq[LockingCache[K, Cached[
     } flatMap { seqTryUnits =>
       // return Future.Unit if any underlying call succeeded, otherwise return
       // the first failure.
-      if (seqTryUnits exists { _.isReturn })
+      if (seqTryUnits etwitterists { _.isReturn })
         Future.Unit
       else
         Future.const(seqTryUnits.head)
@@ -189,7 +189,7 @@ class SimpleReplicatingCache[K, V](underlyingCaches: Seq[LockingCache[K, Cached[
     liftAndCollect {
       underlyingCaches map { _.lockAndSet(key, handler) }
     } flatMap { seqTryOptionCached =>
-      Future.const(seqTryOptionCached.max(tryOptionCachedOrdering))
+      Future.const(seqTryOptionCached.matwitter(tryOptionCachedOrdering))
     }
   }
 

@@ -26,7 +26,7 @@ import com.twitter.onboarding.relevance.features.thriftscala.MCUserCountingFeatu
 import java.lang.{Long => JLong}
 import scala.util.Random
 
-object HydrationSourcesModule extends TwitterModule {
+object HydrationSourcesModule etwittertends TwitterModule {
 
   val readFromManhattan = flag(
     "feature_hydration_enable_reading_from_manhattan",
@@ -56,9 +56,9 @@ object HydrationSourcesModule extends TwitterModule {
   }
 
   val manhattanAuthorDataset = "timelines_author_features"
-  private val defaultCacheMaxKeys = 60000
+  private val defaultCacheMatwitterKeys = 60000
   private val cacheTTL = 12.hours
-  private val earlyExpiration = 0.2
+  private val earlyEtwitterpiration = 0.2
 
   val authorKeyDesc = KeyDescriptor(Component(LongInjection), Component0)
   val authorDatasetKey = authorKeyDesc.withDataset(manhattanAuthorDataset)
@@ -102,7 +102,7 @@ object HydrationSourcesModule extends TwitterModule {
 
     StitchCache[JLong, Option[AuthorFeatures]](
       underlyingCall = timelinesAuthorUnderlyingCall,
-      maxCacheSize = defaultCacheMaxKeys,
+      matwitterCacheSize = defaultCacheMatwitterKeys,
       ttl = randomizedTTL(cacheTTL.inSeconds).seconds,
       statsReceiver = stitchCacheStats
     )
@@ -133,7 +133,7 @@ object HydrationSourcesModule extends TwitterModule {
 
     StitchCache[JLong, Option[MCUserCountingFeatures]](
       underlyingCall = mcUserCountingCacheUnderlyingCall,
-      maxCacheSize = defaultCacheMaxKeys,
+      matwitterCacheSize = defaultCacheMatwitterKeys,
       ttl = randomizedTTL(cacheTTL.inSeconds).seconds,
       statsReceiver = stitchCacheStats
     )
@@ -147,6 +147,6 @@ object HydrationSourcesModule extends TwitterModule {
 
   // To avoid a cache stampede. See https://en.wikipedia.org/wiki/Cache_stampede
   private def randomizedTTL(ttl: Long): Long = {
-    (ttl - ttl * earlyExpiration * Random.nextDouble()).toLong
+    (ttl - ttl * earlyEtwitterpiration * Random.netwittertDouble()).toLong
   }
 }

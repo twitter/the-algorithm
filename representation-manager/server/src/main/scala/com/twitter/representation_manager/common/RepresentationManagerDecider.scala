@@ -4,7 +4,7 @@ import com.twitter.decider.Decider
 import com.twitter.decider.RandomRecipient
 import com.twitter.decider.Recipient
 import com.twitter.simclusters_v2.common.DeciderGateBuilderWithIdHashing
-import javax.inject.Inject
+import javatwitter.inject.Inject
 
 case class RepresentationManagerDecider @Inject() (decider: Decider) {
 

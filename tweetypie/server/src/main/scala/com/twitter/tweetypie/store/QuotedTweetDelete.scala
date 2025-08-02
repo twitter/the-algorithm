@@ -3,7 +3,7 @@ package store
 
 import com.twitter.tweetypie.thriftscala._
 
-object QuotedTweetDelete extends TweetStore.SyncModule {
+object QuotedTweetDelete etwittertends TweetStore.SyncModule {
 
   case class Event(
     quotingTweetId: TweetId,
@@ -12,7 +12,7 @@ object QuotedTweetDelete extends TweetStore.SyncModule {
     quotedUserId: UserId,
     timestamp: Time,
     optUser: Option[User] = None)
-      extends SyncTweetStoreEvent("quoted_tweet_delete")
+      etwittertends SyncTweetStoreEvent("quoted_tweet_delete")
       with TweetStoreTweetEvent {
 
     override def toTweetEventData: Seq[TweetEventData] =
@@ -32,7 +32,7 @@ object QuotedTweetDelete extends TweetStore.SyncModule {
     val quotedTweetDelete: FutureEffect[Event]
   }
 
-  trait StoreWrapper extends Store { self: TweetStoreWrapper[Store] =>
+  trait StoreWrapper etwittertends Store { self: TweetStoreWrapper[Store] =>
     override val quotedTweetDelete: FutureEffect[Event] = wrap(underlying.quotedTweetDelete)
   }
 

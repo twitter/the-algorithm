@@ -7,7 +7,7 @@ object TimelineRange {
     range match {
       case thrift.TimelineRange.TimeRange(r) => TimeRange.fromThrift(r)
       case thrift.TimelineRange.TweetIdRange(r) => TweetIdRange.fromThrift(r)
-      case _ => throw new IllegalArgumentException(s"Unsupported type: $range")
+      case _ => throw new IllegalArgumentEtwitterception(s"Unsupported type: $range")
     }
   }
 }

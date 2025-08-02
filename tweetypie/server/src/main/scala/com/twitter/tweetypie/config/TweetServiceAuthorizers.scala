@@ -4,7 +4,7 @@ package config
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.finagle.mtls.transport.S2STransport
 import com.twitter.servo.gate.RateLimitingGate
-import com.twitter.servo.request.ClientRequestAuthorizer.UnauthorizedException
+import com.twitter.servo.request.ClientRequestAuthorizer.UnauthorizedEtwitterception
 import com.twitter.servo.request.{ClientRequestAuthorizer, ClientRequestObserver}
 import com.twitter.tweetypie.client_id.ClientIdHelper
 import com.twitter.tweetypie.client_id.PreferForwardedServiceIdentifierForStrato
@@ -18,8 +18,8 @@ import com.twitter.util.Future
  * ClientHandlingTweetService
  */
 object ClientHandlingTweetServiceAuthorizer {
-  private val RateLimitExceeded =
-    RateLimited("Your ClientId has exceeded the rate limit for non-allowListed clients.")
+  private val RateLimitEtwitterceeded =
+    RateLimited("Your ClientId has etwitterceeded the rate limit for non-allowListed clients.")
 
   def apply(
     settings: TweetServiceSettings,
@@ -106,14 +106,14 @@ object ClientHandlingTweetServiceAuthorizer {
       { (_, clientId) =>
         dynamicConfig.isAllowListedClient(clientId) || nonAllowListedLimiter()
       },
-      RateLimitExceeded)
+      RateLimitEtwitterceeded)
 
   /**
    * @return A ClientRequestAuthorizer that rejects requests from non-allowListed prod clients.
    */
   def rejectNonAllowListedProdAuthorizer(dynamicConfig: DynamicConfig): ClientRequestAuthorizer = {
-    object UnallowlistedException
-        extends UnauthorizedException(
+    object UnallowlistedEtwitterception
+        etwittertends UnauthorizedEtwitterception(
           "Traffic is only allowed from allow-listed *.prod clients." +
             " Please create a ticket to register your clientId to enable production traffic using http://go/tp-new-client."
         )
@@ -125,7 +125,7 @@ object ClientHandlingTweetServiceAuthorizer {
       { (_, clientId) =>
         !isProdClient(clientId) || dynamicConfig.isAllowListedClient(clientId)
       },
-      UnallowlistedException)
+      UnallowlistedEtwitterception)
   }
 
   /**
@@ -173,19 +173,19 @@ object GetTweetsAuthorizer {
 
   def apply(
     config: DynamicConfig,
-    maxRequestSize: Int,
+    matwitterRequestSize: Int,
     instanceCount: Int,
     enforceRateLimitedClients: Gate[Unit],
-    maxRequestWidthEnabled: Gate[Unit],
+    matwitterRequestWidthEnabled: Gate[Unit],
     statsReceiver: StatsReceiver,
   ): MethodAuthorizer[GetTweetsRequest] =
     MethodAuthorizer.all(
       Seq(
         ProtectedTweetsAuthorizer(config.clientsByFullyQualifiedId)
           .contramap[GetTweetsRequest] { r =>
-            IncludeProtected(r.options.exists(_.bypassVisibilityFiltering))
+            IncludeProtected(r.options.etwitterists(_.bypassVisibilityFiltering))
           },
-        RequestSizeAuthorizer(maxRequestSize, maxRequestWidthEnabled)
+        RequestSizeAuthorizer(matwitterRequestSize, matwitterRequestWidthEnabled)
           .contramap[GetTweetsRequest](_.tweetIds.size),
         RateLimiterAuthorizer(config, instanceCount, enforceRateLimitedClients, statsReceiver)
           .contramap[GetTweetsRequest](_.tweetIds.size)
@@ -201,10 +201,10 @@ object GetTweetFieldsAuthorizer {
 
   def apply(
     config: DynamicConfig,
-    maxRequestSize: Int,
+    matwitterRequestSize: Int,
     instanceCount: Int,
     enforceRateLimitedClients: Gate[Unit],
-    maxRequestWidthEnabled: Gate[Unit],
+    matwitterRequestWidthEnabled: Gate[Unit],
     statsReceiver: StatsReceiver
   ): MethodAuthorizer[GetTweetFieldsRequest] =
     MethodAuthorizer.all(
@@ -212,7 +212,7 @@ object GetTweetFieldsAuthorizer {
         ProtectedTweetsAuthorizer(config.clientsByFullyQualifiedId)
           .contramap[GetTweetFieldsRequest](r =>
             IncludeProtected(r.options.visibilityPolicy == TweetVisibilityPolicy.NoFiltering)),
-        RequestSizeAuthorizer(maxRequestSize, maxRequestWidthEnabled)
+        RequestSizeAuthorizer(matwitterRequestSize, matwitterRequestWidthEnabled)
           .contramap[GetTweetFieldsRequest](_.tweetIds.size),
         RateLimiterAuthorizer(config, instanceCount, enforceRateLimitedClients, statsReceiver)
           .contramap[GetTweetFieldsRequest](_.tweetIds.size)
@@ -221,10 +221,10 @@ object GetTweetFieldsAuthorizer {
 }
 
 object ProtectedTweetsAuthorizer {
-  case class IncludeProtected(include: Boolean) extends AnyVal
+  case class IncludeProtected(include: Boolean) etwittertends AnyVal
 
-  class BypassVisibilityFilteringNotAuthorizedException(message: String)
-      extends UnauthorizedException(message)
+  class BypassVisibilityFilteringNotAuthorizedEtwitterception(message: String)
+      etwittertends UnauthorizedEtwitterception(message)
 
   def apply(optClientsById: Option[Map[String, Client]]): MethodAuthorizer[IncludeProtected] = {
     optClientsById match {
@@ -248,8 +248,8 @@ object ProtectedTweetsAuthorizer {
       // There is only one unauthorized case, a client requesting
       // protected tweets when they are not in the allowlist
       Future.when(includeProtected.include && !protectedTweetsAllowlist(clientId)) {
-        Future.exception(
-          new BypassVisibilityFilteringNotAuthorizedException(
+        Future.etwitterception(
+          new BypassVisibilityFilteringNotAuthorizedEtwitterception(
             s"$clientId is not authorized to bypass visibility filtering"
           )
         )
@@ -261,17 +261,17 @@ object ProtectedTweetsAuthorizer {
  * A MethodAuthorizer[Int] that fails large requests.
  */
 object RequestSizeAuthorizer {
-  class ExceededMaxWidthException(message: String) extends UnauthorizedException(message)
+  class EtwitterceededMatwitterWidthEtwitterception(message: String) etwittertends UnauthorizedEtwitterception(message)
 
   def apply(
-    maxRequestSize: Int,
-    maxWidthLimitEnabled: Gate[Unit] = Gate.False
+    matwitterRequestSize: Int,
+    matwitterWidthLimitEnabled: Gate[Unit] = Gate.False
   ): MethodAuthorizer[Int] =
     MethodAuthorizer { (requestSize, clientId) =>
-      Future.when(requestSize > maxRequestSize && maxWidthLimitEnabled()) {
-        Future.exception(
-          new ExceededMaxWidthException(
-            s"$requestSize exceeds bulk request size limit. $clientId can request at most $maxRequestSize items per request"
+      Future.when(requestSize > matwitterRequestSize && matwitterWidthLimitEnabled()) {
+        Future.etwitterception(
+          new EtwitterceededMatwitterWidthEtwitterception(
+            s"$requestSize etwitterceeds bulk request size limit. $clientId can request at most $matwitterRequestSize items per request"
           )
         )
       }
@@ -294,22 +294,22 @@ object RateLimiterAuthorizer {
    * Therefore, we are over-compensating perInstanceQuota for all low-priority clients.
    * this will act a fudge-factor to account for cluster-wide traffic imbalances.
    *
-   * val perInstanceQuota : Double = math.max(1.0, math.ceil(tpsLimit.toFloat / instanceCount))
+   * val perInstanceQuota : Double = math.matwitter(1.0, math.ceil(tpsLimit.toFloat / instanceCount))
    *
-   * We have some clients like deferredRPC with 0K tps quota and rate limiter expects > 0 permits.
+   * We have some clients like deferredRPC with 0K tps quota and rate limiter etwitterpects > 0 permits.
    *
    * [2] if a client has multiple environments - staging, devel, prod. We provision the
    * same rate-limits for all envs instead of distributing the tps quota across envs.
    *
-   * Example:
+   * Etwitterample:
    *
    * val c = Client(..., limit = 10k, ...)
    * Map("foo.prod" -> c, "foo.staging" -> c, "foo.devel" -> c)
    *
    * Above client config turns into 3 separate RateLimitingGate.weighted(), each with 10k
    *
-   * [3] RateLimitingGate will always give permit to the initial request that exceeds
-   * the limit. ex: starting with rate-limit of 1 tps per instance. first request with
+   * [3] RateLimitingGate will always give permit to the initial request that etwitterceeds
+   * the limit. etwitter: starting with rate-limit of 1 tps per instance. first request with
    * 100 batch size is allowed.
    *
    * RateLimitFudgeFactor is a multiplier for per-instance quota to account for:
@@ -335,7 +335,7 @@ object RateLimiterAuthorizer {
         clients.collect {
           case (clientId, client) if client.tpsLimit.isDefined =>
             val perInstanceQuota: Double =
-              math.max(
+              math.matwitter(
                 1.0,
                 math.ceil(
                   client.tpsLimit.get.toFloat / instanceCount)) * RateLimitFudgeFactor + DefaultStitchBatchSize
@@ -361,27 +361,27 @@ object RateLimiterAuthorizer {
     statsReceiver: StatsReceiver
   ): MethodAuthorizer[Int] = {
 
-    val tpsExceededScope = statsReceiver.scope("tps_exceeded")
+    val tpsEtwitterceededScope = statsReceiver.scope("tps_etwitterceeded")
     val tpsRejectedScope = statsReceiver.scope("tps_rejected")
-    val qpsExceededScope = statsReceiver.scope("qps_exceeded")
+    val qpsEtwitterceededScope = statsReceiver.scope("qps_etwitterceeded")
     val qpsRejectedScope = statsReceiver.scope("qps_rejected")
 
     MethodAuthorizer { (requestSize, clientId) =>
-      val positiveRequestSize = math.max(1, requestSize)
-      val shouldRateLimit: Boolean = limiters.get(clientId).exists { config =>
-        val exceededLimit = !config.limitingGate(positiveRequestSize)
-        if (exceededLimit) {
-          qpsExceededScope.counter(clientId).incr()
-          tpsExceededScope.counter(clientId).incr(positiveRequestSize)
+      val positiveRequestSize = math.matwitter(1, requestSize)
+      val shouldRateLimit: Boolean = limiters.get(clientId).etwitterists { config =>
+        val etwitterceededLimit = !config.limitingGate(positiveRequestSize)
+        if (etwitterceededLimit) {
+          qpsEtwitterceededScope.counter(clientId).incr()
+          tpsEtwitterceededScope.counter(clientId).incr(positiveRequestSize)
         }
-        exceededLimit && config.enforceRateLimit
+        etwitterceededLimit && config.enforceRateLimit
       }
 
       Future.when(shouldRateLimit && enforceRateLimitedClients()) {
         qpsRejectedScope.counter(clientId).incr()
         tpsRejectedScope.counter(clientId).incr(positiveRequestSize)
-        Future.exception(
-          RateLimited(s"Your client ID $clientId has exceeded its reserved tps quota.")
+        Future.etwitterception(
+          RateLimited(s"Your client ID $clientId has etwitterceeded its reserved tps quota.")
         )
       }
     }

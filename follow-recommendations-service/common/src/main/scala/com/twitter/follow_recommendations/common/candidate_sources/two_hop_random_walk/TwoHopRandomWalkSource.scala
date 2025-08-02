@@ -4,12 +4,12 @@ import com.twitter.follow_recommendations.common.candidate_sources.base.StratoFe
 import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
 import com.twitter.follow_recommendations.common.models.CandidateUser
 import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twitter.product_mitwitterer.core.model.common.identifier.CandidateSourceIdentifier
 import com.twitter.strato.client.Fetcher
 import com.twitter.wtf.candidate.thriftscala.{CandidateSeq => TCandidateSeq}
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Named
+import javatwitter.inject.Singleton
 
 @Singleton
 class TwoHopRandomWalkSource @Inject() (
@@ -17,7 +17,7 @@ class TwoHopRandomWalkSource @Inject() (
     Long,
     Unit,
     TCandidateSeq
-  ]) extends StratoFetcherWithUnitViewSource[Long, TCandidateSeq](
+  ]) etwittertends StratoFetcherWithUnitViewSource[Long, TCandidateSeq](
       fetcher,
       TwoHopRandomWalkSource.Identifier) {
 

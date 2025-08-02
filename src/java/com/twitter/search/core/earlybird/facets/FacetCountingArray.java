@@ -1,6 +1,6 @@
 package com.twitter.search.core.earlybird.facets;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Map;
 
 import com.google.common.base.Preconditions;
@@ -12,12 +12,12 @@ import com.twitter.search.common.util.io.flushable.DataDeserializer;
 import com.twitter.search.common.util.io.flushable.DataSerializer;
 import com.twitter.search.common.util.io.flushable.FlushInfo;
 import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
+import com.twitter.search.core.earlybird.indetwitter.DocIDToTweetIDMapper;
+import com.twitter.search.core.earlybird.indetwitter.inverted.IntBlockPool;
 
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 
-public class FacetCountingArray extends AbstractFacetCountingArray {
+public class FacetCountingArray etwittertends AbstractFacetCountingArray {
   private static final Logger LOG = LoggerFactory.getLogger(FacetCountingArray.class);
 
   private final Int2IntOpenHashMap facetsMap;
@@ -25,9 +25,9 @@ public class FacetCountingArray extends AbstractFacetCountingArray {
   /**
    * Creates a new, empty FacetCountingArray with the given size.
    */
-  public FacetCountingArray(int maxSegmentSize) {
+  public FacetCountingArray(int matwitterSegmentSize) {
     super();
-    facetsMap = new Int2IntOpenHashMap(maxSegmentSize);
+    facetsMap = new Int2IntOpenHashMap(matwitterSegmentSize);
     facetsMap.defaultReturnValue(UNASSIGNED);
   }
 
@@ -50,15 +50,15 @@ public class FacetCountingArray extends AbstractFacetCountingArray {
   public AbstractFacetCountingArray rewriteAndMapIDs(
       Map<Integer, int[]> termIDMapper,
       DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
+      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOEtwitterception {
     Preconditions.checkNotNull(originalTweetIdMapper);
     Preconditions.checkNotNull(optimizedTweetIdMapper);
 
     // We need to rewrite the facet array, because the term ids have to be mapped to the
     // key space of the minimum perfect hash function that replaces the hash table.
     // We also need to remap tweet IDs to the optimized doc IDs.
-    int maxDocID = optimizedTweetIdMapper.getPreviousDocID(Integer.MAX_VALUE);
-    AbstractFacetCountingArray newArray = new OptimizedFacetCountingArray(maxDocID + 1);
+    int matwitterDocID = optimizedTweetIdMapper.getPreviousDocID(Integer.MAtwitter_VALUE);
+    AbstractFacetCountingArray newArray = new OptimizedFacetCountingArray(matwitterDocID + 1);
     final FacetCountingArrayWriter writer = new FacetCountingArrayWriter(newArray);
     FacetCountIterator iterator = new ArrayFacetCountIterator() {
       @Override
@@ -67,15 +67,15 @@ public class FacetCountingArray extends AbstractFacetCountingArray {
         int mappedTermID;
         // If there isn't a map for this term, we are using the original term IDs and can continue
         // with that term ID. If there is a term ID map, then we need to use the new term ID,
-        // because the new index will use an MPH term dictionary with new term IDs.
+        // because the new indetwitter will use an MPH term dictionary with new term IDs.
         if (termIDMap == null) {
           mappedTermID = (int) termID;
         } else if (termID < termIDMap.length) {
           mappedTermID = termIDMap[(int) termID];
         } else {
-          // During segment optimization we might index a new term after the termIDMap is created
-          // in IndexOptimizer.optimizeInvertedIndexes(). We can safely ignore these terms, as
-          // they will be re-indexed later.
+          // During segment optimization we might indetwitter a new term after the termIDMap is created
+          // in IndetwitterOptimizer.optimizeInvertedIndetwitteres(). We can safely ignore these terms, as
+          // they will be re-indetwittered later.
           return false;
         }
 
@@ -87,8 +87,8 @@ public class FacetCountingArray extends AbstractFacetCountingArray {
                                    + newDocId + ", tweet ID " + tweetId);
 
           writer.addFacet(newDocId, fieldID, mappedTermID);
-        } catch (IOException e) {
-          LOG.error("Caught an unexpected IOException while optimizing facet.", e);
+        } catch (IOEtwitterception e) {
+          LOG.error("Caught an unetwitterpected IOEtwitterception while optimizing facet.", e);
         }
 
         return true;
@@ -100,7 +100,7 @@ public class FacetCountingArray extends AbstractFacetCountingArray {
     // However, the optimized mapper should be sorted both by tweet IDs and by doc IDs (in reverse
     // order). So we need to iterate here over the doc IDs in the optimized mapper, convert them
     // to doc IDs in the original mapper, and pass those doc IDs to collect().
-    int docId = optimizedTweetIdMapper.getPreviousDocID(Integer.MAX_VALUE);
+    int docId = optimizedTweetIdMapper.getPreviousDocID(Integer.MAtwitter_VALUE);
     while (docId != DocIDToTweetIDMapper.ID_NOT_FOUND) {
       long tweetId = optimizedTweetIdMapper.getTweetID(docId);
       int originalDocId = originalTweetIdMapper.getDocID(tweetId);
@@ -115,21 +115,21 @@ public class FacetCountingArray extends AbstractFacetCountingArray {
     return new FlushHandler(this);
   }
 
-  public static final class FlushHandler extends Flushable.Handler<FacetCountingArray> {
+  public static final class FlushHandler etwittertends Flushable.Handler<FacetCountingArray> {
     private static final String FACETS_POOL_PROP_NAME = "facetsPool";
-    private final int maxSegmentSize;
+    private final int matwitterSegmentSize;
 
-    public FlushHandler(int maxSegmentSize) {
-      this.maxSegmentSize = maxSegmentSize;
+    public FlushHandler(int matwitterSegmentSize) {
+      this.matwitterSegmentSize = matwitterSegmentSize;
     }
 
     public FlushHandler(FacetCountingArray objectToFlush) {
       super(objectToFlush);
-      maxSegmentSize = -1;
+      matwitterSegmentSize = -1;
     }
 
     @Override
-    public void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
+    public void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOEtwitterception {
       FacetCountingArray array = getObjectToFlush();
       out.writeInt(array.facetsMap.size());
       for (Int2IntOpenHashMap.Entry entry : array.facetsMap.int2IntEntrySet()) {
@@ -141,9 +141,9 @@ public class FacetCountingArray extends AbstractFacetCountingArray {
     }
 
     @Override
-    public FacetCountingArray doLoad(FlushInfo flushInfo, DataDeserializer in) throws IOException {
+    public FacetCountingArray doLoad(FlushInfo flushInfo, DataDeserializer in) throws IOEtwitterception {
       int size = in.readInt();
-      Int2IntOpenHashMap facetsMap = new Int2IntOpenHashMap(maxSegmentSize);
+      Int2IntOpenHashMap facetsMap = new Int2IntOpenHashMap(matwitterSegmentSize);
       facetsMap.defaultReturnValue(UNASSIGNED);
       for (int i = 0; i < size; i++) {
         facetsMap.put(in.readInt(), in.readInt());

@@ -9,7 +9,7 @@ import com.twitter.unified_user_actions.adapter.common.AdapterUtils
 import com.twitter.unified_user_actions.thriftscala._
 
 class FavoriteArchivalEventsAdapter
-    extends AbstractAdapter[FavoriteArchivalEvent, UnKeyed, UnifiedUserAction] {
+    etwittertends AbstractAdapter[FavoriteArchivalEvent, UnKeyed, UnifiedUserAction] {
 
   import FavoriteArchivalEventsAdapter._
   override def adaptOneToKeyedMany(

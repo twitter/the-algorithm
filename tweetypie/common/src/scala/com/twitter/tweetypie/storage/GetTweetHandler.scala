@@ -8,8 +8,8 @@ import com.twitter.logging.Logger
 import com.twitter.snowflake.id.SnowflakeId
 import com.twitter.stitch.Stitch
 import com.twitter.stitch.StitchSeqGroup
-import com.twitter.storage.client.manhattan.kv.DeniedManhattanException
-import com.twitter.storage.client.manhattan.kv.ManhattanException
+import com.twitter.storage.client.manhattan.kv.DeniedManhattanEtwitterception
+import com.twitter.storage.client.manhattan.kv.ManhattanEtwitterception
 import com.twitter.tweetypie.storage.TweetStateRecord.BounceDeleted
 import com.twitter.tweetypie.storage.TweetStateRecord.HardDeleted
 import com.twitter.tweetypie.storage.TweetStateRecord.SoftDeleted
@@ -30,7 +30,7 @@ object GetTweetHandler {
 
   /**
    * If this read is soon after the tweet was created, then we would usually
-   * expect it to be served from cache. This early read indicates that this
+   * etwitterpect it to be served from cache. This early read indicates that this
    * tweet is prone to consistency issues, so we log what's present in
    * Manhattan at the time of the read for later analysis.
    */
@@ -48,11 +48,11 @@ object GetTweetHandler {
             .append(rec.lkey)
           rec.value.timestamp.foreach { ts =>
             // If there is a timestamp for this key, log it so that we can tell
-            // later on whether a value should have been present. We expect
+            // later on whether a value should have been present. We etwitterpect
             // keys written in a single write to have the same timestamp, and
             // generally, keys written in separate writes will have different
             // timestamps. The timestamp value is optional in Manhattan, but
-            // we expect there to always be a value for the timestamp.
+            // we etwitterpect there to always be a value for the timestamp.
             sb.append(':')
               .append(ts.inMilliseconds)
           }
@@ -76,7 +76,7 @@ object GetTweetHandler {
       // as not returnable (even if some additional fields are present)
       def tweetFromRecords(tweetId: TweetId, mhRecords: Seq[TweetManhattanRecord]) = {
         val storedTweet = buildStoredTweet(tweetId, mhRecords)
-        if (storedTweet.getFieldBlobs(expectedFields).nonEmpty) {
+        if (storedTweet.getFieldBlobs(etwitterpectedFields).nonEmpty) {
           if (isValid(storedTweet)) {
             statsReceiver.counter("valid").incr()
             Some(StorageConversions.fromStoredTweet(storedTweet))
@@ -86,9 +86,9 @@ object GetTweetHandler {
             None
           }
         } else {
-          // The Tweet contained none of the fields defined in `expectedFields`
-          log.info(s"Expected Fields Not Present Tweet Id: $tweetId")
-          statsReceiver.counter("expected_fields_not_present").incr()
+          // The Tweet contained none of the fields defined in `etwitterpectedFields`
+          log.info(s"Etwitterpected Fields Not Present Tweet Id: $tweetId")
+          statsReceiver.counter("etwitterpected_fields_not_present").incr()
           None
         }
       }
@@ -118,12 +118,12 @@ object GetTweetHandler {
     object stats {
       val getTweetScope = statsReceiver.scope("getTweet")
       val deniedCounter: Counter = getTweetScope.counter("mh_denied")
-      val mhExceptionCounter: Counter = getTweetScope.counter("mh_exception")
-      val nonFatalExceptionCounter: Counter = getTweetScope.counter("non_fatal_exception")
+      val mhEtwitterceptionCounter: Counter = getTweetScope.counter("mh_etwitterception")
+      val nonFatalEtwitterceptionCounter: Counter = getTweetScope.counter("non_fatal_etwitterception")
       val notFoundCounter: Counter = getTweetScope.counter("not_found")
     }
 
-    object mhGroup extends StitchSeqGroup[TweetId, Seq[TweetManhattanRecord]] {
+    object mhGroup etwittertends StitchSeqGroup[TweetId, Seq[TweetManhattanRecord]] {
       override def run(tweetIds: Seq[TweetId]): Stitch[Seq[Seq[TweetManhattanRecord]]] = {
         Stats.addWidthStat("getTweet", "tweetIds", tweetIds.size, statsReceiver)
         Stitch.traverse(tweetIds)(read(_))
@@ -139,20 +139,20 @@ object GetTweetHandler {
           .map(mhRecords => tweetResponseFromRecords(tweetId, mhRecords, stats.getTweetScope))
           .liftToTry
           .map {
-            case Throw(mhException: DeniedManhattanException) =>
+            case Throw(mhEtwitterception: DeniedManhattanEtwitterception) =>
               stats.deniedCounter.incr()
-              Throw(RateLimited("", mhException))
+              Throw(RateLimited("", mhEtwitterception))
 
             // Encountered some other Manhattan error
-            case t @ Throw(_: ManhattanException) =>
-              stats.mhExceptionCounter.incr()
+            case t @ Throw(_: ManhattanEtwitterception) =>
+              stats.mhEtwitterceptionCounter.incr()
               t
 
             // Something else happened
-            case t @ Throw(ex) =>
-              stats.nonFatalExceptionCounter.incr()
+            case t @ Throw(etwitter) =>
+              stats.nonFatalEtwitterceptionCounter.incr()
               TweetUtils.log
-                .warning(ex, s"Unhandled exception in GetTweetHandler for tweetId: $tweetId")
+                .warning(etwitter, s"Unhandled etwitterception in GetTweetHandler for tweetId: $tweetId")
               t
 
             case r @ Return(GetTweet.Response.NotFound) =>

@@ -14,7 +14,7 @@ import com.twitter.util.Future
 
 object ListPredicates {
 
-  def listNameExistsPredicate(
+  def listNameEtwitteristsPredicate(
   )(
     implicit stats: StatsReceiver
   ): NamedPredicate[ListRecommendationPushCandidate] = {
@@ -23,10 +23,10 @@ object ListPredicates {
         candidate.listName.map(_.isDefined)
       }
       .withStats(stats)
-      .withName("list_name_exists")
+      .withName("list_name_etwitterists")
   }
 
-  def listAuthorExistsPredicate(
+  def listAuthorEtwitteristsPredicate(
   )(
     implicit stats: StatsReceiver
   ): NamedPredicate[ListRecommendationPushCandidate] = {
@@ -35,7 +35,7 @@ object ListPredicates {
         candidate.listOwnerId.map(_.isDefined)
       }
       .withStats(stats)
-      .withName("list_owner_exists")
+      .withName("list_owner_etwitterists")
   }
 
   def listAuthorAcceptableToTargetUser(
@@ -45,7 +45,7 @@ object ListPredicates {
   ): NamedPredicate[ListRecommendationPushCandidate] = {
     val name = "list_author_acceptable_to_target_user"
     val sgsPredicate = SocialGraphPredicate
-      .anyRelationExists(
+      .anyRelationEtwitterists(
         edgeStore,
         Set(
           RelationshipType.Blocking,
@@ -53,8 +53,8 @@ object ListPredicates {
           RelationshipType.Muting
         )
       )
-      .withStats(statsReceiver.scope("list_sgs_any_relation_exists"))
-      .withName("list_sgs_any_relation_exists")
+      .withStats(statsReceiver.scope("list_sgs_any_relation_etwitterists"))
+      .withName("list_sgs_any_relation_etwitterists")
 
     Predicate
       .fromAsync { candidate: ListRecommendationPushCandidate =>
@@ -98,7 +98,7 @@ object ListPredicates {
     Predicate
       .fromAsync { candidate: ListRecommendationPushCandidate =>
         candidate.apiList.map { apiListOpt =>
-          apiListOpt.exists { apiList =>
+          apiListOpt.etwitterists { apiList =>
             apiList.subscriberCount >= candidate.target.params(
               PushFeatureSwitchParams.ListRecommendationsSubscriberCount)
           }

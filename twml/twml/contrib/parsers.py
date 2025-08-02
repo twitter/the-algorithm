@@ -8,7 +8,7 @@ Modelers may also provide custom implementations of train/eval_parse_fn using th
 '''
 
 from twitter.deepbird.io.legacy.contrib.parsers import (
-  _convert_to_fixed_length_tensor,  # noqa: F401
+  _convert_to_fitwittered_length_tensor,  # noqa: F401
   _get_input_receiver_fn_feature_dict,  # noqa: F401
   _merge_dictionaries,  # noqa: F401
   get_features_as_tensor_dict,  # noqa: F401

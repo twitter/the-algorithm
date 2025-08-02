@@ -20,8 +20,8 @@ struct RetweetArchivalEvent {
   2: required i64 src_tweet_id (personalDataType = 'TweetId')
   3: required i64 retweet_user_id (personalDataType = 'UserId')
   4: required i64 src_tweet_user_id (personalDataType = 'UserId')
-  // Approximate time in milliseconds for when the count modification occurred, based on
-  // Unix Epoch (1 January 1970 00:00:00 UTC). Tweetypie will use the time when it is
+  // Approtwitterimate time in milliseconds for when the count modification occurred, based on
+  // Unitwitter Epoch (1 January 1970 00:00:00 UTC). Tweetypie will use the time when it is
   // about to send the asynchronous write request to tflock for this timestamp.
   5: required i64 timestamp_ms
   // Marks if this event is for archiving(True) or unarchiving(False) action.

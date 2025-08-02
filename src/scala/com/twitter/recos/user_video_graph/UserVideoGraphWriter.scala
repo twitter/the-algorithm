@@ -29,13 +29,13 @@ case class UserVideoGraphWriter(
   kafkaConsumerBuilder: FinagleKafkaConsumerBuilder[String, RecosHoseMessage],
   clientId: String,
   statsReceiver: StatsReceiver)
-    extends UnifiedGraphWriter[BipartiteGraphSegment, MultiSegmentPowerLawBipartiteGraph] {
+    etwittertends UnifiedGraphWriter[BipartiteGraphSegment, MultiSegmentPowerLawBipartiteGraph] {
   writer =>
-  // The max throughput for each kafka consumer is around 25MB/s
+  // The matwitter throughput for each kafka consumer is around 25MB/s
   // Use 4 processors for 100MB/s catch-up speed.
   val consumerNum: Int = 4
   // Leave 1 Segments to LiveWriter
-  val catchupWriterNum: Int = RecosConfig.maxNumSegments - 1
+  val catchupWriterNum: Int = RecosConfig.matwitterNumSegments - 1
 
   /**
    * Adds a RecosHoseMessage to the graph. used by live writer to insert edges to the

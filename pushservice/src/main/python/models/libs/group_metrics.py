@@ -1,10 +1,10 @@
 import os
 import time
 
-from twitter.cortex.ml.embeddings.deepbird.grouped_metrics.computation import (
+from twitter.cortetwitter.ml.embeddings.deepbird.grouped_metrics.computation import (
   write_grouped_metrics_to_mldash,
 )
-from twitter.cortex.ml.embeddings.deepbird.grouped_metrics.configuration import (
+from twitter.cortetwitter.ml.embeddings.deepbird.grouped_metrics.configuration import (
   ClassificationGroupedMetricsConfiguration,
   NDCGGroupedMetricsConfiguration,
 )
@@ -12,7 +12,7 @@ import twml
 
 from .light_ranking_metrics import (
   CGRGroupedMetricsConfiguration,
-  ExpectedLossGroupedMetricsConfiguration,
+  EtwitterpectedLossGroupedMetricsConfiguration,
   RecallGroupedMetricsConfiguration,
 )
 
@@ -69,7 +69,7 @@ def run_group_metrics_light_ranking(
     metric_configurations=[
       CGRGroupedMetricsConfiguration(lightNs=[50, 100, 200], heavyKs=[1, 3, 10, 20, 50]),
       RecallGroupedMetricsConfiguration(n=[50, 100, 200], k=[1, 3, 10, 20, 50]),
-      ExpectedLossGroupedMetricsConfiguration(lightNs=[50, 100, 200]),
+      EtwitterpectedLossGroupedMetricsConfiguration(lightNs=[50, 100, 200]),
     ],
     total_records_to_read=10000000,
     num_batches_to_load=50,
@@ -89,23 +89,23 @@ def run_group_metrics_light_ranking_in_bq(trainer, params, checkpoint_path):
   info_pool = []
 
   for result in trainer.estimator.predict(
-    eval_input_fn, checkpoint_path=checkpoint_path, yield_single_examples=False
+    eval_input_fn, checkpoint_path=checkpoint_path, yield_single_etwitteramples=False
   ):
     traceID = result["trace_id"]
     pred = result["prediction"]
     label = result["target"]
-    info = np.concatenate([traceID, pred, label], axis=1)
+    info = np.concatenate([traceID, pred, label], atwitteris=1)
     info_pool.append(info)
 
   info_pool = np.concatenate(info_pool)
 
   locname = "/tmp/000/"
-  if not os.path.exists(locname):
+  if not os.path.etwitterists(locname):
     os.makedirs(locname)
 
   locfile = locname + params.pred_file_name
   columns = ["trace_id", "model_prediction", "meta__ranking__weighted_oonc_model_score"]
-  np.savetxt(locfile, info_pool, delimiter=",", header=",".join(columns))
+  np.savettwittert(locfile, info_pool, delimiter=",", header=",".join(columns))
   tf.io.gfile.copy(locfile, params.pred_file_path + params.pred_file_name, overwrite=True)
 
   if os.path.isfile(locfile):

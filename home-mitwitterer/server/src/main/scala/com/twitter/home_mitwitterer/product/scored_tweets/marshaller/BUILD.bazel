@@ -1,0 +1,15 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/model",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/model/request",
+        "home-mitwitterer/server/src/main/scala/com/twitter/home_mitwitterer/product/scored_tweets/model",
+        "home-mitwitterer/thrift/src/main/thrift:thrift-scala",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/marshaller/response/urt",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/functional_component/premarshaller",
+        "product-mitwitterer/core/src/main/scala/com/twitter/product_mitwitterer/core/model/common",
+    ],
+)

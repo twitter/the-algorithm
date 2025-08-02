@@ -1,7 +1,7 @@
 package com.twitter.frigate.pushservice.predicate.magic_fanout
 
 import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContext
+import com.twitter.frigate.common.store.interests.InterestsLookupRequestWithContetwittert
 import com.twitter.frigate.common.util.FeatureSwitchParams
 import com.twitter.frigate.common.util.MagicFanoutTargetingPredicatesEnum
 import com.twitter.frigate.common.util.MagicFanoutTargetingPredicatesEnum.MagicFanoutTargetingPredicatesEnum
@@ -18,7 +18,7 @@ import com.twitter.timelines.configapi.FSEnumParam
 object MagicFanoutTargetingPredicateWrappersForCandidate {
 
   /**
-   * Combine Prod and Experimental Targeting predicate logic
+   * Combine Prod and Etwitterperimental Targeting predicate logic
    * @return: NamedPredicate[MagicFanoutNewsEventPushCandidate]
    */
   def magicFanoutTargetingPredicate(
@@ -36,7 +36,7 @@ object MagicFanoutTargetingPredicateWrappersForCandidate {
           case Some(predicate) =>
             predicate.apply(Seq(candidate)).map(_.head)
           case None =>
-            throw new Exception(
+            throw new Etwitterception(
               s"MFTargetingPredicateMap doesnt contain value for TargetingParam: ${FeatureSwitchParams.MFTargetingPredicate}")
         }
       }
@@ -57,7 +57,7 @@ object MagicFanoutTargetingPredicateWrappersForCandidate {
    */
   def simClusterErgTopicFollowsTargetingPredicate(
     implicit stats: StatsReceiver,
-    interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests]
+    interestsLookupStore: ReadableStore[InterestsLookupRequestWithContetwittert, UserInterests]
   ): NamedPredicate[MagicFanoutEventPushCandidate] = {
     simClusterErgTargetingPredicate
       .or(MagicFanoutPredicatesForCandidate.magicFanoutTopicFollowsTargetingPredicate)
@@ -69,7 +69,7 @@ object MagicFanoutTargetingPredicateWrappersForCandidate {
    */
   def simClusterErgTopicFollowsUserFollowsTargetingPredicate(
     implicit stats: StatsReceiver,
-    interestsLookupStore: ReadableStore[InterestsLookupRequestWithContext, UserInterests]
+    interestsLookupStore: ReadableStore[InterestsLookupRequestWithContetwittert, UserInterests]
   ): NamedPredicate[MagicFanoutEventPushCandidate] = {
     simClusterErgTopicFollowsTargetingPredicate
       .or(
@@ -107,7 +107,7 @@ object MagicFanoutTargetingPredicateMapForCandidate {
       MagicFanoutTargetingPredicatesEnum.SimClusterAndERGAndTopicFollows -> MagicFanoutTargetingPredicateWrappersForCandidate
         .simClusterErgTopicFollowsTargetingPredicate(
           config.statsReceiver,
-          config.interestsWithLookupContextStore),
+          config.interestsWithLookupContetwittertStore),
       MagicFanoutTargetingPredicatesEnum.SimClusterAndERG -> MagicFanoutTargetingPredicateWrappersForCandidate
         .simClusterErgTargetingPredicate(config.statsReceiver),
       MagicFanoutTargetingPredicatesEnum.SimCluster -> MagicFanoutPredicatesForCandidate
@@ -117,7 +117,7 @@ object MagicFanoutTargetingPredicateMapForCandidate {
       MagicFanoutTargetingPredicatesEnum.TopicFollows -> MagicFanoutPredicatesForCandidate
         .magicFanoutTopicFollowsTargetingPredicate(
           config.statsReceiver,
-          config.interestsWithLookupContextStore),
+          config.interestsWithLookupContetwittertStore),
       MagicFanoutTargetingPredicatesEnum.UserFollows -> MagicFanoutPredicatesForCandidate
         .followRankThreshold(
           PushFeatureSwitchParams.MagicFanoutRealgraphRankThreshold
@@ -126,7 +126,7 @@ object MagicFanoutTargetingPredicateMapForCandidate {
         MagicFanoutTargetingPredicateWrappersForCandidate
           .simClusterErgTopicFollowsUserFollowsTargetingPredicate(
             config.statsReceiver,
-            config.interestsWithLookupContextStore
+            config.interestsWithLookupContetwittertStore
           )
     )
   }

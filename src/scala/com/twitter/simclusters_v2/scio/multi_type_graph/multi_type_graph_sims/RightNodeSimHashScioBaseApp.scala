@@ -1,7 +1,7 @@
 package com.twitter.simclusters_v2.scio
 package multi_type_graph.multi_type_graph_sims
 
-import com.spotify.scio.ScioContext
+import com.spotify.scio.ScioContetwittert
 import com.spotify.scio.coders.Coder
 import com.spotify.scio.values.SCollection
 import com.twitter.beam.io.dal.DAL
@@ -19,7 +19,7 @@ import com.twitter.util.Duration
 import com.twitter.wtf.dataflow.cosine_similarity.SimHashJob
 import java.time.Instant
 
-trait RightNodeSimHashScioBaseApp extends ScioBeamJob[DateRangeOptions] with SimHashJob[RightNode] {
+trait RightNodeSimHashScioBaseApp etwittertends ScioBeamJob[DateRangeOptions] with SimHashJob[RightNode] {
   override implicit def scroogeCoder[T <: ThriftStruct: Manifest]: Coder[T] =
     ThriftStructLazyBinaryScroogeCoder.scroogeCoder
   override val ordering: Ordering[RightNode] = MultiTypeGraphUtil.rightNodeOrdering
@@ -29,14 +29,14 @@ trait RightNodeSimHashScioBaseApp extends ScioBeamJob[DateRangeOptions] with Sim
   val simsHashJobOutputDirectory: String = Config.simsHashJobOutputDirectory
 
   override def graph(
-    implicit sc: ScioContext,
+    implicit sc: ScioContetwittert,
   ): SCollection[(Long, RightNode, Double)] =
     MultiTypeGraphUtil.getTruncatedMultiTypeGraph(noOlderThan = Duration.fromDays(14))
 
-  override def configurePipeline(sc: ScioContext, opts: DateRangeOptions): Unit = {
-    implicit def scioContext: ScioContext = sc
+  override def configurePipeline(sc: ScioContetwittert, opts: DateRangeOptions): Unit = {
+    implicit def scioContetwittert: ScioContetwittert = sc
 
-    // DAL.Environment variable for WriteExecs
+    // DAL.Environment variable for WriteEtwitterecs
     val dalEnv = if (isAdhoc) DAL.Environment.Dev else DAL.Environment.Prod
 
     val sketches = computeSimHashSketchesForWeightedGraph(graph)
@@ -50,7 +50,7 @@ trait RightNodeSimHashScioBaseApp extends ScioBeamJob[DateRangeOptions] with Sim
         name = "WriteSimHashSketches",
         DAL.writeSnapshot(
           rightNodeSimHashSnapshotDataset,
-          PathLayout.FixedPath(
+          PathLayout.FitwitteredPath(
             ((if (!isAdhoc)
                 MultiTypeGraphUtil.RootThriftPath
               else

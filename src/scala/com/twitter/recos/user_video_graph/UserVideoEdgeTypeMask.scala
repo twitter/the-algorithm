@@ -8,15 +8,15 @@ import com.twitter.recos.util.Action
  * e.g. favorite, retweet, reply and click. Under current segment configuration, each segment
  * stores up to 128M edges. Assuming that each node on one side is unique, each segment
  * stores up to 128M unique nodes on one side, which occupies the lower 27 bits of an integer.
- * This leaves five bits to encode the edge types, which at max can store 32 edge types.
+ * This leaves five bits to encode the edge types, which at matwitter can store 32 edge types.
  * The following implementation utilizes the top four bits and leaves one free bit out.
  */
-class UserVideoEdgeTypeMask extends EdgeTypeMask {
+class UserVideoEdgeTypeMask etwittertends EdgeTypeMask {
   import UserVideoEdgeTypeMask._
 
   override def encode(node: Int, edgeType: Byte): Int = {
     if (edgeType < 0 || edgeType > SIZE) {
-      throw new IllegalArgumentException("encode: Illegal edge type argument " + edgeType)
+      throw new IllegalArgumentEtwitterception("encode: Illegal edge type argument " + edgeType)
     } else {
       node | (edgeType << 28)
     }
@@ -31,7 +31,7 @@ class UserVideoEdgeTypeMask extends EdgeTypeMask {
   }
 }
 
-object UserVideoEdgeTypeMask extends Enumeration {
+object UserVideoEdgeTypeMask etwittertends Enumeration {
 
   type UserTweetEdgeTypeMask = Value
 
@@ -55,7 +55,7 @@ object UserVideoEdgeTypeMask extends Enumeration {
     val edgeType = Action(actionByte) match {
       case Action.VideoPlayback50 => VideoPlayback50.id
       case _ =>
-        throw new IllegalArgumentException("getEdgeType: Illegal edge type argument " + actionByte)
+        throw new IllegalArgumentEtwitterception("getEdgeType: Illegal edge type argument " + actionByte)
     }
     edgeType.toByte
   }

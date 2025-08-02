@@ -27,7 +27,7 @@ class TripTweetPushCandidate(
 )(
   implicit stats: StatsReceiver,
   pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
+    etwittertends PushCandidate
     with TripCandidate
     with TopicCandidate
     with OutOfNetworkTweetCandidate
@@ -53,7 +53,7 @@ class TripTweetPushCandidate(
 }
 
 case class TripTweetCandidatePredicates(override val config: Config)
-    extends OutOfNetworkTweetPredicates[TripTweetPushCandidate] {
+    etwittertends OutOfNetworkTweetPredicates[TripTweetPushCandidate] {
 
   implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
 

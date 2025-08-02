@@ -7,9 +7,9 @@ import com.twitter.inject.server.TwitterServer
 import com.twitter.kafka.client.processor.AtLeastOnceProcessor
 import com.twitter.unified_user_actions.service.module.KafkaProcessorUserModificationModule
 
-object UserModificationServiceMain extends UserModificationService
+object UserModificationServiceMain etwittertends UserModificationService
 
-class UserModificationService extends TwitterServer {
+class UserModificationService etwittertends TwitterServer {
   override val modules = Seq(
     KafkaProcessorUserModificationModule,
     DeciderModule
@@ -19,7 +19,7 @@ class UserModificationService extends TwitterServer {
 
   override protected def start(): Unit = {
     val processor = injector.instance[AtLeastOnceProcessor[UnKeyed, UserModification]]
-    closeOnExit(processor)
+    closeOnEtwitterit(processor)
     processor.start()
   }
 }

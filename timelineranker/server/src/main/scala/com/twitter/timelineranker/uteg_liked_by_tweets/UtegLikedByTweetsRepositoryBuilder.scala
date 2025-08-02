@@ -11,7 +11,7 @@ import com.twitter.timelines.util.stats.RequestScope
 import com.twitter.util.Duration
 
 class UtegLikedByTweetsRepositoryBuilder(config: RuntimeConfiguration, configBuilder: ConfigBuilder)
-    extends CandidatesRepositoryBuilder(config) {
+    etwittertends CandidatesRepositoryBuilder(config) {
   override val clientSubId = "uteg_liked_by_tweets"
   override val requestScope: RequestScope = RequestScopes.UtegLikedByTweetsSource
   override val followGraphDataFieldsToFetch: SgsFollowGraphDataFields.ValueSet =

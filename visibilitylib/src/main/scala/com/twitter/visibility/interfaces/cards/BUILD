@@ -6,7 +6,7 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         "appsec/sanitization-lib/src/main/scala",
-        "src/thrift/com/twitter/expandodo:cards-scala",
+        "src/thrift/com/twitter/etwitterpandodo:cards-scala",
         "stitch/stitch-core",
         "visibility/lib/src/main/resources/config",
         "visibility/lib/src/main/scala/com/twitter/visibility",

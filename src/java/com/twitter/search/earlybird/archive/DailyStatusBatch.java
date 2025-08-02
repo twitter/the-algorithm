@@ -1,13 +1,13 @@
 package com.twitter.search.earlybird.archive;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Date;
 import java.util.Map;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
-import com.google.gson.JsonParseException;
+import com.google.gson.JsonParseEtwitterception;
 
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
@@ -23,8 +23,8 @@ import org.slf4j.LoggerFactory;
  * - A scrubgen, if it has happened before the scrubgen date.
  * - Our daily jobs pipeline, if it has happened after that.
  *
- * This class checks the _SUCCESS file exists in the "statuses" subdirectory and extracts the status
- * count, min status id and max status id.
+ * This class checks the _SUCCESS file etwitterists in the "statuses" subdirectory and etwittertracts the status
+ * count, min status id and matwitter status id.
  */
 public class DailyStatusBatch implements Comparable<DailyStatusBatch> {
   private static final Logger LOG = LoggerFactory.getLogger(DailyStatusBatch.class);
@@ -58,8 +58,8 @@ public class DailyStatusBatch implements Comparable<DailyStatusBatch> {
     Path successFilePath = new Path(dayPath, SUCCESS_FILE_NAME);
     try {
       return hdfs.getFileStatus(successFilePath).isFile();
-    } catch (IOException e) {
-      LOG.error("Could not verify existence of the _SUCCESS file. Assuming it doesn't exist.", e);
+    } catch (IOEtwitterception e) {
+      LOG.error("Could not verify etwitteristence of the _SUCCESS file. Assuming it doesn't etwitterist.", e);
     }
     return false;
   }
@@ -68,7 +68,7 @@ public class DailyStatusBatch implements Comparable<DailyStatusBatch> {
    * Loads the data for this day for the given partition.
    */
   public PartitionedBatch addPartition(FileSystem hdfs, Path dayPath, int hashPartitionID)
-      throws IOException {
+      throws IOEtwitterception {
     String partitionDir = String.format(PARTITION_FORMAT, hashPartitionID, numHashPartitions);
     Path path = new Path(dayPath, partitionDir);
     PartitionedBatch batch =
@@ -85,12 +85,12 @@ public class DailyStatusBatch implements Comparable<DailyStatusBatch> {
   /**
    * Returns the greatest status count in all partitions belonging to this batch.
    */
-  public int getMaxPerPartitionStatusCount() {
-    int maxPerPartitionStatusCount = 0;
+  public int getMatwitterPerPartitionStatusCount() {
+    int matwitterPerPartitionStatusCount = 0;
     for (PartitionedBatch batch : hashPartitionToStatuses.values()) {
-      maxPerPartitionStatusCount = Math.max(batch.getStatusCount(), maxPerPartitionStatusCount);
+      matwitterPerPartitionStatusCount = Math.matwitter(batch.getStatusCount(), matwitterPerPartitionStatusCount);
     }
-    return maxPerPartitionStatusCount;
+    return matwitterPerPartitionStatusCount;
   }
 
   public int getNumHashPartitions() {
@@ -158,7 +158,7 @@ public class DailyStatusBatch implements Comparable<DailyStatusBatch> {
   static DailyStatusBatch deserializeFromJson(String batchStr) {
     try {
       return new Gson().fromJson(batchStr, DailyStatusBatch.class);
-    } catch (JsonParseException e) {
+    } catch (JsonParseEtwitterception e) {
       LOG.error("Error parsing json string: " + batchStr, e);
       return null;
     }

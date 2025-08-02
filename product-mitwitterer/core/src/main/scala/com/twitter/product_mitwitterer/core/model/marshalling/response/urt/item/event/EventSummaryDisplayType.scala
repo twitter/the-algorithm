@@ -1,0 +1,7 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.item.event
+
+sealed trait EventSummaryDisplayType
+
+case object CellEventSummaryDisplayType etwittertends EventSummaryDisplayType
+case object HeroEventSummaryDisplayType etwittertends EventSummaryDisplayType
+case object CellWithProminentSocialContetwittertEventSummaryDisplayType etwittertends EventSummaryDisplayType

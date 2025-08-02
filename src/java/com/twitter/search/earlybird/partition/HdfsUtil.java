@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.partition;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
@@ -11,7 +11,7 @@ public final class HdfsUtil {
   private HdfsUtil() {
   }
 
-  public static FileSystem getHdfsFileSystem() throws IOException {
+  public static FileSystem getHdfsFileSystem() throws IOEtwitterception {
     Configuration config = new Configuration();
     // Since earlybird uses hdfs from different threads, and closes the FileSystem from
     // them independently, we want each thread to have its own, new FileSystem.
@@ -21,10 +21,10 @@ public final class HdfsUtil {
   /**
    * Checks if the given segment is present on HDFS
    */
-  public static boolean segmentExistsOnHdfs(FileSystem fs, SegmentInfo segmentInfo)
-      throws IOException {
-    String hdfsBaseDirPrefix = segmentInfo.getSyncInfo().getHdfsUploadDirPrefix();
-    FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefix));
+  public static boolean segmentEtwitteristsOnHdfs(FileSystem fs, SegmentInfo segmentInfo)
+      throws IOEtwitterception {
+    String hdfsBaseDirPrefitwitter = segmentInfo.getSyncInfo().getHdfsUploadDirPrefitwitter();
+    FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefitwitter));
     return statuses != null && statuses.length > 0;
   }
 }

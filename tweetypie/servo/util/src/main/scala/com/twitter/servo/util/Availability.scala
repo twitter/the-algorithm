@@ -29,7 +29,7 @@ object Availability {
     )
     require(
       minAvailability > 0 && minAvailability < 1,
-      s"minAvailability ($minAvailability) must be between 0 and 1, exclusive"
+      s"minAvailability ($minAvailability) must be between 0 and 1, etwitterclusive"
     )
 
     {

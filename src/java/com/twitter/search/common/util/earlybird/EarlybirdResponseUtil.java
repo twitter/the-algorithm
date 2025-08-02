@@ -83,9 +83,9 @@ public final class EarlybirdResponseUtil {
   }
 
   /**
-   * Extract results from Earlybird response.
+   * Etwittertract results from Earlybird response.
    */
-  public static List<ThriftSearchResult> extractResultsFromEarlybirdResponse(
+  public static List<ThriftSearchResult> etwittertractResultsFromEarlybirdResponse(
       EarlybirdResponse response) {
     return hasResults(response)
         ? response.getSearchResults().getResults() : Collections.emptyList();
@@ -96,7 +96,7 @@ public final class EarlybirdResponseUtil {
    */
   public static EarlybirdResponse debugLogAsCandidateSource(
       EarlybirdResponse response, TweetSource tweetSource) {
-    List<ThriftSearchResult> results = extractResultsFromEarlybirdResponse(response);
+    List<ThriftSearchResult> results = etwittertractResultsFromEarlybirdResponse(response);
     debugLogAsCandidateSourceHelper(results, tweetSource);
     return response;
   }
@@ -126,9 +126,9 @@ public final class EarlybirdResponseUtil {
   }
 
   /**
-   * Extract the real time response from an existing response
+   * Etwittertract the real time response from an etwitteristing response
    */
-  public static EarlybirdResponse extractRealtimeResponse(EarlybirdResponse response) {
+  public static EarlybirdResponse etwittertractRealtimeResponse(EarlybirdResponse response) {
     EarlybirdResponse realtimeResponse = response.deepCopy();
     if (EarlybirdResponseUtil.hasResults(response)) {
       List<ThriftSearchResult> realtimeResults = realtimeResponse.getSearchResults().getResults();
@@ -147,16 +147,16 @@ public final class EarlybirdResponseUtil {
    * Returns an EarlybirdResponse that should be returned by roots when a tier was skipped.
    *
    * @param minId The minSearchedStatusID to be set on the response.
-   * @param maxId The maxSearchedStatusID to be set on the response.
+   * @param matwitterId The matwitterSearchedStatusID to be set on the response.
    * @param debugMsg The debug message to be set on the response.
    * @return A response that should be returned by roots when a tier was skipped.
    */
-  public static EarlybirdResponse tierSkippedRootResponse(long minId, long maxId, String debugMsg) {
+  public static EarlybirdResponse tierSkippedRootResponse(long minId, long matwitterId, String debugMsg) {
     return new EarlybirdResponse(EarlybirdResponseCode.SUCCESS, 0)
       .setSearchResults(new ThriftSearchResults()
                         .setResults(new ArrayList<>())
                         .setMinSearchedStatusID(minId)
-                        .setMaxSearchedStatusID(maxId))
+                        .setMatwitterSearchedStatusID(matwitterId))
       .setDebugString(debugMsg);
   }
 
@@ -177,12 +177,12 @@ public final class EarlybirdResponseUtil {
   }
 
   /**
-   * Finds all unexpected nullcast statuses within the given result. A nullcast status is
-   * unexpected iff:
+   * Finds all unetwitterpected nullcast statuses within the given result. A nullcast status is
+   * unetwitterpected iff:
    *   1. the tweet is a nullcast tweet.
-   *   2. the tweet is NOT explicitly requested with {@link ThriftSearchQuery#searchStatusIds}
+   *   2. the tweet is NOT etwitterplicitly requested with {@link ThriftSearchQuery#searchStatusIds}
    */
-  public static Set<Long> findUnexpectedNullcastStatusIds(
+  public static Set<Long> findUnetwitterpectedNullcastStatusIds(
       ThriftSearchResults thriftSearchResults, EarlybirdRequest request) {
     Set<Long> statusIds = new HashSet<>();
     for (ThriftSearchResult result : thriftSearchResults.getResults()) {

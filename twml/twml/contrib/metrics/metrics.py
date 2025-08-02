@@ -1,5 +1,5 @@
 """
-Module containing extra tensorflow metrics used at Twitter.
+Module containing etwittertra tensorflow metrics used at Twitter.
 This module conforms to conventions used by tf.metrics.*.
 In particular, each metric constructs two subgraphs: value_op and update_op:
   - The value op is used to fetch the current metric value.
@@ -31,9 +31,9 @@ def get_partial_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1,
       else:
         predcol_list=list(predcols)
       for col in predcol_list:
-        assert 0 <= col < graph_output['output'].shape[class_dim], 'Invalid Prediction Column Index !'
-      preds  = tf.gather(graph_output['output'], indices=predcol_list, axis=class_dim)     # [batchSz, num_col]
-      labels = tf.gather(labels, indices=predcol_list, axis=class_dim)                     # [batchSz, num_col]
+        assert 0 <= col < graph_output['output'].shape[class_dim], 'Invalid Prediction Column Indetwitter !'
+      preds  = tf.gather(graph_output['output'], indices=predcol_list, atwitteris=class_dim)     # [batchSz, num_col]
+      labels = tf.gather(labels, indices=predcol_list, atwitteris=class_dim)                     # [batchSz, num_col]
 
     predInfo = {'output': preds}
     if 'threshold' in graph_output:
@@ -51,12 +51,12 @@ def get_partial_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1,
 
 # Numeric Prediction Performance among TopK Predictions
 def mean_numeric_label_topK(labels, predictions, weights, name, topK_id):
-  top_k_labels  = tf.gather(params=labels, indices=topK_id, axis=0)                # [topK, 1]
+  top_k_labels  = tf.gather(params=labels, indices=topK_id, atwitteris=0)                # [topK, 1]
   return tf.metrics.mean(values=top_k_labels, name=name)
 
 def mean_gated_numeric_label_topK(labels, predictions, weights, name, topK_id, bar=2.0):
   assert isinstance(bar, int) or isinstance(bar, float), "bar must be int or float"
-  top_k_labels  = tf.gather(params=labels, indices=topK_id, axis=0)                # [topK, 1]
+  top_k_labels  = tf.gather(params=labels, indices=topK_id, atwitteris=0)                # [topK, 1]
   gated_top_k_labels  = tf.cast(top_k_labels > bar*1.0, tf.int32)
   return tf.metrics.mean(values=gated_top_k_labels, name=name)
 
@@ -73,9 +73,9 @@ def get_metric_topK_fn_helper(targetMetrics, supportedMetrics_op, metrics=None, 
   :param targetMetrics:        Target Metric List
   :param supportedMetrics_op:  Supported Metric Operators             Dict
   :param metrics:              Metric Set to evaluate
-  :param topK:                 (topK_min, topK_max, topK_delta)       Tuple
-  :param predcol:              Prediction Column Index
-  :param labelcol:             Label Column Index
+  :param topK:                 (topK_min, topK_matwitter, topK_delta)       Tuple
+  :param predcol:              Prediction Column Indetwitter
+  :param labelcol:             Label Column Indetwitter
   :return:
   """
   # pylint: disable=dict-keys-not-iterating
@@ -108,7 +108,7 @@ def get_metric_topK_fn_helper(targetMetrics, supportedMetrics_op, metrics=None, 
     if predcol is None:
       pred = graph_output['output']
     else:
-      assert 0 <= predcol < graph_output['output'].shape[1], 'Invalid Prediction Column Index !'
+      assert 0 <= predcol < graph_output['output'].shape[1], 'Invalid Prediction Column Indetwitter !'
       assert labelcol is not None
       pred   = tf.reshape(graph_output['output'][:, predcol], shape=[-1, 1])
       labels = tf.reshape(labels[:, labelcol], shape=[-1, 1])

@@ -28,7 +28,7 @@ class OCFPromptHistoryStore(
   mtlsParams: ManhattanKVClientMtlsParams = NoMtlsParams
 )(
   implicit stats: StatsReceiver)
-    extends ReadableStore[OCFHistoryStoreKey, FatigueFlowEnrollment] {
+    etwittertends ReadableStore[OCFHistoryStoreKey, FatigueFlowEnrollment] {
 
   import ManhattanInjections._
 
@@ -38,7 +38,7 @@ class OCFPromptHistoryStore(
     mtlsParams = mtlsParams,
     label = "ocf_history_store"
   )
-  private val endpoint = ManhattanKVEndpointBuilder(client, defaultMaxTimeout = 5.seconds)
+  private val endpoint = ManhattanKVEndpointBuilder(client, defaultMatwitterTimeout = 5.seconds)
     .statsReceiver(stats.scope("ocf_history_store"))
     .build()
 

@@ -16,8 +16,8 @@ import com.twitter.util.Future
 import com.twitter.util.Time
 
 object SGSUtils {
-  val MaxNumSocialGraphSignals = 200
-  val MaxAge: Duration = Duration.fromDays(90)
+  val MatwitterNumSocialGraphSignals = 200
+  val MatwitterAge: Duration = Duration.fromDays(90)
 
   def getSGSRawSignals(
     userId: UserId,
@@ -37,7 +37,7 @@ object SGSUtils {
         sgsEdges.flatMap {
           case EdgesResult(edges, _, _) =>
             edges.collect {
-              case edge if edge.createdAt >= now - MaxAge.inMilliseconds =>
+              case edge if edge.createdAt >= now - MatwitterAge.inMilliseconds =>
                 Signal(
                   signalType,
                   timestamp = edge.createdAt,
@@ -47,9 +47,9 @@ object SGSUtils {
       }
       .map { signals =>
         signals
-          .take(MaxNumSocialGraphSignals)
+          .take(MatwitterNumSocialGraphSignals)
           .groupBy(_.targetInternalId)
-          .mapValues(_.maxBy(_.timestamp))
+          .mapValues(_.matwitterBy(_.timestamp))
           .values
           .toSeq
           .sortBy(-_.timestamp)

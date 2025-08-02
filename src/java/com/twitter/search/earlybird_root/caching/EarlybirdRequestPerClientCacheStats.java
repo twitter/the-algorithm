@@ -6,10 +6,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.twitter.search.common.caching.filter.PerClientCacheStats;
 import com.twitter.search.common.metrics.SearchRateCounter;
 import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 
 public class EarlybirdRequestPerClientCacheStats
-    extends PerClientCacheStats<EarlybirdRequestContext> {
+    etwittertends PerClientCacheStats<EarlybirdRequestContetwittert> {
 
   private String cacheOffByClientStatFormat;
   private final Map<String, SearchRateCounter> cacheTurnedOffByClient;
@@ -27,20 +27,20 @@ public class EarlybirdRequestPerClientCacheStats
   }
 
   @Override
-  public void recordRequest(EarlybirdRequestContext requestContext) {
-    if (!EarlybirdRequestUtil.isCachingAllowed(requestContext.getRequest())) {
-      String client = requestContext.getRequest().getClientId();
+  public void recordRequest(EarlybirdRequestContetwittert requestContetwittert) {
+    if (!EarlybirdRequestUtil.isCachingAllowed(requestContetwittert.getRequest())) {
+      String client = requestContetwittert.getRequest().getClientId();
       SearchRateCounter counter = cacheTurnedOffByClient.computeIfAbsent(client,
-          cl -> SearchRateCounter.export(String.format(cacheOffByClientStatFormat, cl)));
+          cl -> SearchRateCounter.etwitterport(String.format(cacheOffByClientStatFormat, cl)));
       counter.increment();
     }
   }
 
   @Override
-  public void recordCacheHit(EarlybirdRequestContext requestContext) {
-    String client = requestContext.getRequest().getClientId();
+  public void recordCacheHit(EarlybirdRequestContetwittert requestContetwittert) {
+    String client = requestContetwittert.getRequest().getClientId();
     SearchRateCounter counter = cacheHitsByClient.computeIfAbsent(client,
-        cl -> SearchRateCounter.export(String.format(cacheHitsByClientStatFormat, cl)));
+        cl -> SearchRateCounter.etwitterport(String.format(cacheHitsByClientStatFormat, cl)));
     counter.increment();
   }
 }

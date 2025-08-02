@@ -14,7 +14,7 @@ scala_library(
         "finagle/finagle-core/src/main",
         "finagle/finagle-http/src/main/scala",
         "finagle/finagle-stats",
-        "finagle/finagle-thriftmux",
+        "finagle/finagle-thriftmutwitter",
         "recos-injector/server/config",
         "recos-injector/server/src/main/scala/com/twitter/recosinjector/clients",
         "recos-injector/server/src/main/scala/com/twitter/recosinjector/config",

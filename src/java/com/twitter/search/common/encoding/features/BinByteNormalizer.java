@@ -12,7 +12,7 @@ import com.google.common.collect.Sets;
  * Normalizes values to predefined bins.
  * If the value to normalize is lower than the lowest bin defined, normalizes to Byte.MIN_VALUE.
  */
-public class BinByteNormalizer extends ByteNormalizer {
+public class BinByteNormalizer etwittertends ByteNormalizer {
 
   private final TreeMap<Double, Byte> bins = Maps.newTreeMap();
   private final TreeMap<Byte, Double> reverseBins = Maps.newTreeMap();
@@ -20,7 +20,7 @@ public class BinByteNormalizer extends ByteNormalizer {
   /**
    * Constructs a normalizer using predefined bins.
    * @param bins A mapping between the upper bound of a value and the bin it should normalize to.
-   * For example providing a map with 2 entries, {5=>1, 10=>2} will normalize as follows:
+   * For etwitterample providing a map with 2 entries, {5=>1, 10=>2} will normalize as follows:
    *   values under 5: Byte.MIN_VALUE
    *   values between 5 and 10: 1
    *   values over 10: 2
@@ -41,7 +41,7 @@ public class BinByteNormalizer extends ByteNormalizer {
   private static boolean hasIncreasingValues(final Map<Double, Byte> map) {
     SortedSet<Double> orderedKeys = Sets.newTreeSet(map.keySet());
     byte prev = Byte.MIN_VALUE;
-    for (Double key : orderedKeys) { // save the unboxing
+    for (Double key : orderedKeys) { // save the unbotwittering
       byte cur = map.get(key);
       if (cur <= prev) {
         return false;

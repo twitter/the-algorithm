@@ -14,7 +14,7 @@ private[handler] object U13ValidationUtil {
   def wasTweetCreatedBeforeUserTurned13(user: User, deletedTweet: DeletedTweet): Boolean =
     deletedTweet.createdAtSecs match {
       case None =>
-        throw NoCreatedAtTimeException
+        throw NoCreatedAtTimeEtwitterception
       case Some(createdAtSecs) =>
         GlobalBirthdateUtil.isUnderSomeAge(13, new DateTime(createdAtSecs * 1000L), user)
     }

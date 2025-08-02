@@ -1,6 +1,6 @@
 package com.twitter.interaction_graph.scio.agg_client_event_logs
 
-import com.spotify.scio.ScioContext
+import com.spotify.scio.ScioContetwittert
 import com.twitter.beam.io.dal.DAL
 import com.twitter.beam.io.dal.DAL.DiskFormat
 import com.twitter.beam.io.dal.DAL.WriteOptions
@@ -8,20 +8,20 @@ import com.twitter.beam.io.fs.multiformat.PathLayout
 import com.twitter.beam.job.ServiceIdentifierOptions
 import com.twitter.interaction_graph.scio.common.UserUtil
 import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.Vertex
+import com.twitter.interaction_graph.thriftscala.Vertetwitter
 import com.twitter.scio_internal.job.ScioBeamJob
 import com.twitter.statebird.v2.thriftscala.Environment
 import org.joda.time.Interval
 
 object InteractionGraphClientEventLogsJob
-    extends ScioBeamJob[InteractionGraphClientEventLogsOption] {
+    etwittertends ScioBeamJob[InteractionGraphClientEventLogsOption] {
   override protected def configurePipeline(
-    scioContext: ScioContext,
+    scioContetwittert: ScioContetwittert,
     pipelineOptions: InteractionGraphClientEventLogsOption
   ): Unit = {
 
     @transient
-    implicit lazy val sc: ScioContext = scioContext
+    implicit lazy val sc: ScioContetwittert = scioContetwittert
     implicit lazy val jobCounters: InteractionGraphClientEventLogsCountersTrait =
       InteractionGraphClientEventLogsCounters
 
@@ -33,7 +33,7 @@ object InteractionGraphClientEventLogsJob
     val rawUsers = sources.readCombinedUsers()
     val safeUsers = UserUtil.getValidUsers(rawUsers)
 
-    val (vertex, edges) = InteractionGraphClientEventLogsUtil.process(userInteractions, safeUsers)
+    val (vertetwitter, edges) = InteractionGraphClientEventLogsUtil.process(userInteractions, safeUsers)
 
     val dalEnvironment: String = pipelineOptions
       .as(classOf[ServiceIdentifierOptions])
@@ -44,12 +44,12 @@ object InteractionGraphClientEventLogsJob
       dalEnvironment
     }
 
-    vertex.saveAsCustomOutput(
-      "Write Vertex Records",
-      DAL.write[Vertex](
-        InteractionGraphAggClientEventLogsVertexDailyScalaDataset,
+    vertetwitter.saveAsCustomOutput(
+      "Write Vertetwitter Records",
+      DAL.write[Vertetwitter](
+        InteractionGraphAggClientEventLogsVertetwitterDailyScalaDataset,
         PathLayout.DailyPath(
-          pipelineOptions.getOutputPath + "/aggregated_client_event_logs_vertex_daily"),
+          pipelineOptions.getOutputPath + "/aggregated_client_event_logs_vertetwitter_daily"),
         dateInterval,
         DiskFormat.Parquet,
         Environment.valueOf(dalWriteEnvironment),

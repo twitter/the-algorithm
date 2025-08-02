@@ -9,7 +9,7 @@ import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
 import com.twitter.search.common.util.earlybird.EarlybirdResponseMergeUtil;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
 import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
 import com.twitter.search.earlybird_root.validators.FacetsResponseValidator;
 import com.twitter.search.earlybird_root.validators.PassThroughResponseValidator;
@@ -21,10 +21,10 @@ import com.twitter.util.Future;
 
 /**
  * Filter responsible for handling invalid response returned by downstream services, and
- * translating them into EarlybirdResponseExceptions.
+ * translating them into EarlybirdResponseEtwitterceptions.
  */
 public class ServiceResponseValidationFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+    etwittertends SimpleFilter<EarlybirdRequestContetwittert, EarlybirdResponse> {
 
   private final Map<EarlybirdRequestType, ServiceResponseValidator<EarlybirdResponse>>
       requestTypeToResponseValidators = new HashMap<>();
@@ -55,20 +55,20 @@ public class ServiceResponseValidationFilter
 
   @Override
   public Future<EarlybirdResponse> apply(
-      final EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    return service.apply(requestContext).flatMap(
+      final EarlybirdRequestContetwittert requestContetwittert,
+      Service<EarlybirdRequestContetwittert, EarlybirdResponse> service) {
+    return service.apply(requestContetwittert).flatMap(
         new Function<EarlybirdResponse, Future<EarlybirdResponse>>() {
           @Override
           public Future<EarlybirdResponse> apply(EarlybirdResponse response) {
             if (response == null) {
-              return Future.exception(new IllegalStateException(
+              return Future.etwitterception(new IllegalStateEtwitterception(
                                           cluster + " returned null response"));
             }
 
             if (response.getResponseCode() == EarlybirdResponseCode.SUCCESS) {
               return requestTypeToResponseValidators
-                .get(requestContext.getEarlybirdRequestType())
+                .get(requestContetwittert.getEarlybirdRequestType())
                 .validate(response);
             }
 

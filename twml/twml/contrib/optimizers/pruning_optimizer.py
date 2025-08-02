@@ -11,7 +11,7 @@ To make a layer prunable, use `twml.contrib.pruning.apply_mask`:
 
 To prune the network, apply PruningOptimizer to any cross-entropy loss:
 
-  loss = tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits)
+  loss = tf.losses.sparse_softmatwitter_cross_entropy(labels=labels, logits=logits)
 
   optimizer = PruningOptimizer(learning_rate=0.001, momentum=0.5)
   minimize = optimizer.minimize(
@@ -42,7 +42,7 @@ class PruningOptimizer(tf.train.MomentumOptimizer):
       If `True`, use locks for update operations
 
     name: str
-      Optional name prefix for the operations created when applying gradients
+      Optional name prefitwitter for the operations created when applying gradients
 
     use_nesterov: bool
       If `True`, use Nesterov momentum
@@ -97,13 +97,13 @@ class PruningOptimizer(tf.train.MomentumOptimizer):
         Pruning starts only after this many parameter updates
 
       decay: float
-        Controls exponential moving average of pruning signals
+        Controls etwitterponential moving average of pruning signals
 
       flops_weight: float or str
-        Controls the targeted trade-off between computational complexity and performance
+        Controls the targeted trade-off between computational completwitterity and performance
 
       flops_target: float
-        Stop pruning when computational complexity is less or this many floating point ops
+        Stop pruning when computational completwitterity is less or this many floating point ops
 
       update_params: tf.Operation
         Optional training operation used instead of MomentumOptimizer to update parameters
@@ -137,7 +137,7 @@ class PruningOptimizer(tf.train.MomentumOptimizer):
         # estimate computational cost per feature map
         costs = tf.gradients(cost, masks)
 
-        # trade off computational complexity and performance
+        # trade off computational completwitterity and performance
         if flops_weight.upper() == 'AUTO':
           signals = [s / (c + 1e-6) for s, c in zip(signals, costs)]
         elif not isinstance(flops_weight, float) or flops_weight != 0.:

@@ -1,12 +1,12 @@
 package com.twitter.search.common.query;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
 import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.search.Scorer;
 import org.apache.lucene.search.Weight;
 
-public class FilteredScorer extends Scorer {
+public class FilteredScorer etwittertends Scorer {
   protected final Scorer inner;
 
   public FilteredScorer(Weight weight, Scorer inner) {
@@ -15,7 +15,7 @@ public class FilteredScorer extends Scorer {
   }
 
   @Override
-  public float score() throws IOException {
+  public float score() throws IOEtwitterception {
     return inner.score();
   }
 
@@ -30,7 +30,7 @@ public class FilteredScorer extends Scorer {
   }
 
   @Override
-  public float getMaxScore(int upTo) throws IOException {
-    return inner.getMaxScore(upTo);
+  public float getMatwitterScore(int upTo) throws IOEtwitterception {
+    return inner.getMatwitterScore(upTo);
   }
 }

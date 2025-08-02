@@ -9,11 +9,11 @@ object Response {
   sealed trait TweetResponseCode
 
   object TweetResponseCode {
-    object Success extends TweetResponseCode
-    object Partial extends TweetResponseCode
-    object Failure extends TweetResponseCode
-    object OverCapacity extends TweetResponseCode
-    object Deleted extends TweetResponseCode
+    object Success etwittertends TweetResponseCode
+    object Partial etwittertends TweetResponseCode
+    object Failure etwittertends TweetResponseCode
+    object OverCapacity etwittertends TweetResponseCode
+    object Deleted etwittertends TweetResponseCode
   }
 
   case class FieldResponse(code: FieldResponseCode, message: Option[String] = None)
@@ -21,10 +21,10 @@ object Response {
   sealed trait FieldResponseCode
 
   object FieldResponseCode {
-    object Success extends FieldResponseCode
-    object InvalidRequest extends FieldResponseCode
-    object ValueNotFound extends FieldResponseCode
-    object Timeout extends FieldResponseCode
-    object Error extends FieldResponseCode
+    object Success etwittertends FieldResponseCode
+    object InvalidRequest etwittertends FieldResponseCode
+    object ValueNotFound etwittertends FieldResponseCode
+    object Timeout etwittertends FieldResponseCode
+    object Error etwittertends FieldResponseCode
   }
 }

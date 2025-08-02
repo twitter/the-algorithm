@@ -11,10 +11,10 @@ def resolve_train_and_eval_files_overlap(
   """Resolve any overlap between train and eval files.
 
   Specifically, if there's an overlap between `train_files` and `eval_files`, then a fraction of
-  the overlap (i.e. `fraction_kept_for_eval`) will be randomly assigned (exclusively) to the
+  the overlap (i.e. `fraction_kept_for_eval`) will be randomly assigned (etwitterclusively) to the
   `eval_files`.
 
-  The following example demonstrates its usage:
+  The following etwitterample demonstrates its usage:
 
   >>> orig_train_files = ['f1', 'f2', 'f3', 'f4']
   >>> orig_eval_files = ['f1', 'f2', 'f3']
@@ -32,7 +32,7 @@ def resolve_train_and_eval_files_overlap(
     train_files: A list of the files used for training.
     eval_files: A list of the files used for validation.
     fraction_kept_for_eval: A fraction of files in the intersection between `train_files` and
-      `eval_files` exclusively kept for evaluation.
+      `eval_files` etwitterclusively kept for evaluation.
     seed: A seed for generating random numbers.
 
   Returns:
@@ -60,13 +60,13 @@ def get_time_based_dataset_files_for_train_and_eval(
   eval_start_datetime,
   eval_end_datetime,
   fraction_kept_for_eval,
-  datetime_prefix_format='%Y/%m/%d/%H',
-  extension='lzo',
+  datetime_prefitwitter_format='%Y/%m/%d/%H',
+  etwittertension='lzo',
   parallelism=1
 ):
-  """Get train/eval dataset files organized with a time-based prefix.
+  """Get train/eval dataset files organized with a time-based prefitwitter.
 
-  This is just a convenience built around `get_dataset_files_prefixed_by_time` and
+  This is just a convenience built around `get_dataset_files_prefitwittered_by_time` and
   `resolve_train_and_eval_files_overlap`. Please refer to these functions for documentation.
   """
 
@@ -74,16 +74,16 @@ def get_time_based_dataset_files_for_train_and_eval(
     base_path=base_path,
     start_datetime=train_start_datetime,
     end_datetime=train_end_datetime,
-    datetime_prefix_format=datetime_prefix_format,
-    extension=extension,
+    datetime_prefitwitter_format=datetime_prefitwitter_format,
+    etwittertension=etwittertension,
     parallelism=parallelism
   )
   eval_files = get_time_based_dataset_files(
     base_path=base_path,
     start_datetime=eval_start_datetime,
     end_datetime=eval_end_datetime,
-    datetime_prefix_format=datetime_prefix_format,
-    extension=extension,
+    datetime_prefitwitter_format=datetime_prefitwitter_format,
+    etwittertension=etwittertension,
     parallelism=parallelism
   )
   return resolve_train_and_eval_files_overlap(

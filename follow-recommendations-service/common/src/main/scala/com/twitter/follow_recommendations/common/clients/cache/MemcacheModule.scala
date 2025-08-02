@@ -10,9 +10,9 @@ import com.twitter.finagle.service.Retries
 import com.twitter.finagle.service.RetryPolicy
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.inject.TwitterModule
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
-object MemcacheModule extends TwitterModule {
+object MemcacheModule etwittertends TwitterModule {
   @Provides
   @Singleton
   def provideMemcacheClient(

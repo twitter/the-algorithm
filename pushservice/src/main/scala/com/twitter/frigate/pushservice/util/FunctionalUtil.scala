@@ -3,10 +3,10 @@ package com.twitter.frigate.pushservice.util
 import com.twitter.finagle.stats.Counter
 
 object FunctionalUtil {
-  def incr[T](counter: Counter): T => T = { x =>
+  def incr[T](counter: Counter): T => T = { twitter =>
     {
       counter.incr()
-      x
+      twitter
     }
   }
 }

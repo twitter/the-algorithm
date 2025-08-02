@@ -12,7 +12,7 @@ REGISTER_OP("BatchPredictionTensorResponseWriter")
 .Input("keys: int64")
 .Input("values: T")
 .Output("result: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
   return Status::OK();
   }).Doc(R"doc(
 
@@ -27,11 +27,11 @@ Outputs
 
 class BatchPredictionTensorResponseWriter : public OpKernel {
  public:
-  explicit BatchPredictionTensorResponseWriter(OpKernelConstruction* context)
-  : OpKernel(context) {}
+  etwitterplicit BatchPredictionTensorResponseWriter(OpKernelConstruction* contetwittert)
+  : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
-    const Tensor& keys = context->input(0);
+  void Compute(OpKernelContetwittert* contetwittert) override {
+    const Tensor& keys = contetwittert->input(0);
 
     try {
       // set keys as twml::Tensor
@@ -39,15 +39,15 @@ class BatchPredictionTensorResponseWriter : public OpKernel {
 
       // check sizes
       uint64_t num_keys = in_keys_.getNumElements();
-      uint64_t num_values = context->num_inputs() - 1;
+      uint64_t num_values = contetwittert->num_inputs() - 1;
 
-      OP_REQUIRES(context, num_values % num_keys == 0,
+      OP_REQUIRES(contetwittert, num_values % num_keys == 0,
         errors::InvalidArgument("Number of dense tensors not multiple of dense keys"));
 
       // set dense tensor values
       std::vector<twml::RawTensor> in_values_;
-      for (int i = 1; i < context->num_inputs(); i++) {
-        in_values_.push_back(TFTensor_to_twml_raw_tensor(context->input(i)));
+      for (int i = 1; i < contetwittert->num_inputs(); i++) {
+        in_values_.push_back(TFTensor_to_twml_raw_tensor(contetwittert->input(i)));
       }
 
       // no continuous predictions in this op, only tensors
@@ -64,14 +64,14 @@ class BatchPredictionTensorResponseWriter : public OpKernel {
 
       // Create an output tensor, the size is determined by the content of input.
       Tensor* result = NULL;
-      OP_REQUIRES_OK(context, context->allocate_output(0, result_shape,
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, result_shape,
                                                        &result));
       twml::Tensor out_result = TFTensor_to_twml_tensor(*result);
 
       // Call writer of BatchPredictionResponse
       tempResult.write(out_result);
-    } catch(const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch(const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };

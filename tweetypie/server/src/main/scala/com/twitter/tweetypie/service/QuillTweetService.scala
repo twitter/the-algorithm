@@ -30,7 +30,7 @@ object QuillTweetService {
  * Wraps an underlying TweetService, logging some requests.
  */
 class QuillTweetService(quillCapture: QuillCapture, protected val underlying: ThriftTweetService)
-    extends TweetServiceProxy {
+    etwittertends TweetServiceProtwittery {
 
   override def postTweet(request: PostTweetRequest): Future[PostTweetResult] = {
     val requestBytes = createThriftBinaryRequest(

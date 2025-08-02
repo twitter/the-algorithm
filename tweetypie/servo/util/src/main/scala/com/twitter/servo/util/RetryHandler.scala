@@ -4,7 +4,7 @@ import com.twitter.finagle.Backoff
 import com.twitter.finagle.service.{RetryBudget, RetryPolicy}
 import com.twitter.finagle.stats.{Counter, StatsReceiver}
 import com.twitter.util._
-import java.util.concurrent.CancellationException
+import java.util.concurrent.CancellationEtwitterception
 import scala.util.control.NonFatal
 
 /**
@@ -14,7 +14,7 @@ import scala.util.control.NonFatal
 trait RetryHandler[-A] {
 
   /**
-   * Executes the given operation and performs any applicable retries.
+   * Etwitterecutes the given operation and performs any applicable retries.
    */
   def apply[A2 <: A](f: => Future[A2]): Future[A2]
 
@@ -29,7 +29,7 @@ object RetryHandler {
 
   /**
    * Builds a RetryHandler that retries according to the given RetryPolicy.  Retries, if any,
-   * will be scheduled on the given Timer to be executed after the appropriate backoff, if any.
+   * will be scheduled on the given Timer to be etwitterecuted after the appropriate backoff, if any.
    * Retries will be limited according the given `RetryBudget`.
    */
   def apply[A](
@@ -40,13 +40,13 @@ object RetryHandler {
   ): RetryHandler[A] = {
     val firstTryCounter = statsReceiver.counter("first_try")
     val retriesCounter = statsReceiver.counter("retries")
-    val budgetExhausedCounter = statsReceiver.counter("budget_exhausted")
+    val budgetEtwitterhausedCounter = statsReceiver.counter("budget_etwitterhausted")
 
     new RetryHandler[A] {
       def apply[A2 <: A](f: => Future[A2]): Future[A2] = {
         firstTryCounter.incr()
         budget.deposit()
-        retry[A2](policy, timer, retriesCounter, budgetExhausedCounter, budget)(f)
+        retry[A2](policy, timer, retriesCounter, budgetEtwitterhausedCounter, budget)(f)
       }
     }
   }
@@ -65,7 +65,7 @@ object RetryHandler {
 
   /**
    * Builds a RetryHandler that will retry any failure according to the given backoff schedule,
-   * until either either the operation succeeds or all backoffs are exhausted.
+   * until either either the operation succeeds or all backoffs are etwitterhausted.
    */
   def failuresOnly[A](
     backoffs: Stream[Duration],
@@ -82,7 +82,7 @@ object RetryHandler {
 
   /**
    * Builds a RetryHandler that will retry any failure according to the given backoff schedule,
-   * until either either the operation succeeds or all backoffs are exhausted.
+   * until either either the operation succeeds or all backoffs are etwitterhausted.
    */
   def failuresOnly[A](
     backoffs: Stream[Duration],
@@ -98,8 +98,8 @@ object RetryHandler {
   def failureOnlyRetryPolicy[A](policy: RetryPolicy[Try[Nothing]]): RetryPolicy[Try[A]] =
     RetryPolicy[Try[A]] {
       case Return(_) => None
-      case Throw(ex) =>
-        policy(Throw(ex)) map {
+      case Throw(etwitter) =>
+        policy(Throw(etwitter)) map {
           case (backoff, p2) => (backoff, failureOnlyRetryPolicy(p2))
         }
     }
@@ -108,21 +108,21 @@ object RetryHandler {
     policy: RetryPolicy[Try[A]],
     timer: Timer,
     retriesCounter: Counter,
-    budgetExhausedCounter: Counter,
+    budgetEtwitterhausedCounter: Counter,
     budget: RetryBudget
   )(
     f: => Future[A]
   ): Future[A] = {
     forceFuture(f).transform { transformed =>
       policy(transformed) match {
-        case Some((backoff, nextPolicy)) =>
+        case Some((backoff, netwittertPolicy)) =>
           if (budget.tryWithdraw()) {
             retriesCounter.incr()
             schedule(backoff, timer) {
-              retry(nextPolicy, timer, retriesCounter, budgetExhausedCounter, budget)(f)
+              retry(netwittertPolicy, timer, retriesCounter, budgetEtwitterhausedCounter, budget)(f)
             }
           } else {
-            budgetExhausedCounter.incr()
+            budgetEtwitterhausedCounter.incr()
             Future.const(transformed)
           }
         case None =>
@@ -131,7 +131,7 @@ object RetryHandler {
     }
   }
 
-  // similar to finagle's RetryExceptionsFilter
+  // similar to finagle's RetryEtwitterceptionsFilter
   private[this] def schedule[A](d: Duration, timer: Timer)(f: => Future[A]) = {
     if (d.inNanoseconds > 0) {
       val promise = new Promise[A]
@@ -141,7 +141,7 @@ object RetryHandler {
             promise.become(f)
           } catch {
             case NonFatal(cause) =>
-            // Ignore any exceptions thrown by Promise#become(). This usually means that the promise
+            // Ignore any etwitterceptions thrown by Promise#become(). This usually means that the promise
             // was already defined and cannot be transformed.
           }
         }
@@ -149,7 +149,7 @@ object RetryHandler {
       promise.setInterruptHandler {
         case cause =>
           task.cancel()
-          val cancellation = new CancellationException
+          val cancellation = new CancellationEtwitterception
           cancellation.initCause(cause)
           promise.updateIfEmpty(Throw(cancellation))
       }
@@ -163,7 +163,7 @@ object RetryHandler {
       f
     } catch {
       case NonFatal(cause) =>
-        Future.exception(cause)
+        Future.etwitterception(cause)
     }
   }
 }

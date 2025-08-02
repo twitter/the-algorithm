@@ -6,7 +6,7 @@ import com.twitter.util.Future
 import com.twitter.util.logging.Logger
 import scala.util.control.NonFatal
 
-trait WriteLoggingCache[K, V] extends CacheWrapper[K, V] {
+trait WriteLoggingCache[K, V] etwittertends CacheWrapper[K, V] {
   // Use getClass so we can see which implementation is actually failing.
   private[this] lazy val logFailureLogger = Logger(getClass)
 
@@ -19,7 +19,7 @@ trait WriteLoggingCache[K, V] extends CacheWrapper[K, V] {
       log(action, k, v)
     } catch {
       case NonFatal(e) =>
-        // The exception occurred in logging, and we don't want to fail the
+        // The etwitterception occurred in logging, and we don't want to fail the
         // request with the logging failure if this happens, so log it and carry
         // on.
         logFailureLogger.error("Logging cache write", e)

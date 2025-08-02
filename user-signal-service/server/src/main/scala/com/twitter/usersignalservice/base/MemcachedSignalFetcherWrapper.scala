@@ -29,9 +29,9 @@ case class MemcachedSignalFetcherWrapper(
   baseSignalFetcher: BaseSignalFetcher,
   ttl: Duration,
   stats: StatsReceiver,
-  keyPrefix: String,
+  keyPrefitwitter: String,
   timer: Timer)
-    extends BaseSignalFetcher {
+    etwittertends BaseSignalFetcher {
   import MemcachedSignalFetcherWrapper._
   override type RawSignalType = baseSignalFetcher.RawSignalType
 
@@ -50,7 +50,7 @@ case class MemcachedSignalFetcherWrapper(
       valueInjection = LZ4Injection.compose(SeqObjectInjection[RawSignalType]()),
       statsReceiver = statsReceiver,
       keyToString = { k: UserId =>
-        s"$keyPrefix:${keyHasher.hashKey(k.toString.getBytes)}"
+        s"$keyPrefitwitter:${keyHasher.hashKey(k.toString.getBytes)}"
       }
     )
   }

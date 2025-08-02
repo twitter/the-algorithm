@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.search.relevance.scoring;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-import org.apache.lucene.search.Explanation;
+import org.apache.lucene.search.Etwitterplanation;
 import org.tensorflow.Tensor;
 
 import com.twitter.common.collections.Pair;
@@ -23,7 +23,7 @@ import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
 import com.twitter.search.common.util.ml.tensorflow_engine.TensorflowModelsManager;
 import com.twitter.search.earlybird.EarlybirdSearcher;
 import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.ClientException;
+import com.twitter.search.earlybird.etwitterception.ClientEtwitterception;
 import com.twitter.search.earlybird.search.AntiGamingFilter;
 import com.twitter.search.earlybird.search.relevance.LinearScoringData;
 import com.twitter.search.earlybird.thrift.EarlybirdRequest;
@@ -37,13 +37,13 @@ import com.twitter.tfcompute_java.TFModelRunner;
  * TensorflowBasedScoringFunction relies on a TF model for scoring tweets
  * Only the `batchScore` part is implemented
  */
-public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction {
+public class TensorflowBasedScoringFunction etwittertends FeatureBasedScoringFunction {
   private final TFModelRunner tfModelRunner;
 
   // https://stackoverflow.com/questions/37849322/how-to-understand-the-term-tensor-in-tensorflow
   // for more information on this notation - in short, a TF graph is made
   // of TF operations and doesn't have a first order notion of tensors
-  // The notation <operation>:<index> will maps to the <index> output of the
+  // The notation <operation>:<indetwitter> will maps to the <indetwitter> output of the
   // <operation> contained in the TF graph.
   private static final String INPUT_VALUES = "input_sparse_tensor_values:0";
   private static final String INPUT_INDICES = "input_sparse_tensor_indices:0";
@@ -62,7 +62,7 @@ public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction 
       ThriftSearchResultType searchResultType,
       UserTable userTable,
       TensorflowModelsManager tensorflowModelsManager
-      ) throws IOException, ClientException {
+      ) throws IOEtwitterception, ClientEtwitterception {
     super(
       "TensorflowBasedScoringFunction",
       schema,
@@ -76,9 +76,9 @@ public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction 
     this.featureSchemaIdToMlApiId = tensorflowModelsManager.getFeatureSchemaIdToMlApiId();
 
     if (modelName == null) {
-      throw new ClientException("Scoring type is TENSORFLOW_BASED but no model was selected");
+      throw new ClientEtwitterception("Scoring type is TENSORFLOW_BASED but no model was selected");
     } else if (!tensorflowModelsManager.getModel(modelName).isPresent()) {
-      throw new ClientException(
+      throw new ClientEtwitterception(
         "Scoring type is TENSORFLOW_BASED. Model "
         + modelName
         + " is not present."
@@ -86,7 +86,7 @@ public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction 
     }
 
     if (searchQuery.getRelevanceOptions().getRankingParams().isEnableHitDemotion()) {
-      throw new ClientException(
+      throw new ClientEtwitterception(
           "Hit attribute demotion is not supported with TENSORFLOW_BASED scoring type");
     }
 
@@ -103,7 +103,7 @@ public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction 
 
   @Override
   public Pair<LinearScoringData, ThriftSearchResultFeatures> collectFeatures(
-      float luceneQueryScore) throws IOException {
+      float luceneQueryScore) throws IOEtwitterception {
     LinearScoringData linearScoringData = updateLinearScoringData(luceneQueryScore);
     ThriftSearchResultFeatures features =
         createFeaturesForDocument(linearScoringData, true).getFeatures();
@@ -114,7 +114,7 @@ public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction 
   @Override
   protected FeatureHandler createFeaturesForDocument(
       LinearScoringData linearScoringData,
-      boolean ignoreDefaultValues) throws IOException {
+      boolean ignoreDefaultValues) throws IOEtwitterception {
     return super.createFeaturesForDocument(linearScoringData,
             ignoreDefaultValues)
         .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_TREND_CLICK,
@@ -137,8 +137,8 @@ public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction 
             request.querySource == ThriftQuerySource.SAVED_SEARCH_CLICK)
         .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_CASHTAG_CLICK,
             request.querySource == ThriftQuerySource.CASHTAG_CLICK)
-        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_SPELLING_EXPANSION_REVERT_CLICK,
-            request.querySource == ThriftQuerySource.SPELLING_EXPANSION_REVERT_CLICK)
+        .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_SPELLING_EtwitterPANSION_REVERT_CLICK,
+            request.querySource == ThriftQuerySource.SPELLING_EtwitterPANSION_REVERT_CLICK)
         .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_SPELLING_SUGGESTION_CLICK,
             request.querySource == ThriftQuerySource.SPELLING_SUGGESTION_CLICK)
         .addBoolean(EarlybirdRankingDerivedFeature.QUERY_SOURCE_LOGGED_OUT_HOME_TREND_CLICK,
@@ -150,18 +150,18 @@ public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction 
   }
 
   /**
-   * Return scores computed in batchScore() if forExplanation is true.
+   * Return scores computed in batchScore() if forEtwitterplanation is true.
    */
   @Override
-  protected double computeScore(LinearScoringData data, boolean forExplanation) {
-    Preconditions.checkState(forExplanation,
-        "forExplanation is false. computeScore() should only be used for explanation creation");
+  protected double computeScore(LinearScoringData data, boolean forEtwitterplanation) {
+    Preconditions.checkState(forEtwitterplanation,
+        "forEtwitterplanation is false. computeScore() should only be used for etwitterplanation creation");
     return tweetIdToScoreMap.get(tweetIDMapper.getTweetID(getCurrentDocID()));
   }
 
   @Override
-  protected void generateExplanationForScoring(
-      LinearScoringData scoringData, boolean isHit, List<Explanation> details) {
+  protected void generateEtwitterplanationForScoring(
+      LinearScoringData scoringData, boolean isHit, List<Etwitterplanation> details) {
   }
 
   @VisibleForTesting
@@ -190,11 +190,11 @@ public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction 
   }
 
   private void addSchemaContinuousFeatures(SparseTensor sparseTensor,
-                                           Map<Integer, ? extends Number> valueMap) {
+                                           Map<Integer, ? etwittertends Number> valueMap) {
     if (valueMap == null || valueMap.isEmpty()) {
       return;
     }
-    for (Map.Entry<Integer, ? extends Number> entry : valueMap.entrySet()) {
+    for (Map.Entry<Integer, ? etwittertends Number> entry : valueMap.entrySet()) {
       Integer id = entry.getKey();
       // SEARCH-26795
       if (!TweetFeaturesUtils.isFeatureDiscrete(id)) {
@@ -268,7 +268,7 @@ public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction 
    * @return Array of scores
    */
   @Override
-  public float[] batchScore(List<BatchHit> hits) throws IOException {
+  public float[] batchScore(List<BatchHit> hits) throws IOEtwitterception {
     ThriftSearchResultFeatures[] featuresForDocs = new ThriftSearchResultFeatures[hits.size()];
 
     for (int i = 0; i < hits.size(); i++) {
@@ -295,8 +295,8 @@ public class TensorflowBasedScoringFunction extends FeatureBasedScoringFunction 
         scores[i] = SKIP_HIT;
       }
 
-      // If explanations enabled, Add scores to map. Will be used in computeScore()
-      if (EarlybirdSearcher.explanationsEnabled(debugMode)) {
+      // If etwitterplanations enabled, Add scores to map. Will be used in computeScore()
+      if (EarlybirdSearcher.etwitterplanationsEnabled(debugMode)) {
         tweetIdToScoreMap.put(hits.get(i).getTweetID(), scores[i]);
       }
 

@@ -5,7 +5,7 @@ import com.twitter.gizmoduck.thriftscala.{CountsUpdateField => Field}
 import com.twitter.tweetypie.backends.Gizmoduck
 
 trait GizmoduckUserCountsUpdatingStore
-    extends TweetStoreBase[GizmoduckUserCountsUpdatingStore]
+    etwittertends TweetStoreBase[GizmoduckUserCountsUpdatingStore]
     with InsertTweet.Store
     with DeleteTweet.Store {
   def wrap(w: TweetStore.Wrap): GizmoduckUserCountsUpdatingStore =

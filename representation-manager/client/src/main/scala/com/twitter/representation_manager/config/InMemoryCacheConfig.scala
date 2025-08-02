@@ -19,10 +19,10 @@ sealed trait InMemoryCacheParams
  */
 case class EnabledInMemoryCacheParams(
   ttl: Duration,
-  maxKeys: Int,
+  matwitterKeys: Int,
   cacheName: String)
-  extends InMemoryCacheParams
-object DisabledInMemoryCacheParams extends InMemoryCacheParams
+  etwittertends InMemoryCacheParams
+object DisabledInMemoryCacheParams etwittertends InMemoryCacheParams
 
 /*
  * This is the class for the in-memory cache config. Client could pass in their own cacheParamsMap to
@@ -38,7 +38,7 @@ class InMemoryCacheConfig(
     embeddingType: EmbeddingType,
     modelVersion: ModelVersion
   ): InMemoryCacheParams = {
-    // When requested embedding type doesn't exist, we return DisabledInMemoryCacheParams
+    // When requested embedding type doesn't etwitterist, we return DisabledInMemoryCacheParams
     cacheParamsMap.getOrElse((embeddingType, modelVersion), DisabledInMemoryCacheParams)
   }
 }
@@ -47,7 +47,7 @@ class InMemoryCacheConfig(
  * Default config for the in-memory cache
  * Clients can directly import and use this one if they don't want to set up a customised config
  * */
-object DefaultInMemoryCacheConfig extends InMemoryCacheConfig {
+object DefaultInMemoryCacheConfig etwittertends InMemoryCacheConfig {
   // set default to no in-memory caching
   val cacheParamsMap = Map.empty
 }

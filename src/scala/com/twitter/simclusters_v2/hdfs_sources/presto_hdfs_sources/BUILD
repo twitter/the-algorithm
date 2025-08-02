@@ -17,18 +17,18 @@ scala_library(
 scala_library(
     name = "data_sources",
     sources = [],
-    description = "DAL datasets we wish to expose externally",
+    description = "DAL datasets we wish to etwitterpose etwitterternally",
     platform = "java8",
     tags = ["bazel-compatible"],
     dependencies = [
-        ":reverse_index_semantic_core_per_language_simclusters_embeddings_presto-scala",
+        ":reverse_indetwitter_semantic_core_per_language_simclusters_embeddings_presto-scala",
         ":semantic_core_per_language_simclusters_embeddings_presto-scala",
         "src/scala/com/twitter/simclusters_v2/common",
     ],
 )
 
 create_datasets(
-    base_name = "reverse_index_semantic_core_per_language_simclusters_embeddings_presto",
+    base_name = "reverse_indetwitter_semantic_core_per_language_simclusters_embeddings_presto",
     java_schema = "com.twitter.simclusters_v2.thriftjava.InternalIdEmbeddingWithId",
     platform = "java8",
     role = "cassowary",

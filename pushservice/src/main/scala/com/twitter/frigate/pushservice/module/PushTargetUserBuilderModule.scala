@@ -8,7 +8,7 @@ import com.twitter.frigate.pushservice.config.DeployConfig
 import com.twitter.frigate.pushservice.target.PushTargetUserBuilder
 import com.twitter.inject.TwitterModule
 
-object PushTargetUserBuilderModule extends TwitterModule {
+object PushTargetUserBuilderModule etwittertends TwitterModule {
 
   @Provides
   @Singleton

@@ -32,28 +32,28 @@ public final class MetricType {
     for (int i = 0; i < swigValues.length; i++)
       if (swigValues[i].swigValue == swigValue)
         return swigValues[i];
-    throw new IllegalArgumentException("No enum " + MetricType.class + " with value " + swigValue);
+    throw new IllegalArgumentEtwitterception("No enum " + MetricType.class + " with value " + swigValue);
   }
 
   private MetricType(String swigName) {
     this.swigName = swigName;
-    this.swigValue = swigNext++;
+    this.swigValue = swigNetwittert++;
   }
 
   private MetricType(String swigName, int swigValue) {
     this.swigName = swigName;
     this.swigValue = swigValue;
-    swigNext = swigValue+1;
+    swigNetwittert = swigValue+1;
   }
 
   private MetricType(String swigName, MetricType swigEnum) {
     this.swigName = swigName;
     this.swigValue = swigEnum.swigValue;
-    swigNext = this.swigValue+1;
+    swigNetwittert = this.swigValue+1;
   }
 
   private static MetricType[] swigValues = { METRIC_INNER_PRODUCT, METRIC_L2, METRIC_L1, METRIC_Linf, METRIC_Lp, METRIC_Canberra, METRIC_BrayCurtis, METRIC_JensenShannon };
-  private static int swigNext = 0;
+  private static int swigNetwittert = 0;
   private final int swigValue;
   private final String swigName;
 }

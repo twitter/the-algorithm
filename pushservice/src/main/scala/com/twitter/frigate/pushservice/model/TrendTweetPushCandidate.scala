@@ -1,6 +1,6 @@
 package com.twitter.frigate.pushservice.model
 
-import com.twitter.events.recos.thriftscala.TrendsContext
+import com.twitter.events.recos.thriftscala.TrendsContetwittert
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base.TrendTweetCandidate
 import com.twitter.frigate.common.base.TweetAuthorDetails
@@ -23,7 +23,7 @@ class TrendTweetPushCandidate(
 )(
   implicit stats: StatsReceiver,
   pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
+    etwittertends PushCandidate
     with TrendTweetCandidate
     with TweetAuthorDetails
     with TrendTweetIbis2Hydrator
@@ -41,10 +41,10 @@ class TrendTweetPushCandidate(
   override val trendId: String = candidate.trendId
   override val trendName: String = candidate.trendName
   override val copyAggregationId: Option[String] = copyIds.aggregationId
-  override val context: TrendsContext = candidate.context
+  override val contetwittert: TrendsContetwittert = candidate.contetwittert
 }
 
 case class TrendTweetPredicates(override val config: Config)
-    extends BasicTweetPredicatesForRFPH[TrendTweetPushCandidate] {
+    etwittertends BasicTweetPredicatesForRFPH[TrendTweetPushCandidate] {
   implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
 }

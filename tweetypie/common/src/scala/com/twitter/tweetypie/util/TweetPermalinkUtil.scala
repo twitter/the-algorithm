@@ -12,7 +12,7 @@ object TweetPermalinkUtil {
 
   def matchQuotedTweetPermalink(entity: UrlEntity): Option[(UrlEntity, TweetPermalink)] =
     for {
-      expanded <- entity.expanded
-      permalink <- TweetPermalink.parse(expanded)
+      etwitterpanded <- entity.etwitterpanded
+      permalink <- TweetPermalink.parse(etwitterpanded)
     } yield (entity, permalink)
 }

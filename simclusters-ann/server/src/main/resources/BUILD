@@ -1,6 +1,6 @@
 resources(
     sources = [
-        "*.xml",
+        "*.twitterml",
         "config/*.yml",
     ],
     tags = ["bazel-compatible"],

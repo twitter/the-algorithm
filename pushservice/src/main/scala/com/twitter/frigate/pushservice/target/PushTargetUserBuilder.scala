@@ -4,7 +4,7 @@ import com.twitter.abdecider.LoggingABDecider
 import com.twitter.conversions.DurationOps._
 import com.twitter.decider.Decider
 import com.twitter.discovery.common.configapi.ConfigParamsBuilder
-import com.twitter.discovery.common.configapi.ExperimentOverride
+import com.twitter.discovery.common.configapi.EtwitterperimentOverride
 import com.twitter.featureswitches.Recipient
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.frigate.common.base._
@@ -15,13 +15,13 @@ import com.twitter.frigate.common.store.PushRecItemsKey
 import com.twitter.frigate.common.store.deviceinfo.DeviceInfo
 import com.twitter.frigate.common.store.interests.UserId
 import com.twitter.frigate.common.util._
-import com.twitter.frigate.data_pipeline.features_common.MrRequestContextForFeatureStore
+import com.twitter.frigate.data_pipeline.features_common.MrRequestContetwittertForFeatureStore
 import com.twitter.frigate.data_pipeline.thriftscala.UserHistoryValue
 import com.twitter.frigate.dau_model.thriftscala.DauProbability
 import com.twitter.frigate.pushcap.thriftscala.PushcapInfo
 import com.twitter.frigate.pushcap.thriftscala.PushcapUserHistory
 import com.twitter.frigate.pushservice.model.PushTypes.Target
-import com.twitter.frigate.pushservice.ml.HydrationContextBuilder
+import com.twitter.frigate.pushservice.ml.HydrationContetwittertBuilder
 import com.twitter.frigate.pushservice.ml.PushMLModelScorer
 import com.twitter.frigate.pushservice.params.PushFeatureSwitchParams
 import com.twitter.frigate.pushservice.params.PushParams
@@ -31,7 +31,7 @@ import com.twitter.frigate.pushservice.util.NsfwInfo
 import com.twitter.frigate.pushservice.util.NsfwPersonalizationUtil
 import com.twitter.frigate.pushservice.util.PushAppPermissionUtil
 import com.twitter.frigate.pushservice.util.PushCapUtil.getMinimumRestrictedPushcapInfo
-import com.twitter.frigate.pushservice.thriftscala.PushContext
+import com.twitter.frigate.pushservice.thriftscala.PushContetwittert
 import com.twitter.frigate.pushservice.thriftscala.RequestSource
 import com.twitter.frigate.thriftscala.SecondaryAccountsByUserState
 import com.twitter.frigate.thriftscala.UserForPushTargeting
@@ -49,14 +49,14 @@ import com.twitter.interests.thriftscala.InterestId
 import com.twitter.notificationservice.feedback.thriftscala.FeedbackInteraction
 import com.twitter.notificationservice.genericfeedbackstore.FeedbackPromptValue
 import com.twitter.notificationservice.genericfeedbackstore.GenericFeedbackStore
-import com.twitter.notificationservice.genericfeedbackstore.GenericFeedbackStoreException
+import com.twitter.notificationservice.genericfeedbackstore.GenericFeedbackStoreEtwitterception
 import com.twitter.notificationservice.model.service.DismissMenuFeedbackAction
 import com.twitter.notificationservice.scribe.manhattan.GenericNotificationsFeedbackRequest
 import com.twitter.notificationservice.thriftscala.CaretFeedbackDetails
 import com.twitter.nrel.heavyranker.FeatureHydrator
-import com.twitter.nrel.hydration.push.HydrationContext
+import com.twitter.nrel.hydration.push.HydrationContetwittert
 import com.twitter.permissions_storage.thriftscala.AppPermission
-import com.twitter.rux.common.strato.thriftscala.UserTargetingProperty
+import com.twitter.rutwitter.common.strato.thriftscala.UserTargetingProperty
 import com.twitter.scio.nsfw_user_segmentation.thriftscala.NSFWUserSegmentation
 import com.twitter.service.metastore.gen.thriftscala.Location
 import com.twitter.service.metastore.gen.thriftscala.UserLanguages
@@ -145,21 +145,21 @@ case class PushTargetUserBuilder(
 
   def buildTarget(
     userId: Long,
-    inputPushContext: Option[PushContext],
+    inputPushContetwittert: Option[PushContetwittert],
     forcedFeatureValues: Option[Map[String, configapi.FeatureValue]] = None
   ): Future[Target] = {
-    val historyStoreKeyContext = HistoryStoreKeyContext(
+    val historyStoreKeyContetwittert = HistoryStoreKeyContetwittert(
       userId,
-      inputPushContext.flatMap(_.useMemcacheForHistory).getOrElse(false)
+      inputPushContetwittert.flatMap(_.useMemcacheForHistory).getOrElse(false)
     )
     Future
       .join(
         userStore.get(userId),
         deviceInfoStore.get(userId),
         pushInfoStore.get(userId),
-        historyStore.get(historyStoreKeyContext, Some(30.days)),
+        historyStore.get(historyStoreKeyContetwittert, Some(30.days)),
         emailHistoryStore.get(
-          HistoryStoreKeyContext(userId, useStoreB = false),
+          HistoryStoreKeyContetwittert(userId, useStoreB = false),
           Some(7.days) // we only keep 7 days of email tweet history
         )
       ).flatMap {
@@ -170,7 +170,7 @@ case class PushTargetUserBuilder(
             deviceInfoOpt,
             userForPushTargetingInfoOpt,
             notifHistory,
-            inputPushContext.flatMap(_.requestSource)).map { customFSField =>
+            inputPushContetwittert.flatMap(_.requestSource)).map { customFSField =>
             new Target {
 
               override lazy val stats: StatsReceiver = statsReceiver
@@ -180,12 +180,12 @@ case class PushTargetUserBuilder(
               override val targetUser: Future[Option[User]] = Future.value(userOpt)
 
               override val isEmailUser: Boolean =
-                inputPushContext.flatMap(_.requestSource) match {
+                inputPushContetwittert.flatMap(_.requestSource) match {
                   case Some(source) if source == RequestSource.Email => true
                   case _ => false
                 }
 
-              override val pushContext = inputPushContext
+              override val pushContetwittert = inputPushContetwittert
 
               override def globalStats: StatsReceiver = globalStatsReceiver
 
@@ -194,7 +194,7 @@ case class PushTargetUserBuilder(
 
               override lazy val pushRecItems: Future[RecItems] =
                 pushRecItemsStore
-                  .get(PushRecItemsKey(historyStoreKeyContext, history))
+                  .get(PushRecItemsKey(historyStoreKeyContetwittert, history))
                   .map(_.getOrElse(RecItems.empty))
 
               // List of past tweet candidates sent in the past through email with timestamp
@@ -273,7 +273,7 @@ case class PushTargetUserBuilder(
               }
 
               override lazy val labeledPushRecsHydrated: Future[Option[UserHistoryValue]] =
-                labeledPushRecsStore.get(LabeledPushRecsStoreKey(this, historyStoreKeyContext))
+                labeledPushRecsStore.get(LabeledPushRecsStoreKey(this, historyStoreKeyContetwittert))
 
               override lazy val onlineLabeledPushRecs: Future[Option[UserHistoryValue]] =
                 labeledPushRecsHydrated.flatMap { labeledPushRecs =>
@@ -307,7 +307,7 @@ case class PushTargetUserBuilder(
               override lazy val lastHTLVisitTimestamp: Future[Option[Long]] =
                 userHTLLastVisitStore.get(targetId).map {
                   case Some(lastVisitTimestamps) if lastVisitTimestamps.nonEmpty =>
-                    Some(lastVisitTimestamps.max)
+                    Some(lastVisitTimestamps.matwitter)
                   case _ => None
                 }
 
@@ -320,8 +320,8 @@ case class PushTargetUserBuilder(
                   eventEndTimestamp = now,
                   filterCategory =
                     Some(Set(MagicRecsCategory, MomentsViaMagicRecsCategory, MomentsCategory)),
-                  filterFeedbackActionText =
-                    Some(Set(DismissMenuFeedbackAction.FeedbackActionTextSeeLessOften))
+                  filterFeedbackActionTetwittert =
+                    Some(Set(DismissMenuFeedbackAction.FeedbackActionTetwittertSeeLessOften))
                 )
                 ntabCaretFeedbackStore.get(request)
               }
@@ -352,7 +352,7 @@ case class PushTargetUserBuilder(
                     newestTimestamp = Time.now,
                     feedbackInteraction = FeedbackInteraction.Feedback
                   ).handle {
-                    case _: GenericFeedbackStoreException => {
+                    case _: GenericFeedbackStoreEtwitterception => {
                       feedbackStoreGenerationErr.incr()
                       Seq.empty[FeedbackPromptValue]
                     }
@@ -363,10 +363,10 @@ case class PushTargetUserBuilder(
                 optOutUserInterestsStore.get(targetId)
               }
 
-              private val experimentOverride = ddgOverrideOption.map {
-                case DDGOverride(Some(exp), Some(bucket)) =>
-                  Set(ExperimentOverride(exp, bucket))
-                case _ => Set.empty[ExperimentOverride]
+              private val etwitterperimentOverride = ddgOverrideOption.map {
+                case DDGOverride(Some(etwitterp), Some(bucket)) =>
+                  Set(EtwitterperimentOverride(etwitterp, bucket))
+                case _ => Set.empty[EtwitterperimentOverride]
               }
 
               override val signupCountryCode =
@@ -390,14 +390,14 @@ case class PushTargetUserBuilder(
 
                 configParamsBuilder.build(
                   userId = Some(targetId),
-                  experimentOverrides = experimentOverride,
+                  etwitterperimentOverrides = etwitterperimentOverride,
                   featureRecipient = Some(fsRecipient),
                   forcedFeatureValues = forcedFeatureValues.getOrElse(Map.empty),
                 )
               }
 
-              override lazy val mrRequestContextForFeatureStore =
-                MrRequestContextForFeatureStore(targetId, params, isModelTrainingData)
+              override lazy val mrRequestContetwittertForFeatureStore =
+                MrRequestContetwittertForFeatureStore(targetId, params, isModelTrainingData)
 
               override lazy val dynamicPushcap: Future[Option[PushcapInfo]] = {
                 // Get the pushcap from the pushcap model prediction store
@@ -424,15 +424,15 @@ case class PushTargetUserBuilder(
                 } else Future.value(None)
               }
 
-              override lazy val targetHydrationContext: Future[HydrationContext] =
-                HydrationContextBuilder.build(this)
+              override lazy val targetHydrationContetwittert: Future[HydrationContetwittert] =
+                HydrationContetwittertBuilder.build(this)
 
               override lazy val featureMap: Future[FeatureMap] =
-                targetHydrationContext.flatMap { hydrationContext =>
+                targetHydrationContetwittert.flatMap { hydrationContetwittert =>
                   featureHydrator.hydrateTarget(
-                    hydrationContext,
+                    hydrationContetwittert,
                     this.params,
-                    this.mrRequestContextForFeatureStore)
+                    this.mrRequestContetwittertForFeatureStore)
                 }
 
               override lazy val globalOptoutProbabilities: Seq[Future[Option[Double]]] = {
@@ -446,7 +446,7 @@ case class PushTargetUserBuilder(
                 Future
                   .collect(globalOptoutProbabilities).map {
                     _.zip(params(PushFeatureSwitchParams.GlobalOptoutThresholdParam))
-                      .exists {
+                      .etwitterists {
                         case (Some(score), threshold) => score >= threshold
                         case _ => false
                       }
@@ -464,11 +464,11 @@ case class PushTargetUserBuilder(
                 if (params(PushFeatureSwitchParams.EnableOptoutAdjustedPushcap)) {
                   bucketOptoutProbability.map {
                     case Some(score) =>
-                      val idx = params(PushFeatureSwitchParams.BucketOptoutSlotThresholdParam)
-                        .indexWhere(score <= _)
-                      if (idx >= 0) {
+                      val idtwitter = params(PushFeatureSwitchParams.BucketOptoutSlotThresholdParam)
+                        .indetwitterWhere(score <= _)
+                      if (idtwitter >= 0) {
                         val pushcap =
-                          params(PushFeatureSwitchParams.BucketOptoutSlotPushcapParam)(idx).toShort
+                          params(PushFeatureSwitchParams.BucketOptoutSlotPushcapParam)(idtwitter).toShort
                         optoutModelStat.scope("adjusted_pushcap").counter(f"$pushcap").incr()
                         if (pushcap >= 0) Some(pushcap)
                         else None
@@ -523,7 +523,7 @@ case class PushTargetUserBuilder(
                 history.map(history => MagicFanoutReasonHistory(history))
 
               override val isNewSignup: Boolean =
-                pushContext.flatMap(_.isFromNewUserLoopProcessor).getOrElse(false)
+                pushContetwittert.flatMap(_.isFromNewUserLoopProcessor).getOrElse(false)
 
               override lazy val resurrectionDate: Future[Option[String]] =
                 Future.value(customFSField.reactivationDate)
@@ -549,7 +549,7 @@ case class PushTargetUserBuilder(
                   }
               }
 
-              lazy val isOpenAppExperimentUser: Future[Boolean] =
+              lazy val isOpenAppEtwitterperimentUser: Future[Boolean] =
                 openAppUserStore.get(userId).map(_.contains(true))
 
               override lazy val openedPushByHourAggregated: Future[Option[Map[Int, Int]]] =
@@ -601,7 +601,7 @@ case class PushTargetUserBuilder(
 
     val isReactivatedUserFut: Future[Boolean] = reactivationTimeFutOpt.map { timeOpt =>
       timeOpt
-        .exists { time => Time.now - time < 30.days }
+        .etwitterists { time => Time.now - time < 30.days }
     }
 
     val daysSinceReactivationFut: Future[Option[Int]] =
@@ -610,15 +610,15 @@ case class PushTargetUserBuilder(
     val daysSinceSignup: Int = (Time.now - SnowflakeUtil.timeFromId(userId)).inDays
     if (daysSinceSignup < 14) newSignUpUserStats.incr()
 
-    val targetAgeInYears = userOpt.flatMap(_.extendedProfile.flatMap(_.ageInYears))
+    val targetAgeInYears = userOpt.flatMap(_.etwittertendedProfile.flatMap(_.ageInYears))
 
     val lastLoginFut: Future[Option[Long]] =
       userHTLLastVisitStore.get(userId).map {
         case Some(lastHTLVisitTimes) =>
-          val latestHTLVisitTime = lastHTLVisitTimes.max
+          val latestHTLVisitTime = lastHTLVisitTimes.matwitter
           userForPushTargetingInfo.flatMap(
             _.lastActiveOnAppTimestamp
-              .map(_.max(latestHTLVisitTime)).orElse(Some(latestHTLVisitTime)))
+              .map(_.matwitter(latestHTLVisitTime)).orElse(Some(latestHTLVisitTime)))
         case None =>
           userForPushTargetingInfo.flatMap(_.lastActiveOnAppTimestamp)
       }

@@ -72,13 +72,13 @@ class TimelineRankerBuilder(config: RuntimeConfiguration) {
     )
 
     // Limits the total number of concurrent requests handled by the TimelineRanker
-    val maxConcurrencyFilter = {
+    val matwitterConcurrencyFilter = {
       val asyncSemaphore = new AsyncSemaphore(
-        initialPermits = config.maxConcurrency,
-        maxWaiters = 0
+        initialPermits = config.matwitterConcurrency,
+        matwitterWaiters = 0
       )
       val enableLimiting = config.deciderGateBuilder.linearGate(
-        DeciderKey.EnableMaxConcurrencyLimiting
+        DeciderKey.EnableMatwitterConcurrencyLimiting
       )
 
       new DeciderableRequestSemaphoreFilter(
@@ -88,13 +88,13 @@ class TimelineRankerBuilder(config: RuntimeConfiguration) {
       )
     }
 
-    // Forwards a percentage of traffic via the DarkTrafficFilter to the TimelineRanker proxy, which in turn can be
+    // Forwards a percentage of traffic via the DarkTrafficFilter to the TimelineRanker protwittery, which in turn can be
     // used to forward dark traffic to staged instances
     val darkTrafficFilter = DarkTrafficFilterBuilder(
       config.deciderGateBuilder,
-      DeciderKey.EnableRoutingToRankerDevProxy,
-      TimelineRankerConstants.ClientPrefix,
-      underlyingClients.darkTrafficProxy,
+      DeciderKey.EnableRoutingToRankerDevProtwittery,
+      TimelineRankerConstants.ClientPrefitwitter,
+      underlyingClients.darkTrafficProtwittery,
       config.statsReceiver
     )
 
@@ -108,10 +108,10 @@ class TimelineRankerBuilder(config: RuntimeConfiguration) {
     } else Filter.identity[Array[Byte], Array[Byte]]
 
     val serviceFilterChain = clientIdFilter
-      .andThen(maxConcurrencyFilter)
+      .andThen(matwitterConcurrencyFilter)
       .andThen(warmupForwardingFilter)
       .andThen(darkTrafficFilter)
-      .andThen(serviceObserver.thriftExceptionFilter)
+      .andThen(serviceObserver.thriftEtwitterceptionFilter)
 
     val finagleService =
       new TimelineRanker$FinagleService(timelineRanker, protocolFactory)

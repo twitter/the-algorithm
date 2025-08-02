@@ -13,7 +13,7 @@ scala_library(
         "representation-manager/client/src/main/scala/com/twitter/representation_manager",
         "simclusters-ann/server/src/main/scala/com/twitter/simclustersann/candidate_source",
         "simclusters-ann/server/src/main/scala/com/twitter/simclustersann/common",
-        "simclusters-ann/server/src/main/scala/com/twitter/simclustersann/exceptions",
+        "simclusters-ann/server/src/main/scala/com/twitter/simclustersann/etwitterceptions",
         "simclusters-ann/thrift/src/main/thrift:thrift-scala",
         "src/scala/com/twitter/simclusters_v2/common",
         "src/scala/com/twitter/simclusters_v2/summingbird",

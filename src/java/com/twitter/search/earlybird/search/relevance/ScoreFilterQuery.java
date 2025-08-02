@@ -1,21 +1,21 @@
 package com.twitter.search.earlybird.search.relevance;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
+import org.apache.lucene.indetwitter.LeafReader;
+import org.apache.lucene.indetwitter.LeafReaderContetwittert;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.IndetwitterSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreMode;
 import org.apache.lucene.search.Weight;
 
 import com.twitter.search.common.query.DefaultFilterWeight;
 import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
+import com.twitter.search.core.earlybird.indetwitter.EarlybirdIndetwitterSegmentAtomicReader;
+import com.twitter.search.core.earlybird.indetwitter.util.RangeFilterDISI;
 import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
 import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunctionProvider;
 import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunctionProvider.NamedScoringFunctionProvider;
@@ -24,32 +24,32 @@ import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunctionProv
  * This filter only accepts documents for which the provided
  * {@link com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction}
  * returns a score that's greater or equal to the passed-in minScore and smaller or equal
- * to maxScore.
+ * to matwitterScore.
  */
-public final class ScoreFilterQuery extends Query {
+public final class ScoreFilterQuery etwittertends Query {
   private static final float DEFAULT_LUCENE_SCORE = 1.0F;
 
   private final float minScore;
-  private final float maxScore;
+  private final float matwitterScore;
   private final NamedScoringFunctionProvider scoringFunctionProvider;
   private final ImmutableSchemaInterface schema;
 
   /**
    * Returns a score filter.
    *
-   * @param schema The schema to use to extract the feature scores.
+   * @param schema The schema to use to etwittertract the feature scores.
    * @param scoringFunctionProvider The scoring function provider.
    * @param minScore The minimum score threshold.
-   * @param maxScore The maximum score threshold.
+   * @param matwitterScore The matwitterimum score threshold.
    * @return A score filter with the given configuration.
    */
   public static Query getScoreFilterQuery(
       ImmutableSchemaInterface schema,
       NamedScoringFunctionProvider scoringFunctionProvider,
       float minScore,
-      float maxScore) {
+      float matwitterScore) {
     return new BooleanQuery.Builder()
-        .add(new ScoreFilterQuery(schema, scoringFunctionProvider, minScore, maxScore),
+        .add(new ScoreFilterQuery(schema, scoringFunctionProvider, minScore, matwitterScore),
              BooleanClause.Occur.FILTER)
         .build();
   }
@@ -57,44 +57,44 @@ public final class ScoreFilterQuery extends Query {
   private ScoreFilterQuery(ImmutableSchemaInterface schema,
                            NamedScoringFunctionProvider scoringFunctionProvider,
                            float minScore,
-                           float maxScore) {
+                           float matwitterScore) {
     this.schema = schema;
     this.scoringFunctionProvider = scoringFunctionProvider;
     this.minScore = minScore;
-    this.maxScore = maxScore;
+    this.matwitterScore = matwitterScore;
   }
 
   @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
+  public Weight createWeight(IndetwitterSearcher searcher, ScoreMode scoreMode, float boost)
+      throws IOEtwitterception {
     return new DefaultFilterWeight(this) {
       @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
+      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContetwittert contetwittert) throws IOEtwitterception {
         ScoringFunction scoringFunction = scoringFunctionProvider.getScoringFunction();
-        scoringFunction.setNextReader((EarlybirdIndexSegmentAtomicReader) context.reader());
+        scoringFunction.setNetwittertReader((EarlybirdIndetwitterSegmentAtomicReader) contetwittert.reader());
         return new ScoreFilterDocIdSetIterator(
-            context.reader(), scoringFunction, minScore, maxScore);
+            contetwittert.reader(), scoringFunction, minScore, matwitterScore);
       }
     };
   }
 
-  private static final class ScoreFilterDocIdSetIterator extends RangeFilterDISI {
+  private static final class ScoreFilterDocIdSetIterator etwittertends RangeFilterDISI {
     private final ScoringFunction scoringFunction;
     private final float minScore;
-    private final float maxScore;
+    private final float matwitterScore;
 
-    public ScoreFilterDocIdSetIterator(LeafReader indexReader, ScoringFunction scoringFunction,
-                                       float minScore, float maxScore) throws IOException {
-      super(indexReader);
+    public ScoreFilterDocIdSetIterator(LeafReader indetwitterReader, ScoringFunction scoringFunction,
+                                       float minScore, float matwitterScore) throws IOEtwitterception {
+      super(indetwitterReader);
       this.scoringFunction = scoringFunction;
       this.minScore = minScore;
-      this.maxScore = maxScore;
+      this.matwitterScore = matwitterScore;
     }
 
     @Override
-    protected boolean shouldReturnDoc() throws IOException {
+    protected boolean shouldReturnDoc() throws IOEtwitterception {
       float score = scoringFunction.score(docID(), DEFAULT_LUCENE_SCORE);
-      return score >= minScore && score <= maxScore;
+      return score >= minScore && score <= matwitterScore;
     }
   }
 
@@ -102,8 +102,8 @@ public final class ScoreFilterQuery extends Query {
     return minScore;
   }
 
-  public float getMaxScoreForTest() {
-    return maxScore;
+  public float getMatwitterScoreForTest() {
+    return matwitterScore;
   }
 
   public ScoringFunctionProvider getScoringFunctionProviderForTest() {
@@ -113,7 +113,7 @@ public final class ScoreFilterQuery extends Query {
   @Override
   public int hashCode() {
     return (int) (minScore * 29
-                  + maxScore * 17
+                  + matwitterScore * 17
                   + (scoringFunctionProvider == null ? 0 : scoringFunctionProvider.hashCode()));
   }
 
@@ -125,7 +125,7 @@ public final class ScoreFilterQuery extends Query {
 
     ScoreFilterQuery filter = ScoreFilterQuery.class.cast(obj);
     return (minScore == filter.minScore)
-        && (maxScore == filter.maxScore)
+        && (matwitterScore == filter.matwitterScore)
         && (scoringFunctionProvider == null
             ? filter.scoringFunctionProvider == null
             : scoringFunctionProvider.equals(filter.scoringFunctionProvider));
@@ -133,6 +133,6 @@ public final class ScoreFilterQuery extends Query {
 
   @Override
   public String toString(String field) {
-    return "SCORE_FILTER_QUERY[minScore=" + minScore + ",maxScore=" + maxScore + "]";
+    return "SCORE_FILTER_QUERY[minScore=" + minScore + ",matwitterScore=" + matwitterScore + "]";
   }
 }

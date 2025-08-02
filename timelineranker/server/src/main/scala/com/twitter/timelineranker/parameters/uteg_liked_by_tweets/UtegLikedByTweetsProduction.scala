@@ -24,21 +24,21 @@ object UtegLikedByTweetsProduction {
 
   val intParams: Seq[Param[Int]] = Seq(
     DefaultUTEGInNetworkCount,
-    DefaultMaxTweetCount,
+    DefaultMatwitterTweetCount,
     DefaultUTEGOutOfNetworkCount,
     MinNumFavoritedByUserIdsParam
   )
 
   val booleanFeatureSwitchParams: Seq[FSParam[Boolean]] = Seq(
     UTEGRecommendationsFilter.EnableParam,
-    UTEGRecommendationsFilter.ExcludeQuoteTweetParam,
-    UTEGRecommendationsFilter.ExcludeReplyParam,
-    UTEGRecommendationsFilter.ExcludeRetweetParam,
-    UTEGRecommendationsFilter.ExcludeTweetParam,
+    UTEGRecommendationsFilter.EtwittercludeQuoteTweetParam,
+    UTEGRecommendationsFilter.EtwittercludeReplyParam,
+    UTEGRecommendationsFilter.EtwittercludeRetweetParam,
+    UTEGRecommendationsFilter.EtwittercludeTweetParam,
     EnableTokensInContentFeaturesHydrationParam,
     EnableConversationControlInContentFeaturesHydrationParam,
-    UTEGRecommendationsFilter.ExcludeRecommendedRepliesToNonFollowedUsersParam,
-    EnableTweetTextInContentFeaturesHydrationParam,
+    UTEGRecommendationsFilter.EtwittercludeRecommendedRepliesToNonFollowedUsersParam,
+    EnableTweetTetwittertInContentFeaturesHydrationParam,
     EnableTweetMediaHydrationParam,
     UtegLikedByTweetsParams.IncludeRandomTweetParam,
     UtegLikedByTweetsParams.IncludeSingleRandomTweetParam,

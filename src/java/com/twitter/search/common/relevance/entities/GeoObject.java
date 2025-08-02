@@ -5,15 +5,15 @@ import java.util.Optional;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoLocationSource;
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoTags;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftGeoLocationSource;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftGeoTags;
 import com.twitter.tweetypie.thriftjava.GeoCoordinates;
 import com.twitter.tweetypie.thriftjava.Place;
 
 import geo.google.datamodel.GeoAddressAccuracy;
 
 /**
- * A GeoObject, extending a GeoCoordinate to include radius and accuracy
+ * A GeoObject, etwittertending a GeoCoordinate to include radius and accuracy
  */
 public class GeoObject {
 
@@ -50,36 +50,36 @@ public class GeoObject {
 
   /**
    * Tries to create a {@code GeoObject} instance from a given TweetyPie {@code Place} struct based
-   * on its bounding box coordinates.
+   * on its bounding botwitter coordinates.
    *
    * @param place
-   * @return {@code Optional} instance with {@code GeoObject} if bounding box coordinates are
+   * @return {@code Optional} instance with {@code GeoObject} if bounding botwitter coordinates are
    *         available, or an empty {@code Optional}.
    */
   public static Optional<GeoObject> fromPlace(Place place) {
     // Can't use place.centroid: from the sample of data, centroid seems to always be null
     // (as of May 17 2016).
-    if (place.isSetBounding_box() && place.getBounding_boxSize() > 0) {
-      int pointsCount = place.getBounding_boxSize();
+    if (place.isSetBounding_botwitter() && place.getBounding_botwitterSize() > 0) {
+      int pointsCount = place.getBounding_botwitterSize();
 
       if (pointsCount == 1) {
-        GeoCoordinates point = place.getBounding_box().get(0);
+        GeoCoordinates point = place.getBounding_botwitter().get(0);
         return Optional.of(createForIngester(point.getLatitude(), point.getLongitude()));
       } else {
         double sumLatitude = 0.0;
         double sumLongitude = 0.0;
 
-        List<GeoCoordinates> box = place.getBounding_box();
+        List<GeoCoordinates> botwitter = place.getBounding_botwitter();
 
         // Drop the last point if it's the same as the first point.
         // The same logic is present in several other classes dealing with places.
         // See e.g. birdherd/src/main/scala/com/twitter/birdherd/tweetypie/TweetyPiePlace.scala
-        if (box.get(pointsCount - 1).equals(box.get(0))) {
+        if (botwitter.get(pointsCount - 1).equals(botwitter.get(0))) {
           pointsCount--;
         }
 
         for (int i = 0; i < pointsCount; i++) {
-          GeoCoordinates coords = box.get(i);
+          GeoCoordinates coords = botwitter.get(i);
           sumLatitude += coords.getLatitude();
           sumLongitude += coords.getLongitude();
         }
@@ -142,14 +142,14 @@ public class GeoObject {
   private static final double COORDS_EQUALITY_THRESHOLD = 1e-7;
 
   /**
-   * Performs an approximate comparison between the two GeoObject instances.
+   * Performs an approtwitterimate comparison between the two GeoObject instances.
    *
    * @deprecated This code is not performant and should not be used in
    * production code. Use only for tests. See SEARCH-5148.
    */
   @Deprecated
   @VisibleForTesting
-  public static boolean approxEquals(GeoObject a, GeoObject b) {
+  public static boolean approtwitterEquals(GeoObject a, GeoObject b) {
     if (a == null && b == null) {
       return true;
     }

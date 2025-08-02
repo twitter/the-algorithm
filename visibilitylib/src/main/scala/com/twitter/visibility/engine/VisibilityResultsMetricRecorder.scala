@@ -89,13 +89,13 @@ case class VisibilityResultsMetricRecorder(
 
   def recordFailedFeature(
     failedFeature: Feature[_],
-    exception: Throwable
+    etwitterception: Throwable
   ): Unit = {
     featureFailureReceiver.counter().incr()
 
     val featureStat = featureFailureReceiver.scope(failedFeature.name)
     featureStat.counter().incr()
-    featureStat.counter(exception.getClass.getName).incr()
+    featureStat.counter(etwitterception.getClass.getName).incr()
   }
 
   def recordAction(
@@ -176,4 +176,4 @@ case class VisibilityResultsMetricRecorder(
 }
 
 object NullVisibilityResultsMetricsRecorder
-    extends VisibilityResultsMetricRecorder(NullStatsReceiver, Gate.False)
+    etwittertends VisibilityResultsMetricRecorder(NullStatsReceiver, Gate.False)

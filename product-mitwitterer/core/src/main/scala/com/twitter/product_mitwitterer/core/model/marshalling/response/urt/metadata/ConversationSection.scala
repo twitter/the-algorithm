@@ -1,0 +1,8 @@
+package com.twitter.product_mitwitterer.core.model.marshalling.response.urt.metadata
+
+sealed trait ConversationSection
+
+case object HighQuality etwittertends ConversationSection
+case object LowQuality etwittertends ConversationSection
+case object AbusiveQuality etwittertends ConversationSection
+case object RelatedTweet etwittertends ConversationSection

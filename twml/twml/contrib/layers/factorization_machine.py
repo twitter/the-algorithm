@@ -19,15 +19,15 @@ class FactorizationMachine(Layer):
   Arguments:
     num_latent_variables:
       num of latent variables
-      The number of parameter in this layer is num_latent_variables x n where n is number of
+      The number of parameter in this layer is num_latent_variables twitter n where n is number of
       input features.
     weight_initializer:
-      Initializer function for the weight matrix.
+      Initializer function for the weight matritwitter.
       This argument defaults to zeros_initializer().
       This is valid when the FullSparse is the first layer of
       parameters but should be changed otherwise.
     weight_regularizer:
-      Regularizer function for the weight matrix.
+      Regularizer function for the weight matritwitter.
       Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
     activation:
       Activation function (callable). Set it to None to maintain a linear activation.
@@ -40,10 +40,10 @@ class FactorizationMachine(Layer):
       share weights, but to avoid mistakes we require ``reuse=True`` in such cases.
     use_sparse_grads:
       Boolean, if `True` do sparse mat mul with `embedding_lookup_sparse`, which will
-      make gradients to weight matrix also sparse in backward pass. This can lead to non-trivial
+      make gradients to weight matritwitter also sparse in backward pass. This can lead to non-trivial
       speed up at training time when input_size is large and optimizer handles sparse gradients
-      correctly (eg. with SGD or LazyAdamOptimizer). If weight matrix is small, it's recommended
-      to set this flag to `False`; for most use cases of FullSparse, however, weight matrix will
+      correctly (eg. with SGD or LazyAdamOptimizer). If weight matritwitter is small, it's recommended
+      to set this flag to `False`; for most use cases of FullSparse, however, weight matritwitter will
       be large, so it's better to set it to `True`
     use_binary_values:
       Assume all non zero values are 1. Defaults to False.
@@ -128,38 +128,38 @@ class FactorizationMachine(Layer):
       - If `inputs` is `SparseTensor`, then returns a number with cross info
     """
     # The following are given:
-    # - inputs is a sparse tensor, we call it sp_x.
-    # - The dense_v tensor is a dense matrix, whose row i
+    # - inputs is a sparse tensor, we call it sp_twitter.
+    # - The dense_v tensor is a dense matritwitter, whose row i
     #   corresponds to the vector V_i.
     #   weights has shape [num_features, k]
-    sp_x = inputs
+    sp_twitter = inputs
     if isinstance(inputs, twml.SparseTensor):
-      sp_x = inputs.to_tf()
-    elif not isinstance(sp_x, tf.SparseTensor):
-      raise TypeError("The sp_x must be of type tf.SparseTensor or twml.SparseTensor")
+      sp_twitter = inputs.to_tf()
+    elif not isinstance(sp_twitter, tf.SparseTensor):
+      raise TypeError("The sp_twitter must be of type tf.SparseTensor or twml.SparseTensor")
 
-    indices = sp_x.indices[:, 1]
-    batch_ids = sp_x.indices[:, 0]
-    values = tf.reshape(sp_x.values, [-1, 1], name=self.name)
+    indices = sp_twitter.indices[:, 1]
+    batch_ids = sp_twitter.indices[:, 0]
+    values = tf.reshape(sp_twitter.values, [-1, 1], name=self.name)
     if self.use_sparse_grads:
       v = tf.nn.embedding_lookup(self.weight, indices)
       # if (self.use_binary_values):
       #   values = tf.ones(tf.shape(values), dtype=values.dtype)
-      v_times_x = v * values
-      # First term: Sum_k  [Sum_i (v_ik * x_i)]^2
-      all_crosses = tf.segment_sum(v_times_x, batch_ids, name=self.name)
+      v_times_twitter = v * values
+      # First term: Sum_k  [Sum_i (v_ik * twitter_i)]^2
+      all_crosses = tf.segment_sum(v_times_twitter, batch_ids, name=self.name)
       all_crosses_squared = tf.reduce_sum((all_crosses * all_crosses), 1)
 
       if self.substract_self_cross:
-        # Second term: Sum_k Sum_i [ (v_ik * x_i)^2 ]
-        v_times_x_2 = v_times_x**2
-        self_crosses = tf.reduce_sum(tf.segment_sum(v_times_x_2, batch_ids, name=self.name), 1)
+        # Second term: Sum_k Sum_i [ (v_ik * twitter_i)^2 ]
+        v_times_twitter_2 = v_times_twitter**2
+        self_crosses = tf.reduce_sum(tf.segment_sum(v_times_twitter_2, batch_ids, name=self.name), 1)
         outputs = all_crosses_squared - self_crosses
       else:
         outputs = all_crosses_squared
     else:
       # need to check if prediction is faster with code below
-      crossTerm = tf.reduce_sum((tf.sparse_tensor_dense_matmul(sp_x, self.weight)**2), 1)
+      crossTerm = tf.reduce_sum((tf.sparse_tensor_dense_matmul(sp_twitter, self.weight)**2), 1)
 
       if self.substract_self_cross:
         # compute self-cross term
@@ -172,8 +172,8 @@ class FactorizationMachine(Layer):
       outputs = self.activation(outputs)
 
     outputs = tf.reshape(outputs, [-1, 1], name=self.name)
-    outputs = _pad_empty_outputs(outputs, tf.cast(sp_x.dense_shape[0], tf.int32))
-    # set more explicit and static shape to avoid shape inference error
+    outputs = _pad_empty_outputs(outputs, tf.cast(sp_twitter.dense_shape[0], tf.int32))
+    # set more etwitterplicit and static shape to avoid shape inference error
     # valueError: The last dimension of the inputs to `Dense` should be defined. Found `None`
     outputs.set_shape([None, 1])
     return outputs

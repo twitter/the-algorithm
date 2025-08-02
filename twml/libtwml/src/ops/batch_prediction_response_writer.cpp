@@ -12,7 +12,7 @@ REGISTER_OP("BatchPredictionResponseWriter")
 .Input("keys: int64")
 .Input("values: T")
 .Output("result: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
+.SetShapeFn([](::tensorflow::shape_inference::InferenceContetwittert* c) {
   return Status::OK();
   }).Doc(R"doc(
 
@@ -28,12 +28,12 @@ Outputs
 template<typename T>
 class BatchPredictionResponseWriter : public OpKernel {
  public:
-  explicit BatchPredictionResponseWriter(OpKernelConstruction* context)
-  : OpKernel(context) {}
+  etwitterplicit BatchPredictionResponseWriter(OpKernelConstruction* contetwittert)
+  : OpKernel(contetwittert) {}
 
-  void Compute(OpKernelContext* context) override {
-    const Tensor& keys = context->input(0);
-    const Tensor& values = context->input(1);
+  void Compute(OpKernelContetwittert* contetwittert) override {
+    const Tensor& keys = contetwittert->input(0);
+    const Tensor& values = contetwittert->input(1);
 
     try {
       // Ensure the inner dimension matches.
@@ -58,14 +58,14 @@ class BatchPredictionResponseWriter : public OpKernel {
 
       // Create an output tensor, the size is determined by the content of input.
       Tensor* result = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, result_shape,
+      OP_REQUIRES_OK(contetwittert, contetwittert->allocate_output(0, result_shape,
                                                        &result));
       twml::Tensor out_result = TFTensor_to_twml_tensor(*result);
 
       // Call writer of BatchPredictionResponse
       tempResult.write(out_result);
-    } catch(const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch(const std::etwitterception &e) {
+      contetwittert->CttwitterFailureWithWarning(errors::InvalidArgument(e.what()));
     }
   }
 };

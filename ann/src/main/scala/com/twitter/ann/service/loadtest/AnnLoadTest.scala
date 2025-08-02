@@ -5,7 +5,7 @@ import com.twitter.ann.common.{Appendable, Distance, EntityEmbedding, Queryable,
 import com.twitter.util.logging.Logger
 import com.twitter.util.{Duration, Future}
 
-class AnnIndexQueryLoadTest(
+class AnnIndetwitterQueryLoadTest(
   worker: AnnLoadTestWorker = new AnnLoadTestWorker()) {
   lazy val logger = Logger(getClass.getName)
 
@@ -43,23 +43,23 @@ class AnnIndexQueryLoadTest(
  */
 case class Query[T](embedding: EmbeddingVector, trueNeighbours: Seq[T] = Seq.empty)
 
-class AnnIndexBuildLoadTest(
+class AnnIndetwitterBuildLoadTest(
   buildRecorder: LoadTestBuildRecorder,
-  embeddingIndexer: EmbeddingIndexer = new EmbeddingIndexer()) {
+  embeddingIndetwitterer: EmbeddingIndetwitterer = new EmbeddingIndetwitterer()) {
   lazy val logger = Logger(getClass.getName)
-  def indexEmbeddings[T, P <: RuntimeParams, D <: Distance[D]](
+  def indetwitterEmbeddings[T, P <: RuntimeParams, D <: Distance[D]](
     appendable: Appendable[T, P, D],
-    indexSet: Seq[EntityEmbedding[T]],
+    indetwitterSet: Seq[EntityEmbedding[T]],
     concurrencyLevel: Int
   ): Future[Queryable[T, P, D]] = {
-    logger.info(s"Index set: ${indexSet.size}")
-    val queryable = embeddingIndexer
-      .indexEmbeddings(
+    logger.info(s"Indetwitter set: ${indetwitterSet.size}")
+    val queryable = embeddingIndetwitterer
+      .indetwitterEmbeddings(
         appendable,
         buildRecorder,
-        indexSet,
+        indetwitterSet,
         concurrencyLevel
-      ).onSuccess(_ => logger.info(s"Done indexing.."))
+      ).onSuccess(_ => logger.info(s"Done indetwittering.."))
 
     queryable
   }

@@ -6,7 +6,7 @@ import org.apache.beam.sdk.options.Default
 import org.apache.beam.sdk.options.Description
 import org.apache.beam.sdk.options.Validation.Required
 
-trait InteractionGraphAggregationOption extends DALOptions with DateRangeOptions {
+trait InteractionGraphAggregationOption etwittertends DALOptions with DateRangeOptions {
   @Required
   @Description("Output path for storing the final dataset")
   def getOutputPath: String
@@ -26,9 +26,9 @@ trait InteractionGraphAggregationOption extends DALOptions with DateRangeOptions
   def getBqTableName: String
   def setBqTableName(value: String): Unit
 
-  @Description("max destination ids that we will store for real graph features in TL")
-  def getMaxDestinationIds: Integer
-  def setMaxDestinationIds(value: Integer): Unit
+  @Description("matwitter destination ids that we will store for real graph features in TL")
+  def getMatwitterDestinationIds: Integer
+  def setMatwitterDestinationIds(value: Integer): Unit
 
   @Description("true if getting scores from BQ instead of DAL-based dataset in GCS")
   def getScoresFromBQ: Boolean

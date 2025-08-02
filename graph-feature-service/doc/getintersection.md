@@ -1,6 +1,6 @@
 # GetIntersection
 
-## Request and response syntax
+## Request and response syntatwitter
 
 A `GetIntersection` call takes as input a `GfsIntersectionRequest` thrift struct. 
 

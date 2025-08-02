@@ -3,18 +3,18 @@ Parameters used in ClemNet.
 """
 from typing import List, Optional
 
-from pydantic import BaseModel, Extra, Field, PositiveInt
+from pydantic import BaseModel, Etwittertra, Field, PositiveInt
 
 
 # checkstyle: noqa
 
 
-class ExtendedBaseModel(BaseModel):
+class EtwittertendedBaseModel(BaseModel):
   class Config:
-    extra = Extra.forbid
+    etwittertra = Etwittertra.forbid
 
 
-class DenseParams(ExtendedBaseModel):
+class DenseParams(EtwittertendedBaseModel):
   name: Optional[str]
   bias_initializer: str = "zeros"
   kernel_initializer: str = "glorot_uniform"
@@ -22,7 +22,7 @@ class DenseParams(ExtendedBaseModel):
   use_bias: bool = Field(True)
 
 
-class ConvParams(ExtendedBaseModel):
+class ConvParams(EtwittertendedBaseModel):
   name: Optional[str]
   bias_initializer: str = "zeros"
   filters: PositiveInt
@@ -33,17 +33,17 @@ class ConvParams(ExtendedBaseModel):
   use_bias: bool = Field(True)
 
 
-class BlockParams(ExtendedBaseModel):
+class BlockParams(EtwittertendedBaseModel):
   activation: Optional[str]
   conv: Optional[ConvParams]
   dense: Optional[DenseParams]
   residual: Optional[bool]
 
 
-class TopLayerParams(ExtendedBaseModel):
+class TopLayerParams(EtwittertendedBaseModel):
   n_labels: PositiveInt
 
 
-class ClemNetParams(ExtendedBaseModel):
+class ClemNetParams(EtwittertendedBaseModel):
   blocks: List[BlockParams] = []
   top: Optional[TopLayerParams]

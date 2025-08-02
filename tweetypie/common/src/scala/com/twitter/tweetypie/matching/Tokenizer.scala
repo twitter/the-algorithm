@@ -1,18 +1,18 @@
 package com.twitter.tweetypie.matching
 
-import com.twitter.common.text.language.LocaleUtil
-import com.twitter.common_internal.text.pipeline.TwitterTextNormalizer
-import com.twitter.common_internal.text.pipeline.TwitterTextTokenizer
-import com.twitter.common_internal.text.version.PenguinVersion
+import com.twitter.common.tetwittert.language.LocaleUtil
+import com.twitter.common_internal.tetwittert.pipeline.TwitterTetwittertNormalizer
+import com.twitter.common_internal.tetwittert.pipeline.TwitterTetwittertTokenizer
+import com.twitter.common_internal.tetwittert.version.PenguinVersion
 import com.twitter.concurrent.Once
 import com.twitter.io.StreamIO
 import java.util.Locale
 import scala.collection.JavaConverters._
 
 /**
- * Extract a sequence of normalized tokens from the input text. The
+ * Etwittertract a sequence of normalized tokens from the input tetwittert. The
  * normalization and tokenization are properly configured for keyword
- * matching between texts.
+ * matching between tetwitterts.
  */
 trait Tokenizer {
   def tokenize(input: String): TokenSequence
@@ -21,15 +21,15 @@ trait Tokenizer {
 object Tokenizer {
 
   /**
-   * When a Penguin version is not explicitly specified, use this
+   * When a Penguin version is not etwitterplicitly specified, use this
    * version of Penguin to perform normalization and tokenization. If
-   * you cache tokenized text, be sure to store the version as well, to
-   * avoid comparing text that was normalized with different algorithms.
+   * you cache tokenized tetwittert, be sure to store the version as well, to
+   * avoid comparing tetwittert that was normalized with different algorithms.
    */
   val DefaultPenguinVersion: PenguinVersion = PenguinVersion.PENGUIN_6
 
   /**
-   * If you already know the locale of the text that is being tokenized,
+   * If you already know the locale of the tetwittert that is being tokenized,
    * use this method to get a tokenizer that is much more efficient than
    * the Tweet or Query tokenizer, since it does not have to perform
    * language detection.
@@ -37,28 +37,28 @@ object Tokenizer {
   def forLocale(locale: Locale): Tokenizer = get(locale, DefaultPenguinVersion)
 
   /**
-   * Obtain a `Tokenizer` that will tokenize the text for the given
+   * Obtain a `Tokenizer` that will tokenize the tetwittert for the given
    * locale and version of the Penguin library.
    */
   def get(locale: Locale, version: PenguinVersion): Tokenizer =
     TokenizerFactories(version).forLocale(locale)
 
   /**
-   * Encapsulates the configuration and use of [[TwitterTextTokenizer]]
-   * and [[TwitterTextNormalizer]].
+   * Encapsulates the configuration and use of [[TwitterTetwittertTokenizer]]
+   * and [[TwitterTetwittertNormalizer]].
    */
   private[this] class TokenizerFactory(version: PenguinVersion) {
     // The normalizer is thread-safe, so share one instance.
     private[this] val normalizer =
-      (new TwitterTextNormalizer.Builder(version)).build()
+      (new TwitterTetwittertNormalizer.Builder(version)).build()
 
-    // The TwitterTextTokenizer is relatively expensive to build,
+    // The TwitterTetwittertTokenizer is relatively etwitterpensive to build,
     // and is not thread safe, so keep instances of it in a
     // ThreadLocal.
     private[this] val local =
-      new ThreadLocal[TwitterTextTokenizer] {
-        override def initialValue: TwitterTextTokenizer =
-          (new TwitterTextTokenizer.Builder(version)).build()
+      new ThreadLocal[TwitterTetwittertTokenizer] {
+        override def initialValue: TwitterTetwittertTokenizer =
+          (new TwitterTetwittertTokenizer.Builder(version)).build()
       }
 
     /**
@@ -70,7 +70,7 @@ object Tokenizer {
         override def tokenize(input: String): TokenSequence = {
           val stream = local.get.getTwitterTokenStreamFor(locale)
           stream.reset(normalizer.normalize(input, locale))
-          val builder = IndexedSeq.newBuilder[CharSequence]
+          val builder = IndetwitteredSeq.newBuilder[CharSequence]
           while (stream.incrementToken) builder += stream.term()
           TokenSequence(builder.result())
         }
@@ -87,7 +87,7 @@ object Tokenizer {
 
   /**
    * The set of locales used in warmup. These locales are mentioned in
-   * the logic of TwitterTextTokenizer and TwitterTextNormalizer.
+   * the logic of TwitterTetwittertTokenizer and TwitterTetwittertNormalizer.
    */
   private[this] val WarmUpLocales: Seq[Locale] =
     Seq
@@ -111,7 +111,7 @@ object Tokenizer {
    * Load the default inputs that are used for warming up this library.
    */
   def warmUpCorpus(): Seq[String] = {
-    val stream = getClass.getResourceAsStream("warmup-text.txt")
+    val stream = getClass.getResourceAsStream("warmup-tetwittert.ttwittert")
     val bytes =
       try StreamIO.buffer(stream)
       finally stream.close()
@@ -119,31 +119,31 @@ object Tokenizer {
   }
 
   /**
-   * Exercise the functionality of this library on the specified
+   * Etwitterercise the functionality of this library on the specified
    * strings. In general, prefer [[warmUp]] to this method.
    */
-  def warmUpWith(ver: PenguinVersion, texts: Iterable[String]): Unit =
-    texts.foreach { txt =>
-      // Exercise each locale
+  def warmUpWith(ver: PenguinVersion, tetwitterts: Iterable[String]): Unit =
+    tetwitterts.foreach { ttwittert =>
+      // Etwitterercise each locale
       WarmUpLocales.foreach { loc =>
-        Tokenizer.get(loc, ver).tokenize(txt)
-        UserMutes.builder().withPenguinVersion(ver).withLocale(loc).validate(txt)
+        Tokenizer.get(loc, ver).tokenize(ttwittert)
+        UserMutes.builder().withPenguinVersion(ver).withLocale(loc).validate(ttwittert)
       }
 
-      // Exercise language detection
-      TweetTokenizer.get(ver).tokenize(txt)
-      UserMutes.builder().withPenguinVersion(ver).validate(txt)
+      // Etwitterercise language detection
+      TweetTokenizer.get(ver).tokenize(ttwittert)
+      UserMutes.builder().withPenguinVersion(ver).validate(ttwittert)
     }
 
   private[this] val warmUpOnce = Once(warmUpWith(DefaultPenguinVersion, warmUpCorpus()))
 
   /**
-   * The creation of the first TwitterTextTokenizer is relatively
-   * expensive, and tokenizing some texts may cause significant
+   * The creation of the first TwitterTetwittertTokenizer is relatively
+   * etwitterpensive, and tokenizing some tetwitterts may cause significant
    * initialization.
    *
-   * This method exercises the functionality of this library
-   * with a range of texts in order to perform as much initialization as
+   * This method etwitterercises the functionality of this library
+   * with a range of tetwitterts in order to perform as much initialization as
    * possible before the library is used in a latency-sensitive way.
    *
    * The warmup routine will only run once. Subsequent invocations of

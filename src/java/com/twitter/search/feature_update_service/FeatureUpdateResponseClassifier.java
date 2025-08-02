@@ -10,7 +10,7 @@ import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateRespons
 import com.twitter.util.Try;
 
 public class FeatureUpdateResponseClassifier
-    extends AbstractPartialFunction<ReqRep, ResponseClass> {
+    etwittertends AbstractPartialFunction<ReqRep, ResponseClass> {
   @Override
   public boolean isDefinedAt(ReqRep tuple) {
     return true;
@@ -31,7 +31,7 @@ public class FeatureUpdateResponseClassifier
       case PERSISTENT_ERROR:
         return ResponseClass.NonRetryableFailure();
       // Client cancellations don't necessarily mean failures on our end. The client decided to
-      // cancel the request (for example we timed out, so they sent a duplicate request etc.),
+      // cancel the request (for etwitterample we timed out, so they sent a duplicate request etc.),
       // so let's treat them as successes.
       case CLIENT_CANCEL_ERROR:
       default:

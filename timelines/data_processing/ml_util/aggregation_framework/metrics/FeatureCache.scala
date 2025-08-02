@@ -14,7 +14,7 @@ trait FeatureCache[T] {
    * @return Full name of output feature
    */
   private def uncachedFullFeatureName(query: AggregateFeature[T], name: String): String =
-    List(query.featurePrefix, name).mkString(".")
+    List(query.featurePrefitwitter, name).mkString(".")
 
   /*
    * A cache from (aggregate query, output feature name) -> fully qualified feature name
@@ -55,7 +55,7 @@ trait FeatureCache[T] {
       aggregateFeatureType match {
         case FeatureType.BINARY => new Feature.Binary(cachedFeatureName, personalDataTypes)
         case FeatureType.DISCRETE => new Feature.Discrete(cachedFeatureName, personalDataTypes)
-        case FeatureType.STRING => new Feature.Text(cachedFeatureName, personalDataTypes)
+        case FeatureType.STRING => new Feature.Tetwittert(cachedFeatureName, personalDataTypes)
         case FeatureType.CONTINUOUS => new Feature.Continuous(cachedFeatureName, personalDataTypes)
         case FeatureType.SPARSE_BINARY =>
           new Feature.SparseBinary(cachedFeatureName, personalDataTypes)

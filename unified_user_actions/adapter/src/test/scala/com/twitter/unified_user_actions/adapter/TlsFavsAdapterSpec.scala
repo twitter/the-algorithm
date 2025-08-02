@@ -1,18 +1,18 @@
 package com.twitter.unified_user_actions.adapter
 
-import com.twitter.context.thriftscala.Viewer
+import com.twitter.contetwittert.thriftscala.Viewer
 import com.twitter.inject.Test
 import com.twitter.timelineservice.thriftscala._
 import com.twitter.unified_user_actions.adapter.tls_favs_event.TlsFavsAdapter
 import com.twitter.unified_user_actions.thriftscala._
 import com.twitter.util.Time
 
-class TlsFavsAdapterSpec extends Test {
-  trait Fixture {
+class TlsFavsAdapterSpec etwittertends Test {
+  trait Fitwitterture {
 
     val frozenTime = Time.fromMilliseconds(1658949273000L)
 
-    val favEventNoRetweet = ContextualizedFavoriteEvent(
+    val favEventNoRetweet = ContetwittertualizedFavoriteEvent(
       event = FavoriteEventUnion.Favorite(
         FavoriteEvent(
           userId = 91L,
@@ -21,9 +21,9 @@ class TlsFavsAdapterSpec extends Test {
           eventTimeMs = 1001L
         )
       ),
-      context = LogEventContext(hostname = "", traceId = 31L)
+      contetwittert = LogEventContetwittert(hostname = "", traceId = 31L)
     )
-    val favEventRetweet = ContextualizedFavoriteEvent(
+    val favEventRetweet = ContetwittertualizedFavoriteEvent(
       event = FavoriteEventUnion.Favorite(
         FavoriteEvent(
           userId = 92L,
@@ -33,9 +33,9 @@ class TlsFavsAdapterSpec extends Test {
           retweetId = Some(22L)
         )
       ),
-      context = LogEventContext(hostname = "", traceId = 32L)
+      contetwittert = LogEventContetwittert(hostname = "", traceId = 32L)
     )
-    val unfavEventNoRetweet = ContextualizedFavoriteEvent(
+    val unfavEventNoRetweet = ContetwittertualizedFavoriteEvent(
       event = FavoriteEventUnion.Unfavorite(
         UnfavoriteEvent(
           userId = 93L,
@@ -44,9 +44,9 @@ class TlsFavsAdapterSpec extends Test {
           eventTimeMs = 1003L
         )
       ),
-      context = LogEventContext(hostname = "", traceId = 33L)
+      contetwittert = LogEventContetwittert(hostname = "", traceId = 33L)
     )
-    val unfavEventRetweet = ContextualizedFavoriteEvent(
+    val unfavEventRetweet = ContetwittertualizedFavoriteEvent(
       event = FavoriteEventUnion.Unfavorite(
         UnfavoriteEvent(
           userId = 94L,
@@ -56,23 +56,23 @@ class TlsFavsAdapterSpec extends Test {
           retweetId = Some(44L)
         )
       ),
-      context = LogEventContext(hostname = "", traceId = 34L)
+      contetwittert = LogEventContetwittert(hostname = "", traceId = 34L)
     )
-    val favEventWithLangAndCountry = ContextualizedFavoriteEvent(
+    val favEventWithLangAndCountry = ContetwittertualizedFavoriteEvent(
       event = FavoriteEventUnion.Favorite(
         FavoriteEvent(
           userId = 91L,
           tweetId = 1L,
           tweetUserId = 101L,
           eventTimeMs = 1001L,
-          viewerContext =
+          viewerContetwittert =
             Some(Viewer(requestCountryCode = Some("us"), requestLanguageCode = Some("en")))
         )
       ),
-      context = LogEventContext(hostname = "", traceId = 31L)
+      contetwittert = LogEventContetwittert(hostname = "", traceId = 31L)
     )
 
-    val expectedUua1 = UnifiedUserAction(
+    val etwitterpectedUua1 = UnifiedUserAction(
       userIdentifier = UserIdentifier(userId = Some(91L)),
       item = Item.TweetInfo(
         TweetInfo(
@@ -88,7 +88,7 @@ class TlsFavsAdapterSpec extends Test {
         traceId = Some(31L)
       )
     )
-    val expectedUua2 = UnifiedUserAction(
+    val etwitterpectedUua2 = UnifiedUserAction(
       userIdentifier = UserIdentifier(userId = Some(92L)),
       item = Item.TweetInfo(
         TweetInfo(
@@ -105,7 +105,7 @@ class TlsFavsAdapterSpec extends Test {
         traceId = Some(32L)
       )
     )
-    val expectedUua3 = UnifiedUserAction(
+    val etwitterpectedUua3 = UnifiedUserAction(
       userIdentifier = UserIdentifier(userId = Some(93L)),
       item = Item.TweetInfo(
         TweetInfo(
@@ -121,7 +121,7 @@ class TlsFavsAdapterSpec extends Test {
         traceId = Some(33L)
       )
     )
-    val expectedUua4 = UnifiedUserAction(
+    val etwitterpectedUua4 = UnifiedUserAction(
       userIdentifier = UserIdentifier(userId = Some(94L)),
       item = Item.TweetInfo(
         TweetInfo(
@@ -138,7 +138,7 @@ class TlsFavsAdapterSpec extends Test {
         traceId = Some(34L)
       )
     )
-    val expectedUua5 = UnifiedUserAction(
+    val etwitterpectedUua5 = UnifiedUserAction(
       userIdentifier = UserIdentifier(userId = Some(91L)),
       item = Item.TweetInfo(
         TweetInfo(
@@ -159,46 +159,46 @@ class TlsFavsAdapterSpec extends Test {
   }
 
   test("fav event with no retweet") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val actual = TlsFavsAdapter.adaptEvent(favEventNoRetweet)
-        assert(Seq(expectedUua1) === actual)
+        assert(Seq(etwitterpectedUua1) === actual)
       }
     }
   }
 
   test("fav event with a retweet") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val actual = TlsFavsAdapter.adaptEvent(favEventRetweet)
-        assert(Seq(expectedUua2) === actual)
+        assert(Seq(etwitterpectedUua2) === actual)
       }
     }
   }
 
   test("unfav event with no retweet") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val actual = TlsFavsAdapter.adaptEvent(unfavEventNoRetweet)
-        assert(Seq(expectedUua3) === actual)
+        assert(Seq(etwitterpectedUua3) === actual)
       }
     }
   }
 
   test("unfav event with a retweet") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val actual = TlsFavsAdapter.adaptEvent(unfavEventRetweet)
-        assert(Seq(expectedUua4) === actual)
+        assert(Seq(etwitterpectedUua4) === actual)
       }
     }
   }
 
   test("fav event with language and country") {
-    new Fixture {
+    new Fitwitterture {
       Time.withTimeAt(frozenTime) { _ =>
         val actual = TlsFavsAdapter.adaptEvent(favEventWithLangAndCountry)
-        assert(Seq(expectedUua5) === actual)
+        assert(Seq(etwitterpectedUua5) === actual)
       }
     }
   }

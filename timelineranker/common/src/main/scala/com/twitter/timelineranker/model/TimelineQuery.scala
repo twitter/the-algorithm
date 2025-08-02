@@ -8,21 +8,21 @@ object TimelineQuery {
   def fromThrift(query: thrift.TimelineQuery): TimelineQuery = {
     val queryType = query.queryType
     val id = TimelineId.fromThrift(query.timelineId)
-    val maxCount = query.maxCount
+    val matwitterCount = query.matwitterCount
     val range = query.range.map(TimelineRange.fromThrift)
     val options = query.options.map(TimelineQueryOptions.fromThrift)
 
     queryType match {
       case thrift.TimelineQueryType.Ranked =>
         val rankedOptions = getRankedOptions(options)
-        RankedTimelineQuery(id, maxCount, range, rankedOptions)
+        RankedTimelineQuery(id, matwitterCount, range, rankedOptions)
 
       case thrift.TimelineQueryType.ReverseChron =>
         val reverseChronOptions = getReverseChronOptions(options)
-        ReverseChronTimelineQuery(id, maxCount, range, reverseChronOptions)
+        ReverseChronTimelineQuery(id, matwitterCount, range, reverseChronOptions)
 
       case _ =>
-        throw new IllegalArgumentException(s"Unsupported query type: $queryType")
+        throw new IllegalArgumentEtwitterception(s"Unsupported query type: $queryType")
     }
   }
 
@@ -32,7 +32,7 @@ object TimelineQuery {
     options.map {
       case o: RankedTimelineQueryOptions => o
       case _ =>
-        throw new IllegalArgumentException(
+        throw new IllegalArgumentEtwitterception(
           "Only RankedTimelineQueryOptions are supported when queryType is TimelineQueryType.Ranked"
         )
     }
@@ -44,7 +44,7 @@ object TimelineQuery {
     options.map {
       case o: ReverseChronTimelineQueryOptions => o
       case _ =>
-        throw new IllegalArgumentException(
+        throw new IllegalArgumentEtwitterception(
           "Only ReverseChronTimelineQueryOptions are supported when queryType is TimelineQueryType.ReverseChron"
         )
     }
@@ -54,7 +54,7 @@ object TimelineQuery {
 abstract class TimelineQuery(
   private val queryType: thrift.TimelineQueryType,
   val id: TimelineId,
-  val maxCount: Option[Int],
+  val matwitterCount: Option[Int],
   val range: Option[TimelineRange],
   val options: Option[TimelineQueryOptions]) {
 
@@ -74,7 +74,7 @@ abstract class TimelineQuery(
     thrift.TimelineQuery(
       queryType = queryType,
       timelineId = id.toThrift,
-      maxCount = maxCount,
+      matwitterCount = matwitterCount,
       range = range.map(_.toTimelineRangeThrift),
       options = options.map(_.toTimelineQueryOptionsThrift)
     )

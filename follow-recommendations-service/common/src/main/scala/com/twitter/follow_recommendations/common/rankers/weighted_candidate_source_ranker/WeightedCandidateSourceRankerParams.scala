@@ -4,5 +4,5 @@ import com.twitter.timelines.configapi.FSParam
 
 object WeightedCandidateSourceRankerParams {
   case object ScribeRankingInfoInWeightedRanker
-      extends FSParam[Boolean]("weighted_ranker_scribe_ranking_info", false)
+      etwittertends FSParam[Boolean]("weighted_ranker_scribe_ranking_info", false)
 }

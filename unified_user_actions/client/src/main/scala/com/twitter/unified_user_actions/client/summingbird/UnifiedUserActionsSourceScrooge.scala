@@ -1,6 +1,6 @@
 package com.twitter.unified_user_actions.client.summingbird
 
-import com.twitter.summingbird.TimeExtractor
+import com.twitter.summingbird.TimeEtwittertractor
 import com.twitter.summingbird.storm.Storm
 import com.twitter.summingbird_internal.sources.AppId
 import com.twitter.summingbird_internal.sources.SourceFactory
@@ -15,7 +15,7 @@ case class UnifiedUserActionsSourceScrooge(
   kafkaConfig: ClientConfig = KafkaConfigs.ProdUnifiedUserActions,
   skipToLatest: Boolean = false,
   enableTls: Boolean = true)
-    extends SourceFactory[Storm, UnifiedUserAction] {
+    etwittertends SourceFactory[Storm, UnifiedUserAction] {
 
   override def name: String = "UnifiedUserActionsSource"
   override def description: String = "Unified User Actions (UUA) events"
@@ -23,7 +23,7 @@ case class UnifiedUserActionsSourceScrooge(
   // The event timestamps from summingbird's perspective (client), is our internally
   // outputted timestamps (producer). This ensures time-continuity between the client and the
   // producer.
-  val timeExtractor: TimeExtractor[UnifiedUserAction] = TimeExtractor { e =>
+  val timeEtwittertractor: TimeEtwittertractor[UnifiedUserAction] = TimeEtwittertractor { e =>
     e.eventMetadata.receivedTimestampMs
   }
 
@@ -38,6 +38,6 @@ case class UnifiedUserActionsSourceScrooge(
         enableTls = enableTls
       ),
       Some(parallelism)
-    )(timeExtractor)
+    )(timeEtwittertractor)
   }
 }

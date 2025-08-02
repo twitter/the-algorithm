@@ -14,7 +14,7 @@ object QualityPredicateMap {
   ): Map[QualityPredicateEnum.Value, NamedPredicate[PushCandidate]] = {
     Map(
       QualityPredicateEnum.WeightedOpenOrNtabClick -> WeightedOpenOrNtabClickQualityPredicate(),
-      QualityPredicateEnum.ExplicitOpenOrNtabClickFilter -> ExplicitOONCFilterPredicate(),
+      QualityPredicateEnum.EtwitterplicitOpenOrNtabClickFilter -> EtwitterplicitOONCFilterPredicate(),
       QualityPredicateEnum.AlwaysTrue -> PredicatesForCandidate.alwaysTruePushCandidatePredicate,
     )
   }

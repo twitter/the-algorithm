@@ -1,8 +1,8 @@
 package com.twitter.simclusters_v2.scalding.mbcg
 
 import com.twitter.conversions.DurationOps._
-import com.twitter.cortex.deepbird.runtime.prediction_engine.TensorflowPredictionEngineConfig
-import com.twitter.cortex.ml.embeddings.common.UserKind
+import com.twitter.cortetwitter.deepbird.runtime.prediction_engine.TensorflowPredictionEngineConfig
+import com.twitter.cortetwitter.ml.embeddings.common.UserKind
 import com.twitter.finagle.stats.NullStatsReceiver
 import com.twitter.ml.api.FeatureUtil
 import com.twitter.ml.api.constant.SharedFeatures
@@ -15,24 +15,24 @@ import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
 import com.twitter.scalding.Args
 import com.twitter.scalding.DateParser
 import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding.UniqueID
 import com.twitter.scalding._
 import com.twitter.scalding_internal.dalv2.DAL
 import com.twitter.scalding_internal.dalv2.DALWrite.D
 import com.twitter.scalding_internal.dalv2.DALWrite._
 import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
+import com.twitter.scalding_internal.job.TwitterEtwitterecutionApp
+import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchEtwitterecution
+import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchEtwitterecutionArgs
 import com.twitter.scalding_internal.job.analytics_batch.BatchDescription
 import com.twitter.scalding_internal.job.analytics_batch.BatchFirstTime
 import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
 import com.twitter.scalding_internal.job.analytics_batch.BatchWidth
-import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
+import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledEtwitterecutionApp
 import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
 import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.ExploreMbcgUserEmbeddingsKvScalaDataset
+import com.twitter.simclusters_v2.hdfs_sources.EtwitterploreMbcgUserEmbeddingsKvScalaDataset
 import com.twitter.simclusters_v2.scalding.common.Util
 import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
 import com.twitter.twml.runtime.scalding.TensorflowBatchPredictor
@@ -46,7 +46,7 @@ This class does the following:
 1) Get user IIAPE Simcluster features that use LogFav scores
 2) Filter them down to users whose accounts are not deactivated or suspended
 3) Convert the remaining user Simclusters into DataRecords using UserSimclusterRecordAdapter
-4) Run inference using a TF model exported with a DataRecord compatible serving signature
+4) Run inference using a TF model etwitterported with a DataRecord compatible serving signature
 5) Write to MH using a KeyVal format
  */
 trait UserEmbeddingGenerationTrait {
@@ -82,18 +82,18 @@ trait UserEmbeddingGenerationTrait {
         val embedding =
           thriftscala.Embedding(Some(rawTensor))
         KeyVal(userId, embedding)
-      case _ => throw new IllegalArgumentException("tensor is wrong type!")
+      case _ => throw new IllegalArgumentEtwitterception("tensor is wrong type!")
     }
   }
 
   def writeUserEmbedding(
     result: TypedPipe[KeyVal[Long, thriftscala.Embedding]],
     args: Args
-  ): Execution[Unit] = {
-    result.writeDALVersionedKeyValExecution(
-      ExploreMbcgUserEmbeddingsKvScalaDataset,
-      D.Suffix(
-        args.getOrElse("kvs_output_path", "/user/cassowary/explore_mbcg/user_kvs_store/test")
+  ): Etwitterecution[Unit] = {
+    result.writeDALVersionedKeyValEtwitterecution(
+      EtwitterploreMbcgUserEmbeddingsKvScalaDataset,
+      D.Suffitwitter(
+        args.getOrElse("kvs_output_path", "/user/cassowary/etwitterplore_mbcg/user_kvs_store/test")
       )
     )
   }
@@ -188,12 +188,12 @@ trait UserEmbeddingGenerationTrait {
 }
 
 object UserEmbeddingGenerationAdhocJob
-    extends TwitterExecutionApp
+    etwittertends TwitterEtwitterecutionApp
     with UserEmbeddingGenerationTrait {
 
-  override def job: Execution[Unit] =
-    Execution.withId { implicit uid =>
-      Execution.withArgs { args =>
+  override def job: Etwitterecution[Unit] =
+    Etwitterecution.withId { implicit uid =>
+      Etwitterecution.withArgs { args =>
         implicit val dateRange: DateRange = DateRange.parse(args.list("dateRange"))
         run(args)
       }
@@ -201,22 +201,22 @@ object UserEmbeddingGenerationAdhocJob
 }
 
 object UserEmbeddingGenerationBatchJob
-    extends TwitterScheduledExecutionApp
+    etwittertends TwitterScheduledEtwitterecutionApp
     with UserEmbeddingGenerationTrait {
 
-  override def scheduledJob: Execution[Unit] =
-    Execution.withId { implicit uid =>
-      Execution.withArgs { args =>
+  override def scheduledJob: Etwitterecution[Unit] =
+    Etwitterecution.withId { implicit uid =>
+      Etwitterecution.withArgs { args =>
         implicit val tz: TimeZone = DateOps.UTC
         val batchFirstTime = BatchFirstTime(RichDate("2021-12-04")(tz, DateParser.default))
-        val analyticsArgs = AnalyticsBatchExecutionArgs(
+        val analyticsArgs = AnalyticsBatchEtwitterecutionArgs(
           batchDesc = BatchDescription(getClass.getName),
           firstTime = batchFirstTime,
           batchIncrement = BatchIncrement(Hours(updateHours)),
           batchWidth = Some(BatchWidth(Hours(updateHours)))
         )
 
-        AnalyticsBatchExecution(analyticsArgs) { implicit dateRange =>
+        AnalyticsBatchEtwitterecution(analyticsArgs) { implicit dateRange =>
           run(args)
         }
       }
@@ -224,45 +224,45 @@ object UserEmbeddingGenerationBatchJob
 }
 
 object UserEmbeddingGenerationBatchJobAlternate
-    extends TwitterScheduledExecutionApp
+    etwittertends TwitterScheduledEtwitterecutionApp
     with UserEmbeddingGenerationTrait {
 
-  override def scheduledJob: Execution[Unit] =
-    Execution.withId { implicit uid =>
-      Execution.withArgs { args =>
+  override def scheduledJob: Etwitterecution[Unit] =
+    Etwitterecution.withId { implicit uid =>
+      Etwitterecution.withArgs { args =>
         implicit val tz: TimeZone = DateOps.UTC
         val batchFirstTime = BatchFirstTime(RichDate("2022-03-28")(tz, DateParser.default))
-        val analyticsArgs = AnalyticsBatchExecutionArgs(
+        val analyticsArgs = AnalyticsBatchEtwitterecutionArgs(
           batchDesc = BatchDescription(getClass.getName),
           firstTime = batchFirstTime,
           batchIncrement = BatchIncrement(Hours(updateHours)),
           batchWidth = Some(BatchWidth(Hours(updateHours)))
         )
 
-        AnalyticsBatchExecution(analyticsArgs) { implicit dateRange =>
+        AnalyticsBatchEtwitterecution(analyticsArgs) { implicit dateRange =>
           run(args)
         }
       }
     }
 }
 
-object UserEmbeddingGenerationBatchJobExperimental
-    extends TwitterScheduledExecutionApp
+object UserEmbeddingGenerationBatchJobEtwitterperimental
+    etwittertends TwitterScheduledEtwitterecutionApp
     with UserEmbeddingGenerationTrait {
 
-  override def scheduledJob: Execution[Unit] =
-    Execution.withId { implicit uid =>
-      Execution.withArgs { args =>
+  override def scheduledJob: Etwitterecution[Unit] =
+    Etwitterecution.withId { implicit uid =>
+      Etwitterecution.withArgs { args =>
         implicit val tz: TimeZone = DateOps.UTC
         val batchFirstTime = BatchFirstTime(RichDate("2021-12-12")(tz, DateParser.default))
-        val analyticsArgs = AnalyticsBatchExecutionArgs(
+        val analyticsArgs = AnalyticsBatchEtwitterecutionArgs(
           batchDesc = BatchDescription(getClass.getName),
           firstTime = batchFirstTime,
           batchIncrement = BatchIncrement(Hours(updateHours)),
           batchWidth = Some(BatchWidth(Hours(updateHours)))
         )
 
-        AnalyticsBatchExecution(analyticsArgs) { implicit dateRange =>
+        AnalyticsBatchEtwitterecution(analyticsArgs) { implicit dateRange =>
           run(args)
         }
       }

@@ -1,8 +1,8 @@
 package com.twitter.search.earlybird_root;
 
-import javax.annotation.Nullable;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javatwitter.annotation.Nullable;
+import javatwitter.inject.Named;
+import javatwitter.inject.Singleton;
 
 import com.google.inject.Provides;
 
@@ -16,10 +16,10 @@ import com.twitter.search.common.root.RootClientServiceBuilder;
 import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
 import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.filters.RequestContextToEarlybirdRequestFilter;
+import com.twitter.search.earlybird_root.common.EarlybirdRequestContetwittert;
+import com.twitter.search.earlybird_root.filters.RequestContetwittertToEarlybirdRequestFilter;
 
-public class ProtectedScatterGatherModule extends ScatterGatherModule {
+public class ProtectedScatterGatherModule etwittertends ScatterGatherModule {
   /**
    * Provides the scatterGatherService for the protected cluster.
    */
@@ -27,17 +27,17 @@ public class ProtectedScatterGatherModule extends ScatterGatherModule {
   @Singleton
   @Named(NAMED_SCATTER_GATHER_SERVICE)
   @Override
-  public Service<EarlybirdRequestContext, EarlybirdResponse> provideScatterGatherService(
+  public Service<EarlybirdRequestContetwittert, EarlybirdResponse> provideScatterGatherService(
       EarlybirdServiceScatterGatherSupport scatterGatherSupport,
       RequestSuccessStats requestSuccessStats,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
+      PartitionLoggingSupport<EarlybirdRequestContetwittert> partitionLoggingSupport,
+      RequestContetwittertToEarlybirdRequestFilter requestContetwittertToEarlybirdRequestFilter,
       PartitionAccessController partitionAccessController,
       PartitionConfig partitionConfig,
       RootClientServiceBuilder<EarlybirdService.ServiceIface> rootClientServiceBuilder,
-      @Named(EarlybirdCommonModule.NAMED_EXP_CLUSTER_CLIENT)
+      @Named(EarlybirdCommonModule.NAMED_EtwitterP_CLUSTER_CLIENT)
           RootClientServiceBuilder<EarlybirdService.ServiceIface>
-          expClusterRootClientServiceBuilder, // unused in protected roots
+          etwitterpClusterRootClientServiceBuilder, // unused in protected roots
       @Named(EarlybirdCommonModule.NAMED_ALT_CLIENT) @Nullable PartitionConfig altPartitionConfig,
       @Named(EarlybirdCommonModule.NAMED_ALT_CLIENT) @Nullable
           RootClientServiceBuilder<EarlybirdService.ServiceIface> altRootClientServiceBuilder,
@@ -48,7 +48,7 @@ public class ProtectedScatterGatherModule extends ScatterGatherModule {
         scatterGatherSupport,
         requestSuccessStats,
         partitionLoggingSupport,
-        requestContextToEarlybirdRequestFilter,
+        requestContetwittertToEarlybirdRequestFilter,
         partitionAccessController,
         partitionConfig,
         rootClientServiceBuilder,

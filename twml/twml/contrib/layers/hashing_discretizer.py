@@ -61,20 +61,20 @@ class HashingDiscretizer(Layer):
         will generate N+1 bin boundaries for each feature, and hence there
         will actually be N+2 potential bins for each feature
       out_bits (int):
-        Determines the maximum value for output feature IDs.
-        The dense_shape of the SparseTensor returned by lookup(x)
-        will be [x.shape[0], 1 << output_bits].
+        Determines the matwitterimum value for output feature IDs.
+        The dense_shape of the SparseTensor returned by lookup(twitter)
+        will be [twitter.shape[0], 1 << output_bits].
 
     Optional args:
       cost_per_unit (int):
-      - heuristic for intra op multithreading. approximate nanoseconds per input value.
+      - heuristic for intra op multithreading. approtwitterimate nanoseconds per input value.
       options (int or None for default):
       - Selects behavior of the op. Default is lower_bound and integer_multiplicative_hashing.
       - Use values in twml.constants.HashingDiscretizerOptions to select options as follows
-        choose exactly one of HashingDiscretizerOptions.{SEARCH_LOWER_BOUND, SEARCH_LINEAR, SEARCH_UPPER_BOUND}
-        choose exactly one of HashingDiscretizerOptions.{HASH_32BIT, HASH_64BIT}
+        choose etwitteractly one of HashingDiscretizerOptions.{SEARCH_LOWER_BOUND, SEARCH_LINEAR, SEARCH_UPPER_BOUND}
+        choose etwitteractly one of HashingDiscretizerOptions.{HASH_32BIT, HASH_64BIT}
         Bitwise OR these together to construct the options input.
-        For example, `options=(HashingDiscretizerOptions.SEARCH_UPPER_BOUND | HashingDiscretizerOptions.HASH_64BIT)`
+        For etwitterample, `options=(HashingDiscretizerOptions.SEARCH_UPPER_BOUND | HashingDiscretizerOptions.HASH_64BIT)`
     """
     super(HashingDiscretizer, self).__init__(**kwargs)
 

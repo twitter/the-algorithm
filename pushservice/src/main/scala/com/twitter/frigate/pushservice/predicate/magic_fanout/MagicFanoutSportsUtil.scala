@@ -30,21 +30,21 @@ object MagicFanoutSportsUtil {
         case _ => false
       }
 
-      val _isHalfTime = game.period.exists { period =>
+      val _isHalfTime = game.period.etwitterists { period =>
         period match {
           case SoccerPeriod.Halftime(_) => true
           case _ => false
         }
       }
 
-      val _isOvertime = game.period.exists { period =>
+      val _isOvertime = game.period.etwitterists { period =>
         period match {
           case SoccerPeriod.PreOvertime(_) => true
           case _ => false
         }
       }
 
-      val _isPenaltyKicks = game.period.exists { period =>
+      val _isPenaltyKicks = game.period.etwitterists { period =>
         period match {
           case SoccerPeriod.PrePenalty(_) => true
           case SoccerPeriod.Penalty(_) => true

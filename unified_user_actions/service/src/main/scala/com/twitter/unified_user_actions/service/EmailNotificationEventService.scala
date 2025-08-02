@@ -7,9 +7,9 @@ import com.twitter.inject.server.TwitterServer
 import com.twitter.kafka.client.processor.AtLeastOnceProcessor
 import com.twitter.unified_user_actions.service.module.KafkaProcessorEmailNotificationEventModule
 
-object EmailNotificationEventServiceMain extends EmailNotificationEventService
+object EmailNotificationEventServiceMain etwittertends EmailNotificationEventService
 
-class EmailNotificationEventService extends TwitterServer {
+class EmailNotificationEventService etwittertends TwitterServer {
 
   override val modules = Seq(
     KafkaProcessorEmailNotificationEventModule,
@@ -20,7 +20,7 @@ class EmailNotificationEventService extends TwitterServer {
 
   override protected def start(): Unit = {
     val processor = injector.instance[AtLeastOnceProcessor[UnKeyed, NotificationScribe]]
-    closeOnExit(processor)
+    closeOnEtwitterit(processor)
     processor.start()
   }
 }

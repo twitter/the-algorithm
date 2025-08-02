@@ -12,7 +12,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.pipeline.StageException;
+import org.apache.commons.pipeline.StageEtwitterception;
 import org.apache.commons.pipeline.validation.ConsumedTypes;
 import org.apache.commons.pipeline.validation.ProducesConsumed;
 
@@ -33,7 +33,7 @@ import com.twitter.util.Try;
 
 @ConsumedTypes(IngesterTwitterMessage.class)
 @ProducesConsumed
-public class RetrieveSpaceAdminsAndTitleStage extends TwitterBaseStage
+public class RetrieveSpaceAdminsAndTitleStage etwittertends TwitterBaseStage
     <IngesterTwitterMessage, CompletableFuture<IngesterTwitterMessage>> {
 
   @VisibleForTesting
@@ -81,8 +81,8 @@ public class RetrieveSpaceAdminsAndTitleStage extends TwitterBaseStage
     parallelFetchFailure = getStageStat("parallel_fetch_failure");
   }
 
-  private SearchRateCounter getStageStat(String statSuffix) {
-    return SearchRateCounter.export(getStageNamePrefix() + "_" + statSuffix);
+  private SearchRateCounter getStageStat(String statSuffitwitter) {
+    return SearchRateCounter.etwitterport(getStageNamePrefitwitter() + "_" + statSuffitwitter);
   }
 
   private Future<Tuple2<Try<Fetch.Result<AudioSpace>>, Try<Fetch.Result<Participants>>>>
@@ -98,7 +98,7 @@ public class RetrieveSpaceAdminsAndTitleStage extends TwitterBaseStage
       return null;
     }
 
-    String spaceId = spaceIds.iterator().next();
+    String spaceId = spaceIds.iterator().netwittert();
 
     // Query both columns in parallel.
     parallelFetchAttempts.increment();
@@ -132,9 +132,9 @@ public class RetrieveSpaceAdminsAndTitleStage extends TwitterBaseStage
   }
 
   @Override
-  public void innerProcess(Object obj) throws StageException {
+  public void innerProcess(Object obj) throws StageEtwitterception {
     if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not a IngesterTwitterMessage object: " + obj);
+      throw new StageEtwitterception(this, "Object is not a IngesterTwitterMessage object: " + obj);
     }
     IngesterTwitterMessage twitterMessage = (IngesterTwitterMessage) obj;
     Future<Tuple2<Try<Fetch.Result<AudioSpace>>, Try<Fetch.Result<Participants>>>>

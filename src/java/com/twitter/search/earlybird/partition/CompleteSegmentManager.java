@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird.partition;
 
-import java.io.IOException;
+import java.io.IOEtwitterception;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
@@ -11,143 +11,143 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.twitter.common.util.Clock;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+import com.twitter.search.common.indetwittering.thriftjava.ThriftVersionedEvents;
 import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
 import com.twitter.search.common.util.io.recordreader.RecordReader;
 import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
 import com.twitter.search.earlybird.EarlybirdStatus;
 import com.twitter.search.earlybird.common.config.EarlybirdProperty;
 import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
+import com.twitter.search.earlybird.etwitterception.CriticalEtwitterceptionHandler;
 import com.twitter.search.earlybird.segment.SegmentDataProvider;
 
 /**
- * CompleteSegmentManager is used to parallelize indexing of complete (not partial) segments
+ * CompleteSegmentManager is used to parallelize indetwittering of complete (not partial) segments
  * on startup.  It also populates the fields used by the PartitionManager.
  */
 public class CompleteSegmentManager {
   private static final Logger LOG = LoggerFactory.getLogger(CompleteSegmentManager.class);
 
-  private static final String INDEX_COMPLETED_SEGMENTS =
-      "indexing, optimizing and flushing complete segments";
+  private static final String INDEtwitter_COMPLETED_SEGMENTS =
+      "indetwittering, optimizing and flushing complete segments";
   private static final String LOAD_COMPLETED_SEGMENTS = "loading complete segments";
-  private static final String INDEX_UPDATES_FOR_COMPLETED_SEGMENTS =
-      "indexing updates for complete segments";
+  private static final String INDEtwitter_UPDATES_FOR_COMPLETED_SEGMENTS =
+      "indetwittering updates for complete segments";
   private static final String BUILD_MULTI_SEGMENT_TERM_DICT =
       "build multi segment term dictionaries";
 
-  // Max number of segments being loaded / indexed concurrently.
-  private final int maxConcurrentSegmentIndexers =
-      EarlybirdProperty.MAX_CONCURRENT_SEGMENT_INDEXERS.get(3);
+  // Matwitter number of segments being loaded / indetwittered concurrently.
+  private final int matwitterConcurrentSegmentIndetwitterers =
+      EarlybirdProperty.MAtwitter_CONCURRENT_SEGMENT_INDEtwitterERS.get(3);
 
   // The state we are building.
   protected final SegmentDataProvider segmentDataProvider;
   private final InstrumentedQueue<ThriftVersionedEvents> retryQueue;
 
-  private final UserUpdatesStreamIndexer userUpdatesStreamIndexer;
-  private final UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer;
+  private final UserUpdatesStreamIndetwitterer userUpdatesStreamIndetwitterer;
+  private final UserScrubGeoEventStreamIndetwitterer userScrubGeoEventStreamIndetwitterer;
 
   private final SegmentManager segmentManager;
   private final ZooKeeperTryLockFactory zkTryLockFactory;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
+  private final SearchIndetwitteringMetricSet searchIndetwitteringMetricSet;
   private final Clock clock;
   private MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager;
   private final SegmentSyncConfig segmentSyncConfig;
 
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  private final CriticalEtwitterceptionHandler criticalEtwitterceptionHandler;
 
   private boolean interrupted = false;
 
   public CompleteSegmentManager(
       ZooKeeperTryLockFactory zooKeeperTryLockFactory,
       SegmentDataProvider segmentDataProvider,
-      UserUpdatesStreamIndexer userUpdatesStreamIndexer,
-      UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer,
+      UserUpdatesStreamIndetwitterer userUpdatesStreamIndetwitterer,
+      UserScrubGeoEventStreamIndetwitterer userScrubGeoEventStreamIndetwitterer,
       SegmentManager segmentManager,
       InstrumentedQueue<ThriftVersionedEvents> retryQueue,
-      SearchIndexingMetricSet searchIndexingMetricSet,
+      SearchIndetwitteringMetricSet searchIndetwitteringMetricSet,
       Clock clock,
       MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
       SegmentSyncConfig segmentSyncConfig,
-      CriticalExceptionHandler criticalExceptionHandler) {
+      CriticalEtwitterceptionHandler criticalEtwitterceptionHandler) {
     this.zkTryLockFactory = zooKeeperTryLockFactory;
     this.segmentDataProvider = segmentDataProvider;
-    this.userUpdatesStreamIndexer = userUpdatesStreamIndexer;
-    this.userScrubGeoEventStreamIndexer = userScrubGeoEventStreamIndexer;
+    this.userUpdatesStreamIndetwitterer = userUpdatesStreamIndetwitterer;
+    this.userScrubGeoEventStreamIndetwitterer = userScrubGeoEventStreamIndetwitterer;
     this.segmentManager = segmentManager;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
+    this.searchIndetwitteringMetricSet = searchIndetwitteringMetricSet;
     this.clock = clock;
     this.multiSegmentTermDictionaryManager = multiSegmentTermDictionaryManager;
     this.segmentSyncConfig = segmentSyncConfig;
     this.retryQueue = retryQueue;
-    this.criticalExceptionHandler = criticalExceptionHandler;
+    this.criticalEtwitterceptionHandler = criticalEtwitterceptionHandler;
   }
 
   /**
-   * Indexes all user events.
+   * Indetwitteres all user events.
    */
-  public void indexUserEvents() {
-    LOG.info("Loading/indexing user events.");
-    StartupUserEventIndexer startupUserEventIndexer = new StartupUserEventIndexer(
-        searchIndexingMetricSet,
-        userUpdatesStreamIndexer,
-        userScrubGeoEventStreamIndexer,
+  public void indetwitterUserEvents() {
+    LOG.info("Loading/indetwittering user events.");
+    StartupUserEventIndetwitterer startupUserEventIndetwitterer = new StartupUserEventIndetwitterer(
+        searchIndetwitteringMetricSet,
+        userUpdatesStreamIndetwitterer,
+        userScrubGeoEventStreamIndetwitterer,
         segmentManager,
         clock
     );
 
-    startupUserEventIndexer.indexAllEvents();
-    LOG.info("Finished loading/indexing user events.");
+    startupUserEventIndetwitterer.indetwitterAllEvents();
+    LOG.info("Finished loading/indetwittering user events.");
   }
 
   /**
-   * Loads or indexes from scratch all complete segments.
+   * Loads or indetwitteres from scratch all complete segments.
    *
-   * @param segmentsToIndexProvider A supplier that provides the list of all complete segments.
+   * @param segmentsToIndetwitterProvider A supplier that provides the list of all complete segments.
    */
-  public void indexCompleteSegments(
-      Supplier<Iterable<SegmentInfo>> segmentsToIndexProvider) throws Exception {
-    List<Thread> segmentIndexers = Lists.newArrayList();
+  public void indetwitterCompleteSegments(
+      Supplier<Iterable<SegmentInfo>> segmentsToIndetwitterProvider) throws Etwitterception {
+    List<Thread> segmentIndetwitterers = Lists.newArrayList();
 
     EarlybirdStatus.beginEvent(
-        INDEX_COMPLETED_SEGMENTS, searchIndexingMetricSet.startupInIndexCompletedSegments);
+        INDEtwitter_COMPLETED_SEGMENTS, searchIndetwitteringMetricSet.startupInIndetwitterCompletedSegments);
     while (!interrupted && !Thread.currentThread().isInterrupted()) {
       try {
         // Get the refreshed list of local segment databases.
         segmentManager.updateSegments(segmentDataProvider.newSegmentList());
-        Iterator<SegmentInfo> segmentsToIndex = segmentsToIndexProvider.get().iterator();
+        Iterator<SegmentInfo> segmentsToIndetwitter = segmentsToIndetwitterProvider.get().iterator();
 
-        // Start up to max concurrent segment indexers.
-        segmentIndexers.clear();
-        while (segmentsToIndex.hasNext() && segmentIndexers.size() < maxConcurrentSegmentIndexers) {
-          SegmentInfo nextSegment = segmentsToIndex.next();
-          if (!nextSegment.isComplete()) {
-            Thread thread = new Thread(new SingleSegmentIndexer(nextSegment),
-                                       "startup-segment-indexer-" + nextSegment.getSegmentName());
+        // Start up to matwitter concurrent segment indetwitterers.
+        segmentIndetwitterers.clear();
+        while (segmentsToIndetwitter.hasNetwittert() && segmentIndetwitterers.size() < matwitterConcurrentSegmentIndetwitterers) {
+          SegmentInfo netwittertSegment = segmentsToIndetwitter.netwittert();
+          if (!netwittertSegment.isComplete()) {
+            Thread thread = new Thread(new SingleSegmentIndetwitterer(netwittertSegment),
+                                       "startup-segment-indetwitterer-" + netwittertSegment.getSegmentName());
             thread.start();
-            segmentIndexers.add(thread);
+            segmentIndetwitterers.add(thread);
           }
         }
 
-        // No remaining indexer threads, we're done.
-        if (segmentIndexers.size() == 0) {
-          LOG.info("Finished indexing complete segments");
+        // No remaining indetwitterer threads, we're done.
+        if (segmentIndetwitterers.size() == 0) {
+          LOG.info("Finished indetwittering complete segments");
           EarlybirdStatus.endEvent(
-              INDEX_COMPLETED_SEGMENTS, searchIndexingMetricSet.startupInIndexCompletedSegments);
+              INDEtwitter_COMPLETED_SEGMENTS, searchIndetwitteringMetricSet.startupInIndetwitterCompletedSegments);
           break;
         }
 
         // Wait for threads to complete fully.
-        LOG.info("Started {} indexing threads", segmentIndexers.size());
-        for (Thread thread : segmentIndexers) {
+        LOG.info("Started {} indetwittering threads", segmentIndetwitterers.size());
+        for (Thread thread : segmentIndetwitterers) {
           thread.join();
         }
-        LOG.info("Joined all {} indexing threads", segmentIndexers.size());
-      } catch (IOException e) {
-        LOG.error("IOException in SegmentStartupManager loop", e);
-      } catch (InterruptedException e) {
+        LOG.info("Joined all {} indetwittering threads", segmentIndetwitterers.size());
+      } catch (IOEtwitterception e) {
+        LOG.error("IOEtwitterception in SegmentStartupManager loop", e);
+      } catch (InterruptedEtwitterception e) {
         interrupted = true;
-        LOG.error("Interrupted joining segment indexer thread", e);
+        LOG.error("Interrupted joining segment indetwitterer thread", e);
       }
     }
   }
@@ -157,11 +157,11 @@ public class CompleteSegmentManager {
    *
    * @param completeSegments The list of all complete segments to be loaded.
    */
-  public void loadCompleteSegments(List<SegmentInfo> completeSegments) throws Exception {
+  public void loadCompleteSegments(List<SegmentInfo> completeSegments) throws Etwitterception {
     if (!interrupted && !Thread.currentThread().isInterrupted()) {
       LOG.info("Starting to load {} complete segments.", completeSegments.size());
       EarlybirdStatus.beginEvent(
-          LOAD_COMPLETED_SEGMENTS, searchIndexingMetricSet.startupInLoadCompletedSegments);
+          LOAD_COMPLETED_SEGMENTS, searchIndetwitteringMetricSet.startupInLoadCompletedSegments);
 
       List<Thread> segmentThreads = Lists.newArrayList();
       List<SegmentInfo> segmentsToBeLoaded = Lists.newArrayList();
@@ -169,7 +169,7 @@ public class CompleteSegmentManager {
         if (segmentInfo.isEnabled()) {
           segmentsToBeLoaded.add(segmentInfo);
           Thread segmentLoaderThread = new Thread(
-              () -> new SegmentLoader(segmentSyncConfig, criticalExceptionHandler)
+              () -> new SegmentLoader(segmentSyncConfig, criticalEtwitterceptionHandler)
                   .load(segmentInfo),
               "startup-segment-loader-" + segmentInfo.getSegmentName());
           segmentThreads.add(segmentLoaderThread);
@@ -185,33 +185,33 @@ public class CompleteSegmentManager {
 
       for (SegmentInfo segmentInfo : segmentsToBeLoaded) {
         if (!segmentInfo.getSyncInfo().isLoaded()) {
-          // Throw an exception if a segment could not be loaded: We do not want earlybirds to
+          // Throw an etwitterception if a segment could not be loaded: We do not want earlybirds to
           // startup with missing segments.
-          throw new RuntimeException("Could not load segment " + segmentInfo.getSegmentName());
+          throw new RuntimeEtwitterception("Could not load segment " + segmentInfo.getSegmentName());
         }
       }
 
-      LOG.info("Loaded all complete segments, starting indexing all updates.");
+      LOG.info("Loaded all complete segments, starting indetwittering all updates.");
       EarlybirdStatus.beginEvent(
-          INDEX_UPDATES_FOR_COMPLETED_SEGMENTS,
-          searchIndexingMetricSet.startupInIndexUpdatesForCompletedSegments);
+          INDEtwitter_UPDATES_FOR_COMPLETED_SEGMENTS,
+          searchIndetwitteringMetricSet.startupInIndetwitterUpdatesForCompletedSegments);
 
-      // Index all updates for all complete segments until we're fully caught up.
-      if (!EarlybirdCluster.isArchive(segmentManager.getEarlybirdIndexConfig().getCluster())) {
+      // Indetwitter all updates for all complete segments until we're fully caught up.
+      if (!EarlybirdCluster.isArchive(segmentManager.getEarlybirdIndetwitterConfig().getCluster())) {
         segmentThreads.clear();
         for (SegmentInfo segmentInfo : completeSegments) {
           if (segmentInfo.isEnabled()) {
             Thread segmentUpdatesThread = new Thread(
-                () -> new SimpleUpdateIndexer(
+                () -> new SimpleUpdateIndetwitterer(
                     segmentDataProvider.getSegmentDataReaderSet(),
-                    searchIndexingMetricSet,
+                    searchIndetwitteringMetricSet,
                     retryQueue,
-                    criticalExceptionHandler).indexAllUpdates(segmentInfo),
-                "startup-complete-segment-update-indexer-" + segmentInfo.getSegmentName());
+                    criticalEtwitterceptionHandler).indetwitterAllUpdates(segmentInfo),
+                "startup-complete-segment-update-indetwitterer-" + segmentInfo.getSegmentName());
             segmentThreads.add(segmentUpdatesThread);
             segmentUpdatesThread.start();
           } else {
-            LOG.info("Will not index updates for segment {} because it's disabled.",
+            LOG.info("Will not indetwitter updates for segment {} because it's disabled.",
                      segmentInfo.getSegmentName());
           }
         }
@@ -220,13 +220,13 @@ public class CompleteSegmentManager {
           segmentUpdatesThread.join();
         }
       }
-      LOG.info("Indexed updates for all complete segments.");
+      LOG.info("Indetwittered updates for all complete segments.");
       EarlybirdStatus.endEvent(
-          INDEX_UPDATES_FOR_COMPLETED_SEGMENTS,
-          searchIndexingMetricSet.startupInIndexUpdatesForCompletedSegments);
+          INDEtwitter_UPDATES_FOR_COMPLETED_SEGMENTS,
+          searchIndetwitteringMetricSet.startupInIndetwitterUpdatesForCompletedSegments);
 
       EarlybirdStatus.endEvent(
-          LOAD_COMPLETED_SEGMENTS, searchIndexingMetricSet.startupInLoadCompletedSegments);
+          LOAD_COMPLETED_SEGMENTS, searchIndetwitteringMetricSet.startupInLoadCompletedSegments);
     }
   }
 
@@ -237,7 +237,7 @@ public class CompleteSegmentManager {
   public void buildMultiSegmentTermDictionary() {
     EarlybirdStatus.beginEvent(
         BUILD_MULTI_SEGMENT_TERM_DICT,
-        searchIndexingMetricSet.startupInMultiSegmentTermDictionaryUpdates);
+        searchIndetwitteringMetricSet.startupInMultiSegmentTermDictionaryUpdates);
     if (!interrupted && !Thread.currentThread().isInterrupted()) {
       LOG.info("Building multi segment term dictionaries.");
       boolean built = multiSegmentTermDictionaryManager.buildDictionary();
@@ -245,7 +245,7 @@ public class CompleteSegmentManager {
     }
     EarlybirdStatus.endEvent(
         BUILD_MULTI_SEGMENT_TERM_DICT,
-        searchIndexingMetricSet.startupInMultiSegmentTermDictionaryUpdates);
+        searchIndetwitteringMetricSet.startupInMultiSegmentTermDictionaryUpdates);
   }
 
   /**
@@ -255,19 +255,19 @@ public class CompleteSegmentManager {
    *
    * @param segments The list of segments to warm up.
    */
-  public final void warmSegments(Iterable<SegmentInfo> segments) throws InterruptedException {
+  public final void warmSegments(Iterable<SegmentInfo> segments) throws InterruptedEtwitterception {
     int threadId = 1;
     Iterator<SegmentInfo> it = segments.iterator();
 
     try {
       List<Thread> segmentWarmers = Lists.newLinkedList();
-      while (it.hasNext()) {
+      while (it.hasNetwittert()) {
 
         segmentWarmers.clear();
-        while (it.hasNext() && segmentWarmers.size() < maxConcurrentSegmentIndexers) {
-          final SegmentInfo segment = it.next();
+        while (it.hasNetwittert() && segmentWarmers.size() < matwitterConcurrentSegmentIndetwitterers) {
+          final SegmentInfo segment = it.netwittert();
           Thread t = new Thread(() ->
-            new SegmentWarmer(criticalExceptionHandler).warmSegmentIfNecessary(segment),
+            new SegmentWarmer(criticalEtwitterceptionHandler).warmSegmentIfNecessary(segment),
               "startup-warmer-" + threadId++);
 
           t.start();
@@ -278,7 +278,7 @@ public class CompleteSegmentManager {
           t.join();
         }
       }
-    } catch (InterruptedException e) {
+    } catch (InterruptedEtwitterception e) {
       LOG.error("Interrupted segment warmer thread", e);
       Thread.currentThread().interrupt();
       throw e;
@@ -286,52 +286,52 @@ public class CompleteSegmentManager {
   }
 
   /**
-   * Indexes a complete segment.
+   * Indetwitteres a complete segment.
    */
-  private class SingleSegmentIndexer implements Runnable {
+  private class SingleSegmentIndetwitterer implements Runnable {
     private final SegmentInfo segmentInfo;
 
-    public SingleSegmentIndexer(SegmentInfo segmentInfo) {
+    public SingleSegmentIndetwitterer(SegmentInfo segmentInfo) {
       this.segmentInfo = segmentInfo;
     }
 
     @Override
     public void run() {
       // 0) Check if the segment can be loaded. This might copy the segment from HDFS.
-      if (new SegmentLoader(segmentSyncConfig, criticalExceptionHandler)
+      if (new SegmentLoader(segmentSyncConfig, criticalEtwitterceptionHandler)
           .downloadSegment(segmentInfo)) {
-        LOG.info("Will not index segment {} because it was downloaded from HDFS.",
+        LOG.info("Will not indetwitter segment {} because it was downloaded from HDFS.",
                  segmentInfo.getSegmentName());
         segmentInfo.setComplete(true);
         return;
       }
 
-      LOG.info("SingleSegmentIndexer starting for segment: " + segmentInfo);
+      LOG.info("SingleSegmentIndetwitterer starting for segment: " + segmentInfo);
 
-      // 1) Index all tweets in this segment.
+      // 1) Indetwitter all tweets in this segment.
       RecordReader<TweetDocument> tweetReader;
       try {
         tweetReader = segmentDataProvider.getSegmentDataReaderSet().newDocumentReader(segmentInfo);
         if (tweetReader != null) {
-          tweetReader.setExhaustStream(true);
+          tweetReader.setEtwitterhaustStream(true);
         }
-      } catch (Exception e) {
-        throw new RuntimeException("Could not create tweet reader for segment: " + segmentInfo, e);
+      } catch (Etwitterception e) {
+        throw new RuntimeEtwitterception("Could not create tweet reader for segment: " + segmentInfo, e);
       }
 
-      new SimpleSegmentIndexer(tweetReader, searchIndexingMetricSet).indexSegment(segmentInfo);
+      new SimpleSegmentIndetwitterer(tweetReader, searchIndetwitteringMetricSet).indetwitterSegment(segmentInfo);
 
-      if (!segmentInfo.isComplete() || segmentInfo.isIndexing()) {
-        throw new RuntimeException("Segment does not appear to be complete: " + segmentInfo);
+      if (!segmentInfo.isComplete() || segmentInfo.isIndetwittering()) {
+        throw new RuntimeEtwitterception("Segment does not appear to be complete: " + segmentInfo);
       }
 
-      // 2) Index all updates in this segment (archive earlybirds don't have updates).
-      if (!EarlybirdCluster.isArchive(segmentManager.getEarlybirdIndexConfig().getCluster())) {
-        new SimpleUpdateIndexer(
+      // 2) Indetwitter all updates in this segment (archive earlybirds don't have updates).
+      if (!EarlybirdCluster.isArchive(segmentManager.getEarlybirdIndetwitterConfig().getCluster())) {
+        new SimpleUpdateIndetwitterer(
             segmentDataProvider.getSegmentDataReaderSet(),
-            searchIndexingMetricSet,
+            searchIndetwitteringMetricSet,
             retryQueue,
-            criticalExceptionHandler).indexAllUpdates(segmentInfo);
+            criticalEtwitterceptionHandler).indetwitterAllUpdates(segmentInfo);
       }
 
       // 3) Optimize the segment.
@@ -342,7 +342,7 @@ public class CompleteSegmentManager {
           .flushSegmentToDiskAndHDFS(segmentInfo);
 
       // 5) Unload the segment from memory.
-      segmentInfo.getIndexSegment().close();
+      segmentInfo.getIndetwitterSegment().close();
     }
   }
 

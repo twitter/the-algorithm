@@ -1,13 +1,13 @@
 package com.twitter.frigate.pushservice.module
 
 import com.google.inject.Provides
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 import com.twitter.discovery.common.nackwarmupfilter.NackWarmupFilter
 import com.twitter.inject.TwitterModule
 import com.twitter.inject.annotations.Flag
 import com.twitter.util.Duration
 
-object FilterModule extends TwitterModule {
+object FilterModule etwittertends TwitterModule {
   @Singleton
   @Provides
   def providesNackWarmupFilter(

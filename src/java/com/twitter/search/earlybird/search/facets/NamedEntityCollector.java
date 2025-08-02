@@ -14,11 +14,11 @@ import com.twitter.search.earlybird.thrift.NamedEntitySource;
 import com.twitter.search.earlybird.thrift.ThriftSearchResult;
 import com.twitter.search.earlybird.thrift.ThriftSearchResultNamedEntity;
 
-public class NamedEntityCollector extends AbstractFacetTermCollector {
+public class NamedEntityCollector etwittertends AbstractFacetTermCollector {
   private static final Map<String, NamedEntitySource> NAMED_ENTITY_WITH_TYPE_FIELDS =
       ImmutableMap.of(
-          EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_TEXT_FIELD.getFieldName(),
-          NamedEntitySource.TEXT,
+          EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_TEtwitterT_FIELD.getFieldName(),
+          NamedEntitySource.TEtwitterT,
           EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_URL_FIELD.getFieldName(),
           NamedEntitySource.URL);
 
@@ -32,10 +32,10 @@ public class NamedEntityCollector extends AbstractFacetTermCollector {
       return false;
     }
 
-    int index = term.lastIndexOf(":");
+    int indetwitter = term.lastIndetwitterOf(":");
     namedEntities.add(new ThriftSearchResultNamedEntity(
-        term.substring(0, index),
-        term.substring(index + 1),
+        term.substring(0, indetwitter),
+        term.substring(indetwitter + 1),
         NAMED_ENTITY_WITH_TYPE_FIELDS.get(findFacetName(fieldID))));
 
     return true;
@@ -43,7 +43,7 @@ public class NamedEntityCollector extends AbstractFacetTermCollector {
 
   @Override
   public void fillResultAndClear(ThriftSearchResult result) {
-    getExtraMetadata(result).setNamedEntities(ImmutableList.copyOf(namedEntities));
+    getEtwittertraMetadata(result).setNamedEntities(ImmutableList.copyOf(namedEntities));
     namedEntities.clear();
   }
 }

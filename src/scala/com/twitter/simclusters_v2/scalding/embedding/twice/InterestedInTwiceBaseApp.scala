@@ -4,7 +4,7 @@ import com.twitter.bijection.Injection
 import com.twitter.dal.client.dataset.KeyValDALDataset
 import com.twitter.scalding.DateRange
 import com.twitter.scalding.Days
-import com.twitter.scalding.Execution
+import com.twitter.scalding.Etwitterecution
 import com.twitter.scalding.Stat
 import com.twitter.scalding.TypedTsv
 import com.twitter.scalding.UniqueID
@@ -84,15 +84,15 @@ trait InterestedInTwiceBaseApp[T] {
   }
 
   /**
-   * Randomly select up to maxNeighborsByUser neighbors for each user.
-   * Attempts to equally sample both follow and fav edges (e.g. maxNeighborsByUser/2 for each).
-   * However, if one type of edge is insufficient, backfill with other type up to maxNeighborsByUser neighbours.
+   * Randomly select up to matwitterNeighborsByUser neighbors for each user.
+   * Attempts to equally sample both follow and fav edges (e.g. matwitterNeighborsByUser/2 for each).
+   * However, if one type of edge is insufficient, backfill with other type up to matwitterNeighborsByUser neighbours.
    * @param userUserGraph User-User follow/fav graph.
-   * @param maxNeighborsByUser How many neighbors to keep for each user.
+   * @param matwitterNeighborsByUser How many neighbors to keep for each user.
    */
-  def selectMaxProducersPerUser(
+  def selectMatwitterProducersPerUser(
     userUserGraph: TypedPipe[UserAndNeighbors],
-    maxNeighborsByUser: Int = MaxNeighborsByUser
+    matwitterNeighborsByUser: Int = MatwitterNeighborsByUser
   )(
     implicit uniqueID: UniqueID
   ): TypedPipe[UserAndNeighbors] = {
@@ -123,7 +123,7 @@ trait InterestedInTwiceBaseApp[T] {
           case (followEdgeOpt, favEdgeOpt) =>
             Seq(followEdgeOpt, favEdgeOpt)
         }.flatten
-        .take(maxNeighborsByUser)
+        .take(matwitterNeighborsByUser)
 
       // edge stats
       interleavedTopKEdges
@@ -145,7 +145,7 @@ trait InterestedInTwiceBaseApp[T] {
    * @param userUserGraph User-User follow/fav graph.
    * @param producerEmbedding producer embedding dataset. e.g. simclusters embeddings, simhash, etc.
    * @param clusteringMethod A method to group embeddings together.
-   * @param maxClustersPerUser How many clusters to keep per user.
+   * @param matwitterClustersPerUser How many clusters to keep per user.
    * @param clusterRepresentativeSelectionMethod A method to select a cluster representative.
    * @param numReducers How many reducers to use for sketch operation.
    */
@@ -153,14 +153,14 @@ trait InterestedInTwiceBaseApp[T] {
     userUserGraph: TypedPipe[UserAndNeighbors],
     producerEmbedding: TypedPipe[(UserId, T)],
     clusteringMethod: ClusteringMethod,
-    maxClustersPerUser: Int = MaxClustersPerUser,
+    matwitterClustersPerUser: Int = MatwitterClustersPerUser,
     clusterRepresentativeSelectionMethod: ClusterRepresentativeSelectionMethod[T],
     numReducers: Int
   )(
     implicit uniqueID: UniqueID
   ): TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)] = {
 
-    val truncatedUserUserGraph: TypedPipe[UserAndNeighbors] = selectMaxProducersPerUser(
+    val truncatedUserUserGraph: TypedPipe[UserAndNeighbors] = selectMatwitterProducersPerUser(
       userUserGraph)
     val validEdges: TypedPipe[(UserId, NeighborWithWeights)] =
       truncatedUserUserGraph.flatMap {
@@ -230,10 +230,10 @@ trait InterestedInTwiceBaseApp[T] {
           // 2. Sort clusters
           val sortedClusters: Seq[Set[UserId]] = clusters.toSeq.sorted(clusterOrdering)
 
-          // 3. Keep only a max number of clusters (avoid OOM)
+          // 3. Keep only a matwitter number of clusters (avoid OOM)
           userClusterPairsBeforeTruncation.incBy(sortedClusters.size)
           numOfClustersCumulativeFrequencyBeforeFilter.incForValue(sortedClusters.size)
-          val truncatedClusters = sortedClusters.take(maxClustersPerUser)
+          val truncatedClusters = sortedClusters.take(matwitterClustersPerUser)
           userClusterPairsAfterTruncation.incBy(truncatedClusters.size)
 
           // 4. Get list of cluster representatives
@@ -267,28 +267,28 @@ trait InterestedInTwiceBaseApp[T] {
    */
   def writeOutputToTypedTSV(
     output: TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)],
-    userToClusterRepresentativesIndexOutputPath: String,
-    userToClusterMembersIndexOutputPath: String
-  ): Execution[(Unit, Unit)] = {
+    userToClusterRepresentativesIndetwitterOutputPath: String,
+    userToClusterMembersIndetwitterOutputPath: String
+  ): Etwitterecution[(Unit, Unit)] = {
 
-    // write the user -> cluster representatives index
+    // write the user -> cluster representatives indetwitter
     val writeClusterRepresentatives = output
       .collect {
         case (userId: Long, _, Ids(ids)) => (userId, ids.ids)
       }
       //.shard(partitions = 1)
-      .writeExecution(TypedTsv[(UserId, Seq[SimClustersEmbeddingIdWithScore])](
-        userToClusterRepresentativesIndexOutputPath))
+      .writeEtwitterecution(TypedTsv[(UserId, Seq[SimClustersEmbeddingIdWithScore])](
+        userToClusterRepresentativesIndetwitterOutputPath))
 
-    // write the user -> cluster members index
+    // write the user -> cluster members indetwitter
     val writeClusterMembers = output
       .collect {
         case (userId: Long, clusters: Seq[Set[UserId]], _) => (userId, clusters)
       }
       //.shard(partitions = 1)
-      .writeExecution(TypedTsv[(UserId, Seq[Set[UserId]])](userToClusterMembersIndexOutputPath))
+      .writeEtwitterecution(TypedTsv[(UserId, Seq[Set[UserId]])](userToClusterMembersIndetwitterOutputPath))
 
-    Execution.zip(writeClusterRepresentatives, writeClusterMembers)
+    Etwitterecution.zip(writeClusterRepresentatives, writeClusterMembers)
 
   }
 
@@ -298,16 +298,16 @@ trait InterestedInTwiceBaseApp[T] {
   def writeOutputToKeyValDataset(
     output: TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)],
     embeddingType: MultiEmbeddingType,
-    userToClusterRepresentativesIndexDataset: KeyValDALDataset[
+    userToClusterRepresentativesIndetwitterDataset: KeyValDALDataset[
       KeyVal[SimClustersMultiEmbeddingId, SimClustersMultiEmbedding]
     ],
-    userToClusterMembersIndexDataset: KeyValDALDataset[KeyVal[UserId, OrderedClustersAndMembers]],
-    userToClusterRepresentativesIndexOutputPath: String,
-    userToClusterMembersIndexOutputPath: String
+    userToClusterMembersIndetwitterDataset: KeyValDALDataset[KeyVal[UserId, OrderedClustersAndMembers]],
+    userToClusterRepresentativesIndetwitterOutputPath: String,
+    userToClusterMembersIndetwitterOutputPath: String
   )(
     implicit dateRange: DateRange
-  ): Execution[(Unit, Unit)] = {
-    // write the user -> cluster representatives index
+  ): Etwitterecution[(Unit, Unit)] = {
+    // write the user -> cluster representatives indetwitter
     val writeClusterRepresentatives = output
       .map {
         case (userId: UserId, _, embeddings: SimClustersMultiEmbedding) =>
@@ -320,13 +320,13 @@ trait InterestedInTwiceBaseApp[T] {
             value = embeddings
           )
       }
-      .writeDALVersionedKeyValExecution(
-        userToClusterRepresentativesIndexDataset,
-        D.Suffix(userToClusterRepresentativesIndexOutputPath),
-        ExplicitEndTime(dateRange.end)
+      .writeDALVersionedKeyValEtwitterecution(
+        userToClusterRepresentativesIndetwitterDataset,
+        D.Suffitwitter(userToClusterRepresentativesIndetwitterOutputPath),
+        EtwitterplicitEndTime(dateRange.end)
       )
 
-    // write the user -> cluster members index
+    // write the user -> cluster members indetwitter
     val writeClusterMembers = output
       .map {
         case (userId: UserId, clusters: Seq[Set[UserId]], _) =>
@@ -334,13 +334,13 @@ trait InterestedInTwiceBaseApp[T] {
             key = userId,
             value = OrderedClustersAndMembers(clusters, Some(clusters.map(ClusterMembers(_)))))
       }
-      .writeDALVersionedKeyValExecution(
-        userToClusterMembersIndexDataset,
-        D.Suffix(userToClusterMembersIndexOutputPath),
-        ExplicitEndTime(dateRange.end)
+      .writeDALVersionedKeyValEtwitterecution(
+        userToClusterMembersIndetwitterDataset,
+        D.Suffitwitter(userToClusterMembersIndetwitterOutputPath),
+        EtwitterplicitEndTime(dateRange.end)
       )
 
-    Execution.zip(writeClusterRepresentatives, writeClusterMembers)
+    Etwitterecution.zip(writeClusterRepresentatives, writeClusterMembers)
   }
 
   /**
@@ -350,34 +350,34 @@ trait InterestedInTwiceBaseApp[T] {
     clusteringMethod: ClusteringMethod,
     clusterRepresentativeSelectionMethod: ClusterRepresentativeSelectionMethod[T],
     producerEmbedding: TypedPipe[(UserId, T)],
-    userToClusterRepresentativesIndexPathSuffix: String,
-    userToClusterMembersIndexPathSuffix: String,
-    userToClusterRepresentativesIndexDataset: KeyValDALDataset[
+    userToClusterRepresentativesIndetwitterPathSuffitwitter: String,
+    userToClusterMembersIndetwitterPathSuffitwitter: String,
+    userToClusterRepresentativesIndetwitterDataset: KeyValDALDataset[
       KeyVal[SimClustersMultiEmbeddingId, SimClustersMultiEmbedding]
     ],
-    userToClusterMembersIndexDataset: KeyValDALDataset[KeyVal[UserId, OrderedClustersAndMembers]],
+    userToClusterMembersIndetwitterDataset: KeyValDALDataset[KeyVal[UserId, OrderedClustersAndMembers]],
     numReducers: Int
   )(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueId: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
-    val userToClusterRepresentativesIndexOutputPath: String = EmbeddingUtil.getHdfsPath(
+    val userToClusterRepresentativesIndetwitterOutputPath: String = EmbeddingUtil.getHdfsPath(
       isAdhoc = false,
       isManhattanKeyVal = true,
       modelVersion = modelVersion,
-      pathSuffix = userToClusterRepresentativesIndexPathSuffix
+      pathSuffitwitter = userToClusterRepresentativesIndetwitterPathSuffitwitter
     )
 
-    val userToClusterMembersIndexOutputPath: String = EmbeddingUtil.getHdfsPath(
+    val userToClusterMembersIndetwitterOutputPath: String = EmbeddingUtil.getHdfsPath(
       isAdhoc = false,
       isManhattanKeyVal = true,
       modelVersion = modelVersion,
-      pathSuffix = userToClusterMembersIndexPathSuffix
+      pathSuffitwitter = userToClusterMembersIndetwitterPathSuffitwitter
     )
 
-    val execution = Execution.withId { implicit uniqueId =>
+    val etwitterecution = Etwitterecution.withId { implicit uniqueId =>
       val output: TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)] =
         getMultiEmbeddingPerUser(
           userUserGraph = getUserUserGraph(dateRange.prepend(Days(30)), implicitly),
@@ -390,15 +390,15 @@ trait InterestedInTwiceBaseApp[T] {
       writeOutputToKeyValDataset(
         output = output,
         embeddingType = MultiEmbeddingType.TwiceUserInterestedIn,
-        userToClusterRepresentativesIndexDataset = userToClusterRepresentativesIndexDataset,
-        userToClusterMembersIndexDataset = userToClusterMembersIndexDataset,
-        userToClusterRepresentativesIndexOutputPath = userToClusterRepresentativesIndexOutputPath,
-        userToClusterMembersIndexOutputPath = userToClusterMembersIndexOutputPath
+        userToClusterRepresentativesIndetwitterDataset = userToClusterRepresentativesIndetwitterDataset,
+        userToClusterMembersIndetwitterDataset = userToClusterMembersIndetwitterDataset,
+        userToClusterRepresentativesIndetwitterOutputPath = userToClusterRepresentativesIndetwitterOutputPath,
+        userToClusterMembersIndetwitterOutputPath = userToClusterMembersIndetwitterOutputPath
       )
 
     }
 
-    execution.unit
+    etwitterecution.unit
   }
 
   /**
@@ -408,30 +408,30 @@ trait InterestedInTwiceBaseApp[T] {
     clusteringMethod: ClusteringMethod,
     clusterRepresentativeSelectionMethod: ClusterRepresentativeSelectionMethod[T],
     producerEmbedding: TypedPipe[(UserId, T)],
-    userToClusterRepresentativesIndexPathSuffix: String,
-    userToClusterMembersIndexPathSuffix: String,
+    userToClusterRepresentativesIndetwitterPathSuffitwitter: String,
+    userToClusterMembersIndetwitterPathSuffitwitter: String,
     numReducers: Int
   )(
     implicit dateRange: DateRange,
     timeZone: TimeZone,
     uniqueId: UniqueID
-  ): Execution[Unit] = {
+  ): Etwitterecution[Unit] = {
 
-    val userToClusterRepresentativesIndexOutputPath: String = EmbeddingUtil.getHdfsPath(
+    val userToClusterRepresentativesIndetwitterOutputPath: String = EmbeddingUtil.getHdfsPath(
       isAdhoc = true,
       isManhattanKeyVal = false,
       modelVersion = modelVersion,
-      pathSuffix = userToClusterRepresentativesIndexPathSuffix
+      pathSuffitwitter = userToClusterRepresentativesIndetwitterPathSuffitwitter
     )
 
-    val userToClusterMembersIndexOutputPath: String = EmbeddingUtil.getHdfsPath(
+    val userToClusterMembersIndetwitterOutputPath: String = EmbeddingUtil.getHdfsPath(
       isAdhoc = true,
       isManhattanKeyVal = false,
       modelVersion = modelVersion,
-      pathSuffix = userToClusterMembersIndexPathSuffix
+      pathSuffitwitter = userToClusterMembersIndetwitterPathSuffitwitter
     )
 
-    val execution = Execution.withId { implicit uniqueId =>
+    val etwitterecution = Etwitterecution.withId { implicit uniqueId =>
       val output: TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)] =
         getMultiEmbeddingPerUser(
           userUserGraph = getUserUserGraph(dateRange.prepend(Days(30)), implicitly),
@@ -443,11 +443,11 @@ trait InterestedInTwiceBaseApp[T] {
 
       writeOutputToTypedTSV(
         output,
-        userToClusterRepresentativesIndexOutputPath,
-        userToClusterMembersIndexOutputPath)
+        userToClusterRepresentativesIndetwitterOutputPath,
+        userToClusterMembersIndetwitterOutputPath)
     }
 
-    execution.unit
+    etwitterecution.unit
   }
 
 }
@@ -472,8 +472,8 @@ object InterestedInTwiceBaseApp {
   val StatCFNumOfClustersBeforeFilterBuckets: Seq[Double] =
     Seq(1, 3, 5, 10, 15, 20, 50, 100, 200, 300, 500)
 
-  val MaxClustersPerUser: Int = 10
-  val MaxNeighborsByUser: Int = 500
+  val MatwitterClustersPerUser: Int = 10
+  val MatwitterNeighborsByUser: Int = 500
 
   object ProducerEmbeddingSource {
 

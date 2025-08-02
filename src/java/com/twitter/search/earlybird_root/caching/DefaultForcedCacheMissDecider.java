@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird_root.caching;
 
-import javax.inject.Inject;
+import javatwitter.inject.Inject;
 
 import com.twitter.common.base.Supplier;
 import com.twitter.search.common.decider.SearchDecider;

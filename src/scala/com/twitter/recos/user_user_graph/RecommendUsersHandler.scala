@@ -10,7 +10,7 @@ import com.twitter.graphjet.algorithms.counting.user.TopSecondDegreeByCountReque
 import com.twitter.graphjet.algorithms.counting.user.UserRecommendationInfo
 import com.twitter.graphjet.algorithms.ConnectingUsersWithMetadata
 import com.twitter.graphjet.algorithms.filters._
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph
+import com.twitter.graphjet.bipartite.NodeMetadataLeftIndetwitteredPowerLawMultiSegmentBipartiteGraph
 import com.twitter.logging.Logger
 import com.twitter.recos.decider.UserUserGraphDecider
 import com.twitter.recos.graph_common.FinagleStatsReceiverWrapper
@@ -25,18 +25,18 @@ import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet
 import scala.collection.JavaConverters._
 
-trait RecommendUsersHandler extends RequestHandler[RecommendUserRequest, RecommendUserResponse]
+trait RecommendUsersHandler etwittertends RequestHandler[RecommendUserRequest, RecommendUserResponse]
 
 /**
  * Computes user recommendations based on a RecommendUserRequest by using
  * TopSecondDegree algorithm in GraphJet.
  */
 case class RecommendUsersHandlerImpl(
-  bipartiteGraph: NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph,
+  bipartiteGraph: NodeMetadataLeftIndetwitteredPowerLawMultiSegmentBipartiteGraph,
   salsaRunnerConfig: SalsaRunnerConfig,
   decider: UserUserGraphDecider,
   statsReceiverWrapper: FinagleStatsReceiverWrapper)
-    extends RecommendUsersHandler {
+    etwittertends RecommendUsersHandler {
 
   private val log: Logger = Logger(this.getClass.getSimpleName)
   private val stats = statsReceiverWrapper.statsReceiver.scope(this.getClass.getSimpleName)
@@ -52,7 +52,7 @@ case class RecommendUsersHandlerImpl(
     graphJetQueue.offer(
       new TopSecondDegreeByCountForUser(
         bipartiteGraph,
-        salsaRunnerConfig.expectedNodesToHitInSalsa,
+        salsaRunnerConfig.etwitterpectedNodesToHitInSalsa,
         statsReceiverWrapper.scope(this.getClass.getSimpleName)
       )
     )
@@ -69,16 +69,16 @@ case class RecommendUsersHandlerImpl(
       request.seedsWithWeights.keys.toArray,
       request.seedsWithWeights.values.toArray
     )
-    val toBeFiltered = new LongOpenHashSet(request.excludedUserIds.getOrElse(Nil).toArray)
-    val maxNumResults = request.maxNumResults.getOrElse(DefaultRequestParams.MaxNumResults)
-    val maxNumSocialProofs =
-      request.maxNumSocialProofs.getOrElse(DefaultRequestParams.MaxNumSocialProofs)
+    val toBeFiltered = new LongOpenHashSet(request.etwittercludedUserIds.getOrElse(Nil).toArray)
+    val matwitterNumResults = request.matwitterNumResults.getOrElse(DefaultRequestParams.MatwitterNumResults)
+    val matwitterNumSocialProofs =
+      request.matwitterNumSocialProofs.getOrElse(DefaultRequestParams.MatwitterNumSocialProofs)
     val minUserPerSocialProof = convertMinUserPerSocialProofToJava(request.minUserPerSocialProof)
     val socialProofTypes =
       UserEdgeTypeMask.getUserUserGraphSocialProofTypes(request.socialProofTypes)
-    val maxRightNodeAgeInMillis = DefaultRequestParams.MaxRightNodeAgeThreshold
-    val maxEdgeEngagementAgeInMillis =
-      request.maxEdgeEngagementAgeInMillis.getOrElse(DefaultRequestParams.MaxEdgeAgeThreshold)
+    val matwitterRightNodeAgeInMillis = DefaultRequestParams.MatwitterRightNodeAgeThreshold
+    val matwitterEdgeEngagementAgeInMillis =
+      request.matwitterEdgeEngagementAgeInMillis.getOrElse(DefaultRequestParams.MatwitterEdgeAgeThreshold)
     val resultFilterChain = new ResultFilterChain(
       Lists.newArrayList(
         new SocialProofTypesFilter(statsReceiverWrapper),
@@ -90,13 +90,13 @@ case class RecommendUsersHandlerImpl(
       queryNode,
       leftSeedNodesWithWeight,
       toBeFiltered,
-      maxNumResults,
-      maxNumSocialProofs,
+      matwitterNumResults,
+      matwitterNumSocialProofs,
       UserEdgeTypeMask.SIZE.toInt,
       minUserPerSocialProof,
       socialProofTypes,
-      maxRightNodeAgeInMillis,
-      maxEdgeEngagementAgeInMillis,
+      matwitterRightNodeAgeInMillis,
+      matwitterEdgeEngagementAgeInMillis,
       resultFilterChain
     )
   }
@@ -171,7 +171,7 @@ case class RecommendUsersHandlerImpl(
     implicit statsReceiver: StatsReceiver
   ): Option[TopSecondDegreeByCountResponse] = {
     trackBlockStats(stats) {
-      // compute recs -- need to catch and print exceptions here otherwise they are swallowed
+      // compute recs -- need to catch and print etwitterceptions here otherwise they are swallowed
       val recAttempt = Try(graphJet.computeRecommendations(request, random)).onFailure { e =>
         failureCounter.incr()
         log.error(e, "GraphJet computation failed")
@@ -201,7 +201,7 @@ case class RecommendUsersHandlerImpl(
           // if we did not get a runner in time, then fail fast here and immediately put it back
           log.warning("GraphJet Queue polling timeout")
           pollTimeoutCounter.incr()
-          throw new RuntimeException("GraphJet poll timeout")
+          throw new RuntimeEtwitterception("GraphJet poll timeout")
           RecommendUserResponse(Nil)
         }
       } ensure {
@@ -213,9 +213,9 @@ case class RecommendUsersHandlerImpl(
   }
 
   object DefaultRequestParams {
-    val MaxNumResults = 100
-    val MaxNumSocialProofs = 100
-    val MaxRightNodeAgeThreshold: Long = Long.MaxValue
-    val MaxEdgeAgeThreshold: Long = Long.MaxValue
+    val MatwitterNumResults = 100
+    val MatwitterNumSocialProofs = 100
+    val MatwitterRightNodeAgeThreshold: Long = Long.MatwitterValue
+    val MatwitterEdgeAgeThreshold: Long = Long.MatwitterValue
   }
 }

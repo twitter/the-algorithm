@@ -1,4 +1,4 @@
 resources(
-    sources = ["*.xml"],
+    sources = ["*.twitterml"],
     tags = ["bazel-compatible"],
 )

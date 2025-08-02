@@ -10,16 +10,16 @@ import com.twitter.strato.config.Policy
 import com.twitter.strato.catalog.OpMetadata
 import com.twitter.strato.data.Conv
 import com.twitter.strato.data.Lifecycle
-import com.twitter.strato.data.Description.PlainText
+import com.twitter.strato.data.Description.PlainTetwittert
 import com.twitter.strato.fed._
 import com.twitter.strato.thrift.ScroogeConv
-import javax.inject.Inject
+import javatwitter.inject.Inject
 
 class ScoreColumn @Inject() (scoreStore: ScoreStore)
-    extends StratoFed.Column("recommendations/representation_scorer/score")
+    etwittertends StratoFed.Column("recommendations/representation_scorer/score")
     with StratoFed.Fetch.Stitch {
 
-  override val policy: Policy = Common.rsxReadPolicy
+  override val policy: Policy = Common.rstwitterReadPolicy
 
   override type Key = ScoreId
   override type View = Unit
@@ -33,7 +33,7 @@ class ScoreColumn @Inject() (scoreStore: ScoreStore)
 
   override val metadata: OpMetadata = OpMetadata(
     lifecycle = Some(Lifecycle.Production),
-    description = Some(PlainText(
+    description = Some(PlainTetwittert(
       "The Uniform Scoring Endpoint in Representation Scorer for the Content-Recommender." +
         " TDD: http://go/representation-scorer-tdd Guideline: http://go/uniform-scoring-guideline"))
   )

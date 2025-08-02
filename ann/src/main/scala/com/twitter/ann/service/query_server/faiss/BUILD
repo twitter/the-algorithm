@@ -8,7 +8,7 @@ scala_library(
         "ann/src/main/scala/com/twitter/ann/common",
         "ann/src/main/scala/com/twitter/ann/faiss",
         "ann/src/main/scala/com/twitter/ann/service/query_server/common",
-        "ann/src/main/scala/com/twitter/ann/service/query_server/common:faiss_index_path_provider",
+        "ann/src/main/scala/com/twitter/ann/service/query_server/common:faiss_indetwitter_path_provider",
         "ann/src/main/scala/com/twitter/ann/service/query_server/common/throttling",
         "ann/src/main/scala/com/twitter/ann/service/query_server/common/warmup",
         "src/java/com/twitter/search/common/file",
@@ -17,7 +17,7 @@ scala_library(
 
 jvm_binary(
     name = "faiss-query-server",
-    main = "com.twitter.ann.service.query_server.faiss.FaissQueryIndexServer",
+    main = "com.twitter.ann.service.query_server.faiss.FaissQueryIndetwitterServer",
     compiler_option_sets = ["fatal_warnings"],
     runtime_platform = "java11",
     tags = ["bazel-compatible"],

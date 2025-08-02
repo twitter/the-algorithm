@@ -65,12 +65,12 @@ public:
         m_sparsebinary.set_empty_key(0);
         m_sparsecontinuous.set_empty_key(0);
 #endif
-        m_binary.max_load_factor(0.5);
-        m_continuous.max_load_factor(0.5);
-        m_discrete.max_load_factor(0.5);
-        m_string.max_load_factor(0.5);
-        m_sparsebinary.max_load_factor(0.5);
-        m_sparsecontinuous.max_load_factor(0.5);
+        m_binary.matwitter_load_factor(0.5);
+        m_continuous.matwitter_load_factor(0.5);
+        m_discrete.matwitter_load_factor(0.5);
+        m_string.matwitter_load_factor(0.5);
+        m_sparsebinary.matwitter_load_factor(0.5);
+        m_sparsecontinuous.matwitter_load_factor(0.5);
       }
 
   const BinaryFeatures &getBinary() const { return m_binary; }

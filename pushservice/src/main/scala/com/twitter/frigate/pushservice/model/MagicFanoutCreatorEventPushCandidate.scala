@@ -26,8 +26,8 @@ import com.twitter.strato.client.UserId
 import com.twitter.util.Future
 import scala.util.control.NoStackTrace
 
-class MagicFanoutCreatorEventPushCandidateHydratorException(private val message: String)
-    extends Exception(message)
+class MagicFanoutCreatorEventPushCandidateHydratorEtwitterception(private val message: String)
+    etwittertends Etwitterception(message)
     with NoStackTrace
 
 class MagicFanoutCreatorEventPushCandidate(
@@ -38,7 +38,7 @@ class MagicFanoutCreatorEventPushCandidate(
 )(
   implicit val statsScoped: StatsReceiver,
   pushModelScorer: PushMLModelScorer)
-    extends PushCandidate
+    etwittertends PushCandidate
     with MagicFanoutCreatorEventIbis2Hydrator
     with MagicFanoutCreatorEventNtabRequestHydrator
     with MagicFanoutCreatorEventCandidate
@@ -52,7 +52,7 @@ class MagicFanoutCreatorEventPushCandidate(
 
   lazy val userProfile = hydratedCreator
     .flatMap(_.profile).getOrElse(
-      throw new MagicFanoutCreatorEventPushCandidateHydratorException(
+      throw new MagicFanoutCreatorEventPushCandidateHydratorEtwitterception(
         s"Unable to get user profile to generate tapThrough for userId: $creatorId"))
 
   override val frigateNotification: FrigateNotification = candidate.frigateNotification
@@ -83,7 +83,7 @@ class MagicFanoutCreatorEventPushCandidate(
 }
 
 case class MagicFanouCreatorSubscriptionEventPushPredicates(config: Config)
-    extends BasicSendHandlerPredicates[MagicFanoutCreatorEventPushCandidate] {
+    etwittertends BasicSendHandlerPredicates[MagicFanoutCreatorEventPushCandidate] {
 
   implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
 
@@ -110,7 +110,7 @@ case class MagicFanouCreatorSubscriptionEventPushPredicates(config: Config)
 }
 
 case class MagicFanoutNewCreatorEventPushPredicates(config: Config)
-    extends BasicSendHandlerPredicates[MagicFanoutCreatorEventPushCandidate] {
+    etwittertends BasicSendHandlerPredicates[MagicFanoutCreatorEventPushCandidate] {
 
   implicit val statsReceiver: StatsReceiver = config.statsReceiver.scope(getClass.getSimpleName)
 

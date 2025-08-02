@@ -4,14 +4,14 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.concurrent.atomic.AtomicLong;
 
-import javax.annotation.concurrent.GuardedBy;
+import javatwitter.annotation.concurrent.GuardedBy;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
-import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.KeeperEtwitterception;
 import org.apache.zookeeper.Watcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +24,12 @@ import com.twitter.search.common.database.DatabaseConfig;
 import com.twitter.search.common.metrics.SearchCounter;
 import com.twitter.search.common.metrics.SearchLongGauge;
 import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.util.zookeeper.ZooKeeperProxy;
+import com.twitter.search.common.util.zookeeper.ZooKeeperProtwittery;
 import com.twitter.search.earlybird.common.config.EarlybirdConfig;
 import com.twitter.search.earlybird.common.config.EarlybirdProperty;
 import com.twitter.search.earlybird.config.TierConfig;
-import com.twitter.search.earlybird.exception.AlreadyInServerSetUpdateException;
-import com.twitter.search.earlybird.exception.NotInServerSetUpdateException;
+import com.twitter.search.earlybird.etwitterception.AlreadyInServerSetUpdateEtwitterception;
+import com.twitter.search.earlybird.etwitterception.NotInServerSetUpdateEtwitterception;
 import com.twitter.search.earlybird.partition.PartitionConfig;
 
 public class EarlybirdServerSetManager implements ServerSetMember {
@@ -40,11 +40,11 @@ public class EarlybirdServerSetManager implements ServerSetMember {
   protected final SearchCounter leaveServerSetCounter;
   @VisibleForTesting
   protected final SearchCounter joinServerSetCounter;
-  private final ZooKeeperProxy discoveryZKClient;
+  private final ZooKeeperProtwittery discoveryZKClient;
   private final SearchLongGauge inServerSetGauge;
   private final PartitionConfig partitionConfig;
   private final int port;
-  private final String serverSetNamePrefix;
+  private final String serverSetNamePrefitwitter;
 
   @VisibleForTesting
   protected final SearchLongGauge connectedToZooKeeper;
@@ -53,40 +53,40 @@ public class EarlybirdServerSetManager implements ServerSetMember {
   @GuardedBy("endpointStatusLock")
   private ServerSet.EndpointStatus endpointStatus = null;
 
-  private boolean inServerSetForServiceProxy = false;
+  private boolean inServerSetForServiceProtwittery = false;
 
   public EarlybirdServerSetManager(
       SearchStatsReceiver searchStatsReceiver,
-      ZooKeeperProxy discoveryZKClient,
+      ZooKeeperProtwittery discoveryZKClient,
       final PartitionConfig partitionConfig,
       int port,
-      String serverSetNamePrefix) {
+      String serverSetNamePrefitwitter) {
     this.discoveryZKClient = discoveryZKClient;
     this.partitionConfig = partitionConfig;
     this.port = port;
-    this.serverSetNamePrefix = serverSetNamePrefix;
+    this.serverSetNamePrefitwitter = serverSetNamePrefitwitter;
 
-    // Export serverset related stats
+    // Etwitterport serverset related stats
     Preconditions.checkNotNull(searchStatsReceiver);
     this.joinServerSetCounter = searchStatsReceiver.getCounter(
-        serverSetNamePrefix + "join_server_set_count");
+        serverSetNamePrefitwitter + "join_server_set_count");
     this.leaveServerSetCounter = searchStatsReceiver.getCounter(
-        serverSetNamePrefix + "leave_server_set_count");
+        serverSetNamePrefitwitter + "leave_server_set_count");
 
     // Create a new stat based on the partition number for hosts-in-partition aggregation.
     // The value of the stat is dependent on whether the server is in the serverset so that the
     // aggregate stat reflects the number serving traffic instead of the live process count.
     AtomicLong sharedInServerSetStatus = new AtomicLong();
     this.inServerSetGauge = searchStatsReceiver.getLongGauge(
-        serverSetNamePrefix + "is_in_server_set", sharedInServerSetStatus);
+        serverSetNamePrefitwitter + "is_in_server_set", sharedInServerSetStatus);
     this.connectedToZooKeeper = searchStatsReceiver.getLongGauge(
-        serverSetNamePrefix + "connected_to_zookeeper");
+        serverSetNamePrefitwitter + "connected_to_zookeeper");
 
     searchStatsReceiver.getLongGauge(
-        serverSetNamePrefix + "member_of_partition_" + partitionConfig.getIndexingHashPartitionID(),
+        serverSetNamePrefitwitter + "member_of_partition_" + partitionConfig.getIndetwitteringHashPartitionID(),
         sharedInServerSetStatus);
 
-    this.discoveryZKClient.registerExpirationHandler(() -> connectedToZooKeeper.set(0));
+    this.discoveryZKClient.registerEtwitterpirationHandler(() -> connectedToZooKeeper.set(0));
 
     this.discoveryZKClient.register(event -> {
       if (event.getType() == Watcher.Event.EventType.None
@@ -103,14 +103,14 @@ public class EarlybirdServerSetManager implements ServerSetMember {
    * @param username
    */
   @Override
-  public void joinServerSet(String username) throws ServerSet.UpdateException {
+  public void joinServerSet(String username) throws ServerSet.UpdateEtwitterception {
     joinServerSetCounter.increment();
 
     synchronized (endpointStatusLock) {
-      LOG.info("Joining {} ServerSet (instructed by: {}) ...", serverSetNamePrefix, username);
+      LOG.info("Joining {} ServerSet (instructed by: {}) ...", serverSetNamePrefitwitter, username);
       if (endpointStatus != null) {
         LOG.warn("Already in ServerSet. Nothing done.");
-        throw new AlreadyInServerSetUpdateException("Already in ServerSet. Nothing done.");
+        throw new AlreadyInServerSetUpdateEtwitterception("Already in ServerSet. Nothing done.");
       }
 
       try {
@@ -125,16 +125,16 @@ public class EarlybirdServerSetManager implements ServerSetMember {
         inServerSetGauge.set(1);
 
         String path = service.getPath();
-        EarlybirdStatus.recordEarlybirdEvent("Joined " + serverSetNamePrefix + " ServerSet " + path
+        EarlybirdStatus.recordEarlybirdEvent("Joined " + serverSetNamePrefitwitter + " ServerSet " + path
                                              + " (instructed by: " + username + ")");
         LOG.info("Successfully joined {} ServerSet {} (instructed by: {})",
-                 serverSetNamePrefix, path, username);
-      } catch (Exception e) {
+                 serverSetNamePrefitwitter, path, username);
+      } catch (Etwitterception e) {
         endpointStatus = null;
-        String message = "Failed to join " + serverSetNamePrefix + " ServerSet of partition "
-            + partitionConfig.getIndexingHashPartitionID();
+        String message = "Failed to join " + serverSetNamePrefitwitter + " ServerSet of partition "
+            + partitionConfig.getIndetwitteringHashPartitionID();
         LOG.error(message, e);
-        throw new ServerSet.UpdateException(message, e);
+        throw new ServerSet.UpdateEtwitterception(message, e);
       }
     }
   }
@@ -142,34 +142,34 @@ public class EarlybirdServerSetManager implements ServerSetMember {
   /**
    * Takes this Earlybird out of its registered ServerSet.
    *
-   * @throws ServerSet.UpdateException if there was a problem leaving the ServerSet,
+   * @throws ServerSet.UpdateEtwitterception if there was a problem leaving the ServerSet,
    * or if this Earlybird is already not in a ServerSet.
    * @param username
    */
   @Override
-  public void leaveServerSet(String username) throws ServerSet.UpdateException {
+  public void leaveServerSet(String username) throws ServerSet.UpdateEtwitterception {
     leaveServerSetCounter.increment();
     synchronized (endpointStatusLock) {
-      LOG.info("Leaving {} ServerSet (instructed by: {}) ...", serverSetNamePrefix, username);
+      LOG.info("Leaving {} ServerSet (instructed by: {}) ...", serverSetNamePrefitwitter, username);
       if (endpointStatus == null) {
         String message = "Not in a ServerSet. Nothing done.";
         LOG.warn(message);
-        throw new NotInServerSetUpdateException(message);
+        throw new NotInServerSetUpdateEtwitterception(message);
       }
 
       endpointStatus.leave();
       endpointStatus = null;
       inServerSetGauge.set(0);
-      EarlybirdStatus.recordEarlybirdEvent("Left " + serverSetNamePrefix
+      EarlybirdStatus.recordEarlybirdEvent("Left " + serverSetNamePrefitwitter
                                            + " ServerSet (instructed by: " + username + ")");
       LOG.info("Successfully left {} ServerSet. (instructed by: {})",
-               serverSetNamePrefix, username);
+               serverSetNamePrefitwitter, username);
     }
   }
 
   @Override
   public int getNumberOfServerSetMembers()
-      throws InterruptedException, ZooKeeperClient.ZooKeeperConnectionException, KeeperException {
+      throws InterruptedEtwitterception, ZooKeeperClient.ZooKeeperConnectionEtwitterception, KeeperEtwitterception {
     String path = getServerSetService().getPath();
     return discoveryZKClient.getNumberOfServerSetMembers(path);
   }
@@ -217,27 +217,27 @@ public class EarlybirdServerSetManager implements ServerSetMember {
   }
 
   private String getServerSetPath(String earlybirdName) {
-    return String.format("%s%s/hash_partition_%d", serverSetNamePrefix, earlybirdName,
-        partitionConfig.getIndexingHashPartitionID());
+    return String.format("%s%s/hash_partition_%d", serverSetNamePrefitwitter, earlybirdName,
+        partitionConfig.getIndetwitteringHashPartitionID());
   }
 
   /**
-   * Join ServerSet for ServiceProxy with a named admin port and with a zookeeper path that Service
-   * Proxy can translate to a domain name label that is less than 64 characters (due to the size
+   * Join ServerSet for ServiceProtwittery with a named admin port and with a zookeeper path that Service
+   * Protwittery can translate to a domain name label that is less than 64 characters (due to the size
    * limit for domain name labels described here: https://tools.ietf.org/html/rfc1035)
-   * This will allow us to access Earlybirds that are not on mesos via ServiceProxy.
+   * This will allow us to access Earlybirds that are not on mesos via ServiceProtwittery.
    */
   @Override
-  public void joinServerSetForServiceProxy() {
+  public void joinServerSetForServiceProtwittery() {
     // This additional Zookeeper server set is only necessary for Archive Earlybirds which are
     // running on bare metal hardware, so ensure that this method is never called for services
     // on Aurora.
     Preconditions.checkArgument(!EarlybirdConfig.isAurora(),
-        "Attempting to join server set for ServiceProxy on Earlybird running on Aurora");
+        "Attempting to join server set for ServiceProtwittery on Earlybird running on Aurora");
 
-    LOG.info("Attempting to join ServerSet for ServiceProxy");
+    LOG.info("Attempting to join ServerSet for ServiceProtwittery");
     try {
-      TwitterServerSet.Service service = getServerSetForServiceProxyOnArchive();
+      TwitterServerSet.Service service = getServerSetForServiceProtwitteryOnArchive();
 
       ServerSet serverSet = discoveryZKClient.createServerSet(service);
       String hostName = InetAddress.getLocalHost().getHostName();
@@ -248,20 +248,20 @@ public class EarlybirdServerSetManager implements ServerSetMember {
           partitionConfig.getHostPositionWithinHashPartition());
 
       String path = service.getPath();
-      LOG.info("Successfully joined ServerSet for ServiceProxy {}", path);
-      inServerSetForServiceProxy = true;
-    } catch (Exception e) {
-      String message = "Failed to join ServerSet for ServiceProxy of partition "
-          + partitionConfig.getIndexingHashPartitionID();
+      LOG.info("Successfully joined ServerSet for ServiceProtwittery {}", path);
+      inServerSetForServiceProtwittery = true;
+    } catch (Etwitterception e) {
+      String message = "Failed to join ServerSet for ServiceProtwittery of partition "
+          + partitionConfig.getIndetwitteringHashPartitionID();
       LOG.warn(message, e);
     }
   }
 
   @VisibleForTesting
-  protected TwitterServerSet.Service getServerSetForServiceProxyOnArchive() {
-    String serverSetPath = String.format("proxy/%s/p_%d",
+  protected TwitterServerSet.Service getServerSetForServiceProtwitteryOnArchive() {
+    String serverSetPath = String.format("protwittery/%s/p_%d",
         partitionConfig.getTierName(),
-        partitionConfig.getIndexingHashPartitionID());
+        partitionConfig.getIndetwitteringHashPartitionID());
     return new TwitterServerSet.Service(
         DatabaseConfig.getZooKeeperRole(),
         Config.getEnvironment(),
@@ -269,7 +269,7 @@ public class EarlybirdServerSetManager implements ServerSetMember {
   }
 
   @VisibleForTesting
-  protected boolean isInServerSetForServiceProxy() {
-    return inServerSetForServiceProxy;
+  protected boolean isInServerSetForServiceProtwittery() {
+    return inServerSetForServiceProtwittery;
   }
 }

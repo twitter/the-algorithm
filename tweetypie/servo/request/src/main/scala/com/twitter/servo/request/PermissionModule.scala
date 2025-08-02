@@ -10,7 +10,7 @@ import com.twitter.util.Try
  * To use, instantiate a subclass:
  *
  * {{{
- * object MyPermissions extends PermissionModule {
+ * object MyPermissions etwittertends PermissionModule {
  *   val Eat = create("eat")
  *   val Drink = create("drink")
  * }
@@ -33,8 +33,8 @@ import com.twitter.util.Try
  * modules.
  *
  * {{{
- * scala> object P1 extends PermissionModule { val Read = create("read") }
- * scala> object P2 extends PermissionModule { val Read = create("read") }
+ * scala> object P1 etwittertends PermissionModule { val Read = create("read") }
+ * scala> object P2 etwittertends PermissionModule { val Read = create("read") }
  * scala> P1.Read satisfiedBy P2.Read
  * error: type mismatch;
  * found   : P2.Permissions
@@ -69,13 +69,13 @@ trait PermissionModule {
    * best to create all of your permissions before doing anything
    * else.
    *
-   * @throws RuntimeException: If it is called after `All` has been
+   * @throws RuntimeEtwitterception: If it is called after `All` has been
    *   initialized.
    */
   protected def create(name: String) = {
     synchronized {
       if (allPerms == null) {
-        throw new RuntimeException("Permission creation after initialization")
+        throw new RuntimeEtwitterception("Permission creation after initialization")
       }
 
       allPerms = allPerms union Set(name)
@@ -96,14 +96,14 @@ trait PermissionModule {
    * Get the set of permissions that contains that single permission
    * by name.
    *
-   * @throws RuntimeException if there is no defined permission with
+   * @throws RuntimeEtwitterception if there is no defined permission with
    *   this name.
    *
    * No permissions may be defined after this method is called.
    */
   def apply(name: String): Permissions =
     get(name) match {
-      case None => throw new RuntimeException("Unknown permission: " + name)
+      case None => throw new RuntimeEtwitterception("Unknown permission: " + name)
       case Some(p) => p
     }
 
@@ -129,7 +129,7 @@ trait PermissionModule {
    * No permissions may be defined after this method is called.
    *
    * @return a map from client identifier to permission set.
-   * @throws RuntimeException when the permission from the Map is not defined.
+   * @throws RuntimeEtwitterception when the permission from the Map is not defined.
    */
   def fromYaml(m: YamlMap): Try[Map[String, Permissions]] =
     Try {
@@ -146,7 +146,7 @@ trait PermissionModule {
    * @param m a map from client identifier to a set of permission strings
    *
    * @return a map from client identifier to permission set.
-   * @throws RuntimeException when the permission from the Map is not defined.
+   * @throws RuntimeEtwitterception when the permission from the Map is not defined.
    */
   def fromMap(m: Map[String, Seq[String]]): Try[Map[String, Permissions]] =
     Try {
@@ -161,7 +161,7 @@ trait PermissionModule {
    * @param sequence a Seq of permission strings
    *
    * @return a permission set.
-   * @throws RuntimeException when the permission is not defined.
+   * @throws RuntimeEtwitterception when the permission is not defined.
    */
   def fromSeq(permissionStrings: Seq[String]): Permissions =
     permissionStrings.foldLeft(Empty) { (p, v) =>
@@ -183,7 +183,7 @@ trait PermissionModule {
     clientPermissions: Map[String, Permissions]
   ): ClientRequestAuthorizer =
     ClientRequestAuthorizer.filtered { (methodName, clientId) =>
-      requiredPermissions.get(methodName) exists {
+      requiredPermissions.get(methodName) etwitterists {
         _ satisfiedBy clientPermissions.getOrElse(clientId, Empty)
       }
     }
@@ -202,7 +202,7 @@ trait PermissionModule {
      * Does the supplied set of held permissions satisfy the
      * requirements of this set of permissions?
      *
-     * For example, if this set of permissions is Set("read"), and the
+     * For etwitterample, if this set of permissions is Set("read"), and the
      * other set of permissions is Set("read", "write"), then the
      * other set of permissions satisfies this set.
      */

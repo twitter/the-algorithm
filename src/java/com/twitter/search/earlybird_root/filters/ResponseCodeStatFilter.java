@@ -14,7 +14,7 @@ import com.twitter.util.Future;
 import com.twitter.util.FutureEventListener;
 
 public class ResponseCodeStatFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+    etwittertends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
 
   private final Map<EarlybirdResponseCode, SearchCounter> responseCodeCounters;
 
@@ -24,7 +24,7 @@ public class ResponseCodeStatFilter
   public ResponseCodeStatFilter() {
     responseCodeCounters = Maps.newEnumMap(EarlybirdResponseCode.class);
     for (EarlybirdResponseCode code : EarlybirdResponseCode.values()) {
-      SearchCounter stat = SearchCounter.export("response_code_" + code.name().toLowerCase());
+      SearchCounter stat = SearchCounter.etwitterport("response_code_" + code.name().toLowerCase());
       responseCodeCounters.put(code, stat);
     }
   }

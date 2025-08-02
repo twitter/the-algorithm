@@ -14,13 +14,13 @@ import com.twitter.visibility.features.ViewerIsCommunityMember
 import com.twitter.visibility.features.ViewerIsCommunityModerator
 import com.twitter.visibility.features.ViewerIsInternalCommunitiesAdmin
 import com.twitter.visibility.models.CommunityTweet
-import com.twitter.visibility.models.ViewerContext
+import com.twitter.visibility.models.ViewerContetwittert
 
 trait CommunityTweetFeatures {
 
   def forTweet(
     tweet: Tweet,
-    viewerContext: ViewerContext
+    viewerContetwittert: ViewerContetwittert
   ): FeatureMapBuilder => FeatureMapBuilder
 
   def forTweetOnly(tweet: Tweet): FeatureMapBuilder => FeatureMapBuilder = {

@@ -19,7 +19,7 @@ import com.twitter.search.earlybird.partition.MultiSegmentTermDictionaryManager;
 import com.twitter.search.earlybird.querycache.QueryCacheManager;
 import com.twitter.search.queryparser.query.search.SearchOperator;
 
-public class LuceneRelevanceQueryVisitor extends EarlybirdLuceneQueryVisitor {
+public class LuceneRelevanceQueryVisitor etwittertends EarlybirdLuceneQueryVisitor {
   public LuceneRelevanceQueryVisitor(
       ImmutableSchemaInterface schema,
       QueryCacheManager queryCacheManager,

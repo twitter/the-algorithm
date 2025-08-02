@@ -1,0 +1,12 @@
+<?twitterml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+    <contetwittertListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+      <resetJUL>true</resetJUL>
+    </contetwittertListener>
+
+    <include resource="logging/logback-all-include.twitterml" />
+
+    <root level="INFO">
+        <appender-ref ref="ALL" />
+    </root>
+</configuration>

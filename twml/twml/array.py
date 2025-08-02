@@ -33,7 +33,7 @@ class Array(object):
 
     try:
       ttype = _NP_TO_TWML_TYPE[array.dtype.name]
-    except KeyError as err:
+    etwittercept KeyError as err:
       logging.error("Unsupported numpy type")
       raise err
 

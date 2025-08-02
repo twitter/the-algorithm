@@ -17,9 +17,9 @@ bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_negative:interacti
 
 #### Run Scheduled Job
 ```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-negative-dataflow
+etwitterport PROJECTID=twttr-recos-ml-prod
+etwitterport REGION=us-central1
+etwitterport JOB_NAME=interaction-graph-negative-dataflow
 
 bin/d6w schedule \
   ${PROJECTID}/${REGION}/${JOB_NAME} \

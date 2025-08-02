@@ -15,78 +15,78 @@ import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
 import static com.twitter.search.common.util.RuleBasedConverter.Rule;
 
 /**
- * Rules to convert exclude operators into cached filters and consolidate them.
+ * Rules to convert etwitterclude operators into cached filters and consolidate them.
  * NOTE: this is copied from blender/core/parser/service/queryparser/QueryCacheConversionRules.java
  * We should remove the blender one once this is in production.
  */
 public final class QueryCacheConversionRules {
-  static final SearchOperator EXCLUDE_ANTISOCIAL =
-      new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.ANTISOCIAL);
-  static final SearchOperator EXCLUDE_SPAM =
-      new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.SPAM);
-  static final SearchOperator EXCLUDE_REPLIES =
-      new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.REPLIES);
-  static final SearchOperator EXCLUDE_NATIVERETWEETS =
-      new SearchOperator(SearchOperator.Type.EXCLUDE, SearchOperatorConstants.NATIVE_RETWEETS);
+  static final SearchOperator EtwitterCLUDE_ANTISOCIAL =
+      new SearchOperator(SearchOperator.Type.EtwitterCLUDE, SearchOperatorConstants.ANTISOCIAL);
+  static final SearchOperator EtwitterCLUDE_SPAM =
+      new SearchOperator(SearchOperator.Type.EtwitterCLUDE, SearchOperatorConstants.SPAM);
+  static final SearchOperator EtwitterCLUDE_REPLIES =
+      new SearchOperator(SearchOperator.Type.EtwitterCLUDE, SearchOperatorConstants.REPLIES);
+  static final SearchOperator EtwitterCLUDE_NATIVERETWEETS =
+      new SearchOperator(SearchOperator.Type.EtwitterCLUDE, SearchOperatorConstants.NATIVE_RETWEETS);
 
-  public static final SearchOperator CACHED_EXCLUDE_ANTISOCIAL =
+  public static final SearchOperator CACHED_EtwitterCLUDE_ANTISOCIAL =
       new SearchOperator(SearchOperator.Type.CACHED_FILTER,
-                         QueryCacheConstants.EXCLUDE_ANTISOCIAL);
-  static final SearchOperator CACHED_EXCLUDE_NATIVERETWEETS =
+                         QueryCacheConstants.EtwitterCLUDE_ANTISOCIAL);
+  static final SearchOperator CACHED_EtwitterCLUDE_NATIVERETWEETS =
       new SearchOperator(SearchOperator.Type.CACHED_FILTER,
-                         QueryCacheConstants.EXCLUDE_ANTISOCIAL_AND_NATIVERETWEETS);
-  static final SearchOperator CACHED_EXCLUDE_SPAM =
+                         QueryCacheConstants.EtwitterCLUDE_ANTISOCIAL_AND_NATIVERETWEETS);
+  static final SearchOperator CACHED_EtwitterCLUDE_SPAM =
       new SearchOperator(SearchOperator.Type.CACHED_FILTER,
-                         QueryCacheConstants.EXCLUDE_SPAM);
-  static final SearchOperator CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS =
+                         QueryCacheConstants.EtwitterCLUDE_SPAM);
+  static final SearchOperator CACHED_EtwitterCLUDE_SPAM_AND_NATIVERETWEETS =
       new SearchOperator(SearchOperator.Type.CACHED_FILTER,
-                         QueryCacheConstants.EXCLUDE_SPAM_AND_NATIVERETWEETS);
-  static final SearchOperator CACHED_EXCLUDE_REPLIES =
+                         QueryCacheConstants.EtwitterCLUDE_SPAM_AND_NATIVERETWEETS);
+  static final SearchOperator CACHED_EtwitterCLUDE_REPLIES =
       new SearchOperator(SearchOperator.Type.CACHED_FILTER,
-                         QueryCacheConstants.EXCLUDE_REPLIES);
+                         QueryCacheConstants.EtwitterCLUDE_REPLIES);
 
   private QueryCacheConversionRules() {
   }
 
   public static final List<Rule<Query>> DEFAULT_RULES = ImmutableList.of(
-      // basic translation from exclude:filter to cached filter
-      new Rule<>(new Query[]{EXCLUDE_ANTISOCIAL},
-                 new Query[]{CACHED_EXCLUDE_ANTISOCIAL}),
+      // basic translation from etwitterclude:filter to cached filter
+      new Rule<>(new Query[]{EtwitterCLUDE_ANTISOCIAL},
+                 new Query[]{CACHED_EtwitterCLUDE_ANTISOCIAL}),
 
-      new Rule<>(new Query[]{EXCLUDE_SPAM},
-                 new Query[]{CACHED_EXCLUDE_SPAM}),
+      new Rule<>(new Query[]{EtwitterCLUDE_SPAM},
+                 new Query[]{CACHED_EtwitterCLUDE_SPAM}),
 
-      new Rule<>(new Query[]{EXCLUDE_NATIVERETWEETS},
-                 new Query[]{CACHED_EXCLUDE_NATIVERETWEETS}),
+      new Rule<>(new Query[]{EtwitterCLUDE_NATIVERETWEETS},
+                 new Query[]{CACHED_EtwitterCLUDE_NATIVERETWEETS}),
 
-      new Rule<>(new Query[]{EXCLUDE_REPLIES},
-                 new Query[]{CACHED_EXCLUDE_REPLIES}),
+      new Rule<>(new Query[]{EtwitterCLUDE_REPLIES},
+                 new Query[]{CACHED_EtwitterCLUDE_REPLIES}),
 
       // combine two cached filter to a new one
-      new Rule<>(new Query[]{CACHED_EXCLUDE_SPAM, CACHED_EXCLUDE_NATIVERETWEETS},
-                 new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS}),
+      new Rule<>(new Query[]{CACHED_EtwitterCLUDE_SPAM, CACHED_EtwitterCLUDE_NATIVERETWEETS},
+                 new Query[]{CACHED_EtwitterCLUDE_SPAM_AND_NATIVERETWEETS}),
 
-      // Remove redundant filters. A cached filter is redundant when it coexist with a
+      // Remove redundant filters. A cached filter is redundant when it coetwitterist with a
       // more strict filter. Note all the filter will filter out antisocial.
       new Rule<>(
-          new Query[]{CACHED_EXCLUDE_SPAM, CACHED_EXCLUDE_ANTISOCIAL},
-          new Query[]{CACHED_EXCLUDE_SPAM}),
+          new Query[]{CACHED_EtwitterCLUDE_SPAM, CACHED_EtwitterCLUDE_ANTISOCIAL},
+          new Query[]{CACHED_EtwitterCLUDE_SPAM}),
 
       new Rule<>(
-          new Query[]{CACHED_EXCLUDE_NATIVERETWEETS, CACHED_EXCLUDE_ANTISOCIAL},
-          new Query[]{CACHED_EXCLUDE_NATIVERETWEETS}),
+          new Query[]{CACHED_EtwitterCLUDE_NATIVERETWEETS, CACHED_EtwitterCLUDE_ANTISOCIAL},
+          new Query[]{CACHED_EtwitterCLUDE_NATIVERETWEETS}),
 
       new Rule<>(
-          new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS, CACHED_EXCLUDE_ANTISOCIAL},
-          new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS}),
+          new Query[]{CACHED_EtwitterCLUDE_SPAM_AND_NATIVERETWEETS, CACHED_EtwitterCLUDE_ANTISOCIAL},
+          new Query[]{CACHED_EtwitterCLUDE_SPAM_AND_NATIVERETWEETS}),
 
       new Rule<>(
-          new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS, CACHED_EXCLUDE_SPAM},
-          new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS}),
+          new Query[]{CACHED_EtwitterCLUDE_SPAM_AND_NATIVERETWEETS, CACHED_EtwitterCLUDE_SPAM},
+          new Query[]{CACHED_EtwitterCLUDE_SPAM_AND_NATIVERETWEETS}),
 
       new Rule<>(
-          new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS, CACHED_EXCLUDE_NATIVERETWEETS},
-          new Query[]{CACHED_EXCLUDE_SPAM_AND_NATIVERETWEETS})
+          new Query[]{CACHED_EtwitterCLUDE_SPAM_AND_NATIVERETWEETS, CACHED_EtwitterCLUDE_NATIVERETWEETS},
+          new Query[]{CACHED_EtwitterCLUDE_SPAM_AND_NATIVERETWEETS})
   );
 
   public static final List<Query> STRIP_ANNOTATIONS_QUERIES;

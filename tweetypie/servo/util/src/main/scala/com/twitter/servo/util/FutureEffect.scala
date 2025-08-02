@@ -16,11 +16,11 @@ object FutureEffect {
     _unit.asInstanceOf[FutureEffect[T]]
 
   /**
-   * A FutureEffect that always fails with the given exception.
+   * A FutureEffect that always fails with the given etwitterception.
    */
-  def fail[T](ex: Throwable): FutureEffect[T] =
+  def fail[T](etwitter: Throwable): FutureEffect[T] =
     FutureEffect[T] { _ =>
-      Future.exception(ex)
+      Future.etwitterception(etwitter)
     }
 
   /**
@@ -28,7 +28,7 @@ object FutureEffect {
    */
   def apply[T](f: T => Future[Unit]) =
     new FutureEffect[T] {
-      override def apply(x: T) = f(x)
+      override def apply(twitter: T) = f(twitter)
     }
 
   /**
@@ -50,8 +50,8 @@ object FutureEffect {
     }
 
   def fromPartial[T](f: PartialFunction[T, Future[Unit]]) =
-    FutureEffect[T] { x =>
-      if (f.isDefinedAt(x)) f(x) else Future.Unit
+    FutureEffect[T] { twitter =>
+      if (f.isDefinedAt(twitter)) f(twitter) else Future.Unit
     }
 
   /**
@@ -75,7 +75,7 @@ object FutureEffect {
  * A function whose only result is a future effect. This wrapper
  * provides convenient combinators.
  */
-trait FutureEffect[T] extends (T => Future[Unit]) { self =>
+trait FutureEffect[T] etwittertends (T => Future[Unit]) { self =>
 
   /**
    * Simplified version of `apply` when type is `Unit`.
@@ -84,12 +84,12 @@ trait FutureEffect[T] extends (T => Future[Unit]) { self =>
 
   /**
    * Combines two Future effects, performing this one first and
-   * performing the next one if this one succeeds.
+   * performing the netwittert one if this one succeeds.
    */
-  def andThen(next: FutureEffect[T]): FutureEffect[T] =
-    FutureEffect[T] { x =>
-      self(x) flatMap { _ =>
-        next(x)
+  def andThen(netwittert: FutureEffect[T]): FutureEffect[T] =
+    FutureEffect[T] { twitter =>
+      self(twitter) flatMap { _ =>
+        netwittert(twitter)
       }
     }
 
@@ -100,10 +100,10 @@ trait FutureEffect[T] extends (T => Future[Unit]) { self =>
   def rescue(
     handler: PartialFunction[Throwable, FutureEffect[T]]
   ): FutureEffect[T] =
-    FutureEffect[T] { x =>
-      self(x) rescue {
+    FutureEffect[T] { twitter =>
+      self(twitter) rescue {
         case t if handler.isDefinedAt(t) =>
-          handler(t)(x)
+          handler(t)(twitter)
       }
     }
 
@@ -113,8 +113,8 @@ trait FutureEffect[T] extends (T => Future[Unit]) { self =>
    * effects will have occurred.
    */
   def inParallel(other: FutureEffect[T]) =
-    FutureEffect[T] { x =>
-      Future.join(Seq(self(x), other(x)))
+    FutureEffect[T] { twitter =>
+      Future.join(Seq(self(twitter), other(twitter)))
     }
 
   /**
@@ -136,8 +136,8 @@ trait FutureEffect[T] extends (T => Future[Unit]) { self =>
    * for the input.
    */
   def onlyIf(predicate: T => Boolean) =
-    FutureEffect[T] { x =>
-      if (predicate(x)) self(x) else Future.Unit
+    FutureEffect[T] { twitter =>
+      if (predicate(twitter)) self(twitter) else Future.Unit
     }
 
   /**
@@ -185,7 +185,7 @@ trait FutureEffect[T] extends (T => Future[Unit]) { self =>
     FutureEffect[U] { u =>
       g(u) flatMap {
         case None => Future.Unit
-        case Some(x) => self(x)
+        case Some(twitter) => self(twitter)
       }
     }
 
@@ -203,8 +203,8 @@ trait FutureEffect[T] extends (T => Future[Unit]) { self =>
    * available.
    */
   def ignoreFailures: FutureEffect[T] =
-    FutureEffect[T] { x =>
-      Try(self(x)); Future.Unit
+    FutureEffect[T] { twitter =>
+      Try(self(twitter)); Future.Unit
     }
 
   /**
@@ -212,8 +212,8 @@ trait FutureEffect[T] extends (T => Future[Unit]) { self =>
    * effect is guaranteed to have finished when its future is available.
    */
   def ignoreFailuresUponCompletion: FutureEffect[T] =
-    FutureEffect[T] { x =>
-      Try(self(x)) match {
+    FutureEffect[T] { twitter =>
+      Try(self(twitter)) match {
         case Return(f) => f.handle { case _ => () }
         case Throw(_) => Future.Unit
       }
@@ -224,8 +224,8 @@ trait FutureEffect[T] extends (T => Future[Unit]) { self =>
    * input that succeeds.
    */
   def onSuccess(f: T => Unit): FutureEffect[T] =
-    FutureEffect[T] { x =>
-      self(x).onSuccess(_ => f(x))
+    FutureEffect[T] { twitter =>
+      self(twitter).onSuccess(_ => f(twitter))
     }
 
   /**
@@ -233,21 +233,21 @@ trait FutureEffect[T] extends (T => Future[Unit]) { self =>
    * input that fails.
    */
   def onFailure(f: (T, Throwable) => Unit): FutureEffect[T] =
-    FutureEffect[T] { x =>
-      self(x).onFailure(t => f(x, t))
+    FutureEffect[T] { twitter =>
+      self(twitter).onFailure(t => f(twitter, t))
     }
 
   /**
-   * Translate exception returned by a FutureEffect according to a
+   * Translate etwitterception returned by a FutureEffect according to a
    * PartialFunction.
    */
-  def translateExceptions(
-    translateException: PartialFunction[Throwable, Throwable]
+  def translateEtwitterceptions(
+    translateEtwitterception: PartialFunction[Throwable, Throwable]
   ): FutureEffect[T] =
     FutureEffect[T] { request =>
       self(request) rescue {
-        case t if translateException.isDefinedAt(t) => Future.exception(translateException(t))
-        case t => Future.exception(t)
+        case t if translateEtwitterception.isDefinedAt(t) => Future.etwitterception(translateEtwitterception(t))
+        case t => Future.etwitterception(t)
       }
     }
 
@@ -258,46 +258,46 @@ trait FutureEffect[T] extends (T => Future[Unit]) { self =>
     retry(RetryHandler.failuresOnly(backoffs, timer, stats))
 
   /**
-   * Returns a new FutureEffect that executes the effect within the given RetryHandler, which
+   * Returns a new FutureEffect that etwitterecutes the effect within the given RetryHandler, which
    * may retry the operation on failures.
    */
   def retry(handler: RetryHandler[Unit]): FutureEffect[T] =
     FutureEffect[T](handler.wrap(self))
 
   @deprecated("use trackOutcome", "2.11.1")
-  def countExceptions(stats: StatsReceiver, getScope: T => String) = {
-    val exceptionCounterFactory = new MemoizedExceptionCounterFactory(stats)
+  def countEtwitterceptions(stats: StatsReceiver, getScope: T => String) = {
+    val etwitterceptionCounterFactory = new MemoizedEtwitterceptionCounterFactory(stats)
     FutureEffect[T] { t =>
-      exceptionCounterFactory(getScope(t)) { self(t) }
+      etwitterceptionCounterFactory(getScope(t)) { self(t) }
     }
   }
 
   /**
    * Produces a FutureEffect that tracks the latency of the underlying operation.
    */
-  def trackLatency(stats: StatsReceiver, extractName: T => String): FutureEffect[T] =
+  def trackLatency(stats: StatsReceiver, etwittertractName: T => String): FutureEffect[T] =
     FutureEffect[T] { t =>
-      Stat.timeFuture(stats.stat(extractName(t), "latency_ms")) { self(t) }
+      Stat.timeFuture(stats.stat(etwittertractName(t), "latency_ms")) { self(t) }
     }
 
   def trackOutcome(
     stats: StatsReceiver,
-    extractName: T => String,
+    etwittertractName: T => String,
     logger: Logger = NullLogger
-  ): FutureEffect[T] = trackOutcome(stats, extractName, logger, _ => None)
+  ): FutureEffect[T] = trackOutcome(stats, etwittertractName, logger, _ => None)
 
   /**
    * Produces a FutureEffect that tracks the outcome (i.e. success vs failure) of
-   * requests, including counting exceptions by classname.
+   * requests, including counting etwitterceptions by classname.
    */
   def trackOutcome(
     stats: StatsReceiver,
-    extractName: T => String,
+    etwittertractName: T => String,
     logger: Logger,
-    exceptionCategorizer: Throwable => Option[String]
+    etwitterceptionCategorizer: Throwable => Option[String]
   ): FutureEffect[T] =
     FutureEffect[T] { t =>
-      val name = extractName(t)
+      val name = etwittertractName(t)
       val scope = stats.scope(name)
 
       self(t) respond { r =>
@@ -308,7 +308,7 @@ trait FutureEffect[T] extends (T => Future[Unit]) { self =>
             scope.counter("success").incr()
 
           case Throw(t) =>
-            val category = exceptionCategorizer(t).getOrElse("failures")
+            val category = etwitterceptionCategorizer(t).getOrElse("failures")
             scope.counter(category).incr()
             scope.scope(category).counter(ThrowableHelper.sanitizeClassnameChain(t): _*).incr()
             logger.warning(t, s"failure in $name")
@@ -320,30 +320,30 @@ trait FutureEffect[T] extends (T => Future[Unit]) { self =>
    * Observe latency and success rate for any FutureEffect
    * @param statsScope a function to produce a parent stats scope from the argument
    * to the FutureEffect
-   * @param exceptionCategorizer a function to assign different Throwables with custom stats scopes.
+   * @param etwitterceptionCategorizer a function to assign different Throwables with custom stats scopes.
    */
   def observed(
     statsReceiver: StatsReceiver,
     statsScope: T => String,
     logger: Logger = NullLogger,
-    exceptionCategorizer: Throwable => Option[String] = _ => None
+    etwitterceptionCategorizer: Throwable => Option[String] = _ => None
   ): FutureEffect[T] =
     self
       .trackLatency(statsReceiver, statsScope)
-      .trackOutcome(statsReceiver, statsScope, logger, exceptionCategorizer)
+      .trackOutcome(statsReceiver, statsScope, logger, etwitterceptionCategorizer)
 
   /**
    * Produces a new FutureEffect where the given function is applied to the result of this
    * FutureEffect.
    */
   def mapResult(f: Future[Unit] => Future[Unit]): FutureEffect[T] =
-    FutureEffect[T] { x =>
-      f(self(x))
+    FutureEffect[T] { twitter =>
+      f(self(twitter))
     }
 
   /**
    * Produces a new FutureEffect where the returned Future must complete within the specified
-   * timeout, otherwise the Future fails with a com.twitter.util.TimeoutException.
+   * timeout, otherwise the Future fails with a com.twitter.util.TimeoutEtwitterception.
    *
    * ''Note'': On timeout, the underlying future is NOT interrupted.
    */
@@ -356,12 +356,12 @@ trait FutureEffect[T] extends (T => Future[Unit]) { self =>
    *
    * ''Note'': On timeout, the underlying future is NOT interrupted.
    */
-  def withTimeout(timer: Timer, timeout: Duration, exc: => Throwable): FutureEffect[T] =
-    mapResult(_.within(timer, timeout, exc))
+  def withTimeout(timer: Timer, timeout: Duration, etwitterc: => Throwable): FutureEffect[T] =
+    mapResult(_.within(timer, timeout, etwitterc))
 
   /**
    * Produces a new FutureEffect where the returned Future must complete within the specified
-   * timeout, otherwise the Future fails with a com.twitter.util.TimeoutException.
+   * timeout, otherwise the Future fails with a com.twitter.util.TimeoutEtwitterception.
    *
    * ''Note'': On timeout, the underlying future is interrupted.
    */
@@ -374,6 +374,6 @@ trait FutureEffect[T] extends (T => Future[Unit]) { self =>
    *
    * ''Note'': On timeout, the underlying future is interrupted.
    */
-  def raiseWithin(timer: Timer, timeout: Duration, exc: => Throwable): FutureEffect[T] =
-    mapResult(_.raiseWithin(timer, timeout, exc))
+  def raiseWithin(timer: Timer, timeout: Duration, etwitterc: => Throwable): FutureEffect[T] =
+    mapResult(_.raiseWithin(timer, timeout, etwitterc))
 }

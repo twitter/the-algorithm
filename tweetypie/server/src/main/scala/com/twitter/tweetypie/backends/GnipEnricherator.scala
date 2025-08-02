@@ -5,7 +5,7 @@ import com.twitter.conversions.PercentOps._
 import com.twitter.conversions.DurationOps._
 import com.twitter.dataproducts.enrichments.thriftscala._
 import com.twitter.dataproducts.enrichments.thriftscala.Enricherator
-import com.twitter.finagle.thriftmux.MethodBuilder
+import com.twitter.finagle.thriftmutwitter.MethodBuilder
 import com.twitter.servo.util.FutureArrow
 
 object GnipEnricherator {
@@ -20,7 +20,7 @@ object GnipEnricherator {
           methodBuilder
             .withTimeoutTotal(300.milliseconds)
             .withTimeoutPerRequest(100.milliseconds)
-            .idempotent(maxExtraLoad = 1.percent)
+            .idempotent(matwitterEtwittertraLoad = 1.percent)
             .servicePerEndpoint[Enricherator.ServicePerEndpoint](methodName = "hydrateProfileGeo")
             .hydrateProfileGeo
         )

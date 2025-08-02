@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 
 /**
- * The indices may map the fields declared here to fields internally without exposing their schemas
- * to other services. This can be used, for example, to set boosts for URL-like fields in Earlybird
+ * The indices may map the fields declared here to fields internally without etwitterposing their schemas
+ * to other services. This can be used, for etwitterample, to set boosts for URL-like fields in Earlybird
  * without direct knowledge of the internal Earlybird field name
  */
 public enum MappableField {

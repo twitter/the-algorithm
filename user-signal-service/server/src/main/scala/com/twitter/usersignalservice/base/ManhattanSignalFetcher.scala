@@ -14,14 +14,14 @@ import com.twitter.storehaus_internal.util.ApplicationID
 import com.twitter.storehaus_internal.util.DatasetName
 
 /**
- * A Manhattan signal fetcher extending BaseSignalFetcher to provide an interface to fetch signals
+ * A Manhattan signal fetcher etwittertending BaseSignalFetcher to provide an interface to fetch signals
  * from a Manhattan dataset.
  *
- * Extends this when the underlying store is a single Manhattan dataset.
+ * Etwittertends this when the underlying store is a single Manhattan dataset.
  * @tparam ManhattanKeyType
  * @tparam ManhattanValueType
  */
-trait ManhattanSignalFetcher[ManhattanKeyType, ManhattanValueType] extends BaseSignalFetcher {
+trait ManhattanSignalFetcher[ManhattanKeyType, ManhattanValueType] etwittertends BaseSignalFetcher {
   /*
     Define the meta info of the Manhattan dataset
    */

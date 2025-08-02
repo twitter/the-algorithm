@@ -5,9 +5,9 @@ import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.inject.TwitterModule
 import com.twitter.topiclisting.TopicListing
 import com.twitter.topiclisting.TopicListingBuilder
-import javax.inject.Singleton
+import javatwitter.inject.Singleton
 
-object TopicListingModule extends TwitterModule {
+object TopicListingModule etwittertends TwitterModule {
 
   @Provides
   @Singleton

@@ -24,17 +24,17 @@ import com.twitter.util.TwitterDateFormat;
  * HDFS.
  */
 public class SegmentSyncConfig {
-  public static final String LUCENE_DIR_PREFIX = "lucene_";
+  public static final String LUCENE_DIR_PREFItwitter = "lucene_";
 
   private final Optional<String> scrubGen;
 
   public SegmentSyncConfig(Optional<String> scrubGen) {
     this.scrubGen = scrubGen;
     String scrubGenStat = scrubGen.orElse("unset");
-    SearchLongGauge.export("scrub_gen_" + scrubGenStat).set(1);
+    SearchLongGauge.etwitterport("scrub_gen_" + scrubGenStat).set(1);
     if (scrubGen.isPresent()) {
-      // Export a stat for the number of days between the scrub gen date and now
-      SearchCustomGauge.export("scrub_gen_age_in_days", () -> {
+      // Etwitterport a stat for the number of days between the scrub gen date and now
+      SearchCustomGauge.etwitterport("scrub_gen_age_in_days", () -> {
         long scrubGenMillis = ScrubGenUtil.parseScrubGenToDate(scrubGen.get()).getTime();
         return TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - scrubGenMillis);
       });
@@ -42,10 +42,10 @@ public class SegmentSyncConfig {
   }
 
   /**
-   * Returns the file extension to be used for the current flush version.
+   * Returns the file etwittertension to be used for the current flush version.
    */
-  public String getVersionFileExtension() {
-    return FlushVersion.CURRENT_FLUSH_VERSION.getVersionFileExtension();
+  public String getVersionFileEtwittertension() {
+    return FlushVersion.CURRENT_FLUSH_VERSION.getVersionFileEtwittertension();
   }
 
   /**
@@ -55,7 +55,7 @@ public class SegmentSyncConfig {
   public int getMinSegmentStatusCountThreshold() {
     double minSegmentTweetCountProportionThreshold =
         EarlybirdConfig.getDouble("min_segment_tweet_count_percentage_threshold", 0) / 100;
-    return (int) (EarlybirdConfig.getMaxSegmentSize() * minSegmentTweetCountProportionThreshold);
+    return (int) (EarlybirdConfig.getMatwitterSegmentSize() * minSegmentTweetCountProportionThreshold);
   }
 
   /**
@@ -86,7 +86,7 @@ public class SegmentSyncConfig {
    */
   public String getLocalSegmentSyncRootDir() {
     return EarlybirdConfig.getString("segment_sync_dir", "partitions")
-        + getScrubGenFlushDirSuffix();
+        + getScrubGenFlushDirSuffitwitter();
   }
 
   /**
@@ -94,7 +94,7 @@ public class SegmentSyncConfig {
    */
   public String getHdfsSegmentSyncRootDir() {
     return EarlybirdProperty.HDFS_SEGMENT_SYNC_DIR.get("partitions")
-        + getScrubGenFlushDirSuffix();
+        + getScrubGenFlushDirSuffitwitter();
   }
 
   /**
@@ -103,7 +103,7 @@ public class SegmentSyncConfig {
   public String getHdfsSegmentUploadRootDir() {
     String hdfsSegmentUploadDir = EarlybirdProperty.HDFS_SEGMENT_UPLOAD_DIR.get(null);
     return hdfsSegmentUploadDir != null
-        ? hdfsSegmentUploadDir + getScrubGenFlushDirSuffix()
+        ? hdfsSegmentUploadDir + getScrubGenFlushDirSuffitwitter()
         : getHdfsSegmentSyncRootDir();
   }
 
@@ -127,7 +127,7 @@ public class SegmentSyncConfig {
    */
   public Collection<String> getAllSyncFileNames(SegmentInfo segment) {
     Collection<String> allFileNames = PersistentFile.getAllFileNames(segment.getSegmentName());
-    if (segment.getEarlybirdIndexConfig().isIndexStoredOnDisk()) {
+    if (segment.getEarlybirdIndetwitterConfig().isIndetwitterStoredOnDisk()) {
       allFileNames = new ArrayList<>(allFileNames);
       // Just the file name, not the full path
       allFileNames.add(getLocalLuceneSyncDirFileName(segment.getSegment()));
@@ -140,7 +140,7 @@ public class SegmentSyncConfig {
    */
   public String getLocalSyncDirName(Segment segment) {
     return getLocalSegmentSyncRootDir() + "/" + segment.getSegmentName()
-        + getVersionFileExtension();
+        + getVersionFileEtwittertension();
   }
 
   /**
@@ -157,26 +157,26 @@ public class SegmentSyncConfig {
     if (segment instanceof ArchiveSegment) {
       Date endDate = ((ArchiveSegment) segment).getDataEndDate();
       String endDateString = TwitterDateFormat.apply("yyyyMMdd").format(endDate);
-      return LUCENE_DIR_PREFIX + endDateString;
+      return LUCENE_DIR_PREFItwitter + endDateString;
     } else {
-      return LUCENE_DIR_PREFIX + "realtime";
+      return LUCENE_DIR_PREFItwitter + "realtime";
     }
   }
 
   /**
    * Returns the HDFS sync directory for the given segment.
    */
-  public String getHdfsSyncDirNamePrefix(Segment segment) {
+  public String getHdfsSyncDirNamePrefitwitter(Segment segment) {
     return getHdfsSegmentSyncRootDir() + "/" + segment.getSegmentName()
-        + getVersionFileExtension() + "*";
+        + getVersionFileEtwittertension() + "*";
   }
 
   /**
-   * Returns the prefix of the HDFS directory where the files for this segment should be uploaded.
+   * Returns the prefitwitter of the HDFS directory where the files for this segment should be uploaded.
    */
-  public String getHdfsUploadDirNamePrefix(Segment segment) {
+  public String getHdfsUploadDirNamePrefitwitter(Segment segment) {
     return getHdfsSegmentUploadRootDir() + "/" + segment.getSegmentName()
-        + getVersionFileExtension() + "*";
+        + getVersionFileEtwittertension() + "*";
   }
 
   /**
@@ -184,7 +184,7 @@ public class SegmentSyncConfig {
    */
   public String getHdfsFlushDirName(Segment segment) {
     return getHdfsSegmentUploadRootDir() + "/" + segment.getSegmentName()
-        + getVersionFileExtension() + "_" + DatabaseConfig.getLocalHostname();
+        + getVersionFileEtwittertension() + "_" + DatabaseConfig.getLocalHostname();
   }
 
   /**
@@ -193,17 +193,17 @@ public class SegmentSyncConfig {
   public String getHdfsTempFlushDirName(Segment segment) {
     return getHdfsSegmentUploadRootDir() + "/temp_"
         + DatabaseConfig.getLocalHostname() + "_" + segment.getSegmentName()
-        + getVersionFileExtension();
+        + getVersionFileEtwittertension();
   }
 
   /**
-   * Concatenates the name of this segment with the flush version extension.
+   * Concatenates the name of this segment with the flush version etwittertension.
    */
   public String getVersionedName(Segment segment) {
-    return segment.getSegmentName() + getVersionFileExtension();
+    return segment.getSegmentName() + getVersionFileEtwittertension();
   }
 
-  private String getScrubGenFlushDirSuffix() {
+  private String getScrubGenFlushDirSuffitwitter() {
     return scrubGen
         .map(s -> "/scrubbed/" + s)
         .orElse("");

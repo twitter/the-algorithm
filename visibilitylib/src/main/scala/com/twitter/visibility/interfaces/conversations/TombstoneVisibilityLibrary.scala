@@ -8,7 +8,7 @@ import com.twitter.spam.rtf.thriftscala.FilteredReason.UnspecifiedReason
 import com.twitter.spam.rtf.thriftscala.SafetyLevel
 import com.twitter.spam.rtf.thriftscala.SafetyResult
 import com.twitter.stitch.Stitch
-import com.twitter.timelines.render.thriftscala.RichText
+import com.twitter.timelines.render.thriftscala.RichTetwittert
 import com.twitter.timelines.render.thriftscala.TombstoneDisplayType
 import com.twitter.timelines.render.thriftscala.TombstoneInfo
 import com.twitter.tweetypie.thriftscala.GetTweetFieldsResult
@@ -36,9 +36,9 @@ import com.twitter.visibility.features.FocalTweetId
 import com.twitter.visibility.features.TweetId
 import com.twitter.visibility.models.ContentId
 import com.twitter.visibility.models.SafetyLevel.Tombstoning
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.results.richtext.EpitaphToRichText
-import com.twitter.visibility.results.richtext.LocalizedMessageToRichText
+import com.twitter.visibility.models.ViewerContetwittert
+import com.twitter.visibility.results.richtetwittert.EpitaphToRichTetwittert
+import com.twitter.visibility.results.richtetwittert.LocalizedMessageToRichTetwittert
 import com.twitter.visibility.results.urt.ReasonToUrtParser
 import com.twitter.visibility.results.urt.SafetyResultToUrtParser
 import com.twitter.visibility.rules._
@@ -53,8 +53,8 @@ case class TombstoneVisibilityRequest(
     User
   ],
   moderatedTweetIds: Seq[Long],
-  viewerContext: ViewerContext,
-  useRichText: Boolean = true)
+  viewerContetwittert: ViewerContetwittert,
+  useRichTetwittert: Boolean = true)
 
 case class TombstoneVisibilityResponse(tweetVerdicts: Map[Long, VfTombstone])
 
@@ -266,7 +266,7 @@ case class TombstoneVisibilityLibrary(
           .map(e => EmergencyDynamicInterstitial(e.copy, e.link))
 
       case TweetFieldsResultState.Found(TweetFieldsResultFound(tweet, _, _))
-          if tweet.perspective.exists(_.reported) =>
+          if tweet.perspective.etwitterists(_.reported) =>
         interstitialLegacyStatsReceiver.counter("reported").incr()
         Some(Interstitial(Reason.ViewerReportedAuthor))
 
@@ -313,7 +313,7 @@ case class TombstoneVisibilityLibrary(
     val authorFeatures = new AuthorFeatures(userSource, statsReceiver)
     val viewerFeatures = new ViewerFeatures(userSource, statsReceiver)
 
-    val languageTag = request.viewerContext.requestCountryCode.getOrElse(En)
+    val languageTag = request.viewerContetwittert.requestCountryCode.getOrElse(En)
     val firstRound: Seq[(GetTweetFieldsResult, Option[TombstoneType])] = request.tweets.map {
       case (gtfr, safetyLevel) =>
         val actionStats = statsReceiver
@@ -359,16 +359,16 @@ case class TombstoneVisibilityLibrary(
           ContentId.TweetId(tweetId),
           visibilityLibrary.featureMapBuilder(
             Seq(
-              viewerFeatures.forViewerContext(request.viewerContext),
+              viewerFeatures.forViewerContetwittert(request.viewerContetwittert),
               moderationFeatures.forTweetId(tweetId),
               authorFeatures.forAuthor(author),
               relationshipFeatures
-                .forAuthor(author, request.viewerContext.userId),
+                .forAuthor(author, request.viewerContetwittert.userId),
               _.withConstantFeature(TweetId, tweetId),
               _.withConstantFeature(FocalTweetId, request.focalTweetId)
             )
           ),
-          request.viewerContext,
+          request.viewerContetwittert,
           Tombstoning
         ).map(_.verdict)
     }
@@ -436,13 +436,13 @@ case class TombstoneVisibilityLibrary(
             case (Some(tombstoneType), nonCompliantOpt) =>
               val tombstoneId = tombstoneType.tombstoneId
               val action = tombstoneType.action
-              val textOpt: Option[RichText] = action match {
+              val tetwittertOpt: Option[RichTetwittert] = action match {
 
                 case InterstitialLimitedEngagements(_, _, Some(localizedMessage), _) =>
-                  Some(LocalizedMessageToRichText(localizedMessage))
+                  Some(LocalizedMessageToRichTetwittert(localizedMessage))
                 case ipi: InterstitialLimitedEngagements =>
                   Some(
-                    SafetyResultToUrtParser.fromSafetyResultToRichText(
+                    SafetyResultToUrtParser.fromSafetyResultToRichTetwittert(
                       SafetyResult(
                         Some(PublicInterest.ReasonToSafetyResultReason(ipi.reason)),
                         ipi.toActionThrift()
@@ -452,10 +452,10 @@ case class TombstoneVisibilityLibrary(
                   )
 
                 case EmergencyDynamicInterstitial(_, _, Some(localizedMessage), _) =>
-                  Some(LocalizedMessageToRichText(localizedMessage))
+                  Some(LocalizedMessageToRichTetwittert(localizedMessage))
                 case edi: EmergencyDynamicInterstitial =>
                   Some(
-                    SafetyResultToUrtParser.fromSafetyResultToRichText(
+                    SafetyResultToUrtParser.fromSafetyResultToRichTetwittert(
                       SafetyResult(
                         None,
                         edi.toActionThrift()
@@ -465,22 +465,22 @@ case class TombstoneVisibilityLibrary(
                   )
 
                 case Tombstone(epitaph, _) =>
-                  if (request.useRichText)
-                    Some(EpitaphToRichText(epitaph, languageTag))
+                  if (request.useRichTetwittert)
+                    Some(EpitaphToRichTetwittert(epitaph, languageTag))
                   else
-                    Some(EpitaphToRichText(Epitaph.UnavailableWithoutLink, languageTag))
+                    Some(EpitaphToRichTetwittert(Epitaph.UnavailableWithoutLink, languageTag))
 
                 case LocalizedTombstone(_, message) =>
-                  if (request.useRichText)
-                    Some(LocalizedMessageToRichText(LocalizedMessageConverter.toThrift(message)))
+                  if (request.useRichTetwittert)
+                    Some(LocalizedMessageToRichTetwittert(LocalizedMessageConverter.toThrift(message)))
                   else
-                    Some(EpitaphToRichText(Epitaph.UnavailableWithoutLink, languageTag))
+                    Some(EpitaphToRichTetwittert(Epitaph.UnavailableWithoutLink, languageTag))
 
                 case Interstitial(_, Some(localizedMessage), _) =>
-                  Some(LocalizedMessageToRichText.apply(localizedMessage))
+                  Some(LocalizedMessageToRichTetwittert.apply(localizedMessage))
 
                 case interstitial: Interstitial =>
-                  ReasonToUrtParser.fromReasonToRichText(interstitial.reason, languageTag)
+                  ReasonToUrtParser.fromReasonToRichTetwittert(interstitial.reason, languageTag)
 
                 case _ =>
                   None
@@ -488,14 +488,14 @@ case class TombstoneVisibilityLibrary(
 
               val isRoot: Boolean = gtfr.tweetId == request.conversationId
               val isOuter: Boolean = tombstoneId == request.conversationId
-              val revealTextOpt: Option[RichText] = action match {
+              val revealTetwittertOpt: Option[RichTetwittert] = action match {
                 case _: InterstitialLimitedEngagements | _: EmergencyDynamicInterstitial
                     if isRoot && isOuter =>
                   None
 
                 case _: Interstitial | _: InterstitialLimitedEngagements |
                     _: EmergencyDynamicInterstitial =>
-                  Some(ReasonToUrtParser.getRichRevealText(languageTag))
+                  Some(ReasonToUrtParser.getRichRevealTetwittert(languageTag))
 
                 case _ =>
                   None
@@ -516,17 +516,17 @@ case class TombstoneVisibilityLibrary(
               val truncateDescendants: Boolean =
                 truncateForAction || truncateForNonCompliant
 
-              val tombstone = textOpt match {
-                case Some(_) if request.useRichText =>
+              val tombstone = tetwittertOpt match {
+                case Some(_) if request.useRichTetwittert =>
                   VfTombstone(
                     includeTweet = includeTweet,
                     action = action,
                     tombstoneInfo = Some(
                       TombstoneInfo(
                         cta = None,
-                        revealText = None,
-                        richText = textOpt,
-                        richRevealText = revealTextOpt
+                        revealTetwittert = None,
+                        richTetwittert = tetwittertOpt,
+                        richRevealTetwittert = revealTetwittertOpt
                       )
                     ),
                     tombstoneDisplayType = tombstoneType.tombstoneDisplayType,
@@ -538,13 +538,13 @@ case class TombstoneVisibilityLibrary(
                     action = action,
                     tombstoneInfo = Some(
                       TombstoneInfo(
-                        text = textOpt
-                          .map(richText => richText.text).getOrElse(
+                        tetwittert = tetwittertOpt
+                          .map(richTetwittert => richTetwittert.tetwittert).getOrElse(
                             ""
                         cta = None,
-                        revealText = revealTextOpt.map(_.text),
-                        richText = None,
-                        richRevealText = None
+                        revealTetwittert = revealTetwittertOpt.map(_.tetwittert),
+                        richTetwittert = None,
+                        richRevealTetwittert = None
                       )
                     ),
                     tombstoneDisplayType = tombstoneType.tombstoneDisplayType,
@@ -558,9 +558,9 @@ case class TombstoneVisibilityLibrary(
                     tombstoneInfo = Some(
                       TombstoneInfo(
                         cta = None,
-                        revealText = None,
-                        richText = Some(EpitaphToRichText(Epitaph.Unavailable, languageTag)),
-                        richRevealText = None
+                        revealTetwittert = None,
+                        richTetwittert = Some(EpitaphToRichTetwittert(Epitaph.Unavailable, languageTag)),
+                        richRevealTetwittert = None
                       )
                     ),
                     tombstoneDisplayType = tombstoneType.tombstoneDisplayType,
@@ -615,17 +615,17 @@ case class TombstoneVisibilityLibrary(
   private def createTombstone(
     epitaph: Epitaph,
     tombstoneStats: StatsReceiver,
-    extraCounterOpt: Option[String] = None
+    etwittertraCounterOpt: Option[String] = None
   ): Option[Action] = {
     tombstoneStats
       .scope("legacy")
       .counter(epitaph.toString().toLowerCase())
       .incr()
-    extraCounterOpt.map { extraCounter =>
+    etwittertraCounterOpt.map { etwittertraCounter =>
       tombstoneStats
         .scope("legacy")
         .scope(epitaph.toString().toLowerCase())
-        .counter(extraCounter)
+        .counter(etwittertraCounter)
         .incr()
     }
     Some(Tombstone(epitaph))

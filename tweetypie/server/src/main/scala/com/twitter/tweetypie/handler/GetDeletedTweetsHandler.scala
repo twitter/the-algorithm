@@ -18,7 +18,7 @@ import com.twitter.tweetypie.thriftscala._
 object GetDeletedTweetsHandler {
 
   type Type = FutureArrow[GetDeletedTweetsRequest, Seq[GetDeletedTweetResult]]
-  type TweetsExist = Seq[TweetId] => Stitch[Set[TweetId]]
+  type TweetsEtwitterist = Seq[TweetId] => Stitch[Set[TweetId]]
 
   def processTweetResponse(response: Try[GetTweet.Response]): Stitch[Option[Tweet]] = {
     import GetTweet.Response._
@@ -26,17 +26,17 @@ object GetDeletedTweetsHandler {
     response match {
       case Return(Found(tweet)) => Stitch.value(Some(tweet))
       case Return(Deleted | NotFound | BounceDeleted(_)) => Stitch.None
-      case Throw(_: RateLimited) => Stitch.exception(OverCapacity("manhattan"))
-      case Throw(exception) => Stitch.exception(exception)
+      case Throw(_: RateLimited) => Stitch.etwitterception(OverCapacity("manhattan"))
+      case Throw(etwitterception) => Stitch.etwitterception(etwitterception)
     }
   }
 
   def convertDeletedTweetResponse(
     r: DeletedTweetResponse,
-    extantIds: Set[TweetId]
+    etwittertantIds: Set[TweetId]
   ): GetDeletedTweetResult = {
     val id = r.tweetId
-    if (extantIds.contains(id) || r.deleteState == DeleteState.NotDeleted) {
+    if (etwittertantIds.contains(id) || r.deleteState == DeleteState.NotDeleted) {
       GetDeletedTweetResult(id, DeletedTweetState.NotDeleted)
     } else {
       r.overallResponse match {
@@ -61,11 +61,11 @@ object GetDeletedTweetsHandler {
   }
 
   /**
-   * Converts [[TweetStorageClient.GetTweet]] into a FutureArrow that returns extant tweet ids from
+   * Converts [[TweetStorageClient.GetTweet]] into a FutureArrow that returns etwittertant tweet ids from
    * the original list. This method is used to check underlying storage againt cache, preferring
-   * cache if a tweet exists there.
+   * cache if a tweet etwitterists there.
    */
-  def tweetsExist(getTweet: TweetStorageClient.GetTweet): TweetsExist =
+  def tweetsEtwitterist(getTweet: TweetStorageClient.GetTweet): TweetsEtwitterist =
     (tweetIds: Seq[TweetId]) =>
       for {
         response <- Stitch.traverse(tweetIds) { tweetId => getTweet(tweetId).liftToTry }
@@ -74,7 +74,7 @@ object GetDeletedTweetsHandler {
 
   def apply(
     getDeletedTweets: TweetStorageClient.GetDeletedTweets,
-    tweetsExist: TweetsExist,
+    tweetsEtwitterist: TweetsEtwitterist,
     stats: StatsReceiver
   ): Type = {
 
@@ -100,10 +100,10 @@ object GetDeletedTweetsHandler {
         Stitch
           .join(
             getDeletedTweets(request.tweetIds),
-            tweetsExist(request.tweetIds)
+            tweetsEtwitterist(request.tweetIds)
           )
           .map {
-            case (deletedTweetResponses, extantIds) =>
+            case (deletedTweetResponses, etwittertantIds) =>
               val responseIds = deletedTweetResponses.map(_.tweetId)
               assert(
                 responseIds == request.tweetIds,
@@ -111,7 +111,7 @@ object GetDeletedTweetsHandler {
                   s"(${request.tweetIds.mkString(", ")}) != response ids (${responseIds
                     .mkString(", ")})"
               )
-              deletedTweetResponses.map { r => convertDeletedTweetResponse(r, extantIds) }
+              deletedTweetResponses.map { r => convertDeletedTweetResponse(r, etwittertantIds) }
           }
       }
     }

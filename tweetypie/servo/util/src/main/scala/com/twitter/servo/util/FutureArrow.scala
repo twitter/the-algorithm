@@ -4,7 +4,7 @@ import com.twitter.finagle.service.RetryPolicy
 import com.twitter.finagle.stats.Stat
 import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.finagle.tracing.Trace
-import com.twitter.finagle.FailedFastException
+import com.twitter.finagle.FailedFastEtwitterception
 import com.twitter.finagle.Filter
 import com.twitter.finagle.Service
 import com.twitter.util._
@@ -23,7 +23,7 @@ object FutureArrow {
       override def apply(a: A): Future[B] =
         try f(a)
         catch {
-          case NonFatal(e) => Future.exception(e)
+          case NonFatal(e) => Future.etwitterception(e)
         }
     }
 
@@ -38,7 +38,7 @@ object FutureArrow {
       override def apply(a: A): Future[B] =
         try g(a)
         catch {
-          case NonFatal(e) => Future.exception(e)
+          case NonFatal(e) => Future.etwitterception(e)
         }
     }
 
@@ -57,7 +57,7 @@ object FutureArrow {
    * Produce a FutureArrow from a function `A => Try[B]`.
    *
    * The Try is evaluated within a Future. Thus, Throw results are translated
-   * to `Future.exception`s.
+   * to `Future.etwitterception`s.
    */
   def fromTry[A, B](f: A => Try[B]): FutureArrow[A, B] =
     FutureArrow[A, B](a => Future.const(f(a)))
@@ -83,14 +83,14 @@ object FutureArrow {
 
   /**
    * Produce a FutureArrow that applies an FutureEffect, returning the argument
-   * value as-is on success. If the effect returns an Future exception, then the
-   * result of the filter will also be that exception.
+   * value as-is on success. If the effect returns an Future etwitterception, then the
+   * result of the filter will also be that etwitterception.
    */
   def effect[A](effect: FutureEffect[A]): FutureArrow[A, A] =
     apply(a => effect(a).map(_ => a))
 
   /**
-   * Produces a FutureArrow that proxies to one of two others, depending on a
+   * Produces a FutureArrow that protwitteries to one of two others, depending on a
    * predicate.
    */
   def choose[A, B](predicate: A => Boolean, ifTrue: FutureArrow[A, B], ifFalse: FutureArrow[A, B]) =
@@ -113,8 +113,8 @@ object FutureArrow {
     apply(a => Future.collect(arrows.map(arrow => arrow(a))))
 
   private val RetryOnNonFailedFast: PartialFunction[Try[Any], Boolean] = {
-    case Throw(_: FailedFastException) => false
-    case Throw(_: Exception) => true
+    case Throw(_: FailedFastEtwitterception) => false
+    case Throw(_: Etwitterception) => true
   }
 }
 
@@ -124,14 +124,14 @@ object FutureArrow {
  * Background on the Arrow abstraction:
  * http://en.wikipedia.org/wiki/Arrow_(computer_science)
  */
-trait FutureArrow[-A, +B] extends (A => Future[B]) { self =>
+trait FutureArrow[-A, +B] etwittertends (A => Future[B]) { self =>
 
   /**
    * Composes two FutureArrows. Produces a new FutureArrow that performs both in
    * series, depending on the success of the first.
    */
-  def andThen[C](next: FutureArrow[B, C]): FutureArrow[A, C] =
-    FutureArrow[A, C](a => self(a).flatMap(next.apply))
+  def andThen[C](netwittert: FutureArrow[B, C]): FutureArrow[A, C] =
+    FutureArrow[A, C](a => self(a).flatMap(netwittert.apply))
 
   /**
    * Combines this FutureArrow with another, producing one that translates a
@@ -145,7 +145,7 @@ trait FutureArrow[-A, +B] extends (A => Future[B]) { self =>
   /**
    * Converts a FutureArrow on a scalar input and output value into a FutureArrow on a
    * Sequence of input values producing a pairwise sequence of output values.  The elements
-   * of the input sequence are processed in parallel, so execution order is not guaranteed.
+   * of the input sequence are processed in parallel, so etwitterecution order is not guaranteed.
    * Results are gathered via Future.collect, so failure semantics are inherited from that method.
    */
   def liftSeq: FutureArrow[Seq[A], Seq[B]] =
@@ -169,13 +169,13 @@ trait FutureArrow[-A, +B] extends (A => Future[B]) { self =>
   }
 
   /**
-   * Wrap a FutureArrow with an ExceptionCounter, thus providing
+   * Wrap a FutureArrow with an EtwitterceptionCounter, thus providing
    * observability into the arrow's success and failure.
    */
-  def countExceptions(
-    exceptionCounter: ExceptionCounter
+  def countEtwitterceptions(
+    etwitterceptionCounter: EtwitterceptionCounter
   ): FutureArrow[A, B] =
-    FutureArrow[A, B](request => exceptionCounter(self(request)))
+    FutureArrow[A, B](request => etwitterceptionCounter(self(request)))
 
   /**
    * Returns a chained FutureArrow in which the given function will be called for any
@@ -192,45 +192,45 @@ trait FutureArrow[-A, +B] extends (A => Future[B]) { self =>
     FutureArrow[A2, B](a => self(a).onFailure(t => f(a, t)))
 
   /**
-   * Translate exception returned by a FutureArrow according to a
+   * Translate etwitterception returned by a FutureArrow according to a
    * PartialFunction.
    */
-  def translateExceptions(
-    translateException: PartialFunction[Throwable, Throwable]
+  def translateEtwitterceptions(
+    translateEtwitterception: PartialFunction[Throwable, Throwable]
   ): FutureArrow[A, B] =
     FutureArrow[A, B] { request =>
       self(request).rescue {
-        case t if translateException.isDefinedAt(t) => Future.exception(translateException(t))
-        case t => Future.exception(t)
+        case t if translateEtwitterception.isDefinedAt(t) => Future.etwitterception(translateEtwitterception(t))
+        case t => Future.etwitterception(t)
       }
     }
 
   /**
-   * Apply a FutureArrow, lifting any non-Future exceptions thrown into
-   * `Future.exception`s.
+   * Apply a FutureArrow, lifting any non-Future etwitterceptions thrown into
+   * `Future.etwitterception`s.
    */
-  def liftExceptions: FutureArrow[A, B] =
+  def liftEtwitterceptions: FutureArrow[A, B] =
     FutureArrow[A, B] { request =>
       // Flattening the Future[Future[Response]] is equivalent, but more concise
       // than wrapping the arrow(request) call in a try/catch block that transforms
-      // the exception to a Future.exception, or at least was more concise before
+      // the etwitterception to a Future.etwitterception, or at least was more concise before
       // I added a four-line comment.
       Future(self(request)).flatten
     }
 
   /**
-   * Wrap a FutureArrow in exception-tracking and -translation. Given a
-   * filter and a handler, exceptional results will be observed and translated
+   * Wrap a FutureArrow in etwitterception-tracking and -translation. Given a
+   * filter and a handler, etwitterceptional results will be observed and translated
    * according to the function passed in this function's second argument list.
    */
   def cleanly(
-    exceptionCounter: ExceptionCounter
+    etwitterceptionCounter: EtwitterceptionCounter
   )(
-    translateException: PartialFunction[Throwable, Throwable] = { case t => t }
+    translateEtwitterception: PartialFunction[Throwable, Throwable] = { case t => t }
   ): FutureArrow[A, B] = {
-    liftExceptions
-      .translateExceptions(translateException)
-      .countExceptions(exceptionCounter)
+    liftEtwitterceptions
+      .translateEtwitterceptions(translateEtwitterception)
+      .countEtwitterceptions(etwitterceptionCounter)
   }
 
   /**
@@ -238,20 +238,20 @@ trait FutureArrow[-A, +B] extends (A => Future[B]) { self =>
    */
   @deprecated("use trackLatency(StatsReceiver, (A2 => String)", "2.11.1")
   def trackLatency[A2 <: A](
-    extractName: (A2 => String),
+    etwittertractName: (A2 => String),
     statsReceiver: StatsReceiver
   ): FutureArrow[A2, B] =
-    trackLatency(statsReceiver, extractName)
+    trackLatency(statsReceiver, etwittertractName)
 
   /**
    * Produces a FutureArrow that tracks its own application latency.
    */
   def trackLatency[A2 <: A](
     statsReceiver: StatsReceiver,
-    extractName: (A2 => String)
+    etwittertractName: (A2 => String)
   ): FutureArrow[A2, B] =
     FutureArrow[A2, B] { request =>
-      Stat.timeFuture(statsReceiver.stat(extractName(request), "latency_ms")) {
+      Stat.timeFuture(statsReceiver.stat(etwittertractName(request), "latency_ms")) {
         self(request)
       }
     }
@@ -262,16 +262,16 @@ trait FutureArrow[-A, +B] extends (A => Future[B]) { self =>
    */
   @deprecated("use trackOutcome(StatsReceiver, (A2 => String)", "2.11.1")
   def trackOutcome[A2 <: A](
-    extractName: (A2 => String),
+    etwittertractName: (A2 => String),
     statsReceiver: StatsReceiver
   ): FutureArrow[A2, B] =
-    trackOutcome(statsReceiver, extractName)
+    trackOutcome(statsReceiver, etwittertractName)
 
   def trackOutcome[A2 <: A](
     statsReceiver: StatsReceiver,
-    extractName: (A2 => String)
+    etwittertractName: (A2 => String)
   ): FutureArrow[A2, B] =
-    trackOutcome(statsReceiver, extractName, _ => None)
+    trackOutcome(statsReceiver, etwittertractName, _ => None)
 
   /**
    * Produces a FutureArrow that tracks the outcome (i.e. success vs failure) of
@@ -279,11 +279,11 @@ trait FutureArrow[-A, +B] extends (A => Future[B]) { self =>
    */
   def trackOutcome[A2 <: A](
     statsReceiver: StatsReceiver,
-    extractName: (A2 => String),
-    exceptionCategorizer: Throwable => Option[String]
+    etwittertractName: (A2 => String),
+    etwitterceptionCategorizer: Throwable => Option[String]
   ): FutureArrow[A2, B] =
     FutureArrow[A2, B] { request =>
-      val scope = statsReceiver.scope(extractName(request))
+      val scope = statsReceiver.scope(etwittertractName(request))
 
       self(request).respond { r =>
         statsReceiver.counter("requests").incr()
@@ -295,7 +295,7 @@ trait FutureArrow[-A, +B] extends (A => Future[B]) { self =>
             scope.counter("success").incr()
 
           case Throw(t) =>
-            val category = exceptionCategorizer(t).getOrElse("failures")
+            val category = etwitterceptionCategorizer(t).getOrElse("failures")
             statsReceiver.counter(category).incr()
             scope.counter(category).incr()
             scope.scope(category).counter(ThrowableHelper.sanitizeClassnameChain(t): _*).incr()
@@ -309,19 +309,19 @@ trait FutureArrow[-A, +B] extends (A => Future[B]) { self =>
   def observed[A2 <: A with Observable](
     statsReceiver: StatsReceiver
   ): FutureArrow[A2, B] =
-    observed(statsReceiver, exceptionCategorizer = _ => None)
+    observed(statsReceiver, etwitterceptionCategorizer = _ => None)
 
   /**
    * Observe latency and success rate for any FutureArrow[A, B] where A is Observable
    */
   def observed[A2 <: A with Observable](
     statsReceiver: StatsReceiver,
-    exceptionCategorizer: Throwable => Option[String]
+    etwitterceptionCategorizer: Throwable => Option[String]
   ): FutureArrow[A2, B] =
     self.observed(
       statsReceiver.scope("client_request"),
       (a: A2) => a.requestName,
-      exceptionCategorizer
+      etwitterceptionCategorizer
     )
 
   /**
@@ -330,11 +330,11 @@ trait FutureArrow[-A, +B] extends (A => Future[B]) { self =>
   def observed[A2 <: A](
     statsReceiver: StatsReceiver,
     statsScope: A2 => String,
-    exceptionCategorizer: Throwable => Option[String] = _ => None
+    etwitterceptionCategorizer: Throwable => Option[String] = _ => None
   ): FutureArrow[A2, B] =
     self
       .trackLatency(statsReceiver, statsScope)
-      .trackOutcome(statsReceiver, statsScope, exceptionCategorizer)
+      .trackOutcome(statsReceiver, statsScope, etwitterceptionCategorizer)
 
   /**
    * Trace the future arrow using local spans as documented here:
@@ -370,13 +370,13 @@ trait FutureArrow[-A, +B] extends (A => Future[B]) { self =>
     FutureArrow[A, C](a => f(self(a)))
 
   /**
-   * Produces a new FutureArrow which translates exceptions into futures
+   * Produces a new FutureArrow which translates etwitterceptions into futures
    */
   def rescue[B2 >: B](
-    rescueException: PartialFunction[Throwable, Future[B2]]
+    rescueEtwitterception: PartialFunction[Throwable, Future[B2]]
   ): FutureArrow[A, B2] = {
     FutureArrow[A, B2] { a =>
-      self(a).rescue(rescueException)
+      self(a).rescue(rescueEtwitterception)
     }
   }
 
@@ -404,18 +404,18 @@ trait FutureArrow[-A, +B] extends (A => Future[B]) { self =>
     policy: RetryPolicy[Try[B]],
     timer: Timer,
     statsReceiver: StatsReceiver,
-    extractName: (A2 => String)
+    etwittertractName: (A2 => String)
   ): FutureArrow[A2, B] =
     FutureArrow[A2, B] { a =>
-      val scoped = statsReceiver.scope(extractName(a))
+      val scoped = statsReceiver.scope(etwittertractName(a))
       RetryHandler(policy, timer, scoped)(self(a))
     }
 
   /**
    * Produces a new FutureArrow where the returned Future[B] must complete within the specified
-   * timeout, otherwise the Future fails with a com.twitter.util.TimeoutException.
+   * timeout, otherwise the Future fails with a com.twitter.util.TimeoutEtwitterception.
    *
-   * The [[timeout]] is passed by name to take advantage of deadlines passed in the request context.
+   * The [[timeout]] is passed by name to take advantage of deadlines passed in the request contetwittert.
    *
    * ''Note'': On timeout, the underlying future is NOT interrupted.
    */
@@ -426,18 +426,18 @@ trait FutureArrow[-A, +B] extends (A => Future[B]) { self =>
    * Produces a new FutureArrow where the returned Future must complete within the specified
    * timeout, otherwise the Future fails with the specified Throwable.
    *
-   * The [[timeout]] is passed by name to take advantage of deadlines passed in the request context.
+   * The [[timeout]] is passed by name to take advantage of deadlines passed in the request contetwittert.
    *
    * ''Note'': On timeout, the underlying future is NOT interrupted.
    */
-  def withTimeout(timer: Timer, timeout: => Duration, exc: => Throwable): FutureArrow[A, B] =
-    mapResult(_.within(timer, timeout, exc))
+  def withTimeout(timer: Timer, timeout: => Duration, etwitterc: => Throwable): FutureArrow[A, B] =
+    mapResult(_.within(timer, timeout, etwitterc))
 
   /**
    * Produces a new FutureArrow where the returned Future[B] must complete within the specified
-   * timeout, otherwise the Future fails with a com.twitter.util.TimeoutException.
+   * timeout, otherwise the Future fails with a com.twitter.util.TimeoutEtwitterception.
    *
-   * The [[timeout]] is passed by name to take advantage of deadlines passed in the request context.
+   * The [[timeout]] is passed by name to take advantage of deadlines passed in the request contetwittert.
    *
    * ''Note'': On timeout, the underlying future is interrupted.
    */
@@ -448,12 +448,12 @@ trait FutureArrow[-A, +B] extends (A => Future[B]) { self =>
    * Produces a new FutureArrow where the returned Future must complete within the specified
    * timeout, otherwise the Future fails with the specified Throwable.
    *
-   * [[timeout]] is passed by name to take advantage of deadlines passed in the request context.
+   * [[timeout]] is passed by name to take advantage of deadlines passed in the request contetwittert.
    *
    * ''Note'': On timeout, the underlying future is interrupted.
    */
-  def raiseWithin(timer: Timer, timeout: => Duration, exc: => Throwable): FutureArrow[A, B] =
-    mapResult(_.raiseWithin(timer, timeout, exc))
+  def raiseWithin(timer: Timer, timeout: => Duration, etwitterc: => Throwable): FutureArrow[A, B] =
+    mapResult(_.raiseWithin(timer, timeout, etwitterc))
 
   /**
    * Produces a finagle.Service instance that invokes this arrow.
@@ -467,12 +467,12 @@ trait FutureArrow[-A, +B] extends (A => Future[B]) { self =>
     FutureArrow[A2, B2](filter.andThen(asService))
 
   /**
-   * Produces a new FutureArrow with the given timeout which retries on Exceptions or timeouts and
+   * Produces a new FutureArrow with the given timeout which retries on Etwitterceptions or timeouts and
    * records stats about the logical request.  This is only appropriate for idempotent operations.
    */
   def observedWithTimeoutAndRetry[A2 <: A](
     statsReceiver: StatsReceiver,
-    extractName: (A2 => String),
+    etwittertractName: (A2 => String),
     timer: Timer,
     timeout: Duration,
     numTries: Int,
@@ -480,9 +480,9 @@ trait FutureArrow[-A, +B] extends (A => Future[B]) { self =>
   ): FutureArrow[A2, B] = {
     val retryPolicy = RetryPolicy.tries(numTries, shouldRetry)
     withTimeout(timer, timeout)
-      .retry(retryPolicy, timer, statsReceiver, extractName)
-      .trackLatency(statsReceiver, extractName)
-      .trackOutcome(statsReceiver, extractName)
+      .retry(retryPolicy, timer, statsReceiver, etwittertractName)
+      .trackLatency(statsReceiver, etwittertractName)
+      .trackOutcome(statsReceiver, etwittertractName)
   }
 
   /**
@@ -491,11 +491,11 @@ trait FutureArrow[-A, +B] extends (A => Future[B]) { self =>
    */
   def observedWithTimeout[A2 <: A](
     statsReceiver: StatsReceiver,
-    extractName: (A2 => String),
+    etwittertractName: (A2 => String),
     timer: Timer,
     timeout: Duration
   ): FutureArrow[A2, B] =
     withTimeout(timer, timeout)
-      .trackLatency(statsReceiver, extractName)
-      .trackOutcome(statsReceiver, extractName)
+      .trackLatency(statsReceiver, etwittertractName)
+      .trackOutcome(statsReceiver, etwittertractName)
 }

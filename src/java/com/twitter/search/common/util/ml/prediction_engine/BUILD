@@ -34,7 +34,7 @@ java_library(
         "BaseLegacyScoreAccumulator.java",
         "BaseModelBuilder.java",
         "BaseScoreAccumulator.java",
-        "CompositeFeatureContext.java",
+        "CompositeFeatureContetwittert.java",
         "DiscretizedFeature.java",
         "DiscretizedFeatureRange.java",
         "LegacyModelBuilder.java",

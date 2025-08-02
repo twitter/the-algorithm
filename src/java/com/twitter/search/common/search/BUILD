@@ -14,7 +14,7 @@ java_library(
         "3rdparty/jvm/org/apache/lucene:lucene-core",
         "3rdparty/jvm/org/apache/lucene:lucene-facet",
         "3rdparty/jvm/org/apache/lucene:lucene-queries",
-        "3rdparty/jvm/org/apache/lucene:lucene-spatial-extras",
+        "3rdparty/jvm/org/apache/lucene:lucene-spatial-etwittertras",
         "3rdparty/jvm/org/apache/thrift:libthrift",
         "3rdparty/jvm/org/apache/zookeeper:zookeeper-client",
         "3rdparty/jvm/org/slf4j:slf4j-api",

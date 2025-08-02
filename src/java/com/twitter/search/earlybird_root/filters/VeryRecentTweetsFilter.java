@@ -1,6 +1,6 @@
 package com.twitter.search.earlybird_root.filters;
 
-import javax.inject.Inject;
+import javatwitter.inject.Inject;
 
 import com.twitter.finagle.Service;
 import com.twitter.finagle.SimpleFilter;
@@ -11,12 +11,12 @@ import com.twitter.search.earlybird.thrift.EarlybirdResponse;
 import com.twitter.util.Future;
 
 public class VeryRecentTweetsFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
+    etwittertends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
   private static final String DECIDER_KEY = "enable_very_recent_tweets";
   private static final SearchRateCounter VERY_RECENT_TWEETS_NOT_MODIFIED =
-      SearchRateCounter.export("very_recent_tweets_not_modified");
+      SearchRateCounter.etwitterport("very_recent_tweets_not_modified");
   private static final SearchRateCounter VERY_RECENT_TWEETS_ENABLED =
-      SearchRateCounter.export("very_recent_tweets_enabled");
+      SearchRateCounter.etwitterport("very_recent_tweets_enabled");
 
   private final SearchDecider decider;
 

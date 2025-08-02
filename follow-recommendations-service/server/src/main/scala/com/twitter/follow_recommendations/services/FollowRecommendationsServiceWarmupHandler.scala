@@ -3,9 +3,9 @@ package com.twitter.follow_recommendations.services
 import com.twitter.finagle.thrift.ClientId
 import com.twitter.finatra.thrift.routing.ThriftWarmup
 import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService.GetRecommendations
-import com.twitter.follow_recommendations.thriftscala.ClientContext
+import com.twitter.follow_recommendations.thriftscala.ClientContetwittert
 import com.twitter.follow_recommendations.thriftscala.DebugParams
-import com.twitter.follow_recommendations.thriftscala.DisplayContext
+import com.twitter.follow_recommendations.thriftscala.DisplayContetwittert
 import com.twitter.follow_recommendations.thriftscala.DisplayLocation
 import com.twitter.follow_recommendations.thriftscala.Profile
 import com.twitter.follow_recommendations.thriftscala.RecommendationRequest
@@ -16,12 +16,12 @@ import com.twitter.scrooge.Response
 import com.twitter.util.Return
 import com.twitter.util.Throw
 import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+import javatwitter.inject.Inject
+import javatwitter.inject.Singleton
 
 @Singleton
 class FollowRecommendationsServiceWarmupHandler @Inject() (warmup: ThriftWarmup)
-    extends Handler
+    etwittertends Handler
     with Logging {
 
   private val clientId = ClientId("thrift-warmup-client")
@@ -29,7 +29,7 @@ class FollowRecommendationsServiceWarmupHandler @Inject() (warmup: ThriftWarmup)
   override def handle(): Unit = {
     val testIds = Seq(1L)
     def warmupQuery(userId: Long, displayLocation: DisplayLocation): RecommendationRequest = {
-      val clientContext = ClientContext(
+      val clientContetwittert = ClientContetwittert(
         userId = Some(userId),
         guestId = None,
         appId = Some(258901L),
@@ -42,10 +42,10 @@ class FollowRecommendationsServiceWarmupHandler @Inject() (warmup: ThriftWarmup)
         deviceId = Some("FAKE_DEVICE_ID_FOR_WARMUPS")
       )
       RecommendationRequest(
-        clientContext = clientContext,
+        clientContetwittert = clientContetwittert,
         displayLocation = displayLocation,
-        displayContext = None,
-        maxResults = Some(3),
+        displayContetwittert = None,
+        matwitterResults = Some(3),
         fetchPromotedContent = Some(false),
         debugParams = Some(DebugParams(doNotLog = Some(true)))
       )
@@ -57,8 +57,8 @@ class FollowRecommendationsServiceWarmupHandler @Inject() (warmup: ThriftWarmup)
       DisplayLocation.HomeTimeline,
       DisplayLocation.HomeTimelineReverseChron,
       DisplayLocation.ProfileSidebar,
-      DisplayLocation.NuxInterests,
-      DisplayLocation.NuxPymk
+      DisplayLocation.NutwitterInterests,
+      DisplayLocation.NutwitterPymk
     )
 
     try {
@@ -90,12 +90,12 @@ class FollowRecommendationsServiceWarmupHandler @Inject() (warmup: ThriftWarmup)
   /* Private */
 
   private def assertWarmupResponse(result: Try[Response[GetRecommendations.SuccessType]]): Unit = {
-    // we collect and log any exceptions from the result.
+    // we collect and log any etwitterceptions from the result.
     result match {
       case Return(_) => // ok
-      case Throw(exception) =>
+      case Throw(etwitterception) =>
         warn()
-        error(s"Error performing warm-up request: ${exception.getMessage}", exception)
+        error(s"Error performing warm-up request: ${etwitterception.getMessage}", etwitterception)
     }
   }
 }
