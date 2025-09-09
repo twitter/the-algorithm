@@ -83,9 +83,9 @@ object TweetSafetyLabelType extends SafetyLabelType {
     s.SafetyLabelType.LowQuality -> LowQuality,
     s.SafetyLabelType.LowQualityMention -> LowQualityMention,
     s.SafetyLabelType.MisinfoCivic -> MisinfoCivic,
-    s.SafetyLabelType.MisinfoCrisis -> MisinfoCrisis,
     s.SafetyLabelType.MisinfoGeneric -> MisinfoGeneric,
     s.SafetyLabelType.MisinfoMedical -> MisinfoMedical,
+    s.SafetyLabelType.MisinfoWar -> MisinfoWar,
     s.SafetyLabelType.NsfaHighPrecision -> NsfaHighPrecision,
     s.SafetyLabelType.NsfaHighRecall -> NsfaHighRecall,
     s.SafetyLabelType.NsfwCardImage -> NsfwCardImage,
@@ -249,7 +249,6 @@ object TweetSafetyLabelType extends SafetyLabelType {
   case object HighProactiveTosScore extends TweetSafetyLabelType
   case object SafetyCrisis extends TweetSafetyLabelType
   case object MisinfoCivic extends TweetSafetyLabelType
-  case object MisinfoCrisis extends TweetSafetyLabelType
   case object MisinfoGeneric extends TweetSafetyLabelType
   case object MisinfoMedical extends TweetSafetyLabelType
   case object AdsManagerDenyList extends TweetSafetyLabelType
