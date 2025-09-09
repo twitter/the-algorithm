@@ -7,7 +7,7 @@ import com.twitter.search.earlybird.search.queries.SinceUntilFilter;
 
 public abstract class AbstractInMemoryTimeMapper implements TimeMapper {
   // Reverse map: timestamp to first doc ID seen with that timestamp.
-  // This is two arrays: the timestamps (sorted), and the doc ids.
+  // These are two arrays: the timestamps (sorted), and the doc ids.
   protected final IntBlockPool reverseMapTimes;
   protected final IntBlockPool reverseMapIds;
   protected volatile int reverseMapLastIndex;
