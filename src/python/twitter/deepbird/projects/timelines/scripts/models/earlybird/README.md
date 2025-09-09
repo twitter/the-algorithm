@@ -35,7 +35,7 @@ Some of these components are explained below:
   become full. They are loaded back later from disk when Earlybird restarts. Note that the features may be computed in a
   non-trivial way (like deciding the value of hasUrl), they could be computed and combined from some more "raw"
   information in the tweet and from other services.
-  Signal Ingester: the ingester for Realtime Features, per-tweet features that can change after the tweet has been
+- Signal Ingester: the ingester for Realtime Features, per-tweet features that can change after the tweet has been
   indexed, mostly social engagements like retweetCount, favCount, replyCount, etc, along with some (future) spam signals
   that's computed with later activities. These were collected and computed in a Heron topology by processing multiple
   event streams and can be extended to support more features.
