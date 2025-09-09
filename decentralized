@@ -1,0 +1,39 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract DecentralizedAlgorithm {
+    struct Algorithm {
+        string name;
+        string code; // Pseudocode or reference to the algorithm
+        uint256 votes;
+    }
+
+    Algorithm[] public algorithms;
+    mapping(address => uint256) public userVotes;
+
+    event AlgorithmAdded(string name, string code);
+    event Voted(address indexed user, uint256 algorithmId);
+
+    function addAlgorithm(string memory _name, string memory _code) public {
+        algorithms.push(Algorithm({
+            name: _name,
+            code: _code,
+            votes: 0
+        }));
+        emit AlgorithmAdded(_name, _code);
+    }
+
+    function vote(uint256 _algorithmId) public {
+        require(_algorithmId < algorithms.length, "Invalid algorithm ID");
+        require(userVotes[msg.sender] == 0, "User has already voted");
+
+        algorithms[_algorithmId].votes += 1;
+        userVotes[msg.sender] = _algorithmId;
+
+        emit Voted(msg.sender, _algorithmId);
+    }
+
+    function getAlgorithms() public view returns (Algorithm[] memory) {
+        return algorithms;
+    }
+}
