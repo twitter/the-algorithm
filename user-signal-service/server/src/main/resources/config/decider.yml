@@ -1,6 +1,0 @@
-test_value:
-  comment: Test Value
-  default_availability: 10000
-dark_traffic_percent:
-  comment: Percentage of traffic to send to dark traffic destination
-  default_availability: 0
