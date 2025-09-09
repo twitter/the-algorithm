@@ -2,4 +2,4 @@
 
 import tensorflow.compat.v1 as tf
 
-print(tf.sysconfig.get_lib(), end='')
+print(tf.sysconfig.get_lib(), end="")
