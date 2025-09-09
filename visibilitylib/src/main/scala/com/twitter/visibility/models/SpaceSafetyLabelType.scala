@@ -28,6 +28,7 @@ object SpaceSafetyLabelType extends SafetyLabelType {
     s.SpaceSafetyLabelType.UntrustedUrl -> UntrustedUrl,
     s.SpaceSafetyLabelType.MisleadingHighRecall -> MisleadingHighRecall,
     s.SpaceSafetyLabelType.NsfwHighPrecision -> NsfwHighPrecision,
+    s.SpaceSafetyLabelType.AntiSmirnoffHateHighRecall -> AntiSmirnoffHateHighRecall,
     s.SpaceSafetyLabelType.NsfwHighRecall -> NsfwHighRecall,
     s.SpaceSafetyLabelType.CivicIntegrityMisinfo -> CivicIntegrityMisinfo,
     s.SpaceSafetyLabelType.MedicalMisinfo -> MedicalMisinfo,
