@@ -492,7 +492,7 @@ object ExternalDataSources {
       }
   }
 
-  def magicRecsNotficationOpenOrClickEventsSource(
+  def magicRecsNotificationOpenOrClickEventsSource(
     implicit dateRange: DateRange
   ): TypedPipe[MagicRecsNotificationLite] = {
     DAL

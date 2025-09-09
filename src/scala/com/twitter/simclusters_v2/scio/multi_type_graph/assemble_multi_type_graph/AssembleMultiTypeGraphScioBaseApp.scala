@@ -423,7 +423,7 @@ trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
 
     // user-MRNotifOpenOrClick events from last 7 days
     val userMRNotifOpenOrClickEvents =
-      ExternalDataSources.magicRecsNotficationOpenOrClickEventsSource(interval_7days)
+      ExternalDataSources.magicRecsNotificationOpenOrClickEventsSource(interval_7days)
 
     // user-searchQuery strings from last 7 days
     val userSearchQueryEdges =

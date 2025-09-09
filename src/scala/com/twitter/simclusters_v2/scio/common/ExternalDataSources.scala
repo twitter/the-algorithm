@@ -236,13 +236,13 @@ object ExternalDataSources {
       }
   }
 
-  def magicRecsNotficationOpenOrClickEventsSource(
+  def magicRecsNotificationOpenOrClickEventsSource(
     interval: Interval
   )(
     implicit sc: ScioContext
   ): SCollection[MagicRecsNotificationLite] = {
     sc.customInput(
-        "ReadMagicRecsNotficationOpenOrClickEventsSource",
+        "ReadMagicRecsNotificationOpenOrClickEventsSource",
         DAL
           .read(MagicrecsNotificationLite1DayLagScalaDataset, interval, DAL.Environment.Prod))
       .filter { entry =>
