@@ -30,7 +30,7 @@ enum SignalType {
   Retweet_90D_V2 = 7, // 90 Days Lookback window : retweet from user with recent engagement in the past 90 days
   OriginalTweet_90D_V2 = 8, // 90 Days Lookback window : original tweet from user with recent engagement in the past 90 days
   Reply_90D_V2 = 9,// 90 Days Lookback window : reply from user with recent engagement in the past 90 days
-  GoodTweetClick = 10,// GoodTweetCilick Signal : Dwell Time  Threshold >=2s
+  GoodTweetClick = 10,// GoodTweetClick Signal : Dwell Time  Threshold >=2s
 
   // video tweets that were watched (10s OR 95%) in the past 90 days, are not ads, and have >=10s video
   VideoView_90D_Quality_V1 = 11   // 90 Days Lookback window
@@ -50,7 +50,7 @@ enum SignalType {
   TrafficAttributionProfile_30D_DecayedVisit = 106,
   TrafficAttributionProfile_30D_WeightedEventDecayedVisit = 107,
   TrafficAttributionProfile_30D_DecayedVisit_WithoutAgathaFilter = 108,
-  GoodProfileClick = 120, // GoodTweetCilick Signal : Dwell Time  Threshold >=10s
+  GoodProfileClick = 120, // GoodTweetClick Signal : Dwell Time  Threshold >=10s
   AdFavorite = 121, // Favorites filtered to ads TweetFavorite has both organic and ads Favs
 
   // AccountFollowWithDelay should only be used by high-traffic clients and has 1 min delay
@@ -81,9 +81,9 @@ enum SignalType {
   use the num > 1000 to test out signals under development/ddg
   put it back to the correct corresponding Key space (0-1000) before ship
   */
-  GoodTweetClick_5s = 1001,// GoodTweetCilick Signal : Dwell Time  Threshold >=5s
-  GoodTweetClick_10s = 1002,// GoodTweetCilick Signal : Dwell Time  Threshold >=10s
-  GoodTweetClick_30s = 1003,// GoodTweetCilick Signal : Dwell Time  Threshold >=30s
+  GoodTweetClick_5s = 1001,// GoodTweetClick Signal : Dwell Time  Threshold >=5s
+  GoodTweetClick_10s = 1002,// GoodTweetClick Signal : Dwell Time  Threshold >=10s
+  GoodTweetClick_30s = 1003,// GoodTweetClick Signal : Dwell Time  Threshold >=30s
 
   GoodProfileClick_20s = 1004,// GoodProfileClick Signal : Dwell Time  Threshold >=20s
   GoodProfileClick_30s = 1005,// GoodProfileClick Signal : Dwell Time  Threshold >=30s
