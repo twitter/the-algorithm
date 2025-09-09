@@ -2,7 +2,7 @@
 
 X's Recommendation Algorithm is a set of services and jobs that are responsible for serving feeds of posts and other content across all X product surfaces (e.g. For You Timeline, Search, Explore, Notifications). For an introduction to how the algorithm works, please refer to our [engineering blog](https://blog.x.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm).
 
-## Architecture
+## The Architecture
 
 Product surfaces at X are built on a shared set of data, models, and software frameworks. The shared components included in this repository are listed below:
 
