@@ -7,44 +7,44 @@ from tensorflow.python.layers import base
 
 
 class Layer(base.Layer):
-  """
-  Base Layer implementation for twml.
-  Overloads `twml.layers.Layer
-  <https://www.tensorflow.org/versions/master/api_docs/python/tf/layers/Layer>`_
-  from tensorflow and adds a couple of custom methods.
-  """
-
-  @property
-  def init(self):
     """
-    Return initializer ops. By default returns tf.no_op().
-    This method is overwritten by classes like twml.layers.MDL, which
-    uses a HashTable internally, that must be initialized with its own op.
+    Base Layer implementation for twml.
+    Overloads `twml.layers.Layer
+    <https://www.tensorflow.org/versions/master/api_docs/python/tf/layers/Layer>`_
+    from tensorflow and adds a couple of custom methods.
     """
-    return tf.no_op()
 
-  def call(self, inputs, **kwargs):
-    """The logic of the layer lives here.
+    @property
+    def init(self):
+        """
+        Return initializer ops. By default returns tf.no_op().
+        This method is overwritten by classes like twml.layers.MDL, which
+        uses a HashTable internally, that must be initialized with its own op.
+        """
+        return tf.no_op()
 
-    Arguments:
-      inputs:
-        input tensor(s).
-      **kwargs:
-        additional keyword arguments.
+    def call(self, inputs, **kwargs):
+        """The logic of the layer lives here.
 
-    Returns:
-      Output tensor(s).
-    """
-    raise NotImplementedError
+        Arguments:
+          inputs:
+            input tensor(s).
+          **kwargs:
+            additional keyword arguments.
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+        Returns:
+          Output tensor(s).
+        """
+        raise NotImplementedError
 
-    Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+    def compute_output_shape(self, input_shape):
+        """Computes the output shape of the layer given the input shape.
 
-    Raise NotImplementedError.
+        Args:
+          input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
+            be fully defined (e.g. the batch size may be unknown).
 
-    """
-    raise NotImplementedError
+        Raise NotImplementedError.
+
+        """
+        raise NotImplementedError
