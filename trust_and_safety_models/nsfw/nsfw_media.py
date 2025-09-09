@@ -406,7 +406,6 @@ precision, recall, thresholds = pr
 
 auc_precision_recall = sklearn.metrics.auc(recall, precision)
 
-print(auc_precision_recall)
 
 plt.figure(figsize=(15, 10))
 plt.plot(recall, precision)
@@ -415,12 +414,10 @@ plt.xlabel("recall")
 plt.ylabel("precision")
 
 ptAt50 = get_point_for_recall(0.5, recall, precision)
-print(ptAt50)
 plt.plot( [ptAt50[0],ptAt50[0]], [0,ptAt50[1]], 'r')
 plt.plot([0, ptAt50[0]], [ptAt50[1], ptAt50[1]], 'r')
 
 ptAt90 = get_point_for_recall(0.9, recall, precision)
-print(ptAt90)
 plt.plot( [ptAt90[0],ptAt90[0]], [0,ptAt90[1]], 'b')
 plt.plot([0, ptAt90[0]], [ptAt90[1], ptAt90[1]], 'b')
 
@@ -437,7 +434,6 @@ plt.savefig('recall_precision_nsfw_Keras_with_twitter_CLIP_MU_test.pdf')
 precision, recall, thresholds = pr_sens_prev
 
 auc_precision_recall = sklearn.metrics.auc(recall, precision)
-print(auc_precision_recall)
 plt.figure(figsize=(15, 10))
 
 plt.plot(recall, precision)
@@ -446,12 +442,10 @@ plt.xlabel("recall")
 plt.ylabel("precision")
 
 ptAt50 = get_point_for_recall(0.5, recall, precision)
-print(ptAt50)
 plt.plot( [ptAt50[0],ptAt50[0]], [0,ptAt50[1]], 'r')
 plt.plot([0, ptAt50[0]], [ptAt50[1], ptAt50[1]], 'r')
 
 ptAt90 = get_point_for_recall(0.9, recall, precision)
-print(ptAt90)
 plt.plot( [ptAt90[0],ptAt90[0]], [0,ptAt90[1]], 'b')
 plt.plot([0, ptAt90[0]], [ptAt90[1], ptAt90[1]], 'b')
 
