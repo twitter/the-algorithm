@@ -263,7 +263,7 @@ def rce(labels, predictions,
 
   y = label; p = prediction;
   binary cross entropy = y * log(p) + (1-y) * log(1-p)
-
+  relative cross entropy = E[log(p)/log(q)] 
   Args:
     labels:
       the ground true value.
