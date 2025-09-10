@@ -69,6 +69,6 @@ def get_feature_config(data_spec_path, label):
     "itl.engagement.is_retweeted",         # Tensor index: 7
     "itl.engagement.is_video_playback_50",  # Tensor index: 8
     "timelines.earlybird_score",           # Tensor index: 9
-  ]) \
-    .define_weight("meta.record_weight/type=earlybird") \
-    .build()
+  ]).define_weight(
+    "meta.record_weight/type=earlybird"
+  ).build()
