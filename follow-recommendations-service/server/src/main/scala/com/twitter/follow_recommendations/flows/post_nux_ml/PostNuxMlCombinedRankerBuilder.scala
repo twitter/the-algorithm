@@ -29,7 +29,7 @@ import com.twitter.timelines.configapi.HasParams
  * - truncating to the top N merged results for ranking
  * - ML ranker
  * - Interleaving ranker for producer-side experiments
- * - impression-based fatigueing
+ * - impression-based fatiguing
  */
 @Singleton
 class PostNuxMlCombinedRankerBuilder[
