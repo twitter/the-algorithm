@@ -476,7 +476,6 @@ pub mod tf {
                 }
                 predict_return.push(res)
             }
-            //TODO: remove in the future
             //TODO: support actual mtl model outputs
             (predict_return, batch_ends)
         }
