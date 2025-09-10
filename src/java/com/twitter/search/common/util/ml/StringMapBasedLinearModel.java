@@ -65,13 +65,12 @@ public class StringMapBasedLinearModel implements MapBasedLinearModel<String> {
   public float score(Map<String, Float> values) {
     float score = 0.0f;
     for (Map.Entry<String, Float> value : values.entrySet()) {
-      String featureName = value.getKey();
-      float weight = getWeight(featureName);
+      float weight = getWeight(value.getKey());
       if (weight != 0.0f) {
         score += weight * value.getValue();
         if (LOG.isDebugEnabled()) {
           LOG.debug(String.format("%s = %.3f * %.3f = %.3f, ",
-              featureName, weight, value.getValue(),
+          value.getKey(), weight, value.getValue(),
               weight * value.getValue()));
         }
       }
