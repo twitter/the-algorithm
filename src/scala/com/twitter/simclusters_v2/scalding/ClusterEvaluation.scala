@@ -90,21 +90,14 @@ object ClusterEvaluation {
     val resultsIter = membersAdjLists.flatMap {
       case (fromNodeId, adjList) =>
         val fromNodeWt = memberScores.getOrElse(fromNodeId, 0.0)
-        adjList.map {
-          case (toNodeId, edgeWt) =>
-            if (memberScores.contains(toNodeId)) {
-              val productOfMembershipScores = fromNodeWt * memberScores(toNodeId)
-              ClusterResults(
-                1,
-                edgeWt,
-                0,
-                0,
-                samplerMonoid.build(
-                  ((fromNodeId, toNodeId), (edgeWt.toDouble, productOfMembershipScores))))
-            } else {
-              ClusterResults(0, 0, 1, edgeWt, samplerMonoid.zero)
-            }
-        }
+        adjList.map(ad => ad match {
+          case (toNodeId,edgeWt) if (!memberScores.contains(toNodeId)) =>
+            ClusterResults(0, 0, 1, edgeWt, samplerMonoid.zero)
+          case (toNodeId,edgeWt) =>
+            val productOfMembershipScores = fromNodeWt * memberScores(toNodeId)
+            val sampler = samplerMonoid.build((fromNodeId, toNodeId), (edgeWt.toDouble, productOfMembershipScores))
+            ClusterResults(1, edgeWt, 0, 0, sampler)
+        })
     }
     Monoid.sum(resultsIter)(ClusterResultsMonoid)
   }
