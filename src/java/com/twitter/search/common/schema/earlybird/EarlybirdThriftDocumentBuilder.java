@@ -320,7 +320,7 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
   }
 
   /**
-   * Add a list of places. The place are U64 encoded place IDs.
+   * Add a list of places. The places are U64 encoded place IDs.
    */
   public EarlybirdThriftDocumentBuilder withPlacesField(List<String> places) {
     if (isNotEmpty(places)) {
@@ -509,7 +509,7 @@ public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder 
   }
 
   /**
-   * Add escherbird annotation fields.
+   * Add earlybird annotation fields.
    */
   public EarlybirdThriftDocumentBuilder withAnnotationEntities(List<String> entities) {
     if (isNotEmpty(entities)) {
