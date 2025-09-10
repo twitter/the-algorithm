@@ -101,7 +101,7 @@ public class CriticalExceptionHandler {
         try {
           Thread.sleep(3 * 60 * 1000);
         } catch (InterruptedException e) {
-          LOG.error(FATAL, "interupted sleep while shutting down.");
+          LOG.error(FATAL, "interrupted sleep while shutting down.");
         }
         LOG.info("Terminate JVM.");
         //CHECKSTYLE:OFF RegexpSinglelineJava
