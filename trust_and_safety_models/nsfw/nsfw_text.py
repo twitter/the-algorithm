@@ -7,7 +7,6 @@ from sklearn.metrics import average_precision_score, classification_report, prec
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 import matplotlib.pyplot as plt
-import re
 
 from twitter.cuad.representation.models.optimization import create_optimizer
 from twitter.cuad.representation.models.text_encoder import TextEncoder
