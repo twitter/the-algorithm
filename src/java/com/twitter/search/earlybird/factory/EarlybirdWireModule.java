@@ -422,8 +422,8 @@ public class EarlybirdWireModule {
   public ScoringModelsManager provideScoringModelsManager(
       SearchStatsReceiver serverStats,
       EarlybirdIndexConfig earlybirdIndexConfig) {
-    boolean modelsEnabled = EarlybirdConfig.getBool("scoring_models_enabled", false);
-    if (!modelsEnabled) {
+    boolean modelsDisabled = !EarlybirdConfig.getBool("scoring_models_enabled", false);
+    if (modelsDisabled) {
       LOG.info("Scoring Models - Disabled in the config. Not loading any models.");
       serverStats.getCounter("scoring_models_disabled_in_config").increment();
       return ScoringModelsManager.NO_OP_MANAGER;
@@ -450,9 +450,9 @@ public class EarlybirdWireModule {
       Decider decider,
       EarlybirdIndexConfig earlybirdIndexConfig) {
 
-    boolean modelsEnabled = EarlybirdProperty.TF_MODELS_ENABLED.get(false);
+    boolean modelsDisabled = !EarlybirdProperty.TF_MODELS_ENABLED.get(false);
 
-    if (!modelsEnabled) {
+    if (modelsDisabled) {
       LOG.info("Tensorflow Models - Disabled in the config. Not loading any models.");
       serverStats.getCounter("tf_models_disabled_in_config").increment();
       return TensorflowModelsManager.createNoOp(statsPrefix);
