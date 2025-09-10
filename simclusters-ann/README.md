@@ -2,7 +2,7 @@
 
 SimClusters ANN is a service that returns tweet candidate recommendations given a SimClusters embedding. The service implements tweet recommendations based on the Approximate Cosine Similarity algorithm.
 
-The cosine similarity between two Tweet SimClusters Embedding represents the relevance level of two tweets in SimCluster space. The traditional algorithm for calculating cosine similarity is expensive and hard to support by the existing infrastructure. Therefore, the Approximate Cosine Similarity algorithm is introduced to save response time by reducing I/O operations.
+The cosine similarity between two Tweet SimClusters Embeddings represent the relevance level of two tweets in SimCluster space. The traditional algorithm for calculating cosine similarity is expensive and hard to support by the existing infrastructure. Therefore, the Approximate Cosine Similarity algorithm is introduced to save response time by reducing I/O operations.
 
 ## Background
 SimClusters V2 runtime infra introduces the SimClusters and its online and offline approaches. A heron job builds the mapping between SimClusters and Tweets. The job saves top 400 Tweets for a SimClusters and top 100 SimClusters for a Tweet. Favorite score and follow score are two types of tweet score.  In the document, the top 100 SimClusters based on the favorite score for a Tweet stands for the Tweet SimClusters Embedding. 
@@ -78,7 +78,7 @@ Use the script to build the service in your local branch, upload it to packer an
 
     $ ./simclusters-ann/bin/deploy.sh atla $USER devel simclusters-ann
 
-You can also deploy to staging with this script. E.g. to deploy to instance 1:
+You can also deploy to staging with this script. E.g. to deploy to a specific instance number:
 
     $ ./simclusters-ann/bin/deploy.sh atla simclusters-ann staging simclusters-ann <instance-number>
 
@@ -87,7 +87,7 @@ You can also deploy to staging with this script. E.g. to deploy to instance 1:
 Production deploys should be managed by Workflows. 
 _Do not_ deploy to production unless it is an emergency and you have approval from oncall.
 
-##### It is not recommended to deploy from Command Lines into production environments, unless 1) you're testing a small change in Canary shard [0,9]. 2) Tt is an absolute emergency. Be sure to make oncalls aware of the changes you're deploying.
+##### It is not recommended to deploy from Command Lines into production environments, unless 1) you're testing a small change in Canary shard [0,9]. 2) it is an absolute emergency. Be sure to make oncalls aware of the changes you're deploying.
 
     $ ./simclusters-ann/bin/deploy.sh atla simclusters-ann prod simclusters-ann <instance-number>
 In the case of multiple instances,
