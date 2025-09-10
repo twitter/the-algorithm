@@ -6,7 +6,7 @@ enum FeatureVal {
   FloatVector(Vec<f32>),
 }
 
-// A Feture has a name and a value
+// A Feature has a name and a value
 // The name for now is 'id' of type string
 // Eventually this needs to be flexible - example to accomodate feature-id
 struct Feature {
