@@ -414,11 +414,9 @@ public abstract class AbstractRecencyAndRelevanceRequestRouter extends RequestRo
       }
     }
 
-    if (adjustedRequestParams.isSetReturnAllResults()) {
-      if (searchQuery.isSetRelevanceOptions()) {
+    if (adjustedRequestParams.isSetReturnAllResults() && searchQuery.isSetRelevanceOptions()) {
         searchQuery.getRelevanceOptions().setReturnAllResults(
             adjustedRequestParams.isReturnAllResults());
-      }
     }
   }
 

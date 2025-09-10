@@ -326,19 +326,19 @@ public class ArchiveSearchPartitionManager extends PartitionManager {
 
     final ArchiveSegment oldSegment = (ArchiveSegment) segmentInfo.getSegment();
 
-    return indexSegment(newSegmentInfoForIndexing, oldSegmentInfo, input -> {
+    return indexSegment(newSegmentInfoForIndexing, oldSegmentInfo, input ->
       // we're updating the segment - only index days after the old end date, but only if
       // we're in the on-disk archive, and we're sure that the previous days have already
       // been indexed.
-      return !earlybirdIndexConfig.isIndexStoredOnDisk()
+       !earlybirdIndexConfig.isIndexStoredOnDisk()
           // First time around, and the segment has not been indexed and optimized yet,
           // we will want to add all the days
           || !oldSegmentInfo.isOptimized()
           || oldSegmentInfo.getIndexSegment().getIndexStats().getStatusCount() == 0
           || !oldSegment.getDataEndDate().before(timeSlice.getEndDate())
           // Index any new days
-          || input.after(oldSegment.getDataEndDate());
-    });
+          || input.after(oldSegment.getDataEndDate())
+    );
   }
 
   private boolean existingSegmentNeedsUpdating(ArchiveTimeSlice timeSlice,

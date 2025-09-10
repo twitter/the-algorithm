@@ -150,7 +150,7 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
       queryTime = System.currentTimeMillis();
     }
     hitCountsThresholdsMsec = thriftSearchQuery.getHitCountBuckets();
-    hitCounts = hitCountsThresholdsMsec == null || hitCountsThresholdsMsec.size() == 0
+    hitCounts = hitCountsThresholdsMsec == null || hitCountsThresholdsMsec.isEmpty()
         ? null
         : new int[hitCountsThresholdsMsec.size()];
 
@@ -192,12 +192,7 @@ public abstract class AbstractResultsCollector<R extends SearchRequestInfo,
         requiredFields.add(field.getFieldType().getFacetName());
       }
     }
-
-    if (requiredFields.size() > 0) {
-      return new FacetLabelCollector(requiredFields);
-    } else {
-      return null;
-    }
+    return requiredFields.isEmpty() ? null : new FacetLabelCollector(requiredFields);
   }
 
   /**
