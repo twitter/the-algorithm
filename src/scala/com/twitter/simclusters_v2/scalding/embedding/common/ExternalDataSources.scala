@@ -330,7 +330,7 @@ object ExternalDataSources {
     DAL
       .readMostRecentSnapshotNoOlderThan(
         UserInterestRelationSnapshotScalaDataset,
-        Days(7)).withRemoteReadPolicy(ExplicitLocation(ProcAtla)).toTypedPipe.collect {
+        Days(14)).withRemoteReadPolicy(ExplicitLocation(ProcAtla)).toTypedPipe.collect {
         case userInterestsRelationSnapshot: UserInterestsRelationSnapshot
             if userInterestsRelationSnapshot.interestType == "UTT" &&
               userInterestsRelationSnapshot.relation == InterestRelationType.NotInterested =>
