@@ -84,9 +84,7 @@ mod utils {
         get_config_or_else(model_config, key, || default.to_string())
     }
     pub fn get_meta_dir() -> &'static str {
-        ARGS.meta_json_dir
-            .as_ref()
-            .map(|s| s.as_str())
+        ARGS.meta_json_dir.as_deref()
             .unwrap_or_else(|| {
                 let model_dir = &ARGS.model_dir[0];
                 let meta_dir = &model_dir[0..model_dir.rfind(&MODEL_SPECS[0]).unwrap()];
