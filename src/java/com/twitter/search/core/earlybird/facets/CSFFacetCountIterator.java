@@ -17,7 +17,7 @@ public class CSFFacetCountIterator extends FacetCountIterator {
   private final NumericDocValues numericDocValues;
 
   /**
-   * Creates a new iterator for the given facet csf field.
+   * Creates a new csf facet iterator for the given facet csf field.
    */
   public CSFFacetCountIterator(
       EarlybirdIndexSegmentAtomicReader reader,
