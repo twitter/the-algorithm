@@ -10,11 +10,8 @@ scala_library(
         "home-mixer/server/src/main/scala/com/twitter/home_mixer/param",
         "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
         "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
-        "src/thrift/com/twitter/hermit/candidate:hermit-candidate-scala",
         "src/thrift/com/twitter/search:earlybird-scala",
         "stitch/stitch-timelineservice/src/main/scala",
-        "strato/config/columns/recommendations/similarity:similarity-strato-client",
-        "strato/src/main/scala/com/twitter/strato/client",
     ],
     exports = [
         "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",

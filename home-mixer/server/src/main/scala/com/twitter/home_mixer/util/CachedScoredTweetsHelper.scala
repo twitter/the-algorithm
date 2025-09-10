@@ -2,6 +2,7 @@ package com.twitter.home_mixer.util
 
 import com.twitter.home_mixer.model.HomeFeatures.CachedScoredTweetsFeature
 import com.twitter.home_mixer.{thriftscala => hmt}
+import com.twitter.product_mixer.component_library.feature_hydrator.query.impressed_tweets.ImpressedTweets
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
 import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
 import com.twitter.snowflake.id.SnowflakeId
@@ -13,7 +14,7 @@ object CachedScoredTweetsHelper {
     features: FeatureMap,
     candidatePipelineIdentifier: CandidatePipelineIdentifier
   ): Seq[Long] = {
-    val tweetImpressions = TweetImpressionsHelper.tweetImpressions(features)
+    val tweetImpressions = features.getOrElse(ImpressedTweets, Seq.empty).toSet
     val cachedScoredTweets = features
       .getOrElse(CachedScoredTweetsFeature, Seq.empty)
       .filter { tweet =>
@@ -32,6 +33,7 @@ object CachedScoredTweetsHelper {
     untilTime: Time
   ): Seq[Long] =
     tweetImpressionsAndCachedScoredTweets(features, candidatePipelineIdentifier)
+      .filter { tweetId => SnowflakeId.isSnowflakeId(tweetId) }
       .filter { tweetId =>
         val creationTime = SnowflakeId.timeFromId(tweetId)
         sinceTime <= creationTime && untilTime >= creationTime
@@ -39,8 +41,8 @@ object CachedScoredTweetsHelper {
 
   def unseenCachedScoredTweets(
     features: FeatureMap
-  ): Seq[hmt.CachedScoredTweet] = {
-    val seenTweetIds = TweetImpressionsHelper.tweetImpressions(features)
+  ): Seq[hmt.ScoredTweet] = {
+    val seenTweetIds = features.getOrElse(ImpressedTweets, Seq.empty).toSet
 
     features
       .getOrElse(CachedScoredTweetsFeature, Seq.empty)

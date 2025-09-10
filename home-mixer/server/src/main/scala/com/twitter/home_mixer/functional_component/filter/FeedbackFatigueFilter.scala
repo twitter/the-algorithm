@@ -1,11 +1,11 @@
 package com.twitter.home_mixer.functional_component.filter
 
-import com.twitter.conversions.DurationOps._
 import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
 import com.twitter.home_mixer.model.HomeFeatures.FeedbackHistoryFeature
 import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
 import com.twitter.home_mixer.model.HomeFeatures.SGSValidFollowedByUserIdsFeature
 import com.twitter.home_mixer.model.HomeFeatures.SGSValidLikedByUserIdsFeature
+import com.twitter.home_mixer.param.HomeGlobalParams.FeedbackFatigueFilteringDurationParam
 import com.twitter.home_mixer.util.CandidatesUtil
 import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -32,8 +32,6 @@ object FeedbackFatigueFilter
   ): Boolean =
     query.features.exists(_.getOrElse(FeedbackHistoryFeature, Seq.empty).nonEmpty)
 
-  private val DurationForFiltering = 14.days
-
   override def apply(
     query: pipeline.PipelineQuery,
     candidates: Seq[CandidateWithFeatures[TweetCandidate]]
@@ -43,7 +41,7 @@ object FeedbackFatigueFilter
         .getOrElse(FeatureMap.empty).getOrElse(FeedbackHistoryFeature, Seq.empty)
         .filter { entry =>
           val timeSinceFeedback = query.queryTime.minus(entry.timestamp)
-          timeSinceFeedback < DurationForFiltering &&
+          timeSinceFeedback < query.params(FeedbackFatigueFilteringDurationParam) &&
           entry.feedbackType == tls.FeedbackType.SeeFewer
         }.groupBy(_.engagementType)
 
@@ -72,7 +70,7 @@ object FeedbackFatigueFilter
 
       originalAuthorId.exists(authorsToFilter.contains) ||
       (likers.nonEmpty && eligibleLikers.isEmpty) ||
-      (followers.nonEmpty && eligibleFollowers.isEmpty) ||
+      (followers.nonEmpty && eligibleFollowers.isEmpty && likers.isEmpty) ||
       (candidate.features.getOrElse(IsRetweetFeature, false) &&
       authorId.exists(retweetersToFilter.contains))
     }
@@ -84,6 +82,6 @@ object FeedbackFatigueFilter
     feedbackEntries: Seq[FeedbackEntry],
   ): Set[Long] =
     feedbackEntries.collect {
-      case FeedbackEntry(_, _, FeedbackEntity.UserId(userId), _, _) => userId
+      case FeedbackEntry(_, _, FeedbackEntity.UserId(userId), _, _, _) => userId
     }.toSet
 }

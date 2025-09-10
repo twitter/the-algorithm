@@ -4,7 +4,5 @@ scala_library(
     platform = "java8",
     strict_deps = True,
     tags = ["bazel-compatible"],
-    dependencies = [
-        "servo/decider",
-    ],
+    dependencies = ["servo/decider"],
 )

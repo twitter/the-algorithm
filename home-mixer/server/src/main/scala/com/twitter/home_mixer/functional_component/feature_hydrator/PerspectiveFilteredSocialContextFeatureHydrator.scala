@@ -10,6 +10,7 @@ import com.twitter.product_mixer.core.functional_component.feature_hydrator.Bulk
 import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
 import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
 import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twitter.product_mixer.core.util.OffloadFuturePools
 import com.twitter.stitch.Stitch
 import com.twitter.stitch.timelineservice.TimelineService
 import com.twitter.stitch.timelineservice.TimelineService.GetPerspectives
@@ -37,10 +38,10 @@ class PerspectiveFilteredSocialContextFeatureHydrator @Inject() (timelineService
   override def apply(
     query: PipelineQuery,
     candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
+  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadStitch {
     val engagingUserIdtoTweetId = candidates.flatMap { candidate =>
       candidate.features
-        .get(FavoritedByUserIdsFeature).take(MaxCountUsers)
+        .getOrElse(FavoritedByUserIdsFeature, Seq.empty).take(MaxCountUsers)
         .map(favoritedBy => favoritedBy -> candidate.candidate.id)
     }
 
@@ -59,7 +60,7 @@ class PerspectiveFilteredSocialContextFeatureHydrator @Inject() (timelineService
 
       candidates.map { candidate =>
         val perspectiveFilteredFavoritedByUserIds: Seq[Long] = candidate.features
-          .get(FavoritedByUserIdsFeature).take(MaxCountUsers)
+          .getOrElse(FavoritedByUserIdsFeature, Seq.empty).take(MaxCountUsers)
           .filter { userId => validUserIdTweetIds.contains((userId, candidate.candidate.id)) }
 
         FeatureMapBuilder()

@@ -1,15 +1,16 @@
 package com.twitter.home_mixer.candidate_pipeline
 
-import com.twitter.home_mixer.functional_component.candidate_source.StaleTweetsCacheCandidateSource
-import com.twitter.home_mixer.functional_component.decorator.HomeFeedbackActionInfoBuilder
+import com.twitter.home_mixer.functional_component.decorator.urt.builder.HomeFeedbackActionInfoBuilder
 import com.twitter.home_mixer.functional_component.feature_hydrator.NamesFeatureHydrator
-import com.twitter.home_mixer.functional_component.query_transformer.EditedTweetsCandidatePipelineQueryTransformer
+import com.twitter.home_mixer.model.HomeFeatures.PersistenceEntriesFeature
 import com.twitter.home_mixer.service.HomeMixerAlertConfig
+import com.twitter.product_mixer.component_library.candidate_source.stale_tweets.StaleTweetsCacheCandidateSource
 import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
 import com.twitter.product_mixer.component_library.decorator.urt.builder.contextual_ref.ContextualTweetRefBuilder
 import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet.TweetCandidateUrtItemBuilder
 import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.EmptyClientEventInfoBuilder
 import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
+import com.twitter.product_mixer.component_library.transformer.stale_tweets.EditedTweetsCandidatePipelineQueryTransformer
 import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
 import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
 import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
@@ -44,15 +45,12 @@ case class EditedTweetsCandidatePipelineConfig @Inject() (
   override val candidateSource: BaseCandidateSource[Seq[Long], Long] =
     staleTweetsCacheCandidateSource
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    PipelineQuery,
-    Seq[Long]
-  ] = EditedTweetsCandidatePipelineQueryTransformer
+  override val queryTransformer: CandidatePipelineQueryTransformer[PipelineQuery, Seq[Long]] =
+    EditedTweetsCandidatePipelineQueryTransformer(PersistenceEntriesFeature)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    Long,
-    TweetCandidate
-  ] = { candidate => TweetCandidate(id = candidate) }
+  override val resultTransformer: CandidatePipelineResultsTransformer[Long, TweetCandidate] = {
+    candidate => TweetCandidate(id = candidate)
+  }
 
   override val postFilterFeatureHydration: Seq[
     BaseCandidateFeatureHydrator[PipelineQuery, TweetCandidate, _]
@@ -78,7 +76,6 @@ case class EditedTweetsCandidatePipelineConfig @Inject() (
     Some(UrtItemCandidateDecorator(tweetItemBuilder))
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.5, 50, 60, 60)
-  )
+  override val alerts =
+    Seq(HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.5, 50, 60, 60))
 }

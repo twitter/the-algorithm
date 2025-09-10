@@ -24,8 +24,8 @@ case class TweetImpressionsQueryFeatureHydrator[
   manhattanTweetImpressionStoreClient: ManhattanTweetImpressionStoreClient)
     extends QueryFeatureHydrator[Query] {
 
-  private val TweetImpressionTTL = 1.day
-  private val TweetImpressionCap = 3000
+  private val TweetImpressionTTL = 2.days
+  private val TweetImpressionCap = 5000
 
   override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("TweetImpressions")
 

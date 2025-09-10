@@ -9,13 +9,12 @@ import com.twitter.product_mixer.core.functional_component.feature_hydrator.Quer
 import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
 import com.twitter.product_mixer.core.pipeline.PipelineQuery
 import com.twitter.stitch.Stitch
-import com.twitter.timelines.user_health.{thriftscala => uh}
 import com.twitter.timelines.user_health.v1.{thriftscala => uhv1}
+import com.twitter.timelines.user_health.{thriftscala => uh}
 import com.twitter.user_session_store.ReadOnlyUserSessionStore
 import com.twitter.user_session_store.ReadRequest
 import com.twitter.user_session_store.UserSessionDataset
 import com.twitter.user_session_store.UserSessionDataset.UserSessionDataset
-
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,8 +23,7 @@ case class UserStateQueryFeatureHydrator @Inject() (
   userSessionStore: ReadOnlyUserSessionStore)
     extends QueryFeatureHydrator[PipelineQuery] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("UserState")
+  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("UserState")
 
   override val features: Set[Feature[_, _]] = Set(UserStateFeature)
 
@@ -49,6 +47,6 @@ case class UserStateQueryFeatureHydrator @Inject() (
   }
 
   override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.9)
+    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99)
   )
 }

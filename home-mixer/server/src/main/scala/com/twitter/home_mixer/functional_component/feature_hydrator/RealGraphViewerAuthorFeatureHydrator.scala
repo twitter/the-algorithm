@@ -11,9 +11,11 @@ import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
 import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
+import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
+import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
 import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
 import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twitter.product_mixer.core.util.OffloadFuturePools
 import com.twitter.stitch.Stitch
 import com.twitter.timelines.prediction.adapters.real_graph.RealGraphEdgeFeaturesCombineAdapter
 import com.twitter.timelines.prediction.adapters.real_graph.RealGraphFeaturesAdapter
@@ -38,7 +40,7 @@ object RealGraphViewerAuthorsDataRecordFeature
 
 @Singleton
 class RealGraphViewerAuthorFeatureHydrator @Inject() ()
-    extends CandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
 
   override val identifier: FeatureHydratorIdentifier =
     FeatureHydratorIdentifier("RealGraphViewerAuthor")
@@ -55,17 +57,14 @@ class RealGraphViewerAuthorFeatureHydrator @Inject() ()
     .add(RealGraphViewerAuthorsDataRecordFeature, Throw(MissingKeyException))
     .build()
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
-    val viewerId = query.getRequiredUserId
-    val realGraphFeatures = query.features
-      .flatMap(_.getOrElse(RealGraphFeatures, None))
-      .getOrElse(Map.empty[Long, v1.RealGraphEdgeFeatures])
+  private val batchSize = 64
 
-    val result: FeatureMap = existingFeatures.getOrElse(AuthorIdFeature, None) match {
+  def getFeatureMap(
+    candidate: CandidateWithFeatures[TweetCandidate],
+    viewerId: Long,
+    realGraphFeatures: Map[Long, v1.RealGraphEdgeFeatures]
+  ): FeatureMap =
+    candidate.features.getOrElse(AuthorIdFeature, None) match {
       case Some(authorId) =>
         val realGraphAuthorFeatures =
           getRealGraphViewerAuthorFeatures(viewerId, authorId, realGraphFeatures)
@@ -73,7 +72,7 @@ class RealGraphViewerAuthorFeatureHydrator @Inject() ()
           .adaptToDataRecords(realGraphAuthorFeatures).asScala.headOption.getOrElse(new DataRecord)
 
         val combinedRealGraphFeaturesDataRecord = for {
-          inReplyToAuthorId <- existingFeatures.getOrElse(InReplyToUserIdFeature, None)
+          inReplyToAuthorId <- candidate.features.getOrElse(InReplyToUserIdFeature, None)
         } yield {
           val combinedRealGraphFeatures =
             getCombinedRealGraphFeatures(Seq(authorId, inReplyToAuthorId), realGraphFeatures)
@@ -82,15 +81,28 @@ class RealGraphViewerAuthorFeatureHydrator @Inject() ()
             .getOrElse(new DataRecord)
         }
 
-        FeatureMapBuilder()
-          .add(RealGraphViewerAuthorDataRecordFeature, realGraphAuthorDataRecord)
-          .add(
-            RealGraphViewerAuthorsDataRecordFeature,
-            combinedRealGraphFeaturesDataRecord.getOrElse(new DataRecord))
-          .build()
+        FeatureMap(
+          RealGraphViewerAuthorDataRecordFeature,
+          realGraphAuthorDataRecord,
+          RealGraphViewerAuthorsDataRecordFeature,
+          combinedRealGraphFeaturesDataRecord.getOrElse(new DataRecord)
+        )
       case _ => MissingKeyFeatureMap
     }
-    Stitch(result)
+
+  override def apply(
+    query: PipelineQuery,
+    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
+  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
+    val viewerId = query.getRequiredUserId
+    val realGraphFeatures = query.features
+      .flatMap(_.getOrElse(RealGraphFeatures, None))
+      .getOrElse(Map.empty[Long, v1.RealGraphEdgeFeatures])
+
+    OffloadFuturePools.offloadBatchElementToElement(
+      candidates,
+      getFeatureMap(_, viewerId, realGraphFeatures),
+      batchSize)
   }
 
   private def getRealGraphViewerAuthorFeatures(

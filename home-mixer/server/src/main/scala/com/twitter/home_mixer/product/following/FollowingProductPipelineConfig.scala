@@ -1,17 +1,18 @@
 package com.twitter.home_mixer.product.following
 
 import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.marshaller.timelines.ChronologicalCursorUnmarshaller
 import com.twitter.home_mixer.model.request.FollowingProduct
 import com.twitter.home_mixer.model.request.FollowingProductContext
 import com.twitter.home_mixer.model.request.HomeMixerRequest
 import com.twitter.home_mixer.product.following.model.FollowingQuery
+import com.twitter.home_mixer.product.following.param.FollowingParam.EnableDependentAdsParam
 import com.twitter.home_mixer.product.following.param.FollowingParam.ServerMaxResultsParam
 import com.twitter.home_mixer.product.following.param.FollowingParamConfig
 import com.twitter.home_mixer.service.HomeMixerAccessPolicy.DefaultHomeMixerAccessPolicy
 import com.twitter.home_mixer.service.HomeMixerAlertConfig.DefaultNotificationGroup
 import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
 import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
+import com.twitter.product_mixer.component_library.premarshaller.cursor.timelines.ChronologicalCursorUnmarshaller
 import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
 import com.twitter.product_mixer.core.functional_component.common.alert.Alert
 import com.twitter.product_mixer.core.functional_component.common.alert.EmptyResponseRateAlert
@@ -44,6 +45,7 @@ import javax.inject.Singleton
 
 @Singleton
 class FollowingProductPipelineConfig @Inject() (
+  followingDependentAdsMixerPipelineConfig: FollowingDependentAdsMixerPipelineConfig,
   followingMixerPipelineConfig: FollowingMixerPipelineConfig,
   followingParamConfig: FollowingParamConfig)
     extends ProductPipelineConfig[HomeMixerRequest, FollowingQuery, urt.TimelineResponse] {
@@ -97,11 +99,12 @@ class FollowingProductPipelineConfig @Inject() (
     )
   }
 
-  override val pipelines: Seq[PipelineConfig] = Seq(followingMixerPipelineConfig)
+  override val pipelines: Seq[PipelineConfig] =
+    Seq(followingMixerPipelineConfig, followingDependentAdsMixerPipelineConfig)
 
-  override def pipelineSelector(
-    query: FollowingQuery
-  ): ComponentIdentifier = followingMixerPipelineConfig.identifier
+  override def pipelineSelector(query: FollowingQuery): ComponentIdentifier =
+    if (query.params(EnableDependentAdsParam)) followingDependentAdsMixerPipelineConfig.identifier
+    else followingMixerPipelineConfig.identifier
 
   override val alerts: Seq[Alert] = Seq(
     SuccessRateAlert(
@@ -112,8 +115,8 @@ class FollowingProductPipelineConfig @Inject() (
     LatencyAlert(
       notificationGroup = DefaultNotificationGroup,
       percentile = P99,
-      warnPredicate = TriggerIfLatencyAbove(1100.millis, 15, 30),
-      criticalPredicate = TriggerIfLatencyAbove(1200.millis, 15, 30)
+      warnPredicate = TriggerIfLatencyAbove(1200.millis, 15, 30),
+      criticalPredicate = TriggerIfLatencyAbove(1500.millis, 15, 30)
     ),
     ThroughputAlert(
       notificationGroup = DefaultNotificationGroup,

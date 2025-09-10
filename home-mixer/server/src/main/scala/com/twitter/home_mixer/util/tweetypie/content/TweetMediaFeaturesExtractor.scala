@@ -32,72 +32,106 @@ object TweetMediaFeaturesExtractor {
     }
   }
 
+  def getMediaIds(tweet: tp.Tweet): Seq[Long] = {
+    val tweetMediaIdsOpt = tweet.media.map { mediaEntities =>
+      mediaEntities.map { mediaEntity =>
+        mediaEntity.mediaId
+      }
+    }
+    tweetMediaIdsOpt.getOrElse(Seq.empty)
+  }
+
   def addMediaFeaturesFromTweet(
     inputFeatures: ContentFeatures,
     tweet: tp.Tweet,
+    isExtractMediaEntities: Boolean = true
   ): ContentFeatures = {
-    val featuresWithMediaEntity = tweet.media
-      .map { mediaEntities =>
-        val sizeFeatures = getSizeFeatures(mediaEntities)
-        val playbackFeatures = getPlaybackFeatures(mediaEntities)
-        val mediaWidths = sizeFeatures.map(_.width.toShort)
-        val mediaHeights = sizeFeatures.map(_.height.toShort)
-        val resizeMethods = sizeFeatures.map(_.resizeMethod.toShort)
-        val faceMapAreas = getFaceMapAreas(mediaEntities)
-        val sortedColorPalette = getSortedColorPalette(mediaEntities)
-        val stickerFeatures = getStickerFeatures(mediaEntities)
-        val mediaOriginProviders = getMediaOriginProviders(mediaEntities)
-        val isManaged = getIsManaged(mediaEntities)
-        val is360 = getIs360(mediaEntities)
-        val viewCount = getViewCount(mediaEntities)
-        val userDefinedProductMetadataFeatures =
-          getUserDefinedProductMetadataFeatures(mediaEntities)
-        val isMonetizable =
-          getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.isMonetizable))
-        val isEmbeddable =
-          getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.isEmbeddable))
-        val hasSelectedPreviewImage =
-          getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.hasSelectedPreviewImage))
-        val hasTitle = getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.hasTitle))
-        val hasDescription =
-          getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.hasDescription))
-        val hasVisitSiteCallToAction = getOptBooleanFromSeqOpt(
-          userDefinedProductMetadataFeatures.map(_.hasVisitSiteCallToAction))
-        val hasAppInstallCallToAction = getOptBooleanFromSeqOpt(
-          userDefinedProductMetadataFeatures.map(_.hasAppInstallCallToAction))
-        val hasWatchNowCallToAction =
-          getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.hasWatchNowCallToAction))
+    val featuresWithMediaEntity =
+      if (isExtractMediaEntities) {
+        tweet.media
+          .map { mediaEntities =>
+            val sizeFeatures = getSizeFeatures(mediaEntities)
+            val playbackFeatures = getPlaybackFeatures(mediaEntities)
+            val mediaWidths = sizeFeatures.map(_.width.toShort)
+            val mediaHeights = sizeFeatures.map(_.height.toShort)
+            val resizeMethods = sizeFeatures.map(_.resizeMethod.toShort)
+            val faceMapAreas = getFaceMapAreas(mediaEntities)
+            val sortedColorPalette = getSortedColorPalette(mediaEntities)
+            val stickerFeatures = getStickerFeatures(mediaEntities)
+            val mediaOriginProviders = getMediaOriginProviders(mediaEntities)
+            val isManaged = getIsManaged(mediaEntities)
+            val is360 = getIs360(mediaEntities)
+            val viewCount = getViewCount(mediaEntities)
+            val userDefinedProductMetadataFeatures =
+              getUserDefinedProductMetadataFeatures(mediaEntities)
+            val isMonetizable =
+              getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.isMonetizable))
+            val isEmbeddable =
+              getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.isEmbeddable))
+            val hasSelectedPreviewImage =
+              getOptBooleanFromSeqOpt(
+                userDefinedProductMetadataFeatures.map(_.hasSelectedPreviewImage))
 
-        inputFeatures.copy(
-          videoDurationMs = playbackFeatures.durationMs,
-          bitRate = playbackFeatures.bitRate,
-          aspectRatioNum = playbackFeatures.aspectRatioNum,
-          aspectRatioDen = playbackFeatures.aspectRatioDen,
-          widths = Some(mediaWidths),
-          heights = Some(mediaHeights),
-          resizeMethods = Some(resizeMethods),
-          faceAreas = Some(faceMapAreas),
-          dominantColorRed = sortedColorPalette.headOption.map(_.rgb.red),
-          dominantColorBlue = sortedColorPalette.headOption.map(_.rgb.blue),
-          dominantColorGreen = sortedColorPalette.headOption.map(_.rgb.green),
-          dominantColorPercentage = sortedColorPalette.headOption.map(_.percentage),
-          numColors = Some(sortedColorPalette.size.toShort),
-          stickerIds = Some(stickerFeatures),
-          mediaOriginProviders = Some(mediaOriginProviders),
-          isManaged = Some(isManaged),
-          is360 = Some(is360),
-          viewCount = viewCount,
-          isMonetizable = isMonetizable,
-          isEmbeddable = isEmbeddable,
-          hasSelectedPreviewImage = hasSelectedPreviewImage,
-          hasTitle = hasTitle,
-          hasDescription = hasDescription,
-          hasVisitSiteCallToAction = hasVisitSiteCallToAction,
-          hasAppInstallCallToAction = hasAppInstallCallToAction,
-          hasWatchNowCallToAction = hasWatchNowCallToAction
-        )
-      }
-      .getOrElse(inputFeatures)
+            val hasImage = Some(
+              mediaEntities.exists { entity =>
+                entity.mediaKey.exists { key =>
+                  ImageCategories.contains(key.mediaCategory.value)
+                }
+              }
+            )
+            val hasVideo = Some(
+              mediaEntities.exists { entity =>
+                entity.mediaKey.exists { key =>
+                  VideoCategories.contains(key.mediaCategory.value)
+                }
+              }
+            )
+
+            val hasTitle =
+              getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.hasTitle))
+            val hasDescription =
+              getOptBooleanFromSeqOpt(userDefinedProductMetadataFeatures.map(_.hasDescription))
+            val hasVisitSiteCallToAction = getOptBooleanFromSeqOpt(
+              userDefinedProductMetadataFeatures.map(_.hasVisitSiteCallToAction))
+            val hasAppInstallCallToAction = getOptBooleanFromSeqOpt(
+              userDefinedProductMetadataFeatures.map(_.hasAppInstallCallToAction))
+            val hasWatchNowCallToAction =
+              getOptBooleanFromSeqOpt(
+                userDefinedProductMetadataFeatures.map(_.hasWatchNowCallToAction))
+
+            inputFeatures.copy(
+              videoDurationMs = playbackFeatures.durationMs,
+              bitRate = playbackFeatures.bitRate,
+              aspectRatioNum = playbackFeatures.aspectRatioNum,
+              aspectRatioDen = playbackFeatures.aspectRatioDen,
+              widths = Some(mediaWidths),
+              heights = Some(mediaHeights),
+              resizeMethods = Some(resizeMethods),
+              faceAreas = Some(faceMapAreas),
+              dominantColorRed = sortedColorPalette.headOption.map(_.rgb.red),
+              dominantColorBlue = sortedColorPalette.headOption.map(_.rgb.blue),
+              dominantColorGreen = sortedColorPalette.headOption.map(_.rgb.green),
+              dominantColorPercentage = sortedColorPalette.headOption.map(_.percentage),
+              numColors = Some(sortedColorPalette.size.toShort),
+              stickerIds = Some(stickerFeatures),
+              mediaOriginProviders = Some(mediaOriginProviders),
+              isManaged = Some(isManaged),
+              is360 = Some(is360),
+              viewCount = viewCount,
+              isMonetizable = isMonetizable,
+              isEmbeddable = isEmbeddable,
+              hasSelectedPreviewImage = hasSelectedPreviewImage,
+              hasTitle = hasTitle,
+              hasDescription = hasDescription,
+              hasVisitSiteCallToAction = hasVisitSiteCallToAction,
+              hasAppInstallCallToAction = hasAppInstallCallToAction,
+              hasWatchNowCallToAction = hasWatchNowCallToAction,
+              hasImage = hasImage,
+              hasVideo = hasVideo
+            )
+          }
+          .getOrElse(inputFeatures)
+      } else inputFeatures
 
     val featuresWithMediaTags = tweet.mediaTags
       .map { mediaTags =>
@@ -151,7 +185,7 @@ object TweetMediaFeaturesExtractor {
         case playbackFeatures: PlaybackFeatures => playbackFeatures
       }
 
-    if (allPlaybackFeatures.nonEmpty) allPlaybackFeatures.maxBy(_.durationMs)
+    if (allPlaybackFeatures.nonEmpty) allPlaybackFeatures.minBy(_.durationMs)
     else PlaybackFeatures(None, None, None, None)
   }
 

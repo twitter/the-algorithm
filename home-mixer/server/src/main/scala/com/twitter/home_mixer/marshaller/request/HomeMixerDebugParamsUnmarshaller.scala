@@ -19,7 +19,8 @@ class HomeMixerDebugParamsUnmarshaller @Inject() (
       },
       debugOptions = debugParams.debugOptions.map { options =>
         HomeMixerDebugOptions(
-          requestTimeOverride = options.requestTimeOverrideMillis.map(Time.fromMilliseconds)
+          requestTimeOverride = options.requestTimeOverrideMillis.map(Time.fromMilliseconds),
+          showIntermediateLogs = options.showIntermediateLogs.orElse(Some(false))
         )
       }
     )

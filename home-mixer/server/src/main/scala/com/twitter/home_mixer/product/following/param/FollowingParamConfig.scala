@@ -12,17 +12,27 @@ class FollowingParamConfig @Inject() () extends ProductParamConfig {
   override val enabledDeciderKey: DeciderKeyName = DeciderKey.EnableFollowingProduct
   override val supportedClientFSName: String = SupportedClientFSName
 
-  override val booleanFSOverrides =
-    Seq(
-      EnableFlipInjectionModuleCandidatePipelineParam,
-      EnableWhoToFollowCandidatePipelineParam,
-      EnableAdsCandidatePipelineParam,
-      EnableFastAds,
-    )
+  override val booleanFSOverrides = Seq(
+    ClearCache.PtrEnableParam,
+    ClearCache.ColdStartEnableParam,
+    ClearCache.WarmStartEnableParam,
+    ClearCache.ManualRefreshEnableParam,
+    ClearCache.NavigateEnableParam,
+    EnableFlipInjectionModuleCandidatePipelineParam,
+    EnableWhoToFollowCandidatePipelineParam,
+    EnablePostContextFeatureHydratorParam,
+    EnableFastAds,
+    EnableDependentAdsParam,
+    EnableNavigationInstructionParam,
+    Navigation.PtrEnableParam,
+    Navigation.ColdStartEnableParam,
+    Navigation.WarmStartEnableParam,
+    Navigation.ManualRefreshEnableParam,
+    Navigation.NavigateEnableParam,
+  )
 
   override val boundedIntFSOverrides = Seq(
-    FlipInlineInjectionModulePosition,
-    WhoToFollowPositionParam,
+    ClearCache.MinEntriesParam,
     ServerMaxResultsParam
   )
 
@@ -30,5 +40,8 @@ class FollowingParamConfig @Inject() () extends ProductParamConfig {
 
   override val boundedDurationFSOverrides = Seq(WhoToFollowMinInjectionIntervalParam)
 
-  override val enumFSOverrides = Seq(WhoToFollowDisplayTypeIdParam)
+  override val enumFSOverrides = Seq(
+    WhoToFollowDisplayTypeIdParam,
+    WhoToFollowUserDisplayTypeIdParam
+  )
 }

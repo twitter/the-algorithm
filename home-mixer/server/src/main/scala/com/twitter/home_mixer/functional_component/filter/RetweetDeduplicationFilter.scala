@@ -38,8 +38,8 @@ object RetweetDeduplicationFilter extends Filter[PipelineQuery, TweetCandidate] 
       }
 
     val (kept, removed) =
-      candidates
-        .map(_.candidate).partition(candidate => dedupedTweetIdsSet.contains(candidate.id))
+      candidates.map(_.candidate).partition(candidate => dedupedTweetIdsSet.contains(candidate.id))
+
     Stitch.value(FilterResult(kept = kept, removed = removed))
   }
 }

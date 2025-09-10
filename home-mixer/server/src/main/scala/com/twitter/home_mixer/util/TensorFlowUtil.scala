@@ -29,4 +29,10 @@ object TensorFlowUtil {
     val bb_content = skipEmbeddingBBHeader(bb)
     FloatTensor(byteBufferToFloatIterator(bb_content).map(_.toDouble).toList)
   }
+
+  def embeddingNoHeaderByteBufferToFloatTensor(
+    bb: ByteBuffer
+  ): FloatTensor = {
+    FloatTensor(byteBufferToFloatIterator(bb).map(_.toDouble).toList)
+  }
 }

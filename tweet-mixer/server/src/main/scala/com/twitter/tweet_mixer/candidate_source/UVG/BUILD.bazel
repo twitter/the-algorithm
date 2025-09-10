@@ -1,0 +1,19 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source/strato",
+        "servo/repo",
+        "src/thrift/com/twitter/recos/user_video_graph:user_video_graph-scala",
+        "strato/config/columns/recommendations/twistly:twistly-strato-client",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/candidate_source/cached_candidate_source",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/candidate_source/engaged_users",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/config",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/feature",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/model",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/model/response",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/utils",
+    ],
+)

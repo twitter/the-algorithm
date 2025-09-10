@@ -74,7 +74,7 @@ Timeline tabs powered by Home Mixer.
             - ScoredTweetsRecommendationPipelineConfig (main Tweet recommendation layer)
                 - Fetch Tweet Candidates
                     - ScoredTweetsInNetworkCandidatePipelineConfig
-                    - ScoredTweetsCrMixerCandidatePipelineConfig
+                    - ScoredTweetsTweetMixerCandidatePipelineConfig
                     - ScoredTweetsUtegCandidatePipelineConfig
                     - ScoredTweetsFrsCandidatePipelineConfig
                 - Feature Hydration and Scoring
@@ -99,4 +99,3 @@ Timeline tabs powered by Home Mixer.
         - ListTweetsTimelineServiceCandidatePipelineConfig (fetch tweets from timeline service)
         - ConversationServiceCandidatePipelineConfig (fetch ancestors for conversation modules)
         - ListTweetsAdsCandidatePipelineConfig (fetch ads)
-

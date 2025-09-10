@@ -15,7 +15,7 @@ import com.twitter.wtf.candidate.{thriftscala => wtf}
 object ManhattanRealGraphKVDescriptor {
   implicit val byteArray2Buf = Bijections.BytesBijection
 
-  val realGraphDatasetName = "real_graph_scores_in"
+  val realGraphDatasetName = "real_graph_scores_in_v1"
   val keyInjection = Injection.connect[Long, Array[Byte]].andThen(Bijections.BytesInjection)
   val keyDesc = ReadOnlyKeyDescriptor(keyInjection)
   val valueDesc = ValueDescriptor(BinaryScalaInjection(wtf.CandidateSeq))

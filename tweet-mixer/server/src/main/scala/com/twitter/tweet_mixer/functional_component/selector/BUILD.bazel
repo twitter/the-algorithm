@@ -1,0 +1,19 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/feature_hydrator/query/control_ai",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/selector",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product",
+        "snowflake/src/main/scala/com/twitter/snowflake/id",
+        "src/thrift/com/twitter/timelines/control_ai:timeline-control-ai-thrift-scala",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/candidate_pipeline",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/feature",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/functional_component/hydrator",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/functional_component/transformer",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/param",
+        "user-signal-service/thrift/src/main/thrift:thrift-scala",
+    ],
+)

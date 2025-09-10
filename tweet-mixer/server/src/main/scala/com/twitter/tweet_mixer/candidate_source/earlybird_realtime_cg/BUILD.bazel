@@ -1,0 +1,15 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "haplolite-thrift/thrift/src/main/thrift:thrift-scala",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/util",
+        "src/thrift/com/twitter/search:earlybird-scala",
+        "timelines/src/main/scala/com/twitter/timelines/clients/haplolite",
+        "timelineservice/common:model",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/model",
+    ],
+)

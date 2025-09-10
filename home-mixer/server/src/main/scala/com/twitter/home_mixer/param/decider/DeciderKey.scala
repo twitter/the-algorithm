@@ -9,32 +9,53 @@ import com.twitter.servo.decider.DeciderKeyEnum
  * @see [[com.twitter.product_mixer.core.product.ProductParamConfig.enabledDeciderKey]]
  */
 object DeciderKey extends DeciderKeyEnum {
-  // Products
+
   val EnableForYouProduct = Value("enable_for_you_product")
 
   val EnableFollowingProduct = Value("enable_following_product")
 
   val EnableScoredTweetsProduct = Value("enable_scored_tweets_product")
 
-  val EnableListTweetsProduct = Value("enable_list_tweets_product")
+  val EnableScoredVideoTweetsProduct = Value("enable_scored_video_tweets_product")
 
-  val EnableListRecommendedUsersProduct = Value("enable_list_recommended_users_product")
+  val EnableSubscribedProduct = Value("enable_subscribed_product")
 
-  // Candidate Pipelines
-  val EnableForYouScoredTweetsCandidatePipeline = Value(
-    "enable_for_you_scored_tweets_candidate_pipeline")
+  val EnableHeavyRankerScoresProduct = Value("enable_heavy_ranker_scores_product")
 
-  val EnableScoredTweetsCrMixerCandidatePipeline = Value(
-    "enable_scored_tweets_cr_mixer_candidate_pipeline")
+  val EnableSimClustersSimilarityFeatureHydration =
+    Value("enable_simclusters_similarity_feature_hydration")
 
-  val EnableScoredTweetsFrsCandidatePipeline = Value("enable_scored_tweets_frs_candidate_pipeline")
+  val EnableServedCandidateFeatureKeysKafkaPublishing =
+    Value("enable_served_candidate_feature_keys_kafka_publishing")
 
-  val EnableScoredTweetsInNetworkCandidatePipeline = Value(
-    "enable_scored_tweets_in_network_candidate_pipeline")
+  val EnablePublishCommonFeaturesKafka =
+    Value("enable_publish_common_features_kafka")
 
-  val EnableScoredTweetsUtegCandidatePipeline = Value(
-    "enable_scored_tweets_uteg_candidate_pipeline")
+  val LiveSpacesFactor = Value("live_spaces_factor")
 
-  val EnableSimClustersSimilarityFeatureHydration = Value(
-    "enable_simclusters_similarity_feature_hydration")
+  val MtlNormalizationAlpha = Value("mtl_normalization_alpha")
+
+  val EnableTweetypieContentFeatures = Value("enable_tweetypie_content_features")
+
+  val EnableCommonFeaturesDataRecordCopyDuringPldrConversion =
+    Value("enable_common_features_data_record_copy_during_pldr_conversion")
+
+  val EnableGetTweetsFromArchiveIndex = Value("enable_get_tweets_from_archive_index")
+
+  val EnableSecondaryNaviRecapCluster = Value("enable_secondary_navi_recap_cluster")
+
+  val EnableGPUNaviRecapClusterTestUsers = Value("enable_gpu_navi_recap_cluster_test_users")
+
+  val NaviGPUClusterRequestBatchSize = Value("navi_gpu_cluster_request_batch_size")
+
+  val EnableVideoSummaryEmbeddingHydration = Value(
+    "enable_video_summary_embedding_feature_hydration")
+
+  val EnableVideoClipEmbeddingHydration = Value("enable_video_clip_embedding_feature_hydration")
+
+  val EnableScoredVideoTweetsUserHistoryEventsQueryFeatureHydrationDeciderParam = Value(
+    "enable_scored_video_tweets_user_history_events_query_feature_hydration")
+
+  val EnableVideoClipEmbeddingMediaUnderstandingHydration = Value(
+    "enable_video_clip_embedding_media_understanding_feature_hydration")
 }

@@ -1,14 +1,16 @@
 package com.twitter.home_mixer.product.following
 
 import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.home_mixer.functional_component.decorator.HomeAdsClientEventDetailsBuilder
+import com.twitter.home_mixer.functional_component.decorator.builder.HomeAdsClientEventDetailsBuilder
+import com.twitter.home_mixer.functional_component.feature_hydrator.NoAdsTierFeature
 import com.twitter.home_mixer.functional_component.gate.ExcludeSoftUserGate
+import com.twitter.home_mixer.functional_component.gate.ExcludeSyntheticUserGate
 import com.twitter.home_mixer.param.HomeGlobalParams
 import com.twitter.home_mixer.param.HomeGlobalParams.EnableAdvertiserBrandSafetySettingsFeatureHydratorParam
 import com.twitter.home_mixer.product.following.model.FollowingQuery
-import com.twitter.home_mixer.product.following.param.FollowingParam.EnableAdsCandidatePipelineParam
 import com.twitter.home_mixer.product.following.param.FollowingParam.EnableFastAds
 import com.twitter.home_mixer.service.HomeMixerAlertConfig
+import com.twitter.home_mixer.{thriftscala => hmt}
 import com.twitter.product_mixer.component_library.candidate_source.ads.AdsProdThriftCandidateSource
 import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
 import com.twitter.product_mixer.component_library.decorator.urt.builder.contextual_ref.ContextualTweetRefBuilder
@@ -16,26 +18,21 @@ import com.twitter.product_mixer.component_library.decorator.urt.builder.item.ad
 import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.ClientEventInfoBuilder
 import com.twitter.product_mixer.component_library.feature_hydrator.candidate.ads.AdvertiserBrandSafetySettingsFeatureHydrator
 import com.twitter.product_mixer.component_library.feature_hydrator.candidate.param_gated.ParamGatedCandidateFeatureHydrator
-import com.twitter.product_mixer.component_library.gate.NonEmptyCandidatesGate
+import com.twitter.product_mixer.component_library.gate.FeatureGate
 import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.AdsDependentCandidatePipelineConfig
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.AdsDependentCandidatePipelineConfigBuilder
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.CountCandidatesFromPipelines
-import com.twitter.product_mixer.component_library.pipeline.candidate.ads.PipelineScopedOrganicItemIds
+import com.twitter.product_mixer.component_library.pipeline.candidate.ads.AdsCandidatePipelineConfig
+import com.twitter.product_mixer.component_library.pipeline.candidate.ads.AdsCandidatePipelineConfigBuilder
 import com.twitter.product_mixer.component_library.pipeline.candidate.ads.ValidAdImpressionIdFilter
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
 import com.twitter.product_mixer.core.gate.ParamNotGate
 import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
 import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.TimelineHomePromotedHydrationSafetyLevel
 import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.TweetHydrationContext
-import com.twitter.timelines.injection.scribe.InjectionScribeUtil
-import com.twitter.timelineservice.suggests.{thriftscala => st}
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class FollowingAdsCandidatePipelineBuilder @Inject() (
-  adsCandidatePipelineConfigBuilder: AdsDependentCandidatePipelineConfigBuilder,
+  adsCandidatePipelineConfigBuilder: AdsCandidatePipelineConfigBuilder,
   adsCandidateSource: AdsProdThriftCandidateSource,
   advertiserBrandSafetySettingsFeatureHydrator: AdvertiserBrandSafetySettingsFeatureHydrator[
     FollowingQuery,
@@ -44,11 +41,13 @@ class FollowingAdsCandidatePipelineBuilder @Inject() (
 
   private val identifier: CandidatePipelineIdentifier = CandidatePipelineIdentifier("FollowingAds")
 
-  private val suggestType = st.SuggestType.Promoted
+  private val EstimatedNumOrganicItems = 100.toShort
+
+  private val servedType = hmt.ServedType.FollowingPromoted
 
   private val clientEventInfoBuilder = ClientEventInfoBuilder(
-    component = InjectionScribeUtil.scribeComponent(suggestType).get,
-    detailsBuilder = Some(HomeAdsClientEventDetailsBuilder(Some(suggestType.name)))
+    component = servedType.originalName,
+    detailsBuilder = Some(HomeAdsClientEventDetailsBuilder(Some(servedType.originalName)))
   )
 
   private val contextualTweetRefBuilder = ContextualTweetRefBuilder(
@@ -68,25 +67,22 @@ class FollowingAdsCandidatePipelineBuilder @Inject() (
     HomeMixerAlertConfig.BusinessHours.defaultEmptyResponseRateAlert()
   )
 
-  def build(
-    organicCandidatePipelines: CandidateScope
-  ): AdsDependentCandidatePipelineConfig[FollowingQuery] =
+  def build(): AdsCandidatePipelineConfig[FollowingQuery] =
     adsCandidatePipelineConfigBuilder.build[FollowingQuery](
       adsCandidateSource = adsCandidateSource,
       identifier = identifier,
       adsDisplayLocationBuilder = query =>
         if (query.params.getBoolean(EnableFastAds)) ads.DisplayLocation.TimelineHomeReverseChron
         else ads.DisplayLocation.TimelineHome,
-      getOrganicItemIds = PipelineScopedOrganicItemIds(organicCandidatePipelines),
-      countNumOrganicItems = CountCandidatesFromPipelines(organicCandidatePipelines),
-      supportedClientParam = Some(EnableAdsCandidatePipelineParam),
+      estimateNumOrganicItems = _ => EstimatedNumOrganicItems,
       gates = Seq(
         ParamNotGate(
           name = "AdsDisableInjectionBasedOnUserRole",
           param = HomeGlobalParams.AdsDisableInjectionBasedOnUserRoleParam
         ),
         ExcludeSoftUserGate,
-        NonEmptyCandidatesGate(organicCandidatePipelines)
+        ExcludeSyntheticUserGate,
+        FeatureGate.fromNegatedFeature(NoAdsTierFeature)
       ),
       filters = Seq(ValidAdImpressionIdFilter),
       postFilterFeatureHydration = Seq(
@@ -97,6 +93,6 @@ class FollowingAdsCandidatePipelineBuilder @Inject() (
       ),
       decorator = Some(decorator),
       alerts = alerts,
-      urtRequest = Some(true),
+      urtRequest = Some(true)
     )
 }

@@ -1,6 +1,6 @@
 package com.twitter.home_mixer.product.list_recommended_users.filter
 
-import com.twitter.home_mixer.functional_component.feature_hydrator.ListMembersFeature
+import com.twitter.home_mixer.product.list_recommended_users.feature_hydrator.RecentListMembersFeature
 import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersQuery
 import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
 import com.twitter.product_mixer.core.functional_component.filter.Filter
@@ -18,7 +18,7 @@ object PreviouslyServedUsersFilter extends Filter[ListRecommendedUsersQuery, Use
     candidates: Seq[CandidateWithFeatures[UserCandidate]]
   ): Stitch[FilterResult[UserCandidate]] = {
 
-    val recentListMembers = query.features.map(_.getOrElse(ListMembersFeature, Seq.empty))
+    val recentListMembers = query.features.map(_.getOrElse(RecentListMembersFeature, Seq.empty))
 
     val servedUserIds = query.pipelineCursor.map(_.excludedIds)
 

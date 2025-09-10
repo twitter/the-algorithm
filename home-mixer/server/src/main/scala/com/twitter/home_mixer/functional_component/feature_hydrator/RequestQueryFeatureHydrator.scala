@@ -17,9 +17,13 @@ import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.G
 import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
 import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
 import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
+import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
 import com.twitter.search.common.util.lang.ThriftLanguageUtil
 import com.twitter.snowflake.id.SnowflakeId
 import com.twitter.stitch.Stitch
+import com.twitter.timelines.prediction.adapters.request_context.RequestContextAdapter.dowFromTimestamp
+import com.twitter.timelines.prediction.adapters.request_context.RequestContextAdapter.hourFromTimestamp
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -32,6 +36,7 @@ class RequestQueryFeatureHydrator[
   override val features: Set[Feature[_, _]] = Set(
     AccountAgeFeature,
     ClientIdFeature,
+    DeviceCountryFeature,
     DeviceLanguageFeature,
     GetInitialFeature,
     GetMiddleFeature,
@@ -44,7 +49,10 @@ class RequestQueryFeatureHydrator[
     PollingFeature,
     PullToRefreshFeature,
     RequestJoinIdFeature,
-    ServedRequestIdFeature,
+    ServedIdFeature,
+    TimestampFeature,
+    TimestampGMTDowFeature,
+    TimestampGMTHourFeature,
     ViewerIdFeature
   )
 
@@ -56,8 +64,8 @@ class RequestQueryFeatureHydrator[
   private def getLanguageISOFormatByCode(languageCode: String): String =
     ThriftLanguageUtil.getLanguageCodeOf(ThriftLanguageUtil.getThriftLanguageOf(languageCode))
 
-  private def getRequestJoinId(servedRequestId: Long): Option[Long] =
-    Some(RequestJoinKeyContext.current.flatMap(_.requestJoinId).getOrElse(servedRequestId))
+  private def getRequestJoinId: Option[Long] =
+    RequestJoinKeyContext.current.flatMap(_.requestJoinId)
 
   private def hasDarkRequest: Option[Boolean] = ForwardAnnotation.current
     .getOrElse(Seq[BinaryAnnotation]())
@@ -66,11 +74,13 @@ class RequestQueryFeatureHydrator[
 
   override def hydrate(query: Query): Stitch[FeatureMap] = {
     val requestContext = query.deviceContext.flatMap(_.requestContextValue)
-    val servedRequestId = UUID.randomUUID.getMostSignificantBits
+    val servedId = UUID.randomUUID.getMostSignificantBits
+    val timestamp = query.queryTime.inMilliseconds
 
     val featureMap = FeatureMapBuilder()
       .add(AccountAgeFeature, query.getOptionalUserId.flatMap(SnowflakeId.timeFromIdOpt))
       .add(ClientIdFeature, query.clientContext.appId)
+      .add(DeviceCountryFeature, query.getCountryCode)
       .add(DeviceLanguageFeature, query.getLanguageCode.map(getLanguageISOFormatByCode))
       .add(
         GetInitialFeature,
@@ -95,10 +105,17 @@ class RequestQueryFeatureHydrator[
       .add(IsLaunchRequestFeature, requestContext.contains(RequestContext.Launch))
       .add(PollingFeature, query.deviceContext.exists(_.isPolling.contains(true)))
       .add(PullToRefreshFeature, requestContext.contains(RequestContext.PullToRefresh))
-      .add(ServedRequestIdFeature, Some(servedRequestId))
-      .add(RequestJoinIdFeature, getRequestJoinId(servedRequestId))
+      .add(ServedIdFeature, Some(servedId))
+      .add(RequestJoinIdFeature, getRequestJoinId)
+      .add(TimestampFeature, timestamp)
+      .add(TimestampGMTDowFeature, dowFromTimestamp(timestamp))
+      .add(TimestampGMTHourFeature, hourFromTimestamp(timestamp))
       .add(HasDarkRequestFeature, hasDarkRequest)
-      .add(ViewerIdFeature, query.getRequiredUserId)
+      .add(
+        ViewerIdFeature,
+        query.getOptionalUserId
+          .orElse(query.getGuestId).getOrElse(
+            throw PipelineFailure(BadRequest, "Missing viewer id")))
       .build()
 
     Stitch.value(featureMap)

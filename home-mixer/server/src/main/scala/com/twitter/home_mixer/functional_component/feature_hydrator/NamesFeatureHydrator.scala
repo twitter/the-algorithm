@@ -8,7 +8,6 @@ import com.twitter.home_mixer.model.HomeFeatures.RealNamesFeature
 import com.twitter.home_mixer.model.HomeFeatures.ScreenNamesFeature
 import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
 import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableNahFeedbackInfoParam
 import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
 import com.twitter.product_mixer.core.feature.Feature
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -36,7 +35,7 @@ class NamesFeatureHydrator @Inject() (gizmoduck: Gizmoduck)
   override val features: Set[Feature[_, _]] = Set(ScreenNamesFeature, RealNamesFeature)
 
   override def onlyIf(query: PipelineQuery): Boolean = query.product match {
-    case FollowingProduct => query.params(EnableNahFeedbackInfoParam)
+    case FollowingProduct => false
     case _ => true
   }
 

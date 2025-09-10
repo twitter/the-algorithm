@@ -10,7 +10,7 @@ import java.lang.{Long => JLong}
 
 case class NonMLCandidateFeatures(
   tweetId: Long,
-  sourceTweetId: Option[Long],
+  sourceTweetId: Long,
   originalAuthorId: Option[Long],
 )
 
@@ -36,8 +36,9 @@ object NonMLCandidateFeaturesAdapter extends TimelinesMutatingAdapterBase[NonMLC
     richDataRecord: RichDataRecord
   ): Unit = {
     richDataRecord.setFeatureValue[JLong](SharedFeatures.TWEET_ID, nonMLCandidateFeatures.tweetId)
-    nonMLCandidateFeatures.sourceTweetId.foreach(
-      richDataRecord.setFeatureValue[JLong](TimelinesSharedFeatures.SOURCE_TWEET_ID, _))
+    richDataRecord.setFeatureValue[JLong](
+      TimelinesSharedFeatures.SOURCE_TWEET_ID,
+      nonMLCandidateFeatures.sourceTweetId)
     nonMLCandidateFeatures.originalAuthorId.foreach(
       richDataRecord.setFeatureValue[JLong](TimelinesSharedFeatures.ORIGINAL_AUTHOR_ID, _))
   }

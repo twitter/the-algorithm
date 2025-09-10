@@ -6,7 +6,8 @@ import com.twitter.tweetypie.{thriftscala => tp}
 object FeatureExtractionHelper {
 
   def extractFeatures(
-    tweet: tp.Tweet
+    tweet: tp.Tweet,
+    isExtractMediaEntities: Boolean = true
   ): ContentFeatures = {
     val contentFeaturesFromTweet = ContentFeatures.Empty.copy(
       selfThreadMetadata = tweet.selfThreadMetadata
@@ -18,7 +19,8 @@ object FeatureExtractionHelper {
     )
     val contentFeaturesWithMedia = TweetMediaFeaturesExtractor.addMediaFeaturesFromTweet(
       contentFeaturesWithText,
-      tweet
+      tweet,
+      isExtractMediaEntities
     )
 
     contentFeaturesWithMedia.copy(

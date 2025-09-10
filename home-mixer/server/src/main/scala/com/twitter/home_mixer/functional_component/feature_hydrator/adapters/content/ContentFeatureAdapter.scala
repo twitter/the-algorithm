@@ -8,11 +8,15 @@ import com.twitter.ml.api.util.DataRecordConverters._
 import com.twitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
 import com.twitter.timelines.prediction.common.adapters.TweetLengthType
 import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
+import com.twitter.timelines.prediction.features.conversation_features.ConversationFeatures
+import com.twitter.timelines.prediction.features.recap.RecapFeatures
 import scala.collection.JavaConverters._
 
 object ContentFeatureAdapter extends TimelinesMutatingAdapterBase[Option[ContentFeatures]] {
 
   override val getFeatureContext: FeatureContext = new FeatureContext(
+    ConversationFeatures.IS_SELF_THREAD_TWEET,
+    ConversationFeatures.IS_LEAF_IN_SELF_THREAD,
     TimelinesSharedFeatures.ASPECT_RATIO_DEN,
     TimelinesSharedFeatures.ASPECT_RATIO_NUM,
     TimelinesSharedFeatures.BIT_RATE,
@@ -57,6 +61,8 @@ object ContentFeatureAdapter extends TimelinesMutatingAdapterBase[Option[Content
     TimelinesSharedFeatures.WIDTH_2,
     TimelinesSharedFeatures.WIDTH_3,
     TimelinesSharedFeatures.WIDTH_4,
+    RecapFeatures.HAS_VIDEO,
+    RecapFeatures.HAS_IMAGE,
   )
 
   override val commonFeatures: Set[Feature[_]] = Set.empty
@@ -79,6 +85,16 @@ object ContentFeatureAdapter extends TimelinesMutatingAdapterBase[Option[Content
   ): Unit = {
     if (contentFeatures.nonEmpty) {
       val features = contentFeatures.get
+      // Conversation Features
+      richDataRecord.setFeatureValueFromOption(
+        ConversationFeatures.IS_SELF_THREAD_TWEET,
+        Some(features.selfThreadMetadata.nonEmpty)
+      )
+      richDataRecord.setFeatureValueFromOption(
+        ConversationFeatures.IS_LEAF_IN_SELF_THREAD,
+        features.selfThreadMetadata.map(_.isLeaf)
+      )
+
       // Media Features
       richDataRecord.setFeatureValueFromOption(
         TimelinesSharedFeatures.ASPECT_RATIO_DEN,
@@ -254,6 +270,14 @@ object ContentFeatureAdapter extends TimelinesMutatingAdapterBase[Option[Content
       richDataRecord.setFeatureValueFromOption(
         TimelinesSharedFeatures.NUM_NEWLINES,
         features.numNewlines.map(_.toDouble)
+      )
+      richDataRecord.setFeatureValueFromOption(
+        RecapFeatures.HAS_IMAGE,
+        features.hasImage
+      )
+      richDataRecord.setFeatureValueFromOption(
+        RecapFeatures.HAS_VIDEO,
+        features.hasVideo
       )
     }
   }

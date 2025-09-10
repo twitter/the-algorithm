@@ -1,6 +1,5 @@
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
 import com.twitter.home_mixer.util.CandidatesUtil
 import com.twitter.ml.api.DataRecord
 import com.twitter.ml.api.RichDataRecord
@@ -11,10 +10,11 @@ import com.twitter.product_mixer.core.feature.Feature
 import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
 import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
+import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
+import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
 import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
 import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twitter.product_mixer.core.util.OffloadFuturePools
 import com.twitter.stitch.Stitch
 import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
 import java.lang.{Long => JLong}
@@ -26,26 +26,25 @@ object TweetMetaDataDataRecord
 }
 
 object TweetMetaDataFeatureHydrator
-    extends CandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
 
   override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("TweetMetaData")
 
   override def features: Set[Feature[_, _]] = Set(TweetMetaDataDataRecord)
 
+  private val batchSize = 64
+
+  def getFeatureMap(candidate: CandidateWithFeatures[TweetCandidate]): FeatureMap = {
+    val richDataRecord = new RichDataRecord()
+    setFeatures(richDataRecord, candidate.candidate, candidate.features)
+    FeatureMap(TweetMetaDataDataRecord, richDataRecord.getRecord)
+  }
+
   override def apply(
     query: PipelineQuery,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
-    val richDataRecord = new RichDataRecord()
-
-    setFeatures(richDataRecord, candidate, existingFeatures)
-
-    Stitch.value {
-      FeatureMapBuilder()
-        .add(TweetMetaDataDataRecord, richDataRecord.getRecord)
-        .build()
-    }
+    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
+  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadFuture {
+    OffloadFuturePools.offloadBatchElementToElement(candidates, getFeatureMap, batchSize)
   }
 
   private def setFeatures(
@@ -58,9 +57,5 @@ object TweetMetaDataFeatureHydrator
     richDataRecord.setFeatureValueFromOption(
       TimelinesSharedFeatures.ORIGINAL_AUTHOR_ID,
       CandidatesUtil.getOriginalAuthorId(existingFeatures))
-
-    richDataRecord.setFeatureValueFromOption(
-      TimelinesSharedFeatures.CANDIDATE_TWEET_SOURCE_ID,
-      existingFeatures.getOrElse(CandidateSourceIdFeature, None).map(_.value.toLong))
   }
 }

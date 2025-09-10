@@ -3,7 +3,7 @@ package com.twitter.home_mixer.product.scored_tweets.model
 import com.twitter.home_mixer.model.request.DeviceContext
 import com.twitter.home_mixer.model.request.HasDeviceContext
 import com.twitter.home_mixer.model.request.HasSeenTweetIds
-import com.twitter.home_mixer.model.request.ScoredTweetsProduct
+import com.twitter.home_mixer.{thriftscala => t}
 import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
 import com.twitter.product_mixer.core.model.marshalling.request._
@@ -22,13 +22,17 @@ case class ScoredTweetsQuery(
   override val features: Option[FeatureMap],
   override val deviceContext: Option[DeviceContext],
   override val seenTweetIds: Option[Seq[Long]],
-  override val qualityFactorStatus: Option[QualityFactorStatus])
+  override val qualityFactorStatus: Option[QualityFactorStatus],
+  override val product: Product,
+  videoType: Option[t.VideoType] = None,
+  pinnedRelatedTweetIds: Option[Seq[Long]] = None,
+  scorePinnedTweetsOnly: Option[Boolean] = None,
+  immersiveClientMetadata: Option[t.ImmersiveClientMetadata] = None)
     extends PipelineQuery
     with HasPipelineCursor[UrtOrderedCursor]
     with HasDeviceContext
     with HasSeenTweetIds
     with HasQualityFactorStatus {
-  override val product: Product = ScoredTweetsProduct
 
   override def withFeatureMap(features: FeatureMap): ScoredTweetsQuery =
     copy(features = Some(features))

@@ -2,6 +2,8 @@ package com.twitter.home_mixer.functional_component.feature_hydrator.offline_agg
 
 import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelineAggregateMetadataRepository
 import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelineAggregatePartARepository
+import com.twitter.product_mixer.component_library.feature_hydrator.candidate.offline_aggregates.BaseAggregateQueryFeatureHydrator
+import com.twitter.product_mixer.component_library.feature_hydrator.candidate.offline_aggregates.BaseAggregateRootFeature
 import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
 import com.twitter.servo.repository.Repository
 import com.twitter.timelines.data_processing.jobs.timeline_ranking_user_features.TimelinesPartAStoreRegister

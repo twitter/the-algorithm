@@ -1,6 +1,8 @@
 package com.twitter.home_mixer.model.request
 
 import com.twitter.dspbidder.commons.thriftscala.DspClientContext
+import com.twitter.home_mixer.model.signup.SignupSource
+import com.twitter.home_mixer.{thriftscala => t}
 import com.twitter.product_mixer.core.model.marshalling.request.ProductContext
 
 case class FollowingProductContext(
@@ -18,17 +20,30 @@ case class ForYouProductContext(
 case class ScoredTweetsProductContext(
   deviceContext: Option[DeviceContext],
   seenTweetIds: Option[Seq[Long]],
-  servedTweetIds: Option[Seq[Long]])
+  servedTweetIds: Option[Seq[Long]],
+  backfillTweetIds: Option[Seq[Long]],
+  signupCountryCode: Option[String],
+  allowForYouRecommendations: Option[Boolean],
+  signupSource: Option[SignupSource],
+  followerCount: Option[Int],
+  servedAuthorIds: Option[Map[Long, Seq[Long]]] = None)
     extends ProductContext
 
-case class ListTweetsProductContext(
-  listId: Long,
+case class ScoredVideoTweetsProductContext(
   deviceContext: Option[DeviceContext],
-  dspClientContext: Option[DspClientContext])
+  seenTweetIds: Option[Seq[Long]],
+  videoType: Option[t.VideoType],
+  pinnedRelatedTweetIds: Option[Seq[Long]],
+  scorePinnedTweetsOnly: Option[Boolean],
+  immersiveClientMetadata: Option[t.ImmersiveClientMetadata])
     extends ProductContext
 
-case class ListRecommendedUsersProductContext(
-  listId: Long,
-  selectedUserIds: Option[Seq[Long]],
-  excludedUserIds: Option[Seq[Long]])
+case class SubscribedProductContext(
+  deviceContext: Option[DeviceContext],
+  seenTweetIds: Option[Seq[Long]])
+    extends ProductContext
+
+case class HeavyRankerScoresProductContext(
+  deviceContext: Option[DeviceContext],
+  tweetIds: Option[Seq[Long]])
     extends ProductContext

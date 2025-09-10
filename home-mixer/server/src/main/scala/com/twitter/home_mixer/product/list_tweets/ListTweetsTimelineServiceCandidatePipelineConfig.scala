@@ -4,6 +4,7 @@ import com.twitter.home_mixer.candidate_pipeline.TimelineServiceResponseFeatureT
 import com.twitter.home_mixer.marshaller.timelines.TimelineServiceCursorMarshaller
 import com.twitter.home_mixer.product.list_tweets.model.ListTweetsQuery
 import com.twitter.home_mixer.product.list_tweets.param.ListTweetsParam.ServerMaxResultsParam
+import com.twitter.home_mixer.service.HomeMixerAlertConfig
 import com.twitter.product_mixer.component_library.candidate_source.timeline_service.TimelineServiceTweetCandidateSource
 import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
 import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
@@ -51,4 +52,8 @@ class ListTweetsTimelineServiceCandidatePipelineConfig @Inject() (
 
   override val featuresFromCandidateSourceTransformers: Seq[CandidateFeatureTransformer[t.Tweet]] =
     Seq(TimelineServiceResponseFeatureTransformer)
+
+  override val alerts = Seq(
+    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.7)
+  )
 }

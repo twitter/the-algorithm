@@ -11,6 +11,8 @@ import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealTimeInteractionG
 import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelinesRealTimeAggregateClient
 import com.twitter.home_mixer.param.HomeMixerInjectionNames.TopicCountryEngagementCache
 import com.twitter.home_mixer.param.HomeMixerInjectionNames.TopicEngagementCache
+import com.twitter.home_mixer.param.HomeMixerInjectionNames.TvRealTimeAggregateClient
+import com.twitter.home_mixer.param.HomeMixerInjectionNames.TvVideoByUserTweetCache
 import com.twitter.home_mixer.param.HomeMixerInjectionNames.TweetCountryEngagementCache
 import com.twitter.home_mixer.param.HomeMixerInjectionNames.TweetEngagementCache
 import com.twitter.home_mixer.param.HomeMixerInjectionNames.TwitterListEngagementCache
@@ -32,19 +34,11 @@ import com.twitter.summingbird_internal.bijection.BatchPairImplicits
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKeyInjection
 import com.twitter.wtf.real_time_interaction_graph.{thriftscala => ig}
-
 import javax.inject.Singleton
 
 object RealtimeAggregateFeatureRepositoryModule
     extends TwitterModule
     with RealtimeAggregateHelpers {
-
-  private val authorIdFeature = new Feature.Discrete("entities.source_author_id")
-  private val countryCodeFeature = new Feature.Text("geo.user_location.country_code")
-  private val listIdFeature = new Feature.Discrete("list.id")
-  private val userIdFeature = new Feature.Discrete("meta.user_id")
-  private val topicIdFeature = new Feature.Discrete("entities.topic_id")
-  private val tweetIdFeature = new Feature.Discrete("entities.source_tweet_id")
 
   @Provides
   @Singleton
@@ -188,9 +182,29 @@ object RealtimeAggregateFeatureRepositoryModule
       underlyingKey
     )
   }
+
+  @Provides
+  @Singleton
+  @Named(TvVideoByUserTweetCache)
+  def providesTvVideoImpressionByUserTweetCache(
+    @Named(TvRealTimeAggregateClient) client: Memcache
+  ): ReadCache[(Long, Long), ml.DataRecord] = {
+    new KeyValueTransformingReadCache(
+      client,
+      dataRecordValueTransformer,
+      keyTransformD2(userIdFeature, tweetIdFeature)
+    )
+  }
 }
 
 trait RealtimeAggregateHelpers {
+
+  val authorIdFeature = new Feature.Discrete("entities.source_author_id").getFeatureId
+  val countryCodeFeature = new Feature.Text("geo.user_location.country_code").getFeatureId
+  val listIdFeature = new Feature.Discrete("list.id").getFeatureId
+  val userIdFeature = new Feature.Discrete("meta.user_id").getFeatureId
+  val topicIdFeature = new Feature.Discrete("entities.topic_id").getFeatureId
+  val tweetIdFeature = new Feature.Discrete("entities.source_tweet_id").getFeatureId
 
   private def customKeyBuilder[K](prefix: String, f: K => Array[Byte]): K => String = {
     // intentionally not implementing injection inverse because it is never used
@@ -208,46 +222,38 @@ trait RealtimeAggregateHelpers {
       .compose((k: AggregationKey) => (k, defaultBatchID))
   }
 
-  protected def keyTransformD1(f1: Feature.Discrete)(key: Long): String = {
-    val aggregationKey = AggregationKey(
-      Map(f1.getFeatureId -> key),
-      Map.empty
-    )
+  def keyTransformD1AggregationKey(f1: Long)(key: Long): AggregationKey = {
+    AggregationKey(Map(f1 -> key), Map.empty)
+  }
 
+  def keyTransformD1(f1: Long)(key: Long): String = {
+    val aggregationKey = AggregationKey(Map(f1 -> key), Map.empty)
     keyEncoder(aggregationKey)
   }
 
-  protected def keyTransformD2(
-    f1: Feature.Discrete,
-    f2: Feature.Discrete
-  )(
-    keys: (Long, Long)
-  ): String = {
+  def keyTransformD2(f1: Long, f2: Long)(keys: (Long, Long)): String = {
     val (k1, k2) = keys
-    val aggregationKey = AggregationKey(
-      Map(f1.getFeatureId -> k1, f2.getFeatureId -> k2),
-      Map.empty
-    )
-
+    val aggregationKey = AggregationKey(Map(f1 -> k1, f2 -> k2), Map.empty)
     keyEncoder(aggregationKey)
   }
 
-  protected def keyTransformD1T1(
-    f1: Feature.Discrete,
-    f2: Feature.Text
-  )(
-    keys: (Long, String)
-  ): String = {
+  def keyTransformD2AggregationKey(f1: Long, f2: Long)(keys: (Long, Long)): AggregationKey = {
     val (k1, k2) = keys
-    val aggregationKey = AggregationKey(
-      Map(f1.getFeatureId -> k1),
-      Map(f2.getFeatureId -> k2)
-    )
+    AggregationKey(Map(f1 -> k1, f2 -> k2), Map.empty)
+  }
 
+  def keyTransformD1T1(f1: Long, f2: Long)(keys: (Long, String)): String = {
+    val (k1, k2) = keys
+    val aggregationKey = AggregationKey(Map(f1 -> k1), Map(f2 -> k2))
     keyEncoder(aggregationKey)
   }
 
-  protected val dataRecordValueTransformer: Transformer[DataRecord, Array[Byte]] = ThriftCodec
+  def keyTransformD1T1AggregationKey(f1: Long, f2: Long)(keys: (Long, String)): AggregationKey = {
+    val (k1, k2) = keys
+    AggregationKey(Map(f1 -> k1), Map(f2 -> k2))
+  }
+
+  val dataRecordValueTransformer: Transformer[DataRecord, Array[Byte]] = ThriftCodec
     .toCompact[ml.DataRecord]
     .toByteArrayTransformer()
 }

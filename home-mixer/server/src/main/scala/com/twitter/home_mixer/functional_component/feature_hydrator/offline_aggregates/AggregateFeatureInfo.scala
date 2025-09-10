@@ -1,6 +1,7 @@
 package com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates
 
 import com.twitter.ml.api.FeatureContext
+import com.twitter.product_mixer.component_library.feature_hydrator.candidate.offline_aggregates.BaseAggregateRootFeature
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateType.AggregateType
 import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup

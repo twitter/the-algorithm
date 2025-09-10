@@ -4,7 +4,8 @@ import com.twitter.home_mixer.param.decider.DeciderKey
 import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam._
 import com.twitter.product_mixer.core.product.ProductParamConfig
 import com.twitter.servo.decider.DeciderKeyName
-
+import com.twitter.timelines.configapi.FSName
+import com.twitter.timelines.configapi.Param
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,47 +14,148 @@ class ScoredTweetsParamConfig @Inject() () extends ProductParamConfig {
   override val enabledDeciderKey: DeciderKeyName = DeciderKey.EnableScoredTweetsProduct
   override val supportedClientFSName: String = SupportedClientFSName
 
-  override val booleanDeciderOverrides = Seq(
-    CrMixerSource.EnableCandidatePipelineParam,
-    FrsTweetSource.EnableCandidatePipelineParam,
-    InNetworkSource.EnableCandidatePipelineParam,
-    UtegSource.EnableCandidatePipelineParam,
-    ScoredTweetsParam.EnableSimClustersSimilarityFeatureHydrationDeciderParam
+  override val booleanDeciderOverrides = Seq(EnablePublishCommonFeaturesKafkaDeciderParam)
+
+  override val boundedDoubleDeciderOverrides = Seq(
+    LiveContentScaleFactorParam,
+    MtlNormalization.AlphaParam
+  )
+
+  override val booleanFSOverrides = Seq(
+    CandidateSourceParams.EnableCommunitiesCandidateSourceParam,
+    CandidateSourceParams.EnableInNetworkCandidateSourceParam,
+    CandidateSourceParams.InNetworkIncludeRepliesParam,
+    CandidateSourceParams.InNetworkIncludeRetweetsParam,
+    CandidateSourceParams.InNetworkIncludeExtendedRepliesParam,
+    CandidateSourceParams.EnableUTEGCandidateSourceParam,
+    CandidateSourceParams.EnableStaticSourceParam,
+    EnableBackfillCandidatePipelineParam,
+    EnableContentExplorationCandidatePipelineParam,
+    EnableContentExplorationSimclusterColdPostsCandidateBoostingParam,
+    EnableContentExplorationCandidateMaxCountParam,
+    EnableContentExplorationScoreScribingParam,
+    EnableContentExplorationMixedCandidateBoostingParam,
+    EnableDeepRetrievalMixedCandidateBoostingParam,
+    EnableScribeScoredCandidatesParam,
+    EnableCacheRetrievalSignalParam,
+    EnableCacheRequestInfoParam,
+    EnableScoredPhoenixCandidatesKafkaSideEffectParam,
+    FeatureHydration.EnableFollowedUserScoreBackfillFeaturesParam,
+    FeatureHydration.EnableRealTimeEntityRealGraphFeaturesParam,
+    FeatureHydration.EnableTopicSocialProofFeaturesParam,
+    FeatureHydration.EnableTweetTextV8EmbeddingFeatureParam,
+    FeatureHydration.EnableMediaClusterFeatureHydrationParam,
+    FeatureHydration.EnableMediaCompletionRateFeatureHydrationParam,
+    FeatureHydration.EnableClipImagesClusterIdFeatureHydrationParam,
+    FeatureHydration.EnableMultiModalEmbeddingsFeatureHydratorParam,
+    FeatureHydration.EnableUserEngagedLanguagesFeaturesParam,
+    FeatureHydration.EnableUserIdentifierFeaturesParam,
+    FeatureHydration.EnableUserHistoryEventsFeaturesParam,
+    FeatureHydration.EnableUserActionsFeatureParam,
+    FeatureHydration.EnableDenseUserActionsHydrationParam,
+    FeatureHydration.EnableMediaClusterDecayParam,
+    FeatureHydration.EnableImageClusterDecayParam,
+    EnableControlAiParam,
+    EnableHeartbeatOptimizerWeightsParam,
+    EnableHeuristicScoringPipeline,
+    EnablePhoenixScoreParam,
+    EnablePhoenixRescoreParam,
+    EnableColdStartFilterParam,
+    EnableImpressionBasedAuthorDecay,
+    EnableCandidateSourceDiversityDecay,
+    EnableHomeMixerFeaturesService,
+    EnableContentFeatureFromTesService,
+    EnableLowSignalUserCheck,
+    EnableDeepRetrievalMaxCountParam,
+    EnableEvergreenDeepRetrievalMaxCountParam,
+    EnableEvergreenDeepRetrievalCrossBorderMaxCountParam,
+    EnableScoredCandidateFeatureKeysKafkaPublishingParam,
+    EnableEarlybirdCommunitiesQueryLinearRankingParam,
+    EnableRecentFeedbackCheckParam,
+    EnableMediaDedupingParam,
+    EnableMediaClusterDedupingParam,
+    EnableClipImageClusterDedupingParam,
+    MtlNormalization.EnableMtlNormalizationParam,
+    EnableRecentEngagementCacheRefreshParam,
+    EnableLanguageFilter,
+    EnableGrokAutoTranslateLanguageFilter
   )
 
   override val boundedIntFSOverrides = Seq(
     CachedScoredTweets.MinCachedTweetsParam,
-    QualityFactor.CrMixerMaxTweetsToScoreParam,
-    QualityFactor.MaxTweetsToScoreParam,
-    ServerMaxResultsParam
+    EarlybirdMaxResultsPerPartitionParam,
+    ServerMaxResultsParam,
+    DefaultRequestedMaxResultsParam,
+    ContentExplorationBoostPosParam,
+    ContentExplorationViewerMaxFollowersParam,
+    DeepRetrievalBoostPosParam,
+    FeatureHydration.UserHistoryEventsLengthParam,
+    FetchParams.FRSMaxTweetsToFetchParam,
+    FetchParams.InNetworkMaxTweetsToFetchParam,
+    FetchParams.TweetMixerMaxTweetsToFetchParam,
+    FetchParams.UTEGMaxTweetsToFetchParam,
+    QualityFactor.BackfillMaxTweetsToScoreParam,
+    QualityFactor.TweetMixerMaxTweetsToScoreParam,
+    QualityFactor.InNetworkMaxTweetsToScoreParam,
+    QualityFactor.ListsMaxTweetsToScoreParam,
+    QualityFactor.UtegMaxTweetsToScoreParam,
+    QualityFactor.CommunitiesMaxTweetsToScoreParam,
+    DeepRetrievalMaxCountParam,
+    EvergreenDeepRetrievalMaxCountParam,
+    EvergreenDeepRetrievalCrossBorderMaxCountParam,
+    ScribedScoredCandidateNumParam,
+    LowSignalUserMaxSignalCount,
+    EarlyBirdCommunitiesMaxSearchResultsParam,
+    FeatureHydration.CategoryDiversityKParam,
+    MultiModalEmbeddingRescorerNumCandidatesParam
+  )
+
+  override val boundedLongFSOverrides = Seq(
+    MtlNormalization.BetaParam,
+    MtlNormalization.GammaParam,
   )
 
   override val boundedDurationFSOverrides = Seq(
-    CachedScoredTweets.TTLParam
+    CachedScoredTweets.TTLParam,
   )
 
   override val stringFSOverrides = Seq(
-    Scoring.HomeModelParam
+    ContentExplorationCandidateVersionParam,
+    EarlybirdTensorflowModel.InNetworkParam,
+    EarlybirdTensorflowModel.FrsParam,
+    EarlybirdTensorflowModel.UtegParam,
+    HeartbeatOptimizerParamsMHPkey,
+    TweetMixerRankingModeForStatsRecallAtKParam,
   )
 
   override val boundedDoubleFSOverrides = Seq(
-    Scoring.ModelWeights.FavParam,
-    Scoring.ModelWeights.ReplyParam,
-    Scoring.ModelWeights.RetweetParam,
-    Scoring.ModelWeights.GoodClickParam,
-    Scoring.ModelWeights.GoodClickV2Param,
-    Scoring.ModelWeights.GoodProfileClickParam,
-    Scoring.ModelWeights.ReplyEngagedByAuthorParam,
-    Scoring.ModelWeights.VideoPlayback50Param,
-    Scoring.ModelWeights.ReportParam,
-    Scoring.ModelWeights.NegativeFeedbackV2Param,
+    CategoryColdStartTierOneProbabilityParam,
+    CategoryColdStartProbabilisticReturnParam,
+    ControlAiShowLessScaleFactorParam,
+    ControlAiShowMoreScaleFactorParam,
+    ControlAiEmbeddingSimilarityThresholdParam,
+    CreatorInNetworkMultiplierParam,
+    CreatorOutOfNetworkMultiplierParam,
+    DeepRetrievalI2iProbabilityParam,
+    OutOfNetworkScaleFactorParam,
+    ReplyScaleFactorParam,
+    AuthorDiversityDecayFactor,
+    AuthorDiversityOutNetworkDecayFactor,
+    AuthorDiversityInNetworkDecayFactor,
+    SmallFollowGraphAuthorDiversityDecayFactor,
+    AuthorDiversityFloor,
+    AuthorDiversityOutNetworkFloor,
+    AuthorDiversityInNetworkFloor,
+    CandidateSourceDiversityDecayFactor,
+    CandidateSourceDiversityFloor,
+    SmallFollowGraphAuthorDiversityFloor,
+    FeatureHydration.TwhinDiversityRescoringWeightParam,
+    FeatureHydration.TwhinDiversityRescoringRatioParam,
+    FeatureHydration.CategoryDiversityRescoringWeightParam,
+    GrokSlopScoreDecayValueParam,
+    MultiModalEmbeddingRescorerGammaParam,
+    MultiModalEmbeddingRescorerMinScoreParam
   )
 
-  override val longSetFSOverrides = Seq(
-    CompetitorSetParam,
-  )
-
-  override val stringSeqFSOverrides = Seq(
-    CompetitorURLSeqParam
-  )
+  override def longSetFSOverrides: Seq[Param[Set[Long]] with FSName] = Seq.empty
 }

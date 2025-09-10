@@ -1,0 +1,12 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
+        "src/java/com/twitter/ml/api:api-base",
+        "src/scala/com/twitter/timelines/prediction/common/adapters",
+        "src/scala/com/twitter/timelines/prediction/features/simcluster",
+    ],
+)

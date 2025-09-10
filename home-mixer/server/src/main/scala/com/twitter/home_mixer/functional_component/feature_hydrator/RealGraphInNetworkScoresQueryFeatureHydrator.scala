@@ -1,7 +1,7 @@
 package com.twitter.home_mixer.functional_component.feature_hydrator
 
 import com.twitter.home_mixer.model.HomeFeatures.RealGraphInNetworkScoresFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealGraphInNetworkScores
+import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealGraphInNetworkScoresOnPrem
 import com.twitter.product_mixer.core.feature.Feature
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
@@ -17,7 +17,7 @@ import javax.inject.Singleton
 
 @Singleton
 case class RealGraphInNetworkScoresQueryFeatureHydrator @Inject() (
-  @Named(RealGraphInNetworkScores) store: ReadableStore[Long, Seq[wtf.Candidate]])
+  @Named(RealGraphInNetworkScoresOnPrem) realGraphMhStore: ReadableStore[Long, Seq[wtf.Candidate]])
     extends QueryFeatureHydrator[PipelineQuery] {
 
   override val identifier: FeatureHydratorIdentifier =
@@ -28,15 +28,21 @@ case class RealGraphInNetworkScoresQueryFeatureHydrator @Inject() (
   private val RealGraphCandidateCount = 1000
 
   override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    Stitch.callFuture(store.get(query.getRequiredUserId)).map { realGraphFollowedUsers =>
+
+    Stitch.callFuture(realGraphMhStore.get(query.getRequiredUserId)).map { realGraphFollowedUsers =>
       val realGraphScoresFeatures = realGraphFollowedUsers
         .getOrElse(Seq.empty)
         .sortBy(-_.score)
-        .map(candidate => candidate.userId -> candidate.score)
+        .map(candidate => candidate.userId -> scaleScore(candidate.score))
         .take(RealGraphCandidateCount)
         .toMap
 
       FeatureMapBuilder().add(RealGraphInNetworkScoresFeature, realGraphScoresFeatures).build()
     }
   }
+
+  // Rescale Real Graph v2 scores from [0,1] to the v1 scores distribution [1,2.97]
+  // v1 logic: src/scala/com/twitter/interaction_graph/scalding/jobs/scoring/InteractionGraphScoringJob.scala?L77-80
+  private def scaleScore(score: Double): Double =
+    if (score >= 0.0 && score <= 1.0) score * 1.97 + 1.0 else score
 }

@@ -1,15 +1,19 @@
 package com.twitter.home_mixer.functional_component.selector
 
-import com.twitter.home_mixer.functional_component.decorator.HomeClientEventDetailsBuilder
+import com.twitter.home_mixer.functional_component.decorator.builder.HomeClientEventDetailsBuilder
 import com.twitter.home_mixer.model.HomeFeatures.AncestorsFeature
+import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
 import com.twitter.home_mixer.model.HomeFeatures.ConversationModule2DisplayedTweetsFeature
 import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleHasGapFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasRandomTweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRandomTweetAboveFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRandomTweetFeature
+import com.twitter.home_mixer.model.HomeFeatures.GrokCategoryDataRecordFeature
+import com.twitter.home_mixer.model.HomeFeatures.MaxSingleAuthorCountFeature
+import com.twitter.home_mixer.model.HomeFeatures.MaxSingleCategoryCountFeature
 import com.twitter.home_mixer.model.HomeFeatures.PositionFeature
 import com.twitter.home_mixer.model.HomeFeatures.ServedInConversationModuleFeature
 import com.twitter.home_mixer.model.HomeFeatures.ServedSizeFeature
+import com.twitter.home_mixer.model.HomeFeatures.ServedTypeFeature
+import com.twitter.home_mixer.model.HomeFeatures.UniqueAuthorCountFeature
+import com.twitter.home_mixer.model.HomeFeatures.UniqueCategoryCountFeature
 import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
 import com.twitter.product_mixer.component_library.model.presentation.urt.UrtModulePresentation
 import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
@@ -52,13 +56,26 @@ case class UpdateHomeClientEventDetails(candidatePipelines: Set[CandidatePipelin
   ): SelectorResult = {
     val selectedCandidates = result.filter(pipelineScope.contains)
 
-    val randomTweetsByPosition = result
-      .map(_.features.getOrElse(IsRandomTweetFeature, false))
-      .zipWithIndex.map(_.swap).toMap
+    val authorCounts: Map[Long, Int] = selectedCandidates
+      .flatMap(_.features.getOrElse(AuthorIdFeature, None))
+      .groupBy(identity)
+      .map { case (authorId, ids) => authorId -> ids.length }
+
+    val categoryCounts: Map[String, Int] = selectedCandidates
+      .flatMap(_.features.getOrElse(GrokCategoryDataRecordFeature, None).getOrElse(Map.empty).keys)
+      .groupBy(identity)
+      .map { case (category, categories) => category -> categories.length }
 
     val resultFeatures = FeatureMapBuilder()
       .add(ServedSizeFeature, Some(selectedCandidates.size))
-      .add(HasRandomTweetFeature, randomTweetsByPosition.valuesIterator.contains(true))
+      .add(UniqueAuthorCountFeature, Some(authorCounts.size))
+      .add(
+        MaxSingleAuthorCountFeature,
+        Some(if (authorCounts.values.nonEmpty) authorCounts.values.max else 0))
+      .add(UniqueCategoryCountFeature, Some(categoryCounts.size))
+      .add(
+        MaxSingleCategoryCountFeature,
+        Some(if (categoryCounts.values.nonEmpty) categoryCounts.values.max else 0))
       .build()
 
     val updatedResult = result.zipWithIndex.map {
@@ -66,7 +83,6 @@ case class UpdateHomeClientEventDetails(candidatePipelines: Set[CandidatePipelin
           if pipelineScope.contains(item) =>
         val resultCandidateFeatures = FeatureMapBuilder()
           .add(PositionFeature, Some(position))
-          .add(IsRandomTweetAboveFeature, randomTweetsByPosition.getOrElse(position - 1, false))
           .build()
 
         updateItemPresentation(query, item, resultFeatures, resultCandidateFeatures)
@@ -75,12 +91,12 @@ case class UpdateHomeClientEventDetails(candidatePipelines: Set[CandidatePipelin
           if pipelineScope.contains(module) =>
         val resultCandidateFeatures = FeatureMapBuilder()
           .add(PositionFeature, Some(position))
-          .add(IsRandomTweetAboveFeature, randomTweetsByPosition.getOrElse(position - 1, false))
           .add(ServedInConversationModuleFeature, true)
           .add(ConversationModule2DisplayedTweetsFeature, module.candidates.size == 2)
           .add(
             ConversationModuleHasGapFeature,
             module.candidates.last.features.getOrElse(AncestorsFeature, Seq.empty).size > 2)
+          .add(ServedTypeFeature, module.candidates.last.features.get(ServedTypeFeature))
           .build()
 
         val updatedItemCandidates =

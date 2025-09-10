@@ -5,14 +5,24 @@ import com.twitter.conversions.DurationOps._
 import com.twitter.finagle.Memcached
 import com.twitter.finagle.mtls.authentication.ServiceIdentifier
 import com.twitter.finagle.stats.StatsReceiver
+import com.twitter.home_mixer.param.HomeMixerInjectionNames.EntityRealGraphClientStore
 import com.twitter.home_mixer.param.HomeMixerInjectionNames.HomeAuthorFeaturesCacheClient
 import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealTimeInteractionGraphUserVertexClient
 import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelinesRealTimeAggregateClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TwhinAuthorFollow20200101FeatureCacheClient
+import com.twitter.home_mixer.param.HomeMixerInjectionNames.TwhinAuthorFollowFeatureCacheClient
 import com.twitter.inject.TwitterModule
 import com.twitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
+import com.twitter.servo.cache.ExpiringLruInProcessCache
+import com.twitter.servo.cache.FinagleMemcache
 import com.twitter.servo.cache.FinagleMemcacheFactory
+import com.twitter.servo.cache.HotKeyMemcacheClient
 import com.twitter.servo.cache.Memcache
+import com.twitter.storehaus.ReadableStore
+import com.twitter.wtf.entity_real_graph.summingbird.client.EntityRealGraphClient
+import com.twitter.wtf.entity_real_graph.summingbird.common.config.Configs.Environment
+import com.twitter.wtf.entity_real_graph.{thriftscala => erg}
+import com.twitter.finagle.memcached.compressing.scheme.Lz4
+import com.twitter.home_mixer.param.HomeMixerInjectionNames.TvRealTimeAggregateClient
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -30,17 +40,25 @@ object MemcachedFeatureRepositoryModule extends TwitterModule {
     serviceIdentifier: ServiceIdentifier,
     statsReceiver: StatsReceiver
   ): Memcache = {
-    val rawClient = MemcachedClientBuilder.buildRawMemcachedClient(
-      numTries = 1,
-      requestTimeout = 150.milliseconds,
-      globalTimeout = 150.milliseconds,
+    val cacheClient = MemcachedClientBuilder.buildMemcachedClient(
+      destName = "/s/cache/timelines_real_time_aggregates:twemcaches",
+      numTries = 3,
+      numConnections = 1,
+      requestTimeout = 100.milliseconds,
+      globalTimeout = 300.milliseconds,
       connectTimeout = 200.milliseconds,
       acquisitionTimeout = 200.milliseconds,
       serviceIdentifier = serviceIdentifier,
       statsReceiver = statsReceiver
     )
 
-    buildMemcacheClient(rawClient, "/s/cache/timelines_real_time_aggregates:twemcaches")
+    val hotkeyCacheClient = new HotKeyMemcacheClient(
+      proxyClient = cacheClient,
+      inProcessCache = new ExpiringLruInProcessCache(ttl = 15.minute, maximumSize = 75000),
+      statsReceiver = statsReceiver.scope(TimelinesRealTimeAggregateClient).scope("inProcess")
+    )
+
+    new FinagleMemcache(hotkeyCacheClient, memcacheKeyHasher)
   }
 
   @Provides
@@ -51,13 +69,15 @@ object MemcachedFeatureRepositoryModule extends TwitterModule {
     statsReceiver: StatsReceiver
   ): Memcache = {
     val cacheClient = MemcachedClientBuilder.buildRawMemcachedClient(
-      numTries = 1,
-      requestTimeout = 50.milliseconds,
-      globalTimeout = 50.milliseconds,
+      numTries = 2,
+      numConnections = 1,
+      requestTimeout = 150.milliseconds,
+      globalTimeout = 300.milliseconds,
       connectTimeout = 200.milliseconds,
       acquisitionTimeout = 200.milliseconds,
       serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+      statsReceiver = statsReceiver,
+      compressionScheme = Lz4
     )
 
     buildMemcacheClient(cacheClient, "/s/cache/timelines_author_features:twemcaches")
@@ -65,15 +85,16 @@ object MemcachedFeatureRepositoryModule extends TwitterModule {
 
   @Provides
   @Singleton
-  @Named(TwhinAuthorFollow20200101FeatureCacheClient)
-  def providesTwhinAuthorFollow20200101FeatureCacheClient(
+  @Named(TwhinAuthorFollowFeatureCacheClient)
+  def providesTwhinAuthorFollowFeatureCacheClient(
     serviceIdentifier: ServiceIdentifier,
     statsReceiver: StatsReceiver
   ): Memcache = {
     val cacheClient = MemcachedClientBuilder.buildRawMemcachedClient(
-      numTries = 1,
-      requestTimeout = 50.milliseconds,
-      globalTimeout = 50.milliseconds,
+      numTries = 2,
+      numConnections = 1,
+      requestTimeout = 150.milliseconds,
+      globalTimeout = 300.milliseconds,
       connectTimeout = 200.milliseconds,
       acquisitionTimeout = 200.milliseconds,
       serviceIdentifier = serviceIdentifier,
@@ -91,9 +112,10 @@ object MemcachedFeatureRepositoryModule extends TwitterModule {
     statsReceiver: StatsReceiver
   ): Memcache = {
     val cacheClient = MemcachedClientBuilder.buildRawMemcachedClient(
-      numTries = 1,
-      requestTimeout = 100.milliseconds,
-      globalTimeout = 100.milliseconds,
+      numTries = 2,
+      numConnections = 1,
+      requestTimeout = 150.milliseconds,
+      globalTimeout = 300.milliseconds,
       connectTimeout = 200.milliseconds,
       acquisitionTimeout = 200.milliseconds,
       serviceIdentifier = serviceIdentifier,
@@ -101,6 +123,35 @@ object MemcachedFeatureRepositoryModule extends TwitterModule {
     )
 
     buildMemcacheClient(cacheClient, "/s/cache/realtime_interactive_graph_prod_v2:twemcaches")
+  }
+
+  @Provides
+  @Singleton
+  @Named(TvRealTimeAggregateClient)
+  def providesTvRealTimeAggregateClient(
+    serviceIdentifier: ServiceIdentifier,
+    statsReceiver: StatsReceiver
+  ): Memcache = {
+    val cacheClient = MemcachedClientBuilder.buildRawMemcachedClient(
+      numTries = 1,
+      numConnections = 1,
+      requestTimeout = 200.milliseconds,
+      globalTimeout = 200.milliseconds,
+      connectTimeout = 200.milliseconds,
+      acquisitionTimeout = 200.milliseconds,
+      serviceIdentifier = serviceIdentifier,
+      statsReceiver = statsReceiver
+    )
+    buildMemcacheClient(cacheClient, "/srv#/prod/local/cache/tv_real_time_aggregates:twemcaches")
+  }
+
+  @Provides
+  @Singleton
+  @Named(EntityRealGraphClientStore)
+  def providesEntityRealGraphClient(
+    serviceIdentifier: ServiceIdentifier
+  ): ReadableStore[erg.EntityRealGraphRequest, erg.EntityRealGraphResponse] = {
+    EntityRealGraphClient(Environment.withName("prod"), serviceIdentifier, Some(250.millis))
   }
 
   private def buildMemcacheClient(cacheClient: Memcached.Client, dest: String): Memcache =

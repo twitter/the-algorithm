@@ -2,6 +2,7 @@ package com.twitter.home_mixer.functional_component.filter
 
 import com.twitter.home_mixer.model.HomeFeatures.GetOlderFeature
 import com.twitter.home_mixer.model.HomeFeatures.ServedTweetIdsFeature
+import com.twitter.home_mixer.param.HomeGlobalParams.EnableServedFilterAllRequests
 import com.twitter.home_mixer.util.CandidatesUtil
 import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
 import com.twitter.product_mixer.core.functional_component.filter.Filter
@@ -21,14 +22,14 @@ object PreviouslyServedTweetsFilter
     query: PipelineQuery,
     candidates: Seq[CandidateWithFeatures[TweetCandidate]]
   ): Boolean = {
-    query.features.exists(_.getOrElse(GetOlderFeature, false))
+    query.features.exists(_.getOrElse(GetOlderFeature, false)) ||
+    query.params(EnableServedFilterAllRequests)
   }
 
   override def apply(
     query: PipelineQuery,
     candidates: Seq[CandidateWithFeatures[TweetCandidate]]
   ): Stitch[FilterResult[TweetCandidate]] = {
-
     val servedTweetIds =
       query.features.map(_.getOrElse(ServedTweetIdsFeature, Seq.empty)).toSeq.flatten.toSet
 

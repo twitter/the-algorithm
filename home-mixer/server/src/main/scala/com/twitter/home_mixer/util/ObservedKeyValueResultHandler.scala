@@ -13,7 +13,7 @@ trait ObservedKeyValueResultHandler {
   private lazy val scopedStatsReceiver = statsReceiver.scope(statScope)
   private lazy val keyTotalCounter = scopedStatsReceiver.counter("key/total")
   private lazy val keyFoundCounter = scopedStatsReceiver.counter("key/found")
-  private lazy val keyLossCounter = scopedStatsReceiver.counter("key/loss")
+  private lazy val keyNotFoundCounter = scopedStatsReceiver.counter("key/notFound")
   private lazy val keyFailureCounter = scopedStatsReceiver.counter("key/failure")
 
   def observedGet[K, V](
@@ -27,7 +27,7 @@ trait ObservedKeyValueResultHandler {
           keyFoundCounter.incr()
           Return(Some(value))
         case Return(None) =>
-          keyLossCounter.incr()
+          keyNotFoundCounter.incr()
           Return(None)
         case Throw(exception) =>
           keyFailureCounter.incr()

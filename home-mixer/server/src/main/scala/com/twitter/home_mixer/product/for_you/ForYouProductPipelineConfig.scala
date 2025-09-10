@@ -1,18 +1,17 @@
 package com.twitter.home_mixer.product.for_you
 
 import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.marshaller.timelines.ChronologicalCursorUnmarshaller
-import com.twitter.home_mixer.model.request.HomeMixerRequest
 import com.twitter.home_mixer.model.request.ForYouProduct
 import com.twitter.home_mixer.model.request.ForYouProductContext
+import com.twitter.home_mixer.model.request.HomeMixerRequest
 import com.twitter.home_mixer.product.for_you.model.ForYouQuery
-import com.twitter.home_mixer.product.for_you.param.ForYouParam.EnableScoredTweetsMixerPipelineParam
 import com.twitter.home_mixer.product.for_you.param.ForYouParam.ServerMaxResultsParam
 import com.twitter.home_mixer.product.for_you.param.ForYouParamConfig
 import com.twitter.home_mixer.service.HomeMixerAccessPolicy.DefaultHomeMixerAccessPolicy
 import com.twitter.home_mixer.service.HomeMixerAlertConfig.DefaultNotificationGroup
 import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
 import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
+import com.twitter.product_mixer.component_library.premarshaller.cursor.timelines.ChronologicalCursorUnmarshaller
 import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
 import com.twitter.product_mixer.core.functional_component.common.alert.Alert
 import com.twitter.product_mixer.core.functional_component.common.alert.EmptyResponseRateAlert
@@ -38,13 +37,13 @@ import com.twitter.timelines.render.{thriftscala => urt}
 import com.twitter.timelines.util.RequestCursorSerializer
 import com.twitter.util.Time
 import com.twitter.util.Try
+
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ForYouProductPipelineConfig @Inject() (
-  forYouTimelineScorerMixerPipelineConfig: ForYouTimelineScorerMixerPipelineConfig,
-  forYouScoredTweetsMixerPipelineConfig: ForYouScoredTweetsMixerPipelineConfig,
+  forYouMixerPipelineConfig: ForYouMixerPipelineConfig,
   forYouParamConfig: ForYouParamConfig)
     extends ProductPipelineConfig[HomeMixerRequest, ForYouQuery, urt.TimelineResponse] {
 
@@ -95,17 +94,10 @@ class ForYouProductPipelineConfig @Inject() (
     )
   }
 
-  override val pipelines: Seq[PipelineConfig] =
-    Seq(forYouTimelineScorerMixerPipelineConfig, forYouScoredTweetsMixerPipelineConfig)
+  override val pipelines: Seq[PipelineConfig] = Seq(forYouMixerPipelineConfig)
 
-  override def pipelineSelector(
-    query: ForYouQuery
-  ): ComponentIdentifier = {
-    if (query.params.getBoolean(EnableScoredTweetsMixerPipelineParam))
-      forYouScoredTweetsMixerPipelineConfig.identifier
-    else
-      forYouTimelineScorerMixerPipelineConfig.identifier
-  }
+  override def pipelineSelector(query: ForYouQuery): ComponentIdentifier =
+    forYouMixerPipelineConfig.identifier
 
   override val alerts: Seq[Alert] = Seq(
     SuccessRateAlert(
@@ -116,8 +108,8 @@ class ForYouProductPipelineConfig @Inject() (
     LatencyAlert(
       notificationGroup = DefaultNotificationGroup,
       percentile = P99,
-      warnPredicate = TriggerIfLatencyAbove(2000.millis, 15, 30),
-      criticalPredicate = TriggerIfLatencyAbove(2100.millis, 15, 30)
+      warnPredicate = TriggerIfLatencyAbove(2800.millis, 15, 30),
+      criticalPredicate = TriggerIfLatencyAbove(3000.millis, 15, 30)
     ),
     ThroughputAlert(
       notificationGroup = DefaultNotificationGroup,

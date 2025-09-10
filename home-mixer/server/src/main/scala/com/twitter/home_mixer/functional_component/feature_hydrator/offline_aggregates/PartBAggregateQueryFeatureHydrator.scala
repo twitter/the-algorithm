@@ -6,6 +6,8 @@ import com.twitter.ml.api.DataRecord
 import com.twitter.ml.api.DataRecordMerger
 import com.twitter.ml.api.FeatureContext
 import com.twitter.ml.api.RichDataRecord
+import com.twitter.product_mixer.component_library.feature_hydrator.candidate.offline_aggregates.BaseAggregateQueryFeatureHydrator
+import com.twitter.product_mixer.component_library.feature_hydrator.candidate.offline_aggregates.BaseAggregateRootFeature
 import com.twitter.product_mixer.core.feature.Feature
 import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
 import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
@@ -58,7 +60,7 @@ class PartBAggregateQueryFeatureHydrator @Inject() (
     aggregateGroups = Set(
       TimelinesAggregationConfig.userAggregatesV2,
       TimelinesAggregationConfig.userAggregatesV5Continuous,
-      TimelinesAggregationConfig.userReciprocalEngagementAggregates,
+      TimelinesAggregationConfig.userAggregatesV6,
       TimelinesAggregationConfig.twitterWideUserAggregates,
     ),
     aggregateType = AggregateType.User
@@ -104,7 +106,7 @@ class PartBAggregateQueryFeatureHydrator @Inject() (
             Option(featuresWithMetadata.userRequestHourAggregates.get(hourOfDay))
               .map(featuresWithMetadata.toDataRecord)
           val userRequestDowAggregatesDr =
-            Option(featuresWithMetadata.userRequestHourAggregates.get(dayOfWeek))
+            Option(featuresWithMetadata.userRequestDowAggregates.get(dayOfWeek))
               .map(featuresWithMetadata.toDataRecord)
 
           dropUnknownFeatures(userAggregatesDr, userAggregateFeatureInfo.featureContext)

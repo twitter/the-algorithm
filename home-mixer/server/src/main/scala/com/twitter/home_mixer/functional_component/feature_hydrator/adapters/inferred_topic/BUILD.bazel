@@ -5,9 +5,7 @@ scala_library(
     tags = ["bazel-compatible"],
     dependencies = [
         "src/java/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/api/util",
         "src/scala/com/twitter/timelines/prediction/common/adapters:base",
         "src/scala/com/twitter/timelines/prediction/features/common",
-        "src/thrift/com/twitter/ml/api:data-java",
     ],
 )

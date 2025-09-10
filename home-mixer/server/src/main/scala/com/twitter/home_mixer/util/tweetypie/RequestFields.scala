@@ -44,7 +44,8 @@ object RequestFields {
       tp.TweetInclude.TweetFieldId(tp.Tweet.QuotedTweetField.id),
       tp.TweetInclude.TweetFieldId(tp.Tweet.CommunitiesField.id),
       // Field required for determining if a Tweet was created via News Camera.
-      tp.TweetInclude.TweetFieldId(tp.Tweet.ComposerSourceField.id)
+      tp.TweetInclude.TweetFieldId(tp.Tweet.ComposerSourceField.id),
+      tp.TweetInclude.TweetFieldId(tp.Tweet.LanguageField.id)
     )
 
   val TweetStaticEntitiesFields: Set[tp.TweetInclude] =

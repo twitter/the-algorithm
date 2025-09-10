@@ -24,12 +24,17 @@ case object ScoredTweetsProduct extends Product {
   override val stringCenterProject: Option[String] = Some("timelinemixer")
 }
 
-case object ListTweetsProduct extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("ListTweets")
+case object ScoredVideoTweetsProduct extends Product {
+  override val identifier: ProductIdentifier = ProductIdentifier("ScoredVideoTweets")
   override val stringCenterProject: Option[String] = Some("timelinemixer")
 }
 
-case object ListRecommendedUsersProduct extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("ListRecommendedUsers")
+case object SubscribedProduct extends Product {
+  override val identifier: ProductIdentifier = ProductIdentifier("Subscribed")
+  override val stringCenterProject: Option[String] = Some("timelinemixer")
+}
+
+case object HeavyRankerScoresProduct extends Product {
+  override val identifier: ProductIdentifier = ProductIdentifier("HeavyRankerScores")
   override val stringCenterProject: Option[String] = Some("timelinemixer")
 }

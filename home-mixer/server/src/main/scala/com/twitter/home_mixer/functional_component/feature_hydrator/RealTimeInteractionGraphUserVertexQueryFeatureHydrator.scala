@@ -13,7 +13,6 @@ import com.twitter.product_mixer.core.pipeline.PipelineQuery
 import com.twitter.servo.cache.ReadCache
 import com.twitter.stitch.Stitch
 import com.twitter.wtf.real_time_interaction_graph.{thriftscala => ig}
-
 import javax.inject.Inject
 import javax.inject.Singleton
 

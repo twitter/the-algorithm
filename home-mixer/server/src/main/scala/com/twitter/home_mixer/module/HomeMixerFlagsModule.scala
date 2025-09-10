@@ -16,20 +16,26 @@ object HomeMixerFlagsModule extends TwitterModule {
   )
 
   flag[Boolean](
-    name = ScribeServedEntriesFlag,
+    name = ScribeServedCandidatesFlag,
     default = false,
-    help = "Toggles logging served entries to Scribe"
+    help = "Toggles logging served candidates to Scribe"
   )
 
   flag[Boolean](
-    name = ScribeServedCommonFeaturesAndCandidateFeaturesFlag,
+    name = ScribeScoredCandidatesFlag,
+    default = false,
+    help = "Toggles logging scored candidates to Scribe"
+  )
+
+  flag[Boolean](
+    name = ScribeFeaturesFlag,
     default = false,
     help = "Toggles logging served common features and candidates features to Scribe"
   )
 
   flag[String](
     name = DataRecordMetadataStoreConfigsYmlFlag,
-    default = "",
+    default = "mysql_timelines_ro_prod.yml",
     help = "The YML file that contains the necessary info for creating metadata store MySQL client."
   )
 
@@ -37,12 +43,6 @@ object HomeMixerFlagsModule extends TwitterModule {
     name = DarkTrafficFilterDeciderKey,
     default = "dark_traffic_filter",
     help = "Dark traffic filter decider key"
-  )
-
-  flag[Duration](
-    TargetFetchLatency,
-    300.millis,
-    "Target fetch latency from candidate sources for Quality Factor"
   )
 
   flag[Duration](

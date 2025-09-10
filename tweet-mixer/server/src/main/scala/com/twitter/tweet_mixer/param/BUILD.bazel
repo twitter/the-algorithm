@@ -1,0 +1,15 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product",
+        "src/scala/com/twitter/simclusters_v2/common",
+        "src/thrift/com/twitter/recos/signals:thrift-scala",
+        "src/thrift/com/twitter/recos/user_tweet_graph:user_tweet_graph-scala",
+        "src/thrift/com/twitter/recos/user_video_graph:user_video_graph-scala",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/param/decider",
+        "user-signal-service/thrift/src/main/thrift:thrift-scala",
+    ],
+)

@@ -21,4 +21,5 @@ class ScoredTweetsService @Inject() (productPipelineRegistry: ProductPipelineReg
   ): Stitch[t.ScoredTweetsResponse] = productPipelineRegistry
     .getProductPipeline[RequestType, t.ScoredTweetsResponse](request.product)
     .process(ProductPipelineRequest(request, params))
+
 }

@@ -12,14 +12,18 @@ import com.twitter.timelines.configapi.FSParam
 
 /**
  * Include a clear cache timeline instruction when we satisfy these criteria:
- * - Request Provenance is "pull to refresh"
- * - Atleast N non-ad tweet entries in the response
+ * - Request Provenance
+ * - At least N non-ad tweet entries in the response
  *
  * This is to ensure that we have sufficient new content to justify jumping users to the
  * top of the new timelines response and don't add unnecessary load to backend systems
  */
 case class ClearCacheIncludeInstruction(
-  enableParam: FSParam[Boolean],
+  ptrEnableParam: FSParam[Boolean],
+  coldStartEnableParam: FSParam[Boolean],
+  warmStartEnableParam: FSParam[Boolean],
+  manualRefreshEnableParam: FSParam[Boolean],
+  navigateEnableParam: FSParam[Boolean],
   minEntriesParam: FSBoundedParam[Int])
     extends IncludeInstruction[PipelineQuery with HasDeviceContext] {
 
@@ -27,10 +31,19 @@ case class ClearCacheIncludeInstruction(
     query: PipelineQuery with HasDeviceContext,
     entries: Seq[TimelineEntry]
   ): Boolean = {
-    val enabled = query.params(enableParam)
+    val requestContext = query.deviceContext.flatMap(_.requestContextValue)
 
-    val ptr =
-      query.deviceContext.flatMap(_.requestContextValue).contains(RequestContext.PullToRefresh)
+    val ptrEnabled =
+      query.params(ptrEnableParam) && requestContext.contains(RequestContext.PullToRefresh)
+    val coldStartEnabled =
+      query.params(coldStartEnableParam) && requestContext.contains(RequestContext.Launch)
+    val warmStartEnabled =
+      query.params(warmStartEnableParam) && requestContext.contains(RequestContext.Foreground)
+    val manualRefreshEnabled =
+      query.params(manualRefreshEnableParam) && requestContext.contains(
+        RequestContext.ManualRefresh)
+    val navigateEnabled =
+      query.params(navigateEnableParam) && requestContext.contains(RequestContext.Navigate)
 
     val minTweets = query.params(minEntriesParam) <= entries.collect {
       case item: TweetItem if item.promotedMetadata.isEmpty => 1
@@ -38,6 +51,6 @@ case class ClearCacheIncludeInstruction(
         module.items.size
     }.sum
 
-    enabled && ptr && minTweets
+    (ptrEnabled || coldStartEnabled || warmStartEnabled || manualRefreshEnabled || navigateEnabled) && minTweets
   }
 }

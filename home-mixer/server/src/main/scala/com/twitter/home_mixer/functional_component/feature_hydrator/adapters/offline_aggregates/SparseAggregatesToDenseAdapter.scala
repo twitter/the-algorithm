@@ -10,7 +10,7 @@ class SparseAggregatesToDenseAdapter(policy: CombineCountsPolicy)
     extends TimelinesIRecordAdapter[Seq[DataRecord]] {
 
   override def setFeatures(input: Seq[DataRecord], mutableDataRecord: RichDataRecord): Unit =
-    policy.defaultMergeRecord(mutableDataRecord.getRecord, input.toList)
+    policy.defaultMergeRecord(mutableDataRecord.getRecord, input)
 
   override val getFeatureContext: FeatureContext =
     new FeatureContext(policy.outputFeaturesPostMerge.toSeq: _*)

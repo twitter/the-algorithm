@@ -12,6 +12,7 @@ import com.twitter.product_mixer.core.functional_component.feature_hydrator.Bulk
 import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
 import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
 import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twitter.product_mixer.core.util.OffloadFuturePools
 import com.twitter.socialgraph.{thriftscala => sg}
 import com.twitter.stitch.Stitch
 import com.twitter.stitch.socialgraph.SocialGraph
@@ -26,7 +27,8 @@ import javax.inject.Singleton
 @Singleton
 class SGSValidSocialContextFeatureHydrator @Inject() (
   socialGraph: SocialGraph)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
+    with WithDefaultFeatureMap {
 
   override val identifier: FeatureHydratorIdentifier =
     FeatureHydratorIdentifier("SGSValidSocialContext")
@@ -36,13 +38,19 @@ class SGSValidSocialContextFeatureHydrator @Inject() (
     SGSValidLikedByUserIdsFeature
   )
 
+  override val defaultFeatureMap: FeatureMap = FeatureMap(
+    SGSValidFollowedByUserIdsFeature,
+    Seq.empty,
+    SGSValidLikedByUserIdsFeature,
+    Seq.empty
+  )
+
   private val MaxCountUsers = 10
 
   override def apply(
     query: PipelineQuery,
     candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-
+  ): Stitch[Seq[FeatureMap]] = OffloadFuturePools.offloadStitch {
     val allSocialContextUserIds =
       candidates.flatMap { candidate =>
         candidate.features.getOrElse(FavoritedByUserIdsFeature, Nil).take(MaxCountUsers) ++

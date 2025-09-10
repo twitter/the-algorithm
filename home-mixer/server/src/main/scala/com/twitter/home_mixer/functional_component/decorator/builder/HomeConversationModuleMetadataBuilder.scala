@@ -25,6 +25,7 @@ case class HomeConversationModuleMetadataBuilder[
         socialContext = None,
         enableDeduplication = Some(true)
       )),
-    gridCarouselMetadata = None
+    gridCarouselMetadata = None,
+    pillGroupMetadata = None
   )
 }

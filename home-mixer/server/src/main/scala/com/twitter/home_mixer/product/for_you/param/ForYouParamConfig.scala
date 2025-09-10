@@ -12,32 +12,119 @@ class ForYouParamConfig @Inject() () extends ProductParamConfig {
   override val enabledDeciderKey: DeciderKeyName = DeciderKey.EnableForYouProduct
   override val supportedClientFSName: String = SupportedClientFSName
 
-  override val booleanDeciderOverrides = Seq(
-    EnableScoredTweetsCandidatePipelineParam
+  override val booleanFSOverrides = Seq(
+    ClearCache.PtrEnableParam,
+    ClearCache.ColdStartEnableParam,
+    ClearCache.WarmStartEnableParam,
+    ClearCache.ManualRefreshEnableParam,
+    ClearCache.NavigateEnableParam,
+    ClearCache.ColdStartRetainViewportParam,
+    EnableCommunitiesToJoinCandidatePipelineParam,
+    EnableBookmarksCandidatePipelineParam,
+    EnableExplorationTweetsCandidatePipelineParam,
+    EnableJetfuelFramePipelineParam,
+    EnableBookmarksModuleWeekendGate,
+    EnablePinnedTweetsCandidatePipelineParam,
+    EnableEntryPointPivotParam,
+    EnableFlipInjectionModuleCandidatePipelineParam,
+    EnableGrokEntryPointPivotParam,
+    EnableRecommendedJobsParam,
+    EnableRecommendedRecruitingOrganizationsParam,
+    EnableTweetPreviewsCandidatePipelineParam,
+    EnableViewerHasJobRecommendationsFeatureParam,
+    EnableWhoToFollowCandidatePipelineParam,
+    EnableWhoToSubscribeCandidatePipelineParam,
+    EnableTrendsParam,
+    EnableKeywordTrendsParam,
+    EnableArticlePreviewTextHydrationParam,
+    EnableForYouTimelineAdsSurface,
+    EnableScoredVideoTweetsCandidatePipelineParam,
+    VideoCarouselEnableFooterParam,
+    VideoCarouselAllowVerticalVideos,
+    VideoCarouselAllowHorizontalVideos,
+    RelevancePromptEnableParam,
+    Navigation.PtrEnableParam,
+    Navigation.ColdStartEnableParam,
+    Navigation.WarmStartEnableParam,
+    Navigation.ManualRefreshEnableParam,
+    Navigation.NavigateEnableParam,
+    EnableAdsDebugParam,
+    EnableForYouAppUpsellParam,
+    EnableForYouTopicSelectorParam,
+    EnableTuneFeedCandidatePipelineParam,
+    EnableFollowedGrokTopicsHydrationParam,
+    EnableTLSHydrationParam
   )
 
-  override val booleanFSOverrides = Seq(
-    EnableFlipInjectionModuleCandidatePipelineParam,
-    EnableWhoToFollowCandidatePipelineParam,
-    EnableScoredTweetsMixerPipelineParam,
-    ClearCacheOnPtr.EnableParam,
-    EnableTimelineScorerCandidatePipelineParam
+  override val boundedLongFSOverrides = Seq(
+    ExplorationTweetsMaxFollowerCountParam
   )
 
   override val boundedIntFSOverrides = Seq(
-    ServerMaxResultsParam,
-    WhoToFollowPositionParam,
-    FlipInlineInjectionModulePosition,
-    TimelineServiceMaxResultsParam,
     AdsNumOrganicItemsParam,
-    ClearCacheOnPtr.MinEntriesParam
+    ClearCache.MinEntriesParam,
+    ExplorationTweetsTimelinePosition,
+    GrokPivotModuleTimelinePosition,
+    SuperbowlModuleTimelinePosition,
+    VideoCarouselNumTweetCandidatesToDedupeAgainstParam,
+    VideoCarouselTimelinePosition,
+    VideoCarouselNumCandidates,
+    MaxCommunitiesToJoinCandidatesParam,
+    MaxNumberExplorationTweetsParam,
+    MaxNumberKeywordTrendsParam,
+    MaxRecommendedJobCandidatesParam,
+    MaxRecommendedRecruitingOrganizationCandidatesParam,
+    ServerMaxResultsParam,
+    TweetPreviewsMaxCandidatesParam,
+    RelevancePromptTweetPositionParam,
+    ForYouAppUpsellPosition,
+    ForYouTopicSelectorPosition,
+    TuneFeedTimelinePosition,
+    MinFollowingCountParam,
+    MaxFollowingCountParam
+  )
+
+  override val stringFSOverrides = Seq(
+    WhoToFollowDisplayLocationParam,
+    ExperimentStatsParam,
+    RelevancePromptTitleParam,
+    RelevancePromptPositiveParam,
+    RelevancePromptNegativeParam,
+    RelevancePromptNeutralParam,
+    ForYouAppUpsellJetfuelRouteParam,
+    ForYouTopicSelectorJetfuelRouteParam,
   )
 
   override val boundedDurationFSOverrides = Seq(
-    WhoToFollowMinInjectionIntervalParam
+    CommunitiesToJoinMinInjectionIntervalParam,
+    RecommendedJobMinInjectionIntervalParam,
+    RecommendedRecruitingOrganizationMinInjectionIntervalParam,
+    WhoToFollowMinInjectionIntervalParam,
+    WhoToSubscribeMinInjectionIntervalParam,
+    TweetPreviewsMinInjectionIntervalParam,
+    BookmarksModuleMinInjectionIntervalParam,
+    InNetworkExplorationTweetsMinInjectionIntervalParam,
+    PinnedTweetsModuleMinInjectionIntervalParam,
+    TrendsModuleMinInjectionIntervalParam,
+    KeywordTrendsModuleMinInjectionIntervalParam,
+    EntryPointPivotMinInjectionIntervalParam,
+    GrokEntryPointPivotMinInjectionIntervalParam,
+    VideoTweetsModuleMinInjectionIntervalParam,
+    RelevancePromptMinInjectionIntervalParam
   )
 
   override val enumFSOverrides = Seq(
-    WhoToFollowDisplayTypeIdParam
+    WhoToFollowDisplayTypeIdParam,
+    WhoToSubscribeDisplayTypeIdParam,
+    WhoToFollowUserDisplayTypeIdParam,
+    CommunitiesToJoinDisplayTypeIdParam
+  )
+
+  override val booleanDeciderOverrides =
+    Seq(EnableGetTweetsFromArchiveIndex)
+
+  override val longSetFSOverrides = Seq(
+    AuthorListForStatsParam,
+    FollowingSportsGateUsersParam
   )
 }
