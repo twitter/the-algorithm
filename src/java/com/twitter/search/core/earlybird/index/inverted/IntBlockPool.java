@@ -11,7 +11,9 @@ import com.twitter.search.common.util.io.flushable.DataSerializer;
 import com.twitter.search.common.util.io.flushable.FlushInfo;
 import com.twitter.search.common.util.io.flushable.Flushable;
 
-// Modeled after TwitterCharBlockPool, with a lot of simplification.
+/**
+ * Modeled after TwitterCharBlockPool, with a lot of simplification.
+ */
 public class IntBlockPool implements Flushable {
   private static final SearchLongGauge INT_BLOCK_POOL_MAX_LENGTH =
       SearchLongGauge.export("twitter_int_block_pool_max_size");
@@ -109,12 +111,16 @@ public class IntBlockPool implements Flushable {
     return (currBlockIndex << BLOCK_SHIFT) + currBlockOffset - 1;
   }
 
-  // Returns number of ints in this blocks
+  /**
+   * Returns number of ints in this blocks
+   */
   public int length() {
     return currBlockOffset + currBlockIndex * BLOCK_SIZE;
   }
 
-  // Gets an int from the specified index.
+  /**
+   * Gets an int from the specified index.
+   */
   public final int get(int index) {
     return getBlock(index)[getOffsetInBlock(index)];
   }
@@ -132,7 +138,9 @@ public class IntBlockPool implements Flushable {
     return pool.blocks[blockIndex];
   }
 
-  // Sets an int value at the specified index.
+  /**
+   * Sets an int value at the specified index.
+   */
   public void set(int index, int value) {
     final int blockIndex = index >>> BLOCK_SHIFT;
     final int offset = index & BLOCK_MASK;
