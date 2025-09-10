@@ -14,7 +14,7 @@ import com.twitter.util.Duration
 /**
  * Domain model for the URT ShowAlert [[https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/ShowAlert.html]]
  *
- * @note the text field (id: 2) has been deliberately excluded as it's been deprecated since 2018. Use RichText instead.
+ * @note the text field (id: 2) has been deliberately excluded as it has been deprecated since 2018. Use RichText instead.
  */
 case class ShowAlert(
   override val id: String,

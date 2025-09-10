@@ -63,7 +63,7 @@ import com.twitter.search.earlybird.thrift.ThriftSocialFilterType;
  * - computeScore
  * - generateExplanationForScoring
  *
- * They are called for scoring and generating the debug information of the document that it's
+ * They are called for scoring and generating the debug information of the document that is
  * currently being evaluated. The field 'data' holds the features of the document.
  */
 public abstract class FeatureBasedScoringFunction extends ScoringFunction {
@@ -709,7 +709,7 @@ public abstract class FeatureBasedScoringFunction extends ScoringFunction {
   }
 
   /**
-   * Computes the score of the document that it's currently being evaluated.
+   * Computes the score of the document that is currently being evaluated.
    *
    * The extracted features from the document are available in the field 'data'.
    *

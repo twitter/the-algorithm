@@ -17,7 +17,7 @@ import scala.collection.immutable.Queue
  * before which the async [[Feature]]s are needed, and a [[Stitch]] of the async [[FeatureMap]].
  * It's expected that the [[Stitch]] has already been started and is running in the background.
  *
- * While not essential to it's core behavior, [[AsyncFeatureMap]] also keeps track of the [[FeatureHydratorIdentifier]]
+ * While not essential to its core behavior, [[AsyncFeatureMap]] also keeps track of the [[FeatureHydratorIdentifier]]
  * and the Set of [[Feature]]s which will be hydrated for each [[Stitch]] of a [[FeatureMap]] it's given.
  *
  * @param asyncFeatureMaps the [[FeatureMap]]s for [[PipelineStepIdentifier]]s which have not been reached yet

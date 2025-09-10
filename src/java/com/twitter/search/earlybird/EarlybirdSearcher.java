@@ -1307,7 +1307,7 @@ public class EarlybirdSearcher {
     }
     if (!searchQuery.getRelevanceOptions().isSetRankingParams()) {
       searchQuery.getRelevanceOptions().setRankingParams(
-          // this is important, or it's gonna pick DefaultScoringFunction which pretty much
+          // this is important, or it's going to pick DefaultScoringFunction which pretty much
           // does nothing.
           new ThriftRankingParams().setType(ThriftScoringFunctionType.TOPTWEETS));
     }

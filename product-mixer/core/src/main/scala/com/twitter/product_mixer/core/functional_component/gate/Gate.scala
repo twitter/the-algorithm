@@ -14,7 +14,7 @@ import com.twitter.stitch.Stitch
 /**
  * A gate controls if a pipeline or other component is executed
  *
- * A gate is mostly controlled by it's `shouldContinue` function - when this function
+ * A gate is mostly controlled by its `shouldContinue` function - when this function
  * returns true, execution Continues.
  *
  * Gates also have a optional `shouldSkip`- When it returns
@@ -61,7 +61,7 @@ sealed trait BaseGate[-Query <: PipelineQuery] extends Component {
  * A regular Gate which only has access to the Query typed PipelineQuery. This can be used anywhere
  * Gates are available.
  *
- * A gate is mostly controlled by it's `shouldContinue` function - when this function
+ * A gate is mostly controlled by its `shouldContinue` function - when this function
  * returns true, execution Continues.
  *
  * Gates also have a optional `shouldSkip`- When it returns
@@ -78,7 +78,7 @@ trait Gate[-Query <: PipelineQuery] extends BaseGate[Query]
  * list of previously fetched candidates. This can be used on dependent candidate pipelines to
  * make a decision on whether to enable/disable them based on previous candidates.
  *
- * A gate is mostly controlled by it's `shouldContinue` function - when this function
+ * A gate is mostly controlled by its `shouldContinue` function - when this function
  * returns true, execution Continues.
  *
  * Gates also have a optional `shouldSkip`- When it returns

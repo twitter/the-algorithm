@@ -47,7 +47,7 @@ class ProductScopeStringCenterModule extends TwitterModule {
   /* The Guice injector is single threaded, but out of a preponderance of caution we use a concurrent Map.
    *
    * We need to ensure that we only build one StringSource, StringCenter client, and External String
-   * Registry for each String Center Project. @ProductScoped doesn't ensure this on it's own as
+   * Registry for each String Center Project. @ProductScoped doesn't ensure this on its own as
    * two products can have the same String Center Project set.
    */
   val stringSources: concurrent.Map[String, StringSource] = concurrent.TrieMap.empty

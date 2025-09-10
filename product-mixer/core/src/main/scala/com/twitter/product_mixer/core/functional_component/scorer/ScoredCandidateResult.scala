@@ -4,7 +4,7 @@ import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
 import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
 import com.twitter.product_mixer.core.model.common.UniversalNoun
 
-/** A [[Candidate]] and it's [[FeatureMap]] after being processed by a [[Scorer]] */
+/** A [[Candidate]] and its [[FeatureMap]] after being processed by a [[Scorer]] */
 case class ScoredCandidateResult[Candidate <: UniversalNoun[Any]](
   candidate: Candidate,
   scorerResult: FeatureMap)

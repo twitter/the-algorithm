@@ -325,7 +325,7 @@ public final class FacetsResultsUtils {
 
   /**
    * Replace "p.twimg.com/" part of the native photo (twimg) URL with "pbs.twimg.com/media/".
-   * We need to do this because of blobstore and it's suppose to be a temporary measure. This
+   * We need to do this because of blobstore and it's supposed to be a temporary measure. This
    * code should be removed once we verified that all native photo URL being sent to Search
    * are prefixed with "pbs.twimg.com/media/" and no native photo URL in our index contains
    * "p.twimg.com/"
@@ -357,7 +357,7 @@ public final class FacetsResultsUtils {
 
   /**
    * Replace "p.twimg.com/" part of the native photo (twimg) URL with "pbs.twimg.com/media/".
-   * We need to do this because of blobstore and it's suppose to be a temporary measure. This
+   * We need to do this because of blobstore and it's supposed to be a temporary measure. This
    * code should be removed once we verified that all native photo URL being sent to Search
    * are prefixed with "pbs.twimg.com/media/" and no native photo URL in our index contains
    * "p.twimg.com/"

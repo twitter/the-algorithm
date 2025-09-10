@@ -12,7 +12,7 @@ import scala.util.control.NoStackTrace
  * The reason field should not be displayed to end-users, and is free to change over time.
  * It should always be free of private user data such that we can log it.
  *
- * The pipeline can classify it's own failures into categories (timeouts, invalid arguments,
+ * The pipeline can classify its own failures into categories (timeouts, invalid arguments,
  * rate limited, etc) such that the caller can choose how to handle it.
  *
  * @note [[componentStack]] should only be set by the product mixer framework,
