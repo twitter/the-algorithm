@@ -40,7 +40,7 @@ public class AudioSpaceCoreFetcher {
   }
 
   /**
-   * Use stitch to fetch mulitiple AudioSpace Objects at once
+   * Use stitch to fetch multiple AudioSpace Objects at once
    */
   public Future<List<Try<Fetch.Result<AudioSpace>>>> fetchBulkSpaces(Set<String> spaceIds) {
     return Stitch.run(
