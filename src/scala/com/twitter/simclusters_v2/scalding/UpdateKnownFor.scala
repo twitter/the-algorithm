@@ -120,32 +120,28 @@ object UpdateKnownFor {
     clusterScoresToFinalScore: ClusterScoresForNode => Double,
     minNeighborsInCluster: Int
   ): Option[(Int, Double)] = {
-    val clusterToScores = statsOfClustersInNeighborhood.toList.flatMap {
-      case (clusterId, statsInNeighborhood) =>
-        val clusterOverallStats = clusterOverallStatsMap(clusterId)
-        if (statsInNeighborhood.nodeCount >= minNeighborsInCluster) {
-          Some(
-            (
-              clusterId,
-              clusterScoresToFinalScore(
-                getScoresForCluster(
-                  overallNeighborhoodStats,
-                  statsInNeighborhood,
-                  clusterOverallStats.nodeCount,
-                  clusterOverallStats.sumOfMembershipWeights,
-                  globalAvgEdgeWeight,
-                  truePositiveWtFactor
-                )
+    statsOfClustersInNeighborhood
+      .toList
+      .flatMap {
+        case (clusterId, statsInNeighborhood) =>
+          val clusterOverallStats = clusterOverallStatsMap(clusterId)
+          statsInNeighborhood match {
+            case statsInNeighborhood if statsInNeighborhood.nodeCount < minNeighborsInCluster => None
+            case _ =>
+              val score = getScoresForCluster(
+                overallNeighborhoodStats,
+                statsInNeighborhood,
+                clusterOverallStats.nodeCount,
+                clusterOverallStats.sumOfMembershipWeights,
+                globalAvgEdgeWeight,
+                truePositiveWtFactor
               )
-            )
-          )
-        } else {
-          None
-        }
+              Some((clusterId, clusterScoresToFinalScore(score)))
+          }
+      } match {
+      case scores if scores.isEmpty => None
+      case _ => Some(clusterToScores.maxBy(_._2))
     }
-    if (clusterToScores.nonEmpty) {
-      Some(clusterToScores.maxBy(_._2))
-    } else None
   }
 
   def updateGeneric(
@@ -170,35 +166,32 @@ object UpdateKnownFor {
     collectInformationPerNode(graph, inputUserToClusters, avgMembershipScore)
       .mapValues {
         case NodeInformation(originalClusters, overallStats, statsOfClustersInNeighborhood) =>
-          val newClusterWithScoreOpt = if (overallStats.nodeCount < minNeighborsInCluster) {
-            nodesWithSmallDegree.inc()
-            None
-          } else {
-            pickBestCluster(
-              overallStats,
-              statsOfClustersInNeighborhood,
-              clusterOverallStatsMap,
-              globalAvgWeight,
-              truePositiveWtFactor,
-              clusterScoresToFinalScore,
-              minNeighborsInCluster
-            )
-          }
-          newClusterWithScoreOpt match {
+          overallStats match {
+            case stats if (overallStats.nodeCount < minNeighborsInCluster) =>
+              nodesWithSmallDegree.inc()
+              None
+            case _ =>
+              pickBestCluster(
+                overallStats,
+                statsOfClustersInNeighborhood,
+                clusterOverallStatsMap,
+                globalAvgWeight,
+                truePositiveWtFactor,
+                clusterScoresToFinalScore,
+                minNeighborsInCluster
+              )
+          } match {
             case Some((newClusterId, score)) =>
-              if (originalClusters.isEmpty) {
-                emptyToSomething.inc()
-              } else if (originalClusters.contains(newClusterId)) {
-                sameCluster.inc()
-              } else {
-                diffCluster.inc()
+              originalClusters match {
+                case cluster if cluster.isEmpty => emptyToSomething.inc()
+                case cluster if cluster.contains(newClusterId) => sameCluster.inc()
+                case _ => diffCluster.inc()
               }
               Array((newClusterId, score.toFloat))
             case None =>
-              if (originalClusters.isEmpty) {
-                emptyToEmpty.inc()
-              } else {
-                somethingToEmpty.inc()
+              originalClusters match {
+                case cluster if cluster.isEmpty => emptyToEmpty.inc()
+                case _ => somethingToEmpty.inc()
               }
               Array.empty[(Int, Float)]
           }
