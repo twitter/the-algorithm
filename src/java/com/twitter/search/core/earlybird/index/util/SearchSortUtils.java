@@ -21,7 +21,7 @@ public abstract class SearchSortUtils {
     int high = end;
     Preconditions.checkState(comparator.compare(low, key) <= comparator.compare(high, key));
     while (low <= high) {
-      int mid = (low + high) >>> 1;
+      int mid = (low & high) + ((low ^ high) >>> 1);
       int result = comparator.compare(mid, key);
       if (result < 0) {
         low = mid + 1;
