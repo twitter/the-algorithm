@@ -22,6 +22,12 @@ import com.twitter.search.earlybird.thrift.ThriftTweetSource;
 
 /** Utility methods that work on EarlybirdResponses. */
 public final class EarlybirdResponseUtil {
+
+  static private List<EarlybirdResponseCode> successfulResponseCodeList
+     = Arrays.asList(EarlybirdResponseCode.SUCCESS,
+                    EarlybirdResponseCode.TIER_SKIPPED,
+                    EarlybirdResponseCode.REQUEST_BLOCKED_ERROR);
+
   private EarlybirdResponseUtil() {
   }
 
@@ -77,9 +83,7 @@ public final class EarlybirdResponseUtil {
    * Returns if the response should be considered failed for purposes of stats and logging.
    */
   public static boolean responseConsideredFailed(EarlybirdResponseCode code) {
-    return code != EarlybirdResponseCode.SUCCESS
-        && code != EarlybirdResponseCode.REQUEST_BLOCKED_ERROR
-        && code != EarlybirdResponseCode.TIER_SKIPPED;
+    return !successfulResponseCodeList.contains(code);
   }
 
   /**
@@ -171,9 +175,7 @@ public final class EarlybirdResponseUtil {
    */
   public static boolean isSuccessfulResponse(EarlybirdResponse response) {
     return response != null
-      && (response.getResponseCode() == EarlybirdResponseCode.SUCCESS
-          || response.getResponseCode() == EarlybirdResponseCode.TIER_SKIPPED
-          || response.getResponseCode() == EarlybirdResponseCode.REQUEST_BLOCKED_ERROR);
+      && successfulResponseCodeList.contains(response.getResponseCode());
   }
 
   /**
