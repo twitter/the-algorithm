@@ -155,11 +155,14 @@ def load_initializers_from_csv(
     vocab['<UNK>'] = np.random.randn(embedding_size)
 
   words = list(vocab.keys())
-  weights = list(vocab.values())
+  weights = np.empty((len(vocab), embedding_size), dtype=np.float32)
 
-  weights = np.asarray(weights, dtype=np.float32)
-  assert weights.shape[0] == len(vocab)
-  assert weights.shape[1] == embedding_size
+  for idx, vec in enumerate(vocab.values()):
+      weights[idx] = np.asarray(vec, dtype=np.float32)
+
+  assert weights.shape == (len(vocab), embedding_size), (
+      f"Expected weights of shape {(len(vocab), embedding_size)}, got {weights.shape}"
+  )
 
   vocab_initializer = tf.constant_initializer(words, tf.string)
   weight_initializer = twml.contrib.initializers.PartitionConstant(weights, tf.float32)
