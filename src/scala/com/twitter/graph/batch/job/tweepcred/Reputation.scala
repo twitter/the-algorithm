@@ -48,24 +48,31 @@ object Reputation {
    */
   def adjustReputationsPostCalculation(mass: Double, numFollowers: Int, numFollowings: Int, blockIssuers: Seq[Long]) = { // NEW: extended signature with issuers
     if (numFollowings > threshAbsNumFriendsReps) {
-      val friendsToFollowersRatio = (1.0 + numFollowings) / (1.0 + numFollowers)
-      val divFactor = math.exp(
+
+      if (mass.isNaN || mass.isInfinity) return mass
+      if (numFollowers < 0 || numFollowings < 0) return mass
+
+      val baseMass = math.max(0.0, mass)
+
+      val friendsToFollowersRatio = (1.0 + numFollowings.toDouble) / (1.0 + numFollowers.toDouble)
+      val divFactorRaw = math.exp(
         constantDivisionFactorGt_threshFriendsToFollowersRatioReps *
           (friendsToFollowersRatio - threshFriendsToFollowersRatioUMass) *
-          math.log(math.log(numFollowings))
+          math.log(scala.math.log1p(numFollowings.toDouble))
       )
-      val adjusted = mass / ((divFactor min maxDivFactorReps) max 1.0)
-      
+      val divFactor = ((divFactorRaw min maxDivFactorReps) max 1.0)
+      val adjusted = baseMass / divFactor
+
       val diversity = if (blockIssuers.nonEmpty) blockIssuers.distinct.size.toDouble / blockIssuers.size else 1.0 // NEW: issuer diversity (unique/total)
       val isBrigade = diversity < brigadeDiversityThreshold // NEW: boolean flag for coordinated attack
       val cap = if (isBrigade) attackCap else normalCap // NEW: select dynamic cap based on brigade flag
       if (isBrigade) incrCounter("tweepcred.brigade.detected") // NEW: telemetry when brigade detected
 
-      val deltaNeg = mass - adjusted // NEW: compute raw negative delta
-      val deltaNegCapped = if (isBrigade) math.min(deltaNeg, 0.0).max(cap) else deltaNeg.max(cap) // NEW: zero/limit positive, clamp negative under attack or normal cap
-      if (deltaNeg < cap) incrCounter("tweepcred.deltaNeg.capped") // NEW: telemetry when clamp engages
+      val delta = adjusted - baseMass // FIX: correct penalty sign
+      val deltaCapped = math.min(0.0, math.max(delta, cap)) // FIX: clamp penalty to cap, never positive
+      if (delta < cap) incrCounter(if (isBrigade) "tweepcred.delta.capped.attack" else "tweepcred.delta.capped.normal") // NEW: telemetry when clamp engages
 
-      mass + deltaNegCapped // NEW: apply capped delta
+      baseMass + deltaCapped // apply capped delta
     } else {
       mass
     }
