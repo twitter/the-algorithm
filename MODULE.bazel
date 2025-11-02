@@ -1,0 +1,52 @@
+###############################################################################
+# Bazel now uses Bzlmod by default to manage external dependencies.
+# Please consider migrating your external dependencies from WORKSPACE to MODULE.bazel.
+#
+# For more details, please check https://github.com/bazelbuild/bazel/issues/18958
+###############################################################################
+
+module(name="null")
+
+bazel_dep(name = "rules_java", version = "8.16.1")
+bazel_dep(name = "rules_scala", version = "7.1.3")
+bazel_dep(name = "rules_python", version = "1.6.3")
+
+register_toolchains("@bazel_tools//tools/python:autodetecting_toolchain")
+
+#load("@rules_scala//scala:scala.bzl", "scala_library")
+#load("@rules_java//java:java_library.bzl", "java_library")
+
+scala_config = use_extension(
+    "@rules_scala//scala/extensions:config.bzl",
+    "scala_config",
+)
+scala_config.settings(scala_version = "2.12.20")
+
+scala_deps = use_extension(
+    "@rules_scala//scala/extensions:deps.bzl",
+    "scala_deps",
+)
+
+scala_deps.scala()
+
+# The remaining items are optional, enabling the precompiled protocol compiler
+# toolchain via `--incompatible_enable_proto_toolchain_resolution`. See the
+# "Using a precompiled protocol compiler" section below.
+scala_protoc = use_extension(
+    "@rules_scala//scala/extensions:protoc.bzl",
+    "scala_protoc",
+    dev_dependency = True,
+)
+use_repo(scala_protoc, "rules_scala_protoc_toolchains")
+
+# Register this toolchain before any others in the file. Still safe even when
+# `--incompatible_enable_proto_toolchain_resolution` is `False`.
+register_toolchains(
+    "@rules_scala_protoc_toolchains//...:all",
+    dev_dependency = True,
+)
+bazel_dep(
+    name = "protobuf",
+    version = "32.1",
+    repo_name = "com_google_protobuf",
+)
