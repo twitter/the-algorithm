@@ -1,3 +1,4 @@
+load("@rules_scala//scala:scala.bzl", "scala_library")
 scala_library(
     name = "multi-type-graph-scio-sims-lib",
     sources = ["*.scala"],

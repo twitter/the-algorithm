@@ -20,6 +20,7 @@ create_datarecord_datasets(
     ],
 )
 
+load("@rules_scala//scala:scala.bzl", "scala_library")
 scala_library(
     name = "training_data_generation",
     sources = ["*.scala"],

@@ -255,6 +255,7 @@ create_datasets(
     ],
 )
 
+load("@rules_scala//scala:scala.bzl", "scala_library")
 scala_library(
     sources = [
         "BCELabelTransformFromUUADataRecord.scala",

@@ -6,6 +6,7 @@ EXCEPTION_SOURCES = [
     "com/twitter/servo/util/package.scala",
 ]
 
+load("@rules_scala//scala:scala.bzl", "scala_library")
 scala_library(
     sources = ["**/*.scala"] + exclude_globs(EXCEPTION_SOURCES),
     platform = "java8",

@@ -1,3 +1,4 @@
+load("@rules_scala//scala:scala.bzl", "scala_library")
 scala_library(
     name = "user_tweet_entity_graph",
     sources = ["*.scala"],

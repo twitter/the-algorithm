@@ -1,3 +1,4 @@
+load("@rules_scala//scala:scala.bzl", "scala_library")
 scala_library(
     sources = ["com/twitter/timelineranker/client/*.scala"],
     platform = "java8",
