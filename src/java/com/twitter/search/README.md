@@ -8,7 +8,7 @@
 
 ![in-network](img/in-network.png)
 
-At Twitter, we use Tweet Search System (Earlybird) to do Home Timeline In-network Tweet retrieval: given a list of following users, find their recently posted tweets. Earlybird (Search Index) is the major candidate source for in-network tweets across Following tab and For You tab.
+At X/Twitter, we use Tweet Search System (Earlybird) to do Home Timeline In-network Tweet retrieval: given a list of following users, find their recently posted tweets. Earlybird (Search Index) is the major candidate source for in-network tweets across Following tab and For You tab.
 
 
 ## High-level architecture
@@ -43,8 +43,8 @@ Earlybird roots fanout requests to different Earlybird clusters or partitions. U
 ![home](img/foryou.png)
 
 ## References
-* "Earlybird: Real-Time Search at Twitter" (http://notes.stephenholiday.com/Earlybird.pdf)
+* "Earlybird: Real-Time Search at X/Twitter" (http://notes.stephenholiday.com/Earlybird.pdf)
 * "Reducing search indexing latency to one second" (https://blog.twitter.com/engineering/en_us/topics/infrastructure/2020/reducing-search-indexing-latency-to-one-second)
-* "Omnisearch index formats" (https://blog.twitter.com/engineering/en_us/topics/infrastructure/2016/omnisearch-index-formats)
+* "Omnisearch index formats" (https://blog.x.com/engineering/en_us/topics/infrastructure/2016/omnisearch-index-formats)
 
 
