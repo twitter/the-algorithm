@@ -21,9 +21,11 @@ import com.twitter.simclustersann.filters.SimClustersAnnVariantFilter
 import com.twitter.util.Future
 import com.twitter.util.JavaTimer
 import com.twitter.util.Timer
+import com.twitter.util.RateLimiter
 
 class SimClustersANNController @Inject() (
   @Flag(FlagNames.ServiceTimeout) serviceTimeout: Int,
+  @Flag(FlagNames.RateLimiterQPS) rateLimiterQPS: Int,
   variantFilter: SimClustersAnnVariantFilter,
   getTweetCandidatesResponseStatsFilter: GetTweetCandidatesResponseStatsFilter,
   sannCandidateSource: SANNSimClustersANNCandidateSource,
@@ -34,6 +36,7 @@ class SimClustersANNController @Inject() (
 
   private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
   private val timer: Timer = new JavaTimer(true)
+  private val rateLimiter: RateLimiter = new RateLimiter(rateLimiterQPS, timer)
 
   val filteredService: Service[Request[GetTweetCandidates.Args], Response[
     Seq[SimClustersANNTweetCandidate]
@@ -48,6 +51,12 @@ class SimClustersANNController @Inject() (
   private def handler(
     request: Request[GetTweetCandidates.Args]
   ): Future[Response[Seq[SimClustersANNTweetCandidate]]] = {
+    // Apply rate limiting to prevent excessive request traffic
+    if (!rateLimiter.tryAcquire()) {
+      stats.counter("rate_limit_exceeded").incr()
+      return Future.value(DefaultResponse)
+    }
+
     val query: Query = request.args.query
     val simClustersANNCandidateSourceQuery = SANNSimClustersANNCandidateSource.Query(
       sourceEmbeddingId = query.sourceEmbeddingId,
