@@ -10,17 +10,17 @@ The candidate sourcing stage within the Twitter Recommendation algorithm serves 
 | Author Unfollow       | The accounts which user recently unfollows.                           |
 | Author Mute           | The accounts which user have muted.                                   |
 | Author Block          | The accounts which user have blocked                                  |
-| Tweet Favorite        | The tweets which user clicked the like botton.                        | 
-| Tweet Unfavorite      | The tweets which user clicked the unlike botton.                      |       
+| Tweet Favorite        | The tweets which user clicked the like button.                        | 
+| Tweet Unfavorite      | The tweets which user clicked the unlike button.                      |             
 | Retweet               | The tweets which user retweeted                                       |
 | Quote Tweet           | The tweets which user retweeted with comments.                        |
 | Tweet Reply           | The tweets which user replied.                                        |
-| Tweet Share           | The tweets which user clicked the share botton.                       |
-| Tweet Bookmark        | The tweets which user clicked the bookmark botton.                    |
+| Tweet Share           | The tweets which user clicked the share button.                       |
+| Tweet Bookmark        | The tweets which user clicked the bookmark button.                    |
 | Tweet Click           | The tweets which user clicked and viewed the tweet detail page.       |
 | Tweet Video Watch     | The video tweets which user watched certain seconds or percentage.    |
-| Tweet Don't like      | The tweets which user clicked "Not interested in this tweet" botton.  |
-| Tweet Report          | The tweets which user clicked "Report Tweet" botton.                  |
+| Tweet Don't like      | The tweets which user clicked "Not interested in this tweet" button.  |
+| Tweet Report          | The tweets which user clicked "Report Tweet" button.                  |
 | Notification Open     | The push notification tweets which user opened.                       |
 | Ntab click            | The tweets which user click on the Notifications page.                |               
 | User AddressBook      | The author accounts identifiers of the user's addressbook.            | 
