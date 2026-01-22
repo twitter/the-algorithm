@@ -1,7 +1,7 @@
 # UserTweetGraph (UTG)
 
 ## What is it
-User Tweet Graph (UTG) is a Finalge thrift service built on the GraphJet framework. In maintains a graph of user-tweet engagements and serves user recommendations based on traversals of this graph.
+User Tweet Graph (UTG) is a Finagle thrift service built on the GraphJet framework. It maintains a graph of user-tweet engagements and serves user recommendations based on traversals of this graph.
 
 ## How is it used on Twitter
 UTG recommends tweets based on collaborative filtering & random walks. UTG takes a set of seed users or seed tweets as input, and performs

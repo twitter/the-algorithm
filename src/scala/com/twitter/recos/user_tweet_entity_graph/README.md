@@ -1,7 +1,7 @@
 # UserTweetEntityGraph (UTEG)
 
 ## What is it
-User Tweet Entity Graph (UTEG) is a Finalge thrift service built on the GraphJet framework. It maintains a graph of user-tweet relationships and serves user recommendations based on traversals in this graph.
+User Tweet Entity Graph (UTEG) is a Finagle thrift service built on the GraphJet framework. It maintains a graph of user-tweet relationships and serves user recommendations based on traversals in this graph.
 
 ## How is it used on Twitter
 UTEG generates the "XXX Liked" out-of-network tweets seen on Twitter's Home Timeline.

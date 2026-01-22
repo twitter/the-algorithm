@@ -1,7 +1,7 @@
 # UserVideoGraph (UVG)
 
 ## What is it
-User Video Graph (UVG) is a Finalge thrift service built on the GraphJet framework. In maintains a graph of user-video engagements and serves user recommendations based on traversals in this graph.
+User Video Graph (UVG) is a Finagle thrift service built on the GraphJet framework. It maintains a graph of user-video engagements and serves user recommendations based on traversals in this graph.
 
 ## How is it used on Twitter
 UVG generates video recommendations from a given seed tweet set. It recommends tweets based on collaborative filtering & random walks.
