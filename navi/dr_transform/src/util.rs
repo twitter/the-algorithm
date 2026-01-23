@@ -1,3 +1,4 @@
+use log::{debug, error};
 use npyz::WriterBuilder;
 use npyz::{AutoSerialize, WriteOptions};
 use std::io::BufWriter;
@@ -5,7 +6,6 @@ use std::{
     fs::File,
     io::{self, BufRead},
 };
-use log::{debug, error}
 
 pub fn load_batch_prediction_request_base64(file_name: &str) -> Vec<Vec<u8>> {
     let file = File::open(file_name).expect("could not read file");
