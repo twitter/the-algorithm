@@ -5,6 +5,7 @@ use std::{
     fs::File,
     io::{self, BufRead},
 };
+use log::{debug, error}
 
 pub fn load_batch_prediction_request_base64(file_name: &str) -> Vec<Vec<u8>> {
     let file = File::open(file_name).expect("could not read file");
@@ -13,10 +14,10 @@ pub fn load_batch_prediction_request_base64(file_name: &str) -> Vec<Vec<u8>> {
         line_count += 1;
         match base64::decode(line.unwrap().trim()) {
             Ok(payload) => result.push(payload),
-            Err(err) => println!("error decoding line {file_name}:{line_count} - {err}"),
+            Err(err) => error!("error decoding line {file_name}:{line_count} - {err}"),
         }
     }
-    println!("result len: {}", result.len());
+    debug!("result len: {}", result.len());
     result
 }
 
