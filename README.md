@@ -23,7 +23,7 @@ Product surfaces at X are built on a shared set of data, models, and software fr
 | Software framework | [navi](navi/README.md) | High performance, machine learning model serving written in Rust. |
 |                    | [product-mixer](product-mixer/README.md) | Software framework for building feeds of content. |
 |                    | [timelines-aggregation-framework](timelines/data_processing/ml_util/aggregation_framework/README.md) | Framework for generating aggregate features in batch or real time. |
-|                    | [representation-manager](representation-manager/README.md) | Service to retrieve embeddings (i.e. SimClusers and TwHIN). |
+|                    | [representation-manager](representation-manager/README.md) | Service to retrieve embeddings (i.e. SimClusters and TwHIN). |
 |                    | [twml](twml/README.md) | Legacy machine learning framework built on TensorFlow v1. |
 
 The product surfaces currently included in this repository are the For You Timeline and Recommended Notifications.
