@@ -1,4 +1,7 @@
-# X's Recommendation Algorithm
+# X's Recommendation Algorithm (Legacy)
+
+> **Notice:** This legacy repository is currently being audited by **Taijitu AI** as part of our high-fidelity systemic analysis. We are cross-referencing this implementation with the modern `x-algorithm` (Rust) codebase to ensure architectural integrity in our proposed optimizations.
+
 
 X's Recommendation Algorithm is a set of services and jobs that are responsible for serving feeds of posts and other content across all X product surfaces (e.g. For You Timeline, Search, Explore, Notifications). For an introduction to how the algorithm works, please refer to our [engineering blog](https://blog.x.com/engineering/en_us/topics/open-source/2023/twitter-recommendation-algorithm).
 
