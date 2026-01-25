@@ -26,7 +26,7 @@ class HashingDiscretizer(Layer):
   The difference between this layer and PercentileDiscretizer is that the
   HashingDiscretizer always assigns the same output id in the
   SparseTensor to the same input (feature id, bin) pair. This is useful if you
-  want to user transfer learning on pre-trained sparse to dense embedding
+  want to use transfer learning on pre-trained sparse to dense embedding
   layers, but re-calibrate your discretizer on newer data.
 
   If there are no calibrated features, then the discretizer will only apply

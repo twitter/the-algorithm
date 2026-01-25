@@ -34,7 +34,7 @@ class HashedPercentileDiscretizer(Layer):
   Note that if an input feature is rarely used, so will its associated output bin/features.
   The difference between this layer and PercentileDiscretizer is that the
   DeterministicPercentileDiscretize always assigns the same output id in the SparseTensor to the
-  same input feature id + bin. This is useful if you want to user transfer learning on pre-trained
+  same input feature id + bin. This is useful if you want to use transfer learning on pre-trained
   sparse to dense embedding layers, but re-calibrate your discretizer on newer data.
   """
 
