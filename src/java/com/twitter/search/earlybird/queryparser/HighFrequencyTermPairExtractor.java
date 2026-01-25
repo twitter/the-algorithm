@@ -31,7 +31,7 @@ import com.twitter.search.queryparser.query.annotation.Annotation;
  * opposite value of isPositive of the parent group.
  *
  * I'll try to break it down a bit further. Let's assume "a" and "b" are hf terms, and '
- * "[hf_term_pair a b]" represents querying their co-occurence.
+ * "[hf_term_pair a b]" represents querying their co-occurrence.
  * Query (* a b not_hf) can become (* [hf_term_pair a b] not_hf)
  * Query (+ -a -b -not_hf) can become (+ -[hf_term_pair a b] -not_hf)
  * These two rules represent the bulk of the rewrites that this class makes.

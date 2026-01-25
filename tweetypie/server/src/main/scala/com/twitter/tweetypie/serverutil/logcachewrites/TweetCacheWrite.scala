@@ -27,7 +27,7 @@ case class TweetCacheWrite(
    *      If the tweet id is a snowflake id, this is an offset since tweet creation.
    *      If it is not a snowflake id, then this is a Unix epoch time in
    *      milliseconds. (The idea is that for most tweets, this encoding will make
-   *      it easier to see the interval between events and whether it occured soon
+   *      it easier to see the interval between events and whether it occurred soon
    *      after tweet creation.)
    *  - Cache action ("set", "add", "replace", "cas", "delete")
    *  - Base64-encoded Cached[CachedTweet] struct

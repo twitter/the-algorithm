@@ -116,7 +116,7 @@ struct TweetCacheWrite {
   // If the tweet id is a snowflake id, this is an offset since tweet creation. 
   // If it is not a snowflake id, then this is a Unix epoch time in
   // milliseconds. (The idea is that for most tweets, this encoding will make
-  // it easier to see the interval between events and whether it occured soon
+  // it easier to see the interval between events and whether it occurred soon
   // acter tweet creation.)
   2: required i64 timestamp (personalDataType = 'TransactionTimestamp')
   3: required string action // One of "set", "add", "replace", "cas", "delete"
