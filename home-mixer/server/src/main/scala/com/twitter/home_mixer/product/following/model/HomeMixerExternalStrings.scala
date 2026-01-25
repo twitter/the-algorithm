@@ -17,6 +17,10 @@ class HomeMixerExternalStrings @Inject() (
     externalStringRegistryProvider.get().createProdString("Feedback.muteUser")
   val muteUserConfirmationString =
     externalStringRegistryProvider.get().createProdString("Feedback.muteUserConfirmation")
+  val muteAllSimilarUsersString =
+    externalStringRegistryProvider.get().createProdString("Feedback.muteAllSimilarUsers")
+  val muteAllSimilarUsersConfirmationString =
+    externalStringRegistryProvider.get().createProdString("Feedback.muteAllSimilarUsersConfirmation")
   val blockUserString =
     externalStringRegistryProvider.get().createProdString("Feedback.blockUser")
   val blockUserConfirmationString =

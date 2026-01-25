@@ -193,6 +193,17 @@ object HomeGlobalParams {
         default = false
       )
 
+  /**
+   * Feature flag to enable the "Mute All" similar accounts feature.
+   * When enabled, after muting an account, users will see a dialog with
+   * suggested similar accounts they can batch-mute to balance their algorithm.
+   */
+  object EnableMuteAllSimilarAccountsParam
+      extends FSParam[Boolean](
+        name = "home_mixer_enable_mute_all_similar_accounts",
+        default = false
+      )
+
   object ListMandarinTweetsParams {
     object ListMandarinTweetsEnable
         extends FSParam[Boolean](

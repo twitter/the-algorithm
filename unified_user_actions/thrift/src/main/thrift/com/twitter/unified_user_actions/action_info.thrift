@@ -117,7 +117,8 @@ enum ActionType {
   // This user action type includes ProfileReportAsSpam and ProfileReportAsAbuse
   ServerProfileReport = 56
   // reserve 57 for ServerProfileUnReport
-  // reserve 56-70 for server social graph actions
+  ServerProfileMuteAll = 58      // User mutes all similar profiles (batch mute from Suggested Mutes)
+  // reserve 59-70 for server social graph actions
 
   // 71-90 reserved for click-based events
   // reserve 71 for ServerTweetClick
@@ -295,7 +296,10 @@ enum ActionType {
   // (eg: People Search / people module in Top tab in Search Result Page
   // For tweets, the click is captured in ClientTweetClickProfile
   ClientProfileClick = 1058
-  // reserve 1059-1070 for client social graph actions
+  // This is fired when a user clicks "Mute All" in the Suggested Mutes dialog
+  // to batch mute all similar profiles to the one they just muted
+  ClientProfileMuteAll = 1059
+  // reserve 1060-1070 for client social graph actions
 
   // This is fired when a user clicks Follow in the caret menu of a Tweet or hovers on the avatar of the tweet
   // author and clicks on the Follow button. A profile can also be followed by clicking the Follow button on the

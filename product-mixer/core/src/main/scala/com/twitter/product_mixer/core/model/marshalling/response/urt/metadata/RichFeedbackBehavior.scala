@@ -11,5 +11,6 @@ case class RichFeedbackBehaviorMarkNotInterestedTopic(topicId: String) extends R
 case class RichFeedbackBehaviorReplyPinState(replyPinState: ReplyPinState)
     extends RichFeedbackBehavior
 case class RichFeedbackBehaviorToggleMuteUser(userId: Long) extends RichFeedbackBehavior
+case class RichFeedbackBehaviorToggleMuteAllUsers(userIds: Seq[Long]) extends RichFeedbackBehavior
 case class RichFeedbackBehaviorToggleFollowUser(userId: Long) extends RichFeedbackBehavior
 case class RichFeedbackBehaviorReportTweet(entryId: Long) extends RichFeedbackBehavior

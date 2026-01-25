@@ -14,6 +14,7 @@ import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Ri
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleFollowUser
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleMuteList
 import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleMuteUser
+import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleMuteAllUsers
 import com.twitter.timelines.render.{thriftscala => urt}
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -47,6 +48,8 @@ class RichFeedbackBehaviorMarshaller @Inject() () {
         urt.RichFeedbackBehavior.ReplyPinState(urt.RichFeedbackBehaviorReplyPinState(pinState))
       case RichFeedbackBehaviorToggleMuteUser(userId) =>
         urt.RichFeedbackBehavior.ToggleMuteUser(urt.RichFeedbackBehaviorToggleMuteUser(userId))
+      case RichFeedbackBehaviorToggleMuteAllUsers(userIds) =>
+        urt.RichFeedbackBehavior.ToggleMuteAllUsers(urt.RichFeedbackBehaviorToggleMuteAllUsers(userIds))
       case RichFeedbackBehaviorToggleFollowUser(userId) =>
         urt.RichFeedbackBehavior.ToggleFollowUser(urt.RichFeedbackBehaviorToggleFollowUser(userId))
       case RichFeedbackBehaviorReportTweet(entryId) =>

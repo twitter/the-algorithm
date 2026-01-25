@@ -37,6 +37,8 @@ PublishServerProfileMute:
   default_availability: 0
 PublishServerProfileUnmute:
   default_availability: 0
+PublishServerProfileMuteAll:
+  default_availability: 10000
 PublishServerProfileReport:
   default_availability: 0
 PublishClientTweetFav:
@@ -163,6 +165,8 @@ PublishClientProfileFollow:
   default_availability: 0
 PublishClientProfileClick:
   default_availability: 0
+PublishClientProfileMuteAll:
+  default_availability: 10000
 PublishClientTweetFollowAuthor:
   default_availability: 0
 PublishClientTweetUnfollowAuthor:

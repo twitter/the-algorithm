@@ -3,3 +3,4 @@ package com.twitter.product_mixer.core.model.marshalling.response.urt.item.messa
 sealed trait MessageActionType
 
 case object FollowAllMessageActionType extends MessageActionType
+case object MuteAllMessageActionType extends MessageActionType
