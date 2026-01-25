@@ -11,6 +11,7 @@ import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.Cover
 import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCoverDisplayType
 import com.twitter.product_mixer.core.model.marshalling.response.urt.icon._
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.FollowAllMessageActionType
+import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MuteAllMessageActionType
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.LargeUserFacepileDisplayType
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageAction
 import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageActionType
@@ -244,6 +245,7 @@ object OnboardingInjectionConversions {
   ): MessageActionType =
     actionType match {
       case onboardingthrift.FacepileActionType.FollowAll => FollowAllMessageActionType
+      case onboardingthrift.FacepileActionType.MuteAll => MuteAllMessageActionType
       case onboardingthrift.FacepileActionType.EnumUnknownFacepileActionType(value) =>
         throw new UnsupportedOperationException(s"Unknown product: $value")
     }
