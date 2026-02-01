@@ -1,0 +1,102 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# ΔØ EQUILIBRIUM CONFIGURATION
+# Equilibrium Constraint Theory
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Open Source Release
+# Copyright 2026 K. Fain (ThēÆrchītēcť)
+# Author: K. Fain aka ThēÆrchītēcť
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+[equilibrium]
+# Base sensitivity to equilibrium deviation
+# Higher values = stronger penalty for rejection signals
+# Range: 1.0 (permissive) to 15.0 (aggressive)
+# Self-adapts when adaptive_learning = true
+base_sensitivity = 5.0
+
+# Minimum rejection signal before equilibrium enforcement activates
+# Below this threshold, pure engagement scoring applies
+rejection_floor = 0.001
+
+# Maximum boost multiplier for pure engagement content
+# Content with zero rejection signals gets this small bonus
+max_engagement_boost = 0.05
+
+[adaptation]
+# Enable self-adaptive sensitivity learning
+# When true, sensitivity adjusts based on signal distribution
+adaptive_learning = true
+
+# Learning rate for sensitivity adaptation
+# Higher = faster adaptation, lower = more stable
+learning_rate = 0.01
+
+# Exponential moving average decay for statistics
+# Higher = longer memory, lower = faster response
+ema_decay = 0.95
+
+# Target equilibrium ratio for healthy content distribution
+# System adapts sensitivity to achieve this average ratio
+target_equilibrium_ratio = 0.75
+
+# Sensitivity bounds for adaptive learning
+min_sensitivity = 1.0
+max_sensitivity = 15.0
+
+[constructive_signals]
+# Weights for positive engagement signals (Δ⁺)
+# Higher weight = more contribution to constructive delta
+favorite = 1.0
+reply = 1.5           # Deeper engagement than passive like
+retweet = 1.3
+quote = 1.4           # Thought engagement
+share = 1.6           # External sharing = very strong
+share_via_dm = 1.5
+share_via_copy_link = 1.4
+follow_author = 2.5   # Highest: commitment signal
+click = 0.3           # Weak: curiosity not value
+profile_click = 0.4
+photo_expand = 0.4
+dwell = 0.6
+vqv = 0.8             # Video quality view
+
+[destructive_signals]
+# Weights for rejection signals (Δ⁻)
+# Higher weight = more contribution to destructive delta
+not_interested = 1.0
+mute_author = 2.5     # Strong rejection
+block_author = 4.0    # Severe rejection  
+report = 5.0          # Most severe
+
+[decay_factors]
+# Time-based decay for signal relevance
+# 1.0 = no decay, < 1.0 = signal importance decreases
+click = 0.9
+profile_click = 0.9
+photo_expand = 0.9
+dwell = 0.95
+
+[integration]
+# Integration settings for X pipeline
+
+# Where to inject ΔØ in the scoring pipeline
+# Options: "replace" (recommended), "wrap", "parallel"
+injection_point = "replace"
+
+# Enable detailed logging for debugging
+debug_logging = false
+
+# Export metrics for monitoring dashboards
+export_metrics = true
+
+# Feature flag for gradual rollout (0-100)
+rollout_percentage = 100
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# END OF CONFIGURATION
+# 
+# Open Source Release
+# Copyright 2026 K. Fain (ThēÆrchītēcť)
+# ═══════════════════════════════════════════════════════════════════════════════
