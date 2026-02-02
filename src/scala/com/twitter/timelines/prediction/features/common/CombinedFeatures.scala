@@ -533,4 +533,10 @@ object CombinedFeatures {
       IS_NOT_RELEVANT,
       IS_SEE_FEWER
     )
+
+  val AuthorLatentInterestEngagements:Set[Feature[JBoolean]] = Set(
+    IS_PROFILE_DWELLED_20_SEC,
+    IS_TWEET_DETAIL_DWELLED_25_SEC,
+    IS_LINK_DWELLED_60_SEC
+  )
 }

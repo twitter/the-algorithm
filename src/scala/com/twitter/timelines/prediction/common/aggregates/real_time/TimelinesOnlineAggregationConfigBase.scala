@@ -1014,6 +1014,19 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
       includeAnyFeature = false,
     )
 
+  val authorLatentInterestRealTimeAggregates =
+    AggregateGroup(
+      inputSource = inputSource,
+      aggregatePrefix = "real_time_author_latent_interest_aggregates",
+      keys = Set(SharedFeatures.USER_ID, TimelinesSharedFeatures.SOURCE_AUTHOR_ID),
+      features = Set.empty,
+      labels =  CombinedFeatures.AuthorLatentInterestEngagements,
+      metrics = Set(CountMetric),
+      halfLives = Set(336.hours),
+      includeAnyLabel = false,
+      includeAnyFeature = true
+    )
+
   val FeaturesGeneratedByPreTransforms = Set(LOG_POSITION, IS_TOP_TEN, IS_TOP_FIVE, IS_TOP_ONE)
 
   val ProdAggregateGroups = Set(
@@ -1053,7 +1066,8 @@ trait TimelinesOnlineAggregationDefinitionsTrait extends OnlineAggregationConfig
     tweetVerifiedDontLikeEngagementRealTimeAggregatesProd,
     tweetVerifiedNegativeEngagementCounts,
     tweetVerifiedNegativeEngagementUserStateRealTimeAggregates,
-    tweetCountryVerifiedNegativeEngagementsRealTimeAggregates
+    tweetCountryVerifiedNegativeEngagementsRealTimeAggregates,
+    authorLatentInterestRealTimeAggregates
   ).map(
     addFeatureFilterFromResource(
       _,
