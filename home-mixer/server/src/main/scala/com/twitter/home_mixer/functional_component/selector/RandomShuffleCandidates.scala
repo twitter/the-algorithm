@@ -6,7 +6,8 @@ import com.twitter.product_mixer.core.functional_component.selector.Selector
 import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
 import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
 import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import scala.util.Random
+import java.util.concurrent.ThreadLocalRandom
+import scala.collection.mutable.ArrayBuffer
 
 object RandomShuffleCandidates extends Selector[PipelineQuery] {
 
@@ -15,9 +16,28 @@ object RandomShuffleCandidates extends Selector[PipelineQuery] {
     remainingCandidates: Seq[CandidateWithDetails],
     result: Seq[CandidateWithDetails]
   ): SelectorResult = {
-    val shuffledRemainingCandidates = Random.shuffle(remainingCandidates)
+    // Use ThreadLocalRandom to avoid lock contention in concurrent applications
+    val shuffledRemainingCandidates = threadLocalShuffle(remainingCandidates)
     SelectorResult(remainingCandidates = shuffledRemainingCandidates, result = result)
   }
 
   override def pipelineScope: CandidateScope = AllPipelines
+
+  /**
+   * Fisher-Yates shuffle using ThreadLocalRandom for better concurrent performance.
+   * This avoids the lock contention issue with scala.util.Random.shuffle
+   */
+  private def threadLocalShuffle[T](seq: Seq[T]): Seq[T] = {
+    val buffer = ArrayBuffer(seq: _*)
+    val random = ThreadLocalRandom.current()
+    var i = buffer.length - 1
+    while (i > 0) {
+      val j = random.nextInt(i + 1)
+      val tmp = buffer(i)
+      buffer(i) = buffer(j)
+      buffer(j) = tmp
+      i -= 1
+    }
+    buffer.toSeq
+  }
 }

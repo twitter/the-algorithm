@@ -1,7 +1,8 @@
 package com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker
 
 import com.twitter.follow_recommendations.common.utils.RandomUtil
-import scala.util.Random
+import java.util.concurrent.ThreadLocalRandom
+import scala.collection.mutable.ArrayBuffer
 
 sealed trait CandidateShuffler[T] {
   def shuffle(seed: Option[Long])(input: Seq[T]): Seq[T]
@@ -11,9 +12,13 @@ class NoShuffle[T]() extends CandidateShuffler[T] {
   def shuffle(seed: Option[Long])(input: Seq[T]): Seq[T] = input
 }
 
+/**
+ * Shuffles candidates using ThreadLocalRandom for better concurrent performance.
+ * This avoids the lock contention issue with scala.util.Random.
+ */
 class RandomShuffler[T]() extends CandidateShuffler[T] {
   def shuffle(seed: Option[Long])(input: Seq[T]): Seq[T] = {
-    seed.map(new Random(_)).getOrElse(Random).shuffle(input)
+    RandomUtil.threadLocalShuffle(input, seed)
   }
 }
 
@@ -24,7 +29,7 @@ trait RankWeightedRandomShuffler[T] extends CandidateShuffler[T] {
     val candWeights = input.zipWithIndex.map {
       case (candidate, rank) => (candidate, rankToWeight(rank))
     }
-    RandomUtil.weightedRandomShuffle(candWeights, seed.map(new Random(_))).unzip._1
+    RandomUtil.weightedRandomShuffle(candWeights, seed).unzip._1
   }
 }
 

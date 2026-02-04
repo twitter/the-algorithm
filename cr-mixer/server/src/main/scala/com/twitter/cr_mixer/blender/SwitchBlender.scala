@@ -9,6 +9,7 @@ import com.twitter.finagle.stats.StatsReceiver
 import com.twitter.timelines.configapi.Params
 import com.twitter.util.Future
 import com.twitter.util.Time
+import java.util.concurrent.ThreadLocalRandom
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -76,6 +77,7 @@ object SwitchBlender {
           .getOrElse(Time.fromMilliseconds(0L)))
       .reverse
 
+  // Use ThreadLocalRandom to avoid lock contention in concurrent applications
   private val RandomOrder: Ordering[InitialCandidate] =
-    Ordering.by[InitialCandidate, Double](_ => scala.util.Random.nextDouble())
+    Ordering.by[InitialCandidate, Double](_ => ThreadLocalRandom.current().nextDouble())
 }
