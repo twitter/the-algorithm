@@ -58,7 +58,7 @@ class CandidateNotifier(
    * - send the notification
    * - scribe the notification
    *
-   * final modifier is to signal that this function cannot be overriden. There's some critical logic
+   * final modifier is to signal that this function cannot be overridden. There's some critical logic
    * in this function, and it's helpful to know that no sub-class overrides it.
    */
   final def notify(

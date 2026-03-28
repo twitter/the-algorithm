@@ -15,7 +15,7 @@ import java.util.{Map => JMap}
  * members of this trait.
  *
  * getIncrementValue() is inherited from the
- * parent trait AggregationMetric, but not overriden in this trait, so
+ * parent trait AggregationMetric, but not overridden in this trait, so
  * it needs to be overloaded by any metric that extends TypedSumLikeMetric.
  *
  * operatorName is a string used for naming the resultant aggregate feature

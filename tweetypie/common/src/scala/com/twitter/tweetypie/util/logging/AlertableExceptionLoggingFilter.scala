@@ -7,7 +7,7 @@ import ch.qos.logback.core.spi.FilterReply
 import com.twitter.tweetypie.serverutil.ExceptionCounter.isAlertable
 
 /**
- * This class is currently being used by logback to log alertable exceptions to a seperate file.
+ * This class is currently being used by logback to log alertable exceptions to a separate file.
  *
  * Filters do not change the log levels of individual loggers. Filters filter out specific messages
  * for specific appenders. This allows us to have a log file with lots of information you will

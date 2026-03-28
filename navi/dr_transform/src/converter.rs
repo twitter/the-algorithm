@@ -303,7 +303,7 @@ impl BatchPredictionRequestToTorchTensorConverter {
     }
 
     // Todo : Refactor, create a generic version with different type and field accessors
-    //   Example paramterize and then instiantiate the following
+    //   Example parameterize and then instantiate the following
     //           (FLOAT --> FLOAT, DataRecord.continuous_feature)
     //           (BOOL --> INT64, DataRecord.binary_feature)
     //           (INT64 --> INT64, DataRecord.discrete_feature)

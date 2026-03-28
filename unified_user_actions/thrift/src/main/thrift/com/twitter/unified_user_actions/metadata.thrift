@@ -43,7 +43,7 @@ struct BreadcrumbTweet {
   /* Id for the tweet that was interacted with prior to the current action */
   1: required i64 tweetId(personalDataType = 'TweetId')
   /*
-   * The UI component that hosted the tweet and was interacted with preceeding to the current action.
+   * The UI component that hosted the tweet and was interacted with preceding to the current action.
    * - tweet: represents the parent tweet container that wraps the quoted tweet
    * - quote_tweet: represents the nested or quoted tweet within the parent container
    *

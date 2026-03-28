@@ -147,11 +147,11 @@
     <logger name="com.twitter.finagle.serverset2" level="INHERITED"/>
     <logger name="com.twitter.logging.ScribeHandler" level="INHERITED"/>
     <logger name="com.twitter.zookeeper.client.internal" level="INHERITED"/>
-    <!-- Disable deadline exceeded logs by default. This can be overriden dynamically in the admin panel of individual instances. -->
+    <!-- Disable deadline exceeded logs by default. This can be overridden dynamically in the admin panel of individual instances. -->
     <logger name="com.twitter.relevance_platform.common.exceptions.DeadlineExceededExceptionMapper" level="OFF"/>
 
     <!-- Root Config -->
-    <!-- For all logs except access logs, disable logging below log_level level by default. This can be overriden in the per-package loggers, and dynamically in the admin panel of individual instances. -->
+    <!-- For all logs except access logs, disable logging below log_level level by default. This can be overridden in the per-package loggers, and dynamically in the admin panel of individual instances. -->
     <root level="${log_level:-INFO}">
         <appender-ref ref="ASYNC-SERVICE"/>
         <appender-ref ref="ASYNC-LOGLENS"/>
