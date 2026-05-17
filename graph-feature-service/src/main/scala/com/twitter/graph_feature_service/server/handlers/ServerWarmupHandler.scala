@@ -31,15 +31,22 @@ class ServerWarmupHandler @Inject() (warmup: ThriftWarmup) extends Handler {
   }
 
   override def handle(): Unit = {
-    warmup.sendRequest(
-      GetIntersection,
-      Request(
-        GetIntersection.Args(
-          getRandomRequest
-        )),
-      10
-    )()
-
-    logger.info("Warmup Done!")
+  if (testingAccounts.isEmpty) {
+    logger.warn(
+      "Skipping graph-feature-service warmup because no testing accounts are configured."
+    )
+    return
   }
+
+  warmup.sendRequest(
+    GetIntersection,
+    Request(
+      GetIntersection.Args(
+        getRandomRequest
+      )),
+    10
+  )()
+
+  logger.info("Warmup Done!")
+}
 }
