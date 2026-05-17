@@ -28,7 +28,7 @@ class ServerGetIntersectionHandler @Inject() (
 
   import ServerGetIntersectionHandler._
 
-  // TODO: Track all the stats based on PresetFeatureType and update the dashboard
+  // Stats are tracked by preset feature type through sourceCandidateNumStats.
   private val stats: StatsReceiver = statsReceiver.scope("srv").scope("get_intersection")
   private val numCandidatesCount = stats.counter("total_num_candidates")
   private val numCandidatesStat = stats.stat("num_candidates")
