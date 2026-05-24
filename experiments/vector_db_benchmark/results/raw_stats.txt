@@ -1,0 +1,51 @@
+Vector DB Benchmark - Raw Stats
+================================
+
+Setup:
+  - 50,000 index vectors, 1,000 queries, 128-dim, L2-normalized
+  - 50 Gaussian clusters with cluster_std=0.3
+  - Cosine similarity / inner product on unit vectors
+  - k=10
+  - 50 warmup queries before timed loop
+  - Ground truth: exact brute-force top-10
+
+Build time notes:
+  - FAISS-HNSW shows real build time (~31s) only for the first ef_search config.
+    The other 3 configs share the same index (ef_search is a query-time param),
+    so build_ms=0 for those.
+  - Qdrant local mode is shown for transparency but performs exact search,
+    not HNSW. Real Qdrant HNSW requires a Docker/cloud server.
+
+| Backend            | Params                                   | Build(ms) | Recall@10 | p50(us) | p95(us) | p99(us) |
+|--------------------|------------------------------------------|-----------|-----------|---------|---------|---------|
+| BruteForce         | (none)                                   |        13 |    1.0000 |    2375 |    3586 |    5115 |
+| FAISS-IVFFlat      | nlist=100, nprobe=1                      |       234 |    0.2215 |      68 |     101 |     263 |
+| FAISS-IVFFlat      | nlist=100, nprobe=4                      |       230 |    0.3742 |     129 |     220 |     428 |
+| FAISS-IVFFlat      | nlist=100, nprobe=16                     |       225 |    0.6282 |     469 |     731 |    1196 |
+| FAISS-IVFFlat      | nlist=100, nprobe=64                     |       242 |    0.9485 |    1706 |    2684 |    4132 |
+| FAISS-HNSW         | M=32, ef_construction=200, ef_search=16  |     30768 |    0.3181 |     233 |     577 |    1430 |
+| FAISS-HNSW         | M=32, ef_construction=200, ef_search=32  |         0 |    0.4815 |     412 |    1075 |    1979 |
+| FAISS-HNSW         | M=32, ef_construction=200, ef_search=64  |         0 |    0.6570 |     669 |    1364 |    2755 |
+| FAISS-HNSW         | M=32, ef_construction=200, ef_search=128 |         0 |    0.8325 |    1144 |    2075 |    3854 |
+| Annoy              | n_trees=10, search_k=1000                |      1377 |    0.1286 |     339 |     563 |     967 |
+| Annoy              | n_trees=10, search_k=5000                |      1327 |    0.3881 |    1413 |    2115 |    3485 |
+| Annoy              | n_trees=10, search_k=10000               |      1336 |    0.5659 |    2553 |    3967 |    5547 |
+| Annoy              | n_trees=50, search_k=1000                |      4837 |    0.1604 |     374 |     616 |    1480 |
+| Annoy              | n_trees=50, search_k=5000                |      5082 |    0.4778 |    1476 |    2437 |    4040 |
+| Annoy              | n_trees=50, search_k=10000               |      4409 |    0.6745 |    2554 |    3674 |    5803 |
+| Annoy              | n_trees=100, search_k=1000               |      8293 |    0.1820 |     420 |     617 |     940 |
+| Annoy              | n_trees=100, search_k=5000               |      8221 |    0.5263 |    1531 |    2103 |    2729 |
+| Annoy              | n_trees=100, search_k=10000               |      8296 |    0.7210 |    2629 |    3525 |    4534 |
+| Qdrant(local-exact)| m=16, ef=16                              |    247446 |    1.0000 |   56977 |   63821 |  107643 |
+| Qdrant(local-exact)| m=16, ef=64                              |    249983 |    1.0000 |   84703 |  127661 |  152191 |
+| Qdrant(local-exact)| m=16, ef=128                             |    646374 |    1.0000 |   53032 |   59967 |   67113 |
+
+Key takeaways:
+  1. FAISS-IVFFlat dominates the Pareto frontier (recall vs latency).
+     - nprobe=64 reaches recall=0.95 at p50=1.7ms.
+  2. FAISS-HNSW gives a smoother recall curve but costs ~30s to build and
+     is consistently more expensive than IVFFlat at matched recall.
+  3. Annoy is strictly dominated by FAISS on this dataset.
+  4. Qdrant local mode does exact search regardless of HNSW config.
+     Latency ~55ms p50 is 22x slower than NumPy brute-force for identical
+     results, entirely due to Python/serialization overhead.

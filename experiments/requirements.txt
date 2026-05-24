@@ -1,0 +1,7 @@
+faiss-cpu
+annoy
+qdrant-client
+numpy
+scipy
+tabulate
+matplotlib

@@ -1,0 +1,46 @@
+Blending Strategy A/B Eval - Raw Stats
+=======================================
+
+Setup:
+  - 5 candidate sources with variable pool sizes [60, 40, 30, 50, 20]
+  - 200 total candidates per trial, ~8 real duplicates (15% overlap)
+  - 50 trials, fresh seed per trial
+  - Each source has a home author cohort of 12 authors (75% probability)
+  - fav_count correlated with similarity_score (lognormal boost)
+  - similarity_score from Beta(2, 5)
+  - Top-K evaluated: 50
+
+Metrics:
+  - author_div:       fraction of unique authors in top-50 (higher = diverse)
+  - src_entropy:      normalized Shannon entropy of source distribution (1.0 = balanced)
+  - src_concentration: max fraction of top-50 from any single source (lower = balanced)
+  - mean_relevance:   average similarity_score across top-50 (higher = relevant)
+  - top10_relevance:  average similarity_score across top-10 only
+  - log_fav_count:    average log(1+fav_count) across top-50 (higher = engaging)
+  - recency_hrs:      average hours since creation across top-50 (lower = fresher)
+
+All values: mean ± std over 50 trials.
+
+| Blender                   | author_div    | src_entropy   | src_concentration | mean_relevance | top10_relevance | log_fav_count | recency_hrs    |
+|---------------------------|---------------|---------------|-------------------|----------------|-----------------|---------------|----------------|
+| Interleave                | 0.5748±0.0447 | 0.9994±0.0008 | 0.2076±0.0097     | 0.4925±0.0183  | 0.6250±0.0334   | 5.7015±0.2318 | 83.1121±7.1630 |
+| CountWeighted(shrink=0.3) | 0.5628±0.0454 | 0.9774±0.0042 | 0.2760±0.0098     | 0.5020±0.0182  | 0.6320±0.0315   | 5.7109±0.2447 | 83.2158±7.1353 |
+| ContentSignal(similarity) | 0.5596±0.0477 | 0.9477±0.0237 | 0.3100±0.0422     | 0.5062±0.0184  | 0.6450±0.0320   | 5.7243±0.2335 | 83.6031±7.5813 |
+| ContentSignal(fav_count)  | 0.5532±0.0494 | 0.9431±0.0302 | 0.3148±0.0394     | 0.3380±0.0231  | 0.3727±0.0501   | 7.3981±0.1782 | 84.6310±7.2147 |
+| ContentSignal(recency)    | 0.5524±0.0379 | 0.9363±0.0290 | 0.3312±0.0477     | 0.2888±0.0226  | 0.2948±0.0535   | 5.2106±0.2420 | 22.8725±2.9052 |
+| SourceTypeBackFill        | 0.5164±0.0507 | 0.6823±0.0001 | 0.3408±0.0039     | 0.4437±0.0173  | 0.6043±0.0282   | 5.5792±0.2344 | 83.1037±7.2209 |
+| Switch(freshness-sort)    | 0.5748±0.0430 | 0.9995±0.0007 | 0.2076±0.0097     | 0.4921±0.0180  | 0.6244±0.0328   | 5.6988±0.2349 | 83.2553±7.2150 |
+
+Key takeaways:
+  1. Clean diversity-vs-relevance Pareto frontier across blenders.
+  2. SourceTypeBackFill has lowest src_entropy (0.682) by design: backfill
+     sources are pushed to the end of the feed.
+  3. ContentSignal(fav_count) maximizes engagement (log_fav=7.40) but
+     sacrifices 33% relevance vs ContentSignal(similarity).
+  4. ContentSignal(recency) produces a 73% fresher feed (22.9h vs ~84h)
+     at the cost of 43% relevance.
+  5. CountWeighted correctly oversamples larger pools: src_concentration
+     0.276 vs 0.208 for plain Interleave.
+  6. Switch(freshness-sort) is nearly indistinguishable from Interleave at
+     this overlap level (~8 duplicates). Higher overlap would reveal more
+     difference.
