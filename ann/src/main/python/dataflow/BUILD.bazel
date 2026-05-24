@@ -1,0 +1,38 @@
+resources(
+    name = "sql",
+    sources = ["bq.sql"],
+)
+
+python3_library(
+    name = "faiss_indexing",
+    sources = ["**/*.py"],
+    tags = ["bazel-compatible"],
+    dependencies = [
+        ":sql",
+        "3rdparty/python/apache-beam:default",
+        "3rdparty/python/faiss-gpu:default",
+        "3rdparty/python/gcsfs:default",
+        "3rdparty/python/google-cloud-bigquery:default",
+        "3rdparty/python/google-cloud-storage",
+        "3rdparty/python/numpy:default",
+        "3rdparty/python/pandas:default",
+        "3rdparty/python/pandas-gbq:default",
+        "3rdparty/python/pyarrow:default",
+        "src/python/twitter/ml/common/apache_beam",
+    ],
+)
+
+python37_binary(
+    name = "faiss_indexing_bin",
+    sources = ["faiss_index_bq_dataset.py"],
+    platforms = [
+        "current",
+        "linux_x86_64",
+    ],
+    tags = ["no-mypy"],
+    zip_safe = False,
+    dependencies = [
+        ":faiss_indexing",
+        "3rdparty/python/_closures/ann/src/main/python/dataflow:faiss_indexing_bin",
+    ],
+)

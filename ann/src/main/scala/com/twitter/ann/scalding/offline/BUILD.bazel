@@ -1,0 +1,44 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-only",
+    ],
+    dependencies = [
+        "3rdparty/jvm/com/twitter/bijection:scrooge",
+        "3rdparty/src/jvm/com/twitter/scalding:args",
+        "3rdparty/src/jvm/com/twitter/scalding:commons",
+        "3rdparty/src/jvm/com/twitter/scalding:core",
+        "ann/src/main/scala/com/twitter/ann/brute_force",
+        "ann/src/main/scala/com/twitter/ann/common",
+        "ann/src/main/scala/com/twitter/ann/hnsw",
+        "ann/src/main/scala/com/twitter/ann/util",
+        "cortex-core/entity-embeddings/src/thrift/com/twitter/entityembeddings/neighbors:embeddings-knn-thrift-scala",
+        "src/scala/com/twitter/cortex/ml/embeddings/common:Helpers-deploy",
+        "src/scala/com/twitter/pluck/source/core_workflows/user_model:condensed_user_state-scala",
+        "src/scala/com/twitter/scalding_internal/dalv2",
+        "src/scala/com/twitter/scalding_internal/job",
+        "src/scala/com/twitter/scalding_internal/multiformat/format",
+        "src/scala/com/twitter/scalding_internal/parquet_thrift",
+        "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/flat:usersource_flat-scala",
+        "usersource/snapshot/src/main/thrift/com/twitter/usersource/snapshot/flat:flat-scala",
+    ],
+)
+
+hadoop_binary(
+    name = "ann-offline-deploy",
+    main = "com.twitter.scalding.Tool",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [
+        ":offline",
+        "3rdparty/jvm/org/slf4j:slf4j-jdk14",
+    ],
+)

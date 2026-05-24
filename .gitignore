@@ -1,0 +1,9 @@
+.DS_Store
+.claude/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/

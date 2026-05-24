@@ -1,0 +1,29 @@
+scala_library(
+    name = "server",
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    tags = ["bazel-only"],
+    dependencies = [
+        "ann/src/main/scala/com/twitter/ann/annoy",
+        "ann/src/main/scala/com/twitter/ann/brute_force",
+        "ann/src/main/scala/com/twitter/ann/common",
+        "ann/src/main/scala/com/twitter/ann/hnsw",
+    ],
+)
+
+hadoop_binary(
+    name = "benchmarking",
+    basename = "benchmarking",
+    main = "com.twitter.ann.experimental.Runner",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [
+        ":server",
+    ],
+)
