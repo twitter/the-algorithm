@@ -1,0 +1,11 @@
+Currently this dir contains multiple adapters.
+The goal is similar: to generate Rekeyed (key by TweetId) `KeyedUuaTweet` events that can be
+used for View Counts (aggregation).
+
+The 2 adapters:
+1. Reads from UUA-all topic
+2. Reads from InteractionEvents
+We have 2 adapters mainly because currently InteractionEvents have 10% more TweetRenderImpressions
+than what UUA has. Details can be found at https://docs.google.com/document/d/1UcEzAZ7rFrsU_6kl20R3YZ6u_Jt8PH_4-mVHWe216eM/edit#
+
+It is still unclear which source should be used, but at a time there should be only one service running.

@@ -1,0 +1,21 @@
+scala_library(
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model/request",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/following",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/following/model",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/for_you",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/for_you/model",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/heavy_ranker_scores",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/heavy_ranker_scores/model",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/scored_tweets",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/scored_tweets/model",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/scored_video_tweets",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/subscribed",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/subscribed/model",
+        "home-mixer/thrift/src/main/thrift:thrift-scala",
+    ],
+)

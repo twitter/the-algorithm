@@ -1,0 +1,13 @@
+junit_tests(
+    sources = ["*.scala"],
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/com/google/guava",
+        "3rdparty/jvm/org/scalatest",
+        "3rdparty/jvm/org/scalatestplus:junit",
+        "finatra/inject/inject-core/src/test/scala:test-deps",
+        "unified_user_actions/enricher/src/main/scala/com/twitter/unified_user_actions/enricher/hcache",
+        "util/util-cache-guava/src/main/scala",
+        "util/util-cache/src/main/scala",
+    ],
+)

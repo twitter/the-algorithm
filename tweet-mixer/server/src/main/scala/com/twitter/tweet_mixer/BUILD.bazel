@@ -1,0 +1,26 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "finatra-internal/mtls-http/src/main/scala",
+        "geoduck/service/src/main/scala/com/twitter/geoduck/service/common/clientmodules",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/module",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/controllers",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/module",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/module/stringcenter",
+        "thrift-web-forms/src/main/scala/com/twitter/thriftwebforms/view",
+        "tweet-mixer/server/src/main/resources",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/controller",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/module",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/module/thrift_client",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/param",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/product",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/store",
+        "tweet-mixer/thrift/src/main/thrift:thrift-scala",
+    ],
+    exports = [
+        "finatra/inject/inject-slf4j/src/main/scala/com/twitter/inject",
+    ],
+)

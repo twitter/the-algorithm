@@ -1,0 +1,33 @@
+scala_library(
+    sources = [
+        "*.scala",
+    ],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature/featuremap",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature/featuremap/asyncfeaturemap",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/decorator:decoration",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/presentation",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/request",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline:query",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service",
+    ],
+    exports = [
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature/featuremap",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature/featuremap/asyncfeaturemap",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/decorator:decoration",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common/presentation",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/request",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline:query",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service",
+    ],
+)

@@ -1,0 +1,21 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "addressbook/thrift/src/thrift/com/twitter/addressbook:thrift-scala",
+        "addressbook/thrift/src/thrift/com/twitter/addressbook/datatypes:thrift-scala",
+        "finatra-internal/mtls-thriftmux/src/main/scala",
+        "finatra/inject/inject-thrift-client",
+        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/addressbook/models",
+        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/common",
+        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
+        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/utils",
+        "src/scala/com/twitter/wtf/scalding/jobs/address_book:ab_util",
+        "src/thrift/com/twitter/hermit/usercontacts:hermit-usercontacts-scala",
+        "src/thrift/com/twitter/wtf/addressbook:addressbook-scala",
+        "stitch/stitch-core",
+        "strato/src/main/scala/com/twitter/strato/client",
+    ],
+)

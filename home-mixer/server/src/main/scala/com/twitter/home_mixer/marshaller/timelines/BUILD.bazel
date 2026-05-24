@@ -1,0 +1,11 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model/request",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/cursor",
+        "src/thrift/com/twitter/timelineservice:thrift-scala",
+    ],
+)

@@ -1,0 +1,15 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/decorator/builder",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/list_tweets/decorator/builder",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/decorator/urt",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
+        "timelines/src/main/scala/com/twitter/timelines/injection/scribe",
+    ],
+)

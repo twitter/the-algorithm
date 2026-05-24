@@ -1,0 +1,324 @@
+# Naming convention:
+# For publishing action types, use [Publish][ActionTypeInThrift]. Please see the Thrift definition at unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions/action_info.thrift
+
+PublishServerTweetFav:
+  default_availability: 0
+PublishServerTweetUnfav:
+  default_availability: 0
+PublishServerTweetCreate:
+  default_availability: 0
+PublishServerTweetReply:
+  default_availability: 0
+PublishServerTweetQuote:
+  default_availability: 0
+PublishServerTweetRetweet:
+  default_availability: 0
+PublishServerTweetDelete:
+  default_availability: 0
+PublishServerTweetUnreply:
+  default_availability: 0
+PublishServerTweetUnquote:
+  default_availability: 0
+PublishServerTweetUnretweet:
+  default_availability: 0
+PublishServerTweetEdit:
+  default_availability: 0
+PublishServerTweetReport:
+  default_availability: 0
+PublishServerProfileFollow:
+  default_availability: 0
+PublishServerProfileUnfollow:
+  default_availability: 0
+PublishServerProfileBlock:
+  default_availability: 0
+PublishServerProfileUnblock:
+  default_availability: 0
+PublishServerProfileMute:
+  default_availability: 0
+PublishServerProfileUnmute:
+  default_availability: 0
+PublishServerProfileReport:
+  default_availability: 0
+PublishClientTweetFav:
+  default_availability: 0
+PublishClientTweetUnfav:
+  default_availability: 0
+PublishClientTweetLingerImpression:
+  default_availability: 0
+PublishClientTweetRenderImpression:
+  default_availability: 0
+PublishClientTweetReply:
+  default_availability: 0
+PublishClientTweetQuote:
+  default_availability: 0
+PublishClientTweetRetweet:
+  default_availability: 0
+PublishClientTweetClickReply:
+  default_availability: 0
+PublishClientTweetClickQuote:
+  default_availability: 0
+PublishClientTweetVideoPlayback25:
+  default_availability: 0
+PublishClientTweetVideoPlayback50:
+  default_availability: 0
+PublishClientTweetVideoPlayback75:
+  default_availability: 0
+PublishClientTweetVideoPlayback95:
+  default_availability: 0
+PublishClientTweetVideoPlayFromTap:
+  default_availability: 0
+PublishClientTweetVideoQualityView:
+  default_availability: 0
+PublishClientTweetVideoView:
+  default_availability: 0
+PublishClientTweetVideoMrcView:
+  default_availability: 0
+PublishClientTweetVideoViewThreshold:
+  default_availability: 0
+PublishClientTweetVideoCtaUrlClick:
+  default_availability: 0
+PublishClientTweetVideoCtaWatchClick:
+  default_availability: 0
+PublishClientTweetUnretweet:
+  default_availability: 0
+PublishClientTweetClickCaret:
+  default_availability: 0
+PublishClientTweetPhotoExpand:
+  default_availability: 0
+PublishClientTweetClickMentionScreenName:
+  default_availability: 0
+PublishClientCardClick:
+  default_availability: 0
+PublishClientCardOpenApp:
+  default_availability: 0
+PublishClientCardAppInstallAttempt:
+  default_availability: 0
+PublishClientPollCardVote:
+  default_availability: 0
+PublishClientTweetProfileMentionClick:
+  default_availability: 0
+PublishClientTweetClick:
+  default_availability: 0
+PublishClientTopicFollow:
+  default_availability: 0
+PublishClientTopicUnfollow:
+  default_availability: 0
+PublishClientTopicNotInterestedIn:
+  default_availability: 0
+PublishClientTopicUndoNotInterestedIn:
+  default_availability: 0
+PublishClientTweetNotHelpful:
+  default_availability: 0
+PublishClientTweetUndoNotHelpful:
+  default_availability: 0
+PublishClientTweetReport:
+  default_availability: 0
+PublishClientTweetNotInterestedIn:
+  default_availability: 0
+PublishClientTweetUndoNotInterestedIn:
+  default_availability: 0
+PublishClientTweetNotAboutTopic:
+  default_availability: 0
+PublishClientTweetUndoNotAboutTopic:
+  default_availability: 0
+PublishClientTweetNotRecent:
+  default_availability: 0
+PublishClientTweetUndoNotRecent:
+  default_availability: 0
+PublishClientTweetSeeFewer:
+  default_availability: 0
+PublishClientTweetUndoSeeFewer:
+  default_availability: 0
+PublishClientTweetNotRelevant:
+  default_availability: 0
+PublishClientTweetUndoNotRelevant:
+  default_availability: 0
+PublishClientProfileFollowAttempt:
+  default_availability: 0
+PublishClientTweetFavoriteAttempt:
+  default_availability: 0
+PublishClientTweetRetweetAttempt:
+  default_availability: 0
+PublishClientTweetReplyAttempt:
+  default_availability: 0
+PublishClientCTALoginClick:
+  default_availability: 0
+PublishClientCTALoginStart:
+  default_availability: 0
+PublishClientCTALoginSuccess:
+  default_availability: 0
+PublishClientCTASignupClick:
+  default_availability: 0
+PublishClientCTASignupSuccess:
+  default_availability: 0
+PublishClientProfileBlock:
+    default_availability: 0
+PublishClientProfileUnblock:
+  default_availability: 0
+PublishClientProfileMute:
+  default_availability: 0
+PublishClientProfileReport:
+  default_availability: 0
+PublishClientProfileFollow:
+  default_availability: 0
+PublishClientProfileClick:
+  default_availability: 0
+PublishClientTweetFollowAuthor:
+  default_availability: 0
+PublishClientTweetUnfollowAuthor:
+  default_availability: 0
+PublishClientTweetBlockAuthor:
+  default_availability: 0
+PublishClientTweetUnblockAuthor:
+  default_availability: 0
+PublishClientTweetMuteAuthor:
+  default_availability: 0
+PublishClientNotificationOpen:
+  default_availability: 0
+PublishClientNotificationClick:
+  default_availability: 0
+PublishClientNotificationSeeLessOften:
+  default_availability: 0
+PublishClientNotificationDismiss:
+  default_availability: 0
+PublishClientTypeaheadClick:
+  default_availability: 0
+PublishClientFeedbackPromptSubmit:
+  default_availability: 0
+PublishClientProfileShow:
+  default_availability: 0
+PublishClientTweetV2Impression:
+  default_availability: 0
+PublishClientTweetVideoFullscreenV2Impression:
+  default_availability: 0
+PublishClientTweetImageFullscreenV2Impression:
+  default_availability: 0
+PublishClientProfileV2Impression:
+  default_availability: 0
+PublishClientTweetClickProfile:
+  default_availability: 0
+PublishClientTweetClickShare:
+  default_availability: 0
+PublishClientTweetShareViaCopyLink:
+  default_availability: 0
+PublishClientTweetClickSendViaDirectMessage:
+  default_availability: 0
+PublishClientTweetShareViaBookmark:
+  default_availability: 0
+PublishClientTweetUnbookmark:
+  default_availability: 0
+PublishClientTweetClickHashtag:
+  default_availability: 0
+PublishClientTweetBookmark:
+  default_availability: 0
+PublishClientTweetOpenLink:
+  default_availability: 0
+PublishClientTweetTakeScreenshot:
+  default_availability: 0
+PublishClientTweetVideoPlaybackStart:
+  default_availability: 0
+PublishClientTweetVideoPlaybackComplete:
+  default_availability: 0
+PublishClientTweetEmailClick:
+  default_availability: 0
+PublishClientAppExit:
+  default_availability: 0
+PublishClientTweetGalleryImpression:
+  default_availability: 0
+PublishClientTweetDetailsImpression:
+  default_availability: 0
+PublishClientTweetMomentImpression:
+  default_availability: 0
+PublishServerUserCreate:
+  default_availability: 0
+PublishServerUserUpdate:
+  default_availability: 0
+PublishServerPromotedTweetFav:
+  default_availability: 0
+PublishServerPromotedTweetUnfav:
+  default_availability: 0
+PublishServerPromotedTweetReply:
+  default_availability: 0
+PublishServerPromotedTweetRetweet:
+  default_availability: 0
+PublishServerPromotedTweetComposeTweet:
+  default_availability: 0
+PublishServerPromotedTweetBlockAuthor:
+  default_availability: 0
+PublishServerPromotedTweetUnblockAuthor:
+  default_availability: 0
+PublishServerPromotedTweetClick:
+  default_availability: 0
+PublishServerPromotedTweetReport:
+  default_availability: 0
+PublishServerPromotedProfileFollow:
+  default_availability: 0
+PublishServerPromotedProfileUnfollow:
+  default_availability: 0
+PublishServerPromotedTweetMuteAuthor:
+  default_availability: 0
+PublishServerPromotedTweetClickProfile:
+  default_availability: 0
+PublishServerPromotedTweetClickHashtag:
+  default_availability: 0
+PublishServerPromotedTweetOpenLink:
+  default_availability: 0
+PublishServerPromotedTweetCarouselSwipeNext:
+  default_availability: 0
+PublishServerPromotedTweetCarouselSwipePrevious:
+  default_availability: 0
+PublishServerPromotedTweetLingerImpressionShort:
+  default_availability: 0
+PublishServerPromotedTweetLingerImpressionMedium:
+  default_availability: 0
+PublishServerPromotedTweetLingerImpressionLong:
+  default_availability: 0
+PublishServerPromotedTweetClickSpotlight:
+  default_availability: 0
+PublishServerPromotedTweetViewSpotlight:
+  default_availability: 0
+PublishServerPromotedTrendView:
+  default_availability: 0
+PublishServerPromotedTrendClick:
+  default_availability: 0
+PublishServerPromotedTweetVideoPlayback25:
+  default_availability: 0
+PublishServerPromotedTweetVideoPlayback50:
+  default_availability: 0
+PublishServerPromotedTweetVideoPlayback75:
+  default_availability: 0
+PublishServerPromotedTweetVideoAdPlayback25:
+  default_availability: 0
+PublishServerPromotedTweetVideoAdPlayback50:
+  default_availability: 0
+PublishServerPromotedTweetVideoAdPlayback75:
+  default_availability: 0
+PublishServerTweetVideoAdPlayback25:
+  default_availability: 0
+PublishServerTweetVideoAdPlayback50:
+  default_availability: 0
+PublishServerTweetVideoAdPlayback75:
+  default_availability: 0
+PublishServerPromotedTweetDismissWithoutReason:
+  default_availability: 0
+PublishServerPromotedTweetDismissUninteresting:
+  default_availability: 0
+PublishServerPromotedTweetDismissRepetitive:
+  default_availability: 0
+PublishServerPromotedTweetDismissSpam:
+  default_availability: 0
+PublishServerTweetArchiveFavorite:
+  default_availability: 0
+PublishServerTweetUnarchiveFavorite:
+  default_availability: 0
+PublishServerTweetArchiveRetweet:
+  default_availability: 0
+PublishServerTweetUnarchiveRetweet:
+  default_availability: 0
+RekeyUUAClientTweetRenderImpression:
+  default_availability: 0
+RekeyUUAIesourceClientTweetRenderImpression:
+  default_availability: 0
+EnrichmentPlannerSampling:
+  default_availability: 0
+

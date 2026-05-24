@@ -1,0 +1,21 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "decider/src/main/scala",
+        "servo/decider/src/main/scala",
+        "src/thrift/com/twitter/gizmoduck:user-thrift-scala",
+        "stitch/stitch-core",
+        "strato/src/main/scala/com/twitter/strato/client",
+        "visibility/common/src/main/scala/com/twitter/visibility/common",
+        "visibility/lib/src/main/resources/config",
+        "visibility/lib/src/main/scala/com/twitter/visibility",
+        "visibility/lib/src/main/scala/com/twitter/visibility/builder/users",
+        "visibility/lib/src/main/scala/com/twitter/visibility/configapi/configs",
+        "visibility/lib/src/main/scala/com/twitter/visibility/features",
+        "visibility/lib/src/main/thrift/com/twitter/visibility/context:vf-context-scala",
+    ],
+)

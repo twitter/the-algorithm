@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+option cc_enable_arenas = true;
+
+import "tensorflow_serving/apis/input.proto";
+import "tensorflow_serving/apis/model.proto";
+
+package tensorflow.serving;
+
+// Regression result for a single item (tensorflow.Example).
+message Regression {
+  float value = 1;
+}
+
+// Contains one result per input example, in the same order as the input in
+// RegressionRequest.
+message RegressionResult {
+  repeated Regression regressions = 1;
+}
+
+// RPC interfaces.
+
+message RegressionRequest {
+  // Model Specification. If version is not specified, will use the latest
+  // (numerical) version.
+  ModelSpec model_spec = 1;
+
+  // Input data.
+  tensorflow.serving.Input input = 2;
+}
+
+message RegressionResponse {
+  // Effective Model Specification used for regression.
+  ModelSpec model_spec = 2;
+
+  RegressionResult result = 1;
+}

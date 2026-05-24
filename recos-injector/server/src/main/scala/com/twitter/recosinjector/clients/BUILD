@@ -1,0 +1,20 @@
+scala_library(
+    platform = "java11",
+    strict_deps = False,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/com/twitter/storehaus:core",
+        "finagle/finagle-memcached/src/main/scala",
+        "finagle/finagle-stats",
+        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/base",
+        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/util",
+        "servo/repo/src/main/scala",
+        "src/thrift/com/twitter/gizmoduck:thrift-scala",
+        "src/thrift/com/twitter/gizmoduck:user-thrift-scala",
+        "src/thrift/com/twitter/recos:recos-internal-scala",
+        "src/thrift/com/twitter/socialgraph:thrift-scala",
+        "src/thrift/com/twitter/tweetypie:service-scala",
+        "stitch/stitch-tweetypie/src/main/scala",
+        "util/util-logging/src/main/scala",
+    ],
+)

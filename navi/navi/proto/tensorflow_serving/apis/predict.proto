@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package tensorflow.serving;
+option cc_enable_arenas = true;
+
+import "tensorflow/core/framework/tensor.proto";
+import "tensorflow_serving/apis/model.proto";
+
+// PredictRequest specifies which TensorFlow model to run, as well as
+// how inputs are mapped to tensors and how outputs are filtered before
+// returning to user.
+message PredictRequest {
+  // Model Specification. If version is not specified, will use the latest
+  // (numerical) version.
+  ModelSpec model_spec = 1;
+
+  // Input tensors.
+  // Names of input tensor are alias names. The mapping from aliases to real
+  // input tensor names is stored in the SavedModel export as a prediction
+  // SignatureDef under the 'inputs' field.
+  map<string, TensorProto> inputs = 2;
+
+  // Output filter.
+  // Names specified are alias names. The mapping from aliases to real output
+  // tensor names is stored in the SavedModel export as a prediction
+  // SignatureDef under the 'outputs' field.
+  // Only tensors specified here will be run/fetched and returned, with the
+  // exception that when none is specified, all tensors specified in the
+  // named signature will be run/fetched and returned.
+  repeated string output_filter = 3;
+}
+
+// Response for PredictRequest on successful run.
+message PredictResponse {
+  // Effective Model Specification used to process PredictRequest.
+  ModelSpec model_spec = 2;
+
+  // Output tensors.
+  map<string, TensorProto> outputs = 1;
+}

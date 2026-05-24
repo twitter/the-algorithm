@@ -1,0 +1,16 @@
+scala_library(
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/javax/inject:javax.inject",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/scorer",
+        "snowflake/src/main/scala/com/twitter/snowflake/id",
+    ],
+    exports = [
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/scorer",
+    ],
+)

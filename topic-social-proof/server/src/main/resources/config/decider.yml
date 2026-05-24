@@ -1,0 +1,61 @@
+# Keys are sorted in an alphabetical order
+
+enable_topic_social_proof_score:
+  comment : "Enable the calculation of <topic, tweet> cosine similarity score in TopicSocialProofStore. 0 means do not calculate the score and use a random rank to generate topic social proof"
+  default_availability: 0
+
+enable_tweet_health_score:
+  comment: "Enable the calculation for health scores in tweetInfo. By enabling this decider, we will compute TweetHealthModelScore"
+  default_availability: 0
+
+enable_user_agatha_score:
+  comment: "Enable the calculation for health scores in tweetInfo. By enabling this decider, we will compute UserHealthModelScore"
+  default_availability: 0
+
+enable_loadshedding_HomeTimeline:
+  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
+  default_availability: 0
+
+enable_loadshedding_HomeTimelineTopicTweets:
+  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
+  default_availability: 0
+
+enable_loadshedding_HomeTimelineRecommendTopicTweets:
+  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
+  default_availability: 0
+
+enable_loadshedding_MagicRecsRecommendTopicTweets:
+  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
+  default_availability: 0
+
+enable_loadshedding_TopicLandingPage:
+  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
+  default_availability: 0
+
+enable_loadshedding_HomeTimelineFeatures:
+  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
+  default_availability: 0
+
+enable_loadshedding_HomeTimelineTopicTweetsMetrics:
+  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
+  default_availability: 0
+
+enable_loadshedding_HomeTimelineUTEGTopicTweets:
+  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
+  default_availability: 0
+
+enable_loadshedding_HomeTimelineSimClusters:
+  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
+  default_availability: 0
+
+enable_loadshedding_ExploreTopicTweets:
+  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
+  default_availability: 0
+
+enable_loadshedding_MagicRecsTopicTweets:
+  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
+  default_availability: 0
+
+enable_loadshedding_Search:
+  comment: "Enable loadshedding (from 0% to 100%). Requests that have been shed will return an empty response"
+  default_availability: 0

@@ -1,0 +1,21 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    platform = "java8",
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "image-fetcher-service/thrift/src/main/thrift:thrift-scala",
+        "mediaservices/commons/src/main/thrift:thrift-scala",
+        "mediaservices/mediainfo-server/thrift/src/main/thrift:thrift-scala",
+        "tweetypie/servo/util",
+        "tweetypie/common/src/thrift/com/twitter/tweetypie:media-entity-scala",
+        "tweetypie/common/src/thrift/com/twitter/tweetypie:tweet-scala",
+        "tweetypie/server/src/main/scala/com/twitter/tweetypie",
+        "tweetypie/server/src/main/scala/com/twitter/tweetypie/backends",
+        "tweetypie/server/src/main/scala/com/twitter/tweetypie/core",
+        "tweetypie/common/src/scala/com/twitter/tweetypie/media",
+        "user-image-service/thrift/src/main/thrift:thrift-scala",
+        "util/util-slf4j-api/src/main/scala/com/twitter/util/logging",
+    ],
+)

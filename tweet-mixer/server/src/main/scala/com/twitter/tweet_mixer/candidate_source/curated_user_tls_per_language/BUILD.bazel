@@ -1,0 +1,12 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "home-mixer/thrift/src/main/thrift:thrift-scala",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product",
+        "servo/repo/src/main/scala",
+        "stitch/stitch-timelineservice",
+    ],
+)

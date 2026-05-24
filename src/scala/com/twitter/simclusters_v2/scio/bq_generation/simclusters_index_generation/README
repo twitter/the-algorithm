@@ -1,0 +1,146 @@
+# Adhoc SimClusters Cluster-to-tweet Index Generation Jobs
+## Build and bundle the binaries
+
+```
+ bazel bundle src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/...
+```
+
+## Run the adhoc jobs
+### To run fav based cluster-to-tweet index generation job (adhoc):
+bin/d6w create \
+  twttr-recos-ml-prod/us-central1/fav-based-index-generation-adhoc-job \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
+  --jar dist/fav-based-cluster-to-tweet-index-generation-adhoc-job-bundle/fav-based-cluster-to-tweet-index-generation-adhoc-job.jar \
+  --bind=profile.user_name=your_ldap \
+  --bind=profile.date="2022-07-15" \
+  --bind=profile.frequency="PT1H" \
+  --bind=profile.environment=dev \
+  --bind=profile.job_name="fav-based-index-generation-adhoc-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:fav-based-cluster-to-tweet-index-generation-adhoc-job"
+
+### To run VideoView based cluster-to-tweet index generation job (adhoc):
+bin/d6w create \
+  twttr-recos-ml-prod/us-central1/video-view-based-index-generation-adhoc-job \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
+  --jar dist/video-view-based-cluster-to-tweet-index-generation-adhoc-job-bundle/video-view-based-cluster-to-tweet-index-generation-adhoc-job.jar \
+  --bind=profile.user_name=your_ldap \
+  --bind=profile.date="2022-07-15" \
+  --bind=profile.frequency="PT1H" \
+  --bind=profile.environment=dev \
+  --bind=profile.job_name="video-view-based-index-generation-adhoc-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:video-view-based-cluster-to-tweet-index-generation-adhoc-job"
+
+### To run retweet based cluster-to-tweet index generation job (adhoc):
+bin/d6w create \
+  twttr-recos-ml-prod/us-central1/retweet-based-index-generation-adhoc-job \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
+  --jar dist/retweet-based-cluster-to-tweet-index-generation-adhoc-job-bundle/retweet-based-cluster-to-tweet-index-generation-adhoc-job.jar \
+  --bind=profile.user_name=your_ldap \
+  --bind=profile.date="2022-07-15" \
+  --bind=profile.frequency="PT1H" \
+  --bind=profile.environment=dev \
+  --bind=profile.job_name="retweet-based-index-generation-adhoc-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:retweet-based-cluster-to-tweet-index-generation-adhoc-job"
+
+### To run reply based cluster-to-tweet index generation job (adhoc):
+bin/d6w create \
+  twttr-recos-ml-prod/us-central1/reply-based-index-generation-adhoc-job \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
+  --jar dist/reply-based-cluster-to-tweet-index-generation-adhoc-job-bundle/reply-based-cluster-to-tweet-index-generation-adhoc-job.jar \
+  --bind=profile.user_name=your_ldap \
+  --bind=profile.date="2022-07-15" \
+  --bind=profile.frequency="PT1H" \
+  --bind=profile.environment=dev \
+  --bind=profile.job_name="reply-based-index-generation-adhoc-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:reply-based-cluster-to-tweet-index-generation-adhoc-job"
+
+### To run push open based cluster-to-tweet index generation job (adhoc):
+bin/d6w create \
+  twttr-recos-ml-prod/us-central1/push-open-based-index-generation-adhoc-job \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
+  --jar dist/push-open-based-cluster-to-tweet-index-generation-adhoc-job-bundle/push-open-based-cluster-to-tweet-index-generation-adhoc-job.jar \
+  --bind=profile.user_name=your_ldap \
+  --bind=profile.date="2022-10-06" \
+  --bind=profile.frequency="PT1H" \
+  --bind=profile.environment=dev \
+  --bind=profile.job_name="push-open-based-index-generation-adhoc-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:push-open-based-cluster-to-tweet-index-generation-adhoc-job"
+
+# For prod scheduled Cluster-to-tweet Index Generation Jobs
+### To run Fav based cluster-to-tweet index generation job (batch):
+ bin/d6w schedule \
+  twttr-recos-ml-prod/us-central1/fav-based-index-generation-batch-job  \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
+  --bind=profile.user_name=cassowary \
+  --bind=profile.environment=prod \
+  --bind=profile.date="2022-07-19" \
+  --bind=profile.frequency="PT1H" \
+  --bind=profile.job_name="fav-based-index-generation-batch-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:fav-based-cluster-to-tweet-index-generation-batch-job"
+
+### To run VideoView based cluster-to-tweet index generation job (batch):
+ bin/d6w schedule \
+  twttr-recos-ml-prod/us-central1/video-view-based-index-generation-batch-job  \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
+  --bind=profile.user_name=cassowary \
+  --bind=profile.environment=prod \
+  --bind=profile.date="2022-07-19" \
+  --bind=profile.frequency="PT1H" \
+  --bind=profile.job_name="video-view-based-index-generation-batch-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:video-view-based-cluster-to-tweet-index-generation-batch-job"
+
+### To run Retweet based cluster-to-tweet index generation job (batch):
+ bin/d6w schedule \
+  twttr-recos-ml-prod/us-central1/retweet-based-index-generation-batch-job  \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
+  --bind=profile.user_name=cassowary \
+  --bind=profile.environment=prod \
+  --bind=profile.date="2022-07-19" \
+  --bind=profile.frequency="PT1H" \
+  --bind=profile.job_name="retweet-based-index-generation-batch-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:retweet-based-cluster-to-tweet-index-generation-batch-job"
+
+### To run Reply based cluster-to-tweet index generation job (batch):
+ bin/d6w schedule \
+  twttr-recos-ml-prod/us-central1/reply-based-index-generation-batch-job  \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
+  --bind=profile.user_name=cassowary \
+  --bind=profile.environment=prod \
+  --bind=profile.date="2022-07-19" \
+  --bind=profile.frequency="PT1H" \
+  --bind=profile.job_name="reply-based-index-generation-batch-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:reply-based-cluster-to-tweet-index-generation-batch-job"
+
+### To run Push open based cluster-to-tweet index generation job (batch):
+ bin/d6w schedule \
+  twttr-recos-ml-prod/us-central1/push-open-based-index-generation-batch-job  \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
+  --bind=profile.user_name=cassowary \
+  --bind=profile.environment=prod \
+  --bind=profile.date="2022-10-06" \
+  --bind=profile.frequency="PT1H" \
+  --bind=profile.job_name="push-open-based-index-generation-batch-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:push-open-based-cluster-to-tweet-index-generation-batch-job"
+
+### To run Ads Fav based cluster-to-tweet index generation job (batch):
+ bin/d6w schedule \
+  twttr-recos-ml-prod/us-central1/ads-fav-based-index-generation-batch-job  \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
+  --bind=profile.user_name=cassowary \
+  --bind=profile.environment=prod \
+  --bind=profile.date="2022-10-06" \
+  --bind=profile.frequency="PT3H" \
+  --bind=profile.job_name="ads-fav-based-index-generation-batch-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:ads-fav-based-cluster-to-tweet-index-generation-batch-job"
+
+### To run Ads Fav Click based cluster-to-tweet index generation job (batch):
+ bin/d6w schedule \
+  twttr-recos-ml-prod/us-central1/ads-fav-click-based-index-generation-batch-job  \
+  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
+  --bind=profile.user_name=cassowary \
+  --bind=profile.environment=prod \
+  --bind=profile.date="2022-12-09" \
+  --bind=profile.frequency="PT3H" \
+  --bind=profile.job_name="ads-fav-click-based-index-generation-batch-job" \
+  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:ads-fav-click-based-cluster-to-tweet-index-generation-batch-job"
+

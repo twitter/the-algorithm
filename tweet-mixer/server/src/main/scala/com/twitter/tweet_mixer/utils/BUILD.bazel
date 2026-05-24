@@ -1,0 +1,16 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "finagle/finagle-memcached/src/main/scala",
+        "servo/repo",
+        "snowflake/src/main/scala/com/twitter/snowflake/id",
+        "storage/clients/manhattan/client/src/main/scala",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/feature",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/param",
+        "tweet-mixer/thrift/src/main/thrift:thrift-scala",
+        "user-signal-service/thrift/src/main/thrift:thrift-scala",
+    ],
+)

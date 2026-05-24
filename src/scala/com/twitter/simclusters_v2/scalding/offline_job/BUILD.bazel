@@ -1,0 +1,126 @@
+scala_library(
+    platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-only",
+    ],
+    dependencies = [
+        "3rdparty/jvm/com/twitter/storehaus:algebra",
+        "3rdparty/jvm/com/twitter/storehaus:core",
+        "3rdparty/src/jvm/com/twitter/storehaus:algebra",
+        "3rdparty/src/jvm/com/twitter/storehaus:core",
+        "graphstore/common:flock_follows-java",
+        "snowflake:id",
+        "src/java/com/twitter/ml/api/constant",
+        "src/java/com/twitter/sbf/graph",
+        "src/scala/com/twitter/ml/api:api-base",
+        "src/scala/com/twitter/pluck/source/core_workflows/user_model:condensed_user_state-scala",
+        "src/scala/com/twitter/scalding_internal/dalv2",
+        "src/scala/com/twitter/scalding_internal/job",
+        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
+        "src/scala/com/twitter/scalding_internal/source",
+        "src/scala/com/twitter/scalding_internal/source/lzo_scrooge",
+        "src/scala/com/twitter/simclusters_v2/candidate_source",
+        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
+        "src/scala/com/twitter/simclusters_v2/scalding",
+        "src/scala/com/twitter/simclusters_v2/scalding/common",
+        "src/scala/com/twitter/simclusters_v2/summingbird/common",
+        "src/scala/com/twitter/timelines/prediction/features/common",
+        "src/scala/com/twitter/timelines/prediction/features/itl",
+        "src/scala/com/twitter/timelines/prediction/features/recap",
+        "src/scala/com/twitter/wtf/scalding/jobs/common:execution_app",
+        "src/thrift/com/twitter/hermit/candidate:hermit-candidate-scala",
+        "src/thrift/com/twitter/wtf/scalding/sims:sims-thrift-scala",
+        "twadoop_config/configuration/log_categories/group/timeline:timeline_service_favorites-scala",
+        "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/flat:usersource_flat-scala",
+        "usersource/snapshot/src/main/thrift/com/twitter/usersource/snapshot/flat:flat-scala",
+    ],
+)
+
+hadoop_binary(
+    name = "simclusters_offline_job-adhoc",
+    main = "com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobAdhocApp",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [
+        ":offline_job",
+    ],
+)
+
+hadoop_binary(
+    name = "simclusters_offline_job",
+    main = "com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobScheduledApp",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [
+        ":offline_job",
+    ],
+)
+
+hadoop_binary(
+    name = "simclusters_offline_job-repl",
+    main = "com.twitter.scalding_internal.repl.TwitterScaldingShell",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [
+        ":offline_job",
+        "science/scalding/scripts:scalding-repl-deps",
+    ],
+)
+
+hadoop_binary(
+    name = "dump_cluster_topk_job-adhoc",
+    main = "com.twitter.simclusters_v2.scalding.offline_job.DumpClusterTopKTweetsAdhoc",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [
+        ":offline_job",
+    ],
+)
+
+# Generated with `capesospy-v2 create_target offline_tweet_job src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml`, config hash bb0831.
+scalding_job(
+    name = "offline_tweet_job",
+    main = "com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobScheduledApp",
+    config = [
+        ("hadoop.combine-input", "true"),
+        ("hadoop.map.jvm.total-memory", "3072m"),
+        ("hadoop.queue", "cassowary.default"),
+        ("hadoop.reduce.jvm.total-memory", "3072m"),
+        ("hadoop.submitter.jvm.total-memory", "5120m"),
+        ("submitter.tier", "preemptible"),
+    ],
+    contact = "no-reply@twitter.com",
+    cron = "14 * * * *",
+    hadoop_cluster = "atla-proc3",
+    platform = "java8",
+    role = "cassowary",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [
+        ":offline_job",
+    ],
+)

@@ -1,0 +1,67 @@
+alias(
+    name = "graph_feature_service-server",
+    target = ":graph_feature_service-server_lib",
+)
+
+target(
+    name = "graph_feature_service-server_lib",
+    dependencies = [
+        "graph-feature-service/src/main/scala/com/twitter/graph_feature_service/server",
+    ],
+)
+
+alias(
+    name = "graph_feature_service-worker",
+    target = ":graph_feature_service-worker_lib",
+)
+
+target(
+    name = "graph_feature_service-worker_lib",
+    dependencies = [
+        "graph-feature-service/src/main/scala/com/twitter/graph_feature_service/worker",
+    ],
+)
+
+jvm_binary(
+    name = "server-bin",
+    basename = "graph_feature_service-server",
+    main = "com.twitter.graph_feature_service.server.Main",
+    platform = "java8",
+    tags = ["bazel-compatible"],
+    dependencies = [
+        ":graph_feature_service-server",
+        "3rdparty/jvm/ch/qos/logback:logback-classic",
+        "finagle/finagle-zipkin-scribe/src/main/scala",
+        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
+        "twitter-server/logback-classic/src/main/scala",
+    ],
+)
+
+jvm_binary(
+    name = "worker-bin",
+    basename = "graph_feature_service-worker",
+    main = "com.twitter.graph_feature_service.worker.Main",
+    platform = "java8",
+    tags = ["bazel-compatible"],
+    dependencies = [
+        ":graph_feature_service-worker",
+        "3rdparty/jvm/ch/qos/logback:logback-classic",
+        "finagle/finagle-zipkin-scribe/src/main/scala",
+        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
+        "twitter-server/logback-classic/src/main/scala",
+    ],
+)
+
+jvm_app(
+    name = "server-bundle",
+    basename = "graph_feature_service-server-dist",
+    binary = ":server-bin",
+    tags = ["bazel-compatible"],
+)
+
+jvm_app(
+    name = "worker-bundle",
+    basename = "graph_feature_service-worker-dist",
+    binary = ":worker-bin",
+    tags = ["bazel-compatible"],
+)

@@ -1,0 +1,313 @@
+stratofed_forward_dark_traffic:
+  comment:
+    Forward Federated Strato traffic to DarkTrafficProxy (DTP).
+    Note, this decider is not overrideable via Tweetypie tooling,
+    as it is only used by the StratoFedServer frameworkDecider instance.
+    Note, you cannot use this decider as a TweetypieDeciderGates.
+  default_availability: 0
+
+tweetypie_enable_community_tweet_creates:
+  comment: When enable, it allows the creation of community tweets
+  default_availability: 10000
+
+tweetypie_hydrate_scrub_engagements:
+  comment: Redact Tweet engagement related data (StatusCounts) from Interstital Public Interest (IPI) Tweets.
+  default_availability: 10000
+
+tweetypie_check_spam_on_retweet:
+  comment: Enable Scarecrow spam check during retweet creation
+  default_availability: 10000
+
+tweetypie_check_spam_on_tweet:
+  comment: Enable Scarecrow spam check during tweet creation
+  default_availability: 10000
+
+tweetypie_conversation_control_use_feature_switch_results:
+  comment:
+    Controls whether Tweetypie uses feature switch results during conversation control parameter validation. This decider supports migration of feature switches from macaw-tweets to tweetypie.
+  default_availability: 0
+
+tweetypie_conversation_control_tweet_create_enabled:
+  comment:
+    Controls whether we will enforce conversation control policy on tweet create. http://go/dont-at-me-backend-tdd
+  default_availability: 0
+
+tweetypie_enable_exclusive_tweet_control_validation:
+  comment:
+    Controls whether we will restrict the exclusiveTweetControlOptions parameter to only be usable by creators. http://go/superfollows
+  default_availability: 0
+
+tweetypie_delay_erase_user_tweets:
+  comment: sleep for a fixed number of seconds before deleting a page of tweets during user erasure. Used as a rate limiting mechanism.
+  default_availability: 5000
+
+tweetypie_deny_non_tweet_permalinks:
+  comment:
+    Right now we would create a quote-tweet which would contain a non-working permalink
+    whereas with latest QT + media changes we're blocking the tweet creation. If tweet
+    from permalink is not found, we would throw an exception if this decider is on else
+    return a default pass-through response.
+  default_availability: 0
+
+tweetypie_enable_trusted_friends_control_validation:
+  comment: Controls whether we will enforce trusted friends control policy on replies
+  default_availability: 0
+
+tweetypie_enforce_rate_limited_clients:
+  comment:
+    Controls whether we will rate-limit low-priority clients based on per-instance requests per sec.
+    We enable clients for rate-limiting by setting the rate_limit to true in clients.yml
+  default_availability: 10000
+
+tweetypie_fail_closed_in_vf:
+  comment: Propagate failure from backends such as Strato when running Visibility Filtering
+  default_availability: 0
+
+tweetypie_fork_dark_traffic:
+  comment: Forks traffic to Darkhub
+  default_availability: 0
+
+tweetypie_hydrate_conversation_muted:
+  comment: Hydrates the conversationMuted field if requested. This calls timelineservice.
+  default_availability: 10000
+
+tweetypie_hydrate_counts:
+  comment: Hydrate status counts, if asked for.  This calls TFlock.
+  default_availability: 10000
+
+tweetypie_hydrate_previous_counts:
+  comment: Hydrate previous engagements on a tweet in an edit chain
+  default_availability: 0
+
+tweetypie_hydrate_device_sources:
+  comment: Hydrate device sources.  This reads from DBs.
+  default_availability: 10000
+
+tweetypie_hydrate_escherbird_annotations:
+  comment: Hydrate the escherbirdEntityAnnotations additional field on tweet create.  This calls the Escherbird Annotation Service.
+  default_availability: 10000
+
+tweetypie_hydrate_gnip_profile_geo_enrichment:
+  comment: Hydrates each tweet with the profile geo enrichment.
+  default_availability: 10000
+
+tweetypie_hydrate_has_media:
+  comment: Hydrate the hasMedia field based on whether the tweet has a media entity, a media card, or a URL that matches partner media regexes
+  default_availability: 10000
+
+tweetypie_hydrate_media:
+  comment: Hydrate media entities. This calls MediaInfo Service.
+  default_availability: 10000
+
+tweetypie_hydrate_media_refs:
+  comment: Hydrate MediaRefs. Calls Tweetypie for pasted media.
+  default_availability: 0
+
+tweetypie_hydrate_media_tags:
+  comment: Hydrate media tags. This calls Gizmoduck for user view.
+  default_availability: 10000
+
+tweetypie_hydrate_pasted_media:
+  comment: Copies media entities and media cards from tweets referenced by a media permalink url entity.
+  default_availability: 10000
+
+tweetypie_hydrate_perspectives:
+  comment: Hydrate perspectival attributes, if asked for.  This calls TLS, which may call TFlock if items are not in cache.
+  default_availability: 10000
+
+tweetypie_hydrate_perspectives_edits_for_timelines:
+  comment:
+    Hydrated perspectival attributes across versions of tweet edit,
+    for timelines safety levels if asked for.
+    This results in more TLS calls (one for each version of tweet).
+  default_availability: 0
+
+tweetypie_hydrate_perspectives_edits_for_tweet_details:
+  comment:
+    Hydrated perspectival attributes across versions of tweet edit,
+    for tweet detail safety levels if asked for.
+    This results in more TLS calls (one for each version of tweet).
+  default_availability: 0
+
+tweetypie_hydrate_perspectives_edits_for_other_levels:
+  comment:
+    Hydrated perspectival attributes across versions of tweet edit,
+    for safety levels not mentioned in other deciders, if asked for.
+    This results in more TLS calls (one for each version of tweet).
+  default_availability: 0
+
+tweetypie_hydrate_places:
+  comment: Hydrate place data, if asked for. This calls geoduck.
+  default_availability: 10000
+
+tweetypie_jiminy_dark_requests:
+  comment: Enables dark requests to the Jiminy backend for the specified % of traffic
+  default_availability: 0
+
+tweetypie_log_cache_exceptions:
+  comment: Enables logging of cache exceptions to loglens.
+  default_availability: 0
+
+tweetypie_log_reads:
+  comment: Enables logging of reads.
+  default_availability: 50
+
+tweetypie_log_tweet_cache_writes:
+  comment: Scribe a record for each cache write for tweets that pass this decider.
+  default_availability: 0
+
+tweetypie_log_writes:
+  comment: Enables logging of status writes.
+  default_availability: 10000
+
+tweetypie_log_young_tweet_cache_writes:
+  comment:
+    Scribe a record of cache writes for recently-created tweets that
+    pass this decider.
+  default_availability: 0
+
+tweetypie_log_vf_dark_read_mismatches:
+  comment: Log mismatches from the tweetypie_dark_read_safety_labels_from_strato code path.
+  default_availability: 0
+
+tweetypie_max_request_width_enabled:
+  comment:
+    Controls whether the max request width limit is enabled or not.
+    0 means the limit is disabled, 10000 means it is turned on and
+    request widths > maxSize will be rejected.
+  default_availability: 0
+
+tweetypie_media_refs_hydrator_include_pasted_media:
+  comment:
+    For debugging MediaRefsHydrator - determine if extra calls to pasted media are causing the GC issues.
+  default_availability: 0
+
+tweetypie_prefer_forwarded_service_identifier_for_client_id:
+  comment: Effective client ID logic prefers forwarded service identifier to service identifier if available.
+  default_availability: 0
+
+tweetypie_rate_limit_by_limiter_service:
+  comment:
+    Controls whether we will consult limiter service to see whether a
+    user is allowed to create more tweets.
+  default_availability: 10000
+
+tweetypie_rate_limit_tweet_creation_failure:
+  comment:
+    Controls whether we rate limit tweet creation based on failed
+    attempts to create tweets via limiter service. This is separate
+    from the limit of created tweets. It is intended to prevent
+    unforeseen abuse by failing tweet creation attempts immediately if
+    the user has had too many recent tweet creation
+    failures. Disabling this decider will reduce traffic to limiter
+    service, but will remove the per-user abuse protection.
+  default_availability: 10000
+
+tweetypie_replicate_reads_to_atla:
+  comment: Send reads to deferredrpc for replication to atla. We can use this to warm caches in atla.
+  default_availability: 0
+
+tweetypie_replicate_reads_to_pdxa:
+  comment: Send reads to deferredrpc for replication to pdxa. We can use this to warm caches in pdxa.
+  default_availability: 0
+
+tweetypie_disable_invite_via_mention:
+  comment:
+    Disables invite via mention field in the conversation control struct of
+    root tweets + reply tweets.
+  default_availability: 0
+
+tweetypie_shed_read_traffic_voluntarily:
+  comment:
+    Preferred way to reject read requests during an incident from a subset of clients that have
+    volunteered to shed load.  These clients have load_shed_envs set in clients.yml, often for
+    staging environments.  Although this decider is available and clients have volunteered, should
+    still only be used in an emergency.
+  default_availability: 0
+
+tweetypie_validate_card_ref_attachment_android:
+  comment:
+    When enabled tweet creates from Android consider CardReference for the TooManyAttachmentTypes error when creating tweets with more than one attachment type.
+  default_availability: 0
+
+tweetypie_validate_card_ref_attachment_non_android:
+  comment:
+    When enabled tweet creates from non-Android consider CardReference for the TooManyAttachmentTypes error when creating tweets with more than one attachment type
+  default_availability: 0
+
+# Additional Fields
+
+tweetypie_short_circuit_likely_partial_tweet_reads_ms:
+  comment:
+    Specifies a number of milliseconds before which, we short circuit likely
+    partial reads from MH and return NotFound tweet response state.
+    After experimenting decided to go with 1500 ms.
+  default_availability: 0
+
+tweetypie_populate_quoted_tweet_results_as_contextual_tweet_ref:
+  comment:
+    CreateTweet and CreateReTweet column to return the 'quoted_tweet_results' PrefetchedItem as
+    ContextualTweetRef type instead of just tweetId.
+    This will be used during the quotedTweet.Tweet column migration (see http://go/qt-col-migration)
+    Post-migration, this will be removed.
+  default_availability: 0
+tweetypie_enable_unmentions_timeline_warmup:
+  comment:
+    When enabled, read-path calls execute an async call to the getUnmentionedUsersFromConverstion
+    strato column to warm the unmentioned NH/haplolite cache.
+    http://go/unmention-me-onepager
+  default_availability: 0
+
+tweetypie_tweet_visibility_library_enable_parity_test:
+  comment: measure TVL parity against VF federated service, for a fraction of traffic
+  default_availability: 0
+
+tweetypie_enable_vf_feature_hydration_in_quoted_tweet_visibility_library_shim:
+  comment: when enabled, all features are hydrated in QuotedTweetVisibilityLibrary shim
+  default_availability: 0
+
+tweetypie_enable_remove_unmentioned_implicit_mentions:
+  comment:
+    When enabled, implicit mentions are filtered based on users that have unmentioned themselves
+    from the tweet's conversation.  http://go/unmention-me-onepager
+  default_availability: 0
+
+tweetypie_enable_stale_tweet_validation:
+  comment: Controls whether we will enforce stale tweet policy on replies and QT
+  default_availability: 0
+
+tweetypie_disable_promoted_tweet_edit:
+  comment:
+    Controls whether we will disable edits on promoted tweets
+  default_availability: 0
+
+tweetypie_should_materialize_containers:
+  comment:
+    When enabled, Creatives Container Service will be called to materialize container-backed tweets.
+    Otherwise, TP will not call CCS and return a StatusState of NotFound.
+  default_availability: 0
+
+tweetypie_check_twitter_blue_subscription_for_edit:
+  comment:
+    Controls whether we check if the User is subscribed to Twitter Blue when editing a Tweet.
+  default_availability: 0
+
+tweetypie_hydrate_bookmarks_count:
+  comment:
+    Controls whether we hydrate bookmarks count for a Tweet
+  default_availability: 0
+
+tweetypie_hydrate_bookmarks_perspective:
+  comment:
+    Controls whether we request the Bookmarked perspective from TLS
+  default_availability: 0
+
+tweetypie_set_edit_time_window_to_sixty_minutes:
+  comment:
+    Set time window in which Tweets are editable to 60 minutes
+  default_availability: 0
+
+tweetypie_enable_federated_column_dark_traffic:
+  comment:
+    Enable dark traffic for federated column.
+  default_availability: 0

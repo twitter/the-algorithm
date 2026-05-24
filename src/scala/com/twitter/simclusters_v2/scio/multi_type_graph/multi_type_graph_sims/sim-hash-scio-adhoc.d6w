@@ -1,0 +1,33 @@
+class Profile(Struct):
+  project = Required(String)
+  date = Required(String)
+  environment = Default(String, 'dev')
+  machine = Default(String, 'n2d-highmem-16')
+
+job = Job(
+  name='multi-type-graph-sim-hash-scio-adhoc-app',
+  project='{{profile.project}}',
+  staging_bucket='{{profile.project}}',
+  service_account='{{profile.user_name}}-shdw@twttr-dp-svc-accounts.iam.gserviceaccount.com',
+  region='us-central1',
+  worker_config=WorkerConfig(
+    num_workers=2,
+    worker_machine_type='{{profile.machine}}',
+    worker_disk_type=WorkerDiskType('HDD'),
+  ),
+  extra_args={
+    "environment": '{{profile.environment}}',
+    "date": Quote('{{profile.date}}'),
+  },
+  deployment_config=BatchDeploymentConfig(
+    role='{{profile.user_name}}',
+    build_target='src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/multi_type_graph_sims:multi-type-graph-sim-hash-scio-adhoc-app',
+    gcp_deployment_credentials='/var/lib/tss/keys/{{profile.user_name}}/cloud/gcp/dp/shadow.json',
+    statebird_config=StatebirdConfig(
+      batch_width='PT1H',
+      first_time='{{profile.date}}'
+    )
+  )
+)
+
+jobs=[job]

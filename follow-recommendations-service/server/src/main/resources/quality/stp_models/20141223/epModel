@@ -1,0 +1,8 @@
+# OWNER = jdeng
+# Date = 20141223_153423
+# Training Size = 16744473
+# Testing Size = 16767335
+#  trained with ElasticNetCV alpha=0.05 cv_folds=5 best_lambda=1.0E-7
+# num base features: 10
+# num nonzero weights: 30
+{bias:-5.67151,featureMetadataMap:["fwd_email":{metadata:{featureWeight:{weight:2.47389}}},"rev_phone":{metadata:{featureWeight:{weight:1.88433}}},"mutual_follow_path":{metadata:{featureWeight:{intervalWeights:[{left:47.0,weight:6.31809},{left:11.0,right:16.0,weight:4.52959},{left:31.0,right:47.0,weight:5.7101},{right:2.0,weight:0.383515},{left:24.0,right:31.0,weight:5.26515},{left:3.0,right:4.0,weight:2.91751},{left:2.0,right:3.0,weight:2.22851},{left:4.0,right:5.0,weight:3.28515},{left:8.0,right:11.0,weight:4.14731},{left:5.0,right:8.0,weight:3.73588},{left:16.0,right:24.0,weight:4.90908}]}}},"fwd_phone":{metadata:{featureWeight:{weight:2.07327}}},"fwd_email_path":{metadata:{featureWeight:{weight:0.961773}}},"rev_phone_path":{metadata:{featureWeight:{weight:0.354484}}},"low_tweepcred_follow_path":{metadata:{featureWeight:{intervalWeights:[{left:4.0,right:5.0,weight:0.177209},{left:7.0,right:8.0,weight:0.12378},{left:3.0,right:4.0,weight:0.197566},{left:5.0,right:6.0,weight:0.15867},{left:2.0,right:3.0,weight:0.196539},{right:2.0,weight:0.1805},{left:75.0,weight:-0.424598},{left:6.0,right:7.0,weight:0.143698},{left:10.0,right:13.0,weight:0.0458502},{left:8.0,right:10.0,weight:0.0919314},{left:13.0,right:75.0,weight:-0.111484}]}}},"rev_email_path":{metadata:{featureWeight:{weight:0.654451}}},"rev_email":{metadata:{featureWeight:{weight:2.33859}}},"fwd_phone_path":{metadata:{featureWeight:{weight:0.210418}}}]}

@@ -1,0 +1,27 @@
+scala_library(
+    platform = "java8",
+    tags = ["bazel-only"],
+    dependencies = [
+        "3rdparty/jvm/com/twitter/bijection:core",
+        "3rdparty/jvm/com/twitter/bijection:scrooge",
+        "frigate/frigate-common/src/main/scala/com/twitter/frigate/common/constdb_util",
+        "src/java/com/twitter/ml/api:api-base",
+        "src/scala/com/twitter/ml/api:api-base",
+        "src/scala/com/twitter/scalding_internal/job",
+        "src/scala/com/twitter/scalding_internal/job/analytics_batch",
+        "src/thrift/com/twitter/ml/api:data-java",
+    ],
+)
+
+hadoop_binary(
+    name = "gfs_random_request-adhoc",
+    main = "com.twitter.graph_feature_service.scalding.adhoc.RandomRequestGenerationApp",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [":adhoc"],
+)

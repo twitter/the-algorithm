@@ -1,0 +1,18 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product",
+        "src/thrift/com/twitter/timelines/impression_bloom_filter:thrift-scala",
+        "strato/config/src/thrift/com/twitter/strato/graphql/unified_counter:graphql-unified-counter-scala",
+        "timelines/src/main/scala/com/twitter/timelines/impressionstore/impressionbloomfilter",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/feature",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/functional_component/hydrator",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/model/request",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/param",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/product/imv_related_tweets/param",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/utils",
+    ],
+)

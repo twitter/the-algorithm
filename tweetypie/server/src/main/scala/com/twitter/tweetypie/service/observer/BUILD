@@ -1,0 +1,21 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "finagle/finagle-core/src/main",
+        "tweetypie/servo/util/src/main/scala",
+        "snowflake/src/main/scala/com/twitter/snowflake/id",
+        "src/thrift/com/twitter/escherbird:media-annotation-structs-scala",
+        "src/thrift/com/twitter/servo:servo-exception-scala",
+        "tweetypie/common/src/thrift/com/twitter/tweetypie:service-scala",
+        "tweetypie/common/src/thrift/com/twitter/tweetypie:stored-tweet-info-scala",
+        "tweetypie/server/src/main/scala/com/twitter/tweetypie",
+        "tweetypie/server/src/main/scala/com/twitter/tweetypie/media",
+        "tweetypie/server/src/main/thrift:compiled-scala",
+        "tweetypie/common/src/scala/com/twitter/tweetypie/additionalfields",
+        "tweetypie/common/src/scala/com/twitter/tweetypie/tweettext",
+        "tweetypie/common/src/scala/com/twitter/tweetypie/util",
+    ],
+)

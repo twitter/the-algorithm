@@ -1,0 +1,165 @@
+<configuration>
+    <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
+
+    <!-- ===================================================== -->
+    <!-- Service Config -->
+    <!-- ===================================================== -->
+    <property name="DEFAULT_SERVICE_PATTERN"
+              value="%-16X{traceId} %-12X{clientId:--} %-16X{method} %-25logger{0} %msg"/>
+
+    <property name="DEFAULT_ACCESS_PATTERN"
+              value="%msg"/>
+
+    <!-- ===================================================== -->
+    <!-- Common Config -->
+    <!-- ===================================================== -->
+
+    <!-- JUL/JDK14 to Logback bridge -->
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+
+    <!-- ====================================================================================== -->
+    <!-- NOTE: The following appenders use a simple TimeBasedRollingPolicy configuration.       -->
+    <!--       You may want to consider using a more advanced SizeAndTimeBasedRollingPolicy.    -->
+    <!--       See: https://logback.qos.ch/manual/appenders.html#SizeAndTimeBasedRollingPolicy  -->
+    <!-- ====================================================================================== -->
+
+    <!-- Service Log (rollover daily, keep maximum of 21 days of gzip compressed logs) -->
+    <appender name="SERVICE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.service.output}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${log.service.output}.%d.gz</fileNamePattern>
+            <!-- the maximum total size of all the log files -->
+            <totalSizeCap>3GB</totalSizeCap>
+            <!-- keep maximum 21 days' worth of history -->
+            <maxHistory>21</maxHistory>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date %.-3level ${DEFAULT_SERVICE_PATTERN}%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Access Log (rollover daily, keep maximum of 21 days of gzip compressed logs) -->
+    <appender name="ACCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.access.output}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${log.access.output}.%d.gz</fileNamePattern>
+            <!-- the maximum total size of all the log files -->
+            <totalSizeCap>100MB</totalSizeCap>
+            <!-- keep maximum 7 days' worth of history -->
+            <maxHistory>7</maxHistory>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${DEFAULT_ACCESS_PATTERN}%n</pattern>
+        </encoder>
+    </appender>
+
+    <!--LogLens -->
+    <appender name="LOGLENS" class="com.twitter.loglens.logback.LoglensAppender">
+        <mdcAdditionalContext>true</mdcAdditionalContext>
+        <category>${log.lens.category}</category>
+        <index>${log.lens.index}</index>
+        <tag>${log.lens.tag}/service</tag>
+        <encoder>
+            <pattern>%msg</pattern>
+        </encoder>
+    </appender>
+
+    <!-- LogLens Access -->
+    <appender name="LOGLENS-ACCESS" class="com.twitter.loglens.logback.LoglensAppender">
+        <mdcAdditionalContext>true</mdcAdditionalContext>
+        <category>${log.lens.category}</category>
+        <index>${log.lens.index}</index>
+        <tag>${log.lens.tag}/access</tag>
+        <encoder>
+            <pattern>%msg</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Pipeline Execution Logs -->
+    <appender name="ALLOW-LISTED-PIPELINE-EXECUTIONS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>allow_listed_pipeline_executions.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>allow_listed_pipeline_executions.log.%d.gz</fileNamePattern>
+             <!-- the maximum total size of all the log files -->
+            <totalSizeCap>100MB</totalSizeCap>
+            <!-- keep maximum 7 days' worth of history -->
+            <maxHistory>7</maxHistory>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%date %.-3level ${DEFAULT_SERVICE_PATTERN}%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- ===================================================== -->
+    <!-- Primary Async Appenders -->
+    <!-- ===================================================== -->
+
+    <property name="async_queue_size" value="${queue.size:-50000}"/>
+    <property name="async_max_flush_time" value="${max.flush.time:-0}"/>
+
+    <appender name="ASYNC-SERVICE" class="com.twitter.inject.logback.AsyncAppender">
+        <queueSize>${async_queue_size}</queueSize>
+        <maxFlushTime>${async_max_flush_time}</maxFlushTime>
+        <appender-ref ref="SERVICE"/>
+    </appender>
+
+    <appender name="ASYNC-ACCESS" class="com.twitter.inject.logback.AsyncAppender">
+        <queueSize>${async_queue_size}</queueSize>
+        <maxFlushTime>${async_max_flush_time}</maxFlushTime>
+        <appender-ref ref="ACCESS"/>
+    </appender>
+
+    <appender name="ASYNC-ALLOW-LISTED-PIPELINE-EXECUTIONS" class="com.twitter.inject.logback.AsyncAppender">
+        <queueSize>${async_queue_size}</queueSize>
+        <maxFlushTime>${async_max_flush_time}</maxFlushTime>
+        <appender-ref ref="ALLOW-LISTED-PIPELINE-EXECUTIONS"/>
+    </appender>
+
+    <appender name="ASYNC-LOGLENS" class="com.twitter.inject.logback.AsyncAppender">
+        <queueSize>${async_queue_size}</queueSize>
+        <maxFlushTime>${async_max_flush_time}</maxFlushTime>
+        <appender-ref ref="LOGLENS"/>
+    </appender>
+
+    <appender name="ASYNC-LOGLENS-ACCESS" class="com.twitter.inject.logback.AsyncAppender">
+        <queueSize>${async_queue_size}</queueSize>
+        <maxFlushTime>${async_max_flush_time}</maxFlushTime>
+        <appender-ref ref="LOGLENS-ACCESS"/>
+    </appender>
+
+    <!-- ===================================================== -->
+    <!-- Package Config -->
+    <!-- ===================================================== -->
+
+    <!-- Per-Package Config -->
+    <logger name="com.twitter" level="INHERITED"/>
+    <logger name="com.twitter.wilyns" level="INHERITED"/>
+    <logger name="com.twitter.configbus.client.file" level="INHERITED"/>
+    <logger name="com.twitter.finagle.mux" level="INHERITED"/>
+    <logger name="com.twitter.finagle.serverset2" level="INHERITED"/>
+    <logger name="com.twitter.logging.ScribeHandler" level="INHERITED"/>
+    <logger name="com.twitter.zookeeper.client.internal" level="INHERITED"/>
+
+    <!-- Root Config -->
+    <!-- For all logs except access logs, disable logging below log_level level by default. This can be overriden in the per-package loggers, and dynamically in the admin panel of individual instances. -->
+    <root level="${log_level:-INFO}">
+        <appender-ref ref="ASYNC-SERVICE"/>
+        <appender-ref ref="ASYNC-LOGLENS"/>
+    </root>
+
+    <!-- Access Logging -->
+    <!-- Access logs are turned off by default -->
+    <logger name="com.twitter.finatra.thrift.filters.AccessLoggingFilter" level="OFF" additivity="false">
+        <appender-ref ref="ASYNC-ACCESS"/>
+        <appender-ref ref="ASYNC-LOGLENS-ACCESS"/>
+    </logger>
+
+</configuration>

@@ -1,0 +1,23 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/com/twitter/storehaus:memcache",
+        "finatra/thrift/src/main/scala/com/twitter/finatra/thrift:controller",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/controllers",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service/debug_query",
+        "snowflake/src/main/scala/com/twitter/snowflake/id",
+        "src/scala/com/twitter/simclusters_v2/common",
+        "src/scala/com/twitter/storehaus_internal/manhattan",
+        "src/scala/com/twitter/storehaus_internal/memcache",
+        "src/thrift/com/twitter/core_workflows/user_model:user_model-scala",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/marshaller/request",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/product/imv_related_tweets/model/request",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/service",
+        "tweet-mixer/thrift/src/main/thrift:thrift-scala",
+        "twitter-context/src/main/scala",
+    ],
+)

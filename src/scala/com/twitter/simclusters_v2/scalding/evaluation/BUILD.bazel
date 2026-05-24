@@ -1,0 +1,72 @@
+scala_library(
+    sources = ["*.scala"],
+    platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-only",
+    ],
+    dependencies = [
+        "src/scala/com/twitter/simclusters_v2/scalding/common",
+        "src/scala/com/twitter/simclusters_v2/scalding/offline_job",
+    ],
+)
+
+hadoop_binary(
+    name = "tweet_evaluation_dummy_candidate_adhoc",
+    main = "com.twitter.simclusters_v2.scalding.DummyCandidateGenerationAdhocJob",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [
+        ":evaluation",
+    ],
+)
+
+hadoop_binary(
+    name = "tweet_evaluation_timelines_reference_adhoc",
+    main = "com.twitter.simclusters_v2.scalding.evaluation.AdhocTimelinesDataExtraction",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [
+        ":evaluation",
+    ],
+)
+
+hadoop_binary(
+    name = "tweet_evaluation_timelines_reference_batch",
+    main = "com.twitter.simclusters_v2.scalding.evaluation.ScheduledTimelinesDataExtractionBatch",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [
+        ":evaluation",
+    ],
+)
+
+hadoop_binary(
+    name = "simcluster_offline_eval_adhoc",
+    main = "com.twitter.simclusters_v2.scalding.evaluation.SimClustersEvaluationAdhocApp",
+    platform = "java8",
+    runtime_platform = "java8",
+    tags = [
+        "bazel-compatible",
+        "bazel-compatible:migrated",
+        "bazel-only",
+    ],
+    dependencies = [
+        ":evaluation",
+    ],
+)

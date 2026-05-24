@@ -1,0 +1,22 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    dependencies = [
+        "3rdparty/jvm/io/grpc:grpc-protobuf",
+        "3rdparty/jvm/io/grpc:grpc-stub",
+        "finagle-internal/finagle-grpc/src/main/scala",
+        "finatra/inject/inject-utils/src/main/scala",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/feature_hydrator/user_history",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model/request",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/param",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/util",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/module:test-user-mapper",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature/featuremap/datarecord",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/util",
+        "timelines/src/main/scala/com/twitter/timelines/clients/predictionservice",
+        "timelineservice/common:model",
+        "user_history_transformer/service/src/main/java/com/x/user_action_sequence",
+    ],
+)

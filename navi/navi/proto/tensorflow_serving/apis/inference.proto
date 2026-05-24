@@ -1,0 +1,59 @@
+// This file contains messages for various machine learning inferences
+// such as regression and classification.
+//
+// In many applications more than one type of inference is desired for a single
+// input.  For example, given meteorologic data an application may want to
+// perform a classification to determine if we should expect rain, snow or sun
+// and also perform a regression to predict the temperature.
+// Sharing the single input data between two inference tasks can be accomplished
+// using MultiInferenceRequest and MultiInferenceResponse.
+
+syntax = "proto3";
+
+option cc_enable_arenas = true;
+
+import "tensorflow_serving/apis/classification.proto";
+import "tensorflow_serving/apis/input.proto";
+import "tensorflow_serving/apis/model.proto";
+import "tensorflow_serving/apis/regression.proto";
+
+package tensorflow.serving;
+
+// Inference request such as classification, regression, etc...
+message InferenceTask {
+  // Model Specification. If version is not specified, will use the latest
+  // (numerical) version.
+  // All ModelSpecs in a MultiInferenceRequest must access the same model name.
+  ModelSpec model_spec = 1;
+
+  // Signature's method_name. Should be one of the method names defined in
+  // third_party/tensorflow/python/saved_model/signature_constants.py.
+  // e.g. "tensorflow/serving/classify".
+  string method_name = 2;
+}
+
+// Inference result, matches the type of request or is an error.
+message InferenceResult {
+  ModelSpec model_spec = 1;
+
+  oneof result {
+    ClassificationResult classification_result = 2;
+    RegressionResult regression_result = 3;
+  }
+}
+
+// Inference request containing one or more requests.
+message MultiInferenceRequest {
+  // Inference tasks.
+  repeated InferenceTask tasks = 1;
+
+  // Input data.
+  Input input = 2;
+}
+
+// Inference request containing one or more responses.
+message MultiInferenceResponse {
+  // List of results; one for each InferenceTask in the request, returned in the
+  // same order as the request.
+  repeated InferenceResult results = 1;
+}

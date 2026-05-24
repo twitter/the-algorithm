@@ -1,0 +1,22 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/param",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/scored_tweets/query_transformer",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/util",
+        "home-mixer/thrift/src/main/thrift:thrift-scala",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/candidate_source/earlybird",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/util",
+        "servo/repo/src/main/scala",
+        "src/thrift/com/twitter/search:earlybird-scala",
+        "src/thrift/com/twitter/timelines/pinned_timelines:thrift-scala",
+        "stitch/stitch-timelineservice",
+        "strato/config/columns/content_understanding:content_understanding-strato-client",
+        "strato/config/columns/timelines/pintweet:pintweet-strato-client",
+        "strato/config/src/thrift/com/twitter/strato/columns/content_understanding:content_understanding-scala",
+    ],
+)

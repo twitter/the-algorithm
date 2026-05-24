@@ -1,0 +1,17 @@
+target(
+    dependencies = [
+        "timelineranker/config",
+        "timelineranker/server/src/main/scala",
+    ],
+)
+
+jvm_app(
+    name = "bundle",
+    basename = "timelineranker-server-package-dist",
+    binary = "timelineranker/server/src/main/scala:bin",
+    bundles = [bundle(
+        fileset = ["config/**/*"],
+        owning_target = "timelineranker/server/config:files",
+    )],
+    tags = ["bazel-compatible"],
+)

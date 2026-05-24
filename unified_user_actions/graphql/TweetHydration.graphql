@@ -1,0 +1,15 @@
+query TweetHydration($rest_id: NumericString!) {
+  tweet_result_by_rest_id(rest_id: $rest_id, safety_level: ForDevelopmentOnly) {
+    result {
+      ... on Tweet {
+        core {
+          user {
+            legacy {
+              id_str
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/util",
+        "src/java/com/twitter/ml/api:api-base",
+        "src/java/com/twitter/ml/api/util",
+        "src/scala/com/twitter/ml/api/util",
+        "src/scala/com/twitter/timelines/prediction/common/adapters:base",
+        "src/scala/com/twitter/timelines/prediction/common/aggregates",
+        "src/scala/com/twitter/timelines/prediction/features/user_health",
+        "src/thrift/com/twitter/timelines/author_features:thrift-java",
+        "timelines/data_processing/ml_util/aggregation_framework",
+    ],
+)

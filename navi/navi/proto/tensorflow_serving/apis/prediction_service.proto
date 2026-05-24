@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package tensorflow.serving;
+option cc_enable_arenas = true;
+
+import "tensorflow_serving/apis/classification.proto";
+import "tensorflow_serving/apis/get_model_metadata.proto";
+import "tensorflow_serving/apis/inference.proto";
+import "tensorflow_serving/apis/predict.proto";
+import "tensorflow_serving/apis/regression.proto";
+
+// open source marker; do not remove
+// PredictionService provides access to machine-learned models loaded by
+// model_servers.
+service PredictionService {
+  // Classify.
+  rpc Classify(ClassificationRequest) returns (ClassificationResponse);
+
+  // Regress.
+  rpc Regress(RegressionRequest) returns (RegressionResponse);
+
+  // Predict -- provides access to loaded TensorFlow model.
+  rpc Predict(PredictRequest) returns (PredictResponse);
+
+  // MultiInference API for multi-headed models.
+  rpc MultiInference(MultiInferenceRequest) returns (MultiInferenceResponse);
+
+  // GetModelMetadata - provides access to metadata for loaded models.
+  rpc GetModelMetadata(GetModelMetadataRequest)
+      returns (GetModelMetadataResponse);
+}

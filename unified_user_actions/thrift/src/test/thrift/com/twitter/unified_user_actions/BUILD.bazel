@@ -1,0 +1,15 @@
+create_thrift_libraries(
+    org = "com.twitter",
+    base_name = "unified_user_actions_spec",
+    sources = ["*.thrift"],
+    tags = ["bazel-compatible"],
+    dependency_roots = [
+    ],
+    generate_languages = [
+        "java",
+        "scala",
+        "strato",
+    ],
+    provides_java_name = "unified_user_actions_spec-thrift-java",
+    provides_scala_name = "unified_user_actions_spec-thrift-scala",
+)

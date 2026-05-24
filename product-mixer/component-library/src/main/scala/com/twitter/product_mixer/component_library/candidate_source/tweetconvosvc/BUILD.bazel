@@ -1,0 +1,26 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/decorator/urt",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source/strato",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/decorator",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/selector",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/transformer",
+        "src/thrift/com/twitter/timelinescorer/common/scoredtweetcandidate:thrift-scala",
+        "src/thrift/com/twitter/timelineservice/server/internal:thrift-scala",
+        "strato/config/columns/tweetconvosvc:tweetconvosvc-strato-client",
+        "tweetconvosvc/common/src/main/thrift/com/twitter/tweetconvosvc/tweet_ancestor:thrift-scala",
+        "tweetconvosvc/thrift/src/main/thrift:thrift-scala",
+    ],
+    exports = [
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/decorator/urt",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source/strato",
+        "strato/config/columns/tweetconvosvc:tweetconvosvc-strato-client",
+        "tweetconvosvc/thrift/src/main/thrift:thrift-scala",
+    ],
+)

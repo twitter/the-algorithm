@@ -1,0 +1,22 @@
+scala_library(
+    sources = ["**/*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/org/apache/kafka:kafka-clients",
+        "3rdparty/jvm/org/apache/thrift:libthrift",
+        "kafka/finagle-kafka/finatra-kafka/src/main/java",
+        "kafka/finagle-kafka/finatra-kafka/src/main/scala",
+        "kafka/libs/src/main/scala/com/twitter/kafka/client/headers",
+        "kafka/libs/src/main/scala/com/twitter/kafka/client/processor",
+        "scrooge/scrooge-core/src/main/scala",
+        "scrooge/scrooge-serializer/src/main/scala",
+        "util/util-app/src/main/scala",
+        "util/util-core:util-core-util",
+        "util/util-core/src/main/scala/com/twitter/conversions",
+        "util/util-slf4j-api/src/main/scala/com/twitter/util/logging",
+        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
+        "util/util-thrift",
+    ],
+)

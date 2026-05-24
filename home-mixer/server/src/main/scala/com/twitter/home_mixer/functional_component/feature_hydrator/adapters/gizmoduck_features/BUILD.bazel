@@ -1,0 +1,11 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "src/java/com/twitter/ml/api:api-base",
+        "src/scala/com/twitter/timelines/prediction/common/adapters:base",
+        "src/scala/com/twitter/timelines/prediction/features/gizmoduck",
+    ],
+)

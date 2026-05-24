@@ -1,0 +1,15 @@
+junit_tests(
+    sources = ["**/*.scala"],
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/ch/qos/logback:logback-classic",
+        "3rdparty/jvm/junit",
+        "3rdparty/jvm/org/scalatest",
+        "3rdparty/jvm/org/scalatestplus:junit",
+        "finatra/inject/inject-core/src/test/scala:test-deps",
+        "kafka/finagle-kafka/finatra-kafka/src/test/scala:test-deps",
+        "unified_user_actions/kafka/src/main/scala/com/twitter/unified_user_actions/kafka",
+        "unified_user_actions/kafka/src/test/resources",
+        "unified_user_actions/thrift/src/test/thrift/com/twitter/unified_user_actions:unified_user_actions_spec-scala",
+    ],
+)

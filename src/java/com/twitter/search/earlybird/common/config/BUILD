@@ -1,0 +1,21 @@
+java_library(
+    sources = ["*.java"],
+    platform = "java8",
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/com/google/code/findbugs:jsr305",
+        "3rdparty/jvm/com/google/guava",
+        "3rdparty/jvm/org/apache/commons:commons-lang3",
+        "3rdparty/jvm/org/apache/thrift:libthrift",
+        "3rdparty/jvm/org/apache/zookeeper:zookeeper-client",
+        "3rdparty/jvm/org/slf4j:slf4j-api",
+        "3rdparty/jvm/org/yaml:snakeyaml",
+        "finagle-internal/mtls/src/main/scala/com/twitter/finagle/mtls/authentication",
+        "src/java/com/twitter/common/base",
+        "src/java/com/twitter/common_internal/text/version",
+        "src/java/com/twitter/search/common/aurora",
+        "src/java/com/twitter/search/common/config",
+        "src/java/com/twitter/search/common/metrics",
+        "src/java/com/twitter/search/common/util/zookeeper",
+    ],
+)

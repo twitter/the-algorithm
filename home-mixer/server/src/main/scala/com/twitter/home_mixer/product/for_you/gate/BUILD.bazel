@@ -1,0 +1,18 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/gate",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/for_you/param",
+    ],
+    exports = [
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/common",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/gate",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
+    ],
+)

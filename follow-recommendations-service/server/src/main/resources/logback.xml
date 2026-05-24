@@ -1,0 +1,133 @@
+<configuration>
+  <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
+
+  <!-- ===================================================== -->
+  <!-- Service Config -->
+  <!-- ===================================================== -->
+  <property name="DEFAULT_SERVICE_PATTERN"
+            value="%-16X{traceId} %-12X{serviceIdentifier:--} %-16X{method} %-12X{product:--} %-25logger{0} %msg"/>
+
+  <property name="DEFAULT_ACCESS_PATTERN"
+            value="%msg %-12X{serviceIdentifier:--} %X{traceId} %X{product:--}"/>
+
+  <!-- ===================================================== -->
+  <!-- Common Config -->
+  <!-- ===================================================== -->
+
+  <!-- JUL/JDK14 to Logback bridge -->
+  <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+    <resetJUL>true</resetJUL>
+  </contextListener>
+
+  <!-- Service Log (Rollover every 50MB, max 5 logs) -->
+  <appender name="SERVICE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${log.service.output}</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <fileNamePattern>${log.service.output}.%i</fileNamePattern>
+      <minIndex>1</minIndex>
+      <maxIndex>5</maxIndex>
+    </rollingPolicy>
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <maxFileSize>50MB</maxFileSize>
+    </triggeringPolicy>
+    <encoder>
+      <pattern>%date %.-3level ${DEFAULT_SERVICE_PATTERN}%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- Access Log (Rollover every 50MB, max 5 logs) -->
+  <appender name="ACCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${log.access.output}</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <fileNamePattern>${log.access.output}.%i</fileNamePattern>
+      <minIndex>1</minIndex>
+      <maxIndex>5</maxIndex>
+    </rollingPolicy>
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <maxFileSize>50MB</maxFileSize>
+    </triggeringPolicy>
+    <encoder>
+      <pattern>${DEFAULT_ACCESS_PATTERN}%n</pattern>
+    </encoder>
+  </appender>
+
+  <!--LogLens -->
+  <appender name="LOGLENS" class="com.twitter.loglens.logback.LoglensAppender">
+    <mdcAdditionalContext>true</mdcAdditionalContext>
+    <category>${log.lens.category}</category>
+    <index>${log.lens.index}</index>
+    <tag>${log.lens.tag}/service</tag>
+    <encoder>
+      <pattern>%msg</pattern>
+    </encoder>
+  </appender>
+
+  <!-- LogLens Access -->
+  <appender name="LOGLENS-ACCESS" class="com.twitter.loglens.logback.LoglensAppender">
+    <mdcAdditionalContext>true</mdcAdditionalContext>
+    <category>${log.lens.category}</category>
+    <index>${log.lens.index}</index>
+    <tag>${log.lens.tag}/access</tag>
+    <encoder>
+      <pattern>%msg</pattern>
+    </encoder>
+  </appender>
+
+  <!-- ===================================================== -->
+  <!-- Primary Async Appenders -->
+  <!-- ===================================================== -->
+
+  <property name="async_queue_size" value="${queue.size:-50000}"/>
+  <property name="async_max_flush_time" value="${max.flush.time:-0}"/>
+
+  <appender name="ASYNC-SERVICE" class="com.twitter.inject.logback.AsyncAppender">
+    <queueSize>${async_queue_size}</queueSize>
+    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
+    <appender-ref ref="SERVICE"/>
+  </appender>
+
+  <appender name="ASYNC-ACCESS" class="com.twitter.inject.logback.AsyncAppender">
+    <queueSize>${async_queue_size}</queueSize>
+    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
+    <appender-ref ref="ACCESS"/>
+  </appender>
+
+  <appender name="ASYNC-LOGLENS" class="com.twitter.inject.logback.AsyncAppender">
+    <queueSize>${async_queue_size}</queueSize>
+    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
+    <appender-ref ref="LOGLENS"/>
+  </appender>
+
+  <appender name="ASYNC-LOGLENS-ACCESS" class="com.twitter.inject.logback.AsyncAppender">
+    <queueSize>${async_queue_size}</queueSize>
+    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
+    <appender-ref ref="LOGLENS-ACCESS"/>
+  </appender>
+
+  <!-- ===================================================== -->
+  <!-- Package Config -->
+  <!-- ===================================================== -->
+
+  <!-- Per-Package Config -->
+  <logger name="com.twitter" level="info"/>
+  <logger name="com.twitter.wilyns" level="warn"/>
+  <logger name="com.twitter.finagle.mux" level="warn"/>
+  <logger name="com.twitter.finagle.serverset2" level="warn"/>
+  <logger name="com.twitter.logging.ScribeHandler" level="warn"/>
+  <logger name="com.twitter.zookeeper.client.internal" level="warn"/>
+
+  <!-- Root Config -->
+  <root level="${log_level:-INFO}">
+    <appender-ref ref="ASYNC-SERVICE"/>
+    <appender-ref ref="ASYNC-LOGLENS"/>
+  </root>
+
+  <!-- Access Logging -->
+  <logger name="com.twitter.finatra.thrift.filters.AccessLoggingFilter"
+          level="info"
+          additivity="false">
+    <appender-ref ref="ASYNC-ACCESS"/>
+    <appender-ref ref="ASYNC-LOGLENS-ACCESS"/>
+  </logger>
+
+</configuration>

@@ -1,0 +1,30 @@
+scala_library(
+    sources = [
+        "*.scala",
+    ],
+    compiler_option_sets = ["fatal_warnings"],
+    scalac_plugins = ["no-roomba"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/com/google/inject:guice",
+        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/adaptors/ads/productmixer",
+        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/adaptors/ads/productmixer/util",
+        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/adaptors/productmixer",
+        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/api",
+        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/impl/core",
+        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/impl/injector",
+        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/impl/injector/product_mixer",
+        "finatra/inject/inject-slf4j/src/main/scala/com/twitter/inject",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate/ads",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/query/ads",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/configapi",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/selector",
+    ],
+    exports = [
+        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/impl/injector",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/selector",
+    ],
+)

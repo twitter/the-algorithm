@@ -1,0 +1,19 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model/candidate_source",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/param",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/following/model",
+        "home-mixer/thrift/src/main/thrift:thrift-scala",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/decorator/urt",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/feature/location",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate/trends_events",
+        "src/scala/com/twitter/suggests/controller_data",
+        "timelinemixer/server/src/main/scala/com/twitter/timelinemixer/injection/model/candidate",
+        "trends/trending_content/src/main/scala/com/twitter/trends/trending_content/util:compacting-number-localizer",
+    ],
+)

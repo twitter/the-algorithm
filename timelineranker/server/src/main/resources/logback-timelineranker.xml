@@ -1,0 +1,124 @@
+<configuration>
+  <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
+  <property name="async_queue_size" value="${queue.size:-50000}"/>
+  <property name="async_max_flush_time" value="${max.flush.time:-0}"/>
+  <property name="SERVICE_OUTPUT" value="${log.service.output:-server.log}"/>
+  <property name="DEBUG_TRANSCRIPTS_OUTPUT"
+            value="${log.debug_transcripts.output:-debug_transcripts.log}"/>
+  <property name="DEFAULT_SERVICE_PATTERN"
+            value="%5p [%d{yyyyMMdd-HH:mm:ss.SSS}] %logger{0}: %m%n"/>
+  <!-- JUL/JDK14 to Logback bridge -->
+  <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+    <resetJUL>true</resetJUL>
+  </contextListener>
+
+  <!-- Service Log -->
+  <appender name="SERVICE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${SERVICE_OUTPUT}</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <!-- daily rollover -->
+      <fileNamePattern>${SERVICE_OUTPUT}.%d.%i.gz</fileNamePattern>
+      <maxFileSize>500MB</maxFileSize>
+      <!-- keep 21 days' worth of history -->
+      <maxHistory>21</maxHistory>
+      <cleanHistoryOnStart>true</cleanHistoryOnStart>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${DEFAULT_SERVICE_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <!-- debug transcripts -->
+  <appender name="DEBUG-TRANSCRIPTS" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${DEBUG_TRANSCRIPTS_OUTPUT}</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <!-- daily rollover -->
+      <fileNamePattern>${DEBUG_TRANSCRIPTS_OUTPUT}.%d.%i.gz</fileNamePattern>
+      <maxFileSize>500MB</maxFileSize>
+      <!-- keep 21 days' worth of history -->
+      <maxHistory>21</maxHistory>
+      <cleanHistoryOnStart>true</cleanHistoryOnStart>
+    </rollingPolicy>
+    <encoder>
+      <pattern>${DEFAULT_SERVICE_PATTERN}</pattern>
+    </encoder>
+  </appender>
+
+  <!-- LogLens/splunk -->
+  <appender name="LOGLENS" class="com.twitter.loglens.logback.LoglensAppender">
+    <mdcAdditionalContext>true</mdcAdditionalContext>
+    <category>loglens</category>
+    <index>${log.lens.index:-timelineranker}</index>
+    <tag>${log.lens.tag}</tag>
+    <encoder>
+      <pattern>%msg%n</pattern>
+    </encoder>
+    <filter class="com.twitter.strato.logging.logback.RegexFilter">
+      <forLogger>manhattan-client</forLogger>
+      <excludeRegex>.*InvalidRequest.*</excludeRegex>
+    </filter>
+  </appender>
+
+  <!-- ===================================================== -->
+  <!-- Primary Async Appenders -->
+  <!-- ===================================================== -->
+
+  <appender name="ASYNC-SERVICE" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>${async_queue_size}</queueSize>
+    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
+    <appender-ref ref="SERVICE"/>
+  </appender>
+
+  <appender name="ASYNC-DEBUG-TRANSCRIPTS" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>${async_queue_size}</queueSize>
+    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
+    <appender-ref ref="DEBUG-TRANSCRIPTS"/>
+  </appender>
+
+  <appender name="ASYNC-LOGLENS" class="ch.qos.logback.classic.AsyncAppender">
+    <queueSize>${async_queue_size}</queueSize>
+    <maxFlushTime>${async_max_flush_time}</maxFlushTime>
+    <appender-ref ref="LOGLENS"/>
+  </appender>
+
+  <!-- ===================================================== -->
+  <!-- Package Config -->
+  <!-- ===================================================== -->
+
+  <!-- Per-Package Config -->
+  <logger name="OptimisticLockingCache" level="off"/>
+  <logger name="ZkSession" level="info"/>
+  <logger name="com.twitter" level="info"/>
+  <logger name="com.twitter.decider.StoreDecider" level="warn"/>
+  <logger name="com.twitter.distributedlog.client" level="warn"/>
+  <logger name="com.twitter.finagle.liveness" level="warn"/>
+  <logger name="com.twitter.finagle.mtls.authorization.config.AccessControlListConfiguration" level="warn"/>
+  <logger name="com.twitter.finagle.mux" level="warn"/>
+  <logger name="com.twitter.finagle.serverset2" level="warn"/>
+  <logger name="com.twitter.finatra.kafka.common.kerberoshelpers" level="warn"/>
+  <logger name="com.twitter.finatra.kafka.utils.BootstrapServerUtils" level="warn"/>
+  <logger name="com.twitter.logging.ScribeHandler" level="warn"/>
+  <logger name="com.twitter.server.coordinate" level="error"/>
+  <logger name="com.twitter.wilyns" level="warn"/>
+  <logger name="com.twitter.zookeeper.client" level="info"/>
+  <logger name="com.twitter.zookeeper.client.internal" level="warn"/>
+  <logger name="manhattan-client" level="warn"/>
+  <logger name="org.apache.kafka.clients.NetworkClient" level="error"/>
+  <logger name="org.apache.kafka.clients.consumer.internals" level="error"/>
+  <logger name="org.apache.kafka.clients.producer.internals" level="error"/>
+  <logger name="org.apache.kafka.common.network" level="warn"/>
+  <logger name="org.apache.zookeeper" level="error"/>
+  <logger name="org.apache.zookeeper.ClientCnxn" level="warn"/>
+
+  <!-- Root Config -->
+  <root level="${log_level:-INFO}">
+    <appender-ref ref="ASYNC-SERVICE"/>
+    <appender-ref ref="ASYNC-LOGLENS"/>
+  </root>
+
+  <!-- debug transcripts: logger name MUST be c.t.timelines.util.debuglog.DebugLog.DebugTranscriptsLog -->
+  <logger name="DebugTranscripts" level="info">
+    <appender-ref ref="ASYNC-DEBUG-TRANSCRIPTS"/>
+    <appender-ref ref="ASYNC-LOGLENS"/>
+  </logger>
+</configuration>

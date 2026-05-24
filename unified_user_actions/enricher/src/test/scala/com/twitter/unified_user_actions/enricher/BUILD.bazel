@@ -1,0 +1,12 @@
+scala_library(
+    name = "fixture",
+    sources = ["EnricherFixture.scala"],
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/org/scalatest",
+        "3rdparty/jvm/org/scalatestplus:junit",
+        "finatra/inject/inject-core/src/test/scala/com/twitter/inject",
+        "unified_user_actions/enricher/src/main/thrift/com/twitter/unified_user_actions/enricher/internal:internal-scala",
+        "unified_user_actions/thrift/src/main/thrift/com/twitter/unified_user_actions:unified_user_actions-scala",
+    ],
+)

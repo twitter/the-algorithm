@@ -1,0 +1,219 @@
+# ---------- traffic percentage by embedding type and model version ----------
+# Decider strings are build dynamically following the rule in there
+# i.e. s"enable_${embeddingType.name}_${modelVersion.name}"
+# Hence this should be updated accordingly if usage is changed in the embedding stores
+
+# Tweet embeddings
+"enable_LogFavBasedTweet_Model20m145k2020":
+  comment: "Enable x% read traffic (0<=x<=10000, e.g. 1000=10%) for LogFavBasedTweet - Model20m145k2020. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_LogFavBasedTweet_Model20m145kUpdated":
+  comment: "Enable x% read traffic (0<=x<=10000, e.g. 1000=10%) for LogFavBasedTweet - Model20m145kUpdated. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_LogFavLongestL2EmbeddingTweet_Model20m145k2020":
+  comment: "Enable x% read traffic (0<=x<=10000, e.g. 1000=10%) for LogFavLongestL2EmbeddingTweet - Model20m145k2020. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_LogFavLongestL2EmbeddingTweet_Model20m145kUpdated":
+  comment: "Enable x% read traffic (0<=x<=10000, e.g. 1000=10%) for LogFavLongestL2EmbeddingTweet - Model20m145kUpdated. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+# Topic embeddings
+"enable_FavTfgTopic_Model20m145k2020":
+  comment: "Enable the read traffic to FavTfgTopic - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_LogFavBasedKgoApeTopic_Model20m145k2020":
+  comment: "Enable the read traffic to LogFavBasedKgoApeTopic - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+# User embeddings - KnownFor
+"enable_FavBasedProducer_Model20m145kUpdated":
+  comment: "Enable the read traffic to FavBasedProducer - Model20m145kUpdated from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_FavBasedProducer_Model20m145k2020":
+  comment: "Enable the read traffic to FavBasedProducer - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_FollowBasedProducer_Model20m145k2020":
+  comment: "Enable the read traffic to FollowBasedProducer - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_AggregatableFavBasedProducer_Model20m145kUpdated":
+  comment: "Enable the read traffic to AggregatableFavBasedProducer - Model20m145kUpdated from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_AggregatableFavBasedProducer_Model20m145k2020":
+  comment: "Enable the read traffic to AggregatableFavBasedProducer - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_AggregatableLogFavBasedProducer_Model20m145kUpdated":
+  comment: "Enable the read traffic to AggregatableLogFavBasedProducer - Model20m145kUpdated from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_AggregatableLogFavBasedProducer_Model20m145k2020":
+  comment: "Enable the read traffic to AggregatableLogFavBasedProducer - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+enable_RelaxedAggregatableLogFavBasedProducer_Model20m145kUpdated:
+  comment: "Enable the read traffic to RelaxedAggregatableLogFavBasedProducer - Model20m145kUpdated from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+enable_RelaxedAggregatableLogFavBasedProducer_Model20m145k2020:
+  comment: "Enable the read traffic to RelaxedAggregatableLogFavBasedProducer - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+# User embeddings - InterestedIn
+"enable_LogFavBasedUserInterestedInFromAPE_Model20m145k2020":
+  comment: "Enable the read traffic to LogFavBasedUserInterestedInFromAPE - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_FollowBasedUserInterestedInFromAPE_Model20m145k2020":
+  comment: "Enable the read traffic to FollowBasedUserInterestedInFromAPE - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_FavBasedUserInterestedIn_Model20m145kUpdated":
+  comment: "Enable the read traffic to FavBasedUserInterestedIn - Model20m145kUpdated from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_FavBasedUserInterestedIn_Model20m145k2020":
+  comment: "Enable the read traffic to FavBasedUserInterestedIn - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_FollowBasedUserInterestedIn_Model20m145k2020":
+  comment: "Enable the read traffic to FollowBasedUserInterestedIn - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_LogFavBasedUserInterestedIn_Model20m145k2020":
+  comment: "Enable the read traffic to LogFavBasedUserInterestedIn - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_FavBasedUserInterestedInFromPE_Model20m145kUpdated":
+  comment: "Enable the read traffic to FavBasedUserInterestedInFromPE - Model20m145kUpdated from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_FilteredUserInterestedIn_Model20m145kUpdated":
+  comment: "Enable the read traffic to FilteredUserInterestedIn - Model20m145kUpdated from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_FilteredUserInterestedIn_Model20m145k2020":
+  comment: "Enable the read traffic to FilteredUserInterestedIn - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_FilteredUserInterestedInFromPE_Model20m145kUpdated":
+  comment: "Enable the read traffic to FilteredUserInterestedInFromPE - Model20m145kUpdated from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_UnfilteredUserInterestedIn_Model20m145kUpdated":
+  comment: "Enable the read traffic to UnfilteredUserInterestedIn - Model20m145kUpdated from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_UnfilteredUserInterestedIn_Model20m145k2020":
+  comment: "Enable the read traffic to UnfilteredUserInterestedIn - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_UserNextInterestedIn_Model20m145k2020":
+  comment: "Enable the read traffic to UserNextInterestedIn - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE_Model20m145k2020":
+  comment: "Enable the read traffic to LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_LogFavBasedUserInterestedAverageAddressBookFromIIAPE_Model20m145k2020":
+  comment: "Enable the read traffic to LogFavBasedUserInterestedAverageAddressBookFromIIAPE - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE_Model20m145k2020":
+  comment: "Enable the read traffic to LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE_Model20m145k2020":
+  comment: "Enable the read traffic to LogFavBasedUserInterestedAverageAddressBookFromIIAPE - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020":
+  comment: "Enable the read traffic to LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+"enable_LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE_Model20m145k2020":
+  comment: "Enable the read traffic to LogFavBasedUserInterestedAverageAddressBookFromIIAPE - Model20m145k2020 from 0% to 100%. 0 means return EMPTY for all requests."
+  default_availability: 10000
+
+# ---------- load shedding by caller id ----------
+# To create a new decider, add here with the same format and caller's details :
+# "representation-manager_load_shed_by_caller_id_twtr:{{role}}:{{name}}:{{environment}}:{{cluster}}"
+# All the deciders below are generated by this script:
+# ./strato/bin/fed deciders representation-manager --service-role=representation-manager --service-name=representation-manager
+# If you need to run the script and paste the output, add ONLY the prod deciders here.
+"representation-manager_load_shed_by_caller_id_all":
+  comment: "Reject all traffic from caller id: all"
+  default_availability: 0
+
+"representation-manager_load_shed_by_caller_id_twtr:svc:cr-mixer:cr-mixer:prod:atla":
+  comment: "Reject all traffic from caller id: twtr:svc:cr-mixer:cr-mixer:prod:atla"
+  default_availability: 0
+
+"representation-manager_load_shed_by_caller_id_twtr:svc:cr-mixer:cr-mixer:prod:pdxa":
+  comment: "Reject all traffic from caller id: twtr:svc:cr-mixer:cr-mixer:prod:pdxa"
+  default_availability: 0
+
+"representation-manager_load_shed_by_caller_id_twtr:svc:simclusters-ann:simclusters-ann-1:prod:atla":
+  comment: "Reject all traffic from caller id: twtr:svc:simclusters-ann:simclusters-ann-1:prod:atla"
+  default_availability: 0
+
+"representation-manager_load_shed_by_caller_id_twtr:svc:simclusters-ann:simclusters-ann-1:prod:pdxa":
+  comment: "Reject all traffic from caller id: twtr:svc:simclusters-ann:simclusters-ann-1:prod:pdxa"
+  default_availability: 0
+
+"representation-manager_load_shed_by_caller_id_twtr:svc:simclusters-ann:simclusters-ann-3:prod:atla":
+  comment: "Reject all traffic from caller id: twtr:svc:simclusters-ann:simclusters-ann-3:prod:atla"
+  default_availability: 0
+
+"representation-manager_load_shed_by_caller_id_twtr:svc:simclusters-ann:simclusters-ann-3:prod:pdxa":
+  comment: "Reject all traffic from caller id: twtr:svc:simclusters-ann:simclusters-ann-3:prod:pdxa"
+  default_availability: 0
+
+"representation-manager_load_shed_by_caller_id_twtr:svc:simclusters-ann:simclusters-ann-4:prod:atla":
+  comment: "Reject all traffic from caller id: twtr:svc:simclusters-ann:simclusters-ann-4:prod:atla"
+  default_availability: 0
+
+"representation-manager_load_shed_by_caller_id_twtr:svc:simclusters-ann:simclusters-ann-4:prod:pdxa":
+  comment: "Reject all traffic from caller id: twtr:svc:simclusters-ann:simclusters-ann-4:prod:pdxa"
+  default_availability: 0
+
+"representation-manager_load_shed_by_caller_id_twtr:svc:simclusters-ann:simclusters-ann-experimental:prod:atla":
+  comment: "Reject all traffic from caller id: twtr:svc:simclusters-ann:simclusters-ann-experimental:prod:atla"
+  default_availability: 0
+
+"representation-manager_load_shed_by_caller_id_twtr:svc:simclusters-ann:simclusters-ann-experimental:prod:pdxa":
+  comment: "Reject all traffic from caller id: twtr:svc:simclusters-ann:simclusters-ann-experimental:prod:pdxa"
+  default_availability: 0
+
+"representation-manager_load_shed_by_caller_id_twtr:svc:simclusters-ann:simclusters-ann:prod:atla":
+  comment: "Reject all traffic from caller id: twtr:svc:simclusters-ann:simclusters-ann:prod:atla"
+  default_availability: 0
+
+"representation-manager_load_shed_by_caller_id_twtr:svc:simclusters-ann:simclusters-ann:prod:pdxa":
+  comment: "Reject all traffic from caller id: twtr:svc:simclusters-ann:simclusters-ann:prod:pdxa"
+  default_availability: 0
+
+"representation-manager_load_shed_by_caller_id_twtr:svc:stratostore:stratoapi:prod:atla":
+  comment: "Reject all traffic from caller id: twtr:svc:stratostore:stratoapi:prod:atla"
+  default_availability: 0
+
+"representation-manager_load_shed_by_caller_id_twtr:svc:stratostore:stratoserver:prod:atla":
+  comment: "Reject all traffic from caller id: twtr:svc:stratostore:stratoserver:prod:atla"
+  default_availability: 0
+
+"representation-manager_load_shed_by_caller_id_twtr:svc:stratostore:stratoserver:prod:pdxa":
+  comment: "Reject all traffic from caller id: twtr:svc:stratostore:stratoserver:prod:pdxa"
+  default_availability: 0
+
+# ---------- Dark Traffic Proxy ----------
+representation-manager_forward_dark_traffic:
+  comment: "Defines the percentage of traffic to forward to diffy-proxy. Set to 0 to disable dark traffic forwarding"
+  default_availability: 0

@@ -1,0 +1,81 @@
+[package]
+name = "navi"
+version = "2.0.45"
+edition = "2021"
+
+[[bin]]
+name = "navi"
+path = "src/bin/navi.rs"
+required-features=["tf"]
+[[bin]]
+name = "navi_torch"
+path = "src/bin/navi_torch.rs"
+required-features=["torch"]
+[[bin]]
+name = "navi_onnx"
+path = "src/bin/navi_onnx.rs"
+required-features=["onnx"]
+[[bin]]
+name = "navi_onnx_test"
+path = "src/bin/bin_tests/navi_onnx_test.rs"
+[[bin]]
+name = "navi_torch_test"
+path = "src/bin/bin_tests/navi_torch_test.rs"
+required-features=["torch"]
+
+[features]
+default=[]
+navi_console=[]
+torch=["tch"]
+onnx=[]
+tf=["tensorflow"]
+[dependencies]
+itertools = "0.10.5"
+anyhow = "1.0.57"
+arrayvec = "0.7.2"
+clap = { version = "4.0.32", features = ["derive"] }
+console-subscriber = "0.1.6"
+time = { version = "0.3.20", features = ["parsing"] }
+env_logger = "0.10.0"
+flamegraph = "0.6.1"
+fnv = "1.0.7"
+futures = { version = "0.3", default-features = false }
+image = "0.24.5"
+indexmap = "1.8.1"
+lazy_static = "1.4"
+libloading = "0.7"
+log = "0.4.17"
+ndarray-rand = "0.14.0"
+prometheus = "0.13.1"
+prost = "0.9"
+prost-types = "0.9"
+parking_lot = "0.12.1"
+rand = "0.8.5"
+rand_pcg = "0.3.1"
+random = "0.12.2"
+x509-parser = "0.15.0"
+sha256 = "1.0.3"
+tonic = { version = "0.6.2", features=['compression', 'tls'] }
+tokio = { version = "1.17.0", features = ["macros", "rt-multi-thread", "fs", "process"] }
+warp = "0.3"
+npyz = "0.7.3"
+base64 = "0.21.0"
+histogram = "0.6.9"
+tch = {version = "0.10.3", optional = true}
+tensorflow = { version = "0.18.0", optional = true }
+once_cell = {version = "1.17.1"}
+ndarray = "0.15"
+serde = "1.0.154"
+serde_json = "1.0.94"
+dr_transform = { path = "../dr_transform"}
+[build-dependencies]
+tonic-build = {version = "0.6.2", features=['prost', "compression"] }
+[profile.release]
+debug = true
+[dev-dependencies]
+ndarray-rand = "0.14.0"
+tokio-test = "*"
+assert_cmd = "2.0"
+criterion = "0.4.0"
+
+

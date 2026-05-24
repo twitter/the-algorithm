@@ -1,0 +1,19 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source/product_pipeline",
+        "relevance-platform/src/main/scala/com/twitter/relevance_platform/simclustersann/multicluster",
+        "servo/repo",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/util",
+        "simclusters-ann/thrift/src/main/thrift:thrift-scala",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/candidate_source/cached_candidate_source",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/config",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/model",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/model/response",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/utils",
+        "strato/config/columns/content_understanding:content_understanding-strato-client"
+    ],
+)

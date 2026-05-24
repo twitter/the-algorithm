@@ -1,0 +1,20 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    dependencies = [
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/marshaller/timelines",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model/candidate_source",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/scored_tweets/candidate_source",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/util/tweetypie/content",
+        "home-mixer/thrift/src/main/thrift:thrift-scala",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/feature/communities",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/feature/location",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/transformer",
+        "src/thrift/com/twitter/recos/user_tweet_entity_graph:user_tweet_entity_graph-scala",
+        "src/thrift/com/twitter/timelineranker:thrift-scala",
+        "topic-social-proof/server/src/main/thrift:thrift-scala",
+        "tweet-mixer/thrift/src/main/thrift:thrift-scala",
+    ],
+)

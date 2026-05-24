@@ -1,0 +1,19 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/util",
+        "src/java/com/twitter/search/common/schema/base",
+        "src/java/com/twitter/search/common/schema/earlybird",
+        "src/java/com/twitter/search/common/util/lang",
+        "src/java/com/twitter/search/queryparser/query:core-query-nodes",
+        "src/thrift/com/twitter/search:earlybird-scala",
+        "timelines/src/main/scala/com/twitter/timelines/clients/relevance_search",
+        "timelines/src/main/scala/com/twitter/timelines/earlybird/common/options",
+        "timelines/src/main/scala/com/twitter/timelines/earlybird/common/utils",
+        "timelines/src/main/scala/com/twitter/timelines/model/types",
+        "timelines/src/main/scala/com/twitter/timelines/util/stats",
+    ],
+)

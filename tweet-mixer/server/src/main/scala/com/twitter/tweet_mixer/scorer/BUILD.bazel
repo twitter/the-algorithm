@@ -1,0 +1,10 @@
+scala_library(
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "hydra/root/thrift/src/main/thrift:thrift-scala",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/feature",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/param",
+    ],
+)

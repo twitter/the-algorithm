@@ -1,0 +1,21 @@
+junit_tests(
+    name = "tests",
+    sources = ["*.scala"],
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/ch/qos/logback:logback-classic",
+        "3rdparty/jvm/com/google/inject:guice",
+        "3rdparty/jvm/javax/inject:javax.inject",
+        "decider/src/main/scala",
+        "kafka/finagle-kafka/finatra-kafka-streams/kafka-streams/src/test/scala:test-deps",
+        "kafka/finagle-kafka/finatra-kafka/src/test/scala:test-deps",
+        "unified_user_actions/enricher/src/main/thrift/com/twitter/unified_user_actions/enricher/internal:internal-scala",
+        "unified_user_actions/enricher/src/test/scala/com/twitter/unified_user_actions/enricher:fixture",
+        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:client-event",
+        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:enrichment-planner",
+        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:rekey-uua-iesource",
+        "unified_user_actions/service/src/main/scala/com/twitter/unified_user_actions/service:tls-favs",
+        "unified_user_actions/service/src/test/resources",
+        "util/util-mock/src/main/scala/com/twitter/util/mock",
+    ],
+)

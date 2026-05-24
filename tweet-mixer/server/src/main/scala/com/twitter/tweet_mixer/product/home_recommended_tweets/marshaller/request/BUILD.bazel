@@ -1,0 +1,14 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/javax/inject:javax.inject",
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/product/home_recommended_tweets/model/request",
+        "tweet-mixer/thrift/src/main/thrift:thrift-scala",
+    ],
+    exports = [
+        "tweet-mixer/server/src/main/scala/com/twitter/tweet_mixer/product/home_recommended_tweets/model/request",
+    ],
+)

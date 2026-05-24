@@ -1,0 +1,15 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
+        "user-signal-service/thrift/src/main/thrift:thrift-scala",
+    ],
+    exports = [
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
+    ],
+)

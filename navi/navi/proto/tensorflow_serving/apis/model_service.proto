@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option cc_enable_arenas = true;
+
+import "tensorflow_serving/apis/get_model_status.proto";
+import "tensorflow_serving/apis/model_management.proto";
+
+package tensorflow.serving;
+
+// ModelService provides methods to query and update the state of the server,
+// e.g. which models/versions are being served.
+service ModelService {
+  // Gets status of model. If the ModelSpec in the request does not specify
+  // version, information about all versions of the model will be returned. If
+  // the ModelSpec in the request does specify a version, the status of only
+  // that version will be returned.
+  rpc GetModelStatus(GetModelStatusRequest) returns (GetModelStatusResponse);
+
+  // Reloads the set of served models. The new config supersedes the old one,
+  // so if a model is omitted from the new config it will be unloaded and no
+  // longer served.
+  rpc HandleReloadConfigRequest(ReloadConfigRequest)
+      returns (ReloadConfigResponse);
+}

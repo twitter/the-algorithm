@@ -1,0 +1,10 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/param/decider",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product",
+    ],
+)

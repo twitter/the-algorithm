@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package tensorflow.serving;
+option cc_enable_arenas = true;
+
+import "google/protobuf/any.proto";
+import "tensorflow/core/protobuf/meta_graph.proto";
+import "tensorflow_serving/apis/model.proto";
+
+// Message returned for "signature_def" field.
+message SignatureDefMap {
+  map<string, SignatureDef> signature_def = 1;
+};
+
+message GetModelMetadataRequest {
+  // Model Specification indicating which model we are querying for metadata.
+  // If version is not specified, will use the latest (numerical) version.
+  ModelSpec model_spec = 1;
+  // Metadata fields to get. Currently supported: "signature_def".
+  repeated string metadata_field = 2;
+}
+
+message GetModelMetadataResponse {
+  // Model Specification indicating which model this metadata belongs to.
+  ModelSpec model_spec = 1;
+  // Map of metadata field name to metadata field. The options for metadata
+  // field name are listed in GetModelMetadataRequest. Currently supported:
+  // "signature_def".
+  map<string, google.protobuf.Any> metadata = 2;
+}

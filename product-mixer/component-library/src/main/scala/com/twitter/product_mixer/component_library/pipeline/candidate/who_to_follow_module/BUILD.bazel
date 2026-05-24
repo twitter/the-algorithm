@@ -1,0 +1,20 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/javax/inject:javax.inject",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/candidate_source/account_recommendations_mixer",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/candidate_source/people_discovery",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/decorator/urt",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/marshaller/request",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/candidate",
+        "servo/repo/src/main/scala",
+        "src/thrift/com/twitter/hermit/internal:hermit-internal-scala",
+    ],
+    exports = [
+        "3rdparty/jvm/javax/inject:javax.inject",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/candidate",
+    ],
+)

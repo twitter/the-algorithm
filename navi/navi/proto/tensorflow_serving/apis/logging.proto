@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package tensorflow.serving;
+
+import "tensorflow_serving/apis/model.proto";
+import "tensorflow_serving/config/logging_config.proto";
+
+option cc_enable_arenas = true;
+
+// Metadata logged along with the request logs.
+message LogMetadata {
+  ModelSpec model_spec = 1;
+  SamplingConfig sampling_config = 2;
+  // List of tags used to load the relevant MetaGraphDef from SavedModel.
+  repeated string saved_model_tags = 3;
+  // TODO(b/33279154): Add more metadata as mentioned in the bug.
+}

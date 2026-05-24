@@ -1,0 +1,12 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    dependencies = [
+        "3rdparty/jvm/com/github/nscala_time",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
+        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/feature_hydrator/candidate/embedding",
+        "snowflake/src/main/scala/com/twitter/snowflake/id",
+        "src/thrift/com/twitter/timelines/control_ai:timeline-control-ai-thrift-scala",
+    ],
+)

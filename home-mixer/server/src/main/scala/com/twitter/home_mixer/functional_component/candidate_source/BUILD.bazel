@@ -1,0 +1,19 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    tags = ["bazel-compatible"],
+    dependencies = [
+        "3rdparty/jvm/javax/inject:javax.inject",
+        "finagle/finagle-memcached/src/main/scala",
+        "finatra/inject/inject-core/src/main/scala",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/param",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
+        "src/thrift/com/twitter/search:earlybird-scala",
+        "stitch/stitch-timelineservice/src/main/scala",
+    ],
+    exports = [
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
+    ],
+)

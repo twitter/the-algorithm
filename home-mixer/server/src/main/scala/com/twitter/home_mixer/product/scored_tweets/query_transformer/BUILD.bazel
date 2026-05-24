@@ -1,0 +1,22 @@
+scala_library(
+    sources = ["*.scala"],
+    compiler_option_sets = ["fatal_warnings"],
+    strict_deps = True,
+    dependencies = [
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/feature_hydrator",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model/request",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/scored_tweets/model",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/scored_tweets/param",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/util",
+        "home-mixer/server/src/main/scala/com/twitter/home_mixer/util/earlybird",
+        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/transformer",
+        "src/thrift/com/twitter/timelineranker:thrift-scala",
+        "timelineranker/common/src/main/scala/com/twitter/timelineranker/model",
+        "timelines/src/main/scala/com/twitter/timelines/common/model",
+        "timelines/src/main/scala/com/twitter/timelines/earlybird/common/options",
+        "timelines/src/main/scala/com/twitter/timelines/earlybird/common/utils",
+        "timelines/src/main/scala/com/twitter/timelines/model/candidate",
+        "timelineservice/common:model",
+    ],
+)

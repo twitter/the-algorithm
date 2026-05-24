@@ -1,0 +1,5 @@
+resources(
+    sources = [
+        "*.xml",
+    ],
+)
