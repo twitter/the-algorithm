@@ -55,7 +55,7 @@ private[featuremap] class FeatureMapSerializer() extends JsonSerializer[FeatureM
     gen.writeEndObject()
   }
 
-  // Some features can be very large when stringified, for example when a dependant candidate
+  // Some features can be very large when stringified, for example when a dependent candidate
   // pipeline is used, the entire previous candidate pipeline result is serialized into a feature.
   // This causes significant performance issues when the result is later sent over the wire.
   private def truncateString(input: String): String =

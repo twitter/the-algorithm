@@ -20,7 +20,7 @@ trait EstimateNumOrganicItems[Query <: PipelineQuery with AdsQuery] {
  * @note the key difference between [[CountNumOrganicItems]] and [[EstimateNumOrganicItems]] is
  *       that for [[EstimateNumOrganicItems]] we don't have any candidates returned yet, so we can
  *       only guess as to the number of organic items in the result set. In contrast,
- *       [[CountNumOrganicItems]] is used on dependant candidate pipelines where we can scan over
+ *       [[CountNumOrganicItems]] is used on dependent candidate pipelines where we can scan over
  *       the candidate pipelines result set to count the number of organic items.
  */
 trait CountNumOrganicItems[-Query <: PipelineQuery with AdsQuery] {
