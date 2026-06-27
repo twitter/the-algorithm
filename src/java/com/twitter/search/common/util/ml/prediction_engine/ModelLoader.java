@@ -60,7 +60,7 @@ public class ModelLoader implements Runnable {
    *   ${counterPrefix}_num_models:
    *      Number of models currently loaded.
    *   ${counterPrefix}_num_loads:
-   *      Number of succesful model loads.
+   *      Number of successful model loads.
    *   ${counterPrefix}_num_errors:
    *      Number of errors occurred while loading the models.
    */

@@ -1804,7 +1804,7 @@ struct PostTweetRequest {
    * time, tweetypie would delegate to creative container service.
    *
    * go/creatives-containers-tdd
-   * Please note that this id is never publically shared with clients, its only used for
+   * Please note that this id is never publicly shared with clients, its only used for
    * internal purposes.
    */
   35: optional i64 underlying_creatives_container_id (personalDataType = 'TweetId')
