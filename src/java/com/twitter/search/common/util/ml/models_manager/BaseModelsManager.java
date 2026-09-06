@@ -26,7 +26,9 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import com.twitter.search.common.file.AbstractFile;
 import com.twitter.search.common.file.FileUtils;
@@ -269,7 +271,7 @@ public abstract class BaseModelsManager<T> implements Runnable {
     @Override
     public Map<String, AbstractFile> get() {
       try (BufferedReader configReader = configFile.getCharSource().openBufferedStream()) {
-        Yaml yamlParser = new Yaml();
+        Yaml yamlParser = new Yaml(new SafeConstructor(new LoaderOptions()));
         //noinspection unchecked
         Map<String, Map<String, String>> config =
             (Map<String, Map<String, String>>) yamlParser.load(configReader);
