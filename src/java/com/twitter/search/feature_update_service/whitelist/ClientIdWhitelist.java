@@ -9,7 +9,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import com.twitter.common.util.Clock;
 import com.twitter.finagle.thrift.ClientId;
@@ -62,7 +64,7 @@ public class ClientIdWhitelist extends PeriodicFileLoader {
   @Override
   protected void accept(InputStream fileStream) {
     ImmutableSet.Builder<ClientId> clientIdBuilder = new ImmutableSet.Builder<>();
-    Yaml yaml = new Yaml();
+    Yaml yaml = new Yaml(new SafeConstructor(new LoaderOptions()));
     Set<String> set = yaml.loadAs(fileStream, Set.class);
     for (String id : set) {
       clientIdBuilder.add(ClientId.apply(id));
