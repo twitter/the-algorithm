@@ -19,6 +19,7 @@ case class ScoredTweetsTweetMixerResponseFeatureTransformer(debugPrefix: String 
     TransformerIdentifier("ScoredTweetsTweetMixerResponse")
 
   override val features: Set[Feature[_, _]] = Set(
+    AuthorIdFeature,
     FromInNetworkSourceFeature,
     ServedTypeFeature,
     TSPMetricTagFeature,
@@ -80,6 +81,7 @@ case class ScoredTweetsTweetMixerResponseFeatureTransformer(debugPrefix: String 
     }
 
     FeatureMapBuilder()
+      .add(AuthorIdFeature, candidate.authorId)
       .add(FromInNetworkSourceFeature, fromInNetwork)
       .add(ServedTypeFeature, servedType)
       .add(TSPMetricTagFeature, tspMetricTag)

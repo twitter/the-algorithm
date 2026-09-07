@@ -122,7 +122,7 @@ class TweetEntityServiceFeatureHydrator @Inject() (
                 tweet,
                 candidate.features.getOrElse(InReplyToTweetIdFeature, None).flatMap(tweetMap.get)
               )
-            }.getOrElse(DefaultFeatureMap)
+            }.getOrElse(featureMapOnStoreMiss(candidate.features))
         }
       }
   }
@@ -181,6 +181,25 @@ object TweetEntityServiceFeatureHydrator {
     .add(FirstMediaIdFeature, None)
     .add(TweetUrlsFeature, Seq.empty)
     .build()
+
+  /**
+   * Cache or TES miss must not wipe ids the candidate source already set.
+   * HasAuthorFilter drops a missing AuthorId, and later scoring uses SourceTweetId /
+   * SourceUserId as the original entity. Empty defaults here hide or retarget the post.
+   */
+  private def featureMapOnStoreMiss(existing: FeatureMap): FeatureMap = {
+    DefaultFeatureMap +
+      (AuthorIdFeature, existing.getOrElse(AuthorIdFeature, None)) +
+      (DirectedAtUserIdFeature, existing.getOrElse(DirectedAtUserIdFeature, None)) +
+      (ExclusiveConversationAuthorIdFeature, existing.getOrElse(ExclusiveConversationAuthorIdFeature, None)) +
+      (InReplyToTweetIdFeature, existing.getOrElse(InReplyToTweetIdFeature, None)) +
+      (InReplyToUserIdFeature, existing.getOrElse(InReplyToUserIdFeature, None)) +
+      (IsRetweetFeature, existing.getOrElse(IsRetweetFeature, false)) +
+      (QuotedTweetIdFeature, existing.getOrElse(QuotedTweetIdFeature, None)) +
+      (OriginalTweetIdFeature, existing.getOrElse(OriginalTweetIdFeature, None)) +
+      (SourceTweetIdFeature, existing.getOrElse(SourceTweetIdFeature, None)) +
+      (SourceUserIdFeature, existing.getOrElse(SourceUserIdFeature, None))
+  }
 
   private def getFeatureMapFromTweet(
     tweet: tp.Tweet,
