@@ -21,6 +21,17 @@ import javax.inject.Singleton
 
 object GrokFilterFeature extends Feature[TweetCandidate, Boolean]
 
+object GrokFilterFeatureHydrator {
+
+  /**
+   * Drop only when Manhattan confirmed Tier1Ineligible.
+   * A missing row is a regular post, not an ineligible cold-start post.
+   * Keep this in sync with tweet-mixer/src/test/grok_filter_status_test.py
+   */
+  def shouldDrop(status: Option[ColdStartPostStatus]): Boolean =
+    status.contains(ColdStartPostStatus.Tier1Ineligible)
+}
+
 @Singleton
 class GrokFilterFeatureHydrator @Inject() (
   coldStartPostsMetadataMhClientColumn: ColdStartPostsMetadataMhClientColumn,
@@ -76,12 +87,8 @@ class GrokFilterFeatureHydrator @Inject() (
           }
         case None =>
           fetchFromManhattan(tweetId)
-            .map { result =>
-              result match {
-                case Some(status) if status != ColdStartPostStatus.Tier1Ineligible => false
-                case _ => true
-              }
-            }.applyEffect { filter =>
+            .map(GrokFilterFeatureHydrator.shouldDrop)
+            .applyEffect { filter =>
               Stitch.async {
                 val buf = Transformers.serializeFilterBoolean(filter)
                 val memCacheSet = memcache.set(getCacheKey(tweetId), buf, TTLSeconds)
