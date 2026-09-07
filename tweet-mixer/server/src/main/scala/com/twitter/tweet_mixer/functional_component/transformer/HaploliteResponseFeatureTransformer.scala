@@ -30,10 +30,10 @@ object HaploliteResponseFeatureTransformer extends CandidateFeatureTransformer[T
       if (isRetweet)
         input.sourceTweetId
       else Some(input.tweetId)
-    val authorId =
-      if (isRetweet)
-        input.sourceUserId
-      else input.userId
+    // AuthorId is the user who posted this tweet. For a retweet that is the
+    // retweeter (userId). sourceUserId is the original author, written by
+    // EarlybirdRealtimeCGTweetCandidateSource from referencedTweetAuthorId.
+    val authorId = input.userId
     FeatureMapBuilder(sizeHint = 5)
       .add(AuthorIdFeature, authorId)
       .add(ReplyFeature, isReply)

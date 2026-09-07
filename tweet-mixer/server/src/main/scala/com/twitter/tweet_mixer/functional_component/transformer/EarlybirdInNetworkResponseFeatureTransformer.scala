@@ -37,10 +37,9 @@ object EarlybirdInNetworkResponseFeatureTransformer
       if (isRetweet.getOrElse(false))
         input.metadata.map(_.sharedStatusId)
       else Some(input.id)
-    val authorId =
-      if (isRetweet.getOrElse(false))
-        input.metadata.map(_.referencedTweetAuthorId)
-      else input.metadata.map(_.fromUserId)
+    // AuthorId is the user who posted this tweet. For a retweet that is the
+    // retweeter (fromUserId). referencedTweetAuthorId is the original author.
+    val authorId = input.metadata.map(_.fromUserId)
     FeatureMapBuilder(sizeHint = 5)
       .add(AuthorIdFeature, authorId)
       .add(ReplyFeature, isReply.getOrElse(false))
