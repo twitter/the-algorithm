@@ -48,7 +48,7 @@ The core components of the For You Timeline included in this repository are list
 |                          | [visibility-filters](visibilitylib/README.md) | Responsible for filtering X content to support legal compliance, improve product quality, increase user trust, protect revenue through the use of hard-filtering, visible product treatments, and coarse-grained downranking. |
 |                          | [timelineranker](timelineranker/README.md) | Legacy service which provides relevance-scored posts from the Earlybird Search Index and UTEG service. |
 
-### Recommended Notifications
+### Recommended Notification
 
 The core components of Recommended Notifications included in this repository are listed below:
 
