@@ -12,17 +12,19 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
         with:
-          go-version: "1.23"
+          go-version: "1.27.3"
           cache-dependency-path: testagram-feed/go.mod
       - name: Format Go source
         working-directory: testagram-feed
-        run: gofmt -w $(find cmd internal -name '*.go' -type f)
+        run: |
+          files=$(gofmt -l $(find cmd internal -name '*.go' -type f))
+          if [ -n "$files" ]; then echo "Go files need formatting:"; echo "$files"; exit 1; fi
       - name: Test
         working-directory: testagram-feed
-        run: go test -race -cover ./...
+        run: go test -race -count=1 -cover ./...
       - name: Static analysis
         working-directory: testagram-feed
         run: go vet ./...
