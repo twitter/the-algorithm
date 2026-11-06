@@ -25,11 +25,11 @@ This is a deterministic baseline, not a trained ML model. Keep weights versioned
 
 ## Run
 
-Go 1.23+:
+Go 1.27.3+:
 
 ```sh
 cd testagram-feed
-go test ./...
+go test -race ./...
 INTERNAL_TOKEN='replace-with-a-long-random-secret' go run ./cmd/feed-api
 ```
 
