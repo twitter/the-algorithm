@@ -27,24 +27,24 @@ type Features struct {
 }
 
 type Request struct {
-	Now              time.Time       `json:"now"`
-	Candidates       []Candidate     `json:"candidates"`
-	SeenIDs          []string        `json:"seenIds"`
-	BlockedAuthorIDs []string        `json:"blockedAuthorIds"`
-	MutedAuthorIDs   []string        `json:"mutedAuthorIds"`
-	Limit            int             `json:"limit"`
-	AllowSensitive   bool            `json:"allowSensitive"`
+	Now              time.Time   `json:"now"`
+	Candidates       []Candidate `json:"candidates"`
+	SeenIDs          []string    `json:"seenIds"`
+	BlockedAuthorIDs []string    `json:"blockedAuthorIds"`
+	MutedAuthorIDs   []string    `json:"mutedAuthorIds"`
+	Limit            int         `json:"limit"`
+	AllowSensitive   bool        `json:"allowSensitive"`
 }
 
 type Result struct {
-	ID       string  `json:"id"`
-	AuthorID string  `json:"authorId"`
-	Score    float64 `json:"score"`
+	ID       string   `json:"id"`
+	AuthorID string   `json:"authorId"`
+	Score    float64  `json:"score"`
 	Reasons  []string `json:"reasons"`
 }
 
 type scored struct {
-	result Result
+	result  Result
 	created time.Time
 }
 
@@ -146,11 +146,21 @@ func scoreCandidate(c Candidate, now time.Time) (float64, []string) {
 	score = math.Max(0, math.Min(1, score))
 
 	reasons := make([]string, 0, 5)
-	if f.Following { reasons = append(reasons, "from-followed-account") }
-	if recency >= 0.5 { reasons = append(reasons, "recent") }
-	if f.InterestAffinity >= 0.6 { reasons = append(reasons, "matches-interests") }
-	if f.Quality >= 0.7 { reasons = append(reasons, "quality-signal") }
-	if f.Conversation >= 0.6 { reasons = append(reasons, "constructive-conversation") }
+	if f.Following {
+		reasons = append(reasons, "from-followed-account")
+	}
+	if recency >= 0.5 {
+		reasons = append(reasons, "recent")
+	}
+	if f.InterestAffinity >= 0.6 {
+		reasons = append(reasons, "matches-interests")
+	}
+	if f.Quality >= 0.7 {
+		reasons = append(reasons, "quality-signal")
+	}
+	if f.Conversation >= 0.6 {
+		reasons = append(reasons, "constructive-conversation")
+	}
 	return score, reasons
 }
 
@@ -165,11 +175,15 @@ func stringSet(values []string) map[string]struct{} {
 }
 
 func clamp01(v float64) float64 {
-	if math.IsNaN(v) || math.IsInf(v, 0) { return 0 }
+	if math.IsNaN(v) || math.IsInf(v, 0) {
+		return 0
+	}
 	return math.Max(0, math.Min(1, v))
 }
 
 func boolFloat(v bool) float64 {
-	if v { return 1 }
+	if v {
+		return 1
+	}
 	return 0
 }

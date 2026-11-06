@@ -69,3 +69,7 @@ Ranking: `POST /v1/feed/rank` with `Authorization: Bearer $INTERNAL_TOKEN`.
 ## Production gates
 
 Before enabling this service in production: run tests and race detector; add request-level metrics and tracing; persist ranking-version metadata in backend logs; enforce mTLS or rotated service credentials; add offline evaluation datasets and fairness/quality checks; verify backend rechecks every candidate's visibility; and load-test with realistic candidate counts. A ranker timeout must fall back to a safe chronological feed, not block publishing or feed availability.
+
+## Container deployment
+
+The standalone service image is built from this directory using testagram-feed/Dockerfile and published as ghcr.io/trendyzima/testagram-feed when the module is merged to main. It listens on port 8092. Run it only on a private service network; do not publish 8092 to the Internet. The Data Centre Compose runtime injects INTERNAL_TOKEN and the Backend connects through ALGORITHM_URL=http://algorithm:8092.
