@@ -1,0 +1,31 @@
+name: testagram-feed
+on:
+  push:
+    branches: [main, "feat/**"]
+    paths: ["testagram-feed/**", ".github/workflows/testagram-feed.yml"]
+  pull_request:
+    paths: ["testagram-feed/**", ".github/workflows/testagram-feed.yml"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+          cache-dependency-path: testagram-feed/go.mod
+      - name: Format Go source
+        working-directory: testagram-feed
+        run: gofmt -w $(find cmd internal -name '*.go' -type f)
+      - name: Test
+        working-directory: testagram-feed
+        run: go test -race -cover ./...
+      - name: Static analysis
+        working-directory: testagram-feed
+        run: go vet ./...
+      - name: Build
+        working-directory: testagram-feed
+        run: go build ./cmd/feed-api
