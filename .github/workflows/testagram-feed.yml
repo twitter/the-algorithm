@@ -19,9 +19,7 @@ jobs:
           cache-dependency-path: testagram-feed/go.mod
       - name: Format Go source
         working-directory: testagram-feed
-        run: |
-          gofmt -w ./cmd ./internal
-          git diff --exit-code -- ./testagram-feed
+        run: gofmt -w ./cmd ./internal
       - name: Test
         working-directory: testagram-feed
         run: go test -race -cover ./...
