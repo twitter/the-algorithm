@@ -19,7 +19,7 @@ jobs:
           cache-dependency-path: testagram-feed/go.mod
       - name: Format Go source
         working-directory: testagram-feed
-        run: gofmt -w ./cmd ./internal
+        run: gofmt -w $(find cmd internal -name '*.go' -type f)
       - name: Test
         working-directory: testagram-feed
         run: go test -race -cover ./...
