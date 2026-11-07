@@ -60,3 +60,19 @@ func TestRankClampsInvalidFeatures(t *testing.T) {
 		t.Fatalf("score out of range: %#v", got)
 	}
 }
+
+func TestRankRejectsMalformedAndDuplicateCandidateIDs(t *testing.T) {
+	now := time.Date(2026, 11, 6, 12, 0, 0, 0, time.UTC)
+	got := Rank(Request{Now: now, Limit: 10, Candidates: []Candidate{
+		{ID: "post-1", AuthorID: "author-1", Visible: true, CreatedAt: now},
+		{ID: "post-1", AuthorID: "author-2", Visible: true, CreatedAt: now},
+		{ID: " post-2", AuthorID: "author-2", Visible: true, CreatedAt: now},
+		{ID: "post-3 ", AuthorID: "author-3", Visible: true, CreatedAt: now},
+		{ID: "post-4", AuthorID: " author-4", Visible: true, CreatedAt: now},
+		{ID: "post-5", AuthorID: "author-5 ", Visible: true, CreatedAt: now},
+		{ID: string(make([]byte, 129)), AuthorID: "author-6", Visible: true, CreatedAt: now},
+	}})
+	if len(got) != 1 || got[0].ID != "post-1" || got[0].AuthorID != "author-1" {
+		t.Fatalf("expected one canonical candidate, got %#v", got)
+	}
+}
