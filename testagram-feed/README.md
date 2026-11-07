@@ -12,6 +12,18 @@ This is a standalone Testagram-owned ranking service added alongside (not inside
 
 The ranker must never become the source of truth for users, posts, follows, blocks, likes, or moderation decisions. Do not expose this internal endpoint directly to browsers or Android clients.
 
+## Five-repository Testagram ownership
+
+| Repository | Owns | Ranker boundary |
+| --- | --- | --- |
+| [XClone](https://github.com/Trendyzima/XClone-9b4dz1-9b4dz1-8936-20260809tr) | Web/mobile user interface | Never calls this private service directly |
+| [Testagram Backend](https://github.com/Trendyzima/Testagram-backend-) | Canonical Appwrite identity, posts, social graph, permissions, visibility and feed orchestration | Authenticates the user, builds candidates, sends server-derived signals, rechecks access and hydrates canonical posts |
+| [Federated Content](https://github.com/Trendyzima/federated-content) | ActivityPub protocol state, signed inbox and remote delivery | May supply eligible federated candidates through Backend-owned adapters; does not grant visibility |
+| **the-algorithm (this module)** | Candidate ranking and recommendation scoring | Returns ordered IDs and explainable reasons only; never owns source records or authorization |
+| [Testagram Data Centre](https://github.com/Trendyzima/Testagram-data-centre-) | Private deployment, networking, media durability, nodes, backup and recovery | Runs this service privately and supplies infrastructure, not product policy |
+
+This service is an internal dependency. Its token must remain server-side and be rotated independently from user sessions. If ranking is unavailable, Backend should use its safe chronological fallback; publishing, authentication and authorization must not depend on this service.
+
 ## Ranking principles
 
 - Hard exclusions before scoring: hidden posts, seen IDs, blocked/muted authors, disallowed sensitive content, and high report-risk candidates.
