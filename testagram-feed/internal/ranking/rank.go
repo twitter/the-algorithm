@@ -73,13 +73,21 @@ func Rank(in Request) []Result {
 	muted := stringSet(in.MutedAuthorIDs)
 
 	items := make([]scored, 0, min(len(in.Candidates), maxCandidates))
+	candidateIDs := make(map[string]struct{}, min(len(in.Candidates), maxCandidates))
 	for i, c := range in.Candidates {
 		if i >= maxCandidates {
 			break
 		}
-		if strings.TrimSpace(c.ID) == "" || strings.TrimSpace(c.AuthorID) == "" || !c.Visible {
+		// IDs are opaque Backend-owned identifiers. Reject malformed values
+		// rather than trimming or rewriting them, and never emit duplicate IDs.
+		if c.ID == "" || c.AuthorID == "" || len(c.ID) > 128 || len(c.AuthorID) > 128 ||
+			strings.TrimSpace(c.ID) != c.ID || strings.TrimSpace(c.AuthorID) != c.AuthorID || !c.Visible {
 			continue
 		}
+		if _, duplicate := candidateIDs[c.ID]; duplicate {
+			continue
+		}
+		candidateIDs[c.ID] = struct{}{}
 		if _, ok := seen[c.ID]; ok {
 			continue
 		}
